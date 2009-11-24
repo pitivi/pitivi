@@ -223,6 +223,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 mode = SELECT_ADD
             elif self._last_event.get_state() & gtk.gdk.CONTROL_MASK:
                 mode = UNSELECT
+            else:
+                self._view.app.current.pipeline.seek(
+                    Zoomable.pixelToNs(pos[0]))
             self._view.timeline.setSelectionToObj(
                 self._view.element, mode)
 
