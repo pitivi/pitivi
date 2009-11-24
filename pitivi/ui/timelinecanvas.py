@@ -185,6 +185,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     _selecting = False
     _mousedown = None
     _marquee = None
+    _got_motion_notify = False
 
     def _normalize(self, p1, p2):
         w, h = p2 - p1
@@ -200,6 +201,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
     def _selectionDrag(self, item, target, event):
         if self._selecting:
+            self._got_motion_notify = True
             cur = self.from_event(event)
             pos, size = self._normalize(self._mousedown, cur)
             m = self._marquee
@@ -222,12 +224,18 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self.pointer_ungrab(self.get_root_item(), event.time)
         self._selecting = False
         self._marquee.props.visibility = goocanvas.ITEM_INVISIBLE
-        mode = 0
-        if event.get_state() & gtk.gdk.SHIFT_MASK:
-            mode = 1
-        if event.get_state() & gtk.gdk.CONTROL_MASK:
-            mode = 2
-        self.timeline.setSelectionTo(self._objectsUnderMarquee(), mode)
+        if not self._got_motion_notify:
+            self.timeline.setSelectionTo(set(), 0)
+            self.app.current.pipeline.seek(
+                Zoomable.pixelToNs(event.x))
+        else:
+            self._got_motion_notify = False
+            mode = 0
+            if event.get_state() & gtk.gdk.SHIFT_MASK:
+                mode = 1
+            if event.get_state() & gtk.gdk.CONTROL_MASK:
+                mode = 2
+            self.timeline.setSelectionTo(self._objectsUnderMarquee(), mode)
         return True
 
     def _objectsUnderMarquee(self):
