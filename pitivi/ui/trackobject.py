@@ -13,7 +13,7 @@ import controller
 from zoominterface import Zoomable
 from pitivi.timeline.track import TrackError
 from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT, \
-    MoveContext, TrimStartContext, TrimEndContext
+    SELECT_BETWEEN, MoveContext, TrimStartContext, TrimEndContext
 from preview import Preview
 from pitivi.ui.curve import Curve
 import gst
@@ -218,16 +218,21 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             return self._context.DEFAULT
 
         def click(self, pos):
-            mode = SELECT
+            timeline = self._view.timeline
+            element = self._view.element
+            element_end = element.start + element.duration
             if self._last_event.get_state() & gtk.gdk.SHIFT_MASK:
-                mode = SELECT_ADD
+                timeline.setSelectionToObj(element, SELECT_BETWEEN)
             elif self._last_event.get_state() & gtk.gdk.CONTROL_MASK:
-                mode = UNSELECT
+                if element.selected:
+                    mode = UNSELECT
+                else:
+                    mode = SELECT_ADD
+                timeline.setSelectionToObj(element, mode)
             else:
                 self._view.app.current.pipeline.seek(
                     Zoomable.pixelToNs(pos[0]))
-            self._view.timeline.setSelectionToObj(
-                self._view.element, mode)
+                timeline.setSelectionToObj(element, SELECT)
 
     def __init__(self, instance, element, track, timeline):
         goocanvas.Group.__init__(self)
