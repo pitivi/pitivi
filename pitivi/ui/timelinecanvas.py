@@ -54,12 +54,9 @@ PreferencesDialog.addNumericPreference('edgeSnapDeadband',
 
 class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
-    __gsignals__ = {
-        "scroll-event":"override"
-        }
-
     __gtype_name__ = 'TimelineCanvas'
     __gsignals__ = {
+        "scroll-event": "override",
         "expose-event" : "override",
     }
 
