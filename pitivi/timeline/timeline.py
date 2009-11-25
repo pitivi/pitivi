@@ -1850,3 +1850,15 @@ class Timeline(Signallable, Loggable):
     def getObjsBeforeTime(self, target):
         return [to for to in self.timeline_objects 
             if to.start + to.duration <=target]
+
+    def getObjsInRegion(self, start, end, min_priority=0,
+        max_priority=4294967295L):
+        objs = []
+        for to in self.timeline_objects:
+            if ((to.start >= start) and
+                ((to.start + to.duration) <= end) and
+                (to.priority >= min_priority) and
+                (to.priority <= max_priority)):
+                objs.append(to)
+        return objs
+
