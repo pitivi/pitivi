@@ -480,7 +480,7 @@ class Selection(Signallable):
 
     # FIXME : it took me 10 mins to understand what this method does... a more obvious
     # name would be better :)
-    def setTo(self, selection, mode):
+    def setTo(self, objs, mode):
         """
         Update the current selection.
 
@@ -494,8 +494,13 @@ class Selection(Signallable):
 
         @see: L{setToObj}
         """
-        # get the L{TrackObject}s for the given TimelineObjects
-        selection = set([obj.timeline_object for obj in selection])
+        # get a list of timeline objects
+        selection = set()
+        for obj in objs:
+            if isinstance(obj, TrackObject):
+                selection.add(obj.timeline_object)
+            else:
+                selection.add(obj)
         old_selection = self.selected
         if mode == SELECT_ADD:
             selection = self.selected | selection
