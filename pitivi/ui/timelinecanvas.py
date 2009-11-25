@@ -107,10 +107,12 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             fill_pattern = unpack_cairo_pattern(0x33CCFF66),
             visibility = goocanvas.ITEM_INVISIBLE)
         self._playhead = goocanvas.Rect(
+            y = -10,
             parent=root,
-            line_width=0,
-            fill_color="red",
-            width=1)
+            line_width=0.5,
+            fill_color_rgba=0xFF0000FF,
+            stroke_color_rgba=0xFFFFFFFF,
+            width=2)
         self._playhead_controller = PlayheadController(self._playhead)
         self._playhead_controller.seeker.connect("seek", self.seekerSeekCb)
         root.connect("motion-notify-event", self._selectionDrag)
@@ -283,18 +285,17 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._request_size()
 
     def _request_size(self):
+        alloc = self.get_allocation()
         w = Zoomable.nsToPixel(self.max_duration)
-        self.set_bounds(0, 0, w, self._height)
-        self._playhead.props.height = self._height
-
-## Zoomable Override
+        h = max(self._height, alloc.height)
+        self.set_bounds(0, 0, w, h)
+        self._playhead.props.height = h + 10
 
     def zoomChanged(self):
         if self.timeline:
             self.timeline.dead_band = self.pixelToNs(
                 self.settings.edgeSnapDeadband)
             self._request_size()
-
 
 ## settings callbacks
 
