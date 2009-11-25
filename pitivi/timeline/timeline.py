@@ -38,6 +38,8 @@ UNSELECT = 1
 """Remove the given set from the selection."""
 SELECT_ADD = 2
 """Extend the selection with the given set"""
+SELECT_BETWEEN = 3
+"""Select a range of clips"""
 
 class TimelineError(Exception):
     """Base Exception for errors happening in L{Timeline}s or L{TimelineObject}s"""
@@ -457,6 +459,7 @@ class Selection(Signallable):
 
     def __init__(self):
         self.selected = set([])
+        self.last_single_obj = None
 
     def setToObj(self, obj, mode):
         """
@@ -507,6 +510,9 @@ class Selection(Signallable):
         elif mode == UNSELECT:
             selection = self.selected - selection
         self.selected = selection
+
+        if len(self.selected) == 1:
+            self.last_single_obj = iter(selection).next()
 
         for obj in self.selected - old_selection:
             obj.selected = True
@@ -1669,6 +1675,19 @@ class Timeline(Signallable, Loggable):
 
         @see: L{Selection.setToObj}
         """
+        if mode == SELECT_BETWEEN:
+            if self.selection.last_single_obj:
+                last = self.selection.last_single_obj
+                earliest = min(last.start, obj.start)
+                latest = max(last.start + last.duration,
+                    obj.start + obj.duration)
+                min_priority = min(last.priority, obj.priority)
+                max_priority = max(last.priority, obj.priority)
+                objs = self.getObjsInRegion(earliest, latest,
+                    min_priority, max_priority)
+                self.setSelectionTo(objs, SELECT)
+                return
+
         self.selection.setToObj(obj, mode)
 
     def setSelectionTo(self, selection, mode):
