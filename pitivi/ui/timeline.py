@@ -375,7 +375,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def timelinePositionChanged(self, position):
         self._position = position
         self.ruler.timelinePositionChanged(position)
-        self._canvas._position = position
+        self._canvas.timelinePositionChanged(position)
         if self._state == gst.STATE_PLAYING:
             self.scrollToPlayhead()
 

@@ -33,11 +33,13 @@ from pitivi.settings import GlobalSettings
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.ui.common import TRACK_SPACING, unpack_cairo_pattern, \
         LAYER_HEIGHT_EXPANDED, LAYER_SPACING
+from pitivi.ui.controller import Controller
+from pitivi.utils import Seeker
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
 # TODO: replace this with custom cursor
-RAZOR_CURSOR = gtk.gdk.Cursor(gtk.gdk.XTERM)
+PLAYHEAD_CURSOR = gtk.gdk.Cursor(gtk.gdk.SB_H_DOUBLE_ARROW)
 
 GlobalSettings.addConfigOption('edgeSnapDeadband',
     section = "user-interface",
@@ -51,6 +53,18 @@ PreferencesDialog.addNumericPreference('edgeSnapDeadband',
     description = _("Threshold distance (in pixels) used for all snapping "
         "operations"),
     lower = 0)
+
+class PlayheadController(Controller):
+
+    _cursor = PLAYHEAD_CURSOR
+
+
+    def __init__(self, *args, **kwargs):
+        Controller.__init__(self, *args, **kwargs)
+        self.seeker = Seeker(80)
+
+    def set_pos(self, item, pos):
+        self.seeker.seek(Zoomable.pixelToNs(pos[0]))
 
 class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
@@ -88,16 +102,17 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self.tracks = goocanvas.Group()
         root.add_child(self.tracks)
         self._marquee = goocanvas.Rect(
+            parent=root,
             stroke_pattern = unpack_cairo_pattern(0x33CCFF66),
             fill_pattern = unpack_cairo_pattern(0x33CCFF66),
             visibility = goocanvas.ITEM_INVISIBLE)
-        self._razor = goocanvas.Rect(
+        self._playhead = goocanvas.Rect(
+            parent=root,
             line_width=0,
-            fill_color="orange",
-            width=1,
-            visibility=goocanvas.ITEM_INVISIBLE)
-        root.add_child(self._marquee)
-        root.add_child(self._razor)
+            fill_color="red",
+            width=1)
+        self._playhead_controller = PlayheadController(self._playhead)
+        self._playhead_controller.seeker.connect("seek", self.seekerSeekCb)
         root.connect("motion-notify-event", self._selectionDrag)
         root.connect("button-press-event", self._selectionStart)
         root.connect("button-release-event", self._selectionEnd)
@@ -105,6 +120,9 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         # add some padding for the horizontal scrollbar
         height += 21
         self.set_size_request(-1, height)
+
+    def seekerSeekCb(self, seeker, position, format):
+        self.app.current.pipeline.seek(position)
 
     def from_event(self, event):
         return Point(*self.convert_from_pixels(event.x, event.y))
@@ -243,24 +261,10 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
                 TrackObject)))
         return set()
 
-## Razor Tool Implementation
+## playhead implementation
 
-    def activateRazor(self, action):
-        self._razor_sigid = self.connect("button_press_event",
-            self._razorClickedCb)
-        self._razor_release_sigid = self.connect("button_release_event",
-            self._razorReleasedCb)
-        self._razor_motion_sigid = self.connect("motion_notify_event",
-            self._razorMovedCb)
-        self._razor.props.visibility = goocanvas.ITEM_VISIBLE
-        self._action = action
-        return True
-
-    def deactivateRazor(self):
-        self.disconnect(self._razor_sigid)
-        self.disconnect(self._razor_motion_sigid)
-        self.disconnect(self._razor_release_sigid)
-        self._razor.props.visibility = goocanvas.ITEM_INVISIBLE
+    def timelinePositionChanged(self, position):
+        self._playhead.props.x = self.nsToPixel(position)
 
     def _razorMovedCb(self, canvas, event):
         def snap(x):
@@ -272,30 +276,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._razor.props.x = snap(self.nsToPixel(self.pixelToNs(x)))
         return True
 
-    def _razorReleasedCb(self, unused_canvas, event):
-        self._action.props.active = False
-
-        x, y = self.convert_from_pixels(event.x, event.y)
-        bounds = goocanvas.Bounds(x, y, x, y)
-        items = self.get_items_in_area(bounds, True, True, True)
-        if items:
-            for item in items:
-                if isinstance(item, TrackObject):
-                    self.app.action_log.begin("split object")
-                    item.element.split(self._snapToPlayhead(self.pixelToNs(x)))
-                    self.app.action_log.commit()
-
-        return True
-
-    def _razorClickedCb(self, unused_canvas, unused_event):
-        return True
-
-    def _snapToPlayhead(self, time):
-        thresh = self.pixelToNs(self.settings.edgeSnapDeadband)
-        if abs(time - self._position) <= thresh:
-            return self._position
-        return time
-
     max_duration = 0
 
     def setMaxDuration(self, duration):
@@ -305,7 +285,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def _request_size(self):
         w = Zoomable.nsToPixel(self.max_duration)
         self.set_bounds(0, 0, w, self._height)
-        self._razor.props.height = self._height
+        self._playhead.props.height = self._height
 
 ## Zoomable Override
 
