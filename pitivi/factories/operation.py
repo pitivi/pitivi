@@ -67,6 +67,7 @@ class AudioModifierFactory(StreamModifierFactory):
         b = gst.Bin()
         idt = gst.element_factory_make("identity", "single-segment")
         idt.props.single_segment = True
+        idt.props.silent = True
         aconv = gst.element_factory_make("audioconvert", "aconv")
         ares = gst.element_factory_make("audioresample", "ares")
         arate = gst.element_factory_make("audiorate", "arate")
@@ -98,6 +99,7 @@ class VideoModifierFactory(StreamModifierFactory):
         b = gst.Bin()
         idt = gst.element_factory_make("identity", "single-segment")
         idt.props.single_segment = True
+        idt.props.silent = True
         csp = gst.element_factory_make("ffmpegcolorspace", "csp")
         vrate = gst.element_factory_make("videorate", "vrate")
 

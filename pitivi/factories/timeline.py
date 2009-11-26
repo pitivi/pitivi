@@ -126,6 +126,7 @@ class TimelineSourceFactory(SourceFactory):
             # in <= 0.10.14 there was a bug in basetransform (commit
             # 83f31c7194b96ec857d6695746dd8b3fcba1846a in gst-python)
             seek = gst.element_factory_make('identity')
+            seek.props.silent = True
         else:
             seek = FixSeekStart(track)
         self.bin.add(seek)
