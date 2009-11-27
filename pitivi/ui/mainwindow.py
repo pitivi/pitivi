@@ -818,10 +818,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.set_border_width(12)
         dialog.get_content_area().set_spacing(6)
 
-        text = _("The following file has moved," +
-            " please tell PiTiVi where to find it.") + "\n\n" + \
-            beautify_factory(factory) + "\n" +\
-            _("<b>Duration:</b>") + beautify_length(factory.duration)
+        text = _("The following file has moved, please tell PiTiVi where to find it.") + \
+            "\n\n" + beautify_factory(factory) + "\n" + \
+            "<b>%s</b>" % _("Duration:") + beautify_length(factory.duration)
 
         label = gtk.Label()
         label.set_markup(text)
