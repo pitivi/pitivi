@@ -258,7 +258,8 @@ class ElementTreeFormatter(Formatter):
     def _deserializeDict(self, element):
         d = {}
         for a, b in element.attrib.iteritems():
-            d[a] = self._parsePropertyValue(b)
+            if len(b):
+                d[a] = self._parsePropertyValue(b)
         return d
 
     def _saveProjectSettings(self, settings):
