@@ -268,16 +268,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def timelinePositionChanged(self, position):
         self._playhead.props.x = self.nsToPixel(position)
 
-    def _razorMovedCb(self, canvas, event):
-        def snap(x):
-            pos = self.nsToPixel(self._position)
-            if abs(x - pos) <= self.settings.edgeSnapDeadband:
-                return pos
-            return x
-        x, y = self.convert_from_pixels(event.x, event.y)
-        self._razor.props.x = snap(self.nsToPixel(self.pixelToNs(x)))
-        return True
-
     max_duration = 0
 
     def setMaxDuration(self, duration):
