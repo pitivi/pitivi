@@ -109,10 +109,10 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._playhead = goocanvas.Rect(
             y = -10,
             parent=root,
-            line_width=0.5,
-            fill_color_rgba=0xFF0000FF,
+            line_width=1,
+            fill_color_rgba=0x000000FF,
             stroke_color_rgba=0xFFFFFFFF,
-            width=2)
+            width=3)
         self._playhead_controller = PlayheadController(self._playhead)
         self._playhead_controller.seeker.connect("seek", self.seekerSeekCb)
         root.connect("motion-notify-event", self._selectionDrag)
