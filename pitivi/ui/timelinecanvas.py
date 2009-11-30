@@ -54,7 +54,7 @@ PreferencesDialog.addNumericPreference('edgeSnapDeadband',
         "operations"),
     lower = 0)
 
-class PlayheadController(Controller):
+class PlayheadController(Controller, Zoomable):
 
     _cursor = PLAYHEAD_CURSOR
 
@@ -265,7 +265,10 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
 ## playhead implementation
 
+    position = 0
+
     def timelinePositionChanged(self, position):
+        self.position = position
         self._playhead.props.x = self.nsToPixel(position)
 
     max_duration = 0
@@ -286,6 +289,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             self.timeline.dead_band = self.pixelToNs(
                 self.settings.edgeSnapDeadband)
             self._request_size()
+            self.timelinePositionChanged(self.position)
 
 ## settings callbacks
 
