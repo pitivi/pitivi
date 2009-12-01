@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: pitivi.HEAD.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-11-04 15:44+0000\n"
-"PO-Revision-Date: 2009-11-04 22:22+0100\n"
+"POT-Creation-Date: 2009-11-28 10:10+0000\n"
+"PO-Revision-Date: 2009-11-29 23:38+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -326,7 +326,6 @@ msgid "Run pitivi in the Python Debugger"
 msgstr "Ejecutar Pitivi en el depurador de Python"
 
 #: ../pitivi/application.py:233
-#| msgid "Run pitivi in the Python Debugger"
 msgid "Run pitivi with no gui"
 msgstr "Ejecutar Pitivi sin IGU"
 
@@ -758,7 +757,7 @@ msgstr "Propiedades para %s"
 msgid "Render"
 msgstr "Renderizando"
 
-#: ../pitivi/ui/mainwindow.py:128
+#: ../pitivi/ui/mainwindow.py:128 ../pitivi/ui/timeline.py:210
 msgid "Split"
 msgstr "Dividir"
 
@@ -967,22 +966,24 @@ msgid "Locate missing file..."
 msgstr "Encontrar archivo perdido..."
 
 #: ../pitivi/ui/mainwindow.py:821
-msgid "The following file has moved,"
-msgstr "Se ha movido el siguiente archivo,"
+#| msgid "The following file can not be used with PiTiVi."
+msgid "The following file has moved, please tell PiTiVi where to find it."
+msgstr "Se movió el siguiente archivo, diga dónde se puede encontrar."
 
-#: ../pitivi/ui/mainwindow.py:824
-msgid "<b>Duration:</b>"
-msgstr "<b>Duración:</b>"
+#: ../pitivi/ui/mainwindow.py:823
+#| msgid "Duration"
+msgid "Duration:"
+msgstr "Duración:"
 
-#: ../pitivi/ui/mainwindow.py:974
+#: ../pitivi/ui/mainwindow.py:973
 msgid "Save As..."
 msgstr "Guardar como…"
 
-#: ../pitivi/ui/mainwindow.py:982
+#: ../pitivi/ui/mainwindow.py:981
 msgid "Untitled.xptv"
 msgstr "Sin título.xptv"
 
-#: ../pitivi/ui/mainwindow.py:993 ../pitivi/ui/mainwindow.py:1006
+#: ../pitivi/ui/mainwindow.py:992 ../pitivi/ui/mainwindow.py:1005
 msgid "Detect Automatically"
 msgstr "Detectar automáticamente"
 
@@ -1152,34 +1153,34 @@ msgstr "Algunos cambios no tendrán efecto hasta que reinicie PiTiVi"
 msgid "Reset"
 msgstr "Reiniciar"
 
-#: ../pitivi/ui/previewer.py:56 ../pitivi/ui/previewer.py:84
-#: ../pitivi/ui/previewer.py:95 ../pitivi/ui/trackobject.py:48
+#: ../pitivi/ui/previewer.py:55 ../pitivi/ui/previewer.py:83
+#: ../pitivi/ui/previewer.py:94 ../pitivi/ui/trackobject.py:48
 #: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
 #: ../pitivi/ui/trackobject.py:81
 msgid "Appearance"
 msgstr "Apariencia"
 
-#: ../pitivi/ui/previewer.py:57
+#: ../pitivi/ui/previewer.py:56
 msgid "Thumbnail Gap (pixels)"
 msgstr "Apertura de miniaturas (píxeles)"
 
-#: ../pitivi/ui/previewer.py:59
+#: ../pitivi/ui/previewer.py:58
 msgid "The gap between thumbnails"
 msgstr "El espacio entre las miniaturas"
 
-#: ../pitivi/ui/previewer.py:85
+#: ../pitivi/ui/previewer.py:84
 msgid "Show Thumbnails (Video)"
 msgstr "Mostrar miniaturas (vídeo)"
 
-#: ../pitivi/ui/previewer.py:86
+#: ../pitivi/ui/previewer.py:85
 msgid "Show Thumbnails on Video Clips"
 msgstr "Mostrar miniaturas en los vídeos"
 
-#: ../pitivi/ui/previewer.py:96
+#: ../pitivi/ui/previewer.py:95
 msgid "Show Waveforms (Audio)"
 msgstr "Mostrar formas de onda (sonido)"
 
-#: ../pitivi/ui/previewer.py:97
+#: ../pitivi/ui/previewer.py:96
 msgid "Show Waveforms on Audio Clips"
 msgstr "Mostrar formas de onda en los audio clips"
 
@@ -1317,8 +1318,9 @@ msgid "Delete Selected"
 msgstr "Borrar los seleccionados"
 
 #: ../pitivi/ui/timeline.py:46
-msgid "Cut clip at mouse position"
-msgstr "Cortar vídeo en la posición del ratón"
+#| msgid "Cut clip at mouse position"
+msgid "Split clip at playhead position"
+msgstr "Cortar vídeo en la posición actual"
 
 #: ../pitivi/ui/timeline.py:47
 msgid "Zoom In"
@@ -1343,10 +1345,6 @@ msgstr "Desagrupar vídeos"
 #: ../pitivi/ui/timeline.py:52
 msgid "Group clips"
 msgstr "Agrupar vídeos"
-
-#: ../pitivi/ui/timeline.py:210
-msgid "Razor"
-msgstr "Navaja"
 
 #: ../pitivi/ui/timelinecanvas.py:49
 msgid "Behavior"
@@ -1397,6 +1395,15 @@ msgstr "Fuente de texto del vídeo"
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
 msgstr "La fuente para usar en los títulos del vídeo"
+
+#~ msgid "The following file has moved,"
+#~ msgstr "Se ha movido el siguiente archivo,"
+
+#~ msgid "<b>Duration:</b>"
+#~ msgstr "<b>Duración:</b>"
+
+#~ msgid "Razor"
+#~ msgstr "Navaja"
 
 #~ msgid "Close project"
 #~ msgstr "Cerrar proyecto"
