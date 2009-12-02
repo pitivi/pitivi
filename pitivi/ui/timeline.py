@@ -204,8 +204,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._prev_duration = 0
         self.shrink = True
         self.rate = gst.Fraction(1,1)
-        self._seeker = Seeker(80)
-        self._seeker.connect('seek', self._seekerSeekCb)
 
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
@@ -235,7 +233,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.attach(controlwindow, 0, 1, 1, 2, xoptions=0)
 
         # timeline ruler
-        self.ruler = ruler.ScaleRuler(self.hadj)
+        self.ruler = ruler.ScaleRuler(self.app, self.hadj)
         self.ruler.set_size_request(0, 25)
         self.ruler.set_border_width(2)
         self.ruler.connect("key-press-event", self._keyPressEventCb)
@@ -362,9 +360,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             pipeline.getDuration()))
         self._seeker.seek(seekvalue)
 
-    def _seekerSeekCb(self, seeker, position, format):
-        self.project.pipeline.seek(position, format)
-
     def _buttonPress(self, window, event):
         self.shrink = False
 
@@ -416,6 +411,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         context.drop_finish(True, timestamp)
         self._factories = None
         self._temp_objects = None
+        self.app.current.seeker.seek(self._position)
         return True
 
     def _dragDataReceivedCb(self, unused_layout, context, x, y,
@@ -508,6 +504,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.ruler.setProjectFrameRate(self.project.getSettings().videorate)
             self.ruler.zoomChanged()
             self._settingsChangedCb(self.project, None, self.project.getSettings())
+            self.seeker = self.project.seeker
 
     project = receiver(_setProject)
 
