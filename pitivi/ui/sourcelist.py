@@ -284,6 +284,7 @@ class SourceList(gtk.VBox, Loggable):
         timeline = self.app.current.timeline
         sources = self.app.current.sources
         start = timeline.duration
+        self.app.current.seeker.seek(start)
         for uri in self.getSelectedItems():
             factory = sources.getUri(uri)
             source = timeline.addSourceFactory(factory)
