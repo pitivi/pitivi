@@ -33,6 +33,7 @@ from pitivi.sourcelist import SourceList
 from pitivi.settings import ExportSettings
 from pitivi.signalinterface import Signallable
 from pitivi.action import ViewAction
+from pitivi.utils import Seeker
 
 class ProjectError(Exception):
     """Project error"""
@@ -90,6 +91,7 @@ class Project(Signallable, Loggable):
         self.pipeline = Pipeline()
         self.view_action = ViewAction()
         self.view_action.addProducers(self.factory)
+        self.seeker = Seeker(80)
 
     def release(self):
         self.pipeline.release()
