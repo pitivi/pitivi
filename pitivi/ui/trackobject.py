@@ -230,7 +230,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                     mode = SELECT_ADD
                 timeline.setSelectionToObj(element, mode)
             else:
-                self._view.app.current.pipeline.seek(
+                self._view.app.current.seeker.seek(
                     Zoomable.pixelToNs(pos[0]))
                 timeline.setSelectionToObj(element, SELECT)
 
