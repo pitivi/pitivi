@@ -386,8 +386,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         hpaned.pack1(self.projecttabs, resize=True, shrink=False)
 
-        self.timeline.ruler.connect('seek', self._timelineRulerSeekCb)
-
         # Viewer
         self.viewer = PitiviViewer()
         # drag and drop
@@ -693,6 +691,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         else:
             self._zoom_duration_changed = True
 
+        self.project.seeker.connect("seek", self._timelineSeekCb)
+
     def _setBestZoomRatio(self):
         ruler_width = self.timeline.ruler.get_allocation()[2]
         timeline_duration = self.project.timeline.duration
@@ -790,6 +790,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._disconnectFromProjectSources(project.sources)
         self.viewer.setAction(None)
         self.viewer.setPipeline(None)
+        project.seeker.disconnect_by_func(self._timelineSeekCb)
         return False
 
     def _projectManagerNewProjectFailedCb(self, projectManager, uri, exception):
@@ -1038,7 +1039,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.viewer.setPipeline(pipeline)
         self.viewer.play()
 
-    def _timelineRulerSeekCb(self, ruler, position):
+    def _timelineSeekCb(self, ruler, position, format):
         self.debug("position:%s", gst.TIME_ARGS (position))
         if self.viewer.action != self.project.view_action:
             self.viewer.setPipeline(None)
@@ -1052,7 +1053,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # set to the pipeline.
         self.project.pipeline.pause()
         try:
-            self.project.pipeline.seek(position)
+            self.project.pipeline.seek(position, format)
         except:
             self.debug("Seeking failed")
 
