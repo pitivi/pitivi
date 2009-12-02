@@ -34,7 +34,6 @@ from pitivi.ui.prefs import PreferencesDialog
 from pitivi.ui.common import TRACK_SPACING, unpack_cairo_pattern, \
         LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 from pitivi.ui.controller import Controller
-from pitivi.utils import Seeker
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
@@ -61,10 +60,10 @@ class PlayheadController(Controller, Zoomable):
 
     def __init__(self, *args, **kwargs):
         Controller.__init__(self, *args, **kwargs)
-        self.seeker = Seeker(80)
 
     def set_pos(self, item, pos):
-        self.seeker.seek(Zoomable.pixelToNs(pos[0]))
+        self._canvas.app.current.seeker.seek(
+            Zoomable.pixelToNs(pos[0]))
 
 class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
@@ -114,7 +113,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             stroke_color_rgba=0xFFFFFFFF,
             width=3)
         self._playhead_controller = PlayheadController(self._playhead)
-        self._playhead_controller.seeker.connect("seek", self.seekerSeekCb)
         root.connect("motion-notify-event", self._selectionDrag)
         root.connect("button-press-event", self._selectionStart)
         root.connect("button-release-event", self._selectionEnd)
@@ -122,9 +120,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         # add some padding for the horizontal scrollbar
         height += 21
         self.set_size_request(-1, height)
-
-    def seekerSeekCb(self, seeker, position, format):
-        self.app.current.pipeline.seek(position)
 
     def from_event(self, event):
         return Point(*self.convert_from_pixels(event.x, event.y))
@@ -238,13 +233,13 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         return True
 
     def _selectionEnd(self, item, target, event):
+        seeker = self.app.current.seeker
         self.pointer_ungrab(self.get_root_item(), event.time)
         self._selecting = False
         self._marquee.props.visibility = goocanvas.ITEM_INVISIBLE
         if not self._got_motion_notify:
             self.timeline.setSelectionTo(set(), 0)
-            self.app.current.pipeline.seek(
-                Zoomable.pixelToNs(event.x))
+            seeker.seek(Zoomable.pixelToNs(event.x))
         else:
             self._got_motion_notify = False
             mode = 0
