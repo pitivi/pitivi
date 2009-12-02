@@ -29,7 +29,7 @@ import gst
 import cairo
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.log.loggable import Loggable
-from pitivi.utils import time_to_string, Seeker
+from pitivi.utils import time_to_string
 
 class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
@@ -50,7 +50,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
     scale = [0, 0, 0, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 3600]
     subdivide = ((1, 1.0), (2, 0.5), (10, .25))
 
-    def __init__(self, hadj):
+    def __init__(self, instance, hadj):
         gtk.Layout.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
@@ -77,11 +77,10 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         self.pressed = False
         self.shaded_duration = gst.CLOCK_TIME_NONE
         self.max_duration = gst.CLOCK_TIME_NONE
-        self.seeker = Seeker(80)
-        self.seeker.connect('seek', self._seekerSeekCb)
         self.min_frame_spacing = 5.0
         self.frame_height = 5.0
         self.frame_rate = gst.Fraction(1/1)
+        self.app = instance
 
     def _hadjValueChangedCb(self, hadj):
         self.pixel_position_offset = Zoomable.nsToPixel(self.position) - hadj.get_value()
@@ -197,7 +196,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         return False
 
     def _doSeek(self, value, format=gst.FORMAT_TIME, on_idle=False):
-        self.seeker.seek(value, format, on_idle)
+        self.app.current.seeker.seek(value, format, on_idle)
 
 ## Drawing methods
 
