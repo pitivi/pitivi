@@ -169,7 +169,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.actions = None
         self.toggleactions = None
         self.actiongroup = None
-        self.error_dialogbox = None
         self.settings = instance.settings
         self.is_fullscreen = self.settings.mainWindowFullScreen
         self.timelinepos = 0
@@ -468,11 +467,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         window.remove(self.viewer)
         pane.pack2(self.viewer, resize=False, shrink=False)
         self.viewer.show()
-
-    def _errorMessageResponseCb(self, dialogbox, unused_response):
-        dialogbox.hide()
-        dialogbox.destroy()
-        self.error_dialogbox = None
 
 ## Missing Plugin Support
 
