@@ -156,3 +156,69 @@ class TestGap(TestCase):
         self.failUnlessEqual(left_gap.duration, 31 * gst.SECOND)
         self.failUnlessEqual(right_gap, invalid_gap)
 
+    def testFindAllGaps(self):
+
+        simple = (
+            (3 * gst.SECOND, 1 * gst.SECOND),
+            (1 * gst.SECOND, 1 * gst.SECOND)
+        )
+
+        objs = []
+        for start, duration in simple:
+            obj = self.makeTimelineObject()
+            obj.start = start
+            obj.duration = duration
+            objs.append(obj)
+
+        result = [(g.start, g.initial_duration) for g in
+            Gap.findAllGaps(objs)]
+
+        self.assertEquals(result, [
+            (0 * gst.SECOND, 1 * gst.SECOND),
+            (2 * gst.SECOND, 1 * gst.SECOND),
+        ])
+
+        complex = [
+            ( 1 * gst.SECOND, 2 * gst.SECOND),
+            ( 6 * gst.SECOND, 2 * gst.SECOND),
+            (10 * gst.SECOND, 2 * gst.SECOND),
+            ( 8 * gst.SECOND, 2 * gst.SECOND),
+            (14 * gst.SECOND, 1 * gst.SECOND),
+            ( 4 * gst.SECOND, 1 * gst.SECOND),
+        ]
+
+        objs = []
+        for start, duration in complex:
+            obj = self.makeTimelineObject()
+            obj.start = start
+            obj.duration = duration
+            objs.append(obj)
+
+        result = [(g.start, g.initial_duration) for g in
+            Gap.findAllGaps(objs)]
+
+        self.assertEquals(result, [
+            ( 0 * gst.SECOND, 1 * gst.SECOND),
+            ( 3 * gst.SECOND, 1 * gst.SECOND),
+            ( 5 * gst.SECOND, 1 * gst.SECOND),
+            (12 * gst.SECOND, 2 * gst.SECOND),
+        ])
+
+        complex.append((2 * gst.SECOND, 5 * gst.SECOND))
+
+        objs = []
+        for start, duration in complex:
+            obj = self.makeTimelineObject()
+            obj.start = start
+            obj.duration = duration
+            objs.append(obj)
+
+        result = [(g.start, g.initial_duration) for g in
+            Gap.findAllGaps(objs)]
+
+        self.assertEquals(result, [
+            ( 0 * gst.SECOND, 1 * gst.SECOND),
+            (12 * gst.SECOND, 2 * gst.SECOND),
+        ])
+
+

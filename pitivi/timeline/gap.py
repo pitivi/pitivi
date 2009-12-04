@@ -72,6 +72,27 @@ class Gap(object):
 
         return left_gap, right_gap
 
+    @classmethod
+    def findAllGaps(self, objs):
+        """Find all the gaps in a given set of objects: i.e. find all the
+        spans of time which are covered by no object in the given set"""
+        duration = 0
+        gaps = []
+        prev = None
+
+        # examine each object in order of increasing start time
+        for obj in sorted(objs, key=lambda x: x.start):
+            start = obj.start
+            end = obj.start + obj.duration
+
+            # only if the current object starts after the total timeline
+            # duration is a gap created.
+            if start > duration:
+                gaps.append(Gap(prev, obj, duration, start - duration))
+            duration = max(duration, end)
+            prev = obj
+        return gaps
+
     @property
     def duration(self):
         if self.left_object is None and self.right_object is None:
