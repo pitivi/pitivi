@@ -876,27 +876,27 @@ class TestTimelineAddFactory(TestCase):
     def testAudioOnly(self):
         self.factory.addOutputStream(self.audio_stream1)
         self.timeline.addSourceFactory(self.factory)
-        self.failUnlessEqual(len(self.audio_track1.track_objects), 2)
-        self.failUnlessEqual(len(self.audio_track2.track_objects), 1)
-        self.failUnlessEqual(len(self.video_track1.track_objects), 1)
-        self.failUnlessEqual(len(self.video_track2.track_objects), 1)
+        self.failUnlessEqual(len(self.audio_track1.track_objects), 1)
+        self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
+        self.failUnlessEqual(len(self.video_track1.track_objects), 0)
+        self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
     def testVideoOnly(self):
         self.factory.addOutputStream(self.video_stream1)
         self.timeline.addSourceFactory(self.factory)
-        self.failUnlessEqual(len(self.audio_track1.track_objects), 1)
-        self.failUnlessEqual(len(self.audio_track2.track_objects), 1)
-        self.failUnlessEqual(len(self.video_track1.track_objects), 2)
-        self.failUnlessEqual(len(self.video_track2.track_objects), 1)
+        self.failUnlessEqual(len(self.audio_track1.track_objects), 0)
+        self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
+        self.failUnlessEqual(len(self.video_track1.track_objects), 1)
+        self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
     def test1Audio1Video(self):
         self.factory.addOutputStream(self.audio_stream1)
         self.factory.addOutputStream(self.video_stream1)
         self.timeline.addSourceFactory(self.factory)
-        self.failUnlessEqual(len(self.audio_track1.track_objects), 2)
-        self.failUnlessEqual(len(self.audio_track2.track_objects), 1)
-        self.failUnlessEqual(len(self.video_track1.track_objects), 2)
-        self.failUnlessEqual(len(self.video_track2.track_objects), 1)
+        self.failUnlessEqual(len(self.audio_track1.track_objects), 1)
+        self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
+        self.failUnlessEqual(len(self.video_track1.track_objects), 1)
+        self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
     def testConflictNotEnoughTracks(self):
         # 3 audio streams, only 2 audio tracks in the timeline
@@ -905,10 +905,10 @@ class TestTimelineAddFactory(TestCase):
         self.factory.addOutputStream(self.audio_stream3)
         self.failUnlessRaises(TimelineError, self.timeline.addSourceFactory,
                 self.factory, strict=True)
-        self.failUnlessEqual(len(self.audio_track1.track_objects), 1)
-        self.failUnlessEqual(len(self.audio_track2.track_objects), 1)
-        self.failUnlessEqual(len(self.video_track1.track_objects), 1)
-        self.failUnlessEqual(len(self.video_track2.track_objects), 1)
+        self.failUnlessEqual(len(self.audio_track1.track_objects), 0)
+        self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
+        self.failUnlessEqual(len(self.video_track1.track_objects), 0)
+        self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
 class TestContexts(TestCase):
 

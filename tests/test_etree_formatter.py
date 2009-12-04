@@ -551,7 +551,7 @@ class TestFormatterLoad(TestCase):
         # point gun at foot; pull trigger
         track = self.formatter._loadTrack(element)
 
-        self.failUnlessEqual(len(track.track_objects), 2)
+        self.failUnlessEqual(len(track.track_objects), 1)
         # FIXME: this is an hack
         self.failUnlessEqual(str(track.stream), str(stream))
 
