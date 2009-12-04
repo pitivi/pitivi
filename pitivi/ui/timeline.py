@@ -122,7 +122,7 @@ class InfoStub(gtk.HBox, Loggable):
         Loggable.__init__(self)
         self.errors = []
         self.showing = False
-        self._errorsmessage = _("PiTiVi has encounters GStreamer errors")
+        self._errorsmessage = _("One or more GStreamer errors has occured!")
         self._makeUI()
 
     def _makeUI(self):
@@ -156,8 +156,8 @@ class InfoStub(gtk.HBox, Loggable):
         dialog.destroy()
 
     def _questionButtonClickedCb(self, unused_button):
-        msgs = (self._errorsmessage,
-            _("The following errors have been reported"))
+        msgs = (_("Error List"),
+            _("The following errors have been reported:"))
         # show error dialog
         dbox = FileListErrorDialog(*msgs)
         dbox.connect("close", self._errorDialogBoxCloseCb)
