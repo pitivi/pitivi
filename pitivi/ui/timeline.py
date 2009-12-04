@@ -40,6 +40,7 @@ from zoominterface import Zoomable
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 from pitivi.timeline.timeline import MoveContext
 from pitivi.utils import Seeker
+from pitivi.ui.filelisterrordialog import FileListErrorDialog
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
@@ -111,6 +112,73 @@ ui = '''
 #    |
 #    +--Status Bar ??
 
+class InfoStub(gtk.HBox, Loggable):
+    """
+    Box used to display information on the current state of the timeline
+    """
+
+    def __init__(self):
+        gtk.HBox.__init__(self)
+        Loggable.__init__(self)
+        self.errors = []
+        self.showing = False
+        self._errorsmessage = _("PiTiVi has encounters GStreamer errors")
+        self._makeUI()
+
+    def _makeUI(self):
+        self.set_spacing(6)
+        self.erroricon = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
+                                                  gtk.ICON_SIZE_SMALL_TOOLBAR)
+
+        self.pack_start(self.erroricon, expand=False)
+
+
+        self.infolabel = gtk.Label(self._errorsmessage)
+        self.infolabel.set_alignment(0, 0.5)
+
+        self.questionbutton = gtk.Button()
+        self.questionbutton.set_image(gtk.image_new_from_stock(gtk.STOCK_INFO,
+                                                               gtk.ICON_SIZE_SMALL_TOOLBAR))
+        self.questionbutton.connect("clicked", self._questionButtonClickedCb)
+        self._questionshowing = False
+
+        self.pack_start(self.infolabel, expand=True, fill=True)
+        self.pack_start(self.questionbutton, expand=False)
+
+    def addErrors(self, *args):
+        self.errors.append(args)
+        self.show()
+
+    def _errorDialogBoxCloseCb(self, dialog):
+        dialog.destroy()
+
+    def _errorDialogBoxResponseCb(self, dialog, unused_response):
+        dialog.destroy()
+
+    def _questionButtonClickedCb(self, unused_button):
+        msgs = (self._errorsmessage,
+            _("The following errors have been reported"))
+        # show error dialog
+        dbox = FileListErrorDialog(*msgs)
+        dbox.connect("close", self._errorDialogBoxCloseCb)
+        dbox.connect("response", self._errorDialogBoxResponseCb)
+        for reason, extra in self.errors:
+            dbox.addFailedFile(None, reason, extra)
+        dbox.show()
+        # reset error list
+        self.errors = []
+        self.hide()
+
+    def show(self):
+        self.log("showing")
+        self.show_all()
+        self.showing = True
+
+    def hide(self):
+        self.log("hiding")
+        gtk.VBox.hide(self)
+        self.showing = False
+
 class Timeline(gtk.Table, Loggable, Zoomable):
 
     # the screen width of the current unit
@@ -174,6 +242,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         timelinewindow.set_shadow_type(gtk.SHADOW_IN)
         #FIXME: remove padding between scrollbar and scrolled window
         self.attach(timelinewindow, 1, 2, 1, 2)
+
+        # error infostub
+        self.infostub = InfoStub()
+        self.attach(self.infostub, 1, 2, 2, 3)
+        self.infostub.hide()
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
