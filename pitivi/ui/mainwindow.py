@@ -434,6 +434,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if not self.settings.mainWindowShowTimelineToolbar:
             ttb.props.visible = False
 
+        self.timeline.infostub.hide()
+
         #application icon
         self.set_icon_name("pitivi")
 
@@ -928,22 +930,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     @handler(project_pipeline, "error")
     def _pipelineErrorCb(self, unused_pipeline, error, detail):
-        # FIXME FIXME FIXME:
-        # _need_ an onobtrusive way to present gstreamer errors,
-        # one that doesn't steel mouse/keyboard focus, one that
-        # makes some kind of sense to the user, and one that presents
-        # some ways of actually _dealing_ with the underlying problem:
-        # install a plugin, re-conform source to some other format, or
-        # maybe even disable playback of a problematic file.
-        if self.error_dialogbox:
-            return
-        self.error_dialogbox = gtk.MessageDialog(None, gtk.DIALOG_MODAL,
-            gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, None)
-        self.error_dialogbox.set_markup("<b>%s</b>" % error)
-        self.error_dialogbox.connect("response", self._errorMessageResponseCb)
         if detail:
-            self.error_dialogbox.format_secondary_text(detail)
-        self.error_dialogbox.show()
+            self.timeline.infostub.addErrors(error, detail)
+        else:
+            self.timeline.infostub.addErrors(error)
 
     @handler(project_pipeline, "position")
     def _timelinePipelinePositionChangedCb(self, pipeline, position):
