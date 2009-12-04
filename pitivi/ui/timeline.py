@@ -245,7 +245,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # error infostub
         self.infostub = InfoStub()
-        self.attach(self.infostub, 1, 2, 2, 3)
+        self.attach(self.infostub, 1, 2, 2, 3, yoptions=0)
         self.infostub.hide()
 
         # drag and drop
