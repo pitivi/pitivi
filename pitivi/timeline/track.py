@@ -666,19 +666,20 @@ class Track(Signallable):
         self.mixer = self._getMixerForStream(stream)
         if self.mixer:
             self.composition.add(self.mixer)
+        self.default_sources = []
 
     def _getDefaultTrackObjectForStream(self, stream):
         if isinstance(stream, VideoStream):
             return self._getDefaultVideoTrackObject(stream)
         elif isinstance(stream, AudioStream):
             return self._getDefaultAudioTrackObject(stream)
+        track_object.props.priority = 2 ** 32 - 1
 
         return None
 
     def _getDefaultVideoTrackObject(self, stream):
         factory = VideoTestSourceFactory(pattern='black')
         track_object = SourceTrackObject(factory, stream)
-        track_object.props.priority = 2 ** 32 - 1
 
         return track_object
 
