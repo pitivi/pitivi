@@ -29,6 +29,7 @@ from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.test import VideoTestSourceFactory, \
         AudioTestSourceFactory
 from pitivi.elements.mixer import SmartAdderBin, SmartVideomixerBin
+from pitivi.timeline.gap import Gap
 
 class TrackError(Exception):
     pass
@@ -688,6 +689,19 @@ class Track(Signallable):
         track_object = SourceTrackObject(factory, stream)
 
         return track_object
+
+    def updateDefaultSources(self):
+        for object in self.default_sources:
+            self.composition.remove(object)
+        gaps = Gap.findAllGaps(self.track_objects)
+
+        self.default_sources = []
+        for gap in gaps:
+            source = self._getDefaultTrackObjectForStream(self.stream)
+            gnl_object = source.gnl_object
+            gnl_object.props.start = gap.start
+            gnl_object.props.duration = gap.initial_duration
+            self.composition.add(gnl_object)
 
     def _getMixerForStream(self, stream):
         if isinstance(stream, AudioStream):
