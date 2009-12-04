@@ -42,8 +42,6 @@ class Track(goocanvas.Group, Zoomable):
     def _setTrack(self):
         if self.track:
             for trackobj in self.track.track_objects:
-                if trackobj is self.track.default_track_object:
-                    continue
                 self._objectAdded(None, trackobj)
 
     track = receiver(_setTrack)

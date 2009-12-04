@@ -661,12 +661,7 @@ class Track(Signallable):
         self.composition.connect('notify::start', self._compositionStartChangedCb)
         self.composition.connect('notify::duration', self._compositionDurationChangedCb)
         self.track_objects = []
-        self.default_track_object = None
         self._max_priority = 0
-
-        default_track_object = self._getDefaultTrackObjectForStream(stream)
-        if default_track_object:
-            self.setDefaultTrackObject(default_track_object)
 
         self.mixer = self._getMixerForStream(stream)
         if self.mixer:
@@ -683,6 +678,7 @@ class Track(Signallable):
     def _getDefaultVideoTrackObject(self, stream):
         factory = VideoTestSourceFactory(pattern='black')
         track_object = SourceTrackObject(factory, stream)
+        track_object.props.priority = 2 ** 32 - 1
 
         return track_object
 
@@ -717,33 +713,15 @@ class Track(Signallable):
     def _getStart(self):
         return self.composition.props.start
 
-    def setDefaultTrackObject(self, track_object):
-        if self.default_track_object is not None:
-            self.removeTrackObject(self.default_track_object)
-
-        self.default_track_object = None
-        track_object.gnl_object.props.priority = 2**32-1
-        self.default_track_object = track_object
-        try:
-            self.addTrackObject(track_object)
-        except:
-            self.default_track_object = None
-            raise
-
-    def _skipDefaultTrackObject(self, timeline_object):
-        return timeline_object is self.default_track_object
-
     def getPreviousTrackObject(self, obj, priority=-1):
-        prev = getPreviousObject(obj, self.track_objects, priority,
-                self._skipDefaultTrackObject)
+        prev = getPreviousObject(obj, self.track_objects, priority)
         if prev is None:
             raise TrackError("no previous track object", obj)
 
         return prev
 
     def getNextTrackObject(self, obj, priority=-1):
-        next = getNextObject(obj, self.track_objects, priority,
-                self._skipDefaultTrackObject)
+        next = getNextObject(obj, self.track_objects, priority)
         if next is None:
             raise TrackError("no next track object", obj)
 
@@ -769,8 +747,7 @@ class Track(Signallable):
 
     def _trackObjectPriorityCb(self, trackobject, priority):
         op = self._max_priority
-        self._max_priority = max((obj.priority for obj in self.track_objects
-            if obj is not self.default_track_object))
+        self._max_priority = max((obj.priority for obj in self.track_objects))
         if op != self._max_priority:
             self.emit("max-priority-changed", self._max_priority)
 
@@ -831,7 +808,7 @@ class Track(Signallable):
 
     def _updateMaxPriority(self):
         priorities = [track_object.priority for track_object in
-            self.track_objects if track_object is not self.default_track_object]
+            self.track_objects]
         if not priorities:
             max_priority = 0
         else:

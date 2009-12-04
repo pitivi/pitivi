@@ -462,8 +462,6 @@ class ElementTreeFormatter(Formatter):
         track_objects = SubElement(element, "track-objects")
 
         for track_object in track.track_objects:
-            if track_object is track.default_track_object:
-                continue
 
             track_object_element = self._saveTrackObject(track_object)
             track_objects.append(track_object_element)
