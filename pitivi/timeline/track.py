@@ -642,10 +642,15 @@ class TrackObject(Signallable, Loggable):
         raise NotImplementedError()
 
 class SourceTrackObject(TrackObject):
-    def _makeGnlObject(self):
-        source = gst.element_factory_make('gnlsource')
-        return source
 
+    numobjs = 0
+
+    def _makeGnlObject(self):
+        source = gst.element_factory_make('gnlsource', 
+            "gnlsource: " + self.factory.__class__.__name__ +
+            str(SourceTrackObject.numobjs))
+        SourceTrackObject.numobjs += 1
+        return source
 
 class Track(Signallable):
     __signals__ = {
