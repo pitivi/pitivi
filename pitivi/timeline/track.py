@@ -676,12 +676,16 @@ class Track(Signallable):
 
     def _getDefaultTrackObjectForStream(self, stream):
         if isinstance(stream, VideoStream):
-            return self._getDefaultVideoTrackObject(stream)
+            ret = self._getDefaultVideoTrackObject(stream)
         elif isinstance(stream, AudioStream):
-            return self._getDefaultAudioTrackObject(stream)
-        track_object.props.priority = 2 ** 32 - 1
+            ret = self._getDefaultAudioTrackObject(stream)
+        else:
+            return None
 
-        return None
+        ret.priority = 2 ** 32 - 1
+        ret.makeBin()
+
+        return ret
 
     def _getDefaultVideoTrackObject(self, stream):
         factory = VideoTestSourceFactory(pattern='black')
