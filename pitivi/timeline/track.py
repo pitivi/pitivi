@@ -793,6 +793,7 @@ class Track(Signallable):
 
         self._updateMaxPriority()
         self._connectToTrackObject(track_object)
+        self.updateDefaultSources()
 
         self.emit('track-object-added', track_object)
 
@@ -814,6 +815,7 @@ class Track(Signallable):
         self._disconnectTrackObjectSignals(track_object)
 
         self._updateMaxPriority()
+        self.updateDefaultSources()
 
         self.emit('track-object-removed', track_object)
 
@@ -865,6 +867,7 @@ class Track(Signallable):
 
     def enableUpdates(self):
         self.composition.props.update = True
+        self.updateDefaultSources()
 
     def disableUpdates(self):
         self.composition.props.update = False
