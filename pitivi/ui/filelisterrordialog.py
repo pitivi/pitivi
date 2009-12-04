@@ -61,9 +61,14 @@ class FileListErrorDialog(GladeWindow, Signallable, Loggable):
         #self.storemodel.append([str(uri), str(reason)])
 
     def _createFileExpander(self, uri, reason, extra=None):
-        if uri[:7] == "file://":
-            uri = uri[7:]
-        exp = gtk.Expander(uri.split('/')[-1])
+        if uri:
+            if uri.startswith("file://"):
+                uri = uri[7:]
+            uri = uri.split('/')[-1]
+            exp = gtk.Expander(uri)
+        else:
+            exp = gtk.Expander(reason)
+
 
         textbuffer = gtk.TextBuffer()
         table = textbuffer.get_tag_table()
@@ -71,12 +76,12 @@ class FileListErrorDialog(GladeWindow, Signallable, Loggable):
         boldtag.props.weight = pango.WEIGHT_BOLD
         table.add(boldtag)
 
-        # <b>URI :</b> % uri
-        end = textbuffer.get_end_iter()
-        textbuffer.insert_with_tags(end, _("URI:"), boldtag)
-
-        end = textbuffer.get_end_iter()
-        textbuffer.insert(end, "%s\n" % uri)
+        if uri:
+            # <b>URI :</b> % uri
+            end = textbuffer.get_end_iter()
+            textbuffer.insert_with_tags(end, _("URI:"), boldtag)
+            end = textbuffer.get_end_iter()
+            textbuffer.insert(end, "%s\n" % uri)
 
         end = textbuffer.get_end_iter()
         textbuffer.insert_with_tags(end, _("Problem:"), boldtag)
