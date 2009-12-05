@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
 "POT-Creation-Date: 2009-12-01 22:01+0000\n"
-"PO-Revision-Date: 2009-12-05 13:37+0200\n"
+"PO-Revision-Date: 2009-12-05 13:50+0200\n"
 "Last-Translator: Adi Roiban <adi@roiban.ro>\n"
 "Language-Team: Gnome Romanian Team <gnomero-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -839,7 +839,7 @@ msgstr "_Fișier"
 
 #: ../pitivi/ui/mainwindow.py:279
 msgid "_Edit"
-msgstr "_Editează"
+msgstr "_Editare"
 
 #: ../pitivi/ui/mainwindow.py:280
 msgid "_View"
@@ -1035,7 +1035,7 @@ msgid ""
 "You may drag plugin files into the list to install them,\n"
 "or type text to search for a specific plugin."
 msgstr ""
-"Pentru a le instala, puteți trage în listă fișiere ce conțin module,\n"
+"Pentru a le instala, puteți trage în listă fișiere ce conțin module\n"
 "sau tastați un text pentru a căuta un modul anume."
 
 #: ../pitivi/ui/pluginmanagerdialog.py:89
