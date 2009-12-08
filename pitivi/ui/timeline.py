@@ -77,8 +77,6 @@ ui = '''
     </menubar>
     <toolbar name="TimelineToolBar">
         <placeholder name="Timeline">
-            <toolitem action="ZoomOut" />
-            <toolitem action="ZoomIn" />
             <separator />
             <toolitem action="Split" />
             <separator />
