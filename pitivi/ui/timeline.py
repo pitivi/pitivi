@@ -191,6 +191,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Zoomable.__init__(self)
         self.log("Creating Timeline")
 
+        self._updateZoom = True
         self.project = None
         self.ui_manager = ui_manager
         self.app = instance
@@ -212,6 +213,17 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.props.column_spacing = 2
         self.hadj = gtk.Adjustment()
         self.vadj = gtk.Adjustment()
+
+        # zooming slider
+        self._zoomAdjustment = gtk.Adjustment()
+        self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
+        self._zoomAdjustment.connect("value-changed",
+            self._zoomAdjustmentChangedCb)
+        self._zoomAdjustment.props.lower = 0
+        self._zoomAdjustment.props.upper = Zoomable.zoom_steps
+        zoomslider = gtk.HScale(self._zoomAdjustment)
+        zoomslider.props.draw_value = False
+        self.attach(zoomslider, 0, 1, 0, 1, yoptions=0, xoptions=gtk.FILL)
 
         # controls for tracks and layers
         self._controls = TimelineControls()
@@ -438,8 +450,16 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
 ## Zooming and Scrolling
 
+    def _zoomAdjustmentChangedCb(self, adjustment):
+        # GTK crack
+        self._updateZoom = False
+        Zoomable.setZoomLevel(int(adjustment.get_value()))
+        self._updateZoom = True
+
     def zoomChanged(self):
         self._canvas.props.redraw_when_scrolled = True
+        if self._updateZoom:
+            self._zoomAdjustment.set_value(self.getCurrentZoomLevel())
         self.ruler.queue_resize()
         self.ruler.queue_draw()
 
