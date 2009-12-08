@@ -223,6 +223,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._zoomAdjustment.props.upper = Zoomable.zoom_steps
         zoomslider = gtk.HScale(self._zoomAdjustment)
         zoomslider.props.draw_value = False
+        zoomslider.set_tooltip_text(_("Zoom Timeline"))
         self.attach(zoomslider, 0, 1, 0, 1, yoptions=0, xoptions=gtk.FILL)
 
         # controls for tracks and layers
