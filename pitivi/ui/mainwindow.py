@@ -1026,6 +1026,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         action = ViewAction()
         action.addProducers(factory)
         self.viewer.setPipeline(None)
+        self.viewer.showSlider()
         # FIXME: why do I have to call viewer.setAction ?
         self.viewer.setAction(action)
         self.viewer.setPipeline(pipeline)
@@ -1035,6 +1036,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.debug("position:%s", gst.TIME_ARGS (position))
         if self.viewer.action != self.project.view_action:
             self.viewer.setPipeline(None)
+            self.viewer.hideSlider()
             self.viewer.setAction(self.project.view_action)
             self.viewer.setPipeline(self.project.pipeline)
             # get the pipeline settings and set the DAR of the viewer

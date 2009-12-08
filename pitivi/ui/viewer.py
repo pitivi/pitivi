@@ -273,6 +273,16 @@ class PitiviViewer(gtk.VBox, Loggable):
             height = int(width / self.aframe.props.ratio)
             self.aframe.set_size_request(width , height)
 
+    _showingSlider = True
+
+    def showSlider(self):
+        self._showingSlider = True
+        self.slider.show()
+
+    def hideSlider(self):
+        self._showingSlider = False
+        self.slider.hide()
+
     def showControls(self):
         if not self.action:
             return
@@ -282,7 +292,8 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.playpause_button.show()
             self.next_button.show()
             self.forward_button.show()
-            self.slider.show()
+            if self._showingSlider:
+                self.slider.show()
         else:
             self.rewind_button.hide()
             self.back_button.hide()
