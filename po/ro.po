@@ -1,169 +1,169 @@
-#
-# Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2009.
-#
+# Romanian translation for pitivi.
+# Copyright (C) 2009 pitivi's COPYRIGHT HOLDER
+# This file is distributed under the same license as the pitivi package.
+# Lucian Adrian Grijincu <lucian.grijincu@gmail.com>, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: pitivi\n"
+"Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-11-29 22:45+0000\n"
-"PO-Revision-Date: \n"
-"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
-"Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
+"POT-Creation-Date: 2009-12-01 22:01+0000\n"
+"PO-Revision-Date: 2009-12-05 13:50+0200\n"
+"Last-Translator: Adi Roiban <adi@roiban.ro>\n"
+"Language-Team: Gnome Romanian Team <gnomero-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
-"X-Poedit-Language: Slovenian\n"
-"X-Poedit-Country: SLOVENIA\n"
-"X-Poedit-SourceCharset: utf-8\n"
+"Language: ro\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2);;\n"
+"X-Generator: Virtaal 0.4.0\n"
 
 #: ../pitivi.desktop.in.in.h:1
 msgid "Create and edit your own movies"
-msgstr "Ustvarjajte in urejajte vaše filme"
+msgstr "Creează și editează filmele tale"
 
 #: ../pitivi.desktop.in.in.h:2
 msgid "Pitivi Video Editor"
-msgstr "Pitivi urejevalnik videa"
+msgstr "Editor video Pitivi"
 
 #: ../pitivi/check.py:102
 #, python-format
 msgid "%s is already running!"
-msgstr "%s že teče!"
+msgstr "%s rulează deja!"
 
 #: ../pitivi/check.py:103
 #, python-format
 msgid "An instance of %s is already running in this script."
-msgstr "Program %s že teče v tej skripti"
+msgstr "O instanță a %s este deja în execuție în acest script."
 
 #: ../pitivi/check.py:105
 msgid "Could not find the GNonLin plugins!"
-msgstr "Ni mogoče najti GNonLin vstavkov!"
+msgstr "Nu s-au putut găsi modulele de extensie GNonLin!"
 
 #: ../pitivi/check.py:106
 msgid "Make sure the plugins were installed and are available in the GStreamer plugins path."
-msgstr "Prepričajte se, da so bili vstavki nameščeni in da so dostopni v poti GStreamer vstavkov."
+msgstr "Asigurați-vă că modulele sunt instalate și sunt disponibile în calea de module pentru GStreamer."
 
 #: ../pitivi/check.py:108
 msgid "Could not find the autodetect plugins!"
-msgstr "Ni mogoče najti samodejno zaznanih vstavkov!"
+msgstr "Nu s-au putut găsi modulele de extensie detectate automat!"
 
 #: ../pitivi/check.py:109
 msgid "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path."
-msgstr "Prepričajte se, da ste namestili gst-plugins-good in je dostopen v poti Gstreamer vstavkov."
+msgstr "Asigurați-vă că modulul gst-plugins-good este instalat și este disponibil în calea de module pentru GStreamer."
 
 #: ../pitivi/check.py:111
 msgid "PyGTK doesn't have cairo support!"
-msgstr "PyGTK nima cairo podpore!"
+msgstr "PyGTK nu are suport pentru Cairo!"
 
 #: ../pitivi/check.py:112
 msgid "Please use a version of the GTK+ Python bindings built with cairo support."
-msgstr "Uporabite različico GTK+ Python vezav zgrajeno s cairo podporo."
+msgstr "Utilizați o versiune a bindingurilor Python pentru GTK+ cu suport pentru Cairo."
 
 #: ../pitivi/check.py:114
 msgid "Could not initiate the video output plugins"
-msgstr "Ni mogoče zagnati vstavkov video odvoda"
+msgstr "Nu s-au putut iniția modulele de ieșire video"
 
 #: ../pitivi/check.py:115
 msgid "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)"
-msgstr "Prepričajte se, da imate dostopno vsaj en veljaven video izhodni ponor (xvimagesink ali ximagesink)"
+msgstr "Asigurați-vă că aveți măcar o destinație video disponibilă (xvimagesink sau ximagesink)"
 
 #: ../pitivi/check.py:117
 msgid "Could not initiate the audio output plugins"
-msgstr "Ni mogoče zagnati vstavkov zvočnega odvoda"
+msgstr "Nu s-au putut iniția modulele de ieșire audio"
 
 #: ../pitivi/check.py:118
 msgid "Make sure you have at least one valid audio output sink available (alsasink or osssink)"
-msgstr "Prepričajte se, da imate dostopen vsaj en veljaven zvočni izhodni ponor (alsasink or osssink)"
+msgstr "Asigurați-vă că aveți măcar o destinație audio disponibilă (alsasink sau osssink)"
 
 #: ../pitivi/check.py:120
 msgid "Could not import the cairo Python bindings"
-msgstr "Ni mogoče uvoziti cairo Python vezav"
+msgstr "Nu s-au putut importa legăturile Python pentru Cairo"
 
 #: ../pitivi/check.py:121
 msgid "Make sure you have the cairo Python bindings installed"
-msgstr "Prepričajte se, da imate nameščene cairo Python  vezave"
+msgstr "Asigurați-vă că ați instalat legăturile Python pentru Cairo"
 
 #: ../pitivi/check.py:123
 msgid "Could not import the libglade Python bindings"
-msgstr "Ni mogoče uvoziti libglade Pythin vezav"
+msgstr "Nu s-au putut importa legăturile Python pentru libglade"
 
 #: ../pitivi/check.py:124
 msgid "Make sure you have the libglade Python bindings installed"
-msgstr "Prepričajte se, da imate nameščene libglade Python vezave"
+msgstr "Asigurați-vă că ați instalat legăturile Python pentru libglade"
 
 #: ../pitivi/check.py:126
 msgid "Could not import the goocanvas Python bindings"
-msgstr "Ni mogoče uvoziti goocanvas Python vezave"
+msgstr "Nu s-au putut importa legăturile Python pentru goocanvas"
 
 #: ../pitivi/check.py:127
 msgid "Make sure you have the goocanvas Python bindings installed"
-msgstr "Prepričajte se, da imate nameščene goocanvas Python vezave"
+msgstr "Asigurați-vă că ați instalat bindingurile Python pentru goocanvas"
 
 #: ../pitivi/check.py:130
 #, python-format
 msgid "You do not have a recent enough version of the GTK+ Python bindings (currently %s)"
-msgstr "Ni nameščene ustrezne različice GTK+ Python vezave (trenutno %s)"
+msgstr "Nu aveți o versiune a bindingurilor Python pentru GTK+ destul de recentă (momentan %s)"
 
 #: ../pitivi/check.py:131
 #, python-format
 msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
-msgstr "Namestiti je treba različico GTK+ Python vezav večjih ali enakih %s"
+msgstr "Instalați o versiunea a bindingurilor Python pentru GTK+ mai mare sau egală cu %s"
 
 #: ../pitivi/check.py:134
 #, python-format
 msgid "You do not have a recent enough version of the GStreamer Python bindings (currently %s)"
-msgstr "Ni nameščene ustrezne različice GStreamer Python vezav (trenutno %s)"
+msgstr "Nu aveți o versiune a bindingurilor Python pentru GStreamer destul de recentă (curent: %s)"
 
 #: ../pitivi/check.py:135
 #, python-format
 msgid "Install a version of the GStreamer Python bindings greater or equal to %s"
-msgstr "Namestiti je treba različico GStreamer Python vezave večjo ali enako %s"
+msgstr "Instalați o versiunea a bindingurilor Python pentru GStreamer mai mare sau egală cu %s"
 
 #: ../pitivi/check.py:138
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
-msgstr "Ni nameščene ustrezne različice GStreamer (trenutno %s)"
+msgstr "Nu aveți o versiune GStreamer destul de recentă (momentan %s)"
 
 #: ../pitivi/check.py:139
 #, python-format
 msgid "Install a version of the GStreamer greater or equal to %s"
-msgstr "Namestiti je treba različico GStreamer večjo ali enako %s"
+msgstr "Instalați o versiunea a GStreamer mai mare sau egală cu %s"
 
 #: ../pitivi/check.py:142
 #, python-format
 msgid "You do not have a recent enough version of the cairo Python bindings (currently %s)"
-msgstr "Ni nameščene ustrezne različice cairo Python vezav (trenutno %s)"
+msgstr "Nu aveți o versiune a bindingurilor Python pentru Cairo destul de recentă (momentan %s)"
 
 #: ../pitivi/check.py:143
 #, python-format
 msgid "Install a version of the cairo Python bindings greater or equal to %s"
-msgstr "Namestiti je treba različico cairo Python vezav večjo ali enako %s"
+msgstr "Instalați o versiunea a bindingurilor Python pentru Cairo mai mare sau egală cu %s"
 
 #: ../pitivi/check.py:146
 #, python-format
 msgid "You do not have a recent enough version of the GNonLin GStreamer plugin (currently %s)"
-msgstr "Ni nameščene ustrezne različice GNonLin GSteamer vstavka (trenutno %s)"
+msgstr "Nu aveți o versiune a modulului GNonLin pentru GStreamer destul de recentă (momentan %s)"
 
 #: ../pitivi/check.py:147
 #, python-format
 msgid "Install a version of the GNonLin GStreamer plugin greater or equal to %s"
-msgstr "Namestiti je treba različico GNonLin GStreamer vstavka večjo ali enako %s"
+msgstr "Instalați o versiunea a modulului GNonLin pentru GStreamer mai mare sau egală cu %s"
 
 #: ../pitivi/check.py:149
 msgid "Could not import the Zope interface module"
-msgstr "Ni mogoče uvoziti modula Zope vmesnika"
+msgstr "Nu s-a putut importa modulul de interfață Zope"
 
 #: ../pitivi/check.py:150
 msgid "Make sure you have the zope.interface module installed"
-msgstr "Prepričajte se, da imate nameščen modul zope vmesnika"
+msgstr "Asigurați-vă că ați instalat modulul zope.interface"
 
 #: ../pitivi/check.py:152
 msgid "Could not import the distutils modules"
-msgstr "Ni mogoče uvoziti modulov distutils"
+msgstr "Nu s-au putut importa modulele distutils"
 
 #: ../pitivi/check.py:153
 msgid "Make sure you have the distutils python module installed"
-msgstr "Prepričajte se, da imate nameščen distutils python modul"
+msgstr "Asigurați-vă că ați instalat modulele distutils"
 
 #: ../pitivi/discoverer.py:190
 #, python-format
@@ -171,64 +171,64 @@ msgid ""
 "Missing plugins:\n"
 "%s"
 msgstr ""
-"Manjkajoči vstavki:\n"
+"Module de extensie lipsă:\n"
 "%s"
 
 #. woot, nothing decodable
 #: ../pitivi/discoverer.py:209
 msgid "Can not decode file."
-msgstr "Ni mogoče dekodirati datoteke."
+msgstr "Nu s-a putut decoda fișierul."
 
 #: ../pitivi/discoverer.py:210
 msgid "The given file does not contain audio, video or picture streams."
-msgstr "Datoteka ne vsebuje zvočnih, video ali slikovnih pretokov."
+msgstr "Fișierul nu conține fluxuri de date audio, video sau de imagine."
 
 #: ../pitivi/discoverer.py:230
 msgid "Could not establish the duration of the file."
-msgstr "Ni mogoče določiti trajanja datoteke."
+msgstr "Nu s-a putut determina durata fișierului."
 
 #: ../pitivi/discoverer.py:231
 msgid "This clip seems to be in a format which cannot be accessed in a random fashion."
-msgstr "Posnetek je v obliki, do katerega ni mogoč naključen dostop."
+msgstr "Acest clip pare a fi într-un format ce nu poate fi accesat în mod aleator."
 
 #: ../pitivi/discoverer.py:295
 msgid "Timeout while analyzing file."
-msgstr "Med analizo datoteke je prišlo do zakasnitve."
+msgstr "A expirat limita de timp la analizarea fișierului."
 
 #: ../pitivi/discoverer.py:296
 msgid "Analyzing the file took too long."
-msgstr "Analiza datoteke je trajala predolgo."
+msgstr "Analizarea fișierului a luat prea mult timp."
 
 #: ../pitivi/discoverer.py:325
 msgid "No available source handler."
-msgstr "Upravljalnik virov ni dostopen."
+msgstr "Nu există niciun mod de operare a sursei."
 
 #: ../pitivi/discoverer.py:326
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
-msgstr "Nimate GStreamer izvornega elementa za upravljanje protokola '%s'"
+msgstr "Nu aveți un element de sursă GStreamer care să opereze pe protocolul „%s”"
 
 #: ../pitivi/discoverer.py:390
 msgid "Pipeline didn't want to go to PAUSED."
-msgstr "Cevovod ni hotel biti zaustavljen."
+msgstr "Linia de ansamblare nu a putut fi suspendată."
 
 #: ../pitivi/discoverer.py:413
 #, python-format
 msgid "An internal error occurred while analyzing this file: %s"
-msgstr "Prišlo je do notranje napake med analizo datoteke: %s"
+msgstr "A apărut o eroare internă în timp ce se analiza fișierul: %s"
 
 #: ../pitivi/discoverer.py:423
 msgid "File contains a redirection to another clip."
-msgstr "Datoteka vsebuje preusmeritev do drugega posnetka."
+msgstr "Fișierul conține o redirectare către alt clip."
 
 #: ../pitivi/discoverer.py:424
 msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi trenutno ne upravlja s preusmeritvenimi datotekami."
+msgstr "Versiunea curentă a PiTiVi nu suportă fișiere de redirectare."
 
 #: ../pitivi/application.py:121
 #, python-format
 msgid "There is already a %s instance, please inform the developers by filing a bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-msgstr "Program %s že teče; obvestite razvijalce s poročilom o hrošču na http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr "Deja există o instanță a %s; informați dezvoltatorii raportând problema la http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
 #: ../pitivi/application.py:218
 msgid ""
@@ -237,8 +237,8 @@ msgid ""
 "      %prog -i [-a] [MEDIA_FILE]..."
 msgstr ""
 "\n"
-"      %prog [DATOTEKA_PROJEKTA]\n"
-"      %prog -i [-a] [MEDIJSKA_DATOTEKA]..."
+"      %prog [FIȘIER_PROIECT]\n"
+"      %prog -i [-a] [FIȘIER_MEDIA]..."
 
 #: ../pitivi/application.py:222
 msgid ""
@@ -248,47 +248,47 @@ msgid ""
 "    imported into the project. If -a is specified, these clips will also be added to\n"
 "    the end of the project timeline."
 msgstr ""
-"Zažene video urejevalnik, in izbirno naloži DATOTEKO_PROJEKTA.\n"
-"V primeru, da projekt ni podan, %prog ustvari nov projekt.\n"
-"Zastavica -i določa, da so argumenti upoštevani kot posnetki, ki bodo\n"
-"uvoženi v projekt. Z zastavico -a, pa bodo posnetki tudi dodatni na\n"
-"konec časovnice projekta."
+"Pornește editorul video, încărcând opțional FIȘIER_PROIECT. Dacă\n"
+"    nu a fost dat nici un proiect, %prog creează un nou proiect.\n"
+"    Alternativ, dacă a fost specificat -i, argumentele sunt tratate drept clipuri\n"
+"    de importat în proiect. Dacă -a este specificat, aceste clipuri vor fi adăugate\n"
+"    și la finalul cronologiei proiectului."
 
 #: ../pitivi/application.py:228
 msgid "Import each MEDIA_FILE into the project."
-msgstr "Uvozi vsako MEDIJSKO_DATOTEKO v projekt."
+msgstr "Importă fiecare FIȘIER_MEDIA în proiect."
 
 #: ../pitivi/application.py:230
 msgid "Add each MEDIA_FILE to timeline after importing."
-msgstr "Dodaj vsako MEDIJSKO_DATOTEKO v časovnico po uvozu."
+msgstr "Adaugă fiecare FIȘIER_MEDIA la cronologia proiectului după importare."
 
 #: ../pitivi/application.py:231
 msgid "Run pitivi in the Python Debugger"
-msgstr "Zaženi pitivi v Python razhroščevalniku"
+msgstr "Execută pitivi în Depanatorul Python"
 
 #: ../pitivi/application.py:233
 msgid "Run pitivi with no gui"
-msgstr "Zagon pitivi brez uporabniškega vmesnika"
+msgstr "Execută pitivi fără nicio interfață utilizator"
 
 #: ../pitivi/projectmanager.py:95
 msgid "Not a valid project file."
-msgstr "Ni veljavna datoteka projekta."
+msgstr "Nu este un fișier proiect valid."
 
 #: ../pitivi/projectmanager.py:100
 msgid "Couldn't close current project"
-msgstr "Ni mogoče zapreti trenutnega projekta"
+msgstr "Nu s-a putut închide proiectul curent"
 
 #: ../pitivi/projectmanager.py:137
 msgid "No URI specified."
-msgstr "URI ni določen."
+msgstr "Nu a fost specificat niciun URI."
 
 #: ../pitivi/projectmanager.py:169
 msgid "New Project"
-msgstr "Nov projekt"
+msgstr "Proiect nou"
 
 #: ../pitivi/settings.py:490
 msgid "Export Settings\n"
-msgstr "Izvozi nastavitve\n"
+msgstr "Exportă configurările\n"
 
 #: ../pitivi/settings.py:491
 msgid "Video: "
@@ -300,7 +300,7 @@ msgid ""
 "Audio: "
 msgstr ""
 "\n"
-"Zvok: "
+"Audio: "
 
 #: ../pitivi/settings.py:497
 msgid ""
@@ -308,171 +308,166 @@ msgid ""
 "Muxer: "
 msgstr ""
 "\n"
-"Zvijalnik: "
+"Multiplexator: "
 
 #: ../pitivi/utils.py:68
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] "%d ur"
-msgstr[1] "%d ura"
-msgstr[2] "%d uri"
-msgstr[3] "%d ure"
+msgstr[0] "%d oră"
+msgstr[1] "%d ore"
+msgstr[2] "%d de ore"
 
 #: ../pitivi/utils.py:71
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minut"
-msgstr[1] "%d minuta"
-msgstr[2] "%d minuti"
-msgstr[3] "%d minute"
+msgstr[1] "%d minute"
+msgstr[2] "%d de minute"
 
 #: ../pitivi/utils.py:74
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] "%d sekund"
-msgstr[1] "%d sekunda"
-msgstr[2] "%d sekundi"
-msgstr[3] "%d sekunde"
+msgstr[0] "%d secundă"
+msgstr[1] "%d secunde"
+msgstr[2] "%d de secunde"
 
 #. Translators: "non local" means the project is not stored
 #. on a local filesystem
 #: ../pitivi/utils.py:241
 #, python-format
 msgid "%s doesn't yet handle non local projects"
-msgstr "%s še ne upravlja oddaljenih projektov"
+msgstr "%s nu poate încă să opereze cu proiecte nelocale"
 
 #: ../pitivi/formatters/format.py:77
 msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi lastni (XML)"
+msgstr "Nativ PiTiVi (XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
-msgstr "Oblika seznama predvajanj"
+msgstr "Format listă de redare"
 
 #: ../pitivi/ui/audiofxlist.py:49
 #: ../pitivi/ui/videofxlist.py:53
 msgid "Name"
-msgstr "Ime"
+msgstr "Nume"
 
 #: ../pitivi/ui/audiofxlist.py:55
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
 #: ../pitivi/ui/videofxlist.py:59
 msgid "Description"
-msgstr "Opis"
+msgstr "Descriere"
 
 #: ../pitivi/ui/cam_capture.glade.h:1
 msgid "Audio Capture Device:"
-msgstr "Naprava za zajem zvoka:"
+msgstr "Dispozitiv de captură audio:"
 
 #: ../pitivi/ui/cam_capture.glade.h:2
 msgid "No device available"
-msgstr "Nobene naprave ni na voljo"
+msgstr "Niciun dispozitiv disponibil"
 
 #: ../pitivi/ui/cam_capture.glade.h:3
 msgid "Video Capture Device:"
-msgstr "Naprava za zajemanje videa:"
+msgstr "Dispozitiv de captură video:"
 
 #: ../pitivi/ui/common.py:86
 #: ../pitivi/ui/common.py:128
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] "<b>Zvok:</b> %d kanalov pri %d <i>Hz</i> (%d <i>bitov</i>)"
-msgstr[1] "<b>Zvok:</b> %d kanal pri %d <i>Hz</i> (%d <i>bitov</i>)"
-msgstr[2] "<b>Zvok:</b> %d kanala pri %d <i>Hz</i> (%d <i>bitov</i>)"
-msgstr[3] "<b>Zvok:</b> %d kanali pri %d <i>Hz</i> (%d <i>bitov</i>)"
+msgstr[0] "<b>Audio:</b> %d canal la %d <i>Hz</i> (%d <i>biți</i>)"
+msgstr[1] "<b>Audio:</b> %d canale la %d <i>Hz</i> (%d <i>biți</i>)"
+msgstr[2] "<b>Audio:</b> %d de canale la %d <i>Hz</i> (%d <i>biți</i>)"
 
 #: ../pitivi/ui/common.py:92
 #: ../pitivi/ui/common.py:134
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
-msgstr "<b>Neznana oblika zapisa zvoka:</b> %s"
+msgstr "<b>Format audio necunoscut:</b> %s"
 
 #: ../pitivi/ui/common.py:97
 #: ../pitivi/ui/common.py:139
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
-msgstr "<b>Video:</b> %d x %d <i>točk</i> pri %.2f<i>sl/s</i>"
+msgstr "<b>Video:</b> %d x %d <i>pixeli</i> la %.2f<i>fps</i>"
 
 #: ../pitivi/ui/common.py:101
 #: ../pitivi/ui/common.py:143
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
-msgstr "<b>Slika:</b> %d x %d <i>točk</i>"
+msgstr "<b>Imagine:</b> %d x %d <i>pixeli</i>"
 
 #: ../pitivi/ui/common.py:104
 #: ../pitivi/ui/common.py:146
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
-msgstr "<b>Neznana oblika zapisa Videa:</b> %s"
+msgstr "<b>Format video necunoscut:</b> %s"
 
 #: ../pitivi/ui/common.py:107
 #: ../pitivi/ui/common.py:149
 #, python-format
 msgid "<b>Text:</b> %s"
-msgstr "<b>Besedilo:</b> %s"
+msgstr "<b>Text:</b> %s"
 
 #: ../pitivi/ui/defaultpropertyeditor.py:104
 #, python-format
 msgid "Properties For: %d object"
 msgid_plural "Properties For: %d objects"
-msgstr[0] "Lastnosti %d predmetov"
-msgstr[1] "Lastnosti %d predmeta"
-msgstr[2] "Lastnosti %d predmetov"
-msgstr[3] "Lastnosti %d predmetov"
+msgstr[0] "Proprietăți pentru: %d obiect"
+msgstr[1] "Proprietăți pentru: %d obiecte"
+msgstr[2] "Proprietăți pentru: %d de obiecte"
 
 #: ../pitivi/ui/defaultpropertyeditor.py:119
 #: ../pitivi/ui/gstwidget.py:140
 msgid "No properties..."
-msgstr "Ni lastnosti ..."
+msgstr "Fără proprietăți..."
 
 #: ../pitivi/ui/dynamic.py:52
 msgid "Implement Me"
-msgstr "Izvedi me"
+msgstr "Implementează-mă"
 
 #: ../pitivi/ui/dynamic.py:237
 msgid "Choose..."
-msgstr "Izberite ..."
+msgstr "Alegeți..."
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 msgid "<b>Author:</b>"
-msgstr "<b>Avtor:</b>"
+msgstr "<b>Autor:</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:2
 msgid "<b>Description:</b>"
-msgstr "<b>Opis:</b>"
+msgstr "<b>Descriere:</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:3
 msgid "<b>Plugin Name</b>"
-msgstr "<b>Ime vstavka</b>"
+msgstr "<b>Nume modul</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:4
 msgid "<b>Properties</b>"
-msgstr "<b>Lastnosti</b>"
+msgstr "<b>Proprietăți</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:5
 msgid "Author"
-msgstr "Avtor"
+msgstr "Autor"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:7
 msgid "Properties for <element>"
-msgstr "Lastnosti za <element>"
+msgstr "Proprietăți pentru <element>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:1
 #: ../pitivi/ui/timelinecontrols.py:13
 msgid "<b>Audio:</b>"
-msgstr "<b>Zvok:</b>"
+msgstr "<b>Audio:</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:2
 msgid "<b>Nothing yet</b>"
-msgstr "<b>Še nič</b>"
+msgstr "<b>Nimic momentan</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:3
 msgid "<b>Settings</b>"
-msgstr "<b>Nastavitve</b>"
+msgstr "<b>Configurări</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:4
 #: ../pitivi/ui/timelinecontrols.py:15
@@ -481,41 +476,41 @@ msgstr "<b>Video:</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:5
 msgid "Choose File"
-msgstr "Izberi datoteko"
+msgstr "Alege un fișier"
 
 #: ../pitivi/ui/encodingdialog.glade.h:6
 msgid "Modify"
-msgstr "Spremeni"
+msgstr "Modifică"
 
 #: ../pitivi/ui/encodingdialog.glade.h:7
 msgid "Output file:"
-msgstr "Izhodna datoteka:"
+msgstr "Fișier de ieșire:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:8
 msgid "Please choose an output file"
-msgstr "Izberite izhodno datoteko"
+msgstr "Alegeți un fișier de ieșiere"
 
 #: ../pitivi/ui/encodingdialog.glade.h:9
 #: ../pitivi/ui/mainwindow.py:254
 msgid "Render project"
-msgstr "Izriši projekt"
+msgstr "Randează proiectul"
 
 #: ../pitivi/ui/encodingdialog.py:92
 msgid "Choose file to render to"
-msgstr "Izberite datoteko za izrisovanje"
+msgstr "Alegeți fișierul în care să se facă randarea"
 
 #: ../pitivi/ui/encodingdialog.py:127
 #, python-format
 msgid "About %s left"
-msgstr "Približno %s preostalih"
+msgstr "Au mai rămas aproximativ %s"
 
 #: ../pitivi/ui/encodingdialog.py:137
 msgid "Rendering"
-msgstr "Izrisovanje"
+msgstr "Se randează"
 
 #: ../pitivi/ui/encodingdialog.py:154
 msgid "Rendering Complete"
-msgstr "Izrisovanje je končano"
+msgstr "Randare completă"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:1
 msgid ""
@@ -527,13 +522,13 @@ msgid ""
 "30 fps\n"
 "60 fps"
 msgstr ""
-"12 sl/s\n"
-"23.97 sl/s\n"
-"24 sl/s\n"
-"25 sl/s\n"
-"29.97 sl/s\n"
-"30 sl/s\n"
-"60 sl/s"
+"12 c/s\n"
+"23.97 c/s\n"
+"24 c/s\n"
+"25 c/s\n"
+"29.97 c/s\n"
+"30 c/s\n"
+"60 c/s"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:8
 msgid ""
@@ -542,10 +537,10 @@ msgid ""
 "24 bit\n"
 "32 bit"
 msgstr ""
-"8 bitni\n"
-"16 bitni\n"
-"24 bitni\n"
-"32 bitni"
+"8 biți\n"
+"16 biți\n"
+"24 biți\n"
+"32 biți"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:12
 msgid ""
@@ -565,47 +560,47 @@ msgstr ""
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:18
 msgid "<b>Audio Output</b>"
-msgstr "<b>Zvočni izhod</b>"
+msgstr "<b>Ieșire audio</b>"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:19
 msgid "<b>Export to</b>"
-msgstr "<b>Izvozi v</b>"
+msgstr "<b>Exportă către</b>"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:20
 msgid "<b>Video Output</b>"
-msgstr "<b>Video izhod</b>"
+msgstr "<b>Ieșire video</b>"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:21
 msgid "Audio Codec"
-msgstr "Kodek zvoka"
+msgstr "Codec audio"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:22
 msgid "Audio Codec:"
-msgstr "Kodek zvoka:"
+msgstr "Codec audio:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:23
 msgid "Audio Preset"
-msgstr "Privzeti zvok"
+msgstr "Preconfigurări audio"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:24
 msgid "Channels:"
-msgstr "Kanali:"
+msgstr "Canale:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:25
 msgid "Container:"
-msgstr "Vsebovalnik:"
+msgstr "Container:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:26
 msgid "Depth:"
-msgstr "Globina:"
+msgstr "Adâncime:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:27
 msgid "Frame rate:"
-msgstr "Hitrost sličic:"
+msgstr "Frecvență cadre:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:28
 msgid "Height:"
-msgstr "Višina:"
+msgstr "Înălțime:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:29
 msgid ""
@@ -617,31 +612,31 @@ msgstr ""
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:31
 msgid "Muxer"
-msgstr "Zvijalnik"
+msgstr "Multiplexator"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:32
 msgid "Rate:"
-msgstr "Hitrost:"
+msgstr "Frecvență:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:33
 msgid "Settings"
-msgstr "Nastavitve"
+msgstr "Configurări"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:34
 msgid "Video Codec"
-msgstr "Video kodek"
+msgstr "Codec video"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:35
 msgid "Video Codec:"
-msgstr "Video kodek:"
+msgstr "Codec video:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:36
 msgid "Video Preset"
-msgstr "Privzeti video"
+msgstr "Preconfigurări video"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:37
 msgid "Width:"
-msgstr "Širina:"
+msgstr "Lățime:"
 
 #: ../pitivi/ui/exportsettingswidget.py:37
 msgid "576p (PAL DV/DVD)"
@@ -657,7 +652,7 @@ msgstr "720p HD"
 
 #: ../pitivi/ui/exportsettingswidget.py:40
 msgid "1080p full HD"
-msgstr "1080p polen HD"
+msgstr "1080p HD complet"
 
 #: ../pitivi/ui/exportsettingswidget.py:41
 msgid "QVGA (320x240)"
@@ -680,23 +675,23 @@ msgstr "XGA (1024x768)"
 #: ../pitivi/ui/exportsettingswidget.py:112
 #: ../pitivi/ui/exportsettingswidget.py:146
 msgid "Custom"
-msgstr "Po meri"
+msgstr "Personalizat"
 
 #: ../pitivi/ui/exportsettingswidget.py:297
 msgid "Raw Video"
-msgstr "Surov video"
+msgstr "Video neprocesat"
 
 #: ../pitivi/ui/exportsettingswidget.py:312
 msgid "Raw Audio"
-msgstr "Surov zvok  "
+msgstr "Audio neprocesat"
 
 #: ../pitivi/ui/exportsettingswidget.py:435
 msgid "Export settings"
-msgstr "Izvozi nastavitve"
+msgstr "Exportă configurările"
 
 #: ../pitivi/ui/filelisterrordialog.py:52
 msgid "Unknown reason"
-msgstr "Neznan vzrok"
+msgstr "Motiv necunoscut"
 
 #: ../pitivi/ui/filelisterrordialog.py:76
 msgid "URI:"
@@ -704,277 +699,279 @@ msgstr "URI:"
 
 #: ../pitivi/ui/filelisterrordialog.py:82
 msgid "Problem:"
-msgstr "Težava:"
+msgstr "Problemă:"
 
 #: ../pitivi/ui/filelisterrordialog.py:89
 msgid "Extra information:"
-msgstr "Dodatni podatki:"
+msgstr "Informații adiționale:"
 
 #. set title and frame label
 #: ../pitivi/ui/gstwidget.py:195
 #, python-format
 msgid "Properties for %s"
-msgstr "Lastnosti %s"
+msgstr "Proprietăți pentru %s"
 
 #: ../pitivi/ui/mainwindow.py:127
 msgid "Render"
-msgstr "Izriši"
+msgstr "Randează"
 
 #: ../pitivi/ui/mainwindow.py:128
 #: ../pitivi/ui/timeline.py:210
 msgid "Split"
-msgstr "Razdeli"
+msgstr "Desparte"
 
 #: ../pitivi/ui/mainwindow.py:129
 msgid "Unlink"
-msgstr "Razveži"
+msgstr "Dezleagă"
 
 #. Translators: This is an action, the title of a button
 #: ../pitivi/ui/mainwindow.py:131
 msgid "Link"
-msgstr "Poveži"
+msgstr "Leagă"
 
 #: ../pitivi/ui/mainwindow.py:132
 msgid "Ungroup"
-msgstr "Razdruži"
+msgstr "Degrupează"
 
 #. Translators: This is an action, the title of a button
 #: ../pitivi/ui/mainwindow.py:134
 msgid "Group"
-msgstr "Združi"
+msgstr "Grupează"
 
 #: ../pitivi/ui/mainwindow.py:237
 msgid "Start Playback"
-msgstr "Začni predvajanje"
+msgstr "Pornește redarea"
 
 #: ../pitivi/ui/mainwindow.py:238
 msgid "Stop Playback"
-msgstr "Zaustavi predvajanje"
+msgstr "Oprește redarea"
 
 #: ../pitivi/ui/mainwindow.py:239
 msgid "Loop over selected area"
-msgstr "Zanka okoli izbranega območja"
+msgstr "Ciclează peste zona selectată"
 
 #: ../pitivi/ui/mainwindow.py:244
 msgid "Create a new project"
-msgstr "Ustvari nov projekt"
+msgstr "Crează un proiect nou"
 
 #: ../pitivi/ui/mainwindow.py:246
 msgid "Open an existing project"
-msgstr "Odpri obstoječ projekt"
+msgstr "Deschide un proiect existent"
 
 #: ../pitivi/ui/mainwindow.py:248
 #: ../pitivi/ui/mainwindow.py:250
 msgid "Save the current project"
-msgstr "Shrani trenutni projekt"
+msgstr "Salvează proiectul curent"
 
 #: ../pitivi/ui/mainwindow.py:251
 #: ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
-msgstr "Nastavitve projekta"
+msgstr "Configurări proiect"
 
 #: ../pitivi/ui/mainwindow.py:252
 msgid "Edit the project settings"
-msgstr "Uredi nastavitve projekta"
+msgstr "Modifică configurările proiectului"
 
 #: ../pitivi/ui/mainwindow.py:253
 msgid "_Render project"
-msgstr "_Izriši projekt"
+msgstr "_Randează proiectul"
 
 #: ../pitivi/ui/mainwindow.py:256
 msgid "_Undo"
-msgstr "_Razveljavi"
+msgstr "An_ulează"
 
 #: ../pitivi/ui/mainwindow.py:257
 msgid "Undo the last operation"
-msgstr "Razveljavi zadnje dejanje"
+msgstr "Anulează ultima operație"
 
 #: ../pitivi/ui/mainwindow.py:259
 msgid "_Redo"
-msgstr "_Obnovi"
+msgstr "_Refă"
 
 #: ../pitivi/ui/mainwindow.py:260
 msgid "Redo the last operation that was undone"
-msgstr "Obnovi zadnjo razveljavljeno dejanje"
+msgstr "Refă ultima operație care a fost anulată"
 
 #: ../pitivi/ui/mainwindow.py:262
 msgid "_Plugins..."
-msgstr "_Vstavki ..."
+msgstr "_Module..."
 
 #: ../pitivi/ui/mainwindow.py:263
 msgid "Manage plugins"
-msgstr "Upravljaj vstavke"
+msgstr "Administrează modulele"
 
 #: ../pitivi/ui/mainwindow.py:264
 msgid "_Preferences"
-msgstr "_Možnosti"
+msgstr "_Preferințe"
 
 #: ../pitivi/ui/mainwindow.py:267
 msgid "Import from _Webcam..."
-msgstr "Uvozi s _spletne kamere ..."
+msgstr "Importă de la camera _web..."
 
 #: ../pitivi/ui/mainwindow.py:268
 msgid "Import Camera stream"
-msgstr "Uvozi tok s kamere"
+msgstr "Importă fluxul camerei"
 
 #: ../pitivi/ui/mainwindow.py:270
 msgid "_Make screencast..."
-msgstr "_Naredi zaslonski posnetek namizja ..."
+msgstr "Reali_zează o captură de ecran..."
 
 #: ../pitivi/ui/mainwindow.py:271
 msgid "Capture the desktop"
-msgstr "Zajemi namizje"
+msgstr "Capturează desktopul"
 
 #: ../pitivi/ui/mainwindow.py:273
 msgid "_Capture Network Stream..."
-msgstr "_Zajemi mrežni tok ..."
+msgstr "_Capturează un flux de pe rețea..."
 
 #: ../pitivi/ui/mainwindow.py:274
 msgid "Capture Network Stream"
-msgstr "Zajemi mrežni tok"
+msgstr "Capturează un flux de pe rețea"
 
 #: ../pitivi/ui/mainwindow.py:277
 #, python-format
 msgid "Information about %s"
-msgstr "Podrobnosti o %s"
+msgstr "Informații despre %s"
 
 #: ../pitivi/ui/mainwindow.py:278
 msgid "_File"
-msgstr "_Datoteka"
+msgstr "_Fișier"
 
 #: ../pitivi/ui/mainwindow.py:279
 msgid "_Edit"
-msgstr "_Uredi"
+msgstr "_Editare"
 
 #: ../pitivi/ui/mainwindow.py:280
 msgid "_View"
-msgstr "_Pogled"
+msgstr "_Vizualizare"
 
 #: ../pitivi/ui/mainwindow.py:281
 msgid "_Project"
-msgstr "_Projekt"
+msgstr "_Proiect"
 
 #: ../pitivi/ui/mainwindow.py:282
 msgid "_Timeline"
-msgstr "_Časovnica"
+msgstr "_Cronologie"
 
 #: ../pitivi/ui/mainwindow.py:283
 msgid "Previe_w"
-msgstr "Pred_ogled"
+msgstr "Previzuali_zare"
 
 #: ../pitivi/ui/mainwindow.py:286
 msgid "Loop"
-msgstr "Zanka"
+msgstr "Ciclează"
 
 #: ../pitivi/ui/mainwindow.py:288
 msgid "_Help"
-msgstr "_Pomoč"
+msgstr "_Ajutor"
 
 #: ../pitivi/ui/mainwindow.py:293
 msgid "View the main window on the whole screen"
-msgstr "Celozaslonski ogled glavnega okna"
+msgstr "Vizualizează fereastra principală pe tot ecranul"
 
 #: ../pitivi/ui/mainwindow.py:297
 msgid "Main Toolbar"
-msgstr "Glavna orodna vrstica"
+msgstr "Bară principală de unelte"
 
 #: ../pitivi/ui/mainwindow.py:300
 msgid "Timeline Toolbar"
-msgstr "Orodna vrstica časovnice"
+msgstr "Bară de unelte de cronologie"
 
 #: ../pitivi/ui/mainwindow.py:384
 msgid "Clip Library"
-msgstr "Knjižnica posnetkov"
+msgstr "Bibliotecă de clipuri"
 
 #: ../pitivi/ui/mainwindow.py:524
 msgid "Open File..."
-msgstr "Odpri datoteko ..."
+msgstr "Deschide fișier..."
 
 #: ../pitivi/ui/mainwindow.py:540
 msgid "All Supported Formats"
-msgstr "Vse podprte oblike zapisa"
+msgstr "Toate formatele suportate"
 
 #: ../pitivi/ui/mainwindow.py:606
 msgid "Contributors:"
-msgstr "Sodelavci:"
+msgstr "Colaboratori:"
 
 #: ../pitivi/ui/mainwindow.py:618
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
 msgstr ""
-"GNU Lesser General Public License\n"
-"Za več podrobnosti si oglejte http://www.gnu.org/copyleft/lesser.html"
+"Licența GNU LGPL\n"
+"Consultați http://www.gnu.org/copyleft/lesser.html pentru mai multe detalii"
 
 #: ../pitivi/ui/mainwindow.py:730
 msgid "Close without saving"
-msgstr "Zapri brez shranjevanja"
+msgstr "Închide fără a salva"
 
 #: ../pitivi/ui/mainwindow.py:743
 msgid "Save changes to the current project before closing?"
-msgstr "Shrani spremembe trenutnega projekta pred zaprtjem?"
+msgstr "Salvați modificările proiectului curent înainte de închidere?"
 
 #: ../pitivi/ui/mainwindow.py:750
 msgid "If you don't save some of your changes will be lost"
-msgstr "Če projekta ne shranite, bo nekaj sprememb bo izgubljenih. "
+msgstr "Dacă nu salvați o parte a modificărilor vor fi pierdute"
 
 #: ../pitivi/ui/mainwindow.py:802
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi ne more naložiti datoteke \"%s\""
+msgstr "PiTiVi nu a reușit să încarce fișierul „%s”"
 
 #: ../pitivi/ui/mainwindow.py:805
 msgid "Error Loading File"
-msgstr "Napaka med nalaganjem datoteke"
+msgstr "Eroare la încărcarea fișierului"
 
 #: ../pitivi/ui/mainwindow.py:812
 msgid "Locate missing file..."
-msgstr "Najdi manjkajočo datoteko ..."
+msgstr "Localizează fișierul lipsă..."
 
 #: ../pitivi/ui/mainwindow.py:821
+#| msgid "The following file can not be used with PiTiVi."
 msgid "The following file has moved, please tell PiTiVi where to find it."
-msgstr "Datoteka je bila premaknjena, zato je treba datoteko ponovno poiskati."
+msgstr "Următorul fișier a fost mutat, informați PiTiVi unde îl poate găsi."
 
 #: ../pitivi/ui/mainwindow.py:823
+#| msgid "Duration"
 msgid "Duration:"
-msgstr "Trajanje:"
+msgstr "Durată:"
 
 #: ../pitivi/ui/mainwindow.py:973
 msgid "Save As..."
-msgstr "Shrani kot ..."
+msgstr "Salvează ca..."
 
 #: ../pitivi/ui/mainwindow.py:981
 msgid "Untitled.xptv"
-msgstr "Neimenovano.xptv"
+msgstr "Fără_titlu.xptv"
 
 #: ../pitivi/ui/mainwindow.py:992
 #: ../pitivi/ui/mainwindow.py:1005
 msgid "Detect Automatically"
-msgstr "Samodejno zaznaj"
+msgstr "Determină automat"
 
 #: ../pitivi/ui/net_capture.glade.h:1
 msgid "Address"
-msgstr "Naslov"
+msgstr "Adresă"
 
 #: ../pitivi/ui/net_capture.glade.h:2
 msgid "Capture"
-msgstr "Zajemi"
+msgstr "Capturează"
 
 #: ../pitivi/ui/net_capture.glade.h:3
 msgid "Capture Stream from URI"
-msgstr "Zajemi tok iz URI"
+msgstr "Capturează un flux din URI"
 
 #: ../pitivi/ui/net_capture.glade.h:4
 msgid "Capture network stream"
-msgstr "Zajemi mrežni tok"
+msgstr "Capturează un flux de pe rețea"
 
 #: ../pitivi/ui/net_capture.glade.h:5
 msgid "Close"
-msgstr "Zapri"
+msgstr "Închide"
 
 #: ../pitivi/ui/net_capture.glade.h:6
 msgid "Customize:"
-msgstr "Prilagodi:"
+msgstr "Personalizare:"
 
 #: ../pitivi/ui/net_capture.glade.h:7
 msgid "HTTP / HTTPS"
@@ -982,27 +979,27 @@ msgstr "HTTP / HTTPS"
 
 #: ../pitivi/ui/net_capture.glade.h:8
 msgid "Network stream video"
-msgstr "Omrežni tok videa"
+msgstr "Flux video de pe rețea"
 
 #: ../pitivi/ui/net_capture.glade.h:9
 msgid "Other protocol"
-msgstr "Drug protokol"
+msgstr "Alt protocol"
 
 #: ../pitivi/ui/net_capture.glade.h:10
 msgid "Port"
-msgstr "Vrata"
+msgstr "Port"
 
 #: ../pitivi/ui/net_capture.glade.h:11
 msgid "Preview"
-msgstr "Predogled"
+msgstr "Previzualizează"
 
 #: ../pitivi/ui/net_capture.glade.h:12
 msgid "Preview Stream from URI"
-msgstr "Predogled toka iz URI"
+msgstr "Previzualizează fluxul din URI"
 
 #: ../pitivi/ui/net_capture.glade.h:13
 msgid "Protocol"
-msgstr "Protokol"
+msgstr "Protocol"
 
 #: ../pitivi/ui/net_capture.glade.h:14
 msgid "RTSP"
@@ -1019,56 +1016,56 @@ msgstr "http://"
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:1
 #: ../pitivi/ui/pluginmanagerdialog.py:173
 msgid "All categories"
-msgstr "Vse kategorije"
+msgstr "Toate categoriile"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:2
 msgid "Plugin manager"
-msgstr "Upravljalnik vstavkov"
+msgstr "Administrator de module de extensie"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:3
 msgid "Search:"
-msgstr "Iskanje:"
+msgstr "Caută:"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:4
 msgid "Show:"
-msgstr "Pokaži:"
+msgstr "Afișează:"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:5
 msgid ""
 "You may drag plugin files into the list to install them,\n"
 "or type text to search for a specific plugin."
 msgstr ""
-"Za namestitev datoteke vstavkov povlecite v seznam,\n"
-"ali vpišite besedilo za iskanje določenega vstavka."
+"Pentru a le instala, puteți trage în listă fișiere ce conțin module\n"
+"sau tastați un text pentru a căuta un modul anume."
 
 #: ../pitivi/ui/pluginmanagerdialog.py:89
 msgid "Enabled"
-msgstr "Omogočeno"
+msgstr "Activat"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:99
 msgid "Plugin"
-msgstr "Vstavek"
+msgstr "Modul"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:109
 msgid "Category"
-msgstr "Kategorija"
+msgstr "Categorie"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:271
 msgid "Are you sure you want to remove the selected plugins?"
-msgstr "Ali ste prepričani, da želite odstraniti izbrane vstavke?"
+msgstr "Doriți să ștergeți acest modul?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:272
 msgid "Confirm remove operation"
-msgstr "Potrdite odstranitev"
+msgstr "Confirmare operație de ștergere"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:289
 #, python-format
 msgid "Cannot remove %s"
-msgstr "Ni mogoče odstraniti %s"
+msgstr "Nu se poate șterge %s"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:321
 msgid "Update the existing plugin?"
-msgstr "Posodobi obstoječ vstavek?"
+msgstr "Actualizați modulul existent?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:324
 #, python-format
@@ -1076,12 +1073,12 @@ msgid ""
 "This plugin is already installed in your system.\n"
 "If you agree, version %(v1)s will be replaced with version %(v2)s"
 msgstr ""
-"Ta vstavek je že nameščen. Različica %(v1)s bo\n"
-"ob vaši privolitvi zamenjana z različico %(v2)s "
+"Acest modul este deja instalat în sistem.\n"
+"Dacă sunteți de acord, versiunea %(v1)s va fi înlocuită cu versiunea %(v2)s"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:327
 msgid "Duplicate plugin found"
-msgstr "Najden je bil dvojnik vstavka"
+msgstr "A fost găsit un modul duplicat"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:341
 #, python-format
@@ -1089,33 +1086,33 @@ msgid ""
 "Cannot install %s\n"
 "The file is not a valid plugin"
 msgstr ""
-"Ni mogoče namestiti %s\n"
-"Datoteka ni veljaven vstavek"
+"Nu se poate instala %s\n"
+"Fișierul nu este un modul valid"
 
 #: ../pitivi/ui/prefs.py:57
 msgid "Preferences"
-msgstr "Možnosti"
+msgstr "Preferințe"
 
 #: ../pitivi/ui/prefs.py:83
 msgid "Section"
-msgstr "Odsek"
+msgstr "Secțiune"
 
 #. revert, close buttons
 #: ../pitivi/ui/prefs.py:104
 msgid "Reset to Factory Settings"
-msgstr "Povrni na tovarniške nastavitve"
+msgstr "Restabiliți configurările din fabrică"
 
 #: ../pitivi/ui/prefs.py:108
 msgid "Revert"
-msgstr "Povrni"
+msgstr "Revenire"
 
 #: ../pitivi/ui/prefs.py:123
 msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Nekatere spremembe ne bodo imele učinka do ponovnega zagona PiTiVi"
+msgstr "Unele modificări nu vor avea efect decât după repornirea PiTiVi"
 
 #: ../pitivi/ui/prefs.py:318
 msgid "Reset"
-msgstr "Povrni"
+msgstr "Restabilește"
 
 #: ../pitivi/ui/previewer.py:55
 #: ../pitivi/ui/previewer.py:83
@@ -1125,241 +1122,242 @@ msgstr "Povrni"
 #: ../pitivi/ui/trackobject.py:70
 #: ../pitivi/ui/trackobject.py:81
 msgid "Appearance"
-msgstr "Videz"
+msgstr "Aspect"
 
 #: ../pitivi/ui/previewer.py:56
 msgid "Thumbnail Gap (pixels)"
-msgstr "Vrzel sličic (točke)"
+msgstr "Spațiu liber miniaturi (pixeli)"
 
 #: ../pitivi/ui/previewer.py:58
 msgid "The gap between thumbnails"
-msgstr "Vrzel med sličicami"
+msgstr "Spațiul liber dintre miniaturi"
 
 #: ../pitivi/ui/previewer.py:84
 msgid "Show Thumbnails (Video)"
-msgstr "Pokaži sličice (Video)"
+msgstr "Afișează miniaturi (video)"
 
 #: ../pitivi/ui/previewer.py:85
 msgid "Show Thumbnails on Video Clips"
-msgstr "Pokaži sličice na video posnetkih"
+msgstr "Afișează miniaturi ale clipurilor video"
 
 #: ../pitivi/ui/previewer.py:95
 msgid "Show Waveforms (Audio)"
-msgstr "Pokaži oblike valov (Zvok)"
+msgstr "Afișează forme de undă (audio)"
 
 #: ../pitivi/ui/previewer.py:96
 msgid "Show Waveforms on Audio Clips"
-msgstr "Pokaži oblike valov na zvokovnih posnetkih"
+msgstr "Afișează formele de undă ale clipurilor audio"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
-msgstr "Kratek opis vašega projekta."
+msgstr "O scurtă descriere a proiectului."
 
 #: ../pitivi/ui/projectsettings.glade.h:2
 msgid "Description:"
-msgstr "Opis:"
+msgstr "Descriere:"
 
 #: ../pitivi/ui/projectsettings.glade.h:3
 msgid "Name:"
-msgstr "Ime:"
+msgstr "Nume:"
 
 #: ../pitivi/ui/projectsettings.glade.h:5
 msgid "The name of your project."
-msgstr "Ime vašega projekta."
+msgstr "Numele proiectului."
 
 #: ../pitivi/ui/propertyeditor.py:54
 msgid "No Objects Selected"
-msgstr "Ni izbranih predmetov"
+msgstr "Niciun obiect selectat"
 
 #: ../pitivi/ui/screencast_manager.glade.h:1
 msgid "Screencast"
-msgstr "Zaslonski posnetek"
+msgstr "Captură video a ecranului"
 
 #: ../pitivi/ui/screencast_manager.glade.h:2
 msgid "Screencast Desktop"
-msgstr "Zaslonski posnetek namizja"
+msgstr "Captură video a desktopului"
 
 #: ../pitivi/ui/screencast_manager.glade.h:3
 msgid "Start Istanbul"
-msgstr "Zaženi Istanbul"
+msgstr "Pornește Istanbul"
 
 #: ../pitivi/ui/sourcelist.py:115
 msgid "Add Clips..."
-msgstr "Dodaj posnetke ..."
+msgstr "Adaugă clipuri..."
 
 #: ../pitivi/ui/sourcelist.py:120
 msgid "Remove Clip"
-msgstr "Odstrani posnetek"
+msgstr "Șterge clip"
 
 #: ../pitivi/ui/sourcelist.py:124
 msgid "Play Clip"
-msgstr "Predvajaj posnetek"
+msgstr "Redă clip"
 
 #: ../pitivi/ui/sourcelist.py:150
 msgid "Icon"
-msgstr "Ikona"
+msgstr "Iconiță"
 
 #: ../pitivi/ui/sourcelist.py:159
 msgid "Information"
-msgstr "Podrobnosti"
+msgstr "Informații"
 
 #: ../pitivi/ui/sourcelist.py:170
 msgid "Duration"
-msgstr "Trajanje"
+msgstr "Durată"
 
 #: ../pitivi/ui/sourcelist.py:192
 msgid "<span size='x-large'>Import your clips by dragging them here or by using the buttons above.</span>"
-msgstr "<span size='x-large'>Posnetke lahko uvozite z vlečenjem sem ali z uporabo gumbov zgoraj.</span>"
+msgstr "<span size='x-large'>Importă clipuri trăgându-le aici sau folosind butoanele de mai sus.</span>"
 
 #: ../pitivi/ui/sourcelist.py:245
 msgid "_Import clips..."
-msgstr "_Uvozi posnetke ..."
+msgstr "_Importă clipuri..."
 
 #: ../pitivi/ui/sourcelist.py:246
 msgid "Import clips to use"
-msgstr "Uvozi posnetke za uporabo"
+msgstr "Importă clipurile de folosit"
 
 #: ../pitivi/ui/sourcelist.py:248
 msgid "Import _folder of clips..."
-msgstr "Uvozi _mapo posnetkov ..."
+msgstr "Importă un _dosar cu clipuri..."
 
 #: ../pitivi/ui/sourcelist.py:249
 msgid "Import folder of clips to use"
-msgstr "Uvozi mapo posnetkov"
+msgstr "Importă un dosar cu clipuri de folosit"
 
 #: ../pitivi/ui/sourcelist.py:255
 msgid "_Remove from project"
-msgstr "_Odstrani iz projekta"
+msgstr "Ște_rge din proiect"
 
 #: ../pitivi/ui/sourcelist.py:258
 msgid "Insert at _end of timeline"
-msgstr "Vstavi na _koncu časovnice"
+msgstr "Introdu la sfârșitul cronologi_ei"
 
 #: ../pitivi/ui/sourcelist.py:374
 msgid "Import a folder"
-msgstr "Uvozi mapo"
+msgstr "Importă un dosar"
 
 #: ../pitivi/ui/sourcelist.py:377
 msgid "Import a clip"
-msgstr "Uvozi posnetek"
+msgstr "Importă un clip"
 
 #: ../pitivi/ui/sourcelist.py:378
 msgid "Close after importing files"
-msgstr "Zapri po uvažanju datotek"
+msgstr "Închide după importarea fișierelor"
 
 #: ../pitivi/ui/sourcelist.py:719
 msgid "Importing clips..."
-msgstr "Uvažanje posnetkov ..."
+msgstr "Importă clipuri..."
 
 #: ../pitivi/ui/sourcelist.py:720
 msgid "Error(s) occurred while importing"
-msgstr "Med uvažanjem je prišlo do napak(e)."
+msgstr "Au apărut erori în timpul importării"
 
 #: ../pitivi/ui/sourcelist.py:721
 msgid "An error occurred while importing"
-msgstr "Med uvažanjem je prišlo do napake"
+msgstr "A apărut o eroare în timpul importării"
 
 #: ../pitivi/ui/sourcelist.py:806
 msgid "Error while analyzing files"
-msgstr "Napaka med preučevanjem datotek"
+msgstr "Au apărut erori în timpul analizării fișierelor"
 
 #: ../pitivi/ui/sourcelist.py:807
 msgid "The following files can not be used with PiTiVi."
-msgstr "S PiTiVi ni mogoče uporabiti sledečih datotek"
+msgstr "Următoarele fișiere nu pot fi folosite în PiTiVi."
 
 #: ../pitivi/ui/sourcelist.py:809
 msgid "Error while analyzing a file"
-msgstr "Napaka med preučevanjem datoteke"
+msgstr "Eroare în timpul analizării unui fișier"
 
 #: ../pitivi/ui/sourcelist.py:810
 msgid "The following file can not be used with PiTiVi."
-msgstr "PiTiVi ne more uporabiti sledeče datoteke."
+msgstr "Următorul fișier nu pot fi folosit în PiTiVi."
 
 #. tooltip text for toolbar
 #: ../pitivi/ui/timeline.py:45
 msgid "Delete Selected"
-msgstr "Izbriši izbor"
+msgstr "Șterge-le pe cele selectate"
 
 #: ../pitivi/ui/timeline.py:46
+#| msgid "Cut clip at mouse position"
 msgid "Split clip at playhead position"
-msgstr "Razdeli posnetek na mestu predvajanja"
+msgstr "Taie clipul la poziția curentă"
 
 #: ../pitivi/ui/timeline.py:47
 msgid "Zoom In"
-msgstr "Približaj"
+msgstr "Mărește"
 
 #: ../pitivi/ui/timeline.py:48
 msgid "Zoom Out"
-msgstr "Oddalji"
+msgstr "Micșorează"
 
 #: ../pitivi/ui/timeline.py:49
 msgid "Break links between clips"
-msgstr "Zlomi povezave med posnetki"
+msgstr "Rupe legăturile dintre clipuri"
 
 #: ../pitivi/ui/timeline.py:50
 msgid "Link together arbitrary clips"
-msgstr "Poveže skupaj poljubne posnetke"
+msgstr "Leagă între ele clipuri arbitrare"
 
 #: ../pitivi/ui/timeline.py:51
 msgid "Ungroup clips"
-msgstr "Razdruži posnetke"
+msgstr "Dezgrupează clipurile"
 
 #: ../pitivi/ui/timeline.py:52
 msgid "Group clips"
-msgstr "Združi posnetke"
-
-#: ../pitivi/ui/timelinecanvas.py:49
-msgid "Behavior"
-msgstr "Vedenje"
-
-#: ../pitivi/ui/timelinecanvas.py:50
-msgid "Snap Distance (pixels)"
-msgstr "Razdalja pripenjanja (točke)"
+msgstr "Grupează clipurile"
 
 #: ../pitivi/ui/timelinecanvas.py:51
+msgid "Behavior"
+msgstr "Comportament"
+
+#: ../pitivi/ui/timelinecanvas.py:52
+msgid "Snap Distance (pixels)"
+msgstr "Distanță cuplare (pixeli)"
+
+#: ../pitivi/ui/timelinecanvas.py:53
 msgid "Threshold distance (in pixels) used for all snapping operations"
-msgstr "Prag razdalje (v točkah) za vsa dejanja pripenjanja"
+msgstr "Prag al distanței (în pixeli) folosit în toate operațiile de cuplare"
 
 #: ../pitivi/ui/timelinecontrols.py:17
 msgid "<b>Text:</b>"
-msgstr "<b>Besedilo:</b>"
+msgstr "<b>Text:</b>"
 
 #: ../pitivi/ui/trackobject.py:49
 msgid "Clip Background (Video)"
-msgstr "Ozadje posnetka (Video)"
+msgstr "Fundalul clipului (video)"
 
 #: ../pitivi/ui/trackobject.py:50
 msgid "The background color for clips in video tracks."
-msgstr "Barva ozadja za posnetke v video progah."
+msgstr "Culoarea de fundal a clipurilor în piese video."
 
 #: ../pitivi/ui/trackobject.py:60
 msgid "Clip Background (Audio)"
-msgstr "Ozadje posnetka (Zvok)"
+msgstr "Fundalul clipului (audio)"
 
 #: ../pitivi/ui/trackobject.py:61
 msgid "The background color for clips in audio tracks."
-msgstr "Barva ozadja za posnetke v zvočnih progah."
+msgstr "Culoarea de fundal a clipurilor în piese audio."
 
 #: ../pitivi/ui/trackobject.py:71
 msgid "Selection Color"
-msgstr "Barva izbora"
+msgstr "Selecție culoare"
 
 #: ../pitivi/ui/trackobject.py:72
 msgid "Selected clips will be tinted with this color."
-msgstr "Izbrani posnetki bodo rahlo obarvani s to barvo."
+msgstr "Clipurile selectate vor fi nuanțate cu această culoare."
 
 #: ../pitivi/ui/trackobject.py:82
 msgid "Clip Font"
-msgstr "Pisava posnetkov"
+msgstr "Font clip"
 
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
-msgstr "Pisava za naslove posnetkov"
+msgstr "Fontul de utilizat în titlurile clipurilor"
 
 #~ msgid "The following file has moved,"
-#~ msgstr "Sledeča datoteka je bila premaknjena, "
+#~ msgstr "Următorul fișier a fost mutat,"
 #~ msgid "<b>Duration:</b>"
-#~ msgstr "<b>Trajanje:</b>"
+#~ msgstr "<b>Durată:</b>"
 #~ msgid "Razor"
-#~ msgstr "Britvica"
+#~ msgstr "Lamă ascuțită"
 
