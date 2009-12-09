@@ -242,6 +242,9 @@ def uri_is_reachable(uri):
     return os.path.isfile(gst.uri_get_location(uri))
 
 class PropertyChangeTracker(Signallable):
+
+    __signals__ = {}
+
     def __init__(self):
         self.properties = {}
         self.obj = None
