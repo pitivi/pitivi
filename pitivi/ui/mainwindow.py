@@ -693,6 +693,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         self.project.seeker.connect("seek", self._timelineSeekCb)
 
+        # preliminary seek to ensure the project pipeline is configured
+        self.project.seeker.seek(0)
+
     def _setBestZoomRatio(self):
         ruler_width = self.timeline.ruler.get_allocation()[2]
         timeline_duration = self.project.timeline.duration

@@ -608,10 +608,7 @@ class TestSeeking(Base):
         self.runner.loadConfiguration(self.config)
 
         def timelineConfigured(runner):
-            self.runner.instance.gui._timelineRulerSeekCb(
-                self.runner.instance.gui.timeline.ruler,
-                gst.SECOND)
-            gobject.timeout_add(1000, self._startSeeking, 100, 10)
+            self._startSeeking(100, 10)
 
         def timelineConfiguredNoUI(runner):
             self.runner.shutDown()
