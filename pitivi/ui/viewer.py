@@ -317,14 +317,18 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     ## gtk.HScale callbacks for self.slider
 
-    def _sliderButtonPressCb(self, slider, unused_event):
+    def _sliderButtonPressCb(self, slider, event):
+        # borrow totem hack for seek-on-click behavior
+        event.button = 2
         self.info("button pressed")
         self.moving_slider = True
         self.valuechangedid = slider.connect("value-changed", self._sliderValueChangedCb)
         self.pipeline.pause()
         return False
 
-    def _sliderButtonReleaseCb(self, slider, unused_event):
+    def _sliderButtonReleaseCb(self, slider, event):
+        # borrow totem hack for seek-on-click behavior
+        event.button = 2
         self.info("slider button release at %s", time_to_string(long(slider.get_value())))
         self.moving_slider = False
         if self.valuechangedid:
