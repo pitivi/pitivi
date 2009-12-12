@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-11-04 15:44+0000\n"
-"PO-Revision-Date: 2009-11-18 16:19+0100\n"
+"POT-Creation-Date: 2009-12-09 11:03+0000\n"
+"PO-Revision-Date: 2009-12-12 11:32+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -320,7 +320,6 @@ msgid "Run pitivi in the Python Debugger"
 msgstr "Pitivi in einem Python-Debugger ausführen"
 
 #: ../pitivi/application.py:233
-#| msgid "Run pitivi in the Python Debugger"
 msgid "Run pitivi with no gui"
 msgstr "Pitivi ohne grafische Benutzeroberfläche ausführen"
 
@@ -731,15 +730,15 @@ msgstr "Exporteinstellungen"
 msgid "Unknown reason"
 msgstr "Unbekannter Grund"
 
-#: ../pitivi/ui/filelisterrordialog.py:76
+#: ../pitivi/ui/filelisterrordialog.py:82
 msgid "URI:"
 msgstr "Adresse:"
 
-#: ../pitivi/ui/filelisterrordialog.py:82
+#: ../pitivi/ui/filelisterrordialog.py:87
 msgid "Problem:"
 msgstr "Problem: "
 
-#: ../pitivi/ui/filelisterrordialog.py:89
+#: ../pitivi/ui/filelisterrordialog.py:94
 msgid "Extra information:"
 msgstr "Zusätzliche Information:"
 
@@ -753,7 +752,7 @@ msgstr "Eigenschaften für %s"
 msgid "Render"
 msgstr "Erstellen"
 
-#: ../pitivi/ui/mainwindow.py:128
+#: ../pitivi/ui/mainwindow.py:128 ../pitivi/ui/timeline.py:294
 msgid "Split"
 msgstr "Teilen"
 
@@ -916,19 +915,19 @@ msgstr "Zeitlinien-Werkzeugleiste"
 msgid "Clip Library"
 msgstr "Clip-Bibliothek"
 
-#: ../pitivi/ui/mainwindow.py:524
+#: ../pitivi/ui/mainwindow.py:521
 msgid "Open File..."
 msgstr "Datei öffnen …"
 
-#: ../pitivi/ui/mainwindow.py:540
+#: ../pitivi/ui/mainwindow.py:537
 msgid "All Supported Formats"
 msgstr "Alle unterstützten Formate"
 
-#: ../pitivi/ui/mainwindow.py:606
+#: ../pitivi/ui/mainwindow.py:603
 msgid "Contributors:"
 msgstr "Mitwirkende:"
 
-#: ../pitivi/ui/mainwindow.py:618
+#: ../pitivi/ui/mainwindow.py:615
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -936,48 +935,52 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Siehe http://www.gnu.org/copyleft/lesser.html für nähere Informationen."
 
-#: ../pitivi/ui/mainwindow.py:730
+#: ../pitivi/ui/mainwindow.py:729
 msgid "Close without saving"
 msgstr "Schließen, ohne zu speichern"
 
-#: ../pitivi/ui/mainwindow.py:743
+#: ../pitivi/ui/mainwindow.py:742
 msgid "Save changes to the current project before closing?"
 msgstr "Aktuelle Änderungen vor dem Schließen des Projekts speichern?"
 
-#: ../pitivi/ui/mainwindow.py:750
+#: ../pitivi/ui/mainwindow.py:749
 msgid "If you don't save some of your changes will be lost"
 msgstr "Falls Sie nicht speichern, werden einige Ihrer Änderungen verlorengehen"
 
-#: ../pitivi/ui/mainwindow.py:802
+#: ../pitivi/ui/mainwindow.py:801
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi  kann die Datei »%s« nicht laden"
 
-#: ../pitivi/ui/mainwindow.py:805
+#: ../pitivi/ui/mainwindow.py:804
 msgid "Error Loading File"
 msgstr "Fehler beim Laden einer Datei"
 
-#: ../pitivi/ui/mainwindow.py:812
+#: ../pitivi/ui/mainwindow.py:811
 msgid "Locate missing file..."
 msgstr "Fehlende Datei suchen …"
 
-#: ../pitivi/ui/mainwindow.py:821
-msgid "The following file has moved,"
-msgstr "Die folgende Datei wurde verschoben,"
+#: ../pitivi/ui/mainwindow.py:820
+#| msgid "The following file can not be used with PiTiVi."
+msgid "The following file has moved, please tell PiTiVi where to find it."
+msgstr ""
+"Die folgende Datei wurde verschoben, bitte informieren Sie PiTiVi, wo sie zu "
+"finden ist."
 
-#: ../pitivi/ui/mainwindow.py:824
-msgid "<b>Duration:</b>"
-msgstr "<b>Dauer:</b>"
+#: ../pitivi/ui/mainwindow.py:822
+#| msgid "Duration"
+msgid "Duration:"
+msgstr "Dauer:"
 
-#: ../pitivi/ui/mainwindow.py:974
+#: ../pitivi/ui/mainwindow.py:963
 msgid "Save As..."
 msgstr "Speichern unter …"
 
-#: ../pitivi/ui/mainwindow.py:982
+#: ../pitivi/ui/mainwindow.py:971
 msgid "Untitled.xptv"
 msgstr "Unbenannt.xptv"
 
-#: ../pitivi/ui/mainwindow.py:993 ../pitivi/ui/mainwindow.py:1006
+#: ../pitivi/ui/mainwindow.py:982 ../pitivi/ui/mainwindow.py:995
 msgid "Detect Automatically"
 msgstr "Automatisch erkennen"
 
@@ -1146,34 +1149,34 @@ msgstr "Einige Einstellungen werden erst nach einem Neustart von PiTiVi wirksam"
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: ../pitivi/ui/previewer.py:56 ../pitivi/ui/previewer.py:84
-#: ../pitivi/ui/previewer.py:95 ../pitivi/ui/trackobject.py:48
+#: ../pitivi/ui/previewer.py:55 ../pitivi/ui/previewer.py:83
+#: ../pitivi/ui/previewer.py:94 ../pitivi/ui/trackobject.py:48
 #: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
 #: ../pitivi/ui/trackobject.py:81
 msgid "Appearance"
 msgstr "Erscheinungsbild"
 
-#: ../pitivi/ui/previewer.py:57
+#: ../pitivi/ui/previewer.py:56
 msgid "Thumbnail Gap (pixels)"
 msgstr "Abstand der Vorschaubilder in Pixel"
 
-#: ../pitivi/ui/previewer.py:59
+#: ../pitivi/ui/previewer.py:58
 msgid "The gap between thumbnails"
 msgstr "Abstand zwischen Vorschaubildern"
 
-#: ../pitivi/ui/previewer.py:85
+#: ../pitivi/ui/previewer.py:84
 msgid "Show Thumbnails (Video)"
 msgstr "Vorschauen anzeigen (Video)"
 
-#: ../pitivi/ui/previewer.py:86
+#: ../pitivi/ui/previewer.py:85
 msgid "Show Thumbnails on Video Clips"
 msgstr "Vorschauen für Videoclips anzeigen"
 
-#: ../pitivi/ui/previewer.py:96
+#: ../pitivi/ui/previewer.py:95
 msgid "Show Waveforms (Audio)"
 msgstr "Wellenform anzeigen (Audio)"
 
-#: ../pitivi/ui/previewer.py:97
+#: ../pitivi/ui/previewer.py:96
 msgid "Show Waveforms on Audio Clips"
 msgstr "Wellenform für Audioclips anzeigen"
 
@@ -1306,51 +1309,66 @@ msgid "The following file can not be used with PiTiVi."
 msgstr "Die folgende Datei kann von PiTiVi nicht verarbeitet werden."
 
 #. tooltip text for toolbar
-#: ../pitivi/ui/timeline.py:45
+#: ../pitivi/ui/timeline.py:46
 msgid "Delete Selected"
 msgstr "Auswahl entfernen"
 
-#: ../pitivi/ui/timeline.py:46
-msgid "Cut clip at mouse position"
+#: ../pitivi/ui/timeline.py:47
+#| msgid "Cut clip at mouse position"
+msgid "Split clip at playhead position"
 msgstr "Clip an der Position des Mauszeigers schneiden"
 
-#: ../pitivi/ui/timeline.py:47
+#: ../pitivi/ui/timeline.py:48
 msgid "Zoom In"
 msgstr "Vergrößern"
 
-#: ../pitivi/ui/timeline.py:48
+#: ../pitivi/ui/timeline.py:49
 msgid "Zoom Out"
 msgstr "Verkleinern"
 
-#: ../pitivi/ui/timeline.py:49
+#: ../pitivi/ui/timeline.py:50
 msgid "Break links between clips"
 msgstr "Verknüpfungen zwischen Clips löschen"
 
-#: ../pitivi/ui/timeline.py:50
+#: ../pitivi/ui/timeline.py:51
 msgid "Link together arbitrary clips"
 msgstr "Clips willkürlich verknüpfen"
 
-#: ../pitivi/ui/timeline.py:51
+#: ../pitivi/ui/timeline.py:52
 msgid "Ungroup clips"
 msgstr "Gruppierung lösen"
 
-#: ../pitivi/ui/timeline.py:52
+#: ../pitivi/ui/timeline.py:53
 msgid "Group clips"
 msgstr "Clips gruppieren"
 
-#: ../pitivi/ui/timeline.py:210
-msgid "Razor"
-msgstr "Schnitt"
+#: ../pitivi/ui/timeline.py:123
+msgid "One or more GStreamer errors has occured!"
+msgstr "Ein oder mehrere GStreamer-Fehler sind aufgetreten!"
 
-#: ../pitivi/ui/timelinecanvas.py:49
+#: ../pitivi/ui/timeline.py:157
+msgid "Error List"
+msgstr "Fehlerliste"
+
+#: ../pitivi/ui/timeline.py:158
+#| msgid "The following file has moved,"
+msgid "The following errors have been reported:"
+msgstr "Die folgenden Fehler wurden gemeldet:"
+
+#: ../pitivi/ui/timeline.py:226
+#| msgid "_Timeline"
+msgid "Zoom Timeline"
+msgstr "Größe der Zeitlinie verändern"
+
+#: ../pitivi/ui/timelinecanvas.py:51
 msgid "Behavior"
 msgstr "Verhalten"
 
-#: ../pitivi/ui/timelinecanvas.py:50
+#: ../pitivi/ui/timelinecanvas.py:52
 msgid "Snap Distance (pixels)"
 msgstr "Abstand für Einrasten (Pixel)"
 
-#: ../pitivi/ui/timelinecanvas.py:51
+#: ../pitivi/ui/timelinecanvas.py:53
 msgid "Threshold distance (in pixels) used for all snapping operations"
 msgstr "Abstand in Pixel für alle Einrastvorgänge"
 
@@ -1389,6 +1407,12 @@ msgstr "Clip-Schrift"
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
 msgstr "Die für die Titel von Clips zu verwendende Schrift"
+
+#~ msgid "<b>Duration:</b>"
+#~ msgstr "<b>Dauer:</b>"
+
+#~ msgid "Razor"
+#~ msgstr "Schnitt"
 
 #~ msgid "Close project"
 #~ msgstr "Projekt schließen"
