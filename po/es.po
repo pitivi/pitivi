@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: pitivi.HEAD.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-11-28 10:10+0000\n"
-"PO-Revision-Date: 2009-11-29 23:38+0100\n"
+"POT-Creation-Date: 2009-12-09 11:03+0000\n"
+"PO-Revision-Date: 2009-12-12 12:11+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -735,15 +735,15 @@ msgstr "Ajustes de exportación"
 msgid "Unknown reason"
 msgstr "Razón desconocida"
 
-#: ../pitivi/ui/filelisterrordialog.py:76
+#: ../pitivi/ui/filelisterrordialog.py:82
 msgid "URI:"
 msgstr "URI: "
 
-#: ../pitivi/ui/filelisterrordialog.py:82
+#: ../pitivi/ui/filelisterrordialog.py:87
 msgid "Problem:"
 msgstr "Problema: "
 
-#: ../pitivi/ui/filelisterrordialog.py:89
+#: ../pitivi/ui/filelisterrordialog.py:94
 msgid "Extra information:"
 msgstr "Información extra: "
 
@@ -757,7 +757,7 @@ msgstr "Propiedades para %s"
 msgid "Render"
 msgstr "Renderizando"
 
-#: ../pitivi/ui/mainwindow.py:128 ../pitivi/ui/timeline.py:210
+#: ../pitivi/ui/mainwindow.py:128 ../pitivi/ui/timeline.py:294
 msgid "Split"
 msgstr "Dividir"
 
@@ -920,19 +920,19 @@ msgstr "Barra de herraminetas de la cronología"
 msgid "Clip Library"
 msgstr "Videoteca"
 
-#: ../pitivi/ui/mainwindow.py:524
+#: ../pitivi/ui/mainwindow.py:521
 msgid "Open File..."
 msgstr "Abrir archivo…"
 
-#: ../pitivi/ui/mainwindow.py:540
+#: ../pitivi/ui/mainwindow.py:537
 msgid "All Supported Formats"
 msgstr "Todos los formatos soportados"
 
-#: ../pitivi/ui/mainwindow.py:606
+#: ../pitivi/ui/mainwindow.py:603
 msgid "Contributors:"
 msgstr "Contribuidores:"
 
-#: ../pitivi/ui/mainwindow.py:618
+#: ../pitivi/ui/mainwindow.py:615
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -940,50 +940,48 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Vea http://www.gnu.org/copyleft/lesser.html para más detalles"
 
-#: ../pitivi/ui/mainwindow.py:730
+#: ../pitivi/ui/mainwindow.py:729
 msgid "Close without saving"
 msgstr "Cerrar sin guardar"
 
-#: ../pitivi/ui/mainwindow.py:743
+#: ../pitivi/ui/mainwindow.py:742
 msgid "Save changes to the current project before closing?"
 msgstr "¿Guardar el proyecto actual antes de cerrar?"
 
-#: ../pitivi/ui/mainwindow.py:750
+#: ../pitivi/ui/mainwindow.py:749
 msgid "If you don't save some of your changes will be lost"
 msgstr "Si no guarda se perderán algunos de sus cambios"
 
-#: ../pitivi/ui/mainwindow.py:802
+#: ../pitivi/ui/mainwindow.py:801
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi no puede cargar el archivo «%s»"
 
-#: ../pitivi/ui/mainwindow.py:805
+#: ../pitivi/ui/mainwindow.py:804
 msgid "Error Loading File"
 msgstr "Error al cargar el archivo"
 
-#: ../pitivi/ui/mainwindow.py:812
+#: ../pitivi/ui/mainwindow.py:811
 msgid "Locate missing file..."
 msgstr "Encontrar archivo perdido..."
 
-#: ../pitivi/ui/mainwindow.py:821
-#| msgid "The following file can not be used with PiTiVi."
+#: ../pitivi/ui/mainwindow.py:820
 msgid "The following file has moved, please tell PiTiVi where to find it."
 msgstr "Se movió el siguiente archivo, diga dónde se puede encontrar."
 
-#: ../pitivi/ui/mainwindow.py:823
-#| msgid "Duration"
+#: ../pitivi/ui/mainwindow.py:822
 msgid "Duration:"
 msgstr "Duración:"
 
-#: ../pitivi/ui/mainwindow.py:973
+#: ../pitivi/ui/mainwindow.py:963
 msgid "Save As..."
 msgstr "Guardar como…"
 
-#: ../pitivi/ui/mainwindow.py:981
+#: ../pitivi/ui/mainwindow.py:971
 msgid "Untitled.xptv"
 msgstr "Sin título.xptv"
 
-#: ../pitivi/ui/mainwindow.py:992 ../pitivi/ui/mainwindow.py:1005
+#: ../pitivi/ui/mainwindow.py:982 ../pitivi/ui/mainwindow.py:995
 msgid "Detect Automatically"
 msgstr "Detectar automáticamente"
 
@@ -1313,48 +1311,65 @@ msgid "The following file can not be used with PiTiVi."
 msgstr "El siguiente archivo no se puede usar con PiTiVi."
 
 #. tooltip text for toolbar
-#: ../pitivi/ui/timeline.py:45
+#: ../pitivi/ui/timeline.py:46
 msgid "Delete Selected"
 msgstr "Borrar los seleccionados"
 
-#: ../pitivi/ui/timeline.py:46
-#| msgid "Cut clip at mouse position"
+#: ../pitivi/ui/timeline.py:47
 msgid "Split clip at playhead position"
 msgstr "Cortar vídeo en la posición actual"
 
-#: ../pitivi/ui/timeline.py:47
+#: ../pitivi/ui/timeline.py:48
 msgid "Zoom In"
 msgstr "Ampliar"
 
-#: ../pitivi/ui/timeline.py:48
+#: ../pitivi/ui/timeline.py:49
 msgid "Zoom Out"
 msgstr "Alejar"
 
-#: ../pitivi/ui/timeline.py:49
+#: ../pitivi/ui/timeline.py:50
 msgid "Break links between clips"
 msgstr "Romper enlaces entre los vídeos"
 
-#: ../pitivi/ui/timeline.py:50
+#: ../pitivi/ui/timeline.py:51
 msgid "Link together arbitrary clips"
 msgstr "Enlazar vídeos arbitrariamente"
 
-#: ../pitivi/ui/timeline.py:51
+#: ../pitivi/ui/timeline.py:52
 msgid "Ungroup clips"
 msgstr "Desagrupar vídeos"
 
-#: ../pitivi/ui/timeline.py:52
+#: ../pitivi/ui/timeline.py:53
 msgid "Group clips"
 msgstr "Agrupar vídeos"
 
-#: ../pitivi/ui/timelinecanvas.py:49
+#: ../pitivi/ui/timeline.py:123
+msgid "One or more GStreamer errors has occured!"
+msgstr "Ocurrieron uno o más errores de GStreamer"
+
+#: ../pitivi/ui/timeline.py:157
+msgid "Error List"
+msgstr "Lista de errores"
+
+#: ../pitivi/ui/timeline.py:158
+#| msgid "The following file has moved,"
+msgid "The following errors have been reported:"
+msgstr "Se han encontrado los siguientes errores:"
+
+#: ../pitivi/ui/timeline.py:226
+#| msgid "_Timeline"
+msgid "Zoom Timeline"
+msgstr "Cronología de la ampliación"
+
+#: ../pitivi/ui/timelinecanvas.py:51
 msgid "Behavior"
 msgstr "Comportamiento"
 
-#: ../pitivi/ui/timelinecanvas.py:50
+#: ../pitivi/ui/timelinecanvas.py:52
 msgid "Snap Distance (pixels)"
 msgstr "Distancia de ajuste a la rejilla (píxeles)"
 
-#: ../pitivi/ui/timelinecanvas.py:51
+#: ../pitivi/ui/timelinecanvas.py:53
 msgid "Threshold distance (in pixels) used for all snapping operations"
 msgstr ""
 "Umbral de distancia (en píxeles) usado para todas las operaciones de ajuste "
@@ -1395,9 +1410,6 @@ msgstr "Fuente de texto del vídeo"
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
 msgstr "La fuente para usar en los títulos del vídeo"
-
-#~ msgid "The following file has moved,"
-#~ msgstr "Se ha movido el siguiente archivo,"
 
 #~ msgid "<b>Duration:</b>"
 #~ msgstr "<b>Duración:</b>"
