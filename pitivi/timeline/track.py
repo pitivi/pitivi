@@ -577,13 +577,19 @@ class TrackObject(Signallable, Loggable):
         self.emit('duration-changed', obj.props.duration)
 
     def _notifyMediaStartCb(self, obj, pspec):
-        self.emit('in-point-changed', obj.props.media_start)
+        start = obj.props.media_start
+        self.emit('in-point-changed', start)
+        for p, i in self.interpolators.itervalues():
+            i.updateMediaStart(start)
 
     def _notifyMediaDurationCb(self, obj, pspec):
         self.emit('media-duration-changed', obj.props.media_duration)
 
     def _notifyMediaStopCb(self, obj, pspec):
-        self.emit('out-point-changed', obj.props.media_stop)
+        stop = obj.props.media_stop
+        self.emit('out-point-changed', stop)
+        for p, i in self.interpolators.itervalues():
+            i.updateMediaStop(stop)
 
     def _notifyPriorityCb(self, obj, pspec):
         self.emit('priority-changed', obj.props.priority)
