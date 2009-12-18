@@ -230,14 +230,14 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     def make_curve(self, cr):
         if not self.interpolator:
             return
-        iterator = self.interpolator.keyframes
+        iterator = self.interpolator.getVisibleKeyframes()
         cr.move_to(*self._getKeyframeXY(iterator.next()))
         for kf in iterator:
             cr.line_to(*self._getKeyframeXY(kf))
         cr.line_to(*self._getKeyframeXY(self.interpolator.end))
 
     def make_keyframes(self, cr):
-        for kf in self.interpolator.keyframes:
+        for kf in self.interpolator.getVisibleKeyframes():
             self._controlPoint(cr, kf)
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
