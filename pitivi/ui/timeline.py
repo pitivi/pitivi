@@ -615,3 +615,5 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def split(self, action):
         self.timeline.split(self._position)
+        # work-around for 603149
+        self.project.seeker.seek(self._position)
