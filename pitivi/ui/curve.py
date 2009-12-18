@@ -33,9 +33,7 @@ from pitivi.ui.view import View
 from pitivi.ui.controller import Controller
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED
 import pitivi.ui.point as point
-
-def between(a, b, c):
-    return (a <= b) and (b <= c)
+from pitivi.utils import between
 
 def intersect(b1, b2):
     return goocanvas.Bounds(max(b1.x1, b2.x1), max(b1.y1, b2.y1),

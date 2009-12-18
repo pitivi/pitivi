@@ -34,6 +34,9 @@ import cProfile
 
 UNKNOWN_DURATION = 2 ** 63 - 1
 
+def between(a, b, c):
+    return (a <= b) and (b <= c)
+
 def time_to_string(value):
     """
     Converts the given time in nanoseconds to a human readable string
