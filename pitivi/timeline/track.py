@@ -23,7 +23,7 @@ import gst
 
 from pitivi.signalinterface import Signallable
 from pitivi.utils import get_controllable_properties, getPreviousObject, \
-        getNextObject, start_insort_right
+        getNextObject, start_insort_right, between
 from pitivi.log.loggable import Loggable
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.test import VideoTestSourceFactory, \
@@ -255,6 +255,24 @@ class Interpolator(Signallable, Loggable):
         """Same as above but does not include start, or end points"""
         for kf in sorted(self._keyframes):
             yield kf
+
+    def getVisibleKeyframes(self):
+        """Return start, end and any keyframes included in between"""
+        yield self.start
+        start_time = self.start.time
+        end_time = self.end.time
+        for kf in sorted(self._keyframes):
+            if between(start_time, kf.time, end_time):
+                yield kf
+        yield self.end
+
+    def updateMediaStart(self, start):
+        self._keyframeTimeValueChanged(self.start, start, self.start.value)
+        self.start.setObjectTime(start)
+
+    def updateMediaStop(self, stop):
+        self._keyframeTimeValueChanged(self.end, stop, self.end.value)
+        self.end.setObjectTime(stop)
 
     keyframes = property(getKeyframes)
 
