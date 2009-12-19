@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-12-01 22:01+0000\n"
-"PO-Revision-Date: 2009-12-05 13:50+0200\n"
+"POT-Creation-Date: 2009-12-09 11:03+0000\n"
+"PO-Revision-Date: 2009-12-19 09:41+0200\n"
 "Last-Translator: Adi Roiban <adi@roiban.ro>\n"
 "Language-Team: Gnome Romanian Team <gnomero-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -193,7 +193,7 @@ msgstr "Acest clip pare a fi într-un format ce nu poate fi accesat în mod alea
 
 #: ../pitivi/discoverer.py:295
 msgid "Timeout while analyzing file."
-msgstr "A expirat limita de timp la analizarea fișierului."
+msgstr "A expirat limita de timp în timp ce se analiza fișierul."
 
 #: ../pitivi/discoverer.py:296
 msgid "Analyzing the file took too long."
@@ -201,7 +201,7 @@ msgstr "Analizarea fișierului a luat prea mult timp."
 
 #: ../pitivi/discoverer.py:325
 msgid "No available source handler."
-msgstr "Nu există niciun mod de operare a sursei."
+msgstr "Nu există niciun mod de tratare a sursei."
 
 #: ../pitivi/discoverer.py:326
 #, python-format
@@ -693,15 +693,15 @@ msgstr "Exportă configurările"
 msgid "Unknown reason"
 msgstr "Motiv necunoscut"
 
-#: ../pitivi/ui/filelisterrordialog.py:76
+#: ../pitivi/ui/filelisterrordialog.py:82
 msgid "URI:"
 msgstr "URI:"
 
-#: ../pitivi/ui/filelisterrordialog.py:82
+#: ../pitivi/ui/filelisterrordialog.py:87
 msgid "Problem:"
 msgstr "Problemă:"
 
-#: ../pitivi/ui/filelisterrordialog.py:89
+#: ../pitivi/ui/filelisterrordialog.py:94
 msgid "Extra information:"
 msgstr "Informații adiționale:"
 
@@ -716,7 +716,7 @@ msgid "Render"
 msgstr "Randează"
 
 #: ../pitivi/ui/mainwindow.py:128
-#: ../pitivi/ui/timeline.py:210
+#: ../pitivi/ui/timeline.py:294
 msgid "Split"
 msgstr "Desparte"
 
@@ -871,7 +871,7 @@ msgstr "Vizualizează fereastra principală pe tot ecranul"
 
 #: ../pitivi/ui/mainwindow.py:297
 msgid "Main Toolbar"
-msgstr "Bară principală de unelte"
+msgstr "Bară cu unelte principală"
 
 #: ../pitivi/ui/mainwindow.py:300
 msgid "Timeline Toolbar"
@@ -881,19 +881,19 @@ msgstr "Bară de unelte de cronologie"
 msgid "Clip Library"
 msgstr "Bibliotecă de clipuri"
 
-#: ../pitivi/ui/mainwindow.py:524
+#: ../pitivi/ui/mainwindow.py:521
 msgid "Open File..."
 msgstr "Deschide fișier..."
 
-#: ../pitivi/ui/mainwindow.py:540
+#: ../pitivi/ui/mainwindow.py:537
 msgid "All Supported Formats"
 msgstr "Toate formatele suportate"
 
-#: ../pitivi/ui/mainwindow.py:606
+#: ../pitivi/ui/mainwindow.py:603
 msgid "Contributors:"
-msgstr "Colaboratori:"
+msgstr "Contribuitori:"
 
-#: ../pitivi/ui/mainwindow.py:618
+#: ../pitivi/ui/mainwindow.py:615
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -901,51 +901,49 @@ msgstr ""
 "Licența GNU LGPL\n"
 "Consultați http://www.gnu.org/copyleft/lesser.html pentru mai multe detalii"
 
-#: ../pitivi/ui/mainwindow.py:730
+#: ../pitivi/ui/mainwindow.py:729
 msgid "Close without saving"
 msgstr "Închide fără a salva"
 
-#: ../pitivi/ui/mainwindow.py:743
+#: ../pitivi/ui/mainwindow.py:742
 msgid "Save changes to the current project before closing?"
 msgstr "Salvați modificările proiectului curent înainte de închidere?"
 
-#: ../pitivi/ui/mainwindow.py:750
+#: ../pitivi/ui/mainwindow.py:749
 msgid "If you don't save some of your changes will be lost"
 msgstr "Dacă nu salvați o parte a modificărilor vor fi pierdute"
 
-#: ../pitivi/ui/mainwindow.py:802
+#: ../pitivi/ui/mainwindow.py:801
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi nu a reușit să încarce fișierul „%s”"
 
-#: ../pitivi/ui/mainwindow.py:805
+#: ../pitivi/ui/mainwindow.py:804
 msgid "Error Loading File"
 msgstr "Eroare la încărcarea fișierului"
 
-#: ../pitivi/ui/mainwindow.py:812
+#: ../pitivi/ui/mainwindow.py:811
 msgid "Locate missing file..."
 msgstr "Localizează fișierul lipsă..."
 
-#: ../pitivi/ui/mainwindow.py:821
-#| msgid "The following file can not be used with PiTiVi."
+#: ../pitivi/ui/mainwindow.py:820
 msgid "The following file has moved, please tell PiTiVi where to find it."
 msgstr "Următorul fișier a fost mutat, informați PiTiVi unde îl poate găsi."
 
-#: ../pitivi/ui/mainwindow.py:823
-#| msgid "Duration"
+#: ../pitivi/ui/mainwindow.py:822
 msgid "Duration:"
 msgstr "Durată:"
 
-#: ../pitivi/ui/mainwindow.py:973
+#: ../pitivi/ui/mainwindow.py:963
 msgid "Save As..."
 msgstr "Salvează ca..."
 
-#: ../pitivi/ui/mainwindow.py:981
+#: ../pitivi/ui/mainwindow.py:971
 msgid "Untitled.xptv"
 msgstr "Fără_titlu.xptv"
 
-#: ../pitivi/ui/mainwindow.py:992
-#: ../pitivi/ui/mainwindow.py:1005
+#: ../pitivi/ui/mainwindow.py:982
+#: ../pitivi/ui/mainwindow.py:995
 msgid "Detect Automatically"
 msgstr "Determină automat"
 
@@ -1186,7 +1184,7 @@ msgstr "Adaugă clipuri..."
 
 #: ../pitivi/ui/sourcelist.py:120
 msgid "Remove Clip"
-msgstr "Șterge clip"
+msgstr "Șterge clipul"
 
 #: ../pitivi/ui/sourcelist.py:124
 msgid "Play Clip"
@@ -1270,41 +1268,58 @@ msgstr "Eroare în timpul analizării unui fișier"
 
 #: ../pitivi/ui/sourcelist.py:810
 msgid "The following file can not be used with PiTiVi."
-msgstr "Următorul fișier nu pot fi folosit în PiTiVi."
+msgstr "Următorul fișier nu poate fi folosit în PiTiVi."
 
 #. tooltip text for toolbar
-#: ../pitivi/ui/timeline.py:45
+#: ../pitivi/ui/timeline.py:46
 msgid "Delete Selected"
 msgstr "Șterge-le pe cele selectate"
 
-#: ../pitivi/ui/timeline.py:46
-#| msgid "Cut clip at mouse position"
+#: ../pitivi/ui/timeline.py:47
 msgid "Split clip at playhead position"
 msgstr "Taie clipul la poziția curentă"
 
-#: ../pitivi/ui/timeline.py:47
+#: ../pitivi/ui/timeline.py:48
 msgid "Zoom In"
 msgstr "Mărește"
 
-#: ../pitivi/ui/timeline.py:48
+#: ../pitivi/ui/timeline.py:49
 msgid "Zoom Out"
 msgstr "Micșorează"
 
-#: ../pitivi/ui/timeline.py:49
+#: ../pitivi/ui/timeline.py:50
 msgid "Break links between clips"
 msgstr "Rupe legăturile dintre clipuri"
 
-#: ../pitivi/ui/timeline.py:50
+#: ../pitivi/ui/timeline.py:51
 msgid "Link together arbitrary clips"
 msgstr "Leagă între ele clipuri arbitrare"
 
-#: ../pitivi/ui/timeline.py:51
+#: ../pitivi/ui/timeline.py:52
 msgid "Ungroup clips"
 msgstr "Dezgrupează clipurile"
 
-#: ../pitivi/ui/timeline.py:52
+#: ../pitivi/ui/timeline.py:53
 msgid "Group clips"
 msgstr "Grupează clipurile"
+
+#: ../pitivi/ui/timeline.py:123
+msgid "One or more GStreamer errors has occured!"
+msgstr "S-au produs una sau mai multe erori GStreamer!"
+
+#: ../pitivi/ui/timeline.py:157
+msgid "Error List"
+msgstr "Listă erori"
+
+#: ../pitivi/ui/timeline.py:158
+#| msgid "The following file has moved,"
+msgid "The following errors have been reported:"
+msgstr "Următoarele erori au fost raportate:"
+
+#: ../pitivi/ui/timeline.py:226
+#| msgid "_Timeline"
+msgid "Zoom Timeline"
+msgstr "Zoom cronologie"
 
 #: ../pitivi/ui/timelinecanvas.py:51
 msgid "Behavior"
@@ -1354,8 +1369,6 @@ msgstr "Font clip"
 msgid "The font to use for clip titles"
 msgstr "Fontul de utilizat în titlurile clipurilor"
 
-#~ msgid "The following file has moved,"
-#~ msgstr "Următorul fișier a fost mutat,"
 #~ msgid "<b>Duration:</b>"
 #~ msgstr "<b>Durată:</b>"
 #~ msgid "Razor"
