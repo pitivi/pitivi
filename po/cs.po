@@ -4,13 +4,14 @@
 # Jan Drábek <repli2dev@gmail.com>, 2009.
 # Petr Kovar <pknbe@volny.cz>, 2009.
 # Marek Černocký <marek@manet.cz>, 2009.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-12-11 11:05+0000\n"
-"PO-Revision-Date: 2009-11-13 20:01+0100\n"
+"POT-Creation-Date: 2009-12-28 09:50+0000\n"
+"PO-Revision-Date: 2009-12-29 18:20+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -963,16 +964,12 @@ msgid "Locate missing file..."
 msgstr "Hledat chybějící soubor…"
 
 #: ../pitivi/ui/mainwindow.py:824
-#, fuzzy
-#| msgid "The following file can not be used with PiTiVi."
 msgid "The following file has moved, please tell PiTiVi where to find it."
-msgstr "Následující soubor nemůže být použit v PiTiVi."
+msgstr "Následující soubor byl přesunut, sdělte prosím PiTiVi, kde ho najít."
 
 #: ../pitivi/ui/mainwindow.py:826
-#, fuzzy
-#| msgid "Duration"
 msgid "Duration:"
-msgstr "Trvání"
+msgstr "Trvání:"
 
 #: ../pitivi/ui/mainwindow.py:967
 msgid "Save As..."
@@ -1316,10 +1313,8 @@ msgid "Delete Selected"
 msgstr "Smazat vybrané"
 
 #: ../pitivi/ui/timeline.py:47
-#, fuzzy
-#| msgid "Cut clip at mouse position"
 msgid "Split clip at playhead position"
-msgstr "Rozdělit klip na pozice kurzoru"
+msgstr "Rozdělit klip v místě kurzoru"
 
 #: ../pitivi/ui/timeline.py:48
 msgid "Zoom In"
@@ -1347,23 +1342,19 @@ msgstr "Seskupit klipy"
 
 #: ../pitivi/ui/timeline.py:123
 msgid "One or more GStreamer errors has occured!"
-msgstr ""
+msgstr "Vyskytla se jedna nebo více chyb týkajících se systému GStreamer!"
 
 #: ../pitivi/ui/timeline.py:157
 msgid "Error List"
-msgstr ""
+msgstr "Seznam chyb"
 
 #: ../pitivi/ui/timeline.py:158
-#, fuzzy
-#| msgid "The following file has moved,"
 msgid "The following errors have been reported:"
-msgstr "Následující soubor byl přesunut,"
+msgstr "Byly ohlášeny následující chyby:"
 
 #: ../pitivi/ui/timeline.py:224
-#, fuzzy
-#| msgid "_Timeline"
 msgid "Zoom Timeline"
-msgstr "Časo_vá osa"
+msgstr "Přiblížit časovou osu"
 
 #: ../pitivi/ui/timelinecanvas.py:50
 msgid "Behavior"
@@ -1412,16 +1403,4 @@ msgstr "Písmo klipu"
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
 msgstr "Písmo používané v titulkových klipech"
-
-#~ msgid "<b>Duration:</b>"
-#~ msgstr "<b>Trvání:</b>"
-
-#~ msgid "Razor"
-#~ msgstr "Nástroj střihu"
-
-#~ msgid "Close project"
-#~ msgstr "Zavřít projekt"
-
-#~ msgid "Please locate the missing file, '%s'"
-#~ msgstr "Vyhledejte prosím chybějící soubor, '%s'"
 
