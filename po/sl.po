@@ -1,13 +1,14 @@
-#
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the pitivi package.#
 # Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2009.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-11-29 22:45+0000\n"
+"POT-Creation-Date: 2009-12-28 09:50+0000\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
+"Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -577,7 +578,7 @@ msgstr "<b>Video izhod</b>"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:21
 msgid "Audio Codec"
-msgstr "Kodek zvoka"
+msgstr "Zvočni kodek"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:22
 msgid "Audio Codec:"
@@ -698,15 +699,15 @@ msgstr "Izvozi nastavitve"
 msgid "Unknown reason"
 msgstr "Neznan vzrok"
 
-#: ../pitivi/ui/filelisterrordialog.py:76
+#: ../pitivi/ui/filelisterrordialog.py:82
 msgid "URI:"
 msgstr "URI:"
 
-#: ../pitivi/ui/filelisterrordialog.py:82
+#: ../pitivi/ui/filelisterrordialog.py:87
 msgid "Problem:"
 msgstr "Težava:"
 
-#: ../pitivi/ui/filelisterrordialog.py:89
+#: ../pitivi/ui/filelisterrordialog.py:94
 msgid "Extra information:"
 msgstr "Dodatni podatki:"
 
@@ -721,7 +722,7 @@ msgid "Render"
 msgstr "Izriši"
 
 #: ../pitivi/ui/mainwindow.py:128
-#: ../pitivi/ui/timeline.py:210
+#: ../pitivi/ui/timeline.py:292
 msgid "Split"
 msgstr "Razdeli"
 
@@ -745,7 +746,7 @@ msgstr "Združi"
 
 #: ../pitivi/ui/mainwindow.py:237
 msgid "Start Playback"
-msgstr "Začni predvajanje"
+msgstr "Začetek predvajanja"
 
 #: ../pitivi/ui/mainwindow.py:238
 msgid "Stop Playback"
@@ -791,7 +792,7 @@ msgstr "Razveljavi zadnje dejanje"
 
 #: ../pitivi/ui/mainwindow.py:259
 msgid "_Redo"
-msgstr "_Obnovi"
+msgstr "_Ponovno uveljavi"
 
 #: ../pitivi/ui/mainwindow.py:260
 msgid "Redo the last operation that was undone"
@@ -864,7 +865,7 @@ msgstr "Pred_ogled"
 
 #: ../pitivi/ui/mainwindow.py:286
 msgid "Loop"
-msgstr "Zanka"
+msgstr "Ponavljanje"
 
 #: ../pitivi/ui/mainwindow.py:288
 msgid "_Help"
@@ -886,19 +887,19 @@ msgstr "Orodna vrstica časovnice"
 msgid "Clip Library"
 msgstr "Knjižnica posnetkov"
 
-#: ../pitivi/ui/mainwindow.py:524
+#: ../pitivi/ui/mainwindow.py:519
 msgid "Open File..."
 msgstr "Odpri datoteko ..."
 
-#: ../pitivi/ui/mainwindow.py:540
+#: ../pitivi/ui/mainwindow.py:535
 msgid "All Supported Formats"
 msgstr "Vse podprte oblike zapisa"
 
-#: ../pitivi/ui/mainwindow.py:606
+#: ../pitivi/ui/mainwindow.py:601
 msgid "Contributors:"
 msgstr "Sodelavci:"
 
-#: ../pitivi/ui/mainwindow.py:618
+#: ../pitivi/ui/mainwindow.py:613
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -906,49 +907,49 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Za več podrobnosti si oglejte http://www.gnu.org/copyleft/lesser.html"
 
-#: ../pitivi/ui/mainwindow.py:730
+#: ../pitivi/ui/mainwindow.py:732
 msgid "Close without saving"
 msgstr "Zapri brez shranjevanja"
 
-#: ../pitivi/ui/mainwindow.py:743
+#: ../pitivi/ui/mainwindow.py:745
 msgid "Save changes to the current project before closing?"
 msgstr "Shrani spremembe trenutnega projekta pred zaprtjem?"
 
-#: ../pitivi/ui/mainwindow.py:750
+#: ../pitivi/ui/mainwindow.py:752
 msgid "If you don't save some of your changes will be lost"
 msgstr "Če projekta ne shranite, bo nekaj sprememb bo izgubljenih. "
 
-#: ../pitivi/ui/mainwindow.py:802
+#: ../pitivi/ui/mainwindow.py:805
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi ne more naložiti datoteke \"%s\""
 
-#: ../pitivi/ui/mainwindow.py:805
+#: ../pitivi/ui/mainwindow.py:808
 msgid "Error Loading File"
 msgstr "Napaka med nalaganjem datoteke"
 
-#: ../pitivi/ui/mainwindow.py:812
+#: ../pitivi/ui/mainwindow.py:815
 msgid "Locate missing file..."
 msgstr "Najdi manjkajočo datoteko ..."
 
-#: ../pitivi/ui/mainwindow.py:821
+#: ../pitivi/ui/mainwindow.py:824
 msgid "The following file has moved, please tell PiTiVi where to find it."
 msgstr "Datoteka je bila premaknjena, zato je treba datoteko ponovno poiskati."
 
-#: ../pitivi/ui/mainwindow.py:823
+#: ../pitivi/ui/mainwindow.py:826
 msgid "Duration:"
 msgstr "Trajanje:"
 
-#: ../pitivi/ui/mainwindow.py:973
+#: ../pitivi/ui/mainwindow.py:967
 msgid "Save As..."
 msgstr "Shrani kot ..."
 
-#: ../pitivi/ui/mainwindow.py:981
+#: ../pitivi/ui/mainwindow.py:975
 msgid "Untitled.xptv"
 msgstr "Neimenovano.xptv"
 
-#: ../pitivi/ui/mainwindow.py:992
-#: ../pitivi/ui/mainwindow.py:1005
+#: ../pitivi/ui/mainwindow.py:986
+#: ../pitivi/ui/mainwindow.py:999
 msgid "Detect Automatically"
 msgstr "Samodejno zaznaj"
 
@@ -1235,88 +1236,104 @@ msgstr "_Odstrani iz projekta"
 msgid "Insert at _end of timeline"
 msgstr "Vstavi na _koncu časovnice"
 
-#: ../pitivi/ui/sourcelist.py:374
+#: ../pitivi/ui/sourcelist.py:375
 msgid "Import a folder"
 msgstr "Uvozi mapo"
 
-#: ../pitivi/ui/sourcelist.py:377
+#: ../pitivi/ui/sourcelist.py:378
 msgid "Import a clip"
 msgstr "Uvozi posnetek"
 
-#: ../pitivi/ui/sourcelist.py:378
+#: ../pitivi/ui/sourcelist.py:379
 msgid "Close after importing files"
 msgstr "Zapri po uvažanju datotek"
 
-#: ../pitivi/ui/sourcelist.py:719
+#: ../pitivi/ui/sourcelist.py:720
 msgid "Importing clips..."
 msgstr "Uvažanje posnetkov ..."
 
-#: ../pitivi/ui/sourcelist.py:720
+#: ../pitivi/ui/sourcelist.py:721
 msgid "Error(s) occurred while importing"
 msgstr "Med uvažanjem je prišlo do napak(e)."
 
-#: ../pitivi/ui/sourcelist.py:721
+#: ../pitivi/ui/sourcelist.py:722
 msgid "An error occurred while importing"
 msgstr "Med uvažanjem je prišlo do napake"
 
-#: ../pitivi/ui/sourcelist.py:806
+#: ../pitivi/ui/sourcelist.py:807
 msgid "Error while analyzing files"
 msgstr "Napaka med preučevanjem datotek"
 
-#: ../pitivi/ui/sourcelist.py:807
+#: ../pitivi/ui/sourcelist.py:808
 msgid "The following files can not be used with PiTiVi."
 msgstr "S PiTiVi ni mogoče uporabiti sledečih datotek"
 
-#: ../pitivi/ui/sourcelist.py:809
+#: ../pitivi/ui/sourcelist.py:810
 msgid "Error while analyzing a file"
 msgstr "Napaka med preučevanjem datoteke"
 
-#: ../pitivi/ui/sourcelist.py:810
+#: ../pitivi/ui/sourcelist.py:811
 msgid "The following file can not be used with PiTiVi."
 msgstr "PiTiVi ne more uporabiti sledeče datoteke."
 
 #. tooltip text for toolbar
-#: ../pitivi/ui/timeline.py:45
+#: ../pitivi/ui/timeline.py:46
 msgid "Delete Selected"
 msgstr "Izbriši izbor"
 
-#: ../pitivi/ui/timeline.py:46
+#: ../pitivi/ui/timeline.py:47
 msgid "Split clip at playhead position"
 msgstr "Razdeli posnetek na mestu predvajanja"
 
-#: ../pitivi/ui/timeline.py:47
+#: ../pitivi/ui/timeline.py:48
 msgid "Zoom In"
 msgstr "Približaj"
 
-#: ../pitivi/ui/timeline.py:48
+#: ../pitivi/ui/timeline.py:49
 msgid "Zoom Out"
 msgstr "Oddalji"
 
-#: ../pitivi/ui/timeline.py:49
+#: ../pitivi/ui/timeline.py:50
 msgid "Break links between clips"
 msgstr "Zlomi povezave med posnetki"
 
-#: ../pitivi/ui/timeline.py:50
+#: ../pitivi/ui/timeline.py:51
 msgid "Link together arbitrary clips"
 msgstr "Poveže skupaj poljubne posnetke"
 
-#: ../pitivi/ui/timeline.py:51
+#: ../pitivi/ui/timeline.py:52
 msgid "Ungroup clips"
 msgstr "Razdruži posnetke"
 
-#: ../pitivi/ui/timeline.py:52
+#: ../pitivi/ui/timeline.py:53
 msgid "Group clips"
 msgstr "Združi posnetke"
 
-#: ../pitivi/ui/timelinecanvas.py:49
+#: ../pitivi/ui/timeline.py:123
+msgid "One or more GStreamer errors has occured!"
+msgstr "Prišlo je do ene ali več napak GStreamer!"
+
+#: ../pitivi/ui/timeline.py:157
+msgid "Error List"
+msgstr "Seznam napak"
+
+#: ../pitivi/ui/timeline.py:158
+msgid "The following errors have been reported:"
+msgstr "Sporočene so bile sledeče napake:"
+
+#: ../pitivi/ui/timeline.py:224
+msgid "Zoom Timeline"
+msgstr "Velikost časovnice"
+
+#: ../pitivi/ui/timelinecanvas.py:50
 msgid "Behavior"
 msgstr "Vedenje"
 
-#: ../pitivi/ui/timelinecanvas.py:50
+#: ../pitivi/ui/timelinecanvas.py:51
 msgid "Snap Distance (pixels)"
 msgstr "Razdalja pripenjanja (točke)"
 
-#: ../pitivi/ui/timelinecanvas.py:51
+#: ../pitivi/ui/timelinecanvas.py:52
 msgid "Threshold distance (in pixels) used for all snapping operations"
 msgstr "Prag razdalje (v točkah) za vsa dejanja pripenjanja"
 
@@ -1356,8 +1373,6 @@ msgstr "Pisava posnetkov"
 msgid "The font to use for clip titles"
 msgstr "Pisava za naslove posnetkov"
 
-#~ msgid "The following file has moved,"
-#~ msgstr "Sledeča datoteka je bila premaknjena, "
 #~ msgid "<b>Duration:</b>"
 #~ msgstr "<b>Trajanje:</b>"
 #~ msgid "Razor"
