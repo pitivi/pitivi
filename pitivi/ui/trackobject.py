@@ -100,7 +100,6 @@ class TimelineController(controller.Controller):
     _handle_enter_leave = False
 
     def enter(self, unused, unused2):
-        self._view.raise_(None)
         self._view.focus()
 
     def leave(self, unused, unused2):
@@ -326,6 +325,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
     def focus(self):
         self.start_handle.props.visibility = goocanvas.ITEM_VISIBLE
         self.end_handle.props.visibility = goocanvas.ITEM_VISIBLE
+        self.raise_(None)
 
     def unfocus(self):
         self.start_handle.props.visibility = goocanvas.ITEM_INVISIBLE

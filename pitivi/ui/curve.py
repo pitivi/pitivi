@@ -39,8 +39,8 @@ def intersect(b1, b2):
     return goocanvas.Bounds(max(b1.x1, b2.x1), max(b1.y1, b2.y1),
         min(b1.x2, b2.x2), min(b1.y2, b2.y2))
 
-KW_WIDTH = 7
-KW_HEIGHT = 7
+KW_WIDTH = 10
+KW_HEIGHT = 10
 KW_WIDTH2 = KW_WIDTH / 2
 KW_HEIGHT2 = KW_HEIGHT / 2
 KW_MOUSE_WIDTH = KW_WIDTH2 + 1
@@ -245,7 +245,9 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             between(0, y, self.height)):
             x += self.bounds.x1
             y += self.bounds.y1
+            cr.new_path()
             self.make_curve(cr)
+            self.make_keyframes(cr)
             cr.set_line_width(10.0)
             return cr.in_stroke(x, y) or bool(self.findKeyframe((x, y)))
         return False
