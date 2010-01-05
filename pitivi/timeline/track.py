@@ -139,6 +139,7 @@ class Interpolator(Signallable, Loggable):
         Loggable.__init__(self)
         self.debug("track:%r, element:%r, property:%r", trackobject, element, prop)
         self._keyframes = []
+        self.trackobject = trackobject
 
         if minimum is None:
             minimum = prop.minimum
@@ -274,6 +275,9 @@ class Interpolator(Signallable, Loggable):
         self._keyframeTimeValueChanged(self.end, stop, self.end.value)
         self.end.setObjectTime(stop)
 
+    def valueAt(self, time):
+        return self._controller.get(self._property.name, time)
+
     keyframes = property(getKeyframes)
 
 class TrackObject(Signallable, Loggable):
@@ -366,6 +370,7 @@ class TrackObject(Signallable, Loggable):
             else:
                 interpolator.attachToElementProperty(gst_object_property,
                         gst_object)
+                interpolator.updateMediaStop(self.media_stop)
 
                 # remove and add again the keyframes so they are set on the
                 # current controller
@@ -533,10 +538,18 @@ class TrackObject(Signallable, Loggable):
 
         other = self.copy()
 
+        # update interpolators
+        for prop, i in self.interpolators.itervalues():
+            value = i.valueAt(position)
+            i.end.setValue(value)
+
+        for prop, i in other.interpolators.itervalues():
+            value = i.valueAt(position)
+            i.start.setValue(value)
+
         other.trimObjectStart(position)
         self.setObjectDuration(position - self.gnl_object.props.start)
         self.setObjectMediaDuration(position - self.gnl_object.props.start)
-
         return other
 
     # True when the track object is part of the timeline's current selection
