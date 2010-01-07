@@ -143,7 +143,8 @@ class VideoStream(MultimediaStream):
         self.videotype = struct.get_name()
         self.raw = self.videotype.startswith("video/x-raw-")
 
-        for property_name in ('width', 'height', 'framerate', 'format'):
+        for property_name in ('width', 'height', 'framerate', 'format',
+            'bpp', 'depth'):
             try:
                 setattr(self, property_name, struct[property_name])
             except KeyError:
@@ -164,6 +165,15 @@ class VideoStream(MultimediaStream):
                 self.dar = gst.Fraction(self.width, self.height)
         except:
             self.dar = gst.Fraction(4, 3)
+
+    def has_alpha(self):
+        if self.videotype == "video/x-raw-rgb":
+            return ((hasattr(self, 'bpp') and (self.bpp == 32)) and
+                    (hasattr(self, 'depth') and (self.depth == 32)))
+        elif self.videotype == "video/x-raw-yuv":
+            return (hasattr(self, 'format') and
+                    self.format == gst.Fourcc('AYUV'))
+        return False
 
 class AudioStream(MultimediaStream):
     """
