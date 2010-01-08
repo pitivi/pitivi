@@ -159,9 +159,14 @@ class Interpolator(Signallable, Loggable):
         self.start = FixedKeyframe(self)
         self.end = FixedKeyframe(self)
         self.start.value = self._default
-        self.start.setObjectTime(0)
+        self.start.setObjectTime(trackobject.in_point)
+        self._keyframeTimeValueChanged(self.start, 0, self.start.value)
         self.end.value = self._default
-        self.end.setObjectTime(trackobject.factory.duration)
+        if trackobject.in_point == trackobject.out_point:
+            self.end.setObjectTime(trackobject.in_point + 1)
+        else:
+            self.end.setObjectTime(trackobject.out_point)
+        self._keyframeTimeValueChanged(self.end, self.end.time, self.end.value)
 
     def attachToElementProperty(self, prop, element):
         self._element = element
