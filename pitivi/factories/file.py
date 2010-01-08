@@ -75,7 +75,7 @@ class PictureFileSourceFactory(FileSourceFactory):
         res = gst.Bin("picture-%s" % self.name)
 
         # use ffvideoscale only if available AND width < 2048
-        if output_stream.width < 2048:
+        if (output_stream.width < 2048) and (not output_stream.has_alpha()):
             try:
                 scale = gst.element_factory_make(self.ffscale_factory, "scale")
                 scale.props.method = 9
