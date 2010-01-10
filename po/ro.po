@@ -37,7 +37,7 @@ msgstr "O instanță a %s este deja în execuție în acest script."
 
 #: ../pitivi/check.py:105
 msgid "Could not find the GNonLin plugins!"
-msgstr "Nu s-au putut găsi modulele de extensie GNonLin!"
+msgstr "Nu s-au putut găsi modulele GNonLin!"
 
 #: ../pitivi/check.py:106
 msgid "Make sure the plugins were installed and are available in the GStreamer plugins path."
@@ -45,11 +45,11 @@ msgstr "Asigurați-vă că modulele sunt instalate și sunt disponibile în cale
 
 #: ../pitivi/check.py:108
 msgid "Could not find the autodetect plugins!"
-msgstr "Nu s-au putut găsi modulele de extensie detectate automat!"
+msgstr "Nu s-au putut găsi modulele detectate automat!"
 
 #: ../pitivi/check.py:109
 msgid "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path."
-msgstr "Asigurați-vă că modulul gst-plugins-good este instalat și este disponibil în calea de module pentru GStreamer."
+msgstr "Asigurați-vă că modulul gst-plugins-good este instalat și este disponibil în calea modulelor GStreamer."
 
 #: ../pitivi/check.py:111
 msgid "PyGTK doesn't have cairo support!"
@@ -171,7 +171,7 @@ msgid ""
 "Missing plugins:\n"
 "%s"
 msgstr ""
-"Module de extensie lipsă:\n"
+"Module lipsă:\n"
 "%s"
 
 #. woot, nothing decodable
@@ -798,7 +798,7 @@ msgstr "_Module..."
 
 #: ../pitivi/ui/mainwindow.py:263
 msgid "Manage plugins"
-msgstr "Administrează modulele"
+msgstr "Administrare module"
 
 #: ../pitivi/ui/mainwindow.py:264
 msgid "_Preferences"
@@ -940,7 +940,7 @@ msgstr "Salvează ca..."
 
 #: ../pitivi/ui/mainwindow.py:971
 msgid "Untitled.xptv"
-msgstr "Fără_titlu.xptv"
+msgstr "Nedenumit.xptv"
 
 #: ../pitivi/ui/mainwindow.py:982
 #: ../pitivi/ui/mainwindow.py:995
@@ -1018,7 +1018,7 @@ msgstr "Toate categoriile"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:2
 msgid "Plugin manager"
-msgstr "Administrator de module de extensie"
+msgstr "Administrator de module"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:3
 msgid "Search:"
@@ -1050,7 +1050,7 @@ msgstr "Categorie"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:271
 msgid "Are you sure you want to remove the selected plugins?"
-msgstr "Doriți să ștergeți acest modul?"
+msgstr "Sigur doriți să ștergeți modulele selectate?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:272
 msgid "Confirm remove operation"
@@ -1076,7 +1076,7 @@ msgstr ""
 
 #: ../pitivi/ui/pluginmanagerdialog.py:327
 msgid "Duplicate plugin found"
-msgstr "A fost găsit un modul duplicat"
+msgstr "S-a găsit un modul duplicat"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:341
 #, python-format
@@ -1110,7 +1110,7 @@ msgstr "Unele modificări nu vor avea efect decât după repornirea PiTiVi"
 
 #: ../pitivi/ui/prefs.py:318
 msgid "Reset"
-msgstr "Restabilește"
+msgstr "Resetează"
 
 #: ../pitivi/ui/previewer.py:55
 #: ../pitivi/ui/previewer.py:83
@@ -1124,7 +1124,7 @@ msgstr "Aspect"
 
 #: ../pitivi/ui/previewer.py:56
 msgid "Thumbnail Gap (pixels)"
-msgstr "Spațiu liber miniaturi (pixeli)"
+msgstr "Spațiu între miniaturi (pixeli)"
 
 #: ../pitivi/ui/previewer.py:58
 msgid "The gap between thumbnails"
@@ -1188,7 +1188,7 @@ msgstr "Șterge clipul"
 
 #: ../pitivi/ui/sourcelist.py:124
 msgid "Play Clip"
-msgstr "Redă clip"
+msgstr "Redă clipul"
 
 #: ../pitivi/ui/sourcelist.py:150
 msgid "Icon"
