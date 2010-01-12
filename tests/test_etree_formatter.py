@@ -423,7 +423,8 @@ class TestFormatterLoad(TestCase):
 
         # add a volume curve
         curves = SubElement(element, "curves")
-        curve = SubElement(curves, "curve", property="volume")
+        curve = SubElement(curves, "curve", property="volume",
+            version="1")
         expected = dict((long(t * gst.SECOND), (float(t % 2), gst.INTERPOLATE_LINEAR)) 
             for t in xrange(1, 10))
         start = SubElement(curve, "start", value="0.0", mode="2")
@@ -451,6 +452,71 @@ class TestFormatterLoad(TestCase):
         curve = dict(((kf.time, (kf.value, kf.mode)) for kf in
             interpolator.getInteriorKeyframes()))
         self.failUnlessEqual(curve, expected)
+
+        self.failUnlessEqual(interpolator.start.value, 0.0)
+        self.failUnlessEqual(interpolator.start.time, 5 * gst.SECOND)
+        self.failUnlessEqual(interpolator.end.value, 0.0)
+        self.failUnlessEqual(interpolator.end.time, 15 * gst.SECOND)
+
+    def testLoadInterpolatorV0(self):
+        # create fake document tree
+        element = Element("track-object",
+                type="pitivi.timeline.track.SourceTrackObject",
+                start=ts(1 * gst.SECOND), duration=ts(15 * gst.SECOND),
+                in_point=ts(5 * gst.SECOND),
+                media_duration=ts(15 * gst.SECOND), priority=ts(5), id="1")
+        factory_ref = SubElement(element, "factory-ref", id="1")
+        stream_ref = SubElement(element, "stream-ref", id="1")
+
+        # insert our fake factory into the context
+        factory = AudioTestSourceFactory()
+        factory.duration = 20 * gst.SECOND
+        self.formatter._context.factories["1"] = factory
+
+        # insert fake stream into the context
+        stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        self.formatter._context.streams["1"] = stream
+
+        # add a volume curve
+        curves = SubElement(element, "curves")
+        curve = SubElement(curves, "curve", property="volume")
+        expected = dict((long(t * gst.SECOND), (float(t % 2), gst.INTERPOLATE_LINEAR)) 
+            for t in xrange(6, 15))
+        start = SubElement(curve, "start", value="1.0", mode="2")
+        for time, (value, mode) in expected.iteritems():
+            SubElement(curve, "keyframe", time=str(time), value=str(value), 
+                mode=str(mode))
+        end = SubElement(curve, "end", value="1.0", mode="2")
+
+        track = Track(stream)
+        # point gun at foot; pull trigger
+        track_object = self.formatter._loadTrackObject(track, element)
+        self.failIfEqual(track_object.interpolators, None)
+        interpolator = track_object.getInterpolator("volume")
+        self.failIfEqual(interpolator, None)
+        curve = dict(((kf.time, (kf.value, kf.mode)) for kf in
+            interpolator.getInteriorKeyframes()))
+        self.failUnlessEqual(curve, expected)
+
+        # check that start keyframe value has been properly adjusted so as not
+        # to change the shape of the curve. rounding is applied here because
+        # the controller seems to round to a different precision
+        # than python. we just want to check that the value is "in the
+        # ballpark", indicating the keyframes have been updated. If you do the
+        # math you'll see that both start and end keyframe values should be
+        # about 1/6
+        self.failUnlessEqual(
+            round(interpolator.start.value, 6),
+            round((-5.0 / 6) + 1, 6))
+        self.failUnlessEqual(interpolator.start.time, 5 * gst.SECOND)
+
+        # check that end keyrame value has been properly adjusted so as not to
+        # change the shape of the curve
+        self.failUnlessEqual(interpolator.end.time, 15 * gst.SECOND)
+        self.failUnlessEqual(
+            round(interpolator.end.value, 6),
+            round((15.0 / 6) - (7.0/3), 6))
+
 
     def testLoadTrackObjectRef(self):
         class Tag(object):
