@@ -369,7 +369,8 @@ class ElementTreeFormatter(Formatter):
 
     def _saveInterpolator(self, interpolator, prop):
         typename = prop.value_type.name
-        element = Element("curve", property=prop.name, type=typename)
+        element = Element("curve", property=prop.name, type=typename,
+            version="1")
 
         start = self._saveKeyframe(interpolator.start, typename, False)
         start.tag = "start"
