@@ -409,6 +409,24 @@ class ElementTreeFormatter(Formatter):
         interpolator.end.value = self._parsePropertyValue(end.attrib["value"])
         interpolator.end.mode = int(end.attrib["mode"])
 
+        # if we are using old-style keyframe curves where start, end point
+        # represent start of file, convert to the newer representation to
+        # preserve the existing shape of the curve
+        if not ("version" in element.attrib):
+            # move start, end keyframes to start of file
+            interpolator.updateMediaStart(0)
+            interpolator.updateMediaStop(trackobject.factory.duration)
+
+            # get the value of the curve at true start/end points
+            startval = interpolator.valueAt(trackobject.in_point)
+            endval = interpolator.valueAt(trackobject.out_point)
+            interpolator.start.value = startval
+            interpolator.end.value = endval
+
+            # move start, end keyframes back to proper position
+            interpolator.updateMediaStart(trackobject.in_point)
+            interpolator.updateMediaStop(trackobject.out_point)
+
     def _saveTrackObjectRef(self, track_object):
         element = Element("track-object-ref")
         element.attrib["id"] = self._context.track_objects[track_object].attrib["id"]
