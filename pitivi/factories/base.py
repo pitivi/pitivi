@@ -374,8 +374,25 @@ class SourceFactory(ObjectFactory):
             b.queue.props.max_size_bytes = 0
             b.queue.props.max_size_time = 0
             b.queue.props.max_size_buffers = 3
-            b.csp = gst.element_factory_make("ffmpegcolorspace", "internal-colorspace")
+
+            # all video needs to be AYUV, but the colorspace conversion
+            # element depends on the input. if there is no alpha we need to
+            # add ffmpegcolorspace. if we have an argb or rgba stream, we need
+            # alphacolor to preserve the alpha channel (ffmpeg clobbers it).
+            # if we have an ayuv stream we don't want any colorspace
+            # converter.
+
+            if not output_stream.has_alpha(): 
+                b.csp = gst.element_factory_make("ffmpegcolorspace",
+                    "internal-colorspace") 
+            elif output_stream.videotype == 'video/x-raw-rgb': 
+                b.csp = gst.element_factory_make("alphacolor", 
+                    "internal-alphacolor")
+            else: 
+                b.csp = gst.element_factory_make("identity")
+
             b.alpha = gst.element_factory_make("alpha", "internal-alpha")
+
             b.add(b.queue, b.csp, b.alpha)
             gst.element_link_many(b.queue, b.csp)
             if child_bin:
