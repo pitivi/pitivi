@@ -341,13 +341,16 @@ class SourceFactory(ObjectFactory):
             bin.remove_pad(bin.ghostpad)
             del bin.ghostpad
 
-    def _makeStreamBin(self, output_stream):
+    def _makeStreamBin(self, output_stream, child_bin=None):
         self.debug("output_stream:%r", output_stream)
         b = gst.Bin()
         b.decodebin = self.singleDecodeBinClass(uri=self.uri, caps=output_stream.caps,
                                            stream=output_stream)
         b.decodebin.connect("pad-added", self._singlePadAddedCb, b)
         b.decodebin.connect("pad-removed", self._singlePadRemovedCb, b)
+        if child_bin:
+            b.child = child_bin
+            b.add(child_bin)
 
         if isinstance(output_stream, AudioStream):
             self.debug("Adding volume element")
@@ -356,7 +359,12 @@ class SourceFactory(ObjectFactory):
             b.ares = gst.element_factory_make("audioresample", "internal-audioresample")
             b.volume = gst.element_factory_make("volume", "internal-volume")
             b.add(b.volume, b.ares, b.aconv)
-            gst.element_link_many(b.aconv, b.ares, b.volume)
+            if child_bin:
+                gst.element_link_many(b.aconv, b.ares, b.child, b.volume)
+                b.child.sync_state_with_parent()
+            else:
+                gst.element_link_many(b.aconv, b.ares, b.volume)
+                
             b.aconv.sync_state_with_parent()
             b.ares.sync_state_with_parent()
             b.volume.sync_state_with_parent()
@@ -369,7 +377,12 @@ class SourceFactory(ObjectFactory):
             b.csp = gst.element_factory_make("ffmpegcolorspace", "internal-colorspace")
             b.alpha = gst.element_factory_make("alpha", "internal-alpha")
             b.add(b.queue, b.csp, b.alpha)
-            gst.element_link_many(b.queue, b.csp, b.alpha)
+            gst.element_link_many(b.queue, b.csp)
+            if child_bin:
+                gst.element_link_many(b.csp, b.child, b.alpha)
+                b.child.sync_state_with_parent()
+            else:
+                gst.element_link_many(b.csp, b.alpha)
             b.queue.sync_state_with_parent()
             b.csp.sync_state_with_parent()
             b.alpha.sync_state_with_parent()
@@ -379,6 +392,8 @@ class SourceFactory(ObjectFactory):
 
     def _singlePadAddedCb(self, dbin, pad, topbin):
         self.debug("dbin:%r, pad:%r, topbin:%r", dbin, pad, topbin)
+        if hasattr(topbin, "child"):
+            topbin.child.sync_state_with_parent()
         if hasattr(topbin, "volume"):
             # make sure audio elements reach our same state. This is needed
             # since those elements are still unlinked downstream at this point,
