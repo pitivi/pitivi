@@ -50,6 +50,7 @@ class CairoSurfaceThumbnailSink(gst.BaseSink):
                                   "blue_mask = (int)  0xFF000000, "
                                   "green_mask = (int) 0x00FF0000, "
                                   "red_mask = (int)   0x0000FF00, "
+                                  "alpha_mask = (int) 0x000000FF, "
                                   "width = (int) [ 1, max ], "
                                   "height = (int) [ 1, max ], "
                                   "framerate = (fraction) [ 0, max ]"))
