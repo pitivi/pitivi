@@ -70,9 +70,10 @@ class PictureFileSourceFactory(FileSourceFactory):
     def _makeDefaultBin(self):
         return self._makeStreamBin(self.output_streams[0])
 
-    def _makeStreamBin(self, output_stream):
+    def _makeStreamBin(self, output_stream, child_bin=None):
         self.debug("making picture bin for %s", self.name)
         res = gst.Bin("picture-%s" % self.name)
+
         # use ffvideoscale only if available AND width < 2048
         if output_stream.width < 2048:
             try:
@@ -86,49 +87,27 @@ class PictureFileSourceFactory(FileSourceFactory):
             scale.props.method = 2
 
         freeze = ImageFreeze()
-        # let's get a single stream provider
-        dbin = FileSourceFactory._makeStreamBin(self, output_stream)
-        res.add(dbin, scale, freeze)
+        res.add(scale, freeze)
         scale.link(freeze)
 
-        dbin.connect("pad-added", self._dbinPadAddedCb,
-                     scale, freeze, res)
-        dbin.connect("pad-removed", self._dbinPadRemovedCb,
-                     scale, freeze, res)
-        self.debug("Returning %r", res)
+        self.debug("Chaining up with %r", res)
 
-        res.decodebin = dbin
-        return res
+        src_pad = freeze.get_pad("src")
+        sink_pad = scale.get_pad("sink")
+        src_ghost = gst.GhostPad("src", src_pad)
+        sink_ghost = gst.GhostPad("sink", sink_pad)
+        src_ghost.set_active(True)
+        sink_ghost.set_active(True)
+        src_ghost.set_caps(src_pad.props.caps)
+        sink_ghost.set_caps(sink_pad.props.caps)
+        res.add_pad(sink_ghost)
+        res.add_pad(src_ghost)
 
-    def _dbinPadAddedCb(self, unused_dbin, pad, scale, freeze, container):
-        pad.link(scale.get_pad("sink"))
-        ghost = gst.GhostPad("src", freeze.get_pad("src"))
-        ghost.set_active(True)
-        if pad.props.caps is not None:
-            ghost.set_caps(pad.props.caps)
-        container.add_pad(ghost)
+        ret = FileSourceFactory._makeStreamBin(self, output_stream,
+            res)
+        self.debug("Returning %r", ret)
 
-    def _dbinPadRemovedCb(self, unused_dbin, pad, scale, freeze, container):
-        ghost = container.get_pad("src")
-        # FIXME: what we want to do here is ghost.set_target(None). Since that
-        # isn't possible as of pygst 0.10.15
-        # (http://bugzilla.gnome.org/show_bug.cgi?id=590735) we create a
-        # throw away srcpad and retarget the ghostpad we are removing to it.
-        # This hopefully fixes deadlocks, abort() and other weird stuff we're
-        # having with freeze.
-        die = gst.Pad("die", gst.PAD_SRC)
-        ghost.set_target(die)
-        container.remove_pad(ghost)
-        pad.unlink(scale.get_pad("sink"))
-
-    def _releaseBin(self, bin):
-        try:
-            bin.decodebin.disconnect_by_func(self._dbinPadAddedCb)
-            bin.decodebin.disconnect_by_func(self._dbinPadRemovedCb)
-        except TypeError:
-            # bin is a bin returned from makeDefaultBin
-            pass
-        FileSourceFactory._releaseBin(self, bin.decodebin)
+        return ret
 
 class URISinkFactory(SinkFactory):
     """ A simple sink factory """
