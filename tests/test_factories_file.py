@@ -113,15 +113,20 @@ class TestPictureFileSourceFactory(TestCase):
         self.factory.releaseBin(bin)
 
     def testDefaultBinGhostPads(self):
-        bin = gst.Bin()
-        pad = gst.Pad('meh', gst.PAD_SRC)
-        pad.set_caps(gst.Caps('audio/x-raw-float'))
-        scale = gst.element_factory_make('identity')
-        freeze = ImageFreeze()
-        self.factory._dbinPadAddedCb(None, pad, scale, freeze, bin)
-        self.failIfEqual(bin.get_pad('src'), None)
-        self.factory._dbinPadRemovedCb(None, pad, scale, freeze, bin)
+        caps = gst.Caps('video/x-raw-rgb, width=2048')
+        video1 = VideoStream(caps, pad_name='src0')
+        self.factory.addOutputStream(video1)
+        bin = self.factory.makeBin()
+
+        pad = gst.Pad('src', gst.PAD_SRC)
+        pad.set_caps(caps)
+
         self.failUnlessEqual(bin.get_pad('src'), None)
+        bin.decodebin.add_pad(pad)
+        self.failIfEqual(bin.get_pad('src'), None)
+        bin.decodebin.remove_pad(pad)
+        self.failUnlessEqual(bin.get_pad('src'), None)
+        self.factory._releaseBin(bin)
 
     def testMakeStreamBin(self):
         # streams are usually populated by the discoverer so here we have to do
