@@ -318,6 +318,9 @@ class SourceFactory(ObjectFactory):
             bin.decodebin.disconnect_by_func(self._singlePadRemovedCb)
 
         del bin.decodebin
+        if hasattr(bin, "child"):
+            bin.child.set_state(gst.STATE_NULL)
+            del bin.child
 
         if hasattr(bin, "volume"):
             # only audio bins have a volume element
