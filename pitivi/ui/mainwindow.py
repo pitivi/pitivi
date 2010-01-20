@@ -437,6 +437,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         #application icon
         self.set_icon_name("pitivi")
 
+        #pulseaudio 'role' (http://0pointer.de/blog/projects/tagging-audio.htm
+        os.environ["PULSE_PROP_media.role"] = "production"
+
     def _connectToSourceList(self):
         # FIXME: projecttabs creates the "components" but then has no API to get
         # them back
