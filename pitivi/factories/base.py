@@ -440,8 +440,14 @@ class SourceFactory(ObjectFactory):
 
     def _singlePadRemovedCb(self, dbin, pad, topbin):
         self.debug("dbin:%r, pad:%r, topbin:%r", dbin, pad, topbin)
+
+        # work around for http://bugzilla.gnome.org/show_bug.cgi?id=590735
+        die = gst.Pad("die", gst.PAD_SRC)
+        topbin.ghostpad.set_target(die)
+
         topbin.remove_pad(topbin.ghostpad)
         del topbin.ghostpad
+
         if hasattr(topbin, "volume"):
             pad.unlink(topbin.aconv.get_pad("sink"))
         elif hasattr(topbin, "alpha"):
