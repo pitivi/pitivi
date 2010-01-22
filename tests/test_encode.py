@@ -73,8 +73,6 @@ class TestEncoderFactory(TestCase):
     def testEncoderSettings(self):
         encsettings = {
             "bitrate":40000,
-            "quick":False,
-            "border":2
             }
         set = StreamEncodeSettings(encoder="theoraenc",
                                    encodersettings=encsettings)
