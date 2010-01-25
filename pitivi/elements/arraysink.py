@@ -36,7 +36,7 @@ class ArraySink(gst.BaseSink):
     caps = gst.Caps(
         "audio/x-raw-float, width=(int) 32, "
         "endianness = (int) LITTLE_ENDIAN, "
-        "channels = (int) [1, 6],"
+        "channels = (int) 1,"
         "rate = (int) [1, 96000]"
     )
 
