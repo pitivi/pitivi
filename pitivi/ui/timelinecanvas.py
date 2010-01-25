@@ -99,6 +99,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._cursor = ARROW
         root = self.get_root_item()
         self.tracks = goocanvas.Group()
+        self.tracks.set_simple_transform(0, 10, 1.0, 0)
         root.add_child(self.tracks)
         self._marquee = goocanvas.Rect(
             parent=root,
@@ -177,7 +178,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             event.area.x, event.area.y,
             event.area.width, event.area.height)
 
-        y = 0
+        y = 10
         for track in self._tracks[:-1]:
             y += track.height
             self.style.paint_box(event.window,
