@@ -214,13 +214,20 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         self.keyframes[kf] = pos
 
     def do_simple_paint(self, cr, bounds):
-        bounds = intersect(self.bounds, bounds)
+
         cr.identity_matrix()
         if self.interpolator:
-            height = bounds.y2 - bounds.y1
-            width = bounds.x2 - bounds.x1
-            cr.rectangle(bounds.x1, bounds.y1, width, height)
+
+            # set clipping region to the visible portion of the clip
+            vis_bounds = intersect(
+                goocanvas.Bounds(
+                    self.bounds.x1, self.bounds.y1 + KW_LABEL_Y_OVERFLOW, 
+                    self.bounds.x2 - KW_LABEL_X_OVERFLOW, self.bounds.y2), bounds)
+            vis_width = vis_bounds.x2 - vis_bounds.x1
+            vis_height = vis_bounds.y2 - vis_bounds.y1
+            cr.rectangle(vis_bounds.x1, vis_bounds.y1, vis_width, vis_height)
             cr.clip()
+
             self.make_curve(cr)
             cr.set_line_width(self.line_width)
             cr.set_source_rgb(1, 0, 0)
@@ -246,6 +253,15 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                 text = self.interpolator.formatValue(self._focused_kf.value)
                 w, h = cr.text_extents("0" * len(text))[2:4]
 
+                # reset clip region to the full bounds of the item
+                bounds = intersect(self.bounds, bounds)
+                width = bounds.x2 - bounds.x1
+                height = bounds.y2 - bounds.y1
+                cr.reset_clip()
+                cr.rectangle(bounds.x1, bounds.y1, width, height)
+                cr.clip()
+
+                # draw the value label
                 roundedrec(cr, x - KW_LABEL_HPAD2, y - KW_LABEL_VPAD2, 
                     w + KW_LABEL_HPAD, h + KW_LABEL_VPAD, r=10)
                 cr.fill()
