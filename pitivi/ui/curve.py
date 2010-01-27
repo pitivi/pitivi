@@ -283,8 +283,9 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             self._controlPoint(cr, kf)
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
-        if (between(0, x, self.nsToPixel(self.element.duration)) and
-            between(0, y, self.height)):
+        if (between(0, x, self.visible_width) and
+            between(KW_LABEL_Y_OVERFLOW, y, self.height + 
+            KW_LABEL_Y_OVERFLOW)):
             x += self.bounds.x1
             y += self.bounds.y1
             cr.new_path()
