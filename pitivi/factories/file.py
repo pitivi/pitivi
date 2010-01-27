@@ -65,49 +65,17 @@ class PictureFileSourceFactory(FileSourceFactory):
     duration = 3600 * gst.SECOND
     default_duration = 5 * gst.SECOND
 
-    # make this overridable in tests
-    ffscale_factory = 'ffvideoscale'
-
     def _makeDefaultBin(self):
         return self._makeStreamBin(self.output_streams[0])
 
     def _makeStreamBin(self, output_stream, child_bin=None):
         self.debug("making picture bin for %s", self.name)
-        res = gst.Bin("picture-%s" % self.name)
-
-        # use ffvideoscale only if available AND width < 2048
-        if (output_stream.width < 2048) and (not output_stream.has_alpha()):
-            try:
-                scale = gst.element_factory_make(self.ffscale_factory, "scale")
-                scale.props.method = 9
-            except gst.ElementNotFoundError:
-                scale = gst.element_factory_make("videoscale", "scale")
-                scale.props.method = 2
-        else:
-            scale = gst.element_factory_make("videoscale", "scale")
-            scale.props.method = 2
-
         freeze = ImageFreeze()
-        csp = gst.element_factory_make("ffmpegcolorspace")
-        res.add(scale, freeze, csp)
-        scale.link(freeze)
-        freeze.link(csp)
 
-        self.debug("Chaining up with %r", res)
-
-        src_pad = csp.get_pad("src")
-        sink_pad = scale.get_pad("sink")
-        src_ghost = gst.GhostPad("src", src_pad)
-        sink_ghost = gst.GhostPad("sink", sink_pad)
-        src_ghost.set_active(True)
-        sink_ghost.set_active(True)
-        src_ghost.set_caps(src_pad.props.caps)
-        sink_ghost.set_caps(sink_pad.props.caps)
-        res.add_pad(sink_ghost)
-        res.add_pad(src_ghost)
+        self.debug("Chaining up with %r", freeze)
 
         ret = FileSourceFactory._makeStreamBin(self, output_stream,
-            res)
+            freeze)
         self.debug("Returning %r", ret)
 
         return ret
