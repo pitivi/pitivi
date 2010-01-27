@@ -34,6 +34,7 @@ from pitivi.ui.prefs import PreferencesDialog
 from pitivi.ui.common import TRACK_SPACING, unpack_cairo_pattern, \
         LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 from pitivi.ui.controller import Controller
+from pitivi.ui.curve import KW_LABEL_Y_OVERFLOW
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
@@ -99,7 +100,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._cursor = ARROW
         root = self.get_root_item()
         self.tracks = goocanvas.Group()
-        self.tracks.set_simple_transform(0, 10, 1.0, 0)
+        self.tracks.set_simple_transform(0, KW_LABEL_Y_OVERFLOW, 1.0, 0)
         root.add_child(self.tracks)
         self._marquee = goocanvas.Rect(
             parent=root,
@@ -178,7 +179,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             event.area.x, event.area.y,
             event.area.width, event.area.height)
 
-        y = 10
+        y = KW_LABEL_Y_OVERFLOW
         for track in self._tracks[:-1]:
             y += track.height
             self.style.paint_box(event.window,

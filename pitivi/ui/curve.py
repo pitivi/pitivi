@@ -47,7 +47,8 @@ KW_MOUSE_WIDTH = KW_WIDTH2 + 1
 KW_MOUSE_HEIGHT = KW_HEIGHT2 + 1
 KW_LABEL_X_OFFSET = KW_WIDTH2 + 5
 KW_LABEL_Y_OFFSET = -10
-KW_LABEL_OVERFLOW = 10
+KW_LABEL_X_OVERFLOW = 50
+KW_LABEL_Y_OVERFLOW = 12
 KW_LABEL_HPAD = 4
 KW_LABEL_VPAD = 4
 KW_LABEL_HPAD2 = KW_LABEL_VPAD / 2
@@ -117,7 +118,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             bounds = view.bounds
             time = (Zoomable.pixelToNs(pos[0] - bounds.x1) +
                 view.element.in_point)
-            value = ((1 - (pos[1] - KW_LABEL_OVERFLOW - bounds.y1 - 
+            value = ((1 - (pos[1] - KW_LABEL_Y_OVERFLOW - bounds.y1 - 
                 view._min) / view._range) * 
                     interpolator.range) + interpolator.lower
             return time, value
@@ -144,7 +145,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         self.interpolator = interpolator
         self._focused_kf = None
         self.normal()
-        self.set_simple_transform(0, -KW_LABEL_OVERFLOW, 1.0, 0)
+        self.set_simple_transform(0, -KW_LABEL_Y_OVERFLOW, 1.0, 0)
 
 ## properties
 
@@ -194,14 +195,15 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     def do_simple_update(self, cr):
         cr.identity_matrix()
         if self.element.factory:
+            self.visible_width = self.nsToPixel(self.element.duration)
             self.bounds = goocanvas.Bounds(0, 0,
-            Zoomable.nsToPixel(self.element.duration), self.height +
-                KW_LABEL_OVERFLOW)
+                self.visible_width + KW_LABEL_X_OVERFLOW, 
+                self.height + KW_LABEL_Y_OVERFLOW)
 
     def _getKeyframeXY(self, kf):
         interp = self.interpolator
         x = self.nsToPixel(kf.time - self.element.in_point)
-        y = KW_LABEL_OVERFLOW + self._range - (((kf.value - 
+        y = KW_LABEL_Y_OVERFLOW + self._range - (((kf.value - 
             interp.lower) / interp.range) * self._range)
         return point.Point(x + self.bounds.x1, y + self.bounds.y1 + self._min)
 
@@ -229,6 +231,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             cr.fill_preserve()
             cr.set_source_rgb(1, 0, 0)
             cr.stroke()
+
             # re-draw the focused keyframe, if it exists, inverted
             if self._focused_kf:
                 self._controlPoint(cr, self._focused_kf)
