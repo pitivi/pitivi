@@ -220,6 +220,16 @@ class SourceFactory(ObjectFactory):
         self.max_bins = -1
         self.current_bins = 0
 
+    def getInterpolatedProperties(self, stream):
+        self.debug("stream:%r", stream)
+        props = ObjectFactory.getInterpolatedProperties(self, stream)
+        if isinstance(stream, AudioStream):
+            props.update({"volume" : (0.0, 2.0), formatPercent})
+        elif isinstance(stream, VideoStream):
+            props.update({"alpha" : (0.0, 1.0), formatPercent})
+        self.debug("returning %r", props)
+        return props
+
     def makeBin(self, output_stream=None):
         """
         Create a bin that outputs the stream described by C{output_stream}.
