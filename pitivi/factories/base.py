@@ -418,15 +418,20 @@ class SourceFactory(ObjectFactory):
             else:
                 b.scale = gst.element_factory_make("videoscale", "scale")
                 b.scale.props.method = 2
+            b.filter = gst.element_factory_make("capsfilter")
+            b.filter.props.caps = gst.Caps("video/x-raw-rgb,"
+                "width=320,height=240;video/x-raw-yuv,width=320,"
+                "height=240")
 
-            b.add(b.queue, b.scale, b.csp, b.alpha)
-            gst.element_link_many(b.queue, b.scale, b.csp)
+            b.add(b.queue, b.scale, b.filter, b.csp, b.alpha)
+            gst.element_link_many(b.queue, b.scale, b.filter, b.csp)
             if child_bin:
                 gst.element_link_many(b.csp, b.child, b.alpha)
                 b.child.sync_state_with_parent()
             else:
                 gst.element_link_many(b.csp, b.alpha)
             b.scale.sync_state_with_parent()
+            b.filter.sync_state_with_parent()
             b.queue.sync_state_with_parent()
             b.csp.sync_state_with_parent()
             b.alpha.sync_state_with_parent()
@@ -449,7 +454,8 @@ class SourceFactory(ObjectFactory):
             pad.link(topbin.aconv.get_pad("sink"))
             topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
         elif hasattr(topbin, "alpha"):
-            for element in [topbin.queue, topbin.scale, topbin.csp, topbin.alpha]:
+            for element in [topbin.queue, topbin.scale, topbin.filter,
+                topbin.csp, topbin.alpha]:
                 element.sync_state_with_parent()
 
             pad.link(topbin.queue.get_pad("sink"))
