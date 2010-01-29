@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
 "POT-Creation-Date: 2010-01-22 18:03+0000\n"
-"PO-Revision-Date: 2010-01-28 01:26+0100\n"
+"PO-Revision-Date: 2010-01-29 02:25+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
 "MIME-Version: 1.0\n"
@@ -995,7 +995,7 @@ msgstr "Bezárás"
 # konyvjelzo
 #: ../pitivi/ui/net_capture.glade.h:6
 msgid "Customize:"
-msgstr "Testres_zabás"
+msgstr "Személyre szabás:"
 
 #: ../pitivi/ui/net_capture.glade.h:7
 msgid "HTTP / HTTPS"
@@ -1003,11 +1003,11 @@ msgstr "HTTP / HTTPS"
 
 #: ../pitivi/ui/net_capture.glade.h:8
 msgid "Network stream video"
-msgstr "Hálózaton tárolt video"
+msgstr "Hálózati videoműsor"
 
 #: ../pitivi/ui/net_capture.glade.h:9
 msgid "Other protocol"
-msgstr "Más protokol"
+msgstr "Más protokoll"
 
 #: ../pitivi/ui/net_capture.glade.h:10
 msgid "Port"
@@ -1019,11 +1019,11 @@ msgstr "Előnézet"
 
 #: ../pitivi/ui/net_capture.glade.h:12
 msgid "Preview Stream from URI"
-msgstr "Stream előnézete egy URI-ről"
+msgstr "Műsor előnézete URI-címről"
 
 #: ../pitivi/ui/net_capture.glade.h:13
 msgid "Protocol"
-msgstr "Protokol"
+msgstr "Protokoll"
 
 #: ../pitivi/ui/net_capture.glade.h:14
 msgid "RTSP"
@@ -1044,24 +1044,23 @@ msgstr "Minden kategória"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:2
 msgid "Plugin manager"
-msgstr "Bővítmény kezelő"
+msgstr "Bővítménykezelő"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:3
 msgid "Search:"
-msgstr "Keresés"
+msgstr "Keresés:"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:4
 msgid "Show:"
-msgstr "Mutat"
+msgstr "Megjelenítés:"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:5
 msgid ""
 "You may drag plugin files into the list to install them,\n"
 "or type text to search for a specific plugin."
 msgstr ""
-"Egy bővítmény telepítéséhez gördítse le a listát és válassza ki a telepíteni "
-"kívánt bővítményt, vagy írjon be egy szöveget a speciális bővítmények "
-"kereséséhez."
+"A bővítményfájlokat áthúzhatja a listába a telepítésükhöz,\n"
+"vagy gépeléssel is megkeresheti az egyes bővítményeket."
 
 #: ../pitivi/ui/pluginmanagerdialog.py:89
 msgid "Enabled"
@@ -1081,7 +1080,7 @@ msgstr "Biztosan törölni szeretné a kiválasztott bővítményeket?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:272
 msgid "Confirm remove operation"
-msgstr "Törlés művelet megerősítése"
+msgstr "Erősítse meg a törlést"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:289
 #, python-format
@@ -1098,7 +1097,7 @@ msgid ""
 "This plugin is already installed in your system.\n"
 "If you agree, version %(v1)s will be replaced with version %(v2)s"
 msgstr ""
-"Ez a bővítmény már telepítve van az ön rendszerén.\n"
+"Ez a bővítmény már telepítve van a rendszeren.\n"
 "Ha elfogadja, a(z) %(v1)s verzió frissítve lesz a(z) %(v2)s verzióra."
 
 #: ../pitivi/ui/pluginmanagerdialog.py:327
@@ -1116,27 +1115,24 @@ msgstr ""
 
 #: ../pitivi/ui/prefs.py:57
 msgid "Preferences"
-msgstr "_Beállítások"
+msgstr "Beállítások"
 
 #: ../pitivi/ui/prefs.py:83
 msgid "Section"
-msgstr "Lapfül"
+msgstr "Szakasz"
 
-# Talán fejezet?
 #. revert, close buttons
 #: ../pitivi/ui/prefs.py:104
 msgid "Reset to Factory Settings"
-msgstr "Gyári beállítások _visszaállítása"
+msgstr "Visszaállítás a gyári beállításokra"
 
 #: ../pitivi/ui/prefs.py:108
 msgid "Revert"
-msgstr "Visszatérés"
+msgstr "Visszaállítás"
 
 #: ../pitivi/ui/prefs.py:123
 msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr ""
-"Néhány változtatás nem lesz alkalmazva, amíg újra nem indítja a PiTiVi "
-"alkalmazást."
+msgstr "Néhány változtatás nem lép életbe a PiTiVi újraindításáig"
 
 #: ../pitivi/ui/prefs.py:318
 msgid "Reset"
@@ -1151,7 +1147,7 @@ msgstr "Megjelenés"
 
 #: ../pitivi/ui/previewer.py:56
 msgid "Thumbnail Gap (pixels)"
-msgstr "Bélyegkép készítése és rés hagyása a képpontok között"
+msgstr "Bélyegképrés (képpont)"
 
 #: ../pitivi/ui/previewer.py:58
 msgid "The gap between thumbnails"
@@ -1159,64 +1155,64 @@ msgstr "Rés a bélyegképek között"
 
 #: ../pitivi/ui/previewer.py:84
 msgid "Show Thumbnails (Video)"
-msgstr "Bélyegkép video megmutatása"
+msgstr "Bélyegképek megjelenítése (videó)"
 
 #: ../pitivi/ui/previewer.py:85
 msgid "Show Thumbnails on Video Clips"
-msgstr "Bélyegképek mutatása a video klipekben"
+msgstr "Bélyegképek megjelenítése a videoklipekhez"
 
 #: ../pitivi/ui/previewer.py:95
 msgid "Show Waveforms (Audio)"
-msgstr "Hang Hullámformák mutatása"
+msgstr "Hullámformák megjelenítése (hang)"
 
 #: ../pitivi/ui/previewer.py:96
 msgid "Show Waveforms on Audio Clips"
-msgstr "Hullámformák mutatása a hang klipeknél"
+msgstr "Hullámformák megjelenítése a hangklipeknél"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
-msgstr "A projektjének a rövid leírása."
+msgstr "A projekt rövid leírása."
 
 #: ../pitivi/ui/projectsettings.glade.h:2
 msgid "Description:"
-msgstr "_Leírás"
+msgstr "Leírás:"
 
 #: ../pitivi/ui/projectsettings.glade.h:3
 msgid "Name:"
-msgstr "_Név"
+msgstr "Név:"
 
 #: ../pitivi/ui/projectsettings.glade.h:5
 msgid "The name of your project."
-msgstr "Az ön projektjének a neve."
+msgstr "A projekt neve."
 
 #: ../pitivi/ui/propertyeditor.py:54
 msgid "No Objects Selected"
-msgstr "Nincsenek kijelölt objektumok"
+msgstr "Nincsenek kijelölve objektumok"
 
 #: ../pitivi/ui/screencast_manager.glade.h:1
 msgid "Screencast"
-msgstr "Képernyőkép"
+msgstr "Képernyővideó"
 
 #: ../pitivi/ui/screencast_manager.glade.h:2
 msgid "Screencast Desktop"
-msgstr "Képernyőkép az asztalról"
+msgstr "Képernyővideó az asztalról"
 
 #: ../pitivi/ui/screencast_manager.glade.h:3
 msgid "Start Istanbul"
-msgstr "Isztambul indítása"
+msgstr "Az Istanbul indítása"
 
 # Ez mire szolgál?
 #: ../pitivi/ui/sourcelist.py:115
 msgid "Add Clips..."
-msgstr "Klipek _hozzáadása…"
+msgstr "Klipek hozzáadása…"
 
 #: ../pitivi/ui/sourcelist.py:120
 msgid "Remove Clip"
-msgstr "Klip _eltávolítása"
+msgstr "Klip eltávolítása"
 
 #: ../pitivi/ui/sourcelist.py:124
 msgid "Play Clip"
-msgstr "Klip _lejátszása"
+msgstr "Klip lejátszása"
 
 #: ../pitivi/ui/sourcelist.py:150
 msgid "Icon"
@@ -1224,43 +1220,41 @@ msgstr "Ikon"
 
 #: ../pitivi/ui/sourcelist.py:159
 msgid "Information"
-msgstr "Információ"
+msgstr "Információk"
 
 #: ../pitivi/ui/sourcelist.py:170
 msgid "Duration"
-msgstr "Időtartam"
+msgstr "Hossz"
 
 #: ../pitivi/ui/sourcelist.py:192
 msgid ""
 "<span size='x-large'>Import your clips by dragging them here or by using the "
 "buttons above.</span>"
-msgstr ""
-"<span size='x-large'>A klipek importálásához húzza őket az egérrel ide, vagy "
-"használja az alábbi gombokat.</span>"
+msgstr "<span size='x-large'>A klipek importálásához húzza azokat ide, vagy a fenti gombok használatával.</span>"
 
 #: ../pitivi/ui/sourcelist.py:245
 msgid "_Import clips..."
-msgstr "Klipek _importálása…"
+msgstr "_Klipek importálása…"
 
 #: ../pitivi/ui/sourcelist.py:246
 msgid "Import clips to use"
-msgstr "A használni kívánt klipek importálása"
+msgstr "A használandó klipek importálása"
 
 #: ../pitivi/ui/sourcelist.py:248
 msgid "Import _folder of clips..."
-msgstr "A könyvtárban levő klipek importálása…"
+msgstr "Kli_pek könyvtárának importálása…"
 
 #: ../pitivi/ui/sourcelist.py:249
 msgid "Import folder of clips to use"
-msgstr "A használni kívánt klipek importálása egy könyvtárból"
+msgstr "A használandó klipek könyvtárának importálása"
 
 #: ../pitivi/ui/sourcelist.py:255
 msgid "_Remove from project"
-msgstr "Eltávolítás a projektből"
+msgstr "_Eltávolítás a projektből"
 
 #: ../pitivi/ui/sourcelist.py:258
 msgid "Insert at _end of timeline"
-msgstr "Beszúrás az idősáv végére"
+msgstr "Beszúrás az idővonal _végére"
 
 #: ../pitivi/ui/sourcelist.py:375
 msgid "Import a folder"
@@ -1272,11 +1266,11 @@ msgstr "Egy klip importálása"
 
 #: ../pitivi/ui/sourcelist.py:379
 msgid "Close after importing files"
-msgstr "Bezárás, ha a fájlok importálása befejeződött"
+msgstr "Bezárás a fájlok importálásának befejeződésekor"
 
 #: ../pitivi/ui/sourcelist.py:720
 msgid "Importing clips..."
-msgstr "_Klipek importálása…"
+msgstr "Klipek importálása…"
 
 #: ../pitivi/ui/sourcelist.py:721
 msgid "Error(s) occurred while importing"
@@ -1284,11 +1278,11 @@ msgstr "Hiba az importálás közben"
 
 #: ../pitivi/ui/sourcelist.py:722
 msgid "An error occurred while importing"
-msgstr "Egy hiba lépett fel az importálás közben"
+msgstr "Hiba történt az importálás közben"
 
 #: ../pitivi/ui/sourcelist.py:807
 msgid "Error while analyzing files"
-msgstr "Hiba a fájlok analizálása közben"
+msgstr "Hiba a fájlok elemzése közben"
 
 #: ../pitivi/ui/sourcelist.py:808
 msgid "The following files can not be used with PiTiVi."
@@ -1296,7 +1290,7 @@ msgstr "A PiTiVi nem tudja használni a következő fájlokat."
 
 #: ../pitivi/ui/sourcelist.py:810
 msgid "Error while analyzing a file"
-msgstr "Hiba a fájl analizálásakor"
+msgstr "Hiba a fájl elemzésekor"
 
 #: ../pitivi/ui/sourcelist.py:811
 msgid "The following file can not be used with PiTiVi."
@@ -1305,19 +1299,19 @@ msgstr "A PiTiVi nem tudja használni a következő fájlt."
 #. tooltip text for toolbar
 #: ../pitivi/ui/timeline.py:46
 msgid "Delete Selected"
-msgstr "Kijelölés törlése"
+msgstr "Kijelölt törlése"
 
 #: ../pitivi/ui/timeline.py:47
 msgid "Split clip at playhead position"
-msgstr "Klip szétvágása a lejátszási pozíciótól"
+msgstr "Klip szétvágása a lejátszófej pozíciójánál"
 
 #: ../pitivi/ui/timeline.py:48
 msgid "Zoom In"
-msgstr "Nagyítás közelítése"
+msgstr "Nagyítás"
 
 #: ../pitivi/ui/timeline.py:49
 msgid "Zoom Out"
-msgstr "Nagyítás távolítása"
+msgstr "Kicsinyítés"
 
 #: ../pitivi/ui/timeline.py:50
 msgid "Break links between clips"
@@ -1337,19 +1331,19 @@ msgstr "Klipek csoportosítása"
 
 #: ../pitivi/ui/timeline.py:123
 msgid "One or more GStreamer errors has occured!"
-msgstr "Egy vagy több GStreamer hiba lépett fel!"
+msgstr "Legalább egy GStreamer hiba történt!"
 
 #: ../pitivi/ui/timeline.py:157
 msgid "Error List"
-msgstr "Hiba lista"
+msgstr "Hibalista"
 
 #: ../pitivi/ui/timeline.py:158
 msgid "The following errors have been reported:"
-msgstr "A következő hibák lettek jelezve:"
+msgstr "A következő hibák történtek:"
 
 #: ../pitivi/ui/timeline.py:224
 msgid "Zoom Timeline"
-msgstr "Nagyítás időszelete"
+msgstr "Idővonal nagyítása"
 
 #: ../pitivi/ui/timelinecanvas.py:50
 msgid "Behavior"
@@ -1357,32 +1351,32 @@ msgstr "Viselkedés"
 
 #: ../pitivi/ui/timelinecanvas.py:51
 msgid "Snap Distance (pixels)"
-msgstr ""
+msgstr "Illesztési távolság (képpont)"
 
 #: ../pitivi/ui/timelinecanvas.py:52
 msgid "Threshold distance (in pixels) used for all snapping operations"
-msgstr ""
+msgstr "Illesztési műveletekhez használt küszöbtávolság (képpontban)"
 
 #: ../pitivi/ui/timelinecontrols.py:17
 msgid "<b>Text:</b>"
-msgstr "<b>Szöveg</b>"
+msgstr "<b>Szöveg:</b>"
 
 # Esetleg felirat?
 #: ../pitivi/ui/trackobject.py:49
 msgid "Clip Background (Video)"
-msgstr "Háttér klip video"
+msgstr "Klip háttér (videó)"
 
 #: ../pitivi/ui/trackobject.py:50
 msgid "The background color for clips in video tracks."
-msgstr "A video klipek háttér színe."
+msgstr "A videosávok klipjeinek háttérszíne."
 
 #: ../pitivi/ui/trackobject.py:60
 msgid "Clip Background (Audio)"
-msgstr "Háttér klip hang"
+msgstr "Klipháttér (hang)"
 
 #: ../pitivi/ui/trackobject.py:61
 msgid "The background color for clips in audio tracks."
-msgstr "A háttér klipek színe a hangsávokban."
+msgstr "A hangsávok klipjeinek háttérszíne."
 
 #: ../pitivi/ui/trackobject.py:71
 msgid "Selection Color"
@@ -1390,7 +1384,7 @@ msgstr "Kijelölés színe"
 
 #: ../pitivi/ui/trackobject.py:72
 msgid "Selected clips will be tinted with this color."
-msgstr "Ez a szín lesz használva a kijelölt klipeknél."
+msgstr "A kijelölt klipek ezzel a színnel lesznek árnyalva."
 
 #: ../pitivi/ui/trackobject.py:82
 msgid "Clip Font"
@@ -1398,5 +1392,5 @@ msgstr "Klip betűkészlete"
 
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
-msgstr "Ez a szín lesz használva a klipek címénél"
+msgstr "A klipek címéhez használandó betűkészlet"
 
