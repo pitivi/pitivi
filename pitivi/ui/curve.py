@@ -241,6 +241,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
             # re-draw the focused keyframe, if it exists, inverted
             if self._focused_kf:
+
                 self._controlPoint(cr, self._focused_kf)
                 cr.set_source_rgb(1, 0, 0)
                 cr.fill_preserve()
