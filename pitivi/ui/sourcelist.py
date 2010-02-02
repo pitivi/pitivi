@@ -161,7 +161,7 @@ class SourceList(gtk.VBox, Loggable):
         self.treeview.set_property("search_column", COL_SEARCH_TEXT)
         tsel = self.treeview.get_selection()
         tsel.set_mode(gtk.SELECTION_MULTIPLE)
-        tsel.connect("changed", self._treeSelectionChanged)
+        tsel.connect("changed", self._viewSelectionChangedCb)
 
         pixbufcol = gtk.TreeViewColumn(_("Icon"))
         pixbufcol.set_expand(False)
@@ -195,6 +195,7 @@ class SourceList(gtk.VBox, Loggable):
         self.iconview = gtk.IconView(self.storemodel)
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.connect("button-press-event", self._iconViewButtonPressEventCb)
+        self.iconview.connect("selection-changed", self._viewSelectionChangedCb)
         self.iconview.set_orientation(gtk.ORIENTATION_VERTICAL)
         self.iconview.set_text_column(COL_SHORT_TEXT)
         self.iconview.set_pixbuf_column(COL_ICON_LARGE)
@@ -780,8 +781,8 @@ class SourceList(gtk.VBox, Loggable):
                     treeview.get_selection().select_path(path)
         return False
 
-    def _treeSelectionChanged(self, tsel):
-        if self.getSelectedItemsTreeView():
+    def _viewSelectionChangedCb(self, unused):
+        if self._viewHasSelection():
             self.selection_actions.set_sensitive(True)
         else:
             self.selection_actions.set_sensitive(False)
