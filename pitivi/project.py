@@ -34,6 +34,7 @@ from pitivi.settings import ExportSettings
 from pitivi.signalinterface import Signallable
 from pitivi.action import ViewAction
 from pitivi.utils import Seeker
+import gst
 
 class ProjectError(Exception):
     """Project error"""
@@ -81,6 +82,7 @@ class Project(Signallable, Loggable):
         self.urichanged = False
         self.format = None
         self.sources = SourceList()
+        self.sources.connect("source-added", self._sourceAddedCb)
         self.sources.connect("source-removed", self._sourceRemovedCb)
 
         self._dirty = False
@@ -92,6 +94,19 @@ class Project(Signallable, Loggable):
         self.view_action = ViewAction()
         self.view_action.addProducers(self.factory)
         self.seeker = Seeker(80)
+
+        self.getCapsFromSettings()
+
+    def getCapsFromSettings(self):
+        settings = self.getSettings()
+        formatstr = "video/x-raw-rgb,width=(int)%d,height=(int)%d;"\
+            "video/x-raw-yuv,width=(int)%d,height=(int)%d"
+        capstr = formatstr % (
+            settings.videowidth,
+            settings.videoheight,
+            settings.videowidth,
+            settings.videoheight)
+        self._videocaps = gst.Caps(capstr)
 
     def release(self):
         self.pipeline.release()
@@ -116,6 +131,7 @@ class Project(Signallable, Loggable):
         self.log("Setting %s as the project's settings", settings)
         oldsettings = self.settings
         self.settings = settings
+        self._projectSettingsChanged()
         self.emit('settings-changed', oldsettings, settings)
 
     def unsetSettings(self, unused_settings):
@@ -185,6 +201,17 @@ class Project(Signallable, Loggable):
 
     def hasUnsavedModifications(self):
         return self._dirty
+
+    def _projectSettingsChanged(self):
+        self.getCapsFromSettings()
+        for fact in self.sources.getSources():
+            fact.setFilterCaps(self._videocaps)
+        if self.pipeline.getState() != gst.STATE_NULL:
+            self.pipeline.stop()
+            self.pipeline.pause()
+
+    def _sourceAddedCb(self, sourcelist, factory):
+        factory.setFilterCaps(self._videocaps)
 
     def _sourceRemovedCb(self, sourclist, uri, factory):
         self.timeline.removeFactory(factory)
