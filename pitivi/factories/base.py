@@ -219,6 +219,7 @@ class SourceFactory(ObjectFactory):
         self.uri = uri
         self.max_bins = -1
         self.current_bins = 0
+        self._filtercaps = gst.Caps("video/x-raw-rgb;video/x-raw-yuv")
 
     def getInterpolatedProperties(self, stream):
         self.debug("stream:%r", stream)
@@ -419,9 +420,7 @@ class SourceFactory(ObjectFactory):
                 b.scale = gst.element_factory_make("videoscale", "scale")
                 b.scale.props.method = 2
             b.filter = gst.element_factory_make("capsfilter")
-            b.filter.props.caps = gst.Caps("video/x-raw-rgb,"
-                "width=320,height=240;video/x-raw-yuv,width=320,"
-                "height=240")
+            b.filter.props.caps = self._filtercaps
 
             b.add(b.queue, b.scale, b.filter, b.csp, b.alpha)
             gst.element_link_many(b.queue, b.scale, b.filter, b.csp)
@@ -485,6 +484,12 @@ class SourceFactory(ObjectFactory):
 
     def addInputStream(self, stream):
         raise AssertionError("source factories can't have input streams")
+
+    def setFilterCaps(self, caps):
+        self._filtercaps = caps
+        for b in self.bins:
+            if hasattr(b, "filter"):
+                b.filter.props.caps = caps
 
 class SinkFactory(ObjectFactory):
     """
