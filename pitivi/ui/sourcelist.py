@@ -194,6 +194,7 @@ class SourceList(gtk.VBox, Loggable):
         # IconView
         self.iconview = gtk.IconView(self.storemodel)
         self.iconview_scrollwin.add(self.iconview)
+        self.iconview.connect("button-press-event", self._iconViewButtonPressEventCb)
         self.iconview.set_orientation(gtk.ORIENTATION_VERTICAL)
         self.iconview.set_text_column(COL_SHORT_TEXT)
         self.iconview.set_pixbuf_column(COL_ICON_LARGE)
@@ -248,8 +249,16 @@ class SourceList(gtk.VBox, Loggable):
             self._treeViewMotionNotifyEventCb)
         self.treeview.connect("button-release-event",
             self._treeViewButtonReleaseCb)
-        self.treeview.connect("drag_begin", self._dndTreeBeginCb)
+        self.treeview.connect("drag_begin", self._dndDragBeginCb)
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
+
+        self.iconview.drag_source_set(0,[], gtk.gdk.ACTION_COPY)
+        self.iconview.connect("motion-notify-event",
+            self._iconViewMotionNotifyEventCb)
+        self.iconview.connect("button-release-event",
+            self._iconViewButtonReleaseCb)
+        self.iconview.connect("drag_begin", self._dndDragBeginCb)
+        self.iconview.connect("drag_data_get", self._dndDataGetCb)
 
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems
@@ -637,6 +646,7 @@ class SourceList(gtk.VBox, Loggable):
         self._setClipView(show)
 
     _dragStarted = False
+    _dragSelection = False
     _dragButton = None
     _dragX = 0
     _dragY = 0
@@ -668,6 +678,7 @@ class SourceList(gtk.VBox, Loggable):
                 chain_up = not self._rowUnderMouseSelected(treeview, event)
 
             self._dragStarted = False
+            self._dragSelection = False
             self._dragButton = event.button 
             self._dragX = int(event.x)
             self._dragY = int(event.y)
@@ -718,6 +729,63 @@ class SourceList(gtk.VBox, Loggable):
     def _rowActivatedCb(self, unused_treeview, path, unused_column):
         factory = self.storemodel[path][COL_FACTORY]
         self.emit('play', factory)
+
+    def _iconViewMotionNotifyEventCb(self, iconview, event):
+        if not self._dragButton:
+            return True
+
+        if self._dragSelection:
+            return False
+
+        if self._nothingUnderMouse(iconview, event):
+            return True
+
+        if iconview.drag_check_threshold(self._dragX, self._dragY,
+            int(event.x), int(event.y)):
+            context = iconview.drag_begin(
+                [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
+                gtk.gdk.ACTION_COPY,
+                self._dragButton,
+                event)
+            self._dragStarted = True
+        return False
+
+    def _iconViewButtonPressEventCb(self, iconview, event):
+        chain_up = True
+
+        #popup menu
+        if event.button == 3:
+            self.popup.popup(None, None, None, event.button, event.time)
+            chain_up = False
+        else:
+            if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
+                chain_up = not self._rowUnderMouseSelected(iconview, event)
+
+            self._dragStarted = False
+            self._dragSelection = self._nothingUnderMouse(iconview, event)
+            self._dragButton = event.button
+            self._dragX = int(event.x)
+            self._dragY = int(event.y)
+
+        if chain_up:
+            gtk.IconView.do_button_press_event(iconview, event)
+        else:
+            iconview.grab_focus()
+
+        self._ignoreRelease = chain_up
+
+        return True
+
+    def _iconViewButtonReleaseCb(self, iconview, event):
+        if event.button == self._dragButton:
+            self._dragButton = None
+            self._dragSelection = False
+            if (not self._ignoreRelease) and (not self._dragStarted):
+                iconview.unselect_all()
+                path = iconview.get_path_at_pos(int(event.x), int(event.y))
+                if path:
+                    iconview.select_path(path)
+        return False
 
     def _newProjectCreatedCb(self, app, project):
         # clear the storemodel
@@ -772,13 +840,15 @@ class SourceList(gtk.VBox, Loggable):
             # filenames already present in the sourcelist
             pass
 
-    def _dndTreeBeginCb(self, unused_widget, context):
+    #used with TreeView and IconView
+    def _dndDragBeginCb(self, view, context):
         self.info("tree drag_begin")
-        model, paths = self.treeview.get_selection().get_selected_rows()
+        paths = self.getSelectedPaths()
+
         if len(paths) < 1:
             context.drag_abort(int(time.time()))
         else:
-            row = model[paths[0]]
+            row = self.storemodel[paths[0]]
             context.set_icon_pixbuf(row[COL_ICON], 0, 0)
 
     def getSelectedPaths(self):
