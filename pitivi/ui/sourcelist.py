@@ -107,10 +107,14 @@ class SourceList(gtk.VBox, Loggable):
         self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, gtk.gdk.Pixbuf, str, object, str, str,
             str, str)
 
-        # Scrolled Window
-        self.scrollwin = gtk.ScrolledWindow()
-        self.scrollwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        self.scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        # Scrolled Windows
+        self.treeview_scrollwin = gtk.ScrolledWindow()
+        self.treeview_scrollwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        self.treeview_scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+
+        self.iconview_scrollwin = gtk.ScrolledWindow()
+        self.iconview_scrollwin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.iconview_scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
 
         # Popup Menu
         self.popup = gtk.Menu()
@@ -140,6 +144,7 @@ class SourceList(gtk.VBox, Loggable):
         # TreeView
         # Displays icon, name, type, length
         self.treeview = gtk.TreeView(self.storemodel)
+        self.treeview_scrollwin.add(self.treeview)
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
         self.treeview.connect("row-activated", self._rowActivatedCb)
         self.treeview.set_property("rules_hint", True)
@@ -177,8 +182,14 @@ class SourceList(gtk.VBox, Loggable):
         namecol.pack_start(txtcell)
         namecol.add_attribute(txtcell, "markup", COL_LENGTH)
 
-        # Start up with tree view
-        self.scrollwin.add(self.treeview)
+        # IconView
+        self.iconview = gtk.IconView(self.storemodel)
+        self.iconview_scrollwin.add(self.iconview)
+        self.iconview.set_orientation(gtk.ORIENTATION_VERTICAL)
+        self.iconview.set_text_column(COL_SHORT_TEXT)
+        self.iconview.set_pixbuf_column(COL_ICON_LARGE)
+        self.iconview.set_selection_mode(gtk.SELECTION_MULTIPLE)
+        self.iconview.set_item_width(106)
 
         # Explanatory message label
         textbox = gtk.EventBox()
