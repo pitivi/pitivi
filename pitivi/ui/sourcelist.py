@@ -652,18 +652,25 @@ class SourceList(gtk.VBox, Loggable):
     _dragY = 0
     _ignoreRelease = False
 
-    def _rowUnderMouseSelected(self, treeview, event):
-        result = treeview.get_path_at_pos(int(event.x), int(event.y))
+    def _rowUnderMouseSelected(self, view, event):
+        result = view.get_path_at_pos(int(event.x), int(event.y))
         if result:
             path = result[0]
-            selection = treeview.get_selection()
+            if isinstance(view, gtk.TreeView):
+                selection = view.get_selection()
 
-            return selection.path_is_selected(path) and selection.count_selected_rows() > 1
+                return selection.path_is_selected(path) and selection.count_selected_rows() > 0
+            elif isinstance(view, gtk.IconView):
+                selection = view.get_selected_items()
+
+                return view.path_is_selected(path) and len(selection)
+            else:
+                assert False
 
         return False
 
-    def _nothingUnderMouse(self, treeview, event):
-        return not bool(treeview.get_path_at_pos(int(event.x), int(event.y)))
+    def _nothingUnderMouse(self, view, event):
+        return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
 
     def _treeViewButtonPressEventCb(self, treeview, event):
         chain_up = True
