@@ -826,13 +826,4 @@ class InfoStub(gtk.HBox, Loggable):
         self.hide()
         self.emit("remove-me")
 
-    def show(self):
-        self.log("showing")
-        self.show_all()
-        self.showing = True
-
-    def hide(self):
-        self.log("hiding")
-        gtk.VBox.hide(self)
-        self.showing = False
 gobject.type_register(SourceList)
