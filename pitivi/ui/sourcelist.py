@@ -56,11 +56,13 @@ GlobalSettings.addConfigOption('closeImportDialog',
     default=True)
 
 (COL_ICON,
+ COL_ICON_LARGE,
  COL_INFOTEXT,
  COL_FACTORY,
  COL_URI,
  COL_LENGTH,
- COL_SEARCH_TEXT) = range(6)
+ COL_SEARCH_TEXT,
+ COL_SHORT_TEXT) = range(8)
 
 ui = '''
 <ui>
@@ -102,8 +104,8 @@ class SourceList(gtk.VBox, Loggable):
 
         # Store
         # icon, infotext, objectfactory, uri, length
-        self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, object, str, str,
-            str)
+        self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, gtk.gdk.Pixbuf, str, object, str, str,
+            str, str)
 
         # Scrolled Window
         self.scrollwin = gtk.ScrolledWindow()
@@ -415,27 +417,45 @@ class SourceList(gtk.VBox, Loggable):
                 self.error("Failure to create thumbnail from file '%s'",
                         thumbnail_file)
                 thumbnail = self.videofilepixbuf
+                thumbnail_large = self.videofilepixbuf
             else:
                 desiredheight = int(64 / float(video[0].dar))
                 thumbnail = pixbuf.scale_simple(64,
                         desiredheight, gtk.gdk.INTERP_BILINEAR)
+                desiredheight = int(96 / float(video[0].dar))
+                thumbnail_large = pixbuf.scale_simple(96,
+                        desiredheight, gtk.gdk.INTERP_BILINEAR)
         else:
             if video:
                 thumbnail = self.videofilepixbuf
+                thumbnail_large = self.videofilepixbuf
             else:
                 thumbnail = self.audiofilepixbuf
+                thumbnail_large = self.audiofilepixbuf
 
         if not factory.duration or factory.duration == gst.CLOCK_TIME_NONE:
             duration = ''
         else:
             duration = beautify_length(factory.duration)
 
+        short_text = None
+        uni = unicode(factory_name(factory), 'utf-8')
+
+        if len(uni) > 34:
+            short_uni = uni[0:29]
+            short_uni += unicode('...')
+            short_text = short_uni.encode('utf-8')
+        else:
+            short_text = factory_name(factory)
+
         self.storemodel.append([thumbnail,
+            thumbnail_large,
             beautify_factory(factory),
             factory,
             factory.uri,
             duration,
-            factory_name(factory)])
+            factory_name(factory),
+            short_text])
         self._displayTreeView()
 
     # sourcelist callbacks
