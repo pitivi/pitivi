@@ -272,6 +272,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             width += 110
             height = int(width / self.aframe.props.ratio)
             self.aframe.set_size_request(width , height)
+        self.show_all()
 
     _showingSlider = True
 

@@ -364,27 +364,35 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # main menu & toolbar
         vbox = gtk.VBox(False)
         self.add(vbox)
+        vbox.show()
         self.menu = self.uimanager.get_widget("/MainMenuBar")
         vbox.pack_start(self.menu, expand=False)
+        self.menu.show()
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
         vbox.pack_start(self.toolbar, expand=False)
+        self.toolbar.show()
         # timeline and project tabs
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
+        vpaned.show()
 
         self.timeline = Timeline(instance, self.uimanager)
         self.timeline.project = self.project
 
         vpaned.pack2(self.timeline, resize=False, shrink=False)
+        self.timeline.show()
         hpaned = gtk.HPaned()
         vpaned.pack1(hpaned, resize=True, shrink=False)
+        hpaned.show()
         self.projecttabs = ProjectTabs()
 
         self.sourcelist = SourceList(instance, self.uimanager)
         self.projecttabs.append_page(self.sourcelist, gtk.Label(_("Clip Library")))
         self._connectToSourceList()
+        self.sourcelist.show()
 
         hpaned.pack1(self.projecttabs, resize=True, shrink=False)
+        self.projecttabs.show()
 
         # Viewer
         self.viewer = PitiviViewer()
@@ -394,6 +402,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                            gtk.gdk.ACTION_COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         hpaned.pack2(self.viewer, resize=False, shrink=False)
+        self.viewer.show()
         self.viewer.connect("expose-event", self._exposeEventCb)
 
         # window and pane position defaults
@@ -423,16 +432,15 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # very bottom of the screen.
         ttb = self.uimanager.get_widget("/TimelineToolBar")
         vbox.pack_start(ttb, expand=False)
+        ttb.show()
 
-        self.show_all()
+        self.show()
 
         if not self.settings.mainWindowShowMainToolbar:
             self.toolbar.props.visible = False
 
         if not self.settings.mainWindowShowTimelineToolbar:
             ttb.props.visible = False
-
-        self.timeline.infostub.hide()
 
         #application icon
         self.set_icon_name("pitivi")

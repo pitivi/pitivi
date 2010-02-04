@@ -192,6 +192,7 @@ class SourceList(gtk.VBox, Loggable):
             _("<span size='x-large'>Import your clips by dragging them here or "
               "by using the buttons above.</span>"))
         textbox.add(txtlabel)
+        txtlabel.show()
         self.txtlabel = txtlabel
 
         self.textbox = textbox
@@ -726,17 +727,21 @@ class InfoStub(gtk.HBox, Loggable):
         self.set_spacing(6)
         anim = gtk.gdk.PixbufAnimation(get_pixmap_dir() + "/busy.gif")
         self.busyanim = gtk.image_new_from_animation(anim)
+        self.busyanim.show()
 
         self.erroricon = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
                                                   gtk.ICON_SIZE_SMALL_TOOLBAR)
+        self.erroricon.show()
 
         self.infolabel = gtk.Label(self._importingmessage)
         self.infolabel.set_alignment(0, 0.5)
+        self.infolabel.show()
 
         self.questionbutton = gtk.Button()
         self.questionbutton.set_image(gtk.image_new_from_stock(gtk.STOCK_INFO,
                                                                gtk.ICON_SIZE_SMALL_TOOLBAR))
         self.questionbutton.connect("clicked", self._questionButtonClickedCb)
+        self.questionbutton.show()
         self._questionshowing = False
 
         self.pack_start(self.busyanim, expand=False)

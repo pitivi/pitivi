@@ -37,6 +37,8 @@ class ProjectTabs(gtk.Notebook):
     def append_page(self, child, label):
         gtk.Notebook.append_page(self, child, label)
         self._set_child_properties(child, label)
+        child.show()
+        label.show()
 
     def _set_child_properties(self, child, label):
         self.child_set_property(child, "detachable", True)
