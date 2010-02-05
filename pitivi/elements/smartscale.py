@@ -50,6 +50,7 @@ class SmartVideoScale(gst.Bin):
         # FIXME : Instead of having the set_caps() method, use proper caps negotiation
         self.videoscale.props.method = 1
         self.videobox = gst.element_factory_make("videobox", "smart-videobox")
+        self.videobox.props.border_alpha = 0.0
         self.capsfilter = gst.element_factory_make("capsfilter", "smart-capsfilter")
         self.add(self.videoscale, self.capsfilter, self.videobox)
         gst.element_link_many(self.videoscale, self.capsfilter, self.videobox)
@@ -148,7 +149,9 @@ class SmartVideoScale(gst.Bin):
         if self.darin == self.darout and gst.version() >= (0, 10, 23):
             self.log("We have same input and output caps, resetting capsfilter and videobox settings")
             # same DAR, set inputcaps on capsfilter, reset videobox values
-            caps = gst.caps_new_any()
+            astr = "width=%d,height=%d" % (self.widthout, self.heightout)
+            caps = gst.caps_from_string("video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (astr, astr))
+
             left = 0
             right = 0
             top = 0
@@ -191,7 +194,5 @@ class SmartVideoScale(gst.Bin):
         self.debug("Settings filter caps %s" % caps.to_string())
         self.capsfilter.props.caps = caps
         self.debug("done")
-
-
 
 gobject.type_register(SmartVideoScale)
