@@ -27,6 +27,7 @@ import gst
 
 from pitivi.log.loggable import Loggable
 from pitivi.elements.singledecodebin import SingleDecodeBin
+from pitivi.elements.smartscale import SmartVideoScale
 from pitivi.signalinterface import Signallable
 from pitivi.stream import match_stream_groups_map, AudioStream, VideoStream
 
@@ -408,29 +409,18 @@ class SourceFactory(ObjectFactory):
                 b.csp = gst.element_factory_make("identity")
 
             b.alpha = gst.element_factory_make("alpha", "internal-alpha")
-            # use ffvideoscale only if available AND width < 2048
-            if (output_stream.width < 2048) and (not output_stream.has_alpha()):
-                try:
-                    b.scale = gst.element_factory_make(self.ffscale_factory, "scale")
-                    b.scale.props.method = 9
-                except gst.ElementNotFoundError:
-                    b.scale = gst.element_factory_make("videoscale", "scale")
-                    b.scale.props.method = 2
-            else:
-                b.scale = gst.element_factory_make("videoscale", "scale")
-                b.scale.props.method = 2
-            b.filter = gst.element_factory_make("capsfilter")
-            b.filter.props.caps = self._filtercaps
+            b.scale = SmartVideoScale()
+            b.scale.set_caps(self._filtercaps)
+            b.scale._computeAndSetValues()
 
-            b.add(b.queue, b.scale, b.filter, b.csp, b.alpha)
-            gst.element_link_many(b.queue, b.scale, b.filter, b.csp)
+            b.add(b.queue, b.scale, b.csp, b.alpha)
+            gst.element_link_many(b.queue, b.csp, b.scale)
             if child_bin:
-                gst.element_link_many(b.csp, b.child, b.alpha)
+                gst.element_link_many(b.scale, b.child, b.alpha)
                 b.child.sync_state_with_parent()
             else:
-                gst.element_link_many(b.csp, b.alpha)
+                gst.element_link_many(b.scale, b.alpha)
             b.scale.sync_state_with_parent()
-            b.filter.sync_state_with_parent()
             b.queue.sync_state_with_parent()
             b.csp.sync_state_with_parent()
             b.alpha.sync_state_with_parent()
@@ -453,8 +443,7 @@ class SourceFactory(ObjectFactory):
             pad.link(topbin.aconv.get_pad("sink"))
             topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
         elif hasattr(topbin, "alpha"):
-            for element in [topbin.queue, topbin.scale, topbin.filter,
-                topbin.csp, topbin.alpha]:
+            for element in [topbin.queue, topbin.scale, topbin.csp, topbin.alpha]:
                 element.sync_state_with_parent()
 
             pad.link(topbin.queue.get_pad("sink"))
@@ -489,7 +478,8 @@ class SourceFactory(ObjectFactory):
         self._filtercaps = caps
         for b in self.bins:
             if hasattr(b, "filter"):
-                b.filter.props.caps = caps
+                b.scale.set_caps(caps)
+                b.scale._computeAndSetValues()
 
 class SinkFactory(ObjectFactory):
     """
