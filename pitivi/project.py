@@ -99,14 +99,15 @@ class Project(Signallable, Loggable):
 
     def getCapsFromSettings(self):
         settings = self.getSettings()
-        formatstr = "video/x-raw-rgb,width=(int)%d,height=(int)%d;"\
-            "video/x-raw-yuv,width=(int)%d,height=(int)%d"
-        capstr = formatstr % (
-            settings.videowidth,
-            settings.videoheight,
-            settings.videowidth,
-            settings.videoheight)
-        self._videocaps = gst.Caps(capstr)
+        #formatstr = "video/x-raw-rgb,width=(int)%d,height=(int)%d;"\
+        #    "video/x-raw-yuv,width=(int)%d,height=(int)%d"
+        #capstr = formatstr % (
+        #    settings.videowidth,
+        #    settings.videoheight,
+        #    settings.videowidth,
+        #    settings.videoheight)
+        #self._videocaps = gst.Caps(capstr)
+        self._videocaps = settings.getVideoCaps()
 
     def release(self):
         self.pipeline.release()
