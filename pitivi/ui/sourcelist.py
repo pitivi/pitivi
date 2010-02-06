@@ -127,25 +127,25 @@ class SourceList(gtk.VBox, Loggable):
 
         # Popup Menu
         self.popup = gtk.Menu()
-        additem = gtk.ImageMenuItem(_("Add Clips..."))
+        self.popup_additem = gtk.ImageMenuItem(_("Add Clips..."))
         image = gtk.Image()
         image.set_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU)
-        additem.set_image(image)
+        self.popup_additem.set_image(image)
 
-        remitem = gtk.ImageMenuItem(_("Remove Clip"))
+        self.popup_remitem = gtk.ImageMenuItem(_("Remove Clip"))
         image = gtk.Image()
         image.set_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_MENU)
-        remitem.set_image(image)
-        playmenuitem = gtk.MenuItem(_("Play Clip"))
-        playmenuitem.connect("activate", self._playButtonClickedCb)
-        additem.connect("activate", self._addButtonClickedCb)
-        remitem.connect("activate", self._removeButtonClickedCb)
-        additem.show()
-        remitem.show()
-        playmenuitem.show()
-        self.popup.append(additem)
-        self.popup.append(remitem)
-        self.popup.append(playmenuitem)
+        self.popup_remitem.set_image(image)
+        self.popup_playmenuitem = gtk.MenuItem(_("Play Clip"))
+        self.popup_playmenuitem.connect("activate", self._playButtonClickedCb)
+        self.popup_additem.connect("activate", self._addButtonClickedCb)
+        self.popup_remitem.connect("activate", self._removeButtonClickedCb)
+        self.popup_additem.show()
+        self.popup_remitem.show()
+        self.popup_playmenuitem.show()
+        self.popup.append(self.popup_additem)
+        self.popup.append(self.popup_remitem)
+        self.popup.append(self.popup_playmenuitem)
 
         # import sources dialogbox
         self._importDialog = None
@@ -672,11 +672,47 @@ class SourceList(gtk.VBox, Loggable):
     def _nothingUnderMouse(self, view, event):
         return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
 
+    def _viewShowPopup(self, view, event):
+        if view != None and self._rowUnderMouseSelected(view, event):
+            self.popup_remitem.set_sensitive(True)
+            self.popup_playmenuitem.set_sensitive(True)
+        elif view != None and (not self._nothingUnderMouse(view, event)):
+            self._viewUnselectAll()
+            self._viewSelectPath(self._viewGetPathAtPos(event))
+            self.popup_remitem.set_sensitive(True)
+            self.popup_playmenuitem.set_sensitive(True)
+        else:
+            self.popup_remitem.set_sensitive(False)
+            self.popup_playmenuitem.set_sensitive(False)
+
+        self.popup.popup(None, None, None, event.button, event.time)
+
+    def _viewGetPathAtPos(self, event):
+        if self.clip_view == SHOW_TREEVIEW:
+            pathinfo = self.treeview.get_path_at_pos(int(event.x), int(event.y))
+            return pathinfo[0]
+        elif self.clip_view == SHOW_ICONVIEW:
+            return self.iconview.get_path_at_pos(int(event.x), int(event.y))
+
+    def _viewSelectPath(self, path):
+        if self.clip_view == SHOW_TREEVIEW:
+            selection = self.treeview.get_selection()
+            selection.select_path(path)
+        elif self.clip_view == SHOW_ICONVIEW:
+            self.iconview.select_path(path)
+
+    def _viewUnselectAll(self):
+        if self.clip_view == SHOW_TREEVIEW:
+            selection = self.treeview.get_selection()
+            selection.unselect_all()
+        elif self.clip_view == SHOW_ICONVIEW:
+            self.iconview.unselect_all()
+
     def _treeViewButtonPressEventCb(self, treeview, event):
         chain_up = True
 
         if event.button == 3:
-            self.popup.popup(None, None, None, event.button, event.time)
+            self._viewShowPopup(treeview, event)
             chain_up = False
 
         else:
@@ -762,7 +798,7 @@ class SourceList(gtk.VBox, Loggable):
 
         #popup menu
         if event.button == 3:
-            self.popup.popup(None, None, None, event.button, event.time)
+            self._viewShowPopup(iconview, event)
             chain_up = False
         else:
             if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
@@ -793,6 +829,10 @@ class SourceList(gtk.VBox, Loggable):
                 if path:
                     iconview.select_path(path)
         return False
+
+    def _textBoxButtonPressEventCb(self, textbox, event):
+        if event.button == 3:
+            self._viewShowPopup(None, event)
 
     def _newProjectCreatedCb(self, app, project):
         # clear the storemodel
