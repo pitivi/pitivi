@@ -44,6 +44,9 @@ from pitivi.ui.common import beautify_factory, factory_name, \
 from pitivi.log.loggable import Loggable
 from pitivi.sourcelist import SourceListError
 
+SHOW_TREEVIEW = 1
+SHOW_ICONVIEW = 2
+
 GlobalSettings.addConfigSection('clip-library')
 GlobalSettings.addConfigOption('lastImportFolder',
     section='clip-library',
@@ -54,6 +57,11 @@ GlobalSettings.addConfigOption('closeImportDialog',
     section='clip-library',
     key='close-import-dialog-after-import',
     default=True)
+GlobalSettings.addConfigOption('lastClipView',
+    section='clip-library',
+    key='last-clip-view',
+    type_=int,
+    default=SHOW_ICONVIEW)
 
 (COL_ICON,
  COL_ICON_LARGE,
@@ -101,6 +109,7 @@ class SourceList(gtk.VBox, Loggable):
         Loggable.__init__(self)
 
         self.app = instance
+        self.settings = instance.settings
 
         # Store
         # icon, infotext, objectfactory, uri, length
@@ -193,6 +202,7 @@ class SourceList(gtk.VBox, Loggable):
 
         # Explanatory message label
         textbox = gtk.EventBox()
+        textbox.connect("button-press-event", self._textBoxButtonPressEventCb)
         textbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
         textbox.show()
 
@@ -209,13 +219,6 @@ class SourceList(gtk.VBox, Loggable):
         self.txtlabel = txtlabel
 
         self.textbox = textbox
-
-        self.pack_start(self.textbox, expand=True, fill=True)
-        self.reorder_child(self.textbox, 0)
-        self.showingTreeView = False
-
-        self.dragMotionSigId = self.txtlabel.connect("drag-motion",
-                                                     self._dragMotionCb)
 
         self.infostub = InfoStub()
         self.infostub.connect("remove-me", self._removeInfoStub)
@@ -284,6 +287,45 @@ class SourceList(gtk.VBox, Loggable):
         uiman.insert_action_group(self.selection_actions, 0)
         uiman.add_ui_from_string(ui)
 
+        # clip view menu items
+        view_menu_item = uiman.get_widget('/MainMenuBar/View')
+        view_menu = view_menu_item.get_submenu()
+        seperator = gtk.SeparatorMenuItem()
+        self.treeview_menuitem = gtk.RadioMenuItem(None,
+                "Show Clips as a List")
+        self.iconview_menuitem = gtk.RadioMenuItem(self.treeview_menuitem,
+                "Show Clips as Icons")
+
+        # update menu items with current clip view before we connect to item
+        # signals
+        if self.settings.lastClipView == SHOW_TREEVIEW:
+            self.treeview_menuitem.set_active(True)
+            self.iconview_menuitem.set_active(False)
+        else:
+            self.treeview_menuitem.set_active(False)
+            self.iconview_menuitem.set_active(True)
+
+        # we only need to connect to one menu item because we get a signal
+        # from each radio item in the group
+        self.treeview_menuitem.connect("toggled", self._treeViewMenuItemToggledCb)
+
+        view_menu.append(seperator)
+        view_menu.append(self.treeview_menuitem)
+        view_menu.append(self.iconview_menuitem)
+        self.treeview_menuitem.show()
+        self.iconview_menuitem.show()
+        seperator.show()
+
+        # add all child widgets
+        self.pack_start(self.textbox, expand=True, fill=True)
+        self.pack_start(self.iconview_scrollwin)
+        self.pack_start(self.treeview_scrollwin)
+
+        # display the help text
+        self.showing_helptext = None
+        self.clip_view = self.settings.lastClipView
+        self._displayHelpText()
+
     def _importSourcesCb(self, unused_action):
         self.showImportSourcesDialog()
 
@@ -341,43 +383,53 @@ class SourceList(gtk.VBox, Loggable):
 
 
     ## Explanatory message methods
+    
+    def _setClipView(self, show):
+        """ Set which clip view to use when sourcelist is showing clips. If
+        none is given, the current one is used. Show: one of SHOW_TREEVIEW or
+        SHOW_ICONVIEW """
 
-    def _displayTreeView(self, displayed=True, usesignals=True):
-        """ Display the tree view in the scrolled window.
-        If displayed is False, then the default explanation message will be
-        shown.
-        If usesignals is True, then signals on the mesagewindow will be
-        (dis)connected
-        """
-        if displayed:
-            if self.showingTreeView:
-                return
+        # save current selection
+        paths = self.getSelectedPaths()
+
+        # update saved clip view
+        self.settings.lastClipView = show
+        self.clip_view = show
+
+        # transfer selection to next view
+        self._viewUnselectAll()
+        for path in paths:
+            self._viewSelectPath(path)
+
+        # if we're not in help text mode, switch to the new clipview
+        if not self.showing_helptext:
+            self._displayClipView()
+
+    def _displayClipView(self):
+
+        # first hide all the child widgets
+        self.showing_helptext = False
+        self.textbox.hide()
+        self.treeview_scrollwin.hide()
+        self.iconview_scrollwin.hide()
+
+        # pick the widget we're actually showing
+        if self.clip_view == SHOW_TREEVIEW:
             self.debug("displaying tree view")
-            self.remove(self.textbox)
-            self.txtlabel.hide()
-            if usesignals:
-                if self.dragMotionSigId:
-                    self.txtlabel.disconnect(self.dragMotionSigId)
-                    self.dragMotionSigId = 0
-            self.pack_start(self.scrollwin)
-            self.reorder_child(self.scrollwin, 0)
-            self.scrollwin.show_all()
-            self.showingTreeView = True
-        else:
-            if not self.showingTreeView:
-                return
-            self.debug("hiding tree view")
-            self.remove(self.scrollwin)
-            self.scrollwin.hide()
-            self.pack_start(self.textbox)
-            self.reorder_child(self.textbox, 0)
-            self.txtlabel.show()
-            self.showingTreeView = False
+            widget = self.treeview_scrollwin
+        elif self.clip_view == SHOW_ICONVIEW:
+            self.debug("displaying icon view")
+            widget = self.iconview_scrollwin
 
-    def _dragMotionCb(self, unused_layout, unused_context, unused_x, unused_y,
-                      unused_timestamp):
-        self.log("motion")
-        gobject.idle_add(self._displayTreeView, True, False)
+        # now un-hide the view
+        widget.show_all()
+
+    def _displayHelpText(self):
+        """Hides the current clip view and displays the help text"""
+        self.textbox.show()
+        self.iconview_scrollwin.hide()
+        self.treeview_scrollwin.hide()
+        self.showing_helptext = True
 
     def showImportSourcesDialog(self, select_folders=False):
         """Pop up the "Import Sources" dialog box"""
@@ -467,7 +519,7 @@ class SourceList(gtk.VBox, Loggable):
             duration,
             factory_name(factory),
             short_text])
-        self._displayTreeView()
+        self._displayClipView()
 
     # sourcelist callbacks
 
@@ -484,7 +536,7 @@ class SourceList(gtk.VBox, Loggable):
                 model.remove(row.iter)
                 break
         if not len(model):
-            self._displayTreeView(False)
+            self._displayHelpText()
 
     def _discoveryErrorCb(self, unused_sourcelist, uri, reason, extra):
         """ The given uri isn't a media file """
@@ -541,15 +593,18 @@ class SourceList(gtk.VBox, Loggable):
         self._importDialog = None
 
     def _removeSources(self):
-        tsel = self.treeview.get_selection()
-        if tsel.count_selected_rows() < 1:
+        model = self.storemodel
+        paths = self.getSelectedPaths()
+        if paths == None or paths < 1:
             return
-        model, selected = tsel.get_selected_rows()
-        # Sort the list in reverse order so we remove from
-        # the end and make sure that the paths are always valid
-        selected.sort(reverse=True)
-        for path in selected:
-            uri = model[path][COL_URI]
+        # use row references so we don't have to care if a path has been removed
+        rows = []
+        for path in paths:
+            row = gtk.TreeRowReference(model, path)
+            rows.append(row)
+
+        for row in rows:
+            uri = model[row.get_path()][COL_URI]
             self.app.current.sources.removeUri(uri)
 
     ## UI Button callbacks
@@ -565,13 +620,21 @@ class SourceList(gtk.VBox, Loggable):
     def _playButtonClickedCb(self, unused_widget):
         """ Called when a user clicks on the play button """
         # get the selected filesourcefactory
-        model, paths = self.treeview.get_selection().get_selected_rows()
+        paths = self.getSelectedPaths()
+        model = self.storemodel
         if len(paths) < 1:
             return
         path = paths[0]
         factory = model[path][COL_FACTORY]
         self.debug("Let's play %s", factory.uri)
         self.emit('play', factory)
+
+    def _treeViewMenuItemToggledCb(self, unused_widget):
+        if self.treeview_menuitem.get_active():
+            show = SHOW_TREEVIEW
+        else:
+            show = SHOW_ICONVIEW
+        self._setClipView(show)
 
     _dragStarted = False
     _dragButton = None
@@ -647,7 +710,7 @@ class SourceList(gtk.VBox, Loggable):
         return False
 
     def _treeSelectionChanged(self, tsel):
-        if self.getSelectedItems():
+        if self.getSelectedItemsTreeView():
             self.selection_actions.set_sensitive(True)
         else:
             self.selection_actions.set_sensitive(False)
@@ -660,7 +723,6 @@ class SourceList(gtk.VBox, Loggable):
         # clear the storemodel
         self.storemodel.clear()
         self._connectToProject(project)
-
 
     def _newProjectLoadingCb(self, unused_pitivi, uri):
         if not self.infostub.showing:
@@ -719,10 +781,25 @@ class SourceList(gtk.VBox, Loggable):
             row = model[paths[0]]
             context.set_icon_pixbuf(row[COL_ICON], 0, 0)
 
-    def getSelectedItems(self):
+    def getSelectedPaths(self):
         """ returns a list of selected items uri """
+        if self.clip_view == SHOW_TREEVIEW:
+            return self.getSelectedPathsTreeView()
+        elif self.clip_view == SHOW_ICONVIEW:
+            return self.getSelectedPathsIconView()
+
+    def getSelectedPathsTreeView(self):
         model, rows = self.treeview.get_selection().get_selected_rows()
-        return [model[path][COL_URI] for path in rows]
+        return rows
+
+    def getSelectedPathsIconView(self):
+        paths = self.iconview.get_selected_items()
+        paths.reverse()
+        return paths
+
+    def getSelectedItems(self):
+        return [self.storemodel[path][COL_URI] 
+            for path in self.getSelectedPaths()]
 
     def _dndDataGetCb(self, unused_widget, context, selection,
                       targettype, unused_eventtime):
