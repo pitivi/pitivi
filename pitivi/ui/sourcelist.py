@@ -677,7 +677,16 @@ class SourceList(gtk.VBox, Loggable):
             self.popup_remitem.set_sensitive(True)
             self.popup_playmenuitem.set_sensitive(True)
         elif view != None and (not self._nothingUnderMouse(view, event)):
-            self._viewUnselectAll()
+            if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
+                self._viewUnselectAll()
+            elif self.clip_view == SHOW_TREEVIEW and self._viewHasSelection() \
+                    and (event.state & gtk.gdk.SHIFT_MASK):
+                selection = self.treeview.get_selection()
+                start_path = self._viewGetFirstSelected()
+                end_path = self._viewGetPathAtPos(event)
+                self._viewUnselectAll()
+                selection.select_range(start_path, end_path)
+
             self._viewSelectPath(self._viewGetPathAtPos(event))
             self.popup_remitem.set_sensitive(True)
             self.popup_playmenuitem.set_sensitive(True)
@@ -686,6 +695,14 @@ class SourceList(gtk.VBox, Loggable):
             self.popup_playmenuitem.set_sensitive(False)
 
         self.popup.popup(None, None, None, event.button, event.time)
+
+    def _viewGetFirstSelected(self):
+        paths = self.getSelectedPaths()
+        return paths[0]
+
+    def _viewHasSelection(self):
+        paths = self.getSelectedPaths()
+        return bool(len(paths))
 
     def _viewGetPathAtPos(self, event):
         if self.clip_view == SHOW_TREEVIEW:
