@@ -340,11 +340,12 @@ def get_stream_for_caps(caps, pad=None):
         ret = VideoStream(caps, pad_name, stream_type == 'image')
     elif stream_type == 'audio':
         ret = AudioStream(caps, pad_name)
-    elif stream_type == 'text':
+    elif stream_type in ('text', 'subpicture'):
         ret = TextStream(caps, pad_name)
     return ret
 
 def get_stream_for_pad(pad):
+    log.debug("stream", "pad:%r")
     caps = pad.props.caps
     if caps is None:
         caps = pad.get_caps()
