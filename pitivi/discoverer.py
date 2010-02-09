@@ -508,6 +508,7 @@ class Discoverer(Signallable, Loggable):
     def _newPadCb(self, pad):
         queue = gst.element_factory_make('queue')
         fakesink = gst.element_factory_make('fakesink')
+        fakesink.props.num_buffers = 1
         self.dynamic_elements.append(queue)
         self.dynamic_elements.append(fakesink)
 
