@@ -20,6 +20,8 @@
 # Boston, MA 02111-1307, USA.
 
 
+import os
+
 from pitivi.configure import APPNAME
 from pitivi.log.loggable import Loggable
 from pitivi.signalinterface import Signallable
@@ -271,3 +273,40 @@ class GnomeSystem(FreedesktopOrgSystem):
                 self.debug("uninhibited")
             else:
                 self.debug("already uninhibited")
+
+
+system_ = None
+
+#attempts to identify the System, import dependencies and overide system_
+if os.name == 'posix':
+    if 'GNOME_DESKTOP_SESSION_ID' in os.environ:
+        try:
+            import pynotify
+            import dbus
+            pynotify.init(APPNAME)
+            system_ = GnomeSystem
+        except:
+            pass
+
+    if  system_ == None:
+        try:
+            import pynotify
+            pynotify.init(APPNAME)
+            system_ = FreedesktopOrgSystem
+        except:
+            pass
+elif os.name == 'nt':
+    pass
+elif os.name == 'mac':
+    pass
+
+
+def getSystem():
+    system = None
+    if system_ != None:
+        system = system_()
+
+    if system == None:
+        system = System()
+
+    return system
