@@ -124,8 +124,10 @@ class SmartVideoScale(gst.Bin):
         dar = gst.Fraction(1, 1)
         if force or (caps and caps.is_fixed()):
             struc = caps[0]
-            width = struc["width"]
-            height = struc["height"]
+            if struc.has_field("width"):
+                width = struc["width"]
+            if struc.has_field("height"):
+                height = struc["height"]
             if struc.has_field('pixel-aspect-ratio'):
                 par = struc['pixel-aspect-ratio']
             dar = gst.Fraction(width * par.num, height * par.denom)
