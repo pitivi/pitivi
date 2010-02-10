@@ -22,6 +22,7 @@ pitivi_PYTHON = \
 	signalinterface.py \
 	sourcelist.py 	\
 	sourcelist_undo.py \
+	system.py	\
 	threads.py	\
 	thumbnailcache.py \
 	undo.py		\
