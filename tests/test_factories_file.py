@@ -140,23 +140,26 @@ class TestPictureFileSourceFactory(TestCase):
         self.factory.addOutputStream(video2)
         self.factory.addOutputStream(audio)
 
-        if gst.registry_get_default().find_feature('ffvideoscale',
-                gst.ElementFactory):
-            bin = self.factory.makeBin(video2)
-            # for width < 2048 we should use ffvideoscale
-            scale = bin.get_by_name("scale")
-            self.failUnlessEqual(scale.get_factory().get_name(), 'ffvideoscale')
-            self.factory.releaseBin(bin)
+        # We're no longer using ffvideoscale, so this check is obsolete. 
+        # TODO: implement this functinality in smartscale, and test it
+        # separately
+        #if gst.registry_get_default().find_feature('ffvideoscale',
+        #        gst.ElementFactory):
+        #    bin = self.factory.makeBin(video2)
+        #    # for width < 2048 we should use ffvideoscale
+        #    scale = bin.get_by_name("scale")
+        #    #self.failUnlessEqual(scale.get_factory().get_name(), 'ffvideoscale')
+        #    self.factory.releaseBin(bin)
 
         # if ffvideoscale isn't available we should still fallback to videoscale
-        self.factory.ffscale_factory = 'meh'
-        bin = self.factory.makeBin(video2)
-        scale = bin.get_by_name("scale")
-        self.failUnlessEqual(scale.get_factory().get_name(), 'videoscale')
-        self.factory.releaseBin(bin)
+        #self.factory.ffscale_factory = 'meh'
+        #bin = self.factory.makeBin(video2)
+        #scale = bin.get_by_name("scale")
+        #self.failUnlessEqual(scale.get_factory().get_name(), 'videoscale')
+        #self.factory.releaseBin(bin)
 
-        bin = self.factory.makeBin(video1)
-        # here we expect videoscale instead
-        scale = bin.get_by_name("scale")
-        self.failUnlessEqual(scale.get_factory().get_name(), 'videoscale')
-        self.factory.releaseBin(bin)
+        #bin = self.factory.makeBin(video1)
+        ## here we expect videoscale instead
+        #scale = bin.get_by_name("scale")
+        #self.failUnlessEqual(scale.get_factory().get_name(), 'videoscale')
+        #self.factory.releaseBin(bin)
