@@ -196,3 +196,78 @@ class FreedesktopOrgSystem(System):
             notification.set_icon_from_pixbuf(icon)
 
         notification.show()
+
+
+#org.gnome.SessionManager flags
+INHIBIT_LOGOUT = 1
+INHIBIT_USER_SWITCHING = 2
+INHIBIT_SUSPEND = 4
+INHIBIT_SESSION_IDLE = 8
+
+COOKIE_NONE = 0
+COOKIE_SCREENSAVER = 1
+COOKIE_SLEEP = 2
+
+class GnomeSystem(FreedesktopOrgSystem):
+    def __init__(self):
+        FreedesktopOrgSystem.__init__(self)
+        self.bus = dbus.Bus(dbus.Bus.TYPE_SESSION)
+
+        #connect to gnome sessionmanager
+        self.sessionmanager = self.bus.get_object('org.gnome.SessionManager',
+            '/org/gnome/SessionManager')
+        self.session_iface = dbus.Interface(self.sessionmanager,
+            'org.gnome.SessionManager')
+        self.cookie = None
+        self.cookie_type = COOKIE_NONE
+
+        self.connect('update-power-inhibition', self._updatePowerInhibitionCb)
+
+    def screensaver_is_blockable(self):
+        return True
+
+    def sleep_is_blockable(self):
+        return True
+
+    def _updatePowerInhibitionCb(self, unused_system):
+        #there are two states we want the program to be in, with regards to
+        #power saving, the screen saver is inhibited when the viewer is watched.
+        #or we inhibit sleep/powersaving when we are processing data
+        #we do things the way we do here because the viewer shows the the output
+        #of the render pipeline
+        self.debug("updating power inhibitors")
+        toplevel_id = 0
+
+        #inhibit power saving if we are rendering, maybe downloading a video
+        if self.sleepIsInhibited():
+            if self.cookie_type != COOKIE_SLEEP:
+                new_cookie = self.session_iface.Inhibit(APPNAME, toplevel_id,
+                    self.getSleepInhibitors(), INHIBIT_SUSPEND | INHIBIT_LOGOUT)
+                if self.cookie != None:
+                    self.session_iface.Uninhibit(self.cookie)
+                self.cookie = new_cookie
+                self.cookie_type = COOKIE_SLEEP
+                self.debug("sleep inhibited")
+            else:
+                self.debug("sleep already inhibited")
+        #inhibit screensaver if we are just watching the viewer
+        elif self.screensaverIsInhibited():
+            if self.cookie_type != COOKIE_SCREENSAVER:
+                new_cookie = self.session_iface.Inhibit(APPNAME, toplevel_id,
+                    self.getScreensaverInhibitors(), INHIBIT_SESSION_IDLE)
+                if self.cookie != None:
+                    self.session_iface.Uninhibit(self.cookie)
+                self.cookie = new_cookie
+                self.cookie_type = COOKIE_SCREENSAVER
+                self.debug("screensaver inhibited")
+            else:
+                self.debug("screensaver already inhibited")
+        #unblock everything otherwise
+        else:
+            if self.cookie != COOKIE_NONE:
+                self.session_iface.Uninhibit(self.cookie)
+                self.cookie = None
+                self.cookie_type = COOKIE_NONE
+                self.debug("uninhibited")
+            else:
+                self.debug("already uninhibited")
