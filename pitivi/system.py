@@ -20,6 +20,7 @@
 # Boston, MA 02111-1307, USA.
 
 
+from pitivi.configure import APPNAME
 from pitivi.log.loggable import Loggable
 from pitivi.signalinterface import Signallable
 
@@ -176,3 +177,22 @@ class System(Signallable, Loggable):
     def desktopIsMessageable():
         return False
 
+
+class FreedesktopOrgSystem(System):
+    """provides messaging capabilites for desktops that implement fd.o specs"""
+
+    def __init__(self):
+        System.__init__(self)
+        pynotify.init(APPNAME)
+
+    def desktopIsMesageable(self):
+        return True
+
+    def desktopMessage(self, title, message, icon=None):
+        #call super method for consistent logging
+        System.desktopMessage(title, message, icon)
+        notification = pynotify.Notification(title, message)
+        if icon != None and isinstance(icon, gtk.gdk.Pixbuf):
+            notification.set_icon_from_pixbuf(icon)
+
+        notification.show()
