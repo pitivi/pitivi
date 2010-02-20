@@ -245,9 +245,9 @@ class Interpolator(Signallable, Loggable):
         self.debug("kf.time:%s, ptime:%s, value:%r",
                    gst.TIME_ARGS(kf.time),
                    gst.TIME_ARGS(ptime), value)
+        self._controller.set(self._property.name, ptime, value)
         if kf.time != ptime:
             self._controller.unset(self._property.name, kf.time)
-        self._controller.set(self._property.name, ptime, value)
         self.emit("keyframe-moved", kf)
 
     def getKeyframes(self):
