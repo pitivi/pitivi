@@ -38,8 +38,9 @@ from pitivi.ui.exportsettingswidget import ExportSettingsDialog
 from pitivi.ui.glade import GladeWindow
 from pitivi.action import render_action_for_uri, ViewAction
 from pitivi.factories.base import SourceFactory
+from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.settings import export_settings_to_render_settings
-from pitivi.stream import AudioStream, VideoStream
+from pitivi.stream import VideoStream, AudioStream
 from pitivi.utils import beautify_length
 
 class EncodingDialog(GladeWindow, Loggable):
@@ -174,10 +175,23 @@ class EncodingDialog(GladeWindow, Loggable):
             self.pipeline.connect('eos', self._eosCb)
             self.debug("Setting pipeline to STOP")
             self.pipeline.stop()
-            settings = export_settings_to_render_settings(self.settings)
-            sources = [x for x in self.pipeline.factories if isinstance(x, SourceFactory)]
+
+            # we can only render TimelineSourceFactory
+            timeline_source = self.pipeline.factories.keys()[0]
+            assert isinstance(timeline_source, TimelineSourceFactory)
+            have_video = False
+            have_audio = False
+            for track in timeline_source.timeline.tracks:
+                if isinstance(track.stream, AudioStream) and track.duration > 0:
+                    have_audio = True
+                elif isinstance(track.stream, VideoStream) and \
+                        track.duration > 0:
+                    have_video = True
+            settings = export_settings_to_render_settings(self.settings,
+                    have_video, have_audio)
             self.debug("Creating RenderAction")
-            self.renderaction = render_action_for_uri(self.outfile, settings, *sources)
+            self.renderaction = render_action_for_uri(self.outfile,
+                    settings, timeline_source)
             self.debug("setting action on pipeline")
             self.pipeline.addAction(self.renderaction)
             self.debug("Activating render action")

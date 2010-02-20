@@ -588,19 +588,20 @@ class ExportSettings(Signallable, Loggable):
         if changed:
             self.emit("encoders-changed")
 
-def export_settings_to_render_settings(export):
+def export_settings_to_render_settings(export,
+        have_video=True, have_audio=True):
     # Get the audio and video caps/encoder/settings
     astream = get_stream_for_caps(export.getAudioCaps())
     vstream = get_stream_for_caps(export.getVideoCaps())
 
     encoder_settings = []
-    if export.vencoder is not None:
+    if export.vencoder is not None and have_video:
         vset = StreamEncodeSettings(encoder=export.vencoder,
                                     input_stream=vstream,
                                     encodersettings=export.vcodecsettings)
         encoder_settings.append(vset)
 
-    if export.aencoder is not None:
+    if export.aencoder is not None and have_audio:
         aset = StreamEncodeSettings(encoder=export.aencoder,
                                     input_stream=astream,
                                     encodersettings=export.acodecsettings)
