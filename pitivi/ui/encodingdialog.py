@@ -70,6 +70,8 @@ class EncodingDialog(GladeWindow, Loggable):
             self.pipeline = pipeline
         else:
             self.pipeline = self.project.pipeline
+        self.detectStreamTypes()
+
         self.outfile = None
         self.rendering = False
         self.renderaction = None
@@ -86,8 +88,15 @@ class EncodingDialog(GladeWindow, Loggable):
         self.destroy()
 
     def _displaySettings(self):
-        self.vinfo.set_markup(self.settings.getVideoDescription())
-        self.ainfo.set_markup(self.settings.getAudioDescription())
+        if self.have_video:
+            self.vinfo.set_markup(self.settings.getVideoDescription())
+        else:
+            self.vinfo.set_markup("no video")
+
+        if self.have_audio:
+            self.ainfo.set_markup(self.settings.getAudioDescription())
+        else:
+            self.ainfo.set_markup("no audio")
 
     def _fileButtonClickedCb(self, button):
         dialog = gtk.FileChooserDialog(title=_("Choose file to render to"),
@@ -168,6 +177,20 @@ class EncodingDialog(GladeWindow, Loggable):
         self.debug("delete event")
         self._shutDown()
 
+    def detectStreamTypes(self):
+        self.have_video = False
+        self.have_audio = False
+
+        # we can only render TimelineSourceFactory
+        timeline_source = self.pipeline.factories.keys()[0]
+        assert isinstance(timeline_source, TimelineSourceFactory)
+        for track in timeline_source.timeline.tracks:
+            if isinstance(track.stream, AudioStream) and track.duration > 0:
+                self.have_audio = True
+            elif isinstance(track.stream, VideoStream) and \
+                    track.duration > 0:
+                self.have_video = True
+
     def addRecordAction(self):
         self.debug("renderaction %r", self.renderaction)
         if self.renderaction == None:
@@ -175,23 +198,13 @@ class EncodingDialog(GladeWindow, Loggable):
             self.pipeline.connect('eos', self._eosCb)
             self.debug("Setting pipeline to STOP")
             self.pipeline.stop()
-
-            # we can only render TimelineSourceFactory
-            timeline_source = self.pipeline.factories.keys()[0]
-            assert isinstance(timeline_source, TimelineSourceFactory)
-            have_video = False
-            have_audio = False
-            for track in timeline_source.timeline.tracks:
-                if isinstance(track.stream, AudioStream) and track.duration > 0:
-                    have_audio = True
-                elif isinstance(track.stream, VideoStream) and \
-                        track.duration > 0:
-                    have_video = True
             settings = export_settings_to_render_settings(self.settings,
-                    have_video, have_audio)
+                    self.have_video, self.have_audio)
             self.debug("Creating RenderAction")
+            sources = [factory for factory in self.pipeline.factories
+                    if isinstance(factory, SourceFactory)]
             self.renderaction = render_action_for_uri(self.outfile,
-                    settings, timeline_source)
+                    settings, *sources)
             self.debug("setting action on pipeline")
             self.pipeline.addAction(self.renderaction)
             self.debug("Activating render action")
