@@ -31,12 +31,12 @@ from pitivi.settings import GlobalSettings
 GlobalSettings.addConfigOption('prefsDialogWidth',
     section = "user-interface",
     key = "prefs-dialog-width",
-    default = 400)
+    default = 600)
 
 GlobalSettings.addConfigOption('prefsDialogHeight',
     section = "user-interface",
     key = "prefs-dialog-height",
-    default = 300)
+    default = 400)
 
 class PreferencesDialog(gtk.Window):
 
@@ -52,14 +52,16 @@ class PreferencesDialog(gtk.Window):
         self._current = None
         self._createUi()
         self._fillContents()
-    
+        min_width, min_height = self.contents.size_request()
+        width = max(min_width, self.settings.prefsDialogWidth)
+        height = max(min_height, self.settings.prefsDialogHeight)
+        self.set_default_size(width, height)
+
     def _createUi(self):
         self.set_title(_("Preferences"))
         self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.set_border_width(12)
         self.connect("configure-event", self._configureCb)
-        self.set_default_size(self.settings.prefsDialogWidth,
-            self.settings.prefsDialogHeight)
 
         # basic layout
         vbox = gtk.VBox()
