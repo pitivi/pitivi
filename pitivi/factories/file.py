@@ -88,12 +88,14 @@ class PictureFileSourceFactory(FileSourceFactory):
             scale.props.method = 2
 
         freeze = ImageFreeze()
-        res.add(scale, freeze)
+        csp = gst.element_factory_make("ffmpegcolorspace")
+        res.add(scale, freeze, csp)
         scale.link(freeze)
+        freeze.link(csp)
 
         self.debug("Chaining up with %r", res)
 
-        src_pad = freeze.get_pad("src")
+        src_pad = csp.get_pad("src")
         sink_pad = scale.get_pad("sink")
         src_ghost = gst.GhostPad("src", src_pad)
         sink_ghost = gst.GhostPad("sink", sink_pad)

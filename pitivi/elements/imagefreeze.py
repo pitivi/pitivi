@@ -56,11 +56,11 @@ class ImageFreeze(gst.Element):
     _srctemplate = gst.PadTemplate("src",
                                    gst.PAD_SRC,
                                    gst.PAD_ALWAYS,
-                                   gst.caps_new_any())
+                                   gst.Caps("video/x-raw-rgb; video/x-raw-yuv"))
     _sinktemplate = gst.PadTemplate("sink",
                                    gst.PAD_SINK,
                                    gst.PAD_ALWAYS,
-                                   gst.caps_new_any())
+                                   gst.Caps("video/x-raw-rgb; video/x-raw-yuv"))
     __gsttemplates__ = (_srctemplate, _sinktemplate)
 
     def __init__(self, *args, **kwargs):
