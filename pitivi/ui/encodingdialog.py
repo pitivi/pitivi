@@ -182,8 +182,11 @@ class EncodingDialog(GladeWindow, Loggable):
         self.have_audio = False
 
         # we can only render TimelineSourceFactory
-        timeline_source = self.pipeline.factories.keys()[0]
+        sources = [factory for factory in self.pipeline.factories.keys()
+                if isinstance(factory, SourceFactory)]
+        timeline_source = sources[0]
         assert isinstance(timeline_source, TimelineSourceFactory)
+
         for track in timeline_source.timeline.tracks:
             if isinstance(track.stream, AudioStream) and track.duration > 0:
                 self.have_audio = True
