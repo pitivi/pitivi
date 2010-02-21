@@ -478,9 +478,28 @@ class Discoverer(Signallable, Loggable):
 
         return filename
 
+    def _videoPadSeekCb(self, pad):
+        try:
+            duration = self.pipeline.query_duration(gst.FORMAT_TIME)[0]
+        except gst.QueryError:
+            duration = 0
+
+        if duration:
+            self.pipeline.seek_simple(gst.FORMAT_TIME,
+                    gst.SEEK_FLAG_FLUSH, duration / 3)
+
+        pad.set_blocked_async(False, self._videoPadBlockCb)
+
+    def _videoPadBlockCb(self, pad, blocked):
+        self.debug("video pad blocked: %s" % blocked)
+        if blocked:
+            gobject.timeout_add(0, self._videoPadSeekCb, pad)
+
     def _newVideoPadCb(self, pad):
         """ a new video pad was found """
         self.debug("pad %r", pad)
+
+        pad.set_blocked_async(True, self._videoPadBlockCb)
 
         queue = gst.element_factory_make("queue")
         queue.props.max_size_bytes = 5 * 1024 * 1024
