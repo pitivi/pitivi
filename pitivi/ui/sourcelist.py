@@ -613,9 +613,11 @@ class SourceList(gtk.VBox, Loggable):
             row = gtk.TreeRowReference(model, path)
             rows.append(row)
 
+        self.app.action_log.begin("remove clip from source list")
         for row in rows:
             uri = model[row.get_path()][COL_URI]
             self.app.current.sources.removeUri(uri)
+        self.app.action_log.commit()
 
     ## UI Button callbacks
 
