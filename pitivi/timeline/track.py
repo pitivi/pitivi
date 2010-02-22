@@ -380,7 +380,7 @@ class TrackObject(Signallable, Loggable):
             else:
                 interpolator.attachToElementProperty(gst_object_property,
                         gst_object)
-                interpolator.updateMediaStop(self.media_stop)
+                interpolator.updateMediaStop(self.out_point)
 
                 # remove and add again the keyframes so they are set on the
                 # current controller
