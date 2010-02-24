@@ -7,9 +7,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-01-22 18:03+0000\n"
-"PO-Revision-Date: 2010-01-29 02:25+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-01-29 02:41+0100\n"
+"PO-Revision-Date: 2010-02-25 00:55+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
 "MIME-Version: 1.0\n"
@@ -45,8 +45,8 @@ msgid ""
 "Make sure the plugins were installed and are available in the GStreamer "
 "plugins path."
 msgstr ""
-"Győződjön meg róla, hogy a bővítmények telepítve vannak, és hogy "
-"elérhetők a Gstreamer bővítmények útvonalán."
+"Győződjön meg róla, hogy a bővítmények telepítve vannak, és hogy elérhetők a "
+"Gstreamer bővítmények útvonalán."
 
 #: ../pitivi/check.py:108
 msgid "Could not find the autodetect plugins!"
@@ -66,7 +66,9 @@ msgstr "A jelenleg használt PyGTK nem rendelkezik cairo támogatással!"
 
 #: ../pitivi/check.py:112
 msgid "Please use a version of the GTK+ Python bindings built with cairo support."
-msgstr "Használja a GTK+ Python kötések beépített cairo támogatással rendelkező változatát."
+msgstr ""
+"Használja a GTK+ Python kötések beépített cairo támogatással rendelkező "
+"változatát."
 
 #: ../pitivi/check.py:114
 msgid "Could not initiate the video output plugins"
@@ -78,8 +80,8 @@ msgid ""
 "Make sure you have at least one valid video output sink available "
 "(xvimagesink or ximagesink)"
 msgstr ""
-"Győződjön meg róla, hogy rendelkezik legalább egy érvényes elérhető videokimeneti "
-"bővítménnyel (xvimagesink vagy ximagesink)."
+"Győződjön meg róla, hogy rendelkezik legalább egy érvényes elérhető "
+"videokimeneti bővítménnyel (xvimagesink vagy ximagesink)."
 
 #: ../pitivi/check.py:117
 msgid "Could not initiate the audio output plugins"
@@ -91,8 +93,8 @@ msgid ""
 "Make sure you have at least one valid audio output sink available (alsasink "
 "or osssink)"
 msgstr ""
-"Győződjön meg róla, hogy rendelkezik legalább egy érvényes elérhető hangkimeneti "
-"bővítménnyel (alsasink vagy osssink)."
+"Győződjön meg róla, hogy rendelkezik legalább egy érvényes elérhető "
+"hangkimeneti bővítménnyel (alsasink vagy osssink)."
 
 #: ../pitivi/check.py:120
 msgid "Could not import the cairo Python bindings"
@@ -138,8 +140,8 @@ msgid ""
 "You do not have a recent enough version of the GStreamer Python bindings "
 "(currently %s)"
 msgstr ""
-"A jelenleg használt %s verziójú GStreamer Python kötések nem teszik lehetővé az "
-"alkalmazás futtatását"
+"A jelenleg használt %s verziójú GStreamer Python kötések nem teszik lehetővé "
+"az alkalmazás futtatását"
 
 #: ../pitivi/check.py:135
 #, python-format
@@ -149,7 +151,9 @@ msgstr "Telepítse a legalább %s verziójú GStreamer Python kötéseket."
 #: ../pitivi/check.py:138
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
-msgstr "A jelenleg használt %s verziójú GStreamer nem teszi lehetővé az alkalmazás futtatását"
+msgstr ""
+"A jelenleg használt %s verziójú GStreamer nem teszi lehetővé az alkalmazás "
+"futtatását"
 
 #: ../pitivi/check.py:139
 #, python-format
@@ -245,7 +249,9 @@ msgstr "Nem érhető el forráskezelő."
 #: ../pitivi/discoverer.py:326
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
-msgstr "Nem rendelkezik olyan GStreamer forráselemmel, amely képes a(z) „%s” protokollt kezelni."
+msgstr ""
+"Nem rendelkezik olyan GStreamer forráselemmel, amely képes a(z) „%s” "
+"protokollt kezelni."
 
 #: ../pitivi/discoverer.py:390
 msgid "Pipeline didn't want to go to PAUSED."
@@ -269,7 +275,9 @@ msgstr "A PiTiVi jelenleg nem kezeli az átirányítási fájlokat."
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
 "at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-msgstr "Egy %s folyamat már fut, értesítse a fejlesztőket hibajelentés küldésével a következő címen: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr ""
+"Egy %s folyamat már fut, értesítse a fejlesztőket hibajelentés küldésével a "
+"következő címen: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
 #: ../pitivi/application.py:218
 msgid ""
@@ -293,9 +301,11 @@ msgid ""
 msgstr ""
 "Elindítja a videoszerkesztőt, opcionálisan megnyitva a PROJEKT_FÁJLT.\n"
 "   Ha nincs megadva projekt, a %prog létrehoz egy új projektet.\n"
-"   Ennek alternatívájaként, ha a -i kapcsoló meg van adva, a paramétereket a\n"
+"   Ennek alternatívájaként, ha a -i kapcsoló meg van adva, a paramétereket "
+"a\n"
 "   projektbe importálandó videoklipeknek tekinti.\n"
-"   Ha az -a kapcsoló is meg van adva, akkor a megadott videoklipek hozzáadódnak\n"
+"   Ha az -a kapcsoló is meg van adva, akkor a megadott videoklipek "
+"hozzáadódnak\n"
 "   a projekt idővonalának végéhez is."
 
 #: ../pitivi/application.py:228
@@ -925,7 +935,8 @@ msgid ""
 "See http://www.gnu.org/copyleft/lesser.html for more details"
 msgstr ""
 "GNU Lesser General Public License\n"
-"Bővebb információkért nézze meg a http://www.gnu.org/copyleft/lesser.html honlapot"
+"Bővebb információkért nézze meg a http://www.gnu.org/copyleft/lesser.html "
+"honlapot"
 
 #: ../pitivi/ui/mainwindow.py:735
 msgid "Close without saving"
@@ -1230,7 +1241,7 @@ msgstr "Hossz"
 msgid ""
 "<span size='x-large'>Import your clips by dragging them here or by using the "
 "buttons above.</span>"
-msgstr "<span size='x-large'>A klipek importálásához húzza azokat ide, vagy a fenti gombok használatával.</span>"
+msgstr "<span size='x-large'>Klipjeit ide húzva, vagy a fenti gombok használatával importálhatja.</span>"
 
 #: ../pitivi/ui/sourcelist.py:245
 msgid "_Import clips..."
