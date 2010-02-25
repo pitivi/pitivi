@@ -700,8 +700,9 @@ class Track(Signallable):
         return track_object
 
     def updateDefaultSources(self):
-        for object in self.default_sources:
-            self.composition.remove(object)
+        for source in self.default_sources:
+            self.composition.remove(source)
+            source.set_state(gst.STATE_NULL)
         gaps = Gap.findAllGaps(self.track_objects)
 
         self.default_sources = []
@@ -712,6 +713,7 @@ class Track(Signallable):
             gnl_object.props.duration = gap.initial_duration
             self.composition.add(gnl_object)
             self.default_sources.append(gnl_object)
+            gnl_object.sync_state_with_parent()
 
     def _getMixerForStream(self, stream):
         if isinstance(stream, AudioStream):
@@ -793,6 +795,7 @@ class Track(Signallable):
         track_object.track = self
 
         start_insort_right(self.track_objects, track_object)
+        self.updateDefaultSources()
 
         try:
             self.composition.add(track_object.gnl_object)
@@ -803,7 +806,6 @@ class Track(Signallable):
 
         self._updateMaxPriority()
         self._connectToTrackObject(track_object)
-        self.updateDefaultSources()
 
         self.emit('track-object-added', track_object)
 
