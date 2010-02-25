@@ -385,8 +385,7 @@ class SourceFactory(ObjectFactory):
             # if we have an ayuv stream we don't want any colorspace
             # converter.
 
-            """
-            if not output_stream.has_alpha():
+            if not output_stream.has_alpha(): 
                 b.csp = gst.element_factory_make("ffmpegcolorspace",
                     "internal-colorspace") 
             elif output_stream.videotype == 'video/x-raw-rgb': 
@@ -394,13 +393,6 @@ class SourceFactory(ObjectFactory):
                     "internal-alphacolor")
             else: 
                 b.csp = gst.element_factory_make("identity")
-            """
-            b.csp = gst.element_factory_make("ffmpegcolorspace",
-                "internal-colorspace") 
-            def probe_cb(pad, buf):
-                #gst.debug_set_threshold_for_name("*", 5)
-                return True
-            b.csp.get_pad('src').add_buffer_probe(probe_cb)
 
             b.alpha = gst.element_factory_make("alpha", "internal-alpha")
 
