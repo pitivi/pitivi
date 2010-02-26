@@ -652,6 +652,72 @@ class SourceTrackObject(TrackObject):
         SourceTrackObject.numobjs += 1
         return source
 
+class Transition(Signallable):
+
+    caps = gst.Caps("video/x-raw-yuv,format=(fourcc)AYUV")
+
+    __signals__ = {
+        "start-changed" : ["start"],
+        "duration-changed" : ["duration"],
+        "priority-changed" : ["priority"],
+    }
+
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+        self.start = 0
+        self.duration = 0
+        self.priority = 0
+        self._makeGnlObject()
+        self._connectToTrackObjects(a, b)
+
+    def _makeGnlObject(self):
+        trans = gst.element_factory_make("alpha")
+        self.controller = gst.Controller(trans, "alpha")
+        self.controller.set_interpolation_mode("alpha", gst.INTERPOLATE_LINEAR)
+
+        self.operation = gst.element_factory_make("gnloperation")
+        self.operation.add(trans)
+        self.operation.props.media_start = 0
+        self.operation.props.caps = self.caps
+
+    def _connectToTrackObjects(self, a, b):
+        a.connect("start-changed", self._updateStartDuration)
+        a.connect("duration-changed", self._updateStartDuration)
+        a.connect("priority-changed", self._updatePriority)
+        b.connect("start-changed", self._updateStartDuration)
+        b.connect("priority-changed", self._updatePriority)
+        self._updateStartDuration()
+        self._updatePriority()
+
+    def _updateStartDuration(self, *unused):
+        start = self.b.start
+        end = self.a.start + self.a.duration
+        duration = end - start
+
+        if start != self.start:
+            self.operation.props.start = start
+            self.start = start
+            self.emit("start-changed", start)
+
+        if duration != self.duration:
+            self.operation.props.duration = duration
+            self.operation.props.media_duration = duration
+            self.duration = duration
+            self.emit("duration-changed", duration)
+
+        self.controller.unset_all("alpha")
+        self.controller.set("alpha", 0, 1.0)
+        self.controller.set("alpha", duration, 0.0)
+
+    def _updatePriority(self, *unused):
+        priority = min(self.a.priority, self.b.priority)
+        if priority != self.priority:
+            self.operation.props.priority = min(self.a.priority, 
+                self.b.priority)
+            self.priority = priority
+            self.emit("priority-changed", priority)
+
 class Track(Signallable, Loggable):
     logCategory = "track"
 
