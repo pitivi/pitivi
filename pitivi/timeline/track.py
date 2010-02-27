@@ -726,7 +726,9 @@ class Track(Signallable, Loggable):
         'duration-changed': ['duration'],
         'track-object-added': ['track_object'],
         'track-object-removed': ['track_object'],
-        'max-priority-changed': ['track_object']
+        'max-priority-changed': ['track_object'],
+        'transition-added' : ['transition'],
+        'transition-removed' : ['transition'],
     }
 
     def __init__(self, stream):
@@ -735,6 +737,7 @@ class Track(Signallable, Loggable):
         self.composition.connect('notify::start', self._compositionStartChangedCb)
         self.composition.connect('notify::duration', self._compositionDurationChangedCb)
         self.track_objects = []
+        self.transitions = {}
         self._max_priority = 0
 
         self.mixer = self._getMixerForStream(stream)
@@ -979,3 +982,22 @@ class Track(Signallable, Loggable):
 
     def disableUpdates(self):
         self.composition.props.update = False
+
+    def addTransition(self, transition):
+        a, b = transition.a, transition.b
+        if not ((a in self.track_objects) and
+                (b in self.track_objects)):
+            raise TrackError("One or both track objects not in track")
+        if (a, b) in self.transitions:
+            raise TrackError(
+                "A transition is already defined for these objects")
+        self.composition.add(transition.operation)
+        self.transitions[a, b] = transition
+        self.emit("transition-added", transition)
+
+    def removeTransition(self, transition):
+        a, b = transition.a, transition.b
+        self.composition.remove(transition.operation)
+        del self.transitions[a, b]
+        self.emit("transition-removed", transition)
+
