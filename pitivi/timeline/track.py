@@ -802,12 +802,6 @@ class Track(Signallable, Loggable):
 
     max_priority = property(_getMaxPriority)
 
-    _max_priority = 0
-
-    @property
-    def max_priority(self):
-        return self._max_priority
-
     def _trackObjectPriorityCb(self, trackobject, priority):
         op = self._max_priority
         self._max_priority = max((obj.priority for obj in self.track_objects))
