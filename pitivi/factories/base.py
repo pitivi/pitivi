@@ -30,6 +30,7 @@ from pitivi.elements.singledecodebin import SingleDecodeBin
 from pitivi.elements.smartscale import SmartVideoScale
 from pitivi.signalinterface import Signallable
 from pitivi.stream import match_stream_groups_map, AudioStream, VideoStream
+from pitivi.utils import formatPercent
 
 # FIXME: define a proper hierarchy
 class ObjectFactoryError(Exception):
@@ -226,9 +227,9 @@ class SourceFactory(ObjectFactory):
         self.debug("stream:%r", stream)
         props = ObjectFactory.getInterpolatedProperties(self, stream)
         if isinstance(stream, AudioStream):
-            props.update({"volume" : (0.0, 2.0), formatPercent})
+            props.update({"volume" : (0.0, 2.0, formatPercent)})
         elif isinstance(stream, VideoStream):
-            props.update({"alpha" : (0.0, 1.0), formatPercent})
+            props.update({"alpha" : (0.0, 1.0, formatPercent)})
         self.debug("returning %r", props)
         return props
 
