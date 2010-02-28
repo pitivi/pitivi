@@ -699,8 +699,19 @@ class Track(Signallable):
 
         return track_object
 
-    def updateDefaultSources(self):
+    def _defaultSourceBlockedCb(self, pad, blocked):
+        pass
+
+    def _shutdownDefaultSource(self, source):
+        source = list(source.elements())[0]
+        for srcpad in source.src_pads():
+            srcpad = source.get_pad('src')
+            srcpad.set_blocked_async(True, self._defaultSourceBlockedCb)
+            srcpad.push_event(gst.event_new_flush_start())
+
+    def _updateDefaultSourcesUnchecked(self):
         for source in self.default_sources:
+            self._shutdownDefaultSource(source)
             self.composition.remove(source)
             source.set_state(gst.STATE_NULL)
         gaps = Gap.findAllGaps(self.track_objects)
@@ -713,6 +724,14 @@ class Track(Signallable):
             gnl_object.props.duration = gap.initial_duration
             self.composition.add(gnl_object)
             self.default_sources.append(gnl_object)
+
+    def updateDefaultSources(self):
+        update = self.composition.props.update
+        self.composition.props.update = True
+        try:
+            self._updateDefaultSourcesUnchecked()
+        finally:
+            self.composition.props.update = update
 
     def _getMixerForStream(self, stream):
         if isinstance(stream, AudioStream):
