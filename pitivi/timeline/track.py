@@ -713,7 +713,6 @@ class Track(Signallable):
             gnl_object.props.duration = gap.initial_duration
             self.composition.add(gnl_object)
             self.default_sources.append(gnl_object)
-            gnl_object.sync_state_with_parent()
 
     def _getMixerForStream(self, stream):
         if isinstance(stream, AudioStream):
