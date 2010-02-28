@@ -1139,8 +1139,6 @@ class MoveContext(EditingContext):
         self._restoreValues(self.default_originals)
 
     def finish(self):
-        EditingContext.finish(self)
-
         if isinstance(self.focus, TrackObject):
             focus_timeline_object = self.focus.timeline_object
         else:
@@ -1175,6 +1173,7 @@ class MoveContext(EditingContext):
                 break
 
         if not overlap:
+            EditingContext.finish(self)
             return
 
         self._defaultTo(initial_position, priority)
@@ -1187,6 +1186,7 @@ class MoveContext(EditingContext):
             final_position = initial_position - left_gap.duration
 
         self._defaultTo(final_position, priority)
+        EditingContext.finish(self)
 
     def _defaultTo(self, position, priority):
         if self._snap:
@@ -1305,8 +1305,6 @@ class TrimStartContext(EditingContext):
         return position, priority
 
     def finish(self):
-        EditingContext.finish(self)
-
         initial_position = self.default_originals[self.focus_timeline_object][0]
 
         timeline_objects = [self.focus_timeline_object]
@@ -1318,6 +1316,7 @@ class TrimStartContext(EditingContext):
             left_gap, right_gap = Gap.findAroundObject(self.focus_timeline_object)
             position = initial_position - left_gap.duration
             self._defaultTo(position, self.focus.priority)
+        EditingContext.finish(self)
 
 class TrimEndContext(EditingContext):
 
