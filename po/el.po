@@ -3,18 +3,19 @@
 # This file is distributed under the same license as the PiTiVi package.
 #
 # Simos Xenitellis <simos@gnome.org>, 2006.
+# Jennie Petoumenou <epetoumenou@gmail.com>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-02-19 13:43+0000\n"
-"PO-Revision-Date: 2006-07-03 19:56+0100\n"
-"Last-Translator: Simos Xenitellis <simos@gnome.org>\n"
-"Language-Team: Greek <team@gnome.gr>\n"
+"PO-Revision-Date: 2010-02-28 17:44+0100\n"
+"Last-Translator: Jennie Petoumenou <epetoumenou@gmail.com>\n"
+"Language-Team: Ελληνικά <team@gnome.gr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11.2\n"
+"X-Generator: Lokalize 1.0\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
 #: ../pitivi/check.py:120
@@ -29,7 +30,7 @@ msgstr ""
 
 #: ../pitivi/check.py:123
 msgid "Could not find the GNonLin plugins!"
-msgstr ""
+msgstr "Τα πρόσθετα GNonLin δε βρέθηκαν!"
 
 #: ../pitivi/check.py:124
 msgid ""
