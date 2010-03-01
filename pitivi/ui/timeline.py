@@ -427,10 +427,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # tell current project to import the uri
         # wait for source-added signal, meanwhile ignore dragMotion signals
         # when ready, add factories to the timeline.
-        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
-            uris = selection.data.split("\n")
-        else:
+        if targetType != dnd.TYPE_PITIVI_FILESOURCE:
             context.finish(False, False, timestamp)
+            return
+
+        uris = selection.data.split("\n")
         self._factories = [self.project.sources.getUri(uri) for uri in uris]
         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
         return True
