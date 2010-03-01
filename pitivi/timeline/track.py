@@ -736,6 +736,12 @@ class Track(Signallable, Loggable):
             self.default_sources.append(gnl_object)
 
     def updateDefaultSources(self):
+        if not self.composition.props.update:
+            return
+
+        self.updateDefaultSourcesReal()
+
+    def updateDefaultSourcesReal(self):
         update = self.composition.props.update
         self.composition.props.update = True
         try:
