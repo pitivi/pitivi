@@ -96,6 +96,10 @@ def xdg_data_home(autocreate=True):
     return get_dir(get_env_default("XDG_DATA_HOME",
         os.path.join(os.getenv("HOME"), ".local", "share")), autocreate)
 
+def xdg_cache_home(autocreate=True):
+    return get_dir(get_env_default("XDG_CACHE_HOME",
+        os.path.join(os.getenv("HOME"), ".cache")), autocreate)
+
 def xdg_data_dirs():
     return get_env_dirs("XDG_DATA_DIRS",
         os.path.pathsep.join((os.path.join("usr", "local", "share"),

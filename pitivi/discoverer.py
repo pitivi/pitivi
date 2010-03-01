@@ -42,6 +42,7 @@ from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
 from pitivi.stream import get_stream_for_pad
 from pitivi.signalinterface import Signallable
 from pitivi.stream import VideoStream
+from pitivi.settings import xdg_cache_home
 
 # FIXME: We need to store more information regarding streams
 # i.e. remember the path took to get to a raw stream, and figure out
@@ -471,10 +472,17 @@ class Discoverer(Signallable, Loggable):
         return tmp
 
     def _getThumbnailFilenameFromPad(self, pad):
-        tmp = self._gettempdir()
+        base = xdg_cache_home()
         name = '%s.%s' % (self.current_uri, pad.get_name())
         name = urlsafe_b64encode(name) + '.png'
-        filename = os.path.join(tmp, name)
+        directory = os.path.join(base, "pitivi")
+        try:
+            os.makedirs(directory)
+        except OSError, e:
+            # 17 = file exists
+            if e.errno != 17:
+                raise
+        filename = os.path.join(base, "pitivi", name)
 
         return filename
 
@@ -483,6 +491,8 @@ class Discoverer(Signallable, Loggable):
             duration = self.pipeline.query_duration(gst.FORMAT_TIME)[0]
         except gst.QueryError:
             duration = 0
+
+        self.debug("doing thumbnail seek at %s", gst.TIME_ARGS(duration))
 
         if duration:
             self.pipeline.seek_simple(gst.FORMAT_TIME,
@@ -499,6 +509,21 @@ class Discoverer(Signallable, Loggable):
         """ a new video pad was found """
         self.debug("pad %r", pad)
 
+        thumbnail = self._getThumbnailFilenameFromPad(pad)
+        self.thumbnails[pad] = thumbnail
+
+        if os.path.exists(thumbnail):
+            self.debug("we already have a thumbnail %s for %s", thumbnail, pad)
+            sink = gst.element_factory_make("fakesink")
+            sink.props.num_buffers = 1
+            self.dynamic_elements.append(sink)
+            self.pipeline.add(sink)
+            sink.set_state(gst.STATE_PLAYING)
+
+            pad.link(sink.get_pad("sink"))
+
+            return
+
         pad.set_blocked_async(True, self._videoPadBlockCb)
 
         queue = gst.element_factory_make("queue")
@@ -510,7 +535,6 @@ class Discoverer(Signallable, Loggable):
         pngenc = gst.element_factory_make("pngenc")
         pngenc.props.snapshot = True
         pngsink = gst.element_factory_make("filesink")
-        self.thumbnails[pad] = thumbnail = self._getThumbnailFilenameFromPad(pad)
         pngsink.props.location = thumbnail
 
         self.dynamic_elements.extend([queue, vscale, csp, pngenc, pngsink])
