@@ -202,9 +202,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.action_log.connect("cleaned", self._actionLogCleaned)
 
         # if no webcams available, hide the webcam action
-        self.app.deviceprobe.connect("device-added", self._deviceChangeCb)
-        self.app.deviceprobe.connect("device-removed", self._deviceChangeCb)
-        if len(self.app.deviceprobe.getVideoSourceDevices()) < 1:
+        if self.app.deviceprobe is not None:
+            self.app.deviceprobe.connect("device-added", self._deviceChangeCb)
+            self.app.deviceprobe.connect("device-removed", self._deviceChangeCb)
+            if len(self.app.deviceprobe.getVideoSourceDevices()) < 1:
+                self.webcam_button.set_sensitive(False)
+        else:
             self.webcam_button.set_sensitive(False)
 
         self.show()

@@ -137,7 +137,7 @@ class WebcamManagerDialog(GladeWindow):
         gst.debug("Creating initial SmartCaptureBin")
         # figure out adev
         probe = self.pitivi.deviceprobe
-        if len(probe.getAudioSourceDevices()):
+        if probe is not None and len(probe.getAudioSourceDevices()):
             adev = probe.getAudioSourceDevices()[0]
         else:
             adev = None
@@ -149,8 +149,9 @@ class WebcamManagerDialog(GladeWindow):
             vdev = None
         self._changeSelectedVideo(vdev)
 
-        probe.connect("device-added", self._deviceAddedCb)
-        probe.connect("device-removed", self._deviceRemovedCb)
+        if probe is not None:
+            probe.connect("device-added", self._deviceAddedCb)
+            probe.connect("device-removed", self._deviceRemovedCb)
 
         if hasattr(self, "player"):
             self.player.set_state(gst.STATE_NULL)

@@ -55,13 +55,17 @@ except:
 # * sink : consumes data
 #
 
+def have_hal():
+    bus = dbus.SystemBus()
+    return 'org.freedesktop.Hal' in bus.list_names()
+
 def get_probe():
     """
     Returns the default DeviceProbe for the current system.
 
     If no suitable DeviceProbe implementation is available, returns None.
     """
-    if HAVE_DBUS:
+    if HAVE_DBUS and have_hal():
         return HalDeviceProbe()
     return None
 
