@@ -652,7 +652,9 @@ class SourceTrackObject(TrackObject):
         SourceTrackObject.numobjs += 1
         return source
 
-class Track(Signallable):
+class Track(Signallable, Loggable):
+    logCategory = "track"
+
     __signals__ = {
         'start-changed': ['start'],
         'duration-changed': ['duration'],
@@ -709,8 +711,14 @@ class Track(Signallable):
             srcpad.set_blocked_async(True, self._defaultSourceBlockedCb)
             srcpad.push_event(gst.event_new_flush_start())
 
+    def _sourceDebug(self, source):
+        t = gst.TIME_ARGS
+        return "%s [%s - %s]" % (source, t(source.props.start),
+                t(source.props.start + source.props.duration))
+
     def _updateDefaultSourcesUnchecked(self):
         for source in self.default_sources:
+            self.debug("removing default source %s", self._sourceDebug(source))
             self._shutdownDefaultSource(source)
             self.composition.remove(source)
             source.set_state(gst.STATE_NULL)
@@ -722,6 +730,8 @@ class Track(Signallable):
             gnl_object = source.gnl_object
             gnl_object.props.start = gap.start
             gnl_object.props.duration = gap.initial_duration
+            self.debug("adding default source %s",
+                    self._sourceDebug(source.gnl_object))
             self.composition.add(gnl_object)
             self.default_sources.append(gnl_object)
 
@@ -753,6 +763,8 @@ class Track(Signallable):
         return None
 
     def _videoInputPriorityChangedCb(self, operation, pad, priority, mixer):
+        self.debug("operation %s pad %s priority changed %s",
+                operation, pad, priority)
         mixer.update_priority(pad, priority)
 
     def _getStart(self):
