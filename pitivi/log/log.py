@@ -430,7 +430,7 @@ def stderrHandler(level, object, category, file, line, message):
     safeprintf(sys.stderr, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
                getFormattedLevelName(level), os.getpid(), thread.get_ident(),
                o[:32], category,
-               time.strftime("%b %d %H:%M:%S")
+               time.time()
                , "", message, where)
     sys.stderr.flush()
 

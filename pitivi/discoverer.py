@@ -49,6 +49,40 @@ from pitivi.settings import xdg_cache_home
 # what encoded format it is
 # We will need that in order to create proper Stream objects.
 
+class EOSSir(gst.Element):
+    __gstdetails__ = (
+        "EOSSir",
+        "Generic",
+        "pushes EOS after the first buffer",
+        "Alessandro Decina <alessandro.d@gmail.com>"
+        )
+
+    srctemplate = gst.PadTemplate("src", gst.PAD_SRC,
+            gst.PAD_ALWAYS, gst.Caps("ANY"))
+    sinktemplate = gst.PadTemplate("sink", gst.PAD_SINK,
+            gst.PAD_ALWAYS, gst.Caps("ANY"))
+
+    __gsttemplates__ = (srctemplate, sinktemplate)
+
+    def __init__(self):
+        gst.Element.__init__(self)
+
+        self.sinkpad = gst.Pad(self.sinktemplate, "sink")
+        self.sinkpad.set_chain_function(self.chain)
+        self.add_pad(self.sinkpad)
+
+        self.srcpad = gst.Pad(self.srctemplate, "src")
+        self.add_pad(self.srcpad)
+
+    def chain(self, pad, buf):
+        ret = self.srcpad.push(buf)
+        if ret == gst.FLOW_OK:
+            self.info("pushed, doing EOS")
+            self.srcpad.push_event(gst.event_new_eos())
+
+        return ret
+gobject.type_register(EOSSir)
+
 class Discoverer(Signallable, Loggable):
     """
     Queues requests to discover information about given files.
@@ -185,6 +219,8 @@ class Discoverer(Signallable, Loggable):
         self._finishAnalysisAfterResult(rescan=rescan)
 
     def _emitError(self):
+        self.debug("emitting error %s, %s, %s",
+                self.current_uri, self.error, self.error_detail)
         self.emit("discovery-error", self.current_uri, self.error, self.error_detail)
 
     def _emitErrorMissingPlugins(self):
@@ -511,20 +547,23 @@ class Discoverer(Signallable, Loggable):
 
         thumbnail = self._getThumbnailFilenameFromPad(pad)
         self.thumbnails[pad] = thumbnail
-
-        if os.path.exists(thumbnail):
-            self.debug("we already have a thumbnail %s for %s", thumbnail, pad)
-            sink = gst.element_factory_make("fakesink")
-            sink.props.num_buffers = 1
-            self.dynamic_elements.append(sink)
-            self.pipeline.add(sink)
-            sink.set_state(gst.STATE_PLAYING)
-
-            pad.link(sink.get_pad("sink"))
-
-            return
+        have_thumbnail = os.path.exists(thumbnail)
 
         pad.set_blocked_async(True, self._videoPadBlockCb)
+
+        if have_thumbnail:
+            self.debug("we already have a thumbnail %s for %s", thumbnail, pad)
+            sink = gst.element_factory_make("fakesink")
+            eossir = EOSSir()
+            self.dynamic_elements.extend([eossir, sink])
+            self.pipeline.add(eossir, sink)
+            eossir.set_state(gst.STATE_PLAYING)
+            sink.set_state(gst.STATE_PLAYING)
+
+            pad.link(eossir.get_pad("sink"))
+            eossir.link(sink)
+
+            return
 
         queue = gst.element_factory_make("queue")
         queue.props.max_size_bytes = 5 * 1024 * 1024
