@@ -543,6 +543,7 @@ class Discoverer(Signallable, Loggable):
             ghost = pad
 
         caps = pad.props.caps
+        self.debug("video pad caps notify %s", caps)
         if caps is None or not caps.is_fixed():
             return
 
@@ -587,6 +588,7 @@ class Discoverer(Signallable, Loggable):
             self.unfixed_pads += 1
 
     def _addStreamFromPad(self, pad):
+        self.debug("adding stream from pad %s caps %s", pad, pad.props.caps)
         stream  = get_stream_for_pad(pad)
         self.current_streams.append(stream)
 
