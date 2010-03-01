@@ -315,13 +315,15 @@ class TestAnalysis(TestCase):
 
         video = gst.Pad(video_template)
         audio = gst.Pad(audio_template)
+        video_ghost = gst.GhostPad("video", video)
+        audio_ghost = gst.GhostPad("audio", audio)
 
         self.failUnlessEqual(self.discoverer.current_streams, [])
-        self.discoverer._newDecodedPadCb(None, video, False)
+        self.discoverer._newDecodedPadCb(None, video_ghost, False)
         self.failUnlessEqual(len(self.discoverer.current_streams), 0)
         self.failUnlessEqual(self.discoverer.new_video_pad_cb, 1)
 
-        self.discoverer._newDecodedPadCb(None, audio, False)
+        self.discoverer._newDecodedPadCb(None, audio_ghost, False)
         self.failUnlessEqual(len(self.discoverer.current_streams), 0)
         self.failUnlessEqual(self.discoverer.new_video_pad_cb, 1)
 
