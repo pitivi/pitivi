@@ -711,7 +711,7 @@ class Pipeline(Signallable, Loggable):
 
         stream_entry.queue = gst.element_factory_make("queue")
         stream_entry.queue.props.max_size_time = queuesize * gst.SECOND
-        stream_entry.queue.props.max_size_buffers = 0
+        stream_entry.queue.props.max_size_buffers = 3
         stream_entry.queue.props.max_size_bytes = 0
         self._pipeline.add(stream_entry.queue)
         stream_entry.queue.set_state(STATE_PAUSED)

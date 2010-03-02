@@ -185,6 +185,7 @@ class SingleDecodeBin(gst.Bin):
     def _plugDecodingQueue(self, pad):
         queue = gst.element_factory_make("queue")
         queue.props.max_size_time = self.QUEUE_SIZE
+        queue.props.max_size_buffers = 3
         self.add(queue)
         queue.sync_state_with_parent()
         pad.link(queue.get_pad("sink"))
