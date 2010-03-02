@@ -289,18 +289,16 @@ class Seeker(Signallable):
         self.format = None
 
     def seek(self, position, format=gst.FORMAT_TIME, on_idle=False):
+        self.position = position
+        self.format = format
+
         if self.pending_seek_id is None:
-            self.position = position
-            self.format = format
             if on_idle:
                 gobject.idle_add(self._seekTimeoutCb)
             else:
                 self._seekTimeoutCb()
             self.pending_seek_id = self._scheduleSeek(self.timeout,
                     self._seekTimeoutCb)
-        else:
-            self.position = position
-            self.format = format
 
     def _scheduleSeek(self, timeout, callback):
         return gobject.timeout_add(timeout, callback)
