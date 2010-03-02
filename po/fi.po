@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-19 11:58+0200\n"
-"PO-Revision-Date: 2010-02-19 11:58+0200\n"
+"POT-Creation-Date: 2010-03-01 20:56+0200\n"
+"PO-Revision-Date: 2010-03-01 20:57+0200\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -238,15 +238,17 @@ msgstr "Lähteen käsittelijää ei saatavilla."
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr ""
+"Yhteyskäytännön ”%s” käsittelyyn tarvittavaa GStreamer-lähde-elementtiä ei "
+"ole"
 
 #: ../pitivi/discoverer.py:390
 msgid "Pipeline didn't want to go to PAUSED."
 msgstr "Liukuhihna kieltäytyi pysäyttämisestä."
 
 #: ../pitivi/discoverer.py:413
-#, fuzzy, python-format
+#, python-format
 msgid "An internal error occurred while analyzing this file: %s"
-msgstr "Tapahtui virhe analysoitaessa tätä tiedostoa: %s"
+msgstr "Tapahtui sisäinen virhe analysoitaessa tätä tiedostoa: %s"
 
 #: ../pitivi/discoverer.py:423
 msgid "File contains a redirection to another clip."
@@ -257,11 +259,14 @@ msgid "PiTiVi currently does not handle redirection files."
 msgstr "PiTiVi ei tällä hetkellä käsittele uudelleenohjaustiedostoja."
 
 #: ../pitivi/application.py:121
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
 "at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-msgstr "Instanssi %s on jo olemassa, raportoi vika kehittäjille"
+msgstr ""
+"Instanssi %s on jo olemassa, raportoi vika kehittäjille luomalla "
+"virheraportti osoitteessa http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=pitivi"
 
 #: ../pitivi/application.py:218
 msgid ""
@@ -283,22 +288,27 @@ msgid ""
 "added to\n"
 "    the end of the project timeline."
 msgstr ""
+"Käynnistää videoeditorin, valinnaisesti ladaten PROJEKTITIEDOSTOn. Jos\n"
+"    projektia ei anneta, %prog luo uuden projektin.\n"
+"    Vaihtoehtoisesti, kun -i on määritelty, argumentit käsitellään "
+"projektiin     tuotavina videoleikkeinä. Jos -a on määritelty, nämä leikkeet "
+"myös     lisätään projektin aikajanan loppuun."
 
 #: ../pitivi/application.py:228
 msgid "Import each MEDIA_FILE into the project."
-msgstr ""
+msgstr "Tuo kukin MEDIATIEDOSTO projektiin."
 
 #: ../pitivi/application.py:230
 msgid "Add each MEDIA_FILE to timeline after importing."
-msgstr ""
+msgstr "Lisää jokainen MEDIATIEDOSTO aikajanalle tuonnin jälkeen."
 
 #: ../pitivi/application.py:231
 msgid "Run pitivi in the Python Debugger"
-msgstr ""
+msgstr "Suorita pitivi Python-virheenjäljittimessä"
 
 #: ../pitivi/application.py:233
 msgid "Run pitivi with no gui"
-msgstr ""
+msgstr "Suorita pitivi ilman graafista käyttöliittymää"
 
 #: ../pitivi/projectmanager.py:95
 msgid "Not a valid project file."
@@ -510,20 +520,20 @@ msgstr "Valitse tulostiedosto"
 msgid "Render project"
 msgstr "Tuota projekti"
 
-#: ../pitivi/ui/encodingdialog.py:92
+#: ../pitivi/ui/encodingdialog.py:102
 msgid "Choose file to render to"
 msgstr "Valitse tiedosto, johon tuotetaan"
 
-#: ../pitivi/ui/encodingdialog.py:127
+#: ../pitivi/ui/encodingdialog.py:137
 #, python-format
 msgid "About %s left"
 msgstr "Noin %s jäljellä"
 
-#: ../pitivi/ui/encodingdialog.py:137
+#: ../pitivi/ui/encodingdialog.py:147
 msgid "Rendering"
 msgstr "Tuotetaan"
 
-#: ../pitivi/ui/encodingdialog.py:154
+#: ../pitivi/ui/encodingdialog.py:164
 msgid "Rendering Complete"
 msgstr "Tuottaminen valmistui"
 
@@ -893,19 +903,19 @@ msgstr "Aikajanatyökalupalkki"
 msgid "Clip Library"
 msgstr "Leikekirjasto"
 
-#: ../pitivi/ui/mainwindow.py:530
+#: ../pitivi/ui/mainwindow.py:528
 msgid "Open File..."
 msgstr "Avaa tiedosto..."
 
-#: ../pitivi/ui/mainwindow.py:546
+#: ../pitivi/ui/mainwindow.py:544
 msgid "All Supported Formats"
 msgstr "Kaikki tuetut muodot"
 
-#: ../pitivi/ui/mainwindow.py:612
+#: ../pitivi/ui/mainwindow.py:610
 msgid "Contributors:"
 msgstr "Avustajat:"
 
-#: ../pitivi/ui/mainwindow.py:624
+#: ../pitivi/ui/mainwindow.py:622
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -913,49 +923,48 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Lue lisää osoitteesta http://www.gnu.org/copyleft/lesser.html"
 
-#: ../pitivi/ui/mainwindow.py:743
+#: ../pitivi/ui/mainwindow.py:741
 msgid "Close without saving"
 msgstr "Sulje tallentamatta"
 
-#: ../pitivi/ui/mainwindow.py:756
+#: ../pitivi/ui/mainwindow.py:754
 msgid "Save changes to the current project before closing?"
 msgstr "Tallenna muutokset nykyiseen projektiin ennen sulkemista?"
 
-#: ../pitivi/ui/mainwindow.py:763
+#: ../pitivi/ui/mainwindow.py:761
 msgid "If you don't save some of your changes will be lost"
 msgstr "Jos et tallenna, jotkin muutokset häviävät"
 
-#: ../pitivi/ui/mainwindow.py:816
+#: ../pitivi/ui/mainwindow.py:814
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi ei voi ladata tiedostoa ”%s”"
 
-#: ../pitivi/ui/mainwindow.py:819
+#: ../pitivi/ui/mainwindow.py:817
 msgid "Error Loading File"
 msgstr "Virhe ladattaessa tiedostoa"
 
-#: ../pitivi/ui/mainwindow.py:826
+#: ../pitivi/ui/mainwindow.py:824
 msgid "Locate missing file..."
 msgstr "Paikallista puuttuva tiedosto..."
 
-#: ../pitivi/ui/mainwindow.py:835
-#, fuzzy
+#: ../pitivi/ui/mainwindow.py:833
 msgid "The following file has moved, please tell PiTiVi where to find it."
-msgstr "Seuraavaa tiedostoa ei voi käyttää PiTiVissä."
+msgstr "Seuraava tiedosto on siirretty, kerro PiTiVille mistä se löytyy."
 
-#: ../pitivi/ui/mainwindow.py:837
+#: ../pitivi/ui/mainwindow.py:835
 msgid "Duration:"
 msgstr "Kesto:"
 
-#: ../pitivi/ui/mainwindow.py:978
+#: ../pitivi/ui/mainwindow.py:976
 msgid "Save As..."
 msgstr "Tallenna nimellä..."
 
-#: ../pitivi/ui/mainwindow.py:986
+#: ../pitivi/ui/mainwindow.py:984
 msgid "Untitled.xptv"
 msgstr "Nimetön.xptv"
 
-#: ../pitivi/ui/mainwindow.py:997 ../pitivi/ui/mainwindow.py:1010
+#: ../pitivi/ui/mainwindow.py:995 ../pitivi/ui/mainwindow.py:1008
 msgid "Detect Automatically"
 msgstr "Tunnista automaattisesti"
 
@@ -1078,47 +1087,51 @@ msgid "Update the existing plugin?"
 msgstr "Päivitetäänkö olemassa oleva liitännäinen?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:324
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This plugin is already installed in your system.\n"
 "If you agree, version %(v1)s will be replaced with version %(v2)s"
-msgstr "Jos haluat, versio %s korvataan versiolla %s"
+msgstr ""
+"Tämä liitännäinen on jo asennettu järjestelmään.\n"
+"Jos haluat, versio %(v1)s korvataan versiolla %(v2)s"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:327
 msgid "Duplicate plugin found"
 msgstr "Löytyi kahdennettu liitännäinen"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:341
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Cannot install %s\n"
 "The file is not a valid plugin"
-msgstr "Tiedosto ei ole kelvollinen liitännäinen."
+msgstr ""
+"%s ei voi asentaa\n"
+"Tiedosto ei ole kelvollinen liitännäinen"
 
-#: ../pitivi/ui/prefs.py:57
+#: ../pitivi/ui/prefs.py:61
 msgid "Preferences"
 msgstr "Asetukset"
 
-#: ../pitivi/ui/prefs.py:83
+#: ../pitivi/ui/prefs.py:85
 msgid "Section"
 msgstr "Osio"
 
 #. revert, close buttons
-#: ../pitivi/ui/prefs.py:104
+#: ../pitivi/ui/prefs.py:106
 msgid "Reset to Factory Settings"
 msgstr "Palauta oletusasetuksiin"
 
-#: ../pitivi/ui/prefs.py:108
+#: ../pitivi/ui/prefs.py:110
 msgid "Revert"
 msgstr "Palauta"
 
-#: ../pitivi/ui/prefs.py:123
+#: ../pitivi/ui/prefs.py:125
 msgid "Some changes will not take effect until you restart PiTiVi"
 msgstr ""
 "Jotkin muutoksista eivät tule voimaa, ennen kuin PiTiVi käynnistetään "
 "uudelleen"
 
-#: ../pitivi/ui/prefs.py:318
+#: ../pitivi/ui/prefs.py:320
 msgid "Reset"
 msgstr "Palauta oletuksiin"
 
@@ -1253,31 +1266,31 @@ msgstr "Tuo leike"
 msgid "Close after importing files"
 msgstr "Sulje tiedostojen tuonnin jälkeen"
 
-#: ../pitivi/ui/sourcelist.py:964
+#: ../pitivi/ui/sourcelist.py:966
 msgid "Importing clips..."
 msgstr "Tuodaan leikkeitä..."
 
-#: ../pitivi/ui/sourcelist.py:965
+#: ../pitivi/ui/sourcelist.py:967
 msgid "Error(s) occurred while importing"
 msgstr "Tuotaessa tapahtui virheitä"
 
-#: ../pitivi/ui/sourcelist.py:966
+#: ../pitivi/ui/sourcelist.py:968
 msgid "An error occurred while importing"
 msgstr "Tuotaessa tapahtui virhe"
 
-#: ../pitivi/ui/sourcelist.py:1055
+#: ../pitivi/ui/sourcelist.py:1057
 msgid "Error while analyzing files"
 msgstr "Virhe analysoitaessa tiedostoja"
 
-#: ../pitivi/ui/sourcelist.py:1056
+#: ../pitivi/ui/sourcelist.py:1058
 msgid "The following files can not be used with PiTiVi."
 msgstr "Seuraavia tiedostoja ei voi käyttää PiTiVin kanssa."
 
-#: ../pitivi/ui/sourcelist.py:1058
+#: ../pitivi/ui/sourcelist.py:1060
 msgid "Error while analyzing a file"
 msgstr "Virhe analysoitaessa tiedostoa"
 
-#: ../pitivi/ui/sourcelist.py:1059
+#: ../pitivi/ui/sourcelist.py:1061
 msgid "The following file can not be used with PiTiVi."
 msgstr "Seuraavaa tiedostoa ei voi käyttää PiTiVissä."
 
@@ -1323,9 +1336,8 @@ msgid "Error List"
 msgstr "Virheluettelo"
 
 #: ../pitivi/ui/timeline.py:158
-#, fuzzy
 msgid "The following errors have been reported:"
-msgstr "Seuraavaa tiedostoa ei voi käyttää PiTiVissä."
+msgstr "Seuraavia virheitä on havaittu:"
 
 #: ../pitivi/ui/timeline.py:224
 msgid "Zoom Timeline"
