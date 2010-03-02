@@ -507,7 +507,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.ruler.setProjectFrameRate(self.project.getSettings().videorate)
             self.ruler.zoomChanged()
             self._settingsChangedCb(self.project, None, self.project.getSettings())
-            self.seeker = self.project.seeker
+            self._seeker = self.project.seeker
 
     project = receiver(_setProject)
 
