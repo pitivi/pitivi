@@ -127,23 +127,23 @@ class SourceList(gtk.VBox, Loggable):
 
         # Popup Menu
         self.popup = gtk.Menu()
-        self.popup_additem = gtk.ImageMenuItem(_("Add Clips..."))
+        self.popup_importitem = gtk.ImageMenuItem(_("Import clips..."))
         image = gtk.Image()
         image.set_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU)
-        self.popup_additem.set_image(image)
+        self.popup_importitem.set_image(image)
 
         self.popup_remitem = gtk.ImageMenuItem(_("Remove Clip"))
         image = gtk.Image()
         image.set_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_MENU)
         self.popup_remitem.set_image(image)
         self.popup_playmenuitem = gtk.MenuItem(_("Play Clip"))
-        self.popup_playmenuitem.connect("activate", self._playButtonClickedCb)
-        self.popup_additem.connect("activate", self._addButtonClickedCb)
+        self.popup_importitem.connect("activate", self._importButtonClickedCb)
         self.popup_remitem.connect("activate", self._removeButtonClickedCb)
-        self.popup_additem.show()
+        self.popup_playmenuitem.connect("activate", self._playButtonClickedCb)
+        self.popup_importitem.show()
         self.popup_remitem.show()
         self.popup_playmenuitem.show()
-        self.popup.append(self.popup_additem)
+        self.popup.append(self.popup_importitem)
         self.popup.append(self.popup_remitem)
         self.popup.append(self.popup_playmenuitem)
 
@@ -621,8 +621,8 @@ class SourceList(gtk.VBox, Loggable):
 
     ## UI Button callbacks
 
-    def _addButtonClickedCb(self, unused_widget=None):
-        """ called when a user clicks on the add button """
+    def _importButtonClickedCb(self, unused_widget=None):
+        """ Called when a user clicks on the import button """
         self.showImportSourcesDialog()
 
     def _removeButtonClickedCb(self, unused_widget=None):
