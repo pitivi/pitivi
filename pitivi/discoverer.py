@@ -627,8 +627,6 @@ class Discoverer(Signallable, Loggable):
             self._newPadCb(pad)
 
         # try to get the duration
-        # NOTE: this gets the duration only once, usually for the first stream.
-        # Demuxers don't seem to implement per stream duration queries anyway.
         self._maybeQueryDuration(pad)
 
         caps = pad.props.caps
@@ -651,6 +649,7 @@ class Discoverer(Signallable, Loggable):
             self.unfixed_pads += 1
 
     def _addStreamFromPad(self, pad):
+        self._maybeQueryDuration(pad)
         self.debug("adding stream from pad %s caps %s", pad, pad.props.caps)
         stream  = get_stream_for_pad(pad)
         self.current_streams.append(stream)
