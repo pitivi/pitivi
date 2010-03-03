@@ -259,16 +259,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.show_all()
         self.infostub.hide()
 
-        # drag and drop
-        self.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
-            [dnd.FILESOURCE_TUPLE],
-            gtk.gdk.ACTION_COPY)
-
-        self.connect("drag-data-received", self._dragDataReceivedCb)
-        self.connect("drag-leave", self._dragLeaveCb)
-        self.connect("drag-drop", self._dragDropCb)
-        self.connect("drag-motion", self._dragMotionCb)
-
         # toolbar actions
         actions = (
             ("ZoomIn", gtk.STOCK_ZOOM_IN, None, "<Control>equal", ZOOM_IN,
