@@ -479,7 +479,7 @@ class SourceFactory(ObjectFactory):
     def setFilterCaps(self, caps):
         self._filtercaps = caps
         for b in self.bins:
-            if hasattr(b, "filter"):
+            if hasattr(b, "scale"):
                 b.scale.set_caps(caps)
                 b.scale._computeAndSetValues()
 
