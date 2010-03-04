@@ -541,6 +541,22 @@ class Discoverer(Signallable, Loggable):
         if blocked:
             gobject.timeout_add(0, self._videoPadSeekCb, pad)
 
+    def _addVideoBufferProbe(self, pad):
+        closure = {}
+        closure['probe_id'] = pad.add_buffer_probe(self._videoBufferProbeCb,
+                closure)
+
+    def _removeVideoBufferProbe(self, pad, closure):
+        pad.remove_buffer_probe(closure['probe_id'])
+
+    def _videoBufferProbeCb(self, pad, buf, closure):
+        self.debug("video buffer probe for pad %s", pad)
+        self._removeVideoBufferProbe(pad, closure)
+
+        pad.set_blocked_async(True, self._videoPadBlockCb)
+
+        return False
+
     def _newVideoPadCb(self, pad):
         """ a new video pad was found """
         self.debug("pad %r", pad)
@@ -548,8 +564,6 @@ class Discoverer(Signallable, Loggable):
         thumbnail = self._getThumbnailFilenameFromPad(pad)
         self.thumbnails[pad] = thumbnail
         have_thumbnail = os.path.exists(thumbnail)
-
-        pad.set_blocked_async(True, self._videoPadBlockCb)
 
         if have_thumbnail:
             self.debug("we already have a thumbnail %s for %s", thumbnail, pad)
@@ -564,6 +578,10 @@ class Discoverer(Signallable, Loggable):
             eossir.link(sink)
 
             return
+
+        stream = get_stream_for_pad(pad)
+        if isinstance(stream, VideoStream) and not stream.is_image:
+            self._addVideoBufferProbe(pad)
 
         queue = gst.element_factory_make("queue")
         queue.props.max_size_bytes = 5 * 1024 * 1024
