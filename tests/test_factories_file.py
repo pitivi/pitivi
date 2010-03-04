@@ -82,6 +82,38 @@ class TestFileSourceFactory(TestCase):
         self.failUnlessEqual(video, bin.decodebin.stream)
         self.factory.releaseBin(bin)
 
+    def testSetFilterCaps(self):
+        stream = VideoStream(gst.Caps("video/x-raw-rgb"))
+        self.factory.addOutputStream(stream)
+
+        caps1 = gst.Caps("video/x-raw-yuv,width=320,height=240")
+        caps2 = gst.Caps("video/x-raw-yuv,width=640,height=480")
+
+        self.factory.setFilterCaps(caps1)
+
+        bin1 = self.factory.makeBin(stream)
+        self.failUnlessEqual(self.factory.current_bins, 1)
+        self.failUnless(isinstance(bin1, gst.Bin))
+        self.failUnless(hasattr(bin1, "scale"))
+        self.failUnlessEqual(bin1.scale.widthout, 320)
+        self.failUnlessEqual(bin1.scale.heightout, 240)
+
+        bin2 = self.factory.makeBin(stream)
+        self.failUnlessEqual(self.factory.current_bins, 2)
+        self.failUnless(isinstance(bin2, gst.Bin))
+        self.failUnless(hasattr(bin2, "scale"))
+        self.failUnlessEqual(bin2.scale.widthout, 320)
+        self.failUnlessEqual(bin2.scale.heightout, 240)
+
+        self.factory.setFilterCaps(caps2)
+        self.failUnlessEqual(bin1.scale.widthout, 640)
+        self.failUnlessEqual(bin1.scale.heightout, 480)
+        self.failUnlessEqual(bin2.scale.widthout, 640)
+        self.failUnlessEqual(bin2.scale.heightout, 480)
+
+        self.factory.releaseBin(bin1)
+        self.factory.releaseBin(bin2)
+
 class StubPictureFileSourceFactory(PictureFileSourceFactory):
     singleDecodeBinClass = StubSingleDecodeBin
 
