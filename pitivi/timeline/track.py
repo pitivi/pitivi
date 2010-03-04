@@ -713,13 +713,15 @@ class Transition(Signallable):
         a.connect("priority-changed", self._updatePriority)
         b.connect("start-changed", self._updateStartDuration)
         b.connect("priority-changed", self._updatePriority)
+        a.connect("stagger-changed", self._staggerChanged)
+        b.connect("stagger-changed", self._staggerChanged)
         self._updateStartDuration()
         self._updatePriority()
 
     def _updateStartDuration(self, *unused):
         start = self.b.start
         end = self.a.start + self.a.duration
-        duration = end - start
+        duration = max(0, end - start)
 
         if start != self.start:
             self.operation.props.start = start
@@ -732,15 +734,29 @@ class Transition(Signallable):
             self.duration = duration
             self.emit("duration-changed", duration)
 
-        self.controller.unset_all("alpha")
-        self.controller.set("alpha", 0, 1.0)
-        self.controller.set("alpha", duration, 0.0)
+        self._updateController()
+
+    def _staggerChanged(self, *unused):
+        self._updateController()
+
+    def _updateController(self):
+        if self.a.stagger > self.b.stagger:
+            # source a is under source b (higher priority)
+            # we fade source B in
+            self.controller.unset_all("alpha")
+            self.controller.set("alpha", 0, 0.0)
+            self.controller.set("alpha", self.duration, 1.0)
+        elif self.a.stagger < self.b.stagger:
+            # source a is over source b (lower priority)
+            # we fade source a out
+            self.controller.unset_all("alpha")
+            self.controller.set("alpha", 0, 1.0)
+            self.controller.set("alpha", self.duration, 0.0)
 
     def _updatePriority(self, *unused):
-        priority = min(self.a.priority, self.b.priority)
-        if priority != self.priority:
-            self.operation.props.priority = min(self.a.priority, 
-                self.b.priority)
+        if self.a.priority == self.b.priority:
+            priority = self.a.priority
+            self.operation.props.priority = (3 * priority) + 1
             self.priority = priority
             self.emit("priority-changed", priority)
 
