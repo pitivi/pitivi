@@ -8,10 +8,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-03-02 11:13+0000\n"
-"PO-Revision-Date: 2010-01-29 14:54+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-03-04 20:46+0100\n"
+"PO-Revision-Date: 2010-03-04 20:46+0100\n"
 "Last-Translator: Gianvito Cavasoli <janvitus@ubuntu-it.org>\n"
 "Language-Team: Italiana <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -1219,10 +1218,8 @@ msgid "Start Istanbul"
 msgstr "Avvia Istanbul"
 
 #: ../pitivi/ui/sourcelist.py:130
-#, fuzzy
-#| msgid "_Import clips..."
 msgid "Import clips..."
-msgstr "Imp_orta clip..."
+msgstr "Importa clip..."
 
 #: ../pitivi/ui/sourcelist.py:135
 msgid "Remove Clip"
