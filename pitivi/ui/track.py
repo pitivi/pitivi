@@ -4,6 +4,56 @@ from pitivi.receiver import receiver, handler
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
 import goocanvas
 
+class Transition(goocanvas.Rect, Zoomable):
+
+    def __init__(self, transition):
+        goocanvas.Rect.__init__(self)
+        Zoomable.__init__(self)
+        self.props.fill_color_rgba = 0xFFFFFF99
+        self.props.stroke_color_rgba = 0x00000099
+        self.set_simple_transform(0, -LAYER_SPACING + 3, 1.0, 0)
+        self.props.height = LAYER_SPACING - 6
+        self.props.pointer_events = goocanvas.EVENTS_NONE
+        self.props.radius_x = 2
+        self.props.radius_y = 2
+        self.transition = transition
+
+    def _setTransition(self):
+        if self.transition:
+            self._updateAll()
+
+    def _updateAll(self):
+        transition = self.transition
+        start = transition.start
+        duration = transition.duration
+        priority = transition.priority
+        self._updateStart(transition, start)
+        self._updateDuration(transition, duration)
+        self._updatePriority(transition, priority)
+
+    transition = receiver(_setTransition)
+
+    @handler(transition, "start-changed")
+    def _updateStart(self, transition, start):
+        self.props.x = self.nsToPixel(start)
+
+    @handler(transition, "duration-changed")
+    def _updateDuration(self, transition, duration):
+        width = max(0, self.nsToPixel(duration))
+        if width == 0:
+            self.props.visibility = goocanvas.ITEM_INVISIBLE
+        else:
+            self.props.visibility = goocanvas.ITEM_VISIBLE
+        self.props.width = width
+
+    @handler(transition, "priority-changed")
+    def _updatePriority(self, transition, priority):
+        self.props.y = (LAYER_HEIGHT_EXPANDED + LAYER_SPACING) * priority
+
+    def zoomChanged(self):
+        self._updateAll()
+
+
 class Track(goocanvas.Group, Zoomable):
     __gtype_name__ = 'Track'
 
@@ -43,6 +93,8 @@ class Track(goocanvas.Group, Zoomable):
         if self.track:
             for trackobj in self.track.track_objects:
                 self._objectAdded(None, trackobj)
+            for transition in self.track.transitions.itervalues():
+                self._transitionAdded(None, transition)
 
     track = receiver(_setTrack)
 
@@ -57,6 +109,19 @@ class Track(goocanvas.Group, Zoomable):
         w = self.widgets[track_object]
         self.remove_child(w)
         del self.widgets[track_object]
+        Zoomable.removeInstance(w)
+
+    @handler(track, "transition-added")
+    def _transitionAdded(self, unused_timeline, transition):
+        w = Transition(transition)
+        self.widgets[transition] = w
+        self.add_child(w)
+
+    @handler(track, "transition-removed")
+    def _transitionRemoved(self, unused_timeline, transition):
+        w = self.widgets[transition]
+        self.remove_child(w)
+        del self.widgets[transition]
         Zoomable.removeInstance(w)
 
     @handler(track, "max-priority-changed")
