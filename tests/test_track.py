@@ -104,9 +104,10 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
 
         priority = 100
+        gnl_priority = 3 * 100 + 2 + obj._stagger
         obj.priority = priority
         self.failUnlessEqual(obj.priority, priority)
-        self.failUnlessEqual(gnl_object.props.priority, priority)
+        self.failUnlessEqual(gnl_object.props.priority, gnl_priority)
         self.failUnlessEqual(self.monitor.priority_changed_count, 1)
 
     def testChangePropertiesFromGnlObject(self):
@@ -136,10 +137,11 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
 
-        priority = 100
-        gnl_object.props.priority = priority
+        gnl_priority = 100
+        priority = (100 - 2 - obj._stagger) // 3
+        gnl_object.props.priority = gnl_priority
         self.failUnlessEqual(obj.priority, priority)
-        self.failUnlessEqual(gnl_object.props.priority, priority)
+        self.failUnlessEqual(gnl_object.props.priority, gnl_priority)
         self.failUnlessEqual(self.monitor.priority_changed_count, 1)
 
     def testTrimStart(self):
