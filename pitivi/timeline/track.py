@@ -301,6 +301,7 @@ class TrackObject(Signallable, Loggable):
         'media-duration-changed': ['media-duration'],
         'priority-changed': ['priority'],
         'selected-changed' : ['state'],
+        'stagger-changed' : ['stagger'],
     }
 
     def __init__(self, factory, stream, start=0,
@@ -314,6 +315,9 @@ class TrackObject(Signallable, Loggable):
         self.timeline_object = None
         self.interpolators = {}
         self._rebuild_interpolators = True
+        self._public_priority = priority
+        self._position = 0
+        self._stagger = 0
         self.gnl_object = obj = self._makeGnlObject()
         self.keyframes = []
 
@@ -337,6 +341,7 @@ class TrackObject(Signallable, Loggable):
         obj.props.priority = priority
 
         self._connectToSignals(obj)
+        self._updatePriority(self._public_priority)
 
     def getInterpolator(self, property_name):
         self._maybeBuildInterpolators()
@@ -501,7 +506,7 @@ class TrackObject(Signallable, Loggable):
     rate = property(_getRate)
 
     def _getPriority(self):
-        return self.gnl_object.props.priority
+        return self._public_priority
 
     def setPriority(self, priority):
         if self.timeline_object is not None:
@@ -510,10 +515,20 @@ class TrackObject(Signallable, Loggable):
             self.setObjectPriority(priority)
 
     def setObjectPriority(self, priority):
-        if self.gnl_object.props.priority != priority:
-            self.gnl_object.props.priority = priority
+        if priority != self._public_priority:
+            self._updatePriority(priority)
+
+    def _updatePriority(self, priority):
+        true_priority = 2 + self._stagger + (3 * priority)
+        if self.gnl_object.props.priority != true_priority:
+            self.gnl_object.props.priority = true_priority
 
     priority = property(_getPriority, setPriority)
+
+    def _getStagger(self):
+        return self._stagger
+
+    stagger = property(_getStagger)
 
     def trimStart(self, position, snap=False):
         if self.timeline_object is not None:
@@ -616,7 +631,11 @@ class TrackObject(Signallable, Loggable):
             i.updateMediaStop(stop)
 
     def _notifyPriorityCb(self, obj, pspec):
-        self.emit('priority-changed', obj.props.priority)
+        true_priority = obj.props.priority
+        public_priority = (true_priority - 2 - self._stagger) // 3
+        if self._public_priority != public_priority:
+            self._public_priority = public_priority
+            self.emit('priority-changed', public_priority)
 
     def _connectToSignals(self, gnl_object):
         gnl_object.connect('notify::start', self._notifyStartCb)
@@ -640,6 +659,13 @@ class TrackObject(Signallable, Loggable):
 
     def _makeGnlObject(self):
         raise NotImplementedError()
+
+    def updatePosition(self, position):
+        if position != self._position:
+            self._position = position
+            self._stagger = position & 1
+            self._updatePriority(self._public_priority)
+            self.emit("stagger-changed", self._stagger)
 
 class SourceTrackObject(TrackObject):
 
@@ -754,8 +780,8 @@ class Track(Signallable, Loggable):
         else:
             return None
 
-        ret.priority = 2 ** 32 - 1
         ret.makeBin()
+        ret.gnl_object.props.priority = 2 ** 32 - 1
 
         return ret
 
@@ -1051,8 +1077,17 @@ class Track(Signallable, Loggable):
         if type(self.stream) is VideoStream:
             for layer in self.getTrackObjectsGroupedByLayer():
                 pos = 0
+                prev = None
                 for slot in self.getValidTransitionSlots(layer):
                     a, b = slot
+                    if a == prev:
+                        b.updatePosition(pos)
+                        pos += 1
+                    else:
+                        a.updatePosition(pos)
+                        b.updatePosition(pos + 1)
+                        pos += 2
+                    prev = b
                     valid_slots.add(slot)
                     if not slot in self.transitions:
                         tr = Transition(a, b)
