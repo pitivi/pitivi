@@ -35,7 +35,7 @@ from gst.pbutils import INSTALL_PLUGINS_SUCCESS, \
         INSTALL_PLUGINS_PARTIAL_SUCCESS, INSTALL_PLUGINS_USER_ABORT, \
         INSTALL_PLUGINS_STARTED_OK
 import tempfile
-from base64 import urlsafe_b64encode
+import hashlib
 
 from pitivi.log.loggable import Loggable
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
@@ -515,8 +515,10 @@ class Discoverer(Signallable, Loggable):
 
     def _getThumbnailFilenameFromPad(self, pad):
         base = xdg_cache_home()
-        name = '%s.%s' % (self.current_uri, pad.get_name())
-        name = urlsafe_b64encode(name) + '.png'
+        name = self.current_uri
+        md5sum = hashlib.md5()
+        md5sum.update(self.current_uri)
+        name = md5sum.hexdigest() + '.png'
         directory = os.path.join(base, "pitivi")
         try:
             os.makedirs(directory)
