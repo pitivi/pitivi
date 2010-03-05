@@ -164,11 +164,11 @@ class TestTransitions(TestCase):
 
         # update a, b priority
         self.failUnlessEqual(tr.priority, 0)
-        self.failUnlessEqual(tr.operation.props.priority, 0)
+        self.failUnlessEqual(tr.operation.props.priority, 1)
         objs["a"].priority = 2
         objs["b"].priority = 2
         self.failUnlessEqual(tr.priority, 2)
-        self.failUnlessEqual(tr.operation.props.priority, 2)
+        self.failUnlessEqual(tr.operation.props.priority, 7)
 
     def testGetTrackObjectsGroupedByLayer(self):
         factory = self.factory
@@ -499,3 +499,84 @@ class TestTransitions(TestCase):
         self.failUnlessEqual(added, set())
         self.failUnlessEqual(removed, set([("b", "c")]))
 
+    def testTrackObjectStagger(self):
+        factory = self.factory
+        stream = self.stream
+        track1 = self.track1
+
+        test_data = [
+            ("a", 0, 10),
+            ("b", 8, 18),
+            ("c", 16, 26),
+            ("d", 24, 32),
+            ("e", 30, 40),
+            ("f", 38, 48),
+            # ---
+            ("g", 50, 60),
+            ("h", 58, 68),
+            # ---
+            ("i", 70, 80),
+            # ---
+            ("j", 80, 90),
+            ("k", 88, 98),
+            # ---
+            ("l", 100, 110),
+        ]
+
+        transitions = ["ab", "cd", "ef", "gh", "ik"]
+
+        objs = {}
+        names = {}
+
+        def addClip(name, start, end):
+            obj = SourceTrackObject(factory, stream)
+            obj.start = start * gst.SECOND
+            obj.in_point = 0
+            obj.duration = end * gst.SECOND - obj.start
+            obj.media_duration = obj.duration
+            obj.name = name
+            names[obj] = name
+            objs[name] = obj
+            track1.addTrackObject(obj)
+
+        for name, start, end in test_data:
+            addClip(name, start, end)
+
+        def verify_result(expected):
+            expected_stagger = [(name, pos % 2) for name, pos in
+                zip(*expected)]
+
+            result = ["", []]
+            for obj in track1.track_objects:
+                result[0] += names[obj]
+                result[1].append(obj._position) 
+            resulting_stagger = [(names[obj], obj._stagger) for obj in
+                track1.track_objects]
+            self.failUnlessEqual(result, expected)
+            self.failUnlessEqual(resulting_stagger, expected_stagger)
+
+        # check that intiial configuration matches
+
+        expected = ["abcdefghijkl", [0, 1, 2, 3, 4, 5, 6, 7, 0, 8, 9,0]]
+        verify_result(expected)
+
+        # remove a clip, which removes its associated transition
+
+        track1.removeTrackObject(objs["e"])
+        expected = ["abcdfghijkl", [0, 1, 2, 3, 5, 4, 5, 0, 6, 7, 0]]
+        verify_result(expected)
+
+        # add a clip
+
+        addClip('m', 16, 17)
+        expected = ["abcmdfghijkl", [0, 1, 2, 0, 3, 5, 4, 5, 0, 6, 7, 0]]
+        verify_result(expected)
+ 
+        # re-order a few clips
+
+        track1.disableUpdates()
+        objs["d"].start = 18 * gst.SECOND
+        objs["i"].start = 25 * gst.SECOND
+        track1.enableUpdates()
+        expected = ["abcmdifghjkl", [0, 1, 2, 0, 3, 0, 5, 2, 3, 4, 5, 0]]
+        verify_result(expected)
