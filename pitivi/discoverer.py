@@ -631,6 +631,7 @@ class Discoverer(Signallable, Loggable):
         pad.disconnect_by_func(self._capsNotifyCb)
 
         self.unfixed_pads -= 1
+        self.debug("unfixed pads %d", self.unfixed_pads)
         stream = self._addStreamFromPad(ghost)
         if isinstance(stream, VideoStream):
             stream.thumbnail = self.thumbnails[ghost]
@@ -665,6 +666,7 @@ class Discoverer(Signallable, Loggable):
             else:
                 pad.connect("notify::caps", self._capsNotifyCb)
             self.unfixed_pads += 1
+            self.debug("unfixed pads %d", self.unfixed_pads)
 
     def _addStreamFromPad(self, pad):
         self._maybeQueryDuration(pad)
