@@ -164,8 +164,51 @@ class TestTransitions(TestCase):
 
         # update a, b priority
         self.failUnlessEqual(tr.priority, 0)
-        self.failUnlessEqual(tr.operation.props.priority, 1)
+        self.failUnlessEqual(tr.operation.props.priority, 0)
         objs["a"].priority = 2
         objs["b"].priority = 2
         self.failUnlessEqual(tr.priority, 2)
-        self.failUnlessEqual(tr.operation.props.priority, 7)
+        self.failUnlessEqual(tr.operation.props.priority, 2)
+
+    def testGetTrackObjectsGroupedByLayer(self):
+        factory = self.factory
+        stream = self.stream
+        track1 = self.track1
+
+        test_data = [
+            ("a", 0, 10, 0),
+            ("b", 5, 15, 0),
+            ("c", 20, 25, 0),
+            ("d", 30, 35, 0),
+            ("e", 30, 35, 2),
+            ("f", 35, 45, 0),
+            ("g", 40, 50, 0),
+            ("h", 50, 60, 0),
+            ("i", 55, 65, 1),
+            ("j", 57, 60, 2),
+            ("k", 62, 70, 3),
+            ("l", 63, 67, 0),
+        ]
+
+        expected = [
+            ["a", "b", "c", "d", "f", "g", "h", "l"], 
+            ["i"],
+            ["e", "j"],
+            ["k"]
+        ]
+
+        objs = {}
+
+        for name, start, end, priority in test_data:
+            obj = SourceTrackObject(factory, stream)
+            obj.start = start * gst.SECOND
+            obj.duration = end * gst.SECOND - obj.start
+            obj.priority = priority
+            track1.addTrackObject(obj)
+            objs[obj] = name
+
+        result = [[objs[obj] for obj in layer] for layer in 
+            track1.getTrackObjectsGroupedByLayer()]
+
+        self.failUnlessEqual(result, expected)
+
