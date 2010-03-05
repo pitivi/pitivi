@@ -1007,3 +1007,34 @@ class Track(Signallable, Loggable):
             layers[int(track_object.priority)].append(track_object)
         return layers
 
+    def getValidTransitionSlots(self, objs):
+        prev = None
+        safe = 0
+        duration = 0
+        slots = []
+        def pop():
+            if len(slots):
+                slots.pop(-1)
+        for obj in objs:
+            end = obj.start + obj.duration
+            if obj.start >= duration:
+                safe = obj.start
+                duration = end
+                prev = obj
+            elif end >= duration and obj.start >= safe:
+                slots.append((prev, obj))
+                safe = duration
+                duration = end
+                prev = obj
+            elif end >= duration and obj.start < safe:
+                pop()
+                safe = duration
+                duration = end
+                prev = obj
+            elif end < duration and obj.start >= safe:
+                safe = end
+            elif end < duration and obj.start < safe:
+                pop()
+                safe = end
+        return slots
+
