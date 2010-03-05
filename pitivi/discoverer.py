@@ -593,6 +593,8 @@ class Discoverer(Signallable, Loggable):
         if have_thumbnail:
             self.debug("we already have a thumbnail %s for %s", thumbnail, pad)
             sink = gst.element_factory_make("fakesink")
+            # use this and not fakesink.props.num_buffers = 1 to avoid some
+            # not-expected errors when discovering pictures
             eossir = EOSSir()
             self.dynamic_elements.extend([eossir, sink])
             self.pipeline.add(eossir, sink)
