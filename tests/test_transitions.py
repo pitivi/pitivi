@@ -20,3 +20,56 @@
 # Boston, MA 02111-1307, USA.
 
 
+    def testTransitionProperties(self):
+        factory = self.factory
+        track1 = self.track1
+        track1._update_transitions = False
+        stream = self.stream
+
+        test_data = [
+            ("a", 0, 10),
+            ("b", 5, 15),
+        ]
+
+        objs = {}
+        names = {}
+
+        for name, start, end in test_data:
+            obj = SourceTrackObject(factory, stream)
+            obj.start = start * gst.SECOND
+            obj.in_point = 0
+            obj.duration = end * gst.SECOND - obj.start
+            obj.media_duration = obj.duration
+            track1.addTrackObject(obj)
+            names[obj] = name
+            objs[name] = obj
+
+        # add transitions and check that initial properties are properly
+        # evaluated
+        tr = Transition(objs["a"], objs["b"])
+
+        # move a and b together,
+        # check that transition start, duration are updated
+        objs["a"].start = 5 * gst.SECOND
+        objs["b"].start = 10 * gst.SECOND
+
+        self.failUnlessEqual(tr.start, 10 * gst.SECOND)
+        self.failUnlessEqual(tr.duration, 5 * gst.SECOND)
+
+        # make A longer
+        objs["a"].duration = 11 * gst.SECOND
+        self.failUnlessEqual(tr.start, 10 * gst.SECOND)
+        self.failUnlessEqual(tr.duration, 6 * gst.SECOND)
+
+        # move B earlier
+        objs["b"].start = 9 * gst.SECOND
+        self.failUnlessEqual(tr.start, 9 * gst.SECOND)
+        self.failUnlessEqual(tr.duration, 7 * gst.SECOND)
+
+        # update a, b priority
+        self.failUnlessEqual(tr.priority, 0)
+        self.failUnlessEqual(tr.operation.props.priority, 1)
+        objs["a"].priority = 2
+        objs["b"].priority = 2
+        self.failUnlessEqual(tr.priority, 2)
+        self.failUnlessEqual(tr.operation.props.priority, 7)
