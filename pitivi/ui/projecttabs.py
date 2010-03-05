@@ -61,6 +61,7 @@ class ProjectTabs(gtk.Notebook):
         label = self.child_get_property(child, "tab-label")
         window = gtk.Window()
         window.set_title(label)
+        window.set_default_size(600, 400)
         window.connect("destroy", self._detachedComponentWindowDestroyCb,
                 child, original_position, label)
         notebook = gtk.Notebook()
