@@ -250,3 +250,252 @@ class TestTransitions(TestCase):
 
         self.failUnlessEqual(result, expected)
 
+    def testUpdateTransitions(self):
+        factory = self.factory
+        stream = self.stream
+        track1 = self.track1
+        track1._update_transitions = False
+
+        test_data = [
+            ("a", 0, 10),
+            ("b", 5, 15),
+            ("c", 20, 25),
+            ("d", 30, 35),
+            ("e", 30, 35),
+            ("f", 35, 45),
+            ("g", 40, 50),
+            ("h", 50, 60),
+            ("i", 55, 65),
+            ("j", 57, 60),
+            ("k", 62, 70),
+            ("l", 63, 67),
+        ]
+
+        expected = [("a", "b"), ("d", "e"), ("f", "g")]
+
+        objs = {}
+        names = {}
+
+        for name, start, end in test_data:
+            obj = SourceTrackObject(factory, stream)
+            obj.start = start * gst.SECOND
+            obj.in_point = 0
+            obj.duration = end * gst.SECOND - obj.start
+            obj.media_duration = obj.duration
+            track1.addTrackObject(obj)
+            names[obj] = name
+            objs[name] = obj
+
+        result = []
+        added = set()
+        removed = set()
+
+        def transitionAddedCb(track, transition):
+            pair =(names[transition.a], names[transition.b])
+            result.append(pair)
+            added.add(pair)
+
+        def transitionRemovedCb(track, transition):
+            pair = (names[transition.a], names[transition.b])
+            result.remove(pair)
+            removed.add(pair)
+
+        track1.connect("transition-added", transitionAddedCb)
+        track1.connect("transition-removed", transitionRemovedCb)
+
+        track1.updateTransitions()
+        self.failUnlessEqual(result, expected)
+
+        # move c so that it overlaps with b
+        # move g so that it overlaps d, e, f
+        # update the transitions, check that we have the expected
+        # configuration
+        test_data = [
+            ("c", 12, 20),
+            ("g", 30, 46),
+        ]
+
+        expected = [("a", "b"), ("b", "c")]
+        added = set()
+        removed = set()
+
+        for name, start, end in test_data:
+            objs[name].start = start * gst.SECOND
+            objs[name].duration = (end - start) * gst.SECOND
+
+        track1.updateTransitions()
+
+        self.failUnlessEqual(result, expected)
+
+        # check that *only* (b, c) was added in the update
+        self.failUnlessEqual(added, set([("b", "c")]))
+
+        # check that *only* (d, e) was removed in the update
+        self.failUnlessEqual(removed, set([("d", "e"), ("f", "g")]))
+
+        # move c to a different layer. check that (b, c) transition is removed
+        added = set()
+        removed = set()
+
+        objs["c"].priority = 1
+        expected = [("a", "b")]
+        track1.updateTransitions()
+
+        self.failUnlessEqual(result, expected)
+        self.failUnlessEqual(added, set())
+        self.failUnlessEqual(removed, set([("b", "c")]))
+
+    def testUpdateAfterAddingAndRemovingTrackObjects(self):
+        factory = self.factory
+        stream = self.stream
+        track1 = self.track1
+
+        test_data = [
+            ("a", 0, 10),
+            ("b", 5, 15),
+            ("c", 20, 25),
+            ("d", 30, 35),
+            ("f", 35, 45),
+            ("g", 40, 50),
+            ("e", 30, 35),
+            ("h", 50, 60),
+            ("i", 55, 65),
+            ("j", 57, 60),
+            ("k", 62, 70),
+            ("l", 63, 67),
+        ]
+
+        added_in_order = [("a", "b"), ("f", "g"), ("d", "e"),
+            ("h", "i"), ("i", "k"), ("h", "i")]
+
+        removed_in_order = [("h", "i"), ("i", "k")]
+
+        objs = {}
+        names = {}
+
+        added = []
+        removed = []
+
+        def transitionAddedCb(track, transition):
+            added.append((names[transition.a], 
+                names[transition.b]))
+
+        def transitionRemovedCb(track, transition):
+            removed.append((names[transition.a],
+                names[transition.b]))
+        track1.connect("transition-added", transitionAddedCb)
+        track1.connect("transition-removed", transitionRemovedCb)
+
+        for name, start, end in test_data:
+            obj = SourceTrackObject(factory, stream)
+            obj.start = start * gst.SECOND
+            obj.in_point = 0
+            obj.duration = end * gst.SECOND - obj.start
+            obj.media_duration = obj.duration
+            names[obj] = name
+            objs[name] = obj
+            track1.addTrackObject(obj)
+
+        # removing this object brings (h, i) back
+        track1.removeTrackObject(objs["j"])
+
+        self.failUnlessEqual(added, added_in_order)
+        self.failUnlessEqual(removed, removed_in_order)
+
+    def testUpdatesAfterEnablingUpdates(self):
+        factory = self.factory
+        stream = self.stream
+        track1 = self.track1
+
+        test_data = [
+            ("a", 0, 10),
+            ("b", 5, 15),
+            ("c", 20, 25),
+            ("d", 30, 35),
+            ("e", 30, 35),
+            ("f", 35, 45),
+            ("g", 40, 50),
+            ("h", 50, 60),
+            ("i", 55, 65),
+            ("j", 57, 60),
+            ("k", 62, 70),
+            ("l", 63, 67),
+        ]
+
+        expected = [("a", "b"), ("d", "e"), ("f", "g")]
+
+        result = []
+        added = set()
+        removed = set()
+
+        def transitionAddedCb(track, transition):
+            pair =(names[transition.a], names[transition.b])
+            result.append(pair)
+            added.add(pair)
+
+        def transitionRemovedCb(track, transition):
+            pair = (names[transition.a], names[transition.b])
+            result.remove(pair)
+            removed.add(pair)
+
+        track1.connect("transition-added", transitionAddedCb)
+        track1.connect("transition-removed", transitionRemovedCb)
+
+        objs = {}
+        names = {}
+
+        for name, start, end in test_data:
+            obj = SourceTrackObject(factory, stream)
+            obj.start = start * gst.SECOND
+            obj.in_point = 0
+            obj.duration = end * gst.SECOND - obj.start
+            obj.media_duration = obj.duration
+            names[obj] = name
+            objs[name] = obj
+            track1.addTrackObject(obj)
+
+        self.failUnlessEqual(result, expected)
+
+        track1.disableUpdates()
+
+        # move c so that it overlaps with b
+        # move g so that it overlaps d, e, f
+        # update the transitions, check that we have the expected
+        # configuration
+        test_data = [
+            ("c", 12, 20),
+            ("g", 30, 46),
+        ]
+
+        expected = [("a", "b"), ("b", "c")]
+        added = set()
+        removed = set()
+
+        for name, start, end in test_data:
+            objs[name].start = start * gst.SECOND
+            objs[name].duration = (end - start) * gst.SECOND
+
+        track1.enableUpdates()
+
+        self.failUnlessEqual(result, expected)
+
+        # check that *only* (b, c) was added in the update
+        self.failUnlessEqual(added, set([("b", "c")]))
+
+        # check that *only* (d, e) was removed in the update
+        self.failUnlessEqual(removed, set([("d", "e"), ("f", "g")]))
+
+        # move c to a different layer. check that (b, c) transition is removed
+
+        track1.disableUpdates()
+        added = set()
+        removed = set()
+
+        objs["c"].priority = 1
+        expected = [("a", "b")]
+        track1.enableUpdates()
+
+        self.failUnlessEqual(result, expected)
+        self.failUnlessEqual(added, set())
+        self.failUnlessEqual(removed, set([("b", "c")]))
+
