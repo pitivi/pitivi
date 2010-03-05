@@ -484,7 +484,11 @@ class Discoverer(Signallable, Loggable):
             have_video, have_audio, have_image = self._getCurrentStreamTypes()
             if self.unfixed_pads or have_video or have_image:
                 # go to PLAYING to generate the thumbnails
-                self.pipeline.set_state(gst.STATE_PLAYING)
+                if self.pipeline.set_state(gst.STATE_PLAYING) == gst.STATE_CHANGE_FAILURE:
+                    if not self.error:
+                        self.error = _("Pipeline didn't want to go to PLAYING.")
+                    self.info("Pipeline didn't want to go to PAUSED")
+                    self._finishAnalysis("failure going to PAUSED")
             elif self.unfixed_pads == 0:
                 # check for unfixed_pads until elements are fixed to do
                 # negotiation before pushing in band data
