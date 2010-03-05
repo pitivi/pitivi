@@ -738,6 +738,7 @@ class Track(Signallable, Loggable):
         self.composition.connect('notify::duration', self._compositionDurationChangedCb)
         self.track_objects = []
         self.transitions = {}
+        self._update_transitions = True
         self._max_priority = 0
 
         self.mixer = self._getMixerForStream(stream)
@@ -907,6 +908,8 @@ class Track(Signallable, Loggable):
         self._connectToTrackObject(track_object)
 
         self.emit('track-object-added', track_object)
+        if self._update_transitions:
+            self.updateTransitions()
 
     def removeTrackObject(self, track_object):
         if track_object.track is None:
@@ -923,12 +926,15 @@ class Track(Signallable, Loggable):
 
         self.track_objects.remove(track_object)
         track_object.track = None
+
         self._disconnectTrackObjectSignals(track_object)
 
         self._updateMaxPriority()
         self.updateDefaultSources()
 
         self.emit('track-object-removed', track_object)
+        if self._update_transitions:
+            self.updateTransitions()
 
     def removeAllTrackObjects(self):
         for track_object in list(self.track_objects):
@@ -979,6 +985,7 @@ class Track(Signallable, Loggable):
     def enableUpdates(self):
         self.composition.props.update = True
         self.updateDefaultSources()
+        self.updateTransitions()
 
     def disableUpdates(self):
         self.composition.props.update = False
@@ -1038,3 +1045,18 @@ class Track(Signallable, Loggable):
                 safe = end
         return slots
 
+    def updateTransitions(self):
+        # create all new transitions
+        valid_slots = set()
+        if type(self.stream) is VideoStream:
+            for layer in self.getTrackObjectsGroupedByLayer():
+                pos = 0
+                for slot in self.getValidTransitionSlots(layer):
+                    a, b = slot
+                    valid_slots.add(slot)
+                    if not slot in self.transitions:
+                        tr = Transition(a, b)
+                        self.addTransition(tr)
+        current_slots = set(self.transitions.iterkeys())
+        for slot in current_slots - valid_slots:
+            self.removeTransition(self.transitions[slot])
