@@ -1001,3 +1001,9 @@ class Track(Signallable, Loggable):
         del self.transitions[a, b]
         self.emit("transition-removed", transition)
 
+    def getTrackObjectsGroupedByLayer(self):
+        layers = [[] for x in xrange(0, self.max_priority + 1)]
+        for track_object in self.track_objects:
+            layers[int(track_object.priority)].append(track_object)
+        return layers
+
