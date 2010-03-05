@@ -212,3 +212,41 @@ class TestTransitions(TestCase):
 
         self.failUnlessEqual(result, expected)
 
+    def testGetValidTransitionSlots(self):
+        factory = self.factory
+        stream = self.stream
+        track1 = self.track1
+
+        test_data = [
+            ("a", 0, 10),
+            ("b", 5, 15),
+            ("c", 20, 25),
+            ("d", 30, 35),
+            ("e", 30, 35),
+            ("f", 35, 45),
+            ("g", 40, 50),
+            ("h", 50, 60),
+            ("i", 55, 65),
+            ("j", 57, 60),
+            ("k", 62, 70),
+            ("l", 63, 67),
+        ]
+
+        expected = [["a", "b"], ["d", "e"], ["f", "g"]]
+
+        objs = {}
+        ordered = []
+
+        for name, start, end in test_data:
+            obj = SourceTrackObject(factory, stream)
+            obj.start = start * gst.SECOND
+            obj.duration = end * gst.SECOND - obj.start
+            track1.addTrackObject(obj)
+            objs[obj] = name
+            ordered.append(obj)
+
+        result = [[objs[obj] for obj in layer] for layer in 
+            track1.getValidTransitionSlots(ordered)]
+
+        self.failUnlessEqual(result, expected)
+
