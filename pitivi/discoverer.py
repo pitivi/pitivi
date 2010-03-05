@@ -138,9 +138,9 @@ class Discoverer(Signallable, Loggable):
             self.bus = None
 
         if self.pipeline is not None:
-            self.info("before setting to NULL")
+            self.debug("before setting to NULL")
             res = self.pipeline.set_state(gst.STATE_NULL)
-            self.info("after setting to NULL : %s", res)
+            self.debug("after setting to NULL : %s", res)
 
         for element in self.dynamic_elements:
             self.pipeline.remove(element)
@@ -294,13 +294,15 @@ class Discoverer(Signallable, Loggable):
         # self._installMissingPluginsCallback is called by the application
         return False
 
-    def _finishAnalysis(self):
+    def _finishAnalysis(self, reason):
         """
         Call this method when the current file is analyzed
         This method will wrap-up the analyzis and call the next analysis if needed
         """
         if self.timeout_id:
             self._removeTimeout()
+
+        self.info("analysys finished, reason %s", reason)
 
         # check if there are missing plugins before calling _resetPipeline as we
         # are going to pop messagess off the bus
@@ -331,7 +333,7 @@ class Discoverer(Signallable, Loggable):
         if not self.error:
             self.error = _('Timeout while analyzing file.')
             self.error_detail = _('Analyzing the file took too long.')
-        self._finishAnalysis()
+        self._finishAnalysis("timeout")
 
         return False
 
@@ -406,7 +408,7 @@ class Discoverer(Signallable, Loggable):
         # create the source element
         source = self._createSource()
         if source is None:
-            self._finishAnalysis()
+            self._finishAnalysis("no source")
             return False
 
         # create decodebin(2)
@@ -426,7 +428,7 @@ class Discoverer(Signallable, Loggable):
             if not self.error:
                 self.error = _("Pipeline didn't want to go to PAUSED.")
             self.info("Pipeline didn't want to go to PAUSED")
-            self._finishAnalysis()
+            self._finishAnalysis("failure going to PAUSED")
 
             return False
 
@@ -436,9 +438,9 @@ class Discoverer(Signallable, Loggable):
         return False
 
     def _busMessageEosCb(self, unused_bus, message):
-        self.log("got EOS")
+        self.debug("got EOS")
 
-        self._finishAnalysis()
+        self._finishAnalysis("EOS")
 
     def _busMessageErrorCb(self, unused_bus, message):
         gerror, detail = message.parse_error()
@@ -450,7 +452,7 @@ class Discoverer(Signallable, Loggable):
         self.error = _("An internal error occurred while analyzing this file: %s") % gerror.message
         self.error_detail = detail
 
-        self._finishAnalysis()
+        self._finishAnalysis("ERROR")
 
     def _busMessageElementCb(self, unused_bus, message):
         self.debug("Element message %s", message.structure.to_string())
@@ -460,7 +462,7 @@ class Discoverer(Signallable, Loggable):
                 self.error = _("File contains a redirection to another clip.")
                 self.error_detail = _("PiTiVi currently does not handle redirection files.")
 
-            self._finishAnalysis()
+            self._finishAnalysis("redirect")
             return
 
         if gst.pbutils.is_missing_plugin_message(message):
@@ -486,7 +488,7 @@ class Discoverer(Signallable, Loggable):
             elif self.unfixed_pads == 0:
                 # check for unfixed_pads until elements are fixed to do
                 # negotiation before pushing in band data
-                self._finishAnalysis()
+                self._finishAnalysis("got to PAUSED and no unfixed pads")
 
     def _busMessageTagCb(self, unused_bus, message):
         self.debug("Got tags %s", message.structure.to_string())
@@ -550,16 +552,33 @@ class Discoverer(Signallable, Loggable):
         pad.remove_buffer_probe(closure['probe_id'])
 
     def _videoBufferProbeCb(self, pad, buf, closure):
-        self.debug("video buffer probe for pad %s", pad)
+        self.log("video buffer probe for pad %s", pad)
         self._removeVideoBufferProbe(pad, closure)
 
         pad.set_blocked_async(True, self._videoPadBlockCb)
 
         return False
 
+    def _padEventProbeCb(self, pad, event):
+        self.log("got event %s from src %s on pad %s",
+                event.type, event.src, pad)
+
+        return True
+
+    def _padBufferProbeCb(self, pad, buf):
+        self.debug("got buffer on pad %s", pad)
+
+        return True
+
+    def _addPadProbes(self, pad):
+        pad.add_event_probe(self._padEventProbeCb)
+        pad.add_buffer_probe(self._padBufferProbeCb)
+
     def _newVideoPadCb(self, pad):
         """ a new video pad was found """
         self.debug("pad %r", pad)
+
+        self._addPadProbes(pad)
 
         thumbnail = self._getThumbnailFilenameFromPad(pad)
         self.thumbnails[pad] = thumbnail
@@ -606,6 +625,8 @@ class Discoverer(Signallable, Loggable):
             element.sync_state_with_parent()
 
     def _newPadCb(self, pad):
+        self._addPadProbes(pad)
+
         queue = gst.element_factory_make('queue')
         fakesink = gst.element_factory_make('fakesink')
         fakesink.props.num_buffers = 1
@@ -624,11 +645,13 @@ class Discoverer(Signallable, Loggable):
             ghost = pad
 
         caps = pad.props.caps
-        self.debug("video pad caps notify %s", caps)
+        self.debug("pad caps notify %s", caps)
         if caps is None or not caps.is_fixed():
             return
 
         pad.disconnect_by_func(self._capsNotifyCb)
+
+        self.info("got fixed caps for pad %s", pad)
 
         self.unfixed_pads -= 1
         self.debug("unfixed pads %d", self.unfixed_pads)
@@ -651,6 +674,8 @@ class Discoverer(Signallable, Loggable):
         caps = pad.props.caps
 
         if caps is not None and caps.is_fixed():
+            self.debug("got fixed caps for pad %s", pad)
+
             stream = self._addStreamFromPad(pad)
             if isinstance(stream, VideoStream):
                 stream.thumbnail = self.thumbnails[pad]
