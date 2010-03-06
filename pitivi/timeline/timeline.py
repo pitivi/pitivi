@@ -1139,6 +1139,18 @@ class MoveContext(EditingContext):
         self._restoreValues(self.default_originals)
 
     def finish(self):
+
+        # special case to allow creating transitions
+        if len(self.timeline_objects) == 1:
+            # run the update algorithm and see if the arrangement remains
+            # valid. Return immediately if valid.
+            self.focus.track.updateTransitions()
+            if self.focus.track.valid_arrangement:
+                self.focus.track._update_transitions = False
+                EditingContext.finish(self)
+                self.focus.track._update_transitions = True
+                return
+
         if isinstance(self.focus, TrackObject):
             focus_timeline_object = self.focus.timeline_object
         else:
