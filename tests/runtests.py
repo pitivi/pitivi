@@ -19,8 +19,15 @@ def gettestnames(which):
 suite = unittest.TestSuite()
 loader = unittest.TestLoader()
 
-for name in gettestnames(sys.argv[1:]):
-    suite.addTest(loader.loadTestsFromName(name))
+TEST_CASE=os.getenv("TESTCASE")
+
+if TEST_CASE:
+    suite.addTest(loader.loadTestsFromName(TEST_CASE))
+    if not suite._tests:
+        raise Exception("could not find test case %r" % TEST_CASE)
+else:
+    for name in gettestnames(sys.argv[1:]):
+        suite.addTest(loader.loadTestsFromName(name))
 
 descriptions = 1
 verbosity = 1
