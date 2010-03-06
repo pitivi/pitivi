@@ -1061,6 +1061,8 @@ class Track(Signallable, Loggable):
         safe = 0
         duration = 0
         slots = []
+        valid = True
+
         def pop():
             if len(slots):
                 slots.pop(-1)
@@ -1077,24 +1079,32 @@ class Track(Signallable, Loggable):
                 prev = obj
             elif end >= duration and obj.start < safe:
                 pop()
+                valid = False
                 safe = duration
                 duration = end
                 prev = obj
             elif end < duration and obj.start >= safe:
                 safe = end
+                valid = False
             elif end < duration and obj.start < safe:
                 pop()
+                valid = False
                 safe = end
-        return slots
+        return slots, valid
+
+    valid_arrangement = True
 
     def updateTransitions(self):
         # create all new transitions
         valid_slots = set()
+        all_valid = True
         if type(self.stream) is VideoStream:
             for layer in self.getTrackObjectsGroupedByLayer():
                 pos = 0
                 prev = None
-                for slot in self.getValidTransitionSlots(layer):
+                slots, is_valid = self.getValidTransitionSlots(layer)
+                all_valid &= is_valid
+                for slot in slots:
                     a, b = slot
                     if a == prev:
                         b.updatePosition(pos)
@@ -1111,3 +1121,4 @@ class Track(Signallable, Loggable):
         current_slots = set(self.transitions.iterkeys())
         for slot in current_slots - valid_slots:
             self.removeTransition(self.transitions[slot])
+        self.valid_arrangement = all_valid
