@@ -235,6 +235,7 @@ class TestTransitions(TestCase):
         expected = [["a", "b"], ["d", "e"], ["f", "g"]]
 
         objs = {}
+        names = {}
         ordered = []
 
         for name, start, end in test_data:
@@ -242,13 +243,46 @@ class TestTransitions(TestCase):
             obj.start = start * gst.SECOND
             obj.duration = end * gst.SECOND - obj.start
             track1.addTrackObject(obj)
-            objs[obj] = name
+            objs[name] = obj
+            names[obj] = name
             ordered.append(obj)
 
-        result = [[objs[obj] for obj in layer] for layer in 
-            track1.getValidTransitionSlots(ordered)]
+        slots, valid = track1.getValidTransitionSlots(ordered)
+        result = [[names[obj] for obj in layer] for layer in 
+            slots]
 
         self.failUnlessEqual(result, expected)
+        self.failUnlessEqual(track1.valid_arrangement, False)
+
+        test_data = [
+            ("a", 0, 5),
+            ("b", 9, 12),
+            ("c", 8, 13)
+        ]
+
+        ordered = []
+        for name, start, end in test_data:
+            ordered.append(objs[name])
+            objs[name].start = gst.SECOND * start
+            objs[name].duration = gst.SECOND * (end - start)
+
+        slots, valid = track1.getValidTransitionSlots(ordered)
+        self.failUnlessEqual(valid, False)
+
+        test_data = [
+            ("a", 0, 5),
+            ("b", 1, 4),
+            ("c", 8, 13),
+        ]
+
+        ordered = []
+        for name, start, end in test_data:
+            ordered.append(objs[name])
+            objs[name].start = gst.SECOND * start
+            objs[name].duration = gst.SECOND * (end - start)
+
+        slots, valid = track1.getValidTransitionSlots(ordered)
+        self.failUnlessEqual(valid, False)
 
     def testUpdateTransitions(self):
         factory = self.factory
@@ -365,6 +399,10 @@ class TestTransitions(TestCase):
             ("l", 63, 67),
         ]
 
+        # object j makes track arrangment invalid
+        valid_in_order = [True for x in "abcdefghi"]
+        valid_in_order.extend([False, False, False])
+
         added_in_order = [("a", "b"), ("f", "g"), ("d", "e"),
             ("h", "i"), ("i", "k"), ("h", "i")]
 
@@ -386,6 +424,8 @@ class TestTransitions(TestCase):
         track1.connect("transition-added", transitionAddedCb)
         track1.connect("transition-removed", transitionRemovedCb)
 
+        valid = []
+
         for name, start, end in test_data:
             obj = SourceTrackObject(factory, stream)
             obj.start = start * gst.SECOND
@@ -395,12 +435,20 @@ class TestTransitions(TestCase):
             names[obj] = name
             objs[name] = obj
             track1.addTrackObject(obj)
+            valid.append(track1.valid_arrangement)
 
         # removing this object brings (h, i) back
         track1.removeTrackObject(objs["j"])
 
         self.failUnlessEqual(added, added_in_order)
         self.failUnlessEqual(removed, removed_in_order)
+        self.failUnlessEqual(valid, valid_in_order)
+
+        # removing this should make the track valid again
+        track1.removeTrackObject(objs["l"])
+        self.failUnlessEqual(track1.valid_arrangement,
+            True)
+
 
     def testUpdatesAfterEnablingUpdates(self):
         factory = self.factory
