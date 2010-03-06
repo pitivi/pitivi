@@ -41,7 +41,7 @@ from pitivi.log.loggable import Loggable
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
 from pitivi.stream import get_stream_for_pad
 from pitivi.signalinterface import Signallable
-from pitivi.stream import VideoStream
+from pitivi.stream import VideoStream, TextStream
 from pitivi.settings import xdg_cache_home
 
 # FIXME: We need to store more information regarding streams
@@ -633,7 +633,8 @@ class Discoverer(Signallable, Loggable):
             element.sync_state_with_parent()
 
     def _newPadCb(self, pad):
-        if 'text' in pad.get_caps():
+        stream = get_stream_for_pad(pad)
+        if isinstance(stream, TextStream):
             self.info("skipping subtitle pad")
             return
 
