@@ -773,5 +773,275 @@ class TestRippleExtensive(Base):
         self.scrub_func = rippleMoveComplexRandomScrubFunc
         self.runner.run()
 
+class TestTransitions(Base):
+
+    def testSimple(self):
+        initial = Configuration()
+        initial.addSource(
+            "object1", 
+            test1, 
+            {
+                "start" : 0,
+                "duration" : 5 * gst.SECOND,
+                "priority" : 0,
+            })
+        initial.addSource(
+            "object2", 
+            test1,
+            {
+                "start" : 5 * gst.SECOND,
+                "duration" : 5 * gst.SECOND,
+                "priority" : 0,
+            })
+        initial.addSource(
+            "object3",
+            test1,
+            {
+                "start" : 10 * gst.SECOND,
+                "duration" : 5 * gst.SECOND,
+                "priority" : 0,
+            })
+
+        moves = [
+            (9 * gst.SECOND, 0),
+            (1 * gst.SECOND, 0),
+        ]
+
+        expected = [
+            ("object2", "object3", 10 * gst.SECOND, 4 * gst.SECOND, 0),
+            ("object1", "object2", 1 * gst.SECOND, 4 * gst.SECOND, 0),
+        ]
+
+        def timelineConfigured(runner):
+            nextMove()
+
+        def nextMove():
+            if moves:
+                self._cur_move = moves.pop(0)
+                context = MoveContext(self.runner.timeline, 
+                    self.runner.video1.object2,
+                        set([self.runner.video1.object2]))
+                brush.scrub(context, self._cur_move[0], self._cur_move[1], steps=10)
+            else:
+                self.runner.shutDown()
+
+        def scrubDone(brush):
+            a, b, start, duration, priority = expected.pop(0)
+            a = getattr(self.runner.video1, a)
+            b = getattr(self.runner.video1, b)
+
+            tr = self.runner.video1.transitions[(a, b)]
+
+            self.failUnlessEqual(b.start, start)
+            self.failUnlessEqual(a.start + a.duration - start,
+                duration)
+            self.failUnlessEqual(tr.start, start)
+            self.failUnlessEqual(tr.duration, duration)
+            self.failUnlessEqual(tr.priority, 0)
+            self.failUnlessEqual(a.priority, 0)
+            self.failUnlessEqual(b.priority, 0)
+            nextMove()
+
+        self.runner.loadConfiguration(initial)
+        self.runner.connect("timeline-configured", timelineConfigured)
+
+        brush = Brush(self.runner)
+        brush.connect("scrub-done", scrubDone)
+
+        self.runner.run()
+
+    def testNoTransitionWhenMovingMultipleClips(self):
+        initial = Configuration()
+        initial.addSource(
+            "object1", 
+            test1, 
+            {
+                "start" : 0,
+                "duration" : 5 * gst.SECOND,
+                "priority" : 0,
+            })
+        initial.addSource(
+            "object2", 
+            test1,
+            {
+                "start" : 5 * gst.SECOND,
+                "duration" : 5 * gst.SECOND,
+                "priority" : 0,
+            })
+        initial.addSource(
+            "object3",
+            test1,
+            {
+                "start" : 10 * gst.SECOND,
+                "duration" : 5 * gst.SECOND,
+                "priority" : 0,
+            })
+
+        moves = [
+            ("object1", 9 * gst.SECOND, 0),
+            ("object3", 1* gst.SECOND, 0),
+        ]
+
+        def timelineConfigured(runner):
+            nextMove()
+
+        def nextMove():
+            if moves:
+                self._cur_move = moves.pop(0)
+                other, start, priority = self._cur_move
+                context = MoveContext(self.runner.timeline, 
+                    self.runner.video1.object2,
+                        set([getattr(self.runner.video1, other)]))
+                brush.scrub(context, start, priority, steps=10)
+            else:
+                self.runner.shutDown()
+
+        def scrubDone(brush):
+            self.failUnlessEqual(self.runner.video1.transitions,
+                {})
+            initial.matches(self.runner)
+            nextMove()
+
+        self.runner.loadConfiguration(initial)
+        self.runner.connect("timeline-configured", timelineConfigured)
+
+        brush = Brush(self.runner)
+        brush.connect("scrub-done", scrubDone)
+
+        self.runner.run()
+
+    def testOverlapOnlyWithValidTransitions(self):
+        initial = Configuration()
+        initial.addSource(
+            "object1", 
+            test1, 
+            {
+                "start" : 0,
+                "duration" : 5 * gst.SECOND,
+                "priority" : 0,
+            })
+        initial.addSource(
+            "object2", 
+            test1,
+            {
+                "start" : 5 * gst.SECOND,
+                "duration" : 3 * gst.SECOND,
+                "priority" : 0,
+            })
+        initial.addSource(
+            "object3",
+            test1,
+            {
+                "start" : 8 * gst.SECOND,
+                "duration" : 5 * gst.SECOND,
+                "priority" : 0,
+            })
+
+        phase2 = initial.clone()
+        phase2.updateSource(
+            "object2", 
+            props={
+                "start" : 4 * gst.SECOND,
+            })
+
+        phase2a = phase2.clone()
+        phase2a.updateSource(
+            "object3",
+            props = {
+                "start" : 7 * gst.SECOND,
+            })
+
+        phase3 = phase2a.clone()
+        phase3.updateSource(
+            "object3",
+            props={
+                "duration" : 1 * gst.SECOND
+            })
+
+        moves = [
+            # [1------]    [3--[2==]]
+            (MoveContext, "object2", 9 * gst.SECOND, 0, initial, []),
+
+            # [1--[2=]]    [3-------]
+            (MoveContext, "object2", 1 * gst.SECOND, 0, initial, []),
+
+            # [1------]    [3-------]
+            #        [2--]
+            (MoveContext, "object2", 4 * gst.SECOND, 0, phase2, 
+                [("object1", "object2")]),
+
+            # Activates overlap prevention
+            # [1------]
+            #      [3-------]
+            #        [2--]
+
+            (MoveContext, "object3", 3 * gst.SECOND, 0, phase2a,
+                [("object1", "object2")]),
+
+            # [1------]  [3-]
+            #        [2--]
+            (TrimEndContext, "object3", 8 * gst.SECOND, 0, phase3,
+                [("object1", "object2")]),
+
+            # Activates overlap prevention
+            # [1------]    
+            #        [3-]
+            #        [2--]
+            (MoveContext, "object3", 4 * gst.SECOND, 0, phase3,
+                [("object1", "object2")]),
+
+            # Activates overlap prevention
+            # [1------]
+            #       [3]
+            #        [2--]
+            (MoveContext, "object3", long(3.5 * gst.SECOND), 0, phase3,
+                [("object1", "object2")]),
+
+            # Activates overlap prevention
+            # [1      ]
+            #         [3]
+            #        [2  ]
+            (MoveContext, "object3", long(4.5 * gst.SECOND), 0,
+                phase3, [("object1", "object2")]),
+        ]
+
+        def timelineConfigured(runner):
+            nextMove()
+
+        def nextMove():
+            if moves:
+                self._cur_move = moves.pop(0)
+                context, focus, start, priority, config, trans = self._cur_move
+                obj = getattr(self.runner.video1, focus)
+                context = context(self.runner.timeline, 
+                     obj, set())
+                brush.scrub(context, start, priority, steps=10)
+            else:
+                self.runner.shutDown()
+
+        def scrubDone(brush):
+            connect, focus, stream, priority, config, trans = self._cur_move
+            expected = [(getattr(self.runner.video1, a),
+                getattr(self.runner.video1, b)) for a, b in
+                    trans]
+
+            if config:
+                config.matches(self.runner)
+
+            self.failUnlessEqual(self.runner.video1.transitions.keys(),
+               expected)
+            nextMove()
+
+        self.runner.loadConfiguration(initial)
+        self.runner.connect("timeline-configured", timelineConfigured)
+
+        brush = Brush(self.runner)
+        brush.connect("scrub-done", scrubDone)
+
+        self.runner.run()
+
+    def testSaveAndLoadWithTransitions(self):
+        pass
+
 if __name__ == "__main__":
     unittest.main()
