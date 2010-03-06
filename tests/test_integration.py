@@ -263,6 +263,16 @@ class InstanceRunner(Signallable):
         container = self.container()
         setattr(self, attrname, container)
         self.tracks[track] = container 
+        container.transitions = {}
+        track.connect("transition-added", self._transitionAddedCb, container)
+        track.connect("transition-removed", self._transitionRemovedCb,
+            container)
+
+    def _transitionAddedCb(self, track, transition, container):
+        container.transitions[(transition.a, transition.b)] = transition
+
+    def _transitionRemovedCb(self, track, transition, container):
+        del container.transitions[(transition.a, transition.b)]
 
     def _setupTimeline(self, configuration):
         for name, uri, props in configuration:
