@@ -633,6 +633,10 @@ class Discoverer(Signallable, Loggable):
             element.sync_state_with_parent()
 
     def _newPadCb(self, pad):
+        if 'text' in pad.get_caps():
+            self.info("skipping subtitle pad")
+            return
+
         self._addPadProbes(pad)
 
         queue = gst.element_factory_make('queue')
