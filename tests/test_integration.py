@@ -120,11 +120,39 @@ class Configuration(object):
         for source in sources:
             self.addSource(*source)
 
+    def clone(self):
+        ret = Configuration()
+        for source in self.sources:
+            if len(source) == 3:
+                name, uri, props = source
+                ret.addSource(name, uri, dict(props))
+            if len(source) == 2:
+                ret.addBadSource(*source)
+        return ret
+
     def addSource(self, name, uri, props=None, error=False):
         if name in self.source_map:
             raise Exception("Duplicate source: '%d' already defined" % name)
         self.sources.append((name, uri, props))
         self.source_map[name] = uri, props
+
+    def updateSource(self, name, uri=None, props=None):
+        def findSource(name):
+            for i, source in enumerate(self.sources):
+                if source[0] == name:
+                    return i
+            raise Exception("Source %s not in configuration" %
+                name)
+
+        i = findSource(name)
+        name, orig_uri, orig_props = self.sources[i]
+        if not uri:
+            uri = orig_uri
+        if props:
+            orig_props.update(props)
+
+        self.sources[i] = (name, uri, orig_props)
+        self.source_map[name] = (uri, orig_props)
 
     def addBadSource(self, name, uri):
         if name in self.source_map:
