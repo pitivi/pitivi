@@ -363,6 +363,12 @@ class Base(TestCase):
     Uses a WatchDog to ensure that test cases will eventually terminate with an
     assertion failure if runtime errors occur inside the mainloop."""
 
+    def run(self, result):
+        self._result = result
+        self._num_failures = len(result.failures)
+        self._num_errors = len(result.errors)
+        TestCase.run(self, result)
+
     def setUp(self):
         TestCase.setUp(self)
         ptv = InteractivePitivi()
@@ -383,9 +389,17 @@ class Base(TestCase):
         # make sure we aren't exiting because our watchdog activated
         self.assertFalse(self.runner.watchdog.activated)
         # make sure the instance has been unset
-        self.assertEquals(pitivi.instance.PiTiVi, None)
+        will_fail = False
+        if ((self._num_errors == self._result.errors) and
+            (self._num_failures == self._result.failures)):
+            will_fail = not (pitivi.instance.PiTiVi is None)
+
+        pitivi.instance.PiTiVi = None
         del self.ptv
         del self.runner
+
+        if will_fail:
+            raise Exception("Instance was not unset")
         TestCase.tearDown(self)
 
 class TestBasic(Base):
