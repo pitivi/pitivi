@@ -84,7 +84,6 @@ class SourceList(Signallable, Loggable):
         if uri in self._sources:
             raise SourceListError("URI already present in the source list", uri)
 
-        uri = urllib.unquote(uri)
         self._sources[uri] = None
 
         self.discoverer.addUri(uri)

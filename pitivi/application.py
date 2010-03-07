@@ -29,6 +29,7 @@ import gtk
 from optparse import OptionParser
 import os
 import sys
+import urllib
 
 from pitivi.pitivigstutils import patch_gst_python
 patch_gst_python()
@@ -272,7 +273,7 @@ class InteractivePitivi(Pitivi):
             # load the passed filenames, optionally adding them to the timeline
             # (useful during development)
             self.projectManager.newBlankProject()
-            uris = ["file://" + os.path.abspath(path) for path in args]
+            uris = ["file://" + urllib.quote(os.path.abspath(path)) for path in args]
             self.current.sources.connect("source-added",
                     self._sourceAddedCb, uris, options.add_to_timeline)
             self.current.sources.connect("discovery-error",
