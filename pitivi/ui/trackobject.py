@@ -41,7 +41,7 @@ import gst
 GlobalSettings.addConfigOption('videoClipBg',
     section = 'user-interface',
     key = 'videoclip-background',
-    default = 0x3182bdC0,
+    default = 0x000000A0,
     notify = True)
 
 PreferencesDialog.addColorPreference('videoClipBg',
@@ -52,7 +52,7 @@ PreferencesDialog.addColorPreference('videoClipBg',
 GlobalSettings.addConfigOption('audioClipBg',
     section = 'user-interface',
     key = 'audioclip-background',
-    default = 0x3182bdC0,
+    default = 0x4E9A06C0,
     notify = True)
 
 PreferencesDialog.addColorPreference('audioClipBg',
