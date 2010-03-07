@@ -125,6 +125,7 @@ class Discoverer(Signallable, Loggable):
         self.error = None
         self.error_detail = None
         self.unfixed_pads = 0
+        self.unknown_pads = 0
         self.missing_plugin_messages = []
         self.dynamic_elements = []
         self.thumbnails = {}
@@ -383,6 +384,7 @@ class Discoverer(Signallable, Loggable):
             dbin = gst.element_factory_make("decodebin", "dbin")
 
         dbin.connect("new-decoded-pad", self._newDecodedPadCb)
+        dbin.connect("unknown-type", self._unknownType)
 
         return dbin
 
@@ -482,7 +484,7 @@ class Discoverer(Signallable, Loggable):
         if prev == gst.STATE_READY and new == gst.STATE_PAUSED and \
                 pending == gst.STATE_VOID_PENDING:
             have_video, have_audio, have_image = self._getCurrentStreamTypes()
-            if self.unfixed_pads or have_video or have_image:
+            if self.unfixed_pads or self.unknown_pads or have_video or have_image:
                 # go to PLAYING to generate the thumbnails
                 if self.pipeline.set_state(gst.STATE_PLAYING) == gst.STATE_CHANGE_FAILURE:
                     if not self.error:
@@ -705,6 +707,11 @@ class Discoverer(Signallable, Loggable):
                 pad.connect("notify::caps", self._capsNotifyCb)
             self.unfixed_pads += 1
             self.debug("unfixed pads %d", self.unfixed_pads)
+
+    def _unknownType(self, decodebin, pad, caps):
+        # decodebin2 sends ASYNC_DONE when it finds an unknown type so we have
+        # to deal with that...
+        self.unknown_pads += 1
 
     def _addStreamFromPad(self, pad):
         self._maybeQueryDuration(pad)
