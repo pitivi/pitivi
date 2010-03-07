@@ -26,7 +26,8 @@ import pango
 import os
 import time
 
-from urllib import unquote
+from urllib import unquote, quote
+from urlparse import urlsplit, urlunsplit
 from gettext import gettext as _
 from gettext import ngettext
 
@@ -901,8 +902,15 @@ class SourceList(gtk.VBox, Loggable):
                 directories = [incoming]
         if directories:
             self.addFolders(directories)
+
+        def quote_uri(uri):
+            parts = list(urlsplit(uri, allow_fragments=False))
+            parts[2] = quote(parts[2])
+            uri = urlunsplit(parts)
+            return uri
+
         try:
-            self.addUris(filenames)
+            self.addUris([quote_uri(uri) for uri in filenames])
         except SourceListError:
             # filenames already present in the sourcelist
             pass
