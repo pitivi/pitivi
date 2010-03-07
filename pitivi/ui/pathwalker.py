@@ -21,7 +21,15 @@
 
 import os
 import threading
+from urllib import quote
+from urlparse import urlsplit, urlunsplit
 from pitivi.threads import Thread
+
+def quote_uri(uri):
+    parts = list(urlsplit(uri, allow_fragments=False))
+    parts[2] = quote(parts[2])
+    uri = urlunsplit(parts)
+    return uri
 
 class PathWalker(Thread):
     """
@@ -45,7 +53,8 @@ class PathWalker(Thread):
                     return
                 uris = []
                 for afile in files:
-                    uris.append("file://%s" % os.path.join(path, afile))
+                    uris.append(quote_uri("file://%s" %
+                            os.path.join(path, afile)))
                 if uris:
                     self.callback(uris)
 

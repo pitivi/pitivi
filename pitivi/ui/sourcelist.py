@@ -26,13 +26,12 @@ import pango
 import os
 import time
 
-from urllib import unquote, quote
-from urlparse import urlsplit, urlunsplit
+from urllib import unquote
 from gettext import gettext as _
 from gettext import ngettext
 
 import pitivi.ui.dnd as dnd
-from pitivi.ui.pathwalker import PathWalker
+from pitivi.ui.pathwalker import PathWalker, quote_uri
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.configure import get_pixmap_dir
 from pitivi.signalgroup import SignalGroup
@@ -902,12 +901,6 @@ class SourceList(gtk.VBox, Loggable):
                 directories = [incoming]
         if directories:
             self.addFolders(directories)
-
-        def quote_uri(uri):
-            parts = list(urlsplit(uri, allow_fragments=False))
-            parts[2] = quote(parts[2])
-            uri = urlunsplit(parts)
-            return uri
 
         try:
             self.addUris([quote_uri(uri) for uri in filenames])
