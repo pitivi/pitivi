@@ -30,13 +30,14 @@ from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
 
 class AddUrisStubDiscoverer(Discoverer):
     analysis_scheduled = 0
+    current_uri = "bar"
 
     def _scheduleAnalysis(self):
         self.analysis_scheduled += 1
 
-    def _finishAnalysis(self):
+    def _finishAnalysis(self, reason):
         self.analysis_scheduled -= 1
-        return Discoverer._finishAnalysis(self)
+        return Discoverer._finishAnalysis(self, reason)
 
 class TestAnalysisQueue(TestCase):
     def testAddUri(self):
@@ -48,7 +49,7 @@ class TestAnalysisQueue(TestCase):
         self.failUnlessEqual(discoverer.analysis_scheduled, 1)
 
         # finish analysis, no other files queued
-        discoverer._finishAnalysis()
+        discoverer._finishAnalysis("foo")
         self.failIf(discoverer.working)
         self.failUnlessEqual(discoverer.analysis_scheduled, 0)
 
@@ -62,12 +63,12 @@ class TestAnalysisQueue(TestCase):
         # this shouldn't trigger a new analysis until the previous is done
         self.failUnless(discoverer.analysis_scheduled, 1)
 
-        discoverer._finishAnalysis()
+        discoverer._finishAnalysis("foo")
         # something queued, keep working
         self.failUnless(discoverer.working)
         self.failUnlessEqual(discoverer.analysis_scheduled, 1)
 
-        discoverer._finishAnalysis()
+        discoverer._finishAnalysis("foo")
         self.failIf(discoverer.working)
         self.failUnlessEqual(discoverer.analysis_scheduled, 0)
 
@@ -119,6 +120,7 @@ class TestAnalysis(TestCase):
     def setUp(self):
         TestCase.setUp(self)
         self.discoverer = Discoverer1()
+        self.discoverer.current_uri = "meh"
         self.discoverer.pipeline = gst.Bin()
 
     def tearDown(self):
@@ -180,7 +182,7 @@ class TestAnalysis(TestCase):
         self.failIf(self.discoverer.timeout_cancelled)
         self.failUnless(self.discoverer.working)
         # a call go _finishAnalysis() cancels the timeout
-        self.discoverer._finishAnalysis()
+        self.discoverer._finishAnalysis("foo")
         self.failUnless(self.discoverer.timeout_cancelled)
         self.failIf(self.discoverer.working)
 
@@ -226,8 +228,10 @@ class TestAnalysis(TestCase):
     def testGetThumbnailFilenameFromPad(self):
         pad = gst.Pad('src0', gst.PAD_SRC)
         pad1 = gst.Pad('src1', gst.PAD_SRC)
+        self.discoverer.current_uri = "meh"
         filename1 = self.discoverer._getThumbnailFilenameFromPad(pad)
         filename2 = self.discoverer._getThumbnailFilenameFromPad(pad)
+        self.discoverer.current_uri = "boo"
         filename3 = self.discoverer._getThumbnailFilenameFromPad(pad1)
         self.failUnlessEqual(filename1, filename2)
         self.failIfEqual(filename2, filename3)
@@ -236,7 +240,7 @@ class TestAnalysis(TestCase):
 
     def testBusEos(self):
         bag = {'called': False}
-        def finish_analysis():
+        def finish_analysis(reason):
             bag['called'] = True
 
         self.discoverer._finishAnalysis = finish_analysis
@@ -245,7 +249,7 @@ class TestAnalysis(TestCase):
 
     def testBusElement(self):
         bag = {'called': False}
-        def finish_analysis():
+        def finish_analysis(reason):
             bag['called'] = True
 
         self.discoverer._finishAnalysis = finish_analysis
@@ -340,6 +344,7 @@ class TestStateChange(TestCase):
     def setUp(self):
         TestCase.setUp(self)
         self.discoverer = Discoverer1()
+        self.discoverer.current_uri = "meh"
         # don't plug the thumbnailing branch
         self.discoverer.current_uri = 'file:///foo/bar'
         self.src = gst.Bin()
@@ -409,7 +414,7 @@ class TestStateChange(TestCase):
         self.discoverer._busMessageStateChangedCb(None, message)
         # should go to PLAYING to do thumbnails
         self.failUnlessEqual(self.src.get_state(0)[2], gst.STATE_PLAYING)
-        self.discoverer._finishAnalysis()
+        self.discoverer._finishAnalysis("foo")
         self.failUnlessEqual(len(self.factories), 1)
         factory = self.factories[0]
         self.failUnless(isinstance(factory, FileSourceFactory))
@@ -454,7 +459,7 @@ class TestStateChange(TestCase):
         self.discoverer._busMessageStateChangedCb(None, message)
         # should go to PLAYING to do thumbnails
         self.failUnlessEqual(self.src.get_state(0)[2], gst.STATE_PLAYING)
-        self.discoverer._finishAnalysis()
+        self.discoverer._finishAnalysis("foo")
         self.failUnlessEqual(len(self.factories), 1)
         factory = self.factories[0]
         self.failUnless(isinstance(factory, PictureFileSourceFactory))
@@ -472,7 +477,7 @@ class TestStateChange(TestCase):
         pad.set_caps(caps)
         self.discoverer._newDecodedPadCb(None, pad, False)
         self.discoverer.addUri('illbepopped')
-        self.discoverer._finishAnalysis()
+        self.discoverer._finishAnalysis("foo")
 
         self.failUnlessEqual(self.error, None)
         self.failUnlessEqual(self.discoverer.current_duration,
@@ -484,7 +489,7 @@ class TestStateChange(TestCase):
         pad.set_caps(gst.Caps('audio/x-raw-int'))
         self.discoverer._newDecodedPadCb(None, pad, False)
         self.discoverer.addUri('illbepopped')
-        self.discoverer._finishAnalysis()
+        self.discoverer._finishAnalysis("foo")
 
         self.failUnlessEqual(self.error,
                 "Could not establish the duration of the file.")
