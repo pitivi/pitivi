@@ -58,16 +58,16 @@ class TestCase(unittest.TestCase):
         del self._tracked
 
     def setUp(self):
-        self._num_failures = len(self._result.failures)
-        self._num_errors = len(self._result.errors)
+        self._num_failures = len(getattr(self._result, 'failures', []))
+        self._num_errors = len(getattr(self._result, 'errors', []))
         if detect_leaks:
             self.gctrack()
 
     def tearDown(self):
         # don't barf gc info all over the console if we have already failed a
         # test case
-        if ((self._num_failures < len(self._result.failures)) or
-            (self._num_errors < len(self._result.errors))):
+        if (self._num_failures < len(getattr(self._result, 'failures', []))
+            or self._num_errors < len(getattr(self._result, 'failures', []))):
             return
         if detect_leaks:
             self.gccollect()
