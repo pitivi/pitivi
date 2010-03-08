@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-03-05 08:00+0000\n"
-"PO-Revision-Date: 2010-03-03 23:19+0100\n"
+"POT-Creation-Date: 2010-03-07 17:48+0000\n"
+"PO-Revision-Date: 2010-03-07 20:35+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -233,43 +233,47 @@ msgid ""
 "fashion."
 msgstr "K tomuto klipu nelze přistupovat v nahodilém pořadí."
 
-#: ../pitivi/discoverer.py:332
+#: ../pitivi/discoverer.py:334
 msgid "Timeout while analyzing file."
 msgstr "Analýza souboru selhala, vypršel časový limit."
 
-#: ../pitivi/discoverer.py:333
+#: ../pitivi/discoverer.py:335
 msgid "Analyzing the file took too long."
 msgstr "Analyzování souboru trvalo příliš dlouho."
 
-#: ../pitivi/discoverer.py:362
+#: ../pitivi/discoverer.py:364
 msgid "No available source handler."
 msgstr "Obsluha vstupu není dostupná."
 
-#: ../pitivi/discoverer.py:363
+#: ../pitivi/discoverer.py:365
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr ""
 "GStreamer nemůže zpracovat protokol '%s'. Máte nainstalovány příslušné "
 "balíčky?"
 
-#: ../pitivi/discoverer.py:427
+#: ../pitivi/discoverer.py:429
 msgid "Pipeline didn't want to go to PAUSED."
 msgstr "Roura nechce přejít do stavu POZASTAVENO."
 
-#: ../pitivi/discoverer.py:450
+#: ../pitivi/discoverer.py:452
 #, python-format
 msgid "An internal error occurred while analyzing this file: %s"
 msgstr "Při analyzování souboru %s se vyskytla vnitřní chyba."
 
-#: ../pitivi/discoverer.py:460
+#: ../pitivi/discoverer.py:462
 msgid "File contains a redirection to another clip."
 msgstr "Soubor obsahuje přesměrování na jiný klip."
 
-#: ../pitivi/discoverer.py:461
+#: ../pitivi/discoverer.py:463
 msgid "PiTiVi currently does not handle redirection files."
 msgstr "PiTiVi momentálně neumí pracovat s přesměrováním souborů."
 
-#: ../pitivi/application.py:121
+#: ../pitivi/discoverer.py:489
+msgid "Pipeline didn't want to go to PLAYING."
+msgstr "Roura nechce přejít do stavu PŘEHRÁVÁNO."
+
+#: ../pitivi/application.py:122
 #, python-format
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
@@ -278,7 +282,7 @@ msgstr ""
 "Již existuje instance %s, informujte prosím vývojáře nahlášením chyby na "
 "http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:218
+#: ../pitivi/application.py:219
 msgid ""
 "\n"
 "      %prog [PROJECT_FILE]\n"
@@ -288,7 +292,7 @@ msgstr ""
 "      %prog [PROJECT_FILE]\n"
 "      %prog -i [-a] [MEDIA_FILE]…"
 
-#: ../pitivi/application.py:222
+#: ../pitivi/application.py:223
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
 "    no project is given, %prog creates a new project.\n"
@@ -304,20 +308,20 @@ msgstr ""
 "    do projektu. Pokud uvedete -a, budou tyto klipy přidány na konec časové\n"
 "osy."
 
-#: ../pitivi/application.py:228
+#: ../pitivi/application.py:229
 msgid "Import each MEDIA_FILE into the project."
 msgstr "Importuje každý multimediální soubor (MEDIA_FILE) do projektu."
 
-#: ../pitivi/application.py:230
+#: ../pitivi/application.py:231
 msgid "Add each MEDIA_FILE to timeline after importing."
 msgstr ""
 "Po importu přidá každý multimediální soubor (MEDIA_FILE) do časové osy."
 
-#: ../pitivi/application.py:231
+#: ../pitivi/application.py:232
 msgid "Run pitivi in the Python Debugger"
 msgstr "Spustit pitivi v Python debugeru"
 
-#: ../pitivi/application.py:233
+#: ../pitivi/application.py:234
 msgid "Run pitivi with no gui"
 msgstr "Spustit aplikaci PiTiVi bez uživatelského rozhraní"
 
