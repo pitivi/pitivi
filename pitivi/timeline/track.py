@@ -1033,6 +1033,8 @@ class Track(Signallable, Loggable):
         self.composition.props.update = False
 
     def addTransition(self, transition):
+        if type(self.stream) is AudioStream:
+            return
         a, b = transition.a, transition.b
         if not ((a in self.track_objects) and
                 (b in self.track_objects)):
