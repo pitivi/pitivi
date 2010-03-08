@@ -958,6 +958,19 @@ class TestTransitions(Base):
                 "duration" : 1 * gst.SECOND
             })
 
+        phase4 = initial.clone()
+        phase4.updateSource(
+            "object2",
+            props={
+                "start" : 3 * gst.SECOND,
+            })
+        phase4.updateSource(
+            "object3",
+            props={
+                "start" : 5 * gst.SECOND,
+                "duration" : 5 * gst.SECOND,
+            })
+
         moves = [
             # [1------]    [3--[2==]]
             (MoveContext, "object2", 9 * gst.SECOND, 0, initial, []),
@@ -1003,6 +1016,28 @@ class TestTransitions(Base):
             #        [2  ]
             (MoveContext, "object3", long(4.5 * gst.SECOND), 0,
                 phase3, [("object1", "object2")]),
+
+            # Next few commands build this arrangement
+            # [1      ]
+            #     [2    ]
+            #          [3   ]
+
+            (MoveContext, "object2", 3 * gst.SECOND, 0,
+                None, None),
+            (MoveContext, "object3", 5 * gst.SECOND, 0,
+                None, None),
+            (TrimEndContext, "object3", 10 * gst.SECOND, 0,
+                phase4, [("object1", "object2"), ("object2",
+                    "object3")]),
+
+            # Activates Overlap Prevention
+            # [1      ]
+            #     [2    ]
+            #       [3   ]
+
+            (MoveContext, "object3", 4 * gst.SECOND, 0,
+                phase4, [("object1", "object2")]),
+
         ]
 
         def timelineConfigured(runner):
@@ -1021,15 +1056,17 @@ class TestTransitions(Base):
 
         def scrubDone(brush):
             connect, focus, stream, priority, config, trans = self._cur_move
-            expected = [(getattr(self.runner.video1, a),
-                getattr(self.runner.video1, b)) for a, b in
-                    trans]
 
             if config:
                 config.matches(self.runner)
 
-            self.failUnlessEqual(self.runner.video1.transitions.keys(),
-               expected)
+            if trans:
+                expected = [(getattr(self.runner.video1, a),
+                    getattr(self.runner.video1, b)) for a, b in
+                        trans]
+
+                self.failUnlessEqual(self.runner.video1.transitions.keys(),
+                   expected)
             nextMove()
 
         self.runner.loadConfiguration(initial)
