@@ -1138,18 +1138,56 @@ class MoveContext(EditingContext):
     def _finishDefault(self):
         self._restoreValues(self.default_originals)
 
-    def finish(self):
+    def _overlapsAreTransitions(self, focus, priority):
+        left_gap, right_gap = Gap.findAroundObject(focus)
 
-        # special case to allow creating transitions
-        if len(self.timeline_objects) == 1:
-            # run the update algorithm and see if the arrangement remains
-            # valid. Return immediately if valid.
-            self.focus.track.updateTransitions()
-            if self.focus.track.valid_arrangement:
-                self.focus.track._update_transitions = False
-                EditingContext.finish(self)
-                self.focus.track._update_transitions = True
-                return
+        focus_end = focus.start + focus.duration
+
+        # left_transition
+        if left_gap.duration < 0:
+
+            left_obj = left_gap.left_object
+            left_end = left_obj.start + left_obj.duration
+
+            if left_end > focus_end:
+                return False
+
+            # check that the previous previous object doesn't end after
+            # our start time. we shouldn't have to go back further than
+            # this because
+            #   * we are only moving one object
+            #   * if there was more than one clip overlaping the previous
+            #   clip, it too would be invalid, since that clip would
+            #   overlap the previous and previous previous clips
+
+            try:
+                prev_prev = self.timeline.getPreviousTimelineObject(left_obj)
+                if prev_prev.start + prev_prev.duration > self.focus.start:
+                    return False
+            except TimelineError:
+                pass
+
+        # right transition
+        if right_gap.duration < 0:
+
+            right_obj = right_gap.right_object
+            right_end = right_obj.start + right_obj.duration
+
+            if right_end < focus.start + self.focus.duration:
+                return False
+
+            # check that the next next object starts after we end
+
+            try:
+                next_next = self.timeline.getNextTimelineObject(right_obj)
+                if next_next.start < focus_end:
+                    return False
+            except TimelineError:
+                pass
+
+        return True
+
+    def finish(self):
 
         if isinstance(self.focus, TrackObject):
             focus_timeline_object = self.focus.timeline_object
