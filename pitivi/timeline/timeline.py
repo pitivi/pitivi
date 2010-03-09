@@ -1173,7 +1173,7 @@ class MoveContext(EditingContext):
             right_obj = right_gap.right_object
             right_end = right_obj.start + right_obj.duration
 
-            if right_end < focus.start + self.focus.duration:
+            if right_end < focus_end:
                 return False
 
             # check that the next next object starts after we end
@@ -1199,8 +1199,18 @@ class MoveContext(EditingContext):
         final_priority = self.focus.priority
         final_position = self.focus.start
 
-        # adjust priority
         priority = final_priority
+
+        # special case for transitions. Allow a single object to overlap
+        # either of its two neighbors if it overlaps no other objects
+        if len(self.timeline_objects) == 1:
+            if not self._overlapsAreTransitions(focus_timeline_object,
+                priority):
+                self._defaultTo (initial_position, initial_priority)
+            EditingContext.finish(self)
+            return
+
+        # adjust priority
         overlap = False
         while True:
             left_gap, right_gap = self._getGapsAtPriority(priority)
@@ -1227,9 +1237,9 @@ class MoveContext(EditingContext):
             return
 
         self._defaultTo(initial_position, priority)
+        delta = final_position - initial_position
         left_gap, right_gap = self._getGapsAtPriority(priority)
 
-        delta = final_position - initial_position
         if delta > 0 and right_gap.duration < delta:
             final_position = initial_position + right_gap.duration
         elif delta < 0 and left_gap.duration < abs(delta):
