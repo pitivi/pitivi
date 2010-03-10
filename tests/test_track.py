@@ -103,12 +103,24 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
 
+        # test video stream$
+        obj.stream_type = VideoStream
         priority = 100
         gnl_priority = 3 * 100 + 2 + obj._stagger
         obj.priority = priority
         self.failUnlessEqual(obj.priority, priority)
         self.failUnlessEqual(gnl_object.props.priority, gnl_priority)
         self.failUnlessEqual(self.monitor.priority_changed_count, 1)
+
+        # test audio stream
+        obj.stream_type = AudioStream
+        priority = 55
+        gnl_priority = 4 * 55 + 2 + 2 * obj._stagger
+        obj.priority = priority
+        self.failUnlessEqual(obj.priority, priority)
+        self.failUnlessEqual(gnl_object.props.priority, gnl_priority)
+        self.failUnlessEqual(self.monitor.priority_changed_count, 2)
+
 
     def testChangePropertiesFromGnlObject(self):
         obj = self.track_object
@@ -137,12 +149,24 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
 
+        # video stream
+        obj.stream_type = VideoStream
         gnl_priority = 100
         priority = (100 - 2 - obj._stagger) // 3
         gnl_object.props.priority = gnl_priority
         self.failUnlessEqual(obj.priority, priority)
         self.failUnlessEqual(gnl_object.props.priority, gnl_priority)
         self.failUnlessEqual(self.monitor.priority_changed_count, 1)
+
+        # video stream
+        obj.stream_type = AudioStream
+        gnl_priority = 55
+        priority = (55 - 2 - obj._stagger) // 4
+        gnl_object.props.priority = gnl_priority
+        self.failUnlessEqual(obj.priority, priority)
+        self.failUnlessEqual(gnl_object.props.priority, gnl_priority)
+        self.failUnlessEqual(self.monitor.priority_changed_count, 2)
+
 
     def testTrimStart(self):
         obj = self.track_object
