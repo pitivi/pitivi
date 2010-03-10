@@ -688,8 +688,6 @@ class SourceTrackObject(TrackObject):
 
 class Transition(Signallable):
 
-    caps = gst.Caps("video/x-raw-yuv,format=(fourcc)AYUV")
-
     __signals__ = {
         "start-changed" : ["start"],
         "duration-changed" : ["duration"],
@@ -706,14 +704,7 @@ class Transition(Signallable):
         self._connectToTrackObjects(a, b)
 
     def _makeGnlObject(self):
-        trans = gst.element_factory_make("alpha")
-        self.controller = gst.Controller(trans, "alpha")
-        self.controller.set_interpolation_mode("alpha", gst.INTERPOLATE_LINEAR)
-
-        self.operation = gst.element_factory_make("gnloperation")
-        self.operation.add(trans)
-        self.operation.props.media_start = 0
-        self.operation.props.caps = self.caps
+        pass
 
     def _connectToTrackObjects(self, a, b):
         a.connect("start-changed", self._updateStartDuration)
@@ -732,20 +723,74 @@ class Transition(Signallable):
         duration = max(0, end - start)
 
         if start != self.start:
-            self.operation.props.start = start
+            self._updateOperationStart(start)
             self.start = start
             self.emit("start-changed", start)
 
         if duration != self.duration:
-            self.operation.props.duration = duration
-            self.operation.props.media_duration = duration
+            self._updateOperationDuration(duration)
             self.duration = duration
             self.emit("duration-changed", duration)
 
         self._updateController()
 
+    def _updatePriority(self, *unused):
+        if self.a.priority == self.b.priority:
+            priority = self.a.priority
+            self._updateOperationPriority(priority)
+            self.priority = priority
+            self.emit("priority-changed", priority)
+
     def _staggerChanged(self, *unused):
         self._updateController()
+
+    def _updateController(self):
+        pass
+
+    def _updateOperationStart(self, start):
+        pass
+
+    def _updateOperationDuration(self, duration):
+        pass
+
+    def _updateOperationPriority(self, priority):
+        pass
+
+    def addThyselfToComposition(self, composition):
+        pass
+
+    def removeThyselfFromComposition(self, composition):
+        pass
+
+class VideoTransition(Transition):
+
+    caps = gst.Caps("video/x-raw-yuv,format=(fourcc)AYUV")
+
+    def _makeGnlObject(self):
+        trans = gst.element_factory_make("alpha")
+        self.controller = gst.Controller(trans, "alpha")
+        self.controller.set_interpolation_mode("alpha", gst.INTERPOLATE_LINEAR)
+
+        self.operation = gst.element_factory_make("gnloperation")
+        self.operation.add(trans)
+        self.operation.props.media_start = 0
+        self.operation.props.caps = self.caps
+
+    def addThyselfToComposition(self, composition):
+        composition.add(self.operation)
+
+    def removeThyselfFromComposition(self, composition):
+        composition.remove(self.operation)
+
+    def _updateOperationStart(self, start):
+        self.operation.props.start = start
+
+    def _updateOperationDuration(self, duration):
+        self.operation.props.duration = duration
+        self.operation.props.media_duration = duration
+
+    def _updateOperationPriority(self, priority):
+        self.operation.props.priority = 1 + 3 * priority
 
     def _updateController(self):
         if self.a.stagger > self.b.stagger:
@@ -761,12 +806,57 @@ class Transition(Signallable):
             self.controller.set("alpha", 0, 1.0)
             self.controller.set("alpha", self.duration, 0.0)
 
-    def _updatePriority(self, *unused):
-        if self.a.priority == self.b.priority:
-            priority = self.a.priority
-            self.operation.props.priority = (3 * priority) + 1
-            self.priority = priority
-            self.emit("priority-changed", priority)
+class AudioTransition(Transition):
+
+    def _makeGnlObject(self):
+        trans = gst.element_factory_make("volume")
+        self.a_controller = gst.Controller(trans, "volume")
+        self.a_controller.set_interpolation_mode("volume", gst.INTERPOLATE_LINEAR)
+
+        self.a_operation = gst.element_factory_make("gnloperation")
+        self.a_operation.add(trans)
+
+        trans = gst.element_factory_make("volume")
+        self.b_controller = gst.Controller(trans, "volume")
+        self.b_controller.set_interpolation_mode("volume", gst.INTERPOLATE_LINEAR)
+
+        self.b_operation = gst.element_factory_make("gnloperation")
+        self.b_operation.add(trans)
+
+        self.a_operation.props.media_start = 0
+
+        self.b_operation.props.media_start = 0
+
+
+    def addThyselfToComposition(self, composition):
+        composition.add(self.a_operation, self.b_operation)
+
+    def removeThyselfFromComposition(self, composition):
+        composition.remove(self.a_operation)
+        composition.remove(self.b_operation)
+
+    def _updateOperationStart(self, start):
+        self.a_operation.props.start = start
+        self.b_operation.props.start = start
+
+    def _updateOperationDuration(self, duration):
+        self.a_operation.props.duration = duration
+        self.a_operation.props.media_duration = duration
+        self.b_operation.props.duration = duration
+        self.b_operation.props.media_duration = duration
+
+    def _staggerChanged(self, *unused):
+        self._updateOperationPriority(self.priority)
+
+    def _updateOperationPriority(self, priority):
+        self.a_operation.props.priority = 1 + 2 * self.a.stagger + 4 * priority
+        self.b_operation.props.priority = 1 + 2 * self.b.stagger + 4 * priority
+
+    def _updateController(self):
+        self.a_controller.set("volume", 0, 1.0)
+        self.a_controller.set("volume", self.duration, 0.0)
+        self.b_controller.set("volume", 0, 0.0)
+        self.b_controller.set("volume", self.duration, 1.0)
 
 class Track(Signallable, Loggable):
     logCategory = "track"
