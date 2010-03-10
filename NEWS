@@ -1,3 +1,17 @@
+2010 March 10 - PiTiVi 0.13.4
+
+ * video mixing/transparency support
+ * icon view in source list
+ * smoother scrolling
+ * modeless splitting
+ * seek on click
+ * faster waveforms
+ * zoom slider
+ * UI beautifications
+ * Speed optimisations
+ * dbus/hal dependency now optional
+ * translated in 30 languages
+
 2009 September 12 - PiTiVi 0.13.3
 
  * Fix rendering failures

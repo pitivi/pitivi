@@ -1,3 +1,1710 @@
+2010-03-10  Edward Hervey <bilboed@bilboed.com>
+
+	* ChangeLog:
+	* NEWS:
+	* RELEASE:
+	* configure.ac:
+	* docs/bugzilla:
+	  Releasing 0.13.4 "Cabernet d'Anjou"
+
+2010-03-10  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure.ac: Make sure people use latest GStreamer
+	  We need 0.10.26 at least for a fix in decodebin2, but since 28 got released
+	  within a short timespan, let's use that one.
+
+2010-03-10  Alexandre Prokoudine <alexandre.prokoudine@gmail.com>
+
+	* po/ru.po:
+	  Slightly updated Russian translation
+
+2010-03-09  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure: 0.13.3.2 pre release
+
+2010-03-09  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure: bump GNonLin requirement to 0.10.15
+	  We need this for the many videomixing-related fixes
+
+2010-03-08  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-03-08  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Update Czech translation
+
+2010-03-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: fix discovery of files with unknown streams
+
+2010-03-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/pathwalker.py:
+	* pitivi/ui/sourcelist.py:
+	  Fix #611996 even more (folders now).
+
+2010-03-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Fix #611996 some more.
+
+2010-03-07  Dimitris Tsiolis <dimits7@gmail.com>
+
+	* po/el.po:
+	  Updated Greek translation for pitivi
+
+2010-03-07  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-03-07  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Update Czech translation
+
+2010-03-07  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2010-03-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_discoverer.py:
+	  Fix discoverer tests.
+
+2010-03-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/common.py:
+	  Fix tests/common.py so that I can use trial to run tests again.
+
+2010-03-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/sourcelist.py:
+	  Pass valid uris for filenames to discoverer. Fixes #611996.
+
+2010-03-07  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/trackobject.py:
+	  Change the default timeline colors to black (video) and green (audio).
+
+2010-03-06  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-03-06  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: try a better fix for subtitles
+
+2010-03-06  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: blind fix for subtitle movies never going EOS.
+
+2010-03-06  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: add a comment about the EOS elements.
+
+2010-03-06  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: generate shorter filenames for thumbnails.
+	  Fixes some weird bugs due to file operations failing with too long filenames.
+
+2010-03-06  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: handle state change failure going to PLAYING.
+
+2010-03-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: add some debugging.
+
+2010-03-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: add some debug logs to show how many unfixed pads are left.
+
+2010-03-05  Fran Diéguez <frandieguez@ubuntu.com>
+
+	* po/gl.po:
+	  Updated Galician translation
+
+2010-03-05  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-03-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/projecttabs.py:
+	  Set a default size for the detachable source list window.
+
+2010-03-05  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/exportsettingswidget.py:
+	  Add more video frame rates. Fixes #603203.
+
+2010-03-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  Block video pads to prepare for seeking only once they are negotiated. Fixes #611761.
+
+2010-03-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_factories_file.py:
+	  test_factories_file.py: check in unit test for SourceFactory.setFilterCaps()
+	  it's easier to test this functionality when it's part of FileSourceFactory, as
+	  it involves creating bins with SourceFactorie's _makeStreamBin
+
+2010-03-04  Gianvito Cavasoli <gianvito@gmx.it>
+
+	* po/it.po:
+	  Micro update to Italian translation
+
+2010-03-04  Gianvito Cavasoli <gianvito@gmx.it>
+
+	* po/it.po:
+	  Updated Italian translation
+
+2010-03-04  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  Updated German translation
+
+2010-03-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/common.py:
+	  tests/common.py: don't bother checking for leaks if test case ends in failure or error
+
+2010-03-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/base.py:
+	  factories/base.py: fix bug preventing scaling when project settings change
+
+2010-03-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline.py: remove duplicated code which connects DnD signal handlers
+
+2010-03-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: also query the duration once caps are fixed.
+	  Workarounds a bug with flump3dec.
+
+2010-03-02  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/utils.py:
+	  seeker: cosmetic change
+
+2010-03-02  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-03-02  Robin Norwood <robin.norwood@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Rename Add Clips to Import clips in the source list popup menu.
+
+2010-03-02  Daniel Nylander <po@danielnylander.se>
+
+	* po/sv.po:
+	  Updated Swedish translation
+
+2010-03-02  Timo Jyrinki <timo.jyrinki@iki.fi>
+
+	* po/fi.po:
+	  Updated Finnish translation.
+
+2010-03-02  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Fix keyboard shortcuts for seeking. Fixes #608949.
+
+2010-03-02  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/singledecodebin.py:
+	* pitivi/pipeline.py:
+	  Make singledecodebin and pipeline queues smaller.
+	  Set max_size_buffers=3 in singledecodebin and Pipeline. This makes
+	  seeking around in the timeline a bit faster.
+
+2010-03-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Fix exception if something != dnd.TYPE_PITIVI_FILESOURCE is dragged on the timeline.
+
+2010-03-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/track.py:
+	  track: don't update the default sources if updates are disabled.
+
+2010-03-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/track.py:
+	  track: add debug logs to show the current default sources.
+
+2010-03-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/log/log.py:
+	  Revert a change in log.py that I introduced in the previous commit.
+
+2010-03-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	* pitivi/log/log.py:
+	  discoverer: add an elements whose sole purpose is to EOS after a buffer.
+	  Add EOSSir and use it instead of fakesink.num_buffers = 1 if we have cached
+	  thumbnails. Fixes not-expected errors when discovering images.
+
+2010-03-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	* pitivi/settings.py:
+	  Cache thumbnails in XDG_CACHE_HOME/pitivi.
+	  This speeds up importing a project significantly until we get a
+	  project format that bundles thumbnails.
+
+2010-03-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: add some debugging.
+
+2010-03-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_discoverer.py:
+	  tests/test_discoverer: make sure we get notify::caps for ghost pads.
+
+2010-03-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/device.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/webcam_managerdialog.py:
+	  Allow pitivi to run without HAL. Partly fixes #605920.
+	  Based on a patch from Guillaume Bouchard.
+
+2010-03-01  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-02-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_factories_file.py:
+	  tests/test_factories_file.py: disable obsolete unit test
+
+2010-02-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/base.py:
+	  factories/base.py: check if bin actually has ghostpad before attempting to remove it
+
+2010-02-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/elements/smartscale.py:
+	  smartscale.py: don't assume that width, height, etc will be present in the given caps
+
+2010-03-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/track.py:
+	  Fix some bugs introduced merging the default_sources branch.
+	  Fix a deadlock calling gnlsource.set_state(gst.STATE_NULL) with composition
+	  updates turned off.
+	  Fix not-linked errors posted by removed default sources.
+
+2010-02-28  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Disable some more updates.
+
+2010-02-28  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/track.py:
+	  Remove a sync_state_with_parent call since it might deadlock.
+
+2010-02-25  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/track.py:
+	  checkpoint
+
+2009-12-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: add bin to gnlobject and set priority when making default sources
+
+2009-12-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: use factory class name for gnlobjects created by TrackObjects
+
+2009-12-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_etree_formatter.py:
+	* tests/test_timeline.py:
+	  tests/test_timeline.py,test_etree_formatter.py: update test cases
+
+2009-12-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: keep track of new default sources
+
+2009-12-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: update default sources whenever a track-object is added or removed, or when updates are re-enabled
+
+2009-12-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: use gap-finding code to handle multiple default sources basically brute-force approach: keep a list of sources added, remove previous sources, find new gap list, add new sources.
+
+2009-12-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: assign maximum allowable priority to default sources
+
+2009-12-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/formatters/etree.py:
+	* pitivi/timeline/track.py:
+	* pitivi/ui/track.py:
+	  etree.py, track.py, ui.track.py: remove references to default TrackObjects
+
+2009-12-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/gap.py:
+	* tests/test_gap.py:
+	  gap.py, test_gap.py: check in findAllGaps() and unit test
+
+2010-02-28  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/base.py:
+	  Fix merge screwup.
+
+2010-02-05  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/elements/smartscale.py:
+	  smartscale.py: scale video to output resolution even if dar is the same
+
+2010-02-05  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/project.py:
+	  project.py: get the full video caps from our settings, since we can handle this now
+
+2010-02-05  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/base.py:
+	  factories/base.py: replace scale/videobox combo with SmartVideoScale element which does this for us
+
+2010-02-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/project.py:
+	  project.py: set width/height on filter caps when settings change. stop/pause pipeline to make sure caps are renegotiated
+
+2010-02-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/base.py:
+	  factories/base.py: add setFilterCaps method to dynamically set caps on SourceFactory bins
+
+2010-01-28  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/base.py:
+	  factories/base.py: force all images to the same resolution
+
+2010-01-27  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/base.py:
+	* pitivi/factories/file.py:
+	  factories/{base.py,file.py}: move definition of alpha and volume props to SourceFactory
+
+2010-01-27  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/file.py:
+	  factories/file.py: remove redundant videoscale from PictureFileSourceFactory
+
+2010-01-27  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/base.py:
+	  factories/base.py: move videoscale element to base SourceFactory
+
+2010-02-28  Jennie Petoumenou <jenniepet@src.gnome.org>
+
+	* po/el.po:
+	  Updated Greek translation
+
+2010-02-25  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/base.py:
+	  Oops, revert some crap that I committed with be3922
+
+2010-02-25  António Lima <amrlima@gmail.com>
+
+	* po/pt.po:
+	  Updated Portuguese translation
+
+2010-02-25  Gabor Kelemen <kelemeng@gnome.hu>
+
+	* po/hu.po:
+	  Updated Hungarian translation
+
+2010-02-22  Aron Xu <aronxu@gnome.org>
+
+	* po/zh_CN.po:
+	  Update Simplified Chinese translation.
+
+2010-02-22  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Fix #602892 - clips deleted from the source list are not restored in the timeline when undoing.
+
+2010-02-22  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/track.py:
+	* pitivi/ui/timeline.py:
+	  Fix a regression undoing splitting of clips. Fixes #597704.
+
+2010-02-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/prefs.py:
+	  Set a better default size for the preference window. Fixes #593663.
+
+2010-02-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: seek at duration / 3 when generating thumbnails.
+
+2010-02-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/imagefreeze.py:
+	* pitivi/factories/base.py:
+	* pitivi/factories/file.py:
+	  PictureSourceFactory, add ffmpegcolorspace after imagefreeze.
+	  Fixes not-negotiated errors with some pngs.
+
+2010-02-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Some more fixes for #584135.
+
+2010-02-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  In the encoding dialog, show "no audio" if audio isn't available. Fixes #584135.
+
+2010-02-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/settings.py:
+	* pitivi/ui/encodingdialog.py:
+	  Make rendering video only or audio only work again. Partly fixes #584135.
+
+2010-02-20  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/track.py:
+	  Workaround for 610072. Fixes a segfault.
+
+2009-10-09  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Remove obsolete FIXME.
+
+2010-02-19  Timo Jyrinki <timo.jyrinki@iki.fi>
+
+	* po/fi.po:
+	  Committing some updates I did to Finnish translation.
+
+2010-02-15  Rudolfs Mazurs <rudolfs.mazurs@gmail.com>
+
+	* po/lv.po:
+	  Updated Latvian translation
+
+2010-02-15  Rudolfs Mazurs <rudolfs.mazurs@gmail.com>
+
+	* po/lv.po:
+	  Updated Latvian translation
+
+2010-02-09  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/stream.py:
+	  stream: Detect subpicture/* as TextStream(s)
+	  Fixes #609426
+
+2010-02-09  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: Make fakesink EOS instantly.
+	  We need this to make the discoverer EOS as soon as possible.
+	  Fixes #575356
+
+2010-02-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* AUTHORS:
+	  AUTHORS: add Stephen Griffiths to authors
+
+2010-02-02  Stephen Griffiths <scgmk5@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  pitivi/ui/sourcelist.py: make insert key sensitive with both views
+
+2010-02-05  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/sourcelist.py:
+	  pitivi/ui/sourcelist.py: use nautilus behaviour for right-click modifiers
+
+2010-02-05  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/sourcelist.py:
+	  pitivi/ui/sourcelist.py: make popup insensitive when not useable
+
+2010-02-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/sourcelist.py:
+	  ui/sourcelist.py: make *UnderMouse*() work with iconview
+
+2010-02-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/sourcelist.py:
+	  ui/sourcelist.py: implement iconview DnD
+
+2010-02-05  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/sourcelist.py:
+	  ui/sourcelist.py: allow user to switch views. save/restore this setting
+
+2010-02-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/sourcelist.py:
+	  ui/sourcelist.py: create an iconview widget
+
+2010-02-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/sourcelist.py:
+	  ui/sourcelist.py: add large icon column to sourcelist model
+
+2010-02-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/sourcelist.py:
+	  ui/sourcelist.py: remove useless overriding of show() and hide() methods
+
+2010-02-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/projecttabs.py:
+	* pitivi/ui/sourcelist.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	  ui/many files: don't call show_all() in mainwindow.py, call show() on individual components
+
+2010-02-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: checkpoint: fixed bug 589814
+
+2010-02-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: slightly larger oval around value label
+
+2010-01-27  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: adjust is_item_at to account for overflow
+
+2010-01-27  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: use a separate clipping rectangle for value labels
+
+2010-01-27  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	* pitivi/ui/timelinecanvas.py:
+	  curve.py,timelinecanvas.py: rename KW_LABEL_OVERFLOW to KW_LABEL_Y_OVERFLOW
+
+2010-01-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: shift tracks downward to make room for label
+
+2010-01-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: shift curve upward
+
+2009-08-17  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: draw value label around focused keyframe
+
+2010-01-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  trackobject.py: don't specify height of curve widget
+
+2009-08-17  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/common.py:
+	  ui.common.py: check in roundedrec function
+
+2009-08-17  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/factories/file.py:
+	* pitivi/timeline/track.py:
+	  curve.py: specify formatfunc in getInterpolatedProperties
+	  factories/file.py,timeline/track.py: give formatfunc in
+	  getInterpolatedProperties
+
+2009-08-17  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: add value formatValue function, with optional format func passed in constructor
+
+2009-08-17  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/utils.py:
+	  utils.py: add formatPercent function
+
+2010-01-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/elements/arraysink.py:
+	  arraysink.py: limit waveforms to a single channel
+	  closes bug 607614
+
+2010-02-04  Xandru Armesto Fernandez <xandru@softastur.org>
+
+	* po/LINGUAS:
+	  Added asturian language
+
+2010-02-04  Xandru Armesto Fernandez <xandru@softastur.org>
+
+	* po/ast.po:
+	  Updated asturian translation
+
+2010-01-29  Gabor Kelemen <kelemeng@gnome.hu>
+
+	* po/hu.po:
+	  Hungarian translation updated
+
+2010-01-28  Gabor Kelemen <kelemeng@gnome.hu>
+
+	* po/hu.po:
+	  Hungarian translation added by Attila Hammer
+
+2010-01-27  Gabor Kelemen <kelemeng@gnome.hu>
+
+	* po/LINGUAS:
+	  Added hu to LINGUAS
+
+2009-12-18  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline.py: seek timeline after spliting. fixes 603149
+
+2010-01-22  Edward Hervey <bilboed@bilboed.com>
+
+	* tests/test_encode.py:
+	  tests: update test_encode for deprecated theoraenc properties
+
+2010-01-20  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/base.py:
+	  pitivi/factories/base.py: clear ghost pad target before removing it
+
+2010-01-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_factories_file.py:
+	  test_factories_file.py: fix test cases
+
+2010-01-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/base.py:
+	  factories/base.py: clean up child bin
+
+2010-01-15  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/elements/thumbnailsink.py:
+	  thumbnailsink.py: set alphamask so transparent thumbnails render
+
+2010-01-08  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/file.py:
+	  factories/file.py: don't use ffvideoscale when still image has alpha ffvideoscale can handle rgba but not ayuv
+
+2010-01-15  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/base.py:
+	  factories/base.py: preserve any existing alpha channel
+
+2010-01-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/file.py:
+	  factories/file.py: PictureFileSourceFactory just got a lot simpler
+
+2010-01-15  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/factories/base.py:
+	  factories/base.py: refactor SourceFactory._makeStreamBin for more flexibility
+	  Allow subclassses to pass a bin when the chain up to which we will link to
+	  both source and sink pads. This allows us to do both upstream and downstream
+	  processing at each level of abstraction.
+
+2010-01-07  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/stream.py:
+	  stream.py: implement has_alpha() for RGB and YUV streams
+
+2010-01-11  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_etree_formatter.py:
+	  tests/test_etree_formatter.py: update unit tests
+	  checkpoint: start end keyframes are now adjustable
+	  closes bug 589691
+
+2010-01-11  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/formatters/etree.py:
+	  etree.py: check for curve version and do conversion if necessary when loading
+
+2010-01-11  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/formatters/etree.py:
+	  etree.py: add a version attribute to curve elements when saving
+
+2010-01-08  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: sets start/end keyframes to {in,out}_point in constructor fixes gst_controller assertion warnings because we don't later try to unset a time that was never set.
+
+2010-01-05  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: preserve shape of curve after splitting
+
+2010-01-05  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	* pitivi/ui/trackobject.py:
+	  curve.py, trackobject.py: fix curve hitbox detection issues curve.py: make keyframes larger again
+	  closes bugs 603425, 603107
+
+2009-12-18  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: use getVisibleKeyframes() for drawing curve
+
+2009-12-18  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: move start and end keyframes when media_{start,stop} of track object changes
+	  note: this changes the semantics of the start, end keyframes. they are not
+	  longer fixed to the start and end points of the file but represent the start of the file in
+	  the timeline.
+
+2009-12-18  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: add getVisibleKeyframes(), updateMedia{Start,Stop} interpolator methods
+
+2009-12-18  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	* pitivi/utils.py:
+	  curve.py,utils.py: move between() function to utils
+
+2010-01-20  Greg Auger <gregory.auger@googlemail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Add pulseaudio 'role' tagging
+
+2010-01-18  António Lima <amrlima@gmail.com>
+
+	* po/pt.po:
+	  Updated Portuguese translation
+
+2010-01-12  Ivaylo Valkov <ivaylo@e-valkov.org>
+
+	* po/LINGUAS:
+	* po/bg.po:
+	  Updated Bulgarian translation
+
+2010-01-11  dumol <dumol@twinsun.ath.cx>
+
+	* po/ro.po:
+	  Updated Romanian translation
+
+2010-01-01  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2009-12-31  Flamarion Jorge <jorge.flamarion@gmail.com>
+
+	* po/pt_BR.po:
+	  Updated Brazilian Portuguese translation
+	  Reviewed by Djavan Fagundes <dnoway@gmail.com>
+
+2009-12-30  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Update Czech translation.
+
+2009-12-28  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Update Czech translation.
+
+2009-12-19  Lucian Adrian Grijincu <lucian.grijincu@gmail.com>
+
+	* po/ro.po:
+	  Update Romanian translation
+
+2009-12-13  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation, fixed typo
+
+2009-12-12  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  Updated German translation
+
+2009-12-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/viewer.py:
+	  viewer.py: add seek-on-click behavior to viewer slider closes bug 432647
+
+2009-12-09  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	* tests/test_integration.py:
+	  mainwindow.py,test_integration.py: issue preliminary seek on timeline closes bugs 603045, 603424, 603102
+
+2009-12-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/sourcelist.py:
+	  sourcelist.py: also seek when adding new clips to timeline
+
+2009-12-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: use project seeker in for playhead
+
+2009-12-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  trackobject.py: use project seeker in trackobject.py
+
+2009-12-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: use project seeker in timeline.py
+
+2009-12-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  pitivi/ui/ruler.py: use project seeker in ruler
+
+2009-12-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  pitivi/ui/mainwindow.py: connect to the project seeker in mainwindow.py note that this commit will break all seeking. it is restored by later commits.
+
+2009-12-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/project.py:
+	  project.py: put a seeker in the project
+
+2009-12-09  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge remote branch 'gnome/master'
+
+2009-12-08  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/utils.py:
+	  utils.py: fix stupid f@#$%ing signalinterface unit test failure
+
+2009-11-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer.py: fine-tune for longer clips
+
+2009-11-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer.py: cache and display waveforms at multiple resolutions
+	  The waveform previewer was exceeding some kind of cairo limitation
+	  at low zoom ratios. This limitation has something to do with the number and
+	  size of images drawn during a single update. By storing and lower-resolution
+	  versions of each waveform segment, we can avoid hitting this limitation.
+
+2009-10-29  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow.py: set zoom ratio when adding the first clips to the timeline closes bug 595362
+
+2009-10-29  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/trackobject.py:
+	  timeline.py,ui.trackobject.py: check in alessandro's fix for 597703
+
+2009-12-08  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline.py: set a tooltip on the zoom slider
+
+2009-12-08  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	  mainwindow.py,viewer.py: hide viewer slider when timeline is current pipeline closes bug 590632
+
+2009-12-08  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline.py: add a gtk.HScale to upper left corner of timeline for zooming closes bug 586025
+
+2009-12-08  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline.py: add +/- accelerators for zooming to menu action
+
+2009-12-08  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline.py: remove zoom buttons from timeline toolbar
+
+2009-12-05  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/sourcelist.py:
+	  ui/sourcelist.py: change conflicting accelerator
+
+2009-12-05  Adi Roiban <adi@roiban.ro>
+
+	* po/ro.po:
+	  Update Romanian translation
+
+2009-12-05  Adi Roiban <adi@roiban.ro>
+
+	* po/LINGUAS:
+	* po/ro.po:
+	  Update Romanian translation
+
+2009-12-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: better error messages
+
+2009-12-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: don't expand timeline infostub
+
+2009-12-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow.py: remove references to MainWindow.errordialog
+
+2009-12-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/filelisterrordialog.py:
+	  filelisterrordialog.py: some small tweaks to make dialog more generic
+
+2009-12-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  pitivi/ui/mainwindow.py: use the timeline infostub to report pipeline errors
+
+2009-12-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: add an InfoStub to the timeline widget
+
+2009-12-04  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2009-12-01  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge remote branch 'gnome/master'
+
+2009-11-20  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: test for seeking (requires ENABLE_UI)
+
+2009-11-20  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: can run tests with UI by setting ENABLE_UI
+
+2009-11-30  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: make playhead black
+
+2009-11-30  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: update playhead on zoom
+
+2009-11-30  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: remove cruft related to razor tool
+
+2009-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: cosmetic tweaks for playhead to improve appearance
+
+2009-11-24  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	  timeine.py,timelinecanvas.py: convert razor to movable playhead
+
+2009-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  ui.trackobject.py: fix SHIFT/CONTROL + click: SHIFT + click selects rectangular area CONTROL + toggles selected state closes bugs 590784 and 587378
+
+2009-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: implement SELECT_BETWEEN selection mode
+
+2009-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: add getObjsInRegion() method
+
+2009-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  pitivi/timeline/timeline.py: allow adding TimelineObjects to selection
+
+2009-11-29  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2009-11-28  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/formatters/etree.py:
+	  ElementTreeFormatter: Don't attempt to deserialize blank properties.
+	  Fixes #603202
+
+2009-11-27  Claude Paroz <claude@2xlibre.net>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow.py Fix string concatenation. Fixes #593962
+
+2009-11-26  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/operation.py:
+	* pitivi/factories/timeline.py:
+	  factories: Silence identity.
+	  This avoids making them waste cpu time creating messages nobody reads
+
+2009-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: remove duplicate __gsignals__
+
+2009-11-23  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: seek when clicking in blank area
+	  do not seek when selecting objects under the marquee. Also, explicitly clear
+	  the selection when the click has occured in a blank area and the shift or
+	  control keys were not depressed.
+
+2009-11-23  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: remove unnecessary seek request, ensures previous commit always works
+
+2009-11-23  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  trackobject.py: seek playhead on unmodified click
+
+2009-11-23  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: make split command modeless split now uses current playhead position as input time
+
+2009-11-23  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  [test_]timeline.py: check in Timeline.split() method and unit tests
+
+2009-11-20  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  timeline.py,test_timeline.py: add getObjsAtTime() method and tests
+
+2009-11-23  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge remote branch 'gnome/master'
+
+2009-11-23  Rodolfo Ribeiro Gomes <rodolforg@gmail.com>
+
+	* po/pt_BR.po:
+	  Updated Brazilian Portuguese translation; reviewed by Vladimir Melo.
+
+2009-11-23  Flamarion Jorge <jorge.flamarion@gmail.com>
+
+	* po/pt_BR.po:
+	  Updated Brazilian Portuguese translation.
+
+2009-11-21  António Lima <amrlima@gmail.com>
+
+	* po/pt.po:
+	  Updated Portuguese translation
+
+2009-11-20  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.xml:
+	  mainwindow.xml: disable plugin manager
+
+2009-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* Makefile.am:
+	* tests/Makefile.am:
+	* tests/runtests.py:
+	  remove integration tests from make check target: run them with make check-integration, instead
+
+2009-11-11  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/application.py:
+	* tests/test_integration.py:
+	  application.py,test_integration.py: changes to make running tests with UI work better
+
+2009-11-11  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: clear dirty bit to prevent save confirmation dialog when running with ui
+
+2009-11-11  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: check for duplicate source names in Configuration
+
+2009-11-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: add simple test case for ripple trim start
+
+2009-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: add more complex suite of integration tests
+
+2009-11-09  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: add simple ripple test case
+
+2009-11-09  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: fix some problems with Brush
+
+2009-11-06  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: split out test cases from fixture
+
+2009-11-06  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: more meaningful error message for Configuration.matches()
+
+2009-11-05  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/preview.py:
+	* pitivi/ui/previewer.py:
+	* pitivi/ui/trackobject.py:
+	  preview{er},trackobject.py: remove references to instance module
+
+2009-11-05  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: remove crack copied over from preview.py
+
+2009-11-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: make Configuration.matches() test more complete
+
+2009-11-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: factor scrub() logic into separate class
+	  should make complex sequences of interaction easier to implement
+
+2009-11-04  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: factor integration test logic into IntanceRunner
+	  Reduces test case boilerplate code and enables most tests to run as
+	  self-contained methods of TestCase objects.
+
+2009-10-29  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration: use media from tests submodule
+
+2009-10-28  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: add TestMoveSources test case
+
+2009-10-28  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: add scrubContext() method
+
+2009-10-26  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: test timeline
+
+2009-10-26  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: test importing files
+
+2009-08-29  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/base.py:
+	  SourceFactory: Make sure video elements reach the proper state befor using them.
+
+2009-08-23  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/mixer.py:
+	* pitivi/timeline/track.py:
+	  videomixing: Use new gnloperation signal to inform videomixer of zorder.
+	  Doesn't seem to work 100% reliably though. Requires gnonlin git.
+
+2009-08-23  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/mixer.py:
+	  SmartVideoMixer: Ensure we request a unique sink pad
+
+2009-08-23  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/base.py:
+	  SourceFactory: Add a 3-buffer queue for video streams.
+	  This is causing really weird crashers and non-linked errors :(
+
+2009-08-23  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/mixer.py:
+	  SmartVideoMixer: Force usage of AYUV and use black background.
+	  We have operational video mixing :)
+
+2009-08-23  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/base.py:
+	* pitivi/factories/file.py:
+	  factories: Setup alpha/ffmpegcolorspace elements for video streams
+	  This needs more work though because it's not doing the mixing properly :)
+
+2009-06-29  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/mixer.py:
+	* pitivi/timeline/track.py:
+	  Add video mixing support, needs some more loving though
+
+2009-11-18  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  Updated German translation
+
+2009-11-06  Edward Hervey <bilboed@bilboed.com>
+
+	  merging translations
+	  Merge remote branch 'gnome/master'
+
+2009-11-06  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/encode.py:
+	  encode.py: Build factories only once.
+	  This avoids stray double-elements lists
+
+2009-11-04  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2009-11-04  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.xml:
+	  Cleans up the toolbar
+	  [ui] Remove "New", "Open" and "Save" toolbar buttons.
+	  https://bugzilla.gnome.org/show_bug.cgi?id=558019
+
+2009-10-28  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/application.py:
+	  application.py: fix a bug exposed by Base integration test
+
+2009-10-26  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: check in base test case
+
+2009-10-28  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/test_integration.py:
+	  test_integration.py: add watchdog timer and tests
+
+2009-10-28  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* tests/Makefile.am:
+	* tests/test_integration.py:
+	  tests: check-in and dist test_integration.py
+
+2009-10-26  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/application.py:
+	  application.py: add a --no-ui option which will not show a gui
+
+2009-10-19  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/application.py:
+	  application.py: track changes to project settings changes to project settings are now undoable and change dirty state closes bug 593465
+
+2009-10-19  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/project.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	  project.py,mainwindow.py,ui.timeline.py: pass old, new settings in settings-changed signal
+
+2009-10-19  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/project.py:
+	  project.py: don't connect to settings-changed signal of ExportSettings
+
+2009-10-19  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  projectsettings.py: pass a copy of current project to export settings widget
+
+2009-10-19  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/settings.py:
+	  settings.py: add copy() method to ExportSettings class
+
+2009-10-19  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/projectmanager.py:
+	  projectmanager.py: check in ProjectSettingsChanged and ProjectLogObserver
+
+2009-10-09  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/previewer.py:
+	  Revert "Fix traceback previewing audio stream. Fixes #597790."
+	  This reverts commit 0e6d977a06080b22b0f900211e8263db71686051. A better fix was
+	  committed.
+
+2009-10-08  Tim Waugh <twaugh@redhat.com>
+
+	* pitivi/ui/previewer.py:
+	  Use at least 1 sample-per-pixel when previewing audio stream. Fixes #597790.
+
+2009-10-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/previewer.py:
+	  Fix traceback previewing audio stream. Fixes #597790.
+
+2009-10-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/timeline.py:
+	* tests/test_timeline_undo.py:
+	  Fix undoing 'ungroup' operation. Fixes #597711.
+
+2009-10-08  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translation
+	  Merge remote branch 'gnome/master'
+
+2009-10-08  Matej Urbančič <mateju@svn.gnome.org>
+
+	* po/LINGUAS:
+	  Added sl for Slovenian language
+
+2009-10-08  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Added Slovenian translation
+
+2009-10-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/previewer.py:
+	  Fix picture thumbnails.
+
+2009-10-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/previewer.py:
+	  Avoid exception generating thumbnails for streams having framerate 0/1
+
+2009-10-04  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  Updated German translation
+
+2009-10-02  Gianvito Cavasoli <gianvito@gmx.it>
+
+	* po/it.po:
+	  Updated Italian translation
+
+2009-09-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer.py: don't draw anything if we get an empty buffer
+
+2009-09-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  prevewer.py: quantize thubnail timestamps to avoid unecessary redraws
+
+2009-09-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer.py: add spacing offset to thumbnail duration, eliminates some uncessary re-renderings
+
+2009-09-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/zoominterface.py:
+	  zoominterface.py: add method to compute pixel width at arbitrary zoom ratio
+
+2009-09-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer.py: make larger audio thumbnail tiles, undersample for smoother appearance
+
+2009-09-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/elements/arraysink.py:
+	* pitivi/ui/previewer.py:
+	  arraysink.py, previewer.py: support multi-channel audio
+
+2009-07-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer.py: use the min-max waveform generation algorithm, speeding up drawing and improving accuracy previewer.py: combine resampling and rendering loops
+
+2009-07-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer.py: scale audio thumbnails to the current zoom
+
+2009-07-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer.py: render waveform thumbnails at constant size
+
+2009-07-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer.py: constant tdur for AudioPreviewer
+
+2009-07-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer.py: make tdur a property
+
+2009-07-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer.py: set cairo surface directly in _thumbForTime
+
+2009-09-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: set a contrasting inward bevel on the canvas
+
+2009-09-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: bevel the ruler and timeline controls outward
+
+2009-09-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: add a little spacing between canvas and adjacent controls
+
+2009-09-23  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi.desktop.in:
+	  remove pitivi.desktop.in from version control
+
+2009-09-23  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* .gitignore:
+	  add pitivi.desktop.in to .gitignore
+
+2009-09-22  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/preview.py:
+	  preview.py: add border around thumbnails
+
+2009-09-21  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  trackobject.py: raise objects on enter instead of drag start
+
+2009-09-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/controller.py:
+	  controller.py: tweaks to make sure enter/leave are called and curors are set correctly
+
+2009-09-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  trackobject.py: add 1 pixel border
+
+2009-09-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  trackobject.py: hide trim handles when not focused
+
+2009-09-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	* pitivi/ui/trackobject.py:
+	  curve.py, trackobject.py: focusing of any part of trackobject also focuses trackobject
+
+2009-09-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/controller.py:
+	  controller.py: allow controllers to override whether or not they handle mouse events
+
+2009-09-21  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge remote branch 'gnome/master'
+
+2009-09-19  Jan Drábek <repli2dev@gmail.com>
+
+	* po/cs.po:
+	  Update Czech translation
+
+2009-09-02  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: paint beveled border between tracks
+
+2009-09-02  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: paint theme-compliant background
+
+2009-09-02  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: override expose event
+
+2009-09-02  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/common.py:
+	  ui.common.py: increase track spacing
+
+2009-09-11  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: zoom based on the playhead position
+
+2009-09-11  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas.py: remove unecessary update request
+
+2009-09-11  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ruler.py, timeline.py: elminate flicker during zooming
+	  When the scroll adjustment changes, the canvas immediately scrolls its
+	  internal gdk window, which is the source of the flicker while zooming.
+	  Temporarily setting redraw_when_scrolling to true both suppresses this
+	  behavior and triggers a complete redraw of the canvas, eliminating flicker.
+
+2009-09-16  Karl Palsson <bugs@tweak.net.au>
+
+	* pitivi/ui/encodingdialog.py:
+	  Fixes bug blah, the filename display with non ascii chars
+
+2009-09-16  Karl Palsson <bugs@tweak.net.au>
+
+	* po/en_GB.po:
+	  make it explicit that we're talking about YOUR version being out of date
+
+2009-09-16  Karl Palsson <bugs@tweak.net.au>
+
+	* pitivi/ui/sourcelist.py:
+	  bind the delete key to removing a file from the source list
+
+2009-09-16  Timo Jyrinki <timo.jyrinki@iki.fi>
+
+	* po/fi.po:
+	  Update Finnish translation.
+
+2009-09-15  Claude Paroz <claude@2xlibre.net>
+
+	* po/fr.po:
+	  Updated French translation
+
+2009-09-14  Aleksander Łukasiewicz <aleksander@lukasiewicz.org>
+
+	* po/LINGUAS:
+	* po/pl.po:
+	  Updated Polish translation
+
+2009-09-14  Alexandre Prokoudine <alexandre.prokoudine@gmail.com>
+
+	* po/ru.po:
+	  Russian translation updated by Valery V. Inozemtsev
+
+2009-09-13  Philip Withnall <philip@tecnocode.co.uk>
+
+	* po/en_GB.po:
+	  Updated British English translation
+
+2009-09-13  Jesse Avilés <jesseaviles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2009-09-13  Jesse Avilés <jesseaviles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2009-09-12  Gianvito Cavasoli <gianvito@dmx.it>
+
+	* po/it.po:
+	  Updated Italian translation
+
 2009-09-12  Edward Hervey <bilboed@bilboed.com>
 
 	* ChangeLog:
