@@ -26,7 +26,8 @@ from pitivi.timeline.track import Track, SourceTrackObject, TrackError
 from pitivi.stream import AudioStream, VideoStream
 from common import SignalMonitor, StubFactory
 from pitivi.factories.test import AudioTestSourceFactory
-from pitivi.timeline.track import Transition, TrackError
+from pitivi.timeline.track import TrackError, \
+    Transition, AudioTransition, VideoTransition
 
 class TestTransitions(TestCase):
     def setUp(self):
@@ -142,33 +143,116 @@ class TestTransitions(TestCase):
 
         # add transitions and check that initial properties are properly
         # evaluated
-        tr = Transition(objs["a"], objs["b"])
+        at = AudioTransition(objs["a"], objs["b"])
+        vt = VideoTransition(objs["a"], objs["b"])
 
         # move a and b together,
         # check that transition start, duration are updated
         objs["a"].start = 5 * gst.SECOND
         objs["b"].start = 10 * gst.SECOND
 
-        self.failUnlessEqual(tr.start, 10 * gst.SECOND)
-        self.failUnlessEqual(tr.duration, 5 * gst.SECOND)
+        self.failUnlessEqual(vt.start, 10 * gst.SECOND)
+        self.failUnlessEqual(vt.duration, 5 * gst.SECOND)
+        self.failUnlessEqual(vt.operation.props.start, 10 * gst.SECOND)
+        self.failUnlessEqual(vt.operation.props.duration, 5 * gst.SECOND)
 
+        self.failUnlessEqual(at.start, 10 * gst.SECOND)
+        self.failUnlessEqual(at.duration, 5 * gst.SECOND)
+        self.failUnlessEqual(at.a_operation.props.start, 10 * gst.SECOND)
+        self.failUnlessEqual(at.a_operation.props.duration, 5 * gst.SECOND)
+        self.failUnlessEqual(at.b_operation.props.start, 10 * gst.SECOND)
+        self.failUnlessEqual(at.b_operation.props.duration, 5 * gst.SECOND)
+
+
+ 
         # make A longer
         objs["a"].duration = 11 * gst.SECOND
-        self.failUnlessEqual(tr.start, 10 * gst.SECOND)
-        self.failUnlessEqual(tr.duration, 6 * gst.SECOND)
+        self.failUnlessEqual(vt.start, 10 * gst.SECOND)
+        self.failUnlessEqual(vt.duration, 6 * gst.SECOND)
+        self.failUnlessEqual(vt.operation.props.start, 10 * gst.SECOND)
+        self.failUnlessEqual(vt.operation.props.duration, 6 * gst.SECOND)
+
+        self.failUnlessEqual(at.start, 10 * gst.SECOND)
+        self.failUnlessEqual(at.duration, 6 * gst.SECOND)
+        self.failUnlessEqual(at.a_operation.props.start, 10 * gst.SECOND)
+        self.failUnlessEqual(at.a_operation.props.duration, 6 * gst.SECOND)
+        self.failUnlessEqual(at.b_operation.props.start, 10 * gst.SECOND)
+        self.failUnlessEqual(at.b_operation.props.duration, 6 * gst.SECOND)
+
+
 
         # move B earlier
         objs["b"].start = 9 * gst.SECOND
-        self.failUnlessEqual(tr.start, 9 * gst.SECOND)
-        self.failUnlessEqual(tr.duration, 7 * gst.SECOND)
+        self.failUnlessEqual(vt.start, 9 * gst.SECOND)
+        self.failUnlessEqual(vt.duration, 7 * gst.SECOND)
+        self.failUnlessEqual(vt.operation.props.start, 9 * gst.SECOND)
+        self.failUnlessEqual(vt.operation.props.duration, 7 * gst.SECOND)
+        self.failUnlessEqual(vt.operation.props.media_duration, 7 * gst.SECOND)
 
-        # update a, b priority
-        self.failUnlessEqual(tr.priority, 0)
-        self.failUnlessEqual(tr.operation.props.priority, 1)
-        objs["a"].priority = 2
-        objs["b"].priority = 2
-        self.failUnlessEqual(tr.priority, 2)
-        self.failUnlessEqual(tr.operation.props.priority, 7)
+        self.failUnlessEqual(at.start, 9 * gst.SECOND)
+        self.failUnlessEqual(at.duration, 7 * gst.SECOND)
+        self.failUnlessEqual(at.a_operation.props.start, 9 * gst.SECOND)
+        self.failUnlessEqual(at.a_operation.props.duration, 7 * gst.SECOND)
+        self.failUnlessEqual(at.a_operation.props.media_duration, 7 * gst.SECOND)
+        self.failUnlessEqual(at.b_operation.props.start, 9 * gst.SECOND)
+        self.failUnlessEqual(at.b_operation.props.duration, 7 * gst.SECOND)
+        self.failUnlessEqual(at.b_operation.props.media_duration, 7 * gst.SECOND)
+
+        # check priority is currently zero
+        self.failUnlessEqual(vt.priority, 0)
+
+        # check video transition priority basic properties
+        self.failUnlessEqual(vt.operation.props.priority, 1)
+        vt.a.priority = 2
+        vt.b.priority = 2
+        self.failUnlessEqual(vt.priority, 2)
+        self.failUnlessEqual(vt.operation.props.priority, 7)
+
+        self.failUnlessEqual(at.priority, 2)
+
+        # check controller for even - odd stagger
+        vt.a.updatePosition(0)
+        vt.b.updatePosition(1)
+
+        self.failUnlessEqual(vt.a.gnl_object.props.priority, 8)
+        self.failUnlessEqual(at.a._stagger, 0)
+        self.failUnlessEqual(at.b._stagger, 1)
+        self.failUnlessEqual(vt.b.gnl_object.props.priority, 9)
+
+        self.failUnlessEqual(vt.controller.get("alpha", 0), 1.0)
+        self.failUnlessEqual(vt.controller.get("alpha", vt.duration),
+            0.0)
+
+        self.failUnlessEqual(at.a_controller.get("volume", 0), 1.0)
+        self.failUnlessEqual(at.a_controller.get("volume", vt.duration),
+            0.0)
+        self.failUnlessEqual(at.b_controller.get("volume", 0), 0.0)
+        self.failUnlessEqual(at.b_controller.get("volume", vt.duration),
+            1.0)
+        self.failUnlessEqual(at.a_operation.props.priority, 9)
+        self.failUnlessEqual(at.b_operation.props.priority, 11)
+
+
+        # check controller for odd - even stagger
+        vt.a.updatePosition(1)
+        vt.b.updatePosition(2)
+        self.failUnlessEqual(vt.controller.get("alpha", 0), 0.0)
+        self.failUnlessEqual(vt.controller.get("alpha",
+            vt.duration), 1.0)
+
+        self.failUnlessEqual(at.a_controller.get("volume", 0), 1.0)
+        self.failUnlessEqual(at.a_controller.get("volume", vt.duration),
+            0.0)
+        self.failUnlessEqual(at.b_controller.get("volume", 0), 0.0)
+        self.failUnlessEqual(at.b_controller.get("volume", vt.duration),
+            1.0)
+        self.failUnlessEqual(at.a_operation.props.priority, 11)
+        self.failUnlessEqual(at.b_operation.props.priority, 9)
+
+
+
+        # check audio transition priority
+        print "warning: not testing audio transition priority"
 
     def testGetTrackObjectsGroupedByLayer(self):
         factory = self.factory
