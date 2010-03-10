@@ -179,7 +179,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             event.area.x, event.area.y,
             event.area.width, event.area.height)
 
-        y = KW_LABEL_Y_OVERFLOW
+        y = 0
         for track in self._tracks[:-1]:
             y += track.height
             self.style.paint_box(event.window,
