@@ -311,6 +311,7 @@ class TrackObject(Signallable, Loggable):
         self.debug("factory:%r", factory)
         self.factory = factory
         self.stream = stream
+        self.stream_type = type(stream)
         self.track = None
         self.timeline_object = None
         self.interpolators = {}
@@ -519,7 +520,10 @@ class TrackObject(Signallable, Loggable):
             self._updatePriority(priority)
 
     def _updatePriority(self, priority):
-        true_priority = 2 + self._stagger + (3 * priority)
+        if self.stream_type is VideoStream:
+            true_priority = 2 + self._stagger + (3 * priority)
+        elif self.stream_type is AudioStream:
+            true_priority  = 2 + (2 * self._stagger) + (4 * priority)
         if self.gnl_object.props.priority != true_priority:
             self.gnl_object.props.priority = true_priority
 
@@ -631,8 +635,12 @@ class TrackObject(Signallable, Loggable):
             i.updateMediaStop(stop)
 
     def _notifyPriorityCb(self, obj, pspec):
-        true_priority = obj.props.priority
-        public_priority = (true_priority - 2 - self._stagger) // 3
+        if self.stream_type is VideoStream:
+            true_priority = obj.props.priority
+            public_priority = (true_priority - 2 - self._stagger) // 3
+        elif self.stream_type is AudioStream:
+            true_priority = obj.props.priority
+            public_priority = (true_priority - 2 - (2 * self._stagger))// 4
         if self._public_priority != public_priority:
             self._public_priority = public_priority
             self.emit('priority-changed', public_priority)
