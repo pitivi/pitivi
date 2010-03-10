@@ -873,6 +873,10 @@ class Track(Signallable, Loggable):
 
     def __init__(self, stream):
         self.stream = stream
+        if type(self.stream) is VideoStream:
+            self.TransitionClass = VideoTransition
+        elif type(self.stream) is AudioStream:
+            self.TransitionClass = AudioTransition
         self.composition = gst.element_factory_make('gnlcomposition')
         self.composition.connect('notify::start', self._compositionStartChangedCb)
         self.composition.connect('notify::duration', self._compositionDurationChangedCb)
@@ -1131,8 +1135,6 @@ class Track(Signallable, Loggable):
         self.composition.props.update = False
 
     def addTransition(self, transition):
-        if type(self.stream) is AudioStream:
-            return
         a, b = transition.a, transition.b
         if not ((a in self.track_objects) and
                 (b in self.track_objects)):
@@ -1140,13 +1142,13 @@ class Track(Signallable, Loggable):
         if (a, b) in self.transitions:
             raise TrackError(
                 "A transition is already defined for these objects")
-        self.composition.add(transition.operation)
+        transition.addThyselfToComposition(self.composition)
         self.transitions[a, b] = transition
         self.emit("transition-added", transition)
 
     def removeTransition(self, transition):
         a, b = transition.a, transition.b
-        self.composition.remove(transition.operation)
+        transition.removeThyselfFromComposition(self.composition)
         del self.transitions[a, b]
         self.emit("transition-removed", transition)
 
@@ -1198,26 +1200,25 @@ class Track(Signallable, Loggable):
         # create all new transitions
         valid_slots = set()
         all_valid = True
-        if type(self.stream) is VideoStream:
-            for layer in self.getTrackObjectsGroupedByLayer():
-                pos = 0
-                prev = None
-                slots, is_valid = self.getValidTransitionSlots(layer)
-                all_valid &= is_valid
-                for slot in slots:
-                    a, b = slot
-                    if a == prev:
-                        b.updatePosition(pos)
-                        pos += 1
-                    else:
-                        a.updatePosition(pos)
-                        b.updatePosition(pos + 1)
-                        pos += 2
-                    prev = b
-                    valid_slots.add(slot)
-                    if not slot in self.transitions:
-                        tr = Transition(a, b)
-                        self.addTransition(tr)
+        for layer in self.getTrackObjectsGroupedByLayer():
+            pos = 0
+            prev = None
+            slots, is_valid = self.getValidTransitionSlots(layer)
+            all_valid &= is_valid
+            for slot in slots:
+                a, b = slot
+                if a == prev:
+                    b.updatePosition(pos)
+                    pos += 1
+                else:
+                    a.updatePosition(pos)
+                    b.updatePosition(pos + 1)
+                    pos += 2
+                prev = b
+                valid_slots.add(slot)
+                if not slot in self.transitions:
+                    tr = self.TransitionClass(a, b)
+                    self.addTransition(tr)
         current_slots = set(self.transitions.iterkeys())
         for slot in current_slots - valid_slots:
             self.removeTransition(self.transitions[slot])
