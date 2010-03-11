@@ -8,9 +8,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-04 20:46+0100\n"
-"PO-Revision-Date: 2010-03-04 20:46+0100\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=pitivi&component=general\n"
+"POT-Creation-Date: 2010-03-10 15:54+0000\n"
+"PO-Revision-Date: 2010-03-10 18:59+0100\n"
 "Last-Translator: Gianvito Cavasoli <janvitus@ubuntu-it.org>\n"
 "Language-Team: Italiana <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -211,7 +212,7 @@ msgstr "Impossibile importare i moduli distutils"
 msgid "Make sure you have the distutils python module installed"
 msgstr "Assicurarsi di aver installato il modulo distutils di Python"
 
-#: ../pitivi/discoverer.py:227
+#: ../pitivi/discoverer.py:228
 #, python-format
 msgid ""
 "Missing plugins:\n"
@@ -221,19 +222,19 @@ msgstr ""
 "%s"
 
 #. woot, nothing decodable
-#: ../pitivi/discoverer.py:246
+#: ../pitivi/discoverer.py:247
 msgid "Can not decode file."
 msgstr "Impossibile decodificare il file."
 
-#: ../pitivi/discoverer.py:247
+#: ../pitivi/discoverer.py:248
 msgid "The given file does not contain audio, video or picture streams."
 msgstr "Il file fornito non contiene flussi audio, video o immagine."
 
-#: ../pitivi/discoverer.py:267
+#: ../pitivi/discoverer.py:268
 msgid "Could not establish the duration of the file."
 msgstr "Impossibile stabilire la durata del file."
 
-#: ../pitivi/discoverer.py:268
+#: ../pitivi/discoverer.py:269
 msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
@@ -241,43 +242,47 @@ msgstr ""
 "Questa clip sembra essere in un formato a cui non è possibile accedere in "
 "modo casuale."
 
-#: ../pitivi/discoverer.py:332
+#: ../pitivi/discoverer.py:335
 msgid "Timeout while analyzing file."
 msgstr "Tempo scaduto durante l'analisi del file."
 
-#: ../pitivi/discoverer.py:333
+#: ../pitivi/discoverer.py:336
 msgid "Analyzing the file took too long."
 msgstr "L'analisi del file ha richiesto troppo tempo."
 
-#: ../pitivi/discoverer.py:362
+#: ../pitivi/discoverer.py:365
 msgid "No available source handler."
 msgstr "Nessun gestore di sorgente disponibile."
 
-#: ../pitivi/discoverer.py:363
+#: ../pitivi/discoverer.py:366
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr ""
 "Non si dispone di un elemento sorgente di GStreamer per gestire il "
 "protocollo «%s»"
 
-#: ../pitivi/discoverer.py:427
+#: ../pitivi/discoverer.py:431
 msgid "Pipeline didn't want to go to PAUSED."
 msgstr "La pipeline non vuole andare in PAUSED."
 
-#: ../pitivi/discoverer.py:450
+#: ../pitivi/discoverer.py:454
 #, python-format
 msgid "An internal error occurred while analyzing this file: %s"
 msgstr "Si è verificato un errore interno durante l'analisi di questo file: %s"
 
-#: ../pitivi/discoverer.py:460
+#: ../pitivi/discoverer.py:464
 msgid "File contains a redirection to another clip."
 msgstr "Il file contiene una ridirezione a un'altra clip."
 
-#: ../pitivi/discoverer.py:461
+#: ../pitivi/discoverer.py:465
 msgid "PiTiVi currently does not handle redirection files."
 msgstr "Attualmente l'applicazione non gestisce la ridirezione dei file."
 
-#: ../pitivi/application.py:121
+#: ../pitivi/discoverer.py:491
+msgid "Pipeline didn't want to go to PLAYING."
+msgstr "La pipeline non vuole andare in PLAYING."
+
+#: ../pitivi/application.py:122
 #, python-format
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
@@ -286,7 +291,7 @@ msgstr ""
 "Un'altra istanza di %s è in esecuzione, informare gli sviluppatori "
 "riportando il bug su http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:218
+#: ../pitivi/application.py:219
 msgid ""
 "\n"
 "      %prog [PROJECT_FILE]\n"
@@ -296,7 +301,7 @@ msgstr ""
 "      %prog [FILE_PROGETTO]\n"
 "      %prog -i [-a] [FILE_MULTIMEDIALE]..."
 
-#: ../pitivi/application.py:222
+#: ../pitivi/application.py:223
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
 "    no project is given, %prog creates a new project.\n"
@@ -314,20 +319,20 @@ msgstr ""
 "saranno\n"
 "    anche aggiunte alla fine della linea temporale del progetto."
 
-#: ../pitivi/application.py:228
+#: ../pitivi/application.py:229
 msgid "Import each MEDIA_FILE into the project."
 msgstr "Importa ogni FILE_MULTIMEDIALE nel progetto."
 
-#: ../pitivi/application.py:230
+#: ../pitivi/application.py:231
 msgid "Add each MEDIA_FILE to timeline after importing."
 msgstr ""
 "Aggiunge ogni FILE_MULTIMEDIALE alla linea temporale dopo l'importazione."
 
-#: ../pitivi/application.py:231
+#: ../pitivi/application.py:232
 msgid "Run pitivi in the Python Debugger"
 msgstr "Esegue l'applicazione nello strumento di debug di Python"
 
-#: ../pitivi/application.py:233
+#: ../pitivi/application.py:234
 msgid "Run pitivi with no gui"
 msgstr "Esegue l'applicazione senza l'interfaccia grafica"
 
@@ -716,20 +721,20 @@ msgstr "XGA (1024x768)"
 
 #. i18n: string for custom video width/height/framerate settings
 #. i18n: string for custom audio rate/depth/channels settings
-#: ../pitivi/ui/exportsettingswidget.py:112
-#: ../pitivi/ui/exportsettingswidget.py:146
+#: ../pitivi/ui/exportsettingswidget.py:116
+#: ../pitivi/ui/exportsettingswidget.py:150
 msgid "Custom"
 msgstr "Personalizzate"
 
-#: ../pitivi/ui/exportsettingswidget.py:297
+#: ../pitivi/ui/exportsettingswidget.py:301
 msgid "Raw Video"
 msgstr "Video grezzo"
 
-#: ../pitivi/ui/exportsettingswidget.py:312
+#: ../pitivi/ui/exportsettingswidget.py:316
 msgid "Raw Audio"
 msgstr "Audio grezzo"
 
-#: ../pitivi/ui/exportsettingswidget.py:435
+#: ../pitivi/ui/exportsettingswidget.py:439
 msgid "Export settings"
 msgstr "Impostazioni di esportazione"
 
@@ -759,7 +764,7 @@ msgstr "Proprietà di %s"
 msgid "Render"
 msgstr "Rendering"
 
-#: ../pitivi/ui/mainwindow.py:128 ../pitivi/ui/timeline.py:294
+#: ../pitivi/ui/mainwindow.py:128 ../pitivi/ui/timeline.py:284
 msgid "Split"
 msgstr "Dividi"
 
@@ -1285,31 +1290,31 @@ msgstr "Importa una clip"
 msgid "Close after importing files"
 msgstr "Chiudi dopo l'importazione dei file"
 
-#: ../pitivi/ui/sourcelist.py:966
+#: ../pitivi/ui/sourcelist.py:967
 msgid "Importing clips..."
 msgstr "Importazione clip..."
 
-#: ../pitivi/ui/sourcelist.py:967
+#: ../pitivi/ui/sourcelist.py:968
 msgid "Error(s) occurred while importing"
 msgstr "Si sono verificati errori durante l'importazione"
 
-#: ../pitivi/ui/sourcelist.py:968
+#: ../pitivi/ui/sourcelist.py:969
 msgid "An error occurred while importing"
 msgstr "Si è verificato un errore durante l'importazione"
 
-#: ../pitivi/ui/sourcelist.py:1057
+#: ../pitivi/ui/sourcelist.py:1058
 msgid "Error while analyzing files"
 msgstr "Errore durante l'analisi dei file"
 
-#: ../pitivi/ui/sourcelist.py:1058
+#: ../pitivi/ui/sourcelist.py:1059
 msgid "The following files can not be used with PiTiVi."
 msgstr "I seguenti file non possono essere usati dall'applicazione."
 
-#: ../pitivi/ui/sourcelist.py:1060
+#: ../pitivi/ui/sourcelist.py:1061
 msgid "Error while analyzing a file"
 msgstr "Errore durante l'analisi del file"
 
-#: ../pitivi/ui/sourcelist.py:1061
+#: ../pitivi/ui/sourcelist.py:1062
 msgid "The following file can not be used with PiTiVi."
 msgstr "Il file seguente non può essere usato dall'applicazione."
 
@@ -1410,6 +1415,3 @@ msgstr "Carattere della clip"
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
 msgstr "Il carattere da usare per i titoli delle clip"
-
-#~ msgid "Add Clips..."
-#~ msgstr "Aggiungi clip..."
