@@ -781,6 +781,7 @@ class VideoTransition(Transition):
 
     def removeThyselfFromComposition(self, composition):
         composition.remove(self.operation)
+        self.operation.set_state(gst.STATE_NULL)
 
     def _updateOperationStart(self, start):
         self.operation.props.start = start
@@ -834,6 +835,8 @@ class AudioTransition(Transition):
     def removeThyselfFromComposition(self, composition):
         composition.remove(self.a_operation)
         composition.remove(self.b_operation)
+        self.a_operation.set_state(gst.STATE_NULL)
+        self.b_operation.set_state(gst.STATE_NULL)
 
     def _updateOperationStart(self, start):
         self.a_operation.props.start = start
