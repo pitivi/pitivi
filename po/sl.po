@@ -1,12 +1,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.#
-# Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2009.
+# Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2009 - 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-03-05 14:12+0000\n"
+"POT-Creation-Date: 2010-03-12 07:20+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -166,7 +166,7 @@ msgstr "Ni mogoče uvoziti modulov distutils"
 msgid "Make sure you have the distutils python module installed"
 msgstr "Prepričajte se, da imate nameščen distutils python modul"
 
-#: ../pitivi/discoverer.py:227
+#: ../pitivi/discoverer.py:228
 #, python-format
 msgid ""
 "Missing plugins:\n"
@@ -176,62 +176,66 @@ msgstr ""
 "%s"
 
 #. woot, nothing decodable
-#: ../pitivi/discoverer.py:246
+#: ../pitivi/discoverer.py:247
 msgid "Can not decode file."
 msgstr "Ni mogoče dekodirati datoteke."
 
-#: ../pitivi/discoverer.py:247
+#: ../pitivi/discoverer.py:248
 msgid "The given file does not contain audio, video or picture streams."
 msgstr "Datoteka ne vsebuje zvočnih, video ali slikovnih pretokov."
 
-#: ../pitivi/discoverer.py:267
+#: ../pitivi/discoverer.py:268
 msgid "Could not establish the duration of the file."
 msgstr "Ni mogoče določiti trajanja datoteke."
 
-#: ../pitivi/discoverer.py:268
+#: ../pitivi/discoverer.py:269
 msgid "This clip seems to be in a format which cannot be accessed in a random fashion."
 msgstr "Posnetek je v obliki, do katerega ni mogoč naključen dostop."
 
-#: ../pitivi/discoverer.py:332
+#: ../pitivi/discoverer.py:335
 msgid "Timeout while analyzing file."
 msgstr "Med analizo datoteke je prišlo do zakasnitve."
 
-#: ../pitivi/discoverer.py:333
+#: ../pitivi/discoverer.py:336
 msgid "Analyzing the file took too long."
 msgstr "Analiza datoteke je trajala predolgo."
 
-#: ../pitivi/discoverer.py:362
+#: ../pitivi/discoverer.py:365
 msgid "No available source handler."
 msgstr "Upravljalnik virov ni dostopen."
 
-#: ../pitivi/discoverer.py:363
+#: ../pitivi/discoverer.py:366
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr "Nimate GStreamer izvornega elementa za upravljanje protokola '%s'"
 
-#: ../pitivi/discoverer.py:427
+#: ../pitivi/discoverer.py:431
 msgid "Pipeline didn't want to go to PAUSED."
 msgstr "Cevovod ni hotel biti zaustavljen."
 
-#: ../pitivi/discoverer.py:450
+#: ../pitivi/discoverer.py:454
 #, python-format
 msgid "An internal error occurred while analyzing this file: %s"
 msgstr "Prišlo je do notranje napake med analizo datoteke: %s"
 
-#: ../pitivi/discoverer.py:460
+#: ../pitivi/discoverer.py:464
 msgid "File contains a redirection to another clip."
 msgstr "Datoteka vsebuje preusmeritev do drugega posnetka."
 
-#: ../pitivi/discoverer.py:461
+#: ../pitivi/discoverer.py:465
 msgid "PiTiVi currently does not handle redirection files."
 msgstr "PiTiVi trenutno ne upravlja s preusmeritvenimi datotekami."
 
-#: ../pitivi/application.py:121
+#: ../pitivi/discoverer.py:491
+msgid "Pipeline didn't want to go to PLAYING."
+msgstr "Cevovod ni hotel iti na PREDVAJANJE."
+
+#: ../pitivi/application.py:122
 #, python-format
 msgid "There is already a %s instance, please inform the developers by filing a bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 msgstr "Program %s že teče; obvestite razvijalce s poročilom o hrošču na http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:218
+#: ../pitivi/application.py:219
 msgid ""
 "\n"
 "      %prog [PROJECT_FILE]\n"
@@ -241,7 +245,7 @@ msgstr ""
 "      %prog [DATOTEKA_PROJEKTA]\n"
 "      %prog -i [-a] [MEDIJSKA_DATOTEKA]..."
 
-#: ../pitivi/application.py:222
+#: ../pitivi/application.py:223
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
 "    no project is given, %prog creates a new project.\n"
@@ -255,19 +259,19 @@ msgstr ""
 "uvoženi v projekt. Z zastavico -a, pa bodo posnetki tudi dodatni na\n"
 "konec časovnice projekta."
 
-#: ../pitivi/application.py:228
+#: ../pitivi/application.py:229
 msgid "Import each MEDIA_FILE into the project."
 msgstr "Uvozi vsako MEDIJSKO_DATOTEKO v projekt."
 
-#: ../pitivi/application.py:230
+#: ../pitivi/application.py:231
 msgid "Add each MEDIA_FILE to timeline after importing."
 msgstr "Dodaj vsako MEDIJSKO_DATOTEKO v časovnico po uvozu."
 
-#: ../pitivi/application.py:231
+#: ../pitivi/application.py:232
 msgid "Run pitivi in the Python Debugger"
 msgstr "Zaženi pitivi v Python razhroščevalniku"
 
-#: ../pitivi/application.py:233
+#: ../pitivi/application.py:234
 msgid "Run pitivi with no gui"
 msgstr "Zagon pitivi brez uporabniškega vmesnika"
 
@@ -1248,31 +1252,31 @@ msgstr "Uvozi posnetek"
 msgid "Close after importing files"
 msgstr "Zapri po uvažanju datotek"
 
-#: ../pitivi/ui/sourcelist.py:966
+#: ../pitivi/ui/sourcelist.py:967
 msgid "Importing clips..."
 msgstr "Uvažanje posnetkov ..."
 
-#: ../pitivi/ui/sourcelist.py:967
+#: ../pitivi/ui/sourcelist.py:968
 msgid "Error(s) occurred while importing"
 msgstr "Med uvažanjem je prišlo do napak(e)."
 
-#: ../pitivi/ui/sourcelist.py:968
+#: ../pitivi/ui/sourcelist.py:969
 msgid "An error occurred while importing"
 msgstr "Med uvažanjem je prišlo do napake"
 
-#: ../pitivi/ui/sourcelist.py:1057
+#: ../pitivi/ui/sourcelist.py:1058
 msgid "Error while analyzing files"
 msgstr "Napaka med preučevanjem datotek"
 
-#: ../pitivi/ui/sourcelist.py:1058
+#: ../pitivi/ui/sourcelist.py:1059
 msgid "The following files can not be used with PiTiVi."
 msgstr "S PiTiVi ni mogoče uporabiti sledečih datotek"
 
-#: ../pitivi/ui/sourcelist.py:1060
+#: ../pitivi/ui/sourcelist.py:1061
 msgid "Error while analyzing a file"
 msgstr "Napaka med preučevanjem datoteke"
 
-#: ../pitivi/ui/sourcelist.py:1061
+#: ../pitivi/ui/sourcelist.py:1062
 msgid "The following file can not be used with PiTiVi."
 msgstr "PiTiVi ne more uporabiti sledeče datoteke."
 
