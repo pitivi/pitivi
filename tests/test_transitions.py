@@ -249,11 +249,6 @@ class TestTransitions(TestCase):
         self.failUnlessEqual(at.a_operation.props.priority, 11)
         self.failUnlessEqual(at.b_operation.props.priority, 9)
 
-
-
-        # check audio transition priority
-        print "warning: not testing audio transition priority"
-
     def testGetTrackObjectsGroupedByLayer(self):
         factory = self.factory
         stream = self.stream
