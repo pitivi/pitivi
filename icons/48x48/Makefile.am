@@ -5,8 +5,8 @@ context = actions
 iconsdir = $(themedir)/$(size)/apps
 
 icons_DATA = \
-	pitivi.png	\
-	pitivi.svg
+	pitivi.png
 
 EXTRA_DIST = \
-        $(icons_DATA)
+        $(icons_DATA) \
+	pitivi.svg
