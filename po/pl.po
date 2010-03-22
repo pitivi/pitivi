@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-03-22 12:42+0100\n"
-"PO-Revision-Date: 2010-03-22 12:50+0100\n"
+"PO-Revision-Date: 2010-03-22 12:55+0100\n"
 "Last-Translator: Tomasz Dominikowski <dominikowski@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "MIME-Version: 1.0\n"
@@ -1192,7 +1192,7 @@ msgstr "Uruchom program Istanbul"
 
 #: ../pitivi/ui/sourcelist.py:130
 msgid "Import clips..."
-msgstr "Zaimportuj _klipy..."
+msgstr "Zaimportuj klipy..."
 
 #: ../pitivi/ui/sourcelist.py:135
 msgid "Remove Clip"
