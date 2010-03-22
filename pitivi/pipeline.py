@@ -292,6 +292,16 @@ class Pipeline(Signallable, Loggable):
         """
         self.setState(STATE_PAUSED)
 
+        # When the pipeline has been paused we need to update the
+        # timeline/playhead position, as the 'position' signal
+        # is only emitted every 300ms and the playhead jumps
+        # during the playback.
+        try:
+            self.emit("position", self.getPosition())
+        except PipelineError:
+            # Getting the position failed
+            pass
+
     def stop(self):
         """
         Sets the L{Pipeline} to READY
@@ -775,6 +785,7 @@ class Pipeline(Signallable, Loggable):
 
     def _busMessageCb(self, unused_bus, message):
         if message.type == gst.MESSAGE_EOS:
+            self.pause()
             self.emit('eos')
         elif message.type == gst.MESSAGE_STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
