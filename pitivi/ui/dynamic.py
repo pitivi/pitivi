@@ -80,6 +80,8 @@ class TextWidget(gtk.HBox):
 
     def __init__(self, matches = None, choices = None):
         gtk.HBox.__init__(self)
+        self.set_border_width(0)
+        self.set_spacing(0)
         if choices:
             self.combo = gtk.combo_box_entry_new_text()
             self.text = self.combo.child
@@ -94,10 +96,6 @@ class TextWidget(gtk.HBox):
         self.matches = None
         self.last_valid = None
         self.valid = False
-        self.image = gtk.Image()
-        self.image.set_from_stock(gtk.STOCK_DIALOG_WARNING, 
-            gtk.ICON_SIZE_BUTTON)
-        self.pack_start(self.image)
         self.text.connect("changed", self._textChanged)
         if matches:
             if type(matches) is str:
@@ -124,11 +122,11 @@ class TextWidget(gtk.HBox):
                 self.last_valid = text
                 self.emit("value-changed")
                 if not self.valid:
-                    self.image.hide()
+                    self.text.set_icon_from_stock(1, None)
                 self.valid = True
             else:
                 if self.valid:
-                    self.image.show()
+                    self.text.set_icon_from_stock(1, gtk.STOCK_DIALOG_WARNING)
                 self.valid = False
         else:
             self.emit("value-changed")
@@ -161,6 +159,7 @@ class NumericWidget(gtk.HBox):
             upper = gobject.G_MAXDOUBLE
         if lower is None:
             lower = gobject.G_MINDOUBLE
+        range = upper - lower
         self.adjustment.props.lower = lower
         self.adjustment.props.upper = upper
         self.spinner = gtk.SpinButton(self.adjustment)
