@@ -24,6 +24,7 @@ Main GTK+ window
 """
 
 import os
+import platform
 import gtk
 import gobject
 gobject.threads_init()
@@ -203,10 +204,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         # if no webcams available, hide the webcam action
         if self.app.deviceprobe is not None:
-            self.app.deviceprobe.connect("device-added", self._deviceChangeCb)
-            self.app.deviceprobe.connect("device-removed", self._deviceChangeCb)
-            if len(self.app.deviceprobe.getVideoSourceDevices()) < 1:
-                self.webcam_button.set_sensitive(False)
+            # On Windows disable device probe
+            if platform.system() != 'Windows':
+                self.app.deviceprobe.connect("device-added", self._deviceChangeCb)
+                self.app.deviceprobe.connect("device-removed", self._deviceChangeCb)
+                if len(self.app.deviceprobe.getVideoSourceDevices()) < 1:
+                    self.webcam_button.set_sensitive(False)
         else:
             self.webcam_button.set_sensitive(False)
 
