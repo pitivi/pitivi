@@ -1,0 +1,1395 @@
+# Kurdish translation for pitivi
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the pitivi package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pitivi\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2010-03-10 21:16+0000\n"
+"PO-Revision-Date: 2010-03-25 16:12+0000\n"
+"Last-Translator: simurg56 <Unknown>\n"
+"Language-Team: Kurdish <ku@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Launchpad-Export-Date: 2010-03-26 12:52+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: ../pitivi.desktop.in.in.h:1
+msgid "Create and edit your own movies"
+msgstr "Fîlmên xwe biafirîne û sererast bike"
+
+#: ../pitivi.desktop.in.in.h:2
+msgid "Pitivi Video Editor"
+msgstr "Pitivi Edîtora Vîdyoyan"
+
+#: ../pitivi/check.py:102
+#, python-format
+msgid "%s is already running!"
+msgstr "%s jixwe dimeşe!"
+
+#: ../pitivi/check.py:103
+#, python-format
+msgid "An instance of %s is already running in this script."
+msgstr "Di vê skrîptê de nimûneyeke %s jixwe dixebite."
+
+#: ../pitivi/check.py:105
+msgid "Could not find the GNonLin plugins!"
+msgstr "Pluginên GNonLin nehat dîtin!"
+
+#: ../pitivi/check.py:106
+msgid ""
+"Make sure the plugins were installed and are available in the GStreamer "
+"plugins path."
+msgstr ""
+"Jê ewle bibe ku pêvek hatine sazkirin û di pelrêça pêvekên GStreamer de "
+"amade ne."
+
+#: ../pitivi/check.py:108
+msgid "Could not find the autodetect plugins!"
+msgstr "Pêvekên naskirina jixweber nehatin dîtin!"
+
+#: ../pitivi/check.py:109
+msgid ""
+"Make sure you have installed gst-plugins-good and is available in the "
+"GStreamer plugin path."
+msgstr ""
+"Jê ewle bibe ku te pêveka gst-plugins-good saz kiriye û di pelrêça pêvekên "
+"GStreamer de amade ye."
+
+#: ../pitivi/check.py:111
+msgid "PyGTK doesn't have cairo support!"
+msgstr "PyGTK piştgirî nade cairo'yê!"
+
+#: ../pitivi/check.py:112
+msgid ""
+"Please use a version of the GTK+ Python bindings built with cairo support."
+msgstr ""
+"Ji kerema xwe re guhertoyeke girêdankerên GTK+ Python ya bi piştgiriya cairo "
+"hatiye avakirin, bi kar bîne."
+
+#: ../pitivi/check.py:114
+msgid "Could not initiate the video output plugins"
+msgstr "Pêvekên derxistina vîdyoyan nehat destpêkirin"
+
+#: ../pitivi/check.py:115
+msgid ""
+"Make sure you have at least one valid video output sink available "
+"(xvimagesink or ximagesink)"
+msgstr ""
+"Pê bawer be ku herî kêm yek derketina te ya vîdyoyê ya derbasdar heye. "
+"(xvimagesink an jî ximagesink)"
+
+#: ../pitivi/check.py:117
+msgid "Could not initiate the audio output plugins"
+msgstr "Pêvekên derxistina dengan nehat destpêkirin"
+
+#: ../pitivi/check.py:118
+msgid ""
+"Make sure you have at least one valid audio output sink available (alsasink "
+"or osssink)"
+msgstr ""
+"Pê bawer be ku herî kêm yek derketina te ya dengê ya derbasdar heye. "
+"(alsasink an jî osssink)"
+
+#: ../pitivi/check.py:120
+msgid "Could not import the cairo Python bindings"
+msgstr "Nekarî girêdankerên Python têxe"
+
+#: ../pitivi/check.py:121
+msgid "Make sure you have the cairo Python bindings installed"
+msgstr "Jê ewle be ku te girêdanerên Python saz kiriye"
+
+#: ../pitivi/check.py:123
+msgid "Could not import the libglade Python bindings"
+msgstr "Nekarî girêdanerê Pythonê libglade bîne hundir"
+
+#: ../pitivi/check.py:124
+msgid "Make sure you have the libglade Python bindings installed"
+msgstr "Jê ewle be ku te girêdanerê Pythonê libglade saz kiriye"
+
+#: ../pitivi/check.py:126
+msgid "Could not import the goocanvas Python bindings"
+msgstr "Nekarî girêdanerê Pythonê goocanvas bîne hundir"
+
+#: ../pitivi/check.py:127
+msgid "Make sure you have the goocanvas Python bindings installed"
+msgstr "Jê ewle bibe ku te girêdanerê Pythonê gooncanvas saz kiriye"
+
+#: ../pitivi/check.py:130
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GTK+ Python bindings "
+"(currently %s)"
+msgstr "Guhertoya te ya girêdankerên GTK+ Python ne ya dawî ye (ya heyî %s)"
+
+#: ../pitivi/check.py:131
+#, python-format
+msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
+msgstr ""
+
+#: ../pitivi/check.py:134
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GStreamer Python bindings "
+"(currently %s)"
+msgstr ""
+
+#: ../pitivi/check.py:135
+#, python-format
+msgid ""
+"Install a version of the GStreamer Python bindings greater or equal to %s"
+msgstr ""
+
+#: ../pitivi/check.py:138
+#, python-format
+msgid "You do not have a recent enough version of GStreamer (currently %s)"
+msgstr ""
+
+#: ../pitivi/check.py:139
+#, python-format
+msgid "Install a version of the GStreamer greater or equal to %s"
+msgstr "Guhertoya %s an jî zêdetir a GStreamerê saz bike."
+
+#: ../pitivi/check.py:142
+#, python-format
+msgid ""
+"You do not have a recent enough version of the cairo Python bindings "
+"(currently %s)"
+msgstr ""
+
+#: ../pitivi/check.py:143
+#, python-format
+msgid "Install a version of the cairo Python bindings greater or equal to %s"
+msgstr ""
+
+#: ../pitivi/check.py:146
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GNonLin GStreamer plugin "
+"(currently %s)"
+msgstr ""
+
+#: ../pitivi/check.py:147
+#, python-format
+msgid ""
+"Install a version of the GNonLin GStreamer plugin greater or equal to %s"
+msgstr "Guhertoya %s an jî zêdetir ya pêveka GNonLin ya GStreamer saz bike"
+
+#: ../pitivi/check.py:149
+msgid "Could not import the Zope interface module"
+msgstr "Nekarî modûla navrûyê a Zope bîne hundir"
+
+#: ../pitivi/check.py:150
+msgid "Make sure you have the zope.interface module installed"
+msgstr "zope.interface birimini kurmuş olduğunuzdan emin olun"
+
+#: ../pitivi/check.py:152
+msgid "Could not import the distutils modules"
+msgstr "Nekarî modûlên distutils bîne hundir"
+
+#: ../pitivi/check.py:153
+msgid "Make sure you have the distutils python module installed"
+msgstr "Jê ewle bibe ku te modîla distutils ya pythonê saz kiriye"
+
+#: ../pitivi/discoverer.py:228
+#, python-format
+msgid ""
+"Missing plugins:\n"
+"%s"
+msgstr ""
+"Pêvekên wenda:\n"
+"%s"
+
+#. woot, nothing decodable
+#: ../pitivi/discoverer.py:247
+msgid "Can not decode file."
+msgstr "Nikare pelê deşîfre bike."
+
+#: ../pitivi/discoverer.py:248
+msgid "The given file does not contain audio, video or picture streams."
+msgstr "Pela diyarkirî tu deng, vîdyo an jî wêne nahewîne."
+
+#: ../pitivi/discoverer.py:268
+msgid "Could not establish the duration of the file."
+msgstr "Nekarî dirêjahiya pelê texmîn bike."
+
+#: ../pitivi/discoverer.py:269
+msgid ""
+"This clip seems to be in a format which cannot be accessed in a random "
+"fashion."
+msgstr ""
+"Xuya ye ev klîb bi formatek e ku bi awayake çawelêhato nikare bê gihiştin."
+
+#: ../pitivi/discoverer.py:335
+msgid "Timeout while analyzing file."
+msgstr "Di analîzkirina pelê de dem qediya."
+
+#: ../pitivi/discoverer.py:336
+msgid "Analyzing the file took too long."
+msgstr "Analîzkirina pelê demeke gelek dirêj girt."
+
+#: ../pitivi/discoverer.py:365
+msgid "No available source handler."
+msgstr "Tu xebatkerê çavkaniyan tune."
+
+#: ../pitivi/discoverer.py:366
+#, python-format
+msgid "You do not have a GStreamer source element to handle protocol '%s'"
+msgstr ""
+
+#: ../pitivi/discoverer.py:431
+msgid "Pipeline didn't want to go to PAUSED."
+msgstr "Pipeline'ê nexwest bibe RAWESTIYAYÎ"
+
+#: ../pitivi/discoverer.py:454
+#, python-format
+msgid "An internal error occurred while analyzing this file: %s"
+msgstr "Di analîzkirina vê pelê de çewtiyek derket: %s"
+
+#: ../pitivi/discoverer.py:464
+msgid "File contains a redirection to another clip."
+msgstr "Pel beralîkirina li klibeke din, dihewîne."
+
+#: ../pitivi/discoverer.py:465
+msgid "PiTiVi currently does not handle redirection files."
+msgstr "PITIVI aniha piştgirî nade pelên ku beralîkirin dihewîne."
+
+#: ../pitivi/discoverer.py:491
+msgid "Pipeline didn't want to go to PLAYING."
+msgstr "Pipeline'ê nexwest bibe LÊ DIDE"
+
+#: ../pitivi/application.py:122
+#, python-format
+msgid ""
+"There is already a %s instance, please inform the developers by filing a bug "
+"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr ""
+"Jixwe nimûneyeke %s heye, ji kerema xwe re bi tijekirina vê qeydê "
+"http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi pêşdebiran agahdar "
+"bike."
+
+#: ../pitivi/application.py:219
+msgid ""
+"\n"
+"      %prog [PROJECT_FILE]\n"
+"      %prog -i [-a] [MEDIA_FILE]..."
+msgstr ""
+"\n"
+"      %prog [PELA_PESNUMA]\n"
+"      %prog -i [-a] [PELA_MEDYA]..."
+
+#: ../pitivi/application.py:223
+msgid ""
+"Starts the video editor, optionally loading PROJECT_FILE. If\n"
+"    no project is given, %prog creates a new project.\n"
+"    Alternatively, when -i is specified, arguments are treated as clips to "
+"be\n"
+"    imported into the project. If -a is specified, these clips will also be "
+"added to\n"
+"    the end of the project timeline."
+msgstr ""
+"Sererastkera vîdyoyan destpê dike, gorî daxwazê PROJECT_FILE. tê barkirin\n"
+"    ger projeyek nehatibe dayîn, %prog projeyeke nû çêdike.\n"
+"   Weke alternatîfek dema bi -i were nîşankirin, heçko argûman dixe proyekê "
+"tev digere\n"
+"    Ger bi -a were nîşankirin, wê ev klîp her wiha li dawiya\n"
+"    xêza demê ya projeyê were zêdekirin."
+
+#: ../pitivi/application.py:229
+msgid "Import each MEDIA_FILE into the project."
+msgstr "Her PELÊ_MEDYAYÊ têxe projeyê."
+
+#: ../pitivi/application.py:231
+msgid "Add each MEDIA_FILE to timeline after importing."
+msgstr "Piştî têxistinê her PELÊ_MEDYAYÊ li xêza demê zêde bike."
+
+#: ../pitivi/application.py:232
+msgid "Run pitivi in the Python Debugger"
+msgstr "Pitiviyê bi Python Debugger bixebitîne."
+
+#: ../pitivi/application.py:234
+msgid "Run pitivi with no gui"
+msgstr "Pitivi'yê bêyî gui bixebitîne"
+
+#: ../pitivi/projectmanager.py:95
+msgid "Not a valid project file."
+msgstr "Navê pela projeyê kêr nayê."
+
+#: ../pitivi/projectmanager.py:100
+msgid "Couldn't close current project"
+msgstr "Nekarî projeya heyî bigire"
+
+#: ../pitivi/projectmanager.py:137
+msgid "No URI specified."
+msgstr "Tu URI nehat diyarkirin."
+
+#: ../pitivi/projectmanager.py:169
+msgid "New Project"
+msgstr "Projeya nû"
+
+#: ../pitivi/settings.py:494
+msgid "Export Settings\n"
+msgstr "Mîhengên Derxistinê\n"
+
+#: ../pitivi/settings.py:495
+msgid "Video: "
+msgstr "Vîdyo: "
+
+#: ../pitivi/settings.py:498
+msgid ""
+"\n"
+"Audio: "
+msgstr ""
+"\n"
+"Deng: "
+
+#: ../pitivi/settings.py:501
+msgid ""
+"\n"
+"Muxer: "
+msgstr ""
+"\n"
+"Tevlîhevker: "
+
+#: ../pitivi/utils.py:71
+#, python-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d saet"
+msgstr[1] "%d saet"
+
+#: ../pitivi/utils.py:74
+#, python-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d xulek"
+msgstr[1] "%d xulek"
+
+#: ../pitivi/utils.py:77
+#, python-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d çirke"
+msgstr[1] "%d çirke"
+
+#. Translators: "non local" means the project is not stored
+#. on a local filesystem
+#: ../pitivi/utils.py:244
+#, python-format
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s hê nikare projeyên ne heremî bi kar bîne."
+
+#: ../pitivi/formatters/format.py:77
+msgid "PiTiVi Native (XML)"
+msgstr "PiTiVi Heremî (XML)"
+
+#: ../pitivi/formatters/format.py:78
+msgid "Playlist format"
+msgstr "Teşeya lîsteya lêdanê"
+
+#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/videofxlist.py:53
+msgid "Name"
+msgstr "Nav"
+
+#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/elementsettingsdialog.glade.h:6
+#: ../pitivi/ui/videofxlist.py:59
+msgid "Description"
+msgstr "Rave"
+
+#: ../pitivi/ui/cam_capture.glade.h:1
+msgid "Audio Capture Device:"
+msgstr "Amûra tomarkera dengê"
+
+#: ../pitivi/ui/cam_capture.glade.h:2
+msgid "No device available"
+msgstr "Amûra guncan tune"
+
+#: ../pitivi/ui/cam_capture.glade.h:3
+msgid "Video Capture Device:"
+msgstr "Amûra tomarkera vîdyoyê:"
+
+#: ../pitivi/ui/common.py:86 ../pitivi/ui/common.py:128
+#, python-format
+msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
+msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[0] "<b>Deng:</b> %d qenal di %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[1] "<b>Deng:</b> %d qenal di %d <i>Hz</i> (%d <i>bits</i>)"
+
+#: ../pitivi/ui/common.py:92 ../pitivi/ui/common.py:134
+#, python-format
+msgid "<b>Unknown Audio format:</b> %s"
+msgstr "<b>Cûreya nenas a dengê:</b> %s"
+
+#: ../pitivi/ui/common.py:97 ../pitivi/ui/common.py:139
+#, python-format
+msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+msgstr "<b>Vîdyo:</b> %d x %d <i>pixels</i> di %.2f<i>fps</i>"
+
+#: ../pitivi/ui/common.py:101 ../pitivi/ui/common.py:143
+#, python-format
+msgid "<b>Image:</b> %d x %d <i>pixels</i>"
+msgstr "<b>Wêne:</b> %d x %d <i>pixels</i>"
+
+#: ../pitivi/ui/common.py:104 ../pitivi/ui/common.py:146
+#, python-format
+msgid "<b>Unknown Video format:</b> %s"
+msgstr "<b>Cûreya nenas a vîdyoyê:</b> %s"
+
+#: ../pitivi/ui/common.py:107 ../pitivi/ui/common.py:149
+#, python-format
+msgid "<b>Text:</b> %s"
+msgstr "<b>Nivîs:</b> %s"
+
+#: ../pitivi/ui/defaultpropertyeditor.py:104
+#, python-format
+msgid "Properties For: %d object"
+msgid_plural "Properties For: %d objects"
+msgstr[0] "Taybetiyên objeya: %d"
+msgstr[1] "Taybetiyên objeyên: %d"
+
+#: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:140
+msgid "No properties..."
+msgstr "Taybetî tune..."
+
+#: ../pitivi/ui/dynamic.py:52
+msgid "Implement Me"
+msgstr "Li min bisepîne"
+
+#: ../pitivi/ui/dynamic.py:237
+msgid "Choose..."
+msgstr "Hilbijêre..."
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:1
+msgid "<b>Author:</b>"
+msgstr "<b>Nivîskar:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:2
+msgid "<b>Description:</b>"
+msgstr "<b>Rave:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:3
+msgid "<b>Plugin Name</b>"
+msgstr "<b>Navê Pêvekê</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:4
+msgid "<b>Properties</b>"
+msgstr "<b>Taybetî</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:5
+msgid "Author"
+msgstr "Nivîskar"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:7
+msgid "Properties for <element>"
+msgstr "Taybetiyên <element>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:1 ../pitivi/ui/timelinecontrols.py:13
+msgid "<b>Audio:</b>"
+msgstr "<b>Deng:</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:2
+msgid "<b>Nothing yet</b>"
+msgstr "<b>Hê tu tişt tune</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:3
+msgid "<b>Settings</b>"
+msgstr "<b>Mîheng</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:4 ../pitivi/ui/timelinecontrols.py:15
+msgid "<b>Video:</b>"
+msgstr "<b>Vîdyo:</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:5
+msgid "Choose File"
+msgstr "Pelê Hilbijêre"
+
+#: ../pitivi/ui/encodingdialog.glade.h:6
+msgid "Modify"
+msgstr "Sererast Bike"
+
+#: ../pitivi/ui/encodingdialog.glade.h:7
+msgid "Output file:"
+msgstr "Pela derdikeve:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:8
+msgid "Please choose an output file"
+msgstr "Ji bo ku were derxistin pelek hilbijêre"
+
+#: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:257
+msgid "Render project"
+msgstr "Projeyê bimeşîne"
+
+#: ../pitivi/ui/encodingdialog.py:102
+msgid "Choose file to render to"
+msgstr "Ji bo were meşandin pelek hilbijêre"
+
+#: ../pitivi/ui/encodingdialog.py:137
+#, python-format
+msgid "About %s left"
+msgstr "Bi qasê %s ma"
+
+#: ../pitivi/ui/encodingdialog.py:147
+msgid "Rendering"
+msgstr "Dimeşîne"
+
+#: ../pitivi/ui/encodingdialog.py:164
+msgid "Rendering Complete"
+msgstr "Meşandin qediya"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:1
+msgid ""
+"12 fps\n"
+"23.97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29.97 fps\n"
+"30 fps\n"
+"60 fps"
+msgstr ""
+"12 fps\n"
+"23.97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29.97 fps\n"
+"30 fps\n"
+"60 fps"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:8
+msgid ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+msgstr ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:12
+msgid ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+msgstr ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:18
+msgid "<b>Audio Output</b>"
+msgstr "<b>Dengê Derxistinê</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:19
+msgid "<b>Export to</b>"
+msgstr "<b>EDerxe li</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:20
+msgid "<b>Video Output</b>"
+msgstr "<b>Vîdyoya Derxistinê</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:21
+msgid "Audio Codec"
+msgstr "Kodeka Dengê"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:22
+msgid "Audio Codec:"
+msgstr "Kodeka Dengê:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:23
+msgid "Audio Preset"
+msgstr "Pêşmîhenga Dengê"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:24
+msgid "Channels:"
+msgstr "Qenal"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:25
+msgid "Container:"
+msgstr "Konteynir:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:26
+msgid "Depth:"
+msgstr "Kûrahî:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:27
+msgid "Frame rate:"
+msgstr "Rêjeya Frame:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:28
+msgid "Height:"
+msgstr "Bilindahî:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:29
+msgid ""
+"Mono (1)\n"
+"Stereo (2)"
+msgstr ""
+"Mono (1)\n"
+"Stereo (2)"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:31
+msgid "Muxer"
+msgstr "Tevlîhevker"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:32
+msgid "Rate:"
+msgstr "Rêje:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:33
+msgid "Settings"
+msgstr "Mîheng"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:34
+msgid "Video Codec"
+msgstr "Kodeka Vîdyoyê"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:35
+msgid "Video Codec:"
+msgstr "Kodeka Vîdyoyê:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:36
+msgid "Video Preset"
+msgstr "Pêşmîhenga Vîdyoyê"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:37
+msgid "Width:"
+msgstr "Firehî:"
+
+#: ../pitivi/ui/exportsettingswidget.py:37
+msgid "576p (PAL DV/DVD)"
+msgstr "576p (PAL DV/DVD)"
+
+#: ../pitivi/ui/exportsettingswidget.py:38
+msgid "480p (NTSC DV/DVD)"
+msgstr "480p (NTSC DV/DVD)"
+
+#: ../pitivi/ui/exportsettingswidget.py:39
+msgid "720p HD"
+msgstr "720p HD"
+
+#: ../pitivi/ui/exportsettingswidget.py:40
+msgid "1080p full HD"
+msgstr "1080p full HD"
+
+#: ../pitivi/ui/exportsettingswidget.py:41
+msgid "QVGA (320x240)"
+msgstr "QVGA (320x240)"
+
+#: ../pitivi/ui/exportsettingswidget.py:42
+msgid "VGA (640x480)"
+msgstr "VGA (640x480)"
+
+#: ../pitivi/ui/exportsettingswidget.py:43
+msgid "SVGA (800x600)"
+msgstr "SVGA (800x600)"
+
+#: ../pitivi/ui/exportsettingswidget.py:44
+msgid "XGA (1024x768)"
+msgstr "XGA (1024x768)"
+
+#. i18n: string for custom video width/height/framerate settings
+#. i18n: string for custom audio rate/depth/channels settings
+#: ../pitivi/ui/exportsettingswidget.py:116
+#: ../pitivi/ui/exportsettingswidget.py:150
+msgid "Custom"
+msgstr "Taybet"
+
+#: ../pitivi/ui/exportsettingswidget.py:301
+msgid "Raw Video"
+msgstr "Vîdyoya Xav"
+
+#: ../pitivi/ui/exportsettingswidget.py:316
+msgid "Raw Audio"
+msgstr "Dengê Xav"
+
+#: ../pitivi/ui/exportsettingswidget.py:439
+msgid "Export settings"
+msgstr "Mîhenga Derxe"
+
+#: ../pitivi/ui/filelisterrordialog.py:52
+msgid "Unknown reason"
+msgstr "Sedema nenas"
+
+#: ../pitivi/ui/filelisterrordialog.py:82
+msgid "URI:"
+msgstr "URI:"
+
+#: ../pitivi/ui/filelisterrordialog.py:87
+msgid "Problem:"
+msgstr "Pirsgirêk:"
+
+#: ../pitivi/ui/filelisterrordialog.py:94
+msgid "Extra information:"
+msgstr "agahiya Dîtir:"
+
+#. set title and frame label
+#: ../pitivi/ui/gstwidget.py:195
+#, python-format
+msgid "Properties for %s"
+msgstr "Taybetiyên %s"
+
+#: ../pitivi/ui/mainwindow.py:127
+msgid "Render"
+msgstr "Bimeşîne"
+
+#: ../pitivi/ui/mainwindow.py:128 ../pitivi/ui/timeline.py:284
+msgid "Split"
+msgstr "Qet bike"
+
+#: ../pitivi/ui/mainwindow.py:129
+msgid "Unlink"
+msgstr "Girêdanê Rake"
+
+#. Translators: This is an action, the title of a button
+#: ../pitivi/ui/mainwindow.py:131
+msgid "Link"
+msgstr "Girêdan"
+
+#: ../pitivi/ui/mainwindow.py:132
+msgid "Ungroup"
+msgstr "Komê Rake"
+
+#. Translators: This is an action, the title of a button
+#: ../pitivi/ui/mainwindow.py:134
+msgid "Group"
+msgstr "Kom"
+
+#: ../pitivi/ui/mainwindow.py:240
+msgid "Start Playback"
+msgstr "Lêdanê Destpê Bike"
+
+#: ../pitivi/ui/mainwindow.py:241
+msgid "Stop Playback"
+msgstr "Lêdanê Bisekinîne"
+
+#: ../pitivi/ui/mainwindow.py:242
+msgid "Loop over selected area"
+msgstr "Di qada bijartî de dubare bike"
+
+#: ../pitivi/ui/mainwindow.py:247
+msgid "Create a new project"
+msgstr "Projeyeke nû biafirîne"
+
+#: ../pitivi/ui/mainwindow.py:249
+msgid "Open an existing project"
+msgstr "Projeyeke heyî veke"
+
+#: ../pitivi/ui/mainwindow.py:251 ../pitivi/ui/mainwindow.py:253
+msgid "Save the current project"
+msgstr "Projeya heyî tomarke"
+
+#: ../pitivi/ui/mainwindow.py:254 ../pitivi/ui/projectsettings.glade.h:4
+msgid "Project Settings"
+msgstr "Mîhengên Projeyê"
+
+#: ../pitivi/ui/mainwindow.py:255
+msgid "Edit the project settings"
+msgstr "Mîhengên projeyê sererastke"
+
+#: ../pitivi/ui/mainwindow.py:256
+msgid "_Render project"
+msgstr "_Projeyê Bimeşîne"
+
+#: ../pitivi/ui/mainwindow.py:259
+msgid "_Undo"
+msgstr "_Vegerîne"
+
+#: ../pitivi/ui/mainwindow.py:260
+msgid "Undo the last operation"
+msgstr "Çalakiya dawîn vegerîne"
+
+#: ../pitivi/ui/mainwindow.py:262
+msgid "_Redo"
+msgstr "_Dubare"
+
+#: ../pitivi/ui/mainwindow.py:263
+msgid "Redo the last operation that was undone"
+msgstr "Çalakiya dawîn ku neqediyabû, dubare bike"
+
+#: ../pitivi/ui/mainwindow.py:265
+msgid "_Plugins..."
+msgstr "_Pêvek..."
+
+#: ../pitivi/ui/mainwindow.py:266
+msgid "Manage plugins"
+msgstr "Rêveberiya pêvekan"
+
+#: ../pitivi/ui/mainwindow.py:267
+msgid "_Preferences"
+msgstr "_Vebijêrk"
+
+#: ../pitivi/ui/mainwindow.py:270
+msgid "Import from _Webcam..."
+msgstr "Ji _webcamê têxe..."
+
+#: ../pitivi/ui/mainwindow.py:271
+msgid "Import Camera stream"
+msgstr "Herikîna kamerayê têxe"
+
+#: ../pitivi/ui/mainwindow.py:273
+msgid "_Make screencast..."
+msgstr "_Weşana ekranê bike..."
+
+#: ../pitivi/ui/mainwindow.py:274
+msgid "Capture the desktop"
+msgstr "Wêneya sermaseyê bistîne"
+
+#: ../pitivi/ui/mainwindow.py:276
+msgid "_Capture Network Stream..."
+msgstr "_Dîmena torê bistîne..."
+
+#: ../pitivi/ui/mainwindow.py:277
+msgid "Capture Network Stream"
+msgstr "Dîmena torê bistîne"
+
+#: ../pitivi/ui/mainwindow.py:280
+#, python-format
+msgid "Information about %s"
+msgstr "Agahiyên der barê %s de"
+
+#: ../pitivi/ui/mainwindow.py:281
+msgid "_File"
+msgstr "_Pel"
+
+#: ../pitivi/ui/mainwindow.py:282
+msgid "_Edit"
+msgstr "_Sererastke"
+
+#: ../pitivi/ui/mainwindow.py:283
+msgid "_View"
+msgstr "_Dîtin"
+
+#: ../pitivi/ui/mainwindow.py:284
+msgid "_Project"
+msgstr "_Proje"
+
+#: ../pitivi/ui/mainwindow.py:285
+msgid "_Timeline"
+msgstr "_Xêza demê"
+
+#: ../pitivi/ui/mainwindow.py:286
+msgid "Previe_w"
+msgstr "Pêşdîtin"
+
+#: ../pitivi/ui/mainwindow.py:289
+msgid "Loop"
+msgstr "Dubareya Bêdawîn"
+
+#: ../pitivi/ui/mainwindow.py:291
+msgid "_Help"
+msgstr "_Alîkarî"
+
+#: ../pitivi/ui/mainwindow.py:296
+msgid "View the main window on the whole screen"
+msgstr "Paceya sereke dîmender tije nîşande"
+
+#: ../pitivi/ui/mainwindow.py:300
+msgid "Main Toolbar"
+msgstr "Darikê Amûran ya Sereke"
+
+#: ../pitivi/ui/mainwindow.py:303
+msgid "Timeline Toolbar"
+msgstr "Darika amûran ya xêza demê"
+
+#: ../pitivi/ui/mainwindow.py:398
+msgid "Clip Library"
+msgstr "Pirtûkxaneya Klîban"
+
+#: ../pitivi/ui/mainwindow.py:536
+msgid "Open File..."
+msgstr "Pelê Veke..."
+
+#: ../pitivi/ui/mainwindow.py:552
+msgid "All Supported Formats"
+msgstr "Hemû Formatên Bipiştgirî"
+
+#: ../pitivi/ui/mainwindow.py:618
+msgid "Contributors:"
+msgstr "Tevkarî:"
+
+#: ../pitivi/ui/mainwindow.py:630
+msgid ""
+"GNU Lesser General Public License\n"
+"See http://www.gnu.org/copyleft/lesser.html for more details"
+msgstr ""
+"GNU Lesser Lîsansa Giştî\n"
+"Ji bo zêdetir agahiyan http://www.gnu.org/copyleft/lesser.html"
+
+#: ../pitivi/ui/mainwindow.py:749
+msgid "Close without saving"
+msgstr "Bêyî tomarkirin bigire"
+
+#: ../pitivi/ui/mainwindow.py:762
+msgid "Save changes to the current project before closing?"
+msgstr "Berî girtinê bila guhertin li projeya heyî werin tomarkirin?"
+
+#: ../pitivi/ui/mainwindow.py:769
+msgid "If you don't save some of your changes will be lost"
+msgstr "Ger tu tomar nekî wê hinek guhertin wenda bibin"
+
+#: ../pitivi/ui/mainwindow.py:822
+#, python-format
+msgid "PiTiVi is unable to load file \"%s\""
+msgstr "PiTiViyê nekarî pela \"%s\" bar bike"
+
+#: ../pitivi/ui/mainwindow.py:825
+msgid "Error Loading File"
+msgstr "Di barkirna pelê de çewtî"
+
+#: ../pitivi/ui/mainwindow.py:832
+msgid "Locate missing file..."
+msgstr "Pela wenda bibîne.."
+
+#: ../pitivi/ui/mainwindow.py:841
+msgid "The following file has moved, please tell PiTiVi where to find it."
+msgstr ""
+"Pel hatiye guheztin, ji kerema xwe re bêje PiTiVi ka dikare wê li ku bibîne."
+
+#: ../pitivi/ui/mainwindow.py:843
+msgid "Duration:"
+msgstr "Dirêjahî:"
+
+#: ../pitivi/ui/mainwindow.py:984
+msgid "Save As..."
+msgstr "Tomar bike weke..."
+
+#: ../pitivi/ui/mainwindow.py:992
+msgid "Untitled.xptv"
+msgstr "Besernav.xptv"
+
+#: ../pitivi/ui/mainwindow.py:1003 ../pitivi/ui/mainwindow.py:1016
+msgid "Detect Automatically"
+msgstr "Jixweber Bibîne"
+
+#: ../pitivi/ui/net_capture.glade.h:1
+msgid "Address"
+msgstr "Navnîşan"
+
+#: ../pitivi/ui/net_capture.glade.h:2
+msgid "Capture"
+msgstr "Capture"
+
+#: ../pitivi/ui/net_capture.glade.h:3
+msgid "Capture Stream from URI"
+msgstr "Ji URLyê herikinê bigire"
+
+#: ../pitivi/ui/net_capture.glade.h:4
+msgid "Capture network stream"
+msgstr "Herikîna torê bigire"
+
+#: ../pitivi/ui/net_capture.glade.h:5
+msgid "Close"
+msgstr "Bigire"
+
+#: ../pitivi/ui/net_capture.glade.h:6
+msgid "Customize:"
+msgstr "Taybetkirin:"
+
+#: ../pitivi/ui/net_capture.glade.h:7
+msgid "HTTP / HTTPS"
+msgstr "HTTP / HTTPS"
+
+#: ../pitivi/ui/net_capture.glade.h:8
+msgid "Network stream video"
+msgstr "Dîmena herikîna torê"
+
+#: ../pitivi/ui/net_capture.glade.h:9
+msgid "Other protocol"
+msgstr "Protokola din"
+
+#: ../pitivi/ui/net_capture.glade.h:10
+msgid "Port"
+msgstr "Dergeh"
+
+#: ../pitivi/ui/net_capture.glade.h:11
+msgid "Preview"
+msgstr "Pêşdîtin"
+
+#: ../pitivi/ui/net_capture.glade.h:12
+msgid "Preview Stream from URI"
+msgstr "Dîmena pêşdîtinê ya herikîna URIyê"
+
+#: ../pitivi/ui/net_capture.glade.h:13
+msgid "Protocol"
+msgstr "Protokol"
+
+#: ../pitivi/ui/net_capture.glade.h:14
+msgid "RTSP"
+msgstr "RTSP"
+
+#: ../pitivi/ui/net_capture.glade.h:15
+msgid "UDP / RDP"
+msgstr "UDP / RDP"
+
+#: ../pitivi/ui/net_capture.glade.h:16
+msgid "http://"
+msgstr "http://"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:1
+#: ../pitivi/ui/pluginmanagerdialog.py:173
+msgid "All categories"
+msgstr "Hemû kategorî"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:2
+msgid "Plugin manager"
+msgstr "Rêvebiriya pêvekan"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:3
+msgid "Search:"
+msgstr "Lêgerîn:"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:4
+msgid "Show:"
+msgstr "Nîşandan:"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:5
+msgid ""
+"You may drag plugin files into the list to install them,\n"
+"or type text to search for a specific plugin."
+msgstr ""
+"Ji bo sazkirina pêvekan dikarî wan berdî ser lîsteyê,\n"
+"an jî ji bo lêgerîna pêvekekî diyarde, tiştek binivîsî."
+
+#: ../pitivi/ui/pluginmanagerdialog.py:89
+msgid "Enabled"
+msgstr "Çalak"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:99
+msgid "Plugin"
+msgstr "Pêvek"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:109
+msgid "Category"
+msgstr "Kategorî"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:271
+msgid "Are you sure you want to remove the selected plugins?"
+msgstr "Ji dil dixwazî pêveka bijartî rakî?"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:272
+msgid "Confirm remove operation"
+msgstr "Çalakiya rakirinê erê bike"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:289
+#, python-format
+msgid "Cannot remove %s"
+msgstr "%s nikare were rakirin"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:321
+msgid "Update the existing plugin?"
+msgstr "Pêveka heyî rojane bike?"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:324
+#, python-format
+msgid ""
+"This plugin is already installed in your system.\n"
+"If you agree, version %(v1)s will be replaced with version %(v2)s"
+msgstr ""
+"Ev pêvek jixwe di pergala te de sazkir, ye.\n"
+"Ger te bivê wê guhertoya %(v1)s, wê bi guhertoya %(v2)s were guhertin"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:327
+msgid "Duplicate plugin found"
+msgstr "Pêveka dubarekirî hat dîtin"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:341
+#, python-format
+msgid ""
+"Cannot install %s\n"
+"The file is not a valid plugin"
+msgstr ""
+"%s nehat sazkirin\n"
+"Pel ne pêvekekî guncan e"
+
+#: ../pitivi/ui/prefs.py:61
+msgid "Preferences"
+msgstr "Vebijêrk"
+
+#: ../pitivi/ui/prefs.py:85
+msgid "Section"
+msgstr "Beş"
+
+#. revert, close buttons
+#: ../pitivi/ui/prefs.py:106
+msgid "Reset to Factory Settings"
+msgstr "Vegerîne mîhengên destpêkê"
+
+#: ../pitivi/ui/prefs.py:110
+msgid "Revert"
+msgstr "Vegerîne"
+
+#: ../pitivi/ui/prefs.py:125
+msgid "Some changes will not take effect until you restart PiTiVi"
+msgstr ""
+"Heta ku PiTiVi ji nû ve nedî destpêkirin wê hinek guhertin neyên çalakirin"
+
+#: ../pitivi/ui/prefs.py:320
+msgid "Reset"
+msgstr "Reset Bike"
+
+#: ../pitivi/ui/previewer.py:55 ../pitivi/ui/previewer.py:83
+#: ../pitivi/ui/previewer.py:94 ../pitivi/ui/trackobject.py:48
+#: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
+#: ../pitivi/ui/trackobject.py:81
+msgid "Appearance"
+msgstr "Xuyanî"
+
+#: ../pitivi/ui/previewer.py:56
+msgid "Thumbnail Gap (pixels)"
+msgstr "Navbera pêşdîtinan (pixel)"
+
+#: ../pitivi/ui/previewer.py:58
+msgid "The gap between thumbnails"
+msgstr "Valahiya navbera pêştîdinan"
+
+#: ../pitivi/ui/previewer.py:84
+msgid "Show Thumbnails (Video)"
+msgstr "Pêşdîtinan nîşande (Vîdyo)"
+
+#: ../pitivi/ui/previewer.py:85
+msgid "Show Thumbnails on Video Clips"
+msgstr "Li ser Klîbên Vîdyo pêşdîtinan nîşande"
+
+#: ../pitivi/ui/previewer.py:95
+msgid "Show Waveforms (Audio)"
+msgstr "Teşeya pêlan nîşande (Deng)"
+
+#: ../pitivi/ui/previewer.py:96
+msgid "Show Waveforms on Audio Clips"
+msgstr "Li ser Klîbên Dengê teşeya pêlan nîşande"
+
+#: ../pitivi/ui/projectsettings.glade.h:1
+msgid "A short description of your project."
+msgstr "Danasîneke kurt ya projeya we."
+
+#: ../pitivi/ui/projectsettings.glade.h:2
+msgid "Description:"
+msgstr "Rave:"
+
+#: ../pitivi/ui/projectsettings.glade.h:3
+msgid "Name:"
+msgstr "Nav:"
+
+#: ../pitivi/ui/projectsettings.glade.h:5
+msgid "The name of your project."
+msgstr "Navê projeya te."
+
+#: ../pitivi/ui/propertyeditor.py:54
+msgid "No Objects Selected"
+msgstr "Tu tişt ne bijartî ye"
+
+#: ../pitivi/ui/screencast_manager.glade.h:1
+msgid "Screencast"
+msgstr "Weşana ekranê"
+
+#: ../pitivi/ui/screencast_manager.glade.h:2
+msgid "Screencast Desktop"
+msgstr "Weşana ekranê Sermase"
+
+#: ../pitivi/ui/screencast_manager.glade.h:3
+msgid "Start Istanbul"
+msgstr "Istanbul'ê bide destpêkirin"
+
+#: ../pitivi/ui/sourcelist.py:130
+msgid "Import clips..."
+msgstr "Klîban bîne hundir..."
+
+#: ../pitivi/ui/sourcelist.py:135
+msgid "Remove Clip"
+msgstr "Klîbê rake"
+
+#: ../pitivi/ui/sourcelist.py:139
+msgid "Play Clip"
+msgstr "Klîbê lêde"
+
+#: ../pitivi/ui/sourcelist.py:166
+msgid "Icon"
+msgstr "Îkon"
+
+#: ../pitivi/ui/sourcelist.py:175
+msgid "Information"
+msgstr "Agahî"
+
+#: ../pitivi/ui/sourcelist.py:186
+msgid "Duration"
+msgstr "Dirêjahî"
+
+#: ../pitivi/ui/sourcelist.py:217
+msgid ""
+"<span size='x-large'>Import your clips by dragging them here or by using the "
+"buttons above.</span>"
+msgstr ""
+"<span size='x-large'>Ji bo ku klîbên xwe lê zêde bikî yan wan bişemitîne û "
+"berde vir an jî bişkojkên li jor bi kar bîne.</span>"
+
+#: ../pitivi/ui/sourcelist.py:272
+msgid "_Import clips..."
+msgstr "_Klîban bîne hundir..."
+
+#: ../pitivi/ui/sourcelist.py:273
+msgid "Import clips to use"
+msgstr "Ji bo bikaranînê klîban bîne hundir"
+
+#: ../pitivi/ui/sourcelist.py:275
+msgid "Import _folder of clips..."
+msgstr "Peldankên klîban bîne hundir..."
+
+#: ../pitivi/ui/sourcelist.py:276
+msgid "Import folder of clips to use"
+msgstr "Ji bo bikaranînê peldankên klîban bîne hundir"
+
+#: ../pitivi/ui/sourcelist.py:282
+msgid "_Remove from project"
+msgstr "Ji projeyê _rake"
+
+#: ../pitivi/ui/sourcelist.py:285
+msgid "Insert at _end of timeline"
+msgstr "Têxe dawiya xêza demê"
+
+#: ../pitivi/ui/sourcelist.py:451
+msgid "Import a folder"
+msgstr "Peldankekê bîne hundir"
+
+#: ../pitivi/ui/sourcelist.py:454
+msgid "Import a clip"
+msgstr "Klîbekê bîne hundir"
+
+#: ../pitivi/ui/sourcelist.py:455
+msgid "Close after importing files"
+msgstr "Piştî têxistina pelan bigire"
+
+#: ../pitivi/ui/sourcelist.py:967
+msgid "Importing clips..."
+msgstr "Klîban tîne hundir..."
+
+#: ../pitivi/ui/sourcelist.py:968
+msgid "Error(s) occurred while importing"
+msgstr "Di têxistinê de çewtî derket(in)"
+
+#: ../pitivi/ui/sourcelist.py:969
+msgid "An error occurred while importing"
+msgstr "Di têxistinê de çewtîyek derket"
+
+#: ../pitivi/ui/sourcelist.py:1058
+msgid "Error while analyzing files"
+msgstr "Di analîzkirina pelan de çewtî"
+
+#: ../pitivi/ui/sourcelist.py:1059
+msgid "The following files can not be used with PiTiVi."
+msgstr "Pelên lîstekirî bi PiTiViyê re nikarin werin bikaranîn."
+
+#: ../pitivi/ui/sourcelist.py:1061
+msgid "Error while analyzing a file"
+msgstr "Di analîzkirina pelekê de çewtî"
+
+#: ../pitivi/ui/sourcelist.py:1062
+msgid "The following file can not be used with PiTiVi."
+msgstr "Ev pel bi PiTiViyê re nikare werin bikaranîn."
+
+#. tooltip text for toolbar
+#: ../pitivi/ui/timeline.py:46
+msgid "Delete Selected"
+msgstr "Bijartiyan Jê Bibe"
+
+#: ../pitivi/ui/timeline.py:47
+msgid "Split clip at playhead position"
+msgstr "Vîdyoyê ji cihê ku lê dide, qet bike"
+
+#: ../pitivi/ui/timeline.py:48
+msgid "Zoom In"
+msgstr "Nêzîktir bike"
+
+#: ../pitivi/ui/timeline.py:49
+msgid "Zoom Out"
+msgstr "Dûrtir bike"
+
+#: ../pitivi/ui/timeline.py:50
+msgid "Break links between clips"
+msgstr "Klîban ji hev bike"
+
+#: ../pitivi/ui/timeline.py:51
+msgid "Link together arbitrary clips"
+msgstr "Klîbên ji hev cuda, bi heve bike"
+
+#: ../pitivi/ui/timeline.py:52
+msgid "Ungroup clips"
+msgstr "Komên klîban betalke"
+
+#: ../pitivi/ui/timeline.py:53
+msgid "Group clips"
+msgstr "Kîban kom bike"
+
+#: ../pitivi/ui/timeline.py:123
+msgid "One or more GStreamer errors has occured!"
+msgstr "Yek an jî zêdetir çewtiyên GStreamer qewimî!"
+
+#: ../pitivi/ui/timeline.py:157
+msgid "Error List"
+msgstr "Lîsteya çewtiyan"
+
+#: ../pitivi/ui/timeline.py:158
+msgid "The following errors have been reported:"
+msgstr "Ev çewtiyên rêzkirî hatin raporkirin:"
+
+#: ../pitivi/ui/timeline.py:224
+msgid "Zoom Timeline"
+msgstr "Nêzikî xêza demê bibe"
+
+#: ../pitivi/ui/timelinecanvas.py:51
+msgid "Behavior"
+msgstr "Helwest"
+
+#: ../pitivi/ui/timelinecanvas.py:52
+msgid "Snap Distance (pixels)"
+msgstr "Dûrahiya Kişandina Dîmenê (pixel)"
+
+#: ../pitivi/ui/timelinecanvas.py:53
+msgid "Threshold distance (in pixels) used for all snapping operations"
+msgstr ""
+
+#: ../pitivi/ui/timelinecontrols.py:17
+msgid "<b>Text:</b>"
+msgstr "<b>Nivîs:</b>"
+
+#: ../pitivi/ui/trackobject.py:49
+msgid "Clip Background (Video)"
+msgstr "Rûerda Klîbê (Vîdyo)"
+
+#: ../pitivi/ui/trackobject.py:50
+msgid "The background color for clips in video tracks."
+msgstr "Di berhemên vîdyo de rengê rûerda klîban."
+
+#: ../pitivi/ui/trackobject.py:60
+msgid "Clip Background (Audio)"
+msgstr "Rûerda Klîbê (Deng)"
+
+#: ../pitivi/ui/trackobject.py:61
+msgid "The background color for clips in audio tracks."
+msgstr "Di berhemên dengê de rengê rûerda klîban."
+
+#: ../pitivi/ui/trackobject.py:71
+msgid "Selection Color"
+msgstr "Rengê Hilbijartinê"
+
+#: ../pitivi/ui/trackobject.py:72
+msgid "Selected clips will be tinted with this color."
+msgstr "Klîbên bijartî wê bi vê rengê werin rengînkirin."
+
+#: ../pitivi/ui/trackobject.py:82
+msgid "Clip Font"
+msgstr "Cûrenivîsa klîbê"
+
+#: ../pitivi/ui/trackobject.py:83
+msgid "The font to use for clip titles"
+msgstr "Cûrenivîsa ji bo sernavên klîban"
