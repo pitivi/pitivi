@@ -164,7 +164,7 @@ class NumericWidget(gtk.HBox):
         self.adjustment.props.lower = lower
         self.adjustment.props.upper = upper
         self.spinner = gtk.SpinButton(self.adjustment)
-        self.pack_start(self.spinner, False, False)
+        self.pack_start(self.spinner)
         self.spinner.show()
 
     def connectValueChanged(self, callback, *args):
@@ -377,6 +377,36 @@ class FontWidget(gtk.FontButton):
 
     def getWidgetValue(self):
         return self.get_font_name()
+
+class ResolutionWidget(gtk.HBox):
+
+    def __init__ (self):
+        gtk.HBox.__init__(self)
+        self.props.spacing = 6
+
+        self.dwidth = 0
+        self.dheight = 0
+        self.dwidthWidget = NumericWidget(lower=0)
+        self.dheightWidget = NumericWidget(lower=0)
+        self.pack_start(self.dwidthWidget)
+        self.pack_start(gtk.Label("x"))
+        self.pack_start(self.dheightWidget)
+        self.setWidgetValue((320, 240))
+        self.show_all()
+
+    def connectValueChanged(self, callback, *args):
+        self.dwidthWidget.connectValueChanged(callback, *args)
+        self.dheightWidget.connectValueChanged(callback, *args)
+
+    def setWidgetValue(self, value):
+        width, height = value
+        dar = gst.Fraction(width, height)
+
+        self.dwidthWidget.setWidgetValue(width)
+        self.dheightWidget.setWidgetValue(height)
+
+    def getWidgetValue(self):
+        pass
 
 if __name__ == '__main__':
 
