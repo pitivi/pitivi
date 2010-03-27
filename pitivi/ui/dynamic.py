@@ -286,6 +286,131 @@ class ChoiceWidget(gtk.HBox):
     def getWidgetValue(self):
         return self.values[self.contents.get_active()]
 
+class PresetChoiceWidget(gtk.HBox):
+
+    """A popup which manages preset settings on a group of widgets supporting
+    the dynamic interface"""
+
+    class WidgetMap(object):
+
+        """A helper class for mapping data from a preset to a set of
+        widgets"""
+
+        def __init__(self):
+            raise NotImplementedError
+
+        def getWidgets(self):
+            raise NotImplementedError
+
+        def map(self, preset):
+            raise NotImplementedError
+
+    class SeqWidgetMap(WidgetMap):
+
+        """Maps widgets positionally to a sequence of values. None can be used
+        if the given position should not map to a widget"""
+
+        def __init__(self, *widgets):
+            self.widgets = widgets
+
+        def getWidgets(self):
+            return (w for w in self.widgets if w)
+
+        def map(self, preset):
+            for w, p in zip(self.widgets, preset):
+                if w:
+                    w.setWidgetValue(p)
+
+        def unmap(self):
+            return [w.getWidgetValue() for w in self.widgets if w]
+
+    def __init__(self, presets):
+        gtk.HBox.__init__(self)
+        self._block_update = False
+        self._widget_map = None
+
+        self.presets = presets
+        presets.connect("preset-added", self._presetAdded)
+        presets.connect("preset-removed", self._presetRemoved)
+
+        self.combo = gtk.combo_box_new_text()
+        self.combo.set_row_separator_func(self._sep_func)
+        for preset in presets:
+            self.combo.append_text(preset[0])
+        self.combo.append_text("-")
+        self.combo.append_text(_("Custom"))
+        self.pack_start(self.combo)
+        self._custom_row = len(presets) + 1
+
+        save_button = gtk.Button(stock=gtk.STOCK_SAVE)
+        self._save_button = save_button
+        self.pack_start(save_button, False, False)
+        save_button.connect("clicked", self._savePreset)
+        self.show_all()
+
+    def _sep_func(self, model, iter):
+        return model[iter][0] == "-"
+
+    def _presetAdded(self, presetlist, preset):
+        row = self._custom_row - 1
+        self._custom_row += 1
+        self.combo.insert_text(row, preset[0])
+        self.combo.set_active(row)
+
+    def _presetRemoved(self, presetlist, preset, index):
+        self.combo.remove_text(index)
+        self._custom_row -= 1
+
+    def _savePreset(self, unused_button):
+        d = gtk.Dialog(_("Save Preset"), None, gtk.DIALOG_MODAL,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE,
+                gtk.RESPONSE_OK))
+        input = gtk.Entry()
+        ca = d.get_content_area()
+        ca.pack_start(input)
+        input.show()
+        response = d.run()
+
+        if response == gtk.RESPONSE_OK:
+            name = input.get_text()
+            values = self._widget_map.unmap()
+            self.presets.addPreset(name, values)
+        d.destroy()
+
+    def setWidgetMap(self, map):
+        self._widget_map = map
+        for widget in self._widget_map.getWidgets():
+            widget.connectValueChanged(self._slaveWidgetValueChanged)
+        self.combo.connect("changed", self._comboChanged)
+
+    def mapWidgetsToSeq(self, *args):
+        self.setWidgetMap(self.SeqWidgetMap(*args))
+
+    def _slaveWidgetValueChanged(self, unused_widget):
+        # gtk isn't very friendly to this sort of thing
+        if not self._block_update:
+            self.combo.set_active(self._custom_row)
+
+    def _comboChanged(self, combo):
+        active = combo.get_active()
+        if active > len(self.presets):
+            self._save_button.set_sensitive(True)
+            return
+        preset = self.presets[active][1]
+
+        self._save_button.set_sensitive(False)
+
+        self._block_update = True
+        self._widget_map.map(preset)
+        self._block_update = False
+
+    def connectValueChanged(self, callback, *args):
+        self.combo.connect("changed", callback, *args)
+
+    def setWidgetValue(self, preset_index):
+        self.combo.set_active(preset_index)
+
+
 class PathWidget(gtk.FileChooserButton):
 
     """A gtk.FileChooserButton which supports the DynamicWidget interface."""
@@ -406,7 +531,8 @@ class ResolutionWidget(gtk.HBox):
         self.dheightWidget.setWidgetValue(height)
 
     def getWidgetValue(self):
-        pass
+        return self.dwidthWidget.getWidgetValue(),\
+            self.dheightWidget.getWidgetValue()
 
 if __name__ == '__main__':
 
