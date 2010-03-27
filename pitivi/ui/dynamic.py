@@ -259,14 +259,14 @@ class ToggleWidget(gtk.CheckButton):
     def getWidgetValue(self):
         return self.get_active()
 
-class ChoiceWidget(gtk.VBox):
+class ChoiceWidget(gtk.HBox):
 
     """Abstractly, represents a choice between a list of named values. The
     association between value names and values is arbitrary. The current
     implementation uses a gtk.ComboBox."""
 
     def __init__(self, choices):
-        gtk.VBox.__init__(self)
+        gtk.HBox.__init__(self)
         self.choices = [choice[0] for choice in choices]
         self.values = [choice[1] for choice in choices]
         self.contents = gtk.combo_box_new_text()
