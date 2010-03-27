@@ -24,7 +24,7 @@ msgstr "Δημιουργήστε και επεξεργαστείτε τις δι
 
 #: ../pitivi.desktop.in.in.h:2
 msgid "Pitivi Video Editor"
-msgstr "Επεξεργαστής Βίντεο Pitivi"
+msgstr "Επεξεργασία βίντεο"
 
 #: ../pitivi/check.py:102
 #, python-format
