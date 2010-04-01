@@ -561,6 +561,8 @@ if __name__ == '__main__':
         (PathWidget, "file:///home/", ()),
         (TextWidget, "banana", ()),
         (TextWidget, "words only", ("^([a-zA-Z]+\s*)+$",)),
+        (TextWidget, "numbers only", ("^\d+$",
+            ("12", "14"))),
         (NumericWidget, 42, (100, 1)),
         (ToggleWidget, True, ()),
         (ChoiceWidget, "banana", ((
@@ -569,13 +571,22 @@ if __name__ == '__main__':
             ("pear", "pear")),)),
         (ColorWidget, 0x336699FF, (int,)),
         (FontWidget, "Sans 9", ()),
-        (FractionWidget, gst.Fraction(25000, 10001), 
+        (FractionWidget, "30M", 
             (gst.FractionRange(gst.Fraction(1, 1), 
                 gst.Fraction(30000, 1001)),)),
-        (FractionWidget, gst.Fraction(25000, 10001), 
-            (gst.FractionRange(gst.Fraction(1, 1), 
-                gst.Fraction(30000, 1001)),
-                (gst.Fraction(25,1), gst.Fraction(30,1))))
+        (FractionWidget, gst.Fraction(25000, 1001), 
+            (
+                gst.FractionRange(
+                    gst.Fraction(1, 1), 
+                    gst.Fraction(30000, 1001)
+                ),
+                (
+                    "25:1", 
+                    gst.Fraction(30,1),
+                    "30M",
+                ),
+            )
+        ),
     )
 
     W = gtk.Window()
@@ -584,8 +595,8 @@ if __name__ == '__main__':
 
     for y, (klass, default, args) in enumerate(widgets):
         w = klass(*args)
-        l = gtk.Label(str(default))
         w.setWidgetValue(default)
+        l = gtk.Label(str(w.getWidgetValue()))
         w.connectValueChanged(valueChanged, w, l)
         w.show()
         l.show()
