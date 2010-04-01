@@ -196,7 +196,8 @@ class FractionWidget(TextWidget):
 
     """A gtk.ComboBoxEntry """
 
-    fraction_regex = "^([0-9]*(\.[0-9]+)?)([:/][0-9]*(\.[0-9]+)?)?$"
+    fraction_regex = re.compile(
+        "^([0-9]*(\.[0-9]+)?)(([:/][0-9]*(\.[0-9]+)?)|M)?$")
     __gtype_name__ = 'FractionWidget'
 
     def __init__(self, range=None, presets=None):
@@ -208,11 +209,15 @@ class FractionWidget(TextWidget):
             fhigh = float("Infinity")
         choices = []
         if presets:
-            for name, preset in presets:
+            for preset in presets:
+                if type(preset) is str:
+                    strval = preset
+                    preset = self._parseText(preset)
+                else:
+                    strval = "%g:%g" % (preset.num, preset.denom)
                 fpreset = float(preset)
                 if flow <= fpreset and fpreset <= fhigh:
-                    strval = "%g:%g" % (preset.num, preset.denom)
-                    choices.append((name, strval))
+                    choices.append(strval)
         self.low = flow
         self.high = fhigh
         TextWidget.__init__(self, self.fraction_regex, choices)
@@ -225,7 +230,16 @@ class FractionWidget(TextWidget):
         return False
 
     def setWidgetValue(self, value):
-        self.text.set_text("%g:%g" % (value.num, value.denom))
+        if type(value) is str:
+            value = self._parseText(value)
+        elif not hasattr(value, "denom"):
+            value = gst.Fraction(value)
+        if (value.denom / 1001) == 1:
+            text = "%gM" % (value.num / 1000)
+        else:
+            text = "%g:%g" % (value.num, value.denom)
+
+        self.text.set_text(text)
 
     def getWidgetValue(self):
         if self.last_valid:
@@ -233,14 +247,18 @@ class FractionWidget(TextWidget):
         return gst.Fraction(1, 1)
 
     def _parseText(self, text):
-        match = self.matches.match(text)
+        match = self.fraction_regex.match(text)
         groups = match.groups()
         num = 1.0
         denom = 1.0
         if groups[0]:
             num = float(groups[0])
-        if groups[2] and groups[2][1:]:
-            denom = float(groups[2][1:])
+        if groups[2]:
+            if groups[2] == "M":
+                num = num * 1000
+                denom = 1001
+            elif groups[2][1:]:
+                denom = float(groups[2][1:])
         return gst.Fraction(num, denom)
 
 class ToggleWidget(gtk.CheckButton):
