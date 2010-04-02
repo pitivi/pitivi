@@ -390,7 +390,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.projecttabs = ProjectTabs()
 
         self.sourcelist = SourceList(instance, self.uimanager)
-        self.projecttabs.append_page(self.sourcelist, gtk.Label(_("Clip Library")))
+        self.projecttabs.append_page(self.sourcelist, gtk.Label(_("Media Library")))
         self._connectToSourceList()
         self.sourcelist.show()
 
