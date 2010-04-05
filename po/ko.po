@@ -1,0 +1,1393 @@
+# Korean translation for pitivi
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the pitivi package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pitivi\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=pitivi&component=general\n"
+"POT-Creation-Date: 2010-04-03 09:02+0000\n"
+"PO-Revision-Date: 2010-03-26 02:05+0900\n"
+"Last-Translator: Kang Bundo <bundo@bundo.biz>\n"
+"Language-Team: Ubuntu Korean Translators <ubuntu-ko@lists.ubuntu.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Launchpad-Export-Date: 2010-03-25 16:48+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: ../pitivi.desktop.in.in.h:1
+msgid "Create and edit your own movies"
+msgstr "동영상 제작 및 편집"
+
+#: ../pitivi.desktop.in.in.h:2
+msgid "Pitivi Video Editor"
+msgstr "Pitivi 동영상 편집기"
+
+#: ../pitivi/check.py:102
+#, python-format
+msgid "%s is already running!"
+msgstr "%s (이)가 이미 실행중입니다."
+
+#: ../pitivi/check.py:103
+#, python-format
+msgid "An instance of %s is already running in this script."
+msgstr "%s의 인스턴스는 이미 이 스크립트에서 작동하고 있습니다."
+
+#: ../pitivi/check.py:105
+msgid "Could not find the GNonLin plugins!"
+msgstr "GNonLin 플러그인을 찾을 수 없습니다."
+
+#: ../pitivi/check.py:106
+msgid ""
+"Make sure the plugins were installed and are available in the GStreamer "
+"plugins path."
+msgstr ""
+"GStreamer 플러그인 경로에 플러그인들이 제대로 설치되어 있는지 확인하십시오."
+
+#: ../pitivi/check.py:108
+msgid "Could not find the autodetect plugins!"
+msgstr "플러그인을 자동으로 찾을 수 없습니다."
+
+#: ../pitivi/check.py:109
+msgid ""
+"Make sure you have installed gst-plugins-good and is available in the "
+"GStreamer plugin path."
+msgstr ""
+"gst-plugins-good가 GStreamer 플러그인 경로에 제대로 설치되어 있는지 확인하십"
+"시오."
+
+#: ../pitivi/check.py:111
+msgid "PyGTK doesn't have cairo support!"
+msgstr "PyGTK는 cairo를 지원하지 않습니다."
+
+#: ../pitivi/check.py:112
+msgid ""
+"Please use a version of the GTK+ Python bindings built with cairo support."
+msgstr "GTK+ 파이썬의 버전을 카이로를 내장 지원하는 버전으로 바꾸십시오."
+
+#: ../pitivi/check.py:114
+msgid "Could not initiate the video output plugins"
+msgstr "비디오 출력 플러그인을 시작할 수 없습니다."
+
+#: ../pitivi/check.py:115
+msgid ""
+"Make sure you have at least one valid video output sink available "
+"(xvimagesink or ximagesink)"
+msgstr ""
+"최소한 한가지 이상의 비디오 출력 플러그인이 있는지 확인하십시오. "
+"(xvimagesink 또는 ximagesink)"
+
+#: ../pitivi/check.py:117
+msgid "Could not initiate the audio output plugins"
+msgstr "오디오 출력 플러그인을 시작할 수 없습니다."
+
+#: ../pitivi/check.py:118
+msgid ""
+"Make sure you have at least one valid audio output sink available (alsasink "
+"or osssink)"
+msgstr ""
+"최소한 한가지 이상의 오디오 출력 플러그인이 있는지 확인하십시오.(alsasink 또"
+"는 osssink)"
+
+#: ../pitivi/check.py:120
+msgid "Could not import the cairo Python bindings"
+msgstr "카이로 파이썬 내장모듈을 불러올 수 없습니다."
+
+#: ../pitivi/check.py:121
+msgid "Make sure you have the cairo Python bindings installed"
+msgstr "카이로 내장모듈이 설치 되었는지 확인해주세요."
+
+#: ../pitivi/check.py:123
+msgid "Could not import the libglade Python bindings"
+msgstr "libglade 파이썬 내장함수를 불러올 수 없습니다."
+
+#: ../pitivi/check.py:124
+msgid "Make sure you have the libglade Python bindings installed"
+msgstr "libglade 함수가 설치되었는지 확인하세요."
+
+#: ../pitivi/check.py:126
+msgid "Could not import the goocanvas Python bindings"
+msgstr "goocanvas 파이썬 내장함수를 불러올 수 없습니다."
+
+#: ../pitivi/check.py:127
+msgid "Make sure you have the goocanvas Python bindings installed"
+msgstr "goocanvas 함수가 설치되었는지 확인하세요."
+
+#: ../pitivi/check.py:130
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GTK+ Python bindings "
+"(currently %s)"
+msgstr "최신버전의 GTK+ 파이썬 바인딩이 설치되어 있지 않습니다.(현재버전 %s)"
+
+#: ../pitivi/check.py:131
+#, python-format
+msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
+msgstr "%s 혹은 그 이상 버전의 GTK+ 파이썬 바인딩을 설치하십시오."
+
+#: ../pitivi/check.py:134
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GStreamer Python bindings "
+"(currently %s)"
+msgstr "GStreamer 함수의 버전이 너무 낮습니다. (현재 버전은 %s 입니다.)"
+
+#: ../pitivi/check.py:135
+#, python-format
+msgid ""
+"Install a version of the GStreamer Python bindings greater or equal to %s"
+msgstr "GStreamer 파이썬 함수 %s 버전 이상이 필요합니다."
+
+#: ../pitivi/check.py:138
+#, python-format
+msgid "You do not have a recent enough version of GStreamer (currently %s)"
+msgstr "GStreamer의 버전이 너무 낮습니다. (현재 버전은 %s 입니다.)"
+
+#: ../pitivi/check.py:139
+#, python-format
+msgid "Install a version of the GStreamer greater or equal to %s"
+msgstr "GStreamer %s 버전 이상을 설치하세요."
+
+#: ../pitivi/check.py:142
+#, python-format
+msgid ""
+"You do not have a recent enough version of the cairo Python bindings "
+"(currently %s)"
+msgstr ""
+"카이로(cairo) 파이썬 내장함수의 버전이 너무 낮습니다. (현재 버전은 %s 입니"
+"다.)"
+
+#: ../pitivi/check.py:143
+#, python-format
+msgid "Install a version of the cairo Python bindings greater or equal to %s"
+msgstr "카이로 파이썬 내장함수의 버전 %s 이상을 설치하십시오."
+
+#: ../pitivi/check.py:146
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GNonLin GStreamer plugin "
+"(currently %s)"
+msgstr ""
+"GNonLin GStreamer 플러그인의 버전이 너무 낮습니다. (현재 버전은 %s 입니다.)"
+
+#: ../pitivi/check.py:147
+#, python-format
+msgid ""
+"Install a version of the GNonLin GStreamer plugin greater or equal to %s"
+msgstr "GNonLin GStreamer 플러그인의 버전 %s 이상을 설치 하십시오."
+
+#: ../pitivi/check.py:149
+msgid "Could not import the Zope interface module"
+msgstr "Zope 인터페이스 모듈을 불러올 수 없습니다."
+
+#: ../pitivi/check.py:150
+msgid "Make sure you have the zope.interface module installed"
+msgstr "Zop 인터페이스 모듈이 설치되었는지 반드시 확인하세요."
+
+#: ../pitivi/check.py:152
+msgid "Could not import the distutils modules"
+msgstr "distutils 모듈을 불러올 수 없습니다."
+
+#: ../pitivi/check.py:153
+msgid "Make sure you have the distutils python module installed"
+msgstr "distutils 파이썬 모듈이 설치되어있는지 반드시 확인하세요."
+
+#: ../pitivi/discoverer.py:228
+#, python-format
+msgid ""
+"Missing plugins:\n"
+"%s"
+msgstr ""
+"플러그인 잃어버렸습니다.\n"
+"%s"
+
+#. woot, nothing decodable
+#: ../pitivi/discoverer.py:247
+msgid "Can not decode file."
+msgstr "디코드 파일이 아닙니다."
+
+#: ../pitivi/discoverer.py:248
+msgid "The given file does not contain audio, video or picture streams."
+msgstr "주신 파일에는 음성,비디오 또는 사진 정보가 포함되어있지 않습니다."
+
+#: ../pitivi/discoverer.py:268
+msgid "Could not establish the duration of the file."
+msgstr "파일 재생시간을 알 수 없습니다."
+
+#: ../pitivi/discoverer.py:269
+msgid ""
+"This clip seems to be in a format which cannot be accessed in a random "
+"fashion."
+msgstr "이 클립은 랜덤 양식으로도 접근이 불가능한 형태인것 같습니다."
+
+#: ../pitivi/discoverer.py:335
+msgid "Timeout while analyzing file."
+msgstr "파일 분석 도중 시간을 초과했습니다."
+
+#: ../pitivi/discoverer.py:336
+msgid "Analyzing the file took too long."
+msgstr "파일 분석이 너무 오래 걸렸습니다."
+
+#: ../pitivi/discoverer.py:365
+msgid "No available source handler."
+msgstr "사용 가능한 소스 핸들러가 없습니다."
+
+#: ../pitivi/discoverer.py:366
+#, python-format
+msgid "You do not have a GStreamer source element to handle protocol '%s'"
+msgstr "프로토콜 '%s'를(을) 처리할 GStreamer 소스 요소가 없습니다."
+
+#: ../pitivi/discoverer.py:431
+msgid "Pipeline didn't want to go to PAUSED."
+msgstr "파이브라인이 일시정지가 되는것을 거부합니다."
+
+#: ../pitivi/discoverer.py:454
+#, python-format
+msgid "An internal error occurred while analyzing this file: %s"
+msgstr "'%s'을(를) 분석하는 도중 내부 오류가 발생했습니다."
+
+#: ../pitivi/discoverer.py:464
+msgid "File contains a redirection to another clip."
+msgstr "파일이 다른 클립으로의 연결을 가지고 있습니다."
+
+#: ../pitivi/discoverer.py:465
+msgid "PiTiVi currently does not handle redirection files."
+msgstr "PiTiVi가 현재 정상적으로 연결된 파일을 다루지 못합니다."
+
+#: ../pitivi/discoverer.py:491
+msgid "Pipeline didn't want to go to PLAYING."
+msgstr "파이프라인은 재생될 수 없습니다."
+
+#: ../pitivi/application.py:122
+#, python-format
+msgid ""
+"There is already a %s instance, please inform the developers by filing a bug "
+"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr ""
+"이건 이미 %s 대신입니다. 개발자가 버그를 고칠 수 있도록 http://bugzilla."
+"gnome.org/enter_bug.cgi?product=pitivi로 정보를 알려주세요!"
+
+#: ../pitivi/application.py:219
+msgid ""
+"\n"
+"      %prog [PROJECT_FILE]\n"
+"      %prog -i [-a] [MEDIA_FILE]..."
+msgstr ""
+"\n"
+"      %prog [PROJECT_FILE]\n"
+"%prog -i [-a] [MEDIA_FILE]..."
+
+#: ../pitivi/application.py:223
+msgid ""
+"Starts the video editor, optionally loading PROJECT_FILE. If\n"
+"    no project is given, %prog creates a new project.\n"
+"    Alternatively, when -i is specified, arguments are treated as clips to "
+"be\n"
+"    imported into the project. If -a is specified, these clips will also be "
+"added to\n"
+"    the end of the project timeline."
+msgstr ""
+"영상 편집기를 시작합니다. 만약에\n"
+"          아무런 프로젝트도 없으면, %prog가 새 프로젝트를 만듭니다.\n"
+"          예외적으로, -i가 인식되면, 하던 일은 프로젝트의 하던 일로 취급됩니"
+"다.\n"
+"          만약에 -a가 인식되면, 이 클립들 또한 모두 프로젝트의 끝부분에 추가"
+"됩니다."
+
+#: ../pitivi/application.py:229
+msgid "Import each MEDIA_FILE into the project."
+msgstr "프로젝트에 각각의 미디어 파일을 추가하세요."
+
+#: ../pitivi/application.py:231
+msgid "Add each MEDIA_FILE to timeline after importing."
+msgstr "추가가 끝났으면, 각각의 미디어 파일을 타임라인에 넣으세요."
+
+#: ../pitivi/application.py:232
+msgid "Run pitivi in the Python Debugger"
+msgstr "pitivi를 파이썬 디버거에서 실행합니다."
+
+#: ../pitivi/application.py:234
+msgid "Run pitivi with no gui"
+msgstr "pitivi를 그래픽 화면 없이 실행합니다."
+
+#: ../pitivi/projectmanager.py:95
+msgid "Not a valid project file."
+msgstr "올바른 프로젝트 파일이 아닙니다."
+
+#: ../pitivi/projectmanager.py:100
+msgid "Couldn't close current project"
+msgstr "현재 프로젝트를 닫을 수 없습니다."
+
+#: ../pitivi/projectmanager.py:137
+msgid "No URI specified."
+msgstr "주소가 입력되지 않았습니다."
+
+#: ../pitivi/projectmanager.py:169
+msgid "New Project"
+msgstr "새 프로젝트"
+
+#: ../pitivi/settings.py:494
+msgid "Export Settings\n"
+msgstr "설정 내보내기\n"
+
+#: ../pitivi/settings.py:495
+msgid "Video: "
+msgstr "영상: "
+
+#: ../pitivi/settings.py:498
+msgid ""
+"\n"
+"Audio: "
+msgstr ""
+"\n"
+"소리: "
+
+#: ../pitivi/settings.py:501
+msgid ""
+"\n"
+"Muxer: "
+msgstr ""
+"\n"
+"믹서\n"
+" 라인 파괴가 확인되면,변환될 같은 위치에 새 라인을 생성합니다. \n"
+" 공간  문자가 확인되면, 변환될 같은 위치에 공간을 삽입합니다. "
+
+#: ../pitivi/utils.py:71
+#, python-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d 시간"
+
+#: ../pitivi/utils.py:74
+#, python-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d 분"
+
+#: ../pitivi/utils.py:77
+#, python-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d 초"
+
+#. Translators: "non local" means the project is not stored
+#. on a local filesystem
+#: ../pitivi/utils.py:244
+#, python-format
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s  로컬 프로젝트를  아직 다룰 수 없습니다."
+
+#: ../pitivi/formatters/format.py:77
+msgid "PiTiVi Native (XML)"
+msgstr "PiTiVi 기본 (XML)"
+
+#: ../pitivi/formatters/format.py:78
+msgid "Playlist format"
+msgstr "재생목록 포맷"
+
+#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/videofxlist.py:53
+msgid "Name"
+msgstr "이름"
+
+#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/elementsettingsdialog.glade.h:6
+#: ../pitivi/ui/videofxlist.py:59
+msgid "Description"
+msgstr "설명"
+
+#: ../pitivi/ui/cam_capture.glade.h:1
+msgid "Audio Capture Device:"
+msgstr "소리 갈무리 장치:"
+
+#: ../pitivi/ui/cam_capture.glade.h:2
+msgid "No device available"
+msgstr "장치가 없습니다."
+
+#: ../pitivi/ui/cam_capture.glade.h:3
+msgid "Video Capture Device:"
+msgstr "영상 갈무리 장치:"
+
+#: ../pitivi/ui/common.py:86 ../pitivi/ui/common.py:128
+#, python-format
+msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
+msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[0] "<b>소리 정보:</b> %d 채널 %d <i>Hz</i> (%d <i>비트</i>)"
+
+#: ../pitivi/ui/common.py:92 ../pitivi/ui/common.py:134
+#, python-format
+msgid "<b>Unknown Audio format:</b> %s"
+msgstr "<b>알 수 없는 오디오 포맷:</b> %s"
+
+#: ../pitivi/ui/common.py:97 ../pitivi/ui/common.py:139
+#, python-format
+msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+msgstr "<b>영상 정보:</b> <i>해상도</i> %d x %d  <i>초당 프레임 수</i>%.2f"
+
+#: ../pitivi/ui/common.py:101 ../pitivi/ui/common.py:143
+#, python-format
+msgid "<b>Image:</b> %d x %d <i>pixels</i>"
+msgstr "<b>사진 정보:</b> %d x %d <i>픽셀</i>"
+
+#: ../pitivi/ui/common.py:104 ../pitivi/ui/common.py:146
+#, python-format
+msgid "<b>Unknown Video format:</b> %s"
+msgstr "<b>알 수 없는 비디오 포맷:</b> %s"
+
+#: ../pitivi/ui/common.py:107 ../pitivi/ui/common.py:149
+#, python-format
+msgid "<b>Text:</b> %s"
+msgstr "<b>문자:</b> %s"
+
+#: ../pitivi/ui/defaultpropertyeditor.py:104
+#, python-format
+msgid "Properties For: %d object"
+msgid_plural "Properties For: %d objects"
+msgstr[0] "%d 객체를 위한 속성"
+
+#: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:140
+msgid "No properties..."
+msgstr "어떤 속성도 없습니다..."
+
+#: ../pitivi/ui/dynamic.py:52
+msgid "Implement Me"
+msgstr "도구로 사용해주세요."
+
+#: ../pitivi/ui/dynamic.py:237
+msgid "Choose..."
+msgstr "선택..."
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:1
+msgid "<b>Author:</b>"
+msgstr "<b>만든 이:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:2
+msgid "<b>Description:</b>"
+msgstr "<b>설명:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:3
+msgid "<b>Plugin Name</b>"
+msgstr "<b>플러긴 이름</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:4
+msgid "<b>Properties</b>"
+msgstr "<b>속성</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:5
+msgid "Author"
+msgstr "만든이"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:7
+msgid "Properties for <element>"
+msgstr "<element> 를 위한 속성"
+
+#: ../pitivi/ui/encodingdialog.glade.h:1 ../pitivi/ui/timelinecontrols.py:13
+msgid "<b>Audio:</b>"
+msgstr "<b>소리:</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:2
+msgid "<b>Nothing yet</b>"
+msgstr "<b>아무것도 아니에요.</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:3
+msgid "<b>Settings</b>"
+msgstr "<b>설정</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:4 ../pitivi/ui/timelinecontrols.py:15
+msgid "<b>Video:</b>"
+msgstr "<b>영상:</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:5
+msgid "Choose File"
+msgstr "파일 선택"
+
+#: ../pitivi/ui/encodingdialog.glade.h:6
+msgid "Modify"
+msgstr "수정"
+
+#: ../pitivi/ui/encodingdialog.glade.h:7
+msgid "Output file:"
+msgstr "출력 파일:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:8
+msgid "Please choose an output file"
+msgstr "출력할 파일을 선택해 주세요"
+
+#: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:257
+msgid "Render project"
+msgstr "동영상 파일 저장"
+
+#: ../pitivi/ui/encodingdialog.py:102
+msgid "Choose file to render to"
+msgstr "저장할 파일명을 입력하십시오."
+
+#: ../pitivi/ui/encodingdialog.py:137
+#, python-format
+msgid "About %s left"
+msgstr "%s 정도 남음"
+
+#: ../pitivi/ui/encodingdialog.py:147
+msgid "Rendering"
+msgstr "변환중입니다."
+
+#: ../pitivi/ui/encodingdialog.py:164
+msgid "Rendering Complete"
+msgstr "변환이 끝났습니다."
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:1
+msgid ""
+"12 fps\n"
+"23.97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29.97 fps\n"
+"30 fps\n"
+"60 fps"
+msgstr ""
+"12 fps\n"
+"23.97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29.97 fps\n"
+"30 fps\n"
+"60 fps"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:8
+msgid ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+msgstr ""
+"8 비트\n"
+"16 비트\n"
+"24 비트\n"
+"32 비트"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:12
+msgid ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+msgstr ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:18
+msgid "<b>Audio Output</b>"
+msgstr "<b>소리 품질</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:19
+msgid "<b>Export to</b>"
+msgstr "<b>변환할 파일 종류</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:20
+msgid "<b>Video Output</b>"
+msgstr "<b>영상 품질</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:21
+msgid "Audio Codec"
+msgstr "오디오 코덱"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:22
+msgid "Audio Codec:"
+msgstr "오디오 코덱:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:23
+msgid "Audio Preset"
+msgstr "소리 프리셋"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:24
+msgid "Channels:"
+msgstr "채널:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:25
+msgid "Container:"
+msgstr "형식:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:26
+msgid "Depth:"
+msgstr "깊이:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:27
+msgid "Frame rate:"
+msgstr "프레임 비율:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:28
+msgid "Height:"
+msgstr "높이:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:29
+msgid ""
+"Mono (1)\n"
+"Stereo (2)"
+msgstr ""
+"모노 (1)\n"
+"스테레오 (2)"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:31
+msgid "Muxer"
+msgstr "믹서"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:32
+msgid "Rate:"
+msgstr "비트율:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:33
+msgid "Settings"
+msgstr "변환될 동영상 정보"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:34
+msgid "Video Codec"
+msgstr "비디오 코덱"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:35
+msgid "Video Codec:"
+msgstr "비디오 코덱:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:36
+msgid "Video Preset"
+msgstr "비디오 프리셋"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:37
+msgid "Width:"
+msgstr "넓이:"
+
+#: ../pitivi/ui/exportsettingswidget.py:37
+msgid "576p (PAL DV/DVD)"
+msgstr "576p (PAL DV/DVD)"
+
+#: ../pitivi/ui/exportsettingswidget.py:38
+msgid "480p (NTSC DV/DVD)"
+msgstr "480p (NTSC DV/DVD)"
+
+#: ../pitivi/ui/exportsettingswidget.py:39
+msgid "720p HD"
+msgstr "720p HD"
+
+#: ../pitivi/ui/exportsettingswidget.py:40
+msgid "1080p full HD"
+msgstr "1080p full HD"
+
+#: ../pitivi/ui/exportsettingswidget.py:41
+msgid "QVGA (320x240)"
+msgstr "QVGA (320x240)"
+
+#: ../pitivi/ui/exportsettingswidget.py:42
+msgid "VGA (640x480)"
+msgstr "VGA (640x480)"
+
+#: ../pitivi/ui/exportsettingswidget.py:43
+msgid "SVGA (800x600)"
+msgstr "SVGA (800x600)"
+
+#: ../pitivi/ui/exportsettingswidget.py:44
+msgid "XGA (1024x768)"
+msgstr "XGA (1024x768)"
+
+#. i18n: string for custom video width/height/framerate settings
+#. i18n: string for custom audio rate/depth/channels settings
+#: ../pitivi/ui/exportsettingswidget.py:116
+#: ../pitivi/ui/exportsettingswidget.py:150
+msgid "Custom"
+msgstr "사용자 설정"
+
+#: ../pitivi/ui/exportsettingswidget.py:301
+msgid "Raw Video"
+msgstr "원본 영상"
+
+#: ../pitivi/ui/exportsettingswidget.py:316
+msgid "Raw Audio"
+msgstr "원본 음성"
+
+#: ../pitivi/ui/exportsettingswidget.py:439
+msgid "Export settings"
+msgstr "설정값 내보내기"
+
+#: ../pitivi/ui/filelisterrordialog.py:52
+msgid "Unknown reason"
+msgstr "알 수 없는 이유"
+
+#: ../pitivi/ui/filelisterrordialog.py:82
+msgid "URI:"
+msgstr "URI:"
+
+#: ../pitivi/ui/filelisterrordialog.py:87
+msgid "Problem:"
+msgstr "문제:"
+
+#: ../pitivi/ui/filelisterrordialog.py:94
+msgid "Extra information:"
+msgstr "추가 정보:"
+
+#. set title and frame label
+#: ../pitivi/ui/gstwidget.py:195
+#, python-format
+msgid "Properties for %s"
+msgstr "%s 속성"
+
+#: ../pitivi/ui/mainwindow.py:127
+msgid "Render"
+msgstr "렌더링"
+
+#: ../pitivi/ui/mainwindow.py:128 ../pitivi/ui/timeline.py:284
+msgid "Split"
+msgstr "분할"
+
+#: ../pitivi/ui/mainwindow.py:129
+msgid "Unlink"
+msgstr "연결 해제"
+
+#. Translators: This is an action, the title of a button
+#: ../pitivi/ui/mainwindow.py:131
+msgid "Link"
+msgstr "연결"
+
+#: ../pitivi/ui/mainwindow.py:132
+msgid "Ungroup"
+msgstr "그룹 해제"
+
+#. Translators: This is an action, the title of a button
+#: ../pitivi/ui/mainwindow.py:134
+msgid "Group"
+msgstr "그룹"
+
+#: ../pitivi/ui/mainwindow.py:240
+msgid "Start Playback"
+msgstr "재생 시작"
+
+#: ../pitivi/ui/mainwindow.py:241
+msgid "Stop Playback"
+msgstr "재생 중지"
+
+#: ../pitivi/ui/mainwindow.py:242
+msgid "Loop over selected area"
+msgstr "선택 구간 반복"
+
+#: ../pitivi/ui/mainwindow.py:247
+msgid "Create a new project"
+msgstr "새 프로젝트를 만듭니다"
+
+#: ../pitivi/ui/mainwindow.py:249
+msgid "Open an existing project"
+msgstr "기존 프로젝트 열기"
+
+#: ../pitivi/ui/mainwindow.py:251 ../pitivi/ui/mainwindow.py:253
+msgid "Save the current project"
+msgstr "현재 프로젝트를 저장합니다"
+
+#: ../pitivi/ui/mainwindow.py:254 ../pitivi/ui/projectsettings.glade.h:4
+msgid "Project Settings"
+msgstr "프로젝트 옵션"
+
+#: ../pitivi/ui/mainwindow.py:255
+msgid "Edit the project settings"
+msgstr "프로젝트 옵션 편집"
+
+#: ../pitivi/ui/mainwindow.py:256
+msgid "_Render project"
+msgstr "동영상으로 만들기(_R)"
+
+#: ../pitivi/ui/mainwindow.py:259
+msgid "_Undo"
+msgstr "실행취소(_U)"
+
+#: ../pitivi/ui/mainwindow.py:260
+msgid "Undo the last operation"
+msgstr "마지막 동작 실행 취소"
+
+#: ../pitivi/ui/mainwindow.py:262
+msgid "_Redo"
+msgstr "다시실행(_R)"
+
+#: ../pitivi/ui/mainwindow.py:263
+msgid "Redo the last operation that was undone"
+msgstr "취소했던 마지막 동작 재실행"
+
+#: ../pitivi/ui/mainwindow.py:265
+msgid "_Plugins..."
+msgstr "플러그인(_P)..."
+
+#: ../pitivi/ui/mainwindow.py:266
+msgid "Manage plugins"
+msgstr "플러그인 관리"
+
+#: ../pitivi/ui/mainwindow.py:267
+msgid "_Preferences"
+msgstr "기본 설정(_P)"
+
+#: ../pitivi/ui/mainwindow.py:270
+msgid "Import from _Webcam..."
+msgstr "화상카메라에서 가져오기(_W)..."
+
+#: ../pitivi/ui/mainwindow.py:271
+msgid "Import Camera stream"
+msgstr "카메라의 영상정보를 추가합니다."
+
+#: ../pitivi/ui/mainwindow.py:273
+msgid "_Make screencast..."
+msgstr "화면녹화(_M)..."
+
+#: ../pitivi/ui/mainwindow.py:274
+msgid "Capture the desktop"
+msgstr "데스크톱 화면을 캡쳐합니다."
+
+#: ../pitivi/ui/mainwindow.py:276
+msgid "_Capture Network Stream..."
+msgstr "인터넷 방송 녹화(_C)..."
+
+#: ../pitivi/ui/mainwindow.py:277
+msgid "Capture Network Stream"
+msgstr "네트워크 영상정보를 켑쳐합니다."
+
+#: ../pitivi/ui/mainwindow.py:280
+#, python-format
+msgid "Information about %s"
+msgstr "%s에 관한 정보"
+
+#: ../pitivi/ui/mainwindow.py:281
+msgid "_File"
+msgstr "파일(_F)"
+
+#: ../pitivi/ui/mainwindow.py:282
+msgid "_Edit"
+msgstr "편집(_E)"
+
+#: ../pitivi/ui/mainwindow.py:283
+msgid "_View"
+msgstr "보기(_V)"
+
+#: ../pitivi/ui/mainwindow.py:284
+msgid "_Project"
+msgstr "프로젝트(_P)"
+
+#: ../pitivi/ui/mainwindow.py:285
+msgid "_Timeline"
+msgstr "시간표시막대(_T)"
+
+#: ../pitivi/ui/mainwindow.py:286
+msgid "Previe_w"
+msgstr "미리보기(_W)"
+
+#: ../pitivi/ui/mainwindow.py:289
+msgid "Loop"
+msgstr "반복"
+
+#: ../pitivi/ui/mainwindow.py:291
+msgid "_Help"
+msgstr "도움말 (_H)"
+
+#: ../pitivi/ui/mainwindow.py:296
+msgid "View the main window on the whole screen"
+msgstr "전체 화면에서 작업합니다."
+
+#: ../pitivi/ui/mainwindow.py:300
+msgid "Main Toolbar"
+msgstr "주 도구막대"
+
+#: ../pitivi/ui/mainwindow.py:303
+msgid "Timeline Toolbar"
+msgstr "시간표시막대"
+
+#: ../pitivi/ui/mainwindow.py:393
+#, fuzzy
+#| msgid "Clip Library"
+msgid "Media Library"
+msgstr "클립 작업 공간"
+
+#: ../pitivi/ui/mainwindow.py:531
+msgid "Open File..."
+msgstr "파일 열기..."
+
+#: ../pitivi/ui/mainwindow.py:547
+msgid "All Supported Formats"
+msgstr "모든 지원 되는 형식"
+
+#: ../pitivi/ui/mainwindow.py:613
+msgid "Contributors:"
+msgstr "기여한 사람들:"
+
+#: ../pitivi/ui/mainwindow.py:625
+msgid ""
+"GNU Lesser General Public License\n"
+"See http://www.gnu.org/copyleft/lesser.html for more details"
+msgstr ""
+"GNU Lesser General Public License\n"
+"자세한 사항은 http://www.gnu.org/copyleft/lesser.html에서 확인하세요."
+
+#: ../pitivi/ui/mainwindow.py:744
+msgid "Close without saving"
+msgstr "저장하지 않고 종료"
+
+#: ../pitivi/ui/mainwindow.py:757
+msgid "Save changes to the current project before closing?"
+msgstr "종료하기 전에 현재 프로젝트를 저장하시겠습니까?"
+
+#: ../pitivi/ui/mainwindow.py:764
+msgid "If you don't save some of your changes will be lost"
+msgstr "저장하지 않는다면 바뀐 사항이 저장되지 않습니다."
+
+#: ../pitivi/ui/mainwindow.py:817
+#, python-format
+msgid "PiTiVi is unable to load file \"%s\""
+msgstr "\"%s\" 파일을 불러올 수 없습니다."
+
+#: ../pitivi/ui/mainwindow.py:820
+msgid "Error Loading File"
+msgstr "파일 불러오기 실패"
+
+#: ../pitivi/ui/mainwindow.py:827
+msgid "Locate missing file..."
+msgstr "분실한 파일의 위치를 찾아주세요....."
+
+#: ../pitivi/ui/mainwindow.py:836
+msgid "The following file has moved, please tell PiTiVi where to find it."
+msgstr ""
+"여기 보이는 파일은 어디로 도망갔습니다. PiTiVi 에게 이걸 찾을 수 있도록 알려"
+"주세요."
+
+#: ../pitivi/ui/mainwindow.py:838
+msgid "Duration:"
+msgstr "재생 시간:"
+
+#: ../pitivi/ui/mainwindow.py:979
+msgid "Save As..."
+msgstr "다른 이름으로 저장..."
+
+#: ../pitivi/ui/mainwindow.py:987
+msgid "Untitled.xptv"
+msgstr "이름없는.xptv"
+
+#: ../pitivi/ui/mainwindow.py:998 ../pitivi/ui/mainwindow.py:1011
+msgid "Detect Automatically"
+msgstr "자동 감지"
+
+#: ../pitivi/ui/net_capture.glade.h:1
+msgid "Address"
+msgstr "주소"
+
+#: ../pitivi/ui/net_capture.glade.h:2
+msgid "Capture"
+msgstr "캡쳐"
+
+#: ../pitivi/ui/net_capture.glade.h:3
+msgid "Capture Stream from URI"
+msgstr "주소에서 영상정보 캡쳐"
+
+#: ../pitivi/ui/net_capture.glade.h:4
+msgid "Capture network stream"
+msgstr "네트워크 영상정보를 캡쳐"
+
+#: ../pitivi/ui/net_capture.glade.h:5
+msgid "Close"
+msgstr "닫기"
+
+#: ../pitivi/ui/net_capture.glade.h:6
+msgid "Customize:"
+msgstr "개인화:"
+
+#: ../pitivi/ui/net_capture.glade.h:7
+msgid "HTTP / HTTPS"
+msgstr "HTTP / HTTPS"
+
+#: ../pitivi/ui/net_capture.glade.h:8
+msgid "Network stream video"
+msgstr "네트워크 스트림 비디오"
+
+#: ../pitivi/ui/net_capture.glade.h:9
+msgid "Other protocol"
+msgstr "다른 프로토콜"
+
+#: ../pitivi/ui/net_capture.glade.h:10
+msgid "Port"
+msgstr "포트"
+
+#: ../pitivi/ui/net_capture.glade.h:11
+msgid "Preview"
+msgstr "미리보기"
+
+#: ../pitivi/ui/net_capture.glade.h:12
+msgid "Preview Stream from URI"
+msgstr "주소에서 영상정보를 미리보기"
+
+#: ../pitivi/ui/net_capture.glade.h:13
+msgid "Protocol"
+msgstr "프로토콜"
+
+#: ../pitivi/ui/net_capture.glade.h:14
+msgid "RTSP"
+msgstr "RTSP"
+
+#: ../pitivi/ui/net_capture.glade.h:15
+msgid "UDP / RDP"
+msgstr "UDP / RDP"
+
+#: ../pitivi/ui/net_capture.glade.h:16
+msgid "http://"
+msgstr "http://"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:1
+#: ../pitivi/ui/pluginmanagerdialog.py:173
+msgid "All categories"
+msgstr "모든 분류"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:2
+msgid "Plugin manager"
+msgstr "플러그인 관리"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:3
+msgid "Search:"
+msgstr "검색:"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:4
+msgid "Show:"
+msgstr "표시:"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:5
+msgid ""
+"You may drag plugin files into the list to install them,\n"
+"or type text to search for a specific plugin."
+msgstr ""
+"플러그인을 설치하시려면, 플러그인 파일을 목록에 드래그 하시거나, 특정 플러그"
+"인 이름을 입력하십시오."
+
+#: ../pitivi/ui/pluginmanagerdialog.py:89
+msgid "Enabled"
+msgstr "사용중"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:99
+msgid "Plugin"
+msgstr "플러그인"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:109
+msgid "Category"
+msgstr "분류"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:271
+msgid "Are you sure you want to remove the selected plugins?"
+msgstr "선택한 플러그인들을 정말 제거하시겠습니까?"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:272
+msgid "Confirm remove operation"
+msgstr "제거한 동작을 수정하기."
+
+#: ../pitivi/ui/pluginmanagerdialog.py:289
+#, python-format
+msgid "Cannot remove %s"
+msgstr "%s (을)를 제거할 수 없습니다."
+
+#: ../pitivi/ui/pluginmanagerdialog.py:321
+msgid "Update the existing plugin?"
+msgstr "플러그인들을 업데이트 하시겠습니까?"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:324
+#, python-format
+msgid ""
+"This plugin is already installed in your system.\n"
+"If you agree, version %(v1)s will be replaced with version %(v2)s"
+msgstr ""
+"이 플러그인은 이미 설치되어 있습니다.\n"
+"동의하게 되면 %(v1)s 버전이 %(v2)s로 변경됩니다."
+
+#: ../pitivi/ui/pluginmanagerdialog.py:327
+msgid "Duplicate plugin found"
+msgstr "플러그인이 중복되었습니다."
+
+#: ../pitivi/ui/pluginmanagerdialog.py:341
+#, python-format
+msgid ""
+"Cannot install %s\n"
+"The file is not a valid plugin"
+msgstr ""
+"%s(을)를 설치할 수 없습니다.\n"
+"올바른 플러그인이 아닙니다."
+
+#: ../pitivi/ui/prefs.py:61
+msgid "Preferences"
+msgstr "기본 설정"
+
+#: ../pitivi/ui/prefs.py:85
+msgid "Section"
+msgstr "영역"
+
+#. revert, close buttons
+#: ../pitivi/ui/prefs.py:106
+msgid "Reset to Factory Settings"
+msgstr "설정값 초기화"
+
+#: ../pitivi/ui/prefs.py:110
+msgid "Revert"
+msgstr "복귀"
+
+#: ../pitivi/ui/prefs.py:125
+msgid "Some changes will not take effect until you restart PiTiVi"
+msgstr "바뀐 사항은 PiTiVi를 다시 시작해야만 적용됩니다."
+
+#: ../pitivi/ui/prefs.py:320
+msgid "Reset"
+msgstr "초기화"
+
+#: ../pitivi/ui/previewer.py:55 ../pitivi/ui/previewer.py:83
+#: ../pitivi/ui/previewer.py:94 ../pitivi/ui/trackobject.py:48
+#: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
+#: ../pitivi/ui/trackobject.py:81
+msgid "Appearance"
+msgstr "모양"
+
+#: ../pitivi/ui/previewer.py:56
+msgid "Thumbnail Gap (pixels)"
+msgstr "섬네일 간격 (픽셀)"
+
+#: ../pitivi/ui/previewer.py:58
+msgid "The gap between thumbnails"
+msgstr "썸네일 사이의 간격"
+
+#: ../pitivi/ui/previewer.py:84
+msgid "Show Thumbnails (Video)"
+msgstr "썸네일 보기 (비디오)"
+
+#: ../pitivi/ui/previewer.py:85
+msgid "Show Thumbnails on Video Clips"
+msgstr "비디오클립을 셈네일로 보기"
+
+#: ../pitivi/ui/previewer.py:95
+msgid "Show Waveforms (Audio)"
+msgstr "소리형식 보기 (오디오)"
+
+#: ../pitivi/ui/previewer.py:96
+msgid "Show Waveforms on Audio Clips"
+msgstr "오디오 클립의 소리형식으로 보기"
+
+#: ../pitivi/ui/projectsettings.glade.h:1
+msgid "A short description of your project."
+msgstr "프로젝트에 대한 간단한 설명."
+
+#: ../pitivi/ui/projectsettings.glade.h:2
+msgid "Description:"
+msgstr "설명:"
+
+#: ../pitivi/ui/projectsettings.glade.h:3
+msgid "Name:"
+msgstr "이름:"
+
+#: ../pitivi/ui/projectsettings.glade.h:5
+msgid "The name of your project."
+msgstr "프로젝트 이름."
+
+#: ../pitivi/ui/propertyeditor.py:54
+msgid "No Objects Selected"
+msgstr "객체 선택 없음"
+
+#: ../pitivi/ui/screencast_manager.glade.h:1
+msgid "Screencast"
+msgstr "화면 녹화"
+
+#: ../pitivi/ui/screencast_manager.glade.h:2
+msgid "Screencast Desktop"
+msgstr "데스크탑 화면 녹화"
+
+#: ../pitivi/ui/screencast_manager.glade.h:3
+msgid "Start Istanbul"
+msgstr "istanbul 시작"
+
+#: ../pitivi/ui/sourcelist.py:130
+msgid "Import clips..."
+msgstr "클립 추가하기...."
+
+#: ../pitivi/ui/sourcelist.py:135
+msgid "Remove Clip"
+msgstr "클립 제거하기"
+
+#: ../pitivi/ui/sourcelist.py:139
+msgid "Play Clip"
+msgstr "클립 재생"
+
+#: ../pitivi/ui/sourcelist.py:166
+msgid "Icon"
+msgstr "아이콘"
+
+#: ../pitivi/ui/sourcelist.py:175
+msgid "Information"
+msgstr "정보"
+
+#: ../pitivi/ui/sourcelist.py:186
+msgid "Duration"
+msgstr "길이"
+
+#: ../pitivi/ui/sourcelist.py:217
+msgid ""
+"<span size='x-large'>Import your clips by dragging them here or by using the "
+"buttons above.</span>"
+msgstr ""
+"<span size='x-large'>작업하려는 파일을 이곳에 끌어오거나, 위의 단추를 눌러 클"
+"립을 추가하세요.</span>"
+
+#: ../pitivi/ui/sourcelist.py:272
+msgid "_Import clips..."
+msgstr "클립 가져오기(_I)..."
+
+#: ../pitivi/ui/sourcelist.py:273
+msgid "Import clips to use"
+msgstr "사용할 클립을 추가하기"
+
+#: ../pitivi/ui/sourcelist.py:275
+msgid "Import _folder of clips..."
+msgstr "폴더에 클립 가져오기(_F)..."
+
+#: ../pitivi/ui/sourcelist.py:276
+msgid "Import folder of clips to use"
+msgstr "사용할 클립의 폴더를 추가하기"
+
+#: ../pitivi/ui/sourcelist.py:282
+msgid "_Remove from project"
+msgstr "프러젝트에서 제거(_R)"
+
+#: ../pitivi/ui/sourcelist.py:285
+msgid "Insert at _end of timeline"
+msgstr "동영상 맨 마지막에 넣기(_E)"
+
+#: ../pitivi/ui/sourcelist.py:451
+msgid "Import a folder"
+msgstr "폴더 추가하기"
+
+#: ../pitivi/ui/sourcelist.py:454
+msgid "Import a clip"
+msgstr "클립 가져오기"
+
+#: ../pitivi/ui/sourcelist.py:455
+msgid "Close after importing files"
+msgstr "파일 가져오기 후에 닫기"
+
+#: ../pitivi/ui/sourcelist.py:967
+msgid "Importing clips..."
+msgstr "클립을 가져오는 중입니다..."
+
+#: ../pitivi/ui/sourcelist.py:968
+msgid "Error(s) occurred while importing"
+msgstr "추가하는데 오류가 발생했습니다."
+
+#: ../pitivi/ui/sourcelist.py:969
+msgid "An error occurred while importing"
+msgstr "가져오는 도중에 문제가 생겼습니다."
+
+#: ../pitivi/ui/sourcelist.py:1058
+msgid "Error while analyzing files"
+msgstr "파일 분석중에 오류가 발생했습니다."
+
+#: ../pitivi/ui/sourcelist.py:1059
+msgid "The following files can not be used with PiTiVi."
+msgstr "이 파일은 PiTiVi에서 사용할 수 없습니다."
+
+#: ../pitivi/ui/sourcelist.py:1061
+msgid "Error while analyzing a file"
+msgstr "특정 파일을 분석하는데 오류가 발생했습니다."
+
+#: ../pitivi/ui/sourcelist.py:1062
+msgid "The following file can not be used with PiTiVi."
+msgstr "따라오는 목록의 파일들은 PiTiVi  에서 사용할 수 없습니다."
+
+#. tooltip text for toolbar
+#: ../pitivi/ui/timeline.py:46
+msgid "Delete Selected"
+msgstr "선택 항목 삭제"
+
+#: ../pitivi/ui/timeline.py:47
+msgid "Split clip at playhead position"
+msgstr "재생 헤드 위치에서 클립 분활"
+
+#: ../pitivi/ui/timeline.py:48
+msgid "Zoom In"
+msgstr "확대"
+
+#: ../pitivi/ui/timeline.py:49
+msgid "Zoom Out"
+msgstr "축소"
+
+#: ../pitivi/ui/timeline.py:50
+msgid "Break links between clips"
+msgstr "클립 사이에 깨진 링크"
+
+#: ../pitivi/ui/timeline.py:51
+msgid "Link together arbitrary clips"
+msgstr "임의의 클립들을 서로 연결하기"
+
+#: ../pitivi/ui/timeline.py:52
+msgid "Ungroup clips"
+msgstr "클립 묶기 취소"
+
+#: ../pitivi/ui/timeline.py:53
+msgid "Group clips"
+msgstr "클립 묶기"
+
+#: ../pitivi/ui/timeline.py:123
+msgid "One or more GStreamer errors has occured!"
+msgstr "GStreamer에서 하나 이상의 오류가 발생했습니다!"
+
+#: ../pitivi/ui/timeline.py:157
+msgid "Error List"
+msgstr "오류 목록"
+
+#: ../pitivi/ui/timeline.py:158
+msgid "The following errors have been reported:"
+msgstr "따라오는 목록의 오류들은 이미 보고되었었습니다:"
+
+#: ../pitivi/ui/timeline.py:224
+msgid "Zoom Timeline"
+msgstr "타임라인 확대"
+
+#: ../pitivi/ui/timelinecanvas.py:51
+msgid "Behavior"
+msgstr "동작"
+
+#: ../pitivi/ui/timelinecanvas.py:52
+msgid "Snap Distance (pixels)"
+msgstr "스냅 거리 (픽셀)"
+
+#: ../pitivi/ui/timelinecanvas.py:53
+msgid "Threshold distance (in pixels) used for all snapping operations"
+msgstr "출발점 거리는 (픽셀에서)는 모든 잡아당기기 동작에 쓰입니다."
+
+#: ../pitivi/ui/timelinecontrols.py:17
+msgid "<b>Text:</b>"
+msgstr "<b>글자:</b>"
+
+#: ../pitivi/ui/trackobject.py:49
+msgid "Clip Background (Video)"
+msgstr "클립 배경화면 (영상)"
+
+#: ../pitivi/ui/trackobject.py:50
+msgid "The background color for clips in video tracks."
+msgstr "비디오트랙의 배경색."
+
+#: ../pitivi/ui/trackobject.py:60
+msgid "Clip Background (Audio)"
+msgstr "클립 배경화면"
+
+#: ../pitivi/ui/trackobject.py:61
+msgid "The background color for clips in audio tracks."
+msgstr "오디오트랙의 배경색."
+
+#: ../pitivi/ui/trackobject.py:71
+msgid "Selection Color"
+msgstr "선택된 색상"
+
+#: ../pitivi/ui/trackobject.py:72
+msgid "Selected clips will be tinted with this color."
+msgstr "선택된 클립은 곧 이 색으로 바뀔 것입니다."
+
+#: ../pitivi/ui/trackobject.py:82
+msgid "Clip Font"
+msgstr "클립 글꼴"
+
+#: ../pitivi/ui/trackobject.py:83
+msgid "The font to use for clip titles"
+msgstr "제목에 사용될 글꼴"
