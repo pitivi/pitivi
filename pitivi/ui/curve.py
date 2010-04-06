@@ -214,7 +214,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         self.keyframes[kf] = pos
 
     def do_simple_paint(self, cr, bounds):
-
+        cr.save()
         cr.identity_matrix()
         if self.interpolator:
 
@@ -258,17 +258,21 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                 bounds = intersect(self.bounds, bounds)
                 width = bounds.x2 - bounds.x1
                 height = bounds.y2 - bounds.y1
-                cr.reset_clip()
+                # cr.reset_clip()
+                cr.restore()
                 cr.rectangle(bounds.x1, bounds.y1, width, height)
                 cr.clip()
 
                 # draw the value label
                 roundedrec(cr, x - KW_LABEL_HPAD2, y - KW_LABEL_VPAD2, 
                     w + KW_LABEL_HPAD, h + KW_LABEL_VPAD, r=10)
+                cr.set_source_rgb(1, 1, 1)
                 cr.fill()
                 cr.set_source_rgb(1, 0, 0)
                 cr.move_to(x, y + h)
                 cr.show_text(text)
+            else:
+                cr.restore()
 
     def make_curve(self, cr):
         if not self.interpolator:
