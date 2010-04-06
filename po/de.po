@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-03-02 11:13+0000\n"
-"PO-Revision-Date: 2010-03-04 16:51+0100\n"
+"POT-Creation-Date: 2010-04-03 09:02+0000\n"
+"PO-Revision-Date: 2010-04-06 22:07+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -48,8 +48,8 @@ msgid ""
 "Make sure the plugins were installed and are available in the GStreamer "
 "plugins path."
 msgstr ""
-"Stellen Sie sicher, dass die Plugins installiert wurden und im GStreamer-"
-"Pfad verfügbar sind."
+"Stellen Sie sicher, dass die Plugins installiert wurden und im GStreamer-Pfad "
+"verfügbar sind."
 
 #: ../pitivi/check.py:108
 msgid "Could not find the autodetect plugins!"
@@ -60,8 +60,8 @@ msgid ""
 "Make sure you have installed gst-plugins-good and is available in the "
 "GStreamer plugin path."
 msgstr ""
-"Stellen sie sicher, dass das Paket »gst-plugins-good« installiert wurde und "
-"im Plugin-Pfad von GStreamer verfügbar ist."
+"Stellen sie sicher, dass das Paket »gst-plugins-good« installiert wurde und im "
+"Plugin-Pfad von GStreamer verfügbar ist."
 
 #: ../pitivi/check.py:111
 msgid "PyGTK doesn't have cairo support!"
@@ -131,8 +131,7 @@ msgid ""
 "You do not have a recent enough version of the GTK+ Python bindings "
 "(currently %s)"
 msgstr ""
-"Die installierte Version der GTK+-Python-Bindings ist zu alt (gegenwärtig %"
-"s)."
+"Die installierte Version der GTK+-Python-Bindings ist zu alt (gegenwärtig %s)."
 
 #: ../pitivi/check.py:131
 #, python-format
@@ -190,8 +189,7 @@ msgstr ""
 
 #: ../pitivi/check.py:147
 #, python-format
-msgid ""
-"Install a version of the GNonLin GStreamer plugin greater or equal to %s"
+msgid "Install a version of the GNonLin GStreamer plugin greater or equal to %s"
 msgstr ""
 "Installieren Sie eine Version %s des GNonLin-GStreamer-Plugins oder neuer"
 
@@ -211,7 +209,7 @@ msgstr "Die distutils-Module konnten nicht importiert werden"
 msgid "Make sure you have the distutils python module installed"
 msgstr "Stellen Sie sicher, dass das Python-Modul distutils installiert ist"
 
-#: ../pitivi/discoverer.py:227
+#: ../pitivi/discoverer.py:228
 #, python-format
 msgid ""
 "Missing plugins:\n"
@@ -221,60 +219,63 @@ msgstr ""
 "%s"
 
 #. woot, nothing decodable
-#: ../pitivi/discoverer.py:246
+#: ../pitivi/discoverer.py:247
 msgid "Can not decode file."
 msgstr "Datei kann nicht dekodiert werden."
 
-#: ../pitivi/discoverer.py:247
+#: ../pitivi/discoverer.py:248
 msgid "The given file does not contain audio, video or picture streams."
 msgstr "Die angegebene Datei enthält keine Audio-, Video- oder Bildströme."
 
-#: ../pitivi/discoverer.py:267
+#: ../pitivi/discoverer.py:268
 msgid "Could not establish the duration of the file."
 msgstr "Die Spieldauer der Datei konnte nicht ermittelt werden."
 
-#: ../pitivi/discoverer.py:268
+#: ../pitivi/discoverer.py:269
 msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
 msgstr "Das Format dieses Clips kann nicht im Zufallsmodus verarbeitet werden."
 
-#: ../pitivi/discoverer.py:332
+#: ../pitivi/discoverer.py:335
 msgid "Timeout while analyzing file."
 msgstr "Zeitüberschreitung beim Analysieren der Datei."
 
-#: ../pitivi/discoverer.py:333
+#: ../pitivi/discoverer.py:336
 msgid "Analyzing the file took too long."
 msgstr "Analysieren der Datei dauerte zu lange."
 
-#: ../pitivi/discoverer.py:362
+#: ../pitivi/discoverer.py:365
 msgid "No available source handler."
 msgstr "Kein Quellen-Handler verfügbar."
 
-#: ../pitivi/discoverer.py:363
+#: ../pitivi/discoverer.py:366
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr "Es gibt kein GStreamer-Quellelement für das Protokoll »%s«"
 
-#: ../pitivi/discoverer.py:427
+#: ../pitivi/discoverer.py:431
 msgid "Pipeline didn't want to go to PAUSED."
 msgstr "Die Pipeline kann nicht auf PAUSED gesetzt werden."
 
-#: ../pitivi/discoverer.py:450
+#: ../pitivi/discoverer.py:454
 #, python-format
 msgid "An internal error occurred while analyzing this file: %s"
 msgstr "Ein interner Fehler ist beim Analysieren dieser Datei aufgetreten: %s"
 
-#: ../pitivi/discoverer.py:460
+#: ../pitivi/discoverer.py:464
 msgid "File contains a redirection to another clip."
 msgstr "Die Datei enthält einen Verknüpfung zu einem anderen Clip."
 
-#: ../pitivi/discoverer.py:461
+#: ../pitivi/discoverer.py:465
 msgid "PiTiVi currently does not handle redirection files."
-msgstr ""
-"PiTiVi kann derzeit nicht mit Verknüpfungen zu anderen Dateien umgehen."
+msgstr "PiTiVi kann derzeit nicht mit Verknüpfungen zu anderen Dateien umgehen."
 
-#: ../pitivi/application.py:121
+#: ../pitivi/discoverer.py:491
+msgid "Pipeline didn't want to go to PLAYING."
+msgstr "Die Pipeline kann nicht auf PLAYING gesetzt werden."
+
+#: ../pitivi/application.py:122
 #, python-format
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
@@ -283,7 +284,7 @@ msgstr ""
 "Es existiert bereits eine Instanz von %s. Bitte informieren Sie die "
 "Entwickler auf http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:218
+#: ../pitivi/application.py:219
 msgid ""
 "\n"
 "      %prog [PROJECT_FILE]\n"
@@ -293,7 +294,7 @@ msgstr ""
 "  %prog [PROJEKTDATEI]\n"
 "  %prog -i [-a] [MEDIENDATEI] …"
 
-#: ../pitivi/application.py:222
+#: ../pitivi/application.py:223
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
 "    no project is given, %prog creates a new project.\n"
@@ -310,19 +311,19 @@ msgstr ""
 "Clips\n"
 "    auch ans Ende der Zeitlinie angehängt."
 
-#: ../pitivi/application.py:228
+#: ../pitivi/application.py:229
 msgid "Import each MEDIA_FILE into the project."
 msgstr "Jede MEDIENDATEI ins Projekt importieren."
 
-#: ../pitivi/application.py:230
+#: ../pitivi/application.py:231
 msgid "Add each MEDIA_FILE to timeline after importing."
 msgstr "Jede MEDIENDATEI nach dem importieren ans Ende der Zeitlinie anhängen."
 
-#: ../pitivi/application.py:231
+#: ../pitivi/application.py:232
 msgid "Run pitivi in the Python Debugger"
 msgstr "Pitivi in einem Python-Debugger ausführen"
 
-#: ../pitivi/application.py:233
+#: ../pitivi/application.py:234
 msgid "Run pitivi with no gui"
 msgstr "Pitivi ohne grafische Benutzeroberfläche ausführen"
 
@@ -712,20 +713,20 @@ msgstr "XGA (1024x768)"
 
 #. i18n: string for custom video width/height/framerate settings
 #. i18n: string for custom audio rate/depth/channels settings
-#: ../pitivi/ui/exportsettingswidget.py:112
-#: ../pitivi/ui/exportsettingswidget.py:146
+#: ../pitivi/ui/exportsettingswidget.py:116
+#: ../pitivi/ui/exportsettingswidget.py:150
 msgid "Custom"
 msgstr "Anpassen"
 
-#: ../pitivi/ui/exportsettingswidget.py:297
+#: ../pitivi/ui/exportsettingswidget.py:301
 msgid "Raw Video"
 msgstr "Video-Rohdaten"
 
-#: ../pitivi/ui/exportsettingswidget.py:312
+#: ../pitivi/ui/exportsettingswidget.py:316
 msgid "Raw Audio"
 msgstr "Audio-Rohdaten"
 
-#: ../pitivi/ui/exportsettingswidget.py:435
+#: ../pitivi/ui/exportsettingswidget.py:439
 msgid "Export settings"
 msgstr "Exporteinstellungen"
 
@@ -755,7 +756,7 @@ msgstr "Eigenschaften für %s"
 msgid "Render"
 msgstr "Erstellen"
 
-#: ../pitivi/ui/mainwindow.py:128 ../pitivi/ui/timeline.py:294
+#: ../pitivi/ui/mainwindow.py:128 ../pitivi/ui/timeline.py:284
 msgid "Split"
 msgstr "Teilen"
 
@@ -915,8 +916,9 @@ msgid "Timeline Toolbar"
 msgstr "Zeitlinien-Werkzeugleiste"
 
 #: ../pitivi/ui/mainwindow.py:393
-msgid "Clip Library"
-msgstr "Clip-Bibliothek"
+#| msgid "Clip Library"
+msgid "Media Library"
+msgstr "Medienbibliothek"
 
 #: ../pitivi/ui/mainwindow.py:531
 msgid "Open File..."
@@ -948,8 +950,7 @@ msgstr "Aktuelle Änderungen vor dem Schließen des Projekts speichern?"
 
 #: ../pitivi/ui/mainwindow.py:764
 msgid "If you don't save some of your changes will be lost"
-msgstr ""
-"Falls Sie nicht speichern, werden einige Ihrer Änderungen verlorengehen"
+msgstr "Falls Sie nicht speichern, werden einige Ihrer Änderungen verlorengehen"
 
 #: ../pitivi/ui/mainwindow.py:817
 #, python-format
@@ -1145,8 +1146,7 @@ msgstr "Rückgängig"
 
 #: ../pitivi/ui/prefs.py:125
 msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr ""
-"Einige Einstellungen werden erst nach einem Neustart von PiTiVi wirksam"
+msgstr "Einige Einstellungen werden erst nach einem Neustart von PiTiVi wirksam"
 
 #: ../pitivi/ui/prefs.py:320
 msgid "Reset"
@@ -1283,31 +1283,31 @@ msgstr "Einen Clip importieren"
 msgid "Close after importing files"
 msgstr "Nach dem Importieren von Dateien schließen"
 
-#: ../pitivi/ui/sourcelist.py:966
+#: ../pitivi/ui/sourcelist.py:967
 msgid "Importing clips..."
 msgstr "Clips werden importiert …"
 
-#: ../pitivi/ui/sourcelist.py:967
+#: ../pitivi/ui/sourcelist.py:968
 msgid "Error(s) occurred while importing"
 msgstr "Ein oder mehrere Fehler sind beim Importieren aufgetreten"
 
-#: ../pitivi/ui/sourcelist.py:968
+#: ../pitivi/ui/sourcelist.py:969
 msgid "An error occurred while importing"
 msgstr "Ein Fehler ist beim Importieren aufgetreten"
 
-#: ../pitivi/ui/sourcelist.py:1057
+#: ../pitivi/ui/sourcelist.py:1058
 msgid "Error while analyzing files"
 msgstr "Fehler beim Analysieren von Dateien"
 
-#: ../pitivi/ui/sourcelist.py:1058
+#: ../pitivi/ui/sourcelist.py:1059
 msgid "The following files can not be used with PiTiVi."
 msgstr "Die folgenden Dateien können von PiTiVi nicht verarbeitet werden."
 
-#: ../pitivi/ui/sourcelist.py:1060
+#: ../pitivi/ui/sourcelist.py:1061
 msgid "Error while analyzing a file"
 msgstr "Fehler beim Analysieren einer Datei"
 
-#: ../pitivi/ui/sourcelist.py:1061
+#: ../pitivi/ui/sourcelist.py:1062
 msgid "The following file can not be used with PiTiVi."
 msgstr "Die folgende Datei kann von PiTiVi nicht verarbeitet werden."
 
@@ -1512,8 +1512,7 @@ msgstr "Die für die Titel von Clips zu verwendende Schrift"
 
 #~ msgid "Make sure you have the Python bindings for libglade installed"
 #~ msgstr ""
-#~ "Stellen Sie sicher, dass die Python-Bindings für libglade installiert "
-#~ "sind."
+#~ "Stellen Sie sicher, dass die Python-Bindings für libglade installiert sind."
 
 #~ msgid "Could not import the Python bindings for goocanvas"
 #~ msgstr "Python-Bindings für goocanvas konnten nicht importiert werden."
@@ -1530,11 +1529,8 @@ msgstr "Die für die Titel von Clips zu verwendende Schrift"
 #~ "GStreamer does not have an element to handle files coming from this type "
 #~ "of file system."
 #~ msgstr ""
-#~ "GStreamer kann nicht mit Dateien umgehen, die von einem Dateisystem "
-#~ "dieses Typs bereitgestellt werden."
-
-#~ msgid "Pipeline didn't want to go to PLAYING."
-#~ msgstr "Die Pipeline kann nicht auf PLAYING gesetzt werden."
+#~ "GStreamer kann nicht mit Dateien umgehen, die von einem Dateisystem dieses "
+#~ "Typs bereitgestellt werden."
 
 #~ msgid "Got unknown stream type : %s"
 #~ msgstr "Unbekannter Datenstromtyp : %s"
