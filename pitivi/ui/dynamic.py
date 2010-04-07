@@ -27,6 +27,7 @@ import gobject
 import gtk
 import re
 import sys
+import gst
 from gettext import gettext as _
 from pitivi.ui.common import unpack_color, pack_color_32, pack_color_64
 
@@ -166,7 +167,6 @@ class NumericWidget(gtk.HBox):
         self.pack_start(self.spinner, False, False)
         self.spinner.show()
 
-
     def connectValueChanged(self, callback, *args):
         self.adjustment.connect("value-changed", callback, *args)
 
@@ -191,6 +191,57 @@ class NumericWidget(gtk.HBox):
         self.adjustment.set_all(value, minimum, maximum, step, page, 0)
         self.spinner.props.climb_rate = 0.01 * abs(min(maximum, 1000) -
             max(minimum, -1000))
+
+class FractionWidget(TextWidget):
+
+    """A gtk.ComboBoxEntry """
+
+    fraction_regex = "^([0-9]*(\.[0-9]+)?)([:/][0-9]*(\.[0-9]+)?)?$"
+    __gtype_name__ = 'FractionWidget'
+
+    def __init__(self, range=None, presets=None):
+        if range:
+            flow = float(range.low)
+            fhigh = float(range.high)
+        else:
+            flow = float("-Infinity")
+            fhigh = float("Infinity")
+        choices = []
+        if presets:
+            for name, preset in presets:
+                fpreset = float(preset)
+                if flow <= fpreset and fpreset <= fhigh:
+                    strval = "%g:%g" % (preset.num, preset.denom)
+                    choices.append((name, strval))
+        self.low = flow
+        self.high = fhigh
+        TextWidget.__init__(self, self.fraction_regex, choices)
+
+    def _filter(self, text):
+        if TextWidget._filter(self, text):
+            value = self._parseText(text)
+            if self.low <= float(value) and float(value) <= self.high:
+                return True
+        return False
+
+    def setWidgetValue(self, value):
+        self.text.set_text("%g:%g" % (value.num, value.denom))
+
+    def getWidgetValue(self):
+        if self.last_valid:
+            return self._parseText(self.last_valid)
+        return gst.Fraction(1, 1)
+
+    def _parseText(self, text):
+        match = self.matches.match(text)
+        groups = match.groups()
+        num = 1.0
+        denom = 1.0
+        if groups[0]:
+            num = float(groups[0])
+        if groups[2] and groups[2][1:]:
+            denom = float(groups[2][1:])
+        return gst.Fraction(num, denom)
 
 class ToggleWidget(gtk.CheckButton):
 
@@ -342,6 +393,13 @@ if __name__ == '__main__':
             ("pear", "pear")),)),
         (ColorWidget, 0x336699FF, (int,)),
         (FontWidget, "Sans 9", ()),
+        (FractionWidget, gst.Fraction(25000, 10001), 
+            (gst.FractionRange(gst.Fraction(1, 1), 
+                gst.Fraction(30000, 1001)),)),
+        (FractionWidget, gst.Fraction(25000, 10001), 
+            (gst.FractionRange(gst.Fraction(1, 1), 
+                gst.Fraction(30000, 1001)),
+                (gst.Fraction(25,1), gst.Fraction(30,1))))
     )
 
     W = gtk.Window()
