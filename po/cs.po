@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-03-07 17:48+0000\n"
-"PO-Revision-Date: 2010-03-07 20:35+0100\n"
+"POT-Creation-Date: 2010-04-06 20:11+0000\n"
+"PO-Revision-Date: 2010-04-07 14:49+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -205,7 +205,7 @@ msgstr "Nelze načíst modul distutils"
 msgid "Make sure you have the distutils python module installed"
 msgstr "Ujistěte se, že máte nainstalován modul distutils python"
 
-#: ../pitivi/discoverer.py:227
+#: ../pitivi/discoverer.py:228
 #, python-format
 msgid ""
 "Missing plugins:\n"
@@ -215,61 +215,61 @@ msgstr ""
 "%s"
 
 #. woot, nothing decodable
-#: ../pitivi/discoverer.py:246
+#: ../pitivi/discoverer.py:247
 msgid "Can not decode file."
 msgstr "Nelze dekódovat soubor."
 
-#: ../pitivi/discoverer.py:247
+#: ../pitivi/discoverer.py:248
 msgid "The given file does not contain audio, video or picture streams."
 msgstr "Vybraný soubor neobsahuje audio, video ani obrázková data."
 
-#: ../pitivi/discoverer.py:267
+#: ../pitivi/discoverer.py:268
 msgid "Could not establish the duration of the file."
 msgstr "Nepodařilo se zjistit trvání souboru."
 
-#: ../pitivi/discoverer.py:268
+#: ../pitivi/discoverer.py:269
 msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
 msgstr "K tomuto klipu nelze přistupovat v nahodilém pořadí."
 
-#: ../pitivi/discoverer.py:334
+#: ../pitivi/discoverer.py:335
 msgid "Timeout while analyzing file."
 msgstr "Analýza souboru selhala, vypršel časový limit."
 
-#: ../pitivi/discoverer.py:335
+#: ../pitivi/discoverer.py:336
 msgid "Analyzing the file took too long."
 msgstr "Analyzování souboru trvalo příliš dlouho."
 
-#: ../pitivi/discoverer.py:364
+#: ../pitivi/discoverer.py:365
 msgid "No available source handler."
 msgstr "Obsluha vstupu není dostupná."
 
-#: ../pitivi/discoverer.py:365
+#: ../pitivi/discoverer.py:366
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr ""
 "GStreamer nemůže zpracovat protokol '%s'. Máte nainstalovány příslušné "
 "balíčky?"
 
-#: ../pitivi/discoverer.py:429
+#: ../pitivi/discoverer.py:431
 msgid "Pipeline didn't want to go to PAUSED."
 msgstr "Roura nechce přejít do stavu POZASTAVENO."
 
-#: ../pitivi/discoverer.py:452
+#: ../pitivi/discoverer.py:454
 #, python-format
 msgid "An internal error occurred while analyzing this file: %s"
 msgstr "Při analyzování souboru %s se vyskytla vnitřní chyba."
 
-#: ../pitivi/discoverer.py:462
+#: ../pitivi/discoverer.py:464
 msgid "File contains a redirection to another clip."
 msgstr "Soubor obsahuje přesměrování na jiný klip."
 
-#: ../pitivi/discoverer.py:463
+#: ../pitivi/discoverer.py:465
 msgid "PiTiVi currently does not handle redirection files."
 msgstr "PiTiVi momentálně neumí pracovat s přesměrováním souborů."
 
-#: ../pitivi/discoverer.py:489
+#: ../pitivi/discoverer.py:491
 msgid "Pipeline didn't want to go to PLAYING."
 msgstr "Roura nechce přejít do stavu PŘEHRÁVÁNO."
 
@@ -918,8 +918,8 @@ msgid "Timeline Toolbar"
 msgstr "Nástrojová lišta časové osy"
 
 #: ../pitivi/ui/mainwindow.py:393
-msgid "Clip Library"
-msgstr "Klipy"
+msgid "Media Library"
+msgstr "Knihovna médií"
 
 #: ../pitivi/ui/mainwindow.py:531
 msgid "Open File..."
@@ -1283,31 +1283,31 @@ msgstr "Importovat klip"
 msgid "Close after importing files"
 msgstr "Zavřít po dokončení importu"
 
-#: ../pitivi/ui/sourcelist.py:966
+#: ../pitivi/ui/sourcelist.py:967
 msgid "Importing clips..."
 msgstr "Načítání klipů…"
 
-#: ../pitivi/ui/sourcelist.py:967
+#: ../pitivi/ui/sourcelist.py:968
 msgid "Error(s) occurred while importing"
 msgstr "Nastaly chyby během importování"
 
-#: ../pitivi/ui/sourcelist.py:968
+#: ../pitivi/ui/sourcelist.py:969
 msgid "An error occurred while importing"
 msgstr "Při importování nastala chyba"
 
-#: ../pitivi/ui/sourcelist.py:1057
+#: ../pitivi/ui/sourcelist.py:1058
 msgid "Error while analyzing files"
 msgstr "Nastala chyba při analyzování souborů"
 
-#: ../pitivi/ui/sourcelist.py:1058
+#: ../pitivi/ui/sourcelist.py:1059
 msgid "The following files can not be used with PiTiVi."
 msgstr "Následující soubory nemůžou být použity v PiTiVi."
 
-#: ../pitivi/ui/sourcelist.py:1060
+#: ../pitivi/ui/sourcelist.py:1061
 msgid "Error while analyzing a file"
 msgstr "Nastala chyba při analyzování souborů"
 
-#: ../pitivi/ui/sourcelist.py:1061
+#: ../pitivi/ui/sourcelist.py:1062
 msgid "The following file can not be used with PiTiVi."
 msgstr "Následující soubor nemůže být použit v PiTiVi."
 
