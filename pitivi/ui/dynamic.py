@@ -30,6 +30,7 @@ import sys
 import gst
 from gettext import gettext as _
 from pitivi.ui.common import unpack_color, pack_color_32, pack_color_64
+import pango
 
 class DynamicWidget(object):
 
@@ -294,6 +295,8 @@ class ChoiceWidget(gtk.HBox):
             self.contents.set_sensitive(False)
         self.pack_start(self.contents)
         self.contents.show()
+        cell = self.contents.get_cells()[0]
+        cell.props.ellipsize = pango.ELLIPSIZE_END
 
     def connectValueChanged(self, callback, *args):
         return self.contents.connect("changed", callback, *args)
