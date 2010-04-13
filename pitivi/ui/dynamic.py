@@ -289,11 +289,8 @@ class ChoiceWidget(gtk.HBox):
         self.choices = [choice[0] for choice in choices]
         self.values = [choice[1] for choice in choices]
         self.contents = gtk.combo_box_new_text()
-        for choice, value in choices:
-            self.contents.append_text(_(choice))
-        if len(choices) <= 1:
-            self.contents.set_sensitive(False)
         self.pack_start(self.contents)
+        self.setChoices(choices)
         self.contents.show()
         cell = self.contents.get_cells()[0]
         cell.props.ellipsize = pango.ELLIPSIZE_END
@@ -306,6 +303,16 @@ class ChoiceWidget(gtk.HBox):
 
     def getWidgetValue(self):
         return self.values[self.contents.get_active()]
+
+    def setChoices(self, choices):
+        m = gtk.ListStore(str)
+        self.contents.set_model(m)
+        for choice, value in choices:
+            self.contents.append_text(_(choice))
+        if len(choices) <= 1:
+            self.contents.set_sensitive(False)
+        else:
+            self.contents.set_sensitive(True)
 
 class PresetChoiceWidget(gtk.HBox):
 
