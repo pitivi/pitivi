@@ -286,8 +286,8 @@ class ChoiceWidget(gtk.HBox):
 
     def __init__(self, choices):
         gtk.HBox.__init__(self)
-        self.choices = [choice[0] for choice in choices]
-        self.values = [choice[1] for choice in choices]
+        self.choices = None
+        self.values = None
         self.contents = gtk.combo_box_new_text()
         self.pack_start(self.contents)
         self.setChoices(choices)
@@ -299,12 +299,17 @@ class ChoiceWidget(gtk.HBox):
         return self.contents.connect("changed", callback, *args)
 
     def setWidgetValue(self, value):
-        self.contents.set_active(self.values.index(value))
+        try:
+            self.contents.set_active(self.values.index(value))
+        except ValueError:
+            raise ValueError("%r not in %r" % (value, self.values))
 
     def getWidgetValue(self):
         return self.values[self.contents.get_active()]
 
     def setChoices(self, choices):
+        self.choices = [choice[0] for choice in choices]
+        self.values = [choice[1] for choice in choices]
         m = gtk.ListStore(str)
         self.contents.set_model(m)
         for choice, value in choices:
