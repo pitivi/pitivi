@@ -85,7 +85,11 @@ class GladeWidget(gtk.VBox):
         gtk.VBox.__init__(self)
         try:
             assert self.glade_file
-            filepath = os.path.join(self.glade_dir, self.glade_file)
+            if 'pitivi.exe' in __file__.lower():
+                from pitivi.configure import WIN32_LIBDIR
+                filepath = os.path.join(self.glade_dir, WIN32_LIBDIR + self.glade_file)
+            else:
+                filepath = os.path.join(self.glade_dir, self.glade_file)
             if self.glade_typedict:
                 wtree = XML(filepath, typedict=self.glade_typedict, domain='pitivi')
             else:
@@ -141,7 +145,11 @@ class GladeWindow(object):
     def __init__(self, parent=None):
         try:
             assert self.glade_file
-            filepath = os.path.join(self.glade_dir, self.glade_file)
+            if 'pitivi.exe' in __file__.lower():
+                from pitivi.configure import WIN32_LIBDIR
+                filepath = os.path.join(self.glade_dir, WIN32_LIBDIR + self.glade_file)
+            else:
+                filepath = os.path.join(self.glade_dir, self.glade_file)
             if self.glade_typedict:
                 wtree = XML(filepath, typedict=self.glade_typedict, domain='pitivi')
             else:
