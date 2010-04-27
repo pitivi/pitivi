@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-03-12 07:20+0000\n"
+"POT-Creation-Date: 2010-04-06 20:11+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -888,8 +888,8 @@ msgid "Timeline Toolbar"
 msgstr "Orodna vrstica časovnice"
 
 #: ../pitivi/ui/mainwindow.py:393
-msgid "Clip Library"
-msgstr "Knjižnica posnetkov"
+msgid "Media Library"
+msgstr "Knjižnica večpredstavnosti"
 
 #: ../pitivi/ui/mainwindow.py:531
 msgid "Open File..."
