@@ -26,6 +26,7 @@ import pango
 import gobject
 from gettext import gettext as _
 
+from pitivi.configure import LIBDIR
 import pitivi.plugincore as plugincore
 import pitivi.pluginmanager as pluginmanager
 
@@ -40,7 +41,10 @@ class PluginManagerDialog(object):
         self.pm = plugin_manager
 
         # load user interface items
-        glade_dir = os.path.dirname(os.path.abspath(__file__))
+        if 'pitivi.exe' in __file__.lower():
+            glade_dir = LIBDIR
+        else:
+            glade_dir = os.path.dirname(os.path.abspath(__file__))
         self.wTree = gtk.glade.XML(os.path.join(glade_dir, 'pluginmanagerdialog.glade'))
         self.window = self.wTree.get_widget('pluginmanager_dlg')
         self.search_entry = self.wTree.get_widget('search_entry')

@@ -29,6 +29,7 @@ import dbus.glib
 import thread
 import time
 
+from pitivi.configure import LIBDIR
 
 class ScreencastManagerDialog(object):
 
@@ -37,7 +38,10 @@ class ScreencastManagerDialog(object):
         self.app = instance
 
         # Create gtk widget using glade model
-        glade_dir = os.path.dirname(os.path.abspath(__file__))
+        if 'pitivi.exe' in __file__.lower():
+            glade_dir = LIBDIR + '\\pitivi.exe'
+        else:
+            glade_dir = os.path.dirname(os.path.abspath(__file__))
         pool_ui = gtk.glade.XML(os.path.join(glade_dir, "screencast_manager.glade"))
 
         self.window = pool_ui.get_widget("screencast_window")

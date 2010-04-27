@@ -25,7 +25,8 @@ Enables identical use for installed and uninstalled versions.
 
 import os.path
 
-LIBDIR = os.path.realpath('../lib/')
+LIBDIR = os.path.realpath('../lib/pitivi')
+WIN32_LIBDIR = '..\\..\\..\\..\\lib\\pitivi\\'
 PKGDATADIR = os.path.realpath('../share/pitivi')
 PIXMAPDIR = os.path.realpath('../share/pitivi/pixmaps')
 pitivi_version = '0.13.4'
