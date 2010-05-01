@@ -54,6 +54,20 @@ class TransformFactory(OperationFactory):
     def _requestNewInputStream(self, *args):
         raise OperationFactoryError("TransformFactory doesn't allow request pads")
 
+class EffectFactory (TransformFactory):
+    """
+    Factories that applies an effect on a stream
+    """
+    pass
+
+class VideoEffectFactory (EffectFactory):
+    def _makeBin (self, *args):
+        pass
+
+class VideoEffectFactory (EffectFactory):
+    def _makeBin (self, *args):
+        pass
+
 class StreamModifierFactory(TransformFactory):
     """
     Factories that modify the nature/type of a stream.
