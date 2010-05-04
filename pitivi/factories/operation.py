@@ -61,10 +61,16 @@ class EffectFactory (TransformFactory):
     pass
 
 class VideoEffectFactory (EffectFactory):
-    def _makeBin (self, *args):
-        pass
 
-class VideoEffectFactory (EffectFactory):
+    def __init__ (self, effect, name=''):
+        TransformFactory.__init__(self, name)
+        self._effect = effect
+
+    def _makeBin (self, *args):
+        print "TEST1"
+        return gst.element_factory_make(self._effect)
+
+class AudioEffectFactory (EffectFactory):
     def _makeBin (self, *args):
         pass
 
