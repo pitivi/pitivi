@@ -28,6 +28,7 @@ import gst
 
 from common import TestCase
 
+from pitivi.log.log import debug
 from pitivi.factories.operation import VideoEffectFactory
 
 class TestVideoEffectFactory(TestCase):
@@ -39,8 +40,8 @@ class TestVideoEffectFactory(TestCase):
         bin = self.factory.makeBin()
         bin2 = self.factory.makeBin()
         self.failUnless(isinstance(bin, gst.Element))
-        self.failUnless(len (self.factory.bins) == 1)
         self.factory.releaseBin(bin)
+        self.factory.releaseBin(bin2)
 
     def tearDown(self):
         self.factory = None

@@ -67,7 +67,6 @@ class VideoEffectFactory (EffectFactory):
         self._effect = effect
 
     def _makeBin (self, *args):
-        print "TEST1"
         return gst.element_factory_make(self._effect)
 
 class AudioEffectFactory (EffectFactory):
