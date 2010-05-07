@@ -21,7 +21,6 @@ class PreviewWidget(gtk.VBox):
 
     def __init__(self):
         gtk.VBox.__init__(self)
-        #self.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
         self.connect('destroy', self._free_all)
         #a dictionary for caching factories
         self.preview_cache = {}
@@ -75,11 +74,9 @@ class PreviewWidget(gtk.VBox):
 
         #buttons for play, seeks ecc
         self.bbox = gtk.HBox()
-        self.bbox.pack_start(gtk.ToolButton(gtk.STOCK_MEDIA_PREVIOUS))
         self.b_action = gtk.ToolButton(gtk.STOCK_MEDIA_PLAY)
         self.b_action.connect("clicked", self._on_start_stop_clicked)
         self.bbox.pack_start(self.b_action)
-        self.bbox.pack_start(gtk.ToolButton(gtk.STOCK_MEDIA_NEXT))
         self.bbox.show_all()
         self.pack_start(self.bbox, expand=False)
 
