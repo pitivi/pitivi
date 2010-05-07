@@ -43,6 +43,7 @@ from pitivi.ui.common import beautify_factory, factory_name, \
     beautify_stream, SPACING, PADDING
 from pitivi.log.loggable import Loggable
 from pitivi.sourcelist import SourceListError
+from pitivi.ui.filechooserpreview import PreviewWidget
 
 SHOW_TREEVIEW = 1
 SHOW_ICONVIEW = 2
@@ -522,6 +523,10 @@ class SourceList(gtk.VBox, Loggable):
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
         self._importDialog.set_select_multiple(True)
         self._importDialog.set_modal(False)
+        pw = PreviewWidget()
+        self._importDialog.set_preview_widget(pw)
+        self._importDialog.set_use_preview_label(False)
+        self._importDialog.connect('update-preview', pw.add_preview_request)
         self._importDialog.set_current_folder(self.app.settings.lastImportFolder)
 
         self._importDialog.connect('response', self._dialogBoxResponseCb, select_folders)
