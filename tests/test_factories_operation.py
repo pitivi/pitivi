@@ -39,7 +39,8 @@ class TestVideoEffectFactory(TestCase):
     def testMakeBin (self):
         bin = self.factory.makeBin()
         bin2 = self.factory.makeBin()
-        self.failUnless(isinstance(bin, gst.Element))
+        self.failUnless(isinstance(bin, gst.BaseTransform))
+        debug ('TestVideoEffectFactory','%s %s','Bin is:', bin.get_factory().get_name())
         self.factory.releaseBin(bin)
         self.factory.releaseBin(bin2)
 
