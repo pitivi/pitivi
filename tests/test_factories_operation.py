@@ -40,6 +40,7 @@ class TestVideoEffectFactory(TestCase):
         bin = self.factory.makeBin()
         bin2 = self.factory.makeBin()
         self.failUnless(isinstance(bin, gst.BaseTransform))
+        self.failUnless(bin.get_factory().get_name() == "identity" )
         debug ('TestVideoEffectFactory','%s %s','Bin is:', bin.get_factory().get_name())
         self.factory.releaseBin(bin)
         self.factory.releaseBin(bin2)
