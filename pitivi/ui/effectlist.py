@@ -69,7 +69,6 @@ class EffectList(gtk.VBox, Loggable):
 
         #TODO check that
         self._dragButton = False
-        self.tooltip = None
         
         # Store
         # icon, icon, infotext, objectfactory
@@ -134,15 +133,16 @@ class EffectList(gtk.VBox, Loggable):
 
             factory = self._getFactoryFromEffect(effect)
             self.storemodel.append ([pixbuf, pixbuf, visualname,
-                                    factory, effect.get_description(), "test"])
+                                    factory, effect.get_description(),
+                                    factory.name])
 
     def _treeViewMotionNotifyEventCb(self, treeview, event):
         pass
 
     def _treeViewQueryTooltipCb(self, treeview, x, y, keyboard_mode, tooltip):
-        pos = treeview.get_path_at_pos(x,y)[0][0]
-        self.tooltip = tooltip 
-        tooltip.set_text(treeview.get_model()[pos][4])
+        pos = treeview.get_path_at_pos(x,y)[0]
+        treeview.set_tooltip_row (tooltip, pos)
+        tooltip.set_text(treeview.get_model()[pos[0]][4])
         return True
 
 
