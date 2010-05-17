@@ -367,7 +367,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _createUi(self, instance):
         """ Create the graphical interface """
-        self.set_title("%s v%s" % (APPNAME, pitivi_version))
+        self.set_title("%s" % (APPNAME))
         self.connect("delete-event", self._deleteCb)
         self.connect("configure-event", self._configureCb)
 
@@ -909,7 +909,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         redo_action.set_sensitive(can_redo)
 
         if self.project is not None:
-            app_name = "%s %s" % (APPNAME, pitivi_version)
+            app_name = "%s" % (APPNAME)
             title = u"%s \u2014 %s" % (self.project.name, app_name)
             if dirty:
                 title = "*" + title
