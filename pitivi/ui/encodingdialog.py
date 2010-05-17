@@ -136,6 +136,11 @@ class EncodingDialog(GladeWindow, Loggable):
             if length:
                 self.progressbar.set_text(_("About %s left") % length)
 
+    def _changeSourceSettings(self, settings):
+        videocaps = settings.getVideoCaps()
+        for source in self.project.sources.getSources():
+            source.setFilterCaps(videocaps)
+
     def _recordButtonClickedCb(self, unused_button):
         self.debug("Rendering")
         if self.outfile and not self.rendering:
@@ -216,6 +221,8 @@ class EncodingDialog(GladeWindow, Loggable):
             for ac in self.pipeline.actions:
                 if isinstance(ac, ViewAction) and ac.isActive():
                     ac.setSync(False)
+            self.debug("Updating all sources to render settings")
+            self._changeSourceSettings(self.settings)
             self.debug("setting pipeline to PAUSE")
             self.pipeline.pause()
             self.debug("done")
@@ -230,6 +237,7 @@ class EncodingDialog(GladeWindow, Loggable):
             for ac in self.pipeline.actions:
                 if isinstance(ac, ViewAction) and ac.isActive():
                     ac.setSync(True)
+            self._changeSourceSettings(self.project.settings)
             self.pipeline.pause()
             self.pipeline.disconnect_by_function(self._positionCb)
             self.pipeline.disconnect_by_function(self._eosCb)
