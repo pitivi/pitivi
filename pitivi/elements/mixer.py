@@ -145,8 +145,9 @@ class SmartVideomixerBin(gst.Bin):
         self.debug("pad:%r, priority:%d" % ( pad, priority))
         if priority > 10000:
             priority = 10000
-        a,b,c,sinkpad = self.inputs[pad.get_name()]
-        sinkpad.props.zorder = 10000 - priority
+        a,b,c,sinkpad = self.inputs.get(pad.get_name(), (None, None, None, None))
+        if sinkpad:
+            sinkpad.props.zorder = 10000 - priority
         self.debug("done")
 
     def do_request_new_pad(self, template, name=None):
