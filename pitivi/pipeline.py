@@ -903,7 +903,8 @@ class Pipeline(Signallable, Loggable):
                 action.streamRemoved(factory, stream)
         except:
             self._lock.release()
-        self._lock.release()
+        else:
+            self._lock.release()
 
     def _connectToPadSignals(self, bin):
         # Listen on the given bin for pads being added/removed
