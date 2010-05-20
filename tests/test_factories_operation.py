@@ -34,7 +34,7 @@ from pitivi.factories.operation import VideoEffectFactory
 class TestVideoEffectFactory(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.factory = VideoEffectFactory ('identity', "identity")
+        self.factory = VideoEffectFactory ('identity', 'identity')
 
     def testMakeBin (self):
         bin = self.factory.makeBin()
@@ -46,4 +46,5 @@ class TestVideoEffectFactory(TestCase):
         self.factory.releaseBin(bin2)
 
     def tearDown(self):
-        self.factory = None
+        del self.factory
+        TestCase.tearDown(self)
