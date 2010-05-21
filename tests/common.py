@@ -9,6 +9,7 @@ import os
 import gc
 import unittest
 from pitivi.factories.base import ObjectFactory, SourceFactory, SinkFactory
+from pitivi.factories.operation import VideoEffectFactory, AudioEffectFactory
 from pitivi.pipeline import Pipeline
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "1") not in ("0", "")
@@ -161,3 +162,11 @@ class StubFactory(SourceFactory):
 
     def _releaseBin(self, bin):
         pass
+
+class FakeVideoEffectFactory(VideoEffectFactory):
+    def __init__(self):
+        VideoEffectFactory.__init__(self, 'identity', "identity")
+
+class FakeAudioEffectFactory(AudioEffectFactory):
+    def __init__(self):
+        AudioEffectFactory.__init__(self, 'identity', "identity")

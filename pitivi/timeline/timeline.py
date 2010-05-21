@@ -25,7 +25,8 @@ from bisect import bisect_left
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.utils import UNKNOWN_DURATION, closest_item, PropertyChangeTracker
-from pitivi.timeline.track import TrackObject, SourceTrackObject, TrackError
+from pitivi.timeline.track import TrackObject, SourceTrackObject,\
+     EffectTrackObject, TrackError
 from pitivi.stream import match_stream_groups_map
 from pitivi.utils import start_insort_right, infinity, getPreviousObject, \
         getNextObject
@@ -1664,8 +1665,45 @@ class Timeline(Signallable, Loggable):
         timeline_object = TimelineObject(factory)
         start = 0
         for stream, track in stream_map.iteritems():
+            self.debug( "Stream: " + str(stream) + "\nTrack :" + str(track) +\
+                        "\n Track duration:" + str(track.duration))
             start = max(start, track.duration)
             track_object = SourceTrackObject(factory, stream)
+            track.addTrackObject(track_object)
+            timeline_object.addTrackObject(track_object)
+
+        timeline_object.start = start
+        self.addTimelineObject(timeline_object)
+        return timeline_object
+
+    def addEffectFactory(self, factory):
+        """
+        Creates a TimelineObject for the given EffectFactory and adds it to the timeline.
+
+        @param factory: The EffectFactory to add.
+        @type factory: L{EffectFactory}
+        @raises TimelineError: if C{strict} is True and no exact mapping could be calculated.
+        """
+        self.debug("factory:%r", factory)
+
+        output_streams = factory.getOutputStreams()
+        if not output_streams:
+            raise TimelineError()
+
+        stream_map = self._getSourceFactoryStreamMap(factory)
+        if len(stream_map) < len(output_streams):
+            # we couldn't assign each stream to a track automatically,
+            # error out and require the caller to pass a stream_map
+            self.error("Couldn't find a complete stream mapping (self:%d < factory:%d)",
+                       len(stream_map), len(output_streams))
+
+        timeline_object = TimelineObject(factory)
+        start = 0
+        for stream, track in stream_map.iteritems():
+            self.debug("Stream: " + str(stream) + "\nTrack :" + str(track) +\
+                       "\nTrack duration:" + str(track.duration))
+            start = max(start, track.duration)
+            track_object = EffectTrackObject(factory, stream)
             track.addTrackObject(track_object)
             timeline_object.addTrackObject(track_object)
 
