@@ -345,7 +345,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_MOTION, 
-            [dnd.FILESOURCE_TUPLE],
+            [dnd.FILESOURCE_TUPLE, dnd.EFFECT_TUPLE],
             gtk.gdk.ACTION_COPY)
 
         self.connect("drag-data-received", self._dragDataReceivedCb)
