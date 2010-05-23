@@ -73,8 +73,9 @@ class AudioEffectFactory (EffectFactory):
     def __init__ (self, effect, name=''):
         TransformFactory.__init__(self, name)
         self._effect = effect
+
     def _makeBin (self, *args):
-        pass
+        return gst.element_factory_make(self._effect)
 
 class StreamModifierFactory(TransformFactory):
     """
