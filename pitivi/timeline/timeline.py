@@ -31,6 +31,7 @@ from pitivi.stream import match_stream_groups_map
 from pitivi.utils import start_insort_right, infinity, getPreviousObject, \
         getNextObject
 from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
+from pitivi.factories.operation import VideoEffectFactory, AudioEffectFactory
 
 # Selection modes
 SELECT = 0
@@ -1686,30 +1687,36 @@ class Timeline(Signallable, Loggable):
         """
         self.debug("factory:%r", factory)
 
-        output_streams = factory.getOutputStreams()
-        if not output_streams:
+        output_stream = factory.getOutputStreams()
+        if not output_stream:
             raise TimelineError()
+        output_stream = output_stream[0]
 
-        stream_map = self._getSourceFactoryStreamMap(factory)
-        if len(stream_map) < len(output_streams):
-            # we couldn't assign each stream to a track automatically,
-            # error out and require the caller to pass a stream_map
-            self.error("Couldn't find a complete stream mapping (self:%d < factory:%d)",
-                       len(stream_map), len(output_streams))
+        input_stream = factory.getInputStreams()
+        if not input_stream:
+            raise TimelineError()
+        input_stream = input_stream[0]
+
+        if isinstance (factory, VideoEffectFactory):
+          track = self._getEffectTrack(input_stream)
+        elif isinstance (factory, AudioEffectFactory):
+          track = self._getEffectTrack(input_stream)
+        else:
+          raise TimelineError()
 
         timeline_object = TimelineObject(factory)
-        start = 0
-        for stream, track in stream_map.iteritems():
-            self.debug("Stream: " + str(stream) + "\nTrack :" + str(track) +\
-                       "\nTrack duration:" + str(track.duration))
-            start = max(start, track.duration)
-            track_object = EffectTrackObject(factory, stream)
-            track.addTrackObject(track_object)
-            timeline_object.addTrackObject(track_object)
+        track_object = EffectTrackObject(factory, input_stream)
+        track.addTrackObject(track_object)
+        timeline_object.addTrackObject(track_object)
 
-        timeline_object.start = start
+        timeline_object.start = track.duration
         self.addTimelineObject(timeline_object)
         return timeline_object
+
+    def _getEffectTrack(self, stream):
+        for track in self.tracks:
+            if track.stream == stream:
+                return track
 
     def _getSourceFactoryStreamMap(self, factory):
         # track.stream -> track

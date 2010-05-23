@@ -620,6 +620,7 @@ class TrackObject(Signallable, Loggable):
         if self.gnl_object is None:
             raise TrackError()
 
+        #print "SELF.FACTORY: %s %s" % (self.factory, self.stream)
         bin = self.factory.makeBin(self.stream)
         self.gnl_object.add(bin)
         self._rebuild_interpolators = True

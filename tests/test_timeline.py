@@ -1069,20 +1069,26 @@ class TestTimelineAddFactory(TestCase):
         self.failUnlessEqual(len(self.video_track1.track_objects), 1)
         self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
-    def testVideoEffectOnly(self):
-        self.video_effect_factory.addOutputStream(self.video_stream1)
+    def testVideoStreamVideoEffect(self):
+        self.factory.addOutputStream(self.video_stream1)
+        self.timeline.addSourceFactory(self.factory)
+        self.video_effect_factory.addInputStream(self.video_stream1)
+        self.video_effect_factory.addOutputStream(self.video_stream2)
         self.timeline.addEffectFactory(self.video_effect_factory)
         self.failUnlessEqual(len(self.audio_track1.track_objects), 0)
         self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
-        self.failUnlessEqual(len(self.video_track1.track_objects), 1)
+        self.failUnlessEqual(len(self.video_track1.track_objects), 2)
         self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
-    def testAudioEffectOnly(self):
-        self.audio_effect_factory.addOutputStream(self.audio_stream1)
+    def testAudioStreamAudioEffect(self):
+        self.factory.addOutputStream(self.audio_stream1)
+        self.timeline.addSourceFactory(self.factory)
+        self.audio_effect_factory.addInputStream(self.audio_stream1)
+        self.audio_effect_factory.addOutputStream(self.audio_stream2)
         self.timeline.addEffectFactory(self.audio_effect_factory)
-        self.failUnlessEqual(len(self.audio_track1.track_objects), 0)
+        self.failUnlessEqual(len(self.audio_track1.track_objects), 2)
         self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
-        self.failUnlessEqual(len(self.video_track1.track_objects), 1)
+        self.failUnlessEqual(len(self.video_track1.track_objects), 0)
         self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
     def test1Audio1Video(self):
