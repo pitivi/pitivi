@@ -117,8 +117,6 @@ class PreviewWidget(gtk.VBox):
         #a filler
         self.pack_start( gtk.Label(''))
 
-    def test_event(self, *arg):
-        print arg
 
     def add_preview_request(self, dialogbox):
         """add a preview request """ 
@@ -308,10 +306,17 @@ class PreviewWidget(gtk.VBox):
         keys = tag_list.keys()
         keys.sort()
         for tag in keys:
-            value = unicode(tag_list[tag]).replace('<', ' ').replace('>', ' ')
-            self.tag_text = self.tag_text + '<b>' + tag + '</b> ' \
-                                + value \
-                                + '\n'
+            tag_type = gst.tag_get_tag_type(tag)
+            if tag_type in (gobject.TYPE_STRING, 
+                                   gobject.TYPE_DOUBLE,
+                                   gobject.TYPE_FLOAT,
+                                   gobject.TYPE_INT,
+                                   gobject.TYPE_UINT):
+                value = unicode(tag_list[tag]).replace('<', ' ').replace('>', ' ')
+                name = gst.tag_get_nick(tag)
+                self.tag_text = self.tag_text + '<b>' + name + '</b> ' \
+                                    + value \
+                                    + '\n'
         self.description.set_markup(self.tag_text)
 
 
