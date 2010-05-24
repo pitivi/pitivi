@@ -407,6 +407,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.warning("self._factories:%r, self._temp_objects:%r",
                      not not self._factories,
                      not not self._temp_objects)
+        print "DRAG_MOTION"
         if self._factories is None:
             atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
             self.drag_get_data(context, atom, timestamp)

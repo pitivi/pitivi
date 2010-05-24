@@ -58,18 +58,6 @@ class EffectFactory (TransformFactory):
     """
     Factories that applies an effect on a stream
     """
-    pass
-
-class VideoEffectFactory (EffectFactory):
-
-    def __init__ (self, effect, name=''):
-        TransformFactory.__init__(self, name)
-        self._effect = effect
-
-    def _makeBin (self, *args):
-        return gst.element_factory_make(self._effect)
-
-class AudioEffectFactory (EffectFactory):
     def __init__ (self, effect, name=''):
         TransformFactory.__init__(self, name)
         self._effect = effect

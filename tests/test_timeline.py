@@ -23,8 +23,7 @@ import pygst
 pygst.require("0.10")
 import gst
 
-from tests.common import FakeSourceFactory, FakeVideoEffectFactory,\
-     FakeAudioEffectFactory
+from tests.common import FakeSourceFactory, FakeEffectFactory
 from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
         Selection, Link, TimelineEdges, MoveContext, TrimStartContext, \
         TrimEndContext
@@ -42,15 +41,15 @@ class TimelineSignalMonitor(SignalMonitor):
 
 class TestTimelineObjectAddRemoveTrackObjects(TestCase):
     def testAddRemoveTrackObjects(self):
-        factory = StubFactory()
-        timeline_object1 = TimelineObject(factory)
-        timeline_object2 = TimelineObject(factory)
+        source_factory = StubFactory()
+        timeline_object1 = TimelineObject(source_factory)
+        timeline_object2 = TimelineObject(source_factory)
 
         stream = AudioStream(gst.Caps('audio/x-raw-int'))
-        factory.addOutputStream(stream)
+        source_factory.addOutputStream(stream)
         track = Track(stream)
-        track_object1 = SourceTrackObject(factory, stream)
-        track_object2 = SourceTrackObject(factory, stream)
+        track_object1 = SourceTrackObject(source_factory, stream)
+        track_object2 = SourceTrackObject(source_factory, stream)
 
         track.addTrackObject(track_object1)
         timeline_object1.addTrackObject(track_object1)
@@ -77,16 +76,16 @@ class TestTimelineObjectAddRemoveTrackObjects(TestCase):
 class TestTimelineObjectProperties(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        factory = StubFactory()
-        self.timeline_object = TimelineObject(factory)
+        source_factory = StubFactory()
+        self.timeline_object = TimelineObject(source_factory)
         self.monitor = SignalMonitor(self.timeline_object, 'start-changed',
                 'duration-changed', 'in-point-changed', 'out-point-changed',
                 'media-duration-changed', 'priority-changed')
         stream = AudioStream(gst.Caps('audio/x-raw-int'))
-        factory.addOutputStream(stream)
+        source_factory.addOutputStream(stream)
         self.track = Track(stream)
-        self.track_object1 = SourceTrackObject(factory, stream)
-        self.track_object2 = SourceTrackObject(factory, stream)
+        self.track_object1 = SourceTrackObject(source_factory, stream)
+        self.track_object2 = SourceTrackObject(source_factory, stream)
         self.track.addTrackObject(self.track_object1)
         self.track.addTrackObject(self.track_object2)
 
@@ -284,19 +283,19 @@ class TestTimelineAddRemoveTracks(TestCase):
 
 class TestTimelineAddRemoveTimelineObjects(TestCase):
     def testAddRemoveTimelineObjects(self):
-        factory = StubFactory()
+        source_factory = StubFactory()
         stream = AudioStream(gst.Caps('audio/x-raw-int'))
-        factory.addOutputStream(stream)
+        source_factory.addOutputStream(stream)
         timeline = Timeline()
         track = Track(stream)
 
-        track_object1 = SourceTrackObject(factory, stream)
-        track_object2 = SourceTrackObject(factory, stream)
+        track_object1 = SourceTrackObject(source_factory, stream)
+        track_object2 = SourceTrackObject(source_factory, stream)
         track.addTrackObject(track_object1)
         track.addTrackObject(track_object2)
 
-        timeline_object1 = TimelineObject(factory)
-        timeline_object2 = TimelineObject(factory)
+        timeline_object1 = TimelineObject(source_factory)
+        timeline_object2 = TimelineObject(source_factory)
 
         self.failUnlessRaises(TimelineError,
                 timeline.addTimelineObject, timeline_object1)
@@ -317,21 +316,21 @@ class TestTimelineAddRemoveTimelineObjects(TestCase):
         timeline.removeTimelineObject(timeline_object2)
 
     def testRemoveFactory(self):
-        factory = StubFactory()
+        source_factory = StubFactory()
         stream = AudioStream(gst.Caps("audio/x-raw-int"))
-        factory.addOutputStream(stream)
+        source_factory.addOutputStream(stream)
         track = Track(stream)
-        track_object1 = SourceTrackObject(factory, stream)
+        track_object1 = SourceTrackObject(source_factory, stream)
         track.addTrackObject(track_object1)
-        track_object2 = SourceTrackObject(factory, stream)
+        track_object2 = SourceTrackObject(source_factory, stream)
         track.addTrackObject(track_object2)
-        track_object3 = SourceTrackObject(factory, stream)
+        track_object3 = SourceTrackObject(source_factory, stream)
         track.addTrackObject(track_object3)
-        timeline_object1 = TimelineObject(factory)
+        timeline_object1 = TimelineObject(source_factory)
         timeline_object1.addTrackObject(track_object1)
-        timeline_object2 = TimelineObject(factory)
+        timeline_object2 = TimelineObject(source_factory)
         timeline_object2.addTrackObject(track_object2)
-        timeline_object3 = TimelineObject(factory)
+        timeline_object3 = TimelineObject(source_factory)
         timeline_object3.addTrackObject(track_object3)
         timeline = Timeline()
         timeline.addTrack(track)
@@ -340,28 +339,28 @@ class TestTimelineAddRemoveTimelineObjects(TestCase):
         timeline.addTimelineObject(timeline_object3)
 
         self.failUnlessEqual(len(timeline.timeline_objects), 3)
-        timeline.removeFactory(factory)
+        timeline.removeFactory(source_factory)
         self.failUnlessEqual(len(timeline.timeline_objects), 0)
 
 class TestTimeline(TestCase):
     def setUp(self):
-        self.factory = StubFactory()
+        self.source_factory = StubFactory()
         self.stream = AudioStream(gst.Caps('audio/x-raw-int'))
-        self.factory.addOutputStream(self.stream)
+        self.source_factory.addOutputStream(self.stream)
         self.track1 = Track(self.stream)
         self.timeline = Timeline()
         TestCase.setUp(self)
 
     def tearDown(self):
-        del self.factory
+        del self.source_factory
         del self.stream
         del self.track1
         del self.timeline
 
     def makeTimelineObject(self):
-        track_object = SourceTrackObject(self.factory, self.stream)
+        track_object = SourceTrackObject(self.source_factory, self.stream)
         self.track1.addTrackObject(track_object)
-        timeline_object = TimelineObject(self.factory)
+        timeline_object = TimelineObject(self.source_factory)
         timeline_object.addTrackObject(track_object)
         self.timeline.addTimelineObject(timeline_object)
 
@@ -724,10 +723,10 @@ class TestLink(TestCase):
         pass
 
     def testAddRemoveTimelineObjects(self):
-        factory = StubFactory()
-        factory.addOutputStream(VideoStream(gst.Caps("video/x-raw-yuv")))
-        timeline_object1 = TimelineObject(factory)
-        timeline_object2 = TimelineObject(factory)
+        source_factory = StubFactory()
+        source_factory.addOutputStream(VideoStream(gst.Caps("video/x-raw-yuv")))
+        timeline_object1 = TimelineObject(source_factory)
+        timeline_object2 = TimelineObject(source_factory)
 
         link = Link()
         link.addTimelineObject(timeline_object1)
@@ -744,22 +743,22 @@ class TestLink(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.factory = StubFactory()
+        self.source_factory = StubFactory()
         self.stream = AudioStream(gst.Caps('audio/x-raw-int'))
-        self.factory.addOutputStream(self.stream)
+        self.source_factory.addOutputStream(self.stream)
         self.track1 = Track(self.stream)
         self.track2 = Track(self.stream)
-        self.track_object1 = SourceTrackObject(self.factory, self.stream)
-        self.track_object2 = SourceTrackObject(self.factory, self.stream)
-        self.track_object3 = SourceTrackObject(self.factory, self.stream)
+        self.track_object1 = SourceTrackObject(self.source_factory, self.stream)
+        self.track_object2 = SourceTrackObject(self.source_factory, self.stream)
+        self.track_object3 = SourceTrackObject(self.source_factory, self.stream)
         self.track1.addTrackObject(self.track_object1)
         self.track1.addTrackObject(self.track_object2)
         self.track2.addTrackObject(self.track_object3)
-        self.timeline_object1 = TimelineObject(self.factory)
+        self.timeline_object1 = TimelineObject(self.source_factory)
         self.timeline_object1.addTrackObject(self.track_object1)
-        self.timeline_object2 = TimelineObject(self.factory)
+        self.timeline_object2 = TimelineObject(self.source_factory)
         self.timeline_object2.addTrackObject(self.track_object2)
-        self.timeline_object3 = TimelineObject(self.factory)
+        self.timeline_object3 = TimelineObject(self.source_factory)
         self.timeline_object3.addTrackObject(self.track_object3)
 
     def tearDown(self):
@@ -778,7 +777,7 @@ class TestLink(TestCase):
         del self.track1
         del self.track2
         del self.stream
-        del self.factory
+        del self.source_factory
         TestCase.tearDown(self)
 
     def testLinkAttribute(self):
@@ -834,7 +833,7 @@ class TestLink(TestCase):
         self.failUnlessEqual(timeline_object3.link, link3)
 
     def testChangeStart(self):
-        factory = self.factory
+        source_factory = self.source_factory
         stream = self.stream
         track1 = self.track1
         track2 = self.track2
@@ -984,10 +983,10 @@ class TestTimelineEdges(TestCase):
         self.failUnlessEqual(self.timeline_edges.snapToEdge(3000), (2000, 1000))
 
     def testAdjacenctObjs(self):
-        factory = FakeSourceFactory()
+        source_factory = FakeSourceFactory()
         stream = AudioStream(gst.Caps("meh"))
-        track_object1 = SourceTrackObject(factory, stream)
-        track_object2 = SourceTrackObject(factory, stream)
+        track_object1 = SourceTrackObject(source_factory, stream)
+        track_object2 = SourceTrackObject(source_factory, stream)
         track_object1.start = 500 
         track_object1.duration = 500
         track_object2.start = 1000
@@ -1010,7 +1009,7 @@ class TestTimelineEdges(TestCase):
 
         track_object1.release()
         track_object2.release()
-        del factory
+        del source_factory
 
 class TestTimelineAddFactory(TestCase):
     def setUp(self):
@@ -1030,9 +1029,8 @@ class TestTimelineAddFactory(TestCase):
         self.timeline.addTrack(self.video_track1)
         self.timeline.addTrack(self.video_track2)
 
-        self.factory = StubFactory()
-        self.video_effect_factory = FakeVideoEffectFactory()
-        self.audio_effect_factory = FakeAudioEffectFactory()
+        self.source_factory = StubFactory()
+        self.effect_factory = FakeEffectFactory()
 
     def tearDown(self):
         del self.audio_stream1
@@ -1045,56 +1043,55 @@ class TestTimelineAddFactory(TestCase):
         del self.video_track1
         del self.video_track2
         del self.timeline
-        del self.factory
-        del self.video_effect_factory
-        del self.audio_effect_factory
+        del self.source_factory
+        del self.effect_factory
         TestCase.tearDown(self)
 
     def testNoStreams(self):
-        self.failUnlessRaises(TimelineError, self.timeline.addSourceFactory, self.factory)
+        self.failUnlessRaises(TimelineError, self.timeline.addSourceFactory, self.source_factory)
 
     def testAudioOnly(self):
-        self.factory.addOutputStream(self.audio_stream1)
-        self.timeline.addSourceFactory(self.factory)
+        self.source_factory.addOutputStream(self.audio_stream1)
+        self.timeline.addSourceFactory(self.source_factory)
         self.failUnlessEqual(len(self.audio_track1.track_objects), 1)
         self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
         self.failUnlessEqual(len(self.video_track1.track_objects), 0)
         self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
     def testVideoOnly(self):
-        self.factory.addOutputStream(self.video_stream1)
-        self.timeline.addSourceFactory(self.factory)
+        self.source_factory.addOutputStream(self.video_stream1)
+        self.timeline.addSourceFactory(self.source_factory)
         self.failUnlessEqual(len(self.audio_track1.track_objects), 0)
         self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
         self.failUnlessEqual(len(self.video_track1.track_objects), 1)
         self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
     def testVideoStreamVideoEffect(self):
-        self.factory.addOutputStream(self.video_stream1)
-        self.timeline.addSourceFactory(self.factory)
-        self.video_effect_factory.addInputStream(self.video_stream1)
-        self.video_effect_factory.addOutputStream(self.video_stream2)
-        self.timeline.addEffectFactory(self.video_effect_factory)
+        self.source_factory.addOutputStream(self.video_stream1)
+        self.timeline.addSourceFactory(self.source_factory)
+        self.effect_factory.addInputStream(self.video_stream1)
+        self.effect_factory.addOutputStream(self.video_stream2)
+        self.timeline.addEffectFactory(self.effect_factory)
         self.failUnlessEqual(len(self.audio_track1.track_objects), 0)
         self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
         self.failUnlessEqual(len(self.video_track1.track_objects), 2)
         self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
     def testAudioStreamAudioEffect(self):
-        self.factory.addOutputStream(self.audio_stream1)
-        self.timeline.addSourceFactory(self.factory)
-        self.audio_effect_factory.addInputStream(self.audio_stream1)
-        self.audio_effect_factory.addOutputStream(self.audio_stream2)
-        self.timeline.addEffectFactory(self.audio_effect_factory)
+        self.source_factory.addOutputStream(self.audio_stream1)
+        self.timeline.addSourceFactory(self.source_factory)
+        self.effect_factory.addInputStream(self.audio_stream1)
+        self.effect_factory.addOutputStream(self.audio_stream2)
+        self.timeline.addEffectFactory(self.effect_factory)
         self.failUnlessEqual(len(self.audio_track1.track_objects), 2)
         self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
         self.failUnlessEqual(len(self.video_track1.track_objects), 0)
         self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
     def test1Audio1Video(self):
-        self.factory.addOutputStream(self.audio_stream1)
-        self.factory.addOutputStream(self.video_stream1)
-        self.timeline.addSourceFactory(self.factory)
+        self.source_factory.addOutputStream(self.audio_stream1)
+        self.source_factory.addOutputStream(self.video_stream1)
+        self.timeline.addSourceFactory(self.source_factory)
         self.failUnlessEqual(len(self.audio_track1.track_objects), 1)
         self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
         self.failUnlessEqual(len(self.video_track1.track_objects), 1)
@@ -1102,11 +1099,11 @@ class TestTimelineAddFactory(TestCase):
 
     def testConflictNotEnoughTracks(self):
         # 3 audio streams, only 2 audio tracks in the timeline
-        self.factory.addOutputStream(self.audio_stream1)
-        self.factory.addOutputStream(self.audio_stream2)
-        self.factory.addOutputStream(self.audio_stream3)
+        self.source_factory.addOutputStream(self.audio_stream1)
+        self.source_factory.addOutputStream(self.audio_stream2)
+        self.source_factory.addOutputStream(self.audio_stream3)
         self.failUnlessRaises(TimelineError, self.timeline.addSourceFactory,
-                self.factory, strict=True)
+                self.source_factory, strict=True)
         self.failUnlessEqual(len(self.audio_track1.track_objects), 0)
         self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
         self.failUnlessEqual(len(self.video_track1.track_objects), 0)
@@ -1117,22 +1114,22 @@ class TestContexts(TestCase):
     def setUp(self):
         TestCase.setUp(self)
         self.timeline = Timeline()
-        self.factory = StubFactory()
+        self.source_factory = StubFactory()
         self.stream = AudioStream(gst.Caps('audio/x-raw-int'))
-        self.factory.addOutputStream(self.stream)
+        self.source_factory.addOutputStream(self.stream)
         self.track1 = Track(self.stream)
         self.track2 = Track(self.stream)
-        self.track_object1 = SourceTrackObject(self.factory, self.stream)
-        self.track_object2 = SourceTrackObject(self.factory, self.stream)
-        self.track_object3 = SourceTrackObject(self.factory, self.stream)
+        self.track_object1 = SourceTrackObject(self.source_factory, self.stream)
+        self.track_object2 = SourceTrackObject(self.source_factory, self.stream)
+        self.track_object3 = SourceTrackObject(self.source_factory, self.stream)
         self.track1.addTrackObject(self.track_object1)
         self.track1.addTrackObject(self.track_object2)
         self.track2.addTrackObject(self.track_object3)
-        self.timeline_object1 = TimelineObject(self.factory)
+        self.timeline_object1 = TimelineObject(self.source_factory)
         self.timeline_object1.addTrackObject(self.track_object1)
-        self.timeline_object2 = TimelineObject(self.factory)
+        self.timeline_object2 = TimelineObject(self.source_factory)
         self.timeline_object2.addTrackObject(self.track_object2)
-        self.timeline_object3 = TimelineObject(self.factory)
+        self.timeline_object3 = TimelineObject(self.source_factory)
         self.timeline_object3.addTrackObject(self.track_object3)
         self.timeline.addTimelineObject(self.timeline_object1)
         self.timeline.addTimelineObject(self.timeline_object2)
@@ -1205,7 +1202,7 @@ class TestContexts(TestCase):
         self.failUnlessEqual(self.track_object2.duration,  10 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.start, 1 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
-        
+
         # move to
         # track1:     [focus][t2]
         # track2:             [t3 ]
@@ -1424,9 +1421,9 @@ class TestContexts(TestCase):
         self.failUnlessEqual(self.track_object3.priority, 1)
 
     def testMoveContextMarginsZigZag(self):
-        self.track_object4 = SourceTrackObject(self.factory, self.stream)
+        self.track_object4 = SourceTrackObject(self.source_factory, self.stream)
         self.track1.addTrackObject(self.track_object4)
-        self.timeline_object4 = TimelineObject(self.factory)
+        self.timeline_object4 = TimelineObject(self.source_factory)
         self.timeline_object4.addTrackObject(self.track_object4)
         self.timeline.addTimelineObject(self.timeline_object4)
 
@@ -1803,7 +1800,7 @@ class TestContexts(TestCase):
         del self.track_object3
         del self.track1
         del self.track2
-        del self.factory
+        del self.source_factory
         del self.stream
         del self.timeline
         del self.other

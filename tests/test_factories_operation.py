@@ -29,19 +29,19 @@ import gst
 from common import TestCase
 
 from pitivi.log.log import debug
-from pitivi.factories.operation import VideoEffectFactory
+from pitivi.factories.operation import EffectFactory
 
 class TestVideoEffectFactory(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.factory = VideoEffectFactory ('identity', 'identity')
+        self.factory = EffectFactory ('identity', 'identity')
 
     def testMakeBin (self):
         bin = self.factory.makeBin()
         bin2 = self.factory.makeBin()
         self.failUnless(isinstance(bin, gst.BaseTransform))
         self.failUnless(bin.get_factory().get_name() == "identity" )
-        debug ('TestVideoEffectFactory','%s %s','Bin is:', bin.get_factory().get_name())
+        debug ('TestOperationFactory','%s %s','Bin is:', bin.get_factory().get_name())
         self.factory.releaseBin(bin)
         self.factory.releaseBin(bin2)
 

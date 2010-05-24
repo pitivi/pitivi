@@ -31,7 +31,6 @@ from pitivi.stream import match_stream_groups_map
 from pitivi.utils import start_insort_right, infinity, getPreviousObject, \
         getNextObject
 from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
-from pitivi.factories.operation import VideoEffectFactory, AudioEffectFactory
 
 # Selection modes
 SELECT = 0
@@ -1697,11 +1696,8 @@ class Timeline(Signallable, Loggable):
             raise TimelineError()
         input_stream = input_stream[0]
 
-        if isinstance (factory, VideoEffectFactory):
-          track = self._getEffectTrack(input_stream)
-        elif isinstance (factory, AudioEffectFactory):
-          track = self._getEffectTrack(input_stream)
-        else:
+        track = self._getEffectTrack(input_stream)
+        if track is None:
           raise TimelineError()
 
         timeline_object = TimelineObject(factory)
@@ -1714,9 +1710,7 @@ class Timeline(Signallable, Loggable):
         return timeline_object
 
     def _getEffectTrack(self, stream):
-        for track in self.tracks:
-            if track.stream == stream:
-                return track
+        return [track for track in self.tracks if track.stream == stream][0]
 
     def _getSourceFactoryStreamMap(self, factory):
         # track.stream -> track

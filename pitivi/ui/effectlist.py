@@ -31,7 +31,7 @@ from gettext import gettext as _
 from gettext import ngettext
 
 import pitivi.ui.dnd as dnd
-from pitivi.factories.operation import VideoEffectFactory, AudioEffectFactory
+from pitivi.factories.operation import EffectFactory
 
 from pitivi.settings import GlobalSettings
 from pitivi.utils import beautify_length
@@ -64,10 +64,10 @@ class EffectList(gtk.VBox, Loggable):
         self._dragX = 0
         self._dragY = 0
         self._ignoreRelease = False
-        
+
         # Store
         # icon, icon, infotext, objectfactory
-        self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, gtk.gdk.Pixbuf, 
+        self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, gtk.gdk.Pixbuf,
                                         str, object, str, str)
 
         # Scrolled Windows
@@ -114,7 +114,7 @@ class EffectList(gtk.VBox, Loggable):
                               self._treeViewQueryTooltipCb)
         self.treeview.connect("button-release-event",
             self._treeViewButtonReleaseCb)
-        self.treeview.connect("drag_begin", 
+        self.treeview.connect("drag_begin",
                               self._dndDragBeginCb)
 
         self.pack_start(self.treeview_scrollwin)
@@ -125,7 +125,6 @@ class EffectList(gtk.VBox, Loggable):
     def _addFactories(self, effects):
         #TODO find a way to associate an icon to each effect
         thumbnail_file = os.path.join (os.getcwd(), "icons", "24x24", "pitivi.png")
-
         pixbuf = gtk.gdk.pixbuf_new_from_file(thumbnail_file)
 
         for effect in effects:
@@ -176,7 +175,7 @@ class EffectList(gtk.VBox, Loggable):
 
             self._dragStarted = False
             self._dragSelection = False
-            self._dragButton = event.button 
+            self._dragButton = event.button
             self._dragX = int(event.x)
             self._dragY = int(event.y)
 
@@ -245,9 +244,9 @@ class EffectList(gtk.VBox, Loggable):
 
     def _getEffects():
         raise NotImplementedError()
-    
+
     def _getFactoryFromEffect(self, effect):
-        raise NotImplementedError()
+        return EffectFactory(effect.get_name())
 
     def _getDndTuple(self):
         raise NotImplementedError()
@@ -259,10 +258,6 @@ class VideoEffectList (EffectList):
 
     def _getEffects(self):
         return self.app.effects.simple_video
-
-    def _getFactoryFromEffect(self, effect):
-        return VideoEffectFactory(effect.get_name())
-
     def _getDndTuple(self):
         return  [dnd.VIDEO_EFFECT_TUPLE, dnd.EFFECT_TUPLE]
 
@@ -274,10 +269,7 @@ class AudioEffectList (EffectList):
     def _getEffects(self):
         return self.app.effects.simple_audio
 
-    def _getFactoryFromEffect(self, effect):
-        return AudioEffectFactory(effect.get_name())
-
     def _getDndTuple(self):
         return  [dnd.AUDIO_EFFECT_TUPLE, dnd.EFFECT_TUPLE]
-        
+
 gobject.type_register(EffectList)

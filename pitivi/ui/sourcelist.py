@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+## PiTiVi , Non-linear video editor
 #
 #       ui/sourcelist.py
 #
@@ -93,7 +93,7 @@ ui = '''
 </ui>
 '''
 
-INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(), 
+INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(),
     "invisible.png"))
 
 class SourceList(gtk.VBox, Loggable):
@@ -271,7 +271,7 @@ class SourceList(gtk.VBox, Loggable):
                 _("Import folder of clips to use"), self._importSourcesFolderCb),
         )
 
-        # only available when selection is non-empty 
+        # only available when selection is non-empty
         selection_actions = (
             ("RemoveSources", gtk.STOCK_DELETE,
                 _("_Remove from project"), "<Control>Delete", None,
@@ -387,7 +387,7 @@ class SourceList(gtk.VBox, Loggable):
 
 
     ## Explanatory message methods
-    
+
     def _setClipView(self, show):
         """ Set which clip view to use when sourcelist is showing clips. If
         none is given, the current one is used. Show: one of SHOW_TREEVIEW or
@@ -736,7 +736,7 @@ class SourceList(gtk.VBox, Loggable):
 
             self._dragStarted = False
             self._dragSelection = False
-            self._dragButton = event.button 
+            self._dragButton = event.button
             self._dragX = int(event.x)
             self._dragY = int(event.y)
 
@@ -926,7 +926,7 @@ class SourceList(gtk.VBox, Loggable):
         return paths
 
     def getSelectedItems(self):
-        return [self.storemodel[path][COL_URI] 
+        return [self.storemodel[path][COL_URI]
             for path in self.getSelectedPaths()]
 
     def _dndDataGetCb(self, unused_widget, context, selection,
