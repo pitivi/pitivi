@@ -705,7 +705,7 @@ class SourceTrackObject(TrackObject):
         SourceTrackObject.numobjs += 1
         return source
 
-class EffectTrack(TrackObject):
+class TrackEffect(TrackObject):
 
     numobjs = 0
 
@@ -713,7 +713,7 @@ class EffectTrack(TrackObject):
         effect = gst.element_factory_make('gnloperation',
             "gnloperation: " + self.factory.__class__.__name__ +
             str(SourceTrackObject.numobjs))
-        EffectTrack.numobjs += 1
+        TrackEffect.numobjs += 1
         return effect
 
 class Transition(Signallable):

@@ -26,7 +26,7 @@ from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.utils import UNKNOWN_DURATION, closest_item, PropertyChangeTracker
 from pitivi.timeline.track import TrackObject, SourceTrackObject,\
-     EffectTrack, TrackError
+     TrackEffect, TrackError
 from pitivi.stream import match_stream_groups_map
 from pitivi.utils import start_insort_right, infinity, getPreviousObject, \
         getNextObject
@@ -1701,7 +1701,7 @@ class Timeline(Signallable, Loggable):
           raise TimelineError()
 
         timeline_object = TimelineObject(factory)
-        track_object = EffectTrack(factory, input_stream)
+        track_object = TrackEffect(factory, input_stream)
         track.addTrackObject(track_object)
         timeline_object.addTrackObject(track_object)
 
