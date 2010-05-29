@@ -31,8 +31,8 @@ from gettext import gettext as _
 from gettext import ngettext
 
 import pitivi.ui.dnd as dnd
-from pitivi.factories.operation import EffectFactory
 
+from pitivi.configure import get_pixmap_dir
 from pitivi.settings import GlobalSettings
 from pitivi.utils import beautify_length
 
@@ -46,6 +46,9 @@ from pitivi.log.loggable import Loggable
  COL_FACTORY,
  COL_SEARCH_TEXT,
  COL_SHORT_TEXT) = range(6)
+
+INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(),
+    "invisible.png"))
 
 class EffectList(gtk.VBox, Loggable):
     """ Widget for listing effects """
@@ -116,6 +119,7 @@ class EffectList(gtk.VBox, Loggable):
             self._treeViewButtonReleaseCb)
         self.treeview.connect("drag_begin",
                               self._dndDragBeginCb)
+        self.treeview.connect("drag_data_get", self._dndDataGetCb)
 
         self.pack_start(self.treeview_scrollwin)
         #Get all available effects
@@ -132,7 +136,7 @@ class EffectList(gtk.VBox, Loggable):
             visualname = ("<b>Name: </b>" + escape(unquote(effect.get_longname())) + "\n" +
                     "<b>Description: </b>"+ effect.get_description())
 
-            factory = self._getFactoryFromEffect(effect)
+            factory = self.app.effects.getFactory(effect.get_name())
             self.storemodel.append ([pixbuf, pixbuf, visualname,
                                     factory, effect.get_description(),
                                     factory.name])
@@ -156,7 +160,6 @@ class EffectList(gtk.VBox, Loggable):
                 return selection.path_is_selected(path) and selection.count_selected_rows() > 0
             elif isinstance(view, gtk.IconView):
                 selection = view.get_selected_items()
-
                 return view.path_is_selected(path) and len(selection)
             else:
                 assert False
@@ -236,17 +239,28 @@ class EffectList(gtk.VBox, Loggable):
         tooltip.set_text(treeview.get_model()[pos[0]][4])
         return True
 
-    def _insertEndCb(self, unused_action):
-        print "T34T"
+    def getSelectedItems(self):
+        model, rows = self.treeview.get_selection().get_selected_rows()
+        return [self.storemodel[path][COL_SHORT_TEXT]
+            for path in rows]
+
+    def _dndDataGetCb(self, unused_widget, context, selection,
+                      targettype, unused_eventtime):
+        self.info("data get, type:%d", targettype)
+        factory = self.getSelectedItems()
+
+        if len(factory) < 1:
+            return
+        factory = factory[0]
+
+        selection.set(selection.target, 8, factory)
+        context.set_icon_pixbuf(INVISIBLE, 0, 0)
 
     def _nothingUnderMouse(self, view, event):
         return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
 
     def _getEffects():
         raise NotImplementedError()
-
-    def _getFactoryFromEffect(self, effect):
-        return EffectFactory(effect.get_name())
 
     def _getDndTuple(self):
         raise NotImplementedError()

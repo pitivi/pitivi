@@ -712,7 +712,7 @@ class TrackEffect(TrackObject):
     def _makeGnlObject(self):
         effect = gst.element_factory_make('gnloperation',
             "gnloperation: " + self.factory.__class__.__name__ +
-            str(SourceTrackObject.numobjs))
+            str(TrackEffect.numobjs))
         TrackEffect.numobjs += 1
         return effect
 

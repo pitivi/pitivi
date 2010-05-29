@@ -25,6 +25,8 @@ Effects global handling
 """
 
 import gst
+from pitivi.factories.operation import EffectFactory
+from pitivi.stream import get_stream_for_pad
 
 # There are different types of effects available:
 #  _ Simple Audio/Video Effects
@@ -43,6 +45,7 @@ class Magician:
     def __init__(self):
         self.simple_video = []
         self.simple_audio = []
+        self.effect_factories_dict = {}
         self.transitions = []
         self._getSimpleFilters()
         self._getEffectPlugins()
@@ -53,13 +56,44 @@ class Magician:
         factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
         for fact in factlist:
             klass = fact.get_klass()
-            if 'Audio' in klass and 'Effect' in klass:
-                self.simple_audio.append(fact)
-            elif 'Video' in klass and 'Effect' in klass:
-                self.simple_video.append(fact)
+            if "Effect" in klass:
+                if 'Audio' in klass:
+                    self.simple_audio.append(fact)
+                elif 'Video' in klass:
+                    self.simple_video.append(fact)
+                factory = EffectFactory(fact.get_name(), fact.get_name())
+                self.addFactory(fact.get_name(), factory)
+                self.addStreams(fact)
 
 
     def _getEffectPlugins(self):
         # find all the pitivi plugins that provide effects
         # TODO : implement
         pass
+
+    def addFactory(self, name, factory):
+        self.effect_factories_dict[name]=factory
+
+    def getFactory(self, name):
+        return self.effect_factories_dict.get(name)
+
+    def addStreams(self, element):
+        pads = element.get_static_pad_templates()
+        factory = self.getFactory(element.get_name())
+
+        if not factory: #FIXME Should raise an exception?
+            return
+
+        for padTmp in pads:
+            pad = gst.Pad (padTmp.get())
+            if pad.get_caps() == "ANY": #FIXME, I don't understand that!
+                return
+
+            if padTmp.direction == gst.PAD_SRC:
+                stream = get_stream_for_pad(pad)
+                factory.addInputStream(stream)
+            elif padTmp.direction == gst.PAD_SINK:
+                stream = get_stream_for_pad(pad)
+                factory.addOutputStream(stream)
+            else:       #FIXME
+                return

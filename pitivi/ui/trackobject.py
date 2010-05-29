@@ -23,6 +23,7 @@ from pitivi.ui.point import Point
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
 from pitivi.stream import AudioStream, VideoStream
+from pitivi.timeline.track import TrackEffect
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
@@ -244,10 +245,13 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.nameheight = 0
 
         self.bg = goocanvas.Rect(
-            height=self.height, 
+            height=self.height,
             line_width=1)
 
-        self.content = Preview(self.app, element)
+        #FIXME I should find the way we want to effects in the time (It should
+        #be shown on existing track?)
+        if not isinstance(element, TrackEffect):
+            self.content = Preview(self.app, element)
 
         self.name = goocanvas.Text(
             x= NAME_HOFFSET + NAME_PADDING,
@@ -271,12 +275,13 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             line_width = 0.0,
             height=self.height)
 
-        for thing in (self.bg, self.content, self.selection_indicator, 
-            self.start_handle, self.end_handle, self.namebg, self.name):
-            self.add_child(thing)
+        if not isinstance(element, TrackEffect): #FIXME
+            for thing in (self.bg, self.content, self.selection_indicator,
+                self.start_handle, self.end_handle, self.namebg, self.name):
+                self.add_child(thing)
 
-        for prop, interpolator in element.getInterpolators().itervalues():
-            self.add_child(Curve(instance, element, interpolator))
+            for prop, interpolator in element.getInterpolators().itervalues():
+                self.add_child(Curve(instance, element, interpolator))
 
         self.element = element
         self.settings = instance.settings

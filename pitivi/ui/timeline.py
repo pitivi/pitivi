@@ -43,6 +43,8 @@ from pitivi.utils import Seeker
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.curve import Curve
 
+from pitivi.factories.operation import EffectFactory
+
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
 SPLIT = _("Split clip at playhead position")
@@ -407,9 +409,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.warning("self._factories:%r, self._temp_objects:%r",
                      not not self._factories,
                      not not self._temp_objects)
-        print "DRAG_MOTION"
         if self._factories is None:
-            atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
+            if  context.targets in [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
+                                    [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]:
+                atom = gtk.gdk.atom_intern(dnd.EFFECT_TUPLE[0])
+            else:
+                atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
+
             self.drag_get_data(context, atom, timestamp)
             self.drag_highlight()
         else:
@@ -461,18 +467,26 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # tell current project to import the uri
         # wait for source-added signal, meanwhile ignore dragMotion signals
         # when ready, add factories to the timeline.
-        if targetType != dnd.TYPE_PITIVI_FILESOURCE:
+        if targetType not in [dnd.TYPE_PITIVI_FILESOURCE, dnd.TYPE_PITIVI_EFFECT]:
             context.finish(False, False, timestamp)
             return
 
-        uris = selection.data.split("\n")
-        self._factories = [self.project.sources.getUri(uri) for uri in uris]
+        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
+            uris = selection.data.split("\n")
+            self._factories = [self.project.sources.getUri(uri) for uri in uris]
+        else:
+            self._factories = [self.app.effects.getFactory(selection.data)]
+
         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
         return True
 
     def _add_temp_source(self):
-        self._temp_objects = [self.timeline.addSourceFactory(factory)
-            for factory in self._factories]
+        if isinstance (self._factories[0], EffectFactory):
+            self._temp_objects = [self.timeline.addEffectFactory(factory)
+                for factory in self._factories]
+        else:
+            self._temp_objects = [self.timeline.addSourceFactory(factory)
+                for factory in self._factories]
 
     def _move_temp_source(self, x, y):
         x1, y1, x2, y2 = self._controls.get_allocation()
