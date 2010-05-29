@@ -1710,7 +1710,7 @@ class Timeline(Signallable, Loggable):
         return timeline_object
 
     def _getEffectTrack(self, stream):
-        return [track for track in self.tracks if track.stream == stream][0]
+        return [track for track in self.tracks if type (track.stream) == type(stream)][0]
 
     def _getSourceFactoryStreamMap(self, factory):
         # track.stream -> track
