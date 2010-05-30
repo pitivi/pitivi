@@ -54,6 +54,8 @@ class PreviewWidget(gtk.VBox):
         self.time_format = gst.Format(gst.FORMAT_TIME)
         self.original_dims = None
         self.countinuous_seek = False
+        self.current_selected_uri = ""
+        self.current_preview_type = ""
         self.tag_text = ""
         
         #gui elements:
@@ -148,16 +150,17 @@ class PreviewWidget(gtk.VBox):
         else:
             duration = beautify_length(factory.duration)
         self.title.set_markup('<b>'+ factory_name(factory) + '</b>') 
-        self.b_action.set_stock_id(gtk.STOCK_MEDIA_PLAY)
         video = factory.getOutputStreams(VideoStream)
         if video:
             video = video[0]
             if video.is_image:
+                self.current_preview_type = 'image'
                 self.preview_video.hide()
                 pixbuf = gtk.gdk.pixbuf_new_from_file(gst.uri_get_location(uri))
                 pixbuf_w = pixbuf.get_width()
                 pixbuf_h = pixbuf.get_height()
                 w, h = self.__get_best_size(pixbuf_w, pixbuf_h)
+                self.original_dims = (w, h)
                 pixbuf = pixbuf.scale_simple(w, h, gtk.gdk.INTERP_NEAREST)
                 self.preview_image.set_from_pixbuf(pixbuf)
                 self.preview_image.show()
@@ -170,6 +173,7 @@ class PreviewWidget(gtk.VBox):
                 desc = desc % (pixbuf_w, pixbuf_h)
                 self.description.set_markup(desc)                
             else:
+                self.current_preview_type = 'video'
                 self.preview_image.hide()
                 self.player.set_property("video-sink", self.__videosink)
                 self.player.set_property("uri", self.current_selected_uri) 
@@ -188,6 +192,7 @@ class PreviewWidget(gtk.VBox):
                 self.tag_text = desc % (video.par*video.width, video.height, duration) 
                 self.description.set_markup(desc) 
         else:
+            self.current_preview_type = 'audio'
             self.preview_video.hide()
             audio = factory.getOutputStreams(AudioStream)
             audio = audio[0]
@@ -218,6 +223,8 @@ class PreviewWidget(gtk.VBox):
         self.player.set_state(gst.STATE_NULL)
         self.is_playing = False
         self.tag_text = ""
+        self.current_selected_uri = ""
+        self.current_preview_type = ''
         self.preview_image.set_from_stock(gtk.STOCK_MISSING_IMAGE,
                                         gtk.ICON_SIZE_DIALOG)
         self.preview_image.show()
@@ -281,18 +288,34 @@ class PreviewWidget(gtk.VBox):
 
 
     def _on_zoom_clicked(self, button, increment):
-        if increment > 0 :
+        if self.current_preview_type == 'video':
             w, h = self.preview_video.get_size_request()
-            w *= 1.2
-            h *= 1.2
-        else:
-            w, h = self.preview_video.get_size_request()
-            w *= 0.8
-            h *= 0.8
-            if (w, h) < self.original_dims:
-                (w, h) = self.original_dims
-        self.preview_video.set_size_request(int(w), int(h))
-
+            if increment > 0 :
+                w *= 1.2
+                h *= 1.2
+            else:
+                w *= 0.8
+                h *= 0.8
+                if (w, h) < self.original_dims:
+                    (w, h) = self.original_dims
+            self.preview_video.set_size_request(int(w), int(h))
+        elif self.current_preview_type == 'image':
+            pixbuf = self.preview_image.get_pixbuf()
+            w = pixbuf.get_width()
+            h = pixbuf.get_height()
+            if increment > 0 :
+                w *= 1.2
+                h *= 1.2
+            else:
+                w *= 0.8
+                h *= 0.8
+                if (w, h) < self.original_dims:
+                    (w, h) = self.original_dims
+            pixbuf = gtk.gdk.pixbuf_new_from_file(gst.uri_get_location(self.current_selected_uri))
+            pixbuf = pixbuf.scale_simple(int(w), int(h), gtk.gdk.INTERP_BILINEAR)
+            self.preview_image.set_size_request(int(w), int(h))
+            self.preview_image.set_from_pixbuf(pixbuf)
+            self.preview_image.show()
 
     def _on_sync_message(self, bus, mess):
         if mess.type == gst.MESSAGE_ELEMENT:
