@@ -161,6 +161,11 @@ class PreviewWidget(gtk.VBox):
                 pixbuf = pixbuf.scale_simple(w, h, gtk.gdk.INTERP_NEAREST)
                 self.preview_image.set_from_pixbuf(pixbuf)
                 self.preview_image.show()
+                self.bbox.show()
+                self.b_action.set_sensitive(False)
+                self.seeker.set_sensitive(False)
+                self.b_zoom_in.set_sensitive(True)
+                self.b_zoom_out.set_sensitive(True)
                 desc = "<b>Image</b> <i>%dx%d pixel</i>"
                 desc = desc % (pixbuf_w, pixbuf_h)
                 self.description.set_markup(desc)                
@@ -174,8 +179,9 @@ class PreviewWidget(gtk.VBox):
                 self.original_dims = (w, h)
                 self.preview_video.set_size_request(w, h)
                 self.preview_video.show()
-                self.seeker.show()                
                 self.bbox.show()
+                self.b_action.set_sensitive(True)
+                self.seeker.set_sensitive(True)
                 self.b_zoom_in.set_sensitive(True)
                 self.b_zoom_out.set_sensitive(True)
                 desc = "<b>Width/Height</b> <i>%dx%d</i>\n" + "<b>Duration</b> %s \n"
@@ -197,7 +203,7 @@ class PreviewWidget(gtk.VBox):
             self.player.set_property("uri", self.current_selected_uri) 
             self.player.set_property("video-sink", self.__fakesink)
             self.player.set_state(gst.STATE_PAUSED)
-            self.seeker.show()
+            self.b_action.set_sensitive(True)
             self.b_zoom_in.set_sensitive(False)
             self.b_zoom_out.set_sensitive(False)
             self.bbox.show()
@@ -205,7 +211,6 @@ class PreviewWidget(gtk.VBox):
             
     def clear_preview(self):
         self.seeker.set_value(0)
-        self.seeker.hide()
         self.bbox.hide()
         self.title.set_markup("<i>No preview</i>")
         self.description.set_markup("")
