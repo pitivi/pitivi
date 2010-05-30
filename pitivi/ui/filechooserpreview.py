@@ -163,6 +163,7 @@ class PreviewWidget(gtk.VBox):
                 self.original_dims = (w, h)
                 pixbuf = pixbuf.scale_simple(w, h, gtk.gdk.INTERP_NEAREST)
                 self.preview_image.set_from_pixbuf(pixbuf)
+                self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
                 self.preview_image.show()
                 self.bbox.show()
                 self.b_action.set_sensitive(False)
@@ -313,7 +314,10 @@ class PreviewWidget(gtk.VBox):
                     (w, h) = self.original_dims
             pixbuf = gtk.gdk.pixbuf_new_from_file(gst.uri_get_location(self.current_selected_uri))
             pixbuf = pixbuf.scale_simple(int(w), int(h), gtk.gdk.INTERP_BILINEAR)
-            self.preview_image.set_size_request(int(w), int(h))
+            
+            w = max(w, PREVIEW_WIDTH)
+            h = max(h, PREVIEW_HEIGHT)
+            self.preview_image.set_size_request(int(w), int(h))                
             self.preview_image.set_from_pixbuf(pixbuf)
             self.preview_image.show()
 
