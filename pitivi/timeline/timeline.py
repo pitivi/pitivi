@@ -1705,7 +1705,7 @@ class Timeline(Signallable, Loggable):
         track.addTrackObject(track_object)
         timeline_object.addTrackObject(track_object)
 
-        timeline_object.start = track.duration
+        timeline_object.duration = track.duration #FIXME
         self.addTimelineObject(timeline_object)
         return timeline_object
 
