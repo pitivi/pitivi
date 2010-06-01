@@ -65,6 +65,12 @@ class EffectFactory (TransformFactory):
     def _makeBin (self, *args):
         return gst.element_factory_make(self._effect)
 
+    def addInputStream(self, stream):
+        return OperationFactory.addInputStream(self, stream)
+
+    def addOutputStream(self, stream):
+        return OperationFactory.addOutputStream(self, stream)
+
 class StreamModifierFactory(TransformFactory):
     """
     Factories that modify the nature/type of a stream.
