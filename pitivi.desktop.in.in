@@ -7,6 +7,7 @@ Terminal=false
 Type=Application
 Icon=pitivi
 Categories=GNOME;GTK;AudioVideo;AudioVideoEditing;
+MimeType=text/x-xptv;
 StartupNotify=true
 X-GNOME-Bugzilla-Bugzilla=GNOME
 X-GNOME-Bugzilla-Product=pitivi
