@@ -346,7 +346,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ui_manager.add_ui_from_string(ui)
 
         # drag and drop
-        self.drag_dest_set(gtk.DEST_DEFAULT_MOTION, 
+        self.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
             [dnd.FILESOURCE_TUPLE, dnd.EFFECT_TUPLE],
             gtk.gdk.ACTION_COPY)
 
