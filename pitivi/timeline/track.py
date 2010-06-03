@@ -765,7 +765,9 @@ class Transition(Signallable):
         self._updateController()
 
     def _updatePriority(self, *unused):
-        if self.a.priority == self.b.priority:
+        if self.a.priority == self.b.priority and\
+                 TrackEffect not in [type(self.a), type(self.b)]: #FIXME, checkme actually
+            #pdb.set_trace()
             priority = self.a.priority
             self._updateOperationPriority(priority)
             self.priority = priority
