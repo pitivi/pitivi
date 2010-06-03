@@ -523,12 +523,22 @@ class TrackObject(Signallable, Loggable):
             self._updatePriority(priority)
 
     def _updatePriority(self, priority):
-        if self.stream_type is VideoStream:
-            true_priority = 2 + self._stagger + (3 * priority)
+        if type(self) is TrackEffect:
+            #pdb.set_trace()
+            if self.stream_type is VideoStream:
+                true_priority = 2 + self._stagger + (3 * priority)
+            elif self.stream_type is AudioStream:
+                true_priority  = 3 + (2 * self._stagger) + (4 * priority)
+        elif self.stream_type is VideoStream:
+            true_priority = 3 + self._stagger + (3 * priority)
         elif self.stream_type is AudioStream:
-            true_priority  = 2 + (2 * self._stagger) + (4 * priority)
+            true_priority  = 3 + (2 * self._stagger) + (4 * priority)
+
         if self.gnl_object.props.priority != true_priority:
             self.gnl_object.props.priority = true_priority
+
+        self.debug("Update priority: %s %s" %(self,
+                                              self.gnl_object.props.priority))
 
     priority = property(_getPriority, setPriority)
 
@@ -1192,7 +1202,8 @@ class Track(Signallable, Loggable):
     def getTrackObjectsGroupedByLayer(self):
         layers = [[] for x in xrange(0, self.max_priority + 1)]
         for track_object in self.track_objects:
-            layers[int(track_object.priority)].append(track_object)
+            if not isinstance(track_object, TrackEffect):
+                layers[int(track_object.priority)].append(track_object)
         return layers
 
     def getValidTransitionSlots(self, objs):
