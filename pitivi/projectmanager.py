@@ -77,6 +77,7 @@ class ProjectManager(Signallable, Loggable):
         "closing-project": ["project"],
         "project-closed": ["project"],
         "missing-uri": ["formatter", "uri", "factory"],
+        "reverting-to-saved":["project"],
     }
 
     def __init__(self):
@@ -183,6 +184,21 @@ class ProjectManager(Signallable, Loggable):
 
         return True
 
+    def revertToSavedProject(self):
+        """ discard all unsaved changes and reload current open project """
+        #no running project or
+        #project has not been modified
+        if self.current is None \
+           or not self.current.hasUnsavedModifications(): 
+            return True
+
+        if not self.emit("reverting-to-saved", self.current):
+            return False
+        uri = self.current.uri 
+        self.current.setModificationState(False)
+        self.closeRunningProject()
+        self.loadProject(uri)
+        
 
     def _getFormatterForUri(self, uri):
         return get_formatter_for_uri(uri)

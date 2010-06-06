@@ -192,6 +192,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 self._projectManagerProjectSavedCb)
         self.app.projectManager.connect("closing-project",
                 self._projectManagerClosingProjectCb)
+        self.app.projectManager.connect("reverting-to-saved",
+                self._projectManagerRevertingToSavedCb)
         self.app.projectManager.connect("project-closed",
                 self._projectManagerProjectClosedCb)
         self.app.projectManager.connect("missing-uri",
@@ -254,6 +256,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
              None, _("Save the current project"), self._saveProjectCb),
             ("SaveProjectAs", gtk.STOCK_SAVE_AS, None,
              None, _("Save the current project"), self._saveProjectAsCb),
+            ("RevertToSavedProject", gtk.STOCK_REVERT_TO_SAVED, None,
+             None, _("Reload the current project"), self._revertToSavedProjectCb),             
             ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"),
              None, _("Edit the project settings"), self._projectSettingsCb),
             ("RenderProject", 'pitivi-render' , _("_Render project"),
@@ -342,12 +346,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 "SecondForward", "SecondBackward", "EdgeForward",
                 "EdgeBackward", "Preferences"]:
                 action.set_sensitive(True)
-            elif action_name in ["NewProject", "SaveProjectAs", "OpenProject"]:
+            elif action_name in ["NewProject", "SaveProjectAs", "OpenProject",
+                                            "RevertToSavedProject"]:
                 if instance.settings.fileSupportEnabled:
                     action.set_sensitive(True)
             elif action_name == "SaveProject":
                 if instance.settings.fileSupportEnabled:
                     action.set_sensitive(True)
+                action.props.is_important = True
                 action.props.is_important = True
             elif action_name == "Undo":
                 action.set_sensitive(True)
@@ -577,6 +583,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
             return self.app.projectManager.saveProject(self.project, uri, overwrite=True)
 
         return False
+
+    def _revertToSavedProjectCb(self, unused_action):
+        return self.app.projectManager.revertToSavedProject()
+            
 
     def _projectSettingsCb(self, unused_action):
         from projectsettings import ProjectSettingsDialog
@@ -814,6 +824,28 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.viewer.setPipeline(None)
         project.seeker.disconnect_by_func(self._timelineSeekCb)
         return False
+
+    def _projectManagerRevertingToSavedCb(self, projectManager, project):
+        if project.hasUnsavedModifications():
+            dialog = gtk.MessageDialog(self,
+                                gtk.DIALOG_MODAL,
+                                gtk.MESSAGE_WARNING,
+                                gtk.BUTTONS_YES_NO,
+                                _("Do you want to reload current project?")
+                                )
+            dialog.set_icon_name("pitivi")
+            dialog.set_title(_("Revert to saved project"))
+            dialog.set_resizable(False)
+            dialog.set_property("secondary-text", 
+                                            _("All unsaved changes will be lost")
+                                        )
+            dialog.set_default_response(gtk.RESPONSE_NO)
+            response = dialog.run()
+            dialog.destroy()
+            if response <> gtk.RESPONSE_YES:
+                return False
+        return True
+        
 
     def _projectManagerNewProjectFailedCb(self, projectManager, uri, exception):
         # ungrey UI
