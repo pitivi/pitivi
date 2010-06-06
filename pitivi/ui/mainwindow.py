@@ -354,7 +354,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 if instance.settings.fileSupportEnabled:
                     action.set_sensitive(True)
                 action.props.is_important = True
-                action.props.is_important = True
             elif action_name == "Undo":
                 action.set_sensitive(True)
                 action.props.is_important = True
