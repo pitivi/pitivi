@@ -28,6 +28,8 @@ import gettext
 
 # variables
 CONFIGURED_PYTHONPATH = '@CONFIGURED_PYTHONPATH@'
+CONFIGURED_LD_LIBRARY_PATH = '@CONFIGURED_LD_LIBRARY_PATH@'
+CONFIGURED_GST_PLUGIN_PATH = '@CONFIGURED_GST_PLUGIN_PATH@'
 LIBDIR = '@LIBDIR@'
 
 localedir = ""
@@ -44,6 +46,14 @@ def _in_devel():
     return (os.path.exists(os.path.join(rd, '.svn')) or
             os.path.exists(os.path.join(rd, 'CVS')) or
             os.path.exists(os.path.join(rd, '.git')))
+
+def _prepend_env_path(name, value):
+    os.environ[name] = os.pathsep.join(value +
+            os.environ.get(name, "").split(os.pathsep))
+
+def jump_through_hoops():
+    os.environ["JUMP_THROUGH_HOOPS"] = "1"
+    os.execv(sys.argv[0], sys.argv)
 
 def _add_pitivi_path():
     global localedir
@@ -77,6 +87,14 @@ def _add_pitivi_path():
     except:
         print "Couldn't set locale !, reverting to C locale"
 
+    if CONFIGURED_LD_LIBRARY_PATH or CONFIGURED_GST_PLUGIN_PATH:
+        _prepend_env_path("LD_LIBRARY_PATH", [CONFIGURED_LD_LIBRARY_PATH])
+        _prepend_env_path("GST_PLUGIN_PATH", [CONFIGURED_GST_PLUGIN_PATH])
+
+        if "JUMP_THROUGH_HOOPS" not in os.environ:
+            # ld caches LD_LIBRARY_PATH at startup so we need to execv() here. LALA.
+            jump_through_hoops()
+
 def _init_gobject_gtk_gst():
     global localedir
     try:
@@ -87,8 +105,8 @@ def _init_gobject_gtk_gst():
 
         import gobject
         gobject.threads_init()
-    except ImportError:
-        raise SystemExit("PyGTK couldn't be found !")
+    except ImportError, e:
+        raise SystemExit("PyGTK couldn't be found !", str(e))
 
     gobject.threads_init()
 
