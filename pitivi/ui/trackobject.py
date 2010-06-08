@@ -252,6 +252,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         #be shown on existing track?)
         if not isinstance(element, TrackEffect):
             self.content = Preview(self.app, element)
+        else:
+            w = Effect(element)
+            self.add_child(w)
 
         self.name = goocanvas.Text(
             x= NAME_HOFFSET + NAME_PADDING,
@@ -428,3 +431,56 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
             else:
                 self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
+
+class Effect(goocanvas.Rect, Zoomable):
+
+    def __init__(self, element):
+        goocanvas.Rect.__init__(self)
+        Zoomable.__init__(self)
+        self.props.fill_color = "blue"
+        self.props.stroke_color = "black"
+        self.set_simple_transform(0, -LAYER_SPACING + 3, 1.0, 0)
+        self.props.height = LAYER_SPACING - 6
+        self.props.pointer_events = goocanvas.EVENTS_NONE
+        self.props.radius_x = 2
+        self.props.radius_y = 2
+        self.props.y = 0 #We keep the effect up
+        self.element = element
+
+    def _setEffect(self):
+        if self.element:
+            self._updateAll()
+
+    def _updateAll(self):
+        element = self.element
+        start = element.start
+        duration = element.factory.duration
+        self._updateStart(element, start)
+        self._updateDuration(element, duration)
+        self._updatePriority(element, duration)
+
+    element = receiver(_setEffect)
+
+    @handler(element, "start-changed")
+    def _updateStart(self, element, start):
+        if self.element.timeline_object is not None:
+            element.setStart(start, True)
+            track_duration = element.timeline_object.timeline.getEffectTrack(element.factory).duration
+            x = self.nsToPixel(start)
+            self.element.setDuration(track_duration - start, True)
+
+    @handler(element, "duration-changed")
+    def _updateDuration(self, element, duration):
+        width = max(0, self.nsToPixel(duration) - self.props.x)
+        if width == 0:
+            self.props.visibility = goocanvas.ITEM_INVISIBLE
+        else:
+            self.props.visibility = goocanvas.ITEM_VISIBLE
+        self.props.width = width
+
+    @handler(element, "priority-changed")
+    def _updatePriority(self, transition, priority):
+        self.props.y = 0
+
+    def zoomChanged(self):
+        self._updateAll()

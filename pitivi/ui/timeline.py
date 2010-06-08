@@ -422,7 +422,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             # actual drag-and-drop
             if not self._temp_objects:
                 self.timeline.disableUpdates()
-                self._add_temp_source()
+                self._add_temp_source(x,y)
                 focus = self._temp_objects[0]
                 self._move_context = MoveContext(self.timeline,
                         focus, set(self._temp_objects[1:]))
@@ -480,9 +480,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
         return True
 
-    def _add_temp_source(self):
+    def _add_temp_source(self, x, y):
         if isinstance (self._factories[0], EffectFactory):
-            self._temp_objects = [self.timeline.addEffectFactory(factory)
+            self._temp_objects = [self.timeline.addEffectFactory(factory, Zoomable.pixelToNs(x))
                 for factory in self._factories]
         else:
             self._temp_objects = [self.timeline.addSourceFactory(factory)

@@ -1676,13 +1676,16 @@ class Timeline(Signallable, Loggable):
         self.addTimelineObject(timeline_object)
         return timeline_object
 
-    def addEffectFactory(self, factory):
+    def addEffectFactory(self, factory, start=0):
         """
         Creates a TimelineObject for the given EffectFactory and adds it to the timeline.
 
         @param factory: The EffectFactory to add.
         @type factory: L{EffectFactory}
-        @raises TimelineError: if C{strict} is True and no exact mapping could be calculated.
+        @param factory: The EffectFactory to add.
+        @ivar start: The position of the effect on a timeline (nanoseconds)
+        @type start: L{long}
+        @raises TimelineError: if the factory doesn't have input or output streams
         """
         self.debug("factory:%r", factory)
 
@@ -1696,7 +1699,7 @@ class Timeline(Signallable, Loggable):
             raise TimelineError()
         input_stream = input_stream[0]
 
-        track = self._getEffectTrack(input_stream)
+        track = self.getEffectTrack(factory)
         if track is None:
           raise TimelineError()
 
@@ -1705,12 +1708,15 @@ class Timeline(Signallable, Loggable):
         track.addTrackObject(track_object)
         timeline_object.addTrackObject(track_object)
 
-        timeline_object.duration = track.duration #FIXME
         self.addTimelineObject(timeline_object)
+
+        timeline_object.start = start
+        timeline_object.setDuration(track.duration - start)
+
         return timeline_object
 
-    def _getEffectTrack(self, stream):
-        return [track for track in self.tracks if type (track.stream) == type(stream)][0]
+    def getEffectTrack(self, factory):
+        return [track for track in self.tracks if type (track.stream) == type(factory.input_streams[0])][0]
 
     def _getSourceFactoryStreamMap(self, factory):
         # track.stream -> track
