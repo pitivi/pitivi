@@ -63,7 +63,20 @@ class EffectFactory (TransformFactory):
         self._effect = effect
 
     def _makeBin (self, *args):
-        return gst.element_factory_make(self._effect)
+        bin = gst.Bin()
+        fx = gst.element_factory_make(self._effect)
+        if isinstance(self.input_streams[0], VideoStream):
+            csp = gst.element_factory_make("ffmpegcolorspace")
+        else:
+            csp = gst.parse_bin_from_description("audioconvert ! audioresample")
+
+        bin.add(fx, csp)
+        csp.link(fx)
+
+        bin.add_pad(gst.GhostPad("sink", csp.get_pad("sink")))
+        bin.add_pad(gst.GhostPad("src", fx.get_pad("src")))
+
+        return bin
 
     def addInputStream(self, stream):
         return OperationFactory.addInputStream(self, stream)
