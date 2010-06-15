@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
 "POT-Creation-Date: 2010-06-15 07:54+0000\n"
-"PO-Revision-Date: 2010-06-15 19:34+0100\n"
+"PO-Revision-Date: 2010-06-15 19:45+0100\n"
 "Last-Translator: Nils-Christoph Fiedler <ncfiedler@gnome.org>\n"
 "Language-Team: Low German <nds-lowgerman@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -774,7 +774,7 @@ msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:265
 msgid "_Redo"
-msgstr ""
+msgstr "_Wedderholen"
 
 #: ../pitivi/ui/mainwindow.py:266
 msgid "Redo the last operation that was undone"
