@@ -1,7 +1,7 @@
 # Low German translation for pitivi.
 # Copyright (C) 2010 pitivi's COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Nils-Christoph Fiedler <ncfiedler@gnome.org>, 2010.
 #
 msgid ""
 msgstr ""
@@ -170,6 +170,8 @@ msgid ""
 "Missing plugins:\n"
 "%s"
 msgstr ""
+"Fehlende plugins:\n"
+"%s"
 
 #. woot, nothing decodable
 #: ../pitivi/discoverer.py:247
