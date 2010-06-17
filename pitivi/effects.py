@@ -57,13 +57,14 @@ class Magician:
         for fact in factlist:
             klass = fact.get_klass()
             if "Effect" in klass:
-                if 'Audio' in klass:
-                    self.simple_audio.append(fact)
-                elif 'Video' in klass:
-                    self.simple_video.append(fact)
                 factory = EffectFactory(fact.get_name(), fact.get_name())
-                self.addFactory(fact.get_name(), factory)
-                self.addStreams(fact)
+                added = self.addStreams(fact, factory)
+                if added is True:
+                    if 'Audio' in klass:
+                        self.simple_audio.append(fact)
+                    elif 'Video' in klass:
+                        self.simple_video.append(fact)
+                    self.addFactory(fact.get_name(), factory)
 
 
     def _getEffectPlugins(self):
@@ -77,17 +78,16 @@ class Magician:
     def getFactory(self, name):
         return self.effect_factories_dict.get(name)
 
-    def addStreams(self, element):
+    def addStreams(self, element, factory):
         pads = element.get_static_pad_templates()
-        factory = self.getFactory(element.get_name())
 
-        if not factory: #FIXME Should raise an exception?
-            return
+        if not factory:
+            return False
 
         for padTmp in pads:
             pad = gst.Pad (padTmp.get())
             if pad.get_caps() == "ANY": #FIXME, I don't understand that!
-                return
+                return False
 
             if padTmp.direction == gst.PAD_SRC:
                 stream = get_stream_for_pad(pad)
@@ -95,5 +95,5 @@ class Magician:
             elif padTmp.direction == gst.PAD_SINK:
                 stream = get_stream_for_pad(pad)
                 factory.addOutputStream(stream)
-            else:       #FIXME
-                return
+
+        return True
