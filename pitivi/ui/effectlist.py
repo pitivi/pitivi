@@ -68,6 +68,13 @@ class EffectList(gtk.VBox, Loggable):
         self._dragY = 0
         self._ignoreRelease = False
 
+        #Searchbox and combobox
+        self.filters = gtk.HBox()
+        self.search_box = gtk.Entry()
+        self.combobox = gtk.combo_box_new_text()
+        self.filters.pack_start(self.combobox, expand=False, padding=0)
+        self.filters.pack_start(self.search_box, expand=True, padding=0)
+
         # Store
         # icon, icon, infotext, objectfactory
         self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, gtk.gdk.Pixbuf,
@@ -121,10 +128,11 @@ class EffectList(gtk.VBox, Loggable):
                               self._dndDragBeginCb)
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
 
-        self.pack_start(self.treeview_scrollwin)
+        self.pack_start(self.filters, expand=False)
+        self.pack_end(self.treeview_scrollwin, expand=True)
         #Get all available effects
         self._addFactories(self._getEffects())
-        self.treeview_scrollwin.show_all()
+        self.show_all()
 
     def _addFactories(self, effects):
         #TODO find a way to associate an icon to each effect
@@ -272,6 +280,7 @@ class VideoEffectList (EffectList):
 
     def _getEffects(self):
         return self.app.effects.simple_video
+
     def _getDndTuple(self):
         return  [dnd.VIDEO_EFFECT_TUPLE, dnd.EFFECT_TUPLE]
 
