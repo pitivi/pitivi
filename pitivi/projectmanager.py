@@ -188,7 +188,7 @@ class ProjectManager(Signallable, Loggable):
         """ discard all unsaved changes and reload current open project """
         #no running project or
         #project has not been modified
-        if self.current is None \
+        if self.current.uri is None \
            or not self.current.hasUnsavedModifications(): 
             return True
 

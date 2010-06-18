@@ -346,8 +346,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 "SecondForward", "SecondBackward", "EdgeForward",
                 "EdgeBackward", "Preferences"]:
                 action.set_sensitive(True)
-            elif action_name in ["NewProject", "SaveProjectAs", "OpenProject",
-                                            "RevertToSavedProject"]:
+            elif action_name in ["NewProject", "SaveProjectAs", "OpenProject"]:
                 if instance.settings.fileSupportEnabled:
                     action.set_sensitive(True)
             elif action_name == "SaveProject":
@@ -829,14 +828,16 @@ class PitiviMainWindow(gtk.Window, Loggable):
             dialog = gtk.MessageDialog(self,
                                 gtk.DIALOG_MODAL,
                                 gtk.MESSAGE_WARNING,
-                                gtk.BUTTONS_YES_NO,
+                                gtk.BUTTONS_NONE,
                                 _("Do you want to reload current project?")
                                 )
             dialog.set_icon_name("pitivi")
+            dialog.add_buttons(gtk.STOCK_REVERT_TO_SAVED, gtk.RESPONSE_YES,
+                                 gtk.STOCK_CANCEL, gtk.RESPONSE_NO)
             dialog.set_title(_("Revert to saved project"))
             dialog.set_resizable(False)
             dialog.set_property("secondary-text", 
-                                            _("All unsaved changes will be lost")
+                                            _("All unsaved changes will be lost.")
                                         )
             dialog.set_default_response(gtk.RESPONSE_NO)
             response = dialog.run()
@@ -933,6 +934,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dirty = action_log.dirty()
         save_action = self.actiongroup.get_action("SaveProject")
         save_action.set_sensitive(dirty)
+        if self.app.current.uri is not None:
+            revert_action = self.actiongroup.get_action("RevertToSavedProject")
+            revert_action.set_sensitive(dirty)
         self.app.current.setModificationState(dirty)
 
         redo_action = self.actiongroup.get_action("Redo")
