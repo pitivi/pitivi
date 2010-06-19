@@ -237,7 +237,7 @@ class EncodingDialog(GladeWindow, Loggable):
             for ac in self.pipeline.actions:
                 if isinstance(ac, ViewAction) and ac.isActive():
                     ac.setSync(True)
-            self._changeSourceSettings(self.project.settings)
+            self._changeSourceSettings(self.project.getSettings())
             self.pipeline.pause()
             self.pipeline.disconnect_by_function(self._positionCb)
             self.pipeline.disconnect_by_function(self._eosCb)
