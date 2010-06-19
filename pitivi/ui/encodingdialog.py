@@ -48,8 +48,8 @@ class EncodingDialog(GladeWindow, Loggable):
     glade_file = "encodingdialog.glade"
 
     def __init__(self, app, project, pipeline=None):
-        GladeWindow.__init__(self)
         Loggable.__init__(self)
+        GladeWindow.__init__(self)
 
         self.app = app
 
