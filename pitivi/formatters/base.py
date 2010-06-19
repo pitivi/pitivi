@@ -318,7 +318,7 @@ class Formatter(Signallable, Loggable):
         newprefix = os.sep.join(b[:ib])
         self.debug("oldprefix:%r, newprefix:%r", oldprefix, newprefix)
         if oldprefix in self.directorymapping.keys():
-            raise FormatterException
+            raise FormatterError()
 
         self.directorymapping[oldprefix] = newprefix
 
