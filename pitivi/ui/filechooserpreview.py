@@ -8,6 +8,7 @@ import pango
 
 import os
 
+from pitivi.log.loggable import Loggable
 from pitivi.discoverer import Discoverer
 from pitivi.ui.common import factory_name, beautify_stream
 from pitivi.stream import match_stream_groups_map, AudioStream, VideoStream
@@ -26,10 +27,13 @@ def get_playbin():
         return gst.element_factory_make("playbin", "preview-player")
 
 
-class PreviewWidget(gtk.VBox):
+class PreviewWidget(gtk.VBox, Loggable):
 
     def __init__(self):
         gtk.VBox.__init__(self)
+        Loggable.__init__(self)
+        
+        self.log("Init PreviewWidget")
         self.connect('destroy', self._free_all)
         #a dictionary for caching factories
         self.preview_cache = {}
@@ -125,15 +129,20 @@ class PreviewWidget(gtk.VBox):
         uri = dialogbox.get_preview_uri()
         if uri is None or not uri_is_valid(uri):
             return
+        self.log("Preview request for " + uri)
         self.clear_preview()
         self.current_selected_uri = uri
         if self.preview_cache.has_key(uri):
             #already discovered
+            self.log(uri + " already in cache")
             self.show_preview(uri)
         else:
+            self.log("Call discoverer for " + uri )
             self.discoverer.addUri(uri)
 
     def _update_preview(self, dscvr, uri, factory):
+        if factory is None:
+            self.error("Discoverer does not handle " + uri)
         #add to cache
         self.preview_cache[uri] = factory
         #show uri only if is the selected one
@@ -141,8 +150,10 @@ class PreviewWidget(gtk.VBox):
             self.show_preview(uri)
 
     def show_preview(self, uri):
+        self.log("Show preview for " + uri )
         factory = self.preview_cache.get(uri, None)
         if factory is None:
+            self.log("No preview for " + uri )
             return
     
         if not factory.duration or factory.duration == gst.CLOCK_TIME_NONE:
@@ -216,6 +227,7 @@ class PreviewWidget(gtk.VBox):
 
             
     def clear_preview(self):
+        self.log("Reset PreviewWidget ")
         self.seeker.set_value(0)
         self.bbox.hide()
         self.title.set_markup("<i>No preview</i>")
@@ -265,7 +277,7 @@ class PreviewWidget(gtk.VBox):
             self.player.set_state(gst.STATE_NULL)
             self.is_playing = False
             err, dbg = message.parse_error()
-            print "Error: %s " % err, dbg
+            self.error( "Error: %s " % err, dbg)
 
 
     def _update_position(self, *args):
@@ -283,10 +295,12 @@ class PreviewWidget(gtk.VBox):
             gobject.timeout_add(1000, self._update_position)
             self.is_playing = True
             button.set_stock_id(gtk.STOCK_MEDIA_PAUSE)
+            self.log("Preview started" )
         else:
             self.player.set_state(gst.STATE_PAUSED)
             self.is_playing = False
             button.set_stock_id(gtk.STOCK_MEDIA_PLAY)
+            self.log("Preview paused" )
 
 
     def _on_zoom_clicked(self, button, increment):
@@ -336,6 +350,7 @@ class PreviewWidget(gtk.VBox):
 
 
     def _on_tag_found(self, abus, mess):
+        self.log("Tag found" )
         tag_list = mess.parse_tag()
         for tag in tag_list.keys():
             tag_type = gst.tag_get_tag_type(tag)
