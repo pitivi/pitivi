@@ -56,7 +56,8 @@ class PreviewWidget(gtk.VBox):
         self.countinuous_seek = False
         self.current_selected_uri = ""
         self.current_preview_type = ""
-        self.tag_text = ""
+        self.description = ""
+        self.tags = {}
         
         #gui elements:
         #a title label
@@ -110,12 +111,11 @@ class PreviewWidget(gtk.VBox):
 
         self.pack_start(self.bbox, expand=False)
 
-        #another label for general info on file
-        self.description = gtk.Label('') 
-        self.description.set_use_markup(True)
-        self.description.set_justify(gtk.JUSTIFY_LEFT)
-        self.description.show()
-        self.pack_start(self.description, expand=False)
+        #another label for tag
+        self.l_tags = gtk.Label('')
+        self.l_tags.set_justify(gtk.JUSTIFY_LEFT)
+        self.l_tags.show()
+        self.pack_start(self.l_tags, expand=False)
         #a filler
         self.pack_start( gtk.Label(''))
 
@@ -189,9 +189,9 @@ class PreviewWidget(gtk.VBox):
                 self.seeker.set_sensitive(True)
                 self.b_zoom_in.set_sensitive(True)
                 self.b_zoom_out.set_sensitive(True)
-                desc = "<b>Width/Height</b> <i>%dx%d</i>\n" + "<b>Duration</b> %s \n"
-                self.tag_text = desc % (video.par*video.width, video.height, duration) 
-                self.description.set_markup(desc) 
+                desc = "<b>Width/Height</b>: <i>%dx%d</i>\n" + "<b>Duration</b>: %s \n"
+                desc = desc % (video.par*video.width, video.height, duration) 
+                self.description = desc
         else:
             self.current_preview_type = 'audio'
             self.preview_video.hide()
@@ -202,9 +202,9 @@ class PreviewWidget(gtk.VBox):
             self.seeker.set_adjustment(adj)
             self.preview_image.set_from_file(DEFAULT_AUDIO_IMAGE)
             self.preview_image.show()
-            desc = "<b>Channels:</b> %d  at %d <i>Hz</i> \n" + "<b>Duration</b> %s \n" 
-            self.tag_text = desc % (audio.channels, audio.rate, duration) 
-            self.description.set_markup(desc)
+            desc = "<b>Channels:</b> %d  at %d <i>Hz</i> \n" + "<b>Duration</b>: %s \n" 
+            desc = desc % (audio.channels, audio.rate, duration) 
+            self.description = desc
             self.player.set_state(gst.STATE_NULL)
             self.player.set_property("uri", self.current_selected_uri) 
             self.player.set_property("video-sink", self.__fakesink)
@@ -219,11 +219,12 @@ class PreviewWidget(gtk.VBox):
         self.seeker.set_value(0)
         self.bbox.hide()
         self.title.set_markup("<i>No preview</i>")
-        self.description.set_markup("")
+        self.description = ""
+        self.l_tags.set_markup("")
         self.b_action.set_stock_id(gtk.STOCK_MEDIA_PLAY)
         self.player.set_state(gst.STATE_NULL)
         self.is_playing = False
-        self.tag_text = ""
+        self.tags = {}
         self.current_selected_uri = ""
         self.current_preview_type = ''
         self.preview_image.set_from_stock(gtk.STOCK_MISSING_IMAGE,
@@ -259,7 +260,7 @@ class PreviewWidget(gtk.VBox):
             self.is_playing = False
             self.b_action.set_stock_id(gtk.STOCK_MEDIA_PLAY)
             adj = gtk.Adjustment(0, 0.00, 100.0, 0.1, 10.0, 10.0)
-            self.seeker.set_adjustment(adj)   
+            self.seeker.set_adjustment(adj)
         elif message.type == gst.MESSAGE_ERROR:
             self.player.set_state(gst.STATE_NULL)
             self.is_playing = False
@@ -336,9 +337,7 @@ class PreviewWidget(gtk.VBox):
 
     def _on_tag_found(self, abus, mess):
         tag_list = mess.parse_tag()
-        keys = tag_list.keys()
-        keys.sort()
-        for tag in keys:
+        for tag in tag_list.keys():
             tag_type = gst.tag_get_tag_type(tag)
             if tag_type in (gobject.TYPE_STRING, 
                                    gobject.TYPE_DOUBLE,
@@ -347,10 +346,13 @@ class PreviewWidget(gtk.VBox):
                                    gobject.TYPE_UINT):
                 value = unicode(tag_list[tag]).replace('<', ' ').replace('>', ' ')
                 name = gst.tag_get_nick(tag)
-                self.tag_text = self.tag_text + '<b>' + name + '</b> ' \
-                                    + value \
-                                    + '\n'
-        self.description.set_markup(self.tag_text)
+                self.tags['<b>' + name + '</b>: '] = value
+        keys = self.tags.keys()
+        keys.sort()
+        text = self.description + "\n"
+        for key in keys:
+            text = text + key + self.tags[key] + "\n"
+        self.l_tags.set_markup(text)
 
 
     def _free_all(self, widget):
