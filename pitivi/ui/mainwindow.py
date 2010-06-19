@@ -832,8 +832,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
                                 _("Do you want to reload current project?")
                                 )
             dialog.set_icon_name("pitivi")
-            dialog.add_buttons(gtk.STOCK_REVERT_TO_SAVED, gtk.RESPONSE_YES,
-                                 gtk.STOCK_CANCEL, gtk.RESPONSE_NO)
+            dialog.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_NO,
+                                        gtk.STOCK_REVERT_TO_SAVED, gtk.RESPONSE_YES)
             dialog.set_title(_("Revert to saved project"))
             dialog.set_resizable(False)
             dialog.set_property("secondary-text", 
