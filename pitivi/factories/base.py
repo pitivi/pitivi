@@ -339,12 +339,13 @@ class SourceFactory(ObjectFactory):
 
         if hasattr(bin, "volume"):
             # only audio bins have a volume element
-            for elt in [bin.aconv, bin.ares, bin.volume]:
+            for elt in [bin.aconv, bin.ares, bin.arate, bin.volume]:
                 elt.set_state(gst.STATE_NULL)
                 bin.remove(elt)
             del bin.volume
             del bin.aconv
             del bin.ares
+            del bin.arate
         elif hasattr(bin, "alpha"):
             for elt in [bin.csp, bin.queue, bin.alpha]:
                 elt.set_state(gst.STATE_NULL)
@@ -375,16 +376,20 @@ class SourceFactory(ObjectFactory):
             # add a volume element
             b.aconv = gst.element_factory_make("audioconvert", "internal-aconv")
             b.ares = gst.element_factory_make("audioresample", "internal-audioresample")
+            # Fix audio jitter of up to 40ms
+            b.arate = gst.element_factory_make("audiorate", "internal-audiorate")
+            b.arate.props.tolerance = 40 * gst.MSECOND
             b.volume = gst.element_factory_make("volume", "internal-volume")
-            b.add(b.volume, b.ares, b.aconv)
+            b.add(b.volume, b.ares, b.aconv, b.arate)
             if child_bin:
-                gst.element_link_many(b.aconv, b.ares, b.child, b.volume)
+                gst.element_link_many(b.aconv, b.ares, b.arate, b.child, b.volume)
                 b.child.sync_state_with_parent()
             else:
-                gst.element_link_many(b.aconv, b.ares, b.volume)
-                
+                gst.element_link_many(b.aconv, b.ares, b.arate, b.volume)
+
             b.aconv.sync_state_with_parent()
             b.ares.sync_state_with_parent()
+            b.arate.sync_state_with_parent()
             b.volume.sync_state_with_parent()
         elif isinstance(output_stream, VideoStream):
             self.debug("Adding alpha element")
@@ -438,7 +443,7 @@ class SourceFactory(ObjectFactory):
             # since those elements are still unlinked downstream at this point,
             # so state change order doesn't happen in the usual
             # downstream-to-upstream way.
-            for element in [topbin.aconv, topbin.ares, topbin.volume]:
+            for element in [topbin.aconv, topbin.ares, topbin.arate, topbin.volume]:
                 element.sync_state_with_parent()
 
             pad.link(topbin.aconv.get_pad("sink"))
