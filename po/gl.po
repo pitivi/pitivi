@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi-master-po-gl-208179\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-24 12:25+0200\n"
-"PO-Revision-Date: 2010-05-24 12:25+0200\n"
+"POT-Creation-Date: 2010-06-20 02:44+0200\n"
+"PO-Revision-Date: 2010-06-20 02:45+0200\n"
 "Last-Translator: Fran Diéguez <frandieguez@ubuntu.com>\n"
 "Language-Team: Galician <gnome@g11.net>\n"
 "MIME-Version: 1.0\n"
@@ -336,19 +336,19 @@ msgstr "Executar pitivi no Depurador de Python"
 msgid "Run pitivi with no gui"
 msgstr "Executar pitivi sen interface de usuario"
 
-#: ../pitivi/projectmanager.py:95
+#: ../pitivi/projectmanager.py:96
 msgid "Not a valid project file."
 msgstr "O ficheiro do proxecto non é válido."
 
-#: ../pitivi/projectmanager.py:100
+#: ../pitivi/projectmanager.py:101
 msgid "Couldn't close current project"
 msgstr "Non foi posíbel pechar o proxecto actual"
 
-#: ../pitivi/projectmanager.py:137
+#: ../pitivi/projectmanager.py:138
 msgid "No URI specified."
 msgstr "Non se especificou ningún URI."
 
-#: ../pitivi/projectmanager.py:169
+#: ../pitivi/projectmanager.py:170
 msgid "New Project"
 msgstr "Proxecto novo"
 
@@ -376,21 +376,21 @@ msgstr ""
 "\n"
 "Multiplexador: "
 
-#: ../pitivi/utils.py:71
+#: ../pitivi/utils.py:74
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d hora"
 msgstr[1] "%d horas"
 
-#: ../pitivi/utils.py:74
+#: ../pitivi/utils.py:77
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minuto"
 msgstr[1] "%d minutos"
 
-#: ../pitivi/utils.py:77
+#: ../pitivi/utils.py:80
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
@@ -399,7 +399,7 @@ msgstr[1] "%d segundos"
 
 #. Translators: "non local" means the project is not stored
 #. on a local filesystem
-#: ../pitivi/utils.py:244
+#: ../pitivi/utils.py:247
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s aínda non manexa os proxecto que non son locais"
@@ -540,7 +540,7 @@ msgstr "Ficheiro de saída:"
 msgid "Please choose an output file"
 msgstr "Escolla un ficheiro de saída"
 
-#: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:260
+#: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:264
 msgid "Render project"
 msgstr "Renderizar o proxecto"
 
@@ -786,160 +786,164 @@ msgstr "Desagrupar"
 msgid "Group"
 msgstr "Agrupar"
 
-#: ../pitivi/ui/mainwindow.py:243
+#: ../pitivi/ui/mainwindow.py:245
 msgid "Start Playback"
 msgstr "Iniciar a reprodución"
 
-#: ../pitivi/ui/mainwindow.py:244
+#: ../pitivi/ui/mainwindow.py:246
 msgid "Stop Playback"
 msgstr "Deter a reprodución"
 
-#: ../pitivi/ui/mainwindow.py:245
+#: ../pitivi/ui/mainwindow.py:247
 msgid "Loop over selected area"
 msgstr "Rodear sobre a área seleccionada"
 
-#: ../pitivi/ui/mainwindow.py:250
+#: ../pitivi/ui/mainwindow.py:252
 msgid "Create a new project"
 msgstr "Crear un proxecto novo"
 
-#: ../pitivi/ui/mainwindow.py:252
+#: ../pitivi/ui/mainwindow.py:254
 msgid "Open an existing project"
 msgstr "Abrir un proxecto existente"
 
-#: ../pitivi/ui/mainwindow.py:254 ../pitivi/ui/mainwindow.py:256
+#: ../pitivi/ui/mainwindow.py:256 ../pitivi/ui/mainwindow.py:258
 msgid "Save the current project"
 msgstr "Gardar o proxecto actual"
 
-#: ../pitivi/ui/mainwindow.py:257 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:260
+msgid "Reload the current project"
+msgstr "Recargar o proxecto actual"
+
+#: ../pitivi/ui/mainwindow.py:261 ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
 msgstr "Configuracións do proxecto"
 
-#: ../pitivi/ui/mainwindow.py:258
+#: ../pitivi/ui/mainwindow.py:262
 msgid "Edit the project settings"
 msgstr "Editar as configuracións de bloqueo"
 
-#: ../pitivi/ui/mainwindow.py:259
+#: ../pitivi/ui/mainwindow.py:263
 msgid "_Render project"
 msgstr "_Renderizar o proxecto"
 
-#: ../pitivi/ui/mainwindow.py:262
+#: ../pitivi/ui/mainwindow.py:266
 msgid "_Undo"
 msgstr "_Desfacer"
 
-#: ../pitivi/ui/mainwindow.py:263
+#: ../pitivi/ui/mainwindow.py:267
 msgid "Undo the last operation"
 msgstr "Desfacer a última operación"
 
-#: ../pitivi/ui/mainwindow.py:265
+#: ../pitivi/ui/mainwindow.py:269
 msgid "_Redo"
 msgstr "_Refacer"
 
-#: ../pitivi/ui/mainwindow.py:266
+#: ../pitivi/ui/mainwindow.py:270
 msgid "Redo the last operation that was undone"
 msgstr "Refacer a última operación que foi desfeita"
 
-#: ../pitivi/ui/mainwindow.py:268
+#: ../pitivi/ui/mainwindow.py:272
 msgid "_Plugins..."
 msgstr "_Engadidos..."
 
-#: ../pitivi/ui/mainwindow.py:269
+#: ../pitivi/ui/mainwindow.py:273
 msgid "Manage plugins"
 msgstr "Xestionar os engadidos"
 
-#: ../pitivi/ui/mainwindow.py:270
+#: ../pitivi/ui/mainwindow.py:274
 msgid "_Preferences"
 msgstr "_Preferencias"
 
-#: ../pitivi/ui/mainwindow.py:273
+#: ../pitivi/ui/mainwindow.py:277
 msgid "Import from _Webcam..."
 msgstr "Importar desde _Cámara web..."
 
-#: ../pitivi/ui/mainwindow.py:274
+#: ../pitivi/ui/mainwindow.py:278
 msgid "Import Camera stream"
 msgstr "Importar fluxo de cámara"
 
-#: ../pitivi/ui/mainwindow.py:276
+#: ../pitivi/ui/mainwindow.py:280
 msgid "_Make screencast..."
 msgstr "_Facer distribución (screencast)..."
 
-#: ../pitivi/ui/mainwindow.py:277
+#: ../pitivi/ui/mainwindow.py:281
 msgid "Capture the desktop"
 msgstr "Capturar o escritorio"
 
-#: ../pitivi/ui/mainwindow.py:279
+#: ../pitivi/ui/mainwindow.py:283
 msgid "_Capture Network Stream..."
 msgstr "_Capturar o fluxo de rede..."
 
-#: ../pitivi/ui/mainwindow.py:280
+#: ../pitivi/ui/mainwindow.py:284
 msgid "Capture Network Stream"
 msgstr "Capturar o fluxo de rede"
 
-#: ../pitivi/ui/mainwindow.py:283
+#: ../pitivi/ui/mainwindow.py:287
 #, python-format
 msgid "Information about %s"
 msgstr "Información acerca de %s"
 
-#: ../pitivi/ui/mainwindow.py:284
+#: ../pitivi/ui/mainwindow.py:288
 msgid "_File"
 msgstr "_Ficheiro"
 
-#: ../pitivi/ui/mainwindow.py:285
+#: ../pitivi/ui/mainwindow.py:289
 msgid "_Edit"
 msgstr "_Editar"
 
-#: ../pitivi/ui/mainwindow.py:286
+#: ../pitivi/ui/mainwindow.py:290
 msgid "_View"
 msgstr "_Ver"
 
-#: ../pitivi/ui/mainwindow.py:287
+#: ../pitivi/ui/mainwindow.py:291
 msgid "_Project"
 msgstr "_Proxecto"
 
-#: ../pitivi/ui/mainwindow.py:288
+#: ../pitivi/ui/mainwindow.py:292
 msgid "_Timeline"
 msgstr "Sec_uencia cronolóxica"
 
-#: ../pitivi/ui/mainwindow.py:289
+#: ../pitivi/ui/mainwindow.py:293
 msgid "Previe_w"
 msgstr "Pre_visualización"
 
-#: ../pitivi/ui/mainwindow.py:292
+#: ../pitivi/ui/mainwindow.py:296
 msgid "Loop"
 msgstr "Bucle"
 
-#: ../pitivi/ui/mainwindow.py:294
+#: ../pitivi/ui/mainwindow.py:298
 msgid "_Help"
 msgstr "_Axuda"
 
-#: ../pitivi/ui/mainwindow.py:299
+#: ../pitivi/ui/mainwindow.py:303
 msgid "View the main window on the whole screen"
 msgstr "Ver a xanela principal na pantalla baleira"
 
-#: ../pitivi/ui/mainwindow.py:303
+#: ../pitivi/ui/mainwindow.py:307
 msgid "Main Toolbar"
 msgstr "Barra de ferramentas principal"
 
-#: ../pitivi/ui/mainwindow.py:306
+#: ../pitivi/ui/mainwindow.py:310
 msgid "Timeline Toolbar"
 msgstr "Barra de ferramentas de secuencia temporal"
 
-#: ../pitivi/ui/mainwindow.py:400
+#: ../pitivi/ui/mainwindow.py:404
 msgid "Media Library"
 msgstr "Biblioteca multimedia"
 
-#: ../pitivi/ui/mainwindow.py:538
+#: ../pitivi/ui/mainwindow.py:542
 msgid "Open File..."
 msgstr "Abrir o ficheiro..."
 
-#: ../pitivi/ui/mainwindow.py:554
+#: ../pitivi/ui/mainwindow.py:558
 msgid "All Supported Formats"
 msgstr "Todos os formatos compatíbeis"
 
-#: ../pitivi/ui/mainwindow.py:620
+#: ../pitivi/ui/mainwindow.py:628
 msgid "Contributors:"
 msgstr "Colaboradores:"
 
-#: ../pitivi/ui/mainwindow.py:632
+#: ../pitivi/ui/mainwindow.py:640
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -947,50 +951,62 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Véxase http://www.gnu.org/copyleft/lesser.html para máis detalles"
 
-#: ../pitivi/ui/mainwindow.py:751
+#: ../pitivi/ui/mainwindow.py:759
 msgid "Close without saving"
 msgstr "Pechar sen gardar"
 
-#: ../pitivi/ui/mainwindow.py:764
+#: ../pitivi/ui/mainwindow.py:772
 msgid "Save changes to the current project before closing?"
 msgstr "Gardar cambios ao proxecto actual antes de pechar?"
 
-#: ../pitivi/ui/mainwindow.py:771
+#: ../pitivi/ui/mainwindow.py:779
 msgid "If you don't save some of your changes will be lost"
 msgstr "Se non garda, algún destes cambios perderanse"
 
-#: ../pitivi/ui/mainwindow.py:824
+#: ../pitivi/ui/mainwindow.py:832
+msgid "Do you want to reload current project?"
+msgstr "Desexa recargar o proxecto actual?"
+
+#: ../pitivi/ui/mainwindow.py:837
+msgid "Revert to saved project"
+msgstr "Reverter ao proxecto gardado"
+
+#: ../pitivi/ui/mainwindow.py:840
+msgid "All unsaved changes will be lost."
+msgstr "Todos os cambios sen gardar perderanse."
+
+#: ../pitivi/ui/mainwindow.py:856
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi non é quen de ler o ficheiro \"%s\""
 
-#: ../pitivi/ui/mainwindow.py:827
+#: ../pitivi/ui/mainwindow.py:859
 msgid "Error Loading File"
 msgstr "Produciuse un erro ao cargar o ficheiro"
 
-#: ../pitivi/ui/mainwindow.py:834
+#: ../pitivi/ui/mainwindow.py:866
 msgid "Locate missing file..."
 msgstr "Localizar o ficheiro perdido..."
 
-#: ../pitivi/ui/mainwindow.py:843
+#: ../pitivi/ui/mainwindow.py:875
 msgid "The following file has moved, please tell PiTiVi where to find it."
 msgstr ""
 "Non é posíbel mover o seguinte ficheiro, dígalle ao PiTiVi onde pode "
 "encontralo"
 
-#: ../pitivi/ui/mainwindow.py:845
+#: ../pitivi/ui/mainwindow.py:877
 msgid "Duration:"
 msgstr "Duración:"
 
-#: ../pitivi/ui/mainwindow.py:986
+#: ../pitivi/ui/mainwindow.py:1021
 msgid "Save As..."
 msgstr "Gardar como..."
 
-#: ../pitivi/ui/mainwindow.py:994
+#: ../pitivi/ui/mainwindow.py:1029
 msgid "Untitled.xptv"
 msgstr "Sentitulo.xptv"
 
-#: ../pitivi/ui/mainwindow.py:1005 ../pitivi/ui/mainwindow.py:1018
+#: ../pitivi/ui/mainwindow.py:1040 ../pitivi/ui/mainwindow.py:1053
 msgid "Detect Automatically"
 msgstr "Detectar _automaticamente"
 
