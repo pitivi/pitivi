@@ -14,6 +14,7 @@ from pitivi.ui.common import factory_name, beautify_stream
 from pitivi.stream import match_stream_groups_map, AudioStream, VideoStream
 from pitivi.utils import beautify_length, uri_is_valid
 from pitivi.configure import get_pixmap_dir
+from pitivi.factories.file import PictureFileSourceFactory
 
 DEFAULT_AUDIO_IMAGE = os.path.join(get_pixmap_dir(), "pitivi-sound.png")
 
@@ -163,8 +164,9 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.title.set_markup('<b>'+ factory_name(factory) + '</b>') 
         video = factory.getOutputStreams(VideoStream)
         if video:
+            print type(factory)
             video = video[0]
-            if video.is_image:
+            if type(factory) == PictureFileSourceFactory:
                 self.current_preview_type = 'image'
                 self.preview_video.hide()
                 pixbuf = gtk.gdk.pixbuf_new_from_file(gst.uri_get_location(uri))
@@ -183,7 +185,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.b_zoom_out.set_sensitive(True)
                 desc = "<b>Image</b> <i>%dx%d pixel</i>"
                 desc = desc % (pixbuf_w, pixbuf_h)
-                self.description.set_markup(desc)                
+                self.description = desc            
             else:
                 self.current_preview_type = 'video'
                 self.preview_image.hide()
