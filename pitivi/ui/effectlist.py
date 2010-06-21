@@ -43,6 +43,8 @@ from pitivi.log.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT,\
       audio_categories, video_categories, get_categories
 
+PADDING = 5
+
 (COL_ICON,
  COL_ICON_LARGE,
  COL_NAME_TEXT,
@@ -84,12 +86,15 @@ class EffectList(gtk.VBox, Loggable):
         self.effectType.set_active(VIDEO_EFFECT)
 
 
-        filters.pack_start(self.effectType, expand=False, padding=0)
-        filters.pack_start(self.effectCategory, expand=False, padding=0)
+        filters.pack_start(self.effectType, expand=True, padding=PADDING/2)
+        filters.pack_start(self.effectCategory, expand=True, padding=PADDING)
 
+        Hentry = gtk.HBox()
+        searchStr = gtk.Label("Search:")
         self.searchEntry = gtk.Entry()
         self.searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
-        filters.pack_start(self.searchEntry, expand=True, padding=0)
+        Hentry.pack_start(searchStr, expand=False, padding=PADDING/2)
+        Hentry.pack_start(self.searchEntry, expand=True, padding=PADDING)
 
         # Store
         # icon, icon, infotext, objectfactory
@@ -166,6 +171,7 @@ class EffectList(gtk.VBox, Loggable):
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
 
         self.pack_start(filters, expand=False)
+        self.pack_start(Hentry, expand=False, padding=0)
         self.pack_end(self.treeview_scrollwin, expand=True)
 
         #create the filterModel
@@ -179,6 +185,7 @@ class EffectList(gtk.VBox, Loggable):
 
         self.treeview_scrollwin.show_all()
         filters.show_all()
+        Hentry.show_all()
 
     def _addFactories(self, effects, effectType):
         #TODO find a way to associate an icon/thumbnail to each effect
