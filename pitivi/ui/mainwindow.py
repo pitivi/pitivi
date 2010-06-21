@@ -56,7 +56,7 @@ from pitivi.receiver import receiver, handler
 import pitivi.formatters.format as formatter
 from pitivi.sourcelist import SourceListError
 from pitivi.ui.sourcelist import SourceList
-from pitivi.ui.effectlist import VideoEffectList, AudioEffectList
+from pitivi.ui.effectlist import EffectList
 from pitivi.ui.common import beautify_factory
 from pitivi.utils import beautify_length
 from pitivi.ui.zoominterface import Zoomable
@@ -404,15 +404,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.projecttabs = ProjectTabs()
 
         self.sourcelist = SourceList(instance, self.uimanager)
-        self.videoeffectlist = VideoEffectList(instance, self.uimanager)
-        self.audioeffectlist = AudioEffectList(instance, self.uimanager)
+        self.effectlist = EffectList(instance, self.uimanager)
         self.projecttabs.append_page(self.sourcelist, gtk.Label(_("Media Library")))
-        self.projecttabs.append_page(self.videoeffectlist, gtk.Label(_("Video Effects")))
-        self.projecttabs.append_page(self.audioeffectlist, gtk.Label(_("Audio Effects")))
+        self.projecttabs.append_page(self.effectlist, gtk.Label(_("Effect Library")))
         self._connectToSourceList()
         self.sourcelist.show()
-        self.videoeffectlist.show()
-        self.audioeffectlist.show()
+        self.effectlist.show()
 
         hpaned.pack1(self.projecttabs, resize=True, shrink=False)
         self.projecttabs.show()

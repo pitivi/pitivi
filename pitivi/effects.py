@@ -28,6 +28,8 @@ import gst
 from pitivi.factories.operation import EffectFactory
 from pitivi.stream import get_stream_for_pad
 
+# Note: Some effects are available through the frei0r library and the libavfilter0 library
+
 # There are different types of effects available:
 #  _ Simple Audio/Video Effects
 #     GStreamer elements that only apply to audio OR video
@@ -36,6 +38,65 @@ from pitivi.stream import get_stream_for_pad
 #     These are the Gstreamer elements that don't have a easy meaning/action or
 #     that are too cumbersome to use as such
 #  _ Complex Audio/Video Effects
+
+(VIDEO_EFFECT, AUDIO_EFFECT)  = range(2)
+video_categories = (
+    ("All video effects", ("")),
+    ("Colors", ("cogcolorspace", "alphacolor", "videobalance", "gamma", "alpha",\
+                "frei0r-filter-color-distance", "frei0r-filter-contrast0r", \
+                "frei0r-filter-invert0r", "frei0r-filter-saturat0r", "frei0r-filter-r",\
+                "frei0r-filter-white-balance", "frei0r-filter-brightness", "frei0r-filter-b",\
+                "frei0r-filter-gamma", "frei0r-filter-hueshift0r", "frei0r-filter-transparency",\
+                "frei0r-filter-equaliz0r", "frei0r-filter-glow ", "frei0r-filter-g", "frei0r-filter-bw0r"\
+                )
+    ),
+    ("Noise", ("videorate", "frei0r-filter-edgeglow" )),
+    ("Analysis", ("videoanalyse", "videodetect", "videomark", "revtv", "navigationtest",\
+                  "frei0r-filter-rgb-parade", "frei0r-filter-vectorscope", "frei0r-filter-luminance",\
+                  )),
+    ("Blur", ("frei0r-filter-squareblur", )),
+    ("Geometry", ("cogscale", "aspectratiocrop", "cogdownsample", "videocrop", "videoflip",\
+                  "videobox", "gdkpixbufscale", "frei0r-filter-letterb0xed" \
+                  "frei0r-filter-k-means-clustering", "videoscale", "frei0r-filter-lens-correction",
+                  "frei0r-filter-perspective", "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",\
+                  "frei0r-filter-flippo", "frei0r-filter-3dflippo"
+                 )
+    ),
+    ("Fancy",("rippletv", "streaktv", "radioactv", "optv", "quarktv", "vertigotv",\
+              "shagadelictv", "warptv", "dicetv", "agingtv", "edgetv", "frei0r-filter-cartoon",\
+              "frei0r-filter-water", "frei0r-filter-nosync0r"
+             )
+    ),
+    ("Time", ("frei0r-filter-delay0r")),
+    ("Uncategorized", (""))
+)
+
+audio_categories = (("All audio effects", ("")),)
+
+def get_categories(effect, effectType):
+
+    effectName = effect.get_name()
+    categories = []
+
+    if effectType is AUDIO_EFFECT:
+        categories.append(audio_categories[0][0])
+        for categorie in audio_categories:
+            for name in categorie[1]:
+                if name == effectName:
+                    categories.append(categorie[0])
+        return categories
+
+    for categorie in video_categories:
+        for name in categorie[1]:
+            if name == effectName:
+                categories.append(categorie[0])
+
+    if categories == []:
+        categories.append("Uncategorized")
+
+    categories.append(video_categories[0][0])
+
+    return categories
 
 class Magician:
     """
@@ -56,7 +117,7 @@ class Magician:
         factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
         for fact in factlist:
             klass = fact.get_klass()
-            if "Effect" in klass:
+            if "Effect" in klass and not self._filterUslessEffect(fact):
                 factory = EffectFactory(fact.get_name(), fact.get_name())
                 added = self.addStreams(fact, factory)
                 if added is True:
@@ -66,6 +127,8 @@ class Magician:
                         self.simple_video.append(fact)
                     self.addFactory(fact.get_name(), factory)
 
+    def _filterUslessEffect(self, effect):
+        return effect.get_name() in ["colorconvert", "coglogoinsert", "festival", ]
 
     def _getEffectPlugins(self):
         # find all the pitivi plugins that provide effects

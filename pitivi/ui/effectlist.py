@@ -25,6 +25,7 @@ import gtk
 import pango
 import os
 import time
+import re
 
 from urllib import unquote
 from gettext import gettext as _
@@ -39,13 +40,18 @@ from pitivi.utils import beautify_length
 from xml.sax.saxutils import escape
 
 from pitivi.log.loggable import Loggable
+from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT,\
+      audio_categories, video_categories, get_categories
 
 (COL_ICON,
  COL_ICON_LARGE,
- COL_INFOTEXT,
+ COL_NAME_TEXT,
+ COL_DESC_TEXT,
+ COL_EFFECT_TYPE,
+ COL_EFFECT_CATEGORIE,
  COL_FACTORY,
  COL_SEARCH_TEXT,
- COL_SHORT_TEXT) = range(6)
+ COL_SHORT_TEXT) = range(9)
 
 INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(),
     "invisible.png"))
@@ -69,16 +75,26 @@ class EffectList(gtk.VBox, Loggable):
         self._ignoreRelease = False
 
         #Searchbox and combobox
-        self.filters = gtk.HBox()
-        self.search_box = gtk.Entry()
-        self.combobox = gtk.combo_box_new_text()
-        self.filters.pack_start(self.combobox, expand=False, padding=0)
-        self.filters.pack_start(self.search_box, expand=True, padding=0)
+        filters = gtk.HBox()
+        self.effectType = gtk.combo_box_new_text()
+        self.effectType.append_text("Video effects")
+        self.effectType.append_text("Audio effects")
+        self.effectCategory = gtk.combo_box_new_text()
+        self.show_categories(VIDEO_EFFECT)
+        self.effectType.set_active(VIDEO_EFFECT)
+
+
+        filters.pack_start(self.effectType, expand=False, padding=0)
+        filters.pack_start(self.effectCategory, expand=False, padding=0)
+
+        self.searchEntry = gtk.Entry()
+        self.searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
+        filters.pack_start(self.searchEntry, expand=True, padding=0)
 
         # Store
         # icon, icon, infotext, objectfactory
         self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, gtk.gdk.Pixbuf,
-                                        str, object, str, str)
+                                        str, str, int, object, object, str, str)
 
         # Scrolled Windows
         self.treeview_scrollwin = gtk.ScrolledWindow()
@@ -86,35 +102,56 @@ class EffectList(gtk.VBox, Loggable):
         self.treeview_scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
 
         # TreeView
-        # Displays icon, long_name
+        # Displays name, description
         self.treeview = gtk.TreeView(self.storemodel)
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.set_property("rules_hint", True)
-        self.treeview.set_headers_visible(False)
         self.treeview.set_property("search_column", COL_SEARCH_TEXT)
         self.treeview.set_property("has_tooltip", True)
         tsel = self.treeview.get_selection()
         tsel.set_mode(gtk.SELECTION_SINGLE)
 
-        pixbufcol = gtk.TreeViewColumn(_("Icon"))
-        pixbufcol.set_expand(False)
-        pixbufcol.set_spacing(5)
-        self.treeview.append_column(pixbufcol)
-        pixcell = gtk.CellRendererPixbuf()
-        pixcell.props.xpad = 6
-        pixbufcol.pack_start(pixcell)
-        pixbufcol.add_attribute(pixcell, 'pixbuf', COL_ICON)
+        #pixbufcol = gtk.TreeViewColumn(_("Icon"))
+        #pixbufcol.set_expand(False)
+        #pixbufcol.set_spacing(5)
+        #self.treeview.append_column(pixbufcol)
+        #pixcell = gtk.CellRendererPixbuf()
+        #pixcell.props.xpad = 6
+        #pixbufcol.pack_start(pixcell)
+        #pixbufcol.add_attribute(pixcell, 'pixbuf', COL_ICON)
 
-        namecol = gtk.TreeViewColumn(_("Information"))
+        namecol = gtk.TreeViewColumn(_("Name"))
+        namecol.set_sort_column_id(COL_NAME_TEXT)
         self.treeview.append_column(namecol)
-        namecol.set_expand(True)
+        #namecol.set_expand(True)
         namecol.set_spacing(5)
-        namecol.set_sizing(gtk.TREE_VIEW_COLUMN_GROW_ONLY)
-        namecol.set_min_width(150)
-        txtcell = gtk.CellRendererText()
-        txtcell.set_property("ellipsize", pango.ELLIPSIZE_END)
-        namecol.pack_start(txtcell)
-        namecol.add_attribute(txtcell, "markup", COL_INFOTEXT)
+        namecol.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        namecol.set_fixed_width(150)
+        namecell = gtk.CellRendererText()
+        namecell.props.xpad = 6
+        namecell.set_property("ellipsize", pango.ELLIPSIZE_END)
+        namecol.pack_start(namecell)
+        namecol.add_attribute(namecell, "text", COL_NAME_TEXT)
+
+        desccol = gtk.TreeViewColumn(_("Description"))
+        desccol.set_sort_column_id(COL_DESC_TEXT)
+        self.treeview.append_column(desccol)
+        desccol.set_expand(True)
+        desccol.set_spacing(5)
+        desccol.set_sizing(gtk.TREE_VIEW_COLUMN_AUTOSIZE)
+        desccol.set_min_width(150)
+        desccell = gtk.CellRendererText()
+        desccell.props.xpad = 6
+        desccell.set_property("ellipsize", pango.ELLIPSIZE_END)
+        desccol.pack_start(desccell)
+        desccol.add_attribute(desccell, "text", COL_DESC_TEXT)
+
+        self.effectType.connect ("changed", self._effectTypeChangedCb)
+        
+        self.effectCategory.connect ("changed", self._effectCategoryChangedCb)
+
+        self.searchEntry.connect ("changed", self.searchEntryChangedCb)
+        self.searchEntry.connect ("icon-press", self.searchEntryIconClickedCb)
 
         self.treeview.connect("button-press-event",
                               self._treeViewButtonPressEventCb)
@@ -128,26 +165,52 @@ class EffectList(gtk.VBox, Loggable):
                               self._dndDragBeginCb)
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
 
-        self.pack_start(self.filters, expand=False)
+        self.pack_start(filters, expand=False)
         self.pack_end(self.treeview_scrollwin, expand=True)
-        #Get all available effects
-        self._addFactories(self._getEffects())
-        self.show_all()
 
-    def _addFactories(self, effects):
-        #TODO find a way to associate an icon to each effect
+        #create the filterModel
+        self.modelFilter = self.storemodel.filter_new()
+        self.modelFilter.set_visible_func(self._setRowVisible, data=None)
+        self.treeview.set_model(self.modelFilter)
+
+        #Add factories
+        self._addFactories(self.app.effects.simple_video, VIDEO_EFFECT)
+        self._addFactories(self.app.effects.simple_audio, AUDIO_EFFECT)
+
+        self.treeview_scrollwin.show_all()
+        filters.show_all()
+
+    def _addFactories(self, effects, effectType):
+        #TODO find a way to associate an icon/thumbnail to each effect
         thumbnail_file = os.path.join (os.getcwd(), "icons", "24x24", "pitivi.png")
         pixbuf = gtk.gdk.pixbuf_new_from_file(thumbnail_file)
 
         for effect in effects:
-            #TODO Check how it would look the best
-            visualname = ("<b>Name: </b>" + escape(unquote(effect.get_longname())) + "\n" +
-                    "<b>Description: </b>"+ effect.get_description())
+            uselessWords = re.compile('(Video |effect |Audio )')
+            name = uselessWords.sub("", (escape(unquote(effect.get_longname())))).title()
+            description = (escape(unquote(effect.get_description())))
+            categories = get_categories(effect, effectType)
 
             factory = self.app.effects.getFactory(effect.get_name())
-            self.storemodel.append ([pixbuf, pixbuf, visualname,
+            #visible = self._setRowVisible(self.storemodel, None, None)
+            self.storemodel.append ([pixbuf, pixbuf, name, description, effectType, categories,
                                     factory, effect.get_description(),
                                     factory.name])
+
+            self.storemodel.set_sort_column_id(COL_NAME_TEXT, gtk.SORT_ASCENDING)
+
+    def show_categories(self, effectType):
+        self.effectCategory.get_model().clear()
+
+        if effectType is VIDEO_EFFECT:
+            for categorie in video_categories:
+                self.effectCategory.append_text(categorie[0])
+
+        if effectType is AUDIO_EFFECT:
+            for categorie in audio_categories:
+                self.effectCategory.append_text(categorie[0])
+
+        self.effectCategory.set_active(0)
 
     def _dndDragBeginCb(self, view, context):
         self.info("tree drag_begin")
@@ -242,9 +305,15 @@ class EffectList(gtk.VBox, Loggable):
         return False
 
     def _treeViewQueryTooltipCb(self, treeview, x, y, keyboard_mode, tooltip):
-        pos = treeview.get_path_at_pos(x,y)[0]
-        treeview.set_tooltip_row (tooltip, pos)
-        tooltip.set_text(treeview.get_model()[pos[0]][4])
+        context = treeview.get_tooltip_context(x, y, keyboard_mode)
+
+        if context is None:
+            return False
+
+        treeview.set_tooltip_row (tooltip, context[1][0])
+        tooltip.set_icon(self.modelFilter.get_value(context[2], COL_ICON))
+        tooltip.set_text(self.modelFilter.get_value(context[2], COL_DESC_TEXT))
+
         return True
 
     def getSelectedItems(self):
@@ -264,35 +333,34 @@ class EffectList(gtk.VBox, Loggable):
         selection.set(selection.target, 8, factory)
         context.set_icon_pixbuf(INVISIBLE, 0, 0)
 
+    def _effectTypeChangedCb(self, combobox):
+        self.modelFilter.refilter()
+        self.show_categories(combobox.get_active())
+
+    def _effectCategoryChangedCb(self, combobox):
+        self.modelFilter.refilter()
+
+    def searchEntryChangedCb (self, entry):
+        self.modelFilter.refilter()
+
+    def searchEntryIconClickedCb (self, entry, unused, unsed1):
+        entry.set_text("")
+
+    def _setRowVisible(self, model, iter, data):
+        if self.effectType.get_active() == model.get_value(iter, COL_EFFECT_TYPE):
+            if model.get_value(iter, COL_EFFECT_CATEGORIE) is None:
+                return False
+            if self.effectCategory.get_active_text() in model.get_value(iter, COL_EFFECT_CATEGORIE):
+                text = self.searchEntry.get_text().lower()
+                return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
+                       text in model.get_value(iter, COL_NAME_TEXT).lower()
+            else:
+                return False
+        else:
+            return False
+
     def _nothingUnderMouse(self, view, event):
         return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
 
-    def _getEffects():
-        raise NotImplementedError()
-
     def _getDndTuple(self):
-        raise NotImplementedError()
-
-class VideoEffectList (EffectList):
-
-    def __init__(self, instance, uiman):
-        EffectList.__init__(self,instance, uiman)
-
-    def _getEffects(self):
-        return self.app.effects.simple_video
-
-    def _getDndTuple(self):
-        return  [dnd.VIDEO_EFFECT_TUPLE, dnd.EFFECT_TUPLE]
-
-class AudioEffectList (EffectList):
-
-    def __init__(self, instance, uiman):
-        EffectList.__init__(self,instance, uiman)
-
-    def _getEffects(self):
-        return self.app.effects.simple_audio
-
-    def _getDndTuple(self):
-        return  [dnd.AUDIO_EFFECT_TUPLE, dnd.EFFECT_TUPLE]
-
-gobject.type_register(EffectList)
+        return  [dnd.EFFECT_TUPLE, dnd.EFFECT_TUPLE]
