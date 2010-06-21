@@ -68,7 +68,7 @@ class EffectFactory (TransformFactory):
         if isinstance(self.input_streams[0], VideoStream):
             csp = gst.element_factory_make("ffmpegcolorspace")
         else:
-            csp = gst.parse_bin_from_description("audioconvert ! audioresample")
+            csp = gst.parse_bin_from_description("audioconvert ! audioresample", True)
 
         bin.add(fx, csp)
         csp.link(fx)
