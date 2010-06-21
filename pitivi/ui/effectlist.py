@@ -43,7 +43,7 @@ from pitivi.log.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT,\
       audio_categories, video_categories, get_categories
 
-PADDING = 5
+SPACING = 5
 
 (COL_ICON,
  COL_ICON_LARGE,
@@ -78,6 +78,7 @@ class EffectList(gtk.VBox, Loggable):
 
         #Searchbox and combobox
         filters = gtk.HBox()
+        filters.set_spacing(SPACING)
         self.effectType = gtk.combo_box_new_text()
         self.effectType.append_text("Video effects")
         self.effectType.append_text("Audio effects")
@@ -86,15 +87,16 @@ class EffectList(gtk.VBox, Loggable):
         self.effectType.set_active(VIDEO_EFFECT)
 
 
-        filters.pack_start(self.effectType, expand=True, padding=PADDING/2)
-        filters.pack_start(self.effectCategory, expand=True, padding=PADDING)
+        filters.pack_start(self.effectType, expand=True)
+        filters.pack_end(self.effectCategory, expand=True)
 
         Hentry = gtk.HBox()
+        Hentry.set_spacing(SPACING)
         searchStr = gtk.Label("Search:")
         self.searchEntry = gtk.Entry()
         self.searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
-        Hentry.pack_start(searchStr, expand=False, padding=PADDING/2)
-        Hentry.pack_start(self.searchEntry, expand=True, padding=PADDING)
+        Hentry.pack_start(searchStr, expand=False)
+        Hentry.pack_end(self.searchEntry, expand=True)
 
         # Store
         # icon, icon, infotext, objectfactory
