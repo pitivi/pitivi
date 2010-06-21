@@ -147,7 +147,7 @@ class EffectList(gtk.VBox, Loggable):
         desccol.add_attribute(desccell, "text", COL_DESC_TEXT)
 
         self.effectType.connect ("changed", self._effectTypeChangedCb)
-        
+
         self.effectCategory.connect ("changed", self._effectCategoryChangedCb)
 
         self.searchEntry.connect ("changed", self.searchEntryChangedCb)
@@ -318,8 +318,8 @@ class EffectList(gtk.VBox, Loggable):
 
     def getSelectedItems(self):
         model, rows = self.treeview.get_selection().get_selected_rows()
-        return [self.storemodel[path][COL_SHORT_TEXT]
-            for path in rows]
+        path = self.modelFilter.convert_path_to_child_path(rows[0])
+        return self.storemodel[path][COL_SHORT_TEXT]
 
     def _dndDataGetCb(self, unused_widget, context, selection,
                       targettype, unused_eventtime):
@@ -328,7 +328,6 @@ class EffectList(gtk.VBox, Loggable):
 
         if len(factory) < 1:
             return
-        factory = factory[0]
 
         selection.set(selection.target, 8, factory)
         context.set_icon_pixbuf(INVISIBLE, 0, 0)
@@ -363,4 +362,7 @@ class EffectList(gtk.VBox, Loggable):
         return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
 
     def _getDndTuple(self):
-        return  [dnd.EFFECT_TUPLE, dnd.EFFECT_TUPLE]
+         if self.effectType.get_active() == VIDEO_EFFECT:
+            return [dnd.VIDEO_EFFECT_TUPLE, dnd.EFFECT_TUPLE]
+         else:
+            return [dnd.AUDIO_EFFECT_TUPLE, dnd.EFFECT_TUPLE]
