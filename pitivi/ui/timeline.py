@@ -37,7 +37,7 @@ from timelinecanvas import TimelineCanvas
 from timelinecontrols import TimelineControls
 from pitivi.receiver import receiver, handler
 from zoominterface import Zoomable
-from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
+from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING, TRACK_SPACING
 from pitivi.timeline.timeline import MoveContext
 from pitivi.utils import Seeker
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
@@ -426,7 +426,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 focus = self._temp_objects[0]
                 self._move_context = MoveContext(self.timeline,
                         focus, set(self._temp_objects[1:]))
-            self._move_temp_source(self.hadj.props.value + x, y)
+            if  context.targets not in [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
+                                    [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]:
+                self._move_temp_source(self.hadj.props.value + x, y)
         return True
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
@@ -446,7 +448,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         focus = self._temp_objects[0]
         self._move_context = MoveContext(self.timeline,
                 focus, set(self._temp_objects[1:]))
-        self._move_temp_source(self.hadj.props.value + x, y)
+
+        if  context.targets not in [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
+                                    [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]:
+            self._move_temp_source(self.hadj.props.value + x, y)
+
         self._move_context.finish()
         self.timeline.enableUpdates()
         self.app.action_log.commit()
@@ -467,6 +473,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # tell current project to import the uri
         # wait for source-added signal, meanwhile ignore dragMotion signals
         # when ready, add factories to the timeline.
+
         if targetType not in [dnd.TYPE_PITIVI_FILESOURCE, dnd.TYPE_PITIVI_EFFECT]:
             context.finish(False, False, timestamp)
             return
@@ -482,7 +489,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _add_temp_source(self, x, y):
         if isinstance (self._factories[0], EffectFactory):
-            self._temp_objects = [self.timeline.addEffectFactory(factory, Zoomable.pixelToNs(x))
+            priority = y / (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
+            self._temp_objects = [self.timeline.addEffectFactory(factory, self.pixelToNs(x), priority)
                 for factory in self._factories]
         else:
             self._temp_objects = [self.timeline.addSourceFactory(factory)

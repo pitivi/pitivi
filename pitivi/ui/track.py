@@ -1,5 +1,6 @@
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.trackobject import TrackObject
+from pitivi.timeline.track import TrackEffect
 from pitivi.receiver import receiver, handler
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
 import goocanvas
@@ -100,16 +101,18 @@ class Track(goocanvas.Group, Zoomable):
 
     @handler(track, "track-object-added")
     def _objectAdded(self, unused_timeline, track_object):
-        w = TrackObject(self.app, track_object, self.track, self.timeline)
-        self.widgets[track_object] = w
-        self.add_child(w)
+        if not isinstance(track_object, TrackEffect):
+            w = TrackObject(self.app, track_object, self.track, self.timeline)
+            self.widgets[track_object] = w
+            self.add_child(w)
 
     @handler(track, "track-object-removed")
     def _objectRemoved(self, unused_timeline, track_object):
-        w = self.widgets[track_object]
-        self.remove_child(w)
-        del self.widgets[track_object]
-        Zoomable.removeInstance(w)
+        if not isinstance (track_object, TrackEffect):
+            w = self.widgets[track_object]
+            self.remove_child(w)
+            del self.widgets[track_object]
+            Zoomable.removeInstance(w)
 
     @handler(track, "transition-added")
     def _transitionAdded(self, unused_timeline, transition):

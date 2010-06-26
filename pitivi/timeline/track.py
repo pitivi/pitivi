@@ -708,7 +708,7 @@ class SourceTrackObject(TrackObject):
     numobjs = 0
 
     def _makeGnlObject(self):
-        source = gst.element_factory_make('gnlsource', 
+        source = gst.element_factory_make('gnlsource',
             "gnlsource: " + self.factory.__class__.__name__ +
             str(SourceTrackObject.numobjs))
         SourceTrackObject.numobjs += 1

@@ -149,7 +149,7 @@ class Magician:
 
         for padTmp in pads:
             pad = gst.Pad (padTmp.get())
-            if pad.get_caps() == "ANY": #FIXME, I don't understand that!
+            if pad.get_caps() == "ANY": #FIXME
                 return False
 
             if padTmp.direction == gst.PAD_SRC:
