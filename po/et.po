@@ -1,0 +1,1057 @@
+# Estonian translation for pitivi.
+# Pitivi eesti keele tõlge.
+#
+# Copyright (C) 2010 The GNOME Project.
+# This file is distributed under the same license as the pitivi package.
+#
+# Mattias Põldaru <mahfiaz gmail com>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pitivi master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
+"POT-Creation-Date: 2010-06-22 21:27+0000\n"
+"PO-Revision-Date: 2010-06-27 21:47+0300\n"
+"Last-Translator: Mattias Põldaru <mahfiaz gmail com>\n"
+"Language-Team: Estonian <et@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Create and edit your own movies"
+msgstr "Loo ja muuda oma enda filme"
+
+msgid "Pitivi Video Editor"
+msgstr "Pitivi videoredaktor"
+
+#, python-format
+msgid "%s is already running!"
+msgstr "%s juba töötab!"
+
+#, python-format
+msgid "An instance of %s is already running in this script."
+msgstr "Üks %s instants juba töötab selles skriptis."
+
+msgid "Could not find the GNonLin plugins!"
+msgstr "GNonLin pluginaid ei leitud!"
+
+msgid "Make sure the plugins were installed and are available in the GStreamer plugins path."
+msgstr "Veendu, et pluginad on paigaldatud ja saadaval GStreameri pluginate kataloogis."
+
+msgid "Could not find the autodetect plugins!"
+msgstr "Automaattuvastuse pluginaid ei leitud!"
+
+msgid "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path."
+msgstr "Veendu, et oled paigaldanud paketi gst-plugins-good ning see on saadaval GStreameri pluginate kataloogis."
+
+msgid "PyGTK doesn't have cairo support!"
+msgstr "PyGTK-l puudub cairo tugi!"
+
+msgid "Please use a version of the GTK+ Python bindings built with cairo support."
+msgstr "Kasuta sellist GTK+ Pythoni seondust, mis on kompileeritud cairo toega."
+
+msgid "Could not initiate the video output plugins"
+msgstr "Video väljundpluginaid ei olnud võimalik lähtestada"
+
+msgid "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)"
+msgstr "Veendu, et saadaval on vähemalt üks sobiv video väljundtoru (xvimagesink või ximagesink)"
+
+msgid "Could not initiate the audio output plugins"
+msgstr "Audio väljundpluginaid ei olnud võimalik lähtestada"
+
+msgid "Make sure you have at least one valid audio output sink available (alsasink or osssink)"
+msgstr "Veendu, et saadaval on vähemalt üks sobiv audio väljundtoru (alsasink või osssink)"
+
+msgid "Could not import the cairo Python bindings"
+msgstr "Cairo Pythoni seoste importimine pole võimalik"
+
+msgid "Make sure you have the cairo Python bindings installed"
+msgstr "Veendu, et cairo Pythoni seosed (bindings) on paigaldatud"
+
+msgid "Could not import the libglade Python bindings"
+msgstr "Libglade Pythoni seoseid pole võimalik importida"
+
+msgid "Make sure you have the libglade Python bindings installed"
+msgstr "Veendu, et libglade Pythoni seosed (bindings) on paigaldatud"
+
+msgid "Could not import the goocanvas Python bindings"
+msgstr "Goocancase Pythoni seoseid pole võimalik importida"
+
+msgid "Make sure you have the goocanvas Python bindings installed"
+msgstr "Veendu, et goocanvas'e Pythoni seosed (bindings) on paigaldatud"
+
+#, python-format
+msgid "You do not have a recent enough version of the GTK+ Python bindings (currently %s)"
+msgstr "Sul pole piisavalt värske GTK+ Pythoni seoste versioon (praegune on %s)"
+
+#, python-format
+msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
+msgstr "Paigalda GTK+ Pythoni seosed, mille versioon on suurem või võrdne kui %s"
+
+#, python-format
+msgid "You do not have a recent enough version of the GStreamer Python bindings (currently %s)"
+msgstr "Sul pole piisavalt värske GStreameri Pythoni seoste versioon (praegune on %s)"
+
+#, python-format
+msgid "Install a version of the GStreamer Python bindings greater or equal to %s"
+msgstr "Paigalda GStreameri Pythoni seosed, mille versioon on suurem või võrdne kui %s"
+
+#, python-format
+msgid "You do not have a recent enough version of GStreamer (currently %s)"
+msgstr "Sul pole piisavalt värske GStreameri versioon (praegune on %s)"
+
+#, python-format
+msgid "Install a version of the GStreamer greater or equal to %s"
+msgstr "Paigalda GStreamer, mille versioon on suurem või võrdne kui %s"
+
+#, python-format
+msgid "You do not have a recent enough version of the cairo Python bindings (currently %s)"
+msgstr "Sul pole piisavalt värske cairo Pythoni seoste versioon (praegune on %s)"
+
+#, python-format
+msgid "Install a version of the cairo Python bindings greater or equal to %s"
+msgstr "Paigalda cairo Pythoni seosed, mille versioon on suurem või võrdne kui %s"
+
+#, python-format
+msgid "You do not have a recent enough version of the GNonLin GStreamer plugin (currently %s)"
+msgstr "Sul pole piisavalt värske GNonLin GStreameri plugina versioon (praegune on %s)"
+
+#, python-format
+msgid "Install a version of the GNonLin GStreamer plugin greater or equal to %s"
+msgstr "Paigalda GNonLin GStreameri plugin, mille versioon on suurem või võrdne kui %s"
+
+msgid "Could not import the Zope interface module"
+msgstr "Zope liidese moodulit pole võimalik importida"
+
+msgid "Make sure you have the zope.interface module installed"
+msgstr "Veendu, et zope.interface moodul on paigaldatud"
+
+msgid "Could not import the distutils modules"
+msgstr "Distuils moodulit pole võimalik importida"
+
+msgid "Make sure you have the distutils python module installed"
+msgstr "Veendu, et distutils-i pythoni moodul on paigaldatud"
+
+#, python-format
+msgid ""
+"Missing plugins:\n"
+"%s"
+msgstr ""
+"Puuduvad pluginad:\n"
+"%s"
+
+#. woot, nothing decodable
+msgid "Can not decode file."
+msgstr "Faili ei suudetud dekodeerida."
+
+msgid "The given file does not contain audio, video or picture streams."
+msgstr "Antud fail ei sisalda ei heli-, video- ega pildivoogu."
+
+msgid "Could not establish the duration of the file."
+msgstr "Faili kestust ei suudetud määrata."
+
+msgid "This clip seems to be in a format which cannot be accessed in a random fashion."
+msgstr "Klipp tundub olevat vormingus, mida pole võimalik juhuslikust kohast lugeda."
+
+msgid "Timeout while analyzing file."
+msgstr "Faili analüüsimine võttis liiga kaua."
+
+msgid "Analyzing the file took too long."
+msgstr "Faili analüüsimine võttis liiga kaua aega."
+
+msgid "No available source handler."
+msgstr "Allika käsitsejat pole saadaval."
+
+#, python-format
+msgid "You do not have a GStreamer source element to handle protocol '%s'"
+msgstr "Sul puudub GStreameri lähteelement protokolli '%s' käsitsemiseks."
+
+msgid "Pipeline didn't want to go to PAUSED."
+msgstr "Toru ei tahtnud minna PAUSITUD olekusse."
+
+#, python-format
+msgid "An internal error occurred while analyzing this file: %s"
+msgstr "Järgneva faili analüüsimisel esines sisemine tõrge: %s"
+
+msgid "File contains a redirection to another clip."
+msgstr "Fail sisaldab edasisuunamist teisele klipile."
+
+msgid "PiTiVi currently does not handle redirection files."
+msgstr "PiTiVi veel ei toeta edasisuunavaid faile."
+
+msgid "Pipeline didn't want to go to PLAYING."
+msgstr "Toru ei tahtnud minna ESITAMISE olekusse."
+
+#, python-format
+msgid "There is already a %s instance, please inform the developers by filing a bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr "Üks %s instants juba töötab, teavita sellest arendajaid ning koosta vearaport aadressil http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+
+msgid ""
+"\n"
+"      %prog [PROJECT_FILE]\n"
+"      %prog -i [-a] [MEDIA_FILE]..."
+msgstr ""
+"\n"
+"      %prog [PROJEKTIFAIL]\n"
+"      %prog -i [-a] [MEEDIAFAIL]..."
+
+msgid ""
+"Starts the video editor, optionally loading PROJECT_FILE. If\n"
+"    no project is given, %prog creates a new project.\n"
+"    Alternatively, when -i is specified, arguments are treated as clips to be\n"
+"    imported into the project. If -a is specified, these clips will also be added to\n"
+"    the end of the project timeline."
+msgstr ""
+"Käivitab videoredaktori, soovil avades PROJEKTIFAILI.\n"
+"    Kui ühtegi projekti ei ole antud, loob %prog uue projekti.\n"
+"    Lisaks, kui -i on määratud, koheldakse argumente nagu klippe,\n"
+"    mis tuleb importida projekti. Kui -a on määratud, lisatakse need\n"
+"    klipid projekti ajajoone lõppu."
+
+msgid "Import each MEDIA_FILE into the project."
+msgstr "Impordi kõik MEEDIAFAILID projekti."
+
+msgid "Add each MEDIA_FILE to timeline after importing."
+msgstr "Lisab kõik MEEDIAFAILID pärast importimist ajajoonele."
+
+msgid "Run pitivi in the Python Debugger"
+msgstr "pitivi käivitamine Pythoni silujas"
+
+msgid "Run pitivi with no gui"
+msgstr "pitivi käivitamine ilma graafilise kasutajaliideseta"
+
+msgid "Not a valid project file."
+msgstr "Pole sobiv projektifail."
+
+msgid "Couldn't close current project"
+msgstr "Praegust projekti pole võimalik sulgeda"
+
+msgid "No URI specified."
+msgstr "URI-d pole määratud."
+
+msgid "New Project"
+msgstr "Uus projekt"
+
+msgid "Export Settings\n"
+msgstr "Eksportimise sätted\n"
+
+msgid "Video: "
+msgstr "Video: "
+
+msgid ""
+"\n"
+"Audio: "
+msgstr ""
+"\n"
+"Audio: "
+
+msgid ""
+"\n"
+"Muxer: "
+msgstr ""
+"\n"
+"Mukser: "
+
+#, python-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d tund"
+msgstr[1] "%d tundi"
+
+#, python-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d minut"
+msgstr[1] "%d minutit"
+
+#, python-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d sekund"
+msgstr[1] "%d sekundit"
+
+#. Translators: "non local" means the project is not stored
+#. on a local filesystem
+#, python-format
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s ei suuda veel töötada kaugmasinas asuvate projektidega "
+
+msgid "PiTiVi Native (XML)"
+msgstr "PiTiVi omavorming (XML)"
+
+msgid "Playlist format"
+msgstr "Esitusnimekirja vorming"
+
+msgid "Name"
+msgstr "Nimi"
+
+msgid "Description"
+msgstr "Kirjeldus"
+
+msgid "Audio Capture Device:"
+msgstr "Helisalvestusseade:"
+
+msgid "No device available"
+msgstr "Ühtegi seade pole saadaval"
+
+msgid "Video Capture Device:"
+msgstr "Videosalvestusseade:"
+
+#, python-format
+msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
+msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[0] "<b>Heli:</b> %d kanal sagedusel %d <i>Hz</i> (%d <i>bitti</i>)"
+msgstr[1] "<b>Heli:</b> %d kanalit sagedusel %d <i>Hz</i> (%d <i>bitti</i>)"
+
+#, python-format
+msgid "<b>Unknown Audio format:</b> %s"
+msgstr "<b>Tundmatu helivorming:</b> %s"
+
+#, python-format
+msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+msgstr "<b>Video:</b> %d x %d <i>pikslit</i> kiirusel %.2f<i>fps</i>"
+
+#, python-format
+msgid "<b>Image:</b> %d x %d <i>pixels</i>"
+msgstr "<b>Pilt:</b> %d x %d <i>pikslit</i>"
+
+#, python-format
+msgid "<b>Unknown Video format:</b> %s"
+msgstr "<b>Tundmatu videovorming:</b> %s"
+
+#, python-format
+msgid "<b>Text:</b> %s"
+msgstr "<b>Tekst:</b> %s"
+
+#, python-format
+msgid "Properties For: %d object"
+msgid_plural "Properties For: %d objects"
+msgstr[0] "Mille omadused: %d objekti"
+msgstr[1] "Mille omadused: %d objekti"
+
+msgid "No properties..."
+msgstr "Omadused puuduvad..."
+
+msgid "Implement Me"
+msgstr "Vajab koostamist"
+
+msgid "Choose..."
+msgstr "Vali..."
+
+msgid "<b>Author:</b>"
+msgstr "<b>Autor:</b>"
+
+msgid "<b>Description:</b>"
+msgstr "<b>Kirjeldus:</b>"
+
+msgid "<b>Plugin Name</b>"
+msgstr "<b>Plugina nimi</b>"
+
+msgid "<b>Properties</b>"
+msgstr "<b>Omadused</b>"
+
+msgid "Author"
+msgstr "Autor"
+
+msgid "Properties for <element>"
+msgstr "Elemendi <element> omadused"
+
+msgid "<b>Audio:</b>"
+msgstr "<b>Heli:</b>"
+
+msgid "<b>Nothing yet</b>"
+msgstr "<b>Veel puudu</b>"
+
+msgid "<b>Settings</b>"
+msgstr "<b>Sätted</b>"
+
+msgid "<b>Video:</b>"
+msgstr "<b>Video:</b>"
+
+msgid "Choose File"
+msgstr "Faili valimine"
+
+msgid "Modify"
+msgstr "Muuda"
+
+msgid "Output file:"
+msgstr "Väljundfail:"
+
+msgid "Please choose an output file"
+msgstr "Vali väljundfail"
+
+msgid "Render project"
+msgstr "Projekti renderdamine"
+
+msgid "Choose file to render to"
+msgstr "Renderduse sihtfaili valimine"
+
+#, python-format
+msgid "About %s left"
+msgstr "Umbes %s jäänud"
+
+msgid "Rendering"
+msgstr "Renderdamine"
+
+msgid "Rendering Complete"
+msgstr "Renderdamine lõpetatud"
+
+msgid ""
+"12 fps\n"
+"23.97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29.97 fps\n"
+"30 fps\n"
+"60 fps"
+msgstr ""
+"12 fps\n"
+"23.97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29.97 fps\n"
+"30 fps\n"
+"60 fps"
+
+msgid ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+msgstr ""
+"8 bitine\n"
+"16 bitine\n"
+"24 bitine\n"
+"32 bitine"
+
+msgid ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+msgstr ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+
+msgid "<b>Audio Output</b>"
+msgstr "<b>Heliväljund</b>"
+
+msgid "<b>Export to</b>"
+msgstr "<b>Ekspordi kuhu</b>"
+
+msgid "<b>Video Output</b>"
+msgstr "<b>Videoväljund</b>"
+
+msgid "Audio Codec"
+msgstr "Helikoodek"
+
+msgid "Audio Codec:"
+msgstr "Helikoodek:"
+
+msgid "Audio Preset"
+msgstr "Helimall"
+
+msgid "Channels:"
+msgstr "Kanalid:"
+
+msgid "Container:"
+msgstr "Konteiner:"
+
+msgid "Depth:"
+msgstr "Sügavus:"
+
+msgid "Frame rate:"
+msgstr "Kaadrisagedus:"
+
+msgid "Height:"
+msgstr "Kõrgus:"
+
+msgid ""
+"Mono (1)\n"
+"Stereo (2)"
+msgstr ""
+"Mono (1)\n"
+"Stereo (2)"
+
+msgid "Muxer"
+msgstr "Mukser"
+
+msgid "Rate:"
+msgstr "Kiirus:"
+
+msgid "Settings"
+msgstr "Sätted"
+
+msgid "Video Codec"
+msgstr "Videokoodek"
+
+msgid "Video Codec:"
+msgstr "Videokoodek:"
+
+msgid "Video Preset"
+msgstr "Videomall"
+
+msgid "Width:"
+msgstr "Laius:"
+
+msgid "576p (PAL DV/DVD)"
+msgstr "576p (PAL DV/DVD)"
+
+msgid "480p (NTSC DV/DVD)"
+msgstr "480p (NTSC DV/DVD)"
+
+msgid "720p HD"
+msgstr "720p HD"
+
+msgid "1080p full HD"
+msgstr "1080p täis-HD"
+
+msgid "QVGA (320x240)"
+msgstr "QVGA (320x240)"
+
+msgid "VGA (640x480)"
+msgstr "VGA (640x480)"
+
+msgid "SVGA (800x600)"
+msgstr "SVGA (800x600)"
+
+msgid "XGA (1024x768)"
+msgstr "XGA (1024x768)"
+
+#. i18n: string for custom video width/height/framerate settings
+#. i18n: string for custom audio rate/depth/channels settings
+msgid "Custom"
+msgstr "Kohandatud"
+
+msgid "Raw Video"
+msgstr "Toorvideo"
+
+msgid "Raw Audio"
+msgstr "Tooraudio"
+
+msgid "Export settings"
+msgstr "Eksportimise sätted"
+
+msgid "Unknown reason"
+msgstr "Teadmata põhjus"
+
+msgid "URI:"
+msgstr "URI:"
+
+msgid "Problem:"
+msgstr "Probleem:"
+
+msgid "Extra information:"
+msgstr "Lisateave:"
+
+#. set title and frame label
+#, python-format
+msgid "Properties for %s"
+msgstr "%s omadused"
+
+msgid "Render"
+msgstr "Renderda"
+
+msgid "Split"
+msgstr "Tükelda"
+
+msgid "Unlink"
+msgstr "Eemalda link"
+
+#. Translators: This is an action, the title of a button
+msgid "Link"
+msgstr "Lingi"
+
+msgid "Ungroup"
+msgstr "Eemalda grupist"
+
+#. Translators: This is an action, the title of a button
+msgid "Group"
+msgstr "Grupeeri"
+
+msgid "Start Playback"
+msgstr "Esituse alustamine"
+
+msgid "Stop Playback"
+msgstr "Esituse lõpetamine"
+
+msgid "Loop over selected area"
+msgstr "Valitud lõigu kordus"
+
+msgid "Create a new project"
+msgstr "Uue projekti loomine"
+
+msgid "Open an existing project"
+msgstr "Olemasoleva projekti avamine"
+
+msgid "Save the current project"
+msgstr "Praeguse projekti salvestamine"
+
+msgid "Reload the current project"
+msgstr "Praeguse projekti uuesti avamine"
+
+msgid "Project Settings"
+msgstr "Projekti sätted"
+
+msgid "Edit the project settings"
+msgstr "Projekti sätete muutmine"
+
+msgid "_Render project"
+msgstr "_Projekti renderdamine"
+
+msgid "_Undo"
+msgstr "_Võta tagasi"
+
+msgid "Undo the last operation"
+msgstr "Viimase tegevuse tagasivõtmine"
+
+msgid "_Redo"
+msgstr "_Tee uuesti"
+
+msgid "Redo the last operation that was undone"
+msgstr "Viimati tagasivõetud tegevuse uuesti sooritamine"
+
+msgid "_Plugins..."
+msgstr "_Pluginad..."
+
+msgid "Manage plugins"
+msgstr "Pluginate haldus"
+
+msgid "_Preferences"
+msgstr "_Eelistused"
+
+msgid "Import from _Webcam..."
+msgstr "Importimine _veebikaamerast..."
+
+msgid "Import Camera stream"
+msgstr "Kaameravoo importimine"
+
+msgid "_Make screencast..."
+msgstr "_Ekraanivideo tegemine..."
+
+msgid "Capture the desktop"
+msgstr "Töölaua lindistamine"
+
+msgid "_Capture Network Stream..."
+msgstr "_Võrguvoo lindistamine..."
+
+msgid "Capture Network Stream"
+msgstr "Võrguvoo lindistamine"
+
+#, python-format
+msgid "Information about %s"
+msgstr "Teave %s kohta"
+
+msgid "_File"
+msgstr "_Fail"
+
+msgid "_Edit"
+msgstr "_Redaktor"
+
+msgid "_View"
+msgstr "_Vaade"
+
+msgid "_Project"
+msgstr "_Projekt"
+
+msgid "_Timeline"
+msgstr "_Ajajoon"
+
+msgid "Previe_w"
+msgstr "_Eelvaatlus"
+
+msgid "Loop"
+msgstr "Kordus"
+
+msgid "_Help"
+msgstr "A_bi"
+
+msgid "View the main window on the whole screen"
+msgstr "Peaakna kuvamine üle ekraani"
+
+msgid "Main Toolbar"
+msgstr "Peamine tööriistariba"
+
+msgid "Timeline Toolbar"
+msgstr "Ajajoone tööriistariba"
+
+msgid "Media Library"
+msgstr "Meediakogu"
+
+msgid "Open File..."
+msgstr "Faili avamine..."
+
+msgid "All Supported Formats"
+msgstr "Kõik toetatud vormingud"
+
+msgid "Contributors:"
+msgstr "Kaastöölised:"
+
+msgid ""
+"GNU Lesser General Public License\n"
+"See http://www.gnu.org/copyleft/lesser.html for more details"
+msgstr ""
+
+msgid "Close without saving"
+msgstr "Sulge ilma salvestamata"
+
+msgid "Save changes to the current project before closing?"
+msgstr "Kas see projekt salvestada enne sulgemist?"
+
+msgid "If you don't save some of your changes will be lost"
+msgstr "Kui sa ei salvesta, lähevad mõned tehtud muudatused kaotsi"
+
+msgid "Do you want to reload current project?"
+msgstr "Kas tahad praeguse projekti uuesti avada?"
+
+msgid "Revert to saved project"
+msgstr "Salvestatud versiooni taastamine"
+
+msgid "All unsaved changes will be lost."
+msgstr "Kõik salvestamata muudatused lähevad kaotsi."
+
+#, python-format
+msgid "PiTiVi is unable to load file \"%s\""
+msgstr "PiTiVi ei suuda laadida faili \"%s\""
+
+msgid "Error Loading File"
+msgstr "Tõrge faili laadimisel"
+
+msgid "Locate missing file..."
+msgstr "Puuduva faili asukoha määramine..."
+
+msgid "The following file has moved, please tell PiTiVi where to find it."
+msgstr "Järgneva faili asukoht on muutunud, palun näita selle faili uus asukoht."
+
+msgid "Duration:"
+msgstr "Kestus:"
+
+msgid "Save As..."
+msgstr "Salvesta kui..."
+
+msgid "Untitled.xptv"
+msgstr "Nimetu.xptv"
+
+msgid "Detect Automatically"
+msgstr "Automaatne tuvastus"
+
+msgid "Address"
+msgstr "Aadress"
+
+msgid "Capture"
+msgstr "Lindista"
+
+msgid "Capture Stream from URI"
+msgstr "URI-st voo lindistamine"
+
+msgid "Capture network stream"
+msgstr "Võrguvoo lindistamine"
+
+msgid "Close"
+msgstr "Sulge"
+
+msgid "Customize:"
+msgstr "Kohanda:"
+
+msgid "HTTP / HTTPS"
+msgstr "HTTP / HTTPS"
+
+msgid "Network stream video"
+msgstr "Video võrguvoog"
+
+msgid "Other protocol"
+msgstr "Muu protokoll"
+
+msgid "Port"
+msgstr "Port"
+
+msgid "Preview"
+msgstr "Eelvaatlus"
+
+msgid "Preview Stream from URI"
+msgstr "URI-lt pärineva voo eelvaatlus"
+
+msgid "Protocol"
+msgstr "Protokoll"
+
+msgid "RTSP"
+msgstr "RTSP"
+
+msgid "UDP / RDP"
+msgstr "UDP / RDP"
+
+msgid "http://"
+msgstr "http://"
+
+msgid "All categories"
+msgstr "Kõik kategooriad"
+
+msgid "Plugin manager"
+msgstr "Pluginate haldur"
+
+msgid "Search:"
+msgstr "Otsing:"
+
+msgid "Show:"
+msgstr "Kuva:"
+
+msgid ""
+"You may drag plugin files into the list to install them,\n"
+"or type text to search for a specific plugin."
+msgstr ""
+"Pluginate paigaldamiseks lohista need siia\n"
+"või kindla plugina otsimiseks sisesta otsisõne."
+
+msgid "Enabled"
+msgstr "Lubatud"
+
+msgid "Plugin"
+msgstr "Plugin"
+
+msgid "Category"
+msgstr "Kategooria"
+
+msgid "Are you sure you want to remove the selected plugins?"
+msgstr "Kas oled kindel, et tahad valitud pluginad eemaldada?"
+
+msgid "Confirm remove operation"
+msgstr "Eemaldamise kinnitus"
+
+#, python-format
+msgid "Cannot remove %s"
+msgstr "%s ei suudetud eemaldada"
+
+msgid "Update the existing plugin?"
+msgstr "Kas uuendada olemasolevat pluginat?"
+
+#, python-format
+msgid ""
+"This plugin is already installed in your system.\n"
+"If you agree, version %(v1)s will be replaced with version %(v2)s"
+msgstr ""
+"See plugin on juba sinu arvutisse paigaldatud.\n"
+"Kui nõustud, asendatakse versioon %(v1)s versiooniga %(v2)s"
+
+msgid "Duplicate plugin found"
+msgstr "Leiti topeltplugin"
+
+#, python-format
+msgid ""
+"Cannot install %s\n"
+"The file is not a valid plugin"
+msgstr ""
+"%s pole võimalik paigaldada\n"
+"See fail ei ole sobiv plugin"
+
+msgid "Preferences"
+msgstr "Eelistused"
+
+msgid "Section"
+msgstr "Sektsioon"
+
+#. revert, close buttons
+msgid "Reset to Factory Settings"
+msgstr "Taasta tehasesätted"
+
+msgid "Revert"
+msgstr "Võta tagasi"
+
+msgid "Some changes will not take effect until you restart PiTiVi"
+msgstr "Mõned muudatused jõustuvad alles pärast PiTiVi taaskäivitust!"
+
+msgid "Reset"
+msgstr "Taaskäivita"
+
+msgid "Appearance"
+msgstr "Välimus"
+
+msgid "Thumbnail Gap (pixels)"
+msgstr "Pisipiltide vahe (pikslites)"
+
+msgid "The gap between thumbnails"
+msgstr "Pisipiltide vahele jääv ruum"
+
+msgid "Show Thumbnails (Video)"
+msgstr "Pisipilte näidatakse (video)"
+
+msgid "Show Thumbnails on Video Clips"
+msgstr "Videoklippidel näidatakse pisipilte"
+
+msgid "Show Waveforms (Audio)"
+msgstr "Lainekuju näidatakse (audio)"
+
+msgid "Show Waveforms on Audio Clips"
+msgstr "Heliklippidel näidatakse lainekuju graafikut"
+
+msgid "A short description of your project."
+msgstr "Projekti lühikirjeldus."
+
+msgid "Description:"
+msgstr "Kirjeldus:"
+
+msgid "Name:"
+msgstr "Nimi:"
+
+msgid "The name of your project."
+msgstr "Projekti nimi."
+
+msgid "No Objects Selected"
+msgstr "Ühtegi objekti pole valitud"
+
+msgid "Screencast"
+msgstr "Ekraaniedastus"
+
+msgid "Screencast Desktop"
+msgstr "Töölaua ekraani edastus"
+
+msgid "Start Istanbul"
+msgstr "Istanbul-i käivitamine"
+
+msgid "Import clips..."
+msgstr "Klippide importimine..."
+
+msgid "Remove Clip"
+msgstr "Klipi eemaldamine"
+
+msgid "Play Clip"
+msgstr "Klipi esitamine"
+
+msgid "Icon"
+msgstr "Ikoon"
+
+msgid "Information"
+msgstr "Teave"
+
+msgid "Duration"
+msgstr "Kestus"
+
+msgid "<span size='x-large'>Import your clips by dragging them here or by using the buttons above.</span>"
+msgstr "<span size='x-large'>Impordi klipid lohistades need siia klõpsates ülal asuval nupul.</span>"
+
+msgid "_Import clips..."
+msgstr "_Impordi klippe..."
+
+msgid "Import clips to use"
+msgstr "Klippide importimine"
+
+msgid "Import _folder of clips..."
+msgstr "Klippide _kausta importimine..."
+
+msgid "Import folder of clips to use"
+msgstr "Klippide kataloogi importimine"
+
+msgid "_Remove from project"
+msgstr "_Eemalda projektist"
+
+msgid "Insert at _end of timeline"
+msgstr "Sisesta ajajoone _lõppu"
+
+msgid "Import a folder"
+msgstr "Kausta importimine"
+
+msgid "Import a clip"
+msgstr "Klipi importimine"
+
+msgid "Close after importing files"
+msgstr "Pärast failide importimist rakendus sulgub"
+
+msgid "Importing clips..."
+msgstr "Klippide importimine..."
+
+msgid "Error(s) occurred while importing"
+msgstr "Importimisel esines tõrge (tõrked)"
+
+msgid "An error occurred while importing"
+msgstr "Importimisel esines tõrge"
+
+msgid "Error while analyzing files"
+msgstr "Viga failide analüüsimisel"
+
+msgid "The following files can not be used with PiTiVi."
+msgstr "Järgnevaid faile pole võimalik PiTiVi-ga kasutada."
+
+msgid "Error while analyzing a file"
+msgstr "Viga faili analüüsimisel"
+
+msgid "The following file can not be used with PiTiVi."
+msgstr "PiTiVi ei suuda kasutada järgnevat faili."
+
+#. tooltip text for toolbar
+msgid "Delete Selected"
+msgstr "Valiku kustutamine"
+
+msgid "Split clip at playhead position"
+msgstr "Klipi tükeldamine esitusejärje kohalt"
+
+msgid "Zoom In"
+msgstr "Suurenda"
+
+msgid "Zoom Out"
+msgstr "Vähenda"
+
+msgid "Break links between clips"
+msgstr "Klippide seoste murdmine"
+
+msgid "Link together arbitrary clips"
+msgstr "Klippide seostamine"
+
+msgid "Ungroup clips"
+msgstr "Klippide grupi lõhkumine"
+
+msgid "Group clips"
+msgstr "Klippide grupeerimine"
+
+msgid "One or more GStreamer errors has occured!"
+msgstr "Esines vähemalt üks GStreameri viga!"
+
+msgid "Error List"
+msgstr "Tõrgete loend"
+
+msgid "The following errors have been reported:"
+msgstr "Raporteeriti järgnevatest tõrgetest:"
+
+msgid "Zoom Timeline"
+msgstr "Ajajoone suurendus"
+
+msgid "Behavior"
+msgstr "Käitumine"
+
+msgid "Snap Distance (pixels)"
+msgstr "Tõmbumise kaugus (pikslites)"
+
+msgid "Threshold distance (in pixels) used for all snapping operations"
+msgstr "Igat liiki tõmbumiste rakendumise lävi pikslites"
+
+msgid "<b>Text:</b>"
+msgstr "<b>Tekst:</b>"
+
+msgid "Clip Background (Video)"
+msgstr "Klipi taust (video)"
+
+msgid "The background color for clips in video tracks."
+msgstr "Videoraja klipi tausta värvus."
+
+msgid "Clip Background (Audio)"
+msgstr "Klipi taust (audio)"
+
+msgid "The background color for clips in audio tracks."
+msgstr "Heliraja klipi tausta värvus."
+
+msgid "Selection Color"
+msgstr "Valiku värvus"
+
+msgid "Selected clips will be tinted with this color."
+msgstr "Valitud klippe näidatakse selle värviga."
+
+msgid "Clip Font"
+msgstr "Klipi kirjatüüp"
+
+msgid "The font to use for clip titles"
+msgstr "Kirjatüüp, mida kasutatakse klipi pealkirja jaoks"
