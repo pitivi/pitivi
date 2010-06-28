@@ -76,6 +76,8 @@ class EffectList(gtk.VBox, Loggable):
         self._dragY = 0
         self._ignoreRelease = False
 
+        self.set_spacing(SPACING)
+
         #Searchbox and combobox
         filters = gtk.HBox()
         filters.set_spacing(SPACING)
