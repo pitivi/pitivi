@@ -93,8 +93,8 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.bbox.pack_start(self.b_action, expand=False)
         
         #Scale for position handling
-        adj = gtk.Adjustment(0.0, 0.00, 100.0, 0.1, 10.0, 10.0)
-        self.seeker = gtk.HScale(adj)
+        self.pos_adj = gtk.Adjustment()
+        self.seeker = gtk.HScale(self.pos_adj)
         self.seeker.set_update_policy(gtk.UPDATE_DISCONTINUOUS)
         self.seeker.connect('button-press-event', self._on_seeker_press)
         self.seeker.connect('button-release-event', self._on_seeker_press)
@@ -164,7 +164,6 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.title.set_markup('<b>'+ factory_name(factory) + '</b>') 
         video = factory.getOutputStreams(VideoStream)
         if video:
-            print type(factory)
             video = video[0]
             if type(factory) == PictureFileSourceFactory:
                 self.current_preview_type = 'image'
@@ -193,6 +192,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.player.set_property("uri", self.current_selected_uri) 
                 self.player.set_state(gst.STATE_PAUSED)
                 self.clip_duration = factory.duration
+                self.pos_adj.upper = self.clip_duration
                 w, h = self.__get_best_size(video.par*video.width, video.height)
                 self.original_dims = (w, h)
                 self.preview_video.set_size_request(w, h)
@@ -211,8 +211,7 @@ class PreviewWidget(gtk.VBox, Loggable):
             audio = factory.getOutputStreams(AudioStream)
             audio = audio[0]
             self.clip_duration = factory.duration
-            adj = gtk.Adjustment(0, 0, 100, gst.SECOND, 0, 0)
-            self.seeker.set_adjustment(adj)
+            self.pos_adj.upper = self.clip_duration
             self.preview_image.set_from_file(DEFAULT_AUDIO_IMAGE)
             self.preview_image.show()
             desc = "<b>Channels:</b> %d  at %d <i>Hz</i> \n" + "<b>Duration</b>: %s \n" 
@@ -255,17 +254,15 @@ class PreviewWidget(gtk.VBox, Loggable):
                 
         elif event.type == gtk.gdk.BUTTON_RELEASE:
             self.countinuous_seek = False
-            value = widget.get_value() 
-            time = value * (self.clip_duration / 100) 
-            self.player.seek_simple(self.time_format, gst.SEEK_FLAG_FLUSH, time)
+            value = long(widget.get_value()) 
+            self.player.seek_simple(self.time_format, gst.SEEK_FLAG_FLUSH, value)
             if self.is_playing:
                 self.player.set_state(gst.STATE_PLAYING)
 
     def _on_motion_notify(self, widget, event):
         if self.countinuous_seek:
             value = widget.get_value() 
-            time = value * (self.clip_duration / 100) 
-            self.player.seek_simple(self.time_format, gst.SEEK_FLAG_FLUSH, time)
+            self.player.seek_simple(self.time_format, gst.SEEK_FLAG_FLUSH, value)
             
 
     def _on_bus_message(self, bus, message):
@@ -273,8 +270,7 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.player.set_state(gst.STATE_NULL)
             self.is_playing = False
             self.b_action.set_stock_id(gtk.STOCK_MEDIA_PLAY)
-            adj = gtk.Adjustment(0, 0.00, 100.0, 0.1, 10.0, 10.0)
-            self.seeker.set_adjustment(adj)
+            self.pos_adj.set_value(0)
         elif message.type == gst.MESSAGE_ERROR:
             self.player.set_state(gst.STATE_NULL)
             self.is_playing = False
@@ -285,9 +281,7 @@ class PreviewWidget(gtk.VBox, Loggable):
     def _update_position(self, *args):
         if self.is_playing:
             curr_pos = self.player.query_position(self.time_format, None)[0]
-            perc = (float(curr_pos)/float(self.clip_duration))*100.0
-            adj = gtk.Adjustment(perc, 0.00, 100.0, 0.1, 10.0, 10.0)
-            self.seeker.set_adjustment(adj)   
+            self.pos_adj.set_value(long(curr_pos))
         return self.is_playing
 
 
