@@ -77,8 +77,6 @@ class TimelineObject(Signallable, Loggable):
     @type selected: L{bool}
     @ivar track_objects: The Track objects controlled.
     @type track_objects: list of L{TrackObject}
-    @ivar effects: Effects that are applied
-    @type effect: list of L{TimelineObject}
     @ivar timeline: The L{Timeline} to which this object belongs
     @type timeline: L{Timeline}
     """
@@ -92,8 +90,6 @@ class TimelineObject(Signallable, Loggable):
         'selected-changed' : ['state'],
         'track-object-added': ["track_object"],
         'track-object-removed': ["track_object"],
-        'effect-added': ["effect_object"],
-        'effect-removed': ["effect_object"],
     }
 
     DEFAULT_START = 0
@@ -106,22 +102,17 @@ class TimelineObject(Signallable, Loggable):
         Loggable.__init__(self)
         self.factory = factory
         self.track_objects = []
-        self.effects = []
         self.timeline = None
         self.link = None
         self._selected = False
 
-    def copy(self, copy_track_objects=True, copy_effects=True):
+    def copy(self, copy_track_objects=True):
         cls = self.__class__
         other = cls(self.factory)
         other.track_objects = []
         if copy_track_objects:
             for track_object in self.track_objects:
                 other.addTrackObject(track_object.copy())
-        other.effect = []
-        if copy_effects:
-            for effect in self.effects:
-                other.addEffect(effect.copy())
 
         return other
 
@@ -163,9 +154,6 @@ class TimelineObject(Signallable, Loggable):
 
         for track_object in self.track_objects:
             track_object.setObjectStart(position)
-
-        for effect in self.effects:
-            effect.setStart(position)
 
         self.emit('start-changed', position)
 
@@ -435,39 +423,6 @@ class TimelineObject(Signallable, Loggable):
         start_insort_right(self.track_objects, obj)
 
         self.emit("track-object-added", obj)
-
-    def addEffect(self, obj):
-        """
-        Add the given C{TimelineObject} to the list of applied effects.
-
-        @param obj: The effect object to add
-        @type obj: C{TimelineObject}
-        @raises TimelineError: If the provided L{TimelineObject} is already applied to
-        this L{TimelineObject}
-        """
-        if obj in self.effects:
-            raise TimelineError()
-
-        self.effects.append(obj)
-
-        self.emit("effect-added", obj)
-
-    def removeEffect(self, obj):
-        """
-        Remove the given C{TimelineObject} to the list of applied effects.
-
-        @param obj: The effect object to add
-        @type obj: C{TimelineObject}
-        @raises TimelineError: If the provided L{TimelineObject} is not applied to
-        this L{TimelineObject}
-        """
-
-        if obj not in self.effects:
-            raise TimelineError()
-
-        self.effects.remove(obj)
-
-        self.emit("effect-removed", obj)
 
     def removeTrackObject(self, obj):
         """
@@ -960,7 +915,7 @@ class EditingContext(object):
     SLIP_SLIDE = 3
 
     """Encapsulates interactive editing.
-    
+
     This is the base class for interactive editing contexts.
     """
 
@@ -1538,7 +1493,6 @@ class Timeline(Signallable, Loggable):
         self.dead_band = 10
         self.edges = TimelineEdges()
         self.property_trackers = {}
-        self.source_to_add_effect = None
 
     def addTrack(self, track):
         """
@@ -1722,13 +1676,14 @@ class Timeline(Signallable, Loggable):
         self.addTimelineObject(timeline_object)
         return timeline_object
 
-    def addEffectFactory(self, factory, time, priority):
+    def addEffectFactory(self, factory, start=0):
         """
         Creates a TimelineObject for the given EffectFactory and adds it to the timeline.
 
         @param factory: The EffectFactory to add.
         @type factory: L{EffectFactory}
-        @param factory: The EffectFactory to add.
+        @ivar start: The position of the effect on a timeline (nanoseconds)
+        @type start: L{long}
         @raises TimelineError: if the factory doesn't have input or output streams
         """
         self.debug("factory:%r", factory)
@@ -1744,9 +1699,6 @@ class Timeline(Signallable, Loggable):
         input_stream = input_stream[0]
 
         track = self.getEffectTrack(factory)
-
-        timeline_objects = self.getSourceToAddEffectTo(time, priority)
-
         if track is None:
           raise TimelineError()
 
@@ -1757,16 +1709,60 @@ class Timeline(Signallable, Loggable):
 
         self.addTimelineObject(timeline_object)
 
-        start = min([obj.start for obj in timeline_objects])
-        end = max([obj.duration + obj.start for obj in timeline_objects])
-
         timeline_object.start = start
-        timeline_object.setDuration(end-start)
-
-        for obj in timeline_objects:
-            obj.addEffect(timeline_object)
+        timeline_object.setDuration(track.duration - start)
 
         return timeline_object
+
+    def addEffectFactoryOnObject(self, factory, time, priority):
+        """
+        Add effectTraks corresponding to the effect from the factory to the corresponding 
+        L{TimelineObject}s on the timeline
+
+        @param factory: The EffectFactory to add.
+        @type factory: L{EffectFactory}
+        @param time: Where the effect should be added, if time = -1, we add the effect 
+                     to the whole layer
+        @type time: C{int}
+        @priority: An aproximation of the clip we want the effect to be added to.
+        @type priority: C{int}
+        @raises TimelineError: if the factory doesn't have input or output streams
+        @returns: A list of L{TimelineObject}, L{TrackObject} tuples
+        """
+        self.debug("factory:%r", factory)
+
+        output_stream = factory.getOutputStreams()
+        if not output_stream:
+            raise TimelineError()
+        output_stream = output_stream[0]
+
+        input_stream = factory.getInputStreams()
+        if not input_stream:
+            raise TimelineError()
+        input_stream = input_stream[0]
+
+        track = self.getEffectTrack(factory)
+        if track is None:
+          raise TimelineError()
+
+        #try:
+        listTimelineObjectTrackObject = []
+        track_object = TrackEffect(factory, input_stream)
+        track_object.makeBin()
+        timeline_objects = self.getObjsToAddEffectTo(time, priority)
+        for obj in timeline_objects:
+            copy_track_obj = track_object.copy()
+            copy_track_obj.makeBin()
+            copy_track_obj.track = track
+            copy_track_obj.start = obj.start
+            copy_track_obj.duration = obj.duration
+            obj.addTrackObject(copy_track_obj)
+            listTimelineObjectTrackObject.append((obj, copy_track_obj))
+        #    del(track_object)
+        #except:
+        #    return None
+
+        return listTimelineObjectTrackObject
 
     def getEffectTrack(self, factory):
         return [track for track in self.tracks if type (track.stream) == type(factory.input_streams[0])][0]
@@ -1999,6 +1995,7 @@ class Timeline(Signallable, Loggable):
         """
         Unblock internal updates. Use this after calling L{disableUpdates}.
         """
+
         for track in self.tracks:
             track.enableUpdates()
 
@@ -2108,16 +2105,17 @@ class Timeline(Signallable, Loggable):
         keyframe_positions.sort()
         return keyframe_positions
 
-    def getSourceToAddEffectTo(self, point, priority):
+    def getObjsToAddEffectTo(self, point, priority):
         timeline_objects = []
         if point == -1:
-            #We should return all objects from the layer
-            pass
-
-        for obj in self.timeline_objects:
-            if (obj.start <= point and
+            for obj in self.timeline_objects:
+                if obj.priority == priority:
+                    timeline_objects.append(obj)
+        else:
+            for obj in self.timeline_objects:
+                if (obj.start <= point and
                     point <= (obj.start + obj.duration) and\
                     obj.priority == priority):
-                timeline_objects.append(obj)
-        print "Timeline objects: %s, priority: %s" %(timeline_objects, priority)
+                    timeline_objects.append(obj)
+
         return timeline_objects

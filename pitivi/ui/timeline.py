@@ -45,6 +45,9 @@ from pitivi.ui.curve import Curve
 
 from pitivi.factories.operation import EffectFactory
 
+DND_EFFECT_LIST =[[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
+                  [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]
+
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
 SPLIT = _("Split clip at playhead position")
@@ -210,6 +213,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ui_manager = ui_manager
         self.app = instance
         self._temp_objects = None
+        self._temp_effect = None
         self._factories = None
         self._finish_drag = False
         self._position = 0
@@ -409,9 +413,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.warning("self._factories:%r, self._temp_objects:%r",
                      not not self._factories,
                      not not self._temp_objects)
+
         if self._factories is None:
-            if  context.targets in [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
-                                    [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]:
+            if  context.targets in DND_EFFECT_LIST:
                 atom = gtk.gdk.atom_intern(dnd.EFFECT_TUPLE[0])
             else:
                 atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
@@ -419,16 +423,27 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.drag_get_data(context, atom, timestamp)
             self.drag_highlight()
         else:
-            # actual drag-and-drop
-            if not self._temp_objects:
-                self.timeline.disableUpdates()
-                self._add_temp_source(x,y)
-                focus = self._temp_objects[0]
-                self._move_context = MoveContext(self.timeline,
-                        focus, set(self._temp_objects[1:]))
-            if  context.targets not in [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
-                                    [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]:
-                self._move_temp_source(self.hadj.props.value + x, y)
+            if  context.targets in DND_EFFECT_LIST:
+                priority = y / (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
+                if self._temp_effect:
+                    #We change the TimelineObject to add the effect to when needed
+                    tmp_timeline_objs = [obj[0] for obj in self._temp_effect]
+                    if self.timeline.getObjsToAddEffectTo(self.pixelToNs(x), priority) != tmp_timeline_objs:
+                        try:
+                            for timeline_obj, track_obj in self._temp_effect:
+                                timeline_obj.removeTrackObject(track_obj)
+                        finally:
+                            self._addEffect(x,y)
+                else:
+                    self._addEffect(x,y)
+            else:
+                if not self._temp_objects:
+                    self.timeline.disableUpdates()
+                    self._add_temp_source()
+                    focus = self._temp_objects[0]
+                    self._move_context = MoveContext(self.timeline,
+                            focus, set(self._temp_objects[1:]))
+                    self._move_temp_source(self.hadj.props.value + x, y)
         return True
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
@@ -438,29 +453,45 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     self.timeline.removeTimelineObject(obj, deep=True)
             finally:
                 self._temp_objects = None
+        elif self._temp_effect:
+            try:
+                for timeline_obj, track_obj in self._temp_effect:
+                    timeline_obj.removeTrackObject(track_obj)
+            finally:
+                self._temp_effect = None
+
         self.drag_unhighlight()
         self.timeline.enableUpdates()
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
-        self.app.action_log.begin("add clip")
-        self.timeline.disableUpdates()
-        self._add_temp_source()
-        focus = self._temp_objects[0]
-        self._move_context = MoveContext(self.timeline,
-                focus, set(self._temp_objects[1:]))
+        if  context.targets not in DND_EFFECT_LIST:
+            self.app.action_log.begin("add clip")
+            self.timeline.disableUpdates()
 
-        if  context.targets not in [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
-                                    [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]:
+            self._add_temp_source()
+            focus = self._temp_objects[0]
+            self._move_context = MoveContext(self.timeline,
+                                             focus, set(self._temp_objects[1:]))
             self._move_temp_source(self.hadj.props.value + x, y)
+            self._move_context.finish()
+            self.app.action_log.commit()
+            context.drop_finish(True, timestamp)
+            self._factories = None
+            self._temp_objects = None
+            self.app.current.seeker.seek(self._position)
 
-        self._move_context.finish()
-        self.timeline.enableUpdates()
-        self.app.action_log.commit()
-        context.drop_finish(True, timestamp)
-        self._factories = None
-        self._temp_objects = None
-        self.app.current.seeker.seek(self._position)
-        return True
+            return True
+        elif context.targets in DND_EFFECT_LIST:
+            self.app.action_log.begin("add effect")
+            self._addEffect(x,y)
+            self._factories = None
+            self._temp_effect = None
+            self.app.current.seeker.seek(self._position) #FIXME
+            context.drop_finish(True, timestamp)
+
+            return True
+
+        return False
 
     def _dragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
@@ -487,14 +518,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
         return True
 
-    def _add_temp_source(self, x, y):
-        if isinstance (self._factories[0], EffectFactory):
-            priority = y / (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
-            self._temp_objects = [self.timeline.addEffectFactory(factory, self.pixelToNs(x), priority)
-                for factory in self._factories]
-        else:
-            self._temp_objects = [self.timeline.addSourceFactory(factory)
-                for factory in self._factories]
+    def _addEffect(self, x, y):
+        priority = y / (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
+        factory = self._factories[0]
+        self._temp_effect = self.timeline.addEffectFactoryOnObject(factory, self.pixelToNs(x), priority)
+
+    def _add_temp_source(self):
+        self._temp_objects = [self.timeline.addSourceFactory(factory)
+            for factory in self._factories]
 
     def _move_temp_source(self, x, y):
         x1, y1, x2, y2 = self._controls.get_allocation()
