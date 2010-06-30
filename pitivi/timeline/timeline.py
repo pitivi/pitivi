@@ -531,6 +531,17 @@ class Selection(Signallable):
 
         return set(objects)
 
+    def getSelectedTrackEffects(self):
+        """
+        Returns the list of L{TrackObject} contained in this selection.
+        """
+        track_effects = []
+        for timeline_object in self.selected:
+            for track in timeline_object.track_objects:
+                if isinstance(track, TrackEffect):
+                    track_effects.append(track)
+
+        return set(track_effects)
 
     def __len__(self):
         return len(self.selected)

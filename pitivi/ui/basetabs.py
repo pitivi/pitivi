@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       ui/projecttabs.py
+#       ui/basetabs.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #
@@ -21,7 +21,7 @@
 
 import gtk
 
-class ProjectTabs(gtk.Notebook):
+class BaseTabs(gtk.Notebook):
     def __init__(self):
         """ initialize """
         gtk.Notebook.__init__(self)
@@ -42,7 +42,7 @@ class ProjectTabs(gtk.Notebook):
 
     def _set_child_properties(self, child, label):
         self.child_set_property(child, "detachable", True)
-        self.child_set_property(child, "tab-expand", True)
+        self.child_set_property(child, "tab-expand", False)
         self.child_set_property(child, "tab-fill", True)
         label.props.xalign = 0.0
 

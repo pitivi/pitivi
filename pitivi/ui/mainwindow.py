@@ -44,7 +44,7 @@ from gettext import gettext as _
 from pitivi.log.loggable import Loggable
 
 from pitivi.ui.timeline import Timeline
-from pitivi.ui.projecttabs import ProjectTabs
+from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
 from pitivi.configure import pitivi_version, APPNAME, get_pixmap_dir, \
      get_global_pixmap_dir, LIBDIR
@@ -57,6 +57,7 @@ import pitivi.formatters.format as formatter
 from pitivi.sourcelist import SourceListError
 from pitivi.ui.sourcelist import SourceList
 from pitivi.ui.effectlist import EffectList
+from pitivi.ui.clipproperties import ClipProperties
 from pitivi.ui.common import beautify_factory
 from pitivi.utils import beautify_length
 from pitivi.ui.zoominterface import Zoomable
@@ -396,12 +397,17 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.timeline = Timeline(instance, self.uimanager)
         self.timeline.project = self.project
 
-        vpaned.pack2(self.timeline, resize=False, shrink=False)
+        vpaned.pack2(self.timeline, resize=True, shrink=False)
         self.timeline.show()
+        hpanedprincipal = gtk.HPaned()
+        vpaned.pack1(hpanedprincipal, resize=True, shrink=False)
+
         hpaned = gtk.HPaned()
-        vpaned.pack1(hpaned, resize=True, shrink=False)
+        hpanedprincipal.pack1(hpaned, resize=True, shrink=False)
         hpaned.show()
-        self.projecttabs = ProjectTabs()
+        hpanedprincipal.show()
+
+        self.projecttabs = BaseTabs()
 
         self.sourcelist = SourceList(instance, self.uimanager)
         self.effectlist = EffectList(instance, self.uimanager)
@@ -414,6 +420,16 @@ class PitiviMainWindow(gtk.Window, Loggable):
         hpaned.pack1(self.projecttabs, resize=True, shrink=False)
         self.projecttabs.show()
 
+        #Clips properties
+        self.propertiestabs = BaseTabs()
+        self.clipconfig = ClipProperties(instance, self.uimanager)
+        self.clipconfig.project = self.project
+        self.propertiestabs.append_page(self.clipconfig, gtk.Label(_("Clip Properties")))
+        self.clipconfig.show()
+
+        hpaned.pack2(self.propertiestabs, resize= True, shrink=False)
+        self.propertiestabs.show()
+
         # Viewer
         self.viewer = PitiviViewer()
         # drag and drop
@@ -421,11 +437,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
                            [dnd.FILESOURCE_TUPLE, dnd.URI_TUPLE],
                            gtk.gdk.ACTION_COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
-        hpaned.pack2(self.viewer, resize=False, shrink=False)
+        hpanedprincipal.pack2(self.viewer, resize=False, shrink=False)
         self.viewer.show()
         self.viewer.connect("expose-event", self._exposeEventCb)
 
         # window and pane position defaults
+        self.hpanedprincipal = hpanedprincipal
         self.hpaned = hpaned
         self.vpaned = vpaned
         height = -1
@@ -591,7 +608,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _revertToSavedProjectCb(self, unused_action):
         return self.app.projectManager.revertToSavedProject()
-            
+
 
     def _projectSettingsCb(self, unused_action):
         from projectsettings import ProjectSettingsDialog
@@ -851,7 +868,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             if response <> gtk.RESPONSE_YES:
                 return False
         return True
-        
+
 
     def _projectManagerNewProjectFailedCb(self, projectManager, uri, exception):
         # ungrey UI
@@ -965,6 +982,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.project_timeline = self.project.timeline
             if self.timeline:
                 self.timeline.project = self.project
+                self.clipconfig.project = self.project
 
     project = receiver(_setProject)
 
