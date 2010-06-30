@@ -25,7 +25,6 @@ import gtk
 import pango
 import os
 import time
-import re
 
 from urllib import unquote
 from gettext import gettext as _
@@ -37,11 +36,10 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.settings import GlobalSettings
 from pitivi.utils import beautify_length
 
-from xml.sax.saxutils import escape
-
 from pitivi.log.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT,\
-      audio_categories, video_categories, get_categories
+      audio_categories, video_categories, get_categories,\
+      getNiceEffectName, getNiceEffectDescription
 from pitivi.ui.common import SPACING, PADDING
 
 (COL_ICON,
@@ -186,13 +184,11 @@ class EffectList(gtk.VBox, Loggable):
         pixbuf = gtk.gdk.pixbuf_new_from_file(thumbnail_file)
 
         for effect in effects:
-            uselessWords = re.compile('(Video |effect |Audio )')
-            name = uselessWords.sub("", (escape(effect.get_longname()))).title()
-            description = (escape(effect.get_description()))
+            name = getNiceEffectName(effect)
+            description = getNiceEffectDescription(effect)
             categories = get_categories(effect, effectType)
 
             factory = self.app.effects.getFactory(effect.get_name())
-            #visible = self._setRowVisible(self.storemodel, None, None)
             self.storemodel.append ([pixbuf, pixbuf, name, description, effectType, categories,
                                     factory, effect.get_description(),
                                     factory.name])

@@ -25,6 +25,10 @@ Effects global handling
 """
 
 import gst
+import re
+
+from xml.sax.saxutils import escape
+
 from pitivi.factories.operation import EffectFactory
 from pitivi.stream import get_stream_for_pad
 
@@ -98,6 +102,14 @@ def get_categories(effect, effectType):
 
     return categories
 
+#Function  to parse effects human readable properties
+def getNiceEffectName(effect):
+    uselessWords = re.compile('(Video |effect |Audio )')
+    return uselessWords.sub("", (escape(effect.get_longname()))).title()
+
+def getNiceEffectDescription(effect):
+    return (escape(effect.get_description()))
+
 class Magician:
     """
     Handles all the effects
@@ -140,6 +152,17 @@ class Magician:
 
     def getFactory(self, name):
         return self.effect_factories_dict.get(name)
+
+    def getElementFromFactoryName(self, name, effectType):
+        if effectType == VIDEO_EFFECT:
+            for fact in self.simple_video:
+                if fact.get_name() == name:
+                    return fact
+        elif effectType == AUDIO_EFFECT:
+            for fact in self.simple_audio:
+                if fact.get_name() == name:
+                    return fact
+
 
     def addStreams(self, element, factory):
         pads = element.get_static_pad_templates()
