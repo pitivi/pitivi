@@ -42,8 +42,7 @@ from xml.sax.saxutils import escape
 from pitivi.log.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT,\
       audio_categories, video_categories, get_categories
-
-SPACING = 5
+from pitivi.ui.common import SPACING, PADDING
 
 (COL_ICON,
  COL_ICON_LARGE,
@@ -79,26 +78,26 @@ class EffectList(gtk.VBox, Loggable):
         self.set_spacing(SPACING)
 
         #Searchbox and combobox
-        filters = gtk.HBox()
-        filters.set_spacing(SPACING)
+        Hfilters = gtk.HBox()
+        Hfilters.set_spacing(SPACING)
         self.effectType = gtk.combo_box_new_text()
-        self.effectType.append_text("Video effects")
-        self.effectType.append_text("Audio effects")
+        self.effectType.append_text(_("Video effects"))
+        self.effectType.append_text(_("Audio effects"))
         self.effectCategory = gtk.combo_box_new_text()
         self.show_categories(VIDEO_EFFECT)
         self.effectType.set_active(VIDEO_EFFECT)
 
 
-        filters.pack_start(self.effectType, expand=True)
-        filters.pack_end(self.effectCategory, expand=True)
+        Hfilters.pack_start(self.effectType, expand=True)
+        Hfilters.pack_end(self.effectCategory, expand=True)
 
-        Hentry = gtk.HBox()
-        Hentry.set_spacing(SPACING)
-        searchStr = gtk.Label("Search:")
+        Hsearch = gtk.HBox()
+        Hsearch.set_spacing(SPACING)
+        searchStr = gtk.Label(_("Search:"))
         self.searchEntry = gtk.Entry()
         self.searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
-        Hentry.pack_start(searchStr, expand=False)
-        Hentry.pack_end(self.searchEntry, expand=True)
+        Hsearch.pack_start(searchStr, expand=False)
+        Hsearch.pack_end(self.searchEntry, expand=True)
 
         # Store
         # icon, icon, infotext, objectfactory
@@ -120,20 +119,10 @@ class EffectList(gtk.VBox, Loggable):
         tsel = self.treeview.get_selection()
         tsel.set_mode(gtk.SELECTION_SINGLE)
 
-        #pixbufcol = gtk.TreeViewColumn(_("Icon"))
-        #pixbufcol.set_expand(False)
-        #pixbufcol.set_spacing(5)
-        #self.treeview.append_column(pixbufcol)
-        #pixcell = gtk.CellRendererPixbuf()
-        #pixcell.props.xpad = 6
-        #pixbufcol.pack_start(pixcell)
-        #pixbufcol.add_attribute(pixcell, 'pixbuf', COL_ICON)
-
         namecol = gtk.TreeViewColumn(_("Name"))
         namecol.set_sort_column_id(COL_NAME_TEXT)
         self.treeview.append_column(namecol)
-        #namecol.set_expand(True)
-        namecol.set_spacing(5)
+        namecol.set_spacing(SPACING)
         namecol.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
         namecol.set_fixed_width(150)
         namecell = gtk.CellRendererText()
@@ -146,7 +135,7 @@ class EffectList(gtk.VBox, Loggable):
         desccol.set_sort_column_id(COL_DESC_TEXT)
         self.treeview.append_column(desccol)
         desccol.set_expand(True)
-        desccol.set_spacing(5)
+        desccol.set_spacing(SPACING)
         desccol.set_sizing(gtk.TREE_VIEW_COLUMN_AUTOSIZE)
         desccol.set_min_width(150)
         desccell = gtk.CellRendererText()
@@ -174,8 +163,8 @@ class EffectList(gtk.VBox, Loggable):
                               self._dndDragBeginCb)
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
 
-        self.pack_start(filters, expand=False)
-        self.pack_start(Hentry, expand=False, padding=0)
+        self.pack_start(Hfilters, expand=False)
+        self.pack_start(Hsearch, expand=False, padding=PADDING)
         self.pack_end(self.treeview_scrollwin, expand=True)
 
         #create the filterModel
@@ -188,8 +177,8 @@ class EffectList(gtk.VBox, Loggable):
         self._addFactories(self.app.effects.simple_audio, AUDIO_EFFECT)
 
         self.treeview_scrollwin.show_all()
-        filters.show_all()
-        Hentry.show_all()
+        Hfilters.show_all()
+        Hsearch.show_all()
 
     def _addFactories(self, effects, effectType):
         #TODO find a way to associate an icon/thumbnail to each effect
@@ -198,8 +187,8 @@ class EffectList(gtk.VBox, Loggable):
 
         for effect in effects:
             uselessWords = re.compile('(Video |effect |Audio )')
-            name = uselessWords.sub("", (escape(unquote(effect.get_longname())))).title()
-            description = (escape(unquote(effect.get_description())))
+            name = uselessWords.sub("", (escape(effect.get_longname()))).title()
+            description = (escape(effect.get_description()))
             categories = get_categories(effect, effectType)
 
             factory = self.app.effects.getFactory(effect.get_name())

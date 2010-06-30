@@ -13,6 +13,9 @@ LAYER_HEIGHT_COLLAPSED = 15
 LAYER_SPACING = 15
 TRACK_SPACING = 8
 
+SPACING = 6
+PADDING = 6
+
 def pack_color_32(red, green, blue, alpha = 0xFFFF):
    red = red >> 8
    green = green >> 8
