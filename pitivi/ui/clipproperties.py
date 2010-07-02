@@ -146,8 +146,6 @@ class EffectProperties(gtk.Expander):
         namecol.set_sort_column_id(COL_NAME_TEXT)
         self.treeview.append_column(namecol)
         namecol.set_spacing(5)
-        #namecol.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
-        #namecol.set_fixed_width(40)
         namecell = gtk.CellRendererText()
         namecell.props.xpad = 6
         namecell.set_property("ellipsize", pango.ELLIPSIZE_END)
