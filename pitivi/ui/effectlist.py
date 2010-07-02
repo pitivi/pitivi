@@ -222,14 +222,8 @@ class EffectList(gtk.VBox, Loggable):
         result = view.get_path_at_pos(int(event.x), int(event.y))
         if result:
             path = result[0]
-            if isinstance(view, gtk.TreeView):
-                selection = view.get_selection()
-                return selection.path_is_selected(path) and selection.count_selected_rows() > 0
-            elif isinstance(view, gtk.IconView):
-                selection = view.get_selected_items()
-                return view.path_is_selected(path) and len(selection)
-            else:
-                assert False
+            selection = view.get_selection()
+            return selection.path_is_selected(path) and selection.count_selected_rows() > 0
 
         return False
 
