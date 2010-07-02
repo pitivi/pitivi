@@ -44,6 +44,9 @@ from pitivi.stream import get_stream_for_pad
 #  _ Complex Audio/Video Effects
 
 (VIDEO_EFFECT, AUDIO_EFFECT)  = range(2)
+USELESS_EFFECTS = ["colorconvert", "coglogoinsert", "festival",]
+
+
 video_categories = (
     ("All video effects", ("")),
     ("Colors", ("cogcolorspace", "alphacolor", "videobalance", "gamma", "alpha",\
@@ -102,7 +105,7 @@ def get_categories(effect, effectType):
 
     return categories
 
-#Function  to parse effects human readable properties
+#Convenience function for better effect properties lisibility
 def getNiceEffectName(effect):
     uselessWords = re.compile('(Video |effect |Audio )')
     return uselessWords.sub("", (escape(effect.get_longname()))).title()
@@ -120,32 +123,23 @@ class Magician:
         self.simple_audio = []
         self.effect_factories_dict = {}
         self.transitions = []
-        self._getSimpleFilters()
-        self._getEffectPlugins()
+        self._getAllEffects()
 
-    def _getSimpleFilters(self):
+    def _getAllEffects(self):
         # go trough the list of element factories and
-        # add them to the correct list
+        # add them to the correct list filtering if necessary
         factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
-        for fact in factlist:
-            klass = fact.get_klass()
-            if "Effect" in klass and not self._filterUslessEffect(fact):
-                factory = EffectFactory(fact.get_name(), fact.get_name())
-                added = self.addStreams(fact, factory)
+        for element_factory in factlist:
+            klass = element_factory.get_klass()
+            if "Effect" in klass and element_factory.get_name() not in USELESS_EFFECTS:
+                factory = EffectFactory(element_factory.get_name(), element_factory.get_name())
+                added = self.addStreams(element_factory, factory)
                 if added is True:
                     if 'Audio' in klass:
-                        self.simple_audio.append(fact)
+                        self.simple_audio.append(element_factory)
                     elif 'Video' in klass:
-                        self.simple_video.append(fact)
-                    self.addFactory(fact.get_name(), factory)
-
-    def _filterUslessEffect(self, effect):
-        return effect.get_name() in ["colorconvert", "coglogoinsert", "festival", ]
-
-    def _getEffectPlugins(self):
-        # find all the pitivi plugins that provide effects
-        # TODO : implement
-        pass
+                        self.simple_video.append(element_factory)
+                    self.addFactory(element_factory.get_name(), factory)
 
     def addFactory(self, name, factory):
         self.effect_factories_dict[name]=factory
@@ -155,14 +149,13 @@ class Magician:
 
     def getElementFromFactoryName(self, name, effectType):
         if effectType == VIDEO_EFFECT:
-            for fact in self.simple_video:
-                if fact.get_name() == name:
-                    return fact
+            for element_factory in self.simple_video:
+                if element_factory.get_name() == name:
+                    return element_factory
         elif effectType == AUDIO_EFFECT:
-            for fact in self.simple_audio:
-                if fact.get_name() == name:
-                    return fact
-
+            for element_factory in self.simple_audio:
+                if element_factory.get_name() == name:
+                    return element_factory
 
     def addStreams(self, element, factory):
         pads = element.get_static_pad_templates()
@@ -181,5 +174,4 @@ class Magician:
             elif padTmp.direction == gst.PAD_SINK:
                 stream = get_stream_for_pad(pad)
                 factory.addOutputStream(stream)
-
         return True
