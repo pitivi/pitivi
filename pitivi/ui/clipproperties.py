@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# PiTiVi , Non-linear video editor
 #
 #       ui/clipproperties.py
 #
@@ -39,7 +39,8 @@ from pitivi.effects import getNiceEffectName, getNiceEffectDescription
 (COL_ACTIVATED,
  COL_TYPE,
  COL_NAME_TEXT,
- COL_DESC_TEXT) = range(4)
+ COL_DESC_TEXT,
+ COL_TRACK_EFFECT) = range(5)
 
 class ClipProperties(gtk.VBox, Loggable):
     """
@@ -101,7 +102,7 @@ class EffectProperties(gtk.Expander):
         #self.toolbar2.insert(self.removeKeyframeBt, 0)
         #self.table.attach(self.toolbar2, 1, 2, 0, 1)
 
-        self.storemodel = gtk.ListStore(bool, str, str, str)
+        self.storemodel = gtk.ListStore(bool, str, str, str, object)
 
         #Treeview
         self.treeview_scrollwin = gtk.ScrolledWindow()
@@ -171,6 +172,7 @@ class EffectProperties(gtk.Expander):
             [dnd.EFFECT_TUPLE],
             gtk.gdk.ACTION_COPY)
 
+        self.removeEffectBt.connect("clicked", self._removeEffectClicked)
         self.treeview.connect("drag-data-received", self._dragDataReceivedCb)
         self.treeview.connect("drag-leave", self._dragLeaveCb)
         self.treeview.connect("drag-drop", self._dragDropCb)
@@ -208,12 +210,21 @@ class EffectProperties(gtk.Expander):
             self._updateAll()
 
     @handler(timeline_object, "track-object-removed")
-    def  trackAddedCb(self, track_object, unused):
+    def  trackAddedCb(self, unused_timeline_object, track_object):
         if isinstance (track_object, TrackEffect):
+            self.selected_effects = self.timeline.selection.getSelectedTrackEffects()
             self._updateAll()
 
     def connectTimelineSelection(self, timeline):
         self.timeline = timeline
+
+    def _removeEffectClicked(self, toolbutton):
+        selection = self.treeview.get_selection().get_selected()
+        if not selection[1]:
+            return
+        else:
+            effect = self.storemodel.get_value(selection[1], COL_TRACK_EFFECT)
+            self.timeline_object.removeTrackObject(effect)
 
     def _dragDataReceivedCb(self, unused, context, x, y, timestamp):
         print "Receive"
@@ -257,7 +268,6 @@ class EffectProperties(gtk.Expander):
                 self.explain_box.hide()
                 self._updateTreeview()
             else:
-                self.table.hide()
                 self._showExplainLabel()
             self.VContent.show()
         else:
@@ -266,7 +276,7 @@ class EffectProperties(gtk.Expander):
     def _updateTreeview(self):
         self.storemodel.clear()
         for effect in self.selected_effects:
-            to_append = [True]
+            to_append = [True] #TODO Implement that
             if isinstance(effect.factory.getInputStreams()[0], VideoStream):
                 to_append.append("Video")
                 elem = self.app.effects.getElementFromFactoryName(effect.factory.name, VIDEO_EFFECT)
@@ -276,9 +286,11 @@ class EffectProperties(gtk.Expander):
 
             to_append.append(getNiceEffectName(elem))
             to_append.append(getNiceEffectDescription(elem))
+            to_append.append(effect)
 
             self.storemodel.append(to_append)
 
     def _showExplainLabel(self):
+        self.table.hide()
         self.explain_box.show()
         self.explain_label.show()
