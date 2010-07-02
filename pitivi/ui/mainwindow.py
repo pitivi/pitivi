@@ -81,6 +81,10 @@ GlobalSettings.addConfigOption('mainWindowHPanePosition',
     section="main-window",
     key="hpane-position",
     type_=int)
+GlobalSettings.addConfigOption('mainWindowMainHPanePosition',
+    section="main-window",
+    key="main-hpane-position",
+    type_=int)
 GlobalSettings.addConfigOption('mainWindowVPanePosition',
     section="main-window",
     key="vpane-position",
@@ -399,13 +403,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         vpaned.pack2(self.timeline, resize=True, shrink=False)
         self.timeline.show()
-        hpanedprincipal = gtk.HPaned()
-        vpaned.pack1(hpanedprincipal, resize=True, shrink=False)
+        mainhpaned = gtk.HPaned()
+        vpaned.pack1(mainhpaned, resize=True, shrink=False)
 
         hpaned = gtk.HPaned()
-        hpanedprincipal.pack1(hpaned, resize=True, shrink=False)
+        mainhpaned.pack1(hpaned, resize=True, shrink=False)
         hpaned.show()
-        hpanedprincipal.show()
+        mainhpaned.show()
 
         self.projecttabs = BaseTabs()
 
@@ -437,18 +441,20 @@ class PitiviMainWindow(gtk.Window, Loggable):
                            [dnd.FILESOURCE_TUPLE, dnd.URI_TUPLE],
                            gtk.gdk.ACTION_COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
-        hpanedprincipal.pack2(self.viewer, resize=False, shrink=False)
+        mainhpaned.pack2(self.viewer, resize=False, shrink=False)
         self.viewer.show()
         self.viewer.connect("expose-event", self._exposeEventCb)
 
         # window and pane position defaults
-        self.hpanedprincipal = hpanedprincipal
+        self.mainhpaned = mainhpaned
         self.hpaned = hpaned
         self.vpaned = vpaned
         height = -1
         width = -1
         if self.settings.mainWindowHPanePosition:
             self.hpaned.set_position(self.settings.mainWindowHPanePosition)
+        if self.settings.mainWindowMainHPanePosition:
+            self.mainhpaned.set_position(self.settings.mainWindowMainHPanePosition)
         if self.settings.mainWindowVPanePosition:
             self.vpaned.set_position(self.settings.mainWindowVPanePosition)
         if self.settings.mainWindowWidth:
@@ -546,6 +552,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _saveWindowSettings(self):
         self.settings.mainWindowFullScreen = self.is_fullscreen
         self.settings.mainWindowHPanePosition = self.hpaned.get_position()
+        self.settings.mainWindowMainHPanePosition = self.mainhpaned.get_position()
         self.settings.mainWindowVPanePosition = self.vpaned.get_position()
         mtb = self.actiongroup.get_action("ShowHideMainToolbar")
         ttb = self.actiongroup.get_action("ShowHideTimelineToolbar")
