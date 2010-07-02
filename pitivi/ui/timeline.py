@@ -443,7 +443,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     focus = self._temp_objects[0]
                     self._move_context = MoveContext(self.timeline,
                             focus, set(self._temp_objects[1:]))
-                    self._move_temp_source(self.hadj.props.value + x, y)
+                self._move_temp_source(self.hadj.props.value + x, y)
         return True
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
