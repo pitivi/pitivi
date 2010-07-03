@@ -15,11 +15,36 @@ from pitivi.stream import match_stream_groups_map, AudioStream, VideoStream
 from pitivi.utils import beautify_length, uri_is_valid
 from pitivi.configure import get_pixmap_dir
 from pitivi.factories.file import PictureFileSourceFactory
+from pitivi.settings import GlobalSettings
+from pitivi.ui.prefs import PreferencesDialog
+from gettext import gettext as _
+
 
 DEFAULT_AUDIO_IMAGE = os.path.join(get_pixmap_dir(), "pitivi-sound.png")
 
 PREVIEW_WIDTH = 250
 PREVIEW_HEIGHT = 100
+
+GlobalSettings.addConfigSection('filechooser-preview')
+GlobalSettings.addConfigOption('FCEnablePreview',
+    section='filechooser-preview',
+    key='do-preview-on-clip-import',
+    default=True)
+GlobalSettings.addConfigOption('FCpreviewWidth',
+    section='filechooser-preview',
+    key='video-preview-width',
+    default=PREVIEW_WIDTH)
+GlobalSettings.addConfigOption('FCpreviewHeight',
+    section='filechooser-preview',
+    key='video-preview-height',
+    default=PREVIEW_HEIGHT)
+
+
+PreferencesDialog.addTogglePreference('FCEnablePreview',
+    section = _('Appearance'),
+    label = _("Enable preview"),
+    description = _("Enable Preview on FileChooser"))
+
 
 def get_playbin():
     try:
@@ -30,12 +55,16 @@ def get_playbin():
 
 class PreviewWidget(gtk.VBox, Loggable):
 
-    def __init__(self):
+    def __init__(self, instance):
         gtk.VBox.__init__(self)
         Loggable.__init__(self)
         
         self.log("Init PreviewWidget")
         self.connect('destroy', self._free_all)
+        
+        #settings obj 
+        self.settings = instance.settings
+        
         #a dictionary for caching factories
         self.preview_cache = {}
         
@@ -57,7 +86,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         #some global variables for preview handling
         self.is_playng = False 
         self.time_format = gst.Format(gst.FORMAT_TIME)
-        self.original_dims = None
+        self.original_dims = (PREVIEW_WIDTH, PREVIEW_HEIGHT)
         self.countinuous_seek = False
         self.current_selected_uri = ""
         self.current_preview_type = ""
@@ -75,13 +104,13 @@ class PreviewWidget(gtk.VBox, Loggable):
         # a drawing area for video output
         self.preview_video = gtk.DrawingArea()
         self.preview_video.modify_bg(gtk.STATE_NORMAL, self.preview_video.style.black)
-        self.preview_video.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
+        self.preview_video.set_size_request(self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
         self.preview_video.hide()
         self.pack_start(self.preview_video, expand=False)
 
         #an image for images and audio
         self.preview_image = gtk.Image()
-        self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
+        self.preview_image.set_size_request(self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
         self.preview_image.show()
         self.pack_start(self.preview_image, expand=False)
 
@@ -172,10 +201,9 @@ class PreviewWidget(gtk.VBox, Loggable):
                 pixbuf_w = pixbuf.get_width()
                 pixbuf_h = pixbuf.get_height()
                 w, h = self.__get_best_size(pixbuf_w, pixbuf_h)
-                self.original_dims = (w, h)
                 pixbuf = pixbuf.scale_simple(w, h, gtk.gdk.INTERP_NEAREST)
                 self.preview_image.set_from_pixbuf(pixbuf)
-                self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
+                self.preview_image.set_size_request(self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
                 self.preview_image.show()
                 self.bbox.show()
                 self.b_action.set_sensitive(False)
@@ -194,7 +222,6 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.clip_duration = factory.duration
                 self.pos_adj.upper = self.clip_duration
                 w, h = self.__get_best_size(video.par*video.width, video.height)
-                self.original_dims = (w, h)
                 self.preview_video.set_size_request(w, h)
                 self.preview_video.show()
                 self.bbox.show()
@@ -214,6 +241,7 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.pos_adj.upper = self.clip_duration
             self.preview_image.set_from_file(DEFAULT_AUDIO_IMAGE)
             self.preview_image.show()
+            self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
             desc = "<b>Channels:</b> %d  at %d <i>Hz</i> \n" + "<b>Duration</b>: %s \n" 
             desc = desc % (audio.channels, audio.rate, duration) 
             self.description = desc
@@ -242,6 +270,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.current_preview_type = ''
         self.preview_image.set_from_stock(gtk.STOCK_MISSING_IMAGE,
                                         gtk.ICON_SIZE_DIALOG)
+        self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
         self.preview_image.show()
         self.preview_video.hide()
 
@@ -311,6 +340,8 @@ class PreviewWidget(gtk.VBox, Loggable):
                 if (w, h) < self.original_dims:
                     (w, h) = self.original_dims
             self.preview_video.set_size_request(int(w), int(h))
+            self.settings.FCpreviewWidth = int(w)
+            self.settings.FCpreviewHeight = int(h)
         elif self.current_preview_type == 'image':
             pixbuf = self.preview_image.get_pixbuf()
             w = pixbuf.get_width()
@@ -326,11 +357,13 @@ class PreviewWidget(gtk.VBox, Loggable):
             pixbuf = gtk.gdk.pixbuf_new_from_file(gst.uri_get_location(self.current_selected_uri))
             pixbuf = pixbuf.scale_simple(int(w), int(h), gtk.gdk.INTERP_BILINEAR)
             
-            w = max(w, PREVIEW_WIDTH)
-            h = max(h, PREVIEW_HEIGHT)
+            w = max(w, self.settings.FCpreviewWidth)
+            h = max(h, self.settings.FCpreviewHeight)
             self.preview_image.set_size_request(int(w), int(h))                
             self.preview_image.set_from_pixbuf(pixbuf)
             self.preview_image.show()
+            self.settings.FCpreviewWidth = int(w)
+            self.settings.FCpreviewHeight = int(h)
 
     def _on_sync_message(self, bus, mess):
         if mess.type == gst.MESSAGE_ELEMENT:
@@ -369,6 +402,7 @@ class PreviewWidget(gtk.VBox, Loggable):
     def _free_all(self, widget):
         self.player.set_state(gst.STATE_NULL)
         self.is_playing = False
+        
         #FIXME: the followig lines are really needed?
         del self.player
         del self.preview_cache
@@ -376,13 +410,13 @@ class PreviewWidget(gtk.VBox, Loggable):
 
     def __get_best_size(self, width_in, height_in):
         if width_in > height_in:
-            if PREVIEW_WIDTH < width_in :
-                w = PREVIEW_WIDTH
+            if  self.settings.FCpreviewWidth < width_in :
+                w = self.settings.FCpreviewWidth
                 h = height_in * w / width_in
                 return (w, h)        
         else:
-            if PREVIEW_HEIGHT < height_in: 
-                h = PREVIEW_HEIGHT
+            if self.settings.FCpreviewHeight < height_in: 
+                h = self.settings.FCpreviewHeight
                 w = width_in * h / height_in
                 return (w, h)
         return (width_in, height_in)

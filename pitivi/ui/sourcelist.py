@@ -523,10 +523,11 @@ class SourceList(gtk.VBox, Loggable):
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
         self._importDialog.set_select_multiple(True)
         self._importDialog.set_modal(False)
-        pw = PreviewWidget()
-        self._importDialog.set_preview_widget(pw)
-        self._importDialog.set_use_preview_label(False)
-        self._importDialog.connect('update-preview', pw.add_preview_request)
+        if self.settings.FCEnablePreview:
+            pw = PreviewWidget(self.app)
+            self._importDialog.set_preview_widget(pw)
+            self._importDialog.set_use_preview_label(False)
+            self._importDialog.connect('update-preview', pw.add_preview_request)
         self._importDialog.set_current_folder(self.app.settings.lastImportFolder)
 
         self._importDialog.connect('response', self._dialogBoxResponseCb, select_folders)
