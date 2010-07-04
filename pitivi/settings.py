@@ -88,7 +88,7 @@ def get_dir(path, autocreate=True):
     return path
 
 def get_dirs(glob):
-    return [d for d in glob.split(os.path.pathsep) if os.path.exists(dir)]
+    return [d for d in glob.split(os.path.pathsep) if os.path.exists(d)]
 
 def get_env_dir(var, default, autocreate=True):
     return get_dir(get_env_default(var, default))
