@@ -3,6 +3,7 @@
 #
 #       effects.py
 #
+# Copyright (c) 2010, Thibault Saunier <tsaunier@gnome.org>
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -23,14 +24,19 @@
 """
 Effects global handling
 """
-
 import gst
+import gtk
 import re
+import os
 
 from xml.sax.saxutils import escape
+from gettext import gettext as _
 
 from pitivi.factories.operation import EffectFactory
 from pitivi.stream import get_stream_for_pad
+from pitivi.configure import get_pixmap_dir
+
+from xdg import IconTheme
 
 # Note: Some effects are available through the frei0r library and the libavfilter0 library
 
@@ -47,115 +53,83 @@ from pitivi.stream import get_stream_for_pad
 USELESS_EFFECTS = ["colorconvert", "coglogoinsert", "festival",]
 
 
-video_categories = (
-    ("All video effects", ("")),
-    ("Colors", ("cogcolorspace", "alphacolor", "videobalance", "gamma", "alpha",\
-                "frei0r-filter-color-distance", "frei0r-filter-contrast0r", \
-                "frei0r-filter-invert0r", "frei0r-filter-saturat0r", "frei0r-filter-r",\
-                "frei0r-filter-white-balance", "frei0r-filter-brightness", "frei0r-filter-b",\
-                "frei0r-filter-gamma", "frei0r-filter-hueshift0r", "frei0r-filter-transparency",\
-                "frei0r-filter-equaliz0r", "frei0r-filter-glow ", "frei0r-filter-g", "frei0r-filter-bw0r"\
-                )
-    ),
-    ("Noise", ("videorate", "frei0r-filter-edgeglow" )),
-    ("Analysis", ("videoanalyse", "videodetect", "videomark", "revtv", "navigationtest",\
-                  "frei0r-filter-rgb-parade", "frei0r-filter-vectorscope", "frei0r-filter-luminance",\
-                  )),
-    ("Blur", ("frei0r-filter-squareblur", )),
-    ("Geometry", ("cogscale", "aspectratiocrop", "cogdownsample", "videocrop", "videoflip",\
-                  "videobox", "gdkpixbufscale", "frei0r-filter-letterb0xed" \
-                  "frei0r-filter-k-means-clustering", "videoscale", "frei0r-filter-lens-correction",
-                  "frei0r-filter-perspective", "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",\
-                  "frei0r-filter-flippo", "frei0r-filter-3dflippo"
-                 )
-    ),
-    ("Fancy",("rippletv", "streaktv", "radioactv", "optv", "quarktv", "vertigotv",\
-              "shagadelictv", "warptv", "dicetv", "agingtv", "edgetv", "frei0r-filter-cartoon",\
-              "frei0r-filter-water", "frei0r-filter-nosync0r"
-             )
-    ),
-    ("Time", ("frei0r-filter-delay0r")),
-    ("Uncategorized", (""))
-)
 
-audio_categories = (("All audio effects", ("")),)
-
-def get_categories(effect, effectType):
-
-    effectName = effect.get_name()
-    categories = []
-
-    if effectType is AUDIO_EFFECT:
-        categories.append(audio_categories[0][0])
-        for categorie in audio_categories:
-            for name in categorie[1]:
-                if name == effectName:
-                    categories.append(categorie[0])
-        return categories
-
-    for categorie in video_categories:
-        for name in categorie[1]:
-            if name == effectName:
-                categories.append(categorie[0])
-
-    if categories == []:
-        categories.append("Uncategorized")
-
-    categories.append(video_categories[0][0])
-
-    return categories
-
-#Convenience function for better effect properties lisibility
-def getNiceEffectName(effect):
-    uselessWords = re.compile('(Video |effect |Audio )')
-    return uselessWords.sub("", (escape(effect.get_longname()))).title()
-
-def getNiceEffectDescription(effect):
-    return (escape(effect.get_description()))
-
-class Magician:
+class effectsHandler:
     """
     Handles all the effects
     """
-
     def __init__(self):
-        self.simple_video = []
-        self.simple_audio = []
+        self._audio_categories_effects = (("All effects", ("")),)
+        self._video_categories_effects = (
+            (_("All effects"), ("")),
+            (_("Colors"), ("cogcolorspace", "alphacolor", "videobalance", "gamma", "alpha",\
+                        "frei0r-filter-color-distance", "frei0r-filter-contrast0r", \
+                        "frei0r-filter-invert0r", "frei0r-filter-saturat0r", "frei0r-filter-r",\
+                        "frei0r-filter-white-balance", "frei0r-filter-brightness", "frei0r-filter-b",\
+                        "frei0r-filter-gamma", "frei0r-filter-hueshift0r", "frei0r-filter-transparency",\
+                        "frei0r-filter-equaliz0r", "frei0r-filter-glow", "frei0r-filter-g", "frei0r-filter-bw0r")
+            ),
+            (_("Noise"), ("videorate", "frei0r-filter-edgeglow" )),
+            (_("Analysis"), ("videoanalyse", "videodetect", "videomark", "revtv", "navigationtest",\
+                          "frei0r-filter-rgb-parade", "frei0r-filter-vectorscope", "frei0r-filter-luminance",\
+                          )),
+            (_("Blur"), ("frei0r-filter-squareblur", )),
+            (_("Geometry"), ("cogscale", "aspectratiocrop", "cogdownsample", "videocrop", "videoflip",\
+                          "videobox", "gdkpixbufscale", "frei0r-filter-letterb0xed" \
+                          "frei0r-filter-k-means-clustering", "videoscale", "frei0r-filter-lens-correction",
+                          "frei0r-filter-perspective", "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",\
+                          "frei0r-filter-flippo", "frei0r-filter-3dflippo", "frei0r-filter-letterb0xed",
+                         )
+            ),
+            (_("Fancy"),("rippletv", "streaktv", "radioactv", "optv", "quarktv", "vertigotv",\
+                      "shagadelictv", "warptv", "dicetv", "agingtv", "edgetv", "frei0r-filter-cartoon",\
+                      "frei0r-filter-water", "frei0r-filter-nosync0r", "frei0r-filter-k-means-clustering",
+                      "frei0r-filter-delay0r",
+                     )
+            ),
+            (_("Time"), ("frei0r-filter-delay0r",)),
+            (_("Uncategorized"), ("",))
+        )
+        self._audio_categories = []
+        self._video_categories = []
+        self.video_effects = []
+        self.audio_effects = []
         self.effect_factories_dict = {}
-        self.transitions = []
-        self._getAllEffects()
+        self._setAllEffects()
 
-    def _getAllEffects(self):
+    def _setAllEffects(self):
         # go trough the list of element factories and
         # add them to the correct list filtering if necessary
         factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
         for element_factory in factlist:
             klass = element_factory.get_klass()
             if "Effect" in klass and element_factory.get_name() not in USELESS_EFFECTS:
-                factory = EffectFactory(element_factory.get_name(), element_factory.get_name())
-                added = self.addStreams(element_factory, factory)
+                name = element_factory.get_name()
+                effect = EffectFactory(name, name,
+                                       self._getEffectCategories(name),
+                                       self._getEffectName(element_factory),
+                                       self._getEffectDescripton(element_factory),
+                                       self._getEffectIcon(name))
+                added = self.addStreams(element_factory, effect)
+
                 if added is True:
                     if 'Audio' in klass:
-                        self.simple_audio.append(element_factory)
+                        self.audio_effects.append(element_factory)
                     elif 'Video' in klass:
-                        self.simple_video.append(element_factory)
-                    self.addFactory(element_factory.get_name(), factory)
+                        self.video_effects.append(element_factory)
+                    self._addEffectToDic(name, effect)
 
-    def addFactory(self, name, factory):
+    def getAllAudioEffects(self):
+        return self.audio_effects
+
+    def getAllVideoEffects(self):
+        return self.video_effects
+
+    def _addEffectToDic(self, name, factory):
         self.effect_factories_dict[name]=factory
 
-    def getFactory(self, name):
+    def getEffect(self, name):
         return self.effect_factories_dict.get(name)
-
-    def getElementFromFactoryName(self, name, effectType):
-        if effectType == VIDEO_EFFECT:
-            for element_factory in self.simple_video:
-                if element_factory.get_name() == name:
-                    return element_factory
-        elif effectType == AUDIO_EFFECT:
-            for element_factory in self.simple_audio:
-                if element_factory.get_name() == name:
-                    return element_factory
 
     def addStreams(self, element, factory):
         pads = element.get_static_pad_templates()
@@ -175,3 +149,76 @@ class Magician:
                 stream = get_stream_for_pad(pad)
                 factory.addOutputStream(stream)
         return True
+
+    def _getEffectDescripton(self, element_factory):
+        return (escape(element_factory.get_description()))
+
+    def _getEffectCategories(self, effect_name):
+        categories = []
+
+        for categorie in self._audio_categories_effects:
+            for name in categorie[1]:
+                if name == effect_name:
+                    categories.append(categorie[0])
+
+        for categorie in self._video_categories_effects:
+            for name in categorie[1]:
+                if name == effect_name:
+                    categories.append(categorie[0])
+
+        if not categories:
+            categories.append(_("Uncategorized"))
+
+        categories.append(self._video_categories_effects[0][0])
+
+        return categories
+
+    def _getEffectName(self, element_factory):
+        """ Better name for humans"""
+        #TODO check if it is the good way to make it translatable
+        #And to filter actually!
+        video = _("Video")
+        audio = _("Audio |audio")
+        effect = _("effect")
+        pipe = " |"
+        uselessWords = re.compile(video + pipe + audio + pipe + effect)
+        return uselessWords.sub("", (escape(element_factory.get_longname()))).title()
+
+    def getVideoCategories(self):
+        """ Returns all video effect categories"""
+        if not self._video_categories:
+            for categorie in self._video_categories_effects:
+                self._video_categories.append(categorie[0])
+        return self._video_categories
+
+    video_categories = property(getVideoCategories)
+
+    def getAudioCategories(self):
+        if not self._audio_categories:
+            for categorie in self._audio_categories_effects:
+                self._audio_categories.append(categorie[0])
+        return self._audio_categories
+
+    audio_categories = property(getAudioCategories)
+
+    def getAllCategories(self):
+        effects_categories = []
+        return effects_categories.extended(self.video_categories).extended(self.audio_categories)
+
+    def _getEffectIcon(self, effect_name):
+        #Shouldn't we use pyxdg to make things cleaner and more optimized?
+        icontheme = gtk.icon_theme_get_default()
+        pixdir = get_pixmap_dir()
+        icon = None
+        try:
+            icon = icontheme.load_icon(effect_name, 32, 0)
+        except:
+            # empty except clause is bad but load_icon raises gio.Error.
+            ## Right, *gio*.
+            if not icon:
+                effect_name = effect_name + ".png"
+                try:
+                    icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, effect_name))
+                except:
+                    return None
+        return icon

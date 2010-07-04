@@ -24,6 +24,8 @@ import gst
 from pitivi.factories.base import OperationFactory
 from pitivi.stream import AudioStream, VideoStream
 
+from gettext import gettext as _
+
 # FIXME: define a proper hierarchy
 class OperationFactoryError(Exception):
     pass
@@ -58,9 +60,22 @@ class EffectFactory (TransformFactory):
     """
     Factories that applies an effect on a stream
     """
-    def __init__ (self, effect, name=''):
+    def __init__ (self, effect, name='', categories=[_("Uncategorized")], human_name="", description="", icon=None):
         TransformFactory.__init__(self, name)
         self._effect = effect
+        self.categories = categories
+        self.description = description
+        self.human_name = human_name
+        self._setIcon(icon)
+
+    def getHumanName(self):
+        return self.human_name
+
+    def getDescription(self):
+        return self.description
+
+    def getCategories(self):
+        return self.categories
 
     def _makeBin (self, *args):
         bin = gst.Bin()

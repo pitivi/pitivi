@@ -34,7 +34,6 @@ from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.receiver import receiver, handler
 from pitivi.timeline.track import TrackEffect
 from pitivi.stream import AudioStream, VideoStream
-from pitivi.effects import getNiceEffectName, getNiceEffectDescription
 
 (COL_ACTIVATED,
  COL_TYPE,
@@ -78,6 +77,7 @@ class EffectProperties(gtk.Expander):
         self.selected_effects = []
         self.timeline_object = None
         self.app = instance
+        self.effectsHandler = self.app.effects
 
         self.VContent = gtk.VBox()
         self.add(self.VContent)
@@ -195,7 +195,6 @@ class EffectProperties(gtk.Expander):
             self.timeline_object = list(timeline.selection.selected)[0]
         else:
             self.timeline_object = None
-        print self.timeline_object
         self._updateAll()
 
     timeline_object = receiver()
@@ -204,7 +203,6 @@ class EffectProperties(gtk.Expander):
     def  trackAddedCb(self, unused_timeline_object, track_object):
         if isinstance (track_object, TrackEffect):
             self.selected_effects = self.timeline.selection.getSelectedTrackEffects()
-            print self.timeline.selection.getSelectedTrackEffects()
             self._updateAll()
 
     @handler(timeline_object, "track-object-removed")
@@ -225,6 +223,7 @@ class EffectProperties(gtk.Expander):
             self.timeline_object.removeTrackObject(effect)
 
     def _dragDataReceivedCb(self, unused, context, x, y, timestamp):
+        # I am waiting for effects to work again before implementing DND here
         print "Receive"
 
     def _dragDropCb(self, unused, context, x, y, timestamp):
@@ -257,7 +256,6 @@ class EffectProperties(gtk.Expander):
         return True
 
     def _updateAll(self):
-        print "Updating"
         if self.get_expanded():
             if self.timeline_object:
                 self.table.show_all()
@@ -273,18 +271,16 @@ class EffectProperties(gtk.Expander):
 
     def _updateTreeview(self):
         self.storemodel.clear()
-        for effect in self.selected_effects:
+        for track_effect in self.selected_effects:
             to_append = [True] #TODO Implement that
-            if isinstance(effect.factory.getInputStreams()[0], VideoStream):
+            if isinstance(track_effect.factory.getInputStreams()[0], VideoStream):
                 to_append.append("Video")
-                elem = self.app.effects.getElementFromFactoryName(effect.factory.name, VIDEO_EFFECT)
             else:
                 to_append.append("Audio")
-                elem = self.app.effects.getElementFromFactoryName(effect.factory.name, AUDIO_EFFECT)
 
-            to_append.append(getNiceEffectName(elem))
-            to_append.append(getNiceEffectDescription(elem))
-            to_append.append(effect)
+            to_append.append(track_effect.factory.getHumanName())
+            to_append.append(track_effect.factory.getDescription())
+            to_append.append(track_effect)
 
             self.storemodel.append(to_append)
 

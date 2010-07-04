@@ -40,7 +40,7 @@ import pitivi.instance as instance
 
 from pitivi.check import initial_checks
 from pitivi.device import get_probe
-from pitivi.effects import Magician
+from pitivi.effects import effectsHandler
 from pitivi.configure import APPNAME
 from pitivi.settings import GlobalSettings
 from pitivi.threads import ThreadMaster
@@ -136,7 +136,7 @@ class Pitivi(Loggable, Signallable):
         self.plugin_manager = PluginManager(
             self.settings.get_local_plugin_path(),
             self.settings.get_plugin_settings_path())
-        self.effects = Magician()
+        self.effects = effectsHandler()
         self.deviceprobe = get_probe()
 
         self.projectManager = ProjectManager()

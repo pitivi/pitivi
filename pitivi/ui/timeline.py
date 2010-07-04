@@ -513,7 +513,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             uris = selection.data.split("\n")
             self._factories = [self.project.sources.getUri(uri) for uri in uris]
         else:
-            self._factories = [self.app.effects.getFactory(selection.data)]
+            self._factories = [self.app.effects.getEffect(selection.data)]
 
         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
         return True
