@@ -42,7 +42,7 @@ GlobalSettings.addConfigOption('FCpreviewHeight',
 
 PreferencesDialog.addTogglePreference('FCEnablePreview',
     section = _('Appearance'),
-    label = _("Enable preview"),
+    label = _("Show preview on Import"),
     description = _("Enable Preview on FileChooser"))
 
 
@@ -68,9 +68,13 @@ class PreviewWidget(gtk.VBox, Loggable):
         #a dictionary for caching factories
         self.preview_cache = {}
         
+        #a dictionary for caching errors
+        self.preview_cache_errors = {}
+        
         #discoverer for analyze file
         self.discoverer = Discoverer()
         self.discoverer.connect('discovery-done', self._update_preview)
+        self.discoverer.connect('discovery-error', self._error_detected)
 
         #playbin for play pics
         self.player = get_playbin()
@@ -150,6 +154,10 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.l_tags.set_justify(gtk.JUSTIFY_LEFT)
         self.l_tags.show()
         self.pack_start(self.l_tags, expand=False)
+        #button for detail
+        self.b_details = gtk.Button('Details')
+        self.b_details.connect('clicked', self._on_b_details_clicked)
+        self.pack_start(self.b_details, expand=False, fill=False)
         #a filler
         self.pack_start( gtk.Label(''))
 
@@ -162,7 +170,8 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.log("Preview request for " + uri)
         self.clear_preview()
         self.current_selected_uri = uri
-        if self.preview_cache.has_key(uri):
+        if self.preview_cache.has_key(uri) or \
+            self.preview_cache_errors.has_key(uri):
             #already discovered
             self.log(uri + " already in cache")
             self.show_preview(uri)
@@ -178,6 +187,12 @@ class PreviewWidget(gtk.VBox, Loggable):
         #show uri only if is the selected one
         if self.current_selected_uri == uri:
             self.show_preview(uri)
+
+    def _error_detected(self, discoverer, uri, mess, details):
+        if details is not None:
+            self.preview_cache_errors[uri] = (mess, details)
+            if self.current_selected_uri == uri:
+                self.show_error(uri)
 
     def show_preview(self, uri):
         self.log("Show preview for " + uri )
@@ -259,6 +274,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.log("Reset PreviewWidget ")
         self.seeker.set_value(0)
         self.bbox.hide()
+        self.b_details.hide()
         self.title.set_markup("<i>No preview</i>")
         self.description = ""
         self.l_tags.set_markup("")
@@ -313,6 +329,10 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.pos_adj.set_value(long(curr_pos))
         return self.is_playing
 
+
+    def show_error(self, uri):
+            self.l_tags.set_markup( _("Pitivi has problems previewing the file"))
+            self.b_details.show()
 
     def _on_start_stop_clicked(self, button):
         if button.get_stock_id() == gtk.STOCK_MEDIA_PLAY:
@@ -398,6 +418,20 @@ class PreviewWidget(gtk.VBox, Loggable):
             text = text + key + self.tags[key] + "\n"
         self.l_tags.set_markup(text)
 
+
+    def _on_b_details_clicked(self, unused_button):
+        mess, detail = self.preview_cache_errors.get(self.current_selected_uri, (None, None))
+        if mess is not None:
+            dialog = gtk.MessageDialog(None,
+                gtk.DIALOG_MODAL,
+                gtk.MESSAGE_WARNING,
+                gtk.BUTTONS_OK,
+                mess)
+            dialog.set_icon_name("pitivi")
+            dialog.set_title(_("Error Previewing File"))
+            dialog.set_property("secondary-text", detail)
+            dialog.run()
+            dialog.destroy()
 
     def _free_all(self, widget):
         self.player.set_state(gst.STATE_NULL)
