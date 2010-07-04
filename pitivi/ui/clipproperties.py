@@ -35,6 +35,8 @@ from pitivi.receiver import receiver, handler
 from pitivi.timeline.track import TrackEffect
 from pitivi.stream import AudioStream, VideoStream
 
+from pitivi.ui.effectsconfiguration import EffectUIFactory
+
 (COL_ACTIVATED,
  COL_TYPE,
  COL_NAME_TEXT,
@@ -78,6 +80,8 @@ class EffectProperties(gtk.Expander):
         self.timeline_object = None
         self.app = instance
         self.effectsHandler = self.app.effects
+        self.effectUIFactory = EffectUIFactory()
+        self.effect_config_ui = None
 
         self.VContent = gtk.VBox()
         self.add(self.VContent)
@@ -171,12 +175,13 @@ class EffectProperties(gtk.Expander):
             gtk.gdk.ACTION_COPY)
 
         self.removeEffectBt.connect("clicked", self._removeEffectClicked)
+
         self.treeview.connect("drag-data-received", self._dragDataReceivedCb)
         self.treeview.connect("drag-leave", self._dragLeaveCb)
         self.treeview.connect("drag-drop", self._dragDropCb)
         self.treeview.connect("drag-motion", self._dragMotionCb)
-        self.treeview.connect("query-tooltip",
-                              self._treeViewQueryTooltipCb)
+        self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
+        self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
 
         self.connect('notify::expanded', self.expandedcb)
 
@@ -266,6 +271,7 @@ class EffectProperties(gtk.Expander):
             else:
                 self._showExplainLabel()
             self.VContent.show()
+            self._updateEffectConfigUi()
         else:
             self.VContent.hide()
 
@@ -288,3 +294,27 @@ class EffectProperties(gtk.Expander):
         self.table.hide()
         self.explain_box.show()
         self.explain_label.show()
+
+    def _treeViewButtonPressEventCb(self, treeview, event):
+        self._updateEffectConfigUi()
+
+    def _updateEffectConfigUi(self):
+        selection = self.treeview.get_selection().get_selected()
+        if selection[1]:
+            effect = self.storemodel.get_value(selection[1], COL_TRACK_EFFECT)
+            #TODO figure out the name of the element better
+            for element in effect.gnl_object.recurse():
+                if effect.factory.name in element.get_name():
+                    break
+
+            if self.effect_config_ui:
+                self.effect_config_ui.hide()
+
+            self.effect_config_ui = self.effectUIFactory.getEffectConfigurationUI(element)
+            if self.effect_config_ui:
+                self.VContent.pack_start(self.effect_config_ui, expand=False, fill=True)
+                self.effect_config_ui.show_all()
+        else:
+            if self.effect_config_ui:
+                self.effect_config_ui.hide()
+                self.effect_config_ui = None
