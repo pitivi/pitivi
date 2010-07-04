@@ -20,11 +20,14 @@
 # Boston, MA 02111-1307, USA.
 
 import gtk
+from pitivi.ui.common import SPACING
 
 class BaseTabs(gtk.Notebook):
     def __init__(self):
         """ initialize """
         gtk.Notebook.__init__(self)
+        self.set_border_width(SPACING)
+
         self.connect("create-window", self._createWindowCb)
         self._createUi()
 

@@ -34,6 +34,7 @@ from pitivi.stream import VideoStream
 from pitivi.utils import time_to_string, Seeker
 from pitivi.log.loggable import Loggable
 from pitivi.pipeline import PipelineError
+from pitivi.ui.common import SPACING
 
 class ViewerError(Exception):
     pass
@@ -63,6 +64,8 @@ class PitiviViewer(gtk.VBox, Loggable):
         @type action: L{ViewAction}
         """
         gtk.VBox.__init__(self)
+        self.set_border_width(SPACING)
+
         Loggable.__init__(self)
         self.log("New PitiviViewer")
 
