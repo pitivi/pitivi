@@ -162,7 +162,7 @@ class EffectProperties(gtk.Expander):
         self.explain_label.set_line_wrap_mode(pango.WRAP_WORD)
         self.explain_label.set_justify(gtk.JUSTIFY_CENTER)
         self.explain_label.set_markup(
-            _("<span size='x-large'>You must select a clip on the timeline "
+            _("<span size='large'>You must select a clip on the timeline "
               "to configure its associated effects</span>"))
         self.explain_box.add(self.explain_label)
 
