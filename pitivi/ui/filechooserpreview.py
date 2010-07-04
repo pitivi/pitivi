@@ -154,10 +154,19 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.l_tags.set_justify(gtk.JUSTIFY_LEFT)
         self.l_tags.show()
         self.pack_start(self.l_tags, expand=False)
+        
+        #error handling
+        #a label
+        hbox = gtk.HBox()
+        self.l_error = gtk.Label('')
+        self.l_error.set_markup( _("<i>PiTiVi can not preview this file</i>"))        
+        hbox.pack_start(self.l_error)
         #button for detail
         self.b_details = gtk.Button('Details')
         self.b_details.connect('clicked', self._on_b_details_clicked)
-        self.pack_start(self.b_details, expand=False, fill=False)
+        hbox.pack_start(self.b_details, expand=False, fill=False)
+        hbox.show()
+        self.pack_start(hbox, expand=False, fill=False)
         #a filler
         self.pack_start( gtk.Label(''))
 
@@ -170,11 +179,13 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.log("Preview request for " + uri)
         self.clear_preview()
         self.current_selected_uri = uri
-        if self.preview_cache.has_key(uri) or \
-            self.preview_cache_errors.has_key(uri):
+        if self.preview_cache.has_key(uri):
             #already discovered
             self.log(uri + " already in cache")
             self.show_preview(uri)
+        elif  self.preview_cache_errors.has_key(uri):
+            self.log(uri + " already in error cache")
+            self.show_error(uri)
         else:
             self.log("Call discoverer for " + uri )
             self.discoverer.addUri(uri)
@@ -269,11 +280,16 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.b_zoom_out.set_sensitive(False)
             self.bbox.show()
 
-            
+
+    def show_error(self, uri):
+            self.l_error.show()
+            self.b_details.show()
+
     def clear_preview(self):
         self.log("Reset PreviewWidget ")
         self.seeker.set_value(0)
         self.bbox.hide()
+        self.l_error.hide()
         self.b_details.hide()
         self.title.set_markup("<i>No preview</i>")
         self.description = ""
@@ -330,9 +346,6 @@ class PreviewWidget(gtk.VBox, Loggable):
         return self.is_playing
 
 
-    def show_error(self, uri):
-            self.l_tags.set_markup( _("Pitivi has problems previewing the file"))
-            self.b_details.show()
 
     def _on_start_stop_clicked(self, button):
         if button.get_stock_id() == gtk.STOCK_MEDIA_PLAY:
