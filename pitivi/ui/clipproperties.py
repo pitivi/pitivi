@@ -82,7 +82,7 @@ class EffectProperties(gtk.Expander):
         self.app = instance
         self.effectsHandler = self.app.effects
         self.effectUIFactory = EffectUIFactory()
-        self.effect_config_ui = None
+        self._effect_config_ui = None
 
         self.VContent = gtk.VBox()
         self.add(self.VContent)
@@ -170,6 +170,9 @@ class EffectProperties(gtk.Expander):
             [dnd.EFFECT_TUPLE],
             gtk.gdk.ACTION_COPY)
 
+        self.selection = self.treeview.get_selection()
+
+        self.selection.connect("changed", self._treeviewSelectionChangedCb)
         self.removeEffectBt.connect("clicked", self._removeEffectClicked)
 
         self.treeview.connect("drag-data-received", self._dragDataReceivedCb)
@@ -177,7 +180,6 @@ class EffectProperties(gtk.Expander):
         self.treeview.connect("drag-drop", self._dragDropCb)
         self.treeview.connect("drag-motion", self._dragMotionCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
-        self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
 
         self.connect('notify::expanded', self.expandedcb)
 
@@ -216,11 +218,10 @@ class EffectProperties(gtk.Expander):
         self.timeline = timeline
 
     def _removeEffectClicked(self, toolbutton):
-        selection = self.treeview.get_selection().get_selected()
-        if not selection[1]:
+        if not self.selection.get_selected()[1]:
             return
         else:
-            effect = self.storemodel.get_value(selection[1], COL_TRACK_EFFECT)
+            effect = self.storemodel.get_value(self.selection.get_selected()[1], COL_TRACK_EFFECT)
             self.timeline_object.removeTrackObject(effect)
 
     def _dragDataReceivedCb(self, unused, context, x, y, timestamp):
@@ -239,8 +240,12 @@ class EffectProperties(gtk.Expander):
     def _timelineWatcherCb(self, timeline):
         print timeline.selection
 
-    def effectActiveToggleCb(self, cellrenderertoggle, path):
-        cellrenderertoggle.set_active(not cellrenderertoggle.get_active())
+    def _effectActiveToggleCb(self, cellrenderertoggle, path):
+        iter = self.storemodel.get_iter(path)
+        track_effect = self.storemodel.get_value(iter, COL_TRACK_EFFECT)
+        activated = track_effect.gnl_object.get_property("active")
+        track_effect.gnl_object.set_property("active", not activated)
+        self.storemodel.set_value(iter, COL_ACTIVATED, not activated)
 
     def expandedcb(self, expander, params):
         self._updateAll()
@@ -266,6 +271,7 @@ class EffectProperties(gtk.Expander):
                 self._updateTreeview()
             else:
                 self._showExplainLabel()
+                self._effect_config_ui
             self.VContent.show()
             self._updateEffectConfigUi()
         else:
@@ -274,7 +280,7 @@ class EffectProperties(gtk.Expander):
     def _updateTreeview(self):
         self.storemodel.clear()
         for track_effect in self.selected_effects:
-            to_append = [True] #TODO Implement that
+            to_append = [track_effect.gnl_object.get_property("active")] #TODO Implement that
             if isinstance(track_effect.factory.getInputStreams()[0], VideoStream):
                 to_append.append("Video")
             else:
@@ -291,26 +297,27 @@ class EffectProperties(gtk.Expander):
         self.explain_box.show()
         self.explain_label.show()
 
-    def _treeViewButtonPressEventCb(self, treeview, event):
+    def _treeviewSelectionChangedCb(self, treeview):
+        print "Selection changed"
         self._updateEffectConfigUi()
 
     def _updateEffectConfigUi(self):
-        selection = self.treeview.get_selection().get_selected()
-        if selection[1]:
-            effect = self.storemodel.get_value(selection[1], COL_TRACK_EFFECT)
+        if self.selection.get_selected()[1]:
+            effect = self.storemodel.get_value(self.selection.get_selected()[1], COL_TRACK_EFFECT)
             #TODO figure out the name of the element better
             for element in effect.gnl_object.recurse():
                 if effect.factory.name in element.get_name():
                     break
 
-            if self.effect_config_ui:
-                self.effect_config_ui.hide()
+            if self._effect_config_ui:
+                self._effect_config_ui.hide()
 
-            self.effect_config_ui = self.effectUIFactory.getEffectConfigurationUI(element)
-            if self.effect_config_ui:
-                self.VContent.pack_start(self.effect_config_ui, expand=False, fill=True)
-                self.effect_config_ui.show_all()
+            self._effect_config_ui = self.effectUIFactory.getEffectConfigurationUI(element)
+            if self._effect_config_ui:
+                self.VContent.pack_start(self._effect_config_ui, expand=False, fill=True)
+                self._effect_config_ui.show_all()
+            self.selected_on_treeview = effect
         else:
-            if self.effect_config_ui:
-                self.effect_config_ui.hide()
-                self.effect_config_ui = None
+            if self._effect_config_ui:
+                self._effect_config_ui.hide()
+                self._effect_config_ui = None
