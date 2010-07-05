@@ -36,6 +36,7 @@ from pitivi.timeline.track import TrackEffect
 from pitivi.stream import AudioStream, VideoStream
 
 from pitivi.ui.effectsconfiguration import EffectUIFactory
+from pitivi.ui.common import PADDING, SPACING
 
 (COL_ACTIVATED,
  COL_TYPE,
@@ -122,36 +123,31 @@ class EffectProperties(gtk.Expander):
         tsel = self.treeview.get_selection()
         tsel.set_mode(gtk.SELECTION_SINGLE)
 
-        activatedcol = gtk.TreeViewColumn(_("Activated"))
-        activatedcol.set_sort_column_id(COL_TYPE)
-        self.treeview.append_column(activatedcol)
-        activatedcol.set_spacing(5)
-        activatedcol.set_sizing(gtk.TREE_VIEW_COLUMN_AUTOSIZE)
-        activatedcol.set_min_width(15)
         activatedcell = gtk.CellRendererToggle()
-        activatedcell.props.xpad = 6
-        activatedcol.pack_start(activatedcell)
+        activatedcell.props.xpad = PADDING
+        activatedcol = self.treeview.insert_column_with_attributes(-1, _("Activated"),
+                                                                  activatedcell,
+                                                                  active = COL_ACTIVATED)
+        activatedcell.connect("toggled",  self._effectActiveToggleCb)
 
-        activatedcell.connect("toggled",  self.effectActiveToggleCb)
-
-        desccol = gtk.TreeViewColumn(_("Type"))
-        desccol.set_sort_column_id(COL_TYPE)
-        self.treeview.append_column(desccol)
-        desccol.set_spacing(5)
-        desccol.set_sizing(gtk.TREE_VIEW_COLUMN_AUTOSIZE)
-        desccol.set_min_width(50)
-        desccell = gtk.CellRendererText()
-        desccell.props.xpad = 6
-        desccell.set_property("ellipsize", pango.ELLIPSIZE_END)
-        desccol.pack_start(desccell)
-        desccol.add_attribute(desccell, "text", COL_TYPE)
+        typecol = gtk.TreeViewColumn(_("Type"))
+        typecol.set_sort_column_id(COL_TYPE)
+        self.treeview.append_column(typecol)
+        typecol.set_spacing(SPACING)
+        typecol.set_sizing(gtk.TREE_VIEW_COLUMN_AUTOSIZE)
+        typecol.set_min_width(50)
+        typecell = gtk.CellRendererText()
+        typecell.props.xpad = PADDING
+        typecell.set_property("ellipsize", pango.ELLIPSIZE_END)
+        typecol.pack_start(typecell)
+        typecol.add_attribute(typecell, "text", COL_TYPE)
 
         namecol = gtk.TreeViewColumn(_("Effect name"))
         namecol.set_sort_column_id(COL_NAME_TEXT)
         self.treeview.append_column(namecol)
-        namecol.set_spacing(5)
+        namecol.set_spacing(SPACING)
         namecell = gtk.CellRendererText()
-        namecell.props.xpad = 6
+        namecell.props.xpad = PADDING
         namecell.set_property("ellipsize", pango.ELLIPSIZE_END)
         namecol.pack_start(namecell)
         namecol.add_attribute(namecell, "text", COL_NAME_TEXT)
