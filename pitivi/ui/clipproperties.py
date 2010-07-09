@@ -22,7 +22,9 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
-
+"""
+Class handling the midle pane
+"""
 import gtk
 import pango
 import dnd
@@ -30,10 +32,9 @@ import dnd
 from gettext import gettext as _
 
 from pitivi.log.loggable import Loggable
-from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.receiver import receiver, handler
 from pitivi.timeline.track import TrackEffect
-from pitivi.stream import AudioStream, VideoStream
+from pitivi.stream import VideoStream
 
 from pitivi.ui.effectsconfiguration import EffectUIFactory
 from pitivi.ui.common import PADDING, SPACING
@@ -57,14 +58,14 @@ class ClipProperties(gtk.VBox, Loggable):
         self.settings = instance.settings
         self.project = None
 
-        self.effectExpander = EffectProperties(instance)
-        self.pack_start(self.effectExpander, expand=True, fill=True)
+        self.effect_expander = EffectProperties(instance)
+        self.pack_start(self.effect_expander, expand=True, fill=True)
 
-        self.effectExpander.show()
+        self.effect_expander.show()
 
     def _setProject(self):
         if self.project:
-            self.effectExpander.connectTimelineSelection(self.project.timeline)
+            self.effect_expander.connectTimelineSelection(self.project.timeline)
 
     project = receiver(_setProject)
 
@@ -81,22 +82,22 @@ class EffectProperties(gtk.Expander):
         self.timeline_object = None
         self.app = instance
         self.effectsHandler = self.app.effects
-        self.effectUIFactory = EffectUIFactory()
+        self._effectUIFactory = EffectUIFactory()
         self._effect_config_ui = None
 
         self.VContent = gtk.VBox()
         self.add(self.VContent)
 
         self.table = gtk.Table(2, 1, False)
-        self.VContent.pack_start(self.table, expand=False, fill=True)
+        self.VContent.pack_start(self.table, expand=True, fill=True)
 
         self.toolbar1 = gtk.Toolbar()
         self.removeEffectBt = gtk.ToolButton("gtk-delete")
-        self.removeEffectBt.set_label("Remove effect")
+        self.removeEffectBt.set_label(_("Remove effect"))
         self.removeEffectBt.set_use_underline(True)
         self.removeEffectBt.set_is_important(True)
         self.toolbar1.insert(self.removeEffectBt, 0)
-        self.table.attach(self.toolbar1, 0, 1, 0, 1)
+        self.table.attach(self.toolbar1, 0, 1, 0, 1, yoptions=gtk.FILL)
 
         #self.toolbar2 = gtk.Toolbar()
         ##self.toolbar2.set_style(gtk.TOOLBAR_BOTH_HORIZ)
@@ -111,7 +112,10 @@ class EffectProperties(gtk.Expander):
 
         #Treeview
         self.treeview_scrollwin = gtk.ScrolledWindow()
-        self.treeview_scrollwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        adjustment = gtk.Adjustment(lower=180)
+        self.treeview_scrollwin.set_vadjustment(adjustment)
+        self.treeview_scrollwin.set_policy(gtk.POLICY_NEVER,
+                                           gtk.POLICY_AUTOMATIC)
         self.treeview_scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
 
         # TreeView
@@ -125,9 +129,10 @@ class EffectProperties(gtk.Expander):
 
         activatedcell = gtk.CellRendererToggle()
         activatedcell.props.xpad = PADDING
-        activatedcol = self.treeview.insert_column_with_attributes(-1, _("Activated"),
-                                                                  activatedcell,
-                                                                  active = COL_ACTIVATED)
+        activatedcol = self.treeview.insert_column_with_attributes(-1,
+                                                        _("Activated"),
+                                                        activatedcell,
+                                                        active = COL_ACTIVATED)
         activatedcell.connect("toggled",  self._effectActiveToggleCb)
 
         typecol = gtk.TreeViewColumn(_("Type"))
@@ -154,7 +159,8 @@ class EffectProperties(gtk.Expander):
 
         #Explain how to configure effects
         self.explain_box = gtk.EventBox()
-        self.explain_box.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
+        self.explain_box.modify_bg(gtk.STATE_NORMAL,
+                                   gtk.gdk.color_parse('white'))
 
         self.explain_label = gtk.Label()
         self.explain_label.set_padding(10, 10)
@@ -203,15 +209,17 @@ class EffectProperties(gtk.Expander):
     timeline_object = receiver()
 
     @handler(timeline_object, "track-object-added")
-    def  trackAddedCb(self, unused_timeline_object, track_object):
+    def  _trackObjectAddedCb(self, unused_timeline_object, track_object):
         if isinstance (track_object, TrackEffect):
-            self.selected_effects = self.timeline.selection.getSelectedTrackEffects()
+            selec = self.timeline.selection.getSelectedTrackEffects()
+            self.selected_effects = selec
             self._updateAll()
 
     @handler(timeline_object, "track-object-removed")
-    def  trackAddedCb(self, unused_timeline_object, track_object):
+    def  _trackRemovedRemovedCb(self, unused_timeline_object, track_object):
         if isinstance (track_object, TrackEffect):
-            self.selected_effects = self.timeline.selection.getSelectedTrackEffects()
+            selec = self.timeline.selection.getSelectedTrackEffects()
+            self.selected_effects = selec
             self._updateAll()
 
     def connectTimelineSelection(self, timeline):
@@ -221,7 +229,10 @@ class EffectProperties(gtk.Expander):
         if not self.selection.get_selected()[1]:
             return
         else:
-            effect = self.storemodel.get_value(self.selection.get_selected()[1], COL_TRACK_EFFECT)
+            effect = self.storemodel.get_value(self.selection.get_selected()[1],
+                                               COL_TRACK_EFFECT)
+            track  = effect.track
+            track.removeTrackObject(effect)
             self.timeline_object.removeTrackObject(effect)
 
     def _dragDataReceivedCb(self, unused, context, x, y, timestamp):
@@ -269,19 +280,20 @@ class EffectProperties(gtk.Expander):
                     self.toolbar1.hide()
                 self.explain_box.hide()
                 self._updateTreeview()
+                self._updateEffectConfigUi()
             else:
+                self._hideEffectConfig()
                 self._showExplainLabel()
-                self._effect_config_ui
             self.VContent.show()
-            self._updateEffectConfigUi()
         else:
             self.VContent.hide()
 
     def _updateTreeview(self):
         self.storemodel.clear()
         for track_effect in self.selected_effects:
-            to_append = [track_effect.gnl_object.get_property("active")] #TODO Implement that
-            if isinstance(track_effect.factory.getInputStreams()[0], VideoStream):
+            to_append = [track_effect.gnl_object.get_property("active")]
+            if isinstance(track_effect.factory.getInputStreams()[0],
+                          VideoStream):
                 to_append.append("Video")
             else:
                 to_append.append("Audio")
@@ -303,7 +315,8 @@ class EffectProperties(gtk.Expander):
 
     def _updateEffectConfigUi(self):
         if self.selection.get_selected()[1]:
-            effect = self.storemodel.get_value(self.selection.get_selected()[1], COL_TRACK_EFFECT)
+            effect = self.storemodel.get_value(self.selection.get_selected()[1],
+                                               COL_TRACK_EFFECT)
             #TODO figure out the name of the element better
             for element in effect.gnl_object.recurse():
                 if effect.factory.name in element.get_name():
@@ -312,12 +325,18 @@ class EffectProperties(gtk.Expander):
             if self._effect_config_ui:
                 self._effect_config_ui.hide()
 
-            self._effect_config_ui = self.effectUIFactory.getEffectConfigurationUI(element)
+            config_ui = self._effectUIFactory.getEffectConfigurationUI(element)
+            self._effect_config_ui =  config_ui
             if self._effect_config_ui:
-                self.VContent.pack_start(self._effect_config_ui, expand=False, fill=True)
+                self.VContent.pack_start(self._effect_config_ui,
+                                         expand=False,
+                                         fill=True)
                 self._effect_config_ui.show_all()
             self.selected_on_treeview = effect
         else:
-            if self._effect_config_ui:
-                self._effect_config_ui.hide()
-                self._effect_config_ui = None
+            self._hideEffectConfig()
+
+    def _hideEffectConfig(self):
+        if self._effect_config_ui:
+            self._effect_config_ui.hide()
+            self._effect_config_ui = None
