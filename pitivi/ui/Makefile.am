@@ -37,6 +37,9 @@ ui_PYTHON =			\
 	viewer.py		\
 	view.py			\
 	webcam_managerdialog.py	\
+	effectlist.py	\
+	clipproperties.py	\
+	effectsconfiguration.py	\
 	zoominterface.py
 
 ui_DATA =				\
