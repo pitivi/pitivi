@@ -45,8 +45,10 @@ from pitivi.ui.curve import Curve
 
 from pitivi.factories.operation import EffectFactory
 
-DND_EFFECT_LIST =[[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
+DND_EFFECT_LIST = [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
                   [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]
+VIDEO_EFFECT_LIST = [dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],
+AUDIO_EFFECT_LIST = [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
@@ -424,18 +426,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.drag_highlight()
         else:
             if  context.targets in DND_EFFECT_LIST:
-                priority = y / (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
+
+                priority = self._getPriority(y, context.targets)
+
                 if self._temp_effect:
                     #We change the TimelineObject to add the effect to when needed
                     tmp_timeline_objs = [obj[0] for obj in self._temp_effect]
                     if self.timeline.getObjsToAddEffectTo(self.pixelToNs(x), priority) != tmp_timeline_objs:
-                        try:
-                            for timeline_obj, track_obj in self._temp_effect:
-                                timeline_obj.removeTrackObject(track_obj)
-                        finally:
-                            self._addEffect(x,y)
+                        for timeline_obj, track_obj in self._temp_effect:
+                            timeline_obj.removeTrackObject(track_obj)
+                        self._addEffect(x, y, context.targets)
                 else:
-                    self._addEffect(x,y)
+                    self._addEffect(x, y, context.targets)
             else:
                 if not self._temp_objects:
                     self.timeline.disableUpdates()
@@ -445,6 +447,15 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                             focus, set(self._temp_objects[1:]))
                 self._move_temp_source(self.hadj.props.value + x, y)
         return True
+
+    def _getPriority(self, y, effectTuple):
+        #TODO find a way to get the good priority for audio effects
+        if effectTuple == VIDEO_EFFECT_LIST:
+            priority = y / (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
+        else:
+            priority = y / (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
+
+        return priority
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
         if self._temp_objects:
@@ -483,7 +494,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             return True
         elif context.targets in DND_EFFECT_LIST:
             self.app.action_log.begin("add effect")
-            self._addEffect(x,y)
+            self._addEffect(x, y, context.targets)
             self._factories = None
             self._temp_effect = None
             self.app.current.seeker.seek(self._position) #FIXME
@@ -518,8 +529,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
         return True
 
-    def _addEffect(self, x, y):
-        priority = y / (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
+    def _addEffect(self, x, y, effectTuple):
+        priority = self._getPriority(y, effectTuple)
         factory = self._factories[0]
         self._temp_effect = self.timeline.addEffectFactoryOnObject(factory, self.pixelToNs(x), priority)
 
