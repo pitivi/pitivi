@@ -54,11 +54,12 @@ USELESS_EFFECTS = ["colorconvert", "coglogoinsert", "festival",]
 
 
 
-class effectsHandler:
+class effectsHandler(object):
     """
     Handles all the effects
     """
     def __init__(self):
+        object.__init__(self)
         self._audio_categories_effects = (("All effects", ("")),)
         self._video_categories_effects = (
             (_("All effects"), ("")),
@@ -98,8 +99,10 @@ class effectsHandler:
         self._setAllEffects()
 
     def _setAllEffects(self):
-        # go trough the list of element factories and
-        # add them to the correct list filtering if necessary
+        """
+        go trough the list of element factories and
+        add them to the correct list filtering if necessary
+        """
         factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
         for element_factory in factlist:
             klass = element_factory.get_klass()
@@ -120,18 +123,33 @@ class effectsHandler:
                     self._addEffectToDic(name, effect)
 
     def getAllAudioEffects(self):
+        """
+        @returns:  the list off available audio effects elements
+        """
         return self.audio_effects
 
     def getAllVideoEffects(self):
+        """
+        @returns: the list off available video effects elements
+        """
         return self.video_effects
 
     def _addEffectToDic(self, name, factory):
         self.effect_factories_dict[name]=factory
 
     def getEffect(self, name):
+        """
+        @ivar name: Factory name.
+        @type name: C{str}
+        @returns: The l{EffectFactory} corresponding to the name
+        @raises: KeyError if the name doesn't  exist
+        """
         return self.effect_factories_dict.get(name)
 
     def addStreams(self, element, factory):
+        """
+        Adds the good streams to the corresponding factory
+        """
         pads = element.get_static_pad_templates()
 
         if not factory:
@@ -151,30 +169,51 @@ class effectsHandler:
         return True
 
     def _getEffectDescripton(self, element_factory):
+        """
+        @ivar element_factory: The element factory
+        @type element_factory: L{gst.ElementFactory}
+        @returns: A human description C{str} for the effect
+        """
         return (escape(element_factory.get_description()))
 
     def _getEffectCategories(self, effect_name):
+        """
+        @ivar effect_name: the name of the effect for wich we want the category
+        @type effect_name: L{str}
+        @returns: A C{list} of name C{str} of categories corresponding the effect
+        """
         categories = []
 
         for categorie in self._audio_categories_effects:
             for name in categorie[1]:
                 if name == effect_name:
                     categories.append(categorie[0])
+                    self._audio_categories.append(categorie[0])
 
         for categorie in self._video_categories_effects:
             for name in categorie[1]:
                 if name == effect_name:
                     categories.append(categorie[0])
+                    self._video_categories.append(categorie[0])
 
         if not categories:
-            categories.append(_("Uncategorized"))
+            uncategorized = _("Uncategorized")
+            categories.append(uncategorized)
+            self._video_categories.append(uncategorized)
+            self._audio_categories.append(uncategorized)
 
         categories.append(self._video_categories_effects[0][0])
+        self._audio_categories.append(self._video_categories_effects[0][0])
+        self._video_categories.append(self._video_categories_effects[0][0])
 
         return categories
 
     def _getEffectName(self, element_factory):
-        """ Better name for humans"""
+        """
+        @ivar element_factory: The element factory
+        @type element_factory: L{gst.ElementFactory}
+        @returns: A human readable name C{str} for the effect
+        """
         #TODO check if it is the good way to make it translatable
         #And to filter actually!
         video = _("Video")
@@ -184,28 +223,49 @@ class effectsHandler:
         uselessWords = re.compile(video + pipe + audio + pipe + effect)
         return uselessWords.sub("", (escape(element_factory.get_longname()))).title()
 
-    def getVideoCategories(self):
-        """ Returns all video effect categories"""
-        if not self._video_categories:
+    def getVideoCategories(self, aware=True):
+        """
+        @ivar  aware: C{True} if you want it to return only categories on whichs
+        there are effects on the system, else C{False}
+        @type aware: C{bool}
+        @returns: All video effect categories names C{str} that are available on
+        the system if it has been filled earlier, if it hasen't it will just
+        return all categories
+        """
+        if not self._video_categories or not aware:
             for categorie in self._video_categories_effects:
                 self._video_categories.append(categorie[0])
+        self._video_categories = list(set(self._video_categories))
+        self._video_categories.sort()
         return self._video_categories
 
     video_categories = property(getVideoCategories)
 
-    def getAudioCategories(self):
-        if not self._audio_categories:
+    def getAudioCategories(self, aware=True):
+        """
+        @ivar  aware: C{True} if you want it to return only categories on whichs
+        there are effects on the system, else C{False}
+        @type aware: C{bool}
+        @returns: All audio effect categories names C{str}
+        """
+        if not self._audio_categories or not aware:
             for categorie in self._audio_categories_effects:
                 self._audio_categories.append(categorie[0])
+        self._audio_categories = list(set(self._audio_categories))
+        self._audio_categories.sort()
         return self._audio_categories
 
     audio_categories = property(getAudioCategories)
 
     def getAllCategories(self):
+        """
+        @returns: All effect categories names C{str}
+        """
         effects_categories = []
         return effects_categories.extended(self.video_categories).extended(self.audio_categories)
 
     def _getEffectIcon(self, effect_name):
+        #TODO, create icons for effects
         #Shouldn't we use pyxdg to make things cleaner and more optimized?
         icontheme = gtk.icon_theme_get_default()
         pixdir = get_pixmap_dir()
