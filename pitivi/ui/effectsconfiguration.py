@@ -73,7 +73,7 @@ class VideoBalanceConfig(gtk.HBox):
             widget.connect("value-changed", self.onValueChangedCb, prop)
 
             controls.pack_start(widget, True, True)
-            labels.pack_end(label, True, True)
+            labels.pack_start(label, True, True)
 
         self.pack_start(labels, expand=False, fill=True)
         self.pack_end(controls, expand=True, fill=True)
