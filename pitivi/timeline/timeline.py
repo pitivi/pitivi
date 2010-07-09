@@ -1727,12 +1727,12 @@ class Timeline(Signallable, Loggable):
 
     def addEffectFactoryOnObject(self, factory, time, priority):
         """
-        Add effectTraks corresponding to the effect from the factory to the corresponding 
+        Add effectTraks corresponding to the effect from the factory to the corresponding
         L{TimelineObject}s on the timeline
 
         @param factory: The EffectFactory to add.
         @type factory: L{EffectFactory}
-        @param time: Where the effect should be added, if time = -1, we add the effect 
+        @param time: Where the effect should be added, if time = -1, we add the effect
                      to the whole layer
         @type time: C{int}
         @priority: An aproximation of the clip we want the effect to be added to.
@@ -1763,15 +1763,11 @@ class Timeline(Signallable, Loggable):
         timeline_objects = self.getObjsToAddEffectTo(time, priority)
         for obj in timeline_objects:
             copy_track_obj = track_object.copy()
-            copy_track_obj.makeBin()
-            copy_track_obj.track = track
+            track.addTrackObject(copy_track_obj)
             copy_track_obj.start = obj.start
             copy_track_obj.duration = obj.duration
             obj.addTrackObject(copy_track_obj)
             listTimelineObjectTrackObject.append((obj, copy_track_obj))
-        #    del(track_object)
-        #except:
-        #    return None
 
         return listTimelineObjectTrackObject
 
