@@ -311,7 +311,14 @@ class Seeker(Signallable):
         if self.position != None and self.format != None:
             position, self.position = self.position, None
             format, self.format = self.format, None
-            self.emit('seek', position, format)
+            try:
+                self.emit('seek', position, format)
+            except:
+                log.doLog(log.ERROR, None, "seeker", "Error while seeking to position:%s format:%r",
+                          (gst.TIME_ARGS(position), format))
+                # if an exception happened while seeking, properly
+                # reset ourselves
+                return False
         return False
 
 def get_filesystem_encoding():
