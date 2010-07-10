@@ -137,7 +137,7 @@ class TimelineObject(Signallable, Loggable):
         @raises TimelineError: If the object doesn't control any C{TrackObject}s.
         """
         if not self.track_objects:
-            raise TimelineError()
+            raise TimelineError("TimelineObject doesn't control any TrackObjects")
 
         if snap:
             position = self.timeline.snapToEdge(position, position + self.duration)
@@ -181,7 +181,7 @@ class TimelineObject(Signallable, Loggable):
         @raises TimelineError: If the object doesn't control any C{TrackObject}s.
         """
         if not self.track_objects:
-            raise TimelineError()
+            raise TimelineError("TimelineObject doesn't control any TrackObjects")
 
         if snap:
             position = self.start + duration
@@ -214,7 +214,7 @@ class TimelineObject(Signallable, Loggable):
         @raises TimelineError: If the object doesn't control any C{TrackObject}s.
         """
         if not self.track_objects:
-            raise TimelineError()
+            raise TimelineError("TimelineObject doesn't control any TrackObjects")
 
         for track_object in self.track_objects:
             track_object.setObjectInPoint(position)
@@ -243,7 +243,7 @@ class TimelineObject(Signallable, Loggable):
         @raises TimelineError: If the object doesn't control any C{TrackObject}s.
         """
         if not self.track_objects:
-            raise TimelineError()
+            raise TimelineError("TimelineObject doesn't control any TrackObjects")
 
         for track_object in self.track_objects:
             track_object.setObjectMediaDuration(position)
@@ -265,7 +265,7 @@ class TimelineObject(Signallable, Loggable):
         @raises TimelineError: If the object doesn't control any C{TrackObject}s.
         """
         if not self.track_objects:
-            raise TimelineError()
+            raise TimelineError("TimelineObject doesn't control any TrackObjects")
 
         for track_object in self.track_objects:
             track_object.setObjectPriority(priority)
@@ -318,7 +318,7 @@ class TimelineObject(Signallable, Loggable):
         @raises TimelineError: If the object doesn't control any C{TrackObject}s.
         """
         if not self.track_objects:
-            raise TimelineError()
+            raise TimelineError("TimelineObject doesn't control any TrackObjects")
 
         if snap:
             position = self.timeline.snapToEdge(position)
@@ -351,7 +351,7 @@ class TimelineObject(Signallable, Loggable):
         it is up to the caller to add the returned 'half' object to a C{Timeline}.
         """
         if not self.track_objects:
-            raise TimelineError()
+            raise TimelineError("TimelineObject doesn't control any TrackObjects")
 
         other = self.copy(copy_track_objects=False)
 
@@ -390,11 +390,11 @@ class TimelineObject(Signallable, Loggable):
         same duration as the other objects controlled.
         """
         if obj.timeline_object is not None:
-            raise TimelineError()
+            raise TimelineError("TrackObject already controlled by another TimelineObject")
 
         if obj in self.track_objects:
             # FIXME : couldn't we just silently return ?
-            raise TimelineError()
+            raise TimelineError("TrackObject already controlled by this TimelineObject")
 
         if self.track_objects:
             # multiple track objects are used for groups.
@@ -415,7 +415,7 @@ class TimelineObject(Signallable, Loggable):
             existing_track_object = self.track_objects[0]
             if obj.start != existing_track_object.start or \
                     obj.duration != existing_track_object.duration:
-                raise TimelineError()
+                raise TimelineError("New TrackObject doesn't have same duration as other controlled TrackObjects")
 
         # FIXME: cycle
         obj.timeline_object = self
@@ -432,13 +432,13 @@ class TimelineObject(Signallable, Loggable):
         @raises TimelineError: If the Track object isn't controlled by this TimelineObject.
         """
         if obj.track is None:
-            raise TimelineError()
+            raise TimelineError("TrackObject doesn't belong to any Track")
 
         try:
             self.track_objects.remove(obj)
             obj.timeline_object = None
         except ValueError:
-            raise TimelineError()
+            raise TimelineError("TrackObject doesn't belong to this TimelineObject")
 
         self.emit("track-object-removed", obj)
 
@@ -479,7 +479,7 @@ class Selection(Signallable):
         Selection.
         """
         if timeline_object in self.timeline_objects:
-            raise TimelineError()
+            raise TimelineError("TrackObject already in this selection")
 
     # FIXME : it took me 10 mins to understand what this method does... a more obvious
     # name would be better :)
@@ -571,10 +571,10 @@ class Link(object):
 
     def addTimelineObject(self, timeline_object):
         if timeline_object.link is not None:
-            raise TimelineError()
+            raise TimelineError("TimelineObject already in a Link")
 
         if timeline_object in self.timeline_objects:
-            raise TimelineError()
+            raise TimelineError("TimelineObject already controlled by this Link")
 
         self.timeline_objects.add(timeline_object)
 
@@ -597,7 +597,7 @@ class Link(object):
         try:
             self.timeline_objects.remove(timeline_object)
         except KeyError:
-            raise TimelineError()
+            raise TimelineError("TimelineObject not controlled by this Link")
 
         tracker = self.property_trackers.pop(timeline_object)
         tracker.disconnectFromObject(timeline_object)
@@ -717,7 +717,7 @@ class TimelineEdges(object):
 
     def addTrackObject(self, track_object):
         if track_object in self.by_object:
-            raise TimelineError()
+            raise TimelineError("TrackObject already controlled by this TimelineEdge")
 
         start = track_object.start
         end = track_object.start + track_object.duration
@@ -735,7 +735,7 @@ class TimelineEdges(object):
         try:
             old_start, old_end = self.by_object.pop(track_object)
         except KeyError:
-            raise TimelineError()
+            raise TimelineError("TrackObject not controlled by this TimelineEdge")
 
         try:
             del self.changed_objects[track_object]
@@ -795,7 +795,7 @@ class TimelineEdges(object):
         index = bisect_left(self.edges, start, lo=lo)
         # check if start is a valid edge
         if index == len(self.edges) or self.edges[index] != start:
-            raise TimelineError()
+            raise TimelineError("Start (%r) is not a valid edge" % start)
 
         del self.edges[index]
         lo = index
@@ -804,7 +804,7 @@ class TimelineEdges(object):
             index = bisect_left(self.edges, end, lo=lo)
             # check if end is a valid edge
             if index == len(self.edges) or self.edges[index] != end:
-                raise TimelineError()
+                raise TimelineError("End (%r) is not a valid edge")
 
             del self.edges[index]
 
@@ -1525,7 +1525,7 @@ class Timeline(Signallable, Loggable):
         try:
             self.tracks.remove(track)
         except ValueError:
-            raise TimelineError()
+            raise TimelineError("Track not controlled by this Timeline")
 
         if removeTrackObjects:
             track.removeAllTrackObjects()
@@ -1557,12 +1557,12 @@ class Timeline(Signallable, Loggable):
         """
         self.debug("obj:%r", obj)
         if obj.timeline is not None:
-            raise TimelineError()
+            raise TimelineError("TimelineObject already controlled by another Timeline")
 
         # FIXME : wait... what's wrong with having empty timeline objects ??
         # And even if it was.. this shouldn't be checked here imho.
         if not obj.track_objects:
-            raise TimelineError()
+            raise TimelineError("TimelineObject doesn't have any TrackObject (THIS IS A VERY DUBIOUS CHECK, WE SHOULD ACCEPT THIS)")
 
         self._connectToTimelineObject(obj)
 
@@ -1586,7 +1586,7 @@ class Timeline(Signallable, Loggable):
         try:
             self.timeline_objects.remove(obj)
         except ValueError:
-            raise TimelineError()
+            raise TimelineError("TimelineObject not controlled by this Timeline")
 
         if obj.link is not None:
             obj.link.removeTimelineObject(obj)
@@ -1650,7 +1650,7 @@ class Timeline(Signallable, Loggable):
         self.debug("factory:%r", factory)
         output_streams = factory.getOutputStreams()
         if not output_streams:
-            raise TimelineError()
+            raise TimelineError("SourceFactory doesn't provide any Output Streams")
 
         if stream_map is None:
             stream_map = self._getSourceFactoryStreamMap(factory)
@@ -1660,7 +1660,7 @@ class Timeline(Signallable, Loggable):
                 self.error("Couldn't find a complete stream mapping (self:%d < factory:%d)",
                            len(stream_map), len(output_streams))
                 if strict:
-                    raise TimelineError()
+                    raise TimelineError("Couldn't map all streams to available Tracks")
 
         timeline_object = TimelineObject(factory)
         start = 0
