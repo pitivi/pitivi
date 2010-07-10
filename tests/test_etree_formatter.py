@@ -20,13 +20,12 @@
 # Boston, MA 02111-1307, USA.
 
 from unittest import TestCase
-from StringIO import StringIO
 import gst
 from xml.etree.ElementTree import Element, SubElement
 
-from pitivi.reflect import qual, namedAny
-from pitivi.formatters.etree import ElementTreeFormatter, version, \
-     ElementTreeFormatterContext, indent, tostring
+from pitivi.reflect import qual
+from pitivi.formatters.etree import ElementTreeFormatter, version,\
+                                    indent, tostring
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.file import FileSourceFactory
 from pitivi.factories.test import VideoTestSourceFactory, \
