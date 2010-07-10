@@ -264,7 +264,9 @@ class Pipeline(Signallable, Loggable):
         self.debug("state:%r", state)
         res = self._pipeline.set_state(state)
         if res == gst.STATE_CHANGE_FAILURE:
-            raise PipelineError("Failure changing state of the gst.Pipeline")
+            # reset to NULL
+            self._pipeline.set_state(gst.STATE_NULL)
+            raise PipelineError("Failure changing state of the gst.Pipeline to %r, currently reset to NULL" % state)
 
     def getState(self):
         """
