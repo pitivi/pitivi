@@ -525,7 +525,7 @@ class Pipeline(Signallable, Loggable):
             return bin_entry.bin
 
         if not automake:
-            raise PipelineError()
+            raise PipelineError("Couldn't get an existing Bin for Factory %r" % factory)
 
         bin = stream_entry.bin = factory.makeBin(stream)
         stream_entry.bin_use_count += 1
@@ -660,7 +660,7 @@ class Pipeline(Signallable, Loggable):
         stream_entry = self._getStreamEntryForFactoryStream(factory, stream)
 
         if stream_entry.tee_use_count == 0:
-            raise PipelineError()
+            raise PipelineError("Tee is already unused from factory %r" % factory)
 
         stream_entry.tee_use_count -= 1
         if stream_entry.tee_use_count == 0:
@@ -750,11 +750,11 @@ class Pipeline(Signallable, Loggable):
         @raise PipelineError: If the Pipeline isn't in NULL or READY.
         """
         if not isinstance(factory, SinkFactory):
-            raise PipelineError()
+            raise PipelineError("Attempting to release a queue for a non-sink factory (%r)" % factory)
 
         stream_entry = self._getStreamEntryForFactoryStream(factory, stream)
         if stream_entry.queue is None:
-            raise PipelineError()
+            raise PipelineError("Couldn't find Queue for Stream/Factory")
 
         stream_entry.queue_use_count -= 1
         if stream_entry.queue_use_count == 0:
