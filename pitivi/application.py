@@ -221,10 +221,10 @@ class InteractivePitivi(Pitivi):
       %prog -i [-a] [MEDIA_FILE]...""")
 
     description = _("""Starts the video editor, optionally loading PROJECT_FILE. If
-    no project is given, %prog creates a new project.
-    Alternatively, when -i is specified, arguments are treated as clips to be
-    imported into the project. If -a is specified, these clips will also be added to
-    the end of the project timeline.""")
+no project is given, %prog creates a new project.
+Alternatively, when -i is specified, arguments are treated as clips to be
+imported into the project. If -a is specified, these clips will also be added to
+the end of the project timeline.""")
 
     import_help = _("""Import each MEDIA_FILE into the project.""")
 
