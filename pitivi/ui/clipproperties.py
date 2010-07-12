@@ -3,7 +3,7 @@
 #       ui/clipproperties.py
 #
 # Copyright (C) 2010 Thibault Saunier <tsaunier@gnome.org>
-# 
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
@@ -112,8 +112,6 @@ class EffectProperties(gtk.Expander):
 
         #Treeview
         self.treeview_scrollwin = gtk.ScrolledWindow()
-        adjustment = gtk.Adjustment(lower=180)
-        self.treeview_scrollwin.set_vadjustment(adjustment)
         self.treeview_scrollwin.set_policy(gtk.POLICY_NEVER,
                                            gtk.POLICY_AUTOMATIC)
         self.treeview_scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
