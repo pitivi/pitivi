@@ -19,22 +19,16 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-import gobject
-import gst
 import gtk
 import pango
 import os
 import time
 
-from urllib import unquote
 from gettext import gettext as _
-from gettext import ngettext
 
 import pitivi.ui.dnd as dnd
 
 from pitivi.configure import get_pixmap_dir
-from pitivi.settings import GlobalSettings
-from pitivi.utils import beautify_length
 
 from pitivi.log.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
