@@ -121,6 +121,7 @@ def _init_gobject_gtk_gst():
         import pygst
         pygst.require('0.10')
 
+        args, sys.argv[:] = sys.argv[:], sys.argv[0:1]
         import gst
     except ImportError:
         raise SystemExit("Gst-Python couldn't be found!")
