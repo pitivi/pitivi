@@ -28,6 +28,8 @@ import gobject
 import gst
 import cairo
 import os
+import gtk
+import rsvg
 from gettext import gettext as _
 import pitivi.utils as utils
 from pitivi.configure import get_pixmap_dir
@@ -150,8 +152,25 @@ class Previewer(Signallable, Loggable):
     def __init__(self, instance, factory, stream_):
         Loggable.__init__(self)
         # create default thumbnail
-        path = os.path.join(get_pixmap_dir(), self.__DEFAULT_THUMB__)
-        self.default_thumb = cairo.ImageSurface.create_from_png(path)
+        icon_theme = gtk.icon_theme_get_default()
+        icon = icon_theme.lookup_icon("appointment-soon", 48, ())
+        # If we can't find the appointment-soon icon, use our own
+        if icon is None:
+            path = os.path.join(get_pixmap_dir(), self.__DEFAULT_THUMB__)
+        else:
+            path = icon.get_filename()
+
+        # If it is an SVG, we have to render to cairo using librsvg
+        if path.endswith(".svg"):
+            handle = rsvg.Handle(file=path)
+            (width, height, width_fl, height_fl) = handle.get_dimension_data()
+            surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+            cr = cairo.Context(surface)
+            handle.render_cairo(cr)
+            self.default_thumb = surface
+        else:
+            # Easy for PNGs
+            self.default_thumb = cairo.ImageSurface.create_from_png(path)
         self._connectSettings(instance.settings)
 
     def render_cairo(self, cr, bounds, element, y1):
