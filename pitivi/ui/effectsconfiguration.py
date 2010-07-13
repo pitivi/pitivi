@@ -62,26 +62,14 @@ class EffectsPropertiesHandling:
     def _connectAllWidgetCbs(self, video_balance_ui, effect):
         for prop, widget in video_balance_ui.properties.iteritems():
             if type(widget) in [gtk.SpinButton]:
-                widget.connect("value-changed", self._onValueChangedCb, prop.name, effect)
+                widget.connect("value-changed", self._onValueChangedCb, prop.name, effect, widget.get_value)
             elif type(widget) in [gtk.Entry]:
-                widget.connect("changed", self._onEntryChangedCb, prop.name, effect)
+                widget.connect("changed", self._onValueChangedCb, prop.name, effect, widget.get_text)
             elif type(widget) in [gtk.ComboBox]:
-                widget.connect("changed", self._onComboboxChangedCb, prop.name, effect)
+                widget.connect("changed", self._onValueChangedCb, prop.name, effect, widget.get_active_text)
             elif type(widget) in [gtk.CheckButton]:
-                widget.connect("clicked", self._onCheckButtonClickedCb, prop.name, effect)
+                widget.connect("clicked", self._onValueChangedCb, prop.name, effect, widget.get_active)
 
-    def _onValueChangedCb(self, widget, prop, element):
-        element.set_property(prop, widget.get_value())
-        self._flushSeekVideo()
-
-    def _onComboboxChangedCb(self, widget, prop, element):
-        element.set_property(prop, widget.get_active_text())
-        self._flushSeekVideo()
-
-    def _onCheckButtonClickedCb(self, widget, prop, element):
-        element.set_property(prop, widget.get_active())
-        self._flushSeekVideo()
-
-    def _onEntryChangedCb(self, widget, prop, element):
-        element.set_property(prop, widget.get_text())
+    def _onValueChangedCb(self, widget, prop, element, function):
+        element.set_property(prop, function())
         self._flushSeekVideo()
