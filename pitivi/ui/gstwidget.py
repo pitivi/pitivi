@@ -126,21 +126,25 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         self.ignore = None
         self.properties = None
 
-    def setElement(self, element, properties={}, ignore=['name']):
+    def setElement(self, element, properties={}, ignore=['name'], default_btn = False):
         """ Set given element on Widget, with optional properties """
         self.info("element:%s, properties:%s", element, properties)
         self.element = element
         self.ignore = ignore
-        self.properties = {} #key:name, value:widget
-        self._addWidgets(properties)
+        self.properties = properties
+        self._addWidgets(properties, default_btn)
 
-    def _addWidgets(self, properties):
-        props = [x for x in gobject.list_properties(self.element) if not x.name in self.ignore]
+    def _addWidgets(self, properties, default_btn):
+        props = [prop for prop in gobject.list_properties(self.element) if not prop.name in self.ignore]
         if not props:
             self.pack_start(gtk.Label(_("No properties...")))
             self.show_all()
             return
-        table = gtk.Table(rows=len(props), columns=2)
+        if default_btn:
+            table = gtk.Table(rows=len(props), columns=3)
+        else:
+            table = gtk.Table(rows=len(props), columns=2)
+
         table.set_row_spacings(5)
         table.set_col_spacings(5)
         table.set_border_width(5)
@@ -148,13 +152,45 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         for prop in props:
             label = gtk.Label(prop.nick)
             label.set_alignment(0.0, 0.5)
-            widget = make_property_widget(self.element, prop, properties.get(prop.name))
             table.attach(label, 0, 1, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
+            widget = make_property_widget(self.element, prop, properties.get(prop.name))
+            if hasattr(prop, 'description'): #TODO: check that
+                widget.set_tooltip_text(prop.description)
             table.attach(widget, 1, 2, y, y+1, yoptions=gtk.FILL)
             self.properties[prop] = widget
+            if default_btn:
+                button = self._getResetToDefaultValueButton(prop, widget)
+                table.attach(button, 2, 3, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
             y += 1
         self.pack_start(table)
         self.show_all()
+
+    def _getResetToDefaultValueButton(self, prop, widget):
+        icon = gtk.Image()
+        icon.set_from_stock('gtk-clear', gtk.ICON_SIZE_MENU)
+        button = gtk.Button(label='')
+        button.set_image(icon)
+        button.set_tooltip_text(_("Reset to default value"))
+        button.connect('clicked', self._defaultBtnClickedCb, prop.default_value, widget)
+        return button
+
+    def _defaultBtnClickedCb(self, button,  default_value, widget):
+        self._set_prop(widget, default_value)
+
+    def _set_prop(self, widget, value):
+        def check_combobox_value(model, path, iter, widget_value):
+            if model.get_value(iter, 0) == str(widget_value[1].value_name):
+                widget_value[0].set_active_iter(iter)
+
+        if type(widget) in [gtk.SpinButton]:
+            widget.set_value(float(value))
+        elif type(widget) in [gtk.Entry]:
+            widget.set_text(str(value))
+        elif type(widget) in [gtk.ComboBox]:
+            model = widget.get_model()
+            model.foreach(check_combobox_value, [widget, value])
+        elif type(widget) in [gtk.CheckButton]:
+            widget.set_active(bool(value))
 
     def getSettings(self):
         """

@@ -46,7 +46,7 @@ class EffectsPropertiesHandling:
             #Here we should handle special effects
         else:
             effect_configuration_ui =  GstElementSettingsWidget()
-            effect_configuration_ui.setElement(effect, ignore=PROPERTIES_TO_IGNORE)
+            effect_configuration_ui.setElement(effect, ignore=PROPERTIES_TO_IGNORE, default_btn=True)
             self._connectAllWidgetCbs(effect_configuration_ui, effect)
             self.cache_dict[effect] = effect_configuration_ui
         return effect_configuration_ui
