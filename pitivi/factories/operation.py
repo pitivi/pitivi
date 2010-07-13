@@ -62,7 +62,7 @@ class EffectFactory (TransformFactory):
     """
     def __init__ (self, effect, name='', categories=[_("Uncategorized")], human_name="", description="", icon=None):
         TransformFactory.__init__(self, name)
-        self._effect = effect
+        self.effectname = effect
         self.categories = categories
         self.description = description
         self.human_name = human_name
@@ -79,7 +79,7 @@ class EffectFactory (TransformFactory):
 
     def _makeBin (self, *args):
         bin = gst.Bin()
-        fx = gst.element_factory_make(self._effect)
+        fx = gst.element_factory_make(self.effectname)
         if isinstance(self.input_streams[0], VideoStream):
             csp = gst.element_factory_make("ffmpegcolorspace")
         else:
