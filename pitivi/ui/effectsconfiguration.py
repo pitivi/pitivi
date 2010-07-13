@@ -24,59 +24,64 @@
 
 import gtk
 
-from gettext import gettext as _
+from pitivi.ui.gstwidget import GstElementSettingsWidget
+from pitivi.pipeline import PipelineError
 
-from pitivi.ui.common import SPACING
+PROPERTIES_TO_IGNORE = ['name', 'qos']
 
-class EffectUIFactory(object):
+class EffectsPropertiesHandling:
     def __init__(self):
         self.cache_dict = {}
+        self.pipeline = None
 
     def getEffectConfigurationUI(self, effect):
-        if "videobalance" in effect.get_name():
-            if effect not in self.cache_dict:
-                video_balance_ui =  VideoBalanceConfig(effect)
-                self.cache_dict[effect] = video_balance_ui
-                return video_balance_ui
-            else:
-                return self.cache_dict[effect]
+        """
+            Permit to get a configuration GUI for the effect
+            @param effect: The effect for which whe want the configuration UI
+            @type effect: C{gst.Element}
+        """
+        if effect in self.cache_dict:
+            return self.cache_dict[effect]
+        #elif "videobalance" in effect.get_name():
+            #Here we should handle special effects
         else:
-            return None
+            effect_configuration_ui =  GstElementSettingsWidget()
+            effect_configuration_ui.setElement(effect, ignore=PROPERTIES_TO_IGNORE)
+            self._connectAllWidgetCbs(effect_configuration_ui, effect)
+            self.cache_dict[effect] = effect_configuration_ui
+        return effect_configuration_ui
 
+    def _flushSeekVideo(self):
+        self.pipeline.pause()
+        if self.pipeline is not None:
+            try:
+                self.pipeline.seekRelative(0)
+            except PipelineError:
+                pass
 
-class VideoBalanceConfig(gtk.HBox):
-    def __init__(self, effect):
-        gtk.HBox.__init__(self, spacing=SPACING)
+    def _connectAllWidgetCbs(self, video_balance_ui, effect):
+        for prop, widget in video_balance_ui.properties.iteritems():
+            if type(widget) in [gtk.SpinButton]:
+                widget.connect("value-changed", self._onValueChangedCb, prop.name, effect)
+            elif type(widget) in [gtk.Entry]:
+                widget.connect("changed", self._onEntryChangedCb, prop.name, effect)
+            elif type(widget) in [gtk.ComboBox]:
+                widget.connect("changed", self._onComboboxChangedCb, prop.name, effect)
+            elif type(widget) in [gtk.CheckButton]:
+                widget.connect("clicked", self._onCheckButtonClickedCb, prop.name, effect)
 
-        self.balance = effect
-        brightness = effect.get_property("brightness")
-        contrast = effect.get_property("contrast")
-        hue = effect.get_property("hue")
-        saturation = effect.get_property("saturation")
+    def _onValueChangedCb(self, widget, prop, element):
+        element.set_property(prop, widget.get_value())
+        self._flushSeekVideo()
 
-        properties = [(_("contrast"), 0, 2, brightness),
-                      (_("brightness"), -1, 1, contrast),
-                      (_("hue"), -1, 1, hue),
-                      (_("saturation"), 0, 2, saturation)]
+    def _onComboboxChangedCb(self, widget, prop, element):
+        element.set_property(prop, widget.get_active_text())
+        self._flushSeekVideo()
 
+    def _onCheckButtonClickedCb(self, widget, prop, element):
+        element.set_property(prop, widget.get_active())
+        self._flushSeekVideo()
 
-        controls = gtk.VBox()
-        labels = gtk.VBox()
-
-        for prop, lower, upper, default in properties:
-            widget = gtk.HScale()
-            label = gtk.Label("\n  "+ prop + " :")
-            widget.set_update_policy(gtk.UPDATE_CONTINUOUS)
-            widget.set_value(default)
-            widget.set_draw_value(True)
-            widget.set_range(lower, upper)
-            widget.connect("value-changed", self.onValueChangedCb, prop)
-
-            controls.pack_start(widget, True, True)
-            labels.pack_start(label, True, True)
-
-        self.pack_start(labels, expand=False, fill=True)
-        self.pack_end(controls, expand=True, fill=True)
-
-    def onValueChangedCb(self, widget, prop):
-        self.balance.set_property(prop, widget.get_value())
+    def _onEntryChangedCb(self, widget, prop, element):
+        element.set_property(prop, widget.get_text())
+        self._flushSeekVideo()

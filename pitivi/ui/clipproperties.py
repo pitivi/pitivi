@@ -36,7 +36,7 @@ from pitivi.receiver import receiver, handler
 from pitivi.timeline.track import TrackEffect
 from pitivi.stream import VideoStream
 
-from pitivi.ui.effectsconfiguration import EffectUIFactory
+from pitivi.ui.effectsconfiguration import EffectsPropertiesHandling
 from pitivi.ui.common import PADDING, SPACING
 
 (COL_ACTIVATED,
@@ -58,7 +58,9 @@ class ClipProperties(gtk.VBox, Loggable):
         self.settings = instance.settings
         self.project = None
 
-        self.effect_expander = EffectProperties(instance)
+        self.effect_properties_handling = EffectsPropertiesHandling()
+        self.effect_expander = EffectProperties(instance,
+                                                self.effect_properties_handling)
         self.pack_start(self.effect_expander, expand=True, fill=True)
 
         self.effect_expander.show()
@@ -66,6 +68,7 @@ class ClipProperties(gtk.VBox, Loggable):
     def _setProject(self):
         if self.project:
             self.effect_expander.connectTimelineSelection(self.project.timeline)
+            self.effect_properties_handling.pipeline = self.project.pipeline
 
     project = receiver(_setProject)
 
@@ -74,7 +77,7 @@ class EffectProperties(gtk.Expander):
     Widget for viewing and configuring effects
     """
 
-    def __init__(self, instance):
+    def __init__(self, instance, effect_properties_handling):
         gtk.Expander.__init__(self, "Effects")
         self.set_expanded(True)
 
@@ -82,8 +85,9 @@ class EffectProperties(gtk.Expander):
         self.timeline_object = None
         self.app = instance
         self.effectsHandler = self.app.effects
-        self._effectUIFactory = EffectUIFactory()
         self._effect_config_ui = None
+        self.pipeline = None
+        self.effect_properties_handling = effect_properties_handling
 
         self.VContent = gtk.VBox()
         self.add(self.VContent)
@@ -323,7 +327,7 @@ class EffectProperties(gtk.Expander):
             if self._effect_config_ui:
                 self._effect_config_ui.hide()
 
-            config_ui = self._effectUIFactory.getEffectConfigurationUI(element)
+            config_ui = self.effect_properties_handling.getEffectConfigurationUI(element)
             self._effect_config_ui =  config_ui
             if self._effect_config_ui:
                 self.VContent.pack_start(self._effect_config_ui,
