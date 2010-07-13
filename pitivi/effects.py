@@ -54,7 +54,7 @@ USELESS_EFFECTS = ["colorconvert", "coglogoinsert", "festival",]
 
 
 
-class effectsHandler(object):
+class EffectsHandler(object):
     """
     Handles all the effects
     """
