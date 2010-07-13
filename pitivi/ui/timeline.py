@@ -451,9 +451,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _getPriority(self, y, effectTuple):
         #TODO find a way to get the good priority for audio effects
         if effectTuple == VIDEO_EFFECT_LIST:
-            priority = y / (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
+            priority = y // (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
         else:
-            priority = y / (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
+            priority = y // (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING)
 
         return priority
 
@@ -468,6 +468,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             try:
                 for timeline_obj, track_obj in self._temp_effect:
                     timeline_obj.removeTrackObject(track_obj)
+                    track_obj.track.removeTrackObject(track_obj)
             finally:
                 self._temp_effect = None
 
