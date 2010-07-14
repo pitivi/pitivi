@@ -233,9 +233,12 @@ class EffectProperties(gtk.Expander):
         else:
             effect = self.storemodel.get_value(self.selection.get_selected()[1],
                                                COL_TRACK_EFFECT)
-            track  = effect.track
-            self.timeline_object.removeTrackObject(effect)
-            track.removeTrackObject(effect)
+            self._removeEffect(effect)
+
+    def _removeEffect(self, effect):
+        track  = effect.track
+        self.timeline_object.removeTrackObject(effect)
+        track.removeTrackObject(effect)
 
     def _dragDataReceivedCb(self, unused, context, x, y, timestamp):
         # I am waiting for effects to work again before implementing DND here
