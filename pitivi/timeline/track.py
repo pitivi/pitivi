@@ -123,7 +123,7 @@ class Interpolator(Signallable, Loggable):
       removing, and mutating discrete keyframe objects
 
     There are two special control points: the start and end points, which are
-    "fixed" to the start and end of the clip in the timeline. 
+    "fixed" to the start and end of the clip in the timeline.
 
     Timestamps given are assumed to be relative to the start of the clip. This
     seems to be the normal behavior when the element being controlled is
@@ -415,6 +415,8 @@ class TrackObject(Signallable, Loggable):
 
         if self.track is not None:
             self.track.addTrackObject(other)
+            other.gnl_object.set_property("active",
+                                          self.gnl_object.get_property("active"))
 
         interpolators = self.getInterpolators()
         for property, interpolator in interpolators.itervalues():
