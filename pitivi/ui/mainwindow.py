@@ -265,7 +265,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("SaveProjectAs", gtk.STOCK_SAVE_AS, None,
              None, _("Save the current project"), self._saveProjectAsCb),
             ("RevertToSavedProject", gtk.STOCK_REVERT_TO_SAVED, None,
-             None, _("Reload the current project"), self._revertToSavedProjectCb),             
+             None, _("Reload the current project"), self._revertToSavedProjectCb),
             ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"),
              None, _("Edit the project settings"), self._projectSettingsCb),
             ("RenderProject", 'pitivi-render' , _("_Render project"),
@@ -504,8 +504,28 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.viewer.window.unfullscreen()
             self.is_fullscreen = False
 
-## PlayGround callback
+    #TODO check if it is the way to go
+    def setActionsSensitive(self, action_names, sensitive):
+        """
+        Permit to get the focus for the keyboard letter keys
+        for other operation as typing text in an entry, or loose it
+        @param action_names: The name of actions we
+                             want to set to sensitive or not
+        @type action_names: A {list} of action names
+        @param sensitiive: %True if actions must be sensitive False otherwise
+        @type action_names: C{Bool}
+        """
+        for action in self.actiongroup.list_actions():
+            if action.get_name() in action_names:
+                action.set_sensitive(sensitive)
 
+        if self.timeline:
+            for action_group in self.timeline.ui_manager.get_action_groups():
+                for action in action_group.list_actions():
+                    if action.get_name() in action_names:
+                        action.set_sensitive(sensitive)
+
+## PlayGround callback
     def _windowizeViewer(self, button, pane):
         # FIXME: the viewer can't seem to handle being unparented/reparented
         pane.remove(self.viewer)
@@ -866,7 +886,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                                         gtk.STOCK_REVERT_TO_SAVED, gtk.RESPONSE_YES)
             dialog.set_title(_("Revert to saved project"))
             dialog.set_resizable(False)
-            dialog.set_property("secondary-text", 
+            dialog.set_property("secondary-text",
                                             _("All unsaved changes will be lost.")
                                         )
             dialog.set_default_response(gtk.RESPONSE_NO)

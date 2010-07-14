@@ -315,7 +315,11 @@ class EffectProperties(gtk.Expander):
         self.explain_label.show()
 
     def _treeviewSelectionChangedCb(self, treeview):
-        print "Selection changed"
+        if self.selection.count_selected_rows() == 0 and self.timeline_object:
+                self.app.gui.setActionsSensitive(['DeleteObj'], True)
+        else:
+            self.app.gui.setActionsSensitive(['DeleteObj'], False)
+
         self._updateEffectConfigUi()
 
     def _updateEffectConfigUi(self):

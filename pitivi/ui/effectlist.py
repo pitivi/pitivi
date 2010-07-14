@@ -135,6 +135,8 @@ class EffectList(gtk.VBox, Loggable):
         self.effectCategory.connect ("changed", self._effectCategoryChangedCb)
 
         self.searchEntry.connect ("changed", self.searchEntryChangedCb)
+        self.searchEntry.connect ("button-press-event", self.searchEntryActivateCb)
+        self.searchEntry.connect ("focus-out-event", self.searchEntryDesactvateCb)
         self.searchEntry.connect ("icon-press", self.searchEntryIconClickedCb)
 
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
@@ -312,10 +314,17 @@ class EffectList(gtk.VBox, Loggable):
         self.modelFilter.refilter()
 
     def searchEntryChangedCb (self, entry):
+        self.searchEntry.grab_focus()
         self.modelFilter.refilter()
 
     def searchEntryIconClickedCb (self, entry, unused, unsed1):
         entry.set_text("")
+
+    def searchEntryDesactvateCb(self, entry, event):
+        self.app.gui.setShortcutsSensitive(['FullScreen', 'Split',], True)
+
+    def searchEntryActivateCb(self, entry, event):
+        self.app.gui.setShortcutsSensitive(['FullScreen', 'Split',], False)
 
     def _setRowVisible(self, model, iter, data):
         if self.effectType.get_active() == model.get_value(iter, COL_EFFECT_TYPE):
