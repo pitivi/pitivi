@@ -22,6 +22,7 @@
 from pitivi.signalinterface import Signallable
 from pitivi.utils import PropertyChangeTracker
 from pitivi.undo import UndoableAction
+from pitivi.timeline.track import TrackEffect
 
 class TimelineObjectPropertyChangeTracker(PropertyChangeTracker):
     # no out-point
@@ -152,6 +153,38 @@ class TimelineObjectRemoved(UndoableAction):
         self.timeline.addTimelineObject(self.timeline_object)
         self._undone()
 
+class TrackEffectRemoved(UndoableAction):
+    def __init__(self, timeline_object, track_object):
+        self.track_object = track_object
+        self.timeline_object = timeline_object
+        self.track = self.track_object.track
+
+    def do(self):
+        self.timeline_object.removeTrackObject(self.track_object)
+        self.track.removeTimelineObject(self.track_object)
+        self._done()
+
+    def undo(self):
+        self.track.addTrackObject(self.track_object)
+        self.timeline_object.addTrackObject(self.track_object)
+        self._undone()
+
+class TrackEffectAdded(UndoableAction):
+    def __init__(self, timeline_object, track_object):
+        self.track_object = track_object
+        self.timeline_object = timeline_object
+        self.track = self.track_object.track
+
+    def do(self):
+        self.track.addTrackObject(self.track_object)
+        self.timeline_object.addTrackObject(self.track_object)
+        self._done()
+
+    def undo(self):
+        self.timeline_object.removeTrackObject(self.track_object)
+        self.track.removeTrackObject(self.track_object)
+        self._undone()
+
 class InterpolatorKeyframeAdded(UndoableAction):
     def __init__(self, track_object, keyframe):
         self.track_object = track_object
@@ -204,6 +237,8 @@ class TimelineLogObserver(object):
     timelinePropertyChangedAction = TimelineObjectPropertyChanged
     timelineObjectAddedAction = TimelineObjectAdded
     timelineObjectRemovedAction = TimelineObjectRemoved
+    trackEffectAddAction = TrackEffectAdded
+    trackEffectRemovedAction = TrackEffectRemoved
     interpolatorKeyframeAddedAction = InterpolatorKeyframeAdded
     interpolatorKeyframeRemovedAction = InterpolatorKeyframeRemoved
     interpolatorKeyframeChangedAction = InterpolatorKeyframeChanged
@@ -293,11 +328,19 @@ class TimelineLogObserver(object):
         self.log.push(action)
 
     def _timelineObjectTrackObjectAddedCb(self, timeline_object, track_object):
-        self._connectToTrackObject(track_object)
+        if isinstance(track_object, TrackEffect):
+            action = self.trackEffectAddAction(timeline_object, track_object)
+            self.log.push(action)
+        else:
+            self._connectToTrackObject(track_object)
 
     def _timelineObjectTrackObjectRemovedCb(self, timeline_object,
-            track_object):
-        self._disconnectFromTrackObject(track_object)
+                                            track_object):
+        if isinstance(track_object, TrackEffect):
+            action = self.trackEffectRemovedAction(timeline_object, track_object)
+            self.log.push(action)
+        else:
+            self._disconnectFromTrackObject(track_object)
 
     def _interpolatorKeyframeAddedCb(self, track_object, keyframe):
         action = self.interpolatorKeyframeAddedAction(track_object, keyframe)
