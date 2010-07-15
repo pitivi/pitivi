@@ -214,10 +214,10 @@ class TestTransitions(TestCase):
         vt.a.updatePosition(0)
         vt.b.updatePosition(1)
 
-        self.failUnlessEqual(vt.a.gnl_object.props.priority, 8)
+        self.failUnlessEqual(vt.a.gnl_object.props.priority, 9)
         self.failUnlessEqual(at.a._stagger, 0)
         self.failUnlessEqual(at.b._stagger, 1)
-        self.failUnlessEqual(vt.b.gnl_object.props.priority, 9)
+        self.failUnlessEqual(vt.b.gnl_object.props.priority, 10)
 
         self.failUnlessEqual(vt.controller.get("alpha", 0), 1.0)
         self.failUnlessEqual(vt.controller.get("alpha", vt.duration),
