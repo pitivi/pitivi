@@ -33,6 +33,7 @@ class EffectsPropertiesHandling:
     def __init__(self):
         self.cache_dict = {}
         self.pipeline = None
+        self.current_config_ui = None
 
     def getEffectConfigurationUI(self, effect):
         """
@@ -40,16 +41,14 @@ class EffectsPropertiesHandling:
             @param effect: The effect for which whe want the configuration UI
             @type effect: C{gst.Element}
         """
-        if effect in self.cache_dict:
-            return self.cache_dict[effect]
-        #elif "videobalance" in effect.get_name():
-            #Here we should handle special effects
-        else:
+        if effect not in self.cache_dict:
+            #Here we should handle special effects configuration UI
             effect_configuration_ui =  GstElementSettingsWidget()
             effect_configuration_ui.setElement(effect, ignore=PROPERTIES_TO_IGNORE, default_btn=True)
             self._connectAllWidgetCbs(effect_configuration_ui, effect)
             self.cache_dict[effect] = effect_configuration_ui
-        return effect_configuration_ui
+        self.current_config_ui = self.cache_dict[effect]
+        return self.cache_dict[effect]
 
     def _flushSeekVideo(self):
         self.pipeline.pause()
@@ -59,8 +58,8 @@ class EffectsPropertiesHandling:
             except PipelineError:
                 pass
 
-    def _connectAllWidgetCbs(self, video_balance_ui, effect):
-        for prop, widget in video_balance_ui.properties.iteritems():
+    def _connectAllWidgetCbs(self, effect_configuration_ui, effect):
+        for prop, widget in effect_configuration_ui.properties.iteritems():
             if type(widget) in [gtk.SpinButton]:
                 widget.connect("value-changed", self._onValueChangedCb, prop.name, effect, widget.get_value)
             elif type(widget) in [gtk.Entry]:
@@ -71,5 +70,5 @@ class EffectsPropertiesHandling:
                 widget.connect("clicked", self._onValueChangedCb, prop.name, effect, widget.get_active)
 
     def _onValueChangedCb(self, widget, prop, element, function):
-        element.set_property(prop, function())
+        self.current_config_ui.element.set_property(prop, function())
         self._flushSeekVideo()
