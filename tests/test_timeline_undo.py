@@ -188,14 +188,30 @@ class  TestTimelineUndo(TestCase):
 
         self.failUnless(self.track_effect1 \
                 in self.timeline_object1.track_objects)
+        self.failUnless(self.track_effect1 \
+                in self.track1.track_objects)
+        self.failUnless(len([effect for effect in \
+                                self.timeline_object1.track_objects
+                                if isinstance(effect, TrackEffect)]) == 1)
+        self.failUnless(len([effect for effect in self.track1.track_objects
+                             if isinstance(effect, TrackEffect)]) == 1)
 
         self.action_log.undo()
         self.failIf(self.track_effect1 \
                 in self.timeline_object1.track_objects)
+        self.failIf(self.track_effect1 \
+                in self.track1.track_objects)
 
         self.action_log.redo()
         self.failUnless(self.track_effect1 \
                 in self.timeline_object1.track_objects)
+        self.failUnless(self.track_effect1 \
+                in self.track1.track_objects)
+        self.failUnless(len([effect for effect in
+                                self.timeline_object1.track_objects
+                                if isinstance(effect, TrackEffect)]) == 1)
+        self.failUnless(len([effect for effect in self.track1.track_objects
+                             if isinstance(effect, TrackEffect)]) == 1)
 
         self.timeline.removeTimelineObject(self.timeline_object1, deep=True)
 
@@ -222,14 +238,25 @@ class  TestTimelineUndo(TestCase):
 
         self.failIf(self.track_effect1 \
                 in self.timeline_object1.track_objects)
+        self.failIf(self.track_effect1 \
+                in self.track1.track_objects)
 
         self.action_log.undo()
         self.failUnless(self.track_effect1 \
                 in self.timeline_object1.track_objects)
+        self.failUnless(len([effect for effect in
+                                self.timeline_object1.track_objects
+                                if isinstance(effect, TrackEffect)]) == 1)
+        self.failUnless(self.track_effect1 \
+                in self.track1.track_objects)
+        self.failUnless(len([effect for effect in self.track1.track_objects
+                             if isinstance(effect, TrackEffect)]) == 1)
 
         self.action_log.redo()
         self.failIf(self.track_effect1 \
                 in self.timeline_object1.track_objects)
+        self.failIf(self.track_effect1 \
+                in self.track1.track_objects)
 
         self.timeline.removeTimelineObject(self.timeline_object1, deep=True)
 
