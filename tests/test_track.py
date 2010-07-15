@@ -106,7 +106,7 @@ class TestTrackObject(TestCase):
         # test video stream$
         obj.stream_type = VideoStream
         priority = 100
-        gnl_priority = 3 * 100 + 2 + obj._stagger
+        gnl_priority = 3 * 100 + 3 + obj._stagger
         obj.priority = priority
         self.failUnlessEqual(obj.priority, priority)
         self.failUnlessEqual(gnl_object.props.priority, gnl_priority)
@@ -115,7 +115,7 @@ class TestTrackObject(TestCase):
         # test audio stream
         obj.stream_type = AudioStream
         priority = 55
-        gnl_priority = 4 * 55 + 2 + 2 * obj._stagger
+        gnl_priority = 4 * 55 + 3 + 2 * obj._stagger
         obj.priority = priority
         self.failUnlessEqual(obj.priority, priority)
         self.failUnlessEqual(gnl_object.props.priority, gnl_priority)
