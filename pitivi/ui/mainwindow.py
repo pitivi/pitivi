@@ -461,6 +461,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         #pulseaudio 'role' (http://0pointer.de/blog/projects/tagging-audio.htm
         os.environ["PULSE_PROP_media.role"] = "production"
+        os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
 
     def _connectToSourceList(self):
         self.sourcelist.connect('play', self._sourceListPlayCb)
