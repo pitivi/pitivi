@@ -494,8 +494,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
             return True
         elif context.targets in DND_EFFECT_LIST:
+
             self.app.action_log.begin("add effect")
             self._addEffect(x, y, context.targets)
+            self.app.action_log.commit()
             self._factories = None
             self._temp_effect = None
             self.app.current.seeker.seek(self._position) #FIXME
