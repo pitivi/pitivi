@@ -26,12 +26,13 @@ gobject.threads_init()
 import gst
 
 from pitivi.timeline.timeline import Timeline, TimelineObject, SELECT_ADD
-from pitivi.timeline.track import Track, SourceTrackObject
-from pitivi.factories.test import VideoTestSourceFactory
+from pitivi.timeline.track import Track, SourceTrackObject, TrackEffect
+from pitivi.factories.test import VideoTestSourceFactory, TestEffectFactory
 from pitivi.stream import VideoStream
 from pitivi.timeline.timeline_undo import TimelineLogObserver, \
         TimelineObjectAdded, TimelineObjectRemoved, \
-        TimelineObjectPropertyChanged
+        TimelineObjectPropertyChanged, TrackEffectAdded, \
+        TrackEffectRemoved
 from pitivi.undo import UndoableActionLog
 
 class TestTimelineLogObserver(TimelineLogObserver):
@@ -46,7 +47,7 @@ class TestTimelineLogObserver(TimelineLogObserver):
     def _connectToTimelineObject(self, timeline_object):
         TimelineLogObserver._connectToTimelineObject(self, timeline_object)
         timeline_object.connected = True
-    
+
     def _disconnectFromTimelineObject(self, timeline_object):
         TimelineLogObserver._disconnectFromTimelineObject(self, timeline_object)
         timeline_object.connected = False
@@ -54,7 +55,7 @@ class TestTimelineLogObserver(TimelineLogObserver):
 def new_stream():
     return VideoStream(gst.Caps("video/x-raw-rgb"))
 
-def new_factory():
+def new_source_factory():
     return VideoTestSourceFactory()
 
 class TestTimelineLogObserverConnections(TestCase):
@@ -65,7 +66,7 @@ class TestTimelineLogObserverConnections(TestCase):
     def testConnectionAndDisconnection(self):
         timeline = Timeline()
         stream = new_stream()
-        factory = new_factory()
+        factory = new_source_factory()
         track = Track(stream)
         track_object1 = SourceTrackObject(factory, stream)
         track.addTrackObject(track_object1)
@@ -91,7 +92,8 @@ class TestTimelineLogObserverConnections(TestCase):
 class  TestTimelineUndo(TestCase):
     def setUp(self):
         self.stream = new_stream()
-        self.factory = new_factory()
+        self.factory = new_source_factory()
+        self.effect_factory = TestEffectFactory(self.stream)
         self.track1 = Track(self.stream)
         self.track2 = Track(self.stream)
         self.timeline = Timeline()
@@ -99,6 +101,8 @@ class  TestTimelineUndo(TestCase):
         self.timeline.addTrack(self.track2)
         self.track_object1 = SourceTrackObject(self.factory, self.stream)
         self.track_object2 = SourceTrackObject(self.factory, self.stream)
+        self.track_effect1 = TrackEffect(self.effect_factory, self.stream)
+        self.track_effect2 = TrackEffect(self.effect_factory, self.stream)
         self.track1.addTrackObject(self.track_object1)
         self.track2.addTrackObject(self.track_object2)
         self.timeline_object1 = TimelineObject(self.factory)
@@ -160,6 +164,74 @@ class  TestTimelineUndo(TestCase):
         self.action_log.redo()
         self.failIf(self.timeline_object1 \
                 in self.timeline.timeline_objects)
+
+    def testAddEffectToTimelineObject(self):
+        stacks = []
+        def commitCb(action_log, stack, nested):
+            stacks.append(stack)
+        self.action_log.connect("commit", commitCb)
+
+        #FIXME Should I commit it and check there are 2 elements
+        #in the stacks
+        self.timeline.addTimelineObject(self.timeline_object1)
+        self.track1.addTrackObject(self.track_effect1)
+
+        self.action_log.begin("add effect")
+        self.timeline_object1.addTrackObject(self.track_effect1)
+        self.action_log.commit()
+
+        self.failUnlessEqual(len(stacks), 1)
+        stack = stacks[0]
+        self.failUnlessEqual(len(stack.done_actions), 1)
+        action = stack.done_actions[0]
+        self.failUnless(isinstance(action, TrackEffectAdded))
+
+        self.failUnless(self.track_effect1 \
+                in self.timeline_object1.track_objects)
+
+        self.action_log.undo()
+        self.failIf(self.track_effect1 \
+                in self.timeline_object1.track_objects)
+
+        self.action_log.redo()
+        self.failUnless(self.track_effect1 \
+                in self.timeline_object1.track_objects)
+
+        self.timeline.removeTimelineObject(self.timeline_object1, deep=True)
+
+    def testRemoveEffectToTimelineObject(self):
+        stacks = []
+        def commitCb(action_log, stack, nested):
+            stacks.append(stack)
+        self.action_log.connect("commit", commitCb)
+
+        self.timeline.addTimelineObject(self.timeline_object1)
+        self.timeline_object1.addTrackObject(self.track_effect1)
+        self.track1.addTrackObject(self.track_effect1)
+
+        self.action_log.begin("add effect")
+        self.timeline_object1.removeTrackObject(self.track_effect1)
+        self.track1.removeTrackObject(self.track_effect1)
+        self.action_log.commit()
+
+        self.failUnlessEqual(len(stacks), 1)
+        stack = stacks[0]
+        self.failUnlessEqual(len(stack.done_actions), 1)
+        action = stack.done_actions[0]
+        self.failUnless(isinstance(action, TrackEffectRemoved))
+
+        self.failIf(self.track_effect1 \
+                in self.timeline_object1.track_objects)
+
+        self.action_log.undo()
+        self.failUnless(self.track_effect1 \
+                in self.timeline_object1.track_objects)
+
+        self.action_log.redo()
+        self.failIf(self.track_effect1 \
+                in self.timeline_object1.track_objects)
+
+        self.timeline.removeTimelineObject(self.timeline_object1, deep=True)
 
     def testTimelineObjectPropertyChange(self):
         stacks = []
