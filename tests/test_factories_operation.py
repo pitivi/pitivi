@@ -28,20 +28,22 @@ import gst
 
 from common import TestCase
 
-from pitivi.log.log import debug
 from pitivi.factories.operation import EffectFactory
+from pitivi.stream import VideoStream
 
 class TestVideoEffectFactory(TestCase):
     def setUp(self):
         TestCase.setUp(self)
+        self.stream = VideoStream(gst.Caps("video/x-raw-rgb"))
         self.factory = EffectFactory ('identity', 'identity')
+        self.factory.addOutputStream(self.stream)
+        self.factory.addInputStream(self.stream)
 
     def testMakeBin (self):
         bin = self.factory.makeBin()
         bin2 = self.factory.makeBin()
-        self.failUnless(isinstance(bin, gst.BaseTransform))
-        self.failUnless(bin.get_factory().get_name() == "identity" )
-        debug ('TestOperationFactory','%s %s','Bin is:', bin.get_factory().get_name())
+        self.failUnless(isinstance(bin, gst.Bin))
+        self.failUnless(bin.get_by_name("ffmpegcsp0"))
         self.factory.releaseBin(bin)
         self.factory.releaseBin(bin2)
 
