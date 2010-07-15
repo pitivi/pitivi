@@ -31,7 +31,7 @@ from common import TestCase
 from pitivi.factories.operation import EffectFactory
 from pitivi.stream import VideoStream
 
-class TestVideoEffectFactory(TestCase):
+class TestEffectFactory(TestCase):
     def setUp(self):
         TestCase.setUp(self)
         self.stream = VideoStream(gst.Caps("video/x-raw-rgb"))
@@ -42,8 +42,9 @@ class TestVideoEffectFactory(TestCase):
     def testMakeBin (self):
         bin = self.factory.makeBin()
         bin2 = self.factory.makeBin()
+        csp = bin.elements().next()
         self.failUnless(isinstance(bin, gst.Bin))
-        self.failUnless(bin.get_by_name("ffmpegcsp0"))
+        self.failUnless(csp)
         self.factory.releaseBin(bin)
         self.factory.releaseBin(bin2)
 
