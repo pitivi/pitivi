@@ -23,6 +23,7 @@
 
 import gst
 from pitivi.factories.base import SourceFactory
+from pitivi.factories.operation import EffectFactory
 from pitivi.stream import VideoStream, AudioStream
 
 class VideoTestSourceFactory(SourceFactory):
@@ -93,3 +94,11 @@ class AudioTestSourceFactory(SourceFactory):
         props.update({"volume": None})
         return props
 
+
+class TestEffectFactory(EffectFactory):
+    def __init__(self, stream):
+        EffectFactory.__init__(self, "identity", "identity")
+
+        caps = gst.Caps('video/x-raw-rgb')
+        self.addOutputStream(stream)
+        self.addInputStream(stream)
