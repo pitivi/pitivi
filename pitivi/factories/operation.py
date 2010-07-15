@@ -93,6 +93,12 @@ class EffectFactory (TransformFactory):
 
         return bin
 
+    def _releaseBin(self, bin):
+        elements = bin.elements()
+        for element in elements.next():
+            del element #bin.remove(element)
+
+
     def addInputStream(self, stream):
         return OperationFactory.addInputStream(self, stream)
 
