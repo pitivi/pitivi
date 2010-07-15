@@ -161,7 +161,7 @@ class TrackEffectRemoved(UndoableAction):
 
     def do(self):
         self.timeline_object.removeTrackObject(self.track_object)
-        self.track.removeTimelineObject(self.track_object)
+        self.track.removeTrackObject(self.track_object)
         self._done()
 
     def undo(self):
