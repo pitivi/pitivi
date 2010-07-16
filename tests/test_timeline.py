@@ -25,9 +25,9 @@ import gst
 
 from tests.common import FakeSourceFactory, FakeEffectFactory
 from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
-        Selection, Link, TimelineEdges, MoveContext, TrimStartContext, \
+        Link, TimelineEdges, MoveContext, TrimStartContext, \
         TrimEndContext
-from pitivi.timeline.track import Track, SourceTrackObject
+from pitivi.timeline.track import Track, SourceTrackObject, TrackEffect
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
 from pitivi.factories.test import AudioTestSourceFactory
@@ -610,7 +610,7 @@ class TestTimeline(TestCase):
             self.failUnlessEqual(clip.start, 2 * gst.SECOND)
             self.failUnlessEqual(clip.start + clip.duration, threeclips)
         self.failUnlessEqual(clip4.start, 2 * gst.SECOND)
-        self.failUnlessEqual(clip4.duration + clip4.start, 
+        self.failUnlessEqual(clip4.duration + clip4.start,
             fourclipsoneselected)
 
     def testGetObjs(self):
@@ -1000,7 +1000,7 @@ class TestTimelineEdges(TestCase):
         self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (0, 500))
 
         self.timeline_edges.removeStartEnd(0, 2000)
-    
+
         self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (500, 0))
 
     def testSnapStart(self):
@@ -1055,7 +1055,7 @@ class TestTimelineEdges(TestCase):
         stream = AudioStream(gst.Caps("meh"))
         track_object1 = SourceTrackObject(source_factory, stream)
         track_object2 = SourceTrackObject(source_factory, stream)
-        track_object1.start = 500 
+        track_object1.start = 500
         track_object1.duration = 500
         track_object2.start = 1000
         track_object2.duration = 500
@@ -1120,6 +1120,7 @@ class TestTimelineAddFactory(TestCase):
 
     def testAudioOnly(self):
         self.source_factory.addOutputStream(self.audio_stream1)
+        self.failUnlessRaises(TimelineError, self.timeline.addSourceFactory, self.source_factory)
         self.timeline.addSourceFactory(self.source_factory)
         self.failUnlessEqual(len(self.audio_track1.track_objects), 1)
         self.failUnlessEqual(len(self.audio_track2.track_objects), 0)
@@ -1299,7 +1300,7 @@ class TestContexts(TestCase):
         context = MoveContext(self.timeline, self.track_object1, other)
         context.editTo(20 * gst.SECOND, 0)
 
-        #                           [t2  ][focus] 
+        #                           [t2  ][focus]
         #                    [t3     ]
         self.failUnlessEqual(self.track_object1.start, 20 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)
@@ -1314,7 +1315,7 @@ class TestContexts(TestCase):
 
         context.setMode(context.DEFAULT)
 
-        #                           [t2  ][focus] 
+        #                           [t2  ][focus]
         #                    [t3     ]
         self.failUnlessEqual(self.track_object1.start, 20 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)
@@ -1403,7 +1404,7 @@ class TestContexts(TestCase):
         self.failUnlessEqual(self.track_object2.priority, 1)
         self.failUnlessEqual(self.track_object3.start, 15 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.priority, 1)
-        
+
         # collapse right
         self.track_object2.start = 6 * gst.SECOND
         self.track_object2.duration = 10 * gst.SECOND
@@ -1466,7 +1467,7 @@ class TestContexts(TestCase):
         self.failUnlessEqual(self.track_object2.priority, 1)
         self.failUnlessEqual(self.track_object3.start, 19 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.priority, 1)
-        
+
         # collapse right
         self.track_object2.start = 21 * gst.SECOND
         self.track_object2.duration = 10 * gst.SECOND
