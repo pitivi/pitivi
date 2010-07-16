@@ -342,6 +342,47 @@ class TestTimelineAddRemoveTimelineObjects(TestCase):
         timeline.removeFactory(source_factory)
         self.failUnlessEqual(len(timeline.timeline_objects), 0)
 
+class TestTimelineAddRemoveEffectsTracks(TestCase):
+    def testAddRemoveEffectTracks(self):
+        stream = VideoStream(gst.Caps("video/x-raw-rgb"))
+        source_factory = StubFactory()
+        source_factory.addOutputStream(stream)
+        effect_factory = FakeEffectFactory()
+        effect_factory.addInputStream(stream)
+        effect_factory.addOutputStream(stream)
+        timeline = Timeline()
+        track = Track(stream)
+
+        track_effect1 = TrackEffect(effect_factory, stream)
+        track_effect2 = TrackEffect(effect_factory, stream)
+
+        track_object1 = SourceTrackObject(source_factory, stream)
+        track.addTrackObject(track_object1)
+        timeline_object1 = TimelineObject(source_factory)
+        timeline_object1.addTrackObject(track_object1)
+        timeline.addTimelineObject(timeline_object1)
+
+        track.addTrackObject(track_effect1)
+        timeline_object1.addTrackObject(track_effect1)
+        self.failUnlessRaises(TimelineError,
+                timeline_object1.addTrackObject, track_effect1)
+        track.addTrackObject(track_effect2)
+        timeline_object1.addTrackObject(track_effect2)
+        self.failUnlessRaises(TimelineError,
+                timeline_object1.addTrackObject, track_effect2)
+
+        timeline_object1.removeTrackObject(track_effect1)
+        self.failUnlessRaises(TimelineError,
+                timeline_object1.removeTrackObject, track_effect1)
+        timeline_object1.removeTrackObject(track_effect2)
+        self.failUnlessRaises(TimelineError,
+                timeline_object1.removeTrackObject, track_effect2)
+
+
+        track.removeTrackObject(track_effect1)
+        track.removeTrackObject(track_effect2)
+        timeline.removeTimelineObject(timeline_object1)
+
 class TestTimeline(TestCase):
     def setUp(self):
         self.source_factory = StubFactory()
