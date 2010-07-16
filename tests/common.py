@@ -166,4 +166,4 @@ class StubFactory(SourceFactory):
 class FakeEffectFactory(EffectFactory):
     def __init__(self):
         EffectFactory.__init__(self, 'identity', "identity")
-
+        self.duration = 42 * gst.SECOND
