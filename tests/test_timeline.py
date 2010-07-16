@@ -383,6 +383,33 @@ class TestTimelineAddRemoveEffectsTracks(TestCase):
         track.removeTrackObject(track_effect2)
         timeline.removeTimelineObject(timeline_object1)
 
+    def testRemoveEffectFactory(self):
+        effect_factory = FakeEffectFactory()
+        stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        effect_factory.addInputStream(stream)
+        effect_factory.addOutputStream(stream)
+        track = Track(stream)
+        track_effect1 = TrackEffect(effect_factory, stream)
+        track.addTrackObject(track_effect1)
+        track_effect2 = TrackEffect(effect_factory, stream)
+        track.addTrackObject(track_effect2)
+        track_effect3 = TrackEffect(effect_factory, stream)
+        track.addTrackObject(track_effect3)
+        timeline_object1 = TimelineObject(effect_factory)
+        timeline_object1.addTrackObject(track_effect1)
+        timeline_object1.addTrackObject(track_effect2)
+        timeline_object1.addTrackObject(track_effect3)
+        timeline = Timeline()
+        timeline.addTrack(track)
+        timeline.addTimelineObject(timeline_object1)
+
+        self.failUnlessEqual(len(timeline_object1.track_objects), 3)
+        self.failUnlessEqual(len(timeline.timeline_objects), 1)
+        self.failUnlessEqual(len(track.track_objects), 3)
+        timeline.removeFactory(effect_factory)
+        self.failUnlessEqual(len(track.track_objects), 0)
+        self.failUnlessEqual(len(timeline.timeline_objects), 0)
+
 class TestTimeline(TestCase):
     def setUp(self):
         self.source_factory = StubFactory()
