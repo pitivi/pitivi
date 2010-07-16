@@ -123,6 +123,7 @@ def _init_gobject_gtk_gst():
 
         args, sys.argv[:] = sys.argv[:], sys.argv[0:1]
         import gst
+        sys.argv = args
     except ImportError:
         raise SystemExit("Gst-Python couldn't be found!")
 
