@@ -727,6 +727,17 @@ class TrackEffect(TrackObject):
         TrackEffect.numobjs += 1
         return effect
 
+    def getElement(self):
+        """
+        Permit to get the gst.Element inside the gnl_object that correspond
+        to the track factory
+        """
+        #Should we find a better implementation?
+        for element in self.gnl_object.recurse():
+            if self.factory.name in element.get_name():
+                break
+        return element
+
 class Transition(Signallable):
 
     __signals__ = {

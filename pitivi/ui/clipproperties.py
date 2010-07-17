@@ -87,7 +87,7 @@ class EffectProperties(gtk.Expander):
         self.effectsHandler = self.app.effects
         self._effect_config_ui = None
         self.pipeline = None
-        self.effect_properties_handling = effect_properties_handling
+        self.effect_props_handling = effect_properties_handling
 
         self.VContent = gtk.VBox()
         self.add(self.VContent)
@@ -326,16 +326,13 @@ class EffectProperties(gtk.Expander):
         if self.selection.get_selected()[1]:
             effect = self.storemodel.get_value(self.selection.get_selected()[1],
                                                COL_TRACK_EFFECT)
-            #TODO figure out the name of the element better
-            for element in effect.gnl_object.recurse():
-                if effect.factory.name in element.get_name():
-                    break
 
             if self._effect_config_ui:
                 self._effect_config_ui.hide()
 
-            config_ui = self.effect_properties_handling.getEffectConfigurationUI(element)
-            self._effect_config_ui =  config_ui
+            element = effect.getElement()
+            ui = self.effect_props_handling.getEffectConfigurationUI(element)
+            self._effect_config_ui = ui
             if self._effect_config_ui:
                 self.VContent.pack_start(self._effect_config_ui,
                                          expand=False,
