@@ -2,7 +2,7 @@
 #       ui/effectsconfiguration.py
 #
 # Copyright (C) 2010 Thibault Saunier <tsaunier@gnome.org>
-# 
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
@@ -27,7 +27,7 @@ import gtk
 from pitivi.ui.gstwidget import GstElementSettingsWidget
 from pitivi.pipeline import PipelineError
 
-PROPERTIES_TO_IGNORE = ['name', 'qos']
+PROPS_TO_IGNORE = ['name', 'qos']
 
 class EffectsPropertiesHandling:
     def __init__(self):
@@ -44,7 +44,8 @@ class EffectsPropertiesHandling:
         if effect not in self.cache_dict:
             #Here we should handle special effects configuration UI
             effect_configuration_ui =  GstElementSettingsWidget()
-            effect_configuration_ui.setElement(effect, ignore=PROPERTIES_TO_IGNORE, default_btn=True)
+            effect_configuration_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
+                                               default_btn=True, use_element_props=True)
             self._connectAllWidgetCbs(effect_configuration_ui, effect)
             self.cache_dict[effect] = effect_configuration_ui
         self.current_config_ui = self.cache_dict[effect]

@@ -19,10 +19,14 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import gobject
+
 from pitivi.signalinterface import Signallable
 from pitivi.utils import PropertyChangeTracker
 from pitivi.undo import UndoableAction
 from pitivi.timeline.track import TrackEffect
+
+from pitivi.ui.effectsconfiguration import PROPS_TO_IGNORE
 
 class TimelineObjectPropertyChangeTracker(PropertyChangeTracker):
     # no out-point
@@ -151,22 +155,7 @@ class TimelineObjectRemoved(UndoableAction):
             track.addTrackObject(track_object)
 
         self.timeline.addTimelineObject(self.timeline_object)
-        self._undone()
 
-class TrackEffectRemoved(UndoableAction):
-    def __init__(self, timeline_object, track_object):
-        self.track_object = track_object
-        self.timeline_object = timeline_object
-        self.track = self.track_object.track
-
-    def do(self):
-        self.timeline_object.removeTrackObject(self.track_object)
-        self.track.removeTrackObject(self.track_object)
-        self._done()
-
-    def undo(self):
-        self.track.addTrackObject(self.track_object)
-        self.timeline_object.addTrackObject(self.track_object)
         self._undone()
 
 class TrackEffectAdded(UndoableAction):
@@ -174,15 +163,59 @@ class TrackEffectAdded(UndoableAction):
         self.track_object = track_object
         self.timeline_object = timeline_object
         self.track = self.track_object.track
+        self.effect_props = []
 
     def do(self):
         self.track.addTrackObject(self.track_object)
         self.timeline_object.addTrackObject(self.track_object)
+
+        element = self.track_object.getElement()
+        for prop_name, prop_value in self.effect_props:
+            element.set_property(prop_name, prop_value)
+
         self._done()
 
     def undo(self):
+        element = self.track_object.getElement()
+        props =  gobject.list_properties(element)
+        self.effect_props = [(prop.name, element.get_property(prop.name))
+                              for prop in props
+                              if prop.flags & gobject.PARAM_WRITABLE
+                              and prop.name not in PROPS_TO_IGNORE]
+
         self.timeline_object.removeTrackObject(self.track_object)
         self.track.removeTrackObject(self.track_object)
+
+        self._undone()
+
+class TrackEffectRemoved(UndoableAction):
+    def __init__(self, timeline_object, track_object):
+        self.track_object = track_object
+        self.timeline_object = timeline_object
+        self.track = self.track_object.track
+        self.effect_props = []
+
+    def do(self):
+        element = self.track_object.getElement()
+        props =  gobject.list_properties(element)
+        self.effect_props = [(prop.name, element.get_property(prop.name))
+                              for prop in props
+                              if prop.flags & gobject.PARAM_WRITABLE
+                              and prop.name not in PROPS_TO_IGNORE]
+
+        self.timeline_object.removeTrackObject(self.track_object)
+        self.track.removeTrackObject(self.track_object)
+
+        self._done()
+
+    def undo(self):
+        self.track.addTrackObject(self.track_object)
+        self.timeline_object.addTrackObject(self.track_object)
+
+        element = self.track_object.getElement()
+        for prop_name, prop_value in self.effect_props:
+            element.set_property(prop_name, prop_value)
+
         self._undone()
 
 class InterpolatorKeyframeAdded(UndoableAction):

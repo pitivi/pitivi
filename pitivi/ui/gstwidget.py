@@ -126,15 +126,16 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         self.ignore = None
         self.properties = None
 
-    def setElement(self, element, properties={}, ignore=['name'], default_btn = False):
+    def setElement(self, element, properties={}, ignore=['name'],
+                   default_btn = False, use_element_props=False):
         """ Set given element on Widget, with optional properties """
-        self.info("element:%s, properties:%s", element, properties)
+        self.info("element:%s, use properties:%s", element, properties)
         self.element = element
         self.ignore = ignore
-        self.properties = properties
-        self._addWidgets(properties, default_btn)
+        self.properties = {}
+        self._addWidgets(properties, default_btn, use_element_props)
 
-    def _addWidgets(self, properties, default_btn):
+    def _addWidgets(self, properties, default_btn, use_element_props):
         props = [prop for prop in gobject.list_properties(self.element) if not prop.name in self.ignore]
         if not props:
             self.pack_start(gtk.Label(_("No properties...")))
@@ -153,15 +154,22 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
             label = gtk.Label(prop.nick)
             label.set_alignment(0.0, 0.5)
             table.attach(label, 0, 1, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
-            widget = make_property_widget(self.element, prop, properties.get(prop.name))
+            if use_element_props:
+                prop_value  = self.element.get_property(prop.name)
+            else:
+                prop_value = properties.get(prop.name)
+            widget = make_property_widget(self.element, prop, prop_value)
+
             if hasattr(prop, 'description'): #TODO: check that
                 widget.set_tooltip_text(prop.description)
+
             table.attach(widget, 1, 2, y, y+1, yoptions=gtk.FILL)
             self.properties[prop] = widget
             if default_btn:
                 button = self._getResetToDefaultValueButton(prop, widget)
                 table.attach(button, 2, 3, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
             y += 1
+
         self.pack_start(table)
         self.show_all()
 
