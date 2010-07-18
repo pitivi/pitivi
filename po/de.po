@@ -7,11 +7,11 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pitivi\n"
+"Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-06-19 11:19+0000\n"
-"PO-Revision-Date: 2010-06-19 23:13+0100\n"
+"POT-Creation-Date: 2010-07-14 09:21+0000\n"
+"PO-Revision-Date: 2010-07-14 21:58+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -297,19 +297,17 @@ msgstr ""
 #: ../pitivi/application.py:223
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"    no project is given, %prog creates a new project.\n"
-"    Alternatively, when -i is specified, arguments are treated as clips to "
-"be\n"
-"    imported into the project. If -a is specified, these clips will also be "
-"added to\n"
-"    the end of the project timeline."
+"no project is given, %prog creates a new project.\n"
+"Alternatively, when -i is specified, arguments are treated as clips to be\n"
+"imported into the project. If -a is specified, these clips will also be added "
+"to\n"
+"the end of the project timeline."
 msgstr ""
 "Startet den Videoeditor oder lädt optional PROJEKTDATEI. Falls\n"
-"    kein Projekt angegeben wird, erstellt %prog ein neues Projekt.\n"
-"    Wenn -i angegeben ist, werden weitere Argumente als in das Projekt zu\n"
-"    importierende Clips aufgefasst. Falls -a angegeben wird, werden diese "
-"Clips\n"
-"    auch ans Ende der Zeitlinie angehängt."
+"kein Projekt angegeben wird, erstellt %prog ein neues Projekt.\n"
+"Wenn -i angegeben ist, werden weitere Argumente als in das Projekt zu\n"
+"importierende Clips aufgefasst. Falls -a angegeben wird, werden diese Clips\n"
+"auch ans Ende der Zeitlinie angehängt."
 
 #: ../pitivi/application.py:229
 msgid "Import each MEDIA_FILE into the project."
@@ -803,7 +801,6 @@ msgid "Save the current project"
 msgstr "Das aktuelle Projekt speichern"
 
 #: ../pitivi/ui/mainwindow.py:260
-#| msgid "Save the current project"
 msgid "Reload the current project"
 msgstr "Das aktuelle Projekt neu laden"
 
@@ -957,17 +954,14 @@ msgid "If you don't save some of your changes will be lost"
 msgstr "Falls Sie nicht speichern, werden einige Ihrer Änderungen verlorengehen"
 
 #: ../pitivi/ui/mainwindow.py:832
-#| msgid "Couldn't close current project"
 msgid "Do you want to reload current project?"
 msgstr "Wollen Sie das aktuelle Projekt neu laden?"
 
 #: ../pitivi/ui/mainwindow.py:837
-#| msgid "_Remove from project"
 msgid "Revert to saved project"
 msgstr "Auf das gespeicherte Projekt zurücksetzen"
 
 #: ../pitivi/ui/mainwindow.py:840
-#| msgid "If you don't save some of your changes will be lost"
 msgid "All unsaved changes will be lost."
 msgstr "Alle ungespeicherten Änderungen werden verlorengehen."
 
@@ -1171,34 +1165,34 @@ msgstr "Einige Einstellungen werden erst nach einem Neustart von PiTiVi wirksam"
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: ../pitivi/ui/previewer.py:55 ../pitivi/ui/previewer.py:83
-#: ../pitivi/ui/previewer.py:94 ../pitivi/ui/trackobject.py:48
+#: ../pitivi/ui/previewer.py:57 ../pitivi/ui/previewer.py:85
+#: ../pitivi/ui/previewer.py:96 ../pitivi/ui/trackobject.py:48
 #: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
 #: ../pitivi/ui/trackobject.py:81
 msgid "Appearance"
 msgstr "Erscheinungsbild"
 
-#: ../pitivi/ui/previewer.py:56
+#: ../pitivi/ui/previewer.py:58
 msgid "Thumbnail Gap (pixels)"
 msgstr "Abstand der Vorschaubilder in Pixel"
 
-#: ../pitivi/ui/previewer.py:58
+#: ../pitivi/ui/previewer.py:60
 msgid "The gap between thumbnails"
 msgstr "Abstand zwischen Vorschaubildern"
 
-#: ../pitivi/ui/previewer.py:84
+#: ../pitivi/ui/previewer.py:86
 msgid "Show Thumbnails (Video)"
 msgstr "Vorschauen anzeigen (Video)"
 
-#: ../pitivi/ui/previewer.py:85
+#: ../pitivi/ui/previewer.py:87
 msgid "Show Thumbnails on Video Clips"
 msgstr "Vorschauen für Videoclips anzeigen"
 
-#: ../pitivi/ui/previewer.py:95
+#: ../pitivi/ui/previewer.py:97
 msgid "Show Waveforms (Audio)"
 msgstr "Wellenform anzeigen (Audio)"
 
-#: ../pitivi/ui/previewer.py:96
+#: ../pitivi/ui/previewer.py:98
 msgid "Show Waveforms on Audio Clips"
 msgstr "Wellenform für Audioclips anzeigen"
 

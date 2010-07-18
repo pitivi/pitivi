@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-06-22 21:27+0000\n"
+"POT-Creation-Date: 2010-07-14 20:01+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -248,16 +248,16 @@ msgstr ""
 #: ../pitivi/application.py:223
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"    no project is given, %prog creates a new project.\n"
-"    Alternatively, when -i is specified, arguments are treated as clips to be\n"
-"    imported into the project. If -a is specified, these clips will also be added to\n"
-"    the end of the project timeline."
+"no project is given, %prog creates a new project.\n"
+"Alternatively, when -i is specified, arguments are treated as clips to be\n"
+"imported into the project. If -a is specified, these clips will also be added to\n"
+"the end of the project timeline."
 msgstr ""
 "Zažene video urejevalnik, in izbirno naloži DATOTEKO_PROJEKTA.\n"
-"    V primeru, da projekt ni podan, %prog ustvari nov projekt.\n"
-"    Zastavica -i določa, da so argumenti upoštevani kot posnetki, ki bodo\n"
-"    uvoženi v projekt. Z zastavico -a pa bodo posnetki tudi dodatni na\n"
-"    konec časovnice projekta."
+"V primeru, da projekt ni podan, %prog ustvari nov projekt.\n"
+"Zastavica -i določa, da so argumenti upoštevani kot posnetki, ki bodo\n"
+"uvoženi v projekt. Z zastavico -a pa bodo posnetki tudi dodatni na\n"
+"konec časovnice projekta."
 
 #: ../pitivi/application.py:229
 msgid "Import each MEDIA_FILE into the project."
@@ -1138,9 +1138,9 @@ msgstr "Nekatere spremembe ne bodo imele učinka do ponovnega zagona PiTiVi-ja"
 msgid "Reset"
 msgstr "Ponastavi"
 
-#: ../pitivi/ui/previewer.py:55
-#: ../pitivi/ui/previewer.py:83
-#: ../pitivi/ui/previewer.py:94
+#: ../pitivi/ui/previewer.py:57
+#: ../pitivi/ui/previewer.py:85
+#: ../pitivi/ui/previewer.py:96
 #: ../pitivi/ui/trackobject.py:48
 #: ../pitivi/ui/trackobject.py:59
 #: ../pitivi/ui/trackobject.py:70
@@ -1148,27 +1148,27 @@ msgstr "Ponastavi"
 msgid "Appearance"
 msgstr "Videz"
 
-#: ../pitivi/ui/previewer.py:56
+#: ../pitivi/ui/previewer.py:58
 msgid "Thumbnail Gap (pixels)"
 msgstr "Vrzel med sličicami (točke)"
 
-#: ../pitivi/ui/previewer.py:58
+#: ../pitivi/ui/previewer.py:60
 msgid "The gap between thumbnails"
 msgstr "Vrzel med sličicami"
 
-#: ../pitivi/ui/previewer.py:84
+#: ../pitivi/ui/previewer.py:86
 msgid "Show Thumbnails (Video)"
 msgstr "Pokaži sličice (Video)"
 
-#: ../pitivi/ui/previewer.py:85
+#: ../pitivi/ui/previewer.py:87
 msgid "Show Thumbnails on Video Clips"
 msgstr "Pokaži sličice na video posnetkih"
 
-#: ../pitivi/ui/previewer.py:95
+#: ../pitivi/ui/previewer.py:97
 msgid "Show Waveforms (Audio)"
 msgstr "Pokaži oblike valov (Zvok)"
 
-#: ../pitivi/ui/previewer.py:96
+#: ../pitivi/ui/previewer.py:98
 msgid "Show Waveforms on Audio Clips"
 msgstr "Pokaži oblike valov na zvokovnih posnetkih"
 
