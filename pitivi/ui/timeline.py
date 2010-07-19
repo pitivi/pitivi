@@ -412,9 +412,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 ## Drag and Drop callbacks
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
-        self.warning("self._factories:%r, self._temp_objects:%r",
+        self.warning("self._factories:%r, self._temp_objects:%r, \
+                     self._temp_effect %r",
                      not not self._factories,
-                     not not self._temp_objects)
+                     not not self._temp_objects,
+                     not not self._temp_effect)
 
         if self._factories is None:
             if  context.targets in DND_EFFECT_LIST:
@@ -435,6 +437,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     if self.timeline.getObjsToAddEffectTo(self.pixelToNs(x), priority) != tmp_timeline_objs:
                         for timeline_obj, track_obj in self._temp_effect:
                             timeline_obj.removeTrackObject(track_obj)
+                            track_obj.track.removeTrackObject(track_obj)
                         self._addEffect(x, y, context.targets)
                 else:
                     self._addEffect(x, y, context.targets)
