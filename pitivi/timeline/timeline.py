@@ -1769,6 +1769,9 @@ class Timeline(Signallable, Loggable):
             obj.addTrackObject(copy_track_obj)
             listTimelineObjectTrackObject.append((obj, copy_track_obj))
 
+        self.debug("%s", ["TimelineObject %s => Track object: %s |"\
+                           %(listTo[0], listTo[1])\
+                           for listTo in listTimelineObjectTrackObject])
         return listTimelineObjectTrackObject
 
     def getEffectTrack(self, factory):
