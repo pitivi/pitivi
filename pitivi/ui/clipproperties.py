@@ -83,6 +83,7 @@ class EffectProperties(gtk.Expander):
 
         self.selected_effects = []
         self.timeline_object = None
+        self._factory = None
         self.app = instance
         self.effectsHandler = self.app.effects
         self._effect_config_ui = None
@@ -183,7 +184,7 @@ class EffectProperties(gtk.Expander):
         self.selection.connect("changed", self._treeviewSelectionChangedCb)
         self.removeEffectBt.connect("clicked", self._removeEffectClicked)
 
-        self.treeview.connect("drag-data-received", self._dragDataReceivedCb)
+        self.connect("drag-data-received", self._dragDataReceivedCb)
         self.treeview.connect("drag-leave", self._dragLeaveCb)
         self.treeview.connect("drag-drop", self._dragDropCb)
         self.treeview.connect("drag-motion", self._dragMotionCb)
@@ -240,21 +241,25 @@ class EffectProperties(gtk.Expander):
         self.timeline_object.removeTrackObject(effect)
         track.removeTrackObject(effect)
 
-    def _dragDataReceivedCb(self, unused, context, x, y, timestamp):
-        # I am waiting for effects to work again before implementing DND here
-        print "Receive"
+    def _dragDataReceivedCb(self, unused_layout, context, x, y,
+        selection, targetType, timestamp):
+        self._factory = self.app.effects.getEffect(selection.data)
 
     def _dragDropCb(self, unused, context, x, y, timestamp):
-        print "Drop"
+        if self._factory:
+            self.timeline.addEffectFactoryOnObject(self._factory,
+                                                   timeline_objects = [self.timeline_object])
+        self._factory = None
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
+        self.factory = None
         self.drag_unhighlight()
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
+        atom = gtk.gdk.atom_intern(dnd.EFFECT_TUPLE[0])
+        if not self._factory:
+            self.drag_get_data(context, atom, timestamp)
         self.drag_highlight()
-
-    def _timelineWatcherCb(self, timeline):
-        print timeline.selection
 
     def _effectActiveToggleCb(self, cellrenderertoggle, path):
         iter = self.storemodel.get_iter(path)

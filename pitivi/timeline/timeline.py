@@ -1687,7 +1687,7 @@ class Timeline(Signallable, Loggable):
         self.addTimelineObject(timeline_object)
         return timeline_object
 
-    def addEffectFactoryOnObject(self, factory, time, priority):
+    def addEffectFactoryOnObject(self, factory, time=0, priority=0, timeline_objects=None):
         """
         Add effectTraks corresponding to the effect from the factory to the corresponding
         L{TimelineObject}s on the timeline
@@ -1722,7 +1722,10 @@ class Timeline(Signallable, Loggable):
         listTimelineObjectTrackObject = []
         track_object = TrackEffect(factory, input_stream)
         track_object.makeBin()
-        timeline_objects = self.getObjsToAddEffectTo(time, priority)
+
+        if not timeline_objects:
+            timeline_objects = self.getObjsToAddEffectTo(time, priority)
+
         for obj in timeline_objects:
             copy_track_obj = track_object.copy()
             track.addTrackObject(copy_track_obj)
