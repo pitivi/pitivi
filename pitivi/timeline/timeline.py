@@ -1728,6 +1728,7 @@ class Timeline(Signallable, Loggable):
             track.addTrackObject(copy_track_obj)
             copy_track_obj.start = obj.start
             copy_track_obj.duration = obj.duration
+            copy_track_obj.media_duration = obj.media_duration
             obj.addTrackObject(copy_track_obj)
             listTimelineObjectTrackObject.append((obj, copy_track_obj))
 
