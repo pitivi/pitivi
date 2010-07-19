@@ -1687,44 +1687,6 @@ class Timeline(Signallable, Loggable):
         self.addTimelineObject(timeline_object)
         return timeline_object
 
-    def addEffectFactory(self, factory, start=0):
-        """
-        Creates a TimelineObject for the given EffectFactory and adds it to the timeline.
-
-        @param factory: The EffectFactory to add.
-        @type factory: L{EffectFactory}
-        @ivar start: The position of the effect on a timeline (nanoseconds)
-        @type start: L{long}
-        @raises TimelineError: if the factory doesn't have input or output streams
-        """
-        self.debug("factory:%r", factory)
-
-        output_stream = factory.getOutputStreams()
-        if not output_stream:
-            raise TimelineError()
-        output_stream = output_stream[0]
-
-        input_stream = factory.getInputStreams()
-        if not input_stream:
-            raise TimelineError()
-        input_stream = input_stream[0]
-
-        track = self.getEffectTrack(factory)
-        if track is None:
-          raise TimelineError()
-
-        timeline_object = TimelineObject(factory)
-        track_object = TrackEffect(factory, input_stream)
-        track.addTrackObject(track_object)
-        timeline_object.addTrackObject(track_object)
-
-        self.addTimelineObject(timeline_object)
-
-        timeline_object.start = start
-        timeline_object.setDuration(track.duration - start)
-
-        return timeline_object
-
     def addEffectFactoryOnObject(self, factory, time, priority):
         """
         Add effectTraks corresponding to the effect from the factory to the corresponding
