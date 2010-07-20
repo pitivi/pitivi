@@ -160,18 +160,23 @@ class TimelineObjectRemoved(UndoableAction):
 
 class TrackEffectAdded(UndoableAction):
     def __init__(self, timeline_object, track_object):
-        self.track_object = track_object
         self.timeline_object = timeline_object
-        self.track = self.track_object.track
+        self.track_object = track_object
+        self.factory = track_object.factory
         self.effect_props = []
+        self.gnl_obj_props = []
 
     def do(self):
-        self.track.addTrackObject(self.track_object)
-        self.timeline_object.addTrackObject(self.track_object)
+        timeline = self.timeline_object.timeline
+        tl_obj_track_obj = timeline.addEffectFactoryOnObject(self.factory,
+                                            timeline_objects=[self.timeline_object])
 
+        self.track_object = tl_obj_track_obj[0][1]
         element = self.track_object.getElement()
         for prop_name, prop_value in self.effect_props:
             element.set_property(prop_name, prop_value)
+        for prop_name, prop_value in self.gnl_obj_props:
+            self.track_object.gnl_object.set_property(prop_name, prop_value)
 
         self._done()
 
@@ -182,9 +187,16 @@ class TrackEffectAdded(UndoableAction):
                               for prop in props
                               if prop.flags & gobject.PARAM_WRITABLE
                               and prop.name not in PROPS_TO_IGNORE]
+        gnl_props =  gobject.list_properties(self.track_object.gnl_object)
+        gnl_obj = self.track_object.gnl_object
+        self.gnl_obj_props = [(prop.name, gnl_obj.get_property(prop.name))
+                              for prop in gnl_props
+                              if prop.flags & gobject.PARAM_WRITABLE]
 
         self.timeline_object.removeTrackObject(self.track_object)
-        self.track.removeTrackObject(self.track_object)
+        self.track_object.track.removeTrackObject(self.track_object)
+        del self.track_object
+        self.track_object = None
 
         self._undone()
 
@@ -192,8 +204,9 @@ class TrackEffectRemoved(UndoableAction):
     def __init__(self, timeline_object, track_object):
         self.track_object = track_object
         self.timeline_object = timeline_object
-        self.track = self.track_object.track
+        self.factory = track_object.factory
         self.effect_props = []
+        self.gnl_obj_props = []
 
     def do(self):
         element = self.track_object.getElement()
@@ -203,18 +216,31 @@ class TrackEffectRemoved(UndoableAction):
                               if prop.flags & gobject.PARAM_WRITABLE
                               and prop.name not in PROPS_TO_IGNORE]
 
+        gnl_props =  gobject.list_properties(self.track_object.gnl_object)
+        gnl_obj = self.track_object.gnl_object
+        self.gnl_obj_props = [(prop.name, gnl_obj.get_property(prop.name))
+                              for prop in gnl_props
+                              if prop.flags & gobject.PARAM_WRITABLE]
+        print self.gnl_obj_props
+
         self.timeline_object.removeTrackObject(self.track_object)
-        self.track.removeTrackObject(self.track_object)
+        self.track_object.track.removeTrackObject(self.track_object)
+        del self.track_object
+        self.track_object = None
 
         self._done()
 
     def undo(self):
-        self.track.addTrackObject(self.track_object)
-        self.timeline_object.addTrackObject(self.track_object)
+        timeline = self.timeline_object.timeline
+        tl_obj_track_obj = timeline.addEffectFactoryOnObject(self.factory,
+                                            timeline_objects=[self.timeline_object])
 
+        self.track_object = tl_obj_track_obj[0][1]
         element = self.track_object.getElement()
         for prop_name, prop_value in self.effect_props:
             element.set_property(prop_name, prop_value)
+        for prop_name, prop_value in self.gnl_obj_props:
+            self.track_object.gnl_object.set_property(prop_name, prop_value)
 
         self._undone()
 
