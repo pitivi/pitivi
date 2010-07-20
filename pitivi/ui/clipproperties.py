@@ -90,11 +90,10 @@ class EffectProperties(gtk.Expander):
         self.pipeline = None
         self.effect_props_handling = effect_properties_handling
 
-        self.VContent = gtk.VBox()
+        self.VContent = gtk.VPaned()
         self.add(self.VContent)
 
         self.table = gtk.Table(2, 1, False)
-        self.VContent.pack_start(self.table, expand=True, fill=True)
 
         self.toolbar1 = gtk.Toolbar()
         self.removeEffectBt = gtk.ToolButton("gtk-delete")
@@ -193,7 +192,6 @@ class EffectProperties(gtk.Expander):
         self.connect('notify::expanded', self.expandedcb)
 
         self.table.attach(self.treeview_scrollwin, 0, 1, 1, 2)
-        self.VContent.pack_start(self.explain_box, expand=True, fill=True)
 
         self._showExplainLabel()
         self.VContent.show()
@@ -266,7 +264,6 @@ class EffectProperties(gtk.Expander):
         track_effect = self.storemodel.get_value(iter, COL_TRACK_EFFECT)
         activated = track_effect.gnl_object.get_property("active")
         track_effect.gnl_object.set_property("active", not activated)
-        self.storemodel.set_value(iter, COL_ACTIVATED, not activated)
 
     def expandedcb(self, expander, params):
         self._updateAll()
@@ -285,9 +282,7 @@ class EffectProperties(gtk.Expander):
     def _updateAll(self):
         if self.get_expanded():
             if self.timeline_object:
-                self.table.show_all()
-                if not self.selected_effects:
-                    self.toolbar1.hide()
+                self._showTable()
                 self.explain_box.hide()
                 self._updateTreeview()
                 self._updateEffectConfigUi()
@@ -320,9 +315,18 @@ class EffectProperties(gtk.Expander):
             self.storemodel.append(to_append)
 
     def _showExplainLabel(self):
-        self.table.hide()
-        self.explain_box.show()
-        self.explain_label.show()
+        if self.table in  self.VContent.get_children():
+            self.VContent.remove(self.table)
+        self.VContent.pack1(self.explain_box, resize=True, shrink=False)
+        self.explain_box.show_all()
+
+    def _showTable(self):
+        if self.explain_box in  self.VContent.get_children():
+            self.VContent.remove(self.explain_box)
+        self.VContent.pack1(self.table, resize=True, shrink=False)
+        self.table.show_all()
+        if not self.selected_effects:
+            self.toolbar1.hide()
 
     def _treeviewSelectionChangedCb(self, treeview):
         if self.selection.count_selected_rows() == 0 and self.timeline_object:
@@ -334,21 +338,22 @@ class EffectProperties(gtk.Expander):
 
     def _updateEffectConfigUi(self):
         if self.selection.get_selected()[1]:
-            effect = self.storemodel.get_value(self.selection.get_selected()[1],
+            track_effect = self.storemodel.get_value(self.selection.get_selected()[1],
                                                COL_TRACK_EFFECT)
 
-            if self._effect_config_ui:
-                self._effect_config_ui.hide()
+            for widget in self.VContent.get_children():
+                if type(widget) is gtk.ScrolledWindow:
+                    self.VContent.remove(widget)
 
-            element = effect.getElement()
+            element = track_effect.getElement()
             ui = self.effect_props_handling.getEffectConfigurationUI(element)
             self._effect_config_ui = ui
             if self._effect_config_ui:
-                self.VContent.pack_start(self._effect_config_ui,
-                                         expand=False,
-                                         fill=True)
+                self.VContent.pack2(self._effect_config_ui,
+                                         resize=True,
+                                         shrink=False)
                 self._effect_config_ui.show_all()
-            self.selected_on_treeview = effect
+            self.selected_on_treeview = track_effect
         else:
             self._hideEffectConfig()
 
