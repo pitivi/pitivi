@@ -33,7 +33,7 @@ class EffectsPropertiesHandling:
     def __init__(self):
         self.cache_dict = {}
         self.pipeline = None
-        self.current_config_ui = None
+        self._current_effect_setting_ui = None
 
     def getEffectConfigurationUI(self, effect):
         """
@@ -43,12 +43,15 @@ class EffectsPropertiesHandling:
         """
         if effect not in self.cache_dict:
             #Here we should handle special effects configuration UI
-            effect_configuration_ui =  GstElementSettingsWidget()
-            effect_configuration_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
+            effect_configuration_ui = gtk.ScrolledWindow()
+            effect_set_ui = GstElementSettingsWidget()
+            effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
                                                default_btn=True, use_element_props=True)
-            self._connectAllWidgetCbs(effect_configuration_ui, effect)
+            effect_configuration_ui.add_with_viewport(effect_set_ui)
+            self._connectAllWidgetCbs(effect_set_ui, effect)
             self.cache_dict[effect] = effect_configuration_ui
-        self.current_config_ui = self.cache_dict[effect]
+        effect_set_ui = self.cache_dict[effect].get_children()[0].get_children()[0]
+        self._current_effect_setting_ui = effect_set_ui
         return self.cache_dict[effect]
 
     def _flushSeekVideo(self):
@@ -69,6 +72,6 @@ class EffectsPropertiesHandling:
                 widget.connect("clicked", self._onValueChangedCb)
 
     def _onValueChangedCb(self, widget):
-        for prop, value in self.current_config_ui.getSettings().iteritems():
-            self.current_config_ui.element.set_property(prop, value)
+        for prop, value in self._current_effect_setting_ui.getSettings().iteritems():
+            self._current_effect_setting_ui.element.set_property(prop, value)
         self._flushSeekVideo()
