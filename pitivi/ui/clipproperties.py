@@ -298,10 +298,15 @@ class EffectProperties(gtk.Expander):
         else:
             self.VContent.hide()
 
+    def _activeChangedCb(self, unusedObj, unusedActive):
+        self._updateTreeview()
+
     def _updateTreeview(self):
         self.storemodel.clear()
         for track_effect in self.selected_effects:
             to_append = [track_effect.gnl_object.get_property("active")]
+            track_effect.gnl_object.connect("notify::active",
+                                            self._activeChangedCb)
             if isinstance(track_effect.factory.getInputStreams()[0],
                           VideoStream):
                 to_append.append("Video")
