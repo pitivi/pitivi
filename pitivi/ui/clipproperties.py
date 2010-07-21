@@ -36,6 +36,7 @@ from pitivi.receiver import receiver, handler
 from pitivi.timeline.track import TrackEffect
 from pitivi.stream import VideoStream
 
+from pitivi.ui.gstwidget import GstElementSettingsWidget
 from pitivi.ui.effectsconfiguration import EffectsPropertiesHandling
 from pitivi.ui.common import PADDING, SPACING
 
@@ -342,7 +343,7 @@ class EffectProperties(gtk.Expander):
                                                COL_TRACK_EFFECT)
 
             for widget in self.VContent.get_children():
-                if type(widget) is gtk.ScrolledWindow:
+                if type(widget) in [gtk.ScrolledWindow, GstElementSettingsWidget]:
                     self.VContent.remove(widget)
 
             element = track_effect.getElement()
@@ -350,8 +351,9 @@ class EffectProperties(gtk.Expander):
             self._effect_config_ui = ui
             if self._effect_config_ui:
                 self.VContent.pack2(self._effect_config_ui,
-                                         resize=True,
+                                         resize=False,
                                          shrink=False)
+                self.VContent.set_position(10)
                 self._effect_config_ui.show_all()
             self.selected_on_treeview = track_effect
         else:
