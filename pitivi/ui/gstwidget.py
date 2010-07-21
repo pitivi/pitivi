@@ -125,6 +125,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         self.element = None
         self.ignore = None
         self.properties = None
+        self.buttons = []
 
     def setElement(self, element, properties={}, ignore=['name'],
                    default_btn = False, use_element_props=False):
@@ -138,7 +139,10 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
     def _addWidgets(self, properties, default_btn, use_element_props):
         props = [prop for prop in gobject.list_properties(self.element) if not prop.name in self.ignore]
         if not props:
-            self.pack_start(gtk.Label(_("No properties...")))
+            table = gtk.Table(rows=1, columns=1)
+            widget = gtk.Label(_("No properties..."))
+            table.attach(widget, 0, 1, 0, 1, yoptions=gtk.FILL)
+            self.pack_start(table)
             self.show_all()
             return
         if default_btn:
@@ -151,7 +155,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         table.set_border_width(5)
         y = 0
         for prop in props:
-            label = gtk.Label(prop.nick)
+            label = gtk.Label(prop.nick+":")
             label.set_alignment(0.0, 0.5)
             table.attach(label, 0, 1, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
             if use_element_props:
@@ -168,6 +172,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
             if default_btn:
                 button = self._getResetToDefaultValueButton(prop, widget)
                 table.attach(button, 2, 3, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
+                self.buttons.append(button)
             y += 1
 
         self.pack_start(table)
@@ -200,7 +205,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         elif type(widget) in [gtk.CheckButton]:
             widget.set_active(bool(value))
 
-    def getSettings(self):
+    def getSettings(self, with_default=False):
         """
         returns the dictionnary of propertyname/propertyvalue
         """
@@ -209,7 +214,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
             if not prop.flags & gobject.PARAM_WRITABLE:
                 continue
             value = get_widget_propvalue(prop, widget)
-            if value != None and value != prop.default_value:
+            if value != None and (value != prop.default_value or with_default):
                 d[prop.name] = value
         return d
 

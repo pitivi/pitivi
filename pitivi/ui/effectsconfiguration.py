@@ -81,10 +81,13 @@ class EffectsPropertiesHandling:
                 widget.connect("value-changed", self._onValueChangedCb)
             elif type(widget) in [gtk.Entry, gtk.ComboBox]:
                 widget.connect("changed", self._onValueChangedCb)
-            elif type(widget) in [gtk.CheckButton]:
+            elif type(widget) in [gtk.CheckButton, gtk.Button]:
                 widget.connect("clicked", self._onValueChangedCb)
 
-    def _onValueChangedCb(self, widget):
-        for prop, value in self._current_effect_setting_ui.getSettings().iteritems():
+        for button in effect_configuration_ui.buttons:
+                button.connect("clicked", self._onValueChangedCb, True)
+
+    def _onValueChangedCb(self, widget, with_default=False):
+        for prop, value in self._current_effect_setting_ui.getSettings(with_default).iteritems():
             self._current_effect_setting_ui.element.set_property(prop, value)
         self._flushSeekVideo()
