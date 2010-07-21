@@ -50,7 +50,10 @@ from xdg import IconTheme
 #  _ Complex Audio/Video Effects
 
 (VIDEO_EFFECT, AUDIO_EFFECT)  = range(2)
-USELESS_EFFECTS = ["colorconvert", "coglogoinsert", "festival",]
+
+#AspectratioCrop is Blacklisted because of this bug:
+#https://bugzilla.gnome.org/show_bug.cgi?id=624882
+BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival", "aspectratiocrop"]
 
 
 
@@ -106,7 +109,7 @@ class EffectsHandler(object):
         factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
         for element_factory in factlist:
             klass = element_factory.get_klass()
-            if "Effect" in klass and element_factory.get_name() not in USELESS_EFFECTS:
+            if "Effect" in klass and element_factory.get_name() not in BLACKLISTED_EFFECTS:
                 name = element_factory.get_name()
                 effect = EffectFactory(name, name,
                                        self._getEffectCategories(name),

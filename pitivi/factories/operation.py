@@ -96,7 +96,7 @@ class EffectFactory (TransformFactory):
     def _releaseBin(self, bin):
         elements = bin.elements()
         for element in elements.next():
-            del element #bin.remove(element)
+            del element
 
 
     def addInputStream(self, stream):
