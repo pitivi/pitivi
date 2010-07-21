@@ -43,16 +43,29 @@ class EffectsPropertiesHandling:
         """
         if effect not in self.cache_dict:
             #Here we should handle special effects configuration UI
-            effect_configuration_ui = gtk.ScrolledWindow()
             effect_set_ui = GstElementSettingsWidget()
             effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
                                                default_btn=True, use_element_props=True)
-            effect_configuration_ui.add_with_viewport(effect_set_ui)
+            nb_rows = effect_set_ui.get_children()[0].get_property('n-rows')
+            if nb_rows > 4:
+                effect_configuration_ui = gtk.ScrolledWindow()
+                effect_configuration_ui.add_with_viewport(effect_set_ui)
+                self.cache_dict[effect] = effect_configuration_ui
+            else:
+                self.cache_dict[effect] = effect_set_ui
             self._connectAllWidgetCbs(effect_set_ui, effect)
-            self.cache_dict[effect] = effect_configuration_ui
-        effect_set_ui = self.cache_dict[effect].get_children()[0].get_children()[0]
+
+        effect_set_ui = self._getEffectSetUI(effect)
+
         self._current_effect_setting_ui = effect_set_ui
         return self.cache_dict[effect]
+
+    def _getEffectSetUI(self, effect):
+        if type(self.cache_dict[effect]) is gtk.ScrolledWindow:
+            effect_set_ui = self.cache_dict[effect].get_children()[0].get_children()[0]
+        else:
+            effect_set_ui = self.cache_dict[effect]
+        return effect_set_ui
 
     def _flushSeekVideo(self):
         self.pipeline.pause()
