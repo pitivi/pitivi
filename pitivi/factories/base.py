@@ -27,7 +27,6 @@ import gst
 
 from pitivi.log.loggable import Loggable
 from pitivi.elements.singledecodebin import SingleDecodeBin
-from pitivi.elements.smartscale import SmartVideoScale
 from pitivi.signalinterface import Signallable
 from pitivi.stream import match_stream_groups_map, AudioStream, VideoStream
 from pitivi.utils import formatPercent
@@ -347,12 +346,14 @@ class SourceFactory(ObjectFactory):
             del bin.ares
             del bin.arate
         elif hasattr(bin, "alpha"):
-            for elt in [bin.csp, bin.queue, bin.alpha]:
+            for elt in [bin.csp, bin.queue, bin.alpha, bin.capsfilter, bin.scale]:
                 elt.set_state(gst.STATE_NULL)
                 bin.remove(elt)
             del bin.queue
             del bin.csp
             del bin.alpha
+            del bin.capsfilter
+            del bin.scale
 
         if hasattr(bin, "ghostpad"):
             # singledecodebin found something on this pad
@@ -415,17 +416,19 @@ class SourceFactory(ObjectFactory):
                 b.csp = gst.element_factory_make("identity")
 
             b.alpha = gst.element_factory_make("alpha", "internal-alpha")
-            b.scale = SmartVideoScale()
-            b.scale.set_caps(self._filtercaps)
-            b.scale._computeAndSetValues()
+            b.scale = gst.element_factory_make("videoscale")
+            b.scale.props.add_borders = True
+            b.capsfilter = gst.element_factory_make("capsfilter")
+            self.setFilterCaps(self._filtercaps)
 
-            b.add(b.queue, b.scale, b.csp, b.alpha)
+            b.add(b.queue, b.scale, b.csp, b.alpha, b.capsfilter)
             gst.element_link_many(b.queue, b.csp, b.scale)
             if child_bin:
-                gst.element_link_many(b.scale, b.child, b.alpha)
+                gst.element_link_many(b.scale, b.child, b.alpha, b.capsfilter)
                 b.child.sync_state_with_parent()
             else:
-                gst.element_link_many(b.scale, b.alpha)
+                gst.element_link_many(b.scale, b.alpha, b.capsfilter)
+            b.capsfilter.sync_state_with_parent()
             b.scale.sync_state_with_parent()
             b.queue.sync_state_with_parent()
             b.csp.sync_state_with_parent()
@@ -449,11 +452,11 @@ class SourceFactory(ObjectFactory):
             pad.link(topbin.aconv.get_pad("sink"))
             topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
         elif hasattr(topbin, "alpha"):
-            for element in [topbin.queue, topbin.scale, topbin.csp, topbin.alpha]:
+            for element in [topbin.queue, topbin.scale, topbin.csp, topbin.alpha, topbin.capsfilter]:
                 element.sync_state_with_parent()
 
             pad.link(topbin.queue.get_pad("sink"))
-            topbin.ghostpad = gst.GhostPad("src", topbin.alpha.get_pad("src"))
+            topbin.ghostpad = gst.GhostPad("src", topbin.capsfilter.get_pad("src"))
         else:
             topbin.ghostpad = gst.GhostPad("src", pad)
 
@@ -482,11 +485,18 @@ class SourceFactory(ObjectFactory):
         raise AssertionError("source factories can't have input streams")
 
     def setFilterCaps(self, caps):
-        self._filtercaps = caps
+        caps_copy = gst.Caps(caps)
+        for structure in caps_copy:
+            # remove framerate as we don't adjust framerate here
+            if structure.has_key("framerate"):
+                del structure["framerate"]
+            # remove format as we will have converted to AYUV/ARGB
+            if structure.has_key("format"):
+                del structure["format"]
         for b in self.bins:
             if hasattr(b, "scale"):
-                b.scale.set_caps(caps)
-                b.scale._computeAndSetValues()
+                b.capsfilter.props.caps = caps_copy
+        self._filtercaps = caps_copy
 
 class SinkFactory(ObjectFactory):
     """

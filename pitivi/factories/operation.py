@@ -22,7 +22,6 @@
 
 import gst
 from pitivi.factories.base import OperationFactory
-from pitivi.elements.smartscale import SmartVideoScale
 from pitivi.stream import AudioStream, VideoStream
 
 # FIXME: define a proper hierarchy
@@ -111,12 +110,13 @@ class VideoModifierFactory(StreamModifierFactory):
         b.add_pad(gsink)
 
         # if we have an output stream specified, we add a capsfilter
-        vscale = SmartVideoScale()
-        vscale.set_caps(self.output_streams[0].caps)
+        vscale = gst.element_factory_make("videoscale")
+        vscale.props.add_borders = True
         b.add(vscale)
         vrate.link(vscale)
         self.debug("output_streams:%d", len(self.output_streams))
-        if len(self.output_streams) and self.output_streams[0].caps.is_fixed():
+
+        if len(self.output_streams):
             idt = gst.element_factory_make("capsfilter")
             idt.props.caps = self.output_streams[0].caps
             b.add(idt)

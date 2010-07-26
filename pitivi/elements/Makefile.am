@@ -5,7 +5,6 @@ elements_PYTHON = 		\
 	arraysink.py 		\
 	mixer.py		\
 	singledecodebin.py 	\
-	smartscale.py		\
 	thumbnailsink.py 	\
 	videofade.py
 
