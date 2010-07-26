@@ -25,7 +25,6 @@ from common import TestCase
 
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
 from pitivi.stream import AudioStream, VideoStream
-from pitivi.elements.imagefreeze import ImageFreeze
 
 class StubSingleDecodeBin(gst.Bin):
     def __init__(self, uri, caps, stream):

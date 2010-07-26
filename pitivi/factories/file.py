@@ -26,7 +26,6 @@ import os
 
 from pitivi.factories.base import RandomAccessSourceFactory, \
         SinkFactory
-from pitivi.elements.imagefreeze import ImageFreeze
 from pitivi.stream import MultimediaStream, AudioStream, VideoStream
 
 class FileSourceFactory(RandomAccessSourceFactory):
@@ -57,7 +56,7 @@ class PictureFileSourceFactory(FileSourceFactory):
 
     def _makeStreamBin(self, output_stream, child_bin=None):
         self.debug("making picture bin for %s", self.name)
-        freeze = ImageFreeze()
+        freeze = gst.element_factory_make("imagefreeze")
 
         self.debug("Chaining up with %r", freeze)
 
