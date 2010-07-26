@@ -106,6 +106,20 @@ def make_property_widget(unused_element, prop, value=None):
                 selected = idx
             idx = idx + 1
         widget.set_active(selected)
+    elif type_name == 'GstFraction':
+        widget = gtk.HBox()
+        widget1 = gtk.SpinButton()
+        widget1.set_range(0,100)
+        widget1.set_increments(1.0, 10.0)
+        #widget1.set_value(float(value))
+        widget2 = gtk.SpinButton()
+        widget2.set_range(0,100)
+        widget2.set_increments(1.0, 10.0)
+        #widget2.set_value(float(value))
+        widget.pack_start(widget1)
+        widget.pack_start(gtk.Label("/"))
+        widget.pack_start(widget2)
+        print "%s, %s" %(value, type(value))
     else:
         widget = gtk.Label(type_name)
         widget.set_alignment(1.0, 0.5)

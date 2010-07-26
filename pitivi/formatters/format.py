@@ -54,7 +54,7 @@ def list_formats():
     """
     return _formatters
 
-def get_formatter_for_uri(uri):
+def get_formatter_for_uri(uri, avalaible_effects):
     """
     Returns an Formatter object that can parse the given project file
 
@@ -64,7 +64,7 @@ def get_formatter_for_uri(uri):
     """
     for klass, name, exts in _formatters:
         if klass.canHandle(uri):
-            return klass()
+            return klass(avalaible_effects)
 
 def register_formatter(klass, name, extensions):
     _formatters.append((klass, name, extensions))

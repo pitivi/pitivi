@@ -30,10 +30,13 @@ from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.file import FileSourceFactory
 from pitivi.factories.test import VideoTestSourceFactory, \
     AudioTestSourceFactory
-from pitivi.timeline.track import Track, SourceTrackObject, Interpolator
+from pitivi.factories.operation import EffectFactory
+from pitivi.timeline.track import Track, SourceTrackObject, Interpolator,\
+                                  TrackEffect
 from pitivi.timeline.timeline import Timeline, TimelineObject
 from pitivi.project import Project
 from pitivi.utils import get_controllable_properties
+from pitivi.effects import EffectsHandler
 
 class FakeElementTreeFormatter(ElementTreeFormatter):
     pass
@@ -43,7 +46,7 @@ def ts(time):
 
 class TestFormatterSave(TestCase):
     def setUp(self):
-        self.formatter = FakeElementTreeFormatter()
+        self.formatter = FakeElementTreeFormatter(EffectsHandler())
 
     def testSaveStream(self):
         stream = VideoStream(gst.Caps("video/x-raw-rgb, blah=meh"))
@@ -87,13 +90,13 @@ class TestFormatterSave(TestCase):
         source2.addOutputStream(video_stream)
         source2.addOutputStream(audio_stream)
 
-        factories = [source1, source2]
-        element = self.formatter._saveFactories(factories)
+        source_factories = [source1, source2]
+        element = self.formatter._saveFactories(source_factories)
         self.failUnlessEqual(element.tag, "factories")
 
         sources = element.find("sources")
         self.failUnlessEqual(len(sources), 2)
-        # source tags are tested in testSaveSource
+        #source tags are tested in testSaveSource
 
     def testSaveFactoryRef(self):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
@@ -107,7 +110,43 @@ class TestFormatterSave(TestCase):
         self.failUnlessEqual(element_ref.tag, "factory-ref")
         self.failUnlessEqual(element_ref.attrib["id"], element.attrib["id"])
 
-    def testSaveTrackObject(self):
+    def testSaveTrackEffect(self):
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
+
+        effect1 = EffectFactory ('identity', 'identity')
+        effect1.addOutputStream(video_stream)
+        effect1.addInputStream(video_stream)
+
+        #It is necessary to had the identity factory to the 
+        #effect_factories_dictionnary
+        self.formatter.avalaible_effects._effect_factories_dict['identity'] =\
+                                                                     effect1
+        track_effect = TrackEffect(effect1, video_stream,
+                start=10 * gst.SECOND, duration=20 * gst.SECOND,
+                in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
+                priority=10)
+
+        track = Track(video_stream)
+        track.addTrackObject(track_effect)
+
+        element = self.formatter._saveTrackObject(track_effect)
+        self.failUnlessEqual(element.tag, "track-object")
+        self.failUnlessEqual(element.attrib["type"],
+                qual(track_effect.__class__))
+        self.failUnlessEqual(element.attrib["start"], ts(10 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["duration"], ts(20 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["in_point"], ts(5 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["media_duration"],
+                ts(15 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["priority"], "(int)10")
+
+        effect_element = element.find('effect')
+        self.failIfEqual(effect_element, None)
+        self.failIfEqual(effect_element.find("factory"), None)
+        self.failIfEqual(effect_element.find("properties"), None)
+
+    def testSaveTrackSource(self):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
         audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
         source1 = FileSourceFactory("file1.ogg")
@@ -118,20 +157,22 @@ class TestFormatterSave(TestCase):
         self.formatter._saveSource(source1)
         self.formatter._saveStream(video_stream)
 
-        track_object = SourceTrackObject(source1, video_stream,
+
+        track_source = SourceTrackObject(source1, video_stream,
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
+
         track = Track(video_stream)
-        track.addTrackObject(track_object)
+        track.addTrackObject(track_source)
 
         # create an interpolator and insert it into the track object
         fakevol = gst.element_factory_make("volume")
         prop = get_controllable_properties(fakevol)[1][1]
-        volcurve = Interpolator(track_object, fakevol, prop)
-        track_object.interpolators[prop.name] = (prop, volcurve)
+        volcurve = Interpolator(track_source, fakevol, prop)
+        track_source.interpolators[prop.name] = (prop, volcurve)
 
-        # add some points to the interpolator 
+        # add some points to the interpolator
         value = float(0)
         volcurve.start.setObjectTime(0)
         volcurve.start.value = 0
@@ -141,10 +182,10 @@ class TestFormatterSave(TestCase):
         volcurve.end.setObjectTime(15 * gst.SECOND)
         volcurve.end.value = 15 % 2
 
-        element = self.formatter._saveTrackObject(track_object)
+        element = self.formatter._saveTrackObject(track_source)
         self.failUnlessEqual(element.tag, "track-object")
         self.failUnlessEqual(element.attrib["type"],
-                qual(track_object.__class__))
+                qual(track_source.__class__))
         self.failUnlessEqual(element.attrib["start"], ts(10 * gst.SECOND))
         self.failUnlessEqual(element.attrib["duration"], ts(20 * gst.SECOND))
         self.failUnlessEqual(element.attrib["in_point"], ts(5 * gst.SECOND))
@@ -161,7 +202,7 @@ class TestFormatterSave(TestCase):
         curve = curves.find("curve")
         self.failIfEqual(curve, None)
         self.failUnlessEqual(curve.attrib["property"], "volume")
-        
+
         # compute a dictionary of keyframes
         saved_points = dict(((obj.attrib["time"], (obj.attrib["value"],
             obj.attrib["mode"])) for obj in curve.getiterator("keyframe")))
@@ -350,7 +391,7 @@ class TestFormatterSave(TestCase):
 
 class TestFormatterLoad(TestCase):
     def setUp(self):
-        self.formatter = FakeElementTreeFormatter()
+        self.formatter = FakeElementTreeFormatter(EffectsHandler())
 
     def testLoadStream(self):
         caps = gst.Caps("video/x-raw-yuv")
@@ -363,6 +404,36 @@ class TestFormatterLoad(TestCase):
         self.failUnlessEqual(qual(stream.__class__), element.attrib["type"])
         self.failUnlessEqual(str(stream.caps), str(caps))
         self.failUnlessEqual(stream, self.formatter._context.streams["1"])
+
+    def testLoadTrackEffect(self):
+        # create fake document tree
+        element = Element("track-object",\
+                type="pitivi.timeline.track.TrackEffect",
+                start=ts(1 * gst.SECOND), duration=ts(10 * gst.SECOND),
+                in_point=ts(5 * gst.SECOND),
+                media_duration=ts(15 * gst.SECOND), priority=ts(5), id="1")
+        effect_elem = SubElement(element, "effect")
+        factory_elem = SubElement(effect_elem, "factory", name="identity")
+        properties_elem = SubElement(effect_elem, "gst-element-properties", async_handling="(bool)True")
+
+        # insert our fake factory into the context
+        stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        factory = EffectFactory('identity')
+        factory.addInputStream(stream)
+        factory.addOutputStream(stream)
+        self.formatter.avalaible_effects._effect_factories_dict['identity'] = factory
+
+        track = Track(stream)
+        track_object = self.formatter._loadTrackObject(track, element)
+        self.failUnless(isinstance(track_object, TrackEffect))
+        self.failUnlessEqual(track_object.factory, factory)
+        self.failUnlessEqual(track_object.stream, stream)
+
+        self.failUnlessEqual(track_object.start, 1 * gst.SECOND)
+        self.failUnlessEqual(track_object.duration, 10 * gst.SECOND)
+        self.failUnlessEqual(track_object.in_point, 5 * gst.SECOND)
+        self.failUnlessEqual(track_object.media_duration, 15 * gst.SECOND)
+        self.failUnlessEqual(track_object.priority, 5)
 
     def testLoadStreamRef(self):
         stream = VideoStream(gst.Caps("meh"))
@@ -401,7 +472,7 @@ class TestFormatterLoad(TestCase):
         ret = self.formatter._loadFactoryRef(element)
         self.failUnless(ret is tag)
 
-    def testLoadTrackObject(self):
+    def testLoadTrackSource(self):
         # create fake document tree
         element = Element("track-object",
                 type="pitivi.timeline.track.SourceTrackObject",
@@ -424,11 +495,11 @@ class TestFormatterLoad(TestCase):
         curves = SubElement(element, "curves")
         curve = SubElement(curves, "curve", property="volume",
             version="1")
-        expected = dict((long(t * gst.SECOND), (float(t % 2), gst.INTERPOLATE_LINEAR)) 
+        expected = dict((long(t * gst.SECOND), (float(t % 2), gst.INTERPOLATE_LINEAR))
             for t in xrange(1, 10))
         start = SubElement(curve, "start", value="0.0", mode="2")
         for time, (value, mode) in expected.iteritems():
-            SubElement(curve, "keyframe", time=str(time), value=str(value), 
+            SubElement(curve, "keyframe", time=str(time), value=str(value),
                 mode=str(mode))
         end = SubElement(curve, "end", value=str(10 % 2), mode="2")
 
@@ -479,11 +550,11 @@ class TestFormatterLoad(TestCase):
         # add a volume curve
         curves = SubElement(element, "curves")
         curve = SubElement(curves, "curve", property="volume")
-        expected = dict((long(t * gst.SECOND), (float(t % 2), gst.INTERPOLATE_LINEAR)) 
+        expected = dict((long(t * gst.SECOND), (float(t % 2), gst.INTERPOLATE_LINEAR))
             for t in xrange(6, 15))
         start = SubElement(curve, "start", value="1.0", mode="2")
         for time, (value, mode) in expected.iteritems():
-            SubElement(curve, "keyframe", time=str(time), value=str(value), 
+            SubElement(curve, "keyframe", time=str(time), value=str(value),
                 mode=str(mode))
         end = SubElement(curve, "end", value="1.0", mode="2")
 

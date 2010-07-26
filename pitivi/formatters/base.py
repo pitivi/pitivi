@@ -75,13 +75,14 @@ class Formatter(Signallable, Loggable):
     description = "Description of the format"
     ProjectClass = Project
 
-    def __init__(self):
+    def __init__(self, avalaible_effects):
         Loggable.__init__(self)
         # mapping of directory changes
         # key : old path
         # value : new path
         self.directorymapping = {}
 
+        self.avalaible_effects = avalaible_effects
         self.project = None
 
     #{ Load/Save methods

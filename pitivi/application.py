@@ -139,7 +139,7 @@ class Pitivi(Loggable, Signallable):
         self.effects = EffectsHandler()
         self.deviceprobe = get_probe()
 
-        self.projectManager = ProjectManager()
+        self.projectManager = ProjectManager(self.effects)
         self._connectToProjectManager(self.projectManager)
 
         self.action_log = UndoableActionLog()

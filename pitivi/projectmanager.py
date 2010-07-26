@@ -82,12 +82,13 @@ class ProjectManager(Signallable, Loggable):
         "reverting-to-saved":["project"],
     }
 
-    def __init__(self):
+    def __init__(self, avalaible_effects={}):
         Signallable.__init__(self)
         Loggable.__init__(self)
 
         self.current = None
         self.backup_lock = 0
+        self.avalaible_effects = avalaible_effects
 
     def loadProject(self, uri):
         """ Load the given project file"""
@@ -133,7 +134,7 @@ class ProjectManager(Signallable, Loggable):
                 formatter == project.format
             else:
                 from pitivi.formatters.etree import ElementTreeFormatter
-                formatter = ElementTreeFormatter()
+                formatter = ElementTreeFormatter(self.avalaible_effects)
 
         if uri is None:
             if project.uri is None:
@@ -195,12 +196,12 @@ class ProjectManager(Signallable, Loggable):
         #no running project or
         #project has not been modified
         if self.current.uri is None \
-           or not self.current.hasUnsavedModifications(): 
+           or not self.current.hasUnsavedModifications():
             return True
 
         if not self.emit("reverting-to-saved", self.current):
             return False
-        uri = self.current.uri 
+        uri = self.current.uri
         self.current.setModificationState(False)
         self.closeRunningProject()
         self.loadProject(uri)
@@ -249,7 +250,7 @@ class ProjectManager(Signallable, Loggable):
         return None
 
     def _getFormatterForUri(self, uri):
-        return get_formatter_for_uri(uri)
+        return get_formatter_for_uri(uri, self.avalaible_effects)
 
     def _connectToFormatter(self, formatter):
         formatter.connect("missing-uri", self._formatterMissingURICb)

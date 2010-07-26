@@ -165,7 +165,7 @@ class EffectList(gtk.VBox, Loggable):
 
     def _addFactories(self, elements, effectType):
         for element in elements:
-            effect = self.app.effects.getEffect(element.get_name())
+            effect = self.app.effects.getFactoryFromName(element.get_name())
             self.storemodel.append ([effect.icon, effect.getHumanName(),\
                                     effect.getDescription(), effectType, effect.getCategories(),\
                                     effect, element.get_name()])

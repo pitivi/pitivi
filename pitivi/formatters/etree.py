@@ -29,7 +29,8 @@ from xml.etree.ElementTree import Element, SubElement, tostring, parse
 from pitivi.reflect import qual, namedAny
 from pitivi.factories.base import SourceFactory
 from pitivi.factories.file import FileSourceFactory
-from pitivi.timeline.track import Track
+from pitivi.factories.operation import EffectFactory
+from pitivi.timeline.track import Track, TrackEffect
 from pitivi.timeline.timeline import TimelineObject
 from pitivi.formatters.base import Formatter, FormatterError
 from pitivi.utils import get_filesystem_encoding
@@ -70,8 +71,8 @@ class ElementTreeFormatter(Formatter):
     _element_id = 0
     _our_properties = ["id", "type"]
 
-    def __init__(self, *args, **kwargs):
-        Formatter.__init__(self, *args, **kwargs)
+    def __init__(self, avalaible_effects, *args, **kwargs):
+        Formatter.__init__(self, avalaible_effects, *args, **kwargs)
         self.factoriesnode = None
         self.timelinenode = None
         self._settingsnode = None
@@ -327,11 +328,44 @@ class ElementTreeFormatter(Formatter):
                     str("(gint64)%s" % getattr(track_object, attribute))
 
         element.attrib["priority"] = "(int)%s" % track_object.priority
+        element.attrib["active"] = "(bool)%s" % track_object.active
 
-        factory_ref = \
-                self._saveFactoryRef(track_object.factory)
+        if not isinstance(track_object.factory, EffectFactory):
+            self._saveSourceTrackObject(track_object, element)
+        else:
+            self._saveTrackEffect(track_object, element)
+
+        self._context.track_objects[track_object] = element
+
+        return element
+
+    def _saveTrackEffect(self, track_object, element):
+        effect_element = Element("effect")
+        element.append(effect_element)
+
+        factory_element = Element("factory")
+        factory_element.attrib["name"] = track_object.factory.name
+        effect_element.append(factory_element)
+
+        self._saveEffectProperties(track_object, effect_element)
+
+    def _saveEffectProperties(self, track_object, effect_element):
+        effect_properties = Element("gst-element-properties")
+        effect = track_object.getElement()
+        properties = gobject.list_properties(effect)
+        for prop in properties:
+            type_name = str(gobject.type_name(prop.value_type.fundamental))
+            if type_name == "GEnum":
+                value = str(effect.get_property(prop.name).value_name)
+            else:
+                value = str(effect.get_property(prop.name))
+            effect_properties.attrib[prop.name] = '(' + type_name + ')' + value
+        effect_element.append(effect_properties)
+
+
+    def _saveSourceTrackObject(self, track_object, element):
+        factory_ref = self._saveFactoryRef(track_object.factory)
         stream_ref = self._saveStreamRef(track_object.stream)
-
         element.append(factory_ref)
         element.append(stream_ref)
         interpolators = track_object.getInterpolators()
@@ -340,14 +374,48 @@ class ElementTreeFormatter(Formatter):
             curves.append(self._saveInterpolator(interpolator, property))
         element.append(curves)
 
-        self._context.track_objects[track_object] = element
-
-        return element
-
     def _loadTrackObject(self, track, element):
         self.debug("%r", element)
         klass = namedAny(element.attrib["type"])
+        if klass is TrackEffect:
+            track_object = self._loadEffectTrackObject(element, klass, track)
+        else:
+            track_object = self._loadSourceTrackObject(element, klass, track)
+        return track_object
 
+    def _loadEffectTrackObject(self, element, klass, track):
+        effect_element = element.find('effect')
+        factory_name = effect_element.find('factory').attrib['name']
+        properties_elem = effect_element.find('gst-element-properties')
+        try:
+            factory = self.avalaible_effects.getFactoryFromName(factory_name)
+        except KeyError:
+            #Find a way to figure out how we could install the missing effect...
+            raise FormatterError(_("The project contains effects that are not\
+                                   avalaibe on the system. It can't be loaded"))
+
+        input_stream = factory.getInputStreams()
+        if not input_stream:
+            raise FormatterError("cant find effect factory input stream")
+        input_stream = input_stream[0]
+
+        track_object = klass(factory, input_stream)
+
+        track.addTrackObject(track_object)
+
+        for name, value_string in self._filterElementProperties(element):
+            value = self._parsePropertyValue(value_string)
+            setattr(track_object, name, value)
+
+        effect_gst_element = track_object.getElement()
+        for name, value in properties_elem.attrib.iteritems():
+            value = self._parsePropertyValue(value)
+            effect_gst_element.set_property(name, value)
+
+        self._context.track_objects[element.attrib["id"]] = track_object
+        return track_object
+
+    def _loadSourceTrackObject(self, element, klass, track):
         factory_ref = element.find("factory-ref")
         factory = self._loadFactoryRef(factory_ref)
 

@@ -242,7 +242,7 @@ class EffectProperties(gtk.Expander):
 
     def _dragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
-        self._factory = self.app.effects.getEffect(selection.data)
+        self._factory = self.app.effects.getFactoryFromName(selection.data)
 
     def _dragDropCb(self, unused, context, x, y, timestamp):
         if self._factory:
