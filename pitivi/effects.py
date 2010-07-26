@@ -66,29 +66,39 @@ class EffectsHandler(object):
         self._audio_categories_effects = (("All effects", ("")),)
         self._video_categories_effects = (
             (_("All effects"), ("")),
-            (_("Colors"), ("cogcolorspace", "alphacolor", "videobalance", "gamma", "alpha",\
-                        "frei0r-filter-color-distance", "frei0r-filter-contrast0r", \
-                        "frei0r-filter-invert0r", "frei0r-filter-saturat0r", "frei0r-filter-r",\
-                        "frei0r-filter-white-balance", "frei0r-filter-brightness", "frei0r-filter-b",\
-                        "frei0r-filter-gamma", "frei0r-filter-hueshift0r", "frei0r-filter-transparency",\
-                        "frei0r-filter-equaliz0r", "frei0r-filter-glow", "frei0r-filter-g", "frei0r-filter-bw0r")
+            (_("Colors"), ("cogcolorspace", "alphacolor", "videobalance",
+                  "gamma", "alpha", "frei0r-filter-color-distance",
+                  "frei0r-filter-contrast0r", "frei0r-filter-invert0r",
+                  "frei0r-filter-saturat0r", "frei0r-filter-r",\
+                  "frei0r-filter-white-balance", "frei0r-filter-brightness",
+                  "frei0r-filter-b", "frei0r-filter-gamma",
+                  "frei0r-filter-hueshift0r", "frei0r-filter-transparency",
+                  "frei0r-filter-equaliz0r", "frei0r-filter-glow",
+                  "frei0r-filter-g", "frei0r-filter-bw0r",
+                )
             ),
-            (_("Noise"), ("videorate", "frei0r-filter-edgeglow" )),
-            (_("Analysis"), ("videoanalyse", "videodetect", "videomark", "revtv", "navigationtest",\
-                          "frei0r-filter-rgb-parade", "frei0r-filter-vectorscope", "frei0r-filter-luminance",\
+            (_("Noise"), ("videorate", "frei0r-filter-edgeglow", )),
+            (_("Analysis"), ("videoanalyse", "videodetect", "videomark", "revtv",
+                             "navigationtest", "frei0r-filter-rgb-parade",
+                             "frei0r-filter-vectorscope",
+                             "frei0r-filter-luminance",\
                           )),
             (_("Blur"), ("frei0r-filter-squareblur", )),
-            (_("Geometry"), ("cogscale", "aspectratiocrop", "cogdownsample", "videocrop", "videoflip",\
-                          "videobox", "gdkpixbufscale", "frei0r-filter-letterb0xed" \
-                          "frei0r-filter-k-means-clustering", "videoscale", "frei0r-filter-lens-correction",
-                          "frei0r-filter-perspective", "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",\
-                          "frei0r-filter-flippo", "frei0r-filter-3dflippo", "frei0r-filter-letterb0xed",
-                         )
+            (_("Geometry"), ("cogscale", "aspectratiocrop", "cogdownsample",
+                  "videocrop", "videoflip", "videobox", "gdkpixbufscale",
+                  "frei0r-filter-letterb0xed", "frei0r-filter-k-means-clustering",
+                  "videoscale", "frei0r-filter-lens-correction",
+                  "frei0r-filter-perspective",
+                  "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",\
+                  "frei0r-filter-flippo", "frei0r-filter-3dflippo",
+                  "frei0r-filter-letterb0xed",
+                  )
             ),
-            (_("Fancy"),("rippletv", "streaktv", "radioactv", "optv", "quarktv", "vertigotv",\
-                      "shagadelictv", "warptv", "dicetv", "agingtv", "edgetv", "frei0r-filter-cartoon",\
-                      "frei0r-filter-water", "frei0r-filter-nosync0r", "frei0r-filter-k-means-clustering",
-                      "frei0r-filter-delay0r",
+            (_("Fancy"),("rippletv", "streaktv", "radioactv", "optv",\
+                         "quarktv", "vertigotv", "shagadelictv", "warptv",\
+                         "dicetv", "agingtv", "edgetv", "frei0r-filter-cartoon",\
+                         "frei0r-filter-water", "frei0r-filter-nosync0r",\
+                         "frei0r-filter-k-means-clustering", "frei0r-filter-delay0r",
                      )
             ),
             (_("Time"), ("frei0r-filter-delay0r",)),
@@ -98,7 +108,7 @@ class EffectsHandler(object):
         self._video_categories = []
         self.video_effects = []
         self.audio_effects = []
-        self.effect_factories_dict = {}
+        self._effect_factories_dict = {}
         self._setAllEffects()
 
     def _setAllEffects(self):
@@ -109,7 +119,8 @@ class EffectsHandler(object):
         factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
         for element_factory in factlist:
             klass = element_factory.get_klass()
-            if "Effect" in klass and element_factory.get_name() not in BLACKLISTED_EFFECTS:
+            if "Effect" in klass and element_factory.get_name()\
+              not in BLACKLISTED_EFFECTS:
                 name = element_factory.get_name()
                 effect = EffectFactory(name, name,
                                        self._getEffectCategories(name),
@@ -138,16 +149,16 @@ class EffectsHandler(object):
         return self.video_effects
 
     def _addEffectToDic(self, name, factory):
-        self.effect_factories_dict[name]=factory
+        self._effect_factories_dict[name]=factory
 
-    def getEffect(self, name):
+    def getFactoryFromName(self, name):
         """
         @ivar name: Factory name.
         @type name: C{str}
         @returns: The l{EffectFactory} corresponding to the name
         @raises: KeyError if the name doesn't  exist
         """
-        return self.effect_factories_dict.get(name)
+        return self._effect_factories_dict.get(name)
 
     def addStreams(self, element, factory):
         """
