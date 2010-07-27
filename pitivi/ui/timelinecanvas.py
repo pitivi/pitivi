@@ -201,6 +201,14 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     _marquee = None
     _got_motion_notify = False
 
+    def getItemsInArea(self, x1, y1, x2, y2):
+        items = self.get_items_in_area(goocanvas.Bounds(x1, y1, x2, y2), True, True,
+            True)
+        if items:
+            return set((item.element for item in items if isinstance(item,
+                TrackObject)))
+        return set()
+
     def _normalize(self, p1, p2):
         w, h = p2 - p1
         x, y = p1
