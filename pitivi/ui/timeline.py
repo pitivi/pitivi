@@ -38,7 +38,7 @@ from timelinecontrols import TimelineControls
 from pitivi.receiver import receiver, handler
 from zoominterface import Zoomable
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING, TRACK_SPACING
-from pitivi.timeline.timeline import MoveContext
+from pitivi.timeline.timeline import MoveContext, SELECT_ADD
 from pitivi.utils import Seeker
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.curve import Curve
@@ -465,12 +465,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             return True
         elif context.targets in DND_EFFECT_LIST:
 
-            self.app.action_log.begin("add effect")
-            self._addEffect(x, y, context.targets)
-            self.app.action_log.commit()
-            self._factories = None
-            self.app.current.seeker.seek(self._position) #FIXME
-            context.drop_finish(True, timestamp)
+            factory = self._factories[0]
+            timeline_objs = self._getTimelineObjectUnderMouse(x, y, factory.getInputStreams()[0])
+            if timeline_objs:
+                self.app.action_log.begin("add effect")
+                self.timeline.addEffectFactoryOnObject(factory,
+                                               timeline_objects = timeline_objs)
+                self.app.action_log.commit()
+                self._factories = None
+                self.app.current.seeker.seek(self._position)
+                context.drop_finish(True, timestamp)
+
+                self.timeline.selection.setTo(timeline_objs, SELECT_ADD)
 
             return True
 
@@ -501,17 +507,19 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
         return True
 
-    def _addEffect(self, x, y, effectTuple):
+    def _getTimelineObjectUnderMouse(self, x, y, stream):
         timeline_objs = []
-        factory = self._factories[0]
-        track_objects = [obj for obj in self._canvas.getItemsInArea(x,y, x+1, y+1)]
+        items_in_area = self._canvas.getItemsInArea(x,y, x+1, y+1)
+        tracks = [obj for obj in items_in_area[0]]
+        track_objects = [obj for obj in items_in_area[1]]
         for track_object in track_objects:
             for timeline_obj in self.timeline.timeline_objects:
-                if track_objects in timeline_obj.track_objects:
-                    timeline_objs = timeline_obj
+                for track in tracks:
+                    if track_object in timeline_obj.track_objects and\
+                            type(stream) == type(track.stream):
+                        timeline_objs.append(timeline_obj)
 
-        self.timeline.addEffectFactoryOnObject(factory,
-                                               timeline_objects = timeline_objs)
+        return timeline_objs
 
     def _add_temp_source(self):
         self._temp_objects = [self.timeline.addSourceFactory(factory)

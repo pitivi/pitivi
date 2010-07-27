@@ -205,8 +205,11 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         items = self.get_items_in_area(goocanvas.Bounds(x1, y1, x2, y2), True, True,
             True)
         if items:
-            return set((item.element for item in items if isinstance(item,
-                TrackObject)))
+            track_objects = set([item.element for item in items
+                             if isinstance(item, TrackObject)])
+            tracks = set([item.track for item in items
+                         if isinstance(item, Track)])
+            return [tracks, track_objects]
         return set()
 
     def _normalize(self, p1, p2):
