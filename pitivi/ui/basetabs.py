@@ -23,12 +23,14 @@ import gtk
 from pitivi.ui.common import SPACING
 
 class BaseTabs(gtk.Notebook):
-    def __init__(self):
+    def __init__(self, app, hide_hpaned=False):
         """ initialize """
         gtk.Notebook.__init__(self)
         self.set_border_width(SPACING)
 
         self.connect("create-window", self._createWindowCb)
+        self._hide_hpaned = hide_hpaned
+        self.app = app
         self._createUi()
 
     def _createUi(self):
@@ -59,6 +61,9 @@ class BaseTabs(gtk.Notebook):
         self._set_child_properties(child, label)
         self.child_set_property(child, "detachable", True)
 
+        if self._hide_hpaned:
+            self._showSecondHpanedInMainWindow()
+
     def _createWindowCb(self, from_notebook, child, x, y):
         original_position = self.child_get_property(child, "position")
         label = self.child_get_property(child, "tab-label")
@@ -75,4 +80,23 @@ class BaseTabs(gtk.Notebook):
         # set_uposition is deprecated but what should I use instead?
         window.set_uposition(x, y)
 
+        if self._hide_hpaned:
+            self._hideSecondHpanedInMainWindow()
+
         return notebook
+
+    def _hideSecondHpanedInMainWindow(self):
+        self.app.gui.mainhpaned.remove(self.app.gui.secondhpaned)
+        self.app.gui.secondhpaned.remove(self.app.gui.projecttabs)
+        self.app.gui.secondhpaned.remove(self.app.gui.propertiestabs)
+        self.app.gui.mainhpaned.pack1(self.app.gui.projecttabs, resize= True,
+                                      shrink=False)
+
+    def _showSecondHpanedInMainWindow(self):
+        self.app.gui.mainhpaned.remove(self.app.gui.projecttabs)
+        self.app.gui.secondhpaned.pack1(self.app.gui.projecttabs,
+                                        resize= True, shrink=False)
+        self.app.gui.secondhpaned.pack2(self.app.gui.propertiestabs,
+                                        resize= True, shrink=False)
+        self.app.gui.mainhpaned.pack1(self.app.gui.secondhpaned,
+                                      resize= True, shrink=False)

@@ -403,35 +403,36 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         vpaned.pack2(self.timeline, resize=True, shrink=False)
         self.timeline.show()
-        mainhpaned = gtk.HPaned()
-        vpaned.pack1(mainhpaned, resize=True, shrink=False)
+        self.mainhpaned = gtk.HPaned()
+        vpaned.pack1(self.mainhpaned, resize=True, shrink=False)
 
-        hpaned = gtk.HPaned()
-        mainhpaned.pack1(hpaned, resize=True, shrink=False)
-        hpaned.show()
-        mainhpaned.show()
+        self.secondhpaned = gtk.HPaned()
+        self.mainhpaned.pack1(self.secondhpaned, resize=True, shrink=False)
+        self.secondhpaned.show()
+        self.mainhpaned.show()
 
-        self.projecttabs = BaseTabs()
+        self.projecttabs = BaseTabs(instance)
 
         self.sourcelist = SourceList(instance, self.uimanager)
-        self.effectlist = EffectList(instance, self.uimanager)
         self.projecttabs.append_page(self.sourcelist, gtk.Label(_("Media Library")))
-        self.projecttabs.append_page(self.effectlist, gtk.Label(_("Effect Library")))
         self._connectToSourceList()
         self.sourcelist.show()
+
+        self.effectlist = EffectList(instance, self.uimanager)
+        self.projecttabs.append_page(self.effectlist, gtk.Label(_("Effect Library")))
         self.effectlist.show()
 
-        hpaned.pack1(self.projecttabs, resize=True, shrink=False)
+        self.secondhpaned.pack1(self.projecttabs, resize=True, shrink=False)
         self.projecttabs.show()
 
         #Clips properties
-        self.propertiestabs = BaseTabs()
+        self.propertiestabs = BaseTabs(instance, True)
         self.clipconfig = ClipProperties(instance, self.uimanager)
         self.clipconfig.project = self.project
         self.propertiestabs.append_page(self.clipconfig, gtk.Label(_("Clip Properties")))
         self.clipconfig.show()
 
-        hpaned.pack2(self.propertiestabs, resize= True, shrink=False)
+        self.secondhpaned.pack2(self.propertiestabs, resize= True, shrink=False)
         self.propertiestabs.show()
 
         # Viewer
@@ -441,13 +442,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
                            [dnd.FILESOURCE_TUPLE, dnd.URI_TUPLE],
                            gtk.gdk.ACTION_COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
-        mainhpaned.pack2(self.viewer, resize=False, shrink=False)
+        self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
         self.viewer.show()
         self.viewer.connect("expose-event", self._exposeEventCb)
 
         # window and pane position defaults
-        self.mainhpaned = mainhpaned
-        self.hpaned = hpaned
+        self.mainhpaned = self.mainhpaned
+        self.hpaned = self.secondhpaned
         self.vpaned = vpaned
         height = -1
         width = -1
