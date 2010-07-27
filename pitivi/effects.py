@@ -123,10 +123,10 @@ class EffectsHandler(object):
               not in BLACKLISTED_EFFECTS:
                 name = element_factory.get_name()
                 effect = EffectFactory(name, name,
-                                       self._getEffectCategories(name),
-                                       self._getEffectName(element_factory),
-                                       self._getEffectDescripton(element_factory),
-                                       self._getEffectIcon(name))
+                                   self._getEffectCategories(name),
+                                   self._getEffectName(element_factory),
+                                   self._getEffectDescripton(element_factory),
+                                   self._getEffectIcon(name))
                 added = self.addStreams(element_factory, effect)
 
                 if added is True:

@@ -60,7 +60,8 @@ class EffectFactory (TransformFactory):
     """
     Factories that applies an effect on a stream
     """
-    def __init__ (self, effect, name='', categories=[_("Uncategorized")], human_name="", description="", icon=None):
+    def __init__ (self, effect, name='', categories=[_("Uncategorized")],
+                  human_name="", description="", icon=None):
         TransformFactory.__init__(self, name)
         self.effectname = effect
         self.categories = categories
@@ -83,7 +84,8 @@ class EffectFactory (TransformFactory):
         if isinstance(self.input_streams[0], VideoStream):
             csp = gst.element_factory_make("ffmpegcolorspace")
         else:
-            csp = gst.parse_bin_from_description("audioconvert ! audioresample", True)
+            csp = gst.parse_bin_from_description("audioconvert ! audioresample",
+                                                 True)
 
         bin.add(fx, csp)
         csp.link(fx)

@@ -1702,6 +1702,8 @@ class Timeline(Signallable, Loggable):
         @raises TimelineError: if the factory doesn't have input or output streams
         @returns: A list of L{TimelineObject}, L{TrackObject} tuples
         """
+        #Note: We should maybe be able to handle several streams for effects which
+        #are actually working on audio/video streams
         self.debug("factory:%r", factory)
 
         output_stream = factory.getOutputStreams()
@@ -1718,7 +1720,6 @@ class Timeline(Signallable, Loggable):
         if track is None:
           raise TimelineError()
 
-        #try:
         listTimelineObjectTrackObject = []
         track_object = TrackEffect(factory, input_stream)
         track_object.makeBin()

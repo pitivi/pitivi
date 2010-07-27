@@ -75,7 +75,7 @@ def make_property_widget(unused_element, prop, value=None):
         elif type_name in ['gulong', 'guint64']:
             minimum, maximum = (0, 2**64 - 1)
             widget.set_increments(1.0, 10.0)
-        elif type_name == 'gfloat' or type_name == 'gdouble':
+        elif type_name in ['gfloat', 'gdouble']:
             minimum, maximum = (float("-Infinity"), float("Infinity"))
             widget.set_increments(0.00001, 0.01)
             widget.set_digits(5)
