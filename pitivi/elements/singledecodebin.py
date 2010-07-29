@@ -89,7 +89,8 @@ class SingleDecodeBin(gst.Bin):
             # Set the blocksize to 512kbytes, this will only matter for push-based sources
             if hasattr(self.urisrc.props, "blocksize"):
                 self.urisrc.props.blocksize = 524288
-            self.urisrc.link(self.typefind)
+            self.urisrc.link_pads_full("src", self.typefind, "sink",
+                                       gst.PAD_LINK_CHECK_NOTHING)
         else:
             self._sinkpad = gst.GhostPad("sink", self.typefind.get_pad("sink"))
             self._sinkpad.set_active(True)
@@ -188,7 +189,7 @@ class SingleDecodeBin(gst.Bin):
         queue.props.max_size_buffers = 3
         self.add(queue)
         queue.sync_state_with_parent()
-        pad.link(queue.get_pad("sink"))
+        pad.link_full(queue.get_pad("sink"), gst.PAD_LINK_CHECK_NOTHING)
         pad = queue.get_pad("src")
 
         return pad

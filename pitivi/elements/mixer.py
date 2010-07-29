@@ -51,7 +51,7 @@ class SmartAdderBin(gst.Bin):
         csp = gst.element_factory_make("capsfilter")
         csp.props.caps = gst.Caps("audio/x-raw-int,depth=32,width=32,signed=True,rate=44100,channels=2,endianness=1234")
         self.add(self.adder, csp)
-        self.adder.link(csp)
+        self.adder.link_pads_full("src", csp, "sink", gst.PAD_LINK_CHECK_NOTHING)
         srcpad = gst.GhostPad("src", csp.get_pad("src"))
         srcpad.set_active(True)
         self.add_pad(srcpad)
@@ -70,9 +70,9 @@ class SmartAdderBin(gst.Bin):
         self.add(aconv, aresample)
         aconv.sync_state_with_parent()
         aresample.sync_state_with_parent()
-        aconv.link(aresample)
+        aconv.link_pads_full("src", aresample, "sink", gst.PAD_LINK_CHECK_NOTHING)
         adderpad = self.adder.get_request_pad("sink%d")
-        aresample.get_pad("src").link(adderpad)
+        aresample.get_pad("src").link_full(adderpad, gst.PAD_LINK_CHECK_NOTHING)
 
         pad = gst.GhostPad(name, aconv.get_pad("sink"))
         pad.set_active(True)
@@ -130,7 +130,7 @@ class SmartVideomixerBin(gst.Bin):
         # FIXME : USE THE PROJECT SETTINGS FOR THESE CAPS !
         csp = gst.element_factory_make("ffmpegcolorspace")
         self.add(self.videomixer, csp)
-        self.videomixer.link(csp)
+        self.videomixer.link_pads_full("src", csp, "sink", gst.PAD_LINK_CHECK_NOTHING)
         srcpad = gst.GhostPad("src", csp.get_pad("src"))
         srcpad.set_active(True)
         self.add_pad(srcpad)
@@ -160,13 +160,13 @@ class SmartVideomixerBin(gst.Bin):
 
         self.add(csp, capsfilter)
 
-        csp.link(capsfilter)
+        csp.link_pads_full("src", capsfilter, "sink", gst.PAD_LINK_CHECK_NOTHING)
         csp.sync_state_with_parent()
         capsfilter.sync_state_with_parent()
 
         videomixerpad = self.videomixer.get_request_pad("sink_%d" % self.pad_count)
 
-        capsfilter.get_pad("src").link(videomixerpad)
+        capsfilter.get_pad("src").link_full(videomixerpad, gst.PAD_LINK_CHECK_NOTHING)
 
         pad = gst.GhostPad(name, csp.get_pad("sink"))
         pad.set_active(True)
