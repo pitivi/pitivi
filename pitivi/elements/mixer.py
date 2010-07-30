@@ -156,7 +156,7 @@ class SmartVideomixerBin(gst.Bin):
 
         csp = gst.element_factory_make("ffmpegcolorspace", "csp-%d" % self.pad_count)
         capsfilter = gst.element_factory_make("capsfilter", "capsfilter-%d" % self.pad_count)
-        capsfilter.props.caps = gst.Caps("video/x-raw-yuv,format=(fourcc)AYUV")
+        capsfilter.props.caps = gst.Caps("video/x-raw-yuv")
 
         self.add(csp, capsfilter)
 
