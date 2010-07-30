@@ -119,7 +119,6 @@ def make_property_widget(unused_element, prop, value=None):
         widget.pack_start(widget1)
         widget.pack_start(gtk.Label("/"))
         widget.pack_start(widget2)
-        print "%s, %s" %(value, type(value))
     else:
         widget = gtk.Label(type_name)
         widget.set_alignment(1.0, 0.5)
@@ -187,10 +186,16 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
                 button = self._getResetToDefaultValueButton(prop, widget)
                 table.attach(button, 2, 3, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
                 self.buttons.append(button)
+            self.element.connect('notify::' + prop.name,
+                                self._propertyChangedCb,
+                                widget)
             y += 1
 
         self.pack_start(table)
         self.show_all()
+
+    def _propertyChangedCb(self, element, pspec, widget):
+        self._set_prop(widget, self.element.get_property(pspec.name))
 
     def _getResetToDefaultValueButton(self, prop, widget):
         icon = gtk.Image()

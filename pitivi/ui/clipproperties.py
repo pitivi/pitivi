@@ -59,7 +59,7 @@ class ClipProperties(gtk.VBox, Loggable):
         self.settings = instance.settings
         self.project = None
 
-        self.effect_properties_handling = EffectsPropertiesHandling()
+        self.effect_properties_handling = EffectsPropertiesHandling(instance.action_log)
         self.effect_expander = EffectProperties(instance,
                                                 self.effect_properties_handling)
         self.pack_start(self.effect_expander, expand=True, fill=True)

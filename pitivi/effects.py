@@ -26,6 +26,7 @@ Effects global handling
 """
 import gst
 import gtk
+import gobject
 import re
 import os
 
@@ -35,8 +36,7 @@ from gettext import gettext as _
 from pitivi.factories.operation import EffectFactory
 from pitivi.stream import get_stream_for_pad
 from pitivi.configure import get_pixmap_dir
-
-from xdg import IconTheme
+from pitivi.undo import UndoableAction
 
 # Note: Some effects are available through the frei0r library and the libavfilter0 library
 
@@ -296,3 +296,44 @@ class EffectsHandler(object):
                 except:
                     return None
         return icon
+
+
+class EffectPropertyChanged(UndoableAction):
+    def __init__(self, gst_element, property_name, old_value, new_value):
+        self.gst_element = gst_element
+        self.property_name = property_name
+        self.old_value = old_value
+        self.new_value = new_value
+
+    def do(self):
+        self.gst_element.set_property(self.property_name, self.new_value)
+        self._done()
+
+    def undo(self):
+        self.gst_element.set_property(self.property_name, self.old_value)
+        self._undone()
+
+class EffectGstElementPropertyChangeTracker:
+    """
+    Track effect configuration changes in its list of control effects
+    """
+    def __init__(self, action_log):
+        self._tracked_effects = {}
+        self.action_log = action_log
+
+    def addEffectElement(self, gst_element):
+        properties = {}
+        for prop in gobject.list_properties(gst_element):
+            gst_element.connect('notify::' + prop.name,
+                                self._propertyChangedCb,
+                                gst_element)
+            properties[prop.name] = gst_element.get_property(prop.name)
+        self._tracked_effects[gst_element] = properties
+
+    def _propertyChangedCb(self, gst_element, pspec, unused):
+        old_value = self._tracked_effects[gst_element][pspec.name]
+        new_value = gst_element.get_property(pspec.name)
+        action = EffectPropertyChanged(gst_element, pspec.name, old_value,
+                                       new_value)
+        self._tracked_effects[gst_element][pspec.name] = new_value
+        self.action_log.push(action)

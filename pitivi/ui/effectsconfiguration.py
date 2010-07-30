@@ -30,10 +30,11 @@ from pitivi.pipeline import PipelineError
 PROPS_TO_IGNORE = ['name', 'qos']
 
 class EffectsPropertiesHandling:
-    def __init__(self):
+    def __init__(self, action_log):
         self.cache_dict = {}
         self.pipeline = None
         self._current_effect_setting_ui = None
+        self.action_log = action_log
 
     def getEffectConfigurationUI(self, effect):
         """
@@ -89,5 +90,8 @@ class EffectsPropertiesHandling:
 
     def _onValueChangedCb(self, widget, with_default=False):
         for prop, value in self._current_effect_setting_ui.getSettings(with_default).iteritems():
+            self.action_log.begin("Effect property change")
             self._current_effect_setting_ui.element.set_property(prop, value)
+            self.action_log.commit()
+
         self._flushSeekVideo()

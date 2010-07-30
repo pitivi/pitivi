@@ -27,6 +27,7 @@ from pitivi.undo import UndoableAction
 from pitivi.timeline.track import TrackEffect
 
 from pitivi.ui.effectsconfiguration import PROPS_TO_IGNORE
+from pitivi.effects import EffectGstElementPropertyChangeTracker
 
 class TimelineObjectPropertyChangeTracker(PropertyChangeTracker):
     # no out-point
@@ -306,6 +307,7 @@ class TimelineLogObserver(object):
         self.log = log
         self.timeline_object_property_trackers = {}
         self.interpolator_keyframe_trackers = {}
+        self.effect_properties_tracker = EffectGstElementPropertyChangeTracker(log)
 
     def startObserving(self, timeline):
         self._connectToTimeline(timeline)
@@ -390,6 +392,7 @@ class TimelineLogObserver(object):
         if isinstance(track_object, TrackEffect):
             action = self.trackEffectAddAction(timeline_object, track_object)
             self.log.push(action)
+            self.effect_properties_tracker.addEffectElement(track_object.getElement())
         else:
             self._connectToTrackObject(track_object)
 
