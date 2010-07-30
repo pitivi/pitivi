@@ -202,6 +202,21 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     _got_motion_notify = False
 
     def getItemsInArea(self, x1, y1, x2, y2):
+        '''
+        Permits to get the Non UI L{Track}/L{TrackObject} in a list of set
+        corresponding to the L{Track}/L{TrackObject} which are in the are
+
+        @param x1: The horizontal coordinate of the up left corner of the area
+        @type x1: An C{int}
+        @param y1: The vertical coordinate of the up left corner of the area
+        @type y1: An C{int}
+        @param x2: The horizontal coordinate of the down right corner of the area
+        @type x2: An C{int}
+        @param x2: The vertical coordinate of the down right corner of the area
+        @type x2: An C{int}
+
+        @returns: A list of L{Track}, L{TrackObject} tuples
+        '''
         items = self.get_items_in_area(goocanvas.Bounds(x1, y1, x2, y2), True, True,
             True)
         if items:

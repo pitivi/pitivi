@@ -78,7 +78,7 @@ class EffectsPropertiesHandling:
 
     def _connectAllWidgetCbs(self, effect_configuration_ui, effect):
         for prop, widget in effect_configuration_ui.properties.iteritems():
-            if type(widget) in [gtk.SpinButton]:
+            if type(widget) in [gtk.SpinButton, gtk.HScale]:
                 widget.connect("value-changed", self._onValueChangedCb)
             elif type(widget) in [gtk.Entry, gtk.ComboBox]:
                 widget.connect("changed", self._onValueChangedCb)

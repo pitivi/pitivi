@@ -61,32 +61,39 @@ def make_property_widget(unused_element, prop, value=None):
         widget = gtk.Entry()
         widget.set_text(str(value))
     elif (type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat',
-        'gdouble', 'gulong']):
-        widget = gtk.SpinButton()
-        if type_name == 'gint':
-            minimum, maximum = (-(2**31), 2**31 - 1)
-            widget.set_increments(1.0, 10.0)
-        elif type_name == 'guint':
-            minimum, maximum = (0, 2**32 - 1)
-            widget.set_increments(1.0, 10.0)
-        elif type_name == 'gint64':
-            minimum, maximum = (-(2**63), 2**63 - 1)
-            widget.set_increments(1.0, 10.0)
-        elif type_name in ['gulong', 'guint64']:
-            minimum, maximum = (0, 2**64 - 1)
-            widget.set_increments(1.0, 10.0)
-        elif type_name in ['gfloat', 'gdouble']:
-            minimum, maximum = (float("-Infinity"), float("Infinity"))
-            widget.set_increments(0.00001, 0.01)
-            widget.set_digits(5)
-        if hasattr(prop, "minimum"):
+        'gulong', 'gdouble']):
+        maximum , minimum = None, None
+        if hasattr(prop, "minimum") and hasattr(prop, "maximum"):
             minimum = prop.minimum
-        if hasattr(prop, "maximum"):
             maximum = prop.maximum
-        widget.set_range(minimum, maximum)
-        widget.props.climb_rate = 0.01 * abs(min(maximum, 1000) -
-            max(minimum, -1000))
-        widget.set_value(float(value))
+        if minimum >- 10 and maximum < 10:
+            widget = gtk.HScale()
+            widget.set_draw_value(True)
+            widget.set_range(prop.minimum, prop.maximum)
+            widget.set_value(value)
+        else:
+            widget = gtk.SpinButton()
+            if type_name == 'gint':
+                minimum, maximum = (-(2**31), 2**31 - 1)
+                widget.set_increments(1.0, 10.0)
+            elif type_name == 'guint':
+                minimum, maximum = (0, 2**32 - 1)
+                widget.set_increments(1.0, 10.0)
+            elif type_name == 'gint64':
+                minimum, maximum = (-(2**63), 2**63 - 1)
+                widget.set_increments(1.0, 10.0)
+            elif type_name in ['gulong', 'guint64']:
+                minimum, maximum = (0, 2**64 - 1)
+                widget.set_increments(1.0, 10.0)
+            elif type_name in ['gfloat','gdouble']:
+                minimum, maximum = (float("-Infinity"), float("Infinity"))
+                widget.set_increments(0.00001, 0.01)
+                widget.set_digits(5)
+            if maximum and minimum:
+                widget.set_range(minimum, maximum)
+                widget.props.climb_rate = 0.01 * abs(min(maximum, 1000) -
+                    max(minimum, -1000))
+            widget.set_value(float(value))
     elif (type_name == 'gboolean'):
         widget = gtk.CheckButton()
         if value:
@@ -158,6 +165,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
             self.pack_start(table)
             self.show_all()
             return
+
         if default_btn:
             table = gtk.Table(rows=len(props), columns=3)
         else:
@@ -214,7 +222,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
             if model.get_value(iter, 0) == str(widget_value[1].value_name):
                 widget_value[0].set_active_iter(iter)
 
-        if type(widget) in [gtk.SpinButton]:
+        if type(widget) in [gtk.SpinButton, gtk.HScale]:
             widget.set_value(float(value))
         elif type(widget) in [gtk.Entry]:
             widget.set_text(str(value))
