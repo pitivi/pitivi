@@ -51,8 +51,6 @@ from pitivi.undo import UndoableAction
 
 (VIDEO_EFFECT, AUDIO_EFFECT)  = range(2)
 
-#AspectratioCrop is Blacklisted because of this bug:
-#https://bugzilla.gnome.org/show_bug.cgi?id=624882
 BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival", "aspectratiocrop"]
 
 
