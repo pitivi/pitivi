@@ -23,7 +23,7 @@ ui_PYTHON =			\
 	previewer.py		\
 	preview.py		\
 	projectsettings.py	\
-	projecttabs.py		\
+	basetabs.py		\
 	propertyeditor.py	\
 	ruler.py		\
 	screencast_managerdialog.py \
