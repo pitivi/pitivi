@@ -94,6 +94,10 @@ class ElementTreeFormatter(Formatter):
     def _parsePropertyValue(self, value):
         # nothing to read here, move along
         # edward: argh, I went past there, what shall I do now ?
+
+        #FIXME
+        if "(GEnum)" in value:
+            return int(value.split("(GEnum)")[1])
         return gst.Caps("meh, name=%s" % value)[0]["name"]
 
     def _saveStream(self, stream):
@@ -355,8 +359,9 @@ class ElementTreeFormatter(Formatter):
         properties = gobject.list_properties(effect)
         for prop in properties:
             type_name = str(gobject.type_name(prop.value_type.fundamental))
+            #FIXME we just take the int equivalent to the GEnum, how should it be handled?
             if type_name == "GEnum":
-                value = str(effect.get_property(prop.name).value_name)
+                value = str(effect.get_property(prop.name).__int__())
             else:
                 value = str(effect.get_property(prop.name))
             effect_properties.attrib[prop.name] = '(' + type_name + ')' + value
