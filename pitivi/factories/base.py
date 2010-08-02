@@ -420,7 +420,7 @@ class SourceFactory(ObjectFactory):
             b.scale = gst.element_factory_make("videoscale")
             b.scale.props.add_borders = True
             b.capsfilter = gst.element_factory_make("capsfilter")
-            self.setFilterCaps(self._filtercaps)
+            self.setFilterCaps(self._filtercaps, b)
 
             b.add(b.queue, b.scale, b.csp, b.alpha, b.capsfilter)
             gst.element_link_many(b.queue, b.csp, b.scale)
@@ -485,7 +485,7 @@ class SourceFactory(ObjectFactory):
     def addInputStream(self, stream):
         raise AssertionError("source factories can't have input streams")
 
-    def setFilterCaps(self, caps):
+    def setFilterCaps(self, caps, b=None):
         caps_copy = gst.Caps(caps)
         for structure in caps_copy:
             # remove framerate as we don't adjust framerate here
@@ -494,9 +494,12 @@ class SourceFactory(ObjectFactory):
             # remove format as we will have converted to AYUV/ARGB
             if structure.has_key("format"):
                 del structure["format"]
-        for b in self.bins:
-            if hasattr(b, "scale"):
-                b.capsfilter.props.caps = caps_copy
+        if b is None:
+            for bin in self.bins:
+                if hasattr(bin, "capsfilter"):
+                    bin.capsfilter.props.caps = caps_copy
+        else:
+            b.capsfilter.props.caps = caps_copy
         self._filtercaps = caps_copy
 
 class SinkFactory(ObjectFactory):

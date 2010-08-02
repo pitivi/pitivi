@@ -93,22 +93,71 @@ class TestFileSourceFactory(TestCase):
         bin1 = self.factory.makeBin(stream)
         self.failUnlessEqual(self.factory.current_bins, 1)
         self.failUnless(isinstance(bin1, gst.Bin))
-        self.failUnless(hasattr(bin1, "scale"))
-        self.failUnlessEqual(bin1.scale.widthout, 320)
-        self.failUnlessEqual(bin1.scale.heightout, 240)
+        self.failUnless(hasattr(bin1, "capsfilter"))
+
+        # check caps1 set on bin1
+        scale_caps1 = bin1.capsfilter.props.caps
+        width_checked = False
+        height_checked = False
+        for structure in scale_caps1:
+            if structure.has_key("width"):
+                self.failUnlessEqual(structure["width"], 320)
+                width_checked = True
+            if structure.has_key("height"):
+                self.failUnlessEqual(structure["height"], 240)
+                height_checked = True
+        self.failUnlessEqual(width_checked, True)
+        self.failUnlessEqual(height_checked, True)
 
         bin2 = self.factory.makeBin(stream)
         self.failUnlessEqual(self.factory.current_bins, 2)
         self.failUnless(isinstance(bin2, gst.Bin))
         self.failUnless(hasattr(bin2, "scale"))
-        self.failUnlessEqual(bin2.scale.widthout, 320)
-        self.failUnlessEqual(bin2.scale.heightout, 240)
+
+        # check caps1 set on bin2
+        scale_caps1 = bin2.capsfilter.props.caps
+        width_checked = False
+        height_checked = False
+        for structure in scale_caps1:
+            if structure.has_key("width"):
+                self.failUnlessEqual(structure["width"], 320)
+                width_checked = True
+            if structure.has_key("height"):
+                self.failUnlessEqual(structure["height"], 240)
+                height_checked = True
+        self.failUnlessEqual(width_checked, True)
+        self.failUnlessEqual(height_checked, True)
+
 
         self.factory.setFilterCaps(caps2)
-        self.failUnlessEqual(bin1.scale.widthout, 640)
-        self.failUnlessEqual(bin1.scale.heightout, 480)
-        self.failUnlessEqual(bin2.scale.widthout, 640)
-        self.failUnlessEqual(bin2.scale.heightout, 480)
+
+        # check caps2 set on bin1
+        scale_caps2 = bin1.capsfilter.props.caps
+        width_checked = False
+        height_checked = False
+        for structure in scale_caps2:
+            if structure.has_key("width"):
+                self.failUnlessEqual(structure["width"], 640)
+                width_checked = True
+            if structure.has_key("height"):
+                self.failUnlessEqual(structure["height"], 480)
+                height_checked = True
+        self.failUnlessEqual(width_checked, True)
+        self.failUnlessEqual(height_checked, True)
+
+        # check caps2 set on bin2
+        scale_caps2 = bin2.capsfilter.props.caps
+        width_checked = False
+        height_checked = False
+        for structure in scale_caps2:
+            if structure.has_key("width"):
+                self.failUnlessEqual(structure["width"], 640)
+                width_checked = True
+            if structure.has_key("height"):
+                self.failUnlessEqual(structure["height"], 480)
+                height_checked = True
+        self.failUnlessEqual(width_checked, True)
+        self.failUnlessEqual(height_checked, True)
 
         self.factory.releaseBin(bin1)
         self.factory.releaseBin(bin2)
