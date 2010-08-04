@@ -132,8 +132,8 @@ class Interpolator(Signallable, Loggable):
 
     __signals__ = {
         'keyframe-added' : ['keyframe'],
-        'keyframe-removed' : ['keyframe'],
-        'keyframe-moved' : ['keyframe'],
+        'keyframe-removed' : ['keyframe', 'old_value'],
+        'keyframe-moved' : ['keyframe', 'old_value'],
     }
 
     def __init__(self, trackobject, element, prop, minimum=None, maximum=None,
@@ -217,10 +217,11 @@ class Interpolator(Signallable, Loggable):
         return keyframe
 
     def removeKeyframe(self, keyframe):
+        old_value = self._controller.get(self._property.name, keyframe.time)
         self._controller.unset(self._property.name, keyframe.time)
         if keyframe is not self.start and keyframe is not self.end:
             self._keyframes.remove(keyframe)
-            self.emit("keyframe-removed", keyframe)
+            self.emit("keyframe-removed", keyframe, old_value)
 
     def setKeyframeMode(self, kf, mode):
         # FIXME: currently InterpolationSourceControllers only support a
@@ -246,10 +247,11 @@ class Interpolator(Signallable, Loggable):
         self.debug("kf.time:%s, ptime:%s, value:%r",
                    gst.TIME_ARGS(kf.time),
                    gst.TIME_ARGS(ptime), value)
+        old_value = self._controller.get(self._property.name, ptime)
         self._controller.set(self._property.name, ptime, value)
         if kf.time != ptime:
             self._controller.unset(self._property.name, kf.time)
-        self.emit("keyframe-moved", kf)
+        self.emit("keyframe-moved", kf, old_value)
 
     def getKeyframes(self):
         # TODO: This could be more efficient. We are re-sorting all the keyframes
@@ -979,7 +981,7 @@ class Track(Signallable, Loggable):
             return gnl
         elif isinstance(stream, VideoStream):
             gnl = gst.element_factory_make("gnloperation", "top-level-video-mixer")
-            m = SmartVideomixerBin()
+            m = SmartVideomixerBin(self)
             gnl.add(m)
             gnl.props.expandable = True
             gnl.props.priority = 0

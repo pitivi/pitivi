@@ -26,6 +26,8 @@ Audio and Video mixers
 import gobject
 import gst
 
+from pitivi.signalinterface import Signallable
+
 
 class SmartAdderBin(gst.Bin):
 
@@ -122,7 +124,7 @@ class SmartVideomixerBin(gst.Bin):
 
         )
 
-    def __init__(self):
+    def __init__(self, track):
         gst.Bin.__init__(self)
         self.videomixer = gst.element_factory_make("videomixer", "real-videomixer")
         # black background
@@ -137,6 +139,8 @@ class SmartVideomixerBin(gst.Bin):
         self.pad_count = 0
         self.inputs = {} # key : pad_name,
                          # value : (sinkpad, ffmpegcolorspace, capsfilter, videomixerpad)
+
+        self.alpha_helper = SmartVideomixerBinPropertyHelper(track, self.inputs)
 
     def update_priority(self, pad, priority):
         self.debug("pad:%r, priority:%d" % ( pad, priority))
@@ -156,7 +160,11 @@ class SmartVideomixerBin(gst.Bin):
 
         csp = gst.element_factory_make("ffmpegcolorspace", "csp-%d" % self.pad_count)
         capsfilter = gst.element_factory_make("capsfilter", "capsfilter-%d" % self.pad_count)
-        capsfilter.props.caps = gst.Caps("video/x-raw-yuv")
+        # configure the capsfilter caps
+        if self.alpha_helper.alpha_count != 0:
+            capsfilter.props.caps = gst.Caps('video/x-raw-yuv,format=(fourcc)AYUV')
+        else:
+            capsfilter.props.caps = gst.Caps('video/x-raw-yuv')
 
         self.add(csp, capsfilter)
 
@@ -188,6 +196,88 @@ class SmartVideomixerBin(gst.Bin):
             self.remove(csp)
             self.remove(capsfilter)
         self.debug("done")
+
+class SmartVideomixerBinPropertyHelper(Signallable):
+    """A set of callbacks used for considering the alpha state of all track
+       objects in the composition."""
+
+    def __init__(self, track, inputs):
+        # this import is here because of a circular dependence
+        from pitivi.timeline.track import TrackError
+        self.inputs = inputs
+        self.alpha_count = 0
+        # connect track-object-{added,removed} signals from track to callbacks
+        track.connect("track-object-added", self._trackAddedCb)
+        track.connect("track-object-removed", self._trackRemovedCb)
+        # connect track_objects' alpha interpolator keyframe-moved signals
+        # to callback and configure initial alpha state
+        for track_object in track.track_objects:
+            try:
+                interpolator =  track_object.getInterpolator("alpha")
+            except TrackError:
+                # no alpha
+                pass
+            else:
+                interpolator.connect("keyframe-added", self._keyframeChangedCb)
+                interpolator.connect("keyframe-moved", self._keyframeChangedCb)
+                interpolator.connect("keyframe-removed", self._keyframeChangedCb)
+                for kf in interpolator.getKeyframes():
+                    if interpolator.valueAt(kf.time) < 1.0:
+                        self.alpha_count += 1
+        if self.alpha_count != 0:
+            self.alphaStateChanged(True)
+        else:
+            self.alphaStateChanged(False)
+
+
+    def _trackAddedCb(self, track, track_object):
+        # this import is here because of a circular dependence
+        from pitivi.timeline.track import TrackError
+        try:
+            interpolator = track_object.getInterpolator("alpha")
+        except TrackError:
+            # no alpha
+            pass
+        else:
+            interpolator.connect("keyframe-added", self._keyframeChangedCb)
+            interpolator.connect("keyframe-moved", self._keyframeChangedCb)
+            interpolator.connect("keyframe-removed", self._keyframeChangedCb)
+
+    def _trackRemovedCb(self, track, track_object):
+        # this import is here because of a circular dependence
+        from pitivi.timeline.track import TrackError
+        try:
+            interpolator = track_object.getInterpolator("alpha")
+        except TrackError:
+            # no alpha
+            pass
+        else:
+            interpolator.disconnect_by_func(self._keyframeChangedCb)
+
+    def _keyframeChangedCb(self, interpolator, keyframe, old_value=None):
+        """Checks the alpha state and emits a signal if it has changed"""
+        # FIXME: This code assumes the interpolation mode is linear and as
+        # such only considers the alpha values at keyframes
+        old_alpha_count = self.alpha_count
+        new_value = interpolator.valueAt(keyframe.time)
+        if old_value == 1.0 or old_value is None:
+            if new_value < 1.0:
+                self.alpha_count += 1
+        elif old_value < 1.0 or old_value is not None:
+            if new_value == 1.0:
+                self.alpha_count -= 1
+        if old_alpha_count == 0 and self.alpha_count > 0:
+            self.alphaStateChanged(True)
+        elif old_alpha_count > 0 and self.alpha_count == 0:
+            self.alphaStateChanged(False)
+
+    def alphaStateChanged(self, has_alpha):
+        """Updates capsfilter caps to reflect the alpha state of composition"""
+        caps = gst.Caps('video/x-raw-yuv')
+        if has_alpha == True:
+            caps[0]["format"] = gst.Fourcc('AYUV')
+        for input in self.inputs.values():
+            input[2].props.caps = caps
 
 
 gobject.type_register(SmartVideomixerBin)

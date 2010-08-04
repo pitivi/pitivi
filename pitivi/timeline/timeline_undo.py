@@ -85,10 +85,10 @@ class KeyframeChangeTracker(Signallable):
     def _keyframeAddedCb(self, interpolator, keyframe):
         self.keyframes[keyframe] = self._getKeyframeSnapshot(keyframe)
 
-    def _keyframeRemovedCb(self, interpolator, keyframe):
+    def _keyframeRemovedCb(self, interpolator, keyframe, old_value=None):
         pass
 
-    def _keyframeMovedCb(self, interpolator, keyframe):
+    def _keyframeMovedCb(self, interpolator, keyframe, old_value=None):
         old_snapshot = self.keyframes[keyframe]
         new_snapshot = self._getKeyframeSnapshot(keyframe)
         self.keyframes[keyframe] = new_snapshot
