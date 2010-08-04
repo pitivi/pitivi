@@ -33,7 +33,7 @@ class VideoTestSourceFactory(SourceFactory):
         caps = gst.Caps('video/x-raw-yuv; video/x-raw-rgb')
         self.addOutputStream(VideoStream(caps))
 
-    def _makeBin(self, output_stream=None):
+    def _makeStreamBinReal(self, output_stream=None):
         if output_stream is None:
             output_stream = self.output_streams[0]
 

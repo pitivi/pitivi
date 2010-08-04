@@ -322,16 +322,17 @@ class SourceFactory(ObjectFactory):
         bin.remove_pad(ghost_pad)
 
     def _releaseBin(self, bin):
-        try:
-            # bin is a bin returned from makeDefaultBin
-            bin.decodebin.disconnect_by_func(self._binNewDecodedPadCb)
-            bin.decodebin.disconnect_by_func(self._binRemovedDecodedPadCb)
-        except TypeError:
-            # bin is a stream bin
-            bin.decodebin.disconnect_by_func(self._singlePadAddedCb)
-            bin.decodebin.disconnect_by_func(self._singlePadRemovedCb)
+        if hasattr(bin, "decodebin"):
+            try:
+                # bin is a bin returned from makeDefaultBin
+                bin.decodebin.disconnect_by_func(self._binNewDecodedPadCb)
+                bin.decodebin.disconnect_by_func(self._binRemovedDecodedPadCb)
+            except TypeError:
+                # bin is a stream bin
+                bin.decodebin.disconnect_by_func(self._singlePadAddedCb)
+                bin.decodebin.disconnect_by_func(self._singlePadRemovedCb)
+            del bin.decodebin
 
-        del bin.decodebin
         if hasattr(bin, "child"):
             bin.child.set_state(gst.STATE_NULL)
             del bin.child
@@ -361,13 +362,17 @@ class SourceFactory(ObjectFactory):
             bin.remove_pad(bin.ghostpad)
             del bin.ghostpad
 
-    def _makeStreamBin(self, output_stream, child_bin=None):
-        self.debug("output_stream:%r", output_stream)
+    def _makeStreamBinReal(self, output_stream):
         b = gst.Bin()
         b.decodebin = self.singleDecodeBinClass(uri=self.uri, caps=output_stream.caps,
                                            stream=output_stream)
         b.decodebin.connect("pad-added", self._singlePadAddedCb, b)
         b.decodebin.connect("pad-removed", self._singlePadRemovedCb, b)
+        return b
+
+    def _makeStreamBin(self, output_stream, child_bin=None):
+        self.debug("output_stream:%r", output_stream)
+        b = self._makeStreamBinReal(output_stream)
         if child_bin:
             b.child = child_bin
             b.add(child_bin)
@@ -435,7 +440,8 @@ class SourceFactory(ObjectFactory):
             b.csp.sync_state_with_parent()
             b.alpha.sync_state_with_parent()
 
-        b.add(b.decodebin)
+        if hasattr(b, "decodebin"):
+            b.add(b.decodebin)
         return b
 
     def _singlePadAddedCb(self, dbin, pad, topbin):
