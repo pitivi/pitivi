@@ -95,18 +95,7 @@ class Project(Signallable, Loggable):
         self.view_action.addProducers(self.factory)
         self.seeker = Seeker(80)
 
-        self.getCapsFromSettings()
-
-    def getCapsFromSettings(self):
         settings = self.getSettings()
-        #formatstr = "video/x-raw-rgb,width=(int)%d,height=(int)%d;"\
-        #    "video/x-raw-yuv,width=(int)%d,height=(int)%d"
-        #capstr = formatstr % (
-        #    settings.videowidth,
-        #    settings.videoheight,
-        #    settings.videowidth,
-        #    settings.videoheight)
-        #self._videocaps = gst.Caps(capstr)
         self._videocaps = settings.getVideoCaps()
 
     def release(self):
@@ -134,10 +123,6 @@ class Project(Signallable, Loggable):
         self.settings = settings
         self._projectSettingsChanged()
         self.emit('settings-changed', oldsettings, settings)
-
-    def unsetSettings(self, unused_settings):
-        """ Remove the currently configured settings."""
-        self.setSettings(None)
 
     def getAutoSettings(self):
         """
@@ -204,7 +189,9 @@ class Project(Signallable, Loggable):
         return self._dirty
 
     def _projectSettingsChanged(self):
-        self.getCapsFromSettings()
+        settings = self.getSettings()
+        self._videocaps = settings.getVideoCaps()
+
         for fact in self.sources.getSources():
             fact.setFilterCaps(self._videocaps)
         if self.pipeline.getState() != gst.STATE_NULL:
