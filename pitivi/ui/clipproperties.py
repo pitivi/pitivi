@@ -236,9 +236,11 @@ class EffectProperties(gtk.Expander):
             self._removeEffect(effect)
 
     def _removeEffect(self, effect):
+        self.app.action_log.begin("add effect")
         track  = effect.track
         self.timeline_object.removeTrackObject(effect)
         track.removeTrackObject(effect)
+        self.app.action_log.commit()
 
     def _dragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
