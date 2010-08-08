@@ -236,7 +236,7 @@ class EffectProperties(gtk.Expander):
             self._removeEffect(effect)
 
     def _removeEffect(self, effect):
-        self.app.action_log.begin("add effect")
+        self.app.action_log.begin("remove effect")
         track  = effect.track
         self.timeline_object.removeTrackObject(effect)
         track.removeTrackObject(effect)
@@ -248,8 +248,10 @@ class EffectProperties(gtk.Expander):
 
     def _dragDropCb(self, unused, context, x, y, timestamp):
         if self._factory:
+            self.app.action_log.begin("add effect")
             self.timeline.addEffectFactoryOnObject(self._factory,
                                                    timeline_objects = [self.timeline_object])
+            self.app.action_log.commit()
         self._factory = None
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
