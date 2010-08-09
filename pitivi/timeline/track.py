@@ -385,14 +385,17 @@ class TrackObject(Signallable, Loggable):
                 interpolator = Interpolator(self, gst_object,
                     gst_object_property, lower, upper, formatstr)
             else:
+                # remove and add again the keyframes so they are set on the
+                # current controller
+                keyframes = list(interpolator.keyframes)
+                for keyframe in keyframes:
+                    interpolator.removeKeyframe(keyframe)
+
                 interpolator.attachToElementProperty(gst_object_property,
                         gst_object)
                 interpolator.updateMediaStop(self.out_point)
 
-                # remove and add again the keyframes so they are set on the
-                # current controller
-                for keyframe in list(interpolator.keyframes):
-                    interpolator.removeKeyframe(keyframe)
+                for keyframe in keyframes:
                     interpolator.newKeyframe(keyframe)
 
             self.interpolators[gst_object_property.name] = \
