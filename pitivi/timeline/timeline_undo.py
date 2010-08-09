@@ -303,7 +303,8 @@ class TimelineLogObserver(object):
         action = self.interpolatorKeyframeAddedAction(track_object, keyframe)
         self.log.push(action)
 
-    def _interpolatorKeyframeRemovedCb(self, track_object, keyframe):
+    def _interpolatorKeyframeRemovedCb(self, track_object, keyframe,
+            old_value=None):
         action = self.interpolatorKeyframeRemovedAction(track_object, keyframe)
         self.log.push(action)
 
