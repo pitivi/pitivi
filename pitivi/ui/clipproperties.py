@@ -267,8 +267,10 @@ class EffectProperties(gtk.Expander):
     def _effectActiveToggleCb(self, cellrenderertoggle, path):
         iter = self.storemodel.get_iter(path)
         track_effect = self.storemodel.get_value(iter, COL_TRACK_EFFECT)
+        self.app.action_log.begin("change active state")
         activated = track_effect.gnl_object.get_property("active")
         track_effect.gnl_object.set_property("active", not activated)
+        self.app.action_log.commit()
 
     def expandedcb(self, expander, params):
         self._updateAll()

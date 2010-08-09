@@ -222,7 +222,6 @@ class TrackEffectRemoved(UndoableAction):
         self.gnl_obj_props = [(prop.name, gnl_obj.get_property(prop.name))
                               for prop in gnl_props
                               if prop.flags & gobject.PARAM_WRITABLE]
-        print self.gnl_obj_props
 
         self.timeline_object.removeTrackObject(self.track_object)
         self.track_object.track.removeTrackObject(self.track_object)
@@ -293,6 +292,21 @@ class InterpolatorKeyframeChanged(UndoableAction):
         self.keyframe.setTime(time)
         self.keyframe.setValue(value)
 
+class ActivePropertyChanged(UndoableAction):
+    def __init__(self, effect_action, active):
+        self.effect_action = effect_action
+        self.active = not active
+
+    def do(self):
+        self.effect_action.track_object.active = self.active
+        self.active = not self.active
+        self._done()
+
+    def undo(self):
+        self.effect_action.track_object.active = self.active
+        self.active = not self.active
+        self._done()
+
 class TimelineLogObserver(object):
     timelinePropertyChangedAction = TimelineObjectPropertyChanged
     timelineObjectAddedAction = TimelineObjectAdded
@@ -302,6 +316,7 @@ class TimelineLogObserver(object):
     interpolatorKeyframeAddedAction = InterpolatorKeyframeAdded
     interpolatorKeyframeRemovedAction = InterpolatorKeyframeRemoved
     interpolatorKeyframeChangedAction = InterpolatorKeyframeChanged
+    activePropertyChangedAction = ActivePropertyChanged
 
     def __init__(self, log):
         self.log = log
@@ -391,10 +406,17 @@ class TimelineLogObserver(object):
     def _timelineObjectTrackObjectAddedCb(self, timeline_object, track_object):
         if isinstance(track_object, TrackEffect):
             action = self.trackEffectAddAction(timeline_object, track_object)
+            #We use the action instead of the track object 
+            #because the track_object changes when redoing
+            track_object.connect("active-changed",
+                                 self._trackObjectActiveChangedCb, action)
             self.log.push(action)
-            self.effect_properties_tracker.addEffectElement(track_object.getElement())
+            element = track_object.getElement()
+            if element:
+                self.effect_properties_tracker.addEffectElement(element)
         else:
             self._connectToTrackObject(track_object)
+
 
     def _timelineObjectTrackObjectRemovedCb(self, timeline_object,
                                             track_object):
@@ -411,6 +433,10 @@ class TimelineLogObserver(object):
     def _interpolatorKeyframeRemovedCb(self, track_object, keyframe,
             old_value=None):
         action = self.interpolatorKeyframeRemovedAction(track_object, keyframe)
+        self.log.push(action)
+
+    def _trackObjectActiveChangedCb(self, track_object, active, add_effect_action):
+        action = self.activePropertyChangedAction(add_effect_action, active)
         self.log.push(action)
 
     def _interpolatorKeyframeMovedCb(self, tracker, track_object,
