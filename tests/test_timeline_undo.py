@@ -203,8 +203,6 @@ class  TestTimelineUndo(TestCase):
                 in self.track1.track_objects)
 
         self.action_log.redo()
-        self.failUnless(self.track_effect1 \
-                in self.timeline_object1.track_objects)
         self.failUnless(len([effect for effect in
                                 self.timeline_object1.track_objects
                                 if isinstance(effect, TrackEffect)]) == 1)
@@ -223,7 +221,7 @@ class  TestTimelineUndo(TestCase):
         self.timeline_object1.addTrackObject(self.track_effect1)
         self.track1.addTrackObject(self.track_effect1)
 
-        self.action_log.begin("add effect")
+        self.action_log.begin("remove effect")
         self.timeline_object1.removeTrackObject(self.track_effect1)
         self.track1.removeTrackObject(self.track_effect1)
         self.action_log.commit()

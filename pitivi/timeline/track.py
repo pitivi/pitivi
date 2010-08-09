@@ -749,8 +749,7 @@ class TrackEffect(TrackObject):
         #Should we find a better implementation?
         for element in self.gnl_object.recurse():
             if self.factory.name in element.get_name():
-                break
-        return element
+                return element
 
 class Transition(Signallable):
 
