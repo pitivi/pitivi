@@ -209,25 +209,8 @@ class SmartVideomixerBinPropertyHelper(Signallable):
         # connect track-object-{added,removed} signals from track to callbacks
         track.connect("track-object-added", self._trackAddedCb)
         track.connect("track-object-removed", self._trackRemovedCb)
-        # connect track_objects' alpha interpolator keyframe-moved signals
-        # to callback and configure initial alpha state
-        for track_object in track.track_objects:
-            try:
-                interpolator =  track_object.getInterpolator("alpha")
-            except TrackError:
-                # no alpha
-                pass
-            else:
-                interpolator.connect("keyframe-added", self._keyframeChangedCb)
-                interpolator.connect("keyframe-moved", self._keyframeChangedCb)
-                interpolator.connect("keyframe-removed", self._keyframeChangedCb)
-                for kf in interpolator.getKeyframes():
-                    if interpolator.valueAt(kf.time) < 1.0:
-                        self.alpha_count += 1
-        if self.alpha_count != 0:
-            self.alphaStateChanged(True)
-        else:
-            self.alphaStateChanged(False)
+        # configure initial alpha state
+        self.alphaStateChanged(False)
 
 
     def _trackAddedCb(self, track, track_object):
@@ -239,6 +222,15 @@ class SmartVideomixerBinPropertyHelper(Signallable):
             # no alpha
             pass
         else:
+            # we must increment alpha_count and update the alpha state as
+            # appropriate
+            old_alpha_count = self.alpha_count
+            for kf in interpolator.getKeyframes():
+                if interpolator.valueAt(kf.time) < 1.0:
+                    self.alpha_count += 1
+            # as we're only incrementing, this should be the only case to check
+            if old_alpha_count == 0 and self.alpha_count > 0:
+                self.alphaStateChanged(True)
             interpolator.connect("keyframe-added", self._keyframeChangedCb)
             interpolator.connect("keyframe-moved", self._keyframeChangedCb)
             interpolator.connect("keyframe-removed", self._keyframeChangedCb)
@@ -247,11 +239,23 @@ class SmartVideomixerBinPropertyHelper(Signallable):
         # this import is here because of a circular dependence
         from pitivi.timeline.track import TrackError
         try:
-            interpolator = track_object.getInterpolator("alpha")
-        except TrackError:
+            # FIXME: .interpolators is accessed directly as the track object
+            # has been removed and its gnl_object doesn't contain any
+            # controllable element anymore
+            interpolator = track_object.interpolators["alpha"][1]
+        except (KeyError, TrackError):
             # no alpha
             pass
         else:
+            # we must decrement alpha_count and update the alpha state as
+            # appropriate
+            old_alpha_count = self.alpha_count
+            for kf in interpolator.getKeyframes():
+                if interpolator.valueAt(kf.time) < 1.0:
+                    self.alpha_count -= 1
+            # as we're only decrementing, this should be the only case to check
+            if old_alpha_count > 0 and self.alpha_count == 0:
+                self.alphaStateChanged(False)
             interpolator.disconnect_by_func(self._keyframeChangedCb)
 
     def _keyframeChangedCb(self, interpolator, keyframe, old_value=None):

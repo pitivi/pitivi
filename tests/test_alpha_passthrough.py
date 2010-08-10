@@ -47,12 +47,14 @@ class TestAlpha(TestCase):
         # make a track, make track objects from the streams and add the track objects to the track
         offset = 0
         self.track1 = Track(streams[0][0])
+        self.track_objects = []
         for item in streams:
             stream = item[0]
             factory = item[1]
             factory.duration = 15 * gst.SECOND
             factory.addOutputStream(stream)
             track_object = SourceTrackObject(factory, stream)
+            self.track_objects.append(track_object)
             track_object.start = offset
             self.track1.addTrackObject(track_object)
             offset += 15 * gst.SECOND
@@ -129,12 +131,31 @@ class TestAlpha(TestCase):
             svmbin_input_capsfilter = input[2]
             self.failUnlessEqual(svmbin_input_capsfilter.props.caps[0]["format"], gst.Fourcc('AYUV'))
 
+        # remove a track object
+        self.track1.removeTrackObject(self.track1.track_objects[2])
+        # check that there are now just 2 track objects
+        self.failUnlessEqual(len(self.track1.track_objects), 2)
+        # check that each SmartVideomixerBin input has alpha set on its capsfilter
+        for input in svmbin_inputs:
+            svmbin_input_capsfilter = input[2]
+            self.failUnlessEqual(svmbin_input_capsfilter.props.caps[0]["format"], gst.Fourcc('AYUV'))
+
+
         # adjust all up to 1.0 again
         for track_obj in self.track1.track_objects:
             interpolator = track_obj.getInterpolator("alpha")
             if interpolator is not None:
                 for kf in interpolator.getKeyframes():
                     interpolator.setKeyframeValue(kf, 1.0)
+        # check that each SmartVideomixerBin input has alpha _not_ set on its capsfilter
+        for input in svmbin_inputs:
+            svmbin_input_capsfilter = input[2]
+            self.failIf(svmbin_input_capsfilter.props.caps[0].has_key("format"))
+
+        # remove a track object
+        self.track1.removeTrackObject(self.track1.track_objects[0])
+        # check that there is now just 1 track object
+        self.failUnlessEqual(len(self.track1.track_objects), 1)
         # check that each SmartVideomixerBin input has alpha _not_ set on its capsfilter
         for input in svmbin_inputs:
             svmbin_input_capsfilter = input[2]
