@@ -25,5 +25,5 @@ check-local:
 	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) $(PYTHON) $(srcdir)/runtests.py $*
 
 check-integration:
-	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) $(PYTHON)\
+	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) TEST_INTEGRATION=1 $(PYTHON)\
         $(srcdir)/test_integration.py

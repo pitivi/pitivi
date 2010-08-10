@@ -1077,5 +1077,17 @@ class TestTransitions(Base):
     def testSaveAndLoadWithTransitions(self):
         pass
 
+# Readable code ends here <-
+
+if not os.getenv("TEST_INTEGRATION"):
+    import inspect
+
+    for symbol_name in list(globals().keys()):
+        print symbol_name
+        symbol = globals()[symbol_name]
+        if inspect.isclass(symbol) and symbol.__name__.startswith('Test') \
+                and symbol.__module__ == __name__:
+            del globals()[symbol_name]
+
 if __name__ == "__main__":
     unittest.main()
