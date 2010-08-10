@@ -144,7 +144,7 @@ class TestFormatterSave(TestCase):
         effect_element = element.find('effect')
         self.failIfEqual(effect_element, None)
         self.failIfEqual(effect_element.find("factory"), None)
-        self.failIfEqual(effect_element.find("properties"), None)
+        self.failIfEqual(effect_element.find("gst-element-properties"), None)
 
     def testSaveTrackSource(self):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
