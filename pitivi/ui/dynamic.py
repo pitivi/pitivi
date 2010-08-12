@@ -156,21 +156,25 @@ class TextWidget(gtk.HBox, DynamicWidget):
             return True
         return False
 
-class NumericWidget(gtk.HBox):
+class NumericWidget(gtk.HBox, DynamicWidget):
 
     """A gtk.HScale and a gtk.SpinButton which share an adjustment. The
     SpinButton is always displayed, while the HScale only appears if both
     lower and upper bounds are defined"""
 
-    def __init__(self, upper = None, lower = None):
+    def __init__(self,  upper = None, lower = None, default=None):
         gtk.HBox.__init__(self)
+        DynamicWidget.__init__(self, default)
 
+        self.spacing = SPACING
         self.adjustment = gtk.Adjustment()
         self.upper = upper
         self.lower = lower
-        if (upper != None) and (lower != None):
+        self._type = None
+        if (upper != None) and (lower != None) and\
+            (upper < 5000) and (lower > -5000):
             self.slider = gtk.HScale(self.adjustment)
-            self.pack_end(self.slider)
+            self.pack_start(self.slider, fill=True, expand=True)
             self.slider.show()
             self.slider.props.draw_value = False
 
