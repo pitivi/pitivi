@@ -222,15 +222,6 @@ class SmartVideomixerBinPropertyHelper(Signallable):
             # no alpha
             pass
         else:
-            # we must increment alpha_count and update the alpha state as
-            # appropriate
-            old_alpha_count = self.alpha_count
-            for kf in interpolator.getKeyframes():
-                if interpolator.valueAt(kf.time) < 1.0:
-                    self.alpha_count += 1
-            # as we're only incrementing, this should be the only case to check
-            if old_alpha_count == 0 and self.alpha_count > 0:
-                self.alphaStateChanged(True)
             interpolator.connect("keyframe-added", self._keyframeChangedCb)
             interpolator.connect("keyframe-moved", self._keyframeChangedCb)
             interpolator.connect("keyframe-removed", self._keyframeChangedCb)
