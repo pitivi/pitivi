@@ -51,7 +51,8 @@ from pitivi.undo import UndoableAction
 
 (VIDEO_EFFECT, AUDIO_EFFECT)  = range(2)
 
-BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival", "aspectratiocrop"]
+BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
+                       "alphacolor", "cogcolorspace"]
 
 
 

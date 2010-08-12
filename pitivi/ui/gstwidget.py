@@ -25,30 +25,12 @@ Widget for gstreamer element properties viewing/setting
 
 import gobject
 import gtk
+import gst
 from pitivi.ui.glade import GladeWindow
 
 from gettext import gettext as _
-import pitivi.log.log as log
 from pitivi.log.loggable import Loggable
-
-def get_widget_propvalue(prop, widget):
-    """ returns the value of the given propertywidget """
-    # FIXME : implement the case for flags
-    type_name = gobject.type_name(prop.value_type.fundamental)
-
-    if (type_name == 'gchararray'):
-        return widget.get_text()
-    if (type_name in ['guint64', 'gint64', 'gint', 'gulong']):
-        return widget.get_value_as_int()
-    if (type_name in ['gfloat', 'gdouble']):
-        return widget.get_value()
-    if (type_name in ['gboolean']):
-        return widget.get_active()
-    if type_name in ['GEnum']:
-        # we don't want to have typed enums wondering around,
-        # we therefore convert it to it's numerical equivalent
-        return int(widget.get_model()[widget.get_active()][1])
-    return None
+import pitivi.ui.dynamic as dynamic
 
 def make_property_widget(unused_element, prop, value=None):
     """ Creates a Widget for the given element property """
@@ -58,80 +40,32 @@ def make_property_widget(unused_element, prop, value=None):
     if value == None:
         value = prop.default_value
     if (type_name == 'gchararray'):
-        widget = gtk.Entry()
-        widget.set_text(str(value))
+        widget = dynamic.TextWidget()
     elif (type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat',
         'gulong', 'gdouble']):
+
         maximum , minimum = None, None
-        if hasattr(prop, "minimum") and hasattr(prop, "maximum"):
+        if hasattr(prop, "minimum"):
             minimum = prop.minimum
+        if hasattr(prop, "maximum"):
             maximum = prop.maximum
-        if minimum >- 10 and maximum < 10:
-            widget = gtk.HScale()
-            widget.set_draw_value(True)
-            widget.set_range(prop.minimum, prop.maximum)
-            widget.set_value(value)
-        else:
-            widget = gtk.SpinButton()
-            if type_name == 'gint':
-                minimum, maximum = (-(2**31), 2**31 - 1)
-                widget.set_increments(1.0, 10.0)
-            elif type_name == 'guint':
-                minimum, maximum = (0, 2**32 - 1)
-                widget.set_increments(1.0, 10.0)
-            elif type_name == 'gint64':
-                minimum, maximum = (-(2**63), 2**63 - 1)
-                widget.set_increments(1.0, 10.0)
-            elif type_name in ['gulong', 'guint64']:
-                minimum, maximum = (0, 2**64 - 1)
-                widget.set_increments(1.0, 10.0)
-            elif type_name in ['gfloat','gdouble']:
-                minimum, maximum = (float("-Infinity"), float("Infinity"))
-                widget.set_increments(0.00001, 0.01)
-                widget.set_digits(5)
-            if maximum and minimum:
-                widget.set_range(minimum, maximum)
-                widget.props.climb_rate = 0.01 * abs(min(maximum, 1000) -
-                    max(minimum, -1000))
-            widget.set_value(float(value))
+        widget = dynamic.NumericWidget(default=prop.default_value,
+                                       upper=maximum, lower=minimum)
     elif (type_name == 'gboolean'):
-        widget = gtk.CheckButton()
-        if value:
-            widget.set_active(True)
+        widget = dynamic.ToggleWidget(default=prop.default_value)
     elif (type_name == 'GEnum'):
-        model = gtk.ListStore(gobject.TYPE_STRING, prop.value_type)
-        widget = gtk.ComboBox(model)
-        cell = gtk.CellRendererText()
-        widget.pack_start(cell, True)
-        widget.add_attribute(cell, 'text', 0)
-
         idx = 0
+        choices = []
         for key, val in prop.enum_class.__enum_values__.iteritems():
-            log.log("gstwidget", "adding %s / %s", val.value_name, val)
-            model.append([val.value_name, val])
-            if val == value or key == value:
-                selected = idx
-            idx = idx + 1
-        widget.set_active(selected)
+            choices.append([val.value_name, int(val)])
+        widget = dynamic.ChoiceWidget(choices, default=prop.default_value)
     elif type_name == 'GstFraction':
-        widget = gtk.HBox()
-        widget1 = gtk.SpinButton()
-        widget1.set_range(0,100)
-        widget1.set_increments(1.0, 10.0)
-        #widget1.set_value(float(value))
-        widget2 = gtk.SpinButton()
-        widget2.set_range(0,100)
-        widget2.set_increments(1.0, 10.0)
-        #widget2.set_value(float(value))
-        widget.pack_start(widget1)
-        widget.pack_start(gtk.Label("/"))
-        widget.pack_start(widget2)
+        widget = dynamic.FractionWidget(None, None, default = prop.default_value)
     else:
-        widget = gtk.Label(type_name)
-        widget.set_alignment(1.0, 0.5)
+        widget = dynamic.DefaultWidget(type_name)
 
-    if not prop.flags & gobject.PARAM_WRITABLE:
-        widget.set_sensitive(False)
+    widget.setWidgetValue(value)
+
     return widget
 
 class GstElementSettingsWidget(gtk.VBox, Loggable):
@@ -145,7 +79,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         self.element = None
         self.ignore = None
         self.properties = None
-        self.buttons = []
+        self.buttons = {}
 
     def setElement(self, element, properties={}, ignore=['name'],
                    default_btn = False, use_element_props=False):
@@ -193,17 +127,14 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
             if default_btn:
                 button = self._getResetToDefaultValueButton(prop, widget)
                 table.attach(button, 2, 3, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
-                self.buttons.append(button)
-            self.element.connect('notify::' + prop.name,
-                                self._propertyChangedCb,
-                                widget)
+                self.buttons[button] = widget
             y += 1
 
         self.pack_start(table)
         self.show_all()
 
     def _propertyChangedCb(self, element, pspec, widget):
-        self._set_prop(widget, self.element.get_property(pspec.name))
+        widget.setWidgetValue(self.element.get_property(pspec.name))
 
     def _getResetToDefaultValueButton(self, prop, widget):
         icon = gtk.Image()
@@ -211,26 +142,11 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         button = gtk.Button(label='')
         button.set_image(icon)
         button.set_tooltip_text(_("Reset to default value"))
-        button.connect('clicked', self._defaultBtnClickedCb, prop.default_value, widget)
+        button.connect('clicked', self._defaultBtnClickedCb, widget)
         return button
 
-    def _defaultBtnClickedCb(self, button,  default_value, widget):
-        self._set_prop(widget, default_value)
-
-    def _set_prop(self, widget, value):
-        def check_combobox_value(model, path, iter, widget_value):
-            if model.get_value(iter, 0) == str(widget_value[1].value_name):
-                widget_value[0].set_active_iter(iter)
-
-        if type(widget) in [gtk.SpinButton, gtk.HScale]:
-            widget.set_value(float(value))
-        elif type(widget) in [gtk.Entry]:
-            widget.set_text(str(value))
-        elif type(widget) in [gtk.ComboBox]:
-            model = widget.get_model()
-            model.foreach(check_combobox_value, [widget, value])
-        elif type(widget) in [gtk.CheckButton]:
-            widget.set_active(bool(value))
+    def _defaultBtnClickedCb(self, button, widget):
+        widget.setWidgetToDefault()
 
     def getSettings(self, with_default=False):
         """
@@ -240,7 +156,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         for prop, widget in self.properties.iteritems():
             if not prop.flags & gobject.PARAM_WRITABLE:
                 continue
-            value = get_widget_propvalue(prop, widget)
+            value = widget.getWidgetValue()
             if value != None and (value != prop.default_value or with_default):
                 d[prop.name] = value
         return d

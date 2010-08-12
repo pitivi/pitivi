@@ -24,8 +24,8 @@
 
 import gtk
 
-from pitivi.ui.gstwidget import GstElementSettingsWidget
 from pitivi.pipeline import PipelineError
+from pitivi.ui.gstwidget import GstElementSettingsWidget
 
 PROPS_TO_IGNORE = ['name', 'qos']
 
@@ -44,17 +44,20 @@ class EffectsPropertiesHandling:
         """
         if effect not in self.cache_dict:
             #Here we should handle special effects configuration UI
-            effect_set_ui = GstElementSettingsWidget()
-            effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
-                                               default_btn=True, use_element_props=True)
-            nb_rows = effect_set_ui.get_children()[0].get_property('n-rows')
-            if nb_rows > 4:
-                effect_configuration_ui = gtk.ScrolledWindow()
-                effect_configuration_ui.add_with_viewport(effect_set_ui)
-                self.cache_dict[effect] = effect_configuration_ui
+            if 'aspectratiocrop' in effect.get_name():
+                effect_set_ui = AspectRatioUi()
             else:
-                self.cache_dict[effect] = effect_set_ui
-            self._connectAllWidgetCbs(effect_set_ui, effect)
+                effect_set_ui = GstElementSettingsWidget()
+                effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
+                                                   default_btn=True, use_element_props=True)
+                nb_rows = effect_set_ui.get_children()[0].get_property('n-rows')
+                if nb_rows > 4:
+                    effect_configuration_ui = gtk.ScrolledWindow()
+                    effect_configuration_ui.add_with_viewport(effect_set_ui)
+                    self.cache_dict[effect] = effect_configuration_ui
+                else:
+                    self.cache_dict[effect] = effect_set_ui
+                self._connectAllWidgetCbs(effect_set_ui, effect)
 
         effect_set_ui = self._getEffectSetUI(effect)
 
@@ -78,20 +81,26 @@ class EffectsPropertiesHandling:
 
     def _connectAllWidgetCbs(self, effect_configuration_ui, effect):
         for prop, widget in effect_configuration_ui.properties.iteritems():
-            if type(widget) in [gtk.SpinButton, gtk.HScale]:
-                widget.connect("value-changed", self._onValueChangedCb)
-            elif type(widget) in [gtk.Entry, gtk.ComboBox]:
-                widget.connect("changed", self._onValueChangedCb)
-            elif type(widget) in [gtk.CheckButton, gtk.Button]:
-                widget.connect("clicked", self._onValueChangedCb)
+            widget.connectValueChanged(self._onValueChangedCb, widget, prop)
 
-        for button in effect_configuration_ui.buttons:
-                button.connect("clicked", self._onValueChangedCb, True)
+    def _onSetDefaultCb(self, widget, dynamic):
+        dynamic.setWidgetToDefault()
 
-    def _onValueChangedCb(self, widget, with_default=False):
-        for prop, value in self._current_effect_setting_ui.getSettings(with_default).iteritems():
-            self.action_log.begin("Effect property change")
-            self._current_effect_setting_ui.element.set_property(prop, value)
-            self.action_log.commit()
+    def _onValueChangedCb(self, widget, dynamic, prop):
+        self.action_log.begin("Effect property change")
+
+        value = dynamic.getWidgetValue()
+        print "%s, %s" %(type(value), value)
+        self._current_effect_setting_ui.element.set_property(prop.name, value)
+        self.action_log.commit()
 
         self._flushSeekVideo()
+
+
+class AspectRatioUi(GstElementSettingsWidget):
+    """
+        UI to configure AspectRatio effects
+    """
+    def __init__(self):
+        GstElementSettingsWidget.__init__(self)
+
