@@ -20,6 +20,7 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
+import gobject
 
 from pitivi.signalinterface import Signallable
 from pitivi.utils import get_controllable_properties, getPreviousObject, \
@@ -418,6 +419,7 @@ class TrackObject(Signallable, Loggable):
             self.track.addTrackObject(other)
             other.gnl_object.set_property("active",
                                           self.gnl_object.get_property("active"))
+            self._setGstElementProperties(other)
 
         interpolators = self.getInterpolators()
         for property, interpolator in interpolators.itervalues():
@@ -434,6 +436,9 @@ class TrackObject(Signallable, Loggable):
         return other
 
     def snapStartDurationTime(self, *args):
+        return
+
+    def _setGstElementProperties(self, other):
         return
 
     def _getStart(self):
@@ -740,6 +745,15 @@ class TrackEffect(TrackObject):
             str(TrackEffect.numobjs))
         TrackEffect.numobjs += 1
         return effect
+
+    def _setGstElementProperties(self, other):
+        if isinstance(self, TrackEffect):
+            element = self.getElement()
+            new_element = other.getElement()
+            for prop in gobject.list_properties(element):
+                value = element.get_property(prop.name)
+                if value != prop.default_value:
+                    new_element.set_property(prop.name, value)
 
     def getElement(self):
         """
