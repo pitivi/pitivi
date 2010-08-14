@@ -40,7 +40,7 @@ from pitivi.stream import VideoStream, AudioStream, TextStream, \
 from pitivi.settings import GlobalSettings
 from pitivi.utils import beautify_length
 from pitivi.ui.common import beautify_factory, factory_name, \
-    beautify_stream
+    beautify_stream, PADDING
 from pitivi.log.loggable import Loggable
 from pitivi.sourcelist import SourceListError
 
@@ -206,7 +206,7 @@ class SourceList(gtk.VBox, Loggable):
         infobar = gtk.InfoBar()
 
         txtlabel = gtk.Label()
-        txtlabel.set_padding(10, 10)
+        txtlabel.set_padding(PADDING, PADDING)
         txtlabel.set_line_wrap(True)
         txtlabel.set_line_wrap_mode(pango.WRAP_WORD)
         txtlabel.set_justify(gtk.JUSTIFY_CENTER)
