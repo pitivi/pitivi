@@ -1,4 +1,4 @@
-## PiTiVi , Non-linear video editor
+# PiTiVi , Non-linear video editor
 #
 #       ui/sourcelist.py
 #
@@ -40,7 +40,7 @@ from pitivi.stream import VideoStream, AudioStream, TextStream, \
 from pitivi.settings import GlobalSettings
 from pitivi.utils import beautify_length
 from pitivi.ui.common import beautify_factory, factory_name, \
-    beautify_stream, PADDING
+    beautify_stream
 from pitivi.log.loggable import Loggable
 from pitivi.sourcelist import SourceListError
 
@@ -93,7 +93,7 @@ ui = '''
 </ui>
 '''
 
-INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(),
+INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(), 
     "invisible.png"))
 
 class SourceList(gtk.VBox, Loggable):
@@ -177,7 +177,7 @@ class SourceList(gtk.VBox, Loggable):
         namecol.set_expand(True)
         namecol.set_spacing(5)
         namecol.set_sizing(gtk.TREE_VIEW_COLUMN_GROW_ONLY)
-        namecol.set_min_width(120)
+        namecol.set_min_width(150)
         txtcell = gtk.CellRendererText()
         txtcell.set_property("ellipsize", pango.ELLIPSIZE_END)
         namecol.pack_start(txtcell)
@@ -206,7 +206,7 @@ class SourceList(gtk.VBox, Loggable):
         infobar = gtk.InfoBar()
 
         txtlabel = gtk.Label()
-        txtlabel.set_padding(PADDING, PADDING)
+        txtlabel.set_padding(10, 10)
         txtlabel.set_line_wrap(True)
         txtlabel.set_line_wrap_mode(pango.WRAP_WORD)
         txtlabel.set_justify(gtk.JUSTIFY_CENTER)
@@ -271,7 +271,7 @@ class SourceList(gtk.VBox, Loggable):
                 _("Import folder of clips to use"), self._importSourcesFolderCb),
         )
 
-        # only available when selection is non-empty
+        # only available when selection is non-empty 
         selection_actions = (
             ("RemoveSources", gtk.STOCK_DELETE,
                 _("_Remove from project"), "<Control>Delete", None,
@@ -387,7 +387,7 @@ class SourceList(gtk.VBox, Loggable):
 
 
     ## Explanatory message methods
-
+    
     def _setClipView(self, show):
         """ Set which clip view to use when sourcelist is showing clips. If
         none is given, the current one is used. Show: one of SHOW_TREEVIEW or
@@ -736,7 +736,7 @@ class SourceList(gtk.VBox, Loggable):
 
             self._dragStarted = False
             self._dragSelection = False
-            self._dragButton = event.button
+            self._dragButton = event.button 
             self._dragX = int(event.x)
             self._dragY = int(event.y)
 
@@ -926,7 +926,7 @@ class SourceList(gtk.VBox, Loggable):
         return paths
 
     def getSelectedItems(self):
-        return [self.storemodel[path][COL_URI]
+        return [self.storemodel[path][COL_URI] 
             for path in self.getSelectedPaths()]
 
     def _dndDataGetCb(self, unused_widget, context, selection,

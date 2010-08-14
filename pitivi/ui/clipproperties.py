@@ -61,9 +61,9 @@ class ClipProperties(gtk.VBox, Loggable):
 
         self.effect_properties_handling = EffectsPropertiesHandling(instance.action_log)
         self.effect_expander = EffectProperties(instance,
-                                                self.effect_properties_handling)
-        self.pack_start(self.effect_expander, expand=True, fill=True)
+                                                self.effect_properties_handling, self)
 
+        self.pack_start(self.effect_expander, expand=True, fill=True)
         self.effect_expander.show()
 
     def _setProject(self):
@@ -73,12 +73,33 @@ class ClipProperties(gtk.VBox, Loggable):
 
     project = receiver(_setProject)
 
+    def addInfoBar(self, text):
+        info_bar = gtk.InfoBar()
+
+        label = gtk.Label()
+        label.set_padding(10, 10)
+        label.set_line_wrap(True)
+        label.set_line_wrap_mode(pango.WRAP_WORD)
+        label.set_justify(gtk.JUSTIFY_CENTER)
+        label.set_markup(text)
+
+        info_bar.add(label)
+        self.pack_start(info_bar, expand=False, fill=False)
+
+        info_bar.show_all()
+        return info_bar
+
+    def hideInfoBar(self, text):
+        print text
+        if text not in self.info_bars:
+            self.info_bars[text].hide()
+
 class EffectProperties(gtk.Expander):
     """
     Widget for viewing and configuring effects
     """
 
-    def __init__(self, instance, effect_properties_handling):
+    def __init__(self, instance, effect_properties_handling, clip_properties):
         gtk.Expander.__init__(self, "Effects")
         self.set_expanded(True)
 
@@ -90,11 +111,13 @@ class EffectProperties(gtk.Expander):
         self._effect_config_ui = None
         self.pipeline = None
         self.effect_props_handling = effect_properties_handling
+        self.clip_properties = clip_properties
+        self._info_bar =  None
 
         self.VContent = gtk.VPaned()
         self.add(self.VContent)
 
-        self.table = gtk.Table(2, 1, False)
+        self.table = gtk.Table(3, 1, False)
 
         self.toolbar1 = gtk.Toolbar()
         self.removeEffectBt = gtk.ToolButton("gtk-delete")
@@ -103,15 +126,6 @@ class EffectProperties(gtk.Expander):
         self.removeEffectBt.set_is_important(True)
         self.toolbar1.insert(self.removeEffectBt, 0)
         self.table.attach(self.toolbar1, 0, 1, 0, 1, yoptions=gtk.FILL)
-
-        #self.toolbar2 = gtk.Toolbar()
-        ##self.toolbar2.set_style(gtk.TOOLBAR_BOTH_HORIZ)
-        #self.removeKeyframeBt = gtk.ToolButton("gtk-remove")
-        #self.removeKeyframeBt.set_label("Remove keyframe")
-        #self.removeKeyframeBt.set_use_underline(True)
-        #self.removeKeyframeBt.set_is_important(True)
-        #self.toolbar2.insert(self.removeKeyframeBt, 0)
-        #self.table.attach(self.toolbar2, 1, 2, 0, 1)
 
         self.storemodel = gtk.ListStore(bool, str, str, str, object)
 
@@ -160,21 +174,6 @@ class EffectProperties(gtk.Expander):
         namecol.pack_start(namecell)
         namecol.add_attribute(namecell, "text", COL_NAME_TEXT)
 
-        #Explain how to configure effects
-        self.explain_box = gtk.EventBox()
-        self.explain_box.modify_bg(gtk.STATE_NORMAL,
-                                   gtk.gdk.color_parse('white'))
-
-        self.explain_label = gtk.Label()
-        self.explain_label.set_padding(10, 10)
-        self.explain_label.set_line_wrap(True)
-        self.explain_label.set_line_wrap_mode(pango.WRAP_WORD)
-        self.explain_label.set_justify(gtk.JUSTIFY_CENTER)
-        self.explain_label.set_markup(
-            _("<span size='large'>You must select a clip on the timeline "
-              "to configure its associated effects</span>"))
-        self.explain_box.add(self.explain_label)
-
         self.treeview.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
             [dnd.EFFECT_TUPLE],
             gtk.gdk.ACTION_COPY)
@@ -190,11 +189,12 @@ class EffectProperties(gtk.Expander):
         self.treeview.connect("drag-motion", self._dragMotionCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
 
-        self.connect('notify::expanded', self.expandedcb)
+        self.connect('notify::expanded', self._expandedCb)
 
-        self.table.attach(self.treeview_scrollwin, 0, 1, 1, 2)
+        self.table.attach(self.treeview_scrollwin, 0, 1, 2, 3)
 
-        self._showExplainLabel()
+        self.VContent.pack1(self.table, resize=True, shrink=False)
+        self._showInfoBar()
         self.VContent.show()
 
     timeline = receiver()
@@ -272,7 +272,7 @@ class EffectProperties(gtk.Expander):
         track_effect.gnl_object.set_property("active", not activated)
         self.app.action_log.commit()
 
-    def expandedcb(self, expander, params):
+    def _expandedCb(self, expander, params):
         self._updateAll()
 
     def _treeViewQueryTooltipCb(self, treeview, x, y, keyboard_mode, tooltip):
@@ -289,13 +289,12 @@ class EffectProperties(gtk.Expander):
     def _updateAll(self):
         if self.get_expanded():
             if self.timeline_object:
-                self._showTable()
-                self.explain_box.hide()
+                self._setEffectDragable()
                 self._updateTreeview()
                 self._updateEffectConfigUi()
             else:
                 self._hideEffectConfig()
-                self._showExplainLabel()
+                self._showInfoBar()
             self.VContent.show()
         else:
             self.VContent.hide()
@@ -321,17 +320,22 @@ class EffectProperties(gtk.Expander):
 
             self.storemodel.append(to_append)
 
-    def _showExplainLabel(self):
-        if self.table in  self.VContent.get_children():
-            self.VContent.remove(self.table)
-        self.VContent.pack1(self.explain_box, resize=True, shrink=False)
-        self.explain_box.show_all()
+    def _showInfoBar(self):
+        if self._info_bar is None:
+            self._info_bar = self.clip_properties.addInfoBar(
+                                _("<span>You must select a clip on the timeline "
+                                  "to configure its associated effects</span>"))
+        else:
+            self._info_bar.show_all()
 
-    def _showTable(self):
-        if self.explain_box in  self.VContent.get_children():
-            self.VContent.remove(self.explain_box)
-        self.VContent.pack1(self.table, resize=True, shrink=False)
+        self.treeview.set_sensitive(False)
         self.table.show_all()
+        self.toolbar1.hide()
+
+    def _setEffectDragable(self):
+        self.treeview.set_sensitive(True)
+        self.table.show_all()
+        self._info_bar.hide()
         if not self.selected_effects:
             self.toolbar1.hide()
 
