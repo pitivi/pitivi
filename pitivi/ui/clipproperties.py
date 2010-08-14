@@ -84,9 +84,9 @@ class ClipProperties(gtk.VBox, Loggable):
         label.set_markup(text)
 
         info_bar.add(label)
+        label.show()
         self.pack_start(info_bar, expand=False, fill=False)
 
-        info_bar.show_all()
         return info_bar
 
     def hideInfoBar(self, text):
@@ -325,8 +325,11 @@ class EffectProperties(gtk.Expander):
             self._info_bar = self.clip_properties.addInfoBar(
                                 _("<span>You must select a clip on the timeline "
                                   "to configure its associated effects</span>"))
-        else:
-            self._info_bar.show_all()
+        self._info_bar.show()
+        children = self._info_bar.get_children()
+        #FIXME: Why does the no-show-all not work?
+        children[0].hide()
+        children[1].hide()
 
         self.treeview.set_sensitive(False)
         self.table.show_all()
