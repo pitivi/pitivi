@@ -136,6 +136,12 @@ class TestStillImage(TestCase):
         self.cleanUp()
 
 
+        # mix images with different resolutions by overlapping
+        self.configureStreams(range(3), [0, self.clip_duration // 2, self.clip_duration])
+        self.startRender()
+        self.cleanUp()
+
+
         # mix images and videos with the same resolution
         self.configureStreams([0, 1, 3], [0, self.clip_duration, 2 * self.clip_duration])
         self.startRender()
@@ -144,6 +150,12 @@ class TestStillImage(TestCase):
 
         # mix images and videos with different resolutions
         self.configureStreams(range(4), [0, self.clip_duration, 2 * self.clip_duration, 3 * self.clip_duration])
+        self.startRender()
+        self.cleanUp()
+
+
+        # mix images and videos with different resolutions by overlapping
+        self.configureStreams(range(4), [0, self.clip_duration // 2, self.clip_duration, (3 * self.clip_duration) // 2])
         self.startRender()
         self.cleanUp()
 
