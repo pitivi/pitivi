@@ -66,8 +66,9 @@ class TestStillImage(TestCase):
         vsettings = StreamEncodeSettings(encoder="theoraenc")
         rsettings = RenderSettings(settings=[vsettings],
                                    muxer="oggmux")
+        self.fakesink = common.FakeSinkFactory()
         rendersink = RenderSinkFactory(RenderFactory(settings=rsettings),
-                                       common.FakeSinkFactory())
+                                       self.fakesink)
         self.render = RenderAction()
         self.pipeline = Pipeline()
         self.pipeline.connect("eos", self._renderEOSCb)
@@ -93,12 +94,19 @@ class TestStillImage(TestCase):
 
     def startRender(self):
         self.render.activate()
+        self.data_written = 0
+        self.fakesink.bins[0].props.signal_handoffs = True
+        self.fakesink.bins[0].connect("handoff", self._fakesinkHandoffCb)
         self.pipeline.play()
         self.mainloop.run()
+
+    def _fakesinkHandoffCb(self, fakesink, buf, pad):
+        self.data_written += buf.size
 
     def _renderEOSCb(self, obj):
         self.mainloop.quit()
         # check the render was successful
+        self.assertTrue(self.data_written > 0)
 
     def _renderErrorCb(self, obj, error, details):
         print "Error: %s\nDetails: %s" % (str(error), str(details))
