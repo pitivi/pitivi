@@ -260,7 +260,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             }
             widget '*.timelinewindow' style 'timelinewindow'
         """)
-        
+
         self.attach(timelinewindow, 1, 2, 1, 2)
 
         # error infostub
