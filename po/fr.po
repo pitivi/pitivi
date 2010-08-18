@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-06-19 11:19+0000\n"
+"POT-Creation-Date: 2010-08-17 07:06+0000\n"
 "PO-Revision-Date: 2010-03-10 22:45+0100\n"
 "Last-Translator: Bruno Brouard <annoa.b@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
@@ -314,20 +314,19 @@ msgstr ""
 #: ../pitivi/application.py:223
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"    no project is given, %prog creates a new project.\n"
-"    Alternatively, when -i is specified, arguments are treated as clips to "
-"be\n"
-"    imported into the project. If -a is specified, these clips will also be "
+"no project is given, %prog creates a new project.\n"
+"Alternatively, when -i is specified, arguments are treated as clips to be\n"
+"imported into the project. If -a is specified, these clips will also be "
 "added to\n"
-"    the end of the project timeline."
+"the end of the project timeline."
 msgstr ""
 "Démarre l'éditeur vidéo et ouvre le FICHIER_DE_PROJET si indiqué. Si aucun\n"
-"    projet n'est indiqué, %prog en crée un nouveau.\n"
-"    Sinon, lorsque -i est indiqué, les paramètres sont traités comme des "
+"projet n'est indiqué, %prog en crée un nouveau.\n"
+"Sinon, lorsque -i est indiqué, les paramètres sont traités comme des "
 "séquences\n"
-"    à importer dans le projet. Si -a est indiqué, ces séquences seront aussi "
+"à importer dans le projet. Si -a est indiqué, ces séquences seront aussi "
 "ajoutées\n"
-"    à la fin de la table de montage du projet."
+"à la fin de la table de montage du projet."
 
 #: ../pitivi/application.py:229
 msgid "Import each MEDIA_FILE into the project."
@@ -486,11 +485,22 @@ msgstr[1] "Propriétés pour : %d objets"
 msgid "No properties..."
 msgstr "Aucune propriété..."
 
-#: ../pitivi/ui/dynamic.py:52
+#: ../pitivi/ui/dynamic.py:54
 msgid "Implement Me"
 msgstr "Implémente-moi"
 
-#: ../pitivi/ui/dynamic.py:237
+#. i18n: string for custom video width/height/framerate settings
+#. i18n: string for custom audio rate/depth/channels settings
+#: ../pitivi/ui/dynamic.py:374 ../pitivi/ui/exportsettingswidget.py:116
+#: ../pitivi/ui/exportsettingswidget.py:150
+msgid "Custom"
+msgstr "Personnalisé"
+
+#: ../pitivi/ui/dynamic.py:398
+msgid "Save Preset"
+msgstr "Enregistrer la pré-sélection"
+
+#: ../pitivi/ui/dynamic.py:466
 msgid "Choose..."
 msgstr "Choisir..."
 
@@ -729,13 +739,6 @@ msgstr "SVGA (800x600)"
 msgid "XGA (1024x768)"
 msgstr "XGA (1024x768)"
 
-#. i18n: string for custom video width/height/framerate settings
-#. i18n: string for custom audio rate/depth/channels settings
-#: ../pitivi/ui/exportsettingswidget.py:116
-#: ../pitivi/ui/exportsettingswidget.py:150
-msgid "Custom"
-msgstr "Personnalisé"
-
 #: ../pitivi/ui/exportsettingswidget.py:301
 msgid "Raw Video"
 msgstr "Vidéo brut"
@@ -941,19 +944,19 @@ msgstr "Barre d'outils de la table de montage"
 msgid "Media Library"
 msgstr "Bibliothèque multimédia"
 
-#: ../pitivi/ui/mainwindow.py:542
+#: ../pitivi/ui/mainwindow.py:543
 msgid "Open File..."
 msgstr "Ouvrir un fichier..."
 
-#: ../pitivi/ui/mainwindow.py:558
+#: ../pitivi/ui/mainwindow.py:559
 msgid "All Supported Formats"
 msgstr "Tous les formats pris en charge"
 
-#: ../pitivi/ui/mainwindow.py:628
+#: ../pitivi/ui/mainwindow.py:629
 msgid "Contributors:"
 msgstr "Contributeurs :"
 
-#: ../pitivi/ui/mainwindow.py:640
+#: ../pitivi/ui/mainwindow.py:641
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -961,61 +964,61 @@ msgstr ""
 "GNU Lesser General Public Licence\n"
 "Voir http://www.gnu.org/copyleft/lesser.html pour plus de détails"
 
-#: ../pitivi/ui/mainwindow.py:759
+#: ../pitivi/ui/mainwindow.py:760
 msgid "Close without saving"
 msgstr "Fermer sans enregistrer"
 
-#: ../pitivi/ui/mainwindow.py:772
+#: ../pitivi/ui/mainwindow.py:773
 msgid "Save changes to the current project before closing?"
 msgstr "Enregistrer les modifications au projet actuel avant de fermer ?"
 
-#: ../pitivi/ui/mainwindow.py:779
+#: ../pitivi/ui/mainwindow.py:780
 msgid "If you don't save some of your changes will be lost"
 msgstr "Si vous n'enregistrez pas, certaines modifications seront perdues"
 
-#: ../pitivi/ui/mainwindow.py:832
+#: ../pitivi/ui/mainwindow.py:833
 msgid "Do you want to reload current project?"
 msgstr "Voulez-vous recharger le projet actuel ?"
 
-#: ../pitivi/ui/mainwindow.py:837
+#: ../pitivi/ui/mainwindow.py:838
 msgid "Revert to saved project"
 msgstr "Revenir au projet enregistré"
 
-#: ../pitivi/ui/mainwindow.py:840
+#: ../pitivi/ui/mainwindow.py:841
 msgid "All unsaved changes will be lost."
 msgstr "Toutes les modifications non enregistrées seront perdues."
 
-#: ../pitivi/ui/mainwindow.py:856
+#: ../pitivi/ui/mainwindow.py:857
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi ne peut charger le fichier « %s »"
 
-#: ../pitivi/ui/mainwindow.py:859
+#: ../pitivi/ui/mainwindow.py:860
 msgid "Error Loading File"
 msgstr "Erreur lors du chargement d'un fichier"
 
-#: ../pitivi/ui/mainwindow.py:866
+#: ../pitivi/ui/mainwindow.py:867
 msgid "Locate missing file..."
 msgstr "Rechercher le fichier manquant..."
 
-#: ../pitivi/ui/mainwindow.py:875
+#: ../pitivi/ui/mainwindow.py:876
 msgid "The following file has moved, please tell PiTiVi where to find it."
 msgstr ""
 "Le fichier suivant a été déplacé, indiquez à PiTiVi son nouvel emplacement."
 
-#: ../pitivi/ui/mainwindow.py:877
+#: ../pitivi/ui/mainwindow.py:878
 msgid "Duration:"
 msgstr "Durée :"
 
-#: ../pitivi/ui/mainwindow.py:1021
+#: ../pitivi/ui/mainwindow.py:1022
 msgid "Save As..."
 msgstr "Enregistrer sous..."
 
-#: ../pitivi/ui/mainwindow.py:1029
+#: ../pitivi/ui/mainwindow.py:1030
 msgid "Untitled.xptv"
 msgstr "SansTitre.xptv"
 
-#: ../pitivi/ui/mainwindow.py:1040 ../pitivi/ui/mainwindow.py:1053
+#: ../pitivi/ui/mainwindow.py:1041 ../pitivi/ui/mainwindow.py:1054
 msgid "Detect Automatically"
 msgstr "Détecter automatiquement"
 
@@ -1185,34 +1188,34 @@ msgstr "Certaines modifications ne prendront effet qu'au redémarrage de Pitivi"
 msgid "Reset"
 msgstr "Réinitialiser"
 
-#: ../pitivi/ui/previewer.py:55 ../pitivi/ui/previewer.py:83
-#: ../pitivi/ui/previewer.py:94 ../pitivi/ui/trackobject.py:48
+#: ../pitivi/ui/previewer.py:57 ../pitivi/ui/previewer.py:85
+#: ../pitivi/ui/previewer.py:96 ../pitivi/ui/trackobject.py:48
 #: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
 #: ../pitivi/ui/trackobject.py:81
 msgid "Appearance"
 msgstr "Apparence"
 
-#: ../pitivi/ui/previewer.py:56
+#: ../pitivi/ui/previewer.py:58
 msgid "Thumbnail Gap (pixels)"
 msgstr "Espace entre vignettes (pixels)"
 
-#: ../pitivi/ui/previewer.py:58
+#: ../pitivi/ui/previewer.py:60
 msgid "The gap between thumbnails"
 msgstr "L'espace entre les vignettes"
 
-#: ../pitivi/ui/previewer.py:84
+#: ../pitivi/ui/previewer.py:86
 msgid "Show Thumbnails (Video)"
 msgstr "Afficher les vignettes (vidéo)"
 
-#: ../pitivi/ui/previewer.py:85
+#: ../pitivi/ui/previewer.py:87
 msgid "Show Thumbnails on Video Clips"
 msgstr "Affiche les vignettes pour les séquences vidéo"
 
-#: ../pitivi/ui/previewer.py:95
+#: ../pitivi/ui/previewer.py:97
 msgid "Show Waveforms (Audio)"
 msgstr "Afficher les formes d'onde (audio)"
 
-#: ../pitivi/ui/previewer.py:96
+#: ../pitivi/ui/previewer.py:98
 msgid "Show Waveforms on Audio Clips"
 msgstr "Affiche les formes d'onde pour les séquences audio"
 
