@@ -242,11 +242,19 @@ class EffectProperties(gtk.Expander):
         track.removeTrackObject(effect)
         self.app.action_log.commit()
 
-    def _dragDataReceivedCb(self, unused_layout, context, x, y,
-        selection, targetType, timestamp):
+    def addEffectToCurrentSelection(self, factory_name):
+        if self.timeline_object:
+            factory = self.app.effects.getFactoryFromName(factory_name)
+            self.app.action_log.begin("add effect")
+            self.timeline.addEffectFactoryOnObject(factory,
+                                                   timeline_objects = [self.timeline_object])
+            self.app.action_log.commit()
+
+    def _dragDataReceivedCb(self, unused_layout, context, unused_x, unused_y,
+        selection, unused_targetType, unused_timestamp):
         self._factory = self.app.effects.getFactoryFromName(selection.data)
 
-    def _dragDropCb(self, unused, context, x, y, timestamp):
+    def _dragDropCb(self, unused, context, unused_x, unused_y, unused_timestamp):
         if self._factory:
             self.app.action_log.begin("add effect")
             self.timeline.addEffectFactoryOnObject(self._factory,
@@ -294,6 +302,7 @@ class EffectProperties(gtk.Expander):
                 self._updateEffectConfigUi()
             else:
                 self._hideEffectConfig()
+                self.storemodel.clear()
                 self._showInfoBar()
             self.VContent.show()
         else:
