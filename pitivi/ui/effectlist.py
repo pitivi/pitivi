@@ -61,7 +61,6 @@ class EffectList(gtk.VBox, Loggable):
         self._dragSelection = False
         self._dragX = 0
         self._dragY = 0
-        self._ignoreRelease = False
 
         self.set_spacing(SPACING)
 
@@ -200,14 +199,8 @@ class EffectList(gtk.VBox, Loggable):
         result = view.get_path_at_pos(int(event.x), int(event.y))
         if result:
             path = result[0]
-            if isinstance(view, gtk.TreeView):
-                selection = view.get_selection()
-                return selection.path_is_selected(path) and selection.count_selected_rows() > 0
-            elif isinstance(view, gtk.IconView):
-                selection = view.get_selected_items()
-                return view.path_is_selected(path) and len(selection)
-            else:
-                assert False
+            selection = view.get_selection()
+            return selection.path_is_selected(path) and selection.count_selected_rows() > 0
 
         return False
 
@@ -221,8 +214,7 @@ class EffectList(gtk.VBox, Loggable):
             factory_name = self.getSelectedItems()
             self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
         else:
-            if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
-                chain_up = not self._rowUnderMouseSelected(treeview, event)
+            chain_up = not self._rowUnderMouseSelected(treeview, event)
 
             self._dragStarted = False
             self._dragSelection = False
@@ -235,20 +227,11 @@ class EffectList(gtk.VBox, Loggable):
         else:
             treeview.grab_focus()
 
-        self._ignoreRelease = chain_up
-
         return True
 
     def _treeViewButtonReleaseCb(self, treeview, event):
         if event.button == self._dragButton:
             self._dragButton = None
-            #   TODO: What does it do?
-            #   if (not self._ignoreRelease) and (not self._dragStarted):
-            #    treeview.get_selection().unselect_all()
-            #    result = treeview.get_path_at_pos(int(event.x), int(event.y))
-            #    if result:
-            #        path = result[0]
-            #        treeview.get_selection().select_path(path)
         return False
 
     def _treeViewMotionNotifyEventCb(self, treeview, event):
@@ -276,8 +259,6 @@ class EffectList(gtk.VBox, Loggable):
             gtk.TreeView.do_button_press_event(treeview, event)
         else:
             treeview.grab_focus()
-
-        self._ignoreRelease = chain_up
 
         return False
 
