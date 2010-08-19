@@ -209,6 +209,8 @@ class SmartVideomixerBinPropertyHelper(Signallable):
         # connect track-object-{added,removed} signals from track to callbacks
         track.connect("track-object-added", self._trackAddedCb)
         track.connect("track-object-removed", self._trackRemovedCb)
+        track.connect("transition-added", self._transitionAddedCb)
+        track.connect("transition-removed", self._transitionRemovedCb)
         # configure initial alpha state
         self.alphaStateChanged(False)
 
@@ -264,6 +266,17 @@ class SmartVideomixerBinPropertyHelper(Signallable):
         if old_alpha_count == 0 and self.alpha_count > 0:
             self.alphaStateChanged(True)
         elif old_alpha_count > 0 and self.alpha_count == 0:
+            self.alphaStateChanged(False)
+
+    def _transitionAddedCb(self, track, transition):
+        # FIXME - this assumes transitions need alpha, change it if they don't
+        if self.alpha_count == 0:
+            self.alphaStateChanged(True)
+        self.alpha_count += 1
+
+    def _transitionRemovedCb(self, track, transition):
+        self.alpha_count -= 1
+        if self.alpha_count == 0:
             self.alphaStateChanged(False)
 
     def alphaStateChanged(self, has_alpha):
