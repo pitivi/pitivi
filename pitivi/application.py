@@ -54,6 +54,7 @@ from pitivi.undo import UndoableActionLog, DebugActionLogObserver
 from pitivi.timeline.timeline_undo import TimelineLogObserver
 from pitivi.sourcelist_undo import SourceListLogObserver
 from pitivi.undo import UndoableAction
+from pitivi.render import Renderer
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
@@ -195,12 +196,16 @@ class Pitivi(Loggable, Signallable):
         self.current = project
         self.emit("new-project-created", project)
 
+    def _newProjectLoaded(self, project):
+        pass
+
     def _projectManagerNewProjectLoaded(self, projectManager, project):
         self.current = project
         self.action_log.clean()
         self.timelineLogObserver.startObserving(project.timeline)
         self.projectLogObserver.startObserving(project)
         self.sourcelist_log_observer.startObserving(project.sources)
+        self._newProjectLoaded(project)
         self.emit("new-project-loaded", project)
 
     def _projectManagerNewProjectFailed(self, projectManager, uri, exception):
@@ -217,14 +222,15 @@ class Pitivi(Loggable, Signallable):
 
 class InteractivePitivi(Pitivi):
     usage = _("""
-      %prog [PROJECT_FILE]
+      %prog [-r OUTPUT_FILE] [PROJECT_FILE]
       %prog -i [-a] [MEDIA_FILE]...""")
 
     description = _("""Starts the video editor, optionally loading PROJECT_FILE. If
 no project is given, %prog creates a new project.
 Alternatively, when -i is specified, arguments are treated as clips to be
 imported into the project. If -a is specified, these clips will also be added to
-the end of the project timeline.""")
+the end of the project timeline.
+When -r is specified, the given project file is rendered without opening the GUI.""")
 
     import_help = _("""Import each MEDIA_FILE into the project.""")
 
@@ -232,10 +238,19 @@ the end of the project timeline.""")
     debug_help = _("""Run pitivi in the Python Debugger""")
 
     no_ui_help = _("""Run pitivi with no gui""")
+    render_help = _("""Render the given project file to OUTPUT_FILE with no GUI.""")
 
     def __init__(self):
         Pitivi.__init__(self)
         self.mainloop = gobject.MainLoop()
+
+    def _newProjectLoaded(self, project):
+        if self.render_output:
+            # create renderer and set output file
+            self.renderer = Renderer(self.current, pipeline=None, outfile=self.output_file)
+            self.renderer.connect("eos", self._eosCb)
+            # configure the renderer and start rendering!
+            self.renderer.startRender()
 
     def run(self, argv):
         # check for dependencies
@@ -246,10 +261,19 @@ the end of the project timeline.""")
         parser = self._createOptionParser()
         options, args = parser.parse_args(argv)
 
+        # if we aren't importing sources then n_args should be at most
+        # 1 + parameters that take individual arguments
+        n_args = 1
+
         if options.debug:
             sys.excepthook = self._excepthook
 
         # validate options
+        self.render_output = options.render_output
+        if options.render_output:
+            options.no_ui = True
+            n_args += 1
+
         if options.no_ui:
             self.gui = None
         else:
@@ -257,17 +281,26 @@ the end of the project timeline.""")
             self.gui = PitiviMainWindow(self)
             self.gui.show()
 
+        if options.import_sources and options.render_output:
+            parser.error("-r and -i are incompatible")
+            return
+
         if not options.import_sources and options.add_to_timeline:
             parser.error("-a requires -i")
             return
 
-        if not options.import_sources and len(args) > 1:
+        if not options.import_sources and ((options.render_output and len(args) != 2)
+                    or len(args) > n_args):
             parser.error("invalid arguments")
             return
 
         if not options.import_sources and args:
+            index = 0
+            if options.render_output:
+                self.output_file = "file://%s" % os.path.abspath(args[index])
+                index += 1
             # load a project file
-            project = "file://%s" % os.path.abspath(args[0])
+            project = "file://%s" % os.path.abspath(args[index])
             self.projectManager.loadProject(project)
         else:
             # load the passed filenames, optionally adding them to the timeline
@@ -282,6 +315,10 @@ the end of the project timeline.""")
 
         # run the mainloop
         self.mainloop.run()
+
+    def _eosCb(self, unused_obj):
+        if self.gui is None:
+            self.shutdown()
 
     def shutdown(self):
         if Pitivi.shutdown(self):
@@ -302,6 +339,8 @@ the end of the project timeline.""")
                 action="store_true", default=False)
         parser.add_option("-n", "--no-ui", help=self.no_ui_help,
                 action="store_true", default=False)
+        parser.add_option("-r", "--render", help=self.render_help,
+                dest="render_output", action="store_true", default=False)
 
         return parser
 

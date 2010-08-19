@@ -24,7 +24,6 @@ Encoding dialog
 """
 
 import os
-import time
 import gtk
 import gst
 from urlparse import urlparse
@@ -41,9 +40,9 @@ from pitivi.factories.base import SourceFactory
 from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.settings import export_settings_to_render_settings
 from pitivi.stream import VideoStream, AudioStream
-from pitivi.utils import beautify_length
+from pitivi.render import Renderer
 
-class EncodingDialog(GladeWindow, Loggable):
+class EncodingDialog(GladeWindow, Renderer):
     """ Encoding dialog box """
     glade_file = "encodingdialog.glade"
 
@@ -64,18 +63,8 @@ class EncodingDialog(GladeWindow, Loggable):
         self.ainfo = self.widgets["audioinfolabel"]
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
 
-        # grab the Pipeline and settings
-        self.project = project
-        if pipeline != None:
-            self.pipeline = pipeline
-        else:
-            self.pipeline = self.project.pipeline
-        self.detectStreamTypes()
+        Renderer.__init__(self, project, pipeline)
 
-        self.outfile = None
-        self.rendering = False
-        self.renderaction = None
-        self.settings = project.getSettings()
         self.timestarted = 0
         self._displaySettings()
 
@@ -123,31 +112,14 @@ class EncodingDialog(GladeWindow, Loggable):
             self.app.settings.lastExportFolder = dialog.get_current_folder()
         dialog.destroy()
 
-    def _positionCb(self, unused_pipeline, position):
-        self.debug("%r %r", unused_pipeline, position)
-        timediff = time.time() - self.timestarted
-        length = self.project.timeline.duration
-        self.progressbar.set_fraction(float(min(position, length)) / float(length))
-        if timediff > 5.0 and position:
-            # only display ETA after 5s in order to have enough averaging and
-            # if the position is non-null
-            totaltime = (timediff * float(length) / float(position)) - timediff
-            length = beautify_length(int(totaltime * gst.SECOND))
-            if length:
-                self.progressbar.set_text(_("About %s left") % length)
-
-    def _changeSourceSettings(self, settings):
-        videocaps = settings.getVideoCaps()
-        for source in self.project.sources.getSources():
-            source.setFilterCaps(videocaps)
+    def updatePosition(self, fraction, text):
+        self.progressbar.set_fraction(fraction)
+        if text is not None:
+            self.progressbar.set_text(_("About %s left") % text)
 
     def _recordButtonClickedCb(self, unused_button):
-        self.debug("Rendering")
-        if self.outfile and not self.rendering:
-            self.addRecordAction()
-            self.pipeline.play()
-            self.timestarted = time.time()
-            self.rendering = True
+        self.startRender()
+        if self.rendering:
             self.cancelbutton.set_label("gtk-cancel")
             self.progressbar.set_text(_("Rendering"))
             self.recordbutton.set_sensitive(False)
@@ -163,16 +135,13 @@ class EncodingDialog(GladeWindow, Loggable):
             self._displaySettings()
         dialog.destroy()
 
-    def _eosCb(self, unused_pipeline):
-        self.debug("EOS !")
-        self.rendering = False
+    def updateUIOnEOS(self):
         self.progressbar.set_text(_("Rendering Complete"))
         self.progressbar.set_fraction(1.0)
         self.recordbutton.set_sensitive(False)
         self.filebutton.set_sensitive(True)
         self.settingsbutton.set_sensitive(True)
         self.cancelbutton.set_label("gtk-close")
-        self.removeRecordAction()
 
     def _cancelButtonClickedCb(self, unused_button):
         self.debug("Cancelling !")
@@ -181,64 +150,3 @@ class EncodingDialog(GladeWindow, Loggable):
     def _deleteEventCb(self, window, event):
         self.debug("delete event")
         self._shutDown()
-
-    def detectStreamTypes(self):
-        self.have_video = False
-        self.have_audio = False
-
-        # we can only render TimelineSourceFactory
-        sources = [factory for factory in self.pipeline.factories.keys()
-                if isinstance(factory, SourceFactory)]
-        timeline_source = sources[0]
-        assert isinstance(timeline_source, TimelineSourceFactory)
-
-        for track in timeline_source.timeline.tracks:
-            if isinstance(track.stream, AudioStream) and track.duration > 0:
-                self.have_audio = True
-            elif isinstance(track.stream, VideoStream) and \
-                    track.duration > 0:
-                self.have_video = True
-
-    def addRecordAction(self):
-        self.debug("renderaction %r", self.renderaction)
-        if self.renderaction == None:
-            self.pipeline.connect('position', self._positionCb)
-            self.pipeline.connect('eos', self._eosCb)
-            self.debug("Setting pipeline to STOP")
-            self.pipeline.stop()
-            settings = export_settings_to_render_settings(self.settings,
-                    self.have_video, self.have_audio)
-            self.debug("Creating RenderAction")
-            sources = [factory for factory in self.pipeline.factories
-                    if isinstance(factory, SourceFactory)]
-            self.renderaction = render_action_for_uri(self.outfile,
-                    settings, *sources)
-            self.debug("setting action on pipeline")
-            self.pipeline.addAction(self.renderaction)
-            self.debug("Activating render action")
-            self.renderaction.activate()
-            self.debug("Setting all active ViewAction to sync=False")
-            for ac in self.pipeline.actions:
-                if isinstance(ac, ViewAction) and ac.isActive():
-                    ac.setSync(False)
-            self.debug("Updating all sources to render settings")
-            self._changeSourceSettings(self.settings)
-            self.debug("setting pipeline to PAUSE")
-            self.pipeline.pause()
-            self.debug("done")
-
-    def removeRecordAction(self):
-        self.debug("renderaction %r", self.renderaction)
-        if self.renderaction:
-            self.pipeline.stop()
-            self.renderaction.deactivate()
-            self.pipeline.removeAction(self.renderaction)
-            self.debug("putting all active ViewActions back to sync=True")
-            for ac in self.pipeline.actions:
-                if isinstance(ac, ViewAction) and ac.isActive():
-                    ac.setSync(True)
-            self._changeSourceSettings(self.project.getSettings())
-            self.pipeline.pause()
-            self.pipeline.disconnect_by_function(self._positionCb)
-            self.pipeline.disconnect_by_function(self._eosCb)
-            self.renderaction = None
