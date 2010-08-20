@@ -249,6 +249,8 @@ When -r is specified, the given project file is rendered without opening the GUI
             # create renderer and set output file
             self.renderer = Renderer(self.current, pipeline=None, outfile=self.output_file)
             self.renderer.connect("eos", self._eosCb)
+            # on error, all we need to do is shutdown which is the same as we do for EOS
+            self.renderer.connect("error", self._eosCb)
             # configure the renderer and start rendering!
             self.renderer.startRender()
 

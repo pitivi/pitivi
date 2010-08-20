@@ -40,7 +40,8 @@ class Renderer(Loggable, Signallable):
     """ Rendering helper methods """
 
     __signals__ = {
-        "eos" : None
+        "eos" : None,
+        "error" : None
         }
 
     def __init__(self, project, pipeline=None, outfile=None):
@@ -88,6 +89,16 @@ class Renderer(Loggable, Signallable):
     def updateUIOnEOS(self):
         pass
 
+    def _errorCb(self, pipeline, error, detail):
+        self.debug("error !")
+        self.rendering = False
+        self.updateUIOnError()
+        self.removeRecordAction()
+        self.emit("error")
+
+    def updateUIOnError(self):
+        pass
+
     def _positionCb(self, unused_pipeline, position):
         self.debug("%r %r", unused_pipeline, position)
         fraction = None
@@ -115,6 +126,7 @@ class Renderer(Loggable, Signallable):
         if self.renderaction == None:
             self.pipeline.connect('position', self._positionCb)
             self.pipeline.connect('eos', self._eosCb)
+            self.pipeline.connect('error', self._errorCb)
             self.debug("Setting pipeline to STOP")
             self.pipeline.stop()
             settings = export_settings_to_render_settings(self.settings,
@@ -155,6 +167,7 @@ class Renderer(Loggable, Signallable):
             self.pipeline.pause()
             self.pipeline.disconnect_by_function(self._positionCb)
             self.pipeline.disconnect_by_function(self._eosCb)
+            self.pipeline.disconnect_by_function(self._errorCb)
             self.renderaction = None
 
     def startRender(self):
