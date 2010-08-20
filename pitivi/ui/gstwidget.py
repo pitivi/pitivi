@@ -128,6 +128,10 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
                 button = self._getResetToDefaultValueButton(prop, widget)
                 table.attach(button, 2, 3, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
                 self.buttons[button] = widget
+            self.element.connect('notify::' + prop.name,
+                                 self._propertyChangedCb,
+                                 widget)
+
             y += 1
 
         self.pack_start(table)
