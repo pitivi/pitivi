@@ -54,8 +54,6 @@ from pitivi.undo import UndoableAction
 BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
                        "alphacolor", "cogcolorspace"]
 
-
-
 class EffectsHandler(object):
     """
     Handles all the effects
@@ -68,36 +66,47 @@ class EffectsHandler(object):
             (_("Colors"), ("cogcolorspace", "alphacolor", "videobalance",
                   "gamma", "alpha", "frei0r-filter-color-distance",
                   "frei0r-filter-contrast0r", "frei0r-filter-invert0r",
-                  "frei0r-filter-saturat0r", "frei0r-filter-r",\
+                  "frei0r-filter-saturat0r", "frei0r-filter-r",
                   "frei0r-filter-white-balance", "frei0r-filter-brightness",
                   "frei0r-filter-b", "frei0r-filter-gamma",
                   "frei0r-filter-hueshift0r", "frei0r-filter-transparency",
                   "frei0r-filter-equaliz0r", "frei0r-filter-glow",
-                  "frei0r-filter-g", "frei0r-filter-bw0r",
+                  "frei0r-filter-g", "frei0r-filter-bw0r", "burn", "dodge",
+                  "coloreffects", "chromium", "exclusion", "glfiltersobel",
+                  "Solarize", "frei0r-filter-threshold0r",
+                  "frei0r-filter-twolay0r", 
                 )
             ),
-            (_("Noise"), ("videorate", "frei0r-filter-edgeglow", )),
+            (_("Noise"), ("videorate", "frei0r-filter-edgeglow", "gaussianblur",
+                          "diffuse", "dilate", "marble", )),
             (_("Analysis"), ("videoanalyse", "videodetect", "videomark", "revtv",
                              "navigationtest", "frei0r-filter-rgb-parade",
                              "frei0r-filter-vectorscope",
-                             "frei0r-filter-luminance",\
+                             "frei0r-filter-luminance",
                           )),
-            (_("Blur"), ("frei0r-filter-squareblur", )),
+            (_("Blur"), ("frei0r-filter-squareblur", "gaussianblur", "diffuse",
+                         "dilate", "marble", )),
             (_("Geometry"), ("cogscale", "aspectratiocrop", "cogdownsample",
                   "videocrop", "videoflip", "videobox", "gdkpixbufscale",
                   "frei0r-filter-letterb0xed", "frei0r-filter-k-means-clustering",
                   "videoscale", "frei0r-filter-lens-correction",
                   "frei0r-filter-perspective",
-                  "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",\
+                  "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",
                   "frei0r-filter-flippo", "frei0r-filter-3dflippo",
-                  "frei0r-filter-letterb0xed",
+                  "frei0r-filter-letterb0xed", "bulge", "circle", "fisheye",
+                  "kaleidoscope", "mirror", "pinch", "sphere", "square",
+                  "stretch", "twirl", "waterriple",
                   )
             ),
-            (_("Fancy"),("rippletv", "streaktv", "radioactv", "optv",\
-                         "quarktv", "vertigotv", "shagadelictv", "warptv",\
-                         "dicetv", "agingtv", "edgetv", "frei0r-filter-cartoon",\
-                         "frei0r-filter-water", "frei0r-filter-nosync0r",\
-                         "frei0r-filter-k-means-clustering", "frei0r-filter-delay0r",
+            (_("Fancy"),("rippletv", "streaktv", "radioactv", "optv",
+                         "quarktv", "vertigotv", "shagadelictv", "warptv",
+                         "dicetv", "agingtv", "edgetv", "frei0r-filter-cartoon",
+                         "frei0r-filter-water", "frei0r-filter-nosync0r",
+                         "frei0r-filter-k-means-clustering",
+                         "frei0r-filter-delay0r",
+                         "bulge", "circle", "fisheye", "kaleidoscope",
+                         "mirror", "pinch", "sphere", "square", "stretch",
+                         "twirl", "waterriple",
                      )
             ),
             (_("Time"), ("frei0r-filter-delay0r",)),
