@@ -46,6 +46,10 @@ from pitivi.ui.common import PADDING, SPACING
  COL_DESC_TEXT,
  COL_TRACK_EFFECT) = range(5)
 
+class ClipPropertiesError(Exception):
+    """Base Exception for errors happening in L{ClipProperties}s or L{EffectProperties}s"""
+    pass
+
 class ClipProperties(gtk.VBox, Loggable):
     """
     Widget for configuring clips properties
@@ -90,7 +94,6 @@ class ClipProperties(gtk.VBox, Loggable):
         return info_bar
 
     def hideInfoBar(self, text):
-        print text
         if text not in self.info_bars:
             self.info_bars[text].hide()
 
@@ -104,7 +107,7 @@ class EffectProperties(gtk.Expander):
         self.set_expanded(True)
 
         self.selected_effects = []
-        self.timeline_object = None
+        self.timeline_objects = []
         self._factory = None
         self.app = instance
         self.effectsHandler = self.app.effects
@@ -113,6 +116,7 @@ class EffectProperties(gtk.Expander):
         self.effect_props_handling = effect_properties_handling
         self.clip_properties = clip_properties
         self._info_bar =  None
+        self._config_ui_h_pos = {}
 
         self.VContent = gtk.VPaned()
         self.add(self.VContent)
@@ -201,23 +205,27 @@ class EffectProperties(gtk.Expander):
 
     @handler(timeline, "selection-changed")
     def selectionChangedCb(self, timeline):
+        for timeline_object in self.timeline_objects:
+            timeline_object.disconnect_by_func(self._trackObjectAddedCb)
+            timeline_object.disconnect_by_func(self._trackRemovedRemovedCb)
+
         self.selected_effects = timeline.selection.getSelectedTrackEffects()
+
         if timeline.selection.selected:
-            self.timeline_object = list(timeline.selection.selected)[0]
+            self.timeline_objects = list(timeline.selection.selected)
+            for timeline_object in self.timeline_objects:
+                timeline_object.connect("track-object-added", self._trackObjectAddedCb)
+                timeline_object.connect("track-object-removed", self._trackRemovedRemovedCb)
         else:
-            self.timeline_object = None
+            self.timeline_objects = []
         self._updateAll()
 
-    timeline_object = receiver()
-
-    @handler(timeline_object, "track-object-added")
     def  _trackObjectAddedCb(self, unused_timeline_object, track_object):
         if isinstance (track_object, TrackEffect):
             selec = self.timeline.selection.getSelectedTrackEffects()
             self.selected_effects = selec
             self._updateAll()
 
-    @handler(timeline_object, "track-object-removed")
     def  _trackRemovedRemovedCb(self, unused_timeline_object, track_object):
         if isinstance (track_object, TrackEffect):
             selec = self.timeline.selection.getSelectedTrackEffects()
@@ -236,18 +244,35 @@ class EffectProperties(gtk.Expander):
             self._removeEffect(effect)
 
     def _removeEffect(self, effect):
-        self.app.action_log.begin("remove effect")
-        track  = effect.track
-        self.timeline_object.removeTrackObject(effect)
-        track.removeTrackObject(effect)
-        self.app.action_log.commit()
+        rm = False
+        for timeline_object in self.timeline_objects:
+            if effect in timeline_object.track_objects:
+                self.app.action_log.begin("remove effect")
+                track  = effect.track
+                timeline_object.removeTrackObject(effect)
+                track.removeTrackObject(effect)
+                self.app.action_log.commit()
+                rm = True
+
+                self._cleanCache(effect)
+                break
+
+        if not rm:
+            raise ClipPropertiesError("Effect not in the selected list of\
+                                      TimelineObjects")
+
+    def _cleanCache(self, effect):
+        element = effect.getElement()
+        config_ui = self.effect_props_handling.cleanCache(element)
+        if self._config_ui_h_pos.has_key(config_ui):
+            self._config_ui_h_pos.pop(config_ui)
 
     def addEffectToCurrentSelection(self, factory_name):
-        if self.timeline_object:
+        if self.timeline_objects:
             factory = self.app.effects.getFactoryFromName(factory_name)
             self.app.action_log.begin("add effect")
             self.timeline.addEffectFactoryOnObject(factory,
-                                                   timeline_objects = [self.timeline_object])
+                                                   self.timeline_objects)
             self.app.action_log.commit()
 
     def _dragDataReceivedCb(self, unused_layout, context, unused_x, unused_y,
@@ -258,7 +283,7 @@ class EffectProperties(gtk.Expander):
         if self._factory:
             self.app.action_log.begin("add effect")
             self.timeline.addEffectFactoryOnObject(self._factory,
-                                                   timeline_objects = [self.timeline_object])
+                                                   self.timeline_objects)
             self.app.action_log.commit()
         self._factory = None
 
@@ -296,7 +321,7 @@ class EffectProperties(gtk.Expander):
 
     def _updateAll(self):
         if self.get_expanded():
-            if self.timeline_object:
+            if self.timeline_objects:
                 self._setEffectDragable()
                 self._updateTreeview()
                 self._updateEffectConfigUi()
@@ -352,7 +377,7 @@ class EffectProperties(gtk.Expander):
             self.toolbar1.hide()
 
     def _treeviewSelectionChangedCb(self, treeview):
-        if self.selection.count_selected_rows() == 0 and self.timeline_object:
+        if self.selection.count_selected_rows() == 0 and self.timeline_objects:
                 self.app.gui.setActionsSensitive(['DeleteObj'], True)
         else:
             self.app.gui.setActionsSensitive(['DeleteObj'], False)
@@ -360,6 +385,8 @@ class EffectProperties(gtk.Expander):
         self._updateEffectConfigUi()
 
     def _updateEffectConfigUi(self):
+        if self._effect_config_ui is not None:
+            self._config_ui_h_pos[self._effect_config_ui] = self.VContent.get_position()
         if self.selection.get_selected()[1]:
             track_effect = self.storemodel.get_value(self.selection.get_selected()[1],
                                                COL_TRACK_EFFECT)
@@ -375,7 +402,12 @@ class EffectProperties(gtk.Expander):
                 self.VContent.pack2(self._effect_config_ui,
                                          resize=False,
                                          shrink=False)
-                self.VContent.set_position(10)
+                if self._config_ui_h_pos.has_key(self._effect_config_ui):
+                    position = self._config_ui_h_pos.get(self._effect_config_ui)
+                    self.VContent.set_position(int(position))
+                else:
+                    self.VContent.set_position(10)
+
                 self._effect_config_ui.show_all()
             self.selected_on_treeview = track_effect
         else:
@@ -383,5 +415,6 @@ class EffectProperties(gtk.Expander):
 
     def _hideEffectConfig(self):
         if self._effect_config_ui:
+            self._config_ui_h_pos[self._effect_config_ui] = self.VContent.get_position()
             self._effect_config_ui.hide()
             self._effect_config_ui = None

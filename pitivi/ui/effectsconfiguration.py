@@ -23,6 +23,7 @@
 # any later version.
 
 import gtk
+import gobject
 
 from pitivi.pipeline import PipelineError
 from pitivi.ui.gstwidget import GstElementSettingsWidget
@@ -34,6 +35,7 @@ class EffectsPropertiesHandling:
         self.cache_dict = {}
         self.pipeline = None
         self._current_effect_setting_ui = None
+        self._current_element_values = {}
         self.action_log = action_log
 
     def getEffectConfigurationUI(self, effect):
@@ -59,16 +61,28 @@ class EffectsPropertiesHandling:
                     self.cache_dict[effect] = effect_set_ui
                 self._connectAllWidgetCbs(effect_set_ui, effect)
 
-        effect_set_ui = self._getEffectSetUI(effect)
+        effect_set_ui = self._getUiToSetEffect(effect)
 
         self._current_effect_setting_ui = effect_set_ui
+        element = self._current_effect_setting_ui.element
+        for prop in gobject.list_properties(element):
+            self._current_element_values[prop.name] = element.get_property(prop.name)
+
         return self.cache_dict[effect]
 
-    def _getEffectSetUI(self, effect):
+    def cleanCache(self, effect):
+        if self.cache_dict.has_key(effect):
+            conf_ui = self.effect_props_handling.cache_dict.get(effect)
+            self.cache_dict.pop(effect)
+            return conf_ui
+
+    def _getUiToSetEffect(self, effect):
+        """ Permit to get the widget to set the effect and not its container """
         if type(self.cache_dict[effect]) is gtk.ScrolledWindow:
             effect_set_ui = self.cache_dict[effect].get_children()[0].get_children()[0]
         else:
             effect_set_ui = self.cache_dict[effect]
+
         return effect_set_ui
 
     def _flushSeekVideo(self):
@@ -87,12 +101,12 @@ class EffectsPropertiesHandling:
         dynamic.setWidgetToDefault()
 
     def _onValueChangedCb(self, widget, dynamic, prop):
-        self.action_log.begin("Effect property change")
-
         value = dynamic.getWidgetValue()
-        print "%s, %s" %(type(value), value)
-        self._current_effect_setting_ui.element.set_property(prop.name, value)
-        self.action_log.commit()
+        if value != self._current_element_values.get(prop.name):
+            self.action_log.begin("Effect property change")
+            self._current_effect_setting_ui.element.set_property(prop.name, value)
+            self.action_log.commit()
+            self._current_element_values[prop.name] = value
 
         self._flushSeekVideo()
 
