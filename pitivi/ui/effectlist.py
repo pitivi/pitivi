@@ -139,6 +139,7 @@ class EffectList(gtk.VBox, Loggable):
         self.searchEntry.connect ("icon-press", self.searchEntryIconClickedCb)
 
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
+        self.treeview.connect("select-cursor-row", self._treeViewEnterPressEventCb)
         self.treeview.connect("motion-notify-event", self._treeViewMotionNotifyEventCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
         self.treeview.connect("button-release-event", self._treeViewButtonReleaseCb)
@@ -203,6 +204,10 @@ class EffectList(gtk.VBox, Loggable):
             return selection.path_is_selected(path) and selection.count_selected_rows() > 0
 
         return False
+
+    def _treeViewEnterPressEventCb(self, treeview, event):
+        factory_name = self.getSelectedItems()
+        self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
 
     def _treeViewButtonPressEventCb(self, treeview, event):
         chain_up = True
