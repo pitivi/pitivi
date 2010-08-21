@@ -62,13 +62,17 @@ class ClipProperties(gtk.VBox, Loggable):
         self.app = instance
         self.settings = instance.settings
         self.project = None
+        self.info_bar_box = gtk.VBox()
 
         self.effect_properties_handling = EffectsPropertiesHandling(instance.action_log)
         self.effect_expander = EffectProperties(instance,
                                                 self.effect_properties_handling, self)
 
-        self.pack_start(self.effect_expander, expand=True, fill=True)
+        self.pack_start(self.info_bar_box, expand=False, fill=True)
+        self.pack_end(self.effect_expander, expand=True, fill=True)
+        self.info_bar_box.show()
         self.effect_expander.show()
+        self.show()
 
     def _setProject(self):
         if self.project:
@@ -81,21 +85,16 @@ class ClipProperties(gtk.VBox, Loggable):
         info_bar = gtk.InfoBar()
 
         label = gtk.Label()
-        label.set_padding(10, 10)
+        label.set_padding(PADDING, PADDING)
         label.set_line_wrap(True)
         label.set_line_wrap_mode(pango.WRAP_WORD)
         label.set_justify(gtk.JUSTIFY_CENTER)
         label.set_markup(text)
 
         info_bar.add(label)
-        label.show()
-        self.pack_start(info_bar, expand=False, fill=False)
+        self.info_bar_box.pack_start(info_bar, expand=False, fill=False)
 
-        return info_bar
-
-    def hideInfoBar(self, text):
-        if text not in self.info_bars:
-            self.info_bars[text].hide()
+        return label, info_bar
 
 class EffectProperties(gtk.Expander):
     """
@@ -356,14 +355,12 @@ class EffectProperties(gtk.Expander):
 
     def _showInfoBar(self):
         if self._info_bar is None:
-            self._info_bar = self.clip_properties.addInfoBar(
+            self.txtlabel, self._info_bar = self.clip_properties.addInfoBar(
                                 _("<span>You must select a clip on the timeline "
                                   "to configure its associated effects</span>"))
+        self._info_bar.hide_all()
+        self.txtlabel.show()
         self._info_bar.show()
-        children = self._info_bar.get_children()
-        #FIXME: Why does the no-show-all not work?
-        children[0].hide()
-        children[1].hide()
 
         self.treeview.set_sensitive(False)
         self.table.show_all()
@@ -372,7 +369,7 @@ class EffectProperties(gtk.Expander):
     def _setEffectDragable(self):
         self.treeview.set_sensitive(True)
         self.table.show_all()
-        self._info_bar.hide()
+        self._info_bar.hide_all()
         if not self.selected_effects:
             self.toolbar1.hide()
 

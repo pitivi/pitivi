@@ -217,9 +217,8 @@ class EffectList(gtk.VBox, Loggable):
         chain_up = True
 
         if event.button == 3:
-            self._viewShowPopup(treeview, event)
             chain_up = False
-        if event.type is gtk.gdk._2BUTTON_PRESS:
+        elif event.type is gtk.gdk.BUTTON_PRESS:
             factory_name = self.getSelectedItems()
             self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
         else:
