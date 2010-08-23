@@ -9,10 +9,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-04 08:54+0200\n"
-"PO-Revision-Date: 2010-06-24 08:05+0200\n"
+"POT-Creation-Date: 2010-08-23 22:06+0200\n"
+"PO-Revision-Date: 2010-08-22 12:35+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -469,11 +470,22 @@ msgstr[2] "Vlastnosti: %d objektů"
 msgid "No properties..."
 msgstr "Žádné vlastnosti…"
 
-#: ../pitivi/ui/dynamic.py:52
+#: ../pitivi/ui/dynamic.py:54
 msgid "Implement Me"
 msgstr "Čeká na implementaci"
 
-#: ../pitivi/ui/dynamic.py:237
+#. i18n: string for custom video width/height/framerate settings
+#. i18n: string for custom audio rate/depth/channels settings
+#: ../pitivi/ui/dynamic.py:374 ../pitivi/ui/exportsettingswidget.py:116
+#: ../pitivi/ui/exportsettingswidget.py:150
+msgid "Custom"
+msgstr "Vlastní"
+
+#: ../pitivi/ui/dynamic.py:398
+msgid "Save Preset"
+msgstr "Uložit nastavení"
+
+#: ../pitivi/ui/dynamic.py:466
 msgid "Choose..."
 msgstr "Vybrat…"
 
@@ -712,13 +724,6 @@ msgstr "SVGA (800x600)"
 msgid "XGA (1024x768)"
 msgstr "XGA (1024x768)"
 
-#. i18n: string for custom video width/height/framerate settings
-#. i18n: string for custom audio rate/depth/channels settings
-#: ../pitivi/ui/exportsettingswidget.py:116
-#: ../pitivi/ui/exportsettingswidget.py:150
-msgid "Custom"
-msgstr "Vlastní"
-
 #: ../pitivi/ui/exportsettingswidget.py:301
 msgid "Raw Video"
 msgstr "Neupravené video"
@@ -757,7 +762,7 @@ msgstr "Vlastnosti - %s"
 msgid "Render"
 msgstr "Vykreslit"
 
-#: ../pitivi/ui/mainwindow.py:129 ../pitivi/ui/timeline.py:284
+#: ../pitivi/ui/mainwindow.py:129 ../pitivi/ui/timeline.py:295
 msgid "Split"
 msgstr "Rozdělit"
 
