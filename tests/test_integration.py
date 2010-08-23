@@ -1083,7 +1083,6 @@ if not os.getenv("TEST_INTEGRATION"):
     import inspect
 
     for symbol_name in list(globals().keys()):
-        print symbol_name
         symbol = globals()[symbol_name]
         if inspect.isclass(symbol) and symbol.__name__.startswith('Test') \
                 and symbol.__module__ == __name__:
