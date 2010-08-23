@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.22\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-12 01:23+0100\n"
-"PO-Revision-Date: 2010-07-05 18:42+0000\n"
+"POT-Creation-Date: 2010-08-21 16:28+0100\n"
+"PO-Revision-Date: 2010-08-04 21:38+0000\n"
 "Last-Translator: António Lima <amrlima@gmail.com>\n"
 "Language-Team: gnome_pt@yahoogroups.com\n"
 "MIME-Version: 1.0\n"
@@ -16,8 +16,8 @@ msgstr ""
 "Language: pt\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Virtaal 0.6.1\n"
-"X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: PORTUGAL\n"
+"X-Poedit-Language: Portuguese\n"
 
 #: ../pitivi.desktop.in.in.h:1
 msgid "Create and edit your own movies"
@@ -297,21 +297,18 @@ msgstr ""
 #: ../pitivi/application.py:223
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"    no project is given, %prog creates a new project.\n"
-"    Alternatively, when -i is specified, arguments are treated as clips to "
-"be\n"
-"    imported into the project. If -a is specified, these clips will also be "
+"no project is given, %prog creates a new project.\n"
+"Alternatively, when -i is specified, arguments are treated as clips to be\n"
+"imported into the project. If -a is specified, these clips will also be "
 "added to\n"
-"    the end of the project timeline."
+"the end of the project timeline."
 msgstr ""
-"Inicia o editor de vídeo, opcionalmente carregando o PROJECT_FILE. Se "
-"nenhum \n"
-"....projecto é dado, %prog cria um novo projecto.\n"
-"....Alternativamente, quando -i é especificado, os argumentos são tratados "
-"como clips a serem\n"
-"....importados para o projecto. Se -a é especificado, estes clips também "
-"serão adicionados ao\n"
-"....final da linha temporal do projecto."
+"Inicia o editor de vídeo, opcionalmente carregando o PROJECT_FILE. Se nenhum "
+"projecto é dado, %prog cria um novo projecto.\n"
+"Em alternativa, quando -i é especificado, os argumentos são tratados como "
+"clips a serem importados para o projecto. Se -a é especificado, estes clips "
+"também serão adicionados ao\n"
+"final da linha temporal do projecto."
 
 #: ../pitivi/application.py:229
 msgid "Import each MEDIA_FILE into the project."
@@ -469,11 +466,22 @@ msgstr[1] "Propriedades Para: %d objectos"
 msgid "No properties..."
 msgstr "Sem propriedades..."
 
-#: ../pitivi/ui/dynamic.py:52
+#: ../pitivi/ui/dynamic.py:54
 msgid "Implement Me"
 msgstr "Implemente-me"
 
-#: ../pitivi/ui/dynamic.py:237
+#. i18n: string for custom video width/height/framerate settings
+#. i18n: string for custom audio rate/depth/channels settings
+#: ../pitivi/ui/dynamic.py:374 ../pitivi/ui/exportsettingswidget.py:116
+#: ../pitivi/ui/exportsettingswidget.py:150
+msgid "Custom"
+msgstr "Personalizar"
+
+#: ../pitivi/ui/dynamic.py:398
+msgid "Save Preset"
+msgstr "Gravar Predefinições"
+
+#: ../pitivi/ui/dynamic.py:466
 msgid "Choose..."
 msgstr "Escolha..."
 
@@ -535,11 +543,11 @@ msgstr "Por favor seleccione um ficheiro de saída"
 
 #: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:264
 msgid "Render project"
-msgstr "Processar projecto"
+msgstr "Renderizar projecto"
 
 #: ../pitivi/ui/encodingdialog.py:102
 msgid "Choose file to render to"
-msgstr "Escolher ficheiro para onde processar"
+msgstr "Escolher ficheiro para onde renderizar"
 
 #: ../pitivi/ui/encodingdialog.py:137
 #, python-format
@@ -548,11 +556,11 @@ msgstr "Cerca de %s restantes"
 
 #: ../pitivi/ui/encodingdialog.py:152
 msgid "Rendering"
-msgstr "A processar"
+msgstr "A renderizar"
 
 #: ../pitivi/ui/encodingdialog.py:169
 msgid "Rendering Complete"
-msgstr "Processamento Terminado"
+msgstr "Renderização Terminada"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:1
 msgid ""
@@ -712,13 +720,6 @@ msgstr "SVGA (800x600)"
 msgid "XGA (1024x768)"
 msgstr "XGA (1024x768)"
 
-#. i18n: string for custom video width/height/framerate settings
-#. i18n: string for custom audio rate/depth/channels settings
-#: ../pitivi/ui/exportsettingswidget.py:116
-#: ../pitivi/ui/exportsettingswidget.py:150
-msgid "Custom"
-msgstr "Personalizar"
-
 #: ../pitivi/ui/exportsettingswidget.py:301
 msgid "Raw Video"
 msgstr "Vídeo Bruto"
@@ -755,9 +756,9 @@ msgstr "Propriedades para %s"
 
 #: ../pitivi/ui/mainwindow.py:128
 msgid "Render"
-msgstr "Processar"
+msgstr "Renderizar"
 
-#: ../pitivi/ui/mainwindow.py:129 ../pitivi/ui/timeline.py:284
+#: ../pitivi/ui/mainwindow.py:129 ../pitivi/ui/timeline.py:295
 msgid "Split"
 msgstr "Dividir"
 
@@ -817,7 +818,7 @@ msgstr "Editar as definições do projecto"
 
 #: ../pitivi/ui/mainwindow.py:263
 msgid "_Render project"
-msgstr "P_rocessar projecto"
+msgstr "_Renderizar projecto"
 
 #: ../pitivi/ui/mainwindow.py:266
 msgid "_Undo"
@@ -924,19 +925,19 @@ msgstr "Barra de Ferramentas de Linha Temporal"
 msgid "Media Library"
 msgstr "Biblioteca de Media"
 
-#: ../pitivi/ui/mainwindow.py:542
+#: ../pitivi/ui/mainwindow.py:543
 msgid "Open File..."
 msgstr "Abrir Ficheiro..."
 
-#: ../pitivi/ui/mainwindow.py:558
+#: ../pitivi/ui/mainwindow.py:559
 msgid "All Supported Formats"
 msgstr "Todos os Formatos Suportados"
 
-#: ../pitivi/ui/mainwindow.py:628
+#: ../pitivi/ui/mainwindow.py:629
 msgid "Contributors:"
 msgstr "Contribuidores:"
 
-#: ../pitivi/ui/mainwindow.py:640
+#: ../pitivi/ui/mainwindow.py:641
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -944,61 +945,61 @@ msgstr ""
 "Licença Pública Geral Restritiva GNU\n"
 "Consultar http://www.gnu.org/copyleft/lesser.html para mais detalhes"
 
-#: ../pitivi/ui/mainwindow.py:759
+#: ../pitivi/ui/mainwindow.py:760
 msgid "Close without saving"
 msgstr "Fechar sem gravar"
 
-#: ../pitivi/ui/mainwindow.py:772
+#: ../pitivi/ui/mainwindow.py:773
 msgid "Save changes to the current project before closing?"
 msgstr "Gravar alterações ao projecto actual antes de fechar?"
 
-#: ../pitivi/ui/mainwindow.py:779
+#: ../pitivi/ui/mainwindow.py:780
 msgid "If you don't save some of your changes will be lost"
 msgstr "Se não gravar algumas das suas alterações serão perdidas"
 
-#: ../pitivi/ui/mainwindow.py:832
+#: ../pitivi/ui/mainwindow.py:833
 msgid "Do you want to reload current project?"
 msgstr "Deseja recarregar projecto actual?"
 
-#: ../pitivi/ui/mainwindow.py:837
+#: ../pitivi/ui/mainwindow.py:838
 msgid "Revert to saved project"
 msgstr "Reverter para o projecto gravado"
 
-#: ../pitivi/ui/mainwindow.py:840
+#: ../pitivi/ui/mainwindow.py:841
 msgid "All unsaved changes will be lost."
 msgstr "Todas as alterações não gravadas serão perdidas."
 
-#: ../pitivi/ui/mainwindow.py:856
+#: ../pitivi/ui/mainwindow.py:857
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi é incapaz de ler o ficheiro \"%s\""
 
-#: ../pitivi/ui/mainwindow.py:859
+#: ../pitivi/ui/mainwindow.py:860
 msgid "Error Loading File"
 msgstr "Erro ao Ler Ficheiro"
 
-#: ../pitivi/ui/mainwindow.py:866
+#: ../pitivi/ui/mainwindow.py:867
 msgid "Locate missing file..."
 msgstr "Localizar ficheiro em falta..."
 
-#: ../pitivi/ui/mainwindow.py:875
+#: ../pitivi/ui/mainwindow.py:876
 msgid "The following file has moved, please tell PiTiVi where to find it."
 msgstr ""
 "O ficheiro seguinte foi movido, por favor informe o PiTiVi onde o encontrar."
 
-#: ../pitivi/ui/mainwindow.py:877
+#: ../pitivi/ui/mainwindow.py:878
 msgid "Duration:"
 msgstr "Duração:"
 
-#: ../pitivi/ui/mainwindow.py:1021
+#: ../pitivi/ui/mainwindow.py:1022
 msgid "Save As..."
 msgstr "Gravar Como..."
 
-#: ../pitivi/ui/mainwindow.py:1029
+#: ../pitivi/ui/mainwindow.py:1030
 msgid "Untitled.xptv"
 msgstr "SemNome.xptv"
 
-#: ../pitivi/ui/mainwindow.py:1040 ../pitivi/ui/mainwindow.py:1053
+#: ../pitivi/ui/mainwindow.py:1041 ../pitivi/ui/mainwindow.py:1054
 msgid "Detect Automatically"
 msgstr "Detectar Automaticamente"
 
@@ -1167,36 +1168,36 @@ msgstr "Algumas alterações não terão efeito até que reinicie o PiTiVi"
 msgid "Reset"
 msgstr "Reiniciar"
 
-#: ../pitivi/ui/previewer.py:55 ../pitivi/ui/previewer.py:83
-#: ../pitivi/ui/previewer.py:94 ../pitivi/ui/trackobject.py:48
+#: ../pitivi/ui/previewer.py:57 ../pitivi/ui/previewer.py:85
+#: ../pitivi/ui/previewer.py:96 ../pitivi/ui/trackobject.py:48
 #: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
 #: ../pitivi/ui/trackobject.py:81
 msgid "Appearance"
 msgstr "Aparência"
 
-#: ../pitivi/ui/previewer.py:56
+#: ../pitivi/ui/previewer.py:58
 msgid "Thumbnail Gap (pixels)"
 msgstr "Intervalo de Imagens de Referência (pixels)"
 
-#: ../pitivi/ui/previewer.py:58
+#: ../pitivi/ui/previewer.py:60
 msgid "The gap between thumbnails"
 msgstr "O intervalo entre imagens de referência"
 
-#: ../pitivi/ui/previewer.py:84
+#: ../pitivi/ui/previewer.py:86
 msgid "Show Thumbnails (Video)"
-msgstr "Mostrar Imagens de Referência (Vídeo)"
+msgstr "Apresentar Imagens de Referência (Vídeo)"
 
-#: ../pitivi/ui/previewer.py:85
+#: ../pitivi/ui/previewer.py:87
 msgid "Show Thumbnails on Video Clips"
-msgstr "Mostrar Imagens de Referência em Clips de Vídeo"
+msgstr "Apresentar Imagens de Referência em Clips de Vídeo"
 
-#: ../pitivi/ui/previewer.py:95
+#: ../pitivi/ui/previewer.py:97
 msgid "Show Waveforms (Audio)"
-msgstr "Mostrar Formas de Onda (Áudio)"
+msgstr "Apresentar Formas de Onda (Áudio)"
 
-#: ../pitivi/ui/previewer.py:96
+#: ../pitivi/ui/previewer.py:98
 msgid "Show Waveforms on Audio Clips"
-msgstr "Mostrar Formas de Onda em Clips de Áudio"
+msgstr "Apresentar Formas de Onda em Clips de Áudio"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
@@ -1424,6 +1425,24 @@ msgstr "Fonte do Clip"
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
 msgstr "A fonte a utilizar para títulos de clip"
+
+#~ msgid ""
+#~ "Starts the video editor, optionally loading PROJECT_FILE. If\n"
+#~ "    no project is given, %prog creates a new project.\n"
+#~ "    Alternatively, when -i is specified, arguments are treated as clips "
+#~ "to be\n"
+#~ "    imported into the project. If -a is specified, these clips will also "
+#~ "be added to\n"
+#~ "    the end of the project timeline."
+#~ msgstr ""
+#~ "Inicia o editor de vídeo, opcionalmente carregando o PROJECT_FILE. Se "
+#~ "nenhum \n"
+#~ "....projecto é dado, %prog cria um novo projecto.\n"
+#~ "....Alternativamente, quando -i é especificado, os argumentos são "
+#~ "tratados como clips a serem\n"
+#~ "....importados para o projecto. Se -a é especificado, estes clips também "
+#~ "serão adicionados ao\n"
+#~ "....final da linha temporal do projecto."
 
 #~ msgid "Add Clips..."
 #~ msgstr "Adicionar Clips..."
