@@ -66,6 +66,7 @@ class Project(Signallable, Loggable):
 
     __signals__ = {
         "settings-changed" : ['old', 'new'],
+        "project-changed" : [],
         }
 
     def __init__(self, name="", uri=None, **kwargs):
@@ -184,6 +185,8 @@ class Project(Signallable, Loggable):
 
     def setModificationState(self, state):
         self._dirty = state
+        if state:
+            self.emit('project-changed')
 
     def hasUnsavedModifications(self):
         return self._dirty

@@ -57,7 +57,7 @@ def get_bool_env(var):
 
 def get_env_by_type(type_, var):
     """
-    Returns the environement variable.
+    Returns the environment variable.
 
     @arg type_: The type of the variable
     @type type_: C{type}

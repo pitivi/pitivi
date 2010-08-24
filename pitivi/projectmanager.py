@@ -23,6 +23,7 @@ from gettext import gettext as _
 import gobject
 gobject.threads_init()
 import gst
+import os
 
 from pitivi.project import Project
 from pitivi.formatters.format import get_formatter_for_uri
@@ -85,6 +86,7 @@ class ProjectManager(Signallable, Loggable):
         Loggable.__init__(self)
 
         self.current = None
+        self.backup_lock = 0
 
     def loadProject(self, uri):
         """ Load the given project file"""
@@ -105,7 +107,7 @@ class ProjectManager(Signallable, Loggable):
         # start loading the project, from now on everything is async
         formatter.loadProject(uri)
 
-    def saveProject(self, project, uri=None, overwrite=False, formatter=None):
+    def saveProject(self, project, uri=None, overwrite=False, formatter=None, backup=False):
         """
         Save the L{Project} to the given location.
 
@@ -141,7 +143,7 @@ class ProjectManager(Signallable, Loggable):
             uri = project.uri
 
         self._connectToFormatter(formatter)
-        return formatter.saveProject(project, uri, overwrite)
+        return formatter.saveProject(project, uri, overwrite, backup)
 
     def closeRunningProject(self):
         """ close the current project """
@@ -154,6 +156,7 @@ class ProjectManager(Signallable, Loggable):
             return False
 
         self.emit("project-closed", self.current)
+        self.current.disconnect_by_function(self._projectChangedCb)
         self.current.release()
         self.current = None
 
@@ -179,6 +182,7 @@ class ProjectManager(Signallable, Loggable):
         audio = AudioStream(gst.Caps('audio/x-raw-int; audio/x-raw-float'))
         track = Track(audio)
         project.timeline.addTrack(track)
+        project.connect("project-changed", self._projectChangedCb)
 
         self.emit("new-project-loaded", self.current)
 
@@ -199,6 +203,32 @@ class ProjectManager(Signallable, Loggable):
         self.closeRunningProject()
         self.loadProject(uri)
         
+    def _projectChangedCb(self, project):
+        # The backup_lock is a timer, when a change in the project is done it is
+        # set to 10 seconds. If before those 10 seconds pass an other change is done
+        # 5 seconds are added in the timeout callback instead of saving the backup
+        # file. The limit is 60 seconds.
+        uri = project.uri
+        if uri != None:
+            if self.backup_lock == 0:
+                self.backup_lock = 10
+                gobject.timeout_add_seconds(self.backup_lock, self._saveBackupCb, \
+                                            project, uri)
+            else:
+                if self.backup_lock < 60:
+                    self.backup_lock += 5
+
+    def _saveBackupCb(self, project, uri):
+        if self.backup_lock > 10:
+            self.backup_lock -= 5
+            return True
+        else:
+            name, ext = os.path.splitext(uri)
+            if ext == '.xptv':
+                uri = name + "~" + ext
+                self.saveProject(project, uri, overwrite=True, backup=True)
+                self.backup_lock = 0
+        return False
 
     def _getFormatterForUri(self, uri):
         return get_formatter_for_uri(uri)
@@ -231,6 +261,7 @@ class ProjectManager(Signallable, Loggable):
         self._disconnectFromFormatter(formatter)
 
         self.current = project
+        project.connect("project-changed", self._projectChangedCb)
         self.emit("new-project-loaded", project)
 
     def _formatterNewProjectFailed(self, formatter, uri, exception):

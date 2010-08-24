@@ -175,7 +175,7 @@ class Formatter(Signallable, Loggable):
         # finally return the project.
         return self.project
 
-    def saveProject(self, project, location, overwrite=False):
+    def saveProject(self, project, location, overwrite=False, backup=False):
         """
         Saves the given project to the given location.
 
@@ -194,11 +194,11 @@ class Formatter(Signallable, Loggable):
             raise FormatterURIError()
         if overwrite == False and uri_is_reachable(location):
             raise FormatterOverwriteError()
-        old_uri = project.uri
         if self._saveProject(project, location):
-            project.uri = location
-            project.name = self._projectNameFromURI(location)
-            self.emit("project-saved", project, location)
+            if not backup:
+                project.uri = location
+                project.name = self._projectNameFromURI(location)
+                self.emit("project-saved", project, location)
             return True
 
         return False
