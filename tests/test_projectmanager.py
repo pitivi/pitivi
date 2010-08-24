@@ -41,6 +41,9 @@ class MockProject(object):
     def release(self):
         pass
 
+    def disconnect_by_function(self, ignored):
+        pass
+
 class ProjectManagerListener(object):
     def __init__(self, manager):
         self.manager = manager
