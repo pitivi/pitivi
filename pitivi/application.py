@@ -54,7 +54,8 @@ from pitivi.undo import UndoableActionLog, DebugActionLogObserver
 from pitivi.timeline.timeline_undo import TimelineLogObserver
 from pitivi.sourcelist_undo import SourceListLogObserver
 from pitivi.undo import UndoableAction
-from pitivi.render import Renderer
+from pitivi.ui.viewer import PitiviViewer
+from pitivi.render import Renderer, Previewer
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
@@ -223,6 +224,7 @@ class Pitivi(Loggable, Signallable):
 class InteractivePitivi(Pitivi):
     usage = _("""
       %prog [-r OUTPUT_FILE] [PROJECT_FILE]
+      %prog -p [PROJECT_FILE]
       %prog -i [-a] [MEDIA_FILE]...""")
 
     description = _("""Starts the video editor, optionally loading PROJECT_FILE. If
@@ -239,20 +241,28 @@ When -r is specified, the given project file is rendered without opening the GUI
 
     no_ui_help = _("""Run pitivi with no gui""")
     render_help = _("""Render the given project file to OUTPUT_FILE with no GUI.""")
+    preview_help = _("""Preview the given project file without the full UI.""")
 
     def __init__(self):
         Pitivi.__init__(self)
         self.mainloop = gobject.MainLoop()
+        self.actioner = None
 
     def _newProjectLoaded(self, project):
         if self.render_output:
             # create renderer and set output file
-            self.renderer = Renderer(self.current, pipeline=None, outfile=self.output_file)
-            self.renderer.connect("eos", self._eosCb)
+            self.actioner = Renderer(self.current, pipeline=None, outfile=self.output_file)
+        elif self.preview:
+            # create previewer and set ui
+            self.actioner = Previewer(self.current, pipeline=None, ui=self.gui)
+            # hack to make the gtk.HScale seek slider UI behave properly
+            self.gui._durationChangedCb(None, project.timeline.duration)
+        if self.actioner:
+            self.actioner.connect("eos", self._eosCb)
             # on error, all we need to do is shutdown which is the same as we do for EOS
-            self.renderer.connect("error", self._eosCb)
-            # configure the renderer and start rendering!
-            self.renderer.startRender()
+            self.actioner.connect("error", self._eosCb)
+            # configure the actioner and start acting!
+            self.actioner.startAction()
 
     def run(self, argv):
         # check for dependencies
@@ -272,19 +282,17 @@ When -r is specified, the given project file is rendered without opening the GUI
 
         # validate options
         self.render_output = options.render_output
+        self.preview = options.preview
         if options.render_output:
             options.no_ui = True
             n_args += 1
 
-        if options.no_ui:
-            self.gui = None
-        else:
-            # create the ui
-            self.gui = PitiviMainWindow(self)
-            self.gui.show()
+        if options.render_output and options.preview:
+            parser.error("-p and -r cannot be used simultaneously")
+            return
 
-        if options.import_sources and options.render_output:
-            parser.error("-r and -i are incompatible")
+        if options.import_sources and (options.render_output or options.preview):
+            parser.error("-r or -p and -i are incompatible")
             return
 
         if not options.import_sources and options.add_to_timeline:
@@ -295,6 +303,20 @@ When -r is specified, the given project file is rendered without opening the GUI
                     or len(args) > n_args):
             parser.error("invalid arguments")
             return
+
+        if options.no_ui:
+            self.gui = None
+        elif options.preview:
+            # init ui for previewing
+            self.gui = PitiviViewer()
+            self.window = gtk.Window()
+            self.window.connect("delete-event", self._deleteCb)
+            self.window.add(self.gui)
+            self.window.show_all()
+        else:
+            # create the ui
+            self.gui = PitiviMainWindow(self)
+            self.gui.show()
 
         if not options.import_sources and args:
             index = 0
@@ -318,9 +340,14 @@ When -r is specified, the given project file is rendered without opening the GUI
         # run the mainloop
         self.mainloop.run()
 
+    def _deleteCb(self, unused_widget, unused_data):
+        self.shutdown()
+
     def _eosCb(self, unused_obj):
         if self.gui is None:
             self.shutdown()
+        elif self.window is not None:
+            self.gui.seek(0)
 
     def shutdown(self):
         if Pitivi.shutdown(self):
@@ -343,6 +370,8 @@ When -r is specified, the given project file is rendered without opening the GUI
                 action="store_true", default=False)
         parser.add_option("-r", "--render", help=self.render_help,
                 dest="render_output", action="store_true", default=False)
+        parser.add_option("-p", "--preview", help=self.preview_help,
+                action="store_true", default=False)
 
         return parser
 

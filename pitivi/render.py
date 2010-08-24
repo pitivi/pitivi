@@ -36,15 +36,18 @@ from pitivi.settings import export_settings_to_render_settings
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.utils import beautify_length
 
-class Renderer(Loggable, Signallable):
-    """ Rendering helper methods """
+class Actioner(Loggable, Signallable):
+    """ Previewer/Renderer helper methods """
 
     __signals__ = {
         "eos" : None,
         "error" : None
         }
 
-    def __init__(self, project, pipeline=None, outfile=None):
+    RENDERER = 0
+    PREVIEWER = 1
+
+    def __init__(self, project, pipeline=None):
         Loggable.__init__(self)
         # grab the Pipeline and settings
         self.project = project
@@ -52,12 +55,118 @@ class Renderer(Loggable, Signallable):
             self.pipeline = pipeline
         else:
             self.pipeline = self.project.pipeline
-        self.outfile = outfile
-        self.detectStreamTypes()
-
-        self.rendering = False
-        self.renderaction = None
+        self.acting = False
+        self.action = None
         self.settings = project.getSettings()
+
+    def _eosCb(self, unused_pipeline):
+        self.debug("eos !")
+        if self.actioner != self.PREVIEWER:
+            self.shutdown()
+        self.emit("eos")
+
+    def shutdown(self):
+        self.acting = False
+        self.updateUIOnEOS()
+        self.removeAction()
+
+    def updateUIOnEOS(self):
+        pass
+
+    def _errorCb(self, pipeline, error, detail):
+        self.debug("error !")
+        self.acting = False
+        self.updateUIOnError()
+        self.removeAction()
+        self.emit("error")
+
+    def updateUIOnError(self):
+        pass
+
+    def _changeSourceSettings(self, settings):
+        videocaps = settings.getVideoCaps()
+        for source in self.project.sources.getSources():
+            source.setFilterCaps(videocaps)
+
+    def addAction(self):
+        self.debug("action %r", self.action)
+        if self.action == None:
+            if self.actioner == self.RENDERER:
+                self.pipeline.connect('position', self._positionCb)
+            self.pipeline.connect('eos', self._eosCb)
+            self.pipeline.connect('error', self._errorCb)
+            self.debug("Setting pipeline to STOP")
+            self.pipeline.stop()
+            self.debug("Creating action")
+            if len(self.pipeline.factories) == 0:
+                sources = [self.project.factory]
+            else:
+                sources = [factory for factory in self.pipeline.factories
+                        if isinstance(factory, SourceFactory)]
+            if self.actioner == self.PREVIEWER:
+                self.action = ViewAction()
+                self.action.addProducers(*sources)
+                self.ui.setAction(self.action)
+                self.ui.setPipeline(self.pipeline)
+            elif self.actioner == self.RENDERER:
+                settings = export_settings_to_render_settings(self.settings,
+                        self.have_video, self.have_audio)
+                self.action = render_action_for_uri(self.outfile,
+                        settings, *sources)
+            #else:
+                # BIG FAT ERROR HERE
+
+            self.debug("setting action on pipeline")
+            self.pipeline.addAction(self.action)
+            self.debug("Activating action")
+            self.action.activate()
+            if self.actioner == self.RENDERER:
+                self.debug("Setting all active ViewAction to sync=False")
+                for ac in self.pipeline.actions:
+                    if isinstance(ac, ViewAction) and ac.isActive():
+                        ac.setSync(False)
+            self.debug("Updating all sources to render settings")
+            self._changeSourceSettings(self.settings)
+            self.debug("setting pipeline to PAUSE")
+            self.pipeline.pause()
+            self.debug("done")
+
+
+    def removeAction(self):
+        self.debug("action %r", self.action)
+        if self.action:
+            self.pipeline.stop()
+            self.action.deactivate()
+            self.pipeline.removeAction(self.action)
+            self.debug("putting all active ViewActions back to sync=True")
+            for ac in self.pipeline.actions:
+                if isinstance(ac, ViewAction) and ac.isActive():
+                    ac.setSync(True)
+            self._changeSourceSettings(self.project.getSettings())
+            self.pipeline.pause()
+            if self.actioner == self.RENDERER:
+                self.pipeline.disconnect_by_function(self._positionCb)
+            self.pipeline.disconnect_by_function(self._eosCb)
+            self.pipeline.disconnect_by_function(self._errorCb)
+            self.action = None
+
+    def _startAction(self):
+        self.addAction()
+        self.pipeline.play()
+        self.timestarted = time.time()
+        self.acting = True
+
+class Renderer(Actioner):
+    """ Rendering helper methods """
+
+    def __init__(self, project, pipeline=None, outfile=None):
+        self.actioner = self.RENDERER
+        Actioner.__init__(self, project, pipeline)
+        self.detectStreamTypes()
+        self.outfile = outfile
+
+    def setOutfile(self):
+        self.outfile = outfile
 
     def detectStreamTypes(self):
         self.have_video = False
@@ -79,26 +188,6 @@ class Renderer(Loggable, Signallable):
                     track.duration > 0:
                 self.have_video = True
 
-    def _eosCb(self, unused_pipeline):
-        self.debug("eos !")
-        self.rendering = False
-        self.updateUIOnEOS()
-        self.removeRecordAction()
-        self.emit("eos")
-
-    def updateUIOnEOS(self):
-        pass
-
-    def _errorCb(self, pipeline, error, detail):
-        self.debug("error !")
-        self.rendering = False
-        self.updateUIOnError()
-        self.removeRecordAction()
-        self.emit("error")
-
-    def updateUIOnError(self):
-        pass
-
     def _positionCb(self, unused_pipeline, position):
         self.debug("%r %r", unused_pipeline, position)
         fraction = None
@@ -116,64 +205,20 @@ class Renderer(Loggable, Signallable):
     def updatePosition(self, fraction, text):
         pass
 
-    def _changeSourceSettings(self, settings):
-        videocaps = settings.getVideoCaps()
-        for source in self.project.sources.getSources():
-            source.setFilterCaps(videocaps)
-
-    def addRecordAction(self):
-        self.debug("renderaction %r", self.renderaction)
-        if self.renderaction == None:
-            self.pipeline.connect('position', self._positionCb)
-            self.pipeline.connect('eos', self._eosCb)
-            self.pipeline.connect('error', self._errorCb)
-            self.debug("Setting pipeline to STOP")
-            self.pipeline.stop()
-            settings = export_settings_to_render_settings(self.settings,
-                    self.have_video, self.have_audio)
-            self.debug("Creating RenderAction")
-            if len(self.pipeline.factories) == 0:
-                sources = [self.project.factory]
-            else:
-                sources = [factory for factory in self.pipeline.factories
-                        if isinstance(factory, SourceFactory)]
-            self.renderaction = render_action_for_uri(self.outfile,
-                    settings, *sources)
-            self.debug("setting action on pipeline")
-            self.pipeline.addAction(self.renderaction)
-            self.debug("Activating render action")
-            self.renderaction.activate()
-            self.debug("Setting all active ViewAction to sync=False")
-            for ac in self.pipeline.actions:
-                if isinstance(ac, ViewAction) and ac.isActive():
-                    ac.setSync(False)
-            self.debug("Updating all sources to render settings")
-            self._changeSourceSettings(self.settings)
-            self.debug("setting pipeline to PAUSE")
-            self.pipeline.pause()
-            self.debug("done")
-
-    def removeRecordAction(self):
-        self.debug("renderaction %r", self.renderaction)
-        if self.renderaction:
-            self.pipeline.stop()
-            self.renderaction.deactivate()
-            self.pipeline.removeAction(self.renderaction)
-            self.debug("putting all active ViewActions back to sync=True")
-            for ac in self.pipeline.actions:
-                if isinstance(ac, ViewAction) and ac.isActive():
-                    ac.setSync(True)
-            self._changeSourceSettings(self.project.getSettings())
-            self.pipeline.pause()
-            self.pipeline.disconnect_by_function(self._positionCb)
-            self.pipeline.disconnect_by_function(self._eosCb)
-            self.pipeline.disconnect_by_function(self._errorCb)
-            self.renderaction = None
-
-    def startRender(self):
+    def startAction(self):
         self.debug("Rendering")
-        if self.outfile and not self.rendering:
-            self.addRecordAction()
-            self.pipeline.play()
-            self.timestarted = time.time()
-            self.rendering = True
+        if not self.acting and self.outfile:
+            self._startAction()
+
+class Previewer(Actioner):
+    """ Previewing helper methods """
+
+    def __init__(self, project, pipeline=None, ui=None):
+        self.actioner = self.PREVIEWER
+        Actioner.__init__(self, project, pipeline)
+        self.ui = ui
+
+    def startAction(self):
+        self.debug("Previewing")
+        if not self.acting and self.ui:
+            self._startAction()

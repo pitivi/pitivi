@@ -73,7 +73,7 @@ class EncodingDialog(GladeWindow, Renderer):
     def _shutDown(self):
         self.debug("shutting down")
         # Abort recording
-        self.removeRecordAction()
+        self.removeAction()
         self.destroy()
 
     def _displaySettings(self):
@@ -118,8 +118,8 @@ class EncodingDialog(GladeWindow, Renderer):
             self.progressbar.set_text(_("About %s left") % text)
 
     def _recordButtonClickedCb(self, unused_button):
-        self.startRender()
-        if self.rendering:
+        self.startAction()
+        if self.acting:
             self.cancelbutton.set_label("gtk-cancel")
             self.progressbar.set_text(_("Rendering"))
             self.recordbutton.set_sensitive(False)
