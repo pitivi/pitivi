@@ -133,8 +133,7 @@ class EffectsHandler(object):
                 effect = EffectFactory(name, name,
                                    self._getEffectCategories(name),
                                    self._getEffectName(element_factory),
-                                   self._getEffectDescripton(element_factory),
-                                   self._getEffectIcon(name))
+                                   self._getEffectDescripton(element_factory))
                 added = self.addStreams(element_factory, effect)
 
                 if added is True:
@@ -286,9 +285,7 @@ class EffectsHandler(object):
         effects_categories = []
         return effects_categories.extended(self.video_categories).extended(self.audio_categories)
 
-    def _getEffectIcon(self, effect_name):
-        #TODO, create icons for effects
-        #Shouldn't we use pyxdg to make things cleaner and more optimized?
+    def getEffectIcon(self, effect_name):
         icontheme = gtk.icon_theme_get_default()
         pixdir = get_pixmap_dir()
         icon = None

@@ -34,13 +34,12 @@ from pitivi.log.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.ui.common import SPACING, PADDING
 
-(COL_ICON,
- COL_NAME_TEXT,
+(COL_NAME_TEXT,
  COL_DESC_TEXT,
  COL_EFFECT_TYPE,
  COL_EFFECT_CATEGORIES,
  COL_FACTORY,
- COL_ELEMENT_NAME) = range(7)
+ COL_ELEMENT_NAME) = range(6)
 
 INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(),
     "invisible.png"))
@@ -61,6 +60,10 @@ class EffectList(gtk.VBox, Loggable):
         self._dragSelection = False
         self._dragX = 0
         self._dragY = 0
+
+        #Tooltip handling
+        self._current_effect_name = None
+        self._current_tooltip_icon = None
 
         self.set_spacing(SPACING)
 
@@ -87,8 +90,7 @@ class EffectList(gtk.VBox, Loggable):
         Hsearch.pack_end(self.searchEntry, expand=True)
 
         # Store
-        # icon, icon, infotext, objectfactory
-        self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, str, int, object, object, str)
+        self.storemodel = gtk.ListStore(str, str, int, object, object, str)
 
         # Scrolled Windows
         self.treeview_scrollwin = gtk.ScrolledWindow()
@@ -165,10 +167,11 @@ class EffectList(gtk.VBox, Loggable):
 
     def _addFactories(self, elements, effectType):
         for element in elements:
-            effect = self.app.effects.getFactoryFromName(element.get_name())
-            self.storemodel.append ([effect.icon, effect.getHumanName(),\
-                                    effect.getDescription(), effectType, effect.getCategories(),\
-                                    effect, element.get_name()])
+            name =element.get_name()
+            effect = self.app.effects.getFactoryFromName(name)
+            self.storemodel.append([ effect.getHumanName(),
+                                     effect.getDescription(), effectType, effect.getCategories(),\
+                                     effect, element.get_name()])
 
             self.storemodel.set_sort_column_id(COL_NAME_TEXT, gtk.SORT_ASCENDING)
 
@@ -193,8 +196,9 @@ class EffectList(gtk.VBox, Loggable):
             context.drag_abort(int(time.time()))
         else:
             row = self.storemodel[path[0]]
-            if row[COL_ICON]:
-                context.set_icon_pixbuf(row[COL_ICON], 0, 0)
+            #FIXME
+            #if row[COL_ICON]:
+                #context.set_icon_pixbuf(row[COL_ICON], 0, 0)
 
     def _rowUnderMouseSelected(self, view, event):
         result = view.get_path_at_pos(int(event.x), int(event.y))
@@ -274,7 +278,13 @@ class EffectList(gtk.VBox, Loggable):
             return False
 
         treeview.set_tooltip_row (tooltip, context[1][0])
-        tooltip.set_icon(self.modelFilter.get_value(context[2], COL_ICON))
+        name = self.modelFilter.get_value(context[2], COL_ELEMENT_NAME)
+        if self._current_effect_name != name: 
+            self._current_effect_name = name
+            icon = self.app.effects.getEffectIcon(name)
+            self._current_tooltip_icon = icon
+
+        tooltip.set_icon(self._current_tooltip_icon)
         tooltip.set_text(self.modelFilter.get_value(context[2], COL_DESC_TEXT))
 
         return True

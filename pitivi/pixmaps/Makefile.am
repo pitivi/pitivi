@@ -25,7 +25,71 @@ pixmap_DATA = \
 	processing-clip.png	\
 	processing-clip.svg	\
 	trimbar-focused.png	\
-	trimbar-normal.png
+	trimbar-normal.png \
+    agingtv.png \
+    bulge.png \
+    burn.png \
+    chromium.png \
+    circle.png \
+    cogdownsample.png \
+    color-distance.png \
+    coloreffects.png \
+    dicetv.png \
+    diffuse.png \
+    dilate.png \
+    dodge.png \
+    edgetv.png \
+    exclusion.png \
+    fisheye.png \
+    frei0r-filter-3dflippo.png \
+    frei0r-filter-brightness.png \
+    frei0r-filter-bw0r.png \
+    frei0r-filter-cartoon.png \
+    frei0r-filter-contrast0r.png \
+    frei0r-filter-distort0r.png \
+    frei0r-filter-edgeglow.png \
+    frei0r-filter-equaliz0r.png \
+    frei0r-filter-flippo.png \
+    frei0r-filter-gamma.png \
+    frei0r-filter-glow.png \
+    frei0r-filter-hueshift0r.png \
+    frei0r-filter-invert0r.png \
+    frei0r-filter-k-means-clustering.png \
+    frei0r-filter-lens-correction.png \
+    frei0r-filter-letterb0xed.png \
+    frei0r-filter-nosync0r.png \
+    frei0r-filter-perspective.png \
+    frei0r-filter-pixeliz0r.png \
+    frei0r-filter-rgb-parade.png \
+    frei0r-filter-saturat0r.png \
+    frei0r-filter-scale0tilt.png \
+    frei0r-filter-scanline0r.png \
+    frei0r-filter-sobel.png \
+    frei0r-filter-squareblur.png \
+    frei0r-filter-tehroxx0r.png \
+    frei0r-filter-twolay0r.png \
+    frei0r-filter-vectorscope.png \
+    frei0r-filter-water.png \
+    frei0r-filter-white-balance.png \
+    gamma-correction.png \
+    gaussianblur.png \
+    invisible.png \
+    kaleidoscope.png \
+    marble.png \
+    mirror.png \
+    optv.png \
+    pinch.png \
+    radioactv.png \
+    revtv.png \
+    shagadelictv.png \
+    solarize.png \
+    sphere.png \
+    square.png \
+    stretch.png \
+    threshold0r.png \
+    tunnel.png \
+    twirl.png
+
 
 EXTRA_DIST = \
 	$(pixmap_DATA)
