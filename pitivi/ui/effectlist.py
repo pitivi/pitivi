@@ -312,7 +312,6 @@ class EffectList(gtk.VBox, Loggable):
         self.modelFilter.refilter()
 
     def searchEntryChangedCb (self, entry):
-        self.searchEntry.grab_focus()
         self.modelFilter.refilter()
 
     def searchEntryIconClickedCb (self, entry, unused, unsed1):
