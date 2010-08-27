@@ -202,11 +202,8 @@ class SourceList(gtk.VBox, Loggable):
         self.iconview.set_selection_mode(gtk.SELECTION_MULTIPLE)
         self.iconview.set_item_width(106)
 
-        # Explanatory message label
-        textbox = gtk.EventBox()
-        textbox.connect("button-press-event", self._textBoxButtonPressEventCb)
-        textbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
-        textbox.show()
+        # Explanatory message InfoBar
+        infobar = gtk.InfoBar()
 
         txtlabel = gtk.Label()
         txtlabel.set_padding(10, 10)
@@ -214,13 +211,11 @@ class SourceList(gtk.VBox, Loggable):
         txtlabel.set_line_wrap_mode(pango.WRAP_WORD)
         txtlabel.set_justify(gtk.JUSTIFY_CENTER)
         txtlabel.set_markup(
-            _("<span size='x-large'>Import your clips by dragging them here or "
+            _("<span>Import your clips by dragging them here or "
               "by using the buttons above.</span>"))
-        textbox.add(txtlabel)
-        txtlabel.show()
+        infobar.add(txtlabel)
+        self.infobar = infobar
         self.txtlabel = txtlabel
-
-        self.textbox = textbox
 
         self.infostub = InfoStub()
         self.infostub.connect("remove-me", self._removeInfoStub)
@@ -327,14 +322,13 @@ class SourceList(gtk.VBox, Loggable):
         seperator.show()
 
         # add all child widgets
-        self.pack_start(self.textbox, expand=True, fill=True)
+        self.pack_start(self.infobar, expand=False, fill=False)
         self.pack_start(self.iconview_scrollwin)
         self.pack_start(self.treeview_scrollwin)
 
         # display the help text
-        self.showing_helptext = None
         self.clip_view = self.settings.lastClipView
-        self._displayHelpText()
+        self._displayClipView()
 
     def _importSourcesCb(self, unused_action):
         self.showImportSourcesDialog()
@@ -411,15 +405,11 @@ class SourceList(gtk.VBox, Loggable):
         for path in paths:
             self._viewSelectPath(path)
 
-        # if we're not in help text mode, switch to the new clipview
-        if not self.showing_helptext:
-            self._displayClipView()
+        self._displayClipView()
 
     def _displayClipView(self):
 
         # first hide all the child widgets
-        self.showing_helptext = False
-        self.textbox.hide()
         self.treeview_scrollwin.hide()
         self.iconview_scrollwin.hide()
 
@@ -431,15 +421,17 @@ class SourceList(gtk.VBox, Loggable):
             self.debug("displaying icon view")
             widget = self.iconview_scrollwin
 
+        if not len(self.storemodel):
+            self._displayHelpText()
+
         # now un-hide the view
         widget.show_all()
 
     def _displayHelpText(self):
-        """Hides the current clip view and displays the help text"""
-        self.textbox.show()
-        self.iconview_scrollwin.hide()
-        self.treeview_scrollwin.hide()
-        self.showing_helptext = True
+        """Display the InfoBar help message"""
+        self.infobar.hide_all()
+        self.txtlabel.show()
+        self.infobar.show()
 
     def showImportSourcesDialog(self, select_folders=False):
         """Pop up the "Import Sources" dialog box"""
@@ -536,6 +528,9 @@ class SourceList(gtk.VBox, Loggable):
     def _sourceAddedCb(self, unused_sourcelist, factory):
         """ a file was added to the sourcelist """
         self._addFactory(factory)
+        if len(self.storemodel):
+            self.infobar.hide_all()
+
 
     def _sourceRemovedCb(self, sourcelist, uri, factory):
         """ the given uri was removed from the sourcelist """
@@ -849,10 +844,6 @@ class SourceList(gtk.VBox, Loggable):
                 if path:
                     iconview.select_path(path)
         return False
-
-    def _textBoxButtonPressEventCb(self, textbox, event):
-        if event.button == 3:
-            self._viewShowPopup(None, event)
 
     def _newProjectCreatedCb(self, app, project):
         # clear the storemodel
