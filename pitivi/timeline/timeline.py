@@ -1676,8 +1676,8 @@ class Timeline(Signallable, Loggable):
         timeline_object = TimelineObject(factory)
         start = 0
         for stream, track in stream_map.iteritems():
-            self.debug( "Stream: " + str(stream) + "\nTrack :" + str(track) +\
-                        "\n Track duration:" + str(track.duration))
+            self.debug("Stream: %s, Track: %s, Track duration: %d", str(stream),
+                       str(track), track.duration)
             start = max(start, track.duration)
             track_object = SourceTrackObject(factory, stream)
             track.addTrackObject(track_object)
@@ -1689,16 +1689,15 @@ class Timeline(Signallable, Loggable):
 
     def addEffectFactoryOnObject(self, factory, timeline_objects):
         """
-        Add effectTraks corresponding to the effect from the factory to the corresponding
+        Add EffectTracks corresponding to the effect from the factory to the corresponding
         L{TimelineObject}s on the timeline
 
         @param factory: The EffectFactory to add.
         @type factory: L{EffectFactory}
-        @param time: Where the effect should be added, if time = -1, we add the effect
-                     to the whole layer
-        @type time: C{int}
-        @priority: An aproximation of the clip we want the effect to be added to.
-        @type priority: C{int}
+        @timeline_objects: The L{TimelineObject}s on whiches you want to add TrackObjects
+                           corresponding to the L{EffectFactory}
+        @type timeline_objects: A C{List} of L{TimelineObject}s
+
         @raises TimelineError: if the factory doesn't have input or output streams
         @returns: A list of L{TimelineObject}, L{TrackObject} tuples
         """
@@ -1716,16 +1715,17 @@ class Timeline(Signallable, Loggable):
             raise TimelineError()
         input_stream = input_stream[0]
 
-        track = self.getEffectTrack(factory)
+        track = [track for track in self.tracks\
+                if type (track.stream) == type(factory.input_streams[0])][0]
         if track is None:
-          raise TimelineError()
+          raise TimelineError("There is no Track to add the effect to")
 
         if not timeline_objects:
           raise TimelineError("There is no timeline object to add effect to")
 
         listTimelineObjectTrackObject = []
         track_object = TrackEffect(factory, input_stream)
-        track_object.makeBin()
+        track_object.makeBin() #FIXME
 
         for obj in timeline_objects:
             copy_track_obj = track_object.copy()
@@ -1740,9 +1740,6 @@ class Timeline(Signallable, Loggable):
                            %(listTo[0], listTo[1])\
                            for listTo in listTimelineObjectTrackObject])
         return listTimelineObjectTrackObject
-
-    def getEffectTrack(self, factory):
-        return [track for track in self.tracks if type (track.stream) == type(factory.input_streams[0])][0]
 
     def _getSourceFactoryStreamMap(self, factory):
         # track.stream -> track

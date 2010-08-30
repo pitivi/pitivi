@@ -419,7 +419,6 @@ class TrackObject(Signallable, Loggable):
             self.track.addTrackObject(other)
             other.gnl_object.set_property("active",
                                           self.gnl_object.get_property("active"))
-            self._setGstElementProperties(other)
 
         interpolators = self.getInterpolators()
         for property, interpolator in interpolators.itervalues():
@@ -436,9 +435,6 @@ class TrackObject(Signallable, Loggable):
         return other
 
     def snapStartDurationTime(self, *args):
-        return
-
-    def _setGstElementProperties(self, other):
         return
 
     def _getStart(self):
@@ -540,6 +536,9 @@ class TrackObject(Signallable, Loggable):
             self._updatePriority(priority)
 
     def _updatePriority(self, priority):
+        # The priority of an effect should always be higher than the priority of 
+        # the track it is applied to. Those priority are affected when we add a 
+        # TrackObject to timeline
         if type(self) is TrackEffect:
             if self.stream_type is VideoStream:
                 true_priority = 2 + self._stagger + (3 * priority)
@@ -746,14 +745,18 @@ class TrackEffect(TrackObject):
         TrackEffect.numobjs += 1
         return effect
 
-    def _setGstElementProperties(self, other):
-        if isinstance(self, TrackEffect):
+    def copy(self):
+        other = TrackObject.copy(self)
+
+        if self.track is not None:
             element = self.getElement()
             new_element = other.getElement()
             for prop in gobject.list_properties(element):
                 value = element.get_property(prop.name)
                 if value != prop.default_value:
                     new_element.set_property(prop.name, value)
+
+        return other
 
     def getElement(self):
         """

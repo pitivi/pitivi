@@ -305,7 +305,7 @@ class ActivePropertyChanged(UndoableAction):
     def undo(self):
         self.effect_action.track_object.active = self.active
         self.active = not self.active
-        self._done()
+        self._undone()
 
 class TimelineLogObserver(object):
     timelinePropertyChangedAction = TimelineObjectPropertyChanged
