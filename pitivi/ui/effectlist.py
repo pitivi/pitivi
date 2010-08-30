@@ -196,9 +196,8 @@ class EffectList(gtk.VBox, Loggable):
             context.drag_abort(int(time.time()))
         else:
             row = self.storemodel[path[0]]
-            #FIXME
-            #if row[COL_ICON]:
-                #context.set_icon_pixbuf(row[COL_ICON], 0, 0)
+            if self._current_tooltip_icon:
+                context.set_icon_pixbuf(self._current_tooltip_icon, 0, 0)
 
     def _rowUnderMouseSelected(self, view, event):
         result = view.get_path_at_pos(int(event.x), int(event.y))
