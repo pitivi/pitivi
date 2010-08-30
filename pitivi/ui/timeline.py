@@ -509,7 +509,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _getTimelineObjectUnderMouse(self, x, y, stream):
         timeline_objs = []
-        items_in_area = self._canvas.getItemsInArea(x,y, x+1, y+1)
+        items_in_area = self._canvas.getItemsInArea(x, y-15, x+1, y-30)
         tracks = [obj for obj in items_in_area[0]]
         track_objects = [obj for obj in items_in_area[1]]
         for track_object in track_objects:
