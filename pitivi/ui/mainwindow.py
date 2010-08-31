@@ -127,6 +127,7 @@ def create_stock_icons():
     gtk.stock_add([
             ('pitivi-render', _('Render'), 0, 0, 'pitivi'),
             ('pitivi-split', _('Split'), 0, 0, 'pitivi'),
+            ('pitivi-keyframe', _('Keyframe'), 0, 0, 'pitivi'),
             ('pitivi-unlink', _('Unlink'), 0, 0, 'pitivi'),
             # Translators: This is an action, the title of a button
             ('pitivi-link', _('Link'), 0, 0, 'pitivi'),
@@ -137,6 +138,7 @@ def create_stock_icons():
     pixmaps = {
         "pitivi-render" : "pitivi-render-24.png",
         "pitivi-split" : "pitivi-split-24.svg",
+        "pitivi-keyframe" : "pitivi-keyframe-24.svg",
         "pitivi-unlink" : "pitivi-unlink-24.svg",
         "pitivi-link" : "pitivi-relink-24.svg",
         "pitivi-ungroup" : "pitivi-unlink-24.svg",
@@ -1114,4 +1116,3 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.project.pipeline.seek(position, format)
         except:
             self.debug("Seeking failed")
-

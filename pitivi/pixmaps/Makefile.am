@@ -5,6 +5,8 @@ pixmap_DATA = \
 	pitivi-advanced-16.png	\
 	pitivi-advanced-22.png	\
 	pitivi-advanced-24.png	\
+    pitivi-keyframe-24.png  \
+    pitivi-keyframe.png   \
 	pitivi-relink-24.svg	\
 	pitivi-relink.svg	\
 	pitivi-render-16.png	\

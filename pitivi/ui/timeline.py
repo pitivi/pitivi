@@ -41,10 +41,12 @@ from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 from pitivi.timeline.timeline import MoveContext
 from pitivi.utils import Seeker
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
+from pitivi.ui.curve import Curve
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
 SPLIT = _("Split clip at playhead position")
+KEYFRAME = _("Create a keyframe")
 ZOOM_IN =  _("Zoom In")
 ZOOM_OUT =  _("Zoom Out")
 UNLINK = _("Break links between clips")
@@ -66,6 +68,7 @@ ui = '''
         <menu action="Timeline">
             <placeholder name="Timeline">
                 <menuitem action="Split" />
+                <menuitem action="Keyframe" />
                 <separator />
                 <menuitem action="DeleteObj" />
                 <menuitem action="LinkObj" />
@@ -79,6 +82,7 @@ ui = '''
         <placeholder name="Timeline">
             <separator />
             <toolitem action="Split" />
+            <toolitem action="Keyframe" />
             <separator />
             <toolitem action="DeleteObj" />
             <toolitem action="UnlinkObj" />
@@ -294,6 +298,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         playhead_actions = (
             ("Split", "pitivi-split", _("Split"), "S", SPLIT,
                 self.split),
+            ("Keyframe", "pitivi-keyframe", _("Keyframe"), "K", KEYFRAME,
+                self.keyframe),
         )
 
         actiongroup = gtk.ActionGroup("timelinepermanent")
@@ -628,3 +634,26 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.app.action_log.commit()
         # work-around for 603149
         self.project.seeker.seek(self._position)
+
+    def keyframe(self, action):
+        timeline_position = self._position
+        selected = self.timeline.selection.getSelectedTrackObjs()
+        
+        for obj in selected:
+            keyframe_exists = False
+
+            position_in_obj = timeline_position - obj.start
+            interpolators = obj.getInterpolators()
+            for value in interpolators:
+                interpolator = obj.getInterpolator(value)
+                keyframes = interpolator.getInteriorKeyframes()
+                for kf in keyframes:
+                    if kf.getTime() == position_in_obj:
+                        keyframe_exists = True
+                        self.app.action_log.begin("remove volume point")
+                        interpolator.removeKeyframe(kf)
+                        self.app.action_log.commit()
+                if keyframe_exists == False:
+                    self.app.action_log.begin("add volume point")
+                    interpolator.newKeyframe(position_in_obj)
+                    self.app.action_log.commit()
