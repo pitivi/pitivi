@@ -317,7 +317,7 @@ class TrackObject(Signallable, Loggable):
         self.track = None
         self.timeline_object = None
         self.interpolators = {}
-        self._rebuild_interpolators = True
+        self._rebuild_interpolators = False
         self._public_priority = priority
         self._position = 0
         self._stagger = 0
@@ -359,11 +359,11 @@ class TrackObject(Signallable, Loggable):
         return self.interpolators
 
     def _maybeBuildInterpolators(self):
-        if not list(self.gnl_object.elements()):
-            raise TrackError("makeBin hasn't been called yet")
-
         if not self._rebuild_interpolators:
             return
+
+        if not list(self.gnl_object.elements()):
+            raise TrackError("makeBin hasn't been called yet")
 
         self._rebuild_interpolators = False
 
@@ -609,6 +609,7 @@ class TrackObject(Signallable, Loggable):
 
         bin = self.factory.makeBin(self.stream)
         self.gnl_object.add(bin)
+        self._rebuild_interpolators = True
         self._maybeBuildInterpolators()
 
     def releaseBin(self):

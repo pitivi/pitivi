@@ -537,3 +537,11 @@ class TestTrack(TestCase):
         # any priority
         prev = track1.getNextTrackObject(obj3, priority=None)
         self.failUnlessEqual(prev, obj4)
+
+    def testCopyMakeBinNotCalled(self):
+        factory = self.factory
+        stream = self.stream
+        obj1 = SourceTrackObject(factory, stream)
+        # this used to raise an exception
+        obj2 = obj1.copy()
+        self.failUnlessEqual(obj1.start, obj2.start)
