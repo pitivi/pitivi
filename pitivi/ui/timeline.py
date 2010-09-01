@@ -464,7 +464,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
             return True
         elif context.targets in DND_EFFECT_LIST:
-
+            if not self.timeline.timeline_objects:
+                return False
             factory = self._factories[0]
             timeline_objs = self._getTimelineObjectUnderMouse(x, y, factory.getInputStreams()[0])
             if timeline_objs:
@@ -502,6 +503,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             uris = selection.data.split("\n")
             self._factories = [self.project.sources.getUri(uri) for uri in uris]
         else:
+            if not self.timeline.timeline_objects:
+                return False
             self._factories = [self.app.effects.getFactoryFromName(selection.data)]
 
         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
