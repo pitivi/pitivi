@@ -99,14 +99,16 @@ class ClipProperties(gtk.VBox, Loggable):
 
         return label, info_bar
 
-class EffectProperties(gtk.Expander):
+class EffectProperties(gtk.HBox):
     """
     Widget for viewing and configuring effects
     """
+    # Note: This should be inherited from gtk.Expander when we get other things
+    # to put in ClipProperties, that is why this is done this way
 
     def __init__(self, instance, effect_properties_handling, clip_properties):
-        gtk.Expander.__init__(self, "Effects")
-        self.set_expanded(True)
+        gtk.HBox.__init__(self)
+        #self.set_expanded(True)
 
         self.selected_effects = []
         self.timeline_objects = []
@@ -196,7 +198,7 @@ class EffectProperties(gtk.Expander):
         self.treeview.connect("drag-motion", self._dragMotionCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
 
-        self.connect('notify::expanded', self._expandedCb)
+        #self.connect('notify::expanded', self._expandedCb)
 
         self._table.attach(self.treeview_scrollwin, 0, 1, 2, 3)
 
@@ -316,8 +318,8 @@ class EffectProperties(gtk.Expander):
         track_effect.gnl_object.set_property("active", not activated)
         self.app.action_log.commit()
 
-    def _expandedCb(self, expander, params):
-        self._updateAll()
+    #def _expandedCb(self, expander, params):
+    #    self._updateAll()
 
     def _treeViewQueryTooltipCb(self, treeview, x, y, keyboard_mode, tooltip):
         context = treeview.get_tooltip_context(x, y, keyboard_mode)
@@ -331,19 +333,19 @@ class EffectProperties(gtk.Expander):
         return True
 
     def _updateAll(self):
-        if self.get_expanded():
-            self._removeEffectBt.set_sensitive(False)
-            if self.timeline_objects:
-                self._setEffectDragable()
-                self._updateTreeview()
-                self._updateEffectConfigUi()
-            else:
-                self._hideEffectConfig()
-                self.storemodel.clear()
-                self._showInfoBar()
-            self._vcontent.show()
+        #if self.get_expanded():
+        self._removeEffectBt.set_sensitive(False)
+        if self.timeline_objects:
+            self._setEffectDragable()
+            self._updateTreeview()
+            self._updateEffectConfigUi()
         else:
-            self._vcontent.hide()
+            self._hideEffectConfig()
+            self.storemodel.clear()
+            self._showInfoBar()
+        self._vcontent.show()
+        #else:
+        #    self._vcontent.hide()
 
     def _activeChangedCb(self, unusedObj, unusedActive):
         self._updateTreeview()
