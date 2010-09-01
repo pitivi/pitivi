@@ -257,22 +257,11 @@ class EffectProperties(gtk.HBox):
             self._removeEffect(effect)
 
     def _removeEffect(self, effect):
-        rm = False
-        for timeline_object in self.timeline_objects:
-            if effect in timeline_object.track_objects:
-                self.app.action_log.begin("remove effect")
-                track  = effect.track
-                timeline_object.removeTrackObject(effect)
-                track.removeTrackObject(effect)
-                self.app.action_log.commit()
-                rm = True
-
-                self._cleanCache(effect)
-                break
-
-        if not rm:
-            raise ClipPropertiesError("Effect not in the selected list of\
-                                      TimelineObjects")
+        self.app.action_log.begin("remove effect")
+        effect.timeline_object.removeTrackObject(effect)
+        effect.track.removeTrackObject(effect)
+        self.app.action_log.commit()
+        self._cleanCache(effect)
 
     def _cleanCache(self, effect):
         element = effect.getElement()
