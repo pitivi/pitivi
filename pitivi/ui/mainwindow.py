@@ -429,7 +429,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.propertiestabs = BaseTabs(instance, True)
         self.clipconfig = ClipProperties(instance, self.uimanager)
         self.clipconfig.project = self.project
-        self.propertiestabs.append_page(self.clipconfig, gtk.Label(_("Clip Properties")))
+        self.propertiestabs.append_page(self.clipconfig,
+                                        gtk.Label(_("Effects configurations")))
         self.clipconfig.show()
 
         self.secondhpaned.pack2(self.propertiestabs, resize= True, shrink=False)
