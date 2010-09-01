@@ -133,6 +133,7 @@ class EffectProperties(gtk.HBox):
         self._removeEffectBt.set_label(_("Remove effect"))
         self._removeEffectBt.set_use_underline(True)
         self._removeEffectBt.set_is_important(True)
+        self._removeEffectBt.set_sensitive(False)
         self._toolbar.insert(self._removeEffectBt, 0)
         self._table.attach(self._toolbar, 0, 1, 0, 1, yoptions=gtk.FILL)
 
@@ -367,14 +368,11 @@ class EffectProperties(gtk.HBox):
 
         self.treeview.set_sensitive(False)
         self._table.show_all()
-        self._toolbar.hide()
 
     def _setEffectDragable(self):
         self.treeview.set_sensitive(True)
         self._table.show_all()
         self._info_bar.hide_all()
-        if not self.selected_effects:
-            self._toolbar.hide()
 
     def _treeviewSelectionChangedCb(self, treeview):
         if self.selection.count_selected_rows() == 0 and self.timeline_objects:
