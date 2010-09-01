@@ -324,7 +324,7 @@ class EffectProperties(gtk.HBox):
     def _updateAll(self):
         #if self.get_expanded():
         self._removeEffectBt.set_sensitive(False)
-        if self.timeline_objects:
+        if len(self.timeline_objects) == 1:
             self._setEffectDragable()
             self._updateTreeview()
             self._updateEffectConfigUi()
@@ -360,7 +360,7 @@ class EffectProperties(gtk.HBox):
     def _showInfoBar(self):
         if self._info_bar is None:
             self.txtlabel, self._info_bar = self.clip_properties.addInfoBar(
-                                _("<span>You must select a clip on the timeline "
+                                _("<span>You must select <b>one</b> clip on the timeline "
                                   "to configure its associated effects</span>"))
         self._info_bar.hide_all()
         self.txtlabel.show()
