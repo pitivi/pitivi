@@ -121,8 +121,8 @@ class EffectProperties(gtk.Expander):
         self._config_ui_h_pos = {}
         self._timeline = None
 
-        self.VContent = gtk.VPaned()
-        self.add(self.VContent)
+        self.vcontent = gtk.VPaned()
+        self.add(self.vcontent)
 
         self.table = gtk.Table(3, 1, False)
 
@@ -200,9 +200,9 @@ class EffectProperties(gtk.Expander):
 
         self.table.attach(self.treeview_scrollwin, 0, 1, 2, 3)
 
-        self.VContent.pack1(self.table, resize=True, shrink=False)
+        self.vcontent.pack1(self.table, resize=True, shrink=False)
         self._showInfoBar()
-        self.Vcontent.show()
+        self.vcontent.show()
 
     def _getTimeline(self):
         return self._timeline
@@ -340,9 +340,9 @@ class EffectProperties(gtk.Expander):
                 self._hideEffectConfig()
                 self.storemodel.clear()
                 self._showInfoBar()
-            self.VContent.show()
+            self.vcontent.show()
         else:
-            self.VContent.hide()
+            self.vcontent.hide()
 
     def _activeChangedCb(self, unusedObj, unusedActive):
         self._updateTreeview()
@@ -395,27 +395,27 @@ class EffectProperties(gtk.Expander):
 
     def _updateEffectConfigUi(self):
         if self._effect_config_ui is not None:
-            self._config_ui_h_pos[self._effect_config_ui] = self.VContent.get_position()
+            self._config_ui_h_pos[self._effect_config_ui] = self.vcontent.get_position()
         if self.selection.get_selected()[1]:
             track_effect = self.storemodel.get_value(self.selection.get_selected()[1],
                                                COL_TRACK_EFFECT)
 
-            for widget in self.VContent.get_children():
+            for widget in self.vcontent.get_children():
                 if type(widget) in [gtk.ScrolledWindow, GstElementSettingsWidget]:
-                    self.VContent.remove(widget)
+                    self.vcontent.remove(widget)
 
             element = track_effect.getElement()
             ui = self.effect_props_handling.getEffectConfigurationUI(element)
             self._effect_config_ui = ui
             if self._effect_config_ui:
-                self.VContent.pack2(self._effect_config_ui,
+                self.vcontent.pack2(self._effect_config_ui,
                                          resize=False,
                                          shrink=False)
                 if self._config_ui_h_pos.has_key(self._effect_config_ui):
                     position = self._config_ui_h_pos.get(self._effect_config_ui)
-                    self.VContent.set_position(int(position))
+                    self.vcontent.set_position(int(position))
                 else:
-                    self.VContent.set_position(10)
+                    self.vcontent.set_position(10)
 
                 self._effect_config_ui.show_all()
             self.selected_on_treeview = track_effect
@@ -424,6 +424,6 @@ class EffectProperties(gtk.Expander):
 
     def _hideEffectConfig(self):
         if self._effect_config_ui:
-            self._config_ui_h_pos[self._effect_config_ui] = self.VContent.get_position()
+            self._config_ui_h_pos[self._effect_config_ui] = self.vcontent.get_position()
             self._effect_config_ui.hide()
             self._effect_config_ui = None

@@ -68,8 +68,8 @@ class EffectList(gtk.VBox, Loggable):
         self.set_spacing(SPACING)
 
         #Searchbox and combobox
-        Hfilters = gtk.HBox()
-        Hfilters.set_spacing(SPACING)
+        hfilters = gtk.HBox()
+        hfilters.set_spacing(SPACING)
         self.effectType = gtk.combo_box_new_text()
         self.effectType.append_text(_("Video effects"))
         self.effectType.append_text(_("Audio effects"))
@@ -78,16 +78,16 @@ class EffectList(gtk.VBox, Loggable):
         self.effectType.set_active(VIDEO_EFFECT)
 
 
-        Hfilters.pack_start(self.effectType, expand=True)
-        Hfilters.pack_end(self.effectCategory, expand=True)
+        hfilters.pack_start(self.effectType, expand=True)
+        hfilters.pack_end(self.effectCategory, expand=True)
 
-        Hsearch = gtk.HBox()
-        Hsearch.set_spacing(SPACING)
+        hsearch = gtk.HBox()
+        hsearch.set_spacing(SPACING)
         searchStr = gtk.Label(_("Search:"))
         self.searchEntry = gtk.Entry()
         self.searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
-        Hsearch.pack_start(searchStr, expand=False)
-        Hsearch.pack_end(self.searchEntry, expand=True)
+        hsearch.pack_start(searchStr, expand=False)
+        hsearch.pack_end(self.searchEntry, expand=True)
 
         # Store
         self.storemodel = gtk.ListStore(str, str, int, object, object, str)
@@ -148,8 +148,8 @@ class EffectList(gtk.VBox, Loggable):
         self.treeview.connect("drag_begin", self._dndDragBeginCb)
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
 
-        self.pack_start(Hfilters, expand=False)
-        self.pack_start(Hsearch, expand=False, padding=PADDING)
+        self.pack_start(hfilters, expand=False)
+        self.pack_start(hsearch, expand=False, padding=PADDING)
         self.pack_end(self.treeview_scrollwin, expand=True)
 
         #create the filterModel
@@ -162,8 +162,8 @@ class EffectList(gtk.VBox, Loggable):
         self._addFactories(self.app.effects.getAllAudioEffects(), AUDIO_EFFECT)
 
         self.treeview_scrollwin.show_all()
-        Hfilters.show_all()
-        Hsearch.show_all()
+        hfilters.show_all()
+        hsearch.show_all()
 
     def _addFactories(self, elements, effectType):
         for element in elements:
