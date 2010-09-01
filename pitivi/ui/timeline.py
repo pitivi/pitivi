@@ -513,11 +513,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         tracks = [obj for obj in items_in_area[0]]
         track_objects = [obj for obj in items_in_area[1]]
         for track_object in track_objects:
-            for timeline_obj in self.timeline.timeline_objects:
-                for track in tracks:
-                    if track_object in timeline_obj.track_objects and\
-                            type(stream) == type(track.stream):
-                        timeline_objs.append(timeline_obj)
+            if (type(stream) == type(track_object.stream)):
+                timeline_objs.append(track_object.timeline_object)
 
         return timeline_objs
 
