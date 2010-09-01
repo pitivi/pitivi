@@ -32,7 +32,6 @@ import dnd
 from gettext import gettext as _
 
 from pitivi.log.loggable import Loggable
-from pitivi.receiver import receiver, handler
 from pitivi.timeline.track import TrackEffect
 from pitivi.stream import VideoStream
 
@@ -61,7 +60,7 @@ class ClipProperties(gtk.VBox, Loggable):
 
         self.app = instance
         self.settings = instance.settings
-        self.project = None
+        self._project = None
         self.info_bar_box = gtk.VBox()
 
         self.effect_properties_handling = EffectsPropertiesHandling(instance.action_log)
@@ -74,12 +73,16 @@ class ClipProperties(gtk.VBox, Loggable):
         self.effect_expander.show()
         self.show()
 
-    def _setProject(self):
-        if self.project:
-            self.effect_expander.connectTimelineSelection(self.project.timeline)
-            self.effect_properties_handling.pipeline = self.project.pipeline
+    def _setProject(self, project):
+        self._project = project
+        if project:
+            self.effect_expander.connectTimelineSelection(self._project.timeline)
+            self.effect_properties_handling.pipeline = self._project.pipeline
 
-    project = receiver(_setProject)
+    def _getProject(self):
+        return self._project
+
+    project = property(_getProject, _setProject)
 
     def addInfoBar(self, text):
         info_bar = gtk.InfoBar()
@@ -116,6 +119,7 @@ class EffectProperties(gtk.Expander):
         self.clip_properties = clip_properties
         self._info_bar =  None
         self._config_ui_h_pos = {}
+        self._timeline = None
 
         self.VContent = gtk.VPaned()
         self.add(self.VContent)
@@ -198,12 +202,20 @@ class EffectProperties(gtk.Expander):
 
         self.VContent.pack1(self.table, resize=True, shrink=False)
         self._showInfoBar()
-        self.VContent.show()
+        self.Vcontent.show()
 
-    timeline = receiver()
+    def _getTimeline(self):
+        return self._timeline
 
-    @handler(timeline, "selection-changed")
-    def selectionChangedCb(self, timeline):
+    def _setTimeline(self, timeline):
+        self._timeline = timeline
+        if timeline:
+            self.timeline.connect('selection-changed', self._selectionChangedCb)
+
+    timeline = property(_getTimeline, _setTimeline)
+
+
+    def _selectionChangedCb(self, timeline):
         for timeline_object in self.timeline_objects:
             timeline_object.disconnect_by_func(self._trackObjectAddedCb)
             timeline_object.disconnect_by_func(self._trackRemovedRemovedCb)
