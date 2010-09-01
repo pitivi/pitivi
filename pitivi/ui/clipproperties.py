@@ -332,6 +332,7 @@ class EffectProperties(gtk.Expander):
 
     def _updateAll(self):
         if self.get_expanded():
+            self.removeEffectBt.set_sensitive(False)
             if self.timeline_objects:
                 self._setEffectDragable()
                 self._updateTreeview()
@@ -388,8 +389,10 @@ class EffectProperties(gtk.Expander):
     def _treeviewSelectionChangedCb(self, treeview):
         if self.selection.count_selected_rows() == 0 and self.timeline_objects:
                 self.app.gui.setActionsSensitive(['DeleteObj'], True)
+                self.removeEffectBt.set_sensitive(False)
         else:
             self.app.gui.setActionsSensitive(['DeleteObj'], False)
+            self.removeEffectBt.set_sensitive(True)
 
         self._updateEffectConfigUi()
 
