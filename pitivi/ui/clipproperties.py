@@ -303,8 +303,7 @@ class EffectProperties(gtk.HBox):
         iter = self.storemodel.get_iter(path)
         track_effect = self.storemodel.get_value(iter, COL_TRACK_EFFECT)
         self.app.action_log.begin("change active state")
-        activated = track_effect.gnl_object.get_property("active")
-        track_effect.gnl_object.set_property("active", not activated)
+        track_effect.active = not track_effect.active
         self.app.action_log.commit()
 
     #def _expandedCb(self, expander, params):
