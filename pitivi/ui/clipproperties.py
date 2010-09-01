@@ -76,7 +76,7 @@ class ClipProperties(gtk.VBox, Loggable):
     def _setProject(self, project):
         self._project = project
         if project:
-            self.effect_expander.connectTimelineSelection(self._project.timeline)
+            self.effect_expander._connectTimelineSelection(self._project.timeline)
             self.effect_properties_handling.pipeline = self._project.pipeline
 
     def _getProject(self):
@@ -121,18 +121,18 @@ class EffectProperties(gtk.Expander):
         self._config_ui_h_pos = {}
         self._timeline = None
 
-        self.vcontent = gtk.VPaned()
-        self.add(self.vcontent)
+        self._vcontent = gtk.VPaned()
+        self.add(self._vcontent)
 
-        self.table = gtk.Table(3, 1, False)
+        self._table = gtk.Table(3, 1, False)
 
-        self.toolbar1 = gtk.Toolbar()
-        self.removeEffectBt = gtk.ToolButton("gtk-delete")
-        self.removeEffectBt.set_label(_("Remove effect"))
-        self.removeEffectBt.set_use_underline(True)
-        self.removeEffectBt.set_is_important(True)
-        self.toolbar1.insert(self.removeEffectBt, 0)
-        self.table.attach(self.toolbar1, 0, 1, 0, 1, yoptions=gtk.FILL)
+        self._toolbar = gtk.Toolbar()
+        self._removeEffectBt = gtk.ToolButton("gtk-delete")
+        self._removeEffectBt.set_label(_("Remove effect"))
+        self._removeEffectBt.set_use_underline(True)
+        self._removeEffectBt.set_is_important(True)
+        self._toolbar.insert(self._removeEffectBt, 0)
+        self._table.attach(self._toolbar, 0, 1, 0, 1, yoptions=gtk.FILL)
 
         self.storemodel = gtk.ListStore(bool, str, str, str, object)
 
@@ -188,7 +188,7 @@ class EffectProperties(gtk.Expander):
         self.selection = self.treeview.get_selection()
 
         self.selection.connect("changed", self._treeviewSelectionChangedCb)
-        self.removeEffectBt.connect("clicked", self._removeEffectClicked)
+        self._removeEffectBt.connect("clicked", self._removeEffectClicked)
 
         self.connect("drag-data-received", self._dragDataReceivedCb)
         self.treeview.connect("drag-leave", self._dragLeaveCb)
@@ -198,11 +198,11 @@ class EffectProperties(gtk.Expander):
 
         self.connect('notify::expanded', self._expandedCb)
 
-        self.table.attach(self.treeview_scrollwin, 0, 1, 2, 3)
+        self._table.attach(self.treeview_scrollwin, 0, 1, 2, 3)
 
-        self.vcontent.pack1(self.table, resize=True, shrink=False)
+        self._vcontent.pack1(self._table, resize=True, shrink=False)
         self._showInfoBar()
-        self.vcontent.show()
+        self._vcontent.show()
 
     def _getTimeline(self):
         return self._timeline
@@ -243,7 +243,7 @@ class EffectProperties(gtk.Expander):
             self.selected_effects = selec
             self._updateAll()
 
-    def connectTimelineSelection(self, timeline):
+    def _connectTimelineSelection(self, timeline):
         self.timeline = timeline
 
     def _removeEffectClicked(self, toolbutton):
@@ -332,7 +332,7 @@ class EffectProperties(gtk.Expander):
 
     def _updateAll(self):
         if self.get_expanded():
-            self.removeEffectBt.set_sensitive(False)
+            self._removeEffectBt.set_sensitive(False)
             if self.timeline_objects:
                 self._setEffectDragable()
                 self._updateTreeview()
@@ -341,9 +341,9 @@ class EffectProperties(gtk.Expander):
                 self._hideEffectConfig()
                 self.storemodel.clear()
                 self._showInfoBar()
-            self.vcontent.show()
+            self._vcontent.show()
         else:
-            self.vcontent.hide()
+            self._vcontent.hide()
 
     def _activeChangedCb(self, unusedObj, unusedActive):
         self._updateTreeview()
@@ -376,49 +376,49 @@ class EffectProperties(gtk.Expander):
         self._info_bar.show()
 
         self.treeview.set_sensitive(False)
-        self.table.show_all()
-        self.toolbar1.hide()
+        self._table.show_all()
+        self._toolbar.hide()
 
     def _setEffectDragable(self):
         self.treeview.set_sensitive(True)
-        self.table.show_all()
+        self._table.show_all()
         self._info_bar.hide_all()
         if not self.selected_effects:
-            self.toolbar1.hide()
+            self._toolbar.hide()
 
     def _treeviewSelectionChangedCb(self, treeview):
         if self.selection.count_selected_rows() == 0 and self.timeline_objects:
                 self.app.gui.setActionsSensitive(['DeleteObj'], True)
-                self.removeEffectBt.set_sensitive(False)
+                self._removeEffectBt.set_sensitive(False)
         else:
             self.app.gui.setActionsSensitive(['DeleteObj'], False)
-            self.removeEffectBt.set_sensitive(True)
+            self._removeEffectBt.set_sensitive(True)
 
         self._updateEffectConfigUi()
 
     def _updateEffectConfigUi(self):
         if self._effect_config_ui is not None:
-            self._config_ui_h_pos[self._effect_config_ui] = self.vcontent.get_position()
+            self._config_ui_h_pos[self._effect_config_ui] = self._vcontent.get_position()
         if self.selection.get_selected()[1]:
             track_effect = self.storemodel.get_value(self.selection.get_selected()[1],
                                                COL_TRACK_EFFECT)
 
-            for widget in self.vcontent.get_children():
+            for widget in self._vcontent.get_children():
                 if type(widget) in [gtk.ScrolledWindow, GstElementSettingsWidget]:
-                    self.vcontent.remove(widget)
+                    self._vcontent.remove(widget)
 
             element = track_effect.getElement()
             ui = self.effect_props_handling.getEffectConfigurationUI(element)
             self._effect_config_ui = ui
             if self._effect_config_ui:
-                self.vcontent.pack2(self._effect_config_ui,
+                self._vcontent.pack2(self._effect_config_ui,
                                          resize=False,
                                          shrink=False)
                 if self._config_ui_h_pos.has_key(self._effect_config_ui):
                     position = self._config_ui_h_pos.get(self._effect_config_ui)
-                    self.vcontent.set_position(int(position))
+                    self._vcontent.set_position(int(position))
                 else:
-                    self.vcontent.set_position(10)
+                    self._vcontent.set_position(10)
 
                 self._effect_config_ui.show_all()
             self.selected_on_treeview = track_effect
@@ -427,6 +427,6 @@ class EffectProperties(gtk.Expander):
 
     def _hideEffectConfig(self):
         if self._effect_config_ui:
-            self._config_ui_h_pos[self._effect_config_ui] = self.vcontent.get_position()
+            self._config_ui_h_pos[self._effect_config_ui] = self._vcontent.get_position()
             self._effect_config_ui.hide()
             self._effect_config_ui = None
