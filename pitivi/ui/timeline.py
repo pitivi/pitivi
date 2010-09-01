@@ -38,7 +38,7 @@ from timelinecontrols import TimelineControls
 from pitivi.receiver import receiver, handler
 from zoominterface import Zoomable
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING, TRACK_SPACING
-from pitivi.timeline.timeline import MoveContext, SELECT_ADD
+from pitivi.timeline.timeline import MoveContext, SELECT
 from pitivi.utils import Seeker
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.curve import Curve
@@ -476,7 +476,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 self.app.current.seeker.seek(self._position)
                 context.drop_finish(True, timestamp)
 
-                self.timeline.selection.setTo(timeline_objs, SELECT_ADD)
+                self.timeline.selection.setTo(timeline_objs, SELECT)
 
             return True
 
