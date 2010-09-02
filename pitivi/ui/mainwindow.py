@@ -141,8 +141,8 @@ def create_stock_icons():
         "pitivi-keyframe" : "pitivi-keyframe-24.svg",
         "pitivi-unlink" : "pitivi-unlink-24.svg",
         "pitivi-link" : "pitivi-relink-24.svg",
-        "pitivi-ungroup" : "pitivi-unlink-24.svg",
-        "pitivi-group" : "pitivi-relink-24.svg",
+        "pitivi-ungroup" : "pitivi-ungroup-24.svg",
+        "pitivi-group" : "pitivi-group-24.svg",
     }
     factory = gtk.IconFactory()
     pmdir = get_pixmap_dir()

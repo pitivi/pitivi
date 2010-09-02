@@ -5,6 +5,8 @@ pixmap_DATA = \
 	pitivi-advanced-16.png	\
 	pitivi-advanced-22.png	\
 	pitivi-advanced-24.png	\
+	pitivi-group-24.svg  \
+	pitivi-group.svg  \
 	pitivi-keyframe-24.svg  \
 	pitivi-keyframe.svg     \
 	pitivi-relink-24.svg	\
@@ -15,6 +17,8 @@ pixmap_DATA = \
 	pitivi-sound.png	\
 	pitivi-split-24.svg	\
 	pitivi-split.svg	\
+	pitivi-ungroup-24.svg	\
+	pitivi-ungroup.svg	\
 	pitivi-unlink-24.svg	\
 	pitivi-unlink.svg	\
 	pitivi-video.png	\
