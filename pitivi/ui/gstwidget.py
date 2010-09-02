@@ -64,7 +64,8 @@ def make_property_widget(unused_element, prop, value=None):
     else:
         widget = dynamic.DefaultWidget(type_name)
 
-    widget.setWidgetValue(value)
+    if value is not None and type_name != 'GFlags':
+        widget.setWidgetValue(value)
 
     return widget
 
@@ -158,7 +159,8 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         """
         d = {}
         for prop, widget in self.properties.iteritems():
-            if not prop.flags & gobject.PARAM_WRITABLE:
+            if not prop.flags & gobject.PARAM_WRITABLE\
+              or isinstance(widget, dynamic.DefaultWidget):
                 continue
             value = widget.getWidgetValue()
             if value != None and (value != prop.default_value or with_default):
