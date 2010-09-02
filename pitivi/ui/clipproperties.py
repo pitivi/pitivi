@@ -38,12 +38,15 @@ from pitivi.stream import VideoStream
 from pitivi.ui.gstwidget import GstElementSettingsWidget
 from pitivi.ui.effectsconfiguration import EffectsPropertiesHandling
 from pitivi.ui.common import PADDING, SPACING
+from pitivi.ui import dynamic
 
 (COL_ACTIVATED,
  COL_TYPE,
  COL_NAME_TEXT,
  COL_DESC_TEXT,
  COL_TRACK_EFFECT) = range(5)
+
+VPANED_DEFAULT_POSITION = 30
 
 class ClipPropertiesError(Exception):
     """Base Exception for errors happening in L{ClipProperties}s or L{EffectProperties}s"""
@@ -120,7 +123,7 @@ class EffectProperties(gtk.HBox):
         self.effect_props_handling = effect_properties_handling
         self.clip_properties = clip_properties
         self._info_bar =  None
-        self._config_ui_h_pos = {}
+        self._config_ui_h_pos = None
         self._timeline = None
 
         self._vcontent = gtk.VPaned()
@@ -267,8 +270,6 @@ class EffectProperties(gtk.HBox):
     def _cleanCache(self, effect):
         element = effect.getElement()
         config_ui = self.effect_props_handling.cleanCache(element)
-        if self._config_ui_h_pos.has_key(config_ui):
-            self._config_ui_h_pos.pop(config_ui)
 
     def addEffectToCurrentSelection(self, factory_name):
         if self.timeline_objects:
@@ -386,7 +387,7 @@ class EffectProperties(gtk.HBox):
 
     def _updateEffectConfigUi(self):
         if self._effect_config_ui is not None:
-            self._config_ui_h_pos[self._effect_config_ui] = self._vcontent.get_position()
+            self._config_ui_h_pos = self._vcontent.get_position()
         if self.selection.get_selected()[1]:
             track_effect = self.storemodel.get_value(self.selection.get_selected()[1],
                                                COL_TRACK_EFFECT)
@@ -397,16 +398,16 @@ class EffectProperties(gtk.HBox):
 
             element = track_effect.getElement()
             ui = self.effect_props_handling.getEffectConfigurationUI(element)
+
             self._effect_config_ui = ui
             if self._effect_config_ui:
                 self._vcontent.pack2(self._effect_config_ui,
                                          resize=False,
                                          shrink=False)
-                if self._config_ui_h_pos.has_key(self._effect_config_ui):
-                    position = self._config_ui_h_pos.get(self._effect_config_ui)
-                    self._vcontent.set_position(int(position))
+                if self._config_ui_h_pos:
+                    self._vcontent.set_position(int(self._config_ui_h_pos))
                 else:
-                    self._vcontent.set_position(10)
+                    self._vcontent.set_position(VPANED_DEFAULT_POSITION)
 
                 self._effect_config_ui.show_all()
             self.selected_on_treeview = track_effect
@@ -415,6 +416,6 @@ class EffectProperties(gtk.HBox):
 
     def _hideEffectConfig(self):
         if self._effect_config_ui:
-            self._config_ui_h_pos[self._effect_config_ui] = self._vcontent.get_position()
+            self._config_ui_h_pos = self._vcontent.get_position()
             self._effect_config_ui.hide()
             self._effect_config_ui = None
