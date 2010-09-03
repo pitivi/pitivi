@@ -209,6 +209,7 @@ class Interpolator(Signallable, Loggable):
                    gst.TIME_ARGS(keyframe.time), keyframe.value, keyframe.mode)
 
         self._keyframes.append(keyframe)
+        self._keyframes.sort()
 
         self._controller.set(self._property.name, keyframe.time, keyframe.value)
 
@@ -254,17 +255,14 @@ class Interpolator(Signallable, Loggable):
         self.emit("keyframe-moved", kf, old_value)
 
     def getKeyframes(self):
-        # TODO: This could be more efficient. We are re-sorting all the keyframes
-        # every time we iterate over them. One thought would be to keep the
-        # list sorted in-place as keyframes are added and moved.
         yield self.start
-        for kf in sorted(self._keyframes):
+        for kf in self._keyframes:
             yield kf
         yield self.end
 
     def getInteriorKeyframes(self):
         """Same as above but does not include start, or end points"""
-        for kf in sorted(self._keyframes):
+        for kf in self._keyframes:
             yield kf
 
     def getVisibleKeyframes(self):

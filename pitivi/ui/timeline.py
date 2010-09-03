@@ -601,7 +601,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ungroup_action.set_sensitive(ungroup)
         self.split_action.set_sensitive(split)
         self.keyframe_action.set_sensitive(keyframe)
-        print self.keyframe_action.get_sensitive()
 
 
 ## ToolBar callbacks
