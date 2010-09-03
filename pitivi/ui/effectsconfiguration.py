@@ -28,7 +28,7 @@ import gobject
 from pitivi.pipeline import PipelineError
 from pitivi.ui.gstwidget import GstElementSettingsWidget
 
-PROPS_TO_IGNORE = ['name', 'qos']
+PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
 
 class EffectsPropertiesHandling:
     def __init__(self, action_log):
@@ -51,7 +51,7 @@ class EffectsPropertiesHandling:
             else:
                 effect_set_ui = GstElementSettingsWidget()
                 effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
-                                                   default_btn=True, use_element_props=True)
+                                         default_btn=True, use_element_props=True)
                 nb_rows = effect_set_ui.get_children()[0].get_property('n-rows')
                 effect_configuration_ui = gtk.ScrolledWindow()
                 effect_configuration_ui.add_with_viewport(effect_set_ui)
