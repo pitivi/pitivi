@@ -65,7 +65,8 @@ class EffectsPropertiesHandling:
         self._current_effect_setting_ui = effect_set_ui
         element = self._current_effect_setting_ui.element
         for prop in gobject.list_properties(element):
-            self._current_element_values[prop.name] = element.get_property(prop.name)
+            if prop.flags & gobject.PARAM_READABLE:
+                self._current_element_values[prop.name] = element.get_property(prop.name)
 
         return self.cache_dict[effect]
 

@@ -360,11 +360,12 @@ class ElementTreeFormatter(Formatter):
         for prop in properties:
             type_name = str(gobject.type_name(prop.value_type.fundamental))
             #FIXME we just take the int equivalent to the GEnum, how should it be handled?
-            if type_name == "GEnum":
-                value = str(effect.get_property(prop.name).__int__())
-            else:
-                value = str(effect.get_property(prop.name))
-            effect_properties.attrib[prop.name] = '(' + type_name + ')' + value
+            if prop.flags & gobject.PARAM_READABLE:
+                if type_name == "GEnum":
+                    value = str(effect.get_property(prop.name).__int__())
+                else:
+                    value = str(effect.get_property(prop.name))
+                effect_properties.attrib[prop.name] = '(' + type_name + ')' + value
         effect_element.append(effect_properties)
 
 

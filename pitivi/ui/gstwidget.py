@@ -111,6 +111,10 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         table.set_border_width(5)
         y = 0
         for prop in props:
+            if not prop.flags & gobject.PARAM_WRITABLE\
+              or not prop.flags & gobject.PARAM_READABLE:
+                continue
+
             label = gtk.Label(prop.nick+":")
             label.set_alignment(0.0, 0.5)
             table.attach(label, 0, 1, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)

@@ -332,7 +332,8 @@ class EffectGstElementPropertyChangeTracker:
             gst_element.connect('notify::' + prop.name,
                                 self._propertyChangedCb,
                                 gst_element)
-            properties[prop.name] = gst_element.get_property(prop.name)
+            if prop.flags & gobject.PARAM_READABLE:
+                properties[prop.name] = gst_element.get_property(prop.name)
         self._tracked_effects[gst_element] = properties
 
     def _propertyChangedCb(self, gst_element, pspec, unused):
