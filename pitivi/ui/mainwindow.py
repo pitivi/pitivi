@@ -124,6 +124,11 @@ GlobalSettings.addConfigOption('elementSettingsDialogHeight',
     section='export',
     key='element-settings-dialog-height',
     default = 460)
+GlobalSettings.addConfigSection("effect-configuration")
+GlobalSettings.addConfigOption('effectVPanedPosition',
+    section='effect-configuration',
+    key='effect-vpaned-position',
+    type_=int)
 
 def supported(info):
     return formatter.can_handle_location(info[1])

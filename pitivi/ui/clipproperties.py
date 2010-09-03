@@ -46,8 +46,6 @@ from pitivi.ui import dynamic
  COL_DESC_TEXT,
  COL_TRACK_EFFECT) = range(5)
 
-VPANED_DEFAULT_POSITION = 30
-
 class ClipPropertiesError(Exception):
     """Base Exception for errors happening in L{ClipProperties}s or L{EffectProperties}s"""
     pass
@@ -68,7 +66,8 @@ class ClipProperties(gtk.VBox, Loggable):
 
         self.effect_properties_handling = EffectsPropertiesHandling(instance.action_log)
         self.effect_expander = EffectProperties(instance,
-                                                self.effect_properties_handling, self)
+                                                self.effect_properties_handling,
+                                                self)
 
         self.pack_start(self.info_bar_box, expand=False, fill=True)
         self.pack_end(self.effect_expander, expand=True, fill=True)
@@ -201,6 +200,7 @@ class EffectProperties(gtk.HBox):
         self.treeview.connect("drag-drop", self._dragDropCb)
         self.treeview.connect("drag-motion", self._dragMotionCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
+        self._vcontent.connect("notify", self._vcontentNotifyCb)
 
         #self.connect('notify::expanded', self._expandedCb)
 
@@ -209,6 +209,11 @@ class EffectProperties(gtk.HBox):
         self._vcontent.pack1(self._table, resize=True, shrink=False)
         self._showInfoBar()
         self._vcontent.show()
+
+    def _vcontentNotifyCb(self, paned, gparamspec):
+        if gparamspec.name == 'position':
+            self._config_ui_h_pos = self._vcontent.get_position()
+            self.app.settings.effectVPanedPosition = self._config_ui_h_pos
 
     def _getTimeline(self):
         return self._timeline
@@ -219,7 +224,6 @@ class EffectProperties(gtk.HBox):
             self.timeline.connect('selection-changed', self._selectionChangedCb)
 
     timeline = property(_getTimeline, _setTimeline)
-
 
     def _selectionChangedCb(self, timeline):
         for timeline_object in self.timeline_objects:
@@ -386,8 +390,12 @@ class EffectProperties(gtk.HBox):
         self._updateEffectConfigUi()
 
     def _updateEffectConfigUi(self):
-        if self._effect_config_ui is not None:
-            self._config_ui_h_pos = self._vcontent.get_position()
+        if self._config_ui_h_pos is None:
+            self._config_ui_h_pos =\
+                        self.app.gui.settings.effectVPanedPosition
+            if self._config_ui_h_pos is None:
+                self._config_ui_h_pos=\
+                        self.app.gui.settings.mainWindowHeight // 3
         if self.selection.get_selected()[1]:
             track_effect = self.storemodel.get_value(self.selection.get_selected()[1],
                                                COL_TRACK_EFFECT)
@@ -404,11 +412,7 @@ class EffectProperties(gtk.HBox):
                 self._vcontent.pack2(self._effect_config_ui,
                                          resize=False,
                                          shrink=False)
-                if self._config_ui_h_pos:
-                    self._vcontent.set_position(int(self._config_ui_h_pos))
-                else:
-                    self._vcontent.set_position(VPANED_DEFAULT_POSITION)
-
+                self._vcontent.set_position(int(self._config_ui_h_pos))
                 self._effect_config_ui.show_all()
             self.selected_on_treeview = track_effect
         else:
@@ -416,6 +420,5 @@ class EffectProperties(gtk.HBox):
 
     def _hideEffectConfig(self):
         if self._effect_config_ui:
-            self._config_ui_h_pos = self._vcontent.get_position()
             self._effect_config_ui.hide()
             self._effect_config_ui = None
