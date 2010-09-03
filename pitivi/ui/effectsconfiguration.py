@@ -53,12 +53,11 @@ class EffectsPropertiesHandling:
                 effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
                                                    default_btn=True, use_element_props=True)
                 nb_rows = effect_set_ui.get_children()[0].get_property('n-rows')
-                if nb_rows > 2:
-                    effect_configuration_ui = gtk.ScrolledWindow()
-                    effect_configuration_ui.add_with_viewport(effect_set_ui)
-                    self.cache_dict[effect] = effect_configuration_ui
-                else:
-                    self.cache_dict[effect] = effect_set_ui
+                effect_configuration_ui = gtk.ScrolledWindow()
+                effect_configuration_ui.add_with_viewport(effect_set_ui)
+                effect_configuration_ui.set_policy(gtk.POLICY_AUTOMATIC,
+                                                   gtk.POLICY_AUTOMATIC)
+                self.cache_dict[effect] = effect_configuration_ui
                 self._connectAllWidgetCbs(effect_set_ui, effect)
 
         effect_set_ui = self._getUiToSetEffect(effect)
