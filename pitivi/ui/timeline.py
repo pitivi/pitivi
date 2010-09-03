@@ -304,16 +304,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         actiongroup = gtk.ActionGroup("timelinepermanent")
         actiongroup.add_actions(actions)
-        actiongroup.add_actions(playhead_actions)
         self.ui_manager.insert_action_group(actiongroup, 0)
 
         actiongroup = gtk.ActionGroup("timelineselection")
         actiongroup.add_actions(selection_actions)
+        actiongroup.add_actions(playhead_actions)
         self.link_action = actiongroup.get_action("LinkObj")
         self.unlink_action = actiongroup.get_action("UnlinkObj")
         self.group_action = actiongroup.get_action("GroupObj")
         self.ungroup_action = actiongroup.get_action("UngroupObj")
         self.delete_action = actiongroup.get_action("DeleteObj")
+        self.split_action = actiongroup.get_action("Split")
+        self.keyframe_action = actiongroup.get_action("Keyframe")
 
         self.ui_manager.insert_action_group(actiongroup, -1)
 
@@ -563,6 +565,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         unlink = False
         group = False
         ungroup = False
+        split = False
+        keyframe = False
         timeline_objects = {}
         if timeline.selection:
             delete = True
@@ -574,6 +578,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             duration = None
             for obj in self.timeline.selection:
                 if obj.link:
+                    link = False
                     unlink = True
 
                 if len(obj.track_objects) > 1:
@@ -586,11 +591,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     start = obj.start
                     duration = obj.duration
 
+            split = True
+            keyframe = True
+
         self.delete_action.set_sensitive(delete)
         self.link_action.set_sensitive(link)
         self.unlink_action.set_sensitive(unlink)
         self.group_action.set_sensitive(group)
         self.ungroup_action.set_sensitive(ungroup)
+        self.split_action.set_sensitive(split)
+        self.keyframe_action.set_sensitive(keyframe)
+        print self.keyframe_action.get_sensitive()
+
 
 ## ToolBar callbacks
 
