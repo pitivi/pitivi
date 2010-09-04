@@ -16,7 +16,6 @@ from pitivi.utils import beautify_length, uri_is_valid
 from pitivi.configure import get_pixmap_dir
 from pitivi.factories.file import PictureFileSourceFactory
 from pitivi.settings import GlobalSettings
-from pitivi.ui.prefs import PreferencesDialog
 from gettext import gettext as _
 
 
@@ -38,12 +37,6 @@ GlobalSettings.addConfigOption('FCpreviewHeight',
     section='filechooser-preview',
     key='video-preview-height',
     default=PREVIEW_HEIGHT)
-
-
-PreferencesDialog.addTogglePreference('FCEnablePreview',
-    section = _('Appearance'),
-    label = _("Show preview on Import"),
-    description = _("Enable Preview on FileChooser"))
 
 
 def get_playbin():
