@@ -423,7 +423,10 @@ class SourceFactory(ObjectFactory):
             b.alpha = gst.element_factory_make("alpha", "internal-alpha")
             b.alpha.props.prefer_passthrough = True
             b.scale = gst.element_factory_make("videoscale")
-            b.scale.props.add_borders = True
+            try:
+                b.scale.props.add_borders = True
+            except:
+                self.warning("User has old version of videoscale. add-border not enabled")
             b.capsfilter = gst.element_factory_make("capsfilter")
             self.setFilterCaps(self._filtercaps, b)
 
