@@ -92,6 +92,9 @@ ui = '''
         </placeholder>
     </toolbar>
     <accelerator action="DeleteObj" />
+    <accelerator action="ControlEqualAccel" />
+    <accelerator action="ControlKPAddAccel" />
+    <accelerator action="ControlKPSubtractAccel" />
 </ui>
 '''
 
@@ -276,9 +279,17 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # toolbar actions
         actions = (
-            ("ZoomIn", gtk.STOCK_ZOOM_IN, None, "<Control>equal", ZOOM_IN,
+            ("ZoomIn", gtk.STOCK_ZOOM_IN, None, "<Control>plus", ZOOM_IN,
                 self._zoomInCb),
             ("ZoomOut", gtk.STOCK_ZOOM_OUT, None, "<Control>minus", ZOOM_OUT,
+                self._zoomOutCb),
+
+            # actions for adding additional accelerators
+            ("ControlEqualAccel", gtk.STOCK_ZOOM_IN, None, "<Control>equal", ZOOM_IN,
+                self._zoomInCb),
+            ("ControlKPAddAccel", gtk.STOCK_ZOOM_IN, None, "<Control>KP_Add", ZOOM_IN,
+                self._zoomInCb),
+            ("ControlKPSubtractAccel", gtk.STOCK_ZOOM_OUT, None, "<Control>KP_Subtract", ZOOM_OUT,
                 self._zoomOutCb),
         )
 
