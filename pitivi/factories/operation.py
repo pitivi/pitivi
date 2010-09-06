@@ -111,7 +111,12 @@ class VideoModifierFactory(StreamModifierFactory):
 
         # if we have an output stream specified, we add a capsfilter
         vscale = gst.element_factory_make("videoscale")
-        vscale.props.add_borders = True
+        try:
+            vscale.props.add_borders = True
+        except AttributeError:
+            self.warning("User has old version of videoscale. "
+                    "add-border not enabled.")
+
         b.add(vscale)
         vrate.link(vscale)
         self.debug("output_streams:%d", len(self.output_streams))

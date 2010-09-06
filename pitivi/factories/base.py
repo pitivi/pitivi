@@ -425,8 +425,9 @@ class SourceFactory(ObjectFactory):
             b.scale = gst.element_factory_make("videoscale")
             try:
                 b.scale.props.add_borders = True
-            except:
-                self.warning("User has old version of videoscale. add-border not enabled")
+            except AttributeError:
+                self.warning("User has old version of videoscale. "
+                        "add-border not enabled")
             b.capsfilter = gst.element_factory_make("capsfilter")
             self.setFilterCaps(self._filtercaps, b)
 
