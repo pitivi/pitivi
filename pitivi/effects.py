@@ -52,7 +52,8 @@ from pitivi.undo import UndoableAction
 (VIDEO_EFFECT, AUDIO_EFFECT)  = range(2)
 
 BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
-                       "alphacolor", "cogcolorspace"]
+                       "alphacolor", "cogcolorspace", "videodetect",
+                       "navigationtest", "videoanalyse"]
 
 class EffectsHandler(object):
     """
@@ -74,7 +75,7 @@ class EffectsHandler(object):
                   "frei0r-filter-g", "frei0r-filter-bw0r", "burn", "dodge",
                   "coloreffects", "chromium", "exclusion", "glfiltersobel",
                   "Solarize", "frei0r-filter-threshold0r",
-                  "frei0r-filter-twolay0r", 
+                  "frei0r-filter-twolay0r",
                 )
             ),
             (_("Noise"), ("videorate", "frei0r-filter-edgeglow", "gaussianblur",
