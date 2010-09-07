@@ -23,9 +23,9 @@
 from common import TestCase
 from pitivi.stream import AudioStream, VideoStream, match_stream, \
         match_stream_groups, StreamGroupWalker, \
-        STREAM_MATCH_MAXIMUM, STREAM_MATCH_SAME_CAPS, \
-        STREAM_MATCH_COMPATIBLE_CAPS, STREAM_MATCH_NONE, \
-        STREAM_MATCH_SAME_PAD_NAME
+        STREAM_MATCH_SAME_CAPS, STREAM_MATCH_COMPATIBLE_CAPS, \
+        STREAM_MATCH_NONE, STREAM_MATCH_SAME_PAD_NAME, \
+        STREAM_MATCH_SAME_TYPE
 import gst
 
 class TestMultimediaStream(object):
@@ -170,7 +170,8 @@ class TestMatchStream(TestCase):
         s2 = AudioStream(gst.Caps("audio/x-speex"), pad_name="src0")
         stream, rank = match_stream(s1, [s2])
         self.failUnlessEqual(id(s2), id(stream))
-        self.failUnlessEqual(rank, STREAM_MATCH_SAME_PAD_NAME)
+        self.failUnlessEqual(rank, STREAM_MATCH_SAME_PAD_NAME +
+                STREAM_MATCH_SAME_TYPE)
 
     def testMatchStreamCompatibleCaps(self):
         s1 = AudioStream(gst.Caps("audio/x-vorbis, a={1, 2}"))
@@ -186,7 +187,6 @@ class TestMatchStream(TestCase):
         self.failUnlessEqual(id(s2), id(stream))
         self.failUnlessEqual(rank,
                 STREAM_MATCH_SAME_PAD_NAME + STREAM_MATCH_SAME_CAPS)
-        self.failUnlessEqual(rank, STREAM_MATCH_MAXIMUM)
 
     def testMatchStreamSameNameAndCompatibleCaps(self):
         s1 = AudioStream(gst.Caps("audio/x-vorbis, a={1, 2}"), pad_name="src0")
@@ -238,7 +238,8 @@ class TestStreamGroupMatching(TestCase):
 
         walker = walkers[1]
         self.failUnlessEqual(walker.advance(), [])
-        self.failUnlessEqual(walker.getMatches(), {})
+        self.failUnlessEqual(walker.getMatches(),
+                {(stream2, stream3): STREAM_MATCH_SAME_TYPE})
 
     def testMatchStreamGroupsOrder(self):
         stream1 = AudioStream(gst.Caps("audio/x-vorbis"))

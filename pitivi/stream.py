@@ -27,10 +27,10 @@ from pitivi.log.loggable import Loggable
 import pitivi.log.log as log
 import gst
 
-STREAM_MATCH_MAXIMUM = 100
 STREAM_MATCH_SAME_CAPS = 60
-STREAM_MATCH_SAME_PAD_NAME = 40
-STREAM_MATCH_COMPATIBLE_CAPS = 30
+STREAM_MATCH_SAME_PAD_NAME = 30
+STREAM_MATCH_COMPATIBLE_CAPS = 20
+STREAM_MATCH_SAME_TYPE = 10
 STREAM_MATCH_NONE = 0
 
 class MultimediaStream(Loggable):
@@ -444,6 +444,11 @@ def stream_compare(stream_a, stream_b):
             current_rank += STREAM_MATCH_SAME_CAPS
         elif stream_a.caps.intersect(stream_b.caps):
             current_rank += STREAM_MATCH_COMPATIBLE_CAPS
+        else:
+            name_a = stream_a.caps[0].get_name()
+            name_b = stream_b.caps[0].get_name()
+            if name_a.split("/", 1)[0] == name_b.split("/", 1)[0]:
+                current_rank += STREAM_MATCH_SAME_TYPE
 
     return current_rank
 
