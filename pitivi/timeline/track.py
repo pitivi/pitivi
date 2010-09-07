@@ -1004,6 +1004,7 @@ class Track(Signallable, Loggable):
 
     def _getDefaultVideoTrackObject(self, stream):
         factory = VideoTestSourceFactory(pattern='black')
+        factory.setFilterCaps(stream.caps)
         track_object = SourceTrackObject(factory, stream)
 
         return track_object
