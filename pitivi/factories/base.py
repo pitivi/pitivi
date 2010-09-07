@@ -373,76 +373,11 @@ class SourceFactory(ObjectFactory):
     def _makeStreamBin(self, output_stream, child_bin=None):
         self.debug("output_stream:%r", output_stream)
         b = self._makeStreamBinReal(output_stream)
-        if child_bin:
-            b.child = child_bin
-            b.add(child_bin)
 
         if isinstance(output_stream, AudioStream):
-            self.debug("Adding volume element")
-            # add a volume element
-            b.aconv = gst.element_factory_make("audioconvert", "internal-aconv")
-            b.ares = gst.element_factory_make("audioresample", "internal-audioresample")
-            # Fix audio jitter of up to 40ms
-            b.arate = gst.element_factory_make("audiorate", "internal-audiorate")
-            b.arate.props.tolerance = 40 * gst.MSECOND
-            b.volume = gst.element_factory_make("volume", "internal-volume")
-            b.add(b.volume, b.ares, b.aconv, b.arate)
-            if child_bin:
-                gst.element_link_many(b.aconv, b.ares, b.arate, b.child, b.volume)
-                b.child.sync_state_with_parent()
-            else:
-                gst.element_link_many(b.aconv, b.ares, b.arate, b.volume)
-
-            b.aconv.sync_state_with_parent()
-            b.ares.sync_state_with_parent()
-            b.arate.sync_state_with_parent()
-            b.volume.sync_state_with_parent()
+            self._addCommonAudioElements(b, output_stream)
         elif isinstance(output_stream, VideoStream):
-            self.debug("Adding alpha element")
-            b.queue = gst.element_factory_make("queue", "internal-queue")
-            b.queue.props.max_size_bytes = 0
-            b.queue.props.max_size_time = 0
-            b.queue.props.max_size_buffers = 3
-
-            # all video needs to be AYUV, but the colorspace conversion
-            # element depends on the input. if there is no alpha we need to
-            # add ffmpegcolorspace. if we have an argb or rgba stream, we need
-            # alphacolor to preserve the alpha channel (ffmpeg clobbers it).
-            # if we have an ayuv stream we don't want any colorspace
-            # converter.
-
-            if not output_stream.has_alpha(): 
-                b.csp = gst.element_factory_make("ffmpegcolorspace",
-                    "internal-colorspace") 
-            elif output_stream.videotype == 'video/x-raw-rgb': 
-                b.csp = gst.element_factory_make("alphacolor", 
-                    "internal-alphacolor")
-            else: 
-                b.csp = gst.element_factory_make("identity")
-
-            b.alpha = gst.element_factory_make("alpha", "internal-alpha")
-            b.alpha.props.prefer_passthrough = True
-            b.scale = gst.element_factory_make("videoscale")
-            try:
-                b.scale.props.add_borders = True
-            except AttributeError:
-                self.warning("User has old version of videoscale. "
-                        "add-border not enabled")
-            b.capsfilter = gst.element_factory_make("capsfilter")
-            self.setFilterCaps(self._filtercaps, b)
-
-            b.add(b.queue, b.scale, b.csp, b.alpha, b.capsfilter)
-            gst.element_link_many(b.queue, b.csp, b.scale)
-            if child_bin:
-                gst.element_link_many(b.scale, b.child, b.alpha, b.capsfilter)
-                b.child.sync_state_with_parent()
-            else:
-                gst.element_link_many(b.scale, b.alpha, b.capsfilter)
-            b.capsfilter.sync_state_with_parent()
-            b.scale.sync_state_with_parent()
-            b.queue.sync_state_with_parent()
-            b.csp.sync_state_with_parent()
-            b.alpha.sync_state_with_parent()
+            self._addCommonVideoElements(b, output_stream, child_bin)
 
         if hasattr(b, "decodebin"):
             b.add(b.decodebin)
@@ -511,6 +446,82 @@ class SourceFactory(ObjectFactory):
         else:
             b.capsfilter.props.caps = caps_copy
         self._filtercaps = caps_copy
+
+    def _addCommonVideoElements(self, video_bin, output_stream, child_bin=None):
+        if child_bin:
+            video_bin.child = child_bin
+            video_bin.add(child_bin)
+
+        video_bin.queue = gst.element_factory_make("queue", "internal-queue")
+        video_bin.queue.props.max_size_bytes = 0
+        video_bin.queue.props.max_size_time = 0
+        video_bin.queue.props.max_size_buffers = 3
+
+        # all video needs to be AYUV, but the colorspace conversion
+        # element depends on the input. if there is no alpha we need to
+        # add ffmpegcolorspace. if we have an argb or rgba stream, we need
+        # alphacolor to preserve the alpha channel (ffmpeg clobbers it).
+        # if we have an ayuv stream we don't want any colorspace
+        # converter.
+
+        if not output_stream.has_alpha():
+            video_bin.csp = gst.element_factory_make("ffmpegcolorspace",
+                "internal-colorspace")
+        elif output_stream.videotype == 'video/x-raw-rgb':
+            video_bin.csp = gst.element_factory_make("alphacolor",
+                "internal-alphacolor")
+        else:
+            video_bin.csp = gst.element_factory_make("identity")
+
+        video_bin.alpha = gst.element_factory_make("alpha", "internal-alpha")
+        video_bin.alpha.props.prefer_passthrough = True
+        video_bin.scale = gst.element_factory_make("videoscale")
+        try:
+            video_bin.scale.props.add_borders = True
+        except AttributeError:
+            self.warning("User has old version of videoscale. "
+                    "add-border not enabled")
+        video_bin.capsfilter = gst.element_factory_make("capsfilter",
+                "capsfilter-proj-settings")
+        self.setFilterCaps(self._filtercaps, video_bin)
+
+        video_bin.add(video_bin.queue, video_bin.scale, video_bin.csp,
+                video_bin.alpha, video_bin.capsfilter)
+        gst.element_link_many(video_bin.queue, video_bin.csp, video_bin.scale)
+        if child_bin is not None:
+            gst.element_link_many(video_bin.scale, video_bin.child,
+                    video_bin.alpha, video_bin.capsfilter)
+            video_bin.child.sync_state_with_parent()
+        else:
+            gst.element_link_many(video_bin.scale,
+                    video_bin.alpha, video_bin.capsfilter)
+
+        video_bin.capsfilter.sync_state_with_parent()
+        video_bin.scale.sync_state_with_parent()
+        video_bin.queue.sync_state_with_parent()
+        video_bin.csp.sync_state_with_parent()
+        video_bin.alpha.sync_state_with_parent()
+
+    def _addCommonAudioElements(self, audio_bin, output_stream):
+        self.debug("Adding volume element")
+        # add a volume element
+        audio_bin.aconv = gst.element_factory_make("audioconvert", "internal-aconv")
+        audio_bin.ares = gst.element_factory_make("audioresample", "internal-audioresample")
+        # Fix audio jitter of up to 40ms
+        audio_bin.arate = gst.element_factory_make("audiorate", "internal-audiorate")
+        audio_bin.arate.props.tolerance = 40 * gst.MSECOND
+        audio_bin.volume = gst.element_factory_make("volume", "internal-volume")
+        audio_bin.add(audio_bin.volume, audio_bin.ares, audio_bin.aconv, audio_bin.arate)
+        #if child_bin:
+        #    gst.element_link_many(audio_bin.aconv, audio_bin.ares, audio_bin.arate, audio_bin.child, audio_bin.volume)
+        #    audio_bin.child.sync_state_with_parent()
+        #else:
+        gst.element_link_many(audio_bin.aconv, audio_bin.ares, audio_bin.arate, audio_bin.volume)
+
+        audio_bin.aconv.sync_state_with_parent()
+        audio_bin.ares.sync_state_with_parent()
+        audio_bin.arate.sync_state_with_parent()
+        audio_bin.volume.sync_state_with_parent()
 
 class SinkFactory(ObjectFactory):
     """
