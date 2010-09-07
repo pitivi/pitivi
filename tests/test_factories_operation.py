@@ -40,8 +40,8 @@ class TestEffectFactory(TestCase):
         self.factory.addInputStream(self.stream)
 
     def testMakeBin (self):
-        bin = self.factory.makeBin()
-        bin2 = self.factory.makeBin()
+        bin, fx = self.factory.makeBin()
+        bin2, fx = self.factory.makeBin()
         csp = bin.elements().next()
         self.failUnless(isinstance(bin, gst.Bin))
         self.failUnless(csp)
