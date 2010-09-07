@@ -41,18 +41,28 @@ class VideoTestSourceFactory(SourceFactory):
         bin = gst.Bin()
         videotestsrc = gst.element_factory_make('videotestsrc')
         videotestsrc.props.pattern = self.pattern
-        capsfilter = gst.element_factory_make('capsfilter')
+        capsfilter = gst.element_factory_make('capsfilter',
+                "videotestsrc-capsfilter")
         capsfilter.props.caps = output_stream.caps.copy()
 
         bin.add(videotestsrc)
         bin.add(capsfilter)
         videotestsrc.link(capsfilter)
 
-        target = capsfilter.get_pad('src')
-        ghost = gst.GhostPad('src', target)
-        bin.add_pad(ghost)
-
         return bin
+
+    def _makeStreamBin(self, output_stream):
+        video_bin = SourceFactory._makeStreamBin(self, output_stream)
+        capsfilter = video_bin.get_by_name("videotestsrc-capsfilter")
+        queue = video_bin.get_by_name("internal-queue")
+        capsfilter.link(queue)
+
+        capsfilter = video_bin.get_by_name("capsfilter-proj-settings")
+        target = capsfilter.get_pad("src")
+        ghost = gst.GhostPad('src', target)
+        video_bin.add_pad(ghost)
+
+        return video_bin
 
     def _releaseBin(self, bin):
         pass
