@@ -179,10 +179,11 @@ class ProjectManager(Signallable, Loggable):
 
         # FIXME: this should not be hard-coded
         # add default tracks for a new project
-        video = VideoStream(gst.Caps('video/x-raw-rgb; video/x-raw-yuv'))
+        settings = project.getSettings()
+        video = VideoStream(gst.Caps(settings.getVideoCaps()))
         track = Track(video)
         project.timeline.addTrack(track)
-        audio = AudioStream(gst.Caps('audio/x-raw-int; audio/x-raw-float'))
+        audio = AudioStream(gst.Caps(settings.getAudioCaps()))
         track = Track(audio)
         project.timeline.addTrack(track)
         project.connect("project-changed", self._projectChangedCb)
