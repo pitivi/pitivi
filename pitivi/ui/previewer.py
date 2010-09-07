@@ -109,12 +109,7 @@ previewers = {}
 
 def get_preview_for_object(instance, trackobject):
     factory = trackobject.factory
-    for stream_ in factory.getOutputStreams():
-        if stream_.isCompatible(trackobject.track.stream):
-            break
-        stream_ = None
-    if not stream_:
-        raise NotImplementedError
+    stream_ = trackobject.stream
     stream_type = type(stream_)
     key = factory, stream_
     if not key in previewers:
