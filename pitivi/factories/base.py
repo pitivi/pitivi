@@ -28,7 +28,8 @@ import gst
 from pitivi.log.loggable import Loggable
 from pitivi.elements.singledecodebin import SingleDecodeBin
 from pitivi.signalinterface import Signallable
-from pitivi.stream import match_stream_groups_map, AudioStream, VideoStream
+from pitivi.stream import match_stream_groups, AudioStream, VideoStream, \
+        STREAM_MATCH_COMPATIBLE_CAPS
 from pitivi.utils import formatPercent
 
 # FIXME: define a proper hierarchy
@@ -251,12 +252,20 @@ class SourceFactory(ObjectFactory):
 
         if output_stream is not None:
             self.debug("output_streams:%r", self.output_streams)
-            stream_map = match_stream_groups_map([output_stream], self.output_streams)
+
+            # get the best stream from self.output_streams that matches
+            # output_stream
+            stream_map_rank = match_stream_groups([output_stream],
+                    self.output_streams)
+            stream_map = dict(stream_map_rank.keys())
             if output_stream not in stream_map:
                 self.warning("stream not available in map %r", stream_map)
                 raise ObjectFactoryError("can not create stream")
 
             compatible_stream = stream_map[output_stream]
+            rank = stream_map_rank[output_stream, compatible_stream]
+            if rank < STREAM_MATCH_COMPATIBLE_CAPS:
+                raise ObjectFactoryError("can not create stream")
 
         if self.max_bins != -1 and self.current_bins == self.max_bins:
             raise ObjectFactoryError('no bins available')
