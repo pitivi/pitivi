@@ -200,7 +200,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         if self.element.factory:
             self.visible_width = self.nsToPixel(self.element.duration)
             self.bounds = goocanvas.Bounds(0, 0,
-                self.visible_width + KW_LABEL_X_OVERFLOW, 
+                self.visible_width + KW_LABEL_X_OVERFLOW,
                 self.height + KW_LABEL_Y_OVERFLOW)
 
     def _getKeyframeXY(self, kf):
@@ -224,7 +224,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             # set clipping region to the visible portion of the clip
             vis_bounds = intersect(
                 goocanvas.Bounds(
-                    self.bounds.x1, self.bounds.y1 + KW_LABEL_Y_OVERFLOW, 
+                    self.bounds.x1, self.bounds.y1 + KW_LABEL_Y_OVERFLOW,
                     self.bounds.x2 - KW_LABEL_X_OVERFLOW, self.bounds.y2), bounds)
             vis_width = vis_bounds.x2 - vis_bounds.x1
             vis_height = vis_bounds.y2 - vis_bounds.y1
