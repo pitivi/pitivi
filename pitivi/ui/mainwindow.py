@@ -707,7 +707,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def loop(self, unused_action):
         pass
 
-
     def _projectManagerNewProjectLoadedCb(self, projectManager, project):
         self.log("A NEW project is loaded, update the UI!")
         self.project = project

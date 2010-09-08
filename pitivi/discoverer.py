@@ -234,8 +234,9 @@ class Discoverer(Signallable, Loggable):
         self.emit("discovery-done", self.current_uri, factory)
 
     def _emitResult(self):
+        missing_plugins = bool(self.missing_plugin_details)
         # we got a gst error, error out ASAP
-        if self.error:
+        if not missing_plugins and self.error:
             self._emitError()
             return True
 

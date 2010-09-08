@@ -378,8 +378,8 @@ class SourceList(gtk.VBox, Loggable):
             project.sources, "source-removed", None, self._sourceRemovedCb)
         self.project_signals.connect(
             project.sources, "discovery-error", None, self._discoveryErrorCb)
-        #self.project_signals.connect(
-        #    project.sources, "missing-plugins", None, self._missingPluginsCb)
+        self.project_signals.connect(
+            project.sources, "missing-plugins", None, self._missingPluginsCb)
         self.project_signals.connect(
             project.sources, "ready", None, self._sourcesStoppedImportingCb)
         self.project_signals.connect(
@@ -547,9 +547,8 @@ class SourceList(gtk.VBox, Loggable):
         """ The given uri isn't a media file """
         self.infostub.addErrors(uri, reason, extra)
 
-    def _missingPluginsCb(self, sourcelist, uri, details, descriptions):
-        #self.infostub.addErrors(uri, "Missing plugins", "\n".join(descriptions))
-        pass
+    def _missingPluginsCb(self, sourcelist, uri, factory, details, descriptions, cb):
+        self.infostub.addErrors(uri, "Missing plugins", "\n".join(descriptions))
 
     def _sourcesStartedImportingCb(self, unused_sourcelist):
         if not self.infostub.showing:
