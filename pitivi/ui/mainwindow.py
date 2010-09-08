@@ -987,10 +987,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     @handler(project_pipeline, "error")
     def _pipelineErrorCb(self, unused_pipeline, error, detail):
-        if detail:
-            self.timeline.infostub.addErrors(error, detail)
-        else:
-            self.timeline.infostub.addErrors(error)
+        pass
 
     @handler(project_pipeline, "position")
     def _timelinePipelinePositionChangedCb(self, pipeline, position):
