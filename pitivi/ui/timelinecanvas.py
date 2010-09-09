@@ -226,6 +226,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._selecting = True
         self._marquee.props.visibility = goocanvas.ITEM_VISIBLE
         self._mousedown = self.from_event(event)
+        self._marquee.props.width = 0
+        self._marquee.props.height = 0
         self.pointer_grab(self.get_root_item(), gtk.gdk.POINTER_MOTION_MASK |
             gtk.gdk.BUTTON_RELEASE_MASK, self._cursor, event.time)
         return True
