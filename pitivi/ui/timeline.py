@@ -652,7 +652,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def split(self, action):
         self.app.action_log.begin("split")
+        self.timeline.disableUpdates()
         self.timeline.split(self._position)
+        self.timeline.enableUpdates()
         self.app.action_log.commit()
         # work-around for 603149
         self.project.seeker.seek(self._position)
