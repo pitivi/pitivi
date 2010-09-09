@@ -1136,10 +1136,12 @@ class Track(Signallable, Loggable):
     def enableUpdates(self):
         self.composition.props.update = True
         self.updateDefaultSources()
+        self._update_transitions = True
         self.updateTransitions()
 
     def disableUpdates(self):
         self.composition.props.update = False
+        self._update_transitions = False
 
     def addTransition(self, transition):
         a, b = transition.a, transition.b
