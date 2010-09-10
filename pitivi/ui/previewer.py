@@ -303,7 +303,9 @@ class RandomAccessPreviewer(Previewer):
         the next thumbnail in the queue. This should always be called from the
         main application thread."""
         if self._queue:
-            self._startThumbnail(self._queue[0])
+            if not self._startThumbnail(self._queue[0]):
+                self._queue.pop(0)
+                self._nextThumbnail()
         return False
 
     def _requestThumbnail(self, segment):
@@ -386,7 +388,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
     def _startThumbnail(self, timestamp):
         RandomAccessPreviewer._startThumbnail(self, timestamp)
-        self.videopipeline.seek(1.0,
+        return self.videopipeline.seek(1.0,
             gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
             gst.SEEK_TYPE_SET, timestamp,
             gst.SEEK_TYPE_NONE, -1)
@@ -453,12 +455,16 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
     def _startThumbnail(self, (timestamp, duration)):
         RandomAccessPreviewer._startThumbnail(self, (timestamp, duration))
         self._audio_cur = timestamp, duration
-        self.audioPipeline.seek(1.0,
+        res = self.audioPipeline.seek(1.0,
             gst.FORMAT_TIME,
             gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE | gst.SEEK_FLAG_SEGMENT,
             gst.SEEK_TYPE_SET, timestamp,
             gst.SEEK_TYPE_SET, timestamp + duration)
+        if not res:
+            self.warning("seek failed %s", timestamp)
         self.audioPipeline.set_state(gst.STATE_PLAYING)
+
+        return res
 
     def _finishWaveform(self):
         surfaces = []
