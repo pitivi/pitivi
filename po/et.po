@@ -9,9 +9,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-07-04 08:32+0000\n"
-"PO-Revision-Date: 2010-07-07 22:11+0300\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=pitivi&component=general\n"
+"POT-Creation-Date: 2010-09-09 15:01+0000\n"
+"PO-Revision-Date: 2010-09-09 23:45+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz gmail com>\n"
 "Language-Team: Estonian <et@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -36,32 +37,50 @@ msgstr "Üks %s instants juba töötab selles skriptis."
 msgid "Could not find the GNonLin plugins!"
 msgstr "GNonLin pluginaid ei leitud!"
 
-msgid "Make sure the plugins were installed and are available in the GStreamer plugins path."
-msgstr "Veendu, et pluginad on paigaldatud ja saadaval GStreameri pluginate kataloogis."
+msgid ""
+"Make sure the plugins were installed and are available in the GStreamer "
+"plugins path."
+msgstr ""
+"Veendu, et pluginad on paigaldatud ja saadaval GStreameri pluginate "
+"kataloogis."
 
 msgid "Could not find the autodetect plugins!"
 msgstr "Automaattuvastuse pluginaid ei leitud!"
 
-msgid "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path."
-msgstr "Veendu, et oled paigaldanud paketi gst-plugins-good ning see on saadaval GStreameri pluginate kataloogis."
+msgid ""
+"Make sure you have installed gst-plugins-good and is available in the "
+"GStreamer plugin path."
+msgstr ""
+"Veendu, et oled paigaldanud paketi gst-plugins-good ning see on saadaval "
+"GStreameri pluginate kataloogis."
 
 msgid "PyGTK doesn't have cairo support!"
 msgstr "PyGTK-l puudub cairo tugi!"
 
-msgid "Please use a version of the GTK+ Python bindings built with cairo support."
-msgstr "Kasuta sellist GTK+ Pythoni seondust, mis on kompileeritud cairo toega."
+msgid ""
+"Please use a version of the GTK+ Python bindings built with cairo support."
+msgstr ""
+"Kasuta sellist GTK+ Pythoni seondust, mis on kompileeritud cairo toega."
 
 msgid "Could not initiate the video output plugins"
 msgstr "Video väljundpluginaid ei olnud võimalik lähtestada"
 
-msgid "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)"
-msgstr "Veendu, et saadaval on vähemalt üks sobiv video väljundtoru (xvimagesink või ximagesink)"
+msgid ""
+"Make sure you have at least one valid video output sink available "
+"(xvimagesink or ximagesink)"
+msgstr ""
+"Veendu, et saadaval on vähemalt üks sobiv video väljundtoru (xvimagesink või "
+"ximagesink)"
 
 msgid "Could not initiate the audio output plugins"
 msgstr "Audio väljundpluginaid ei olnud võimalik lähtestada"
 
-msgid "Make sure you have at least one valid audio output sink available (alsasink or osssink)"
-msgstr "Veendu, et saadaval on vähemalt üks sobiv audio väljundtoru (alsasink või osssink)"
+msgid ""
+"Make sure you have at least one valid audio output sink available (alsasink "
+"or osssink)"
+msgstr ""
+"Veendu, et saadaval on vähemalt üks sobiv audio väljundtoru (alsasink või "
+"osssink)"
 
 msgid "Could not import the cairo Python bindings"
 msgstr "Cairo Pythoni seoste importimine pole võimalik"
@@ -82,20 +101,29 @@ msgid "Make sure you have the goocanvas Python bindings installed"
 msgstr "Veendu, et goocanvas'e Pythoni seosed (bindings) on paigaldatud"
 
 #, python-format
-msgid "You do not have a recent enough version of the GTK+ Python bindings (currently %s)"
-msgstr "Sul pole piisavalt värske GTK+ Pythoni seoste versioon (praegune on %s)"
+msgid ""
+"You do not have a recent enough version of the GTK+ Python bindings "
+"(currently %s)"
+msgstr ""
+"Sul pole piisavalt värske GTK+ Pythoni seoste versioon (praegune on %s)"
 
 #, python-format
 msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
-msgstr "Paigalda GTK+ Pythoni seosed, mille versioon on suurem või võrdne kui %s"
+msgstr ""
+"Paigalda GTK+ Pythoni seosed, mille versioon on vähemalt %s"
 
 #, python-format
-msgid "You do not have a recent enough version of the GStreamer Python bindings (currently %s)"
-msgstr "Sul pole piisavalt värske GStreameri Pythoni seoste versioon (praegune on %s)"
+msgid ""
+"You do not have a recent enough version of the GStreamer Python bindings "
+"(currently %s)"
+msgstr ""
+"Sul pole piisavalt värske GStreameri Pythoni seoste versioon (praegune on %s)"
 
 #, python-format
-msgid "Install a version of the GStreamer Python bindings greater or equal to %s"
-msgstr "Paigalda GStreameri Pythoni seosed, mille versioon on suurem või võrdne kui %s"
+msgid ""
+"Install a version of the GStreamer Python bindings greater or equal to %s"
+msgstr ""
+"Paigalda GStreameri Pythoni seosed, mille versioon on vähemalt %s"
 
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
@@ -103,23 +131,33 @@ msgstr "Sul pole piisavalt värske GStreameri versioon (praegune on %s)"
 
 #, python-format
 msgid "Install a version of the GStreamer greater or equal to %s"
-msgstr "Paigalda GStreamer, mille versioon on suurem või võrdne kui %s"
+msgstr "Paigalda GStreamer, mille versioon on vähemalt %s"
 
 #, python-format
-msgid "You do not have a recent enough version of the cairo Python bindings (currently %s)"
-msgstr "Sul pole piisavalt värske cairo Pythoni seoste versioon (praegune on %s)"
+msgid ""
+"You do not have a recent enough version of the cairo Python bindings "
+"(currently %s)"
+msgstr ""
+"Sul pole piisavalt värske cairo Pythoni seoste versioon (praegune on %s)"
 
 #, python-format
 msgid "Install a version of the cairo Python bindings greater or equal to %s"
-msgstr "Paigalda cairo Pythoni seosed, mille versioon on suurem või võrdne kui %s"
+msgstr ""
+"Paigalda cairo Pythoni seosed, mille versioon on vähemalt %s"
 
 #, python-format
-msgid "You do not have a recent enough version of the GNonLin GStreamer plugin (currently %s)"
-msgstr "Sul pole piisavalt värske GNonLin GStreameri plugina versioon (praegune on %s)"
+msgid ""
+"You do not have a recent enough version of the GNonLin GStreamer plugin "
+"(currently %s)"
+msgstr ""
+"Sul pole piisavalt värske GNonLin GStreameri plugina versioon (praegune on %"
+"s)"
 
 #, python-format
-msgid "Install a version of the GNonLin GStreamer plugin greater or equal to %s"
-msgstr "Paigalda GNonLin GStreameri plugin, mille versioon on suurem või võrdne kui %s"
+msgid ""
+"Install a version of the GNonLin GStreamer plugin greater or equal to %s"
+msgstr ""
+"Paigalda GNonLin GStreameri plugin, mille versioon on vähemalt %s"
 
 msgid "Could not import the Zope interface module"
 msgstr "Zope liidese moodulit pole võimalik importida"
@@ -151,8 +189,11 @@ msgstr "Antud fail ei sisalda ei heli-, video- ega pildivoogu."
 msgid "Could not establish the duration of the file."
 msgstr "Faili kestust ei suudetud määrata."
 
-msgid "This clip seems to be in a format which cannot be accessed in a random fashion."
-msgstr "Klipp tundub olevat vormingus, mida pole võimalik juhuslikust kohast lugeda."
+msgid ""
+"This clip seems to be in a format which cannot be accessed in a random "
+"fashion."
+msgstr ""
+"Klipp tundub olevat vormingus, mida pole võimalik juhuslikust kohast lugeda."
 
 msgid "Timeout while analyzing file."
 msgstr "Faili analüüsimine võttis liiga kaua."
@@ -184,8 +225,12 @@ msgid "Pipeline didn't want to go to PLAYING."
 msgstr "Toru ei tahtnud minna ESITAMISE olekusse."
 
 #, python-format
-msgid "There is already a %s instance, please inform the developers by filing a bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-msgstr "Üks %s instants juba töötab, teavita sellest arendajaid ning koosta vearaport aadressil http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgid ""
+"There is already a %s instance, please inform the developers by filing a bug "
+"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr ""
+"Üks %s instants juba töötab, teavita sellest arendajaid ning koosta "
+"vearaport aadressil http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
 msgid ""
 "\n"
@@ -198,16 +243,17 @@ msgstr ""
 
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"    no project is given, %prog creates a new project.\n"
-"    Alternatively, when -i is specified, arguments are treated as clips to be\n"
-"    imported into the project. If -a is specified, these clips will also be added to\n"
-"    the end of the project timeline."
+"no project is given, %prog creates a new project.\n"
+"Alternatively, when -i is specified, arguments are treated as clips to be\n"
+"imported into the project. If -a is specified, these clips will also be "
+"added to\n"
+"the end of the project timeline."
 msgstr ""
 "Käivitab videoredaktori, soovil avades PROJEKTIFAILI.\n"
-"    Kui ühtegi projekti ei ole antud, loob %prog uue projekti.\n"
-"    Lisaks, kui -i on määratud, koheldakse argumente nagu klippe,\n"
-"    mis tuleb importida projekti. Kui -a on määratud, lisatakse need\n"
-"    klipid projekti ajajoone lõppu."
+"Kui ühtegi projekti ei ole antud, loob %prog uue projekti.\n"
+"Lisaks, kui -i on määratud, koheldakse argumente nagu klippe,\n"
+"mis tuleb importida projekti. Kui -a on määratud, lisatakse need\n"
+"klipid projekti ajajoone lõppu."
 
 msgid "Import each MEDIA_FILE into the project."
 msgstr "Impordi kõik MEEDIAFAILID projekti."
@@ -335,6 +381,14 @@ msgstr "Omadused puuduvad..."
 
 msgid "Implement Me"
 msgstr "Vajab koostamist"
+
+#. i18n: string for custom video width/height/framerate settings
+#. i18n: string for custom audio rate/depth/channels settings
+msgid "Custom"
+msgstr "Kohandatud"
+
+msgid "Save Preset"
+msgstr "Salvesta mall"
 
 msgid "Choose..."
 msgstr "Vali..."
@@ -525,11 +579,6 @@ msgstr "SVGA (800x600)"
 msgid "XGA (1024x768)"
 msgstr "XGA (1024x768)"
 
-#. i18n: string for custom video width/height/framerate settings
-#. i18n: string for custom audio rate/depth/channels settings
-msgid "Custom"
-msgstr "Kohandatud"
-
 msgid "Raw Video"
 msgstr "Toorvideo"
 
@@ -561,6 +610,9 @@ msgstr "Renderda"
 
 msgid "Split"
 msgstr "Tükelda"
+
+msgid "Keyframe"
+msgstr "Võtmekaader"
 
 msgid "Unlink"
 msgstr "Eemalda link"
@@ -730,7 +782,8 @@ msgid "Locate missing file..."
 msgstr "Puuduva faili asukoha määramine..."
 
 msgid "The following file has moved, please tell PiTiVi where to find it."
-msgstr "Järgneva faili asukoht on muutunud, palun näita selle faili uus asukoht."
+msgstr ""
+"Järgneva faili asukoht on muutunud, palun näita selle faili uus asukoht."
 
 msgid "Duration:"
 msgstr "Kestus:"
@@ -934,8 +987,11 @@ msgstr "Teave"
 msgid "Duration"
 msgstr "Kestus"
 
-msgid "<span size='x-large'>Import your clips by dragging them here or by using the buttons above.</span>"
-msgstr "<span size='x-large'>Impordi klipid lohistades need siia klõpsates ülal asuval nupul.</span>"
+msgid ""
+"<span>Import your clips by dragging them here or by using the buttons above."
+"</span>"
+msgstr ""
+"<span>Impordi klipid lohistades need siia või kasutades ülemisi nuppe.</span>"
 
 msgid "_Import clips..."
 msgstr "_Impordi klippe..."
@@ -991,6 +1047,9 @@ msgstr "Valiku kustutamine"
 
 msgid "Split clip at playhead position"
 msgstr "Klipi tükeldamine esitusejärje kohalt"
+
+msgid "Create a keyframe"
+msgstr "Loo uus võtmekaader"
 
 msgid "Zoom In"
 msgstr "Suurenda"
