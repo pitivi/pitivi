@@ -294,7 +294,8 @@ class RandomAccessPreviewer(Previewer):
         self._cache[segment] = surface
         self.emit("update", segment)
 
-        self._queue.remove(waiting)
+        if segment in self._queue:
+            self._queue.remove(segment)
         self._nextThumbnail()
         return False
 
