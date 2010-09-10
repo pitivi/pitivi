@@ -463,11 +463,11 @@ class Selection(Signallable):
 
     def setToObj(self, obj, mode):
         """
-        Convenience method for calling L{setTo} with a single L{TimelineObject}
+        Convenience method for calling L{setSelection} with a single L{TimelineObject}
 
-        @see: L{setTo}
+        @see: L{setSelection}
         """
-        self.setTo(set([obj]), mode)
+        self.setSelection(set([obj]), mode)
 
     def addTimelineObject(self, timeline_object):
         """
@@ -481,9 +481,7 @@ class Selection(Signallable):
         if timeline_object in self.timeline_objects:
             raise TimelineError("TrackObject already in this selection")
 
-    # FIXME : it took me 10 mins to understand what this method does... a more obvious
-    # name would be better :)
-    def setTo(self, objs, mode):
+    def setSelection(self, objs, mode):
         """
         Update the current selection.
 
@@ -531,6 +529,7 @@ class Selection(Signallable):
             objects.extend(timeline_object.track_objects)
 
         return set(objects)
+
 
     def __len__(self):
         return len(self.selected)
@@ -1753,9 +1752,9 @@ class Timeline(Signallable, Loggable):
         """
         Update the timeline's selection with the given selection and mode.
 
-        @see: L{Selection.setTo}
+        @see: L{Selection.setSelection}
         """
-        self.selection.setTo(selection, mode)
+        self.selection.setSelection(selection, mode)
 
     def linkSelection(self):
         """
@@ -1823,8 +1822,8 @@ class Timeline(Signallable, Loggable):
             old_track_objects.extend(timeline_object.track_objects)
             self.removeTimelineObject(timeline_object, deep=True)
 
-        self.selection.setTo(old_track_objects, UNSELECT)
-        self.selection.setTo(new_timeline_object.track_objects, SELECT_ADD)
+        self.selection.setSelection(old_track_objects, UNSELECT)
+        self.selection.setSelection(new_timeline_object.track_objects, SELECT_ADD)
 
     def ungroupSelection(self):
         new_track_objects = []
@@ -1832,7 +1831,7 @@ class Timeline(Signallable, Loggable):
             if len(timeline_object.track_objects) == 1:
                 continue
 
-            self.selection.setTo(timeline_object.track_objects, UNSELECT)
+            self.selection.setSelection(timeline_object.track_objects, UNSELECT)
 
             for track_object in list(timeline_object.track_objects):
                 new_track_object = track_object.copy()
@@ -1843,7 +1842,7 @@ class Timeline(Signallable, Loggable):
 
             self.removeTimelineObject(timeline_object, deep=True)
 
-        self.selection.setTo(new_track_objects, SELECT_ADD)
+        self.selection.setSelection(new_track_objects, SELECT_ADD)
 
     def deleteSelection(self):
         """
@@ -1852,7 +1851,7 @@ class Timeline(Signallable, Loggable):
         self.unlinkSelection()
         for timeline_object in self.selection:
             self.removeTimelineObject(timeline_object, deep=True)
-        self.selection.setTo(set([]), SELECT)
+        self.selection.setSelection(set([]), SELECT)
 
     def split(self, time):
         """
