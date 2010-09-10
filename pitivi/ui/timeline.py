@@ -423,12 +423,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
         self.app.action_log.begin("add clip")
+        self.timeline.disableUpdates()
         self._add_temp_source()
         focus = self._temp_objects[0]
         self._move_context = MoveContext(self.timeline,
                 focus, set(self._temp_objects[1:]))
         self._move_temp_source(self.hadj.props.value + x, y)
         self._move_context.finish()
+        self.timeline.enableUpdates()
         self.app.action_log.commit()
         context.drop_finish(True, timestamp)
         self._factories = None
