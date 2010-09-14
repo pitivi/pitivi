@@ -157,6 +157,7 @@ class ProjectManager(Signallable, Loggable):
 
         self.emit("project-closed", self.current)
         self.current.disconnect_by_function(self._projectChangedCb)
+        self._cleanBackupCb(self.current)
         self.current.release()
         self.current = None
 
@@ -219,16 +220,31 @@ class ProjectManager(Signallable, Loggable):
                     self.backup_lock += 5
 
     def _saveBackupCb(self, project, uri):
+        backup_uri = self._backupFilename(uri)
+
         if self.backup_lock > 10:
             self.backup_lock -= 5
             return True
         else:
+            self.saveProject(project, backup_uri, overwrite=True, backup=True)
+            self.backup_lock = 0
+        return False
+
+    def _cleanBackupCb(self, project):
+        uri = project.uri
+        if uri:
+            location = self._backupFilename(uri)
+            if location:
+                location = location.split('file://')[1]
+                if os.path.exists(location):
+                    os.remove(location)
+
+    def _backupFilename(self, uri):
+        if uri:
             name, ext = os.path.splitext(uri)
             if ext == '.xptv':
-                uri = name + "~" + ext
-                self.saveProject(project, uri, overwrite=True, backup=True)
-                self.backup_lock = 0
-        return False
+                return name + "~" + ext
+        return None
 
     def _getFormatterForUri(self, uri):
         return get_formatter_for_uri(uri)

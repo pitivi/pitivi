@@ -346,3 +346,26 @@ class TestProjectManager(TestCase):
             pass
 
 
+    def testBackupProject(self):
+        uri = "file://" + os.path.abspath("testproject.xptv")
+
+        # Create and save the project
+        self.manager.newBlankProject()
+        self.manager.saveProject(self.manager.current, uri, True)
+
+        # Save the backup
+        self.manager._saveBackupCb(self.manager.current, uri)
+        backup_uri = self.manager._backupFilename(uri)
+        self.failUnless(uri_is_reachable(uri))
+        self.failUnless(uri_is_reachable(backup_uri))
+
+        # When closing it should clean the backup
+        self.manager.closeRunningProject()
+        self.failUnless(not uri_is_reachable(backup_uri))
+
+        # unlink any existing project files
+        try:
+            os.unlink(uri)
+            os.unlink(backup_uri)
+        except OSError:
+            pass
