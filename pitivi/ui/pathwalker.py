@@ -21,7 +21,7 @@
 
 import os
 import threading
-from urllib import quote
+from urllib import quote, unquote
 from urlparse import urlsplit, urlunsplit
 from pitivi.threads import Thread
 
@@ -47,7 +47,7 @@ class PathWalker(Thread):
         for folder in self.paths:
             self.log("folder %s" % folder)
             if folder.startswith("file://"):
-                folder = folder[len("file://"):]
+                folder = unquote(folder[len("file://"):])
             for path, dirs, files in os.walk(folder):
                 if self.stopme.isSet():
                     return
