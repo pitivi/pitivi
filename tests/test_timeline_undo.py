@@ -25,6 +25,7 @@ import gobject
 gobject.threads_init()
 import gst
 
+from pitivi.pipeline import Pipeline
 from pitivi.timeline.timeline import Timeline, TimelineObject, SELECT_ADD
 from pitivi.timeline.track import Track, SourceTrackObject, TrackEffect
 from pitivi.factories.test import VideoTestSourceFactory, TestEffectFactory
@@ -167,9 +168,11 @@ class  TestTimelineUndo(TestCase):
 
     def testAddEffectToTimelineObject(self):
         stacks = []
+        pipeline = Pipeline()
         def commitCb(action_log, stack, nested):
             stacks.append(stack)
         self.action_log.connect("commit", commitCb)
+        self.observer.pipeline = pipeline
 
         #FIXME Should I commit it and check there are 2 elements
         #in the stacks
@@ -208,47 +211,6 @@ class  TestTimelineUndo(TestCase):
                                 if isinstance(effect, TrackEffect)]) == 1)
         self.failUnless(len([effect for effect in self.track1.track_objects
                              if isinstance(effect, TrackEffect)]) == 1)
-
-        self.timeline.removeTimelineObject(self.timeline_object1, deep=True)
-
-    def testRemoveEffectToTimelineObject(self):
-        stacks = []
-        def commitCb(action_log, stack, nested):
-            stacks.append(stack)
-        self.action_log.connect("commit", commitCb)
-
-        self.timeline.addTimelineObject(self.timeline_object1)
-        self.timeline_object1.addTrackObject(self.track_effect1)
-        self.track1.addTrackObject(self.track_effect1)
-
-        self.action_log.begin("remove effect")
-        self.timeline_object1.removeTrackObject(self.track_effect1)
-        self.track1.removeTrackObject(self.track_effect1)
-        self.action_log.commit()
-
-        self.failUnlessEqual(len(stacks), 1)
-        stack = stacks[0]
-        self.failUnlessEqual(len(stack.done_actions), 1)
-        action = stack.done_actions[0]
-        self.failUnless(isinstance(action, TrackEffectRemoved))
-
-        self.failIf(self.track_effect1 \
-                in self.timeline_object1.track_objects)
-        self.failIf(self.track_effect1 \
-                in self.track1.track_objects)
-
-        self.action_log.undo()
-        self.failUnless(len([effect for effect in
-                                self.timeline_object1.track_objects
-                                if isinstance(effect, TrackEffect)]) == 1)
-        self.failUnless(len([effect for effect in self.track1.track_objects
-                             if isinstance(effect, TrackEffect)]) == 1)
-
-        self.action_log.redo()
-        self.failIf(self.track_effect1 \
-                in self.timeline_object1.track_objects)
-        self.failIf(self.track_effect1 \
-                in self.track1.track_objects)
 
         self.timeline.removeTimelineObject(self.timeline_object1, deep=True)
 

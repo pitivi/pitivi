@@ -414,7 +414,7 @@ class TestFormatterLoad(TestCase):
                 media_duration=ts(15 * gst.SECOND), priority=ts(5), id="1")
         effect_elem = SubElement(element, "effect")
         factory_elem = SubElement(effect_elem, "factory", name="identity")
-        properties_elem = SubElement(effect_elem, "gst-element-properties", async_handling="(bool)True")
+        properties_elem = SubElement(effect_elem, "gst-element-properties", sync="(bool)True")
 
         # insert our fake factory into the context
         stream = AudioStream(gst.Caps("audio/x-raw-int"))

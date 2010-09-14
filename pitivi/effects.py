@@ -326,6 +326,7 @@ class EffectGstElementPropertyChangeTracker:
     def __init__(self, action_log):
         self._tracked_effects = {}
         self.action_log = action_log
+        self.pipeline = None
 
     def addEffectElement(self, gst_element):
         properties = {}
@@ -337,10 +338,28 @@ class EffectGstElementPropertyChangeTracker:
                 properties[prop.name] = gst_element.get_property(prop.name)
         self._tracked_effects[gst_element] = properties
 
+    def getPropChangedFromTrackObj(self, track_effect):
+        prop_changed = []
+
+        for undo_stack in self.action_log.undo_stacks:
+            for done_prop_change in undo_stack.done_actions:
+                if isinstance(done_prop_change, EffectPropertyChanged):
+                    if done_prop_change.gst_element is track_effect.getElement():
+                        prop_changed.append(done_prop_change)
+
+        for redo_stack in self.action_log.redo_stacks:
+            for done_prop_change in redo_stack.done_actions:
+                if isinstance(done_prop_change, EffectPropertyChanged):
+                    if done_prop_change.gst_element is track_effect.getElement():
+                        prop_changed.append(done_prop_change)
+
+        return prop_changed
+
     def _propertyChangedCb(self, gst_element, pspec, unused):
         old_value = self._tracked_effects[gst_element][pspec.name]
         new_value = gst_element.get_property(pspec.name)
         action = EffectPropertyChanged(gst_element, pspec.name, old_value,
                                        new_value)
         self._tracked_effects[gst_element][pspec.name] = new_value
+        self.pipeline.flushSeekVideo()
         self.action_log.push(action)

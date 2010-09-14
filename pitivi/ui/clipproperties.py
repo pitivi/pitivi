@@ -79,7 +79,6 @@ class ClipProperties(gtk.VBox, Loggable):
         self._project = project
         if project:
             self.effect_expander._connectTimelineSelection(self._project.timeline)
-            self.effect_properties_handling.pipeline = self._project.pipeline
 
     def _getProject(self):
         return self._project

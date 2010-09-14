@@ -744,9 +744,9 @@ class TrackEffect(TrackObject):
     def __init__(self, factory, stream, start=0,
             duration=0, in_point=0,
             media_duration=0, priority=0):
-        TrackObject.__init__(self, factory, stream, start=0,
-                             duration=0, in_point=0,
-                             media_duration=0, priority=0)
+        TrackObject.__init__(self, factory, stream, start=start,
+                             duration=duration, in_point=in_point,
+                             media_duration=media_duration, priority=priority)
         self._element = None
 
     def _makeGnlObject(self):

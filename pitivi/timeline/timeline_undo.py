@@ -160,12 +160,21 @@ class TimelineObjectRemoved(UndoableAction):
         self._undone()
 
 class TrackEffectAdded(UndoableAction):
-    def __init__(self, timeline_object, track_object):
+    # Note: We have a bug if we just remove the TrackEffect from the timeline
+    # and keep it saved here and then readd it to corresponding timeline (it
+    # freezes everything). So what we are doing is  to free the TrackEffect,
+    # keep its settings here when undoing, and instanciate a new one when
+    # doing again. We have to keep all EffectPropertyChanged object that refers
+    # to the TrackEffect when undoing so we reset theirs gst_element when
+    # doing it again. The way of doing it is the same with TrackEffectRemoved
+    def __init__(self, timeline_object, track_object, properties_watcher):
         self.timeline_object = timeline_object
         self.track_object = track_object
         self.factory = track_object.factory
         self.effect_props = []
         self.gnl_obj_props = []
+        self._properties_watcher = properties_watcher
+        self._props_changed = []
 
     def do(self):
         timeline = self.timeline_object.timeline
@@ -178,6 +187,9 @@ class TrackEffectAdded(UndoableAction):
             element.set_property(prop_name, prop_value)
         for prop_name, prop_value in self.gnl_obj_props:
             self.track_object.gnl_object.set_property(prop_name, prop_value)
+        for prop_changed in self._props_changed:
+            prop_changed.gst_element = self.track_object.getElement()
+        self._props_changed = []
 
         self._done()
 
@@ -196,18 +208,22 @@ class TrackEffectAdded(UndoableAction):
 
         self.timeline_object.removeTrackObject(self.track_object)
         self.track_object.track.removeTrackObject(self.track_object)
+        self._props_changed =\
+            self._properties_watcher.getPropChangedFromTrackObj(self.track_object)
         del self.track_object
         self.track_object = None
 
         self._undone()
 
 class TrackEffectRemoved(UndoableAction):
-    def __init__(self, timeline_object, track_object):
+    def __init__(self, timeline_object, track_object, properties_watcher):
         self.track_object = track_object
         self.timeline_object = timeline_object
         self.factory = track_object.factory
         self.effect_props = []
         self.gnl_obj_props = []
+        self._properties_watcher = properties_watcher
+        self._props_changed = []
 
     def do(self):
         element = self.track_object.getElement()
@@ -225,6 +241,8 @@ class TrackEffectRemoved(UndoableAction):
 
         self.timeline_object.removeTrackObject(self.track_object)
         self.track_object.track.removeTrackObject(self.track_object)
+        self._props_changed =\
+            self._properties_watcher.getPropChangedFromTrackObj(self.track_object)
         del self.track_object
         self.track_object = None
 
@@ -241,6 +259,9 @@ class TrackEffectRemoved(UndoableAction):
             element.set_property(prop_name, prop_value)
         for prop_name, prop_value in self.gnl_obj_props:
             self.track_object.gnl_object.set_property(prop_name, prop_value)
+        for prop_changed in self._props_changed:
+            prop_changed.gst_element = self.track_object.getElement()
+        self._props_changed = []
 
         self._undone()
 
@@ -323,6 +344,7 @@ class TimelineLogObserver(object):
         self.timeline_object_property_trackers = {}
         self.interpolator_keyframe_trackers = {}
         self.effect_properties_tracker = EffectGstElementPropertyChangeTracker(log)
+        self._pipeline = None
 
     def startObserving(self, timeline):
         self._connectToTimeline(timeline)
@@ -405,7 +427,8 @@ class TimelineLogObserver(object):
 
     def _timelineObjectTrackObjectAddedCb(self, timeline_object, track_object):
         if isinstance(track_object, TrackEffect):
-            action = self.trackEffectAddAction(timeline_object, track_object)
+            action = self.trackEffectAddAction(timeline_object, track_object,
+                                               self.effect_properties_tracker)
             #We use the action instead of the track object 
             #because the track_object changes when redoing
             track_object.connect("active-changed",
@@ -421,7 +444,9 @@ class TimelineLogObserver(object):
     def _timelineObjectTrackObjectRemovedCb(self, timeline_object,
                                             track_object):
         if isinstance(track_object, TrackEffect):
-            action = self.trackEffectRemovedAction(timeline_object, track_object)
+            action = self.trackEffectRemovedAction(timeline_object,
+                                                track_object,
+                                                self.effect_properties_tracker)
             self.log.push(action)
         else:
             self._disconnectFromTrackObject(track_object)

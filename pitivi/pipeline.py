@@ -199,6 +199,13 @@ class Pipeline(Signallable, Loggable):
         self.debug("Returning")
         return action
 
+    def flushSeekVideo(self):
+        self.pause()
+        try:
+            self.seekRelative(0)
+        except PipelineError:
+            pass
+
     def setAction(self, action):
         """
         Set the given L{Action} on the L{Pipeline}.

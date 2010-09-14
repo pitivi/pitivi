@@ -33,7 +33,6 @@ PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
 class EffectsPropertiesHandling:
     def __init__(self, action_log):
         self.cache_dict = {}
-        self.pipeline = None
         self._current_effect_setting_ui = None
         self._current_element_values = {}
         self.action_log = action_log
@@ -72,7 +71,7 @@ class EffectsPropertiesHandling:
 
     def cleanCache(self, effect):
         if self.cache_dict.has_key(effect):
-            conf_ui = self.effect_props_handling.cache_dict.get(effect)
+            conf_ui = self.cache_dict.get(effect)
             self.cache_dict.pop(effect)
             return conf_ui
 
@@ -84,14 +83,6 @@ class EffectsPropertiesHandling:
             effect_set_ui = self.cache_dict[effect]
 
         return effect_set_ui
-
-    def _flushSeekVideo(self):
-        self.pipeline.pause()
-        if self.pipeline is not None:
-            try:
-                self.pipeline.seekRelative(0)
-            except PipelineError:
-                pass
 
     def _connectAllWidgetCbs(self, effect_configuration_ui, effect):
         for prop, widget in effect_configuration_ui.properties.iteritems():
@@ -107,14 +98,3 @@ class EffectsPropertiesHandling:
             self._current_effect_setting_ui.element.set_property(prop.name, value)
             self.action_log.commit()
             self._current_element_values[prop.name] = value
-
-        self._flushSeekVideo()
-
-
-class AspectRatioUi(GstElementSettingsWidget):
-    """
-        UI to configure AspectRatio effects
-    """
-    def __init__(self):
-        GstElementSettingsWidget.__init__(self)
-
