@@ -1,7 +1,7 @@
-0.13.4 Release "Cabernet d'Anjou"
+0.13.5 Release "I Missed My Lunch"
 ---------------------------------
 
-The PiTiVi team is proud to announce the third release in the unstable 0.13
+The PiTiVi team is proud to announce the fifth release in the unstable 0.13
 PiTiVi series.
 
 Due to its dependency on GStreamer, The PiTiVi team strongly recommends users have
@@ -10,23 +10,20 @@ experience.
 
 
 * Features of this release
- * video mixing/transparency support
- * icon view in source list
- * smoother scrolling
- * modeless splitting
- * seek on click
- * faster waveforms
- * zoom slider
- * UI beautifications
- * Speed optimisations
- * dbus/hal dependency now optional
- * translated in 30 languages
+
+ * periodic backup of the current project file
+ * easy crossfading transitions of overlapping clips
+ * better icons for link and group operations
+ * new add keyframe button
+ * fixed support for the missing plugins installer
+ * improved support for pictures
+ * various performance improvements (less conversions, faster linking)
 
 * Requirements
 
  * gstreamer >= 0.10.28
- * gst-python >= 0.10.16
- * gnonlin >= 0.10.15
+ * gst-python >= 0.10.19
+ * gnonlin >= 0.10.16
  * pygtk >= 2.14.0
  * Python >= 2.5
  * zope.interface (http://www.zope.org/Products/ZopeInterface)
@@ -34,46 +31,66 @@ experience.
  * pygoocanvas (http://live.gnome.org/GooCanvas)
  * (optional) dbus and HAL for capture support
 
+* Known Issues
+
+ * If using gst-plugins-good < 0.10.25 scaling will not add black borders. You
+   will need to set the proper width and height in the project settings
+ * Some files might not respond when seeking in them the first time
+ * Keyframe percentage labels are sometimes shown at the wrong position
+
 
 * Contributors
 
-   176  Brandon Lewis
-    49  Alessandro Decina
-    27  Edward Hervey
-     4  Andrej Žnidaršič
-     4  Gabor Kelemen
-     4  Gianvito Cavasoli
-     4  Jorge González
-     4  Marek Černocký
-     4  Mario Blättermann
-     3  António Lima
-     3  Jean-François Fortin Tam
-     3  Karl Palsson
-     3  Timo Jyrinki
-     2  Adi Roiban
-     2  Alexandre Prokoudine
-     2  Claude Paroz
-     2  Flamarion Jorge
-     2  Jesse Avilés
-     2  Rudolfs Mazurs
-     2  Xandru Armesto Fernandez
-     1  Aleksander Łukasiewicz
-     1  Aron Xu
-     1  Daniel Nylander
-     1  Dimitris Tsiolis
-     1  Fran Diéguez
-     1  Greg Auger
-     1  Ivaylo Valkov
-     1  Jan Drábek
-     1  Jennie Petoumenou
-     1  Lucian Adrian Grijincu
-     1  Matej Urbančič
-     1  Philip Withnall
-     1  Robin Norwood
-     1  Rodolfo Ribeiro Gomes
-     1  Stephen Griffiths
-     1  Tim Waugh
-     1  dumol
+    56	Brandon Lewis
+    33	Edward Hervey
+    29	Alessandro Decina
+    14	Robert Swain
+     9	Luis de Bethencourt
+     9	Andoni Morales Alastruey
+     7	Andrej Žnidaršič
+     5	Nils-Christoph Fiedler
+     5	Jorge González
+     5	Mario Blättermann
+     4	Pier Carteri
+     3	António Lima
+     3	Volker Sobek
+     3	Mattias Põldaru
+     3	Bruno Brouard
+     2	Gabor Kelemen
+     2	Ivaylo Valkov
+     2	Cheng-Chia Tseng
+     2	Tomasz Dominikowski
+     2	Petr Kovar
+     2	Marek Černocký
+     2	Joe Hansen
+     2	Daniel Nylander
+     2	Fran Diéguez
+     1	Xandru Armesto Fernandez
+     1	YunQiang Su
+     1	Alexey Fisher
+     1	Andrew Higginson
+     1	Antonio Fernandes C. Neto
+     1	Baris Cicek
+     1	Benjamin Otte
+     1	Bruce Cowan
+     1	Chris Ball
+     1	Claude Paroz
+     1	Dimitris Tsiolis
+     1	Erdai Ronahi
+     1	Gianvito Cavasoli
+     1	Jean-François Fortin Tam
+     1	Jeroen Hoolmans
+     1	Kang Bundo
+     1	Maxim V. Dziumanenko
+     1	Neil Jagdish Patel
+     1	OKANO Takayoshi
+     1	Priit Laes
+     1	Sebastian Dröge
+     1	Shushi Kurose
+     1	Simos Xenitellis
+     1	Stephen Irons
+     1	Thibault Saunier
+
 
 
 * Download
@@ -92,62 +109,47 @@ experience.
   * PiTiVi bug-tracker : http://bugzilla.gnome.org/browse.cgi?product=pitivi
 
 * Bugs Fixed
-
- * 589814 : [keyframe] should have percentage labels
- * 610072 : crash when crossing trimming handles
- * 354647 : Use gtk.IconView for sources
- * 432647 : [Viewer] slider should be clickable
- * 558019 : Import/Open is a bit confusing
- * 604699 : broken link to Brandon's wiki in the gnonlin docs
- * 337967 : avoid black frames as video thumbnails in the source list
- * 575356 : timeout on importing large clip
- * 575983 : pitivi doesn't find Python 2.6 well
- * 576289 : tagging PiTiVi's audio streams for pulseaudio
- * 579544 : cannot add layers above existing ones
- * 584135 :  &quot; No audio &quot; gets changed to some audio improperly; handle properly timelines without audio or without video
- * 585735 : [patch] Use different colors for video and audio clips
- * 585738 : Difference between mounted videos / different layers
- * 586025 : use a slider instead of 2 zoom buttons
- * 589691 : keyframes outside trimmed regions cannot be adjusted
- * 590569 : lack of consistency : icon for razor is a pair of scissor
- * 590632 : hide the previewer's slider widget when not previewing something directly in the source list
- * 590784 : shift + click should select a horizontal range of clips
- * 593663 : Preference window initial size is too small
- * 593962 : Bad string concatenation in gettext call (mainwindow.py)
- * 593977 : [PERFORMANCE] loading projects is slow
- * 594389 : move playhead on click - better splitting metaphor
- * 594826 : alpha channel for PNG images
- * 595362 : default empty timeline length is way too long
- * 595402 : delete key on a clip in the source list should remove it.
- * 595960 : [performance] thumbnails are slow to generate when zooming
- * 596134 : render sound is desynched
- * 596267 : division by zero when trying to load a timeline that starts with a still image
- * 596948 : Can't grab waveform extremities
- * 597243 : delete key on a clip in the source list should remove it only if the timeline is not focused
- * 597703 : Trim handles can get glued together
- * 597704 : Traceback when undoing 'split' operation
- * 597711 : Traceback when undoing 'ungroup' operation
- * 597790 : Traceback while previewing audio stream
- * 598342 : OGG Theora ignores rendering resolution
- * 602892 : clips deleted in the source list are not restored in the timeline when undoing deletion
- * 603045 : [regression] viewer no longer displays after dropping files
- * 603102 : cannot render until the timeline has been seeked, and traceback if trying to seek after trying to render directly
- * 603107 : keyframes are hard to manipulate near trimming handles/clips edges
- * 603148 : unlinking clips resets the playhead position
- * 603149 : splitting resets the playhead position
- * 603202 : PiTiVi can't load its own project format/file
- * 603203 : More frame rate support
- * 603424 : first seek doesn't work until you used the ruler to seek
- * 603425 : video curves' hitbox eats kittens
- * 604381 : tracebacks when trying to open an old project (0.13.1 release screencast)
- * 607408 : Pitivi does not respect theme settings
- * 607614 : downmix channels for drawing audio waveforms on the timeline
- * 608949 : [regression] keyboard shortcuts for scrubbing/frame seeking broke
- * 609426 : traceback when importing an MPEG2-TS file (.mts, .m2ts)
- * 611761 : [regression] some mpeg files get detected as sound-only
- * 611915 : Timeout not configurable
- * 611946 : [regression] some clips randomly cause pitivi to segfault on import since changes in thumbnailing
- * 611996 : Files with % and # in the file name can't be imported by drag and drop
- * 581816 : render output filename not in unicode
- * 593465 : changing project settings does not mark the project as changed
- * 594312 : convert entities in filenames in the render dialog
+ 
+ * 605445 : Pitivi does not work on big endian machines
+ * 608064 : general stream error related to mod files' audio
+ * 612797 : black frame flashing in rendered files or live playback between some clips
+ * 622134 : PiTiVi  constantly crashes when zooming in the track
+ * 624887 : playback hangs / errors while playing mov clips on clip change
+ * 627148 : Scrubbing over still image start causes segfault
+ * 629107 :  " Keyframe " menu item should read " Insert keyframe " 
+ * 629606 : render dialog sometimes causes tracebacks when clicking the Settings button
+ * 614290 : create tests for PNGs/still images
+ * 613767 : Rendering hang with transitions
+ * 629207 : [REGRESSION] can't load project with http-sourced images
+ * 629607 : choosing ffenc_dvdsub as an audio codec causes a traceback (crash) with AttributeError in __init__()
+ * 612501 : [patch] TypeError in do_simple_paint
+ * 615569 : Project settings resolution overrides that of render settings
+ * 563456 : create file association for .xptv files
+ * 573886 : Timeline scrolling goes too far when auto-scrolling or zooming
+ * 579230 : easy crossfading transition of overlapping clips
+ * 584089 : link clips and group clips have the same icon, confusing
+ * 586023 :  " revert to saved version " feature
+ * 589684 : [audio mixing] crackling noise in rendered sound if sampling rate not set high enough
+ * 590253 : Turn off thumbnail generation during redering
+ * 602894 : Ripple Move: trackebacks when dragging clips above top of timeline
+ * 606117 : Don't show version number in titlebar
+ * 609325 : weired shortcut for zoom in
+ * 609659 :  " Source List " vs " Clip Library " 
+ * 609660 : Pitivi doesn't render
+ * 610060 : Timeline sticks to end of video after it is played through and stops automatically.
+ * 610298 : [regression] box selection selects more clips than it's supposed to
+ * 610325 : codec autodetection does not always work
+ * 613625 : UI is not updated on pausing
+ * 613716 : Render to H.264 doesn’t start
+ * 613965 : Dragging an PNG to the timeline fails
+ * 614008 : Kurdish (ku) translation
+ * 615207 : spacebar doesn't always work, decodebin errors
+ * 616341 : Missing media in project file generates traceback
+ * 617130 : Static/still images (PNG, JPEG, gif, etc.) cause a not-negotiated error
+ * 621576 : Fails to render with encoders that have some latency
+ * 621949 : traceback when rendering completes
+ * 625479 : Pitivi does not set framerate when rendering
+ * 625984 : add_borders exception not handled
+ * 626124 : project.py:  code cleaning
+ * 627284 : Use gtk.InfoBar instead of custom code to show informations to users
+ * 615202 : [regression] " import folder of clips " doesn't work

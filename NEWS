@@ -1,3 +1,13 @@
+2010 September 16 - PiTiVi 0.13.5
+
+ * periodic backup of the current project file
+ * easy crossfading transitions of overlapping clips
+ * better icons for link and group operations
+ * new add keyframe button
+ * fixed support for the missing plugins installer
+ * improved support for pictures
+ * various performance improvements (less conversions, faster linking)
+
 2010 March 10 - PiTiVi 0.13.4
 
  * video mixing/transparency support
