@@ -217,10 +217,9 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         self.keyframes[kf] = pos
 
     def do_simple_paint(self, cr, bounds):
-        cr.save()
         cr.identity_matrix()
         if self.interpolator:
-
+            cr.save()
             # set clipping region to the visible portion of the clip
             vis_bounds = intersect(
                 goocanvas.Bounds(
