@@ -22,11 +22,12 @@
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
 
+import gst
 import gtk
 import gobject
 
-from pitivi.pipeline import PipelineError
 from pitivi.ui.gstwidget import GstElementSettingsWidget
+from pitivi.ui.dynamic import FractionWidget
 
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
 
@@ -45,19 +46,17 @@ class EffectsPropertiesHandling:
         """
         if effect not in self.cache_dict:
             #Here we should handle special effects configuration UI
-            if 'aspectratiocrop' in effect.get_name():
-                effect_set_ui = AspectRatioUi()
-            else:
-                effect_set_ui = GstElementSettingsWidget()
-                effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
-                                         default_btn=True, use_element_props=True)
-                nb_rows = effect_set_ui.get_children()[0].get_property('n-rows')
-                effect_configuration_ui = gtk.ScrolledWindow()
-                effect_configuration_ui.add_with_viewport(effect_set_ui)
-                effect_configuration_ui.set_policy(gtk.POLICY_AUTOMATIC,
-                                                   gtk.POLICY_AUTOMATIC)
-                self.cache_dict[effect] = effect_configuration_ui
-                self._connectAllWidgetCbs(effect_set_ui, effect)
+            effect_set_ui = GstElementSettingsWidget()
+            effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
+                                     default_btn=True, use_element_props=True)
+            nb_rows = effect_set_ui.get_children()[0].get_property('n-rows')
+            effect_configuration_ui = gtk.ScrolledWindow()
+            effect_configuration_ui.add_with_viewport(effect_set_ui)
+            effect_configuration_ui.set_policy(gtk.POLICY_AUTOMATIC,
+                                               gtk.POLICY_AUTOMATIC)
+            self.cache_dict[effect] = effect_configuration_ui
+            self._connectAllWidgetCbs(effect_set_ui, effect)
+            self._postConfiguration(effect, effect_set_ui)
 
         effect_set_ui = self._getUiToSetEffect(effect)
 
@@ -74,6 +73,12 @@ class EffectsPropertiesHandling:
             conf_ui = self.cache_dict.get(effect)
             self.cache_dict.pop(effect)
             return conf_ui
+
+    def _postConfiguration(self, effect, effect_set_ui):
+        if 'aspectratiocrop' in effect.get_name():
+            for widget in effect_set_ui.get_children()[0].get_children():
+                if isinstance(widget, FractionWidget):
+                    widget.addPresets(["4:3", "5:4", "9:3", "16:9", "16:10"])
 
     def _getUiToSetEffect(self, effect):
         """ Permit to get the widget to set the effect and not its container """
@@ -93,6 +98,11 @@ class EffectsPropertiesHandling:
 
     def _onValueChangedCb(self, widget, dynamic, prop):
         value = dynamic.getWidgetValue()
+
+        #FIXME Workaround in order to make aspectratiocrop working
+        if isinstance(value, gst.Fraction):
+            value = gst.Fraction(int(value.num),int(value.denom))
+
         if value != self._current_element_values.get(prop.name):
             self.action_log.begin("Effect property change")
             self._current_effect_setting_ui.element.set_property(prop.name, value)

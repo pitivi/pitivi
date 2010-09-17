@@ -134,6 +134,10 @@ class TextWidget(gtk.HBox, DynamicWidget):
             return self.last_valid
         return self.text.get_text()
 
+    def addChoices(self, choices):
+        for choice in choices:
+            self.combo.append_text(choice)
+
     def _textChanged(self, unused_widget):
         text = self.text.get_text()
         if self.matches:
@@ -257,6 +261,20 @@ class FractionWidget(TextWidget, DynamicWidget):
             if self.low <= float(value) and float(value) <= self.high:
                 return True
         return False
+
+    def addPresets(self, presets):
+        choices = []
+        for preset in presets:
+            if type(preset) is str:
+                strval = preset
+                preset = self._parseText(preset)
+            else:
+                strval = "%g:%g" % (preset.num, preset.denom)
+            fpreset = float(preset)
+            if self.low <= fpreset and fpreset <= self.high:
+               choices.append(strval)
+
+        self.addChoices(choices)
 
     def setWidgetValue(self, value):
         if type(value) is str:

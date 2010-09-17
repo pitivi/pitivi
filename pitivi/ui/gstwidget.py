@@ -60,7 +60,7 @@ def make_property_widget(unused_element, prop, value=None):
             choices.append([val.value_name, int(val)])
         widget = dynamic.ChoiceWidget(choices, default=prop.default_value)
     elif type_name == 'GstFraction':
-        widget = dynamic.FractionWidget(None, None, default = prop.default_value)
+        widget = dynamic.FractionWidget(None, presets=["0:1"], default=prop.default_value)
     else:
         widget = dynamic.DefaultWidget(type_name)
 
