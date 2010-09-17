@@ -2,6 +2,7 @@ import glob
 import os
 import sys
 import unittest
+import tests
 
 SKIP_FILES = ['common', 'runtests', 'test_integration']
 
