@@ -1908,34 +1908,49 @@ class Timeline(Signallable, Loggable):
 
         self.emit("disable-updates", False)
 
-    def getObjsAtTime(self, time_):
-        objects = self.timeline_objects
-        return [obj for obj in objects if
-            (obj.start < time_) and 
-            ((obj.start + obj.duration) > time_)]
+    def getObjsAtTime(self, time):
+        objects = []
+        for obj in self.timeline_objects:
+            if obj.start < time:
+                if (obj.start + obj.duration) > time:
+                    objects.append(obj)
+            else:
+                break
+        return objects
 
     def getObjsAfterObj(self, obj):
         return self.getObjsAfterTime(obj.start + obj.duration)
 
     def getObjsAfterTime(self, target):
-        return [to for to in self.timeline_objects 
-            if to.start >= target]
+        objects = []
+        for i in range(0, len(self.timeline_objects)):
+            if self.timeline_objects[i].start >= target:
+                objects.extend(self.timeline_objects[i:])
+                break
+        return objects
 
     def getObjsBeforeObj(self, obj):
         return self.getObjsBeforeTime(obj.start)
 
     def getObjsBeforeTime(self, target):
-        return [to for to in self.timeline_objects 
-            if to.start + to.duration <=target]
+        objects = []
+        for obj in self.timeline_objects:
+            if obj.start > target:
+                break
+            elif obj.start + obj.duration <= target:
+                objects.append(obj)
+        return objects
 
     def getObjsInRegion(self, start, end, min_priority=0,
         max_priority=4294967295L):
-        objs = []
-        for to in self.timeline_objects:
-            if ((to.start >= start) and
-                ((to.start + to.duration) <= end) and
-                (to.priority >= min_priority) and
-                (to.priority <= max_priority)):
-                objs.append(to)
-        return objs
+        objects = []
+        for obj in self.timeline_objects:
+            if obj.start >= start:
+                if ((obj.start + obj.duration) <= end and
+                obj.priority >= min_priority and
+                obj.priority <= max_priority):
+                    objects.append(obj)
+            elif obj.start > end:
+                break
+        return objects
 

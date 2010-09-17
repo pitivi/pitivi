@@ -19,6 +19,8 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import pygst
+pygst.require("0.10")
 import gst
 
 from tests.common import FakeSourceFactory
@@ -28,6 +30,7 @@ from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
 from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
+from pitivi.factories.test import AudioTestSourceFactory
 
 from common import SignalMonitor, TestCase, StubFactory
 
@@ -541,6 +544,91 @@ class TestTimeline(TestCase):
         self.failUnlessEqual(clip4.start, 2 * gst.SECOND)
         self.failUnlessEqual(clip4.duration + clip4.start, 
             fourclipsoneselected)
+
+    def testGetObjs(self):
+        obj1 = self.makeTimelineObject()
+        obj2 = self.makeTimelineObject()
+        obj3 = self.makeTimelineObject()
+        obj4 = self.makeTimelineObject()
+
+        obj1.start = 0 * gst.SECOND
+        obj1.duration = 5 * gst.SECOND
+        obj1.priority = 1
+
+        obj2.start = 5 * gst.SECOND
+        obj2.duration = 5 * gst.SECOND
+        obj2.priority = 2
+
+        obj3.start = 8 * gst.SECOND
+        obj3.duration = 5 * gst.SECOND
+        obj3.priority = 3
+
+        obj4.start = 15 * gst.SECOND
+        obj4.duration = 5 * gst.SECOND
+        obj4.priority = 4
+
+        timeline = self.timeline
+
+        time1 = 0 * gst.SECOND
+        time2 = 5 * gst.SECOND
+        time3 = 9 * gst.SECOND
+        time4 = 14 * gst.SECOND
+        tmp_obj_list = []
+
+        # Objects before time.
+        tmp_obj_list = []
+        result = timeline.getObjsBeforeTime(time1)
+        self.failUnlessEqual(result, tmp_obj_list)
+        tmp_obj_list = [obj1]
+        result = timeline.getObjsBeforeTime(time2)
+        self.failUnlessEqual(result, tmp_obj_list)
+        tmp_obj_list = [obj1]
+        result = timeline.getObjsBeforeTime(time3)
+        self.failUnlessEqual(result, tmp_obj_list)
+        tmp_obj_list = [obj1, obj2, obj3]
+        result = timeline.getObjsBeforeTime(time4)
+        self.failUnlessEqual(result, tmp_obj_list)
+
+        # Objects after time.
+        tmp_obj_list = [obj1, obj2, obj3, obj4]
+        result = timeline.getObjsAfterTime(time1)
+        self.failUnlessEqual(result, tmp_obj_list)
+        tmp_obj_list = [obj2, obj3, obj4]
+        result = timeline.getObjsAfterTime(time2)
+        self.failUnlessEqual(result, tmp_obj_list)
+        tmp_obj_list = [obj4]
+        result = timeline.getObjsAfterTime(time3)
+        self.failUnlessEqual(result, tmp_obj_list)
+        tmp_obj_list = [obj4]
+        result = timeline.getObjsAfterTime(time4)
+        self.failUnlessEqual(result, tmp_obj_list)
+
+        # Objects at time.
+        tmp_obj_list = []
+        result = timeline.getObjsAtTime(time1)
+        self.failUnlessEqual(result, tmp_obj_list)
+        tmp_obj_list = []
+        result = timeline.getObjsAtTime(time2)
+        self.failUnlessEqual(result, tmp_obj_list)
+        tmp_obj_list = [obj2, obj3]
+        result = timeline.getObjsAtTime(time3)
+        self.failUnlessEqual(result, tmp_obj_list)
+        tmp_obj_list = []
+        result = timeline.getObjsAtTime(time4)
+        self.failUnlessEqual(result, tmp_obj_list)
+
+        # Objects in region.
+        tmp_obj_list = [obj1]
+        result = timeline.getObjsInRegion(time1, time2)
+        self.failUnlessEqual(result, tmp_obj_list)
+        tmp_obj_list = []
+        result = timeline.getObjsInRegion(time3, time4)
+        self.failUnlessEqual(result, tmp_obj_list)
+        tmp_obj_list = [obj3]
+        result = timeline.getObjsInRegion(time1, time4, \
+            min_priority=3, max_priority=4)
+        self.failUnlessEqual(result, tmp_obj_list)
+
 
 class TestLink(TestCase):
 
