@@ -159,7 +159,6 @@ class PitiviViewer(gtk.VBox, Loggable):
                 self.action.deactivate()
             self.pipeline.removeAction(self.action)
 
-        self.deactivatePositionListener()
         self.pipeline.disconnect_by_function(self._posCb)
         self.pipeline.disconnect_by_function(self._currentStateCb)
         self.pipeline.disconnect_by_function(self._elementMessageCb)
