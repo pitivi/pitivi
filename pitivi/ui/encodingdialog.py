@@ -40,7 +40,7 @@ from pitivi.factories.base import SourceFactory
 from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.settings import export_settings_to_render_settings
 from pitivi.stream import VideoStream, AudioStream
-from pitivi.render import Renderer
+from pitivi.actioner import Renderer
 
 class EncodingDialog(GladeWindow, Renderer):
     """ Encoding dialog box """

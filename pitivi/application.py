@@ -55,7 +55,7 @@ from pitivi.timeline.timeline_undo import TimelineLogObserver
 from pitivi.sourcelist_undo import SourceListLogObserver
 from pitivi.undo import UndoableAction
 from pitivi.ui.viewer import PitiviViewer
-from pitivi.render import Renderer, Previewer
+from pitivi.actioner import Renderer, Previewer
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
