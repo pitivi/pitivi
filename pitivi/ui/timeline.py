@@ -46,7 +46,7 @@ from pitivi.ui.curve import Curve
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
 SPLIT = _("Split clip at playhead position")
-KEYFRAME = _("Create a keyframe")
+KEYFRAME = _("Add a keyframe")
 ZOOM_IN =  _("Zoom In")
 ZOOM_OUT =  _("Zoom Out")
 UNLINK = _("Break links between clips")
@@ -309,7 +309,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         playhead_actions = (
             ("Split", "pitivi-split", _("Split"), "S", SPLIT,
                 self.split),
-            ("Keyframe", "pitivi-keyframe", _("Keyframe"), "K", KEYFRAME,
+            ("Keyframe", "pitivi-keyframe", _("Add a keyframe"), "K", KEYFRAME,
                 self.keyframe),
         )
 
