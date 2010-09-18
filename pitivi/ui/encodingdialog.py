@@ -114,6 +114,7 @@ class EncodingDialog(GladeWindow, Renderer):
 
     def updatePosition(self, fraction, text):
         self.progressbar.set_fraction(fraction)
+        self.window.set_title(_("%.0f%% rendered" % (fraction*100)))
         if text is not None:
             self.progressbar.set_text(_("About %s left") % text)
 
@@ -122,6 +123,7 @@ class EncodingDialog(GladeWindow, Renderer):
         if self.acting:
             self.cancelbutton.set_label("gtk-cancel")
             self.progressbar.set_text(_("Rendering"))
+            self.window.set_title(_("0% rendered"))
             self.recordbutton.set_sensitive(False)
             self.filebutton.set_sensitive(False)
             self.settingsbutton.set_sensitive(False)
@@ -137,6 +139,7 @@ class EncodingDialog(GladeWindow, Renderer):
 
     def updateUIOnEOS(self):
         self.progressbar.set_text(_("Rendering Complete"))
+        self.window.set_title(_("Rendering Complete"))
         self.progressbar.set_fraction(1.0)
         self.recordbutton.set_sensitive(False)
         self.filebutton.set_sensitive(True)
