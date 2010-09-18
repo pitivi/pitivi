@@ -26,6 +26,8 @@ import gtk
 from gtk import gdk
 import gst
 
+from gettext import gettext as _
+
 from pitivi.action import ViewAction
 
 from pitivi.stream import VideoStream
@@ -197,9 +199,9 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.debug("active %r", active)
         self.set_sensitive(active)
         if self._haveUI:
-            for item in [self.slider, self.rewind_button, self.back_button,
-                         self.playpause_button, self.next_button,
-                         self.forward_button, self.timelabel]:
+            for item in [self.slider, self.goToStart_button, self.back_button,
+                         self.playpause_button, self.forward_button,
+                         self.goToEnd_button, self.timelabel]:
                 item.set_sensitive(active)
         if active:
             self.emit("activate-playback-controls", True)
@@ -233,13 +235,15 @@ class PitiviViewer(gtk.VBox, Loggable):
         boxalign.add(bbox)
         self.pack_start(boxalign, expand=False)
 
-        self.rewind_button = gtk.ToolButton(gtk.STOCK_MEDIA_REWIND)
-        self.rewind_button.connect("clicked", self._rewindCb)
-        self.rewind_button.set_sensitive(False)
-        bbox.pack_start(self.rewind_button, expand=False)
+        self.goToStart_button = gtk.ToolButton(gtk.STOCK_MEDIA_PREVIOUS)
+        self.goToStart_button.connect("clicked", self._goToStartCb)
+        self.goToStart_button.set_tooltip_text(_("Go to the beginning of the timeline"))
+        self.goToStart_button.set_sensitive(False)
+        bbox.pack_start(self.goToStart_button, expand=False)
 
-        self.back_button = gtk.ToolButton(gtk.STOCK_MEDIA_PREVIOUS)
+        self.back_button = gtk.ToolButton(gtk.STOCK_MEDIA_REWIND)
         self.back_button.connect("clicked", self._backCb)
+        self.back_button.set_tooltip_text(_("Go back one second"))
         self.back_button.set_sensitive(False)
         bbox.pack_start(self.back_button, expand=False)
 
@@ -248,15 +252,17 @@ class PitiviViewer(gtk.VBox, Loggable):
         bbox.pack_start(self.playpause_button, expand=False)
         self.playpause_button.set_sensitive(False)
 
-        self.next_button = gtk.ToolButton(gtk.STOCK_MEDIA_NEXT)
-        self.next_button.connect("clicked", self._nextCb)
-        self.next_button.set_sensitive(False)
-        bbox.pack_start(self.next_button, expand=False)
-
         self.forward_button = gtk.ToolButton(gtk.STOCK_MEDIA_FORWARD)
         self.forward_button.connect("clicked", self._forwardCb)
+        self.forward_button.set_tooltip_text(_("Go forward one second"))
         self.forward_button.set_sensitive(False)
         bbox.pack_start(self.forward_button, expand=False)
+
+        self.goToEnd_button = gtk.ToolButton(gtk.STOCK_MEDIA_NEXT)
+        self.goToEnd_button.connect("clicked", self._goToEndCb)
+        self.goToEnd_button.set_tooltip_text(_("Go to the end of the timeline"))
+        self.goToEnd_button.set_sensitive(False)
+        bbox.pack_start(self.goToEnd_button, expand=False)
 
         # current time
         self.timelabel = gtk.Label()
@@ -291,19 +297,19 @@ class PitiviViewer(gtk.VBox, Loggable):
         if not self.action:
             return
         if True:
-            self.rewind_button.show()
+            self.goToStart_button.show()
             self.back_button.show()
             self.playpause_button.show()
-            self.next_button.show()
             self.forward_button.show()
+            self.goToEnd_button.show()
             if self._showingSlider:
                 self.slider.show()
         else:
-            self.rewind_button.hide()
+            self.goToStart_button.hide()
             self.back_button.hide()
             self.playpause_button.hide()
-            self.next_button.hide()
             self.forward_button.hide()
+            self.goToEnd_button.hide()
             self.slider.hide()
 
     def setDisplayAspectRatio(self, ratio):
@@ -401,7 +407,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     ## Control gtk.Button callbacks
 
-    def _rewindCb(self, unused_button):
+    def _goToStartCb(self, unused_button):
         self.seek(0)
 
     def _backCb(self, unused_button):
@@ -410,10 +416,10 @@ class PitiviViewer(gtk.VBox, Loggable):
     def _playButtonCb(self, unused_button, isplaying):
         self.togglePlayback()
 
-    def _nextCb(self, unused_button):
+    def _forwardCb(self, unused_button):
         self.seekRelative(gst.SECOND)
 
-    def _forwardCb(self, unused_button):
+    def _goToEndCb(self, unused_button):
         try:
             dur = self.pipeline.getDuration()
             self.seek(dur - 1)
@@ -511,6 +517,7 @@ class PlayPauseButton(gtk.Button, Loggable):
         self.log("setPlay")
         if self.playing:
             self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PLAY, gtk.ICON_SIZE_BUTTON))
+            self.set_tooltip_text(_("Play"))
             self.playing = False
 
     def setPause(self):
@@ -518,4 +525,5 @@ class PlayPauseButton(gtk.Button, Loggable):
         """ display the pause image """
         if not self.playing:
             self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON))
+            self.set_tooltip_text(_("Pause"))
             self.playing = True
