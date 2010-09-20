@@ -315,7 +315,6 @@ class TestTrackObject(TestCase):
         monitor = TrackSignalMonitor(other1)
 
         other2 = other1.splitObject(6 * gst.SECOND)
-        self.failUnlessEqual(expected, getKeyframes(other2))
         self.failUnlessEqual(other1.start, 1 * gst.SECOND)
         self.failUnlessEqual(other1.in_point, 1 * gst.SECOND)
         self.failUnlessEqual(other1.duration, 5 * gst.SECOND)
@@ -329,6 +328,43 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(monitor.start_changed_count, 0)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
 
+    def testSplitObjectKeyframes(self):
+        DURATION = 10 * gst.SECOND
+
+        factory = AudioTestSourceFactory()
+        factory.duration = DURATION
+        stream_ = AudioStream(gst.Caps("audio/x-raw-int"))
+        obj = SourceTrackObject(factory, stream_)
+        track = Track(stream_)
+        track.addTrackObject(obj)
+
+        obj.start = 3 * gst.SECOND
+        obj.duration = DURATION
+
+
+        # create a three keyframes at: 3, 6 and 9 seconds
+        interpolator = obj.getInterpolator("volume")
+        keyframes = dict(((t * gst.SECOND, (t % 2, gst.INTERPOLATE_LINEAR))
+            for t in xrange(3, 10, 3)))
+        expected = []
+        expected2 = []
+        for time, (value, mode) in keyframes.iteritems():
+            kf = interpolator.newKeyframe(time, value, mode)
+            if time < (5 * gst.SECOND):
+                expected.append(kf)
+            else:
+                expected2.append(kf)
+
+        def getKeyframes(obj):
+            keyframes = obj.getInterpolator("volume").getInteriorKeyframes()
+            return list(keyframes)
+
+        obj2 = obj.splitObject(8 * gst.SECOND)
+
+        keyframes =  getKeyframes(obj)
+        keyframes2 = getKeyframes(obj2)
+        self.failUnlessEqual(keyframes, expected)
+        self.failUnlessEqual(keyframes2, expected2)
 
 class TestTrack(TestCase):
     def setUp(self):

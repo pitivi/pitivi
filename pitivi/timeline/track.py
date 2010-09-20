@@ -566,6 +566,7 @@ class TrackObject(Signallable, Loggable):
     def splitObject(self, position):
         start = self.gnl_object.props.start
         duration = self.gnl_object.props.duration
+        in_point = self.gnl_object.props.media_start
         if position <= start or position >= start + duration:
             raise TrackError("can't split at position %s" % gst.TIME_ARGS(position))
 
@@ -575,10 +576,24 @@ class TrackObject(Signallable, Loggable):
         for prop, i in self.interpolators.itervalues():
             value = i.valueAt(position)
             i.end.setValue(value)
+            keyframes = i.getInteriorKeyframes()
+            duplicates = []
+            for kf in keyframes:
+                if kf.getTime() >= (position - start + in_point):
+                    duplicates.append(kf)
+            for kf in duplicates:
+                i.removeKeyframe(kf)
 
         for prop, i in other.interpolators.itervalues():
             value = i.valueAt(position)
             i.start.setValue(value)
+            keyframes = i.getInteriorKeyframes()
+            duplicates = []
+            for kf in keyframes:
+                if kf.getTime() <= (position - start + in_point):
+                    duplicates.append(kf)
+            for kf in duplicates:
+                i.removeKeyframe(kf)
 
         other.trimObjectStart(position)
         self.setObjectDuration(position - self.gnl_object.props.start)
