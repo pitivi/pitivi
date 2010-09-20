@@ -629,6 +629,93 @@ class TestTimeline(TestCase):
             min_priority=3, max_priority=4)
         self.failUnlessEqual(result, tmp_obj_list)
 
+    def testGetKeyframe(self):
+        timeline_object0 = self.makeTimelineObject()
+        timeline_object1 = self.makeTimelineObject()
+        timeline_object3 = self.makeTimelineObject()
+
+        timeline_object0.start = 0 * gst.SECOND
+        timeline_object0.duration = 1 * gst.SECOND
+        timeline_object0.priority = 0
+
+        timeline_object1.start = 1 * gst.SECOND
+        timeline_object1.duration = 5 * gst.SECOND
+        timeline_object1.priority = 1
+
+        timeline_object3.start = 15 * gst.SECOND
+        timeline_object3.duration = 5 * gst.SECOND
+        timeline_object3.priority = 2
+
+        factory = AudioTestSourceFactory()
+        stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        track_object = SourceTrackObject(factory, stream)
+        self.track1.addTrackObject(track_object)
+        timeline_object2 = TimelineObject(factory)
+        timeline_object2.addTrackObject(track_object)
+        self.timeline.addTimelineObject(timeline_object2)
+        timeline_object2.start = 3 * gst.SECOND
+        timeline_object2.duration = 10 * gst.SECOND
+        timeline_object2.priority = 1
+
+        interpolator = track_object.getInterpolator("volume")
+        keyframe_position = 7 * gst.SECOND - timeline_object2.start
+        interpolator.newKeyframe(keyframe_position, 0.0, "mode")
+
+        timeline = self.timeline
+
+        time1 = 0
+        time2 = 0.5 * gst.SECOND
+        time3 = 2 * gst.SECOND
+        time4 = 6.5 * gst.SECOND
+        time5 = 10 * gst.SECOND
+        time6 = 14 * gst.SECOND
+        time7 = 25 * gst.SECOND
+
+        result = timeline.getPrevKeyframe(time1)
+        self.failUnlessEqual(result, None)
+        result = timeline.getPrevKeyframe(time2)
+        self.failUnlessEqual(result, 0 * gst.SECOND)
+        result = timeline.getPrevKeyframe(time3)
+        self.failUnlessEqual(result, 1 * gst.SECOND)
+        result = timeline.getPrevKeyframe(time4)
+        self.failUnlessEqual(result, 6 * gst.SECOND)
+        result = timeline.getPrevKeyframe(time5)
+        self.failUnlessEqual(result, 7 * gst.SECOND)
+        result = timeline.getPrevKeyframe(time6)
+        self.failUnlessEqual(result, 13 * gst.SECOND)
+        result = timeline.getPrevKeyframe(time7)
+        self.failUnlessEqual(result, 20 * gst.SECOND)
+
+        result = timeline.getNextKeyframe(time1)
+        self.failUnlessEqual(result, 1 * gst.SECOND)
+        result = timeline.getNextKeyframe(time2)
+        self.failUnlessEqual(result, 1 * gst.SECOND)
+        result = timeline.getNextKeyframe(time3)
+        self.failUnlessEqual(result, 3 * gst.SECOND)
+        result = timeline.getNextKeyframe(time4)
+        self.failUnlessEqual(result, 7 * gst.SECOND)
+        result = timeline.getNextKeyframe(time5)
+        self.failUnlessEqual(result, 13 * gst.SECOND)
+        result = timeline.getNextKeyframe(time6)
+        self.failUnlessEqual(result, 15 * gst.SECOND)
+        result = timeline.getNextKeyframe(time7)
+        self.failUnlessEqual(result, None)
+
+        other_object2 = timeline_object2.split(8 * gst.SECOND)
+        timeline_object2.start = 5 * gst.SECOND
+        other_object2.start = 7 * gst.SECOND
+        time1 = 7 * gst.SECOND
+        time2 = 10 * gst.SECOND
+        result = timeline.getNextKeyframe(time1)
+        self.failUnlessEqual(result, 9 * gst.SECOND)
+        result = timeline.getNextKeyframe(time2)
+        self.failUnlessEqual(result, 12 * gst.SECOND)
+
+        position = 8.5 * gst.SECOND
+        interpolator = other_object2.track_objects[0].getInterpolator("volume")
+        interpolator.newKeyframe(position)
+        result = timeline.getNextKeyframe(time2)
+        self.failUnlessEqual(result, 10.5 * gst.SECOND)
 
 class TestLink(TestCase):
 

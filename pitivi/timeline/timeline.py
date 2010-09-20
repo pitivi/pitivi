@@ -1954,3 +1954,58 @@ class Timeline(Signallable, Loggable):
                 break
         return objects
 
+    def getPrevKeyframe(self, time):
+        tl_objs = []
+
+        # Exclude objects that start after current position.
+        for obj in self.timeline_objects:
+                tl_objs.append(obj)
+                if obj.start > time:
+                    break
+
+        keyframe_positions = self._getKeyframePositions(tl_objs)
+        for n in range(len(keyframe_positions) -1, -1, -1):
+            if keyframe_positions[n] < time:
+                return keyframe_positions[n]
+        return None
+
+    def getNextKeyframe(self, time):
+        tl_objs = []
+
+        # Include from first object whose end is after the current
+        # position onward.
+        for obj in self.timeline_objects:
+            if (obj.start + obj.duration) > time:
+                n = self.timeline_objects.index(obj)
+                tl_objs.extend(self.timeline_objects[n:])
+                break
+
+        keyframe_positions = self._getKeyframePositions(tl_objs)
+        for n in range(0, len(keyframe_positions)):
+                if keyframe_positions[n] > time:
+                    return keyframe_positions[n]
+
+        return None
+
+    def _getKeyframePositions(self, timeline_objects):
+        keyframe_positions = set([])
+        for tl_obj in timeline_objects:
+            first_track = True
+            for track_obj in tl_obj.track_objects:
+                start = track_obj.start
+                in_point = track_obj.in_point
+                if first_track:
+                    keyframe_positions.add(start)
+                    keyframe_positions.add(start + track_obj.duration)
+                    first_track = False
+
+                interpolators = track_obj.getInterpolators()
+                for value in interpolators:
+                    interpolator = track_obj.getInterpolator(value)
+                    keyframes = interpolator.getInteriorKeyframes()
+                    for kf in keyframes:
+                        position_in_obj = kf.getTime() + start - in_point
+                        keyframe_positions.add(position_in_obj)
+        keyframe_positions = list(keyframe_positions)
+        keyframe_positions.sort()
+        return keyframe_positions

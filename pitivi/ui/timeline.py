@@ -47,6 +47,8 @@ from pitivi.ui.curve import Curve
 DELETE = _("Delete Selected")
 SPLIT = _("Split clip at playhead position")
 KEYFRAME = _("Add a keyframe")
+PREVFRAME = _("Move to the previous keyframe")
+NEXTFRAME = _("Move to the next keyframe")
 ZOOM_IN =  _("Zoom In")
 ZOOM_OUT =  _("Zoom Out")
 UNLINK = _("Break links between clips")
@@ -75,6 +77,9 @@ ui = '''
                 <menuitem action="UnlinkObj" />
                 <menuitem action="GroupObj" />
                 <menuitem action="UngroupObj" />
+                <separator />
+                <menuitem action="Prevframe" />
+                <menuitem action="Nextframe" />
             </placeholder>
         </menu>
     </menubar>
@@ -311,6 +316,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 self.split),
             ("Keyframe", "pitivi-keyframe", _("Add a keyframe"), "K", KEYFRAME,
                 self.keyframe),
+            ("Prevframe", "pitivi-prevframe", _("_Prevframe"), "E", PREVFRAME,
+                self.prevframe),
+            ("Nextframe", "pitivi-nextframe", _("_Nextframe"), "R", NEXTFRAME,
+                self.nextframe),
         )
 
         actiongroup = gtk.ActionGroup("timelinepermanent")
@@ -327,6 +336,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.delete_action = actiongroup.get_action("DeleteObj")
         self.split_action = actiongroup.get_action("Split")
         self.keyframe_action = actiongroup.get_action("Keyframe")
+        self.prevframe_action = actiongroup.get_action("Prevframe")
+        self.nextframe_action = actiongroup.get_action("Nextframe")
 
         self.ui_manager.insert_action_group(actiongroup, -1)
 
@@ -668,7 +679,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         for obj in selected:
             keyframe_exists = False
 
-            position_in_obj = timeline_position - obj.start
+            position_in_obj = (timeline_position - obj.start) + obj.in_point
             interpolators = obj.getInterpolators()
             for value in interpolators:
                 interpolator = obj.getInterpolator(value)
@@ -683,3 +694,19 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     self.app.action_log.begin("add volume point")
                     interpolator.newKeyframe(position_in_obj)
                     self.app.action_log.commit()
+
+    def prevframe(self, action):
+        timeline_position = self._position
+
+        prev_kf = self.timeline.getPrevKeyframe(timeline_position)
+        if prev_kf != None:
+            self._seeker.seek(prev_kf)
+            self.timelinePositionChanged(prev_kf)
+
+    def nextframe(self, action):
+        timeline_position = self._position
+
+        next_kf = self.timeline.getNextKeyframe(timeline_position)
+        if next_kf:
+                self._seeker.seek(next_kf)
+                self.timelinePositionChanged(next_kf)
