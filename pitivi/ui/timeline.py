@@ -701,7 +701,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         prev_kf = self.timeline.getPrevKeyframe(timeline_position)
         if prev_kf != None:
             self._seeker.seek(prev_kf)
-            self.timelinePositionChanged(prev_kf)
 
     def nextframe(self, action):
         timeline_position = self._position
@@ -709,4 +708,3 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         next_kf = self.timeline.getNextKeyframe(timeline_position)
         if next_kf:
                 self._seeker.seek(next_kf)
-                self.timelinePositionChanged(next_kf)
