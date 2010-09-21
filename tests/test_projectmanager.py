@@ -355,7 +355,7 @@ class TestProjectManager(TestCase):
 
         # Save the backup
         self.manager._saveBackupCb(self.manager.current, uri)
-        backup_uri = self.manager._backupFilename(uri)
+        backup_uri = self.manager._makeBackupURI(uri)
         self.failUnless(uri_is_reachable(uri))
         self.failUnless(uri_is_reachable(backup_uri))
 

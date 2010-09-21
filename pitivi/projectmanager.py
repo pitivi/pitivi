@@ -24,6 +24,7 @@ import gobject
 gobject.threads_init()
 import gst
 import os
+from urlparse import urlparse
 
 from pitivi.project import Project
 from pitivi.formatters.format import get_formatter_for_uri
@@ -157,7 +158,7 @@ class ProjectManager(Signallable, Loggable):
 
         self.emit("project-closed", self.current)
         self.current.disconnect_by_function(self._projectChangedCb)
-        self._cleanBackupCb(self.current)
+        self._cleanBackup(self.current.uri)
         self.current.release()
         self.current = None
 
@@ -203,24 +204,26 @@ class ProjectManager(Signallable, Loggable):
         self.current.setModificationState(False)
         self.closeRunningProject()
         self.loadProject(uri)
-        
+
     def _projectChangedCb(self, project):
         # The backup_lock is a timer, when a change in the project is done it is
         # set to 10 seconds. If before those 10 seconds pass an other change is done
         # 5 seconds are added in the timeout callback instead of saving the backup
         # file. The limit is 60 seconds.
         uri = project.uri
-        if uri != None:
-            if self.backup_lock == 0:
-                self.backup_lock = 10
-                gobject.timeout_add_seconds(self.backup_lock, self._saveBackupCb, \
-                                            project, uri)
-            else:
-                if self.backup_lock < 60:
-                    self.backup_lock += 5
+        if uri is None:
+            return
+
+        if self.backup_lock == 0:
+            self.backup_lock = 10
+            gobject.timeout_add_seconds(self.backup_lock,
+                    self._saveBackupCb, project, uri)
+        else:
+            if self.backup_lock < 60:
+                self.backup_lock += 5
 
     def _saveBackupCb(self, project, uri):
-        backup_uri = self._backupFilename(uri)
+        backup_uri = self._makeBackupURI(uri)
 
         if self.backup_lock > 10:
             self.backup_lock -= 5
@@ -230,20 +233,19 @@ class ProjectManager(Signallable, Loggable):
             self.backup_lock = 0
         return False
 
-    def _cleanBackupCb(self, project):
-        uri = project.uri
-        if uri:
-            location = self._backupFilename(uri)
-            if location:
-                location = location.split('file://')[1]
-                if os.path.exists(location):
-                    os.remove(location)
+    def _cleanBackup(self, uri):
+        if uri is None:
+            return
 
-    def _backupFilename(self, uri):
-        if uri:
-            name, ext = os.path.splitext(uri)
-            if ext == '.xptv':
-                return name + "~" + ext
+        location = self._makeBackupURI(uri)
+        path = urlparse(location).path
+        if os.path.exists(path):
+            os.remove(path)
+
+    def _makeBackupURI(self, uri):
+        name, ext = os.path.splitext(uri)
+        if ext == '.xptv':
+            return name + "~" + ext
         return None
 
     def _getFormatterForUri(self, uri):
