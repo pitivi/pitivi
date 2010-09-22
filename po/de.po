@@ -644,11 +644,6 @@ msgstr "Ungefähr %s verbleibend"
 msgid "Rendering"
 msgstr "Wird erstellt"
 
-#: ../pitivi/ui/encodingdialog.py:126
-#, python-format
-msgid "0% rendered"
-msgstr "0% verarbeitet"
-
 #: ../pitivi/ui/encodingdialog.py:141 ../pitivi/ui/encodingdialog.py:142
 msgid "Rendering Complete"
 msgstr "Erstellung beendet"
