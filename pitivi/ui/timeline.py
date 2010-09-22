@@ -560,8 +560,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def scrollToPlayhead(self):
         """
-        Scroll the current position as close to the center of the view
-        as possible (as close as the timeline canvas allows).
+        If the current position is out of the view bouds, then scroll
+        as close to the center of the view as possible or as close as the
+        timeline canvas allows.
         """
         page_size = self.hadj.get_page_size()
 
@@ -753,10 +754,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         prev_kf = self.timeline.getPrevKeyframe(timeline_position)
         if prev_kf != None:
             self._seeker.seek(prev_kf)
+            self.scrollToPlayhead()
 
     def nextframe(self, action):
         timeline_position = self._position
 
         next_kf = self.timeline.getNextKeyframe(timeline_position)
         if next_kf:
-                self._seeker.seek(next_kf)
+            self._seeker.seek(next_kf)
+            self.scrollToPlayhead()
