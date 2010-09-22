@@ -464,7 +464,11 @@ class SourceList(gtk.VBox, Loggable):
 
     def addUris(self, files):
         """ Add files to the list """
-        self.app.current.sources.addUris(files)
+        try:
+            self.app.current.sources.addUris(files)
+        except SourceListError as error:
+            disclaimer, uri = error.args
+            self.error("'%s' is already present in the source list." + uri)
 
     def addFolders(self, folders):
         """ walks the trees of the folders in the list and adds the files it finds """
