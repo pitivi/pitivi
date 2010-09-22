@@ -19,6 +19,7 @@ pitivi/ui/cam_capture.glade
 pitivi/ui/common.py
 pitivi/ui/defaultpropertyeditor.py
 pitivi/ui/dynamic.py
+pitivi/ui/effectlist.py
 pitivi/ui/elementsettingsdialog.glade
 pitivi/ui/encodingdialog.glade
 pitivi/ui/encodingdialog.py
