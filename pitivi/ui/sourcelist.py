@@ -623,7 +623,7 @@ class SourceList(gtk.VBox, Loggable):
         """ Called when a user clicks on the remove button """
         self._removeSources()
 
-    def _playButtonClickedCb(self, unused_widget):
+    def _playButtonClickedCb(self, unused_widget=None):
         """ Called when a user clicks on the play button """
         # get the selected filesourcefactory
         paths = self.getSelectedPaths()
@@ -725,7 +725,10 @@ class SourceList(gtk.VBox, Loggable):
     def _treeViewButtonPressEventCb(self, treeview, event):
         chain_up = True
 
-        if event.button == 3:
+        if event.type == gtk.gdk._2BUTTON_PRESS:
+            self._playButtonClickedCb()
+            chain_up = False
+        elif event.button == 3:
             self._viewShowPopup(treeview, event)
             chain_up = False
 
@@ -810,8 +813,10 @@ class SourceList(gtk.VBox, Loggable):
     def _iconViewButtonPressEventCb(self, iconview, event):
         chain_up = True
 
-        #popup menu
-        if event.button == 3:
+        if event.type == gtk.gdk._2BUTTON_PRESS:
+            self._playButtonClickedCb()
+            chain_up = False
+        elif event.button == 3:
             self._viewShowPopup(iconview, event)
             chain_up = False
         else:
