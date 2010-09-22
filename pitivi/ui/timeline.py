@@ -477,7 +477,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 self.app.current.seeker.seek(self._position)
                 context.drop_finish(True, timestamp)
 
-                self.timeline.selection.setTo(timeline_objs, SELECT)
+                self.timeline.selection.setSelection(timeline_objs, SELECT)
 
             return True
 
