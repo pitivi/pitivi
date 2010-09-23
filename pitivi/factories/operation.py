@@ -80,7 +80,7 @@ class EffectFactory (TransformFactory):
 
     def _makeBin (self, *args):
         bin = gst.Bin()
-        fx = gst.element_factory_make(self.effectname)
+        fx = gst.element_factory_make(self.effectname, "effect")
         if isinstance(self.input_streams[0], VideoStream):
             csp = gst.element_factory_make("ffmpegcolorspace")
         else:
