@@ -644,13 +644,10 @@ class TrackObject(Signallable, Loggable):
         if self.gnl_object is None:
             raise TrackError()
 
-        bin = self._getBin()
+        bin = self.factory.makeBin(self.stream)
         self.gnl_object.add(bin)
         self._rebuild_interpolators = True
         self._maybeBuildInterpolators()
-
-    def _getBin(self):
-        return self.factory.makeBin(self.stream)
 
     def releaseBin(self):
         for bin in list(self.gnl_object.elements()):
@@ -741,26 +738,12 @@ class TrackEffect(TrackObject):
 
     numobjs = 0
 
-    def __init__(self, factory, stream, start=0,
-            duration=0, in_point=0,
-            media_duration=0, priority=0):
-        TrackObject.__init__(self, factory, stream, start=start,
-                             duration=duration, in_point=in_point,
-                             media_duration=media_duration, priority=priority)
-        self._element = None
-
     def _makeGnlObject(self):
         effect = gst.element_factory_make('gnloperation',
             "gnloperation: " + self.factory.__class__.__name__ +
             str(TrackEffect.numobjs))
         TrackEffect.numobjs += 1
         return effect
-
-    def _getBin(self):
-        bin, fx = self.factory.makeBin(self.stream)
-        self._element = fx
-
-        return bin
 
     def copy(self):
         other = TrackObject.copy(self)
@@ -780,7 +763,10 @@ class TrackEffect(TrackObject):
         Permit to get the gst.Element inside the gnl_object that correspond
         to the track factory
         """
-        return self._element
+        #Should we find a better implementation?
+        for element in self.gnl_object.recurse():
+            if self.factory.name in element.get_name():
+                return element
 
 class Transition(Signallable):
 

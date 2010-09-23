@@ -21,7 +21,7 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
-from pitivi.factories.base import OperationFactory, ObjectFactoryError
+from pitivi.factories.base import OperationFactory
 from pitivi.stream import AudioStream, VideoStream
 
 from gettext import gettext as _
@@ -56,7 +56,7 @@ class TransformFactory(OperationFactory):
     def _requestNewInputStream(self, *args):
         raise OperationFactoryError("TransformFactory doesn't allow request pads")
 
-class EffectFactory(TransformFactory):
+class EffectFactory (TransformFactory):
     """
     Factories that applies an effect on a stream
     """
@@ -78,33 +78,6 @@ class EffectFactory(TransformFactory):
     def getCategories(self):
         return self.categories
 
-    def makeBin(self, input_stream=None, output_stream=None):
-        """
-        Create a bin that consumes the stream described by C{input_stream}.
-
-        If C{input_stream} and/or C{output_stream} are None, it's up to the
-        implementations to return a suitable "default" bin.
-
-        @param input_stream: A L{MultimediaStream}
-        @param output_stream: A L{MultimediaStream}
-        @return: A bin and the element
-        @rtype: C{gst.Bin} and C{gst.Element}
-
-        @see: L{releaseBin}
-        """
-
-        if input_stream is not None and \
-                input_stream not in self.input_streams:
-            raise ObjectFactoryError('unknown stream')
-
-        bin, fx = self._makeBin(input_stream)
-        bin.factory = self
-        self.bins.append(bin)
-        self.current_bins += 1
-        self.emit('bin-created', bin)
-
-        return bin, fx
-
     def _makeBin (self, *args):
         bin = gst.Bin()
         fx = gst.element_factory_make(self.effectname)
@@ -120,12 +93,13 @@ class EffectFactory(TransformFactory):
         bin.add_pad(gst.GhostPad("sink", csp.get_pad("sink")))
         bin.add_pad(gst.GhostPad("src", fx.get_pad("src")))
 
-        return bin, fx
+        return bin
 
     def _releaseBin(self, bin):
         elements = bin.elements()
         for element in elements.next():
             del element
+
 
     def addInputStream(self, stream):
         return OperationFactory.addInputStream(self, stream)
