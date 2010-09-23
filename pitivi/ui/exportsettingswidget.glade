@@ -298,13 +298,13 @@ Stereo (2)</property>
                     <property name="column_spacing">5</property>
                     <property name="row_spacing">5</property>
                     <child>
-                      <widget class="GtkButton" id="vcodecsettingsbutton">
+                      <widget class="GtkButton" id="acodecsettingsbutton">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="label" translatable="yes">Settings</property>
                         <property name="use_underline">True</property>
                         <property name="response_id">0</property>
-                        <signal name="clicked" handler="_vcodecSettingsButtonClickedCb"/>
+                        <signal name="clicked" handler="_acodecSettingsButtonClickedCb"/>
                       </widget>
                       <packing>
                         <property name="left_attach">2</property>
@@ -316,13 +316,13 @@ Stereo (2)</property>
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkButton" id="acodecsettingsbutton">
+                      <widget class="GtkButton" id="vcodecsettingsbutton">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="label" translatable="yes">Settings</property>
                         <property name="use_underline">True</property>
                         <property name="response_id">0</property>
-                        <signal name="clicked" handler="_acodecSettingsButtonClickedCb"/>
+                        <signal name="clicked" handler="_vcodecSettingsButtonClickedCb"/>
                       </widget>
                       <packing>
                         <property name="left_attach">2</property>
@@ -374,9 +374,9 @@ Stereo (2)</property>
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkComboBox" id="acodeccbox">
+                      <widget class="GtkComboBox" id="vcodeccbox">
                         <property name="visible">True</property>
-                        <property name="items" translatable="yes">Audio Codec</property>
+                        <property name="items" translatable="yes">Video Codec</property>
                       </widget>
                       <packing>
                         <property name="left_attach">1</property>
@@ -387,9 +387,9 @@ Stereo (2)</property>
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkComboBox" id="vcodeccbox">
+                      <widget class="GtkComboBox" id="acodeccbox">
                         <property name="visible">True</property>
-                        <property name="items" translatable="yes">Video Codec</property>
+                        <property name="items" translatable="yes">Audio Codec</property>
                       </widget>
                       <packing>
                         <property name="left_attach">1</property>
@@ -401,10 +401,10 @@ Stereo (2)</property>
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkLabel" id="label26">
+                      <widget class="GtkLabel" id="label25">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Audio Codec:</property>
+                        <property name="label" translatable="yes">Video Codec:</property>
                       </widget>
                       <packing>
                         <property name="top_attach">1</property>
@@ -414,10 +414,10 @@ Stereo (2)</property>
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkLabel" id="label25">
+                      <widget class="GtkLabel" id="label26">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Video Codec:</property>
+                        <property name="label" translatable="yes">Audio Codec:</property>
                       </widget>
                       <packing>
                         <property name="top_attach">2</property>
