@@ -277,13 +277,16 @@ class EffectList(gtk.VBox, Loggable):
 
         treeview.set_tooltip_row (tooltip, context[1][0])
         name = self.modelFilter.get_value(context[2], COL_ELEMENT_NAME)
-        if self._current_effect_name != name: 
+        if self._current_effect_name != name:
             self._current_effect_name = name
             icon = self.app.effects.getEffectIcon(name)
             self._current_tooltip_icon = icon
 
+        longname = self.modelFilter.get_value(context[2], COL_NAME_TEXT).strip()
+        txt = "<b>%s:</b>\n%s" % (longname,
+                self.modelFilter.get_value(context[2], COL_DESC_TEXT))
         tooltip.set_icon(self._current_tooltip_icon)
-        tooltip.set_text(self.modelFilter.get_value(context[2], COL_DESC_TEXT))
+        tooltip.set_markup(txt)
 
         return True
 
