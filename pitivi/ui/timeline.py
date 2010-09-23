@@ -451,6 +451,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.timeline.disableUpdates()
 
             self._add_temp_source()
+            self.timeline.selection.setSelection(self._temp_objects, SELECT)
             focus = self._temp_objects[0]
             self._move_context = MoveContext(self.timeline,
                                              focus, set(self._temp_objects[1:]))
