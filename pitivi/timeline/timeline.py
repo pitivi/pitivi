@@ -1729,7 +1729,6 @@ class Timeline(Signallable, Loggable):
 
         listTimelineObjectTrackObject = []
         track_object = TrackEffect(factory, input_stream)
-        track_object.makeBin() #FIXME
 
         for obj in timeline_objects:
             copy_track_obj = track_object.copy()
