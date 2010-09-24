@@ -1715,8 +1715,12 @@ class Timeline(Signallable, Loggable):
             raise TimelineError()
         input_stream = input_stream[0]
 
-        track = [track for track in self.tracks\
-                if type (track.stream) == type(factory.input_streams[0])][0]
+        track = None
+        for track_ in self.tracks:
+            if type(track_.stream) == type(input_stream):
+                track = track_
+                break
+
         if track is None:
           raise TimelineError("There is no Track to add the effect to")
 
