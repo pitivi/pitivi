@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-09-22 13:44+0000\n"
-"PO-Revision-Date: 2010-09-22 21:07+0100\n"
+"POT-Creation-Date: 2010-09-22 19:29+0000\n"
+"PO-Revision-Date: 2010-09-27 20:46+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -643,6 +643,11 @@ msgstr "Ungefähr %s verbleibend"
 #: ../pitivi/ui/encodingdialog.py:125
 msgid "Rendering"
 msgstr "Wird erstellt"
+
+#: ../pitivi/ui/encodingdialog.py:126
+#, fuzzy, python-format
+msgid "0% rendered"
+msgstr "%.0f%% verarbeitet"
 
 #: ../pitivi/ui/encodingdialog.py:141 ../pitivi/ui/encodingdialog.py:142
 msgid "Rendering Complete"
@@ -1319,6 +1324,8 @@ msgid ""
 "<span>You must select <b>one</b> clip on the timeline to configure its "
 "associated effects</span>"
 msgstr ""
+"<span>Sie müssen <b>einen</b> Clip in der Zeitlinie auswählen, um dessen "
+"Effekte zu konfigurieren</span>"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
@@ -1420,31 +1427,31 @@ msgstr "Einen Clip importieren"
 msgid "Close after importing files"
 msgstr "Nach dem Importieren von Dateien schließen"
 
-#: ../pitivi/ui/sourcelist.py:957
+#: ../pitivi/ui/sourcelist.py:962
 msgid "Importing clips..."
 msgstr "Clips werden importiert …"
 
-#: ../pitivi/ui/sourcelist.py:958
+#: ../pitivi/ui/sourcelist.py:963
 msgid "Error(s) occurred while importing"
 msgstr "Ein oder mehrere Fehler sind beim Importieren aufgetreten"
 
-#: ../pitivi/ui/sourcelist.py:959
+#: ../pitivi/ui/sourcelist.py:964
 msgid "An error occurred while importing"
 msgstr "Ein Fehler ist beim Importieren aufgetreten"
 
-#: ../pitivi/ui/sourcelist.py:1048
+#: ../pitivi/ui/sourcelist.py:1053
 msgid "Error while analyzing files"
 msgstr "Fehler beim Analysieren von Dateien"
 
-#: ../pitivi/ui/sourcelist.py:1049
+#: ../pitivi/ui/sourcelist.py:1054
 msgid "The following files can not be used with PiTiVi."
 msgstr "Die folgenden Dateien können von PiTiVi nicht verarbeitet werden."
 
-#: ../pitivi/ui/sourcelist.py:1051
+#: ../pitivi/ui/sourcelist.py:1056
 msgid "Error while analyzing a file"
 msgstr "Fehler beim Analysieren einer Datei"
 
-#: ../pitivi/ui/sourcelist.py:1052
+#: ../pitivi/ui/sourcelist.py:1057
 msgid "The following file can not be used with PiTiVi."
 msgstr "Die folgende Datei kann von PiTiVi nicht verarbeitet werden."
 
@@ -1455,7 +1462,7 @@ msgstr "Auswahl entfernen"
 
 #: ../pitivi/ui/timeline.py:55
 msgid "Split clip at playhead position"
-msgstr "Clip an der Position des Mauszeigers schneiden"
+msgstr "Clip an der Zeitlinienposition schneiden"
 
 #: ../pitivi/ui/timeline.py:56 ../pitivi/ui/timeline.py:324
 msgid "Add a keyframe"
