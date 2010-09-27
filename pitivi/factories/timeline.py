@@ -130,7 +130,7 @@ class TimelineSourceFactory(SourceFactory):
         else:
             seek = FixSeekStart(track)
         self.bin.add(seek)
-        seek.set_state(gst.STATE_PLAYING)
+        seek.sync_state_with_parent()
         pad.link(seek.get_pad('sink'))
         ghost = gst.GhostPad('src%d' % self.pad_num + str(id(pad)), seek.get_pad('src'))
 
