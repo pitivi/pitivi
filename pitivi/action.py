@@ -603,9 +603,9 @@ class Action(Signallable, Loggable):
             tee = self.pipeline.getTeeForFactoryStream(producer, prodstream,
                                                      automake=True)
 
-        except PipelineError:
+        except PipelineError, e:
             if init != True:
-                self.debug("Could not create link")
+                self.debug("Could not create link %s" % e)
                 return False
 
             self.debug("Stream will be created dynamically")
