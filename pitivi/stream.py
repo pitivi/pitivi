@@ -269,6 +269,10 @@ def find_upstream_demuxer_and_pad(pad):
             continue
 
         element_factory = element.get_factory()
+        if element_factory is None:
+            # python elements don't have a factory
+            return None, None
+
         element_klass = element_factory.get_klass()
 
         if 'Demuxer' in element_klass:
