@@ -138,9 +138,12 @@ class TimelineSourceFactory(SourceFactory):
         caps = pad.props.caps
         if caps is None:
             caps = pad.get_caps()
-        if caps.is_fixed():
-            seek.get_pad("sink").set_caps(caps)
-            ghost.set_caps(caps)
+        if not caps.is_fixed():
+            # still set some caps so get_stream_for_pad knows what kind of
+            # stream this is
+            caps = gst.Caps(caps[0].get_name())
+        seek.get_pad("sink").set_caps(caps)
+        ghost.set_caps(caps)
         ghost.set_active(True)
         self.ghosts[pad_id] = ghost
         self.seek_checkers[pad_id] = seek
