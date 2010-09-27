@@ -306,7 +306,11 @@ def get_pad_type(pad):
     if decoder:
         return get_type_from_decoder(decoder)
 
-    return pad.get_caps()[0].get_name().split('/', 1)[0]
+    caps = pad.props.caps
+    if caps is None:
+        caps = pad.get_caps()
+
+    return caps[0].get_name().split('/', 1)[0]
 
 def get_pad_id(pad):
     lst = []
