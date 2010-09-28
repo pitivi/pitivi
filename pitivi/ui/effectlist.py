@@ -320,10 +320,12 @@ class EffectList(gtk.VBox, Loggable):
         entry.set_text("")
 
     def searchEntryDesactvateCb(self, entry, event):
-        self.app.gui.setActionsSensitive(['FullScreen', 'Split',], True)
+        sensitive_actions = self.app.gui.sensitive_actions
+        self.app.gui.setActionsSensitive(sensitive_actions, True)
 
     def searchEntryActivateCb(self, entry, event):
-        self.app.gui.setActionsSensitive(['FullScreen', 'Split',], False)
+        sensitive_actions = self.app.gui.sensitive_actions
+        self.app.gui.setActionsSensitive(sensitive_actions, False)
 
     def _setRowVisible(self, model, iter, data):
         if self.effectType.get_active() == model.get_value(iter, COL_EFFECT_TYPE):

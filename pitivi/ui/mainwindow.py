@@ -430,6 +430,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.secondhpaned.pack1(self.projecttabs, resize=True, shrink=False)
         self.projecttabs.show()
 
+        # Actions with key accelerators that will be made unsensitive while
+        # a gtk entry box is used to avoid conflicts.
+        self.sensitive_actions = []
+        for action in self.timeline.playhead_actions:
+            self.sensitive_actions.append(action[0])
+        for action in self.toggleactions:
+            self.sensitive_actions.append(action[0])
+
         #Clips properties
         self.propertiestabs = BaseTabs(instance, True)
         self.clipconfig = ClipProperties(instance, self.uimanager)

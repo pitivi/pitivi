@@ -318,7 +318,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 self.groupSelected),
         )
 
-        playhead_actions = (
+        self.playhead_actions = (
             ("Split", "pitivi-split", _("Split"), "S", SPLIT,
                 self.split),
             ("Keyframe", "pitivi-keyframe", _("Add a keyframe"), "K", KEYFRAME,
@@ -335,7 +335,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         actiongroup = gtk.ActionGroup("timelineselection")
         actiongroup.add_actions(selection_actions)
-        actiongroup.add_actions(playhead_actions)
+        actiongroup.add_actions(self.playhead_actions)
         self.link_action = actiongroup.get_action("LinkObj")
         self.unlink_action = actiongroup.get_action("UnlinkObj")
         self.group_action = actiongroup.get_action("GroupObj")
