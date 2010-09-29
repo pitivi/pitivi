@@ -27,7 +27,8 @@ from pitivi.signalinterface import Signallable
 from pitivi.factories.base import SourceFactory, SinkFactory
 from pitivi.action import ActionError
 from pitivi.stream import get_src_pads_for_stream, \
-     get_sink_pads_for_stream, get_stream_for_caps
+     get_sink_pads_for_stream, get_stream_for_caps, \
+     match_stream, get_stream_for_pad
 from pitivi.log.loggable import Loggable
 import gobject
 import gst
@@ -619,7 +620,7 @@ class Pipeline(Signallable, Loggable):
         stream_entry = self._getStreamEntryForFactoryStream(factory, stream)
         bin_stream_entry = stream_entry.findBinEntry()
         if bin_stream_entry is None:
-            raise PipelineError()
+            raise PipelineError("couldn't find bin entry")
 
         bin = bin_stream_entry.bin
 
@@ -629,14 +630,25 @@ class Pipeline(Signallable, Loggable):
             return stream_entry.tee
 
         if not automake:
-            raise PipelineError()
+            raise PipelineError("no automake")
 
         self.debug("Really creating a tee")
-        pads = get_src_pads_for_stream(bin, stream)
-        if not pads or len(pads) > 1:
-            raise PipelineError("Can't figure out which source pad to use !")
+        # get the source pads
+        pads = get_src_pads_for_stream(bin, None)
+        # get the corresponding streams
+        streams = [get_stream_for_pad(pad, store_pad=True) for pad in pads]
+        # find the pad that matches the given stream best
+        if stream is None:
+            if len(streams) == 1:
+                stream = streams[0]
+            else:
+                raise PipelineError("bin has multiple compatible pads")
 
-        srcpad = pads[0]
+        stream, rank = match_stream(stream, streams)
+        if stream is None:
+            raise PipelineError("bin has no compatible source pads")
+
+        srcpad = stream.pad
         self.debug("Using pad %r", srcpad)
 
         stream_entry.tee = gst.element_factory_make("tee")

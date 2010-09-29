@@ -352,7 +352,7 @@ def get_stream_for_caps(caps, pad=None):
         ret = TextStream(caps, pad_name)
     return ret
 
-def get_stream_for_pad(pad):
+def get_stream_for_pad(pad, store_pad=False):
     log.debug("stream", "pad:%r")
     caps = pad.props.caps
     if caps is None:
@@ -360,6 +360,8 @@ def get_stream_for_pad(pad):
     pad_id = get_pad_id(pad)
     stream = get_stream_for_caps(caps, pad)
     stream.pad_id = pad_id
+    if store_pad:
+        stream.pad = pad
 
     return stream
 
@@ -400,7 +402,7 @@ def get_pads_for_stream(element, stream):
         try:
             ls = [x for x in element.pads() if pad_compatible_stream(x, stream)]
             break
-        except:
+        except TypeError:
             continue
     # FIXME : I'm not 100% certain that checking against the stream pad_name
     # is a good idea ....
