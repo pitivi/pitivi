@@ -64,6 +64,9 @@ class VideoTestSourceFactory(SourceFactory):
 
         return video_bin
 
+    def _makeDefaultBin(self):
+        return self._makeStreamBin(self.output_streams[0])
+
     def _releaseBin(self, bin):
         pass
 
