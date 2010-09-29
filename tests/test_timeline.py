@@ -1304,6 +1304,33 @@ class TestContexts(TestCase):
         self.failUnlessEqual(self.track_object3.start, 10 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
 
+    def testMoveContextOverlapTransition(self):
+        # start
+        # track1:  [focus  ][  t2  ]
+        # track2:  [t3 ]
+        self.track_object1.start = 0 * gst.SECOND
+        self.track_object1.duration = 10 * gst.SECOND
+        self.track_object1.priority = 1
+        self.track_object2.start = 10 * gst.SECOND
+        self.track_object2.duration = 10 * gst.SECOND
+        self.track_object2.priority = 1
+        self.track_object3.start = 0 * gst.SECOND
+        self.track_object3.duration = 10 * gst.SECOND
+        self.track_object3.priority = 1
+
+        # move to
+        # track1:  [focus[  ]t2  ]
+        # track2:  [t3 ]
+        context = MoveContext(self.timeline, self.track_object2, set([]))
+        context.editTo(gst.SECOND * 5, 1)
+        context.finish()
+        self.failUnlessEqual(self.track_object1.start, 0 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 5 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 0 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
+
     def testMoveContextFocusNotEarliest(self):
         #     [t2  ][focus]  [t3     ]
         self.track_object1.start = 10 * gst.SECOND

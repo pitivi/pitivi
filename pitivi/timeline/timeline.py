@@ -1150,13 +1150,13 @@ class MoveContext(EditingContext):
         self._restoreValues(self.default_originals)
 
     def _overlapsAreTransitions(self, focus, priority):
-        left_gap, right_gap = Gap.findAroundObject(focus)
+        tracks = set(o.track for o in focus.track_objects)
+        left_gap, right_gap = Gap.findAroundObject(focus, tracks=tracks)
 
         focus_end = focus.start + focus.duration
 
         # left_transition
         if left_gap.duration < 0:
-
             left_obj = left_gap.left_object
             left_end = left_obj.start + left_obj.duration
 
@@ -1172,7 +1172,8 @@ class MoveContext(EditingContext):
             #   overlap the previous and previous previous clips
 
             try:
-                prev_prev = self.timeline.getPreviousTimelineObject(left_obj)
+                prev_prev = self.timeline.getPreviousTimelineObject(left_obj,
+                        tracks=tracks)
                 if prev_prev.start + prev_prev.duration > self.focus.start:
                     return False
             except TimelineError:
@@ -1180,7 +1181,6 @@ class MoveContext(EditingContext):
 
         # right transition
         if right_gap.duration < 0:
-
             right_obj = right_gap.right_object
             right_end = right_obj.start + right_obj.duration
 
