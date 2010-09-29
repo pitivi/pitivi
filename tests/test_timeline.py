@@ -474,10 +474,29 @@ class TestTimeline(TestCase):
         prev = timeline.getPreviousTimelineObject(timeline_object2, priority=None)
         self.failUnlessEqual(prev, timeline_object4)
 
-        timeline_object3.start = 8 * gst.SECOND
-        # same start
+    def testGetPreviousTimelineObjectSameStart(self):
+        timeline_object1 = self.makeTimelineObject()
+        timeline_object2 = self.makeTimelineObject()
+        timeline = self.timeline
+
+        timeline_object1.start = 1 * gst.SECOND
+        timeline_object1.duration = 5 * gst.SECOND
+        timeline_object1.priority = 1
+
+        timeline_object2.start = 1 * gst.SECOND
+        timeline_object2.duration = 5 * gst.SECOND
+        timeline_object2.priority = 2
+
+        self.failUnlessRaises(TimelineError,
+                timeline.getPreviousTimelineObject, timeline_object1)
+        self.failUnlessRaises(TimelineError,
+                timeline.getPreviousTimelineObject, timeline_object2)
+
         prev = timeline.getPreviousTimelineObject(timeline_object2, priority=None)
-        self.failUnlessEqual(prev, timeline_object3)
+        self.failUnlessEqual(prev, timeline_object1)
+
+        prev = timeline.getPreviousTimelineObject(timeline_object1, priority=None)
+        self.failUnlessEqual(prev, timeline_object2)
 
     def testGetNextTrackObject(self):
         timeline_object1 = self.makeTimelineObject()
