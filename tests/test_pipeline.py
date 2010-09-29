@@ -26,7 +26,8 @@ from unittest import main
 from pitivi.pipeline import Pipeline, STATE_NULL, STATE_READY, STATE_PAUSED, STATE_PLAYING, PipelineError
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE
 from pitivi.stream import AudioStream, VideoStream
-from common import TestCase, SignalMonitor, FakeSourceFactory, FakeSinkFactory, FakeEffectFactory
+from common import TestCase, SignalMonitor, FakeSinkFactory, FakeEffectFactory
+from pitivi.factories.test import VideoTestSourceFactory
 
 class BogusAction(Action):
     pass
@@ -183,8 +184,9 @@ class TestPipeline(TestCase):
         self.assertEquals(self.monitor.state_changed_count, 5)
 
     def testGetReleaseBinForFactoryStream(self):
-        factory = FakeSourceFactory()
-        stream = VideoStream(gst.Caps('any'), 'src0')
+        factory = VideoTestSourceFactory()
+        stream = VideoStream(gst.Caps('video/x-raw-rgb; video/x-raw-yuv'),
+                'src0')
         factory.addOutputStream(stream)
 
         # try to get a cached instance
@@ -210,8 +212,9 @@ class TestPipeline(TestCase):
         self.pipeline.releaseBinForFactoryStream(factory, stream)
 
     def testGetReleaseTeeForFactoryStream(self):
-        factory = FakeSourceFactory()
-        stream = VideoStream(gst.Caps('any'), 'src')
+        factory = VideoTestSourceFactory()
+        stream = VideoStream(gst.Caps('video/x-raw-rgb; video/x-raw-yuv'),
+                'src')
         factory.addOutputStream(stream)
 
         self.failUnlessRaises(PipelineError,
@@ -249,7 +252,8 @@ class TestPipeline(TestCase):
 
         # should always fail with a sink bin
         factory2 = FakeSinkFactory()
-        stream2= VideoStream(gst.Caps('any'), 'src')
+        stream2 = VideoStream(gst.Caps('video/x-raw-rgb; video/x-raw-yuv'),
+                'src')
         factory2.addInputStream(stream2)
 
         self.failUnlessRaises(PipelineError,
@@ -301,7 +305,7 @@ class TestPipeline(TestCase):
                 self.pipeline.releaseQueueForFactoryStream, factory, stream)
 
         # should always fail with a src bin
-        factory2 = FakeSourceFactory()
+        factory2 = VideoTestSourceFactory()
         stream2 = VideoStream(gst.Caps('any'), 'src')
         factory2.addOutputStream(stream2)
 

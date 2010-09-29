@@ -28,6 +28,7 @@ from unittest import TestCase, main
 from pitivi.pipeline import Pipeline, STATE_READY, STATE_PLAYING, STATE_NULL
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE, ActionError
 from pitivi.stream import MultimediaStream, VideoStream
+from pitivi.factories.test import VideoTestSourceFactory
 from common import TestCase
 import common
 import gst
@@ -51,8 +52,7 @@ class TestPipelineAction(TestCase):
         """Testing pipeline state interaction"""
         p = Pipeline()
         a = Action()
-        src = common.FakeSourceFactory()
-        src.addOutputStream(MultimediaStream(gst.Caps("any"), pad_name="src"))
+        src = VideoTestSourceFactory()
         sink = common.FakeSinkFactory()
         sink.addInputStream(MultimediaStream(gst.Caps("any"), pad_name="sink"))
 
