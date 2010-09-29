@@ -42,6 +42,13 @@ class FixSeekStart(gst.BaseTransform):
     def __init__(self, track):
         gst.BaseTransform.__init__(self)
         self.track = track
+        self.caps = None
+
+    def do_transform_caps(self, direction, caps):
+        if self.caps is None:
+            return caps
+
+        return caps.intersect(self.caps)
 
     def do_src_event(self, event):
         if event.type == gst.EVENT_SEEK:
@@ -134,16 +141,12 @@ class TimelineSourceFactory(SourceFactory):
         pad.link(seek.get_pad('sink'))
         ghost = gst.GhostPad('src%d' % self.pad_num + str(id(pad)), seek.get_pad('src'))
 
-        # if the target pad has negotiated caps, set them on the ghost as well
+        # FixSeekStart has template caps ANY. Setting seek.caps here we make it
+        # so that ghost.get_caps() returns pad.get_caps()
         caps = pad.props.caps
         if caps is None:
             caps = pad.get_caps()
-        if not caps.is_fixed():
-            # still set some caps so get_stream_for_pad knows what kind of
-            # stream this is
-            caps = gst.Caps(caps[0].get_name())
-        seek.get_pad("sink").set_caps(caps)
-        ghost.set_caps(caps)
+        seek.caps = caps
         ghost.set_active(True)
         self.ghosts[pad_id] = ghost
         self.seek_checkers[pad_id] = seek
