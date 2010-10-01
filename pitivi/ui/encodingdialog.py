@@ -123,6 +123,7 @@ class EncodingDialog(GladeWindow, Renderer):
         if self.acting:
             self.cancelbutton.set_label("gtk-cancel")
             self.progressbar.set_text(_("Rendering"))
+            # xgettext:no-python-format
             self.window.set_title(_("0% rendered"))
             self.recordbutton.set_sensitive(False)
             self.filebutton.set_sensitive(False)
