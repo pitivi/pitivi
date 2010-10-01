@@ -272,6 +272,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._vscrollbar = gtk.VScrollbar(self.vadj)
         self.attach(self._hscrollbar, 1, 2, 2, 3, yoptions=0)
         self.attach(self._vscrollbar, 2, 3, 1, 2, xoptions=0)
+        self.hadj.connect("value-changed", self._updateScrollPosition)
+        self.vadj.connect("value-changed", self._updateScrollPosition)
 
         # error infostub
         self.infostub = InfoStub()
@@ -526,6 +528,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._move_context.editTo(delta, priority)
 
 ## Zooming and Scrolling
+
+    def _updateScrollPosition(self, adjustment):
+        self._root_item.set_simple_transform( -self.hadj.get_value(), 
+            -self.vadj.get_value(), 1.0, 0)
 
     def _zoomAdjustmentChangedCb(self, adjustment):
         # GTK crack
