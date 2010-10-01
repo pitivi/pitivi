@@ -49,6 +49,8 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
         self.height = float(height)
         self.element = element
         self.props.pointer_events = False
+        # ghetto hack
+        self.hadj = instance.gui.timeline.hadj
 
 ## properties
 
@@ -100,12 +102,11 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
                 border_width), self.height)
 
     def do_simple_paint(self, cr, bounds):
-
-
+        x1 = -self.hadj.get_value()
         cr.identity_matrix()
         if self.element.factory:
             self.previewer.render_cairo(cr, intersect(self.bounds, bounds),
-            self.element, self.bounds.y1)
+            self.element, x1, self.bounds.y1)
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
         return (between(0, x, self.nsToPixel(self.element.duration)) and

@@ -149,7 +149,7 @@ class Previewer(Signallable, Loggable):
         self.default_thumb = cairo.ImageSurface.create_from_png(path)
         self._connectSettings(instance.settings)
 
-    def render_cairo(self, cr, bounds, element, y1):
+    def render_cairo(self, cr, bounds, element, hscroll_pos, y1):
         """Render a preview of element onto a cairo context within the current
         bounds, which may or may not be the entire object and which may or may
         not intersect the visible portion of the object"""
@@ -160,7 +160,7 @@ class Previewer(Signallable, Loggable):
 
 class DefaultPreviewer(Previewer):
 
-    def render_cairo(self, cr, bounds, element, y1):
+    def render_cairo(self, cr, bounds, element, hscroll_pos, y1):
         # TODO: draw a single thumbnail
         pass
 
@@ -202,7 +202,7 @@ class RandomAccessPreviewer(Previewer):
 
 ## public interface
 
-    def render_cairo(self, cr, bounds, element, y1):
+    def render_cairo(self, cr, bounds, element, hscroll_pos, y1):
         if not self._view:
             return
         # The idea is to conceptually divide the clip into a sequence of
@@ -224,7 +224,8 @@ class RandomAccessPreviewer(Previewer):
         # tdur = duration in ns of thumbnail
         # sof  = start of file in pixel coordinates
         x1 = bounds.x1;
-        sof = Zoomable.nsToPixel(element.start - element.in_point)
+        sof = Zoomable.nsToPixel(element.start - element.in_point) +\
+            hscroll_pos
 
         # i = left edge of thumbnail to be drawn. We start with x1 and
         # subtract the distance to the nearest leftward rectangle.
