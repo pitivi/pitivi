@@ -166,6 +166,9 @@ class Controller(object):
     def _event_common(self, item, target, event):
         if not self._canvas:
             self._canvas = item.get_canvas()
+            # might there be a better way to do this?
+            self._hadj = self._canvas.app.gui.timeline.hadj
+            self._vadj = self._canvas.app.gui.timeline.vadj
         self._last_event = event
         s = event.get_state()
         self._shift_down = s & gtk.gdk.SHIFT_MASK

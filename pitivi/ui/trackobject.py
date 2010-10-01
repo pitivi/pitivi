@@ -121,8 +121,9 @@ class TimelineController(controller.Controller):
 
     def set_pos(self, item, pos):
         x, y = pos
-        position = Zoomable.pixelToNs(x)
-        priority = int((y - self._y_offset) // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
+        position = Zoomable.pixelToNs(x + self._hadj.get_value())
+        priority = int((y - self._y_offset + self._vadj.get_value()) //
+            (LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
         self._context.setMode(self._getMode())
         self._context.editTo(position, priority)
 
