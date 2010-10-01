@@ -306,10 +306,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
     def _request_size(self):
         alloc = self.get_allocation()
-        w = Zoomable.nsToPixel(self.max_duration)
-        h = max(self._height, alloc.height)
-        self.set_bounds(0, 0, w, h)
-        self._playhead.props.height = h + 10
+        self.set_bounds(0, 0, alloc.width, alloc.height)
+        self._playhead.props.height = alloc.height + 10
 
     def zoomChanged(self):
         if self.timeline:
