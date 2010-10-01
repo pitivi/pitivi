@@ -264,27 +264,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # proportional timeline
         self._canvas = TimelineCanvas(self.app)
-        timelinewindow = gtk.ScrolledWindow(self.hadj, self.vadj)
-        timelinewindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        timelinewindow.add(self._canvas)
-        timelinewindow.set_shadow_type(gtk.SHADOW_IN)
-        timelinewindow.set_name("timelinewindow")
+        self._root_item = self._canvas.get_root_item()
+        self.attach(self._canvas, 1, 2, 1, 2)
 
-        # temp fix for padding between scrollbar and scrolled window
-        #FIXME: should be set at an global position for easy editing?
-        gtk.rc_parse_string("""
-            style 'timelinewindow'
-            {
-                GtkScrolledWindow::scrollbar-spacing = 0
-            }
-            widget '*.timelinewindow' style 'timelinewindow'
-        """)
-
-        self.attach(timelinewindow, 1, 2, 1, 2)
+        # scrollbar
+        self._hscrollbar = gtk.HScrollbar(self.hadj)
+        self._vscrollbar = gtk.VScrollbar(self.vadj)
+        self.attach(self._hscrollbar, 1, 2, 2, 3, yoptions=0)
+        self.attach(self._vscrollbar, 2, 3, 1, 2, xoptions=0)
 
         # error infostub
         self.infostub = InfoStub()
-        self.attach(self.infostub, 1, 2, 2, 3, yoptions=0)
+        self.attach(self.infostub, 1, 2, 4, 5, yoptions=0)
 
         self.show_all()
         self.infostub.hide()
