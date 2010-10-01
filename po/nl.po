@@ -1,24 +1,24 @@
 # Dutch translation for pitivi.
+#
 # Nathan Samson <nathansamson@gmail.com>, 2008.
 # rob <linuxned@gmail.com>, 2010.
 # Mario Blättermann <mariobl@gnome.org>, 2010.
-# Hannie Dumoleyn <lafeber-dumoleyn2@zonnet.nl>, 2010.
-#
+# Hannie Dumoleyn <hannie@ubuntu-nl.org>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-09-27 18:52+0000\n"
-"PO-Revision-Date: 2010-09-20 08:49+0000\n"
-"Last-Translator: rob <linuxned@gmail.com>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-10-01 13:02+0200\n"
+"PO-Revision-Date: 2010-09-30 11:46+0200\n"
+"Last-Translator: Hannie Dumoleyn <hannie@ubuntu-nl.org>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Launchpad-Export-Date: 2010-09-28 15:48+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Generator: Lokalize 1.0\n"
 "X-Poedit-Language: Dutch\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -294,11 +294,6 @@ msgstr ""
 "de pagina http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
 #: ../pitivi/application.py:225
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "      %prog [PROJECT_FILE]\n"
-#| "      %prog -i [-a] [MEDIA_FILE]..."
 msgid ""
 "\n"
 "      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
@@ -306,19 +301,11 @@ msgid ""
 "      %prog -i [-a] [MEDIA_FILE]..."
 msgstr ""
 "\n"
-"      %prog [PROJECTBESTAND]\n"
-"      %prog -i [-a] [MEDIABESTAND]…"
+"      %prog [-r UITVOER_BESTAND] [PROJECT_BESTAND]\n"
+"      %prog -p [PROJECT_BESTAND]\n"
+"      %prog -i [-a] [MEDIA_BESTAND]…"
 
 #: ../pitivi/application.py:230
-#, fuzzy
-#| msgid ""
-#| "Starts the video editor, optionally loading PROJECT_FILE. If\n"
-#| "no project is given, %prog creates a new project.\n"
-#| "Alternatively, when -i is specified, arguments are treated as clips to "
-#| "be\n"
-#| "imported into the project. If -a is specified, these clips will also be "
-#| "added to\n"
-#| "the end of the project timeline."
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
 "no project is given, %prog creates a new project.\n"
@@ -329,12 +316,14 @@ msgid ""
 "When -r is specified, the given project file is rendered without opening the "
 "GUI."
 msgstr ""
-"Start de videoeditor, PROJECT_BESTAND wordt eventueel geladen. Als\n"
-"er geen project aangegeven wordt, zal %prog een nieuw project aanmaken.\n"
-"Wanneer -i is aangegeven, zullen argumenten behandeld worden als fragmenten\n"
-"om te importeren in het project. Wanneer -a is aangegeven, zullen deze "
+"Start de video-editor, PROJECT_BESTAND wordt eventueel geladen. Als\n"
+"er geen project opgegeven wordt, zal %prog een nieuw project aanmaken.\n"
+"Wanneer -i is opgegeven, zullen argumenten behandeld worden als fragmenten\n"
+"om te importeren in het project. Wanneer -a is opgegeven, zullen deze "
 "fragmenten ook\n"
-"toegevoegd worden aan het einde van de projecttijdlijn."
+"toegevoegd worden aan het einde van de projecttijdlijn.\n"
+"Wanneer -r is opgegeven, wordt het opgegeven projectbestand gerenderd zonder "
+"dat de GUI wordt geopend."
 
 #: ../pitivi/application.py:237
 msgid "Import each MEDIA_FILE into the project."
@@ -354,11 +343,11 @@ msgstr "pitivi zonder gafische gebruikersomgeving starten"
 
 #: ../pitivi/application.py:243
 msgid "Render the given project file to OUTPUT_FILE with no GUI."
-msgstr ""
+msgstr "Het opgegeven projectbestand renderen naar PROJECT_BESTAND zonder GUI."
 
 #: ../pitivi/application.py:244
 msgid "Preview the given project file without the full UI."
-msgstr ""
+msgstr "Voorbeeld van het opgegeven projectbestand zonder de volledige UI."
 
 #: ../pitivi/projectmanager.py:100
 msgid "Not a valid project file."
@@ -430,65 +419,53 @@ msgstr "%s kan nog niet omgaan met niet lokale projecten"
 
 #: ../pitivi/effects.py:66
 msgid "All effects"
-msgstr ""
+msgstr "Alle effecten"
 
 #: ../pitivi/effects.py:67
-#, fuzzy
-#| msgid "Close"
 msgid "Colors"
-msgstr "Sluiten"
+msgstr "Kleuren"
 
 #: ../pitivi/effects.py:81
-#, fuzzy
-#| msgid "Close"
 msgid "Noise"
-msgstr "Sluiten"
+msgstr "Ruis"
 
 #: ../pitivi/effects.py:83
 msgid "Analysis"
-msgstr ""
+msgstr "Analyse"
 
 #: ../pitivi/effects.py:88
 msgid "Blur"
-msgstr ""
+msgstr "Vervaging"
 
 #: ../pitivi/effects.py:90
 msgid "Geometry"
-msgstr ""
+msgstr "Afmetingen"
 
 #: ../pitivi/effects.py:102
 msgid "Fancy"
-msgstr ""
+msgstr "Elegant"
 
 #: ../pitivi/effects.py:113
-#, fuzzy
-#| msgid "_Timeline"
 msgid "Time"
-msgstr "_Tijdlijn"
+msgstr "Tijd"
 
 #: ../pitivi/effects.py:114 ../pitivi/effects.py:222
-#, fuzzy
-#| msgid "All categories"
 msgid "Uncategorized"
-msgstr "Alle categorieën"
+msgstr "Geen categorie"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
 #: ../pitivi/effects.py:241
-#, fuzzy
-#| msgid "Video: "
 msgid "Video"
-msgstr "Video: "
+msgstr "Video"
 
 #: ../pitivi/effects.py:242
-#, fuzzy
-#| msgid "Audio Codec"
 msgid "Audio |audio"
-msgstr "Audio-codec"
+msgstr "Audio |audio"
 
 #: ../pitivi/effects.py:243
 msgid "effect"
-msgstr ""
+msgstr "effect"
 
 #: ../pitivi/formatters/format.py:77
 msgid "PiTiVi Native (XML)"
@@ -583,16 +560,12 @@ msgid "Choose..."
 msgstr "Kiezen…"
 
 #: ../pitivi/ui/effectlist.py:74
-#, fuzzy
-#| msgid "Video Preset"
 msgid "Video effects"
-msgstr "Video-voorinstelling"
+msgstr "Video-effecten"
 
 #: ../pitivi/ui/effectlist.py:75
-#, fuzzy
-#| msgid "Audio Preset"
 msgid "Audio effects"
-msgstr "Audio-voorinstelling"
+msgstr "Audio-effecten"
 
 #: ../pitivi/ui/effectlist.py:86 ../pitivi/ui/pluginmanagerdialog.glade.h:3
 msgid "Search:"
@@ -665,7 +638,7 @@ msgstr "Kies bestand om naar te renderen"
 #: ../pitivi/ui/encodingdialog.py:117
 #, python-format
 msgid "%.0f%% rendered"
-msgstr ""
+msgstr "%.0f%% gerenderd"
 
 #: ../pitivi/ui/encodingdialog.py:119
 #, python-format
@@ -676,12 +649,12 @@ msgstr "Ongeveer %s te gaan"
 msgid "Rendering"
 msgstr "Bezig met renderen"
 
-#: ../pitivi/ui/encodingdialog.py:126
-#, python-format
+#: ../pitivi/ui/encodingdialog.py:127
+#, no-python-format
 msgid "0% rendered"
-msgstr ""
+msgstr "0% gerenderd"
 
-#: ../pitivi/ui/encodingdialog.py:141 ../pitivi/ui/encodingdialog.py:142
+#: ../pitivi/ui/encodingdialog.py:142 ../pitivi/ui/encodingdialog.py:143
 msgid "Rendering Complete"
 msgstr "Renderen voltooid"
 
@@ -873,7 +846,7 @@ msgstr "Extra informatie:"
 
 #: ../pitivi/ui/gstwidget.py:153
 msgid "Reset to default value"
-msgstr ""
+msgstr "De standaardwaarde terugzetten"
 
 #. set title and frame label
 #: ../pitivi/ui/gstwidget.py:197
@@ -1057,14 +1030,12 @@ msgid "Media Library"
 msgstr "Mediabibliotheek"
 
 #: ../pitivi/ui/mainwindow.py:427
-#, fuzzy
-#| msgid "Media Library"
 msgid "Effect Library"
-msgstr "Mediabibliotheek"
+msgstr "Effectenbibliotheek"
 
 #: ../pitivi/ui/mainwindow.py:438
 msgid "Effects configurations"
-msgstr ""
+msgstr "Instellingen effecten"
 
 #: ../pitivi/ui/mainwindow.py:600
 msgid "Open File..."
@@ -1337,28 +1308,28 @@ msgid "Show Waveforms on Audio Clips"
 msgstr "Golfvormen op audiofragmenten tonen"
 
 #: ../pitivi/ui/clipproperties.py:134
-#, fuzzy
-#| msgid "_Remove from project"
 msgid "Remove effect"
-msgstr "Uit project ve_rwijderen"
+msgstr "Effect verwijderen"
 
 #: ../pitivi/ui/clipproperties.py:161
 msgid "Activated"
-msgstr ""
+msgstr "Geactiveerd"
 
 #: ../pitivi/ui/clipproperties.py:166
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: ../pitivi/ui/clipproperties.py:178
 msgid "Effect name"
-msgstr ""
+msgstr "Naam effect"
 
 #: ../pitivi/ui/clipproperties.py:367
 msgid ""
 "<span>You must select <b>one</b> clip on the timeline to configure its "
 "associated effects</span>"
 msgstr ""
+"<span>U dient <b>een</b> clip op de tijdlijn te selecteren om de daaraan "
+"gekoppelde effecten te configureren</span>"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
@@ -1498,20 +1469,16 @@ msgid "Split clip at playhead position"
 msgstr "Fragment splitsen op posititie afspeelkop"
 
 #: ../pitivi/ui/timeline.py:56 ../pitivi/ui/timeline.py:324
-#, fuzzy
-#| msgid "Create a keyframe"
 msgid "Add a keyframe"
-msgstr "Sleutelframe aanmaken"
+msgstr "Sleutelframe toevoegen"
 
 #: ../pitivi/ui/timeline.py:57
 msgid "Move to the previous keyframe"
-msgstr ""
+msgstr "Ga naar vorige sleutelframe"
 
 #: ../pitivi/ui/timeline.py:58
-#, fuzzy
-#| msgid "Create a keyframe"
 msgid "Move to the next keyframe"
-msgstr "Sleutelframe aanmaken"
+msgstr "Ga naar volgende sleutelframe"
 
 #: ../pitivi/ui/timeline.py:59
 msgid "Zoom In"
@@ -1554,16 +1521,12 @@ msgid "Zoom Timeline"
 msgstr "Inzoomen op tijdlijn"
 
 #: ../pitivi/ui/timeline.py:326
-#, fuzzy
-#| msgid "Keyframe"
 msgid "_Prevframe"
-msgstr "Sleutelframe"
+msgstr "_Prevframe"
 
 #: ../pitivi/ui/timeline.py:328
-#, fuzzy
-#| msgid "Keyframe"
 msgid "_Nextframe"
-msgstr "Sleutelframe"
+msgstr "_Nextframe"
 
 #: ../pitivi/ui/timelinecanvas.py:51
 msgid "Behavior"
@@ -1615,28 +1578,24 @@ msgstr "Het lettertype voor de fragmententitels"
 
 #: ../pitivi/ui/viewer.py:243
 msgid "Go to the beginning of the timeline"
-msgstr ""
+msgstr "Ga naar het begin van de tijdlijn"
 
 #: ../pitivi/ui/viewer.py:249
 msgid "Go back one second"
-msgstr ""
+msgstr "Ga een seconde terug"
 
 #: ../pitivi/ui/viewer.py:260
 msgid "Go forward one second"
-msgstr ""
+msgstr "Ga een seconde vooruit"
 
 #: ../pitivi/ui/viewer.py:266
-#, fuzzy
-#| msgid "Insert at _end of timeline"
 msgid "Go to the end of the timeline"
-msgstr "Invoegen op _einde van de tijdlijn"
+msgstr "Ga naar het einde van de tijdlijn"
 
 #: ../pitivi/ui/viewer.py:523
-#, fuzzy
-#| msgid "Play Clip"
 msgid "Play"
-msgstr "Fragment afspelen"
+msgstr "Afspelen"
 
 #: ../pitivi/ui/viewer.py:531
 msgid "Pause"
-msgstr ""
+msgstr "Pauzeren"

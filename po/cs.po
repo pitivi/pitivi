@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-09-23 06:33+0000\n"
-"PO-Revision-Date: 2010-09-22 08:20+0200\n"
+"POT-Creation-Date: 2010-09-27 18:52+0000\n"
+"PO-Revision-Date: 2010-09-28 12:09+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -414,65 +414,53 @@ msgstr "%s zatím nedokáže pracovat s jinými než místními projekty"
 
 #: ../pitivi/effects.py:66
 msgid "All effects"
-msgstr ""
+msgstr "Všechny efekty"
 
 #: ../pitivi/effects.py:67
-#, fuzzy
-#| msgid "Close"
 msgid "Colors"
-msgstr "Zavřít"
+msgstr "Barvy"
 
 #: ../pitivi/effects.py:81
-#, fuzzy
-#| msgid "Close"
 msgid "Noise"
-msgstr "Zavřít"
+msgstr "Šumové"
 
 #: ../pitivi/effects.py:83
 msgid "Analysis"
-msgstr ""
+msgstr "Analytické"
 
 #: ../pitivi/effects.py:88
 msgid "Blur"
-msgstr ""
+msgstr "Ostřící"
 
 #: ../pitivi/effects.py:90
 msgid "Geometry"
-msgstr ""
+msgstr "Geometrické"
 
 #: ../pitivi/effects.py:102
 msgid "Fancy"
-msgstr ""
+msgstr "Zábavné"
 
 #: ../pitivi/effects.py:113
-#, fuzzy
-#| msgid "_Timeline"
 msgid "Time"
-msgstr "Časo_vá osa"
+msgstr "Časové"
 
 #: ../pitivi/effects.py:114 ../pitivi/effects.py:222
-#, fuzzy
-#| msgid "All categories"
 msgid "Uncategorized"
-msgstr "Všechny kategorie"
+msgstr "Nezařazené"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
 #: ../pitivi/effects.py:241
-#, fuzzy
-#| msgid "Video: "
 msgid "Video"
-msgstr "Video: "
+msgstr "Video|video|Obrazový|obrazový"
 
 #: ../pitivi/effects.py:242
-#, fuzzy
-#| msgid "Audio Codec"
 msgid "Audio |audio"
-msgstr "Audio kodek"
+msgstr "Audio|audio|Zvukový|zvukový"
 
 #: ../pitivi/effects.py:243
 msgid "effect"
-msgstr ""
+msgstr "efekt"
 
 #: ../pitivi/formatters/format.py:77
 msgid "PiTiVi Native (XML)"
@@ -569,16 +557,12 @@ msgid "Choose..."
 msgstr "Vybrat…"
 
 #: ../pitivi/ui/effectlist.py:74
-#, fuzzy
-#| msgid "Video Preset"
 msgid "Video effects"
-msgstr "Video nastavení"
+msgstr "Obrazové efekty"
 
 #: ../pitivi/ui/effectlist.py:75
-#, fuzzy
-#| msgid "Audio Preset"
 msgid "Audio effects"
-msgstr "Audio nastavení"
+msgstr "Zvukové efekty"
 
 #: ../pitivi/ui/effectlist.py:86 ../pitivi/ui/pluginmanagerdialog.glade.h:3
 msgid "Search:"
@@ -651,7 +635,7 @@ msgstr "Vyberte soubor, do kterého se má vykreslit výstup"
 #: ../pitivi/ui/encodingdialog.py:117
 #, python-format
 msgid "%.0f%% rendered"
-msgstr ""
+msgstr "Vykresleno %.0f%%"
 
 #: ../pitivi/ui/encodingdialog.py:119
 #, python-format
@@ -663,9 +647,10 @@ msgid "Rendering"
 msgstr "Vykreslování"
 
 #: ../pitivi/ui/encodingdialog.py:126
-#, python-format
+#, fuzzy, python-format
+#| msgid "0% rendered"
 msgid "0% rendered"
-msgstr ""
+msgstr "Vykresleno 0%"
 
 #: ../pitivi/ui/encodingdialog.py:141 ../pitivi/ui/encodingdialog.py:142
 msgid "Rendering Complete"
@@ -859,7 +844,7 @@ msgstr "Další informace:"
 
 #: ../pitivi/ui/gstwidget.py:153
 msgid "Reset to default value"
-msgstr ""
+msgstr "Vrátit na výchozí hodnotu"
 
 #. set title and frame label
 #: ../pitivi/ui/gstwidget.py:197
@@ -1043,14 +1028,12 @@ msgid "Media Library"
 msgstr "Knihovna médií"
 
 #: ../pitivi/ui/mainwindow.py:427
-#, fuzzy
-#| msgid "Media Library"
 msgid "Effect Library"
-msgstr "Knihovna médií"
+msgstr "Knihovna efektů"
 
 #: ../pitivi/ui/mainwindow.py:438
 msgid "Effects configurations"
-msgstr ""
+msgstr "Nastavení efektů"
 
 #: ../pitivi/ui/mainwindow.py:600
 msgid "Open File..."
@@ -1323,28 +1306,28 @@ msgid "Show Waveforms on Audio Clips"
 msgstr "Zobrazit průběh audia graficky (v křivkách)"
 
 #: ../pitivi/ui/clipproperties.py:134
-#, fuzzy
-#| msgid "_Remove from project"
 msgid "Remove effect"
-msgstr "O_debrat z projektu"
+msgstr "Odebrat efekt"
 
 #: ../pitivi/ui/clipproperties.py:161
 msgid "Activated"
-msgstr ""
+msgstr "Aktivováno"
 
 #: ../pitivi/ui/clipproperties.py:166
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #: ../pitivi/ui/clipproperties.py:178
 msgid "Effect name"
-msgstr ""
+msgstr "Název efektu"
 
 #: ../pitivi/ui/clipproperties.py:367
 msgid ""
 "<span>You must select <b>one</b> clip on the timeline to configure its "
 "associated effects</span>"
 msgstr ""
+"<span>Abyste mohli nastavit přidružené efekty, musíte na časové ose vybrat "
+"<b>jeden</b> klip</span>"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
@@ -1489,11 +1472,11 @@ msgstr "Přidat klíčový snímek"
 
 #: ../pitivi/ui/timeline.py:57
 msgid "Move to the previous keyframe"
-msgstr ""
+msgstr "Přesunout se na předchozí klíčový snímek"
 
 #: ../pitivi/ui/timeline.py:58
 msgid "Move to the next keyframe"
-msgstr ""
+msgstr "Přesunout se na následující klíčový snímek"
 
 #: ../pitivi/ui/timeline.py:59
 msgid "Zoom In"
@@ -1536,16 +1519,12 @@ msgid "Zoom Timeline"
 msgstr "Přiblížit časovou osu"
 
 #: ../pitivi/ui/timeline.py:326
-#, fuzzy
-#| msgid "Keyframe"
 msgid "_Prevframe"
-msgstr "Klíčový snímek"
+msgstr "_Předchozí snímek"
 
 #: ../pitivi/ui/timeline.py:328
-#, fuzzy
-#| msgid "Keyframe"
 msgid "_Nextframe"
-msgstr "Klíčový snímek"
+msgstr "_Následující snímek"
 
 #: ../pitivi/ui/timelinecanvas.py:51
 msgid "Behavior"
