@@ -10,10 +10,11 @@ msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-09-22 19:29+0000\n"
-"PO-Revision-Date: 2010-09-27 20:46+0100\n"
+"POT-Creation-Date: 2010-10-01 11:05+0000\n"
+"PO-Revision-Date: 2010-10-01 14:06+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -644,12 +645,12 @@ msgstr "Ungefähr %s verbleibend"
 msgid "Rendering"
 msgstr "Wird erstellt"
 
-#: ../pitivi/ui/encodingdialog.py:126
-#, fuzzy, python-format
+#: ../pitivi/ui/encodingdialog.py:127
+#, no-python-format
 msgid "0% rendered"
-msgstr "%.0f%% verarbeitet"
+msgstr "0% verarbeitet"
 
-#: ../pitivi/ui/encodingdialog.py:141 ../pitivi/ui/encodingdialog.py:142
+#: ../pitivi/ui/encodingdialog.py:142 ../pitivi/ui/encodingdialog.py:143
 msgid "Rendering Complete"
 msgstr "Erstellung beendet"
 
@@ -1427,31 +1428,31 @@ msgstr "Einen Clip importieren"
 msgid "Close after importing files"
 msgstr "Nach dem Importieren von Dateien schließen"
 
-#: ../pitivi/ui/sourcelist.py:962
+#: ../pitivi/ui/sourcelist.py:966
 msgid "Importing clips..."
 msgstr "Clips werden importiert …"
 
-#: ../pitivi/ui/sourcelist.py:963
+#: ../pitivi/ui/sourcelist.py:967
 msgid "Error(s) occurred while importing"
 msgstr "Ein oder mehrere Fehler sind beim Importieren aufgetreten"
 
-#: ../pitivi/ui/sourcelist.py:964
+#: ../pitivi/ui/sourcelist.py:968
 msgid "An error occurred while importing"
 msgstr "Ein Fehler ist beim Importieren aufgetreten"
 
-#: ../pitivi/ui/sourcelist.py:1053
+#: ../pitivi/ui/sourcelist.py:1057
 msgid "Error while analyzing files"
 msgstr "Fehler beim Analysieren von Dateien"
 
-#: ../pitivi/ui/sourcelist.py:1054
+#: ../pitivi/ui/sourcelist.py:1058
 msgid "The following files can not be used with PiTiVi."
 msgstr "Die folgenden Dateien können von PiTiVi nicht verarbeitet werden."
 
-#: ../pitivi/ui/sourcelist.py:1056
+#: ../pitivi/ui/sourcelist.py:1060
 msgid "Error while analyzing a file"
 msgstr "Fehler beim Analysieren einer Datei"
 
-#: ../pitivi/ui/sourcelist.py:1057
+#: ../pitivi/ui/sourcelist.py:1061
 msgid "The following file can not be used with PiTiVi."
 msgstr "Die folgende Datei kann von PiTiVi nicht verarbeitet werden."
 
