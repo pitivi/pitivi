@@ -25,6 +25,7 @@ import os
 import time
 
 from gettext import gettext as _
+from xml.sax.saxutils import escape
 
 import pitivi.ui.dnd as dnd
 
@@ -282,9 +283,11 @@ class EffectList(gtk.VBox, Loggable):
             icon = self.app.effects.getEffectIcon(name)
             self._current_tooltip_icon = icon
 
-        longname = self.modelFilter.get_value(context[2], COL_NAME_TEXT).strip()
-        txt = "<b>%s:</b>\n%s" % (longname,
-                self.modelFilter.get_value(context[2], COL_DESC_TEXT))
+        longname = escape(self.modelFilter.get_value(context[2],
+                COL_NAME_TEXT).strip())
+        description = escape(self.modelFilter.get_value(context[2],
+                COL_DESC_TEXT))
+        txt = "<b>%s:</b>\n%s" % (longname, description)
         tooltip.set_icon(self._current_tooltip_icon)
         tooltip.set_markup(txt)
 

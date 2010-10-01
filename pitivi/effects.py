@@ -30,7 +30,6 @@ import gobject
 import re
 import os
 
-from xml.sax.saxutils import escape
 from gettext import gettext as _
 
 from pitivi.factories.operation import EffectFactory
@@ -196,7 +195,7 @@ class EffectsHandler(object):
         @type element_factory: L{gst.ElementFactory}
         @returns: A human description C{str} for the effect
         """
-        return (escape(element_factory.get_description()))
+        return element_factory.get_description()
 
     def _getEffectCategories(self, effect_name):
         """
@@ -243,7 +242,7 @@ class EffectsHandler(object):
         effect = _("effect")
         pipe = " |"
         uselessWords = re.compile(video + pipe + audio + pipe + effect)
-        return uselessWords.sub("", (escape(element_factory.get_longname()))).title()
+        return uselessWords.sub("", element_factory.get_longname()).title()
 
     def getVideoCategories(self, aware=True):
         """
