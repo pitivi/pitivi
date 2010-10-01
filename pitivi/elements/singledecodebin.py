@@ -106,7 +106,7 @@ class SingleDecodeBin(gst.Bin):
 
         self.debug("stream:%r" % self.stream)
 
-        self.pending_newsegment = False
+        self.pending_newsegment = None
         self.eventProbeId = None
 
     ## internal methods
