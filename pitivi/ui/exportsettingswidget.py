@@ -32,6 +32,19 @@ from gstwidget import GstElementSettingsDialog
 import gobject
 from gettext import gettext as _
 
+def beautify_factoryname(factory):
+    # only replace lowercase versions of "format", "video", "audio"
+    # otherwise they might be part of a trademark name
+    words = ["Muxer", "muxer", "Encoder", "encoder",
+            "format", "video", "audio", "instead"]
+    name = factory.get_longname()
+    for word in words:
+        name = name.replace(word, "")
+    parts = name.split(" ")
+    ret = " ".join(p.strip() for p in parts)
+
+    return ret
+
 class ExportSettingsWidget(GladeWidget, Loggable):
     glade_file = "exportsettingswidget.glade"
     video_presets = ((_("576p (PAL DV/DVD)"), 720, 576, 25.0, 1.0),
@@ -165,7 +178,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         idx = 0
         selected = 0
         for factory in self.settings.vencoders:
-            venclist.append(["%s [%s]" % (factory.get_longname(), factory.get_name())])
+            venclist.append(["%s [%s]" % (beautify_factoryname(factory), factory.get_name())])
             if factory.get_name() == self.settings.vencoder:
                 selected = idx
             idx = idx + 1
@@ -176,7 +189,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         idx = 0
         selected = 0
         for factory in self.settings.aencoders:
-            aenclist.append(["%s [%s]" % (factory.get_longname(), factory.get_name())])
+            aenclist.append(["%s [%s]" % (beautify_factoryname(factory), factory.get_name())])
             if factory.get_name() == self.settings.aencoder:
                 selected = idx
             idx = idx + 1
@@ -190,7 +203,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         idx = 0
         selected = 0
         for mux in self.muxers:
-            muxs.append(["%s [%s]" % (mux.get_longname(), mux.get_name())])
+            muxs.append(["%s [%s]" % (beautify_factoryname(mux), mux.get_name())])
             if mux.get_name() == self.settings.muxer:
                 selected = idx
             idx = idx + 1
@@ -293,7 +306,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         idx = 0
         selected = 0
         for enc in self.validvencoders:
-            venclist.append(["%s [%s]" % (enc.get_longname(), enc.get_name())])
+            venclist.append(["%s [%s]" % (beautify_factoryname(enc), enc.get_name())])
             if enc.get_name() == prevvenc:
                 selected = idx
             idx = idx + 1
@@ -308,7 +321,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         idx = 0
         selected = 0
         for enc in self.validaencoders:
-            aenclist.append(["%s [%s]" % (enc.get_longname(), enc.get_name())])
+            aenclist.append(["%s [%s]" % (beautify_factoryname(enc), enc.get_name())])
             if enc.get_name() == prevaenc:
                 selected = idx
             idx = idx + 1
