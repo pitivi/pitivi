@@ -179,18 +179,18 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             event.area.x, event.area.y,
             event.area.width, event.area.height)
 
-        y = 0
-        for track in self._tracks[:-1]:
-            y += track.height
-            self.style.paint_box(event.window,
-                gtk.STATE_NORMAL,
-                gtk.SHADOW_OUT,
-                event.area,
-                self,
-                "",
-                event.area.x - 5, y + 1,
-                event.area.width + 10,  TRACK_SPACING - 2)
-            y += TRACK_SPACING 
+        # y = 0
+        # for track in self._tracks[:-1]:
+        #     y += track.height
+        #     self.style.paint_box(event.window,
+        #         gtk.STATE_NORMAL,
+        #         gtk.SHADOW_OUT,
+        #         event.area,
+        #         self,
+        #         "",
+        #         event.area.x - 5, y + 1,
+        #         event.area.width + 10,  TRACK_SPACING - 2)
+        #     y += TRACK_SPACING 
 
         goocanvas.Canvas.do_expose_event(self, event)
 
