@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-01 13:02+0200\n"
-"PO-Revision-Date: 2010-09-30 11:46+0200\n"
+"POT-Creation-Date: 2010-10-02 17:03+0200\n"
+"PO-Revision-Date: 2010-10-02 16:12+0200\n"
 "Last-Translator: Hannie Dumoleyn <hannie@ubuntu-nl.org>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "Language: nl\n"
@@ -301,9 +301,9 @@ msgid ""
 "      %prog -i [-a] [MEDIA_FILE]..."
 msgstr ""
 "\n"
-"      %prog [-r UITVOER_BESTAND] [PROJECT_BESTAND]\n"
-"      %prog -p [PROJECT_BESTAND]\n"
-"      %prog -i [-a] [MEDIA_BESTAND]…"
+"      %prog [-r UITVOERBESTAND] [PROJECTBESTAND]\n"
+"      %prog -p [PROJECTBESTAND]\n"
+"      %prog -i [-a] [MEDIABESTAND]…"
 
 #: ../pitivi/application.py:230
 msgid ""
@@ -316,7 +316,7 @@ msgid ""
 "When -r is specified, the given project file is rendered without opening the "
 "GUI."
 msgstr ""
-"Start de video-editor, PROJECT_BESTAND wordt eventueel geladen. Als\n"
+"Start de video-editor, PROJECTBESTAND wordt eventueel geladen. Als\n"
 "er geen project opgegeven wordt, zal %prog een nieuw project aanmaken.\n"
 "Wanneer -i is opgegeven, zullen argumenten behandeld worden als fragmenten\n"
 "om te importeren in het project. Wanneer -a is opgegeven, zullen deze "
@@ -343,7 +343,7 @@ msgstr "pitivi zonder gafische gebruikersomgeving starten"
 
 #: ../pitivi/application.py:243
 msgid "Render the given project file to OUTPUT_FILE with no GUI."
-msgstr "Het opgegeven projectbestand renderen naar PROJECT_BESTAND zonder GUI."
+msgstr "Het opgegeven projectbestand renderen naar PROJECTBESTAND zonder GUI."
 
 #: ../pitivi/application.py:244
 msgid "Preview the given project file without the full UI."
@@ -1033,23 +1033,23 @@ msgstr "Mediabibliotheek"
 msgid "Effect Library"
 msgstr "Effectenbibliotheek"
 
-#: ../pitivi/ui/mainwindow.py:438
+#: ../pitivi/ui/mainwindow.py:446
 msgid "Effects configurations"
 msgstr "Instellingen effecten"
 
-#: ../pitivi/ui/mainwindow.py:600
+#: ../pitivi/ui/mainwindow.py:608
 msgid "Open File..."
 msgstr "Bestand openen…"
 
-#: ../pitivi/ui/mainwindow.py:616
+#: ../pitivi/ui/mainwindow.py:624
 msgid "All Supported Formats"
 msgstr "Alle ondersteunde indelingen"
 
-#: ../pitivi/ui/mainwindow.py:686
+#: ../pitivi/ui/mainwindow.py:694
 msgid "Contributors:"
 msgstr "Met medewerking van:"
 
-#: ../pitivi/ui/mainwindow.py:698
+#: ../pitivi/ui/mainwindow.py:706
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -1057,61 +1057,61 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Kijk op http://www.gnu.org/copyleft/lesser.html voor meer details"
 
-#: ../pitivi/ui/mainwindow.py:816
+#: ../pitivi/ui/mainwindow.py:824
 msgid "Close without saving"
 msgstr "Afsluiten zonder opslaan"
 
-#: ../pitivi/ui/mainwindow.py:829
+#: ../pitivi/ui/mainwindow.py:837
 msgid "Save changes to the current project before closing?"
 msgstr "Wilt u de wijzigingen opslaan alvorens af te sluiten?"
 
-#: ../pitivi/ui/mainwindow.py:836
+#: ../pitivi/ui/mainwindow.py:844
 msgid "If you don't save some of your changes will be lost"
 msgstr "Als u niet opslaat, zullen sommige wijzigingen verloren gaan"
 
-#: ../pitivi/ui/mainwindow.py:889
+#: ../pitivi/ui/mainwindow.py:897
 msgid "Do you want to reload current project?"
 msgstr "Wilt u het huidige project opnieuw laden?"
 
-#: ../pitivi/ui/mainwindow.py:894
+#: ../pitivi/ui/mainwindow.py:902
 msgid "Revert to saved project"
 msgstr "Teruggaan naar opgeslagen project"
 
-#: ../pitivi/ui/mainwindow.py:897
+#: ../pitivi/ui/mainwindow.py:905
 msgid "All unsaved changes will be lost."
 msgstr "Alle niet opgeslagen wijzigingen zullen verloren gaan."
 
-#: ../pitivi/ui/mainwindow.py:913
+#: ../pitivi/ui/mainwindow.py:921
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi kon \"%s\" niet laden"
 
-#: ../pitivi/ui/mainwindow.py:916
+#: ../pitivi/ui/mainwindow.py:924
 msgid "Error Loading File"
 msgstr "Fout bij laden bestand"
 
-#: ../pitivi/ui/mainwindow.py:923
+#: ../pitivi/ui/mainwindow.py:931
 msgid "Locate missing file..."
 msgstr "Ontbrekend bestand zoeken…"
 
-#: ../pitivi/ui/mainwindow.py:932
+#: ../pitivi/ui/mainwindow.py:940
 msgid "The following file has moved, please tell PiTiVi where to find it."
 msgstr ""
 "Het volgende bestand is verplaats, geef aan waar PiTiVi het kan vinden."
 
-#: ../pitivi/ui/mainwindow.py:934
+#: ../pitivi/ui/mainwindow.py:942
 msgid "Duration:"
 msgstr "Tijdsduur:"
 
-#: ../pitivi/ui/mainwindow.py:1078
+#: ../pitivi/ui/mainwindow.py:1086
 msgid "Save As..."
 msgstr "Opslaan als…"
 
-#: ../pitivi/ui/mainwindow.py:1086
+#: ../pitivi/ui/mainwindow.py:1094
 msgid "Untitled.xptv"
 msgstr "Naamloos.xptv"
 
-#: ../pitivi/ui/mainwindow.py:1097 ../pitivi/ui/mainwindow.py:1110
+#: ../pitivi/ui/mainwindow.py:1105 ../pitivi/ui/mainwindow.py:1118
 msgid "Detect Automatically"
 msgstr "Automatisch detecteren"
 
