@@ -63,8 +63,9 @@ class PlayheadController(Controller, Zoomable):
         Controller.__init__(self, *args, **kwargs)
 
     def set_pos(self, item, pos):
-        self._canvas.app.current.seeker.seek(
-            Zoomable.pixelToNs(pos[0]))
+        x, y = pos
+        x += self._hadj.get_value()
+        self._canvas.app.current.seeker.seek(Zoomable.pixelToNs(x))
 
 class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
