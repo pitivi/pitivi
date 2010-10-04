@@ -125,7 +125,9 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self.set_size_request(-1, height)
 
     def from_event(self, event):
-        return Point(*self.convert_from_pixels(event.x, event.y))
+        x, y = event.x, event.y
+        x += self.app.gui.timeline.hadj.get_value()
+        return Point(*self.convert_from_pixels(x, y))
 
     def setExpanded(self, track_object, expanded):
         track_ui = None
@@ -250,7 +252,9 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             self._got_motion_notify = True
             cur = self.from_event(event)
             pos, size = self._normalize(self._mousedown, cur)
-            self._marquee.props.x, self._marquee.props.y = pos
+            x, y = pos
+            x += self.app.gui.timeline.hadj.get_value()
+            self._marquee.props.x, self._marquee.props.y = (x, y)
             self._marquee.props.width, self._marquee.props.height = size
             return True
         return False
