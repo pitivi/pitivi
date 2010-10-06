@@ -614,9 +614,9 @@ msgstr "Izrisovanje"
 
 # ta niz je okvarjen in ga morajo popraviti programerji
 #: ../pitivi/ui/encodingdialog.py:126
-#, python-format
+#, fuzzy, python-format
 msgid "0% rendered"
-msgstr "0\% izrisano"
+msgstr "0% izrisano"
 
 #: ../pitivi/ui/encodingdialog.py:141
 #: ../pitivi/ui/encodingdialog.py:142
