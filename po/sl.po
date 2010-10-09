@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-09-23 15:54+0000\n"
+"POT-Creation-Date: 2010-10-09 10:04+0000\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
+"Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -360,54 +360,54 @@ msgstr[3] "%d sekunde"
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s še ne upravlja oddaljenih projektov"
 
-#: ../pitivi/effects.py:66
+#: ../pitivi/effects.py:65
 msgid "All effects"
 msgstr "Vsi učinki"
 
-#: ../pitivi/effects.py:67
+#: ../pitivi/effects.py:66
 msgid "Colors"
 msgstr "Barve"
 
-#: ../pitivi/effects.py:81
+#: ../pitivi/effects.py:80
 msgid "Noise"
 msgstr "Hrup"
 
-#: ../pitivi/effects.py:83
+#: ../pitivi/effects.py:82
 msgid "Analysis"
 msgstr "Preučevanje"
 
-#: ../pitivi/effects.py:88
+#: ../pitivi/effects.py:87
 msgid "Blur"
 msgstr "Zameglitev"
 
-#: ../pitivi/effects.py:90
+#: ../pitivi/effects.py:89
 msgid "Geometry"
 msgstr "Geometrija"
 
-#: ../pitivi/effects.py:102
+#: ../pitivi/effects.py:101
 msgid "Fancy"
 msgstr "Olepšano"
 
-#: ../pitivi/effects.py:113
+#: ../pitivi/effects.py:112
 msgid "Time"
 msgstr "Čas"
 
-#: ../pitivi/effects.py:114
-#: ../pitivi/effects.py:222
+#: ../pitivi/effects.py:113
+#: ../pitivi/effects.py:221
 msgid "Uncategorized"
 msgstr "Nekategorizirano"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../pitivi/effects.py:241
+#: ../pitivi/effects.py:240
 msgid "Video"
 msgstr "Video"
 
-#: ../pitivi/effects.py:242
+#: ../pitivi/effects.py:241
 msgid "Audio |audio"
 msgstr "Zvok |zvok"
 
-#: ../pitivi/effects.py:243
+#: ../pitivi/effects.py:242
 msgid "effect"
 msgstr "učinek"
 
@@ -420,13 +420,13 @@ msgid "Playlist format"
 msgstr "Oblika seznama predvajanj"
 
 #: ../pitivi/ui/audiofxlist.py:49
-#: ../pitivi/ui/effectlist.py:109
+#: ../pitivi/ui/effectlist.py:110
 #: ../pitivi/ui/videofxlist.py:53
 msgid "Name"
 msgstr "Ime"
 
 #: ../pitivi/ui/audiofxlist.py:55
-#: ../pitivi/ui/effectlist.py:121
+#: ../pitivi/ui/effectlist.py:122
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
 #: ../pitivi/ui/videofxlist.py:59
 msgid "Description"
@@ -505,8 +505,8 @@ msgstr "Podpri me"
 #. i18n: string for custom video width/height/framerate settings
 #. i18n: string for custom audio rate/depth/channels settings
 #: ../pitivi/ui/dynamic.py:423
-#: ../pitivi/ui/exportsettingswidget.py:116
-#: ../pitivi/ui/exportsettingswidget.py:150
+#: ../pitivi/ui/exportsettingswidget.py:129
+#: ../pitivi/ui/exportsettingswidget.py:163
 msgid "Custom"
 msgstr "Po meri"
 
@@ -518,15 +518,15 @@ msgstr "Shrani prednastavljeno"
 msgid "Choose..."
 msgstr "Izberite ..."
 
-#: ../pitivi/ui/effectlist.py:74
+#: ../pitivi/ui/effectlist.py:75
 msgid "Video effects"
 msgstr "Video učinki"
 
-#: ../pitivi/ui/effectlist.py:75
+#: ../pitivi/ui/effectlist.py:76
 msgid "Audio effects"
 msgstr "Zvočni učinki"
 
-#: ../pitivi/ui/effectlist.py:86
+#: ../pitivi/ui/effectlist.py:87
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:3
 msgid "Search:"
 msgstr "Iskanje:"
@@ -613,13 +613,13 @@ msgid "Rendering"
 msgstr "Izrisovanje"
 
 # ta niz je okvarjen in ga morajo popraviti programerji
-#: ../pitivi/ui/encodingdialog.py:126
-#, fuzzy, python-format
+#: ../pitivi/ui/encodingdialog.py:127
+#, fuzzy, no-python-format
 msgid "0% rendered"
-msgstr "0% izrisano"
+msgstr "Izris po meri"
 
-#: ../pitivi/ui/encodingdialog.py:141
 #: ../pitivi/ui/encodingdialog.py:142
+#: ../pitivi/ui/encodingdialog.py:143
 msgid "Rendering Complete"
 msgstr "Izrisovanje je končano"
 
@@ -749,47 +749,47 @@ msgstr "Prednastavljeni video"
 msgid "Width:"
 msgstr "Širina:"
 
-#: ../pitivi/ui/exportsettingswidget.py:37
+#: ../pitivi/ui/exportsettingswidget.py:50
 msgid "576p (PAL DV/DVD)"
 msgstr "576p (PAL DV/DVD)"
 
-#: ../pitivi/ui/exportsettingswidget.py:38
+#: ../pitivi/ui/exportsettingswidget.py:51
 msgid "480p (NTSC DV/DVD)"
 msgstr "480p (NTSC DV/DVD)"
 
-#: ../pitivi/ui/exportsettingswidget.py:39
+#: ../pitivi/ui/exportsettingswidget.py:52
 msgid "720p HD"
 msgstr "720p HD"
 
-#: ../pitivi/ui/exportsettingswidget.py:40
+#: ../pitivi/ui/exportsettingswidget.py:53
 msgid "1080p full HD"
 msgstr "1080p polen HD"
 
-#: ../pitivi/ui/exportsettingswidget.py:41
+#: ../pitivi/ui/exportsettingswidget.py:54
 msgid "QVGA (320x240)"
 msgstr "QVGA (320x240)"
 
-#: ../pitivi/ui/exportsettingswidget.py:42
+#: ../pitivi/ui/exportsettingswidget.py:55
 msgid "VGA (640x480)"
 msgstr "VGA (640x480)"
 
-#: ../pitivi/ui/exportsettingswidget.py:43
+#: ../pitivi/ui/exportsettingswidget.py:56
 msgid "SVGA (800x600)"
 msgstr "SVGA (800x600)"
 
-#: ../pitivi/ui/exportsettingswidget.py:44
+#: ../pitivi/ui/exportsettingswidget.py:57
 msgid "XGA (1024x768)"
 msgstr "XGA (1024x768)"
 
-#: ../pitivi/ui/exportsettingswidget.py:301
+#: ../pitivi/ui/exportsettingswidget.py:314
 msgid "Raw Video"
 msgstr "Surov video"
 
-#: ../pitivi/ui/exportsettingswidget.py:316
+#: ../pitivi/ui/exportsettingswidget.py:329
 msgid "Raw Audio"
 msgstr "Surov zvok  "
 
-#: ../pitivi/ui/exportsettingswidget.py:439
+#: ../pitivi/ui/exportsettingswidget.py:452
 msgid "Export settings"
 msgstr "Izvozi nastavitve"
 
@@ -1001,23 +1001,23 @@ msgstr "Knjižnica večpredstavnosti"
 msgid "Effect Library"
 msgstr "Knjižnica učinkov"
 
-#: ../pitivi/ui/mainwindow.py:438
+#: ../pitivi/ui/mainwindow.py:446
 msgid "Effects configurations"
 msgstr "Nastavitve učinkov"
 
-#: ../pitivi/ui/mainwindow.py:600
+#: ../pitivi/ui/mainwindow.py:608
 msgid "Open File..."
 msgstr "Odpri datoteko ..."
 
-#: ../pitivi/ui/mainwindow.py:616
+#: ../pitivi/ui/mainwindow.py:624
 msgid "All Supported Formats"
 msgstr "Vse podprte vrste datotek"
 
-#: ../pitivi/ui/mainwindow.py:686
+#: ../pitivi/ui/mainwindow.py:694
 msgid "Contributors:"
 msgstr "Sodelavci:"
 
-#: ../pitivi/ui/mainwindow.py:698
+#: ../pitivi/ui/mainwindow.py:706
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -1025,61 +1025,61 @@ msgstr ""
 "Manj splošno dovoljenje GNU (LGPL)\n"
 "Za več podrobnosti si oglejte http://www.gnu.org/copyleft/lesser.html"
 
-#: ../pitivi/ui/mainwindow.py:816
+#: ../pitivi/ui/mainwindow.py:824
 msgid "Close without saving"
 msgstr "Zapri brez shranjevanja"
 
-#: ../pitivi/ui/mainwindow.py:829
+#: ../pitivi/ui/mainwindow.py:837
 msgid "Save changes to the current project before closing?"
 msgstr "Ali naj bodo spremembe trenutnega projekta pred zaprtjem shranjene?"
 
-#: ../pitivi/ui/mainwindow.py:836
+#: ../pitivi/ui/mainwindow.py:844
 msgid "If you don't save some of your changes will be lost"
 msgstr "Če projekta ne shranite, bo nekaj vaših sprememb izgubljenih. "
 
-#: ../pitivi/ui/mainwindow.py:889
+#: ../pitivi/ui/mainwindow.py:897
 msgid "Do you want to reload current project?"
 msgstr "Ali želite ponovno naložiti trenutni projekt?"
 
-#: ../pitivi/ui/mainwindow.py:894
+#: ../pitivi/ui/mainwindow.py:902
 msgid "Revert to saved project"
 msgstr "Povrni na shranjen projekt"
 
-#: ../pitivi/ui/mainwindow.py:897
+#: ../pitivi/ui/mainwindow.py:905
 msgid "All unsaved changes will be lost."
 msgstr "Vse neshranjene spremembe bodo izgubljene."
 
-#: ../pitivi/ui/mainwindow.py:913
+#: ../pitivi/ui/mainwindow.py:921
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi ne more naložiti datoteke \"%s\""
 
-#: ../pitivi/ui/mainwindow.py:916
+#: ../pitivi/ui/mainwindow.py:924
 msgid "Error Loading File"
 msgstr "Napaka med nalaganjem datoteke"
 
-#: ../pitivi/ui/mainwindow.py:923
+#: ../pitivi/ui/mainwindow.py:931
 msgid "Locate missing file..."
 msgstr "Najdi manjkajočo datoteko ..."
 
-#: ../pitivi/ui/mainwindow.py:932
+#: ../pitivi/ui/mainwindow.py:940
 msgid "The following file has moved, please tell PiTiVi where to find it."
 msgstr "Datoteka je bila premaknjena, zato je treba datoteko ponovno poiskati."
 
-#: ../pitivi/ui/mainwindow.py:934
+#: ../pitivi/ui/mainwindow.py:942
 msgid "Duration:"
 msgstr "Trajanje:"
 
-#: ../pitivi/ui/mainwindow.py:1078
+#: ../pitivi/ui/mainwindow.py:1086
 msgid "Save As..."
 msgstr "Shrani kot ..."
 
-#: ../pitivi/ui/mainwindow.py:1086
+#: ../pitivi/ui/mainwindow.py:1094
 msgid "Untitled.xptv"
 msgstr "Neimenovano.xptv"
 
-#: ../pitivi/ui/mainwindow.py:1097
-#: ../pitivi/ui/mainwindow.py:1110
+#: ../pitivi/ui/mainwindow.py:1105
+#: ../pitivi/ui/mainwindow.py:1118
 msgid "Detect Automatically"
 msgstr "Samodejno zaznaj"
 
