@@ -274,13 +274,14 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def _request_size(self):
         alloc = self.get_allocation()
         self.set_bounds(0, 0, alloc.width, alloc.height)
-        self._playhead.props.height = alloc.height + 10
+        self._playhead.props.height = max(alloc.width,
+            self.tracks.get_bounds().y2 + 10)
 
     def zoomChanged(self):
+        self.queue_draw()
         if self.timeline:
             self.timeline.dead_band = self.pixelToNs(
                 self.settings.edgeSnapDeadband)
-            self._request_size()
             self.timelinePositionChanged(self.position)
 
 ## settings callbacks
