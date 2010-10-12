@@ -203,7 +203,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     # specific levels of zoom, in (multiplier, unit) pairs which
     # from zoomed out to zoomed in
 
-
     def __init__(self, instance, ui_manager):
         gtk.Table.__init__(self, rows=2, columns=1, homogeneous=False)
         Loggable.__init__(self)
@@ -355,6 +354,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._canvas.connect("button-press-event", self._buttonPress)
         self._canvas.connect("button-release-event", self._buttonRelease)
         self._canvas.connect("key-press-event", self._keyPressEventCb)
+        self._canvas.connect("scroll-event", self._scrollEventCb)
 
 
 ## Event callbacks
@@ -529,6 +529,46 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
 ## Zooming and Scrolling
 
+    def _scrollEventCb(self, canvas, event):
+        if event.state & gtk.gdk.SHIFT_MASK:
+            # shift + scroll => vertical (up/down) scroll
+            if event.direction == gtk.gdk.SCROLL_UP:
+                self.scroll_up()
+            elif event.direction == gtk.gdk.SCROLL_DOWN:
+                self.scroll_down()
+            event.state &= ~gtk.gdk.SHIFT_MASK
+        elif event.state & gtk.gdk.CONTROL_MASK:
+            # zoom + scroll => zooming (up: zoom in)
+            if event.direction == gtk.gdk.SCROLL_UP:
+                Zoomable.zoomIn()
+                return True
+            elif event.direction == gtk.gdk.SCROLL_DOWN:
+                Zoomable.zoomOut()
+                return True
+            return False
+        else:
+            if event.direction == gtk.gdk.SCROLL_UP:
+                self.scroll_left()
+            elif event.direction == gtk.gdk.SCROLL_DOWN:
+                self.scroll_right()
+        return True
+
+    def scroll_left(self):
+        self._hscrollbar.set_value (self._hscrollbar.get_value() -
+            self.hadj.props.page_size ** (2.0 / 3.0))
+
+    def scroll_right(self):
+        self._hscrollbar.set_value (self._hscrollbar.get_value() +
+            self.hadj.props.page_size ** (2.0 / 3.0))
+
+    def scroll_up(self):
+        self._vscrollbar.set_value (self._vscrollbar.get_value() -
+            self.vadj.props.page_size ** (2.0 / 3.0))
+
+    def scroll_down(self):
+        self._vscrollbar.set_value (self._vscrollbar.get_value() +
+            self.vadj.props.page_size ** (2.0 / 3.0))
+
     def _updateScrollPosition(self, adjustment):
         self._root_item.set_simple_transform( -self.hadj.get_value(), 
             -self.vadj.get_value(), 1.0, 0)
@@ -540,9 +580,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._updateZoom = True
 
     def zoomChanged(self):
-        self._canvas.props.redraw_when_scrolled = True
         if self._updateZoom:
             self._zoomAdjustment.set_value(self.getCurrentZoomLevel())
+        size = Zoomable.nsToPixel(self.timeline.duration)
+        self.hadj.props.upper = size
+        self.hadj.props.page_size = size
+        self.hadj.props.page_increment = size * 0.9
+        self.hadj.props.step_increment = size * 0.1
         self.ruler.queue_resize()
         self.ruler.queue_draw()
 

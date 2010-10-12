@@ -71,7 +71,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
     __gtype_name__ = 'TimelineCanvas'
     __gsignals__ = {
-        "scroll-event": "override",
         "expose-event" : "override",
     }
 
@@ -137,30 +136,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
                 break
 
         track_ui.setExpanded(expanded)
-
-    def do_scroll_event(self, event):
-        if event.state & gtk.gdk.SHIFT_MASK:
-            # shift + scroll => vertical (up/down) scroll
-            if event.direction == gtk.gdk.SCROLL_LEFT:
-                event.direction = gtk.gdk.SCROLL_UP
-            elif event.direction == gtk.gdk.SCROLL_RIGHT:
-                event.direction = gtk.gdk.SCROLL_DOWN
-            event.state &= ~gtk.gdk.SHIFT_MASK
-        elif event.state & gtk.gdk.CONTROL_MASK:
-            # zoom + scroll => zooming (up: zoom in)
-            if event.direction == gtk.gdk.SCROLL_UP:
-                Zoomable.zoomIn()
-                return True
-            elif event.direction == gtk.gdk.SCROLL_DOWN:
-                Zoomable.zoomOut()
-                return True
-            return False
-        else:
-            if event.direction == gtk.gdk.SCROLL_UP:
-                event.direction = gtk.gdk.SCROLL_LEFT
-            elif event.direction == gtk.gdk.SCROLL_DOWN:
-                event.direction = gtk.gdk.SCROLL_RIGHT
-        return goocanvas.Canvas.do_scroll_event(self, event)
 
 ## sets the cursor as appropriate
 
