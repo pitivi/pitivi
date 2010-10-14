@@ -139,6 +139,7 @@ class InfoStub(gtk.HBox, Loggable):
         Loggable.__init__(self)
         self.errors = []
         self.showing = False
+        self._scroll_pos_ns = 0
         self._errorsmessage = _("One or more GStreamer errors has occured!")
         self._makeUI()
 
@@ -253,7 +254,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # timeline ruler
         self.ruler = ruler.ScaleRuler(self.app, self.hadj)
         self.ruler.set_size_request(0, 25)
-        self.ruler.set_border_width(2)
+        #self.ruler.set_border_width(2)
         self.ruler.connect("key-press-event", self._keyPressEventCb)
         self.ruler.connect("size-allocate", self._rulerSizeAllocateCb)
         rulerframe = gtk.Frame()
@@ -570,6 +571,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.vadj.props.page_size ** (2.0 / 3.0))
 
     def _updateScrollPosition(self, adjustment):
+        self._scroll_pos_ns = Zoomable.pixelToNs(self.hadj.get_value())
         self._root_item.set_simple_transform( -self.hadj.get_value(), 
             -self.vadj.get_value(), 1.0, 0)
 
@@ -579,14 +581,27 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Zoomable.setZoomLevel(int(adjustment.get_value()))
         self._updateZoom = True
 
+    _scroll_pos_ns = 0
+
     def zoomChanged(self):
+        a = self.get_allocation()
         if self._updateZoom:
             self._zoomAdjustment.set_value(self.getCurrentZoomLevel())
+
+        # the new scroll position should preserve the current horizontal
+        # position of the playhead in the window
+        cur_playhead_offset = self._canvas._playhead.props.x -\
+            self.hadj.props.value
+        new_pos = Zoomable.nsToPixel(self._position) - cur_playhead_offset
+
         size = Zoomable.nsToPixel(self.timeline.duration)
-        self.hadj.props.upper = size
-        self.hadj.props.page_size = size
+
+        self.hadj.props.lower = 0
+        self.hadj.props.upper = size + 200 # why is this necessary???
+        self.hadj.props.page_size = a.width
         self.hadj.props.page_increment = size * 0.9
         self.hadj.props.step_increment = size * 0.1
+        self._scrollToPosition(new_pos)
         self.ruler.queue_resize()
         self.ruler.queue_draw()
 
@@ -623,7 +638,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._scrollToPosition(position)
 
     def _scrollToPosition(self, position):
-        self.hadj.set_value(position)
+        self._hscrollbar.set_value(position)
         return False
 
     def _rulerSizeAllocateCb(self, ruler, allocation):
