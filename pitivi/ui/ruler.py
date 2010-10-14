@@ -31,7 +31,7 @@ from pitivi.ui.zoominterface import Zoomable
 from pitivi.log.loggable import Loggable
 from pitivi.utils import time_to_string
 
-class ScaleRuler(gtk.Layout, Zoomable, Loggable):
+class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     __gsignals__ = {
         "expose-event":"override",
@@ -51,13 +51,12 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
     subdivide = ((1, 1.0), (2, 0.5), (10, .25))
 
     def __init__(self, instance, hadj):
-        gtk.Layout.__init__(self)
+        gtk.DrawingArea.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
         self.log("Creating new ScaleRule")
         self.add_events(gtk.gdk.POINTER_MOTION_MASK |
             gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
-        self.set_hadjustment(hadj)
         self.hadj = hadj
         self.pixel_position_offset = 0
         hadj.connect("value-changed", self._hadjValueChangedCb)
@@ -101,26 +100,18 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         npos = max(self.nsToPixel(self.position) - 1, 0)
         self._hadjValueChangedCb(self.hadj)
         height = self.get_allocation().height
-        self.bin_window.invalidate_rect((ppos, 0, 2, height), True)
-        self.bin_window.invalidate_rect((npos, 0, 2, height), True)
+        self.window.invalidate_rect((ppos, 0, 2, height), True)
+        self.window.invalidate_rect((npos, 0, 2, height), True)
 
 ## gtk.Widget overrides
 
     def do_size_allocate(self, allocation):
         self.debug("ScaleRuler got %s", list(allocation))
-        gtk.Layout.do_size_allocate(self, allocation)
-        width = max(self.getMaxDurationWidth(), allocation.width)
-        self.debug("Setting layout size to %d x %d",
-                   width, allocation.height)
-        self.set_size(width, allocation.height)
-        new_pos = Zoomable.nsToPixel(self.position) -\
-            self.pixel_position_offset
-        self.hadj.set_value(new_pos)
-        # the size has changed, therefore we want to redo our pixmap
-        self.doPixmap()
+        gtk.DrawingArea.do_size_allocate(self, allocation)
+        #self.doPixmap()
 
     def do_realize(self):
-        gtk.Layout.do_realize(self)
+        gtk.DrawingArea.do_realize(self)
         # we want to create our own pixmap here
         self.doPixmap()
 
@@ -135,13 +126,13 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
             width = self.pixmap_allocated_width
 
         # double buffering power !
-        self.bin_window.draw_drawable(
+        self.window.draw_drawable(
             self.style.fg_gc[gtk.STATE_NORMAL],
             self.pixmap,
             x - self.pixmap_offset, y,
             x, y, width, height)
         # draw the position
-        context = self.bin_window.cairo_create()
+        context = self.window.cairo_create()
         self.drawPosition(context, self.get_allocation())
         return False
 
@@ -225,7 +216,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         if (allocation.width != self.pixmap_old_allocated_width):
             if self.pixmap:
                 del self.pixmap
-            self.pixmap = gtk.gdk.Pixmap(self.bin_window, allocation.width,
+            self.pixmap = gtk.gdk.Pixmap(self.window, allocation.width,
                                          allocation.height)
             self.pixmap_old_allocated_width = allocation.width
 
