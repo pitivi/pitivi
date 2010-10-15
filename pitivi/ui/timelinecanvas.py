@@ -115,6 +115,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             stroke_color_rgba=0xFFFFFFFF,
             width=3)
         self._playhead_controller = PlayheadController(self._playhead)
+        self.connect("size-allocate", self._size_allocate_cb)
         root.connect("motion-notify-event", self._selectionDrag)
         root.connect("button-press-event", self._selectionStart)
         root.connect("button-release-event", self._selectionEnd)
@@ -274,8 +275,11 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def _request_size(self):
         alloc = self.get_allocation()
         self.set_bounds(0, 0, alloc.width, alloc.height)
-        self._playhead.props.height = max(alloc.width,
-            self.tracks.get_bounds().y2 + 10)
+        self._playhead.props.height = (max(alloc.height,
+            self.tracks.get_bounds().y2) + 10)
+
+    def _size_allocate_cb (self, widget, allocation):
+        self._request_size()
 
     def zoomChanged(self):
         self.queue_draw()
