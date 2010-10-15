@@ -58,7 +58,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.add_events(gtk.gdk.POINTER_MOTION_MASK |
             gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
         self.hadj = hadj
-        self.pixel_position_offset = 0
         hadj.connect("value-changed", self._hadjValueChangedCb)
 
         # double-buffering properties
@@ -82,7 +81,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.app = instance
 
     def _hadjValueChangedCb(self, hadj):
-        self.pixel_position_offset = Zoomable.nsToPixel(self.position) - hadj.get_value()
+        self.pixmap_offset = self.hadj.get_value()
+        self.queue_draw()
 
 ## Zoomable interface override
 
@@ -113,23 +113,25 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
     def do_realize(self):
         gtk.DrawingArea.do_realize(self)
         # we want to create our own pixmap here
-        self.doPixmap()
+        #self.doPixmap()
 
     def do_expose_event(self, event):
         self.debug("exposing ScaleRuler %s", list(event.area))
         x, y, width, height = event.area
-        if (x < self.pixmap_offset) or (x+width > self.pixmap_offset + self.pixmap_allocated_width):
-            self.debug("exposing outside boundaries !")
-            self.pixmap_offset = max(0, x + (width / 2) - (self.pixmap_allocated_width / 2))
-            self.debug("offset is now %d", self.pixmap_offset)
-            self.doPixmap()
-            width = self.pixmap_allocated_width
+        # if (x < self.pixmap_offset) or (x+width > self.pixmap_offset + self.pixmap_allocated_width):
+        #     self.debug("exposing outside boundaries !")
+        #     self.pixmap_offset = max(0, x + (width / 2) - (self.pixmap_allocated_width / 2))
+        #     self.debug("offset is now %d", self.pixmap_offset)
+        #     self.doPixmap()
+        #     width = self.pixmap_allocated_width
+
+        self.doPixmap()
 
         # double buffering power !
         self.window.draw_drawable(
             self.style.fg_gc[gtk.STATE_NORMAL],
             self.pixmap,
-            x - self.pixmap_offset, y,
+            x, y,
             x, y, width, height)
         # draw the position
         context = self.window.cairo_create()
@@ -142,7 +144,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             self.debug("no timeline to seek on, ignoring")
         self.pressed = True
         # seek at position
-        cur = self.pixelToNs(event.x)
+        cur = self.pixelToNs(event.x + self.pixmap_offset)
         self._doSeek(cur)
         return True
 
@@ -155,7 +157,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.debug("motion at event.x %d", event.x)
         if self.pressed:
             # seek at position
-            cur = self.pixelToNs(event.x)
+            cur = self.pixelToNs(event.x + self.pixmap_offset)
             self._doSeek(cur)
         return False
 
@@ -206,12 +208,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         # width (allocation.width)
 
         allocation = self.get_allocation()
-        lwidth, lheight = self.get_size()
-
-        self.pixmap_visible_width = allocation.width
-        self.pixmap_allocated_width = self.pixmap_visible_width * self.pixmap_multiples
-        allocation.width = self.pixmap_allocated_width
-
 
         if (allocation.width != self.pixmap_old_allocated_width):
             if self.pixmap:
@@ -253,15 +249,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.queue_resize()
         self.max_duration = duration
 
-    def getMaxDuration(self):
-        return self.max_duration
-
-    def getMaxDurationWidth(self):
-        return self.nsToPixel(self.getMaxDuration())
-
-    def getPixelPosition(self):
-        return 0
-
     def drawBackground(self, allocation):
         self.pixmap.draw_rectangle(
             self.style.bg_gc[gtk.STATE_NORMAL],
@@ -275,8 +262,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
                 self.style.bg_gc[gtk.STATE_ACTIVE],
                 True,
                 0, 0,
-                offset,
-                allocation.height)
+                int(offset),
+                int(allocation.height))
 
     def drawRuler(self, allocation):
         layout = self.create_pango_layout(time_to_string(0))
@@ -308,9 +295,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             dur = scale / float(subdivide)
             if spc < self.min_tick_spacing:
                 break
-            paintpos = float(self.border) + 0.5
-            if offset > 0:
-                paintpos += spacing - offset
+            paintpos = -spacing + 0.5
+            paintpos += spacing - offset
             while paintpos < allocation.width:
                 self.drawTick(allocation, paintpos, height)
                 paintpos += spc
@@ -343,7 +329,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         frame_width = self.nsToPixel(ns_per_frame)
         if frame_width >= self.min_frame_spacing:
             offset = self.pixmap_offset % frame_width
-            paintpos = float(self.border) + 0.5
+            paintpos = -frame_width + 0.5
             height = allocation.height
             y = int(height - self.frame_height)
             states = [gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT]
@@ -361,7 +347,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         if self.getShadedDuration() <= 0:
             return
         # a simple RED line will do for now
-        xpos = self.nsToPixel(self.position) + self.border
+        xpos = self.nsToPixel(self.position) + self.border -\
+            self.pixmap_offset
         context.save()
         context.set_line_width(1.5)
         context.set_source_rgb(1.0, 0, 0)
