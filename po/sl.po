@@ -6,10 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-10-09 10:04+0000\n"
+"POT-Creation-Date: 2010-10-12 08:12+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -824,7 +825,7 @@ msgid "Render"
 msgstr "Izriši"
 
 #: ../pitivi/ui/mainwindow.py:140
-#: ../pitivi/ui/timeline.py:322
+#: ../pitivi/ui/timeline.py:315
 msgid "Split"
 msgstr "Razdeli"
 
@@ -1432,7 +1433,7 @@ msgid "Split clip at playhead position"
 msgstr "Razdeli posnetek na mestu glave predvajanja"
 
 #: ../pitivi/ui/timeline.py:56
-#: ../pitivi/ui/timeline.py:324
+#: ../pitivi/ui/timeline.py:317
 msgid "Add a keyframe"
 msgstr "Dodaj ključno sličico"
 
@@ -1484,11 +1485,11 @@ msgstr "Sporočene so bile naslednje napake:"
 msgid "Zoom Timeline"
 msgstr "Približanje časovnice"
 
-#: ../pitivi/ui/timeline.py:326
+#: ../pitivi/ui/timeline.py:319
 msgid "_Prevframe"
 msgstr "_Predhodna sličica"
 
-#: ../pitivi/ui/timeline.py:328
+#: ../pitivi/ui/timeline.py:321
 msgid "_Nextframe"
 msgstr "_Naslednja sličica"
 
