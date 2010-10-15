@@ -221,7 +221,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._state = gst.STATE_NULL
         self._createUI()
         self._prev_duration = 0
-        self.shrink = True
         self.rate = gst.Fraction(1,1)
 
     def _createUI(self):
@@ -352,8 +351,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.connect("drag-leave", self._dragLeaveCb)
         self.connect("drag-drop", self._dragDropCb)
         self.connect("drag-motion", self._dragMotionCb)
-        self._canvas.connect("button-press-event", self._buttonPress)
-        self._canvas.connect("button-release-event", self._buttonRelease)
         self._canvas.connect("key-press-event", self._keyPressEventCb)
         self._canvas.connect("scroll-event", self._scrollEventCb)
 
@@ -393,14 +390,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         seekvalue = max(0, min(pipeline.getPosition() + time,
             pipeline.getDuration()))
         self._seeker.seek(seekvalue)
-
-    def _buttonPress(self, window, event):
-        self.shrink = False
-
-    def _buttonRelease(self, window, event):
-        self.shrink = True
-        self._timelineStartDurationChanged(self.timeline,
-            self.timeline.duration)
 
 ## Drag and Drop callbacks
 
@@ -584,7 +573,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     _scroll_pos_ns = 0
 
     def zoomChanged(self):
-        a = self.get_allocation()
         if self._updateZoom:
             self._zoomAdjustment.set_value(self.getCurrentZoomLevel())
 
@@ -594,13 +582,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.hadj.props.value
         new_pos = Zoomable.nsToPixel(self._position) - cur_playhead_offset
 
-        size = Zoomable.nsToPixel(self.timeline.duration)
 
-        self.hadj.props.lower = 0
-        self.hadj.props.upper = size + 200 # why is this necessary???
-        self.hadj.props.page_size = a.width
-        self.hadj.props.page_increment = size * 0.9
-        self.hadj.props.step_increment = size * 0.1
+        self._updateScrollAdjustments()
         self._scrollToPosition(new_pos)
         self.ruler.queue_resize()
         self.ruler.queue_draw()
@@ -679,18 +662,21 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     @handler(timeline, "duration-changed")
     def _timelineStartDurationChanged(self, unused_timeline, duration):
-        if self.shrink:
-            self._prev_duration = duration
-            self.ruler.setMaxDuration(duration + 60 * gst.SECOND)
-            self._canvas.setMaxDuration(duration + 60 * gst.SECOND)
-            self.ruler.setShadedDuration(duration)
-        else:
-            # only resize if new size is larger
-            if duration > self._prev_duration:
-                self._prev_duration = duration
-                self.ruler.setMaxDuration(duration)
-                self._canvas.setMaxDuration(duration)
-                #self.ruler.setShadedDuration(duration)
+        self._prev_duration = duration
+        self.ruler.setMaxDuration(duration + 60 * gst.SECOND)
+        self._canvas.setMaxDuration(duration + 60 * gst.SECOND)
+        self.ruler.setShadedDuration(duration)
+        self._updateScrollAdjustments()
+
+    def _updateScrollAdjustments(self):
+        a = self.get_allocation()
+        size = Zoomable.nsToPixel(self.timeline.duration)
+        self.hadj.props.lower = 0
+        self.hadj.props.upper = size + 200 # why is this necessary???
+        self.hadj.props.page_size = a.width
+        self.hadj.props.page_increment = size * 0.9
+        self.hadj.props.step_increment = size * 0.1
+
 
     @handler(timeline, "selection-changed")
     def _timelineSelectionChanged(self, timeline):
