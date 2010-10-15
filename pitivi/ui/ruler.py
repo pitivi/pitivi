@@ -35,8 +35,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     __gsignals__ = {
         "expose-event":"override",
-        "size-allocate":"override",
-        "realize":"override",
         "button-press-event":"override",
         "button-release-event":"override",
         "motion-notify-event":"override",
@@ -104,16 +102,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.window.invalidate_rect((npos, 0, 2, height), True)
 
 ## gtk.Widget overrides
-
-    def do_size_allocate(self, allocation):
-        self.debug("ScaleRuler got %s", list(allocation))
-        gtk.DrawingArea.do_size_allocate(self, allocation)
-        #self.doPixmap()
-
-    def do_realize(self):
-        gtk.DrawingArea.do_realize(self)
-        # we want to create our own pixmap here
-        #self.doPixmap()
 
     def do_expose_event(self, event):
         self.debug("exposing ScaleRuler %s", list(event.area))
