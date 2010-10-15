@@ -77,16 +77,17 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.frame_height = 5.0
         self.frame_rate = gst.Fraction(1/1)
         self.app = instance
+        self.need_update = True
 
     def _hadjValueChangedCb(self, hadj):
         self.pixmap_offset = self.hadj.get_value()
+        self.need_update = True
         self.queue_draw()
 
 ## Zoomable interface override
 
     def zoomChanged(self):
-        self.queue_resize()
-        self.doPixmap()
+        self.need_update = True
         self.queue_draw()
 
 ## timeline position changed method
@@ -113,7 +114,9 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         #     self.doPixmap()
         #     width = self.pixmap_allocated_width
 
-        self.doPixmap()
+        if self.need_update:
+            self.doPixmap()
+            self.need_update = False
 
         # double buffering power !
         self.window.draw_drawable(
@@ -214,11 +217,9 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.scale[0] = float(2 / rate)
         self.scale[1] = float(5 / rate)
         self.scale[2] = float(10 / rate)
-        self.queue_resize()
 
     def setShadedDuration(self, duration):
         self.info("start/duration changed")
-        self.queue_resize()
 
         self.shaded_duration = duration
 
@@ -226,6 +227,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             position = duration - gst.NSECOND
         else:
             position = self.position
+        self.need_update = True
+        self.queue_draw()
 
     def getShadedDuration(self):
         return self.shaded_duration
@@ -234,7 +237,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         return self.nsToPixel(self.getShadedDuration())
 
     def setMaxDuration(self, duration):
-        self.queue_resize()
         self.max_duration = duration
 
     def drawBackground(self, allocation):
