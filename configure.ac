@@ -4,7 +4,7 @@ dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
 AC_INIT(PiTiVi, 0.13.5.1,
-    http://www.pitivi.org/,
+    https://bugzilla.gnome.org/browse.cgi?product=pitivi,
     pitivi)
 
 dnl initialize automake

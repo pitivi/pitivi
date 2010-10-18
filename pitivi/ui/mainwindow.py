@@ -31,6 +31,7 @@ gobject.threads_init()
 import gst
 import gst.pbutils
 from urllib import unquote
+import webbrowser
 
 try:
     import gconf
@@ -46,8 +47,8 @@ from pitivi.log.loggable import Loggable
 from pitivi.ui.timeline import Timeline
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
-from pitivi.configure import pitivi_version, APPNAME, get_pixmap_dir, \
-     get_global_pixmap_dir, LIBDIR
+from pitivi.configure import pitivi_version, APPNAME, APPURL, APPMANUALURL, \
+     get_pixmap_dir, get_global_pixmap_dir, LIBDIR
 from pitivi.ui import dnd
 from pitivi.pipeline import Pipeline
 from pitivi.action import ViewAction
@@ -298,6 +299,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
             ("About", gtk.STOCK_ABOUT, None, None,
              _("Information about %s") % APPNAME, self._aboutCb),
+            ("UserManual", gtk.STOCK_HELP, _("User manual"),
+             None, None, self._userManualCb),
             ("File", None, _("_File")),
             ("Edit", None, _("_Edit")),
             ("View", None, _("_View")),
@@ -351,7 +354,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 action.set_visible(False)
             elif action_name in [
                 "ProjectSettings", "Quit", "File", "Edit", "Help", "About",
-                "View", "FullScreen", "FullScreenAlternate",
+                "View", "FullScreen", "FullScreenAlternate", "UserManual",
                 "ImportSourcesFolder", "PluginManager", "PlayPause",
                 "Project", "FrameForward", "FrameBackward",
                 "ShowHideMainToolbar", "ShowHideTimelineToolbar", "Library",
@@ -674,11 +677,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.uimanager.get_widget("/TimelineToolBar").props.visible = \
             action.props.active
 
+    def _userManualCb(self, unused_action):
+        webbrowser.open_new (APPMANUALURL)
+
     def _aboutResponseCb(self, dialog, unused_response):
         dialog.destroy()
 
     def _showWebsiteCb(self, dialog, uri):
-        import webbrowser
         webbrowser.open_new(uri)
 
     def _aboutCb(self, unused_action):
@@ -686,7 +691,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         abt.set_name(APPNAME)
         abt.set_version("v%s" % pitivi_version)
         gtk.about_dialog_set_url_hook(self._showWebsiteCb)
-        abt.set_website("http://www.pitivi.org/")
+        abt.set_website(APPURL)
         authors = ["Edward Hervey <bilboed@bilboed.com>",
                    "Alessandro Decina <alessandro.decina@collabora.co.uk>",
                    "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)",

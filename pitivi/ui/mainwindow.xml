@@ -44,6 +44,7 @@
     </menu>
     <menu action="Help">
       <menuitem action="About" />
+      <menuitem action="UserManual" />
     </menu>
   </menubar>
   <toolbar name="MainToolBar">
