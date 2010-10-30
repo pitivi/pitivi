@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-10-12 08:12+0000\n"
+"POT-Creation-Date: 2010-10-15 18:17+0000\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
+"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -615,9 +615,9 @@ msgstr "Izrisovanje"
 
 # ta niz je okvarjen in ga morajo popraviti programerji
 #: ../pitivi/ui/encodingdialog.py:127
-#, fuzzy, no-python-format
+#, no-python-format
 msgid "0% rendered"
-msgstr "Izris po meri"
+msgstr "izrisano"
 
 #: ../pitivi/ui/encodingdialog.py:142
 #: ../pitivi/ui/encodingdialog.py:143
