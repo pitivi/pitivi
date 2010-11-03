@@ -567,6 +567,10 @@ def formatPercent(value):
     return "%3d%%" % (value * 100)
 
 
+def quantize(input, interval):
+    return (input // interval) * interval
+
+
 native_endianness = struct.pack('=I', 0x34333231)
 
 big_to_cairo_alpha_mask = struct.unpack('=i', '\xFF\x00\x00\x00')[0]

@@ -49,12 +49,24 @@ GlobalSettings.addConfigOption("thumbnailSpacingHint",
     key="spacing-hint",
     default=2,
     notify=True)
+GlobalSettings.addConfigOption("thumbnailPeriod",
+    section="thumbnailing",
+    key="thumbnail-period",
+    default=0.5,
+    notify=True)
 
 PreferencesDialog.addNumericPreference("thumbnailSpacingHint",
     section=_("Appearance"),
     label=_("Thumbnail Gap (pixels)"),
     lower=0,
     description=_("The gap between thumbnails"))
+
+PreferencesDialog.addNumericPreference("thumbnailPeriod",
+    section=_("Appearance"),
+    label=_("Thumbnail Period (seconds)"),
+    lower=0.001,
+    upper=60,
+    description=_("The interval, in seconds, between successive thumbnails"))
 
 # this default works out to a maximum of ~ 1.78 MiB per factory, assuming:
 # 4:3 aspect ratio
@@ -381,7 +393,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
     def _segment_for_time(self, time):
         # quantize thumbnail timestamps to maximum granularity
-        return time - (time % self.tstep)
+        return utils.quantize(time, long(gst.SECOND * self.tperiod))
 
     def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
         gobject.idle_add(self._finishThumbnail, pixbuf, timestamp)
@@ -396,10 +408,17 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
     def _connectSettings(self, settings):
         RandomAccessPreviewer._connectSettings(self, settings)
         settings.connect("showThumbnailsChanged", self._showThumbsChanged)
+        settings.connect("thumbnailPeriodChanged",
+            self._thumbnailPeriodChanged)
         self._view = settings.showThumbnails
+        self.tperiod = settings.thumbnailPeriod
 
     def _showThumbsChanged(self, settings):
         self._view = settings.showThumbnails
+        self.emit("update", None)
+
+    def _thumbnailPeriodChanged(self, settings):
+        self.tperiod = settings.thumbnailPeriod
         self.emit("update", None)
 
 
