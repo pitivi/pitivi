@@ -49,10 +49,11 @@ GlobalSettings.addConfigOption("thumbnailSpacingHint",
     key="spacing-hint",
     default=2,
     notify=True)
+
 GlobalSettings.addConfigOption("thumbnailPeriod",
     section="thumbnailing",
     key="thumbnail-period",
-    default=0.5,
+    default=gst.SECOND / 2,
     notify=True)
 
 PreferencesDialog.addNumericPreference("thumbnailSpacingHint",
@@ -61,12 +62,19 @@ PreferencesDialog.addNumericPreference("thumbnailSpacingHint",
     lower=0,
     description=_("The gap between thumbnails"))
 
-PreferencesDialog.addNumericPreference("thumbnailPeriod",
+PreferencesDialog.addChoicePreference("thumbnailPeriod",
     section=_("Appearance"),
-    label=_("Thumbnail Period (seconds)"),
-    lower=0.001,
-    upper=60,
-    description=_("The interval, in seconds, between successive thumbnails"))
+    label=_("Thumbnail every"),
+    choices=(
+        ("1/100 second", gst.SECOND / 100),
+        ("1/10 second", gst.SECOND / 10),
+        ("1/4 second", gst.SECOND / 4),
+        ("1/2 second", gst.SECOND/ 2),
+        ("second", gst.SECOND),
+        ("5 seconds", 5 * gst.SECOND),
+        ("10 seconds", 10 * gst.SECOND),
+        ("minute", 60 * gst.SECOND)),
+    description=_("The interval, in seconds, between thumbnails"))
 
 # this default works out to a maximum of ~ 1.78 MiB per factory, assuming:
 # 4:3 aspect ratio
@@ -393,7 +401,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
     def _segment_for_time(self, time):
         # quantize thumbnail timestamps to maximum granularity
-        return utils.quantize(time, long(gst.SECOND * self.tperiod))
+        return utils.quantize(time, self.tperiod)
 
     def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
         gobject.idle_add(self._finishThumbnail, pixbuf, timestamp)
