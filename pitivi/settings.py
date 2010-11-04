@@ -28,6 +28,7 @@ import os
 import platform
 import gst
 from ConfigParser import SafeConfigParser, ParsingError
+import xdg.BaseDirectory as xdg_dirs  # Freedesktop directories spec
 
 from gettext import gettext as _
 
@@ -97,24 +98,19 @@ def get_env_dirs(var, default):
     return get_dirs(get_env_default(var, default))
 
 def xdg_config_home(autocreate=True):
-    return get_dir(get_env_default("XDG_CONFIG_HOME",
-        os.path.join(os.getenv(HOME), ".config")), autocreate)
+    return get_dir(xdg_dirs.xdg_config_home, autocreate)
 
 def xdg_data_home(autocreate=True):
-    return get_dir(get_env_default("XDG_DATA_HOME",
-        os.path.join(os.getenv(HOME), ".local", "share")), autocreate)
+    return get_dir(xdg_dirs.xdg_data_home, autocreate)
 
 def xdg_cache_home(autocreate=True):
-    return get_dir(get_env_default("XDG_CACHE_HOME",
-        os.path.join(os.getenv("HOME"), ".cache")), autocreate)
+    return get_dir(xdg_dirs.xdg_cache_home, autocreate)
 
 def xdg_data_dirs():
-    return get_env_dirs("XDG_DATA_DIRS",
-        os.path.pathsep.join((os.path.join("usr", "local", "share"),
-            os.path.join("usr", "share"))))
+    return get_env_dirs(xdg_dirs.xdg_data_dirs)
 
 def xdg_config_dirs():
-    return get_env_dirs("XDG_CONFIG_DIRS", "/etc/xdg")
+    return get_env_dirs(xdg_dirs.xdg_config_dirs)
 
 class ConfigError(Exception):
     pass
