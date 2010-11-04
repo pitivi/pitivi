@@ -66,11 +66,11 @@ class EffectList(gtk.VBox, Loggable):
         self._current_effect_name = None
         self._current_tooltip_icon = None
 
-        self.set_spacing(SPACING)
 
         #Searchbox and combobox
         hfilters = gtk.HBox()
         hfilters.set_spacing(SPACING)
+        hfilters.set_border_width(3)  # Prevents being flush against the notebook
         self.effectType = gtk.combo_box_new_text()
         self.effectType.append_text(_("Video effects"))
         self.effectType.append_text(_("Audio effects"))
@@ -84,6 +84,7 @@ class EffectList(gtk.VBox, Loggable):
 
         hsearch = gtk.HBox()
         hsearch.set_spacing(SPACING)
+        hsearch.set_border_width(3)  # Prevents being flush against the notebook
         searchStr = gtk.Label(_("Search:"))
         self.searchEntry = gtk.Entry()
         self.searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
@@ -150,7 +151,7 @@ class EffectList(gtk.VBox, Loggable):
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
 
         self.pack_start(hfilters, expand=False)
-        self.pack_start(hsearch, expand=False, padding=PADDING)
+        self.pack_start(hsearch, expand=False)
         self.pack_end(self.treeview_scrollwin, expand=True)
 
         #create the filterModel
