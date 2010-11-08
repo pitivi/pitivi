@@ -165,9 +165,6 @@ class Renderer(Actioner):
         self.detectStreamTypes()
         self.outfile = outfile
 
-    def setOutfile(self):
-        self.outfile = outfile
-
     def detectStreamTypes(self):
         self.have_video = False
         self.have_audio = False
