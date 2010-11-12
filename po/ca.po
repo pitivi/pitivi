@@ -1,21 +1,30 @@
 # pitivi translation to Catalan.
 # Copyright © 2006 The Free Software Foundation Inc.
 # This file is distributed under the same license as the pitivi package.
-#
 # Gil Forcada <gilforcada@guifi.net>, 2006, 2007, 2008, 2009.
+# Jordi Estrada <jordi.estrada@gmail.com>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-12 22:22+0200\n"
-"PO-Revision-Date: 2009-08-12 22:25+0200\n"
-"Last-Translator: Gil Forcada <gilforcada@guifi.net>\n"
+"POT-Creation-Date: 2010-11-12 21:15+0100\n"
+"PO-Revision-Date: 2010-11-12 21:16+0100\n"
+"Last-Translator: Jordi Estrada <jordi.estrada@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
+"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: ../pitivi.desktop.in.in.h:1
+msgid "Create and edit your own movies"
+msgstr "Creeu i editeu les vostres pel·lícules"
+
+#: ../pitivi.desktop.in.in.h:2
+msgid "Pitivi Video Editor"
+msgstr "Editor de vídeo Pitivi"
 
 #: ../pitivi/check.py:102
 #, python-format
@@ -29,7 +38,7 @@ msgstr "Ja s'està executant una instància de %s en aquest script."
 
 #: ../pitivi/check.py:105
 msgid "Could not find the GNonLin plugins!"
-msgstr "No s'han pogut trobar els connectors del GNonLin"
+msgstr "No s'han pogut trobar els connectors del GNonLin."
 
 #: ../pitivi/check.py:106
 msgid ""
@@ -41,7 +50,7 @@ msgstr ""
 
 #: ../pitivi/check.py:108
 msgid "Could not find the autodetect plugins!"
-msgstr "No s'han pogut trobar els connectors de detecció automàtica"
+msgstr "No s'han pogut trobar els connectors de detecció automàtica."
 
 #: ../pitivi/check.py:109
 msgid ""
@@ -53,14 +62,14 @@ msgstr ""
 
 #: ../pitivi/check.py:111
 msgid "PyGTK doesn't have cairo support!"
-msgstr "El PyGTK no disposa de Cairo"
+msgstr "El PyGTK no és compatible amb el Cairo."
 
 #: ../pitivi/check.py:112
 msgid ""
 "Please use a version of the GTK+ Python bindings built with cairo support."
 msgstr ""
-"Utilitzeu una versió de les vinculacions de Python per a GTK+ que permetin "
-"utilitzar Cairo."
+"Utilitzeu una versió de les vinculacions de Python per al GTK+ que permetin "
+"utilitzar el Cairo."
 
 #: ../pitivi/check.py:114
 msgid "Could not initiate the video output plugins"
@@ -88,12 +97,12 @@ msgstr ""
 
 #: ../pitivi/check.py:120
 msgid "Could not import the cairo Python bindings"
-msgstr "No s'han pogut importar les vinculacions de Python per a Cairo"
+msgstr "No s'han pogut importar les vinculacions de Python per al Cairo"
 
 #: ../pitivi/check.py:121
 msgid "Make sure you have the cairo Python bindings installed"
 msgstr ""
-"Assegureu-vos que teniu instal·lades les vinculacions de Python per a Cairo"
+"Assegureu-vos que teniu instal·lades les vinculacions de Python per al Cairo"
 
 #: ../pitivi/check.py:123
 msgid "Could not import the libglade Python bindings"
@@ -107,12 +116,12 @@ msgstr ""
 
 #: ../pitivi/check.py:126
 msgid "Could not import the goocanvas Python bindings"
-msgstr "No s'han pogut importar les vinculacions de Python per a goocanvas"
+msgstr "No s'han pogut importar les vinculacions de Python per al goocanvas"
 
 #: ../pitivi/check.py:127
 msgid "Make sure you have the goocanvas Python bindings installed"
 msgstr ""
-"Assegureu-vos que teniu instal·lades les vinculacions de Python per a "
+"Assegureu-vos que teniu instal·lades les vinculacions de Python per al "
 "goocanvas"
 
 #: ../pitivi/check.py:130
@@ -121,8 +130,15 @@ msgid ""
 "You do not have a recent enough version of the GTK+ Python bindings "
 "(currently %s)"
 msgstr ""
-"La versió de les vinculacions de Python per a GTK+ que teniu és massa vella "
+"La versió de les vinculacions de Python per al GTK+ que teniu és massa vella "
 "(teniu la versió %s)"
+
+#: ../pitivi/check.py:131
+#, python-format
+msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
+msgstr ""
+"Instal·leu una versió de les vinculacions de Python per al GTK+ igual o "
+"superior a %s"
 
 #: ../pitivi/check.py:134
 #, python-format
@@ -130,13 +146,26 @@ msgid ""
 "You do not have a recent enough version of the GStreamer Python bindings "
 "(currently %s)"
 msgstr ""
-"La versió de les vinculacions de Python per a GStreamer que teniu és massa "
+"La versió de les vinculacions de Python per al GStreamer que teniu és massa "
 "vella (teniu la versió %s)"
+
+#: ../pitivi/check.py:135
+#, python-format
+msgid ""
+"Install a version of the GStreamer Python bindings greater or equal to %s"
+msgstr ""
+"Instal·leu una versió de les vinculacions de Python per al GStreamer igual o "
+"superior a %s"
 
 #: ../pitivi/check.py:138
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
 msgstr "La versió del GStreamer que teniu és massa vella (teniu la versió %s)"
+
+#: ../pitivi/check.py:139
+#, python-format
+msgid "Install a version of the GStreamer greater or equal to %s"
+msgstr "Instal·leu una versió del GStreamer igual o superior a %s"
 
 #: ../pitivi/check.py:142
 #, python-format
@@ -144,8 +173,15 @@ msgid ""
 "You do not have a recent enough version of the cairo Python bindings "
 "(currently %s)"
 msgstr ""
-"La versió de les vinculacions de Python per a Cairo que teniu és massa vella "
-"(teniu la versió %s)"
+"La versió de les vinculacions de Python per al Cairo que teniu és massa "
+"vella (teniu la versió %s)"
+
+#: ../pitivi/check.py:143
+#, python-format
+msgid "Install a version of the cairo Python bindings greater or equal to %s"
+msgstr ""
+"Instal·leu una versió de les vinculacions de Python per al Cairo igual o "
+"superior a %s"
 
 #: ../pitivi/check.py:146
 #, python-format
@@ -153,8 +189,16 @@ msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
 "(currently %s)"
 msgstr ""
-"La versió del connector GNonLin de GStreamer que teniu és massa vell (teniu "
+"La versió del connector GNonLin del GStreamer que teniu és massa vell (teniu "
 "la versió %s)"
+
+#: ../pitivi/check.py:147
+#, python-format
+msgid ""
+"Install a version of the GNonLin GStreamer plugin greater or equal to %s"
+msgstr ""
+"Instal·leu una versió del connector GNonLin del GStreamer igual o superior a "
+"%s"
 
 #: ../pitivi/check.py:149
 msgid "Could not import the Zope interface module"
@@ -172,7 +216,7 @@ msgstr "No s'han pogut importar els mòduls distutils"
 msgid "Make sure you have the distutils python module installed"
 msgstr "Assegureu-vos que teniu instal·lat el mòdul distutils de Python"
 
-#: ../pitivi/discoverer.py:190
+#: ../pitivi/discoverer.py:228
 #, python-format
 msgid ""
 "Missing plugins:\n"
@@ -182,19 +226,19 @@ msgstr ""
 "%s"
 
 #. woot, nothing decodable
-#: ../pitivi/discoverer.py:209
+#: ../pitivi/discoverer.py:248
 msgid "Can not decode file."
 msgstr "No es pot descodificar el fitxer."
 
-#: ../pitivi/discoverer.py:210
+#: ../pitivi/discoverer.py:249
 msgid "The given file does not contain audio, video or picture streams."
 msgstr "El fitxer no conté ni àudio, ni vídeo ni fluxos d'imatges."
 
-#: ../pitivi/discoverer.py:230
+#: ../pitivi/discoverer.py:269
 msgid "Could not establish the duration of the file."
 msgstr "No s'ha pogut determinar la durada del fitxer."
 
-#: ../pitivi/discoverer.py:231
+#: ../pitivi/discoverer.py:270
 msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
@@ -202,41 +246,46 @@ msgstr ""
 "Sembla que aquest clip és d'un format al qual no es pot accedir de manera "
 "aleatòria."
 
-#: ../pitivi/discoverer.py:295
+#: ../pitivi/discoverer.py:336
 msgid "Timeout while analyzing file."
 msgstr "S'ha acabat el temps d'espera mentre s'analitzava el fitxer."
 
-#: ../pitivi/discoverer.py:296
+#: ../pitivi/discoverer.py:337
 msgid "Analyzing the file took too long."
 msgstr "S'ha tardat massa en analitzar el fitxer."
 
-#: ../pitivi/discoverer.py:325
+#: ../pitivi/discoverer.py:366
 msgid "No available source handler."
 msgstr "No hi ha cap gestor de font."
 
-#: ../pitivi/discoverer.py:326
+#: ../pitivi/discoverer.py:367
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
-msgstr "No teniu cap element font de GStreamer per a gestionar el protocol «%s»"
+msgstr ""
+"No teniu cap element font del GStreamer per a gestionar el protocol «%s»"
 
-#: ../pitivi/discoverer.py:390
+#: ../pitivi/discoverer.py:432
 msgid "Pipeline didn't want to go to PAUSED."
 msgstr "El conducte no volia anar a PAUSAT."
 
-#: ../pitivi/discoverer.py:413
+#: ../pitivi/discoverer.py:455
 #, python-format
 msgid "An internal error occurred while analyzing this file: %s"
 msgstr "S'ha produït un error intern en analitzar aquest fitxer: %s"
 
-#: ../pitivi/discoverer.py:423
+#: ../pitivi/discoverer.py:465
 msgid "File contains a redirection to another clip."
 msgstr "El fitxer conté una redirecció a un altre clip."
 
-#: ../pitivi/discoverer.py:424
+#: ../pitivi/discoverer.py:466
 msgid "PiTiVi currently does not handle redirection files."
 msgstr "El PiTiVi encara no sap gestionar les redireccions de fitxers."
 
-#: ../pitivi/application.py:120
+#: ../pitivi/discoverer.py:492
+msgid "Pipeline didn't want to go to PLAYING."
+msgstr "El conducte no vol anar a EN REPRODUCCIÓ."
+
+#: ../pitivi/application.py:124
 #, python-format
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
@@ -245,73 +294,92 @@ msgstr ""
 "Ja hi ha una instància de %s. Informeu-ne els desenvolupadors emplenant un "
 "informe d'errades a http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:214
+#: ../pitivi/application.py:225
 msgid ""
 "\n"
-"      %prog [PROJECT_FILE]\n"
+"      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
+"      %prog -p [PROJECT_FILE]\n"
 "      %prog -i [-a] [MEDIA_FILE]..."
 msgstr ""
 "\n"
-"      %prog [FITXER_DE_PROJECTE]\n"
-"      %prog -i [-a] [FITXER_MULTIMEDIA]..."
+"      %prog [-r FITXER_DE_SORTIDA] [FITXER_DE_PROJECTE]\n"
+"      %prog -p [FITXER_DE_PROJECTE]\n"
+"      %prog -i [-a] [FITXER_MULTIMÈDIA]..."
 
-#: ../pitivi/application.py:218
+#: ../pitivi/application.py:230
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"    no project is given, %prog creates a new project.\n"
-"    Alternatively, when -i is specified, arguments are treated as clips to "
-"be\n"
-"    imported into the project. If -a is specified, these clips will also be "
+"no project is given, %prog creates a new project.\n"
+"Alternatively, when -i is specified, arguments are treated as clips to be\n"
+"imported into the project. If -a is specified, these clips will also be "
 "added to\n"
-"    the end of the project timeline."
+"the end of the project timeline.\n"
+"When -r is specified, the given project file is rendered without opening the "
+"GUI."
 msgstr ""
-"Inicia l'editor de vídeos, si s'indica carrega el FITXER_DE_PROJECTE.\n"
-"    Si no s'indica cap projecte, el %prog crea un projecte nou.\n"
-"    Si s'indica l'argument -i, es consideraran els arguments com a clips que \n"
-"    s'importaran al projecte. Si a més s'especifica l'argument -a, \n"
-"    s'afegiran els clips al final de la línia de temps del projecte."
+"Inicia l'editor de vídeo, si s'indica carrega el FITXER_DE_PROJECTE.\n"
+"Si no s'indica cap projecte, el %prog crea un projecte nou.\n"
+"Si s'indica l'argument -i, es consideraran els arguments com a clips que \n"
+"s'importaran al projecte. Si a més s'especifica l'argument -a, \n"
+"s'afegiran els clips al final de la línia de temps del projecte.\n"
+"Si s'indica l'argument -r, el fitxer de projecte es renderitzarà sense obrir "
+"la interfície gràfica."
 
-#: ../pitivi/application.py:224
+#: ../pitivi/application.py:237
 msgid "Import each MEDIA_FILE into the project."
-msgstr ""
-"Afegeix tots els FITXER_MULTIMEDIA a la línia de temps després d'importar-"
-"los."
+msgstr "Importa tots els FITXER_MULTIMÈDIA en el projecte."
 
-#: ../pitivi/application.py:226
+#: ../pitivi/application.py:239
 msgid "Add each MEDIA_FILE to timeline after importing."
 msgstr ""
-"Afegeix tots els FITXER_MULTIMEDIA a la línia de temps després d'importar-"
+"Afegeix tots els FITXER_MULTIMÈDIA a la línia de temps després d'importar-"
 "los."
 
-#: ../pitivi/application.py:227
+#: ../pitivi/application.py:240
 msgid "Run pitivi in the Python Debugger"
 msgstr "Executa el PiTiVi en el depurador de Python"
 
-#: ../pitivi/projectmanager.py:62
+#: ../pitivi/application.py:242
+msgid "Run pitivi with no gui"
+msgstr "Executa el PiTiVi sense la interfície gràfica"
+
+#: ../pitivi/application.py:243
+msgid "Render the given project file to OUTPUT_FILE with no GUI."
+msgstr ""
+"Renderitza el fitxer de projecte indicat a FITXER_DE_SORTIDA sense la "
+"interfície gràfica."
+
+#: ../pitivi/application.py:244
+msgid "Preview the given project file without the full UI."
+msgstr ""
+"Previsualitza el fitxer de projecte indicat sense la interfície d'usuari "
+"completa."
+
+#: ../pitivi/projectmanager.py:100
 msgid "Not a valid project file."
 msgstr "No és un fitxer de projecte vàlid."
 
-#: ../pitivi/projectmanager.py:67
+#: ../pitivi/projectmanager.py:105
 msgid "Couldn't close current project"
 msgstr "No s'ha pogut tancar el projecte actual"
 
-#: ../pitivi/projectmanager.py:104
+#: ../pitivi/projectmanager.py:142
 msgid "No URI specified."
 msgstr "No s'ha especificat cap URI."
 
-#: ../pitivi/projectmanager.py:136
+#: ../pitivi/projectmanager.py:176
 msgid "New Project"
 msgstr "Projecte nou"
 
-#: ../pitivi/settings.py:473
+#: ../pitivi/settings.py:498
 msgid "Export Settings\n"
 msgstr "Exporta els paràmetres\n"
 
-#: ../pitivi/settings.py:474
+#: ../pitivi/settings.py:499
 msgid "Video: "
 msgstr "Vídeo: "
 
-#: ../pitivi/settings.py:477
+#: ../pitivi/settings.py:502
 msgid ""
 "\n"
 "Audio: "
@@ -319,29 +387,29 @@ msgstr ""
 "\n"
 "Àudio: "
 
-#: ../pitivi/settings.py:480
+#: ../pitivi/settings.py:505
 msgid ""
 "\n"
 "Muxer: "
 msgstr ""
 "\n"
-"Mesclador: "
+"Multiplexor: "
 
-#: ../pitivi/utils.py:66
+#: ../pitivi/utils.py:74
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d hora"
 msgstr[1] "%d hores"
 
-#: ../pitivi/utils.py:69
+#: ../pitivi/utils.py:77
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minut"
 msgstr[1] "%d minuts"
 
-#: ../pitivi/utils.py:72
+#: ../pitivi/utils.py:80
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
@@ -350,25 +418,76 @@ msgstr[1] "%d segons"
 
 #. Translators: "non local" means the project is not stored
 #. on a local filesystem
-#: ../pitivi/utils.py:239
+#: ../pitivi/utils.py:247
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "El %s encara no pot gestionar projectes que no siguin locals"
 
+#: ../pitivi/effects.py:65
+msgid "All effects"
+msgstr "Tots els efectes"
+
+#: ../pitivi/effects.py:66
+msgid "Colors"
+msgstr "Colors"
+
+#: ../pitivi/effects.py:80
+msgid "Noise"
+msgstr "Soroll"
+
+#: ../pitivi/effects.py:82
+msgid "Analysis"
+msgstr "Anàlisi"
+
+#: ../pitivi/effects.py:87
+msgid "Blur"
+msgstr "Difuminar"
+
+#: ../pitivi/effects.py:89
+msgid "Geometry"
+msgstr "Geometria"
+
+#: ../pitivi/effects.py:101
+msgid "Fancy"
+msgstr "Fantasia"
+
+#: ../pitivi/effects.py:112
+msgid "Time"
+msgstr "Temps"
+
+#: ../pitivi/effects.py:113 ../pitivi/effects.py:221
+msgid "Uncategorized"
+msgstr "Sense categoria"
+
+#. TODO check if it is the good way to make it translatable
+#. And to filter actually!
+#: ../pitivi/effects.py:240
+msgid "Video"
+msgstr "Vídeo"
+
+#: ../pitivi/effects.py:241
+msgid "Audio |audio"
+msgstr "Àudio |àudio"
+
+#: ../pitivi/effects.py:242
+msgid "effect"
+msgstr "efecte"
+
 #: ../pitivi/formatters/format.py:77
 msgid "PiTiVi Native (XML)"
-msgstr "Format nadiu del PiTiVi (XML)"
+msgstr "Nadiu del PiTiVi (XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
 msgstr "Format de llista de reproducció"
 
-#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/videofxlist.py:53
+#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/effectlist.py:111
+#: ../pitivi/ui/videofxlist.py:53
 msgid "Name"
 msgstr "Nom"
 
-#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/videofxlist.py:59
+#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/effectlist.py:123
+#: ../pitivi/ui/elementsettingsdialog.glade.h:6 ../pitivi/ui/videofxlist.py:59
 msgid "Description"
 msgstr "Descripció"
 
@@ -384,6 +503,38 @@ msgstr "No hi ha cap dispositiu disponible"
 msgid "Video Capture Device:"
 msgstr "Dispositiu de captura de vídeo:"
 
+#: ../pitivi/ui/common.py:89 ../pitivi/ui/common.py:131
+#, python-format
+msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
+msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[0] "<b>Àudio:</b> %d canal a %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[1] "<b>Àudio:</b> %d canals a %d <i>Hz</i> (%d <i>bits</i>)"
+
+#: ../pitivi/ui/common.py:95 ../pitivi/ui/common.py:137
+#, python-format
+msgid "<b>Unknown Audio format:</b> %s"
+msgstr "<b>Format d'àudio desconegut:</b> %s"
+
+#: ../pitivi/ui/common.py:100 ../pitivi/ui/common.py:142
+#, python-format
+msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+msgstr "<b>Vídeo:</b> %d x %d <i>píxels</i> a %.2f<i>fps</i>"
+
+#: ../pitivi/ui/common.py:104 ../pitivi/ui/common.py:146
+#, python-format
+msgid "<b>Image:</b> %d x %d <i>pixels</i>"
+msgstr "<b>Imatge:</b> %d x %d <i>píxels</i>"
+
+#: ../pitivi/ui/common.py:107 ../pitivi/ui/common.py:149
+#, python-format
+msgid "<b>Unknown Video format:</b> %s"
+msgstr "<b>Format de vídeo desconegut:</b> %s"
+
+#: ../pitivi/ui/common.py:110 ../pitivi/ui/common.py:152
+#, python-format
+msgid "<b>Text:</b> %s"
+msgstr "<b>Text:</b> %s"
+
 #: ../pitivi/ui/defaultpropertyeditor.py:104
 #, python-format
 msgid "Properties For: %d object"
@@ -391,17 +542,41 @@ msgid_plural "Properties For: %d objects"
 msgstr[0] "Propietats per a: %d objecte"
 msgstr[1] "Propietats per a: %d objectes"
 
-#: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:140
+#: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:98
 msgid "No properties..."
 msgstr "Sense propietats..."
 
-#: ../pitivi/ui/dynamic.py:52
+#: ../pitivi/ui/dynamic.py:67
 msgid "Implement Me"
 msgstr "Implementa'm"
 
-#: ../pitivi/ui/dynamic.py:237
+#. i18n: string for custom video width/height/framerate settings
+#. i18n: string for custom audio rate/depth/channels settings
+#: ../pitivi/ui/dynamic.py:423 ../pitivi/ui/exportsettingswidget.py:129
+#: ../pitivi/ui/exportsettingswidget.py:163
+msgid "Custom"
+msgstr "Personalitza"
+
+#: ../pitivi/ui/dynamic.py:447
+msgid "Save Preset"
+msgstr "Desa els valors predeterminats"
+
+#: ../pitivi/ui/dynamic.py:516
 msgid "Choose..."
 msgstr "Escolliu..."
+
+#: ../pitivi/ui/effectlist.py:75
+msgid "Video effects"
+msgstr "Efectes de vídeo"
+
+#: ../pitivi/ui/effectlist.py:76
+msgid "Audio effects"
+msgstr "Efectes d'àudio"
+
+#. Prevents being flush against the notebook
+#: ../pitivi/ui/effectlist.py:88 ../pitivi/ui/pluginmanagerdialog.glade.h:3
+msgid "Search:"
+msgstr "Cerca:"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 msgid "<b>Author:</b>"
@@ -459,24 +634,34 @@ msgstr "Fitxer de sortida:"
 msgid "Please choose an output file"
 msgstr "Escolliu un fitxer de sortida"
 
-#: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:250
+#: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:278
 msgid "Render project"
 msgstr "Renderitza el projecte"
 
-#: ../pitivi/ui/encodingdialog.py:90
+#: ../pitivi/ui/encodingdialog.py:91
 msgid "Choose file to render to"
 msgstr "Escolliu el fitxer a renderitzar per"
 
-#: ../pitivi/ui/encodingdialog.py:122
+#: ../pitivi/ui/encodingdialog.py:117
+#, python-format
+msgid "%.0f%% rendered"
+msgstr "%.0f%% renderitzat"
+
+#: ../pitivi/ui/encodingdialog.py:119
 #, python-format
 msgid "About %s left"
 msgstr "Manca %s"
 
-#: ../pitivi/ui/encodingdialog.py:132
+#: ../pitivi/ui/encodingdialog.py:125
 msgid "Rendering"
 msgstr "S'està renderitzant"
 
-#: ../pitivi/ui/encodingdialog.py:149
+#: ../pitivi/ui/encodingdialog.py:127
+#, no-python-format
+msgid "0% rendered"
+msgstr "0% renderitzat"
+
+#: ../pitivi/ui/encodingdialog.py:142 ../pitivi/ui/encodingdialog.py:143
 msgid "Rendering Complete"
 msgstr "S'ha completat la renderització"
 
@@ -548,7 +733,7 @@ msgstr "Còdec d'àudio:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:23
 msgid "Audio Preset"
-msgstr "Preselecció d'àudio"
+msgstr "Valors predeterminats de l'àudio"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:24
 msgid "Channels:"
@@ -564,7 +749,7 @@ msgstr "Profunditat:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:27
 msgid "Frame rate:"
-msgstr "Imatges per segon:"
+msgstr "Fotogrames per segon:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:28
 msgid "Height:"
@@ -580,7 +765,7 @@ msgstr ""
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:31
 msgid "Muxer"
-msgstr "Mesclador"
+msgstr "Multiplexor"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:32
 msgid "Rate:"
@@ -600,60 +785,53 @@ msgstr "Còdec de vídeo:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:36
 msgid "Video Preset"
-msgstr "Preselecció de vídeo"
+msgstr "Valors predeterminats del vídeo"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:37
 msgid "Width:"
 msgstr "Amplada:"
 
-#: ../pitivi/ui/exportsettingswidget.py:37
+#: ../pitivi/ui/exportsettingswidget.py:50
 msgid "576p (PAL DV/DVD)"
 msgstr "576p (PAL DV/DVD)"
 
-#: ../pitivi/ui/exportsettingswidget.py:38
+#: ../pitivi/ui/exportsettingswidget.py:51
 msgid "480p (NTSC DV/DVD)"
 msgstr "480p (NTSC DV/DVD)"
 
-#: ../pitivi/ui/exportsettingswidget.py:39
+#: ../pitivi/ui/exportsettingswidget.py:52
 msgid "720p HD"
 msgstr "720p HD"
 
-#: ../pitivi/ui/exportsettingswidget.py:40
+#: ../pitivi/ui/exportsettingswidget.py:53
 msgid "1080p full HD"
 msgstr "1080p full HD"
 
-#: ../pitivi/ui/exportsettingswidget.py:41
+#: ../pitivi/ui/exportsettingswidget.py:54
 msgid "QVGA (320x240)"
 msgstr "QVGA (320x240)"
 
-#: ../pitivi/ui/exportsettingswidget.py:42
+#: ../pitivi/ui/exportsettingswidget.py:55
 msgid "VGA (640x480)"
 msgstr "VGA (640x480)"
 
-#: ../pitivi/ui/exportsettingswidget.py:43
+#: ../pitivi/ui/exportsettingswidget.py:56
 msgid "SVGA (800x600)"
 msgstr "SVGA (800x600)"
 
-#: ../pitivi/ui/exportsettingswidget.py:44
+#: ../pitivi/ui/exportsettingswidget.py:57
 msgid "XGA (1024x768)"
 msgstr "XGA (1024x768)"
 
-#. i18n: string for custom video width/height/framerate settings
-#. i18n: string for custom audio rate/depth/channels settings
-#: ../pitivi/ui/exportsettingswidget.py:112
-#: ../pitivi/ui/exportsettingswidget.py:146
-msgid "Custom"
-msgstr "Personalitza"
-
-#: ../pitivi/ui/exportsettingswidget.py:297
+#: ../pitivi/ui/exportsettingswidget.py:314
 msgid "Raw Video"
 msgstr "Vídeo sense processar"
 
-#: ../pitivi/ui/exportsettingswidget.py:312
+#: ../pitivi/ui/exportsettingswidget.py:329
 msgid "Raw Audio"
 msgstr "Àudio sense processar"
 
-#: ../pitivi/ui/exportsettingswidget.py:435
+#: ../pitivi/ui/exportsettingswidget.py:452
 msgid "Export settings"
 msgstr "Paràmetres d'exportació"
 
@@ -661,200 +839,228 @@ msgstr "Paràmetres d'exportació"
 msgid "Unknown reason"
 msgstr "Motiu desconegut"
 
-#: ../pitivi/ui/filelisterrordialog.py:76
+#: ../pitivi/ui/filelisterrordialog.py:82
 msgid "URI:"
 msgstr "URI:"
 
-#: ../pitivi/ui/filelisterrordialog.py:82
+#: ../pitivi/ui/filelisterrordialog.py:87
 msgid "Problem:"
 msgstr "Problema:"
 
-#: ../pitivi/ui/filelisterrordialog.py:89
+#: ../pitivi/ui/filelisterrordialog.py:94
 msgid "Extra information:"
 msgstr "Informació extra:"
 
+#: ../pitivi/ui/gstwidget.py:153
+msgid "Reset to default value"
+msgstr "Reinicia als valor predeterminats"
+
 #. set title and frame label
-#: ../pitivi/ui/gstwidget.py:195
+#: ../pitivi/ui/gstwidget.py:197
 #, python-format
 msgid "Properties for %s"
 msgstr "Propietats de %s"
 
-#: ../pitivi/ui/mainwindow.py:123
+#: ../pitivi/ui/mainwindow.py:140
 msgid "Render"
 msgstr "Renderitza"
 
-#: ../pitivi/ui/mainwindow.py:124
+#: ../pitivi/ui/mainwindow.py:141 ../pitivi/ui/timeline.py:314
 msgid "Split"
 msgstr "Parteix"
 
-#: ../pitivi/ui/mainwindow.py:125
+#: ../pitivi/ui/mainwindow.py:142
+msgid "Keyframe"
+msgstr "Fotograma clau"
+
+#: ../pitivi/ui/mainwindow.py:143
 msgid "Unlink"
 msgstr "Desenllaça"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/ui/mainwindow.py:127
+#: ../pitivi/ui/mainwindow.py:145
 msgid "Link"
 msgstr "Enllaça"
 
-#: ../pitivi/ui/mainwindow.py:128
+#: ../pitivi/ui/mainwindow.py:146
 msgid "Ungroup"
 msgstr "Desagrupa"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/ui/mainwindow.py:130
+#: ../pitivi/ui/mainwindow.py:148
 msgid "Group"
 msgstr "Agrupa"
 
-#: ../pitivi/ui/mainwindow.py:233
+#: ../pitivi/ui/mainwindow.py:259
 msgid "Start Playback"
 msgstr "Inicia la reproducció"
 
-#: ../pitivi/ui/mainwindow.py:234
+#: ../pitivi/ui/mainwindow.py:260
 msgid "Stop Playback"
 msgstr "Atura la reproducció"
 
-#: ../pitivi/ui/mainwindow.py:235
+#: ../pitivi/ui/mainwindow.py:261
 msgid "Loop over selected area"
 msgstr "Reprodueix cíclicament l'àrea seleccionada"
 
-#: ../pitivi/ui/mainwindow.py:240
+#: ../pitivi/ui/mainwindow.py:266
 msgid "Create a new project"
 msgstr "Crea un projecte nou"
 
-#: ../pitivi/ui/mainwindow.py:242
+#: ../pitivi/ui/mainwindow.py:268
 msgid "Open an existing project"
 msgstr "Obre un projecte existent"
 
-#: ../pitivi/ui/mainwindow.py:244 ../pitivi/ui/mainwindow.py:246
+#: ../pitivi/ui/mainwindow.py:270 ../pitivi/ui/mainwindow.py:272
 msgid "Save the current project"
 msgstr "Desa el projecte actual"
 
-#: ../pitivi/ui/mainwindow.py:247 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:274
+msgid "Reload the current project"
+msgstr "Torna a carregar el projecte actual"
+
+#: ../pitivi/ui/mainwindow.py:275 ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
 msgstr "Paràmetres del projecte"
 
-#: ../pitivi/ui/mainwindow.py:248
+#: ../pitivi/ui/mainwindow.py:276
 msgid "Edit the project settings"
 msgstr "Edita els paràmetres del projecte"
 
-#: ../pitivi/ui/mainwindow.py:249
+#: ../pitivi/ui/mainwindow.py:277
 msgid "_Render project"
 msgstr "_Renderitza el projecte"
 
-#: ../pitivi/ui/mainwindow.py:252
+#: ../pitivi/ui/mainwindow.py:280
 msgid "_Undo"
 msgstr "_Desfés"
 
-#: ../pitivi/ui/mainwindow.py:253
+#: ../pitivi/ui/mainwindow.py:281
 msgid "Undo the last operation"
 msgstr "Desfés l'última operació"
 
-#: ../pitivi/ui/mainwindow.py:255
+#: ../pitivi/ui/mainwindow.py:283
 msgid "_Redo"
-msgstr "Torna a _fer"
+msgstr "_Refés"
 
-#: ../pitivi/ui/mainwindow.py:256
+#: ../pitivi/ui/mainwindow.py:284
 msgid "Redo the last operation that was undone"
-msgstr "Torna a fer l'última operació que s'ha desfet"
+msgstr "Refés l'última operació que s'ha desfet"
 
-#: ../pitivi/ui/mainwindow.py:258
+#: ../pitivi/ui/mainwindow.py:286
 msgid "_Plugins..."
 msgstr "_Connectors..."
 
-#: ../pitivi/ui/mainwindow.py:259
+#: ../pitivi/ui/mainwindow.py:287
 msgid "Manage plugins"
 msgstr "Gestiona els connectors"
 
-#: ../pitivi/ui/mainwindow.py:260
+#: ../pitivi/ui/mainwindow.py:288
 msgid "_Preferences"
 msgstr "_Preferències"
 
-#: ../pitivi/ui/mainwindow.py:263
+#: ../pitivi/ui/mainwindow.py:291
 msgid "Import from _Webcam..."
 msgstr "Importa des de la càmera _web..."
 
-#: ../pitivi/ui/mainwindow.py:264
+#: ../pitivi/ui/mainwindow.py:292
 msgid "Import Camera stream"
 msgstr "Importa el flux de càmera"
 
-#: ../pitivi/ui/mainwindow.py:266
+#: ../pitivi/ui/mainwindow.py:294
 msgid "_Make screencast..."
 msgstr "_Fes un screencast..."
 
-#: ../pitivi/ui/mainwindow.py:267
+#: ../pitivi/ui/mainwindow.py:295
 msgid "Capture the desktop"
 msgstr "Captura l'escriptori"
 
-#: ../pitivi/ui/mainwindow.py:269
+#: ../pitivi/ui/mainwindow.py:297
 msgid "_Capture Network Stream..."
 msgstr "_Captura un flux de xarxa..."
 
-#: ../pitivi/ui/mainwindow.py:270
+#: ../pitivi/ui/mainwindow.py:298
 msgid "Capture Network Stream"
 msgstr "Captura un flux de xarxa"
 
-#: ../pitivi/ui/mainwindow.py:273
+#: ../pitivi/ui/mainwindow.py:301
 #, python-format
 msgid "Information about %s"
 msgstr "Informació sobre %s"
 
-#: ../pitivi/ui/mainwindow.py:274
+#: ../pitivi/ui/mainwindow.py:302
+msgid "User manual"
+msgstr "Manual d'usuari"
+
+#: ../pitivi/ui/mainwindow.py:304
 msgid "_File"
 msgstr "_Fitxer"
 
-#: ../pitivi/ui/mainwindow.py:275
+#: ../pitivi/ui/mainwindow.py:305
 msgid "_Edit"
 msgstr "_Edita"
 
-#: ../pitivi/ui/mainwindow.py:276
+#: ../pitivi/ui/mainwindow.py:306
 msgid "_View"
 msgstr "_Visualitza"
 
-#: ../pitivi/ui/mainwindow.py:277
+#: ../pitivi/ui/mainwindow.py:307
 msgid "_Project"
 msgstr "_Projecte"
 
-#: ../pitivi/ui/mainwindow.py:278
+#: ../pitivi/ui/mainwindow.py:308
 msgid "_Timeline"
 msgstr "_Línia de temps"
 
-#: ../pitivi/ui/mainwindow.py:279
+#: ../pitivi/ui/mainwindow.py:309
 msgid "Previe_w"
 msgstr "Pre_visualització"
 
-#: ../pitivi/ui/mainwindow.py:282
+#: ../pitivi/ui/mainwindow.py:312
 msgid "Loop"
-msgstr "Cicla"
+msgstr "Bucle"
 
-#: ../pitivi/ui/mainwindow.py:284
+#: ../pitivi/ui/mainwindow.py:314
 msgid "_Help"
 msgstr "A_juda"
 
-#: ../pitivi/ui/mainwindow.py:289
+#: ../pitivi/ui/mainwindow.py:319
 msgid "View the main window on the whole screen"
 msgstr "Visualitza la finestra principal a pantalla completa"
 
-#: ../pitivi/ui/mainwindow.py:293
+#: ../pitivi/ui/mainwindow.py:323
 msgid "Main Toolbar"
 msgstr "Barra d'eines principal"
 
-#: ../pitivi/ui/mainwindow.py:296
+#: ../pitivi/ui/mainwindow.py:326
 msgid "Timeline Toolbar"
 msgstr "Barra d'eines de la línia del temps"
 
-#: ../pitivi/ui/mainwindow.py:520
+#: ../pitivi/ui/mainwindow.py:425
+msgid "Media Library"
+msgstr "Biblioteca multimèdia"
+
+#: ../pitivi/ui/mainwindow.py:430
+msgid "Effect Library"
+msgstr "Biblioteca d'efectes"
+
+#: ../pitivi/ui/mainwindow.py:449
+msgid "Effects configurations"
+msgstr "Configuracions dels efectes"
+
+#: ../pitivi/ui/mainwindow.py:611
 msgid "Open File..."
 msgstr "Obre un fitxer..."
 
-#: ../pitivi/ui/mainwindow.py:535
+#: ../pitivi/ui/mainwindow.py:627
 msgid "All Supported Formats"
-msgstr "Tots els formats coneguts"
+msgstr "Tots els formats compatibles"
 
-#: ../pitivi/ui/mainwindow.py:601
+#: ../pitivi/ui/mainwindow.py:699
 msgid "Contributors:"
 msgstr "Col·laboradors:"
 
-#: ../pitivi/ui/mainwindow.py:613
+#: ../pitivi/ui/mainwindow.py:711
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -862,49 +1068,60 @@ msgstr ""
 "Llicència Pública General Limitada de GNU\n"
 "Per a més detalls vegeu http://www.gnu.org/copyleft/lesser.html"
 
-#: ../pitivi/ui/mainwindow.py:709
-msgid "Close project"
-msgstr "Tanca el projecte"
-
-#: ../pitivi/ui/mainwindow.py:711
+#: ../pitivi/ui/mainwindow.py:829
 msgid "Close without saving"
 msgstr "Tanca sense desar"
 
-#: ../pitivi/ui/mainwindow.py:725
+#: ../pitivi/ui/mainwindow.py:842
 msgid "Save changes to the current project before closing?"
 msgstr "Voleu desar els canvis del projecte actual abans de tancar?"
 
-#: ../pitivi/ui/mainwindow.py:728
+#: ../pitivi/ui/mainwindow.py:849
 msgid "If you don't save some of your changes will be lost"
 msgstr "Perdreu alguns canvis si no deseu"
 
-#: ../pitivi/ui/mainwindow.py:775
+#: ../pitivi/ui/mainwindow.py:902
+msgid "Do you want to reload current project?"
+msgstr "Voleu tornar a carregar el projecte actual?"
+
+#: ../pitivi/ui/mainwindow.py:907
+msgid "Revert to saved project"
+msgstr "Torna al projecte desat"
+
+#: ../pitivi/ui/mainwindow.py:910
+msgid "All unsaved changes will be lost."
+msgstr "Perdreu tots els canvis sense desar."
+
+#: ../pitivi/ui/mainwindow.py:926
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "El PiTiVi no pot carregar el fitxer «%s»"
 
-#: ../pitivi/ui/mainwindow.py:777
+#: ../pitivi/ui/mainwindow.py:929
 msgid "Error Loading File"
 msgstr "S'ha produït un error en carregar el fitxer"
 
-#: ../pitivi/ui/mainwindow.py:784
+#: ../pitivi/ui/mainwindow.py:936
 msgid "Locate missing file..."
 msgstr "Ubiqueu el fitxer que manca..."
 
-#: ../pitivi/ui/mainwindow.py:792
-#, python-format
-msgid "Please locate the missing file, '%s'"
-msgstr "Ubiqueu el fitxer que manca, «%s»"
+#: ../pitivi/ui/mainwindow.py:945
+msgid "The following file has moved, please tell PiTiVi where to find it."
+msgstr "El fitxer següent s'ha mogut, indiqueu al PiTiVi on trobar-lo."
 
-#: ../pitivi/ui/mainwindow.py:930
+#: ../pitivi/ui/mainwindow.py:947
+msgid "Duration:"
+msgstr "Durada:"
+
+#: ../pitivi/ui/mainwindow.py:1091
 msgid "Save As..."
 msgstr "Anomena i desa..."
 
-#: ../pitivi/ui/mainwindow.py:937
+#: ../pitivi/ui/mainwindow.py:1099
 msgid "Untitled.xptv"
 msgstr "Sense nom.xptv"
 
-#: ../pitivi/ui/mainwindow.py:948 ../pitivi/ui/mainwindow.py:961
+#: ../pitivi/ui/mainwindow.py:1110 ../pitivi/ui/mainwindow.py:1123
 msgid "Detect Automatically"
 msgstr "Detecta automàticament"
 
@@ -973,17 +1190,13 @@ msgid "http://"
 msgstr "http://"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:1
-#: ../pitivi/ui/pluginmanagerdialog.py:173
+#: ../pitivi/ui/pluginmanagerdialog.py:177
 msgid "All categories"
 msgstr "Totes les categories"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:2
 msgid "Plugin manager"
 msgstr "Gestor de connectors"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:3
-msgid "Search:"
-msgstr "Cerca:"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:4
 msgid "Show:"
@@ -997,49 +1210,49 @@ msgstr ""
 "Podeu arrossegar fitxers de connectors en aquesta llista per a \n"
 "instal·lar-los, o escriviu per a cercar un connector en concret."
 
-#: ../pitivi/ui/pluginmanagerdialog.py:89
+#: ../pitivi/ui/pluginmanagerdialog.py:93
 msgid "Enabled"
 msgstr "Habilitat"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:99
+#: ../pitivi/ui/pluginmanagerdialog.py:103
 msgid "Plugin"
 msgstr "Connector"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:109
+#: ../pitivi/ui/pluginmanagerdialog.py:113
 msgid "Category"
 msgstr "Categoria"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:271
+#: ../pitivi/ui/pluginmanagerdialog.py:275
 msgid "Are you sure you want to remove the selected plugins?"
 msgstr "Segur que voleu suprimir els connectors seleccionats?"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:272
+#: ../pitivi/ui/pluginmanagerdialog.py:276
 msgid "Confirm remove operation"
 msgstr "Confirmeu l'operació de supressió"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:289
+#: ../pitivi/ui/pluginmanagerdialog.py:293
 #, python-format
 msgid "Cannot remove %s"
 msgstr "No s'ha pogut suprimir %s"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:321
+#: ../pitivi/ui/pluginmanagerdialog.py:325
 msgid "Update the existing plugin?"
 msgstr "Voleu actualitzar el connector existent?"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:324
+#: ../pitivi/ui/pluginmanagerdialog.py:328
 #, python-format
 msgid ""
 "This plugin is already installed in your system.\n"
 "If you agree, version %(v1)s will be replaced with version %(v2)s"
 msgstr ""
-"Ja teniu instal·lar aquest connector en el sistema.\n"
+"Ja teniu instal·lat aquest connector en el sistema.\n"
 "Si hi esteu d'acord, s'actualitzarà de la versió %(v1)s a la %(v2)s"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:327
+#: ../pitivi/ui/pluginmanagerdialog.py:331
 msgid "Duplicate plugin found"
 msgstr "S'ha trobat un connector duplicat"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:341
+#: ../pitivi/ui/pluginmanagerdialog.py:345
 #, python-format
 msgid ""
 "Cannot install %s\n"
@@ -1048,65 +1261,85 @@ msgstr ""
 "No s'ha pogut instal·lar %s\n"
 "El fitxer no és un connector vàlid"
 
-#: ../pitivi/ui/prefs.py:57
+#: ../pitivi/ui/prefs.py:61
 msgid "Preferences"
 msgstr "Preferències"
 
-#: ../pitivi/ui/prefs.py:83
+#: ../pitivi/ui/prefs.py:85
 msgid "Section"
 msgstr "Secció"
 
 #. revert, close buttons
-#: ../pitivi/ui/prefs.py:104
+#: ../pitivi/ui/prefs.py:106
 msgid "Reset to Factory Settings"
 msgstr "Reinicieu als paràmetres de fàbrica"
 
-#: ../pitivi/ui/prefs.py:108
+#: ../pitivi/ui/prefs.py:110
 msgid "Revert"
 msgstr "Restaura"
 
-#: ../pitivi/ui/prefs.py:123
+#: ../pitivi/ui/prefs.py:125
 msgid "Some changes will not take effect until you restart PiTiVi"
 msgstr "No s'aplicaran alguns dels canvis fins que no reinicieu el PiTiVi"
 
-#: ../pitivi/ui/prefs.py:318
+#: ../pitivi/ui/prefs.py:320
 msgid "Reset"
 msgstr "Reinicia"
 
-#: ../pitivi/ui/previewer.py:56 ../pitivi/ui/previewer.py:84
-#: ../pitivi/ui/previewer.py:95 ../pitivi/ui/trackobject.py:48
+#: ../pitivi/ui/previewer.py:55 ../pitivi/ui/previewer.py:83
+#: ../pitivi/ui/previewer.py:94 ../pitivi/ui/trackobject.py:48
 #: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
 #: ../pitivi/ui/trackobject.py:81
 msgid "Appearance"
 msgstr "Aparença"
 
-#: ../pitivi/ui/previewer.py:57
+#: ../pitivi/ui/previewer.py:56
 msgid "Thumbnail Gap (pixels)"
 msgstr "Espai entre miniatures (píxels)"
 
-#: ../pitivi/ui/previewer.py:59
+#: ../pitivi/ui/previewer.py:58
 msgid "The gap between thumbnails"
 msgstr "L'espai entre miniatures"
 
-#: ../pitivi/ui/previewer.py:85
+#: ../pitivi/ui/previewer.py:84
 msgid "Show Thumbnails (Video)"
 msgstr "Mostra miniatures (vídeo)"
 
-#: ../pitivi/ui/previewer.py:86
+#: ../pitivi/ui/previewer.py:85
 msgid "Show Thumbnails on Video Clips"
 msgstr "Mostra miniatures en els clips de vídeo"
 
-#: ../pitivi/ui/previewer.py:96
+#: ../pitivi/ui/previewer.py:95
 msgid "Show Waveforms (Audio)"
-msgstr "Mostra les formes de les ones (àudio)"
+msgstr "Mostra les formes d'ona (àudio)"
 
-#: ../pitivi/ui/previewer.py:97
+#: ../pitivi/ui/previewer.py:96
 msgid "Show Waveforms on Audio Clips"
-msgstr "Mostra les formes de les ones en els clips d'àudio"
+msgstr "Mostra les formes d'ona en els clips d'àudio"
 
-#: ../pitivi/ui/projecttabs.py:65
-msgid "Clip Library"
-msgstr "Biblioteca de clips"
+#: ../pitivi/ui/clipproperties.py:134
+msgid "Remove effect"
+msgstr "_Suprimeix l'efecte"
+
+#: ../pitivi/ui/clipproperties.py:161
+msgid "Activated"
+msgstr "Activat"
+
+#: ../pitivi/ui/clipproperties.py:166
+msgid "Type"
+msgstr "Tipus"
+
+#: ../pitivi/ui/clipproperties.py:178
+msgid "Effect name"
+msgstr "Nom de l'efecte"
+
+#: ../pitivi/ui/clipproperties.py:367
+msgid ""
+"<span>You must select <b>one</b> clip on the timeline to configure its "
+"associated effects</span>"
+msgstr ""
+"<span>Heu de seleccionar <b>un</b> clip en la línia de temps per configurar "
+"els seus efectes associats</span>"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
@@ -1140,180 +1373,180 @@ msgstr "Screencast de l'escriptori"
 msgid "Start Istanbul"
 msgstr "Inicia l'Istanbul"
 
-#: ../pitivi/ui/sourcelist.py:92
-#, python-format
-msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
-msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] "<b>Àudio:</b> %d canal a %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[1] "<b>Àudio:</b> %d canals a %d <i>Hz</i> (%d <i>bits</i>)"
+#: ../pitivi/ui/sourcelist.py:130
+msgid "Import clips..."
+msgstr "Importa clips..."
 
-#: ../pitivi/ui/sourcelist.py:98
-#, python-format
-msgid "<b>Unknown Audio format:</b> %s"
-msgstr "<b>Format d'àudio desconegut:</b> %s"
-
-#: ../pitivi/ui/sourcelist.py:103
-#, python-format
-msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
-msgstr "<b>Vídeo:</b> %d x %d <i>píxels</i> a %.2f<i>fps</i>"
-
-#: ../pitivi/ui/sourcelist.py:107
-#, python-format
-msgid "<b>Image:</b> %d x %d <i>pixels</i>"
-msgstr "<b>Imatge:</b> %d x %d <i>píxels</i>"
-
-#: ../pitivi/ui/sourcelist.py:110
-#, python-format
-msgid "<b>Unknown Video format:</b> %s"
-msgstr "<b>Format de vídeo desconegut:</b> %s"
-
-#: ../pitivi/ui/sourcelist.py:113
-#, python-format
-msgid "<b>Text:</b> %s"
-msgstr "<b>Text:</b> %s"
-
-#: ../pitivi/ui/sourcelist.py:159
-msgid "Add Clips..."
-msgstr "Afegeix clips..."
-
-#: ../pitivi/ui/sourcelist.py:164
+#: ../pitivi/ui/sourcelist.py:135
 msgid "Remove Clip"
 msgstr "Suprimeix el clip"
 
-#: ../pitivi/ui/sourcelist.py:168
+#: ../pitivi/ui/sourcelist.py:139
 msgid "Play Clip"
 msgstr "Reprodueix el clip"
 
-#: ../pitivi/ui/sourcelist.py:194
+#: ../pitivi/ui/sourcelist.py:166
 msgid "Icon"
 msgstr "Icona"
 
-#: ../pitivi/ui/sourcelist.py:203
+#: ../pitivi/ui/sourcelist.py:175
 msgid "Information"
 msgstr "Informació"
 
-#: ../pitivi/ui/sourcelist.py:214
+#: ../pitivi/ui/sourcelist.py:186
 msgid "Duration"
 msgstr "Durada"
 
-#: ../pitivi/ui/sourcelist.py:236
+#: ../pitivi/ui/sourcelist.py:214
 msgid ""
-"<span size='x-large'>Import your clips by dragging them here or by using the "
-"buttons above.</span>"
+"<span>Import your clips by dragging them here or by using the buttons above."
+"</span>"
 msgstr ""
-"<span size='x-large'>Importeu els clips de vídeo arrossegant-los aquí o bé "
-"utilitzant els botons d'aquí sobre.</span>"
+"<span>Importeu els clips de vídeo arrossegant-los aquí o bé utilitzant els "
+"botons d'aquí sobre.</span>"
 
-#: ../pitivi/ui/sourcelist.py:289
+#: ../pitivi/ui/sourcelist.py:267
 msgid "_Import clips..."
 msgstr "_Importa clips..."
 
-#: ../pitivi/ui/sourcelist.py:290
+#: ../pitivi/ui/sourcelist.py:268
 msgid "Import clips to use"
 msgstr "Importa clips per a utilitzar"
 
-#: ../pitivi/ui/sourcelist.py:292
+#: ../pitivi/ui/sourcelist.py:270
 msgid "Import _folder of clips..."
 msgstr "Importa un _directori de clips..."
 
-#: ../pitivi/ui/sourcelist.py:293
+#: ../pitivi/ui/sourcelist.py:271
 msgid "Import folder of clips to use"
 msgstr "Importa un directori de clips a utilitzar"
 
-#: ../pitivi/ui/sourcelist.py:299
+#: ../pitivi/ui/sourcelist.py:277
 msgid "_Remove from project"
 msgstr "_Suprimeix del projecte"
 
-#: ../pitivi/ui/sourcelist.py:302
+#: ../pitivi/ui/sourcelist.py:280
 msgid "Insert at _end of timeline"
 msgstr "Insereix-lo al _final de la línia del temps"
 
-#: ../pitivi/ui/sourcelist.py:418
+#: ../pitivi/ui/sourcelist.py:443
 msgid "Import a folder"
 msgstr "Importa un directori"
 
-#: ../pitivi/ui/sourcelist.py:421
+#: ../pitivi/ui/sourcelist.py:446
 msgid "Import a clip"
 msgstr "Importa un clip"
 
-#: ../pitivi/ui/sourcelist.py:422
+#: ../pitivi/ui/sourcelist.py:447
 msgid "Close after importing files"
 msgstr "Tanca després d'importar els fitxers"
 
-#: ../pitivi/ui/sourcelist.py:762
+#: ../pitivi/ui/sourcelist.py:966
 msgid "Importing clips..."
 msgstr "S'estan important els clips..."
 
-#: ../pitivi/ui/sourcelist.py:763
+#: ../pitivi/ui/sourcelist.py:967
 msgid "Error(s) occurred while importing"
 msgstr "S'han produït errors durant la importació"
 
-#: ../pitivi/ui/sourcelist.py:764
+#: ../pitivi/ui/sourcelist.py:968
 msgid "An error occurred while importing"
 msgstr "S'ha produït un error durant la importació"
 
-#: ../pitivi/ui/sourcelist.py:849
+#: ../pitivi/ui/sourcelist.py:1057
 msgid "Error while analyzing files"
 msgstr "S'ha produït un error en analitzar els fitxers"
 
-#: ../pitivi/ui/sourcelist.py:850
+#: ../pitivi/ui/sourcelist.py:1058
 msgid "The following files can not be used with PiTiVi."
 msgstr "Els fitxers següents no es poden utilitzar amb el PiTiVi."
 
-#: ../pitivi/ui/sourcelist.py:852
+#: ../pitivi/ui/sourcelist.py:1060
 msgid "Error while analyzing a file"
 msgstr "S'ha produït un error en analitzar un fitxer"
 
-#: ../pitivi/ui/sourcelist.py:853
+#: ../pitivi/ui/sourcelist.py:1061
 msgid "The following file can not be used with PiTiVi."
 msgstr "El fitxer següent no es pot utilitzar amb el PiTiVi."
 
 #. tooltip text for toolbar
-#: ../pitivi/ui/timeline.py:44
+#: ../pitivi/ui/timeline.py:54
 msgid "Delete Selected"
 msgstr "Suprimeix els seleccionats"
 
-#: ../pitivi/ui/timeline.py:45
-msgid "Cut clip at mouse position"
-msgstr "Retalla el clip a la posició del ratolí"
+#: ../pitivi/ui/timeline.py:55
+msgid "Split clip at playhead position"
+msgstr "Parteix el clip a la posició del cap lector"
 
-#: ../pitivi/ui/timeline.py:46
+#: ../pitivi/ui/timeline.py:56 ../pitivi/ui/timeline.py:316
+msgid "Add a keyframe"
+msgstr "Afegeix un fotograma clau"
+
+#: ../pitivi/ui/timeline.py:57
+msgid "Move to the previous keyframe"
+msgstr "Mou-te al fotograma clau anterior"
+
+#: ../pitivi/ui/timeline.py:58
+msgid "Move to the next keyframe"
+msgstr "Mou-te al fotograma clau següent"
+
+#: ../pitivi/ui/timeline.py:59
 msgid "Zoom In"
 msgstr "Amplia"
 
-#: ../pitivi/ui/timeline.py:47
+#: ../pitivi/ui/timeline.py:60
 msgid "Zoom Out"
 msgstr "Redueix"
 
-#: ../pitivi/ui/timeline.py:48
+#: ../pitivi/ui/timeline.py:61
 msgid "Break links between clips"
 msgstr "Trenca els enllaços entre els clips"
 
-#: ../pitivi/ui/timeline.py:49
+#: ../pitivi/ui/timeline.py:62
 msgid "Link together arbitrary clips"
-msgstr "Enllaça clips aleatòris"
+msgstr "Enllaça clips aleatoris"
 
-#: ../pitivi/ui/timeline.py:50
+#: ../pitivi/ui/timeline.py:63
 msgid "Ungroup clips"
 msgstr "Desagrupa els clips"
 
-#: ../pitivi/ui/timeline.py:51
+#: ../pitivi/ui/timeline.py:64
 msgid "Group clips"
 msgstr "Agrupa els clips"
 
-#: ../pitivi/ui/timeline.py:199
-msgid "Razor"
-msgstr "Fulla d'afaitar"
+#: ../pitivi/ui/timeline.py:143
+msgid "One or more GStreamer errors has occured!"
+msgstr "S'han produït un o més errors del GStreamer."
 
-#: ../pitivi/ui/timelinecanvas.py:49
+#: ../pitivi/ui/timeline.py:177
+msgid "Error List"
+msgstr "Llista d'errors"
+
+#: ../pitivi/ui/timeline.py:178
+msgid "The following errors have been reported:"
+msgstr "S'ha informat dels errors següents:"
+
+#: ../pitivi/ui/timeline.py:242
+msgid "Zoom Timeline"
+msgstr "Amplia la línia de temps"
+
+#: ../pitivi/ui/timeline.py:318
+msgid "_Prevframe"
+msgstr "Fotograma _anterior"
+
+#: ../pitivi/ui/timeline.py:320
+msgid "_Nextframe"
+msgstr "Fotograma _següent"
+
+#: ../pitivi/ui/timelinecanvas.py:51
 msgid "Behavior"
 msgstr "Comportament"
 
-#: ../pitivi/ui/timelinecanvas.py:50
+#: ../pitivi/ui/timelinecanvas.py:52
 msgid "Snap Distance (pixels)"
 msgstr "Distància de desplaçament (píxels)"
 
-#: ../pitivi/ui/timelinecanvas.py:51
+#: ../pitivi/ui/timelinecanvas.py:53
 msgid "Threshold distance (in pixels) used for all snapping operations"
 msgstr ""
 "Distància llindar (en píxels) que s'utilitzarà per a totes les operacions de "
@@ -1354,6 +1587,42 @@ msgstr "Tipus de lletra del clip"
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
 msgstr "El tipus de lletra per als títols dels clips"
+
+#: ../pitivi/ui/viewer.py:243
+msgid "Go to the beginning of the timeline"
+msgstr "Vés al principi de la línia de temps"
+
+#: ../pitivi/ui/viewer.py:249
+msgid "Go back one second"
+msgstr "Retrocedeix un segon"
+
+#: ../pitivi/ui/viewer.py:260
+msgid "Go forward one second"
+msgstr "Avança un segon"
+
+#: ../pitivi/ui/viewer.py:266
+msgid "Go to the end of the timeline"
+msgstr "Vés al final de la línia de temps"
+
+#: ../pitivi/ui/viewer.py:523
+msgid "Play"
+msgstr "Reprodueix"
+
+#: ../pitivi/ui/viewer.py:531
+msgid "Pause"
+msgstr "Atura"
+
+#~ msgid "Close project"
+#~ msgstr "Tanca el projecte"
+
+#~ msgid "Please locate the missing file, '%s'"
+#~ msgstr "Ubiqueu el fitxer que manca, «%s»"
+
+#~ msgid "Add Clips..."
+#~ msgstr "Afegeix clips..."
+
+#~ msgid "Razor"
+#~ msgstr "Fulla d'afaitar"
 
 #~ msgid "Undo %s"
 #~ msgstr "Desfés %s"
@@ -1406,15 +1675,13 @@ msgstr "El tipus de lletra per als títols dels clips"
 #~ "Assegureu-vos que teniu instal·lades les vinculacions de Python per a "
 #~ "libglade"
 
-#, fuzzy
 #~ msgid "Could not import the Python bindings for goocanvas"
-#~ msgstr "No s'han pogut importar les vinculacions de Python per a Cairo"
+#~ msgstr "No s'han pogut importar les vinculacions de Python per al goocanvas"
 
-#, fuzzy
 #~ msgid "Make sure you have the Python bindings for goocanvas installed"
 #~ msgstr ""
-#~ "Assegureu-vos que teniu instal·lades les vinculacions de Python per a "
-#~ "Cairo"
+#~ "Assegureu-vos que teniu instal·lades les vinculacions de Python per al "
+#~ "goocanvas"
 
 #~ msgid "Couldn't construct pipeline."
 #~ msgstr "No s'ha pogut construir el conducte."
@@ -1425,9 +1692,6 @@ msgstr "El tipus de lletra per als títols dels clips"
 #~ msgstr ""
 #~ "El GStreamer no té cap element per a gestionar els fitxers que vinguin "
 #~ "d'aquest tipus de sistema de fitxers."
-
-#~ msgid "Pipeline didn't want to go to PLAYING."
-#~ msgstr "El conducte no vol anar a EN REPRODUCCIÓ."
 
 #~ msgid "Got unknown stream type : %s"
 #~ msgstr "S'ha obtingut un tipus de flux desconegut: %s"
@@ -1503,7 +1767,6 @@ msgstr "El tipus de lletra per als títols dels clips"
 #~ msgid "Cannot install %s\n"
 #~ msgstr "No s'ha pogut instal·lar %s\n"
 
-#, fuzzy
 #~ msgid "Properties"
 #~ msgstr "Propietats de "
 
@@ -1534,17 +1797,11 @@ msgstr "El tipus de lletra per als títols dels clips"
 #~ msgid "Start"
 #~ msgstr "Inici"
 
-#~ msgid "Trim"
-#~ msgstr "Retalla"
-
 #~ msgid "End"
 #~ msgstr "Fi"
 
 #~ msgid "Edit"
 #~ msgstr "Edita"
-
-#~ msgid "Effect"
-#~ msgstr "Efecte"
 
 #~ msgid "Sound"
 #~ msgstr "So"
