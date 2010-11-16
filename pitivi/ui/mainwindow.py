@@ -41,6 +41,7 @@ else:
     HAVE_GCONF = True
 
 from gettext import gettext as _
+from gtk import RecentManager
 
 from pitivi.log.loggable import Loggable
 
@@ -62,6 +63,7 @@ from pitivi.ui.clipproperties import ClipProperties
 from pitivi.ui.common import beautify_factory
 from pitivi.utils import beautify_length
 from pitivi.ui.zoominterface import Zoomable
+from pitivi.ui.startupwizard import StartUpWizard
 
 if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -191,13 +193,18 @@ class PitiviMainWindow(gtk.Window, Loggable):
         create_stock_icons()
         self._setActions(instance)
         self._createUi(instance)
+
         self.app = instance
+        self._launchWizard()
+        self.manager = RecentManager()
         self._zoom_duration_changed = False
 
         self.app.projectManager.connect("new-project-loading",
                 self._projectManagerNewProjectLoadingCb)
         self.app.projectManager.connect("new-project-loaded",
                 self._projectManagerNewProjectLoadedCb)
+        self.app.projectManager.connect("new-project-loaded",
+                self._quitWizardCb)
         self.app.projectManager.connect("new-project-failed",
                 self._projectManagerNewProjectFailedCb)
         self.app.projectManager.connect("save-project-failed",
@@ -513,6 +520,15 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _connectToSourceList(self):
         self.sourcelist.connect('play', self._sourceListPlayCb)
 
+    def _launchWizard(self):
+        self._wizard = StartUpWizard(self.app)
+
+    def _quitWizardCb(self, projectManager, uri = None):
+        if uri.uri != None:
+            self._wizard.quit()
+        else :
+            pass
+
     def toggleFullScreen(self):
         """ Toggle the fullscreen mode of the application """
         if not self.is_fullscreen:
@@ -804,6 +820,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         Zoomable.setZoomLevel(nearest_zoom_level)
 
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
+        if uri != None :
+            self.manager.add_item(uri)
         self.log("A NEW project is being loaded, deactivate UI")
 
     def _projectManagerSaveProjectFailedCb(self, projectManager,
