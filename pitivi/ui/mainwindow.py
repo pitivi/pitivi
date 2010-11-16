@@ -607,36 +607,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.projectManager.newBlankProject()
 
     def _openProjectCb(self, unused_action):
-
-        chooser = gtk.FileChooserDialog(_("Open File..."),
-            self,
-            action=gtk.FILE_CHOOSER_ACTION_OPEN,
-            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        chooser.set_icon_name("pitivi")
-        chooser.set_select_multiple(False)
-        chooser.set_current_folder(self.settings.lastProjectFolder)
-        formats = formatter.list_formats()
-        for format in formats:
-            filt = gtk.FileFilter()
-            filt.set_name(format[1])
-            for ext in format[2]:
-                filt.add_pattern("*%s" % ext)
-            chooser.add_filter(filt)
-        default = gtk.FileFilter()
-        default.set_name(_("All Supported Formats"))
-        default.add_custom(gtk.FILE_FILTER_URI, supported)
-        chooser.add_filter(default)
-
-        response = chooser.run()
-        self.settings.lastProjectFolder = chooser.get_current_folder()
-        if response == gtk.RESPONSE_OK:
-            uri = chooser.get_uri()
-            uri = unquote(uri)
-            self.app.projectManager.loadProject(uri)
-
-        chooser.destroy()
-        return True
+        self.openProject()
 
     def _saveProjectCb(self, unused_action):
         if not self.project.uri:
@@ -714,6 +685,37 @@ class PitiviMainWindow(gtk.Window, Loggable):
         abt.set_logo_icon_name("pitivi")
         abt.connect("response", self._aboutResponseCb)
         abt.show()
+
+    def openProject(self):
+        chooser = gtk.FileChooserDialog(_("Open File..."),
+            self,
+            action=gtk.FILE_CHOOSER_ACTION_OPEN,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser.set_icon_name("pitivi")
+        chooser.set_select_multiple(False)
+        chooser.set_current_folder(self.settings.lastProjectFolder)
+        formats = formatter.list_formats()
+        for format in formats:
+            filt = gtk.FileFilter()
+            filt.set_name(format[1])
+            for ext in format[2]:
+                filt.add_pattern("*%s" % ext)
+            chooser.add_filter(filt)
+        default = gtk.FileFilter()
+        default.set_name(_("All Supported Formats"))
+        default.add_custom(gtk.FILE_FILTER_URI, supported)
+        chooser.add_filter(default)
+
+        response = chooser.run()
+        self.settings.lastProjectFolder = chooser.get_current_folder()
+        if response == gtk.RESPONSE_OK:
+            uri = chooser.get_uri()
+            uri = unquote(uri)
+            self.app.projectManager.loadProject(uri)
+
+        chooser.destroy()
+        return True
 
     def _undoCb(self, action):
         self.app.action_log.undo()
