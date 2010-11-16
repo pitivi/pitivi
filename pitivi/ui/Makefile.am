@@ -28,6 +28,7 @@ ui_PYTHON =			\
 	ruler.py		\
 	screencast_managerdialog.py \
 	sourcelist.py		\
+	startupwizard.py 	\
 	timelinecanvas.py	\
 	timelinecontrols.py	\
 	timeline.py		\
@@ -52,7 +53,8 @@ ui_DATA =				\
 	net_capture.glade		\
 	projectsettings.glade		\
 	pluginmanagerdialog.glade	\
-	screencast_manager.glade
+	screencast_manager.glade	\
+	startupwizard.glade
 
 clean-local:
 	rm -rf *.pyc *.pyo
