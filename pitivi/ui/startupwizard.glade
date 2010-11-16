@@ -71,7 +71,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button7">
-                <property name="label" translatable="yes">Quick start manual</property>
+                <property name="label" translatable="yes">Help</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
