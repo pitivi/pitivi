@@ -526,8 +526,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _quitWizardCb(self, projectManager, uri = None):
         if uri.uri != None:
             self._wizard.quit()
-        else :
-            pass
 
     def toggleFullScreen(self):
         """ Toggle the fullscreen mode of the application """
