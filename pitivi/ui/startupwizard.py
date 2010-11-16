@@ -43,17 +43,12 @@ class StartUpWizard(object):
 
     def _newProjectCb(self, unused_button4):
         self.quit()
-        ProjectSettingsDialog(self.app.gui, self.app.current).show()
 
     def _loadCb(self, unused_button3):
         self.data = unquote(self.data)
-        self.app.projectManager.connect("new-project-loaded",self.app.gui.
-                _quitWizardCb)
         self.app.projectManager.loadProject(self.data)
 
     def _onBrowseButtonClickedCb(self, unused_button6):
-        self.app.projectManager.connect("new-project-loaded",self.app.gui.
-                    _quitWizardCb)
         self.app.gui.openProject()
 
     def _getFileNameCb(self, chooser):
