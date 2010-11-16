@@ -24,6 +24,7 @@ import gobject
 gobject.threads_init()
 import gst
 import os
+
 from urlparse import urlparse
 
 from pitivi.project import Project
@@ -92,6 +93,7 @@ class ProjectManager(Signallable, Loggable):
 
     def loadProject(self, uri):
         """ Load the given project file"""
+
         self.emit("new-project-loading", uri)
 
         formatter = self._getFormatterForUri(uri)
