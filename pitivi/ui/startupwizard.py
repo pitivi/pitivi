@@ -9,7 +9,8 @@ from projectsettings import ProjectSettingsDialog
 from pitivi.configure import APPMANUALURL
 
 from urllib import unquote
-class StartUpWizard:
+
+class StartUpWizard(object):
     """A Wizard displaying recent projects and allowing the user to either:
 
      load one, skip,see the quick start manual or
@@ -17,6 +18,7 @@ class StartUpWizard:
      configure a new project with the settings dialog.
 
      """
+
     def __init__(self, app):
         if 'pitivi.exe' in __file__.lower():
             glade_dir = LIBDIR
