@@ -29,7 +29,8 @@ class StartUpWizard:
         self.builder.connect_signals(self)
 
         chooser = self.builder.get_object("recentchooser2")
-        #FIXME useless combobox
+        # FIXME: gtk creates a combo box with only one item, but there is no
+        # simple way to hide it.
         filtre = gtk.RecentFilter()
         filtre.set_name("Projects")
         filtre.add_pattern("*.xptv")
