@@ -1,177 +1,503 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!-- Generated with glade3
-	Version: 3.0.0
-	Date: Wed Nov 29 18:52:38 2006
-	User: bilboed
-	Host: pitivi
--->
+<?xml version="1.0" encoding="UTF-8"?>
 <glade-interface>
-  <widget class="GtkDialog" id="encodingdialog">
-    <property name="visible">True</property>
-    <property name="border_width">5</property>
-    <property name="title" translatable="yes">Render project</property>
-    <property name="modal">True</property>
-    <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
+  <!-- interface-requires gtk+ 2.6 -->
+  <!-- interface-naming-policy toplevel-contextual -->
+  <widget class="GtkDialog" id="render-dialog">
+    <property name="border_width">12</property>
+    <property name="title">Render</property>
+    <property name="window_position">center-on-parent</property>
+    <property name="type_hint">dialog</property>
     <child internal-child="vbox">
-      <widget class="GtkVBox" id="dialog-vbox1">
+      <widget class="GtkVBox" id="dialog-vbox3">
         <property name="visible">True</property>
+        <property name="spacing">12</property>
         <child>
-          <widget class="GtkVBox" id="vbox1">
+          <widget class="GtkNotebook" id="notebook1">
             <property name="visible">True</property>
-            <property name="border_width">5</property>
-            <property name="spacing">5</property>
+            <property name="can_focus">True</property>
             <child>
-              <widget class="GtkHBox" id="filehbox">
+              <widget class="GtkVBox" id="vbox1">
                 <property name="visible">True</property>
-                <property name="spacing">5</property>
+                <property name="border_width">12</property>
+                <property name="spacing">12</property>
                 <child>
-                  <widget class="GtkLabel" id="label1">
+                  <widget class="GtkTable" id="table2">
                     <property name="visible">True</property>
-                    <property name="xalign">0.000000</property>
-                    <property name="label" translatable="yes">Output file:</property>
-                  </widget>
-                </child>
-                <child>
-                  <widget class="GtkButton" id="filebutton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="label" translatable="yes">Choose File</property>
-                    <signal name="clicked" handler="_fileButtonClickedCb"/>
+                    <property name="n_rows">3</property>
+                    <property name="n_columns">2</property>
+                    <property name="column_spacing">6</property>
+                    <property name="row_spacing">6</property>
+                    <child>
+                      <widget class="GtkFileChooserButton" id="filebutton">
+                        <property name="visible">True</property>
+                        <property name="action">select-folder</property>
+                        <accessibility>
+                          <atkproperty name="AtkObject::accessible-name" translatable="yes">Folder</atkproperty>
+                        </accessibility>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkComboBox" id="muxercombobox">
+                        <property name="visible">True</property>
+                        <property name="active">0</property>
+                        <property name="items" translatable="yes">MP4</property>
+                        <accessibility>
+                          <atkproperty name="AtkObject::accessible-name" translatable="yes">Container format</atkproperty>
+                        </accessibility>
+                        <signal name="changed" handler="_muxerComboChangedCb"/>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label2">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Container format:</property>
+                        <accessibility>
+                          <atkrelation type="label-for" target="muxercombobox"/>
+                        </accessibility>
+                      </widget>
+                      <packing>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label1">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Folder:</property>
+                        <accessibility>
+                          <atkrelation type="label-for" target="filebutton"/>
+                        </accessibility>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label5">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">File name:</property>
+                        <accessibility>
+                          <atkrelation type="label-for" target="fileentry"/>
+                        </accessibility>
+                      </widget>
+                      <packing>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkEntry" id="fileentry">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="invisible_char">●</property>
+                        <accessibility>
+                          <atkproperty name="AtkObject::accessible-name" translatable="yes">File name</atkproperty>
+                        </accessibility>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                      </packing>
+                    </child>
                   </widget>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkCheckButton" id="selected_only_button">
+                    <property name="label" translatable="yes">Render only the selected clips</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="draw_indicator">True</property>
+                  </widget>
+                  <packing>
                     <property name="position">1</property>
                   </packing>
                 </child>
+                <child>
+                  <widget class="GtkCheckButton" id="draft_button">
+                    <property name="label" translatable="yes">Draft (no special effects, single pass)</property>
+                    <property name="visible">False</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="draw_indicator">True</property>
+                  </widget>
+                  <packing>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </widget>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label12">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">General</property>
               </widget>
               <packing>
-                <property name="expand">False</property>
+                <property name="tab_fill">False</property>
+                <property name="type">tab</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkFrame" id="settingsframe">
+              <widget class="GtkVBox" id="vbox2">
                 <property name="visible">True</property>
-                <property name="label_xalign">0.000000</property>
-                <property name="shadow_type">GTK_SHADOW_ETCHED_OUT</property>
+                <property name="border_width">12</property>
+                <property name="spacing">6</property>
                 <child>
-                  <widget class="GtkAlignment" id="alignment1">
+                  <widget class="GtkTable" id="table3">
                     <property name="visible">True</property>
-                    <property name="left_padding">12</property>
+                    <property name="n_rows">3</property>
+                    <property name="n_columns">2</property>
+                    <property name="column_spacing">6</property>
+                    <property name="row_spacing">6</property>
                     <child>
-                      <widget class="GtkVBox" id="vbox2">
+                      <widget class="GtkHBox" id="hbox5">
                         <property name="visible">True</property>
+                        <property name="spacing">6</property>
                         <child>
-                          <widget class="GtkTable" id="table1">
+                          <widget class="GtkComboBox" id="video_encoder_combo">
                             <property name="visible">True</property>
-                            <property name="border_width">2</property>
-                            <property name="n_rows">2</property>
-                            <property name="n_columns">2</property>
-                            <child>
-                              <widget class="GtkLabel" id="audioinfolabel">
-                                <property name="visible">True</property>
-                                <property name="xalign">1.000000</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Nothing yet&lt;/b&gt;</property>
-                                <property name="use_markup">True</property>
-                              </widget>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="right_attach">2</property>
-                                <property name="top_attach">1</property>
-                                <property name="bottom_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <widget class="GtkLabel" id="videoinfolabel">
-                                <property name="visible">True</property>
-                                <property name="xalign">1.000000</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Nothing yet&lt;/b&gt;</property>
-                                <property name="use_markup">True</property>
-                              </widget>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="right_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <widget class="GtkLabel" id="label4">
-                                <property name="visible">True</property>
-                                <property name="xalign">0.000000</property>
-                                <property name="xpad">2</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Audio:&lt;/b&gt;</property>
-                                <property name="use_markup">True</property>
-                              </widget>
-                              <packing>
-                                <property name="top_attach">1</property>
-                                <property name="bottom_attach">2</property>
-                                <property name="x_options">GTK_FILL</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <widget class="GtkLabel" id="label2">
-                                <property name="visible">True</property>
-                                <property name="xalign">0.000000</property>
-                                <property name="xpad">2</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Video:&lt;/b&gt;</property>
-                                <property name="use_markup">True</property>
-                              </widget>
-                              <packing>
-                                <property name="x_options">GTK_FILL</property>
-                              </packing>
-                            </child>
+                            <property name="items" translatable="yes">H.264</property>
+                            <signal name="changed" handler="_videoEncoderComboChangedCb"/>
                           </widget>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
                         </child>
                         <child>
-                          <widget class="GtkHButtonBox" id="hbuttonbox1">
+                          <widget class="GtkButton" id="video_settings_button">
+                            <property name="label" translatable="yes">Advanced...</property>
                             <property name="visible">True</property>
-                            <property name="layout_style">GTK_BUTTONBOX_END</property>
-                            <child>
-                              <widget class="GtkButton" id="settingsbutton">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="label" translatable="yes">Modify</property>
-                                <property name="use_underline">True</property>
-                                <signal name="clicked" handler="_settingsButtonClickedCb"/>
-                              </widget>
-                            </child>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <signal name="clicked" handler="_videoSettingsButtonClickedCb"/>
                           </widget>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="padding">2</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
                       </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label16">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Codec:</property>
+                      </widget>
+                      <packing>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkComboBox" id="frame_rate_combo">
+                        <property name="visible">True</property>
+                        <property name="items" translatable="yes">29.97 fps</property>
+                        <accessibility>
+                          <atkproperty name="AtkObject::accessible-name" translatable="yes">Framerate</atkproperty>
+                        </accessibility>
+                        <signal name="changed" handler="_frameRateComboChangedCb"/>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkHBox" id="hbox3">
+                        <property name="visible">True</property>
+                        <property name="spacing">6</property>
+                        <child>
+                          <widget class="GtkSpinButton" id="width_spinbutton">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">1280 320 1920 4 0 0</property>
+                            <property name="snap_to_ticks">True</property>
+                            <property name="numeric">True</property>
+                            <accessibility>
+                              <atkproperty name="AtkObject::accessible-name" translatable="yes">Width</atkproperty>
+                            </accessibility>
+                            <signal name="value_changed" handler="_widthSpinbuttonChangedCb"/>
+                          </widget>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="GtkLabel" id="height_label">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <accessibility>
+                              <atkproperty name="AtkObject::accessible-name" translatable="yes">Height</atkproperty>
+                            </accessibility>
+                          </widget>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="GtkButton" id="button1">
+                            <property name="label" translatable="yes">Edit Project Settings...</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                          </widget>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label17">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Frame rate:</property>
+                      </widget>
+                      <packing>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label3">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Resolution:</property>
+                      </widget>
+                      <packing>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
                     </child>
                   </widget>
-                </child>
-                <child>
-                  <widget class="GtkLabel" id="label3">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Settings&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
-                  </widget>
                   <packing>
-                    <property name="type">label_item</property>
+                    <property name="expand">False</property>
+                    <property name="position">0</property>
                   </packing>
                 </child>
               </widget>
               <packing>
-                <property name="expand">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkProgressBar" id="progressbar">
+              <widget class="GtkLabel" id="label13">
                 <property name="visible">True</property>
-                <property name="pulse_step">0.1</property>
-                <property name="text" translatable="yes">Please choose an output file</property>
+                <property name="label" translatable="yes">Video</property>
               </widget>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
+                <property name="position">1</property>
+                <property name="tab_fill">False</property>
+                <property name="type">tab</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkVBox" id="vbox3">
+                <property name="visible">True</property>
+                <property name="border_width">12</property>
+                <property name="spacing">6</property>
+                <child>
+                  <widget class="GtkTable" id="table4">
+                    <property name="visible">True</property>
+                    <property name="n_rows">4</property>
+                    <property name="n_columns">2</property>
+                    <property name="column_spacing">6</property>
+                    <property name="row_spacing">6</property>
+                    <child>
+                      <widget class="GtkHBox" id="hbox4">
+                        <property name="visible">True</property>
+                        <property name="spacing">6</property>
+                        <child>
+                          <widget class="GtkComboBox" id="audio_encoder_combo">
+                            <property name="visible">True</property>
+                            <property name="items" translatable="yes">AC-3
+AAC</property>
+                            <signal name="changed" handler="_audioEncoderChangedComboCb"/>
+                          </widget>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="GtkButton" id="audio_settings_button">
+                            <property name="label" translatable="yes">Advanced...</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <signal name="clicked" handler="_audioSettingsButtonClickedCb"/>
+                        </widget>
+                        <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">3</property>
+                        <property name="bottom_attach">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label21">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Codec:</property>
+                      </widget>
+                      <packing>
+                        <property name="top_attach">3</property>
+                        <property name="bottom_attach">4</property>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkComboBox" id="channels_combo">
+                        <property name="visible">True</property>
+                        <property name="items" translatable="yes">6 channels (5.1)
+</property>
+                        <signal name="changed" handler="_channelsComboChangedCb"/>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label23">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Number of channels:</property>
+                      </widget>
+                      <packing>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label4">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Sample Rate:</property>
+                      </widget>
+                      <packing>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkComboBox" id="sample_rate_combo">
+                        <property name="visible">True</property>
+                        <property name="items"></property>
+                        <accessibility>
+                          <atkproperty name="AtkObject::accessible-name" translatable="yes">Sample rate</atkproperty>
+                        </accessibility>
+                        <signal name="changed" handler="_sampleRateComboChangedCb"/>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label6">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Sample Depth:</property>
+                      </widget>
+                      <packing>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkComboBox" id="sample_depth_combo">
+                        <property name="visible">True</property>
+                        <property name="items"></property>
+                        <signal name="changed" handler="_sampleDepthComboChangedCb"/>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
                 <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label14">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Audio</property>
+              </widget>
+              <packing>
+                <property name="position">2</property>
+                <property name="tab_fill">False</property>
+                <property name="type">tab</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="summary_label">
+                <property name="visible">True</property>
+                <property name="use_markup">True</property>
+              </widget>
+              <packing>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label7">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Summary</property>
+              </widget>
+              <packing>
+                <property name="position">3</property>
+                <property name="tab_fill">False</property>
+                <property name="type">tab</property>
               </packing>
             </child>
           </widget>
@@ -180,38 +506,45 @@
           </packing>
         </child>
         <child internal-child="action_area">
-          <widget class="GtkHButtonBox" id="dialog-action_area1">
+          <widget class="GtkHButtonBox" id="dialog-action_area3">
             <property name="visible">True</property>
-            <property name="layout_style">GTK_BUTTONBOX_END</property>
+            <property name="layout_style">end</property>
             <child>
               <widget class="GtkButton" id="cancelbutton">
+                <property name="label">gtk-close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="label">gtk-close</property>
+                <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <property name="response_id">-6</property>
                 <signal name="clicked" handler="_cancelButtonClickedCb"/>
               </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
               <widget class="GtkButton" id="recordbutton">
+                <property name="label">pitivi-render</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="label">pitivi-render</property>
+                <property name="receives_default">True</property>
+                <property name="use_underline">True</property>
                 <property name="use_stock">True</property>
-                <property name="response_id">-5</property>
-                <signal name="clicked" handler="_recordButtonClickedCb"/>
+                <signal name="clicked" handler="_renderButtonClickedCb"/>
               </widget>
               <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
           </widget>
           <packing>
             <property name="expand">False</property>
-            <property name="pack_type">GTK_PACK_END</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </widget>
