@@ -23,8 +23,6 @@ pitivi/ui/effectlist.py
 pitivi/ui/elementsettingsdialog.glade
 pitivi/ui/encodingdialog.glade
 pitivi/ui/encodingdialog.py
-pitivi/ui/exportsettingswidget.glade
-pitivi/ui/exportsettingswidget.py
 pitivi/ui/filelisterrordialog.glade
 pitivi/ui/filelisterrordialog.py
 pitivi/ui/gstwidget.py
