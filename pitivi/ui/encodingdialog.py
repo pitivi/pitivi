@@ -130,12 +130,21 @@ class EncodingDialog(GladeWindow, Renderer):
             self.settings.muxers))
 
 
+    def updateFilename(self, name):
+        self.fileentry.set_text(name + extension_for_muxer(self.settings.muxer))
+
     def updatePosition(self, fraction, text):
         self.progressbar.set_fraction(fraction)
         self.window.set_title(_("%.0f%% rendered" % (fraction*100)))
         if text is not None:
             self.progressbar.set_text(_("About %s left") % text)
 
+    def _muxerComboChangedCb(self, muxer):
+        basename = os.path.splitext(self.fileentry.get_text())[0]
+        muxer = get_combo_value(muxer).get_name()
+
+        self.settings.setEncoders(muxer=muxer)
+        self.updateFilename(basename)
         self.startAction()
 
     def _settingsButtonClickedCb(self, unused_button):
