@@ -6,6 +6,8 @@ from xml.sax.saxutils import escape
 from urllib import unquote
 from gettext import gettext as _
 from gettext import ngettext
+import gst
+import gtk
 
 GlobalSettings.addConfigSection("user-interface")
 LAYER_HEIGHT_EXPANDED = 50
@@ -178,4 +180,53 @@ def model(columns, data):
     for datum in data:
         ret.append(datum)
     return ret
+
+frame_rates = model((str, object), (
+    (_("12 fps"), gst.Fraction(12.0, 1.0)),
+    (_("15 fps"), gst.Fraction(15.0, 1.0)),
+    (_("20 fps"), gst.Fraction(20.0, 1.0)),
+    (_("23,976 fps"), gst.Fraction(24000.0, 1001.0)),
+    (_("24 fps"), gst.Fraction(24.0, 1.0)),
+    (_("25 fps"), gst.Fraction(25.0, 1.0)),
+    (_("29,97 fps"), gst.Fraction(30000.0, 1001.0)),
+    (_("30 fps"), gst.Fraction(30.0, 1.0)),
+    (_("59,94 fps"), gst.Fraction(60000.0, 1001.0)),
+    (_("60 fps"), gst.Fraction(60.0, 1.0)),
+    (_("120 fps"), gst.Fraction(120.0, 1.0)),
+))
+
+audio_rates = model((str, int), (
+    (_("8 KHz"),   8000),
+    (_("11 KHz"),  11025),
+    (_("22 KHz"),  22050),
+    (_("44.1 KHz"), 44100),
+    (_("48 KHz"),  48000),
+    (_("96 KHz"),  96000)
+))
+
+audio_depths = model((str, int), (
+    (_("8 bit"),  8),
+    (_("16 bit"), 16),
+    (_("24 bit"), 24),
+    (_("32 bit"), 32)
+))
+
+audio_channels = model((str, int), (
+    (_("6 Channels (5.1)"), 6),
+    (_("4 Channels (4.0)"), 4),
+    (_("Stereo"), 2),
+    (_("Mono"), 1)
+))
+
+def set_combo_value(combo, value, default_index=-1):
+    model = combo.props.model
+    for i, row in enumerate(model):
+        if row[1] == value:
+            combo.set_active(i)
+            return
+    combo.set_active(default_index)
+
+def get_combo_value(combo):
+    active = combo.get_active()
+    return combo.props.model[active][1]
 
