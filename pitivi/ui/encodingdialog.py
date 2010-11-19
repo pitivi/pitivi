@@ -112,7 +112,11 @@ class EncodingDialog(GladeWindow, Renderer):
         self._displaySettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
+        self.settings.connect("settings-changed", self._settingsChanged)
+        self.settings.connect("encoders-changed", self._settingsChanged)
 
+    def _settingsChanged(self, settings):
+        self._updateSummary()
 
     def _displaySettings(self):
 
@@ -129,6 +133,8 @@ class EncodingDialog(GladeWindow, Renderer):
         self.muxercombobox.set_model(factorylist(
             self.settings.muxers))
 
+        # Summary
+        self._updateSummary()
 
     def updateFilename(self, name):
         self.fileentry.set_text(name + extension_for_muxer(self.settings.muxer))
@@ -145,6 +151,12 @@ class EncodingDialog(GladeWindow, Renderer):
 
         self.settings.setEncoders(muxer=muxer)
         self.updateFilename(basename)
+
+    def _updateSummary(self):
+        text = self.settings.getVideoDescription() + "\n\n" +\
+            self.settings.getAudioDescription()
+        self.summary_label.props.label = text
+
         self.startAction()
 
     def _settingsButtonClickedCb(self, unused_button):
