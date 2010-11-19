@@ -270,6 +270,8 @@ class EncodingDialog(GladeWindow, Renderer):
 
     def _cancelButtonClickedCb(self, unused_button):
         self.debug("Cancelling !")
+        self.destroy()
 
     def _deleteEventCb(self, window, event):
         self.debug("delete event")
+        self.destroy()
