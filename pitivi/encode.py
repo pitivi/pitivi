@@ -395,12 +395,31 @@ def muxer_can_sink_raw_video(muxer):
     """ Returns True if given muxer can accept raw video """
     return my_can_sink_caps(muxer, raw_video_caps)
 
-def available_combinations(muxers, vencoders, aencoders):
-    res = []
-    for mux in muxers:
-        muxsinkcaps = [x.get_caps() for x in mux.get_static_pad_templates() if x.direction == gst.PAD_SINK]
-        noaudio = (encoders_muxer_compatible(aencoders, mux, muxsinkcaps) == []) and not my_can_sink_caps(mux, raw_audio_caps, muxsinkcaps)
-        novideo = (encoders_muxer_compatible(vencoders, mux, muxsinkcaps) == []) and not my_can_sink_caps(mux, raw_video_caps, muxsinkcaps)
-        if (noaudio == False) and (novideo == False):
-            res.append(mux)
-    return res
+
+def available_combinations():
+
+    """Return a 3-tuple of (muxers, audio, video), where:
+        - muxers is a list of muxer factories
+        - audio is a dictionary from muxer names to compatible audio encoders
+        - video is a dictionary from muxer names to compatible video encoders
+    """
+
+    aencoders = available_audio_encoders()
+    vencoders = available_video_encoders()
+    muxers = available_muxers()
+
+    audio = {}
+    video = {}
+    containers = []
+    for muxer in muxers:
+        mux = muxer.get_name()
+        aencs = encoders_muxer_compatible(aencoders, muxer)
+        vencs = encoders_muxer_compatible(vencoders, muxer)
+        # only include muxers with audio and video
+
+        if aencs and vencs:
+            audio[mux] = aencs
+            video[mux] = vencs
+            containers.append(muxer)
+
+    return containers, audio, video

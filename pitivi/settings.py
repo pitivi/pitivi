@@ -33,8 +33,7 @@ import xdg.BaseDirectory as xdg_dirs  # Freedesktop directories spec
 from gettext import gettext as _
 
 from pitivi.signalinterface import Signallable
-from pitivi.encode import available_muxers, available_video_encoders, \
-     available_audio_encoders, available_combinations, \
+from pitivi.encode import available_combinations, \
      get_compatible_sink_caps
 from pitivi.stream import get_stream_for_caps
 from pitivi.log.loggable import Loggable
@@ -469,13 +468,10 @@ class ExportSettings(Signallable, Loggable):
         self.vencoder = "theoraenc"
         self.aencoder = "vorbisenc"
         self.muxer = "oggmux"
-        self.containersettings = {}
-        self.acodecsettings = {}
-        self.vcodecsettings = {}
-        self.muxers = available_muxers()
-        self.vencoders = available_video_encoders()
-        self.aencoders = available_audio_encoders()
-        self.muxers = available_combinations(self.muxers, self.vencoders, self.aencoders)
+        self.containersettings = self.factory_settings_cache.get(self.muxer, {})
+        self.acodecsettings = self.factory_settings_cache.get(self.aencoder, {})
+        self.vcodecsettings = self.factory_settings_cache.get(self.vencoder, {})
+        self.muxers, self.aencoders, self.vencoders = available_combinations()
 
     def copy(self):
         ret = ExportSettings()
