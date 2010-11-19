@@ -24,8 +24,44 @@ Dialog box for project settings
 """
 
 import gtk
+import gst
+from gettext import gettext as _
 from pitivi.ui.glade import GladeWindow
 from pitivi.ui.dynamic import FractionWidget
+from pitivi.ui.common import\
+    model,\
+    frame_rates,\
+    audio_rates,\
+    audio_depths,\
+    audio_channels,\
+    get_combo_value,\
+    set_combo_value
+
+# FIXME: are we sure the following tables correct?
+
+pixel_aspect_ratios = model((str, object), (
+    (_("Square"), gst.Fraction(1, 1)),
+    (_("480p"), gst.Fraction(10, 11)),
+    (_("480i"), gst.Fraction(8, 9)),
+    (_("480p Wide"), gst.Fraction(40, 33)),
+    (_("480i Wide"), gst.Fraction(32, 27)),
+    (_("576p"), gst.Fraction(12, 11)),
+    (_("576i"), gst.Fraction(16, 15)),
+    (_("576p Wide"), gst.Fraction(16, 11)),
+    (_("576i Wide"), gst.Fraction(64, 45)),
+))
+
+display_aspect_ratios = model((str, object), (
+    (_("Standard (4:3)"), gst.Fraction(4, 3)),
+    (_("DV (15:11)"), gst.Fraction(15, 11)),
+    (_("DV Widescreen (16:9)"), gst.Fraction(16, 9)),
+    (_("Cinema (1.37)"), gst.Fraction(11, 8)),
+    (_("Cinema (1.66)"), gst.Fraction(166, 100)),
+    (_("Cinema (1.85)"), gst.Fraction(185, 100)),
+    (_("Anamorphic (2.35)"), gst.Fraction(235, 100)),
+    (_("Anamorphic (2.39)"), gst.Fraction(239, 100)),
+    (_("Anamorphic (2.4)"), gst.Fraction(24, 10)),
+))
 
 class ProjectSettingsDialog(GladeWindow):
     glade_file = "projectsettings.glade"
@@ -51,6 +87,14 @@ class ProjectSettingsDialog(GladeWindow):
             1, 2, 2, 3, xoptions=gtk.EXPAND | gtk.FILL, yoptions=0)
         self.frame_rate_fraction_widget.show()
 
+        # populate coboboxes with appropriate data
+        self.frame_rate_combo.set_model(frame_rates)
+        self.dar_combo.set_model(display_aspect_ratios)
+        self.par_combo.set_model(pixel_aspect_ratios)
+
+        self.channels_combo.set_model(audio_channels)
+        self.sample_rate_combo.set_model(audio_rates)
+        self.sample_depth_combo.set_model(audio_depths)
     def updateSettings(self):
 
 
