@@ -263,6 +263,7 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.outfile = self.filebutton.get_uri() + "/" + self.fileentry.get_text()
         self.progress = EncodingProgressDialog(self.app, self)
         self.progress.show()
+        self.window.hide() # Hide the rendering settings dialog while rendering
         self.startAction()
         self.progress.connect("cancel", self._cancelRender)
         self.progress.connect("pause", self._pauseRender)
@@ -270,6 +271,7 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
 
     def _cancelRender(self, progress):
         self.debug("aborting render")
+        self.window.show()
         self.shutdown()
 
     def _pauseRender(self, progress):
