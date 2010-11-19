@@ -494,6 +494,9 @@ class ExportSettings(Signallable, Loggable):
         ret.vcodecsettings = dict(self.vcodecsettings)
         return ret
 
+    def getDAR(self):
+        return gst.Fraction(self.videowidth, self.videoheight) * self.videopar
+
     def __str__(self):
         msg = _("Export Settings\n")
         msg += _("Video: ") + str(self.videowidth) + " " + str(self.videoheight) +\
