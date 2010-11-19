@@ -23,6 +23,7 @@ ui_PYTHON =			\
 	previewer.py		\
 	preview.py		\
 	projectsettings.py	\
+	ripple_update_group.py	\
 	basetabs.py		\
 	propertyeditor.py	\
 	ruler.py		\
