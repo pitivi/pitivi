@@ -456,6 +456,10 @@ class ExportSettings(Signallable, Loggable):
     # TODO : Add PAR/DAR for video
     # TODO : switch to using GstFraction internally where appliable
 
+
+    # TODO: initialize this cache from the project file?
+    factory_settings_cache = {}
+
     def __init__(self, **unused_kw):
         Loggable.__init__(self)
         self.videowidth = 720
@@ -585,16 +589,23 @@ class ExportSettings(Signallable, Loggable):
         """ Set the video/audio encoder and muxer """
         changed = False
         if not muxer == "" and not muxer == self.muxer:
+            self._updateSettingsCache(self.muxer, muxer, 'containersettings')
             self.muxer = muxer
             changed = True
         if not vencoder == "" and not vencoder == self.vencoder:
+            self._updateSettingsCache(self.vencoder, vencoder, 'vcodecsettings')
             self.vencoder = vencoder
             changed = True
         if not aencoder == "" and not aencoder == self.aencoder:
+            self._updateSettingsCache(self.aencoder, aencoder, 'acodecsettings')
             self.aencoder = aencoder
             changed = True
         if changed:
             self.emit("encoders-changed")
+
+    def _updateSettingsCache(self, current, new, attr):
+        self.factory_settings_cache[current] = getattr(self, attr)
+        setattr(self, attr, self.factory_settings_cache.get(new, {}))
 
     def getAudioEncoders(self):
         """ Returns the list of audio encoders compatible with the current
