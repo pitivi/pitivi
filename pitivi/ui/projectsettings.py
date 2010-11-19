@@ -25,7 +25,6 @@ Dialog box for project settings
 
 import gtk
 from pitivi.ui.glade import GladeWindow
-from pitivi.ui.exportsettingswidget import ExportSettingsWidget
 
 class ProjectSettingsDialog(GladeWindow):
     glade_file = "projectsettings.glade"
@@ -33,32 +32,12 @@ class ProjectSettingsDialog(GladeWindow):
     def __init__(self, parent, project):
         GladeWindow.__init__(self, parent)
         self.project = project
-        self.expwidget = ExportSettingsWidget(parent)
-        self.widgets["vbox1"].pack_start(self.expwidget)
-        self.expwidget.show()
-        self.expwidget.setSettings(self.project.getSettings().copy())
-        self._fillSettings()
 
-    def _fillSettings(self):
-        w = self.widgets
-        w["nameentry"].set_text(self.project.name)
-        w["descriptiontextview"].get_buffer().set_text(self.project.description)
 
     def updateSettings(self):
-        # apply selected settings to project
-        w = self.widgets
 
-        # Name/Description
-        self.project.name = w["nameentry"].get_text()
-        txtbuffer = w["descriptiontextview"].get_buffer()
-        self.project.description = txtbuffer.get_text(txtbuffer.get_start_iter(),
-                                                      txtbuffer.get_end_iter())
-        self.project.setSettings(self.expwidget.updateSettings())
 
     def _responseCb(self, unused_widget, response):
-        # if the response is gtk.RESPONSE_OK update the settings
-        # else destroy yourself !
-        self.hide()
         if response == gtk.RESPONSE_OK:
             self.updateSettings()
         self.destroy()
