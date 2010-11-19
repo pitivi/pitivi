@@ -3,6 +3,7 @@
 #       ui/projectsettings.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2010, Brandon Lewis <brandon.lewis@collabora.co.uk>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
