@@ -107,10 +107,26 @@ class ProjectSettingsDialog(GladeWindow):
                 self.frame_rate_fraction_widget),
             (self.frame_rate_fraction_widget, self._updateFraction, 
                 "value-changed", self.frame_rate_combo),
+            (self.dar_combo, None, "changed"),
+            (self.dar_fraction_widget, None, "value-changed"),
+            (self.par_combo, None, "changed"),
+            (self.par_fraction_widget, None, "value-changed"),
         )
         # keep framereate text field and combo in sync
         self.wg.add_bi_edge(self.frame_rate_combo,
-            self.frame_rate_fraction_widget)
+           self.frame_rate_fraction_widget)
+
+        # keep dar text field and combo in sync
+        self.wg.add_edge(self.dar_combo, self.dar_fraction_widget,
+            edge_func=self.updateDarFromCombo)
+        self.wg.add_edge(self.dar_fraction_widget, self.dar_combo,
+            edge_func=self.updateDarFromFractionWidget)
+
+        # keep par text field and combo in sync
+        self.wg.add_edge(self.par_combo, self.par_fraction_widget,
+            edge_func=self.updateParFromCombo)
+        self.wg.add_edge(self.par_fraction_widget, self.par_combo,
+            edge_func=self.updateParFromFractionWidget)
 
         self.updateUI()
 
@@ -119,6 +135,37 @@ class ProjectSettingsDialog(GladeWindow):
 
     def _updateCombo(self, unused, combo, fraction):
         set_combo_value(combo, fraction.getWidgetValue())
+
+    def getSAR(self):
+        width = int(self.width_spinbutton.get_value())
+        height = int(self.height_spinbutton.get_value())
+        return gst.Fraction(width, height)
+
+    def updateDarFromPar(self):
+        par = self.par_fraction_widget.getWidgetValue()
+        sar = self.getSAR()
+        self.dar_fraction_widget.setWidgetValue(sar * par)
+
+    def updateParFromDar(self):
+        dar = self.dar_fraction_widget.getWidgetValue()
+        sar = self.getSAR()
+        self.par_fraction_widget.setWidgetValue(dar * (1 / sar))
+
+    def updateDarFromCombo(self):
+        self.dar_fraction_widget.setWidgetValue(get_combo_value(
+            self.dar_combo))
+
+    def updateDarFromFractionWidget(self):
+        set_combo_value(self.dar_combo, 
+            self.dar_fraction_widget.getWidgetValue())
+
+    def updateParFromCombo(self):
+        self.par_fraction_widget.setWidgetValue(get_combo_value(
+            self.par_combo))
+
+    def updateParFromFractionWidget(self):
+        set_combo_value(self.par_combo, 
+            self.par_fraction_widget.getWidgetValue())
 
     def updateUI(self):
 
