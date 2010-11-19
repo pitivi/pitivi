@@ -111,7 +111,16 @@ class ProjectSettingsDialog(GladeWindow):
             (self.dar_fraction_widget, None, "value-changed"),
             (self.par_combo, None, "changed"),
             (self.par_fraction_widget, None, "value-changed"),
+            (self.width_spinbutton, None, "value-changed"),
+            (self.height_spinbutton, None, "value-changed"),
         )
+
+        # constrain width and height IFF constrain_sar_button is active
+        self.wg.add_edge(self.width_spinbutton, self.height_spinbutton,
+            self.constrained, self.updateHeight)
+        self.wg.add_edge(self.height_spinbutton, self.width_spinbutton,
+            self.constrained, self.updateWidth)
+
         # keep framereate text field and combo in sync
         self.wg.add_bi_edge(self.frame_rate_combo,
            self.frame_rate_fraction_widget)
@@ -128,7 +137,17 @@ class ProjectSettingsDialog(GladeWindow):
         self.wg.add_edge(self.par_fraction_widget, self.par_combo,
             edge_func=self.updateParFromFractionWidget)
 
+        # constrain DAR and PAR values. because the combo boxes are already
+        # linked, we only have to link the fraction widgets together.
+        self.wg.add_edge(self.par_fraction_widget, self.dar_fraction_widget,
+            edge_func=self.updateDarFromPar)
+        self.wg.add_edge(self.dar_fraction_widget, self.par_fraction_widget,
+            edge_func=self.updateParFromDar)
+
         self.updateUI()
+
+    def constrained(self):
+        return self.constrain_sar_button.props.active
 
     def _updateFraction(self, unused, fraction, combo):
         fraction.setWidgetValue(get_combo_value(combo))
@@ -140,6 +159,19 @@ class ProjectSettingsDialog(GladeWindow):
         width = int(self.width_spinbutton.get_value())
         height = int(self.height_spinbutton.get_value())
         return gst.Fraction(width, height)
+
+    def _constrainSarButtonToggledCb(self, button):
+        if button.props.active:
+            self.sar = self.getSAR()
+
+
+    def updateWidth(self):
+        height = int(self.height_spinbutton.get_value())
+        self.width_spinbutton.set_value(height * self.sar)
+
+    def updateHeight(self):
+        width = int(self.width_spinbutton.get_value())
+        self.height_spinbutton.set_value(width * (1 / self.sar))
 
     def updateDarFromPar(self):
         par = self.par_fraction_widget.getWidgetValue()
