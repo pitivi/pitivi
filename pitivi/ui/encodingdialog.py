@@ -34,6 +34,15 @@ from pitivi.log.loggable import Loggable
 from pitivi.ui.gstwidget import GstElementSettingsDialog
 from pitivi.ui.glade import GladeWindow
 from pitivi.actioner import Renderer
+from pitivi.ui.common import\
+    model,\
+    frame_rates,\
+    audio_rates,\
+    audio_depths,\
+    audio_channels,\
+    get_combo_value,\
+    set_combo_value
+
 import pango
 
 def ellipsize(combo):
@@ -67,6 +76,16 @@ class EncodingDialog(GladeWindow, Renderer):
 
 
     def _displaySettings(self):
+
+        # Video settings
+        self.frame_rate_combo.set_model(frame_rates)
+
+        # Audio settings
+        self.channels_combo.set_model(audio_channels)
+
+        self.sample_rate_combo.set_model(audio_rates)
+
+        self.sample_depth_combo.set_model(audio_depths)
 
 
     def updatePosition(self, fraction, text):
