@@ -173,3 +173,9 @@ def roundedrec(context,x,y,w,h,r = 10):
     context.curve_to(x,y,x,y,x+r,y)             # Curve to A
     return
 
+def model(columns, data):
+    ret = gtk.ListStore(*columns)
+    for datum in data:
+        ret.append(datum)
+    return ret
+
