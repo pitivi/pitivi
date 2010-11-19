@@ -181,6 +181,9 @@ class EncodingDialog(GladeWindow, Renderer):
             self.settings.getAudioEncoders()))
         self.audio_encoder_combo.set_active(0)
 
+    # TODO: selected-only changed
+
+    # TODO: draft quality changed
 
     def _widthSpinbuttonChangedCb(self, button):
         self._width = int(self.width_spinbutton.get_value())
