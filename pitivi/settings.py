@@ -596,6 +596,16 @@ class ExportSettings(Signallable, Loggable):
         if changed:
             self.emit("encoders-changed")
 
+    def getAudioEncoders(self):
+        """ Returns the list of audio encoders compatible with the current
+        muxer """
+        return self.aencoders[self.muxer]
+
+    def getVideoEncoders(self):
+        """ Returns the list of video encoders compatible with the current
+        muxer """
+        return self.vencoders[self.muxer]
+
 def export_settings_to_render_settings(export,
         have_video=True, have_audio=True):
     # Get the audio and video caps/encoder/settings
