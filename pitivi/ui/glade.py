@@ -171,6 +171,7 @@ class GladeWindow(object):
                 raise AssertionError("Two objects with same name (%s): %r %r"
                                      % (wname, self.widgets[wname], widget))
             self.widgets[wname] = widget
+            setattr(self, wname, widget)
 
         if parent:
             self.window.set_transient_for(parent)
