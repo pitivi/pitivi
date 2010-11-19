@@ -465,7 +465,7 @@ class ExportSettings(Signallable, Loggable):
         self.videowidth = 720
         self.videoheight = 576
         self.videorate = gst.Fraction(25, 1)
-        self.videopar = gst.Fraction(1, 1)
+        self.videopar = gst.Fraction(16, 15)
         self.audiochannels = 2
         self.audiorate = 44100
         self.audiodepth = 16
