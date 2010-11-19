@@ -112,6 +112,7 @@ class EncodingDialog(GladeWindow, Renderer):
         self.timestarted = 0
         self._width = 0
         self._height = 0
+
         self._displaySettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
