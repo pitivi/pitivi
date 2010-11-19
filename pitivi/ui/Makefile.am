@@ -11,10 +11,10 @@ ui_PYTHON =			\
 	dynamic.py		\
 	encodingdialog.py	\
 	encodingprogress.py	\
-	exportsettingswidget.py	\
 	filelisterrordialog.py	\
 	glade.py		\
 	gstwidget.py		\
+	linkwidget.py		\
 	mainwindow.py		\
 	netstream_managerdialog.py \
 	pathwalker.py		\
@@ -50,7 +50,6 @@ ui_DATA =				\
 	cam_capture.glade		\
 	encodingdialog.glade		\
 	encodingprogress.glade		\
-	exportsettingswidget.glade	\
 	filelisterrordialog.glade	\
 	mainwindow.xml			\
 	net_capture.glade		\
