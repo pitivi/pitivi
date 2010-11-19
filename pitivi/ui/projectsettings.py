@@ -28,6 +28,7 @@ import gst
 from gettext import gettext as _
 from pitivi.ui.glade import GladeWindow
 from pitivi.ui.dynamic import FractionWidget
+from pitivi.ui.ripple_update_group import RippleUpdateGroup
 from pitivi.ui.common import\
     model,\
     frame_rates,\
@@ -99,7 +100,25 @@ class ProjectSettingsDialog(GladeWindow):
         self.sample_rate_combo.set_model(audio_rates)
         self.sample_depth_combo.set_model(audio_depths)
 
+        # behavior
+
+        self.wg = RippleUpdateGroup(
+            (self.frame_rate_combo, self._updateCombo, "changed",
+                self.frame_rate_fraction_widget),
+            (self.frame_rate_fraction_widget, self._updateFraction, 
+                "value-changed", self.frame_rate_combo),
+        )
+        # keep framereate text field and combo in sync
+        self.wg.add_bi_edge(self.frame_rate_combo,
+            self.frame_rate_fraction_widget)
+
         self.updateUI()
+
+    def _updateFraction(self, unused, fraction, combo):
+        fraction.setWidgetValue(get_combo_value(combo))
+
+    def _updateCombo(self, unused, combo, fraction):
+        set_combo_value(combo, fraction.getWidgetValue())
 
     def updateUI(self):
 
