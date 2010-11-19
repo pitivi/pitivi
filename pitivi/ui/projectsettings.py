@@ -164,6 +164,12 @@ class ProjectSettingsDialog(GladeWindow):
         if button.props.active:
             self.sar = self.getSAR()
 
+    def _selectDarRadiobuttonToggledCb(self, button):
+        state = button.props.active
+        self.dar_fraction_widget.set_sensitive(state)
+        self.dar_combo.set_sensitive(state)
+        self.par_fraction_widget.set_sensitive(not state)
+        self.par_combo.set_sensitive(not state)
 
     def updateWidth(self):
         height = int(self.height_spinbutton.get_value())
