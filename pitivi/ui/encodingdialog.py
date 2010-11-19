@@ -110,6 +110,8 @@ class EncodingDialog(GladeWindow, Renderer):
         ellipsize(self.video_encoder_combo)
 
         self.timestarted = 0
+        self._width = 0
+        self._height = 0
         self._displaySettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
@@ -165,6 +167,13 @@ class EncodingDialog(GladeWindow, Renderer):
             self.settings.getAudioEncoders()))
         self.audio_encoder_combo.set_active(0)
 
+
+    def _widthSpinbuttonChangedCb(self, button):
+        self._width = int(self.width_spinbutton.get_value())
+        self._height = int(self.settings.heightForWidth(self._width))
+        self.height_label.set_text(_("x %d pixels") % self._height)
+
+        self.settings.setVideoProperties(width=self._width, height=self._height)
     def _videoSettingsButtonClickedCb(self, button):
         self._elementSettingsDialog(self.video_encoder_combo,
             'vcodecsettings')
