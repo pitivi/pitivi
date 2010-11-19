@@ -25,6 +25,7 @@ Dialog box for project settings
 
 import gtk
 from pitivi.ui.glade import GladeWindow
+from pitivi.ui.dynamic import FractionWidget
 
 class ProjectSettingsDialog(GladeWindow):
     glade_file = "projectsettings.glade"
@@ -33,6 +34,22 @@ class ProjectSettingsDialog(GladeWindow):
         GladeWindow.__init__(self, parent)
         self.project = project
 
+        # add custom widgets
+        self.dar_fraction_widget = FractionWidget()
+        self.video_properties_table.attach(self.dar_fraction_widget, 
+            0, 1, 6, 7, xoptions=gtk.EXPAND | gtk.FILL, yoptions=0)
+        self.dar_fraction_widget.show()
+
+        # add custom widgets
+        self.par_fraction_widget = FractionWidget()
+        self.video_properties_table.attach(self.par_fraction_widget, 
+            1, 2, 6, 7, xoptions=gtk.EXPAND | gtk.FILL, yoptions=0)
+        self.par_fraction_widget.show()
+
+        self.frame_rate_fraction_widget = FractionWidget()
+        self.video_properties_table.attach(self.frame_rate_fraction_widget,
+            1, 2, 2, 3, xoptions=gtk.EXPAND | gtk.FILL, yoptions=0)
+        self.frame_rate_fraction_widget.show()
 
     def updateSettings(self):
 
