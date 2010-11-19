@@ -110,7 +110,6 @@ class EncodingDialog(GladeWindow, Renderer):
         ellipsize(self.video_encoder_combo)
 
         self.timestarted = 0
-        self.containersettings = {}
         self._displaySettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
@@ -136,8 +135,6 @@ class EncodingDialog(GladeWindow, Renderer):
             self.settings.muxers))
 
         # Encoder/Muxer settings
-        self.containersettings = self.settings.containersettings
-
 
         # Summary
         self._updateSummary()
@@ -158,6 +155,15 @@ class EncodingDialog(GladeWindow, Renderer):
         self.settings.setEncoders(muxer=muxer)
         self.updateFilename(basename)
 
+        # update muxer-dependent video widgets
+        self.video_encoder_combo.set_model(factorylist(
+            self.settings.getVideoEncoders()))
+        self.video_encoder_combo.set_active(0)
+
+        # update muxer-dependent audio widgets
+        self.audio_encoder_combo.set_model(factorylist(
+            self.settings.getAudioEncoders()))
+        self.audio_encoder_combo.set_active(0)
 
     def _videoSettingsButtonClickedCb(self, button):
         self._elementSettingsDialog(self.video_encoder_combo,
