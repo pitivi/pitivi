@@ -242,7 +242,19 @@ class ProjectSettingsDialog(GladeWindow):
         self._selectDarRadiobuttonToggledCb(self.select_dar_radiobutton)
 
     def updateSettings(self):
+        width = int(self.width_spinbutton.get_value())
+        height = int(self.height_spinbutton.get_value())
+        par = self.par_fraction_widget.getWidgetValue()
+        frame_rate = self.frame_rate_fraction_widget.getWidgetValue()
 
+        channels = get_combo_value(self.channels_combo)
+        sample_rate = get_combo_value(self.sample_rate_combo)
+        sample_depth = get_combo_value(self.sample_depth_combo)
+
+        self.settings.setVideoProperties(width, height, frame_rate, par)
+        self.settings.setAudioProperties(channels, sample_rate, sample_depth)
+
+        self.project.setSettings(self.settings)
 
     def _responseCb(self, unused_widget, response):
         if response == gtk.RESPONSE_OK:
