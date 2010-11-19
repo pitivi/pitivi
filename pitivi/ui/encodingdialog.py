@@ -31,8 +31,15 @@ from gettext import gettext as _
 
 import pitivi.configure as configure
 from pitivi.log.loggable import Loggable
+from pitivi.ui.gstwidget import GstElementSettingsDialog
 from pitivi.ui.glade import GladeWindow
 from pitivi.actioner import Renderer
+import pango
+
+def ellipsize(combo):
+    cell_view = combo.get_children()[0]
+    cell_renderer = cell_view.get_cell_renderers()[0]
+    cell_renderer.props.ellipsize = pango.ELLIPSIZE_END
 
 class EncodingDialog(GladeWindow, Renderer):
     """ Encoding dialog box """
@@ -48,6 +55,10 @@ class EncodingDialog(GladeWindow, Renderer):
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
 
         Renderer.__init__(self, project, pipeline)
+
+        ellipsize(self.muxercombobox)
+        ellipsize(self.audio_encoder_combo)
+        ellipsize(self.video_encoder_combo)
 
         self.timestarted = 0
         self._displaySettings()
