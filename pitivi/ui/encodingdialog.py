@@ -43,6 +43,44 @@ from pitivi.ui.common import\
     get_combo_value,\
     set_combo_value
 
+def beautify_factoryname(factory):
+    # only replace lowercase versions of "format", "video", "audio"
+    # otherwise they might be part of a trademark name
+    words = ["Muxer", "muxer", "Encoder", "encoder",
+            "format", "video", "audio", "instead"]
+    name = factory.get_longname()
+    for word in words:
+        name = name.replace(word, "")
+    parts = name.split(" ")
+    ret = " ".join(p.strip() for p in parts).strip()
+
+    return ret
+
+def filter_recommended(muxers):
+    return [m for m in muxers if m.get_rank() > 0]
+
+def extension_for_muxer(muxer):
+    exts = {
+        "oggmux" : "ogm",
+        "avimux" : "avi",
+        "qtmux"  : "mov",
+        "mxfmux" : "mxf",
+        "matroskamux" : "mkv",
+    }
+
+    if muxer in exts:
+        return os.path.extsep + exts[muxer]
+    return ""
+
+def factorylist(factories):
+    """ Given a sequence of factories, returns a gtk.ListStore() 
+    of sorted, beautified factory names """
+
+    return model((str, object),
+        sorted(((beautify_factoryname(f), f) for f in
+            filter_recommended(factories)),
+                key = lambda x: x[0]))
+
 import pango
 
 def ellipsize(combo):
@@ -59,6 +97,7 @@ class EncodingDialog(GladeWindow, Renderer):
         GladeWindow.__init__(self)
 
         self.app = app
+        self.settings = project.getSettings()
 
         # UI widgets
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
@@ -86,6 +125,9 @@ class EncodingDialog(GladeWindow, Renderer):
         self.sample_rate_combo.set_model(audio_rates)
 
         self.sample_depth_combo.set_model(audio_depths)
+        # Muxer
+        self.muxercombobox.set_model(factorylist(
+            self.settings.muxers))
 
 
     def updatePosition(self, fraction, text):
