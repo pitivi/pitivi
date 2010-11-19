@@ -144,6 +144,20 @@ class ProjectSettingsDialog(GladeWindow):
         self.wg.add_edge(self.dar_fraction_widget, self.par_fraction_widget,
             edge_func=self.updateParFromDar)
 
+        # update PAR when width/height change and the DAR checkbutton is
+        # selected
+        self.wg.add_edge(self.width_spinbutton, self.par_fraction_widget,
+            predicate=self.darSelected, edge_func=self.updateParFromDar)
+        self.wg.add_edge(self.height_spinbutton, self.par_fraction_widget,
+            predicate=self.darSelected, edge_func=self.updateParFromDar)
+
+        # update DAR when width/height change and the PAR checkbutton is
+        # selected
+        self.wg.add_edge(self.width_spinbutton, self.dar_fraction_widget,
+            predicate=self.parSelected, edge_func=self.updateDarFromPar)
+        self.wg.add_edge(self.height_spinbutton, self.dar_fraction_widget,
+            predicate=self.parSelected, edge_func=self.updateDarFromPar)
+
         self.updateUI()
 
     def constrained(self):
