@@ -31,6 +31,7 @@ from gettext import gettext as _
 
 import pitivi.configure as configure
 from pitivi.log.loggable import Loggable
+from pitivi.ui.encodingprogress import EncodingProgressDialog
 from pitivi.ui.gstwidget import GstElementSettingsDialog
 from pitivi.ui.glade import GladeWindow
 from pitivi.actioner import Renderer
@@ -109,6 +110,7 @@ class EncodingDialog(GladeWindow, Renderer):
         ellipsize(self.video_encoder_combo)
 
         self.timestarted = 0
+        self.containersettings = {}
         self._displaySettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
@@ -133,6 +135,10 @@ class EncodingDialog(GladeWindow, Renderer):
         self.muxercombobox.set_model(factorylist(
             self.settings.muxers))
 
+        # Encoder/Muxer settings
+        self.containersettings = self.settings.containersettings
+
+
         # Summary
         self._updateSummary()
 
@@ -152,10 +158,29 @@ class EncodingDialog(GladeWindow, Renderer):
         self.settings.setEncoders(muxer=muxer)
         self.updateFilename(basename)
 
+
+    def _videoSettingsButtonClickedCb(self, button):
+        self._elementSettingsDialog(self.video_encoder_combo,
+            'vcodecsettings')
+
     def _updateSummary(self):
         text = self.settings.getVideoDescription() + "\n\n" +\
             self.settings.getAudioDescription()
         self.summary_label.props.label = text
+
+    def _audioSettingsButtonClickedCb(self, button):
+        self._elementSettingsDialog(self.audio_encoder_combo,
+            'acodecsettings')
+
+    def _elementSettingsDialog(self, combo, settings_attr):
+        factory = get_combo_value(combo)
+        settings = getattr(self.settings, settings_attr)
+        dialog = GstElementSettingsDialog(factory, settings)
+
+        response = dialog.run()
+        if response == gtk.RESPONSE_OK:
+            setattr(self.settings, settings_attr, dialog.getSettings())
+        dialog.destroy()
 
         self.startAction()
 
