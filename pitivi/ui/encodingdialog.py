@@ -125,18 +125,32 @@ class EncodingDialog(GladeWindow, Renderer):
 
         # Video settings
         self.frame_rate_combo.set_model(frame_rates)
+        set_combo_value(self.frame_rate_combo, self.settings.videorate)
+
+        self.width_spinbutton.set_value(self.settings.videowidth)
 
         # Audio settings
         self.channels_combo.set_model(audio_channels)
+        set_combo_value(self.channels_combo, self.settings.audiochannels)
 
         self.sample_rate_combo.set_model(audio_rates)
+        set_combo_value(self.sample_rate_combo, self.settings.audiorate)
 
         self.sample_depth_combo.set_model(audio_depths)
+        set_combo_value(self.sample_depth_combo, self.settings.audiodepth)
+
         # Muxer
         self.muxercombobox.set_model(factorylist(
             self.settings.muxers))
+        # note: this will trigger an update of the codec comboboxes
+        set_combo_value(self.muxercombobox, 
+            gst.element_factory_find(self.settings.muxer))
 
         # Encoder/Muxer settings
+
+        # File
+        self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
+        self.updateFilename(self.project.name)
 
         # Summary
         self._updateSummary()
