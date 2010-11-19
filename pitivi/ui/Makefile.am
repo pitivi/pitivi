@@ -10,6 +10,7 @@ ui_PYTHON =			\
 	dnd.py			\
 	dynamic.py		\
 	encodingdialog.py	\
+	encodingprogress.py	\
 	exportsettingswidget.py	\
 	filelisterrordialog.py	\
 	glade.py		\
@@ -48,6 +49,7 @@ ui_DATA =				\
 	elementsettingsdialog.glade	\
 	cam_capture.glade		\
 	encodingdialog.glade		\
+	encodingprogress.glade		\
 	exportsettingswidget.glade	\
 	filelisterrordialog.glade	\
 	mainwindow.xml			\
