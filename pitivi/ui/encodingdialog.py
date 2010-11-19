@@ -233,7 +233,24 @@ class EncodingDialog(GladeWindow, Renderer):
             setattr(self.settings, settings_attr, dialog.getSettings())
         dialog.destroy()
 
+    def _renderButtonClickedCb(self, unused_button):
+        self.outfile = self.filebutton.get_uri() + "/" + self.fileentry.get_text()
+        self.progress = EncodingProgressDialog(self.app, self)
+        self.progress.show()
         self.startAction()
+        self.progress.connect("cancel", self._cancelRender)
+        self.progress.connect("pause", self._pauseRender)
+        self.pipeline.connect("state-changed", self._stateChanged)
+
+    def _cancelRender(self, progress):
+        self.debug("aborting render")
+        self.shutdown()
+
+    def _pauseRender(self, progress):
+        self.pipeline.togglePlayback()
+
+    def _stateChanged(self, pipeline, state):
+        self.progress.setState(state)
 
     def _settingsButtonClickedCb(self, unused_button):
         dialog = ExportSettingsDialog(self.app, self.settings)
@@ -244,7 +261,12 @@ class EncodingDialog(GladeWindow, Renderer):
             self._displaySettings()
         dialog.destroy()
 
+    def updatePosition(self, fraction, text):
+        self.progress.updatePosition(fraction, text)
+
     def updateUIOnEOS(self):
+        self.progress.destroy()
+        self.pipeline.disconnect_by_function(self._stateChanged)
 
     def _cancelButtonClickedCb(self, unused_button):
         self.debug("Cancelling !")
