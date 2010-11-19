@@ -70,6 +70,9 @@ class ProjectSettingsDialog(GladeWindow):
         GladeWindow.__init__(self, parent)
         self.project = project
 
+        self.settings = project.getSettings()
+        self.project = project
+
         # add custom widgets
         self.dar_fraction_widget = FractionWidget()
         self.video_properties_table.attach(self.dar_fraction_widget, 
@@ -95,6 +98,25 @@ class ProjectSettingsDialog(GladeWindow):
         self.channels_combo.set_model(audio_channels)
         self.sample_rate_combo.set_model(audio_rates)
         self.sample_depth_combo.set_model(audio_depths)
+
+        self.updateUI()
+
+    def updateUI(self):
+
+        self.width_spinbutton.set_value(self.settings.videowidth)
+        self.height_spinbutton.set_value(self.settings.videoheight)
+
+        # video
+        self.frame_rate_fraction_widget.setWidgetValue(self.settings.videorate)
+        self.par_fraction_widget.setWidgetValue(self.settings.videopar)
+
+        # audio
+        set_combo_value(self.channels_combo, self.settings.audiochannels)
+        set_combo_value(self.sample_rate_combo, self.settings.audiorate)
+        set_combo_value(self.sample_depth_combo, self.settings.audiodepth)
+
+        self._selectDarRadiobuttonToggledCb(self.select_dar_radiobutton)
+
     def updateSettings(self):
 
 
