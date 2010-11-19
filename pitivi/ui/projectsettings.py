@@ -171,6 +171,12 @@ class ProjectSettingsDialog(GladeWindow):
         self.par_fraction_widget.set_sensitive(not state)
         self.par_combo.set_sensitive(not state)
 
+    def darSelected(self):
+        return self.select_dar_radiobutton.props.active
+
+    def parSelected(self):
+        return not self.darSelected()
+
     def updateWidth(self):
         height = int(self.height_spinbutton.get_value())
         self.width_spinbutton.set_value(height * self.sar)
