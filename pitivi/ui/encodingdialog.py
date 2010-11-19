@@ -188,9 +188,31 @@ class EncodingDialog(GladeWindow, Renderer):
         self.height_label.set_text(_("x %d pixels") % self._height)
 
         self.settings.setVideoProperties(width=self._width, height=self._height)
+
+    def _frameRateComboChangedCb(self, combo):
+        framerate = get_combo_value(combo)
+        self.settings.setVideoProperties(framerate=framerate)
+
+    def _videoEncoderComboChangedCb(self, combo):
+        name = get_combo_value(combo).get_name()
+        self.settings.setEncoders(vencoder=name)
+
     def _videoSettingsButtonClickedCb(self, button):
         self._elementSettingsDialog(self.video_encoder_combo,
             'vcodecsettings')
+
+    def _channelsComboChangedCb(self, combo):
+        self.settings.setAudioProperties(nbchanns=get_combo_value(combo))
+
+    def _sampleDepthComboChangedCb(self, combo):
+        self.settings.setAudioProperties(depth=get_combo_value(combo))
+
+    def _sampleRateComboChangedCb(self, combo):
+        self.settings.setAudioProperties(rate=get_combo_value(combo))
+
+    def _audioEncoderChangedComboCb(self, combo):
+        name = get_combo_value(combo).get_name()
+        self.settings.setEncoders(aencoder=name)
 
     def _updateSummary(self):
         text = self.settings.getVideoDescription() + "\n\n" +\
