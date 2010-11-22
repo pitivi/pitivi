@@ -89,7 +89,7 @@ def ellipsize(combo):
     cell_renderer = cell_view.get_cell_renderers()[0]
     cell_renderer.props.ellipsize = pango.ELLIPSIZE_END
 
-class EncodingDialog(GladeWindow, Renderer):
+class EncodingDialog(GladeWindow, Renderer, Loggable):
     """ Encoding dialog box """
     glade_file = "encodingdialog.glade"
 
