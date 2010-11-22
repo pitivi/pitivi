@@ -98,7 +98,11 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         GladeWindow.__init__(self)
 
         self.app = app
-        self.settings = project.getSettings()
+        self.project = project
+        # clone the current project settings
+        self.original_settings = self.project.getSettings()
+        self.settings = self.original_settings.copy()
+        self.project.setSettings(self.settings)
 
         # UI widgets
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
@@ -279,3 +283,7 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
     def _deleteEventCb(self, window, event):
         self.debug("delete event")
         self.destroy()
+
+    def destroy(self):
+        self.project.setSettings(self.original_settings)
+        GladeWindow.destroy(self)
