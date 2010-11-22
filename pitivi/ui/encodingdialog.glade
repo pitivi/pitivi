@@ -131,7 +131,6 @@
                 <child>
                   <widget class="GtkCheckButton" id="draft_button">
                     <property name="label" translatable="yes">Draft (no special effects, single pass)</property>
-                    <property name="visible">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="draw_indicator">True</property>
@@ -232,23 +231,23 @@
                         <property name="visible">True</property>
                         <property name="spacing">6</property>
                         <child>
-                          <widget class="GtkSpinButton" id="width_spinbutton">
+                          <widget class="GtkSpinButton" id="scale_spinbutton">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="adjustment">1280 320 1920 4 0 0</property>
+                            <property name="adjustment">1280 1 9999 1 1 0</property>
                             <property name="snap_to_ticks">True</property>
                             <property name="numeric">True</property>
                             <accessibility>
-                              <atkproperty name="AtkObject::accessible-name" translatable="yes">Width</atkproperty>
+                              <atkproperty name="AtkObject::accessible-name" translatable="yes">Scale</atkproperty>
                             </accessibility>
-                            <signal name="value_changed" handler="_widthSpinbuttonChangedCb"/>
+                            <signal name="value_changed" handler="_scaleSpinbuttonChangedCb"/>
                           </widget>
                           <packing>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <widget class="GtkLabel" id="height_label">
+                          <widget class="GtkLabel" id="resolution_label">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
                             <accessibility>
@@ -261,11 +260,12 @@
                           </packing>
                         </child>
                         <child>
-                          <widget class="GtkButton" id="button1">
+                          <widget class="GtkButton" id="project_settings_button">
                             <property name="label" translatable="yes">Edit Project Settings...</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <signal name="clicked" handler="_projectSettingsButtonClickedCb"/>
                           </widget>
                           <packing>
                             <property name="expand">False</property>
@@ -294,7 +294,7 @@
                       <widget class="GtkLabel" id="label3">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Resolution:</property>
+                        <property name="label" translatable="yes">Scale:</property>
                       </widget>
                       <packing>
                         <property name="x_options">GTK_FILL</property>
@@ -356,8 +356,8 @@ AAC</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <signal name="clicked" handler="_audioSettingsButtonClickedCb"/>
-                        </widget>
-                        <packing>
+                          </widget>
+                          <packing>
                             <property name="expand">False</property>
                             <property name="fill">False</property>
                             <property name="position">1</property>
