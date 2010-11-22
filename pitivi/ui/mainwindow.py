@@ -639,8 +639,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _revertToSavedProjectCb(self, unused_action):
         return self.app.projectManager.revertToSavedProject()
 
-
     def _projectSettingsCb(self, unused_action):
+        self.showProjectSettingsDialog()
+
+    def showProjectSettingsDialog(self):
         from projectsettings import ProjectSettingsDialog
         ProjectSettingsDialog(self, self.app.current).show()
 
