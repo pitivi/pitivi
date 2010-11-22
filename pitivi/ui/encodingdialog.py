@@ -201,6 +201,20 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.resolution_label.set_text("%d x %d" % (width, height))
         return width, height
 
+    def _projectSettingsButtonClickedCb(self, button):
+        from pitivi.ui.projectsettings import ProjectSettingsDialog
+        self.settings.setVideoProperties(width=self.width, height=self.height)
+        d = ProjectSettingsDialog(self.window, self.project)
+        d.window.connect("destroy", self._projectSettingsDestroyCb)
+        d.show()
+
+    def _projectSettingsDestroyCb(self, dialog):
+        self.width = self.settings.videowidth
+        self.height = self.settings.videoheight
+        width, height = self.updateResolution()
+        self.settings.setVideoProperties(width=width, height=height)
+        self._displaySettings()
+
     def _frameRateComboChangedCb(self, combo):
         framerate = get_combo_value(combo)
         self.settings.setVideoProperties(framerate=framerate)
