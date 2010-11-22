@@ -114,9 +114,6 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         ellipsize(self.video_encoder_combo)
 
         self.timestarted = 0
-        self._width = 0
-        self._height = 0
-
         self._displaySettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
@@ -125,14 +122,17 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
 
     def _settingsChanged(self, settings):
         self._updateSummary()
+        self.updateResolution()
 
     def _displaySettings(self):
+        self.width = self.settings.videowidth
+        self.height = self.settings.videoheight
 
         # Video settings
         self.frame_rate_combo.set_model(frame_rates)
         set_combo_value(self.frame_rate_combo, self.settings.videorate)
-
-        self.width_spinbutton.set_value(self.settings.videowidth)
+        self.scale_spinbutton.set_value(100)
+        self.updateResolution()
 
         # Audio settings
         self.channels_combo.set_model(audio_channels)
@@ -190,12 +190,16 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
 
     # TODO: draft quality changed
 
-    def _widthSpinbuttonChangedCb(self, button):
-        self._width = int(self.width_spinbutton.get_value())
-        self._height = int(self.settings.heightForWidth(self._width))
-        self.height_label.set_text(_("x %d pixels") % self._height)
+    def _scaleSpinbuttonChangedCb(self, button):
+        width, height = self.updateResolution()
+        self.settings.setVideoProperties(width=width, height=height)
 
-        self.settings.setVideoProperties(width=self._width, height=self._height)
+    def updateResolution(self):
+        scale = self.scale_spinbutton.get_value() / 100
+        width = int(self.width * scale)
+        height = int(self.height * scale)
+        self.resolution_label.set_text("%d x %d" % (width, height))
+        return width, height
 
     def _frameRateComboChangedCb(self, combo):
         framerate = get_combo_value(combo)
