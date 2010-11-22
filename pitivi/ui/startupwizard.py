@@ -61,6 +61,7 @@ class StartUpWizard(object):
         treeview.drag_source_unset()
 
     def _newProjectCb(self, unused_button4):
+        self.app.gui.showProjectSettingsDialog()
         self.quit()
 
     def _loadCb(self, unused_button3):
