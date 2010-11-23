@@ -71,6 +71,7 @@ class ClipProperties(gtk.VBox, Loggable):
 
         self.pack_start(self.info_bar_box, expand=False, fill=True)
         self.pack_end(self.effect_expander, expand=True, fill=True)
+
         self.info_bar_box.show()
         self.effect_expander.show()
         self.show()
@@ -201,6 +202,8 @@ class EffectProperties(gtk.HBox):
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
         self._vcontent.connect("notify", self._vcontentNotifyCb)
         self.treeview.set_headers_clickable(False)
+        self.app.connect("new-project-loaded",
+            self._newProjectLoadedCb)
 
         #self.connect('notify::expanded', self._expandedCb)
 
@@ -209,6 +212,11 @@ class EffectProperties(gtk.HBox):
         self._vcontent.pack1(self._table, resize=True, shrink=False)
         self._showInfoBar()
         self._vcontent.show()
+
+    def _newProjectLoadedCb(self, app, project):
+        self.clip_properties.project = project
+        self.selected_effects = self.timeline.selection.getSelectedTrackEffects()
+        self._updateAll()
 
     def _vcontentNotifyCb(self, paned, gparamspec):
         if gparamspec.name == 'position':
