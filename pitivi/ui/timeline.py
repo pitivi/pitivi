@@ -240,6 +240,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         zoomslider = gtk.HScale(self._zoomAdjustment)
         zoomslider.props.draw_value = False
         zoomslider.set_tooltip_text(_("Zoom Timeline"))
+        zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
         self.attach(zoomslider, 0, 1, 0, 1, yoptions=0, xoptions=gtk.FILL)
 
         # controls for tracks and layers
@@ -571,6 +572,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._updateZoom = True
 
     _scroll_pos_ns = 0
+
+    def _zoomSliderScrollCb(self, unused_widget, event):
+        value = self._zoomAdjustment.get_value()
+        if event.direction in [gtk.gdk.SCROLL_UP, gtk.gdk.SCROLL_RIGHT]:
+            self._zoomAdjustment.set_value(value + 1)
+        elif event.direction in [gtk.gdk.SCROLL_DOWN, gtk.gdk.SCROLL_LEFT]:
+            self._zoomAdjustment.set_value(value - 1)
 
     def zoomChanged(self):
         if self._updateZoom:
