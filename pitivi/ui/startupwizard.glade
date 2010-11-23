@@ -56,7 +56,7 @@
           <object class="GtkVButtonBox" id="vbuttonbox2">
             <property name="visible">True</property>
             <property name="spacing">6</property>
-            <property name="layout_style">end</property>
+            <property name="layout_style">start</property>
             <child>
               <object class="GtkButton" id="button1">
                 <property name="label">gtk-new</property>
@@ -100,31 +100,6 @@
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkHSeparator" id="hseparator1">
-                <property name="visible">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="button2">
-                <property name="label" translatable="yes">Skip</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="_quitWizardCb"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="pack_type">end</property>
-                <property name="position">4</property>
               </packing>
             </child>
           </object>
