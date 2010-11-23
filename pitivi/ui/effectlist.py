@@ -105,6 +105,7 @@ class EffectList(gtk.VBox, Loggable):
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.set_property("rules_hint", True)
         self.treeview.set_property("has_tooltip", True)
+        self.treeview.set_property("headers-clickable", False)
         tsel = self.treeview.get_selection()
         tsel.set_mode(gtk.SELECTION_SINGLE)
 

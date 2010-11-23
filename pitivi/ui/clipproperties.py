@@ -200,6 +200,7 @@ class EffectProperties(gtk.HBox):
         self.treeview.connect("drag-motion", self._dragMotionCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
         self._vcontent.connect("notify", self._vcontentNotifyCb)
+        self.treeview.set_headers_clickable(False)
 
         #self.connect('notify::expanded', self._expandedCb)
 

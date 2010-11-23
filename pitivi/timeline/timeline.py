@@ -541,7 +541,7 @@ class Selection(Signallable):
                 if isinstance(track, TrackEffect):
                     track_effects.append(track)
 
-        return set(track_effects)
+        return track_effects
 
     def __len__(self):
         return len(self.selected)
