@@ -12,6 +12,7 @@ pitividir = $(libdir)/pitivi/python/pitivi
 pitivi_PYTHON = \
 	__init__.py 	\
 	action.py	\
+	actioner.py	\
 	application.py	\
 	check.py 	\
 	configure.py 	\
