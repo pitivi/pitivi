@@ -189,8 +189,9 @@ def data_probe(pad, data, section=""):
 def linkDynamic(element, target):
 
     def pad_added(bin, pad, target):
-        if target.get_compatible_pad(pad):
-            element.link(target)
+        compatpad = target.get_compatible_pad(pad)
+        if compatpad:
+            pad.link_full(compatpad, gst.PAD_LINK_CHECK_NOTHING)
     element.connect("pad-added", pad_added, target)
 
 def element_make_many(*args):

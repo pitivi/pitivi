@@ -656,7 +656,8 @@ class Pipeline(Signallable, Loggable):
         stream_entry.tee_use_count += 1
         stream_entry.tee.set_state(STATE_PAUSED)
         self.debug("Linking pad %r to tee", pads[0])
-        srcpad.link(stream_entry.tee.get_pad("sink"))
+        srcpad.link_full(stream_entry.tee.get_pad("sink"),
+                         gst.PAD_LINK_CHECK_NOTHING)
 
         return stream_entry.tee
 
@@ -748,7 +749,7 @@ class Pipeline(Signallable, Loggable):
         stream_entry.queue.set_state(STATE_PAUSED)
 
         self.debug("Linking pad %r to queue", pads[0])
-        stream_entry.queue.get_pad("src").link(pads[0])
+        stream_entry.queue.get_pad("src").link_full(pads[0], gst.PAD_LINK_CHECK_NOTHING)
 
         stream_entry.queue_use_count += 1
         return stream_entry.queue

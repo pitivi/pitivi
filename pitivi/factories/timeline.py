@@ -138,7 +138,7 @@ class TimelineSourceFactory(SourceFactory):
             seek = FixSeekStart(track)
         self.bin.add(seek)
         seek.sync_state_with_parent()
-        pad.link(seek.get_pad('sink'))
+        pad.link_full(seek.get_pad('sink'), gst.PAD_LINK_CHECK_NOTHING)
         ghost = gst.GhostPad('src%d' % self.pad_num + str(id(pad)), seek.get_pad('src'))
 
         # FixSeekStart has template caps ANY. Setting seek.caps here we make it

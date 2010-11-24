@@ -60,8 +60,8 @@ class DefaultVideoSink(SinkFactory):
         autovideosink.set_state(gst.STATE_READY)
 
         bin.add(ffmpegcolorspace, videoscale, autovideosink)
-        ffmpegcolorspace.link(videoscale)
-        videoscale.link(autovideosink)
+        ffmpegcolorspace.link_pads_full("src", videoscale, "sink", gst.PAD_LINK_CHECK_NOTHING)
+        videoscale.link_pads_full("src", autovideosink, "sink", gst.PAD_LINK_CHECK_NOTHING)
         pad = ffmpegcolorspace.get_pad("sink")
         ghost = gst.GhostPad("sink", pad)
         bin.add_pad(ghost)
@@ -137,7 +137,7 @@ class DefaultAudioSink(SinkFactory):
         ares = gst.element_factory_make("audioresample", "audiobin-resample")
 
         audiosink.add(aconv, ares, autoaudiosink)
-        aconv.link(ares)
+        aconv.link_pads_full("src", ares, "sink", gst.PAD_LINK_CHECK_NOTHING)
         # FIXME : This is really bad
         # For starters... it means we can't edit/preview multi-channel audio
         # Also, most hardware cards do internal resampling much better
