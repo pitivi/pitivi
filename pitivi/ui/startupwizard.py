@@ -30,7 +30,10 @@ class StartUpWizard(object):
         self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
 
-        self.builder.get_object("window1").set_transient_for(self.app.gui)
+        self.window = self.builder.get_object("window1")
+        self.window.connect("key-press-event", self._keypressCb)
+        self.window.set_transient_for(self.app.gui)
+
         chooser = self.builder.get_object("recentchooser2")
         # FIXME: gtk creates a combo box with only one item, but there is no
         # simple way to hide it.
@@ -40,12 +43,16 @@ class StartUpWizard(object):
         chooser.add_filter(filtre)
 
     def _newProjectCb(self, unused_button4):
-        self.quit()
         self.app.gui.showProjectSettingsDialog()
+        self.quit()
 
     def _loadCb(self, unused_button3):
         self.data = unquote(self.data)
         self.app.projectManager.loadProject(self.data)
+
+    def _keypressCb(self, widget, event):
+        if event.keyval == gtk.keysyms.Escape:  # If the user presses "Esc"
+            self.quit()
 
     def _onBrowseButtonClickedCb(self, unused_button6):
         self.app.gui.openProject()
@@ -61,4 +68,4 @@ class StartUpWizard(object):
         self.quit()
 
     def quit(self):
-        self.builder.get_object("window1").destroy()
+        self.window.destroy()
