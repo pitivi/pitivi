@@ -313,7 +313,7 @@ class SourceFactory(ObjectFactory):
         except:
             dbin = gst.element_factory_make("decodebin")
         bin.add(src, dbin)
-        src.link(dbin)
+        src.link_pads_full("src", dbin, "sink", gst.PAD_LINK_CHECK_NOTHING)
 
         dbin.connect("new-decoded-pad", self._binNewDecodedPadCb, bin)
         dbin.connect("removed-decoded-pad", self._binRemovedDecodedPadCb, bin)
@@ -404,13 +404,13 @@ class SourceFactory(ObjectFactory):
             for element in [topbin.aconv, topbin.ares, topbin.arate, topbin.volume]:
                 element.sync_state_with_parent()
 
-            pad.link(topbin.aconv.get_pad("sink"))
+            pad.link_full(topbin.aconv.get_pad("sink"), gst.PAD_LINK_CHECK_NOTHING)
             topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
         elif hasattr(topbin, "alpha"):
             for element in [topbin.queue, topbin.scale, topbin.csp, topbin.alpha, topbin.capsfilter]:
                 element.sync_state_with_parent()
 
-            pad.link(topbin.queue.get_pad("sink"))
+            pad.link_full(topbin.queue.get_pad("sink"), gst.PAD_LINK_CHECK_NOTHING)
             topbin.ghostpad = gst.GhostPad("src", topbin.capsfilter.get_pad("src"))
         else:
             topbin.ghostpad = gst.GhostPad("src", pad)
@@ -496,14 +496,16 @@ class SourceFactory(ObjectFactory):
 
         video_bin.add(video_bin.queue, video_bin.scale, video_bin.csp,
                 video_bin.alpha, video_bin.capsfilter)
-        gst.element_link_many(video_bin.queue, video_bin.csp, video_bin.scale)
+        video_bin.queue.link_pads_full("src", video_bin.csp, "sink", gst.PAD_LINK_CHECK_NOTHING)
+        video_bin.csp.link_pads_full("src", video_bin.scale, "sink", gst.PAD_LINK_CHECK_NOTHING)
         if child_bin is not None:
             gst.element_link_many(video_bin.scale, video_bin.child,
-                    video_bin.alpha, video_bin.capsfilter)
+                    video_bin.alpha)
+            video_bin.alpha.link_pads_full("src", video_bin.capsfilter, "sink", gst.PAD_LINK_CHECK_NOTHING)
             video_bin.child.sync_state_with_parent()
         else:
-            gst.element_link_many(video_bin.scale,
-                    video_bin.alpha, video_bin.capsfilter)
+            video_bin.scale.link_pads_full("src", video_bin.alpha, "sink", gst.PAD_LINK_CHECK_NOTHING)
+            video_bin.alpha.link_pads_full("src", video_bin.capsfilter, "sink", gst.PAD_LINK_CHECK_NOTHING)
 
         video_bin.capsfilter.sync_state_with_parent()
         video_bin.scale.sync_state_with_parent()
@@ -525,7 +527,9 @@ class SourceFactory(ObjectFactory):
         #    gst.element_link_many(audio_bin.aconv, audio_bin.ares, audio_bin.arate, audio_bin.child, audio_bin.volume)
         #    audio_bin.child.sync_state_with_parent()
         #else:
-        gst.element_link_many(audio_bin.aconv, audio_bin.ares, audio_bin.arate, audio_bin.volume)
+        audio_bin.aconv.link_pads_full("src", audio_bin.ares, "sink", gst.PAD_LINK_CHECK_NOTHING)
+        audio_bin.ares.link_pads_full("src", audio_bin.arate, "sink", gst.PAD_LINK_CHECK_NOTHING)
+        audio_bin.arate.link_pads_full("src", audio_bin.volume, "sink", gst.PAD_LINK_CHECK_NOTHING)
 
         audio_bin.aconv.sync_state_with_parent()
         audio_bin.ares.sync_state_with_parent()

@@ -47,7 +47,7 @@ class VideoTestSourceFactory(SourceFactory):
 
         bin.add(videotestsrc)
         bin.add(capsfilter)
-        videotestsrc.link(capsfilter)
+        videotestsrc.link_pads_full("src", capsfilter, "sink", gst.PAD_LINK_CHECK_NOTHING)
 
         return bin
 
@@ -55,7 +55,7 @@ class VideoTestSourceFactory(SourceFactory):
         video_bin = SourceFactory._makeStreamBin(self, output_stream)
         capsfilter = video_bin.get_by_name("videotestsrc-capsfilter")
         queue = video_bin.get_by_name("internal-queue")
-        capsfilter.link(queue)
+        capsfilter.link_pads_full("src", queue, "sink", gst.PAD_LINK_CHECK_NOTHING)
 
         capsfilter = video_bin.get_by_name("capsfilter-proj-settings")
         target = capsfilter.get_pad("src")
@@ -91,7 +91,9 @@ class AudioTestSourceFactory(SourceFactory):
         capsfilter.props.caps = output_stream.caps.copy()
 
         bin.add(audiotestsrc, ares, aconv, capsfilter)
-        gst.element_link_many(audiotestsrc, aconv, ares, capsfilter)
+        audiotestsrc.link_pads_full("src", aconv, "sink", gst.PAD_LINK_CHECK_NOTHING)
+        aconv.link_pads_full("src", ares, "sink", gst.PAD_LINK_CHECK_NOTHING)
+        ares.link_pads_full("src", capsfilter, "sink", gst.PAD_LINK_CHECK_NOTHING)
 
         target = capsfilter.get_pad('src')
         ghost = gst.GhostPad('src', target)
