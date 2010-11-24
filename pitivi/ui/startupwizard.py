@@ -30,6 +30,7 @@ class StartUpWizard(object):
         self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
 
+        self.builder.get_object("window1").set_transient_for(self.app.gui)
         chooser = self.builder.get_object("recentchooser2")
         # FIXME: gtk creates a combo box with only one item, but there is no
         # simple way to hide it.
