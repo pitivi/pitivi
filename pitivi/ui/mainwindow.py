@@ -560,21 +560,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
                     if action.get_name() in action_names:
                         action.set_sensitive(sensitive)
 
-## PlayGround callback
-    def _windowizeViewer(self, button, pane):
-        # FIXME: the viewer can't seem to handle being unparented/reparented
-        pane.remove(self.viewer)
-        window = gtk.Window()
-        window.add(self.viewer)
-        window.connect("destroy", self._reparentViewer, pane)
-        window.resize(200, 200)
-        window.show_all()
-
-    def _reparentViewer(self, window, pane):
-        window.remove(self.viewer)
-        pane.pack2(self.viewer, resize=False, shrink=False)
-        self.viewer.show()
-
 ## Missing Plugin Support
 
     def _installPlugins(self, details, missingPluginsCallback):
