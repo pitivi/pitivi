@@ -87,6 +87,8 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.target = self.internal
         self.setAction(action)
         self.setPipeline(pipeline)
+        self.undock_action = undock_action
+        self.undock_action.connect("activate", self._toggleDocked)
 
     def setPipeline(self, pipeline):
         """
@@ -495,6 +497,11 @@ class PitiviViewer(gtk.VBox, Loggable):
             self._switch_output_window()
         self.external_window.hide()
 
+    def _toggleDocked(self, action):
+        if self.docked:
+            self.undock()
+        else:
+            self.dock()
 
     def seekRelative(self, time):
         try:
