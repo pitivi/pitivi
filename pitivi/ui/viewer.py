@@ -73,6 +73,8 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.seeker.connect('seek', self._seekerSeekCb)
         self.action = action
         self.pipeline = pipeline
+        self.sink = None
+        self.docked = True
 
         self.current_time = long(0)
         self._initial_seek = None
@@ -82,6 +84,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self._haveUI = False
 
         self._createUi()
+        self.target = self.internal
         self.setAction(action)
         self.setPipeline(pipeline)
 
@@ -178,7 +181,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         # not sure what we need to do ...
         self.action = action
         # FIXME: fix this properly?
-        self.drawingarea.action = action
+        self.internal.action = action
         dar = float(4/3)
         try:
             producer = action.producers[0]
@@ -212,14 +215,28 @@ class PitiviViewer(gtk.VBox, Loggable):
     def _getDefaultAction(self):
         return ViewAction()
 
+    def _externalWindowDeleteCb(self, window, event):
+        self.dock()
+        return True
+
     def _createUi(self):
         """ Creates the Viewer GUI """
         # drawing area
         self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.5, ratio=4.0/3.0,
                                       obey_child=False)
         self.pack_start(self.aframe, expand=True)
-        self.drawingarea = ViewerWidget(self.action)
-        self.aframe.add(self.drawingarea)
+        self.internal = ViewerWidget(self.action)
+        self.aframe.add(self.internal)
+
+        self.external_window = gtk.Window()
+        vbox = gtk.VBox()
+        vbox.set_spacing(6)
+        self.external_window.add(vbox)
+        self.external = ViewerWidget(self.action)
+        vbox.pack_start(self.external)
+        self.external_window.connect("delete-event",
+            self._externalWindowDeleteCb)
+        self.external_vbox = vbox
 
         # Slider
         self.posadjust = gtk.Adjustment()
@@ -285,6 +302,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             height = int(width / self.aframe.props.ratio)
             self.aframe.set_size_request(width , height)
         self.show_all()
+        self.buttons = boxalign
 
     _showingSlider = True
 
@@ -442,6 +460,42 @@ class PitiviViewer(gtk.VBox, Loggable):
             return
         self.pipeline.togglePlayback()
 
+    def undock(self):
+        if not self.docked:
+            return
+
+        self.docked = False
+        self.undock_action.set_label(_("Dock Viewer"))
+
+        self.remove(self.buttons)
+        self.remove(self.slider)
+        self.external_vbox.pack_end(self.slider, False, False)
+        self.external_vbox.pack_end(self.buttons, False, False)
+        self.external_window.show_all()
+        self.target = self.external
+        # if we are playing, switch output immediately
+        if self.sink:
+            self._switch_output_window()
+        self.hide()
+
+    def dock(self):
+        if self.docked:
+            return
+        self.docked = True
+        self.undock_action.set_label(_("Undock Viewer"))
+
+        self.target = self.internal
+        self.external_vbox.remove(self.slider)
+        self.external_vbox.remove(self.buttons)
+        self.pack_end(self.slider, False, False)
+        self.pack_end(self.buttons, False, False)
+        self.show()
+        # if we are playing, switch output immediately
+        if self.sink:
+            self._switch_output_window()
+        self.external_window.hide()
+
+
     def seekRelative(self, time):
         try:
             self.pipeline.seekRelative(time)
@@ -457,6 +511,8 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.playpause_button.setPause()
         elif state == int(gst.STATE_PAUSED):
             self.playpause_button.setPlay()
+        else:
+            self.sink = None
         self.currentState = state
 
     def _eosCb(self, unused_pipeline):
@@ -467,7 +523,14 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.log('message:%s / %s', message, name)
         if name == 'prepare-xwindow-id':
             sink = message.src
-            sink.set_xwindow_id(self.drawingarea.window_xid)
+            self.sink = sink
+            self._switch_output_window()
+
+    def _switch_output_window(self):
+        gtk.gdk.threads_enter()
+        self.sink.set_xwindow_id(self.target.window_xid)
+        self.sink.expose()
+        gtk.gdk.threads_leave()
 
 
 class ViewerWidget(gtk.DrawingArea, Loggable):
