@@ -516,6 +516,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.remove(self.slider)
         self.external_vbox.pack_end(self.slider, False, False)
         self.external_vbox.pack_end(self.buttons, False, False)
+        self.external_window.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_UTILITY)
         self.external_window.show()
         self.target = self.external
         # if we are playing, switch output immediately

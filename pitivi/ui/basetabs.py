@@ -68,6 +68,8 @@ class BaseTabs(gtk.Notebook):
         original_position = self.child_get_property(child, "position")
         label = self.child_get_property(child, "tab-label")
         window = gtk.Window()
+        window.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_UTILITY)
+
         window.set_title(label)
         window.set_default_size(600, 400)
         window.connect("destroy", self._detachedComponentWindowDestroyCb,
