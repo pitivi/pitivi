@@ -58,7 +58,7 @@ class PitiviViewer(gtk.VBox, Loggable):
     @type action: L{ViewAction}
     """
 
-    def __init__(self, action=None, pipeline=None):
+    def __init__(self, undock_action, action=None, pipeline=None):
         """
         @param action: Specific action to use instead of auto-created one
         @type action: L{ViewAction}
