@@ -463,7 +463,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.propertiestabs.show()
 
         # Viewer
-        self.viewer = PitiviViewer(self.undock_action)
+        self.viewer = PitiviViewer(instance, self.undock_action)
         # drag and drop
         self.viewer.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
                            [dnd.FILESOURCE_TUPLE, dnd.URI_TUPLE],
