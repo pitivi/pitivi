@@ -35,6 +35,29 @@ from pitivi.utils import time_to_string, Seeker
 from pitivi.log.loggable import Loggable
 from pitivi.pipeline import PipelineError
 from pitivi.ui.common import SPACING
+from pitivi.settings import GlobalSettings
+
+GlobalSettings.addConfigSection("viewer")
+GlobalSettings.addConfigOption("viewerDocked",
+    section="viewer",
+    key="docked",
+    default=True)
+GlobalSettings.addConfigOption("viewerWidth",
+    section="viewer",
+    key="width",
+    default=320)
+GlobalSettings.addConfigOption("viewerHeight",
+    section="viewer",
+    key="height",
+    default=240)
+GlobalSettings.addConfigOption("viewerX",
+    section="viewer",
+    key="x-pos",
+    default=0)
+GlobalSettings.addConfigOption("viewerY",
+    section="viewer",
+    key="y-pos",
+    default=0)
 
 class ViewerError(Exception):
     pass
