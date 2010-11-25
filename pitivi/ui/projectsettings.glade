@@ -593,7 +593,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="invisible_char">●</property>
-                    <property name="adjustment">2009 1900 2500 1 10 10</property>
+                    <property name="adjustment">1900 1900 2500 1 10 10</property>
                   </widget>
                   <packing>
                     <property name="left_attach">1</property>

@@ -26,6 +26,7 @@ Dialog box for project settings
 
 import gtk
 import gst
+from datetime import datetime
 from gettext import gettext as _
 from pitivi.ui.glade import GladeWindow
 from pitivi.ui.dynamic import FractionWidget
@@ -102,6 +103,11 @@ class ProjectSettingsDialog(GladeWindow):
         self.channels_combo.set_model(audio_channels)
         self.sample_rate_combo.set_model(audio_rates)
         self.sample_depth_combo.set_model(audio_depths)
+        
+        # set the project metadata
+        # FIXME: not saved in the project file
+        if self.year_spinbutton.get_value_as_int() == 1900:
+            self.year_spinbutton.set_value(datetime.now().year)
 
         # behavior
 
