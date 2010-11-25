@@ -249,6 +249,12 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.dock()
         return True
 
+    def _externalWindowConfigureCb(self, window, event):
+        self.settings.viewerWidth = event.width
+        self.settings.viewerHeight = event.height
+        self.settings.viewerX = event.x
+        self.settings.viewerY = event.y
+
     def _createUi(self):
         """ Creates the Viewer GUI """
         # drawing area
@@ -267,6 +273,8 @@ class PitiviViewer(gtk.VBox, Loggable):
         vbox.pack_start(self.external)
         self.external_window.connect("delete-event",
             self._externalWindowDeleteCb)
+        self.external_window.connect("configure-event",
+            self._externalWindowConfigureCb)
         self.external_vbox = vbox
         self.external_vbox.show_all()
 
@@ -497,6 +505,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             return
 
         self.docked = False
+        self.settings.viewerDocked = False
         self.undock_action.set_label(_("Dock Viewer"))
 
         self.remove(self.buttons)
@@ -518,6 +527,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         if self.docked:
             return
         self.docked = True
+        self.settings.viewerDocked = True
         self.undock_action.set_label(_("Undock Viewer"))
 
         self.target = self.internal
