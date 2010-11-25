@@ -338,6 +338,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.actiongroup = gtk.ActionGroup("mainwindow")
         self.actiongroup.add_actions(self.actions)
         self.actiongroup.add_toggle_actions(self.toggleactions)
+        self.undock_action = gtk.Action("WindowizeViewer", _("Undock Viewer"),
+            _("Put the viewer in a serparate window"), None)
+        self.actiongroup.add_action(self.undock_action)
 
         # deactivating non-functional actions
         # FIXME : reactivate them
@@ -367,7 +370,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 "ShowHideMainToolbar", "ShowHideTimelineToolbar", "Library",
                 "Timeline", "Viewer", "FrameForward", "FrameBackward",
                 "SecondForward", "SecondBackward", "EdgeForward",
-                "EdgeBackward", "Preferences"]:
+                "EdgeBackward", "Preferences", "WindowizeViewer"]:
                 action.set_sensitive(True)
             elif action_name in ["NewProject", "SaveProjectAs", "OpenProject"]:
                 if instance.settings.fileSupportEnabled:

@@ -21,6 +21,7 @@
       <placeholder name="Timeline" />
       <separator />
       <menuitem action="FullScreen" />
+      <menuitem action="WindowizeViewer" />
     </menu>
     <menu action="Library">
       <menuitem action="RenderProject" />
