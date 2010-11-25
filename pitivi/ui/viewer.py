@@ -230,6 +230,7 @@ class PitiviViewer(gtk.VBox, Loggable):
                                       obey_child=False)
         self.pack_start(self.aframe, expand=True)
         self.internal = ViewerWidget(self.action)
+        self.internal.show()
         self.aframe.add(self.internal)
 
         self.external_window = gtk.Window()
@@ -241,6 +242,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.external_window.connect("delete-event",
             self._externalWindowDeleteCb)
         self.external_vbox = vbox
+        self.external_vbox.show_all()
 
         # Slider
         self.posadjust = gtk.Adjustment()
@@ -475,7 +477,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.remove(self.slider)
         self.external_vbox.pack_end(self.slider, False, False)
         self.external_vbox.pack_end(self.buttons, False, False)
-        self.external_window.show_all()
+        self.external_window.show()
         self.target = self.external
         # if we are playing, switch output immediately
         if self.sink:

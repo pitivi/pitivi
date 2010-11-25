@@ -470,7 +470,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
                            gtk.gdk.ACTION_COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
-        self.viewer.show()
         self.viewer.connect("expose-event", self._exposeEventCb)
 
         # window and pane position defaults
