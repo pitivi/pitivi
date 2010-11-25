@@ -115,6 +115,9 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.undock_action = undock_action
         self.undock_action.connect("activate", self._toggleDocked)
 
+        if not self.settings.viewerDocked:
+            self.undock()
+
     def setPipeline(self, pipeline):
         """
         Set the Viewer to the given Pipeline.
@@ -506,6 +509,10 @@ class PitiviViewer(gtk.VBox, Loggable):
         if self.sink:
             self._switch_output_window()
         self.hide()
+        self.external_window.move(self.settings.viewerX,
+            self.settings.viewerY)
+        self.external_window.resize(self.settings.viewerWidth,
+            self.settings.viewerHeight)
 
     def dock(self):
         if self.docked:
