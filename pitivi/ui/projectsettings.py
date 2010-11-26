@@ -185,7 +185,14 @@ class ProjectSettingsDialog(GladeWindow):
         treeview.props.headers_visible = False
         model = mgr.getModel()
         treeview.set_model(model)
+        model.connect("row-inserted", self._newPresetCb,
+            column, renderer, treeview)
         renderer.connect("edited", self.presetNameEditedCb, mgr)
+
+    def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
+        treeview.set_cursor_on_cell(path, column, renderer, start_editing=True)
+        treeview.grab_focus()
+
     def constrained(self):
         return self.constrain_sar_button.props.active
 
@@ -211,6 +218,32 @@ class ProjectSettingsDialog(GladeWindow):
         self.par_fraction_widget.set_sensitive(not state)
         self.par_combo.set_sensitive(not state)
 
+    def _addAudioPresetButtonClickedCb(self, button):
+        self.audio_presets.addPreset(_("New Preset"), {
+            "channels" : get_combo_value(self.channels_combo),
+            "sample-rate" : get_combo_value(self.sample_rate_combo),
+            "depth" : get_combo_value(self.sample_depth_combo)
+        })
+
+    def _removeAudioPresetButtonClickedCb(self, button):
+        selection = self.audio_preset_treeview.get_selection()
+        model, iter_ = selection.get_selected()
+        if iter_:
+            self.audio_presets.removePreset(model[iter_][0])
+
+    def _addVideoPresetButtonClickedCb(self, button):
+        self.video_presets.addPreset(_("New Preset"), {
+            "width": int(self.width_spinbutton.get_value()),
+            "height": int(self.height_spinbutton.get_value()),
+            "frame-rate": self.frame_rate_fraction_widget.getWidgetValue(),
+            "par": self.par_fraction_widget.getWidgetValue(),
+        })
+
+    def _removeVideoPresetButtonClickedCb(self, button):
+        selection = self.video_preset_treeview.get_selection()
+        model, iter_ = selection.get_selected()
+        if iter_:
+            self.video_presets.removePreset(model[iter_][0])
     def darSelected(self):
         return self.select_dar_radiobutton.props.active
 
