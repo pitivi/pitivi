@@ -62,11 +62,33 @@ def filter_recommended(muxers):
 
 def extension_for_muxer(muxer):
     exts = {
-        "oggmux" : "ogm",
+        "asfmux": "asf",
         "avimux" : "avi",
-        "qtmux"  : "mov",
-        "mxfmux" : "mxf",
+        "ffmux_3g2": "3g2",
+        "ffmux_avm2": "avm2",
+        "ffmux_dvd": "vob",
+        "ffmux_flv": "flv",
+        "ffmux_ipod": "mp4",
+        "ffmux_mpeg": "mpeg",
+        "ffmux_mpegts": "mpeg",
+        "ffmux_psp": "mp4",
+        "ffmux_rm": "rm",
+        "ffmux_svcd": "mpeg",
+        "ffmux_swf": "swf",
+        "ffmux_vcd": "mpeg",
+        "ffmux_vob": "vob",
+        "flvmux": "flv",
+        "gppmux": "3gp",
         "matroskamux" : "mkv",
+        "mj2mux": "mj2",
+        "mp4mux": "mp4",
+        "mpegpsmux": "mpeg",
+        "mpegtsmux": "mpeg",
+        "mvemux": "mve",
+        "mxfmux" : "mxf",
+        "oggmux" : "ogv",
+        "qtmux"  : "mov",
+        "webmmux": "webm",
     }
 
     if muxer in exts:
