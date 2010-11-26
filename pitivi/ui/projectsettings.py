@@ -170,8 +170,44 @@ class ProjectSettingsDialog(GladeWindow):
         self.fillTreeview(self.audio_preset_treeview, self.audio_presets)
         self.fillTreeview(self.video_preset_treeview, self.video_presets)
 
+        self.bindSpinbutton(self.video_presets, "width", self.width_spinbutton)
+        self.bindSpinbutton(self.video_presets, "height",
+            self.height_spinbutton)
+        self.bindFractionWidget(self.video_presets, "frame-rate",
+            self.frame_rate_fraction_widget)
+        self.bindPar(self.video_presets)
+        self.bindCombo(self.audio_presets, "channels",
+            self.channels_combo)
+        self.bindCombo(self.audio_presets, "sample-rate",
+            self.sample_rate_combo)
+        self.bindCombo(self.audio_presets, "depth",
+            self.sample_depth_combo)
+
         self.updateUI()
 
+    def bindPar(self, mgr):
+
+        def updatePar(value):
+            # activate par so we can set the value
+            self.select_par_radiobutton.props.active = True
+            self.par_fraction_widget.setWidgetValue(value)
+
+        mgr.bindWidget("par", updatePar,
+            self.par_fraction_widget.getWidgetValue)
+
+    def bindFractionWidget(self, mgr, name, widget):
+        mgr.bindWidget(name, widget.setWidgetValue,
+            widget.getWidgetValue)
+
+    def bindCombo(self, mgr, name, widget):
+        mgr.bindWidget(name,
+            lambda x: set_combo_value(widget, x),
+            lambda : get_combo_value(widget))
+
+    def bindSpinbutton(self, mgr, name, widget):
+        mgr.bindWidget(name, 
+            lambda x: widget.set_value(float(x)),
+            lambda : int(widget.get_value()))
 
     def presetNameEditedCb(self, renderer, path, new_text, mgr):
         mgr.renamePreset(path, new_text)
@@ -231,6 +267,10 @@ class ProjectSettingsDialog(GladeWindow):
         if iter_:
             self.audio_presets.removePreset(model[iter_][0])
 
+    def _saveAudioPresetButtonClickedCb(self, button):
+        self.audio_presets.savePreset()
+        self.save_audio_preset_button.set_sensitive(False)
+
     def _addVideoPresetButtonClickedCb(self, button):
         self.video_presets.addPreset(_("New Preset"), {
             "width": int(self.width_spinbutton.get_value()),
@@ -244,6 +284,11 @@ class ProjectSettingsDialog(GladeWindow):
         model, iter_ = selection.get_selected()
         if iter_:
             self.video_presets.removePreset(model[iter_][0])
+
+    def _saveVideoPresetClickedCb(self, button):
+        self.video_presets.savePreset()
+        self.save_video_preset_button.set_sensitive(False)
+
     def darSelected(self):
         return self.select_dar_radiobutton.props.active
 
@@ -318,4 +363,6 @@ class ProjectSettingsDialog(GladeWindow):
     def _responseCb(self, unused_widget, response):
         if response == gtk.RESPONSE_OK:
             self.updateSettings()
+        self.audio_presets.save()
+        self.video_presets.save()
         self.destroy()
