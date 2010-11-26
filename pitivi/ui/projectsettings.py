@@ -26,6 +26,8 @@ Dialog box for project settings
 
 import gtk
 import gst
+import os
+from pwd import getpwuid
 from datetime import datetime
 from gettext import gettext as _
 from pitivi.ui.glade import GladeWindow
@@ -108,6 +110,9 @@ class ProjectSettingsDialog(GladeWindow):
         # FIXME: not saved in the project file
         if self.year_spinbutton.get_value_as_int() == 1900:
             self.year_spinbutton.set_value(datetime.now().year)
+        if self.author_entry.get_text() == "":
+            self.full_user_name = getpwuid(os.getuid()).pw_gecos.split(",")[0]
+            self.author_entry.set_text(self.full_user_name)
 
         # behavior
 

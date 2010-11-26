@@ -608,7 +608,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="invisible_char">●</property>
-                    <property name="text" translatable="yes">(auto-filled from gnome's settings)</property>
+                    <property name="text" translatable="yes"></property>
                   </widget>
                   <packing>
                     <property name="left_attach">1</property>
