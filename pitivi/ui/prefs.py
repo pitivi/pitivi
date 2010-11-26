@@ -96,7 +96,7 @@ class PreferencesDialog(gtk.Window):
         # preferences content region
         self.contents = gtk.VBox()
         scrolled = gtk.ScrolledWindow()
-        scrolled.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scrolled.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         scrolled.add_with_viewport(self.contents)
         pane.pack2(scrolled)
         scrolled.show()
