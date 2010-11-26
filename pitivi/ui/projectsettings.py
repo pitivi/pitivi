@@ -39,6 +39,8 @@ from pitivi.ui.common import\
     get_combo_value,\
     set_combo_value
 
+from pitivi.ui.preset import AudioPresetManager, VideoPresetManager
+
 # FIXME: are we sure the following tables correct?
 
 pixel_aspect_ratios = model((str, object), (
@@ -159,8 +161,26 @@ class ProjectSettingsDialog(GladeWindow):
         self.wg.add_edge(self.height_spinbutton, self.dar_fraction_widget,
             predicate=self.parSelected, edge_func=self.updateDarFromPar)
 
+        # presets
+        self.audio_presets = AudioPresetManager()
+        self.audio_presets.load()
+        self.video_presets = VideoPresetManager()
+        self.video_presets.load()
+
+        self.fillTreeview(self.audio_preset_treeview, self.audio_presets)
+        self.fillTreeview(self.video_preset_treeview, self.video_presets)
+
         self.updateUI()
 
+
+    def fillTreeview(self, treeview, mgr):
+        renderer = gtk.CellRendererText()
+        renderer.props.editable = True
+        column = gtk.TreeViewColumn("Preset", renderer, text=0)
+        treeview.append_column(column)
+        treeview.props.headers_visible = False
+        model = mgr.getModel()
+        treeview.set_model(model)
     def constrained(self):
         return self.constrain_sar_button.props.active
 
