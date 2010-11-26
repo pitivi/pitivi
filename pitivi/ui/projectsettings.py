@@ -116,6 +116,11 @@ class ProjectSettingsDialog(GladeWindow):
             (self.par_fraction_widget, None, "value-changed"),
             (self.width_spinbutton, None, "value-changed"),
             (self.height_spinbutton, None, "value-changed"),
+            (self.save_audio_preset_button, self._updateAudioSaveButton),
+            (self.save_video_preset_button, self._updateVideoSaveButton),
+            (self.channels_combo,),
+            (self.sample_rate_combo,),
+            (self.sample_depth_combo,),
         )
 
         # constrain width and height IFF constrain_sar_button is active
@@ -183,6 +188,22 @@ class ProjectSettingsDialog(GladeWindow):
         self.bindCombo(self.audio_presets, "depth",
             self.sample_depth_combo)
 
+        self.wg.add_edge(self.par_fraction_widget,
+            self.save_video_preset_button)
+        self.wg.add_edge(self.frame_rate_fraction_widget,
+            self.save_video_preset_button)
+        self.wg.add_edge(self.width_spinbutton,
+            self.save_video_preset_button)
+        self.wg.add_edge(self.height_spinbutton,
+            self.save_video_preset_button)
+
+        self.wg.add_edge(self.channels_combo,
+            self.save_audio_preset_button)
+        self.wg.add_edge(self.sample_rate_combo,
+            self.save_audio_preset_button)
+        self.wg.add_edge(self.sample_depth_combo,
+            self.save_audio_preset_button)
+
         self.updateUI()
 
     def bindPar(self, mgr):
@@ -224,10 +245,24 @@ class ProjectSettingsDialog(GladeWindow):
         model.connect("row-inserted", self._newPresetCb,
             column, renderer, treeview)
         renderer.connect("edited", self.presetNameEditedCb, mgr)
+        treeview.get_selection().connect("changed", self._presetChangedCb,
+            mgr)
 
     def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
         treeview.set_cursor_on_cell(path, column, renderer, start_editing=True)
         treeview.grab_focus()
+
+    def _presetChangedCb(self, selection, mgr):
+        model, iter_ = selection.get_selected()
+        if iter_:
+            preset = model[iter_][0]
+        else:
+            preset = None
+        mgr.restorePreset(preset)
+        if mgr == self.audio_presets:
+            self._updateAudioSaveButton(None, self.save_audio_preset_button)
+        else:
+            self._updateVideoSaveButton(None, self.save_video_preset_button)
 
     def constrained(self):
         return self.constrain_sar_button.props.active
@@ -288,6 +323,12 @@ class ProjectSettingsDialog(GladeWindow):
     def _saveVideoPresetClickedCb(self, button):
         self.video_presets.savePreset()
         self.save_video_preset_button.set_sensitive(False)
+
+    def _updateAudioSaveButton(self, unused_in, button):
+        button.set_sensitive(self.audio_presets.changed())
+
+    def _updateVideoSaveButton(self, unused_in, button):
+        button.set_sensitive(self.video_presets.changed())
 
     def darSelected(self):
         return self.select_dar_radiobutton.props.active
