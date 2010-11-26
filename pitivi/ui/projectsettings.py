@@ -173,6 +173,10 @@ class ProjectSettingsDialog(GladeWindow):
         self.updateUI()
 
 
+    def presetNameEditedCb(self, renderer, path, new_text, mgr):
+        mgr.renamePreset(path, new_text)
+        mgr.cur_preset = new_text
+
     def fillTreeview(self, treeview, mgr):
         renderer = gtk.CellRendererText()
         renderer.props.editable = True
@@ -181,6 +185,7 @@ class ProjectSettingsDialog(GladeWindow):
         treeview.props.headers_visible = False
         model = mgr.getModel()
         treeview.set_model(model)
+        renderer.connect("edited", self.presetNameEditedCb, mgr)
     def constrained(self):
         return self.constrain_sar_button.props.active
 
