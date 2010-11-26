@@ -261,8 +261,10 @@ class ProjectSettingsDialog(GladeWindow):
         mgr.restorePreset(preset)
         if mgr == self.audio_presets:
             self._updateAudioSaveButton(None, self.save_audio_preset_button)
+            self.remove_audio_preset_button.set_sensitive(bool(preset))
         else:
             self._updateVideoSaveButton(None, self.save_video_preset_button)
+            self.remove_video_preset_button.set_sensitive(bool(preset))
 
     def constrained(self):
         return self.constrain_sar_button.props.active
