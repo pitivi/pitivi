@@ -221,6 +221,8 @@ class SourceList(gtk.VBox, Loggable):
         self.iconview.connect("button-press-event", self._iconViewButtonPressEventCb)
         self.iconview.connect("selection-changed", self._viewSelectionChangedCb)
         self.iconview.set_orientation(gtk.ORIENTATION_VERTICAL)
+        self.iconview.set_property("has_tooltip", True)
+        self.iconview.set_tooltip_column(COL_INFOTEXT)
         self.iconview.set_text_column(COL_SHORT_TEXT)
         self.iconview.set_pixbuf_column(COL_ICON_LARGE)
         self.iconview.set_selection_mode(gtk.SELECTION_MULTIPLE)
