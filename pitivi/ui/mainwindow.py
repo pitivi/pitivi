@@ -62,6 +62,7 @@ from pitivi.ui.sourcelist import SourceList
 from pitivi.ui.effectlist import EffectList
 from pitivi.ui.clipproperties import ClipProperties
 from pitivi.ui.common import beautify_factory
+from pitivi.ui.common import SPACING
 from pitivi.utils import beautify_length
 from pitivi.ui.zoominterface import Zoomable
 
@@ -854,25 +855,23 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 "changes will be lost")
 
         # put the text in a vbox
-        vbox = gtk.VBox(False, 12)
+        vbox = gtk.VBox(False, SPACING*2)
         vbox.pack_start(primary, expand=True, fill=True)
         vbox.pack_start(secondary, expand=True, fill=True)
 
         # make the [[image] text] hbox
         image = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
                gtk.ICON_SIZE_DIALOG)
-        hbox = gtk.HBox(False, 12)
+        hbox = gtk.HBox(False, SPACING*2)
         hbox.pack_start(image, expand=False)
         hbox.pack_start(vbox, expand=True, fill=True)
         action_area = dialog.get_action_area()
-        # FIXME: find out where this "6" comes from. It's needed to align our
-        # hbox with the action area button box
-        hbox.set_border_width(6)
+        hbox.set_border_width(SPACING)
 
         # stuff the hbox in the dialog
         content_area = dialog.get_content_area()
         content_area.pack_start(hbox, expand=True, fill=True)
-        content_area.set_spacing(14)
+        content_area.set_spacing(SPACING*2)
         hbox.show_all()
 
         response = dialog.run()
@@ -942,8 +941,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
             gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         dialog.set_icon_name("pitivi")
-        dialog.set_border_width(12)
-        dialog.get_content_area().set_spacing(6)
+        dialog.set_border_width(SPACING*2)
+        dialog.get_content_area().set_spacing(SPACING)
 
         text = _("The following file has moved, please tell PiTiVi where to find it.") + \
             "\n\n" + beautify_factory(factory) + "\n" + \
