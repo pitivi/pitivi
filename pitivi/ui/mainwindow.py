@@ -63,6 +63,7 @@ from pitivi.ui.effectlist import EffectList
 from pitivi.ui.clipproperties import ClipProperties
 from pitivi.ui.common import beautify_factory
 from pitivi.ui.common import SPACING
+from pitivi.ui.common import factory_name
 from pitivi.utils import beautify_length
 from pitivi.ui.zoominterface import Zoomable
 
@@ -947,9 +948,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.set_border_width(SPACING*2)
         dialog.get_content_area().set_spacing(SPACING)
 
-        text = _("The following file has moved, please tell PiTiVi where to find it.") + \
-            "\n\n" + beautify_factory(factory) + "\n" + \
-            "<b>%s</b>" % _("Duration:") + beautify_length(factory.duration)
+        text = _('The following file has moved: "<b>%s</b>" (duration: %s)\
+                \nPlease specify its new location:' \
+                % (factory_name(factory), beautify_length(factory.duration)))
+        # TODO: display the filesize to help the user identify the file
 
         label = gtk.Label()
         label.set_markup(text)
