@@ -969,13 +969,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
         response = dialog.run()
 
         if response == gtk.RESPONSE_OK:
-            self.log("User chose a URI to save project to")
+            self.log("User chose a new URI for the missing file")
             new = chooser.get_uri()
             if new:
                 formatter.addMapping(uri, unquote(new))
                 self._missingUriOnLoading = True
         else:
-            self.log("User didn't choose a URI to save project to")
+            self.log("User didn't choose a URI for the missing file")
             # FIXME: not calling addMapping doesn't keep the formatter from
             # re-emitting the same signal. How do we get out of this
             # situation?
