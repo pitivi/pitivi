@@ -27,6 +27,7 @@ import sys
 import gobject
 import gst, bisect
 import os
+import struct
 from pitivi.signalinterface import Signallable
 import pitivi.log.log as log
 from gettext import ngettext
@@ -498,3 +499,11 @@ def profile(func, profiler_filename="result.prof"):
 
 def formatPercent(value):
     return "%3d%%" % (value * 100)
+
+
+native_endianness = struct.pack('=I', 0x34333231)
+
+big_to_cairo_alpha_mask = struct.unpack('=i', '\xFF\x00\x00\x00')[0]
+big_to_cairo_red_mask = struct.unpack('=i', '\x00\xFF\x00\x00')[0]
+big_to_cairo_green_mask = struct.unpack('=i', '\x00\x00\xFF\x00')[0]
+big_to_cairo_blue_mask = struct.unpack('=i', '\x00\x00\x00\xFF')[0]

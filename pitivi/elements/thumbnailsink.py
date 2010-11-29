@@ -26,6 +26,7 @@ import gobject
 import gst
 import cairo
 import array
+from pitivi.utils import big_to_cairo_alpha_mask, big_to_cairo_red_mask, big_to_cairo_green_mask, big_to_cairo_blue_mask
 
 class CairoSurfaceThumbnailSink(gst.BaseSink):
     """
@@ -47,13 +48,17 @@ class CairoSurfaceThumbnailSink(gst.BaseSink):
                          gst.Caps("video/x-raw-rgb,"
                                   "bpp = (int) 32, depth = (int) 32,"
                                   "endianness = (int) BIG_ENDIAN,"
-                                  "blue_mask = (int)  0xFF000000, "
-                                  "green_mask = (int) 0x00FF0000, "
-                                  "red_mask = (int)   0x0000FF00, "
-                                  "alpha_mask = (int) 0x000000FF, "
+                                  "alpha_mask = (int) %i, "
+                                  "red_mask = (int)   %i, "
+                                  "green_mask = (int) %i, "
+                                  "blue_mask = (int)  %i, "
                                   "width = (int) [ 1, max ], "
                                   "height = (int) [ 1, max ], "
-                                  "framerate = (fraction) [ 0, max ]"))
+                                  "framerate = (fraction) [ 0, max ]"
+                                  % (big_to_cairo_alpha_mask,
+                                     big_to_cairo_red_mask,
+                                     big_to_cairo_green_mask,
+                                     big_to_cairo_blue_mask)))
         )
 
     def __init__(self):
@@ -74,7 +79,7 @@ class CairoSurfaceThumbnailSink(gst.BaseSink):
     def do_render(self, buf):
         self.log("buffer %s %d" % (gst.TIME_ARGS(buf.timestamp),
                                    len(buf.data)))
-        b = array.array("B")
+        b = array.array("b")
         b.fromstring(buf)
         pixb = cairo.ImageSurface.create_for_data(b,
             cairo.FORMAT_ARGB32,

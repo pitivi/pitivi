@@ -25,6 +25,7 @@ Audio and Video mixers
 
 import gobject
 import gst
+from pitivi.utils import native_endianness
 
 from pitivi.signalinterface import Signallable
 
@@ -51,7 +52,7 @@ class SmartAdderBin(gst.Bin):
         self.adder = gst.element_factory_make("adder", "real-adder")
         # FIXME : USE THE PROJECT SETTINGS FOR THESE CAPS !
         csp = gst.element_factory_make("capsfilter")
-        csp.props.caps = gst.Caps("audio/x-raw-int,depth=32,width=32,signed=True,rate=44100,channels=2,endianness=1234")
+        csp.props.caps = gst.Caps("audio/x-raw-int,depth=32,width=32,signed=True,rate=44100,channels=2,endianness=%s" % native_endianness)
         self.add(self.adder, csp)
         self.adder.link_pads_full("src", csp, "sink", gst.PAD_LINK_CHECK_NOTHING)
         srcpad = gst.GhostPad("src", csp.get_pad("src"))

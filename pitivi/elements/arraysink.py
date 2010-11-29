@@ -27,6 +27,7 @@ gobject.threads_init()
 import gst
 import gtk
 import array
+from pitivi.utils import native_endianness
 
 class ArraySink(gst.BaseSink):
 
@@ -35,9 +36,10 @@ class ArraySink(gst.BaseSink):
     """
     caps = gst.Caps(
         "audio/x-raw-float, width=(int) 32, "
-        "endianness = (int) LITTLE_ENDIAN, "
+        "endianness = (int) %s, "
         "channels = (int) 1,"
         "rate = (int) [1, 96000]"
+        % native_endianness
     )
 
     __gsttemplates__ = (
