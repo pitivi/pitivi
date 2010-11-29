@@ -198,6 +198,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._launchWizard()
         self.manager = RecentManager()
         self._zoom_duration_changed = False
+        self._missingUriOnLoading = False
 
         self.app.projectManager.connect("new-project-loading",
                 self._projectManagerNewProjectLoadingCb)
@@ -788,6 +789,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.render_button.set_sensitive(can_render)
         self._syncDoUndo(self.app.action_log)
 
+        if self._missingUriOnLoading:
+            self.app.current.setModificationState(True)
+            self.actiongroup.get_action("SaveProject").set_sensitive(True)
+            self._missingUriOnLoading = False
+
         if project.timeline.duration != 0:
             self._setBestZoomRatio()
         else:
@@ -973,6 +979,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             new = chooser.get_uri()
             if new:
                 formatter.addMapping(uri, unquote(new))
+                self._missingUriOnLoading = True
         else:
             self.log("User didn't choose a URI to save project to")
             # FIXME: not calling addMapping doesn't keep the formatter from
