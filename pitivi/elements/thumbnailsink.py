@@ -82,7 +82,11 @@ class CairoSurfaceThumbnailSink(gst.BaseSink):
         b = array.array("b")
         b.fromstring(buf)
         pixb = cairo.ImageSurface.create_for_data(b,
-            cairo.FORMAT_ARGB32,
+            # We don't use FORMAT_ARGB32 because Cairo uses premultiplied
+            # alpha, and gstreamer does not.  Discarding the alpha channel
+            # is not ideal, but the alternative would be to compute the
+            # conversion in python (slow!).
+            cairo.FORMAT_RGB24,
             self.width,
             self.height,
             self.width * 4)
