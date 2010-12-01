@@ -58,6 +58,7 @@ PREVFRAME = _("Move to the previous keyframe")
 NEXTFRAME = _("Move to the next keyframe")
 ZOOM_IN =  _("Zoom In")
 ZOOM_OUT =  _("Zoom Out")
+ZOOM_FIT = _("Zoom Fit")
 UNLINK = _("Break links between clips")
 LINK = _("Link together arbitrary clips")
 UNGROUP = _("Ungroup clips")
@@ -72,6 +73,7 @@ ui = '''
             <placeholder name="Timeline">
                 <menuitem action="ZoomIn" />
                 <menuitem action="ZoomOut" />
+                <menuitem action="ZoomFit" />
             </placeholder>
         </menu>
         <menu action="Timeline">
@@ -234,7 +236,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         zoom_controls_hbox = gtk.HBox()
         zoom_best_fit_button = gtk.Button(_("Zoom"))
         zoom_best_fit_button.set_relief(gtk.RELIEF_NONE)
-        zoom_best_fit_button.set_tooltip_text(_("Zoom fit"))
+        zoom_best_fit_button.set_tooltip_text(ZOOM_FIT)
         zoom_best_fit_button.set_image(gtk.image_new_from_stock(gtk.STOCK_ZOOM_FIT, gtk.ICON_SIZE_BUTTON))
         zoom_best_fit_button.connect("clicked", self._zoomFitCb)
         zoom_controls_hbox.pack_start(zoom_best_fit_button)
@@ -298,6 +300,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 self._zoomInCb),
             ("ZoomOut", gtk.STOCK_ZOOM_OUT, None, "<Control>minus", ZOOM_OUT,
                 self._zoomOutCb),
+            ("ZoomFit", gtk.STOCK_ZOOM_FIT, None, None, ZOOM_FIT,
+                self._zoomFitCb),
 
             # actions for adding additional accelerators
             ("ControlEqualAccel", gtk.STOCK_ZOOM_IN, None, "<Control>equal", ZOOM_IN,
