@@ -261,7 +261,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         controlwindow.add(self._controls)
         controlwindow.set_size_request(-1, 1)
         controlwindow.set_shadow_type(gtk.SHADOW_OUT)
-        self.attach(controlwindow, 0, 1, 1, 2, xoptions=0)
+        self.attach(controlwindow, 0, 1, 1, 2, xoptions=gtk.FILL)
 
         # timeline ruler
         self.ruler = ruler.ScaleRuler(self.app, self.hadj)
