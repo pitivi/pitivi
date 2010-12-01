@@ -230,6 +230,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.hadj = gtk.Adjustment()
         self.vadj = gtk.Adjustment()
 
+        # zooming slider's "zoom fit" button
+        zoom_controls_hbox = gtk.HBox()
+        zoom_best_fit_button = gtk.Button(_("Zoom"))
+        zoom_best_fit_button.set_relief(gtk.RELIEF_NONE)
+        zoom_best_fit_button.set_tooltip_text(_("Zoom fit"))
+        zoom_best_fit_button.set_image(gtk.image_new_from_stock(gtk.STOCK_ZOOM_FIT, gtk.ICON_SIZE_BUTTON))
+        zoom_best_fit_button.connect("clicked", self._zoomFitCb)
+        zoom_controls_hbox.pack_start(zoom_best_fit_button)
         # zooming slider
         self._zoomAdjustment = gtk.Adjustment()
         self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
@@ -241,7 +249,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         zoomslider.props.draw_value = False
         zoomslider.set_tooltip_text(_("Zoom Timeline"))
         zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
-        self.attach(zoomslider, 0, 1, 0, 1, yoptions=0, xoptions=gtk.FILL)
+        zoom_controls_hbox.pack_start(zoomslider)
+        self.attach(zoom_controls_hbox, 0, 1, 0, 1, yoptions=0, xoptions=gtk.FILL)
 
         # controls for tracks and layers
         self._controls = TimelineControls()
@@ -736,6 +745,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def hide(self):
         self.actiongroup.set_visible(False)
         gtk.Vbox.hide(self)
+
+    def _zoomFitCb(self, unused_action):
+        pass
 
     def _zoomInCb(self, unused_action):
         Zoomable.zoomIn()
