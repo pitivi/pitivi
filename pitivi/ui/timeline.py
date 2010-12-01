@@ -249,6 +249,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         zoomslider.props.draw_value = False
         zoomslider.set_tooltip_text(_("Zoom Timeline"))
         zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
+        zoomslider.set_size_request(100, 0) # At least 100px wide for precision
         zoom_controls_hbox.pack_start(zoomslider)
         self.attach(zoom_controls_hbox, 0, 1, 0, 1, yoptions=0, xoptions=gtk.FILL)
 
