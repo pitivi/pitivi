@@ -273,10 +273,6 @@ When -r is specified, the given project file is rendered without opening the GUI
         parser = self._createOptionParser()
         options, args = parser.parse_args(argv)
 
-        # if we aren't importing sources then n_args should be at most
-        # 1 + parameters that take individual arguments
-        n_args = 1
-
         if options.debug:
             sys.excepthook = self._excepthook
 
@@ -285,7 +281,6 @@ When -r is specified, the given project file is rendered without opening the GUI
         self.preview = options.preview
         if options.render_output:
             options.no_ui = True
-            n_args += 1
 
         if options.render_output and options.preview:
             parser.error("-p and -r cannot be used simultaneously")
@@ -299,8 +294,8 @@ When -r is specified, the given project file is rendered without opening the GUI
             parser.error("-a requires -i")
             return
 
-        if not options.import_sources and ((options.render_output and len(args) != 2)
-                    or len(args) > n_args):
+        if not options.import_sources and ((options.render_output and len(args) != 1)
+                    or len(args) > 1):
             parser.error("invalid arguments")
             return
 
@@ -319,12 +314,10 @@ When -r is specified, the given project file is rendered without opening the GUI
             self.gui.show()
 
         if not options.import_sources and args:
-            index = 0
             if options.render_output:
-                self.output_file = "file://%s" % os.path.abspath(args[index])
-                index += 1
+                self.output_file = "file://%s" % os.path.abspath(options.render_output)
             # load a project file
-            project = "file://%s" % os.path.abspath(args[index])
+            project = "file://%s" % os.path.abspath(args[0])
             self.projectManager.loadProject(project)
         else:
             # load the passed filenames, optionally adding them to the timeline
@@ -369,7 +362,7 @@ When -r is specified, the given project file is rendered without opening the GUI
         parser.add_option("-n", "--no-ui", help=self.no_ui_help,
                 action="store_true", default=False)
         parser.add_option("-r", "--render", help=self.render_help,
-                dest="render_output", action="store_true", default=False)
+                dest="render_output", action="store", default=None)
         parser.add_option("-p", "--preview", help=self.preview_help,
                 action="store_true", default=False)
 
