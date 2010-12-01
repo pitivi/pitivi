@@ -520,8 +520,10 @@ class ExportSettings(Signallable, Loggable):
 
     def getVideoDescription(self):
         """ Returns a human-readable markup-ed string describing the video properties """
-        res = "%d x %d <i>pixels</i> at %.2f <i>fps</i>" % (self.videowidth,
-                self.videoheight, float(self.videorate))
+        res = _("%(width)d x %(height)d pixels at %(framerate).2f fps" %\
+            {"width": self.videowidth,
+            "height": self.videoheight,
+            "framerate": float(self.videorate)})
         if self.vencoder is not None:
             res += " <i>(%s)</i>" % self.vencoder
 
@@ -529,8 +531,10 @@ class ExportSettings(Signallable, Loggable):
 
     def getAudioDescription(self):
         """ Returns a human-readable markup-ed string describing the audio properties """
-        res = "%d channels at %d <i>Hz</i> (%d <i>bits</i>)" % \
-                (self.audiochannels, self.audiorate, self.audiodepth)
+        res = _("%(channels)d channels at %(frequency)d Hz (%(depth)d bits)" % \
+                {"channels": self.audiochannels,
+                "frequency": self.audiorate,
+                "depth": self.audiodepth})
         if self.aencoder is not None:
             res += " <i>(%s)</i>" % self.aencoder
 
