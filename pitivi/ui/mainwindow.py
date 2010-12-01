@@ -677,7 +677,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                    "Ernst Persson  <ernstp@gmail.com>",
                    "Richard Boulton <richard@tartarus.org>",
                    "Thibaut Girka <thibaut.girka@free.fr> (UI)",
-                   "Jeff Fortin <nekohayo@gmail.com> (UI)",
+                   "Jean-François Fortin Tam <nekohayo@gmail.com> (UI)",
                    "Johan Dahlin <jdahlin@async.com.br> (UI)",
                    "Luca Della Santina <dellasantina@farm.unipi.it>",
                    "Thijs Vermeir <thijsvermeir@gmail.com>",
