@@ -297,9 +297,9 @@ class SourceList(gtk.VBox, Loggable):
         view_menu = view_menu_item.get_submenu()
         seperator = gtk.SeparatorMenuItem()
         self.treeview_menuitem = gtk.RadioMenuItem(None,
-                "Show Clips as a List")
+                _("Show Clips as a List"))
         self.iconview_menuitem = gtk.RadioMenuItem(self.treeview_menuitem,
-                "Show Clips as Icons")
+                _("Show Clips as Icons"))
 
         # update menu items with current clip view before we connect to item
         # signals
