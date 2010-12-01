@@ -748,7 +748,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         gtk.Vbox.hide(self)
 
     def _zoomFitCb(self, unused_action):
-        pass
+        self.app.gui.setBestZoomRatio()
 
     def _zoomInCb(self, unused_action):
         Zoomable.zoomIn()
