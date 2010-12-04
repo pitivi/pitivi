@@ -51,6 +51,7 @@ class EncoderFactory(TransformFactory):
         # encoder
         enc = gst.element_factory_make(s.encoder)
         for k, v in s.encodersettings.iteritems():
+            self.debug("Setting property %r value %r", k, v)
             enc.set_property(k, v)
         b.add(enc)
 
