@@ -316,6 +316,8 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
 
     def updateUIOnEOS(self):
         self.progress.destroy()
+        self.window.show()  # Show the encoding dialog again
+        self.window.grab_focus()
         self.pipeline.disconnect_by_function(self._stateChanged)
 
     def _cancelButtonClickedCb(self, unused_button):
