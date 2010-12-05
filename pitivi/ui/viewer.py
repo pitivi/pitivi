@@ -81,7 +81,8 @@ class PitiviViewer(gtk.VBox, Loggable):
     @type action: L{ViewAction}
     """
 
-    def __init__(self, app, undock_action, action=None, pipeline=None):
+    def __init__(self, app, undock_action=None, action=None,
+                 pipeline=None):
         """
         @param action: Specific action to use instead of auto-created one
         @type action: L{ViewAction}
@@ -113,10 +114,11 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.setAction(action)
         self.setPipeline(pipeline)
         self.undock_action = undock_action
-        self.undock_action.connect("activate", self._toggleDocked)
+        if undock_action:
+            self.undock_action.connect("activate", self._toggleDocked)
 
-        if not self.settings.viewerDocked:
-            self.undock()
+            if not self.settings.viewerDocked:
+                self.undock()
 
     def setPipeline(self, pipeline):
         """
@@ -501,6 +503,9 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.pipeline.togglePlayback()
 
     def undock(self):
+        if not self.undock_action:
+            self.error("Cannot undock because undock_action is missing.")
+            return
         if not self.docked:
             return
 
@@ -524,6 +529,9 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.settings.viewerHeight)
 
     def dock(self):
+        if not self.undock_action:
+            self.error("Cannot dock because undock_action is missing.")
+            return
         if self.docked:
             return
         self.docked = True
