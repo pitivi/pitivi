@@ -1,4 +1,4 @@
-+# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # PiTiVi , Non-linear video editor
 #
 #       ui/mainwindow.py
