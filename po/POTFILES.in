@@ -41,6 +41,7 @@ pitivi/ui/projectsettings.glade
 pitivi/ui/propertyeditor.py
 pitivi/ui/screencast_manager.glade
 pitivi/ui/sourcelist.py
+pitivi/ui/startupwizard.glade
 pitivi/ui/timeline.py
 pitivi/ui/timelinecanvas.py
 pitivi/ui/timelinecontrols.py
