@@ -44,7 +44,9 @@ class EncodingProgressDialog(GladeWindow, Signallable):
         GladeWindow.__init__(self)
 
         self.app = app
-        self.window.set_transient_for(parent.window)
+        # Parent the dialog with mainwindow, since encodingdialog is hidden.
+        # It allows this dialog to properly minimize together with mainwindow
+        self.window.set_transient_for(self.app)
 
         # UI widgets
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")

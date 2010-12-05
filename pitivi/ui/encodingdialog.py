@@ -287,7 +287,6 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
 
     def _cancelRender(self, progress):
         self.debug("aborting render")
-        self.window.show()
         self.shutdown()
 
     def _pauseRender(self, progress):
@@ -309,8 +308,11 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.progress.updatePosition(fraction, text)
 
     def updateUIOnEOS(self):
-        self.window.show()  # Show the encoding dialog again
+        """
+        When a render completes or is cancelled, update the UI
+        """
         self.progress.destroy()
+        self.window.show()  # Show the encoding dialog again
         self.pipeline.disconnect_by_function(self._stateChanged)
 
     def _cancelButtonClickedCb(self, unused_button):
