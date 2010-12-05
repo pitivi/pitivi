@@ -185,12 +185,6 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
     def updateFilename(self, name):
         self.fileentry.set_text(name + extension_for_muxer(self.settings.muxer))
 
-    def updatePosition(self, fraction, text):
-        self.progressbar.set_fraction(fraction)
-        self.window.set_title(_("%.0f%% rendered" % (fraction*100)))
-        if text is not None:
-            self.progressbar.set_text(_("About %s left") % text)
-
     def _muxerComboChangedCb(self, muxer):
         basename = os.path.splitext(self.fileentry.get_text())[0]
         muxer = get_combo_value(muxer).get_name()
@@ -284,8 +278,8 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
     def _renderButtonClickedCb(self, unused_button):
         self.outfile = self.filebutton.get_uri() + "/" + self.fileentry.get_text()
         self.progress = EncodingProgressDialog(self.app, self)
-        self.progress.show()
         self.window.hide() # Hide the rendering settings dialog while rendering
+        self.progress.show()
         self.startAction()
         self.progress.connect("cancel", self._cancelRender)
         self.progress.connect("pause", self._pauseRender)
@@ -315,9 +309,8 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.progress.updatePosition(fraction, text)
 
     def updateUIOnEOS(self):
-        self.progress.destroy()
         self.window.show()  # Show the encoding dialog again
-        self.window.grab_focus()
+        self.progress.destroy()
         self.pipeline.disconnect_by_function(self._stateChanged)
 
     def _cancelButtonClickedCb(self, unused_button):

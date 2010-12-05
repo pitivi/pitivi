@@ -51,12 +51,9 @@ class EncodingProgressDialog(GladeWindow, Signallable):
 
     def updatePosition(self, fraction, estimated):
         self.progressbar.set_fraction(fraction)
-
-        text = _("%d%% Rendered") % int(100 * fraction)
+        self.window.set_title(_("%d%% Rendered") % int(100 * fraction))
         if estimated:
-            text += _(", about %s left") % estimated
-
-        self.progressbar.set_text(text)
+            self.progressbar.set_text(_("About %s left") % estimated)
 
     def setState(self, state):
         if state == gst.STATE_PLAYING:

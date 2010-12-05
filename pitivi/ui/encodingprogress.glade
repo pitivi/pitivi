@@ -4,10 +4,10 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkDialog" id="render-progress">
     <property name="border_width">12</property>
+    <property name="title" translatable="yes">Rendering</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
-    <property name="skip_taskbar_hint">True</property>
     <child internal-child="vbox">
       <widget class="GtkVBox" id="dialog-vbox2">
         <property name="visible">True</property>
