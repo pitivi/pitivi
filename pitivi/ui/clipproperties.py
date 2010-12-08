@@ -274,10 +274,10 @@ class EffectProperties(gtk.HBox):
 
     def _removeEffect(self, effect):
         self.app.action_log.begin("remove effect")
+        self._cleanCache(effect)
         effect.timeline_object.removeTrackObject(effect)
         effect.track.removeTrackObject(effect)
         self.app.action_log.commit()
-        self._cleanCache(effect)
 
     def _cleanCache(self, effect):
         element = effect.getElement()
