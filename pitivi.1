@@ -1,0 +1,56 @@
+.\" Copyright (C) 2010 The GNOME Foundation
+.\"
+.\" This is free software; you may redistribute it and/or modify
+.\" it under the terms of the GNU Lesser General Public License as
+.\" published by the Free Software Foundation; either version 2.1 of the License,
+.\" or (at your option) any later version.
+.\"
+.\" This is distributed in the hope that it will be useful, but
+.\" WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU Lesser General Public License for more details.
+.\"
+.\"You should have received a copy of the GNU Lesser General Public License along
+.\"with this program; if not, write to the Free Software Foundation, Inc.,
+.\"59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+.TH pitivi 1 "2010\-12\-08" "GNOME"
+.SH NAME
+pitivi \- Non-linear video editor
+.SH SYNOPSIS
+.B pitivi
+.RI [PROJECT_FILE]
+.P
+.B pitivi
+.RI -i
+.RI [-a]
+.RI [MEDIA_FILE]...
+.SH DESCRIPTION
+.B pitivi
+is a free, intuitive and featureful movie editor for the Linux desktop.
+.P
+.B pitivi
+starts the video editor, optionally loading PROJECT_FILE. If no project is
+given, pitivi creates a new project. Alternatively, when -i is specified,
+arguments are treated as clips to be imported into the project. If -a is
+specified, these clips will also be added to the end of the project timeline.
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Show help message and exit
+.TP
+.B \-i, \-\-import
+Import each MEDIA_FILE into the project
+.TP
+.B \-a, \-\-add-to-timeline
+Add each MEDIA_FILE to timeline after importing
+.TP
+.B \-d, \-\-debug
+Run pitivi in the Python Debugger
+.TP
+.B \-n, \-\-no-ui
+Run pitivi with no gui
+.SH AUTHOR
+This manual page was written by Hicham HAOUARI <hicham@fedoraproject.org>,
+for the Fedora project (but may be used by others).
+.SH BUGS
+Please report bugs to http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi

@@ -10,6 +10,8 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 mimedir = $(datadir)/mime/packages
 mime_DATA = pitivi.xml
 
+man_MANS = pitivi.1
+
 EXTRA_DIST = \
 	pitivi.spec \
 	pitivi.spec.in \
@@ -36,7 +38,8 @@ EXTRA_DIST +=                   \
         intltool-extract.in     \
         intltool-merge.in       \
         intltool-update.in      \
-        $(desktop_in_files)
+        $(desktop_in_files)     \
+        $(man_MANS)
 
 
 locale-uninstalled:
