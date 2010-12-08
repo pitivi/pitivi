@@ -72,6 +72,11 @@ GlobalSettings.addConfigOption('lastClipView',
  COL_SEARCH_TEXT,
  COL_SHORT_TEXT) = range(8)
 
+(LOCAL_FILE,
+ LOCAL_DIR,
+ REMOTE_FILE,
+ NOT_A_FILE) = range(4)
+
 ui = '''
 <ui>
     <menubar name="MainMenuBar">
@@ -876,30 +881,45 @@ class SourceList(gtk.VBox, Loggable):
 
     def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
                            unused_y, selection, targettype, unused_time):
-        def isfile(path):
+        def get_file_type(path):
             if path[:7] == "file://":
-                # either it's on local system and we know if it's a directory
-                return os.path.isfile(path[7:])
-            elif "://" in path:
-                # or it's not, in which case we assume it's a file
-                return True
-            # or it's on local system with "file://"
-            return os.path.isfile(path)
+                if os.path.isfile(path[7:]):
+                    return LOCAL_FILE
+                return LOCAL_DIR
+            elif "://" in path: #we concider it is a remote file
+                return REMOTE_FILE
+            return NOT_A_FILE
+
 
         self.debug("targettype:%d, selection.data:%r", targettype, selection.data)
         directories = []
         if targettype == dnd.TYPE_URI_LIST:
-            incoming = [unquote(x.strip('\x00')) for x in selection.data.strip().split("\r\n") if x.strip('\x00')]
-            filenames = [x for x in incoming if isfile(x)]
-            directories = [x for x in incoming if not isfile(x)]
+            filenames = []
+            directories = []
+            remote_files = []
+            incoming = [unquote(x.strip('\x00')) for x in selection.data.strip().split("\r\n")
+                        if x.strip('\x00')]
+            for x in incoming:
+                filetype = get_file_type(x)
+                if filetype == LOCAL_FILE:
+                    filenames.append(x)
+                elif filetype == LOCAL_DIR:
+                    directories.append(x)
+                elif filetype == REMOTE_FILE:
+                    remote_files.append(x)
         elif targettype == dnd.TYPE_TEXT_PLAIN:
             incoming = selection.data.strip()
-            if isfile(incoming):
+            file_type = get_file_type(incoming)
+            if file_type == LOCAL_FILE:
                 filenames = [incoming]
-            else:
+            elif file_type == LOCAL_DIR:
                 directories = [incoming]
         if directories:
             self.addFolders(directories)
+
+        if remote_files:
+            #TODO waiting for remote files downloader support to be implemented
+            pass
 
         try:
             self.addUris([quote_uri(uri) for uri in filenames])
