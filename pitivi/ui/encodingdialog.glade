@@ -234,7 +234,7 @@
                           <widget class="GtkSpinButton" id="scale_spinbutton">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="adjustment">1280 1 9999 1 1 0</property>
+                            <property name="adjustment">1 1 9999 1 1 0</property>
                             <property name="snap_to_ticks">True</property>
                             <property name="numeric">True</property>
                             <accessibility>
@@ -243,13 +243,16 @@
                             <signal name="value_changed" handler="_scaleSpinbuttonChangedCb"/>
                           </widget>
                           <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <widget class="GtkLabel" id="resolution_label">
                             <property name="visible">True</property>
-                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">1000 x 1000</property>
+                            <property name="width_chars">12</property>
                             <accessibility>
                               <atkproperty name="AtkObject::accessible-name" translatable="yes">Height</atkproperty>
                             </accessibility>
@@ -269,6 +272,7 @@
                           </widget>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="pack_type">end</property>
                             <property name="position">2</property>
                           </packing>
                         </child>
