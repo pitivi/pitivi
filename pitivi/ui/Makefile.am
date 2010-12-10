@@ -14,7 +14,6 @@ ui_PYTHON =			\
 	filelisterrordialog.py	\
 	glade.py		\
 	gstwidget.py		\
-	linkwidget.py		\
 	mainwindow.py		\
 	netstream_managerdialog.py \
 	pathwalker.py		\
