@@ -187,19 +187,15 @@ class GstElementSettingsDialog(GladeWindow, Loggable):
         self.element = self.factory.create("elementsettings")
         if not self.element:
             self.warning("Couldn't create element from factory %s", self.factory)
-        self.desclabel = self.widgets["descriptionlabel"]
-        self.authlabel = self.widgets["authorlabel"]
         self.properties = properties
         self._fillWindow()
 
     def _fillWindow(self):
         # set title and frame label
         self.window.set_title(_("Properties for %s") % self.factory.get_longname())
-        self.widgets["infolabel"].set_markup("<b>" + self.factory.get_longname() + "</b>")
-        self.desclabel.set_text(self.factory.get_description())
-        self.authlabel.set_text('\n'.join(self.factory.get_author().split(",")))
-        self.authlabel.set_justify(gtk.JUSTIFY_RIGHT)
-        self.widgets["elementsettings"].setElement(self.element, self.properties)
+        self.infolabel.set_markup("<b>" + self.factory.get_longname() + "</b>")
+        self.elementsettings.setElement(self.element, self.properties)
+        self.elementsettings.set_border_width(12)
 
     def getSettings(self):
         """ returns the property/value dictionnary of the selected settings """
