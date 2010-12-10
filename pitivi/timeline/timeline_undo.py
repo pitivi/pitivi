@@ -346,6 +346,15 @@ class TimelineLogObserver(object):
         self.effect_properties_tracker = EffectGstElementPropertyChangeTracker(log)
         self._pipeline = None
 
+    def setPipeline(self, pipeline):
+        self._pipeline = pipeline
+        self.effect_properties_tracker.pipeline = pipeline
+
+    def getPipeline(self):
+        return self._pipeline
+
+    pipeline = property(getPipeline, setPipeline)
+
     def startObserving(self, timeline):
         self._connectToTimeline(timeline)
         for timeline_object in timeline.timeline_objects:

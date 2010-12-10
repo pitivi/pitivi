@@ -1045,8 +1045,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             if self.timeline:
                 self.timeline.project = self.project
                 self.clipconfig.project = self.project
-                self.app.timelineLogObserver.effect_properties_tracker.pipeline\
-                                                        = self.project.pipeline
+                self.app.timelineLogObserver.pipeline = self.project.pipeline
 
     project = receiver(_setProject)
 
