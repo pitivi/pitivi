@@ -4,7 +4,6 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkDialog" id="render-progress">
     <property name="border_width">12</property>
-    <property name="type">popup</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
