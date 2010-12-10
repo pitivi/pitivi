@@ -196,6 +196,10 @@ class GstElementSettingsDialog(GladeWindow, Loggable):
         self.infolabel.set_markup("<b>" + self.factory.get_longname() + "</b>")
         self.elementsettings.setElement(self.element, self.properties)
         self.elementsettings.set_border_width(12)
+        self.window.connect("map-event", self._windowMappedCb)
+
+    def _windowMappedCb(self, widget, event):
+        self.window.resize(600, 400)
 
     def getSettings(self):
         """ returns the property/value dictionnary of the selected settings """
