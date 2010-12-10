@@ -398,6 +398,8 @@ class TimelineLogObserver(object):
     def _connectToTrackObject(self, track_object):
         for prop, interpolator in track_object.getInterpolators().itervalues():
             self._connectToInterpolator(interpolator)
+        if isinstance(track_object, TrackEffect):
+            self.effect_properties_tracker.addEffectElement (track_object.getElement())
 
     def _disconnectFromTrackObject(self, track_object):
         for prop, interpolator in track_object.getInterpolators().itervalues():

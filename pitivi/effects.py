@@ -329,6 +329,10 @@ class EffectGstElementPropertyChangeTracker:
 
     def addEffectElement(self, gst_element):
         properties = {}
+
+        if gst_element in self._tracked_effects:
+            return
+
         for prop in gobject.list_properties(gst_element):
             gst_element.connect('notify::' + prop.name,
                                 self._propertyChangedCb,
