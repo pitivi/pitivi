@@ -222,26 +222,6 @@ class Pitivi(Loggable, Signallable):
         self.emit("project-closed", project)
 
 class InteractivePitivi(Pitivi):
-    usage = _("""
-      %prog [-r OUTPUT_FILE] [PROJECT_FILE]
-      %prog -p [PROJECT_FILE]
-      %prog -i [-a] [MEDIA_FILE]...""")
-
-    description = _("""Starts the video editor, optionally loading PROJECT_FILE. If
-no project is given, %prog creates a new project.
-Alternatively, when -i is specified, arguments are treated as clips to be
-imported into the project. If -a is specified, these clips will also be added to
-the end of the project timeline.
-When -r is specified, the given project file is rendered without opening the GUI.""")
-
-    import_help = _("""Import each MEDIA_FILE into the project.""")
-
-    add_help = _("""Add each MEDIA_FILE to timeline after importing.""")
-    debug_help = _("""Run pitivi in the Python Debugger""")
-
-    no_ui_help = _("""Run pitivi with no gui""")
-    render_help = _("""Render the given project file to OUTPUT_FILE with no GUI.""")
-    preview_help = _("""Preview the given project file without the full UI.""")
 
     def __init__(self):
         Pitivi.__init__(self)
@@ -264,14 +244,10 @@ When -r is specified, the given project file is rendered without opening the GUI
             # configure the actioner and start acting!
             self.actioner.startAction()
 
-    def run(self, argv):
+    def run(self, options, args):
         # check for dependencies
         if not self._checkDependencies():
             return
-
-        # parse cmdline options
-        parser = self._createOptionParser()
-        options, args = parser.parse_args(argv)
 
         if options.debug:
             sys.excepthook = self._excepthook
@@ -281,23 +257,6 @@ When -r is specified, the given project file is rendered without opening the GUI
         self.preview = options.preview
         if options.render_output:
             options.no_ui = True
-
-        if options.render_output and options.preview:
-            parser.error("-p and -r cannot be used simultaneously")
-            return
-
-        if options.import_sources and (options.render_output or options.preview):
-            parser.error("-r or -p and -i are incompatible")
-            return
-
-        if not options.import_sources and options.add_to_timeline:
-            parser.error("-a requires -i")
-            return
-
-        if not options.import_sources and ((options.render_output and len(args) != 1)
-                    or len(args) > 1):
-            parser.error("invalid arguments")
-            return
 
         if options.no_ui:
             self.gui = None
@@ -351,24 +310,6 @@ When -r is specified, the given project file is rendered without opening the GUI
 
         return False
 
-    def _createOptionParser(self):
-        parser = OptionParser(self.usage, description=self.description)
-        parser.add_option("-i", "--import", help=self.import_help,
-                dest="import_sources", action="store_true", default=False)
-        parser.add_option("-a", "--add-to-timeline", help=self.add_help,
-                action="store_true", default=False)
-        parser.add_option("-d", "--debug", help=self.debug_help,
-                action="store_true", default=False)
-        parser.add_option("-n", "--no-ui", help=self.no_ui_help,
-                action="store_true", default=False)
-        parser.add_option("-r", "--render", help=self.render_help,
-                dest="render_output", action="store", default=None)
-        parser.add_option("-p", "--preview", help=self.preview_help,
-                action="store_true", default=False)
-
-        return parser
-
-
     def _checkDependencies(self):
         missing_deps = initial_checks()
         if missing_deps:
@@ -416,6 +357,61 @@ When -r is specified, the given project file is rendered without opening the GUI
         traceback.print_tb(tback)
         pdb.post_mortem(tback)
 
+def _parse_options(argv):
+    parser = OptionParser(
+            usage=_("""
+    %prog [PROJECT_FILE]               # Start the video editor.
+    %prog -i [-a] MEDIA_FILE1 [...]    # Start the editor and create a project.
+    %prog PROJECT_FILE -r OUTPUT_FILE  # Render a project.
+    %prog PROJECT_FILE -p              # Preview a project."""))
+
+    parser.add_option("-i", "--import", dest="import_sources",
+            action="store_true", default=False,
+            help=_("Import each MEDIA_FILE into a new project."))
+    parser.add_option("-a", "--add-to-timeline",
+            action="store_true", default=False,
+            help=_("Add each imported MEDIA_FILE to the timeline."))
+    parser.add_option("-d", "--debug",
+            action="store_true", default=False,
+            help=_("Run Pitivi in the Python Debugger."))
+    parser.add_option("-n", "--no-ui",
+            action="store_true", default=False,
+            help=_("Run Pitivi with no GUI."))
+    parser.add_option("-r", "--render", dest="render_output",
+            action="store", default=None,
+            help=_("Render the specified project to OUTPUT_FILE with no GUI."))
+    parser.add_option("-p", "--preview",
+            action="store_true", default=False,
+            help=_("Preview the specified project file without the full UI."))
+    options, args = parser.parse_args(argv[1:])
+
+    # Validate options.
+    if options.render_output and options.preview:
+        parser.error("-p and -r cannot be used simultaneously")
+
+    if options.import_sources and (options.render_output or options.preview):
+        parser.error("-r or -p and -i are incompatible")
+
+    if options.add_to_timeline and not options.import_sources:
+        parser.error("-a requires -i")
+
+    # Validate args.
+    if options.import_sources:
+        if not args:
+            parser.error("-i requires at least one MEDIA_FILE")
+    elif options.render_output:
+        if len(args) != 1:
+            parser.error("-r requires exactly one PROJECT_FILE")
+    elif options.preview:
+        if len(args) != 1:
+            parser.error("-p requires exactly one PROJECT_FILE")
+    else:
+        if len(args) > 1:
+            parser.error("Cannot open more than one PROJECT_FILE")
+
+    return options, args
+
 def main(argv):
+    options, args = _parse_options(argv)
     ptv = InteractivePitivi()
-    ptv.run(sys.argv[1:])
+    ptv.run(options, args)
