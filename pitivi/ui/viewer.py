@@ -81,7 +81,7 @@ class PitiviViewer(gtk.VBox, Loggable):
     @type action: L{ViewAction}
     """
 
-    def __init__(self, app, undock_action=None, action=None,
+    def __init__(self, settings, undock_action=None, action=None,
                  pipeline=None):
         """
         @param action: Specific action to use instead of auto-created one
@@ -89,8 +89,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         """
         gtk.VBox.__init__(self)
         self.set_border_width(SPACING)
-        self.app = app
-        self.settings = app.settings
+        self.settings = settings
 
         Loggable.__init__(self)
         self.log("New PitiviViewer")

@@ -303,7 +303,7 @@ When -r is specified, the given project file is rendered without opening the GUI
             self.gui = None
         elif options.preview:
             # init ui for previewing
-            self.gui = PitiviViewer(self)
+            self.gui = PitiviViewer(self.settings)
             self.window = gtk.Window()
             self.window.connect("delete-event", self._deleteCb)
             self.window.add(self.gui)
