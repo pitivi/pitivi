@@ -53,9 +53,9 @@ from pitivi.projectmanager import ProjectManager, ProjectLogObserver
 from pitivi.undo import UndoableActionLog, DebugActionLogObserver
 from pitivi.timeline.timeline_undo import TimelineLogObserver
 from pitivi.sourcelist_undo import SourceListLogObserver
-from pitivi.undo import UndoableAction
 from pitivi.ui.viewer import PitiviViewer
 from pitivi.actioner import Renderer, Previewer
+from pitivi.ui.startupwizard import StartUpWizard
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
@@ -272,12 +272,18 @@ class InteractivePitivi(Pitivi):
             self.gui = PitiviMainWindow(self)
             self.gui.show()
 
-        if not options.import_sources and args:
-            if options.render_output:
-                self.output_file = "file://%s" % os.path.abspath(options.render_output)
-            # load a project file
-            project = "file://%s" % os.path.abspath(args[0])
-            self.projectManager.loadProject(project)
+        if not options.import_sources:
+            if args:
+                if options.render_output:
+                    self.output_file = "file://%s" % os.path.abspath(options.render_output)
+                # load a project file
+                project = "file://%s" % os.path.abspath(args[0])
+                self.projectManager.loadProject(project)
+            else:
+                self.projectManager.newBlankProject()
+        
+                self.projectManager.connect("new-project-loaded", self._quitWizardCb)
+                self.wizard = StartUpWizard(self)
         else:
             # load the passed filenames, optionally adding them to the timeline
             # (useful during development)
@@ -291,6 +297,10 @@ class InteractivePitivi(Pitivi):
 
         # run the mainloop
         self.mainloop.run()
+
+    def _quitWizardCb(self, unused_projectManager, uri):
+        if uri.uri is not None:
+            self.wizard.quit()
 
     def _deleteCb(self, unused_widget, unused_data):
         self.shutdown()

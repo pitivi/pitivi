@@ -64,7 +64,6 @@ from pitivi.ui.clipproperties import ClipProperties
 from pitivi.ui.common import beautify_factory
 from pitivi.utils import beautify_length
 from pitivi.ui.zoominterface import Zoomable
-from pitivi.ui.startupwizard import StartUpWizard
 
 if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -196,7 +195,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._createUi(instance)
 
         self.app = instance
-        self._launchWizard()
         self.manager = RecentManager()
         self._zoom_duration_changed = False
         self._missingUriOnLoading = False
@@ -205,8 +203,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 self._projectManagerNewProjectLoadingCb)
         self.app.projectManager.connect("new-project-loaded",
                 self._projectManagerNewProjectLoadedCb)
-        self.app.projectManager.connect("new-project-loaded",
-                self._quitWizardCb)
         self.app.projectManager.connect("new-project-failed",
                 self._projectManagerNewProjectFailedCb)
         self.app.projectManager.connect("save-project-failed",
@@ -524,13 +520,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _connectToSourceList(self):
         self.sourcelist.connect('play', self._sourceListPlayCb)
-
-    def _launchWizard(self):
-        self._wizard = StartUpWizard(self.app)
-
-    def _quitWizardCb(self, projectManager, uri = None):
-        if uri.uri != None:
-            self._wizard.quit()
 
     def toggleFullScreen(self):
         """ Toggle the fullscreen mode of the application """
