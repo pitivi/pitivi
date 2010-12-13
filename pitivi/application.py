@@ -4,6 +4,7 @@
 #
 # Copyright (c) 2005-2009 Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2008-2009 Alessandro Decina <alessandro.d@gmail.com>
+# Copyright (c) 2010      Google <aleb@google.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -149,8 +150,6 @@ class Pitivi(Loggable, Signallable):
         self.projectLogObserver = ProjectLogObserver(self.action_log)
         self.sourcelist_log_observer = SourceListLogObserver(self.action_log)
 
-    #{ Shutdown methods
-
     def shutdown(self):
         """
         Close PiTiVi.
@@ -173,8 +172,6 @@ class Pitivi(Loggable, Signallable):
         instance.PiTiVi = None
         self.emit("shutdown")
         return True
-
-    #}
 
     def _connectToProjectManager(self, projectManager):
         projectManager.connect("new-project-loading",
@@ -223,117 +220,94 @@ class Pitivi(Loggable, Signallable):
 
 class InteractivePitivi(Pitivi):
 
-    def __init__(self):
+    def __init__(self, debug=False):
         Pitivi.__init__(self)
         self.mainloop = gobject.MainLoop()
         self.actioner = None
+        self.gui = None
 
-    def _newProjectLoaded(self, project):
-        if self.render_output:
-            # create renderer and set output file
-            self.actioner = Renderer(self.current, pipeline=None, outfile=self.output_file)
-        elif self.preview:
-            # create previewer and set ui
-            self.actioner = Previewer(self.current, pipeline=None, ui=self.gui)
-            # hack to make the gtk.HScale seek slider UI behave properly
-            self.gui._durationChangedCb(None, project.timeline.duration)
-        if self.actioner:
-            self.actioner.connect("eos", self._eosCb)
-            # on error, all we need to do is shutdown which is the same as we do for EOS
-            self.actioner.connect("error", self._eosCb)
-            # configure the actioner and start acting!
-            self.actioner.startAction()
-
-    def run(self, options, args):
-        # check for dependencies
-        if not self._checkDependencies():
-            return
-
-        if options.debug:
-            sys.excepthook = self._excepthook
-
-        # validate options
-        self.render_output = options.render_output
-        self.preview = options.preview
-        if options.render_output:
-            options.no_ui = True
-
-        if options.no_ui:
-            self.gui = None
-        elif options.preview:
-            # init ui for previewing
-            self.gui = PitiviViewer(self.settings)
-            self.window = gtk.Window()
-            self.window.connect("delete-event", self._deleteCb)
-            self.window.add(self.gui)
-            self.window.show_all()
-        else:
-            # create the ui
-            self.gui = PitiviMainWindow(self)
-            self.gui.show()
-
-        if not options.import_sources:
-            if args:
-                if options.render_output:
-                    self.output_file = "file://%s" % os.path.abspath(options.render_output)
-                # load a project file
-                project = "file://%s" % os.path.abspath(args[0])
-                self.projectManager.loadProject(project)
-            else:
-                self.projectManager.newBlankProject()
-        
-                self.projectManager.connect("new-project-loaded", self._quitWizardCb)
-                self.wizard = StartUpWizard(self)
-        else:
-            # load the passed filenames, optionally adding them to the timeline
-            # (useful during development)
-            self.projectManager.newBlankProject()
-            uris = ["file://" + urllib.quote(os.path.abspath(path)) for path in args]
-            self.current.sources.connect("source-added",
-                    self._sourceAddedCb, uris, options.add_to_timeline)
-            self.current.sources.connect("discovery-error",
-                    self._discoveryErrorCb, uris)
-            self.current.sources.addUris(uris)
-
-        # run the mainloop
-        self.mainloop.run()
-
-    def _quitWizardCb(self, unused_projectManager, uri):
-        if uri.uri is not None:
-            self.wizard.quit()
-
-    def _deleteCb(self, unused_widget, unused_data):
-        self.shutdown()
-
-    def _eosCb(self, unused_obj):
-        if self.gui is None:
-            self.shutdown()
-        elif self.window is not None:
-            self.gui.seek(0)
-
-    def shutdown(self):
-        if Pitivi.shutdown(self):
-            if self.gui:
-                self.gui.destroy()
-            self.mainloop.quit()
-            return True
-
-        return False
-
-    def _checkDependencies(self):
+        # Check the dependencies.
         missing_deps = initial_checks()
         if missing_deps:
             message, detail = missing_deps
-            dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-                                       buttons=gtk.BUTTONS_OK)
-            dialog.set_icon_name("pitivi")
-            dialog.set_markup("<b>"+message+"</b>")
-            dialog.format_secondary_text(detail)
-            dialog.run()
+            self._showStartupError(message, detail)
+            sys.exit(2)
 
-            return False
+        if debug:
+            sys.excepthook = self._excepthook
 
-        return True
+    def _showStartupError(self, message, detail):
+        self.error("%s %s" % (message, detail))
+
+    def _excepthook(self, exc_type, value, tback):
+        import traceback
+        import pdb
+        traceback.print_tb(tback)
+        pdb.post_mortem(tback)
+
+    def _setActioner(self, actioner):
+        self.actioner = actioner
+        if self.actioner:
+            self.actioner.connect("eos", self._eosCb)
+            # On error, all we need to do is shutdown which
+            # is the same as we do for EOS
+            self.actioner.connect("error", self._eosCb)
+            # Configure the actioner and start acting!
+            self.actioner.startAction()
+
+    def _eosCb(self, unused_obj):
+        raise NotImplementedError()
+
+    def _loadProject(self, project_filename):
+        project = "file://%s" % os.path.abspath(project_filename)
+        self.projectManager.loadProject(project)
+
+    def run(self):
+        """Runs the main loop."""
+        self.mainloop.run()
+
+class GuiPitivi(InteractivePitivi):
+
+    def __init__(self, debug=False):
+        InteractivePitivi.__init__(self, debug)
+
+    def _showStartupError(self, message, detail):
+        dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                                   buttons=gtk.BUTTONS_OK)
+        dialog.set_icon_name("pitivi")
+        dialog.set_markup("<b>"+message+"</b>")
+        dialog.format_secondary_text(detail)
+        dialog.run()
+
+    def _eosCb(self, unused_obj):
+        self.shutdown()
+
+    def _setGui(self, gui):
+        self.gui = gui
+        self.gui.show()
+
+    def shutdown(self):
+        if Pitivi.shutdown(self):
+            self.gui.destroy()
+            self.mainloop.quit()
+            return True
+        return False
+
+class ProjectCreatorGuiPitivi(GuiPitivi):
+
+    def __init__(self, media_filenames, add_to_timeline=False, debug=False):
+        GuiPitivi.__init__(self, debug)
+        self._setGui(PitiviMainWindow(self))
+        # load the passed filenames, optionally adding them to the timeline
+        # (useful during development)
+        self.projectManager.newBlankProject()
+        uris = ["file://" + urllib.quote(os.path.abspath(media_filename))
+                for media_filename in media_filenames]
+        self.current.sources.connect("source-added",
+                self._sourceAddedCb, uris, add_to_timeline)
+        self.current.sources.connect("discovery-error",
+                self._discoveryErrorCb, uris)
+        self.current.sources.addUris(uris)
 
     def _sourceAddedCb(self, sourcelist, factory,
             startup_uris, add_to_timeline):
@@ -361,11 +335,78 @@ class InteractivePitivi(Pitivi):
 
         return True
 
-    def _excepthook(self, exc_type, value, tback):
-        import traceback
-        import pdb
-        traceback.print_tb(tback)
-        pdb.post_mortem(tback)
+class ProjectLoaderGuiPitivi(GuiPitivi):
+
+    def __init__(self, project_filename, debug=False):
+        GuiPitivi.__init__(self, debug)
+        self._loadProject(project_filename)
+        self._setGui(PitiviMainWindow(self))
+
+class StartupWizardGuiPitivi(GuiPitivi):
+
+    def __init__(self, debug=False):
+        GuiPitivi.__init__(self, debug)
+        self._setGui(PitiviMainWindow(self))
+
+        self.projectManager.newBlankProject()
+
+        self.projectManager.connect("new-project-loaded", self._quitWizardCb)
+        self.wizard = StartUpWizard(self)
+
+    def _quitWizardCb(self, unused_projectManager, uri):
+        if uri.uri is not None:
+            self.wizard.quit()
+
+class PreviewGuiPitivi(GuiPitivi):
+
+    def __init__(self, project_filename, debug=False):
+        GuiPitivi.__init__(self, debug)
+
+        # init ui for previewing
+        self.viewer = PitiviViewer(self.settings)
+        self._setGui(self._createWindow(self.viewer))
+
+        self._loadProject(project_filename)
+
+    def _createWindow(self, viewer):
+        window = gtk.Window()
+        window.connect("delete-event", self._deleteCb)
+        window.add(viewer)
+        return window
+
+    def _deleteCb(self, unused_widget, unused_data):
+        self.shutdown()
+
+    def _eosCb(self, unused_obj):
+        self.viewer.seek(0)
+
+    def _newProjectLoaded(self, project):
+        # create previewer and set ui
+        previewer = Previewer(self.current, pipeline=None, ui=self.viewer)
+        self._setActioner(previewer)
+        # hack to make the gtk.HScale seek slider UI behave properly
+        self.viewer._durationChangedCb(None, project.timeline.duration)
+
+class RenderingNoGuiPitivi(InteractivePitivi):
+
+    def __init__(self, project_filename, output_filename, debug=False):
+        InteractivePitivi.__init__(self, debug)
+        self.outfile = "file://%s" % os.path.abspath(output_filename)
+        self._loadProject(project_filename)
+
+    def _eosCb(self, unused_obj):
+        self.shutdown()
+
+    def _newProjectLoaded(self, project):
+        # create renderer and set output file
+        renderer = Renderer(self.current, outfile=self.outfile)
+        self._setActioner(renderer)
+
+    def shutdown(self):
+        if Pitivi.shutdown(self):
+            self.mainloop.quit()
+            return True
+        return False
 
 def _parse_options(argv):
     parser = OptionParser(
@@ -420,5 +461,20 @@ def _parse_options(argv):
 
 def main(argv):
     options, args = _parse_options(argv)
-    ptv = InteractivePitivi()
-    ptv.run(options, args)
+    if options.import_sources:
+        ptv = ProjectCreatorGuiPitivi(media_filenames=args,
+                                      add_to_timeline=options.add_to_timeline,
+                                      debug=options.debug)
+    elif options.render_output:
+        ptv = RenderingNoGuiPitivi(project_filename=args[0],
+                                   output_filename=options.render_output,
+                                   debug=options.debug)
+    elif options.preview:
+        ptv = PreviewGuiPitivi(project_filename=args[0], debug=options.debug)
+    else:
+        if args:
+            ptv = ProjectLoaderGuiPitivi(project_filename=args[0],
+                                         debug=options.debug)
+        else:
+            ptv = StartupWizardGuiPitivi(debug=options.debug)
+    ptv.run()
