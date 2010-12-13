@@ -384,9 +384,6 @@ def _parse_options(argv):
     parser.add_option("-d", "--debug",
             action="store_true", default=False,
             help=_("Run Pitivi in the Python Debugger."))
-    parser.add_option("-n", "--no-ui",
-            action="store_true", default=False,
-            help=_("Run Pitivi with no GUI."))
     parser.add_option("-r", "--render", dest="render_output",
             action="store", default=None,
             help=_("Render the specified project to OUTPUT_FILE with no GUI."))
