@@ -412,7 +412,7 @@ def _parse_options(argv):
     parser = OptionParser(
             usage=_("""
     %prog [PROJECT_FILE]               # Start the video editor.
-    %prog -i [-a] MEDIA_FILE1 [...]    # Start the editor and create a project.
+    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a project.
     %prog PROJECT_FILE -r OUTPUT_FILE  # Render a project.
     %prog PROJECT_FILE -p              # Preview a project."""))
 
@@ -445,8 +445,8 @@ def _parse_options(argv):
 
     # Validate args.
     if options.import_sources:
-        if not args:
-            parser.error("-i requires at least one MEDIA_FILE")
+        # When no MEDIA_FILE is specified, we just create a new project.
+        pass
     elif options.render_output:
         if len(args) != 1:
             parser.error("-r requires exactly one PROJECT_FILE")
