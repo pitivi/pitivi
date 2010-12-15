@@ -112,8 +112,8 @@ class EffectsHandler(object):
             (_("Time"), ("frei0r-filter-delay0r",)),
             (_("Uncategorized"), ("",))
         )
-        self._audio_categories = []
-        self._video_categories = []
+        self._audio_categories =set([])
+        self._video_categories = set([])
         self.video_effects = []
         self.audio_effects = []
         self._effect_factories_dict = {}
@@ -215,17 +215,16 @@ class EffectsHandler(object):
             for name in categorie[1]:
                 if name == effect_name:
                     categories.append(categorie[0])
-                    self._video_categories.append(categorie[0])
+                    self._video_categories.add(categorie[0])
 
         if not categories:
             uncategorized = _("Uncategorized")
             categories.append(uncategorized)
-            self._video_categories.append(uncategorized)
-            self._audio_categories.append(uncategorized)
+            self._video_categories.add(uncategorized)
+            self._audio_categories.add(uncategorized)
 
-        categories.append(self._video_categories_effects[0][0])
-        self._audio_categories.append(self._video_categories_effects[0][0])
-        self._video_categories.append(self._video_categories_effects[0][0])
+        categories.insert(0, self._video_categories_effects[0][0])
+        categories.insert(0, self._audio_categories_effects[0][0])
 
         return categories
 
@@ -254,11 +253,14 @@ class EffectsHandler(object):
         return all categories
         """
         if not self._video_categories or not aware:
-            for categorie in self._video_categories_effects:
-                self._video_categories.append(categorie[0])
-        self._video_categories = list(set(self._video_categories))
-        self._video_categories.sort()
-        return self._video_categories
+            for categorie in self._video_categories_effects[1:]:
+                self._video_categories.add(categorie[0])
+
+        ret = list(self._video_categories)
+        ret.sort()
+        ret.insert(0, self._video_categories_effects[0][0])
+
+        return ret
 
     video_categories = property(getVideoCategories)
 
@@ -270,11 +272,14 @@ class EffectsHandler(object):
         @returns: All audio effect categories names C{str}
         """
         if not self._audio_categories or not aware:
-            for categorie in self._audio_categories_effects:
-                self._audio_categories.append(categorie[0])
-        self._audio_categories = list(set(self._audio_categories))
-        self._audio_categories.sort()
-        return self._audio_categories
+            for categorie in self._audio_categories_effects[1:]:
+                self._audio_categories.add(categorie[0])
+
+        ret = list(self._audio_categories)
+        ret.sort()
+        ret.insert(0, self._audio_categories_effects[0][0])
+
+        return ret
 
     audio_categories = property(getAudioCategories)
 
