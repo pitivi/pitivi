@@ -270,6 +270,7 @@ class GuiPitivi(InteractivePitivi):
 
     def __init__(self, debug=False):
         InteractivePitivi.__init__(self, debug)
+        self._showGui()
 
     def _showStartupError(self, message, detail):
         dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
@@ -282,8 +283,13 @@ class GuiPitivi(InteractivePitivi):
     def _eosCb(self, unused_obj):
         self.shutdown()
 
-    def _setGui(self, gui):
-        self.gui = gui
+    def _createGui(self):
+        """Returns a gtk.Widget which represents the UI."""
+        raise NotImplementedError()
+
+    def _showGui(self):
+        """Creates and shows the UI."""
+        self.gui = self._createGui()
         self.gui.show()
 
     def shutdown(self):
@@ -293,11 +299,15 @@ class GuiPitivi(InteractivePitivi):
             return True
         return False
 
-class ProjectCreatorGuiPitivi(GuiPitivi):
+class FullGuiPitivi(GuiPitivi):
+
+    def _createGui(self):
+        return PitiviMainWindow(self)
+
+class ProjectCreatorGuiPitivi(FullGuiPitivi):
 
     def __init__(self, media_filenames, add_to_timeline=False, debug=False):
-        GuiPitivi.__init__(self, debug)
-        self._setGui(PitiviMainWindow(self))
+        FullGuiPitivi.__init__(self, debug)
         # load the passed filenames, optionally adding them to the timeline
         # (useful during development)
         self.projectManager.newBlankProject()
@@ -335,18 +345,17 @@ class ProjectCreatorGuiPitivi(GuiPitivi):
 
         return True
 
-class ProjectLoaderGuiPitivi(GuiPitivi):
+class ProjectLoaderGuiPitivi(FullGuiPitivi):
 
     def __init__(self, project_filename, debug=False):
-        GuiPitivi.__init__(self, debug)
-        self._loadProject(project_filename)
-        self._setGui(PitiviMainWindow(self))
+        FullGuiPitivi.__init__(self, debug)
 
-class StartupWizardGuiPitivi(GuiPitivi):
+        self._loadProject(project_filename)
+
+class StartupWizardGuiPitivi(FullGuiPitivi):
 
     def __init__(self, debug=False):
-        GuiPitivi.__init__(self, debug)
-        self._setGui(PitiviMainWindow(self))
+        FullGuiPitivi.__init__(self, debug)
 
         self.projectManager.newBlankProject()
 
@@ -362,16 +371,13 @@ class PreviewGuiPitivi(GuiPitivi):
     def __init__(self, project_filename, debug=False):
         GuiPitivi.__init__(self, debug)
 
-        # init ui for previewing
-        self.viewer = PitiviViewer(self.settings)
-        self._setGui(self._createWindow(self.viewer))
-
         self._loadProject(project_filename)
 
-    def _createWindow(self, viewer):
+    def _createGui(self):
+        self.viewer = PitiviViewer(self.settings)
         window = gtk.Window()
         window.connect("delete-event", self._deleteCb)
-        window.add(viewer)
+        window.add(self.viewer)
         return window
 
     def _deleteCb(self, unused_widget, unused_data):

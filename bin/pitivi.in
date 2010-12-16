@@ -130,6 +130,11 @@ def _init_gobject_gtk_gst():
 def _run_pitivi():
     import pitivi.application as ptv
 
+    # Make it easy for developers to debug the application startup.
+    if os.environ.get('PITIVI_DEBUG_NO_UI') == '1':
+        print 'Starting Pitivi with no GUI.'
+        ptv.GuiPitivi._showGui = lambda *args, **kargs : None
+
     sys.exit(ptv.main(sys.argv))
 
 try:
