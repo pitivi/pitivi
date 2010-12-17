@@ -31,6 +31,9 @@ INSTALL
 .coverage
 *,cover
 log
+*.log*
+*.patch
+*.diff
 *.orig
 *.rej
 *.xptv
