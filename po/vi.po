@@ -1,0 +1,1408 @@
+# Vietnamese translation for pitivi
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the pitivi package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pitivi\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2010-10-15 13:46+0000\n"
+"PO-Revision-Date: 2010-03-25 03:28+0000\n"
+"Last-Translator: Danh Tính <Unknown>\n"
+"Language-Team: Vietnamese <vi@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Launchpad-Export-Date: 2010-12-19 11:08+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: ../pitivi.desktop.in.in.h:1
+msgid "Create and edit your own movies"
+msgstr "Tạo ra và chỉnh sửa phim của bạn"
+
+#: ../pitivi.desktop.in.in.h:2
+msgid "Pitivi Video Editor"
+msgstr "Trình soạn phim Pitivi"
+
+#: ../pitivi/check.py:102
+#, python-format
+msgid "%s is already running!"
+msgstr "%s đang chạy rồi!"
+
+#: ../pitivi/check.py:103
+#, python-format
+msgid "An instance of %s is already running in this script."
+msgstr "Một bản %s đang chạy theo script này rồi."
+
+#: ../pitivi/check.py:105
+msgid "Could not find the GNonLin plugins!"
+msgstr "Không tìm thấy phần bổ sung GNonLin!"
+
+#: ../pitivi/check.py:106
+msgid ""
+"Make sure the plugins were installed and are available in the GStreamer "
+"plugins path."
+msgstr ""
+"Kiểm tra lại các phần bổ sung đã cài đặt chưa và có thể truy cập từ đường dẫn đến "
+"các phần bổ sung của GStreamer chưa."
+
+#: ../pitivi/check.py:108
+msgid "Could not find the autodetect plugins!"
+msgstr "Không tìm được các phần bổ sung tự nhận ra!"
+
+#: ../pitivi/check.py:109
+msgid ""
+"Make sure you have installed gst-plugins-good and is available in the "
+"GStreamer plugin path."
+msgstr ""
+"Kiểm tra lại đã cài đặt gói gst-plugins-good chưa và có thể truy cập từ "
+"đường dẫn đến các phần bổ sung của GStreamer chưa."
+
+#: ../pitivi/check.py:111
+msgid "PyGTK doesn't have cairo support!"
+msgstr "PyGTK chưa có hỗ trợ cho cairo!"
+
+#: ../pitivi/check.py:112
+msgid ""
+"Please use a version of the GTK+ Python bindings built with cairo support."
+msgstr ""
+"Vui lòng dùng một phiên bản GTK+ Python bindings có hỗ trợ cho cairo."
+
+#: ../pitivi/check.py:114
+msgid "Could not initiate the video output plugins"
+msgstr "Không thể chạy trình phần bổ sung xuất video."
+
+#: ../pitivi/check.py:115
+msgid ""
+"Make sure you have at least one valid video output sink available "
+"(xvimagesink or ximagesink)"
+msgstr ""
+"Hãy chắc chắn rằng bạn đã có ít nhất một đoạn phim hợp lệ tại đầu ra "
+"(xvimagesink hoặc ximagesink)"
+
+#: ../pitivi/check.py:117
+msgid "Could not initiate the audio output plugins"
+msgstr "Không thể chạy trình phần bổ sung xuất audio."
+
+#: ../pitivi/check.py:118
+msgid ""
+"Make sure you have at least one valid audio output sink available (alsasink "
+"or osssink)"
+msgstr ""
+"Hãy chắc chắn rằng bạn đã có ít nhất một tập tin âm thanh hợp lệ tại đầu ra "
+"(alsasink hoặc osssink)"
+
+#: ../pitivi/check.py:120
+msgid "Could not import the cairo Python bindings"
+msgstr "Không thể import the cairo Python bindings"
+
+#: ../pitivi/check.py:121
+msgid "Make sure you have the cairo Python bindings installed"
+msgstr "Phải chắc chắn rằng bạn đã cài cairo Python bindings"
+
+#: ../pitivi/check.py:123
+msgid "Could not import the libglade Python bindings"
+msgstr "Không thể import the libglade Python bindings"
+
+#: ../pitivi/check.py:124
+msgid "Make sure you have the libglade Python bindings installed"
+msgstr "Phải chắc chắn rằng bạn đã cài \"libglade Python bindings\""
+
+#: ../pitivi/check.py:126
+msgid "Could not import the goocanvas Python bindings"
+msgstr "Không thể import the goocanvas Python bindings"
+
+#: ../pitivi/check.py:127
+msgid "Make sure you have the goocanvas Python bindings installed"
+msgstr "Phải đảm bảo là mình đã cài \"goocanvas Python bindings\""
+
+#: ../pitivi/check.py:130
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GTK+ Python bindings "
+"(currently %s)"
+msgstr "Bạn không có đủ phiên bản GTK+ Python bindings gần đây (hiện tại %s)"
+
+#: ../pitivi/check.py:131
+#, python-format
+msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
+msgstr "Cài phiên bản GTK+Python bindings  lớn hơn hoặc bằng %s"
+
+#: ../pitivi/check.py:134
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GStreamer Python bindings "
+"(currently %s)"
+msgstr ""
+"Bạn không có đủ phiên bản GStreamer Python bindings gần đây (hiện tại %s)"
+
+#: ../pitivi/check.py:135
+#, python-format
+msgid ""
+"Install a version of the GStreamer Python bindings greater or equal to %s"
+msgstr "Cài phiên bản GStreamer Python bindings lớn hơn hoặc bằng %s"
+
+#: ../pitivi/check.py:138
+#, python-format
+msgid "You do not have a recent enough version of GStreamer (currently %s)"
+msgstr "Bạn không có đủ phiên bản GStreamer gần đây (hiện tại %s)"
+
+#: ../pitivi/check.py:139
+#, python-format
+msgid "Install a version of the GStreamer greater or equal to %s"
+msgstr "Cài phiên bản GStreamer lớn hơn hoặc bằng %s"
+
+#: ../pitivi/check.py:142
+#, python-format
+msgid ""
+"You do not have a recent enough version of the cairo Python bindings "
+"(currently %s)"
+msgstr ""
+"Bạn không có đủ phiên bản cairo Python bindings gần đây (hiện tại %s)"
+
+#: ../pitivi/check.py:143
+#, python-format
+msgid "Install a version of the cairo Python bindings greater or equal to %s"
+msgstr "Cài phiên bản cairo Python bindings lớn hơn hoặc bằng %s"
+
+#: ../pitivi/check.py:146
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GNonLin GStreamer plugin "
+"(currently %s)"
+msgstr ""
+"Bạn không có đủ phiên bản phần bổ sung GStream GNonLin gần đây (hiện tại %s)"
+
+#: ../pitivi/check.py:147
+#, python-format
+msgid ""
+"Install a version of the GNonLin GStreamer plugin greater or equal to %s"
+msgstr "Cài phiên bản phần bổ sung GStreamer GNonLin lớn hơn hoặc bằng %s"
+
+#: ../pitivi/check.py:149
+msgid "Could not import the Zope interface module"
+msgstr "Không thê truy cập giao diện sử dụng của Zope"
+
+#: ../pitivi/check.py:150
+msgid "Make sure you have the zope.interface module installed"
+msgstr "Hãy chắc chắn rằng giao diện sử dụng của Zope đã được cài đặt"
+
+#: ../pitivi/check.py:152
+msgid "Could not import the distutils modules"
+msgstr "Không thể nhập mô đun distutils"
+
+#: ../pitivi/check.py:153
+msgid "Make sure you have the distutils python module installed"
+msgstr "Hãy chắc chắn rằng mô đun python distutils đã được cài đặt"
+
+#: ../pitivi/discoverer.py:228
+#, python-format
+msgid ""
+"Missing plugins:\n"
+"%s"
+msgstr ""
+"Thiếu phần bổ sung:\n"
+"%s"
+
+#. woot, nothing decodable
+#: ../pitivi/discoverer.py:248
+msgid "Can not decode file."
+msgstr "không thể giải mã được tập tin."
+
+#: ../pitivi/discoverer.py:249
+msgid "The given file does not contain audio, video or picture streams."
+msgstr "Tập tin đưa ra không chứa âm thanh, đoạn phim hay hình ảnh."
+
+#: ../pitivi/discoverer.py:269
+msgid "Could not establish the duration of the file."
+msgstr "Không thể xác định được độ dài của tập tin."
+
+#: ../pitivi/discoverer.py:270
+msgid ""
+"This clip seems to be in a format which cannot be accessed in a random "
+"fashion."
+msgstr ""
+"Đinh dạng tập tin phim có vẻ không cho phép truy cập theo dạng ngẫu nhiên."
+
+#: ../pitivi/discoverer.py:336
+msgid "Timeout while analyzing file."
+msgstr "Hết thời gian để phân tích tập tin."
+
+#: ../pitivi/discoverer.py:337
+msgid "Analyzing the file took too long."
+msgstr "Phân tích tập tin quá lâu."
+
+#: ../pitivi/discoverer.py:366
+msgid "No available source handler."
+msgstr "Không có sẵn trình xử lí."
+
+#: ../pitivi/discoverer.py:367
+#, python-format
+msgid "You do not have a GStreamer source element to handle protocol '%s'"
+msgstr "Bạn không có thành phần giải mã GStreamer để xử lí thủ tục '%s'"
+
+#: ../pitivi/discoverer.py:432
+msgid "Pipeline didn't want to go to PAUSED."
+msgstr "Pipeline không muốn vào tình trạng TẠM NGỪNG."
+
+#: ../pitivi/discoverer.py:455
+#, python-format
+msgid "An internal error occurred while analyzing this file: %s"
+msgstr "Lỗi nội bộ khi phân tích tập tin này: %s"
+
+#: ../pitivi/discoverer.py:465
+msgid "File contains a redirection to another clip."
+msgstr "Tập tin có chỉ dẫn đến một tập tin phim khác."
+
+#: ../pitivi/discoverer.py:466
+msgid "PiTiVi currently does not handle redirection files."
+msgstr "PiTiVi chưa hỗ trợ các tập tin chỉ dẫn đến tập tin khác."
+
+#: ../pitivi/discoverer.py:492
+msgid "Pipeline didn't want to go to PLAYING."
+msgstr ""
+
+#: ../pitivi/application.py:122
+#, python-format
+msgid ""
+"There is already a %s instance, please inform the developers by filing a bug "
+"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr ""
+"Đã có trường hợp %s rồi, vui lòng báo cáo lỗi đó cho các nhà phát triển tại "
+"http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+
+#: ../pitivi/application.py:219
+msgid ""
+"\n"
+"      %prog [PROJECT_FILE]\n"
+"      %prog -i [-a] [MEDIA_FILE]..."
+msgstr ""
+"\n"
+"      %prog [PROJECT_FILE]\n"
+"      %prog -i [-a] [MEDIA_FILE]..."
+
+#: ../pitivi/application.py:223
+msgid ""
+"Starts the video editor, optionally loading PROJECT_FILE. If\n"
+"no project is given, %prog creates a new project.\n"
+"Alternatively, when -i is specified, arguments are treated as clips to be\n"
+"imported into the project. If -a is specified, these clips will also be "
+"added to\n"
+"the end of the project timeline."
+msgstr ""
+
+#: ../pitivi/application.py:229
+msgid "Import each MEDIA_FILE into the project."
+msgstr "Nhập mỗi MEDIA_FILE vào đề án."
+
+#: ../pitivi/application.py:231
+msgid "Add each MEDIA_FILE to timeline after importing."
+msgstr "Bổ sung mỗi MEDIA_FILE cho thời gian chạy đề án sau khi nhập xong."
+
+#: ../pitivi/application.py:232
+msgid "Run pitivi in the Python Debugger"
+msgstr "Chạy trình pitivi dùng chế độ Python Debugger"
+
+#: ../pitivi/application.py:234
+msgid "Run pitivi with no gui"
+msgstr "Chạy pitivi không dùng giao diện đồ họa"
+
+#: ../pitivi/projectmanager.py:98
+msgid "Not a valid project file."
+msgstr "Không phải một tập tin đề án hợp lệ."
+
+#: ../pitivi/projectmanager.py:103
+msgid "Couldn't close current project"
+msgstr "Không đóng được đề án hiện tại"
+
+#: ../pitivi/projectmanager.py:140
+msgid "No URI specified."
+msgstr "Chưa xác định URI."
+
+#: ../pitivi/projectmanager.py:173
+msgid "New Project"
+msgstr "Đề án Mới"
+
+#: ../pitivi/settings.py:502
+msgid "Export Settings\n"
+msgstr "Thiết lập Xuất khẩu\n"
+
+#: ../pitivi/settings.py:503
+msgid "Video: "
+msgstr "Phim: "
+
+#: ../pitivi/settings.py:506
+msgid ""
+"\n"
+"Audio: "
+msgstr ""
+"\n"
+"Âm thanh: "
+
+#: ../pitivi/settings.py:509
+msgid ""
+"\n"
+"Muxer: "
+msgstr ""
+"\n"
+"Bộ trộn: "
+
+#: ../pitivi/utils.py:74
+#, python-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d giờ"
+
+#: ../pitivi/utils.py:77
+#, python-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d phút"
+
+#: ../pitivi/utils.py:80
+#, python-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d giây"
+
+#. Translators: "non local" means the project is not stored
+#. on a local filesystem
+#: ../pitivi/utils.py:247
+#, python-format
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s chưa xử lý được các đề án lưu bên ngoài"
+
+#: ../pitivi/formatters/format.py:77
+msgid "PiTiVi Native (XML)"
+msgstr "PiTiVi Native (XML)"
+
+#: ../pitivi/formatters/format.py:78
+msgid "Playlist format"
+msgstr "Định dạng danh sách chơi"
+
+#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/videofxlist.py:53
+msgid "Name"
+msgstr "Tên"
+
+#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/elementsettingsdialog.glade.h:6
+#: ../pitivi/ui/videofxlist.py:59
+msgid "Description"
+msgstr "Mô tả"
+
+#: ../pitivi/ui/cam_capture.glade.h:1
+msgid "Audio Capture Device:"
+msgstr "Thiết bị Bắt Âm thanh:"
+
+#: ../pitivi/ui/cam_capture.glade.h:2
+msgid "No device available"
+msgstr "Không có thiết bị nào"
+
+#: ../pitivi/ui/cam_capture.glade.h:3
+msgid "Video Capture Device:"
+msgstr "Thiết bị Bắt Phim:"
+
+#: ../pitivi/ui/common.py:86 ../pitivi/ui/common.py:128
+#, python-format
+msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
+msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[0] "<b>Âm thanh:</b> %d kênh tần số %d <i>Hz</i> (%d <i>bits</i>)"
+
+#: ../pitivi/ui/common.py:92 ../pitivi/ui/common.py:134
+#, python-format
+msgid "<b>Unknown Audio format:</b> %s"
+msgstr "<b>Không xác định định dạng âm thanh:</b> %s"
+
+#: ../pitivi/ui/common.py:97 ../pitivi/ui/common.py:139
+#, python-format
+msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+msgstr "<b>Phim:</b> %d x %d <i>pixels</i> chế độ %.2f<i>fps</i>"
+
+#: ../pitivi/ui/common.py:101 ../pitivi/ui/common.py:143
+#, python-format
+msgid "<b>Image:</b> %d x %d <i>pixels</i>"
+msgstr "<b>Hình:</b> %d x %d <i>pixels</i>"
+
+#: ../pitivi/ui/common.py:104 ../pitivi/ui/common.py:146
+#, python-format
+msgid "<b>Unknown Video format:</b> %s"
+msgstr "<b>Không xác định định dạng phim:</b> %s"
+
+#: ../pitivi/ui/common.py:107 ../pitivi/ui/common.py:149
+#, python-format
+msgid "<b>Text:</b> %s"
+msgstr "<b>Văn bản:</b> %s"
+
+#: ../pitivi/ui/defaultpropertyeditor.py:104
+#, python-format
+msgid "Properties For: %d object"
+msgid_plural "Properties For: %d objects"
+msgstr[0] "Thuộc tính Cho: vật %d"
+
+#: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:140
+msgid "No properties..."
+msgstr "Không có thuộc tính..."
+
+#: ../pitivi/ui/dynamic.py:54
+msgid "Implement Me"
+msgstr ""
+
+#. i18n: string for custom video width/height/framerate settings
+#. i18n: string for custom audio rate/depth/channels settings
+#: ../pitivi/ui/dynamic.py:374 ../pitivi/ui/exportsettingswidget.py:116
+#: ../pitivi/ui/exportsettingswidget.py:150
+msgid "Custom"
+msgstr "Tuỳ chọn"
+
+#: ../pitivi/ui/dynamic.py:398
+msgid "Save Preset"
+msgstr ""
+
+#: ../pitivi/ui/dynamic.py:466
+msgid "Choose..."
+msgstr "Chọn..."
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:1
+msgid "<b>Author:</b>"
+msgstr "<b>Tác giả:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:2
+msgid "<b>Description:</b>"
+msgstr "<b>Mô tả:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:3
+msgid "<b>Plugin Name</b>"
+msgstr "<b>Tên Plugin</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:4
+msgid "<b>Properties</b>"
+msgstr "<b>Thuộc tính</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:5
+msgid "Author"
+msgstr "Tác giả"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:7
+msgid "Properties for <element>"
+msgstr "Thuộc tính cho <element>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:1 ../pitivi/ui/timelinecontrols.py:13
+msgid "<b>Audio:</b>"
+msgstr "<b>Âm thanh:</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:2
+msgid "<b>Nothing yet</b>"
+msgstr "<b>Chưa có gì</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:3
+msgid "<b>Settings</b>"
+msgstr "<b>Thiết lập</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:4 ../pitivi/ui/timelinecontrols.py:15
+msgid "<b>Video:</b>"
+msgstr "<b>Phim:</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:5
+msgid "Choose File"
+msgstr "Chọn tập tin"
+
+#: ../pitivi/ui/encodingdialog.glade.h:6
+msgid "Modify"
+msgstr "Sửa"
+
+#: ../pitivi/ui/encodingdialog.glade.h:7
+msgid "Output file:"
+msgstr "Tập tin xuất:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:8
+msgid "Please choose an output file"
+msgstr "Vui lòng chọn một tập tin để lưu kết quả"
+
+#: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:266
+msgid "Render project"
+msgstr "Đề án diễn lại"
+
+#: ../pitivi/ui/encodingdialog.py:102
+msgid "Choose file to render to"
+msgstr "Chọn tập tin để diễn lại"
+
+#: ../pitivi/ui/encodingdialog.py:137
+#, python-format
+msgid "About %s left"
+msgstr "Còn lại khoảng %s"
+
+#: ../pitivi/ui/encodingdialog.py:152
+msgid "Rendering"
+msgstr "Đang diễn lại"
+
+#: ../pitivi/ui/encodingdialog.py:169
+msgid "Rendering Complete"
+msgstr "Diễn lại xong"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:1
+msgid ""
+"12 fps\n"
+"23.97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29.97 fps\n"
+"30 fps\n"
+"60 fps"
+msgstr ""
+"12 fps\n"
+"23.97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29.97 fps\n"
+"30 fps\n"
+"60 fps"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:8
+msgid ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+msgstr ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:12
+msgid ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+msgstr ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:18
+msgid "<b>Audio Output</b>"
+msgstr "<b>Xuất Âm thanh</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:19
+msgid "<b>Export to</b>"
+msgstr "<b>Xuất sang</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:20
+msgid "<b>Video Output</b>"
+msgstr "<b>Xuất phim</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:21
+msgid "Audio Codec"
+msgstr "Codec Âm thanh"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:22
+msgid "Audio Codec:"
+msgstr "Codec Âm thanh:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:23
+msgid "Audio Preset"
+msgstr "Âm thanh đặt sẵn"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:24
+msgid "Channels:"
+msgstr "Kênh:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:25
+msgid "Container:"
+msgstr "Vỏ chứa:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:26
+msgid "Depth:"
+msgstr "Độ sâu :"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:27
+msgid "Frame rate:"
+msgstr "Tần số khung:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:28
+msgid "Height:"
+msgstr "Độ cao:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:29
+msgid ""
+"Mono (1)\n"
+"Stereo (2)"
+msgstr ""
+"Mono (1)\n"
+"Stereo (2)"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:31
+msgid "Muxer"
+msgstr "Bộ trộn"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:32
+msgid "Rate:"
+msgstr "Mức:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:33
+msgid "Settings"
+msgstr "Thiết lập"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:34
+msgid "Video Codec"
+msgstr "Codec Video"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:35
+msgid "Video Codec:"
+msgstr "Codec Video:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:36
+msgid "Video Preset"
+msgstr "Video đặt sẵn"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:37
+msgid "Width:"
+msgstr "Chiều rộng:"
+
+#: ../pitivi/ui/exportsettingswidget.py:37
+msgid "576p (PAL DV/DVD)"
+msgstr "576p (PAL DV/DVD)"
+
+#: ../pitivi/ui/exportsettingswidget.py:38
+msgid "480p (NTSC DV/DVD)"
+msgstr "480p (NTSC DV/DVD)"
+
+#: ../pitivi/ui/exportsettingswidget.py:39
+msgid "720p HD"
+msgstr "720p HD"
+
+#: ../pitivi/ui/exportsettingswidget.py:40
+msgid "1080p full HD"
+msgstr "1080p full HD"
+
+#: ../pitivi/ui/exportsettingswidget.py:41
+msgid "QVGA (320x240)"
+msgstr "QVGA (320x240)"
+
+#: ../pitivi/ui/exportsettingswidget.py:42
+msgid "VGA (640x480)"
+msgstr "VGA (640x480)"
+
+#: ../pitivi/ui/exportsettingswidget.py:43
+msgid "SVGA (800x600)"
+msgstr "SVGA (800x600)"
+
+#: ../pitivi/ui/exportsettingswidget.py:44
+msgid "XGA (1024x768)"
+msgstr "XGA (1024x768)"
+
+#: ../pitivi/ui/exportsettingswidget.py:301
+msgid "Raw Video"
+msgstr "Video thô"
+
+#: ../pitivi/ui/exportsettingswidget.py:316
+msgid "Raw Audio"
+msgstr "Âm thanh thô"
+
+#: ../pitivi/ui/exportsettingswidget.py:439
+msgid "Export settings"
+msgstr "Thiết lập xuất khẩu"
+
+#: ../pitivi/ui/filelisterrordialog.py:52
+msgid "Unknown reason"
+msgstr "Lý do không rõ"
+
+#: ../pitivi/ui/filelisterrordialog.py:82
+msgid "URI:"
+msgstr "URI:"
+
+#: ../pitivi/ui/filelisterrordialog.py:87
+msgid "Problem:"
+msgstr "Vấn đề:"
+
+#: ../pitivi/ui/filelisterrordialog.py:94
+msgid "Extra information:"
+msgstr "Thông tin thêm:"
+
+#. set title and frame label
+#: ../pitivi/ui/gstwidget.py:195
+#, python-format
+msgid "Properties for %s"
+msgstr "Thuộc tính cho %s"
+
+#: ../pitivi/ui/mainwindow.py:128
+msgid "Render"
+msgstr "Diễn lại"
+
+#: ../pitivi/ui/mainwindow.py:129 ../pitivi/ui/timeline.py:303
+msgid "Split"
+msgstr "Phân tách"
+
+#: ../pitivi/ui/mainwindow.py:130 ../pitivi/ui/timeline.py:305
+msgid "Keyframe"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:131
+msgid "Unlink"
+msgstr "Bỏ liên kết"
+
+#. Translators: This is an action, the title of a button
+#: ../pitivi/ui/mainwindow.py:133
+msgid "Link"
+msgstr "Liên kết"
+
+#: ../pitivi/ui/mainwindow.py:134
+msgid "Ungroup"
+msgstr "Tách ra"
+
+#. Translators: This is an action, the title of a button
+#: ../pitivi/ui/mainwindow.py:136
+msgid "Group"
+msgstr "Nhóm lại"
+
+#: ../pitivi/ui/mainwindow.py:247
+msgid "Start Playback"
+msgstr "Bắt đầu phát lại"
+
+#: ../pitivi/ui/mainwindow.py:248
+msgid "Stop Playback"
+msgstr "Dừng phát"
+
+#: ../pitivi/ui/mainwindow.py:249
+msgid "Loop over selected area"
+msgstr "Phát vòng lại khu đã chọn"
+
+#: ../pitivi/ui/mainwindow.py:254
+msgid "Create a new project"
+msgstr "Tạo một đề án mới"
+
+#: ../pitivi/ui/mainwindow.py:256
+msgid "Open an existing project"
+msgstr "Mở đề án đã có"
+
+#: ../pitivi/ui/mainwindow.py:258 ../pitivi/ui/mainwindow.py:260
+msgid "Save the current project"
+msgstr "Lưu đề án hiện có"
+
+#: ../pitivi/ui/mainwindow.py:262
+msgid "Reload the current project"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:263 ../pitivi/ui/projectsettings.glade.h:4
+msgid "Project Settings"
+msgstr "Thiết lập đề án"
+
+#: ../pitivi/ui/mainwindow.py:264
+msgid "Edit the project settings"
+msgstr "Chỉnh lại thiết lập đề án"
+
+#: ../pitivi/ui/mainwindow.py:265
+msgid "_Render project"
+msgstr "_Diến lại đề án"
+
+#: ../pitivi/ui/mainwindow.py:268
+msgid "_Undo"
+msgstr "_Hủy bước"
+
+#: ../pitivi/ui/mainwindow.py:269
+msgid "Undo the last operation"
+msgstr "Hủy thao tác cuối cùng"
+
+#: ../pitivi/ui/mainwindow.py:271
+msgid "_Redo"
+msgstr "_Làm lại"
+
+#: ../pitivi/ui/mainwindow.py:272
+msgid "Redo the last operation that was undone"
+msgstr "Làm lại thao tác cuối cùng đã bị hủy"
+
+#: ../pitivi/ui/mainwindow.py:274
+msgid "_Plugins..."
+msgstr "_Plugin..."
+
+#: ../pitivi/ui/mainwindow.py:275
+msgid "Manage plugins"
+msgstr "Quản lý phần bổ sung"
+
+#: ../pitivi/ui/mainwindow.py:276
+msgid "_Preferences"
+msgstr "Tù_y chỉnh"
+
+#: ../pitivi/ui/mainwindow.py:279
+msgid "Import from _Webcam..."
+msgstr "Nhập từ _Webcam..."
+
+#: ../pitivi/ui/mainwindow.py:280
+msgid "Import Camera stream"
+msgstr "Nhầp dòng Camera"
+
+#: ../pitivi/ui/mainwindow.py:282
+msgid "_Make screencast..."
+msgstr "_Tạo phim quay màn hình..."
+
+#: ../pitivi/ui/mainwindow.py:283
+msgid "Capture the desktop"
+msgstr "Quay chụp màn hình nền"
+
+#: ../pitivi/ui/mainwindow.py:285
+msgid "_Capture Network Stream..."
+msgstr "_Bắt Luồng Mạng..."
+
+#: ../pitivi/ui/mainwindow.py:286
+msgid "Capture Network Stream"
+msgstr "Quay chụp Dòng video qua Mạng"
+
+#: ../pitivi/ui/mainwindow.py:289
+#, python-format
+msgid "Information about %s"
+msgstr "Thông tin về %s"
+
+#: ../pitivi/ui/mainwindow.py:290
+msgid "_File"
+msgstr "_Tập tin"
+
+#: ../pitivi/ui/mainwindow.py:291
+msgid "_Edit"
+msgstr "_Sửa"
+
+#: ../pitivi/ui/mainwindow.py:292
+msgid "_View"
+msgstr "_Xem"
+
+#: ../pitivi/ui/mainwindow.py:293
+msgid "_Project"
+msgstr "_Dự án"
+
+#: ../pitivi/ui/mainwindow.py:294
+msgid "_Timeline"
+msgstr "_Bảng niên đại"
+
+#: ../pitivi/ui/mainwindow.py:295
+msgid "Previe_w"
+msgstr "Xem _thử"
+
+#: ../pitivi/ui/mainwindow.py:298
+msgid "Loop"
+msgstr "Quay vòng"
+
+#: ../pitivi/ui/mainwindow.py:300
+msgid "_Help"
+msgstr "Trợ _giúp"
+
+#: ../pitivi/ui/mainwindow.py:305
+msgid "View the main window on the whole screen"
+msgstr "Xem cửa sổ chính toàn màn hình"
+
+#: ../pitivi/ui/mainwindow.py:309
+msgid "Main Toolbar"
+msgstr "Thanh công cụ chính"
+
+#: ../pitivi/ui/mainwindow.py:312
+msgid "Timeline Toolbar"
+msgstr "Thanh Bảng thời gian"
+
+#: ../pitivi/ui/mainwindow.py:411
+msgid "Media Library"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:550
+msgid "Open File..."
+msgstr "Mở Tập tin..."
+
+#: ../pitivi/ui/mainwindow.py:566
+msgid "All Supported Formats"
+msgstr "Tất cả các định dạng được hỗ trợ"
+
+#: ../pitivi/ui/mainwindow.py:636
+msgid "Contributors:"
+msgstr "Người đóng góp:"
+
+#: ../pitivi/ui/mainwindow.py:648
+msgid ""
+"GNU Lesser General Public License\n"
+"See http://www.gnu.org/copyleft/lesser.html for more details"
+msgstr ""
+"GNU Lesser General Public License\n"
+"Xem http://www.gnu.org/copyleft/lesser.html để tham khảo chi tiết"
+
+#: ../pitivi/ui/mainwindow.py:766
+msgid "Close without saving"
+msgstr "Đóng không lưu"
+
+#: ../pitivi/ui/mainwindow.py:779
+msgid "Save changes to the current project before closing?"
+msgstr "Lưu các thay đổi của đề án trước khi đóng?"
+
+#: ../pitivi/ui/mainwindow.py:786
+msgid "If you don't save some of your changes will be lost"
+msgstr "Nếu không lưu lại môt số thay đổi sẽ bị mất"
+
+#: ../pitivi/ui/mainwindow.py:839
+msgid "Do you want to reload current project?"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:844
+msgid "Revert to saved project"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:847
+msgid "All unsaved changes will be lost."
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:863
+#, python-format
+msgid "PiTiVi is unable to load file \"%s\""
+msgstr "PiTiVi không nhập được tập tin \"%s\""
+
+#: ../pitivi/ui/mainwindow.py:866
+msgid "Error Loading File"
+msgstr "Gặp Lỗi khi Nhập Tập tin"
+
+#: ../pitivi/ui/mainwindow.py:873
+msgid "Locate missing file..."
+msgstr "Tìm tập tin bị thiếu..."
+
+#: ../pitivi/ui/mainwindow.py:882
+msgid "The following file has moved, please tell PiTiVi where to find it."
+msgstr "Tập tin sau đây đã chuyển nơi, vui lòng cho PiTiVi biết vị trí của nó."
+
+#: ../pitivi/ui/mainwindow.py:884
+msgid "Duration:"
+msgstr "Thời lượng:"
+
+#: ../pitivi/ui/mainwindow.py:1025
+msgid "Save As..."
+msgstr "Lưu thành..."
+
+#: ../pitivi/ui/mainwindow.py:1033
+msgid "Untitled.xptv"
+msgstr "KhôngTên.xptv"
+
+#: ../pitivi/ui/mainwindow.py:1044 ../pitivi/ui/mainwindow.py:1057
+msgid "Detect Automatically"
+msgstr "Tự động nhận dạng"
+
+#: ../pitivi/ui/net_capture.glade.h:1
+msgid "Address"
+msgstr "Địa chỉ"
+
+#: ../pitivi/ui/net_capture.glade.h:2
+msgid "Capture"
+msgstr "Chụp"
+
+#: ../pitivi/ui/net_capture.glade.h:3
+msgid "Capture Stream from URI"
+msgstr "Chụp Dòng xuất phát từ URI"
+
+#: ../pitivi/ui/net_capture.glade.h:4
+msgid "Capture network stream"
+msgstr "Bắt luồng mạng"
+
+#: ../pitivi/ui/net_capture.glade.h:5
+msgid "Close"
+msgstr "Đóng"
+
+#: ../pitivi/ui/net_capture.glade.h:6
+msgid "Customize:"
+msgstr "Tùy chỉnh:"
+
+#: ../pitivi/ui/net_capture.glade.h:7
+msgid "HTTP / HTTPS"
+msgstr "HTTP / HTTPS"
+
+#: ../pitivi/ui/net_capture.glade.h:8
+msgid "Network stream video"
+msgstr "Dòng video qua mạng"
+
+#: ../pitivi/ui/net_capture.glade.h:9
+msgid "Other protocol"
+msgstr "Giao thức khác"
+
+#: ../pitivi/ui/net_capture.glade.h:10
+msgid "Port"
+msgstr "Cổng"
+
+#: ../pitivi/ui/net_capture.glade.h:11
+msgid "Preview"
+msgstr "Xem trước"
+
+#: ../pitivi/ui/net_capture.glade.h:12
+msgid "Preview Stream from URI"
+msgstr "Xem trước Dòng phát từ URI"
+
+#: ../pitivi/ui/net_capture.glade.h:13
+msgid "Protocol"
+msgstr "Giao thức"
+
+#: ../pitivi/ui/net_capture.glade.h:14
+msgid "RTSP"
+msgstr "RTSP"
+
+#: ../pitivi/ui/net_capture.glade.h:15
+msgid "UDP / RDP"
+msgstr "UDP / RDP"
+
+#: ../pitivi/ui/net_capture.glade.h:16
+msgid "http://"
+msgstr "http://"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:1
+#: ../pitivi/ui/pluginmanagerdialog.py:177
+msgid "All categories"
+msgstr "Mọi chủng loại"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:2
+msgid "Plugin manager"
+msgstr "Bộ quản lý phần bổ sung"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:3
+msgid "Search:"
+msgstr "Tìm:"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:4
+msgid "Show:"
+msgstr "Hiển thị:"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:5
+msgid ""
+"You may drag plugin files into the list to install them,\n"
+"or type text to search for a specific plugin."
+msgstr ""
+"Bạn có thể kéo thả tập tin phần bổ sung vào danh sách để cài đặt,\n"
+"hoặc gõ chữ để tìm một phần bổ sung nhất định."
+
+#: ../pitivi/ui/pluginmanagerdialog.py:93
+msgid "Enabled"
+msgstr "Bật"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:103
+msgid "Plugin"
+msgstr "Plugin"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:113
+msgid "Category"
+msgstr "Loại"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:275
+msgid "Are you sure you want to remove the selected plugins?"
+msgstr "Có chắc chắn muốn bỏ các phần bổ sung đã chọn không?"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:276
+msgid "Confirm remove operation"
+msgstr "Vui lòng khẳng định sự loại bỏ"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:293
+#, python-format
+msgid "Cannot remove %s"
+msgstr "Không bỏ được %s"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:325
+msgid "Update the existing plugin?"
+msgstr "Cập nhật phần bổ sung hiện tại?"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:328
+#, python-format
+msgid ""
+"This plugin is already installed in your system.\n"
+"If you agree, version %(v1)s will be replaced with version %(v2)s"
+msgstr ""
+"Phần bổ sung này đã cài đặt rồi.\n"
+"Nếu bạn đồng ý, phiên bản %(v1)s sẽ được thay thế bởi phiên bản %(v2)s"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:331
+msgid "Duplicate plugin found"
+msgstr "Tìm thấy phần bổ sung trùng lắp"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:345
+#, python-format
+msgid ""
+"Cannot install %s\n"
+"The file is not a valid plugin"
+msgstr ""
+"Không cài được %s\n"
+"Tập tin này không phải là một phần bổ sung hợp lệ"
+
+#: ../pitivi/ui/prefs.py:61
+msgid "Preferences"
+msgstr "Tùy chỉnh"
+
+#: ../pitivi/ui/prefs.py:85
+msgid "Section"
+msgstr "Phần"
+
+#. revert, close buttons
+#: ../pitivi/ui/prefs.py:106
+msgid "Reset to Factory Settings"
+msgstr "Thiết lập lại theo mặc định"
+
+#: ../pitivi/ui/prefs.py:110
+msgid "Revert"
+msgstr "Trở lại"
+
+#: ../pitivi/ui/prefs.py:125
+msgid "Some changes will not take effect until you restart PiTiVi"
+msgstr "Cần khởi động lại PiTiVi để kích hoạt một số thay đổi"
+
+#: ../pitivi/ui/prefs.py:320
+msgid "Reset"
+msgstr "Đặt lại"
+
+#: ../pitivi/ui/previewer.py:55 ../pitivi/ui/previewer.py:83
+#: ../pitivi/ui/previewer.py:94 ../pitivi/ui/trackobject.py:48
+#: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
+#: ../pitivi/ui/trackobject.py:81
+msgid "Appearance"
+msgstr "Diện mạo"
+
+#: ../pitivi/ui/previewer.py:56
+msgid "Thumbnail Gap (pixels)"
+msgstr "Khoảng cách hình nhỏ (pixels)"
+
+#: ../pitivi/ui/previewer.py:58
+msgid "The gap between thumbnails"
+msgstr "Khoảng cách giữa các hình nhỏ"
+
+#: ../pitivi/ui/previewer.py:84
+msgid "Show Thumbnails (Video)"
+msgstr "Hiển thị hình nhỏ (Video)"
+
+#: ../pitivi/ui/previewer.py:85
+msgid "Show Thumbnails on Video Clips"
+msgstr "Hiển thị hình nhỏ trên các Video clip"
+
+#: ../pitivi/ui/previewer.py:95
+msgid "Show Waveforms (Audio)"
+msgstr "Hiển thị Tín hiệu Âm thanh"
+
+#: ../pitivi/ui/previewer.py:96
+msgid "Show Waveforms on Audio Clips"
+msgstr "Hiển thị Tín hiệu Âm thanh trên các Khúc Âm thanh"
+
+#: ../pitivi/ui/projectsettings.glade.h:1
+msgid "A short description of your project."
+msgstr "Sự mô tả ngắn của đề án."
+
+#: ../pitivi/ui/projectsettings.glade.h:2
+msgid "Description:"
+msgstr "Mô tả:"
+
+#: ../pitivi/ui/projectsettings.glade.h:3
+msgid "Name:"
+msgstr "Tên:"
+
+#: ../pitivi/ui/projectsettings.glade.h:5
+msgid "The name of your project."
+msgstr "Tên của đề án."
+
+#: ../pitivi/ui/propertyeditor.py:54
+msgid "No Objects Selected"
+msgstr "Chưa Chọn Đồ vật"
+
+#: ../pitivi/ui/screencast_manager.glade.h:1
+msgid "Screencast"
+msgstr "Quay phim Màn hình"
+
+#: ../pitivi/ui/screencast_manager.glade.h:2
+msgid "Screencast Desktop"
+msgstr "Quay phìm Màn hình nền"
+
+#: ../pitivi/ui/screencast_manager.glade.h:3
+msgid "Start Istanbul"
+msgstr "Khởi động Istanbul"
+
+#: ../pitivi/ui/sourcelist.py:130
+msgid "Import clips..."
+msgstr "Nhập clip..."
+
+#: ../pitivi/ui/sourcelist.py:135
+msgid "Remove Clip"
+msgstr "Bỏ clip"
+
+#: ../pitivi/ui/sourcelist.py:139
+msgid "Play Clip"
+msgstr "Phát Clip"
+
+#: ../pitivi/ui/sourcelist.py:166
+msgid "Icon"
+msgstr "Biểu tượng"
+
+#: ../pitivi/ui/sourcelist.py:175
+msgid "Information"
+msgstr "Thông tin"
+
+#: ../pitivi/ui/sourcelist.py:186
+msgid "Duration"
+msgstr "Thời lượng"
+
+#: ../pitivi/ui/sourcelist.py:214
+msgid ""
+"<span>Import your clips by dragging them here or by using the buttons "
+"above.</span>"
+msgstr ""
+
+#: ../pitivi/ui/sourcelist.py:267
+msgid "_Import clips..."
+msgstr "_Nhập clip..."
+
+#: ../pitivi/ui/sourcelist.py:268
+msgid "Import clips to use"
+msgstr "Nhập clip để dùng"
+
+#: ../pitivi/ui/sourcelist.py:270
+msgid "Import _folder of clips..."
+msgstr "Nhập thư _mục clip"
+
+#: ../pitivi/ui/sourcelist.py:271
+msgid "Import folder of clips to use"
+msgstr "Nhập các clip trong một thư mục để dùng"
+
+#: ../pitivi/ui/sourcelist.py:277
+msgid "_Remove from project"
+msgstr "_Loại bỏ từ đề án"
+
+#: ../pitivi/ui/sourcelist.py:280
+msgid "Insert at _end of timeline"
+msgstr "Chèn vào _cuối bảng thời gian"
+
+#: ../pitivi/ui/sourcelist.py:443
+msgid "Import a folder"
+msgstr "Nhập một thư mục"
+
+#: ../pitivi/ui/sourcelist.py:446
+msgid "Import a clip"
+msgstr "Nhập một clip"
+
+#: ../pitivi/ui/sourcelist.py:447
+msgid "Close after importing files"
+msgstr "Đóng lại sau khi đã nhập các tập tin"
+
+#: ../pitivi/ui/sourcelist.py:957
+msgid "Importing clips..."
+msgstr "Đang nhập các clip..."
+
+#: ../pitivi/ui/sourcelist.py:958
+msgid "Error(s) occurred while importing"
+msgstr "Đã gặp lỗi khi đang nhập tập tin"
+
+#: ../pitivi/ui/sourcelist.py:959
+msgid "An error occurred while importing"
+msgstr "Đã gặp lỗi khi đang nhập tập tin"
+
+#: ../pitivi/ui/sourcelist.py:1048
+msgid "Error while analyzing files"
+msgstr "Gặp lỗi khi đang phân tích các tập tin"
+
+#: ../pitivi/ui/sourcelist.py:1049
+msgid "The following files can not be used with PiTiVi."
+msgstr "Những tập tin sau đây không dùng được với PiTiVi."
+
+#: ../pitivi/ui/sourcelist.py:1051
+msgid "Error while analyzing a file"
+msgstr "Gặp lỗi khi đang phân tích tập tin"
+
+#: ../pitivi/ui/sourcelist.py:1052
+msgid "The following file can not be used with PiTiVi."
+msgstr "Tập tin sau đây không dùng được với PiTiVi."
+
+#. tooltip text for toolbar
+#: ../pitivi/ui/timeline.py:47
+msgid "Delete Selected"
+msgstr "Xóa sự lựa chọn"
+
+#: ../pitivi/ui/timeline.py:48
+msgid "Split clip at playhead position"
+msgstr "Xén clip ở vị trí đang đọc"
+
+#: ../pitivi/ui/timeline.py:49
+msgid "Create a keyframe"
+msgstr ""
+
+#: ../pitivi/ui/timeline.py:50
+msgid "Zoom In"
+msgstr "Phóng to"
+
+#: ../pitivi/ui/timeline.py:51
+msgid "Zoom Out"
+msgstr "Thu nhỏ"
+
+#: ../pitivi/ui/timeline.py:52
+msgid "Break links between clips"
+msgstr "Bỏ nối giữa các clip"
+
+#: ../pitivi/ui/timeline.py:53
+msgid "Link together arbitrary clips"
+msgstr "Nối với nhau các clip"
+
+#: ../pitivi/ui/timeline.py:54
+msgid "Ungroup clips"
+msgstr "Tách ra các clip"
+
+#: ../pitivi/ui/timeline.py:55
+msgid "Group clips"
+msgstr "Nhóm lại các clip"
+
+#: ../pitivi/ui/timeline.py:130
+msgid "One or more GStreamer errors has occured!"
+msgstr "Gstreamer đã gặp một hoặc nhiều lỗi sai!"
+
+#: ../pitivi/ui/timeline.py:164
+msgid "Error List"
+msgstr "Danh sách lỗi"
+
+#: ../pitivi/ui/timeline.py:165
+msgid "The following errors have been reported:"
+msgstr "Đã gặp những lỗi sai sau đây:"
+
+#: ../pitivi/ui/timeline.py:231
+msgid "Zoom Timeline"
+msgstr "Phong to Bảng thời gian"
+
+#: ../pitivi/ui/timelinecanvas.py:51
+msgid "Behavior"
+msgstr "Cư xử"
+
+#: ../pitivi/ui/timelinecanvas.py:52
+msgid "Snap Distance (pixels)"
+msgstr "Khoảng cách chộp lấy (pixels)"
+
+#: ../pitivi/ui/timelinecanvas.py:53
+msgid "Threshold distance (in pixels) used for all snapping operations"
+msgstr "Ngưỡng khoảng cách (pixels) cho các thao tác chộp lại"
+
+#: ../pitivi/ui/timelinecontrols.py:17
+msgid "<b>Text:</b>"
+msgstr "<b>Văn bản:</b>"
+
+#: ../pitivi/ui/trackobject.py:49
+msgid "Clip Background (Video)"
+msgstr "Màu nền cho Clip (Video)"
+
+#: ../pitivi/ui/trackobject.py:50
+msgid "The background color for clips in video tracks."
+msgstr "Màu nền cho các clip trên các đoạn phim."
+
+#: ../pitivi/ui/trackobject.py:60
+msgid "Clip Background (Audio)"
+msgstr "Màu nền cho Clip (Âm thanh)"
+
+#: ../pitivi/ui/trackobject.py:61
+msgid "The background color for clips in audio tracks."
+msgstr "Màu nền cho các clip trên các rãnh âm thanh."
+
+#: ../pitivi/ui/trackobject.py:71
+msgid "Selection Color"
+msgstr "Màu vùng chọn"
+
+#: ../pitivi/ui/trackobject.py:72
+msgid "Selected clips will be tinted with this color."
+msgstr "Những clip đã chọn sẽ được nhuộm với màu này."
+
+#: ../pitivi/ui/trackobject.py:82
+msgid "Clip Font"
+msgstr "Phông cho Clip"
+
+#: ../pitivi/ui/trackobject.py:83
+msgid "The font to use for clip titles"
+msgstr "Phông dùng cho tên các clip"
