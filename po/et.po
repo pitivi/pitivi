@@ -11,10 +11,11 @@ msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-09-09 15:01+0000\n"
-"PO-Revision-Date: 2010-09-09 23:45+0300\n"
+"POT-Creation-Date: 2010-12-17 19:06+0000\n"
+"PO-Revision-Date: 2010-12-19 02:39+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz gmail com>\n"
 "Language-Team: Estonian <et@li.org>\n"
+"Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -109,8 +110,7 @@ msgstr ""
 
 #, python-format
 msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
-msgstr ""
-"Paigalda GTK+ Pythoni seosed, mille versioon on vähemalt %s"
+msgstr "Paigalda GTK+ Pythoni seosed, mille versioon on vähemalt %s"
 
 #, python-format
 msgid ""
@@ -122,8 +122,7 @@ msgstr ""
 #, python-format
 msgid ""
 "Install a version of the GStreamer Python bindings greater or equal to %s"
-msgstr ""
-"Paigalda GStreameri Pythoni seosed, mille versioon on vähemalt %s"
+msgstr "Paigalda GStreameri Pythoni seosed, mille versioon on vähemalt %s"
 
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
@@ -142,22 +141,20 @@ msgstr ""
 
 #, python-format
 msgid "Install a version of the cairo Python bindings greater or equal to %s"
-msgstr ""
-"Paigalda cairo Pythoni seosed, mille versioon on vähemalt %s"
+msgstr "Paigalda cairo Pythoni seosed, mille versioon on vähemalt %s"
 
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
 "(currently %s)"
 msgstr ""
-"Sul pole piisavalt värske GNonLin GStreameri plugina versioon (praegune on %"
-"s)"
+"Sul pole piisavalt värske GNonLin GStreameri plugina versioon (praegune on "
+"%s)"
 
 #, python-format
 msgid ""
 "Install a version of the GNonLin GStreamer plugin greater or equal to %s"
-msgstr ""
-"Paigalda GNonLin GStreameri plugin, mille versioon on vähemalt %s"
+msgstr "Paigalda GNonLin GStreameri plugin, mille versioon on vähemalt %s"
 
 msgid "Could not import the Zope interface module"
 msgstr "Zope liidese moodulit pole võimalik importida"
@@ -234,11 +231,13 @@ msgstr ""
 
 msgid ""
 "\n"
-"      %prog [PROJECT_FILE]\n"
+"      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
+"      %prog -p [PROJECT_FILE]\n"
 "      %prog -i [-a] [MEDIA_FILE]..."
 msgstr ""
 "\n"
-"      %prog [PROJEKTIFAIL]\n"
+"      %prog [-r VÄLJUNDFAIL] [PROJEKTIFAIL]\n"
+"      %prog -p [PROJEKTIFAIL]\n"
 "      %prog -i [-a] [MEEDIAFAIL]..."
 
 msgid ""
@@ -247,25 +246,34 @@ msgid ""
 "Alternatively, when -i is specified, arguments are treated as clips to be\n"
 "imported into the project. If -a is specified, these clips will also be "
 "added to\n"
-"the end of the project timeline."
+"the end of the project timeline.\n"
+"When -r is specified, the given project file is rendered without opening the "
+"GUI."
 msgstr ""
 "Käivitab videoredaktori, soovil avades PROJEKTIFAILI.\n"
 "Kui ühtegi projekti ei ole antud, loob %prog uue projekti.\n"
 "Lisaks, kui -i on määratud, koheldakse argumente nagu klippe,\n"
 "mis tuleb importida projekti. Kui -a on määratud, lisatakse need\n"
-"klipid projekti ajajoone lõppu."
+"klipid projekti ajatelje lõppu.\n"
+"Võtmega -r renderdatakse antud fail ilma graafilist kasutajaliidest avamata."
 
 msgid "Import each MEDIA_FILE into the project."
-msgstr "Impordi kõik MEEDIAFAILID projekti."
+msgstr "Kõigi MEEDIAFAILIDE importimine projekti."
 
 msgid "Add each MEDIA_FILE to timeline after importing."
-msgstr "Lisab kõik MEEDIAFAILID pärast importimist ajajoonele."
+msgstr "Kõigi MEEDIAFAILIDE lisamine ajateljele pärast importimist."
 
 msgid "Run pitivi in the Python Debugger"
 msgstr "pitivi käivitamine Pythoni silujas"
 
 msgid "Run pitivi with no gui"
 msgstr "pitivi käivitamine ilma graafilise kasutajaliideseta"
+
+msgid "Render the given project file to OUTPUT_FILE with no GUI."
+msgstr "Antud projekti renderdamine VÄLJUNDFAILI ilma kasutajaliideseta."
+
+msgid "Preview the given project file without the full UI."
+msgstr "Antud projekti eelvaatlemine ilma täieliku kasutajaliideseta."
 
 msgid "Not a valid project file."
 msgstr "Pole sobiv projektifail."
@@ -300,6 +308,14 @@ msgstr ""
 "Mukser: "
 
 #, python-format
+msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
+msgstr "%(width)d x %(height)d pikslit kiirusel %(framerate).2f k/s"
+
+#, python-format
+msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
+msgstr "%(channels)d kanalit lahutusega %(frequency)d Hz (%(depth)d bitti)"
+
+#, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d tund"
@@ -322,6 +338,44 @@ msgstr[1] "%d sekundit"
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s ei suuda veel töötada kaugmasinas asuvate projektidega "
+
+msgid "All effects"
+msgstr "Kõik efektid"
+
+msgid "Colors"
+msgstr "Värvid"
+
+msgid "Noise"
+msgstr "Müra"
+
+msgid "Analysis"
+msgstr "Analüüs"
+
+msgid "Blur"
+msgstr "Hägustamine"
+
+msgid "Geometry"
+msgstr "Geomeetria"
+
+msgid "Fancy"
+msgstr "Edev"
+
+msgid "Time"
+msgstr "Aeg"
+
+msgid "Uncategorized"
+msgstr "Kategoriseerimata"
+
+#. TODO check if it is the good way to make it translatable
+#. And to filter actually!
+msgid "Video"
+msgstr "Video"
+
+msgid "Audio |audio"
+msgstr "audio"
+
+msgid "effect"
+msgstr "efekt"
 
 msgid "PiTiVi Native (XML)"
 msgstr "PiTiVi omavorming (XML)"
@@ -370,6 +424,81 @@ msgstr "<b>Tundmatu videovorming:</b> %s"
 msgid "<b>Text:</b> %s"
 msgstr "<b>Tekst:</b> %s"
 
+msgid "12 fps"
+msgstr "12 k/s"
+
+msgid "15 fps"
+msgstr "15 k/s"
+
+msgid "20 fps"
+msgstr "20 k/s"
+
+msgid "23,976 fps"
+msgstr "23,976 k/s"
+
+msgid "24 fps"
+msgstr "24 k/s"
+
+msgid "25 fps"
+msgstr "25 k/s"
+
+msgid "29,97 fps"
+msgstr "29,97 k/s"
+
+msgid "30 fps"
+msgstr "30 k/s"
+
+msgid "59,94 fps"
+msgstr "59,94 k/s"
+
+msgid "60 fps"
+msgstr "60 k/s"
+
+msgid "120 fps"
+msgstr "120 k/s"
+
+msgid "8 KHz"
+msgstr "8 kHz"
+
+msgid "11 KHz"
+msgstr "11 kHz"
+
+msgid "22 KHz"
+msgstr "22 kHz"
+
+msgid "44.1 KHz"
+msgstr "44.1 kHz"
+
+msgid "48 KHz"
+msgstr "48 kHz"
+
+msgid "96 KHz"
+msgstr "96 kHz"
+
+msgid "8 bit"
+msgstr "8 bitti"
+
+msgid "16 bit"
+msgstr "16 bitti"
+
+msgid "24 bit"
+msgstr "24 bitti"
+
+msgid "32 bit"
+msgstr "32 bitti"
+
+msgid "6 Channels (5.1)"
+msgstr "6 kanalit (5.1)"
+
+msgid "4 Channels (4.0)"
+msgstr "4 kanalit (4.0)"
+
+msgid "Stereo"
+msgstr "Stereo"
+
+msgid "Mono"
+msgstr "Mono"
+
 #, python-format
 msgid "Properties For: %d object"
 msgid_plural "Properties For: %d objects"
@@ -382,8 +511,6 @@ msgstr "Omadused puuduvad..."
 msgid "Implement Me"
 msgstr "Vajab koostamist"
 
-#. i18n: string for custom video width/height/framerate settings
-#. i18n: string for custom audio rate/depth/channels settings
 msgid "Custom"
 msgstr "Kohandatud"
 
@@ -393,200 +520,137 @@ msgstr "Salvesta mall"
 msgid "Choose..."
 msgstr "Vali..."
 
-msgid "<b>Author:</b>"
-msgstr "<b>Autor:</b>"
+msgid "Video effects"
+msgstr "Videefektid"
 
-msgid "<b>Description:</b>"
-msgstr "<b>Kirjeldus:</b>"
+msgid "Audio effects"
+msgstr "Heliefektid"
 
-msgid "<b>Plugin Name</b>"
-msgstr "<b>Plugina nimi</b>"
+#. Prevents being flush against the notebook
+msgid "Search:"
+msgstr "Otsing:"
 
-msgid "<b>Properties</b>"
-msgstr "<b>Omadused</b>"
-
-msgid "Author"
-msgstr "Autor"
+msgid "<b>Properties For Plugin</b>"
+msgstr "<b>Plugina omadused</b>"
 
 msgid "Properties for <element>"
 msgstr "Elemendi <element> omadused"
 
-msgid "<b>Audio:</b>"
-msgstr "<b>Heli:</b>"
+msgid "1000 x 1000"
+msgstr "1000 x 1000"
 
-msgid "<b>Nothing yet</b>"
-msgstr "<b>Veel puudu</b>"
+msgid "29.97 fps"
+msgstr "29.97 k/s"
 
-msgid "<b>Settings</b>"
-msgstr "<b>Sätted</b>"
-
-msgid "<b>Video:</b>"
-msgstr "<b>Video:</b>"
-
-msgid "Choose File"
-msgstr "Faili valimine"
-
-msgid "Modify"
-msgstr "Muuda"
-
-msgid "Output file:"
-msgstr "Väljundfail:"
-
-msgid "Please choose an output file"
-msgstr "Vali väljundfail"
-
-msgid "Render project"
-msgstr "Projekti renderdamine"
-
-msgid "Choose file to render to"
-msgstr "Renderduse sihtfaili valimine"
-
-#, python-format
-msgid "About %s left"
-msgstr "Umbes %s jäänud"
-
-msgid "Rendering"
-msgstr "Renderdamine"
-
-msgid "Rendering Complete"
-msgstr "Renderdamine lõpetatud"
+msgid "6 channels (5.1)\n"
+msgstr "6 kanalit (5.1)\n"
 
 msgid ""
-"12 fps\n"
-"23.97 fps\n"
-"24 fps\n"
-"25 fps\n"
-"29.97 fps\n"
-"30 fps\n"
-"60 fps"
+"AC-3\n"
+"AAC"
 msgstr ""
-"12 fps\n"
-"23.97 fps\n"
-"24 fps\n"
-"25 fps\n"
-"29.97 fps\n"
-"30 fps\n"
-"60 fps"
+"AC-3\n"
+"AAC"
 
-msgid ""
-"8 bit\n"
-"16 bit\n"
-"24 bit\n"
-"32 bit"
-msgstr ""
-"8 bitine\n"
-"16 bitine\n"
-"24 bitine\n"
-"32 bitine"
+msgid "Advanced..."
+msgstr "Täpsem..."
 
-msgid ""
-"8000 Hz\n"
-"11025 Hz\n"
-"22050 Hz\n"
-"44100 Hz\n"
-"48000 Hz\n"
-"96000 Hz"
-msgstr ""
-"8000 Hz\n"
-"11025 Hz\n"
-"22050 Hz\n"
-"44100 Hz\n"
-"48000 Hz\n"
-"96000 Hz"
+msgid "Audio"
+msgstr "Audio"
 
-msgid "<b>Audio Output</b>"
-msgstr "<b>Heliväljund</b>"
+msgid "Codec:"
+msgstr "Koodek:"
 
-msgid "<b>Export to</b>"
-msgstr "<b>Ekspordi kuhu</b>"
+msgid "Container format"
+msgstr "Konteinervorming"
 
-msgid "<b>Video Output</b>"
-msgstr "<b>Videoväljund</b>"
+msgid "Container format:"
+msgstr "Konteinervorming:"
 
-msgid "Audio Codec"
-msgstr "Helikoodek"
+msgid "Draft (no special effects, single pass)"
+msgstr "Mustand (ilma eriefektideta, ühe käiguga)"
 
-msgid "Audio Codec:"
-msgstr "Helikoodek:"
+msgid "Edit Project Settings..."
+msgstr "Projekti sättete muutmine..."
 
-msgid "Audio Preset"
-msgstr "Helimall"
+msgid "File name"
+msgstr "Failinimi"
 
-msgid "Channels:"
-msgstr "Kanalid:"
+msgid "File name:"
+msgstr "Failinimi:"
 
-msgid "Container:"
-msgstr "Konteiner:"
+msgid "Folder"
+msgstr "Kaust"
 
-msgid "Depth:"
-msgstr "Sügavus:"
+msgid "Folder:"
+msgstr "Kaust:"
 
 msgid "Frame rate:"
 msgstr "Kaadrisagedus:"
 
-msgid "Height:"
-msgstr "Kõrgus:"
+msgid "Framerate"
+msgstr "Kaadrisagedus"
 
-msgid ""
-"Mono (1)\n"
-"Stereo (2)"
-msgstr ""
-"Mono (1)\n"
-"Stereo (2)"
+msgid "General"
+msgstr "Üldine"
 
-msgid "Muxer"
-msgstr "Mukser"
+msgid "H.264"
+msgstr "H.264"
 
-msgid "Rate:"
-msgstr "Kiirus:"
+msgid "Height"
+msgstr "Kõrgus"
 
-msgid "Settings"
-msgstr "Sätted"
+msgid "MP4"
+msgstr "MP4"
 
-msgid "Video Codec"
-msgstr "Videokoodek"
+msgid "Number of channels:"
+msgstr "Kanalite arv:"
 
-msgid "Video Codec:"
-msgstr "Videokoodek:"
+msgid "Render only the selected clips"
+msgstr "Renderdatakse ainult valitud klipid"
 
-msgid "Video Preset"
-msgstr "Videomall"
+msgid "Sample Depth:"
+msgstr "Diskreedi sügavus:"
 
-msgid "Width:"
-msgstr "Laius:"
+msgid "Sample Rate:"
+msgstr "Diskreetimissagedus:"
 
-msgid "576p (PAL DV/DVD)"
-msgstr "576p (PAL DV/DVD)"
+msgid "Sample rate"
+msgstr "Diskreetimissagedus"
 
-msgid "480p (NTSC DV/DVD)"
-msgstr "480p (NTSC DV/DVD)"
+msgid "Scale"
+msgstr "Skaleerimine"
 
-msgid "720p HD"
-msgstr "720p HD"
+msgid "Scale:"
+msgstr "Skaala:"
 
-msgid "1080p full HD"
-msgstr "1080p täis-HD"
+msgid "Summary"
+msgstr "Kokkuvõte"
 
-msgid "QVGA (320x240)"
-msgstr "QVGA (320x240)"
+msgid "<b><big>Rendering movie</big></b>"
+msgstr "<b><big>Filmi renderdamine</big></b>"
 
-msgid "VGA (640x480)"
-msgstr "VGA (640x480)"
+msgid "<b>Estimated filesize:</b>"
+msgstr "<b>Eeldatav failisuurus:</b>"
 
-msgid "SVGA (800x600)"
-msgstr "SVGA (800x600)"
+msgid "<b>Frames per second:</b>"
+msgstr "<b>Kaadreid sekundis:</b>"
 
-msgid "XGA (1024x768)"
-msgstr "XGA (1024x768)"
+msgid "<b>Phase:</b>"
+msgstr "<b>Faas:</b>"
 
-msgid "Raw Video"
-msgstr "Toorvideo"
+msgid "Encoding first pass"
+msgstr "Kodeerimise esimene käik"
 
-msgid "Raw Audio"
-msgstr "Tooraudio"
+msgid "Rendering"
+msgstr "Renderdamine"
 
-msgid "Export settings"
-msgstr "Eksportimise sätted"
+#, fuzzy
+msgid "Unknown Mib"
+msgstr "Teadmata Mib"
+
+msgid "Unkown"
+msgstr "Tundmatu"
 
 msgid "Unknown reason"
 msgstr "Teadmata põhjus"
@@ -599,6 +663,9 @@ msgstr "Probleem:"
 
 msgid "Extra information:"
 msgstr "Lisateave:"
+
+msgid "Reset to default value"
+msgstr "Vaikeväärtuse taastamine"
 
 #. set title and frame label
 #, python-format
@@ -640,11 +707,17 @@ msgstr "Valitud lõigu kordus"
 msgid "Create a new project"
 msgstr "Uue projekti loomine"
 
+msgid "_Open..."
+msgstr "_Ava..."
+
 msgid "Open an existing project"
 msgstr "Olemasoleva projekti avamine"
 
 msgid "Save the current project"
 msgstr "Praeguse projekti salvestamine"
+
+msgid "Save _As..."
+msgstr "Salvesta _kui..."
 
 msgid "Reload the current project"
 msgstr "Praeguse projekti uuesti avamine"
@@ -658,6 +731,9 @@ msgstr "Projekti sätete muutmine"
 msgid "_Render project"
 msgstr "_Projekti renderdamine"
 
+msgid "Render project..."
+msgstr "Projekti renderdamine..."
+
 msgid "_Undo"
 msgstr "_Võta tagasi"
 
@@ -668,7 +744,7 @@ msgid "_Redo"
 msgstr "_Tee uuesti"
 
 msgid "Redo the last operation that was undone"
-msgstr "Viimati tagasivõetud tegevuse uuesti sooritamine"
+msgstr "Tagasivõetud tegevuse uuesti sooritamine"
 
 msgid "_Plugins..."
 msgstr "_Pluginad..."
@@ -680,7 +756,7 @@ msgid "_Preferences"
 msgstr "_Eelistused"
 
 msgid "Import from _Webcam..."
-msgstr "Importimine _veebikaamerast..."
+msgstr "Impordi _veebikaamerast..."
 
 msgid "Import Camera stream"
 msgstr "Kaameravoo importimine"
@@ -692,7 +768,7 @@ msgid "Capture the desktop"
 msgstr "Töölaua lindistamine"
 
 msgid "_Capture Network Stream..."
-msgstr "_Võrguvoo lindistamine..."
+msgstr "_Lindista võrguvoogu..."
 
 msgid "Capture Network Stream"
 msgstr "Võrguvoo lindistamine"
@@ -700,6 +776,9 @@ msgstr "Võrguvoo lindistamine"
 #, python-format
 msgid "Information about %s"
 msgstr "Teave %s kohta"
+
+msgid "User manual"
+msgstr "Kasutaja käsiraamat"
 
 msgid "_File"
 msgstr "_Fail"
@@ -714,7 +793,7 @@ msgid "_Project"
 msgstr "_Projekt"
 
 msgid "_Timeline"
-msgstr "_Ajajoon"
+msgstr "_Ajatelg"
 
 msgid "Previe_w"
 msgstr "_Eelvaatlus"
@@ -732,16 +811,22 @@ msgid "Main Toolbar"
 msgstr "Peamine tööriistariba"
 
 msgid "Timeline Toolbar"
-msgstr "Ajajoone tööriistariba"
+msgstr "Ajatelje tööriistariba"
+
+msgid "Undock Viewer"
+msgstr "Vabasta vaatur dokist"
+
+msgid "Put the viewer in a serparate window"
+msgstr "Vaaturi tõstmine eraldi aknasse"
 
 msgid "Media Library"
 msgstr "Meediakogu"
 
-msgid "Open File..."
-msgstr "Faili avamine..."
+msgid "Effect Library"
+msgstr "Efektikogu"
 
-msgid "All Supported Formats"
-msgstr "Kõik toetatud vormingud"
+msgid "Effects configurations"
+msgstr "Efektide seadistused"
 
 msgid "Contributors:"
 msgstr "Kaastöölised:"
@@ -752,6 +837,12 @@ msgid ""
 msgstr ""
 "GNU vähem üldine avalik litsents\n"
 "Lähem teave aadressilt http://www.gnu.org/copyleft/lesser.html"
+
+msgid "Open File..."
+msgstr "Faili avamine..."
+
+msgid "All Supported Formats"
+msgstr "Kõik toetatud vormingud"
 
 msgid "Close without saving"
 msgstr "Sulge ilma salvestamata"
@@ -851,9 +942,6 @@ msgstr "Kõik kategooriad"
 msgid "Plugin manager"
 msgstr "Pluginate haldur"
 
-msgid "Search:"
-msgstr "Otsing:"
-
 msgid "Show:"
 msgstr "Kuva:"
 
@@ -922,7 +1010,7 @@ msgid "Some changes will not take effect until you restart PiTiVi"
 msgstr "Mõned muudatused jõustuvad alles pärast PiTiVi taaskäivitust!"
 
 msgid "Reset"
-msgstr "Taaskäivita"
+msgstr "Lähtesta"
 
 msgid "Appearance"
 msgstr "Välimus"
@@ -945,17 +1033,78 @@ msgstr "Lainekuju näidatakse (audio)"
 msgid "Show Waveforms on Audio Clips"
 msgstr "Heliklippidel näidatakse lainekuju graafikut"
 
-msgid "A short description of your project."
-msgstr "Projekti lühikirjeldus."
+msgid "Remove effect"
+msgstr "Eemalda efekt"
 
-msgid "Description:"
-msgstr "Kirjeldus:"
+msgid "Activated"
+msgstr "Aktiivne"
 
-msgid "Name:"
-msgstr "Nimi:"
+msgid "Type"
+msgstr "Liik"
 
-msgid "The name of your project."
-msgstr "Projekti nimi."
+msgid "Effect name"
+msgstr "Efekti nimi"
+
+msgid ""
+"<span>You must select <b>one</b> clip on the timeline to configure its "
+"associated effects</span>"
+msgstr ""
+"<span>Pead valima <b>ühe</b> klipi, millega seotud efekte tahad seadistada</"
+"span>"
+
+msgid "25 FPS"
+msgstr "25 k/s"
+
+msgid "<b>Aspect Ratio</b>"
+msgstr "<b>Külgede suhe</b>"
+
+msgid "<b>Format</b>"
+msgstr "<b>Vorming</b>"
+
+msgid "<b>Frame Rate</b>"
+msgstr "<b>Kaadrisagedus</b>"
+
+msgid "<b>Preset</b>"
+msgstr "<b>Eelseadistus</b>"
+
+msgid "<b>Size (Pixels)</b>"
+msgstr "<b>Suurus (pikslites)</b>"
+
+msgid "Author:"
+msgstr "Autor:"
+
+msgid "Channels:"
+msgstr "Kanalid:"
+
+msgid "Display Aspect Ratio"
+msgstr "Kuva külgede suhe"
+
+msgid "Info"
+msgstr "Andmed"
+
+msgid "Pixel Aspect Ratio"
+msgstr "Piksli külgede suhe"
+
+msgid "Project title:"
+msgstr "Projekti pealkiri:"
+
+msgid "Sample depth:"
+msgstr "Diskreedi sügavus:"
+
+msgid "Sample rate:"
+msgstr "Diskreetimissagedus:"
+
+msgid "Standard (4:3)"
+msgstr "Standardne (4:3)"
+
+msgid "Standard PAL"
+msgstr "Standardne PAL"
+
+msgid "Year:"
+msgstr "Aasta:"
+
+msgid "x"
+msgstr "x"
 
 msgid "No Objects Selected"
 msgstr "Ühtegi objekti pole valitud"
@@ -970,7 +1119,7 @@ msgid "Start Istanbul"
 msgstr "Istanbul-i käivitamine"
 
 msgid "Import clips..."
-msgstr "Klippide importimine..."
+msgstr "Impordi klippe..."
 
 msgid "Remove Clip"
 msgstr "Klipi eemaldamine"
@@ -991,7 +1140,8 @@ msgid ""
 "<span>Import your clips by dragging them here or by using the buttons above."
 "</span>"
 msgstr ""
-"<span>Impordi klipid lohistades need siia või kasutades ülemisi nuppe.</span>"
+"<span>Klippide importimiseks lohista need siia või vajuta ülal asuvat "
+"klippide importimise nuppu.</span>"
 
 msgid "_Import clips..."
 msgstr "_Impordi klippe..."
@@ -1000,7 +1150,7 @@ msgid "Import clips to use"
 msgstr "Klippide importimine"
 
 msgid "Import _folder of clips..."
-msgstr "Klippide _kausta importimine..."
+msgstr "Impordi klippide _kaust..."
 
 msgid "Import folder of clips to use"
 msgstr "Klippide kataloogi importimine"
@@ -1009,7 +1159,13 @@ msgid "_Remove from project"
 msgstr "_Eemalda projektist"
 
 msgid "Insert at _end of timeline"
-msgstr "Sisesta ajajoone _lõppu"
+msgstr "Sisesta ajatelje _lõppu"
+
+msgid "Show Clips as a List"
+msgstr "Klippe näidatakse loendina"
+
+msgid "Show Clips as Icons"
+msgstr "Klippe näidatakse ikoonidena"
 
 msgid "Import a folder"
 msgstr "Kausta importimine"
@@ -1018,7 +1174,7 @@ msgid "Import a clip"
 msgstr "Klipi importimine"
 
 msgid "Close after importing files"
-msgstr "Pärast failide importimist rakendus sulgub"
+msgstr "Pärast failide importimist aken sulgub"
 
 msgid "Importing clips..."
 msgstr "Klippide importimine..."
@@ -1041,6 +1197,21 @@ msgstr "Viga faili analüüsimisel"
 msgid "The following file can not be used with PiTiVi."
 msgstr "PiTiVi ei suuda kasutada järgnevat faili."
 
+msgid "Browse projects..."
+msgstr "Projektide sirvimine..."
+
+msgid "Double-click a project below to load it:"
+msgstr "Projeki laadimiseks tee sellel topeltklõps"
+
+msgid "Help"
+msgstr "Abi"
+
+msgid "Skip"
+msgstr "Jäta vahele"
+
+msgid "Startup Wizard"
+msgstr "Käivitusnõustaja"
+
 #. tooltip text for toolbar
 msgid "Delete Selected"
 msgstr "Valiku kustutamine"
@@ -1048,8 +1219,14 @@ msgstr "Valiku kustutamine"
 msgid "Split clip at playhead position"
 msgstr "Klipi tükeldamine esitusejärje kohalt"
 
-msgid "Create a keyframe"
-msgstr "Loo uus võtmekaader"
+msgid "Add a keyframe"
+msgstr "Lisa võtmekaader"
+
+msgid "Move to the previous keyframe"
+msgstr "Eelmisele võtmekaadrile liikumine"
+
+msgid "Move to the next keyframe"
+msgstr "Järgmisele võtmekaadrile liikumine"
 
 msgid "Zoom In"
 msgstr "Suurenda"
@@ -1079,7 +1256,13 @@ msgid "The following errors have been reported:"
 msgstr "Raporteeriti järgnevatest tõrgetest:"
 
 msgid "Zoom Timeline"
-msgstr "Ajajoone suurendus"
+msgstr "Ajatelje suurendus"
+
+msgid "_Prevframe"
+msgstr "_Eelmine kaader"
+
+msgid "_Nextframe"
+msgstr "_Järgmine kaader"
 
 msgid "Behavior"
 msgstr "Käitumine"
@@ -1089,6 +1272,12 @@ msgstr "Tõmbumise kaugus (pikslites)"
 
 msgid "Threshold distance (in pixels) used for all snapping operations"
 msgstr "Igat liiki tõmbumiste rakendumise lävi pikslites"
+
+msgid "<b>Audio:</b>"
+msgstr "<b>Heli:</b>"
+
+msgid "<b>Video:</b>"
+msgstr "<b>Video:</b>"
 
 msgid "<b>Text:</b>"
 msgstr "<b>Tekst:</b>"
@@ -1116,3 +1305,191 @@ msgstr "Klipi kirjatüüp"
 
 msgid "The font to use for clip titles"
 msgstr "Kirjatüüp, mida kasutatakse klipi pealkirja jaoks"
+
+msgid "Go to the beginning of the timeline"
+msgstr "Ajatelje algusesse liikumine"
+
+msgid "Go back one second"
+msgstr "Liikumine üks sekund tagasi"
+
+msgid "Go forward one second"
+msgstr "Liikumine üks sekund edasi"
+
+msgid "Go to the end of the timeline"
+msgstr "Ajatelje lõppu liikumine"
+
+msgid "Dock Viewer"
+msgstr "Doki vaatur"
+
+msgid "Play"
+msgstr "Esita"
+
+msgid "Pause"
+msgstr "Paus"
+
+#~ msgid "<b>Author:</b>"
+#~ msgstr "<b>Autor:</b>"
+
+#~ msgid "<b>Description:</b>"
+#~ msgstr "<b>Kirjeldus:</b>"
+
+#~ msgid "<b>Plugin Name</b>"
+#~ msgstr "<b>Plugina nimi</b>"
+
+#~ msgid "<b>Nothing yet</b>"
+#~ msgstr "<b>Veel puudu</b>"
+
+#~ msgid "Choose File"
+#~ msgstr "Faili valimine"
+
+#~ msgid "Modify"
+#~ msgstr "Muuda"
+
+#~ msgid "Output file:"
+#~ msgstr "Väljundfail:"
+
+#~ msgid "Please choose an output file"
+#~ msgstr "Vali väljundfail"
+
+#~ msgid "Choose file to render to"
+#~ msgstr "Renderduse sihtfaili valimine"
+
+#~ msgid "%.0f%% rendered"
+#~ msgstr "%.0f%% on renderdatud"
+
+#~ msgid "About %s left"
+#~ msgstr "Umbes %s jäänud"
+
+#~ msgid "0% rendered"
+#~ msgstr "0% on renderdatud"
+
+#~ msgid "Rendering Complete"
+#~ msgstr "Renderdamine lõpetatud"
+
+#~ msgid ""
+#~ "12 fps\n"
+#~ "23.97 fps\n"
+#~ "24 fps\n"
+#~ "25 fps\n"
+#~ "29.97 fps\n"
+#~ "30 fps\n"
+#~ "60 fps"
+#~ msgstr ""
+#~ "12 fps\n"
+#~ "23.97 fps\n"
+#~ "24 fps\n"
+#~ "25 fps\n"
+#~ "29.97 fps\n"
+#~ "30 fps\n"
+#~ "60 fps"
+
+#~ msgid ""
+#~ "8 bit\n"
+#~ "16 bit\n"
+#~ "24 bit\n"
+#~ "32 bit"
+#~ msgstr ""
+#~ "8 bitine\n"
+#~ "16 bitine\n"
+#~ "24 bitine\n"
+#~ "32 bitine"
+
+#~ msgid ""
+#~ "8000 Hz\n"
+#~ "11025 Hz\n"
+#~ "22050 Hz\n"
+#~ "44100 Hz\n"
+#~ "48000 Hz\n"
+#~ "96000 Hz"
+#~ msgstr ""
+#~ "8000 Hz\n"
+#~ "11025 Hz\n"
+#~ "22050 Hz\n"
+#~ "44100 Hz\n"
+#~ "48000 Hz\n"
+#~ "96000 Hz"
+
+#~ msgid "<b>Audio Output</b>"
+#~ msgstr "<b>Heliväljund</b>"
+
+#~ msgid "<b>Video Output</b>"
+#~ msgstr "<b>Videoväljund</b>"
+
+#~ msgid "Audio Codec"
+#~ msgstr "Helikoodek"
+
+#~ msgid "Audio Preset"
+#~ msgstr "Helimall"
+
+#~ msgid ""
+#~ "Mono (1)\n"
+#~ "Stereo (2)"
+#~ msgstr ""
+#~ "Mono (1)\n"
+#~ "Stereo (2)"
+
+#~ msgid "Muxer"
+#~ msgstr "Mukser"
+
+#~ msgid "Rate:"
+#~ msgstr "Kiirus:"
+
+#~ msgid "Settings"
+#~ msgstr "Sätted"
+
+#~ msgid "Video Codec"
+#~ msgstr "Videokoodek"
+
+#~ msgid "Video Codec:"
+#~ msgstr "Videokoodek:"
+
+#~ msgid "Video Preset"
+#~ msgstr "Videomall"
+
+#~ msgid "Width:"
+#~ msgstr "Laius:"
+
+#~ msgid "576p (PAL DV/DVD)"
+#~ msgstr "576p (PAL DV/DVD)"
+
+#~ msgid "480p (NTSC DV/DVD)"
+#~ msgstr "480p (NTSC DV/DVD)"
+
+#~ msgid "720p HD"
+#~ msgstr "720p HD"
+
+#~ msgid "1080p full HD"
+#~ msgstr "1080p täis-HD"
+
+#~ msgid "QVGA (320x240)"
+#~ msgstr "QVGA (320x240)"
+
+#~ msgid "VGA (640x480)"
+#~ msgstr "VGA (640x480)"
+
+#~ msgid "SVGA (800x600)"
+#~ msgstr "SVGA (800x600)"
+
+#~ msgid "XGA (1024x768)"
+#~ msgstr "XGA (1024x768)"
+
+#~ msgid "Raw Video"
+#~ msgstr "Toorvideo"
+
+#~ msgid "Raw Audio"
+#~ msgstr "Tooraudio"
+
+#~ msgid "Export settings"
+#~ msgstr "Eksportimise sätted"
+
+#~ msgid "A short description of your project."
+#~ msgstr "Projekti lühikirjeldus."
+
+#~ msgid "Description:"
+#~ msgstr "Kirjeldus:"
+
+#~ msgid "Name:"
+#~ msgstr "Nimi:"
+
+#~ msgid "The name of your project."
+#~ msgstr "Projekti nimi."
