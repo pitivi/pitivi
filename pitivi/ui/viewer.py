@@ -239,7 +239,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         if self._haveUI:
             for item in [self.slider, self.goToStart_button, self.back_button,
                          self.playpause_button, self.forward_button,
-                         self.goToEnd_button, self.timelabel]:
+                         self.goToEnd_button, self.timecode_entry]:
                 item.set_sensitive(active)
         if active:
             self.emit("activate-playback-controls", True)
@@ -327,9 +327,9 @@ class PitiviViewer(gtk.VBox, Loggable):
         bbox.pack_start(self.goToEnd_button, expand=False)
 
         # current time
-        self.timelabel = gtk.Entry()
-        self.timelabel.set_text("00:00:00.000")
-        bbox.pack_start(self.timelabel, expand=False, padding=10)
+        self.timecode_entry = gtk.Entry()
+        self.timecode_entry.set_text("00:00:00.000")
+        bbox.pack_start(self.timecode_entry, expand=False, padding=10)
         self._haveUI = True
 
         screen = gdk.screen_get_default()
@@ -443,7 +443,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.info("value:%s, frame:%d", gst.TIME_ARGS(value), frame)
         self.current_time = value
         self.current_frame = frame
-        self.timelabel.set_text("%s" % time_to_string(value))
+        self.timecode_entry.set_text("%s" % time_to_string(value))
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
         return False
