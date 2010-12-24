@@ -493,8 +493,8 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _jumpToTimecodeCb(self, widget):
         nanoseconds = string_to_time(widget.get_text())
-        if nanoseconds:
-            pass # TODO: seek
+        if nanoseconds:  # The timecode has been correctly parsed
+            self.seek(nanoseconds)
 
     ## public methods for controlling playback
 
