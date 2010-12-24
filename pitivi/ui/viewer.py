@@ -31,7 +31,7 @@ from gettext import gettext as _
 from pitivi.action import ViewAction
 
 from pitivi.stream import VideoStream
-from pitivi.utils import time_to_string, Seeker
+from pitivi.utils import time_to_string, string_to_time, Seeker
 from pitivi.log.loggable import Loggable
 from pitivi.pipeline import PipelineError
 from pitivi.ui.common import SPACING
@@ -329,6 +329,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         # current time
         self.timecode_entry = gtk.Entry()
         self.timecode_entry.set_text("00:00:00.000")
+        self.timecode_entry.connect("activate", self._jumpToTimecodeCb)
         bbox.pack_start(self.timecode_entry, expand=False, padding=10)
         self._haveUI = True
 
@@ -487,6 +488,13 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.seek(dur - 1)
         except:
             self.warning("couldn't get duration")
+
+    ## Callback for jumping to a specific timecode
+
+    def _jumpToTimecodeCb(self, widget):
+        nanoseconds = string_to_time(widget.get_text())
+        if nanoseconds:
+            pass # TODO: seek
 
     ## public methods for controlling playback
 
