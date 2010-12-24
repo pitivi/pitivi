@@ -327,9 +327,8 @@ class PitiviViewer(gtk.VBox, Loggable):
         bbox.pack_start(self.goToEnd_button, expand=False)
 
         # current time
-        self.timelabel = gtk.Label()
-        self.timelabel.set_markup("<tt>00:00:00.000</tt>")
-        self.timelabel.set_alignment(1.0, 0.5)
+        self.timelabel = gtk.Entry()
+        self.timelabel.set_text("00:00:00.000")
         bbox.pack_start(self.timelabel, expand=False, padding=10)
         self._haveUI = True
 
@@ -444,7 +443,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.info("value:%s, frame:%d", gst.TIME_ARGS(value), frame)
         self.current_time = value
         self.current_frame = frame
-        self.timelabel.set_markup("<tt>%s</tt>" % time_to_string(value))
+        self.timelabel.set_text("%s" % time_to_string(value))
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
         return False
