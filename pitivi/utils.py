@@ -72,7 +72,8 @@ def string_to_time(timecode):
             + int(mm) * 6 * 10e10 \
             + int(ss) * 10e9 \
             + int(xxx) * 10e6
-        return int(nanosecs)
+        nanosecs = nanosecs / 10 # Compensate the 10 factor of e notation
+        return nanosecs
     except:
         return False
 
