@@ -155,6 +155,16 @@ class SourceList(gtk.VBox, Loggable):
         # import sources dialogbox
         self._importDialog = None
 
+        # Search/filter box
+        self.search_hbox = gtk.HBox()
+        self.search_hbox.set_spacing(SPACING)
+        self.search_hbox.set_border_width(3)  # Prevents being flush against the notebook
+        searchLabel = gtk.Label(_("Search:"))
+        searchEntry = gtk.Entry()
+        searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
+        self.search_hbox.pack_start(searchLabel, expand=False)
+        self.search_hbox.pack_end(searchEntry, expand=True)
+
         # TreeView
         # Displays icon, name, type, length
         self.treeview = gtk.TreeView(self.storemodel)
@@ -327,6 +337,7 @@ class SourceList(gtk.VBox, Loggable):
 
         # add all child widgets
         self.pack_start(self.infobar, expand=False, fill=False)
+        self.pack_start(self.search_hbox, expand=False)
         self.pack_start(self.iconview_scrollwin)
         self.pack_start(self.treeview_scrollwin)
 
@@ -538,7 +549,7 @@ class SourceList(gtk.VBox, Loggable):
         self._addFactory(factory)
         if len(self.storemodel):
             self.infobar.hide_all()
-
+            self.search_hbox.show_all()
 
     def _sourceRemovedCb(self, sourcelist, uri, factory):
         """ the given uri was removed from the sourcelist """
@@ -550,6 +561,7 @@ class SourceList(gtk.VBox, Loggable):
                 break
         if not len(model):
             self._displayHelpText()
+            self.search_hbox.hide()
 
     def _discoveryErrorCb(self, unused_sourcelist, uri, reason, extra):
         """ The given uri isn't a media file """
