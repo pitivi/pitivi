@@ -714,9 +714,27 @@ class SourceList(gtk.VBox, Loggable):
         Select, in the media library, unused sources in the project.
         """
         sources = self.app.current.sources.getSources()
+        unused_sources_uris = []
+
+        model = self.storemodel
+        selection = self.treeview.get_selection()
         for source in sources:
             if not self.app.current.timeline.usesFactory(source):
-                print "Unused source:", source.name
+                unused_sources_uris.append(source.uri)
+
+        # Hack around the fact that making selections (in a treeview/iconview)
+        # deselects what was previously selected
+        if self.clip_view == SHOW_TREEVIEW:
+            self.treeview.get_selection().select_all()
+        elif self.clip_view == SHOW_ICONVIEW:
+            self.iconview.select_all()
+
+        for row in model:
+            if row[COL_URI] not in unused_sources_uris:
+                if self.clip_view == SHOW_TREEVIEW:
+                    selection.unselect_iter(row.iter)
+                else:
+                    self.iconview.unselect_path(row.path)
 
     ## UI Button callbacks
 
