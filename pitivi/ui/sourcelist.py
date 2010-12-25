@@ -40,7 +40,7 @@ from pitivi.stream import VideoStream, AudioStream, TextStream, \
 from pitivi.settings import GlobalSettings
 from pitivi.utils import beautify_length
 from pitivi.ui.common import beautify_factory, factory_name, \
-    beautify_stream, PADDING
+    beautify_stream, SPACING, PADDING
 from pitivi.log.loggable import Loggable
 from pitivi.sourcelist import SourceListError
 
@@ -118,8 +118,8 @@ class SourceList(gtk.VBox, Loggable):
 
         # Store
         # icon, infotext, objectfactory, uri, length
-        self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, gtk.gdk.Pixbuf, str, object, str, str,
-            str, str)
+        self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, gtk.gdk.Pixbuf,
+            str, object, str, str, str, str)
 
         # Scrolled Windows
         self.treeview_scrollwin = gtk.ScrolledWindow()
@@ -170,7 +170,7 @@ class SourceList(gtk.VBox, Loggable):
 
         pixbufcol = gtk.TreeViewColumn(_("Icon"))
         pixbufcol.set_expand(False)
-        pixbufcol.set_spacing(5)
+        pixbufcol.set_spacing(SPACING)
         self.treeview.append_column(pixbufcol)
         pixcell = gtk.CellRendererPixbuf()
         pixcell.props.xpad = 6
@@ -180,7 +180,7 @@ class SourceList(gtk.VBox, Loggable):
         namecol = gtk.TreeViewColumn(_("Information"))
         self.treeview.append_column(namecol)
         namecol.set_expand(True)
-        namecol.set_spacing(5)
+        namecol.set_spacing(SPACING)
         namecol.set_sizing(gtk.TREE_VIEW_COLUMN_GROW_ONLY)
         namecol.set_min_width(150)
         txtcell = gtk.CellRendererText()
@@ -208,7 +208,7 @@ class SourceList(gtk.VBox, Loggable):
         self.iconview.set_item_width(106)
 
         # Explanatory message InfoBar
-        infobar = gtk.InfoBar()
+        self.infobar = gtk.InfoBar()
 
         txtlabel = gtk.Label()
         txtlabel.set_padding(PADDING, PADDING)
@@ -218,8 +218,7 @@ class SourceList(gtk.VBox, Loggable):
         txtlabel.set_markup(
             _("<span>Import your clips by dragging them here or "
               "by using the buttons above.</span>"))
-        infobar.add(txtlabel)
-        self.infobar = infobar
+        self.infobar.add(txtlabel)
         self.txtlabel = txtlabel
 
         self.infostub = InfoStub()
@@ -989,7 +988,7 @@ class InfoStub(gtk.HBox, Loggable):
         self._makeUI()
 
     def _makeUI(self):
-        self.set_spacing(6)
+        self.set_spacing(SPACING)
         anim = gtk.gdk.PixbufAnimation(get_pixmap_dir() + "/busy.gif")
         self.busyanim = gtk.image_new_from_animation(anim)
         self.busyanim.show()
