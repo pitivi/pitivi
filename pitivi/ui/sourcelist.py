@@ -85,6 +85,8 @@ ui = '''
             <placeholder name="SourceList" >
                 <menuitem action="ImportSources" />
                 <menuitem action="ImportSourcesFolder" />
+                <separator />
+                <menuitem action="SelectUnusedSources" />
                 <menuitem action="RemoveSources" />
                 <separator />
                 <menuitem action="InsertEnd" />
@@ -310,6 +312,9 @@ class SourceList(gtk.VBox, Loggable):
                 _("Import _Folders..."), None,
                 _("Add the contents of a folder as clips in your project"),
                 self._importSourcesFolderCb),
+            ("SelectUnusedSources", None, _("Select Unused Media"), None,
+                _("Select clips that have not been used in the project"),
+                self._selectUnusedSourcesCb),
         )
 
         # only available when selection is non-empty
@@ -382,6 +387,9 @@ class SourceList(gtk.VBox, Loggable):
 
     def _removeSourcesCb(self, unused_action):
         self._removeSources()
+
+    def _selectUnusedSourcesCb(self, widget):
+        pass
 
     def _insertEndCb(self, unused_action):
         self.app.action_log.begin("add clip")
