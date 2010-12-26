@@ -162,12 +162,20 @@ class SourceList(gtk.VBox, Loggable):
         searchLabel = gtk.Label(_("Search:"))
         searchEntry = gtk.Entry()
         searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
+        searchEntry.connect("changed", self.searchEntryChangedCb)
+        searchEntry.connect("button-press-event", self.searchEntryActivateCb)
+        searchEntry.connect("focus-out-event", self.searchEntryDeactivateCb)
+        searchEntry.connect("icon-press", self.searchEntryIconClickedCb)
         self.search_hbox.pack_start(searchLabel, expand=False)
         self.search_hbox.pack_end(searchEntry, expand=True)
+        # Filtering model for the search box
+        self.modelFilter = self.storemodel.filter_new()
+        self.modelFilter.set_visible_func(self._setRowVisible, data=searchEntry)
+        #self.treeview.set_model(self.modelFilter)
 
         # TreeView
         # Displays icon, name, type, length
-        self.treeview = gtk.TreeView(self.storemodel)
+        self.treeview = gtk.TreeView(self.modelFilter)
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
         self.treeview.connect("row-activated", self._rowActivatedCb)
@@ -366,6 +374,31 @@ class SourceList(gtk.VBox, Loggable):
             source.setStart(start)
             start += source.duration
         self.app.action_log.commit()
+
+    def searchEntryChangedCb (self, entry):
+        self.modelFilter.refilter()
+
+    def searchEntryIconClickedCb (self, entry, unused, unsed1):
+        entry.set_text("")
+
+    def searchEntryDeactivateCb(self, entry, event):
+        sensitive_actions = self.app.gui.sensitive_actions
+        self.app.gui.setActionsSensitive(sensitive_actions, True)
+
+    def searchEntryActivateCb(self, entry, event):
+        sensitive_actions = self.app.gui.sensitive_actions
+        self.app.gui.setActionsSensitive(sensitive_actions, False)
+
+    def _setRowVisible(self, model, iter, data):
+        """
+        Toggle the visibility of a liststore row.
+        Used for the search box.
+        """
+        text = data.get_text().lower()
+        if text == "":
+            return True # Avoid silly warnings
+        else:
+            return text in model.get_value(iter, COL_INFOTEXT).lower()
 
     def _getIcon(self, iconname, alternate):
         icontheme = gtk.icon_theme_get_default()
