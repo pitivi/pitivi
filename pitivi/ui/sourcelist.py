@@ -168,10 +168,10 @@ class SourceList(gtk.VBox, Loggable):
         searchEntry.connect("icon-press", self.searchEntryIconClickedCb)
         self.search_hbox.pack_start(searchLabel, expand=False)
         self.search_hbox.pack_end(searchEntry, expand=True)
-        # Filtering model for the search box
+        # Filtering model for the search box.
+        # Use this instead of using self.storemodel directly
         self.modelFilter = self.storemodel.filter_new()
         self.modelFilter.set_visible_func(self._setRowVisible, data=searchEntry)
-        #self.treeview.set_model(self.modelFilter)
 
         # TreeView
         # Displays icon, name, type, length
@@ -215,7 +215,7 @@ class SourceList(gtk.VBox, Loggable):
         namecol.add_attribute(txtcell, "markup", COL_LENGTH)
 
         # IconView
-        self.iconview = gtk.IconView(self.storemodel)
+        self.iconview = gtk.IconView(self.modelFilter)
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.connect("button-press-event", self._iconViewButtonPressEventCb)
         self.iconview.connect("selection-changed", self._viewSelectionChangedCb)
