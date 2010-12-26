@@ -529,12 +529,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
     #TODO check if it is the way to go
     def setActionsSensitive(self, action_names, sensitive):
         """
-        Permit to get the focus for the keyboard letter keys
-        for other operation as typing text in an entry, or loose it
+        Grab (or release) keyboard letter keys focus/sensitivity
+        for operations such as typing text in an entry.
         @param action_names: The name of actions we
                              want to set to sensitive or not
         @type action_names: A {list} of action names
-        @param sensitiive: %True if actions must be sensitive False otherwise
+        @param sensitive: %True if actions must be sensitive False otherwise
         @type action_names: C{Bool}
         """
         for action in self.actiongroup.list_actions():
