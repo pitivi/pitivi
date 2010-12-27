@@ -29,6 +29,7 @@ import pango
 from gettext import gettext as _
 
 from pitivi.ui.glade import GladeWindow
+from urllib import unquote
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 
@@ -66,6 +67,7 @@ class FileListErrorDialog(GladeWindow, Signallable, Loggable):
             if uri.startswith("file://"):
                 uri = uri[7:]
             uri = uri.split('/')[-1]
+            uri = unquote(uri)
             exp = gtk.Expander(uri)
         else:
             exp = gtk.Expander(reason)
