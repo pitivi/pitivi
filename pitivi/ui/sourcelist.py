@@ -115,6 +115,7 @@ class SourceList(gtk.VBox, Loggable):
 
         self.app = instance
         self.settings = instance.settings
+        self.errors = []
 
         # Store
         # icon, infotext, objectfactory, uri, length
@@ -239,8 +240,22 @@ class SourceList(gtk.VBox, Loggable):
         self.infobar.add(txtlabel)
         self.txtlabel = txtlabel
 
-        self.infostub = InfoStub()
-        self.infostub.connect("remove-me", self._removeInfoStub)
+        # The infobar that shows up if there are errors when importing clips
+        self.import_warning_infobar = gtk.InfoBar()
+        self.import_warning_infobar.set_message_type(gtk.MESSAGE_WARNING)
+        content_area = self.import_warning_infobar.get_content_area()
+        actions_area = self.import_warning_infobar.get_action_area()
+        self.warning_label = gtk.Label(_("Errors occured during importing"))
+        self.warning_label.set_line_wrap(True)
+        self.warning_label.set_line_wrap_mode(pango.WRAP_WORD)
+        self.warning_label.set_justify(gtk.JUSTIFY_CENTER)
+        self.viewErrorsButton = gtk.Button(_("View errors"))
+        self.viewErrorsButton.connect("clicked", self._viewErrorsButtonClickedCb)
+        content_area.add(self.warning_label)
+        actions_area.add(self.viewErrorsButton)
+
+        # The progressbar that shows up when importing clips
+        self.progressbar = gtk.ProgressBar()
 
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
@@ -280,9 +295,6 @@ class SourceList(gtk.VBox, Loggable):
 
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems
-
-        # Error dialog box
-        self.errorDialogBox = None
 
         # always available
         actions = (
@@ -345,9 +357,10 @@ class SourceList(gtk.VBox, Loggable):
 
         # add all child widgets
         self.pack_start(self.infobar, expand=False, fill=False)
-        self.pack_start(self.search_hbox, expand=False)
+        self.pack_start(self.import_warning_infobar, expand=False, fill=False)
         self.pack_start(self.iconview_scrollwin)
         self.pack_start(self.treeview_scrollwin)
+        self.pack_start(self.progressbar, expand=False)
 
         # display the help text
         self.clip_view = self.settings.lastClipView
@@ -432,7 +445,6 @@ class SourceList(gtk.VBox, Loggable):
             project.sources, "starting", None, self._sourcesStartedImportingCb)
 
 
-    ## Explanatory message methods
     
     def _setClipView(self, show):
         """ Set which clip view to use when sourcelist is showing clips. If
@@ -520,6 +532,23 @@ class SourceList(gtk.VBox, Loggable):
         """ walks the trees of the folders in the list and adds the files it finds """
         self.app.threads.addThread(PathWalker, folders, self.app.current.sources.addUris)
 
+    def _updateProgressbar(self):
+        """
+        Update the progressbar with the ratio of clips imported vs the total
+        """
+        self.current_clip_iter = self.app.current.sources.nb_imported_files
+        self.total_clips = self.app.current.sources.nb_file_to_import
+        progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
+            {"current_clip": self.current_clip_iter,
+            "total": self.total_clips})
+        self.progressbar.set_text(progressbar_text)
+        if self.current_clip_iter == 0:
+            self.progressbar.set_fraction(0.0)
+        elif self.total_clips != 0:
+            self.progressbar.set_fraction((self.current_clip_iter - 1) / float(self.total_clips))
+        else:
+            pass # FIXME on project load, it thinks there are 0 total clips
+
     def _addFactory(self, factory):
         video = factory.getOutputStreams(VideoStream)
         if video and video[0].thumbnail:
@@ -577,7 +606,7 @@ class SourceList(gtk.VBox, Loggable):
 
     def _sourceAddedCb(self, sourcelist, factory):
         """ a file was added to the sourcelist """
-        self.infostub.updateProgressbar(sourcelist)
+        self._updateProgressbar()
         self._addFactory(factory)
         if len(self.storemodel):
             self.infobar.hide_all()
@@ -597,22 +626,21 @@ class SourceList(gtk.VBox, Loggable):
 
     def _discoveryErrorCb(self, unused_sourcelist, uri, reason, extra):
         """ The given uri isn't a media file """
-        self.infostub.addErrors(uri, reason, extra)
+        error = (uri, reason, extra)
+        self.errors.append(error)
 
     def _missingPluginsCb(self, sourcelist, uri, factory, details, descriptions, cb):
-        self.infostub.addErrors(uri, "Missing plugins", "\n".join(descriptions))
+        error = (uri, "Missing plugins", "\n".join(descriptions))
+        self.errors.append(error)
 
     def _sourcesStartedImportingCb(self, sourcelist):
-        if not self.infostub.showing:
-            self.pack_start(self.infostub, expand=False)
-        self.infostub.startingImport()
-        self.infostub.updateProgressbar(sourcelist)
+        self.progressbar.show()
+        self._updateProgressbar()
 
     def _sourcesStoppedImportingCb(self, unused_sourcelist):
-        self.infostub.stoppingImport()
-
-    def _removeInfoStub(self, unused_i):
-        self.remove(self.infostub)
+        self.progressbar.hide()
+        if self.errors:
+            self.import_warning_infobar.show_all()
 
     ## Error Dialog Box callbacks
 
@@ -687,6 +715,25 @@ class SourceList(gtk.VBox, Loggable):
         factory = model[path][COL_FACTORY]
         self.debug("Let's play %s", factory.uri)
         self.emit('play', factory)
+
+    def _viewErrorsButtonClickedCb(self, unused_button):
+        """
+        Show a FileListErrorDialog to display import errors.
+        """
+        if len(self.errors) > 1:
+            msgs = (_("Error while analyzing files"),
+                    _("The following files can not be used with PiTiVi."))
+        else:
+            msgs = (_("Error while analyzing a file"),
+                    _("The following file can not be used with PiTiVi."))
+        self.errorDialogBox = FileListErrorDialog(*msgs)
+        self.errorDialogBox.connect("close", self._errorDialogBoxCloseCb)
+        self.errorDialogBox.connect("response", self._errorDialogBoxResponseCb)
+        for uri, reason, extra in self.errors:
+            self.errorDialogBox.addFailedFile(uri, reason, extra)
+        self.errorDialogBox.show()
+        self.errors = []  # Reset the error list (since the user has read them)
+        self.import_warning_infobar.hide()
 
     def _treeViewMenuItemToggledCb(self, unused_widget):
         if self.treeview_menuitem.get_active():
@@ -908,9 +955,7 @@ class SourceList(gtk.VBox, Loggable):
         self._connectToProject(project)
 
     def _newProjectLoadingCb(self, unused_pitivi, uri):
-        if not self.infostub.showing:
-            self.pack_start(self.infostub, expand=False)
-            self.infostub.startingImport()
+        pass
 
     def _newProjectLoadedCb(self, unused_pitivi, project):
         pass
@@ -1010,143 +1055,5 @@ class SourceList(gtk.VBox, Loggable):
             return
         selection.set(selection.target, 8, '\n'.join(uris))
         context.set_icon_pixbuf(INVISIBLE, 0, 0)
-
-class InfoStub(gtk.HBox, Loggable):
-    """
-    Box used to display information on the current state of the lists
-    """
-
-    __gsignals__ = {
-        "remove-me" : (gobject.SIGNAL_RUN_LAST,
-                       gobject.TYPE_NONE,
-                       ( ))
-        }
-
-    def __init__(self):
-        gtk.HBox.__init__(self)
-        Loggable.__init__(self)
-        self.errors = []
-        self.showing = False
-        self._errorsmessage = _("Errors occurred while importing")
-        self._errormessage = _("An error occurred while importing")
-        self._makeUI()
-
-    def _makeUI(self):
-        self.set_spacing(6)
-
-        self.progressbar = gtk.ProgressBar()
-        self.progressbar.show()
-
-        self.erroricon = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
-                                                  gtk.ICON_SIZE_SMALL_TOOLBAR)
-        self.erroricon.show()
-
-        self.infolabel = gtk.Label()
-        self.infolabel.set_alignment(0, 0.5)
-        self.infolabel.show()
-
-        self.questionbutton = gtk.Button()
-        self.questionbutton.set_image(gtk.image_new_from_stock(gtk.STOCK_INFO,
-                                                               gtk.ICON_SIZE_SMALL_TOOLBAR))
-        self.questionbutton.connect("clicked", self._questionButtonClickedCb)
-        self.questionbutton.show()
-        self._questionshowing = False
-
-        self.pack_start(self.infolabel, expand=True, fill=True)
-        self.pack_start(self.progressbar)
-        self._busyshowing = True
-
-    def updateProgressbar(self, sourcelist):
-        self.current_clip_iter = sourcelist.nb_imported_files
-        self.total_clips = sourcelist.nb_file_to_import
-        progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
-            {"current_clip": self.current_clip_iter,
-            "total": self.total_clips})
-        self.progressbar.set_text(progressbar_text)
-        if self.current_clip_iter == 0:
-            self.progressbar.set_fraction(0.0)
-        elif self.total_clips != 0:
-            self.progressbar.set_fraction((self.current_clip_iter - 1) / float(self.total_clips))
-        else:
-            pass # FIXME it thinks there are 0 total clips on project load
-
-    def startingImport(self):
-        if self.showing:
-            if self.errors:
-                # if we're already showing and we have errors, show spinner
-                self._showBusyAnim()
-        else:
-            self._showBusyAnim()
-            self._showQuestionButton(False)
-            self.show()
-
-    def stoppingImport(self):
-        if self.errors:
-            self._showErrorIcon()
-            if len(self.errors) > 1:
-                self.infolabel.set_text(self._errorsmessage)
-            else:
-                self.infolabel.set_text(self._errormessage)
-            self.infolabel.show()
-            self._showQuestionButton()
-        else:
-            self.hide()
-            self.emit("remove-me")
-
-    def addErrors(self, *args):
-        self.errors.append(args)
-
-    def _showBusyAnim(self):
-        if self._busyshowing:
-            return
-        self.remove(self.erroricon)
-        self.pack_start(self.progressbar, expand=False)
-        self.reorder_child(self.progressbar, 0)
-        self.progressbar.show()
-        self._busyshowing = True
-
-    def _showErrorIcon(self):
-        if not self._busyshowing:
-            return
-        self.remove(self.progressbar)
-        self.pack_start(self.erroricon, expand=False)
-        self.reorder_child(self.erroricon, 0)
-        self.erroricon.show()
-        self._busyshowing = False
-
-    def _showQuestionButton(self, visible=True):
-        if visible and not self._questionshowing:
-            self.pack_start(self.questionbutton, expand=False)
-            self.questionbutton.show()
-            self._questionshowing = True
-        elif not visible and self._questionshowing:
-            self.remove(self.questionbutton)
-            self._questionshowing = False
-
-    def _errorDialogBoxCloseCb(self, dialog):
-        dialog.destroy()
-
-    def _errorDialogBoxResponseCb(self, dialog, unused_response):
-        dialog.destroy()
-
-    def _questionButtonClickedCb(self, unused_button):
-        if len(self.errors) > 1:
-            msgs = (_("Error while analyzing files"),
-                    _("The following files can not be used with PiTiVi."))
-        else:
-            msgs = (_("Error while analyzing a file"),
-                    _("The following file can not be used with PiTiVi."))
-        # show error dialog
-        dbox = FileListErrorDialog(*msgs)
-        dbox.connect("close", self._errorDialogBoxCloseCb)
-        dbox.connect("response", self._errorDialogBoxResponseCb)
-        for uri, reason, extra in self.errors:
-            dbox.addFailedFile(uri, reason, extra)
-        dbox.show()
-        # reset error list
-        self.errors = []
-        self.infolabel.hide()
-        self.hide()
-        self.emit("remove-me")
 
 gobject.type_register(SourceList)
