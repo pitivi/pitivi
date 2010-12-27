@@ -575,8 +575,9 @@ class SourceList(gtk.VBox, Loggable):
 
     # sourcelist callbacks
 
-    def _sourceAddedCb(self, unused_sourcelist, factory):
+    def _sourceAddedCb(self, sourcelist, factory):
         """ a file was added to the sourcelist """
+        self.infostub.updateProgressbar(sourcelist)
         self._addFactory(factory)
         if len(self.storemodel):
             self.infobar.hide_all()
@@ -601,10 +602,11 @@ class SourceList(gtk.VBox, Loggable):
     def _missingPluginsCb(self, sourcelist, uri, factory, details, descriptions, cb):
         self.infostub.addErrors(uri, "Missing plugins", "\n".join(descriptions))
 
-    def _sourcesStartedImportingCb(self, unused_sourcelist):
+    def _sourcesStartedImportingCb(self, sourcelist):
         if not self.infostub.showing:
             self.pack_start(self.infostub, expand=False)
         self.infostub.startingImport()
+        self.infostub.updateProgressbar(sourcelist)
 
     def _sourcesStoppedImportingCb(self, unused_sourcelist):
         self.infostub.stoppingImport()
@@ -1025,22 +1027,21 @@ class InfoStub(gtk.HBox, Loggable):
         Loggable.__init__(self)
         self.errors = []
         self.showing = False
-        self._importingmessage = _("Importing clips...")
-        self._errorsmessage = _("Error(s) occurred while importing")
+        self._errorsmessage = _("Errors occurred while importing")
         self._errormessage = _("An error occurred while importing")
         self._makeUI()
 
     def _makeUI(self):
-        self.set_spacing(SPACING)
-        anim = gtk.gdk.PixbufAnimation(get_pixmap_dir() + "/busy.gif")
-        self.busyanim = gtk.image_new_from_animation(anim)
-        self.busyanim.show()
+        self.set_spacing(6)
+
+        self.progressbar = gtk.ProgressBar()
+        self.progressbar.show()
 
         self.erroricon = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
                                                   gtk.ICON_SIZE_SMALL_TOOLBAR)
         self.erroricon.show()
 
-        self.infolabel = gtk.Label(self._importingmessage)
+        self.infolabel = gtk.Label()
         self.infolabel.set_alignment(0, 0.5)
         self.infolabel.show()
 
@@ -1051,9 +1052,23 @@ class InfoStub(gtk.HBox, Loggable):
         self.questionbutton.show()
         self._questionshowing = False
 
-        self.pack_start(self.busyanim, expand=False)
-        self._busyshowing = True
         self.pack_start(self.infolabel, expand=True, fill=True)
+        self.pack_start(self.progressbar)
+        self._busyshowing = True
+
+    def updateProgressbar(self, sourcelist):
+        self.current_clip_iter = sourcelist.nb_imported_files
+        self.total_clips = sourcelist.nb_file_to_import
+        progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
+            {"current_clip": self.current_clip_iter,
+            "total": self.total_clips})
+        self.progressbar.set_text(progressbar_text)
+        if self.current_clip_iter == 0:
+            self.progressbar.set_fraction(0.0)
+        elif self.total_clips != 0:
+            self.progressbar.set_fraction((self.current_clip_iter - 1) / float(self.total_clips))
+        else:
+            pass # FIXME it thinks there are 0 total clips on project load
 
     def startingImport(self):
         if self.showing:
@@ -1062,7 +1077,6 @@ class InfoStub(gtk.HBox, Loggable):
                 self._showBusyAnim()
         else:
             self._showBusyAnim()
-            self.infolabel.set_text(self._importingmessage)
             self._showQuestionButton(False)
             self.show()
 
@@ -1073,6 +1087,7 @@ class InfoStub(gtk.HBox, Loggable):
                 self.infolabel.set_text(self._errorsmessage)
             else:
                 self.infolabel.set_text(self._errormessage)
+            self.infolabel.show()
             self._showQuestionButton()
         else:
             self.hide()
@@ -1085,15 +1100,15 @@ class InfoStub(gtk.HBox, Loggable):
         if self._busyshowing:
             return
         self.remove(self.erroricon)
-        self.pack_start(self.busyanim, expand=False)
-        self.reorder_child(self.busyanim, 0)
-        self.busyanim.show()
+        self.pack_start(self.progressbar, expand=False)
+        self.reorder_child(self.progressbar, 0)
+        self.progressbar.show()
         self._busyshowing = True
 
     def _showErrorIcon(self):
         if not self._busyshowing:
             return
-        self.remove(self.busyanim)
+        self.remove(self.progressbar)
         self.pack_start(self.erroricon, expand=False)
         self.reorder_child(self.erroricon, 0)
         self.erroricon.show()
@@ -1130,6 +1145,7 @@ class InfoStub(gtk.HBox, Loggable):
         dbox.show()
         # reset error list
         self.errors = []
+        self.infolabel.hide()
         self.hide()
         self.emit("remove-me")
 

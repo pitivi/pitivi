@@ -65,6 +65,8 @@ class SourceList(Signallable, Loggable):
         Signallable.__init__(self)
         self._sources = {}
         self._ordered_sources = []
+        self.nb_file_to_import = 1
+        self.nb_imported_files = 0
 
         self.discoverer = self.discovererClass()
         self.discoverer.connect("discovery-error", self._discoveryErrorCb)
@@ -94,6 +96,8 @@ class SourceList(Signallable, Loggable):
 
         The uris will be analyzed before being added.
         """
+        self.nb_file_to_import = len(uris)
+        self.nb_imported_files = 0
         for uri in uris:
             self.addUri(uri)
 
@@ -135,6 +139,7 @@ class SourceList(Signallable, Loggable):
 
         self._sources[factory.uri] = factory
         self._ordered_sources.append(factory)
+        self.nb_imported_files += 1
         self.emit("source-added", factory)
 
     def getSources(self):
