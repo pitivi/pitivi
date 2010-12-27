@@ -47,7 +47,6 @@ class FileListErrorDialog(GladeWindow, Signallable, Loggable):
         self.widgets["headline"].set_text(headline)
         self.window.set_title(title)
         self.errorvbox = self.widgets["errorvbox"]
-        self.window.set_geometry_hints(min_width=400, min_height=200)
 
     def addFailedFile(self, uri, reason=_("Unknown reason"), extra=None):
         """Add the given uri to the list of failed files. You can optionnaly
@@ -56,7 +55,7 @@ class FileListErrorDialog(GladeWindow, Signallable, Loggable):
         """
         self.debug("Uri:%s, reason:%s, extra:%s", uri, reason, extra)
         exp = self._createFileExpander(uri, reason, extra)
-        self.errorvbox.pack_start(exp)
+        self.errorvbox.pack_start(exp, expand=False, fill=False)
         exp.show_all()
         #self.storemodel.append([str(uri), str(reason)])
 
@@ -76,22 +75,15 @@ class FileListErrorDialog(GladeWindow, Signallable, Loggable):
         boldtag.props.weight = pango.WEIGHT_BOLD
         table.add(boldtag)
 
-        if uri:
-            # <b>URI :</b> % uri
-            end = textbuffer.get_end_iter()
-            textbuffer.insert_with_tags(end, _("URI:"), boldtag)
-            end = textbuffer.get_end_iter()
-            textbuffer.insert(end, "%s\n" % uri)
-
         end = textbuffer.get_end_iter()
-        textbuffer.insert_with_tags(end, _("Problem:"), boldtag)
+        textbuffer.insert_with_tags(end, _("Problem:") + " ", boldtag)
 
         end = textbuffer.get_end_iter()
         textbuffer.insert(end, "%s\n" % reason)
 
         if extra:
             end = textbuffer.get_end_iter()
-            textbuffer.insert_with_tags(end, _("Extra information:"), boldtag)
+            textbuffer.insert_with_tags(end, _("Extra information:") + " ", boldtag)
 
             end = textbuffer.get_end_iter()
             textbuffer.insert(end, "%s\n" % extra)
