@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-14 21:12+0100\n"
-"PO-Revision-Date: 2010-12-05 18:58+0100\n"
+"POT-Creation-Date: 2010-12-27 20:40+0100\n"
+"PO-Revision-Date: 2010-12-16 09:31+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -248,7 +248,7 @@ msgstr "Obsluha vstupu není dostupná."
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr ""
-"GStreamer nemůže zpracovat protokol '%s'. Máte nainstalovány příslušné "
+"GStreamer nemůže zpracovat protokol „%s“. Máte nainstalovány příslušné "
 "balíčky?"
 
 #: ../pitivi/discoverer.py:432
@@ -290,7 +290,7 @@ msgid ""
 msgstr ""
 "\n"
 "      %prog [-r VÝSTUPNÍ_SOUBOR] [SOUBOR_PROJEKTU]\n"
-"      %prog [SOUBOR_PROJEKTU]\n"
+"      %prog -p [SOUBOR_PROJEKTU]\n"
 "      %prog -i [-a] [SOUBOR_MÉDIÍ]…"
 
 #: ../pitivi/application.py:230
@@ -350,7 +350,7 @@ msgstr "Nelze zavřít současný projekt"
 
 #: ../pitivi/projectmanager.py:144
 msgid "No URI specified."
-msgstr "Nebyla zadána adresa."
+msgstr "Nebyla zadána adresa URI."
 
 #: ../pitivi/projectmanager.py:178
 msgid "New Project"
@@ -370,7 +370,7 @@ msgid ""
 "Audio: "
 msgstr ""
 "\n"
-"Audio: "
+"Zvuk: "
 
 #: ../pitivi/settings.py:508
 msgid ""
@@ -383,7 +383,7 @@ msgstr ""
 #: ../pitivi/settings.py:526
 #, python-format
 msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
-msgstr "%(width)d × %(height)d pixelů při %(framerate).2f fps"
+msgstr "%(width)d × %(height)d pixelů při %(framerate).2f snímcích/s"
 
 #: ../pitivi/settings.py:537
 #, python-format
@@ -462,7 +462,7 @@ msgstr "Nezařazené"
 #: ../pitivi/effects.py:240 ../pitivi/ui/encodingdialog.glade.h:32
 #: ../pitivi/ui/projectsettings.glade.h:20
 msgid "Video"
-msgstr "Video|video|Obrazový|obrazový"
+msgstr "Video"
 
 #: ../pitivi/effects.py:241
 msgid "Audio |audio"
@@ -506,24 +506,24 @@ msgstr "Video nahrávací zařízení:"
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] "<b>Audio:</b> %d kanál @ %d <i>Hz</i> (%d <i>bitů</i>)"
-msgstr[1] "<b>Audio:</b> %d kanály @ %d <i>Hz</i> (%d <i>bitů</i>)"
-msgstr[2] "<b>Audio:</b> %d kanálů @ %d <i>Hz</i> (%d <i>bitů</i>)"
+msgstr[0] "<b>Zvuk:</b> %d kanál @ %d <i>Hz</i> (%d <i>bitů</i>)"
+msgstr[1] "<b>Zvuk:</b> %d kanály @ %d <i>Hz</i> (%d <i>bitů</i>)"
+msgstr[2] "<b>Zvuk:</b> %d kanálů @ %d <i>Hz</i> (%d <i>bitů</i>)"
 
 #: ../pitivi/ui/common.py:97 ../pitivi/ui/common.py:139
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
-msgstr "<b>Neznámý audio formát:</b> %s"
+msgstr "<b>Neznámý zvukový formát:</b> %s"
 
 #: ../pitivi/ui/common.py:102 ../pitivi/ui/common.py:144
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
-msgstr "<b>Video:</b> %d x %d <i>pixelů</i> @ %.2f<i>fps</i>"
+msgstr "<b>Video:</b> %d × %d <i>pixelů</i> @ %.2f<i>fps</i>"
 
 #: ../pitivi/ui/common.py:106 ../pitivi/ui/common.py:148
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
-msgstr "<b>Obrázek:</b> %d x %d <i>pixelů</i>"
+msgstr "<b>Obrázek:</b> %d × %d <i>pixelů</i>"
 
 #: ../pitivi/ui/common.py:109 ../pitivi/ui/common.py:151
 #, python-format
@@ -537,105 +537,103 @@ msgstr "<b>Text:</b> %s"
 
 #: ../pitivi/ui/common.py:185
 msgid "12 fps"
-msgstr ""
+msgstr "12 snímků/s"
 
 #: ../pitivi/ui/common.py:186
 msgid "15 fps"
-msgstr ""
+msgstr "15 snímků/s"
 
 #: ../pitivi/ui/common.py:187
 msgid "20 fps"
-msgstr ""
+msgstr "20 snímků/s"
 
 #: ../pitivi/ui/common.py:188
 msgid "23,976 fps"
-msgstr ""
+msgstr "23,976 snímků/s"
 
 #: ../pitivi/ui/common.py:189
 msgid "24 fps"
-msgstr ""
+msgstr "24 snímků/s"
 
 #: ../pitivi/ui/common.py:190
 msgid "25 fps"
-msgstr ""
+msgstr "25 snímků/s"
 
 #: ../pitivi/ui/common.py:191
 msgid "29,97 fps"
-msgstr ""
+msgstr "29,97 snímků/s"
 
 #: ../pitivi/ui/common.py:192
 msgid "30 fps"
-msgstr ""
+msgstr "30 snímků/s"
 
 #: ../pitivi/ui/common.py:193
 msgid "59,94 fps"
-msgstr ""
+msgstr "59,94 snímků/s"
 
 #: ../pitivi/ui/common.py:194
 msgid "60 fps"
-msgstr ""
+msgstr "60 snímků/s"
 
 #: ../pitivi/ui/common.py:195
 msgid "120 fps"
-msgstr ""
+msgstr "120 snímků/s"
 
 #: ../pitivi/ui/common.py:199
 msgid "8 KHz"
-msgstr ""
+msgstr "8 kHz"
 
 #: ../pitivi/ui/common.py:200
 msgid "11 KHz"
-msgstr ""
+msgstr "11 kHz"
 
 #: ../pitivi/ui/common.py:201
 msgid "22 KHz"
-msgstr ""
+msgstr "22 kHz"
 
 #: ../pitivi/ui/common.py:202
 msgid "44.1 KHz"
-msgstr ""
+msgstr "44,1 kHz"
 
 #: ../pitivi/ui/common.py:203
 msgid "48 KHz"
-msgstr ""
+msgstr "48 kHz"
 
 #: ../pitivi/ui/common.py:204
 msgid "96 KHz"
-msgstr ""
+msgstr "96 kHz"
 
 #: ../pitivi/ui/common.py:208
 msgid "8 bit"
-msgstr ""
+msgstr "8 bitů"
 
 #: ../pitivi/ui/common.py:209
 msgid "16 bit"
-msgstr ""
+msgstr "16 bitů"
 
 #: ../pitivi/ui/common.py:210
 msgid "24 bit"
-msgstr ""
+msgstr "24 bitů"
 
 #: ../pitivi/ui/common.py:211
 msgid "32 bit"
-msgstr ""
+msgstr "32 bitů"
 
 #: ../pitivi/ui/common.py:215
-#, fuzzy
 msgid "6 Channels (5.1)"
-msgstr "Kanály:"
+msgstr "6 kanálů (5.1)"
 
 #: ../pitivi/ui/common.py:216
-#, fuzzy
 msgid "4 Channels (4.0)"
-msgstr "Kanály:"
+msgstr "4 kanály (4.0)"
 
 #: ../pitivi/ui/common.py:217
 msgid "Stereo"
-msgstr ""
+msgstr "Stereo"
 
 #: ../pitivi/ui/common.py:218
 msgid "Mono"
-msgstr ""
+msgstr "Mono"
 
 #: ../pitivi/ui/defaultpropertyeditor.py:104
 #, python-format
@@ -667,7 +665,7 @@ msgstr "Vybrat…"
 
 #: ../pitivi/ui/effectlist.py:75
 msgid "Video effects"
-msgstr "Obrazové efekty"
+msgstr "Video efekty"
 
 #: ../pitivi/ui/effectlist.py:76
 msgid "Audio effects"
@@ -679,9 +677,8 @@ msgid "Search:"
 msgstr "Hledat:"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
-#, fuzzy
 msgid "<b>Properties For Plugin</b>"
-msgstr "<b>Vlastnosti</b>"
+msgstr "<b>Vlastnosti pro zásuvný modul</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:2
 msgid "Properties for <element>"
@@ -689,169 +686,156 @@ msgstr "Vlastnosti - <element>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:1
 msgid "1000 x 1000"
-msgstr ""
+msgstr "1000 × 1000"
 
 #: ../pitivi/ui/encodingdialog.glade.h:2
 msgid "29.97 fps"
-msgstr ""
+msgstr "29.97 snímků/s"
 
 #: ../pitivi/ui/encodingdialog.glade.h:3
 msgid "6 channels (5.1)\n"
-msgstr ""
+msgstr "6 kanálů (5.1)\n"
 
 #: ../pitivi/ui/encodingdialog.glade.h:5
 msgid ""
 "AC-3\n"
 "AAC"
 msgstr ""
+"AC-3\n"
+"AAC"
 
 #: ../pitivi/ui/encodingdialog.glade.h:7
 msgid "Advanced..."
-msgstr ""
+msgstr "Pokročilé…"
 
 #: ../pitivi/ui/encodingdialog.glade.h:8
 #: ../pitivi/ui/projectsettings.glade.h:7
-#, fuzzy
 msgid "Audio"
-msgstr ""
-"\n"
-"Audio: "
+msgstr "Zvuk"
 
 #: ../pitivi/ui/encodingdialog.glade.h:9
-#, fuzzy
 msgid "Codec:"
-msgstr "Audio kodek:"
+msgstr "Kodek:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:10
-#, fuzzy
 msgid "Container format"
-msgstr "Kontejner:"
+msgstr "Formát kontejneru"
 
 #: ../pitivi/ui/encodingdialog.glade.h:11
-#, fuzzy
 msgid "Container format:"
-msgstr "Kontejner:"
+msgstr "Formát kontejneru:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:12
 msgid "Draft (no special effects, single pass)"
-msgstr ""
+msgstr "Koncept (bez speciálních efektů, jeden průchod)"
 
 #: ../pitivi/ui/encodingdialog.glade.h:13
-#, fuzzy
 msgid "Edit Project Settings..."
-msgstr "Nastavení projektu"
+msgstr "Upravit nastavení projektu…"
 
 #: ../pitivi/ui/encodingdialog.glade.h:14
-#, fuzzy
 msgid "File name"
-msgstr "Název efektu"
+msgstr "Název souboru"
 
 #: ../pitivi/ui/encodingdialog.glade.h:15
 msgid "File name:"
-msgstr ""
+msgstr "Název souboru:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:16
 msgid "Folder"
-msgstr ""
+msgstr "Složka"
 
 #: ../pitivi/ui/encodingdialog.glade.h:17
 msgid "Folder:"
-msgstr ""
+msgstr "Složka:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:18
 msgid "Frame rate:"
 msgstr "Snímková frekvence:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:19
-#, fuzzy
 msgid "Framerate"
-msgstr "Snímková frekvence:"
+msgstr "Snímková frekvence"
 
 #: ../pitivi/ui/encodingdialog.glade.h:20
 msgid "General"
-msgstr ""
+msgstr "Obecné"
 
 #: ../pitivi/ui/encodingdialog.glade.h:21
 msgid "H.264"
-msgstr ""
+msgstr "H.264"
 
 #: ../pitivi/ui/encodingdialog.glade.h:22
-#, fuzzy
 msgid "Height"
-msgstr "Výška:"
+msgstr "Výška"
 
 #: ../pitivi/ui/encodingdialog.glade.h:23
 msgid "MP4"
-msgstr ""
+msgstr "MP4"
 
 #: ../pitivi/ui/encodingdialog.glade.h:24
 msgid "Number of channels:"
-msgstr ""
+msgstr "Počet kanálů:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:25
 msgid "Render only the selected clips"
-msgstr ""
+msgstr "Vykreslit pouze vybrané klipy"
 
 #: ../pitivi/ui/encodingdialog.glade.h:26
-#, fuzzy
 msgid "Sample Depth:"
-msgstr "Hloubka:"
+msgstr "Hloubka vzorku:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:27
-#, fuzzy
 msgid "Sample Rate:"
-msgstr "Snímková frekvence:"
+msgstr "Vzorkovací frekvence:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:28
-#, fuzzy
 msgid "Sample rate"
-msgstr "Snímková frekvence:"
+msgstr "Vzorkovací frekvence"
 
 #: ../pitivi/ui/encodingdialog.glade.h:29
 msgid "Scale"
-msgstr ""
+msgstr "Škálování"
 
 #: ../pitivi/ui/encodingdialog.glade.h:30
 msgid "Scale:"
-msgstr ""
+msgstr "Škálování:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:31
 msgid "Summary"
-msgstr ""
+msgstr "Shrnutí"
 
 #: ../pitivi/ui/encodingprogress.glade.h:1
 msgid "<b><big>Rendering movie</big></b>"
-msgstr ""
+msgstr "<b><big>Vykresluje se film</big></b>"
 
 #: ../pitivi/ui/encodingprogress.glade.h:2
 msgid "<b>Estimated filesize:</b>"
-msgstr ""
+msgstr "<b>Odhadovaná velikost souboru:</b>"
 
 #: ../pitivi/ui/encodingprogress.glade.h:3
 msgid "<b>Frames per second:</b>"
-msgstr ""
+msgstr "<b>Snímků za sekundu:</b>"
 
 #: ../pitivi/ui/encodingprogress.glade.h:4
-#, fuzzy
 msgid "<b>Phase:</b>"
-msgstr "<b>Text:</b>"
+msgstr "<b>Fáze:</b>"
 
 #: ../pitivi/ui/encodingprogress.glade.h:5
 msgid "Encoding first pass"
-msgstr ""
+msgstr "Kódování prvního průchodu"
 
 #: ../pitivi/ui/encodingprogress.glade.h:6
 msgid "Rendering"
 msgstr "Vykreslování"
 
 #: ../pitivi/ui/encodingprogress.glade.h:7
-#, fuzzy
 msgid "Unknown Mib"
-msgstr "Neznámá příčina"
+msgstr "Neznámo Mib"
 
 #: ../pitivi/ui/encodingprogress.glade.h:8
 msgid "Unkown"
-msgstr ""
+msgstr "Neznámo"
 
 #: ../pitivi/ui/filelisterrordialog.py:52
 msgid "Unknown reason"
@@ -898,7 +882,7 @@ msgstr "Rozpojit"
 #. Translators: This is an action, the title of a button
 #: ../pitivi/ui/mainwindow.py:148 ../pitivi/ui/projectsettings.glade.h:12
 msgid "Link"
-msgstr "Spojit"
+msgstr "Svázat"
 
 #: ../pitivi/ui/mainwindow.py:149
 msgid "Ungroup"
@@ -1382,37 +1366,31 @@ msgstr ""
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "25 FPS"
-msgstr ""
+msgstr "25 snímků/s"
 
 #: ../pitivi/ui/projectsettings.glade.h:2
-#, fuzzy
 msgid "<b>Aspect Ratio</b>"
-msgstr "<b>Exportovat do</b>"
+msgstr "<b>Poměr stran</b>"
 
 #: ../pitivi/ui/projectsettings.glade.h:3
-#, fuzzy
 msgid "<b>Format</b>"
-msgstr "<b>Exportovat do</b>"
+msgstr "<b>Formát</b>"
 
 #: ../pitivi/ui/projectsettings.glade.h:4
-#, fuzzy
 msgid "<b>Frame Rate</b>"
-msgstr "<b>Vlastnosti</b>"
+msgstr "<b>Snímková rychlost</b>"
 
 #: ../pitivi/ui/projectsettings.glade.h:5
-#, fuzzy
 msgid "<b>Preset</b>"
-msgstr "<b>Vlastnosti</b>"
+msgstr "<b>Přednastavené</b>"
 
 #: ../pitivi/ui/projectsettings.glade.h:6
-#, fuzzy
 msgid "<b>Size (Pixels)</b>"
-msgstr "<b>Nastavení</b>"
+msgstr "<b>Velikost (pixely)</b>"
 
 #: ../pitivi/ui/projectsettings.glade.h:8
-#, fuzzy
 msgid "Author:"
-msgstr "Autor"
+msgstr "Autor:"
 
 #: ../pitivi/ui/projectsettings.glade.h:9
 msgid "Channels:"
@@ -1420,45 +1398,43 @@ msgstr "Kanály:"
 
 #: ../pitivi/ui/projectsettings.glade.h:10
 msgid "Display Aspect Ratio"
-msgstr ""
+msgstr "Poměr stran dle obrazovky"
 
 #: ../pitivi/ui/projectsettings.glade.h:11
 msgid "Info"
-msgstr ""
+msgstr "Informace"
 
 #: ../pitivi/ui/projectsettings.glade.h:13
 msgid "Pixel Aspect Ratio"
-msgstr ""
+msgstr "Poměr stran dle pixelů"
 
 #: ../pitivi/ui/projectsettings.glade.h:15
-#, fuzzy
 msgid "Project title:"
-msgstr "Nastavení projektu"
+msgstr "Název projektu:"
 
 #: ../pitivi/ui/projectsettings.glade.h:16
 msgid "Sample depth:"
-msgstr ""
+msgstr "Hloubka vzorku:"
 
 #: ../pitivi/ui/projectsettings.glade.h:17
-#, fuzzy
 msgid "Sample rate:"
-msgstr "Snímková frekvence:"
+msgstr "Vzorkovací frekvence:"
 
 #: ../pitivi/ui/projectsettings.glade.h:18
 msgid "Standard (4:3)"
-msgstr ""
+msgstr "Standardní (4:3)"
 
 #: ../pitivi/ui/projectsettings.glade.h:19
 msgid "Standard PAL"
-msgstr ""
+msgstr "Standardní PAL"
 
 #: ../pitivi/ui/projectsettings.glade.h:21
 msgid "Year:"
-msgstr ""
+msgstr "Rok:"
 
 #: ../pitivi/ui/projectsettings.glade.h:22
 msgid "x"
-msgstr ""
+msgstr "×"
 
 #: ../pitivi/ui/propertyeditor.py:54
 msgid "No Objects Selected"
