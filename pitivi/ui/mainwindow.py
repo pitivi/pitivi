@@ -955,7 +955,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         label = gtk.Label()
         label.set_markup(text)
-        label.set_justify(gtk.JUSTIFY_CENTER)
         dialog.get_content_area().pack_start(label, False, False)
         label.show()
 
