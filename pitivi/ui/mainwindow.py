@@ -922,16 +922,15 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
 
     def _projectManagerNewProjectFailedCb(self, projectManager, uri, exception):
-        # ungrey UI
+        project_filename = unquote(uri.split("/")[-1])
         dialog = gtk.MessageDialog(self,
             gtk.DIALOG_MODAL,
             gtk.MESSAGE_ERROR,
             gtk.BUTTONS_OK,
-            _("PiTiVi is unable to load file \"%s\"") %
-                uri)
+            _('Unable to load project "%s"') % project_filename)
         dialog.set_icon_name("pitivi")
         dialog.set_title(_("Error Loading File"))
-        dialog.set_property("secondary-text", str(exception))
+        dialog.set_property("secondary-text", unquote(str(exception)))
         dialog.run()
         dialog.destroy()
         self.set_sensitive(True)
