@@ -25,6 +25,7 @@ Base Formatter classes
 
 import os
 from urlparse import urlparse
+from urllib import unquote, quote
 from pitivi.project import Project
 from pitivi.utils import uri_is_reachable, uri_is_valid
 from pitivi.signalinterface import Signallable
@@ -299,24 +300,36 @@ class Formatter(Signallable, Loggable):
         @param newpath: The new location corresponding to oldpath.
         @type newpath: C{URI}
         """
+        # Make sure the two paths are human-readable for comparing
+        oldpath = unquote(oldpath)
+        newpath = unquote(newpath)
+
         self.debug("oldpath:%r, newpath:%r", oldpath, newpath)
         # FIXME dumbest of dumbest implementation, whoever comes up
         # with a less ugly code is welcome to change this :)
+        
+        # Split the paths for each directory level
         a = oldpath.split(os.sep)
         b = newpath.split(os.sep)
 
-        # search backwards for when the mapping starts
+        # Search backwards in the paths for when the mapping starts
         ia = len(a)
         ib = len(b)
         while ia > 0 and ib > 0:
             self.debug("ia:%d, ib:%d", ia, ib)
-            if a[ia - 1] != b[ib - 1]:
+            if a[ia - 1] != b[ib - 1]:  # Whenever the two portions differ
                 break
+            # As long as they don't differ, go up one level in the paths
             ia -= 1
             ib -= 1
 
         oldprefix = os.sep.join(a[:ia])
         newprefix = os.sep.join(b[:ib])
+
+        # Re-encode the paths to URI format (after unquoting them)
+        oldprefix = quote(oldprefix, ":/")
+        newprefix = quote(newprefix, ":/")
+
         self.debug("oldprefix:%r, newprefix:%r", oldprefix, newprefix)
         if oldprefix in self.directorymapping.keys():
             raise FormatterError()
