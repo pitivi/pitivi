@@ -708,6 +708,7 @@ class ElementTreeFormatter(Formatter):
             return
 
         uris = [source.uri for source in sources]
+        project.sources.nb_file_to_import = len(uris)
         discoverer = project.sources.discoverer
         discoverer.connect("discovery-done", self._discovererDiscoveryDoneCb,
                 project, sources, uris, closure)
