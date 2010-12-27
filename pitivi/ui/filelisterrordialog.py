@@ -56,6 +56,8 @@ class FileListErrorDialog(GladeWindow, Signallable, Loggable):
         self.debug("Uri:%s, reason:%s, extra:%s", uri, reason, extra)
         exp = self._createFileExpander(uri, reason, extra)
         self.errorvbox.pack_start(exp, expand=False, fill=False)
+        if len(self.errorvbox.get_children()) < 3:
+            exp.set_expanded(True)  # Let's save the user some clicks
         exp.show_all()
         #self.storemodel.append([str(uri), str(reason)])
 
