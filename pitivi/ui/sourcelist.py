@@ -245,11 +245,11 @@ class SourceList(gtk.VBox, Loggable):
         self.import_warning_infobar.set_message_type(gtk.MESSAGE_WARNING)
         content_area = self.import_warning_infobar.get_content_area()
         actions_area = self.import_warning_infobar.get_action_area()
-        self.warning_label = gtk.Label(_("Errors occured during importing"))
+        self.warning_label = gtk.Label()
         self.warning_label.set_line_wrap(True)
         self.warning_label.set_line_wrap_mode(pango.WRAP_WORD)
         self.warning_label.set_justify(gtk.JUSTIFY_CENTER)
-        self.viewErrorsButton = gtk.Button(_("View errors"))
+        self.viewErrorsButton = gtk.Button()
         self.viewErrorsButton.connect("clicked", self._viewErrorsButtonClickedCb)
         content_area.add(self.warning_label)
         actions_area.add(self.viewErrorsButton)
@@ -640,6 +640,12 @@ class SourceList(gtk.VBox, Loggable):
     def _sourcesStoppedImportingCb(self, unused_sourcelist):
         self.progressbar.hide()
         if self.errors:
+            if len(self.errors) > 1:
+                self.warning_label.set_text(_("Errors occured while importing."))
+                self.viewErrorsButton.set_label(_("View errors"))
+            else:
+                self.warning_label.set_text(_("An error occured while importing."))
+                self.viewErrorsButton.set_label(_("View error"))
             self.import_warning_infobar.show_all()
 
     ## Error Dialog Box callbacks
