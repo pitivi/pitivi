@@ -44,7 +44,7 @@ class StartUpWizard(object):
 
     def _newProjectCb(self, unused_button4):
         self.app.gui.showProjectSettingsDialog()
-        self.quit()
+        self.hide()
 
     def _loadCb(self, unused_button3):
         self.data = unquote(self.data)
@@ -52,7 +52,7 @@ class StartUpWizard(object):
 
     def _keypressCb(self, widget, event):
         if event.keyval == gtk.keysyms.Escape:  # If the user presses "Esc"
-            self.quit()
+            self.hide()
 
     def _onBrowseButtonClickedCb(self, unused_button6):
         self.app.gui.openProject()
@@ -64,8 +64,12 @@ class StartUpWizard(object):
     def _quick_start_manual(self, unused_button5):
         webbrowser.open(APPMANUALURL)
 
-    def _quitWizardCb(self,unused_button2):
-        self.quit()
+    def _dialogCloseCb(self, unused_widget):
+        self.hide()
 
-    def quit(self):
-        self.window.destroy()
+    def show(self):
+        self.window.show()
+        self.window.grab_focus()
+
+    def hide(self):
+        self.window.hide()

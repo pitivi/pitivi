@@ -12,7 +12,7 @@
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
-    <signal name="destroy_event" handler="_quitWizardCb"/>
+    <signal name="destroy_event" handler="_dialogCloseCb"/>
     <child>
       <object class="GtkHBox" id="hbox2">
         <property name="visible">True</property>
