@@ -31,6 +31,7 @@ from ConfigParser import SafeConfigParser, ParsingError
 import xdg.BaseDirectory as xdg_dirs  # Freedesktop directories spec
 
 from gettext import gettext as _
+from gettext import ngettext
 
 from pitivi.signalinterface import Signallable
 from pitivi.encode import available_combinations, \
@@ -534,10 +535,13 @@ class ExportSettings(Signallable, Loggable):
 
     def getAudioDescription(self):
         """ Returns a human-readable markup-ed string describing the audio properties """
-        res = _("%(channels)d channels at %(frequency)d Hz (%(depth)d bits)" % \
+        res = ngettext("%(channels)d channel at %(frequency)d Hz (%(depth)d bits)",
+            "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)",
+            self.audiochannels)
+        res = res % \
                 {"channels": self.audiochannels,
                 "frequency": self.audiorate,
-                "depth": self.audiodepth})
+                "depth": self.audiodepth}
         if self.aencoder is not None:
             res += " <i>(%s)</i>" % self.aencoder
 
