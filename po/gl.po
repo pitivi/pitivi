@@ -13,7 +13,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
 "POT-Creation-Date: 2011-01-09 18:08+0000\n"
-"PO-Revision-Date: 2011-01-11 21:03+0100\n"
+"PO-Revision-Date: 2011-01-11 22:16+0100\n"
 "Last-Translator: Fran Diéguez <frandieguez@ubuntu.com>\n"
 "Language-Team: Galician <gnome-gl-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -109,19 +109,19 @@ msgstr "Non foi posíbel importar os «bindings» de Python para Cairo"
 
 #: ../pitivi/check.py:121
 msgid "Make sure you have the cairo Python bindings installed"
-msgstr "Asegúrese de que ten as interfaces Python de Cairo instaladas"
+msgstr "Asegúrese de que ten os «bindings» de Python para Cairo instalados"
 
 #: ../pitivi/check.py:123
 msgid "Could not import the libglade Python bindings"
-msgstr "Non foi posíbel importar as interfaces Python de libglade"
+msgstr "Non foi posíbel importar os «bindings» de Python para libglade"
 
 #: ../pitivi/check.py:124
 msgid "Make sure you have the libglade Python bindings installed"
-msgstr "Asegúrese de que ten as interfaces Python de libglade instaladas"
+msgstr "Asegúrese de que ten os «bindings» de Python para libglade instaladas"
 
 #: ../pitivi/check.py:126
 msgid "Could not import the goocanvas Python bindings"
-msgstr "Non foi posíbel importar as interfaces Python de goocanvas"
+msgstr "Non foi posíbel importar os «bindings» de Python para goocanvas"
 
 #: ../pitivi/check.py:127
 msgid "Make sure you have the goocanvas Python bindings installed"
@@ -791,15 +791,15 @@ msgstr "Renderizar só os vídeos seleccionados"
 
 #: ../pitivi/ui/encodingdialog.glade.h:26
 msgid "Sample Depth:"
-msgstr "Profundidade de mostreo:"
+msgstr "Profundidade da mostraxe:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:27
 msgid "Sample Rate:"
-msgstr "Frecuencia de mostreo:"
+msgstr "Frecuencia da mostraxe:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:28
 msgid "Sample rate"
-msgstr "Frecuencia de mostreo"
+msgstr "Frecuencia da mostraxe"
 
 #: ../pitivi/ui/encodingdialog.glade.h:29
 msgid "Scale"
@@ -1421,11 +1421,11 @@ msgstr "Título do proxecto:"
 
 #: ../pitivi/ui/projectsettings.glade.h:16
 msgid "Sample depth:"
-msgstr "Profundidade de mostreo:"
+msgstr "Profundidade da mostraxe:"
 
 #: ../pitivi/ui/projectsettings.glade.h:17
 msgid "Sample rate:"
-msgstr "Frecuencia de mostreo:"
+msgstr "Frecuencia da mostraxe:"
 
 #: ../pitivi/ui/projectsettings.glade.h:18
 msgid "Standard (4:3)"
