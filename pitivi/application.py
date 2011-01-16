@@ -359,8 +359,10 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
 
         self.projectManager.newBlankProject()
 
+    def _createGui(self):
         self.projectManager.connect("new-project-loaded", self._quitWizardCb)
         self.wizard = StartUpWizard(self)
+        return FullGuiPitivi._createGui(self)
 
     def _quitWizardCb(self, unused_projectManager, uri):
         if uri.uri is not None:

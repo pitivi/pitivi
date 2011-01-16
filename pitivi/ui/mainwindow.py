@@ -234,8 +234,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         else:
             self.webcam_button.set_sensitive(False)
 
-        self.show()
-
     def showEncodingDialog(self, project, pause=True):
         """
         Shows the L{EncodingDialog} for the given project Timeline.
@@ -502,8 +500,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         ttb = self.uimanager.get_widget("/TimelineToolBar")
         vbox.pack_start(ttb, expand=False)
         ttb.show()
-
-        self.show()
 
         if not self.settings.mainWindowShowMainToolbar:
             self.toolbar.props.visible = False
