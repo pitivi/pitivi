@@ -1,0 +1,32 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="saveproject">
+
+  <info>
+    <link type="guide" xref="index#gettingstarted"/>
+    <link type="seealso" xref="rendering"/>
+    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="incomplete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      How to save your project for later editing use.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Saving a project</title>
+
+     <p>To save your project work, use the <guiseq><gui>File</gui><gui>Save</gui></guiseq> menu, the Save button on the main toolbar or press <keyseq><key>Ctrl</key><key>S</key></keyseq>.</p>
+      <p>When you save a project for the first time, a dialog window appears, asking you where to save the project file and how to name it.</p>
+      <p>If you want to save your project as a different file, use <guiseq><gui>File</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be used to create different versions of your project.</p>
+<!-- TODO: document the "revert to saved" feature -->
+</page>

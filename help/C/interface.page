@@ -1,0 +1,21 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="guide"
+      id="interface">
+
+  <info>
+    <link type="guide" xref="index#intro"/>
+    <revision pkgversion="0.14" version="0.2" date="2010-12-05" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <desc>Discover the various windows, components and widgets.</desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>An overview of the user interface</title>
+
+</page>

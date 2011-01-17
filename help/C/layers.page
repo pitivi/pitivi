@@ -1,0 +1,59 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="layers">
+
+  <info>
+    <link type="guide" xref="index#timeline"/>
+    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Understanding layers</title>
+
+     <p><em>Layers</em> are a fundamental concept for advanced editing in the timeline: compositing, mixing multiple videos simultaneously, and adding titles depend on this feature.</p>
+     <p>It is easier to think of layers in terms of images painted on glass. With several pieces of glass stacked on top of each other, each of these pieces of glass is a layer. If the top piece of glass is completely painted over, none of the pieces of glass underneath will be visible.</p>
+     <p>If, on the other hand, you only paint over a portion of a piece of glass, you will be able to see what is underneath the non-painted parts.</p>
+
+     <section>
+      <title>Opacity (how solid “opaque” things are)</title>
+       <p>Each layer (and each clip) has its own transparency. To continue the paint on glass metaphor, if the paint is thin enough, it can be seen through. Visually, an opacity of 100% means you cannot see the clips below that layer or clip, and an opacity of of 50% means you can partly see them.</p>
+     </section>
+
+     <section>
+      <title>How this translates in terms of user interface</title>
+       <p>While, in real life, you can stack pieces of glass onto each other in three dimensions, your computer monitor only has two dimensions. Thus, the <em>layers on top</em> (the “Z” axis in the physical world) are also visually <em>on top</em>, albeit on the “Y” axis.</p>
+       <p>The following diagram illustrates the <em>pieces of glass</em> (left) and how they are show as <em>layers</em> in <app>PiTiVi</app>'s user interface (right).</p>
+       <figure>
+        <media type="image" src="figures/layers.png" mime="image/png" style="right"></media>
+       </figure>
+       <p>Clips located on a layer above will block the clips below from view, unless it has an opacity value lower than 100% (as shown with the two topmost layers in the previous illustration).</p>
+     </section>
+
+     <section>
+      <title>Adding and removing layers</title>
+       <p>Layers are created and removed automatically. There is no “layer management” interface in <app>PiTiVi</app> (at least, not yet).</p>
+       <p>To create a layer, drag a clip downwards until a new layer appears for it.</p>
+       <p>If there are no more clips on a layer, it is automatically removed. Thus, to remove a layer, simply drag its clips upwards onto another layer.</p>
+     </section>
+
+     <section>
+      <title>What about audio layers?</title>
+       <p>Unlike in vision, multiple sounds do not (objectively) “block” each other. As such, if you have multiple audio clips on separate layers, their sound will be mixed together. Controlling the volume of those audio clips simply changes their relative loudness.</p>
+     </section>
+
+
+</page>

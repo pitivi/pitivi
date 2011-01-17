@@ -1,0 +1,59 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="gstreamer">
+
+  <info>
+    <link type="guide" xref="index#intro"/>
+    <revision pkgversion="0.14" version="0.2" date="2011-06-05" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      Ensuring you have the proper multimedia codecs and plugins installed for maximum compatibility.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Gstreamer and compatibility</title>
+
+     <p>A great strength in <app>PiTiVi</app> lies in its use of the <app>GStreamer</app> multimedia framework. <app>GStreamer</app> is used by dozens of multimedia applications across desktop environments, operating systems and architectures.</p>
+     <p>This essentially means three things to you, the user:</p>
+     <list>
+      <item>
+       <p>You can, in theory, import pretty much any media file supported by <app>GStreamer</app> (but see the next section).</p>
+      </item>
+      <item>
+       <p>You can render your projects using any supported container and codec combination from <app>GStreamer</app>.</p>
+      </item>
+      <item>
+       <p>You need a very recent version of <app>GStreamer</app> to maximize <app>PiTiVi's</app> capabilities and reduce the possibilities of bugs. This is because the <app>PiTiVi</app> project developers work hard in fixing problems directly in <app>GStreamer</app> (instead of putting temporary workarounds inside <app>PiTiVi</app>).</p>
+      </item>
+     </list>
+
+    <section>
+     <title>A word about editing-friendly codecs</title>
+      <p>Some formats, like <em>MPEG</em>, are oriented towards playback only, and do not compress each frame independently. While it is the goal of <app>PiTiVi</app> to support working with these files, certain operations (like rapid seeking) will not perform as well as they would with frame-independent compressed video (such as <em>MJPEG</em> or <em>DV</em>).</p>
+    </section>
+
+    <section>
+     <title>The Good, the Bad and the Ugly</title>
+      <p><app>GStreamer</app> plugins come into three categories: good, bad and ugly. To maximize your experience, you may need to install some of all of these plugins to ensure compatibility with your media files. Whether or not you install them is up to you, and may depend on your country's jurisdiction regarding software patents.</p>
+        <list>
+            <item><p>The "Good" plugins are good quality plugins under the LGPL license. These plugins are considered safe and recommended at any time.</p></item>
+            <item><p>The "Bad" plugins are plugins whose code is not of good enough quality, or are not considered tested well enough. The licensing may or may not be LGPL.</p></item>
+            <item><p>The "Ugly" plugins are good quality plugins whose license is not LGPL or with licensing issues.</p></item>
+        </list>
+      <note><p>In addition to the Good, Bad and Ugly plugins, you may want to install gstreamer-ffmpeg to have access to ffmpeg's set of codecs.</p></note>
+      <p></p>
+    </section>
+
+
+</page>

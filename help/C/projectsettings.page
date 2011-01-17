@@ -1,0 +1,56 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="editsettings">
+
+  <info>
+    <link type="guide" xref="index#gettingstarted"/>
+    <revision pkgversion="0.14" version="0.2" date="2011-06-05" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      How to specify the global project resolution, framerate, aspect ratio, audio settings and project metadata.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Editing project settings</title>
+
+    <p>When starting a new project, you should make sure to go adjust the project settings, such as framerate, resolution and preferred codecs. The video resolution and aspect ratio will affect the appearance of the previewer. If you do not set the resolution and aspect ratio to match those of your footage, the video may look squished or letterboxed.</p>
+    <p>To edit the project settings after initial creation, use the <guiseq><gui>Project</gui><gui>Project Settings</gui></guiseq> menu.</p>
+
+    <section>
+        <title>Pixel aspect ratio vs display aspect ratio</title>
+        <p>Digital images are composed of a grid of <link href="http://en.wikipedia.org/wiki/Pixel">pixels</link>, which may or may not be square. As such, in some cases, you may need to set the <link href="http://en.wikipedia.org/wiki/Pixel_aspect_ratio">pixel aspect ratio</link> (PAR) for the image to display correctly. On the other hand, <link href="http://en.wikipedia.org/wiki/Display_aspect_ratio">display aspect ratio</link> (DAR) is the mathematical ratio of width:height for the whole image.</p>
+        <p>In <app>PiTiVi</app>, pixel aspect ratio and display aspect ratio are related to each other by the video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with.</p>
+        <p>You can use the ratios already provided in the combo boxes, or input a custom aspect ratio in the text entry below (using a syntax such as "4:3" or "1.3333", although the decimal version is less precise).</p>
+    </section>
+
+    <section>
+        <title>Presets</title>
+        <p>The project settings dialog allows you to save presets for later use. If you often deal with the same kind of project settings or with different cameras using different settings, you may want to create custom presets.</p>
+        <note><p>Video presets and audio presets are independent of each other.</p></note>
+        <p>To create a preset:</p>
+        <steps>
+            <item><p>Change the video (or audio) settings to your liking.</p></item>
+            <item><p>Click the <gui>Add</gui> button.</p></item>
+            <item><p>Give your preset a unique name: while the preset is selected in the list, click on its name to toggle editing mode. When you're done, press <key>Enter</key>.</p></item>
+        </steps>
+        <p>To edit a preset:</p>
+        <steps>
+            <item><p>Select your preset in the list of existing presets.</p></item>
+            <item><p>Change the settings to your liking.</p></item>
+            <item><p>Click the <gui>Save</gui> button.</p></item>
+        </steps>
+        <p>To remove a preset, simply select it in the list of presets and press the <gui>Remove</gui> button.</p>
+    </section>
+
+</page>

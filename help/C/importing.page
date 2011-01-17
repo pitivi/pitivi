@@ -1,0 +1,75 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="importing">
+
+  <info>
+    <link type="guide" xref="index#gettingstarted"/>
+    <revision pkgversion="0.14" version="0.2" date="2011-06-05" status="incomplete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      Importing files into your project as clips.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Getting media</title>
+
+     <p>At the time of this writing, the only supported method is importing files from your hard drive. As such, you cannot use <app>PiTiVi</app> to capture directly from a camcorder. For DV/HDV camcorders using an IEEE 1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture footage.</p>
+      <note>
+       <p>We would welcome good quality patches to implement the following:</p>
+       <list>
+        <item><p>Capture from a DV or HDV camcorder using an IEEE 1394 connection.</p></item>
+        <item><p>Capture from a webcam.</p></item>
+        <item><p>Dumping a network/Internet stream.</p></item>
+        <item><p>Importing from DVD.</p></item>
+        <item><p>Importing from an audio CD.</p></item>
+        <item><p>Downloading from content providers such as <link href="http://www.jamendo.com">Jamendo</link>, <link href="http://www.magnatune.com/">Magnatune</link>, <link href="http://creativecommons.org/">CreativeCommons</link>, etc.</p>
+        </item>
+       </list>
+      </note>
+
+      <section>
+       <title>Importing files</title>
+       <section>
+        <title>Using the file chooser</title>
+         <p>You can import media into the <gui>Media Library</gui> by using the file chooser dialog, which has the advantage of letting you preview the files you want to import. To do so, use the <guiseq><gui>Project</gui><gui>Import clips...</gui></guiseq> menu, the <gui>Import clips</gui> button on the main toolbar, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>.</p>
+         <p>The following file chooser dialog window will appear:</p>
+         <figure>
+          <title>Filechooser dialog</title>
+          <desc>Filechooser dialog</desc>
+          <media type="image" src="figures/filechooser.png" mime="image/png" style="right"></media>
+         </figure>
+         <p>Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the same time. You can also import all the files contained in a folder (and its subfolders) by using <guiseq><gui>Project</gui><gui>Import folder of clips</gui></guiseq> in the menu bar.</p>
+       </section>
+       <section>
+        <title>Using drag and drop</title>
+         <p>The concept of drag and drop is a well-established method of bridging the gap between software applications. Simply select the files you want to import in another application (such as a file manager or a multimedia app) and drag them with your mouse onto <app>PiTiVi</app>'s <gui>Media Library</gui>.</p>
+         <p>This feature can be used to:</p>
+         <list>
+          <item>
+           <p>Easily import music or video clips from a media player (such as <app>Rhythmbox</app> or <app>Totem</app>).</p>
+          </item>
+          <item>
+           <p>Allow using a full-fledged file manager (such as <app>Nautilus</app>, <app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of the file chooser dialog.</p>
+          </item>
+          <item>
+           <p>Import a combination of files and folders at the same time.</p>
+          </item>
+          <item>
+           <p>Leverage the searching capability of another application (such as <app>GNOME Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, <app>GNOME Search Tool</app>, etc.).</p>
+          </item>
+         </list>
+       </section>
+      </section>
+
+</page>

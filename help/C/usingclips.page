@@ -1,0 +1,53 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="usingclips">
+
+  <info>
+    <link type="guide" xref="index#gettingstarted"/>
+    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      Learn the difference between clips and files and how to do basic operations on clips in the timeline.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Using clips</title>
+
+     <section>
+      <title>Clips vs files</title>
+       <list>
+        <item><p><em>Files</em> are data on your hard disk (videos, music, pictures, etc.) that can be accessed by <app>PiTiVi</app> and incorporated in your video editing project.</p></item>
+        <item><p><em>Clips</em> are a visual representation of your files on the timeline. They represent the period of time they consume on the timeline and can be edited independently: each time you drag a file from the source list to the timeline, a new clip is created. As such, a file can be reused as much as you want to create any amount of different clips.</p></item>
+       </list>
+       <p>Since PiTiVi is a non-destructive editor, clips are edited, not files. As such, your files stay intact.</p>
+     </section>
+
+     <section>
+      <title>Moving clips along the timeline</title>
+       <p>You can move a clip within a layer or move it to a different layer.</p>
+       <p>Click and drag a single clip to move it, and release the mouse button to place it. Dragging horizontally keeps the clip on the same layer, but dragging it vertically moves the clip to a different layer.</p>
+       <p>To move multiple clips at the same time, use the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips. Selected clips do not need to be on the same layer. Then, drag the clips just as you would do for a single clip; their position relative to each other will be preserved.</p>
+      <section>
+       <title>Using ripple editing while moving clips</title>
+        <p>While dragging clips around in the timeline, you can use the <link xref="rippletechnique">ripple technique</link> to move the <em>following</em> clips (the clips that start after the one you're directly editing) to fill the gap.</p>
+        <steps>
+         <item><p>Click and drag the clip you want to move, with the mouse button held down</p></item>
+         <item><p>During the drag, hold down <key>Shift</key> on the keyboard</p></item>
+         <item><p>Release the mouse button to end the drag operation, then release the <key>Shift</key> key.</p></item>
+        </steps>
+        <p>During the drag operation, if you changed your mind and only want to drag one clip at a time, just release the <key>Shift</key> key before you release the mouse button.</p>
+      </section>
+     </section>
+
+</page>

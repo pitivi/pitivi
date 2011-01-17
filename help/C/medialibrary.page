@@ -1,0 +1,52 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="medialibrary">
+
+  <info>
+    <link type="guide" xref="interface"/>
+    <revision pkgversion="0.14" version="0.2" date="2011-06-05" status="incomplete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <desc>
+      Managing your imported clips with the Media Library
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Using the Media Library</title>
+
+       <section>
+        <title>Previewing a clip from the <gui>Media Library</gui></title>
+         <p>To preview a clip before placing it on the timeline, you can double-click on it in the <gui>Media Library</gui>, or right-click and choose <gui>Play clip</gui> from the popup menu.</p>
+         <figure>
+          <desc>Popup menu</desc>
+          <media type="image" src="figures/previewsource.png" mime="image/png" style="right"></media>
+         </figure>
+       </section>
+       <section>
+        <title>Filtering search</title>
+         <p>A search bar is shown at the top of the <gui>Media Library</gui>. Typing into the search entry filters the contents of the <gui>Media Library</gui> to show only clips whose filenames match your search terms. To reset the search entry, click the "cleanup" icon in the search entry.</p>
+       </section>
+       <section>
+        <title>Typeahead search</title>
+         <p>An alternative way of searching, if you know the beginning of a clip's filename, is to click anywhere in the <gui>Media Library</gui> and start typing the name of the file you're looking for.</p>
+         <list>
+          <item><p>As you type, the first matching file will become selected.</p></item>
+          <item><p>You can keep typing to refine your search.</p></item>
+          <item><p>When there are multiple results, you can use the <gui>up</gui> and <app>down</app> arrow keys to switch the selection between each search result.</p>
+          </item>
+         </list>
+         <p>This method only allows searching from the beginning of the filename.</p>
+       </section>
+       <section>
+        <title>View modes</title>
+         <p>The <gui>Media Library</gui> can display your clips in a list (<guiseq><gui>View</gui><gui>Show Clips as a List</gui></guiseq>) or in an icon view (<guiseq><gui>View</gui><gui>Show Clips as Icons</gui></guiseq>).</p>
+         <p>The list view mode shows more details about each clip, but the icon view mode can display more clips without needing to scroll (especially on high resolution computer monitors).</p>
+       </section>
+
+</page>

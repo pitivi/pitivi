@@ -1,0 +1,27 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="othertransitions">
+
+  <info>
+    <link type="guide" xref="index#transitions"/>
+    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="incomplete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc></desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Other transitions</title>
+     
+     <p>Other types of transitions (such as wipes) are not yet implemented (see <link href="https://bugzilla.gnome.org/show_bug.cgi?id=609353">bug #609353</link>).</p>
+
+</page>

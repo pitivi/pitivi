@@ -1,0 +1,47 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="fadeinfadeout">
+
+  <info>
+    <link type="guide" xref="index#transitions"/>
+    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      Fading video to black or to a layer below, or fading audio.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Fade-ins and fade-outs</title>
+     
+     <p>You can do “fades” of single clip by using <app>PiTiVi</app>'s video mixing capabilities, which relies on keyframes controlling each clip's opacity (see also: <link xref="layers">Understanding layers</link>).</p>
+     <p>To fade a clip to black:</p>
+     <steps>
+      <item>
+       <p>Double-click on its opacity keyframe curve where you want the fade-out to start (or the fade-in to end).</p>
+       <figure>
+        <media type="image" src="figures/fadestep1.png" mime="image/png" style="right"></media>
+       </figure>
+       <figure>
+        <media type="image" src="figures/fadestep2.png" mime="image/png" style="right"></media>
+       </figure>
+      </item>
+      <item>
+       <p>Click and drag the last (or first) keyframe of the clip downwards.</p>
+       <figure>
+        <media type="image" src="figures/fadestep3.png" mime="image/png" style="right"></media>
+       </figure>
+      </item>
+     </steps>
+
+</page>

@@ -1,0 +1,27 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="importingmpegts">
+
+  <info>
+    <link type="seealso" xref="importing"/>
+    <link type="seealso" xref="gstreamer"/>
+    <revision pkgversion="0.14" version="0.1" date="2011-06-05" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <desc>
+      How to convert .mts and .m2ts files to a format that can be parsed by GStreamer and PiTiVi.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+    <!-- TODO: remove this manual page when gstreamer supports mpeg-ts files !-->
+    <title>Dealing with AVCHD / MPEG-TS files</title>
+
+     <p>At the time being, MPEG Transport Stream files (usually with file extensions such as .mts, .m2ts and sometimes .mpg or .mpeg), such as those used by some HD camcorders, cannot be played reliably with <app>GStreamer</app>. As such, you may want to remux them in a different container format by using <app>ffmpeg</app>. To convert losslessly to an MPEG4 container, you can use the following command:</p>
+    <code>ffmpeg -i your_clip.MTS -vcodec copy -acodec copy -sn test.mp4</code>
+
+</page>

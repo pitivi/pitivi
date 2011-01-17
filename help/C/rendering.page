@@ -1,0 +1,37 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="rendering">
+
+  <info>
+    <link type="guide" xref="index#rendering"/>
+    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="incomplete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      Learn the difference between saving a project and exporting a rendered movie.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Understanding rendering</title>
+     
+     <p>Rendering is the process of exporting your project into a new, finalized media file. Rendering only creates a new “rendered” video file, and does not affect the project itself; you can still make edits to your project and render again as many times as needed.</p>
+     <steps>
+      <item><p>From the <gui>Project</gui> menu, use <gui>Render</gui>.</p></item>
+      <item><p>Adjust the various encoding settings, if needed, to use settings different from the project settings.</p></item>
+      <item><p>Click the <gui>Render</gui> button.</p></item>
+     </steps>
+     <note style="bug">
+      <p>If your computer is set to suspend or hibernate automatically, <app>PiTiVi</app> will automatically inhibit the power saving features during the render process (see bug <link href="https://bugzilla.gnome.org/show_bug.cgi?id=571885">bug #571885</link>).</p>
+     </note>
+
+</page>

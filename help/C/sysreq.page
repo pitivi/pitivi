@@ -1,0 +1,32 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="sysreq">
+
+  <info>
+    <link type="guide" xref="index#intro"/>
+    <link type="seealso" xref="gstreamer"/>
+    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="incomplete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      What kind of hardware is needed to do video editing?
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>System requirements</title>
+
+     <p>In terms of hardware, video editing typically requires a powerful computer, depending on the type of video you are editing. While the processing power of computers has increased tremendously over the years, so has demand for higher quality video.</p>
+     <p>Editing HD (High Definition) video usually requires (at the time of this writing) state of the art hardware (depending on the codec used), while SD (Standard Definition) video editing can be done on modest hardware configurations. It is up to you to make sure that your equipment is adequate. It should at least be able to playback your media in <app>Totem</app> without lagging.</p>
+     <p>It is possible, however, to use low-quality versions of your footage during editing and use the high-quality versions when rendering the final output, thus allowing to bypass hardware limitations to some extent. This is called <em>proxy editing</em>. This feature, however, is not yet available in <app>PiTiVi</app>.</p>
+
+</page>

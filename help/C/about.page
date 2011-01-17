@@ -1,0 +1,38 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="about">
+
+  <info>
+    <link type="seealso" xref="index"/>
+    <revision pkgversion="0.14" version="0.2" date="2011-06-05" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      Current state of this user manual and call for participation.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>About this manual</title>
+   <p>This user manual is written and maintained by Jean-François Fortin Tam.</p>
+   <section>
+    <title>Work in progress</title>
+     <p>You may encounter unwritten portions due to features that have not yet been implemented in PiTiVi at the time of writing.</p>
+     <p>You may also encounter smaller areas which have been documented in this manual but have not been implemented in PiTiVi – those are areas where the design and expected user interaction are quite narrow/certain.</p>
+   </section>
+
+   <section>
+    <title>Patches welcome</title>
+     <p>If you happen to find errors, missing information or unclear passages in this manual, please feel free to submit corrections. You can find contact information on <link href="http://jeff.ecchi.ca/">my personal website</link>. You can also <link href="https://bugzilla.gnome.org/enter_bug.cgi?product=pitivi;component=documentation">file bugs on the “documentation” component in our bug tracker</link>.</p>
+   </section>
+ 
+</page>

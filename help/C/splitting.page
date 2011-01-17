@@ -1,0 +1,53 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="splitting">
+
+  <info>
+    <link type="guide" xref="index#timeline"/>
+    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      Dividing clips in two parts.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Splitting</title>
+     
+     <p>As the name implies, splitting a clip divides it into two adjacent clips, with new beginning/end points being created accordingly.</p>
+     <p>In <app>PiTiVi</app>, splitting is a “non-modal” operation; this means that you do not have to “activate” a particular tool before doing the split action. Splitting occurs where the playhead is currently located (see also <link xref="movingplayhead">Moving the playhead</link>). Combined with zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless splitting is not only fast and efficient, it is also very accurate.</p>
+     <p>Selections affect splitting in the following ways:</p>
+     <list>
+      <item><p>Only the selected clips under the playhead will be split.</p></item>
+      <item><p>If no clips are selected, all the clips under the playhead will be split.</p></item>
+     </list>
+     <p>To split a single clip:</p>
+     <steps>
+      <item><p>Click on the clip.</p></item>
+      <item><p>Reposition the playhead (if needed).</p></item>
+      <item><p>Click on the <gui>Split</gui> button on the timeline toolbar or press <key>S</key>.</p></item>
+     </steps>
+     <p>To split all the clips across the all layers:</p>
+     <steps>
+      <item><p>Click on a blank area of the timeline (this will deselect all selected clips, if any).</p></item>
+      <item><p>Reposition the playhead (if needed).</p></item>
+      <item><p>Click on the <gui>Split</gui> button on the timeline toolbar or press <key>S</key>.</p></item>
+     </steps>
+     <p>To split multiple selected clips:</p>
+     <steps>
+      <item><p>Position the playhead where you want to split.</p></item>
+      <item><p>Add or remove clips to the selection with the <key>Ctrl</key> modifier key. This will not affect the playhead's position.</p></item>
+      <item><p>Click on the <gui>Split</gui> button on the timeline toolbar or press <key>S</key>.</p></item>
+     </steps>
+
+</page>

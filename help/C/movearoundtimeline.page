@@ -1,0 +1,68 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="movearoundtimeline">
+
+  <info>
+    <link type="guide" xref="index#gettingstarted"/>
+    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="incomplete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      Moving the playhead, using the zoom feature, scrolling and scrubbing.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Moving around the timeline</title>
+
+     <section>
+      <title>Scrolling</title>
+       <p>You can use the scrollbars (located on the right and bottom of the timeline), use the mouse wheel anywhere over the timeline to scroll horizontally, or hold down the <key>Shift</key> key while using the mousewheel to scroll the timeline layers vertically.</p>
+     </section>
+
+     <section>
+      <title>Zooming</title>
+       <p>Zooming directly affects your editing accuracy and your ability to move quickly along the timeline:</p>
+       <list>
+        <item><p>When zooming in, video clips display more thumbnails and audio clips display increasingly detailed waveforms, allowing you to do precise edits.</p></item>
+        <item><p>Zooming out allows you to scroll faster along the timeline. Zoom can thus be used in conjunction with scrolling to move quickly between distant points of your project's chronology.</p></item>
+       </list>
+       <p>You can zoom in and out by holding the <key>Ctrl</key> key while using the mousewheel over the timeline, using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and <guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq>menu items, or dragging the zoom slider on the left of the ruler.</p>
+       <note>
+        <title><em>Warping</em> between zoom levels</title>
+        <p>Using your mouse's scroll wheel, you can also <em>warp</em> instantly from any zoom level to another in a single click. To do that, click with your mousewheel anywhere on the zoom slider.</p>
+       </note>
+     </section>
+
+     <section id="movingplayhead">
+      <title>Moving the playhead</title>
+       <p>You can change the position of the playhead by clicking anywhere on the ruler or on the timeline.</p>
+       <p>When clicking on the <em>timeline</em>:</p>
+       <list>
+        <item><p>If a clip is under the mouse cursor, it will replace the current clip selection (see the <link xref="selectmulti">Selecting multiple items</link> section for more detailed instructions).</p></item>
+        <item><p>If there is no clip under the cursor, all selected clips (if any) will be deselected.</p></item>
+       </list>
+       <p>When clicking on the ruler, only the playhead's position changes; clip selections are not affected.</p>
+     </section>
+
+     <section>
+      <title>Scrubbing</title>
+       <p><em>Scrubbing</em> is a way of moving the playhead that allows you to:</p>
+       <list>
+        <item><p>Search for a specific position in time by approximation/trial and error.</p></item>
+        <item><p>Review repeatedly the visual motion in a scene by moving back and forth in time.</p></item>
+       </list>
+       <p>To scrub, click on the ruler and move the mouse with the button still held down.</p>
+       <p>You can also scrub by dragging the black vertical line that stems from the playhead and spans across the timeline.</p>
+     </section>
+
+</page>

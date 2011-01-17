@@ -1,0 +1,22 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="effectsanimation">
+
+  <info>
+    <link type="guide" xref="index#effects"/>
+    <revision pkgversion="0.15" version="0.1" date="2011-06-20" status="incomplete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <desc>Changing the properties of effects over time</desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Animating effects with Keyframes</title>
+     
+     <p>This feature is not yet implemented, but is planned to be completed as a GSoC 2011 project.</p>
+</page>

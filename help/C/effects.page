@@ -1,0 +1,47 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="effects">
+
+  <info>
+    <link type="guide" xref="index#effects"/>
+    <link type="seealso" xref="gstreamer"/>
+    <revision pkgversion="0.14" version="0.1" date="2010-06-20" status="incomplete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <desc>Adding special effects to your video and audio</desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Introduction to effects</title>
+     
+     <p><app>PiTiVi</app> offers a wide variety of video and audio effects to spice up your movies. Effects are non destructive: they are only applied to the resulting rendered movie and do not affect your source files.</p>
+     <note style="important">
+        <p>Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in <app>PiTiVi</app>'s effect library, make sure that the following are installed on your system:</p>
+        <list>
+            <item><p>The <link xref="gstreamer">appropriate GStreamer plugins</link></p></item>
+            <item><p>frei0r-plugins</p></item>
+            <item><p>gnome-video-effects</p></item>
+        </list>
+     </note>
+
+    <section>
+        <title>Adding and removing effects to clips</title>
+        <p>To add an effect:</p>
+        <steps>
+            <item><p>Select an existing clip on the timeline</p></item>
+            <item><p>Choose an effect in the effect library</p></item>
+            <item><p>Drag the chosen effect into the <gui>Effect Properties</gui> pane</p></item>
+        </steps>
+        <p>To remove an effect on a selected clip, select it in the effect properties pane and click the <gui>Remove</gui> button.</p>
+    </section>
+    <section>
+        <title>Toggling effects on and off</title>
+        <p>If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the effect properties pane.</p>
+    </section>
+    <note><p>Currently, effects are applied on a "per-clip" basis. It is not yet possible to apply effects to timeline layers.</p></note>
+</page>

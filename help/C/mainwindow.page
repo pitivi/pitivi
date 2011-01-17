@@ -1,0 +1,106 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="mainwindow">
+
+  <info>
+    <link type="guide" xref="interface"/>
+    <link type="seealso" xref="medialibrary"/>
+    <link type="seealso" xref="movearoundtimeline"/>
+    <revision pkgversion="0.14" version="0.2" date="2010-12-05" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <desc>
+      Discover the components of the main window.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>The main window</title>
+
+      <figure>
+       <title><app>PiTiVi</app> main window</title>
+       <desc><app>PiTiVi</app> main window</desc>
+        <media type="image" src="figures/mainwindow.png" mime="image/png" style="right">
+        <p><app>PiTiVi</app> main window.</p>
+        </media>
+      </figure>
+      <p>The main window, as the name implies, is the window containing the main components of the <app>PiTiVi</app> user interface, namely: the menu bar, the toolbars, the timeline and various customizable components (source list, previewer, effects list, transitions list, etc.).</p>
+
+
+    <section>
+     <title>Menu bar</title>
+      <p>The menu bar contains all the possible actions of the toolbars, plus many more. The menu bar also provides some instant-apply settings, as well as access to further customizations in the <gui>Project settings</gui> dialog and <gui>Preferences</gui> dialog.</p>
+      <note><p>The menu bar cannot be hidden.</p>
+      </note>
+    </section>
+
+    <section>
+     <title>The toolbars</title>
+      <p>Toolbars provide access to the most commonly used functions of <app>PiTiVi</app>. All items in toolbars can also be accessed through the menu bar. Toolbars can be activated or deactivated in the <gui>View</gui> menu.</p>
+      <p>You can hover the mouse cursor over a toolbar item to reveal an information tooltip regarding its function.</p>
+      <figure>
+        <media type="image" src="figures/hovering.png" mime="image/png" style="right"></media>
+      </figure>
+    </section>
+
+    <section>
+     <title>Ruler</title>
+      <p>The ruler plays a crucial role in your interaction with the timeline. In addition to giving you time measurements (in seconds), it is the primary way of moving the playhead (and thus, your position in time).</p>
+      <p>The current playhead position is indicated by a red vertical line:</p>
+      <figure>
+        <media type="image" src="figures/ruler.png" mime="image/png" style="right"></media>
+      </figure>
+      <note>
+       <p>When zoomed in, frames are visually represented on the ruler as alternating light and dark areas in the bottom part; those are based on the project framerate settings.</p>
+      </note>
+      <p>To move your position in time, click anywhere on the ruler. You can also <em>scrub</em> the timeline by clicking on the ruler and holding down the mouse button while moving. See the <link xref="scrubbing">Scrubbing</link> section for more details.</p>
+    </section>
+
+    <section>
+     <title>Marker bar</title>
+      <p>Markers are visual cues that you can create to <em>mark</em> important points or regions in your project's timeline. The marker bar allows you to view and edit markers that you created.</p>
+      <note style="bug">
+       <p>This feature is not yet implemented. See <link href="https://bugzilla.gnome.org/show_bug.cgi?id=608682">bug #608682</link> for more information.</p>
+      </note>
+    </section>
+
+    <section>
+     <title>Timeline</title>
+      <p>The timeline is the core user interface component that you will use for editing. It is a visual, time-proportional representation of your project's chronology.</p>
+    </section>
+
+    <section>
+     <title>Playback toolbar</title>
+      <p>This toolbar, located below the previewer, contains buttons controlling</p>
+      <list>
+       <item><p>The playback of the timeline.</p></item>
+       <item><p>The playback of a clip being previewed from the source list.</p></item>
+      </list>
+      <p>The <gui>Play</gui> button transforms into a <gui>Pause</gui> button when playing, and reverts to a <gui>Play</gui> button again when not playing.</p>
+    </section>
+
+    <section>
+     <title>Previewer</title>
+      <p>The previewer displays</p>
+      <list>
+       <item><p>Your project's video when playing back.</p></item>
+       <item><p>The video frame at the current position of the playhead.</p></item>
+       <item><p>A <em>live preview</em> when trimming a clip's beginning/end point.</p>
+             <note style="bug">
+           <p>The <em>live preview</em> feature is not yet implemented. See <link href="https://bugzilla.gnome.org/show_bug.cgi?id=569980">bug #569980</link> for more information.</p>
+          </note>
+       </item>
+      </list>
+    </section>
+
+    <section>
+     <title>Media Library</title>
+      <p>The media library displays the imported media files in your project and allows you to manage them.</p>
+    </section>
+
+</page>

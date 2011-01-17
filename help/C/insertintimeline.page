@@ -1,0 +1,37 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="insertintimeline">
+
+  <info>
+    <link type="guide" xref="index#gettingstarted"/>
+    <revision pkgversion="0.14" version="0.2" date="2011-06-05" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Mario Blättermann</name>
+      <email>mariobl@gnome.org</email>
+    </credit>
+    <desc>
+      Putting your project media files into the timeline for editing.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Inserting clips</title>
+
+     <p>From the source list, you can insert one or more clips by selecting them (using the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) and:</p>
+     <list>
+      <item><p>Dragging and dropping them onto place in the timeline.</p></item>
+      <item><p>Using <guiseq><gui>Project</gui><gui>Insert at end of timeline</gui></guiseq>.</p></item>
+      <item><p>Pressing the <key>Insert</key> (Ins) key. Those clips will be inserted at the end of the timeline.</p></item>
+     </list>
+     <note style="bug">
+     <p>It should also be possible to import files directly into the timeline by dragging them from another application and dropping them onto <app>PiTiVi</app>'s timeline. The files would be added automatically to the <gui>Media Library</gui> in the process. This feature is not yet implemented, see <link href="https://bugzilla.gnome.org/show_bug.cgi?id=608682">bug #570118</link> for more information.</p>
+     </note>
+
+</page>
