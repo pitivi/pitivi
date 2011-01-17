@@ -4,7 +4,7 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkDialog" id="render-dialog">
     <property name="border_width">12</property>
-    <property name="title">Render</property>
+    <property name="title" translatable="yes">Render</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
