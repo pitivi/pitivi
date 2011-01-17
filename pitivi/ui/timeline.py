@@ -316,9 +316,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 self.split),
             ("Keyframe", "pitivi-keyframe", _("Add a keyframe"), "K", KEYFRAME,
                 self.keyframe),
-            ("Prevframe", "pitivi-prevframe", _("_Prevframe"), "E", PREVFRAME,
+            ("Prevframe", "pitivi-prevframe", _("_Previous keyframe"), "E", PREVFRAME,
                 self.prevframe),
-            ("Nextframe", "pitivi-nextframe", _("_Nextframe"), "R", NEXTFRAME,
+            ("Nextframe", "pitivi-nextframe", _("_Next keyframe"), "R", NEXTFRAME,
                 self.nextframe),
         )
 
