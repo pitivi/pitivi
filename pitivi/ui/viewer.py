@@ -31,11 +31,12 @@ from gettext import gettext as _
 from pitivi.action import ViewAction
 
 from pitivi.stream import VideoStream
-from pitivi.utils import time_to_string, string_to_time, Seeker
+from pitivi.utils import time_to_string, Seeker
 from pitivi.log.loggable import Loggable
 from pitivi.pipeline import PipelineError
 from pitivi.ui.common import SPACING
 from pitivi.settings import GlobalSettings
+from pitivi.ui.dynamic import TimeWidget
 
 GlobalSettings.addConfigSection("viewer")
 GlobalSettings.addConfigOption("viewerDocked",
@@ -327,9 +328,9 @@ class PitiviViewer(gtk.VBox, Loggable):
         bbox.pack_start(self.goToEnd_button, expand=False)
 
         # current time
-        self.timecode_entry = gtk.Entry()
-        self.timecode_entry.set_text("00:00:00.000")
-        self.timecode_entry.connect("activate", self._jumpToTimecodeCb)
+        self.timecode_entry = TimeWidget()
+        self.timecode_entry.setWidgetValue("00:00:00.000")
+        self.timecode_entry.connect("value-changed", self._jumpToTimecodeCb)
         bbox.pack_start(self.timecode_entry, expand=False, padding=10)
         self._haveUI = True
 
@@ -492,9 +493,8 @@ class PitiviViewer(gtk.VBox, Loggable):
     ## Callback for jumping to a specific timecode
 
     def _jumpToTimecodeCb(self, widget):
-        nanoseconds = string_to_time(widget.get_text())
-        if nanoseconds:  # The timecode has been correctly parsed
-            self.seek(nanoseconds)
+        nanoseconds = widget.getWidgetValue()
+        self.seek(nanoseconds)
 
     ## public methods for controlling playback
 

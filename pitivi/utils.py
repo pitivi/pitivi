@@ -58,25 +58,6 @@ def time_to_string(value):
     mins = mins % 60
     return "%02d:%02d:%02d.%03d" % (hours, mins, sec, ms)
 
-def string_to_time(timecode):
-    """
-    Converts the given timecode string to nanoseconds.
-    Format must be HH:MM:SS.XXX
-    
-    Returns the time in nanoseconds, or False if the format is incorrect.
-    """
-    try:
-        hh, mm, foo = timecode.split(":")
-        ss, xxx = foo.split(".")
-        nanosecs = int(hh) * 3.6 * 10e12 \
-            + int(mm) * 6 * 10e10 \
-            + int(ss) * 10e9 \
-            + int(xxx) * 10e6
-        nanosecs = nanosecs / 10 # Compensate the 10 factor of e notation
-        return nanosecs
-    except:
-        return False
-
 def beautify_length(length):
     """
     Converts the given time in nanoseconds to a human readable string

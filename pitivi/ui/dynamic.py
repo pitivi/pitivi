@@ -223,6 +223,32 @@ class NumericWidget(gtk.HBox, DynamicWidget):
         self.adjustment.set_all(value, minimum, maximum, step, page, 0)
         self.spinner.set_adjustment(self.adjustment)
 
+class TimeWidget(TextWidget, DynamicWidget):
+    """ A widget that contains a time """
+
+    regex = re.compile("^([0-9][0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
+    __gtype_name__ = 'TimeWidget'
+
+    def __init__(self, default=None):
+        DynamicWidget.__init__(self, default)
+        TextWidget.__init__(self, self.regex)
+
+    def getWidgetValue(self):
+
+      timecode = TextWidget.getWidgetValue(self)
+
+      hh, mm, end = timecode.split(":")
+      ss, xxx = end.split(".")
+      nanosecs = int(hh) * 3.6 * 10e12 \
+          + int(mm) * 6 * 10e10 \
+          + int(ss) * 10e9 \
+          + int(xxx) * 10e6
+
+      nanosecs = nanosecs / 10 # Compensate the 10 factor of e notation
+
+      return nanosecs
+
+
 class FractionWidget(TextWidget, DynamicWidget):
 
     """A gtk.ComboBoxEntry """
