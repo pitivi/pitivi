@@ -133,7 +133,8 @@ class EffectsHandler(object):
                 effect = EffectFactory(name, name,
                                    self._getEffectCategories(name),
                                    self._getEffectName(element_factory),
-                                   self._getEffectDescripton(element_factory))
+                                   self._getEffectDescripton(element_factory),
+                                   icon = self.getEffectIcon(name))
                 added = self.addStreams(element_factory, effect)
 
                 if added is True:
@@ -304,7 +305,7 @@ class EffectsHandler(object):
                 try:
                     icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, effect_name))
                 except:
-                    return None
+                    icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "defaultthumbnail.svg"))
         return icon
 
 

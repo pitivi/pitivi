@@ -34,13 +34,25 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.log.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.ui.common import SPACING, PADDING
+from pitivi.settings import GlobalSettings
+
+SHOW_TREEVIEW = 1
+SHOW_ICONVIEW = 2
+
+GlobalSettings.addConfigSection('effect-library')
+GlobalSettings.addConfigOption('lastEffectView',
+    section='effect-library',
+    key='last-effect-view',
+    type_=int,
+    default=SHOW_TREEVIEW)
 
 (COL_NAME_TEXT,
  COL_DESC_TEXT,
  COL_EFFECT_TYPE,
  COL_EFFECT_CATEGORIES,
  COL_FACTORY,
- COL_ELEMENT_NAME) = range(6)
+ COL_ELEMENT_NAME,
+ COL_ICON) = range(7)
 
 INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(),
     "invisible.png"))
@@ -55,7 +67,6 @@ class EffectList(gtk.VBox, Loggable):
         self.app = instance
         self.settings = instance.settings
 
-        #TODO check that
         self._dragButton = None
         self._dragStarted = False
         self._dragSelection = False
@@ -75,7 +86,6 @@ class EffectList(gtk.VBox, Loggable):
         self.effectType.append_text(_("Video effects"))
         self.effectType.append_text(_("Audio effects"))
         self.effectCategory = gtk.combo_box_new_text()
-        self.show_categories(VIDEO_EFFECT)
         self.effectType.set_active(VIDEO_EFFECT)
 
 
@@ -92,12 +102,16 @@ class EffectList(gtk.VBox, Loggable):
         hsearch.pack_end(self.searchEntry, expand=True)
 
         # Store
-        self.storemodel = gtk.ListStore(str, str, int, object, object, str)
+        self.storemodel = gtk.ListStore(str, str, int, object, object, str, gtk.gdk.Pixbuf)
 
         # Scrolled Windows
         self.treeview_scrollwin = gtk.ScrolledWindow()
         self.treeview_scrollwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.treeview_scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+
+        self.iconview_scrollwin = gtk.ScrolledWindow()
+        self.iconview_scrollwin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.iconview_scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
 
         # TreeView
         # Displays name, description
@@ -134,6 +148,13 @@ class EffectList(gtk.VBox, Loggable):
         desccol.pack_start(desccell)
         desccol.add_attribute(desccell, "text", COL_DESC_TEXT)
 
+        self.iconview = gtk.IconView(self.storemodel)
+        self.iconview.set_pixbuf_column(COL_ICON)
+        self.iconview.set_text_column(COL_NAME_TEXT)
+        self.iconview.set_item_width(102)
+        self.iconview_scrollwin.add(self.iconview)
+        self.iconview.set_property("has_tooltip", True)
+
         self.effectType.connect ("changed", self._effectTypeChangedCb)
 
         self.effectCategory.connect ("changed", self._effectCategoryChangedCb)
@@ -143,30 +164,70 @@ class EffectList(gtk.VBox, Loggable):
         self.searchEntry.connect ("focus-out-event", self.searchEntryDesactvateCb)
         self.searchEntry.connect ("icon-press", self.searchEntryIconClickedCb)
 
-        self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
-        self.treeview.connect("select-cursor-row", self._treeViewEnterPressEventCb)
-        self.treeview.connect("motion-notify-event", self._treeViewMotionNotifyEventCb)
-        self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
-        self.treeview.connect("button-release-event", self._treeViewButtonReleaseCb)
+        self.treeview.connect("button-press-event", self._buttonPressEventCb)
+        self.treeview.connect("select-cursor-row", self._enterPressEventCb)
+        self.treeview.connect("motion-notify-event", self._motionNotifyEventCb)
+        self.treeview.connect("query-tooltip", self._queryTooltipCb)
+        self.treeview.connect("button-release-event", self._buttonReleaseCb)
+        self.treeview.drag_source_set(0,[], gtk.gdk.ACTION_COPY)
         self.treeview.connect("drag_begin", self._dndDragBeginCb)
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
+
+        self.iconview.connect("button-press-event", self._buttonPressEventCb)
+        self.iconview.connect("activate-cursor-item", self._enterPressEventCb)
+        self.iconview.connect("query-tooltip", self._queryTooltipCb)
+        self.iconview.drag_source_set(0,[], gtk.gdk.ACTION_COPY)
+        self.iconview.connect("motion-notify-event", self._motionNotifyEventCb)
+        self.iconview.connect("button-release-event", self._buttonReleaseCb)
+        self.iconview.connect("drag_begin", self._dndDragBeginCb)
+        self.iconview.connect("drag_data_get", self._dndDataGetCb)
 
         self.pack_start(hfilters, expand=False)
         self.pack_start(hsearch, expand=False)
         self.pack_end(self.treeview_scrollwin, expand=True)
+        self.pack_end(self.iconview_scrollwin, expand=True)
 
         #create the filterModel
         self.modelFilter = self.storemodel.filter_new()
         self.modelFilter.set_visible_func(self._setRowVisible, data=None)
         self.treeview.set_model(self.modelFilter)
+        self.iconview.set_model(self.modelFilter)
 
         #Add factories
         self._addFactories(self.app.effects.getAllVideoEffects(), VIDEO_EFFECT)
         self._addFactories(self.app.effects.getAllAudioEffects(), AUDIO_EFFECT)
 
-        self.treeview_scrollwin.show_all()
+        self._addMenuItems(uiman)
+        self.show_categories(VIDEO_EFFECT)
+
         hfilters.show_all()
         hsearch.show_all()
+
+    def _addMenuItems(self, uiman):
+      view_menu_item = uiman.get_widget('/MainMenuBar/View')
+      view_menu = view_menu_item.get_submenu()
+      seperator = gtk.SeparatorMenuItem()
+      self.treeview_menuitem = gtk.RadioMenuItem(None,
+              _("Show Video Effects as a List"))
+      self.iconview_menuitem = gtk.RadioMenuItem(self.treeview_menuitem,
+              _("Show Video Effects as Icons"))
+
+      if self.settings.lastEffectView == SHOW_TREEVIEW:
+          self.treeview_menuitem.set_active(True)
+          self.iconview_menuitem.set_active(False)
+      else:
+          self.treeview_menuitem.set_active(False)
+          self.iconview_menuitem.set_active(True)
+
+      self.treeview_menuitem.connect("toggled", self._treeViewMenuItemToggledCb)
+      view_menu.append(seperator)
+      view_menu.append(self.treeview_menuitem)
+      view_menu.append(self.iconview_menuitem)
+      self.treeview_menuitem.show()
+      self.iconview_menuitem.show()
+      seperator.show()
+
+      self.effect_view = self.settings.lastEffectView
 
     def _addFactories(self, elements, effectType):
         for element in elements:
@@ -174,26 +235,45 @@ class EffectList(gtk.VBox, Loggable):
             effect = self.app.effects.getFactoryFromName(name)
             self.storemodel.append([ effect.getHumanName(),
                                      effect.getDescription(), effectType, effect.getCategories(),\
-                                     effect, element.get_name()])
+                                     effect, element.get_name(), effect.icon])
 
             self.storemodel.set_sort_column_id(COL_NAME_TEXT, gtk.SORT_ASCENDING)
 
     def show_categories(self, effectType):
         self.effectCategory.get_model().clear()
+        self._effect_type_ref = effectType
 
         if effectType is VIDEO_EFFECT:
             for categorie in self.app.effects.video_categories:
                 self.effectCategory.append_text(categorie)
-
-        if effectType is AUDIO_EFFECT:
+        else:
             for categorie in self.app.effects.audio_categories:
                 self.effectCategory.append_text(categorie)
 
+        if self.treeview_menuitem.get_active() == False:
+            self.effect_view = SHOW_ICONVIEW
+        self._displayEffectView()
         self.effectCategory.set_active(0)
+
+    def _displayEffectView(self):
+        self.treeview_scrollwin.hide()
+        self.iconview_scrollwin.hide()
+
+        if self.effect_view == SHOW_TREEVIEW or\
+                        self._effect_type_ref == AUDIO_EFFECT:
+            widget = self.treeview_scrollwin
+            self.effect_view = SHOW_TREEVIEW
+        else:
+            widget = self.iconview_scrollwin
+
+        widget.show_all()
 
     def _dndDragBeginCb(self, view, context):
         self.info("tree drag_begin")
-        path = self.treeview.get_selection().get_selected_rows()[1]
+        if self.effect_view == SHOW_ICONVIEW:
+            path = self.iconview.get_selected_items()
+        elif self.effect_view == SHOW_TREEVIEW:
+            path = self.treeview.get_selection().get_selected_rows()[1]
 
         if len(path) < 1:
             context.drag_abort(int(time.time()))
@@ -206,16 +286,21 @@ class EffectList(gtk.VBox, Loggable):
         result = view.get_path_at_pos(int(event.x), int(event.y))
         if result:
             path = result[0]
-            selection = view.get_selection()
-            return selection.path_is_selected(path) and selection.count_selected_rows() > 0
-
+            if self.effect_view == SHOW_TREEVIEW or\
+                        self._effect_type_ref == AUDIO_EFFECT:
+                selection = view.get_selection()
+                return selection.path_is_selected(path) and\
+                                selection.count_selected_rows() > 0
+            elif self.effect_view == SHOW_ICONVIEW:
+                selection = view.get_selected_items()
+                return view.path_is_selected(path) and len(selection)
         return False
 
-    def _treeViewEnterPressEventCb(self, treeview, event):
+    def _enterPressEventCb(self, view, event = None):
         factory_name = self.getSelectedItems()
         self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
 
-    def _treeViewButtonPressEventCb(self, treeview, event):
+    def _buttonPressEventCb(self, view, event):
         chain_up = True
 
         if event.button == 3:
@@ -224,7 +309,7 @@ class EffectList(gtk.VBox, Loggable):
             factory_name = self.getSelectedItems()
             self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
         else:
-            chain_up = not self._rowUnderMouseSelected(treeview, event)
+            chain_up = not self._rowUnderMouseSelected(view, event)
 
             self._dragStarted = False
             self._dragSelection = False
@@ -232,53 +317,70 @@ class EffectList(gtk.VBox, Loggable):
             self._dragX = int(event.x)
             self._dragY = int(event.y)
 
-        if chain_up:
-            gtk.TreeView.do_button_press_event(treeview, event)
+        if chain_up and self.effect_view is SHOW_TREEVIEW:
+            gtk.TreeView.do_button_press_event(view, event)
+        elif chain_up and self.effect_view is SHOW_ICONVIEW:
+            gtk.IconView.do_button_press_event(view, event)
         else:
-            treeview.grab_focus()
+            view.grab_focus()
 
         return True
 
-    def _treeViewButtonReleaseCb(self, treeview, event):
+    def _iconViewButtonReleaseCb(self, treeview, event):
         if event.button == self._dragButton:
             self._dragButton = None
         return False
 
-    def _treeViewMotionNotifyEventCb(self, treeview, event):
+    def _treeViewMenuItemToggledCb(self, unused_widget):
+        if self.effect_view is SHOW_ICONVIEW:
+            show = SHOW_TREEVIEW
+        else:
+            show = SHOW_ICONVIEW
+        self.settings.lastEffectView = show
+        self.effect_view = show
+        self._displayEffectView()
+
+    def _motionNotifyEventCb(self, view, event):
         chain_up = True
 
         if not self._dragButton:
             return True
 
-        if self._nothingUnderMouse(treeview, event):
+        if self._nothingUnderMouse(view, event):
             return True
 
         if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
-            chain_up = not self._rowUnderMouseSelected(treeview, event)
+            chain_up = not self._rowUnderMouseSelected(view, event)
 
-        if treeview.drag_check_threshold(self._dragX, self._dragY,
+        if view.drag_check_threshold(self._dragX, self._dragY,
             int(event.x), int(event.y)):
-            context = treeview.drag_begin(
+            context = view.drag_begin(
                 self._getDndTuple(),
                 gtk.gdk.ACTION_COPY,
                 self._dragButton,
                 event)
             self._dragStarted = True
 
-        if chain_up:
-            gtk.TreeView.do_button_press_event(treeview, event)
-        else:
-            treeview.grab_focus()
+        if self.effect_view is SHOW_TREEVIEW:
+          if chain_up:
+              gtk.TreeView.do_button_press_event(view, event)
+          else:
+              view.grab_focus()
 
         return False
 
-    def _treeViewQueryTooltipCb(self, treeview, x, y, keyboard_mode, tooltip):
-        context = treeview.get_tooltip_context(x, y, keyboard_mode)
+    def _queryTooltipCb(self, view, x, y, keyboard_mode, tooltip):
+        context = view.get_tooltip_context(x, y, keyboard_mode)
 
         if context is None:
             return False
 
-        treeview.set_tooltip_row (tooltip, context[1][0])
+        if self.effect_view is SHOW_TREEVIEW or\
+                    self._effect_type_ref == AUDIO_EFFECT:
+            view.set_tooltip_row (tooltip, context[1][0])
+        elif self.effect_view is SHOW_ICONVIEW and\
+                     self._effect_type_ref == VIDEO_EFFECT:
+            view.set_tooltip_item (tooltip, context[1][0])
         name = self.modelFilter.get_value(context[2], COL_ELEMENT_NAME)
         if self._current_effect_name != name:
             self._current_effect_name = name
@@ -290,21 +392,34 @@ class EffectList(gtk.VBox, Loggable):
         description = escape(self.modelFilter.get_value(context[2],
                 COL_DESC_TEXT))
         txt = "<b>%s:</b>\n%s" % (longname, description)
-        tooltip.set_icon(self._current_tooltip_icon)
+        if self.effect_view == SHOW_ICONVIEW:
+            tooltip.set_icon(None)
+        else :
+            tooltip.set_icon(self._current_tooltip_icon)
         tooltip.set_markup(txt)
 
         return True
 
+    def _buttonReleaseCb(self, treeview, event):
+        if event.button == self._dragButton:
+            self._dragButton = None
+        return False
+
     def getSelectedItems(self):
-        model, rows = self.treeview.get_selection().get_selected_rows()
-        path = self.modelFilter.convert_path_to_child_path(rows[0])
+        if self.effect_view == SHOW_TREEVIEW or\
+                        self._effect_type_ref == AUDIO_EFFECT:
+            model, rows = self.treeview.get_selection().get_selected_rows()
+            path = self.modelFilter.convert_path_to_child_path(rows[0])
+        elif self.effect_view == SHOW_ICONVIEW:
+            path = self.iconview.get_selected_items()
+            path = self.modelFilter.convert_path_to_child_path(path[0])
+
         return self.storemodel[path][COL_ELEMENT_NAME]
 
     def _dndDataGetCb(self, unused_widget, context, selection,
                       targettype, unused_eventtime):
         self.info("data get, type:%d", targettype)
         factory = self.getSelectedItems()
-
         if len(factory) < 1:
             return
 
