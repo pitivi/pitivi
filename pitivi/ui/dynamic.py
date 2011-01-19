@@ -240,22 +240,21 @@ class TimeWidget(TextWidget, DynamicWidget):
         TextWidget.__init__(self, self.regex)
 
     def getWidgetValue(self):
+        timecode = TextWidget.getWidgetValue(self)
 
-      timecode = TextWidget.getWidgetValue(self)
+        hh, mm, end = timecode.split(":")
+        ss, xxx = end.split(".")
+        nanosecs = int(hh) * 3.6 * 10e12 \
+            + int(mm) * 6 * 10e10 \
+            + int(ss) * 10e9 \
+            + int(xxx) * 10e6
 
-      hh, mm, end = timecode.split(":")
-      ss, xxx = end.split(".")
-      nanosecs = int(hh) * 3.6 * 10e12 \
-          + int(mm) * 6 * 10e10 \
-          + int(ss) * 10e9 \
-          + int(xxx) * 10e6
+        nanosecs = nanosecs / 10 # Compensate the 10 factor of e notation
 
-      nanosecs = nanosecs / 10 # Compensate the 10 factor of e notation
-
-      return nanosecs
+        return nanosecs
 
     def setWidgetValue(self, value, send_signal = True):
-      TextWidget.setWidgetValue(self, time_to_string(value),
+        TextWidget.setWidgetValue(self, time_to_string(value),
                                 send_signal = send_signal)
 
     def connectFocusEvents (self, focusInCb, focusOutCb):
