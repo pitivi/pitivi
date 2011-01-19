@@ -116,6 +116,7 @@ class TextWidget(gtk.HBox, DynamicWidget):
         self.matches = None
         self.last_valid = None
         self.valid = False
+        self.send_signal = True
         self.text.connect("changed", self._textChanged)
         if matches:
             if type(matches) is str:
@@ -127,7 +128,8 @@ class TextWidget(gtk.HBox, DynamicWidget):
     def connectValueChanged(self, callback, *args):
         return self.connect("value-changed", callback, *args)
 
-    def setWidgetValue(self, value):
+    def setWidgetValue(self, value, send_signal = True):
+        self.send_signal = send_signal
         self.text.set_text(value)
 
     def getWidgetValue(self):
@@ -144,7 +146,8 @@ class TextWidget(gtk.HBox, DynamicWidget):
         if self.matches:
             if self._filter(text):
                 self.last_valid = text
-                self.emit("value-changed")
+                if self.send_signal:
+                    self.emit("value-changed")
                 if not self.valid:
                     self.text.set_icon_from_stock(1, None)
                 self.valid = True
@@ -152,8 +155,10 @@ class TextWidget(gtk.HBox, DynamicWidget):
                 if self.valid:
                     self.text.set_icon_from_stock(1, gtk.STOCK_DIALOG_WARNING)
                 self.valid = False
-        else:
+        elif self.send_signal:
             self.emit("value-changed")
+
+        self.send_signal = True
 
     def _filter(self, text):
         match = self.matches.match(text)
@@ -249,8 +254,9 @@ class TimeWidget(TextWidget, DynamicWidget):
 
       return nanosecs
 
-    def setWidgetValue(self, value):
-      TextWidget.setWidgetValue(self, time_to_string(value))
+    def setWidgetValue(self, value, send_signal = True):
+      TextWidget.setWidgetValue(self, time_to_string(value),
+                                send_signal = send_signal)
 
     def connectFocusEvents (self, focusInCb, focusOutCb):
         fIn = self.text.connect ("button-press-event", focusInCb)

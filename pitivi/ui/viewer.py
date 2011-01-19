@@ -454,7 +454,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.info("value:%s, frame:%d", gst.TIME_ARGS(value), frame)
         self.current_time = value
         self.current_frame = frame
-        self.timecode_entry.setWidgetValue(value)
+        self.timecode_entry.setWidgetValue(value, False)
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
         return False
