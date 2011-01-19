@@ -44,7 +44,7 @@ GlobalSettings.addConfigOption('lastEffectView',
     section='effect-library',
     key='last-effect-view',
     type_=int,
-    default=SHOW_TREEVIEW)
+    default=SHOW_ICONVIEW)
 
 (COL_NAME_TEXT,
  COL_DESC_TEXT,
