@@ -329,7 +329,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
         # current time
         self.timecode_entry = TimeWidget()
-        self.timecode_entry.setWidgetValue("00:00:00.000")
+        self.timecode_entry.setWidgetValue(0)
         self.timecode_entry.connect("value-changed", self._jumpToTimecodeCb)
         self.timecode_entry.connectFocusEvents(self._entryFocusInCb, self._entryFocusOutCb)
         bbox.pack_start(self.timecode_entry, expand=False, padding=10)
@@ -454,7 +454,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.info("value:%s, frame:%d", gst.TIME_ARGS(value), frame)
         self.current_time = value
         self.current_frame = frame
-        self.timecode_entry.set_text("%s" % time_to_string(value))
+        self.timecode_entry.setWidgetValue(value)
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
         return False
