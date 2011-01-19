@@ -60,7 +60,7 @@ class EffectsHandler(object):
     """
     def __init__(self):
         object.__init__(self)
-        self._audio_categories_effects = (("All effects", ("")),)
+        self._audio_categories_effects = ((_("All effects"), ("")),)
         self._video_categories_effects = (
             (_("All effects"), ("")),
             (_("Colors"), ("cogcolorspace", "alphacolor", "videobalance",
