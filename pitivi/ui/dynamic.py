@@ -29,6 +29,7 @@ import re
 import sys
 import gst
 from gettext import gettext as _
+from pitivi.utils import time_to_string
 from pitivi.ui.common import unpack_color, pack_color_32, pack_color_64
 import pango
 from pitivi.ui.common import PADDING, SPACING
@@ -224,7 +225,7 @@ class NumericWidget(gtk.HBox, DynamicWidget):
         self.spinner.set_adjustment(self.adjustment)
 
 class TimeWidget(TextWidget, DynamicWidget):
-    """ A widget that contains a time """
+    """ A widget that contains a time in nanosconds"""
 
     regex = re.compile("^([0-9][0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
     __gtype_name__ = 'TimeWidget'
@@ -247,6 +248,15 @@ class TimeWidget(TextWidget, DynamicWidget):
       nanosecs = nanosecs / 10 # Compensate the 10 factor of e notation
 
       return nanosecs
+
+    def setWidgetValue(self, value):
+      TextWidget.setWidgetValue(self, time_to_string(value))
+
+    def connectFocusEvents (self, focusInCb, focusOutCb):
+        fIn = self.text.connect ("button-press-event", focusInCb)
+        fOut = self.text.connect ("focus-out-event", focusOutCb)
+
+        return [fIn, fOut]
 
 
 class FractionWidget(TextWidget, DynamicWidget):

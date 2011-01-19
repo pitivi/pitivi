@@ -331,6 +331,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.timecode_entry = TimeWidget()
         self.timecode_entry.setWidgetValue("00:00:00.000")
         self.timecode_entry.connect("value-changed", self._jumpToTimecodeCb)
+        self.timecode_entry.connectFocusEvents(self._entryFocusInCb, self._entryFocusOutCb)
         bbox.pack_start(self.timecode_entry, expand=False, padding=10)
         self._haveUI = True
 
@@ -390,6 +391,14 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.warning("could not set ratio !")
 
     ## gtk.HScale callbacks for self.slider
+
+    def _entryFocusInCb(self, entry, event):
+        sensitive_actions = self.app.gui.sensitive_actions
+        self.app.gui.setActionsSensitive(sensitive_actions, False)
+
+    def _entryFocusOutCb(self, entry, event):
+        sensitive_actions = self.app.gui.sensitive_actions
+        self.app.gui.setActionsSensitive(sensitive_actions, True)
 
     def _sliderButtonPressCb(self, slider, event):
         # borrow totem hack for seek-on-click behavior
