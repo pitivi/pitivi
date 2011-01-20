@@ -4,15 +4,15 @@
 #
 # Jan Drábek <repli2dev@gmail.com>, 2009.
 # Petr Kovar <pknbe@volny.cz>, 2009.
-# Marek Černocký <marek@manet.cz>, 2009, 2010, 2011.
+# Marek Černocký <marek@manet.cz>, 2009 – 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2011-01-17 00:55+0000\n"
-"PO-Revision-Date: 2011-01-18 13:53+0100\n"
+"POT-Creation-Date: 2011-01-20 17:03+0000\n"
+"PO-Revision-Date: 2011-01-20 20:18+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: cs\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Poedit-Language: Czech\n"
 "X-Generator: Lokalize 1.0\n"
 
 #: ../pitivi/application.py:124
@@ -341,7 +340,7 @@ msgstr "PiTiVi momentálně neumí pracovat s přesměrováním souborů."
 msgid "Pipeline didn't want to go to PLAYING."
 msgstr "Roura nechce přejít do stavu PŘEHRÁVÁNO."
 
-#: ../pitivi/effects.py:65
+#: ../pitivi/effects.py:63 ../pitivi/effects.py:65
 msgid "All effects"
 msgstr "Všechny efekty"
 
@@ -373,7 +372,7 @@ msgstr "Zábavné"
 msgid "Time"
 msgstr "Časové"
 
-#: ../pitivi/effects.py:113 ../pitivi/effects.py:221
+#: ../pitivi/effects.py:113 ../pitivi/effects.py:222
 msgid "Uncategorized"
 msgstr "Nezařazené"
 
@@ -450,12 +449,12 @@ msgstr "%(width)d × %(height)d pixelů při %(framerate).2f snímcích/s"
 msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
 msgstr "%(channels)d kanálů při %(frequency)d Hz (%(depth)d bitů)"
 
-#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/effectlist.py:112
+#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/effectlist.py:126
 #: ../pitivi/ui/videofxlist.py:53
 msgid "Name"
 msgstr "Název"
 
-#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/effectlist.py:124
+#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/effectlist.py:138
 #: ../pitivi/ui/videofxlist.py:59
 msgid "Description"
 msgstr "Popis"
@@ -657,18 +656,28 @@ msgstr "Uložit nastavení"
 msgid "Choose..."
 msgstr "Vybrat…"
 
-#: ../pitivi/ui/effectlist.py:75
+#: ../pitivi/ui/effectlist.py:86
 msgid "Video effects"
 msgstr "Video efekty"
 
-#: ../pitivi/ui/effectlist.py:76
+#: ../pitivi/ui/effectlist.py:87
 msgid "Audio effects"
 msgstr "Zvukové efekty"
 
 #. Prevents being flush against the notebook
-#: ../pitivi/ui/effectlist.py:88 ../pitivi/ui/pluginmanagerdialog.glade.h:3
+#: ../pitivi/ui/effectlist.py:98 ../pitivi/ui/pluginmanagerdialog.glade.h:3
 msgid "Search:"
 msgstr "Hledat:"
+
+#: ../pitivi/ui/effectlist.py:211
+#| msgid "Show Clips as a List"
+msgid "Show Video Effects as a List"
+msgstr "Zobrazit video efekty jako seznam"
+
+#: ../pitivi/ui/effectlist.py:213
+#| msgid "Show Clips as Icons"
+msgid "Show Video Effects as Icons"
+msgstr "Zobrazit video efekty jako ikony"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 msgid "<b>Properties For Plugin</b>"
