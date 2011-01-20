@@ -34,6 +34,7 @@ pixmap_DATA = \
     cogdownsample.png \
     color-distance.png \
     coloreffects.png \
+	defaultthumbnail.svg \
     dicetv.png \
     diffuse.png \
     dilate.png \
