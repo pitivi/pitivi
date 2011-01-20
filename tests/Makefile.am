@@ -15,7 +15,7 @@ tests = \
 	test_still_image.py			\
 	test_gap.py
 
-EXTRA_DIST = $(tests) runtests.py common.py
+EXTRA_DIST = $(tests) runtests.py common.py __init__.py
 
 clean-local:
 	rm -f testProject.ptv testproject.xptv testproject2.xptv
