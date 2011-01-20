@@ -4,31 +4,92 @@
 #
 # Jan Drábek <repli2dev@gmail.com>, 2009.
 # Petr Kovar <pknbe@volny.cz>, 2009.
-# Marek Černocký <marek@manet.cz>, 2009, 2010.
+# Marek Černocký <marek@manet.cz>, 2009, 2010, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-27 20:40+0100\n"
-"PO-Revision-Date: 2010-12-16 09:31+0100\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=pitivi&component=general\n"
+"POT-Creation-Date: 2011-01-17 00:55+0000\n"
+"PO-Revision-Date: 2011-01-18 13:53+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
-"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: cs\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Poedit-Language: Czech\n"
 "X-Generator: Lokalize 1.0\n"
 
-#: ../pitivi.desktop.in.in.h:1
-msgid "Create and edit your own movies"
-msgstr "Vytvářejte a upravujte své vlastní filmy"
+#: ../pitivi/application.py:124
+#, python-format
+msgid ""
+"There is already a %s instance, please inform the developers by filing a bug "
+"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr ""
+"Již existuje instance %s, informujte prosím vývojáře nahlášením chyby na "
+"http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi.desktop.in.in.h:2
-msgid "Pitivi Video Editor"
-msgstr "Editor videa Pitivi"
+#: ../pitivi/application.py:225
+msgid ""
+"\n"
+"      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
+"      %prog -p [PROJECT_FILE]\n"
+"      %prog -i [-a] [MEDIA_FILE]..."
+msgstr ""
+"\n"
+"      %prog [-r VÝSTUPNÍ_SOUBOR] [SOUBOR_PROJEKTU]\n"
+"      %prog -p [SOUBOR_PROJEKTU]\n"
+"      %prog -i [-a] [SOUBOR_MÉDIÍ]…"
+
+#: ../pitivi/application.py:230
+msgid ""
+"Starts the video editor, optionally loading PROJECT_FILE. If\n"
+"no project is given, %prog creates a new project.\n"
+"Alternatively, when -i is specified, arguments are treated as clips to be\n"
+"imported into the project. If -a is specified, these clips will also be "
+"added to\n"
+"the end of the project timeline.\n"
+"When -r is specified, the given project file is rendered without opening the "
+"GUI."
+msgstr ""
+"Spustí video editor, volitelně načte SOUBOR_PROJEKTU. Pokud\n"
+"není zadán soubor projektu, %prog vytvoří nový projekt.\n"
+"Eventuálně můžete použít -i a za ním soubory, které se mají importovat\n"
+"do projektu. Pokud uvedete -a, budou tyto klipy přidány také na konec "
+"časové\n"
+"osy.\n"
+"Pokud je zadáno -r, daný projekt se vykreslí bez otevíraní grafického "
+"rozhraní."
+
+#: ../pitivi/application.py:237
+msgid "Import each MEDIA_FILE into the project."
+msgstr "Importuje každý multimediální soubor (MEDIA_FILE) do projektu."
+
+#: ../pitivi/application.py:239
+msgid "Add each MEDIA_FILE to timeline after importing."
+msgstr ""
+"Po importu přidá každý multimediální soubor (MEDIA_FILE) do časové osy."
+
+#: ../pitivi/application.py:240
+msgid "Run pitivi in the Python Debugger"
+msgstr "Spustit pitivi v Python debugeru"
+
+#: ../pitivi/application.py:242
+msgid "Run pitivi with no gui"
+msgstr "Spustit aplikaci PiTiVi bez uživatelského rozhraní"
+
+#: ../pitivi/application.py:243
+msgid "Render the given project file to OUTPUT_FILE with no GUI."
+msgstr ""
+"Vykreslit daný soubor s projektem do VÝSTUPNÍHO_SOUBORU bez použití "
+"grafického prostředí."
+
+#: ../pitivi/application.py:244
+msgid "Preview the given project file without the full UI."
+msgstr "Náhled daného souboru s projektem bez plného grafického prostředí."
 
 #: ../pitivi/check.py:102
 #, python-format
@@ -204,6 +265,14 @@ msgstr "Nelze načíst modul distutils"
 msgid "Make sure you have the distutils python module installed"
 msgstr "Ujistěte se, že máte nainstalován modul distutils python"
 
+#: ../pitivi.desktop.in.in.h:1
+msgid "Create and edit your own movies"
+msgstr "Vytvářejte a upravujte své vlastní filmy"
+
+#: ../pitivi.desktop.in.in.h:2
+msgid "Pitivi Video Editor"
+msgstr "Editor videa Pitivi"
+
 #: ../pitivi/discoverer.py:228
 #, python-format
 msgid ""
@@ -272,73 +341,64 @@ msgstr "PiTiVi momentálně neumí pracovat s přesměrováním souborů."
 msgid "Pipeline didn't want to go to PLAYING."
 msgstr "Roura nechce přejít do stavu PŘEHRÁVÁNO."
 
-#: ../pitivi/application.py:124
-#, python-format
-msgid ""
-"There is already a %s instance, please inform the developers by filing a bug "
-"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-msgstr ""
-"Již existuje instance %s, informujte prosím vývojáře nahlášením chyby na "
-"http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+#: ../pitivi/effects.py:65
+msgid "All effects"
+msgstr "Všechny efekty"
 
-#: ../pitivi/application.py:225
-msgid ""
-"\n"
-"      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
-"      %prog -p [PROJECT_FILE]\n"
-"      %prog -i [-a] [MEDIA_FILE]..."
-msgstr ""
-"\n"
-"      %prog [-r VÝSTUPNÍ_SOUBOR] [SOUBOR_PROJEKTU]\n"
-"      %prog -p [SOUBOR_PROJEKTU]\n"
-"      %prog -i [-a] [SOUBOR_MÉDIÍ]…"
+#: ../pitivi/effects.py:66
+msgid "Colors"
+msgstr "Barvy"
 
-#: ../pitivi/application.py:230
-msgid ""
-"Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"no project is given, %prog creates a new project.\n"
-"Alternatively, when -i is specified, arguments are treated as clips to be\n"
-"imported into the project. If -a is specified, these clips will also be "
-"added to\n"
-"the end of the project timeline.\n"
-"When -r is specified, the given project file is rendered without opening the "
-"GUI."
-msgstr ""
-"Spustí video editor, volitelně načte SOUBOR_PROJEKTU. Pokud\n"
-"není zadán soubor projektu, %prog vytvoří nový projekt.\n"
-"Eventuálně můžete použít -i a za ním soubory, které se mají importovat\n"
-"do projektu. Pokud uvedete -a, budou tyto klipy přidány také na konec "
-"časové\n"
-"osy.\n"
-"Pokud je zadáno -r, daný projekt se vykreslí bez otevíraní grafického "
-"rozhraní."
+#: ../pitivi/effects.py:80
+msgid "Noise"
+msgstr "Šumové"
 
-#: ../pitivi/application.py:237
-msgid "Import each MEDIA_FILE into the project."
-msgstr "Importuje každý multimediální soubor (MEDIA_FILE) do projektu."
+#: ../pitivi/effects.py:82
+msgid "Analysis"
+msgstr "Analytické"
 
-#: ../pitivi/application.py:239
-msgid "Add each MEDIA_FILE to timeline after importing."
-msgstr ""
-"Po importu přidá každý multimediální soubor (MEDIA_FILE) do časové osy."
+#: ../pitivi/effects.py:87
+msgid "Blur"
+msgstr "Ostřící"
 
-#: ../pitivi/application.py:240
-msgid "Run pitivi in the Python Debugger"
-msgstr "Spustit pitivi v Python debugeru"
+#: ../pitivi/effects.py:89
+msgid "Geometry"
+msgstr "Geometrické"
 
-#: ../pitivi/application.py:242
-msgid "Run pitivi with no gui"
-msgstr "Spustit aplikaci PiTiVi bez uživatelského rozhraní"
+#: ../pitivi/effects.py:101
+msgid "Fancy"
+msgstr "Zábavné"
 
-#: ../pitivi/application.py:243
-msgid "Render the given project file to OUTPUT_FILE with no GUI."
-msgstr ""
-"Vykreslit daný soubor s projektem do VÝSTUPNÍHO_SOUBORU bez použití "
-"grafického prostředí."
+#: ../pitivi/effects.py:112
+msgid "Time"
+msgstr "Časové"
 
-#: ../pitivi/application.py:244
-msgid "Preview the given project file without the full UI."
-msgstr "Náhled daného souboru s projektem bez plného grafického prostředí."
+#: ../pitivi/effects.py:113 ../pitivi/effects.py:221
+msgid "Uncategorized"
+msgstr "Nezařazené"
+
+#. TODO check if it is the good way to make it translatable
+#. And to filter actually!
+#: ../pitivi/effects.py:240 ../pitivi/ui/encodingdialog.glade.h:33
+#: ../pitivi/ui/projectsettings.glade.h:20
+msgid "Video"
+msgstr "Video"
+
+#: ../pitivi/effects.py:241
+msgid "Audio |audio"
+msgstr "Audio|audio|Zvukový|zvukový"
+
+#: ../pitivi/effects.py:242
+msgid "effect"
+msgstr "efekt"
+
+#: ../pitivi/formatters/format.py:77
+msgid "PiTiVi Native (XML)"
+msgstr "PiTiVi formát (XML)"
+
+#: ../pitivi/formatters/format.py:78
+msgid "Playlist format"
+msgstr "Formát playlistu"
 
 #: ../pitivi/projectmanager.py:102
 msgid "Not a valid project file."
@@ -390,96 +450,6 @@ msgstr "%(width)d × %(height)d pixelů při %(framerate).2f snímcích/s"
 msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
 msgstr "%(channels)d kanálů při %(frequency)d Hz (%(depth)d bitů)"
 
-#: ../pitivi/utils.py:75
-#, python-format
-msgid "%d hour"
-msgid_plural "%d hours"
-msgstr[0] "%d hodina"
-msgstr[1] "%d hodiny"
-msgstr[2] "%d #hodin"
-
-#: ../pitivi/utils.py:78
-#, python-format
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] "%d minuta"
-msgstr[1] "%d minuty"
-msgstr[2] "%d minut"
-
-#: ../pitivi/utils.py:81
-#, python-format
-msgid "%d second"
-msgid_plural "%d seconds"
-msgstr[0] "%d sekunda"
-msgstr[1] "%d sekundy"
-msgstr[2] "%d sekund"
-
-#. Translators: "non local" means the project is not stored
-#. on a local filesystem
-#: ../pitivi/utils.py:249
-#, python-format
-msgid "%s doesn't yet handle non local projects"
-msgstr "%s zatím nedokáže pracovat s jinými než místními projekty"
-
-#: ../pitivi/effects.py:65
-msgid "All effects"
-msgstr "Všechny efekty"
-
-#: ../pitivi/effects.py:66
-msgid "Colors"
-msgstr "Barvy"
-
-#: ../pitivi/effects.py:80
-msgid "Noise"
-msgstr "Šumové"
-
-#: ../pitivi/effects.py:82
-msgid "Analysis"
-msgstr "Analytické"
-
-#: ../pitivi/effects.py:87
-msgid "Blur"
-msgstr "Ostřící"
-
-#: ../pitivi/effects.py:89
-msgid "Geometry"
-msgstr "Geometrické"
-
-#: ../pitivi/effects.py:101
-msgid "Fancy"
-msgstr "Zábavné"
-
-#: ../pitivi/effects.py:112
-msgid "Time"
-msgstr "Časové"
-
-#: ../pitivi/effects.py:113 ../pitivi/effects.py:221
-msgid "Uncategorized"
-msgstr "Nezařazené"
-
-#. TODO check if it is the good way to make it translatable
-#. And to filter actually!
-#: ../pitivi/effects.py:240 ../pitivi/ui/encodingdialog.glade.h:32
-#: ../pitivi/ui/projectsettings.glade.h:20
-msgid "Video"
-msgstr "Video"
-
-#: ../pitivi/effects.py:241
-msgid "Audio |audio"
-msgstr "Audio|audio|Zvukový|zvukový"
-
-#: ../pitivi/effects.py:242
-msgid "effect"
-msgstr "efekt"
-
-#: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi formát (XML)"
-
-#: ../pitivi/formatters/format.py:78
-msgid "Playlist format"
-msgstr "Formát playlistu"
-
 #: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/effectlist.py:112
 #: ../pitivi/ui/videofxlist.py:53
 msgid "Name"
@@ -501,6 +471,30 @@ msgstr "Není dostupné žádné zařízení"
 #: ../pitivi/ui/cam_capture.glade.h:3
 msgid "Video Capture Device:"
 msgstr "Video nahrávací zařízení:"
+
+#: ../pitivi/ui/clipproperties.py:135
+msgid "Remove effect"
+msgstr "Odebrat efekt"
+
+#: ../pitivi/ui/clipproperties.py:162
+msgid "Activated"
+msgstr "Aktivováno"
+
+#: ../pitivi/ui/clipproperties.py:167
+msgid "Type"
+msgstr "Typ"
+
+#: ../pitivi/ui/clipproperties.py:179
+msgid "Effect name"
+msgstr "Název efektu"
+
+#: ../pitivi/ui/clipproperties.py:376
+msgid ""
+"<span>You must select <b>one</b> clip on the timeline to configure its "
+"associated effects</span>"
+msgstr ""
+"<span>Abyste mohli nastavit přidružené efekty, musíte na časové ose vybrat "
+"<b>jeden</b> klip</span>"
 
 #: ../pitivi/ui/common.py:91 ../pitivi/ui/common.py:133
 #, python-format
@@ -777,31 +771,35 @@ msgstr "MP4"
 msgid "Number of channels:"
 msgstr "Počet kanálů:"
 
-#: ../pitivi/ui/encodingdialog.glade.h:25
+#: ../pitivi/ui/encodingdialog.glade.h:25 ../pitivi/ui/mainwindow.py:143
+msgid "Render"
+msgstr "Vykreslit"
+
+#: ../pitivi/ui/encodingdialog.glade.h:26
 msgid "Render only the selected clips"
 msgstr "Vykreslit pouze vybrané klipy"
 
-#: ../pitivi/ui/encodingdialog.glade.h:26
+#: ../pitivi/ui/encodingdialog.glade.h:27
 msgid "Sample Depth:"
 msgstr "Hloubka vzorku:"
 
-#: ../pitivi/ui/encodingdialog.glade.h:27
+#: ../pitivi/ui/encodingdialog.glade.h:28
 msgid "Sample Rate:"
 msgstr "Vzorkovací frekvence:"
 
-#: ../pitivi/ui/encodingdialog.glade.h:28
+#: ../pitivi/ui/encodingdialog.glade.h:29
 msgid "Sample rate"
 msgstr "Vzorkovací frekvence"
 
-#: ../pitivi/ui/encodingdialog.glade.h:29
+#: ../pitivi/ui/encodingdialog.glade.h:30
 msgid "Scale"
 msgstr "Škálování"
 
-#: ../pitivi/ui/encodingdialog.glade.h:30
+#: ../pitivi/ui/encodingdialog.glade.h:31
 msgid "Scale:"
 msgstr "Škálování:"
 
-#: ../pitivi/ui/encodingdialog.glade.h:31
+#: ../pitivi/ui/encodingdialog.glade.h:32
 msgid "Summary"
 msgstr "Shrnutí"
 
@@ -830,12 +828,12 @@ msgid "Rendering"
 msgstr "Vykreslování"
 
 #: ../pitivi/ui/encodingprogress.glade.h:7
-msgid "Unknown Mib"
-msgstr "Neznámo Mib"
+msgid "Unknown"
+msgstr "Není známo"
 
 #: ../pitivi/ui/encodingprogress.glade.h:8
-msgid "Unkown"
-msgstr "Neznámo"
+msgid "Unknown Mib"
+msgstr "Neznámo Mib"
 
 #: ../pitivi/ui/filelisterrordialog.py:52
 msgid "Unknown reason"
@@ -862,10 +860,6 @@ msgstr "Vrátit na výchozí hodnotu"
 #, python-format
 msgid "Properties for %s"
 msgstr "Vlastnosti - %s"
-
-#: ../pitivi/ui/mainwindow.py:143
-msgid "Render"
-msgstr "Vykreslit"
 
 #: ../pitivi/ui/mainwindow.py:144 ../pitivi/ui/timeline.py:315
 msgid "Split"
@@ -1340,30 +1334,6 @@ msgstr "Zobrazit zvukovou stopu graficky"
 msgid "Show Waveforms on Audio Clips"
 msgstr "Zobrazit průběh audia graficky (v křivkách)"
 
-#: ../pitivi/ui/clipproperties.py:135
-msgid "Remove effect"
-msgstr "Odebrat efekt"
-
-#: ../pitivi/ui/clipproperties.py:162
-msgid "Activated"
-msgstr "Aktivováno"
-
-#: ../pitivi/ui/clipproperties.py:167
-msgid "Type"
-msgstr "Typ"
-
-#: ../pitivi/ui/clipproperties.py:179
-msgid "Effect name"
-msgstr "Název efektu"
-
-#: ../pitivi/ui/clipproperties.py:376
-msgid ""
-"<span>You must select <b>one</b> clip on the timeline to configure its "
-"associated effects</span>"
-msgstr ""
-"<span>Abyste mohli nastavit přidružené efekty, musíte na časové ose vybrat "
-"<b>jeden</b> klip</span>"
-
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "25 FPS"
 msgstr "25 snímků/s"
@@ -1420,7 +1390,7 @@ msgstr "Hloubka vzorku:"
 msgid "Sample rate:"
 msgstr "Vzorkovací frekvence:"
 
-#: ../pitivi/ui/projectsettings.glade.h:18
+#: ../pitivi/ui/projectsettings.glade.h:18 ../pitivi/ui/projectsettings.py:62
 msgid "Standard (4:3)"
 msgstr "Standardní (4:3)"
 
@@ -1435,6 +1405,78 @@ msgstr "Rok:"
 #: ../pitivi/ui/projectsettings.glade.h:22
 msgid "x"
 msgstr "×"
+
+#: ../pitivi/ui/projectsettings.py:50
+msgid "Square"
+msgstr "Čtverec"
+
+#: ../pitivi/ui/projectsettings.py:51
+msgid "480p"
+msgstr "480p"
+
+#: ../pitivi/ui/projectsettings.py:52
+msgid "480i"
+msgstr "480i"
+
+#: ../pitivi/ui/projectsettings.py:53
+msgid "480p Wide"
+msgstr "480p širokoúhlý"
+
+#: ../pitivi/ui/projectsettings.py:54
+msgid "480i Wide"
+msgstr "480i širokoúhlý"
+
+#: ../pitivi/ui/projectsettings.py:55
+msgid "576p"
+msgstr "576p"
+
+#: ../pitivi/ui/projectsettings.py:56
+msgid "576i"
+msgstr "576i"
+
+#: ../pitivi/ui/projectsettings.py:57
+msgid "576p Wide"
+msgstr "576p širokoúhlý"
+
+#: ../pitivi/ui/projectsettings.py:58
+msgid "576i Wide"
+msgstr "576i širokoúhlý"
+
+#: ../pitivi/ui/projectsettings.py:63
+msgid "DV (15:11)"
+msgstr "DV (15:11)"
+
+#: ../pitivi/ui/projectsettings.py:64
+msgid "DV Widescreen (16:9)"
+msgstr "DV širokoúhlý (16:9)"
+
+#: ../pitivi/ui/projectsettings.py:65
+msgid "Cinema (1.37)"
+msgstr "Kino (1,37)"
+
+#: ../pitivi/ui/projectsettings.py:66
+msgid "Cinema (1.66)"
+msgstr "Kino (1,66)"
+
+#: ../pitivi/ui/projectsettings.py:67
+msgid "Cinema (1.85)"
+msgstr "Kino (1,85)"
+
+#: ../pitivi/ui/projectsettings.py:68
+msgid "Anamorphic (2.35)"
+msgstr "Anamorfní (2,35)"
+
+#: ../pitivi/ui/projectsettings.py:69
+msgid "Anamorphic (2.39)"
+msgstr "Anamorfní (2,39)"
+
+#: ../pitivi/ui/projectsettings.py:70
+msgid "Anamorphic (2.4)"
+msgstr "Anamorfní (2,4)"
+
+#: ../pitivi/ui/projectsettings.py:306 ../pitivi/ui/projectsettings.py:323
+msgid "New Preset"
+msgstr "Nové nastavení"
 
 #: ../pitivi/ui/propertyeditor.py:54
 msgid "No Objects Selected"
@@ -1576,6 +1618,30 @@ msgstr "Přeskočit"
 msgid "Startup Wizard"
 msgstr "Úvodní průvodce"
 
+#: ../pitivi/ui/timelinecanvas.py:51
+msgid "Behavior"
+msgstr "Chování"
+
+#: ../pitivi/ui/timelinecanvas.py:52
+msgid "Snap Distance (pixels)"
+msgstr "Vzdálenost přichytávání (v pixelech)"
+
+#: ../pitivi/ui/timelinecanvas.py:53
+msgid "Threshold distance (in pixels) used for all snapping operations"
+msgstr "Práh (v pixelech) přichytávání"
+
+#: ../pitivi/ui/timelinecontrols.py:13
+msgid "<b>Audio:</b>"
+msgstr "<b>Audio:</b>"
+
+#: ../pitivi/ui/timelinecontrols.py:15
+msgid "<b>Video:</b>"
+msgstr "<b>Video:</b>"
+
+#: ../pitivi/ui/timelinecontrols.py:17
+msgid "<b>Text:</b>"
+msgstr "<b>Text:</b>"
+
 #. tooltip text for toolbar
 #: ../pitivi/ui/timeline.py:54
 msgid "Delete Selected"
@@ -1638,36 +1704,12 @@ msgid "Zoom Timeline"
 msgstr "Přiblížit časovou osu"
 
 #: ../pitivi/ui/timeline.py:319
-msgid "_Prevframe"
-msgstr "_Předchozí snímek"
+msgid "_Previous keyframe"
+msgstr "_Předchozí klíčový snímek"
 
 #: ../pitivi/ui/timeline.py:321
-msgid "_Nextframe"
-msgstr "_Následující snímek"
-
-#: ../pitivi/ui/timelinecanvas.py:51
-msgid "Behavior"
-msgstr "Chování"
-
-#: ../pitivi/ui/timelinecanvas.py:52
-msgid "Snap Distance (pixels)"
-msgstr "Vzdálenost přichytávání (v pixelech)"
-
-#: ../pitivi/ui/timelinecanvas.py:53
-msgid "Threshold distance (in pixels) used for all snapping operations"
-msgstr "Práh (v pixelech) přichytávání"
-
-#: ../pitivi/ui/timelinecontrols.py:13
-msgid "<b>Audio:</b>"
-msgstr "<b>Audio:</b>"
-
-#: ../pitivi/ui/timelinecontrols.py:15
-msgid "<b>Video:</b>"
-msgstr "<b>Video:</b>"
-
-#: ../pitivi/ui/timelinecontrols.py:17
-msgid "<b>Text:</b>"
-msgstr "<b>Text:</b>"
+msgid "_Next keyframe"
+msgstr "_Následující klíčový snímek"
 
 #: ../pitivi/ui/trackobject.py:49
 msgid "Clip Background (Video)"
@@ -1728,6 +1770,37 @@ msgstr "Přehrát"
 #: ../pitivi/ui/viewer.py:653
 msgid "Pause"
 msgstr "Pozastavit"
+
+#: ../pitivi/utils.py:75
+#, python-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d hodina"
+msgstr[1] "%d hodiny"
+msgstr[2] "%d #hodin"
+
+#: ../pitivi/utils.py:78
+#, python-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d minuta"
+msgstr[1] "%d minuty"
+msgstr[2] "%d minut"
+
+#: ../pitivi/utils.py:81
+#, python-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d sekunda"
+msgstr[1] "%d sekundy"
+msgstr[2] "%d sekund"
+
+#. Translators: "non local" means the project is not stored
+#. on a local filesystem
+#: ../pitivi/utils.py:249
+#, python-format
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s zatím nedokáže pracovat s jinými než místními projekty"
 
 #~ msgid "<b>Author:</b>"
 #~ msgstr "<b>Autor:</b>"
