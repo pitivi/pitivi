@@ -133,8 +133,7 @@ class EffectsHandler(object):
                 effect = EffectFactory(name, name,
                                    self._getEffectCategories(name),
                                    self._getEffectName(element_factory),
-                                   self._getEffectDescripton(element_factory),
-                                   icon = self.getEffectIcon(name))
+                                   self._getEffectDescripton(element_factory))
                 added = self.addStreams(element_factory, effect)
 
                 if added is True:

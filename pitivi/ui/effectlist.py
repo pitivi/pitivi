@@ -234,9 +234,10 @@ class EffectList(gtk.VBox, Loggable):
             name =element.get_name()
             effect = self.app.effects.getFactoryFromName(name)
             self.storemodel.append([ effect.getHumanName(),
-                                     effect.getDescription(), effectType, effect.getCategories(),\
-                                     effect, element.get_name(), effect.icon])
-
+                                     effect.getDescription(), effectType,
+                                     effect.getCategories(),
+                                     effect, name,
+                                     self.app.effects.getEffectIcon(name)])
             self.storemodel.set_sort_column_id(COL_NAME_TEXT, gtk.SORT_ASCENDING)
 
     def show_categories(self, effectType):
@@ -384,7 +385,7 @@ class EffectList(gtk.VBox, Loggable):
         name = self.modelFilter.get_value(context[2], COL_ELEMENT_NAME)
         if self._current_effect_name != name:
             self._current_effect_name = name
-            icon = self.app.effects.getEffectIcon(name)
+            icon = self.modelFilter.get_value(context[2], COL_ICON)
             self._current_tooltip_icon = icon
 
         longname = escape(self.modelFilter.get_value(context[2],
