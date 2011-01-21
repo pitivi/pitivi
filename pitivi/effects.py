@@ -291,20 +291,19 @@ class EffectsHandler(object):
         return effects_categories.extended(self.video_categories).extended(self.audio_categories)
 
     def getEffectIcon(self, effect_name):
-        icontheme = gtk.icon_theme_get_default()
         pixdir = get_pixmap_dir()
+        effect_name = effect_name + ".png"
         icon = None
         try:
-            icon = icontheme.load_icon(effect_name, 32, 0)
+            icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, effect_name))
+        # empty except clause is bad but load_icon raises gio.Error.
+        ## Right, *gio*.
         except:
-            # empty except clause is bad but load_icon raises gio.Error.
-            ## Right, *gio*.
-            if not icon:
-                effect_name = effect_name + ".png"
-                try:
-                    icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, effect_name))
-                except:
-                    icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "defaultthumbnail.svg"))
+            try:
+                icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "defaultthumbnail.svg"))
+            except:
+                return None
+
         return icon
 
 
