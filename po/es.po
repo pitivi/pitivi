@@ -4,17 +4,17 @@
 #
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2006.
 # Jesse Aviles <jesseaviles@gmail.com>, 2008, 2009, 2010.
-# Jorge González <jorgegonz@svn.gnome.org>, 2007, 2009, 2010.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
+# Jorge González <jorgegonz@svn.gnome.org>, 2007, 2009, 2010, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2011-01-20 19:37+0000\n"
-"PO-Revision-Date: 2011-01-20 20:39+0100\n"
-"Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
+"POT-Creation-Date: 2011-01-22 03:45+0000\n"
+"PO-Revision-Date: 2011-01-22 17:09+0100\n"
+"Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -381,22 +381,22 @@ msgstr "Fantasía"
 msgid "Time"
 msgstr "Duración"
 
-#: ../pitivi/effects.py:113 ../pitivi/effects.py:222
+#: ../pitivi/effects.py:113 ../pitivi/effects.py:221
 msgid "Uncategorized"
 msgstr "Sin categorizar"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../pitivi/effects.py:240 ../pitivi/ui/encodingdialog.glade.h:33
+#: ../pitivi/effects.py:239 ../pitivi/ui/encodingdialog.glade.h:33
 #: ../pitivi/ui/projectsettings.glade.h:20
 msgid "Video"
 msgstr "Vídeo"
 
-#: ../pitivi/effects.py:241
+#: ../pitivi/effects.py:240
 msgid "Audio |audio"
 msgstr "Sonido |sonido"
 
-#: ../pitivi/effects.py:242
+#: ../pitivi/effects.py:241
 msgid "effect"
 msgstr "efecto"
 
@@ -677,12 +677,10 @@ msgid "Search:"
 msgstr "Buscar:"
 
 #: ../pitivi/ui/effectlist.py:211
-#| msgid "Show Clips as a List"
 msgid "Show Video Effects as a List"
 msgstr "Mostrar efectos de vídeo como una lista"
 
 #: ../pitivi/ui/effectlist.py:213
-#| msgid "Show Clips as Icons"
 msgid "Show Video Effects as Icons"
 msgstr "Mostrar efectos de vídeo como iconos"
 
@@ -1065,7 +1063,8 @@ msgid "Undock Viewer"
 msgstr "Desbloquear visor"
 
 #: ../pitivi/ui/mainwindow.py:344
-msgid "Put the viewer in a serparate window"
+#| msgid "Put the viewer in a serparate window"
+msgid "Put the viewer in a separate window"
 msgstr "Poner el visor en una ventana separada"
 
 #: ../pitivi/ui/mainwindow.py:437
