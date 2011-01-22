@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi 0.13.5.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-17 03:31+0300\n"
-"PO-Revision-Date: 2011-01-17 03:50+0300\n"
+"POT-Creation-Date: 2011-01-22 06:39+0300\n"
+"PO-Revision-Date: 2011-01-22 06:40+0300\n"
 "Last-Translator: Александр Прокудин <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -327,11 +327,10 @@ msgid "PiTiVi currently does not handle redirection files."
 msgstr "PiTiVi пока что не поддерживает файлы перенаправления."
 
 #: ../pitivi/discoverer.py:492
-#, fuzzy
 msgid "Pipeline didn't want to go to PLAYING."
-msgstr "Конвейер не перешёл в режим паузы."
+msgstr "Конвейер не перешёл в режим воспроизведения."
 
-#: ../pitivi/effects.py:65
+#: ../pitivi/effects.py:63 ../pitivi/effects.py:65
 msgid "All effects"
 msgstr "Все эффекты"
 
@@ -369,16 +368,16 @@ msgstr "Без категории"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../pitivi/effects.py:240 ../pitivi/ui/encodingdialog.glade.h:33
+#: ../pitivi/effects.py:239 ../pitivi/ui/encodingdialog.glade.h:33
 #: ../pitivi/ui/projectsettings.glade.h:20
 msgid "Video"
 msgstr "Видео"
 
-#: ../pitivi/effects.py:241
+#: ../pitivi/effects.py:240
 msgid "Audio |audio"
 msgstr "Звук"
 
-#: ../pitivi/effects.py:242
+#: ../pitivi/effects.py:241
 msgid "effect"
 msgstr ""
 
@@ -440,12 +439,12 @@ msgstr "%(width)d × %(height)d пикселов с частотой %(framerate
 msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
 msgstr "%(channels)d каналов с частотой %(frequency)d Гц (%(depth)d разрядов)"
 
-#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/effectlist.py:112
+#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/effectlist.py:126
 #: ../pitivi/ui/videofxlist.py:53
 msgid "Name"
 msgstr "Название"
 
-#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/effectlist.py:124
+#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/effectlist.py:138
 #: ../pitivi/ui/videofxlist.py:59
 msgid "Description"
 msgstr "Описание"
@@ -647,18 +646,26 @@ msgstr "Сохранить предустановку"
 msgid "Choose..."
 msgstr "Выбрать..."
 
-#: ../pitivi/ui/effectlist.py:75
+#: ../pitivi/ui/effectlist.py:86
 msgid "Video effects"
 msgstr "Видеоэффекты"
 
-#: ../pitivi/ui/effectlist.py:76
+#: ../pitivi/ui/effectlist.py:87
 msgid "Audio effects"
 msgstr "Звуковые эффекты"
 
 #. Prevents being flush against the notebook
-#: ../pitivi/ui/effectlist.py:88 ../pitivi/ui/pluginmanagerdialog.glade.h:3
+#: ../pitivi/ui/effectlist.py:98 ../pitivi/ui/pluginmanagerdialog.glade.h:3
 msgid "Search:"
 msgstr "Искать:"
+
+#: ../pitivi/ui/effectlist.py:211
+msgid "Show Video Effects as a List"
+msgstr "Показывать список эффектов"
+
+#: ../pitivi/ui/effectlist.py:213
+msgid "Show Video Effects as Icons"
+msgstr "Показывать миниатюры эффектов"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 msgid "<b>Properties For Plugin</b>"
@@ -711,7 +718,7 @@ msgstr "Контейнер:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:12
 msgid "Draft (no special effects, single pass)"
-msgstr ""
+msgstr "Черновик (без спецэффектов, в один проход)"
 
 #: ../pitivi/ui/encodingdialog.glade.h:13
 msgid "Edit Project Settings..."
@@ -845,7 +852,7 @@ msgstr "Дополнительная информация:"
 
 #: ../pitivi/ui/gstwidget.py:153
 msgid "Reset to default value"
-msgstr ""
+msgstr "Вернуть исходное значение"
 
 #. set title and frame label
 #: ../pitivi/ui/gstwidget.py:195
@@ -912,9 +919,8 @@ msgid "Save _As..."
 msgstr "Сохранить _как..."
 
 #: ../pitivi/ui/mainwindow.py:283
-#, fuzzy
 msgid "Reload the current project"
-msgstr "Сохранить текущий проект"
+msgstr "Перезагрузить текущий проект"
 
 #: ../pitivi/ui/mainwindow.py:284 ../pitivi/ui/projectsettings.glade.h:14
 msgid "Project Settings"
@@ -1042,8 +1048,8 @@ msgid "Undock Viewer"
 msgstr "Открепить монитор"
 
 #: ../pitivi/ui/mainwindow.py:344
-msgid "Put the viewer in a serparate window"
-msgstr ""
+msgid "Put the viewer in a separate window"
+msgstr "Поместить монитор в отдельное окно"
 
 #: ../pitivi/ui/mainwindow.py:437
 msgid "Media Library"
@@ -1090,19 +1096,16 @@ msgid "If you don't save some of your changes will be lost"
 msgstr "Несохранённые изменения быдут потеряны"
 
 #: ../pitivi/ui/mainwindow.py:916
-#, fuzzy
 msgid "Do you want to reload current project?"
-msgstr "Невозможно закрыть текущий проект"
+msgstr "Вы хотите заново открыть текущий проект?"
 
 #: ../pitivi/ui/mainwindow.py:921
-#, fuzzy
 msgid "Revert to saved project"
-msgstr "_Удалить из проекта"
+msgstr "Вернуться к сохранённому проекту"
 
 #: ../pitivi/ui/mainwindow.py:924
-#, fuzzy
 msgid "All unsaved changes will be lost."
-msgstr "Несохранённые изменения быдут потеряны"
+msgstr "Несохранённые изменения будут потеряны"
 
 #: ../pitivi/ui/mainwindow.py:940
 #, python-format
@@ -1653,11 +1656,11 @@ msgstr "Добавить ключевой кадр"
 
 #: ../pitivi/ui/timeline.py:57
 msgid "Move to the previous keyframe"
-msgstr ""
+msgstr "Перейти к предыдущему ключевому кадру"
 
 #: ../pitivi/ui/timeline.py:58
 msgid "Move to the next keyframe"
-msgstr ""
+msgstr "Перейти к следующему ключевому кадру"
 
 #: ../pitivi/ui/timeline.py:59
 msgid "Zoom In"
