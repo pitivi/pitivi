@@ -341,7 +341,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.actiongroup.add_actions(self.actions)
         self.actiongroup.add_toggle_actions(self.toggleactions)
         self.undock_action = gtk.Action("WindowizeViewer", _("Undock Viewer"),
-            _("Put the viewer in a serparate window"), None)
+            _("Put the viewer in a separate window"), None)
         self.actiongroup.add_action(self.undock_action)
 
         # deactivating non-functional actions
