@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2011-01-20 19:38+0000\n"
+"POT-Creation-Date: 2011-01-23 13:21+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -321,23 +321,23 @@ msgid "Time"
 msgstr "Čas"
 
 #: ../pitivi/effects.py:113
-#: ../pitivi/effects.py:222
+#: ../pitivi/effects.py:221
 msgid "Uncategorized"
 msgstr "Nekategorizirano"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../pitivi/effects.py:240
+#: ../pitivi/effects.py:239
 #: ../pitivi/ui/encodingdialog.glade.h:33
 #: ../pitivi/ui/projectsettings.glade.h:20
 msgid "Video"
 msgstr "Video"
 
-#: ../pitivi/effects.py:241
+#: ../pitivi/effects.py:240
 msgid "Audio |audio"
 msgstr "Zvok |zvok"
 
-#: ../pitivi/effects.py:242
+#: ../pitivi/effects.py:241
 msgid "effect"
 msgstr "učinek"
 
@@ -1020,7 +1020,7 @@ msgid "Undock Viewer"
 msgstr "Odsidraj pregledovalnik"
 
 #: ../pitivi/ui/mainwindow.py:344
-msgid "Put the viewer in a serparate window"
+msgid "Put the viewer in a separate window"
 msgstr "Postavi pregledovalnik v ločeno okno"
 
 #: ../pitivi/ui/mainwindow.py:437
