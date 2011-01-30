@@ -483,7 +483,13 @@ class SourceFactory(ObjectFactory):
             video_bin.csp = gst.element_factory_make("identity")
 
         video_bin.alpha = gst.element_factory_make("alpha", "internal-alpha")
-        video_bin.alpha.props.prefer_passthrough = True
+
+        try:
+            video_bin.alpha.props.prefer_passthrough = True
+        except AttributeError:
+            self.warning("User has old version of alpha. "
+                         "prefer-passthrough not enabled")
+
         video_bin.scale = gst.element_factory_make("videoscale")
         try:
             video_bin.scale.props.add_borders = True
