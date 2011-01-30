@@ -13,11 +13,11 @@ from urllib import unquote
 class StartUpWizard(object):
     """A Wizard displaying recent projects and allowing the user to either:
 
-     load one, skip,see the quick start manual or
+    load one, skip,see the quick start manual or
 
-     configure a new project with the settings dialog.
+    configure a new project with the settings dialog.
 
-     """
+    """
 
     def __init__(self, app):
         if 'pitivi.exe' in __file__.lower():
