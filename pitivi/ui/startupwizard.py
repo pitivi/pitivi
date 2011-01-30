@@ -37,28 +37,6 @@ class StartUpWizard(object):
         filtre.set_name("Projects")
         filtre.add_pattern("*.xptv")
         chooser.add_filter(filtre)
-        chooser.get_children()[0].get_children()[1].\
-        get_children()[0].hide()
-
-        # FIXME: the gtk.RecentChooserWidget crashes the application when the
-        # user drags a file from its treeview to any other window.
-
-        # First we find the treeview using depth-first search:
-
-        def find_treeview(widget):
-            stack = [widget]
-            while stack:
-                cur = stack.pop()
-                if isinstance(cur, gtk.TreeView):
-                    return cur
-                elif isinstance(cur, gtk.Container):
-                    stack.extend(cur.get_children())
-            return None
-
-        treeview = find_treeview(chooser)
-
-        # then unset the window as a drag source
-        treeview.drag_source_unset()
 
     def _newProjectCb(self, unused_button4):
         self.quit()
