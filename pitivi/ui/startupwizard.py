@@ -43,8 +43,8 @@ class StartUpWizard(object):
         chooser.add_filter(filtre)
 
     def _newProjectCb(self, unused_button4):
-        self.app.gui.showProjectSettingsDialog()
         self.hide()
+        self.app.gui.showProjectSettingsDialog()
 
     def _loadCb(self, unused_button3):
         self.data = unquote(self.data)
