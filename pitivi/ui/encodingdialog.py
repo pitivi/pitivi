@@ -162,12 +162,14 @@ class EncodingDialog(Loggable):
     @ivar settings: The settings used for rendering.
     @type settings: ExportSettings
     """
+    INHIBIT_REASON = _("Currently rendering media")
 
     def __init__(self, app, project, pipeline=None):
         Loggable.__init__(self)
 
         self.app = app
         self.project = project
+        self.system = app.app.system
         self._timeline = self.app.timeline
         self._seeker = Seeker(80)
         if pipeline != None:
@@ -222,6 +224,7 @@ class EncodingDialog(Loggable):
         self._displayRenderSettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
+        self.pipeline.connect("state-changed", self._pipelineStateChangedCb)
         self.settings.connect("settings-changed", self._settingsChanged)
 
         # Monitor changes
@@ -563,6 +566,12 @@ class EncodingDialog(Loggable):
         self.sample_rate_combo.set_model(audio_rates)
         self.sample_depth_combo.set_model(audio_depths)
         self.muxercombobox.set_model(factorylist(ExportSettings.muxers))
+
+    def _pipelineStateChangedCb(self, pipeline, state):
+        if state == gst.STATE_PLAYING:
+            self.system.inhibitSleep(EncodingDialog.INHIBIT_REASON)
+        else:
+            self.system.uninhibitSleep(EncodingDialog.INHIBIT_REASON)
 
     def _displaySettings(self):
         """Display the settings that also change in the ProjectSettingsDialog.
