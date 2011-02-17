@@ -42,6 +42,7 @@ from pitivi.configure import APPNAME
 from pitivi.settings import GlobalSettings
 from pitivi.threads import ThreadMaster
 from pitivi.signalinterface import Signallable
+from pitivi.system import getSystem
 from pitivi.log.loggable import Loggable
 from pitivi.log import log
 from pitivi.ui.mainwindow import PitiviMainWindow
@@ -124,6 +125,7 @@ class Pitivi(Loggable, Signallable):
         #self.screencast = False
 
         self.effects = EffectsHandler()
+        self.system = getSystem ()
 
         self.projectManager = ProjectManager(self.effects)
         self._connectToProjectManager(self.projectManager)
