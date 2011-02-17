@@ -80,6 +80,8 @@ class PitiviViewer(gtk.VBox, Loggable):
             gobject.TYPE_NONE, (gobject.TYPE_BOOLEAN,)),
     }
 
+    INHIBIT_REASON = _("Currently playing media")
+
     """
     A Widget to control and visualize a Pipeline
 
@@ -94,6 +96,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.set_border_width(SPACING)
         self.settings = app.settings
         self.app = app
+        self.system = app.system
 
         Loggable.__init__(self)
         self.log("New PitiviViewer")
@@ -520,15 +523,19 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.info("current state changed : %s", state)
         if int(state) == int(gst.STATE_PLAYING):
             self.playpause_button.setPause()
+            self.system.inhibitScreensaver(self.INHIBIT_REASON)
         elif int(state) == int(gst.STATE_PAUSED):
             self.playpause_button.setPlay()
+            self.system.uninhibitScreensaver(self.INHIBIT_REASON)
         else:
             self.sink = None
+            self.system.uninhibitScreensaver(self.INHIBIT_REASON)
         self.internal._currentStateCb(self.pipeline, state)
         self.currentState = state
 
     def _eosCb(self, unused_pipeline):
         self.playpause_button.setPlay()
+        self.system.uninhibitScreensaver(self.INHIBIT_REASON)
 
     def _elementMessageCb(self, unused_bus, message):
         if message.type == gst.MESSAGE_ELEMENT:
