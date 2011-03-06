@@ -219,6 +219,9 @@ class Pitivi(Loggable, Signallable):
         self.emit("project-closed", project)
 
 class InteractivePitivi(Pitivi):
+    """
+        Base class to launch interactive PiTiVi
+    """
 
     def __init__(self, debug=False):
         Pitivi.__init__(self)
@@ -267,6 +270,9 @@ class InteractivePitivi(Pitivi):
         self.mainloop.run()
 
 class GuiPitivi(InteractivePitivi):
+    """
+        Base class to launch PiTiVi with UI
+    """
 
     def __init__(self, debug=False):
         InteractivePitivi.__init__(self, debug)
@@ -300,11 +306,18 @@ class GuiPitivi(InteractivePitivi):
         return False
 
 class FullGuiPitivi(GuiPitivi):
+    """
+        Creates an instance of PiTiVi with the UI
+    """
 
     def _createGui(self):
         return PitiviMainWindow(self)
 
 class ProjectCreatorGuiPitivi(FullGuiPitivi):
+    """
+        Creates an instance of PiTiVi with the UI and loading a list
+        of clips, adding them to the timeline or not
+    """
 
     def __init__(self, media_filenames, add_to_timeline=False, debug=False):
         FullGuiPitivi.__init__(self, debug)
@@ -346,6 +359,10 @@ class ProjectCreatorGuiPitivi(FullGuiPitivi):
         return True
 
 class ProjectLoaderGuiPitivi(FullGuiPitivi):
+    """
+        Creates an instance of PiTiVi with the UI and loading the @project_filename
+        project
+    """
 
     def __init__(self, project_filename, debug=False):
         FullGuiPitivi.__init__(self, debug)
@@ -353,6 +370,9 @@ class ProjectLoaderGuiPitivi(FullGuiPitivi):
         self._loadProject(project_filename)
 
 class StartupWizardGuiPitivi(FullGuiPitivi):
+    """
+        Creates an instance of PiTiVi with the UI and the startup wizard
+    """
 
     def __init__(self, debug=False):
         FullGuiPitivi.__init__(self, debug)
@@ -369,6 +389,10 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
             self.wizard.quit()
 
 class PreviewGuiPitivi(GuiPitivi):
+    """
+        Creates an instance of PiTiVi which plays the @project_filename
+        in a basic UI.
+    """
 
     def __init__(self, project_filename, debug=False):
         GuiPitivi.__init__(self, debug)
@@ -396,6 +420,10 @@ class PreviewGuiPitivi(GuiPitivi):
         self.viewer._durationChangedCb(None, project.timeline.duration)
 
 class RenderingNoGuiPitivi(InteractivePitivi):
+    """
+        Creates an instance of PiTiVi with no UI which aims
+        at rendering the @project_filename project in @output_filename file
+    """
 
     def __init__(self, project_filename, output_filename, debug=False):
         InteractivePitivi.__init__(self, debug)
