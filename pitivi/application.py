@@ -160,7 +160,7 @@ class Pitivi(Loggable, Signallable):
         self.debug("shutting down")
         # we refuse to close if we're running a user interface and the user
         # doesn't want us to close the current project.
-        if self.projectManager.current and not self.projectManager.closeRunningProject():
+        if self.current and not self.projectManager.closeRunningProject():
             self.warning("Not closing since running project doesn't want to close")
             return False
         self.threads.stopAllThreads()
