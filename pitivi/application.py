@@ -65,8 +65,6 @@ from pitivi.ui.startupwizard import StartUpWizard
 # AND THEN load up the required parts.
 # This will result in a much better end-user experience
 
-# FIXME : maybe we should have subclasses for UI and CLI
-
 class Pitivi(Loggable, Signallable):
     """
     Pitivi's main application class.
