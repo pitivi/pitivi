@@ -30,7 +30,7 @@ states = (STATE_NOT_ACTIVE,
 
 from pitivi.signalinterface import Signallable
 from pitivi.factories.base import SourceFactory, SinkFactory
-from pitivi.encode import RenderSinkFactory, RenderFactory
+from pitivi.encode import RenderSinkFactory
 from pitivi.log.loggable import Loggable
 
 # TODO : Create a convenience class for Links
@@ -747,24 +747,3 @@ class RenderAction(Action):
     compatible_consumers = [RenderSinkFactory]
     # Use a queue of 5s to allow for big interleave
     queue_size = 5
-
-def render_action_for_uri(uri, settings, *factories):
-    """Creates a L{RenderAction}.
-
-    @param uri: The destination uri
-    @type uri: C{URI}
-    @param settings: The settings
-    @type settings: L{RenderSettings}
-    @param factories: The source factories
-    @type factories: L{SourceFactory}
-    @returns: The action
-    @rtype: L{RenderAction}
-    """
-    from pitivi.factories.file import URISinkFactory
-    sf = RenderSinkFactory(RenderFactory(settings=settings),
-                           URISinkFactory(uri=uri))
-    a = RenderAction()
-    a.addProducers(*factories)
-    a.addConsumers(sf)
-
-    return a
