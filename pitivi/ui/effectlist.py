@@ -441,12 +441,10 @@ class EffectList(gtk.VBox, Loggable):
         entry.set_text("")
 
     def searchEntryDesactvateCb(self, entry, event):
-        sensitive_actions = self.app.gui.sensitive_actions
-        self.app.gui.setActionsSensitive(sensitive_actions, True)
+        self.app.gui.setActionsSensitive("default", True)
 
     def searchEntryActivateCb(self, entry, event):
-        sensitive_actions = self.app.gui.sensitive_actions
-        self.app.gui.setActionsSensitive(sensitive_actions, False)
+        self.app.gui.setActionsSensitive("default", False)
 
     def _setRowVisible(self, model, iter, data):
         if self.effectType.get_active() == model.get_value(iter, COL_EFFECT_TYPE):
