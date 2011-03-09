@@ -709,7 +709,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         ungroup = False
         split = False
         keyframe = False
-        timeline_objects = {}
         if timeline.selection:
             delete = True
             if len(timeline.selection) > 1:
@@ -733,8 +732,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     start = obj.start
                     duration = obj.duration
 
-            split = True
             keyframe = True
+
+        if (len (timeline.timeline_objects) > 0):
+            split = True
 
         self.delete_action.set_sensitive(delete)
         self.link_action.set_sensitive(link)
