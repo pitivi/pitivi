@@ -58,6 +58,7 @@ def unpack_color_64(value):
     return red, green, blue, alpha
 
 def unpack_cairo_pattern(value):
+    """Transforms the specified RGBA value into a SolidPattern object."""
     red, green, blue, alpha = unpack_color(value)
     return cairo.SolidPattern(
         red / 65535.0,
@@ -66,19 +67,22 @@ def unpack_cairo_pattern(value):
         alpha / 65535.0)
 
 def unpack_cairo_gradient(value):
+    """Creates a LinearGradient object out of the specified RGBA value."""
     red, green, blue, alpha = unpack_color(value)
-    ret = cairo.LinearGradient(0,0, 0, 50)
-    ret.add_color_stop_rgba(50,
+    gradient = cairo.LinearGradient(0, 0, 0, 50)
+    gradient.add_color_stop_rgba(
+        1.0,
         red / 65535.0,
         green / 65535.0,
         blue / 65535.0,
         alpha / 65535.0)
-    ret.add_color_stop_rgba(0,
+    gradient.add_color_stop_rgba(
+        0,
         (red / 65535.0) * 1.5,
         (green / 65535.0) * 1.5,
         (blue / 65535.0) * 1.5,
         alpha / 65535.0)
-    return ret
+    return gradient
 
 def beautify_factory(factory):
     ranks = {VideoStream: 0, AudioStream: 1, TextStream: 2, MultimediaStream: 3}
