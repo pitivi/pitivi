@@ -122,48 +122,6 @@ def beautify_stream(stream):
 
     raise NotImplementedError
 
-def beautify_factory(factory):
-    ranks = {VideoStream: 0, AudioStream: 1, TextStream: 2, MultimediaStream: 3}
-    def stream_sort_key(stream):
-        return ranks[type(stream)]
-
-    streams = factory.getOutputStreams()
-    streams.sort(key=stream_sort_key)
-    return ("<b>" + escape(unquote(factory.name)) + "</b>\n" +
-        "\n".join((beautify_stream(stream) for stream in streams)))
-
-def factory_name(factory):
-    return escape(unquote(factory.name))
-
-
-def beautify_stream(stream):
-    if type(stream) == AudioStream:
-        if stream.raw:
-            templ = ngettext("<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
-                    "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",
-                    stream.channels)
-            templ = templ % (stream.channels, stream.rate, stream.width)
-            return templ
-
-        return _("<b>Unknown Audio format:</b> %s") % stream.audiotype
-
-    elif type(stream) == VideoStream:
-        if stream.raw:
-            if stream.framerate.num:
-                templ = _("<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>")
-                templ = templ % (stream.par * stream.width , stream.height,
-                        float(stream.framerate))
-            else:
-                templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
-                templ = templ % (stream.par * stream.width, stream.height)
-            return templ
-        return _("<b>Unknown Video format:</b> %s") % stream.videotype
-
-    elif type(stream) == TextStream:
-        return _("<b>Text:</b> %s") % stream.texttype
-
-    raise NotImplementedError
-
 # from http://cairographics.org/cookbook/roundedrectangles/
 def roundedrec(context,x,y,w,h,r = 10):
     "Draw a rounded rectangle"
