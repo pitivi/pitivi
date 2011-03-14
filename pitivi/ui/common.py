@@ -190,6 +190,7 @@ frame_rates = model((str, object), (
     (_("25 fps"), gst.Fraction(25.0, 1.0)),
     (_("29,97 fps"), gst.Fraction(30000.0, 1001.0)),
     (_("30 fps"), gst.Fraction(30.0, 1.0)),
+    (_("50 fps"), gst.Fraction(50.0, 1.0)),
     (_("59,94 fps"), gst.Fraction(60000.0, 1001.0)),
     (_("60 fps"), gst.Fraction(60.0, 1.0)),
     (_("120 fps"), gst.Fraction(120.0, 1.0)),
