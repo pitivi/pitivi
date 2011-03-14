@@ -18,30 +18,39 @@ TRACK_SPACING = 8
 SPACING = 6
 PADDING = 6
 
-def pack_color_32(red, green, blue, alpha = 0xFFFF):
-   red = red >> 8
-   green = green >> 8
-   blue = blue >> 8
-   alpha = alpha >> 8
-   return (red << 24 | green << 16 | blue << 8 | alpha)
+def pack_color_32(red, green, blue, alpha=0xFFFF):
+    """Packs the specified 16bit color values in a 32bit RGBA value."""
+    red = red >> 8
+    green = green >> 8
+    blue = blue >> 8
+    alpha = alpha >> 8
+    return (red << 24 | green << 16 | blue << 8 | alpha)
 
-def pack_color_64(red, green, blue, alpha = 0xFFFF):
-   return (red << 48 | green << 32 | blue << 16 | alpha)
+def pack_color_64(red, green, blue, alpha=0xFFFF):
+    """Packs the specified 16bit color values in a 64bit RGBA value."""
+    return (red << 48 | green << 32 | blue << 16 | alpha)
 
 def unpack_color(value):
+    """Unpacks the specified RGBA value into four 16bit color values.
+
+    Args:
+      value: A 32bit or 64bit RGBA value.
+    """
     if not (value >> 32):
         return unpack_color_32(value)
     else:
         return unpack_color_64(value)
 
 def unpack_color_32(value):
-    red = (value >> 24); red = red | red << 8
-    green = (value >> 16) & 0xFF; green = green | green << 8
-    blue = (value >> 8) & 0xFF; blue = blue | blue << 8
-    alpha = value & 0xFF; alpha = alpha | alpha << 8
+    """Unpacks the specified 32bit RGBA value into four 16bit color values."""
+    red = (value >> 24) << 8
+    green = ((value >> 16) & 0xFF) << 8
+    blue = ((value >> 8) & 0xFF) << 8
+    alpha = (value & 0xFF) << 8
     return red, green, blue, alpha
 
 def unpack_color_64(value):
+    """Unpacks the specified 64bit RGBA value into four 16bit color values."""
     red = (value >> 48) & 0xFFFF
     green = (value >> 32) & 0xFFFF
     blue = (value >> 16) & 0xFFFF
