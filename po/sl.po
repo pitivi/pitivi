@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2011-03-18 12:09+0000\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
+"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,12 @@ msgid ""
 "    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a project.\n"
 "    %prog PROJECT_FILE -r OUTPUT_FILE  # Render a project.\n"
 "    %prog PROJECT_FILE -p              # Preview a project."
-msgstr "Primerek %s že teče. Obvestite razvijalce s poročilom o hrošču na http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr ""
+"\n"
+"    %prog [PROJECT_FILE]               # Začni urejevalnik videa.\n"
+"    %prog -i [-a] [MEDIA_FILE1 ...]    # Začni urejevalnik in ustvari projekt.\n"
+"    %prog PROJECT_FILE -r OUTPUT_FILE  # Izriši projekt.\n"
+"    %prog PROJECT_FILE -p              # Predoglej projekt."
 
 #: ../pitivi/application.py:455
 msgid "Import each MEDIA_FILE into a new project."
@@ -50,9 +55,8 @@ msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr "Izriši dano projekt v IZHODNO_DATOTEKO brez grafičnega vmesnika."
 
 #: ../pitivi/application.py:467
-#, fuzzy
 msgid "Preview the specified project file without the full UI."
-msgstr "Predogled dane datoteke projekta brez polnega grafičnega vmesnika."
+msgstr "Predogled določene datoteke projekta brez popolnega grafičnega vmesnika."
 
 #: ../pitivi/check.py:102
 #, python-format
