@@ -4,16 +4,16 @@
 # Copyright (C) 2010 The GNOME Project.
 # This file is distributed under the same license as the pitivi package.
 #
-# Mattias Põldaru <mahfiaz gmail com>, 2010.
+# Mattias Põldaru <mahfiaz gmail com>, 2010, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-12-17 19:06+0000\n"
-"PO-Revision-Date: 2010-12-19 02:39+0300\n"
-"Last-Translator: Mattias Põldaru <mahfiaz gmail com>\n"
+"product=pitivi&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2011-03-12 21:40+0000\n"
+"PO-Revision-Date: 2011-03-15 09:16+0300\n"
+"Last-Translator: Mattias Põldaru <mahfiaz@gmail.com>\n"
 "Language-Team: Estonian <et@li.org>\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
@@ -21,11 +21,59 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Create and edit your own movies"
-msgstr "Loo ja muuda oma enda filme"
+#, python-format
+msgid ""
+"There is already a %s instance, please inform the developers by filing a bug "
+"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr ""
+"Üks %s instants juba töötab, teavita sellest arendajaid ning koosta "
+"vearaport aadressil http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-msgid "Pitivi Video Editor"
-msgstr "Pitivi videoredaktor"
+msgid ""
+"\n"
+"      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
+"      %prog -p [PROJECT_FILE]\n"
+"      %prog -i [-a] [MEDIA_FILE]..."
+msgstr ""
+"\n"
+"      %prog [-r VÄLJUNDFAIL] [PROJEKTIFAIL]\n"
+"      %prog -p [PROJEKTIFAIL]\n"
+"      %prog -i [-a] [MEEDIAFAIL]..."
+
+msgid ""
+"Starts the video editor, optionally loading PROJECT_FILE. If\n"
+"no project is given, %prog creates a new project.\n"
+"Alternatively, when -i is specified, arguments are treated as clips to be\n"
+"imported into the project. If -a is specified, these clips will also be "
+"added to\n"
+"the end of the project timeline.\n"
+"When -r is specified, the given project file is rendered without opening the "
+"GUI."
+msgstr ""
+"Käivitab videoredaktori, soovil avades PROJEKTIFAILI.\n"
+"Kui ühtegi projekti ei ole antud, loob %prog uue projekti.\n"
+"Lisaks, kui -i on määratud, koheldakse argumente nagu klippe,\n"
+"mis tuleb importida projekti. Kui -a on määratud, lisatakse need\n"
+"klipid projekti ajatelje lõppu.\n"
+"Võtmega -r renderdatakse antud fail ilma graafilist kasutajaliidest avamata."
+
+msgid "Import each MEDIA_FILE into the project."
+msgstr "Kõigi MEEDIAFAILIDE importimine projekti."
+
+msgid "Add each MEDIA_FILE to timeline after importing."
+msgstr "Kõigi MEEDIAFAILIDE lisamine ajateljele pärast importimist."
+
+msgid "Run pitivi in the Python Debugger"
+msgstr "pitivi käivitamine Pythoni silujas"
+
+msgid "Run pitivi with no gui"
+msgstr "pitivi käivitamine ilma graafilise kasutajaliideseta"
+
+msgid "Render the given project file to OUTPUT_FILE with no GUI."
+msgstr "Antud projekti renderdamine VÄLJUNDFAILI ilma kasutajaliideseta."
+
+msgid "Preview the given project file without the full UI."
+msgstr "Antud projekti eelvaatlemine ilma täieliku kasutajaliideseta."
 
 #, python-format
 msgid "%s is already running!"
@@ -168,6 +216,12 @@ msgstr "Distuils moodulit pole võimalik importida"
 msgid "Make sure you have the distutils python module installed"
 msgstr "Veendu, et distutils-i pythoni moodul on paigaldatud"
 
+msgid "Create and edit your own movies"
+msgstr "Loo ja muuda oma enda filme"
+
+msgid "Pitivi Video Editor"
+msgstr "Pitivi videoredaktor"
+
 #, python-format
 msgid ""
 "Missing plugins:\n"
@@ -221,124 +275,6 @@ msgstr "PiTiVi veel ei toeta edasisuunavaid faile."
 msgid "Pipeline didn't want to go to PLAYING."
 msgstr "Toru ei tahtnud minna ESITAMISE olekusse."
 
-#, python-format
-msgid ""
-"There is already a %s instance, please inform the developers by filing a bug "
-"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-msgstr ""
-"Üks %s instants juba töötab, teavita sellest arendajaid ning koosta "
-"vearaport aadressil http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-
-msgid ""
-"\n"
-"      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
-"      %prog -p [PROJECT_FILE]\n"
-"      %prog -i [-a] [MEDIA_FILE]..."
-msgstr ""
-"\n"
-"      %prog [-r VÄLJUNDFAIL] [PROJEKTIFAIL]\n"
-"      %prog -p [PROJEKTIFAIL]\n"
-"      %prog -i [-a] [MEEDIAFAIL]..."
-
-msgid ""
-"Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"no project is given, %prog creates a new project.\n"
-"Alternatively, when -i is specified, arguments are treated as clips to be\n"
-"imported into the project. If -a is specified, these clips will also be "
-"added to\n"
-"the end of the project timeline.\n"
-"When -r is specified, the given project file is rendered without opening the "
-"GUI."
-msgstr ""
-"Käivitab videoredaktori, soovil avades PROJEKTIFAILI.\n"
-"Kui ühtegi projekti ei ole antud, loob %prog uue projekti.\n"
-"Lisaks, kui -i on määratud, koheldakse argumente nagu klippe,\n"
-"mis tuleb importida projekti. Kui -a on määratud, lisatakse need\n"
-"klipid projekti ajatelje lõppu.\n"
-"Võtmega -r renderdatakse antud fail ilma graafilist kasutajaliidest avamata."
-
-msgid "Import each MEDIA_FILE into the project."
-msgstr "Kõigi MEEDIAFAILIDE importimine projekti."
-
-msgid "Add each MEDIA_FILE to timeline after importing."
-msgstr "Kõigi MEEDIAFAILIDE lisamine ajateljele pärast importimist."
-
-msgid "Run pitivi in the Python Debugger"
-msgstr "pitivi käivitamine Pythoni silujas"
-
-msgid "Run pitivi with no gui"
-msgstr "pitivi käivitamine ilma graafilise kasutajaliideseta"
-
-msgid "Render the given project file to OUTPUT_FILE with no GUI."
-msgstr "Antud projekti renderdamine VÄLJUNDFAILI ilma kasutajaliideseta."
-
-msgid "Preview the given project file without the full UI."
-msgstr "Antud projekti eelvaatlemine ilma täieliku kasutajaliideseta."
-
-msgid "Not a valid project file."
-msgstr "Pole sobiv projektifail."
-
-msgid "Couldn't close current project"
-msgstr "Praegust projekti pole võimalik sulgeda"
-
-msgid "No URI specified."
-msgstr "URI-d pole määratud."
-
-msgid "New Project"
-msgstr "Uus projekt"
-
-msgid "Export Settings\n"
-msgstr "Eksportimise sätted\n"
-
-msgid "Video: "
-msgstr "Video: "
-
-msgid ""
-"\n"
-"Audio: "
-msgstr ""
-"\n"
-"Audio: "
-
-msgid ""
-"\n"
-"Muxer: "
-msgstr ""
-"\n"
-"Mukser: "
-
-#, python-format
-msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
-msgstr "%(width)d x %(height)d pikslit kiirusel %(framerate).2f k/s"
-
-#, python-format
-msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
-msgstr "%(channels)d kanalit lahutusega %(frequency)d Hz (%(depth)d bitti)"
-
-#, python-format
-msgid "%d hour"
-msgid_plural "%d hours"
-msgstr[0] "%d tund"
-msgstr[1] "%d tundi"
-
-#, python-format
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] "%d minut"
-msgstr[1] "%d minutit"
-
-#, python-format
-msgid "%d second"
-msgid_plural "%d seconds"
-msgstr[0] "%d sekund"
-msgstr[1] "%d sekundit"
-
-#. Translators: "non local" means the project is not stored
-#. on a local filesystem
-#, python-format
-msgid "%s doesn't yet handle non local projects"
-msgstr "%s ei suuda veel töötada kaugmasinas asuvate projektidega "
-
 msgid "All effects"
 msgstr "Kõik efektid"
 
@@ -383,6 +319,46 @@ msgstr "PiTiVi omavorming (XML)"
 msgid "Playlist format"
 msgstr "Esitusnimekirja vorming"
 
+msgid "Not a valid project file."
+msgstr "Pole sobiv projektifail."
+
+msgid "Couldn't close current project"
+msgstr "Praegust projekti pole võimalik sulgeda"
+
+msgid "No URI specified."
+msgstr "URI-d pole määratud."
+
+msgid "New Project"
+msgstr "Uus projekt"
+
+msgid "Export Settings\n"
+msgstr "Eksportimise sätted\n"
+
+msgid "Video: "
+msgstr "Video: "
+
+msgid ""
+"\n"
+"Audio: "
+msgstr ""
+"\n"
+"Audio: "
+
+msgid ""
+"\n"
+"Muxer: "
+msgstr ""
+"\n"
+"Mukser: "
+
+#, python-format
+msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
+msgstr "%(width)d x %(height)d pikslit kiirusel %(framerate).2f k/s"
+
+#, python-format
+msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
+msgstr "%(channels)d kanalit lahutusega %(frequency)d Hz (%(depth)d bitti)"
+
 msgid "Name"
 msgstr "Nimi"
 
@@ -397,6 +373,25 @@ msgstr "Ühtegi seade pole saadaval"
 
 msgid "Video Capture Device:"
 msgstr "Videosalvestusseade:"
+
+msgid "Remove effect"
+msgstr "Eemalda efekt"
+
+msgid "Activated"
+msgstr "Aktiivne"
+
+msgid "Type"
+msgstr "Liik"
+
+msgid "Effect name"
+msgstr "Efekti nimi"
+
+msgid ""
+"<span>You must select <b>one</b> clip on the timeline to configure its "
+"associated effects</span>"
+msgstr ""
+"<span>Pead valima <b>ühe</b> klipi, millega seotud efekte tahad seadistada</"
+"span>"
 
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
@@ -530,6 +525,12 @@ msgstr "Heliefektid"
 msgid "Search:"
 msgstr "Otsing:"
 
+msgid "Show Video Effects as a List"
+msgstr "Videoefekte näidatakse loendina"
+
+msgid "Show Video Effects as Icons"
+msgstr "Videoefekte näidatakse ikoonidena"
+
 msgid "<b>Properties For Plugin</b>"
 msgstr "<b>Plugina omadused</b>"
 
@@ -606,6 +607,9 @@ msgstr "MP4"
 msgid "Number of channels:"
 msgstr "Kanalite arv:"
 
+msgid "Render"
+msgstr "Renderda"
+
 msgid "Render only the selected clips"
 msgstr "Renderdatakse ainult valitud klipid"
 
@@ -645,12 +649,11 @@ msgstr "Kodeerimise esimene käik"
 msgid "Rendering"
 msgstr "Renderdamine"
 
-#, fuzzy
+msgid "Unknown"
+msgstr "Teadmata"
+
 msgid "Unknown Mib"
 msgstr "Teadmata Mib"
-
-msgid "Unkown"
-msgstr "Tundmatu"
 
 msgid "Unknown reason"
 msgstr "Teadmata põhjus"
@@ -671,9 +674,6 @@ msgstr "Vaikeväärtuse taastamine"
 #, python-format
 msgid "Properties for %s"
 msgstr "%s omadused"
-
-msgid "Render"
-msgstr "Renderda"
 
 msgid "Split"
 msgstr "Tükelda"
@@ -816,7 +816,7 @@ msgstr "Ajatelje tööriistariba"
 msgid "Undock Viewer"
 msgstr "Vabasta vaatur dokist"
 
-msgid "Put the viewer in a serparate window"
+msgid "Put the viewer in a separate window"
 msgstr "Vaaturi tõstmine eraldi aknasse"
 
 msgid "Media Library"
@@ -1033,25 +1033,6 @@ msgstr "Lainekuju näidatakse (audio)"
 msgid "Show Waveforms on Audio Clips"
 msgstr "Heliklippidel näidatakse lainekuju graafikut"
 
-msgid "Remove effect"
-msgstr "Eemalda efekt"
-
-msgid "Activated"
-msgstr "Aktiivne"
-
-msgid "Type"
-msgstr "Liik"
-
-msgid "Effect name"
-msgstr "Efekti nimi"
-
-msgid ""
-"<span>You must select <b>one</b> clip on the timeline to configure its "
-"associated effects</span>"
-msgstr ""
-"<span>Pead valima <b>ühe</b> klipi, millega seotud efekte tahad seadistada</"
-"span>"
-
 msgid "25 FPS"
 msgstr "25 k/s"
 
@@ -1105,6 +1086,60 @@ msgstr "Aasta:"
 
 msgid "x"
 msgstr "x"
+
+msgid "Square"
+msgstr "Ruut"
+
+msgid "480p"
+msgstr "480p"
+
+msgid "480i"
+msgstr "480i"
+
+msgid "480p Wide"
+msgstr "480p lai"
+
+msgid "480i Wide"
+msgstr "480i lai"
+
+msgid "576p"
+msgstr "576p"
+
+msgid "576i"
+msgstr "576i"
+
+msgid "576p Wide"
+msgstr "576p lai"
+
+msgid "576i Wide"
+msgstr "576i lai"
+
+msgid "DV (15:11)"
+msgstr "DV (15:11)"
+
+msgid "DV Widescreen (16:9)"
+msgstr "DV laiekraan (16:9)"
+
+msgid "Cinema (1.37)"
+msgstr "Kino (1.37)"
+
+msgid "Cinema (1.66)"
+msgstr "Kino (1.66)"
+
+msgid "Cinema (1.85)"
+msgstr "Kino (1.85)"
+
+msgid "Anamorphic (2.35)"
+msgstr "Anamorfne (2.35)"
+
+msgid "Anamorphic (2.39)"
+msgstr "Anamorfne (2.39)"
+
+msgid "Anamorphic (2.4)"
+msgstr "Anamorfne (2.4)"
+
+msgid "New Preset"
+msgstr "Uus mall"
 
 msgid "No Objects Selected"
 msgstr "Ühtegi objekti pole valitud"
@@ -1212,6 +1247,24 @@ msgstr "Jäta vahele"
 msgid "Startup Wizard"
 msgstr "Käivitusnõustaja"
 
+msgid "Behavior"
+msgstr "Käitumine"
+
+msgid "Snap Distance (pixels)"
+msgstr "Tõmbumise kaugus (pikslites)"
+
+msgid "Threshold distance (in pixels) used for all snapping operations"
+msgstr "Igat liiki tõmbumiste rakendumise lävi pikslites"
+
+msgid "<b>Audio:</b>"
+msgstr "<b>Heli:</b>"
+
+msgid "<b>Video:</b>"
+msgstr "<b>Video:</b>"
+
+msgid "<b>Text:</b>"
+msgstr "<b>Tekst:</b>"
+
 #. tooltip text for toolbar
 msgid "Delete Selected"
 msgstr "Valiku kustutamine"
@@ -1258,29 +1311,11 @@ msgstr "Raporteeriti järgnevatest tõrgetest:"
 msgid "Zoom Timeline"
 msgstr "Ajatelje suurendus"
 
-msgid "_Prevframe"
-msgstr "_Eelmine kaader"
+msgid "_Previous keyframe"
+msgstr "_Eelmine võtmekaader"
 
-msgid "_Nextframe"
-msgstr "_Järgmine kaader"
-
-msgid "Behavior"
-msgstr "Käitumine"
-
-msgid "Snap Distance (pixels)"
-msgstr "Tõmbumise kaugus (pikslites)"
-
-msgid "Threshold distance (in pixels) used for all snapping operations"
-msgstr "Igat liiki tõmbumiste rakendumise lävi pikslites"
-
-msgid "<b>Audio:</b>"
-msgstr "<b>Heli:</b>"
-
-msgid "<b>Video:</b>"
-msgstr "<b>Video:</b>"
-
-msgid "<b>Text:</b>"
-msgstr "<b>Tekst:</b>"
+msgid "_Next keyframe"
+msgstr "_Järgmine võtmekaader"
 
 msgid "Clip Background (Video)"
 msgstr "Klipi taust (video)"
@@ -1326,6 +1361,33 @@ msgstr "Esita"
 
 msgid "Pause"
 msgstr "Paus"
+
+#, python-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d tund"
+msgstr[1] "%d tundi"
+
+#, python-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d minut"
+msgstr[1] "%d minutit"
+
+#, python-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d sekund"
+msgstr[1] "%d sekundit"
+
+#. Translators: "non local" means the project is not stored
+#. on a local filesystem
+#, python-format
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s ei suuda veel töötada kaugmasinas asuvate projektidega "
+
+#~ msgid "Unkown"
+#~ msgstr "Tundmatu"
 
 #~ msgid "<b>Author:</b>"
 #~ msgstr "<b>Autor:</b>"
