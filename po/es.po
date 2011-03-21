@@ -4,18 +4,18 @@
 #
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2006.
 # Jesse Aviles <jesseaviles@gmail.com>, 2008, 2009, 2010.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
 # Jesse Avilés <jesseaviles@gmail.com>, 2011.
 # Jorge González <jorgegonz@svn.gnome.org>, 2007, 2009, 2010, 2011.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-03-18 20:50+0000\n"
-"PO-Revision-Date: 2011-03-19 15:07+0100\n"
-"Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
+"POT-Creation-Date: 2011-03-21 10:11+0000\n"
+"PO-Revision-Date: 2011-03-21 19:26+0100\n"
+"Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,7 +32,7 @@ msgstr ""
 "Ya hay una instancia de %s, informe a los desarrolladores rellenando un "
 "informe de error en http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:447
+#: ../pitivi/application.py:451
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -51,24 +51,24 @@ msgstr ""
 "    %prog ARCHIVO_DE_PROYECTO -p                    # Previsualizar un "
 "proyecto."
 
-#: ../pitivi/application.py:455
+#: ../pitivi/application.py:459
 msgid "Import each MEDIA_FILE into a new project."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:458
+#: ../pitivi/application.py:462
 msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:461
+#: ../pitivi/application.py:465
 msgid "Run Pitivi in the Python Debugger."
 msgstr "Ejecutar Pitivi en el depurador de Python"
 
-#: ../pitivi/application.py:464
+#: ../pitivi/application.py:468
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr ""
 "Renderizar en ARCHIVO_DE_SALIDA el archivo de proyecto proporcionado sin IGU."
 
-#: ../pitivi/application.py:467
+#: ../pitivi/application.py:471
 msgid "Preview the specified project file without the full UI."
 msgstr "Previsualizar el archivo de proyecto proporcionado sin el IU completo."
 
@@ -1110,34 +1110,35 @@ msgstr "Se perderán todos los cambios sin guardar."
 
 #: ../pitivi/ui/mainwindow.py:930
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi no puede cargar el archivo «%s»"
+#| msgid "PiTiVi is unable to load file \"%s\""
+msgid "Unable to load project \"%s\""
+msgstr "No se pudo cargar el proyecto «%s»"
 
-#: ../pitivi/ui/mainwindow.py:933
+#: ../pitivi/ui/mainwindow.py:932
 msgid "Error Loading File"
 msgstr "Error al cargar el archivo"
 
-#: ../pitivi/ui/mainwindow.py:940
+#: ../pitivi/ui/mainwindow.py:939
 msgid "Locate missing file..."
 msgstr "Encontrar archivo perdido…"
 
-#: ../pitivi/ui/mainwindow.py:949
+#: ../pitivi/ui/mainwindow.py:948
 msgid "The following file has moved, please tell PiTiVi where to find it."
 msgstr "Se movió el siguiente archivo, diga dónde se puede encontrar."
 
-#: ../pitivi/ui/mainwindow.py:951
+#: ../pitivi/ui/mainwindow.py:950
 msgid "Duration:"
 msgstr "Duración:"
 
-#: ../pitivi/ui/mainwindow.py:1095
+#: ../pitivi/ui/mainwindow.py:1094
 msgid "Save As..."
 msgstr "Guardar como…"
 
-#: ../pitivi/ui/mainwindow.py:1103
+#: ../pitivi/ui/mainwindow.py:1102
 msgid "Untitled.xptv"
 msgstr "Sin título.xptv"
 
-#: ../pitivi/ui/mainwindow.py:1114 ../pitivi/ui/mainwindow.py:1127
+#: ../pitivi/ui/mainwindow.py:1113 ../pitivi/ui/mainwindow.py:1126
 msgid "Detect Automatically"
 msgstr "Detectar automáticamente"
 
@@ -1607,16 +1608,8 @@ msgid "Double-click a project below to load it:"
 msgstr "Pulsar abajo dos veces sobre un proyecto para cargarlo:"
 
 #: ../pitivi/ui/startupwizard.glade.h:3
-msgid "Help"
-msgstr "Ayuda"
-
-#: ../pitivi/ui/startupwizard.glade.h:4
-msgid "Skip"
-msgstr "Omitir"
-
-#: ../pitivi/ui/startupwizard.glade.h:5
-msgid "Startup Wizard"
-msgstr "Asistente de inicio"
+msgid "Welcome"
+msgstr "Bienvenido"
 
 #: ../pitivi/ui/timelinecanvas.py:51
 msgid "Behavior"
@@ -1800,6 +1793,15 @@ msgstr[1] "%d segundos"
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s no puede manipular aún proyectos no locales"
+
+#~ msgid "Help"
+#~ msgstr "Ayuda"
+
+#~ msgid "Skip"
+#~ msgstr "Omitir"
+
+#~ msgid "Startup Wizard"
+#~ msgstr "Asistente de inicio"
 
 #~ msgid ""
 #~ "\n"
