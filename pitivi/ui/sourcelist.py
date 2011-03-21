@@ -250,9 +250,14 @@ class SourceList(gtk.VBox, Loggable):
         self._warning_label.set_line_wrap_mode(pango.WRAP_WORD)
         self._warning_label.set_justify(gtk.JUSTIFY_CENTER)
         self._view_error_btn = gtk.Button()
+        self._hide_infobar_btn = gtk.Button()
+        self._hide_infobar_btn.set_label(_("Hide"))
         self._view_error_btn.connect("clicked", self._viewErrorsButtonClickedCb)
+        self._hide_infobar_btn.connect("clicked",
+                                        self._hideInfoBarClickedCb)
         content_area.add(self._warning_label)
         actions_area.add(self._view_error_btn)
+        actions_area.add(self._hide_infobar_btn)
 
         # The _progressbar that shows up when importing clips
         self._progressbar = gtk.ProgressBar()
@@ -720,6 +725,10 @@ class SourceList(gtk.VBox, Loggable):
         factory = model[path][COL_FACTORY]
         self.debug("Let's play %s", factory.uri)
         self.emit('play', factory)
+
+    def _hideInfoBarClickedCb(self, unused_button):
+        self._errors = []
+        self._import_warning_infobar.hide()
 
     def _viewErrorsButtonClickedCb(self, unused_button):
         """
