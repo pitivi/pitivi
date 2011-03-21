@@ -98,7 +98,7 @@ ui = '''
 </ui>
 '''
 
-INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(), 
+INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(),
     "invisible.png"))
 
 class SourceList(gtk.VBox, Loggable):
@@ -115,7 +115,7 @@ class SourceList(gtk.VBox, Loggable):
 
         self.app = instance
         self.settings = instance.settings
-        self.errors = []
+        self._errors = []
 
         # Store
         # icon, infotext, objectfactory, uri, length
@@ -240,22 +240,22 @@ class SourceList(gtk.VBox, Loggable):
         self.infobar.add(txtlabel)
         self.txtlabel = txtlabel
 
-        # The infobar that shows up if there are errors when importing clips
-        self.import_warning_infobar = gtk.InfoBar()
-        self.import_warning_infobar.set_message_type(gtk.MESSAGE_WARNING)
-        content_area = self.import_warning_infobar.get_content_area()
-        actions_area = self.import_warning_infobar.get_action_area()
-        self.warning_label = gtk.Label()
-        self.warning_label.set_line_wrap(True)
-        self.warning_label.set_line_wrap_mode(pango.WRAP_WORD)
-        self.warning_label.set_justify(gtk.JUSTIFY_CENTER)
-        self.viewErrorsButton = gtk.Button()
-        self.viewErrorsButton.connect("clicked", self._viewErrorsButtonClickedCb)
-        content_area.add(self.warning_label)
-        actions_area.add(self.viewErrorsButton)
+        # The infobar that shows up if there are _errors when importing clips
+        self._import_warning_infobar = gtk.InfoBar()
+        self._import_warning_infobar.set_message_type(gtk.MESSAGE_WARNING)
+        content_area = self._import_warning_infobar.get_content_area()
+        actions_area = self._import_warning_infobar.get_action_area()
+        self._warning_label = gtk.Label()
+        self._warning_label.set_line_wrap(True)
+        self._warning_label.set_line_wrap_mode(pango.WRAP_WORD)
+        self._warning_label.set_justify(gtk.JUSTIFY_CENTER)
+        self._view_error_btn = gtk.Button()
+        self._view_error_btn.connect("clicked", self._viewErrorsButtonClickedCb)
+        content_area.add(self._warning_label)
+        actions_area.add(self._view_error_btn)
 
-        # The progressbar that shows up when importing clips
-        self.progressbar = gtk.ProgressBar()
+        # The _progressbar that shows up when importing clips
+        self._progressbar = gtk.ProgressBar()
 
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
@@ -305,7 +305,7 @@ class SourceList(gtk.VBox, Loggable):
                 _("Import folder of clips to use"), self._importSourcesFolderCb),
         )
 
-        # only available when selection is non-empty 
+        # only available when selection is non-empty
         selection_actions = (
             ("RemoveSources", gtk.STOCK_DELETE,
                 _("_Remove from project"), "<Control>Delete", None,
@@ -357,10 +357,10 @@ class SourceList(gtk.VBox, Loggable):
 
         # add all child widgets
         self.pack_start(self.infobar, expand=False, fill=False)
-        self.pack_start(self.import_warning_infobar, expand=False, fill=False)
+        self.pack_start(self._import_warning_infobar, expand=False, fill=False)
         self.pack_start(self.iconview_scrollwin)
         self.pack_start(self.treeview_scrollwin)
-        self.pack_start(self.progressbar, expand=False)
+        self.pack_start(self._progressbar, expand=False)
 
         # display the help text
         self.clip_view = self.settings.lastClipView
@@ -445,7 +445,7 @@ class SourceList(gtk.VBox, Loggable):
             project.sources, "starting", None, self._sourcesStartedImportingCb)
 
 
-    
+
     def _setClipView(self, show):
         """ Set which clip view to use when sourcelist is showing clips. If
         none is given, the current one is used. Show: one of SHOW_TREEVIEW or
@@ -534,20 +534,18 @@ class SourceList(gtk.VBox, Loggable):
 
     def _updateProgressbar(self):
         """
-        Update the progressbar with the ratio of clips imported vs the total
+        Update the _progressbar with the ratio of clips imported vs the total
         """
-        self.current_clip_iter = self.app.current.sources.nb_imported_files
-        self.total_clips = self.app.current.sources.nb_file_to_import
+        current_clip_iter = self.app.current.sources.nb_imported_files
+        total_clips = self.app.current.sources.nb_file_to_import
         progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
-            {"current_clip": self.current_clip_iter,
-            "total": self.total_clips})
-        self.progressbar.set_text(progressbar_text)
-        if self.current_clip_iter == 0:
-            self.progressbar.set_fraction(0.0)
-        elif self.total_clips != 0:
-            self.progressbar.set_fraction((self.current_clip_iter - 1) / float(self.total_clips))
-        else:
-            pass # FIXME on project load, it thinks there are 0 total clips
+            {"current_clip": current_clip_iter,
+            "total": total_clips})
+        self._progressbar.set_text(progressbar_text)
+        if current_clip_iter == 0:
+            self._progressbar.set_fraction(0.0)
+        elif total_clips != 0:
+            self._progressbar.set_fraction((current_clip_iter - 1) / float(total_clips))
 
     def _addFactory(self, factory):
         video = factory.getOutputStreams(VideoStream)
@@ -627,36 +625,37 @@ class SourceList(gtk.VBox, Loggable):
     def _discoveryErrorCb(self, unused_sourcelist, uri, reason, extra):
         """ The given uri isn't a media file """
         error = (uri, reason, extra)
-        self.errors.append(error)
+        self._errors.append(error)
 
     def _missingPluginsCb(self, sourcelist, uri, factory, details, descriptions, cb):
         error = (uri, "Missing plugins", "\n".join(descriptions))
-        self.errors.append(error)
+        self._errors.append(error)
 
     def _sourcesStartedImportingCb(self, sourcelist):
-        self.progressbar.show()
+        self._progressbar.show()
         self._updateProgressbar()
 
     def _sourcesStoppedImportingCb(self, unused_sourcelist):
-        self.progressbar.hide()
-        if self.errors:
-            if len(self.errors) > 1:
-                self.warning_label.set_text(_("Errors occured while importing."))
-                self.viewErrorsButton.set_label(_("View errors"))
+        self._progressbar.hide()
+        if self._errors:
+            if len(self._errors) > 1:
+                self._warning_label.set_text(_("Errors occured while importing."))
+                self._view_error_btn.set_label(_("View errors"))
             else:
-                self.warning_label.set_text(_("An error occured while importing."))
-                self.viewErrorsButton.set_label(_("View error"))
-            self.import_warning_infobar.show_all()
+                self._warning_label.set_text(_("An error occured while importing."))
+                self._view_error_btn.set_label(_("View error"))
+
+            self._import_warning_infobar.show_all()
 
     ## Error Dialog Box callbacks
 
     def _errorDialogBoxCloseCb(self, unused_dialog):
-        self.errorDialogBox.destroy()
-        self.errorDialogBox = None
+        self._error_dialogbox.destroy()
+        self._error_dialogbox = None
 
     def _errorDialogBoxResponseCb(self, unused_dialog, unused_response):
-        self.errorDialogBox.destroy()
-        self.errorDialogBox = None
+        self._error_dialogbox.destroy()
+        self._error_dialogbox = None
 
     ## Import Sources Dialog Box callbacks
 
@@ -724,22 +723,22 @@ class SourceList(gtk.VBox, Loggable):
 
     def _viewErrorsButtonClickedCb(self, unused_button):
         """
-        Show a FileListErrorDialog to display import errors.
+        Show a FileListErrorDialog to display import _errors.
         """
-        if len(self.errors) > 1:
+        if len(self._errors) > 1:
             msgs = (_("Error while analyzing files"),
                     _("The following files can not be used with PiTiVi."))
         else:
             msgs = (_("Error while analyzing a file"),
                     _("The following file can not be used with PiTiVi."))
-        self.errorDialogBox = FileListErrorDialog(*msgs)
-        self.errorDialogBox.connect("close", self._errorDialogBoxCloseCb)
-        self.errorDialogBox.connect("response", self._errorDialogBoxResponseCb)
-        for uri, reason, extra in self.errors:
-            self.errorDialogBox.addFailedFile(uri, reason, extra)
-        self.errorDialogBox.show()
-        self.errors = []  # Reset the error list (since the user has read them)
-        self.import_warning_infobar.hide()
+        self._error_dialogbox = FileListErrorDialog(*msgs)
+        self._error_dialogbox.connect("close", self._errorDialogBoxCloseCb)
+        self._error_dialogbox.connect("response", self._errorDialogBoxResponseCb)
+        for uri, reason, extra in self._errors:
+            self._error_dialogbox.addFailedFile(uri, reason, extra)
+        self._error_dialogbox.show()
+        self._errors = []  # Reset the error list (since the user has read them)
+        self._import_warning_infobar.hide()
 
     def _treeViewMenuItemToggledCb(self, unused_widget):
         if self.treeview_menuitem.get_active():
@@ -845,7 +844,7 @@ class SourceList(gtk.VBox, Loggable):
 
             self._dragStarted = False
             self._dragSelection = False
-            self._dragButton = event.button 
+            self._dragButton = event.button
             self._dragX = int(event.x)
             self._dragY = int(event.y)
 
@@ -960,9 +959,6 @@ class SourceList(gtk.VBox, Loggable):
         self.storemodel.clear()
         self._connectToProject(project)
 
-    def _newProjectLoadingCb(self, unused_pitivi, uri):
-        pass
-
     def _newProjectLoadedCb(self, unused_pitivi, project):
         pass
 
@@ -1050,7 +1046,7 @@ class SourceList(gtk.VBox, Loggable):
         return paths
 
     def getSelectedItems(self):
-        return [self.storemodel[path][COL_URI] 
+        return [self.storemodel[path][COL_URI]
             for path in self.getSelectedPaths()]
 
     def _dndDataGetCb(self, unused_widget, context, selection,
