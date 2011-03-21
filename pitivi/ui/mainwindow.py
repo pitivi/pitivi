@@ -786,7 +786,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self._missingUriOnLoading = False
 
         if project.timeline.duration != 0:
-            self._setBestZoomRatio()
+            self.setBestZoomRatio()
         else:
             self._zoom_duration_changed = True
 
@@ -795,7 +795,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # preliminary seek to ensure the project pipeline is configured
         self.project.seeker.seek(0)
 
-    def _setBestZoomRatio(self):
+    def setBestZoomRatio(self):
         ruler_width = self.timeline.ruler.get_allocation()[2]
         timeline_duration = self.project.timeline.duration
 
@@ -1081,7 +1081,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if duration > 0:
             sensitive = True
             if self._zoom_duration_changed:
-                self._setBestZoomRatio()
+                self.setBestZoomRatio()
                 self._zoom_duration_changed = False
         else:
             sensitive = False
