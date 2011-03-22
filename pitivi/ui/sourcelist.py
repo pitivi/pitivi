@@ -363,6 +363,7 @@ class SourceList(gtk.VBox, Loggable):
         # add all child widgets
         self.pack_start(self.infobar, expand=False, fill=False)
         self.pack_start(self._import_warning_infobar, expand=False, fill=False)
+        self.pack_start(self.search_hbox, expand=False)
         self.pack_start(self.iconview_scrollwin)
         self.pack_start(self.treeview_scrollwin)
         self.pack_start(self._progressbar, expand=False)
