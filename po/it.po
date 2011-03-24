@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-03-22 10:35+0000\n"
-"PO-Revision-Date: 2011-02-21 17:37+0100\n"
+"POT-Creation-Date: 2011-03-24 07:43+0000\n"
+"PO-Revision-Date: 2011-03-23 10:13+0100\n"
 "Last-Translator: Gianvito Cavasoli <gianvito@gmx.it>\n"
 "Language-Team: Italiana <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -36,39 +36,35 @@ msgid ""
 "    %prog PROJECT_FILE -r OUTPUT_FILE  # Render a project.\n"
 "    %prog PROJECT_FILE -p              # Preview a project."
 msgstr ""
+"\n"
+"    %prog [FILE_PROGETTO]                    # Avvia l'editor video.\n"
+"    %prog -i [-a] [FILE_MULTIMEDIALE1 ...]   # Avvia l'editor e crea un "
+"progetto.\n"
+"    %prog FILE_PROGETTO -r FILE_USCITA       # Render di un progetto.\n"
+"    %prog FILE_PROGETTO -p                   # Anteprima di un progetto."
 
 #: ../pitivi/application.py:459
-#, fuzzy
-#| msgid "Import each MEDIA_FILE into the project."
 msgid "Import each MEDIA_FILE into a new project."
-msgstr "Importa ogni FILE_MULTIMEDIALE nel progetto."
+msgstr "Importa ogni FILE_MULTIMEDIALE in un nuovo progetto."
 
 #: ../pitivi/application.py:462
-#, fuzzy
-#| msgid "Add each MEDIA_FILE to timeline after importing."
 msgid "Add each imported MEDIA_FILE to the timeline."
-msgstr ""
-"Aggiunge ogni FILE_MULTIMEDIALE alla linea temporale dopo l'importazione."
+msgstr "Aggiunge ogni FILE_MULTIMEDIALE importato alla linea temporale."
 
 #: ../pitivi/application.py:465
-#, fuzzy
-#| msgid "Run pitivi in the Python Debugger"
 msgid "Run Pitivi in the Python Debugger."
-msgstr "Esegue l'applicazione nello strumento di debug di Python"
+msgstr "Esegue l'applicazione nello strumento di debug di Python."
 
 #: ../pitivi/application.py:468
-#, fuzzy
-#| msgid "Render the given project file to OUTPUT_FILE with no GUI."
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr ""
-"Render del file di progetto fornito nel FILE_USCITA senza l'interfaccia "
+"Render del progetto specificato in un FILE_USCITA senza l'interfaccia "
 "grafica."
 
 #: ../pitivi/application.py:471
-#, fuzzy
-#| msgid "Preview the given project file without the full UI."
 msgid "Preview the specified project file without the full UI."
-msgstr "Anteprima del file di progetto fornito senza l'interfaccia completa."
+msgstr ""
+"Anteprima del file di progetto specificato senza l'interfaccia completa."
 
 #: ../pitivi/check.py:102
 #, python-format
@@ -1104,10 +1100,9 @@ msgid "All unsaved changes will be lost."
 msgstr "Tutte le modifiche non salvate andranno perse."
 
 #: ../pitivi/ui/mainwindow.py:930
-#, fuzzy, python-format
-#| msgid "PiTiVi is unable to load file \"%s\""
+#, python-format
 msgid "Unable to load project \"%s\""
-msgstr "L'applicazione non può caricare il file «%s»"
+msgstr "Impossibile caricare il progetto «%s»"
 
 #: ../pitivi/ui/mainwindow.py:932
 msgid "Error Loading File"
@@ -1524,10 +1519,8 @@ msgstr ""
 "span>"
 
 #: ../pitivi/ui/sourcelist.py:254
-#, fuzzy
-#| msgid "Video"
 msgid "Hide"
-msgstr "Video"
+msgstr "Nascondi"
 
 #: ../pitivi/ui/sourcelist.py:306
 msgid "_Import clips..."
@@ -1561,56 +1554,52 @@ msgstr "Mostra clip come un elenco"
 msgid "Show Clips as Icons"
 msgstr "Mostra clip come icone"
 
-#: ../pitivi/ui/sourcelist.py:506
+#: ../pitivi/ui/sourcelist.py:507
 msgid "Import a folder"
 msgstr "Importa una cartella"
 
-#: ../pitivi/ui/sourcelist.py:509
+#: ../pitivi/ui/sourcelist.py:510
 msgid "Import a clip"
 msgstr "Importa una clip"
 
-#: ../pitivi/ui/sourcelist.py:510
+#: ../pitivi/ui/sourcelist.py:511
 msgid "Close after importing files"
 msgstr "Chiudi dopo l'importazione dei file"
 
-#: ../pitivi/ui/sourcelist.py:546
+#: ../pitivi/ui/sourcelist.py:547
 #, python-format
 msgid "Importing clip %(current_clip)d of %(total)d"
-msgstr ""
-
-#: ../pitivi/ui/sourcelist.py:647
-#, fuzzy
-#| msgid "Error(s) occurred while importing"
-msgid "Errors occured while importing."
-msgstr "Si sono verificati errori durante l'importazione"
+msgstr "Importazione clip %(current_clip)d di %(total)d"
 
 #: ../pitivi/ui/sourcelist.py:648
-msgid "View errors"
-msgstr ""
+msgid "Errors occured while importing."
+msgstr "Si sono verificati errori durante l'importazione."
 
-#: ../pitivi/ui/sourcelist.py:650
-#, fuzzy
-#| msgid "An error occurred while importing"
-msgid "An error occured while importing."
-msgstr "Si è verificato un errore durante l'importazione"
+#: ../pitivi/ui/sourcelist.py:649
+msgid "View errors"
+msgstr "Visualizza errori"
 
 #: ../pitivi/ui/sourcelist.py:651
-msgid "View error"
-msgstr ""
+msgid "An error occured while importing."
+msgstr "Si è verificato un errore durante l'importazione."
 
-#: ../pitivi/ui/sourcelist.py:738
+#: ../pitivi/ui/sourcelist.py:652
+msgid "View error"
+msgstr "Visualizza errore"
+
+#: ../pitivi/ui/sourcelist.py:739
 msgid "Error while analyzing files"
 msgstr "Errore durante l'analisi dei file"
 
-#: ../pitivi/ui/sourcelist.py:739
+#: ../pitivi/ui/sourcelist.py:740
 msgid "The following files can not be used with PiTiVi."
 msgstr "I seguenti file non possono essere usati dall'applicazione."
 
-#: ../pitivi/ui/sourcelist.py:741
+#: ../pitivi/ui/sourcelist.py:742
 msgid "Error while analyzing a file"
 msgstr "Errore durante l'analisi del file"
 
-#: ../pitivi/ui/sourcelist.py:742
+#: ../pitivi/ui/sourcelist.py:743
 msgid "The following file can not be used with PiTiVi."
 msgstr "Il file seguente non può essere usato dall'applicazione."
 
@@ -1624,7 +1613,7 @@ msgstr "Fare doppio clic su un progetto qui sotto per caricarlo:"
 
 #: ../pitivi/ui/startupwizard.glade.h:3
 msgid "Welcome"
-msgstr ""
+msgstr "Benvenuti"
 
 #: ../pitivi/ui/timelinecanvas.py:51
 msgid "Behavior"
@@ -1681,10 +1670,8 @@ msgid "Zoom Out"
 msgstr "Diminuisce l'ingrandimento"
 
 #: ../pitivi/ui/timeline.py:61
-#, fuzzy
-#| msgid "Zoom Out"
 msgid "Zoom Fit"
-msgstr "Diminuisce l'ingrandimento"
+msgstr "Adatta ingrandimento"
 
 #: ../pitivi/ui/timeline.py:62
 msgid "Break links between clips"
@@ -1715,10 +1702,8 @@ msgid "The following errors have been reported:"
 msgstr "I seguenti errori sono stati segnalati:"
 
 #: ../pitivi/ui/timeline.py:237
-#, fuzzy
-#| msgid "Zoom In"
 msgid "Zoom"
-msgstr "Aumenta l'ingrandimento"
+msgstr "Ingrandimento"
 
 #: ../pitivi/ui/timeline.py:252
 msgid "Zoom Timeline"
@@ -1819,65 +1804,3 @@ msgstr[1] "%d secondi"
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s non gestisce ancora progetti non locali"
-
-#~| msgid ""
-#~| "\n"
-#~| "      %prog [PROJECT_FILE]\n"
-#~| "      %prog -i [-a] [MEDIA_FILE]..."
-#~ msgid ""
-#~ "\n"
-#~ "      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
-#~ "      %prog -p [PROJECT_FILE]\n"
-#~ "      %prog -i [-a] [MEDIA_FILE]..."
-#~ msgstr ""
-#~ "\n"
-#~ "      %prog [-r FILE_USCITA] [FILE_PROGETTO]\n"
-#~ "      %prog -p [FILE_PROGETTO]\n"
-#~ "      %prog -i [-a] [FILE_MULTIMEDIALE]..."
-
-#~| msgid ""
-#~| "Starts the video editor, optionally loading PROJECT_FILE. If\n"
-#~| "no project is given, %prog creates a new project.\n"
-#~| "Alternatively, when -i is specified, arguments are treated as clips to "
-#~| "be\n"
-#~| "imported into the project. If -a is specified, these clips will also be "
-#~| "added to\n"
-#~| "the end of the project timeline."
-#~ msgid ""
-#~ "Starts the video editor, optionally loading PROJECT_FILE. If\n"
-#~ "no project is given, %prog creates a new project.\n"
-#~ "Alternatively, when -i is specified, arguments are treated as clips to "
-#~ "be\n"
-#~ "imported into the project. If -a is specified, these clips will also be "
-#~ "added to\n"
-#~ "the end of the project timeline.\n"
-#~ "When -r is specified, the given project file is rendered without opening "
-#~ "the GUI."
-#~ msgstr ""
-#~ "Avvia l'editor video, eventualmente caricando il FILE_PROGETTO.\n"
-#~ "Se nessun progetto è fornito, %prog crea un nuovo progetto.\n"
-#~ "Alternativamente, quando è specificato «-i», gli argomenti sono trattati "
-#~ "come clip da importare nel progetto. Se è specificato «-a», queste clip "
-#~ "saranno anche aggiunte alla\n"
-#~ "fine della linea temporale del progetto.\n"
-#~ "Quando è specificato «-r», viene eseguito un rendering sul file di "
-#~ "progetto fornito senza aprire l'interfaccia grafica."
-
-#~ msgid "Run pitivi with no gui"
-#~ msgstr "Esegue l'applicazione senza l'interfaccia grafica"
-
-#~ msgid "URI:"
-#~ msgstr "URI:"
-
-#~ msgid "Importing clips..."
-#~ msgstr "Importazione clip..."
-
-#~| msgid "_Help"
-#~ msgid "Help"
-#~ msgstr "Aiuto"
-
-#~ msgid "Skip"
-#~ msgstr "Salta"
-
-#~ msgid "Startup Wizard"
-#~ msgstr "Procedura guidata"
