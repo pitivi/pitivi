@@ -92,13 +92,18 @@ class ElementTreeFormatter(Formatter):
             yield name, value
 
     def _parsePropertyValue(self, value):
-        # nothing to read here, move along
-        # edward: argh, I went past there, what shall I do now ?
-
-        #FIXME
+        # We treat the GEnum values differently because they are actually ints.
         if "(GEnum)" in value:
             return int(value.split("(GEnum)")[1])
-        return gst.Caps("meh, name=%s" % value)[0]["name"]
+        # We treat the guint64 values differently because when we serialize
+        # a long integer, the serialization is, for example, "(guint64) 4L",
+        # and gst.Caps() fails to parse it, because it has "L" at the end.
+        if "(guint64)" in value:
+            value = value.rstrip('lL')
+        # TODO: Use what gst.Caps() uses to parse a property value.
+        caps = gst.Caps("structure1, property1=%s;" % value)
+        structure = caps[0]
+        return structure["property1"]
 
     def _saveStream(self, stream):
         element = Element("stream")
@@ -247,25 +252,28 @@ class ElementTreeFormatter(Formatter):
         self._sources = res
         return res
 
-    def _serializeDict(self, element, dict):
-        for a, b in dict.iteritems():
-            print a, b, type(b)
-            if isinstance(b, str):
-                element.attrib[a] = b
-            elif isinstance(b, bool):
-                element.attrib[a] = "(boolean) %r" % b
-            elif isinstance(b, float):
-                element.attrib[a] = "(float) %r" % b
+    def _serializeDict(self, element, values_dict):
+        """Serialize the specified dict into the specified Element instance."""
+        for key, value in values_dict.iteritems():
+            if isinstance(value, str):
+                # TODO: If this starts with "(<type>)", or if it contains ";",
+                # the deserialization might fail.
+                serialized_value = value
+            elif isinstance(value, bool):
+                serialized_value = "(boolean) %r" % value
+            elif isinstance(value, float):
+                serialized_value = "(float) %r" % value
             else:
-                element.attrib[a] = "(guint64) %r" % b
-
+                serialized_value = "(guint64) %r" % value
+            element.attrib[key] = serialized_value
 
     def _deserializeDict(self, element):
-        d = {}
-        for a, b in element.attrib.iteritems():
-            if len(b):
-                d[a] = self._parsePropertyValue(b)
-        return d
+        """Get the specified Element as a deserialized dict."""
+        values_dict = {}
+        for name, value_string in element.attrib.iteritems():
+            if value_string:
+                values_dict[name] = self._parsePropertyValue(value_string)
+        return values_dict
 
     def _saveProjectSettings(self, settings):
         element = Element('export-settings')
@@ -358,9 +366,9 @@ class ElementTreeFormatter(Formatter):
         effect = track_object.getElement()
         properties = gobject.list_properties(effect)
         for prop in properties:
-            type_name = str(gobject.type_name(prop.value_type.fundamental))
-            #FIXME we just take the int equivalent to the GEnum, how should it be handled?
             if prop.flags & gobject.PARAM_READABLE:
+                type_name = str(gobject.type_name(prop.value_type.fundamental))
+                #FIXME we just take the int equivalent to the GEnum, how should it be handled?
                 if type_name == "GEnum":
                     value = str(effect.get_property(prop.name).__int__())
                 else:

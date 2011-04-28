@@ -44,6 +44,31 @@ class FakeElementTreeFormatter(ElementTreeFormatter):
 def ts(time):
     return "(gint64)%s" % time
 
+class TestSerialization(TestCase):
+    def setUp(self):
+        self.formatter = FakeElementTreeFormatter(EffectsHandler())
+
+    def testSerializeAndDeserialize(self):
+        element = Element('tag')
+        values_dict = {
+                'str_': 'four',
+                'boolean_': True,
+                'float_': 4.0,
+                'guint64_': 4,
+                'guint64_2': 4L}
+        self.formatter._serializeDict(element, values_dict)
+        # Make sure that all the keys end up in element.
+        for key, unused_value in values_dict.iteritems():
+            self.assertTrue(key in element.attrib)
+
+        deserialized_values_dict = self.formatter._deserializeDict(element)
+        # Make sure that all the keys in the original dict end up in the
+        # deserialized dict.
+        self.assertEqual(
+                set(values_dict.keys()), set(deserialized_values_dict.keys()))
+        for key, value in values_dict.iteritems():
+            self.assertEqual(value, deserialized_values_dict[key])
+
 class TestFormatterSave(TestCase):
     def setUp(self):
         self.formatter = FakeElementTreeFormatter(EffectsHandler())
