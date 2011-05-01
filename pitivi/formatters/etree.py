@@ -188,15 +188,17 @@ class ElementTreeFormatter(Formatter):
         factory.duration = long(element.attrib["duration"])
         factory.default_duration = long(element.attrib["default_duration"])
 
-        input_streams = element.find("input-streams") or []
-        for stream_element in input_streams:
-            stream = self._loadStream(stream_element)
-            factory.addInputStream(stream)
+        input_streams = element.find("input-streams")
+        if input_streams is not None:
+            for stream_element in input_streams:
+                stream = self._loadStream(stream_element)
+                factory.addInputStream(stream)
 
         output_streams = element.find("output-streams")
-        for stream_element in output_streams:
-            stream = self._loadStream(stream_element)
-            factory.addOutputStream(stream)
+        if output_streams is not None:
+            for stream_element in output_streams:
+                stream = self._loadStream(stream_element)
+                factory.addOutputStream(stream)
 
         if filename is not None:
             filename1 = self.validateSourceURI(filename, factory)
@@ -442,7 +444,7 @@ class ElementTreeFormatter(Formatter):
             setattr(track_object, name, value)
         track.addTrackObject(track_object)
         curves_element = element.find("curves")
-        if curves_element:
+        if curves_element is not None:
             for curve in curves_element.getchildren():
                 self._loadInterpolator(curve, track_object)
 
