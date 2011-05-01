@@ -121,10 +121,7 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
 
         self.app = app
         self.project = project
-        # clone the current project settings
-        self.original_settings = self.project.getSettings()
-        self.settings = self.original_settings.copy()
-        self.project.setSettings(self.settings)
+        self.settings = self.project.getSettings()
 
         # UI widgets
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
@@ -317,5 +314,6 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.destroy()
 
     def destroy(self):
-        self.project.setSettings(self.original_settings)
+        # TODO: Do this only when the settings actually changed.
+        self.project.setSettings(self.settings)
         GladeWindow.destroy(self)
