@@ -61,6 +61,7 @@ def filter_recommended(muxers):
     return [m for m in muxers if m.get_rank() > 0]
 
 def extension_for_muxer(muxer):
+    """Returns the file extension appropriate for the specified muxer."""
     exts = {
         "asfmux": "asf",
         "avimux" : "avi",
@@ -88,12 +89,8 @@ def extension_for_muxer(muxer):
         "mxfmux" : "mxf",
         "oggmux" : "ogv",
         "qtmux"  : "mov",
-        "webmmux": "webm",
-    }
-
-    if muxer in exts:
-        return os.path.extsep + exts[muxer]
-    return ""
+        "webmmux": "webm"}
+    return exts.get(muxer)
 
 def factorylist(factories):
     """ Given a sequence of factories, returns a gtk.ListStore()
@@ -179,24 +176,38 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         # Summary
         self._updateSummary()
 
-    def updateFilename(self, name):
-        self.fileentry.set_text(name + extension_for_muxer(self.settings.muxer))
+    def updateFilename(self, basename):
+        """Updates the filename UI element to show the specified file name."""
+        extension = extension_for_muxer(self.settings.muxer)
+        if extension:
+            name = "%s%s%s" % (basename, os.path.extsep, extension)
+        else:
+            name = basename
+        self.fileentry.set_text(name)
 
-    def _muxerComboChangedCb(self, muxer):
-        basename = os.path.splitext(self.fileentry.get_text())[0]
-        muxer = get_combo_value(muxer).get_name()
-
+    def _muxerComboChangedCb(self, muxer_combo):
+        muxer = get_combo_value(muxer_combo).get_name()
         self.settings.setEncoders(muxer=muxer)
+
+		# Update the extension of the filename.
+        basename = os.path.splitext(self.fileentry.get_text())[0]
         self.updateFilename(basename)
 
-        # update muxer-dependent video widgets
-        self.video_encoder_combo.set_model(factorylist(
-            self.settings.getVideoEncoders()))
-        self.video_encoder_combo.set_active(0)
+        # Update muxer-dependent widgets.
+        self.updateAvailableEncoders()
 
-        # update muxer-dependent audio widgets
-        self.audio_encoder_combo.set_model(factorylist(
-            self.settings.getAudioEncoders()))
+    def updateAvailableEncoders(self):
+        """Update the encoder comboboxes to show the available encoders."""
+        video_encoders = self.settings.getVideoEncoders()
+        video_encoder_model = factorylist(video_encoders)
+        self.video_encoder_combo.set_model(video_encoder_model)
+
+        audio_encoders = self.settings.getAudioEncoders()
+        audio_encoder_model = factorylist(audio_encoders)
+        self.audio_encoder_combo.set_model(audio_encoder_model)
+
+        # TODO: Set active the preferred audio and video encoders.
+        self.video_encoder_combo.set_active(0)
         self.audio_encoder_combo.set_active(0)
 
     # TODO: selected-only changed
