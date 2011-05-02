@@ -461,6 +461,8 @@ class ExportSettings(Signallable, Loggable):
     # TODO: initialize this cache from the project file?
     factory_settings_cache = {}
 
+    muxers, aencoders, vencoders = available_combinations()
+
     def __init__(self, **unused_kw):
         Loggable.__init__(self)
         self.videowidth = 720
@@ -476,7 +478,6 @@ class ExportSettings(Signallable, Loggable):
         self.containersettings = self.factory_settings_cache.get(self.muxer, {})
         self.acodecsettings = self.factory_settings_cache.get(self.aencoder, {})
         self.vcodecsettings = self.factory_settings_cache.get(self.vencoder, {})
-        self.muxers, self.aencoders, self.vencoders = available_combinations()
 
     def copy(self):
         ret = ExportSettings()
