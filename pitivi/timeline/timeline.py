@@ -31,6 +31,7 @@ from pitivi.stream import match_stream_groups_map
 from pitivi.utils import start_insort_right, infinity, getPreviousObject, \
         getNextObject
 from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
+from pitivi.stream import VideoStream
 
 # Selection modes
 SELECT = 0
@@ -1903,13 +1904,26 @@ class Timeline(Signallable, Loggable):
                 continue
 
             self.selection.setSelection(timeline_object.track_objects, UNSELECT)
+            n_track_effects = []
+            n_tl_objects = []
 
             for track_object in list(timeline_object.track_objects):
                 new_track_object = track_object.copy()
-                new_timeline_object = TimelineObject(new_track_object.factory)
-                new_timeline_object.addTrackObject(new_track_object)
-                self.addTimelineObject(new_timeline_object)
-                new_track_objects.extend(new_timeline_object.track_objects)
+                if isinstance(new_track_object, TrackEffect):
+                    n_track_effects.append(new_track_object)
+                else:
+                    new_timeline_object = TimelineObject(new_track_object.factory)
+                    new_timeline_object.addTrackObject(new_track_object)
+                    n_tl_objects.append(new_timeline_object)
+
+            for tl_object in n_tl_objects:
+                for tck_effect in n_track_effects:
+                    if tl_object.track_objects[0].stream_type == tck_effect.stream_type:
+                        self.addEffectFactoryOnObject(tck_effect.factory, [tl_object])
+
+                self.addTimelineObject(tl_object)
+
+            new_track_objects.extend(new_timeline_object.track_objects)
 
             self.removeTimelineObject(timeline_object, deep=True)
 
