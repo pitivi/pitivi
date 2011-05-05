@@ -523,31 +523,6 @@ class ExportSettings(Signallable, Loggable):
             return get_compatible_sink_caps(self.vencoder, vcaps)
         return vcaps
 
-    def getVideoDescription(self):
-        """ Returns a human-readable markup-ed string describing the video properties """
-        res = _("%(width)d x %(height)d pixels at %(framerate).2f fps" %\
-            {"width": self.videowidth,
-            "height": self.videoheight,
-            "framerate": float(self.videorate)})
-        if self.vencoder is not None:
-            res += " <i>(%s)</i>" % self.vencoder
-
-        return res
-
-    def getAudioDescription(self):
-        """ Returns a human-readable markup-ed string describing the audio properties """
-        res = ngettext("%(channels)d channel at %(frequency)d Hz (%(depth)d bits)",
-            "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)",
-            self.audiochannels)
-        res = res % \
-                {"channels": self.audiochannels,
-                "frequency": self.audiorate,
-                "depth": self.audiodepth}
-        if self.aencoder is not None:
-            res += " <i>(%s)</i>" % self.aencoder
-
-        return res
-
     def getAudioCaps(self):
         """ Returns the GstCaps corresponding to the audio settings """
         astr = "rate=%d,channels=%d" % (self.audiorate, self.audiochannels)

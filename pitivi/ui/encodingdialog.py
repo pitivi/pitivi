@@ -137,7 +137,6 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.settings.connect("encoders-changed", self._settingsChanged)
 
     def _settingsChanged(self, settings):
-        self._updateSummary()
         self.updateResolution()
 
     def _displaySettings(self):
@@ -172,9 +171,6 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         # File
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
         self.updateFilename(self.project.name)
-
-        # Summary
-        self._updateSummary()
 
     def updateFilename(self, basename):
         """Updates the filename UI element to show the specified file name."""
@@ -263,11 +259,6 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
     def _audioEncoderChangedComboCb(self, combo):
         name = get_combo_value(combo).get_name()
         self.settings.setEncoders(aencoder=name)
-
-    def _updateSummary(self):
-        text = self.settings.getVideoDescription() + "\n\n" +\
-            self.settings.getAudioDescription()
-        self.summary_label.props.label = text
 
     def _audioSettingsButtonClickedCb(self, button):
         self._elementSettingsDialog(self.audio_encoder_combo,

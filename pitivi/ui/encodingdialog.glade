@@ -484,26 +484,6 @@ AAC</property>
                 <property name="type">tab</property>
               </packing>
             </child>
-            <child>
-              <widget class="GtkLabel" id="summary_label">
-                <property name="visible">True</property>
-                <property name="use_markup">True</property>
-              </widget>
-              <packing>
-                <property name="position">3</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label7">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Summary</property>
-              </widget>
-              <packing>
-                <property name="position">3</property>
-                <property name="tab_fill">False</property>
-                <property name="type">tab</property>
-              </packing>
-            </child>
           </widget>
           <packing>
             <property name="position">2</property>
