@@ -458,8 +458,13 @@ class ExportSettings(Signallable, Loggable):
     # TODO : switch to using GstFraction internally where appliable
 
 
-    # TODO: initialize this cache from the project file?
-    factory_settings_cache = {}
+    # The following dependant attributes caches are common to all instances!
+    # A (muxer -> containersettings) map.
+    _containersettings_cache = {}
+    # A (vencoder -> vcodecsettings) map.
+    _vcodecsettings_cache = {}
+    # A (aencoder -> acodecsettings) map.
+    _acodecsettings_cache = {}
 
     muxers, aencoders, vencoders = available_combinations()
 
@@ -475,9 +480,6 @@ class ExportSettings(Signallable, Loggable):
         self.vencoder = "theoraenc"
         self.aencoder = "vorbisenc"
         self.muxer = "oggmux"
-        self.containersettings = self.factory_settings_cache.get(self.muxer, {})
-        self.acodecsettings = self.factory_settings_cache.get(self.aencoder, {})
-        self.vcodecsettings = self.factory_settings_cache.get(self.vencoder, {})
 
     def copy(self):
         ret = ExportSettings()
@@ -572,23 +574,40 @@ class ExportSettings(Signallable, Loggable):
         """ Set the video/audio encoder and muxer """
         changed = False
         if not muxer == "" and not muxer == self.muxer:
-            self._updateSettingsCache(self.muxer, muxer, 'containersettings')
             self.muxer = muxer
             changed = True
         if not vencoder == "" and not vencoder == self.vencoder:
-            self._updateSettingsCache(self.vencoder, vencoder, 'vcodecsettings')
             self.vencoder = vencoder
             changed = True
         if not aencoder == "" and not aencoder == self.aencoder:
-            self._updateSettingsCache(self.aencoder, aencoder, 'acodecsettings')
             self.aencoder = aencoder
             changed = True
         if changed:
             self.emit("encoders-changed")
 
-    def _updateSettingsCache(self, current, new, attr):
-        self.factory_settings_cache[current] = getattr(self, attr)
-        setattr(self, attr, self.factory_settings_cache.get(new, {}))
+    @property
+    def containersettings(self):
+        return self._containersettings_cache.setdefault(self.muxer, {})
+
+    @containersettings.setter
+    def containersettings(self, value):
+        self._containersettings_cache[self.muxer] = value
+
+    @property
+    def vcodecsettings(self):
+        return self._vcodecsettings_cache.setdefault(self.vencoder, {})
+
+    @vcodecsettings.setter
+    def vcodecsettings(self, value):
+        self._vcodecsettings_cache[self.vencoder] = value
+
+    @property
+    def acodecsettings(self):
+        return self._acodecsettings_cache.setdefault(self.aencoder, {})
+
+    @acodecsettings.setter
+    def acodecsettings(self, value):
+        self._acodecsettings_cache[self.aencoder] = value
 
     def getAudioEncoders(self):
         """ Returns the list of audio encoders compatible with the current
