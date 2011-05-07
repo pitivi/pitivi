@@ -125,6 +125,10 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
 
         Renderer.__init__(self, project, pipeline)
 
+        # Encoder settings
+        self.preferred_vencoder = self.settings.vencoder
+        self.preferred_aencoder = self.settings.aencoder
+
         ellipsize(self.muxercombobox)
         ellipsize(self.audio_encoder_combo)
         ellipsize(self.video_encoder_combo)
@@ -160,13 +164,10 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         set_combo_value(self.sample_depth_combo, self.settings.audiodepth)
 
         # Muxer
-        self.muxercombobox.set_model(factorylist(
-            self.settings.muxers))
+        self.muxercombobox.set_model(factorylist(self.settings.muxers))
         # note: this will trigger an update of the codec comboboxes
         set_combo_value(self.muxercombobox,
             gst.element_factory_find(self.settings.muxer))
-
-        # Encoder/Muxer settings
 
         # File
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
@@ -185,12 +186,16 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         muxer = get_combo_value(muxer_combo).get_name()
         self.settings.setEncoders(muxer=muxer)
 
-		# Update the extension of the filename.
+        # Update the extension of the filename.
         basename = os.path.splitext(self.fileentry.get_text())[0]
         self.updateFilename(basename)
 
         # Update muxer-dependent widgets.
-        self.updateAvailableEncoders()
+        self.muxer_combo_changing = True
+        try:
+            self.updateAvailableEncoders()
+        finally:
+            self.muxer_combo_changing = False
 
     def updateAvailableEncoders(self):
         """Update the encoder comboboxes to show the available encoders."""
@@ -202,13 +207,12 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         audio_encoder_model = factorylist(audio_encoders)
         self.audio_encoder_combo.set_model(audio_encoder_model)
 
-        # TODO: Set active the preferred audio and video encoders.
-        self.video_encoder_combo.set_active(0)
-        self.audio_encoder_combo.set_active(0)
-
-    # TODO: selected-only changed
-
-    # TODO: draft quality changed
+        preferred_vencoder = gst.element_factory_find(self.preferred_vencoder)
+        set_combo_value(
+                self.video_encoder_combo, preferred_vencoder, default_index=0)
+        preferred_aencoder = gst.element_factory_find(self.preferred_aencoder)
+        set_combo_value(
+                self.audio_encoder_combo, preferred_aencoder, default_index=0)
 
     def _scaleSpinbuttonChangedCb(self, button):
         width, height = self.updateResolution()
@@ -240,12 +244,14 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.settings.setVideoProperties(framerate=framerate)
 
     def _videoEncoderComboChangedCb(self, combo):
-        name = get_combo_value(combo).get_name()
-        self.settings.setEncoders(vencoder=name)
+        vencoder = get_combo_value(combo).get_name()
+        self.settings.setEncoders(vencoder=vencoder)
+        if not self.muxer_combo_changing:
+            # The user directly changed the video encoder combo.
+            self.preferred_vencoder = vencoder
 
     def _videoSettingsButtonClickedCb(self, button):
-        self._elementSettingsDialog(self.video_encoder_combo,
-            'vcodecsettings')
+        self._elementSettingsDialog(self.video_encoder_combo, 'vcodecsettings')
 
     def _channelsComboChangedCb(self, combo):
         self.settings.setAudioProperties(nbchanns=get_combo_value(combo))
@@ -257,12 +263,14 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.settings.setAudioProperties(rate=get_combo_value(combo))
 
     def _audioEncoderChangedComboCb(self, combo):
-        name = get_combo_value(combo).get_name()
-        self.settings.setEncoders(aencoder=name)
+        aencoder = get_combo_value(combo).get_name()
+        self.settings.setEncoders(aencoder=aencoder)
+        if not self.muxer_combo_changing:
+            # The user directly changed the audio encoder combo.
+            self.preferred_aencoder = aencoder
 
     def _audioSettingsButtonClickedCb(self, button):
-        self._elementSettingsDialog(self.audio_encoder_combo,
-            'acodecsettings')
+        self._elementSettingsDialog(self.audio_encoder_combo, 'acodecsettings')
 
     def _elementSettingsDialog(self, combo, settings_attr):
         factory = get_combo_value(combo)
