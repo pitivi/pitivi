@@ -1,36 +1,78 @@
 # Japanese translation for pitivi.
-# Copyright (C) 2010 pitivi's COPYRIGHT HOLDER
+# Copyright (C) 2010,2011 pitivi's COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.
 # OKANO Takayoshi <kano@na.rim.or.jp>, 2010.
 # vbk <https://launchpad.net/~vbkaisetsu>, 2010.
 # Shushi Kurose <md81bird@hitaki.net>, 2010.
+# OKANO Takayoshi <kano@na.rim.or.jp>, 2011.
+# Takayuki KUSANO <AE5T-KSN@asahi-net.or.jp>, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=pitivi&component=general\n"
-"POT-Creation-Date: 2010-09-04 19:27+0000\n"
-"PO-Revision-Date: 2010-09-01 02:46+0900\n"
-"Last-Translator: Shushi Kurose <md81bird@hitaki.net>\n"
+"product=pitivi&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2011-04-29 17:00+0000\n"
+"PO-Revision-Date: 2011-05-04 21:20+0900\n"
+"Last-Translator: Takayuki KUSANO <AE5T-KSN@asahi-net.or.jp>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../pitivi.desktop.in.in.h:1
-msgid "Create and edit your own movies"
-msgstr "自分で動画を作成・編集します"
+#: ../pitivi/application.py:123
+#, python-format
+msgid ""
+"There is already a %s instance, please inform the developers by filing a bug "
+"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr ""
+"すでに %s のインスタンスがあります。このバグを以下のサイトで開発者に報告して"
+"ください。http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi.desktop.in.in.h:2
-msgid "Pitivi Video Editor"
-msgstr "PiTiVi 動画エディタ"
+#: ../pitivi/application.py:451
+msgid ""
+"\n"
+"    %prog [PROJECT_FILE]               # Start the video editor.\n"
+"    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a "
+"project.\n"
+"    %prog PROJECT_FILE -r OUTPUT_FILE  # Render a project.\n"
+"    %prog PROJECT_FILE -p              # Preview a project."
+msgstr ""
+"\n"
+"    %prog [PROJECT_FILE]               # 動画エディタを起動します。\n"
+"    %prog -i [-a] [MEDIA_FILE1 ...]    # エディタを起動してプロジェクトを作成"
+"します。\n"
+"    %prog PROJECT_FILE -r OUTPUT_FILE  # プロジェクトをレンダリングしま"
+"す。.\n"
+"    %prog PROJECT_FILE -p              # プロジェクトをプレビューします。"
+
+#: ../pitivi/application.py:459
+msgid "Import each MEDIA_FILE into a new project."
+msgstr "各メディアファイルを新規プロジェクトに取り込みます。"
+
+#: ../pitivi/application.py:462
+msgid "Add each imported MEDIA_FILE to the timeline."
+msgstr "各メディアファイルを取り込んで、タイムラインに追加します。"
+
+#: ../pitivi/application.py:465
+msgid "Run Pitivi in the Python Debugger."
+msgstr "Python デバッガで PiTiVi を起動します。"
+
+#: ../pitivi/application.py:468
+msgid "Render the specified project to OUTPUT_FILE with no GUI."
+msgstr ""
+"GUI を使わずに、指定したプロジェクトを OUTPUT_FILE にレンダリングします。"
+
+#: ../pitivi/application.py:471
+msgid "Preview the specified project file without the full UI."
+msgstr "一部の UI を省略して、指定したプロジェクトをプレビューします。"
 
 #: ../pitivi/check.py:102
 #, python-format
 msgid "%s is already running!"
-msgstr "%s は既に起動しています！"
+msgstr "%s は既に起動しています!"
 
 #: ../pitivi/check.py:103
 #, python-format
@@ -190,7 +232,7 @@ msgstr ""
 
 #: ../pitivi/check.py:149
 msgid "Could not import the Zope interface module"
-msgstr "Zope インタフェースモジュールを取り込めません"
+msgstr "Zope インターフェースモジュールを取り込めません"
 
 #: ../pitivi/check.py:150
 msgid "Make sure you have the zope.interface module installed"
@@ -206,6 +248,14 @@ msgid "Make sure you have the distutils python module installed"
 msgstr ""
 "distutils python モジュールがインストールされていることを確認してください"
 
+#: ../pitivi.desktop.in.in.h:1
+msgid "Create and edit your own movies"
+msgstr "自分で動画を作成・編集します"
+
+#: ../pitivi.desktop.in.in.h:2
+msgid "Pitivi Video Editor"
+msgstr "PiTiVi 動画エディタ"
+
 #: ../pitivi/discoverer.py:228
 #, python-format
 msgid ""
@@ -216,178 +266,113 @@ msgstr ""
 "%s"
 
 #. woot, nothing decodable
-#: ../pitivi/discoverer.py:247
+#: ../pitivi/discoverer.py:248
 msgid "Can not decode file."
 msgstr "ファイルをデコードできません。"
 
-#: ../pitivi/discoverer.py:248
+#: ../pitivi/discoverer.py:249
 msgid "The given file does not contain audio, video or picture streams."
 msgstr ""
 "このファイルには、映像、音声、静止画いずれのストリームも含まれていません。"
 
-#: ../pitivi/discoverer.py:268
+#: ../pitivi/discoverer.py:269
 msgid "Could not establish the duration of the file."
 msgstr "ファイルの長さを特定できませんでした。"
 
-#: ../pitivi/discoverer.py:269
+#: ../pitivi/discoverer.py:270
 msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
 msgstr "このクリップは、ランダムアクセスできない形式のようです。"
 
-#: ../pitivi/discoverer.py:335
+#: ../pitivi/discoverer.py:336
 msgid "Timeout while analyzing file."
 msgstr "ファイルの解析中にタイムアウトしました。"
 
-#: ../pitivi/discoverer.py:336
+#: ../pitivi/discoverer.py:337
 msgid "Analyzing the file took too long."
 msgstr "ファイルの解析に時間がかかりすぎました。"
 
-#: ../pitivi/discoverer.py:365
+#: ../pitivi/discoverer.py:366
 msgid "No available source handler."
 msgstr "利用可能なソースハンドラがありません。"
 
-#: ../pitivi/discoverer.py:366
+#: ../pitivi/discoverer.py:367
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr "プロトコル '%s' を処理できる GStreamer ソースエレメントがありません"
 
-#: ../pitivi/discoverer.py:431
+#: ../pitivi/discoverer.py:432
 msgid "Pipeline didn't want to go to PAUSED."
 msgstr "パイプラインを一時停止できませんでした。"
 
-#: ../pitivi/discoverer.py:454
+#: ../pitivi/discoverer.py:455
 #, python-format
 msgid "An internal error occurred while analyzing this file: %s"
 msgstr "ファイルの解析中に、内部エラーが発生しました: %s"
 
-#: ../pitivi/discoverer.py:464
+#: ../pitivi/discoverer.py:465
 msgid "File contains a redirection to another clip."
 msgstr "ファイルに他のクリップへのリダイレクトが含まれています。"
 
-#: ../pitivi/discoverer.py:465
+#: ../pitivi/discoverer.py:466
 msgid "PiTiVi currently does not handle redirection files."
 msgstr "現在の PiTiVi はファイルのリダイレクトを処理することができません。"
 
-#: ../pitivi/discoverer.py:491
+#: ../pitivi/discoverer.py:492
 msgid "Pipeline didn't want to go to PLAYING."
 msgstr "パイプラインを再生できませんでした。"
 
-#: ../pitivi/application.py:122
-#, python-format
-msgid ""
-"There is already a %s instance, please inform the developers by filing a bug "
-"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+#: ../pitivi/effects.py:63 ../pitivi/effects.py:65
+msgid "All effects"
+msgstr "すべての効果"
+
+#: ../pitivi/effects.py:66
+msgid "Colors"
+msgstr "カラー"
+
+#: ../pitivi/effects.py:80
+msgid "Noise"
+msgstr "ノイズ"
+
+#: ../pitivi/effects.py:82
+msgid "Analysis"
+msgstr "アナリシス"
+
+#: ../pitivi/effects.py:87
+msgid "Blur"
+msgstr "ブラー"
+
+#: ../pitivi/effects.py:89
+msgid "Geometry"
+msgstr "ジオメトリ"
+
+#: ../pitivi/effects.py:101
+msgid "Fancy"
+msgstr "ファンシー"
+
+#: ../pitivi/effects.py:112
+msgid "Time"
+msgstr "タイム"
+
+#: ../pitivi/effects.py:113 ../pitivi/effects.py:221
+msgid "Uncategorized"
+msgstr "未分類"
+
+#. TODO check if it is the good way to make it translatable
+#. And to filter actually!
+#: ../pitivi/effects.py:239 ../pitivi/ui/encodingdialog.glade.h:33
+#: ../pitivi/ui/projectsettings.glade.h:20
+msgid "Video"
 msgstr ""
-"すでに %s のインスタンスがあります。このバグを以下のサイトで開発者に報告して"
-"ください。http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:219
-msgid ""
-"\n"
-"      %prog [PROJECT_FILE]\n"
-"      %prog -i [-a] [MEDIA_FILE]..."
+#: ../pitivi/effects.py:240
+msgid "Audio |audio"
 msgstr ""
-"\n"
-"      %prog [プロジェクトファイル]\n"
-"      %prog -i [-a] [メディアファイル]..."
 
-#: ../pitivi/application.py:223
-msgid ""
-"Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"no project is given, %prog creates a new project.\n"
-"Alternatively, when -i is specified, arguments are treated as clips to be\n"
-"imported into the project. If -a is specified, these clips will also be "
-"added to\n"
-"the end of the project timeline."
+#: ../pitivi/effects.py:241
+msgid "effect"
 msgstr ""
-"動画エディタを起動し、オプションを指定するとプロジェクトファイルを読み込みま"
-"す。\n"
-"プロジェクトを指定しなかった場合は、%prog は新規プロジェクトを作成します。\n"
-"あるいは -i を指定した場合は、引数で指定したものをクリップとして\n"
-"プロジェクトに取り込みます。-a を指定した場合は、取り込んだクリップを\n"
-"プロジェクトのタイムライン末尾に追加します。"
-
-#: ../pitivi/application.py:229
-msgid "Import each MEDIA_FILE into the project."
-msgstr "各メディアファイルをプロジェクトに取り込みます。"
-
-#: ../pitivi/application.py:231
-msgid "Add each MEDIA_FILE to timeline after importing."
-msgstr "各メディアファイルを取り込んで、タイムラインに追加します。"
-
-#: ../pitivi/application.py:232
-msgid "Run pitivi in the Python Debugger"
-msgstr "Python デバッガで PiTiVi を起動します"
-
-#: ../pitivi/application.py:234
-msgid "Run pitivi with no gui"
-msgstr "GUI なしで PiTiVi を起動します"
-
-#: ../pitivi/projectmanager.py:96
-msgid "Not a valid project file."
-msgstr "有効なプロジェクトファイルではありません。"
-
-#: ../pitivi/projectmanager.py:101
-msgid "Couldn't close current project"
-msgstr "現在のプロジェクトを終了できませんでした"
-
-#: ../pitivi/projectmanager.py:138
-msgid "No URI specified."
-msgstr "URI が指定されていません。"
-
-#: ../pitivi/projectmanager.py:170
-msgid "New Project"
-msgstr "新規プロジェクト"
-
-#: ../pitivi/settings.py:502
-msgid "Export Settings\n"
-msgstr "出力設定\n"
-
-#: ../pitivi/settings.py:503
-msgid "Video: "
-msgstr "映像: "
-
-#: ../pitivi/settings.py:506
-msgid ""
-"\n"
-"Audio: "
-msgstr ""
-"\n"
-"音声: "
-
-#: ../pitivi/settings.py:509
-msgid ""
-"\n"
-"Muxer: "
-msgstr ""
-"\n"
-"マルチプレクサ: "
-
-#: ../pitivi/utils.py:74
-#, python-format
-msgid "%d hour"
-msgid_plural "%d hours"
-msgstr[0] "%d 時間"
-
-#: ../pitivi/utils.py:77
-#, python-format
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] "%d 分"
-
-#: ../pitivi/utils.py:80
-#, python-format
-msgid "%d second"
-msgid_plural "%d seconds"
-msgstr[0] "%d 秒"
-
-#. Translators: "non local" means the project is not stored
-#. on a local filesystem
-#: ../pitivi/utils.py:247
-#, python-format
-msgid "%s doesn't yet handle non local projects"
-msgstr "%s はローカルプロジェクト以外を処理できません"
 
 #: ../pitivi/formatters/format.py:77
 msgid "PiTiVi Native (XML)"
@@ -397,11 +382,62 @@ msgstr "PiTiVi 標準 (XML)"
 msgid "Playlist format"
 msgstr "プレイリスト形式"
 
-#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/videofxlist.py:53
+#: ../pitivi/projectmanager.py:102
+msgid "Not a valid project file."
+msgstr "有効なプロジェクトファイルではありません。"
+
+#: ../pitivi/projectmanager.py:107
+msgid "Couldn't close current project"
+msgstr "現在のプロジェクトを終了できませんでした"
+
+#: ../pitivi/projectmanager.py:144
+msgid "No URI specified."
+msgstr "URI が指定されていません。"
+
+#: ../pitivi/projectmanager.py:178
+msgid "New Project"
+msgstr "新規プロジェクト"
+
+#: ../pitivi/settings.py:501
+msgid "Export Settings\n"
+msgstr "出力設定\n"
+
+#: ../pitivi/settings.py:502
+msgid "Video: "
+msgstr "映像: "
+
+#: ../pitivi/settings.py:505
+msgid ""
+"\n"
+"Audio: "
+msgstr ""
+"\n"
+"音声: "
+
+#: ../pitivi/settings.py:508
+msgid ""
+"\n"
+"Muxer: "
+msgstr ""
+"\n"
+"マルチプレクサ: "
+
+#: ../pitivi/settings.py:526
+#, python-format
+msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
+msgstr "%(width)d x %(height)d ピクセル、%(framerate).2f fps"
+
+#: ../pitivi/settings.py:537
+#, python-format
+msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
+msgstr "%(channels)d チャンネル、%(frequency)d Hz (%(depth)d ビット)"
+
+#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/effectlist.py:126
+#: ../pitivi/ui/videofxlist.py:53
 msgid "Name"
 msgstr "名前"
 
-#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/elementsettingsdialog.glade.h:6
+#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/effectlist.py:138
 #: ../pitivi/ui/videofxlist.py:59
 msgid "Description"
 msgstr "説明"
@@ -418,36 +454,160 @@ msgstr "利用可能なデバイスがありません"
 msgid "Video Capture Device:"
 msgstr "映像キャプチャデバイス:"
 
-#: ../pitivi/ui/common.py:86 ../pitivi/ui/common.py:128
+#: ../pitivi/ui/clipproperties.py:135
+msgid "Remove effect"
+msgstr "効果を削除"
+
+#: ../pitivi/ui/clipproperties.py:162
+msgid "Activated"
+msgstr "有効化"
+
+#: ../pitivi/ui/clipproperties.py:167
+msgid "Type"
+msgstr "種類"
+
+#: ../pitivi/ui/clipproperties.py:179
+msgid "Effect name"
+msgstr "効果名"
+
+#: ../pitivi/ui/clipproperties.py:376
+msgid ""
+"<span>You must select <b>one</b> clip on the timeline to configure its "
+"associated effects</span>"
+msgstr ""
+"<span>クリップへの効果を構成するためには、タイムライン上のクリップを<b>ひとつ"
+"</b>選択してください</span>"
+
+#: ../pitivi/ui/common.py:91 ../pitivi/ui/common.py:133
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>音声:</b> %d チャンネル %d <i>Hz</i> (%d <i>ビット</i>)"
 
-#: ../pitivi/ui/common.py:92 ../pitivi/ui/common.py:134
+#: ../pitivi/ui/common.py:97 ../pitivi/ui/common.py:139
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "<b>不明な音声形式:</b> %s"
 
-#: ../pitivi/ui/common.py:97 ../pitivi/ui/common.py:139
+#: ../pitivi/ui/common.py:102 ../pitivi/ui/common.py:144
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr "<b>映像:</b> %d x %d <i>ピクセル</i> %.2f<i>fps</i>"
 
-#: ../pitivi/ui/common.py:101 ../pitivi/ui/common.py:143
+#: ../pitivi/ui/common.py:106 ../pitivi/ui/common.py:148
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>画像:</b> %d x %d <i>ピクセル</i>"
 
-#: ../pitivi/ui/common.py:104 ../pitivi/ui/common.py:146
+#: ../pitivi/ui/common.py:109 ../pitivi/ui/common.py:151
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "<b>不明な映像形式:</b> %s"
 
-#: ../pitivi/ui/common.py:107 ../pitivi/ui/common.py:149
+#: ../pitivi/ui/common.py:112 ../pitivi/ui/common.py:154
 #, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>テキスト:</b> %s"
+
+#: ../pitivi/ui/common.py:185
+msgid "12 fps"
+msgstr "12 fps"
+
+#: ../pitivi/ui/common.py:186
+msgid "15 fps"
+msgstr "15 fps"
+
+#: ../pitivi/ui/common.py:187
+msgid "20 fps"
+msgstr "20 fps"
+
+#: ../pitivi/ui/common.py:188
+msgid "23,976 fps"
+msgstr "23.976 fps"
+
+#: ../pitivi/ui/common.py:189
+msgid "24 fps"
+msgstr "24 fps"
+
+#: ../pitivi/ui/common.py:190
+msgid "25 fps"
+msgstr "25 fps"
+
+#: ../pitivi/ui/common.py:191
+msgid "29,97 fps"
+msgstr "29.97 fps"
+
+#: ../pitivi/ui/common.py:192
+msgid "30 fps"
+msgstr "30 fps"
+
+#: ../pitivi/ui/common.py:193
+msgid "59,94 fps"
+msgstr "59.94 fps"
+
+#: ../pitivi/ui/common.py:194
+msgid "60 fps"
+msgstr "60 fps"
+
+#: ../pitivi/ui/common.py:195
+msgid "120 fps"
+msgstr "120 fps"
+
+#: ../pitivi/ui/common.py:199
+msgid "8 KHz"
+msgstr "8 KHz"
+
+#: ../pitivi/ui/common.py:200
+msgid "11 KHz"
+msgstr "11 KHz"
+
+#: ../pitivi/ui/common.py:201
+msgid "22 KHz"
+msgstr "22 KHz"
+
+#: ../pitivi/ui/common.py:202
+msgid "44.1 KHz"
+msgstr "44.1 KHz"
+
+#: ../pitivi/ui/common.py:203
+msgid "48 KHz"
+msgstr "48 KHz"
+
+#: ../pitivi/ui/common.py:204
+msgid "96 KHz"
+msgstr "96 KHz"
+
+#: ../pitivi/ui/common.py:208
+msgid "8 bit"
+msgstr "8 ビット"
+
+#: ../pitivi/ui/common.py:209
+msgid "16 bit"
+msgstr "16 ビット"
+
+#: ../pitivi/ui/common.py:210
+msgid "24 bit"
+msgstr "24 ビット"
+
+#: ../pitivi/ui/common.py:211
+msgid "32 bit"
+msgstr "32 ビット"
+
+#: ../pitivi/ui/common.py:215
+msgid "6 Channels (5.1)"
+msgstr "6 チャンネル (5.1)"
+
+#: ../pitivi/ui/common.py:216
+msgid "4 Channels (4.0)"
+msgstr "4 チャンネル (4.0)"
+
+#: ../pitivi/ui/common.py:217
+msgid "Stereo"
+msgstr "ステレオ"
+
+#: ../pitivi/ui/common.py:218
+msgid "Mono"
+msgstr "モノラル"
 
 #: ../pitivi/ui/defaultpropertyeditor.py:104
 #, python-format
@@ -455,291 +615,228 @@ msgid "Properties For: %d object"
 msgid_plural "Properties For: %d objects"
 msgstr[0] "%d 個のオブジェクトのプロパティ"
 
-#: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:140
+#: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:98
 msgid "No properties..."
 msgstr "プロパティなし..."
 
-#: ../pitivi/ui/dynamic.py:54
+#: ../pitivi/ui/dynamic.py:67
 msgid "Implement Me"
 msgstr "実装する"
 
-#. i18n: string for custom video width/height/framerate settings
-#. i18n: string for custom audio rate/depth/channels settings
-#: ../pitivi/ui/dynamic.py:374 ../pitivi/ui/exportsettingswidget.py:116
-#: ../pitivi/ui/exportsettingswidget.py:150
+#: ../pitivi/ui/dynamic.py:423
 msgid "Custom"
 msgstr "カスタム"
 
-#: ../pitivi/ui/dynamic.py:398
+#: ../pitivi/ui/dynamic.py:447
 msgid "Save Preset"
 msgstr "プリセットを保存"
 
-#: ../pitivi/ui/dynamic.py:466
+#: ../pitivi/ui/dynamic.py:516
 msgid "Choose..."
 msgstr "選択..."
 
+#: ../pitivi/ui/effectlist.py:86
+msgid "Video effects"
+msgstr "映像効果"
+
+#: ../pitivi/ui/effectlist.py:87
+msgid "Audio effects"
+msgstr "音声効果"
+
+#. Prevents being flush against the notebook
+#: ../pitivi/ui/effectlist.py:98 ../pitivi/ui/pluginmanagerdialog.glade.h:3
+#: ../pitivi/ui/sourcelist.py:163
+msgid "Search:"
+msgstr "検索:"
+
+#: ../pitivi/ui/effectlist.py:211
+msgid "Show Video Effects as a List"
+msgstr "映像効果を一覧表示"
+
+#: ../pitivi/ui/effectlist.py:213
+msgid "Show Video Effects as Icons"
+msgstr "映像効果をアイコン表示"
+
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
-msgid "<b>Author:</b>"
-msgstr "<b>作者:</b>"
+msgid "<b>Properties For Plugin</b>"
+msgstr "<b>プラグインのプロパティ</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:2
-msgid "<b>Description:</b>"
-msgstr "<b>説明:</b>"
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:3
-msgid "<b>Plugin Name</b>"
-msgstr "<b>プラグイン名</b>"
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:4
-msgid "<b>Properties</b>"
-msgstr "<b>プロパティ</b>"
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:5
-msgid "Author"
-msgstr "作者"
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:7
 msgid "Properties for <element>"
 msgstr "<element> のプロパティ"
 
-#: ../pitivi/ui/encodingdialog.glade.h:1 ../pitivi/ui/timelinecontrols.py:13
-msgid "<b>Audio:</b>"
-msgstr "<b>音声:</b>"
+#: ../pitivi/ui/encodingdialog.glade.h:1
+msgid "1000 x 1000"
+msgstr "1000 x 1000"
 
 #: ../pitivi/ui/encodingdialog.glade.h:2
-msgid "<b>Nothing yet</b>"
-msgstr "<b>なし</b>"
+msgid "29.97 fps"
+msgstr "29.97 fps"
 
 #: ../pitivi/ui/encodingdialog.glade.h:3
-msgid "<b>Settings</b>"
-msgstr "<b>設定</b>"
-
-#: ../pitivi/ui/encodingdialog.glade.h:4 ../pitivi/ui/timelinecontrols.py:15
-msgid "<b>Video:</b>"
-msgstr "<b>映像:</b>"
+msgid "6 channels (5.1)\n"
+msgstr "6 チャンネル (5.1)\n"
 
 #: ../pitivi/ui/encodingdialog.glade.h:5
-msgid "Choose File"
-msgstr "ファイルを選択"
-
-#: ../pitivi/ui/encodingdialog.glade.h:6
-msgid "Modify"
-msgstr "変更"
+msgid ""
+"AC-3\n"
+"AAC"
+msgstr ""
+"AC-3\n"
+"AAC"
 
 #: ../pitivi/ui/encodingdialog.glade.h:7
-msgid "Output file:"
-msgstr "出力ファイル:"
+msgid "Advanced..."
+msgstr "高度な設定..."
 
 #: ../pitivi/ui/encodingdialog.glade.h:8
-msgid "Please choose an output file"
-msgstr "出力ファイルを選択してください"
+#: ../pitivi/ui/projectsettings.glade.h:7
+msgid "Audio"
+msgstr "音声"
 
-#: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:264
-msgid "Render project"
-msgstr "プロジェクトのレンダリング"
+#: ../pitivi/ui/encodingdialog.glade.h:9
+msgid "Codec:"
+msgstr "コーデック:"
 
-#: ../pitivi/ui/encodingdialog.py:102
-msgid "Choose file to render to"
-msgstr "レンダリングの出力ファイルの選択"
+#: ../pitivi/ui/encodingdialog.glade.h:10
+msgid "Container format"
+msgstr "コンテナ形式"
 
-#: ../pitivi/ui/encodingdialog.py:137
-#, python-format
-msgid "About %s left"
-msgstr "残り時間: 約 %s "
+#: ../pitivi/ui/encodingdialog.glade.h:11
+msgid "Container format:"
+msgstr "コンテナ形式:"
 
-#: ../pitivi/ui/encodingdialog.py:152
-msgid "Rendering"
-msgstr "レンダリングしています"
+#: ../pitivi/ui/encodingdialog.glade.h:12
+msgid "Draft (no special effects, single pass)"
+msgstr "ドラフト (特殊効果なし、シングルパス)"
 
-#: ../pitivi/ui/encodingdialog.py:169
-msgid "Rendering Complete"
-msgstr "レンダリングが完了しました"
+#: ../pitivi/ui/encodingdialog.glade.h:13
+msgid "Edit Project Settings..."
+msgstr "プロジェクトの設定を編集..."
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:1
-msgid ""
-"12 fps\n"
-"23.97 fps\n"
-"24 fps\n"
-"25 fps\n"
-"29.97 fps\n"
-"30 fps\n"
-"60 fps"
-msgstr ""
-"12 fps\n"
-"23.97 fps\n"
-"24 fps\n"
-"25 fps\n"
-"29.97 fps\n"
-"30 fps\n"
-"60 fps"
+#: ../pitivi/ui/encodingdialog.glade.h:14
+msgid "File name"
+msgstr "ファイル名"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:8
-msgid ""
-"8 bit\n"
-"16 bit\n"
-"24 bit\n"
-"32 bit"
-msgstr ""
-"8 bit\n"
-"16 bit\n"
-"24 bit\n"
-"32 bit"
+#: ../pitivi/ui/encodingdialog.glade.h:15
+msgid "File name:"
+msgstr "ファイル名:"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:12
-msgid ""
-"8000 Hz\n"
-"11025 Hz\n"
-"22050 Hz\n"
-"44100 Hz\n"
-"48000 Hz\n"
-"96000 Hz"
-msgstr ""
-"8000 Hz\n"
-"11025 Hz\n"
-"22050 Hz\n"
-"44100 Hz\n"
-"48000 Hz\n"
-"96000 Hz"
+#: ../pitivi/ui/encodingdialog.glade.h:16
+msgid "Folder"
+msgstr "フォルダ"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:18
-msgid "<b>Audio Output</b>"
-msgstr "<b>音声出力</b>"
+#: ../pitivi/ui/encodingdialog.glade.h:17
+msgid "Folder:"
+msgstr "フォルダ:"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:19
-msgid "<b>Export to</b>"
-msgstr "<b>出力先</b>"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:20
-msgid "<b>Video Output</b>"
-msgstr "<b>映像出力</b>"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:21
-msgid "Audio Codec"
-msgstr "音声コーデック"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:22
-msgid "Audio Codec:"
-msgstr "音声コーデック:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:23
-msgid "Audio Preset"
-msgstr "音声プリセット"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:24
-msgid "Channels:"
-msgstr "チャンネル:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:25
-msgid "Container:"
-msgstr "コンテナ:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:26
-msgid "Depth:"
-msgstr "量子化ビット:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:27
+#: ../pitivi/ui/encodingdialog.glade.h:18
 msgid "Frame rate:"
 msgstr "フレームレート:"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:28
-msgid "Height:"
-msgstr "高さ:"
+#: ../pitivi/ui/encodingdialog.glade.h:19
+msgid "Framerate"
+msgstr "フレームレート"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:29
-msgid ""
-"Mono (1)\n"
-"Stereo (2)"
-msgstr ""
-"モノラル (1)\n"
-"ステレオ (2)"
+#: ../pitivi/ui/encodingdialog.glade.h:20
+msgid "General"
+msgstr "全般"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:31
-msgid "Muxer"
-msgstr "マルチプレクサ"
+#: ../pitivi/ui/encodingdialog.glade.h:21
+msgid "H.264"
+msgstr "H.264"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:32
-msgid "Rate:"
+#: ../pitivi/ui/encodingdialog.glade.h:22
+msgid "Height"
+msgstr "高さ"
+
+#: ../pitivi/ui/encodingdialog.glade.h:23
+msgid "MP4"
+msgstr "MP4"
+
+#: ../pitivi/ui/encodingdialog.glade.h:24
+msgid "Number of channels:"
+msgstr "チャンネル数:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:25 ../pitivi/ui/mainwindow.py:142
+msgid "Render"
+msgstr "レンダリング"
+
+#: ../pitivi/ui/encodingdialog.glade.h:26
+msgid "Render only the selected clips"
+msgstr "選択したクリップのみをレンダリングする"
+
+#: ../pitivi/ui/encodingdialog.glade.h:27
+msgid "Sample Depth:"
+msgstr "量子化ビット:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:28
+msgid "Sample Rate:"
 msgstr "サンプルレート:"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:33
-msgid "Settings"
-msgstr "設定"
+#: ../pitivi/ui/encodingdialog.glade.h:29
+msgid "Sample rate"
+msgstr "サンプルレート"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:34
-msgid "Video Codec"
-msgstr "映像コーデック"
+#: ../pitivi/ui/encodingdialog.glade.h:30
+msgid "Scale"
+msgstr "拡大比率"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:35
-msgid "Video Codec:"
-msgstr "映像コーデック:"
+#: ../pitivi/ui/encodingdialog.glade.h:31
+msgid "Scale:"
+msgstr "拡大比率:"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:36
-msgid "Video Preset"
-msgstr "映像プリセット"
+#: ../pitivi/ui/encodingdialog.glade.h:32
+msgid "Summary"
+msgstr "要約"
 
-#: ../pitivi/ui/exportsettingswidget.glade.h:37
-msgid "Width:"
-msgstr "幅:"
+#: ../pitivi/ui/encodingprogress.glade.h:1
+msgid "<b><big>Rendering movie</big></b>"
+msgstr "<b><big>動画をレンダリング中</big></b>"
 
-#: ../pitivi/ui/exportsettingswidget.py:37
-msgid "576p (PAL DV/DVD)"
-msgstr "576p (PAL DV/DVD)"
+#: ../pitivi/ui/encodingprogress.glade.h:2
+msgid "<b>Estimated filesize:</b>"
+msgstr "<b>想定ファイルサイズ:</b>"
 
-#: ../pitivi/ui/exportsettingswidget.py:38
-msgid "480p (NTSC DV/DVD)"
-msgstr "480p (NTSC DV/DVD)"
+#: ../pitivi/ui/encodingprogress.glade.h:3
+msgid "<b>Frames per second:</b>"
+msgstr "<b>フレーム処理数/秒:</b>"
 
-#: ../pitivi/ui/exportsettingswidget.py:39
-msgid "720p HD"
-msgstr "720p HD"
+#: ../pitivi/ui/encodingprogress.glade.h:4
+msgid "<b>Phase:</b>"
+msgstr "<b>フェーズ:</b>"
 
-#: ../pitivi/ui/exportsettingswidget.py:40
-msgid "1080p full HD"
-msgstr "1080p フル HD"
+#: ../pitivi/ui/encodingprogress.glade.h:5
+msgid "Encoding first pass"
+msgstr "1 パス目のエンコード中"
 
-#: ../pitivi/ui/exportsettingswidget.py:41
-msgid "QVGA (320x240)"
-msgstr "QVGA (320x240)"
+#: ../pitivi/ui/encodingprogress.glade.h:6
+msgid "Rendering"
+msgstr "レンダリングしています"
 
-#: ../pitivi/ui/exportsettingswidget.py:42
-msgid "VGA (640x480)"
-msgstr "VGA (640x480)"
+#: ../pitivi/ui/encodingprogress.glade.h:7
+msgid "Unknown"
+msgstr "不明"
 
-#: ../pitivi/ui/exportsettingswidget.py:43
-msgid "SVGA (800x600)"
-msgstr "SVGA (800x600)"
-
-#: ../pitivi/ui/exportsettingswidget.py:44
-msgid "XGA (1024x768)"
-msgstr "XGA (1024x768)"
-
-#: ../pitivi/ui/exportsettingswidget.py:301
-msgid "Raw Video"
-msgstr "RAW 映像"
-
-#: ../pitivi/ui/exportsettingswidget.py:316
-msgid "Raw Audio"
-msgstr "RAW 音声"
-
-#: ../pitivi/ui/exportsettingswidget.py:439
-msgid "Export settings"
-msgstr "出力設定"
+#: ../pitivi/ui/encodingprogress.glade.h:8
+msgid "Unknown Mib"
+msgstr "不明 Mib"
 
 #: ../pitivi/ui/filelisterrordialog.py:52
 msgid "Unknown reason"
 msgstr "原因不明"
 
-#: ../pitivi/ui/filelisterrordialog.py:82
-msgid "URI:"
-msgstr "URI:"
-
-#: ../pitivi/ui/filelisterrordialog.py:87
+#: ../pitivi/ui/filelisterrordialog.py:83
 msgid "Problem:"
 msgstr "問題:"
 
-#: ../pitivi/ui/filelisterrordialog.py:94
+#: ../pitivi/ui/filelisterrordialog.py:90
 msgid "Extra information:"
 msgstr "詳細情報:"
+
+#: ../pitivi/ui/gstwidget.py:153
+msgid "Reset to default value"
+msgstr "既定値に戻す"
 
 #. set title and frame label
 #: ../pitivi/ui/gstwidget.py:195
@@ -747,190 +844,214 @@ msgstr "詳細情報:"
 msgid "Properties for %s"
 msgstr "%s のプロパティ"
 
-#: ../pitivi/ui/mainwindow.py:128
-msgid "Render"
-msgstr "レンダリング"
-
-#: ../pitivi/ui/mainwindow.py:129 ../pitivi/ui/timeline.py:295
+#: ../pitivi/ui/mainwindow.py:143 ../pitivi/ui/timeline.py:329
 msgid "Split"
 msgstr "分割"
 
-#: ../pitivi/ui/mainwindow.py:130
+#: ../pitivi/ui/mainwindow.py:144
+msgid "Keyframe"
+msgstr "キーフレーム"
+
+#: ../pitivi/ui/mainwindow.py:145
 msgid "Unlink"
 msgstr "リンク解除"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/ui/mainwindow.py:132
+#: ../pitivi/ui/mainwindow.py:147 ../pitivi/ui/projectsettings.glade.h:12
 msgid "Link"
 msgstr "リンク"
 
-#: ../pitivi/ui/mainwindow.py:133
+#: ../pitivi/ui/mainwindow.py:148
 msgid "Ungroup"
 msgstr "グループ解除"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/ui/mainwindow.py:135
+#: ../pitivi/ui/mainwindow.py:150
 msgid "Group"
 msgstr "グループ化"
 
-#: ../pitivi/ui/mainwindow.py:245
+#: ../pitivi/ui/mainwindow.py:262
 msgid "Start Playback"
 msgstr "再生を開始します"
 
-#: ../pitivi/ui/mainwindow.py:246
+#: ../pitivi/ui/mainwindow.py:263
 msgid "Stop Playback"
 msgstr "再生を停止します"
 
-#: ../pitivi/ui/mainwindow.py:247
+#: ../pitivi/ui/mainwindow.py:264
 msgid "Loop over selected area"
 msgstr "選択した領域を繰り返し再生します"
 
-#: ../pitivi/ui/mainwindow.py:252
+#: ../pitivi/ui/mainwindow.py:269
 msgid "Create a new project"
 msgstr "新しいプロジェクトを作成します"
 
-#: ../pitivi/ui/mainwindow.py:254
+#: ../pitivi/ui/mainwindow.py:270
+msgid "_Open..."
+msgstr "開く(_O)..."
+
+#: ../pitivi/ui/mainwindow.py:271
 msgid "Open an existing project"
 msgstr "既存のプロジェクトを開きます"
 
-#: ../pitivi/ui/mainwindow.py:256 ../pitivi/ui/mainwindow.py:258
+#: ../pitivi/ui/mainwindow.py:273 ../pitivi/ui/mainwindow.py:275
 msgid "Save the current project"
 msgstr "現在のプロジェクトを保存します"
 
-#: ../pitivi/ui/mainwindow.py:260
+#: ../pitivi/ui/mainwindow.py:274
+msgid "Save _As..."
+msgstr "名前をつけて保存(_A)..."
+
+#: ../pitivi/ui/mainwindow.py:277
 msgid "Reload the current project"
 msgstr "現在のプロジェクトの再読み込み"
 
-#: ../pitivi/ui/mainwindow.py:261 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:278 ../pitivi/ui/projectsettings.glade.h:14
 msgid "Project Settings"
 msgstr "プロジェクトの設定"
 
-#: ../pitivi/ui/mainwindow.py:262
+#: ../pitivi/ui/mainwindow.py:279
 msgid "Edit the project settings"
 msgstr "プロジェクトの設定を編集します"
 
-#: ../pitivi/ui/mainwindow.py:263
+#: ../pitivi/ui/mainwindow.py:280
 msgid "_Render project"
 msgstr "プロジェクトのレンダリング(_R)"
 
-#: ../pitivi/ui/mainwindow.py:266
+#: ../pitivi/ui/mainwindow.py:281
+msgid "Render project..."
+msgstr "プロジェクトをレンダリングします..."
+
+#: ../pitivi/ui/mainwindow.py:283
 msgid "_Undo"
 msgstr "元に戻す(_U)"
 
-#: ../pitivi/ui/mainwindow.py:267
+#: ../pitivi/ui/mainwindow.py:284
 msgid "Undo the last operation"
 msgstr "直前の操作を取り消します"
 
-#: ../pitivi/ui/mainwindow.py:269
+#: ../pitivi/ui/mainwindow.py:286
 msgid "_Redo"
 msgstr "やり直す(_R)"
 
-#: ../pitivi/ui/mainwindow.py:270
+#: ../pitivi/ui/mainwindow.py:287
 msgid "Redo the last operation that was undone"
 msgstr "取り消した操作をやり直します"
 
-#: ../pitivi/ui/mainwindow.py:272
+#: ../pitivi/ui/mainwindow.py:289
 msgid "_Plugins..."
 msgstr "プラグイン(_P)..."
 
-#: ../pitivi/ui/mainwindow.py:273
+#: ../pitivi/ui/mainwindow.py:290
 msgid "Manage plugins"
 msgstr "プラグインの管理"
 
-#: ../pitivi/ui/mainwindow.py:274
+#: ../pitivi/ui/mainwindow.py:291
 msgid "_Preferences"
 msgstr "設定(_P)"
 
-#: ../pitivi/ui/mainwindow.py:277
+#: ../pitivi/ui/mainwindow.py:294
 msgid "Import from _Webcam..."
 msgstr "Web カメラから取り込み(_W)..."
 
-#: ../pitivi/ui/mainwindow.py:278
+#: ../pitivi/ui/mainwindow.py:295
 msgid "Import Camera stream"
 msgstr "カメラからストリームを取り込みます"
 
-#: ../pitivi/ui/mainwindow.py:280
+#: ../pitivi/ui/mainwindow.py:297
 msgid "_Make screencast..."
 msgstr "スクリーンキャストを作成(_M)..."
 
-#: ../pitivi/ui/mainwindow.py:281
+#: ../pitivi/ui/mainwindow.py:298
 msgid "Capture the desktop"
 msgstr "デスクトップをキャプチャします"
 
-#: ../pitivi/ui/mainwindow.py:283
+#: ../pitivi/ui/mainwindow.py:300
 msgid "_Capture Network Stream..."
 msgstr "ネットワークストリームをキャプチャ(_C)..."
 
-#: ../pitivi/ui/mainwindow.py:284
+#: ../pitivi/ui/mainwindow.py:301
 msgid "Capture Network Stream"
 msgstr "ネットワークからストリームをキャプチャします"
 
-#: ../pitivi/ui/mainwindow.py:287
+#: ../pitivi/ui/mainwindow.py:304
 #, python-format
 msgid "Information about %s"
 msgstr "%s について"
 
-#: ../pitivi/ui/mainwindow.py:288
+#: ../pitivi/ui/mainwindow.py:305
+msgid "User manual"
+msgstr "利用者マニュアル"
+
+#: ../pitivi/ui/mainwindow.py:307
 msgid "_File"
 msgstr "ファイル(_F)"
 
-#: ../pitivi/ui/mainwindow.py:289
+#: ../pitivi/ui/mainwindow.py:308
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: ../pitivi/ui/mainwindow.py:290
+#: ../pitivi/ui/mainwindow.py:309
 msgid "_View"
 msgstr "表示(_V)"
 
-#: ../pitivi/ui/mainwindow.py:291
+#: ../pitivi/ui/mainwindow.py:310
 msgid "_Project"
 msgstr "プロジェクト(_P)"
 
-#: ../pitivi/ui/mainwindow.py:292
+#: ../pitivi/ui/mainwindow.py:311
 msgid "_Timeline"
 msgstr "タイムライン(_T)"
 
-#: ../pitivi/ui/mainwindow.py:293
+#: ../pitivi/ui/mainwindow.py:312
 msgid "Previe_w"
 msgstr "プレビュー(_W)"
 
-#: ../pitivi/ui/mainwindow.py:296
+#: ../pitivi/ui/mainwindow.py:315
 msgid "Loop"
 msgstr "ループ再生"
 
-#: ../pitivi/ui/mainwindow.py:298
+#: ../pitivi/ui/mainwindow.py:317
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: ../pitivi/ui/mainwindow.py:303
+#: ../pitivi/ui/mainwindow.py:322
 msgid "View the main window on the whole screen"
 msgstr "メインウィンドウを全画面表示します"
 
-#: ../pitivi/ui/mainwindow.py:307
+#: ../pitivi/ui/mainwindow.py:326
 msgid "Main Toolbar"
 msgstr "メインツールバー"
 
-#: ../pitivi/ui/mainwindow.py:310
+#: ../pitivi/ui/mainwindow.py:329
 msgid "Timeline Toolbar"
 msgstr "タイムラインツールバー"
 
-#: ../pitivi/ui/mainwindow.py:404
+#: ../pitivi/ui/mainwindow.py:337 ../pitivi/ui/viewer.py:538
+msgid "Undock Viewer"
+msgstr "ビューアを本体から切り離す"
+
+#: ../pitivi/ui/mainwindow.py:338
+msgid "Put the viewer in a separate window"
+msgstr "ビューアを本体と別のウィンドウに切り離します"
+
+#: ../pitivi/ui/mainwindow.py:431
 msgid "Media Library"
-msgstr "メディアライブラリ"
+msgstr "メディア・ライブラリ"
 
-#: ../pitivi/ui/mainwindow.py:543
-msgid "Open File..."
-msgstr "ファイルを開く..."
+#: ../pitivi/ui/mainwindow.py:436
+msgid "Effect Library"
+msgstr "効果ライブラリ"
 
-#: ../pitivi/ui/mainwindow.py:559
-msgid "All Supported Formats"
-msgstr "サポートされている全ての形式"
+#: ../pitivi/ui/mainwindow.py:455
+msgid "Effects configurations"
+msgstr "効果の構成"
 
-#: ../pitivi/ui/mainwindow.py:629
+#: ../pitivi/ui/mainwindow.py:665
 msgid "Contributors:"
 msgstr "貢献者:"
 
-#: ../pitivi/ui/mainwindow.py:641
+#: ../pitivi/ui/mainwindow.py:677
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -938,62 +1059,70 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "詳細は http://www.gnu.org/copyleft/lesser.html を参照してください"
 
-#: ../pitivi/ui/mainwindow.py:760
+#: ../pitivi/ui/mainwindow.py:685
+msgid "Open File..."
+msgstr "ファイルを開く..."
+
+#: ../pitivi/ui/mainwindow.py:701
+msgid "All Supported Formats"
+msgstr "サポートされているすべての形式"
+
+#: ../pitivi/ui/mainwindow.py:833
 msgid "Close without saving"
 msgstr "保存せずに閉じる"
 
-#: ../pitivi/ui/mainwindow.py:773
+#: ../pitivi/ui/mainwindow.py:846
 msgid "Save changes to the current project before closing?"
-msgstr "終了する前に、現在のプロジェクトに変更点を保存しますか？"
+msgstr "終了する前に、現在のプロジェクトに変更点を保存しますか?"
 
-#: ../pitivi/ui/mainwindow.py:780
+#: ../pitivi/ui/mainwindow.py:853
 msgid "If you don't save some of your changes will be lost"
 msgstr "保存しなかった場合、変更点は失われます"
 
-#: ../pitivi/ui/mainwindow.py:833
+#: ../pitivi/ui/mainwindow.py:906
 msgid "Do you want to reload current project?"
 msgstr "現在のプロジェクトを再読み込みしますか?"
 
-#: ../pitivi/ui/mainwindow.py:838
+#: ../pitivi/ui/mainwindow.py:911
 msgid "Revert to saved project"
 msgstr "保存したプロジェクトの状態に戻します"
 
-#: ../pitivi/ui/mainwindow.py:841
+#: ../pitivi/ui/mainwindow.py:914
 msgid "All unsaved changes will be lost."
 msgstr "保存していないすべての変更点は失われます。"
 
-#: ../pitivi/ui/mainwindow.py:857
+#: ../pitivi/ui/mainwindow.py:930
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi はファイル \"%s\" を読み込めません"
+msgid "Unable to load project \"%s\""
+msgstr "プロジェクト \"%s\" を読み込めません"
 
-#: ../pitivi/ui/mainwindow.py:860
+#: ../pitivi/ui/mainwindow.py:932
 msgid "Error Loading File"
 msgstr "ファイル読み込みエラー"
 
-#: ../pitivi/ui/mainwindow.py:867
+#: ../pitivi/ui/mainwindow.py:939
 msgid "Locate missing file..."
 msgstr "不明なファイルの場所..."
 
-#: ../pitivi/ui/mainwindow.py:876
+#: ../pitivi/ui/mainwindow.py:948
 msgid "The following file has moved, please tell PiTiVi where to find it."
 msgstr ""
 "以下のファイルは移動されています。ファイルのある場所を PiTiVi に指示してくだ"
 "さい。"
 
-#: ../pitivi/ui/mainwindow.py:878
+#: ../pitivi/ui/mainwindow.py:950
 msgid "Duration:"
 msgstr "長さ:"
 
-#: ../pitivi/ui/mainwindow.py:1022
+#: ../pitivi/ui/mainwindow.py:1094
 msgid "Save As..."
 msgstr "名前をつけて保存..."
 
-#: ../pitivi/ui/mainwindow.py:1030
+#: ../pitivi/ui/mainwindow.py:1102
 msgid "Untitled.xptv"
 msgstr "Untitled.xptv"
 
-#: ../pitivi/ui/mainwindow.py:1041 ../pitivi/ui/mainwindow.py:1054
+#: ../pitivi/ui/mainwindow.py:1113 ../pitivi/ui/mainwindow.py:1126
 msgid "Detect Automatically"
 msgstr "自動検出"
 
@@ -1070,10 +1199,6 @@ msgstr "全カテゴリ"
 msgid "Plugin manager"
 msgstr "プラグインマネージャ"
 
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:3
-msgid "Search:"
-msgstr "検索:"
-
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:4
 msgid "Show:"
 msgstr "表示:"
@@ -1113,7 +1238,7 @@ msgstr "%s を削除できません"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:325
 msgid "Update the existing plugin?"
-msgstr "既存のプラグインを更新しますか？"
+msgstr "既存のプラグインを更新しますか?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:328
 #, python-format
@@ -1163,52 +1288,180 @@ msgstr "設定項目のなかには、PiTiVi を再起動するまで反映さ�
 msgid "Reset"
 msgstr "リセット"
 
-#: ../pitivi/ui/previewer.py:57 ../pitivi/ui/previewer.py:85
-#: ../pitivi/ui/previewer.py:96 ../pitivi/ui/trackobject.py:48
+#: ../pitivi/ui/previewer.py:55 ../pitivi/ui/previewer.py:83
+#: ../pitivi/ui/previewer.py:94 ../pitivi/ui/trackobject.py:48
 #: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
 #: ../pitivi/ui/trackobject.py:81
 msgid "Appearance"
 msgstr "外観"
 
-#: ../pitivi/ui/previewer.py:58
+#: ../pitivi/ui/previewer.py:56
 msgid "Thumbnail Gap (pixels)"
 msgstr "サムネイルの間隔 (ピクセル)"
 
-#: ../pitivi/ui/previewer.py:60
+#: ../pitivi/ui/previewer.py:58
 msgid "The gap between thumbnails"
 msgstr "サムネイル同士の間隔です"
 
-#: ../pitivi/ui/previewer.py:86
+#: ../pitivi/ui/previewer.py:84
 msgid "Show Thumbnails (Video)"
 msgstr "サムネイルを表示 (映像)"
 
-#: ../pitivi/ui/previewer.py:87
+#: ../pitivi/ui/previewer.py:85
 msgid "Show Thumbnails on Video Clips"
 msgstr "映像クリップ上にサムネイルを表示します"
 
-#: ../pitivi/ui/previewer.py:97
+#: ../pitivi/ui/previewer.py:95
 msgid "Show Waveforms (Audio)"
 msgstr "波形を表示 (音声)"
 
-#: ../pitivi/ui/previewer.py:98
+#: ../pitivi/ui/previewer.py:96
 msgid "Show Waveforms on Audio Clips"
 msgstr "音声クリップ上に波形を表示します"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
-msgid "A short description of your project."
-msgstr "プロジェクトの簡単な説明文です。"
+msgid "25 FPS"
+msgstr "25 FPS"
 
 #: ../pitivi/ui/projectsettings.glade.h:2
-msgid "Description:"
-msgstr "説明:"
+msgid "<b>Aspect Ratio</b>"
+msgstr "<b>アスペクト比</b>"
 
 #: ../pitivi/ui/projectsettings.glade.h:3
-msgid "Name:"
-msgstr "名前:"
+msgid "<b>Format</b>"
+msgstr "<b>形式</b>"
+
+#: ../pitivi/ui/projectsettings.glade.h:4
+msgid "<b>Frame Rate</b>"
+msgstr "<b>フレームレート</b>"
 
 #: ../pitivi/ui/projectsettings.glade.h:5
-msgid "The name of your project."
-msgstr "プロジェクトの名前です。"
+msgid "<b>Preset</b>"
+msgstr "<b>プリセット</b>"
+
+#: ../pitivi/ui/projectsettings.glade.h:6
+msgid "<b>Size (Pixels)</b>"
+msgstr "<b>大きさ (ピクセル単位)</b>"
+
+#: ../pitivi/ui/projectsettings.glade.h:8
+msgid "Author:"
+msgstr "作者:"
+
+#: ../pitivi/ui/projectsettings.glade.h:9
+msgid "Channels:"
+msgstr "チャンネル:"
+
+#: ../pitivi/ui/projectsettings.glade.h:10
+msgid "Display Aspect Ratio"
+msgstr "画面アスペクト比"
+
+#: ../pitivi/ui/projectsettings.glade.h:11
+msgid "Info"
+msgstr "情報"
+
+#: ../pitivi/ui/projectsettings.glade.h:13
+msgid "Pixel Aspect Ratio"
+msgstr "ピクセルアスペクト比"
+
+#: ../pitivi/ui/projectsettings.glade.h:15
+msgid "Project title:"
+msgstr "プロジェクト名:"
+
+#: ../pitivi/ui/projectsettings.glade.h:16
+msgid "Sample depth:"
+msgstr "量子化ビット:"
+
+#: ../pitivi/ui/projectsettings.glade.h:17
+msgid "Sample rate:"
+msgstr "サンプルレート:"
+
+#: ../pitivi/ui/projectsettings.glade.h:18 ../pitivi/ui/projectsettings.py:62
+msgid "Standard (4:3)"
+msgstr "標準 (4:3)"
+
+#: ../pitivi/ui/projectsettings.glade.h:19
+msgid "Standard PAL"
+msgstr "標準 PAL"
+
+#: ../pitivi/ui/projectsettings.glade.h:21
+msgid "Year:"
+msgstr "製作年:"
+
+#: ../pitivi/ui/projectsettings.glade.h:22
+msgid "x"
+msgstr "x"
+
+#: ../pitivi/ui/projectsettings.py:50
+msgid "Square"
+msgstr "正方形"
+
+#: ../pitivi/ui/projectsettings.py:51
+msgid "480p"
+msgstr "480p"
+
+#: ../pitivi/ui/projectsettings.py:52
+msgid "480i"
+msgstr "480i"
+
+#: ../pitivi/ui/projectsettings.py:53
+msgid "480p Wide"
+msgstr "480p ワイド"
+
+#: ../pitivi/ui/projectsettings.py:54
+msgid "480i Wide"
+msgstr "480i ワイド"
+
+#: ../pitivi/ui/projectsettings.py:55
+msgid "576p"
+msgstr "576p"
+
+#: ../pitivi/ui/projectsettings.py:56
+msgid "576i"
+msgstr "576i"
+
+#: ../pitivi/ui/projectsettings.py:57
+msgid "576p Wide"
+msgstr "576p ワイド"
+
+#: ../pitivi/ui/projectsettings.py:58
+msgid "576i Wide"
+msgstr "576i ワイド"
+
+#: ../pitivi/ui/projectsettings.py:63
+msgid "DV (15:11)"
+msgstr "DV (15:11)"
+
+#: ../pitivi/ui/projectsettings.py:64
+msgid "DV Widescreen (16:9)"
+msgstr "DV ワイドスクリーン (16:9)"
+
+#: ../pitivi/ui/projectsettings.py:65
+msgid "Cinema (1.37)"
+msgstr "シネマ (1.37)"
+
+#: ../pitivi/ui/projectsettings.py:66
+msgid "Cinema (1.66)"
+msgstr "シネマ (1.66)"
+
+#: ../pitivi/ui/projectsettings.py:67
+msgid "Cinema (1.85)"
+msgstr "シネマ (1.85)"
+
+#: ../pitivi/ui/projectsettings.py:68
+msgid "Anamorphic (2.35)"
+msgstr "アナモフィック (2.35)"
+
+#: ../pitivi/ui/projectsettings.py:69
+msgid "Anamorphic (2.39)"
+msgstr "アナモフィック (2.39)"
+
+#: ../pitivi/ui/projectsettings.py:70
+msgid "Anamorphic (2.4)"
+msgstr "アナモフィック (2.4)"
+
+#: ../pitivi/ui/projectsettings.py:306 ../pitivi/ui/projectsettings.py:323
+msgid "New Preset"
+msgstr "新規プリセット"
 
 #: ../pitivi/ui/propertyeditor.py:54
 msgid "No Objects Selected"
@@ -1226,150 +1479,134 @@ msgstr "デスクトップのスクリーンキャスト"
 msgid "Start Istanbul"
 msgstr "Istanbul を起動"
 
-#: ../pitivi/ui/sourcelist.py:130
+#: ../pitivi/ui/sourcelist.py:136
 msgid "Import clips..."
 msgstr "クリップの取り込み..."
 
-#: ../pitivi/ui/sourcelist.py:135
+#: ../pitivi/ui/sourcelist.py:141
 msgid "Remove Clip"
 msgstr "クリップを削除"
 
-#: ../pitivi/ui/sourcelist.py:139
+#: ../pitivi/ui/sourcelist.py:145
 msgid "Play Clip"
 msgstr "クリップを再生"
 
-#: ../pitivi/ui/sourcelist.py:166
+#: ../pitivi/ui/sourcelist.py:190
 msgid "Icon"
 msgstr "アイコン"
 
-#: ../pitivi/ui/sourcelist.py:175
+#: ../pitivi/ui/sourcelist.py:199
 msgid "Information"
 msgstr "情報"
 
-#: ../pitivi/ui/sourcelist.py:186
+#: ../pitivi/ui/sourcelist.py:210
 msgid "Duration"
 msgstr "長さ"
 
-#: ../pitivi/ui/sourcelist.py:217
+#: ../pitivi/ui/sourcelist.py:238
 msgid ""
-"<span size='x-large'>Import your clips by dragging them here or by using the "
-"buttons above.</span>"
+"<span>Import your clips by dragging them here or by using the buttons above."
+"</span>"
 msgstr ""
-"<span size='x-large'>クリップをここにドラッグするか、上のボタンを使ってクリッ"
-"プを取り込みます。</span>"
+"<span>クリップをここにドラッグするか、上のボタンを使ってクリップを取り込みま"
+"す。</span>"
 
-#: ../pitivi/ui/sourcelist.py:272
+#: ../pitivi/ui/sourcelist.py:254
+msgid "Hide"
+msgstr "隠す"
+
+#: ../pitivi/ui/sourcelist.py:306
 msgid "_Import clips..."
 msgstr "クリップの取り込み(_I)..."
 
-#: ../pitivi/ui/sourcelist.py:273
+#: ../pitivi/ui/sourcelist.py:307
 msgid "Import clips to use"
 msgstr "使用するクリップを取り込みます"
 
-#: ../pitivi/ui/sourcelist.py:275
+#: ../pitivi/ui/sourcelist.py:309
 msgid "Import _folder of clips..."
 msgstr "フォルダにあるクリップの取り込み(_F)..."
 
-#: ../pitivi/ui/sourcelist.py:276
+#: ../pitivi/ui/sourcelist.py:310
 msgid "Import folder of clips to use"
 msgstr "使用するクリップをフォルダごとインポートします"
 
-#: ../pitivi/ui/sourcelist.py:282
+#: ../pitivi/ui/sourcelist.py:316
 msgid "_Remove from project"
 msgstr "プロジェクトから削除(_R)"
 
-#: ../pitivi/ui/sourcelist.py:285
+#: ../pitivi/ui/sourcelist.py:319
 msgid "Insert at _end of timeline"
 msgstr "タイムラインの末尾に挿入(_E)"
 
-#: ../pitivi/ui/sourcelist.py:451
+#: ../pitivi/ui/sourcelist.py:339
+msgid "Show Clips as a List"
+msgstr "クリップを一覧表示"
+
+#: ../pitivi/ui/sourcelist.py:341
+msgid "Show Clips as Icons"
+msgstr "クリップをアイコン表示"
+
+#: ../pitivi/ui/sourcelist.py:507
 msgid "Import a folder"
 msgstr "フォルダの取り込み"
 
-#: ../pitivi/ui/sourcelist.py:454
+#: ../pitivi/ui/sourcelist.py:510
 msgid "Import a clip"
 msgstr "クリップの取り込み"
 
-#: ../pitivi/ui/sourcelist.py:455
+#: ../pitivi/ui/sourcelist.py:511
 msgid "Close after importing files"
 msgstr "ファイルを取り込んだ後に閉じる"
 
-#: ../pitivi/ui/sourcelist.py:967
-msgid "Importing clips..."
-msgstr "クリップを取り込んでいます..."
+#: ../pitivi/ui/sourcelist.py:547
+#, python-format
+msgid "Importing clip %(current_clip)d of %(total)d"
+msgstr "%(total)d 個中 %(current_clip)d 個目のクリップを取り込み中"
 
-#: ../pitivi/ui/sourcelist.py:968
-msgid "Error(s) occurred while importing"
-msgstr "取り込み中にエラーが発生しました"
+#: ../pitivi/ui/sourcelist.py:648
+msgid "Errors occured while importing."
+msgstr "取り込み中にエラーが発生しました。"
 
-#: ../pitivi/ui/sourcelist.py:969
-msgid "An error occurred while importing"
-msgstr "取り込み中にエラーが発生しました"
+#: ../pitivi/ui/sourcelist.py:649
+msgid "View errors"
+msgstr "エラーを見る"
 
-#: ../pitivi/ui/sourcelist.py:1058
+#: ../pitivi/ui/sourcelist.py:651
+msgid "An error occured while importing."
+msgstr "取り込み中にエラーが発生しました。"
+
+#: ../pitivi/ui/sourcelist.py:652
+msgid "View error"
+msgstr "エラーを見る"
+
+#: ../pitivi/ui/sourcelist.py:739
 msgid "Error while analyzing files"
 msgstr "ファイルの解析中にエラーが発生しました"
 
-#: ../pitivi/ui/sourcelist.py:1059
+#: ../pitivi/ui/sourcelist.py:740
 msgid "The following files can not be used with PiTiVi."
 msgstr "以下のファイルは PiTiVi で扱えません。"
 
-#: ../pitivi/ui/sourcelist.py:1061
+#: ../pitivi/ui/sourcelist.py:742
 msgid "Error while analyzing a file"
 msgstr "ファイルの解析中にエラーが発生しました"
 
-#: ../pitivi/ui/sourcelist.py:1062
+#: ../pitivi/ui/sourcelist.py:743
 msgid "The following file can not be used with PiTiVi."
 msgstr "以下のファイルは PiTiVi で扱えません。"
 
-#. tooltip text for toolbar
-#: ../pitivi/ui/timeline.py:46
-msgid "Delete Selected"
-msgstr "選択したものを削除"
+#: ../pitivi/ui/startupwizard.glade.h:1
+msgid "Browse projects..."
+msgstr "プロジェクトファイルを閲覧..."
 
-#: ../pitivi/ui/timeline.py:47
-msgid "Split clip at playhead position"
-msgstr "再生位置でクリップを分割します"
+#: ../pitivi/ui/startupwizard.glade.h:2
+msgid "Double-click a project below to load it:"
+msgstr "以下のプロジェクトを読み込む場合はダブルクリックします:"
 
-#: ../pitivi/ui/timeline.py:48
-msgid "Zoom In"
-msgstr "ズームイン"
-
-#: ../pitivi/ui/timeline.py:49
-msgid "Zoom Out"
-msgstr "ズームアウト"
-
-#: ../pitivi/ui/timeline.py:50
-msgid "Break links between clips"
-msgstr "クリップ同士のリンクを解除します"
-
-#: ../pitivi/ui/timeline.py:51
-msgid "Link together arbitrary clips"
-msgstr "任意のクリップ同士をリンクします"
-
-#: ../pitivi/ui/timeline.py:52
-msgid "Ungroup clips"
-msgstr "クリップのグループ化を解除します"
-
-#: ../pitivi/ui/timeline.py:53
-msgid "Group clips"
-msgstr "クリップをグループ化します"
-
-#: ../pitivi/ui/timeline.py:123
-msgid "One or more GStreamer errors has occured!"
-msgstr "GStreamer でエラーが発生しました!"
-
-#: ../pitivi/ui/timeline.py:157
-msgid "Error List"
-msgstr "エラー一覧"
-
-#: ../pitivi/ui/timeline.py:158
-msgid "The following errors have been reported:"
-msgstr "以下のエラーが報告されています:"
-
-#: ../pitivi/ui/timeline.py:224
-msgid "Zoom Timeline"
-msgstr "タイムラインの表示を拡大・縮小します"
+#: ../pitivi/ui/startupwizard.glade.h:3
+msgid "Welcome"
+msgstr "ようこそ"
 
 #: ../pitivi/ui/timelinecanvas.py:51
 msgid "Behavior"
@@ -1381,11 +1618,96 @@ msgstr "スナップする距離 (ピクセル)"
 
 #: ../pitivi/ui/timelinecanvas.py:53
 msgid "Threshold distance (in pixels) used for all snapping operations"
-msgstr "全てのスナップ操作での、スナップする距離の閾値 (ピクセル単位) です"
+msgstr "すべてのスナップ操作での、スナップする距離の閾値 (ピクセル単位) です"
+
+#: ../pitivi/ui/timelinecontrols.py:13
+msgid "<b>Audio:</b>"
+msgstr "<b>音声:</b>"
+
+#: ../pitivi/ui/timelinecontrols.py:15
+msgid "<b>Video:</b>"
+msgstr "<b>映像:</b>"
 
 #: ../pitivi/ui/timelinecontrols.py:17
 msgid "<b>Text:</b>"
 msgstr "<b>テキスト:</b>"
+
+#. tooltip text for toolbar
+#: ../pitivi/ui/timeline.py:54
+msgid "Delete Selected"
+msgstr "選択したものを削除"
+
+#: ../pitivi/ui/timeline.py:55
+msgid "Split clip at playhead position"
+msgstr "再生位置でクリップを分割します"
+
+#: ../pitivi/ui/timeline.py:56 ../pitivi/ui/timeline.py:331
+msgid "Add a keyframe"
+msgstr "キーフレームを追加"
+
+#: ../pitivi/ui/timeline.py:57
+msgid "Move to the previous keyframe"
+msgstr "前のキーフレームに移動します"
+
+#: ../pitivi/ui/timeline.py:58
+msgid "Move to the next keyframe"
+msgstr "次のキーフレームに移動します"
+
+#: ../pitivi/ui/timeline.py:59
+msgid "Zoom In"
+msgstr "ズームイン"
+
+#: ../pitivi/ui/timeline.py:60
+msgid "Zoom Out"
+msgstr "ズームアウト"
+
+#: ../pitivi/ui/timeline.py:61
+msgid "Zoom Fit"
+msgstr "画面に合わせる"
+
+#: ../pitivi/ui/timeline.py:62
+msgid "Break links between clips"
+msgstr "クリップ同士のリンクを解除します"
+
+#: ../pitivi/ui/timeline.py:63
+msgid "Link together arbitrary clips"
+msgstr "任意のクリップ同士をリンクします"
+
+#: ../pitivi/ui/timeline.py:64
+msgid "Ungroup clips"
+msgstr "クリップのグループ化を解除します"
+
+#: ../pitivi/ui/timeline.py:65
+msgid "Group clips"
+msgstr "クリップをグループ化します"
+
+#: ../pitivi/ui/timeline.py:145
+msgid "One or more GStreamer errors has occured!"
+msgstr "GStreamer でエラーが発生しました!"
+
+#: ../pitivi/ui/timeline.py:179
+msgid "Error List"
+msgstr "エラー一覧"
+
+#: ../pitivi/ui/timeline.py:180
+msgid "The following errors have been reported:"
+msgstr "以下のエラーが報告されています:"
+
+#: ../pitivi/ui/timeline.py:237
+msgid "Zoom"
+msgstr "ズーム"
+
+#: ../pitivi/ui/timeline.py:252
+msgid "Zoom Timeline"
+msgstr "タイムラインの表示を拡大・縮小します"
+
+#: ../pitivi/ui/timeline.py:333
+msgid "_Previous keyframe"
+msgstr "前のキーフレーム(_P)"
+
+#: ../pitivi/ui/timeline.py:335
+msgid "_Next keyframe"
+msgstr "次のキーフレーム(_N)"
 
 #: ../pitivi/ui/trackobject.py:49
 msgid "Clip Background (Video)"
@@ -1418,6 +1740,246 @@ msgstr "クリップのフォント"
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
 msgstr "クリップのタイトルで使われるフォントです。"
+
+#: ../pitivi/ui/viewer.py:301
+msgid "Go to the beginning of the timeline"
+msgstr "タイムラインの冒頭に戻る"
+
+#: ../pitivi/ui/viewer.py:307
+msgid "Go back one second"
+msgstr "1 秒戻る"
+
+#: ../pitivi/ui/viewer.py:318
+msgid "Go forward one second"
+msgstr "1 秒進む"
+
+#: ../pitivi/ui/viewer.py:324
+msgid "Go to the end of the timeline"
+msgstr "タイムラインの末尾に進む"
+
+#: ../pitivi/ui/viewer.py:513
+msgid "Dock Viewer"
+msgstr "ビューアを本体に組み込む"
+
+#: ../pitivi/ui/viewer.py:644
+msgid "Play"
+msgstr "再生"
+
+#: ../pitivi/ui/viewer.py:652
+msgid "Pause"
+msgstr "一時停止"
+
+#: ../pitivi/utils.py:75
+#, python-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d 時間"
+
+#: ../pitivi/utils.py:78
+#, python-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d 分"
+
+#: ../pitivi/utils.py:81
+#, python-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d 秒"
+
+#. Translators: "non local" means the project is not stored
+#. on a local filesystem
+#: ../pitivi/utils.py:249
+#, python-format
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s はローカルプロジェクト以外を処理できません"
+
+#~ msgid ""
+#~ "\n"
+#~ "      %prog [PROJECT_FILE]\n"
+#~ "      %prog -i [-a] [MEDIA_FILE]..."
+#~ msgstr ""
+#~ "\n"
+#~ "      %prog [プロジェクトファイル]\n"
+#~ "      %prog -i [-a] [メディアファイル]..."
+
+#~ msgid ""
+#~ "Starts the video editor, optionally loading PROJECT_FILE. If\n"
+#~ "no project is given, %prog creates a new project.\n"
+#~ "Alternatively, when -i is specified, arguments are treated as clips to "
+#~ "be\n"
+#~ "imported into the project. If -a is specified, these clips will also be "
+#~ "added to\n"
+#~ "the end of the project timeline."
+#~ msgstr ""
+#~ "動画エディタを起動し、オプションを指定するとプロジェクトファイルを読み込み"
+#~ "ます。\n"
+#~ "プロジェクトを指定しなかった場合は、%prog は新規プロジェクトを作成しま"
+#~ "す。\n"
+#~ "あるいは -i を指定した場合は、引数で指定したものをクリップとして\n"
+#~ "プロジェクトに取り込みます。-a を指定した場合は、取り込んだクリップを\n"
+#~ "プロジェクトのタイムライン末尾に追加します。"
+
+#~ msgid "Run pitivi with no gui"
+#~ msgstr "GUI なしで PiTiVi を起動します"
+
+#~ msgid "<b>Author:</b>"
+#~ msgstr "<b>作者:</b>"
+
+#~ msgid "<b>Description:</b>"
+#~ msgstr "<b>説明:</b>"
+
+#~ msgid "<b>Plugin Name</b>"
+#~ msgstr "<b>プラグイン名</b>"
+
+#~ msgid "<b>Nothing yet</b>"
+#~ msgstr "<b>なし</b>"
+
+#~ msgid "Choose File"
+#~ msgstr "ファイルを選択"
+
+#~ msgid "Modify"
+#~ msgstr "変更"
+
+#~ msgid "Output file:"
+#~ msgstr "出力ファイル:"
+
+#~ msgid "Please choose an output file"
+#~ msgstr "出力ファイルを選択してください"
+
+#~ msgid "Choose file to render to"
+#~ msgstr "レンダリングの出力ファイルの選択"
+
+#~ msgid "About %s left"
+#~ msgstr "残り時間: 約 %s "
+
+#~ msgid "Rendering Complete"
+#~ msgstr "レンダリングが完了しました"
+
+#~ msgid ""
+#~ "12 fps\n"
+#~ "23.97 fps\n"
+#~ "24 fps\n"
+#~ "25 fps\n"
+#~ "29.97 fps\n"
+#~ "30 fps\n"
+#~ "60 fps"
+#~ msgstr ""
+#~ "12 fps\n"
+#~ "23.97 fps\n"
+#~ "24 fps\n"
+#~ "25 fps\n"
+#~ "29.97 fps\n"
+#~ "30 fps\n"
+#~ "60 fps"
+
+#~ msgid ""
+#~ "8 bit\n"
+#~ "16 bit\n"
+#~ "24 bit\n"
+#~ "32 bit"
+#~ msgstr ""
+#~ "8 bit\n"
+#~ "16 bit\n"
+#~ "24 bit\n"
+#~ "32 bit"
+
+#~ msgid ""
+#~ "8000 Hz\n"
+#~ "11025 Hz\n"
+#~ "22050 Hz\n"
+#~ "44100 Hz\n"
+#~ "48000 Hz\n"
+#~ "96000 Hz"
+#~ msgstr ""
+#~ "8000 Hz\n"
+#~ "11025 Hz\n"
+#~ "22050 Hz\n"
+#~ "44100 Hz\n"
+#~ "48000 Hz\n"
+#~ "96000 Hz"
+
+#~ msgid "<b>Audio Output</b>"
+#~ msgstr "<b>音声出力</b>"
+
+#~ msgid "<b>Video Output</b>"
+#~ msgstr "<b>映像出力</b>"
+
+#~ msgid ""
+#~ "Mono (1)\n"
+#~ "Stereo (2)"
+#~ msgstr ""
+#~ "モノラル (1)\n"
+#~ "ステレオ (2)"
+
+#~ msgid "Muxer"
+#~ msgstr "マルチプレクサ"
+
+#~ msgid "Rate:"
+#~ msgstr "サンプルレート:"
+
+#~ msgid "Settings"
+#~ msgstr "設定"
+
+#~ msgid "Video Codec"
+#~ msgstr "映像コーデック"
+
+#~ msgid "Video Codec:"
+#~ msgstr "映像コーデック:"
+
+#~ msgid "Width:"
+#~ msgstr "幅:"
+
+#~ msgid "576p (PAL DV/DVD)"
+#~ msgstr "576p (PAL DV/DVD)"
+
+#~ msgid "480p (NTSC DV/DVD)"
+#~ msgstr "480p (NTSC DV/DVD)"
+
+#~ msgid "720p HD"
+#~ msgstr "720p HD"
+
+#~ msgid "1080p full HD"
+#~ msgstr "1080p フル HD"
+
+#~ msgid "QVGA (320x240)"
+#~ msgstr "QVGA (320x240)"
+
+#~ msgid "VGA (640x480)"
+#~ msgstr "VGA (640x480)"
+
+#~ msgid "SVGA (800x600)"
+#~ msgstr "SVGA (800x600)"
+
+#~ msgid "XGA (1024x768)"
+#~ msgstr "XGA (1024x768)"
+
+#~ msgid "Raw Video"
+#~ msgstr "RAW 映像"
+
+#~ msgid "Raw Audio"
+#~ msgstr "RAW 音声"
+
+#~ msgid "Export settings"
+#~ msgstr "出力設定"
+
+#~ msgid "URI:"
+#~ msgstr "URI:"
+
+#~ msgid "A short description of your project."
+#~ msgstr "プロジェクトの簡単な説明文です。"
+
+#~ msgid "Description:"
+#~ msgstr "説明:"
+
+#~ msgid "Name:"
+#~ msgstr "名前:"
+
+#~ msgid "The name of your project."
+#~ msgstr "プロジェクトの名前です。"
+
+#~ msgid "Importing clips..."
+#~ msgstr "クリップを取り込んでいます..."
 
 #~ msgid "Add Clips..."
 #~ msgstr "クリップを追加..."
