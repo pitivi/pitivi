@@ -166,6 +166,11 @@ class TextWidget(gtk.HBox, DynamicWidget):
             return True
         return False
 
+    def set_width_chars(self, width):
+        """Allows setting the width of the text entry widget for compactness."""
+        self.text.set_width_chars(width)
+
+
 class NumericWidget(gtk.HBox, DynamicWidget):
 
     """A gtk.HScale and a gtk.SpinButton which share an adjustment. The
@@ -232,12 +237,13 @@ class NumericWidget(gtk.HBox, DynamicWidget):
 class TimeWidget(TextWidget, DynamicWidget):
     """ A widget that contains a time in nanosconds"""
 
-    regex = re.compile("^([0-9][0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
+    regex = re.compile("^([0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
     __gtype_name__ = 'TimeWidget'
 
     def __init__(self, default=None):
         DynamicWidget.__init__(self, default)
         TextWidget.__init__(self, self.regex)
+        TextWidget.set_width_chars(self, 10)
 
     def getWidgetValue(self):
         timecode = TextWidget.getWidgetValue(self)
