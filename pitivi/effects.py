@@ -60,6 +60,7 @@ class EffectsHandler(object):
     """
     def __init__(self):
         object.__init__(self)
+        self._pixdir = get_pixmap_dir()
         self._audio_categories_effects = ((_("All effects"), ("")),)
         self._video_categories_effects = (
             (_("All effects"), ("")),
@@ -291,16 +292,15 @@ class EffectsHandler(object):
         return effects_categories.extended(self.video_categories).extended(self.audio_categories)
 
     def getEffectIcon(self, effect_name):
-        pixdir = get_pixmap_dir()
         effect_name = effect_name + ".png"
         icon = None
         try:
-            icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, effect_name))
+            icon = gtk.gdk.pixbuf_new_from_file(os.path.join(self._pixdir, effect_name))
         # empty except clause is bad but load_icon raises gio.Error.
         ## Right, *gio*.
         except:
             try:
-                icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "defaultthumbnail.svg"))
+                icon = gtk.gdk.pixbuf_new_from_file(os.path.join(self._pixdir, "defaultthumbnail.svg"))
             except:
                 return None
 
