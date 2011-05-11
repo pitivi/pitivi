@@ -4,29 +4,70 @@
 #
 # Raivis Dejus <orvils@gmail.com>, 2007.
 # Rūdolfs Mazurs <rudolfs.mazurs@gmail.com>, 2010.
+# Rūdofls Mazurs <rudolfs.mazurs@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: lv\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug."
-"cgi?product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-12-09 11:03+0000\n"
-"PO-Revision-Date: 2010-02-15 14:09+0200\n"
-"Last-Translator: \n"
-"Language-Team: American English <kde-i18n-doc@kde.org>\n"
+"cgi?product=pitivi&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2011-03-22 10:35+0000\n"
+"PO-Revision-Date: 2011-03-31 01:48+0300\n"
+"Last-Translator: Rūdofls Mazurs <rudolfs.mazurs@gmail.com>\n"
+"Language-Team: Latvian <lata-l10n@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.0\n"
+"X-Generator: Lokalize 1.1\n"
 "Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
 "2);\n"
 
-#: ../pitivi.desktop.in.in.h:1
-msgid "Create and edit your own movies"
-msgstr "Izveido un rediģē savas filmas"
+#: ../pitivi/application.py:123
+#, python-format
+msgid ""
+"There is already a %s instance, please inform the developers by filing a bug "
+"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr ""
+"Jau ir instance %s. Lūdzu, informējiet izstrādātājus, aizpildot kļūdu "
+"ziņojumuhttp://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi.desktop.in.in.h:2
-msgid "Pitivi Video Editor"
-msgstr "Pitivi video redaktors"
+#: ../pitivi/application.py:451
+msgid ""
+"\n"
+"    %prog [PROJECT_FILE]               # Start the video editor.\n"
+"    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a "
+"project.\n"
+"    %prog PROJECT_FILE -r OUTPUT_FILE  # Render a project.\n"
+"    %prog PROJECT_FILE -p              # Preview a project."
+msgstr ""
+"\n"
+"    %prog [PROJEKTA_FAILS]               # Palaist video redaktoru.\n"
+"    %prog -i [-a] [MEDIJU_FAILS1 ...]    # Palaist redaktoru un izveidot "
+"projektu.\n"
+"    %prog PROJEKTA_FAILS -r IZVADES_FAILS  # Renderēt projektu.\n"
+"    %prog PROJEKTA_FAILS -p              # Priekšskatīt projektu."
+
+#: ../pitivi/application.py:459
+#| msgid "Import each MEDIA_FILE into the project."
+msgid "Import each MEDIA_FILE into a new project."
+msgstr "Ielādēt katru MEDIJU_FAILS projektā."
+
+#: ../pitivi/application.py:462
+#| msgid "Add each MEDIA_FILE to timeline after importing."
+msgid "Add each imported MEDIA_FILE to the timeline."
+msgstr "Pēc importēšanas pievienot katru MEDIJU_FAILS laika skalas beigās."
+
+#: ../pitivi/application.py:465
+#| msgid "Run pitivi in the Python Debugger"
+msgid "Run Pitivi in the Python Debugger."
+msgstr "Palaist Pitivi Python atkļūdotājā"
+
+#: ../pitivi/application.py:468
+msgid "Render the specified project to OUTPUT_FILE with no GUI."
+msgstr "Renderēt norādīto projektu uz IZVADES_FAILS, bez GUI."
+
+#: ../pitivi/application.py:471
+msgid "Preview the specified project file without the full UI."
+msgstr "Priekšskatīt norādīto projekta failu bez pilnas lietotāja saskarnes."
 
 #: ../pitivi/check.py:102
 #, python-format
@@ -60,23 +101,16 @@ msgid ""
 "GStreamer plugin path."
 msgstr ""
 "Pārliecinieties, ka gst-plugins-good spraudņi ir uzinstalēti, un ka tie ir "
-"pieejami "
-"GStreamer spraudņu ceļā."
+"pieejami GStreamer spraudņu ceļā."
 
 #: ../pitivi/check.py:111
-#| msgid "PyGTK doesn't have Cairo support!"
 msgid "PyGTK doesn't have cairo support!"
 msgstr "PyGTK nav cairo atbalsts!"
 
 #: ../pitivi/check.py:112
-#| msgid ""
-#| "Please use a version of the Python bindings for GTK+ built with Cairo "
-#| "support."
 msgid ""
 "Please use a version of the GTK+ Python bindings built with cairo support."
-msgstr ""
-"Lūdzu lietojiet GTK+ Python piesaistes ar iebūvētu cairo"
-"atbalstu."
+msgstr "Lūdzu lietojiet GTK+ Python piesaistes ar iebūvētu cairoatbalstu."
 
 #: ../pitivi/check.py:114
 msgid "Could not initiate the video output plugins"
@@ -103,40 +137,31 @@ msgstr ""
 "saņēmējs (alsasink vai osssink)"
 
 #: ../pitivi/check.py:120
-#| msgid "Could not import the Python bindings for cairo"
 msgid "Could not import the cairo Python bindings"
 msgstr "Neizdevās importēt cairo Python piesaistes"
 
 #: ../pitivi/check.py:121
-#| msgid "Make sure you have the Python bindings for cairo installed"
 msgid "Make sure you have the cairo Python bindings installed"
 msgstr "Pārliecinieties, ka jums ir uzinstalētas cairo Python piesaistes"
 
 #: ../pitivi/check.py:123
-#| msgid "Could not import the Python bindings for cairo"
 msgid "Could not import the libglade Python bindings"
 msgstr "Neizdevās importēt Python piesaistes priekš libglade"
 
 #: ../pitivi/check.py:124
-#| msgid "Make sure you have the Python bindings for cairo installed"
 msgid "Make sure you have the libglade Python bindings installed"
 msgstr "Pārliecinieties, ka jums ir uzinstalētas libglade Python piesaistes"
 
 #: ../pitivi/check.py:126
-#| msgid "Could not import the Python bindings for cairo"
 msgid "Could not import the goocanvas Python bindings"
 msgstr "Neizdevās importēt goocanvas Python piesaistes"
 
 #: ../pitivi/check.py:127
-#| msgid "Make sure you have the Python bindings for cairo installed"
 msgid "Make sure you have the goocanvas Python bindings installed"
 msgstr "Pārliecinieties, ka jums ir uzinstalētas goocanvas Python piesaistes"
 
 #: ../pitivi/check.py:130
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of the GTK+ Python Bindings "
-#| "(currently %s)"
 msgid ""
 "You do not have a recent enough version of the GTK+ Python bindings "
 "(currently %s)"
@@ -144,17 +169,11 @@ msgstr "Jums nav pietiekami jauna GTK+ Python piesaistu versija (šobrīd %s)"
 
 #: ../pitivi/check.py:131
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of the GTK+ Python Bindings "
-#| "(currently %s)"
 msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
 msgstr "Uzinstalējiet GTK+ Python piesaistu versiju lielāku vai vienādu ar %s"
 
 #: ../pitivi/check.py:134
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of the GStreamer Python Bindings "
-#| "(currently %s)"
 msgid ""
 "You do not have a recent enough version of the GStreamer Python bindings "
 "(currently %s)"
@@ -163,9 +182,6 @@ msgstr ""
 
 #: ../pitivi/check.py:135
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of the GStreamer Python Bindings "
-#| "(currently %s)"
 msgid ""
 "Install a version of the GStreamer Python bindings greater or equal to %s"
 msgstr ""
@@ -183,9 +199,6 @@ msgstr "Uzinstalējiet GStreamer versiju lielāku vai vienādu ar %s"
 
 #: ../pitivi/check.py:142
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of the Cairo Python Bindings "
-#| "(currently %s)"
 msgid ""
 "You do not have a recent enough version of the cairo Python bindings "
 "(currently %s)"
@@ -193,9 +206,6 @@ msgstr "Jums nav pietiekami jauna Cairo Python piesaistu versija (šobrīd %s)"
 
 #: ../pitivi/check.py:143
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of the Cairo Python Bindings "
-#| "(currently %s)"
 msgid "Install a version of the cairo Python bindings greater or equal to %s"
 msgstr "Uzinstalējiet Cairo Python piesaistu versiju lielāku vai vienādu ar %s"
 
@@ -209,9 +219,6 @@ msgstr ""
 
 #: ../pitivi/check.py:147
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of the GNonLin GStreamer plugin "
-#| "(currently %s)"
 msgid ""
 "Install a version of the GNonLin GStreamer plugin greater or equal to %s"
 msgstr ""
@@ -233,7 +240,15 @@ msgstr "Neizdevās importēt distutils moduļus"
 msgid "Make sure you have the distutils python module installed"
 msgstr "Pārliecinieties, ka jums ir uzinstalēts distutils python modulis"
 
-#: ../pitivi/discoverer.py:190
+#: ../pitivi.desktop.in.in.h:1
+msgid "Create and edit your own movies"
+msgstr "Izveido un rediģē savas filmas"
+
+#: ../pitivi.desktop.in.in.h:2
+msgid "Pitivi Video Editor"
+msgstr "Pitivi video redaktors"
+
+#: ../pitivi/discoverer.py:228
 #, python-format
 msgid ""
 "Missing plugins:\n"
@@ -243,190 +258,119 @@ msgstr ""
 "%s"
 
 #. woot, nothing decodable
-#: ../pitivi/discoverer.py:209
+#: ../pitivi/discoverer.py:248
 msgid "Can not decode file."
 msgstr "Nevar atkodēt failu."
 
-#: ../pitivi/discoverer.py:210
+#: ../pitivi/discoverer.py:249
 msgid "The given file does not contain audio, video or picture streams."
 msgstr "Dotie faili nesatur audio, video vai attēlu plūsmas."
 
-#: ../pitivi/discoverer.py:230
+#: ../pitivi/discoverer.py:269
 msgid "Could not establish the duration of the file."
 msgstr "Neizdevās noteikt faila ilgumu."
 
-#: ../pitivi/discoverer.py:231
+#: ../pitivi/discoverer.py:270
 msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
 msgstr ""
 "Izskatās, ka klips ir tādā formātā, ko nevar apstrādāt ar brīvpieejas metodi."
 
-#: ../pitivi/discoverer.py:295
-#| msgid "Error while analyzing files"
+#: ../pitivi/discoverer.py:336
 msgid "Timeout while analyzing file."
 msgstr "Iestājās noildze analizējot failu."
 
-#: ../pitivi/discoverer.py:296
+#: ../pitivi/discoverer.py:337
 msgid "Analyzing the file took too long."
 msgstr "Faila analīze aizņēma pārāk daudz laika."
 
-#: ../pitivi/discoverer.py:325
+#: ../pitivi/discoverer.py:366
 msgid "No available source handler."
 msgstr "Nav pieejams avota apdarinātājs."
 
-#: ../pitivi/discoverer.py:326
+#: ../pitivi/discoverer.py:367
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr "Jums nav GStreamer avota elementu, lai apstrādātu protokolu '%s'"
 
-#: ../pitivi/discoverer.py:390
+#: ../pitivi/discoverer.py:432
 msgid "Pipeline didn't want to go to PAUSED."
 msgstr "Konveijers negribēja pāriet uz stāvokli PAUSED."
 
-#: ../pitivi/discoverer.py:413
+#: ../pitivi/discoverer.py:455
 #, python-format
-#| msgid "An internal error occured while analyzing this file : %s"
 msgid "An internal error occurred while analyzing this file: %s"
 msgstr "Faila analizēšanas laikā radusies iekšējā kļūda: %s"
 
-#: ../pitivi/discoverer.py:423
+#: ../pitivi/discoverer.py:465
 msgid "File contains a redirection to another clip."
 msgstr "Fails satur pāradresāciju uz citu klipu."
 
-#: ../pitivi/discoverer.py:424
-#| msgid "PiTiVi does not currently does not handle redirection files."
+#: ../pitivi/discoverer.py:466
 msgid "PiTiVi currently does not handle redirection files."
 msgstr "PiTiVi šobrīd nespēj apstrādāt pārsūtīšanas failus."
 
-#: ../pitivi/application.py:121
-#, python-format
-msgid ""
-"There is already a %s instance, please inform the developers by filing a bug "
-"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-msgstr ""
-"Jau ir instance %s, lūdzu, informējiet izstrādātājus aizpildot kļūdu ziņojumu"
-"http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+#: ../pitivi/discoverer.py:492
+msgid "Pipeline didn't want to go to PLAYING."
+msgstr "Cauruļvds nedribēja pāriet uz stāvokli ATSKAŅO."
 
-#: ../pitivi/application.py:218
-msgid ""
-"\n"
-"      %prog [PROJECT_FILE]\n"
-"      %prog -i [-a] [MEDIA_FILE]..."
-msgstr ""
-"\n"
-"      %prog [PROJEKTA_FAILS]\n"
-"      %prog -i [-a] [MEDIJU_FAILS]..."
+#: ../pitivi/effects.py:63 ../pitivi/effects.py:65
+msgid "All effects"
+msgstr "Visi efekti"
 
-#: ../pitivi/application.py:222
-msgid ""
-"Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"    no project is given, %prog creates a new project.\n"
-"    Alternatively, when -i is specified, arguments are treated as clips to "
-"be\n"
-"    imported into the project. If -a is specified, these clips will also be "
-"added to\n"
-"    the end of the project timeline."
-msgstr ""
-"Palaiž video redaktoru, ielādējot PROJEKTA_FAILS (ja norādīts). Ja\n"
-"   projekta fails nav norādīts, %prog izveidos jaunu projektu.\n"
-"   Ja ir norādīts -i, argumenti tiek saprasti kā projektā ielādējami klipi.\n"
-"   Ja ir norādīts -a, šie klipi tiks pievienoti projekta laika skalas beigās."
+#: ../pitivi/effects.py:66
+#| msgid "Close"
+msgid "Colors"
+msgstr "Krāsas"
 
-#: ../pitivi/application.py:228
-msgid "Import each MEDIA_FILE into the project."
-msgstr "Ielādēt katru MEDIJU_FAILS projektā."
+#: ../pitivi/effects.py:80
+#| msgid "Close"
+msgid "Noise"
+msgstr "Trokšņi"
 
-#: ../pitivi/application.py:230
-msgid "Add each MEDIA_FILE to timeline after importing."
-msgstr "Pēc importēšanas pievienot katru MEDIJU_FAILS laika skalas beigās."
+#: ../pitivi/effects.py:82
+msgid "Analysis"
+msgstr "Analīze"
 
-#: ../pitivi/application.py:231
-msgid "Run pitivi in the Python Debugger"
-msgstr "Palaist pitivi Python atkļūdotājā"
+#: ../pitivi/effects.py:87
+msgid "Blur"
+msgstr "Izpludināšana"
 
-#: ../pitivi/application.py:233
-msgid "Run pitivi with no gui"
-msgstr "Palaist pitivi bez gui"
+#: ../pitivi/effects.py:89
+msgid "Geometry"
+msgstr "Ģeometrija"
 
-#: ../pitivi/projectmanager.py:95
-msgid "Not a valid project file."
-msgstr "Nav derīgs projekta fails."
+#: ../pitivi/effects.py:101
+msgid "Fancy"
+msgstr "Šiks"
 
-#: ../pitivi/projectmanager.py:100
-#| msgid "Save the current project"
-msgid "Couldn't close current project"
-msgstr "Neizdevās aizvērt esošo projektu"
+#: ../pitivi/effects.py:112
+#| msgid "_Timeline"
+msgid "Time"
+msgstr "Laiks"
 
-#: ../pitivi/projectmanager.py:137
-msgid "No URI specified."
-msgstr "URI nav norādīts."
+#: ../pitivi/effects.py:113 ../pitivi/effects.py:221
+#| msgid "All categories"
+msgid "Uncategorized"
+msgstr "Bez kategorijas"
 
-#: ../pitivi/projectmanager.py:169
-msgid "New Project"
-msgstr "Jauns projekts"
+#. TODO check if it is the good way to make it translatable
+#. And to filter actually!
+#: ../pitivi/effects.py:239 ../pitivi/ui/encodingdialog.glade.h:33
+#: ../pitivi/ui/projectsettings.glade.h:20
+#| msgid "Video: "
+msgid "Video"
+msgstr "Video"
 
-#: ../pitivi/settings.py:490
-msgid "Export Settings\n"
-msgstr "Eksportēt iestatījumus\n"
+#: ../pitivi/effects.py:240
+#| msgid "Audio Codec"
+msgid "Audio |audio"
+msgstr "Audio"
 
-#: ../pitivi/settings.py:491
-#| msgid "Video :"
-msgid "Video: "
-msgstr "Video: "
-
-#: ../pitivi/settings.py:494
-#| msgid ""
-#| "\n"
-#| "Audio :"
-msgid ""
-"\n"
-"Audio: "
-msgstr ""
-"\n"
-"Audio: "
-
-#: ../pitivi/settings.py:497
-#| msgid ""
-#| "\n"
-#| "Muxer :"
-msgid ""
-"\n"
-"Muxer: "
-msgstr ""
-"\n"
-"Muksers: "
-
-#: ../pitivi/utils.py:68
-#, python-format
-msgid "%d hour"
-msgid_plural "%d hours"
-msgstr[0] "%d stunda"
-msgstr[1] "%d stundas"
-msgstr[2] "%d stundas"
-
-#: ../pitivi/utils.py:71
-#, python-format
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] "%d minūte"
-msgstr[1] "%d minūtes"
-msgstr[2] "%d minūtes"
-
-#: ../pitivi/utils.py:74
-#, python-format
-msgid "%d second"
-msgid_plural "%d seconds"
-msgstr[0] "%d sekunde"
-msgstr[1] "%d sekundes"
-msgstr[2] "%d sekundes"
-
-#. Translators: "non local" means the project is not stored
-#. on a local filesystem
-#: ../pitivi/utils.py:241
-#, python-format
-msgid "%s doesn't yet handle non local projects"
-msgstr "%s vēl neapstrādā attālinātus projektus"
+#: ../pitivi/effects.py:241
+msgid "effect"
+msgstr "efekts"
 
 #: ../pitivi/formatters/format.py:77
 msgid "PiTiVi Native (XML)"
@@ -436,11 +380,62 @@ msgstr "PiTiVi vietējais (XML)"
 msgid "Playlist format"
 msgstr "Repertuāra formāts"
 
-#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/videofxlist.py:53
+#: ../pitivi/projectmanager.py:102
+msgid "Not a valid project file."
+msgstr "Nav derīgs projekta fails."
+
+#: ../pitivi/projectmanager.py:107
+msgid "Couldn't close current project"
+msgstr "Neizdevās aizvērt esošo projektu"
+
+#: ../pitivi/projectmanager.py:144
+msgid "No URI specified."
+msgstr "URI nav norādīts."
+
+#: ../pitivi/projectmanager.py:178
+msgid "New Project"
+msgstr "Jauns projekts"
+
+#: ../pitivi/settings.py:501
+msgid "Export Settings\n"
+msgstr "Eksportēt iestatījumus\n"
+
+#: ../pitivi/settings.py:502
+msgid "Video: "
+msgstr "Video: "
+
+#: ../pitivi/settings.py:505
+msgid ""
+"\n"
+"Audio: "
+msgstr ""
+"\n"
+"Audio: "
+
+#: ../pitivi/settings.py:508
+msgid ""
+"\n"
+"Muxer: "
+msgstr ""
+"\n"
+"Muksers: "
+
+#: ../pitivi/settings.py:526
+#, python-format
+msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
+msgstr "%(width)d x %(height)d pikseļi ar %(framerate).2f kadriem sekundē"
+
+#: ../pitivi/settings.py:537
+#, python-format
+msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
+msgstr "%(channels)d kanāli ar %(frequency)d Hz (%(depth)d biti)"
+
+#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/effectlist.py:126
+#: ../pitivi/ui/videofxlist.py:53
 msgid "Name"
 msgstr "Nosaukums"
 
-#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/elementsettingsdialog.glade.h:6
+#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/effectlist.py:138
 #: ../pitivi/ui/videofxlist.py:59
 msgid "Description"
 msgstr "Apraksts"
@@ -457,39 +452,166 @@ msgstr "Neviena ierīce nav pieejama"
 msgid "Video Capture Device:"
 msgstr "Video tveršanas ierīce:"
 
-#: ../pitivi/ui/common.py:86 ../pitivi/ui/common.py:128
+#: ../pitivi/ui/clipproperties.py:135
+#| msgid "_Remove from project"
+msgid "Remove effect"
+msgstr "Izņemt efektu"
+
+#: ../pitivi/ui/clipproperties.py:162
+msgid "Activated"
+msgstr "Aktivizēts"
+
+#: ../pitivi/ui/clipproperties.py:167
+msgid "Type"
+msgstr "Tips"
+
+#: ../pitivi/ui/clipproperties.py:179
+msgid "Effect name"
+msgstr "Efekta nosaukums"
+
+#: ../pitivi/ui/clipproperties.py:376
+msgid ""
+"<span>You must select <b>one</b> clip on the timeline to configure its "
+"associated effects</span>"
+msgstr ""
+"<span>Jums jāizvēlas <b>viens</b> klips uz laika skalas, lai konfigurētu ar "
+"to "
+"saistītos efektus</span>"
+
+#: ../pitivi/ui/common.py:91 ../pitivi/ui/common.py:133
 #, python-format
-#| msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>Audio:</b> %d kanāls pie %d <i>Hz</i> (%d <i>biti</i>)"
 msgstr[1] "<b>Audio:</b> %d kanāli pie %d <i>Hz</i> (%d <i>biti</i>)"
 msgstr[2] "<b>Audio:</b> %d kanāli pie %d <i>Hz</i> (%d <i>biti</i>)"
 
-#: ../pitivi/ui/common.py:92 ../pitivi/ui/common.py:134
+#: ../pitivi/ui/common.py:97 ../pitivi/ui/common.py:139
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "<b>Nezināms audio formāts:</b> %s"
 
-#: ../pitivi/ui/common.py:97 ../pitivi/ui/common.py:139
+#: ../pitivi/ui/common.py:102 ../pitivi/ui/common.py:144
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr "<b>Video:</b> %d x %d <i>pikseļi</i> pie %.2f<i>fps</i>"
 
-#: ../pitivi/ui/common.py:101 ../pitivi/ui/common.py:143
+#: ../pitivi/ui/common.py:106 ../pitivi/ui/common.py:148
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>Attēls:</b> %d x %d <i>pikseļi</i>"
 
-#: ../pitivi/ui/common.py:104 ../pitivi/ui/common.py:146
+#: ../pitivi/ui/common.py:109 ../pitivi/ui/common.py:151
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "<b>Nezināms video formāts:</b> %s"
 
-#: ../pitivi/ui/common.py:107 ../pitivi/ui/common.py:149
+#: ../pitivi/ui/common.py:112 ../pitivi/ui/common.py:154
 #, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>Teksts:</b> %s"
+
+#: ../pitivi/ui/common.py:185
+msgid "12 fps"
+msgstr "12 fps"
+
+#: ../pitivi/ui/common.py:186
+msgid "15 fps"
+msgstr "15 fps"
+
+#: ../pitivi/ui/common.py:187
+msgid "20 fps"
+msgstr "20 fps"
+
+#: ../pitivi/ui/common.py:188
+msgid "23,976 fps"
+msgstr "23,976 fps"
+
+#: ../pitivi/ui/common.py:189
+msgid "24 fps"
+msgstr "24 fps"
+
+#: ../pitivi/ui/common.py:190
+msgid "25 fps"
+msgstr "25 fps"
+
+#: ../pitivi/ui/common.py:191
+msgid "29,97 fps"
+msgstr "29,97 fps"
+
+#: ../pitivi/ui/common.py:192
+msgid "30 fps"
+msgstr "30 fps"
+
+#: ../pitivi/ui/common.py:193
+msgid "59,94 fps"
+msgstr "59,94 fps"
+
+#: ../pitivi/ui/common.py:194
+msgid "60 fps"
+msgstr "60 fps"
+
+#: ../pitivi/ui/common.py:195
+msgid "120 fps"
+msgstr "120 fps"
+
+#: ../pitivi/ui/common.py:199
+msgid "8 KHz"
+msgstr "8 KHz"
+
+#: ../pitivi/ui/common.py:200
+msgid "11 KHz"
+msgstr "11 KHz"
+
+#: ../pitivi/ui/common.py:201
+msgid "22 KHz"
+msgstr "22 KHz"
+
+#: ../pitivi/ui/common.py:202
+msgid "44.1 KHz"
+msgstr "44.1 KHz"
+
+#: ../pitivi/ui/common.py:203
+msgid "48 KHz"
+msgstr "48 KHz"
+
+#: ../pitivi/ui/common.py:204
+msgid "96 KHz"
+msgstr "96 KHz"
+
+#: ../pitivi/ui/common.py:208
+msgid "8 bit"
+msgstr "8 biti"
+
+#: ../pitivi/ui/common.py:209
+msgid "16 bit"
+msgstr "16 biti"
+
+#: ../pitivi/ui/common.py:210
+msgid "24 bit"
+msgstr "24 biti"
+
+#: ../pitivi/ui/common.py:211
+msgid "32 bit"
+msgstr "32 biti"
+
+#: ../pitivi/ui/common.py:215
+#| msgid "Channels:"
+msgid "6 Channels (5.1)"
+msgstr "6 kanāli (5.1)"
+
+#: ../pitivi/ui/common.py:216
+#| msgid "Channels:"
+msgid "4 Channels (4.0)"
+msgstr "4 kanāli (4.0)"
+
+#: ../pitivi/ui/common.py:217
+msgid "Stereo"
+msgstr "Stereo"
+
+#: ../pitivi/ui/common.py:218
+msgid "Mono"
+msgstr "Mono"
 
 #: ../pitivi/ui/defaultpropertyeditor.py:104
 #, python-format
@@ -499,492 +621,470 @@ msgstr[0] "Īpašības %d objektam"
 msgstr[1] "Īpašības %d objektiem"
 msgstr[2] "Īpašības %d objektiem"
 
-#: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:140
+#: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:98
 msgid "No properties..."
 msgstr "Nav īpašību..."
 
-#: ../pitivi/ui/dynamic.py:52
+#: ../pitivi/ui/dynamic.py:67
 msgid "Implement Me"
 msgstr "Īsteno mani"
 
-#: ../pitivi/ui/dynamic.py:237
-#| msgid "Choose File"
-msgid "Choose..."
-msgstr "Izvēlēties..."
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:1
-msgid "<b>Author:</b>"
-msgstr "<b>Autors:</b>"
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:2
-msgid "<b>Description:</b>"
-msgstr "<b>Apraksts:</b>"
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:3
-msgid "<b>Plugin Name</b>"
-msgstr "<b>Spraudņa nosaukums</b>"
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:4
-msgid "<b>Properties</b>"
-msgstr "<b>Īpašības</b>"
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:5
-msgid "Author"
-msgstr "Autors"
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:7
-msgid "Properties for <element>"
-msgstr "<element> īpašības"
-
-#: ../pitivi/ui/encodingdialog.glade.h:1 ../pitivi/ui/timelinecontrols.py:13
-#| msgid "<b>Audio :</b>"
-msgid "<b>Audio:</b>"
-msgstr "<b>Audio:</b>"
-
-#: ../pitivi/ui/encodingdialog.glade.h:2
-msgid "<b>Nothing yet</b>"
-msgstr "<b>Pagaidām nekas</b>"
-
-#: ../pitivi/ui/encodingdialog.glade.h:3
-msgid "<b>Settings</b>"
-msgstr "<b>Iestatījumi</b>"
-
-#: ../pitivi/ui/encodingdialog.glade.h:4 ../pitivi/ui/timelinecontrols.py:15
-#| msgid "<b>Video :</b>"
-msgid "<b>Video:</b>"
-msgstr "<b>Video:</b>"
-
-#: ../pitivi/ui/encodingdialog.glade.h:5
-msgid "Choose File"
-msgstr "Izvēlēties failu"
-
-#: ../pitivi/ui/encodingdialog.glade.h:6
-msgid "Modify"
-msgstr "Modificēt"
-
-#: ../pitivi/ui/encodingdialog.glade.h:7
-msgid "Output file:"
-msgstr "Izvada fails:"
-
-#: ../pitivi/ui/encodingdialog.glade.h:8
-msgid "Please choose an output file"
-msgstr "Lūdzu, izvēlieties izvada faili"
-
-#: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:254
-msgid "Render project"
-msgstr "Renderēt projektu"
-
-#: ../pitivi/ui/encodingdialog.py:92
-msgid "Choose file to render to"
-msgstr "Izvēlēties failu, uz kuru renderēt"
-
-#: ../pitivi/ui/encodingdialog.py:127
-#, python-format
-msgid "About %s left"
-msgstr "Apmēram atlicis: %s"
-
-#: ../pitivi/ui/encodingdialog.py:137
-msgid "Rendering"
-msgstr "Renderē"
-
-#: ../pitivi/ui/encodingdialog.py:154
-msgid "Rendering Complete"
-msgstr "Renderēšana pabeigta"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:1
-#| msgid ""
-#| "12 fps\n"
-#| "23,97 fps\n"
-#| "24 fps\n"
-#| "25 fps\n"
-#| "29,97 fps\n"
-#| "30 fps\n"
-#| "60 fps"
-msgid ""
-"12 fps\n"
-"23.97 fps\n"
-"24 fps\n"
-"25 fps\n"
-"29.97 fps\n"
-"30 fps\n"
-"60 fps"
-msgstr ""
-"12 kadri/sec\n"
-"23,97 kadri/sec\n"
-"24 kadri/sec\n"
-"25 kadri/sec\n"
-"29,97 kadri/sec\n"
-"30 kadri/sec\n"
-"60 kadri/sec"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:8
-msgid ""
-"8 bit\n"
-"16 bit\n"
-"24 bit\n"
-"32 bit"
-msgstr ""
-"8 biti\n"
-"16 biti\n"
-"24 biti\n"
-"32 biti"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:12
-msgid ""
-"8000 Hz\n"
-"11025 Hz\n"
-"22050 Hz\n"
-"44100 Hz\n"
-"48000 Hz\n"
-"96000 Hz"
-msgstr ""
-"8000 Hz\n"
-"11025 Hz\n"
-"22050 Hz\n"
-"44100 Hz\n"
-"48000 Hz\n"
-"96000 Hz"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:18
-msgid "<b>Audio Output</b>"
-msgstr "<b>Audio izeja</b>"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:19
-msgid "<b>Export to</b>"
-msgstr "<b>Eksportēt uz</b>"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:20
-msgid "<b>Video Output</b>"
-msgstr "<b>Video izeja</b>"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:21
-msgid "Audio Codec"
-msgstr "Audio kodeks"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:22
-msgid "Audio Codec:"
-msgstr "Audio kodeks:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:23
-msgid "Audio Preset"
-msgstr "Audio regulējums"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:24
-msgid "Channels:"
-msgstr "Kanāli:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:25
-msgid "Container:"
-msgstr "Konteiners:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:26
-msgid "Depth:"
-msgstr "Dziļums:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:27
-msgid "Frame rate:"
-msgstr "Kadru ātrums:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:28
-msgid "Height:"
-msgstr "Augstums:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:29
-msgid ""
-"Mono (1)\n"
-"Stereo (2)"
-msgstr ""
-"Mono (1)\n"
-"Stereo (2)"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:31
-msgid "Muxer"
-msgstr "Muksers"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:32
-msgid "Rate:"
-msgstr "Ātrums:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:33
-msgid "Settings"
-msgstr "Iestatījumi"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:34
-msgid "Video Codec"
-msgstr "Video kodeks"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:35
-msgid "Video Codec:"
-msgstr "Video kodeks:"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:36
-msgid "Video Preset"
-msgstr "Video regulējums"
-
-#: ../pitivi/ui/exportsettingswidget.glade.h:37
-msgid "Width:"
-msgstr "Platums:"
-
-#: ../pitivi/ui/exportsettingswidget.py:37
-msgid "576p (PAL DV/DVD)"
-msgstr "576p (PAL DV/DVD)"
-
-#: ../pitivi/ui/exportsettingswidget.py:38
-msgid "480p (NTSC DV/DVD)"
-msgstr "480p (NTSC DV/DVD)"
-
-#: ../pitivi/ui/exportsettingswidget.py:39
-msgid "720p HD"
-msgstr "720p HD"
-
-#: ../pitivi/ui/exportsettingswidget.py:40
-msgid "1080p full HD"
-msgstr "1080p pilns HD"
-
-#: ../pitivi/ui/exportsettingswidget.py:41
-msgid "QVGA (320x240)"
-msgstr "QVGA (320x240)"
-
-#: ../pitivi/ui/exportsettingswidget.py:42
-msgid "VGA (640x480)"
-msgstr "VGA (640x480)"
-
-#: ../pitivi/ui/exportsettingswidget.py:43
-msgid "SVGA (800x600)"
-msgstr "SVGA (800x600)"
-
-#: ../pitivi/ui/exportsettingswidget.py:44
-msgid "XGA (1024x768)"
-msgstr "XGA (1024x768)"
-
-#. i18n: string for custom video width/height/framerate settings
-#. i18n: string for custom audio rate/depth/channels settings
-#: ../pitivi/ui/exportsettingswidget.py:112
-#: ../pitivi/ui/exportsettingswidget.py:146
+#: ../pitivi/ui/dynamic.py:423
 msgid "Custom"
 msgstr "Pielāgots"
 
-#: ../pitivi/ui/exportsettingswidget.py:297
-#| msgid "Video :"
-msgid "Raw Video"
-msgstr "Jēls video"
+#: ../pitivi/ui/dynamic.py:447
+#| msgid "Video Preset"
+msgid "Save Preset"
+msgstr "Saglabāt regulējums"
 
-#: ../pitivi/ui/exportsettingswidget.py:312
-msgid "Raw Audio"
-msgstr "Jēls audio"
+#: ../pitivi/ui/dynamic.py:516
+msgid "Choose..."
+msgstr "Izvēlēties..."
 
-#: ../pitivi/ui/exportsettingswidget.py:435
-msgid "Export settings"
-msgstr "Eksportēt iestatījumus"
+#: ../pitivi/ui/effectlist.py:86
+#| msgid "Video Preset"
+msgid "Video effects"
+msgstr "Video efekti"
+
+#: ../pitivi/ui/effectlist.py:87
+#| msgid "Audio Preset"
+msgid "Audio effects"
+msgstr "Audio efekti"
+
+#. Prevents being flush against the notebook
+#: ../pitivi/ui/effectlist.py:98 ../pitivi/ui/pluginmanagerdialog.glade.h:3
+#: ../pitivi/ui/sourcelist.py:163
+msgid "Search:"
+msgstr "Meklēt:"
+
+#: ../pitivi/ui/effectlist.py:211
+msgid "Show Video Effects as a List"
+msgstr "Rādīt video efektus kā sarakstu"
+
+#: ../pitivi/ui/effectlist.py:213
+msgid "Show Video Effects as Icons"
+msgstr "Rādīt video efektus kā ikonas"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:1
+#| msgid "<b>Properties</b>"
+msgid "<b>Properties For Plugin</b>"
+msgstr "<b>Spraudņa īpašības</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:2
+msgid "Properties for <element>"
+msgstr "<element> īpašības"
+
+#: ../pitivi/ui/encodingdialog.glade.h:1
+msgid "1000 x 1000"
+msgstr "1000 x 1000"
+
+#: ../pitivi/ui/encodingdialog.glade.h:2
+msgid "29.97 fps"
+msgstr "29.97 fps"
+
+#: ../pitivi/ui/encodingdialog.glade.h:3
+msgid "6 channels (5.1)\n"
+msgstr "6 kanāli (5.1)\n"
+
+#: ../pitivi/ui/encodingdialog.glade.h:5
+msgid ""
+"AC-3\n"
+"AAC"
+msgstr ""
+"AC-3\n"
+"AAC"
+
+#: ../pitivi/ui/encodingdialog.glade.h:7
+#| msgid "Advanced vie_w"
+msgid "Advanced..."
+msgstr "Paplašināti..."
+
+#: ../pitivi/ui/encodingdialog.glade.h:8
+#: ../pitivi/ui/projectsettings.glade.h:7
+#| msgid ""
+#| "\n"
+#| "Audio: "
+msgid "Audio"
+msgstr "Audio"
+
+#: ../pitivi/ui/encodingdialog.glade.h:9
+#| msgid "Audio Codec:"
+msgid "Codec:"
+msgstr "Kodeks:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:10
+#| msgid "Container:"
+msgid "Container format"
+msgstr "Konteinera formāts"
+
+#: ../pitivi/ui/encodingdialog.glade.h:11
+#| msgid "Container:"
+msgid "Container format:"
+msgstr "Konteinera formāts:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:12
+msgid "Draft (no special effects, single pass)"
+msgstr "Uzmetums (bez specefektiem, vienreizēja apstrāde)"
+
+#: ../pitivi/ui/encodingdialog.glade.h:13
+#| msgid "Project Settings"
+msgid "Edit Project Settings..."
+msgstr "Rediģēt projekta iestatījumus..."
+
+#: ../pitivi/ui/encodingdialog.glade.h:14
+msgid "File name"
+msgstr "Faila nosaukums"
+
+#: ../pitivi/ui/encodingdialog.glade.h:15
+msgid "File name:"
+msgstr "Faila nosaukums:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:16
+msgid "Folder"
+msgstr "Mape"
+
+#: ../pitivi/ui/encodingdialog.glade.h:17
+msgid "Folder:"
+msgstr "Mape:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:18
+msgid "Frame rate:"
+msgstr "Kadru ātrums:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:19
+#| msgid "Frame rate:"
+msgid "Framerate"
+msgstr "Kadru ātrums"
+
+#: ../pitivi/ui/encodingdialog.glade.h:20
+#| msgid "Render"
+msgid "General"
+msgstr "Vispārīgi"
+
+#: ../pitivi/ui/encodingdialog.glade.h:21
+msgid "H.264"
+msgstr "H.264"
+
+#: ../pitivi/ui/encodingdialog.glade.h:22
+#| msgid "Height:"
+msgid "Height"
+msgstr "Augstums"
+
+#: ../pitivi/ui/encodingdialog.glade.h:23
+msgid "MP4"
+msgstr "MP4"
+
+#: ../pitivi/ui/encodingdialog.glade.h:24
+msgid "Number of channels:"
+msgstr "Kanālu skaits:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:25 ../pitivi/ui/mainwindow.py:142
+msgid "Render"
+msgstr "Renderēt"
+
+#: ../pitivi/ui/encodingdialog.glade.h:26
+msgid "Render only the selected clips"
+msgstr "Renderēt tikai izvēlētos klipus"
+
+#: ../pitivi/ui/encodingdialog.glade.h:27
+#| msgid "Depth:"
+msgid "Sample Depth:"
+msgstr "Nolases dziļums:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:28
+#| msgid "Frame rate:"
+msgid "Sample Rate:"
+msgstr "Nolases kvalitāte:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:29
+#| msgid "Frame rate:"
+msgid "Sample rate"
+msgstr "Nolases kvalitāte"
+
+#: ../pitivi/ui/encodingdialog.glade.h:30
+msgid "Scale"
+msgstr "Mērogs"
+
+#: ../pitivi/ui/encodingdialog.glade.h:31
+msgid "Scale:"
+msgstr "Mērogs:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:32
+msgid "Summary"
+msgstr "Kopsavilkums"
+
+#: ../pitivi/ui/encodingprogress.glade.h:1
+msgid "<b><big>Rendering movie</big></b>"
+msgstr "<b><big>Renderē filmu</big></b>"
+
+#: ../pitivi/ui/encodingprogress.glade.h:2
+msgid "<b>Estimated filesize:</b>"
+msgstr "<b>Faila apjoma novērtējums:</b>"
+
+#: ../pitivi/ui/encodingprogress.glade.h:3
+msgid "<b>Frames per second:</b>"
+msgstr "<b>Kadri sekundē:</b>"
+
+#: ../pitivi/ui/encodingprogress.glade.h:4
+#| msgid "<b>%s</b>"
+msgid "<b>Phase:</b>"
+msgstr "<b>Fāze:</b>"
+
+#: ../pitivi/ui/encodingprogress.glade.h:5
+msgid "Encoding first pass"
+msgstr "Iekodēšanas pirmā apstrāde"
+
+#: ../pitivi/ui/encodingprogress.glade.h:6
+msgid "Rendering"
+msgstr "Renderē"
+
+#: ../pitivi/ui/encodingprogress.glade.h:7
+#| msgid "Unknown reason"
+msgid "Unknown"
+msgstr "Nezināms"
+
+#: ../pitivi/ui/encodingprogress.glade.h:8
+#| msgid "Unknown reason"
+msgid "Unknown Mib"
+msgstr "Nezināmi Mib"
 
 #: ../pitivi/ui/filelisterrordialog.py:52
 msgid "Unknown reason"
 msgstr "Nezināms iemesls"
 
-#: ../pitivi/ui/filelisterrordialog.py:82
-#| msgid "URI : "
-msgid "URI:"
-msgstr "URI:"
-
-#: ../pitivi/ui/filelisterrordialog.py:87
-#| msgid "Problem : "
+#: ../pitivi/ui/filelisterrordialog.py:83
 msgid "Problem:"
 msgstr "Problēma:"
 
-#: ../pitivi/ui/filelisterrordialog.py:94
-#| msgid "Extra information : "
+#: ../pitivi/ui/filelisterrordialog.py:90
 msgid "Extra information:"
 msgstr "Papildus informācija:"
+
+#: ../pitivi/ui/gstwidget.py:153
+msgid "Reset to default value"
+msgstr "Atstatīt  uz noklusētajām vērtībām"
 
 #. set title and frame label
 #: ../pitivi/ui/gstwidget.py:195
 #, python-format
-#| msgid "Properties for "
 msgid "Properties for %s"
 msgstr "%s īpašības"
 
-#: ../pitivi/ui/mainwindow.py:127
-#| msgid "Rendering"
-msgid "Render"
-msgstr "Renderēt"
-
-#: ../pitivi/ui/mainwindow.py:128 ../pitivi/ui/timeline.py:294
+#: ../pitivi/ui/mainwindow.py:143 ../pitivi/ui/timeline.py:329
 msgid "Split"
 msgstr "Sadalīt"
 
-#: ../pitivi/ui/mainwindow.py:129
+#: ../pitivi/ui/mainwindow.py:144
+msgid "Keyframe"
+msgstr "Atslēgkadrs"
+
+#: ../pitivi/ui/mainwindow.py:145
 msgid "Unlink"
 msgstr "Atsaistīt"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/ui/mainwindow.py:131
+#: ../pitivi/ui/mainwindow.py:147 ../pitivi/ui/projectsettings.glade.h:12
 msgid "Link"
 msgstr "Saistīt"
 
-#: ../pitivi/ui/mainwindow.py:132
+#: ../pitivi/ui/mainwindow.py:148
 msgid "Ungroup"
 msgstr "Atgrupēt"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/ui/mainwindow.py:134
+#: ../pitivi/ui/mainwindow.py:150
 msgid "Group"
 msgstr "Sagrupēt"
 
-#: ../pitivi/ui/mainwindow.py:237
+#: ../pitivi/ui/mainwindow.py:262
 msgid "Start Playback"
 msgstr "Sākt atskaņošanu"
 
-#: ../pitivi/ui/mainwindow.py:238
+#: ../pitivi/ui/mainwindow.py:263
 msgid "Stop Playback"
 msgstr "Apturēt atskaņošanu"
 
-#: ../pitivi/ui/mainwindow.py:239
+#: ../pitivi/ui/mainwindow.py:264
 msgid "Loop over selected area"
 msgstr "Atkārtot izvēlēto apgabalu"
 
-#: ../pitivi/ui/mainwindow.py:244
+#: ../pitivi/ui/mainwindow.py:269
 msgid "Create a new project"
 msgstr "Izveidot jaunu projektu"
 
-#: ../pitivi/ui/mainwindow.py:246
+#: ../pitivi/ui/mainwindow.py:270
+#| msgid "Open File..."
+msgid "_Open..."
+msgstr "_Atvērt..."
+
+#: ../pitivi/ui/mainwindow.py:271
 msgid "Open an existing project"
 msgstr "Atvērt esošu projektu"
 
-#: ../pitivi/ui/mainwindow.py:248 ../pitivi/ui/mainwindow.py:250
+#: ../pitivi/ui/mainwindow.py:273 ../pitivi/ui/mainwindow.py:275
 msgid "Save the current project"
 msgstr "Saglabāt pašreizējo projektu"
 
-#: ../pitivi/ui/mainwindow.py:251 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:274
+#| msgid "Save As..."
+msgid "Save _As..."
+msgstr "S_aglabāt kā..."
+
+#: ../pitivi/ui/mainwindow.py:277
+#| msgid "Save the current project"
+msgid "Reload the current project"
+msgstr "Pārlādēt pašreizējo projektu"
+
+#: ../pitivi/ui/mainwindow.py:278 ../pitivi/ui/projectsettings.glade.h:14
 msgid "Project Settings"
 msgstr "Projekta iestatījumi"
 
-#: ../pitivi/ui/mainwindow.py:252
+#: ../pitivi/ui/mainwindow.py:279
 msgid "Edit the project settings"
 msgstr "Rediģēt projekta iestatījumus"
 
-#: ../pitivi/ui/mainwindow.py:253
+#: ../pitivi/ui/mainwindow.py:280
 msgid "_Render project"
 msgstr "_Renderēt projektu"
 
-#: ../pitivi/ui/mainwindow.py:256
+#: ../pitivi/ui/mainwindow.py:281
+#| msgid "Render project"
+msgid "Render project..."
+msgstr "Renderēt projektu..."
+
+#: ../pitivi/ui/mainwindow.py:283
 msgid "_Undo"
 msgstr "_Atsaukt"
 
-#: ../pitivi/ui/mainwindow.py:257
+#: ../pitivi/ui/mainwindow.py:284
 msgid "Undo the last operation"
 msgstr "Atsaukt iepriekšējo darbību"
 
-#: ../pitivi/ui/mainwindow.py:259
+#: ../pitivi/ui/mainwindow.py:286
 msgid "_Redo"
 msgstr "Atkā_rtot"
 
-#: ../pitivi/ui/mainwindow.py:260
+#: ../pitivi/ui/mainwindow.py:287
 msgid "Redo the last operation that was undone"
 msgstr "Atkārtot pēdējo darbību, kura tika atsaukta"
 
-#: ../pitivi/ui/mainwindow.py:262
+#: ../pitivi/ui/mainwindow.py:289
 msgid "_Plugins..."
 msgstr "S_praudņi..."
 
-#: ../pitivi/ui/mainwindow.py:263
+#: ../pitivi/ui/mainwindow.py:290
 msgid "Manage plugins"
 msgstr "Pārvaldīt spraudņus"
 
-#: ../pitivi/ui/mainwindow.py:264
+#: ../pitivi/ui/mainwindow.py:291
 msgid "_Preferences"
 msgstr "_Iestatījumi"
 
-#: ../pitivi/ui/mainwindow.py:267
+#: ../pitivi/ui/mainwindow.py:294
 msgid "Import from _Webcam..."
 msgstr "Importēt no _tīmekļa kameras..."
 
-#: ../pitivi/ui/mainwindow.py:268
+#: ../pitivi/ui/mainwindow.py:295
 msgid "Import Camera stream"
 msgstr "Importēt kameras plūsmu"
 
-#: ../pitivi/ui/mainwindow.py:270
+#: ../pitivi/ui/mainwindow.py:297
 msgid "_Make screencast..."
 msgstr "_Izveidot ekrānraidi..."
 
-#: ../pitivi/ui/mainwindow.py:271
+#: ../pitivi/ui/mainwindow.py:298
 msgid "Capture the desktop"
 msgstr "Tvert darbvirsmu"
 
-#: ../pitivi/ui/mainwindow.py:273
+#: ../pitivi/ui/mainwindow.py:300
 msgid "_Capture Network Stream..."
 msgstr "_Tvert tīkla plūsmu..."
 
-#: ../pitivi/ui/mainwindow.py:274
+#: ../pitivi/ui/mainwindow.py:301
 msgid "Capture Network Stream"
 msgstr "Tvert tīkla plūsmu"
 
-#: ../pitivi/ui/mainwindow.py:277
+#: ../pitivi/ui/mainwindow.py:304
 #, python-format
 msgid "Information about %s"
 msgstr "Informācija par %s"
 
-#: ../pitivi/ui/mainwindow.py:278
+#: ../pitivi/ui/mainwindow.py:305
+msgid "User manual"
+msgstr "Lietotāja rokasgrāmata"
+
+#: ../pitivi/ui/mainwindow.py:307
 msgid "_File"
 msgstr "_Fails"
 
-#: ../pitivi/ui/mainwindow.py:279
+#: ../pitivi/ui/mainwindow.py:308
 msgid "_Edit"
 msgstr "R_ediģēt"
 
-#: ../pitivi/ui/mainwindow.py:280
+#: ../pitivi/ui/mainwindow.py:309
 msgid "_View"
 msgstr "_Skats"
 
-#: ../pitivi/ui/mainwindow.py:281
-#| msgid "New Project"
+#: ../pitivi/ui/mainwindow.py:310
 msgid "_Project"
 msgstr "_Projekts"
 
-#: ../pitivi/ui/mainwindow.py:282
+#: ../pitivi/ui/mainwindow.py:311
 msgid "_Timeline"
 msgstr "_Laika skala"
 
-#: ../pitivi/ui/mainwindow.py:283
+#: ../pitivi/ui/mainwindow.py:312
 msgid "Previe_w"
 msgstr "Priekš_skatījums"
 
-#: ../pitivi/ui/mainwindow.py:286
+#: ../pitivi/ui/mainwindow.py:315
 msgid "Loop"
 msgstr "Cilpa"
 
-#: ../pitivi/ui/mainwindow.py:288
+#: ../pitivi/ui/mainwindow.py:317
 msgid "_Help"
 msgstr "_Palīdzība"
 
-#: ../pitivi/ui/mainwindow.py:293
+#: ../pitivi/ui/mainwindow.py:322
 msgid "View the main window on the whole screen"
 msgstr "Skatīt galveno logu uz visa ekrāna"
 
-#: ../pitivi/ui/mainwindow.py:297
+#: ../pitivi/ui/mainwindow.py:326
 msgid "Main Toolbar"
 msgstr "Galvenā rīkjosla"
 
-#: ../pitivi/ui/mainwindow.py:300
+#: ../pitivi/ui/mainwindow.py:329
 msgid "Timeline Toolbar"
 msgstr "Laika skalas rīkjosla"
 
-#: ../pitivi/ui/mainwindow.py:384
-msgid "Clip Library"
-msgstr "Klipu bibliotēka"
+#: ../pitivi/ui/mainwindow.py:337 ../pitivi/ui/viewer.py:538
+msgid "Undock Viewer"
+msgstr "Atdokot skatītāju"
 
-#: ../pitivi/ui/mainwindow.py:521
-msgid "Open File..."
-msgstr "Atvērt failu..."
+#: ../pitivi/ui/mainwindow.py:338
+msgid "Put the viewer in a separate window"
+msgstr "Novietot skatītāju atsevišķā logā"
 
-#: ../pitivi/ui/mainwindow.py:537
-msgid "All Supported Formats"
-msgstr "Visi atbalstītie formāti"
+#: ../pitivi/ui/mainwindow.py:431
+#| msgid "Clip Library"
+msgid "Media Library"
+msgstr "Klipu videotēka"
 
-#: ../pitivi/ui/mainwindow.py:603
+#: ../pitivi/ui/mainwindow.py:436
+#| msgid "Clip Library"
+msgid "Effect Library"
+msgstr "Efektu videotēka"
+
+#: ../pitivi/ui/mainwindow.py:455
+msgid "Effects configurations"
+msgstr "Efektu konfigurācijas"
+
+#: ../pitivi/ui/mainwindow.py:665
 msgid "Contributors:"
 msgstr "Atbalstītāji:"
 
-#: ../pitivi/ui/mainwindow.py:615
+#: ../pitivi/ui/mainwindow.py:677
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -992,51 +1092,72 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Apskatiet http://www.gnu.org/copyleft/lesser.html , lai uzzinātu vairāk"
 
-#: ../pitivi/ui/mainwindow.py:729
+#: ../pitivi/ui/mainwindow.py:685
+msgid "Open File..."
+msgstr "Atvērt failu..."
+
+#: ../pitivi/ui/mainwindow.py:701
+msgid "All Supported Formats"
+msgstr "Visi atbalstītie formāti"
+
+#: ../pitivi/ui/mainwindow.py:833
 msgid "Close without saving"
 msgstr "Aizvērt nesaglabājot"
 
-#: ../pitivi/ui/mainwindow.py:742
-#| msgid "Save the current project"
+#: ../pitivi/ui/mainwindow.py:846
 msgid "Save changes to the current project before closing?"
 msgstr "Saglabāt izmaiņas šajā projektā pirms aizvēršanas?"
 
-#: ../pitivi/ui/mainwindow.py:749
+#: ../pitivi/ui/mainwindow.py:853
 msgid "If you don't save some of your changes will be lost"
 msgstr "Ja nesaglabāsiet, dažas izmaiņas pazudīs"
 
-#: ../pitivi/ui/mainwindow.py:801
-#, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi nevar ielādēt failu \"%s\""
+#: ../pitivi/ui/mainwindow.py:906
+#| msgid "Couldn't close current project"
+msgid "Do you want to reload current project?"
+msgstr "Vai vēlaties pārlādēt pašreizējo projektu?"
 
-#: ../pitivi/ui/mainwindow.py:804
+#: ../pitivi/ui/mainwindow.py:911
+#| msgid "_Remove from project"
+msgid "Revert to saved project"
+msgstr "Atgriezt uz saglabāto projektu"
+
+#: ../pitivi/ui/mainwindow.py:914
+#| msgid "If you don't save some of your changes will be lost"
+msgid "All unsaved changes will be lost."
+msgstr "Visas nesaglabātās izmaiņas pazudīs."
+
+#: ../pitivi/ui/mainwindow.py:930
+#, python-format
+#| msgid "PiTiVi is unable to load file \"%s\""
+msgid "Unable to load project \"%s\""
+msgstr "Nevar ielādēt projektu \"%s\""
+
+#: ../pitivi/ui/mainwindow.py:932
 msgid "Error Loading File"
 msgstr "Kļūda ielādējot failu"
 
-#: ../pitivi/ui/mainwindow.py:811
+#: ../pitivi/ui/mainwindow.py:939
 msgid "Locate missing file..."
 msgstr "Atrast trūkstošo failu..."
 
-#: ../pitivi/ui/mainwindow.py:820
-#| msgid "The following file can not be used with PiTiVi."
+#: ../pitivi/ui/mainwindow.py:948
 msgid "The following file has moved, please tell PiTiVi where to find it."
 msgstr "Sekojošais fails ir pārvietots. Lūdzu pasakiet PiTiVi, kur to meklēt."
 
-#: ../pitivi/ui/mainwindow.py:822
-#| msgid "Duration"
+#: ../pitivi/ui/mainwindow.py:950
 msgid "Duration:"
 msgstr "Ilgums:"
 
-#: ../pitivi/ui/mainwindow.py:963
+#: ../pitivi/ui/mainwindow.py:1094
 msgid "Save As..."
 msgstr "Saglabāt kā..."
 
-#: ../pitivi/ui/mainwindow.py:971
+#: ../pitivi/ui/mainwindow.py:1102
 msgid "Untitled.xptv"
 msgstr "Nenosaukts.xptv"
 
-#: ../pitivi/ui/mainwindow.py:982 ../pitivi/ui/mainwindow.py:995
+#: ../pitivi/ui/mainwindow.py:1113 ../pitivi/ui/mainwindow.py:1126
 msgid "Detect Automatically"
 msgstr "Noteikt automātiski"
 
@@ -1105,17 +1226,13 @@ msgid "http://"
 msgstr "http://"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:1
-#: ../pitivi/ui/pluginmanagerdialog.py:173
+#: ../pitivi/ui/pluginmanagerdialog.py:177
 msgid "All categories"
 msgstr "Visas kategorijas"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:2
 msgid "Plugin manager"
 msgstr "Spraudņu pārvaldnieks"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:3
-msgid "Search:"
-msgstr "Meklēt:"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:4
 msgid "Show:"
@@ -1129,36 +1246,36 @@ msgstr ""
 "Jūs varat vilkt spraudņu failus sarakstā, lai tos instalētu,\n"
 "vai arī rakstiet, lai meklētu noteiktu spraudni."
 
-#: ../pitivi/ui/pluginmanagerdialog.py:89
+#: ../pitivi/ui/pluginmanagerdialog.py:93
 msgid "Enabled"
 msgstr "Ieslēgts"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:99
+#: ../pitivi/ui/pluginmanagerdialog.py:103
 msgid "Plugin"
 msgstr "Spraudnis"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:109
+#: ../pitivi/ui/pluginmanagerdialog.py:113
 msgid "Category"
 msgstr "Kategorija"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:271
+#: ../pitivi/ui/pluginmanagerdialog.py:275
 msgid "Are you sure you want to remove the selected plugins?"
 msgstr "Esat droši, ka vēlaties izņemt izvēlētos spraudņus?"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:272
+#: ../pitivi/ui/pluginmanagerdialog.py:276
 msgid "Confirm remove operation"
 msgstr "Apstiprināt izņemšanas darbību"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:289
+#: ../pitivi/ui/pluginmanagerdialog.py:293
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Nevar izņemt %s"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:321
+#: ../pitivi/ui/pluginmanagerdialog.py:325
 msgid "Update the existing plugin?"
 msgstr "Atjaunināt esošo spraudni?"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:324
+#: ../pitivi/ui/pluginmanagerdialog.py:328
 #, python-format
 msgid ""
 "This plugin is already installed in your system.\n"
@@ -1167,11 +1284,11 @@ msgstr ""
 "Šis spraudnis jau ir uzinstalēts sistēmā.\n"
 "Ja piekrītat, versija %(v1)s tiks aizvietota ar versiju %(v2)s."
 
-#: ../pitivi/ui/pluginmanagerdialog.py:327
+#: ../pitivi/ui/pluginmanagerdialog.py:331
 msgid "Duplicate plugin found"
 msgstr "Dubultot atrasto spraudni"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:341
+#: ../pitivi/ui/pluginmanagerdialog.py:345
 #, python-format
 msgid ""
 "Cannot install %s\n"
@@ -1180,30 +1297,28 @@ msgstr ""
 "Nevar uzinstalēt %s\n"
 "Fails nav derīgs spraudnis"
 
-#: ../pitivi/ui/prefs.py:57
+#: ../pitivi/ui/prefs.py:61
 msgid "Preferences"
 msgstr "Iestatījumi"
 
-#: ../pitivi/ui/prefs.py:83
-#| msgid "Description"
+#: ../pitivi/ui/prefs.py:85
 msgid "Section"
 msgstr "Nodaļa"
 
 #. revert, close buttons
-#: ../pitivi/ui/prefs.py:104
+#: ../pitivi/ui/prefs.py:106
 msgid "Reset to Factory Settings"
 msgstr "Atstatīt uz rūpnīcas iestatījumiem"
 
-#: ../pitivi/ui/prefs.py:108
-#| msgid "Remove"
+#: ../pitivi/ui/prefs.py:110
 msgid "Revert"
 msgstr "Atgriezt"
 
-#: ../pitivi/ui/prefs.py:123
+#: ../pitivi/ui/prefs.py:125
 msgid "Some changes will not take effect until you restart PiTiVi"
 msgstr "Dažas izmaiņas nestāsies spēkā, kamēr nebūsiet pārstartējis PiTiVi"
 
-#: ../pitivi/ui/prefs.py:318
+#: ../pitivi/ui/prefs.py:320
 msgid "Reset"
 msgstr "Atstatīt"
 
@@ -1239,20 +1354,158 @@ msgid "Show Waveforms on Audio Clips"
 msgstr "Rādīt skaņu viļņus audio klipos"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
-msgid "A short description of your project."
-msgstr "Īss projekta apraksts."
+msgid "25 FPS"
+msgstr "25 FPS"
 
 #: ../pitivi/ui/projectsettings.glade.h:2
-msgid "Description:"
-msgstr "Apraksts:"
+#| msgid "<b>Export to</b>"
+msgid "<b>Aspect Ratio</b>"
+msgstr "<b>Izmēra attiecība</b>"
 
 #: ../pitivi/ui/projectsettings.glade.h:3
-msgid "Name:"
-msgstr "Nosaukums:"
+#| msgid "<b>Export to</b>"
+msgid "<b>Format</b>"
+msgstr "<b>Formāts</b>"
+
+#: ../pitivi/ui/projectsettings.glade.h:4
+#| msgid "<b>Properties</b>"
+msgid "<b>Frame Rate</b>"
+msgstr "<b>Kadru ātrums</b>"
 
 #: ../pitivi/ui/projectsettings.glade.h:5
-msgid "The name of your project."
-msgstr "Projekta nosaukums."
+#| msgid "<b>Properties</b>"
+msgid "<b>Preset</b>"
+msgstr "<b>Regulējums</b>"
+
+#: ../pitivi/ui/projectsettings.glade.h:6
+#| msgid "<b>Settings</b>"
+msgid "<b>Size (Pixels)</b>"
+msgstr "<b>Izmērs (pikseļi)</b>"
+
+#: ../pitivi/ui/projectsettings.glade.h:8
+#| msgid "Author"
+msgid "Author:"
+msgstr "Autors:"
+
+#: ../pitivi/ui/projectsettings.glade.h:9
+msgid "Channels:"
+msgstr "Kanāli:"
+
+#: ../pitivi/ui/projectsettings.glade.h:10
+msgid "Display Aspect Ratio"
+msgstr "Displeja izmēra attiecība"
+
+#: ../pitivi/ui/projectsettings.glade.h:11
+msgid "Info"
+msgstr "Informācija"
+
+#: ../pitivi/ui/projectsettings.glade.h:13
+msgid "Pixel Aspect Ratio"
+msgstr "Pikseļa izmēra attiecība"
+
+#: ../pitivi/ui/projectsettings.glade.h:15
+#| msgid "Project Settings"
+msgid "Project title:"
+msgstr "Projekta nosaukums:"
+
+#: ../pitivi/ui/projectsettings.glade.h:16
+msgid "Sample depth:"
+msgstr "Nolases dziļums:"
+
+#: ../pitivi/ui/projectsettings.glade.h:17
+#| msgid "Frame rate:"
+msgid "Sample rate:"
+msgstr "Nolases kvalitāte:"
+
+#: ../pitivi/ui/projectsettings.glade.h:18 ../pitivi/ui/projectsettings.py:62
+msgid "Standard (4:3)"
+msgstr "Standarta (4:3)"
+
+#: ../pitivi/ui/projectsettings.glade.h:19
+msgid "Standard PAL"
+msgstr "Standarta PAL"
+
+#: ../pitivi/ui/projectsettings.glade.h:21
+#| msgid "Search:"
+msgid "Year:"
+msgstr "Gads:"
+
+#: ../pitivi/ui/projectsettings.glade.h:22
+msgid "x"
+msgstr "x"
+
+#: ../pitivi/ui/projectsettings.py:50
+msgid "Square"
+msgstr "Kvadrāts"
+
+#: ../pitivi/ui/projectsettings.py:51
+msgid "480p"
+msgstr "480p"
+
+#: ../pitivi/ui/projectsettings.py:52
+msgid "480i"
+msgstr "480i"
+
+#: ../pitivi/ui/projectsettings.py:53
+msgid "480p Wide"
+msgstr "480p plats"
+
+#: ../pitivi/ui/projectsettings.py:54
+msgid "480i Wide"
+msgstr "480i plats"
+
+#: ../pitivi/ui/projectsettings.py:55
+msgid "576p"
+msgstr "576p"
+
+#: ../pitivi/ui/projectsettings.py:56
+msgid "576i"
+msgstr "576i"
+
+#: ../pitivi/ui/projectsettings.py:57
+msgid "576p Wide"
+msgstr "576p plats"
+
+#: ../pitivi/ui/projectsettings.py:58
+msgid "576i Wide"
+msgstr "576i plats"
+
+#: ../pitivi/ui/projectsettings.py:63
+msgid "DV (15:11)"
+msgstr "DV (15:11)"
+
+#: ../pitivi/ui/projectsettings.py:64
+msgid "DV Widescreen (16:9)"
+msgstr "DV platekrāna (16:9)"
+
+#: ../pitivi/ui/projectsettings.py:65
+msgid "Cinema (1.37)"
+msgstr "Kinoteātra (1.37)"
+
+#: ../pitivi/ui/projectsettings.py:66
+msgid "Cinema (1.66)"
+msgstr "Kinoteātra (1.66)"
+
+#: ../pitivi/ui/projectsettings.py:67
+msgid "Cinema (1.85)"
+msgstr "Kinoteātra (1.85)"
+
+#: ../pitivi/ui/projectsettings.py:68
+msgid "Anamorphic (2.35)"
+msgstr "Anamorfisks (2.35)"
+
+#: ../pitivi/ui/projectsettings.py:69
+msgid "Anamorphic (2.39)"
+msgstr "Anamorfisks (2.39)"
+
+#: ../pitivi/ui/projectsettings.py:70
+msgid "Anamorphic (2.4)"
+msgstr "Anamorfisks (2.4)"
+
+#: ../pitivi/ui/projectsettings.py:306 ../pitivi/ui/projectsettings.py:323
+#| msgid "New Project"
+msgid "New Preset"
+msgstr "Jauns regulējums"
 
 #: ../pitivi/ui/propertyeditor.py:54
 msgid "No Objects Selected"
@@ -1270,154 +1523,140 @@ msgstr "Ekrānraidīt darbvirsmu"
 msgid "Start Istanbul"
 msgstr "Palaist Istanbul"
 
-#: ../pitivi/ui/sourcelist.py:115
-msgid "Add Clips..."
-msgstr "Pievienot klipus..."
+#: ../pitivi/ui/sourcelist.py:136
+#| msgid "_Import clips..."
+msgid "Import clips..."
+msgstr "Importēt klipus..."
 
-#: ../pitivi/ui/sourcelist.py:120
+#: ../pitivi/ui/sourcelist.py:141
 msgid "Remove Clip"
 msgstr "Izņemt klipus"
 
-#: ../pitivi/ui/sourcelist.py:124
+#: ../pitivi/ui/sourcelist.py:145
 msgid "Play Clip"
 msgstr "Atskaņot klipu"
 
-#: ../pitivi/ui/sourcelist.py:150
+#: ../pitivi/ui/sourcelist.py:190
 msgid "Icon"
 msgstr "Ikona"
 
-#: ../pitivi/ui/sourcelist.py:159
+#: ../pitivi/ui/sourcelist.py:199
 msgid "Information"
 msgstr "Informācija"
 
-#: ../pitivi/ui/sourcelist.py:170
+#: ../pitivi/ui/sourcelist.py:210
 msgid "Duration"
 msgstr "Ilgums"
 
-#: ../pitivi/ui/sourcelist.py:192
+#: ../pitivi/ui/sourcelist.py:238
+#| msgid ""
+#| "<span size='x-large'>Import your clips by dragging them here or by using "
+#| "the buttons above.</span>"
 msgid ""
-"<span size='x-large'>Import your clips by dragging them here or by using the "
-"buttons above.</span>"
+"<span>Import your clips by dragging them here or by using the buttons above."
+"</span>"
 msgstr ""
-"<span size='x-large'>Importējiet klipus, ievelkot tos šeit vai lietojot "
-"pogas augšā.</span>"
+"<span>Importējiet klipus, ievelkot tos šeit vai lietojot pogas augšā.</span>"
 
-#: ../pitivi/ui/sourcelist.py:245
+#: ../pitivi/ui/sourcelist.py:254
+msgid "Hide"
+msgstr "Slēpt"
+
+#: ../pitivi/ui/sourcelist.py:306
 msgid "_Import clips..."
 msgstr "_Importēt klipus..."
 
-#: ../pitivi/ui/sourcelist.py:246
+#: ../pitivi/ui/sourcelist.py:307
 msgid "Import clips to use"
 msgstr "Importēt izmantojamos klipus"
 
-#: ../pitivi/ui/sourcelist.py:248
-#| msgid "_Import folder of clips..."
+#: ../pitivi/ui/sourcelist.py:309
 msgid "Import _folder of clips..."
 msgstr "_Importēt klipu mapi..."
 
-#: ../pitivi/ui/sourcelist.py:249
+#: ../pitivi/ui/sourcelist.py:310
 msgid "Import folder of clips to use"
 msgstr "Importēt izmantojamo klipu mapi"
 
-#: ../pitivi/ui/sourcelist.py:255
-#| msgid "_Render project"
+#: ../pitivi/ui/sourcelist.py:316
 msgid "_Remove from project"
 msgstr "Izņemt no p_rojekta"
 
-#: ../pitivi/ui/sourcelist.py:258
+#: ../pitivi/ui/sourcelist.py:319
 msgid "Insert at _end of timeline"
 msgstr "I_evietot laika skalas beigās"
 
-#: ../pitivi/ui/sourcelist.py:374
+#: ../pitivi/ui/sourcelist.py:339
+msgid "Show Clips as a List"
+msgstr "Rādīt klipus kā sarakstu"
+
+#: ../pitivi/ui/sourcelist.py:341
+msgid "Show Clips as Icons"
+msgstr "Rādīt klipus kā ikonas"
+
+#: ../pitivi/ui/sourcelist.py:506
 msgid "Import a folder"
 msgstr "Importēt mapi"
 
-#: ../pitivi/ui/sourcelist.py:377
+#: ../pitivi/ui/sourcelist.py:509
 msgid "Import a clip"
 msgstr "Importēt klipu"
 
-#: ../pitivi/ui/sourcelist.py:378
+#: ../pitivi/ui/sourcelist.py:510
 msgid "Close after importing files"
 msgstr "Aizvērt pēc failu importēšanas"
 
-#: ../pitivi/ui/sourcelist.py:719
-msgid "Importing clips..."
-msgstr "Importē klipus..."
+#: ../pitivi/ui/sourcelist.py:546
+#, python-format
+msgid "Importing clip %(current_clip)d of %(total)d"
+msgstr "Importē klipu %(current_clip)d no %(total)d"
 
-#: ../pitivi/ui/sourcelist.py:720
-#| msgid "Error(s) occured while importing"
-msgid "Error(s) occurred while importing"
-msgstr "Importēšanas laikā notika kļūda(s)"
+#: ../pitivi/ui/sourcelist.py:647
+#| msgid "Error(s) occurred while importing"
+msgid "Errors occured while importing."
+msgstr "Importējot gadījās kļūdas."
 
-#: ../pitivi/ui/sourcelist.py:721
-#| msgid "An error occured while importing"
-msgid "An error occurred while importing"
-msgstr "Importēšanas laikā notika kļūda"
+#: ../pitivi/ui/sourcelist.py:648
+msgid "View errors"
+msgstr "Skatīt kļūdas"
 
-#: ../pitivi/ui/sourcelist.py:806
+#: ../pitivi/ui/sourcelist.py:650
+#| msgid "An error occurred while importing"
+msgid "An error occured while importing."
+msgstr "Importējot gadījās kļūda."
+
+#: ../pitivi/ui/sourcelist.py:651
+msgid "View error"
+msgstr "Skatīt kļūdu"
+
+#: ../pitivi/ui/sourcelist.py:738
 msgid "Error while analyzing files"
 msgstr "Failu analizēšanas laikā notika kļūda"
 
-#: ../pitivi/ui/sourcelist.py:807
+#: ../pitivi/ui/sourcelist.py:739
 msgid "The following files can not be used with PiTiVi."
 msgstr "Sekojošos failus nav iespējams lietot ar PiTiVi."
 
-#: ../pitivi/ui/sourcelist.py:809
+#: ../pitivi/ui/sourcelist.py:741
 msgid "Error while analyzing a file"
 msgstr "Failu analizēšanas laikā gadījās kļūda"
 
-#: ../pitivi/ui/sourcelist.py:810
+#: ../pitivi/ui/sourcelist.py:742
 msgid "The following file can not be used with PiTiVi."
 msgstr "Sekojošo failu nav iespējams lietot ar PiTiVi."
 
-#. tooltip text for toolbar
-#: ../pitivi/ui/timeline.py:46
-msgid "Delete Selected"
-msgstr "Dzēst izvēlēto"
+#: ../pitivi/ui/startupwizard.glade.h:1
+#| msgid "No properties..."
+msgid "Browse projects..."
+msgstr "Pārlūkot projektus..."
 
-#: ../pitivi/ui/timeline.py:47
-msgid "Split clip at playhead position"
-msgstr "Sadalīt klipu pie atskaņošanas galviņas pozīcijas"
+#: ../pitivi/ui/startupwizard.glade.h:2
+msgid "Double-click a project below to load it:"
+msgstr "Dubultklikšķiniet uz projekta, lai to atvērtu:"
 
-#: ../pitivi/ui/timeline.py:48
-msgid "Zoom In"
-msgstr "Tuvināt"
-
-#: ../pitivi/ui/timeline.py:49
-msgid "Zoom Out"
-msgstr "Tālināt"
-
-#: ../pitivi/ui/timeline.py:50
-msgid "Break links between clips"
-msgstr "Salauzt saites starp klipiem"
-
-#: ../pitivi/ui/timeline.py:51
-msgid "Link together arbitrary clips"
-msgstr "Savienot kopā patvaļīgus klipus"
-
-#: ../pitivi/ui/timeline.py:52
-msgid "Ungroup clips"
-msgstr "Atgrupēt klipus"
-
-#: ../pitivi/ui/timeline.py:53
-msgid "Group clips"
-msgstr "Grupēt klipus"
-
-#: ../pitivi/ui/timeline.py:123
-msgid "One or more GStreamer errors has occured!"
-msgstr "Gadījās viena vai vairākas GStreamer kļūdas!"
-
-#: ../pitivi/ui/timeline.py:157
-msgid "Error List"
-msgstr "Kļūdu saraksts"
-
-#: ../pitivi/ui/timeline.py:158
-msgid "The following errors have been reported:"
-msgstr "Tika ziņotas sekojošās kļūdas:"
-
-#: ../pitivi/ui/timeline.py:226
-msgid "Zoom Timeline"
-msgstr "Mainīt laika skalas mērogu"
+#: ../pitivi/ui/startupwizard.glade.h:3
+msgid "Welcome"
+msgstr "Laipni lūdzam"
 
 #: ../pitivi/ui/timelinecanvas.py:51
 msgid "Behavior"
@@ -1431,10 +1670,96 @@ msgstr "Lipšanas attālums (pikseļos)"
 msgid "Threshold distance (in pixels) used for all snapping operations"
 msgstr "Sliekšņa attālums (pikseļos), kuru izmantot visām lipšanas darbībām"
 
+#: ../pitivi/ui/timelinecontrols.py:13
+msgid "<b>Audio:</b>"
+msgstr "<b>Audio:</b>"
+
+#: ../pitivi/ui/timelinecontrols.py:15
+msgid "<b>Video:</b>"
+msgstr "<b>Video:</b>"
+
 #: ../pitivi/ui/timelinecontrols.py:17
-#| msgid "<b>Text:</b> %s"
 msgid "<b>Text:</b>"
 msgstr "<b>Teksts:</b>"
+
+#. tooltip text for toolbar
+#: ../pitivi/ui/timeline.py:54
+msgid "Delete Selected"
+msgstr "Dzēst izvēlēto"
+
+#: ../pitivi/ui/timeline.py:55
+msgid "Split clip at playhead position"
+msgstr "Sadalīt klipu pie atskaņošanas galviņas pozīcijas"
+
+#: ../pitivi/ui/timeline.py:56 ../pitivi/ui/timeline.py:331
+msgid "Add a keyframe"
+msgstr "Pievienot atslēgkadru"
+
+#: ../pitivi/ui/timeline.py:57
+msgid "Move to the previous keyframe"
+msgstr "Iet uz iepriekšējo atslēgkadru"
+
+#: ../pitivi/ui/timeline.py:58
+msgid "Move to the next keyframe"
+msgstr "Iet uz nākamo atslēgkadru"
+
+#: ../pitivi/ui/timeline.py:59
+msgid "Zoom In"
+msgstr "Tuvināt"
+
+#: ../pitivi/ui/timeline.py:60
+msgid "Zoom Out"
+msgstr "Tālināt"
+
+#: ../pitivi/ui/timeline.py:61
+#| msgid "Zoom Out"
+msgid "Zoom Fit"
+msgstr "Mērogs, lai iekļautos"
+
+#: ../pitivi/ui/timeline.py:62
+msgid "Break links between clips"
+msgstr "Salauzt saites starp klipiem"
+
+#: ../pitivi/ui/timeline.py:63
+msgid "Link together arbitrary clips"
+msgstr "Savienot kopā patvaļīgus klipus"
+
+#: ../pitivi/ui/timeline.py:64
+msgid "Ungroup clips"
+msgstr "Atgrupēt klipus"
+
+#: ../pitivi/ui/timeline.py:65
+msgid "Group clips"
+msgstr "Grupēt klipus"
+
+#: ../pitivi/ui/timeline.py:145
+msgid "One or more GStreamer errors has occured!"
+msgstr "Gadījās viena vai vairākas GStreamer kļūdas!"
+
+#: ../pitivi/ui/timeline.py:179
+msgid "Error List"
+msgstr "Kļūdu saraksts"
+
+#: ../pitivi/ui/timeline.py:180
+msgid "The following errors have been reported:"
+msgstr "Tika ziņotas sekojošās kļūdas:"
+
+#: ../pitivi/ui/timeline.py:237
+#| msgid "Zoom In"
+msgid "Zoom"
+msgstr "Mērogs"
+
+#: ../pitivi/ui/timeline.py:252
+msgid "Zoom Timeline"
+msgstr "Mainīt laika skalas mērogu"
+
+#: ../pitivi/ui/timeline.py:333
+msgid "_Previous keyframe"
+msgstr "Ie_priekšējais atslēgkadrs"
+
+#: ../pitivi/ui/timeline.py:335
+msgid "_Next keyframe"
+msgstr "_Nākamais atslēgkadrs"
 
 #: ../pitivi/ui/trackobject.py:49
 msgid "Clip Background (Video)"
@@ -1468,6 +1793,266 @@ msgstr "Klipa fonts"
 msgid "The font to use for clip titles"
 msgstr "Fonts, kuru izmantot klipu virsrakstiem"
 
+#: ../pitivi/ui/viewer.py:301
+msgid "Go to the beginning of the timeline"
+msgstr "Iet uz laika skalas sākumu"
+
+#: ../pitivi/ui/viewer.py:307
+msgid "Go back one second"
+msgstr "Iet atpakaļ par vienu sekundi"
+
+#: ../pitivi/ui/viewer.py:318
+msgid "Go forward one second"
+msgstr "Iet uz priekšu par vienu sekundi"
+
+#: ../pitivi/ui/viewer.py:324
+#| msgid "Insert at _end of timeline"
+msgid "Go to the end of the timeline"
+msgstr "Iet uz laika skalas beigām"
+
+#: ../pitivi/ui/viewer.py:513
+msgid "Dock Viewer"
+msgstr "Dokot skatītāju"
+
+#: ../pitivi/ui/viewer.py:644
+#| msgid "Play Clip"
+msgid "Play"
+msgstr "Atskaņot"
+
+#: ../pitivi/ui/viewer.py:652
+msgid "Pause"
+msgstr "Pauzēt"
+
+#: ../pitivi/utils.py:75
+#, python-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d stunda"
+msgstr[1] "%d stundas"
+msgstr[2] "%d stundas"
+
+#: ../pitivi/utils.py:78
+#, python-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d minūte"
+msgstr[1] "%d minūtes"
+msgstr[2] "%d minūtes"
+
+#: ../pitivi/utils.py:81
+#, python-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d sekunde"
+msgstr[1] "%d sekundes"
+msgstr[2] "%d sekundes"
+
+#. Translators: "non local" means the project is not stored
+#. on a local filesystem
+#: ../pitivi/utils.py:249
+#, python-format
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s vēl neapstrādā attālinātus projektus"
+
+#~ msgid ""
+#~ "\n"
+#~ "      %prog [PROJECT_FILE]\n"
+#~ "      %prog -i [-a] [MEDIA_FILE]..."
+#~ msgstr ""
+#~ "\n"
+#~ "      %prog [PROJEKTA_FAILS]\n"
+#~ "      %prog -i [-a] [MEDIJU_FAILS]..."
+
+#~ msgid ""
+#~ "Starts the video editor, optionally loading PROJECT_FILE. If\n"
+#~ "    no project is given, %prog creates a new project.\n"
+#~ "    Alternatively, when -i is specified, arguments are treated as clips "
+#~ "to be\n"
+#~ "    imported into the project. If -a is specified, these clips will also "
+#~ "be added to\n"
+#~ "    the end of the project timeline."
+#~ msgstr ""
+#~ "Palaiž video redaktoru, ielādējot PROJEKTA_FAILS (ja norādīts). Ja\n"
+#~ "   projekta fails nav norādīts, %prog izveidos jaunu projektu.\n"
+#~ "   Ja ir norādīts -i, argumenti tiek saprasti kā projektā ielādējami "
+#~ "klipi.\n"
+#~ "   Ja ir norādīts -a, šie klipi tiks pievienoti projekta laika skalas "
+#~ "beigās."
+
+#~ msgid "Run pitivi with no gui"
+#~ msgstr "Palaist pitivi bez gui"
+
+#~ msgid "<b>Author:</b>"
+#~ msgstr "<b>Autors:</b>"
+
+#~ msgid "<b>Description:</b>"
+#~ msgstr "<b>Apraksts:</b>"
+
+#~ msgid "<b>Plugin Name</b>"
+#~ msgstr "<b>Spraudņa nosaukums</b>"
+
+#~ msgid "<b>Nothing yet</b>"
+#~ msgstr "<b>Pagaidām nekas</b>"
+
+#~ msgid "Choose File"
+#~ msgstr "Izvēlēties failu"
+
+#~ msgid "Modify"
+#~ msgstr "Modificēt"
+
+#~ msgid "Output file:"
+#~ msgstr "Izvada fails:"
+
+#~ msgid "Please choose an output file"
+#~ msgstr "Lūdzu, izvēlieties izvada faili"
+
+#~ msgid "Choose file to render to"
+#~ msgstr "Izvēlēties failu, uz kuru renderēt"
+
+#~ msgid "About %s left"
+#~ msgstr "Apmēram atlicis: %s"
+
+#~ msgid "Rendering Complete"
+#~ msgstr "Renderēšana pabeigta"
+
+#~| msgid ""
+#~| "12 fps\n"
+#~| "23,97 fps\n"
+#~| "24 fps\n"
+#~| "25 fps\n"
+#~| "29,97 fps\n"
+#~| "30 fps\n"
+#~| "60 fps"
+#~ msgid ""
+#~ "12 fps\n"
+#~ "23.97 fps\n"
+#~ "24 fps\n"
+#~ "25 fps\n"
+#~ "29.97 fps\n"
+#~ "30 fps\n"
+#~ "60 fps"
+#~ msgstr ""
+#~ "12 kadri/sec\n"
+#~ "23,97 kadri/sec\n"
+#~ "24 kadri/sec\n"
+#~ "25 kadri/sec\n"
+#~ "29,97 kadri/sec\n"
+#~ "30 kadri/sec\n"
+#~ "60 kadri/sec"
+
+#~ msgid ""
+#~ "8 bit\n"
+#~ "16 bit\n"
+#~ "24 bit\n"
+#~ "32 bit"
+#~ msgstr ""
+#~ "8 biti\n"
+#~ "16 biti\n"
+#~ "24 biti\n"
+#~ "32 biti"
+
+#~ msgid ""
+#~ "8000 Hz\n"
+#~ "11025 Hz\n"
+#~ "22050 Hz\n"
+#~ "44100 Hz\n"
+#~ "48000 Hz\n"
+#~ "96000 Hz"
+#~ msgstr ""
+#~ "8000 Hz\n"
+#~ "11025 Hz\n"
+#~ "22050 Hz\n"
+#~ "44100 Hz\n"
+#~ "48000 Hz\n"
+#~ "96000 Hz"
+
+#~ msgid "<b>Audio Output</b>"
+#~ msgstr "<b>Audio izeja</b>"
+
+#~ msgid "<b>Video Output</b>"
+#~ msgstr "<b>Video izeja</b>"
+
+#~ msgid ""
+#~ "Mono (1)\n"
+#~ "Stereo (2)"
+#~ msgstr ""
+#~ "Mono (1)\n"
+#~ "Stereo (2)"
+
+#~ msgid "Muxer"
+#~ msgstr "Muksers"
+
+#~ msgid "Rate:"
+#~ msgstr "Ātrums:"
+
+#~ msgid "Settings"
+#~ msgstr "Iestatījumi"
+
+#~ msgid "Video Codec"
+#~ msgstr "Video kodeks"
+
+#~ msgid "Video Codec:"
+#~ msgstr "Video kodeks:"
+
+#~ msgid "Width:"
+#~ msgstr "Platums:"
+
+#~ msgid "576p (PAL DV/DVD)"
+#~ msgstr "576p (PAL DV/DVD)"
+
+#~ msgid "480p (NTSC DV/DVD)"
+#~ msgstr "480p (NTSC DV/DVD)"
+
+#~ msgid "720p HD"
+#~ msgstr "720p HD"
+
+#~ msgid "1080p full HD"
+#~ msgstr "1080p pilns HD"
+
+#~ msgid "QVGA (320x240)"
+#~ msgstr "QVGA (320x240)"
+
+#~ msgid "VGA (640x480)"
+#~ msgstr "VGA (640x480)"
+
+#~ msgid "SVGA (800x600)"
+#~ msgstr "SVGA (800x600)"
+
+#~ msgid "XGA (1024x768)"
+#~ msgstr "XGA (1024x768)"
+
+#~| msgid "Video :"
+#~ msgid "Raw Video"
+#~ msgstr "Jēls video"
+
+#~ msgid "Raw Audio"
+#~ msgstr "Jēls audio"
+
+#~ msgid "Export settings"
+#~ msgstr "Eksportēt iestatījumus"
+
+#~| msgid "URI : "
+#~ msgid "URI:"
+#~ msgstr "URI:"
+
+#~ msgid "A short description of your project."
+#~ msgstr "Īss projekta apraksts."
+
+#~ msgid "Description:"
+#~ msgstr "Apraksts:"
+
+#~ msgid "Name:"
+#~ msgstr "Nosaukums:"
+
+#~ msgid "The name of your project."
+#~ msgstr "Projekta nosaukums."
+
+#~ msgid "Add Clips..."
+#~ msgstr "Pievienot klipus..."
+
+#~ msgid "Importing clips..."
+#~ msgstr "Importē klipus..."
+
 #~ msgid "Could not import the Python bindings for libglade"
 #~ msgstr "Nav iespējams importēt Python piesaistes priekš libglade"
 
@@ -1495,9 +2080,6 @@ msgstr "Fonts, kuru izmantot klipu virsrakstiem"
 #~ "GStreamer nav elementu, lai apstrādātu failus, kas nāk no šī tipa "
 #~ "failsistēmas."
 
-#~ msgid "Pipeline didn't want to go to PLAYING."
-#~ msgstr "Cauruļvds nedribēja pāriet uz stāvokli ATSKAŅO."
-
 #~ msgid "Got unknown stream type : %s"
 #~ msgstr "Saņemta nezināma tipa plūsmas : %s"
 
@@ -1509,9 +2091,6 @@ msgstr "Fonts, kuru izmantot klipu virsrakstiem"
 
 #~ msgid "<b>%s</b> (%s)"
 #~ msgstr "<b>%s</b> (%s)"
-
-#~ msgid "<b>%s</b>"
-#~ msgstr "<b>%s</b>"
 
 #~ msgid "<small><b>File:</b> %s"
 #~ msgstr "<small><b>Fails:</b> %s"
@@ -1575,9 +2154,6 @@ msgstr "Fonts, kuru izmantot klipu virsrakstiem"
 
 #~ msgid "Empty"
 #~ msgstr "Tukšs"
-
-#~ msgid "Advanced vie_w"
-#~ msgstr "Uzlabots s_kats"
 
 #~ msgid "Switch to advanced view"
 #~ msgstr "Pārslēgt uz uzlaboto skatu"
