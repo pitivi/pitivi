@@ -27,7 +27,6 @@ import os.path
 
 LIBDIR = '@LIBDIR@'
 PKGDATADIR = '@DATADIR@/@PACKAGE@'
-PIXMAPDIR = '@DATADIR@/pixmaps'
 pitivi_version = '@VERSION@'
 APPNAME = '@PACKAGE_NAME@'
 APPURL = 'http://www.pitivi.org/'
@@ -45,22 +44,20 @@ def _in_devel():
     rd = _get_root_dir()
     return os.path.exists(os.path.join(rd, '.git'))
 
-def get_pixmap_dir():
-    """ Returns the directory for program-only pixmaps """
-    _dir = os.path.dirname(os.path.abspath(__file__))
+def get_data_dir():
     if _in_devel():
-        root = _dir
+        datadir = os.path.join(_get_root_dir(), "data")
     elif os.getenv("PITIVI_TOP_LEVEL_DIR"):
         top_level = os.getenv("PITIVI_TOP_LEVEL_DIR")
-        root = os.path.abspath(os.path.join(top_level, "pitivi"))
+        datadir = os.path.join(top_level, "data")
     else:
-        root = PKGDATADIR
-    return os.path.join(root, 'pixmaps')
+        datadir = PKGDATADIR
+    return os.path.abspath(datadir)
 
-def get_global_pixmap_dir():
-    """ Returns the directory for global pixmaps (ex : application icon) """
-    if _in_devel():
-        root = _get_root_dir()
-    else:
-        root = PIXMAPDIR
-    return root
+def get_pixmap_dir():
+    """ Returns the directory for program-only pixmaps """
+    return os.path.join(get_data_dir(), 'pixmaps')
+
+def get_ui_dir():
+    """ Returns the directory for GtkBuilder/Glade files """
+    return os.path.join(get_data_dir(), 'ui')
