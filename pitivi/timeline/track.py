@@ -543,7 +543,7 @@ class TrackObject(Signallable, Loggable):
             if self.stream_type is VideoStream:
                 true_priority = 2 + self._stagger + (3 * priority)
             elif self.stream_type is AudioStream:
-                true_priority  = 3 + (2 * self._stagger) + (4 * priority)
+                true_priority  = 2 + (2 * self._stagger) + (4 * priority)
         elif self.stream_type is VideoStream:
             true_priority = 3 + self._stagger + (3 * priority)
         elif self.stream_type is AudioStream:
