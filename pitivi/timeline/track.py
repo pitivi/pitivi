@@ -535,19 +535,15 @@ class TrackObject(Signallable, Loggable):
         if priority != self._public_priority:
             self._updatePriority(priority)
 
-    def _updatePriority(self, priority):
-        # The priority of an effect should always be higher than the priority of
-        # the track it is applied to. Those priority are affected when we add a
-        # TrackObject to timeline
-        if type(self) is TrackEffect:
-            if self.stream_type is VideoStream:
-                true_priority = 2 + self._stagger + (3 * priority)
-            elif self.stream_type is AudioStream:
-                true_priority  = 2 + (2 * self._stagger) + (4 * priority)
-        elif self.stream_type is VideoStream:
-            true_priority = 3 + self._stagger + (3 * priority)
+    def _getTruePriority (self, priority):
+        """ calculate the priority the contained gnlobject should have """
+        if self.stream_type is VideoStream:
+            return 3 + self._stagger + (3 * priority)
         elif self.stream_type is AudioStream:
-            true_priority  = 3 + (2 * self._stagger) + (4 * priority)
+            return 3 + (2 * self._stagger) + (4 * priority)
+
+    def _updatePriority(self, priority):
+        true_priority = self._getTruePriority(priority)
 
         if self.gnl_object.props.priority != true_priority:
             self.gnl_object.props.priority = true_priority
@@ -757,6 +753,17 @@ class TrackEffect(TrackObject):
                     new_element.set_property(prop.name, value)
 
         return other
+
+    def _getTruePriority(self, priority):
+        """
+        The priority of an effect should always be higher than the priority
+        of the track it is applied to. Those priority are affected when we
+        add a TrackObject to timeline
+        """
+        if self.stream_type is VideoStream:
+            return 2 + self._stagger + (3 * priority)
+        elif self.stream_type is AudioStream:
+            return  2 + (2 * self._stagger) + (4 * priority)
 
     def getElement(self):
         """
