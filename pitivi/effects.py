@@ -128,9 +128,8 @@ class EffectsHandler(object):
         factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
         for element_factory in factlist:
             klass = element_factory.get_klass()
-            if "Effect" in klass and element_factory.get_name()\
-              not in BLACKLISTED_EFFECTS:
-                name = element_factory.get_name()
+            name = element_factory.get_name()
+            if "Effect" in klass and name not in BLACKLISTED_EFFECTS:
                 effect = EffectFactory(name, name,
                                    self._getEffectCategories(name),
                                    self._getEffectName(element_factory),
