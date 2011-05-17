@@ -49,7 +49,7 @@ from pitivi.ui.timeline import Timeline
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
 from pitivi.configure import pitivi_version, APPNAME, APPURL, APPMANUALURL, \
-     get_pixmap_dir, LIBDIR
+     get_pixmap_dir, LIBDIR, get_ui_dir
 from pitivi.ui import dnd
 from pitivi.pipeline import Pipeline
 from pitivi.action import ViewAction
@@ -384,12 +384,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.uimanager = gtk.UIManager()
         self.add_accel_group(self.uimanager.get_accel_group())
         self.uimanager.insert_action_group(self.actiongroup, 0)
-        if 'pitivi.exe' in __file__.lower():
-            xml = LIBDIR + '\\pitivi.exe'
-        else:
-            xml = __file__
-        self.uimanager.add_ui_from_file(os.path.join(os.path.dirname(
-            os.path.abspath(xml)), "mainwindow.xml"))
+        self.uimanager.add_ui_from_file(os.path.join(get_ui_dir(), "mainwindow.xml"))
 
     def _createUi(self, instance):
         """ Create the graphical interface """

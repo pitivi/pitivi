@@ -46,20 +46,5 @@ ui_PYTHON =			\
 	filechooserpreview.py	\
 	zoominterface.py
 
-ui_DATA =				\
-	elementsettingsdialog.glade	\
-	cam_capture.glade		\
-	encodingdialog.glade		\
-	encodingprogress.glade		\
-	filelisterrordialog.glade	\
-	mainwindow.xml			\
-	net_capture.glade		\
-	projectsettings.glade		\
-	pluginmanagerdialog.glade	\
-	screencast_manager.glade	\
-	startupwizard.glade
-
 clean-local:
 	rm -rf *.pyc *.pyo
-
-EXTRA_DIST = $(ui_DATA)

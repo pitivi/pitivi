@@ -100,4 +100,5 @@ data/icons/32x32/Makefile
 data/icons/48x48/Makefile
 data/icons/scalable/Makefile
 data/pixmaps/Makefile
+data/ui/Makefile
 )

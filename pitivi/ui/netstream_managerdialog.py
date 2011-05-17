@@ -24,7 +24,7 @@ import gtk
 import gtk.glade
 import gst
 import tempfile
-from pitivi.configure import LIBDIR
+from pitivi.configure import LIBDIR, get_ui_dir
 from pitivi.sourcelist import SourceList
 from pitivi.bin import SmartStreamBin, SinkBin
 from pitivi.settings import ExportSettings
@@ -36,12 +36,7 @@ class NetstreamManagerDialog(object):
         self.capture_pipe = None
         self.player = None
 
-        if 'pitivi.exe' in __file__.lower():
-            glade_dir = LIBDIR + '\\pitivi.exe'
-        else:
-            glade_dir = os.path.dirname(os.path.abspath(__file__))
-
-        self.objectpool_ui = gtk.glade.XML(os.path.join(glade_dir, "net_capture.glade"))
+        self.objectpool_ui = gtk.glade.XML(os.path.join(get_ui_dir), "net_capture.ui")
         self.stream_window = self.objectpool_ui.get_widget("network_capture")
         self.screen = self.objectpool_ui.get_widget("screen")
         self.capture_btn = self.objectpool_ui.get_widget("capture_btn")

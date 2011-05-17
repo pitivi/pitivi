@@ -71,7 +71,7 @@ display_aspect_ratios = model((str, object), (
 ))
 
 class ProjectSettingsDialog(GladeWindow):
-    glade_file = "projectsettings.glade"
+    glade_file = "projectsettings.ui"
 
     def __init__(self, parent, project):
         GladeWindow.__init__(self, parent)

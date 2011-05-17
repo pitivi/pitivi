@@ -1,4 +1,4 @@
-SUBDIRS=icons pixmaps
+SUBDIRS=icons pixmaps ui
 
 desktopdir = $(datadir)/applications
 desktop_in_files = pitivi.desktop.in

@@ -35,7 +35,7 @@ from pitivi.log.loggable import Loggable
 
 class FileListErrorDialog(GladeWindow, Signallable, Loggable):
     """ Dialog box for showing errors in a list of files """
-    glade_file = "filelisterrordialog.glade"
+    glade_file = "filelisterrordialog.ui"
     __signals__ = {
         'close': None,
         'response': ["something"]

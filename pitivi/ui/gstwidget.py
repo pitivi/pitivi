@@ -177,7 +177,7 @@ class GstElementSettingsDialog(GladeWindow, Loggable):
     """
     Dialog window for viewing/modifying properties of a gst.Element
     """
-    glade_file = "elementsettingsdialog.glade"
+    glade_file = "elementsettingsdialog.ui"
 
     def __init__(self, elementfactory, properties={}):
         GladeWindow.__init__(self)

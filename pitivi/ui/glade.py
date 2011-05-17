@@ -31,6 +31,8 @@ import sys
 import gtk
 from gtk.glade import XML, set_custom_handler
 
+from pitivi.configure import get_ui_dir
+
 # proc := module1.module2.moduleN.proc1().maybe_another_proc()
 #  -> eval proc1().maybe_another_proc() in module1.module2.moduleN
 def flumotion_glade_custom_handler(unused_xml, proc, name, *unused_args):
@@ -77,7 +79,7 @@ class GladeWidget(gtk.VBox):
     Remember to chain up if you customize __init__().
     '''
 
-    glade_dir = os.path.dirname(os.path.abspath(__file__))
+    glade_dir = get_ui_dir()
     glade_file = None
     glade_typedict = None
 
@@ -136,7 +138,7 @@ class GladeWindow(object):
     convenience wrappers.
     """
 
-    glade_dir = os.path.dirname(os.path.abspath(__file__))
+    glade_dir = get_ui_dir()
     glade_file = None
     glade_typedict = None
 

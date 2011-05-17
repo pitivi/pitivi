@@ -32,7 +32,7 @@ class WebcamManagerDialog(GladeWindow):
     """
     Webcan capture dialog box
     """
-    glade_file = "cam_capture.glade"
+    glade_file = "cam_capture.ui"
 
     def __init__(self, pitivi):
         gst.log("Creating new WebcamManager Dialog")

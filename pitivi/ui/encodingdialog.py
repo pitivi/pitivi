@@ -110,7 +110,7 @@ def ellipsize(combo):
 
 class EncodingDialog(GladeWindow, Renderer, Loggable):
     """ Encoding dialog box """
-    glade_file = "encodingdialog.glade"
+    glade_file = "encodingdialog.ui"
 
     def __init__(self, app, project, pipeline=None):
         Loggable.__init__(self)

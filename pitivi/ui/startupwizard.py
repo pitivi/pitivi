@@ -4,7 +4,7 @@ import os
 import gtk
 import webbrowser
 
-from pitivi.configure import LIBDIR
+from pitivi.configure import LIBDIR, get_ui_dir
 from projectsettings import ProjectSettingsDialog
 from pitivi.configure import APPMANUALURL
 
@@ -20,14 +20,9 @@ class StartUpWizard(object):
     """
 
     def __init__(self, app):
-        if 'pitivi.exe' in __file__.lower():
-            glade_dir = LIBDIR
-        else:
-            glade_dir = os.path.dirname(os.path.abspath(__file__))
         self.app = app
         self.builder = gtk.Builder()
-        gladefile = os.path.join(glade_dir, "startupwizard.glade")
-        self.builder.add_from_file(gladefile)
+        self.builder.add_from_file(os.path.join(get_ui_dir(), "startupwizard.ui"))
         self.builder.connect_signals(self)
 
         self.window = self.builder.get_object("window1")

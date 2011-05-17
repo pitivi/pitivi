@@ -33,7 +33,7 @@ from pitivi.signalinterface import Signallable
 
 class EncodingProgressDialog(GladeWindow, Signallable):
 
-    glade_file = "encodingprogress.glade"
+    glade_file = "encodingprogress.ui"
 
     __signals__ = {
         "pause": [],
