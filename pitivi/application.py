@@ -378,7 +378,6 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
 
     def __init__(self, debug=False):
         FullGuiPitivi.__init__(self, debug)
-
         self.projectManager.newBlankProject()
 
     def _createGui(self):

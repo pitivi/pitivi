@@ -32,7 +32,6 @@ class StartUpWizard(object):
 
         self.window = self.builder.get_object("window1")
         self.window.connect("key-press-event", self._keypressCb)
-        self.window.set_transient_for(self.app.gui)
 
         chooser = self.builder.get_object("recentchooser2")
         # FIXME: gtk creates a combo box with only one item, but there is no
@@ -68,6 +67,7 @@ class StartUpWizard(object):
         self.hide()
 
     def show(self):
+        self.window.set_transient_for(self.app.gui)
         self.window.show()
         self.window.grab_focus()
 
