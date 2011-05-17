@@ -293,8 +293,17 @@ class GuiPitivi(InteractivePitivi):
 
     def _showGui(self):
         """Creates and shows the UI."""
+
         self.gui = self._createGui()
-        self.gui.show()
+        
+        if isinstance(self, StartupWizardGuiPitivi):
+            # A hack to ensure that the welcome dialog is really shown
+            # and focused *after* the main window
+            self.wizard.hide()
+            self.gui.show()
+            self.wizard.show()
+        else:
+            self.gui.show()
 
     def shutdown(self):
         if Pitivi.shutdown(self):
@@ -307,6 +316,9 @@ class GuiPitivi(InteractivePitivi):
 class FullGuiPitivi(GuiPitivi):
     """
     Creates an instance of PiTiVi with the UI
+    
+    This is called when we start the UI with a project passed as a parameter,
+    but not when we start with the welcome dialog.
     """
 
     def _createGui(self):
@@ -361,19 +373,19 @@ class ProjectCreatorGuiPitivi(FullGuiPitivi):
 
 class ProjectLoaderGuiPitivi(FullGuiPitivi):
     """
-    Creates an instance of PiTiVi with the UI and loading the @project_filename
-    project
+    Creates an instance of the UI and loads @project_filename
     """
 
     def __init__(self, project_filename, debug=False):
         FullGuiPitivi.__init__(self, debug)
-
         self._loadProject(project_filename)
 
 
 class StartupWizardGuiPitivi(FullGuiPitivi):
     """
-    Creates an instance of PiTiVi with the UI and the startup wizard
+    Creates an instance of the PiTiVi UI with the welcome dialog
+    
+    This is not called when a project is passed as a parameter.
     """
 
     def __init__(self, debug=False):
