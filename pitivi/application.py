@@ -93,17 +93,15 @@ class Pitivi(Loggable, Signallable):
     """
 
     __signals__ = {
-        "new-project" : ["project"],
-
-        "new-project-loading" : ["uri"],
-        "new-project-created" : ["project"],
-        "new-project-loaded" : ["project"],
-        "new-project-failed" : ["uri", "exception"],
-        "closing-project" : ["project"],
-        "project-closed" : ["project"],
-        "missing-uri" : ["formatter", "uri"],
-        "shutdown" : None
-        }
+        "new-project": ["project"],
+        "new-project-loading": ["uri"],
+        "new-project-created": ["project"],
+        "new-project-loaded": ["project"],
+        "new-project-failed": ["uri", "exception"],
+        "closing-project": ["project"],
+        "project-closed": ["project"],
+        "missing-uri": ["formatter", "uri"],
+        "shutdown": None}
 
     def __init__(self):
         """
@@ -216,9 +214,10 @@ class Pitivi(Loggable, Signallable):
         self.current = None
         self.emit("project-closed", project)
 
+
 class InteractivePitivi(Pitivi):
     """
-        Base class to launch interactive PiTiVi
+    Base class to launch interactive PiTiVi
     """
 
     def __init__(self, debug=False):
@@ -267,9 +266,10 @@ class InteractivePitivi(Pitivi):
         """Runs the main loop."""
         self.mainloop.run()
 
+
 class GuiPitivi(InteractivePitivi):
     """
-        Base class to launch PiTiVi with UI
+    Base class to launch PiTiVi with UI
     """
 
     def __init__(self, debug=False):
@@ -303,18 +303,20 @@ class GuiPitivi(InteractivePitivi):
             return True
         return False
 
+
 class FullGuiPitivi(GuiPitivi):
     """
-        Creates an instance of PiTiVi with the UI
+    Creates an instance of PiTiVi with the UI
     """
 
     def _createGui(self):
         return PitiviMainWindow(self)
 
+
 class ProjectCreatorGuiPitivi(FullGuiPitivi):
     """
-        Creates an instance of PiTiVi with the UI and loading a list
-        of clips, adding them to the timeline or not
+    Creates an instance of PiTiVi with the UI and loading a list
+    of clips, adding them to the timeline or not
     """
 
     def __init__(self, media_filenames, add_to_timeline=False, debug=False):
@@ -356,10 +358,11 @@ class ProjectCreatorGuiPitivi(FullGuiPitivi):
 
         return True
 
+
 class ProjectLoaderGuiPitivi(FullGuiPitivi):
     """
-        Creates an instance of PiTiVi with the UI and loading the @project_filename
-        project
+    Creates an instance of PiTiVi with the UI and loading the @project_filename
+    project
     """
 
     def __init__(self, project_filename, debug=False):
@@ -367,9 +370,10 @@ class ProjectLoaderGuiPitivi(FullGuiPitivi):
 
         self._loadProject(project_filename)
 
+
 class StartupWizardGuiPitivi(FullGuiPitivi):
     """
-        Creates an instance of PiTiVi with the UI and the startup wizard
+    Creates an instance of PiTiVi with the UI and the startup wizard
     """
 
     def __init__(self, debug=False):
@@ -390,10 +394,11 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
     def _showWizardCb(self, unused_projectManager, unused_uri, unused_exception):
         self.wizard.show()
 
+
 class PreviewGuiPitivi(GuiPitivi):
     """
-        Creates an instance of PiTiVi which plays the @project_filename
-        in a basic UI.
+    Creates an instance of PiTiVi which plays the @project_filename
+    in a basic UI.
     """
 
     def __init__(self, project_filename, debug=False):
@@ -421,10 +426,11 @@ class PreviewGuiPitivi(GuiPitivi):
         # hack to make the gtk.HScale seek slider UI behave properly
         self.viewer._durationChangedCb(None, project.timeline.duration)
 
+
 class RenderingNoGuiPitivi(InteractivePitivi):
     """
-        Creates an instance of PiTiVi with no UI which aims
-        at rendering the @project_filename project in @output_filename file
+    Creates an instance of PiTiVi with no UI which aims
+    at rendering the @project_filename project in @output_filename file
     """
 
     def __init__(self, project_filename, output_filename, debug=False):
@@ -445,6 +451,7 @@ class RenderingNoGuiPitivi(InteractivePitivi):
             self.mainloop.quit()
             return True
         return False
+
 
 def _parse_options(argv):
     parser = OptionParser(
@@ -496,6 +503,7 @@ def _parse_options(argv):
             parser.error("Cannot open more than one PROJECT_FILE")
 
     return options, args
+
 
 def main(argv):
     options, args = _parse_options(argv)
