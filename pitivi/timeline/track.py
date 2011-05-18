@@ -1046,6 +1046,10 @@ class Track(Signallable, Loggable):
 
         self.updateDefaultSourcesReal()
 
+    def updateCaps(self, caps):
+        self.stream.caps = caps
+        self.updateDefaultSources()
+
     def updateDefaultSourcesReal(self):
         update = self.composition.props.update
         self.composition.props.update = True

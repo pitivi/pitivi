@@ -1505,6 +1505,7 @@ class Timeline(Signallable, Loggable):
         self.dead_band = 10
         self.edges = TimelineEdges()
         self.property_trackers = {}
+        self._video_caps = None
 
     def addTrack(self, track):
         """
@@ -1518,6 +1519,7 @@ class Timeline(Signallable, Loggable):
             raise TimelineError("Provided track already controlled by the timeline")
 
         self.tracks.append(track)
+        self.updateVideoCaps()
         self._updateDuration()
         track.connect('start-changed', self._trackDurationChangedCb)
         track.connect('duration-changed', self._trackDurationChangedCb)
@@ -1558,6 +1560,15 @@ class Timeline(Signallable, Loggable):
         if duration != self.duration:
             self.duration = duration
             self.emit('duration-changed', duration)
+
+    def updateVideoCaps (self, caps= None):
+        if caps:
+            self._video_caps = caps
+
+        if self._video_caps:
+            for track in self.tracks:
+                if type(track.stream) is VideoStream:
+                    track.updateCaps(self._video_caps)
 
     def addTimelineObject(self, obj):
         """

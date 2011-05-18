@@ -194,6 +194,8 @@ class Project(Signallable, Loggable):
     def _projectSettingsChanged(self):
         settings = self.getSettings()
         self._videocaps = settings.getVideoCaps()
+        if self.timeline:
+            self.timeline.updateVideoCaps(self._videocaps)
 
         for fact in self.sources.getSources():
             fact.setFilterCaps(self._videocaps)
