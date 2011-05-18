@@ -296,13 +296,15 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.progress.setState(state)
 
     def updatePosition(self, fraction, text):
-        self.progress.updatePosition(fraction, text)
+        if self.progress:
+            self.progress.updatePosition(fraction, text)
 
     def updateUIOnEOS(self):
         """
         When a render completes or is cancelled, update the UI
         """
         self.progress.destroy()
+        self.progress = None
         self.window.show()  # Show the encoding dialog again
         self.pipeline.disconnect_by_function(self._stateChanged)
 
