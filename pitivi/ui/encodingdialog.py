@@ -295,15 +295,6 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
     def _stateChanged(self, pipeline, state):
         self.progress.setState(state)
 
-    def _settingsButtonClickedCb(self, unused_button):
-        dialog = ExportSettingsDialog(self.app, self.settings)
-        res = dialog.run()
-        dialog.hide()
-        if res == gtk.RESPONSE_ACCEPT:
-            self.settings = dialog.getSettings()
-            self._displaySettings()
-        dialog.destroy()
-
     def updatePosition(self, fraction, text):
         self.progress.updatePosition(fraction, text)
 
