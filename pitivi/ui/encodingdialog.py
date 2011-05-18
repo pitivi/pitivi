@@ -129,10 +129,6 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.preferred_vencoder = self.settings.vencoder
         self.preferred_aencoder = self.settings.aencoder
 
-        ellipsize(self.muxercombobox)
-        ellipsize(self.audio_encoder_combo)
-        ellipsize(self.video_encoder_combo)
-
         self.timestarted = 0
         self._displaySettings()
 
@@ -165,6 +161,10 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         # note: this will trigger an update of the codec comboboxes
         set_combo_value(self.muxercombobox,
             gst.element_factory_find(self.settings.muxer))
+
+        ellipsize(self.muxercombobox)
+        ellipsize(self.audio_encoder_combo)
+        ellipsize(self.video_encoder_combo)
 
         # File
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
