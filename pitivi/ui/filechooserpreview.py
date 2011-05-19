@@ -210,8 +210,8 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.bbox.show()
                 self.b_action.set_sensitive(False)
                 self.seeker.set_sensitive(False)
-                self.b_zoom_in.set_sensitive(True)
-                self.b_zoom_out.set_sensitive(True)
+                self.b_zoom_in.show()
+                self.b_zoom_out.show()
                 desc = "<b>Image</b> <i>%dx%d pixel</i>"
                 desc = desc % (pixbuf_w, pixbuf_h)
                 self.description = desc
@@ -229,8 +229,8 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.bbox.show()
                 self.b_action.set_sensitive(True)
                 self.seeker.set_sensitive(True)
-                self.b_zoom_in.set_sensitive(True)
-                self.b_zoom_out.set_sensitive(True)
+                self.b_zoom_in.show()
+                self.b_zoom_out.show()
                 desc = "<b>Width/Height</b>: <i>%dx%d</i>\n" + "<b>Duration</b>: %s \n"
                 desc = desc % (video.par*video.width, video.height, duration)
                 self.description = desc
@@ -252,8 +252,8 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.player.set_property("video-sink", self.__fakesink)
             self.player.set_state(gst.STATE_PAUSED)
             self.b_action.set_sensitive(True)
-            self.b_zoom_in.set_sensitive(False)
-            self.b_zoom_out.set_sensitive(False)
+            self.b_zoom_in.hide()
+            self.b_zoom_out.hide()
             self.bbox.show()
 
     def show_error(self, uri):
