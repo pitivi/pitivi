@@ -378,15 +378,24 @@ class PreviewWidget(gtk.VBox, Loggable):
     def _on_tag_found(self, abus, mess):
         self.log("Tag found")
         tag_list = mess.parse_tag()
+        acceptable_tags = [gst.TAG_ALBUM_ARTIST,
+                            gst.TAG_ARTIST,
+                            gst.TAG_TITLE,
+                            gst.TAG_ALBUM,
+                            gst.TAG_BITRATE,
+                            gst.TAG_COMPOSER,
+                            gst.TAG_GENRE,
+                            gst.TAG_PERFORMER,
+                            gst.TAG_DATE]
         for tag in tag_list.keys():
             tag_type = gst.tag_get_tag_type(tag)
-            if tag_type in (gobject.TYPE_STRING,
+            if tag in acceptable_tags and tag_type in (gobject.TYPE_STRING,
                                    gobject.TYPE_DOUBLE,
                                    gobject.TYPE_FLOAT,
                                    gobject.TYPE_INT,
                                    gobject.TYPE_UINT):
+                name = gst.tag_get_nick(tag)                
                 value = unicode(tag_list[tag]).replace('<', ' ').replace('>', ' ')
-                name = gst.tag_get_nick(tag)
                 self.tags['<b>' + name + '</b>: '] = value
         keys = self.tags.keys()
         keys.sort()
