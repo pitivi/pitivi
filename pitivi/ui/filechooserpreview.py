@@ -54,16 +54,10 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.log("Init PreviewWidget")
         self.connect('destroy', self._free_all)
 
-        #settings obj
         self.settings = instance.settings
-
-        #a dictionary for caching factories
         self.preview_cache = {}
-
-        #a dictionary for caching errors
         self.preview_cache_errors = {}
 
-        #discoverer for analyze file
         self.discoverer = Discoverer()
         self.discoverer.connect('discovery-done', self._update_preview)
         self.discoverer.connect('discovery-error', self._error_detected)
@@ -89,28 +83,28 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.description = ""
         self.tags = {}
 
-        #gui elements:
-        #a title label
-        self.title = gtk.Label('')
+        # Gui elements:
+        # Filename (title) label
+        self.title = gtk.Label()
         self.title.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
         self.title.set_use_markup(True)
         self.title.show()
         self.pack_start(self.title, expand=False)
 
-        # a drawing area for video output
+        # Drawing area for video output
         self.preview_video = gtk.DrawingArea()
         self.preview_video.modify_bg(gtk.STATE_NORMAL, self.preview_video.style.black)
         self.preview_video.set_size_request(self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
         self.preview_video.hide()
         self.pack_start(self.preview_video, expand=False)
 
-        #an image for images and audio
+        # An image for images and audio
         self.preview_image = gtk.Image()
         self.preview_image.set_size_request(self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
         self.preview_image.show()
         self.pack_start(self.preview_image, expand=False)
 
-        #button play
+        # Play button
         self.bbox = gtk.HBox()
         self.b_action = gtk.ToolButton(gtk.STOCK_MEDIA_PLAY)
         self.b_action.connect("clicked", self._on_start_stop_clicked)
@@ -127,39 +121,33 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.seeker.show()
         self.bbox.pack_start(self.seeker)
 
-        #button zoom in
+        # Zoom buttons
         self.b_zoom_in = gtk.ToolButton(gtk.STOCK_ZOOM_IN)
         self.b_zoom_in.connect("clicked", self._on_zoom_clicked, 1)
-        self.bbox.pack_start(self.b_zoom_in, expand=False)
-        #button zoom out
         self.b_zoom_out = gtk.ToolButton(gtk.STOCK_ZOOM_OUT)
         self.b_zoom_out.connect("clicked", self._on_zoom_clicked, -1)
+        self.bbox.pack_start(self.b_zoom_in, expand=False)
         self.bbox.pack_start(self.b_zoom_out, expand=False)
         self.bbox.show_all()
         self.pack_start(self.bbox, expand=False)
 
-        #another label for tag
-        self.l_tags = gtk.Label('')
+        # Label for metadata tags
+        self.l_tags = gtk.Label()
         self.l_tags.set_justify(gtk.JUSTIFY_LEFT)
         self.l_tags.set_ellipsize(pango.ELLIPSIZE_END)
         self.l_tags.show()
         self.pack_start(self.l_tags, expand=False)
 
-        #error handling
-        #a label
-        hbox = gtk.HBox()
-        hbox.set_spacing(5)
-        self.l_error = gtk.Label('')
-        self.l_error.set_markup(_("PiTiVi can not preview this file."))
-        hbox.pack_start(self.l_error)
-        #button for detail
-        self.b_details = gtk.Button('More')
+        # Error handling
+        vbox = gtk.VBox()
+        vbox.set_spacing(6)
+        self.l_error = gtk.Label(_("PiTiVi can not preview this file."))
+        self.b_details = gtk.Button(_("Show errors"))
         self.b_details.connect('clicked', self._on_b_details_clicked)
-        hbox.pack_start(self.b_details, expand=False, fill=False)
-        hbox.show()
-        self.pack_start(hbox, expand=False, fill=False)
-        #a filler
-        self.pack_start(gtk.Label(''))
+        vbox.pack_start(self.l_error)
+        vbox.pack_start(self.b_details, expand=False, fill=False)
+        vbox.show()
+        self.pack_start(vbox, expand=False, fill=False)
 
     def add_preview_request(self, dialogbox):
         """add a preview request """
@@ -169,8 +157,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.log("Preview request for " + uri)
         self.clear_preview()
         self.current_selected_uri = uri
-        if uri in self.preview_cache:
-            #already discovered
+        if uri in self.preview_cache: # Already discovered
             self.log(uri + " already in cache")
             self.show_preview(uri)
         elif uri in self.preview_cache_errors:
@@ -183,9 +170,9 @@ class PreviewWidget(gtk.VBox, Loggable):
     def _update_preview(self, dscvr, uri, factory):
         if factory is None:
             self.error("Discoverer does not handle " + uri)
-        #add to cache
+        # Add to cache
         self.preview_cache[uri] = factory
-        #show uri only if is the selected one
+        # Show uri only if is the selected one
         if self.current_selected_uri == uri:
             self.show_preview(uri)
 
@@ -279,7 +266,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.bbox.hide()
         self.l_error.hide()
         self.b_details.hide()
-        self.title.set_markup("<i>No preview</i>")
+        self.title.set_markup("<i>" + _("No preview") + "</i>")
         self.description = ""
         self.l_tags.set_markup("")
         self.b_action.set_stock_id(gtk.STOCK_MEDIA_PLAY)
@@ -421,7 +408,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                 gtk.BUTTONS_OK,
                 mess)
             dialog.set_icon_name("pitivi")
-            dialog.set_title(_("Error Previewing File"))
+            dialog.set_title(_("Error while analyzing a file"))
             dialog.set_property("secondary-text", detail)
             dialog.run()
             dialog.destroy()
@@ -429,7 +416,7 @@ class PreviewWidget(gtk.VBox, Loggable):
     def _free_all(self, widget):
         self.player.set_state(gst.STATE_NULL)
         self.is_playing = False
-        #FIXME: the followig lines are really needed?
+        #FIXME: are the following lines really needed?
         del self.player
         del self.preview_cache
 
