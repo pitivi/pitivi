@@ -106,9 +106,9 @@ class PreviewWidget(gtk.VBox, Loggable):
 
         # Play button
         self.bbox = gtk.HBox()
-        self.b_action = gtk.ToolButton(gtk.STOCK_MEDIA_PLAY)
-        self.b_action.connect("clicked", self._on_start_stop_clicked)
-        self.bbox.pack_start(self.b_action, expand=False)
+        self.play_button = gtk.ToolButton(gtk.STOCK_MEDIA_PLAY)
+        self.play_button.connect("clicked", self._on_start_stop_clicked)
+        self.bbox.pack_start(self.play_button, expand=False)
 
         #Scale for position handling
         self.pos_adj = gtk.Adjustment()
@@ -208,8 +208,8 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.preview_image.set_size_request(self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
                 self.preview_image.show()
                 self.bbox.show()
-                self.b_action.set_sensitive(False)
-                self.seeker.set_sensitive(False)
+                self.play_button.hide()
+                self.seeker.hide()
                 self.b_zoom_in.show()
                 self.b_zoom_out.show()
                 desc = "<b>Image</b> <i>%dx%d pixel</i>"
@@ -227,8 +227,8 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.preview_video.set_size_request(w, h)
                 self.preview_video.show()
                 self.bbox.show()
-                self.b_action.set_sensitive(True)
-                self.seeker.set_sensitive(True)
+                self.play_button.show()
+                self.seeker.show()
                 self.b_zoom_in.show()
                 self.b_zoom_out.show()
                 desc = "<b>Width/Height</b>: <i>%dx%d</i>\n" + "<b>Duration</b>: %s \n"
@@ -251,7 +251,8 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.player.set_property("uri", self.current_selected_uri)
             self.player.set_property("video-sink", self.__fakesink)
             self.player.set_state(gst.STATE_PAUSED)
-            self.b_action.set_sensitive(True)
+            self.play_button.show()
+            self.seeker.show()
             self.b_zoom_in.hide()
             self.b_zoom_out.hide()
             self.bbox.show()
@@ -269,7 +270,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.title.set_markup("<i>" + _("No preview") + "</i>")
         self.description = ""
         self.l_tags.set_markup("")
-        self.b_action.set_stock_id(gtk.STOCK_MEDIA_PLAY)
+        self.play_button.set_stock_id(gtk.STOCK_MEDIA_PLAY)
         self.player.set_state(gst.STATE_NULL)
         self.is_playing = False
         self.tags = {}
@@ -303,7 +304,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         if message.type == gst.MESSAGE_EOS:
             self.player.set_state(gst.STATE_NULL)
             self.is_playing = False
-            self.b_action.set_stock_id(gtk.STOCK_MEDIA_PLAY)
+            self.play_button.set_stock_id(gtk.STOCK_MEDIA_PLAY)
             self.pos_adj.set_value(0)
         elif message.type == gst.MESSAGE_ERROR:
             self.player.set_state(gst.STATE_NULL)
