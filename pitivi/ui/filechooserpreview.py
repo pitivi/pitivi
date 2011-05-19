@@ -145,6 +145,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         #another label for tag
         self.l_tags = gtk.Label('')
         self.l_tags.set_justify(gtk.JUSTIFY_LEFT)
+        self.l_tags.set_ellipsize(pango.ELLIPSIZE_END)
         self.l_tags.show()
         self.pack_start(self.l_tags, expand=False)
         
