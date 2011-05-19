@@ -9,7 +9,7 @@ import os
 
 from pitivi.log.loggable import Loggable
 from pitivi.discoverer import Discoverer
-from pitivi.ui.common import factory_name, beautify_stream
+from pitivi.ui.common import beautify_stream
 from pitivi.stream import match_stream_groups_map, AudioStream, VideoStream
 from pitivi.utils import beautify_length, uri_is_valid
 from pitivi.configure import get_pixmap_dir
@@ -84,13 +84,6 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.tags = {}
 
         # Gui elements:
-        # Filename (title) label
-        self.title = gtk.Label()
-        self.title.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
-        self.title.set_use_markup(True)
-        self.title.show()
-        self.pack_start(self.title, expand=False)
-
         # Drawing area for video output
         self.preview_video = gtk.DrawingArea()
         self.preview_video.modify_bg(gtk.STATE_NORMAL, self.preview_video.style.black)
@@ -192,7 +185,6 @@ class PreviewWidget(gtk.VBox, Loggable):
             duration = ''
         else:
             duration = beautify_length(factory.duration)
-        self.title.set_markup('<b>'+ factory_name(factory) + '</b>')
         video = factory.getOutputStreams(VideoStream)
         if video:
             video = video[0]
@@ -262,7 +254,6 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.bbox.hide()
         self.l_error.hide()
         self.b_details.hide()
-        self.title.set_markup("<i>" + _("No preview") + "</i>")
         self.description = ""
         self.l_tags.set_markup("")
         self.play_button.set_stock_id(gtk.STOCK_MEDIA_PLAY)
