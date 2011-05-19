@@ -131,17 +131,65 @@ class SmartVideomixerBin(gst.Bin):
         # black background
         self.videomixer.props.background = 1
         # FIXME : USE THE PROJECT SETTINGS FOR THESE CAPS !
-        csp = gst.element_factory_make("ffmpegcolorspace")
-        self.add(self.videomixer, csp)
-        self.videomixer.link_pads_full("src", csp, "sink", gst.PAD_LINK_CHECK_NOTHING)
-        srcpad = gst.GhostPad("src", csp.get_pad("src"))
+        self.colorspace = gst.element_factory_make("ffmpegcolorspace")
+        self.add(self.videomixer, self.colorspace)
+        self.videomixer.link_pads_full("src", self.colorspace, "sink", gst.PAD_LINK_CHECK_NOTHING)
+        srcpad = gst.GhostPad("src", self.colorspace.get_pad("src"))
         srcpad.set_active(True)
         self.add_pad(srcpad)
         self.pad_count = 0
         self.inputs = {} # key : pad_name,
                          # value : (sinkpad, ffmpegcolorspace, capsfilter, videomixerpad)
 
-        self.alpha_helper = SmartVideomixerBinPropertyHelper(track, self.inputs)
+        self.alpha_helper = SmartVideomixerBinPropertyHelper(self, track, self.inputs)
+
+    def _pad_blockedCb (self, pad, blocked, unused=None):
+        pass
+
+    def change_mixer(self, has_alpha):
+        # When we change from having an alpha channel to not having one,
+        # we need to change the videomixer to avoid Not Negotiated Errors (since
+        # we are actually changing the caps format in this case).
+        # This is Hacky, but needed for the alpha passthrough optimization to be
+        # usable since if fixes bugs such as #632414, #637522 (and perhaps others)
+        # More infos at:
+        #   http://jeff.ecchi.ca/blog/2011/04/24/negotiating-performance/
+        for pad_name in self.inputs:
+            values = self.inputs.get(pad_name)
+            values[3].send_event (gst.event_new_flush_start())
+            values[3].send_event (gst.event_new_flush_stop())
+            if not values[3].is_blocked():
+                values[3].set_blocked_async(True, self._pad_blockedCb)
+
+        new_videomixer = gst.element_factory_make("videomixer", "real-videomixer")
+        new_videomixer.props.background = 1
+
+        self.videomixer.set_state(gst.STATE_NULL)
+        #We change the mixer
+        self.remove(self.videomixer)
+        self.add(new_videomixer)
+
+        #And relink everything in the new one
+        for pad_name in self.inputs:
+            values = self.inputs.get(pad_name)
+            videomixerpad = new_videomixer.get_request_pad(pad_name)
+            values[2].get_pad("src").unlink(values[3])
+            values[2].get_pad("src").link_full(videomixerpad, gst.PAD_LINK_CHECK_NOTHING)
+            self.inputs[pad_name] = (values[0], values[1], values[2], videomixerpad)
+
+        csp_sink = self.colorspace.get_pad("sink")
+        self.videomixer.get_pad("src").unlink(csp_sink)
+        self.videomixer = new_videomixer
+        self.videomixer.link_pads_full("src", self.colorspace, "sink", gst.PAD_LINK_CHECK_NOTHING)
+
+        for pad_name in self.inputs:
+            values = self.inputs.get(pad_name)
+            values[3].send_event (gst.event_new_flush_start())
+            values[3].send_event (gst.event_new_flush_stop())
+            if values[3].is_blocked():
+                values[3].set_blocked_async(False, self._pad_blockedCb)
+
+        self.sync_state_with_parent()
 
     def update_priority(self, pad, priority):
         self.debug("pad:%r, priority:%d" % ( pad, priority))
@@ -202,11 +250,12 @@ class SmartVideomixerBinPropertyHelper(Signallable):
     """A set of callbacks used for considering the alpha state of all track
        objects in the composition."""
 
-    def __init__(self, track, inputs):
+    def __init__(self, mixer, track, inputs):
         # this import is here because of a circular dependence
         from pitivi.timeline.track import TrackError
         self.inputs = inputs
         self.alpha_count = 0
+        self._mixer = mixer
         # connect track-object-{added,removed} signals from track to callbacks
         track.connect("track-object-added", self._trackAddedCb)
         track.connect("track-object-removed", self._trackRemovedCb)
@@ -288,6 +337,7 @@ class SmartVideomixerBinPropertyHelper(Signallable):
         for input in self.inputs.values():
             input[2].props.caps = caps
 
+        self._mixer.change_mixer(has_alpha)
 
 gobject.type_register(SmartVideomixerBin)
 gst.element_register(SmartVideomixerBin, 'smart-videomixer-bin')
