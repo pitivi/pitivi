@@ -212,9 +212,6 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.seeker.hide()
                 self.b_zoom_in.show()
                 self.b_zoom_out.show()
-                desc = "<b>Image</b> <i>%dx%d pixel</i>"
-                desc = desc % (pixbuf_w, pixbuf_h)
-                self.description = desc
             else:
                 self.current_preview_type = 'video'
                 self.preview_image.hide()
