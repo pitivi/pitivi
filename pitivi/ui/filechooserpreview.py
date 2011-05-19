@@ -231,9 +231,8 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.seeker.show()
                 self.b_zoom_in.show()
                 self.b_zoom_out.show()
-                desc = "<b>Width/Height</b>: <i>%dx%d</i>\n" + "<b>Duration</b>: %s \n"
-                desc = desc % (video.par*video.width, video.height, duration)
-                self.description = desc
+                self.description = _("<b>Width/Height</b>: %dx%d") % (video.par*video.width, video.height) + "\n" + \
+                    _("<b>Duration</b>: %s") % (duration) + "\n"
         else:
             self.current_preview_type = 'audio'
             self.preview_video.hide()
@@ -244,9 +243,8 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.preview_image.set_from_file(DEFAULT_AUDIO_IMAGE)
             self.preview_image.show()
             self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
-            desc = "<b>Channels:</b> %d  at %d <i>Hz</i> \n" + "<b>Duration</b>: %s \n"
-            desc = desc % (audio.channels, audio.rate, duration)
-            self.description = desc
+            self.description = beautify_stream(audio) + "\n" + \
+                _("<b>Duration</b>: %s") % (duration) + "\n"
             self.player.set_state(gst.STATE_NULL)
             self.player.set_property("uri", self.current_selected_uri)
             self.player.set_property("video-sink", self.__fakesink)
