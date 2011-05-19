@@ -142,7 +142,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         vbox = gtk.VBox()
         vbox.set_spacing(6)
         self.l_error = gtk.Label(_("PiTiVi can not preview this file."))
-        self.b_details = gtk.Button(_("Show errors"))
+        self.b_details = gtk.Button(_("More info"))
         self.b_details.connect('clicked', self._on_b_details_clicked)
         vbox.pack_start(self.l_error)
         vbox.pack_start(self.b_details, expand=False, fill=False)
@@ -270,11 +270,8 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.is_playing = False
         self.tags = {}
         self.current_selected_uri = ""
-        self.current_preview_type = ''
-        self.preview_image.set_from_stock(gtk.STOCK_MISSING_IMAGE,
-                                        gtk.ICON_SIZE_DIALOG)
-        self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
-        self.preview_image.show()
+        self.current_preview_type = ""
+        self.preview_image.hide()
         self.preview_video.hide()
 
     def _on_seeker_press(self, widget, event):
@@ -376,7 +373,6 @@ class PreviewWidget(gtk.VBox, Loggable):
         return gst.BUS_PASS
 
     def _on_tag_found(self, abus, mess):
-        self.log("Tag found")
         tag_list = mess.parse_tag()
         acceptable_tags = [gst.TAG_ALBUM_ARTIST,
                             gst.TAG_ARTIST,
@@ -396,12 +392,12 @@ class PreviewWidget(gtk.VBox, Loggable):
                                    gobject.TYPE_UINT):
                 name = gst.tag_get_nick(tag)                
                 value = unicode(tag_list[tag]).replace('<', ' ').replace('>', ' ')
-                self.tags['<b>' + name + '</b>: '] = value
+                self.tags[name] = value
         keys = self.tags.keys()
         keys.sort()
         text = self.description + "\n"
         for key in keys:
-            text = text + key + self.tags[key] + "\n"
+            text = text + "<b>" + key + "</b>: " + self.tags[key] + "\n"
         self.l_tags.set_markup(text)
 
     def _on_b_details_clicked(self, unused_button):
