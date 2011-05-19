@@ -74,7 +74,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.__fakesink = gst.element_factory_make("fakesink", "fakesink")
 
         #some global variables for preview handling
-        self.is_playng = False
+        self.is_playing = False
         self.time_format = gst.Format(gst.FORMAT_TIME)
         self.original_dims = (PREVIEW_WIDTH, PREVIEW_HEIGHT)
         self.countinuous_seek = False
