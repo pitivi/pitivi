@@ -52,24 +52,24 @@ class PreviewWidget(gtk.VBox, Loggable):
         Loggable.__init__(self)
 
         self.log("Init PreviewWidget")
-        self.connect('destroy', self._free_all)
+        self.connect('destroy', self._destroy_cb)
 
         self.settings = instance.settings
         self.preview_cache = {}
         self.preview_cache_errors = {}
 
         self.discoverer = Discoverer()
-        self.discoverer.connect('discovery-done', self._update_preview)
-        self.discoverer.connect('discovery-error', self._error_detected)
+        self.discoverer.connect('discovery-done', self._update_preview_cb)
+        self.discoverer.connect('discovery-error', self._error_detected_cb)
 
         #playbin for play pics
         self.player = get_playbin()
         bus = self.player.get_bus()
         bus.add_signal_watch()
-        bus.connect('message', self._on_bus_message)
+        bus.connect('message', self._bus_message_cb)
         bus.enable_sync_message_emission()
-        bus.connect('sync-message::element', self._on_sync_message)
-        bus.connect('message::tag', self._on_tag_found)
+        bus.connect('sync-message::element', self._sync_message_cb)
+        bus.connect('message::tag', self._tag_found_cb)
         self.__videosink = self.player.get_property("video-sink")
         self.__fakesink = gst.element_factory_make("fakesink", "fakesink")
 
@@ -100,25 +100,25 @@ class PreviewWidget(gtk.VBox, Loggable):
         # Play button
         self.bbox = gtk.HBox()
         self.play_button = gtk.ToolButton(gtk.STOCK_MEDIA_PLAY)
-        self.play_button.connect("clicked", self._on_start_stop_clicked)
+        self.play_button.connect("clicked", self._on_start_stop_clicked_cb)
         self.bbox.pack_start(self.play_button, expand=False)
 
         #Scale for position handling
         self.pos_adj = gtk.Adjustment()
         self.seeker = gtk.HScale(self.pos_adj)
         self.seeker.set_update_policy(gtk.UPDATE_DISCONTINUOUS)
-        self.seeker.connect('button-press-event', self._on_seeker_press)
-        self.seeker.connect('button-release-event', self._on_seeker_press)
-        self.seeker.connect('motion-notify-event', self._on_motion_notify)
+        self.seeker.connect('button-press-event', self._on_seeker_press_cb)
+        self.seeker.connect('button-release-event', self._on_seeker_press_cb)
+        self.seeker.connect('motion-notify-event', self._on_motion_notify_cb)
         self.seeker.set_draw_value(False)
         self.seeker.show()
         self.bbox.pack_start(self.seeker)
 
         # Zoom buttons
         self.b_zoom_in = gtk.ToolButton(gtk.STOCK_ZOOM_IN)
-        self.b_zoom_in.connect("clicked", self._on_zoom_clicked, 1)
+        self.b_zoom_in.connect("clicked", self._on_zoom_clicked_cb, 1)
         self.b_zoom_out = gtk.ToolButton(gtk.STOCK_ZOOM_OUT)
-        self.b_zoom_out.connect("clicked", self._on_zoom_clicked, -1)
+        self.b_zoom_out.connect("clicked", self._on_zoom_clicked_cb, -1)
         self.bbox.pack_start(self.b_zoom_in, expand=False)
         self.bbox.pack_start(self.b_zoom_out, expand=False)
         self.bbox.show_all()
@@ -133,10 +133,10 @@ class PreviewWidget(gtk.VBox, Loggable):
 
         # Error handling
         vbox = gtk.VBox()
-        vbox.set_spacing(6)
+        vbox.set_spacing(SPACING)
         self.l_error = gtk.Label(_("PiTiVi can not preview this file."))
         self.b_details = gtk.Button(_("More info"))
-        self.b_details.connect('clicked', self._on_b_details_clicked)
+        self.b_details.connect('clicked', self._on_b_details_clicked_cb)
         vbox.pack_start(self.l_error)
         vbox.pack_start(self.b_details, expand=False, fill=False)
         vbox.show()
@@ -160,7 +160,7 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.log("Call discoverer for " + uri)
             self.discoverer.addUri(uri)
 
-    def _update_preview(self, dscvr, uri, factory):
+    def _update_preview_cb(self, dscvr, uri, factory):
         if factory is None:
             self.error("Discoverer does not handle " + uri)
         # Add to cache
@@ -169,7 +169,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         if self.current_selected_uri == uri:
             self.show_preview(uri)
 
-    def _error_detected(self, discoverer, uri, mess, details):
+    def _error_detected_cb(self, discoverer, uri, mess, details):
         if details is not None:
             self.preview_cache_errors[uri] = (mess, details)
             if self.current_selected_uri == uri:
@@ -265,7 +265,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.preview_image.hide()
         self.preview_video.hide()
 
-    def _on_seeker_press(self, widget, event):
+    def _on_seeker_press_cb(self, widget, event):
         event.button = 2
         if event.type == gtk.gdk.BUTTON_PRESS:
             self.countinuous_seek = True
@@ -278,12 +278,12 @@ class PreviewWidget(gtk.VBox, Loggable):
             if self.is_playing:
                 self.player.set_state(gst.STATE_PLAYING)
 
-    def _on_motion_notify(self, widget, event):
+    def _on_motion_notify_cb(self, widget, event):
         if self.countinuous_seek:
             value = widget.get_value()
             self.player.seek_simple(self.time_format, gst.SEEK_FLAG_FLUSH, value)
 
-    def _on_bus_message(self, bus, message):
+    def _bus_message_cb(self, bus, message):
         if message.type == gst.MESSAGE_EOS:
             self.player.set_state(gst.STATE_NULL)
             self.is_playing = False
@@ -301,7 +301,7 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.pos_adj.set_value(long(curr_pos))
         return self.is_playing
 
-    def _on_start_stop_clicked(self, button):
+    def _on_start_stop_clicked_cb(self, button):
         if button.get_stock_id() == gtk.STOCK_MEDIA_PLAY:
             self.player.set_state(gst.STATE_PLAYING)
             gobject.timeout_add(1000, self._update_position)
@@ -314,7 +314,7 @@ class PreviewWidget(gtk.VBox, Loggable):
             button.set_stock_id(gtk.STOCK_MEDIA_PLAY)
             self.log("Preview paused")
 
-    def _on_zoom_clicked(self, button, increment):
+    def _on_zoom_clicked_cb(self, button, increment):
         if self.current_preview_type == 'video':
             w, h = self.preview_video.get_size_request()
             if increment > 0:
@@ -351,7 +351,7 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.settings.FCpreviewWidth = int(w)
             self.settings.FCpreviewHeight = int(h)
 
-    def _on_sync_message(self, bus, mess):
+    def _sync_message_cb(self, bus, mess):
         if mess.type == gst.MESSAGE_ELEMENT:
             if mess.structure.get_name() == 'prepare-xwindow-id':
                 sink = mess.src
@@ -363,7 +363,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                 gtk.gdk.threads_leave()
         return gst.BUS_PASS
 
-    def _on_tag_found(self, abus, mess):
+    def _tag_found_cb(self, abus, mess):
         tag_list = mess.parse_tag()
         acceptable_tags = [gst.TAG_ALBUM_ARTIST,
                             gst.TAG_ARTIST,
@@ -391,7 +391,7 @@ class PreviewWidget(gtk.VBox, Loggable):
             text = text + "<b>" + key + "</b>: " + self.tags[key] + "\n"
         self.l_tags.set_markup(text)
 
-    def _on_b_details_clicked(self, unused_button):
+    def _on_b_details_clicked_cb(self, unused_button):
         mess, detail = self.preview_cache_errors.get(self.current_selected_uri, (None, None))
         if mess is not None:
             dialog = gtk.MessageDialog(None,
@@ -405,7 +405,7 @@ class PreviewWidget(gtk.VBox, Loggable):
             dialog.run()
             dialog.destroy()
 
-    def _free_all(self, widget):
+    def _destroy_cb(self, widget):
         self.player.set_state(gst.STATE_NULL)
         self.is_playing = False
         #FIXME: are the following lines really needed?
