@@ -476,7 +476,7 @@ class ElementTreeFormatter(Formatter):
         interpolator.start.mode = int(start.attrib["mode"])
 
         for kf in element.getiterator("keyframe"):
-            interpolator.newKeyframe(long(kf.attrib["time"]), 
+            interpolator.newKeyframe(long(kf.attrib["time"]),
                 value=self._parsePropertyValue(kf.attrib["value"]),
                 mode=int(kf.attrib["mode"]))
         end = element.find("end")

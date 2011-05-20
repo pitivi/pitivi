@@ -66,7 +66,7 @@ GlobalSettings.addConfigOption("thumbnailCacheSize",
     key="cache-size",
     default=250)
 
-# the maximum number of thumbnails to enqueue at a given time. setting this to 
+# the maximum number of thumbnails to enqueue at a given time. setting this to
 # a larger value will increase latency after large operations, such as zooming
 GlobalSettings.addConfigOption("thumbnailMaxRequests",
     section="thumbnailing",

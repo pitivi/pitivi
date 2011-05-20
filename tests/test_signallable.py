@@ -155,7 +155,7 @@ class TestSignalisation(unittest.TestCase):
                           function_cb)
 
         self.object.emit("signal-oneargs", 42)
-        
+
 
     def test04_emit01(self):
         # signal : no arguments

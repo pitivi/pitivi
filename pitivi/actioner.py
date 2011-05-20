@@ -224,7 +224,7 @@ class Renderer(Actioner):
         a = RenderAction()
         a.addProducers(*sources)
         a.addConsumers(sf)
-    
+
         return a
 
     def _connectFunctions(self):

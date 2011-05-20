@@ -118,8 +118,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             bounds = view.bounds
             time = (Zoomable.pixelToNs(pos[0] - bounds.x1) +
                 view.element.in_point)
-            value = ((1 - (pos[1] - KW_LABEL_Y_OVERFLOW - bounds.y1 - 
-                view._min) / view._range) * 
+            value = ((1 - (pos[1] - KW_LABEL_Y_OVERFLOW - bounds.y1 -
+                view._min) / view._range) *
                     interpolator.range) + interpolator.lower
             return time, value
 
@@ -206,7 +206,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     def _getKeyframeXY(self, kf):
         interp = self.interpolator
         x = self.nsToPixel(kf.time - self.element.in_point)
-        y = KW_LABEL_Y_OVERFLOW + self._range - (((kf.value - 
+        y = KW_LABEL_Y_OVERFLOW + self._range - (((kf.value -
             interp.lower) / interp.range) * self._range)
         return point.Point(x + self.bounds.x1, y + self.bounds.y1 + self._min)
 
@@ -266,7 +266,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                 cr.clip()
 
                 # draw the value label
-                roundedrec(cr, x - KW_LABEL_HPAD2, y - KW_LABEL_VPAD2, 
+                roundedrec(cr, x - KW_LABEL_HPAD2, y - KW_LABEL_VPAD2,
                     w + KW_LABEL_HPAD, h + KW_LABEL_VPAD, r=10)
                 cr.set_source_rgb(1, 1, 1)
                 cr.fill()
@@ -291,7 +291,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
         if (between(0, x, self.visible_width) and
-            between(KW_LABEL_Y_OVERFLOW, y, self.height + 
+            between(KW_LABEL_Y_OVERFLOW, y, self.height +
             KW_LABEL_Y_OVERFLOW)):
             x += self.bounds.x1
             y += self.bounds.y1

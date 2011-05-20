@@ -48,7 +48,7 @@ class Deploy():
             exit(1)
         else:
             exit(0)
-    
+
     def setPathVariables(self):
         self.curr_dir = os.getcwd()
         if not self.curr_dir.endswith('win32'):
@@ -75,7 +75,7 @@ class Deploy():
         shutil.copy(os.path.join(self.gstPath, 'bin',  'libxml2-2.dll'),
             os.path.join(self.dist_bin_dir, 'libxml2.dll'))
         os.environ['PATH'] = os.environ['PATH']+';'+self.dist_bin_dir
-        
+
     def createDeploymentFolder(self):
         # Create a Unix-like diretory tree to deploy PiTiVi
         print ('Create deployment directory')
@@ -85,11 +85,11 @@ class Deploy():
             except :
                 self.close("ERROR: Can't delete folder %s"%self.dist_dir)
 
-        for path in [self.dist_dir, self.dist_bin_dir, self.dist_etc_dir, 
-                self.dist_share_dir, self.dist_lib_pitivi_dir, 
+        for path in [self.dist_dir, self.dist_bin_dir, self.dist_etc_dir,
+                self.dist_share_dir, self.dist_lib_pitivi_dir,
                 self.dist_share_pixmaps_dir]:
                 os.makedirs(path)
-         
+
     def checkDependencies(self):
         print ('Checking dependencies')
         try:
@@ -102,7 +102,7 @@ class Deploy():
                 'http://www.gstreamer-winbuild.ylatuya.es')
         else:
             print ('GStreamer... OK')
-     
+
         try:
             import pygtk
             pygtk.require('2.0')
@@ -152,7 +152,7 @@ class Deploy():
             os.path.join(self.root_dir, 'pitivi'))
         # Copy ui files to lib/pitivi
         ui_dir = os.path.join(self.root_dir, 'pitivi', 'ui')
-        shutil.copy (os.path.join(ui_dir, 'mainwindow.xml'), 
+        shutil.copy (os.path.join(ui_dir, 'mainwindow.xml'),
             os.path.join(self.dist_lib_pitivi_dir, 'mainwindow.xml'))
         for name in [x for x in os.listdir(ui_dir) if x.endswith('glade')]:
             shutil.copy (os.path.join(ui_dir, name),
@@ -169,16 +169,16 @@ class Deploy():
             out_name = name.replace('.png', '.svg')
             shutil.copy (os.path.join(win32_pixmaps_dir, name),
                   os.path.join(self.dist_share_pixmaps_dir, out_name))
-    
+
     def deployGStreamer(self):
         print ('Deploying GStreamer')
         # Copy gstreamer binaries to the dist folder
         for name in os.listdir(os.path.join(self.gstPath, 'bin')):
-            shutil.copy (os.path.join(self.gstPath, 'bin', name), 
+            shutil.copy (os.path.join(self.gstPath, 'bin', name),
                     self.dist_bin_dir)
         shutil.copytree(os.path.join(self.gstPath, 'lib', 'gstreamer-0.10'),
              os.path.join(self.dist_lib_dir, 'gstreamer-0.10'))
-    
+
     def deployGTK(self):
         print ('Deploying Gtk dependencies')
         # Copy Gtk files to the dist folder
@@ -207,14 +207,14 @@ class Deploy():
                               'packages':'pitivi',
                               'includes': 'gtk, cairo, pango, atk, pangocairo,\
                                       zope.interface, gobject, gst, email',
-                              'dist_dir' : self.dist_bin_dir  
+                              'dist_dir' : self.dist_bin_dir
                         }
                     },
-                          
+
             zipfile = None,
         )
 
-    
+
 def main():
     usage = "usage: %prog [options]"
     parser = OptionParser(usage)
@@ -227,7 +227,7 @@ def main():
 
     (options, args) = parser.parse_args()
     Deploy(options.gstPath, options.gtkPath)
-    
+
 if __name__ == "__main__":
     main()
 

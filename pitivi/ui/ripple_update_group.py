@@ -24,16 +24,16 @@ class RippleUpdateGroup(object):
 
     """Allows for event-driven spreadsheet-like ripple updates without
     infinite loops.
-    
+
     This class allows you to express an event-driven sequence of operations in
     terms of a directed graph. It is not a constraint solver: The goal is to
     allow the programmer to reduce complex logic to a set of simple functions
     and predicates combined declaratively.
-    
+
     Events propagate through the graph in breadth first order. During an
     update cycle, each vertex is visited only once, so cycles can exist in the
     graph without creating infinite loops.
-    
+
     Each vertex represents a unique object. The following may also be
     associated with a vertex:
 

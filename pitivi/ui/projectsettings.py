@@ -82,13 +82,13 @@ class ProjectSettingsDialog(GladeWindow):
 
         # add custom widgets
         self.dar_fraction_widget = FractionWidget()
-        self.video_properties_table.attach(self.dar_fraction_widget, 
+        self.video_properties_table.attach(self.dar_fraction_widget,
             0, 1, 6, 7, xoptions=gtk.EXPAND | gtk.FILL, yoptions=0)
         self.dar_fraction_widget.show()
 
         # add custom widgets
         self.par_fraction_widget = FractionWidget()
-        self.video_properties_table.attach(self.par_fraction_widget, 
+        self.video_properties_table.attach(self.par_fraction_widget,
             1, 2, 6, 7, xoptions=gtk.EXPAND | gtk.FILL, yoptions=0)
         self.par_fraction_widget.show()
 
@@ -105,7 +105,7 @@ class ProjectSettingsDialog(GladeWindow):
         self.channels_combo.set_model(audio_channels)
         self.sample_rate_combo.set_model(audio_rates)
         self.sample_depth_combo.set_model(audio_depths)
-        
+
         # set the project metadata
         # FIXME: not saved in the project file
         if self.year_spinbutton.get_value_as_int() == 1900:
@@ -119,7 +119,7 @@ class ProjectSettingsDialog(GladeWindow):
         self.wg = RippleUpdateGroup(
             (self.frame_rate_combo, self._updateCombo, "changed",
                 self.frame_rate_fraction_widget),
-            (self.frame_rate_fraction_widget, self._updateFraction, 
+            (self.frame_rate_fraction_widget, self._updateFraction,
                 "value-changed", self.frame_rate_combo),
             (self.dar_combo, None, "changed"),
             (self.dar_fraction_widget, None, "value-changed"),
@@ -237,7 +237,7 @@ class ProjectSettingsDialog(GladeWindow):
             lambda : get_combo_value(widget))
 
     def bindSpinbutton(self, mgr, name, widget):
-        mgr.bindWidget(name, 
+        mgr.bindWidget(name,
             lambda x: widget.set_value(float(x)),
             lambda : int(widget.get_value()))
 
@@ -372,7 +372,7 @@ class ProjectSettingsDialog(GladeWindow):
             self.dar_combo))
 
     def updateDarFromFractionWidget(self):
-        set_combo_value(self.dar_combo, 
+        set_combo_value(self.dar_combo,
             self.dar_fraction_widget.getWidgetValue())
 
     def updateParFromCombo(self):
@@ -380,7 +380,7 @@ class ProjectSettingsDialog(GladeWindow):
             self.par_combo))
 
     def updateParFromFractionWidget(self):
-        set_combo_value(self.par_combo, 
+        set_combo_value(self.par_combo,
             self.par_fraction_widget.getWidgetValue())
 
     def updateUI(self):

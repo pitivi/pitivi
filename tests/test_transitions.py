@@ -164,7 +164,7 @@ class TestTransitions(TestCase):
         self.failUnlessEqual(at.b_operation.props.duration, 5 * gst.SECOND)
 
 
- 
+
         # make A longer
         objs["a"].duration = 11 * gst.SECOND
         self.failUnlessEqual(vt.start, 10 * gst.SECOND)
@@ -270,7 +270,7 @@ class TestTransitions(TestCase):
         ]
 
         expected = [
-            ["a", "b", "c", "d", "f", "g", "h", "l"], 
+            ["a", "b", "c", "d", "f", "g", "h", "l"],
             ["i"],
             ["e", "j"],
             ["k"]
@@ -286,7 +286,7 @@ class TestTransitions(TestCase):
             track1.addTrackObject(obj)
             objs[obj] = name
 
-        result = [[objs[obj] for obj in layer] for layer in 
+        result = [[objs[obj] for obj in layer] for layer in
             track1.getTrackObjectsGroupedByLayer()]
 
         self.failUnlessEqual(result, expected)
@@ -327,7 +327,7 @@ class TestTransitions(TestCase):
             ordered.append(obj)
 
         slots, valid = track1.getValidTransitionSlots(ordered)
-        result = [[names[obj] for obj in layer] for layer in 
+        result = [[names[obj] for obj in layer] for layer in
             slots]
 
         self.failUnlessEqual(result, expected)
@@ -494,7 +494,7 @@ class TestTransitions(TestCase):
         removed = []
 
         def transitionAddedCb(track, transition):
-            added.append((names[transition.a], 
+            added.append((names[transition.a],
                 names[transition.b]))
 
         def transitionRemovedCb(track, transition):
@@ -676,7 +676,7 @@ class TestTransitions(TestCase):
             result = ["", []]
             for obj in track1.track_objects:
                 result[0] += names[obj]
-                result[1].append(obj._position) 
+                result[1].append(obj._position)
             resulting_stagger = [(names[obj], obj._stagger) for obj in
                 track1.track_objects]
             self.failUnlessEqual(result, expected)
@@ -698,7 +698,7 @@ class TestTransitions(TestCase):
         addClip('m', 16, 17)
         expected = ["abcmdfghijkl", [0, 1, 2, 0, 3, 5, 4, 5, 0, 6, 7, 0]]
         verify_result(expected)
- 
+
         # re-order a few clips
 
         track1.disableUpdates()

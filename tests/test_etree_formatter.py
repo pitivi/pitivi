@@ -118,7 +118,7 @@ class TestFormatterSave(TestCase):
         effect1.addOutputStream(video_stream)
         effect1.addInputStream(video_stream)
 
-        #It is necessary to had the identity factory to the 
+        #It is necessary to had the identity factory to the
         #effect_factories_dictionnary
         self.formatter.avalaible_effects._effect_factories_dict['identity'] =\
                                                                      effect1

@@ -35,7 +35,7 @@ class TestComposition(gobject.GObject):
             gobject.TYPE_NONE,
             (gobject.TYPE_PYOBJECT, )),
     }
-    
+
     def __init__(self, *args, **kwargs):
         gobject.GObject.__init__(self, *args, **kwargs)
         self.media_type = MEDIA_TYPE_VIDEO

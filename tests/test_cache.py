@@ -15,7 +15,7 @@ class CacheTest(TestCase):
         assert len(c.cache) == 32
         assert not 31 in c
         assert 32 in c
-        
+
         # touch the LRU item, and then add something to the queue
         # the item should still remain in the queue
 

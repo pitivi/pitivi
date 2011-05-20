@@ -69,7 +69,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     __gtype_name__ = 'PitiviViewer'
     __gsignals__ = {
-        "activate-playback-controls" : (gobject.SIGNAL_RUN_LAST, 
+        "activate-playback-controls" : (gobject.SIGNAL_RUN_LAST,
             gobject.TYPE_NONE, (gobject.TYPE_BOOLEAN,)),
     }
 

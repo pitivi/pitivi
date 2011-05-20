@@ -440,7 +440,7 @@ class TimelineLogObserver(object):
         if isinstance(track_object, TrackEffect):
             action = self.trackEffectAddAction(timeline_object, track_object,
                                                self.effect_properties_tracker)
-            #We use the action instead of the track object 
+            #We use the action instead of the track object
             #because the track_object changes when redoing
             track_object.connect("active-changed",
                                  self._trackObjectActiveChangedCb, action)

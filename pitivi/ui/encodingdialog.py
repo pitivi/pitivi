@@ -96,7 +96,7 @@ def extension_for_muxer(muxer):
     return ""
 
 def factorylist(factories):
-    """ Given a sequence of factories, returns a gtk.ListStore() 
+    """ Given a sequence of factories, returns a gtk.ListStore()
     of sorted, beautified factory names """
 
     return model((str, object),
@@ -170,7 +170,7 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.muxercombobox.set_model(factorylist(
             self.settings.muxers))
         # note: this will trigger an update of the codec comboboxes
-        set_combo_value(self.muxercombobox, 
+        set_combo_value(self.muxercombobox,
             gst.element_factory_find(self.settings.muxer))
 
         # Encoder/Muxer settings

@@ -3,7 +3,7 @@
 #       test/test_factories_operation.py
 #
 # Copyright (C) 2010 Thibault Saunier <tsaunier@gnome.org>
-# 
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either

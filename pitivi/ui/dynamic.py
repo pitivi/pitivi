@@ -686,17 +686,17 @@ if __name__ == '__main__':
             ("pear", "pear")),)),
         (ColorWidget, 0x336699FF, (int,)),
         (FontWidget, "Sans 9", ()),
-        (FractionWidget, "30M", 
-            (gst.FractionRange(gst.Fraction(1, 1), 
+        (FractionWidget, "30M",
+            (gst.FractionRange(gst.Fraction(1, 1),
                 gst.Fraction(30000, 1001)),)),
-        (FractionWidget, gst.Fraction(25000, 1001), 
+        (FractionWidget, gst.Fraction(25000, 1001),
             (
                 gst.FractionRange(
-                    gst.Fraction(1, 1), 
+                    gst.Fraction(1, 1),
                     gst.Fraction(30000, 1001)
                 ),
                 (
-                    "25:1", 
+                    "25:1",
                     gst.Fraction(30,1),
                     "30M",
                 ),

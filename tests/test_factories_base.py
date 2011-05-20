@@ -127,7 +127,7 @@ class TestLiveSourceFactory(TestCase):
         # pass an explicit default_duration
         factory = LiveSourceFactory('live://', 'name', 10 * gst.SECOND)
         self.failUnlessEqual(factory.default_duration, 10 * gst.SECOND)
-        
+
         # check that if a LiveSourceFactory derived class doesn't pass a
         # default_duration it's still set to 5 seconds
         factory = LiveSourceFactory('name')

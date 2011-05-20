@@ -576,7 +576,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _updateScrollPosition(self, adjustment):
         self._scroll_pos_ns = Zoomable.pixelToNs(self.hadj.get_value())
-        self._root_item.set_simple_transform( -self.hadj.get_value(), 
+        self._root_item.set_simple_transform( -self.hadj.get_value(),
             -self.vadj.get_value(), 1.0, 0)
 
     def _zoomAdjustmentChangedCb(self, adjustment):
@@ -797,7 +797,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def keyframe(self, action):
         timeline_position = self._position
         selected = self.timeline.selection.getSelectedTrackObjs()
-        
+
         for obj in selected:
             keyframe_exists = False
 

@@ -155,7 +155,7 @@ class VideoPresetManager(PresetManager):
             str(int(values["frame-rate"].num)))
         parser.set(section, "framerate-denom",
             str(int(values["frame-rate"].denom)))
-        parser.set(section, "par-num", 
+        parser.set(section, "par-num",
             str(int(values["par"].num)))
         parser.set(section, "par-denom",
             str(int(values["par"].denom)))

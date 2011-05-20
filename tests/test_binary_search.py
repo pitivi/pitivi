@@ -20,21 +20,21 @@ class BasicTest(TestCase):
         for offset in xrange(1, 5):
             for length in xrange(1, 2049, 300):
                 A = [i * offset for i in xrange(0, length)]
-                
+
 ## check negative hits
- 
+
                 # search value too low
                 # error if value is found
                 # if search returns non-negative index, fail
                 value = A[0] - 1
                 self.assertFalse(found(A, binary_search(A, value), value))
- 
+
                 # search value too high
                 # error if value is found
                 # if search returns non-negative index, fail
                 value = A[-1] + 1
                 self.assertFalse(found(A, binary_search(A, value), value))
- 
+
 ## check positive hits
                 for i, a in enumerate(A):
                     # error if value is NOT found

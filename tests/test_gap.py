@@ -100,7 +100,7 @@ class TestGap(TestCase):
         timeline_object2 = self.makeTimelineObject()
         timeline_object3 = self.makeTimelineObject()
         timeline_object4 = self.makeTimelineObject()
-        
+
         timeline_object1.start = 5 * gst.SECOND
         timeline_object1.duration = 10 * gst.SECOND
         timeline_object1.priority = 1

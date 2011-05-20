@@ -129,7 +129,7 @@ class PreferencesDialog(gtk.Window):
 ## Public API
 
     @classmethod
-    def addPreference(cls, attrname, label, description, section=None, 
+    def addPreference(cls, attrname, label, description, section=None,
         widget_klass=None, **args):
         """
         Add a user preference. The preferences dialog will try

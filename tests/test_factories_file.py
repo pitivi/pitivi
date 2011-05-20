@@ -220,7 +220,7 @@ class TestPictureFileSourceFactory(TestCase):
         self.factory.addOutputStream(video2)
         self.factory.addOutputStream(audio)
 
-        # We're no longer using ffvideoscale, so this check is obsolete. 
+        # We're no longer using ffvideoscale, so this check is obsolete.
         # TODO: implement this functinality in smartscale, and test it
         # separately
         #if gst.registry_get_default().find_feature('ffvideoscale',

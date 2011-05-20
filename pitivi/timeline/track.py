@@ -536,8 +536,8 @@ class TrackObject(Signallable, Loggable):
             self._updatePriority(priority)
 
     def _updatePriority(self, priority):
-        # The priority of an effect should always be higher than the priority of 
-        # the track it is applied to. Those priority are affected when we add a 
+        # The priority of an effect should always be higher than the priority of
+        # the track it is applied to. Those priority are affected when we add a
         # TrackObject to timeline
         if type(self) is TrackEffect:
             if self.stream_type is VideoStream:

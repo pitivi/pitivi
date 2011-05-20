@@ -262,7 +262,7 @@ class InstanceRunner(Signallable):
             attrname = "video%d" % self.videoTracks
         container = self.container()
         setattr(self, attrname, container)
-        self.tracks[track] = container 
+        self.tracks[track] = container
         container.transitions = {}
         track.connect("transition-added", self._transitionAddedCb, container)
         track.connect("transition-removed", self._transitionRemovedCb,
@@ -437,28 +437,28 @@ class TestBasic(Base):
         self.failUnlessEqual(self.runner.errors, set((test3,)))
 
     def testConfigureTimeline(self):
- 
+
         config = Configuration()
         config.addSource(
-            "object1", 
-            test1, 
+            "object1",
+            test1,
             {
                 "start" : 0,
                 "duration" : gst.SECOND,
                 "media-start" : gst.SECOND,
             })
         config.addSource(
-            "object2", 
+            "object2",
             test2,
             {
                 "start" : gst.SECOND,
                 "duration" : gst.SECOND,
             })
- 
+
         def timelineConfigured(runner):
             config.matches(self.runner)
             self.runner.shutDown()
- 
+
         self.runner.loadConfiguration(config)
         self.runner.connect("timeline-configured", timelineConfigured)
         self.runner.run()
@@ -471,8 +471,8 @@ class TestBasic(Base):
     def testMoveSources(self):
         initial = Configuration()
         initial.addSource(
-            "object1", 
-            test1, 
+            "object1",
+            test1,
             {
                 "start" : 0,
                 "duration" : gst.SECOND,
@@ -480,7 +480,7 @@ class TestBasic(Base):
                 "priority" : 0
             })
         initial.addSource(
-            "object2", 
+            "object2",
             test2,
             {
                 "start" : gst.SECOND,
@@ -503,7 +503,7 @@ class TestBasic(Base):
             })
 
         def timelineConfigured(runner):
-            context = MoveContext(self.runner.timeline, 
+            context = MoveContext(self.runner.timeline,
                 self.runner.video1.object1,
                 set((self.runner.audio1.object2,)))
             brush.scrub(context, 10 * gst.SECOND, 1, steps=10)
@@ -527,7 +527,7 @@ class TestBasic(Base):
     def testRippleMoveSimple(self):
 
         initial = Configuration()
-        initial.addSource('clip1', test1, { 
+        initial.addSource('clip1', test1, {
             "duration" : gst.SECOND,
             "start" : gst.SECOND,
             "priority" : 2})
@@ -629,7 +629,7 @@ class TestSeeking(Base):
             "duration" : gst.SECOND,
             "priority" : i % 2,
         })
-        
+
 
     def _startSeeking(self, interval, steps=10):
         self.count = 0
@@ -642,7 +642,7 @@ class TestSeeking(Base):
         if self.count < self.steps:
             self.runner.watchdog.keepAlive()
             self.count += 1
-            self.cur_pos = random.randint(0, 
+            self.cur_pos = random.randint(0,
                 self.runner.timeline.duration)
             self.runner.project.pipeline.seek(self.cur_pos)
             return True
@@ -699,13 +699,13 @@ class TestRippleExtensive(Base):
             for j in xrange(0, 10):
                 if j < i:
                     final.addSource('clip%d' % j, test1,
-                        { 'start' : gst.SECOND * j, 
+                        { 'start' : gst.SECOND * j,
                           'duration' : gst.SECOND,
                           'priority' : j % 2})
                 else:
                     final.addSource('clip%d' % j, test1,
-                        { 'start' : gst.SECOND * (j + 10), 
-                          'duration' : gst.SECOND, 
+                        { 'start' : gst.SECOND * (j + 10),
+                          'duration' : gst.SECOND,
                           'priority' : (j % 2) + 1})
             self.finals.append(final)
         Base.__init__(self, unknown)
@@ -778,15 +778,15 @@ class TestTransitions(Base):
     def testSimple(self):
         initial = Configuration()
         initial.addSource(
-            "object1", 
-            test1, 
+            "object1",
+            test1,
             {
                 "start" : 0,
                 "duration" : 5 * gst.SECOND,
                 "priority" : 0,
             })
         initial.addSource(
-            "object2", 
+            "object2",
             test1,
             {
                 "start" : 5 * gst.SECOND,
@@ -818,7 +818,7 @@ class TestTransitions(Base):
         def nextMove():
             if moves:
                 self._cur_move = moves.pop(0)
-                context = MoveContext(self.runner.timeline, 
+                context = MoveContext(self.runner.timeline,
                     self.runner.video1.object2,
                         set([self.runner.video1.object2]))
                 brush.scrub(context, self._cur_move[0], self._cur_move[1], steps=10)
@@ -853,15 +853,15 @@ class TestTransitions(Base):
     def testNoTransitionWhenMovingMultipleClips(self):
         initial = Configuration()
         initial.addSource(
-            "object1", 
-            test1, 
+            "object1",
+            test1,
             {
                 "start" : 0,
                 "duration" : 5 * gst.SECOND,
                 "priority" : 0,
             })
         initial.addSource(
-            "object2", 
+            "object2",
             test1,
             {
                 "start" : 5 * gst.SECOND,
@@ -889,7 +889,7 @@ class TestTransitions(Base):
             if moves:
                 self._cur_move = moves.pop(0)
                 other, start, priority = self._cur_move
-                context = MoveContext(self.runner.timeline, 
+                context = MoveContext(self.runner.timeline,
                     self.runner.video1.object2,
                         set([getattr(self.runner.video1, other)]))
                 brush.scrub(context, start, priority, steps=10)
@@ -913,15 +913,15 @@ class TestTransitions(Base):
     def testOverlapOnlyWithValidTransitions(self):
         initial = Configuration()
         initial.addSource(
-            "object1", 
-            test1, 
+            "object1",
+            test1,
             {
                 "start" : 0,
                 "duration" : 5 * gst.SECOND,
                 "priority" : 0,
             })
         initial.addSource(
-            "object2", 
+            "object2",
             test1,
             {
                 "start" : 5 * gst.SECOND,
@@ -939,7 +939,7 @@ class TestTransitions(Base):
 
         phase2 = initial.clone()
         phase2.updateSource(
-            "object2", 
+            "object2",
             props={
                 "start" : 4 * gst.SECOND,
             })
@@ -973,7 +973,7 @@ class TestTransitions(Base):
 
             # [1------]    [3-------]
             #        [2--]
-            (MoveContext, "object2", 4 * gst.SECOND, 0, phase2, 
+            (MoveContext, "object2", 4 * gst.SECOND, 0, phase2,
                 [("object1", "object2")]),
 
             # Activates overlap prevention
@@ -990,7 +990,7 @@ class TestTransitions(Base):
                 [("object1", "object2")]),
 
             # Activates overlap prevention
-            # [1------]    
+            # [1------]
             #        [3-]
             #        [2--]
             (MoveContext, "object3", 4 * gst.SECOND, 0, phase3,
@@ -1033,7 +1033,7 @@ class TestTransitions(Base):
                     ("object2", "object3")]),
 
         ]
-        
+
         nmoves = len(moves)
 
         def timelineConfigured(runner):
@@ -1045,7 +1045,7 @@ class TestTransitions(Base):
                 self._cur_move = moves.pop(0)
                 context, focus, start, priority, config, trans = self._cur_move
                 obj = getattr(self.runner.video1, focus)
-                context = context(self.runner.timeline, 
+                context = context(self.runner.timeline,
                      obj, set())
                 brush.scrub(context, start, priority, steps=10)
             else:
