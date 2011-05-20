@@ -36,7 +36,7 @@ from pitivi.log.loggable import Loggable
 from pitivi.settings import export_settings_to_render_settings
 from pitivi.signalinterface import Signallable
 from pitivi.stream import AudioStream, VideoStream
-from pitivi.utils import beautify_length
+from pitivi.utils import beautify_ETA
 
 class Actioner(Loggable, Signallable):
     """ Previewer/Renderer helper methods """
@@ -202,7 +202,7 @@ class Renderer(Actioner):
             # only display ETA after 5s in order to have enough averaging and
             # if the position is non-null
             totaltime = (timediff * float(length) / float(position)) - timediff
-            text = beautify_length(int(totaltime * gst.SECOND))
+            text = beautify_ETA(int(totaltime * gst.SECOND))
         self.updatePosition(fraction, text)
 
     def updatePosition(self, fraction, text):

@@ -61,8 +61,6 @@ def time_to_string(value):
 def beautify_length(length):
     """
     Converts the given time in nanoseconds to a human readable string
-
-    Format HHhMMmSSs
     """
     sec = length / gst.SECOND
     mins = sec / 60
@@ -78,6 +76,29 @@ def beautify_length(length):
         parts.append(ngettext("%d minute", "%d minutes", mins) % mins)
 
     if not hours and sec:
+        parts.append(ngettext("%d second", "%d seconds", sec) % sec)
+
+    return ", ".join(parts)
+
+def beautify_ETA(length):
+    """
+    Converts the given time in nanoseconds to a fuzzy estimate,
+    intended for progress ETAs, not to indicate a clip's duration.
+    """
+    sec = length / gst.SECOND
+    mins = sec / 60
+    sec = sec % 60
+    hours = mins / 60
+    mins = mins % 60
+
+    parts = []
+    if hours:
+        parts.append(ngettext("%d hour", "%d hours", hours) % hours)
+
+    if mins:
+        parts.append(ngettext("%d minute", "%d minutes", mins) % mins)
+
+    if not hours and mins < 2 and sec:
         parts.append(ngettext("%d second", "%d seconds", sec) % sec)
 
     return ", ".join(parts)
