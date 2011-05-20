@@ -472,6 +472,7 @@ class ExportSettings(Signallable, Loggable):
         Loggable.__init__(self)
         self.videowidth = 720
         self.videoheight = 576
+        self.render_scale = 100
         self.videorate = gst.Fraction(25, 1)
         self.videopar = gst.Fraction(16, 15)
         self.audiochannels = 2
@@ -512,14 +513,26 @@ class ExportSettings(Signallable, Loggable):
         msg += _("\nMuxer: ") + str(self.muxer) + " " + str(self.containersettings)
         return msg
 
-    def getVideoCaps(self):
+    def getVideoWidthAndHeight(self, render=False):
+        """ Returns the video width and height as a tuple
+
+        @param render: Whether to apply self.render_scale to the returned
+        values.
+        @type render: bool
+        """
+        if render:
+            scale = self.render_scale
+        else:
+            scale = 100
+        return self.videowidth * scale / 100, self.videoheight * scale / 100
+
+    def getVideoCaps(self, render=False):
         """ Returns the GstCaps corresponding to the video settings """
-        astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (self.videowidth,
-                                                                                self.videoheight,
-                                                                                self.videopar.num,
-                                                                                self.videopar.denom,
-                                                                                self.videorate.num,
-                                                                                self.videorate.denom)
+        videowidth, videoheight = self.getVideoWidthAndHeight(render=render)
+        astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (
+                videowidth, videoheight,
+                self.videopar.num, self.videopar.denom,
+                self.videorate.num, self.videorate.denom)
         vcaps = gst.caps_from_string("video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (astr, astr))
         if self.vencoder:
             return get_compatible_sink_caps(self.vencoder, vcaps)
@@ -535,7 +548,8 @@ class ExportSettings(Signallable, Loggable):
 
         # interset with current audioencoder sink pad caps
 
-    def setVideoProperties(self, width=-1, height=-1, framerate=-1, par=-1):
+    def setVideoProperties(self, width=-1, height=-1, framerate=-1, par=-1,
+            render_scale=-1):
         """ Set the video width, height and framerate """
         self.info("set_video_props %d x %d @ %r fps", width, height, framerate)
         changed = False
@@ -544,6 +558,9 @@ class ExportSettings(Signallable, Loggable):
             changed = True
         if not height == -1 and not height == self.videoheight:
             self.videoheight = height
+            changed = True
+        if not render_scale == -1 and not render_scale == self.render_scale:
+            self.render_scale = render_scale
             changed = True
         if not framerate == -1 and not framerate == self.videorate:
             self.videorate = framerate
@@ -621,9 +638,11 @@ class ExportSettings(Signallable, Loggable):
 
 def export_settings_to_render_settings(export,
         have_video=True, have_audio=True):
+    """Convert the specified ExportSettings object to a RenderSettings object.
+    """
     # Get the audio and video caps/encoder/settings
     astream = get_stream_for_caps(export.getAudioCaps())
-    vstream = get_stream_for_caps(export.getVideoCaps())
+    vstream = get_stream_for_caps(export.getVideoCaps(render=True))
 
     encoder_settings = []
     if export.vencoder is not None and have_video:

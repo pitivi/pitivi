@@ -144,14 +144,11 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.updateResolution()
 
     def _displaySettings(self):
-        self.width = self.settings.videowidth
-        self.height = self.settings.videoheight
-
         # Video settings
         self.frame_rate_combo.set_model(frame_rates)
         set_combo_value(self.frame_rate_combo, self.settings.videorate)
-        self.scale_spinbutton.set_value(100)
-        self.updateResolution()
+        # note: this will trigger an update of the video resolution label
+        self.scale_spinbutton.set_value(self.settings.render_scale)
 
         # Audio settings
         self.channels_combo.set_model(audio_channels)
@@ -215,28 +212,21 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
                 self.audio_encoder_combo, preferred_aencoder, default_index=0)
 
     def _scaleSpinbuttonChangedCb(self, button):
-        width, height = self.updateResolution()
-        self.settings.setVideoProperties(width=width, height=height)
+        render_scale = self.scale_spinbutton.get_value()
+        self.settings.setVideoProperties(render_scale=render_scale)
+        self.updateResolution()
 
     def updateResolution(self):
-        scale = self.scale_spinbutton.get_value() / 100
-        width = int(self.width * scale)
-        height = int(self.height * scale)
+        width, height = self.settings.getVideoWidthAndHeight(render=True)
         self.resolution_label.set_text("%d x %d" % (width, height))
-        return width, height
 
     def _projectSettingsButtonClickedCb(self, button):
         from pitivi.ui.projectsettings import ProjectSettingsDialog
-        self.settings.setVideoProperties(width=self.width, height=self.height)
         d = ProjectSettingsDialog(self.window, self.project)
         d.window.connect("destroy", self._projectSettingsDestroyCb)
         d.show()
 
     def _projectSettingsDestroyCb(self, dialog):
-        self.width = self.settings.videowidth
-        self.height = self.settings.videoheight
-        width, height = self.updateResolution()
-        self.settings.setVideoProperties(width=width, height=height)
         self._displaySettings()
 
     def _frameRateComboChangedCb(self, combo):

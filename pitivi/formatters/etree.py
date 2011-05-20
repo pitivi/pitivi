@@ -281,6 +281,7 @@ class ElementTreeFormatter(Formatter):
         element = Element('export-settings')
         element.attrib["videowidth"] = str(int(settings.videowidth))
         element.attrib["videoheight"] = str(int(settings.videoheight))
+        element.attrib["render-scale"] = str(int(settings.render_scale))
         element.attrib["videorate-num"] = str(int(settings.videorate.num))
         element.attrib["videorate-denom"] = str(int(settings.videorate.denom))
         element.attrib["videopar-num"] = str(int(settings.videopar.num))
@@ -309,6 +310,8 @@ class ElementTreeFormatter(Formatter):
         settings = ExportSettings()
         settings.videowidth = int(element.attrib["videowidth"])
         settings.videoheight = int(element.attrib["videoheight"])
+        if "render-scale" in element.attrib:
+            settings.render_scale = int(element.attrib["render-scale"])
         settings.videorate = gst.Fraction(int(element.attrib["videorate-num"]),
                                          int(element.attrib["videorate-denom"]))
         settings.videopar = gst.Fraction(int(element.attrib["videopar-num"]),
@@ -316,8 +319,8 @@ class ElementTreeFormatter(Formatter):
         settings.audiochannels = int(element.attrib["audiochannels"])
         settings.audiorate = int(element.attrib["audiorate"])
         settings.audiodepth = int(element.attrib["audiodepth"])
-        settings.aencoder = element.attrib["aencoder"] or None
-        settings.vencoder = element.attrib["vencoder"] or None
+        settings.aencoder = element.attrib["aencoder"]
+        settings.vencoder = element.attrib["vencoder"]
         settings.muxer = element.attrib["muxer"]
 
         sett = element.find("container-settings")
