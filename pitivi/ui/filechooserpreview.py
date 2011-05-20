@@ -15,7 +15,7 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.factories.file import PictureFileSourceFactory
 from pitivi.settings import GlobalSettings
 from gettext import gettext as _
-
+from pitivi.ui.common import SPACING
 
 DEFAULT_AUDIO_IMAGE = os.path.join(get_pixmap_dir(), "pitivi-sound.png")
 

@@ -270,7 +270,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
         self.external_window = gtk.Window()
         vbox = gtk.VBox()
-        vbox.set_spacing(6)
+        vbox.set_spacing(SPACING)
         self.external_window.add(vbox)
         self.external = ViewerWidget(self.action)
         vbox.pack_start(self.external)

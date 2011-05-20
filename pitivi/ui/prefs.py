@@ -27,6 +27,7 @@ import gtk
 from gettext import gettext as _
 import pitivi.ui.dynamic as dynamic
 from pitivi.settings import GlobalSettings
+from pitivi.ui.common import SPACING
 
 GlobalSettings.addConfigOption('prefsDialogWidth',
     section = "user-interface",
@@ -65,9 +66,9 @@ class PreferencesDialog(gtk.Window):
 
         # basic layout
         vbox = gtk.VBox()
-        vbox.set_spacing(6)
+        vbox.set_spacing(SPACING)
         button_box = gtk.HBox()
-        button_box.set_spacing(5)
+        button_box.set_spacing(SPACING)
         button_box.set_homogeneous(False)
         pane = gtk.HPaned()
         vbox.pack_start(pane, True, True)

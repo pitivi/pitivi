@@ -42,6 +42,7 @@ from pitivi.timeline.timeline import MoveContext, SELECT
 from pitivi.utils import Seeker
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.curve import Curve
+from pitivi.ui.common import SPACING
 
 from pitivi.factories.operation import EffectFactory
 
@@ -146,7 +147,7 @@ class InfoStub(gtk.HBox, Loggable):
         self._makeUI()
 
     def _makeUI(self):
-        self.set_spacing(6)
+        self.set_spacing(SPACING)
         self.erroricon = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
                                                   gtk.ICON_SIZE_SMALL_TOOLBAR)
 
