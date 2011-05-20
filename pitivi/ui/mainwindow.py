@@ -795,11 +795,15 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # preliminary seek to ensure the project pipeline is configured
         self.project.seeker.seek(0)
 
-    def setBestZoomRatio(self):
+    def setBestZoomRatio(self, p=0):
+        """Set the zoom level so that the entire timeline is in view."""
         ruler_width = self.timeline.ruler.get_allocation()[2]
-        timeline_duration = self.project.timeline.duration
+        # Add gst.SECOND - 1 to the timeline duration to make sure the
+        # last second of the timeline will be in view.
+        timeline_duration = self.project.timeline.duration + gst.SECOND - 1
+        timeline_duration_s = int(timeline_duration / gst.SECOND)
 
-        ideal_zoom_ratio = ruler_width / float(timeline_duration / gst.SECOND)
+        ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
         Zoomable.setZoomLevel(nearest_zoom_level)
 
