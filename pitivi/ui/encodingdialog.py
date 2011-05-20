@@ -95,11 +95,11 @@ def extension_for_muxer(muxer):
 def factorylist(factories):
     """ Given a sequence of factories, returns a gtk.ListStore()
     of sorted, beautified factory names """
-
-    return model((str, object),
-        sorted(((beautify_factoryname(f), f) for f in
-            filter_recommended(factories)),
-                key = lambda x: x[0]))
+    columns = (str, object)
+    data = [(beautify_factoryname(factory), factory)
+            for factory in filter_recommended(factories)]
+    data.sort(key=lambda x: x[0])
+    return model(columns, data)
 
 import pango
 
@@ -204,12 +204,22 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         audio_encoder_model = factorylist(audio_encoders)
         self.audio_encoder_combo.set_model(audio_encoder_model)
 
-        preferred_vencoder = gst.element_factory_find(self.preferred_vencoder)
-        set_combo_value(
-                self.video_encoder_combo, preferred_vencoder, default_index=0)
-        preferred_aencoder = gst.element_factory_find(self.preferred_aencoder)
-        set_combo_value(
-                self.audio_encoder_combo, preferred_aencoder, default_index=0)
+        self._updateEncoderCombo(
+                self.video_encoder_combo, self.preferred_vencoder)
+        self._updateEncoderCombo(
+                self.audio_encoder_combo, self.preferred_aencoder)
+
+    def _updateEncoderCombo(self, encoder_combo, preferred_encoder):
+        """Select the specified encoder for the specified encoder combo."""
+        if preferred_encoder:
+            # A preferrence exists, pick it if it can be found in
+            # the current model of the combobox.
+            vencoder = gst.element_factory_find(preferred_encoder)
+            set_combo_value(encoder_combo, vencoder, default_index=0)
+        else:
+            # No preferrence exists, pick the first encoder from
+            # the current model of the combobox.
+            encoder_combo.set_active(0)
 
     def _scaleSpinbuttonChangedCb(self, button):
         render_scale = self.scale_spinbutton.get_value()
