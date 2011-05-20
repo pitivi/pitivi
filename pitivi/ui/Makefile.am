@@ -43,6 +43,7 @@ ui_PYTHON =			\
 	effectlist.py	\
 	clipproperties.py	\
 	effectsconfiguration.py	\
+	filechooserpreview.py	\
 	zoominterface.py
 
 ui_DATA =				\
