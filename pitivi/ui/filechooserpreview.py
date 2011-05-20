@@ -1,4 +1,3 @@
-
 import gobject
 gobject.threads_init()
 import gst
@@ -10,7 +9,7 @@ import os
 from pitivi.log.loggable import Loggable
 from pitivi.discoverer import Discoverer
 from pitivi.ui.common import beautify_stream
-from pitivi.stream import match_stream_groups_map, AudioStream, VideoStream
+from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import beautify_length, uri_is_valid
 from pitivi.configure import get_pixmap_dir
 from pitivi.factories.file import PictureFileSourceFactory
@@ -381,7 +380,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                                    gobject.TYPE_FLOAT,
                                    gobject.TYPE_INT,
                                    gobject.TYPE_UINT):
-                name = gst.tag_get_nick(tag)                
+                name = gst.tag_get_nick(tag)
                 value = unicode(tag_list[tag]).replace('<', ' ').replace('>', ' ')
                 self.tags[name] = value
         keys = self.tags.keys()
