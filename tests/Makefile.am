@@ -28,4 +28,4 @@ check-local:
 
 check-integration:
 	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) TEST_INTEGRATION=1 $(PYTHON)\
-        $(srcdir)/test_integration.py
+        $(srcdir)/runtests.py

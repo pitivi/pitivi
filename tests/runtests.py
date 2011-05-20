@@ -4,9 +4,17 @@ import sys
 import unittest
 import tests
 
-SKIP_FILES = ['common', 'runtests', 'test_integration']
+SKIP_FILES = ['common', 'runtests'] #They are not testsuites
+#Those files need sample files, and therefore shoud not be tested
+#when running distcheck
+INTEGRATION_FILES=['test_still_image', 'test_integration']
 
 def gettestnames(which):
+    if os.getenv("TEST_INTEGRATION"):
+        return INTEGRATION_FILES
+    else:
+        SKIP_FILES.extend(INTEGRATION_FILES)
+
     if not which:
         dir = os.path.split(os.path.abspath(__file__))[0]
         which = [os.path.basename(p) for p in glob.glob('%s/test_*.py' % dir)]
