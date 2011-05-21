@@ -234,7 +234,7 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         from pitivi.ui.projectsettings import ProjectSettingsDialog
         d = ProjectSettingsDialog(self.window, self.project)
         d.window.connect("destroy", self._projectSettingsDestroyCb)
-        d.show()
+        d.run()
 
     def _projectSettingsDestroyCb(self, dialog):
         self._displaySettings()
