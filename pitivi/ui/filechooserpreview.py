@@ -216,7 +216,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.seeker.show()
                 self.b_zoom_in.show()
                 self.b_zoom_out.show()
-                self.description = _("<b>Width/Height</b>: %dx%d") % (video.par*video.width, video.height) + "\n" + \
+                self.description = _("<b>Resolution</b>: %dx%d") % (video.par*video.width, video.height) + "\n" + \
                     _("<b>Duration</b>: %s") % (duration) + "\n"
         else:
             self.current_preview_type = 'audio'
