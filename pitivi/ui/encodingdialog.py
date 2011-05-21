@@ -123,6 +123,9 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         # UI widgets
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
 
+        # FIXME: re-enable this widget when bug #637078 is implemented
+        self.selected_only_button.destroy()
+
         Renderer.__init__(self, project, pipeline)
 
         # Encoder settings
