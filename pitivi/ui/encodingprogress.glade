@@ -109,6 +109,8 @@
             <child>
               <widget class="GtkProgressBar" id="progressbar">
                 <property name="visible">True</property>
+                <property name="text" translatable="yes">Estimating...</property>
+                <property name="show_text">True</property>
               </widget>
               <packing>
                 <property name="position">2</property>
