@@ -21,7 +21,8 @@ clean-local:
 	rm -f testProject.ptv testproject.xptv testproject2.xptv
 
 check-local:
-	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) $(PYTHON) $(srcdir)/runtests.py
+	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) PITIVI_TOP_LEVEL_DIR='$(top_srcdir)' $(PYTHON)\
+		$(srcdir)/runtests.py
 
 %.check: %
 	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) $(PYTHON) $(srcdir)/runtests.py $*

@@ -52,6 +52,9 @@ def get_pixmap_dir():
     _dir = os.path.dirname(os.path.abspath(__file__))
     if _in_devel():
         root = _dir
+    elif os.getenv("PITIVI_TOP_LEVEL_DIR"):
+        top_level = os.getenv("PITIVI_TOP_LEVEL_DIR")
+        root = os.path.abspath(os.path.join(top_level, "pitivi"))
     else:
         root = PKGDATADIR
     return os.path.join(root, 'pixmaps')
