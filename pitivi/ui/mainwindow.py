@@ -964,7 +964,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.get_content_area().pack_start(chooser, True, True)
         chooser.show()
 
-        dialog.set_size_request(640, 480)
+        # If the window is too big, the window manager will resize it so that
+        # it fits on the screen.
+        dialog.set_default_size(1024, 1000)
         response = dialog.run()
 
         if response == gtk.RESPONSE_OK:
