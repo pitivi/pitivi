@@ -199,12 +199,14 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
         return tracks, track_objects
 
-    def _normalize(self, p1, p2):
+    def _normalize(self, p1, p2, adjust=0):
         w, h = p2 - p1
         x, y = p1
-        if w < 0:
-            w = abs(w)
+        if w - adjust < 0:
+            w = abs(w - adjust)
             x -= w
+        else:
+            w -= adjust
         if h < 0:
             h = abs(h)
             y -= h
@@ -214,10 +216,9 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         if self._selecting:
             self._got_motion_notify = True
             cur = self.from_event(event)
-            pos, size = self._normalize(self._mousedown, cur)
-            x, y = pos
-            x += self.app.gui.timeline.hadj.get_value()
-            self._marquee.props.x, self._marquee.props.y = (x, y)
+            pos, size = self._normalize(self._mousedown, cur,
+                self.app.gui.timeline.hadj.get_value())
+            self._marquee.props.x, self._marquee.props.y = pos
             self._marquee.props.width, self._marquee.props.height = size
             return True
         return False
