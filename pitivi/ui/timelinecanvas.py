@@ -42,22 +42,22 @@ ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
 PLAYHEAD_CURSOR = gtk.gdk.Cursor(gtk.gdk.SB_H_DOUBLE_ARROW)
 
 GlobalSettings.addConfigOption('edgeSnapDeadband',
-    section = "user-interface",
-    key = "edge-snap-deadband",
-    default = 5,
-    notify = True)
+    section="user-interface",
+    key="edge-snap-deadband",
+    default=5,
+    notify=True)
 
 PreferencesDialog.addNumericPreference('edgeSnapDeadband',
-    section = _("Behavior"),
-    label = _("Snap Distance (pixels)"),
-    description = _("Threshold distance (in pixels) used for all snapping "
+    section=_("Behavior"),
+    label=_("Snap Distance (pixels)"),
+    description=_("Threshold distance (in pixels) used for all snapping "
         "operations"),
-    lower = 0)
+    lower=0)
+
 
 class PlayheadController(Controller, Zoomable):
 
     _cursor = PLAYHEAD_CURSOR
-
 
     def __init__(self, *args, **kwargs):
         Controller.__init__(self, *args, **kwargs)
@@ -67,11 +67,12 @@ class PlayheadController(Controller, Zoomable):
         x += self._hadj.get_value()
         self._canvas.app.current.seeker.seek(Zoomable.pixelToNs(x))
 
+
 class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
     __gtype_name__ = 'TimelineCanvas'
     __gsignals__ = {
-        "expose-event" : "override",
+        "expose-event": "override",
     }
 
     _tracks = None
@@ -104,11 +105,11 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         root.add_child(self.tracks)
         self._marquee = goocanvas.Rect(
             parent=root,
-            stroke_pattern = unpack_cairo_pattern(0x33CCFF66),
-            fill_pattern = unpack_cairo_pattern(0x33CCFF66),
-            visibility = goocanvas.ITEM_INVISIBLE)
+            stroke_pattern=unpack_cairo_pattern(0x33CCFF66),
+            fill_pattern=unpack_cairo_pattern(0x33CCFF66),
+            visibility=goocanvas.ITEM_INVISIBLE)
         self._playhead = goocanvas.Rect(
-            y = -10,
+            y=-10,
             parent=root,
             line_width=1,
             fill_color_rgba=0x000000FF,
@@ -176,15 +177,16 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         @type x1: An C{int}
         @param y1: The vertical coordinate of the up left corner of the area
         @type y1: An C{int}
-        @param x2: The horizontal coordinate of the down right corner of the area
+        @param x2: The horizontal coordinate of the down right corner of the
+                   area
         @type x2: An C{int}
         @param x2: The vertical coordinate of the down right corner of the area
         @type x2: An C{int}
 
         @returns: A list of L{Track}, L{TrackObject} tuples
         '''
-        items = self.get_items_in_area(goocanvas.Bounds(x1, y1, x2, y2), True, True,
-            True)
+        items = self.get_items_in_area(goocanvas.Bounds(x1, y1, x2, y2), True,
+            True, True)
         if not items:
             return [], []
 
@@ -279,7 +281,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._playhead.props.height = (max(alloc.height,
             self.tracks.get_bounds().y2) + 10)
 
-    def _size_allocate_cb (self, widget, allocation):
+    def _size_allocate_cb(self, widget, allocation):
         self._request_size()
 
     def zoomChanged(self):
