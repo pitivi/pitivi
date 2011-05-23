@@ -219,6 +219,10 @@ class Interpolator(Signallable, Loggable):
         return keyframe
 
     def removeKeyframe(self, keyframe):
+        if keyframe not in self._keyframes:
+            self.debug("This keyframe doesn't belong to me")
+            return
+
         old_value = self._controller.get(self._property.name, keyframe.time)
         self._controller.unset(self._property.name, keyframe.time)
         if keyframe is not self.start and keyframe is not self.end:
