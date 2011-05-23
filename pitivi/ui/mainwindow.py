@@ -30,7 +30,6 @@ import gtk
 import gobject
 gobject.threads_init()
 import gst
-import gst.pbutils
 from urllib import unquote
 import webbrowser
 
@@ -50,7 +49,7 @@ from pitivi.ui.timeline import Timeline
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
 from pitivi.configure import pitivi_version, APPNAME, APPURL, APPMANUALURL, \
-     get_pixmap_dir, get_global_pixmap_dir, LIBDIR
+     get_pixmap_dir, LIBDIR
 from pitivi.ui import dnd
 from pitivi.pipeline import Pipeline
 from pitivi.action import ViewAction
@@ -61,7 +60,6 @@ from pitivi.sourcelist import SourceListError
 from pitivi.ui.sourcelist import SourceList
 from pitivi.ui.effectlist import EffectList
 from pitivi.ui.clipproperties import ClipProperties
-from pitivi.ui.common import beautify_factory
 from pitivi.ui.common import SPACING
 from pitivi.ui.common import factory_name
 from pitivi.utils import beautify_length
