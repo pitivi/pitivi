@@ -37,7 +37,8 @@ from pitivi.stream import get_stream_for_pad
 from pitivi.configure import get_pixmap_dir
 from pitivi.undo import UndoableAction
 
-# Note: Some effects are available through the frei0r library and the libavfilter0 library
+# Note: Some effects are available through the frei0r
+# library and the libavfilter0 library
 
 # There are different types of effects available:
 #  _ Simple Audio/Video Effects
@@ -48,11 +49,12 @@ from pitivi.undo import UndoableAction
 #     that are too cumbersome to use as such
 #  _ Complex Audio/Video Effects
 
-(VIDEO_EFFECT, AUDIO_EFFECT)  = range(2)
+(VIDEO_EFFECT, AUDIO_EFFECT) = range(2)
 
 BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
                        "alphacolor", "cogcolorspace", "videodetect",
                        "navigationtest", "videoanalyse"]
+
 
 class EffectsHandler(object):
     """
@@ -78,18 +80,18 @@ class EffectsHandler(object):
                   "frei0r-filter-twolay0r",
                 )
             ),
-            (_("Noise"), ("videorate", "frei0r-filter-edgeglow", "gaussianblur",
-                          "diffuse", "dilate", "marble", )),
-            (_("Analysis"), ("videoanalyse", "videodetect", "videomark", "revtv",
-                             "navigationtest", "frei0r-filter-rgb-parade",
-                             "frei0r-filter-vectorscope",
-                             "frei0r-filter-luminance",
+            (_("Noise"), ("videorate", "frei0r-filter-edgeglow",
+                  "gaussianblur", "diffuse", "dilate", "marble", )),
+            (_("Analysis"), ("videoanalyse", "videodetect", "videomark",
+                 "revtv", "navigationtest", "frei0r-filter-rgb-parade",
+                 "frei0r-filter-vectorscope", "frei0r-filter-luminance",
                           )),
             (_("Blur"), ("frei0r-filter-squareblur", "gaussianblur", "diffuse",
-                         "dilate", "marble", )),
+                 "dilate", "marble", )),
             (_("Geometry"), ("cogscale", "aspectratiocrop", "cogdownsample",
                   "videocrop", "videoflip", "videobox", "gdkpixbufscale",
-                  "frei0r-filter-letterb0xed", "frei0r-filter-k-means-clustering",
+                  "frei0r-filter-letterb0xed",
+                  "frei0r-filter-k-means-clustering",
                   "videoscale", "frei0r-filter-lens-correction",
                   "frei0r-filter-perspective",
                   "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",
@@ -99,21 +101,19 @@ class EffectsHandler(object):
                   "stretch", "twirl", "waterriple",
                   )
             ),
-            (_("Fancy"),("rippletv", "streaktv", "radioactv", "optv",
-                         "quarktv", "vertigotv", "shagadelictv", "warptv",
-                         "dicetv", "agingtv", "edgetv", "frei0r-filter-cartoon",
-                         "frei0r-filter-water", "frei0r-filter-nosync0r",
-                         "frei0r-filter-k-means-clustering",
-                         "frei0r-filter-delay0r",
-                         "bulge", "circle", "fisheye", "kaleidoscope",
-                         "mirror", "pinch", "sphere", "square", "stretch",
-                         "twirl", "waterriple",
-                     )
+            (_("Fancy"), ("rippletv", "streaktv", "radioactv", "optv",
+                 "quarktv", "vertigotv", "shagadelictv", "warptv", "dicetv",
+                 "agingtv", "edgetv", "frei0r-filter-cartoon",
+                 "frei0r-filter-water", "frei0r-filter-nosync0r",
+                 "frei0r-filter-k-means-clustering", "frei0r-filter-delay0r",
+                 "bulge", "circle", "fisheye", "kaleidoscope", "mirror",
+                 "pinch", "sphere", "square", "stretch", "twirl", "waterriple",
+             )
             ),
             (_("Time"), ("frei0r-filter-delay0r",)),
             (_("Uncategorized"), ("",))
         )
-        self._audio_categories =set([])
+        self._audio_categories = set([])
         self._video_categories = set([])
         self.video_effects = []
         self.audio_effects = []
@@ -125,7 +125,8 @@ class EffectsHandler(object):
         go trough the list of element factories and
         add them to the correct list filtering if necessary
         """
-        factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
+        factlist = gst.registry_get_default().get_feature_list(
+            gst.ElementFactory)
         for element_factory in factlist:
             klass = element_factory.get_klass()
             name = element_factory.get_name()
@@ -156,7 +157,7 @@ class EffectsHandler(object):
         return self.video_effects
 
     def _addEffectToDic(self, name, factory):
-        self._effect_factories_dict[name]=factory
+        self._effect_factories_dict[name] = factory
 
     def getFactoryFromName(self, name):
         """
@@ -177,8 +178,8 @@ class EffectsHandler(object):
             return False
 
         for padTmp in pads:
-            pad = gst.Pad (padTmp.get())
-            if pad.get_caps() == "ANY": #FIXME
+            pad = gst.Pad(padTmp.get())
+            if pad.get_caps() == "ANY":
                 return False
 
             if padTmp.direction == gst.PAD_SRC:
@@ -201,7 +202,8 @@ class EffectsHandler(object):
         """
         @ivar effect_name: the name of the effect for wich we want the category
         @type effect_name: L{str}
-        @returns: A C{list} of name C{str} of categories corresponding the effect
+        @returns: A C{list} of name C{str} of categories corresponding the
+        effect
         """
         categories = []
 
@@ -245,12 +247,13 @@ class EffectsHandler(object):
 
     def getVideoCategories(self, aware=True):
         """
-        @ivar  aware: C{True} if you want it to return only categories on whichs
+        @ivar  aware: C{True} if you want it to return only categories on
+        whichs
         there are effects on the system, else C{False}
         @type aware: C{bool}
-        @returns: All video effect categories names C{str} that are available on
-        the system if it has been filled earlier, if it hasen't it will just
-        return all categories
+        @returns: All video effect categories names C{str} that are available
+        on the system if it has been filled earlier, if it hasen't it will
+        just return all categories
         """
         if not self._video_categories or not aware:
             for categorie in self._video_categories_effects[1:]:
@@ -266,8 +269,8 @@ class EffectsHandler(object):
 
     def getAudioCategories(self, aware=True):
         """
-        @ivar  aware: C{True} if you want it to return only categories on whichs
-        there are effects on the system, else C{False}
+        @ivar  aware: C{True} if you want it to return only categories on
+        whichs there are effects on the system, else C{False}
         @type aware: C{bool}
         @returns: All audio effect categories names C{str}
         """
@@ -288,18 +291,21 @@ class EffectsHandler(object):
         @returns: All effect categories names C{str}
         """
         effects_categories = []
-        return effects_categories.extended(self.video_categories).extended(self.audio_categories)
+        return effects_categories.extended(self.video_categories).extended(
+            self.audio_categories)
 
     def getEffectIcon(self, effect_name):
         effect_name = effect_name + ".png"
         icon = None
         try:
-            icon = gtk.gdk.pixbuf_new_from_file(os.path.join(self._pixdir, effect_name))
+            icon = gtk.gdk.pixbuf_new_from_file(os.path.join(self._pixdir,
+                effect_name))
         # empty except clause is bad but load_icon raises gio.Error.
         ## Right, *gio*.
         except:
             try:
-                icon = gtk.gdk.pixbuf_new_from_file(os.path.join(self._pixdir, "defaultthumbnail.svg"))
+                icon = gtk.gdk.pixbuf_new_from_file(os.path.join(self._pixdir,
+                    "defaultthumbnail.svg"))
             except:
                 return None
 
@@ -320,6 +326,7 @@ class EffectPropertyChanged(UndoableAction):
     def undo(self):
         self.gst_element.set_property(self.property_name, self.old_value)
         self._undone()
+
 
 class EffectGstElementPropertyChangeTracker:
     """
@@ -350,13 +357,15 @@ class EffectGstElementPropertyChangeTracker:
         for undo_stack in self.action_log.undo_stacks:
             for done_prop_change in undo_stack.done_actions:
                 if isinstance(done_prop_change, EffectPropertyChanged):
-                    if done_prop_change.gst_element is track_effect.getElement():
+                    if done_prop_change.gst_element is\
+                                        track_effect.getElement():
                         prop_changed.append(done_prop_change)
 
         for redo_stack in self.action_log.redo_stacks:
             for done_prop_change in redo_stack.done_actions:
                 if isinstance(done_prop_change, EffectPropertyChanged):
-                    if done_prop_change.gst_element is track_effect.getElement():
+                    if done_prop_change.gst_element is\
+                                        track_effect.getElement():
                         prop_changed.append(done_prop_change)
 
         return prop_changed
