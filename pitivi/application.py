@@ -414,7 +414,7 @@ class PreviewGuiPitivi(GuiPitivi):
         self._loadProject(project_filename)
 
     def _createGui(self):
-        self.viewer = PitiviViewer(self.settings)
+        self.viewer = PitiviViewer(self)
         window = gtk.Window()
         window.connect("delete-event", self._deleteCb)
         window.add(self.viewer)
