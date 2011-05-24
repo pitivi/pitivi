@@ -422,7 +422,7 @@ class PreviewGuiPitivi(GuiPitivi):
 
     def _newProjectLoaded(self, project):
         # create previewer and set ui
-        previewer = Previewer(self.current, pipeline=None, ui=self.viewer)
+        previewer = Previewer(project, ui=self.viewer)
         self._setActioner(previewer)
         # hack to make the gtk.HScale seek slider UI behave properly
         self.viewer._durationChangedCb(None, project.timeline.duration)
@@ -444,7 +444,7 @@ class RenderingNoGuiPitivi(InteractivePitivi):
 
     def _newProjectLoaded(self, project):
         # create renderer and set output file
-        renderer = Renderer(self.current, outfile=self.outfile)
+        renderer = Renderer(project, outfile=self.outfile)
         self._setActioner(renderer)
 
     def shutdown(self):
