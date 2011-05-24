@@ -186,6 +186,10 @@ class Interpolator(Signallable, Loggable):
         that the new keyframe likes on the existing curve at that timestampi
 
         returns: the keyframe object"""
+        if time_or_keyframe is self.start or time_or_keyframe is self.end:
+            self.debug("We don't want to add the starting and end keyframes to"
+                       " our list of controlled keyframes")
+            return
 
         if isinstance(time_or_keyframe, Keyframe):
             keyframe = time_or_keyframe
