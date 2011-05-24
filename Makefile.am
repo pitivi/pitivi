@@ -10,7 +10,7 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 mimedir = $(datadir)/mime/packages
 mime_DATA = pitivi.xml
 
-man_MANS = pitivi.1
+man_MANS = docs/pitivi.1
 
 EXTRA_DIST = \
 	pitivi.spec \
