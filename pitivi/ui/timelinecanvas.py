@@ -35,6 +35,7 @@ from pitivi.ui.common import TRACK_SPACING, unpack_cairo_pattern, \
         LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 from pitivi.ui.controller import Controller
 from pitivi.ui.curve import KW_LABEL_Y_OVERFLOW
+from pitivi.ui.common import SPACING
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
@@ -84,7 +85,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self.app = instance
         self._selected_sources = []
         self._tracks = []
-        self._height = 0
+        self.height = 0
         self._position = 0
 
         self._block_size_request = False
@@ -120,10 +121,11 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         root.connect("motion-notify-event", self._selectionDrag)
         root.connect("button-press-event", self._selectionStart)
         root.connect("button-release-event", self._selectionEnd)
-        height = (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING) * 2
+        self.height = (LAYER_HEIGHT_EXPANDED + TRACK_SPACING +
+                LAYER_SPACING) * 2
         # add some padding for the horizontal scrollbar
-        height += 21
-        self.set_size_request(-1, height)
+        self.height += 21
+        self.set_size_request(-1, self.height)
 
     def from_event(self, event):
         x, y = event.x, event.y
@@ -278,8 +280,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def _request_size(self):
         alloc = self.get_allocation()
         self.set_bounds(0, 0, alloc.width, alloc.height)
-        self._playhead.props.height = (max(alloc.height,
-            self.tracks.get_bounds().y2) + 10)
+        self._playhead.props.height = (self.height + SPACING)
 
     def _size_allocate_cb(self, widget, allocation):
         self._request_size()
@@ -334,5 +335,5 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         for i, track in enumerate(self._tracks):
             track.set_simple_transform(0, height, 1, 0)
             height += track.height + TRACK_SPACING
-        self._height = height
+        self.height = height
         self._request_size()

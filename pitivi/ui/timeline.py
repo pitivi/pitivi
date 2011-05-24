@@ -279,6 +279,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._canvas = TimelineCanvas(self.app)
         self._root_item = self._canvas.get_root_item()
         self.attach(self._canvas, 1, 2, 1, 2)
+        self.vadj.connect("changed", self._unsureVadjHeightCb)
 
         # scrollbar
         self._hscrollbar = gtk.HScrollbar(self.hadj)
@@ -585,6 +586,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._updateZoom = False
         Zoomable.setZoomLevel(int(adjustment.get_value()))
         self._updateZoom = True
+
+    def _unsureVadjHeightCb(self, adj):
+        # GTK crack, without that, at loading a project, the vadj upper
+        # property is reset to be equal as the lower, right after the
+        # trackobjects are added to the timeline (bug: #648714)
+        if self.vadj.props.upper < self._canvas.height:
+            self.vadj.props.upper = self._canvas.height
 
     _scroll_pos_ns = 0
 
