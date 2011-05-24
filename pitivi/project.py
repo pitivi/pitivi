@@ -127,31 +127,6 @@ class Project(Signallable, Loggable):
 
     #{ Save and Load features
 
-    def save(self, location=None, overwrite=False):
-        """
-        Save the project to the given location.
-
-        @param location: The location to write to. If not specified, the
-        current project location will be used (if set).
-        @type location: C{URI}
-        @param overwrite: Whether to overwrite existing location.
-        @type overwrite: C{bool}
-        """
-        # import here to break circular import
-        from pitivi.formatters.format import save_project
-        from pitivi.formatters.base import FormatterError
-
-        self.log("saving...")
-        location = location or self.uri
-
-        if location == None:
-            raise FormatterError("Location unknown")
-
-        save_project(self, location or self.uri, self.format,
-                     overwrite)
-
-        self.uri = location
-
     def setModificationState(self, state):
         self._dirty = state
         if state:
