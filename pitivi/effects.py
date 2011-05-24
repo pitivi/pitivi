@@ -55,6 +55,8 @@ BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
                        "alphacolor", "cogcolorspace", "videodetect",
                        "navigationtest", "videoanalyse"]
 
+#We should unblacklist it when #650985 is solved
+BLACKLISTED_PLUGINS = ["ldaspa"]
 
 class EffectsHandler(object):
     """
@@ -130,7 +132,8 @@ class EffectsHandler(object):
         for element_factory in factlist:
             klass = element_factory.get_klass()
             name = element_factory.get_name()
-            if "Effect" in klass and name not in BLACKLISTED_EFFECTS:
+            if "Effect" in klass and name not in BLACKLISTED_EFFECTS and not\
+                [bplug for bplug in BLACKLISTED_PLUGINS if bplug in name]:
                 effect = EffectFactory(name, name,
                                    self._getEffectCategories(name),
                                    self._getEffectName(element_factory),
