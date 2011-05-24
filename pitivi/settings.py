@@ -485,6 +485,7 @@ class ExportSettings(Signallable, Loggable):
         ret = ExportSettings()
         ret.videowidth = self.videowidth
         ret.videoheight = self.videoheight
+        ret.render_scale = self.render_scale
         ret.videorate = gst.Fraction(self.videorate.num, self.videorate.denom)
         ret.videopar = gst.Fraction(self.videopar.num, self.videopar.denom)
         ret.audiochannels = self.audiochannels
