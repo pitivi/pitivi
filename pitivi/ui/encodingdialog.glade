@@ -234,8 +234,8 @@
                           <widget class="GtkSpinButton" id="scale_spinbutton">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="adjustment">1 1 9999 1 1 0</property>
-                            <property name="snap_to_ticks">True</property>
+                            <property name="adjustment">1 1 100 1 1 0</property>
+                            <property name="digits">1</property>
                             <property name="numeric">True</property>
                             <accessibility>
                               <atkproperty name="AtkObject::accessible-name" translatable="yes">Scale</atkproperty>
