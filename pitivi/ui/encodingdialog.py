@@ -134,7 +134,6 @@ class EncodingDialog(Renderer, Loggable):
 
         self.window.connect("delete-event", self._deleteEventCb)
         self.settings.connect("settings-changed", self._settingsChanged)
-        self.settings.connect("encoders-changed", self._settingsChanged)
 
     def _setProperties(self):
         self.window = self.builder.get_object("render-dialog")
