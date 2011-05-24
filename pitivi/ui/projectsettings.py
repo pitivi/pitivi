@@ -74,9 +74,7 @@ class ProjectSettingsDialog():
 
     def __init__(self, parent, project):
         self.project = project
-
         self.settings = project.getSettings()
-        self.project = project
 
         self.builder = gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
