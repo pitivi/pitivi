@@ -1,3 +1,21 @@
+2011 May 24 - PiTiVi 0.14
+  * Audio and video effects
+  * Completely redesigned project settings dialog, with the ability to create presets
+  * Completely redesigned rendering dialog
+  * Welcome dialog that helps you start a project or load recent projects in two clicks
+  * Ability to preview video, audio and image files before importing
+  * Add a "best fit" zoom button
+  * Ability to jump to an exact position in the timeline
+  * Ability to specify custom aspect ratios and framerates
+  * Show a progress bar when loading projects
+  * 300% faster project timeline loading
+  * Search bar in the Media Library
+  * Ability to detach all the tabs and the previewer
+  * New manpage
+  * Commandline render mode
+  * Use the standard infobar widget all around
+  * Lots of bug fixing:
+
 2010 September 16 - PiTiVi 0.13.5
 
  * periodic backup of the current project file

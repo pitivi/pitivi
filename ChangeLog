@@ -1,3 +1,3695 @@
+2011-05-24  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* NEWS:
+	* Changelog:
+	* configure.ac:
+	  0.13.9.90 pre-release
+
+2011-12-24  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/utils.py:
+	* pitivi/actioner.py:
+	  Do not show seconds unless the ETA is under 2 minutes.
+	  Seconds vary too much and generally do not make sense when waiting for a long render to finish
+
+2011-05-24  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/encodingdialog.glade:
+	  ui: add a digit to the scaling in renderdialog
+	  Fixes: 638759
+
+2011-05-24  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* README:
+	  readme: Update the readme specifying that frei0r is a soft dependency
+
+2011-05-24  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* docs/pitivi.1:
+	  man: Update the man page
+
+2011-05-24  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* Makefile.am:
+	* docs/pitivi.1:
+	* pitivi.1:
+	  docs: Move the manpage to docs/
+
+2010-12-08  Hicham HAOUARI <hicham.haouari@gmail.com>
+
+	* Makefile.am:
+	* pitivi.1:
+	  Add man page
+	  Fixes: 636787
+
+2011-05-24  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/effects.py:
+	  effects: Add a plugins blacklist and blacklist ladspa.
+	  This is related to #650985
+
+2011-05-20  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/encodingprogress.py:
+	  Hide widgets that cannot be used
+
+2011-05-20  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/encodingprogress.glade:
+	  Provide a default text for the rendering progress bar.
+	  Prevents the progressbar's height from resizing and
+	  tells the user that we're still estimating the ETA.
+
+2011-05-24  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/timeline/track.py:
+	  track: Do no add start and end keyframe to our controlled keyframe list  in interpollator
+	  Fixes: 636773
+
+2011-05-24  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	  ui: VScrollbar of the timeline has the good upper prop at loading a project
+	  Fixes: #648714
+
+2011-05-21  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Disable the render dialog while the project settings dialog is opened
+
+2011-05-18  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/elements/mixer.py:
+	  mixer: Change the videomixer when enabling/disabling the alpha channel
+	  When we change from having an alpha channel to not having one, we need to change
+	  the videomixer to avoid Not Negotiated Errors. More infos at:
+	  http://jeff.ecchi.ca/blog/2011/04/24/negotiating-performance/
+	  Fixes #632414 #637522
+
+2011-05-23  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/effects.py:
+	  Make effects.py pep8 compliant
+
+2011-05-23  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas: pep8 compliance
+
+2011-05-23  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/timelinecanvas.py:
+	  ui: calculate well the width of the canvas selection marquee.
+	  Fixes #632391
+
+2011-05-22  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/timeline/track.py:
+	  interpolator: Do not allow removing a keyframe that don't belong to us
+
+2011-05-22  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/application.py:
+	  application: Make preview project working again
+	  903bd3e609fed098423e05c2ea7d390083de7dda broked it.
+
+2011-05-22  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/application.py:
+	  application: clean up the welcome dialog grab focus commit
+
+2011-05-16  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/application.py:
+	  Make the welcome dialog grab focus after the main window
+
+2011-05-16  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/startupwizard.glade:
+	* pitivi/ui/startupwizard.py:
+	  Properly set the welcome dialog as transient for mainwindow
+
+2011-05-16  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/application.py:
+	  PEP-8 compliance for application.py
+
+2011-05-22  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow: Remove useless import
+
+2011-05-22  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Provide a better default size for the "missing files" dialog
+
+2010-12-27  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/formatters/base.py:
+	  Correctly "guess" the new path of missing media files
+	  (make sure that the URIs compared in addMapping have similar encodings)
+	  Fixes bug #638143
+
+2010-12-27  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Do not center the text in the missing files dialog
+
+2010-11-28  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Clearer debug statements for the missing files dialog
+
+2010-11-28  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Make the missing files dialog a bit more space-efficient
+
+2011-05-22  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/configure.py.in:
+	* tests/Makefile.am:
+	  build: look at the proper pixmap directory when distchecking
+	  Make distcheck working even if we haven't installed the project
+
+2011-05-18  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/encodingdialog.py:
+	  encodingdialog: Make sure that the combobox we ellipsize are not empty
+	  Avoid a GtkWarning.
+
+2011-05-20  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Make sure the last second of the timeline is in view. Matters when the duration of the timeline is very short.
+
+2011-05-20  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Handle the case when no audio or video encoder has been previously selected.
+
+2011-05-20  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	* pitivi/settings.py:
+	* pitivi/ui/encodingdialog.py:
+	  Save the render scale in the export settings.
+
+2011-05-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Fixed EncodingDialog to display the saved audio and video encoders when the dialog is opened. Fixes bug 587095.
+
+2011-05-05  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/settings.py:
+	* tests/test_settings.py:
+	  Split ExportSettings.factory_settings_cache into three dicts. Simplified the code and added a unittest.
+
+2011-05-05  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/settings.py:
+	* pitivi/ui/encodingdialog.glade:
+	* pitivi/ui/encodingdialog.py:
+	  Removed the Summary tab in the Render dialog. Did this because the dialog is very simple, there is no reason for having that extra tab.
+
+2011-05-02  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Simplified encodingdialog.extension_for_muxer()
+
+2011-05-02  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/settings.py:
+	  Generate the available combinations of muxers and encoders only once in ExportSettings
+
+2011-05-02  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Fixed etree FutureWarning
+
+2011-05-01  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Changed EncodingDialog to apply the settings changed in the UI to the project settings. Fixes bug 647023.
+
+2011-04-28  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	* tests/test_etree_formatter.py:
+	  Deserialize correctly the longinteger values. Fixes bug 634715.
+
+2011-05-18  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/encodingdialog.py:
+	  progressdialog: Avoid to call progress.updatePosition when we destroyed progress
+
+2011-05-18  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/encodingdialog.py:
+	  ui: remove unused _settingsButtonClickedCb in the encoding dialog
+
+2011-05-17  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/project.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	  pitivi: Update the video caps of the default_source when project setting change
+	  This avoid lot of NNE introduced by different caps on VideoSources and VideoTestSource
+	  fixes #637522 and #613767
+
+2011-05-17  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/timeline/track.py:
+	  Effects: Do not use the type of a subclass in TrackObject._updatePriority
+
+2011-05-04  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/timeline/timeline.py:
+	  effects: handle ungrouping properly
+
+2011-05-17  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/effects.py:
+	  Effects: little fixe
+
+2011-05-17  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/timeline/track.py:
+	  Effects: Make audio effects working
+
+2011-05-22  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	  Merging translations
+
+2011-05-22  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-05-21  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2011-05-20  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/filechooserpreview.py:
+	* pitivi/ui/prefs.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	  ui: Use the SPACING variable around all the project
+
+2011-05-20  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/Makefile.am:
+	  build: Install filechooserpreview.py
+
+2011-05-20  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/actioner.py:
+	* pitivi/formatters/etree.py:
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/timeline/track.py:
+	* pitivi/ui/curve.py:
+	* pitivi/ui/dynamic.py:
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/prefs.py:
+	* pitivi/ui/preset.py:
+	* pitivi/ui/previewer.py:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/ripple_update_group.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	* tests/test_binary_search.py:
+	* tests/test_cache.py:
+	* tests/test_etree_formatter.py:
+	* tests/test_factories_base.py:
+	* tests/test_factories_file.py:
+	* tests/test_factories_operation.py:
+	* tests/test_gap.py:
+	* tests/test_integration.py:
+	* tests/test_signallable.py:
+	* tests/test_transitions.py:
+	* tests/testcomplex.py:
+	* win32/setup.py:
+	  Remove all trailling spaces
+
+2011-05-20  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* tests/Makefile.am:
+	* tests/runtests.py:
+	* tests/test_integration.py:
+	  tests: Run the still image testsuite when running check-integration
+	  This testsuite is based on sample files, and can not be runned when running distcheck
+
+2011-05-20  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/filechooserpreview.py:
+	  filechooserpreview: Little cleanup
+
+2011-05-20  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/filechooserpreview.py:
+	  filechooserpreview: Respect the Callback naming convention
+
+2011-05-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Remove filenames (redundant with the file chooser)
+
+2011-05-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Do not show an icon for files that cannot be previewed
+
+2011-05-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Use a whitelist of acceptable tags to be shown
+
+2011-05-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Remove the (non working) code to show image width and height
+
+2011-05-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Fix a typo in a variable name
+
+2011-05-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Use standard beautified strings for localization
+
+2011-05-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Show/hide widgets depending on the context
+
+2011-05-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Hide the zoom buttons when previewing an audio file
+
+2011-05-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Use a vbox for errors, better strings, code cleanup
+
+2011-05-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  PEP-8 compliance
+
+2011-05-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Ellipsize the tags label to prevent unwanted resizing
+
+2010-09-04  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	* pitivi/ui/sourcelist.py:
+	  Remove option for enable/disable preview
+
+2010-07-04  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Minor enhancement on gui
+
+2010-07-04  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Minor enhancement on gui
+
+2010-07-04  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Better import error handling
+
+2010-07-03  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	* pitivi/ui/sourcelist.py:
+	  add option for enable/disable preview on filechooser
+
+2010-06-28  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Bugfix on scale position when playing
+
+2010-06-20  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Bugfix in image detection
+
+2010-06-19  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Add log messages
+
+2010-06-19  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Fix tags duplication
+
+2010-05-30  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Better size handling for image preview
+
+2010-05-30  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Add zoom for image files
+
+2010-05-30  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Controls are always visible but set sensivite only when needed
+
+2010-05-30  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  BugFix: clicking somewhere in the slider while the clip is playing yields an incorrect result
+
+2010-05-24  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Better handling of tag names
+
+2010-05-22  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Major rework on code; feaures complete, but still some bugs to fix
+
+2010-05-07  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  remove unneeded buttons
+
+2010-05-07  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  some cleanup
+
+2010-05-07  Pier Carteri <pier.carteri@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	* pitivi/ui/sourcelist.py:
+	  initial work
+
+2011-05-16  Мирослав Николић <miroslavnikolic@rocketmail.com>
+
+	* po/sr.po:
+	* po/sr@latin.po:
+	  Updated Serbian translation
+
+2011-05-15  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-05-11  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-05-11  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	  Merging translations
+
+2011-05-04  Stéphane Maniaci <stephane.maniaci@gmail.com>
+
+	* pitivi/ui/clipproperties.py:
+	  Soften the effects infobar string
+
+2011-05-10  Stéphane Maniaci <stephane.maniaci@gmail.com>
+
+	* pitivi/effects.py:
+	  effects: Export pixmap dir to avoid multiple calls to get_pixmap_dir()
+
+2011-05-09  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/dynamic.py:
+	* pitivi/utils.py:
+	  Limit the timecode widget's width to prevent the window from overflowing
+	  Remove a digit from the hours in the time_to_string function to save some screen space
+	  and avoid the display to bug when using the cantarell fonts
+
+2011-05-08  Takayuki KUSANO <AE5T-KSN@asahi-net.or.jp>
+
+	* po/ja.po:
+	  Updated Japanese translation
+
+2011-04-29  Kristjan SCHMIDT <kristjan.schmidt@googlemail.com>
+
+	* po/LINGUAS:
+	* po/eo.po:
+	  Add Esperanto translation
+
+2011-01-19  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/dynamic.py:
+	  dynamic: Fixe indentation
+
+2011-01-19  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/viewer.py:
+	  viewer: Disconnect ui/timeline:deleteObj event when timecode_entry is focused
+
+2011-01-19  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/dynamic.py:
+	* pitivi/ui/viewer.py:
+	  TimeWidget: let user decide wether to send the value-changed signal or not
+	  Use it in the timecode_entry in the viewer
+
+2011-01-19  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/viewer.py:
+	  viewer: make the seeker in the timeline working again
+
+2011-01-19  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/dynamic.py:
+	* pitivi/ui/viewer.py:
+	  viewer: Disconnect ui/timeline when timecode_entry is focused
+
+2011-01-18  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/dynamic.py:
+	* pitivi/ui/viewer.py:
+	* pitivi/utils.py:
+	  Implement a TimeWidget class and use it to jump to a specific time
+	  Remove the string_to_time function
+
+2010-12-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  Seek to the requested position when the user activates the timecode entry
+
+2010-12-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/utils.py:
+	  Divide the summation by 10 to compensate the use of scientific notation
+
+2010-12-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	* pitivi/utils.py:
+	  Connect to a new utility method for converting timecodes to nanoseconds
+
+2010-12-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  Clarify the name for the timecode widget
+
+2010-12-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  Use a GTK Entry widget instead of a label for displaying the timecode
+
+2011-03-07  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	  viewer: Pass the all app to it so we can access the UI, and everything we need
+
+2011-03-14  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/common.py:
+	  Fixed common.unpack_cairo_gradient() to use a valid value for the offset parameter
+
+2011-03-14  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/common.py:
+	  Removed duplicated methods in common.py
+
+2011-03-14  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/common.py:
+	* tests/test_common.py:
+	  Fixed common.unpack_color_32() and added unittests
+
+2011-03-14  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/common.py:
+	  Added '50 fps' to the list of framerates
+
+2011-03-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/action.py:
+	* pitivi/actioner.py:
+	  Removed Actioner.actioner
+
+2011-03-09  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Allow splitting even when there is no selection. Fixes bug #644313.
+
+2010-12-30  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/settings.py:
+	  settings.py: use ngettext for plurals in getAudioDescription
+	  Fixes bug #637497
+
+2010-12-16  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* .gitignore:
+	  Add log files and patches to git ignore
+
+2010-11-28  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Standardize spacing in ui/mainwindow.py
+
+2010-11-27  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Fix bug 610127 - Clip details tooltip for icon view
+
+2010-11-25  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/basetabs.py:
+	* pitivi/ui/viewer.py:
+	  Make detachable components "utility" window types so that they show up above the timeline
+
+2011-04-01  Rudolfs Mazurs <rudolfs.mazurs@gmail.com>
+
+	* po/lv.po:
+	  Updated Latvian translation.
+
+2011-03-31  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2011-03-29  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-03-26  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-03-26  Daniel Nylander <po@danielnylander.se>
+
+	* po/sv.po:
+	  Updated Swedish translation
+
+2011-03-24  Gianvito Cavasoli <gianvito@gmx.it>
+
+	* po/it.po:
+	  Updated Italian translation
+
+2011-03-24  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2011-03-23  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-03-22  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/sourcelist.py:
+	  Sourcelist: show the searchbar again
+
+2011-03-22  Gianvito Cavasoli <gianvito@gmx.it>
+
+	* po/it.po:
+	  Updated Italian translationù
+
+2011-03-22  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  Merging translations
+
+2011-03-21  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/sourcelist.py:
+	  sourcelist: Add a button to hide the error infobar
+
+2011-03-21  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/sourcelist.py:
+	  ui/sourcelist Code cleanup
+
+2010-12-27  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Handle plurals and singular for the warning infobar's label and button label
+
+2010-12-26  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Fix the total amount of clips being imported when loading a project
+
+2010-12-26  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filelisterrordialog.py:
+	  Make the URIs in FileListErrorDialog human-readable
+
+2010-12-26  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filelisterrordialog.py:
+	  Auto-expand the first two errors in FileListErrorDialog
+
+2010-12-26  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filelisterrordialog.glade:
+	* pitivi/ui/filelisterrordialog.py:
+	  Usability fixes for the FileListError dialog
+
+2010-12-26  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Kill the infostub widget and replace it with a progressbar and an infobar.
+
+2010-12-26  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/sourcelist.py:
+	* pitivi/ui/sourcelist.py:
+	  Replace the sourcelist busy animation by a progressbar.
+
+2011-03-21  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2010-12-01  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Make the layers/tracks controls fill available space
+
+2010-12-01  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Add a menu item for zoom fit
+
+2010-12-01  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Properly call mainwindow's setBestZoomRatio()
+
+2011-03-21  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/mainwindow.py:
+	  Make MainWindow.setBestZoomRatio public
+
+2010-12-01  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Make the zoom slider a reasonable minimum width
+
+2010-12-01  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Add a "zoom fit" button near the zoom slider
+
+2011-03-21  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  Merging translations
+
+2011-01-31  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/startupwizard.py:
+	  Make sure the Project settings dialog is focused when creating a new project
+
+2011-01-31  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/startupwizard.glade:
+	  Compensate height of recent projects for the filter combobox
+
+2010-12-27  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Make the project load error dialog human-readable
+
+2010-12-27  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/startupwizard.glade:
+	* pitivi/ui/startupwizard.py:
+	  Hide the welcome dialog while loading a project, show it again if needed
+
+2010-11-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/startupwizard.py:
+	  Close the Welcome dialog when the user presses "Escape"
+
+2010-11-23  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/startupwizard.glade:
+	  Remove the Skip button and its separator
+
+2010-11-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/startupwizard.glade:
+	* pitivi/ui/startupwizard.py:
+	  Make the welcome dialog a transient window
+
+2011-03-21  Kang Bundo <bundo@bundo.biz>
+
+	* po/ko.po:
+	  Updated Korean translation
+
+2011-03-21  Kim Boram <boramism@gmail.com>
+
+	* po/ko.po:
+	  Updated Korean translation
+
+2011-03-20  Bruno Brouard <annoa.b@gmail.com>
+
+	* po/fr.po:
+	  Updated French translation
+
+2011-03-19  Jesse Aviles <jesseaviles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-03-19  Jesse Aviles <jesseaviles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2010-11-23  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/startupwizard.glade:
+	  Fix spacing and alignment nitpicks
+
+2011-03-18  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-03-18  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-03-18  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  Merging translations
+
+2011-03-15  Mattias Põldaru <mahfiaz@gmail.com>
+
+	* po/et.po:
+	  [l10n] Updated Estonian translation
+
+2011-03-12  António Lima <amrlima@gmail.com>
+
+	* po/pt.po:
+	  Updated Portuguese translation
+
+2011-03-07  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcelist.py:
+	  mainwindow: add a default action list to setActionsSensitive
+
+2010-12-25  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Fixe typos in setActionsSensitive method
+
+2010-12-25  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Connect the modelFilter to the iconview
+
+2010-12-25  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Add methods and signals similar to those used in ui/effectlist.py
+
+2010-12-25  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Add a search widget to the media library
+
+2010-12-25  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Standardize spacing and beautify some code
+
+2011-03-06  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/application.py:
+	  application: Remove the FIXME related to subclassing InteractivePitivi
+
+2011-03-06  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/application.py:
+	  application: use the proper reference to the current project when quitting
+
+2011-03-06  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/application.py:
+	  application: Adds a description of the classes
+
+2011-01-16  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/mainwindow.py:
+	  Fix StartupWizardGuiPitivi to show the wizard only when it should. Removed unnecessary show() calls from PitiviMainWindow.
+
+2010-12-16  Alex Băluț <alexandru.balut@gmail.com>
+
+	* bin/pitivi.in:
+	* pitivi/application.py:
+	  Added back the option to start the application without the UI
+
+2010-12-13  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	  Allow specifying -i with no MEDIA_FILES, to directly create a new project.
+
+2010-12-13  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	  Split InteractivePitivi into a few classes.
+
+2010-12-13  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	  Removed the --no-ui option because it can be confusing for users, as it does nothing.
+
+2010-12-12  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/mainwindow.py:
+	  Fix 635994: Show the Startup Wizard only when no project is loaded or created.
+
+2010-12-12  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	  Extracted the command line arguments parsing out of InteractivePitivi. Cleaned up the validation of the options and the validation of the args. Simplified the usage message.
+
+2010-12-12  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	  Pass only the settings, not the whole app, to PitiviViewer
+
+2011-03-05  Miroslav Nikolić <miroslavnikolic@rocketmail.com>
+
+	* po/sr.po:
+	* po/sr@latin.po:
+	  Updated Serbian translation
+
+2011-02-28  Mateus Zenaide <matzenh@gmail.com>
+
+	* po/pt_BR.po:
+	  Updated Brazilian Portuguese translation
+
+2011-02-23  Kjartan Maraas <kmaraas@gnome.org>
+
+	* po/nb.po:
+	  Updated Norwegian bokmål translation.
+
+2011-02-15  Bruno Brouard <annoa.b@gmail.com>
+
+	* po/fr.po:
+	  Updated French translation
+
+2011-02-03  Мирослав Николић <miroslavnikolic@rocketmail.com>
+
+	* po/LINGUAS:
+	* po/sr.po:
+	* po/sr@latin.po:
+	  Added Serbian translation
+
+2011-01-30  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/startupwizard.py:
+	  startupwizard: Indent fixes
+
+2011-01-30  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/startupwizard.py:
+	  startupwizard : Remove ugly/crack code
+	  DO NOT DO THIS ! If you want to hide the combobox, go ask the gtk
+	  team to add methods to do this.
+	  Avoids crashing
+
+2011-01-30  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/startupwizard.py:
+	  startupwizard: dos2unix
+
+2011-01-30  Arun Raghavan <arun.raghavan@collabora.co.uk>
+
+	* pitivi/factories/base.py:
+	  base: Set prefer-passthrough on alpha only if available
+	  This allows us to work with gst-plugins-good prior to 0.10.24
+	  https://bugzilla.gnome.org/show_bug.cgi?id=640936
+
+2011-01-29  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2011-01-29  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-01-23  Yaron Shahrabani <sh.yaron@gmail.com>
+
+	* po/he.po:
+	  Updated Hebrew translation.
+
+2011-01-22  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-01-22  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-01-22  Alexandre Prokoudine <alexandre.prokoudine@gmail.com>
+
+	* po/ru.po:
+	  Updated Russian translation
+
+2011-01-22  Alexandre Prokoudine <alexandre.prokoudine@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Fixed a typo
+
+2011-01-21  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-01-21  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  Merging translations
+
+2011-01-21  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/effects.py:
+	  effects: Clean up the way we load effect icons
+
+2011-01-21  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/effects.py:
+	* pitivi/ui/effectlist.py:
+	  Do not load effects icons when running with no UI.
+
+2011-01-20  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-01-20  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-01-20  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-01-20  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  Merging translations
+
+2011-01-20  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* tests/Makefile.am:
+	  tests: Don't forget to dist __init__.py
+	  Makes out-of-build make check work.
+
+2011-01-20  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/pixmaps/Makefile.am:
+	  Add the default thumbnail for video effect file to Makefile.am
+
+2011-01-19  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/effectlist.py:
+	  Effects: show iconview by default for video effect list
+
+2011-01-19  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/pixmaps/defaultthumbnail.svg:
+	  Actually add the default thumbnail for video effects
+
+2011-01-19  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/effects.py:
+	  Effects: make the "All effects" string translatable for audio_effects
+
+2011-01-19  Mathieu Duponchelle <seeed@laposte.net>
+
+	* pitivi/effects.py:
+	* pitivi/ui/effectlist.py:
+	  Effects: Add an icon view for the video effect list bug #630368
+	  Add a default thumbnail for effects that don't have.
+
+2010-12-15  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/effects.py:
+	  Effects: "All effect" selected by default whatever the localization is bug #637278
+
+2011-01-18  Maxim V. Dziumanenko <dziumanenko@gmail.com>
+
+	* po/uk.po:
+	  Updated Ukrainian translation
+
+2011-01-18  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-01-17  Alexandre Prokoudine <alexandre.prokoudine@gmail.com>
+
+	* po/ru.po:
+	  Updated Russian translation
+
+2011-01-17  Alexandre Prokoudine <alexandre.prokoudine@gmail.com>
+
+	* pitivi/ui/encodingdialog.glade:
+	  Dialog's caption is now translatable
+
+2011-01-17  Alexandre Prokoudine <alexandre.prokoudine@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Deweirdification of keyframes related menu items (prevframe and nextframe)
+
+2011-01-17  Alexandre Prokoudine <alexandre.prokoudine@gmail.com>
+
+	* po/POTFILES.in:
+	  Added forgotten file containing translatable messages and resorted the list alphabetically
+
+2011-01-17  Alexandre Prokoudine <alexandre.prokoudine@gmail.com>
+
+	* pitivi/ui/encodingprogress.glade:
+	  A patch for a typo
+
+2011-01-13  Yinghua Wang <wantinghard@gmail.com>
+
+	* po/zh_CN.po:
+	  Update Simplified Chinese translation.
+
+2011-01-11  Fran Diéguez <fran.dieguez@mabishu.com>
+
+	* po/gl.po:
+	  Updated Galician translations - QA
+
+2011-01-11  Fran Diéguez <fran.dieguez@mabishu.com>
+
+	* po/gl.po:
+	  Updated Galician translations
+
+2011-01-09  António Lima <amrlima@gmail.com>
+
+	* po/pt.po:
+	  Updated Portuguese translation
+
+2010-12-29  Djavan Fagundes <djavan@comum.org>
+
+	* po/pt_BR.po:
+	  Updated Brazilian Portuguese translation
+
+2010-12-27  Petr Kovar <pknbe@volny.cz>
+
+	* po/cs.po:
+	  Update Czech translation by Marek Cernocky
+
+2010-12-26  Gabor Kelemen <kelemeng@gnome.hu>
+
+	* po/hu.po:
+	  Updated Hungarian translation
+
+2010-12-20  Mattias Põldaru <mahfiaz gmail com>
+
+	* po/et.po:
+	  [l10n] Updated Estonian translation
+
+2010-12-19  Nguyễn Thái Ngọc Duy <pclouds@gmail.com>
+
+	* po/LINGUAS:
+	* po/vi.po:
+	  po/vi.po: import translations from Ubuntu/Maverick
+
+2010-12-17  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-12-16  Peter Mráz <etkinator@gmail.com>
+
+	* po/LINGUAS:
+	* po/sk.po:
+	  Added Slovak translation
+
+2010-12-15  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2010-12-14  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-12-14  Petr Kovar <pknbe@volny.cz>
+
+	* po/cs.po:
+	  Update Czech translation by Marek Cernocky
+
+2010-12-13  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2010-12-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/Makefile.am:
+	  Undist non-existant file linkwidget.py
+
+2010-12-12  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-12-12  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2010-12-10  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* po/POTFILES.in:
+	  po: Add encodingprogressdialog.glade to translatable files
+
+2010-12-10  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/effects.py:
+	* pitivi/timeline/timeline_undo.py:
+	  Effects: Undo/redo effect properties on project opened from a project file bug #636970
+
+2010-12-10  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/ui/mainwindow.py:
+	  Test: Effect observer missing reference to the pipeline bug #636914
+
+2010-12-08  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/sourcelist.py:
+	  sourcelist: Do not let user import http-source images bug #629207
+
+2010-12-08  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/clipproperties.py:
+	  clipproperties: fixe removing effect from clip BT #636763
+
+2010-12-08  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/startupwizard.py:
+	  Ensure the project settings dialog is focused when called from the startup wizard
+
+2010-12-05  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/encodingprogress.glade:
+	* pitivi/ui/encodingprogress.py:
+	  Make mainwindow a parent of encodingprogress, fix modality and focusing
+
+2010-12-05  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/encodingprogress.glade:
+	* pitivi/ui/encodingprogress.py:
+	  - Make the rendering progress dialog not a popup anymore; it was too invasive and didn't allow setting a title to indicate progress - Only put the time estimate in the progressbar, not the percentage (which goes in the titlebar) - Remove the duplicated updatePosition method in encodingdialog (see encodingprogress) - Show/hide/destroy windows in the right order for proper focus
+
+2010-12-05  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Show the encoding dialog again when a render completes
+
+2010-11-26  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Extend the list of muxer extensions
+
+2010-11-25  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/projectsettings.glade:
+	* pitivi/ui/projectsettings.py:
+	  Autofill the author's name in the project metadata
+
+2010-11-25  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/projectsettings.glade:
+	* pitivi/ui/projectsettings.py:
+	  Automatically set the year in the project metadata
+
+2010-11-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Hide the rendering settings dialog while rendering
+
+2010-11-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/projectsettings.glade:
+	  Add border around scrollable widgets, correct alignment of some labels
+
+2010-12-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/gstwidget.py:
+	  ElementSettingsDialog: make the dialog reasonably large by default
+
+2010-12-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/elementsettingsdialog.glade:
+	* pitivi/ui/gstwidget.py:
+	  ElementSettingsDialog: remove unecessary widgets
+
+2010-12-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/elementsettingsdialog.glade:
+	  ElementSettingsDialog: set horizontal scroll policy to automatic
+
+2010-12-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/elementsettingsdialog.glade:
+	  ElementSettingsDialog: remove superflous image borders
+
+2010-12-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingprogress.glade:
+	  EncodingProgressDialog: make dialog not a popup
+
+2010-12-10  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.glade:
+	  RenderDialog: glade file changes to prevent unwanted resizing
+
+2010-11-26  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: remove buttons only senstive when a preset is selected
+
+2010-11-26  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: save buttons only sensitive when values have been changed
+
+2010-11-26  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.glade:
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: implement saving of presets
+
+2010-11-26  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.glade:
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: allow adding and removing presets
+
+2010-11-26  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: allow editing preset names directly
+
+2010-11-26  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: fill preset treeviews from preset manager
+
+2010-11-26  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/preset.py:
+	  Check in new module ui/preset.py
+
+2010-11-22  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: implement ProjectSettings button
+
+2010-11-22  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: implement scale spinbutton
+
+2010-11-22  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: save / restore project settings
+
+2010-11-22  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: should also inherit from Loggable
+
+2010-11-22  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.glade:
+	  RenderDialog: change width spinbutton to 'scale' spinbutton
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* po/POTFILES.in:
+	  Squash: delete export settings widget
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/glade.py:
+	  GladeWindow: sett named widgets as attributes
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/exportsettingswidget.glade:
+	* pitivi/ui/exportsettingswidget.py:
+	  Remove deprecated EportSettingsWidget
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: whitespace fix
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: add some TODO items
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: make sure dialog closes on cancel/close
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: implement render button
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: update settings values when widgets change
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: fill values from current project settings
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: adjust height when width changes
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: update encoder combos when muxer combo changes
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: implement video / audio encoder settings
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: update summary whenever anything changes
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: update filename when muxer changes
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: populate muxer combobox from settings
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: populate combo boxes
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: ellipsize the text in encoder combo boxes
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/encodingprogress.glade:
+	* pitivi/ui/encodingprogress.py:
+	  Check in and dist EncodingProgess sub-dialog
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.glade:
+	  RenderDialog: complete glade re-design
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	  RenderDialog: remove existing implementation
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/settings.py:
+	  ExportSettings: fix default PAR
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/settings.py:
+	  ExportSettings: add a method to get the current DAR
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/settings.py:
+	  ExportSettings: remember element settings on a per-factory basis
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/settings.py:
+	  ExportSettings: implement get{Audio,Video}Encoders
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/encode.py:
+	* pitivi/settings.py:
+	  Encode: complete re-write of available_muxers
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: update copyright
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: update settings when OK button is clicked
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: update PAR when SAR changes and DAR is selected, and vice versa
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: constrain DAR/PAR values to each other
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: grey out DAR widgets when PAR button is selected, and vice verssa
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: constrain width/height spinbuttons when link button is checked.
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: keep DAR and PAR text fields and combos in sync
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  RenderDialog: keep framerate widgets in sync using RippleUpdateGroup
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/ripple_update_group.py:
+	  Check in and dist RippleUpdateGroup
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: set widget values from project settings
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: populate combo boxes with choices
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/common.py:
+	  ui/common: add some convenience TreeModels
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/common.py:
+	  ui/common: add conveience function to create gtk.TreeModels from python lists
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: add FractionWidgets programatically
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.glade:
+	  ProjectSettings: compete redesign of glade file
+
+2010-11-19  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: remove existing implementation
+
+2010-12-05  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	  fixed 635984 - make -p command line argument work again
+
+2010-12-01  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	  fix bug 636046 - Properly use OptionParser
+
+2010-12-05  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2010-12-05  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2010-12-05  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2010-12-05  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow : screw this
+
+2010-12-05  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow: Make the file utf8 so python doesn't choke
+
+2010-12-01  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  sourcelist: Make more menu items translatable
+	  Fixes #633506
+	  Signed-off-by: Edward Hervey <bilboed@bilboed.com>
+
+2010-12-01  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow: Fix my name
+	  Signed-off-by: Edward Hervey <bilboed@bilboed.com>
+
+2010-12-01  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/settings.py:
+	  settings: make getAudioDescription/getVideoDescription translatable
+	  Fixes #590471
+	  Signed-off-by: Edward Hervey <bilboed@bilboed.com>
+
+2010-12-05  Edward Hervey <bilboed@bilboed.com>
+
+	* po/POTFILES.in:
+	  po: Add new glade file to translatable files
+
+2010-12-05  Yaron Shahrabani <sh.yaron@gmail.com>
+
+	* po/he.po:
+	  Updated Hebrew translation.
+
+2010-12-04  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2010-12-04  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/encode.py:
+	  encode: Debug properties being set on the encoder
+	  Useful for debugging issues in the future
+
+2010-12-03  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-12-02  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2010-11-29  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/mainwindow.py:
+	  fig bug 635992 Missing files dialog: ...does not allow saving the project after loading
+
+2010-11-29  Benjamin M. Schwartz <bens@alum.mit.edu>
+
+	* pitivi/elements/thumbnailsink.py:
+	  fix bug 634933 - Preview in the Timeline is weird and wrong...
+
+2010-11-29  Benjamin Berg <benjamin@sipsolutions.net>
+
+	* pitivi/elements/arraysink.py:
+	* pitivi/elements/mixer.py:
+	* pitivi/elements/thumbnailsink.py:
+	* pitivi/utils.py:
+	  fix bug 605445 - Pitivi does not work on big endian machines
+
+2010-11-26  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/prefs.py:
+	  fix bug 634991 - Auto-expand preferences contents area
+
+2010-11-26  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/viewer.py:
+	  Viewer: remember state
+
+2010-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/viewer.py:
+	  Viewer: set viewer state, size and position from settings
+
+2010-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/viewer.py:
+	  Viewer: add viewer-specific settings options
+
+2010-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	  MainWindow: don't show viewer directly
+
+2010-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	  MainWindow: pass application instance to viewer constructor
+
+2010-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  MainWindow: remove unused code from previous attempt at making viewer detachable
+
+2010-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/viewer.py:
+	  Viewer: dock/undock viewer in response to action signal
+
+2010-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/viewer.py:
+	  Viewer: implement dock/undock methods
+
+2010-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	  Viewer: pass dock/undock action to viewer constructor
+
+2010-11-25  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/mainwindow.xml:
+	  MainWindow: add dock/undock viewer action
+
+2010-11-24  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/timeline.py:
+	* pitivi/pipeline.py:
+	* pitivi/plumber.py:
+	* pitivi/utils.py:
+	  pitivi: More linking speedups
+	  https://bugzilla.gnome.org/show_bug.cgi?id=591427
+
+2010-11-24  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/base.py:
+	* pitivi/factories/test.py:
+	  factories: First round at making linking faster
+	  https://bugzilla.gnome.org/show_bug.cgi?id=591427
+
+2010-11-24  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/Makefile.am:
+	  pitivi: Don't forget to dist actioner.py
+
+2010-11-24  Bruno Brouard <annoa.b@gmail.com>
+
+	* po/fr.po:
+	  Updated French translation
+
+2010-11-24  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-11-23  Ben Asselstine <benasselstine@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Fix bug 632366 - Ellipsize the "Open" and "Save As" menu items
+
+2010-11-23  Volker Sobek <reklov@live.com>
+
+	* pitivi/ui/timeline.py:
+	  Fix bug 630373 - Can't move the zoom slider with the mouse wheel
+
+2010-11-23  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Fix for bug 635126 - The Effects configurations list is not cleared
+
+2010-11-23  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectlist.py:
+	  Fix for bug 635124 - Effects configurations list shuffled
+
+2010-11-22  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/startupwizard.py:
+	  StartupWizard: show project settings when new project is chosen
+
+2010-11-22  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  MainWindow: add pubic method showProjectSettingsDialog
+
+2010-11-20  Khaled Hosny <khaledhosny@eglug.org>
+
+	* po/ar.po:
+	  Updated Arabic translation
+
+2010-11-16  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/startupwizard.py:
+	  StartupWizard: unset RecentChooserWidget treeview as a drag source
+
+2010-11-16  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/startupwizard.py:
+	  StartupWizard: remove redundant signal connections
+
+2010-11-16  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/startupwizard.glade:
+	  StartupDialog: Change button label
+
+2010-11-16  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/startupwizard.glade:
+	  StartupWizard: add icons to buttons
+
+2010-11-16  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/startupwizard.py:
+	  StartupWizard: inherit from object
+
+2010-11-16  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/startupwizard.py:
+	  Reword fixme comment about a gtk bug
+
+2010-11-16  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  Mainwindow: Remove empty else clause
+
+2010-11-16  Mathieu Duponchelle <seeed@laposte.net>
+
+	* pitivi/ui/mainwindow.py:
+	  Mainwindow: show start-up wizard on start-up, and close it when the project loads
+
+2010-11-16  Mathieu Duponchelle <seeed@laposte.net>
+
+	* pitivi/ui/mainwindow.py:
+	  Mainwindow: factor out openProject() from _openProjectCb
+
+2010-11-16  Mathieu Duponchelle <seeed@laposte.net>
+
+	* pitivi/configure.py.in:
+	  Update the URL of the pitivi user manual
+
+2010-11-16  Mathieu Duponchelle <seeed@laposte.net>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/startupwizard.glade:
+	* pitivi/ui/startupwizard.py:
+	  Check in and distribute new files for PiTiVi sartup wizard
+
+2010-11-16  Mathieu Duponchelle <seeed@laposte.net>
+
+	* pitivi/projectmanager.py:
+	  Whitespace fixes
+
+2010-11-14  Gabor Kelemen <kelemeng@gnome.hu>
+
+	* po/hu.po:
+	  Updated Hungarian translation
+
+2010-11-12  Jordi Estrada <jordi.estrada@gmail.com>
+
+	* po/ca.po:
+	  Updated Catalan translation
+
+2010-11-09  Joe Hansen <joedalton2@yahoo.dk>
+
+	* po/da.po:
+	  Updated Danish translation
+
+2010-11-08  Petr Kovar <pknbe@volny.cz>
+
+	* po/cs.po:
+	  Update Czech translation by Marek Cernocky
+
+2010-11-08  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-11-08  Edward Hervey <bilboed@bilboed.com>
+
+	* common:
+	* po/zh_CN.po:
+	  Revert "Update Simplified Chinese translation."
+	  This reverts commit 5aed3736d6a005b49aaf45d8f9b5095d609a04c6.
+
+2010-11-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/actioner.py:
+	  actioner: remove dead function
+
+2010-11-08  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2010-11-05  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-11-04  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-11-04  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/settings.py:
+	  settings: Cleaner XDG dirs spec implementation with pyxdg
+
+2010-11-04  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/effectlist.py:
+	  effectlist: effects list filtering spacing improvements
+
+2010-10-31  Bruno Brouard <annoa.b@gmail.com>
+
+	* po/fr.po:
+	  Updated French translation
+
+2010-10-30  Carles Ferrando <carles.ferrando@gmail.com>
+
+	* po/LINGUAS:
+	* po/ca@valencia.po:
+	  Updated Catalan (Valencian) translation
+
+2010-10-30  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-10-27  Aron Xu <aronxu@gnome.org>
+
+	* common:
+	* po/zh_CN.po:
+	  Update Simplified Chinese translation.
+
+2010-10-18  7 Stéphane Maniaci <stephane.maniaci@gmail.com>
+
+	* configure.ac:
+	* pitivi/configure.py.in:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/mainwindow.xml:
+	  patch for bug 621342 (show Quickstart Guide in Help Menu)
+
+2010-10-15  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  only redraw when scrolling or zooming
+
+2010-10-15  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  remove unecessary overrides
+
+2010-10-18  Jesse Aviles <jesseaviles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2010-10-16  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-10-15  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-10-15  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  checkpoint: ruler functional again, but no longer 'double-buffered'
+
+2010-10-15  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  remove the shrink-during-drag prevention cruft (no longer needed with transform scrolling)
+
+2010-10-15  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  update canvas size in response to size-allocate signal
+
+2010-10-14  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  convert ruler into a gtk.DrawingArea
+
+2010-10-14  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  update scroll position after zooming
+
+2010-10-12  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  use tracks canvas item rather than allocation for playhead height
+
+2010-10-12  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	  emulate previous mouse-wheel scrolling behavior
+
+2010-10-12  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-10-12  Maxim V. Dziumanenko <dziumanenko@gmail.com>
+
+	* po/uk.po:
+	  Added Ukrainian translation
+
+2010-10-09  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-10-09  Petr Kovar <pknbe@volny.cz>
+
+	* po/cs.po:
+	  Update Czech translation by Marek Cernocky
+
+2010-10-06  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-10-06  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-10-06  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-10-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas: remove commented out code
+
+2010-10-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas: make marquee work again with the new scrolling method
+
+2010-10-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas: add scroll offset to PlayheadController
+
+2010-10-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/trackobject.py:
+	  trackobject: add scroll position in click()
+
+2010-10-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/controller.py:
+	* pitivi/ui/trackobject.py:
+	  add scroll position to mouse coordinate in timeline controller
+
+2010-10-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/preview.py:
+	* pitivi/ui/previewer.py:
+	  take scroll position into consideration when rendering previews
+
+2010-10-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  don't draw gutters between tracks; now they smear
+
+2010-10-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  set canvas bounds to be only as large as the window allocation
+
+2010-10-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  scroll canvas by translating root item
+
+2010-10-01  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  do not put canvas in a scrolled window. use our own scroll bars instead
+
+2010-10-02  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-10-02  Hannie Dumoleyn <hannie@ubuntu-nl.org>
+
+	* po/nl.po:
+	  Updated Dutch translation by Hannie Dumoleyn
+
+2010-10-02  Gianvito Cavasoli <gianvito@gmx.it>
+
+	* po/it.po:
+	  [l10n] Updated Italian translation
+
+2010-10-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/exportsettingswidget.py:
+	  exportsettings: make the codecs/muxers list cleaner. Fixes #593682.
+	  Based on a patch from Jean-François Fortin Tam.
+
+2010-10-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/effects.py:
+	* pitivi/ui/effectlist.py:
+	  effects: escape names and descriptions only where needed. Fixes #630370.
+
+2010-10-01  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-10-01  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [i18n] Updated German translation
+
+2010-10-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/singledecodebin.py:
+	  singledecodebin: initialize pending_newsegment to None. Fixes #613960.
+
+2010-10-01  Hannie Dumoleyn <hannie@ubuntu-nl.org>
+
+	* po/nl.po:
+	  Updated Dutch translation by Hannie Dumoleyn
+
+2010-10-01  Wouter Bolsterlee <wbolster@gnome.org>
+
+	* pitivi/ui/encodingdialog.py:
+	  i18n: Explicitly mark no-python-format string as such
+	  This fixes bug #630359.
+
+2010-10-01  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2010-09-28  Luis de Bethencourt <luis@debethencourt.com>
+
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	  ui/effectlist: add keyframe, prevframe and nextframe to the action sensitive/unsensitive when focus is in the effect list search entry.
+
+2010-09-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/pipeline.py:
+	* pitivi/stream.py:
+	  pipeline: use match_stream in getTeeForFactoryStream. Fixes #630015.
+
+2010-09-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_pipeline.py:
+	* tests/test_pipeline_action.py:
+	  tests: make test_pipeline[_action] use better sources/caps
+
+2010-09-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/timeline.py:
+	  factories/timeline: Fix caps handling in FixSeekStart
+
+2010-09-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/test.py:
+	  factories/test: make _makeDefaultBin do something sensible.
+
+2010-09-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/timeline.py:
+	  timeline: always set caps on FixSeekStart:sink.
+	  This is needed so get_pad_for_stream, called once we ghost FixSeekStart:src,
+	  knows what stream to instantiate.
+
+2010-09-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  timeline: fix a bug in the transition detection code. Fixes #630827.
+
+2010-09-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_timeline.py:
+	  tests: add more tests for Timeline.getPreviousTimelineObject
+
+2010-09-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/stream.py:
+	  stream: in get_pad_type, look at template caps if negotiated caps aren't set
+
+2010-09-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/stream.py:
+	  stream: deal with python elements in find_upstream_demuxer_and_pad
+
+2010-09-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/action.py:
+	  action: print a slightly more useful debug message
+
+2010-09-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/timeline.py:
+	  timeline: change a set_state(PLAYING) call to sync_state_with_parent().
+
+2010-09-29  Yaron Shahrabani <sh.yaron@gmail.com>
+
+	* po/LINGUAS:
+	* po/he.po:
+	  Added Hebrew translation
+
+2010-09-28  Hannie Dumoleyn <lafeber-dumoleyn2@zonnet.nl>
+
+	* po/nl.po:
+	  [i18n] Updated Dutch translation
+
+2010-09-27  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [i18n] Updated German translation, fixed bug #629335
+
+2010-09-26  Ivaylo Valkov <ivaylo@e-valkov.org>
+
+	* po/bg.po:
+	  Updated Bulgarian translation
+
+2010-09-26  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2010-09-26  Kjartan Maraas <kmaraas@gnome.org>
+
+	* po/nb.po:
+	  Updated Norwegian bokmål translation
+
+2010-09-26  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-09-25  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-09-25  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2010-09-24  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/log/loggable.py:
+	  log: make Loggable.error print the correct line number
+
+2010-09-24  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  timeline: remove a workaround for a bug that was fixed in cc30c6.
+
+2010-09-24  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  timeline: remove a little list comprehension abuse
+
+2010-09-23  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2010-09-23  Luis de Bethencourt <luis@debethencourt.com>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline: mark as selected the clip loaded to the timeline.
+
+2010-09-23  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  effectlist: Add the name of effects tooltips. Fixes bug #630371.
+
+2010-09-23  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/operation.py:
+	* pitivi/timeline/track.py:
+	  effects: implement a simple but robust TrackEffect.getElement()
+
+2010-09-23  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/operation.py:
+	* pitivi/timeline/track.py:
+	* tests/test_factories_operation.py:
+	  Revert "timeline/track.py: Reliable implementation of TrackEffect.getElement()"
+	  This reverts commit 71624851f77e79a4c13046b29e0a8666f4f8fae7.
+	  Conflicts:
+	  pitivi/timeline/track.py
+
+2010-09-23  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/exportsettingswidget.glade:
+	  ui/exportsettings: make video come before audio. Fixes #629605.
+
+2010-09-23  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timelinecanvas.py:
+	  ui/timelinecanvas.py: make getItemsInArea a bit more efficient
+
+2010-09-23  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-09-22  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [i18n] Updated German translation
+
+2010-09-22  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [i18n] Updated German translation
+
+2010-09-22  Luis de Bethencourt <luis@debethencourt.com>
+
+	* pitivi/ui/sourcelist.py:
+	  ui/sourcelist: catch the error of addUris(files) if file is already imported into the sourcelist of the project.
+
+2010-09-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/base.py:
+	  factories: adapt after recent changes to stream_compare.
+
+2010-09-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/track.py:
+	  track: make default track objects respect the project settings.
+	  Make default sources output data compatible with the project settings, just like
+	  we do for other regular factories.
+
+2010-09-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/projectmanager.py:
+	  projectmanager: initialize Track streams from project settings.
+	  Initialize the default audio and video Track()s with streams containing caps as
+	  returned by the project settings.
+
+2010-09-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/test.py:
+	  factories: make VideoTestSourceFactory link to the video elements created by the base factory.
+
+2010-09-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/base.py:
+	  factories: refactor SourceFactory a little.
+
+2010-09-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/stream.py:
+	* tests/test_stream.py:
+	  stream: add STREAM_MATCH_SAME_TYPE to stream_compare.
+	  STREAM_MATCH_SAME_TYPE is returned when two streams are of the same type (audio,
+	  video, etc)
+
+2010-09-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/previewer.py:
+	  ui: make get_preview_from_object simpler
+
+2010-09-22  Luis de Bethencourt <luis@debethencourt.com>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline: adding scrollToPlayhead() when moving between frames out of the view bounds
+
+2010-09-22  Karl Palsson <gnome@tweak.net.au>
+
+	* pitivi/ui/sourcelist.py:
+	  ui/sourcelist: preview a clip on double click. Fixes #629408.
+
+2010-09-22  Edward Hervey <bilboed@bilboed.com>
+
+	* po/POTFILES.in:
+	  po: Add missing file
+
+2010-09-22  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline: selection.setTo is not selection.setSelection
+
+2010-09-17  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/dynamic.py:
+	* pitivi/ui/effectsconfiguration.py:
+	* pitivi/ui/gstwidget.py:
+	  Workaournd to make aspectcropratio working
+
+2010-09-14  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/pipeline.py:
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/timeline/track.py:
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectsconfiguration.py:
+	* pitivi/ui/mainwindow.py:
+	* tests/test_etree_formatter.py:
+	* tests/test_timeline_undo.py:
+	  Fixe bugs related to do/undo of effect properties
+
+2010-09-07  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	  effects.py: Blacklist all useless effects
+
+2010-09-07  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/factories/operation.py:
+	* pitivi/timeline/track.py:
+	* tests/test_factories_operation.py:
+	  timeline/track.py: Reliable implementation of TrackEffect.getElement()
+
+2010-09-03  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectsconfiguration.py:
+	  ui/effectsconfiguration.py: Blacklist uneeded properties configurations
+
+2010-09-03  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/formatters/etree.py:
+	* pitivi/ui/effectsconfiguration.py:
+	* pitivi/ui/gstwidget.py:
+	  Fix crash when trying to configure an effect which as not readable properties
+
+2010-09-03  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/mainwindow.py:
+	  Make effect pane position better configured and saved in time
+
+2010-09-03  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectsconfiguration.py:
+	  ui/effectsconfiguration.py: Always add a ScrolledWindow int effect configuration UI
+
+2010-09-02  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/gstwidget.py:
+	  ui/gstwidget.py: Fixe several bugs when using it for rendering configurations
+
+2010-09-02  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectsconfiguration.py:
+	  ui/clipproperties.py: Better VPaned management
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  ui/clipproperties.py: We can configure only one clip at a time
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/mainwindow.py:
+	  Rename "Clip properties" tab to "Effects configurations" for the moment
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  ui/clipproperties.py:Do not hide the remve button
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline.py: Adding an effect to the timeline does nothing
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline.py: Select only the clip where you drop an effect (not add it to the current selection)
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline.py: Be logical in _getTimelineObjectUnderMouse!
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  ui/clipproperties.py: Use the active property of TrackObject instead of the gnl_object directly
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  ui/clipproperties.py: fixe removeEffect weirdness
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  ui/clipproperties.py: Remove the gtk.Expander since it is useless for the moment
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  ui/clipproperties.py: Make private what should be private
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  ui/clipproperties.py: Handle Delete effect button sensitivity
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectlist.py:
+	  Respect variable naming conventions everywhere
+
+2010-09-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  ui/clipproperties.py: Do not use receiver
+
+2010-08-30  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline.py: Better effect droping handling
+
+2010-08-30  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  ui/effectlist.py: See effect thumbnails when dragging
+
+2010-08-30  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/timeline/track.py:
+	  Fixe error noticed by Alessandro in its review of the timeline code for effect implementation: http://sourceforge.net/mailarchive/message.php?msg_name=AANLkTi%3DwZkAs4Rsfq1bv6YECyk%2Bf3GLYvN%3Dwc8GYbKaL%40mail.gmail.com
+
+2010-08-26  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  effectlist.py: fixe double click to had an effect on selected clips
+
+2010-08-26  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  ui/effectlist.py: Press backspace in the effect searchbox doesn't select all the text
+
+2010-08-21  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectlist.py:
+	  InfoBar refactoring
+
+2010-08-25  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/pixmaps/Makefile.am:
+	* pitivi/pixmaps/agingtv.png:
+	* pitivi/pixmaps/bulge.png:
+	* pitivi/pixmaps/burn.png:
+	* pitivi/pixmaps/chromium.png:
+	* pitivi/pixmaps/circle.png:
+	* pitivi/pixmaps/cogdownsample.png:
+	* pitivi/pixmaps/color-distance.png:
+	* pitivi/pixmaps/coloreffects.png:
+	* pitivi/pixmaps/dicetv.png:
+	* pitivi/pixmaps/diffuse.png:
+	* pitivi/pixmaps/dilate.png:
+	* pitivi/pixmaps/dodge.png:
+	* pitivi/pixmaps/edgetv.png:
+	* pitivi/pixmaps/exclusion.png:
+	* pitivi/pixmaps/fisheye.png:
+	* pitivi/pixmaps/frei0r-filter-3dflippo.png:
+	* pitivi/pixmaps/frei0r-filter-brightness.png:
+	* pitivi/pixmaps/frei0r-filter-bw0r.png:
+	* pitivi/pixmaps/frei0r-filter-cartoon.png:
+	* pitivi/pixmaps/frei0r-filter-contrast0r.png:
+	* pitivi/pixmaps/frei0r-filter-distort0r.png:
+	* pitivi/pixmaps/frei0r-filter-edgeglow.png:
+	* pitivi/pixmaps/frei0r-filter-equaliz0r.png:
+	* pitivi/pixmaps/frei0r-filter-flippo.png:
+	* pitivi/pixmaps/frei0r-filter-gamma.png:
+	* pitivi/pixmaps/frei0r-filter-glow.png:
+	* pitivi/pixmaps/frei0r-filter-hueshift0r.png:
+	* pitivi/pixmaps/frei0r-filter-invert0r.png:
+	* pitivi/pixmaps/frei0r-filter-k-means-clustering.png:
+	* pitivi/pixmaps/frei0r-filter-lens-correction.png:
+	* pitivi/pixmaps/frei0r-filter-letterb0xed.png:
+	* pitivi/pixmaps/frei0r-filter-nosync0r.png:
+	* pitivi/pixmaps/frei0r-filter-perspective.png:
+	* pitivi/pixmaps/frei0r-filter-pixeliz0r.png:
+	* pitivi/pixmaps/frei0r-filter-rgb-parade.png:
+	* pitivi/pixmaps/frei0r-filter-saturat0r.png:
+	* pitivi/pixmaps/frei0r-filter-scale0tilt.png:
+	* pitivi/pixmaps/frei0r-filter-scanline0r.png:
+	* pitivi/pixmaps/frei0r-filter-sobel.png:
+	* pitivi/pixmaps/frei0r-filter-squareblur.png:
+	* pitivi/pixmaps/frei0r-filter-tehroxx0r.png:
+	* pitivi/pixmaps/frei0r-filter-twolay0r.png:
+	* pitivi/pixmaps/frei0r-filter-vectorscope.png:
+	* pitivi/pixmaps/frei0r-filter-water.png:
+	* pitivi/pixmaps/frei0r-filter-white-balance.png:
+	* pitivi/pixmaps/gamma-correction.png:
+	* pitivi/pixmaps/gaussianblur.png:
+	* pitivi/pixmaps/kaleidoscope.png:
+	* pitivi/pixmaps/marble.png:
+	* pitivi/pixmaps/mirror.png:
+	* pitivi/pixmaps/optv.png:
+	* pitivi/pixmaps/pinch.png:
+	* pitivi/pixmaps/radioactv.png:
+	* pitivi/pixmaps/revtv.png:
+	* pitivi/pixmaps/shagadelictv.png:
+	* pitivi/pixmaps/solarize.png:
+	* pitivi/pixmaps/sphere.png:
+	* pitivi/pixmaps/square.png:
+	* pitivi/pixmaps/stretch.png:
+	* pitivi/pixmaps/threshold0r.png:
+	* pitivi/pixmaps/tunnel.png:
+	* pitivi/pixmaps/twirl.png:
+	* pitivi/pixmaps/vertigotv.png:
+	* pitivi/pixmaps/videobalance.png:
+	* pitivi/pixmaps/videobox.png:
+	* pitivi/pixmaps/videocrop.png:
+	* pitivi/pixmaps/warptv.png:
+	* pitivi/pixmaps/waterripple.png:
+	* pitivi/ui/effectlist.py:
+	  Add New effects images from nekohayo (and optimizations)
+
+2010-08-21  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  effectlist.py: Press enter on an effect apply it in the selection
+
+2010-08-20  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/gstwidget.py:
+	  gstwidget.py: Take care the element notify:: signal
+
+2010-08-20  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectsconfiguration.py:
+	  Better multiple timeline_object handling in effects configurations
+
+2010-08-20  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	  effects.py: Effect categorizing
+
+2010-08-18  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  ui/effectlist.py: Code cleaning
+
+2010-08-18  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectlist.py:
+	  Add an effect by double clicking in the effect list
+
+2010-08-14  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/sourcelist.py:
+	  ui/sourcelist.py: Use the PADDING property instead of hard coding it
+
+2010-08-14  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Make the infoBar text really center
+
+2010-08-14  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/sourcelist.py:
+	  Use InfoBars instead of TextBox to display information text
+
+2010-08-12  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/track.py:
+	  timeline/track.py: Have the same effect configuration when spliting a TrackEffect
+
+2010-08-12  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/dynamic.py:
+	  dynamic.py: Enhance NumericWidget
+
+2010-08-12  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/dynamic.py:
+	  dynamic.py: Add a default porperty to widgets that implement the dynamic interface
+
+2010-08-12  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/ui/effectsconfiguration.py:
+	* pitivi/ui/gstwidget.py:
+	  gstwidget.py: use the new dynamic widgets
+
+2010-08-10  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_etree_formatter.py:
+	* tests/test_projectmanager.py:
+	  Adapt etree test to pass with the latest effect saving implementation
+
+2010-08-08  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/track.py:
+	* tests/test_timeline_undo.py:
+	  Some cleanup in effect testing
+
+2010-08-08  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/ui/clipproperties.py:
+	  Handle the undo/redo active property
+
+2010-08-08  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  ui/clipproperties.py: mak undo/redo working
+
+2010-08-08  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  ui/clipproperties.py: log the removing effects so you can undo/redo it
+
+2010-08-01  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/Makefile.am:
+	  ui/Makefile.am: Make make install working
+
+2010-07-31  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/formatters/etree.py:
+	  formatters/etree.py : Make GEnum loading working
+
+2010-07-30  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  Clean Timeline.addEffectFactory
+
+2010-07-30  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectsconfiguration.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/timelinecanvas.py:
+	  Enhance effect drop in the timeline
+
+2010-07-30  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectsconfiguration.py:
+	* pitivi/ui/gstwidget.py:
+	  Make effect property changes undoable
+
+2010-07-27  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	  Make effect droping working only when droping on the proper track working.
+
+2010-07-27  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/factories/operation.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/gstwidget.py:
+	  Some code cleanup
+
+2010-07-27  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	  Moving an effect on a TimelineObject doesn't actually adds the effect to it. And enhance the way we fin on which TimelineObject to add effects TimelineObject
+
+2010-07-27  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/basetabs.py:
+	* pitivi/ui/mainwindow.py:
+	  Remove the extra HPaned when bringing cliproperties in a new window
+
+2010-07-27  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/application.py:
+	* pitivi/formatters/base.py:
+	* pitivi/formatters/etree.py:
+	* pitivi/formatters/format.py:
+	* pitivi/projectmanager.py:
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/timeline.py:
+	* tests/test_etree_formatter.py:
+	* tests/test_pipeline.py:
+	  Make saving working
+
+2010-07-27  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	  Effects file cleanup
+
+2010-07-23  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/track.py:
+	  Add the active property to TrackObject
+
+2010-07-21  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Make the new HPaned in cmipconfiguration working properly
+
+2010-07-21  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/factories/operation.py:
+	  Little cleaning/refactoring
+
+2010-07-21  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectsconfiguration.py:
+	* pitivi/ui/gstwidget.py:
+	  Make Default button on effectsconfiguration work again.
+
+2010-07-21  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectsconfiguration.py:
+	  Add a scrollwindow to the effectconfiguration when needed
+
+2010-07-20  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectsconfiguration.py:
+	  Add a gtk.ScrolledWindow in the effect_setting_ui
+
+2010-07-20  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Change the EffectProperties.VConent from VBox to Vpane
+
+2010-07-20  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Unactive effect are unstick when redoing them
+
+2010-07-20  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline_undo.py:
+	  Make undo/redo working with effects
+
+2010-07-19  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/clipproperties.py:
+	  Add dnd to the clip properties
+
+2010-07-19  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/timeline.py:
+	  Always have the correct number of effects playing in the composition
+
+2010-07-19  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	  Make seeking working again
+
+2010-07-18  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  Remove all references to addEffectFactory and use AddEffectFactoryOnObject instead
+
+2010-07-18  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	  Add a debugging message in addFactoryOnObject
+
+2010-07-18  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/gstwidget.py:
+	  Fixe a bug in gstwidget
+
+2010-07-18  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectsconfiguration.py:
+	  Better use of GstElementSettingsWidget
+
+2010-07-16  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/ui/effectsconfiguration.py:
+	* pitivi/ui/gstwidget.py:
+	  Save effect  configurations when undoing
+
+2010-07-16  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/track.py:
+	* pitivi/ui/clipproperties.py:
+	  Add a TrackEffect.getElement method that permit to get the effect element in the gnl_object
+
+2010-07-16  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_timeline.py:
+	  Make the test_timeline pass
+
+2010-07-16  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_timeline.py:
+	  Clean up test_timeline file
+
+2010-07-16  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/common.py:
+	  Make the time of FakeEffectFactory egal to StubFactory
+
+2010-07-16  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_timeline.py:
+	  Test removing an effect factory in the timeline
+
+2010-07-16  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_timeline.py:
+	  Add add/remove TrackEffect testing
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/timeline.py:
+	  Make do/Undo 'working' after rebasing
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_transitions.py:
+	  Corrects the priority issue we get in the test suite due to change of priority handling in TrackObject
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_track.py:
+	  Adapt the test_track code to the new priority management
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_factories_operation.py:
+	  Fixe the last test in test_factories_operation
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* po/POTFILES.in:
+	  Add files to the POTFILE.in
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_factories_operation.py:
+	  Adpapt the test to the new EffectFactory
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/factories/operation.py:
+	  Make the EffectFactory release bins properly
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_timeline_undo.py:
+	  Make do/undo effect test more logical
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline_undo.py:
+	  Remove an error in timeline_undo
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/factories/test.py:
+	  Adds the missing TestEffectFactory
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_timeline_undo.py:
+	  Enhance do/undo test for effects
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_timeline_undo.py:
+	  Implement do/undo for effects
+
+2010-07-15  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectsconfiguration.py:
+	  Fixe bug in the effect configuration. Before it could be trying to configure a property of an effect that didn't correspond to the interface we were seing
+
+2010-07-14  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline_undo.py:
+	  Implements the undo/redo for effects
+
+2010-07-14  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  Makes last commit related to keyboard handling effective
+
+2010-07-14  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/track.py:
+	  Conserve the 'active' state of the TrackObject.gnl_object when spliting
+
+2010-07-14  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/mainwindow.py:
+	  Better keyboard handling in effectlist and clipproperties
+
+2010-07-14  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Litle refactoring in the clipproperties
+
+2010-07-13  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectsconfiguration.py:
+	* pitivi/ui/gstwidget.py:
+	  Adds a button to reset to default property on the effect configuration
+
+2010-07-13  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectsconfiguration.py:
+	  Refactore EffectsConfiguration
+
+2010-07-12  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/factories/operation.py:
+	  Make the EffectFactory._effectname property public so it can be used in formatter.etree to save projects
+
+2010-07-12  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/application.py:
+	* pitivi/effects.py:
+	  Rename EffectsHandler class to EffectsHandler so it respects the naming convention
+
+2010-07-12  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/timeline.py:
+	  Better style for divion n the timeline ui
+
+2010-07-12  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectsconfiguration.py:
+	  Have a  generci UI to configure effects and get configuration acts in live
+
+2010-07-12  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  Remove useless imports in EffectList
+
+2010-07-12  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Fixe style issues in cliproperties
+
+2010-07-12  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Fixe the 'remove effect' in clipproperties
+
+2010-07-09  Thibault Saunier <tsaunier@gnome.org>
+
+	* tests/test_etree_formatter.py:
+	  Delte unused imports
+
+2010-07-09  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/Makefile.am:
+	  Add references to the new files in the pitivi/ui/Makefile.am
+
+2010-07-09  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/timeline.py:
+	  Refactoring on effects handling in the UI timeline
+
+2010-07-09  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Better space handling in EffectProperties
+
+2010-07-09  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	  Documents EffectsHandler
+
+2010-07-09  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectsconfiguration.py:
+	  Make saturation configuration acts on saturation instead of hue!
+
+2010-07-09  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	  Make effects working again
+
+2010-07-04  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Better effect configuration implementation handling
+
+2010-07-04  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Better treeview handling in clipproperties
+
+2010-07-04  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectsconfiguration.py:
+	  Make videobalance effect configurable
+
+2010-07-04  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/sourcelist.py:
+	  Try to make it usable on small screens
+
+2010-07-04  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/basetabs.py:
+	* pitivi/ui/viewer.py:
+	  Makes some space between panes
+
+2010-07-04  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/application.py:
+	* pitivi/effects.py:
+	* pitivi/factories/operation.py:
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/timeline.py:
+	  Refactore pitivi.effects
+
+2010-07-04  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/settings.py:
+	  Apply my patch to make xdg.get_dirs working
+
+2010-07-02  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  Remove reference to IconList in EffectList
+
+2010-07-02  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Refactor clipproperties
+
+2010-07-02  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	  Refactor pitivi.effects
+
+2010-07-02  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/clipproperties.py:
+	  Implement "Remove effect"
+
+2010-07-02  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/mainwindow.py:
+	  Save new HPaned position between sessions
+
+2010-07-02  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/timeline.py:
+	  Fixes a bug when adding a clip to the timeline
+
+2010-06-29  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/basetabs.py:
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/projecttabs.py:
+	  Add the clip configuration pane
+
+2010-06-29  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/ui/effectlist.py:
+	  Refactoring
+
+2010-06-29  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/common.py:
+	* pitivi/ui/effectlist.py:
+	  Effect list refactoring
+
+2010-06-28  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  Make some space in the effect list
+
+2010-06-28  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/timeline.py:
+	  Hacks to make effects by clip without using TimelineObject
+
+2010-06-25  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/track.py:
+	* pitivi/ui/trackobject.py:
+	  Makes effects per clips
+
+2010-06-21  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  Correct spacing error in the effect list
+
+2010-06-21  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/factories/operation.py:
+	  Actually make audio effects working
+
+2010-06-21  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  Fit the exact nekohayo design for EffectList
+
+2010-06-21  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  Make the new list design working
+
+2010-06-20  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/mainwindow.py:
+	  Redesign the effect list
+
+2010-06-18  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  Adds a litle searchbox/combobox to the effect list
+
+2010-06-17  Thibault Saunier <tsaunier@gnome.org>
+
+	* pitivi/effects.py:
+	  Correct a bug when adding streams
+
+2010-06-12  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/factories/operation.py:
+	  Make effect factory working for audios effects
+
+2010-06-07  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/trackobject.py:
+	  First effects UI representation
+
+2010-06-03  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/timeline/track.py:
+	* pitivi/ui/timeline.py:
+	  Remove debug in VideoTransition
+
+2010-06-03  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/timeline/track.py:
+	  Trying to make the priorities working
+
+2010-06-03  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/timeline/track.py:
+	  Fixe the transition problem
+
+2010-06-03  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/timeline/track.py:
+	  Do not show a transtion in the UI when you add an effect
+
+2010-06-01  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/factories/operation.py:
+	  Fixe multiple addInputStream/addOutputStream in EffectFactory
+
+2010-05-31  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	  Fixe the duration in Timeline::addEffectFactory
+
+2010-05-29  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	  Correction in Timeline._getEffectTrack
+
+2010-05-29  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/effects.py:
+	* pitivi/timeline/track.py:
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/trackobject.py:
+	  DND without crashing, need to make it work properly
+
+2010-05-24  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	  Change EffectTrack=>TrackEffect
+
+2010-05-24  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	  Change EffectTrackObject => EffectTrack
+
+2010-05-24  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/factories/operation.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/sourcelist.py:
+	* pitivi/ui/timeline.py:
+	* tests/common.py:
+	* tests/test_factories_operation.py:
+	* tests/test_timeline.py:
+	  Make a single implementation of EffectFactory instead of the AudioEffectFactory and VideoEffectFactory
+
+2010-05-22  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	* tests/test_timeline.py:
+	  Make the TestTimelineAddFactory testsuite pass with effects added
+
+2010-05-22  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/factories/operation.py:
+	  Implement AudioEffectFactory _makeBin
+
+2010-05-21  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	* tests/common.py:
+	* tests/test_timeline.py:
+	  First effect integration in the non UI timeline
+
+2010-05-20  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/ui/timeline.py:
+	  Add effects as a possible timeline UI destination
+
+2010-05-20  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/factories/operation.py:
+	  Fixe in __init__ of AudioEffectFactory
+
+2010-05-20  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  Some fixes in ui/effectlist.py
+
+2010-05-20  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* tests/test_factories_operation.py:
+	  Enhance tearDown in the EffectFactory test
+
+2010-05-14  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/mainwindow.py:
+	  Work on the effect list UI
+
+2010-05-14  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/ui/effectlist.py:
+	  First simple implementation of effectList
+
+2010-05-08  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* tests/test_factories_operation.py:
+	  Better TestVideoEffectFactory testing
+
+2010-05-08  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* tests/test_factories_operation.py:
+	  Enhance the EffectFactory test
+
+2010-05-05  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/factories/operation.py:
+	* tests/test_factories_operation.py:
+	  Small clean up in the EffectFactory implementation and testing
+
+2010-05-04  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/factories/operation.py:
+	* tests/test_factories_operation.py:
+	  First effect and test implementation
+
+2010-05-01  Thibault Saunier <tsaunier@src.gnome.org>
+
+	* pitivi/factories/operation.py:
+	* tests/test_factories_operation.py:
+	  Add video effects class definition and test suite
+
+2010-09-22  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-09-21  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [i18n] Updated German translation
+
+2010-09-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  timeline: don't call timelinePositionChanged after seeking.
+	  Remove calls to timelinePositionChanged in prev/next frame.
+
+2010-09-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/projectmanager.py:
+	* tests/test_projectmanager.py:
+	  projectmanager: minor cleanups
+
+2010-09-14  Luis de Bethencourt <luis@debethencourt.com>
+
+	* pitivi/projectmanager.py:
+	* tests/test_projectmanager.py:
+	  projectmanager: backup recovery file is removed out when project is cleanly closed.
+
+2010-09-18  Karl Palsson <gnome@tweak.net.au>
+
+	* pitivi/ui/encodingdialog.py:
+	  Show rendering process % in the dialog title bar.
+	  Fixes bug: https://bugzilla.gnome.org/show_bug.cgi?id=607243
+
+2010-09-20  Luis de Bethencourt <luis@debethencourt.com>
+
+	* pitivi/timeline/track.py:
+	* tests/test_track.py:
+	  timeline/track: removing the keyframes out of bounds of the split.
+
+2010-09-20  Luis de Bethencourt <luis@debethencourt.com>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/timeline.py:
+	* tests/test_timeline.py:
+	  ui/timeline: move to the next/prev keyframe with 'E'/'R' keys or menu buttons.
+
+2010-09-17  Luis de Bethencourt <luis@debethencourt.com>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  timeline: getObjs* optimizations
+
+2010-09-20  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+
+2010-09-18  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  viewer: fix buttons and add tooltips.
+
+2010-09-10  Luis de Bethencourt <luis@debethencourt.com>
+
+	* pitivi/timeline/timeline.py:
+	  timeline/timeline: fixed the naming of setTo() in class Selection to something more readable, setSelection().
+
+2010-09-16  Volker Sobek <reklov@live.com>
+
+	* pitivi/ui/curve.py:
+	  Fix wrong positions of keyframe value labels
+	  Fixes #629811
+
+2010-09-17  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  viewer: remove call to a non existing method.
+
+2010-09-17  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/encodingdialog.py:
+	  s/pitivi.renderer/pitivi.actioner/ in a couple of files.
+
+2010-08-25  Robert Swain <robert.swain@collabora.co.uk>
+
+	* pitivi/actioner.py:
+	* pitivi/render.py:
+	  render: Rename render.py to actioner.py
+	  It now contains classes for a renderer and a previewer and the common code.
+
+2010-08-25  Robert Swain <robert.swain@collabora.co.uk>
+
+	* pitivi/ui/viewer.py:
+	  viewer: Make disconnection from mirror connection to a pipeline
+
+2010-08-24  Robert Swain <robert.swain@collabora.co.uk>
+
+	* pitivi/application.py:
+	* pitivi/render.py:
+	* pitivi/ui/encodingdialog.py:
+	  Initial implementation of command line preview option
+	  Also refactor Renderer class into Actioner for common parts so that the code
+	  can be reused for a Previewer class
+
+2010-08-20  Robert Swain <robert.swain@collabora.co.uk>
+
+	* pitivi/application.py:
+	* pitivi/render.py:
+	  application: render: Catch errors while rendering
+	  This shuts down pitivi when running from the command line to render a project.
+
+2010-08-19  Robert Swain <robert.swain@collabora.co.uk>
+
+	* pitivi/application.py:
+	* pitivi/render.py:
+	* pitivi/ui/encodingdialog.py:
+	  application: render: Initial implementation of command line rendering
+	  Abstract rendering code from encoding dialogue into a Renderer convenience
+	  class. Make the encoding dialogue use this class. Add --render option to
+	  command line and implement rendering of a given project file from the command
+	  line.
+
+2010-09-17  Cheng-Chia Tseng <pswo10680@gmail.com>
+
+	* po/zh_HK.po:
+	* po/zh_TW.po:
+	  Updated Traditional Chinese translation(Hong Kong and Taiwan)
+
+2010-09-17  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/__init__.py:
+	* tests/runtests.py:
+	  tests: call pygst.require("0.10") when running tests
+
+2010-09-17  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  ui/timeline: rename Keyframe menu item to Add Keyframe
+
+2010-09-17  Alessandro Decina <alessandro.d@gmail.com>
+
+	* configure.ac:
+	  Back to development.
+
 2010-09-16 16:51:17 +0200  Alessandro Decina <alessandro.d@gmail.com>
 
 	* NEWS:
