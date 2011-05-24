@@ -30,7 +30,8 @@ import pango
 
 from gettext import gettext as _
 
-import pitivi.configure as configure
+from pitivi import configure
+from pitivi.settings import ExportSettings
 from pitivi.log.loggable import Loggable
 from pitivi.ui.encodingprogress import EncodingProgressDialog
 from pitivi.ui.gstwidget import GstElementSettingsDialog
@@ -108,8 +109,6 @@ class EncodingDialog(Renderer, Loggable):
         Loggable.__init__(self)
 
         self.app = app
-        self.project = project
-        self.settings = self.project.getSettings()
 
         self.builder = gtk.Builder()
         self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
@@ -130,6 +129,7 @@ class EncodingDialog(Renderer, Loggable):
         self.preferred_aencoder = self.settings.aencoder
 
         self.timestarted = 0
+        self._initializeComboboxModels()
         self._displaySettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
@@ -158,25 +158,25 @@ class EncodingDialog(Renderer, Loggable):
     def _settingsChanged(self, settings):
         self.updateResolution()
 
+    def _initializeComboboxModels(self):
+        self.frame_rate_combo.set_model(frame_rates)
+        self.channels_combo.set_model(audio_channels)
+        self.sample_rate_combo.set_model(audio_rates)
+        self.sample_depth_combo.set_model(audio_depths)
+        self.muxercombobox.set_model(factorylist(ExportSettings.muxers))
+
     def _displaySettings(self):
         # Video settings
-        self.frame_rate_combo.set_model(frame_rates)
         set_combo_value(self.frame_rate_combo, self.settings.videorate)
         # note: this will trigger an update of the video resolution label
         self.scale_spinbutton.set_value(self.settings.render_scale)
 
         # Audio settings
-        self.channels_combo.set_model(audio_channels)
         set_combo_value(self.channels_combo, self.settings.audiochannels)
-
-        self.sample_rate_combo.set_model(audio_rates)
         set_combo_value(self.sample_rate_combo, self.settings.audiorate)
-
-        self.sample_depth_combo.set_model(audio_depths)
         set_combo_value(self.sample_depth_combo, self.settings.audiodepth)
 
         # Muxer
-        self.muxercombobox.set_model(factorylist(self.settings.muxers))
         # note: this will trigger an update of the codec comboboxes
         set_combo_value(self.muxercombobox,
             gst.element_factory_find(self.settings.muxer))
