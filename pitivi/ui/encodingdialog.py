@@ -20,7 +20,7 @@
 # Boston, MA 02110-1301, USA.
 
 """
-Encoding dialog
+Render dialog
 """
 
 import os
@@ -45,20 +45,15 @@ from pitivi.ui.common import\
     set_combo_value
 
 def beautify_factoryname(factory):
+    """Returns a nice name for the specified gst.ElementFactory instance."""
     # only replace lowercase versions of "format", "video", "audio"
     # otherwise they might be part of a trademark name
-    words = ["Muxer", "muxer", "Encoder", "encoder",
+    words_to_remove = ["Muxer", "muxer", "Encoder", "encoder",
             "format", "video", "audio", "instead"]
     name = factory.get_longname()
-    for word in words:
+    for word in words_to_remove:
         name = name.replace(word, "")
-    parts = name.split(" ")
-    ret = " ".join(p.strip() for p in parts).strip()
-
-    return ret
-
-def filter_recommended(muxers):
-    return [m for m in muxers if m.get_rank() > 0]
+    return " ".join(word for word in name.split())
 
 def extension_for_muxer(muxer):
     """Returns the file extension appropriate for the specified muxer."""
@@ -93,11 +88,15 @@ def extension_for_muxer(muxer):
     return exts.get(muxer)
 
 def factorylist(factories):
-    """ Given a sequence of factories, returns a gtk.ListStore()
-    of sorted, beautified factory names """
+    """Create a gtk.ListStore() of sorted, beautified factory names.
+
+    @param factories: The factories available for creating the list. 
+    @type factories: A sequence of gst.ElementFactory instances.
+    """
     columns = (str, object)
     data = [(beautify_factoryname(factory), factory)
-            for factory in filter_recommended(factories)]
+            for factory in factories
+            if factory.get_rank() > 0]
     data.sort(key=lambda x: x[0])
     return model(columns, data)
 
@@ -197,6 +196,7 @@ class EncodingDialog(Renderer, Loggable):
         self.fileentry.set_text(name)
 
     def _muxerComboChangedCb(self, muxer_combo):
+        """Handle the changing of the container format combobox."""
         muxer = get_combo_value(muxer_combo).get_name()
         self.settings.setEncoders(muxer=muxer)
 
@@ -254,6 +254,7 @@ class EncodingDialog(Renderer, Loggable):
         dialog.window.run()
 
     def _projectSettingsDestroyCb(self, dialog):
+        """Handle the destruction of the ProjectSettingsDialog."""
         self._displaySettings()
 
     def _frameRateComboChangedCb(self, combo):
