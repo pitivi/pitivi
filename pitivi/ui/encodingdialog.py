@@ -28,8 +28,6 @@ import gtk
 import gst
 import pango
 
-from gettext import gettext as _
-
 from pitivi import configure
 from pitivi.settings import ExportSettings
 from pitivi.log.loggable import Loggable
@@ -103,7 +101,13 @@ def factorylist(factories):
 
 
 class EncodingDialog(Renderer, Loggable):
-    """ Encoding dialog box """
+    """Render dialog box.
+
+    @ivar preferred_aencoder: The last audio encoder selected by the user.
+    @type preferred_aencoder: str
+    @ivar preferred_vencoder: The last video encoder selected by the user.
+    @type preferred_vencoder: str
+    """
 
     def __init__(self, app, project, pipeline=None):
         Loggable.__init__(self)
@@ -124,12 +128,19 @@ class EncodingDialog(Renderer, Loggable):
 
         Renderer.__init__(self, project, pipeline)
 
-        # Encoder settings
+        # Directory and Filename
+        self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
+        self.updateFilename(self.project.name)
+
+        # We store these so that when the user tries various container formats,
+        # (AKA muxers) we select these a/v encoders, if they are compatible with
+        # the current container format.
         self.preferred_vencoder = self.settings.vencoder
         self.preferred_aencoder = self.settings.aencoder
 
         self._initializeComboboxModels()
         self._displaySettings()
+        self._displayRenderSettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
         self.settings.connect("settings-changed", self._settingsChanged)
@@ -165,17 +176,22 @@ class EncodingDialog(Renderer, Loggable):
         self.muxercombobox.set_model(factorylist(ExportSettings.muxers))
 
     def _displaySettings(self):
+        """Display the settings that also change in the ProjectSettingsDialog.
+        """
         # Video settings
         set_combo_value(self.frame_rate_combo, self.settings.videorate)
-        # note: this will trigger an update of the video resolution label
-        self.scale_spinbutton.set_value(self.settings.render_scale)
-
         # Audio settings
         set_combo_value(self.channels_combo, self.settings.audiochannels)
         set_combo_value(self.sample_rate_combo, self.settings.audiorate)
         set_combo_value(self.sample_depth_combo, self.settings.audiodepth)
 
-        # Muxer
+    def _displayRenderSettings(self):
+        """Display the settings which can be changed only in the EncodingDialog.
+        """
+        # Video settings
+        # note: this will trigger an update of the video resolution label
+        self.scale_spinbutton.set_value(self.settings.render_scale)
+        # Muxer settings
         # note: this will trigger an update of the codec comboboxes
         set_combo_value(self.muxercombobox,
             gst.element_factory_find(self.settings.muxer))
@@ -183,6 +199,7 @@ class EncodingDialog(Renderer, Loggable):
         # File
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
         self.updateFilename(self.project.name)
+
 
     def updateFilename(self, basename):
         """Updates the filename UI element to show the specified file name."""
@@ -324,9 +341,7 @@ class EncodingDialog(Renderer, Loggable):
             self.progress.updatePosition(fraction, text)
 
     def updateUIOnEOS(self):
-        """
-        When a render completes or is cancelled, update the UI
-        """
+        """Handle the ending or the cancellation of the render process."""
         self.progress.window.destroy()
         self.progress = None
         self.window.show()  # Show the encoding dialog again
