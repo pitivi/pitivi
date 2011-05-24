@@ -25,7 +25,6 @@ Project class
 
 from pitivi.log.loggable import Loggable
 from pitivi.timeline.timeline import Timeline
-from pitivi.stream import AudioStream, VideoStream
 from pitivi.pipeline import Pipeline
 from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.sourcelist import SourceList
@@ -70,8 +69,8 @@ class Project(Signallable, Loggable):
 
     def __init__(self, name="", uri=None, **kwargs):
         """
-        name : the name of the project
-        uri : the uri of the project
+        @param name: the name of the project
+        @param uri: the uri of the project
         """
         Loggable.__init__(self)
         self.log("name:%s, uri:%s", name, uri)
@@ -95,8 +94,8 @@ class Project(Signallable, Loggable):
         self.view_action.addProducers(self.factory)
         self.seeker = Seeker(80)
 
-        settings = self.getSettings()
-        self._videocaps = settings.getVideoCaps()
+        self.settings = ExportSettings()
+        self._videocaps = self.settings.getVideoCaps()
 
     def release(self):
         self.pipeline.release()
@@ -107,51 +106,22 @@ class Project(Signallable, Loggable):
     def getSettings(self):
         """
         return the currently configured settings.
-        If no setting have been explicitely set, some smart settings will be
-        chosen.
         """
         self.debug("self.settings %s", self.settings)
-        return self.settings or self.getAutoSettings()
+        return self.settings
 
     def setSettings(self, settings):
         """
         Sets the given settings as the project's settings.
-        If settings is None, the current settings will be unset
+        @param settings: The new settings for the project.
+        @type settings: ExportSettings
         """
+        assert settings
         self.log("Setting %s as the project's settings", settings)
         oldsettings = self.settings
         self.settings = settings
         self._projectSettingsChanged()
         self.emit('settings-changed', oldsettings, settings)
-
-    def getAutoSettings(self):
-        """
-        Computes and returns smart settings for the project.
-        If the project only has one source, it will be that source's settings.
-        If it has more than one, it will return the largest setting that suits
-        all contained sources.
-        """
-        settings = ExportSettings()
-        if not self.timeline:
-            self.warning("project doesn't have a timeline, returning default settings")
-            return settings
-
-        # FIXME: this is ugly, but rendering for now assumes at most one audio
-        # and one video tracks
-        have_audio = have_video = False
-        for track in self.timeline.tracks:
-            if isinstance(track.stream, VideoStream) and track.duration != 0:
-                have_video = True
-            elif isinstance(track.stream, AudioStream) and track.duration != 0:
-                have_audio = True
-
-        if not have_audio:
-            settings.aencoder = None
-
-        if not have_video:
-            settings.vencoder = None
-
-        return settings
 
     #}
 
