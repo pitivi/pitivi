@@ -57,6 +57,7 @@ class Actioner(Loggable, Signallable):
         self.acting = False
         self.action = None
         self.settings = project.getSettings()
+        self.timestarted = 0
 
     def _eosCb(self, unused_pipeline):
         self.debug("eos !")

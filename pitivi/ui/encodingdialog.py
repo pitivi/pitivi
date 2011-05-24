@@ -128,7 +128,6 @@ class EncodingDialog(Renderer, Loggable):
         self.preferred_vencoder = self.settings.vencoder
         self.preferred_aencoder = self.settings.aencoder
 
-        self.timestarted = 0
         self._initializeComboboxModels()
         self._displaySettings()
 
