@@ -43,6 +43,7 @@ from pitivi.ui.common import\
     get_combo_value,\
     set_combo_value
 
+
 def beautify_factoryname(factory):
     """Returns a nice name for the specified gst.ElementFactory instance."""
     # only replace lowercase versions of "format", "video", "audio"
@@ -53,6 +54,7 @@ def beautify_factoryname(factory):
     for word in words_to_remove:
         name = name.replace(word, "")
     return " ".join(word for word in name.split())
+
 
 def extension_for_muxer(muxer):
     """Returns the file extension appropriate for the specified muxer."""
@@ -85,6 +87,7 @@ def extension_for_muxer(muxer):
         "qtmux"  : "mov",
         "webmmux": "webm"}
     return exts.get(muxer)
+
 
 def factorylist(factories):
     """Create a gtk.ListStore() of sorted, beautified factory names.
@@ -121,7 +124,8 @@ class EncodingDialog(Renderer, Loggable):
         self.builder.connect_signals(self)
 
         # UI widgets
-        self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
+        icon = os.path.join(configure.get_pixmap_dir(), "pitivi-render-16.png")
+        self.window.set_icon_from_file(icon)
 
         # FIXME: re-enable this widget when bug #637078 is implemented
         self.selected_only_button.destroy()
@@ -317,7 +321,8 @@ class EncodingDialog(Renderer, Loggable):
         dialog.window.destroy()
 
     def _renderButtonClickedCb(self, unused_button):
-        self.outfile = self.filebutton.get_uri() + "/" + self.fileentry.get_text()
+        self.outfile = os.path.join(self.filebutton.get_uri(),
+                                    self.fileentry.get_text())
         self.progress = EncodingProgressDialog(self.app, self)
         self.window.hide() # Hide the rendering settings dialog while rendering
         self.progress.window.show()
