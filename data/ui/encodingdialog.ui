@@ -84,14 +84,14 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="cancelbutton">
+              <object class="GtkButton" id="closebutton">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="_cancelButtonClickedCb" swapped="no"/>
+                <signal name="clicked" handler="_closeButtonClickedCb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -702,7 +702,7 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">cancelbutton</action-widget>
+      <action-widget response="0">closebutton</action-widget>
       <action-widget response="0">recordbutton</action-widget>
     </action-widgets>
   </object>

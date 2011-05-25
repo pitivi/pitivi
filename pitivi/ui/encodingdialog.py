@@ -347,12 +347,12 @@ class EncodingDialog(Renderer, Loggable):
         self.window.show()  # Show the encoding dialog again
         self.pipeline.disconnect_by_function(self._stateChanged)
 
-    def _cancelButtonClickedCb(self, unused_button):
-        self.debug("Cancelling !")
+    def _closeButtonClickedCb(self, unused_button):
+        self.debug("Render Close button clicked")
         self.destroy()
 
     def _deleteEventCb(self, window, event):
-        self.debug("delete event")
+        self.debug("Render window is being deleted")
         self.destroy()
 
     def destroy(self):
