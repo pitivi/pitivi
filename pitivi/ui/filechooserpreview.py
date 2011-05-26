@@ -1,8 +1,6 @@
 import gobject
-gobject.threads_init()
 import gst
 import gtk
-gtk.gdk.threads_init()
 import pango
 import os
 
@@ -16,6 +14,7 @@ from pitivi.factories.file import PictureFileSourceFactory
 from pitivi.settings import GlobalSettings
 from gettext import gettext as _
 from pitivi.ui.common import SPACING
+from pitivi.ui.viewer import ViewerWidget
 
 DEFAULT_AUDIO_IMAGE = os.path.join(get_pixmap_dir(), "pitivi-sound.png")
 
@@ -84,10 +83,8 @@ class PreviewWidget(gtk.VBox, Loggable):
 
         # Gui elements:
         # Drawing area for video output
-        self.preview_video = gtk.DrawingArea()
+        self.preview_video = ViewerWidget()
         self.preview_video.modify_bg(gtk.STATE_NORMAL, self.preview_video.style.black)
-        self.preview_video.set_size_request(self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
-        self.preview_video.hide()
         self.pack_start(self.preview_video, expand=False)
 
         # An image for images and audio
@@ -357,7 +354,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                 sink.set_property('force-aspect-ratio', True)
                 sink.set_property("handle-expose", True)
                 gtk.gdk.threads_enter()
-                sink.set_xwindow_id(self.preview_video.window.xid)
+                sink.set_xwindow_id(self.preview_video.window_xid)
                 sink.expose()
                 gtk.gdk.threads_leave()
         return gst.BUS_PASS

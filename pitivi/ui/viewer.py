@@ -618,7 +618,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
 
     __gsignals__ = {}
 
-    def __init__(self, action):
+    def __init__(self, action=None):
         gtk.DrawingArea.__init__(self)
         Loggable.__init__(self)
         self.action = action # FIXME : Check if it's a view action
