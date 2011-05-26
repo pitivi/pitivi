@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-26 21:32+0200\n"
-"PO-Revision-Date: 2011-05-26 21:31+0200\n"
+"POT-Creation-Date: 2011-05-26 21:33+0200\n"
+"PO-Revision-Date: 2011-05-26 21:36+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
 "Language: \n"
@@ -104,8 +104,7 @@ msgid "PyGTK doesn't have cairo support!"
 msgstr "A jelenleg használt PyGTK nem rendelkezik cairo támogatással!"
 
 #: ../pitivi/check.py:112
-msgid ""
-"Please use a version of the GTK+ Python bindings built with cairo support."
+msgid "Please use a version of the GTK+ Python bindings built with cairo support."
 msgstr ""
 "Használja a GTK+ Python kötések beépített cairo támogatással rendelkező "
 "változatát."
@@ -183,8 +182,7 @@ msgstr ""
 
 #: ../pitivi/check.py:135
 #, python-format
-msgid ""
-"Install a version of the GStreamer Python bindings greater or equal to %s"
+msgid "Install a version of the GStreamer Python bindings greater or equal to %s"
 msgstr "Telepítse a legalább %s verziójú GStreamer Python kötéseket"
 
 #: ../pitivi/check.py:138
@@ -224,8 +222,7 @@ msgstr ""
 
 #: ../pitivi/check.py:147
 #, python-format
-msgid ""
-"Install a version of the GNonLin GStreamer plugin greater or equal to %s"
+msgid "Install a version of the GNonLin GStreamer plugin greater or equal to %s"
 msgstr "Telepítse a legalább %s verziójú GNonLin GStreamer bővítményt"
 
 #: ../pitivi/check.py:149
@@ -814,6 +811,29 @@ msgstr "Ismeretlen"
 #: ../pitivi/ui/encodingprogress.glade.h:9
 msgid "Unknown Mib"
 msgstr "Ismeretlen Mib"
+
+#: ../pitivi/ui/filechooserpreview.py:136
+msgid "PiTiVi can not preview this file."
+msgstr "A PiTiVi nem képes megjeleníteni ezt a fájlot."
+
+#: ../pitivi/ui/filechooserpreview.py:137
+msgid "More info"
+msgstr "Több infó"
+
+#: ../pitivi/ui/filechooserpreview.py:222
+#, python-format
+msgid "<b>Width/Height</b>: %dx%d"
+msgstr "<b>Szélesség/magasság</b>: %dx%d"
+
+#: ../pitivi/ui/filechooserpreview.py:223
+#: ../pitivi/ui/filechooserpreview.py:235
+#, python-format
+msgid "<b>Duration</b>: %s"
+msgstr "<b>Hossz:</b> %s"
+
+#: ../pitivi/ui/filechooserpreview.py:402 ../pitivi/ui/sourcelist.py:749
+msgid "Error while analyzing a file"
+msgstr "Hiba a fájl elemzésekor"
 
 #: ../pitivi/ui/filelisterrordialog.py:52
 msgid "Unknown reason"
@@ -1582,10 +1602,6 @@ msgstr "Hiba a fájlok elemzése közben"
 msgid "The following files can not be used with PiTiVi."
 msgstr "A PiTiVi nem tudja használni a következő fájlokat."
 
-#: ../pitivi/ui/sourcelist.py:749
-msgid "Error while analyzing a file"
-msgstr "Hiba a fájl elemzésekor"
-
 #: ../pitivi/ui/sourcelist.py:750
 msgid "The following file can not be used with PiTiVi."
 msgstr "A PiTiVi nem tudja használni a következő fájlt."
@@ -1792,3 +1808,4 @@ msgstr[1] "%d másodperc"
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "A(z) %s jelenleg nem kezeli a nem helyileg tárolt projekteket"
+
