@@ -40,7 +40,6 @@ from gettext import gettext as _
 import pitivi.instance as instance
 
 from pitivi.check import initial_checks
-from pitivi.device import get_probe
 from pitivi.effects import EffectsHandler
 from pitivi.configure import APPNAME
 from pitivi.settings import GlobalSettings
@@ -134,7 +133,7 @@ class Pitivi(Loggable, Signallable):
             self.settings.get_local_plugin_path(),
             self.settings.get_plugin_settings_path())
         self.effects = EffectsHandler()
-        self.deviceprobe = get_probe()
+        self.deviceprobe = None
 
         self.projectManager = ProjectManager(self.effects)
         self._connectToProjectManager(self.projectManager)
