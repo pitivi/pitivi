@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-05-23 00:56+0000\n"
-"PO-Revision-Date: 2011-05-24 09:54+0200\n"
+"POT-Creation-Date: 2011-05-25 17:25+0000\n"
+"PO-Revision-Date: 2011-05-26 16:07+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -333,54 +333,54 @@ msgstr "PiTiVi no puede manejar archivos de redirección actualmente."
 msgid "Pipeline didn't want to go to PLAYING."
 msgstr "La tubería no quiso REPRODUCIR."
 
-#: ../pitivi/effects.py:64 ../pitivi/effects.py:66
+#: ../pitivi/effects.py:68 ../pitivi/effects.py:70
 msgid "All effects"
 msgstr "Todos los efectos"
 
-#: ../pitivi/effects.py:67
+#: ../pitivi/effects.py:71
 msgid "Colors"
 msgstr "Colores"
 
-#: ../pitivi/effects.py:81
+#: ../pitivi/effects.py:85
 msgid "Noise"
 msgstr "Ruido"
 
-#: ../pitivi/effects.py:83
+#: ../pitivi/effects.py:87
 msgid "Analysis"
 msgstr "Análisis"
 
-#: ../pitivi/effects.py:88
+#: ../pitivi/effects.py:91
 msgid "Blur"
 msgstr "Desenfoque"
 
-#: ../pitivi/effects.py:90
+#: ../pitivi/effects.py:93
 msgid "Geometry"
 msgstr "Geometría"
 
-#: ../pitivi/effects.py:102
+#: ../pitivi/effects.py:106
 msgid "Fancy"
 msgstr "Fantasía"
 
-#: ../pitivi/effects.py:113
+#: ../pitivi/effects.py:115
 msgid "Time"
 msgstr "Duración"
 
-#: ../pitivi/effects.py:114 ../pitivi/effects.py:221
+#: ../pitivi/effects.py:116 ../pitivi/effects.py:226
 msgid "Uncategorized"
 msgstr "Sin categorizar"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../pitivi/effects.py:239 ../pitivi/ui/encodingdialog.glade.h:32
+#: ../pitivi/effects.py:244 ../pitivi/ui/encodingdialog.glade.h:32
 #: ../pitivi/ui/projectsettings.glade.h:20
 msgid "Video"
 msgstr "Vídeo"
 
-#: ../pitivi/effects.py:240
+#: ../pitivi/effects.py:245
 msgid "Audio |audio"
 msgstr "Sonido |sonido"
 
-#: ../pitivi/effects.py:241
+#: ../pitivi/effects.py:246
 msgid "effect"
 msgstr "efecto"
 
@@ -810,14 +810,18 @@ msgid "Encoding first pass"
 msgstr "Codificando la primera pasada"
 
 #: ../pitivi/ui/encodingprogress.glade.h:6
+msgid "Estimating..."
+msgstr "Estimando…"
+
+#: ../pitivi/ui/encodingprogress.glade.h:7
 msgid "Rendering"
 msgstr "Renderizando"
 
-#: ../pitivi/ui/encodingprogress.glade.h:7
+#: ../pitivi/ui/encodingprogress.glade.h:8
 msgid "Unknown"
 msgstr "Desconocido"
 
-#: ../pitivi/ui/encodingprogress.glade.h:8
+#: ../pitivi/ui/encodingprogress.glade.h:9
 msgid "Unknown Mib"
 msgstr "Mib desconocido"
 
@@ -843,7 +847,7 @@ msgstr "Restablecer al valor predeterminado"
 msgid "Properties for %s"
 msgstr "Propiedades para %s"
 
-#: ../pitivi/ui/mainwindow.py:143 ../pitivi/ui/timeline.py:330
+#: ../pitivi/ui/mainwindow.py:143 ../pitivi/ui/timeline.py:331
 msgid "Split"
 msgstr "Dividir"
 
@@ -1607,15 +1611,15 @@ msgstr "Pulsar abajo dos veces sobre un proyecto para cargarlo:"
 msgid "Welcome"
 msgstr "Bienvenido"
 
-#: ../pitivi/ui/timelinecanvas.py:51
+#: ../pitivi/ui/timelinecanvas.py:52
 msgid "Behavior"
 msgstr "Comportamiento"
 
-#: ../pitivi/ui/timelinecanvas.py:52
+#: ../pitivi/ui/timelinecanvas.py:53
 msgid "Snap Distance (pixels)"
 msgstr "Distancia de ajuste a la rejilla (píxeles)"
 
-#: ../pitivi/ui/timelinecanvas.py:53
+#: ../pitivi/ui/timelinecanvas.py:54
 msgid "Threshold distance (in pixels) used for all snapping operations"
 msgstr ""
 "Umbral de distancia (en píxeles) usado para todas las operaciones de ajuste "
@@ -1642,7 +1646,7 @@ msgstr "Borrar los seleccionados"
 msgid "Split clip at playhead position"
 msgstr "Cortar vídeo en la posición actual"
 
-#: ../pitivi/ui/timeline.py:57 ../pitivi/ui/timeline.py:332
+#: ../pitivi/ui/timeline.py:57 ../pitivi/ui/timeline.py:333
 msgid "Add a keyframe"
 msgstr "Añadir un fotograma clave"
 
@@ -1702,11 +1706,11 @@ msgstr "Ampliación"
 msgid "Zoom Timeline"
 msgstr "Cronología de la ampliación"
 
-#: ../pitivi/ui/timeline.py:334
+#: ../pitivi/ui/timeline.py:335
 msgid "_Previous keyframe"
 msgstr "Fotograma _anterior"
 
-#: ../pitivi/ui/timeline.py:336
+#: ../pitivi/ui/timeline.py:337
 msgid "_Next keyframe"
 msgstr "_Siguiente fotograma"
 
