@@ -26,6 +26,7 @@ pitivi/ui/elementsettingsdialog.glade
 pitivi/ui/encodingdialog.glade
 pitivi/ui/encodingdialog.py
 pitivi/ui/encodingprogress.glade
+pitivi/ui/filechooserpreview.py
 pitivi/ui/filelisterrordialog.glade
 pitivi/ui/filelisterrordialog.py
 pitivi/ui/gstwidget.py
