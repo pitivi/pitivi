@@ -386,9 +386,19 @@ class EncodingDialog(Renderer, Loggable):
         self.destroy()
 
     def _updateProjectSettings(self):
-        """Updates the settings of the project."""
-        # TODO: Do this only when the settings actually changed.
+        """Updates the settings of the project if the render settings changed.
+        """
         settings = self.project.getSettings()
+        if (settings.muxer == self.settings.muxer
+            and settings.aencoder == self.settings.aencoder
+            and settings.vencoder == self.settings.vencoder
+            and settings.containersettings == self.settings.containersettings
+            and settings.acodecsettings == self.settings.acodecsettings
+            and settings.vcodecsettings == self.settings.vcodecsettings
+            and settings.render_scale == self.settings.render_scale):
+            # No setting which can be changed in the Render dialog
+            # and which we want to save have been changed.
+            return
         settings.setEncoders(muxer=self.settings.muxer,
                              aencoder=self.settings.aencoder,
                              vencoder=self.settings.vencoder)
