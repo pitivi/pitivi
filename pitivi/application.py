@@ -133,7 +133,6 @@ class Pitivi(Loggable, Signallable):
             self.settings.get_local_plugin_path(),
             self.settings.get_plugin_settings_path())
         self.effects = EffectsHandler()
-        self.deviceprobe = None
 
         self.projectManager = ProjectManager(self.effects)
         self._connectToProjectManager(self.projectManager)
@@ -160,9 +159,6 @@ class Pitivi(Loggable, Signallable):
             return False
         self.threads.stopAllThreads()
         self.settings.storeSettings()
-        if self.deviceprobe:
-            self.deviceprobe.release()
-        self.deviceprobe = None
         self.current = None
         instance.PiTiVi = None
         self.emit("shutdown")

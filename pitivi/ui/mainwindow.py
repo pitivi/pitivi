@@ -223,17 +223,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.action_log.connect("redo", self._actionLogRedo)
         self.app.action_log.connect("cleaned", self._actionLogCleaned)
 
-        # if no webcams available, hide the webcam action
-        if self.app.deviceprobe is not None:
-            # On Windows disable device probe
-            if platform.system() != 'Windows':
-                self.app.deviceprobe.connect("device-added", self._deviceChangeCb)
-                self.app.deviceprobe.connect("device-removed", self._deviceChangeCb)
-                if len(self.app.deviceprobe.getVideoSourceDevices()) < 1:
-                    self.webcam_button.set_sensitive(False)
-        else:
-            self.webcam_button.set_sensitive(False)
-
     def showEncodingDialog(self, project, pause=True):
         """
         Shows the L{EncodingDialog} for the given project Timeline.
@@ -290,9 +279,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
              None, _("Manage plugins"), self._pluginManagerCb),
             ("Preferences", gtk.STOCK_PREFERENCES, _("_Preferences"),
               None, None, self._prefsCb),
-            ("ImportfromCam", gtk.STOCK_ADD ,
-             _("Import from _Webcam..."),
-             None, _("Import Camera stream"), self._ImportWebcam),
             ("Screencast", gtk.STOCK_ADD ,
              _("_Make screencast..."),
              None, _("Capture the desktop"), self._Screencast),
@@ -350,9 +336,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 # this will be set sensitive when the timeline duration changes
                 action.set_sensitive(False)
                 action.props.is_important = True
-            elif action_name == "ImportfromCam":
-                self.webcam_button = action
-                action.set_sensitive(False)
             elif action_name == "Screencast":
                 # FIXME : re-enable this action once istanbul integration is complete
                 # and upstream istanbul has applied packages for proper interaction.
@@ -718,12 +701,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         from pluginmanagerdialog import PluginManagerDialog
         PluginManagerDialog(self.app.plugin_manager)
 
-    # Import from Webcam callback
-    def _ImportWebcam(self,unused_action):
-        from webcam_managerdialog import WebcamManagerDialog
-        w = WebcamManagerDialog(self.app)
-        w.show()
-
     # Capture network stream callback
     def _ImportNetstream(self,unused_action):
         from netstream_managerdialog import NetstreamManagerDialog
@@ -733,13 +710,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _Screencast(self,unused_action):
         from screencast_managerdialog import ScreencastManagerDialog
         ScreencastManagerDialog(self.app)
-
-    ## Devices changed
-    def _deviceChangeCb(self, probe, unused_device):
-        if len(probe.getVideoSourceDevices()) < 1:
-            self.webcam_button.set_sensitive(False)
-        else:
-            self.webcam_button.set_sensitive(True)
 
     def _hideChildWindow(self, window, event):
         window.hide()

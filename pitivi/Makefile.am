@@ -15,7 +15,6 @@ pitivi_PYTHON = \
 	application.py	\
 	check.py 	\
 	configure.py 	\
-	device.py	\
 	discoverer.py 	\
 	effects.py	\
 	encode.py	\

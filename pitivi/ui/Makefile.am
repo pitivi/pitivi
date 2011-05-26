@@ -39,7 +39,6 @@ ui_PYTHON =			\
 	videofxlist.py		\
 	viewer.py		\
 	view.py			\
-	webcam_managerdialog.py	\
 	effectlist.py	\
 	clipproperties.py	\
 	effectsconfiguration.py	\

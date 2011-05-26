@@ -1,7 +1,6 @@
 uidir = $(pkgdatadir)/ui
 ui_DATA = \
 	elementsettingsdialog.ui \
-	cam_capture.ui		 \
 	encodingdialog.ui	 \
 	encodingprogress.ui	 \
 	filelisterrordialog.ui	 \
