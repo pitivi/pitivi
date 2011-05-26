@@ -46,7 +46,7 @@ class Actioner(Loggable, Signallable):
         "error" : None
         }
 
-    def __init__(self, project, pipeline=None):
+    def __init__(self, project, pipeline=None, settings=None):
         Loggable.__init__(self)
         # grab the Pipeline and settings
         self.project = project
@@ -56,7 +56,10 @@ class Actioner(Loggable, Signallable):
             self.pipeline = self.project.pipeline
         self.acting = False
         self.action = None
-        self.settings = project.getSettings()
+        if settings:
+            self.settings = settings
+        else:
+            self.settings = project.getSettings()
         self.timestarted = 0
 
     def _eosCb(self, unused_pipeline):
@@ -164,12 +167,15 @@ class Actioner(Loggable, Signallable):
 class Renderer(Actioner):
     """ Rendering helper methods """
 
-    def __init__(self, project, pipeline=None, outfile=None):
+    def __init__(self, project, pipeline=None, settings=None, outfile=None):
         """
+        @param settings: The export settings to be used, or None to use
+        the default export settings of the project.
+        @type settings: ExportSettings
         @param outfile: The destination URI
         @type outfile: C{URI}
         """
-        Actioner.__init__(self, project, pipeline)
+        Actioner.__init__(self, project, pipeline, settings)
         self.detectStreamTypes()
         self.outfile = outfile
 
@@ -247,7 +253,7 @@ class Previewer(Actioner):
     """ Previewing helper methods """
 
     def __init__(self, project, pipeline=None, ui=None):
-        Actioner.__init__(self, project, pipeline)
+        Actioner.__init__(self, project, pipeline=pipeline)
         self.ui = ui
 
     def _isReady(self):

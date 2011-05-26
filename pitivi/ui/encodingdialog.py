@@ -110,6 +110,8 @@ class EncodingDialog(Renderer, Loggable):
     @type preferred_aencoder: str
     @ivar preferred_vencoder: The last video encoder selected by the user.
     @type preferred_vencoder: str
+    @ivar settings: The settings used for rendering.
+    @type settings: ExportSettings
     """
 
     def __init__(self, app, project, pipeline=None):
@@ -130,7 +132,15 @@ class EncodingDialog(Renderer, Loggable):
         # FIXME: re-enable this widget when bug #637078 is implemented
         self.selected_only_button.destroy()
 
-        Renderer.__init__(self, project, pipeline)
+        # The Render dialog and the Project Settings dialog have some
+        # common settings, for example the audio sample rate.
+        # When these common settings are changed in the Render dialog,
+        # we don't want them to be saved, so we create a copy of the project's
+        # settings to be used by the Render dialog for rendering.
+        render_settings = project.getSettings().copy()
+        # Note: render_settings will end up as self.settings.
+        Renderer.__init__(self, project,
+                pipeline=pipeline, settings=render_settings)
 
         # Directory and Filename
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
@@ -274,6 +284,13 @@ class EncodingDialog(Renderer, Loggable):
 
     def _projectSettingsDestroyCb(self, dialog):
         """Handle the destruction of the ProjectSettingsDialog."""
+        settings = self.project.getSettings()
+        self.settings.setVideoProperties(width=settings.videowidth,
+                                         height=settings.videoheight,
+                                         framerate=settings.videorate)
+        self.settings.setAudioProperties(nbchanns=settings.audiochannels,
+                                         rate=settings.audiorate,
+                                         depth=settings.audiodepth)
         self._displaySettings()
 
     def _frameRateComboChangedCb(self, combo):
@@ -288,7 +305,8 @@ class EncodingDialog(Renderer, Loggable):
             self.preferred_vencoder = vencoder
 
     def _videoSettingsButtonClickedCb(self, button):
-        self._elementSettingsDialog(self.video_encoder_combo, 'vcodecsettings')
+        factory = get_combo_value(self.video_encoder_combo)
+        self._elementSettingsDialog(factory, 'vcodecsettings')
 
     def _channelsComboChangedCb(self, combo):
         self.settings.setAudioProperties(nbchanns=get_combo_value(combo))
@@ -307,14 +325,21 @@ class EncodingDialog(Renderer, Loggable):
             self.preferred_aencoder = aencoder
 
     def _audioSettingsButtonClickedCb(self, button):
-        self._elementSettingsDialog(self.audio_encoder_combo, 'acodecsettings')
+        factory = get_combo_value(self.audio_encoder_combo)
+        self._elementSettingsDialog(factory, 'acodecsettings')
 
-    def _elementSettingsDialog(self, combo, settings_attr):
-        factory = get_combo_value(combo)
-        settings = getattr(self.settings, settings_attr)
-        dialog = GstElementSettingsDialog(factory, settings)
+    def _elementSettingsDialog(self, factory, settings_attr):
+        """Open a dialog to edit the properties for the specified factory.
+
+        @param factory: An element factory whose properties the user will edit.
+        @type factory: gst.ElementFactory
+        @param settings_attr: The ExportSettings attribute holding
+        the properties.
+        @type settings_attr: str
+        """
+        properties = getattr(self.settings, settings_attr)
+        dialog = GstElementSettingsDialog(factory, properties=properties)
         dialog.window.set_transient_for(self.window)
-
         response = dialog.window.run()
         if response == gtk.RESPONSE_OK:
             setattr(self.settings, settings_attr, dialog.getSettings())
@@ -360,7 +385,20 @@ class EncodingDialog(Renderer, Loggable):
         self.debug("Render window is being deleted")
         self.destroy()
 
-    def destroy(self):
+    def _updateProjectSettings(self):
+        """Updates the settings of the project."""
         # TODO: Do this only when the settings actually changed.
-        self.project.setSettings(self.settings)
+        settings = self.project.getSettings()
+        settings.setEncoders(muxer=self.settings.muxer,
+                             aencoder=self.settings.aencoder,
+                             vencoder=self.settings.vencoder)
+        settings.containersettings = self.settings.containersettings
+        settings.acodecsettings = self.settings.acodecsettings
+        settings.vcodecsettings = self.settings.vcodecsettings
+        settings.setVideoProperties(render_scale=self.settings.render_scale)
+        # Signal that the project settings have been changed.
+        self.project.setSettings(settings)
+
+    def destroy(self):
+        self._updateProjectSettings()
         self.window.destroy()

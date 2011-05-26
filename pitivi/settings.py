@@ -442,9 +442,12 @@ class ExportSettings(Signallable, Loggable):
     Multimedia export settings
 
     Signals:
-
     'settings-changed' : the settings have changed
     'encoders-changed' : The encoders or muxer have changed
+
+    @ivar render_scale: The scale to be applied to the video width and height
+    when rendering.
+    @type render_scale: int
     """
     __signals__ = {
         "settings-changed" : None,
@@ -456,14 +459,6 @@ class ExportSettings(Signallable, Loggable):
     # TODO : Add PAR/DAR for video
     # TODO : switch to using GstFraction internally where appliable
 
-
-    # The following dependant attributes caches are common to all instances!
-    # A (muxer -> containersettings) map.
-    _containersettings_cache = {}
-    # A (vencoder -> vcodecsettings) map.
-    _vcodecsettings_cache = {}
-    # A (aencoder -> acodecsettings) map.
-    _acodecsettings_cache = {}
 
     muxers, aencoders, vencoders = available_combinations()
 
@@ -480,6 +475,12 @@ class ExportSettings(Signallable, Loggable):
         self.vencoder = "theoraenc"
         self.aencoder = "vorbisenc"
         self.muxer = "oggmux"
+        # A (muxer -> containersettings) map.
+        self._containersettings_cache = {}
+        # A (vencoder -> vcodecsettings) map.
+        self._vcodecsettings_cache = {}
+        # A (aencoder -> acodecsettings) map.
+        self._acodecsettings_cache = {}
 
     def copy(self):
         ret = ExportSettings()
