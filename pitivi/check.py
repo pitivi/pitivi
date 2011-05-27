@@ -125,6 +125,9 @@ def initial_checks():
     if not __try_import__("goocanvas"):
         return (_("Could not import the goocanvas Python bindings"),
                 _("Make sure you have the goocanvas Python bindings installed"))
+    if not __try_import__("xdg"):
+        return (_("Could not import the xdg Python library"),
+                _("Make sure you have the xdg Python library installed"))
     req, inst = check_required_version("gtk")
     if req:
         return (_("You do not have a recent enough version of the GTK+ Python bindings (currently %s)") % inst,
