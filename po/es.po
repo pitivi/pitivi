@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-05-26 18:28+0000\n"
-"PO-Revision-Date: 2011-05-27 13:01+0200\n"
+"POT-Creation-Date: 2011-05-28 08:14+0000\n"
+"PO-Revision-Date: 2011-05-28 10:20+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -23,7 +23,7 @@ msgstr ""
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../pitivi/application.py:121
+#: ../pitivi/application.py:120
 #, python-format
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
@@ -32,7 +32,7 @@ msgstr ""
 "Ya hay una instancia de %s, informe a los desarrolladores rellenando un "
 "informe de error en http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:465
+#: ../pitivi/application.py:464
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -51,24 +51,24 @@ msgstr ""
 "    %prog ARCHIVO_DE_PROYECTO -p                    # Previsualizar un "
 "proyecto."
 
-#: ../pitivi/application.py:473
+#: ../pitivi/application.py:472
 msgid "Import each MEDIA_FILE into a new project."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:476
+#: ../pitivi/application.py:475
 msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:479
+#: ../pitivi/application.py:478
 msgid "Run Pitivi in the Python Debugger."
 msgstr "Ejecutar Pitivi en el depurador de Python"
 
-#: ../pitivi/application.py:482
+#: ../pitivi/application.py:481
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr ""
 "Renderizar en ARCHIVO_DE_SALIDA el archivo de proyecto proporcionado sin IGU."
 
-#: ../pitivi/application.py:485
+#: ../pitivi/application.py:484
 msgid "Preview the specified project file without the full UI."
 msgstr "Previsualizar el archivo de proyecto proporcionado sin el IU completo."
 
@@ -168,7 +168,17 @@ msgid "Make sure you have the goocanvas Python bindings installed"
 msgstr ""
 "Asegúrese de que tiene instalados los bindings de Python para goocanvas."
 
+#: ../pitivi/check.py:129
+#| msgid "Could not import the cairo Python bindings"
+msgid "Could not import the xdg Python library"
+msgstr "No se pudo importar la biblioteca xdg de Python"
+
 #: ../pitivi/check.py:130
+#| msgid "Make sure you have the cairo Python bindings installed"
+msgid "Make sure you have the xdg Python library installed"
+msgstr "Asegúrese de que tiene instalada la biblioteca xdg de Python"
+
+#: ../pitivi/check.py:133
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GTK+ Python bindings "
@@ -176,13 +186,13 @@ msgid ""
 msgstr ""
 "No tiene una versión reciente de los bindings de Python para GTK+ (actual %s)"
 
-#: ../pitivi/check.py:131
+#: ../pitivi/check.py:134
 #, python-format
 msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
 msgstr ""
 "Instale una versión de los bindings de Python para GTK+ mayor o igual a %s"
 
-#: ../pitivi/check.py:134
+#: ../pitivi/check.py:137
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GStreamer Python bindings "
@@ -191,7 +201,7 @@ msgstr ""
 "No tiene una versión reciente de los bindings de Python para GStreamer "
 "(actual %s)"
 
-#: ../pitivi/check.py:135
+#: ../pitivi/check.py:138
 #, python-format
 msgid ""
 "Install a version of the GStreamer Python bindings greater or equal to %s"
@@ -199,60 +209,60 @@ msgstr ""
 "Instale una versión de los bindings de Python para GStreamer mayor o igual a "
 "%s"
 
-#: ../pitivi/check.py:138
+#: ../pitivi/check.py:141
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
 msgstr "No tiene una versión reciente de GStreamer (actual %s)"
 
-#: ../pitivi/check.py:139
+#: ../pitivi/check.py:142
 #, python-format
 msgid "Install a version of the GStreamer greater or equal to %s"
 msgstr "Instale una versión de GStreamer mayor o igual a %s"
 
-#: ../pitivi/check.py:142
+#: ../pitivi/check.py:145
 #, python-format
 msgid ""
 "You do not have a recent enough version of the cairo Python bindings "
 "(currently %s)"
 msgstr ""
-"No tiene una versión reciente de los bindings de Python para Cairo (actual %"
-"s)"
+"No tiene una versión reciente de los bindings de Python para Cairo (actual "
+"%s)"
 
-#: ../pitivi/check.py:143
+#: ../pitivi/check.py:146
 #, python-format
 msgid "Install a version of the cairo Python bindings greater or equal to %s"
 msgstr ""
 "Instale una versión de los bindings de Python para Cairo mayor o igual a %s"
 
-#: ../pitivi/check.py:146
+#: ../pitivi/check.py:149
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
 "(currently %s)"
 msgstr ""
-"No tiene una versión reciente del complemento de GStreamer GNonLin (actual %"
-"s)"
+"No tiene una versión reciente del complemento de GStreamer GNonLin (actual "
+"%s)"
 
-#: ../pitivi/check.py:147
+#: ../pitivi/check.py:150
 #, python-format
 msgid ""
 "Install a version of the GNonLin GStreamer plugin greater or equal to %s"
 msgstr ""
 "Instale una versión del complemento GNonLin para GStreamer mayor o igual a %s"
 
-#: ../pitivi/check.py:149
+#: ../pitivi/check.py:152
 msgid "Could not import the Zope interface module"
 msgstr "No se pudo importar el módulo de interfaz de Zope"
 
-#: ../pitivi/check.py:150
+#: ../pitivi/check.py:153
 msgid "Make sure you have the zope.interface module installed"
 msgstr "Asegúrese de que tiene el módulo zope.interface instalado"
 
-#: ../pitivi/check.py:152
+#: ../pitivi/check.py:155
 msgid "Could not import the distutils modules"
 msgstr "No se pudieron importar los módulos distutils"
 
-#: ../pitivi/check.py:153
+#: ../pitivi/check.py:156
 msgid "Make sure you have the distutils python module installed"
 msgstr "Asegúrese de que tiene instalado el módulo de pyton distutils"
 
@@ -310,7 +320,8 @@ msgstr "No hay disponible un manejador de la fuente."
 #: ../pitivi/discoverer.py:367
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
-msgstr "No tiene un elemento fuente de GStreamer para manejar el protocolo «%s»"
+msgstr ""
+"No tiene un elemento fuente de GStreamer para manejar el protocolo «%s»"
 
 #: ../pitivi/discoverer.py:432
 msgid "Pipeline didn't want to go to PAUSED."
@@ -825,29 +836,26 @@ msgstr "Desconocido"
 msgid "Unknown Mib"
 msgstr "Mib desconocido"
 
-#: ../pitivi/ui/filechooserpreview.py:136
-#| msgid "PiTiVi currently does not handle redirection files."
+#: ../pitivi/ui/filechooserpreview.py:133
 msgid "PiTiVi can not preview this file."
 msgstr "PiTiVi no puede previsualizar este archivo."
 
-#: ../pitivi/ui/filechooserpreview.py:137
-#| msgid "Mono"
+#: ../pitivi/ui/filechooserpreview.py:134
 msgid "More info"
 msgstr "Más información"
 
-#: ../pitivi/ui/filechooserpreview.py:222
+#: ../pitivi/ui/filechooserpreview.py:219
 #, python-format
 msgid "<b>Width/Height</b>: %dx%d"
 msgstr "<b>Anchura/altura</b>: %dx%d"
 
-#: ../pitivi/ui/filechooserpreview.py:223
-#: ../pitivi/ui/filechooserpreview.py:235
+#: ../pitivi/ui/filechooserpreview.py:220
+#: ../pitivi/ui/filechooserpreview.py:232
 #, python-format
-#| msgid "<b>Duration:</b>"
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Duración:</b>: %s"
 
-#: ../pitivi/ui/filechooserpreview.py:402 ../pitivi/ui/sourcelist.py:749
+#: ../pitivi/ui/filechooserpreview.py:399 ../pitivi/ui/sourcelist.py:749
 msgid "Error while analyzing a file"
 msgstr "Error al analizar un archivo"
 
@@ -1139,8 +1147,8 @@ msgid ""
 "The following file has moved: \"<b>%s</b>\" (duration: %s)                \n"
 "Please specify its new location:"
 msgstr ""
-"El siguiente archivo se ha movido: «<b>%s</b>» (duración: %"
-"s)                \n"
+"El siguiente archivo se ha movido: «<b>%s</b>» (duración: "
+"%s)                \n"
 "Especifique su nueva ubicación:"
 
 #: ../pitivi/ui/mainwindow.py:1097
