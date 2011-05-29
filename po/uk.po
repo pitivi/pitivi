@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-27 00:30+0300\n"
-"PO-Revision-Date: 2011-05-26 22:57+0300\n"
+"POT-Creation-Date: 2011-05-29 11:12+0300\n"
+"PO-Revision-Date: 2011-05-28 14:23+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -18,7 +18,7 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: ../pitivi/application.py:121
+#: ../pitivi/application.py:120
 #, python-format
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
@@ -28,7 +28,7 @@ msgstr ""
 "допомогою звіту про ваду за адресою at http://bugzilla.gnome.org/enter_bug."
 "cgi?product=pitivi"
 
-#: ../pitivi/application.py:465
+#: ../pitivi/application.py:464
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -44,25 +44,25 @@ msgstr ""
 "    %prog ФАЙЛ_ПРОЕКТУ -r ФАЙЛ_РЕЗУЛЬТАТУ # обробити проект.\n"
 "    %prog ФАЙЛ_ПРОЕКТУ -p                 # переглянути проект."
 
-#: ../pitivi/application.py:473
+#: ../pitivi/application.py:472
 msgid "Import each MEDIA_FILE into a new project."
 msgstr "Імпортувати всі вказані ФАЙЛИ_ДАНИХ до нового проекту"
 
-#: ../pitivi/application.py:476
+#: ../pitivi/application.py:475
 msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr "Додати всі ФАЙЛИ_ДАНИХ до лінійки запису."
 
-#: ../pitivi/application.py:479
+#: ../pitivi/application.py:478
 msgid "Run Pitivi in the Python Debugger."
 msgstr "Запустити Pitivi у програмі зневаджування Python."
 
-#: ../pitivi/application.py:482
+#: ../pitivi/application.py:481
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr ""
 "Обробити дані вказаного проекту до ФАЙЛА_РЕЗУЛЬТАТУ без відкриття графічного "
 "інтерфейсу."
 
-#: ../pitivi/application.py:485
+#: ../pitivi/application.py:484
 msgid "Preview the specified project file without the full UI."
 msgstr ""
 "Попередньо переглянути вказаний файл проекту без відкриття графічного "
@@ -161,7 +161,15 @@ msgstr "Не вдалося імпортувати бібліотеки Python �
 msgid "Make sure you have the goocanvas Python bindings installed"
 msgstr "Переконайтеся, що встановлено бібліотеки Python для goocanvas"
 
+#: ../pitivi/check.py:129
+msgid "Could not import the xdg Python library"
+msgstr "Не вдалося імпортувати бібліотеку Python xdg"
+
 #: ../pitivi/check.py:130
+msgid "Make sure you have the xdg Python library installed"
+msgstr "Переконайтеся, що встановлено бібліотеку Python xdg"
+
+#: ../pitivi/check.py:133
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GTK+ Python bindings "
@@ -170,12 +178,12 @@ msgstr ""
 "У вашій системі не виявлено достатньо нової версії бібліотек Python для GTK+ "
 "(поточна версія %s)"
 
-#: ../pitivi/check.py:131
+#: ../pitivi/check.py:134
 #, python-format
 msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
 msgstr "Встановіть бібліотеки Python для GTK+ версії не меншої, ніж %s"
 
-#: ../pitivi/check.py:134
+#: ../pitivi/check.py:137
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GStreamer Python bindings "
@@ -184,25 +192,25 @@ msgstr ""
 "У вашій системі не виявлено достатньо нової версії бібліотек Python для "
 "GStreamer (поточна версія %s)"
 
-#: ../pitivi/check.py:135
+#: ../pitivi/check.py:138
 #, python-format
 msgid ""
 "Install a version of the GStreamer Python bindings greater or equal to %s"
 msgstr "Встановіть бібліотеки Python для GStreamer версії не меншої, ніж %s"
 
-#: ../pitivi/check.py:138
+#: ../pitivi/check.py:141
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
 msgstr ""
 "У вашій системі не виявлено достатньо нової версії GStreamer (поточна версія "
 "%s)"
 
-#: ../pitivi/check.py:139
+#: ../pitivi/check.py:142
 #, python-format
 msgid "Install a version of the GStreamer greater or equal to %s"
 msgstr "Встановіть GStreamer версії не меншої, ніж %s"
 
-#: ../pitivi/check.py:142
+#: ../pitivi/check.py:145
 #, python-format
 msgid ""
 "You do not have a recent enough version of the cairo Python bindings "
@@ -211,12 +219,12 @@ msgstr ""
 "У вашій системі не виявлено достатньо нової версії бібліотек Python для "
 "cairo (поточна версія %s)"
 
-#: ../pitivi/check.py:143
+#: ../pitivi/check.py:146
 #, python-format
 msgid "Install a version of the cairo Python bindings greater or equal to %s"
 msgstr "Встановіть бібліотеки Python для cairo версії не меншої, ніж %s"
 
-#: ../pitivi/check.py:146
+#: ../pitivi/check.py:149
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
@@ -225,25 +233,25 @@ msgstr ""
 "У вашій системі не виявлено достатньо нової версії додатка GNonLin до "
 "GStreamer (поточна версія %s)"
 
-#: ../pitivi/check.py:147
+#: ../pitivi/check.py:150
 #, python-format
 msgid ""
 "Install a version of the GNonLin GStreamer plugin greater or equal to %s"
 msgstr "Встановіть додаток GNonLin до GStreamer версії не меншої, ніж %s"
 
-#: ../pitivi/check.py:149
+#: ../pitivi/check.py:152
 msgid "Could not import the Zope interface module"
 msgstr "Не вдалося імпортувати модуль інтерфейсу Zope"
 
-#: ../pitivi/check.py:150
+#: ../pitivi/check.py:153
 msgid "Make sure you have the zope.interface module installed"
 msgstr "Переконайтеся, що встановлено модуль zope.interface"
 
-#: ../pitivi/check.py:152
+#: ../pitivi/check.py:155
 msgid "Could not import the distutils modules"
 msgstr "Не вдалося імпортувати модулі distutils"
 
-#: ../pitivi/check.py:153
+#: ../pitivi/check.py:156
 msgid "Make sure you have the distutils python module installed"
 msgstr "Переконайтеся, що встановлено модуль distutils"
 
@@ -821,26 +829,26 @@ msgstr "Невідомо"
 msgid "Unknown Mib"
 msgstr "Невідома кількість МіБ"
 
-#: ../pitivi/ui/filechooserpreview.py:136
+#: ../pitivi/ui/filechooserpreview.py:133
 msgid "PiTiVi can not preview this file."
 msgstr "Перегляд цього файла у PiTiVi неможливий."
 
-#: ../pitivi/ui/filechooserpreview.py:137
+#: ../pitivi/ui/filechooserpreview.py:134
 msgid "More info"
 msgstr "Додаткова інформація"
 
-#: ../pitivi/ui/filechooserpreview.py:222
+#: ../pitivi/ui/filechooserpreview.py:219
 #, python-format
 msgid "<b>Width/Height</b>: %dx%d"
 msgstr "<b>Ширина/Висота</b>: %d⨯%d"
 
-#: ../pitivi/ui/filechooserpreview.py:223
-#: ../pitivi/ui/filechooserpreview.py:235
+#: ../pitivi/ui/filechooserpreview.py:220
+#: ../pitivi/ui/filechooserpreview.py:232
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Тривалість</b>: %s"
 
-#: ../pitivi/ui/filechooserpreview.py:402 ../pitivi/ui/sourcelist.py:749
+#: ../pitivi/ui/filechooserpreview.py:399 ../pitivi/ui/sourcelist.py:749
 msgid "Error while analyzing a file"
 msgstr "Помилка під час спроби аналізу файла"
 
@@ -914,7 +922,7 @@ msgstr "_Відкрити…"
 
 #: ../pitivi/ui/mainwindow.py:271
 msgid "Open an existing project"
-msgstr "Відкрити існуючий проект"
+msgstr "Відкрити наявний проект"
 
 #: ../pitivi/ui/mainwindow.py:273 ../pitivi/ui/mainwindow.py:275
 msgid "Save the current project"
@@ -1259,7 +1267,7 @@ msgstr "Не вдалося вилучити %s"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:325
 msgid "Update the existing plugin?"
-msgstr "Оновити існуючий додаток?"
+msgstr "Оновити наявний додаток?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:328
 #, python-format
