@@ -1919,10 +1919,10 @@ class Timeline(Signallable, Loggable):
             n_tl_objects = []
 
             for track_object in list(timeline_object.track_objects):
-                new_track_object = track_object.copy()
-                if isinstance(new_track_object, TrackEffect):
-                    n_track_effects.append(new_track_object)
+                if isinstance(track_object, TrackEffect):
+                    n_track_effects.append(track_object)
                 else:
+                    new_track_object = track_object.copy()
                     new_timeline_object = TimelineObject(new_track_object.factory)
                     new_timeline_object.addTrackObject(new_track_object)
                     n_tl_objects.append(new_timeline_object)
