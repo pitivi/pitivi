@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-05-29 18:29+0100\n"
-"PO-Revision-Date: 2011-05-29 18:48+0100\n"
+"PO-Revision-Date: 2011-05-30 17:24+0100\n"
 "Last-Translator: Bruce Cowan <bruce@bcowan.me.uk>\n"
 "Language-Team: British English <en@li.org>\n"
 "Language: en_GB\n"
@@ -96,7 +96,7 @@ msgid ""
 "Make sure you have installed gst-plugins-good and is available in the "
 "GStreamer plugin path."
 msgstr ""
-"Make sure you have installed gst-plugins-good and it is available in the "
+"Make sure you have installed gst-plugins-good and that it's available in the "
 "GStreamer plugin path."
 
 #: ../pitivi/check.py:111
@@ -252,7 +252,7 @@ msgstr "Could not import the distutils modules"
 
 #: ../pitivi/check.py:156
 msgid "Make sure you have the distutils python module installed"
-msgstr "Make sure you have the distutils python module installed"
+msgstr "Make sure you have the distutils Python module installed"
 
 #: ../pitivi.desktop.in.in.h:1
 msgid "Create and edit your own movies"
@@ -260,7 +260,7 @@ msgstr "Create and edit your own movies"
 
 #: ../pitivi.desktop.in.in.h:2
 msgid "Pitivi Video Editor"
-msgstr "PiTiVi Video Editor"
+msgstr "Pitivi Video Editor"
 
 #: ../pitivi/discoverer.py:228
 #, python-format
