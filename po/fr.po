@@ -13,23 +13,23 @@
 # Christophe Benz <christophe.benz@gmail.com>, 2007.
 # Ivan Buresi <err747@free.fr>, 2007.
 # Robert-André Mauchin <zebob.m@pengzone.org>, 2007.
-# Bruno Brouard <annoa.b@gmail.com, 2009-2011.
+# Bruno Brouard <annoa.b@gmail.com>, 2009-2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-05-24 18:53+0000\n"
-"PO-Revision-Date: 2011-05-26 19:31+0200\n"
-"Last-Translator: Claude Paroz <claude@2xlibre.net>\n"
+"POT-Creation-Date: 2011-05-27 19:25+0000\n"
+"PO-Revision-Date: 2011-05-30 22:36+0200\n"
+"Last-Translator: Bruno Brouard <annoa.b@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: ../pitivi/application.py:121
+#: ../pitivi/application.py:120
 #, python-format
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
@@ -39,7 +39,7 @@ msgstr ""
 "soumettant un rapport d'anomalie sur http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi"
 
-#: ../pitivi/application.py:465
+#: ../pitivi/application.py:464
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -56,24 +56,24 @@ msgstr ""
 "    %prog FICHIER_PROJET -p                    # Affiche un aperçu d'un "
 "projet."
 
-#: ../pitivi/application.py:473
+#: ../pitivi/application.py:472
 msgid "Import each MEDIA_FILE into a new project."
 msgstr "Importe chaque FICHIER_MULTIMÉDIA dans un nouveau projet."
 
-#: ../pitivi/application.py:476
+#: ../pitivi/application.py:475
 msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr "Ajoute chaque FICHIER_MULTIMÉDIA importé à la table de montage."
 
-#: ../pitivi/application.py:479
+#: ../pitivi/application.py:478
 msgid "Run Pitivi in the Python Debugger."
 msgstr "Lance pitivi dans le débogueur Python."
 
-#: ../pitivi/application.py:482
+#: ../pitivi/application.py:481
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr ""
 "Rend le projet indiqué dans le FICHIER_DE_SORTIE sans interface graphique."
 
-#: ../pitivi/application.py:485
+#: ../pitivi/application.py:484
 msgid "Preview the specified project file without the full UI."
 msgstr ""
 "Affiche un aperçu du fichier de projet indiqué sans l'interface complète."
@@ -171,7 +171,15 @@ msgstr "Impossible d'importer les liaisons Python pour goocanvas"
 msgid "Make sure you have the goocanvas Python bindings installed"
 msgstr "Assurez-vous que les liaisons Python pour goocanvas sont installées"
 
+#: ../pitivi/check.py:129
+msgid "Could not import the xdg Python library"
+msgstr "Impossible d'importer la bibliothèque Python xdg"
+
 #: ../pitivi/check.py:130
+msgid "Make sure you have the xdg Python library installed"
+msgstr "Assurez-vous que la bibliothèque Python xdg est installée"
+
+#: ../pitivi/check.py:133
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GTK+ Python bindings "
@@ -180,13 +188,13 @@ msgstr ""
 "Vous ne disposez pas d'une version assez récente des liaisons Python pour GTK"
 "+ (actuellement %s)"
 
-#: ../pitivi/check.py:131
+#: ../pitivi/check.py:134
 #, python-format
 msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
 msgstr ""
 "Installez une version des liaisons Python pour GTK+ supérieure ou égale à %s"
 
-#: ../pitivi/check.py:134
+#: ../pitivi/check.py:137
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GStreamer Python bindings "
@@ -195,7 +203,7 @@ msgstr ""
 "Vous ne disposez pas d'une version assez récente des liaisons Python pour "
 "GStreamer (actuellement %s)"
 
-#: ../pitivi/check.py:135
+#: ../pitivi/check.py:138
 #, python-format
 msgid ""
 "Install a version of the GStreamer Python bindings greater or equal to %s"
@@ -203,19 +211,19 @@ msgstr ""
 "Installez une version des liaisons Python pour GStreamer supérieure ou égale "
 "à %s"
 
-#: ../pitivi/check.py:138
+#: ../pitivi/check.py:141
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
 msgstr ""
-"Vous ne disposez pas d'une version assez récente de GStreamer (actuellement %"
-"s)"
+"Vous ne disposez pas d'une version assez récente de GStreamer (actuellement "
+"%s)"
 
-#: ../pitivi/check.py:139
+#: ../pitivi/check.py:142
 #, python-format
 msgid "Install a version of the GStreamer greater or equal to %s"
 msgstr "Installez une version de GStreamer supérieure ou égale à %s"
 
-#: ../pitivi/check.py:142
+#: ../pitivi/check.py:145
 #, python-format
 msgid ""
 "You do not have a recent enough version of the cairo Python bindings "
@@ -224,13 +232,13 @@ msgstr ""
 "Vous ne disposez pas d'une version assez récente des liaisons Python pour "
 "Cairo (actuellement %s)"
 
-#: ../pitivi/check.py:143
+#: ../pitivi/check.py:146
 #, python-format
 msgid "Install a version of the cairo Python bindings greater or equal to %s"
 msgstr ""
 "Installez une version des liaisons Python pour Cairo supérieure ou égale à %s"
 
-#: ../pitivi/check.py:146
+#: ../pitivi/check.py:149
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
@@ -239,7 +247,7 @@ msgstr ""
 "Vous ne disposez pas d'une version assez récente du greffon GNonLin pour "
 "GStreamer (actuellement %s)"
 
-#: ../pitivi/check.py:147
+#: ../pitivi/check.py:150
 #, python-format
 msgid ""
 "Install a version of the GNonLin GStreamer plugin greater or equal to %s"
@@ -247,19 +255,19 @@ msgstr ""
 "Installez une version du greffon GNonLin pour GStreamer supérieure ou égale "
 "à %s"
 
-#: ../pitivi/check.py:149
+#: ../pitivi/check.py:152
 msgid "Could not import the Zope interface module"
 msgstr "Impossible d'importer le module d'interface Zope"
 
-#: ../pitivi/check.py:150
+#: ../pitivi/check.py:153
 msgid "Make sure you have the zope.interface module installed"
 msgstr "Assurez-vous que le module zope.interface est installé"
 
-#: ../pitivi/check.py:152
+#: ../pitivi/check.py:155
 msgid "Could not import the distutils modules"
 msgstr "Impossible d'importer les modules distutils"
 
-#: ../pitivi/check.py:153
+#: ../pitivi/check.py:156
 msgid "Make sure you have the distutils python module installed"
 msgstr "Assurez-vous que les modules distutils pour Python sont installés"
 
@@ -317,8 +325,8 @@ msgstr "Aucun gestionnaire disponible pour la source."
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr ""
-"Vous ne disposez pas d'un élément GStreamer source pour gérer le protocole « %"
-"s »"
+"Vous ne disposez pas d'un élément GStreamer source pour gérer le protocole "
+"« %s »"
 
 #: ../pitivi/discoverer.py:432
 msgid "Pipeline didn't want to go to PAUSED."
@@ -481,8 +489,8 @@ msgstr "Nom de l'effet"
 #: ../pitivi/ui/clipproperties.py:376
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
-"Sélectionnez une séquence sur la table de montage pour configurer les "
-"effets associés"
+"Sélectionnez une séquence sur la table de montage pour configurer les effets "
+"associés"
 
 #: ../pitivi/ui/common.py:104
 #, python-format
@@ -833,6 +841,29 @@ msgstr "Inconnu"
 #: ../pitivi/ui/encodingprogress.glade.h:9
 msgid "Unknown Mib"
 msgstr "Nombre de Mio inconnu"
+
+#: ../pitivi/ui/filechooserpreview.py:133
+msgid "PiTiVi can not preview this file."
+msgstr "PiTiVi ne peut afficher un aperçu de ce fichier."
+
+#: ../pitivi/ui/filechooserpreview.py:134
+msgid "More info"
+msgstr "Plus d'informations"
+
+#: ../pitivi/ui/filechooserpreview.py:219
+#, python-format
+msgid "<b>Width/Height</b>: %dx%d"
+msgstr "<b>Largeur/hauteur</b> : %dx%d"
+
+#: ../pitivi/ui/filechooserpreview.py:220
+#: ../pitivi/ui/filechooserpreview.py:232
+#, python-format
+msgid "<b>Duration</b>: %s"
+msgstr "<b>Durée</b> : %s"
+
+#: ../pitivi/ui/filechooserpreview.py:399 ../pitivi/ui/sourcelist.py:749
+msgid "Error while analyzing a file"
+msgstr "Erreur lors de l'analyse d'un fichier"
 
 #: ../pitivi/ui/filelisterrordialog.py:52
 msgid "Unknown reason"
@@ -1599,10 +1630,6 @@ msgstr "Erreur lors de l'analyse des fichiers"
 msgid "The following files can not be used with PiTiVi."
 msgstr "Les fichiers suivants ne peuvent pas être utilisés par PiTiVi."
 
-#: ../pitivi/ui/sourcelist.py:749
-msgid "Error while analyzing a file"
-msgstr "Erreur lors de l'analyse d'un fichier"
-
 #: ../pitivi/ui/sourcelist.py:750
 msgid "The following file can not be used with PiTiVi."
 msgstr "Le fichier suivant ne peut pas être utilisé par PiTiVi."
@@ -1781,21 +1808,21 @@ msgstr "Lit"
 msgid "Pause"
 msgstr "Met en pause"
 
-#: ../pitivi/utils.py:75
+#: ../pitivi/utils.py:73 ../pitivi/utils.py:96
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d heure"
 msgstr[1] "%d heures"
 
-#: ../pitivi/utils.py:78
+#: ../pitivi/utils.py:76 ../pitivi/utils.py:99
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minute"
 msgstr[1] "%d minutes"
 
-#: ../pitivi/utils.py:81
+#: ../pitivi/utils.py:79 ../pitivi/utils.py:102
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
@@ -1804,7 +1831,7 @@ msgstr[1] "%d secondes"
 
 #. Translators: "non local" means the project is not stored
 #. on a local filesystem
-#: ../pitivi/utils.py:249
+#: ../pitivi/utils.py:270
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s ne gère pas encore les projets non présents localement"
