@@ -571,15 +571,21 @@ class TrackObject(Signallable, Loggable):
         else:
             self.trimObjectStart(position)
 
-    def trimObjectStart(self, position):
+    def _getTrimInpointAndPosition(self, position):
         # clamp position to be inside the object
         position = max(self.start - self.in_point, position)
         position = min(position, self.start + self.duration)
-        new_duration = max(0, self.start + self.duration - position)
 
         delta = position - self.start
         in_point = self.in_point
         in_point += delta
+
+        return in_point, position
+
+    def trimObjectStart(self, position):
+        in_point, position = self._getTrimInpointAndPosition(position)
+        new_duration = max(0, self.start + self.duration - position)
+
         self.setObjectStart(position)
         self.setObjectDuration(new_duration)
         self.setObjectInPoint(in_point)
@@ -748,6 +754,11 @@ class TrackEffect(TrackObject):
             str(TrackEffect.numobjs))
         TrackEffect.numobjs += 1
         return effect
+
+    def _getTrimInpointAndPosition(self, position):
+        # Effect inpoint is meaningless, and we can resize theme
+        # as needed
+        return 0, position
 
     def copy(self):
         other = TrackObject.copy(self)
