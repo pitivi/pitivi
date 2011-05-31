@@ -1,3 +1,151 @@
+2011-05-31  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* AUTHORS:
+	* ChangeLog:
+	* RELEASE:
+	* configure.ac:
+	  Releasing 0.14.0 "no longer kills kittens"
+
+2011-05-31  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* configure.ac:
+	* pitivi.spec.in:
+	  build: Update dependencies
+
+2011-05-30  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/timeline/timeline.py:
+	  effects: Do make a copy ofTrackEffect-s when unlinking
+	  We used to copy the trackeffects when unlinking which resulted in a
+	  TrackEffect not controlled by any TimelineObject-s in the timeline.
+
+2011-05-30  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/timeline/track.py:
+	  effects: make trimming possible in any case for effects
+	  Inpoint of effects doesn't matter since effects are operations that are always
+	  equal independently of the time, so when we want to trim the start of an effect,
+	  we should just make it possible, and not care about the inpoint of the effect.
+
+2011-05-30  Bruno Brouard <annoa.b@gmail.com>
+
+	* po/fr.po:
+	  Updated French translation
+
+2011-05-30  Bruce Cowan <bruce@bcowan.me.uk>
+
+	* po/en_GB.po:
+	  Updated British English translation
+	  A few minor fixes
+
+2011-05-29  Bruce Cowan <bruce@bcowan.me.uk>
+
+	* po/en_GB.po:
+	  Updated British English translation
+
+2011-05-29  Yuri Myasoedov <omerta13@yandex.ru>
+
+	* po/ru.po:
+	  Updated Russian translation
+
+2011-05-29  Daniel Korostil <ted.korostiled@gmail.com>
+
+	* po/uk.po:
+	  Uploaded Ukranian
+
+2011-05-29  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-05-28  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-05-28  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-05-27  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/check.py:
+	  build: Check that the xdg python library is installed
+	  We introduced this new dependency with: 5b4924d13173df5853c76415288fe769a5f35448
+
+2011-05-26  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* pitivi/ui/filechooserpreview.py:
+	* pitivi/ui/viewer.py:
+	  filechooserpreview: Make use of our ViewerWidget and main gobject.threads()
+	  Fixes: #651157
+
+2011-05-26  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* NEWS:
+	* pitivi/application.py:
+	  Remove HAL dependency
+
+2011-05-27  Djavan Fagundes <djavan@comum.org>
+
+	* po/pt_BR.po:
+	  Updated Brazilian Portuguese translation
+
+2011-05-27  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-05-27  Daniel Korostil <ted.korostiled@gmail.com>
+
+	* po/uk.po:
+	  Uploaded Ukranian
+
+2011-05-26  Gabor Kelemen <kelemeng@gnome.hu>
+
+	* po/hu.po:
+	  Updated Hungarian translation
+
+2011-05-26  Gabor Kelemen <kelemeng@gnome.hu>
+
+	* po/hu.po:
+	  Updated Hungarian translation
+
+2011-05-26  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-05-26  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* po/POTFILES.in:
+	  translation: add filechooserpreview.py to the list of translatable files
+
+2011-05-26  Claude Paroz <claude@2xlibre.net>
+
+	* po/fr.po:
+	  Updated French translation
+
+2011-05-26  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-05-25  Djavan Fagundes <djavan@comum.org>
+
+	* po/pt_BR.po:
+	  Updated Brazilian Portuguese translation
+
+2011-05-25  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	  Merging translations
+
+2011-05-25  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
 2011-05-24  Thibault Saunier <thibault.saunier@collabora.co.uk>
 
 	* NEWS:
