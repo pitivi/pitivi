@@ -1,4 +1,4 @@
-2011 May 24 - PiTiVi 0.14
+2011 May 31 - PiTiVi 0.14
   * Audio and video effects
   * Completely redesigned project settings dialog, with the ability to create presets
   * Completely redesigned rendering dialog
@@ -15,7 +15,7 @@
   * Commandline render mode
   * Use the standard infobar widget all around
   * Remove hal dependency
-  * Lots of bug fixing:
+  * Lots of bug fixing
 
 2010 September 16 - PiTiVi 0.13.5
 

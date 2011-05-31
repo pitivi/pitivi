@@ -660,6 +660,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         authors = ["Edward Hervey <bilboed@bilboed.com>",
                    "Alessandro Decina <alessandro.decina@collabora.co.uk>",
                    "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)",
+                   "Jean-François Fortin Tam <nekohayo@gmail.com> (UI)",
+                   "Thibault Saunier <thibault.saunier@collabora.com>",
                    "",
                    _("Contributors:"),
                    "Christophe Sauthier <christophe.sauthier@gmail.com> (i18n)",
@@ -667,11 +669,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
                    "Ernst Persson  <ernstp@gmail.com>",
                    "Richard Boulton <richard@tartarus.org>",
                    "Thibaut Girka <thibaut.girka@free.fr> (UI)",
-                   "Jean-François Fortin Tam <nekohayo@gmail.com> (UI)",
                    "Johan Dahlin <jdahlin@async.com.br> (UI)",
                    "Luca Della Santina <dellasantina@farm.unipi.it>",
                    "Thijs Vermeir <thijsvermeir@gmail.com>",
-                   "Sarath Lakshman <sarathlakshman@slynux.org>"]
+                   "Sarath Lakshman <sarathlakshman@slynux.org>",
+                   "Alex Balut <alexandru.balut@gmail.com>"]
         abt.set_authors(authors)
         abt.set_license(_("GNU Lesser General Public License\n"
                           "See http://www.gnu.org/copyleft/lesser.html for more details"))
