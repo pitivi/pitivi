@@ -282,9 +282,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("Screencast", gtk.STOCK_ADD ,
              _("_Make screencast..."),
              None, _("Capture the desktop"), self._Screencast),
-            ("NetstreamCapture", gtk.STOCK_ADD ,
-             _("_Capture Network Stream..."),
-             None, _("Capture Network Stream"), self._ImportNetstream),
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
             ("About", gtk.STOCK_ABOUT, None, None,
              _("Information about %s") % APPNAME, self._aboutCb),
@@ -700,11 +697,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _pluginManagerCb(self, unused_action):
         from pluginmanagerdialog import PluginManagerDialog
         PluginManagerDialog(self.app.plugin_manager)
-
-    # Capture network stream callback
-    def _ImportNetstream(self,unused_action):
-        from netstream_managerdialog import NetstreamManagerDialog
-        NetstreamManagerDialog()
 
     # screencast callback
     def _Screencast(self,unused_action):

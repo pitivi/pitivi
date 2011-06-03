@@ -5,7 +5,6 @@ ui_DATA = \
 	encodingprogress.ui	 \
 	filelisterrordialog.ui	 \
 	mainwindow.xml		 \
-	net_capture.ui		 \
 	projectsettings.ui	 \
 	pluginmanagerdialog.ui	 \
 	screencast_manager.ui	 \

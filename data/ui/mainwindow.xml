@@ -26,7 +26,6 @@
     <menu action="Library">
       <menuitem action="RenderProject" />
       <separator />
-      <menuitem action="NetstreamCapture" />
       <menuitem action="Screencast" />
       <placeholder name="SourceList" />
       <separator />

@@ -15,7 +15,6 @@ ui_PYTHON =			\
 	glade.py		\
 	gstwidget.py		\
 	mainwindow.py		\
-	netstream_managerdialog.py \
 	pathwalker.py		\
 	pluginmanagerdialog.py	\
 	point.py		\

@@ -6,7 +6,6 @@ data/ui/elementsettingsdialog.ui
 data/ui/encodingdialog.ui
 data/ui/encodingprogress.ui
 data/ui/filelisterrordialog.ui
-data/ui/net_capture.ui
 data/ui/pluginmanagerdialog.ui
 data/ui/projectsettings.ui
 data/ui/screencast_manager.ui
