@@ -21,12 +21,11 @@
 
 import os
 import gtk
-import gtk.glade
 import pango
 import gobject
 from gettext import gettext as _
 
-from pitivi.configure import LIBDIR, get_ui_dir
+from pitivi.configure import get_ui_dir
 import pitivi.plugincore as plugincore
 import pitivi.pluginmanager as pluginmanager
 
@@ -39,20 +38,22 @@ class PluginManagerDialog(object):
 
     def __init__(self, plugin_manager):
         self.pm = plugin_manager
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(os.path.join(get_ui_dir(),
+            "pluginmanagerdialog.ui"))
 
         # load user interface items
-        self.wTree = gtk.glade.XML(os.path.join(get_ui_dir(), 'pluginmanagerdialog.ui'))
-        self.window = self.wTree.get_widget('pluginmanager_dlg')
-        self.search_entry = self.wTree.get_widget('search_entry')
-        self.category_cmb = self.wTree.get_widget('category_cmb')
-        self.about_btn = self.wTree.get_widget('about_btn')
-        self.configure_btn = self.wTree.get_widget('configure_btn')
-        self.delete_btn = self.wTree.get_widget('delete_btn')
-        self.plugin_tree = self.wTree.get_widget('plugin_tree')
-        self.search_entry = self.wTree.get_widget('search_entry')
+        self.window = self.builder.get_object('pluginmanager_dlg')
+        self.search_entry = self.builder.get_object('search_entry')
+        self.category_cmb = self.builder.get_object('category_cmb')
+        self.about_btn = self.builder.get_object('about_btn')
+        self.configure_btn = self.builder.get_object('configure_btn')
+        self.delete_btn = self.builder.get_object('delete_btn')
+        self.plugin_tree = self.builder.get_object('plugin_tree')
+        self.search_entry = self.builder.get_object('search_entry')
 
         # connect signals
-        self.wTree.signal_autoconnect(self)
+        self.builder.connect_signals(self)
 
         # intialize plugin list
         self._initialize_plugin_tree(self.plugin_tree)

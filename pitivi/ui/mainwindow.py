@@ -236,10 +236,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         if pause:
             project.pipeline.pause()
-        win = EncodingDialog(self, project)
-        win.window.connect("destroy", self._encodingDialogDestroyCb)
+        dialog = EncodingDialog(self, project)
+        dialog.window.connect("destroy", self._encodingDialogDestroyCb)
         self.set_sensitive(False)
-        win.show()
+        dialog.window.show()
 
     def _encodingDialogDestroyCb(self, unused_dialog):
         self.set_sensitive(True)
@@ -594,7 +594,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def showProjectSettingsDialog(self):
         from projectsettings import ProjectSettingsDialog
-        ProjectSettingsDialog(self, self.app.current).show()
+        ProjectSettingsDialog(self, self.app.current).window.show()
 
     def _quitCb(self, unused_action):
         self._saveWindowSettings()

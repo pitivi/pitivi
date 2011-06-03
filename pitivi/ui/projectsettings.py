@@ -29,8 +29,8 @@ import gst
 import os
 from pwd import getpwuid
 from datetime import datetime
+from pitivi.configure import get_ui_dir
 from gettext import gettext as _
-from pitivi.ui.glade import GladeWindow
 from pitivi.ui.dynamic import FractionWidget
 from pitivi.ui.ripple_update_group import RippleUpdateGroup
 from pitivi.ui.common import\
@@ -70,15 +70,19 @@ display_aspect_ratios = model((str, object), (
     (_("Anamorphic (2.4)"), gst.Fraction(24, 10)),
 ))
 
-class ProjectSettingsDialog(GladeWindow):
-    glade_file = "projectsettings.ui"
+class ProjectSettingsDialog():
 
     def __init__(self, parent, project):
-        GladeWindow.__init__(self, parent)
         self.project = project
 
         self.settings = project.getSettings()
         self.project = project
+
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(os.path.join(get_ui_dir(),
+            "projectsettings.ui"))
+        self._setProperties()
+        self.builder.connect_signals(self)
 
         # add custom widgets
         self.dar_fraction_widget = FractionWidget()
@@ -291,6 +295,41 @@ class ProjectSettingsDialog(GladeWindow):
         height = int(self.height_spinbutton.get_value())
         return gst.Fraction(width, height)
 
+    def _setProperties(self):
+        self.window = self.builder.get_object("project-settings-dialog")
+        self.video_properties_table = self.builder.get_object(
+            "video_properties_table")
+        self.video_properties_table = self.builder.get_object(
+            "video_properties_table")
+        self.frame_rate_combo = self.builder.get_object("frame_rate_combo")
+        self.dar_combo = self.builder.get_object("dar_combo")
+        self.par_combo = self.builder.get_object("par_combo")
+        self.channels_combo = self.builder.get_object("channels_combo")
+        self.sample_rate_combo = self.builder.get_object("sample_rate_combo")
+        self.sample_depth_combo = self.builder.get_object("sample_depth_combo")
+        self.year_spinbutton = self.builder.get_object("year_spinbutton")
+        self.author_entry = self.builder.get_object("author_entry")
+        self.width_spinbutton = self.builder.get_object("width_spinbutton")
+        self.height_spinbutton = self.builder.get_object("height_spinbutton")
+        self.save_audio_preset_button = self.builder.get_object(
+            "save_audio_preset_button")
+        self.save_video_preset_button = self.builder.get_object(
+            "save_video_preset_button")
+        self.audio_preset_treeview = self.builder.get_object(
+            "audio_preset_treeview")
+        self.video_preset_treeview = self.builder.get_object(
+            "video_preset_treeview")
+        self.select_par_radiobutton = self.builder.get_object(
+            "select_par_radiobutton")
+        self.remove_audio_preset_button = self.builder.get_object(
+            "remove_audio_preset_button")
+        self.remove_video_preset_button = self.builder.get_object(
+            "remove_video_preset_button")
+        self.constrain_sar_button = self.builder.get_object(
+            "constrain_sar_button")
+        self.select_dar_radiobutton = self.builder.get_object(
+            "select_dar_radiobutton")
+
     def _constrainSarButtonToggledCb(self, button):
         if button.props.active:
             self.sar = self.getSAR()
@@ -419,4 +458,4 @@ class ProjectSettingsDialog(GladeWindow):
             self.updateSettings()
         self.audio_presets.save()
         self.video_presets.save()
-        self.destroy()
+        self.window.destroy()

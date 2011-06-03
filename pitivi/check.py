@@ -119,9 +119,6 @@ def initial_checks():
     if not __try_import__("cairo"):
         return (_("Could not import the cairo Python bindings"),
                 _("Make sure you have the cairo Python bindings installed"))
-    if not __try_import__("gtk.glade"):
-        return (_("Could not import the libglade Python bindings"),
-                _("Make sure you have the libglade Python bindings installed"))
     if not __try_import__("goocanvas"):
         return (_("Could not import the goocanvas Python bindings"),
                 _("Make sure you have the goocanvas Python bindings installed"))

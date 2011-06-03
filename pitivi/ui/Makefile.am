@@ -12,7 +12,6 @@ ui_PYTHON =			\
 	encodingdialog.py	\
 	encodingprogress.py	\
 	filelisterrordialog.py	\
-	glade.py		\
 	gstwidget.py		\
 	mainwindow.py		\
 	pathwalker.py		\

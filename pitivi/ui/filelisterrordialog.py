@@ -24,30 +24,36 @@ Dialog box listing files which had errors, and the reasons.
 """
 
 import gtk
+import os
 import pango
 
 from gettext import gettext as _
 
-from pitivi.ui.glade import GladeWindow
 from urllib import unquote
+from pitivi.configure import get_ui_dir
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 
-class FileListErrorDialog(GladeWindow, Signallable, Loggable):
+class FileListErrorDialog(Signallable, Loggable):
     """ Dialog box for showing errors in a list of files """
-    glade_file = "filelisterrordialog.ui"
     __signals__ = {
         'close': None,
         'response': ["something"]
         }
 
     def __init__(self, title, headline):
-        GladeWindow.__init__(self)
         Loggable.__init__(self)
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(os.path.join(get_ui_dir(),
+            "filelisterrordialog.ui"))
+        self.builder.connect_signals(self)
+
+        self.window = self.builder.get_object("filelisterrordialog")
         self.window.set_modal(False)
-        self.widgets["headline"].set_text(headline)
         self.window.set_title(title)
-        self.errorvbox = self.widgets["errorvbox"]
+
+        self.builder.get_object("headline").set_text(headline)
+        self.errorvbox = self.builder.get_object("errorvbox")
 
     def addFailedFile(self, uri, reason=_("Unknown reason"), extra=None):
         """Add the given uri to the list of failed files. You can optionnaly

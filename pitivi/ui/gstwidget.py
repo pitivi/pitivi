@@ -26,10 +26,11 @@ Widget for gstreamer element properties viewing/setting
 import gobject
 import gtk
 import gst
-from pitivi.ui.glade import GladeWindow
+import os
 
 from gettext import gettext as _
 from pitivi.log.loggable import Loggable
+from pitivi.configure import get_ui_dir
 import pitivi.ui.dynamic as dynamic
 
 def make_property_widget(unused_element, prop, value=None):
@@ -173,16 +174,24 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
 
 
 
-class GstElementSettingsDialog(GladeWindow, Loggable):
+class GstElementSettingsDialog(Loggable):
     """
     Dialog window for viewing/modifying properties of a gst.Element
     """
-    glade_file = "elementsettingsdialog.ui"
-
     def __init__(self, elementfactory, properties={}):
-        GladeWindow.__init__(self)
         Loggable.__init__(self)
         self.debug("factory:%s, properties:%s", elementfactory, properties)
+
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(os.path.join(get_ui_dir(),
+            "elementsettingsdialog.ui"))
+        self.builder.connect_signals(self)
+
+        self.window = self.builder.get_object("dialog1")
+        self.infolabel = self.builder.get_object("infolabel")
+        self.elementsettings = GstElementSettingsWidget()
+        self.builder.get_object("viewport1").add(self.elementsettings)
+
         self.factory = elementfactory
         self.element = self.factory.create("elementsettings")
         if not self.element:
@@ -203,4 +212,4 @@ class GstElementSettingsDialog(GladeWindow, Loggable):
 
     def getSettings(self):
         """ returns the property/value dictionnary of the selected settings """
-        return self.widgets["elementsettings"].getSettings()
+        return self.elementsettings.getSettings()

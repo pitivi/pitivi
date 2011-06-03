@@ -118,16 +118,6 @@ class Deploy():
             print ('Gtk... OK')
 
         try:
-            import gtk.glade
-        except ImportError:
-            self.close('IMPORT_ERROR: Could not find libglade in the system.\n'
-                    'You can download the installers at:\n'
-                    'http://sourceforge.net/projects/gladewin32/files/libglade-win32'
-                    '/2.4.0/libglade-2.4.0-bin.zip/download')
-        else:
-            print ('libglade... OK')
-
-        try:
             import goocanvas
         except ImportError:
             self.close('IMPORT_ERROR: Could not find the Goocanvas Python bindings.\n'

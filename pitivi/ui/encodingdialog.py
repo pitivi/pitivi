@@ -33,7 +33,6 @@ import pitivi.configure as configure
 from pitivi.log.loggable import Loggable
 from pitivi.ui.encodingprogress import EncodingProgressDialog
 from pitivi.ui.gstwidget import GstElementSettingsDialog
-from pitivi.ui.glade import GladeWindow
 from pitivi.actioner import Renderer
 from pitivi.ui.common import\
     model,\
@@ -108,17 +107,21 @@ def ellipsize(combo):
     cell_renderer = cell_view.get_cell_renderers()[0]
     cell_renderer.props.ellipsize = pango.ELLIPSIZE_END
 
-class EncodingDialog(GladeWindow, Renderer, Loggable):
+class EncodingDialog(Renderer, Loggable):
     """ Encoding dialog box """
-    glade_file = "encodingdialog.ui"
 
     def __init__(self, app, project, pipeline=None):
         Loggable.__init__(self)
-        GladeWindow.__init__(self)
 
         self.app = app
         self.project = project
         self.settings = self.project.getSettings()
+
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
+            "encodingdialog.ui"))
+        self._setProperties()
+        self.builder.connect_signals(self)
 
         # UI widgets
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
@@ -138,6 +141,26 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         self.window.connect("delete-event", self._deleteEventCb)
         self.settings.connect("settings-changed", self._settingsChanged)
         self.settings.connect("encoders-changed", self._settingsChanged)
+
+    def _setProperties(self):
+        self.window = self.builder.get_object("render-dialog")
+        self.selected_only_button = self.builder.get_object(
+            "selected_only_button")
+        self.frame_rate_combo = self.builder.get_object("frame_rate_combo")
+        self.scale_spinbutton = self.builder.get_object("scale_spinbutton")
+        self.channels_combo = self.builder.get_object("channels_combo")
+        self.sample_rate_combo = self.builder.get_object(
+                        "sample_rate_combo")
+        self.sample_depth_combo = self.builder.get_object(
+                        "sample_depth_combo")
+        self.muxercombobox = self.builder.get_object("muxercombobox")
+        self.audio_encoder_combo = self.builder.get_object(
+            "audio_encoder_combo")
+        self.video_encoder_combo = self.builder.get_object(
+            "video_encoder_combo")
+        self.filebutton = self.builder.get_object("filebutton")
+        self.fileentry = self.builder.get_object("fileentry")
+        self.resolution_label = self.builder.get_object("resolution_label")
 
     def _settingsChanged(self, settings):
         self.updateResolution()
@@ -235,9 +258,9 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
 
     def _projectSettingsButtonClickedCb(self, button):
         from pitivi.ui.projectsettings import ProjectSettingsDialog
-        d = ProjectSettingsDialog(self.window, self.project)
-        d.window.connect("destroy", self._projectSettingsDestroyCb)
-        d.run()
+        dialog = ProjectSettingsDialog(self.window, self.project)
+        dialog.window.connect("destroy", self._projectSettingsDestroyCb)
+        dialog.window.run()
 
     def _projectSettingsDestroyCb(self, dialog):
         self._displaySettings()
@@ -280,16 +303,16 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         settings = getattr(self.settings, settings_attr)
         dialog = GstElementSettingsDialog(factory, settings)
 
-        response = dialog.run()
+        response = dialog.window.run()
         if response == gtk.RESPONSE_OK:
             setattr(self.settings, settings_attr, dialog.getSettings())
-        dialog.destroy()
+        dialog.window.destroy()
 
     def _renderButtonClickedCb(self, unused_button):
         self.outfile = self.filebutton.get_uri() + "/" + self.fileentry.get_text()
         self.progress = EncodingProgressDialog(self.app, self)
         self.window.hide() # Hide the rendering settings dialog while rendering
-        self.progress.show()
+        self.progress.window.show()
         self.startAction()
         self.progress.connect("cancel", self._cancelRender)
         self.progress.connect("pause", self._pauseRender)
@@ -313,7 +336,7 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
         """
         When a render completes or is cancelled, update the UI
         """
-        self.progress.destroy()
+        self.progress.window.destroy()
         self.progress = None
         self.window.show()  # Show the encoding dialog again
         self.pipeline.disconnect_by_function(self._stateChanged)
@@ -329,4 +352,4 @@ class EncodingDialog(GladeWindow, Renderer, Loggable):
     def destroy(self):
         # TODO: Do this only when the settings actually changed.
         self.project.setSettings(self.settings)
-        GladeWindow.destroy(self)
+        self.window.destroy()

@@ -23,27 +23,31 @@
 Encoding dialog
 """
 
+import os
 import gtk
 import gst
-from pitivi.ui.glade import GladeWindow
 import pitivi.configure as configure
 from gettext import gettext as _
 import gobject
 from pitivi.signalinterface import Signallable
 
-class EncodingProgressDialog(GladeWindow, Signallable):
-
-    glade_file = "encodingprogress.ui"
-
+class EncodingProgressDialog(Signallable):
     __signals__ = {
         "pause": [],
         "cancel": [],
     }
 
     def __init__(self, app, parent):
-        GladeWindow.__init__(self)
-
         self.app = app
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
+            "encodingprogress.ui"))
+        self.builder.connect_signals(self)
+
+        self.window = self.builder.get_object("render-progress")
+        self.table1 = self.builder.get_object("table1")
+        self.progressbar = self.builder.get_object("progressbar")
+        self.play_pause_button = self.builder.get_object("play_pause_button")
         # Parent the dialog with mainwindow, since encodingdialog is hidden.
         # It allows this dialog to properly minimize together with mainwindow
         self.window.set_transient_for(self.app)
