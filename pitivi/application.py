@@ -386,7 +386,6 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
         self.projectManager.connect("new-project-loading", self._hideWizardCb)
         self.projectManager.connect("new-project-failed", self._showWizardCb)
         self.wizard = StartUpWizard(self)
-        self.wizard.hide()
         return FullGuiPitivi._createGui(self)
 
     def _showGui(self):
