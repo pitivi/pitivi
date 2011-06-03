@@ -372,7 +372,7 @@ class Pipeline(Signallable, Loggable):
         @return: Whether the position listener was activated or not
         @rtype: L{bool}
         """
-        if self._listening == True:
+        if self._listening:
             return True
         self._listening = True
         self._listeningInterval = interval
@@ -400,8 +400,8 @@ class Pipeline(Signallable, Loggable):
     def _listenToPosition(self, listen=True):
         # stupid and dumm method, not many checks done
         # i.e. it does NOT check for current state
-        if listen == True:
-            if self._listening == True and self._listeningSigId == 0:
+        if listen:
+            if self._listening and self._listeningSigId == 0:
                 self._listeningSigId = gobject.timeout_add(self._listeningInterval,
                                                            self._positionListenerCb)
         elif self._listeningSigId != 0:
@@ -911,7 +911,7 @@ class Pipeline(Signallable, Loggable):
             for action in compatactions:
                 handled |= action.handleNewStream(factory, stream)
 
-            if handled == False:
+            if not handled:
                 self.debug("No action handled this Stream")
                 self.emit('unhandled-stream', stream)
         finally:

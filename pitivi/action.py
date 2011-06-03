@@ -219,7 +219,7 @@ class Action(Signallable, Loggable):
                     if isinstance(p, t):
                         val = True
                         continue
-                if val == False:
+                if not val:
                     raise ActionError("Some producers are not of the compatible type")
         for p in producers:
             if not p in self.producers:
@@ -262,7 +262,7 @@ class Action(Signallable, Loggable):
                     if isinstance(p, t):
                         val = True
                         continue
-                if val == False:
+                if not val:
                     raise ActionError("Some consumers are not of the compatible type")
         for p in consumers:
             if not p in self.consumers:
@@ -398,7 +398,7 @@ class Action(Signallable, Loggable):
         @rtype: List of (C{Producer}, C{Consumer}, C{ProducerStream}, C{ConsumerStream})
         """
         links = self._links[:]
-        if links == [] and autolink == True:
+        if links == [] and autolink:
             links = self._links = self.autoLink()
         self.debug("Returning %d links", len(links))
         return links
@@ -481,7 +481,7 @@ class Action(Signallable, Loggable):
                     self._pd.append((producer, stream))
 
 
-        if waspending == False:
+        if not waspending:
             self.debug("Checking to see if we haven't already handled it")
             # 2. If it's not one of the pending links, It could also be one of the
             # links we've *already* handled
@@ -604,7 +604,7 @@ class Action(Signallable, Loggable):
                                                      automake=True)
 
         except PipelineError, e:
-            if init != True:
+            if not init:
                 self.debug("Could not create link %s" % e)
                 return False
 
@@ -618,7 +618,7 @@ class Action(Signallable, Loggable):
                 consstream, automake=True)
 
         self.info("Got our bin for our consumer: %r", bin)
-        if init != True:
+        if not init:
             # we set the sink to paused, since we are adding this link during
             # auto-plugging
             bin.sync_state_with_parent()

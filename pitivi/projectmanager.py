@@ -156,7 +156,7 @@ class ProjectManager(Signallable, Loggable):
         if self.current is None:
             return True
 
-        if self.emit("closing-project", self.current) == False:
+        if not self.emit("closing-project", self.current):
             return False
 
         self.emit("project-closed", self.current)
