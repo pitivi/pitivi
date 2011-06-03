@@ -30,10 +30,7 @@ import os.path
 import gobject
 gobject.threads_init()
 import gst
-import gst.pbutils
-from gst.pbutils import INSTALL_PLUGINS_SUCCESS, \
-        INSTALL_PLUGINS_PARTIAL_SUCCESS, INSTALL_PLUGINS_USER_ABORT, \
-        INSTALL_PLUGINS_STARTED_OK
+from gst import pbutils
 import tempfile
 import hashlib
 
@@ -195,9 +192,9 @@ class Discoverer(Signallable, Loggable):
 
         for message in self.missing_plugin_messages:
             detail = \
-                    gst.pbutils.missing_plugin_message_get_installer_detail(message)
+                    pbutils.missing_plugin_message_get_installer_detail(message)
             description = \
-                    gst.pbutils.missing_plugin_message_get_description(message)
+                    pbutils.missing_plugin_message_get_description(message)
 
             self.missing_plugin_details.append(detail)
             self.missing_plugin_descriptions.append(description)
@@ -207,11 +204,11 @@ class Discoverer(Signallable, Loggable):
     def _installMissingPluginsCallback(self, result, factory):
         rescan = False
 
-        if result in (INSTALL_PLUGINS_SUCCESS,
-                INSTALL_PLUGINS_PARTIAL_SUCCESS):
+        if result in (pbutils.INSTALL_PLUGINS_SUCCESS,
+                pbutils.INSTALL_PLUGINS_PARTIAL_SUCCESS):
             gst.update_registry()
             rescan = True
-        elif result == INSTALL_PLUGINS_USER_ABORT \
+        elif result == pbutils.INSTALL_PLUGINS_USER_ABORT \
                 and factory.getOutputStreams():
             self._emitDone(factory)
         else:
@@ -282,7 +279,7 @@ class Discoverer(Signallable, Loggable):
                 self.missing_plugin_details,
                 self.missing_plugin_descriptions,
                 callback)
-        if res is None or res != INSTALL_PLUGINS_STARTED_OK:
+        if res is None or res != pbutils.INSTALL_PLUGINS_STARTED_OK:
             # no missing-plugins handlers
             if factory.getOutputStreams():
                 self._emitDone(factory)
@@ -468,7 +465,7 @@ class Discoverer(Signallable, Loggable):
             self._finishAnalysis("redirect")
             return
 
-        if gst.pbutils.is_missing_plugin_message(message):
+        if pbutils.is_missing_plugin_message(message):
             self._busMessageMissingPlugins(message)
 
     def _busMessageMissingPlugins(self, message):
