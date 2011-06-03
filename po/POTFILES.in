@@ -8,7 +8,6 @@ data/ui/encodingprogress.ui
 data/ui/filelisterrordialog.ui
 data/ui/pluginmanagerdialog.ui
 data/ui/projectsettings.ui
-data/ui/screencast_manager.ui
 data/ui/startupwizard.ui
 pitivi/application.py
 pitivi/check.py

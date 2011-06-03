@@ -7,7 +7,6 @@ ui_DATA = \
 	mainwindow.xml		 \
 	projectsettings.ui	 \
 	pluginmanagerdialog.ui	 \
-	screencast_manager.ui	 \
 	startupwizard.ui
 
 EXTRA_DIST = \

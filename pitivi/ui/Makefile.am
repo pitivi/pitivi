@@ -27,7 +27,6 @@ ui_PYTHON =			\
 	basetabs.py		\
 	propertyeditor.py	\
 	ruler.py		\
-	screencast_managerdialog.py \
 	sourcelist.py		\
 	startupwizard.py 	\
 	timelinecanvas.py	\

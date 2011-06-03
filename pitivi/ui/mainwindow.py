@@ -279,9 +279,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
              None, _("Manage plugins"), self._pluginManagerCb),
             ("Preferences", gtk.STOCK_PREFERENCES, _("_Preferences"),
               None, None, self._prefsCb),
-            ("Screencast", gtk.STOCK_ADD ,
-             _("_Make screencast..."),
-             None, _("Capture the desktop"), self._Screencast),
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
             ("About", gtk.STOCK_ABOUT, None, None,
              _("Information about %s") % APPNAME, self._aboutCb),
@@ -697,11 +694,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _pluginManagerCb(self, unused_action):
         from pluginmanagerdialog import PluginManagerDialog
         PluginManagerDialog(self.app.plugin_manager)
-
-    # screencast callback
-    def _Screencast(self,unused_action):
-        from screencast_managerdialog import ScreencastManagerDialog
-        ScreencastManagerDialog(self.app)
 
     def _hideChildWindow(self, window, event):
         window.hide()
