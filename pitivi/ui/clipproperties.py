@@ -389,8 +389,8 @@ class EffectProperties(gtk.HBox):
 
     def _treeviewSelectionChangedCb(self, treeview):
         if self.selection.count_selected_rows() == 0 and self.timeline_objects:
-                self.app.gui.setActionsSensitive(['DeleteObj'], True)
-                self._removeEffectBt.set_sensitive(False)
+            self.app.gui.setActionsSensitive(['DeleteObj'], True)
+            self._removeEffectBt.set_sensitive(False)
         else:
             self.app.gui.setActionsSensitive(['DeleteObj'], False)
             self._removeEffectBt.set_sensitive(True)

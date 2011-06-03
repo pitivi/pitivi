@@ -181,4 +181,3 @@ class AudioPresetManager(PresetManager):
         parser.set(section, "channels", str(values["channels"]))
         parser.set(section, "depth", str(values["depth"]))
         parser.set(section, "sample-rate", str(values["sample-rate"]))
-

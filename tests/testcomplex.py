@@ -94,5 +94,3 @@ w.add(b)
 w.show_all()
 w.connect("destroy", gtk.main_quit)
 gtk.main()
-
-

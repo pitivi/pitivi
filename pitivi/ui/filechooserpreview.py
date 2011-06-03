@@ -241,8 +241,8 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.bbox.show()
 
     def show_error(self, uri):
-            self.l_error.show()
-            self.b_details.show()
+        self.l_error.show()
+        self.b_details.show()
 
     def clear_preview(self):
         self.log("Reset PreviewWidget ")

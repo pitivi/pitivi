@@ -81,4 +81,3 @@ class TestSeeker(TestCase):
 
         # timeout with None position
         seeker._seekTimeoutCb()
-

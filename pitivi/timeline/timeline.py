@@ -711,7 +711,7 @@ class TimelineEdges(object):
         """
         self._disconnectFromTimelineObject(timeline_object)
         for obj in timeline_object.track_objects:
-             self.removeTrackObject(obj)
+            self.removeTrackObject(obj)
 
     def _connectToTimelineObject(self, timeline_object):
         timeline_object.connect("track-object-added", self._trackObjectAddedCb)
@@ -1734,10 +1734,10 @@ class Timeline(Signallable, Loggable):
                 break
 
         if track is None:
-          raise TimelineError("There is no Track to add the effect to")
+            raise TimelineError("There is no Track to add the effect to")
 
         if not timeline_objects:
-          raise TimelineError("There is no timeline object to add effect to")
+            raise TimelineError("There is no timeline object to add effect to")
 
         listTimelineObjectTrackObject = []
         track_object = TrackEffect(factory, input_stream)
@@ -2056,9 +2056,9 @@ class Timeline(Signallable, Loggable):
 
         # Exclude objects that start after current position.
         for obj in self.timeline_objects:
-                tl_objs.append(obj)
-                if obj.start > time:
-                    break
+            tl_objs.append(obj)
+            if obj.start > time:
+                break
 
         keyframe_positions = self._getKeyframePositions(tl_objs)
         for n in range(len(keyframe_positions) -1, -1, -1):
@@ -2079,8 +2079,8 @@ class Timeline(Signallable, Loggable):
 
         keyframe_positions = self._getKeyframePositions(tl_objs)
         for n in range(0, len(keyframe_positions)):
-                if keyframe_positions[n] > time:
-                    return keyframe_positions[n]
+            if keyframe_positions[n] > time:
+                return keyframe_positions[n]
 
         return None
 

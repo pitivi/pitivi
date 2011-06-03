@@ -319,7 +319,7 @@ class FractionWidget(TextWidget, DynamicWidget):
                 strval = "%g:%g" % (preset.num, preset.denom)
             fpreset = float(preset)
             if self.low <= fpreset and fpreset <= self.high:
-               choices.append(strval)
+                choices.append(strval)
 
         self.addChoices(choices)
 

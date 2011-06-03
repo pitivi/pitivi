@@ -122,4 +122,3 @@ class RippleUpdateGroup(object):
 
             # enqueue children
             queue.extend(((cur, v) for v in self.arcs[cur]))
-

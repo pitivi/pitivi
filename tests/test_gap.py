@@ -220,5 +220,3 @@ class TestGap(TestCase):
             ( 0 * gst.SECOND, 1 * gst.SECOND),
             (12 * gst.SECOND, 2 * gst.SECOND),
         ])
-
-

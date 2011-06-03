@@ -88,7 +88,7 @@ class Deploy():
         for path in [self.dist_dir, self.dist_bin_dir, self.dist_etc_dir,
                 self.dist_share_dir, self.dist_lib_pitivi_dir,
                 self.dist_share_pixmaps_dir]:
-                os.makedirs(path)
+            os.makedirs(path)
 
     def checkDependencies(self):
         print ('Checking dependencies')
@@ -110,10 +110,10 @@ class Deploy():
             import gtk.gdk
             import gobject
         except ImportError:
-                self.close('IMPORT_ERROR: Could not find the Gtk Python bindings.\n'
-                    'You can download the installers at:\n'
-                    'http://www.pygtk.org/\n'
-                    'http://www.gtk.org/')
+            self.close('IMPORT_ERROR: Could not find the Gtk Python bindings.\n'
+                'You can download the installers at:\n'
+                'http://www.pygtk.org/\n'
+                'http://www.gtk.org/')
         else:
             print ('Gtk... OK')
 
@@ -220,5 +220,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

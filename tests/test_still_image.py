@@ -158,4 +158,3 @@ class TestStillImage(TestCase):
         self.configureStreams(range(4), [0, self.clip_duration // 2, self.clip_duration, (3 * self.clip_duration) // 2])
         self.startRender()
         self.cleanUp()
-

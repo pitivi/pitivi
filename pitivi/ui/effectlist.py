@@ -204,30 +204,30 @@ class EffectList(gtk.VBox, Loggable):
         hsearch.show_all()
 
     def _addMenuItems(self, uiman):
-      view_menu_item = uiman.get_widget('/MainMenuBar/View')
-      view_menu = view_menu_item.get_submenu()
-      seperator = gtk.SeparatorMenuItem()
-      self.treeview_menuitem = gtk.RadioMenuItem(None,
-              _("Show Video Effects as a List"))
-      self.iconview_menuitem = gtk.RadioMenuItem(self.treeview_menuitem,
-              _("Show Video Effects as Icons"))
+        view_menu_item = uiman.get_widget('/MainMenuBar/View')
+        view_menu = view_menu_item.get_submenu()
+        seperator = gtk.SeparatorMenuItem()
+        self.treeview_menuitem = gtk.RadioMenuItem(None,
+                _("Show Video Effects as a List"))
+        self.iconview_menuitem = gtk.RadioMenuItem(self.treeview_menuitem,
+                _("Show Video Effects as Icons"))
 
-      if self.settings.lastEffectView == SHOW_TREEVIEW:
-          self.treeview_menuitem.set_active(True)
-          self.iconview_menuitem.set_active(False)
-      else:
-          self.treeview_menuitem.set_active(False)
-          self.iconview_menuitem.set_active(True)
+        if self.settings.lastEffectView == SHOW_TREEVIEW:
+            self.treeview_menuitem.set_active(True)
+            self.iconview_menuitem.set_active(False)
+        else:
+            self.treeview_menuitem.set_active(False)
+            self.iconview_menuitem.set_active(True)
 
-      self.treeview_menuitem.connect("toggled", self._treeViewMenuItemToggledCb)
-      view_menu.append(seperator)
-      view_menu.append(self.treeview_menuitem)
-      view_menu.append(self.iconview_menuitem)
-      self.treeview_menuitem.show()
-      self.iconview_menuitem.show()
-      seperator.show()
+        self.treeview_menuitem.connect("toggled", self._treeViewMenuItemToggledCb)
+        view_menu.append(seperator)
+        view_menu.append(self.treeview_menuitem)
+        view_menu.append(self.iconview_menuitem)
+        self.treeview_menuitem.show()
+        self.iconview_menuitem.show()
+        seperator.show()
 
-      self.effect_view = self.settings.lastEffectView
+        self.effect_view = self.settings.lastEffectView
 
     def _addFactories(self, elements, effectType):
         for element in elements:
@@ -363,10 +363,10 @@ class EffectList(gtk.VBox, Loggable):
             self._dragStarted = True
 
         if self.effect_view is SHOW_TREEVIEW:
-          if chain_up:
-              gtk.TreeView.do_button_press_event(view, event)
-          else:
-              view.grab_focus()
+            if chain_up:
+                gtk.TreeView.do_button_press_event(view, event)
+            else:
+                view.grab_focus()
 
         return False
 
@@ -463,7 +463,7 @@ class EffectList(gtk.VBox, Loggable):
         return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
 
     def _getDndTuple(self):
-         if self.effectType.get_active() == VIDEO_EFFECT:
+        if self.effectType.get_active() == VIDEO_EFFECT:
             return [dnd.VIDEO_EFFECT_TUPLE, dnd.EFFECT_TUPLE]
-         else:
+        else:
             return [dnd.AUDIO_EFFECT_TUPLE, dnd.EFFECT_TUPLE]

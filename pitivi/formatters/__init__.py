@@ -22,4 +22,3 @@
 """
 Project store/load support
 """
-

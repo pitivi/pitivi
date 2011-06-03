@@ -560,4 +560,3 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
     def _showWaveformsChanged(self, settings):
         self._view = settings.showWaveforms
         self.emit("update", None)
-

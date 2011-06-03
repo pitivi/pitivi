@@ -315,4 +315,3 @@ class TestTimelineSourceFactoryPipeline(MainLoopTestCase):
         pipeline.set_state(gst.STATE_NULL)
 
         factory.clean()
-

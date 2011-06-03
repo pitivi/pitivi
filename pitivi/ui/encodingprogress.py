@@ -54,7 +54,7 @@ class EncodingProgressDialog(Signallable):
 
         # UI widgets
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
-        
+
         # FIXME: re-enable these widgets when bugs #650710 and 637079 are fixed
         self.play_pause_button.hide()
         self.table1.hide()

@@ -51,4 +51,3 @@ class TestBeautifyLength(TestCase):
     def testBeautifyHoursAndMinutes(self):
         self.failUnlessEqual(beautify_length(hour + minute + second),
                 "1 hour, 1 minute")
-

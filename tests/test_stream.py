@@ -279,4 +279,3 @@ class TestStreamGroupMatching(TestCase):
         group_b = [stream5, stream6, stream4]
         best_map = match_stream_groups(group_a, group_b)
         self.failUnlessEqual(known_best_map, best_map)
-

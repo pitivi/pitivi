@@ -307,7 +307,7 @@ class Formatter(Signallable, Loggable):
         self.debug("oldpath:%r, newpath:%r", oldpath, newpath)
         # FIXME dumbest of dumbest implementation, whoever comes up
         # with a less ugly code is welcome to change this :)
-        
+
         # Split the paths for each directory level
         a = oldpath.split(os.sep)
         b = newpath.split(os.sep)
@@ -410,4 +410,3 @@ class DefaultFormatter(Formatter):
     description = "PiTiVi default file format"
 
     pass
-

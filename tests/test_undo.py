@@ -386,12 +386,12 @@ class TestUndoableActionLog(TestCase):
                 self.n = n
 
             def do(self):
-               call_sequence.append("do%s" % self.n)
-               self._done()
+                call_sequence.append("do%s" % self.n)
+                self._done()
 
             def undo(self):
-               call_sequence.append("undo%s" % self.n)
-               self._undone()
+                call_sequence.append("undo%s" % self.n)
+                self._undone()
 
         action1 = Action(1)
         action2 = Action(2)
@@ -415,4 +415,3 @@ class TestUndoableActionLog(TestCase):
         call_sequence[:] = []
         self.log.undo()
         self.failUnlessEqual(call_sequence, ["undo3", "undo2", "undo1"])
-

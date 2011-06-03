@@ -201,4 +201,3 @@ def set_combo_value(combo, value, default_index=-1):
 def get_combo_value(combo):
     active = combo.get_active()
     return combo.props.model[active][1]
-
