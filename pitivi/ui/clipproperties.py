@@ -94,7 +94,7 @@ class ClipProperties(gtk.VBox, Loggable):
         label.set_line_wrap(True)
         label.set_line_wrap_mode(pango.WRAP_WORD)
         label.set_justify(gtk.JUSTIFY_CENTER)
-        label.set_text (text)
+        label.set_text(text)
 
         info_bar.add(label)
         self.info_bar_box.pack_start(info_bar, expand=False, fill=False)
@@ -250,13 +250,13 @@ class EffectProperties(gtk.HBox):
         self._updateAll()
 
     def  _trackObjectAddedCb(self, unused_timeline_object, track_object):
-        if isinstance (track_object, TrackEffect):
+        if isinstance(track_object, TrackEffect):
             selec = self.timeline.selection.getSelectedTrackEffects()
             self.selected_effects = selec
             self._updateAll()
 
     def  _trackRemovedRemovedCb(self, unused_timeline_object, track_object):
-        if isinstance (track_object, TrackEffect):
+        if isinstance(track_object, TrackEffect):
             selec = self.timeline.selection.getSelectedTrackEffects()
             self.selected_effects = selec
             self._updateAll()
@@ -329,7 +329,7 @@ class EffectProperties(gtk.HBox):
         if context is None:
             return False
 
-        treeview.set_tooltip_row (tooltip, context[1][0])
+        treeview.set_tooltip_row(tooltip, context[1][0])
         tooltip.set_text(self.storemodel.get_value(context[2], COL_DESC_TEXT))
 
         return True

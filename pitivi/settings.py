@@ -505,7 +505,7 @@ class ExportSettings(Signallable, Loggable):
     def __str__(self):
         msg = _("Export Settings\n")
         msg += _("Video: ") + str(self.videowidth) + " " + str(self.videoheight) +\
-               " " + str(self.videorate) + " " + str (self.videopar)
+               " " + str(self.videorate) + " " + str(self.videopar)
         msg += "\n\t" + str(self.vencoder) + " " +str(self.vcodecsettings)
         msg += _("\nAudio: ") + str(self.audiochannels) + " " + str(self.audiorate) +\
                " " + str(self.audiodepth)

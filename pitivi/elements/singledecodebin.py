@@ -61,11 +61,11 @@ class SingleDecodeBin(gst.Bin):
     QUEUE_SIZE = 1 * gst.SECOND
 
     __gsttemplates__ = (
-        gst.PadTemplate ("sinkpadtemplate",
+        gst.PadTemplate("sinkpadtemplate",
                          gst.PAD_SINK,
                          gst.PAD_ALWAYS,
                          gst.caps_new_any()),
-        gst.PadTemplate ("srcpadtemplate",
+        gst.PadTemplate("srcpadtemplate",
                          gst.PAD_SRC,
                          gst.PAD_SOMETIMES,
                          gst.caps_new_any())

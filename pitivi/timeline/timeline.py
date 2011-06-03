@@ -1561,7 +1561,7 @@ class Timeline(Signallable, Loggable):
             self.duration = duration
             self.emit('duration-changed', duration)
 
-    def updateVideoCaps (self, caps= None):
+    def updateVideoCaps(self, caps= None):
         if caps:
             self._video_caps = caps
 

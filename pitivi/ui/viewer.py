@@ -637,9 +637,9 @@ class PlayPauseButton(gtk.Button, Loggable):
     """ Double state gtk.Button which displays play/pause """
 
     __gsignals__ = {
-        "play" : ( gobject.SIGNAL_RUN_LAST,
+        "play" : (gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE,
-                   (gobject.TYPE_BOOLEAN, ))
+                   (gobject.TYPE_BOOLEAN,))
         }
 
     def __init__(self):

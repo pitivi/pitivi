@@ -543,7 +543,7 @@ class TrackObject(Signallable, Loggable):
         if priority != self._public_priority:
             self._updatePriority(priority)
 
-    def _getTruePriority (self, priority):
+    def _getTruePriority(self, priority):
         """ calculate the priority the contained gnlobject should have """
         if self.stream_type is VideoStream:
             return 3 + self._stagger + (3 * priority)

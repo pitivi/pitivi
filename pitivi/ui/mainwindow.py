@@ -69,7 +69,7 @@ if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
 
     for gconf_dir in (D_G_INTERFACE, ):
-        gconf.client_get_default ().add_dir (gconf_dir, gconf.CLIENT_PRELOAD_NONE)
+        gconf.client_get_default().add_dir(gconf_dir, gconf.CLIENT_PRELOAD_NONE)
 
 GlobalSettings.addConfigOption("fileSupportEnabled",
     environment="PITIVI_FILE_SUPPORT",
@@ -615,7 +615,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             action.props.active
 
     def _userManualCb(self, unused_action):
-        webbrowser.open_new (APPMANUALURL)
+        webbrowser.open_new(APPMANUALURL)
 
     def _aboutResponseCb(self, dialog, unused_response):
         dialog.destroy()

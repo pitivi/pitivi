@@ -156,8 +156,8 @@ class SmartVideomixerBin(gst.Bin):
         #   http://jeff.ecchi.ca/blog/2011/04/24/negotiating-performance/
         for pad_name in self.inputs:
             values = self.inputs.get(pad_name)
-            values[3].send_event (gst.event_new_flush_start())
-            values[3].send_event (gst.event_new_flush_stop())
+            values[3].send_event(gst.event_new_flush_start())
+            values[3].send_event(gst.event_new_flush_stop())
             if not values[3].is_blocked():
                 values[3].set_blocked_async(True, self._pad_blockedCb)
 
@@ -184,15 +184,15 @@ class SmartVideomixerBin(gst.Bin):
 
         for pad_name in self.inputs:
             values = self.inputs.get(pad_name)
-            values[3].send_event (gst.event_new_flush_start())
-            values[3].send_event (gst.event_new_flush_stop())
+            values[3].send_event(gst.event_new_flush_start())
+            values[3].send_event(gst.event_new_flush_stop())
             if values[3].is_blocked():
                 values[3].set_blocked_async(False, self._pad_blockedCb)
 
         self.sync_state_with_parent()
 
     def update_priority(self, pad, priority):
-        self.debug("pad:%r, priority:%d" % ( pad, priority))
+        self.debug("pad:%r, priority:%d" % (pad, priority))
         if priority > 10000:
             priority = 10000
         a,b,c,sinkpad = self.inputs.get(pad.get_name(), (None, None, None, None))
@@ -286,7 +286,7 @@ class SmartVideomixerBinPropertyHelper(Signallable):
             # has been removed and its gnl_object doesn't contain any
             # controllable element anymore
             interpolator = track_object.interpolators["alpha"][1]
-        except (KeyError, TrackError):
+        except(KeyError, TrackError):
             # no alpha
             pass
         else:

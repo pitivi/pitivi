@@ -56,11 +56,11 @@ class TransformFactory(OperationFactory):
     def _requestNewInputStream(self, *args):
         raise OperationFactoryError("TransformFactory doesn't allow request pads")
 
-class EffectFactory (TransformFactory):
+class EffectFactory(TransformFactory):
     """
     Factories that applies an effect on a stream
     """
-    def __init__ (self, effect, name='', categories=[_("Uncategorized")],
+    def __init__(self, effect, name='', categories=[_("Uncategorized")],
                   human_name="", description="", icon=None):
         TransformFactory.__init__(self, name)
         self.effectname = effect
@@ -78,7 +78,7 @@ class EffectFactory (TransformFactory):
     def getCategories(self):
         return self.categories
 
-    def _makeBin (self, *args):
+    def _makeBin(self, *args):
         bin = gst.Bin()
         fx = gst.element_factory_make(self.effectname, "effect")
         if isinstance(self.input_streams[0], VideoStream):

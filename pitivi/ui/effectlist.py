@@ -155,14 +155,14 @@ class EffectList(gtk.VBox, Loggable):
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.set_property("has_tooltip", True)
 
-        self.effectType.connect ("changed", self._effectTypeChangedCb)
+        self.effectType.connect("changed", self._effectTypeChangedCb)
 
-        self.effectCategory.connect ("changed", self._effectCategoryChangedCb)
+        self.effectCategory.connect("changed", self._effectCategoryChangedCb)
 
-        self.searchEntry.connect ("changed", self.searchEntryChangedCb)
-        self.searchEntry.connect ("button-press-event", self.searchEntryActivateCb)
-        self.searchEntry.connect ("focus-out-event", self.searchEntryDesactvateCb)
-        self.searchEntry.connect ("icon-press", self.searchEntryIconClickedCb)
+        self.searchEntry.connect("changed", self.searchEntryChangedCb)
+        self.searchEntry.connect("button-press-event", self.searchEntryActivateCb)
+        self.searchEntry.connect("focus-out-event", self.searchEntryDesactvateCb)
+        self.searchEntry.connect("icon-press", self.searchEntryIconClickedCb)
 
         self.treeview.connect("button-press-event", self._buttonPressEventCb)
         self.treeview.connect("select-cursor-row", self._enterPressEventCb)
@@ -378,10 +378,10 @@ class EffectList(gtk.VBox, Loggable):
 
         if self.effect_view is SHOW_TREEVIEW or\
                     self._effect_type_ref == AUDIO_EFFECT:
-            view.set_tooltip_row (tooltip, context[1][0])
+            view.set_tooltip_row(tooltip, context[1][0])
         elif self.effect_view is SHOW_ICONVIEW and\
                      self._effect_type_ref == VIDEO_EFFECT:
-            view.set_tooltip_item (tooltip, context[1][0])
+            view.set_tooltip_item(tooltip, context[1][0])
         name = self.modelFilter.get_value(context[2], COL_ELEMENT_NAME)
         if self._current_effect_name != name:
             self._current_effect_name = name

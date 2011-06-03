@@ -35,11 +35,11 @@ class TestEffectFactory(TestCase):
     def setUp(self):
         TestCase.setUp(self)
         self.stream = VideoStream(gst.Caps("video/x-raw-rgb"))
-        self.factory = EffectFactory ('identity', 'identity')
+        self.factory = EffectFactory('identity', 'identity')
         self.factory.addOutputStream(self.stream)
         self.factory.addInputStream(self.stream)
 
-    def testMakeBin (self):
+    def testMakeBin(self):
         bin = self.factory.makeBin()
         bin2 = self.factory.makeBin()
         csp = bin.elements().next()

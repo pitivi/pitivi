@@ -263,9 +263,9 @@ class TimeWidget(TextWidget, DynamicWidget):
         TextWidget.setWidgetValue(self, time_to_string(value),
                                 send_signal = send_signal)
 
-    def connectFocusEvents (self, focusInCb, focusOutCb):
-        fIn = self.text.connect ("button-press-event", focusInCb)
-        fOut = self.text.connect ("focus-out-event", focusOutCb)
+    def connectFocusEvents(self, focusInCb, focusOutCb):
+        fIn = self.text.connect("button-press-event", focusInCb)
+        fOut = self.text.connect("focus-out-event", focusOutCb)
 
         return [fIn, fOut]
 
@@ -637,7 +637,7 @@ class FontWidget(gtk.FontButton, DynamicWidget):
 
 class ResolutionWidget(gtk.HBox, DynamicWidget):
 
-    def __init__ (self, default = None):
+    def __init__(self, default = None):
         gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
         self.props.spacing = 6

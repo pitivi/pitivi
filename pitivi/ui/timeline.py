@@ -561,24 +561,24 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         return True
 
     def scroll_left(self):
-        self._hscrollbar.set_value (self._hscrollbar.get_value() -
+        self._hscrollbar.set_value(self._hscrollbar.get_value() -
             self.hadj.props.page_size ** (2.0 / 3.0))
 
     def scroll_right(self):
-        self._hscrollbar.set_value (self._hscrollbar.get_value() +
+        self._hscrollbar.set_value(self._hscrollbar.get_value() +
             self.hadj.props.page_size ** (2.0 / 3.0))
 
     def scroll_up(self):
-        self._vscrollbar.set_value (self._vscrollbar.get_value() -
+        self._vscrollbar.set_value(self._vscrollbar.get_value() -
             self.vadj.props.page_size ** (2.0 / 3.0))
 
     def scroll_down(self):
-        self._vscrollbar.set_value (self._vscrollbar.get_value() +
+        self._vscrollbar.set_value(self._vscrollbar.get_value() +
             self.vadj.props.page_size ** (2.0 / 3.0))
 
     def _updateScrollPosition(self, adjustment):
         self._scroll_pos_ns = Zoomable.pixelToNs(self.hadj.get_value())
-        self._root_item.set_simple_transform( -self.hadj.get_value(),
+        self._root_item.set_simple_transform(-self.hadj.get_value(),
             -self.vadj.get_value(), 1.0, 0)
 
     def _zoomAdjustmentChangedCb(self, adjustment):
@@ -743,7 +743,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
             keyframe = True
 
-        if (len (timeline.timeline_objects) > 0):
+        if (len(timeline.timeline_objects) > 0):
             split = True
 
         self.delete_action.set_sensitive(delete)

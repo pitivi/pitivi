@@ -179,12 +179,12 @@ class TestGap(TestCase):
         ])
 
         complex = [
-            ( 1 * gst.SECOND, 2 * gst.SECOND),
-            ( 6 * gst.SECOND, 2 * gst.SECOND),
+            (1 * gst.SECOND, 2 * gst.SECOND),
+            (6 * gst.SECOND, 2 * gst.SECOND),
             (10 * gst.SECOND, 2 * gst.SECOND),
-            ( 8 * gst.SECOND, 2 * gst.SECOND),
+            (8 * gst.SECOND, 2 * gst.SECOND),
             (14 * gst.SECOND, 1 * gst.SECOND),
-            ( 4 * gst.SECOND, 1 * gst.SECOND),
+            (4 * gst.SECOND, 1 * gst.SECOND),
         ]
 
         objs = []
@@ -198,9 +198,9 @@ class TestGap(TestCase):
             Gap.findAllGaps(objs)]
 
         self.assertEquals(result, [
-            ( 0 * gst.SECOND, 1 * gst.SECOND),
-            ( 3 * gst.SECOND, 1 * gst.SECOND),
-            ( 5 * gst.SECOND, 1 * gst.SECOND),
+            (0 * gst.SECOND, 1 * gst.SECOND),
+            (3 * gst.SECOND, 1 * gst.SECOND),
+            (5 * gst.SECOND, 1 * gst.SECOND),
             (12 * gst.SECOND, 2 * gst.SECOND),
         ])
 
@@ -217,6 +217,6 @@ class TestGap(TestCase):
             Gap.findAllGaps(objs)]
 
         self.assertEquals(result, [
-            ( 0 * gst.SECOND, 1 * gst.SECOND),
+            (0 * gst.SECOND, 1 * gst.SECOND),
             (12 * gst.SECOND, 2 * gst.SECOND),
         ])

@@ -139,7 +139,7 @@ class TestFormatterSave(TestCase):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
         audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
 
-        effect1 = EffectFactory ('identity', 'identity')
+        effect1 = EffectFactory('identity', 'identity')
         effect1.addOutputStream(video_stream)
         effect1.addInputStream(video_stream)
 

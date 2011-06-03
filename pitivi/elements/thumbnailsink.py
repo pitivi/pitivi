@@ -38,11 +38,11 @@ class CairoSurfaceThumbnailSink(gst.BaseSink):
     __gsignals__ = {
         "thumbnail" : (gobject.SIGNAL_RUN_LAST,
                        gobject.TYPE_NONE,
-                       ( gobject.TYPE_PYOBJECT, gobject.TYPE_UINT64 ))
+                       (gobject.TYPE_PYOBJECT, gobject.TYPE_UINT64))
         }
 
     __gsttemplates__ = (
-        gst.PadTemplate ("sink",
+        gst.PadTemplate("sink",
                          gst.PAD_SINK,
                          gst.PAD_ALWAYS,
                          gst.Caps("video/x-raw-rgb,"
