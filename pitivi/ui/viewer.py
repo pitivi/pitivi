@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # PiTiVi , Non-linear video editor
 #
 #       ui/viewer.py
