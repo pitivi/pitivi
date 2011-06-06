@@ -188,7 +188,6 @@ class GstElementSettingsDialog(Loggable):
         self.builder.connect_signals(self)
 
         self.window = self.builder.get_object("dialog1")
-        self.infolabel = self.builder.get_object("infolabel")
         self.elementsettings = GstElementSettingsWidget()
         self.builder.get_object("viewport1").add(self.elementsettings)
 
@@ -202,9 +201,7 @@ class GstElementSettingsDialog(Loggable):
     def _fillWindow(self):
         # set title and frame label
         self.window.set_title(_("Properties for %s") % self.factory.get_longname())
-        self.infolabel.set_markup("<b>" + self.factory.get_longname() + "</b>")
         self.elementsettings.setElement(self.element, self.properties)
-        self.elementsettings.set_border_width(12)
 
     def getSettings(self):
         """ returns the property/value dictionnary of the selected settings """
