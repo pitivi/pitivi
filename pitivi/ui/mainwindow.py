@@ -626,7 +626,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _aboutCb(self, unused_action):
         abt = gtk.AboutDialog()
         abt.set_name(APPNAME)
-        abt.set_version("v%s" % pitivi_version)
+        abt.set_version(pitivi_version)
         gtk.about_dialog_set_url_hook(self._showWebsiteCb)
         abt.set_website(APPURL)
         authors = ["Edward Hervey <bilboed@bilboed.com>",
@@ -647,6 +647,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
                    "Sarath Lakshman <sarathlakshman@slynux.org>",
                    "Alex Balut <alexandru.balut@gmail.com>"]
         abt.set_authors(authors)
+        translators = _("translator-credits")
+        if translators != "translator-credits":
+            abt.set_translator_credits(translators)
         abt.set_license(_("GNU Lesser General Public License\n"
                           "See http://www.gnu.org/copyleft/lesser.html for more details"))
         abt.set_icon_name("pitivi")
