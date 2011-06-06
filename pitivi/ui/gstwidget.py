@@ -197,6 +197,7 @@ class GstElementSettingsDialog(Loggable):
             self.warning("Couldn't create element from factory %s", self.factory)
         self.properties = properties
         self._fillWindow()
+        self.window.show()
 
     def _fillWindow(self):
         # set title and frame label

@@ -293,6 +293,7 @@ class EncodingDialog(Renderer, Loggable):
         factory = get_combo_value(combo)
         settings = getattr(self.settings, settings_attr)
         dialog = GstElementSettingsDialog(factory, settings)
+        dialog.window.set_transient_for(self.window)
 
         response = dialog.window.run()
         if response == gtk.RESPONSE_OK:
