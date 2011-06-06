@@ -26,6 +26,7 @@ Encoding dialog
 import os
 import gtk
 import gst
+import pango
 
 from gettext import gettext as _
 
@@ -100,12 +101,11 @@ def factorylist(factories):
     data.sort(key=lambda x: x[0])
     return model(columns, data)
 
-import pango
-
 def ellipsize(combo):
     cell_view = combo.get_children()[0]
     cell_renderer = cell_view.get_cell_renderers()[0]
-    cell_renderer.props.ellipsize = pango.ELLIPSIZE_END
+    cell_renderer.props.ellipsize = pango.ELLIPSIZE_MIDDLE
+    cell_renderer.props.width_chars = 60
 
 class EncodingDialog(Renderer, Loggable):
     """ Encoding dialog box """
