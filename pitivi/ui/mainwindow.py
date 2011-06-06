@@ -791,6 +791,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.set_resizable(False)
         dialog.set_has_separator(False)
         dialog.set_default_response(gtk.RESPONSE_YES)
+        dialog.set_transient_for(self)
 
         primary = gtk.Label()
         primary.set_line_wrap(True)
@@ -866,6 +867,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                                             _("All unsaved changes will be lost.")
                                         )
             dialog.set_default_response(gtk.RESPONSE_NO)
+            dialog.set_transient_for(self)
             response = dialog.run()
             dialog.destroy()
             if response <> gtk.RESPONSE_YES:
@@ -883,6 +885,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.set_icon_name("pitivi")
         dialog.set_title(_("Error Loading File"))
         dialog.set_property("secondary-text", unquote(str(exception)))
+        dialog.set_transient_for(self)
         dialog.run()
         dialog.destroy()
         self.set_sensitive(True)
@@ -896,6 +899,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.set_icon_name("pitivi")
         dialog.set_border_width(SPACING*2)
         dialog.get_content_area().set_spacing(SPACING)
+        dialog.set_transient_for(self)
 
         text = _('The following file has moved: "<b>%s</b>" (duration: %s)\
                 \nPlease specify its new location:' \
