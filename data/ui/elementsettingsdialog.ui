@@ -4,14 +4,17 @@
   <object class="GtkDialog" id="dialog1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="border_width">3</property>
+    <property name="border_width">12</property>
     <property name="title" translatable="yes">Properties for &lt;element&gt;</property>
     <property name="modal">True</property>
+    <property name="default_height">550</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
@@ -61,12 +64,12 @@
           <object class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="border_width">12</property>
             <property name="spacing">12</property>
             <child>
               <object class="GtkScrolledWindow" id="scrolledwindow1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="hscrollbar_policy">never</property>
                 <property name="shadow_type">in</property>
                 <child>
                   <object class="GtkViewport" id="viewport1">
