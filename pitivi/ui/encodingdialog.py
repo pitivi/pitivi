@@ -101,11 +101,6 @@ def factorylist(factories):
     data.sort(key=lambda x: x[0])
     return model(columns, data)
 
-def ellipsize(combo):
-    cell_view = combo.get_children()[0]
-    cell_renderer = cell_view.get_cell_renderers()[0]
-    cell_renderer.props.ellipsize = pango.ELLIPSIZE_MIDDLE
-    cell_renderer.props.width_chars = 60
 
 class EncodingDialog(Renderer, Loggable):
     """ Encoding dialog box """
@@ -187,10 +182,6 @@ class EncodingDialog(Renderer, Loggable):
         # note: this will trigger an update of the codec comboboxes
         set_combo_value(self.muxercombobox,
             gst.element_factory_find(self.settings.muxer))
-
-        ellipsize(self.muxercombobox)
-        ellipsize(self.audio_encoder_combo)
-        ellipsize(self.video_encoder_combo)
 
         # File
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
