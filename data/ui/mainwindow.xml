@@ -41,8 +41,8 @@
       <separator />
     </menu>
     <menu action="Help">
-      <menuitem action="About" />
       <menuitem action="UserManual" />
+      <menuitem action="About" />
     </menu>
   </menubar>
   <toolbar name="MainToolBar">
