@@ -663,11 +663,11 @@ class SourceList(gtk.VBox, Loggable):
     ## Error Dialog Box callbacks
 
     def _errorDialogBoxCloseCb(self, unused_dialog):
-        self._error_dialogbox.destroy()
+        self._error_dialogbox.window.destroy()
         self._error_dialogbox = None
 
     def _errorDialogBoxResponseCb(self, unused_dialog, unused_response):
-        self._error_dialogbox.destroy()
+        self._error_dialogbox.window.destroy()
         self._error_dialogbox = None
 
     ## Import Sources Dialog Box callbacks
@@ -753,7 +753,7 @@ class SourceList(gtk.VBox, Loggable):
         self._error_dialogbox.connect("response", self._errorDialogBoxResponseCb)
         for uri, reason, extra in self._errors:
             self._error_dialogbox.addFailedFile(uri, reason, extra)
-        self._error_dialogbox.show()
+        self._error_dialogbox.window.show()
         self._errors = []  # Reset the error list (since the user has read them)
         self._import_warning_infobar.hide()
 
