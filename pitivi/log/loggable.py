@@ -22,6 +22,7 @@
 from pitivi.log.log import _canShortcutLogging, doLog, ERROR
 from pitivi.log import log
 
+
 class Loggable(log.Loggable):
     def __init__(self):
         if not hasattr(self, 'logCategory'):

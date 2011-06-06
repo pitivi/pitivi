@@ -39,20 +39,22 @@ from pitivi.stream import match_stream_groups_map
 
 version = "0.1"
 
+
 def indent(elem, level=0):
-    i = "\n" + level*"  "
+    i = "\n" + level * "  "
     if len(elem):
         if not elem.text or not elem.text.strip():
             elem.text = i + "  "
         if not elem.tail or not elem.tail.strip():
             elem.tail = i
         for elem in elem:
-            indent(elem, level+1)
+            indent(elem, level + 1)
         if not elem.tail or not elem.tail.strip():
             elem.tail = i
     else:
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
+
 
 class ElementTreeFormatterContext(object):
     def __init__(self):
@@ -61,11 +63,14 @@ class ElementTreeFormatterContext(object):
         self.track_objects = {}
         self.rootelement = None
 
+
 class ElementTreeFormatterSaveContext(ElementTreeFormatterContext):
     pass
 
+
 class ElementTreeFormatterLoadContext(ElementTreeFormatterContext):
     pass
+
 
 class ElementTreeFormatter(Formatter):
     _element_id = 0
@@ -381,7 +386,6 @@ class ElementTreeFormatter(Formatter):
                 effect_properties.attrib[prop.name] = '(' + type_name + ')' + value
         effect_element.append(effect_properties)
 
-
     def _saveSourceTrackObject(self, track_object, element):
         factory_ref = self._saveFactoryRef(track_object.factory)
         stream_ref = self._saveStreamRef(track_object.stream)
@@ -562,7 +566,7 @@ class ElementTreeFormatter(Formatter):
 
         track = Track(stream)
 
-        track_objects_element  = element.find("track-objects")
+        track_objects_element = element.find("track-objects")
         for track_object_element in track_objects_element:
             self._loadTrackObject(track, track_object_element)
 

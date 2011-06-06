@@ -31,6 +31,7 @@ Interfaces for event-based programming
 
 from random import randint
 
+
 class Signallable(object):
     """
     Signallable interface
@@ -68,9 +69,9 @@ class Signallable(object):
             if not callable(cb):
                 raise Exception("Provided callable '%r' is not callable" % cb)
 
-            uuid = randint(0, 2**64)
+            uuid = randint(0, 2 ** 64)
             while uuid in self.ids:
-                uuid = randint(0, 2**64)
+                uuid = randint(0, 2 ** 64)
 
             self.ids[uuid] = (cb, args, kwargs)
             self.callback_ids.setdefault(cb, []).append(uuid)
@@ -119,10 +120,9 @@ class Signallable(object):
                 res = cb(*ar, **kw)
             return res
 
-
     # key : name (string)
     # value : signature (list of any strings)
-    __signals__ = { }
+    __signals__ = {}
 
     def emit(self, signame, *args, **kwargs):
         """

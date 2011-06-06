@@ -38,6 +38,7 @@ import gst
  STATE_PAUSED,
  STATE_PLAYING) = (gst.STATE_NULL, gst.STATE_READY, gst.STATE_PAUSED, gst.STATE_PLAYING)
 
+
 # FIXME : define/document a proper hierarchy
 class PipelineError(Exception):
     pass
@@ -52,6 +53,7 @@ class PipelineError(Exception):
 # Maybe that convenience method could be put in a higher-level module, like the
 # one that handles all the Pipelines existing in the application.
 
+
 class FactoryEntry(object):
     def __init__(self, factory):
         self.factory = factory
@@ -59,6 +61,7 @@ class FactoryEntry(object):
 
     def __str__(self):
         return "<FactoryEntry %s>" % self.factory
+
 
 class StreamEntry(object):
     def __init__(self, factory_entry, stream, parent=None):
@@ -84,6 +87,7 @@ class StreamEntry(object):
 
     def __str__(self):
         return "<StreamEntry %s '%s'>" % (self.factory_entry.factory, self.stream)
+
 
 class Pipeline(Signallable, Loggable):
     """
@@ -123,16 +127,16 @@ class Pipeline(Signallable, Loggable):
     """
 
     __signals__ = {
-        "action-added" : ["action"],
-        "action-removed" : ["action"],
-        "factory-added" : ["factory"],
-        "factory-removed" : ["factory"],
-        "state-changed" : ["state"],
-        "position" : ["position"],
-        "duration-changed" : ["duration"],
-        "unhandled-stream" : ["factory", "stream"],
-        "eos" : [],
-        "error" : ["message", "details"],
+        "action-added": ["action"],
+        "action-removed": ["action"],
+        "factory-added": ["factory"],
+        "factory-removed": ["factory"],
+        "state-changed": ["state"],
+        "position": ["position"],
+        "duration-changed": ["duration"],
+        "unhandled-stream": ["factory", "stream"],
+        "eos": [],
+        "error": ["message", "details"],
         "element-message": ["message"]
         }
 
@@ -146,8 +150,8 @@ class Pipeline(Signallable, Loggable):
         self._bus.set_sync_handler(self._busSyncMessageHandler)
         self.factories = {}
         self.actions = []
-        self._listening = False # for the position handler
-        self._listeningInterval = 300 # default 300ms
+        self._listening = False  # for the position handler
+        self._listeningInterval = 300  # default 300ms
         self._listeningSigId = 0
         self._stream_entry_from_pad = {}
 
@@ -419,14 +423,14 @@ class Pipeline(Signallable, Loggable):
         @raise PipelineError: If seek failed
         """
         if format == gst.FORMAT_TIME:
-            self.debug("position : %s", gst.TIME_ARGS (position))
+            self.debug("position : %s", gst.TIME_ARGS(position))
         else:
             self.debug("position : %d , format:%d", position, format)
         # FIXME : temporarily deactivate position listener
         #self._listenToPosition(False)
 
         # clamp between [0, duration]
-        if format==gst.FORMAT_TIME:
+        if format == gst.FORMAT_TIME:
             position = max(0, min(position, self.getDuration()))
 
         res = self._pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
@@ -446,7 +450,7 @@ class Pipeline(Signallable, Loggable):
     #{ GStreamer object methods (For Action usage only)
 
     def _getFactoryEntryForStream(self, factory, stream, create=False):
-        self.debug("factory %r, stream %r" , factory, stream)
+        self.debug("factory %r, stream %r", factory, stream)
         try:
             factory_entry = self.factories[factory]
         except KeyError:
@@ -717,7 +721,7 @@ class Pipeline(Signallable, Loggable):
         there are none for the given factory.
         @rtype: C{gst.Element}
         """
-        self.debug("factory %r, stream %r" , factory, stream)
+        self.debug("factory %r, stream %r", factory, stream)
         if not isinstance(factory, SinkFactory):
             raise PipelineError("Given ObjectFactory isn't a SinkFactory")
 
@@ -839,7 +843,7 @@ class Pipeline(Signallable, Loggable):
             self.debug("Duration might have changed, querying it")
             gobject.idle_add(self._queryDurationAsync)
         else:
-            self.info("%s [%r]" , message.type, message.src)
+            self.info("%s [%r]", message.type, message.src)
 
     def _queryDurationAsync(self, *args, **kwargs):
         try:
@@ -917,7 +921,6 @@ class Pipeline(Signallable, Loggable):
         finally:
             self.debug("Done handling new pad")
             self._lock.release()
-
 
     def _binPadRemovedCb(self, bin, pad):
         self._lock.acquire()

@@ -43,6 +43,7 @@ if platform.system() == 'Windows':
 else:
     HOME = 'HOME'
 
+
 def get_bool_env(var):
     value = os.getenv(var)
     if not value:
@@ -54,6 +55,7 @@ def get_bool_env(var):
         return False
     else:
         return bool(value)
+
 
 def get_env_by_type(type_, var):
     """
@@ -76,43 +78,55 @@ def get_env_by_type(type_, var):
             return type_(os.getenv(var))
         return None
 
+
 def get_env_default(var, default):
     value = os.getenv(var)
     if value:
         return value
     return default
 
+
 def get_dir(path, autocreate=True):
     if autocreate and not os.path.exists(path):
         os.makedirs(path)
     return path
 
+
 def get_dirs(glob):
     return [d for d in glob.split(os.path.pathsep) if os.path.exists(d)]
+
 
 def get_env_dir(var, default, autocreate=True):
     return get_dir(get_env_default(var, default))
 
+
 def get_env_dirs(var, default):
     return get_dirs(get_env_default(var, default))
+
 
 def xdg_config_home(autocreate=True):
     return get_dir(xdg_dirs.xdg_config_home, autocreate)
 
+
 def xdg_data_home(autocreate=True):
     return get_dir(xdg_dirs.xdg_data_home, autocreate)
+
 
 def xdg_cache_home(autocreate=True):
     return get_dir(xdg_dirs.xdg_cache_home, autocreate)
 
+
 def xdg_data_dirs():
     return get_env_dirs(xdg_dirs.xdg_data_dirs)
+
 
 def xdg_config_dirs():
     return get_env_dirs(xdg_dirs.xdg_config_dirs)
 
+
 class ConfigError(Exception):
     pass
+
 
 class Notification(object):
 
@@ -128,6 +142,7 @@ class Notification(object):
     def __set__(self, instance, value):
         setattr(instance, self.attrname, value)
         instance.emit(self.signame)
+
 
 class GlobalSettings(Signallable):
     """
@@ -363,6 +378,7 @@ class GlobalSettings(Signallable):
             raise ConfigError("Duplicate Section \"%s\"." % section)
         cls.options[section] = {}
 
+
 class StreamEncodeSettings(object):
     """
     Settings for encoding a L{MultimediaStream}.
@@ -417,6 +433,7 @@ class StreamEncodeSettings(object):
     def __str__(self):
         return "<StreamEncodeSettings %s>" % self.encoder
 
+
 class RenderSettings(object):
     """
     Settings for rendering and multiplexing one or multiple streams.
@@ -437,6 +454,7 @@ class RenderSettings(object):
     def __str__(self):
         return "<RenderSettings %s [%d streams]>" % (self.muxer, len(self.settings))
 
+
 class ExportSettings(Signallable, Loggable):
     """
     Multimedia export settings
@@ -450,8 +468,8 @@ class ExportSettings(Signallable, Loggable):
     @type render_scale: int
     """
     __signals__ = {
-        "settings-changed" : None,
-        "encoders-changed" : None,
+        "settings-changed": None,
+        "encoders-changed": None,
         }
 
     # Audio/Video settings for processing/export
@@ -507,7 +525,7 @@ class ExportSettings(Signallable, Loggable):
         msg = _("Export Settings\n")
         msg += _("Video: ") + str(self.videowidth) + " " + str(self.videoheight) +\
                " " + str(self.videorate) + " " + str(self.videopar)
-        msg += "\n\t" + str(self.vencoder) + " " +str(self.vcodecsettings)
+        msg += "\n\t" + str(self.vencoder) + " " + str(self.vcodecsettings)
         msg += _("\nAudio: ") + str(self.audiochannels) + " " + str(self.audiorate) +\
                " " + str(self.audiodepth)
         msg += "\n\t" + str(self.aencoder) + " " + str(self.acodecsettings)
@@ -637,6 +655,7 @@ class ExportSettings(Signallable, Loggable):
         """ Returns the list of video encoders compatible with the current
         muxer """
         return self.vencoders[self.muxer]
+
 
 def export_settings_to_render_settings(export,
         have_video=True, have_audio=True):

@@ -95,7 +95,7 @@ def getLevelInt(levelName):
     """
     assert isinstance(levelName, str) and levelName in getLevelNames(), \
         "Bad debug level name"
-    return  getLevelNames().index(levelName)+1
+    return  getLevelNames().index(levelName) + 1
 
 
 def getFormattedLevelName(level):
@@ -134,7 +134,7 @@ def registerCategory(category):
                 continue
             try:
                 level = int(value)
-            except ValueError: # e.g. *; we default to most
+            except ValueError:  # e.g. *; we default to most
                 level = 5
     # store it
     _categories[category] = level
@@ -429,9 +429,7 @@ def stderrHandler(level, object, category, file, line, message):
     # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
     safeprintf(sys.stderr, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
                getFormattedLevelName(level), os.getpid(), thread.get_ident(),
-               o[:32], category,
-               time.strftime("%b %d %H:%M:%S")
-               , "", message, where)
+               o[:32], category, time.strftime("%b %d %H:%M:%S"), "", message, where)
     sys.stderr.flush()
 
 
@@ -452,9 +450,9 @@ def _preformatLevels(noColorEnvVarName):
 
         t = termcolor.TerminalController()
         formatter = lambda level: ''.join((t.BOLD, getattr(t, COLORS[level]),
-                            format % (_LEVEL_NAMES[level-1], ), t.NORMAL))
+                            format % (_LEVEL_NAMES[level - 1], ), t.NORMAL))
     else:
-        formatter = lambda level: format % (_LEVEL_NAMES[level-1], )
+        formatter = lambda level: format % (_LEVEL_NAMES[level - 1], )
 
     for level in ERROR, WARN, INFO, DEBUG, LOG:
         _FORMATTED_LEVELS.append(formatter(level))
@@ -722,7 +720,6 @@ class Loggable(object):
        messages under.
     """
 
-
     def writeMarker(self, marker, level):
         """
         Sets a marker that written to the logs. Setting this
@@ -927,10 +924,10 @@ class TwistedLogObserver(Loggable):
     logCategory = "logobserver"
 
     def __init__(self):
-        self._ignoreErrors = [] # Failure types
+        self._ignoreErrors = []  # Failure types
 
     def emit(self, eventDict):
-        method = log # by default, lowest level
+        method = log  # by default, lowest level
         edm = eventDict['message']
         if not edm:
             if eventDict['isError'] and 'failure' in eventDict:
@@ -944,7 +941,7 @@ class TwistedLogObserver(Loggable):
 
                 self.log("Failure %r" % f)
 
-                method = debug # tracebacks from errors at debug level
+                method = debug  # tracebacks from errors at debug level
                 msg = "A twisted traceback occurred."
                 if getCategoryLevel("twisted") < WARN:
                     msg += "  Run with debug level >= 2 to see the traceback."

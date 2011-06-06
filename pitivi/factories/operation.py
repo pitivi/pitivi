@@ -25,12 +25,15 @@ from pitivi.stream import AudioStream, VideoStream
 
 from gettext import gettext as _
 
+
 # FIXME: define a proper hierarchy
 class OperationFactoryError(Exception):
     pass
 
+
 class ModifierFactoryError(OperationFactoryError):
     pass
+
 
 class TransformFactory(OperationFactory):
     """
@@ -54,6 +57,7 @@ class TransformFactory(OperationFactory):
 
     def _requestNewInputStream(self, *args):
         raise OperationFactoryError("TransformFactory doesn't allow request pads")
+
 
 class EffectFactory(TransformFactory):
     """
@@ -99,18 +103,19 @@ class EffectFactory(TransformFactory):
         for element in elements.next():
             del element
 
-
     def addInputStream(self, stream):
         return OperationFactory.addInputStream(self, stream)
 
     def addOutputStream(self, stream):
         return OperationFactory.addOutputStream(self, stream)
 
+
 class StreamModifierFactory(TransformFactory):
     """
     Factories that modify the nature/type of a stream.
     """
     pass
+
 
 class AudioModifierFactory(StreamModifierFactory):
 
@@ -143,6 +148,7 @@ class AudioModifierFactory(StreamModifierFactory):
         gsrc.set_active(True)
         b.add_pad(gsrc)
         return b
+
 
 class VideoModifierFactory(StreamModifierFactory):
 
@@ -186,6 +192,7 @@ class VideoModifierFactory(StreamModifierFactory):
         gsrc.set_active(True)
         b.add_pad(gsrc)
         return b
+
 
 def get_modifier_for_stream(input_stream=None, output_stream=None):
     """

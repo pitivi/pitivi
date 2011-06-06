@@ -28,6 +28,7 @@ import cairo
 import array
 from pitivi.utils import big_to_cairo_alpha_mask, big_to_cairo_red_mask, big_to_cairo_green_mask, big_to_cairo_blue_mask
 
+
 class CairoSurfaceThumbnailSink(gst.BaseSink):
     """
     GStreamer thumbnailing sink element.
@@ -36,9 +37,9 @@ class CairoSurfaceThumbnailSink(gst.BaseSink):
     """
 
     __gsignals__ = {
-        "thumbnail" : (gobject.SIGNAL_RUN_LAST,
-                       gobject.TYPE_NONE,
-                       (gobject.TYPE_PYOBJECT, gobject.TYPE_UINT64))
+        "thumbnail": (gobject.SIGNAL_RUN_LAST,
+                      gobject.TYPE_NONE,
+                      (gobject.TYPE_PYOBJECT, gobject.TYPE_UINT64))
         }
 
     __gsttemplates__ = (

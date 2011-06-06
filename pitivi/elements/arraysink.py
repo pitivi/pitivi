@@ -29,6 +29,7 @@ import gtk
 import array
 from pitivi.utils import native_endianness
 
+
 class ArraySink(gst.BaseSink):
 
     """

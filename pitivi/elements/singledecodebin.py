@@ -28,6 +28,7 @@ import gst
 from pitivi.stream import get_pad_id, pad_compatible_stream
 from pitivi.utils import CachedFactoryList
 
+
 def is_raw(caps):
     """ returns True if the caps are RAW """
     rep = caps.to_string()
@@ -37,8 +38,9 @@ def is_raw(caps):
             return True
     return False
 
+
 def factoryFilter(factory):
-    if factory.get_rank() < 64 :
+    if factory.get_rank() < 64:
         return False
 
     klass = factory.get_klass()
@@ -49,6 +51,7 @@ def factoryFilter(factory):
     return False
 
 _factoryCache = CachedFactoryList(factoryFilter)
+
 
 class SingleDecodeBin(gst.Bin):
     """
@@ -102,7 +105,7 @@ class SingleDecodeBin(gst.Bin):
 
         self._dynamics = []
 
-        self._validelements = [] #added elements
+        self._validelements = []  # added elements
 
         self.debug("stream:%r" % self.stream)
 
@@ -258,7 +261,7 @@ class SingleDecodeBin(gst.Bin):
             if not self._srcpad:
                 self._wrapUp(element, pad)
         elif is_raw(caps) and pad_compatible_stream(pad, self.stream):
-            self.log ("not the target stream, but compatible")
+            self.log("not the target stream, but compatible")
             if not self._srcpad:
                 self._wrapUp(element, pad)
         elif is_raw(caps):

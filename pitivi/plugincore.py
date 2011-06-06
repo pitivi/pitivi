@@ -25,6 +25,7 @@ from zope.interface import Interface, Attribute
 PiTiVi plugin system
 """
 
+
 # Interfaces
 class IPlugin(Interface):
     """ Every plugin must implement this interface """
@@ -41,11 +42,13 @@ class IPlugin(Interface):
     def __call__(self):
         """ Initialize the plugin passing a reference to the plugin manager """
 
+
 class IConfigurable(Interface):
     """Allow user customization of plugin settings """
 
     def configure(self):
         """ Display preferences dialog """
+
 
 class IUpdateSettings(Interface):
     """ Allow importing settings from different versions of the plugin """
@@ -53,24 +56,30 @@ class IUpdateSettings(Interface):
     def update_settings(self):
         """ import settings from a different version """
 
+
 # Exceptions
 class PluginError(Exception):
     pass
+
 
 class InvalidPluginError(PluginError):
     def __init__(self, filename):
         self.filename = filename
 
+
 class InvalidPluginClassError(InvalidPluginError):
     pass
 
+
 class IPluginNotImplementedError(InvalidPluginError):
     pass
+
 
 class DuplicatePluginError(PluginError):
     def __init__(self, old_plugin, new_plugin):
         self.old_plugin = old_plugin
         self.new_plugin = new_plugin
+
 
 class RemovePluginError(PluginError):
     def __init__(self, filename):

@@ -21,6 +21,7 @@
 
 from pitivi.undo import UndoableAction
 
+
 class SourceListSourceAddedAction(UndoableAction):
     def __init__(self, sourcelist, source):
         self.sourcelist = sourcelist
@@ -33,6 +34,7 @@ class SourceListSourceAddedAction(UndoableAction):
     def do(self):
         self.sourcelist.addFactory(self.source)
         self._done()
+
 
 class SourceListSourceRemovedAction(UndoableAction):
     def __init__(self, sourcelist, uri, source):
@@ -47,6 +49,7 @@ class SourceListSourceRemovedAction(UndoableAction):
     def do(self):
         self.sourcelist.removeUri(self.source.uri)
         self._done()
+
 
 class SourceListLogObserver(object):
     def __init__(self, log):

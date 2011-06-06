@@ -35,6 +35,7 @@ import gst
 from gst import interfaces
 from pitivi.factories.base import SinkFactory
 
+
 class DefaultVideoSink(SinkFactory):
 
     def __init__(self, *args, **kwargs):
@@ -111,6 +112,7 @@ class DefaultVideoSink(SinkFactory):
             self._realsink.props.sync = self.sync
             self._realsink.props.qos = self.sync
 
+
 class DefaultAudioSink(SinkFactory):
 
     def __init__(self, *args, **kwargs):
@@ -132,7 +134,7 @@ class DefaultAudioSink(SinkFactory):
         self._realsink.props.sync = self.sync
 
         audiosink = gst.Bin("pitivi-audiosink")
-        aconv = gst.element_factory_make("audioconvert","audiobin-convert")
+        aconv = gst.element_factory_make("audioconvert", "audiobin-convert")
         ares = gst.element_factory_make("audioresample", "audiobin-resample")
 
         audiosink.add(aconv, ares, autoaudiosink)
@@ -161,6 +163,7 @@ class DefaultAudioSink(SinkFactory):
         self.debug("_realsink:%r", self._realsink)
         if self._realsink:
             self._realsink.props.sync = self.sync
+
 
 def find_recursive_element(bin, typ):
     if not isinstance(bin, gst.Bin):

@@ -57,6 +57,7 @@ BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
 #We should unblacklist it when #650985 is solved
 BLACKLISTED_PLUGINS = ["ldaspa"]
 
+
 class EffectsHandler(object):
     """
     Handles all the effects

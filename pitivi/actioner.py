@@ -38,12 +38,13 @@ from pitivi.signalinterface import Signallable
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import beautify_ETA
 
+
 class Actioner(Loggable, Signallable):
     """ Previewer/Renderer helper methods """
 
     __signals__ = {
-        "eos" : None,
-        "error" : None
+        "eos": None,
+        "error": None
         }
 
     def __init__(self, project, pipeline=None, settings=None):
@@ -164,6 +165,7 @@ class Actioner(Loggable, Signallable):
         """
         raise NotImplementedError()
 
+
 class Renderer(Actioner):
     """ Rendering helper methods """
 
@@ -248,6 +250,7 @@ class Renderer(Actioner):
         for action in self.pipeline.actions:
             if isinstance(action, ViewAction) and action.isActive():
                 action.setSync(False)
+
 
 class Previewer(Actioner):
     """ Previewing helper methods """

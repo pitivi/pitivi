@@ -59,7 +59,7 @@ class SmartAdderBin(gst.Bin):
         srcpad.set_active(True)
         self.add_pad(srcpad)
         self.pad_count = 0
-        self.inputs = {} # key:pad_name, value:(sinkpad, aconv, aresample, adderpad)
+        self.inputs = {}  # key:pad_name, value:(sinkpad, aconv, aresample, adderpad)
 
     def do_request_new_pad(self, template, name=None):
         self.debug("template:%r, name:%r" % (template, name))
@@ -108,6 +108,7 @@ class SmartAdderBin(gst.Bin):
 gobject.type_register(SmartAdderBin)
 gst.element_register(SmartAdderBin, 'smart-adder-bin')
 
+
 class SmartVideomixerBin(gst.Bin):
 
     __gstdetails__ = (
@@ -138,12 +139,12 @@ class SmartVideomixerBin(gst.Bin):
         srcpad.set_active(True)
         self.add_pad(srcpad)
         self.pad_count = 0
-        self.inputs = {} # key : pad_name,
-                         # value : (sinkpad, ffmpegcolorspace, capsfilter, videomixerpad)
+        self.inputs = {}  # key : pad_name,
+                          # value : (sinkpad, ffmpegcolorspace, capsfilter, videomixerpad)
 
         self.alpha_helper = SmartVideomixerBinPropertyHelper(self, track, self.inputs)
 
-    def _pad_blockedCb (self, pad, blocked, unused=None):
+    def _pad_blockedCb(self, pad, blocked, unused=None):
         pass
 
     def change_mixer(self, has_alpha):
@@ -195,7 +196,7 @@ class SmartVideomixerBin(gst.Bin):
         self.debug("pad:%r, priority:%d" % (pad, priority))
         if priority > 10000:
             priority = 10000
-        a,b,c,sinkpad = self.inputs.get(pad.get_name(), (None, None, None, None))
+        a, b, c, sinkpad = self.inputs.get(pad.get_name(), (None, None, None, None))
         if sinkpad:
             sinkpad.props.zorder = 10000 - priority
         self.debug("done")
@@ -246,6 +247,7 @@ class SmartVideomixerBin(gst.Bin):
             self.remove(capsfilter)
         self.debug("done")
 
+
 class SmartVideomixerBinPropertyHelper(Signallable):
     """A set of callbacks used for considering the alpha state of all track
        objects in the composition."""
@@ -263,7 +265,6 @@ class SmartVideomixerBinPropertyHelper(Signallable):
         track.connect("transition-removed", self._transitionRemovedCb)
         # configure initial alpha state
         self.alphaStateChanged(False)
-
 
     def _trackAddedCb(self, track, track_object):
         # this import is here because of a circular dependence

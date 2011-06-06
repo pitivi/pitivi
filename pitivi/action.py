@@ -35,9 +35,11 @@ from pitivi.log.loggable import Loggable
 
 # TODO : Create a convenience class for Links
 
+
 # FIXME : define/document a proper hierarchy
 class ActionError(Exception):
     pass
+
 
 class Action(Signallable, Loggable):
     """
@@ -68,13 +70,13 @@ class Action(Signallable, Loggable):
     @cvar queue_size: Default queueing size (in seconds) to use for links.
     """
 
-    compatible_producers = [ SourceFactory ]
-    compatible_consumers = [ SinkFactory ]
+    compatible_producers = [SourceFactory]
+    compatible_consumers = [SinkFactory]
 
     queue_size = 1
 
     __signals__ = {
-        "state-changed" : ["state"]
+        "state-changed": ["state"]
         }
 
     def __init__(self):
@@ -83,11 +85,11 @@ class Action(Signallable, Loggable):
         self.producers = []
         self.consumers = []
         self.pipeline = None
-        self._links = [] # list of (producer, consumer, prodstream, consstream)
-        self._pending_links = [] # list of links that still need to be connected
+        self._links = []  # list of (producer, consumer, prodstream, consstream)
+        self._pending_links = []  # list of links that still need to be connected
         self._pending_links_elements = []
-        self._dyn_links = [] # list of links added at RunTime, will be removed when deactivated
-        self._dynconsumers = [] # consumers that we added at RunTime
+        self._dyn_links = []  # list of links added at RunTime, will be removed when deactivated
+        self._dynconsumers = []  # consumers that we added at RunTime
 
     #{ Activation methods
 
@@ -403,7 +405,6 @@ class Action(Signallable, Loggable):
         self.debug("Returning %d links", len(links))
         return links
 
-
     def autoLink(self):
         """
         Based on the available consumers and producers, returns a list of
@@ -458,7 +459,7 @@ class Action(Signallable, Loggable):
         @return: C{True} if the Stream is/was handled by the Action, else C{False}
         @rtype: C{bool}
         """
-        self.debug("producer:%r, stream:%s" , producer, stream.caps)
+        self.debug("producer:%r, stream:%s", producer, stream.caps)
 
         waspending = False
 
@@ -479,7 +480,6 @@ class Action(Signallable, Loggable):
                             prodstream, consstream))
                     self._pd = getattr(self, '_pd', [])
                     self._pd.append((producer, stream))
-
 
         if not waspending:
             self.debug("Checking to see if we haven't already handled it")
@@ -592,7 +592,7 @@ class Action(Signallable, Loggable):
 
         # activate the given Link, returns True if it was (already) activated
         # if init is True, then remember the pending link
-        self.debug("producer:%r, consumer:%r, prodstream:%r, consstream:%r" , \
+        self.debug("producer:%r, consumer:%r, prodstream:%r, consstream:%r", \
                 producer, consumer, prodstream, consstream)
 
         self.info("Ensuring a bin exists for our producer")
@@ -688,6 +688,7 @@ class Action(Signallable, Loggable):
                 # FIXME: use a strictier exception hierarchy
                 pass
 
+
 class ViewAction(Action):
     """
     An action used to view sources.
@@ -736,6 +737,7 @@ class ViewAction(Action):
             self.videosink.setSync(sync)
         if self.audiosink:
             self.audiosink.setSync(sync)
+
 
 class RenderAction(Action):
     """

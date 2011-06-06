@@ -26,12 +26,13 @@ Simple video fade element
 import gobject
 import gst
 
+
 class VideoFade(gst.Bin):
     """
     Simple video fade element
     """
 
-    def __init__(self, position=0, duration=2*gst.SECOND, fadefromblack=True):
+    def __init__(self, position=0, duration=2 * gst.SECOND, fadefromblack=True):
         gst.Bin.__init__(self)
         self.incsp = gst.element_factory_make("ffmpegcolorspace", "incsp")
         self.outcsp = gst.element_factory_make("ffmpegcolorspace", "outcsp")

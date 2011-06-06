@@ -24,7 +24,8 @@
 
 import sys
 import gobject
-import gst, bisect
+import gst
+import bisect
 import os
 import struct
 from pitivi.signalinterface import Signallable
@@ -37,8 +38,10 @@ except ImportError:
 
 UNKNOWN_DURATION = 2 ** 63 - 1
 
+
 def between(a, b, c):
     return (a <= b) and (b <= c)
+
 
 def time_to_string(value):
     """
@@ -56,6 +59,7 @@ def time_to_string(value):
     hours = mins / 60
     mins = mins % 60
     return "%01d:%02d:%02d.%03d" % (hours, mins, sec, ms)
+
 
 def beautify_length(length):
     """
@@ -79,6 +83,7 @@ def beautify_length(length):
 
     return ", ".join(parts)
 
+
 def beautify_ETA(length):
     """
     Converts the given time in nanoseconds to a fuzzy estimate,
@@ -101,6 +106,7 @@ def beautify_ETA(length):
         parts.append(ngettext("%d second", "%d seconds", sec) % sec)
 
     return ", ".join(parts)
+
 
 def bin_contains(bin, element):
     """ Returns True if the bin contains the given element, the search is recursive """
@@ -126,21 +132,22 @@ def bin_contains(bin, element):
 # matches the list, this function returns the index of the lement closest to
 # value in the array.
 
+
 def binary_search(col, value):
     low = 0
     high = len(col)
     while (low < high):
-        mid = (low + high)/2
+        mid = (low + high) / 2
         if (col[mid] < value):
             low = mid + 1
         else:
             #can't be high = mid-1: here col[mid] >= value,
             #so high can't be < mid if col[mid] == value
-            high = mid;
+            high = mid
     return low
 
-# Returns the element of seq nearest to item, and the difference between them
 
+# Returns the element of seq nearest to item, and the difference between them
 def closest_item(seq, item, lo=0):
     index = bisect.bisect(seq, item, lo)
     if index >= len(seq):
@@ -162,6 +169,7 @@ def closest_item(seq, item, lo=0):
 
     return res, diff, index
 
+
 def argmax(func, seq):
     """return the element of seq that gives max(map(func, seq))"""
     def compare(a1, b1):
@@ -172,6 +180,7 @@ def argmax(func, seq):
     objs = ((func(val), val) for val in seq)
     return reduce(compare, objs)[1]
 
+
 def same(seq):
     i = iter(seq)
     first = i.next()
@@ -179,6 +188,7 @@ def same(seq):
         if first != item:
             return None
     return first
+
 
 def data_probe(pad, data, section=""):
     """Callback to use for gst.Pad.add_*_probe.
@@ -188,24 +198,25 @@ def data_probe(pad, data, section=""):
     if section == "":
         section = "%s:%s" % (pad.get_parent().get_name(), pad.get_name())
     if isinstance(data, gst.Buffer):
-        log.debug("probe","%s BUFFER timestamp:%s , duration:%s , size:%d , offset:%d , offset_end:%d",
+        log.debug("probe", "%s BUFFER timestamp:%s , duration:%s , size:%d , offset:%d , offset_end:%d",
                   section, gst.TIME_ARGS(data.timestamp), gst.TIME_ARGS(data.duration),
                   data.size, data.offset, data.offset_end)
         if data.flags & gst.BUFFER_FLAG_DELTA_UNIT:
-            log.debug("probe","%s DELTA_UNIT", section)
+            log.debug("probe", "%s DELTA_UNIT", section)
         if data.flags & gst.BUFFER_FLAG_DISCONT:
-            log.debug("probe","%s DISCONT", section)
+            log.debug("probe", "%s DISCONT", section)
         if data.flags & gst.BUFFER_FLAG_GAP:
-            log.debug("probe","%s GAP", section)
-        log.debug("probe","%s flags:%r", section, data.flags)
+            log.debug("probe", "%s GAP", section)
+        log.debug("probe", "%s flags:%r", section, data.flags)
     else:
-        log.debug("probe","%s EVENT %s", section, data.type)
+        log.debug("probe", "%s EVENT %s", section, data.type)
         if data.type == gst.EVENT_NEWSEGMENT:
             upd, rat, fmt, start, stop, pos = data.parse_new_segment()
-            log.debug("probe","%s Update:%r rate:%f fmt:%s, start:%s, stop:%s, pos:%s",
+            log.debug("probe", "%s Update:%r rate:%f fmt:%s, start:%s, stop:%s, pos:%s",
                       section, upd, rat, fmt, gst.TIME_ARGS(start),
                       gst.TIME_ARGS(stop), gst.TIME_ARGS(pos))
     return True
+
 
 def linkDynamic(element, target):
 
@@ -215,8 +226,10 @@ def linkDynamic(element, target):
             pad.link_full(compatpad, gst.PAD_LINK_CHECK_NOTHING)
     element.connect("pad-added", pad_added, target)
 
+
 def element_make_many(*args):
     return tuple((gst.element_factory_make(arg) for arg in args))
+
 
 def pipeline(graph):
     E = graph.iteritems()
@@ -230,6 +243,7 @@ def pipeline(graph):
             except gst.LinkError:
                 linkDynamic(u, v)
     return p
+
 
 def filter_(caps):
     f = gst.element_factory_make("capsfilter")
@@ -253,6 +267,7 @@ def uri_is_valid(uri):
         return len(os.path.basename(gst.uri_get_location(uri))) > 0
     return res
 
+
 def uri_is_reachable(uri):
     """ Check whether the given uri is reachable and we can read/write
     to it.
@@ -268,6 +283,7 @@ def uri_is_reachable(uri):
             # on a local filesystem
             _("%s doesn't yet handle non local projects") % APPNAME)
     return os.path.isfile(gst.uri_get_location(uri))
+
 
 class PropertyChangeTracker(Signallable):
 
@@ -303,6 +319,7 @@ class PropertyChangeTracker(Signallable):
         self.properties[property_name] = value
 
         self.emit(property_name + '-changed', object, old_value, value)
+
 
 class Seeker(Signallable):
     __signals__ = {'seek': ['position', 'format']}
@@ -343,8 +360,10 @@ class Seeker(Signallable):
                 return False
         return False
 
+
 def get_filesystem_encoding():
     return sys.getfilesystemencoding() or "utf-8"
+
 
 def get_controllable_properties(element):
     """
@@ -367,32 +386,42 @@ def get_controllable_properties(element):
                 res.append((element, prop))
     return res
 
+
 def start_insort_left(a, x, lo=0, hi=None):
     if hi is None:
         hi = len(a)
     while lo < hi:
-        mid = (lo+hi)//2
-        if a[mid].start < x.start: lo = mid+1
-        else: hi = mid
+        mid = (lo + hi) // 2
+        if a[mid].start < x.start:
+            lo = mid + 1
+        else:
+            hi = mid
     a.insert(lo, x)
+
 
 def start_insort_right(a, x, lo=0, hi=None):
     if hi is None:
         hi = len(a)
     while lo < hi:
-        mid = (lo+hi)//2
-        if x.start < a[mid].start: hi = mid
-        else: lo = mid+1
+        mid = (lo + hi) // 2
+        if x.start < a[mid].start:
+            hi = mid
+        else:
+            lo = mid + 1
     a.insert(lo, x)
+
 
 def start_bisect_left(a, x, lo=0, hi=None):
     if hi is None:
         hi = len(a)
     while lo < hi:
-        mid = (lo+hi)//2
-        if a[mid].start < x.start: lo = mid+1
-        else: hi = mid
+        mid = (lo + hi) // 2
+        if a[mid].start < x.start:
+            lo = mid + 1
+        else:
+            hi = mid
     return lo
+
 
 class Infinity(object):
     def __cmp__(self, other):
@@ -402,6 +431,7 @@ class Infinity(object):
         return 1
 
 infinity = Infinity()
+
 
 def findObject(obj, objects):
     low = 0
@@ -417,6 +447,7 @@ def findObject(obj, objects):
             low = low + 1
 
     return low
+
 
 def getPreviousObject(obj, objects, priority=-1, skip=None):
     if priority == -1:
@@ -439,7 +470,6 @@ def getPreviousObject(obj, objects, priority=-1, skip=None):
         if priority is None or prev_obj.priority == priority:
             return prev_obj
 
-
     # check if there are objects with start < obj.start
     prev_obj_index = obj_index - 1
     while prev_obj_index >= 0:
@@ -451,6 +481,7 @@ def getPreviousObject(obj, objects, priority=-1, skip=None):
         prev_obj_index -= 1
 
     return None
+
 
 def getNextObject(obj, objects, priority=-1, skip=None):
     if priority == -1:
@@ -501,6 +532,7 @@ class CachedFactoryList(object):
         log.warning("utils", "New feature added, invalidating cached factories")
         self._factories = None
 
+
 def profile(func, profiler_filename="result.prof"):
     import os.path
     counter = 1
@@ -509,13 +541,14 @@ def profile(func, profiler_filename="result.prof"):
         output_filename = profiler_filename + str(counter)
         counter += 1
 
-    def _wrapper(*args,**kwargs):
+    def _wrapper(*args, **kwargs):
         local_func = func
         cProfile.runctx("result = local_func(*args, **kwargs)", globals(), locals(),
                         filename=output_filename)
         return locals()["result"]
 
     return _wrapper
+
 
 def formatPercent(value):
     return "%3d%%" % (value * 100)

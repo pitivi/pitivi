@@ -30,9 +30,11 @@ import gst.interfaces
 import gst.audio
 import gst.video
 
+
 def fraction_float(frac):
     """ override for gst.Fraction.__float__ """
     return float(frac.num) / float(frac.denom)
+
 
 def fraction_eq(frac, other):
     """ override for gst.Fraction.__eq__ """
@@ -40,9 +42,11 @@ def fraction_eq(frac, other):
         return frac.num * other.denom == frac.denom * other.num
     return False
 
+
 def fraction_ne(frac, other):
     """ override for gst.Fraction.__ne__ """
     return not fraction_eq(frac, other)
+
 
 def fraction_mul(frac, other):
     """ override for gst.Fraction.__mul__ """
@@ -55,6 +59,7 @@ def fraction_mul(frac, other):
         return float(frac.num) * other / float(frac.denom)
     raise TypeError
 
+
 def fraction_div(frac, other):
     """ override for gst.Fraction.__div__ """
     if isinstance(other, int):
@@ -62,6 +67,7 @@ def fraction_div(frac, other):
     if isinstance(other, float):
         return float(frac.num) / (other * float(frac.denom))
     return TypeError
+
 
 def patch_gst_python():
     """ override gst.Fraction methods not available in all gst-python """

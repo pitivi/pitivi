@@ -32,23 +32,30 @@ from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.factories.base import SourceFactory
 
+
 class FormatterError(Exception):
     pass
+
 
 class FormatterURIError(FormatterError):
     """An error occured with a URI"""
 
+
 class FormatterLoadError(FormatterError):
     """An error occured while loading the Project"""
+
 
 class FormatterParseError(FormatterLoadError):
     """An error occured while parsing the project file"""
 
+
 class FormatterSaveError(FormatterError):
     """An error occured while saving the Project"""
 
+
 class FormatterOverwriteError(FormatterSaveError):
     """A project can't be saved because it will be overwritten"""
+
 
 class Formatter(Signallable, Loggable):
     """
@@ -70,7 +77,7 @@ class Formatter(Signallable, Loggable):
         "new-project-failed": ["uri", "exception"],
         "save-project-failed": ["project", "uri", "exception"],
         "project-saved": ["project", "uri"],
-        "missing-uri" : ["uri", "factory"]
+        "missing-uri": ["uri", "factory"]
         }
 
     description = "Description of the format"

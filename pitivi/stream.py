@@ -33,6 +33,7 @@ STREAM_MATCH_COMPATIBLE_CAPS = 20
 STREAM_MATCH_SAME_TYPE = 10
 STREAM_MATCH_NONE = 0
 
+
 class MultimediaStream(Loggable):
     """
     Defines a media stream
@@ -97,6 +98,7 @@ class MultimediaStream(Loggable):
 
     def __str__(self):
         return "<%s(%s) '%s'>" % (self.__class__.__name__, self.pad_name, self.caps)
+
 
 class VideoStream(MultimediaStream):
     """
@@ -175,6 +177,7 @@ class VideoStream(MultimediaStream):
                     self.format == gst.Fourcc('AYUV'))
         return False
 
+
 class AudioStream(MultimediaStream):
     """
     Audio stream
@@ -215,6 +218,7 @@ class AudioStream(MultimediaStream):
         if self.width and not self.depth:
             self.depth = self.width
 
+
 class TextStream(MultimediaStream):
     """
     Text media stream
@@ -222,6 +226,7 @@ class TextStream(MultimediaStream):
 
     def _analyzeCaps(self):
         self.texttype = self.caps[0].get_name()
+
 
 def find_decoder(pad):
     decoder = None
@@ -247,6 +252,7 @@ def find_decoder(pad):
         pad = element.get_pad('sink')
 
     return decoder
+
 
 def find_upstream_demuxer_and_pad(pad):
     while pad:
@@ -292,14 +298,16 @@ def find_upstream_demuxer_and_pad(pad):
 
     return None, None
 
+
 def get_type_from_decoder(decoder):
-    log.debug("stream","%r" % decoder)
+    log.debug("stream", "%r" % decoder)
     klass = decoder.get_factory().get_klass()
     parts = klass.split('/', 2)
     if len(parts) != 3:
         return None
 
     return parts[2].lower()
+
 
 def get_pad_type(pad):
     decoder = find_decoder(pad)
@@ -311,6 +319,7 @@ def get_pad_type(pad):
         caps = pad.get_caps()
 
     return caps[0].get_name().split('/', 1)[0]
+
 
 def get_pad_id(pad):
     lst = []
@@ -327,12 +336,13 @@ def get_pad_id(pad):
 
     return lst
 
+
 def get_stream_for_caps(caps, pad=None):
     """
     Returns the appropriate MediaStream corresponding to the
     given caps.
     """
-    log.debug("stream","caps:%s, pad:%r" % (caps.to_string(), pad))
+    log.debug("stream", "caps:%s, pad:%r" % (caps.to_string(), pad))
     # FIXME : we should have an 'unknown' data stream class
     ret = None
 
@@ -343,7 +353,7 @@ def get_stream_for_caps(caps, pad=None):
         pad_name = None
         stream_type = caps[0].get_name().split('/', 1)[0]
 
-    log.debug("stream","stream_type:%s" % stream_type)
+    log.debug("stream", "stream_type:%s" % stream_type)
     if stream_type in ('video', 'image'):
         ret = VideoStream(caps, pad_name, stream_type == 'image')
     elif stream_type == 'audio':
@@ -351,6 +361,7 @@ def get_stream_for_caps(caps, pad=None):
     elif stream_type in ('text', 'subpicture'):
         ret = TextStream(caps, pad_name)
     return ret
+
 
 def get_stream_for_pad(pad, store_pad=False):
     log.debug("stream", "pad:%r")
@@ -365,6 +376,7 @@ def get_stream_for_pad(pad, store_pad=False):
 
     return stream
 
+
 def pad_compatible_stream(pad, stream):
     """
     Checks whether the given pad is compatible with the given stream.
@@ -376,7 +388,7 @@ def pad_compatible_stream(pad, stream):
     @return: Whether the pad is compatible with the given stream
     @rtype: C{bool}
     """
-    log.debug("stream","pad:%r, stream:%r" % (pad, stream))
+    log.debug("stream", "pad:%r, stream:%r" % (pad, stream))
     if stream == None:
         # yes, None is the magical stream that takes everything
         return True
@@ -384,6 +396,7 @@ def pad_compatible_stream(pad, stream):
     if stream.caps:
         return not stream.caps.intersect(pad.get_caps()).is_empty()
     raise Exception("Can't figure out compatibility since the stream doesn't have any caps")
+
 
 def get_pads_for_stream(element, stream):
     """
@@ -397,7 +410,7 @@ def get_pads_for_stream(element, stream):
     @return: The compatible pads
     @rtype: List of C{gst.Pad}
     """
-    log.debug("stream","element:%r, stream:%r" % (element, stream))
+    log.debug("stream", "element:%r, stream:%r" % (element, stream))
     while True:
         try:
             ls = [x for x in element.pads() if pad_compatible_stream(x, stream)]
@@ -410,6 +423,7 @@ def get_pads_for_stream(element, stream):
     if stream and len(ls) > 1 and stream.pad_name:
         return [x for x in ls if x.get_name() == stream.pad_name]
     return ls
+
 
 def get_src_pads_for_stream(element, stream):
     """
@@ -425,6 +439,7 @@ def get_src_pads_for_stream(element, stream):
     """
     return [x for x in get_pads_for_stream(element, stream) if x.get_direction() == gst.PAD_SRC]
 
+
 def get_sink_pads_for_stream(element, stream):
     """
     Fetches the sink pads of the given element which are compatible with the
@@ -438,6 +453,7 @@ def get_sink_pads_for_stream(element, stream):
     @rtype: List of C{gst.Pad}
     """
     return [x for x in get_pads_for_stream(element, stream) if x.get_direction() == gst.PAD_SINK]
+
 
 def stream_compare(stream_a, stream_b):
     """
@@ -462,6 +478,7 @@ def stream_compare(stream_a, stream_b):
 
     return current_rank
 
+
 def match_stream(stream, stream_list):
     """
     Get the stream contained in stream_list that best matches the given stream.
@@ -476,6 +493,7 @@ def match_stream(stream, stream_list):
             best_stream = current_stream
 
     return best_stream, best_rank
+
 
 class StreamGroupWalker(object):
     """
@@ -528,6 +546,7 @@ class StreamGroupWalker(object):
 
         return matches
 
+
 def match_stream_groups(group_a, group_b):
     """
     Match two groups of streams.
@@ -558,6 +577,7 @@ def match_stream_groups(group_a, group_b):
             best_map = current_map
 
     return best_map
+
 
 def match_stream_groups_map(group_a, group_b):
     stream_map = match_stream_groups(group_a, group_b)

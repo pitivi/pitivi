@@ -31,13 +31,14 @@ from pitivi.log.loggable import Loggable
 #   John Stowers <john.stowers@gmail.com>
 #
 
+
 class Thread(threading.Thread, Signallable, Loggable):
     """
     Event-powered thread
     """
 
     __signals__ = {
-        "done" : None
+        "done": None
         }
 
     def __init__(self):
@@ -62,8 +63,8 @@ class Thread(threading.Thread, Signallable, Loggable):
         """ Abort the thread. Subclass have to implement this method ! """
         pass
 
-class CallbackThread(Thread):
 
+class CallbackThread(Thread):
     def __init__(self, callback, *args, **kwargs):
         self.callback = callback
         self.args = args
@@ -72,6 +73,7 @@ class CallbackThread(Thread):
 
     def process(self):
         self.callback(*self.args, **self.kwargs)
+
 
 class ThreadMaster(Loggable):
     """

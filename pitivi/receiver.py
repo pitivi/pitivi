@@ -1,9 +1,11 @@
 from types import MethodType
 
+
 class _receiver_data(object):
 
     sender = None
     sigids = None
+
 
 class receiver(object):
 
@@ -26,7 +28,7 @@ class receiver(object):
     def __set__(self, instance, value):
         if not hasattr(instance, "_receiver_data"):
             instance._receiver_data = {}
-        if not instance._receiver_data.has_key(self):
+        if not self in instance._receiver_data:
             instance._receiver_data[self] = _receiver_data()
             instance._receiver_data[self].sigids = {}
         rd = instance._receiver_data[self]
@@ -50,6 +52,7 @@ class receiver(object):
 
     def add_handler(self, signal, hdlr):
         self.handlers[signal] = hdlr
+
 
 def handler(prop, signal):
 

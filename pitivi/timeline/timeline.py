@@ -43,9 +43,11 @@ SELECT_ADD = 2
 SELECT_BETWEEN = 3
 """Select a range of clips"""
 
+
 class TimelineError(Exception):
     """Base Exception for errors happening in L{Timeline}s or L{TimelineObject}s"""
     pass
+
 
 class TimelineObject(Signallable, Loggable):
     """
@@ -88,7 +90,7 @@ class TimelineObject(Signallable, Loggable):
         'out-point-changed': ['in-point'],
         'media-duration-changed': ['media-duration'],
         'priority-changed': ['priority'],
-        'selected-changed' : ['state'],
+        'selected-changed': ['state'],
         'track-object-added': ["track_object"],
         'track-object-removed': ["track_object"],
     }
@@ -444,6 +446,7 @@ class TimelineObject(Signallable, Loggable):
 
         self.emit("track-object-removed", obj)
 
+
 class Selection(Signallable):
     """
     A collection of L{TimelineObject}.
@@ -456,7 +459,7 @@ class Selection(Signallable):
     """
 
     __signals__ = {
-        "selection-changed" : []
+        "selection-changed": []
     }
 
     def __init__(self):
@@ -558,7 +561,6 @@ class LinkEntry(object):
         self.duration = duration
 
 
-
 class LinkPropertyChangeTracker(PropertyChangeTracker):
     """
     Tracker for private usage by L{Link}
@@ -571,6 +573,7 @@ class LinkPropertyChangeTracker(PropertyChangeTracker):
     }
 
     property_names = ('start', 'duration')
+
 
 class Link(object):
 
@@ -659,6 +662,7 @@ class Link(object):
 
         else:
             self.waiting_update.remove(timeline_object)
+
 
 # FIXME: This seems overly complicated and (therefore) a potential speed bottleneck.
 # It would be much simpler to just track objects, and specify for each object
@@ -918,6 +922,7 @@ class TimelineEdges(object):
         if end in self.by_start:
             return self.by_start[end]
         return []
+
 
 class EditingContext(object):
 
@@ -1218,7 +1223,7 @@ class MoveContext(EditingContext):
         if len(self.timeline_objects) == 1:
             if not self._overlapsAreTransitions(focus_timeline_object,
                 priority):
-                self._defaultTo (initial_position, initial_priority)
+                self._defaultTo(initial_position, initial_priority)
             EditingContext.finish(self)
             return
 
@@ -1237,7 +1242,6 @@ class MoveContext(EditingContext):
                     priority -= 1
                 else:
                     priority += 1
-
 
                 self._defaultTo(final_position, priority)
             else:
@@ -1269,7 +1273,7 @@ class MoveContext(EditingContext):
         position = max(self.min_position, position)
 
         self.focus.priority = priority
-        self.focus.setStart(position, snap = self._snap)
+        self.focus.setStart(position, snap=self._snap)
 
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
             obj.setStart(position + s_offset)
@@ -1312,6 +1316,7 @@ class MoveContext(EditingContext):
             obj.priority = priority + p_offset
 
         return position, priority
+
 
 class TrimStartContext(EditingContext):
 
@@ -1390,8 +1395,8 @@ class TrimStartContext(EditingContext):
             self._defaultTo(position, self.focus.priority)
         EditingContext.finish(self)
 
-class TrimEndContext(EditingContext):
 
+class TrimEndContext(EditingContext):
     def __init__(self, timeline, focus, other):
         EditingContext.__init__(self, timeline, focus, other)
         self.adjacent = timeline.edges.getObjsAdjacentToEnd(focus)
@@ -1465,6 +1470,7 @@ class TrimEndContext(EditingContext):
             left_gap, right_gap = Gap.findAroundObject(self.focus_timeline_object)
             duration = absolute_initial_duration + right_gap.duration
             self._defaultTo(duration, self.focus.priority)
+
 
 class Timeline(Signallable, Loggable):
     """
@@ -1561,7 +1567,7 @@ class Timeline(Signallable, Loggable):
             self.duration = duration
             self.emit('duration-changed', duration)
 
-    def updateVideoCaps(self, caps= None):
+    def updateVideoCaps(self, caps=None):
         if caps:
             self._video_caps = caps
 
@@ -1752,7 +1758,7 @@ class Timeline(Signallable, Loggable):
             listTimelineObjectTrackObject.append((obj, copy_track_obj))
 
         self.debug("%s", ["TimelineObject %s => Track object: %s |"\
-                           %(listTo[0], listTo[1])\
+                           % (listTo[0], listTo[1])\
                            for listTo in listTimelineObjectTrackObject])
         return listTimelineObjectTrackObject
 
@@ -2061,7 +2067,7 @@ class Timeline(Signallable, Loggable):
                 break
 
         keyframe_positions = self._getKeyframePositions(tl_objs)
-        for n in range(len(keyframe_positions) -1, -1, -1):
+        for n in range(len(keyframe_positions) - 1, -1, -1):
             if keyframe_positions[n] < time:
                 return keyframe_positions[n]
         return None

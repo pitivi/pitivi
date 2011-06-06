@@ -25,6 +25,7 @@ from pitivi.factories.base import SourceFactory
 from pitivi.factories.operation import EffectFactory
 from pitivi.stream import VideoStream, AudioStream
 
+
 class VideoTestSourceFactory(SourceFactory):
     def __init__(self, pattern=0):
         SourceFactory.__init__(self, "videotestsrc://")
@@ -68,6 +69,7 @@ class VideoTestSourceFactory(SourceFactory):
 
     def _releaseBin(self, bin):
         pass
+
 
 class AudioTestSourceFactory(SourceFactory):
     def __init__(self, wave=0):

@@ -25,6 +25,7 @@ Dictionary-Like object for caching of thumbnails.
 
 import collections
 
+
 class ThumbnailCache(object):
 
     """Caches thumbnails by key using LRU policy, implemented with heapq"""

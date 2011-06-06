@@ -26,6 +26,7 @@ from pitivi.stream import AudioStream, VideoStream
 from pitivi.formatters.base import LoadOnlyFormatter
 from pitivi.timeline.track import Track
 
+
 class PlaylistFormatter(LoadOnlyFormatter):
     """A simple playlist formatter"""
 
@@ -70,7 +71,7 @@ class PlaylistFormatter(LoadOnlyFormatter):
         config.read((filename, ))
         res = []
         for i in range(config.getint('playlist', 'NumberOfEntries')):
-            ln = config.get('playlist', 'File%d' % (i+1))
+            ln = config.get('playlist', 'File%d' % (i + 1))
             val = self.validateSourceURI(self._parseLine(ln))
             # FIXME : if the loading failed, we should insert a blank source
             res.append(val)

@@ -6,6 +6,7 @@
 
 import sys
 
+
 def namedModule(name):
     """Return a module given its name."""
     topLevel = __import__(name)
@@ -23,7 +24,8 @@ def namedObject(name):
     module = namedModule('.'.join(classSplit[:-1]))
     return getattr(module, classSplit[-1])
 
-namedClass = namedObject # backwards compat
+#namedClass = namedObject  # backwards compat
+
 
 class _NoModuleFound(Exception):
     """
@@ -72,8 +74,8 @@ def _importAndCheckStack(importName):
             excType, excValue, excTraceback = sys.exc_info()
             while excTraceback:
                 execName = excTraceback.tb_frame.f_globals["__name__"]
-                if (execName is None or # python 2.4+, post-cleanup
-                    execName == importName): # python 2.3, no cleanup
+                if (execName is None or  # python 2.4+, post-cleanup
+                    execName == importName):  # python 2.3, no cleanup
                     raise excType, excValue, excTraceback
                 excTraceback = excTraceback.tb_next
             raise _NoModuleFound()
@@ -81,7 +83,6 @@ def _importAndCheckStack(importName):
         # Necessary for cleaning up modules in 2.3.
         sys.modules.pop(importName, None)
         raise
-
 
 
 def namedAny(name):
@@ -145,6 +146,7 @@ def namedAny(name):
         obj = getattr(obj, n)
 
     return obj
+
 
 def qual(clazz):
     """Return full import path of a class."""

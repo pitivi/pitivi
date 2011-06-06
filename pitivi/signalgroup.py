@@ -25,6 +25,7 @@ A group of signals, which can be disconnected easily.
 Used to make it easy to keep signals attached to the current project.
 """
 
+
 class SignalGroup:
     def __init__(self):
         self.signal_handler_ids = {}
@@ -72,7 +73,6 @@ class SignalGroup:
         for old_object, handler_id in self.signal_handler_ids.itervalues():
             old_object.disconnect(handler_id)
         self.signal_handler_ids = {}
-
 
     def disconnectForObject(self, obj):
         """

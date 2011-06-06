@@ -34,9 +34,11 @@ from pitivi.action import ViewAction
 from pitivi.utils import Seeker
 import gst
 
+
 class ProjectError(Exception):
     """Project error"""
     pass
+
 
 class Project(Signallable, Loggable):
     """The base class for PiTiVi projects
@@ -63,8 +65,8 @@ class Project(Signallable, Loggable):
     """
 
     __signals__ = {
-        "settings-changed" : ['old', 'new'],
-        "project-changed" : [],
+        "settings-changed": ['old', 'new'],
+        "project-changed": [],
         }
 
     def __init__(self, name="", uri=None, **kwargs):

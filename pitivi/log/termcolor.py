@@ -42,32 +42,32 @@ class TerminalController:
     they will be stored in the `COLS` and `LINES` attributes.
     """
     # Cursor movement:
-    BOL = ''             #: Move the cursor to the beginning of the line
-    UP = ''              #: Move the cursor up one line
-    DOWN = ''            #: Move the cursor down one line
-    LEFT = ''            #: Move the cursor left one char
-    RIGHT = ''           #: Move the cursor right one char
+    BOL = ''             # : Move the cursor to the beginning of the line
+    UP = ''              # : Move the cursor up one line
+    DOWN = ''            # : Move the cursor down one line
+    LEFT = ''            # : Move the cursor left one char
+    RIGHT = ''           # : Move the cursor right one char
 
     # Deletion:
-    CLEAR_SCREEN = ''    #: Clear the screen and move to home position
-    CLEAR_EOL = ''       #: Clear to the end of the line.
-    CLEAR_BOL = ''       #: Clear to the beginning of the line.
-    CLEAR_EOS = ''       #: Clear to the end of the screen
+    CLEAR_SCREEN = ''    # : Clear the screen and move to home position
+    CLEAR_EOL = ''       # : Clear to the end of the line.
+    CLEAR_BOL = ''       # : Clear to the beginning of the line.
+    CLEAR_EOS = ''       # : Clear to the end of the screen
 
     # Output modes:
-    BOLD = ''            #: Turn on bold mode
-    BLINK = ''           #: Turn on blink mode
-    DIM = ''             #: Turn on half-bright mode
-    REVERSE = ''         #: Turn on reverse-video mode
-    NORMAL = ''          #: Turn off all modes
+    BOLD = ''            # : Turn on bold mode
+    BLINK = ''           # : Turn on blink mode
+    DIM = ''             # : Turn on half-bright mode
+    REVERSE = ''         # : Turn on reverse-video mode
+    NORMAL = ''          # : Turn off all modes
 
     # Cursor display:
-    HIDE_CURSOR = ''     #: Make the cursor invisible
-    SHOW_CURSOR = ''     #: Make the cursor visible
+    HIDE_CURSOR = ''     # : Make the cursor invisible
+    SHOW_CURSOR = ''     # : Make the cursor visible
 
     # Terminal size:
-    COLS = None          #: Width of the terminal (None for unknown)
-    LINES = None         #: Height of the terminal (None for unknown)
+    COLS = None          # : Width of the terminal (None for unknown)
+    LINES = None         # : Height of the terminal (None for unknown)
 
     # Foreground colors:
     BLACK = BLUE = GREEN = CYAN = RED = MAGENTA = YELLOW = WHITE = ''
@@ -131,12 +131,12 @@ class TerminalController:
         set_bg = self._tigetstr('setb')
         if set_bg:
             for i, color in zip(range(len(self._COLORS)), self._COLORS):
-                setattr(self, 'BG_'+color, curses.tparm(set_bg, i) or '')
+                setattr(self, 'BG_' + color, curses.tparm(set_bg, i) or '')
         set_bg_ansi = self._tigetstr('setab')
         if set_bg_ansi:
             for i, color in zip(range(len(self._ANSICOLORS)),
                                 self._ANSICOLORS):
-                setattr(self, 'BG_'+color, curses.tparm(set_bg_ansi, i) or '')
+                setattr(self, 'BG_' + color, curses.tparm(set_bg_ansi, i) or '')
 
     def _tigetstr(self, cap_name):
         # String capabilities can include "delays" of the form "$<2>".
@@ -188,17 +188,17 @@ class ProgressBar:
         self.width = self.term.COLS or 75
         self.bar = term.render(self.BAR)
         self.header = self.term.render(self.HEADER % header.center(self.width))
-        self.cleared = 1 #: true if we haven't drawn the bar yet.
+        self.cleared = 1  # : true if we haven't drawn the bar yet.
         self.update(0, '')
 
     def update(self, percent, message):
         if self.cleared:
             sys.stdout.write(self.header)
             self.cleared = 0
-        n = int((self.width-10)*percent)
+        n = int((self.width - 10) * percent)
         sys.stdout.write(
             self.term.BOL + self.term.UP + self.term.CLEAR_EOL +
-            (self.bar % (100*percent, '='*n, '-'*(self.width-10-n))) +
+            (self.bar % (100 * percent, '=' * n, '-' * (self.width - 10 - n))) +
             self.term.CLEAR_EOL + message.center(self.width))
 
     def clear(self):

@@ -32,17 +32,19 @@ from pitivi.factories.test import VideoTestSourceFactory, \
 from pitivi.elements.mixer import SmartAdderBin, SmartVideomixerBin
 from pitivi.timeline.gap import Gap
 
+
 class TrackError(Exception):
     pass
+
 
 class Keyframe(Signallable):
 
     """Represents a single point on an interpolation curve"""
 
     __signals__ = {
-        "value-changed" : ['value'],
-        "time-changed" : ['time'],
-        "mode-changed" : ['mode'],
+        "value-changed": ['value'],
+        "time-changed": ['time'],
+        "mode-changed": ['mode'],
     }
 
     def __init__(self, parent):
@@ -106,12 +108,14 @@ class Keyframe(Signallable):
             return cmp(self.time, other.time)
         return self
 
+
 class FixedKeyframe(Keyframe):
 
     def setTime(self, time):
         pass
 
     time = property(Keyframe.getTime, setTime)
+
 
 class Interpolator(Signallable, Loggable):
 
@@ -132,9 +136,9 @@ class Interpolator(Signallable, Loggable):
     """
 
     __signals__ = {
-        'keyframe-added' : ['keyframe'],
-        'keyframe-removed' : ['keyframe', 'old_value'],
-        'keyframe-moved' : ['keyframe', 'old_value'],
+        'keyframe-added': ['keyframe'],
+        'keyframe-removed': ['keyframe', 'old_value'],
+        'keyframe-moved': ['keyframe', 'old_value'],
     }
 
     def __init__(self, trackobject, element, prop, minimum=None, maximum=None,
@@ -300,6 +304,7 @@ class Interpolator(Signallable, Loggable):
 
     keyframes = property(getKeyframes)
 
+
 class TrackObject(Signallable, Loggable):
 
     __signals__ = {
@@ -309,9 +314,9 @@ class TrackObject(Signallable, Loggable):
         'out-point-changed': ['out-point'],
         'media-duration-changed': ['media-duration'],
         'priority-changed': ['priority'],
-        'selected-changed' : ['state'],
-        'stagger-changed' : ['stagger'],
-        'active-changed' : ['active'],
+        'selected-changed': ['state'],
+        'stagger-changed': ['stagger'],
+        'active-changed': ['active'],
     }
 
     def __init__(self, factory, stream, start=0,
@@ -693,7 +698,7 @@ class TrackObject(Signallable, Loggable):
             public_priority = (true_priority - 2 - self._stagger) // 3
         elif self.stream_type is AudioStream:
             true_priority = obj.props.priority
-            public_priority = (true_priority - 2 - (2 * self._stagger))// 4
+            public_priority = (true_priority - 2 - (2 * self._stagger)) // 4
         if self._public_priority != public_priority:
             self._public_priority = public_priority
             self.emit('priority-changed', public_priority)
@@ -733,6 +738,7 @@ class TrackObject(Signallable, Loggable):
             self._updatePriority(self._public_priority)
             self.emit("stagger-changed", self._stagger)
 
+
 class SourceTrackObject(TrackObject):
 
     numobjs = 0
@@ -743,6 +749,7 @@ class SourceTrackObject(TrackObject):
             str(SourceTrackObject.numobjs))
         SourceTrackObject.numobjs += 1
         return source
+
 
 class TrackEffect(TrackObject):
 
@@ -792,12 +799,13 @@ class TrackEffect(TrackObject):
         effect_bin = list(self.gnl_object.elements())[0]
         return effect_bin.get_by_name("effect")
 
+
 class Transition(Signallable):
 
     __signals__ = {
-        "start-changed" : ["start"],
-        "duration-changed" : ["duration"],
-        "priority-changed" : ["priority"],
+        "start-changed": ["start"],
+        "duration-changed": ["duration"],
+        "priority-changed": ["priority"],
     }
 
     def __init__(self, a, b):
@@ -868,6 +876,7 @@ class Transition(Signallable):
     def removeThyselfFromComposition(self, composition):
         pass
 
+
 class VideoTransition(Transition):
 
     caps = gst.Caps("video/x-raw-yuv,format=(fourcc)AYUV")
@@ -913,6 +922,7 @@ class VideoTransition(Transition):
             self.controller.set("alpha", 0, 1.0)
             self.controller.set("alpha", self.duration, 0.0)
 
+
 class AudioTransition(Transition):
 
     def _makeGnlObject(self):
@@ -933,7 +943,6 @@ class AudioTransition(Transition):
         self.a_operation.props.media_start = 0
 
         self.b_operation.props.media_start = 0
-
 
     def addThyselfToComposition(self, composition):
         composition.add(self.a_operation, self.b_operation)
@@ -967,6 +976,7 @@ class AudioTransition(Transition):
         self.b_controller.set("volume", 0, 0.0)
         self.b_controller.set("volume", self.duration, 1.0)
 
+
 class Track(Signallable, Loggable):
     logCategory = "track"
 
@@ -976,8 +986,8 @@ class Track(Signallable, Loggable):
         'track-object-added': ['track_object'],
         'track-object-removed': ['track_object'],
         'max-priority-changed': ['track_object'],
-        'transition-added' : ['transition'],
-        'transition-removed' : ['transition'],
+        'transition-added': ['transition'],
+        'transition-removed': ['transition'],
     }
 
     def __init__(self, stream):

@@ -29,8 +29,10 @@ from pitivi.discoverer import Discoverer
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 
+
 class SourceListError(Exception):
     pass
+
 
 class SourceList(Signallable, Loggable):
     discovererClass = Discoverer
@@ -52,12 +54,12 @@ class SourceList(Signallable, Loggable):
     """
 
     __signals__ = {
-        "ready" : [],
-        "starting" : [],
+        "ready": [],
+        "starting": [],
         "missing-plugins": ["uri", "factory", "details", "descriptions"],
-        "source-added" : ["factory"],
-        "source-removed" : ["uri"],
-        "discovery-error" : ["uri", "reason"],
+        "source-added": ["factory"],
+        "source-removed": ["uri"],
+        "discovery-error": ["uri", "reason"],
         }
 
     def __init__(self):
@@ -75,7 +77,6 @@ class SourceList(Signallable, Loggable):
         self.discoverer.connect("ready", self._discovererReadyCb)
         self.discoverer.connect("missing-plugins",
                 self._discovererMissingPluginsCb)
-
 
     def addUri(self, uri):
         """

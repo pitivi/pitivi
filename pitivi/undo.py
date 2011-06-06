@@ -22,11 +22,14 @@
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 
+
 class UndoError(Exception):
     pass
 
+
 class UndoWrongStateError(UndoError):
     pass
+
 
 class UndoableAction(Signallable):
     __signals__ = {
@@ -49,6 +52,7 @@ class UndoableAction(Signallable):
 
     def _undone(self):
         self.emit("undone")
+
 
 class UndoableActionStack(UndoableAction):
     __signals__ = {
@@ -99,6 +103,7 @@ class UndoableActionLog(Signallable):
         "redo": ["stack"],
         "cleaned": [],
     }
+
     def __init__(self):
         self.undo_stacks = []
         self.redo_stacks = []
@@ -220,6 +225,7 @@ class UndoableActionLog(Signallable):
 
     def _stackIsNested(self, stack):
         return bool(len(self.stacks))
+
 
 class DebugActionLogObserver(Loggable):
     def startObserving(self, log):

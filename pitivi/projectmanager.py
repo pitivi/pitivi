@@ -37,6 +37,7 @@ from pitivi.stream import AudioStream, VideoStream
 from pitivi.timeline.track import Track
 from pitivi.undo import UndoableAction
 
+
 class ProjectSettingsChanged(UndoableAction):
 
     def __init__(self, project, old, new):
@@ -51,6 +52,7 @@ class ProjectSettingsChanged(UndoableAction):
     def undo(self):
         self.project.setSettings(self.oldsettings)
         self._undone()
+
 
 class ProjectLogObserver(UndoableAction):
 
@@ -69,6 +71,7 @@ class ProjectLogObserver(UndoableAction):
         self.log.push(action)
         self.log.commit()
 
+
 class ProjectManager(Signallable, Loggable):
     __signals__ = {
         "new-project-loading": ["uri"],
@@ -80,7 +83,7 @@ class ProjectManager(Signallable, Loggable):
         "closing-project": ["project"],
         "project-closed": ["project"],
         "missing-uri": ["formatter", "uri", "factory"],
-        "reverting-to-saved":["project"],
+        "reverting-to-saved": ["project"],
     }
 
     def __init__(self, avalaible_effects={}):

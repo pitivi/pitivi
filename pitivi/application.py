@@ -64,6 +64,7 @@ from pitivi.ui.startupwizard import StartUpWizard
 # AND THEN load up the required parts.
 # This will result in a much better end-user experience
 
+
 class Pitivi(Loggable, Signallable):
     """
     Pitivi's main application class.
@@ -275,7 +276,7 @@ class GuiPitivi(InteractivePitivi):
         dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
                                    buttons=gtk.BUTTONS_OK)
         dialog.set_icon_name("pitivi")
-        dialog.set_markup("<b>"+message+"</b>")
+        dialog.set_markup("<b>" + message + "</b>")
         dialog.format_secondary_text(detail)
         dialog.run()
 

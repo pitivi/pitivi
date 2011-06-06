@@ -21,6 +21,7 @@
 
 from pitivi.utils import infinity
 
+
 class Gap(object):
     def __init__(self, left_object, right_object, start, duration):
         self.left_object = left_object
@@ -111,10 +112,12 @@ class Gap(object):
                 (self.left_object.start + self.left_object.duration)
         return res
 
+
 class InvalidGap(object):
     pass
 
 invalid_gap = InvalidGap()
+
 
 class SmallestGapsFinder(object):
     def __init__(self, internal_objects):

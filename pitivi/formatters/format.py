@@ -29,6 +29,7 @@ from gettext import gettext as _
 
 _formatters = []
 
+
 def can_handle_location(uri):
     """
     Detects whether the project at the given location can be loaded.
@@ -44,6 +45,7 @@ def can_handle_location(uri):
         if klass.canHandle(uri):
             return True
 
+
 def list_formats():
     """
     Returns a sequence of available project file formats
@@ -53,6 +55,7 @@ def list_formats():
     sequence of extensions for this format ('.' omitted).
     """
     return _formatters
+
 
 def get_formatter_for_uri(uri, avalaible_effects):
     """
@@ -65,6 +68,7 @@ def get_formatter_for_uri(uri, avalaible_effects):
     for klass, name, exts in _formatters:
         if klass.canHandle(uri):
             return klass(avalaible_effects)
+
 
 def register_formatter(klass, name, extensions):
     _formatters.append((klass, name, extensions))

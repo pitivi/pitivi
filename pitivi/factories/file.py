@@ -27,6 +27,7 @@ from pitivi.factories.base import RandomAccessSourceFactory, \
         SinkFactory
 from pitivi.stream import MultimediaStream, AudioStream, VideoStream
 
+
 class FileSourceFactory(RandomAccessSourceFactory):
     """
     Factory for local files.
@@ -39,6 +40,7 @@ class FileSourceFactory(RandomAccessSourceFactory):
         RandomAccessSourceFactory.__init__(self, uri, name)
         # FIXME: backward compatibility
         self.filename = uri
+
 
 class PictureFileSourceFactory(FileSourceFactory):
     """
@@ -64,6 +66,7 @@ class PictureFileSourceFactory(FileSourceFactory):
         self.debug("Returning %r", ret)
 
         return ret
+
 
 class URISinkFactory(SinkFactory):
     """ A simple sink factory """

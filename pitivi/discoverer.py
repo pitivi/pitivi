@@ -45,6 +45,7 @@ from pitivi.settings import xdg_cache_home
 # what encoded format it is
 # We will need that in order to create proper Stream objects.
 
+
 class EOSSir(gst.Element):
     __gstdetails__ = (
         "EOSSir",
@@ -79,6 +80,7 @@ class EOSSir(gst.Element):
         return ret
 gobject.type_register(EOSSir)
 
+
 class Discoverer(Signallable, Loggable):
     """
     Queues requests to discover information about given files.
@@ -97,10 +99,10 @@ class Discoverer(Signallable, Loggable):
     """
 
     __signals__ = {
-        "discovery-error" : ["a", "b", "c" ],
-        "discovery-done" : ["uri", "factory"],
-        "ready" : None,
-        "starting" : None,
+        "discovery-error": ["a", "b", "c"],
+        "discovery-done": ["uri", "factory"],
+        "ready": None,
+        "starting": None,
         "missing-plugins": ["uri", "detail", "description"]
         }
 
@@ -262,7 +264,7 @@ class Discoverer(Signallable, Loggable):
             # assume it's got infinite duration)
             is_image = have_image and len(self.current_streams) == 1
             if self.current_duration == gst.CLOCK_TIME_NONE and not is_image:
-                self.error =_("Could not establish the duration of the file.")
+                self.error = _("Could not establish the duration of the file.")
                 self.error_detail = _("This clip seems to be in a format "
                         "which cannot be accessed in a random fashion.")
                 self._emitError()
@@ -286,7 +288,6 @@ class Discoverer(Signallable, Loggable):
                 self._emitErrorMissingPlugins()
 
             return True
-
 
         # plugins are being installed, processing will continue when
         # self._installMissingPluginsCallback is called by the application
@@ -713,7 +714,7 @@ class Discoverer(Signallable, Loggable):
     def _addStreamFromPad(self, pad):
         self._maybeQueryDuration(pad)
         self.debug("adding stream from pad %s caps %s", pad, pad.props.caps)
-        stream  = get_stream_for_pad(pad)
+        stream = get_stream_for_pad(pad)
         self.current_streams.append(stream)
 
         return stream

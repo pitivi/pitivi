@@ -32,11 +32,15 @@ from pitivi.stream import match_stream_groups, AudioStream, VideoStream, \
 from pitivi.utils import formatPercent
 
 # FIXME: define a proper hierarchy
+
+
 class ObjectFactoryError(Exception):
     pass
 
+
 class ObjectFactoryStreamError(ObjectFactoryError):
     pass
+
 
 class ObjectFactory(Signallable, Loggable):
     """
@@ -194,6 +198,7 @@ class ObjectFactory(Signallable, Loggable):
     def getInterpolatedProperties(self, stream):
         return {}
 
+
 class SourceFactory(ObjectFactory):
     """
     Base class for factories that produce output and have no input.
@@ -226,9 +231,9 @@ class SourceFactory(ObjectFactory):
         self.debug("stream:%r", stream)
         props = ObjectFactory.getInterpolatedProperties(self, stream)
         if isinstance(stream, AudioStream):
-            props.update({"volume" : (0.0, 2.0, formatPercent)})
+            props.update({"volume": (0.0, 2.0, formatPercent)})
         elif isinstance(stream, VideoStream):
-            props.update({"alpha" : (0.0, 1.0, formatPercent)})
+            props.update({"alpha": (0.0, 1.0, formatPercent)})
         self.debug("returning %r", props)
         return props
 
@@ -541,6 +546,7 @@ class SourceFactory(ObjectFactory):
         audio_bin.arate.sync_state_with_parent()
         audio_bin.volume.sync_state_with_parent()
 
+
 class SinkFactory(ObjectFactory):
     """
     Base class for factories that consume input and have no output.
@@ -642,6 +648,7 @@ class SinkFactory(ObjectFactory):
 
     def addOutputStream(self, stream):
         raise AssertionError("sink factories can't have output streams")
+
 
 class OperationFactory(ObjectFactory):
     """
@@ -747,6 +754,7 @@ class LiveSourceFactory(SourceFactory):
             default_duration = 5 * gst.SECOND
 
         self.default_duration = default_duration
+
 
 class RandomAccessSourceFactory(SourceFactory):
     """

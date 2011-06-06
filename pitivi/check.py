@@ -31,6 +31,7 @@ from gettext import gettext as _
 from pitivi.instance import PiTiVi
 from pitivi.configure import APPNAME, PYGTK_REQ, PYGST_REQ, GST_REQ, GNONLIN_REQ, PYCAIRO_REQ
 
+
 def initiate_videosinks():
     """
     Test if the autovideosink element can initiate, return TRUE if it is the
@@ -41,6 +42,7 @@ def initiate_videosinks():
         return False
     sink.set_state(gst.STATE_NULL)
     return True
+
 
 def initiate_audiosinks():
     """
@@ -53,6 +55,7 @@ def initiate_audiosinks():
     sink.set_state(gst.STATE_NULL)
     return True
 
+
 def __try_import__(modulename):
     """
     Attempt to load given module.
@@ -64,11 +67,14 @@ def __try_import__(modulename):
     except:
         return False
 
+
 def _version_to_string(version):
     return ".".join([str(x) for x in version])
 
+
 def _string_to_list(version):
     return [int(x) for x in version.split(".")]
+
 
 def check_required_version(modulename):
     """
@@ -95,6 +101,7 @@ def check_required_version(modulename):
         if _string_to_list(gnlver) < _string_to_list(GNONLIN_REQ):
             return [GNONLIN_REQ, gnlver]
     return [None, None]
+
 
 def initial_checks():
     reg = gst.registry_get_default()

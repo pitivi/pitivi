@@ -29,6 +29,7 @@ from pitivi.timeline.track import TrackEffect
 from pitivi.ui.effectsconfiguration import PROPS_TO_IGNORE
 from pitivi.effects import EffectGstElementPropertyChangeTracker
 
+
 class TimelineObjectPropertyChangeTracker(PropertyChangeTracker):
     # no out-point
     property_names = ["start", "duration", "in-point",
@@ -60,6 +61,7 @@ class TimelineObjectPropertyChangeTracker(PropertyChangeTracker):
         if not self._disabled:
             PropertyChangeTracker._propertyChangedCb(self,
                     timeline_object, value, property_name)
+
 
 class KeyframeChangeTracker(Signallable):
     __signals__ = {
@@ -105,6 +107,7 @@ class KeyframeChangeTracker(Signallable):
     def _getKeyframeSnapshot(self, keyframe):
         return (keyframe.mode, keyframe.time, keyframe.value)
 
+
 class TimelineObjectPropertyChanged(UndoableAction):
     def __init__(self, timeline_object, property_name, old_value, new_value):
         self.timeline_object = timeline_object
@@ -121,6 +124,7 @@ class TimelineObjectPropertyChanged(UndoableAction):
         setattr(self.timeline_object,
                 self.property_name.replace("-", "_"), self.old_value)
         self._undone()
+
 
 class TimelineObjectAdded(UndoableAction):
     def __init__(self, timeline, timeline_object):
@@ -140,6 +144,7 @@ class TimelineObjectAdded(UndoableAction):
         self.timeline.removeTimelineObject(self.timeline_object, deep=True)
         self._undone()
 
+
 class TimelineObjectRemoved(UndoableAction):
     def __init__(self, timeline, timeline_object):
         self.timeline = timeline
@@ -158,6 +163,7 @@ class TimelineObjectRemoved(UndoableAction):
         self.timeline.addTimelineObject(self.timeline_object)
 
         self._undone()
+
 
 class TrackEffectAdded(UndoableAction):
     # Note: We have a bug if we just remove the TrackEffect from the timeline
@@ -195,12 +201,12 @@ class TrackEffectAdded(UndoableAction):
 
     def undo(self):
         element = self.track_object.getElement()
-        props =  gobject.list_properties(element)
+        props = gobject.list_properties(element)
         self.effect_props = [(prop.name, element.get_property(prop.name))
                               for prop in props
                               if prop.flags & gobject.PARAM_WRITABLE
                               and prop.name not in PROPS_TO_IGNORE]
-        gnl_props =  gobject.list_properties(self.track_object.gnl_object)
+        gnl_props = gobject.list_properties(self.track_object.gnl_object)
         gnl_obj = self.track_object.gnl_object
         self.gnl_obj_props = [(prop.name, gnl_obj.get_property(prop.name))
                               for prop in gnl_props
@@ -215,6 +221,7 @@ class TrackEffectAdded(UndoableAction):
 
         self._undone()
 
+
 class TrackEffectRemoved(UndoableAction):
     def __init__(self, timeline_object, track_object, properties_watcher):
         self.track_object = track_object
@@ -227,13 +234,13 @@ class TrackEffectRemoved(UndoableAction):
 
     def do(self):
         element = self.track_object.getElement()
-        props =  gobject.list_properties(element)
+        props = gobject.list_properties(element)
         self.effect_props = [(prop.name, element.get_property(prop.name))
                               for prop in props
                               if prop.flags & gobject.PARAM_WRITABLE
                               and prop.name not in PROPS_TO_IGNORE]
 
-        gnl_props =  gobject.list_properties(self.track_object.gnl_object)
+        gnl_props = gobject.list_properties(self.track_object.gnl_object)
         gnl_obj = self.track_object.gnl_object
         self.gnl_obj_props = [(prop.name, gnl_obj.get_property(prop.name))
                               for prop in gnl_props
@@ -265,6 +272,7 @@ class TrackEffectRemoved(UndoableAction):
 
         self._undone()
 
+
 class InterpolatorKeyframeAdded(UndoableAction):
     def __init__(self, track_object, keyframe):
         self.track_object = track_object
@@ -277,6 +285,7 @@ class InterpolatorKeyframeAdded(UndoableAction):
     def undo(self):
         self.track_object.removeKeyframe(self.keyframe)
         self._undone()
+
 
 class InterpolatorKeyframeRemoved(UndoableAction):
     def __init__(self, track_object, keyframe):
@@ -291,6 +300,7 @@ class InterpolatorKeyframeRemoved(UndoableAction):
         self.track_object.newKeyframe(self.keyframe.time,
                 self.keyframe.value, self.keyframe.mode)
         self._done()
+
 
 class InterpolatorKeyframeChanged(UndoableAction):
     def __init__(self, track_object, keyframe, old_snapshot, new_snapshot):
@@ -313,6 +323,7 @@ class InterpolatorKeyframeChanged(UndoableAction):
         self.keyframe.setTime(time)
         self.keyframe.setValue(value)
 
+
 class ActivePropertyChanged(UndoableAction):
     def __init__(self, effect_action, active):
         self.effect_action = effect_action
@@ -327,6 +338,7 @@ class ActivePropertyChanged(UndoableAction):
         self.effect_action.track_object.active = self.active
         self.active = not self.active
         self._undone()
+
 
 class TimelineLogObserver(object):
     timelinePropertyChangedAction = TimelineObjectPropertyChanged
@@ -399,7 +411,7 @@ class TimelineLogObserver(object):
         for prop, interpolator in track_object.getInterpolators().itervalues():
             self._connectToInterpolator(interpolator)
         if isinstance(track_object, TrackEffect):
-            self.effect_properties_tracker.addEffectElement (track_object.getElement())
+            self.effect_properties_tracker.addEffectElement(track_object.getElement())
 
     def _disconnectFromTrackObject(self, track_object):
         for prop, interpolator in track_object.getInterpolators().itervalues():
@@ -450,7 +462,6 @@ class TimelineLogObserver(object):
                 self.effect_properties_tracker.addEffectElement(element)
         else:
             self._connectToTrackObject(track_object)
-
 
     def _timelineObjectTrackObjectRemovedCb(self, timeline_object,
                                             track_object):

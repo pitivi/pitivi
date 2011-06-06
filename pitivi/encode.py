@@ -29,6 +29,7 @@ import pitivi.log.log as log
 from pitivi.factories.base import OperationFactory, SinkFactory
 from pitivi.factories.operation import TransformFactory, get_modifier_for_stream
 
+
 class EncoderFactory(TransformFactory):
     """
     Creates one-to-one encoding bins based on provided L{StreamEncodeSettings}.
@@ -85,6 +86,7 @@ class EncoderFactory(TransformFactory):
         for b in bin.elements():
             if isinstance(b, gst.Bin):
                 b.factory.releaseBin(b)
+
 
 class RenderFactory(OperationFactory):
     """
@@ -161,6 +163,7 @@ class RenderFactory(OperationFactory):
 
     def _requestNewInputStream(self, bin, input_stream):
         raise NotImplementedError
+
 
 class RenderSinkFactory(SinkFactory):
     """
@@ -240,38 +243,39 @@ def get_compatible_sink_pad(factoryname, caps):
     """
     factory = gst.registry_get_default().lookup_feature(factoryname)
     if factory == None:
-        log.warning("encode","%s is not a valid factoryname", factoryname)
+        log.warning("encode", "%s is not a valid factoryname", factoryname)
         return None
 
     res = []
     sinkpads = [x for x in factory.get_static_pad_templates() if x.direction == gst.PAD_SINK]
     for p in sinkpads:
         c = p.get_caps()
-        log.log("encode","sinkcaps %s", c.to_string())
+        log.log("encode", "sinkcaps %s", c.to_string())
         inter = caps.intersect(c)
-        log.log("encode","intersection %s", inter.to_string())
+        log.log("encode", "intersection %s", inter.to_string())
         if inter:
             res.append(p.name_template)
     if len(res) > 0:
         return res[0]
     return None
 
+
 def get_compatible_sink_caps(factoryname, caps):
     """
     Returns the compatible caps between 'caps' and the sink pad caps of 'factoryname'
     """
-    log.log("encode","factoryname : %s , caps : %s", factoryname, caps.to_string())
+    log.log("encode", "factoryname : %s , caps : %s", factoryname, caps.to_string())
     factory = gst.registry_get_default().lookup_feature(factoryname)
     if factory == None:
-        log.warning("encode","%s is not a valid factoryname", factoryname)
+        log.warning("encode", "%s is not a valid factoryname", factoryname)
         return None
 
     res = []
     sinkcaps = [x.get_caps() for x in factory.get_static_pad_templates() if x.direction == gst.PAD_SINK]
     for c in sinkcaps:
-        log.log("encode","sinkcaps %s", c.to_string())
+        log.log("encode", "sinkcaps %s", c.to_string())
         inter = caps.intersect(c)
-        log.log("encode","intersection %s", inter.to_string())
+        log.log("encode", "intersection %s", inter.to_string())
         if inter:
             res.append(inter)
 
@@ -279,11 +283,13 @@ def get_compatible_sink_caps(factoryname, caps):
         return res[0]
     return None
 
+
 def list_compat(a1, b1):
     for x1 in a1:
         if not x1 in b1:
             return False
     return True
+
 
 def my_can_sink_caps(muxer, ocaps, muxsinkcaps=[]):
     """ returns True if the given caps intersect with some of the muxer's
@@ -307,6 +313,7 @@ def my_can_sink_caps(muxer, ocaps, muxsinkcaps=[]):
     #     if not x.intersect(ocaps).is_empty():
     #         return True
     # return False
+
 
 class CachedEncoderList(object):
     def __init__(self):
@@ -351,26 +358,32 @@ class CachedEncoderList(object):
         self._factories = None
 
 _cached_encoder_list = None
+
+
 def encoderlist():
     global _cached_encoder_list
     if _cached_encoder_list is None:
         _cached_encoder_list = CachedEncoderList()
     return _cached_encoder_list
 
+
 def available_muxers():
     """ return all available muxers """
     enclist = encoderlist()
     return enclist.available_muxers()
+
 
 def available_video_encoders():
     """ returns all available video encoders """
     enclist = encoderlist()
     return enclist.available_video_encoders()
 
+
 def available_audio_encoders():
     """ returns all available audio encoders """
     enclist = encoderlist()
     return enclist.available_audio_encoders()
+
 
 def encoders_muxer_compatible(encoders, muxer, muxsinkcaps=[]):
     """ returns the list of encoders compatible with the given muxer """
@@ -385,11 +398,15 @@ def encoders_muxer_compatible(encoders, muxer, muxsinkcaps=[]):
                     break
     return res
 
+
 raw_audio_caps = gst.Caps("audio/x-raw-float;audio/x-raw-int")
 raw_video_caps = gst.Caps("video/x-raw-yuv;video/x-raw-rgb")
+
+
 def muxer_can_sink_raw_audio(muxer):
     """ Returns True if given muxer can accept raw audio """
     return my_can_sink_caps(muxer, raw_audio_caps)
+
 
 def muxer_can_sink_raw_video(muxer):
     """ Returns True if given muxer can accept raw video """
@@ -397,7 +414,6 @@ def muxer_can_sink_raw_video(muxer):
 
 
 def available_combinations():
-
     """Return a 3-tuple of (muxers, audio, video), where:
         - muxers is a list of muxer factories
         - audio is a dictionary from muxer names to compatible audio encoders
