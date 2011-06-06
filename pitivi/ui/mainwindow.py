@@ -698,17 +698,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
         from pluginmanagerdialog import PluginManagerDialog
         PluginManagerDialog(self.app.plugin_manager)
 
-    def _hideChildWindow(self, window, event):
-        window.hide()
-        return True
-
     def _prefsCb(self, unused_action):
         if not self.prefsdialog:
             from pitivi.ui.prefs import PreferencesDialog
             self.prefsdialog = PreferencesDialog(self.app)
-            self.prefsdialog.set_transient_for(self)
-            self.prefsdialog.connect("delete-event", self._hideChildWindow)
-        self.prefsdialog.show()
+            self.prefsdialog.dialog.set_transient_for(self)
+        self.prefsdialog.run()
 
     def rewind(self, unused_action):
         pass

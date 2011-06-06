@@ -24,10 +24,14 @@ Dialog box for user preferences.
 """
 
 import gtk
-from gettext import gettext as _
+import os
+
 import pitivi.ui.dynamic as dynamic
+
+from pitivi.configure import get_ui_dir
 from pitivi.settings import GlobalSettings
 from pitivi.ui.common import SPACING
+from gettext import gettext as _
 
 GlobalSettings.addConfigOption('prefsDialogWidth',
     section = "user-interface",
@@ -39,14 +43,12 @@ GlobalSettings.addConfigOption('prefsDialogHeight',
     key = "prefs-dialog-height",
     default = 400)
 
-class PreferencesDialog(gtk.Window):
+class PreferencesDialog():
 
     prefs = {}
     original_values = {}
 
     def __init__(self, instance):
-        gtk.Window.__init__(self)
-        self.app = instance
         self.settings = instance.settings
         self.widgets = {}
         self.resets = {}
@@ -56,76 +58,24 @@ class PreferencesDialog(gtk.Window):
         min_width, min_height = self.contents.size_request()
         width = max(min_width, self.settings.prefsDialogWidth)
         height = max(min_height, self.settings.prefsDialogHeight)
-        self.set_default_size(width, height)
+        self.dialog.set_default_size(width, height)
+
+    def run(self):
+        self.dialog.run()
 
     def _createUi(self):
-        self.set_title(_("Preferences"))
-        self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
-        self.set_border_width(12)
-        self.connect("configure-event", self._configureCb)
+        builder = gtk.Builder()
+        builder.add_from_file(os.path.join(get_ui_dir(), "preferences.ui"))
+        builder.connect_signals(self)
 
-        # basic layout
-        vbox = gtk.VBox()
-        vbox.set_spacing(SPACING)
-        button_box = gtk.HBox()
-        button_box.set_spacing(SPACING)
-        button_box.set_homogeneous(False)
-        pane = gtk.HPaned()
-        vbox.pack_start(pane, True, True)
-        vbox.pack_end(button_box, False, False)
-        pane.show()
-        self.add(vbox)
-        vbox.show()
-
-        # left-side list view
-        self.model = gtk.ListStore(str, str)
-        self.treeview = gtk.TreeView(self.model)
-        self.treeview.get_selection().connect("changed",
-            self._treeSelectionChangedCb)
-        ren = gtk.CellRendererText()
-        col = gtk.TreeViewColumn(_("Section"), ren, text=0)
-        self.treeview.append_column(col)
-        scrolled = gtk.ScrolledWindow()
-        scrolled.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        scrolled.add(self.treeview)
-        scrolled.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        self.treeview.props.headers_visible = False
-        self.treeview.show()
-        pane.pack1(scrolled)
-        scrolled.show()
-
-        # preferences content region
-        self.contents = gtk.VBox()
-        scrolled = gtk.ScrolledWindow()
-        scrolled.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        scrolled.add_with_viewport(self.contents)
-        pane.pack2(scrolled)
-        scrolled.show()
-        self.contents.show()
-
-        # revert, close buttons
-        self.factory_settings = gtk.Button(label=_("Reset to Factory Settings"))
-        self.factory_settings.connect("clicked", self._factorySettingsButtonCb)
-        self.factory_settings.set_sensitive(self._canReset())
-        self.factory_settings.show()
-        self.revert_button = gtk.Button(_("Revert"))
-        self.revert_button.connect("clicked", self._revertButtonCb)
-        self.revert_button.show()
-        self.revert_button.set_sensitive(False)
-        accept_button = gtk.Button(stock=gtk.STOCK_CLOSE)
-        accept_button.connect("clicked", self._acceptButtonCb)
-        accept_button.show()
-        button_box.pack_start(self.factory_settings, False, True)
-        button_box.pack_end(accept_button, False, True)
-        button_box.pack_end(self.revert_button, False, True)
-        button_box.show()
-
-        # restart warning
-        self.restart_warning = gtk.Label()
-        self.restart_warning.set_markup(
-            "<b>%s</b>" % _("Some changes will not take effect until you "
-            "restart PiTiVi"))
-        vbox.pack_end(self.restart_warning, False, False)
+        # widgets we'll need
+        self.dialog = builder.get_object("dialog1")
+        self.model = builder.get_object("liststore1")
+        self.treeview = builder.get_object("treeview1")
+        self.contents = builder.get_object("box1")
+        self.revert_button = builder.get_object("revertButton")
+        self.factory_settings = builder.get_object("resetButton")
+        self.restart_warning = builder.get_object("restartWarning")
 
 ## Public API
 
@@ -377,7 +327,7 @@ class PreferencesDialog(gtk.Window):
 
     def _acceptButtonCb(self, unused_button):
         self._clearHistory()
-        self.hide()
+        self.dialog.hide()
 
     def _valueChanged(self, fake_widget, real_widget, attrname):
         value = getattr(self.settings, attrname)
