@@ -530,24 +530,25 @@ class ExportSettings(Signallable, Loggable):
     def getVideoCaps(self, render=False):
         """ Returns the GstCaps corresponding to the video settings """
         videowidth, videoheight = self.getVideoWidthAndHeight(render=render)
-        astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (
+        vstr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (
                 videowidth, videoheight,
                 self.videopar.num, self.videopar.denom,
                 self.videorate.num, self.videorate.denom)
-        vcaps = gst.caps_from_string("video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (astr, astr))
+        caps_str = "video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (vstr, vstr)
+        video_caps = gst.caps_from_string(caps_str)
         if self.vencoder:
-            return get_compatible_sink_caps(self.vencoder, vcaps)
-        return vcaps
+            return get_compatible_sink_caps(self.vencoder, video_caps)
+        return video_caps
 
     def getAudioCaps(self):
         """ Returns the GstCaps corresponding to the audio settings """
-        astr = "rate=%d,channels=%d" % (self.audiorate, self.audiochannels)
-        astrcaps = gst.caps_from_string("audio/x-raw-int,%s;audio/x-raw-float,%s" % (astr, astr))
+        astr = "rate=%d,channels=%d,depth=%d" % (
+                self.audiorate, self.audiochannels, self.audiodepth)
+        caps_str = "audio/x-raw-int,%s;audio/x-raw-float,%s" % (astr, astr)
+        audio_caps = gst.caps_from_string(caps_str)
         if self.aencoder:
-            return get_compatible_sink_caps(self.aencoder, astrcaps)
-        return astrcaps
-
-        # interset with current audioencoder sink pad caps
+            return get_compatible_sink_caps(self.aencoder, audio_caps)
+        return audio_caps
 
     def setVideoProperties(self, width=-1, height=-1, framerate=-1, par=-1,
             render_scale=-1):
