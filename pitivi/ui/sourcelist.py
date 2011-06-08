@@ -257,8 +257,7 @@ class SourceList(gtk.VBox, Loggable):
         self._hide_infobar_btn = gtk.Button()
         self._hide_infobar_btn.set_label(_("Hide"))
         self._view_error_btn.connect("clicked", self._viewErrorsButtonClickedCb)
-        self._hide_infobar_btn.connect("clicked",
-                                        self._hideInfoBarClickedCb)
+        self._hide_infobar_btn.connect("clicked", self._hideInfoBarClickedCb)
         content_area.add(self._warning_label)
         actions_area.add(self._view_error_btn)
         actions_area.add(self._hide_infobar_btn)
@@ -269,12 +268,9 @@ class SourceList(gtk.VBox, Loggable):
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
         self.project_signals = SignalGroup()
-        self.app.connect("new-project-created",
-            self._newProjectCreatedCb)
-        self.app.connect("new-project-loaded",
-            self._newProjectLoadedCb)
-        self.app.connect("new-project-failed",
-            self._newProjectFailedCb)
+        self.app.connect("new-project-created", self._newProjectCreatedCb)
+        self.app.connect("new-project-loaded", self._newProjectLoadedCb)
+        self.app.connect("new-project-failed", self._newProjectFailedCb)
 
         # default pixbufs
         self.audiofilepixbuf = self._getIcon("audio-x-generic", "pitivi-sound.png")
@@ -736,6 +732,9 @@ class SourceList(gtk.VBox, Loggable):
         self.emit('play', factory)
 
     def _hideInfoBarClickedCb(self, unused_button):
+        self._resetErrorList()
+
+    def _resetErrorList(self):
         self._errors = []
         self._import_warning_infobar.hide()
 
@@ -755,8 +754,8 @@ class SourceList(gtk.VBox, Loggable):
         for uri, reason, extra in self._errors:
             self._error_dialogbox.addFailedFile(uri, reason, extra)
         self._error_dialogbox.window.show()
-        self._errors = []  # Reset the error list (since the user has read them)
-        self._import_warning_infobar.hide()
+        # Reset the error list, since the user has read them.
+        self._resetErrorList()
 
     def _treeViewMenuItemToggledCb(self, unused_widget):
         if self.treeview_menuitem.get_active():
@@ -973,15 +972,14 @@ class SourceList(gtk.VBox, Loggable):
         return False
 
     def _newProjectCreatedCb(self, app, project):
-        # clear the storemodel
+        self._resetErrorList()
         self.storemodel.clear()
         self._connectToProject(project)
 
     def _newProjectLoadedCb(self, unused_pitivi, project):
         pass
 
-    def _newProjectFailedCb(self, unused_pitivi, unused_reason,
-        unused_uri):
+    def _newProjectFailedCb(self, unused_pitivi, unused_reason, unused_uri):
         self.storemodel.clear()
         self.project_signals.disconnectAll()
 
