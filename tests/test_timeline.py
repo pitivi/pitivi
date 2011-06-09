@@ -20,7 +20,6 @@
 # Boston, MA 02110-1301, USA.
 
 import pygst
-pygst.require("0.10")
 import gst
 
 from tests.common import FakeSourceFactory, FakeEffectFactory
