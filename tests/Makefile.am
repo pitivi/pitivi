@@ -13,7 +13,6 @@ tests = \
 	test_pipeline.py \
 	test_signallable.py \
 	test_still_image.py \
-	testcomplex.py \
 	test_undo.py \
 	test_timeline_undo.py \
 	test_transitions.py
