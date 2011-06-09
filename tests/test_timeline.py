@@ -19,19 +19,18 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-import pygst
 import gst
 
-from tests.common import FakeSourceFactory, FakeEffectFactory
+from pitivi.factories.test import AudioTestSourceFactory
+from pitivi.stream import AudioStream, VideoStream
 from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
         Link, TimelineEdges, MoveContext, TrimStartContext, \
         TrimEndContext
 from pitivi.timeline.track import Track, SourceTrackObject, TrackEffect
-from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
-from pitivi.factories.test import AudioTestSourceFactory
 
-from common import SignalMonitor, TestCase, StubFactory
+from tests.common import FakeEffectFactory, FakeSourceFactory, \
+        SignalMonitor, StubFactory, TestCase
 
 
 class TimelineSignalMonitor(SignalMonitor):
