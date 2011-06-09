@@ -85,8 +85,6 @@ class Pitivi(Loggable, Signallable):
 
     @ivar settings: Application-wide settings.
     @type settings: L{GlobalSettings}.
-    @ivar projects: List of used projects
-    @type projects: List of L{Project}.
     @ivar current: Currently used project.
     @type current: L{Project}.
     """
@@ -121,7 +119,6 @@ class Pitivi(Loggable, Signallable):
                 % APPNAME)
         instance.PiTiVi = self
 
-        self.projects = []
         self.current = None
 
         # get settings
