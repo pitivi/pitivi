@@ -42,6 +42,11 @@ class SourceList(Signallable, Loggable):
 
     @ivar discoverer: The discoverer object used internally
     @type discoverer: L{Discoverer}
+    @ivar nb_file_to_import: The number of URIs on the last addUris call.
+    @type nb_file_to_import: int
+    @ivar nb_imported_files: The number of URIs loaded since the last addUris
+    call.
+    @type nb_imported_files: int
 
     Signals:
      - C{source-added} : A source has been discovered and added to the SourceList.
@@ -65,7 +70,9 @@ class SourceList(Signallable, Loggable):
     def __init__(self):
         Loggable.__init__(self)
         Signallable.__init__(self)
+        # A (URI -> SourceFactory) map.
         self._sources = {}
+        # A list of SourceFactory objects.
         self._ordered_sources = []
         self.nb_file_to_import = 1
         self.nb_imported_files = 0
@@ -86,9 +93,9 @@ class SourceList(Signallable, Loggable):
         """
         if uri in self._sources:
             raise SourceListError("URI already present in the source list", uri)
-
         self._sources[uri] = None
-
+        # Tell the discoverer to investigate the URI and report back when
+        # it has the info or failed.
         self.discoverer.addUri(uri)
 
     def addUris(self, uris):
@@ -110,34 +117,30 @@ class SourceList(Signallable, Loggable):
             factory = self._sources.pop(uri)
         except KeyError:
             raise SourceListError("URI not in the sourcelist", uri)
-
         try:
             self._ordered_sources.remove(factory)
         except ValueError:
             # this can only happen if discoverer hasn't finished scanning the
             # source, so factory must be None
             assert factory is None
-
         self.emit("source-removed", uri, factory)
 
     def getUri(self, uri):
         """
         Get the source corresponding to C{uri}.
         """
-        factory = self._sources.get(uri, None)
+        factory = self._sources.get(uri)
         if factory is None:
             raise SourceListError("URI not in the sourcelist", uri)
-
         return factory
 
     def addFactory(self, factory):
         """
-        Add an objectfactory for the given uri.
+        Add the specified SourceFactory to the list of sources.
         """
         if self._sources.get(factory.uri, None) is not None:
-            raise SourceListError("We already have a factory for this uri",
+            raise SourceListError("We already have a factory for this URI",
                     factory.uri)
-
         self._sources[factory.uri] = factory
         self._ordered_sources.append(factory)
         self.nb_imported_files += 1
@@ -146,37 +149,40 @@ class SourceList(Signallable, Loggable):
     def getSources(self):
         """ Returns the list of sources used.
 
-        The list will be ordered by the order in which they were added
+        The list will be ordered by the order in which they were added.
+
+        @return: A list of SourceFactory objects which must not be changed.
         """
         return self._ordered_sources
 
     def _discoveryDoneCb(self, discoverer, uri, factory):
+        """Handles the success of a URI info gathering operation."""
         if factory.uri not in self._sources:
-            # the source was removed while it was being scanned
+            # The source was removed while it was being scanned. Nothing to do.
             return
-
         self.addFactory(factory)
 
     def _discoveryErrorCb(self, discoverer, uri, reason, extra):
+        """Handles the failure of a URI info gathering operation."""
         try:
             del self._sources[uri]
         except KeyError:
-            # the source was removed while it was being scanned
+            # The source was removed while it was being scanned. Nothing to do.
             pass
-
         self.emit("discovery-error", uri, reason, extra)
 
     def _discovererStartingCb(self, unused_discoverer):
+        """Handles the start of the URI info gathering operations."""
         self.emit("starting")
 
     def _discovererReadyCb(self, unused_discoverer):
+        """Handles the finish of the URI info gathering operations."""
         self.emit("ready")
 
     def _discovererMissingPluginsCb(self, discoverer, uri, factory,
             details, descriptions, missingPluginsCallback):
         if factory.uri not in self._sources:
-            # the source was removed while it was being scanned
+            # The source was removed while it was being scanned. Nothing to do.
             return None
-
         return self.emit('missing-plugins', uri, factory,
                 details, descriptions, missingPluginsCallback)
