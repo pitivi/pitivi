@@ -47,6 +47,12 @@ if 'VERBOSE' in os.environ:
 from pitivi.log import log
 log.init('PITIVI_DEBUG', 1)
 
+# Make available to configure.py the top level dir.
+dir = os.path.dirname(os.path.abspath(__file__))
+top_srcdir = os.path.split(dir)[0]
+os.environ.setdefault('PITIVI_TOP_LEVEL_DIR', top_srcdir)
+
+# Run the tests.
 testRunner = unittest.TextTestRunner(descriptions=descriptions,
     verbosity=verbosity)
 result = testRunner.run(suite)
