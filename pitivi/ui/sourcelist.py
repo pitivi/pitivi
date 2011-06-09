@@ -530,14 +530,6 @@ class SourceList(gtk.VBox, Loggable):
         self._importDialog.connect('close', self._dialogBoxCloseCb)
         self._importDialog.show()
 
-    def addUris(self, files):
-        """ Add files to the list """
-        try:
-            self.app.current.sources.addUris(files)
-        except SourceListError as error:
-            disclaimer, uri = error.args
-            self.error("'%s' is already present in the source list." + uri)
-
     def addFolders(self, folders):
         """ walks the trees of the folders in the list and adds the files it finds """
         self.app.threads.addThread(PathWalker, folders, self.app.current.sources.addUris)
@@ -680,7 +672,7 @@ class SourceList(gtk.VBox, Loggable):
             if select_folders:
                 self.addFolders(filenames)
             else:
-                self.addUris(filenames)
+                self.app.current.sources.addUris(filenames)
             if self.app.settings.closeImportDialog:
                 dialogbox.destroy()
                 self._importDialog = None
@@ -1025,11 +1017,8 @@ class SourceList(gtk.VBox, Loggable):
             #TODO waiting for remote files downloader support to be implemented
             pass
 
-        try:
-            self.addUris([quote_uri(uri) for uri in filenames])
-        except SourceListError:
-            # filenames already present in the sourcelist
-            pass
+        uris = [quote_uri(uri) for uri in filenames]
+        self.app.current.sources.addUris(uris)
 
     #used with TreeView and IconView
     def _dndDragBeginCb(self, view, context):

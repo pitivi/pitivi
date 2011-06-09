@@ -92,7 +92,8 @@ class SourceList(Signallable, Loggable):
         The uri will be analyzed before being added.
         """
         if uri in self._sources:
-            raise SourceListError("URI already present in the source list", uri)
+            # uri is already added. Nothing to do.
+            return
         self._sources[uri] = None
         # Tell the discoverer to investigate the URI and report back when
         # it has the info or failed.

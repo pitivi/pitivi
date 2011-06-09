@@ -46,14 +46,13 @@ class TestSourceList(TestCase):
         factory = FileSourceFactory(uri)
         self.sourcelist.addUri(uri)
         self.failUnlessEqual(len(self.sourcelist.getSources()), 0)
-        self.failUnlessRaises(SourceListError, self.sourcelist.addUri, uri)
+        self.failUnlessRaises(SourceListError, self.sourcelist.getUri, uri)
 
         # mock discovery-done
         self.sourcelist.discoverer.emit("discovery-done", uri, factory)
         self.failUnlessEqual(len(self.sourcelist.getSources()), 1)
 
-        # can't add again
-        self.failUnlessRaises(SourceListError, self.sourcelist.addUri, uri)
+        self.failUnlessEqual(self.sourcelist.getUri(uri), factory)
 
     def testAddUriDiscoveryOkSourceGone(self):
         """
@@ -77,7 +76,6 @@ class TestSourceList(TestCase):
         Same as the test above, but testing the discovery-error handler.
         """
         uri = "file:///ciao"
-        factory = FileSourceFactory(uri)
         self.sourcelist.addUri(uri)
         self.sourcelist.removeUri(uri)
 
@@ -91,15 +89,13 @@ class TestSourceList(TestCase):
 
     def testAddUriDiscoveryError(self):
         uri = "file:///ciao"
-        factory = FileSourceFactory(uri)
         self.sourcelist.addUri(uri)
         self.failUnlessEqual(len(self.sourcelist.getSources()), 0)
-        self.failUnlessRaises(SourceListError, self.sourcelist.addUri, uri)
 
         # mock discovery-done
         self.sourcelist.discoverer.emit("discovery-error", uri,
                 "error", "verbose debug")
         self.failUnlessEqual(len(self.sourcelist.getSources()), 0)
 
-        # there was an error, the factory wasn't added so this shouldn't raise
-        self.sourcelist.addUri(uri)
+        # there was an error, the factory wasn't added so this should raise
+        self.failUnlessRaises(SourceListError, self.sourcelist.getUri, uri)
