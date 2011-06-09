@@ -1,44 +1,25 @@
-import glob
 import os
 import sys
 import unittest
-import tests
-
-SKIP_FILES = ['common', 'runtests']  # They are not testsuites
-#Those files need sample files, and therefore shoud not be tested
-#when running distcheck
-INTEGRATION_FILES = ['test_still_image', 'test_integration']
 
 
-def gettestnames(which):
-    if os.getenv("TEST_INTEGRATION"):
-        return INTEGRATION_FILES
-    else:
-        SKIP_FILES.extend(INTEGRATION_FILES)
+def gettestnames(file_names):
+    test_names = [file_name[:-3] for file_name in file_names]
+    return test_names
 
-    if not which:
-        dir = os.path.split(os.path.abspath(__file__))[0]
-        which = [os.path.basename(p) for p in glob.glob('%s/test_*.py' % dir)]
-
-    names = map(lambda x: x[:-3], which)
-    for f in SKIP_FILES:
-        if f in names:
-            names.remove(f)
-    return names
-
-suite = unittest.TestSuite()
 loader = unittest.TestLoader()
 
+# Pick which tests to run.
 TEST_CASE = os.getenv("TESTCASE")
-
 if TEST_CASE:
-    suite.addTest(loader.loadTestsFromName(TEST_CASE))
-    if not suite._tests:
-        raise Exception("could not find test case %r" % TEST_CASE)
+    test_names = [TEST_CASE]
 else:
-    for name in gettestnames(sys.argv[1:]):
-        suite.addTest(loader.loadTestsFromName(name))
+    test_names = gettestnames(sys.argv[1:])
+suite = loader.loadTestsFromNames(test_names)
+if not list(suite):
+    raise Exception("No tests found")
 
+# Set verbosity.
 descriptions = 1
 verbosity = 1
 if 'VERBOSE' in os.environ:

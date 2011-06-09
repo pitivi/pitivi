@@ -1,5 +1,5 @@
 
-# Please keep the test list below ordered.
+# Please keep the test lists below ordered.
 
 tests = \
 	test_action.py \
@@ -15,7 +15,6 @@ tests = \
 	test_factories_file.py \
 	test_factories_operation.py \
 	test_gap.py \
-	test_integration.py \
 	test_pipeline_action.py \
 	test_pipeline.py \
 	test_projectmanager.py \
@@ -23,7 +22,6 @@ tests = \
 	test_settings.py \
 	test_signallable.py \
 	test_sourcelist.py \
-	test_still_image.py \
 	test_stream.py \
 	test_timeline_factory.py \
 	test_timeline.py \
@@ -32,6 +30,10 @@ tests = \
 	test_transitions.py \
 	test_undo.py \
 	test_utils.py
+
+integration_tests = \
+	test_integration.py \
+	test_still_image.py
 
 EXTRA_DIST = \
 	__init__.py \
@@ -43,11 +45,12 @@ clean-local:
 	rm -f testProject.ptv testproject.xptv testproject2.xptv
 
 check-local:
-	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) $(PYTHON) $(srcdir)/runtests.py
+	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) $(PYTHON) $(srcdir)/runtests.py \
+		$(tests)
 
 %.check: %
 	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) $(PYTHON) $(srcdir)/runtests.py $*
 
 check-integration:
-	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) TEST_INTEGRATION=1 $(PYTHON)\
-        $(srcdir)/runtests.py
+	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) $(PYTHON) $(srcdir)/runtests.py \
+		$(integration_tests)
