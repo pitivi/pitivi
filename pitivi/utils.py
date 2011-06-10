@@ -262,10 +262,9 @@ def uri_is_valid(uri):
     @param uri: The location to check
     @type uri: C{URI}
     """
-    res = gst.uri_is_valid(uri) and gst.uri_get_protocol(uri) == "file"
-    if res:
-        return len(os.path.basename(gst.uri_get_location(uri))) > 0
-    return res
+    return (gst.uri_is_valid(uri) and
+            gst.uri_get_protocol(uri) == "file" and
+            len(os.path.basename(gst.uri_get_location(uri))) > 0)
 
 
 def uri_is_reachable(uri):
