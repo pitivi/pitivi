@@ -362,12 +362,8 @@ class Formatter(Signallable, Loggable):
             self.warning("invalid URI")
             raise FormatterError("invalid URI", uri)
 
-        # skip non local uri
-        if not uri.split('://', 1)[0] in ["file"]:
-            raise FormatterError("We can only handle file:// URI", uri)
-
         # first check the good old way
-        if uri_is_valid(uri) and uri_is_reachable(uri):
+        if uri_is_reachable(uri):
             self.debug("URI is reachable")
             return uri
 
