@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = dist-bzip2
 
-SUBDIRS	= bin pitivi common po tests data
+SUBDIRS	= bin pitivi common po tests data help
 
 mimedir = $(datadir)/mime/packages
 mime_DATA = pitivi.xml
@@ -16,10 +16,12 @@ EXTRA_DIST = \
 	AUTHORS \
 	RELEASE \
 	ABOUT-NLS \
+	gnome-doc-utils.make \
     pitivi.xml
 
 
 DISTCLEANFILES =                \
+        gnome-doc-utils.make    \
         intltool-extract        \
         intltool-merge          \
         intltool-update

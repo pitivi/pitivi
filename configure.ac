@@ -73,12 +73,15 @@ AC_SUBST(CONFIGURED_GST_PLUGIN_PATH)
 
 AC_CONFIG_FILES([bin/pitivi], [chmod +x bin/pitivi])
 
+GNOME_DOC_INIT([0.18.0])
+
 dnl output stuff
 AC_OUTPUT(
 Makefile
 bin/Makefile
 common/Makefile
 common/m4/Makefile
+help/Makefile
 pitivi/Makefile
 pitivi/configure.py
 pitivi/ui/Makefile

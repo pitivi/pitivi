@@ -60,6 +60,12 @@ fi
 
 toplevel_check $srcfile
 
+echo "+ checking for GNOME Doc Utils"
+# gnome-doc-prepare is a gnome_doc_utils tool which creates a link to
+# gnome-doc-utils.make, which is required to build the user manual.
+tool_run "gnome-doc-prepare" "--automake" \
+    "echo Install gnome-doc-utils if gnome-doc-prepare is missing."
+
 tool_run "$aclocal" "-I common/m4 $ACLOCAL_FLAGS"
 tool_run "$autoconf"
 tool_run "$automake" "-a -c"

@@ -7,6 +7,7 @@ config.rpath
 config.status
 config.sub
 configure
+gnome-doc-utils.make
 install-sh
 libtool
 locale/
