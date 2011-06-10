@@ -156,8 +156,10 @@ class ElementTreeFormatter(Formatter):
 
     def _loadFactory(self, element):
         klass = namedAny(element.attrib["type"])
-
-        return self._loadObjectFactory(klass, element)
+        assert issubclass(klass, SourceFactory)
+        factory = self._loadObjectFactory(klass, element)
+        self._context.factories[element.attrib["id"]] = factory
+        return factory
 
     def _saveObjectFactory(self, factory):
         element = Element("source")
@@ -183,18 +185,23 @@ class ElementTreeFormatter(Formatter):
         return element
 
     def _loadObjectFactory(self, klass, element):
+        """Instantiate the specified class and set its attributes.
+
+        @param klass: An ObjectFactory subclass.
+        @param element: The Element representing the object to be created.
+        @return: An instance of the specified klass.
+        """
         self.debug("klass:%r, element:%r", klass, element)
-        # FIXME : we should check if the given ObjectFactory
-        # requires a filename !
-        filename = element.attrib.get("filename", None)
-        if filename is not None:
+        # Instantiate the class.
+        args = []
+        if issubclass(klass, FileSourceFactory):
+            filename = element.attrib.get("filename")
             if isinstance(filename, unicode):
                 filename = filename.encode("utf-8")
+            args.append(filename)
+        factory = klass(*args)
 
-            factory = klass(filename)
-        else:
-            factory = klass()
-
+        # Set the attributes of the instance.
         factory.duration = long(element.attrib["duration"])
         factory.default_duration = long(element.attrib["default_duration"])
 
@@ -210,13 +217,13 @@ class ElementTreeFormatter(Formatter):
                 stream = self._loadStream(stream_element)
                 factory.addOutputStream(stream)
 
-        if filename is not None:
+        if issubclass(klass, FileSourceFactory):
             filename1 = self.validateSourceURI(filename, factory)
             if filename != filename1:
                 # the file was moved
-                factory.uri = factory.filename = filename1
+                factory.uri = filename1
+                factory.filename = filename1
 
-        self._context.factories[element.attrib["id"]] = factory
         return factory
 
     def _saveFileSourceFactory(self, element, source):
