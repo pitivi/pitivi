@@ -78,9 +78,14 @@ class ElementTreeFormatter(Formatter):
 
     def __init__(self, avalaible_effects, *args, **kwargs):
         Formatter.__init__(self, avalaible_effects, *args, **kwargs)
+        # An Element representing the <factories> element.
         self.factoriesnode = None
+        # An Element representing the <timeline> element.
         self.timelinenode = None
+        # An Element representing the <export-settings> element.
         self._settingsnode = None
+        # A list of SourceFactory objects.
+        self._sources = None
         self._context = ElementTreeFormatterContext()
 
     def _new_element_id(self):
@@ -246,17 +251,16 @@ class ElementTreeFormatter(Formatter):
         return element
 
     def _loadSources(self):
-        try:
-            return self._sources
-        except AttributeError:
-            pass
+        """Deserialize the sources.
 
+        @return: A list of SourceFactory objects.
+        """
         sources = self.factoriesnode.find("sources")
         res = []
+        # For each <source> element in the <sources> element, create the
+        # object represented by it.
         for src in sources:
             res.append(self._loadFactory(src))
-
-        self._sources = res
         return res
 
     def _serializeDict(self, element, values_dict):
@@ -719,7 +723,7 @@ class ElementTreeFormatter(Formatter):
         # rediscover the factories
         closure = {"rediscovered": 0}
         try:
-            sources = self._loadSources()
+            sources = self._getSources()
         except FormatterError, e:
             self.emit("new-project-failed", location, e)
             return
@@ -767,7 +771,6 @@ class ElementTreeFormatter(Formatter):
         old_stream_to_new_stream = self._matchFactoryStreams(factory,
                 old_factory)
 
-        old_streams = old_factory.getOutputStreams()
         new_streams = {}
         for stream_id, old_stream in self._context.streams.iteritems():
             try:
@@ -835,7 +838,9 @@ class ElementTreeFormatter(Formatter):
 
     def _getSources(self):
         self.debug("%r", self)
-        return self._loadSources()
+        if self._sources is None:
+            self._sources = self._loadSources()
+        return self._sources
 
     def _fillTimeline(self):
         # fill up self.project
