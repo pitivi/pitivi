@@ -14,6 +14,7 @@ tests = \
 	test_factories_base.py \
 	test_factories_file.py \
 	test_factories_operation.py \
+	test_formatters_base.py \
 	test_gap.py \
 	test_pipeline_action.py \
 	test_pipeline.py \

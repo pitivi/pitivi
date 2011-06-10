@@ -362,33 +362,38 @@ class Formatter(Signallable, Loggable):
             self.warning("invalid URI")
             raise FormatterError("invalid URI", uri)
 
-        # first check the good old way
         if uri_is_reachable(uri):
             self.debug("URI is reachable")
             return uri
 
-        self.debug("URI might have moved...")
+        # The file might have been moved.
+        probable = self._searchMissingFile(uri)
+        if probable:
+            # We already have a mapping which allowed us to find
+            # the new position of the file.
+            return probable
 
-        # else let's figure out if we have a compatible mapping
-        for k, v in self.directorymapping.iteritems():
-            if uri.startswith(k):
-                probable = uri.replace(k, v, 1)
-                if uri_is_valid(probable) and uri_is_reachable(probable):
-                    return probable
-
-        # else, let's fire the signal...
+        # Inform the user that the file cannot be found.
         self.emit('missing-uri', uri, factory)
 
-        # and check again
-        for k, v in self.directorymapping.iteritems():
-            self.debug("uri:%r, k:%r, v:%r", uri, k, v)
-            if uri.startswith(k):
-                probable = uri.replace(k, v, 1)
-                if uri_is_valid(probable) and uri_is_reachable(probable):
-                    return probable
+        # Check again, as emitting the missing-uri signal could result in
+        # a new mapping in self.directorymapping.
+        probable = self._searchMissingFile(uri)
+        if probable:
+            return probable
 
         # Houston, we have lost contact with mission://fail
         raise FormatterError("Couldn't find %s" % uri)
+
+    def _searchMissingFile(self, uri):
+        """Search for a replacement for the specified file:// URI."""
+        for old_prefix, new_prefix in self.directorymapping.iteritems():
+            self.debug("uri:%r, k:%r, v:%r", uri, old_prefix, new_prefix)
+            if uri.startswith(old_prefix):
+                probable = uri.replace(old_prefix, new_prefix, 1)
+                if uri_is_valid(probable) and uri_is_reachable(probable):
+                    return probable
+        return None
 
     #}
 
