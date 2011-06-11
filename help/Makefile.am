@@ -51,3 +51,8 @@ DOC_PAGES = \
     trimming.page \
     usingclips.page \
     welcomedialog.page
+
+html:
+	mkdir -p html
+	yelp-build cache C/*.page
+	yelp-build html -o html C/*.page
