@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/ui/controller.py
+#       pitivi/ui/preset.py
 #
 # Copyright (c) 2010, Brandon Lewis <brandon_lewis@berkeley.edu>
 #
@@ -19,55 +19,107 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from pitivi.settings import xdg_data_home
-from ConfigParser import SafeConfigParser
-from pitivi.ui.dynamic import DynamicWidget
-from pitivi.ui.common import set_combo_value, get_combo_value
+import ConfigParser
 import os.path
-import gtk
+
 import gst
+import gtk
+
+from pitivi.settings import xdg_data_home
+
 
 
 class PresetManager(object):
+    """Abstract class for storing a list of presets.
+
+    Subclasses must provide a filename attribute.
+
+    @cvar filename: The name of the file where the presets will be stored.
+    @type filename: str
+    """
 
     def __init__(self):
-        self.path = os.path.join(xdg_data_home(), "pitivi", self.filename)
         self.presets = {}
         self.widget_map = {}
         self.ordered = gtk.ListStore(str, object)
         self.cur_preset = None
         self.ignore = False
 
+    def _getFilename(self):
+        return os.path.join(xdg_data_home(), "pitivi", self.filename)
+
     def load(self):
-        try:
-            fin = open(self.path, "r")
-            parser = SafeConfigParser()
-            parser.readfp(fin)
-            self._load(parser)
-        except IOError:
-            pass
+        parser = ConfigParser.SafeConfigParser()
+        if not parser.read(self._getFilename()):
+            # The file probably does not exist yet.
+            return
+        self._loadPresetsFromParser(parser)
 
     def save(self):
-        fout = open(self.path, "w")
-        parser = SafeConfigParser()
-        self._save(parser)
+        parser = ConfigParser.SafeConfigParser()
+        self._savePresetsToParser(parser)
+        fout = open(self._getFilename(), "w")
         parser.write(fout)
+        fout.close()
 
-    def _load(self, parser):
+    def _loadPresetsFromParser(self, parser):
         for section in sorted(parser.sections()):
-            self.loadSection(parser, section)
+            values = self._loadPreset(parser, section)
+            preset = self._convertSectionNameToPresetName(section)
+            self.addPreset(preset, values)
 
-    def _save(self, parser):
-        for name, properties in self.ordered:
-            self.saveSection(parser, name)
+    def _savePresetsToParser(self, parser):
+        for preset, properties in self.ordered:
+            values = self.presets[preset]
+            section = self._convertPresetNameToSectionName(preset)
+            self._savePreset(parser, section, values)
 
-    def loadSection(self, parser, section):
+    def _loadPreset(self, parser, section):
+        """Load the specified section from the specified config parser.
+
+        @param parser: The config parser from which the section will be loaded.
+        @type parser: ConfigParser
+        @param section: The name of the section to be loaded.
+        @type section: str
+        @return: A dict representing a preset.
+        """
         raise NotImplemented
 
-    def saveSection(self, parser, section):
+    def _savePreset(self, parser, section, values):
+        """Create the specified section into the specified config parser.
+
+        @param parser: The config parser in which the section will be created.
+        @type parser: ConfigParser
+        @param section: The name of the section to be created.
+        @type section: str
+        @param values: The values of a preset.
+        @type values: dict
+        """
         raise NotImplemented
+
+    def _convertSectionNameToPresetName(self, section):
+        # A section name for a ConfigParser can have any name except "default"!
+        assert section != "default"
+        if section.rstrip("_").lower() == "default":
+            return section[:-1]
+        else:
+            return section
+
+    def _convertPresetNameToSectionName(self, preset):
+        if preset.rstrip("_").lower() == "default":
+            # We add an _ to allow the user to have a preset named "default".
+            return "%s_" % preset
+        else:
+            return preset
 
     def addPreset(self, name, values):
+        """Add a new preset.
+
+        @param name: The name of the new preset.
+        @type name: str
+        @param values: The values of the new preset.
+        @type values: dict
+        """
         self.presets[name] = values
         self.ordered.append((name, values))
 
@@ -129,7 +181,7 @@ class VideoPresetManager(PresetManager):
 
     filename = "video_presets"
 
-    def loadSection(self, parser, section):
+    def _loadPreset(self, parser, section):
         width = parser.getint(section, "width")
         height = parser.getint(section, "height")
 
@@ -141,15 +193,13 @@ class VideoPresetManager(PresetManager):
         par_denom = parser.getint(section, "par-denom")
         par = gst.Fraction(par_num, par_denom)
 
-        self.addPreset(section, {
+        return {
             "width": width,
             "height": height,
             "frame-rate": rate,
-            "par": par,
-        })
+            "par": par}
 
-    def saveSection(self, parser, section):
-        values = self.presets[section]
+    def _savePreset(self, parser, section, values):
         parser.add_section(section)
         parser.set(section, "width", str(values["width"]))
         parser.set(section, "height", str(values["height"]))
@@ -167,19 +217,17 @@ class AudioPresetManager(PresetManager):
 
     filename = "audio_presets"
 
-    def loadSection(self, parser, section):
+    def _loadPreset(self, parser, section):
         channels = parser.getint(section, "channels")
         depth = parser.getint(section, "depth")
         rate = parser.getint(section, "sample-rate")
 
-        self.addPreset(section, {
+        return {
             "channels": channels,
             "depth": depth,
-            "sample-rate": rate,
-        })
+            "sample-rate": rate}
 
-    def saveSection(self, parser, section):
-        values = self.presets[section]
+    def _savePreset(self, parser, section, values):
         parser.add_section(section)
         parser.set(section, "channels", str(values["channels"]))
         parser.set(section, "depth", str(values["depth"]))
