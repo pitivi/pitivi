@@ -238,9 +238,9 @@ class SourceList(gtk.VBox, Loggable):
         txtlabel.set_line_wrap(True)
         txtlabel.set_line_wrap_mode(pango.WRAP_WORD)
         txtlabel.set_justify(gtk.JUSTIFY_CENTER)
-        txtlabel.set_markup(
-            _("<span>Import your clips by dragging them here or "
-              "by using the buttons above.</span>"))
+        txtlabel.set_text(
+            _('Add media to your project by dragging files here or '
+              'by using the "Import clips..." button.'))
         self.infobar.add(txtlabel)
         self.txtlabel = txtlabel
 
