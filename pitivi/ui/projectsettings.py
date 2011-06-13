@@ -387,7 +387,7 @@ class ProjectSettingsDialog():
         if iter_:
             self.video_presets.removePreset(model[iter_][0])
 
-    def _saveVideoPresetClickedCb(self, button):
+    def _saveVideoPresetButtonClickedCb(self, button):
         self.video_presets.savePreset()
         self.save_video_preset_button.set_sensitive(False)
 
