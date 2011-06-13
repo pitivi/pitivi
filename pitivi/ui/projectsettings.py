@@ -120,65 +120,70 @@ class ProjectSettingsDialog():
 
         # behavior
 
-        self.wg = RippleUpdateGroup(
-            (self.frame_rate_combo, self._updateCombo, "changed",
-                self.frame_rate_fraction_widget),
-            (self.frame_rate_fraction_widget, self._updateFraction,
-                "value-changed", self.frame_rate_combo),
-            (self.dar_combo, None, "changed"),
-            (self.dar_fraction_widget, None, "value-changed"),
-            (self.par_combo, None, "changed"),
-            (self.par_fraction_widget, None, "value-changed"),
-            (self.width_spinbutton, None, "value-changed"),
-            (self.height_spinbutton, None, "value-changed"),
-            (self.save_audio_preset_button, self._updateAudioSaveButton),
-            (self.save_video_preset_button, self._updateVideoSaveButton),
-            (self.channels_combo,),
-            (self.sample_rate_combo,),
-            (self.sample_depth_combo,),
-        )
+        self.wg = RippleUpdateGroup()
+        self.wg.addVertex(self.frame_rate_combo,
+                signal="changed",
+                update_func=self._updateCombo,
+                update_func_args=(self.frame_rate_fraction_widget,))
+        self.wg.addVertex(self.frame_rate_fraction_widget,
+                signal="value-changed",
+                update_func=self._updateFraction,
+                update_func_args=(self.frame_rate_combo,))
+        self.wg.addVertex(self.dar_combo, signal="changed")
+        self.wg.addVertex(self.dar_fraction_widget, signal="value-changed")
+        self.wg.addVertex(self.par_combo, signal="changed")
+        self.wg.addVertex(self.par_fraction_widget, signal="value-changed")
+        self.wg.addVertex(self.width_spinbutton, signal="value-changed")
+        self.wg.addVertex(self.height_spinbutton, signal="value-changed")
+        self.wg.addVertex(self.save_audio_preset_button,
+                 update_func=self._updateAudioSaveButton)
+        self.wg.addVertex(self.save_video_preset_button,
+                 update_func=self._updateVideoSaveButton)
+        self.wg.addVertex(self.channels_combo)
+        self.wg.addVertex(self.sample_rate_combo)
+        self.wg.addVertex(self.sample_depth_combo)
 
         # constrain width and height IFF constrain_sar_button is active
-        self.wg.add_edge(self.width_spinbutton, self.height_spinbutton,
-            self.constrained, self.updateHeight)
-        self.wg.add_edge(self.height_spinbutton, self.width_spinbutton,
-            self.constrained, self.updateWidth)
+        self.wg.addEdge(self.width_spinbutton, self.height_spinbutton,
+            predicate=self.constrained, edge_func=self.updateHeight)
+        self.wg.addEdge(self.height_spinbutton, self.width_spinbutton,
+            predicate=self.constrained, edge_func=self.updateWidth)
 
         # keep framereate text field and combo in sync
-        self.wg.add_bi_edge(self.frame_rate_combo,
+        self.wg.addBiEdge(self.frame_rate_combo,
            self.frame_rate_fraction_widget)
 
         # keep dar text field and combo in sync
-        self.wg.add_edge(self.dar_combo, self.dar_fraction_widget,
+        self.wg.addEdge(self.dar_combo, self.dar_fraction_widget,
             edge_func=self.updateDarFromCombo)
-        self.wg.add_edge(self.dar_fraction_widget, self.dar_combo,
+        self.wg.addEdge(self.dar_fraction_widget, self.dar_combo,
             edge_func=self.updateDarFromFractionWidget)
 
         # keep par text field and combo in sync
-        self.wg.add_edge(self.par_combo, self.par_fraction_widget,
+        self.wg.addEdge(self.par_combo, self.par_fraction_widget,
             edge_func=self.updateParFromCombo)
-        self.wg.add_edge(self.par_fraction_widget, self.par_combo,
+        self.wg.addEdge(self.par_fraction_widget, self.par_combo,
             edge_func=self.updateParFromFractionWidget)
 
         # constrain DAR and PAR values. because the combo boxes are already
         # linked, we only have to link the fraction widgets together.
-        self.wg.add_edge(self.par_fraction_widget, self.dar_fraction_widget,
+        self.wg.addEdge(self.par_fraction_widget, self.dar_fraction_widget,
             edge_func=self.updateDarFromPar)
-        self.wg.add_edge(self.dar_fraction_widget, self.par_fraction_widget,
+        self.wg.addEdge(self.dar_fraction_widget, self.par_fraction_widget,
             edge_func=self.updateParFromDar)
 
         # update PAR when width/height change and the DAR checkbutton is
         # selected
-        self.wg.add_edge(self.width_spinbutton, self.par_fraction_widget,
+        self.wg.addEdge(self.width_spinbutton, self.par_fraction_widget,
             predicate=self.darSelected, edge_func=self.updateParFromDar)
-        self.wg.add_edge(self.height_spinbutton, self.par_fraction_widget,
+        self.wg.addEdge(self.height_spinbutton, self.par_fraction_widget,
             predicate=self.darSelected, edge_func=self.updateParFromDar)
 
         # update DAR when width/height change and the PAR checkbutton is
         # selected
-        self.wg.add_edge(self.width_spinbutton, self.dar_fraction_widget,
+        self.wg.addEdge(self.width_spinbutton, self.dar_fraction_widget,
             predicate=self.parSelected, edge_func=self.updateDarFromPar)
-        self.wg.add_edge(self.height_spinbutton, self.dar_fraction_widget,
+        self.wg.addEdge(self.height_spinbutton, self.dar_fraction_widget,
             predicate=self.parSelected, edge_func=self.updateDarFromPar)
 
         # presets
@@ -207,20 +212,20 @@ class ProjectSettingsDialog():
         self.bindCombo(self.audio_presets, "depth",
             self.sample_depth_combo)
 
-        self.wg.add_edge(self.par_fraction_widget,
+        self.wg.addEdge(self.par_fraction_widget,
             self.save_video_preset_button)
-        self.wg.add_edge(self.frame_rate_fraction_widget,
+        self.wg.addEdge(self.frame_rate_fraction_widget,
             self.save_video_preset_button)
-        self.wg.add_edge(self.width_spinbutton,
+        self.wg.addEdge(self.width_spinbutton,
             self.save_video_preset_button)
-        self.wg.add_edge(self.height_spinbutton,
+        self.wg.addEdge(self.height_spinbutton,
             self.save_video_preset_button)
 
-        self.wg.add_edge(self.channels_combo,
+        self.wg.addEdge(self.channels_combo,
             self.save_audio_preset_button)
-        self.wg.add_edge(self.sample_rate_combo,
+        self.wg.addEdge(self.sample_rate_combo,
             self.save_audio_preset_button)
-        self.wg.add_edge(self.sample_depth_combo,
+        self.wg.addEdge(self.sample_depth_combo,
             self.save_audio_preset_button)
 
         self.updateUI()
