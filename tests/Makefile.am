@@ -35,6 +35,7 @@ tests = \
 integration_tests = \
 	test_integration.py \
 	test_preset.py \
+	test_projectsettings.py \
 	test_still_image.py
 
 EXTRA_DIST = \

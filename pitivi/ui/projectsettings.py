@@ -356,12 +356,27 @@ class ProjectSettingsDialog():
         self.par_fraction_widget.set_sensitive(not state)
         self.par_combo.set_sensitive(not state)
 
+    @staticmethod
+    def _getUniquePresetName(mgr):
+        """Get a unique name for a new preset for the specified PresetManager.
+        """
+        existing_preset_names = list(mgr.getPresetNames())
+        preset_name = _("New Preset")
+        i = 1
+        while preset_name in existing_preset_names:
+            preset_name = _("New Preset %d") % i
+            i += 1
+        return preset_name
+
     def _addAudioPresetButtonClickedCb(self, button):
-        self.audio_presets.addPreset(_("New Preset"), {
+        preset_name = self._getUniquePresetName(self.audio_presets)
+        self.audio_presets.addPreset(preset_name, {
             "channels": get_combo_value(self.channels_combo),
             "sample-rate": get_combo_value(self.sample_rate_combo),
             "depth": get_combo_value(self.sample_depth_combo)
         })
+        self.audio_presets.restorePreset(preset_name)
+        self._updateAudioPresetButtons()
 
     def _removeAudioPresetButtonClickedCb(self, button):
         selection = self.audio_preset_treeview.get_selection()
@@ -374,7 +389,7 @@ class ProjectSettingsDialog():
         self.save_audio_preset_button.set_sensitive(False)
 
     def _addVideoPresetButtonClickedCb(self, button):
-        preset_name = _("New Preset")
+        preset_name = self._getUniquePresetName(self.video_presets)
         self.video_presets.addPreset(preset_name, {
             "width": int(self.width_spinbutton.get_value()),
             "height": int(self.height_spinbutton.get_value()),
