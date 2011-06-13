@@ -187,8 +187,12 @@ class ProjectSettingsDialog():
         self.video_presets = VideoPresetManager()
         self.video_presets.load()
 
-        self.fillTreeview(self.audio_preset_treeview, self.audio_presets)
-        self.fillTreeview(self.video_preset_treeview, self.video_presets)
+        self._fillPresetsTreeview(
+                self.audio_preset_treeview, self.audio_presets,
+                self._updateAudioPresetButtons)
+        self._fillPresetsTreeview(
+                self.video_preset_treeview, self.video_presets,
+                self._updateVideoPresetButtons)
 
         self.bindSpinbutton(self.video_presets, "width", self.width_spinbutton)
         self.bindSpinbutton(self.video_presets, "height",
@@ -245,11 +249,17 @@ class ProjectSettingsDialog():
             lambda x: widget.set_value(float(x)),
             lambda: int(widget.get_value()))
 
-    def presetNameEditedCb(self, renderer, path, new_text, mgr):
-        mgr.renamePreset(path, new_text)
-        mgr.cur_preset = new_text
+    def _fillPresetsTreeview(self, treeview, mgr, update_buttons_func):
+        """Set up the specified treeview to display the specified presets.
 
-    def fillTreeview(self, treeview, mgr):
+        @param treeview: The treeview for displaying the presets.
+        @type treeview: TreeView
+        @param mgr: The preset manager.
+        @type mgr: PresetManager
+        @param update_buttons_func: A function which updates the buttons for
+        removing and saving a preset, enabling or disabling them accordingly.
+        @type update_buttons_func: function
+        """
         renderer = gtk.CellRendererText()
         renderer.props.editable = True
         column = gtk.TreeViewColumn("Preset", renderer, text=0)
@@ -259,27 +269,27 @@ class ProjectSettingsDialog():
         treeview.set_model(model)
         model.connect("row-inserted", self._newPresetCb,
             column, renderer, treeview)
-        renderer.connect("edited", self.presetNameEditedCb, mgr)
+        renderer.connect("edited", self._presetNameEditedCb, mgr)
         treeview.get_selection().connect("changed", self._presetChangedCb,
-            mgr)
+            mgr, update_buttons_func)
 
     def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
         treeview.set_cursor_on_cell(path, column, renderer, start_editing=True)
         treeview.grab_focus()
 
-    def _presetChangedCb(self, selection, mgr):
+    def _presetNameEditedCb(self, renderer, path, new_text, mgr):
+        mgr.renamePreset(path, new_text)
+        mgr.cur_preset = new_text
+
+    def _presetChangedCb(self, selection, mgr, update_preset_buttons_func):
+        """Handle the selection of a preset."""
         model, iter_ = selection.get_selected()
         if iter_:
             preset = model[iter_][0]
         else:
             preset = None
         mgr.restorePreset(preset)
-        if mgr == self.audio_presets:
-            self._updateAudioSaveButton(None, self.save_audio_preset_button)
-            self.remove_audio_preset_button.set_sensitive(bool(preset))
-        else:
-            self._updateVideoSaveButton(None, self.save_video_preset_button)
-            self.remove_video_preset_button.set_sensitive(bool(preset))
+        update_preset_buttons_func()
 
     def constrained(self):
         return self.constrain_sar_button.props.active
@@ -376,6 +386,18 @@ class ProjectSettingsDialog():
         self.video_presets.savePreset()
         self.save_video_preset_button.set_sensitive(False)
 
+    def _updateAudioPresetButtons(self):
+        preset_changed = self.audio_presets.changed()
+        self.save_audio_preset_button.set_sensitive(preset_changed)
+        preset_selected = bool(self.audio_presets.cur_preset)
+        self.remove_audio_preset_button.set_sensitive(preset_selected)
+
+    def _updateVideoPresetButtons(self):
+        preset_changed = self.video_presets.changed()
+        self.save_video_preset_button.set_sensitive(preset_changed)
+        preset_selected = bool(self.video_presets.cur_preset)
+        self.remove_video_preset_button.set_sensitive(preset_selected)
+    
     def _updateAudioSaveButton(self, unused_in, button):
         button.set_sensitive(self.audio_presets.changed())
 
