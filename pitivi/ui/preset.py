@@ -28,6 +28,10 @@ import gtk
 from pitivi.settings import xdg_data_home
 
 
+class DuplicatePresetNameException(Exception):
+    """Raised when an operation would result in a duplicated preset name."""
+    pass
+
 
 class PresetManager(object):
     """Abstract class for storing a list of presets.
@@ -132,6 +136,8 @@ class PresetManager(object):
         @param values: The values of the new preset.
         @type values: dict
         """
+        if self.hasPreset(name):
+            raise DuplicatePresetNameException(name)
         self.presets[name] = values
         # Note: This generates a "row-inserted" signal in the model.
         self.ordered.append((name, values))
@@ -154,10 +160,21 @@ class PresetManager(object):
         @type new_name: str
         """
         old_name = self.ordered[path][0]
+        assert old_name in self.presets
+        if old_name == new_name:
+            # Nothing to do.
+            return
+        if (not old_name.lower() == new_name.lower() and
+            self.hasPreset(new_name)):
+            raise DuplicatePresetNameException()
         self.ordered[path][0] = new_name
         self.presets[new_name] = self.presets.pop(old_name)
         if self.cur_preset == old_name:
             self.cur_preset = new_name
+
+    def hasPreset(self, name):
+        name = name.lower()
+        return any(name == preset.lower() for preset in self.getPresetNames())
 
     def getPresetNames(self):
         return (row[0] for row in self.ordered)

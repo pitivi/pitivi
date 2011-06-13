@@ -24,7 +24,7 @@ import shutil
 import tempfile
 from unittest import TestCase
 
-from pitivi.ui.preset import PresetManager
+from pitivi.ui.preset import DuplicatePresetNameException, PresetManager
 
 
 class SimplePresetManager(PresetManager):
@@ -114,3 +114,22 @@ class TestProjectManager(TestCase):
         preset_one = other_manager.presets['preset one']
         self.assertEqual(1, len(preset_one))
         self.assertEqual('1A', preset_one['name1'])
+
+    def testAddPreset(self):
+        self.manager.addPreset('preseT onE', {'name1': '1A'})
+        self.assertRaises(DuplicatePresetNameException,
+                self.manager.addPreset, 'Preset One', {'name1': '2A'})
+
+    def testRenamePreset(self):
+        self.manager.addPreset('preseT onE', {'name1': '1A'})
+        self.manager.addPreset('Preset Two', {'name1': '2A'})
+
+        # Renaming 'preseT onE' to 'Preset One'.
+        self.manager.renamePreset('0', 'Preset One')
+
+        # Renaming 'Preset One' to 'Preset TWO'.
+        self.assertRaises(DuplicatePresetNameException,
+                self.manager.renamePreset, '0', 'Preset TWO')
+        # Renaming 'Preset One' to 'Preset two'.
+        self.assertRaises(DuplicatePresetNameException,
+                self.manager.renamePreset, '0', 'Preset two')

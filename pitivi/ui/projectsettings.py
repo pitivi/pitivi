@@ -42,7 +42,8 @@ from pitivi.ui.common import\
     get_combo_value,\
     set_combo_value
 
-from pitivi.ui.preset import AudioPresetManager, VideoPresetManager
+from pitivi.ui.preset import AudioPresetManager, DuplicatePresetNameException,\
+    VideoPresetManager
 
 # FIXME: are we sure the following tables correct?
 
@@ -199,6 +200,12 @@ class ProjectSettingsDialog():
                 self.video_preset_treeview, self.video_presets,
                 self._updateVideoPresetButtons)
 
+        # A map which tells which infobar should be used when displaying
+        # an error for a preset manager.
+        self._infobarForPresetManager = {
+                self.audio_presets: self.audio_preset_infobar,
+                self.video_presets: self.video_preset_infobar}
+
         # Bind the widgets in the Video tab to the Video Presets Manager.
         self.bindSpinbutton(self.video_presets, "width", self.width_spinbutton)
         self.bindSpinbutton(self.video_presets, "height",
@@ -278,15 +285,29 @@ class ProjectSettingsDialog():
         model.connect("row-inserted", self._newPresetCb,
             column, renderer, treeview)
         renderer.connect("edited", self._presetNameEditedCb, mgr)
+        renderer.connect("editing-started", self._presetNameEditingStartedCb,
+            mgr)
         treeview.get_selection().connect("changed", self._presetChangedCb,
             mgr, update_buttons_func)
+        treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
 
     def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
+        """Handle the addition of a preset to the model of the preset manager.
+        """
         treeview.set_cursor_on_cell(path, column, renderer, start_editing=True)
         treeview.grab_focus()
 
     def _presetNameEditedCb(self, renderer, path, new_text, mgr):
-        mgr.renamePreset(path, new_text)
+        """Handle the renaming of a preset."""
+        try:
+            mgr.renamePreset(path, new_text)
+        except DuplicatePresetNameException:
+            error_markup = _('"%s" already exists.') % new_text
+            self._showPresetManagerError(mgr, error_markup)
+
+    def _presetNameEditingStartedCb(self, renderer, editable, path, mgr):
+        """Handle the start of a preset renaming."""
+        self._hidePresetManagerError(mgr)
 
     def _presetChangedCb(self, selection, mgr, update_preset_buttons_func):
         """Handle the selection of a preset."""
@@ -297,6 +318,33 @@ class ProjectSettingsDialog():
             preset = None
         mgr.restorePreset(preset)
         update_preset_buttons_func()
+        self._hidePresetManagerError(mgr)
+
+    def _treeviewDefocusedCb(self, widget, event, mgr):
+        """Handle the treeview loosing the focus."""
+        self._hidePresetManagerError(mgr)
+
+    def _showPresetManagerError(self, mgr, error_markup):
+        """Show the specified error on the infobar associated with the manager.
+
+        @param mgr: The preset manager for which to show the error.
+        @type mgr: PresetManager
+        """
+        infobar = self._infobarForPresetManager[mgr]
+        # The infobar must contain exactly one object in the content area:
+        # a label for displaying the error.
+        label = infobar.get_content_area().children()[0]
+        label.set_markup(error_markup)
+        infobar.show()
+
+    def _hidePresetManagerError(self, mgr):
+        """Hide the error infobar associated with the manager.
+
+        @param mgr: The preset manager for which to hide the error infobar.
+        @type mgr: PresetManager
+        """
+        infobar = self._infobarForPresetManager[mgr]
+        infobar.hide()
 
     def constrained(self):
         return self.constrain_sar_button.props.active
@@ -346,6 +394,10 @@ class ProjectSettingsDialog():
             "constrain_sar_button")
         self.select_dar_radiobutton = self.builder.get_object(
             "select_dar_radiobutton")
+        self.video_preset_infobar = self.builder.get_object(
+            "video-preset-infobar")
+        self.audio_preset_infobar = self.builder.get_object(
+            "audio-preset-infobar")
 
     def _constrainSarButtonToggledCb(self, button):
         if button.props.active:
