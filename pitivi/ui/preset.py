@@ -83,7 +83,7 @@ class PresetManager(object):
         @type section: str
         @return: A dict representing a preset.
         """
-        raise NotImplemented
+        raise NotImplementedError()
 
     def _savePreset(self, parser, section, values):
         """Create the specified section into the specified config parser.
@@ -95,7 +95,7 @@ class PresetManager(object):
         @param values: The values of a preset.
         @type values: dict
         """
-        raise NotImplemented
+        raise NotImplementedError()
 
     def _convertSectionNameToPresetName(self, section):
         # A section name for a ConfigParser can have any name except "default"!
