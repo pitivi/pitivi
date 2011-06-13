@@ -374,12 +374,15 @@ class ProjectSettingsDialog():
         self.save_audio_preset_button.set_sensitive(False)
 
     def _addVideoPresetButtonClickedCb(self, button):
-        self.video_presets.addPreset(_("New Preset"), {
+        preset_name = _("New Preset")
+        self.video_presets.addPreset(preset_name, {
             "width": int(self.width_spinbutton.get_value()),
             "height": int(self.height_spinbutton.get_value()),
             "frame-rate": self.frame_rate_fraction_widget.getWidgetValue(),
             "par": self.par_fraction_widget.getWidgetValue(),
         })
+        self.video_presets.restorePreset(preset_name)
+        self._updateVideoPresetButtons()
 
     def _removeVideoPresetButtonClickedCb(self, button):
         selection = self.video_preset_treeview.get_selection()
