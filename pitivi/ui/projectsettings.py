@@ -139,9 +139,9 @@ class ProjectSettingsDialog():
                  update_func=self._updateAudioSaveButton)
         self.wg.addVertex(self.save_video_preset_button,
                  update_func=self._updateVideoSaveButton)
-        self.wg.addVertex(self.channels_combo)
-        self.wg.addVertex(self.sample_rate_combo)
-        self.wg.addVertex(self.sample_depth_combo)
+        self.wg.addVertex(self.channels_combo, signal="changed")
+        self.wg.addVertex(self.sample_rate_combo, signal="changed")
+        self.wg.addVertex(self.sample_depth_combo, signal="changed")
 
         # constrain width and height IFF constrain_sar_button is active
         self.wg.addEdge(self.width_spinbutton, self.height_spinbutton,
@@ -199,12 +199,15 @@ class ProjectSettingsDialog():
                 self.video_preset_treeview, self.video_presets,
                 self._updateVideoPresetButtons)
 
+        # Bind the widgets in the Video tab to the Video Presets Manager.
         self.bindSpinbutton(self.video_presets, "width", self.width_spinbutton)
         self.bindSpinbutton(self.video_presets, "height",
             self.height_spinbutton)
         self.bindFractionWidget(self.video_presets, "frame-rate",
             self.frame_rate_fraction_widget)
         self.bindPar(self.video_presets)
+
+        # Bind the widgets in the Audio tab to the Audio Presets Manager.
         self.bindCombo(self.audio_presets, "channels",
             self.channels_combo)
         self.bindCombo(self.audio_presets, "sample-rate",
