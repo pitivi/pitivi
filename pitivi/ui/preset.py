@@ -36,6 +36,17 @@ class PresetManager(object):
 
     @cvar filename: The name of the file where the presets will be stored.
     @type filename: str
+
+    @ivar cur_preset: The currently selected preset. Note that a preset has to
+        be selected before it can be changed.
+    @type cur_preset: str
+    @ivar ordered: A list holding (name -> preset_dict) tuples.
+    @type ordered: gtk.ListStore
+    @ivar presets: A (name -> preset_dict) map.
+    @type presets: dict
+    @ivar widget_map: A (propname -> (setter_func, getter_func)) map.
+        These two functions are used when showing or saving a preset.
+    @type widget_map: dict
     """
 
     def __init__(self):
@@ -43,6 +54,7 @@ class PresetManager(object):
         self.widget_map = {}
         self.ordered = gtk.ListStore(str, object)
         self.cur_preset = None
+        # Whether to ignore the updateValue calls.
         self._ignore_update_requests = False
 
     def _getFilename(self):
@@ -121,6 +133,7 @@ class PresetManager(object):
         @type values: dict
         """
         self.presets[name] = values
+        # Note: This generates a "row-inserted" signal in the model.
         self.ordered.append((name, values))
 
     def removePreset(self, name):
@@ -133,6 +146,13 @@ class PresetManager(object):
             self.cur_preset = None
 
     def renamePreset(self, path, new_name):
+        """Change the name of a preset.
+
+        @param path: The path in the model identifying the preset to be renamed.
+        @type path: str
+        @param new_name: The new name for the preset.
+        @type new_name: str
+        """
         old_name = self.ordered[path][0]
         self.ordered[path][0] = new_name
         self.presets[new_name] = self.presets.pop(old_name)
@@ -141,9 +161,11 @@ class PresetManager(object):
         return (row[0] for row in self.ordered)
 
     def getModel(self):
+        """Get the GtkModel used by the UI."""
         return self.ordered
 
     def updateValue(self, name, value):
+        """Update a value in the current preset, if any."""
         if self._ignore_update_requests:
             # This is caused by restorePreset, nothing to do.
             return
@@ -151,9 +173,15 @@ class PresetManager(object):
             self.presets[self.cur_preset][name] = value
 
     def bindWidget(self, propname, setter_func, getter_func):
+        """Link the specified functions to the specified preset property."""
         self.widget_map[propname] = (setter_func, getter_func)
 
     def restorePreset(self, preset):
+        """Select a preset and copy the values from the preset to the widgets.
+
+        @param preset: The name of the preset to be selected.
+        @type preset: str
+        """
         self._ignore_update_requests = True
         if preset is None:
             self.cur_preset = None
@@ -167,6 +195,7 @@ class PresetManager(object):
         self._ignore_update_requests = False
 
     def savePreset(self):
+        """Copy the values from the widgets to the preset."""
         values = self.presets[self.cur_preset]
         for field, (setter, getter) in self.widget_map.iteritems():
             values[field] = getter()
