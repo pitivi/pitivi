@@ -156,6 +156,8 @@ class PresetManager(object):
         old_name = self.ordered[path][0]
         self.ordered[path][0] = new_name
         self.presets[new_name] = self.presets.pop(old_name)
+        if self.cur_preset == old_name:
+            self.cur_preset = new_name
 
     def getPresetNames(self):
         return (row[0] for row in self.ordered)

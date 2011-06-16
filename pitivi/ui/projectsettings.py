@@ -284,7 +284,6 @@ class ProjectSettingsDialog():
 
     def _presetNameEditedCb(self, renderer, path, new_text, mgr):
         mgr.renamePreset(path, new_text)
-        mgr.cur_preset = new_text
 
     def _presetChangedCb(self, selection, mgr, update_preset_buttons_func):
         """Handle the selection of a preset."""
