@@ -43,7 +43,7 @@ class PresetManager(object):
         self.widget_map = {}
         self.ordered = gtk.ListStore(str, object)
         self.cur_preset = None
-        self.ignore = False
+        self._ignore_update_requests = False
 
     def _getFilename(self):
         return os.path.join(xdg_data_home(), "pitivi", self.filename)
@@ -144,14 +144,17 @@ class PresetManager(object):
         return self.ordered
 
     def updateValue(self, name, value):
-        if self.cur_preset and not self.ignore:
+        if self._ignore_update_requests:
+            # This is caused by restorePreset, nothing to do.
+            return
+        if self.cur_preset:
             self.presets[self.cur_preset][name] = value
 
     def bindWidget(self, propname, setter_func, getter_func):
         self.widget_map[propname] = (setter_func, getter_func)
 
     def restorePreset(self, preset):
-        self.ignore = True
+        self._ignore_update_requests = True
         if preset is None:
             self.cur_preset = None
             return
@@ -159,9 +162,9 @@ class PresetManager(object):
             return
         values = self.presets[preset]
         self.cur_preset = preset
-        for field, (setter_func, getter_func) in self.widget_map.iteritems():
-            setter_func(values[field])
-        self.ignore = False
+        for field, (setter, getter) in self.widget_map.iteritems():
+            setter(values[field])
+        self._ignore_update_requests = False
 
     def savePreset(self):
         values = self.presets[self.cur_preset]
