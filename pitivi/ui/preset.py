@@ -168,13 +168,14 @@ class PresetManager(object):
         for field, (setter, getter) in self.widget_map.iteritems():
             values[field] = getter()
 
-    def changed(self):
+    def isCurrentPresetChanged(self):
+        """Return whether the widgets values differ from those of the preset."""
         if not self.cur_preset:
+            # There is no preset selected, nothing to do.
             return False
-
         values = self.presets[self.cur_preset]
-        return any((values[field] != getter() for field, (setter, getter)
-            in self.widget_map.iteritems()))
+        return any((values[field] != getter()
+                    for field, (setter, getter) in self.widget_map.iteritems()))
 
 
 class VideoPresetManager(PresetManager):
