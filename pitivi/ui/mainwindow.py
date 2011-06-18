@@ -899,10 +899,17 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.get_content_area().set_spacing(SPACING)
         dialog.set_transient_for(self)
 
-        text = _('The following file has moved: "<b>%s</b>" (duration: %s)\
-                \nPlease specify its new location:' \
-                % (factory_name(factory), beautify_length(factory.duration)))
         # TODO: display the filesize to help the user identify the file
+        if not factory.duration or factory.duration == gst.CLOCK_TIME_NONE:
+            # The file is probably an image, not video or audio.
+            text = _('The following file has moved: "<b>%s</b>"'
+                     '\nPlease specify its new location:'
+                     % factory_name(factory))
+        else:
+            length = beautify_length(factory.duration)
+            text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
+                     '\nPlease specify its new location:'
+                     % (factory_name(factory), length))
 
         label = gtk.Label()
         label.set_markup(text)
