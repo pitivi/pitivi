@@ -2,12 +2,10 @@
 <interface>
   <!-- interface-requires gtk+ 2.6 -->
   <object class="GtkDialog" id="dialog1">
-    <property name="visible">False</property>
     <property name="can_focus">False</property>
     <property name="border_width">12</property>
     <property name="title" translatable="yes">Properties for &lt;element&gt;</property>
     <property name="modal">True</property>
-    <property name="default_height">550</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">

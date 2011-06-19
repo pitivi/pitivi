@@ -197,6 +197,22 @@ class GstElementSettingsDialog(Loggable):
             self.warning("Couldn't create element from factory %s", self.factory)
         self.properties = properties
         self._fillWindow()
+
+        # Try to avoid scrolling, whenever possible.
+        screen_height = self.window.get_screen().get_height()
+        contents_height = self.elementsettings.size_request()[1]
+        maximum_contents_height = max(500, 0.7 * screen_height)
+        if contents_height < maximum_contents_height:
+            # The height of the content is small enough, disable the scrollbars.
+            default_height = -1
+            scrolledwindow = self.builder.get_object("scrolledwindow1")
+            scrolledwindow.set_policy(gtk.POLICY_NEVER, gtk.POLICY_NEVER)
+            scrolledwindow.set_shadow_type(gtk.SHADOW_NONE)
+        else:
+            # If we need to scroll, set a reasonable height for the window.
+            default_height = 600
+        self.window.set_default_size(300, default_height)
+
         self.window.show()
 
     def _fillWindow(self):
