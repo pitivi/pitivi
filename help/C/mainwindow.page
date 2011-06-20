@@ -24,12 +24,10 @@
 
       <figure>
        <title><app>PiTiVi</app> main window</title>
-       <desc><app>PiTiVi</app> main window</desc>
-        <media type="image" src="figures/mainwindow.png" mime="image/png" style="right">
-        <p><app>PiTiVi</app> main window.</p>
+       <desc>The main window, as the name implies, is the window containing the main components of the <app>PiTiVi</app> user interface, namely: the menu bar, the toolbars, the timeline and various customizable components (media library, previewer, effects library, transitions library, etc.).</desc>
+        <media type="image" src="figures/mainwindow.jpg" mime="image/jpg" style="right">
         </media>
       </figure>
-      <p>The main window, as the name implies, is the window containing the main components of the <app>PiTiVi</app> user interface, namely: the menu bar, the toolbars, the timeline and various customizable components (source list, previewer, effects list, transitions list, etc.).</p>
 
 
     <section>
@@ -79,7 +77,7 @@
       <p>This toolbar, located below the previewer, contains buttons controlling</p>
       <list>
        <item><p>The playback of the timeline.</p></item>
-       <item><p>The playback of a clip being previewed from the source list.</p></item>
+       <item><p>The playback of a clip being previewed from the media library.</p></item>
       </list>
       <p>The <gui>Play</gui> button transforms into a <gui>Pause</gui> button when playing, and reverts to a <gui>Play</gui> button again when not playing.</p>
     </section>

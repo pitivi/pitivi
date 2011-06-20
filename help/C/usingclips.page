@@ -28,7 +28,7 @@
       <title>Clips vs files</title>
        <list>
         <item><p><em>Files</em> are data on your hard disk (videos, music, pictures, etc.) that can be accessed by <app>PiTiVi</app> and incorporated in your video editing project.</p></item>
-        <item><p><em>Clips</em> are a visual representation of your files on the timeline. They represent the period of time they consume on the timeline and can be edited independently: each time you drag a file from the source list to the timeline, a new clip is created. As such, a file can be reused as much as you want to create any amount of different clips.</p></item>
+        <item><p><em>Clips</em> are a visual representation of your files on the timeline. They represent the period of time they consume on the timeline and can be edited independently: each time you drag a file from the media library to the timeline, a new clip is created. As such, a file can be reused as much as you want to create any amount of different clips.</p></item>
        </list>
        <p>Since PiTiVi is a non-destructive editor, clips are edited, not files. As such, your files stay intact.</p>
      </section>

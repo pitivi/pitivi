@@ -24,14 +24,14 @@
 
     <title>Inserting clips</title>
 
-     <p>From the source list, you can insert one or more clips by selecting them (using the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) and:</p>
+     <p>From the media library, you can insert one or more clips by selecting them (using the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) and:</p>
      <list>
       <item><p>Dragging and dropping them onto place in the timeline.</p></item>
       <item><p>Using <guiseq><gui>Project</gui><gui>Insert at end of timeline</gui></guiseq>.</p></item>
       <item><p>Pressing the <key>Insert</key> (Ins) key. Those clips will be inserted at the end of the timeline.</p></item>
      </list>
      <note style="bug">
-     <p>It should also be possible to import files directly into the timeline by dragging them from another application and dropping them onto <app>PiTiVi</app>'s timeline. The files would be added automatically to the <gui>Media Library</gui> in the process. This feature is not yet implemented, see <link href="https://bugzilla.gnome.org/show_bug.cgi?id=608682">bug #570118</link> for more information.</p>
+     <p>It should also be possible to import files directly into the timeline by dragging them from another application and dropping them onto <app>PiTiVi</app>'s timeline. The files would be added automatically to the media library in the process. This feature is not yet implemented, see <link href="https://bugzilla.gnome.org/show_bug.cgi?id=608682">bug #570118</link> for more information.</p>
      </note>
 
 </page>
