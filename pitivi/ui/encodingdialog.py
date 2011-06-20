@@ -27,6 +27,7 @@ import os
 import gtk
 import gst
 import pango
+from gettext import gettext as _
 
 from pitivi import configure
 from pitivi.settings import ExportSettings
@@ -214,6 +215,27 @@ class EncodingDialog(Renderer, Loggable):
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
         self.updateFilename(self.project.name)
 
+    def _checkForExistingFile(self, *args):
+        """
+        Display a warning icon and tooltip if the file path already exists.
+        """
+        path = self.filebutton.get_current_folder()
+        if not path:
+            # This happens when the window is initialized.
+            return
+        warning_icon = gtk.STOCK_DIALOG_WARNING
+        filename = self.fileentry.get_text()
+        if not filename:
+            tooltip_text = _("A file name is required.")
+        elif filename and os.path.exists(os.path.join(path, filename)):
+            tooltip_text = _("This file already exists.\n"
+                             "If you don't want to overwrite it, choose a "
+                             "different file name or folder.")
+        else:
+            warning_icon = None
+            tooltip_text = None
+        self.fileentry.set_icon_from_stock(1, warning_icon)
+        self.fileentry.set_icon_tooltip_text(1, tooltip_text)
 
     def updateFilename(self, basename):
         """Updates the filename UI element to show the specified file name."""

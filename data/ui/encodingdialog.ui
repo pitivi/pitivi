@@ -152,6 +152,7 @@
                             <property name="AtkObject::accessible-name" translatable="yes">Folder</property>
                           </object>
                         </child>
+                        <signal name="current-folder-changed" handler="_checkForExistingFile" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -235,6 +236,7 @@
                             <property name="AtkObject::accessible-name" translatable="yes">File name</property>
                           </object>
                         </child>
+                        <signal name="changed" handler="_checkForExistingFile" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
