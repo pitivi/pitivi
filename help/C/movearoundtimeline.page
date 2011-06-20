@@ -37,10 +37,12 @@
         <item><p>Zooming out allows you to scroll faster along the timeline. Zoom can thus be used in conjunction with scrolling to move quickly between distant points of your project's chronology.</p></item>
        </list>
        <p>You can zoom in and out by holding the <key>Ctrl</key> key while using the mousewheel over the timeline, using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and <guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq>menu items, or dragging the zoom slider on the left of the ruler.</p>
-       <note>
+       <note style="tip">
         <title><em>Warping</em> between zoom levels</title>
         <p>Using your mouse's scroll wheel, you can also <em>warp</em> instantly from any zoom level to another in a single click. To do that, click with your mousewheel anywhere on the zoom slider.</p>
        </note>
+       
+       <p>To get a better overview of your timeline, you may use the <guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the <gui>Zoom</gui> button on the left of the zoom slider.</p>
      </section>
 
      <section id="movingplayhead">
