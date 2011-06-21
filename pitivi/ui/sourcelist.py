@@ -135,7 +135,7 @@ class SourceList(gtk.VBox, Loggable):
 
         # Popup Menu
         self.popup = gtk.Menu()
-        self.popup_importitem = gtk.ImageMenuItem(_("Import clips..."))
+        self.popup_importitem = gtk.ImageMenuItem(_("Import Files..."))
         image = gtk.Image()
         image.set_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU)
         self.popup_importitem.set_image(image)
@@ -239,8 +239,8 @@ class SourceList(gtk.VBox, Loggable):
         txtlabel.set_line_wrap_mode(pango.WRAP_WORD)
         txtlabel.set_justify(gtk.JUSTIFY_CENTER)
         txtlabel.set_text(
-            _('Add media to your project by dragging files here or '
-              'by using the "Import clips..." button.'))
+            _('Add media to your project by dragging files and folders here or '
+              'by using the "Import Files..." button.'))
         self.infobar.add(txtlabel)
         self.txtlabel = txtlabel
 
@@ -307,20 +307,22 @@ class SourceList(gtk.VBox, Loggable):
 
         # always available
         actions = (
-            ("ImportSources", gtk.STOCK_ADD, _("_Import clips..."),
-                None, _("Import clips to use"), self._importSourcesCb),
+            ("ImportSources", gtk.STOCK_ADD, _("_Import Files..."),
+                None, _("Add media files to your project"),
+                self._importSourcesCb),
             ("ImportSourcesFolder", gtk.STOCK_ADD,
-                _("Import _folder of clips..."), None,
-                _("Import folder of clips to use"), self._importSourcesFolderCb),
+                _("Import _Folders..."), None,
+                _("Add the contents of a folder as clips in your project"),
+                self._importSourcesFolderCb),
         )
 
         # only available when selection is non-empty
         selection_actions = (
             ("RemoveSources", gtk.STOCK_DELETE,
-                _("_Remove from project"), "<Control>Delete", None,
+                _("_Remove from Project"), "<Control>Delete", None,
                 self._removeSourcesCb),
             ("InsertEnd", gtk.STOCK_COPY,
-                _("Insert at _end of timeline"), "Insert", None,
+                _("Insert at _End of Timeline"), "Insert", None,
                 self._insertEndCb),
         )
 
@@ -506,10 +508,10 @@ class SourceList(gtk.VBox, Loggable):
 
         if select_folders:
             chooser_action = gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER
-            dialogtitle = _("Import a folder")
+            dialogtitle = _("Select One or More Folders")
         else:
             chooser_action = gtk.FILE_CHOOSER_ACTION_OPEN
-            dialogtitle = _("Import a clip")
+            dialogtitle = _("Select One or More Files")
         close_after = gtk.CheckButton(_("Close after importing files"))
         close_after.set_active(self.app.settings.closeImportDialog)
 

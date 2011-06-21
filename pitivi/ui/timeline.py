@@ -144,7 +144,7 @@ class InfoStub(gtk.HBox, Loggable):
         self.errors = []
         self.showing = False
         self._scroll_pos_ns = 0
-        self._errorsmessage = _("One or more GStreamer errors has occured!")
+        self._errorsmessage = _("One or more GStreamer errors occured!")
         self._makeUI()
 
     def _makeUI(self):
@@ -331,11 +331,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.playhead_actions = (
             ("Split", "pitivi-split", _("Split"), "S", SPLIT,
                 self.split),
-            ("Keyframe", "pitivi-keyframe", _("Add a keyframe"), "K", KEYFRAME,
+            ("Keyframe", "pitivi-keyframe", _("Add a Keyframe"), "K", KEYFRAME,
                 self.keyframe),
-            ("Prevframe", "pitivi-prevframe", _("_Previous keyframe"), "E", PREVFRAME,
+            ("Prevframe", "pitivi-prevframe", _("_Previous Keyframe"), "E", PREVFRAME,
                 self.prevframe),
-            ("Nextframe", "pitivi-nextframe", _("_Next keyframe"), "R", NEXTFRAME,
+            ("Nextframe", "pitivi-nextframe", _("_Next Keyframe"), "R", NEXTFRAME,
                 self.nextframe),
         )
 
