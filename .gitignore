@@ -37,3 +37,5 @@ log
 *.orig
 *.rej
 *.xptv
+/po/.intltool-merge-cache
+/config.status.lineno
