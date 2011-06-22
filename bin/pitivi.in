@@ -111,13 +111,6 @@ def _init_gobject_gtk_gst():
     gobject.threads_init()
 
     try:
-        from gtk import glade
-    except ImportError:
-        raise SystemExit("Can't find glade module")
-
-    glade.bindtextdomain('pitivi', localedir)
-
-    try:
         import pygst
         pygst.require('0.10')
 
