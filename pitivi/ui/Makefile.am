@@ -29,7 +29,6 @@ ui_PYTHON =			\
 	timeline.py		\
 	trackobject.py		\
 	track.py		\
-	videofxlist.py		\
 	viewer.py		\
 	view.py			\
 	effectlist.py	\

@@ -39,6 +39,5 @@ pitivi/ui/timelinecanvas.py
 pitivi/ui/timelinecontrols.py
 pitivi/ui/timeline.py
 pitivi/ui/trackobject.py
-pitivi/ui/videofxlist.py
 pitivi/ui/viewer.py
 pitivi/utils.py
