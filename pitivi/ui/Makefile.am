@@ -5,7 +5,6 @@ ui_PYTHON =			\
 	common.py		\
 	controller.py		\
 	curve.py		\
-	defaultpropertyeditor.py\
 	dnd.py			\
 	dynamic.py		\
 	encodingdialog.py	\
@@ -22,7 +21,6 @@ ui_PYTHON =			\
 	projectsettings.py	\
 	ripple_update_group.py	\
 	basetabs.py		\
-	propertyeditor.py	\
 	ruler.py		\
 	sourcelist.py		\
 	startupwizard.py 	\

@@ -23,7 +23,6 @@ pitivi/stream.py
 pitivi/ui/basetabs.py
 pitivi/ui/clipproperties.py
 pitivi/ui/common.py
-pitivi/ui/defaultpropertyeditor.py
 pitivi/ui/dynamic.py
 pitivi/ui/effectlist.py
 pitivi/ui/effectsconfiguration.py
@@ -35,7 +34,6 @@ pitivi/ui/mainwindow.py
 pitivi/ui/prefs.py
 pitivi/ui/previewer.py
 pitivi/ui/projectsettings.py
-pitivi/ui/propertyeditor.py
 pitivi/ui/sourcelist.py
 pitivi/ui/timelinecanvas.py
 pitivi/ui/timelinecontrols.py
