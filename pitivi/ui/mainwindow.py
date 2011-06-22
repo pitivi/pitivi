@@ -274,9 +274,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("Redo", gtk.STOCK_REDO,
              _("_Redo"),
              "<Ctrl>Y", _("Redo the last operation that was undone"), self._redoCb),
-            ("PluginManager", gtk.STOCK_PREFERENCES ,
-             _("_Plugins..."),
-             None, _("Manage plugins"), self._pluginManagerCb),
             ("Preferences", gtk.STOCK_PREFERENCES, _("_Preferences"),
               None, None, self._prefsCb),
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
@@ -338,7 +335,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             elif action_name in [
                 "ProjectSettings", "Quit", "File", "Edit", "Help", "About",
                 "View", "FullScreen", "FullScreenAlternate", "UserManual",
-                "ImportSourcesFolder", "PluginManager", "PlayPause",
+                "ImportSourcesFolder", "PlayPause",
                 "Project", "FrameForward", "FrameBackward",
                 "ShowHideMainToolbar", "ShowHideTimelineToolbar", "Library",
                 "Timeline", "Viewer", "FrameForward", "FrameBackward",
@@ -693,10 +690,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _redoCb(self, action):
         self.app.action_log.redo()
-
-    def _pluginManagerCb(self, unused_action):
-        from pluginmanagerdialog import PluginManagerDialog
-        PluginManagerDialog(self.app.plugin_manager)
 
     def _prefsCb(self, unused_action):
         if not self.prefsdialog:

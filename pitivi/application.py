@@ -44,7 +44,6 @@ from pitivi.effects import EffectsHandler
 from pitivi.configure import APPNAME
 from pitivi.settings import GlobalSettings
 from pitivi.threads import ThreadMaster
-from pitivi.pluginmanager import PluginManager
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.log import log
@@ -130,9 +129,6 @@ class Pitivi(Loggable, Signallable):
         self.threads = ThreadMaster()
         #self.screencast = False
 
-        self.plugin_manager = PluginManager(
-            self.settings.get_local_plugin_path(),
-            self.settings.get_plugin_settings_path())
         self.effects = EffectsHandler()
 
         self.projectManager = ProjectManager(self.effects)

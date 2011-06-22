@@ -6,7 +6,6 @@ data/ui/elementsettingsdialog.ui
 data/ui/encodingdialog.ui
 data/ui/encodingprogress.ui
 data/ui/filelisterrordialog.ui
-data/ui/pluginmanagerdialog.ui
 data/ui/preferences.ui
 data/ui/projectsettings.ui
 data/ui/startupwizard.ui
@@ -34,7 +33,6 @@ pitivi/ui/filechooserpreview.py
 pitivi/ui/filelisterrordialog.py
 pitivi/ui/gstwidget.py
 pitivi/ui/mainwindow.py
-pitivi/ui/pluginmanagerdialog.py
 pitivi/ui/prefs.py
 pitivi/ui/previewer.py
 pitivi/ui/projectsettings.py

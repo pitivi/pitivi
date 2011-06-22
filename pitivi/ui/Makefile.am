@@ -15,7 +15,6 @@ ui_PYTHON =			\
 	gstwidget.py		\
 	mainwindow.py		\
 	pathwalker.py		\
-	pluginmanagerdialog.py	\
 	point.py		\
 	prefs.py		\
 	preset.py		\

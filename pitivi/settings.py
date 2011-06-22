@@ -251,35 +251,6 @@ class GlobalSettings(Signallable):
         return get_dir(os.path.join(xdg_config_home(autocreate), "pitivi"),
             autocreate)
 
-    def get_local_plugin_path(self, autocreate=True):
-        """
-        Compute the absolute path to local plugin repository
-
-        @param autocreate: create the path if missing
-        @return: the plugin repository path
-        """
-
-        return get_dir(
-            os.path.join(
-                get_dir(
-                    os.path.join(
-                        xdg_data_home(autocreate),
-                        "pitivi"),
-                    autocreate),
-                "plugins"),
-            autocreate)
-
-    def get_plugin_settings_path(self, autocreate=True):
-        """
-        Compute the absolute path to local plugin settings' repository
-
-        @param autocreate: create the path if missing
-        @return: the plugin settings path
-        """
-
-        return get_dir(os.path.join(self.get_local_settings_path(autocreate),
-            "plugin-settings"), autocreate)
-
     def iterAllOptions(self):
         """
         Iterate over all registered options

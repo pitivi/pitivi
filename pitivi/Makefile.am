@@ -21,8 +21,6 @@ pitivi_PYTHON = \
 	instance.py 	\
 	pipeline.py	\
 	pitivigstutils.py \
-	plugincore.py	\
-	pluginmanager.py \
 	plumber.py	\
 	project.py 	\
 	projectmanager.py 	\
