@@ -31,14 +31,15 @@ from pitivi.ui.zoominterface import Zoomable
 from pitivi.log.loggable import Loggable
 from pitivi.utils import time_to_string
 
+
 class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     __gsignals__ = {
-        "expose-event":"override",
-        "button-press-event":"override",
-        "button-release-event":"override",
-        "motion-notify-event":"override",
-        "scroll-event" : "override",
+        "expose-event": "override",
+        "button-press-event": "override",
+        "button-release-event": "override",
+        "motion-notify-event": "override",
+        "scroll-event": "override",
         "seek": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
                 [gobject.TYPE_UINT64])
         }
@@ -75,7 +76,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.max_duration = gst.CLOCK_TIME_NONE
         self.min_frame_spacing = 5.0
         self.frame_height = 5.0
-        self.frame_rate = gst.Fraction(1/1)
+        self.frame_rate = gst.Fraction(1 / 1)
         self.app = instance
         self.need_update = True
 

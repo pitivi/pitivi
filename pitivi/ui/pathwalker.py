@@ -25,11 +25,13 @@ from urllib import quote, unquote
 from urlparse import urlsplit, urlunsplit
 from pitivi.threads import Thread
 
+
 def quote_uri(uri):
     parts = list(urlsplit(uri, allow_fragments=False))
     parts[2] = quote(parts[2])
     uri = urlunsplit(parts)
     return uri
+
 
 class PathWalker(Thread):
     """

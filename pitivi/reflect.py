@@ -74,9 +74,9 @@ def _importAndCheckStack(importName):
             excType, excValue, excTraceback = sys.exc_info()
             while excTraceback:
                 execName = excTraceback.tb_frame.f_globals["__name__"]
-                if (execName is None or  # python 2.4+, post-cleanup
-                    execName == importName):  # python 2.3, no cleanup
-                    raise excType, excValue, excTraceback
+                if (execName is None or
+                    execName == importName):
+                    raise _NoModuleFound()
                 excTraceback = excTraceback.tb_next
             raise _NoModuleFound()
     except:

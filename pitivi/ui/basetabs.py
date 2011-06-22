@@ -22,6 +22,7 @@
 import gtk
 from pitivi.ui.common import SPACING
 
+
 class BaseTabs(gtk.Notebook):
     def __init__(self, app, hide_hpaned=False):
         """ initialize """
@@ -91,14 +92,14 @@ class BaseTabs(gtk.Notebook):
         self.app.gui.mainhpaned.remove(self.app.gui.secondhpaned)
         self.app.gui.secondhpaned.remove(self.app.gui.projecttabs)
         self.app.gui.secondhpaned.remove(self.app.gui.propertiestabs)
-        self.app.gui.mainhpaned.pack1(self.app.gui.projecttabs, resize= True,
+        self.app.gui.mainhpaned.pack1(self.app.gui.projecttabs, resize=True,
                                       shrink=False)
 
     def _showSecondHpanedInMainWindow(self):
         self.app.gui.mainhpaned.remove(self.app.gui.projecttabs)
         self.app.gui.secondhpaned.pack1(self.app.gui.projecttabs,
-                                        resize= True, shrink=False)
+                                        resize=True, shrink=False)
         self.app.gui.secondhpaned.pack2(self.app.gui.propertiestabs,
-                                        resize= True, shrink=False)
+                                        resize=True, shrink=False)
         self.app.gui.mainhpaned.pack1(self.app.gui.secondhpaned,
-                                      resize= True, shrink=False)
+                                      resize=True, shrink=False)

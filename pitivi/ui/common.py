@@ -18,6 +18,7 @@ TRACK_SPACING = 8
 SPACING = 6
 PADDING = 6
 
+
 def pack_color_32(red, green, blue, alpha=0xFFFF):
     """Packs the specified 16bit color values in a 32bit RGBA value."""
     red = red >> 8
@@ -26,9 +27,11 @@ def pack_color_32(red, green, blue, alpha=0xFFFF):
     alpha = alpha >> 8
     return (red << 24 | green << 16 | blue << 8 | alpha)
 
+
 def pack_color_64(red, green, blue, alpha=0xFFFF):
     """Packs the specified 16bit color values in a 64bit RGBA value."""
     return (red << 48 | green << 32 | blue << 16 | alpha)
+
 
 def unpack_color(value):
     """Unpacks the specified RGBA value into four 16bit color values.
@@ -41,6 +44,7 @@ def unpack_color(value):
     else:
         return unpack_color_64(value)
 
+
 def unpack_color_32(value):
     """Unpacks the specified 32bit RGBA value into four 16bit color values."""
     red = (value >> 24) << 8
@@ -48,6 +52,7 @@ def unpack_color_32(value):
     blue = ((value >> 8) & 0xFF) << 8
     alpha = (value & 0xFF) << 8
     return red, green, blue, alpha
+
 
 def unpack_color_64(value):
     """Unpacks the specified 64bit RGBA value into four 16bit color values."""
@@ -57,6 +62,7 @@ def unpack_color_64(value):
     alpha = value & 0xFFFF
     return red, green, blue, alpha
 
+
 def unpack_cairo_pattern(value):
     """Transforms the specified RGBA value into a SolidPattern object."""
     red, green, blue, alpha = unpack_color(value)
@@ -65,6 +71,7 @@ def unpack_cairo_pattern(value):
         green / 65535.0,
         blue / 65535.0,
         alpha / 65535.0)
+
 
 def unpack_cairo_gradient(value):
     """Creates a LinearGradient object out of the specified RGBA value."""
@@ -84,8 +91,10 @@ def unpack_cairo_gradient(value):
         alpha / 65535.0)
     return gradient
 
+
 def beautify_factory(factory):
     ranks = {VideoStream: 0, AudioStream: 1, TextStream: 2, MultimediaStream: 3}
+
     def stream_sort_key(stream):
         return ranks[type(stream)]
 
@@ -93,6 +102,7 @@ def beautify_factory(factory):
     streams.sort(key=stream_sort_key)
     return ("<b>" + escape(unquote(factory.name)) + "</b>\n" +
         "\n".join((beautify_stream(stream) for stream in streams)))
+
 
 def factory_name(factory):
     return escape(unquote(factory.name))
@@ -113,7 +123,7 @@ def beautify_stream(stream):
         if stream.raw:
             if stream.framerate.num:
                 templ = _("<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>")
-                templ = templ % (stream.par * stream.width , stream.height,
+                templ = templ % (stream.par * stream.width, stream.height,
                         float(stream.framerate))
             else:
                 templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
@@ -126,8 +136,9 @@ def beautify_stream(stream):
 
     raise NotImplementedError
 
+
 # from http://cairographics.org/cookbook/roundedrectangles/
-def roundedrec(context,x,y,w,h,r = 10):
+def roundedrec(context, x, y, w, h, r=10):
     "Draw a rounded rectangle"
     #   A****BQ
     #  H      C
@@ -135,16 +146,19 @@ def roundedrec(context,x,y,w,h,r = 10):
     #  G      D
     #   F****E
 
-    context.move_to(x+r,y)                      # Move to A
-    context.line_to(x+w-r,y)                    # Straight line to B
-    context.curve_to(x+w,y,x+w,y,x+w,y+r)       # Curve to C, Control points are both at Q
-    context.line_to(x+w,y+h-r)                  # Move to D
-    context.curve_to(x+w,y+h,x+w,y+h,x+w-r,y+h) # Curve to E
-    context.line_to(x+r,y+h)                    # Line to F
-    context.curve_to(x,y+h,x,y+h,x,y+h-r)       # Curve to G
-    context.line_to(x,y+r)                      # Line to H
-    context.curve_to(x,y,x,y,x+r,y)             # Curve to A
+    context.move_to(x + r, y)      # Move to A
+    context.line_to(x + w - r, y)  # Straight line to B
+
+    # Curve to C, Control points are both at Q
+    context.curve_to(x + w, y, x + w, y, x + w, y + r)
+    context.line_to(x + w, y + h - r)                               # Move to D
+    context.curve_to(x + w, y + h, x + w, y + h, x + w - r, y + h)  # Curve to E
+    context.line_to(x + r, y + h)                                   # Line to F
+    context.curve_to(x, y + h, x, y + h, x, y + h - r)              # Curve to G
+    context.line_to(x, y + r)                                       # Line to H
+    context.curve_to(x, y, x, y, x + r, y)                          # Curve to A
     return
+
 
 def model(columns, data):
     ret = gtk.ListStore(*columns)
@@ -168,16 +182,16 @@ frame_rates = model((str, object), (
 ))
 
 audio_rates = model((str, int), (
-    (_("8 KHz"),   8000),
-    (_("11 KHz"),  11025),
-    (_("22 KHz"),  22050),
+    (_("8 KHz"), 8000),
+    (_("11 KHz"), 11025),
+    (_("22 KHz"), 22050),
     (_("44.1 KHz"), 44100),
-    (_("48 KHz"),  48000),
-    (_("96 KHz"),  96000)
+    (_("48 KHz"), 48000),
+    (_("96 KHz"), 96000)
 ))
 
 audio_depths = model((str, int), (
-    (_("8 bit"),  8),
+    (_("8 bit"), 8),
     (_("16 bit"), 16),
     (_("24 bit"), 24),
     (_("32 bit"), 32)
@@ -190,6 +204,7 @@ audio_channels = model((str, int), (
     (_("Mono"), 1)
 ))
 
+
 def set_combo_value(combo, value, default_index=-1):
     model = combo.props.model
     for i, row in enumerate(model):
@@ -197,6 +212,7 @@ def set_combo_value(combo, value, default_index=-1):
             combo.set_active(i)
             return
     combo.set_active(default_index)
+
 
 def get_combo_value(combo):
     active = combo.get_active()

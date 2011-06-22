@@ -34,14 +34,15 @@ from pitivi.ui.common import SPACING
 from gettext import gettext as _
 
 GlobalSettings.addConfigOption('prefsDialogWidth',
-    section = "user-interface",
-    key = "prefs-dialog-width",
-    default = 600)
+    section="user-interface",
+    key="prefs-dialog-width",
+    default=600)
 
 GlobalSettings.addConfigOption('prefsDialogHeight',
-    section = "user-interface",
-    key = "prefs-dialog-height",
-    default = 400)
+    section="user-interface",
+    key="prefs-dialog-height",
+    default=400)
+
 
 class PreferencesDialog():
 
@@ -124,7 +125,7 @@ class PreferencesDialog():
 
     @classmethod
     def addNumericPreference(cls, attrname, label, description, section=None,
-        upper = None, lower = None):
+        upper=None, lower=None):
         """
         Add an auto-generated user preference that will show up as either a
         gtk.SpinButton or a gtk.HScale, depending whether both the upper and lower
@@ -148,7 +149,7 @@ class PreferencesDialog():
 
     @classmethod
     def addTextPreference(cls, attrname, label, description, section=None,
-        matches = None):
+        matches=None):
         """
         Add an auto-generated user preference that will show up as either a
         gtk.SpinButton or a gtk.HScale, depending on the upper and lower
@@ -245,9 +246,7 @@ class PreferencesDialog():
         cls.addPreference(attrname, label, description, section,
             dynamic.FontWidget)
 
-
 ## Implementation
-
     def _fillContents(self):
         self.sections = {}
         for section in sorted(self.prefs):
@@ -270,7 +269,7 @@ class PreferencesDialog():
                 self.widgets[attrname] = widget
                 revert = gtk.Button(_("Reset"))
                 revert.set_sensitive(not self.settings.isDefault(attrname))
-                revert.connect("clicked",  self._resetOptionCb, attrname)
+                revert.connect("clicked", self._resetOptionCb, attrname)
                 self.resets[attrname] = revert
                 prefs[label] = (label_widget, widget, revert)
 
@@ -382,54 +381,53 @@ if False:
 ## Numeric
 
     PreferencesDialog.addNumericPreference('numericPreference1',
-        label = "Open Range",
-        section = "Test",
-        description = "This option has no upper bound",
-        lower = -10)
+        label="Open Range",
+        section="Test",
+        description="This option has no upper bound",
+        lower=-10)
 
     PreferencesDialog.addNumericPreference('numericPreference2',
-        label = "Closed Range",
-        section = "Test",
-        description = "This option has both upper and lower bounds",
-        lower = -10,
-        upper = 10000)
+        label="Closed Range",
+        section="Test",
+        description="This option has both upper and lower bounds",
+        lower=-10,
+        upper=10000)
 
 ## Text
 
     PreferencesDialog.addTextPreference('textPreference1',
-        label = "Unfiltered",
-        section = "Test",
-        description = "Anything can go in this box")
+        label="Unfiltered",
+        section="Test",
+        description="Anything can go in this box")
 
     PreferencesDialog.addTextPreference('textPreference2',
-        label = "Numbers only",
-        section = "Test",
-        description = "This input validates its input with a regex",
-        matches = "^-?\d+(\.\d+)?$")
+        label="Numbers only",
+        section="Test",
+        description="This input validates its input with a regex",
+        matches="^-?\d+(\.\d+)?$")
 
 ## other
-
     PreferencesDialog.addPathPreference('aPathPreference',
-        label = "Test Path",
-        section = "Test",
-        description = "Test the path widget")
+        label="Test Path",
+        section="Test",
+        description="Test the path widget")
 
     PreferencesDialog.addChoicePreference('aChoicePreference',
-        label = "Swallow Velocity",
-        section = "Test",
-        description = "What is the velocity of an african swollow laden " \
+        label="Swallow Velocity",
+        section="Test",
+        description="What is the velocity of an african swollow laden " \
             "a coconut?",
-        choices = (
+        choices=(
             ("42 Knots", 32),
             ("9 furlongs per fortnight", 42),
             ("I don't know that!", None)))
 
     PreferencesDialog.addChoicePreference('aLongChoicePreference',
-        label = "Favorite Color",
-        section = "Test",
-        description = "What is the velocity of an african swollow laden " \
+        label="Favorite Color",
+        section="Test",
+        description="What is the velocity of an african swollow laden " \
             "a coconut?",
-        choices = (
+        choices=(
             ("Mauve", "Mauve"),
             ("Chartreuse", "Chartreuse"),
             ("Magenta", "Magenta"),
@@ -438,11 +436,11 @@ if False:
             ("Yellow Ochre", "Yellow Ochre")))
 
     PreferencesDialog.addTogglePreference('aTogglePreference',
-        label = "Test Toggle",
-        section = "Test",
-        description = "Test the toggle widget")
+        label="Test Toggle",
+        section="Test",
+        description="Test the toggle widget")
 
     PreferencesDialog.addFontPreference('aFontPreference',
-        label = "Foo Font",
-        section = "Test",
-        description = "Test the font widget")
+        label="Foo Font",
+        section="Test",
+        description="Test the font widget")

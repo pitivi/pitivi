@@ -59,16 +59,17 @@ GlobalSettings.addConfigOption("viewerY",
     key="y-pos",
     default=0)
 
+
 class ViewerError(Exception):
     pass
 
-# TODO : Switch to using Pipeline and Action
 
+# TODO : Switch to using Pipeline and Action
 class PitiviViewer(gtk.VBox, Loggable):
 
     __gtype_name__ = 'PitiviViewer'
     __gsignals__ = {
-        "activate-playback-controls" : (gobject.SIGNAL_RUN_LAST,
+        "activate-playback-controls": (gobject.SIGNAL_RUN_LAST,
             gobject.TYPE_NONE, (gobject.TYPE_BOOLEAN,)),
     }
 
@@ -214,7 +215,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.action = action
         # FIXME: fix this properly?
         self.internal.action = action
-        dar = float(4/3)
+        dar = float(4 / 3)
         try:
             producer = action.producers[0]
             self.debug("producer:%r", producer)
@@ -226,7 +227,7 @@ class PitiviViewer(gtk.VBox, Loggable):
                     dar = stream.dar
                     continue
         except:
-            dar = float(4/3)
+            dar = float(4 / 3)
         self.setDisplayAspectRatio(dar)
         self.showControls()
 
@@ -260,7 +261,7 @@ class PitiviViewer(gtk.VBox, Loggable):
     def _createUi(self):
         """ Creates the Viewer GUI """
         # drawing area
-        self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.5, ratio=4.0/3.0,
+        self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.5, ratio=4.0 / 3.0,
                                       obey_child=False)
         self.pack_start(self.aframe, expand=True)
         self.internal = ViewerWidget(self.action)
@@ -343,7 +344,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             width, height = bbox.size_request()
             width += 110
             height = int(width / self.aframe.props.ratio)
-            self.aframe.set_size_request(width , height)
+            self.aframe.set_size_request(width, height)
         self.show_all()
         self.buttons = boxalign
 
@@ -460,9 +461,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.posadjust.set_value(float(value))
         return False
 
-
     ## active Timeline calllbacks
-
     def _durationChangedCb(self, unused_pipeline, duration):
         self.debug("duration : %s", gst.TIME_ARGS(duration))
         position = self.posadjust.get_value()
@@ -620,7 +619,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
     def __init__(self, action=None):
         gtk.DrawingArea.__init__(self)
         Loggable.__init__(self)
-        self.action = action # FIXME : Check if it's a view action
+        self.action = action  # FIXME : Check if it's a view action
         self.unset_flags(gtk.SENSITIVE)
         for state in range(gtk.STATE_INSENSITIVE + 1):
             self.modify_bg(state, self.style.black)
@@ -630,13 +629,14 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         if platform.system() == 'Windows':
             self.window_xid = self.window.handle
         else:
-            self.window_xid  = self.window.xid
+            self.window_xid = self.window.xid
+
 
 class PlayPauseButton(gtk.Button, Loggable):
     """ Double state gtk.Button which displays play/pause """
 
     __gsignals__ = {
-        "play" : (gobject.SIGNAL_RUN_LAST,
+        "play": (gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE,
                    (gobject.TYPE_BOOLEAN,))
         }

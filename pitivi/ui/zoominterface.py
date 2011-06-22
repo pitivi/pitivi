@@ -46,6 +46,7 @@ import gst
 # Instance Methods
 # . zoomChanged()
 
+
 class Zoomable(object):
 
     sigid = None
@@ -110,7 +111,7 @@ class Zoomable(object):
     def computeZoomLevel(cls, ratio):
         return int((
             (max(0, ratio - cls.min_zoom) /
-                cls.zoom_range) ** (1.0/3.0)) *
+                cls.zoom_range) ** (1.0 / 3.0)) *
                     cls.zoom_steps)
 
     @classmethod
@@ -126,7 +127,6 @@ class Zoomable(object):
         Returns the pixel equivalent in nanoseconds according to the zoomratio
         """
         return long(pixel * gst.SECOND / ratio)
-
 
     @classmethod
     def nsToPixel(cls, duration):

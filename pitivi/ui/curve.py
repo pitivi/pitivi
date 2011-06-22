@@ -35,6 +35,7 @@ from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, roundedrec
 import pitivi.ui.point as point
 from pitivi.utils import between
 
+
 def intersect(b1, b2):
     return goocanvas.Bounds(max(b1.x1, b2.x1), max(b1.y1, b2.y1),
         min(b1.x2, b2.x2), min(b1.y2, b2.y2))
@@ -55,6 +56,7 @@ KW_LABEL_HPAD2 = KW_LABEL_VPAD / 2
 KW_LABEL_VPAD2 = KW_LABEL_VPAD / 2
 CURVE_STROKE_WIDTH = 2.0
 HAND = gtk.gdk.Cursor(gtk.gdk.HAND2)
+
 
 class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
@@ -123,7 +125,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                     interpolator.range) + interpolator.lower
             return time, value
 
-        def enter(self, item ,target):
+        def enter(self, item, target):
             coords = self.from_item_event(item, self._last_event)
             self._kf = self._view.findKeyframe(coords)
             self._view.setFocusedKf(self._kf)
@@ -151,7 +153,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
     def _get_height(self):
         return self._height
-    def _set_height (self, value):
+
+    def _set_height(self, value):
         self._height = value
         self._min = CURVE_STROKE_WIDTH / 2
         self._max = value - (CURVE_STROKE_WIDTH / 2)

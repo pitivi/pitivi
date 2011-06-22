@@ -57,8 +57,8 @@ SPLIT = _("Split clip at playhead position")
 KEYFRAME = _("Add a keyframe")
 PREVFRAME = _("Move to the previous keyframe")
 NEXTFRAME = _("Move to the next keyframe")
-ZOOM_IN =  _("Zoom In")
-ZOOM_OUT =  _("Zoom Out")
+ZOOM_IN = _("Zoom In")
+ZOOM_OUT = _("Zoom Out")
 ZOOM_FIT = _("Zoom Fit")
 UNLINK = _("Break links between clips")
 LINK = _("Link together arbitrary clips")
@@ -132,6 +132,7 @@ ui = '''
 #    |
 #    +--Status Bar ??
 
+
 class InfoStub(gtk.HBox, Loggable):
     """
     Box used to display information on the current state of the timeline
@@ -152,7 +153,6 @@ class InfoStub(gtk.HBox, Loggable):
                                                   gtk.ICON_SIZE_SMALL_TOOLBAR)
 
         self.pack_start(self.erroricon, expand=False)
-
 
         self.infolabel = gtk.Label(self._errorsmessage)
         self.infolabel.set_alignment(0, 0.5)
@@ -200,6 +200,7 @@ class InfoStub(gtk.HBox, Loggable):
         gtk.VBox.hide(self)
         self.showing = False
 
+
 class Timeline(gtk.Table, Loggable, Zoomable):
 
     # the screen width of the current unit
@@ -224,7 +225,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._state = gst.STATE_NULL
         self._createUI()
         self._prev_duration = 0
-        self.rate = gst.Fraction(1,1)
+        self.rate = gst.Fraction(1, 1)
 
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
@@ -252,7 +253,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         zoomslider.props.draw_value = False
         zoomslider.set_tooltip_text(_("Zoom Timeline"))
         zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
-        zoomslider.set_size_request(100, 0) # At least 100px wide for precision
+        zoomslider.set_size_request(100, 0)  # At least 100px wide for precision
         zoom_controls_hbox.pack_start(zoomslider)
         self.attach(zoom_controls_hbox, 0, 1, 0, 1, yoptions=0, xoptions=gtk.FILL)
 
@@ -371,9 +372,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._canvas.connect("key-press-event", self._keyPressEventCb)
         self._canvas.connect("scroll-event", self._scrollEventCb)
 
-
 ## Event callbacks
-
     def _keyPressEventCb(self, unused_widget, event):
         kv = event.keyval
         self.debug("kv:%r", kv)
@@ -389,14 +388,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 if mod & gtk.gdk.SHIFT_MASK:
                     self._seekRelative(-gst.SECOND)
                 elif mod & gtk.gdk.CONTROL_MASK:
-                    self._seeker.seek(ltime+1)
+                    self._seeker.seek(ltime + 1)
                 else:
                     self._seekRelative(-long(self.rate * gst.SECOND))
             elif kv == gtk.keysyms.Right:
                 if mod & gtk.gdk.SHIFT_MASK:
                     self._seekRelative(gst.SECOND)
                 elif mod & gtk.gdk.CONTROL_MASK:
-                    self._seeker.seek(rtime+1)
+                    self._seeker.seek(rtime + 1)
                 else:
                     self._seekRelative(long(self.rate * gst.SECOND))
         finally:
@@ -472,7 +471,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             if timeline_objs:
                 self.app.action_log.begin("add effect")
                 self.timeline.addEffectFactoryOnObject(factory,
-                                               timeline_objects = timeline_objs)
+                                               timeline_objects=timeline_objs)
                 self.app.action_log.commit()
                 self._factories = None
                 self.app.current.seeker.seek(self._position)
@@ -513,7 +512,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _getTimelineObjectUnderMouse(self, x, y, stream):
         timeline_objs = []
-        items_in_area = self._canvas.getItemsInArea(x, y-15, x+1, y-30)
+        items_in_area = self._canvas.getItemsInArea(x, y - 15, x + 1, y - 30)
         tracks = [obj for obj in items_in_area[0]]
         track_objects = [obj for obj in items_in_area[1]]
         for track_object in track_objects:
@@ -613,7 +612,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.hadj.props.value
         new_pos = Zoomable.nsToPixel(self._position) - cur_playhead_offset
 
-
         self._updateScrollAdjustments()
         self._scrollToPosition(new_pos)
         self.ruler.queue_resize()
@@ -703,11 +701,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         a = self.get_allocation()
         size = Zoomable.nsToPixel(self.timeline.duration)
         self.hadj.props.lower = 0
-        self.hadj.props.upper = size + 200 # why is this necessary???
+        self.hadj.props.upper = size + 200  # why is this necessary???
         self.hadj.props.page_size = a.width
         self.hadj.props.page_increment = size * 0.9
         self.hadj.props.step_increment = size * 0.1
-
 
     @handler(timeline, "selection-changed")
     def _timelineSelectionChanged(self, timeline):
@@ -754,9 +751,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.split_action.set_sensitive(split)
         self.keyframe_action.set_sensitive(keyframe)
 
-
 ## ToolBar callbacks
-
     def hide(self):
         self.actiongroup.set_visible(False)
         gtk.Vbox.hide(self)

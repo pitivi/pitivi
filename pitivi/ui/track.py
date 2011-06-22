@@ -5,6 +5,7 @@ from pitivi.receiver import receiver, handler
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
 import goocanvas
 
+
 class Transition(goocanvas.Rect, Zoomable):
 
     def __init__(self, transition):
@@ -108,7 +109,7 @@ class Track(goocanvas.Group, Zoomable):
 
     @handler(track, "track-object-removed")
     def _objectRemoved(self, unused_timeline, track_object):
-        if not isinstance (track_object, TrackEffect):
+        if not isinstance(track_object, TrackEffect):
             w = self.widgets[track_object]
             self.remove_child(w)
             del self.widgets[track_object]

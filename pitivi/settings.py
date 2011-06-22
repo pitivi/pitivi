@@ -448,7 +448,6 @@ class ExportSettings(Signallable, Loggable):
     # TODO : Add PAR/DAR for video
     # TODO : switch to using GstFraction internally where appliable
 
-
     muxers, aencoders, vencoders = available_combinations()
 
     def __init__(self, **unused_kw):

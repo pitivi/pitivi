@@ -102,6 +102,7 @@ ui = '''
 INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(),
     "invisible.png"))
 
+
 class SourceList(gtk.VBox, Loggable):
     """ Widget for listing sources """
 
@@ -285,7 +286,7 @@ class SourceList(gtk.VBox, Loggable):
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
-        self.treeview.drag_source_set(0,[], gtk.gdk.ACTION_COPY)
+        self.treeview.drag_source_set(0, [], gtk.gdk.ACTION_COPY)
         self.treeview.connect("motion-notify-event",
             self._treeViewMotionNotifyEventCb)
         self.treeview.connect("button-release-event",
@@ -293,7 +294,7 @@ class SourceList(gtk.VBox, Loggable):
         self.treeview.connect("drag_begin", self._dndDragBeginCb)
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
 
-        self.iconview.drag_source_set(0,[], gtk.gdk.ACTION_COPY)
+        self.iconview.drag_source_set(0, [], gtk.gdk.ACTION_COPY)
         self.iconview.connect("motion-notify-event",
             self._iconViewMotionNotifyEventCb)
         self.iconview.connect("button-release-event",
@@ -397,10 +398,10 @@ class SourceList(gtk.VBox, Loggable):
             start += source.duration
         self.app.action_log.commit()
 
-    def searchEntryChangedCb (self, entry):
+    def searchEntryChangedCb(self, entry):
         self.modelFilter.refilter()
 
-    def searchEntryIconClickedCb (self, entry, unused, unsed1):
+    def searchEntryIconClickedCb(self, entry, unused, unsed1):
         entry.set_text("")
 
     def searchEntryDeactivateCb(self, entry, event):
@@ -416,7 +417,7 @@ class SourceList(gtk.VBox, Loggable):
         """
         text = data.get_text().lower()
         if text == "":
-            return True # Avoid silly warnings
+            return True  # Avoid silly warnings
         else:
             return text in model.get_value(iter, COL_INFOTEXT).lower()
 
@@ -452,8 +453,6 @@ class SourceList(gtk.VBox, Loggable):
             project.sources, "ready", None, self._sourcesStoppedImportingCb)
         self.project_signals.connect(
             project.sources, "starting", None, self._sourcesStartedImportingCb)
-
-
 
     def _setClipView(self, show):
         """ Set which clip view to use when sourcelist is showing clips. If
@@ -984,9 +983,7 @@ class SourceList(gtk.VBox, Loggable):
         self.storemodel.clear()
         self.project_signals.disconnectAll()
 
-
     ## Drag and Drop
-
     def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
                            unused_y, selection, targettype, unused_time):
         def get_file_type(path):
@@ -994,10 +991,9 @@ class SourceList(gtk.VBox, Loggable):
                 if os.path.isfile(path[7:]):
                     return LOCAL_FILE
                 return LOCAL_DIR
-            elif "://" in path: #we concider it is a remote file
+            elif "://" in path:  # we concider it is a remote file
                 return REMOTE_FILE
             return NOT_A_FILE
-
 
         self.debug("targettype:%d, selection.data:%r", targettype, selection.data)
         directories = []

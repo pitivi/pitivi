@@ -34,6 +34,7 @@ from pitivi.configure import get_ui_dir
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 
+
 class FileListErrorDialog(Signallable, Loggable):
     """ Dialog box for showing errors in a list of files """
     __signals__ = {
@@ -77,7 +78,6 @@ class FileListErrorDialog(Signallable, Loggable):
             exp = gtk.Expander(uri)
         else:
             exp = gtk.Expander(reason)
-
 
         textbuffer = gtk.TextBuffer()
         table = textbuffer.get_tag_table()

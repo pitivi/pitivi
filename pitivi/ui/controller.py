@@ -32,6 +32,7 @@ from pitivi.ui.point import Point
 
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
 
+
 class Controller(object):
 
     """A controller which implements drag-and-drop bahavior on connected view

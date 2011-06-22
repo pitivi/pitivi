@@ -31,12 +31,15 @@ from pitivi.receiver import receiver, handler
 from pitivi.ui.zoominterface import Zoomable
 import pitivi.ui.previewer as previewer
 
+
 def between(a, b, c):
     return (a <= b) and (b <= c)
+
 
 def intersect(b1, b2):
     return goocanvas.Bounds(max(b1.x1, b2.x1), max(b1.y1, b2.y1),
         min(b1.x2, b2.x2), min(b1.y2, b2.y2))
+
 
 class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 
@@ -56,7 +59,8 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 
     def _get_height(self):
         return self._height
-    def _set_height (self, value):
+
+    def _set_height(self, value):
         self._height = value
         self.changed(True)
     height = gobject.property(_get_height, _set_height, type=float)

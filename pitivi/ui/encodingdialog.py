@@ -61,7 +61,7 @@ def extension_for_muxer(muxer):
     """Returns the file extension appropriate for the specified muxer."""
     exts = {
         "asfmux": "asf",
-        "avimux" : "avi",
+        "avimux": "avi",
         "ffmux_3g2": "3g2",
         "ffmux_avm2": "avm2",
         "ffmux_dvd": "vob",
@@ -77,15 +77,15 @@ def extension_for_muxer(muxer):
         "ffmux_vob": "vob",
         "flvmux": "flv",
         "gppmux": "3gp",
-        "matroskamux" : "mkv",
+        "matroskamux": "mkv",
         "mj2mux": "mj2",
         "mp4mux": "mp4",
         "mpegpsmux": "mpeg",
         "mpegtsmux": "mpeg",
         "mvemux": "mve",
-        "mxfmux" : "mxf",
-        "oggmux" : "ogv",
-        "qtmux"  : "mov",
+        "mxfmux": "mxf",
+        "oggmux": "ogv",
+        "qtmux": "mov",
         "webmmux": "webm"}
     return exts.get(muxer)
 
@@ -93,7 +93,7 @@ def extension_for_muxer(muxer):
 def factorylist(factories):
     """Create a gtk.ListStore() of sorted, beautified factory names.
 
-    @param factories: The factories available for creating the list. 
+    @param factories: The factories available for creating the list.
     @type factories: A sequence of gst.ElementFactory instances.
     """
     columns = (str, object)
@@ -371,7 +371,7 @@ class EncodingDialog(Renderer, Loggable):
         self.outfile = os.path.join(self.filebutton.get_uri(),
                                     self.fileentry.get_text())
         self.progress = EncodingProgressDialog(self.app, self)
-        self.window.hide() # Hide the rendering settings dialog while rendering
+        self.window.hide()  # Hide the rendering settings dialog while rendering
         self.progress.window.show()
         self.startAction()
         self.progress.connect("cancel", self._cancelRender)

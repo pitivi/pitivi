@@ -146,7 +146,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.log("Preview request for " + uri)
         self.clear_preview()
         self.current_selected_uri = uri
-        if uri in self.preview_cache: # Already discovered
+        if uri in self.preview_cache:  # Already discovered
             self.log(uri + " already in cache")
             self.show_preview(uri)
         elif uri in self.preview_cache_errors:
@@ -208,7 +208,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.player.set_state(gst.STATE_PAUSED)
                 self.clip_duration = factory.duration
                 self.pos_adj.upper = self.clip_duration
-                w, h = self.__get_best_size(video.par*video.width, video.height)
+                w, h = self.__get_best_size(video.par * video.width, video.height)
                 self.preview_video.set_size_request(w, h)
                 self.preview_video.show()
                 self.bbox.show()
@@ -216,8 +216,8 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.seeker.show()
                 self.b_zoom_in.show()
                 self.b_zoom_out.show()
-                self.description = _("<b>Resolution</b>: %dx%d") % (video.par*video.width, video.height) + "\n" + \
-                    _("<b>Duration</b>: %s") % (duration) + "\n"
+                self.description = _("<b>Resolution</b>: %dx%d") % (video.par * video.width,
+                    video.height) + "\n" + _("<b>Duration</b>: %s") % (duration) + "\n"
         else:
             self.current_preview_type = 'audio'
             self.preview_video.hide()

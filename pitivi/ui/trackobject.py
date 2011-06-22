@@ -39,59 +39,61 @@ NAME_PADDING2X = 2 * NAME_PADDING
 import gst
 
 GlobalSettings.addConfigOption('videoClipBg',
-    section = 'user-interface',
-    key = 'videoclip-background',
-    default = 0x000000A0,
-    notify = True)
+    section='user-interface',
+    key='videoclip-background',
+    default=0x000000A0,
+    notify=True)
 
 PreferencesDialog.addColorPreference('videoClipBg',
-    section = _("Appearance"),
-    label = _("Clip Background (Video)"),
-    description = _("The background color for clips in video tracks."))
+    section=_("Appearance"),
+    label=_("Clip Background (Video)"),
+    description=_("The background color for clips in video tracks."))
 
 GlobalSettings.addConfigOption('audioClipBg',
-    section = 'user-interface',
-    key = 'audioclip-background',
-    default = 0x4E9A06C0,
-    notify = True)
+    section='user-interface',
+    key='audioclip-background',
+    default=0x4E9A06C0,
+    notify=True)
 
 PreferencesDialog.addColorPreference('audioClipBg',
-    section = _("Appearance"),
-    label = _("Clip Background (Audio)"),
-    description = _("The background color for clips in audio tracks."))
+    section=_("Appearance"),
+    label=_("Clip Background (Audio)"),
+    description=_("The background color for clips in audio tracks."))
 
 GlobalSettings.addConfigOption('selectedColor',
-    section = 'user-interface',
-    key = 'selected-color',
-    default = 0x00000077,
-    notify = True)
+    section='user-interface',
+    key='selected-color',
+    default=0x00000077,
+    notify=True)
 
 PreferencesDialog.addColorPreference('selectedColor',
-    section = _("Appearance"),
-    label = _("Selection Color"),
-    description = _("Selected clips will be tinted with this color."))
+    section=_("Appearance"),
+    label=_("Selection Color"),
+    description=_("Selected clips will be tinted with this color."))
 
 GlobalSettings.addConfigOption('clipFontDesc',
-    section = 'user-interface',
-    key = 'clip-font-name',
-    default = "Sans 9",
-    notify = True)
+    section='user-interface',
+    key='clip-font-name',
+    default="Sans 9",
+    notify=True)
 
 PreferencesDialog.addFontPreference('clipFontDesc',
-    section = _('Appearance'),
-    label = _("Clip Font"),
-    description = _("The font to use for clip titles"))
+    section=_('Appearance'),
+    label=_("Clip Font"),
+    description=_("The font to use for clip titles"))
 
 GlobalSettings.addConfigOption('clipFontColor',
-    section = 'user-interface',
-    key = 'clip-font-color',
-    default = 0xFFFFFFAA,
-    notify = True)
+    section='user-interface',
+    key='clip-font-color',
+    default=0xFFFFFFAA,
+    notify=True)
+
 
 def text_size(text):
     ink, logical = text.get_natural_extents()
     x1, y1, x2, y2 = [pango.PIXELS(x) for x in logical]
     return x2 - x1, y2 - y1
+
 
 class TimelineController(controller.Controller):
 
@@ -142,6 +144,7 @@ class TimelineController(controller.Controller):
         if self._context:
             self._context.setMode(self._getMode())
 
+
 class TrimHandle(View, goocanvas.Image, Zoomable):
 
     """A component of a TrackObject which manage's the source's edit
@@ -154,7 +157,7 @@ class TrimHandle(View, goocanvas.Image, Zoomable):
         self.element = element
         self.timeline = timeline
         goocanvas.Image.__init__(self,
-            pixbuf = TRIMBAR_PIXBUF,
+            pixbuf=TRIMBAR_PIXBUF,
             line_width=0,
             pointer_events=goocanvas.EVENTS_FILL,
             **kwargs
@@ -167,6 +170,7 @@ class TrimHandle(View, goocanvas.Image, Zoomable):
 
     def unfocus(self):
         self.props.pixbuf = TRIMBAR_PIXBUF
+
 
 class StartHandle(TrimHandle):
 
@@ -183,6 +187,7 @@ class StartHandle(TrimHandle):
                 self._view.timeline.selection.getSelectedTrackObjs())
             self._view.app.action_log.begin("trim object")
 
+
 class EndHandle(TrimHandle):
 
     """Subclass of TrimHandle which sets the objects's end time"""
@@ -197,6 +202,7 @@ class EndHandle(TrimHandle):
                 self._view.element,
                 self._view.timeline.selection.getSelectedTrackObjs())
             self._view.app.action_log.begin("trim object")
+
 
 class TrackObject(View, goocanvas.Group, Zoomable):
 
@@ -251,16 +257,16 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.content = Preview(self.app, element)
 
         self.name = goocanvas.Text(
-            x= NAME_HOFFSET + NAME_PADDING,
-            y= NAME_VOFFSET + NAME_PADDING,
-            operator = cairo.OPERATOR_ADD,
+            x=NAME_HOFFSET + NAME_PADDING,
+            y=NAME_VOFFSET + NAME_PADDING,
+            operator=cairo.OPERATOR_ADD,
             alignment=pango.ALIGN_LEFT)
         self.namebg = goocanvas.Rect(
-            radius_x = 2,
-            radius_y = 2,
-            x = NAME_HOFFSET,
-            y = NAME_VOFFSET,
-            line_width = 0)
+            radius_x=2,
+            radius_y=2,
+            x=NAME_HOFFSET,
+            y=NAME_VOFFSET,
+            line_width=0)
 
         self.start_handle = StartHandle(self.app, element, timeline,
             height=self.height)
@@ -269,7 +275,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         self.selection_indicator = goocanvas.Rect(
             visibility=goocanvas.ITEM_INVISIBLE,
-            line_width = 0.0,
+            line_width=0.0,
             height=self.height)
 
         for thing in (self.bg, self.content, self.selection_indicator,

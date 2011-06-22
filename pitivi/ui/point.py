@@ -1,5 +1,6 @@
 from itertools import izip
 
+
 class Point(tuple):
 
     def __new__(cls, x, y):

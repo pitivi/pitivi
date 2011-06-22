@@ -79,12 +79,12 @@ class RippleUpdateGroup(object):
         self.update_funcs[widget] = (update_func, args)
         self.arcs[widget] = []
 
-    def add_edge(self, a, b, predicate = None,
-        edge_func = None):
+    def add_edge(self, a, b, predicate=None,
+        edge_func=None):
         self.arcs[a].append((b, predicate, edge_func))
 
-    def add_bi_edge(self, a, b, predicate = None,
-        edge_func = None):
+    def add_bi_edge(self, a, b, predicate=None,
+        edge_func=None):
         self.add_edge(a, b, predicate, edge_func)
         self.add_edge(b, a, predicate, edge_func)
 

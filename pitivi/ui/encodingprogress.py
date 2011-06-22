@@ -31,6 +31,7 @@ from gettext import gettext as _
 import gobject
 from pitivi.signalinterface import Signallable
 
+
 class EncodingProgressDialog(Signallable):
     __signals__ = {
         "pause": [],

@@ -122,19 +122,21 @@ GlobalSettings.addConfigOption('lastExportFolder',
 GlobalSettings.addConfigOption('elementSettingsDialogWidth',
     section='export',
     key='element-settings-dialog-width',
-    default = 620)
+    default=620)
 GlobalSettings.addConfigOption('elementSettingsDialogHeight',
     section='export',
     key='element-settings-dialog-height',
-    default = 460)
+    default=460)
 GlobalSettings.addConfigSection("effect-configuration")
 GlobalSettings.addConfigOption('effectVPanedPosition',
     section='effect-configuration',
     key='effect-vpaned-position',
     type_=int)
 
+
 def supported(info):
     return formatter.can_handle_location(info[1])
+
 
 def create_stock_icons():
     """ Creates the pitivi-only stock icons """
@@ -150,13 +152,13 @@ def create_stock_icons():
             ('pitivi-group', _('Group'), 0, 0, 'pitivi'),
             ])
     pixmaps = {
-        "pitivi-render" : "pitivi-render-24.png",
-        "pitivi-split" : "pitivi-split-24.svg",
-        "pitivi-keyframe" : "pitivi-keyframe-24.svg",
-        "pitivi-unlink" : "pitivi-unlink-24.svg",
-        "pitivi-link" : "pitivi-relink-24.svg",
-        "pitivi-ungroup" : "pitivi-ungroup-24.svg",
-        "pitivi-group" : "pitivi-group-24.svg",
+        "pitivi-render": "pitivi-render-24.png",
+        "pitivi-split": "pitivi-split-24.svg",
+        "pitivi-keyframe": "pitivi-keyframe-24.svg",
+        "pitivi-unlink": "pitivi-unlink-24.svg",
+        "pitivi-link": "pitivi-relink-24.svg",
+        "pitivi-ungroup": "pitivi-ungroup-24.svg",
+        "pitivi-group": "pitivi-group-24.svg",
     }
     factory = gtk.IconFactory()
     pmdir = get_pixmap_dir()
@@ -176,8 +178,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
     @cvar project: The current project
     @type project: L{Project}
     """
-
-
     def __init__(self, instance):
         """ initialize with the Pitivi object """
         gtk.Window.__init__(self)
@@ -266,7 +266,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
              None, _("Reload the current project"), self._revertToSavedProjectCb),
             ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"),
              None, _("Edit the project settings"), self._projectSettingsCb),
-            ("RenderProject", 'pitivi-render' , _("_Render project"),
+            ("RenderProject", 'pitivi-render', _("_Render project"),
              None, _("Render project..."), self._recordCb),
             ("Undo", gtk.STOCK_UNDO,
              _("_Undo"),
@@ -424,7 +424,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                                         gtk.Label(_("Effects configurations")))
         self.clipconfig.show()
 
-        self.secondhpaned.pack2(self.propertiestabs, resize= True, shrink=False)
+        self.secondhpaned.pack2(self.propertiestabs, resize=True, shrink=False)
         self.propertiestabs.show()
 
         # Viewer
@@ -557,7 +557,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         ttb = self.actiongroup.get_action("ShowHideTimelineToolbar")
         self.settings.mainWindowShowMainToolbar = mtb.props.active
         self.settings.mainWindowShowTimelineToolbar = ttb.props.active
-
 
     def _sourceListPlayCb(self, sourcelist, factory):
         self._viewFactory(factory)
@@ -749,7 +748,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         Zoomable.setZoomLevel(nearest_zoom_level)
 
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
-        if uri != None :
+        if uri != None:
             self.manager.add_item(uri)
         self.log("A NEW project is being loaded, deactivate UI")
 
@@ -800,14 +799,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 "changes will be lost")
 
         # put the text in a vbox
-        vbox = gtk.VBox(False, SPACING*2)
+        vbox = gtk.VBox(False, SPACING * 2)
         vbox.pack_start(primary, expand=True, fill=True)
         vbox.pack_start(secondary, expand=True, fill=True)
 
         # make the [[image] text] hbox
         image = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
                gtk.ICON_SIZE_DIALOG)
-        hbox = gtk.HBox(False, SPACING*2)
+        hbox = gtk.HBox(False, SPACING * 2)
         hbox.pack_start(image, expand=False)
         hbox.pack_start(vbox, expand=True, fill=True)
         action_area = dialog.get_action_area()
@@ -816,7 +815,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # stuff the hbox in the dialog
         content_area = dialog.get_content_area()
         content_area.pack_start(hbox, expand=True, fill=True)
-        content_area.set_spacing(SPACING*2)
+        content_area.set_spacing(SPACING * 2)
         hbox.show_all()
 
         response = dialog.run()
@@ -861,10 +860,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
             dialog.set_transient_for(self)
             response = dialog.run()
             dialog.destroy()
-            if response <> gtk.RESPONSE_YES:
+            if response != gtk.RESPONSE_YES:
                 return False
         return True
-
 
     def _projectManagerNewProjectFailedCb(self, projectManager, uri, exception):
         project_filename = unquote(uri.split("/")[-1])
@@ -888,7 +886,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
             gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         dialog.set_icon_name("pitivi")
-        dialog.set_border_width(SPACING*2)
+        dialog.set_border_width(SPACING * 2)
         dialog.get_content_area().set_spacing(SPACING)
         dialog.set_transient_for(self)
 
@@ -1126,7 +1124,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.viewer.play()
 
     def _timelineSeekCb(self, ruler, position, format):
-        self.debug("position:%s", gst.TIME_ARGS (position))
+        self.debug("position:%s", gst.TIME_ARGS(position))
         if self.viewer.action != self.project.view_action:
             self.viewer.setPipeline(None)
             self.viewer.hideSlider()

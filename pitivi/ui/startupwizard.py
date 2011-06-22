@@ -4,11 +4,11 @@ import os
 import gtk
 import webbrowser
 
-from pitivi.configure import LIBDIR, get_ui_dir
-from projectsettings import ProjectSettingsDialog
+from pitivi.configure import get_ui_dir
 from pitivi.configure import APPMANUALURL
 
 from urllib import unquote
+
 
 class StartUpWizard(object):
     """A Wizard displaying recent projects and allowing the user to either:

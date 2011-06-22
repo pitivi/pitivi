@@ -27,6 +27,7 @@ from pitivi.ui.dynamic import FractionWidget
 
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
 
+
 class EffectsPropertiesHandling:
     def __init__(self, action_log):
         self.cache_dict = {}
@@ -65,7 +66,7 @@ class EffectsPropertiesHandling:
         return self.cache_dict[effect]
 
     def cleanCache(self, effect):
-        if self.cache_dict.has_key(effect):
+        if effect in self.cache_dict:
             conf_ui = self.cache_dict.get(effect)
             self.cache_dict.pop(effect)
             return conf_ui
@@ -97,7 +98,7 @@ class EffectsPropertiesHandling:
 
         #FIXME Workaround in order to make aspectratiocrop working
         if isinstance(value, gst.Fraction):
-            value = gst.Fraction(int(value.num),int(value.denom))
+            value = gst.Fraction(int(value.num), int(value.denom))
 
         if value != self._current_element_values.get(prop.name):
             self.action_log.begin("Effect property change")

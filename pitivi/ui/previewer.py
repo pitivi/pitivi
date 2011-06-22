@@ -70,29 +70,29 @@ GlobalSettings.addConfigOption("thumbnailCacheSize",
 GlobalSettings.addConfigOption("thumbnailMaxRequests",
     section="thumbnailing",
     key="max-requests",
-    default = 10)
+    default=10)
 
 GlobalSettings.addConfigOption('showThumbnails',
-    section = 'user-interface',
-    key = 'show-thumbnails',
-    default = True,
-    notify = True)
+    section='user-interface',
+    key='show-thumbnails',
+    default=True,
+    notify=True)
 
 PreferencesDialog.addTogglePreference('showThumbnails',
-    section = _("Appearance"),
-    label = _("Show Thumbnails (Video)"),
-    description = _("Show Thumbnails on Video Clips"))
+    section=_("Appearance"),
+    label=_("Show Thumbnails (Video)"),
+    description=_("Show Thumbnails on Video Clips"))
 
 GlobalSettings.addConfigOption('showWaveforms',
-    section = 'user-interface',
-    key = 'show-waveforms',
-    default = True,
-    notify = True)
+    section='user-interface',
+    key='show-waveforms',
+    default=True,
+    notify=True)
 
 PreferencesDialog.addTogglePreference('showWaveforms',
-    section = _("Appearance"),
-    label = _("Show Waveforms (Audio)"),
-    description = _("Show Waveforms on Audio Clips"))
+    section=_("Appearance"),
+    label=_("Show Waveforms (Audio)"),
+    description=_("Show Waveforms on Audio Clips"))
 
 # Previewer                      -- abstract base class with public interface for UI
 # |_DefaultPreviewer             -- draws a default thumbnail for UI
@@ -105,6 +105,7 @@ PreferencesDialog.addTogglePreference('showWaveforms',
 #     |_StillImagePreviewer      -- only uses one segment
 
 previewers = {}
+
 
 def get_preview_for_object(instance, trackobject):
     factory = trackobject.factory
@@ -127,10 +128,11 @@ def get_preview_for_object(instance, trackobject):
             previewers[key] = DefaultPreviewer(instance, factory, stream_)
     return previewers[key]
 
+
 class Previewer(Signallable, Loggable):
 
     __signals__ = {
-        "update" : ("segment",),
+        "update": ("segment",),
     }
 
     # TODO: parameterize height, instead of assuming self.theight pixels.
@@ -157,14 +159,15 @@ class Previewer(Signallable, Loggable):
     def _connectSettings(self, settings):
         self._settings = settings
 
+
 class DefaultPreviewer(Previewer):
 
     def render_cairo(self, cr, bounds, element, hscroll_pos, y1):
         # TODO: draw a single thumbnail
         pass
 
-class RandomAccessPreviewer(Previewer):
 
+class RandomAccessPreviewer(Previewer):
     """ Handles loading, caching, and drawing preview data for segments of
     random-access streams.  There is one Previewer per stream per
     ObjectFactory.  Preview data is read from an instance of an
@@ -222,7 +225,7 @@ class RandomAccessPreviewer(Previewer):
 
         # tdur = duration in ns of thumbnail
         # sof  = start of file in pixel coordinates
-        x1 = bounds.x1;
+        x1 = bounds.x1
         sof = Zoomable.nsToPixel(element.start - element.in_point) +\
             hscroll_pos
 
@@ -337,6 +340,7 @@ class RandomAccessPreviewer(Previewer):
         self.spacing = settings.thumbnailSpacingHint
         self.emit("update", None)
 
+
 class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
     @property
@@ -366,11 +370,11 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
             (self.theight, self.twidth + 2))
         filter_ = utils.filter_(caps)
         self.videopipeline = utils.pipeline({
-            sbin : csp,
-            csp : scale,
-            scale : filter_,
-            filter_ : sink,
-            sink : None
+            sbin: csp,
+            csp: scale,
+            scale: filter_,
+            filter_: sink,
+            sink: None
         })
         sink.connect('thumbnail', self._thumbnailCb)
         self.videopipeline.set_state(gst.STATE_PAUSED)
@@ -398,10 +402,11 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         self._view = settings.showThumbnails
         self.emit("update", None)
 
-class StillImagePreviewer(RandomAccessVideoPreviewer):
 
+class StillImagePreviewer(RandomAccessVideoPreviewer):
     def _thumbForTime(self, cr, time, x, y):
         return RandomAccessVideoPreviewer._thumbForTime(self, cr, 0L, x, y)
+
 
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
@@ -420,9 +425,9 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         self.audioSink = ArraySink()
         conv = gst.element_factory_make("audioconvert")
         self.audioPipeline = utils.pipeline({
-            sbin : conv,
-            conv : self.audioSink,
-            self.audioSink : None})
+            sbin: conv,
+            conv: self.audioSink,
+            self.audioSink: None})
         bus = self.audioPipeline.get_bus()
         bus.add_signal_watch()
         bus.connect("message::segment-done", self._busMessageSegmentDoneCb)
@@ -475,7 +480,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
                width, self.theight)
             cr = cairo.Context(scaled)
             matrix = cairo.Matrix()
-            matrix.scale(self.base_width/width, 1.0)
+            matrix.scale(self.base_width / width, 1.0)
             cr.set_source_surface(surface)
             cr.get_source().set_matrix(matrix)
             cr.rectangle(0, 0, width, self.theight)

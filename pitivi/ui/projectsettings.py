@@ -70,6 +70,7 @@ display_aspect_ratios = model((str, object), (
     (_("Anamorphic (2.4)"), gst.Fraction(24, 10)),
 ))
 
+
 class ProjectSettingsDialog():
 
     def __init__(self, parent, project):
@@ -237,12 +238,12 @@ class ProjectSettingsDialog():
     def bindCombo(self, mgr, name, widget):
         mgr.bindWidget(name,
             lambda x: set_combo_value(widget, x),
-            lambda : get_combo_value(widget))
+            lambda: get_combo_value(widget))
 
     def bindSpinbutton(self, mgr, name, widget):
         mgr.bindWidget(name,
             lambda x: widget.set_value(float(x)),
-            lambda : int(widget.get_value()))
+            lambda: int(widget.get_value()))
 
     def presetNameEditedCb(self, renderer, path, new_text, mgr):
         mgr.renamePreset(path, new_text)
@@ -342,9 +343,9 @@ class ProjectSettingsDialog():
 
     def _addAudioPresetButtonClickedCb(self, button):
         self.audio_presets.addPreset(_("New Preset"), {
-            "channels" : get_combo_value(self.channels_combo),
-            "sample-rate" : get_combo_value(self.sample_rate_combo),
-            "depth" : get_combo_value(self.sample_depth_combo)
+            "channels": get_combo_value(self.channels_combo),
+            "sample-rate": get_combo_value(self.sample_rate_combo),
+            "depth": get_combo_value(self.sample_depth_combo)
         })
 
     def _removeAudioPresetButtonClickedCb(self, button):

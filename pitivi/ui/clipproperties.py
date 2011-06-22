@@ -43,9 +43,11 @@ from pitivi.ui import dynamic
  COL_DESC_TEXT,
  COL_TRACK_EFFECT) = range(5)
 
+
 class ClipPropertiesError(Exception):
     """Base Exception for errors happening in L{ClipProperties}s or L{EffectProperties}s"""
     pass
+
 
 class ClipProperties(gtk.VBox, Loggable):
     """
@@ -98,6 +100,7 @@ class ClipProperties(gtk.VBox, Loggable):
 
         return label, info_bar
 
+
 class EffectProperties(gtk.HBox):
     """
     Widget for viewing and configuring effects
@@ -118,7 +121,7 @@ class EffectProperties(gtk.HBox):
         self.pipeline = None
         self.effect_props_handling = effect_properties_handling
         self.clip_properties = clip_properties
-        self._info_bar =  None
+        self._info_bar = None
         self._config_ui_h_pos = None
         self._timeline = None
 
@@ -158,8 +161,8 @@ class EffectProperties(gtk.HBox):
         activatedcol = self.treeview.insert_column_with_attributes(-1,
                                                         _("Activated"),
                                                         activatedcell,
-                                                        active = COL_ACTIVATED)
-        activatedcell.connect("toggled",  self._effectActiveToggleCb)
+                                                        active=COL_ACTIVATED)
+        activatedcell.connect("toggled", self._effectActiveToggleCb)
 
         typecol = gtk.TreeViewColumn(_("Type"))
         typecol.set_sort_column_id(COL_TYPE)
@@ -399,7 +402,7 @@ class EffectProperties(gtk.HBox):
             self._config_ui_h_pos =\
                         self.app.gui.settings.effectVPanedPosition
             if self._config_ui_h_pos is None:
-                self._config_ui_h_pos=\
+                self._config_ui_h_pos =\
                         self.app.gui.settings.mainWindowHeight // 3
         if self.selection.get_selected()[1]:
             track_effect = self.storemodel.get_value(self.selection.get_selected()[1],

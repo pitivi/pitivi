@@ -7,6 +7,7 @@ from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
 
 TRACK_CONTROL_WIDTH = 75
 
+
 def track_name(track):
     stream_type = type(track.stream)
     if stream_type == stream.AudioStream:
@@ -15,6 +16,7 @@ def track_name(track):
         return _("<b>Video:</b>")
     elif stream_type == stream.TextStream:
         return _("<b>Text:</b>")
+
 
 class TrackControls(gtk.Label):
     __gtype_name__ = 'TrackControls'
@@ -37,6 +39,7 @@ class TrackControls(gtk.Label):
         self.set_size_request(TRACK_CONTROL_WIDTH, (1 +
             max_priority) * (LAYER_HEIGHT_EXPANDED +
             LAYER_SPACING))
+
 
 class TimelineControls(gtk.VBox):
     def __init__(self):

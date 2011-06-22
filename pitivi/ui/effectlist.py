@@ -57,6 +57,7 @@ GlobalSettings.addConfigOption('lastEffectView',
 INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(),
     "invisible.png"))
 
+
 class EffectList(gtk.VBox, Loggable):
     """ Widget for listing effects """
 
@@ -77,7 +78,6 @@ class EffectList(gtk.VBox, Loggable):
         self._current_effect_name = None
         self._current_tooltip_icon = None
 
-
         #Searchbox and combobox
         hfilters = gtk.HBox()
         hfilters.set_spacing(SPACING)
@@ -87,7 +87,6 @@ class EffectList(gtk.VBox, Loggable):
         self.effectType.append_text(_("Audio effects"))
         self.effectCategory = gtk.combo_box_new_text()
         self.effectType.set_active(VIDEO_EFFECT)
-
 
         hfilters.pack_start(self.effectType, expand=True)
         hfilters.pack_end(self.effectCategory, expand=True)
@@ -169,14 +168,14 @@ class EffectList(gtk.VBox, Loggable):
         self.treeview.connect("motion-notify-event", self._motionNotifyEventCb)
         self.treeview.connect("query-tooltip", self._queryTooltipCb)
         self.treeview.connect("button-release-event", self._buttonReleaseCb)
-        self.treeview.drag_source_set(0,[], gtk.gdk.ACTION_COPY)
+        self.treeview.drag_source_set(0, [], gtk.gdk.ACTION_COPY)
         self.treeview.connect("drag_begin", self._dndDragBeginCb)
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
 
         self.iconview.connect("button-press-event", self._buttonPressEventCb)
         self.iconview.connect("activate-cursor-item", self._enterPressEventCb)
         self.iconview.connect("query-tooltip", self._queryTooltipCb)
-        self.iconview.drag_source_set(0,[], gtk.gdk.ACTION_COPY)
+        self.iconview.drag_source_set(0, [], gtk.gdk.ACTION_COPY)
         self.iconview.connect("motion-notify-event", self._motionNotifyEventCb)
         self.iconview.connect("button-release-event", self._buttonReleaseCb)
         self.iconview.connect("drag_begin", self._dndDragBeginCb)
@@ -231,9 +230,9 @@ class EffectList(gtk.VBox, Loggable):
 
     def _addFactories(self, elements, effectType):
         for element in elements:
-            name =element.get_name()
+            name = element.get_name()
             effect = self.app.effects.getFactoryFromName(name)
-            self.storemodel.append([ effect.getHumanName(),
+            self.storemodel.append([effect.getHumanName(),
                                      effect.getDescription(), effectType,
                                      effect.getCategories(),
                                      effect, name,
@@ -297,7 +296,7 @@ class EffectList(gtk.VBox, Loggable):
                 return view.path_is_selected(path) and len(selection)
         return False
 
-    def _enterPressEventCb(self, view, event = None):
+    def _enterPressEventCb(self, view, event=None):
         factory_name = self.getSelectedItems()
         self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
 
@@ -395,7 +394,7 @@ class EffectList(gtk.VBox, Loggable):
         txt = "<b>%s:</b>\n%s" % (longname, description)
         if self.effect_view == SHOW_ICONVIEW:
             tooltip.set_icon(None)
-        else :
+        else:
             tooltip.set_icon(self._current_tooltip_icon)
         tooltip.set_markup(txt)
 
@@ -434,10 +433,10 @@ class EffectList(gtk.VBox, Loggable):
     def _effectCategoryChangedCb(self, combobox):
         self.modelFilter.refilter()
 
-    def searchEntryChangedCb (self, entry):
+    def searchEntryChangedCb(self, entry):
         self.modelFilter.refilter()
 
-    def searchEntryIconClickedCb (self, entry, unused, unsed1):
+    def searchEntryIconClickedCb(self, entry, unused, unsed1):
         entry.set_text("")
 
     def searchEntryDesactvateCb(self, entry, event):

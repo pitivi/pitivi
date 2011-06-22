@@ -27,6 +27,7 @@ import os.path
 import gtk
 import gst
 
+
 class PresetManager(object):
 
     def __init__(self):
@@ -123,6 +124,7 @@ class PresetManager(object):
         return any((values[field] != getter() for field, (setter, getter)
             in self.widget_map.iteritems()))
 
+
 class VideoPresetManager(PresetManager):
 
     filename = "video_presets"
@@ -159,6 +161,7 @@ class VideoPresetManager(PresetManager):
             str(int(values["par"].num)))
         parser.set(section, "par-denom",
             str(int(values["par"].denom)))
+
 
 class AudioPresetManager(PresetManager):
 

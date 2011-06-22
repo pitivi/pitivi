@@ -1,6 +1,7 @@
 from pitivi.receiver import receiver, handler
 import controller
 
+
 class View(object):
 
     Controller = controller.Controller

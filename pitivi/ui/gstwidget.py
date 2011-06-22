@@ -33,6 +33,7 @@ from pitivi.log.loggable import Loggable
 from pitivi.configure import get_ui_dir
 import pitivi.ui.dynamic as dynamic
 
+
 def make_property_widget(unused_element, prop, value=None):
     """ Creates a Widget for the given element property """
     # FIXME : implement the case for flags
@@ -45,7 +46,7 @@ def make_property_widget(unused_element, prop, value=None):
     elif (type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat',
         'gulong', 'gdouble']):
 
-        maximum , minimum = None, None
+        maximum, minimum = None, None
         if hasattr(prop, "minimum"):
             minimum = prop.minimum
         if hasattr(prop, "maximum"):
@@ -70,6 +71,7 @@ def make_property_widget(unused_element, prop, value=None):
 
     return widget
 
+
 class GstElementSettingsWidget(gtk.VBox, Loggable):
     """
     Widget to view/modify properties of a gst.Element
@@ -84,7 +86,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         self.buttons = {}
 
     def setElement(self, element, properties={}, ignore=['name'],
-                   default_btn = False, use_element_props=False):
+                   default_btn=False, use_element_props=False):
         """ Set given element on Widget, with optional properties """
         self.info("element:%s, use properties:%s", element, properties)
         self.element = element
@@ -116,23 +118,23 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
               or not prop.flags & gobject.PARAM_READABLE:
                 continue
 
-            label = gtk.Label(prop.nick+":")
+            label = gtk.Label(prop.nick + ":")
             label.set_alignment(0.0, 0.5)
-            table.attach(label, 0, 1, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
+            table.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
             if use_element_props:
-                prop_value  = self.element.get_property(prop.name)
+                prop_value = self.element.get_property(prop.name)
             else:
                 prop_value = properties.get(prop.name)
             widget = make_property_widget(self.element, prop, prop_value)
 
-            if hasattr(prop, 'description'): #TODO: check that
+            if hasattr(prop, 'description'):   # TODO: check that
                 widget.set_tooltip_text(prop.description)
 
-            table.attach(widget, 1, 2, y, y+1, yoptions=gtk.FILL)
+            table.attach(widget, 1, 2, y, y + 1, yoptions=gtk.FILL)
             self.properties[prop] = widget
             if default_btn:
                 button = self._getResetToDefaultValueButton(prop, widget)
-                table.attach(button, 2, 3, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
+                table.attach(button, 2, 3, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
                 self.buttons[button] = widget
             self.element.connect('notify::' + prop.name,
                                  self._propertyChangedCb,
@@ -171,7 +173,6 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
             if value != None and (value != prop.default_value or with_default):
                 d[prop.name] = value
         return d
-
 
 
 class GstElementSettingsDialog(Loggable):

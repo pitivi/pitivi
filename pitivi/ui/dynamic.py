@@ -34,6 +34,7 @@ from pitivi.ui.common import unpack_color, pack_color_32, pack_color_64
 import pango
 from pitivi.ui.common import PADDING, SPACING
 
+
 class DynamicWidget(object):
 
     """An interface which provides a uniform way to get, set, and observe
@@ -60,14 +61,14 @@ class DynamicWidget(object):
         if self.default is not None:
             self.setWidgetValue(self.default)
 
+
 class DefaultWidget(gtk.Label, DynamicWidget):
 
     """When all hope fails...."""
 
-    def __init__(self, default = None, *unused, **kw_unused):
+    def __init__(self, default=None, *unused, **kw_unused):
         gtk.Label.__init__(self, _("Implement Me"))
         DynamicWidget.__init__(self, default)
-
 
     def connectValueChanged(self, callback, *args):
         pass
@@ -87,7 +88,7 @@ class TextWidget(gtk.HBox, DynamicWidget):
 
     __gtype_name__ = 'TextWidget'
     __gsignals__ = {
-        "value-changed" : (
+        "value-changed": (
             gobject.SIGNAL_RUN_LAST,
             gobject.TYPE_NONE,
             (),)
@@ -96,7 +97,7 @@ class TextWidget(gtk.HBox, DynamicWidget):
     __INVALID__ = gtk.gdk.Color(0xFFFF, 0, 0)
     __NORMAL__ = gtk.gdk.Color(0, 0, 0)
 
-    def __init__(self, matches = None, choices = None, default = None):
+    def __init__(self, matches=None, choices=None, default=None):
         gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
 
@@ -128,7 +129,7 @@ class TextWidget(gtk.HBox, DynamicWidget):
     def connectValueChanged(self, callback, *args):
         return self.connect("value-changed", callback, *args)
 
-    def setWidgetValue(self, value, send_signal = True):
+    def setWidgetValue(self, value, send_signal=True):
         self.send_signal = send_signal
         self.text.set_text(value)
 
@@ -177,7 +178,7 @@ class NumericWidget(gtk.HBox, DynamicWidget):
     SpinButton is always displayed, while the HScale only appears if both
     lower and upper bounds are defined"""
 
-    def __init__(self,  upper = None, lower = None, default=None):
+    def __init__(self, upper=None, lower=None, default=None):
         gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
 
@@ -234,6 +235,7 @@ class NumericWidget(gtk.HBox, DynamicWidget):
         self.adjustment.set_all(value, minimum, maximum, step, page, 0)
         self.spinner.set_adjustment(self.adjustment)
 
+
 class TimeWidget(TextWidget, DynamicWidget):
     """ A widget that contains a time in nanosconds"""
 
@@ -255,13 +257,13 @@ class TimeWidget(TextWidget, DynamicWidget):
             + int(ss) * 10e9 \
             + int(xxx) * 10e6
 
-        nanosecs = nanosecs / 10 # Compensate the 10 factor of e notation
+        nanosecs = nanosecs / 10  # Compensate the 10 factor of e notation
 
         return nanosecs
 
-    def setWidgetValue(self, value, send_signal = True):
+    def setWidgetValue(self, value, send_signal=True):
         TextWidget.setWidgetValue(self, time_to_string(value),
-                                send_signal = send_signal)
+                                send_signal=send_signal)
 
     def connectFocusEvents(self, focusInCb, focusOutCb):
         fIn = self.text.connect("button-press-event", focusInCb)
@@ -355,6 +357,7 @@ class FractionWidget(TextWidget, DynamicWidget):
                 denom = float(groups[2][1:])
         return gst.Fraction(num, denom)
 
+
 class ToggleWidget(gtk.CheckButton, DynamicWidget):
 
     """A gtk.CheckButton which supports the DynamicWidget interface."""
@@ -371,6 +374,7 @@ class ToggleWidget(gtk.CheckButton, DynamicWidget):
 
     def getWidgetValue(self):
         return self.get_active()
+
 
 class ChoiceWidget(gtk.HBox, DynamicWidget):
 
@@ -413,6 +417,7 @@ class ChoiceWidget(gtk.HBox, DynamicWidget):
             self.contents.set_sensitive(False)
         else:
             self.contents.set_sensitive(True)
+
 
 class PresetChoiceWidget(gtk.HBox, DynamicWidget):
 
@@ -547,17 +552,17 @@ class PathWidget(gtk.FileChooserButton, DynamicWidget):
     __gtype_name__ = 'PathWidget'
 
     __gsignals__ = {
-        "value-changed" : (gobject.SIGNAL_RUN_LAST,
+        "value-changed": (gobject.SIGNAL_RUN_LAST,
             gobject.TYPE_NONE,
             ()),
     }
 
-    def __init__(self, action = gtk.FILE_CHOOSER_ACTION_OPEN, default=None):
+    def __init__(self, action=gtk.FILE_CHOOSER_ACTION_OPEN, default=None):
         DynamicWidget.__init__(self, default)
         self.dialog = gtk.FileChooserDialog(
-            action = action,
-            buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_CLOSE,
-            gtk.RESPONSE_CLOSE))
+            action=action,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_CLOSE,
+             gtk.RESPONSE_CLOSE))
         self.dialog.set_default_response(gtk.RESPONSE_OK)
         gtk.FileChooserButton.__init__(self, self.dialog)
         self.set_title(_("Choose..."))
@@ -580,9 +585,10 @@ class PathWidget(gtk.FileChooserButton, DynamicWidget):
             self.emit("value-changed")
             self.dialog.hide()
 
+
 class ColorWidget(gtk.ColorButton, DynamicWidget):
 
-    def __init__(self, value_type=str, default= None):
+    def __init__(self, value_type=str, default=None):
         gtk.ColorButton.__init__(self)
         DynamicWidget.__init__(self, default)
         self.value_type = value_type
@@ -619,9 +625,10 @@ class ColorWidget(gtk.ColorButton, DynamicWidget):
             return color
         return color.to_string()
 
+
 class FontWidget(gtk.FontButton, DynamicWidget):
 
-    def __init__(self, default = None):
+    def __init__(self, default=None):
         gtk.FontButton.__init__(self)
         DynamicWidget.__init__(self, default)
         self.set_use_font(True)
@@ -635,9 +642,10 @@ class FontWidget(gtk.FontButton, DynamicWidget):
     def getWidgetValue(self):
         return self.get_font_name()
 
+
 class ResolutionWidget(gtk.HBox, DynamicWidget):
 
-    def __init__(self, default = None):
+    def __init__(self, default=None):
         gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
         self.props.spacing = 6
@@ -695,11 +703,7 @@ if __name__ == '__main__':
                     gst.Fraction(1, 1),
                     gst.Fraction(30000, 1001)
                 ),
-                (
-                    "25:1",
-                    gst.Fraction(30,1),
-                    "30M",
-                ),
+                ("25:1", gst.Fraction(30, 1), "30M", ),
             )
         ),
     )

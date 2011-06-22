@@ -447,10 +447,10 @@ class SourceFactory(ObjectFactory):
         caps_copy = gst.Caps(caps)
         for structure in caps_copy:
             # remove framerate as we don't adjust framerate here
-            if structure.has_key("framerate"):
+            if structure.has_field("framerate"):
                 del structure["framerate"]
             # remove format as we will have converted to AYUV/ARGB
-            if structure.has_key("format"):
+            if structure.has_field("format"):
                 del structure["format"]
         if b is None:
             for bin in self.bins:
