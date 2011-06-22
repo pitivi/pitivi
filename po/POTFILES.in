@@ -20,7 +20,6 @@ pitivi/projectmanager.py
 pitivi/project.py
 pitivi/settings.py
 pitivi/stream.py
-pitivi/ui/audiofxlist.py
 pitivi/ui/basetabs.py
 pitivi/ui/clipproperties.py
 pitivi/ui/common.py
