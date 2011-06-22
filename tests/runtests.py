@@ -4,10 +4,11 @@ import sys
 import unittest
 import tests
 
-SKIP_FILES = ['common', 'runtests'] #They are not testsuites
+SKIP_FILES = ['common', 'runtests']  # They are not testsuites
 #Those files need sample files, and therefore shoud not be tested
 #when running distcheck
-INTEGRATION_FILES=['test_still_image', 'test_integration']
+INTEGRATION_FILES = ['test_still_image', 'test_integration']
+
 
 def gettestnames(which):
     if os.getenv("TEST_INTEGRATION"):
@@ -28,7 +29,7 @@ def gettestnames(which):
 suite = unittest.TestSuite()
 loader = unittest.TestLoader()
 
-TEST_CASE=os.getenv("TESTCASE")
+TEST_CASE = os.getenv("TESTCASE")
 
 if TEST_CASE:
     suite.addTest(loader.loadTestsFromName(TEST_CASE))
@@ -40,7 +41,7 @@ else:
 
 descriptions = 1
 verbosity = 1
-if os.environ.has_key('VERBOSE'):
+if 'VERBOSE' in os.environ:
     descriptions = 2
     verbosity = 2
 from pitivi.log import log

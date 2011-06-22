@@ -14,6 +14,7 @@ from pitivi.pipeline import Pipeline
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "1") not in ("0", "")
 
+
 class TestCase(unittest.TestCase):
     _tracked_types = (gst.MiniObject, gst.Element, gst.Pad, gst.Caps,
             ObjectFactory, Pipeline)
@@ -81,6 +82,7 @@ class TestCase(unittest.TestCase):
         self._result = result
         unittest.TestCase.run(self, result)
 
+
 # Some fake factories
 class FakeSourceFactory(SourceFactory):
     def __init__(self, factoryname="fakesrc", *args, **kwargs):
@@ -93,17 +95,19 @@ class FakeSourceFactory(SourceFactory):
     def _releaseBin(self, bin):
         pass
 
+
 class FakeSinkFactory(SinkFactory):
     def __init__(self, factoryname="fakesink", *args, **kwargs):
         SinkFactory.__init__(self, *args, **kwargs)
-        self.__factoryname=factoryname
+        self.__factoryname = factoryname
 
     def _makeBin(self, output_stream=None):
         return gst.element_factory_make(self.__factoryname)
 
+
 class FakeGnlFactory(SourceFactory):
 
-    def __init__(self, duration=10*gst.SECOND, media_duration=10*gst.SECOND,
+    def __init__(self, duration=10 * gst.SECOND, media_duration=10 * gst.SECOND,
                  *args, **kwargs):
         self.__duration = duration
         self.__media_duration = media_duration
@@ -114,12 +118,13 @@ class FakeGnlFactory(SourceFactory):
         gnl = gst.element_factory_make("gnlsource")
         vs = gst.element_factory_make("videotestsrc")
         gnl.add(vs)
-        gnl.props.duration=self.__duration
-        gnl.props.media_duration=self.__media_duration
+        gnl.props.duration = self.__duration
+        gnl.props.media_duration = self.__media_duration
         return gnl
 
     def _releaseBin(self, bin):
         pass
+
 
 class SignalMonitor(object):
     def __init__(self, obj, *signals):
@@ -152,6 +157,7 @@ class SignalMonitor(object):
         field = self._getSignalCollectName(name)
         setattr(self, field, getattr(self, field, []) + [args[:-1]])
 
+
 class StubFactory(SourceFactory):
     def __init__(self):
         SourceFactory.__init__(self, "stub://")
@@ -162,6 +168,7 @@ class StubFactory(SourceFactory):
 
     def _releaseBin(self, bin):
         pass
+
 
 class FakeEffectFactory(EffectFactory):
     def __init__(self):

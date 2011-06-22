@@ -13,6 +13,7 @@
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+
 # Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public
@@ -26,6 +27,7 @@ from common import TestCase
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
 from pitivi.stream import AudioStream, VideoStream
 
+
 class StubSingleDecodeBin(gst.Bin):
     def __init__(self, uri, caps, stream):
         self.uri = uri
@@ -33,8 +35,10 @@ class StubSingleDecodeBin(gst.Bin):
         self.stream = stream
         gst.Bin.__init__(self)
 
+
 class StubFileSourceFactory(FileSourceFactory):
     singleDecodeBinClass = StubSingleDecodeBin
+
 
 class TestFileSourceFactory(TestCase):
     def setUp(self):
@@ -100,10 +104,10 @@ class TestFileSourceFactory(TestCase):
         width_checked = False
         height_checked = False
         for structure in scale_caps1:
-            if structure.has_key("width"):
+            if structure.has_field("width"):
                 self.failUnlessEqual(structure["width"], 320)
                 width_checked = True
-            if structure.has_key("height"):
+            if structure.has_field("height"):
                 self.failUnlessEqual(structure["height"], 240)
                 height_checked = True
         self.failUnlessEqual(width_checked, True)
@@ -119,15 +123,14 @@ class TestFileSourceFactory(TestCase):
         width_checked = False
         height_checked = False
         for structure in scale_caps1:
-            if structure.has_key("width"):
+            if structure.has_field("width"):
                 self.failUnlessEqual(structure["width"], 320)
                 width_checked = True
-            if structure.has_key("height"):
+            if structure.has_field("height"):
                 self.failUnlessEqual(structure["height"], 240)
                 height_checked = True
         self.failUnlessEqual(width_checked, True)
         self.failUnlessEqual(height_checked, True)
-
 
         self.factory.setFilterCaps(caps2)
 
@@ -136,10 +139,10 @@ class TestFileSourceFactory(TestCase):
         width_checked = False
         height_checked = False
         for structure in scale_caps2:
-            if structure.has_key("width"):
+            if structure.has_field("width"):
                 self.failUnlessEqual(structure["width"], 640)
                 width_checked = True
-            if structure.has_key("height"):
+            if structure.has_field("height"):
                 self.failUnlessEqual(structure["height"], 480)
                 height_checked = True
         self.failUnlessEqual(width_checked, True)
@@ -150,10 +153,10 @@ class TestFileSourceFactory(TestCase):
         width_checked = False
         height_checked = False
         for structure in scale_caps2:
-            if structure.has_key("width"):
+            if structure.has_field("width"):
                 self.failUnlessEqual(structure["width"], 640)
                 width_checked = True
-            if structure.has_key("height"):
+            if structure.has_field("height"):
                 self.failUnlessEqual(structure["height"], 480)
                 height_checked = True
         self.failUnlessEqual(width_checked, True)
@@ -162,8 +165,10 @@ class TestFileSourceFactory(TestCase):
         self.factory.releaseBin(bin1)
         self.factory.releaseBin(bin2)
 
+
 class StubPictureFileSourceFactory(PictureFileSourceFactory):
     singleDecodeBinClass = StubSingleDecodeBin
+
 
 class TestPictureFileSourceFactory(TestCase):
     def setUp(self):

@@ -25,13 +25,14 @@ SOURCES = (
     ("source3", 10 * gst.SECOND),
 )
 
+
 class TestComposition(gobject.GObject):
     __gtype_name__ = "TestComposition"
     __gsignals__ = {
-        "source-added" : (gobject.SIGNAL_RUN_LAST,
+        "source-added": (gobject.SIGNAL_RUN_LAST,
             gobject.TYPE_NONE,
             (gobject.TYPE_PYOBJECT, )),
-        "source-removed" : (gobject.SIGNAL_RUN_LAST,
+        "source-removed": (gobject.SIGNAL_RUN_LAST,
             gobject.TYPE_NONE,
             (gobject.TYPE_PYOBJECT, )),
     }
@@ -46,23 +47,24 @@ class TestComposition(gobject.GObject):
     def removeSource(self, source):
         self.emit("source-removed", source)
 
+
 class TestTimelineObject(gobject.GObject):
     __gtype_name__ = "TestObject"
     __gsignals__ = {
-        "start-duration-changed" : (gobject.SIGNAL_RUN_LAST,
+        "start-duration-changed": (gobject.SIGNAL_RUN_LAST,
             gobject.TYPE_NONE,
             (gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, )),
     }
 
     class Factory:
-        name=None
+        name = None
 
     def __init__(self, name, start, duration):
         gobject.GObject.__init__(self)
         self.start = start
         self.duration = duration
         self.factory = self.Factory()
-        self.factory.name=name
+        self.factory.name = name
 
     def setStartDurationTime(self, start=-1, duration=-1):
         if start != -1:

@@ -1,11 +1,12 @@
 import unittest
 from pitivi.signalinterface import Signallable
 
+
 class myobject(Signallable):
 
     __signals__ = {
-        "signal-oneargs" : ["firstarg"],
-        "signal-noargs" : []
+        "signal-oneargs": ["firstarg"],
+        "signal-noargs": []
         }
 
     def emit_signal_one_args(self, firstarg):
@@ -14,17 +15,20 @@ class myobject(Signallable):
     def emit_signal_no_args(self):
         self.emit("signal-noargs")
 
+
 class mysubobject(myobject):
 
     __signals__ = {
-        "subobject-noargs" : None
+        "subobject-noargs": None
         }
 
     def emit_sub_signal_no_args(self):
         self.emit("subobject-noargs")
 
+
 def function_cb(testcase):
     testcase.fail("this should not be reached")
+
 
 class TestSignalisation(unittest.TestCase):
     """
@@ -61,7 +65,7 @@ class TestSignalisation(unittest.TestCase):
 
     # default callbacks to be used
     def _cb_oneargs(self, signaller, firstarg=None, *args, **kwargs):
-        self.s_oneargs_triggered +=1
+        self.s_oneargs_triggered += 1
         self.signal_oneargs_signaller = signaller
         self.signal_oneargs_firstarg = firstarg
         self.signal_oneargs_args = args
@@ -78,7 +82,6 @@ class TestSignalisation(unittest.TestCase):
         self.signal_suboargs_signaller = signaller
         self.signal_subnoargs_args = args
         self.signal_subnoargs_kwargs = kwargs
-
 
     def test01_get_signals(self):
         self.assertEquals(self.object.get_signals(),
@@ -156,15 +159,14 @@ class TestSignalisation(unittest.TestCase):
 
         self.object.emit("signal-oneargs", 42)
 
-
     def test04_emit01(self):
-        # signal : no arguments
-        # connect : no arguments
+        # signal: no arguments
+        # connect: no arguments
         noargsid = self.object.connect("signal-noargs",
                                        self._cb_noargs)
         self.assert_(noargsid)
         self.object.emit_signal_no_args()
-        self.assertEquals(self.s_noargs_triggered,1)
+        self.assertEquals(self.s_noargs_triggered, 1)
         self.assertEquals(self.signal_noargs_args, ())
         self.assertEquals(self.signal_noargs_signaller, self.object)
         self.assertEquals(self.signal_noargs_kwargs, {})
@@ -178,22 +180,22 @@ class TestSignalisation(unittest.TestCase):
         self.assertEquals(self.s_noargs_triggered, 0)
 
     def test04_emit02(self):
-        # signal : no arguments
-        # connect : extra arguments
+        # signal: no arguments
+        # connect: extra arguments
         noargsid = self.object.connect("signal-noargs",
                                        self._cb_noargs,
-                                       1,2,3,
+                                       1, 2, 3,
                                        myvalue=42)
         self.assert_(noargsid)
         self.object.emit_signal_no_args()
         self.assertEquals(self.s_noargs_triggered, 1)
-        self.assertEquals(self.signal_noargs_args, (1,2,3))
+        self.assertEquals(self.signal_noargs_args, (1, 2, 3))
         self.assertEquals(self.signal_noargs_signaller, self.object)
-        self.assertEquals(self.signal_noargs_kwargs, {"myvalue":42})
+        self.assertEquals(self.signal_noargs_kwargs, {"myvalue": 42})
 
     def test04_emit03(self):
-        # signal : named argument
-        # connect : no arguments
+        # signal: named argument
+        # connect: no arguments
         oneargsigid = self.object.connect("signal-oneargs",
                                             self._cb_oneargs)
         self.assert_(oneargsigid)
@@ -205,43 +207,43 @@ class TestSignalisation(unittest.TestCase):
         self.assertEquals(self.signal_oneargs_kwargs, {})
 
     def test04_emit04(self):
-        # signal : named argument
-        # connect : extra arguments
+        # signal: named argument
+        # connect: extra arguments
         oneargsigid = self.object.connect("signal-oneargs",
                                             self._cb_oneargs,
-                                          1,2,3, myvalue=42)
+                                          1, 2, 3, myvalue=42)
         self.assert_(oneargsigid)
         self.object.emit_signal_one_args(firstarg="yep")
         self.assertEquals(self.s_oneargs_triggered, 1)
         self.assertEquals(self.signal_oneargs_firstarg, "yep")
         self.assertEquals(self.signal_oneargs_signaller, self.object)
-        self.assertEquals(self.signal_oneargs_args, (1,2,3))
-        self.assertEquals(self.signal_oneargs_kwargs, {"myvalue":42})
+        self.assertEquals(self.signal_oneargs_args, (1, 2, 3))
+        self.assertEquals(self.signal_oneargs_kwargs, {"myvalue": 42})
 
     def test05_subclass_emit01(self):
         # making sure a subclass can emit the parent classes
         # signal
         noargsid = self.subobject.connect("signal-noargs",
                                           self._cb_noargs,
-                                          1,2,3,
+                                          1, 2, 3,
                                           myvalue=42)
         self.assert_(noargsid)
         self.subobject.emit_signal_no_args()
         self.assertEquals(self.s_noargs_triggered, 1)
         self.assertEquals(self.signal_noargs_signaller, self.subobject)
-        self.assertEquals(self.signal_noargs_args, (1,2,3))
-        self.assertEquals(self.signal_noargs_kwargs, {"myvalue":42})
+        self.assertEquals(self.signal_noargs_args, (1, 2, 3))
+        self.assertEquals(self.signal_noargs_kwargs, {"myvalue": 42})
 
     def test06_multiple_emissions(self):
         # connect two handlers to one signal
         noargsid1 = self.object.connect("signal-noargs",
                                         self._cb_noargs,
-                                        1,2,3,
+                                        1, 2, 3,
                                         myvalue=42)
         self.assert_(noargsid1)
         noargsid2 = self.object.connect("signal-noargs",
                                         self._cb_noargs,
-                                        1,2,3,
+                                        1, 2, 3,
                                         myvalue=42)
         self.assert_(noargsid2)
 
@@ -249,8 +251,8 @@ class TestSignalisation(unittest.TestCase):
         self.object.emit_signal_no_args()
         # ...which should have called all the handlers
         self.assertEquals(self.s_noargs_triggered, 2)
-        self.assertEquals(self.signal_noargs_args, (1,2,3))
-        self.assertEquals(self.signal_noargs_kwargs, {"myvalue":42})
+        self.assertEquals(self.signal_noargs_args, (1, 2, 3))
+        self.assertEquals(self.signal_noargs_kwargs, {"myvalue": 42})
 
         self.object.disconnect(noargsid1)
         self.object.disconnect(noargsid2)

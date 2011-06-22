@@ -26,6 +26,7 @@ from pitivi.stream import VideoStream
 from pitivi.encode import EncoderFactory, RenderFactory
 from pitivi.settings import StreamEncodeSettings, RenderSettings
 
+
 class TestEncoderFactory(TestCase):
 
     def testSimple(self):
@@ -72,7 +73,7 @@ class TestEncoderFactory(TestCase):
 
     def testEncoderSettings(self):
         encsettings = {
-            "bitrate":40000,
+            "bitrate": 40000,
             }
         set = StreamEncodeSettings(encoder="theoraenc",
                                    encodersettings=encsettings)
@@ -82,6 +83,7 @@ class TestEncoderFactory(TestCase):
         encoder = list(bin.elements())[0]
         for k, v in encsettings.iteritems():
             self.assertEquals(encoder.get_property(k), v)
+
 
 class TestRenderFactory(TestCase):
 

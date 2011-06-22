@@ -36,6 +36,7 @@ from pitivi.timeline.timeline_undo import TimelineLogObserver, \
         TrackEffectRemoved
 from pitivi.undo import UndoableActionLog
 
+
 class TestTimelineLogObserver(TimelineLogObserver):
     def _connectToTimeline(self, timeline):
         TimelineLogObserver._connectToTimeline(self, timeline)
@@ -53,11 +54,14 @@ class TestTimelineLogObserver(TimelineLogObserver):
         TimelineLogObserver._disconnectFromTimelineObject(self, timeline_object)
         timeline_object.connected = False
 
+
 def new_stream():
     return VideoStream(gst.Caps("video/x-raw-rgb"))
 
+
 def new_source_factory():
     return VideoTestSourceFactory()
+
 
 class TestTimelineLogObserverConnections(TestCase):
     def setUp(self):
@@ -90,6 +94,7 @@ class TestTimelineLogObserverConnections(TestCase):
         self.failIf(timeline.connected)
         self.failIf(timeline_object1.connected)
 
+
 class  TestTimelineUndo(TestCase):
     def setUp(self):
         self.stream = new_stream()
@@ -115,6 +120,7 @@ class  TestTimelineUndo(TestCase):
 
     def testAddTimelineObject(self):
         stacks = []
+
         def commitCb(action_log, stack, nested):
             stacks.append(stack)
         self.action_log.connect("commit", commitCb)
@@ -141,6 +147,7 @@ class  TestTimelineUndo(TestCase):
 
     def testRemoveTimelineObject(self):
         stacks = []
+
         def commitCb(action_log, stack, nested):
             stacks.append(stack)
         self.action_log.connect("commit", commitCb)
@@ -169,6 +176,7 @@ class  TestTimelineUndo(TestCase):
     def testAddEffectToTimelineObject(self):
         stacks = []
         pipeline = Pipeline()
+
         def commitCb(action_log, stack, nested):
             stacks.append(stack)
         self.action_log.connect("commit", commitCb)
@@ -216,6 +224,7 @@ class  TestTimelineUndo(TestCase):
 
     def testTimelineObjectPropertyChange(self):
         stacks = []
+
         def commitCb(action_log, stack, nested):
             stacks.append(stack)
         self.action_log.connect("commit", commitCb)

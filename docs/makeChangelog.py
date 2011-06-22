@@ -8,6 +8,7 @@ import subprocess
 
 # Arguments : same as for git log
 
+
 def process_commit(lines, files):
     # DATE NAME
     # BLANK LINE

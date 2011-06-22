@@ -32,6 +32,7 @@ from pitivi.timeline.timeline import Timeline, TimelineObject
 from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
 from pitivi.utils import infinity
 
+
 class TestGap(TestCase):
     def setUp(self):
         self.factory = StubFactory()

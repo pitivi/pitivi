@@ -39,8 +39,10 @@ from pitivi.stream import VideoStream
 from pitivi.factories.test import VideoTestSourceFactory
 from pitivi.pipeline import Pipeline, PipelineError
 
+
 class TestStillImage(TestCase):
     clip_duration = 3 * gst.SECOND
+
     def setUp(self):
         self.mainloop = gobject.MainLoop()
 
@@ -123,36 +125,30 @@ class TestStillImage(TestCase):
         self.startRender()
         self.cleanUp()
 
-
         # use two images with the same resolution and concatenate them
         self.configureStreams(range(2), [0, self.clip_duration])
         self.startRender()
         self.cleanUp()
-
 
         # concatenate images with different resolutions
         self.configureStreams(range(3), [0, self.clip_duration, 2 * self.clip_duration])
         self.startRender()
         self.cleanUp()
 
-
         # mix images with different resolutions by overlapping
         self.configureStreams(range(3), [0, self.clip_duration // 2, self.clip_duration])
         self.startRender()
         self.cleanUp()
-
 
         # mix images and videos with the same resolution
         self.configureStreams([0, 1, 3], [0, self.clip_duration, 2 * self.clip_duration])
         self.startRender()
         self.cleanUp()
 
-
         # mix images and videos with different resolutions
         self.configureStreams(range(4), [0, self.clip_duration, 2 * self.clip_duration, 3 * self.clip_duration])
         self.startRender()
         self.cleanUp()
-
 
         # mix images and videos with different resolutions by overlapping
         self.configureStreams(range(4), [0, self.clip_duration // 2, self.clip_duration, (3 * self.clip_duration) // 2])

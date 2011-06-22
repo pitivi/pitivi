@@ -33,6 +33,7 @@ from common import TestCase
 import common
 import gst
 
+
 class DynamicAction(Action):
     def getDynamicLinks(self, producer, stream):
         links = Action.getDynamicLinks(self, producer, stream)
@@ -41,6 +42,7 @@ class DynamicAction(Action):
         links.append((producer, consumer, stream, None))
         gst.debug("Returning link")
         return links
+
 
 class TestPipelineAction(TestCase):
 
@@ -147,7 +149,6 @@ class TestPipelineAction(TestCase):
         p.setState(STATE_NULL)
         self.assertEquals(len(list(p._pipeline.elements())), 0)
         p.release()
-
 
     def testDynamicLink(self):
         a = DynamicAction()

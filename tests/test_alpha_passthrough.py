@@ -34,10 +34,12 @@ from pitivi.timeline.track import Track, SourceTrackObject, Interpolator
 from pitivi.elements.mixer import SmartVideomixerBinPropertyHelper
 from pitivi.utils import infinity
 
+
 def set_one_keyframe(track_object, value):
     interpolator = track_object.getInterpolator("alpha")
     kf = list(interpolator.getKeyframes())[0]
     interpolator.setKeyframeValue(kf, value)
+
 
 def set_all_keyframes(track_object, value):
     interpolator = track_object.getInterpolator("alpha")
@@ -49,9 +51,11 @@ def set_all_keyframes(track_object, value):
                 val = value
             interpolator.setKeyframeValue(kf, val)
 
+
 def yuv(fourcc):
     caps = gst.Caps("video/x-raw-yuv,format=(fourcc)%s" % fourcc)
     return VideoStream(caps)
+
 
 def rgb():
     caps = gst.Caps("video/x-raw-rgb,bpp=(int)24,depth=(int)24,"
@@ -59,10 +63,12 @@ def rgb():
             "green_mask=(int)65280,blue_mask=(int)255")
     return VideoStream(caps)
 
+
 def make_track_object(stream):
     factory = VideoTestSourceFactory()
     factory.duration = 15 * gst.SECOND
     return SourceTrackObject(factory, stream)
+
 
 class TestAlpha(TestCase):
     def setUp(self):
@@ -89,8 +95,10 @@ class TestAlpha(TestCase):
         # make a fakesink for the pipeline and connect it as necessary with a callback
         composition = self.track1.composition
         fakesink = gst.element_factory_make('fakesink')
+
         def bin_pad_added_cb(composition, pad):
             pad.link(fakesink.get_pad('sink'))
+
         composition.connect("pad-added", bin_pad_added_cb)
 
         # add the composition and fakesink to the pipeline and set state to paused to preroll
@@ -118,14 +126,14 @@ class TestAlpha(TestCase):
         # capsfilter
         for input in self.svmbin.inputs.values():
             capsfilter = input[2]
-            self.failUnless(capsfilter.props.caps[0].has_key("format"))
+            self.failUnless(capsfilter.props.caps[0].has_field("format"))
 
     def failUnlessAlphaIsNotSet(self):
         # check that each SmartVideomixerBin input has alpha _not_ set on its
         # capsfilter
         for input in self.svmbin.inputs.values():
             capsfilter = input[2]
-            self.failIf(capsfilter.props.caps[0].has_key("format"))
+            self.failIf(capsfilter.props.caps[0].has_field("format"))
 
     def testKeyframesOnDifferentObjects(self):
         # no alpha < 1.0 keyframes

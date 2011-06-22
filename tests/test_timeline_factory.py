@@ -31,6 +31,7 @@ from pitivi.timeline.timeline import Timeline
 from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.stream import AudioStream, VideoStream
 
+
 class TestTimelineSourceFactory(TestCase):
     def testEmpty(self):
         timeline = Timeline()
@@ -108,9 +109,11 @@ class TestTimelineSourceFactory(TestCase):
 
         factory.clean()
 
+
 class MainLoopTestCaseMeta(type):
     def __new__(cls, name, bases, dic):
-        import sys, inspect
+        import sys
+        import inspect
 
         def wrapTest(method):
             def wrapper(self):
@@ -152,12 +155,14 @@ class MainLoopTestCaseMeta(type):
 
         return cls
 
+
 class MainLoopTestCase(TestCase):
     __metaclass__ = MainLoopTestCaseMeta
 
     def __init__(self, methodName='runTest'):
         self.loop = gobject.MainLoop()
         TestCase.__init__(self, methodName)
+
 
 class TestTimelineSourceFactoryPipeline(MainLoopTestCase):
     def testVideoOnly(self):

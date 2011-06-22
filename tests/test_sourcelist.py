@@ -24,6 +24,7 @@ from pitivi.sourcelist import SourceList, SourceListError
 from pitivi.discoverer import Discoverer
 from pitivi.factories.file import FileSourceFactory
 
+
 class FakeDiscoverer(Discoverer):
     def _scheduleAnalysis(self):
         pass

@@ -34,10 +34,12 @@ from pitivi.factories.test import AudioTestSourceFactory
 
 from common import SignalMonitor, TestCase, StubFactory
 
+
 class TimelineSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
         SignalMonitor.__init__(self, track_object, 'start-changed',
                 'duration-changed', 'in-point-changed', 'media-duration-changed')
+
 
 class TestTimelineObjectAddRemoveTrackObjects(TestCase):
     def testAddRemoveTrackObjects(self):
@@ -72,6 +74,7 @@ class TestTimelineObjectAddRemoveTrackObjects(TestCase):
                 timeline_object1.removeTrackObject, track_object1)
 
         timeline_object1.removeTrackObject(track_object2)
+
 
 class TestTimelineObjectProperties(TestCase):
     def setUp(self):
@@ -263,6 +266,7 @@ class TestTimelineObjectProperties(TestCase):
         self.failUnlessEqual(monitor.start_changed_count, 0)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
 
+
 class TestTimelineAddRemoveTracks(TestCase):
     def testAddRemoveTracks(self):
         stream = AudioStream(gst.Caps('audio/x-raw-int'))
@@ -280,6 +284,7 @@ class TestTimelineAddRemoveTracks(TestCase):
         self.failUnlessRaises(TimelineError, timeline.removeTrack, track1)
 
         timeline.removeTrack(track2)
+
 
 class TestTimelineAddRemoveTimelineObjects(TestCase):
     def testAddRemoveTimelineObjects(self):
@@ -342,6 +347,7 @@ class TestTimelineAddRemoveTimelineObjects(TestCase):
         timeline.removeFactory(source_factory)
         self.failUnlessEqual(len(timeline.timeline_objects), 0)
 
+
 class TestTimelineAddRemoveEffectsTracks(TestCase):
     def testAddRemoveEffectTracks(self):
         stream = VideoStream(gst.Caps("video/x-raw-rgb"))
@@ -378,7 +384,6 @@ class TestTimelineAddRemoveEffectsTracks(TestCase):
         self.failUnlessRaises(TimelineError,
                 timeline_object1.removeTrackObject, track_effect2)
 
-
         track.removeTrackObject(track_effect1)
         track.removeTrackObject(track_effect2)
         timeline.removeTimelineObject(timeline_object1)
@@ -409,6 +414,7 @@ class TestTimelineAddRemoveEffectsTracks(TestCase):
         timeline.removeFactory(effect_factory)
         self.failUnlessEqual(len(track.track_objects), 0)
         self.failUnlessEqual(len(timeline.timeline_objects), 0)
+
 
 class TestTimeline(TestCase):
     def setUp(self):
@@ -600,7 +606,7 @@ class TestTimeline(TestCase):
 
         # test split no clips
         self.timeline.split(noclips)
-        for i, clip in enumerate([clip1,clip2,clip3,clip4]):
+        for i, clip in enumerate([clip1, clip2, clip3, clip4]):
             self.failUnlessEqual(clip.start, 2 * gst.SECOND)
             self.failUnlessEqual(clip.duration,
                 (5 - i) * gst.SECOND)
@@ -609,14 +615,14 @@ class TestTimeline(TestCase):
         self.timeline.split(oneclip)
         self.failUnlessEqual(clip1.start, 2 * gst.SECOND)
         self.failUnlessEqual(clip1.duration, oneclip - 2 * gst.SECOND)
-        for i, clip in enumerate([clip2,clip3,clip4]):
+        for i, clip in enumerate([clip2, clip3, clip4]):
             self.failUnlessEqual(clip.start, 2 * gst.SECOND)
             self.failUnlessEqual(clip.duration,
                 (5 - (i + 1)) * gst.SECOND)
 
         # test split three clips
         self.timeline.split(threeclips)
-        for i, clip in enumerate([clip1,clip2,clip3]):
+        for i, clip in enumerate([clip1, clip2, clip3]):
             self.failUnlessEqual(clip.start, 2 * gst.SECOND)
             self.failUnlessEqual(clip.start + clip.duration, threeclips)
         self.failUnlessEqual(clip4.start, 2 * gst.SECOND)
@@ -625,7 +631,7 @@ class TestTimeline(TestCase):
         # test split three clips, one selected
         self.timeline.selection.selected = set((clip4,))
         self.timeline.split(fourclipsoneselected)
-        for i, clip in enumerate([clip1,clip2,clip3]):
+        for i, clip in enumerate([clip1, clip2, clip3]):
             self.failUnlessEqual(clip.start, 2 * gst.SECOND)
             self.failUnlessEqual(clip.start + clip.duration, threeclips)
         self.failUnlessEqual(clip4.start, 2 * gst.SECOND)
@@ -804,6 +810,7 @@ class TestTimeline(TestCase):
         result = timeline.getNextKeyframe(time2)
         self.failUnlessEqual(result, 10.5 * gst.SECOND)
 
+
 class TestLink(TestCase):
 
     def test(self):
@@ -979,6 +986,7 @@ class TestLink(TestCase):
         self.failUnlessEqual(timeline_object2.start, 0)
         self.failUnlessEqual(timeline_object3.start, 8 * gst.SECOND)
 
+
 class TestTimelineEdges(TestCase):
     def setUp(self):
         TestCase.setUp(self)
@@ -1098,6 +1106,7 @@ class TestTimelineEdges(TestCase):
         track_object2.release()
         del source_factory
 
+
 class TestTimelineAddFactory(TestCase):
     def setUp(self):
         TestCase.setUp(self)
@@ -1196,6 +1205,7 @@ class TestTimelineAddFactory(TestCase):
         self.failUnlessEqual(len(self.video_track1.track_objects), 0)
         self.failUnlessEqual(len(self.video_track2.track_objects), 0)
 
+
 class TestContexts(TestCase):
 
     def setUp(self):
@@ -1236,7 +1246,7 @@ class TestContexts(TestCase):
         #    [focus]  [t2   ]     [t3     ]
         context.editTo(gst.SECOND * 10, 0)
         self.failUnlessEqual(self.track_object1.start, gst.SECOND * 10)
-        self.failUnlessEqual(self.track_object1.duration,  gst.SECOND * 5)
+        self.failUnlessEqual(self.track_object1.duration, gst.SECOND * 5)
         self.failUnlessEqual(self.track_object1.in_point, 0)
         self.failUnlessEqual(self.track_object2.start, gst.SECOND * 15)
         self.failUnlessEqual(self.track_object3.start, gst.SECOND * 25)
@@ -1246,7 +1256,7 @@ class TestContexts(TestCase):
         context.setMode(context.RIPPLE)
         context.editTo(gst.SECOND * 20, 0)
         self.failUnlessEqual(self.track_object1.start, gst.SECOND * 20)
-        self.failUnlessEqual(self.track_object1.duration,  gst.SECOND * 5)
+        self.failUnlessEqual(self.track_object1.duration, gst.SECOND * 5)
         self.failUnlessEqual(self.track_object1.in_point, 0)
         self.failUnlessEqual(self.track_object2.start, gst.SECOND * 35)
         self.failUnlessEqual(self.track_object3.start, gst.SECOND * 45)
@@ -1256,7 +1266,7 @@ class TestContexts(TestCase):
         #            [focus]
         context.setMode(context.DEFAULT)
         self.failUnlessEqual(self.track_object1.start, gst.SECOND * 20)
-        self.failUnlessEqual(self.track_object1.duration,  gst.SECOND * 5)
+        self.failUnlessEqual(self.track_object1.duration, gst.SECOND * 5)
         self.failUnlessEqual(self.track_object1.in_point, 0)
         self.failUnlessEqual(self.track_object2.start, gst.SECOND * 15)
         self.failUnlessEqual(self.track_object3.start, gst.SECOND * 25)
@@ -1284,11 +1294,11 @@ class TestContexts(TestCase):
         context.editTo(gst.SECOND * 1, 0)
         context.finish()
         self.failUnlessEqual(self.track_object1.start, 1 * gst.SECOND)
-        self.failUnlessEqual(self.track_object1.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration, 10 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)
-        self.failUnlessEqual(self.track_object2.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration, 10 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.start, 1 * gst.SECOND)
-        self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration, 10 * gst.SECOND)
 
         # move to
         # track1:     [focus][t2]
@@ -1298,11 +1308,11 @@ class TestContexts(TestCase):
         context.editTo(gst.SECOND * 10, 0)
         context.finish()
         self.failUnlessEqual(self.track_object1.start, 1 * gst.SECOND)
-        self.failUnlessEqual(self.track_object1.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration, 10 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)
-        self.failUnlessEqual(self.track_object2.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration, 10 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.start, 10 * gst.SECOND)
-        self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration, 10 * gst.SECOND)
 
     def testMoveContextOverlapTransition(self):
         # start
@@ -1325,11 +1335,11 @@ class TestContexts(TestCase):
         context.editTo(gst.SECOND * 5, 1)
         context.finish()
         self.failUnlessEqual(self.track_object1.start, 0 * gst.SECOND)
-        self.failUnlessEqual(self.track_object1.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration, 10 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.start, 5 * gst.SECOND)
-        self.failUnlessEqual(self.track_object2.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration, 10 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.start, 0 * gst.SECOND)
-        self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration, 10 * gst.SECOND)
 
     def testMoveContextFocusNotEarliest(self):
         #     [t2  ][focus]  [t3     ]
@@ -1653,11 +1663,11 @@ class TestContexts(TestCase):
         context.editTo(gst.SECOND * 5, 0)
         context.finish()
         self.failUnlessEqual(self.track_object1.start, 5 * gst.SECOND)
-        self.failUnlessEqual(self.track_object1.duration,  25 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration, 25 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.start, 30 * gst.SECOND)
-        self.failUnlessEqual(self.track_object2.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration, 10 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.start, 1 * gst.SECOND)
-        self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration, 10 * gst.SECOND)
 
     def testTrimEndContext(self):
         self.track_object1.start = 1 * gst.SECOND
@@ -1725,11 +1735,11 @@ class TestContexts(TestCase):
         context.editTo(gst.SECOND * 30, 0)
         context.finish()
         self.failUnlessEqual(self.track_object1.start, 1 * gst.SECOND)
-        self.failUnlessEqual(self.track_object1.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration, 10 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.start, 10 * gst.SECOND)
-        self.failUnlessEqual(self.track_object2.duration,  20 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration, 20 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.start, 25 * gst.SECOND)
-        self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration, 10 * gst.SECOND)
 
     def testTrimStartRipple(self):
         # [t2]  [t3]  [t1]
@@ -1746,7 +1756,7 @@ class TestContexts(TestCase):
         # set maximum duration on focus
         self.track_object1.factory.duration = 10 * gst.SECOND
 
-        self.failUnlessEqual(self.track_object1.start,20 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.start, 20 * gst.SECOND)
         self.failUnlessEqual(self.track_object1.in_point, 5 * gst.SECOND)
         self.failUnlessEqual(self.track_object1.duration, 5 * gst.SECOND)
 

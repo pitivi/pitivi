@@ -28,6 +28,7 @@ from pitivi.stream import AudioStream, VideoStream
 
 from common import SignalMonitor, TestCase
 
+
 class TestObjectFactory(TestCase):
     def setUp(self):
         TestCase.setUp(self)
@@ -69,12 +70,14 @@ class TestObjectFactory(TestCase):
         self.failUnlessEqual(self.factory.default_duration, 10 * gst.SECOND)
         self.failUnlessEqual(self.factory.duration, 60 * gst.SECOND)
 
+
 class StubSourceFactory(SourceFactory):
     def _makeBin(self, output_stream=None):
         return gst.Bin()
 
     def _releaseBin(self, bin):
         pass
+
 
 class TestSourceFactory(TestCase):
     def setUp(self):
@@ -122,6 +125,7 @@ class TestSourceFactory(TestCase):
         self.failUnlessEqual(self.factory.current_bins, 0)
         self.failUnlessEqual(self.monitor.bin_released_count, 2)
 
+
 class TestLiveSourceFactory(TestCase):
     def testDefaultDuration(self):
         # pass an explicit default_duration
@@ -133,6 +137,7 @@ class TestLiveSourceFactory(TestCase):
         factory = LiveSourceFactory('name')
         self.failUnlessEqual(factory.duration, gst.CLOCK_TIME_NONE)
         self.failUnlessEqual(factory.default_duration, 5 * gst.SECOND)
+
 
 class TestRandomAccessSourceFactory(TestCase):
     def testOffsetAndLength(self):

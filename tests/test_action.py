@@ -31,9 +31,11 @@ from pitivi.factories.base import ObjectFactory, SourceFactory
 from pitivi.encode import RenderSinkFactory, RenderFactory
 from pitivi.settings import StreamEncodeSettings, RenderSettings
 
+
 class BinSourceFactory(SourceFactory):
     def _makeBin(self, output_stream=None):
         return gst.element_factory_make('bin')
+
 
 class TestAction(common.TestCase):
 
@@ -121,7 +123,6 @@ class TestAction(common.TestCase):
         a.removeLink(src, sink)
         self.assertEquals(a._links, [])
 
-
     def test_isActive(self):
         """ Test isActive() """
         ac = Action()
@@ -181,6 +182,7 @@ class TestAction(common.TestCase):
 
         p.release()
 
+
 class TestRenderAction(common.TestCase):
 
     def setUp(self):
@@ -225,7 +227,6 @@ class TestRenderAction(common.TestCase):
 
         a.unsetPipeline()
         p.release()
-
 
     def testSimpleStreams(self):
         """Test a RenderSettings with exact stream settings"""

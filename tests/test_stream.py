@@ -28,6 +28,7 @@ from pitivi.stream import AudioStream, VideoStream, match_stream, \
         STREAM_MATCH_SAME_TYPE
 import gst
 
+
 class TestMultimediaStream(object):
     """
     Base mixin for stream tests.
@@ -95,6 +96,7 @@ class TestAudioStream(TestMultimediaStream, TestCase):
         expected['audiotype'] = 'audio/x-vorbis'
         stream = AudioStream(self.non_raw_caps)
         self.checkProperties(stream, expected)
+
 
 class TestVideoStream(TestMultimediaStream, TestCase):
     streamClass = VideoStream

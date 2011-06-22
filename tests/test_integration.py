@@ -40,6 +40,7 @@ test1 = base_uri + "test1.ogg"
 test2 = base_uri + "test2.ogg"
 test3 = base_uri + "test3.ogg"
 
+
 class WatchDog(object):
 
     """A simple watchdog timer to aid developing integration tests. If
@@ -72,6 +73,7 @@ class WatchDog(object):
 
     def keepAlive(self):
         self.will_quit = False
+
 
 class TestWatchdog(TestCase):
 
@@ -111,6 +113,7 @@ class TestWatchdog(TestCase):
         self.ml.quit()
         self.timeout_called = True
         return False
+
 
 class Configuration(object):
 
@@ -193,6 +196,7 @@ class Configuration(object):
     def __iter__(self):
         return (source for source in self.sources if len(source) > 2)
 
+
 class InstanceRunner(Signallable):
 
     no_ui = not(os.getenv("ENABLE_UI"))
@@ -203,8 +207,8 @@ class InstanceRunner(Signallable):
             pass
 
     __signals__ = {
-        "sources-loaded" : [],
-        "timeline-configured" : [],
+        "sources-loaded": [],
+        "timeline-configured": [],
     }
 
     def __init__(self, instance):
@@ -313,12 +317,13 @@ class InstanceRunner(Signallable):
         gobject.idle_add(self.instance.shutdown)
         self.project._dirty = False
 
+
 class Brush(Signallable):
     """Scrubs your timelines until they're squeaky clean."""
 
     __signals__ = {
-        "scrub-step" : ["time", "priority"],
-        "scrub-done" : [],
+        "scrub-step": ["time", "priority"],
+        "scrub-done": [],
     }
 
     def __init__(self, runner, delay=100, maxtime=7200, maxpriority=10):
@@ -356,6 +361,7 @@ class Brush(Signallable):
             self.context.finish()
             self.emit("scrub-done")
             return False
+
 
 class Base(TestCase):
     """
@@ -402,6 +408,7 @@ class Base(TestCase):
             raise Exception("Instance was not unset")
         TestCase.tearDown(self)
 
+
 class TestBasic(Base):
 
     def testWatchdog(self):
@@ -431,8 +438,8 @@ class TestBasic(Base):
         self.runner.loadConfiguration(config)
         self.runner.run()
 
-        self.assertFalse(hasattr(self.runner,test1))
-        self.assertFalse(hasattr(self.runner,test2))
+        self.assertFalse(hasattr(self.runner, test1))
+        self.assertFalse(hasattr(self.runner, test2))
         self.failUnlessEqual(self.runner.factories, set((test1, test2)))
         self.failUnlessEqual(self.runner.errors, set((test3,)))
 
@@ -443,16 +450,16 @@ class TestBasic(Base):
             "object1",
             test1,
             {
-                "start" : 0,
-                "duration" : gst.SECOND,
-                "media-start" : gst.SECOND,
+                "start": 0,
+                "duration": gst.SECOND,
+                "media-start": gst.SECOND,
             })
         config.addSource(
             "object2",
             test2,
             {
-                "start" : gst.SECOND,
-                "duration" : gst.SECOND,
+                "start": gst.SECOND,
+                "duration": gst.SECOND,
             })
 
         def timelineConfigured(runner):
@@ -474,32 +481,32 @@ class TestBasic(Base):
             "object1",
             test1,
             {
-                "start" : 0,
-                "duration" : gst.SECOND,
-                "media-start" : gst.SECOND,
-                "priority" : 0
+                "start": 0,
+                "duration": gst.SECOND,
+                "media-start": gst.SECOND,
+                "priority": 0
             })
         initial.addSource(
             "object2",
             test2,
             {
-                "start" : gst.SECOND,
-                "duration" : gst.SECOND,
-                "priority" : 1,
+                "start": gst.SECOND,
+                "duration": gst.SECOND,
+                "priority": 1,
             })
         final = Configuration()
         final.addSource(
             "object1",
             test1,
             {
-                "start" : 10 * gst.SECOND,
+                "start": 10 * gst.SECOND,
             })
         final.addSource(
             "object2",
             test2,
             {
-                "start" : 11 * gst.SECOND,
-                "priority" : 2,
+                "start": 11 * gst.SECOND,
+                "priority": 2,
             })
 
         def timelineConfigured(runner):
@@ -528,22 +535,22 @@ class TestBasic(Base):
 
         initial = Configuration()
         initial.addSource('clip1', test1, {
-            "duration" : gst.SECOND,
-            "start" : gst.SECOND,
-            "priority" : 2})
+            "duration": gst.SECOND,
+            "start": gst.SECOND,
+            "priority": 2})
         initial.addSource('clip2', test1, {
-            "duration" : gst.SECOND,
-            "start" : 2 * gst.SECOND,
-            "priority" : 5})
+            "duration": gst.SECOND,
+            "start": 2 * gst.SECOND,
+            "priority": 5})
         final = Configuration()
         final.addSource('clip1', test1, {
-            "duration" : gst.SECOND,
-            "start" : 11 * gst.SECOND,
-            "priority" : 0})
+            "duration": gst.SECOND,
+            "start": 11 * gst.SECOND,
+            "priority": 0})
         final.addSource('clip2', test1, {
-            "duration" : gst.SECOND,
-            "start" : 12 * gst.SECOND,
-            "priority" : 3})
+            "duration": gst.SECOND,
+            "start": 12 * gst.SECOND,
+            "priority": 3})
 
         def timelineConfigured(runner):
             initial.matches(self.runner)
@@ -567,38 +574,39 @@ class TestBasic(Base):
         initial = Configuration()
         initial.addSource('clip1', test1,
             {
-                "start" : gst.SECOND,
-                "duration" : gst.SECOND,
+                "start": gst.SECOND,
+                "duration": gst.SECOND,
             })
         initial.addSource('clip2', test1,
             {
-                "start" : 2 * gst.SECOND,
-                "duration" : gst.SECOND,
+                "start": 2 * gst.SECOND,
+                "duration": gst.SECOND,
             })
         initial.addSource('clip3', test1,
             {
-                "start" : 5 * gst.SECOND,
-                "duration" : 10 * gst.SECOND,
+                "start": 5 * gst.SECOND,
+                "duration": 10 * gst.SECOND,
             })
 
         final = Configuration()
         final.addSource('clip1', test1,
             {
-                "start" : 6 * gst.SECOND,
+                "start": 6 * gst.SECOND,
                 "duration": gst.SECOND,
             })
         final.addSource('clip2', test1,
             {
-                "start" : 7 * gst.SECOND,
-                "duration" : gst.SECOND,
+                "start": 7 * gst.SECOND,
+                "duration": gst.SECOND,
             })
         final.addSource('clip3', test1,
             {
-                "start" : 10 * gst.SECOND,
-                "duration" : 5 * gst.SECOND,
+                "start": 10 * gst.SECOND,
+                "duration": 5 * gst.SECOND,
             })
 
         self.runner.loadConfiguration(initial)
+
         def timelineConfigured(runner):
             context = TrimStartContext(self.runner.timeline,
                 self.runner.video1.clip3, set())
@@ -616,6 +624,7 @@ class TestBasic(Base):
 
 from pitivi.pipeline import PipelineError
 
+
 class TestSeeking(Base):
 
     count = 0
@@ -625,11 +634,10 @@ class TestSeeking(Base):
     config = Configuration()
     for i in xrange(0, 10):
         config.addSource("clip%d" % i, test1, {
-            "start" : i * gst.SECOND,
-            "duration" : gst.SECOND,
-            "priority" : i % 2,
+            "start": i * gst.SECOND,
+            "duration": gst.SECOND,
+            "priority": i % 2,
         })
-
 
     def _startSeeking(self, interval, steps=10):
         self.count = 0
@@ -675,6 +683,7 @@ class TestSeeking(Base):
 
         self.runner.run()
 
+
 class TestRippleExtensive(Base):
 
     """Test suite for ripple editing minutia and corner-cases"""
@@ -690,8 +699,8 @@ class TestRippleExtensive(Base):
         self.finals = []
         for i in xrange(0, 10):
             self.initial.addSource('clip%d' % i, test1,
-                { 'start' : gst.SECOND * i, 'duration' : gst.SECOND,
-                    'priority' : i % 2 })
+                {'start': gst.SECOND * i, 'duration': gst.SECOND,
+                    'priority': i % 2})
             # we're going to repeat the same operation using each clip as the
             # focus of the editing context. We create one final
             # configuration for the expected result of each scenario.
@@ -699,14 +708,14 @@ class TestRippleExtensive(Base):
             for j in xrange(0, 10):
                 if j < i:
                     final.addSource('clip%d' % j, test1,
-                        { 'start' : gst.SECOND * j,
-                          'duration' : gst.SECOND,
-                          'priority' : j % 2})
+                        {'start': gst.SECOND * j,
+                          'duration': gst.SECOND,
+                          'priority': j % 2})
                 else:
                     final.addSource('clip%d' % j, test1,
-                        { 'start' : gst.SECOND * (j + 10),
-                          'duration' : gst.SECOND,
-                          'priority' : (j % 2) + 1})
+                        {'start': gst.SECOND * (j + 10),
+                          'duration': gst.SECOND,
+                          'priority': (j % 2) + 1})
             self.finals.append(final)
         Base.__init__(self, unknown)
 
@@ -773,6 +782,7 @@ class TestRippleExtensive(Base):
         self.scrub_func = rippleMoveComplexRandomScrubFunc
         self.runner.run()
 
+
 class TestTransitions(Base):
 
     def testSimple(self):
@@ -781,25 +791,25 @@ class TestTransitions(Base):
             "object1",
             test1,
             {
-                "start" : 0,
-                "duration" : 5 * gst.SECOND,
-                "priority" : 0,
+                "start": 0,
+                "duration": 5 * gst.SECOND,
+                "priority": 0,
             })
         initial.addSource(
             "object2",
             test1,
             {
-                "start" : 5 * gst.SECOND,
-                "duration" : 5 * gst.SECOND,
-                "priority" : 0,
+                "start": 5 * gst.SECOND,
+                "duration": 5 * gst.SECOND,
+                "priority": 0,
             })
         initial.addSource(
             "object3",
             test1,
             {
-                "start" : 10 * gst.SECOND,
-                "duration" : 5 * gst.SECOND,
-                "priority" : 0,
+                "start": 10 * gst.SECOND,
+                "duration": 5 * gst.SECOND,
+                "priority": 0,
             })
 
         moves = [
@@ -856,30 +866,30 @@ class TestTransitions(Base):
             "object1",
             test1,
             {
-                "start" : 0,
-                "duration" : 5 * gst.SECOND,
-                "priority" : 0,
+                "start": 0,
+                "duration": 5 * gst.SECOND,
+                "priority": 0,
             })
         initial.addSource(
             "object2",
             test1,
             {
-                "start" : 5 * gst.SECOND,
-                "duration" : 5 * gst.SECOND,
-                "priority" : 0,
+                "start": 5 * gst.SECOND,
+                "duration": 5 * gst.SECOND,
+                "priority": 0,
             })
         initial.addSource(
             "object3",
             test1,
             {
-                "start" : 10 * gst.SECOND,
-                "duration" : 5 * gst.SECOND,
-                "priority" : 0,
+                "start": 10 * gst.SECOND,
+                "duration": 5 * gst.SECOND,
+                "priority": 0,
             })
 
         moves = [
             ("object1", 9 * gst.SECOND, 0),
-            ("object3", 1* gst.SECOND, 0),
+            ("object3", 1 * gst.SECOND, 0),
         ]
 
         def timelineConfigured(runner):
@@ -916,52 +926,52 @@ class TestTransitions(Base):
             "object1",
             test1,
             {
-                "start" : 0,
-                "duration" : 5 * gst.SECOND,
-                "priority" : 0,
+                "start": 0,
+                "duration": 5 * gst.SECOND,
+                "priority": 0,
             })
         initial.addSource(
             "object2",
             test1,
             {
-                "start" : 5 * gst.SECOND,
-                "duration" : 3 * gst.SECOND,
-                "priority" : 0,
+                "start": 5 * gst.SECOND,
+                "duration": 3 * gst.SECOND,
+                "priority": 0,
             })
         initial.addSource(
             "object3",
             test1,
             {
-                "start" : 8 * gst.SECOND,
-                "duration" : 5 * gst.SECOND,
-                "priority" : 0,
+                "start": 8 * gst.SECOND,
+                "duration": 5 * gst.SECOND,
+                "priority": 0,
             })
 
         phase2 = initial.clone()
         phase2.updateSource(
             "object2",
             props={
-                "start" : 4 * gst.SECOND,
+                "start": 4 * gst.SECOND,
             })
 
         phase3 = phase2.clone()
         phase3.updateSource(
             "object3",
             props={
-                "duration" : 1 * gst.SECOND
+                "duration": 1 * gst.SECOND
             })
 
         phase4 = initial.clone()
         phase4.updateSource(
             "object2",
             props={
-                "start" : 3 * gst.SECOND,
+                "start": 3 * gst.SECOND,
             })
         phase4.updateSource(
             "object3",
             props={
-                "start" : 5 * gst.SECOND,
-                "duration" : 5 * gst.SECOND,
+                "start": 5 * gst.SECOND,
+                "duration": 5 * gst.SECOND,
             })
 
         moves = [

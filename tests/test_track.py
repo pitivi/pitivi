@@ -27,11 +27,13 @@ from pitivi.stream import AudioStream, VideoStream
 from common import SignalMonitor, StubFactory
 from pitivi.factories.test import AudioTestSourceFactory
 
+
 class TrackSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
         SignalMonitor.__init__(self, track_object, 'start-changed',
                 'duration-changed', 'in-point-changed', 'out-point-changed',
                 'media-duration-changed', 'priority-changed')
+
 
 class TestTrackObject(TestCase):
     def setUp(self):
@@ -121,7 +123,6 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(gnl_object.props.priority, gnl_priority)
         self.failUnlessEqual(self.monitor.priority_changed_count, 2)
 
-
     def testChangePropertiesFromGnlObject(self):
         obj = self.track_object
         gnl_object = obj.gnl_object
@@ -166,7 +167,6 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.priority, priority)
         self.failUnlessEqual(gnl_object.props.priority, gnl_priority)
         self.failUnlessEqual(self.monitor.priority_changed_count, 2)
-
 
     def testTrimStart(self):
         obj = self.track_object
@@ -255,7 +255,6 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
 
-
     def testSplitObject(self):
         DURATION = 10 * gst.SECOND
 
@@ -268,7 +267,6 @@ class TestTrackObject(TestCase):
 
         obj.start = 3 * gst.SECOND
         obj.duration = DURATION
-
 
         # create a zig-zag volume curve
         interpolator = obj.getInterpolator("volume")
@@ -341,7 +339,6 @@ class TestTrackObject(TestCase):
         obj.start = 3 * gst.SECOND
         obj.duration = DURATION
 
-
         # create a three keyframes at: 3, 6 and 9 seconds
         interpolator = obj.getInterpolator("volume")
         keyframes = dict(((t * gst.SECOND, (t % 2, gst.INTERPOLATE_LINEAR))
@@ -361,10 +358,11 @@ class TestTrackObject(TestCase):
 
         obj2 = obj.splitObject(8 * gst.SECOND)
 
-        keyframes =  getKeyframes(obj)
+        keyframes = getKeyframes(obj)
         keyframes2 = getKeyframes(obj2)
         self.failUnlessEqual(keyframes, expected)
         self.failUnlessEqual(keyframes2, expected2)
+
 
 class TestTrack(TestCase):
     def setUp(self):

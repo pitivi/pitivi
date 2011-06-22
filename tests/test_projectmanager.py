@@ -29,6 +29,7 @@ import gst
 from pitivi.utils import uri_is_reachable
 import time
 
+
 class MockProject(object):
     settings = None
     format = None
@@ -43,6 +44,7 @@ class MockProject(object):
 
     def disconnect_by_function(self, ignored):
         pass
+
 
 class ProjectManagerListener(object):
     def __init__(self, manager):
@@ -99,6 +101,7 @@ class TestProjectManager(TestCase):
         project instance.
         """
         state = {"tried-close": False}
+
         def close():
             state["tried-close"] = True
             return False
@@ -187,7 +190,6 @@ class TestProjectManager(TestCase):
         self.failUnlessEqual(name, "missing-uri")
         formatter, signalUri, unused_factory = args
         self.failUnlessEqual(signalUri, "file:///icantpossiblyexist")
-
 
     def testLoadProjectLoaded(self):
         class EmptyFormatter(Formatter):
@@ -292,10 +294,9 @@ class TestProjectManager(TestCase):
         project = args[0]
         self.failUnless(project is self.manager.current)
 
-
     def testSaveProject(self):
         uri = "file://" + os.path.abspath("testproject.xptv")
-        uri2 ="file://" + os.path.abspath("testproject2.xptv")
+        uri2 = "file://" + os.path.abspath("testproject2.xptv")
         path = gst.uri_get_location(uri)
         path2 = gst.uri_get_location(uri2)
 
@@ -344,7 +345,6 @@ class TestProjectManager(TestCase):
             os.unlink(path2)
         except OSError:
             pass
-
 
     def testBackupProject(self):
         uri = "file://" + os.path.abspath("testproject.xptv")

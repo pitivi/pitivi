@@ -29,6 +29,7 @@ from pitivi.factories.test import AudioTestSourceFactory
 from pitivi.timeline.track import TrackError, \
     Transition, AudioTransition, VideoTransition
 
+
 class TestTransitions(TestCase):
     def setUp(self):
         TestCase.setUp(self)
@@ -83,12 +84,12 @@ class TestTransitions(TestCase):
             track1.addTransition(tr)
 
         def transitionAddedCb(track, transition):
-            values =(names[transition.a], names[transition.b])
+            values = (names[transition.a], names[transition.b])
             result.append(values)
             transition_objects[values] = transition
 
         def transitionRemovedCb(track, transition):
-            values =(names[transition.a], names[transition.b])
+            values = (names[transition.a], names[transition.b])
             result.remove(values)
 
         track1.connect("transition-added", transitionAddedCb)
@@ -163,8 +164,6 @@ class TestTransitions(TestCase):
         self.failUnlessEqual(at.b_operation.props.start, 10 * gst.SECOND)
         self.failUnlessEqual(at.b_operation.props.duration, 5 * gst.SECOND)
 
-
-
         # make A longer
         objs["a"].duration = 11 * gst.SECOND
         self.failUnlessEqual(vt.start, 10 * gst.SECOND)
@@ -178,8 +177,6 @@ class TestTransitions(TestCase):
         self.failUnlessEqual(at.a_operation.props.duration, 6 * gst.SECOND)
         self.failUnlessEqual(at.b_operation.props.start, 10 * gst.SECOND)
         self.failUnlessEqual(at.b_operation.props.duration, 6 * gst.SECOND)
-
-
 
         # move B earlier
         objs["b"].start = 9 * gst.SECOND
@@ -231,7 +228,6 @@ class TestTransitions(TestCase):
             1.0)
         self.failUnlessEqual(at.a_operation.props.priority, 9)
         self.failUnlessEqual(at.b_operation.props.priority, 11)
-
 
         # check controller for odd - even stagger
         vt.a.updatePosition(1)
@@ -404,7 +400,7 @@ class TestTransitions(TestCase):
         removed = set()
 
         def transitionAddedCb(track, transition):
-            pair =(names[transition.a], names[transition.b])
+            pair = (names[transition.a], names[transition.b])
             result.append(pair)
             added.add(pair)
 
@@ -528,7 +524,6 @@ class TestTransitions(TestCase):
         self.failUnlessEqual(track1.valid_arrangement,
             True)
 
-
     def testUpdatesAfterEnablingUpdates(self):
         factory = self.factory
         stream = self.stream
@@ -556,7 +551,7 @@ class TestTransitions(TestCase):
         removed = set()
 
         def transitionAddedCb(track, transition):
-            pair =(names[transition.a], names[transition.b])
+            pair = (names[transition.a], names[transition.b])
             result.append(pair)
             added.add(pair)
 
@@ -684,7 +679,7 @@ class TestTransitions(TestCase):
 
         # check that intiial configuration matches
 
-        expected = ["abcdefghijkl", [0, 1, 2, 3, 4, 5, 6, 7, 0, 8, 9,0]]
+        expected = ["abcdefghijkl", [0, 1, 2, 3, 4, 5, 6, 7, 0, 8, 9, 0]]
         verify_result(expected)
 
         # remove a clip, which removes its associated transition

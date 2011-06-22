@@ -24,6 +24,7 @@ from unittest import TestCase
 from pitivi.undo import UndoError, UndoWrongStateError, UndoableAction, \
         UndoableActionStack, UndoableActionLog
 
+
 class DummyUndoableAction(UndoableAction):
     done_ = True
 
@@ -35,12 +36,14 @@ class DummyUndoableAction(UndoableAction):
         self.done_ = False
         self._undone()
 
+
 class TestUndoableAction(TestCase):
     def testSimpleSignals(self):
         """
         Test signal emission from _done() and _undone().
         """
         state = {"done": False}
+
         def doneCb(action, val):
             state["done"] = val
 
@@ -61,6 +64,7 @@ class TestUndoableActionStack(TestCase):
         Undo an empty stack.
         """
         state = {"done": True}
+
         def doneCb(action, value):
             state["done"] = value
 
@@ -79,10 +83,12 @@ class TestUndoableActionStack(TestCase):
         Test an undo() do() sequence.
         """
         state = {"done": True, "actions": 2}
+
         def doneCb(action, value):
             state["done"] = value
 
         state["done"] = 2
+
         class Action(UndoableAction):
             def do(self):
                 state["actions"] += 1
@@ -113,10 +119,12 @@ class TestUndoableActionStack(TestCase):
         Undo a stack containing a failing action.
         """
         state = {"done": True}
+
         def doneCb(action, value):
             state["done"] = value
 
         state["actions"] = 2
+
         class Action(UndoableAction):
             def undo(self):
                 state["actions"] -= 1
@@ -381,6 +389,7 @@ class TestUndoableActionLog(TestCase):
         Test that actions are undone and redone in the correct order.
         """
         call_sequence = []
+
         class Action(UndoableAction):
             def __init__(self, n):
                 self.n = n

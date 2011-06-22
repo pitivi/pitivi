@@ -3,6 +3,7 @@ import pitivi
 from common import TestCase
 from pitivi.application import Pitivi
 
+
 class BasicTest(TestCase):
     """
     Basic test to create the proper creation of the Pitivi object

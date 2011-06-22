@@ -31,6 +31,7 @@ from common import TestCase
 from pitivi.factories.operation import EffectFactory
 from pitivi.stream import VideoStream
 
+
 class TestEffectFactory(TestCase):
     def setUp(self):
         TestCase.setUp(self)

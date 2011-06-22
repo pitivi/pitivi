@@ -4,6 +4,7 @@ from pitivi.application import Pitivi
 from pitivi.utils import binary_search
 from common import TestCase
 
+
 class BasicTest(TestCase):
     """
     Basic test to create the proper creation of the Pitivi object

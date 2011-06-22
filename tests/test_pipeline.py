@@ -29,11 +29,14 @@ from pitivi.stream import AudioStream, VideoStream
 from common import TestCase, SignalMonitor, FakeSinkFactory, FakeEffectFactory
 from pitivi.factories.test import VideoTestSourceFactory
 
+
 class BogusAction(Action):
     pass
 
+
 class WeirdAction(Action):
     pass
+
 
 class TestPipeline(TestCase):
 
@@ -139,6 +142,7 @@ class TestPipeline(TestCase):
         loop = gobject.MainLoop()
 
         bag = {"last_state": None}
+
         def state_changed_cb(pipeline, state, bag, loop):
             bag["last_state"] = state
             loop.quit()

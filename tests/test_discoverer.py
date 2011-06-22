@@ -28,6 +28,7 @@ from common import TestCase
 from pitivi.discoverer import Discoverer
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
 
+
 class AddUrisStubDiscoverer(Discoverer):
     analysis_scheduled = 0
     current_uri = "bar"
@@ -38,6 +39,7 @@ class AddUrisStubDiscoverer(Discoverer):
     def _finishAnalysis(self, reason):
         self.analysis_scheduled -= 1
         return Discoverer._finishAnalysis(self, reason)
+
 
 class TestAnalysisQueue(TestCase):
     def testAddUri(self):
@@ -71,6 +73,7 @@ class TestAnalysisQueue(TestCase):
         discoverer._finishAnalysis("foo")
         self.failIf(discoverer.working)
         self.failUnlessEqual(discoverer.analysis_scheduled, 0)
+
 
 class Discoverer1(Discoverer):
     use_decodebin2 = True
@@ -116,6 +119,7 @@ class Discoverer1(Discoverer):
         Discoverer._newPadCb(self, pad)
         self.new_pad_cb += 1
 
+
 class TestAnalysis(TestCase):
     def setUp(self):
         TestCase.setUp(self)
@@ -132,6 +136,7 @@ class TestAnalysis(TestCase):
         Check that discoverer errors out if it can't create a source element.
         """
         bag = {'error': None}
+
         def no_media_file_cb(disc, uri, error, error_detail):
             bag['error'] = error
 
@@ -145,6 +150,7 @@ class TestAnalysis(TestCase):
         Check for errors setting the state of the pipeline to PAUSED.
         """
         bag = {'error': None}
+
         def no_media_file_cb(disc, uri, error, error_detail):
             bag['error'] = error
 
@@ -160,6 +166,7 @@ class TestAnalysis(TestCase):
         Check that a timeout is set when analyzing a file.
         """
         bag = {'error': None}
+
         def discovery_error_cb(disc, uri, error, error_detail):
             bag['error'] = error
 
@@ -240,6 +247,7 @@ class TestAnalysis(TestCase):
 
     def testBusEos(self):
         bag = {'called': False}
+
         def finish_analysis(reason):
             bag['called'] = True
 
@@ -249,6 +257,7 @@ class TestAnalysis(TestCase):
 
     def testBusElement(self):
         bag = {'called': False}
+
         def finish_analysis(reason):
             bag['called'] = True
 
@@ -339,6 +348,7 @@ class TestAnalysis(TestCase):
         audio.set_caps(gst.Caps('audio/x-raw-int, rate=44100'))
         self.failUnlessEqual(len(self.discoverer.current_streams), 2)
         self.failUnlessEqual(self.discoverer.new_video_pad_cb, 1)
+
 
 class TestStateChange(TestCase):
     def setUp(self):

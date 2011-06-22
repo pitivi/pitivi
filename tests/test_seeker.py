@@ -23,6 +23,7 @@ from unittest import TestCase
 from pitivi.utils import Seeker
 import gst
 
+
 class StubSeeker(Seeker):
     seek_id = 0
 
@@ -32,6 +33,7 @@ class StubSeeker(Seeker):
         self.seek_id += 1
 
         return seek_id
+
 
 class TestSeeker(TestCase):
     def setUp(self):

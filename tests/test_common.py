@@ -23,6 +23,7 @@ import common
 from unittest import main
 from pitivi.ui import common as ui_common
 
+
 class TestColors(common.TestCase):
 
     def test_pack_color_32(self):

@@ -38,11 +38,14 @@ from pitivi.project import Project
 from pitivi.utils import get_controllable_properties
 from pitivi.effects import EffectsHandler
 
+
 class FakeElementTreeFormatter(ElementTreeFormatter):
     pass
 
+
 def ts(time):
     return "(gint64)%s" % time
+
 
 class TestSerialization(TestCase):
     def setUp(self):
@@ -68,6 +71,7 @@ class TestSerialization(TestCase):
                 set(values_dict.keys()), set(deserialized_values_dict.keys()))
         for key, value in values_dict.iteritems():
             self.assertEqual(value, deserialized_values_dict[key])
+
 
 class TestFormatterSave(TestCase):
     def setUp(self):
@@ -181,7 +185,6 @@ class TestFormatterSave(TestCase):
         # elements
         self.formatter._saveSource(source1)
         self.formatter._saveStream(video_stream)
-
 
         track_source = SourceTrackObject(source1, video_stream,
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
@@ -490,7 +493,8 @@ class TestFormatterLoad(TestCase):
         self.failUnlessEqual(factory.default_duration, 5 * gst.SECOND)
 
     def testLoadFactoryRef(self):
-        class Tag(object): pass
+        class Tag(object):
+            pass
         tag = Tag()
         self.formatter._context.factories["1"] = tag
         element = Element("factory-ref", id="1")
@@ -610,8 +614,7 @@ class TestFormatterLoad(TestCase):
         self.failUnlessEqual(interpolator.end.time, 15 * gst.SECOND)
         self.failUnlessEqual(
             round(interpolator.end.value, 6),
-            round((15.0 / 6) - (7.0/3), 6))
-
+            round((15.0 / 6) - (7.0 / 3), 6))
 
     def testLoadTrackObjectRef(self):
         class Tag(object):
@@ -707,7 +710,6 @@ class TestFormatterLoad(TestCase):
         source1 = VideoTestSourceFactory()
         self.formatter._context.factories["2"] = source1
         self.formatter._context.track_objects["1"] = SourceTrackObject(source1, video_stream)
-
 
         # point gun at foot; pull trigger
         self.formatter._loadTimeline(timeline_element)

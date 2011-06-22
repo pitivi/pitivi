@@ -3,6 +3,7 @@ import pitivi
 from common import TestCase
 from pitivi.thumbnailcache import ThumbnailCache
 
+
 class CacheTest(TestCase):
     """
     Basic test to create the proper creation of the Pitivi object

@@ -31,6 +31,7 @@ second = gst.SECOND
 minute = second * 60
 hour = minute * 60
 
+
 class TestBeautifyLength(TestCase):
     def testBeautifySeconds(self):
         self.failUnlessEqual(beautify_length(second), "1 second")
