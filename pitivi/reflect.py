@@ -24,8 +24,6 @@ def namedObject(name):
     module = namedModule('.'.join(classSplit[:-1]))
     return getattr(module, classSplit[-1])
 
-#namedClass = namedObject  # backwards compat
-
 
 class _NoModuleFound(Exception):
     """
