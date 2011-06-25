@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # PiTiVi , Non-linear video editor
 #
 #       ui/mainwindow.py
@@ -296,7 +297,7 @@ class EncodingDialog(Renderer, Loggable):
 
     def updateResolution(self):
         width, height = self.settings.getVideoWidthAndHeight(render=True)
-        self.resolution_label.set_text("%d x %d" % (width, height))
+        self.resolution_label.set_text(u"%d×%d" % (width, height))
 
     def _projectSettingsButtonClickedCb(self, button):
         from pitivi.ui.projectsettings import ProjectSettingsDialog
