@@ -158,8 +158,7 @@ class TestAnalysis(TestCase):
             'really/have/a/file/named/like/this/you/deserve/a/faillure')
         self.discoverer.connect('discovery-error', no_media_file_cb)
         self.discoverer._analyze()
-        self.failUnlessEqual(bag['error'], 'Pipeline didn\'t want '
-                'to go to PAUSED.')
+        self.failUnlessEqual(bag['error'], 'File does not exist')
 
     def testSetTimeout(self):
         """

@@ -25,7 +25,8 @@ Discover file multimedia information.
 """
 
 from gettext import gettext as _
-import os.path
+import os
+from urlparse import urlparse
 import gobject
 gobject.threads_init()
 import gst
@@ -401,6 +402,18 @@ class Discoverer(Signallable, Loggable):
         """
         self.current_uri = self.queue[0]
         self.info("Analyzing %s", self.current_uri)
+
+        # check if file exists and is readable
+        if gst.uri_get_protocol(self.current_uri) == "file":
+            if not os.access(self.current_uri, os.F_OK):
+                self.error = _("File does not exist")
+            elif not os.access(self.current_uri, os.R_OK):
+                self.error = _("File not readable by current user")
+            
+            if self.error:
+                self.info("Error: %s", self.error)
+                self._finishAnalysis("File does not exist or is not readable by the current user")
+                return False
 
         # setup graph and start analyzing
         self.pipeline = gst.Pipeline("Discoverer-%s" % self.current_uri)
