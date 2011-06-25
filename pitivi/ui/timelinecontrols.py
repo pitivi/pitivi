@@ -11,11 +11,12 @@ TRACK_CONTROL_WIDTH = 75
 def track_name(track):
     stream_type = type(track.stream)
     if stream_type == stream.AudioStream:
-        return _("<b>Audio:</b>")
+        track_name = _("Audio:")
     elif stream_type == stream.VideoStream:
-        return _("<b>Video:</b>")
+        track_name = _("Video:")
     elif stream_type == stream.TextStream:
-        return _("<b>Text:</b>")
+        track_name = _("Text:")
+    return "<b>%s</b>" % track_name
 
 
 class TrackControls(gtk.Label):

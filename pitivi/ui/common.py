@@ -167,34 +167,35 @@ def model(columns, data):
     return ret
 
 frame_rates = model((str, object), (
-    (_("12 fps"), gst.Fraction(12.0, 1.0)),
-    (_("15 fps"), gst.Fraction(15.0, 1.0)),
-    (_("20 fps"), gst.Fraction(20.0, 1.0)),
-    (_("23,976 fps"), gst.Fraction(24000.0, 1001.0)),
-    (_("24 fps"), gst.Fraction(24.0, 1.0)),
-    (_("25 fps"), gst.Fraction(25.0, 1.0)),
-    (_("29,97 fps"), gst.Fraction(30000.0, 1001.0)),
-    (_("30 fps"), gst.Fraction(30.0, 1.0)),
-    (_("50 fps"), gst.Fraction(50.0, 1.0)),
-    (_("59,94 fps"), gst.Fraction(60000.0, 1001.0)),
-    (_("60 fps"), gst.Fraction(60.0, 1.0)),
-    (_("120 fps"), gst.Fraction(120.0, 1.0)),
+    # Translators: fps is for frames per second
+    (_("%d fps") % 12, gst.Fraction(12.0, 1.0)),
+    (_("%d fps") % 15, gst.Fraction(15.0, 1.0)),
+    (_("%d fps") % 20, gst.Fraction(20.0, 1.0)),
+    (_("%.3f fps") % 23.976, gst.Fraction(24000.0, 1001.0)),
+    (_("%d fps") % 24, gst.Fraction(24.0, 1.0)),
+    (_("%d fps") % 25, gst.Fraction(25.0, 1.0)),
+    (_("%.2f fps") % 29.97, gst.Fraction(30000.0, 1001.0)),
+    (_("%d fps") % 30, gst.Fraction(30.0, 1.0)),
+    (_("%d fps") % 50, gst.Fraction(50.0, 1.0)),
+    (_("%.2f fps") % 59.94, gst.Fraction(60000.0, 1001.0)),
+    (_("%d fps") % 60, gst.Fraction(60.0, 1.0)),
+    (_("%d fps") % 120, gst.Fraction(120.0, 1.0)),
 ))
 
 audio_rates = model((str, int), (
-    (_("8 KHz"), 8000),
-    (_("11 KHz"), 11025),
-    (_("22 KHz"), 22050),
-    (_("44.1 KHz"), 44100),
-    (_("48 KHz"), 48000),
-    (_("96 KHz"), 96000)
+    (_("%d KHz") % 8, 8000),
+    (_("%d KHz") % 11, 11025),
+    (_("%d KHz") % 22, 22050),
+    (_("%.1f KHz") % 44.1, 44100),
+    (_("%d KHz") % 48, 48000),
+    (_("%d KHz") % 96, 96000)
 ))
 
 audio_depths = model((str, int), (
-    (_("8 bit"), 8),
-    (_("16 bit"), 16),
-    (_("24 bit"), 24),
-    (_("32 bit"), 32)
+    (_("%d bit") % 8, 8),
+    (_("%d bit") % 16, 16),
+    (_("%d bit") % 24, 24),
+    (_("%d bit") % 32, 32)
 ))
 
 audio_channels = model((str, int), (
