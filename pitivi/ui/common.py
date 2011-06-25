@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pitivi.settings import GlobalSettings
 import cairo
 from pitivi.stream import VideoStream, AudioStream, TextStream, \
@@ -122,11 +123,11 @@ def beautify_stream(stream):
     elif type(stream) == VideoStream:
         if stream.raw:
             if stream.framerate.num:
-                templ = _("<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>")
+                templ = _(u"<b>Video:</b> %d×%d <i>pixels</i> at %.2f<i>fps</i>")
                 templ = templ % (stream.par * stream.width, stream.height,
                         float(stream.framerate))
             else:
-                templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
+                templ = _(u"<b>Image:</b> %d×%d <i>pixels</i>")
                 templ = templ % (stream.par * stream.width, stream.height)
             return templ
         return _("<b>Unknown Video format:</b> %s") % stream.videotype

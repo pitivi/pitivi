@@ -653,10 +653,10 @@ class SourceList(gtk.VBox, Loggable):
         self._progressbar.hide()
         if self._errors:
             if len(self._errors) > 1:
-                self._warning_label.set_text(_("Errors occured while importing."))
+                self._warning_label.set_text(_("Errors occurred while importing."))
                 self._view_error_btn.set_label(_("View errors"))
             else:
-                self._warning_label.set_text(_("An error occured while importing."))
+                self._warning_label.set_text(_("An error occurred while importing."))
                 self._view_error_btn.set_label(_("View error"))
 
             self._import_warning_infobar.show_all()

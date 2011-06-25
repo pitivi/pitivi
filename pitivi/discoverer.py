@@ -243,7 +243,7 @@ class Discoverer(Signallable, Loggable):
 
         if not self.current_streams and not missing_plugins:
             # woot, nothing decodable
-            self.error = _('Can not decode file.')
+            self.error = _('Cannot decode file.')
             self.error_detail = _("The given file does not contain audio, "
                     "video or picture streams.")
             self._emitError()
@@ -361,7 +361,7 @@ class Discoverer(Signallable, Loggable):
         if not source:
             self.warning("This is not a media file: %s", self.current_uri)
             self.error = _("No available source handler.")
-            self.error_detail = _("You do not have a GStreamer source element to handle protocol '%s'") % gst.uri_get_protocol(self.current_uri)
+            self.error_detail = _('You do not have a GStreamer source element to handle the "%s" protocol') % gst.uri_get_protocol(self.current_uri)
 
             return None
 
