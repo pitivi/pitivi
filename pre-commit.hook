@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from __future__ import with_statement
 import os
-import re
 import shutil
 import subprocess
 import sys
@@ -15,11 +14,7 @@ def system(*args, **kwargs):
     return out
 
 
-def main():
-    modified = re.compile('^[AM]+\s+(?P<name>.*\.py)', re.MULTILINE)
-    files = system('git', 'status', '--porcelain')
-    files = modified.findall(files)
-
+def copy_files_to_tmp_dir(files):
     tempdir = tempfile.mkdtemp()
     for name in files:
         filename = os.path.join(tempdir, name)
@@ -28,21 +23,36 @@ def main():
             os.makedirs(filepath)
         with file(filename, 'w') as f:
             system('git', 'show', ':' + name, stdout=f)
+
+    return tempdir
+
+
+def main():
+    modified_files = system('git', 'diff-index', '--cached',
+        '--name-only', 'HEAD', '--diff-filter', 'ACMR').split("\n")[:-1]
+    output_message = None
+
+    tempdir = copy_files_to_tmp_dir(modified_files)
     try:
-        output = system('pep8', '.', cwd=tempdir)
+        pep8_errors = system('pep8', '--repeat', '--ignore', 'E501', '.',
+            cwd=tempdir)
+        if pep8_errors != "":
+            output_message = "Your code is not fully pep8 compliant and contains"\
+                " the following coding style issues:\n\n" + pep8_errors +\
+                "\n\nThanks for correcting them before commiting"
     except OSError:
-        output =  "You should install the pep8 style checker to be able"\
-              " to commit in this repo.\nIt allow us to garantee that "\
-              "anything that is commited respects the pep8 coding style "\
-              "standard.\nYou can install it:\n"\
-              "  * on ubuntu, debian: $sudo apt-get install pep8 \n"\
-              "  * on fedora: #yum install python-pep8 \n"\
-              "  * Or add the official pep8 from http://www.python.org/dev/peps/pep-0008/"\
-              " in your $PATH"
+        output_message = "You should install the pep8 style checker to be able"\
+           " to commit in this repo.\nIt allows us to garantee that "\
+           "anything that is commited respects the pep8 coding style "\
+           "standard.\nYou can install it:\n"\
+           "  * on ubuntu, debian: $sudo apt-get install pep8 \n"\
+           "  * on fedora: #yum install python-pep8 \n"\
+           "  * or add the official pep8 from http://www.python.org/dev/peps/pep-0008/"\
+           " in your $PATH"
 
     shutil.rmtree(tempdir)
-    if output:
-        print output,
+    if output_message:
+        print output_message,
         sys.exit(1)
 
 
