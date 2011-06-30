@@ -85,6 +85,9 @@ class ElementTreeFormatter(Formatter):
         self.timelinenode = None
         # An Element representing the <export-settings> element.
         self._settingsnode = None
+        # An Element representing the <metadata> element.
+        self._metadatanode = None
+
         # A list of SourceFactory objects.
         self._sources = None
         self._context = ElementTreeFormatterContext()
@@ -322,6 +325,13 @@ class ElementTreeFormatter(Formatter):
             self._serializeDict(ss, settings.acodecsettings)
         return element
 
+    def _saveProjectMetadata(self, project):
+        element = Element('metadata')
+        element.attrib["author"] = project.author
+        element.attrib["name"] = project.name
+        element.attrib["year"] = project.year
+        return element
+
     def _loadProjectSettings(self, element):
         self.debug("element:%r", element)
         settings = ExportSettings()
@@ -351,6 +361,11 @@ class ElementTreeFormatter(Formatter):
             settings.acodecsettings = self._deserializeDict(sett)
 
         return settings
+
+    def _loadProjectMetadata(self, element, project):
+        project.name = element.attrib["name"]
+        project.author = element.attrib["author"]
+        project.year = element.attrib["year"]
 
     def _saveTrackObject(self, track_object):
         element = Element("track-object")
@@ -698,6 +713,9 @@ class ElementTreeFormatter(Formatter):
         if project.settings:
             root.append(self._saveProjectSettings(project.settings))
 
+        # metadata
+        root.append(self._saveProjectMetadata(project))
+
         # sources
         root.append(self._saveFactories(project.sources.getSources()))
 
@@ -723,9 +741,13 @@ class ElementTreeFormatter(Formatter):
         self.factoriesnode = self._context.rootelement.find("factories")
         self.timelinenode = self._context.rootelement.find("timeline")
         self._settingsnode = self._context.rootelement.find("export-settings")
+        self._metadatanode = self._context.rootelement.find("metadata")
+
         if self._settingsnode != None:
             project.setSettings(self._loadProjectSettings(self._settingsnode))
 
+        if self._metadatanode != None:
+            self._loadProjectMetadata(self._metadatanode, project)
         # rediscover the factories
         closure = {"rediscovered": 0}
         try:
@@ -844,6 +866,11 @@ class ElementTreeFormatter(Formatter):
         # add the settings
         if self._settingsnode != None:
             project.setSettings(self._loadProjectSettings(self._settingsnode))
+
+        # add metadata
+        if self._metadatanode != None:
+            self._loadProjectMetadata(self._metadatanode, project)
+
         return project
 
     def _getSources(self):

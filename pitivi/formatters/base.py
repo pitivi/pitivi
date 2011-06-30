@@ -129,7 +129,6 @@ class Formatter(Signallable, Loggable):
         project = self.newProject()
         self.emit("new-project-created", project)
 
-        project.name = self._projectNameFromURI(location)
         project.uri = location
 
         self.log("location:%s, project:%r", location, project)
@@ -138,11 +137,6 @@ class Formatter(Signallable, Loggable):
         # parse the format (subclasses)
         # FIXME : maybe have a convenience method for opening a location
         self._loadProject(location, project)
-
-    def _projectNameFromURI(self, uri):
-        path = urlparse(uri).path
-        basename = os.path.basename(path)
-        return os.path.splitext(basename)[0]
 
     def _finishLoadingProject(self, project):
         self.debug("About to get used sources")
@@ -206,7 +200,6 @@ class Formatter(Signallable, Loggable):
         if self._saveProject(project, location):
             if not backup:
                 project.uri = location
-                project.name = self._projectNameFromURI(location)
                 self.emit("project-saved", project, location)
             return True
 
