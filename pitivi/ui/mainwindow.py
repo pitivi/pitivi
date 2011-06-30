@@ -266,7 +266,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
              None, _("Reload the current project"), self._revertToSavedProjectCb),
             ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"),
              None, _("Edit the project settings"), self._projectSettingsCb),
-            ("RenderProject", 'pitivi-render' , _("_Render Project..."),
+            ("RenderProject", 'pitivi-render', _("_Render Project..."),
              None, _("Export your project as a finished movie"), self._recordCb),
             ("Undo", gtk.STOCK_UNDO,
              _("_Undo"),
@@ -1069,7 +1069,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         chooser.add_filter(default)
 
         response = chooser.run()
-        self.settings.lastProjectFolder = chooser.get_current_folder()
+        current_folder = chooser.get_current_folder()
+        if current_folder:
+            self.settings.lastProjectFolder = current_folder
 
         if response == gtk.RESPONSE_OK:
             self.log("User chose a URI to save project to")
