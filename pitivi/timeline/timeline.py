@@ -1642,6 +1642,18 @@ class Timeline(Signallable, Loggable):
         for obj in objs:
             self.removeTimelineObject(obj, deep=True)
 
+    def usesFactory(self, factory):
+        """
+        Return whether the specified factory is present in the timeline.
+        @param the factory you are looking for
+        @type factory
+        @returns True if found, or False if not in the timeline.
+        """
+        for obj in self.timeline_objects:
+            if obj.factory is factory:
+                return True
+        return False
+
     def _timelineObjectStartChangedCb(self, timeline_object, start):
         self.timeline_objects.remove(timeline_object)
         start_insort_right(self.timeline_objects, timeline_object)

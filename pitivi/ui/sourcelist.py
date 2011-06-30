@@ -389,7 +389,7 @@ class SourceList(gtk.VBox, Loggable):
         self._removeSources()
 
     def _selectUnusedSourcesCb(self, widget):
-        pass
+        self._selectUnusedSources()
 
     def _insertEndCb(self, unused_action):
         self.app.action_log.begin("add clip")
@@ -708,6 +708,15 @@ class SourceList(gtk.VBox, Loggable):
             uri = model[row.get_path()][COL_URI]
             self.app.current.sources.removeUri(uri)
         self.app.action_log.commit()
+
+    def _selectUnusedSources(self):
+        """
+        Select, in the media library, unused sources in the project.
+        """
+        sources = self.app.current.sources.getSources()
+        for source in sources:
+            if not self.app.current.timeline.usesFactory(source):
+                print "Unused source:", source.name
 
     ## UI Button callbacks
 
