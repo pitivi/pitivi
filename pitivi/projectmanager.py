@@ -26,6 +26,7 @@ import gst
 import os
 
 from urlparse import urlparse
+from pwd import getpwuid
 
 from pitivi.project import Project
 from pitivi.formatters.format import get_formatter_for_uri
@@ -179,6 +180,10 @@ class ProjectManager(Signallable, Loggable):
         # we don't have an URI here, None means we're loading a new project
         self.emit("new-project-loading", None)
         project = Project(_("New Project"))
+
+        # setting default values for project metadata
+        project.author = getpwuid(os.getuid()).pw_gecos.split(",")[0]
+
         self.emit("new-project-created", project)
         self.current = project
 

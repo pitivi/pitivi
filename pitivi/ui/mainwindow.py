@@ -594,7 +594,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def showProjectSettingsDialog(self):
         from projectsettings import ProjectSettingsDialog
-        ProjectSettingsDialog(self, self.app.current).window.show()
+        ProjectSettingsDialog(self, self.app.current).window.run()
+        self.updateTitle()
 
     def _quitCb(self, unused_action):
         self._saveWindowSettings()
@@ -976,14 +977,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         redo_action = self.actiongroup.get_action("Redo")
         can_redo = bool(action_log.redo_stacks)
         redo_action.set_sensitive(can_redo)
-
-        if self.project is not None:
-            app_name = "%s" % (APPNAME)
-            title = u"%s \u2014 %s" % (self.project.name, app_name)
-            if dirty:
-                title = "*" + title
-            title = title.encode("utf8")
-            self.set_title(title)
+        self.updateTitle()
 
 ## PiTiVi current project callbacks
 
@@ -1148,3 +1142,15 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.project.pipeline.seek(position, format)
         except:
             self.debug("Seeking failed")
+
+    def updateTitle(self):
+        name = touched = ""
+        if self.project:
+            if self.project.name:
+                name = self.project.name
+            else:
+                name = _("Untitled project")
+            if self.project.hasUnsavedModifications():
+                touched = "*"
+        title = u"%s%s \u2014 %s" % (touched, name, APPNAME)
+        self.set_title(title)

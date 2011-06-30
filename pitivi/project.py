@@ -77,6 +77,8 @@ class Project(Signallable, Loggable):
         Loggable.__init__(self)
         self.log("name:%s, uri:%s", name, uri)
         self.name = name
+        self.author = ""
+        self.year = ""
         self.settings = None
         self.description = ""
         self.uri = uri

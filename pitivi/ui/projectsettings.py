@@ -27,8 +27,9 @@ Dialog box for project settings
 import gtk
 import gst
 import os
-from pwd import getpwuid
+
 from datetime import datetime
+
 from pitivi.configure import get_ui_dir
 from gettext import gettext as _
 from pitivi.ui.dynamic import FractionWidget
@@ -111,16 +112,7 @@ class ProjectSettingsDialog():
         self.sample_rate_combo.set_model(audio_rates)
         self.sample_depth_combo.set_model(audio_depths)
 
-        # set the project metadata
-        # FIXME: not saved in the project file
-        if self.year_spinbutton.get_value_as_int() == 1900:
-            self.year_spinbutton.set_value(datetime.now().year)
-        if self.author_entry.get_text() == "":
-            self.full_user_name = getpwuid(os.getuid()).pw_gecos.split(",")[0]
-            self.author_entry.set_text(self.full_user_name)
-
         # behavior
-
         self.wg = RippleUpdateGroup()
         self.wg.addVertex(self.frame_rate_combo,
                 signal="changed",
@@ -398,6 +390,9 @@ class ProjectSettingsDialog():
             "video-preset-infobar")
         self.audio_preset_infobar = self.builder.get_object(
             "audio-preset-infobar")
+        self.title_entry = self.builder.get_object("title_entry")
+        self.author_entry = self.builder.get_object("author_entry")
+        self.year_spinbutton = self.builder.get_object("year_spinbutton")
 
     def _constrainSarButtonToggledCb(self, button):
         if button.props.active:
@@ -474,7 +469,7 @@ class ProjectSettingsDialog():
         self.save_video_preset_button.set_sensitive(preset_changed)
         preset_selected = bool(self.video_presets.cur_preset)
         self.remove_video_preset_button.set_sensitive(preset_selected)
-    
+
     def _updateAudioSaveButton(self, unused_in, button):
         button.set_sensitive(self.audio_presets.isCurrentPresetChanged())
 
@@ -537,6 +532,20 @@ class ProjectSettingsDialog():
 
         self._selectDarRadiobuttonToggledCb(self.select_dar_radiobutton)
 
+        # metadata
+        self.title_entry.set_text(self.project.name)
+        self.author_entry.set_text(self.project.author)
+        if self.project.year:
+            year = int(self.project.year)
+        else:
+            year = datetime.now().year
+        self.year_spinbutton.get_adjustment().set_value(year)
+
+    def updateMetadata(self):
+        self.project.name = self.title_entry.get_text()
+        self.project.author = self.author_entry.get_text()
+        self.project.year = str(self.year_spinbutton.get_adjustment().get_value())
+
     def updateSettings(self):
         width = int(self.width_spinbutton.get_value())
         height = int(self.height_spinbutton.get_value())
@@ -555,6 +564,7 @@ class ProjectSettingsDialog():
     def _responseCb(self, unused_widget, response):
         if response == gtk.RESPONSE_OK:
             self.updateSettings()
+            self.updateMetadata()
         self.audio_presets.save()
         self.video_presets.save()
         self.window.destroy()
