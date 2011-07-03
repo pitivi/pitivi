@@ -51,8 +51,7 @@ class EOSSir(gst.Element):
         "EOSSir",
         "Generic",
         "pushes EOS after the first buffer",
-        "Alessandro Decina <alessandro.d@gmail.com>"
-        )
+        "Alessandro Decina <alessandro.d@gmail.com>")
 
     srctemplate = gst.PadTemplate("src", gst.PAD_SRC,
             gst.PAD_ALWAYS, gst.Caps("ANY"))
@@ -103,8 +102,7 @@ class Discoverer(Signallable, Loggable):
         "discovery-done": ["uri", "factory"],
         "ready": None,
         "starting": None,
-        "missing-plugins": ["uri", "detail", "description"]
-        }
+        "missing-plugins": ["uri", "detail", "description"]}
 
     def __init__(self):
         Loggable.__init__(self)
@@ -405,9 +403,14 @@ class Discoverer(Signallable, Loggable):
         # check if file exists and is readable
         if gst.uri_get_protocol(self.current_uri) == "file":
             filename = gst.uri_get_location(self.current_uri)
-            if not os.access(filename, os.R_OK):
-                self.error = _("File not readable by current user")
+            error = None
+            if not os.access(filename, os.F_OK):
+                error = _("File does not exist")
+            elif not os.access(filename, os.R_OK):
+                error = _("File not readable by current user")
+            if error:
                 self.info("Error: %s", self.error)
+                self.error = error
                 self._finishAnalysis("File does not exist or is not readable by the current user")
                 return False
 
