@@ -9,16 +9,6 @@ def gettestnames(file_names):
 
 loader = unittest.TestLoader()
 
-# Pick which tests to run.
-TEST_CASE = os.getenv("TESTCASE")
-if TEST_CASE:
-    test_names = [TEST_CASE]
-else:
-    test_names = gettestnames(sys.argv[1:])
-suite = loader.loadTestsFromNames(test_names)
-if not list(suite):
-    raise Exception("No tests found")
-
 # Set verbosity.
 descriptions = 1
 verbosity = 1
@@ -32,6 +22,16 @@ log.init('PITIVI_DEBUG', 1)
 dir = os.path.dirname(os.path.abspath(__file__))
 top_srcdir = os.path.split(dir)[0]
 os.environ.setdefault('PITIVI_TOP_LEVEL_DIR', top_srcdir)
+
+# Pick which tests to run.
+TEST_CASE = os.getenv("TESTCASE")
+if TEST_CASE:
+    test_names = [TEST_CASE]
+else:
+    test_names = gettestnames(sys.argv[1:])
+suite = loader.loadTestsFromNames(test_names)
+if not list(suite):
+    raise Exception("No tests found")
 
 # Run the tests.
 testRunner = unittest.TextTestRunner(descriptions=descriptions,
