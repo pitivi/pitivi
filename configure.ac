@@ -3,7 +3,7 @@ AC_PREREQ(2.52)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(PiTiVi, 0.14.0,
+AC_INIT(PiTiVi, 0.14.1,
     https://bugzilla.gnome.org/browse.cgi?product=pitivi,
     pitivi)
 

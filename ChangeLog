@@ -1,3 +1,1240 @@
+2011-07-03  Alex Băluț <alexandru.balut@gmail.com>
+
+	* tests/runtests.py:
+	  Set PITIVI_TOP_LEVEL_DIR before the test modules are loaded, not after
+
+2011-07-03  Thibault Saunier <thibault.saunier@collabora.com>
+
+	  Merging translations
+
+2011-07-03  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/discoverer.py:
+	  Add back the 'File does not exist' error removed it commit a73102859360bc41dd3cef15ce1d94994e21d1e8 for no reason
+
+2011-06-30  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Make sure we don't save 'None' as the last open project folder
+
+2010-12-25  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Implement the unused clips selection algorithm in source list
+
+2011-06-30  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/sourcelist.py:
+	  Methods to determine what sources are not used in the timeline
+
+2010-12-25  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Add a menu item to "Select Unused Media"
+
+2011-06-25  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/discoverer.py:
+	  Fix discoverer.py so the application can open media files
+
+2011-06-25  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pre-commit.hook:
+	  Update the pre-commit hook to be less agressive
+
+2011-06-13  Alex Băluț <alexandru.balut@gmail.com>
+
+	* data/ui/projectsettings.ui:
+	* pitivi/ui/preset.py:
+	* pitivi/ui/projectsettings.py:
+	* tests/test_preset.py:
+	  Changed ProjectSettingsDialog to show an error message if a preset is renamed and the new name already belongs to another preset. Fixes bug 638799.
+
+2011-06-14  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/projectsettings.py:
+	  Enable the Save button when the selected audio preset is changed, in ProjectSettingsDialog.
+	  Fixes bug 652537.
+
+2011-06-16  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/preset.py:
+	* pitivi/ui/projectsettings.py:
+	  Changed PresetManager.renamePreset to change the name of the current preset, if this is the case. This makes its behaviour similar with PresetManager.removePreset's behaviour.
+
+2011-06-16  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/preset.py:
+	  Added docstrings to PresetManager
+
+2011-06-16  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/preset.py:
+	  Renamed the private PresetManager.ignore attribute accordingly
+
+2011-06-16  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/preset.py:
+	* pitivi/ui/projectsettings.py:
+	  Renamed the PresetManager.changed method so the name starts with a verb
+
+2011-06-13  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/projectsettings.py:
+	* tests/Makefile.am:
+	* tests/test_projectsettings.py:
+	  Changed ProjectSettingsDialog to generate unique names when a new preset is added. Required to fix bug 638799.
+
+2011-06-13  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/projectsettings.py:
+	  Changed ProjectSettingsDialog to enable the Remove button after adding a preset. Fixes bug 638798.
+
+2011-06-13  Alex Băluț <alexandru.balut@gmail.com>
+
+	* data/ui/projectsettings.ui:
+	* pitivi/ui/projectsettings.py:
+	  Rename handler in ProjectSettingsDialog to be consistent with the other handlers
+
+2011-06-13  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/ripple_update_group.py:
+	  Simplified the RippleUpdateGroup constructor and cleaned the class a bit.
+
+2011-06-13  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/projectsettings.py:
+	  Changed ProjectSettingsDialog._presetChangedCb to not be aware of the fact that there are two types of presets
+
+2011-06-13  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/preset.py:
+	  Raise the correct exception in PresetManager
+
+2011-06-12  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/preset.py:
+	* tests/Makefile.am:
+	* tests/test_preset.py:
+	  Changed PresetManager to allow the user to have a preset called Default. Fixes bug 652397.
+
+2011-06-12  Alex Băluț <alexandru.balut@gmail.com>
+
+	* data/ui/projectsettings.ui:
+	  Changed the Preset labels to specify the types of presets
+
+2011-06-11  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/formatters/base.py:
+	* tests/Makefile.am:
+	* tests/test_formatters_base.py:
+	  Extracted duplicated code into Formatter._searchMissingFile
+
+2011-06-11  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/formatters/base.py:
+	  Removed duplicate checks
+
+2011-06-10  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Clarify when an argument needs to be passed when an ObjectFactory is instantiated in ElementTreeFormatter._loadObjectFactory This change was suggested by the FIXME I removed.
+
+2011-06-10  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/utils.py:
+	  Simplified utils.uri_is_valid
+
+2011-06-10  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Simplified ElementTreeFormatter._loadSources
+
+2011-06-10  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/sourcelist.py:
+	* pitivi/ui/sourcelist.py:
+	* tests/test_sourcelist.py:
+	  Change pitivi.sourcelist.SourceList.addUri to not raise an exception when the URI is already added. The problem fixed by this patch is that currently, when running "bin/pitivi -i video.mkv video.mkv" the application breaks and shows a stacktrace.
+
+2011-06-09  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/sourcelist.py:
+	  Added docstrings in sourcelist.py
+
+2011-06-09  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	  Removed Pitivi.projects because it's unused
+
+2011-06-09  Alex Băluț <alexandru.balut@gmail.com>
+
+	* tests/Makefile.am:
+	* tests/runtests.py:
+	  Specified in Makefile.am which tests should be run and simplified runtests. This change will make sure that new test files will be added to the list of tests which are included in the distribution package, otherwise now they won't run when running 'make check'.
+
+2011-06-09  Alex Băluț <alexandru.balut@gmail.com>
+
+	* tests/test_timeline.py:
+	  Change the test_timeline imports to be consistent with the other tests
+
+2011-06-09  Alex Băluț <alexandru.balut@gmail.com>
+
+	* tests/__init__.py:
+	* tests/test_timeline.py:
+	  Make the same initial checks as the application when the tests package is initialized.
+
+2011-06-09  Alex Băluț <alexandru.balut@gmail.com>
+
+	* tests/Makefile.am:
+	* tests/runtests.py:
+	  Make sure PITIVI_TOP_LEVEL_DIR is always set when running the tests
+
+2011-06-09  Alex Băluț <alexandru.balut@gmail.com>
+
+	* tests/Makefile.am:
+	  Added all the test files to the list of tests
+
+2011-06-09  Alex Băluț <alexandru.balut@gmail.com>
+
+	* tests/Makefile.am:
+	* tests/testcomplex.py:
+	  Removed testcomplex.py because it's obsolete
+
+2011-06-09  Alex Băluț <alexandru.balut@gmail.com>
+
+	* tests/Makefile.am:
+	  Ordered alphabetically the list of tests in tests/Makefile.am
+
+2011-06-09  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Changed SourceList to reset the error list when a new project is created or loaded. Fixes bug 635993.
+
+2011-06-09  Alex Băluț <alexandru.balut@gmail.com>
+
+	* bin/pitivi.in:
+	  Removed obsolete conditions from pitivi.in
+
+2011-06-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/discoverer.py:
+	* tests/test_discoverer.py:
+	  Improve error message for non-existing and non-readable files
+
+2011-06-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/filechooserpreview.py:
+	  Standardize the use of the multiplication symbol in resolutions
+
+2011-06-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/check.py:
+	* pitivi/discoverer.py:
+	* pitivi/ui/common.py:
+	* pitivi/ui/sourcelist.py:
+	* pitivi/utils.py:
+	  String fixes
+	  Fixes: 651483
+
+2011-06-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/common.py:
+	* pitivi/ui/timelinecontrols.py:
+	  More efficient translatable strings
+	  Fixes bug #651186
+
+2011-06-21  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/mainwindow.xml:
+	* pitivi/ui/mainwindow.py:
+	  Fix the naming and categorization of menus
+
+2011-06-21  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcelist.py:
+	* pitivi/ui/timeline.py:
+	  Fix header capitalization in menus and clarify clips vs files
+	  Fixes bug #587235
+
+2011-06-11  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Correct the media library's infobar text
+
+2011-06-22  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* autogen.sh:
+	* pre-commit.hook:
+	  Add a pre-hook commit to check the pep8 compliance of each commit
+
+2011-06-22  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/reflect.py:
+	  Remove leftover line from the PEP-8 cleanup
+
+2011-06-22  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* docs/makeChangelog.py:
+	* tests/common.py:
+	* tests/runtests.py:
+	* tests/test_action.py:
+	* tests/test_alpha_passthrough.py:
+	* tests/test_basic.py:
+	* tests/test_binary_search.py:
+	* tests/test_cache.py:
+	* tests/test_common.py:
+	* tests/test_discoverer.py:
+	* tests/test_encode.py:
+	* tests/test_etree_formatter.py:
+	* tests/test_factories_base.py:
+	* tests/test_factories_file.py:
+	* tests/test_factories_operation.py:
+	* tests/test_gap.py:
+	* tests/test_integration.py:
+	* tests/test_pipeline.py:
+	* tests/test_pipeline_action.py:
+	* tests/test_projectmanager.py:
+	* tests/test_seeker.py:
+	* tests/test_signallable.py:
+	* tests/test_sourcelist.py:
+	* tests/test_still_image.py:
+	* tests/test_stream.py:
+	* tests/test_timeline.py:
+	* tests/test_timeline_factory.py:
+	* tests/test_timeline_undo.py:
+	* tests/test_track.py:
+	* tests/test_transitions.py:
+	* tests/test_undo.py:
+	* tests/test_utils.py:
+	* tests/testcomplex.py:
+	  tests: Fully pep8 compliant
+
+2011-06-22  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/factories/base.py:
+	* pitivi/reflect.py:
+	* pitivi/settings.py:
+	* pitivi/ui/basetabs.py:
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/common.py:
+	* pitivi/ui/controller.py:
+	* pitivi/ui/curve.py:
+	* pitivi/ui/dynamic.py:
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/effectsconfiguration.py:
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/encodingprogress.py:
+	* pitivi/ui/filechooserpreview.py:
+	* pitivi/ui/filelisterrordialog.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/pathwalker.py:
+	* pitivi/ui/point.py:
+	* pitivi/ui/prefs.py:
+	* pitivi/ui/preset.py:
+	* pitivi/ui/preview.py:
+	* pitivi/ui/previewer.py:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/ripple_update_group.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcelist.py:
+	* pitivi/ui/startupwizard.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecontrols.py:
+	* pitivi/ui/track.py:
+	* pitivi/ui/trackobject.py:
+	* pitivi/ui/view.py:
+	* pitivi/ui/viewer.py:
+	* pitivi/ui/zoominterface.py:
+	  pitivi: All pep8 compliant
+
+2011-06-22  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/videofxlist.py:
+	* po/POTFILES.in:
+	  Remove dead videofxlist code
+
+2011-06-22  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/defaultpropertyeditor.py:
+	* pitivi/ui/propertyeditor.py:
+	* po/POTFILES.in:
+	  Remove dead defaultpropertyeditor code
+
+2011-06-22  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/audiofxlist.py:
+	* po/POTFILES.in:
+	  Remove audiofxlist dead code
+
+2011-06-21  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* data/ui/Makefile.am:
+	* data/ui/pluginmanagerdialog.ui:
+	* pitivi/Makefile.am:
+	* pitivi/application.py:
+	* pitivi/plugincore.py:
+	* pitivi/pluginmanager.py:
+	* pitivi/settings.py:
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/pluginmanagerdialog.py:
+	* po/POTFILES.in:
+	  Remove the dead pluginmanager code
+
+2011-06-06  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/action.py:
+	* pitivi/actioner.py:
+	* pitivi/application.py:
+	* pitivi/check.py:
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/elements/arraysink.py:
+	* pitivi/elements/mixer.py:
+	* pitivi/elements/singledecodebin.py:
+	* pitivi/elements/thumbnailsink.py:
+	* pitivi/elements/videofade.py:
+	* pitivi/encode.py:
+	* pitivi/factories/base.py:
+	* pitivi/factories/file.py:
+	* pitivi/factories/operation.py:
+	* pitivi/factories/test.py:
+	* pitivi/factories/timeline.py:
+	* pitivi/formatters/base.py:
+	* pitivi/formatters/etree.py:
+	* pitivi/formatters/format.py:
+	* pitivi/formatters/playlist.py:
+	* pitivi/log/log.py:
+	* pitivi/log/loggable.py:
+	* pitivi/log/termcolor.py:
+	* pitivi/pipeline.py:
+	* pitivi/pitivigstutils.py:
+	* pitivi/plugincore.py:
+	* pitivi/plumber.py:
+	* pitivi/project.py:
+	* pitivi/projectmanager.py:
+	* pitivi/receiver.py:
+	* pitivi/reflect.py:
+	* pitivi/settings.py:
+	* pitivi/signalgroup.py:
+	* pitivi/signalinterface.py:
+	* pitivi/sourcelist.py:
+	* pitivi/sourcelist_undo.py:
+	* pitivi/stream.py:
+	* pitivi/threads.py:
+	* pitivi/thumbnailcache.py:
+	* pitivi/timeline/gap.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/timeline/track.py:
+	* pitivi/undo.py:
+	* pitivi/utils.py:
+	  Make core pep8 compliant
+
+2011-06-22  Matej Urbančič <mateju@svn.gnome.org>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-06-19  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/encodingdialog.ui:
+	* pitivi/ui/encodingdialog.py:
+	  encodingdialog: Show a warning icon and tooltip when the output file already exists
+	  Fixes bug #594485
+
+2011-06-18  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/elementsettingsdialog.ui:
+	* pitivi/ui/gstwidget.py:
+	  Automatically determine if codec settings require scrolling
+
+2011-06-18  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/encodingprogress.ui:
+	  Set a width request to make encoding progress look better
+
+2011-06-18  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Don't show duration for image files in the missing files dialog
+
+2011-05-20  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Use "Resolution" instead of "Width/Height" in the file chooser
+
+2011-06-22  Bruno Brouard <annoa.b@gmail.com>
+
+	* po/fr.po:
+	  Updated French translation
+
+2011-06-21  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* bin/pitivi.in:
+	  Remove remaining references to glade
+
+2011-06-21  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* .gitignore:
+	  Add intltool-merge-cache and config.status.lineno to gitignore
+
+2011-06-14  Hicham HAOUARI <hicham.haouari@gmail.com>
+
+	* configure.ac:
+	  Lower pygtk2 minimum version to 2.17.0
+
+2011-06-19  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-06-17  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2011-06-06  Stéphane Maniaci <stephane.maniaci@gmail.com>
+
+	* data/ui/Makefile.am:
+	* data/ui/preferences.ui:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/prefs.py:
+	* po/POTFILES.in:
+	  Port PreferencesDialog to GtkBuilder
+
+2011-06-07  Kjartan Maraas <kmaraas@gnome.org>
+
+	* po/nb.po:
+	  Added Norwegian bokmål translation
+
+2011-06-07  Thibault Saunier <thibault.saunier@collabora.com>
+
+	  Merging translations
+
+2011-06-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/settings.py:
+	  Included the audio depth to the audio caps created in ExportSettings.
+
+2011-06-07  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-06-07  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-05-26  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Check that the settings are changed before signalling that they have been changed. Fixes bug 646513
+
+2011-05-26  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/actioner.py:
+	* pitivi/settings.py:
+	* pitivi/ui/encodingdialog.py:
+	  Change the actioner.Renderer class to work with a settings instance which is not the settings instance of the project The reason is that the changes to the settings which can also be made in the Project Settings dialog must not be saved when they are changed in the Render dialog.
+
+2011-05-25  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Use os.path.join in EncodingDialog
+
+2011-05-25  Alex Băluț <alexandru.balut@gmail.com>
+
+	* data/ui/encodingdialog.ui:
+	* pitivi/ui/encodingdialog.py:
+	  Rename 'cancel' button to 'close' in EncodingDialog
+
+2011-05-24  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/settings.py:
+	  Include the render_scale attribute when creating a copy of an ExportSettings
+
+2011-05-24  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Split EncodingDialog._displaySettings()
+
+2011-05-24  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/actioner.py:
+	* pitivi/ui/encodingdialog.py:
+	  Move the initialization of 'timestarted' in Actioner.__init__()
+
+2011-05-24  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	  Use 'project' consistently in _newProjectLoaded()
+
+2011-05-24  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/projectsettings.py:
+	  Removed duplicate line
+
+2011-05-24  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/project.py:
+	  Remove Project.save() because it's obsolete
+
+2011-05-24  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/project.py:
+	  Make sure a project always has settings
+
+2011-05-24  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Initialize the models of the EncodingDialog comboboxes only once
+
+2011-05-24  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Removed connection to the encoders-changed signal because it's not needed.
+
+2011-05-24  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  Simplified encodingdialog.beautify_factoryname()
+
+2011-06-06  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/ui/sourcelist.py:
+	  ui: fix export dialog closing button
+	  Forgot to update the destroy call when porting to GtkBuilder
+
+2011-06-06  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/mainwindow.xml:
+	  Fix the ordering of the Help menu
+
+2011-06-06  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Allow translators to credit themselves, fix the version string
+
+2011-06-06  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow: fix the modality of sub-dialogs
+
+2011-06-06  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/elementsettingsdialog.ui:
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/gstwidget.py:
+	  Properly set the advanced codec settings dialog's modality
+	  Set transient state to parent it with encodingdialog.
+	  Don't show elementsettingsdialog until readied by gstwidget.
+
+2011-06-06  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/elementsettingsdialog.ui:
+	* pitivi/ui/gstwidget.py:
+	  Remove the redundant info label (already shown in the title)
+
+2011-06-06  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/elementsettingsdialog.ui:
+	* pitivi/ui/gstwidget.py:
+	  gstwidget: don't override elementsettingsdialog's size settings
+	  Set the horizontal scrollbar policy to "never" to allow the dialog
+	  to set its width automatically.
+	  Fix spacing.
+
+2011-06-06  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/projectsettings.ui:
+	* pitivi/ui/projectsettings.py:
+	  projectsettings: slight cleanup
+
+2011-06-06  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  encodingdialog: disable ellipsizing for comboboxes
+	  Also remove the function since it is not used anywhere else
+
+2011-06-06  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/encodingdialog.ui:
+	  De-uglify the rendering dialog's UI file
+
+2011-06-05  Hicham HAOUARI <hicham.haouari@gmail.com>
+
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/factories/base.py:
+	* pitivi/factories/file.py:
+	* pitivi/factories/operation.py:
+	* pitivi/factories/test.py:
+	* pitivi/plumber.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/thumbnailcache.py:
+	* pitivi/ui/previewer.py:
+	* pitivi/ui/viewer.py:
+	* pitivi/ui/zoominterface.py:
+	* pitivi/utils.py:
+	  Remove unneeded shebang
+
+2011-06-05  Hicham HAOUARI <hicham.haouari@gmail.com>
+
+	* COPYING:
+	* bin/pitivi.in:
+	* docs/pitivi.1:
+	* pitivi/action.py:
+	* pitivi/actioner.py:
+	* pitivi/application.py:
+	* pitivi/check.py:
+	* pitivi/configure.py.in:
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/elements/arraysink.py:
+	* pitivi/elements/mixer.py:
+	* pitivi/elements/singledecodebin.py:
+	* pitivi/elements/thumbnailsink.py:
+	* pitivi/elements/videofade.py:
+	* pitivi/encode.py:
+	* pitivi/factories/base.py:
+	* pitivi/factories/file.py:
+	* pitivi/factories/operation.py:
+	* pitivi/factories/test.py:
+	* pitivi/factories/timeline.py:
+	* pitivi/formatters/__init__.py:
+	* pitivi/formatters/base.py:
+	* pitivi/formatters/etree.py:
+	* pitivi/formatters/format.py:
+	* pitivi/formatters/playlist.py:
+	* pitivi/instance.py:
+	* pitivi/log/loggable.py:
+	* pitivi/pipeline.py:
+	* pitivi/pitivigstutils.py:
+	* pitivi/plugincore.py:
+	* pitivi/pluginmanager.py:
+	* pitivi/plumber.py:
+	* pitivi/project.py:
+	* pitivi/projectmanager.py:
+	* pitivi/settings.py:
+	* pitivi/signalgroup.py:
+	* pitivi/signalinterface.py:
+	* pitivi/sourcelist.py:
+	* pitivi/sourcelist_undo.py:
+	* pitivi/stream.py:
+	* pitivi/threads.py:
+	* pitivi/thumbnailcache.py:
+	* pitivi/timeline/gap.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/timeline/track.py:
+	* pitivi/ui/audiofxlist.py:
+	* pitivi/ui/basetabs.py:
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/controller.py:
+	* pitivi/ui/curve.py:
+	* pitivi/ui/defaultpropertyeditor.py:
+	* pitivi/ui/dnd.py:
+	* pitivi/ui/dynamic.py:
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/effectsconfiguration.py:
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/encodingprogress.py:
+	* pitivi/ui/filelisterrordialog.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/pathwalker.py:
+	* pitivi/ui/pluginmanagerdialog.py:
+	* pitivi/ui/prefs.py:
+	* pitivi/ui/preset.py:
+	* pitivi/ui/preview.py:
+	* pitivi/ui/previewer.py:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/propertyeditor.py:
+	* pitivi/ui/ripple_update_group.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcelist.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	* pitivi/ui/videofxlist.py:
+	* pitivi/ui/viewer.py:
+	* pitivi/ui/zoominterface.py:
+	* pitivi/undo.py:
+	* pitivi/utils.py:
+	* tests/test_action.py:
+	* tests/test_alpha_passthrough.py:
+	* tests/test_common.py:
+	* tests/test_discoverer.py:
+	* tests/test_encode.py:
+	* tests/test_etree_formatter.py:
+	* tests/test_factories_base.py:
+	* tests/test_factories_file.py:
+	* tests/test_factories_operation.py:
+	* tests/test_gap.py:
+	* tests/test_integration.py:
+	* tests/test_pipeline.py:
+	* tests/test_pipeline_action.py:
+	* tests/test_projectmanager.py:
+	* tests/test_seeker.py:
+	* tests/test_sourcelist.py:
+	* tests/test_still_image.py:
+	* tests/test_stream.py:
+	* tests/test_timeline.py:
+	* tests/test_timeline_factory.py:
+	* tests/test_timeline_undo.py:
+	* tests/test_track.py:
+	* tests/test_transitions.py:
+	* tests/test_undo.py:
+	* tests/test_utils.py:
+	* win32/setup.py:
+	  Update fsf address
+
+2011-06-05  Hicham HAOUARI <hicham.haouari@gmail.com>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectsconfiguration.py:
+	  Fix typo in license
+
+2011-06-06  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/ui/encodingdialog.py:
+	  encodingdialog: ellipize combobox correctly
+	  After the GtkBuilder port, the ellipization of combobox became... a bit to
+	  efficient (We only add '...') this sets the length of the text to 60 chars
+	  which fixes the issue.
+
+2011-06-03  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/elements/mixer.py:
+	* pitivi/elements/singledecodebin.py:
+	* pitivi/elements/thumbnailsink.py:
+	* pitivi/factories/operation.py:
+	* pitivi/settings.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/dynamic.py:
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	* tests/test_etree_formatter.py:
+	* tests/test_factories_operation.py:
+	* tests/test_gap.py:
+	* win32/setup.py:
+	  Remove all spaces before or after parenthesis
+
+2011-06-03  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/formatters/__init__.py:
+	* pitivi/formatters/base.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/common.py:
+	* pitivi/ui/dynamic.py:
+	* pitivi/ui/effectlist.py:
+	* pitivi/ui/encodingprogress.py:
+	* pitivi/ui/filechooserpreview.py:
+	* pitivi/ui/preset.py:
+	* pitivi/ui/previewer.py:
+	* pitivi/ui/ripple_update_group.py:
+	* tests/test_gap.py:
+	* tests/test_pipeline.py:
+	* tests/test_seeker.py:
+	* tests/test_still_image.py:
+	* tests/test_stream.py:
+	* tests/test_timeline_factory.py:
+	* tests/test_undo.py:
+	* tests/test_utils.py:
+	* tests/testcomplex.py:
+	* win32/setup.py:
+	  Use the reindent.py official python script
+
+2011-06-03  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* data/ui/elementsettingsdialog.ui:
+	* data/ui/encodingdialog.ui:
+	* data/ui/encodingprogress.ui:
+	* data/ui/filelisterrordialog.ui:
+	* data/ui/projectsettings.ui:
+	* pitivi/check.py:
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/encodingprogress.py:
+	* pitivi/ui/filelisterrordialog.py:
+	* pitivi/ui/glade.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/pluginmanagerdialog.py:
+	* pitivi/ui/projectsettings.py:
+	* win32/pitivi:
+	* win32/setup.py:
+	  Port PiTiVi to GtkBuilder!
+
+2011-06-03  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* data/ui/Makefile.am:
+	* data/ui/mainwindow.xml:
+	* data/ui/screencast_manager.ui:
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/screencast_managerdialog.py:
+	* po/POTFILES.in:
+	  Remove screencast manager dead code
+
+2011-06-03  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* data/ui/Makefile.am:
+	* data/ui/mainwindow.xml:
+	* data/ui/net_capture.ui:
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/netstream_managerdialog.py:
+	* po/POTFILES.in:
+	  Remove the netcapture dead code
+
+2011-06-03  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/action.py:
+	* pitivi/pipeline.py:
+	* pitivi/projectmanager.py:
+	  Never compare variable with True or False
+
+2011-06-03  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/discoverer.py:
+	  discoverer: clean pbutils import code
+
+2011-05-26  Thibault Saunier <thibault.saunier@collabora.co.uk>
+
+	* data/ui/Makefile.am:
+	* data/ui/cam_capture.ui:
+	* data/ui/mainwindow.xml:
+	* pitivi/Makefile.am:
+	* pitivi/application.py:
+	* pitivi/device.py:
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/webcam_managerdialog.py:
+	* po/POTFILES.in:
+	  Remove everything related to the webcam import feature
+
+2011-06-03  Thibault Saunier <thibault.saunier@collabora.com>
+
+	  Merging translations
+
+2011-05-16  Stéphane Maniaci <stephane.maniaci@gmail.com>
+
+	* configure.ac:
+	* data/Makefile.am:
+	* data/ui/Makefile.am:
+	* data/ui/cam_capture.ui:
+	* data/ui/elementsettingsdialog.ui:
+	* data/ui/encodingdialog.ui:
+	* data/ui/encodingprogress.ui:
+	* data/ui/filelisterrordialog.ui:
+	* data/ui/mainwindow.xml:
+	* data/ui/net_capture.ui:
+	* data/ui/pluginmanagerdialog.ui:
+	* data/ui/projectsettings.ui:
+	* data/ui/screencast_manager.ui:
+	* data/ui/startupwizard.ui:
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/cam_capture.glade:
+	* pitivi/ui/elementsettingsdialog.glade:
+	* pitivi/ui/encodingdialog.glade:
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/encodingprogress.glade:
+	* pitivi/ui/encodingprogress.py:
+	* pitivi/ui/filelisterrordialog.glade:
+	* pitivi/ui/filelisterrordialog.py:
+	* pitivi/ui/glade.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/mainwindow.xml:
+	* pitivi/ui/net_capture.glade:
+	* pitivi/ui/netstream_managerdialog.py:
+	* pitivi/ui/pluginmanagerdialog.glade:
+	* pitivi/ui/pluginmanagerdialog.py:
+	* pitivi/ui/projectsettings.glade:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/screencast_manager.glade:
+	* pitivi/ui/screencast_managerdialog.py:
+	* pitivi/ui/startupwizard.glade:
+	* pitivi/ui/startupwizard.py:
+	* pitivi/ui/webcam_managerdialog.py:
+	* po/POTFILES.in:
+	  Move UI files to the data/ui directory.
+
+2011-05-13  Stéphane Maniaci <stephane.maniaci@gmail.com>
+
+	* Makefile.am:
+	* configure.ac:
+	* data/Makefile.am:
+	* data/icons/16x16/Makefile.am:
+	* data/icons/16x16/pitivi.png:
+	* data/icons/16x16/pitivi.svg:
+	* data/icons/22x22/Makefile.am:
+	* data/icons/22x22/pitivi.png:
+	* data/icons/22x22/pitivi.svg:
+	* data/icons/24x24/Makefile.am:
+	* data/icons/24x24/pitivi.png:
+	* data/icons/32x32/Makefile.am:
+	* data/icons/32x32/pitivi.png:
+	* data/icons/32x32/pitivi.svg:
+	* data/icons/48x48/Makefile.am:
+	* data/icons/48x48/pitivi.png:
+	* data/icons/48x48/pitivi.svg:
+	* data/icons/Makefile.am:
+	* data/icons/scalable/Makefile.am:
+	* data/icons/scalable/pitivi.svg:
+	* data/pitivi.desktop.in.in:
+	* data/pixmaps/.gitignore:
+	* data/pixmaps/Makefile.am:
+	* data/pixmaps/agingtv.png:
+	* data/pixmaps/bulge.png:
+	* data/pixmaps/burn.png:
+	* data/pixmaps/busy.gif:
+	* data/pixmaps/chromium.png:
+	* data/pixmaps/circle.png:
+	* data/pixmaps/cogdownsample.png:
+	* data/pixmaps/color-distance.png:
+	* data/pixmaps/coloreffects.png:
+	* data/pixmaps/defaultthumbnail.svg:
+	* data/pixmaps/dicetv.png:
+	* data/pixmaps/diffuse.png:
+	* data/pixmaps/dilate.png:
+	* data/pixmaps/dodge.png:
+	* data/pixmaps/edgetv.png:
+	* data/pixmaps/exclusion.png:
+	* data/pixmaps/fisheye.png:
+	* data/pixmaps/frei0r-filter-3dflippo.png:
+	* data/pixmaps/frei0r-filter-brightness.png:
+	* data/pixmaps/frei0r-filter-bw0r.png:
+	* data/pixmaps/frei0r-filter-cartoon.png:
+	* data/pixmaps/frei0r-filter-contrast0r.png:
+	* data/pixmaps/frei0r-filter-distort0r.png:
+	* data/pixmaps/frei0r-filter-edgeglow.png:
+	* data/pixmaps/frei0r-filter-equaliz0r.png:
+	* data/pixmaps/frei0r-filter-flippo.png:
+	* data/pixmaps/frei0r-filter-gamma.png:
+	* data/pixmaps/frei0r-filter-glow.png:
+	* data/pixmaps/frei0r-filter-hueshift0r.png:
+	* data/pixmaps/frei0r-filter-invert0r.png:
+	* data/pixmaps/frei0r-filter-k-means-clustering.png:
+	* data/pixmaps/frei0r-filter-lens-correction.png:
+	* data/pixmaps/frei0r-filter-letterb0xed.png:
+	* data/pixmaps/frei0r-filter-nosync0r.png:
+	* data/pixmaps/frei0r-filter-perspective.png:
+	* data/pixmaps/frei0r-filter-pixeliz0r.png:
+	* data/pixmaps/frei0r-filter-rgb-parade.png:
+	* data/pixmaps/frei0r-filter-saturat0r.png:
+	* data/pixmaps/frei0r-filter-scale0tilt.png:
+	* data/pixmaps/frei0r-filter-scanline0r.png:
+	* data/pixmaps/frei0r-filter-sobel.png:
+	* data/pixmaps/frei0r-filter-squareblur.png:
+	* data/pixmaps/frei0r-filter-tehroxx0r.png:
+	* data/pixmaps/frei0r-filter-twolay0r.png:
+	* data/pixmaps/frei0r-filter-vectorscope.png:
+	* data/pixmaps/frei0r-filter-water.png:
+	* data/pixmaps/frei0r-filter-white-balance.png:
+	* data/pixmaps/gamma-correction.png:
+	* data/pixmaps/gaussianblur.png:
+	* data/pixmaps/invisible.png:
+	* data/pixmaps/kaleidoscope.png:
+	* data/pixmaps/marble.png:
+	* data/pixmaps/mirror.png:
+	* data/pixmaps/optv.png:
+	* data/pixmaps/pinch.png:
+	* data/pixmaps/pitivi-advanced-16.png:
+	* data/pixmaps/pitivi-advanced-22.png:
+	* data/pixmaps/pitivi-advanced-24.png:
+	* data/pixmaps/pitivi-group-24.svg:
+	* data/pixmaps/pitivi-group.svg:
+	* data/pixmaps/pitivi-keyframe-24.svg:
+	* data/pixmaps/pitivi-keyframe.svg:
+	* data/pixmaps/pitivi-relink-24.svg:
+	* data/pixmaps/pitivi-relink.svg:
+	* data/pixmaps/pitivi-render-16.png:
+	* data/pixmaps/pitivi-render-22.png:
+	* data/pixmaps/pitivi-render-24.png:
+	* data/pixmaps/pitivi-sound.png:
+	* data/pixmaps/pitivi-split-24.svg:
+	* data/pixmaps/pitivi-split.svg:
+	* data/pixmaps/pitivi-ungroup-24.svg:
+	* data/pixmaps/pitivi-ungroup.svg:
+	* data/pixmaps/pitivi-unlink-24.svg:
+	* data/pixmaps/pitivi-unlink.svg:
+	* data/pixmaps/pitivi-video.png:
+	* data/pixmaps/processing-clip.png:
+	* data/pixmaps/processing-clip.svg:
+	* data/pixmaps/radioactv.png:
+	* data/pixmaps/revtv.png:
+	* data/pixmaps/shagadelictv.png:
+	* data/pixmaps/solarize.png:
+	* data/pixmaps/sphere.png:
+	* data/pixmaps/square.png:
+	* data/pixmaps/stretch.png:
+	* data/pixmaps/threshold0r.png:
+	* data/pixmaps/trimbar-focused.png:
+	* data/pixmaps/trimbar-normal.png:
+	* data/pixmaps/tunnel.png:
+	* data/pixmaps/twirl.png:
+	* data/pixmaps/vertigotv.png:
+	* data/pixmaps/videobalance.png:
+	* data/pixmaps/videobox.png:
+	* data/pixmaps/videocrop.png:
+	* data/pixmaps/warptv.png:
+	* data/pixmaps/waterripple.png:
+	* icons/16x16/Makefile.am:
+	* icons/16x16/pitivi.png:
+	* icons/16x16/pitivi.svg:
+	* icons/22x22/Makefile.am:
+	* icons/22x22/pitivi.png:
+	* icons/22x22/pitivi.svg:
+	* icons/24x24/Makefile.am:
+	* icons/24x24/pitivi.png:
+	* icons/32x32/Makefile.am:
+	* icons/32x32/pitivi.png:
+	* icons/32x32/pitivi.svg:
+	* icons/48x48/Makefile.am:
+	* icons/48x48/pitivi.png:
+	* icons/48x48/pitivi.svg:
+	* icons/Makefile.am:
+	* icons/scalable/Makefile.am:
+	* icons/scalable/pitivi.svg:
+	* pitivi.desktop.in.in:
+	* pitivi/Makefile.am:
+	* pitivi/configure.py.in:
+	* pitivi/pixmaps/.gitignore:
+	* pitivi/pixmaps/Makefile.am:
+	* pitivi/pixmaps/agingtv.png:
+	* pitivi/pixmaps/bulge.png:
+	* pitivi/pixmaps/burn.png:
+	* pitivi/pixmaps/busy.gif:
+	* pitivi/pixmaps/chromium.png:
+	* pitivi/pixmaps/circle.png:
+	* pitivi/pixmaps/cogdownsample.png:
+	* pitivi/pixmaps/color-distance.png:
+	* pitivi/pixmaps/coloreffects.png:
+	* pitivi/pixmaps/defaultthumbnail.svg:
+	* pitivi/pixmaps/dicetv.png:
+	* pitivi/pixmaps/diffuse.png:
+	* pitivi/pixmaps/dilate.png:
+	* pitivi/pixmaps/dodge.png:
+	* pitivi/pixmaps/edgetv.png:
+	* pitivi/pixmaps/exclusion.png:
+	* pitivi/pixmaps/fisheye.png:
+	* pitivi/pixmaps/frei0r-filter-3dflippo.png:
+	* pitivi/pixmaps/frei0r-filter-brightness.png:
+	* pitivi/pixmaps/frei0r-filter-bw0r.png:
+	* pitivi/pixmaps/frei0r-filter-cartoon.png:
+	* pitivi/pixmaps/frei0r-filter-contrast0r.png:
+	* pitivi/pixmaps/frei0r-filter-distort0r.png:
+	* pitivi/pixmaps/frei0r-filter-edgeglow.png:
+	* pitivi/pixmaps/frei0r-filter-equaliz0r.png:
+	* pitivi/pixmaps/frei0r-filter-flippo.png:
+	* pitivi/pixmaps/frei0r-filter-gamma.png:
+	* pitivi/pixmaps/frei0r-filter-glow.png:
+	* pitivi/pixmaps/frei0r-filter-hueshift0r.png:
+	* pitivi/pixmaps/frei0r-filter-invert0r.png:
+	* pitivi/pixmaps/frei0r-filter-k-means-clustering.png:
+	* pitivi/pixmaps/frei0r-filter-lens-correction.png:
+	* pitivi/pixmaps/frei0r-filter-letterb0xed.png:
+	* pitivi/pixmaps/frei0r-filter-nosync0r.png:
+	* pitivi/pixmaps/frei0r-filter-perspective.png:
+	* pitivi/pixmaps/frei0r-filter-pixeliz0r.png:
+	* pitivi/pixmaps/frei0r-filter-rgb-parade.png:
+	* pitivi/pixmaps/frei0r-filter-saturat0r.png:
+	* pitivi/pixmaps/frei0r-filter-scale0tilt.png:
+	* pitivi/pixmaps/frei0r-filter-scanline0r.png:
+	* pitivi/pixmaps/frei0r-filter-sobel.png:
+	* pitivi/pixmaps/frei0r-filter-squareblur.png:
+	* pitivi/pixmaps/frei0r-filter-tehroxx0r.png:
+	* pitivi/pixmaps/frei0r-filter-twolay0r.png:
+	* pitivi/pixmaps/frei0r-filter-vectorscope.png:
+	* pitivi/pixmaps/frei0r-filter-water.png:
+	* pitivi/pixmaps/frei0r-filter-white-balance.png:
+	* pitivi/pixmaps/gamma-correction.png:
+	* pitivi/pixmaps/gaussianblur.png:
+	* pitivi/pixmaps/invisible.png:
+	* pitivi/pixmaps/kaleidoscope.png:
+	* pitivi/pixmaps/marble.png:
+	* pitivi/pixmaps/mirror.png:
+	* pitivi/pixmaps/optv.png:
+	* pitivi/pixmaps/pinch.png:
+	* pitivi/pixmaps/pitivi-advanced-16.png:
+	* pitivi/pixmaps/pitivi-advanced-22.png:
+	* pitivi/pixmaps/pitivi-advanced-24.png:
+	* pitivi/pixmaps/pitivi-group-24.svg:
+	* pitivi/pixmaps/pitivi-group.svg:
+	* pitivi/pixmaps/pitivi-keyframe-24.svg:
+	* pitivi/pixmaps/pitivi-keyframe.svg:
+	* pitivi/pixmaps/pitivi-relink-24.svg:
+	* pitivi/pixmaps/pitivi-relink.svg:
+	* pitivi/pixmaps/pitivi-render-16.png:
+	* pitivi/pixmaps/pitivi-render-22.png:
+	* pitivi/pixmaps/pitivi-render-24.png:
+	* pitivi/pixmaps/pitivi-sound.png:
+	* pitivi/pixmaps/pitivi-split-24.svg:
+	* pitivi/pixmaps/pitivi-split.svg:
+	* pitivi/pixmaps/pitivi-ungroup-24.svg:
+	* pitivi/pixmaps/pitivi-ungroup.svg:
+	* pitivi/pixmaps/pitivi-unlink-24.svg:
+	* pitivi/pixmaps/pitivi-unlink.svg:
+	* pitivi/pixmaps/pitivi-video.png:
+	* pitivi/pixmaps/processing-clip.png:
+	* pitivi/pixmaps/processing-clip.svg:
+	* pitivi/pixmaps/radioactv.png:
+	* pitivi/pixmaps/revtv.png:
+	* pitivi/pixmaps/shagadelictv.png:
+	* pitivi/pixmaps/solarize.png:
+	* pitivi/pixmaps/sphere.png:
+	* pitivi/pixmaps/square.png:
+	* pitivi/pixmaps/stretch.png:
+	* pitivi/pixmaps/threshold0r.png:
+	* pitivi/pixmaps/trimbar-focused.png:
+	* pitivi/pixmaps/trimbar-normal.png:
+	* pitivi/pixmaps/tunnel.png:
+	* pitivi/pixmaps/twirl.png:
+	* pitivi/pixmaps/vertigotv.png:
+	* pitivi/pixmaps/videobalance.png:
+	* pitivi/pixmaps/videobox.png:
+	* pitivi/pixmaps/videocrop.png:
+	* pitivi/pixmaps/warptv.png:
+	* pitivi/pixmaps/waterripple.png:
+	* po/POTFILES.in:
+	  Move our pixmaps and icons into a data/ dir.
+	  And adapt/simplify configure.py.in appropriately
+
+2011-05-13  Stéphane Maniaci <stephane.maniaci@gmail.com>
+
+	* pitivi/configure.py.in:
+	  Only check for Git directory for _in_devel()
+	  SVN/CVS are so nineties.
+
+2011-06-02  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/startupwizard.glade:
+	  ui: Make sure the welcome dialog doesn't appear before the mainwindow
+
+2011-06-02  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
 2011-05-31  Thibault Saunier <thibault.saunier@collabora.co.uk>
 
 	* AUTHORS:
