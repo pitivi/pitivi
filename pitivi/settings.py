@@ -460,8 +460,8 @@ class ExportSettings(Signallable, Loggable):
         self.audiochannels = 2
         self.audiorate = 44100
         self.audiodepth = 16
-        self.vencoder = "theoraenc"
-        self.aencoder = "vorbisenc"
+        self.vencoder = None
+        self.aencoder = None
         self.muxer = "oggmux"
         # A (muxer -> containersettings) map.
         self._containersettings_cache = {}
