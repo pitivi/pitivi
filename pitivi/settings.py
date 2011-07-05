@@ -530,8 +530,8 @@ class ExportSettings(Signallable, Loggable):
 
     def getAudioCaps(self):
         """ Returns the GstCaps corresponding to the audio settings """
-        astr = "rate=%d,channels=%d,depth=%d" % (
-                self.audiorate, self.audiochannels, self.audiodepth)
+        # TODO: Figure out why including 'depth' causes pipeline failures:
+        astr = "rate=%d,channels=%d" % (self.audiorate, self.audiochannels)
         caps_str = "audio/x-raw-int,%s;audio/x-raw-float,%s" % (astr, astr)
         audio_caps = gst.caps_from_string(caps_str)
         if self.aencoder:
