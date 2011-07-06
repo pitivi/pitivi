@@ -137,8 +137,7 @@ class Pipeline(Signallable, Loggable):
         "unhandled-stream": ["factory", "stream"],
         "eos": [],
         "error": ["message", "details"],
-        "element-message": ["message"]
-        }
+        "element-message": ["message"]}
 
     def __init__(self):
         Loggable.__init__(self)
@@ -449,8 +448,11 @@ class Pipeline(Signallable, Loggable):
 
     #{ GStreamer object methods (For Action usage only)
 
-    def _getFactoryEntryForStream(self, factory, stream, create=False):
-        self.debug("factory %r, stream %r", factory, stream)
+    def _getFactoryEntry(self, factory, create=False):
+        """
+        Get the L{FactoryEntry} for the specified L{ObjectFactory}.
+        """
+        self.debug("factory %r", factory)
         try:
             factory_entry = self.factories[factory]
         except KeyError:
@@ -458,7 +460,6 @@ class Pipeline(Signallable, Loggable):
                 raise PipelineError()
 
             change, current, pending = self._pipeline.get_state(0)
-
             if (current > STATE_READY or pending > STATE_READY) and \
                     isinstance(factory, SourceFactory):
                 raise PipelineError("Pipeline not in NULL/READY,"
@@ -472,7 +473,7 @@ class Pipeline(Signallable, Loggable):
 
     def _getStreamEntryForFactoryStream(self, factory, stream=None, create=False):
         self.debug("factory %r, stream %r, create:%r", factory, stream, create)
-        factory_entry = self._getFactoryEntryForStream(factory, stream, create)
+        factory_entry = self._getFactoryEntry(factory, create)
         for k, v in factory_entry.streams.iteritems():
             self.debug("Stream:%r  ==>  %s", k, v)
 
@@ -547,7 +548,7 @@ class Pipeline(Signallable, Loggable):
         self._pipeline.add(bin)
 
         if stream is None:
-            factory_entry = self._getFactoryEntryForStream(factory, stream)
+            factory_entry = self._getFactoryEntry(factory)
 
             for stream in factory.output_streams:
                 factory_entry.streams[stream] = StreamEntry(factory_entry,
