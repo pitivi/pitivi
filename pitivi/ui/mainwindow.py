@@ -64,6 +64,7 @@ from pitivi.ui.common import SPACING
 from pitivi.ui.common import factory_name
 from pitivi.utils import beautify_length
 from pitivi.ui.zoominterface import Zoomable
+from pitivi.ui.filechooserpreview import PreviewWidget
 
 if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -909,6 +910,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         chooser = gtk.FileChooserWidget(action=gtk.FILE_CHOOSER_ACTION_OPEN)
         chooser.set_select_multiple(False)
+        pw = PreviewWidget(self.app)
+        chooser.set_preview_widget(pw)
+        chooser.set_use_preview_label(False)
+        chooser.connect('update-preview', pw.add_preview_request)
         chooser.set_current_folder(self.settings.lastProjectFolder)
         dialog.get_content_area().pack_start(chooser, True, True)
         chooser.show()
