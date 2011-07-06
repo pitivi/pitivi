@@ -781,7 +781,8 @@ class Pipeline(Signallable, Loggable):
 
         stream_entry = self._getStreamEntryForFactoryStream(factory, stream)
         if stream_entry.queue is None:
-            raise PipelineError("Couldn't find Queue for Stream/Factory")
+            # It can happen for example when the queue has not yet been created.
+            return
 
         stream_entry.queue_use_count -= 1
         if stream_entry.queue_use_count == 0:
