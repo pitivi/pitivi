@@ -900,9 +900,9 @@ class Pipeline(Signallable, Loggable):
 
             stream = get_stream_for_caps(caps, pad)
             if stream not in factory_entry.streams:
-                factory_entry.streams[stream] = StreamEntry(factory_entry,
+                stream_entry = StreamEntry(factory_entry,
                         stream, parent=stream_entry)
-                stream_entry = factory_entry.streams[stream]
+                factory_entry.streams[stream] = stream_entry
 
             self._stream_entry_from_pad[pad] = stream_entry
 
