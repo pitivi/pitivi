@@ -41,7 +41,6 @@
                 <property name="show_tips">True</property>
                 <property name="sort_type">mru</property>
                 <signal name="item_activated" handler="_loadCb"/>
-                <signal name="selection_changed" handler="_getFileNameCb"/>
               </object>
               <packing>
                 <property name="position">1</property>

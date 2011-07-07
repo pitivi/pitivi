@@ -28,24 +28,28 @@ class StartUpWizard(object):
         self.window = self.builder.get_object("window1")
         self.window.connect("key-press-event", self._keypressCb)
 
-        chooser = self.builder.get_object("recentchooser2")
+        self.recent_chooser = self.builder.get_object("recentchooser2")
         # FIXME: gtk creates a combo box with only one item, but there is no
         # simple way to hide it.
         filter = gtk.RecentFilter()
         filter.set_name("Projects")
         filter.add_pattern("*.xptv")
-        chooser.add_filter(filter)
+        self.recent_chooser.add_filter(filter)
 
-    def _newProjectCb(self, unused_button4):
+    def _newProjectCb(self, unused_button):
         self.hide()
         # A new project has already been created, so only display
         # the Project Settings dialog.
         self.app.gui.showProjectSettingsDialog()
 
-    def _loadCb(self, unused_button3):
-        self.data = unquote(self.data)
+    def _loadCb(self, unused_recent_chooser):
         self.hide()
-        self.app.projectManager.loadProject(self.data)
+        self.app.projectManager.loadProject(self._getFileName())
+
+    def _getFileName(self):
+        """Get the URI of the project selected in the recent chooser."""
+        uri = self.recent_chooser.get_current_uri()
+        return unquote(uri)
 
     def _keypressCb(self, widget, event):
         if event.keyval == gtk.keysyms.Escape:  # If the user presses "Esc"
@@ -53,10 +57,6 @@ class StartUpWizard(object):
 
     def _onBrowseButtonClickedCb(self, unused_button6):
         self.app.gui.openProject()
-
-    def _getFileNameCb(self, chooser):
-        self.data = chooser.get_current_uri()
-        return self.data
 
     def _quick_start_manual(self, unused_button5):
         webbrowser.open(APPMANUALURL)
