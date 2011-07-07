@@ -23,21 +23,20 @@ import os.path
 from unittest import TestCase
 
 import gobject
-gobject.threads_init()
 import gst
 
 import common
 
-from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
+from pitivi.factories.file import PictureFileSourceFactory
 from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.timeline.track import Track, SourceTrackObject
-from pitivi.timeline.timeline import Timeline, TimelineObject
+from pitivi.timeline.timeline import Timeline
 from pitivi.encode import RenderSinkFactory, RenderFactory
 from pitivi.action import RenderAction
 from pitivi.settings import StreamEncodeSettings, RenderSettings
 from pitivi.stream import VideoStream
 from pitivi.factories.test import VideoTestSourceFactory
-from pitivi.pipeline import Pipeline, PipelineError
+from pitivi.pipeline import Pipeline
 
 
 class TestStillImage(TestCase):

@@ -21,8 +21,6 @@
 
 from unittest import TestCase
 
-import gobject
-gobject.threads_init()
 import gst
 
 from pitivi.pipeline import Pipeline
@@ -32,8 +30,7 @@ from pitivi.factories.test import VideoTestSourceFactory, TestEffectFactory
 from pitivi.stream import VideoStream
 from pitivi.timeline.timeline_undo import TimelineLogObserver, \
         TimelineObjectAdded, TimelineObjectRemoved, \
-        TimelineObjectPropertyChanged, TrackEffectAdded, \
-        TrackEffectRemoved
+        TimelineObjectPropertyChanged, TrackEffectAdded
 from pitivi.undo import UndoableActionLog
 
 

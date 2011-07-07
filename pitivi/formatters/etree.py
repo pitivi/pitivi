@@ -22,7 +22,6 @@
 
 from gettext import gettext as _
 import gobject
-gobject.threads_init()
 import gst
 
 from xml.etree.ElementTree import Element, SubElement, tostring, parse

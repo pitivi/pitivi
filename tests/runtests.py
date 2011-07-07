@@ -2,6 +2,12 @@ import os
 import sys
 import unittest
 
+import gobject
+# This call has to be made before any "import gst" call!
+# We have to do this call here, even though it already is in __init__.py,
+# because this tool is run directly, as an executable.
+gobject.threads_init()
+
 
 def gettestnames(file_names):
     test_names = [file_name[:-3] for file_name in file_names]

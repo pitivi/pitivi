@@ -21,8 +21,6 @@
 
 from unittest import TestCase
 
-import gobject
-gobject.threads_init()
 import gst
 
 from common import StubFactory
@@ -161,8 +159,7 @@ class TestGap(TestCase):
 
         simple = (
             (3 * gst.SECOND, 1 * gst.SECOND),
-            (1 * gst.SECOND, 1 * gst.SECOND)
-        )
+            (1 * gst.SECOND, 1 * gst.SECOND))
 
         objs = []
         for start, duration in simple:

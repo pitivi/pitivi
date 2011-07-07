@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       tests/test_timeline.py
+#       tests/test_timeline_factory.py
 #
 # Copyright (c) 2008, Alessandro Decina <alessandro.decina@collabora.co.uk>
 #
@@ -20,7 +20,6 @@
 # Boston, MA 02110-1301, USA.
 
 import gobject
-gobject.threads_init()
 import gst
 from common import TestCase
 from pitivi.factories.base import ObjectFactoryError

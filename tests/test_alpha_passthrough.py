@@ -22,17 +22,11 @@
 
 from unittest import TestCase
 
-import random
-
-import gobject
-gobject.threads_init()
 import gst
 
 from pitivi.factories.test import VideoTestSourceFactory
 from pitivi.stream import VideoStream
-from pitivi.timeline.track import Track, SourceTrackObject, Interpolator
-from pitivi.elements.mixer import SmartVideomixerBinPropertyHelper
-from pitivi.utils import infinity
+from pitivi.timeline.track import Track, SourceTrackObject
 
 
 def set_one_keyframe(track_object, value):

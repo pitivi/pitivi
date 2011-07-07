@@ -26,8 +26,6 @@ Main GTK+ window
 
 import os
 import gtk
-import gobject
-gobject.threads_init()
 import gst
 from urllib import unquote
 import webbrowser

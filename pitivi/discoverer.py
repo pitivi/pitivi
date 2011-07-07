@@ -27,7 +27,6 @@ Discover file multimedia information.
 from gettext import gettext as _
 import os
 import gobject
-gobject.threads_init()
 import gst
 from gst import pbutils
 import tempfile

@@ -22,8 +22,6 @@
 
 from unittest import TestCase
 
-import gobject
-gobject.threads_init()
 import gst
 from pitivi.utils import beautify_length
 

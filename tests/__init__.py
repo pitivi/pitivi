@@ -1,3 +1,7 @@
+import gobject
+# This call has to be made before any "import gst" call!
+gobject.threads_init()
+
 from pitivi.check import initial_checks
 
 

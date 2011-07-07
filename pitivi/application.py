@@ -25,7 +25,6 @@
 Main application
 """
 import gobject
-gobject.threads_init()
 import gtk
 from optparse import OptionParser
 import os

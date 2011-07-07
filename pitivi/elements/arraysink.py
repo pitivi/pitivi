@@ -23,9 +23,7 @@ Stores audio samples in an array for plotting waveforms
 """
 
 import gobject
-gobject.threads_init()
 import gst
-import gtk
 import array
 from pitivi.utils import native_endianness
 
@@ -40,16 +38,14 @@ class ArraySink(gst.BaseSink):
         "endianness = (int) %s, "
         "channels = (int) 1,"
         "rate = (int) [1, 96000]"
-        % native_endianness
-    )
+        % native_endianness)
 
     __gsttemplates__ = (
         gst.PadTemplate(
             "sink",
             gst.PAD_SINK,
             gst.PAD_ALWAYS,
-            caps
-       ),
+            caps),
     )
 
     def __init__(self):

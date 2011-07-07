@@ -2,8 +2,6 @@
 A collection of objects to use for testing
 """
 
-import gobject
-gobject.threads_init()
 import gst
 import os
 import gc
@@ -38,7 +36,6 @@ class TestCase(unittest.TestCase):
         return ret
 
     def gcverify(self):
-        new = []
         leaked = []
         for obj in gc.get_objects():
             if not isinstance(obj, self._tracked_types) or \
