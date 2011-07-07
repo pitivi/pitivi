@@ -106,6 +106,8 @@ class ElementTreeFormatter(Formatter):
             yield name, value
 
     def _parsePropertyValue(self, value):
+        if value == "":
+            return value
         # We treat the GEnum values differently because they are actually ints.
         if "(GEnum)" in value:
             return int(value.split("(GEnum)")[1])
@@ -293,8 +295,7 @@ class ElementTreeFormatter(Formatter):
         """Get the specified Element as a deserialized dict."""
         values_dict = {}
         for name, value_string in element.attrib.iteritems():
-            if value_string:
-                values_dict[name] = self._parsePropertyValue(value_string)
+            values_dict[name] = self._parsePropertyValue(value_string)
         return values_dict
 
     def _saveProjectSettings(self, settings):

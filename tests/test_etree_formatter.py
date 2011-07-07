@@ -72,6 +72,9 @@ class TestSerialization(TestCase):
         for key, value in values_dict.iteritems():
             self.assertEqual(value, deserialized_values_dict[key])
 
+    def testEmptyValuesDeserialization(self):
+        self.assertEqual("", self.formatter._parsePropertyValue(""))
+
 
 class TestFormatterSave(TestCase):
     def setUp(self):
