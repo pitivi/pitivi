@@ -724,7 +724,7 @@ class ElementTreeFormatter(Formatter):
         self.factoriesnode = self._context.rootelement.find("factories")
         self.timelinenode = self._context.rootelement.find("timeline")
         self._settingsnode = self._context.rootelement.find("export-settings")
-        if project and self._settingsnode != None:
+        if self._settingsnode != None:
             project.setSettings(self._loadProjectSettings(self._settingsnode))
 
         # rediscover the factories
