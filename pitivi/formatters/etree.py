@@ -20,6 +20,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+from gettext import gettext as _
 import gobject
 gobject.threads_init()
 import gst
@@ -424,17 +425,15 @@ class ElementTreeFormatter(Formatter):
         try:
             factory = self.avalaible_effects.getFactoryFromName(factory_name)
         except KeyError:
-            #Find a way to figure out how we could install the missing effect...
-            raise FormatterError(_("The project contains effects that are not\
-                                   avalaibe on the system. It can't be loaded"))
+            # TODO: Find a way to install the missing effect.
+            raise FormatterError(_("The project contains effects which are not "
+                                   "available on the system."))
 
         input_stream = factory.getInputStreams()
         if not input_stream:
             raise FormatterError("cant find effect factory input stream")
         input_stream = input_stream[0]
-
         track_object = klass(factory, input_stream)
-
         track.addTrackObject(track_object)
 
         for name, value_string in self._filterElementProperties(element):
