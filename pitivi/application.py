@@ -475,13 +475,13 @@ def _parse_options(argv):
 
     # Validate options.
     if options.render_output and options.preview:
-        parser.error("-p and -r cannot be used simultaneously")
+        parser.error(_("-p and -r cannot be used simultaneously"))
 
     if options.import_sources and (options.render_output or options.preview):
-        parser.error("-r or -p and -i are incompatible")
+        parser.error(_("-r or -p and -i are incompatible"))
 
     if options.add_to_timeline and not options.import_sources:
-        parser.error("-a requires -i")
+        parser.error(_("-a requires -i"))
 
     # Validate args.
     if options.import_sources:
@@ -489,13 +489,13 @@ def _parse_options(argv):
         pass
     elif options.render_output:
         if len(args) != 1:
-            parser.error("-r requires exactly one PROJECT_FILE")
+            parser.error(_("-r requires exactly one PROJECT_FILE"))
     elif options.preview:
         if len(args) != 1:
-            parser.error("-p requires exactly one PROJECT_FILE")
+            parser.error(_("-p requires exactly one PROJECT_FILE"))
     else:
         if len(args) > 1:
-            parser.error("Cannot open more than one PROJECT_FILE")
+            parser.error(_("Cannot open more than one PROJECT_FILE"))
 
     return options, args
 
