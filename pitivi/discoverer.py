@@ -499,8 +499,8 @@ class Discoverer(Signallable, Loggable):
                 if self.pipeline.set_state(gst.STATE_PLAYING) == gst.STATE_CHANGE_FAILURE:
                     if not self.error:
                         self.error = _("Pipeline didn't want to go to PLAYING.")
-                    self.info("Pipeline didn't want to go to PAUSED")
-                    self._finishAnalysis("failure going to PAUSED")
+                    self.info("Pipeline didn't want to go to PLAYING")
+                    self._finishAnalysis("failure going to PLAYING")
             elif self.unfixed_pads == 0:
                 # check for unfixed_pads until elements are fixed to do
                 # negotiation before pushing in band data
@@ -527,7 +527,6 @@ class Discoverer(Signallable, Loggable):
 
     def _getThumbnailFilenameFromPad(self, pad):
         base = xdg_cache_home()
-        name = self.current_uri
         md5sum = hashlib.md5()
         md5sum.update(self.current_uri)
         name = md5sum.hexdigest() + '.png'
@@ -733,7 +732,6 @@ class Discoverer(Signallable, Loggable):
 
 if __name__ == '__main__':
     import sys
-    import gobject
 
     discoverer = Discoverer()
     discoverer.addUris(['file://%s' % i  for i in sys.argv[1:]])
