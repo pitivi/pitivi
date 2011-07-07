@@ -832,8 +832,12 @@ class ElementTreeFormatter(Formatter):
             # someone else is using discoverer, this signal isn't for us
             return
 
-        self.emit("new-project-failed", project_uri,
-                FormatterError("%s: %s" % (error, detail)))
+        message = _("Failed loading %(uri)s.") % {"uri": uri}
+        message += "\n\n%s" % error
+        if detail:
+            message += "\n\n%s" % detail
+        formatter_error = FormatterError(message)
+        self.emit("new-project-failed", project_uri, formatter_error)
 
     def newProject(self):
         project = Formatter.newProject(self)
