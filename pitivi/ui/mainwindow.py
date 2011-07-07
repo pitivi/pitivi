@@ -844,19 +844,17 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _projectManagerRevertingToSavedCb(self, projectManager, project):
         if project.hasUnsavedModifications():
             dialog = gtk.MessageDialog(self,
-                                gtk.DIALOG_MODAL,
-                                gtk.MESSAGE_WARNING,
-                                gtk.BUTTONS_NONE,
-                                _("Do you want to reload current project?")
-                                )
+                    gtk.DIALOG_MODAL,
+                    gtk.MESSAGE_WARNING,
+                    gtk.BUTTONS_NONE,
+                    _("Do you want to reload current project?"))
             dialog.set_icon_name("pitivi")
             dialog.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_NO,
-                                        gtk.STOCK_REVERT_TO_SAVED, gtk.RESPONSE_YES)
+                    gtk.STOCK_REVERT_TO_SAVED, gtk.RESPONSE_YES)
             dialog.set_title(_("Revert to saved project"))
             dialog.set_resizable(False)
             dialog.set_property("secondary-text",
-                                            _("All unsaved changes will be lost.")
-                                        )
+                    _("All unsaved changes will be lost."))
             dialog.set_default_response(gtk.RESPONSE_NO)
             dialog.set_transient_for(self)
             response = dialog.run()
@@ -873,7 +871,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             gtk.BUTTONS_OK,
             _('Unable to load project "%s"') % project_filename)
         dialog.set_icon_name("pitivi")
-        dialog.set_title(_("Error Loading File"))
+        dialog.set_title(_("Error Loading Project"))
         dialog.set_property("secondary-text", unquote(str(exception)))
         dialog.set_transient_for(self)
         dialog.run()
