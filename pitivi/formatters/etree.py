@@ -717,10 +717,10 @@ class ElementTreeFormatter(Formatter):
 
         return True
 
-    def _loadProject(self, location, project):
-        self.debug("location:%s, project:%r", location, project)
+    def _loadProject(self, project_uri, project):
+        self.debug("project_uri:%s, project:%r", project_uri, project)
         # open the given location
-        self._context.rootelement = parse(location.split('://', 1)[1])
+        self._context.rootelement = parse(project_uri.split('://', 1)[1])
         self.factoriesnode = self._context.rootelement.find("factories")
         self.timelinenode = self._context.rootelement.find("timeline")
         self._settingsnode = self._context.rootelement.find("export-settings")
@@ -732,7 +732,7 @@ class ElementTreeFormatter(Formatter):
         try:
             sources = self._getSources()
         except FormatterError, e:
-            self.emit("new-project-failed", location, e)
+            self.emit("new-project-failed", project_uri, e)
             return
 
         uris = [source.uri for source in sources]
@@ -741,7 +741,7 @@ class ElementTreeFormatter(Formatter):
         discoverer.connect("discovery-done", self._discovererDiscoveryDoneCb,
                 project, sources, uris, closure)
         discoverer.connect("discovery-error", self._discovererDiscoveryErrorCb,
-                project, sources, uris, closure)
+                project, sources, uris, closure, project_uri)
 
         if not sources:
             self._finishLoadingProject(project)
@@ -828,12 +828,12 @@ class ElementTreeFormatter(Formatter):
         discoverer.addUri(next.uri)
 
     def _discovererDiscoveryErrorCb(self, discoverer, uri, error, detail,
-            project, sources, uris, closure):
+            project, sources, uris, closure, project_uri):
         if uri not in uris:
             # someone else is using discoverer, this signal isn't for us
             return
 
-        self.emit("new-project-failed", uri,
+        self.emit("new-project-failed", project_uri,
                 FormatterError("%s: %s" % (error, detail)))
 
     def newProject(self):
