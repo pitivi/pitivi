@@ -38,10 +38,13 @@ class StartUpWizard(object):
 
     def _newProjectCb(self, unused_button4):
         self.hide()
+        # A new project has already been created, so only display
+        # the Project Settings dialog.
         self.app.gui.showProjectSettingsDialog()
 
     def _loadCb(self, unused_button3):
         self.data = unquote(self.data)
+        self.hide()
         self.app.projectManager.loadProject(self.data)
 
     def _keypressCb(self, widget, event):
