@@ -136,7 +136,7 @@ class ProjectManager(Signallable, Loggable):
         """
         if formatter is None:
             if project.format:
-                formatter == project.format
+                formatter = project.format
             else:
                 from pitivi.formatters.etree import ElementTreeFormatter
                 formatter = ElementTreeFormatter(self.avalaible_effects)
