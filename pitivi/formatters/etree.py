@@ -116,8 +116,12 @@ class ElementTreeFormatter(Formatter):
         # and gst.Caps() fails to parse it, because it has "L" at the end.
         if "(guint64)" in value:
             value = value.rstrip('lL')
-        # TODO: Use what gst.Caps() uses to parse a property value.
-        caps = gst.Caps("structure1, property1=%s;" % value)
+        try:
+            # TODO: Use what gst.Caps() uses to parse a property value.
+            caps = gst.Caps("structure1, property1=%s;" % value)
+        except TypeError, exception:
+            # Report the value which caused the exception.
+            raise Exception(exception, value)
         structure = caps[0]
         return structure["property1"]
 
