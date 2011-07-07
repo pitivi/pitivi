@@ -31,10 +31,10 @@ class StartUpWizard(object):
         chooser = self.builder.get_object("recentchooser2")
         # FIXME: gtk creates a combo box with only one item, but there is no
         # simple way to hide it.
-        filtre = gtk.RecentFilter()
-        filtre.set_name("Projects")
-        filtre.add_pattern("*.xptv")
-        chooser.add_filter(filtre)
+        filter = gtk.RecentFilter()
+        filter.set_name("Projects")
+        filter.add_pattern("*.xptv")
+        chooser.add_filter(filter)
 
     def _newProjectCb(self, unused_button4):
         self.hide()
