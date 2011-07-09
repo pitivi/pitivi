@@ -1180,7 +1180,7 @@ class Track(Signallable, Loggable):
         if self._update_transitions:
             self.updateTransitions()
 
-    def removeTrackObject(self, track_object):
+    def _justRemoveTrackObject(self, track_object):
         if track_object.track is None:
             raise TrackError()
 
@@ -1197,17 +1197,29 @@ class Track(Signallable, Loggable):
         track_object.track = None
 
         self._disconnectTrackObjectSignals(track_object)
+        self.emit('track-object-removed', track_object)
+
+    def removeTrackObject(self, track_object):
+        self._justRemoveTrackObject(track_object)
 
         self._updateMaxPriority()
         self.updateDefaultSources()
 
-        self.emit('track-object-removed', track_object)
+        if self._update_transitions:
+            self.updateTransitions()
+
+    def removeMultipleTrackObjects(self, track_objects):
+        for track_object in track_objects:
+            self._justRemoveTrackObject(track_object)
+
+        self._updateMaxPriority()
+        self.updateDefaultSources()
+
         if self._update_transitions:
             self.updateTransitions()
 
     def removeAllTrackObjects(self):
-        for track_object in list(self.track_objects):
-            self.removeTrackObject(track_object)
+        self.removeMultipleTrackObjects(list(self.track_objects))
 
     def _updateMaxPriority(self):
         priorities = [track_object.priority for track_object in

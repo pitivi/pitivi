@@ -1634,14 +1634,37 @@ class Timeline(Signallable, Loggable):
                 track = track_object.track
                 track.removeTrackObject(track_object)
 
+    def removeMultipleTimelineObjects(self, objs, deep=False):
+        """
+        Remove multiple objects from the Timeline.
+
+        @param objs: The collection of objects to remove
+        @type obj: collection(L{TimelineObject})
+        @param deep: If C{True}, remove the L{TrackObject}s associated with
+             these objects.
+        @type deep: C{bool}
+        @raises TimelineError: If the object doesn't belong to the timeline.
+        """
+        for obj in objs:
+            self.removeTimelineObject(obj, False)
+
+        # If we are going to remove the associated track objects, first
+        # group them by track so we can use the track's removeMultiple method.
+        if deep:
+            track_aggregate = collections.defaultdict(list)
+            for obj in objs:
+                for track_object in obj.track_objects:
+                    track_aggregate[track_object.track].append(track_object)
+            for track, objects_to_remove in track_aggregate.items():
+                track.removeMultipleTrackObjects(objects_to_remove)
+
     def removeFactory(self, factory):
         """Remove every instance factory in the timeline
         @param factory: the factory to remove from the timeline
         """
         objs = [obj for obj in self.timeline_objects if obj.factory is
             factory]
-        for obj in objs:
-            self.removeTimelineObject(obj, deep=True)
+        self.removeMultipleTimelineObjects(objs, deep=True)
 
     def usesFactory(self, factory):
         """
@@ -1979,8 +2002,7 @@ class Timeline(Signallable, Loggable):
         Removes all the currently selected L{TimelineObject}s from the Timeline.
         """
         self.unlinkSelection()
-        for timeline_object in self.selection:
-            self.removeTimelineObject(timeline_object, deep=True)
+        self.removeMultipleTimelineObjects(self.selection, deep=True)
         self.selection.setSelection(set([]), SELECT)
 
     def split(self, time):
