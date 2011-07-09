@@ -29,7 +29,7 @@ def copy_files_to_tmp_dir(files):
 
 def main():
     modified_files = system('git', 'diff-index', '--cached',
-        '--name-only', 'HEAD', '--diff-filter', 'ACMR').split("\n")[:-1]
+        '--name-only', 'HEAD', '--diff-filter=ACMR').split("\n")[:-1]
     output_message = None
 
     tempdir = copy_files_to_tmp_dir(modified_files)
