@@ -370,10 +370,6 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
 
     def __init__(self, debug=False):
         FullGuiPitivi.__init__(self, debug)
-        self.projectManager.newBlankProject()
-        self.projectManager.connect("new-project-failed", self._projectFailedCb)
-        self.projectManager.connect("new-project-loaded", self._projectLoadedCb)
-        self.projectManager.connect("new-project-loading", self._projectLoadingCb)
 
     def _createGui(self):
         self.wizard = StartUpWizard(self)
@@ -381,18 +377,6 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
 
     def _showGui(self):
         FullGuiPitivi._showGui(self)
-        self.wizard.show()
-
-    def _projectLoadingCb(self, unused_project_manager, project):
-        self.wizard.hide()
-
-    def _projectLoadedCb(self, unused_project_manager, project):
-        self.projectManager.disconnect_by_function(self._projectFailedCb)
-        self.projectManager.disconnect_by_function(self._projectLoadedCb)
-        del self.wizard
-
-    def _projectFailedCb(self, unused_project_manager, unused_uri,
-            unused_exception):
         self.wizard.show()
 
 
@@ -404,7 +388,6 @@ class PreviewGuiPitivi(GuiPitivi):
 
     def __init__(self, project_filename, debug=False):
         GuiPitivi.__init__(self, debug)
-
         self._loadProject(project_filename)
 
     def _createGui(self):

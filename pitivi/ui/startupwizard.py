@@ -58,11 +58,16 @@ class StartUpWizard(object):
         filter.add_pattern("*.xptv")
         self.recent_chooser.add_filter(filter)
 
+        self.app.projectManager.connect("new-project-failed",
+                self._projectFailedCb)
+        self.app.projectManager.connect("new-project-loaded",
+                self._projectLoadedCb)
+        self.app.projectManager.connect("new-project-loading",
+                self._projectLoadingCb)
+
     def _newProjectCb(self, unused_button):
         """Handle a click on the New (Project) button."""
-        self.hide()
-        # A new project has already been created, so only display
-        # the Project Settings dialog.
+        self.app.projectManager.newBlankProject()
         self.app.gui.showProjectSettingsDialog()
 
     def _loadCb(self, unused_recent_chooser):
@@ -78,7 +83,7 @@ class StartUpWizard(object):
         """Handle a key press event on the dialog."""
         if event.keyval == gtk.keysyms.Escape:
             # The user pressed "Esc".
-            self.hide()
+            self.app.projectManager.newBlankProject()
 
     def _onBrowseButtonClickedCb(self, unused_button6):
         """Handle a click on the Browse button."""
@@ -90,7 +95,7 @@ class StartUpWizard(object):
 
     def _dialogCloseCb(self, unused_widget):
         """Handle the closing of the dialog."""
-        self.hide()
+        self.app.projectManager.newBlankProject()
 
     def show(self):
         self.window.set_transient_for(self.app.gui)
@@ -99,3 +104,22 @@ class StartUpWizard(object):
 
     def hide(self):
         self.window.hide()
+
+    def _projectFailedCb(self, unused_project_manager, unused_uri,
+            unused_exception):
+        """Handle the failure of a project open operation."""
+        self.show()
+
+    def _projectLoadedCb(self, unused_project_manager, unused_project):
+        """Handle the success of a project load operation.
+
+        All the create or load project usage scenarios must generate
+        a new-project-loaded signal from self.app.projectManager!
+        """
+        self.app.projectManager.disconnect_by_function(self._projectFailedCb)
+        self.app.projectManager.disconnect_by_function(self._projectLoadedCb)
+        self.app.projectManager.disconnect_by_function(self._projectLoadingCb)
+
+    def _projectLoadingCb(self, unused_project_manager, unused_project):
+        """Handle the start of a project load operation."""
+        self.hide()
