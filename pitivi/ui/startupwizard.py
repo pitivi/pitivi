@@ -43,7 +43,6 @@ class StartUpWizard(object):
         self.app.gui.showProjectSettingsDialog()
 
     def _loadCb(self, unused_recent_chooser):
-        self.hide()
         self.app.projectManager.loadProject(self._getFileName())
 
     def _getFileName(self):

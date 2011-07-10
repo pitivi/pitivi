@@ -373,6 +373,7 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
         self.projectManager.newBlankProject()
         self.projectManager.connect("new-project-failed", self._projectFailedCb)
         self.projectManager.connect("new-project-loaded", self._projectLoadedCb)
+        self.projectManager.connect("new-project-loading", self._projectLoadingCb)
 
     def _createGui(self):
         self.wizard = StartUpWizard(self)
@@ -381,6 +382,9 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
     def _showGui(self):
         FullGuiPitivi._showGui(self)
         self.wizard.show()
+
+    def _projectLoadingCb(self, unused_project_manager, project):
+        self.wizard.hide()
 
     def _projectLoadedCb(self, unused_project_manager, project):
         self.projectManager.disconnect_by_function(self._projectFailedCb)
