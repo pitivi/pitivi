@@ -49,7 +49,6 @@ class StartUpWizard(object):
         self.builder.connect_signals(self)
 
         self.window = self.builder.get_object("window1")
-        self.window.connect("key-press-event", self._keypressCb)
 
         self.recent_chooser = self.builder.get_object("recentchooser2")
         # FIXME: gtk creates a combo box with only one item, but there is no
@@ -60,12 +59,14 @@ class StartUpWizard(object):
         self.recent_chooser.add_filter(filter)
 
     def _newProjectCb(self, unused_button):
+        """Handle a click on the New (Project) button."""
         self.hide()
         # A new project has already been created, so only display
         # the Project Settings dialog.
         self.app.gui.showProjectSettingsDialog()
 
     def _loadCb(self, unused_recent_chooser):
+        """Handle a double-click on the recent chooser."""
         self.app.projectManager.loadProject(self._getFileName())
 
     def _getFileName(self):
@@ -73,11 +74,14 @@ class StartUpWizard(object):
         uri = self.recent_chooser.get_current_uri()
         return unquote(uri)
 
-    def _keypressCb(self, widget, event):
-        if event.keyval == gtk.keysyms.Escape:  # If the user presses "Esc"
+    def _keyPressCb(self, widget, event):
+        """Handle a key press event on the dialog."""
+        if event.keyval == gtk.keysyms.Escape:
+            # The user pressed "Esc".
             self.hide()
 
     def _onBrowseButtonClickedCb(self, unused_button6):
+        """Handle a click on the Browse button."""
         self.app.gui.openProject()
 
     def _userManualCb(self, unused_button):
@@ -85,6 +89,7 @@ class StartUpWizard(object):
         webbrowser.open(APPMANUALURL)
 
     def _dialogCloseCb(self, unused_widget):
+        """Handle the closing of the dialog."""
         self.hide()
 
     def show(self):
