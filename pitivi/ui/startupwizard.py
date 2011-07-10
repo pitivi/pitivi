@@ -80,7 +80,8 @@ class StartUpWizard(object):
     def _onBrowseButtonClickedCb(self, unused_button6):
         self.app.gui.openProject()
 
-    def _quick_start_manual(self, unused_button5):
+    def _userManualCb(self, unused_button):
+        """Handle a click on the Help button."""
         webbrowser.open(APPMANUALURL)
 
     def _dialogCloseCb(self, unused_widget):

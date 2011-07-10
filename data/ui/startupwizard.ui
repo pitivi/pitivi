@@ -78,7 +78,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="_quick_start_manual"/>
+                <signal name="clicked" handler="_userManualCb"/>
               </object>
               <packing>
                 <property name="expand">False</property>
