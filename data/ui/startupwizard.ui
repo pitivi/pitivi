@@ -109,20 +109,6 @@
       </object>
     </child>
   </object>
-  <object class="GtkVPaned" id="vpaned2">
-    <property name="visible">True</property>
-    <property name="can_focus">True</property>
-    <child>
-      <placeholder/>
-    </child>
-    <child>
-      <placeholder/>
-    </child>
-  </object>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="stock">gtk-dialog-question</property>
-  </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="stock">gtk-open</property>
