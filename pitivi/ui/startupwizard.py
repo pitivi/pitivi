@@ -23,6 +23,8 @@ import os
 import gtk
 import webbrowser
 
+from gettext import gettext as _
+
 from pitivi.configure import get_ui_dir
 from pitivi.configure import APPMANUALURL
 
@@ -53,7 +55,7 @@ class StartUpWizard(object):
         # FIXME: gtk creates a combo box with only one item, but there is no
         # simple way to hide it.
         filter = gtk.RecentFilter()
-        filter.set_name("Projects")
+        filter.set_name(_("Projects"))
         filter.add_pattern("*.xptv")
         self.recent_chooser.add_filter(filter)
 
