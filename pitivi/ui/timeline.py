@@ -785,7 +785,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def deleteSelected(self, unused_action):
         if self.timeline:
             self.app.action_log.begin("delete clip")
+            self.timeline.disableUpdates()
             self.timeline.deleteSelection()
+            self.timeline.enableUpdates()
             self.app.action_log.commit()
 
     def unlinkSelected(self, unused_action):
