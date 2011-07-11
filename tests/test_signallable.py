@@ -6,8 +6,7 @@ class myobject(Signallable):
 
     __signals__ = {
         "signal-oneargs": ["firstarg"],
-        "signal-noargs": []
-        }
+        "signal-noargs": []}
 
     def emit_signal_one_args(self, firstarg):
         self.emit("signal-oneargs", firstarg)
@@ -19,8 +18,7 @@ class myobject(Signallable):
 class mysubobject(myobject):
 
     __signals__ = {
-        "subobject-noargs": None
-        }
+        "subobject-noargs": None}
 
     def emit_sub_signal_no_args(self):
         self.emit("subobject-noargs")
@@ -158,6 +156,40 @@ class TestSignalisation(unittest.TestCase):
                           function_cb)
 
         self.object.emit("signal-oneargs", 42)
+
+    def test_disconnect_while_handling(self):
+        # When the handler being called disconnects itself,
+        # the next handler must not be skipped.
+
+        def firstCb(unused_object):
+            self.object.disconnect_by_function(firstCb)
+
+        def secondCb(unused_object):
+            self.called = True
+
+        self.called = False
+        self.object.connect("signal-oneargs", firstCb)
+        self.object.connect("signal-oneargs", secondCb)
+        self.object.emit("signal-oneargs")
+        self.assertTrue(self.called)
+        del self.called
+
+    def test_disconnect_following_handler_while_handling(self):
+        # When the handler being called disconnects a following handler,
+        # the following handler must be skipped.
+
+        def firstCb(unused_object):
+            self.object.disconnect_by_function(secondCb)
+
+        def secondCb(unused_object):
+            self.called = True
+
+        self.called = False
+        self.object.connect("signal-oneargs", firstCb)
+        self.object.connect("signal-oneargs", secondCb)
+        self.object.emit("signal-oneargs")
+        self.assertFalse(self.called)
+        del self.called
 
     def test04_emit01(self):
         # signal: no arguments

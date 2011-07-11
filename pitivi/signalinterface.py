@@ -111,7 +111,13 @@ class Signallable(object):
             # will concatenate the given args/kwargs with
             # the ones supplied in .connect()
             res = None
-            for sigid in self.handlers[signame]:
+            # Create a copy because if the handler being executed disconnects,
+            # the next handler will not be called.
+            signame_handlers = list(self.handlers[signame])
+            for sigid in signame_handlers:
+                if sigid not in self.handlers[signame]:
+                    # The handler has been disconnected in the meantime!
+                    continue
                 # cb: callable
                 cb, orar, kwar = self.ids[sigid]
                 ar = args[:] + orar
