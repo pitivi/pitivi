@@ -12,7 +12,7 @@
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">normal</property>
     <property name="skip_taskbar_hint">True</property>
-    <signal name="destroy_event" handler="_dialogCloseCb"/>
+    <signal name="delete_event" handler="_deleteCb"/>
     <signal name="key_press_event" handler="_keyPressCb"/>
     <child>
       <object class="GtkHBox" id="hbox2">

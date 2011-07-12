@@ -93,8 +93,8 @@ class StartUpWizard(object):
         """Handle a click on the Help button."""
         webbrowser.open(APPMANUALURL)
 
-    def _dialogCloseCb(self, unused_widget):
-        """Handle the closing of the dialog."""
+    def _deleteCb(self, unused_widget, event):
+        """Handle a click on the X button of the dialog."""
         self.app.projectManager.newBlankProject()
 
     def show(self):
