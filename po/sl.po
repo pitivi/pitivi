@@ -851,7 +851,7 @@ msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
 "Please specify its new location:"
 msgstr ""
-"Naslednja datoteka je bila premaknjena: \"<b>%s</b>\" (trajanje: %s)\n"
+"Datoteka je bila premaknjena: \"<b>%s</b>\"\n"
 "Navedite njeno novo mesto:"
 
 #: ../pitivi/ui/mainwindow.py:901
