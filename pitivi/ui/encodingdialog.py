@@ -352,6 +352,16 @@ class EncodingDialog(Renderer, Loggable):
         self.render_presets.restorePreset(preset_name)
         self._updateRenderPresetButtons()
 
+    def _saveRenderPresetButtonClickedCb(self, button):
+        self.render_presets.savePreset()
+        self.save_render_preset_button.set_sensitive(False)
+
+    def _copyRenderPresets(self, cur_preset):
+        #  Copies current settings to presets
+
+        self.render_presets.savePreset()
+        self.render_presets.save()
+
     def _presetChangedCb(self, selection, mgr, update_preset_buttons_func):
         """Handle the selection of a preset."""
         model, iter_ = selection.get_selected()
