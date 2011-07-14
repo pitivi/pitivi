@@ -1,0 +1,13 @@
+{
+    "name": "iPod / iPhone", 
+    "container": "avimux", 
+    "vcodec": "x264enc",
+    "width": 320, 
+    "height": 240,
+    "framerate-num": 30,
+    "framerate-denom": 1,           
+    "acodec": "lame", 
+    "depth": 32, 
+    "sample-rate": 44100, 
+    "channels": 2 
+}

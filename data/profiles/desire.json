@@ -1,0 +1,13 @@
+{
+    "name": "HTC Desire", 
+    "container": "mp4mux", 
+    "vcodec": "x264enc",
+    "width": 800, 
+    "height": 480,
+    "framerate-num": 30,
+    "framerate-denom": 1,           
+    "acodec": "faac", 
+    "depth": 8, 
+    "sample-rate": 96000, 
+    "channels": 1 
+}
