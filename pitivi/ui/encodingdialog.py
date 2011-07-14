@@ -662,3 +662,6 @@ class EncodingDialog(Renderer, Loggable):
     def destroy(self):
         self._updateProjectSettings()
         self.window.destroy()
+
+    def _responseCb(self, unused_widget, response):
+        self.render_presets.save()
