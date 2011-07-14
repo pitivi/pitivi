@@ -45,6 +45,7 @@ from pitivi.ui.common import\
     get_combo_value,\
     set_combo_value
 
+from pitivi.ui.preset import RenderPresetManager
 
 def beautify_factoryname(factory):
     """Returns a nice name for the specified gst.ElementFactory instance."""
@@ -161,6 +162,162 @@ class EncodingDialog(Renderer, Loggable):
         self.window.connect("delete-event", self._deleteEventCb)
         self.settings.connect("settings-changed", self._settingsChanged)
 
+        self.render_presets = RenderPresetManager()
+        self.render_presets.load()
+
+        self._fillPresetsTreeview(
+                self.render_preset_treeview, self.render_presets,
+                self._updateRenderPresetButtons)
+
+        # Bind widgets to RenderPresetsManager
+        self.bindCombo(self.render_presets, "channels",
+            self.channels_combo)
+        self.bindCombo(self.render_presets, "sample-rate",
+            self.sample_rate_combo)
+        self.bindCombo(self.render_presets, "depth",
+            self.sample_depth_combo)
+        self.bindCombo(self.render_presets, "acodec",
+            self.audio_encoder_combo)
+        self.bindCombo(self.render_presets, "vcodec",
+            self.video_encoder_combo)
+        self.bindCombo(self.render_presets, "container",
+            self.muxercombobox)
+        self.bindCombo(self.render_presets, "frame-rate",
+            self.frame_rate_combo)
+        self.bindHeight(self.render_presets)
+        self.bindWidth(self.render_presets)
+
+    def bindCombo(self, mgr, name, widget):
+        if name == "container":
+            mgr.bindWidget(name,
+                lambda x: self.muxer_setter(widget, x),
+                lambda: get_combo_value(widget).get_name())
+
+        elif name == "acodec":
+            mgr.bindWidget(name,
+                lambda x: self.acodec_setter(widget, x),
+                lambda: get_combo_value(widget).get_name())
+
+        elif name == "vcodec":
+            mgr.bindWidget(name,
+                lambda x: self.vcodec_setter(widget, x),
+                lambda: get_combo_value(widget).get_name())
+
+        elif name == "depth":
+            mgr.bindWidget(name,
+                lambda x: self.sample_depth_setter(widget, x),
+                lambda: get_combo_value(widget))
+
+        elif name == "sample-rate":
+            mgr.bindWidget(name,
+                lambda x: self.sample_rate_setter(widget, x),
+                lambda: get_combo_value(widget))
+
+        elif name == "channels":
+            mgr.bindWidget(name,
+                lambda x: self.channels_setter(widget, x),
+                lambda: get_combo_value(widget))
+
+        elif name == "frame-rate":
+            mgr.bindWidget(name,
+                lambda x: self.framerate_setter(widget, x),
+                lambda: get_combo_value(widget))
+
+    def muxer_setter(self, widget, value):
+        set_combo_value(widget, gst.element_factory_find(value))
+        self.settings.setEncoders(muxer=value)
+
+        # Update the extension of the filename.
+        basename = os.path.splitext(self.fileentry.get_text())[0]
+        self.updateFilename(basename)
+
+        # Update muxer-dependent widgets.
+        self.muxer_combo_changing = True
+        try:
+            self.updateAvailableEncoders()
+        finally:
+            self.muxer_combo_changing = False
+
+    def acodec_setter(self, widget, value):
+        set_combo_value(widget, gst.element_factory_find(value))
+        self.settings.setEncoders(aencoder=value)
+        if not self.muxer_combo_changing:
+            # The user directly changed the audio encoder combo.
+            self.preferred_aencoder = value
+
+    def vcodec_setter(self, widget, value):
+        set_combo_value(widget, gst.element_factory_find(value))
+        self.settings.setEncoders(vencoder=value)
+        if not self.muxer_combo_changing:
+            # The user directly changed the video encoder combo.
+            self.preferred_vencoder = value
+
+    def sample_depth_setter(self, widget, value):
+        set_combo_value(widget, value)
+        self.settings.setAudioProperties(depth=value)
+
+    def sample_rate_setter(self, widget, value):
+        set_combo_value(widget, value)
+        self.settings.setAudioProperties(rate=value)
+
+    def channels_setter(self, widget, value):
+        set_combo_value(widget, value)
+        self.settings.setAudioProperties(nbchanns=value)
+
+    def framerate_setter(self, widget, value):
+        set_combo_value(widget, value)
+        self.settings.setVideoProperties(framerate=value)
+
+    def bindHeight(self, mgr):
+        mgr.bindWidget("height",
+                       lambda x: self.settings.setVideoProperties(height=x),
+                       lambda: self.getDimension("height"))
+
+    def bindWidth(self, mgr):
+        mgr.bindWidget("width",
+                       lambda x: self.settings.setVideoProperties(width=x),
+                       lambda: self.getDimension("width"))
+
+    def getDimension(self, dimension):
+        value = self.settings.getVideoWidthAndHeight()
+        if dimension == "height":
+            return value[1]
+        elif dimension == "width":
+            return value[0]
+
+    def _fillPresetsTreeview(self, treeview, mgr, update_buttons_func):
+        """Set up the specified treeview to display the specified presets.
+
+        @param treeview: The treeview for displaying the presets.
+        @type treeview: TreeView
+        @param mgr: The preset manager.
+        @type mgr: PresetManager
+        @param update_buttons_func: A function which updates the buttons for
+        removing and saving a preset, enabling or disabling them accordingly.
+        @type update_buttons_func: function
+        """
+        renderer = gtk.CellRendererText()
+        renderer.props.editable = True
+        column = gtk.TreeViewColumn("Preset", renderer, text=0)
+        treeview.append_column(column)
+        treeview.props.headers_visible = False
+        model = mgr.getModel()
+        treeview.set_model(model)
+        treeview.get_selection().connect("changed", self._presetChangedCb,
+            mgr, update_buttons_func)
+
+    def _presetChangedCb(self, selection, mgr, update_preset_buttons_func):
+        """Handle the selection of a preset."""
+        model, iter_ = selection.get_selected()
+        if iter_:
+            self.selected_preset = model[iter_][0]
+        else:
+            self.selected_preset = None
+
+        mgr.restorePreset(self.selected_preset)
+        self._displaySettings()
+        update_preset_buttons_func()
+
     def _setProperties(self):
         self.window = self.builder.get_object("render-dialog")
         self.selected_only_button = self.builder.get_object(
@@ -180,6 +337,12 @@ class EncodingDialog(Renderer, Loggable):
         self.filebutton = self.builder.get_object("filebutton")
         self.fileentry = self.builder.get_object("fileentry")
         self.resolution_label = self.builder.get_object("resolution_label")
+        self.render_preset_treeview = self.builder.get_object(
+                                        "render_preset_treeview")
+        self.save_render_preset_button = self.builder.get_object(
+                                        "save_render_preset_button")
+        self.remove_render_preset_button = self.builder.get_object(
+                                        "remove_render_preset_button")
 
     def _settingsChanged(self, settings):
         self.updateResolution()
