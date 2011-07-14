@@ -362,6 +362,12 @@ class EncodingDialog(Renderer, Loggable):
         self.render_presets.savePreset()
         self.render_presets.save()
 
+    def _removeRenderPresetButtonClickedCb(self, button):
+        selection = self.render_preset_treeview.get_selection()
+        model, iter_ = selection.get_selected()
+        if iter_:
+            self.render_presets.removePreset(model[iter_][0])
+
     def _presetChangedCb(self, selection, mgr, update_preset_buttons_func):
         """Handle the selection of a preset."""
         model, iter_ = selection.get_selected()
