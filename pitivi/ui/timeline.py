@@ -163,8 +163,9 @@ class InfoStub(gtk.HBox, Loggable):
         self.infolabel.set_alignment(0, 0.5)
 
         self.questionbutton = gtk.Button()
-        self.questionbutton.set_image(gtk.image_new_from_stock(gtk.STOCK_INFO,
-                                                               gtk.ICON_SIZE_SMALL_TOOLBAR))
+        self.infoicon = gtk.Image()
+        self.infoicon.set_from_stock(gtk.STOCK_INFO, gtk.ICON_SIZE_SMALL_TOOLBAR)
+        self.questionbutton.add(self.infoicon)
         self.questionbutton.connect("clicked", self._questionButtonClickedCb)
         self._questionshowing = False
 
