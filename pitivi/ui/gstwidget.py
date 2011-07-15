@@ -151,8 +151,8 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
     def _getResetToDefaultValueButton(self, prop, widget):
         icon = gtk.Image()
         icon.set_from_stock('gtk-clear', gtk.ICON_SIZE_MENU)
-        button = gtk.Button(label='')
-        button.set_image(icon)
+        button = gtk.Button()
+        button.add(icon)
         button.set_tooltip_text(_("Reset to default value"))
         button.connect('clicked', self._defaultBtnClickedCb, widget)
         return button
