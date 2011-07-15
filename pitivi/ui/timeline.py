@@ -242,12 +242,17 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # zooming slider's "zoom fit" button
         zoom_controls_hbox = gtk.HBox()
-        zoom_best_fit_button = gtk.Button(_("Zoom"))
-        zoom_best_fit_button.set_relief(gtk.RELIEF_NONE)
-        zoom_best_fit_button.set_tooltip_text(ZOOM_FIT)
-        zoom_best_fit_button.set_image(gtk.image_new_from_stock(gtk.STOCK_ZOOM_FIT, gtk.ICON_SIZE_BUTTON))
-        zoom_best_fit_button.connect("clicked", self._zoomFitCb)
-        zoom_controls_hbox.pack_start(zoom_best_fit_button)
+        zoom_fit_btn = gtk.Button()
+        zoom_fit_btn.set_relief(gtk.RELIEF_NONE)
+        zoom_fit_btn.set_tooltip_text(ZOOM_FIT)
+        zoom_fit_icon = gtk.Image()
+        zoom_fit_icon.set_from_stock(gtk.STOCK_ZOOM_FIT, gtk.ICON_SIZE_BUTTON)
+        zoom_fit_btn_hbox = gtk.HBox()
+        zoom_fit_btn_hbox.pack_start(zoom_fit_icon)
+        zoom_fit_btn_hbox.pack_start(gtk.Label(_("Zoom")))
+        zoom_fit_btn.add(zoom_fit_btn_hbox)
+        zoom_fit_btn.connect("clicked", self._zoomFitCb)
+        zoom_controls_hbox.pack_start(zoom_fit_btn)
         # zooming slider
         self._zoomAdjustment = gtk.Adjustment()
         self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
