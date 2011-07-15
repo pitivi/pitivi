@@ -642,8 +642,10 @@ class PlayPauseButton(gtk.Button, Loggable):
         }
 
     def __init__(self):
-        gtk.Button.__init__(self, label="")
+        gtk.Button.__init__(self)
         Loggable.__init__(self)
+        self.image = gtk.Image()
+        self.add(self.image)
         self.playing = True
         self.setPlay()
         self.connect('clicked', self._clickedCb)
@@ -658,7 +660,7 @@ class PlayPauseButton(gtk.Button, Loggable):
         """ display the play image """
         self.log("setPlay")
         if self.playing:
-            self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PLAY, gtk.ICON_SIZE_BUTTON))
+            self.image.set_from_stock(gtk.STOCK_MEDIA_PLAY, gtk.ICON_SIZE_BUTTON)
             self.set_tooltip_text(_("Play"))
             self.playing = False
 
@@ -666,6 +668,6 @@ class PlayPauseButton(gtk.Button, Loggable):
         self.log("setPause")
         """ display the pause image """
         if not self.playing:
-            self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON))
+            self.image.set_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON)
             self.set_tooltip_text(_("Pause"))
             self.playing = True
