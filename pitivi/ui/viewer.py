@@ -134,13 +134,14 @@ class PitiviViewer(gtk.VBox, Loggable):
                 self.undock()
 
     def loadProject(self, uri):
-        self.app.projectManager.current.pipeline.set_state(gst.STATE_NULL)
+        pipeline = self.app.projectManager.current.pipeline
+        pipeline.set_state(gst.STATE_NULL)
         self.timeline = self.app.projectManager.current.timeline
         for layer in self.timeline.get_layers():
             self.timeline.remove_layer(layer)
         self.formatter.load_from_uri(self.timeline, uri)
         self.app.projectManager.emit("new-project-loading", uri)
-        self.app.projectManager.current.pipeline.set_state(gst.STATE_PAUSED)
+        pipeline.set_state(gst.STATE_PAUSED)
 
     def setPipeline(self):
         """
@@ -513,6 +514,7 @@ class PitiviViewer(gtk.VBox, Loggable):
     def _playButtonCb(self, unused_button, playing):
         if playing:
             self.pipeline.set_state(gst.STATE_PLAYING)
+            gobject.timeout_add(300, self._posCb)
         else:
             self.pipeline.set_state(gst.STATE_PAUSED)
 
@@ -605,8 +607,11 @@ class PitiviViewer(gtk.VBox, Loggable):
         except:
             self.warning("seek failed")
 
-    def _posCb(self, unused_pipeline, pos):
-        self._newTime(pos)
+    def _posCb(self):
+        position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
+        self._newTime(position)
+        self.app.gui.timeline._canvas.timelinePositionChanged(position)
+        return True
 
     def _currentStateCb(self, state):
         self.info("current state changed : %s", state)
