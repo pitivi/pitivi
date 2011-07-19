@@ -65,6 +65,7 @@ class Track(goocanvas.Group, Zoomable):
         Zoomable.__init__(self)
         self.app = instance
         self.widgets = {}
+        self.transitions = []
         self.timeline = timeline
         self.track = track
         self.max_priority = 0
@@ -133,7 +134,7 @@ class Track(goocanvas.Group, Zoomable):
 
     def check(self, tr_obj):
         if tr_obj.get_timeline_object():
-            w = TrackObject(self.app, tr_obj, self.track, self.timeline)
+            w = TrackObject(self.app, tr_obj, self.track, self.timeline, self)
             self.widgets[tr_obj] = w
             self.add_child(w)
             self.app.gui.setBestZoomRatio()
