@@ -425,6 +425,18 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 goocanvas.ITEM_INVISIBLE
 
     def _update(self):
+        objects = self.app.projectManager.current.timeline.get_layers()[0].get_objects()
+        lastStart = 0
+        for obj in objects:
+            for tr_obj in obj.get_track_objects():
+                if tr_obj.get_property("duration") > lastStart:
+                    lastStart = tr_obj.get_property("start")
+        print lastStart, "connard"
+
+        for layer in self.app.projectManager.current.timeline.get_layers():
+            if layer.get_priority() == 99:
+                layer.get_objects()[0].set_property("duration", lastStart)
+
         try:
             x = self.nsToPixel(self.element.get_start())
         except Exception, e:
