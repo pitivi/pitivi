@@ -200,6 +200,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._prev_duration = 0
         self.rate = gst.Fraction(1, 1)
 
+        self._temp_objects = []
+
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
         self.props.row_spacing = 2
@@ -392,28 +394,25 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
 
-        if self._factories is None:
-            if  context.targets in DND_EFFECT_LIST:
-                atom = gtk.gdk.atom_intern(dnd.EFFECT_TUPLE[0])
-            else:
-                atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
+        atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
 
-            self.drag_get_data(context, atom, timestamp)
-            self.drag_highlight()
-        else:
-            if  context.targets not in DND_EFFECT_LIST:
-                if not self._temp_objects:
-                    #GES break,FIXME
-                    pass
+        self.drag_get_data(context, atom, timestamp)
+        self.drag_highlight()
+        if  context.targets not in DND_EFFECT_LIST:
+            if not self._temp_objects:
+                #GES break, FIXME
+                pass
+                self.timeline.disableUpdates()
+                self._add_temp_source()
+                focus = self._temp_objects[0]
+                self._move_context = MoveContext(self.timeline,
+                        focus, set(self._temp_objects[1:]))
+            self._move_temp_source(self.hadj.props.value + x, y)
         return True
 
     def _dragLeaveCb(self, unused_layout, context, unused_tstamp):
         if self._temp_objects:
-            try:
-                for obj in self._temp_objects:
-                    self.timeline.removeTimelineObject(obj, deep=True)
-            finally:
-                self._temp_objects = None
+            self._temp_objects = []
 
         self.drag_unhighlight()
         #FIXME, GES break, temporary hack
@@ -490,8 +489,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         return timeline_objs
 
     def _add_temp_source(self):
-        self._temp_objects = [self.timeline.addSourceFactory(factory)
-            for factory in self._factories]
+        uris = self.selection_data.split("\n")
+        layer = self.app.projectManager.current.timeline.get_layers()[0]
+        for uri in uris :
+            src = ges.TimelineFileSource(uri)
+            layer.add_object(src)
+            self._temp_objects.insert(0, src)
 
     def _move_temp_source(self, x, y):
         x1, y1, x2, y2 = self._controls.get_allocation()

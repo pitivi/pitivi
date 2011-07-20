@@ -353,7 +353,7 @@ class PropertyChangeTracker(Signallable):
         old_value = self.properties[property_name]
         self.properties[property_name] = value
 
-        self.emit(property_name + '-changed', object, old_value, value)
+        self.emit("notify::" + property_name, object, old_value, value)
 
 
 class Seeker(Signallable):

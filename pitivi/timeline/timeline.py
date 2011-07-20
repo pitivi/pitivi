@@ -953,25 +953,25 @@ class EditingContext(object):
         self.other = other
         self.focus = focus
         self.timeline = timeline
-        self._snap = True
+        self._snap = False
         self._mode = self.DEFAULT
-        self._last_position = focus.start
-        self._last_priority = focus.priority
+        self._last_position = focus.get_property("start")
+        self._last_priority = focus.get_property("priority")
 
-        self.timeline.disableUpdates()
+        #self.timeline.disableUpdates()
 
     def _getOffsets(self, start_offset, priority_offset, timeline_objects):
         offsets = {}
         for timeline_object in timeline_objects:
-            offsets[timeline_object] = (timeline_object.start - start_offset,
-                        timeline_object.priority - priority_offset)
+            offsets[timeline_object] = (timeline_object.get_property("start") - start_offset,
+                        timeline_object.get_property("priority") - priority_offset)
 
         return offsets
 
     def _getTimelineObjectValues(self, timeline_object):
-        return (timeline_object.start, timeline_object.duration,
-                timeline_object.in_point, timeline_object.media_duration,
-                timeline_object.priority)
+        return (timeline_object.get_property("start"), timeline_object.get_property("duration"),
+                timeline_object.get_property("in_point"),
+                timeline_object.get_property("priority"))
 
     def _saveValues(self, timeline_objects):
         return dict(((timeline_object,
@@ -1093,7 +1093,7 @@ class MoveContext(EditingContext):
             else:
                 timeline_object = obj
                 timeline_object_tracks = set(track_object.track for track_object
-                        in timeline_object.track_objects)
+                        in timeline_object.get_track_objects())
                 self.tracks.update(timeline_object_tracks)
 
             self.timeline_objects.add(timeline_object)
@@ -1101,35 +1101,35 @@ class MoveContext(EditingContext):
             self.default_originals[timeline_object] = \
                     self._getTimelineObjectValues(timeline_object)
 
-            earliest = min(earliest, timeline_object.start)
+            earliest = min(earliest, timeline_object.get_property("start"))
             latest = max(latest,
-                    timeline_object.start + timeline_object.duration)
-            min_priority = min(min_priority, timeline_object.priority)
+                    timeline_object.get_property("start") + timeline_object.get_property("duration"))
+            min_priority = min(min_priority, timeline_object.get_property("priority"))
 
-        self.offsets = self._getOffsets(self.focus.start, self.focus.priority,
+        self.offsets = self._getOffsets(self.focus.get_property("start"), self.focus.get_property("priority"),
                 self.timeline_objects)
 
-        self.min_priority = focus.priority - min_priority
-        self.min_position = focus.start - earliest
+        self.min_priority = focus.get_property("priority") - min_priority
+        self.min_position = focus.get_property("start") - earliest
 
         # get the span over all clips for edge snapping
         self.default_span = latest - earliest
 
-        ripple = timeline.getObjsAfterTime(latest)
-        self.ripple_offsets = self._getOffsets(self.focus.start,
-            self.focus.priority, ripple)
+        #ripple = timeline.getObjsAfterTime(latest)
+        #self.ripple_offsets = self._getOffsets(self.focus.get_property("start"),
+            #self.focus.get_property("priority"), ripple)
 
         # get the span over all clips for ripple editing
-        for timeline_object in ripple:
-            latest = max(latest, timeline_object.start +
-                timeline_object.duration)
-        self.ripple_span = latest - earliest
+        #for timeline_object in ripple:
+            #latest = max(latest, timeline_object.get_property("start") +
+                #timeline_object.get_property("duration"))
+        #self.ripple_span = latest - earliest
 
         # save default values
-        self.ripple_originals = self._saveValues(ripple)
+        #self.ripple_originals = self._saveValues(ripple)
 
-        self.timeline_objects_plus_ripple = set(self.timeline_objects)
-        self.timeline_objects_plus_ripple.update(ripple)
+        #self.timeline_objects_plus_ripple = set(self.timeline_objects)
+        #self.timeline_objects_plus_ripple.update(ripple)
 
     def _getGapsAtPriority(self, priority):
         if self._mode == self.RIPPLE:
@@ -1265,12 +1265,12 @@ class MoveContext(EditingContext):
         priority = max(self.min_priority, priority)
         position = max(self.min_position, position)
 
-        self.focus.priority = priority
-        self.focus.setStart(position, snap=self._snap)
+        self.focus.set_property ("priority", priority)
+        self.focus.set_property("start", position)
 
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
-            obj.setStart(position + s_offset)
-            obj.priority = priority + p_offset
+            obj.set_property("start", position + s_offset)
+            obj.set_property ("priority", priority + p_offset)
 
         return position, priority
 
