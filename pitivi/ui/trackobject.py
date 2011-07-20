@@ -283,8 +283,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self.start_handle, self.end_handle, self.namebg, self.name):
                 self.add_child(thing)
         else :
-            for thing in (self.bg, self.selection_indicator,
-                self.namebg, self.name):
+            for thing in (self.bg, self.name):
                 self.add_child(thing)
 
         self.element = element
