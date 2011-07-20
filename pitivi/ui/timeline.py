@@ -490,7 +490,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _add_temp_source(self):
         uris = self.selection_data.split("\n")
-        layer = self.app.projectManager.current.timeline.get_layers()[0]
+        for layer in self.app.projectManager.current.timeline.get_layers():
+            if layer.get_priority() != 99:
+                break
         for uri in uris :
             src = ges.TimelineFileSource(uri)
             layer.add_object(src)
