@@ -97,20 +97,15 @@ class ProjectManager(Signallable, Loggable):
 
         self.emit("new-project-loading", uri)
 
-        formatter = self._getFormatterForUri(uri)
-        if not formatter:
-            self.emit("new-project-failed", uri,
-                    FormatterLoadError(_("Not a valid project file.")))
-            return
+        self.formatter = ges.PitiviFormatter()
 
-        if not self.closeRunningProject():
-            self.emit("new-project-failed", uri,
-                    FormatterLoadError(_("Couldn't close current project")))
-            return
-
-        self._connectToFormatter(formatter)
-        # start loading the project, from now on everything is async
-        formatter.loadProject(uri)
+        pipeline = self.current.pipeline
+        pipeline.set_state(gst.STATE_NULL)
+        self.timeline = self.current.timeline
+        for layer in self.timeline.get_layers():
+            self.timeline.remove_layer(layer)
+        self.formatter.load_from_uri(self.timeline, uri)
+        pipeline.set_state(gst.STATE_PAUSED)
 
     def saveProject(self, project, uri=None, overwrite=False, formatter=None, backup=False):
         """

@@ -131,16 +131,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             if not self.settings.viewerDocked:
                 self.undock()
 
-    def loadProject(self, uri):
-        pipeline = self.app.projectManager.current.pipeline
-        pipeline.set_state(gst.STATE_NULL)
-        self.timeline = self.app.projectManager.current.timeline
-        for layer in self.timeline.get_layers():
-            self.timeline.remove_layer(layer)
-        self.formatter.load_from_uri(self.timeline, uri)
-        self.app.projectManager.emit("new-project-loading", uri)
-        pipeline.set_state(gst.STATE_PAUSED)
-
     def setPipeline(self):
         """
         Set the Viewer to the given Pipeline.
@@ -619,11 +609,11 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.warning("seek failed")
 
     def _posCb(self):
+        if not self.playing :
+            return False
         position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
         self._newTime(position)
         self.app.gui.timeline._canvas.timelinePositionChanged(position)
-        if not self.playing :
-            return False
         return True
 
     def _currentStateCb(self, state):
