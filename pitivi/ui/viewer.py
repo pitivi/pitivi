@@ -611,7 +611,10 @@ class PitiviViewer(gtk.VBox, Loggable):
     def _posCb(self):
         if not self.playing :
             return False
-        position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
+        try:
+            position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
+        except:
+            return True
         self._newTime(position)
         self.app.gui.timeline._canvas.timelinePositionChanged(position)
         return True
