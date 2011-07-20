@@ -135,6 +135,7 @@ class Track(goocanvas.Group, Zoomable):
     def check(self, tr_obj):
         if tr_obj.get_timeline_object():
             w = TrackObject(self.app, tr_obj, self.track, self.timeline, self)
+            self.app.current.sources.addUri(tr_obj.get_timeline_object().get_uri())
             self.widgets[tr_obj] = w
             self.add_child(w)
             self.app.gui.setBestZoomRatio()
