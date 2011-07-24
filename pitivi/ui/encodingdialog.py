@@ -187,6 +187,23 @@ class EncodingDialog(Renderer, Loggable):
         self.bindHeight(self.render_presets)
         self.bindWidth(self.render_presets)
 
+        self.createNoPreset(self.render_presets)
+
+    def createNoPreset(self, mgr):
+        mgr.prependPreset("No Preset", {
+            "depth": int(get_combo_value(self.sample_depth_combo)),
+            "channels": int(get_combo_value(self.channels_combo)),
+            "sample-rate": int(get_combo_value(self.sample_rate_combo)),
+            "acodec": get_combo_value(self.audio_encoder_combo).get_name(),
+            "vcodec": get_combo_value(self.video_encoder_combo).get_name(),
+            "container": get_combo_value(self.muxercombobox).get_name(),
+            "frame-rate": gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
+                                        int(get_combo_value(self.frame_rate_combo).denom)),
+            "height": self.getDimension("height"),
+            "width": self.getDimension("width")
+        })
+
+
     def bindCombo(self, mgr, name, widget):
         if name == "container":
             mgr.bindWidget(name,

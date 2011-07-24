@@ -333,8 +333,10 @@ class RenderPresetManager(PresetManager):
             except:
                 filename = name + ".json"
                 filepath = os.path.join(self.path, filename)
-            fout = open(filepath, "w")
-            self.saveSection(fout, name)
+            
+            if not name == "No Preset":
+                fout = open(filepath, "w")
+                self.saveSection(fout, name)
 
     def saveSection(self, fout, section):
         values = self.presets[section]
@@ -362,3 +364,9 @@ class RenderPresetManager(PresetManager):
                 break
         if self.cur_preset == name:
             self.cur_preset = None
+
+    def prependPreset(self, name, values):
+        self.presets[name] = values
+        # Note: This generates a "row-inserted" signal in the model.
+        self.ordered.prepend((name, values))
+
