@@ -361,12 +361,14 @@ class EncodingDialog(Renderer, Loggable):
         @type settings_attr: str
         """
         properties = getattr(self.settings, settings_attr)
-        dialog = GstElementSettingsDialog(factory, properties=properties)
-        dialog.window.set_transient_for(self.window)
-        response = dialog.window.run()
-        if response == gtk.RESPONSE_OK:
-            setattr(self.settings, settings_attr, dialog.getSettings())
-        dialog.window.destroy()
+        self.dialog = GstElementSettingsDialog(factory, properties=properties)
+        self.dialog.window.set_transient_for(self.window)
+        self.dialog.ok_btn.connect("clicked", self._okButtonClickedCb, settings_attr)
+        self.dialog.window.run()
+
+    def _okButtonClickedCb(self, unused_button, settings_attr):
+        setattr(self.settings, settings_attr, self.dialog.getSettings())
+        self.dialog.window.destroy()
 
     def _renderButtonClickedCb(self, unused_button):
         self.outfile = os.path.join(self.filebutton.get_uri(),

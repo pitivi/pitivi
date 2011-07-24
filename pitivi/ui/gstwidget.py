@@ -187,6 +187,7 @@ class GstElementSettingsDialog(Loggable):
         self.builder.add_from_file(os.path.join(get_ui_dir(),
             "elementsettingsdialog.ui"))
         self.builder.connect_signals(self)
+        self.ok_btn = self.builder.get_object("okbutton1")
 
         self.window = self.builder.get_object("dialog1")
         self.elementsettings = GstElementSettingsWidget()
@@ -224,3 +225,10 @@ class GstElementSettingsDialog(Loggable):
     def getSettings(self):
         """ returns the property/value dictionnary of the selected settings """
         return self.elementsettings.getSettings()
+
+    def _resetValuesClickedCb(self, unused_button):
+        self.resetAll()
+
+    def resetAll(self):
+        for prop, widget in self.elementsettings.properties.iteritems():
+            widget.setWidgetToDefault()
