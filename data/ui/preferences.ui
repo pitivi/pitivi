@@ -21,6 +21,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="hscrollbar_policy">never</property>
+                <property name="vscrollbar_policy">never</property>
                 <property name="shadow_type">etched-in</property>
                 <child>
                   <object class="GtkTreeView" id="treeview1">
@@ -51,7 +52,7 @@
               </object>
               <packing>
                 <property name="resize">True</property>
-                <property name="shrink">True</property>
+                <property name="shrink">False</property>
               </packing>
             </child>
             <child>
@@ -94,7 +95,7 @@
             <property name="label" translatable="yes">&lt;b&gt;Some changes will not take effect until you restart PiTiVi&lt;/b&gt;</property>
             <property name="use_markup">True</property>
             <property name="justify">center</property>
-            <property name="max_width_chars">40</property>
+            <property name="wrap">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
