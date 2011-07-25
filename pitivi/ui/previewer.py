@@ -66,14 +66,14 @@ PreferencesDialog.addChoicePreference("thumbnailPeriod",
     section=_("Appearance"),
     label=_("Thumbnail every"),
     choices=(
-        ("1/100 second", gst.SECOND / 100),
-        ("1/10 second", gst.SECOND / 10),
-        ("1/4 second", gst.SECOND / 4),
-        ("1/2 second", gst.SECOND/ 2),
-        ("second", gst.SECOND),
-        ("5 seconds", 5 * gst.SECOND),
-        ("10 seconds", 10 * gst.SECOND),
-        ("minute", 60 * gst.SECOND)),
+        (_("%s second") % "1/100", gst.SECOND / 100),
+        (_("%s second") % "1/10", gst.SECOND / 10),
+        (_("%s second") % "1/4", gst.SECOND / 4),
+        (_("%s second") % "1/2", gst.SECOND / 2),
+        (_("%s second") % "1", gst.SECOND),
+        (_("%s seconds") % "5", 5 * gst.SECOND),
+        (_("%s seconds") % "10", 10 * gst.SECOND),
+        (_("minute"), 60 * gst.SECOND)),
     description=_("The interval, in seconds, between thumbnails"))
 
 # this default works out to a maximum of ~ 1.78 MiB per factory, assuming:
