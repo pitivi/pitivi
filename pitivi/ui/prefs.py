@@ -267,9 +267,14 @@ class PreferencesDialog():
                 widget.connectValueChanged(self._valueChanged, widget,
                     attrname)
                 self.widgets[attrname] = widget
-                revert = gtk.Button(_("Reset"))
+                icon = gtk.Image()
+                icon.set_from_stock('gtk-clear', gtk.ICON_SIZE_MENU)
+                revert = gtk.Button()
+                revert.add(icon)
+                revert.set_tooltip_text(_("Reset to default value"))
                 revert.set_sensitive(not self.settings.isDefault(attrname))
                 revert.connect("clicked", self._resetOptionCb, attrname)
+                revert.show_all()
                 self.resets[attrname] = revert
                 prefs[label] = (label_widget, widget, revert)
 
