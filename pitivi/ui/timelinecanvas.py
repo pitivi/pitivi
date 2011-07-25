@@ -50,9 +50,9 @@ GlobalSettings.addConfigOption('edgeSnapDeadband',
 
 PreferencesDialog.addNumericPreference('edgeSnapDeadband',
     section=_("Behavior"),
-    label=_("Snap distance (pixels)"),
-    description=_("Threshold distance (in pixels) used for all snapping "
-        "operations"),
+    label=_("Snap distance"),
+    description=_("Threshold (in pixels) at which two clips will snap together "
+        "when dragging or trimming."),
     lower=0)
 
 

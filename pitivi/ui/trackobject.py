@@ -46,7 +46,7 @@ GlobalSettings.addConfigOption('videoClipBg',
 
 PreferencesDialog.addColorPreference('videoClipBg',
     section=_("Appearance"),
-    label=_("Clip background (video)"),
+    label=_("Color for video clips"),
     description=_("The background color for clips in video tracks."))
 
 GlobalSettings.addConfigOption('audioClipBg',
@@ -57,7 +57,7 @@ GlobalSettings.addConfigOption('audioClipBg',
 
 PreferencesDialog.addColorPreference('audioClipBg',
     section=_("Appearance"),
-    label=_("Clip background (audio)"),
+    label=_("Color for audio clips"),
     description=_("The background color for clips in audio tracks."))
 
 GlobalSettings.addConfigOption('selectedColor',

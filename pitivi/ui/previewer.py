@@ -58,9 +58,9 @@ GlobalSettings.addConfigOption("thumbnailPeriod",
 
 PreferencesDialog.addNumericPreference("thumbnailSpacingHint",
     section=_("Appearance"),
-    label=_("Thumbnail gap (pixels)"),
+    label=_("Thumbnail gap"),
     lower=0,
-    description=_("The gap between thumbnails"))
+    description=_("The spacing between thumbnails, in pixels"))
 
 PreferencesDialog.addChoicePreference("thumbnailPeriod",
     section=_("Performance"),
@@ -74,7 +74,7 @@ PreferencesDialog.addChoicePreference("thumbnailPeriod",
         (_("%s seconds") % "5", 5 * gst.SECOND),
         (_("%s seconds") % "10", 10 * gst.SECOND),
         (_("minute"), 60 * gst.SECOND)),
-    description=_("The interval, in seconds, between thumbnails"))
+    description=_("The interval, in seconds, between thumbnails."))
 
 # this default works out to a maximum of ~ 1.78 MiB per factory, assuming:
 # 4:3 aspect ratio
@@ -100,7 +100,7 @@ GlobalSettings.addConfigOption('showThumbnails',
 
 PreferencesDialog.addTogglePreference('showThumbnails',
     section=_("Performance"),
-    label=_("Show video thumbnails"),
+    label=_("Enable video thumbnails"),
     description=_("Show thumbnails on video clips"))
 
 GlobalSettings.addConfigOption('showWaveforms',
@@ -111,7 +111,7 @@ GlobalSettings.addConfigOption('showWaveforms',
 
 PreferencesDialog.addTogglePreference('showWaveforms',
     section=_("Performance"),
-    label=_("Show audio waveforms"),
+    label=_("Enable audio waveforms"),
     description=_("Show waveforms on audio clips"))
 
 # Previewer                      -- abstract base class with public interface for UI
