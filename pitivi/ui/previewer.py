@@ -53,7 +53,7 @@ GlobalSettings.addConfigOption("thumbnailSpacingHint",
 GlobalSettings.addConfigOption("thumbnailPeriod",
     section="thumbnailing",
     key="thumbnail-period",
-    default=gst.SECOND / 2,
+    default=gst.SECOND,
     notify=True)
 
 PreferencesDialog.addNumericPreference("thumbnailSpacingHint",
