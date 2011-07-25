@@ -119,19 +119,24 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
               or not prop.flags & gobject.PARAM_READABLE:
                 continue
 
-            label = gtk.Label(prop.nick + ":")
-            label.set_alignment(0.0, 0.5)
-            table.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
             if use_element_props:
                 prop_value = self.element.get_property(prop.name)
             else:
                 prop_value = properties.get(prop.name)
+
             widget = make_property_widget(self.element, prop, prop_value)
+            if isinstance(widget, dynamic.ToggleWidget):
+                widget.set_label(prop.nick)
+                table.attach(widget, 0, 2, y, y + 1, yoptions=gtk.FILL)
+            else:
+                label = gtk.Label(prop.nick + ":")
+                label.set_alignment(0.0, 0.5)
+                table.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
+                table.attach(widget, 1, 2, y, y + 1, yoptions=gtk.FILL)
 
             if hasattr(prop, 'description'):   # TODO: check that
                 widget.set_tooltip_text(prop.description)
 
-            table.attach(widget, 1, 2, y, y + 1, yoptions=gtk.FILL)
             self.properties[prop] = widget
             if default_btn:
                 button = self._getResetToDefaultValueButton(prop, widget)
