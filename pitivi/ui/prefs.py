@@ -280,14 +280,14 @@ class PreferencesDialog():
                 revert.connect("clicked", self._resetOptionCb, attrname)
                 revert.show_all()
                 self.resets[attrname] = revert
-                prefs[label] = (label_widget, widget, revert)
+                prefs[label] = (label_widget, widget, description, revert)
 
             # Sort widgets: I think we only want to sort by the non-localized
             # names, so options appear in the same place across locales ...
             # but then I may be wrong
 
             for y, unlocalized in enumerate(sorted(prefs)):
-                label, widget, revert = prefs[unlocalized]
+                label, widget, description, revert = prefs[unlocalized]
                 if isinstance(widget, dynamic.ToggleWidget):
                     # Avoid the separating the label from the checkbox
                     widget.set_label(label.get_text())
@@ -295,10 +295,12 @@ class PreferencesDialog():
                     widgets.attach(revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
                 else:
                     label.set_alignment(1.0, 0.5)
+                    label.set_tooltip_text(description)
                     widgets.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=0)
                     widgets.attach(widget, 1, 2, y, y + 1, yoptions=0)
                     widgets.attach(revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
                     label.show()
+                widget.set_tooltip_text(description)
                 widget.show()
                 revert.show()
 
