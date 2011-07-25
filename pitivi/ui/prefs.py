@@ -420,8 +420,7 @@ if False:
     PreferencesDialog.addChoicePreference('aChoicePreference',
         label="Swallow Velocity",
         section="Test",
-        description="What is the velocity of an african swollow laden " \
-            "a coconut?",
+        description="What is the airspeed velocity of a coconut-laden swallow?",
         choices=(
             ("42 Knots", 32),
             ("9 furlongs per fortnight", 42),
@@ -430,14 +429,13 @@ if False:
     PreferencesDialog.addChoicePreference('aLongChoicePreference',
         label="Favorite Color",
         section="Test",
-        description="What is the velocity of an african swollow laden " \
-            "a coconut?",
+        description="What is the color of the parrot's plumage?",
         choices=(
             ("Mauve", "Mauve"),
             ("Chartreuse", "Chartreuse"),
             ("Magenta", "Magenta"),
             ("Pink", "Pink"),
-            ("Orange", "Orange"),
+            ("Norwegian Blue", "Norwegian Blue"),
             ("Yellow Ochre", "Yellow Ochre")))
 
     PreferencesDialog.addTogglePreference('aTogglePreference',
