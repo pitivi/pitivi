@@ -86,7 +86,7 @@ class PreferencesDialog():
         """
         Add a user preference. The preferences dialog will try
         to guess the appropriate widget to use based on the type of the
-        option, but you can override this by specifying a ustom class.
+        option, but you can override this by specifying a custom class.
 
         @param label: user-visible name for this option
         @type label: C{str}
@@ -253,9 +253,9 @@ class PreferencesDialog():
             options = self.prefs[section]
             self.model.append((_(section), section))
             widgets = gtk.Table()
-            widgets.set_border_width(6)
-            widgets.props.column_spacing = 6
-            widgets.props.row_spacing = 3
+            widgets.set_border_width(SPACING)
+            widgets.props.column_spacing = SPACING
+            widgets.props.row_spacing = SPACING / 2
             self.sections[section] = widgets
 
             prefs = {}

@@ -32,6 +32,7 @@ from gettext import gettext as _
 from pitivi.log.loggable import Loggable
 from pitivi.configure import get_ui_dir
 import pitivi.ui.dynamic as dynamic
+from pitivi.ui.common import SPACING
 
 
 def make_property_widget(unused_element, prop, value=None):
@@ -109,9 +110,9 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         else:
             table = gtk.Table(rows=len(props), columns=2)
 
-        table.set_row_spacings(5)
-        table.set_col_spacings(5)
-        table.set_border_width(5)
+        table.set_row_spacings(SPACING)
+        table.set_col_spacings(SPACING)
+        table.set_border_width(SPACING)
         y = 0
         for prop in props:
             if not prop.flags & gobject.PARAM_WRITABLE\

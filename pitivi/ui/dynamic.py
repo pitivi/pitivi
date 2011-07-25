@@ -32,7 +32,7 @@ from gettext import gettext as _
 from pitivi.utils import time_to_string
 from pitivi.ui.common import unpack_color, pack_color_32, pack_color_64
 import pango
-from pitivi.ui.common import PADDING, SPACING
+from pitivi.ui.common import SPACING
 
 
 class DynamicWidget(object):
@@ -648,7 +648,7 @@ class ResolutionWidget(gtk.HBox, DynamicWidget):
     def __init__(self, default=None):
         gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
-        self.props.spacing = 6
+        self.props.spacing = SPACING
 
         self.dwidth = 0
         self.dheight = 0
