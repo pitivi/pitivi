@@ -261,12 +261,16 @@ class PreferencesDialog():
             prefs = {}
             for attrname in options:
                 label, description, klass, args = options[attrname]
-                label_widget = gtk.Label(_(label) + ":")
                 widget = klass(**args)
                 widget.setWidgetValue(getattr(self.settings, attrname))
                 widget.connectValueChanged(self._valueChanged, widget,
                     attrname)
                 self.widgets[attrname] = widget
+                if isinstance(widget, dynamic.ToggleWidget):
+                    # Don't add a semicolon for checkbuttons
+                    label_widget = gtk.Label(_(label))
+                else:
+                    label_widget = gtk.Label(_(label) + ":")
                 icon = gtk.Image()
                 icon.set_from_stock('gtk-clear', gtk.ICON_SIZE_MENU)
                 revert = gtk.Button()
@@ -284,11 +288,17 @@ class PreferencesDialog():
 
             for y, unlocalized in enumerate(sorted(prefs)):
                 label, widget, revert = prefs[unlocalized]
-                label.set_alignment(1.0, 0.5)
-                widgets.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=0)
-                widgets.attach(widget, 1, 2, y, y + 1, yoptions=0)
-                widgets.attach(revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
-                label.show()
+                if isinstance(widget, dynamic.ToggleWidget):
+                    # Avoid the separating the label from the checkbox
+                    widget.set_label(label.get_text())
+                    widgets.attach(widget, 0, 2, y, y + 1, yoptions=0)
+                    widgets.attach(revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
+                else:
+                    label.set_alignment(1.0, 0.5)
+                    widgets.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=0)
+                    widgets.attach(widget, 1, 2, y, y + 1, yoptions=0)
+                    widgets.attach(revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
+                    label.show()
                 widget.show()
                 revert.show()
 
