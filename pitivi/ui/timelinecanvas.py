@@ -50,7 +50,7 @@ GlobalSettings.addConfigOption('edgeSnapDeadband',
 
 PreferencesDialog.addNumericPreference('edgeSnapDeadband',
     section=_("Behavior"),
-    label=_("Snap Distance (pixels)"),
+    label=_("Snap distance (pixels)"),
     description=_("Threshold distance (in pixels) used for all snapping "
         "operations"),
     lower=0)

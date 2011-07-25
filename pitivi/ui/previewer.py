@@ -58,7 +58,7 @@ GlobalSettings.addConfigOption("thumbnailPeriod",
 
 PreferencesDialog.addNumericPreference("thumbnailSpacingHint",
     section=_("Appearance"),
-    label=_("Thumbnail Gap (pixels)"),
+    label=_("Thumbnail gap (pixels)"),
     lower=0,
     description=_("The gap between thumbnails"))
 
@@ -100,8 +100,8 @@ GlobalSettings.addConfigOption('showThumbnails',
 
 PreferencesDialog.addTogglePreference('showThumbnails',
     section=_("Performance"),
-    label=_("Show Thumbnails (Video)"),
-    description=_("Show Thumbnails on Video Clips"))
+    label=_("Show video thumbnails"),
+    description=_("Show thumbnails on video clips"))
 
 GlobalSettings.addConfigOption('showWaveforms',
     section='user-interface',
@@ -111,8 +111,8 @@ GlobalSettings.addConfigOption('showWaveforms',
 
 PreferencesDialog.addTogglePreference('showWaveforms',
     section=_("Performance"),
-    label=_("Show Waveforms (Audio)"),
-    description=_("Show Waveforms on Audio Clips"))
+    label=_("Show audio waveforms"),
+    description=_("Show waveforms on audio clips"))
 
 # Previewer                      -- abstract base class with public interface for UI
 # |_DefaultPreviewer             -- draws a default thumbnail for UI

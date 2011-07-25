@@ -46,7 +46,7 @@ GlobalSettings.addConfigOption('videoClipBg',
 
 PreferencesDialog.addColorPreference('videoClipBg',
     section=_("Appearance"),
-    label=_("Clip Background (Video)"),
+    label=_("Clip background (video)"),
     description=_("The background color for clips in video tracks."))
 
 GlobalSettings.addConfigOption('audioClipBg',
@@ -57,7 +57,7 @@ GlobalSettings.addConfigOption('audioClipBg',
 
 PreferencesDialog.addColorPreference('audioClipBg',
     section=_("Appearance"),
-    label=_("Clip Background (Audio)"),
+    label=_("Clip background (audio)"),
     description=_("The background color for clips in audio tracks."))
 
 GlobalSettings.addConfigOption('selectedColor',
@@ -68,7 +68,7 @@ GlobalSettings.addConfigOption('selectedColor',
 
 PreferencesDialog.addColorPreference('selectedColor',
     section=_("Appearance"),
-    label=_("Selection Color"),
+    label=_("Selection color"),
     description=_("Selected clips will be tinted with this color."))
 
 GlobalSettings.addConfigOption('clipFontDesc',
@@ -79,7 +79,7 @@ GlobalSettings.addConfigOption('clipFontDesc',
 
 PreferencesDialog.addFontPreference('clipFontDesc',
     section=_('Appearance'),
-    label=_("Clip Font"),
+    label=_("Clip font"),
     description=_("The font to use for clip titles"))
 
 GlobalSettings.addConfigOption('clipFontColor',
