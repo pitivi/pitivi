@@ -23,7 +23,10 @@
 Algorithms for aligning (i.e. registering, synchronizing) time series
 """
 
-import numpy
+try:
+    import numpy
+except ImportError:
+    numpy = None
 
 
 def nextpow2(x):
