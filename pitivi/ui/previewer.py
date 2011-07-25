@@ -63,7 +63,7 @@ PreferencesDialog.addNumericPreference("thumbnailSpacingHint",
     description=_("The gap between thumbnails"))
 
 PreferencesDialog.addChoicePreference("thumbnailPeriod",
-    section=_("Appearance"),
+    section=_("Performance"),
     label=_("Thumbnail every"),
     choices=(
         (_("%s second") % "1/100", gst.SECOND / 100),
@@ -99,7 +99,7 @@ GlobalSettings.addConfigOption('showThumbnails',
     notify=True)
 
 PreferencesDialog.addTogglePreference('showThumbnails',
-    section=_("Appearance"),
+    section=_("Performance"),
     label=_("Show Thumbnails (Video)"),
     description=_("Show Thumbnails on Video Clips"))
 
@@ -110,7 +110,7 @@ GlobalSettings.addConfigOption('showWaveforms',
     notify=True)
 
 PreferencesDialog.addTogglePreference('showWaveforms',
-    section=_("Appearance"),
+    section=_("Performance"),
     label=_("Show Waveforms (Audio)"),
     description=_("Show Waveforms on Audio Clips"))
 
