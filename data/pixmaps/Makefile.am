@@ -19,6 +19,8 @@ pixmap_DATA = \
 	pitivi-split.svg	\
 	pitivi-ungroup-24.svg	\
 	pitivi-ungroup.svg	\
+	pitivi-align-24.svg	\
+	pitivi-align.svg	\
 	pitivi-unlink-24.svg	\
 	pitivi-unlink.svg	\
 	pitivi-video.png	\

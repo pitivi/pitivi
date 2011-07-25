@@ -151,6 +151,7 @@ def create_stock_icons():
             ('pitivi-ungroup', _('Ungroup'), 0, 0, 'pitivi'),
             # Translators: This is an action, the title of a button
             ('pitivi-group', _('Group'), 0, 0, 'pitivi'),
+            ('pitivi-align', _('Align'), 0, 0, 'pitivi'),
             ])
     pixmaps = {
         "pitivi-render": "pitivi-render-24.png",
@@ -160,6 +161,7 @@ def create_stock_icons():
         "pitivi-link": "pitivi-relink-24.svg",
         "pitivi-ungroup": "pitivi-ungroup-24.svg",
         "pitivi-group": "pitivi-group-24.svg",
+        "pitivi-align": "pitivi-align-24.svg",
     }
     factory = gtk.IconFactory()
     pmdir = get_pixmap_dir()

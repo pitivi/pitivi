@@ -32,6 +32,7 @@ from pitivi.utils import start_insort_right, infinity, getPreviousObject, \
         getNextObject
 from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
 from pitivi.stream import VideoStream
+from pitivi.timeline.align import AutoAligner
 
 # Selection modes
 SELECT = 0
@@ -1957,6 +1958,21 @@ class Timeline(Signallable, Loggable):
             self.removeTimelineObject(timeline_object, deep=True)
 
         self.selection.setSelection(new_track_objects, SELECT_ADD)
+
+    def alignSelection(self, callback):
+        """
+        Auto-align the selected set of L{TimelineObject}s based on their
+        contents.  Return asynchronously, and call back when finished.
+
+        @param callback: function to call (with no arguments) when finished.
+        @type callback: function
+        @returns: a L{ProgressMeter} indicating the state of the alignment
+            process
+        @rtype: L{ProgressMeter}
+        """
+        auto_aligner = AutoAligner(self.selection.selected, callback)
+        progress_meter = auto_aligner.start()
+        return progress_meter
 
     def deleteSelection(self):
         """
