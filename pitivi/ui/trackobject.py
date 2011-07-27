@@ -23,6 +23,7 @@ from pitivi.ui.point import Point
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
 from pitivi.stream import AudioStream, VideoStream
+import ges
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
@@ -108,15 +109,17 @@ class TimelineController(controller.Controller):
         self._view.unfocus()
 
     def drag_start(self, item, target, event):
-        if not self._view.element.selected:
-            self._view.timeline.selection.setToObj(self._view.element, SELECT)
-        tx = self._view.props.parent.get_transform()
+        return
+        #if not self._view.element.selected:
+            #self._view.timeline.selection.setToObj(self._view.element, SELECT)
+        #tx = self._view.props.parent.get_transform()
         # store y offset for later priority calculation
-        self._y_offset = tx[5]
+        #self._y_offset = tx[5]
         # zero y component of mousdown coordiante
-        self._mousedown = Point(self._mousedown[0], 0)
+        #self._mousedown = Point(self._mousedown[0], 0)
 
     def drag_end(self, item, target, event):
+        print "drag ended"
         self._context.finish()
         self._context = None
         self._view.app.action_log.commit()
@@ -124,9 +127,10 @@ class TimelineController(controller.Controller):
     def set_pos(self, item, pos):
         x, y = pos
         position = Zoomable.pixelToNs(x + self._hadj.get_value())
-        priority = int((y - self._y_offset + self._vadj.get_value()) //
-            (LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
-        self._context.setMode(self._getMode())
+        priority = 0
+        #priority = int((y - self._y_offset + self._vadj.get_value()) //
+            #(LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
+        #self._context.setMode(self._getMode())
         self._context.editTo(position, priority)
 
     def _getMode(self):
@@ -183,8 +187,8 @@ class StartHandle(TrimHandle):
         def drag_start(self, item, target, event):
             TimelineController.drag_start(self, item, target, event)
             self._context = TrimStartContext(self._view.timeline,
-                self._view.element,
-                self._view.timeline.selection.getSelectedTrackObjs())
+                self._view.element.get_timeline_object(),
+                set([]))
             self._view.app.action_log.begin("trim object")
 
 
@@ -199,8 +203,8 @@ class EndHandle(TrimHandle):
         def drag_start(self, item, target, event):
             TimelineController.drag_start(self, item, target, event)
             self._context = TrimEndContext(self._view.timeline,
-                self._view.element,
-                self._view.timeline.selection.getSelectedTrackObjs())
+                self._view.element.get_timeline_object(),
+                set([]))
             self._view.app.action_log.begin("trim object")
 
 
@@ -213,8 +217,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         def drag_start(self, item, target, event):
             TimelineController.drag_start(self, item, target, event)
             self._context = MoveContext(self._view.timeline,
-                self._view.element,
-                self._view.timeline.selection.getSelectedTrackObjs())
+                self._view.element.get_timeline_object(),
+                set([]))
             self._view.app.action_log.begin("move object")
 
         def _getMode(self):
@@ -225,7 +229,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         def click(self, pos):
             timeline = self._view.timeline
             element = self._view.element
-            element_end = element.start + element.duration
+            element_end = element.get_property("start") + element.get_property("duration")
             if self._last_event.get_state() & gtk.gdk.SHIFT_MASK:
                 timeline.setSelectionToObj(element, SELECT_BETWEEN)
             elif self._last_event.get_state() & gtk.gdk.CONTROL_MASK:
@@ -238,7 +242,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 x, y = pos
                 x += self._hadj.get_value()
                 self._view.app.current.seeker.seek(Zoomable.pixelToNs(x))
-                timeline.setSelectionToObj(element, SELECT)
+                #timeline.setSelectionToObj(element, SELECT)
 
     def __init__(self, instance, element, track, timeline, uTrack, is_transition = False):
         goocanvas.Group.__init__(self)
@@ -287,6 +291,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self.add_child(thing)
 
         self.element = element
+        self.element.get_timeline_object().max_duration = self.element.get_timeline_object().get_property("duration")
+        self.element.selected = False
         self.settings = instance.settings
         self.unfocus()
 
@@ -335,7 +341,6 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.end_handle.props.visibility = goocanvas.ITEM_VISIBLE
         self.raise_(None)
         for transition in self.uTrack.transitions:
-            print "transition raised"
             transition.raise_(None)
 
     def unfocus(self):
@@ -425,18 +430,6 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 goocanvas.ITEM_INVISIBLE
 
     def _update(self):
-        objects = self.app.projectManager.current.timeline.get_layers()[0].get_objects()
-        lastStart = 0
-        for obj in objects:
-            for tr_obj in obj.get_track_objects():
-                if tr_obj.get_property("duration") > lastStart:
-                    lastStart = tr_obj.get_property("start")
-        print lastStart, "connard"
-
-        for layer in self.app.projectManager.current.timeline.get_layers():
-            if layer.get_priority() == 99:
-                layer.get_objects()[0].set_property("duration", lastStart)
-
         try:
             x = self.nsToPixel(self.element.get_start())
         except Exception, e:

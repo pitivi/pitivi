@@ -243,7 +243,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._selecting = False
         self._marquee.props.visibility = goocanvas.ITEM_INVISIBLE
         if not self._got_motion_notify:
-            self.timeline.setSelectionTo(set(), 0)
+            #self.timeline.setSelectionTo(set(), 0)
             seeker.seek(Zoomable.pixelToNs(event.x))
         else:
             self._got_motion_notify = False
@@ -252,7 +252,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
                 mode = 1
             if event.get_state() & gtk.gdk.CONTROL_MASK:
                 mode = 2
-            self.timeline.setSelectionTo(self._objectsUnderMarquee(), mode)
+            #self.timeline.setSelectionTo(self._objectsUnderMarquee(), mode)
         return True
 
     def _objectsUnderMarquee(self):
