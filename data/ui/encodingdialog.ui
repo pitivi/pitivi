@@ -149,6 +149,45 @@
                     <property name="position">0</property>
                   </packing>
                 </child>
+                    <child>
+                      <object class="GtkInfoBar" id="render-preset-infobar">
+                        <property name="app_paintable">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="message_type">error</property>
+                        <child internal-child="content_area">
+                          <object class="GtkBox" id="infobar-content_area3">
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkLabel" id="render-preset-error-label">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child internal-child="action_area">
+                          <object class="GtkButtonBox" id="infobar-action_area3">
+                            <property name="can_focus">False</property>
+                            <property name="orientation">vertical</property>
+                            <property name="layout_style">center</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow2">
                     <property name="visible">True</property>

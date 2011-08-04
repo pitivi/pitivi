@@ -356,7 +356,10 @@ class RenderPresetManager(PresetManager):
         fout.write(data)
 
     def removePreset(self, name):
-        os.remove(self.presets[name]["filepath"])  # Deletes json file
+        try:
+            os.remove(self.presets[name]["filepath"])  # Deletes json file if exists
+        except Exception:
+            pass
         self.presets.pop(name)
         for i, row in enumerate(self.ordered):
             if row[0] == name:

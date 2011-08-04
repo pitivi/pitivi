@@ -45,7 +45,7 @@ from pitivi.ui.common import\
     get_combo_value,\
     set_combo_value
 
-from pitivi.ui.preset import RenderPresetManager
+from pitivi.ui.preset import RenderPresetManager, DuplicatePresetNameException
 
 def beautify_factoryname(factory):
     """Returns a nice name for the specified gst.ElementFactory instance."""
@@ -168,6 +168,10 @@ class EncodingDialog(Renderer, Loggable):
         self._fillPresetsTreeview(
                 self.render_preset_treeview, self.render_presets,
                 self._updateRenderPresetButtons)
+
+        self._infobarForPresetManager = {
+                self.render_presets: self.render_preset_infobar}
+
 
         # Bind widgets to RenderPresetsManager
         self.bindCombo(self.render_presets, "channels",
@@ -323,8 +327,13 @@ class EncodingDialog(Renderer, Loggable):
         model.connect("row-inserted", self._newPresetCb,
             column, renderer, treeview)
         renderer.connect("edited", self._presetNameEditedCb, mgr)
+        renderer.connect("editing-started", self._presetNameEditingStartedCb,
+            mgr)
         treeview.get_selection().connect("changed", self._presetChangedCb,
             mgr, update_buttons_func)
+        treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
+
+
 
     def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
         """Handle the addition of a preset to the model of the preset manager.
@@ -339,6 +348,36 @@ class EncodingDialog(Renderer, Loggable):
         except DuplicatePresetNameException:
             error_markup = _('"%s" already exists.') % new_text
             self._showPresetManagerError(mgr, error_markup)
+
+    def _presetNameEditingStartedCb(self, renderer, editable, path, mgr):
+        """Handle the start of a preset renaming."""
+        self._hidePresetManagerError(mgr)
+
+    def _treeviewDefocusedCb(self, widget, event, mgr):
+        """Handle the treeview loosing the focus."""
+        self._hidePresetManagerError(mgr)
+
+    def _showPresetManagerError(self, mgr, error_markup):
+        """Show the specified error on the infobar associated with the manager.
+
+        @param mgr: The preset manager for which to show the error.
+        @type mgr: PresetManager
+        """
+        infobar = self._infobarForPresetManager[mgr]
+        # The infobar must contain exactly one object in the content area:
+        # a label for displaying the error.
+        label = infobar.get_content_area().children()[0]
+        label.set_markup(error_markup)
+        infobar.show()
+
+    def _hidePresetManagerError(self, mgr):
+        """Hide the error infobar associated with the manager.
+
+        @param mgr: The preset manager for which to hide the error infobar.
+        @type mgr: PresetManager
+        """
+        infobar = self._infobarForPresetManager[mgr]
+        infobar.hide()
 
     @staticmethod
     def _getUniquePresetName(mgr):
@@ -396,6 +435,7 @@ class EncodingDialog(Renderer, Loggable):
         mgr.restorePreset(self.selected_preset)
         self._displaySettings()
         update_preset_buttons_func()
+        self._hidePresetManagerError(mgr)
 
     def _setProperties(self):
         self.window = self.builder.get_object("render-dialog")
@@ -422,6 +462,9 @@ class EncodingDialog(Renderer, Loggable):
                                         "save_render_preset_button")
         self.remove_render_preset_button = self.builder.get_object(
                                         "remove_render_preset_button")
+        self.render_preset_infobar = self.builder.get_object(
+            "render-preset-infobar")
+
 
     def _settingsChanged(self, settings):
         self.updateResolution()
