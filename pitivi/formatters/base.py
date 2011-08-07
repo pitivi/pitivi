@@ -388,11 +388,21 @@ class Formatter(Signallable, Loggable):
     def _searchMissingFile(self, uri):
         """Search for a replacement for the specified file:// URI."""
         for old_prefix, new_prefix in self.directorymapping.iteritems():
-            self.debug("uri:%r, k:%r, v:%r", uri, old_prefix, new_prefix)
+            self.debug("uri:%r, old prefix:%r, new prefix:%r", uri,
+                     old_prefix, new_prefix)
+            uri = unquote(uri)
+            old_prefix = unquote(old_prefix)
+            print uri
+            print old_prefix
             if uri.startswith(old_prefix):
+                uri = quote(uri)
+                old_prefix = quote(old_prefix)
                 probable = uri.replace(old_prefix, new_prefix, 1)
                 if uri_is_valid(probable) and uri_is_reachable(probable):
                     return probable
+            uri = quote(uri)
+            old_prefix = quote(old_prefix)
+
         return None
 
     #}
