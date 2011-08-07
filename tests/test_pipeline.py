@@ -304,10 +304,6 @@ class TestPipeline(TestCase):
 
         self.pipeline.releaseQueueForFactoryStream(factory, stream)
 
-        gst.debug("pouet2")
-        self.failUnlessRaises(PipelineError,
-                self.pipeline.releaseQueueForFactoryStream, factory, stream)
-
         # should always fail with a src bin
         factory2 = VideoTestSourceFactory()
         stream2 = VideoStream(gst.Caps('any'), 'src')
