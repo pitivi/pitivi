@@ -392,8 +392,6 @@ class Formatter(Signallable, Loggable):
                      old_prefix, new_prefix)
             uri = unquote(uri)
             old_prefix = unquote(old_prefix)
-            print uri
-            print old_prefix
             if uri.startswith(old_prefix):
                 uri = quote(uri)
                 old_prefix = quote(old_prefix)
