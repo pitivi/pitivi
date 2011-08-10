@@ -27,6 +27,8 @@ from gettext import gettext as _
 
 from pitivi.configure import get_ui_dir
 from pitivi.configure import APPMANUALURL
+from pitivi.ui.depsmanager import DepsManager
+from pitivi.check import soft_deps
 
 from urllib import unquote
 
@@ -58,6 +60,9 @@ class StartUpWizard(object):
         filter.add_pattern("*.xptv")
         self.recent_chooser.add_filter(filter)
 
+        if not soft_deps:
+            self.builder.get_object("missing_deps_button").hide()
+
         self.app.projectManager.connect("new-project-failed",
                 self._projectFailedCb)
         self.app.projectManager.connect("new-project-loaded",
@@ -88,6 +93,10 @@ class StartUpWizard(object):
     def _onBrowseButtonClickedCb(self, unused_button6):
         """Handle a click on the Browse button."""
         self.app.gui.openProject()
+
+    def _onMissingDepsButtonClickedCb(self, unused_button):
+        self.hide()
+        self.dep_manager = DepsManager()
 
     def _userManualCb(self, unused_button):
         """Handle a click on the Help button."""

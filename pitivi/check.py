@@ -105,6 +105,8 @@ def check_required_version(modulename):
 
 def initial_checks():
     reg = gst.registry_get_default()
+    global soft_deps
+    soft_deps = {}
     if PiTiVi:
         return (_("%s is already running") % APPNAME,
                 _("An instance of %s is already running in this script.") % APPNAME)
@@ -158,4 +160,22 @@ def initial_checks():
     if not __try_import__("pkg_resources"):
         return (_("Could not import the distutils modules"),
                 _("Make sure you have the distutils Python module installed."))
+
+    # The following are soft dependencies
+    # Note that instead of checking for plugins using gst.registry_get_default().find_plugin("foo"),
+    # we could check for elements using gst.element_factory.make("foo")
+    if not __try_import__("numpy"):
+        soft_deps["NumPy"] = _("Enables the autoalign feature")
+    if not gst.registry_get_default().find_plugin("frei0r"):
+        soft_deps["Frei0r"] = _("Additional video effects")
+    if not gst.registry_get_default().find_plugin("ffmpeg"):
+        soft_deps["GStreamer FFmpeg plugin"] = _('Additional multimedia codecs through the FFmpeg library')
+    # Test for gst bad
+    # This is disabled because, by definition, gst bad is a set of plugins that can
+    # move to gst good or ugly, and we don't really have something to rely upon.
+    #if not gst.registry_get_default().find_plugin("swfdec"): # FIXME: find a more representative plugin
+    #    soft_deps["GStreamer bad plugins"] = _('Additional GStreamer plugins whose code is not of good enough quality, or are not considered tested well enough. The licensing may or may not be LGPL')
+    # Test for gst ugly
+    #if not gst.registry_get_default().find_plugin("x264"):
+    #    soft_deps["GStreamer ugly plugins"] = _('Additional good quality GStreamer plugins whose license is not LGPL or with licensing issues')
     return None
