@@ -7,6 +7,7 @@ ui_PYTHON =			\
 	controller.py		\
 	curve.py		\
 	dnd.py			\
+	depsmanager.py	\
 	dynamic.py		\
 	encodingdialog.py	\
 	encodingprogress.py	\

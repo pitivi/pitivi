@@ -7,6 +7,7 @@ ui_DATA = \
 	mainwindow.xml		 \
 	preferences.ui		 \
 	projectsettings.ui	 \
+	depsmanager.ui	\
 	startupwizard.ui
 
 EXTRA_DIST = \
