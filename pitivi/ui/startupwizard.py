@@ -26,9 +26,9 @@ import webbrowser
 from gettext import gettext as _
 
 from pitivi.configure import get_ui_dir
-from pitivi.configure import APPMANUALURL
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.check import soft_deps
+from pitivi.utils import show_user_manual
 
 from urllib import unquote
 
@@ -100,7 +100,7 @@ class StartUpWizard(object):
 
     def _userManualCb(self, unused_button):
         """Handle a click on the Help button."""
-        webbrowser.open(APPMANUALURL)
+        show_user_manual()
 
     def _deleteCb(self, unused_widget, event):
         """Handle a click on the X button of the dialog."""

@@ -48,7 +48,7 @@ from pitivi.log.loggable import Loggable
 from pitivi.ui.timeline import Timeline
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
-from pitivi.configure import pitivi_version, APPNAME, APPURL, APPMANUALURL, \
+from pitivi.configure import pitivi_version, APPNAME, APPURL, \
      get_pixmap_dir, LIBDIR, get_ui_dir
 from pitivi.ui import dnd
 from pitivi.pipeline import Pipeline
@@ -62,7 +62,7 @@ from pitivi.ui.effectlist import EffectList
 from pitivi.ui.clipproperties import ClipProperties
 from pitivi.ui.common import SPACING
 from pitivi.ui.common import factory_name
-from pitivi.utils import beautify_length
+from pitivi.utils import beautify_length, show_user_manual
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.filechooserpreview import PreviewWidget
 
@@ -616,7 +616,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             action.props.active
 
     def _userManualCb(self, unused_action):
-        webbrowser.open_new(APPMANUALURL)
+        show_user_manual()
 
     def _aboutResponseCb(self, dialog, unused_response):
         dialog.destroy()
