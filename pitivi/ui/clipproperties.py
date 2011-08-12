@@ -35,7 +35,6 @@ from pitivi.stream import VideoStream
 from pitivi.ui.gstwidget import GstElementSettingsWidget
 from pitivi.ui.effectsconfiguration import EffectsPropertiesHandling
 from pitivi.ui.common import PADDING, SPACING
-from pitivi.ui import dynamic
 from pitivi.ui.effectlist import HIDDEN_EFFECTS
 
 (COL_ACTIVATED,
@@ -50,30 +49,45 @@ class ClipPropertiesError(Exception):
     pass
 
 
-class ClipProperties(gtk.VBox, Loggable):
+class ClipProperties(gtk.ScrolledWindow, Loggable):
     """
     Widget for configuring clips properties
     """
 
     def __init__(self, instance, uiman):
-        gtk.VBox.__init__(self)
+        gtk.ScrolledWindow.__init__(self)
         Loggable.__init__(self)
+
+        self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        self.set_shadow_type(gtk.SHADOW_NONE)
+
+        vp = gtk.Viewport()
+        vp.set_shadow_type(gtk.SHADOW_NONE)
+        self.add(vp)
 
         self.app = instance
         self.settings = instance.settings
         self._project = None
+        self.transformation_expander = None
         self.info_bar_box = gtk.VBox()
+
+        vbox = gtk.VBox()
+        vp.add(vbox)
 
         self.effect_properties_handling = EffectsPropertiesHandling(instance.action_log)
         self.effect_expander = EffectProperties(instance,
                                                 self.effect_properties_handling,
                                                 self)
 
-        self.pack_start(self.info_bar_box, expand=False, fill=True)
-        self.pack_end(self.effect_expander, expand=True, fill=True)
+        vbox.pack_start(self.info_bar_box, expand=False, fill=True)
+
+        vbox.pack_end(self.effect_expander, expand=True, fill=True)
+        vbox.set_spacing(SPACING)
 
         self.info_bar_box.show()
         self.effect_expander.show()
+        vbox.show()
+        vp.show()
         self.show()
 
     def _setProject(self, project):
@@ -102,7 +116,7 @@ class ClipProperties(gtk.VBox, Loggable):
         return label, info_bar
 
 
-class EffectProperties(gtk.HBox):
+class EffectProperties(gtk.Expander, gtk.HBox):
     """
     Widget for viewing and configuring effects
     """
@@ -110,6 +124,7 @@ class EffectProperties(gtk.HBox):
     # to put in ClipProperties, that is why this is done this way
 
     def __init__(self, instance, effect_properties_handling, clip_properties):
+        gtk.Expander.__init__(self)
         gtk.HBox.__init__(self)
         #self.set_expanded(True)
 
@@ -206,13 +221,13 @@ class EffectProperties(gtk.HBox):
         self.app.connect("new-project-loaded",
             self._newProjectLoadedCb)
 
-        #self.connect('notify::expanded', self._expandedCb)
-
         self._table.attach(self.treeview_scrollwin, 0, 1, 2, 3)
 
         self._vcontent.pack1(self._table, resize=True, shrink=False)
         self._showInfoBar()
         self._vcontent.show()
+        self.set_expanded(True)
+        self.set_label("Effects configuration")
 
     def _newProjectLoadedCb(self, app, project):
         self.clip_properties.project = project
@@ -248,6 +263,7 @@ class EffectProperties(gtk.HBox):
                 timeline_object.connect("track-object-removed", self._trackRemovedRemovedCb)
         else:
             self.timeline_objects = []
+            self.set_sensitive(False)
         self._updateAll()
 
     def  _trackObjectAddedCb(self, unused_timeline_object, track_object):
@@ -321,8 +337,8 @@ class EffectProperties(gtk.HBox):
         track_effect.active = not track_effect.active
         self.app.action_log.commit()
 
-    #def _expandedCb(self, expander, params):
-    #    self._updateAll()
+    def _expandedCb(self, expander, params):
+        self._updateAll()
 
     def _treeViewQueryTooltipCb(self, treeview, x, y, keyboard_mode, tooltip):
         context = treeview.get_tooltip_context(x, y, keyboard_mode)
@@ -336,19 +352,19 @@ class EffectProperties(gtk.HBox):
         return True
 
     def _updateAll(self):
-        #if self.get_expanded():
-        self._removeEffectBt.set_sensitive(False)
-        if len(self.timeline_objects) == 1:
-            self._setEffectDragable()
-            self._updateTreeview()
-            self._updateEffectConfigUi()
+        if self.get_expanded():
+            self._removeEffectBt.set_sensitive(False)
+            if len(self.timeline_objects) == 1:
+                self._setEffectDragable()
+                self._updateTreeview()
+                self._updateEffectConfigUi()
+            else:
+                self._hideEffectConfig()
+                self.storemodel.clear()
+                self._showInfoBar()
+            self._vcontent.show()
         else:
-            self._hideEffectConfig()
-            self.storemodel.clear()
-            self._showInfoBar()
-        self._vcontent.show()
-        #else:
-        #    self._vcontent.hide()
+            self._vcontent.hide()
 
     def _activeChangedCb(self, unusedObj, unusedActive):
         self._updateTreeview()
@@ -381,11 +397,11 @@ class EffectProperties(gtk.HBox):
         self.txtlabel.show()
         self._info_bar.show()
 
-        self.treeview.set_sensitive(False)
+        self.set_sensitive(False)
         self._table.show_all()
 
     def _setEffectDragable(self):
-        self.treeview.set_sensitive(True)
+        self.set_sensitive(True)
         self._table.show_all()
         self._info_bar.hide_all()
 
