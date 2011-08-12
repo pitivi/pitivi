@@ -38,18 +38,39 @@ class DepsManager(object):
         self.builder = gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(), "depsmanager.ui"))
         self.builder.connect_signals(self)
-
         self.window = self.builder.get_object("window1")
+
+        # FIXME: autodetect if we can actually use PackageKit's "InstallResource" dbus
+        # method, and if yes, show this button.
+        self.builder.get_object("install_btn").hide()
         self.show()
 
     def _onCloseButtonClickedCb(self, unused_button):
         self.hide()
 
-    def _onInstallButtonClickedCb(self, unused_button):  # TODO: do stuff here
+    def _onInstallButtonClickedCb(self, unused_button):
         self.hide()
-        for foo in soft_deps:
-            print foo
-            print "\t", soft_deps[foo], "\n"
+        """
+        # FIXME: this is not implemented properly. Here is some partially working code:
+        
+        self.session_bus = dbus.SessionBus()
+        self.dbus_path = "/org/freedesktop/PackageKit"
+        self.dbus_name = "org.freedesktop.PackageKit"
+        self.dbus_interface = "org.freedesktop.PackageKit.Modify"
+        self.obj = self.session_bus.get_object(self.dbus_name, self.dbus_path)
+        self.iface = dbus.Interface(self.obj, self.dbus_interface)
+
+        soft_deps_list = []
+        for dep in soft_deps:
+            soft_deps_list.append(dep)
+
+        # This line works for testing, but InstallProvideFiles is not really what we want:
+        #self.iface.InstallProvideFiles(self.window.window_xid, soft_deps_list, "show-progress,show-finished")
+
+        # Instead, we should be using InstallResources(xid, type, resources)
+        self.iface.InstallResources(self.window.window_xid, None, soft_deps_list)
+        """
+        # TODO: catch exceptions/create callbacks to _installFailedCb
 
     def _setDepsLabel(self):
         """Set the contents of the label containing the list of missing dependencies"""
