@@ -8,6 +8,7 @@ ui_DATA = \
 	preferences.ui		 \
 	projectsettings.ui	 \
 	depsmanager.ui	\
+	cliptransformation.ui \
 	startupwizard.ui
 
 EXTRA_DIST = \
