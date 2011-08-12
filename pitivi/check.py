@@ -183,8 +183,3 @@ def initial_checks():
     #if not gst.registry_get_default().find_plugin("x264"):
     #    soft_deps["GStreamer ugly plugins"] = _('Additional good quality GStreamer plugins whose license is not LGPL or with licensing issues')
     return None
-
-
-def get_softdeps():
-    """Returns the soft_deps dictionary."""
-    return soft_deps

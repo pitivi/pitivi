@@ -25,7 +25,7 @@ import os
 from gettext import gettext as _
 
 from pitivi.configure import get_ui_dir
-from pitivi.check import get_softdeps
+from pitivi.check import soft_deps
 
 class DepsManager(object):
     """Display a dialog listing missing soft dependencies.
@@ -46,13 +46,20 @@ class DepsManager(object):
 
     def _onInstallButtonClickedCb(self, unused_button): # TODO: do stuff here
         self.hide()
-        soft_deps = get_softdeps()
         for foo in soft_deps:
             print foo
             print "\t", soft_deps[foo], "\n"
 
+    def _setDepsLabel(self):
+        """Set the contents of the label containing the list of missing dependencies"""
+        label_contents = ""
+        for dep in soft_deps:
+            label_contents += u"• " + dep + " (" + soft_deps[dep] + ")\n"
+        self.builder.get_object("pkg_list").set_text(label_contents)
+
     def show(self):
 #        self.window.set_transient_for(self.app.gui)
+        self._setDepsLabel()
         self.window.show()
         self.window.grab_focus()
 
