@@ -189,22 +189,19 @@ audio_rates = model((str, int), (
     (_("%d KHz") % 22, 22050),
     (_("%.1f KHz") % 44.1, 44100),
     (_("%d KHz") % 48, 48000),
-    (_("%d KHz") % 96, 96000)
-))
+    (_("%d KHz") % 96, 96000)))
 
 audio_depths = model((str, int), (
     (_("%d bit") % 8, 8),
     (_("%d bit") % 16, 16),
     (_("%d bit") % 24, 24),
-    (_("%d bit") % 32, 32)
-))
+    (_("%d bit") % 32, 32)))
 
 audio_channels = model((str, int), (
     (_("6 Channels (5.1)"), 6),
     (_("4 Channels (4.0)"), 4),
     (_("Stereo"), 2),
-    (_("Mono"), 1)
-))
+    (_("Mono"), 1)))
 
 
 def set_combo_value(combo, value, default_index=-1):
@@ -219,3 +216,7 @@ def set_combo_value(combo, value, default_index=-1):
 def get_combo_value(combo):
     active = combo.get_active()
     return combo.props.model[active][1]
+
+
+def hex_to_rgb(value):
+    return tuple(float(int(value[i:i + 2], 16)) / 255.0 for i in range(0, 6, 2))
