@@ -25,6 +25,8 @@ Class handling the midle pane
 import gtk
 import pango
 import dnd
+import gst
+import os
 
 from gettext import gettext as _
 
@@ -34,7 +36,10 @@ from pitivi.stream import VideoStream
 
 from pitivi.ui.gstwidget import GstElementSettingsWidget
 from pitivi.ui.effectsconfiguration import EffectsPropertiesHandling
+from pitivi.ui.depsmanager import DepsManager
 from pitivi.ui.common import PADDING, SPACING
+from pitivi.configure import get_ui_dir
+from pitivi.check import soft_deps
 from pitivi.ui.effectlist import HIDDEN_EFFECTS
 
 (COL_ACTIVATED,
@@ -75,11 +80,17 @@ class ClipProperties(gtk.ScrolledWindow, Loggable):
         vp.add(vbox)
 
         self.effect_properties_handling = EffectsPropertiesHandling(instance.action_log)
+
         self.effect_expander = EffectProperties(instance,
                                                 self.effect_properties_handling,
                                                 self)
 
         vbox.pack_start(self.info_bar_box, expand=False, fill=True)
+
+        self.transformation_expander = TransformationProperties(
+            instance, instance.action_log)
+        vbox.pack_start(self.transformation_expander, expand=False, fill=False)
+        self.transformation_expander.show()
 
         vbox.pack_end(self.effect_expander, expand=True, fill=True)
         vbox.set_spacing(SPACING)
@@ -94,6 +105,8 @@ class ClipProperties(gtk.ScrolledWindow, Loggable):
         self._project = project
         if project:
             self.effect_expander._connectTimelineSelection(self._project.timeline)
+            if self.transformation_expander:
+                self.transformation_expander.timeline = self._project.timeline
 
     def _getProject(self):
         return self._project
@@ -448,3 +461,170 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         if self._effect_config_ui:
             self._effect_config_ui.hide()
             self._effect_config_ui = None
+
+
+class TransformationProperties(gtk.Expander):
+    """
+    Widget for viewing and configuring speed
+    """
+    __signals__ = {
+        'selection-changed': []}
+
+    def __init__(self, app, action_log):
+        gtk.Expander.__init__(self)
+        self.action_log = action_log
+        self.app = app
+        self._timeline = None
+        self._current_tl_obj = None
+        self.spin_buttons = {}
+        self.default_values = {}
+        self.set_label(_("Transformation configuration"))
+        self.set_sensitive(False)
+
+        if not "Frei0r" in soft_deps:
+            self.builder = gtk.Builder()
+            self.builder.add_from_file(os.path.join(get_ui_dir(),
+                        "cliptransformation.ui"))
+
+            self.add(self.builder.get_object("transform_box"))
+            self.show_all()
+            self._initButtons()
+        self.connect('notify::expanded', self._expandedCb)
+
+    def _initButtons(self):
+        self.zoom_scale = self.builder.get_object("zoom_scale")
+        self.zoom_scale.connect("value-changed", self._zoomViewerCb)
+        clear_button = self.builder.get_object("clear_button")
+        clear_button.connect("clicked", self._defaultValuesCb)
+
+        self._getAndConnectToEffect("xpos_spinbtn", "tilt_x")
+        self._getAndConnectToEffect("ypos_spinbtn", "tilt_y")
+
+        self._getAndConnectToEffect("width_spinbtn", "scale_x")
+        self._getAndConnectToEffect("height_spinbtn", "scale_y")
+
+        self._getAndConnectToEffect("crop_left_spinbtn", "clip_left")
+        self._getAndConnectToEffect("crop_right_spinbtn", "clip_right")
+        self._getAndConnectToEffect("crop_top_spinbtn", "clip_top")
+        self._getAndConnectToEffect("crop_bottom_spinbtn", "clip_bottom")
+        self.connectSpinButtonsToFlush()
+
+    def _zoomViewerCb(self, scale):
+        self.app.gui.viewer.setZoom(scale.get_value())
+
+    def _expandedCb(self, expander, params):
+        if not "Frei0r" in soft_deps:
+            if self._current_tl_obj:
+                self.effect = self._findOrCreateEffect("frei0r-filter-scale0tilt")
+                self._updateSpinButtons()
+                self.set_expanded(self.get_expanded())
+                self._updateBoxVisibility()
+                self.zoom_scale.set_value(1.0)
+        else:
+            if self.get_expanded():
+                DepsManager(self.app)
+            self.set_expanded(False)
+
+    def _defaultValuesCb(self, widget):
+        self.disconnectSpinButtonsFromFlush()
+        for name, spinbtn in self.spin_buttons.items():
+            spinbtn.set_value(self.default_values[name])
+        self.app.gui.viewer.pipeline.flushSeekVideo()
+        self.connectSpinButtonsToFlush()
+        self.track_effect.gnl_object.props.active = False
+
+    def disconnectSpinButtonsFromFlush(self):
+        for spinbtn in self.spin_buttons.values():
+            spinbtn.disconnect_by_func(self._flushPipeLineCb)
+
+    def connectSpinButtonsToFlush(self):
+        for spinbtn in self.spin_buttons.values():
+            spinbtn.connect("output", self._flushPipeLineCb)
+
+    def _updateSpinButtons(self):
+        for name, spinbtn in self.spin_buttons.items():
+            spinbtn.set_value(self.effect.get_property(name))
+
+    def _getAndConnectToEffect(self, widget_name, property_name):
+        spinbtn = self.builder.get_object(widget_name)
+        spinbtn.connect("output",
+                        self._onValueChangedCb, property_name)
+        self.spin_buttons[property_name] = spinbtn
+        self.default_values[property_name] = spinbtn.get_value()
+
+    def _onValueChangedCb(self, spinbtn, prop):
+        value = spinbtn.get_value()
+
+        if value != self.default_values[prop] and not self.track_effect.gnl_object.props.active:
+            self.track_effect.gnl_object.props.active = True
+
+        if value != self.effect.get_property(prop):
+            self.action_log.begin("Transformation property change")
+            self.effect.set_property(prop, value)
+            self.action_log.commit()
+        box = self.app.gui.viewer.internal.box
+
+        # update box when values are changed in the spin boxes,
+        # so no point is selected
+        if box and box.clicked_point == 0:
+            box.update_from_effect(self.effect)
+
+    def _flushPipeLineCb(self, widget):
+        self.app.gui.viewer.pipeline.flushSeekVideo()
+
+    def _findEffect(self, name):
+        for track_effect in self._current_tl_obj.track_objects:
+            if isinstance(track_effect, TrackEffect):
+                if name in track_effect.getElement().get_path_string():
+                        self.track_effect = track_effect
+                        return track_effect.getElement()
+
+    def _findOrCreateEffect(self, name):
+        effect = self._findEffect(name)
+        if not effect:
+            factory = self.app.effects.getFactoryFromName(name)
+            self.timeline.addEffectFactoryOnObject(factory, [self._current_tl_obj])
+            effect = self._findEffect(name)
+            # disable the effect on default
+            self.track_effect.gnl_object.props.active = False
+        self.app.gui.viewer.internal.set_transformation_properties(self)
+        effect.freeze_notify()
+        return effect
+
+    def _selectionChangedCb(self, timeline):
+        if self.timeline and len(self.timeline.selection.selected) > 0:
+            for tl_obj in self.timeline.selection.selected:
+                pass
+
+            if tl_obj != self._current_tl_obj:
+                self._current_tl_obj = tl_obj
+                self.effect = None
+
+            self.set_sensitive(True)
+            if self.get_expanded():
+                self.effect = self._findOrCreateEffect("frei0r-filter-scale0tilt")
+                self._updateSpinButtons()
+        else:
+            if self._current_tl_obj:
+                self._current_tl_obj = None
+                self.zoom_scale.set_value(1.0)
+                self.app.gui.viewer.pipeline.flushSeekVideo()
+            self.effect = None
+            self.set_sensitive(False)
+        self._updateBoxVisibility()
+
+    def _updateBoxVisibility(self):
+        if self.get_expanded() and self._current_tl_obj:
+            self.app.gui.viewer.internal.show_box()
+        else:
+            self.app.gui.viewer.internal.hide_box()
+
+    def _getTimeline(self):
+        return self._timeline
+
+    def _setTimeline(self, timeline):
+        self._timeline = timeline
+        if timeline:
+            self.timeline.connect('selection-changed', self._selectionChangedCb)
+
+    timeline = property(_getTimeline, _setTimeline)

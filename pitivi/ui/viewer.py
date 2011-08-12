@@ -24,6 +24,8 @@ import gobject
 import gtk
 from gtk import gdk
 import gst
+from math import pi
+import cairo
 
 from gettext import gettext as _
 
@@ -33,7 +35,7 @@ from pitivi.stream import VideoStream
 from pitivi.utils import time_to_string, Seeker
 from pitivi.log.loggable import Loggable
 from pitivi.pipeline import PipelineError
-from pitivi.ui.common import SPACING
+from pitivi.ui.common import SPACING, hex_to_rgb
 from pitivi.settings import GlobalSettings
 from pitivi.ui.dynamic import TimeWidget
 
@@ -58,6 +60,18 @@ GlobalSettings.addConfigOption("viewerY",
     section="viewer",
     key="y-pos",
     default=0)
+GlobalSettings.addConfigOption("pointSize",
+    section="viewer",
+    key="point-size",
+    default=25)
+GlobalSettings.addConfigOption("clickedPointColor",
+    section="viewer",
+    key="clicked-point-color",
+    default='ffa854')
+GlobalSettings.addConfigOption("pointColor",
+    section="viewer",
+    key="point-color",
+    default='49a0e0')
 
 
 class ViewerError(Exception):
@@ -183,6 +197,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.pipeline.connect('element-message', self._elementMessageCb)
         self.pipeline.connect('duration-changed', self._durationChangedCb)
         self.pipeline.connect('eos', self._eosCb)
+        self.pipeline.connect("state-changed", self.internal.currentStateCb)
         # if we have an action set it to that new pipeline
         if self.action:
             self.pipeline.setAction(self.action)
@@ -205,6 +220,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.pipeline.disconnect_by_function(self._elementMessageCb)
         self.pipeline.disconnect_by_function(self._durationChangedCb)
         self.pipeline.disconnect_by_function(self._eosCb)
+        self.pipeline.disconnect_by_function(self.internal.currentStateCb)
         self.pipeline.stop()
 
         self.pipeline = None
@@ -263,16 +279,18 @@ class PitiviViewer(gtk.VBox, Loggable):
         # drawing area
         self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.5, ratio=4.0 / 3.0,
                                       obey_child=False)
-        self.pack_start(self.aframe, expand=True)
-        self.internal = ViewerWidget(self.action)
+
+        self.internal = ViewerWidget(self.action, self.app.settings)
+        self.internal.init_transformation_events()
         self.internal.show()
         self.aframe.add(self.internal)
+        self.pack_start(self.aframe, expand=True)
 
         self.external_window = gtk.Window()
         vbox = gtk.VBox()
         vbox.set_spacing(SPACING)
         self.external_window.add(vbox)
-        self.external = ViewerWidget(self.action)
+        self.external = ViewerWidget(self.action, self.app.settings)
         vbox.pack_start(self.external)
         self.external_window.connect("delete-event",
             self._externalWindowDeleteCb)
@@ -480,6 +498,20 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     ## Control gtk.Button callbacks
 
+    def setZoom(self, zoom):
+        if self.target.box:
+            maxSize = self.target.area
+            width = int(float(maxSize.width) * zoom)
+            height = int(float(maxSize.height) * zoom)
+            area = gtk.gdk.Rectangle((maxSize.width - width) / 2,
+                                     (maxSize.height - height) / 2,
+                                     width, height)
+            self.sink.set_render_rectangle(*area)
+            self.target.box.update_size(area)
+            self.target.zoom = zoom
+            self.target.sink = self.sink
+            self.target.renderbox()
+
     def _goToStartCb(self, unused_button):
         self.seek(0)
 
@@ -609,6 +641,313 @@ class PitiviViewer(gtk.VBox, Loggable):
         gtk.gdk.threads_leave()
 
 
+class Point():
+    def __init__(self, x, y, settings):
+        self.x = x
+        self.y = y
+        self.color = hex_to_rgb(settings.pointColor)
+        self.clickedColor = hex_to_rgb(settings.clickedPointColor)
+        self.set_width(settings.pointSize)
+        self.clicked = False
+
+    def set_position(self, x, y):
+        self.x = x
+        self.y = y
+
+    def set_width(self, width):
+        self.width = width
+        self.radius = width / 2
+
+    def is_clicked(self, event):
+        is_right_of_left = event.x > self.x - self.radius
+        is_left_of_right = event.x < self.x + self.radius
+        is_below_top = event.y > self.y - self.radius
+        is_above_bottom = event.y < self.y + self.radius
+
+        if is_right_of_left and is_left_of_right and is_below_top and is_above_bottom:
+            self.clicked = True
+            return True
+
+    def draw(self, cr):
+        linear = cairo.LinearGradient(self.x, self.y - self.radius, self.x, self.y + self.radius)
+        linear.add_color_stop_rgba(0.00, .6, .6, .6, 1)
+        linear.add_color_stop_rgba(0.50, .4, .4, .4, .1)
+        linear.add_color_stop_rgba(0.60, .4, .4, .4, .1)
+        linear.add_color_stop_rgba(1.00, .6, .6, .6, 1)
+
+        radial = cairo.RadialGradient(self.x + self.radius / 2, self.y - self.radius / 2, 1, self.x, self.y, self.radius)
+        if self.clicked:
+            radial.add_color_stop_rgb(0, *self.clickedColor)
+        else:
+            radial.add_color_stop_rgb(0, *self.color)
+        radial.add_color_stop_rgb(1, 0.1, 0.1, 0.1)
+
+        radial_glow = cairo.RadialGradient(self.x, self.y, self.radius * .9, self.x, self.y, self.radius * 1.2)
+
+        radial_glow.add_color_stop_rgba(0, 0.9, 0.9, 0.9, 1)
+        radial_glow.add_color_stop_rgba(1, 0.9, 0.9, 0.9, 0)
+
+        cr.set_source(radial_glow)
+        cr.arc(self.x, self.y, self.radius * 1.2, 0, 2 * pi)
+        cr.fill()
+
+        cr.arc(self.x, self.y, self.radius * .9, 0, 2 * pi)
+        cr.set_source(radial)
+        cr.fill()
+        cr.arc(self.x, self.y, self.radius * .9, 0, 2 * pi)
+        cr.set_source(linear)
+        cr.fill()
+
+(NO_POINT,
+ AREA,
+ TOP_LEFT,
+ BOTTOM_LEFT,
+ TOP_RIGHT,
+ BOTTOM_RIGHT,
+ LEFT,
+ RIGHT,
+ TOP,
+ BOTTOM) = range(10)
+
+
+class TransformationBox():
+    """
+    Box for transforming the video on the ViewerWidget
+    """
+
+    def __init__(self, settings):
+        self.clicked_point = NO_POINT
+        self.left_factor = 0
+        self.settings = settings
+        self.right_factor = 1
+        self.top_factor = 0
+        self.bottom_factor = 1
+        self.center_factor = Point(0.5, 0.5, settings)
+        self.transformation_properties = None
+        self.points = {}
+
+    def is_clicked(self, event):
+        is_right_of_left = event.x > self.left
+        is_left_of_right = event.x < self.right
+        is_below_top = event.y > self.top
+        is_above_bottom = event.y < self.bottom
+
+        if is_right_of_left and is_left_of_right and is_below_top and is_above_bottom:
+            return True
+
+    def update_scale(self):
+        self.scale_x = (self.right_factor - self.left_factor) / 2.0
+        self.scale_y = (self.bottom_factor - self.top_factor) / 2.0
+
+    def update_center(self):
+        self.center_factor.x = (self.left_factor + self.right_factor) / 2.0
+        self.center_factor.y = (self.top_factor + self.bottom_factor) / 2.0
+
+        self.center.x = self.area.width * self.center_factor.x
+        self.center.y = self.area.height * self.center_factor.y
+
+    def set_transformation_properties(self, transformation_properties):
+        self.transformation_properties = transformation_properties
+        self.update_from_effect(transformation_properties.effect)
+
+    def update_from_effect(self, effect):
+        self.scale_x = effect.get_property("scale-x")
+        self.scale_y = effect.get_property("scale-y")
+        self.center_factor.x = 2 * (effect.get_property("tilt-x") - 0.5) + self.scale_x
+        self.center_factor.y = 2 * (effect.get_property("tilt-y") - 0.5) + self.scale_y
+        self.left_factor = self.center_factor.x - self.scale_x
+        self.right_factor = self.center_factor.x + self.scale_x
+        self.top_factor = self.center_factor.y - self.scale_y
+        self.bottom_factor = self.center_factor.y + self.scale_y
+        self.update_absolute()
+        self.update_factors()
+        self.update_center()
+        self.update_scale()
+        self.update_points()
+
+    def move(self, event):
+        rel_x = self.last_x - event.x
+        rel_y = self.last_y - event.y
+
+        self.center.x -= rel_x
+        self.center.y -= rel_y
+
+        self.left -= rel_x
+        self.right -= rel_x
+        self.top -= rel_y
+        self.bottom -= rel_y
+
+        self.last_x = event.x
+        self.last_y = event.y
+
+    def init_points(self):
+        #corner boxes
+        self.points[TOP_LEFT] = Point(self.left, self.top, self.settings)
+        self.points[TOP_RIGHT] = Point(self.right, self.top, self.settings)
+        self.points[BOTTOM_LEFT] = Point(self.left, self.bottom, self.settings)
+        self.points[BOTTOM_RIGHT] = Point(self.right, self.bottom, self.settings)
+
+        #edge boxes
+        self.points[TOP] = Point(self.center.x, self.top, self.settings)
+        self.points[BOTTOM] = Point(self.center.x, self.bottom, self.settings)
+        self.points[LEFT] = Point(self.left, self.center.y, self.settings)
+        self.points[RIGHT] = Point(self.right, self.center.y, self.settings)
+
+    def update_points(self):
+        self._update_measure()
+
+        #corner boxes
+        self.points[TOP_LEFT].set_position(self.left, self.top)
+        self.points[TOP_RIGHT].set_position(self.right, self.top)
+        self.points[BOTTOM_LEFT].set_position(self.left, self.bottom)
+        self.points[BOTTOM_RIGHT].set_position(self.right, self.bottom)
+
+        #edge boxes
+        self.points[TOP].set_position(self.center.x, self.top)
+        self.points[BOTTOM].set_position(self.center.x, self.bottom)
+        self.points[LEFT].set_position(self.left, self.center.y)
+        self.points[RIGHT].set_position(self.right, self.center.y)
+
+        if self.width < 100 or self.height < 100:
+            if self.width < self.height:
+                point_width = self.width / 4.0
+            else:
+                point_width = self.height / 4.0
+
+            # gradient is not rendered below width 7
+            if point_width < 7:
+                point_width = 7
+        else:
+            point_width = self.settings.pointSize
+
+        for point in self.points.values():
+            point.set_width(point_width)
+
+    def draw(self, cr):
+        self.update_points()
+        # main box
+        cr.set_source_rgba(0.5, 0.5, 0.5, 0.7)
+        cr.rectangle(self.left, self.top, self.right - self.left, self.bottom - self.top)
+        cr.stroke()
+
+        for point in self.points.values():
+            point.draw(cr)
+
+    def select_point(self, event):
+        # translate when zoomed out
+        event.x -= self.area.x
+        event.y -= self.area.y
+        for type, point in self.points.items():
+            if point.is_clicked(event):
+                self.clicked_point = type
+                return
+
+        if self.is_clicked(event):
+            self.clicked_point = AREA
+            self.last_x = event.x
+            self.last_y = event.y
+        else:
+            self.clicked_point = NO_POINT
+
+    def _update_measure(self):
+        self.width = self.right - self.left
+        self.height = self.bottom - self.top
+
+    def transform(self, event):
+        # translate when zoomed out
+        event.x -= self.area.x
+        event.y -= self.area.y
+        aspect = float(self.area.width) / float(self.area.height)
+        self._update_measure()
+
+        if self.clicked_point == NO_POINT:
+            return False
+        elif self.clicked_point == AREA:
+            self.move(event)
+        elif self.clicked_point == TOP_LEFT:
+            self.left = event.x
+            self.top = self.bottom - self.width / aspect
+        elif self.clicked_point == BOTTOM_LEFT:
+            self.left = event.x
+            self.bottom = self.top + self.width / aspect
+        elif self.clicked_point == TOP_RIGHT:
+            self.right = event.x
+            self.top = self.bottom - self.width / aspect
+        elif self.clicked_point == BOTTOM_RIGHT:
+            self.right = event.x
+            self.bottom = self.top + self.width / aspect
+        elif self.clicked_point == LEFT:
+            self.left = event.x
+        elif self.clicked_point == RIGHT:
+            self.right = event.x
+        elif self.clicked_point == TOP:
+            self.top = event.y
+        elif self.clicked_point == BOTTOM:
+            self.bottom = event.y
+        self._check_negative_scale()
+        self.update_factors()
+        self.update_center()
+        self.update_scale()
+        return True
+
+    def release_point(self):
+        for point in self.points.values():
+            point.clicked = False
+        self.clicked_point = NO_POINT
+
+    def _check_negative_scale(self):
+        if self.right < self.left:
+            if self.clicked_point in [RIGHT, BOTTOM_RIGHT, TOP_RIGHT]:
+                self.right = self.left
+            else:
+                self.left = self.right
+        if self.bottom < self.top:
+            if self.clicked_point == [BOTTOM, BOTTOM_RIGHT, BOTTOM_LEFT]:
+                self.bottom = self.top
+            else:
+                self.top = self.bottom
+
+    def update_factors(self):
+        self.bottom_factor = float(self.bottom) / float(self.area.height)
+        self.top_factor = float(self.top) / float(self.area.height)
+        self.left_factor = float(self.left) / float(self.area.width)
+        self.right_factor = float(self.right) / float(self.area.width)
+
+    def update_size(self, area):
+        if area.width == 0 or area.height == 0:
+            return
+        self.area = area
+        self.update_absolute()
+
+    def init_size(self, area):
+        self.area = area
+        self.left = area.x
+        self.right = area.x + area.width
+        self.top = area.y
+        self.bottom = area.y + area.height
+        self.center = Point((self.left + self.right) / 2, (self.top + self.bottom) / 2, self.settings)
+        self.init_points()
+        self._update_measure()
+
+    def update_absolute(self):
+        self.top = self.top_factor * self.area.height
+        self.left = self.left_factor * self.area.width
+        self.bottom = self.bottom_factor * self.area.height
+        self.right = self.right_factor * self.area.width
+        self.update_center()
+
+    def update_effect_properties(self):
+        if self.transformation_properties:
+            self.transformation_properties.disconnectSpinButtonsFromFlush()
+            values = self.transformation_properties.spin_buttons
+            values["tilt_x"].set_value((self.center_factor.x - self.scale_x) / 2.0 + 0.5)
+            values["tilt_y"].set_value((self.center_factor.y - self.scale_y) / 2.0 + 0.5)
+
+            values["scale_x"].set_value(self.scale_x)
+            values["scale_y"].set_value(self.scale_y)
+            self.transformation_properties.connectSpinButtonsToFlush()
+
+
 class ViewerWidget(gtk.DrawingArea, Loggable):
     """
     Widget for displaying properly GStreamer video sink
@@ -616,13 +955,71 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
 
     __gsignals__ = {}
 
-    def __init__(self, action=None):
+    def __init__(self, action=None, settings=None):
         gtk.DrawingArea.__init__(self)
         Loggable.__init__(self)
-        self.action = action  # FIXME : Check if it's a view action
-        self.unset_flags(gtk.SENSITIVE)
+        # FIXME : Check if it's a view action
+        self.action = action
+        self.settings = settings
+        self.box = None
+        self.stored = False
+        self.area = None
+        self.zoom = 1.0
+        self.sink = None
+        self.transformation_properties = None
         for state in range(gtk.STATE_INSENSITIVE + 1):
             self.modify_bg(state, self.style.black)
+
+    def init_transformation_events(self):
+        self.set_events(gtk.gdk.BUTTON_PRESS_MASK
+                        | gtk.gdk.BUTTON_RELEASE_MASK
+                        | gtk.gdk.POINTER_MOTION_MASK
+                        | gtk.gdk.POINTER_MOTION_HINT_MASK)
+
+    def show_box(self):
+        if not self.box:
+            self.box = TransformationBox(self.settings)
+            self.box.init_size(self.area)
+            self._update_gradient()
+            self.connect("button-press-event", self.button_press_event)
+            self.connect("button-release-event", self.button_release_event)
+            self.connect("motion-notify-event", self.motion_notify_event)
+            self.connect("size-allocate", self._sizeCb)
+            self.box.set_transformation_properties(self.transformation_properties)
+            self.renderbox()
+
+    def _sizeCb(self, widget, area):
+        # TODO: box is cleared when using regular rendering
+        # so we need to flush the pipeline
+        self.pipeline.flushSeekVideo()
+
+    def hide_box(self):
+        if self.box:
+            self.box = None
+            self.disconnect_by_func(self.button_press_event)
+            self.disconnect_by_func(self.button_release_event)
+            self.disconnect_by_func(self.motion_notify_event)
+            self.pipeline.flushSeekVideo()
+            self.zoom = 1.0
+            if self.sink:
+                self.sink.set_render_rectangle(*self.area)
+
+    def set_transformation_properties(self, transformation_properties):
+            self.transformation_properties = transformation_properties
+
+    def _store_pixbuf(self):
+        colormap = self.window.get_colormap()
+        if self.box and self.zoom != 1.0:
+            # crop away 1 pixel border to avoid artefacts on the pixbuf
+            pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, 0, 8, self.box.area.width - 2, self.box.area.height - 2)
+            self.pixbuf = pixbuf.get_from_drawable(self.window, colormap,
+                                                   self.box.area.x + 1, self.box.area.y + 1,
+                                                   0, 0,
+                                                   self.box.area.width - 2, self.box.area.height - 2)
+        else:
+            pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, 0, 8, *self.window.get_size())
+            self.pixbuf = pixbuf.get_from_drawable(self.window, colormap, 0, 0, 0, 0, *self.window.get_size())
+        self.stored = True
 
     def do_realize(self):
         gtk.DrawingArea.do_realize(self)
@@ -631,6 +1028,84 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         else:
             self.window_xid = self.window.xid
 
+    def button_release_event(self, widget, event):
+        if event.button == 1:
+            self.box.update_effect_properties()
+            self.box.release_point()
+            self.pipeline.flushSeekVideo()
+            self.stored = False
+        return True
+
+    def button_press_event(self, widget, event):
+        if event.button == 1:
+            self.box.select_point(event)
+        return True
+
+    def currentStateCb(self, pipeline, state):
+        self.pipeline = pipeline
+        if state == gst.STATE_PAUSED:
+            self._store_pixbuf()
+            self.renderbox()
+
+    def motion_notify_event(self, widget, event):
+        if event.get_state() & gtk.gdk.BUTTON1_MASK:
+            if self.box.transform(event):
+                if self.stored:
+                    self.renderbox()
+        return True
+
+    def do_expose_event(self, event):
+        self.area = event.area
+        if self.box:
+            self._update_gradient()
+            if self.zoom != 1.0:
+                width = int(float(self.area.width) * self.zoom)
+                height = int(float(self.area.height) * self.zoom)
+                area = gtk.gdk.Rectangle((self.area.width - width) / 2,
+                                     (self.area.height - height) / 2,
+                                     width, height)
+                self.sink.set_render_rectangle(*area)
+            else:
+                area = self.area
+            self.box.update_size(area)
+            self.renderbox()
+
+    def _update_gradient(self):
+        self.gradient_background = cairo.LinearGradient(0, 0, 0, self.area.height)
+        self.gradient_background.add_color_stop_rgb(0.00, .1, .1, .1)
+        self.gradient_background.add_color_stop_rgb(0.50, .2, .2, .2)
+        self.gradient_background.add_color_stop_rgb(1.00, .5, .5, .5)
+
+    def renderbox(self):
+        if self.box:
+            cr = self.window.cairo_create()
+            cr.push_group()
+
+            if self.zoom != 1.0:
+                # draw some nice background for zoom out
+                cr.set_source(self.gradient_background)
+                cr.rectangle(0, 0, self.area.width, self.area.height)
+                cr.fill()
+
+                # translate the drawing of the zoomed out box
+                cr.translate(self.box.area.x, self.box.area.y)
+
+            # clear the drawingarea with the last known clean video frame
+            # translate when zoomed out
+            if self.pixbuf:
+                if self.box.area.width != self.pixbuf.get_width():
+                    scale = float(self.box.area.width) / float(self.pixbuf.get_width())
+                    cr.save()
+                    cr.scale(scale, scale)
+                cr.set_source_pixbuf(self.pixbuf, 0, 0)
+                cr.paint()
+                if self.box.area.width != self.pixbuf.get_width():
+                    cr.restore()
+
+            self.box.draw(cr)
+            cr.pop_group_to_source()
+            cr.paint()
+
 
 class PlayPauseButton(gtk.Button, Loggable):
     """ Double state gtk.Button which displays play/pause """
@@ -638,8 +1113,7 @@ class PlayPauseButton(gtk.Button, Loggable):
     __gsignals__ = {
         "play": (gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE,
-                   (gobject.TYPE_BOOLEAN,))
-        }
+                   (gobject.TYPE_BOOLEAN,))}
 
     def __init__(self):
         gtk.Button.__init__(self)
