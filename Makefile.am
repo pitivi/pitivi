@@ -11,7 +11,6 @@ EXTRA_DIST = \
 	pitivi.spec \
 	pitivi.spec.in \
 	ChangeLog \
-	autogen.sh \
 	NEWS \
 	AUTHORS \
 	RELEASE \
