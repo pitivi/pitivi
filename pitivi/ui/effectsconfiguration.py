@@ -38,9 +38,10 @@ class EffectsPropertiesHandling:
     def getEffectConfigurationUI(self, effect):
         """
             Permit to get a configuration GUI for the effect
-            @param effect: The effect for which whe want the configuration UI
+            @param effect: The effect for which we want the configuration UI
             @type effect: C{gst.Element}
         """
+
         if effect not in self.cache_dict:
             #Here we should handle special effects configuration UI
             effect_set_ui = GstElementSettingsWidget()
@@ -72,7 +73,7 @@ class EffectsPropertiesHandling:
             return conf_ui
 
     def _postConfiguration(self, effect, effect_set_ui):
-        if 'aspectratiocrop' in effect.get_name():
+        if 'GstAspectRatioCrop' in effect.get_path_string():
             for widget in effect_set_ui.get_children()[0].get_children():
                 if isinstance(widget, FractionWidget):
                     widget.addPresets(["4:3", "5:4", "9:3", "16:9", "16:10"])
