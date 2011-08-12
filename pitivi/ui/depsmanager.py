@@ -27,13 +27,14 @@ from gettext import gettext as _
 from pitivi.configure import get_ui_dir
 from pitivi.check import soft_deps
 
+
 class DepsManager(object):
     """Display a dialog listing missing soft dependencies.
-    The sane way to query packages (like frei0r), is by using PackageKit's GetRequires()
+    The sane way to query and install is by using PackageKit's InstallResource()
     """
 
-    def __init__(self):#, app):
-        #self.app = app
+    def __init__(self, app):
+        self.app = app
         self.builder = gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(), "depsmanager.ui"))
         self.builder.connect_signals(self)
@@ -44,7 +45,7 @@ class DepsManager(object):
     def _onCloseButtonClickedCb(self, unused_button):
         self.hide()
 
-    def _onInstallButtonClickedCb(self, unused_button): # TODO: do stuff here
+    def _onInstallButtonClickedCb(self, unused_button):  # TODO: do stuff here
         self.hide()
         for foo in soft_deps:
             print foo
@@ -58,7 +59,8 @@ class DepsManager(object):
         self.builder.get_object("pkg_list").set_text(label_contents)
 
     def show(self):
-#        self.window.set_transient_for(self.app.gui)
+        self.window.set_transient_for(self.app.gui)
+        self.window.set_modal(True)
         self._setDepsLabel()
         self.window.show()
         self.window.grab_focus()

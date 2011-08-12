@@ -96,7 +96,7 @@ class StartUpWizard(object):
 
     def _onMissingDepsButtonClickedCb(self, unused_button):
         self.hide()
-        self.dep_manager = DepsManager()
+        self.dep_manager = DepsManager(self.app)
 
     def _userManualCb(self, unused_button):
         """Handle a click on the Help button."""
