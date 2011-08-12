@@ -39,6 +39,8 @@ from pitivi.settings import GlobalSettings
 SHOW_TREEVIEW = 1
 SHOW_ICONVIEW = 2
 
+HIDDEN_EFFECTS = ["frei0r-filter-scale0tilt"]
+
 GlobalSettings.addConfigSection('effect-library')
 GlobalSettings.addConfigOption('lastEffectView',
     section='effect-library',
@@ -231,13 +233,14 @@ class EffectList(gtk.VBox, Loggable):
     def _addFactories(self, elements, effectType):
         for element in elements:
             name = element.get_name()
-            effect = self.app.effects.getFactoryFromName(name)
-            self.storemodel.append([effect.getHumanName(),
-                                     effect.getDescription(), effectType,
-                                     effect.getCategories(),
-                                     effect, name,
-                                     self.app.effects.getEffectIcon(name)])
-            self.storemodel.set_sort_column_id(COL_NAME_TEXT, gtk.SORT_ASCENDING)
+            if name not in HIDDEN_EFFECTS:
+                effect = self.app.effects.getFactoryFromName(name)
+                self.storemodel.append([effect.getHumanName(),
+                                         effect.getDescription(), effectType,
+                                         effect.getCategories(),
+                                         effect, name,
+                                         self.app.effects.getEffectIcon(name)])
+                self.storemodel.set_sort_column_id(COL_NAME_TEXT, gtk.SORT_ASCENDING)
 
     def show_categories(self, effectType):
         self.effectCategory.get_model().clear()

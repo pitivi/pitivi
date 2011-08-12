@@ -36,6 +36,7 @@ from pitivi.ui.gstwidget import GstElementSettingsWidget
 from pitivi.ui.effectsconfiguration import EffectsPropertiesHandling
 from pitivi.ui.common import PADDING, SPACING
 from pitivi.ui import dynamic
+from pitivi.ui.effectlist import HIDDEN_EFFECTS
 
 (COL_ACTIVATED,
  COL_TYPE,
@@ -355,20 +356,21 @@ class EffectProperties(gtk.HBox):
     def _updateTreeview(self):
         self.storemodel.clear()
         for track_effect in self.selected_effects:
-            to_append = [track_effect.gnl_object.get_property("active")]
-            track_effect.gnl_object.connect("notify::active",
-                                            self._activeChangedCb)
-            if isinstance(track_effect.factory.getInputStreams()[0],
-                          VideoStream):
-                to_append.append("Video")
-            else:
-                to_append.append("Audio")
+            if not track_effect.factory.effectname in HIDDEN_EFFECTS:
+                to_append = [track_effect.gnl_object.get_property("active")]
+                track_effect.gnl_object.connect("notify::active",
+                                                self._activeChangedCb)
+                if isinstance(track_effect.factory.getInputStreams()[0],
+                              VideoStream):
+                    to_append.append("Video")
+                else:
+                    to_append.append("Audio")
 
-            to_append.append(track_effect.factory.getHumanName())
-            to_append.append(track_effect.factory.getDescription())
-            to_append.append(track_effect)
+                to_append.append(track_effect.factory.getHumanName())
+                to_append.append(track_effect.factory.getDescription())
+                to_append.append(track_effect)
 
-            self.storemodel.append(to_append)
+                self.storemodel.append(to_append)
 
     def _showInfoBar(self):
         if self._info_bar is None:
