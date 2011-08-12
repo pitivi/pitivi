@@ -44,7 +44,9 @@ from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.curve import Curve
 from pitivi.ui.common import SPACING
 from pitivi.ui.alignmentprogress import AlignmentProgressDialog
+from pitivi.ui.depsmanager import DepsManager
 from pitivi.timeline.align import AutoAligner
+from pitivi.check import soft_deps
 
 from pitivi.factories.operation import EffectFactory
 
@@ -809,7 +811,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.timeline.groupSelection()
 
     def alignSelected(self, unused_action):
-        if self.timeline:
+        if "NumPy" in soft_deps:
+            DepsManager(self.app)
+
+        elif self.timeline:
             progress_dialog = AlignmentProgressDialog(self.app)
             progress_dialog.window.show()
             self.app.action_log.begin("align")

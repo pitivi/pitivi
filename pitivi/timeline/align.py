@@ -25,7 +25,10 @@ Classes for automatic alignment of L{TimelineObject}s
 
 import array
 import time
-import numpy
+try:
+    import numpy
+except ImportError:
+    numpy = None
 
 import gobject
 import gst
@@ -273,6 +276,9 @@ class AutoAligner(Loggable):
         @rtype: L{bool}
 
         """
+        # numpy is a "soft dependency".  If you're running without numpy,
+        # this False return value is your only warning not to
+        # use the AutoAligner, which will crash immediately.
         return all(getAudioTrack(t) is not None for t in timeline_objects)
 
     def _extractNextEnvelope(self):
