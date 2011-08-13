@@ -1,3 +1,615 @@
+2011-08-13  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* ChangeLog:
+	* configure.ac:
+	  Unstable release 0.14.2
+
+
+2011-08-13  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi.spec.in:
+	  Update pitivi.spec.in
+
+2011-08-12  Lubosz Sarnecki <lubosz@gmail.com>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/viewer.py:
+	  ui: implement viewer transformation
+	  use frei0r scale0tilt and add an expander in the clip properties.
+	  use cairo for rendering in the viewer.
+
+2011-08-12  Lubosz Sarnecki <lubosz@gmail.com>
+
+	* data/ui/Makefile.am:
+	* data/ui/cliptransformation.ui:
+	  ui: add glade file for clip transformation
+
+2011-08-12  Lubosz Sarnecki <lubosz@gmail.com>
+
+	* pitivi/ui/common.py:
+	  common: add an covertion function from hex to rgb color
+
+2011-08-12  Lubosz Sarnecki <lubosz@gmail.com>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/mainwindow.py:
+	  ui: make the clip transformation tab more general
+	  change the name of the clip configuration tab
+	  move the effects properties to an expander, and make the window scrollable.
+
+2011-08-12  Lubosz Sarnecki <lubosz@gmail.com>
+
+	* pitivi/ui/effectsconfiguration.py:
+	  effectsconfiguration: fix aspect ratio crop ui
+	  also fix typo
+
+2011-08-12  Lubosz Sarnecki <lubosz@gmail.com>
+
+	* pitivi/ui/clipproperties.py:
+	* pitivi/ui/effectlist.py:
+	  ui: add a blacklist for hiding effects in the ui
+
+2011-08-12  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/configure.py.in:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/startupwizard.py:
+	* pitivi/utils.py:
+	  Created utils.show_user_manual which tries to open the offline or online user manual
+
+2011-06-12  Alex Băluț <alexandru.balut@gmail.com>
+
+	* .gitignore:
+	* help/Makefile.am:
+	  Added a target for building the user manual into HTML files
+
+2011-06-11  Alex Băluț <alexandru.balut@gmail.com>
+
+	* .gitignore:
+	* Makefile.am:
+	* autogen.sh:
+	* configure.ac:
+	* help/Makefile.am:
+	  Integrate the user manual with the application package
+
+2011-06-20  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* help/C/figures/mainwindow.jpg:
+	* help/C/figures/mainwindow.png:
+	* help/C/insertintimeline.page:
+	* help/C/mainwindow.page:
+	* help/C/usingclips.page:
+	  manual: new Main Window screenshot, rename "source list"
+
+2011-06-20  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* help/C/movearoundtimeline.page:
+	* help/C/selectunusedfiles.page:
+	* help/C/welcomedialog.page:
+	  manual: Document effects, the welcome dialog, zoom fit, etc.
+
+2011-01-17  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* help/C/about.page:
+	* help/C/crossfading.page:
+	* help/C/effects.page:
+	* help/C/effectsanimation.page:
+	* help/C/fadeinfadeout.page:
+	* help/C/figures/fadestep1.png:
+	* help/C/figures/fadestep2.png:
+	* help/C/figures/fadestep3.png:
+	* help/C/figures/filechooser.png:
+	* help/C/figures/hovering.png:
+	* help/C/figures/keyframecurves.png:
+	* help/C/figures/layers.png:
+	* help/C/figures/logo.png:
+	* help/C/figures/mainwindow.png:
+	* help/C/figures/previewsource.png:
+	* help/C/figures/ripple-after.png:
+	* help/C/figures/ripple-before.png:
+	* help/C/figures/roll-after.png:
+	* help/C/figures/roll-before.png:
+	* help/C/figures/ruler.png:
+	* help/C/figures/trimming-individual.png:
+	* help/C/gstreamer.page:
+	* help/C/importing.page:
+	* help/C/importingmpegts.page:
+	* help/C/index.page:
+	* help/C/insertintimeline.page:
+	* help/C/interface.page:
+	* help/C/keyframecurves.page:
+	* help/C/layers.page:
+	* help/C/license.page:
+	* help/C/mainwindow.page:
+	* help/C/makeselections.page:
+	* help/C/medialibrary.page:
+	* help/C/movearoundtimeline.page:
+	* help/C/othertransitions.page:
+	* help/C/projectsettings.page:
+	* help/C/rendering.page:
+	* help/C/saveproject.page:
+	* help/C/splitting.page:
+	* help/C/sysreq.page:
+	* help/C/trimming.page:
+	* help/C/usingclips.page:
+	  Initial commit for the Mallard-formatted user manual covering pitivi 0.13.4
+
+2011-08-12  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/timeline/align.py:
+	* pitivi/ui/timeline.py:
+	  Show the missing dependency dialog when trying to align and numpy is missing
+
+2011-07-25  Benjamin M. Schwartz <bens@alum.mit.edu>
+
+	* pitivi/timeline/alignalgs.py:
+	  Turn numpy into a "soft dependency"; disable autoalign if it's absent.
+	  Running without numpy will cause the auto-align functions to appear
+	  permanently grayed-out in the UI.
+	  Conflicts:
+	  pitivi/timeline/align.py
+
+2011-08-12  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/depsmanager.py:
+	  Add sample code for installing dependencies
+
+2011-08-12  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/depsmanager.py:
+	* pitivi/ui/startupwizard.py:
+	  Make the dependencies manager a modal window
+
+2011-08-12  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/check.py:
+	* pitivi/ui/depsmanager.py:
+	  Show the list of missing packages in the dependency manager
+
+2011-08-10  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/Makefile.am:
+	* data/ui/depsmanager.ui:
+	* pitivi/check.py:
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/depsmanager.py:
+	  Create a missing dependencies dialog
+
+2011-08-10  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/startupwizard.ui:
+	* pitivi/check.py:
+	* pitivi/ui/startupwizard.py:
+	  Add a check for soft dependencies on startup
+
+2011-08-10  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* configure.ac:
+	  Bump the Gtk dependency to 2.24
+
+2011-06-30  Stéphane Maniaci <stephane.maniaci@gmail.com>
+
+	* pitivi/formatters/base.py:
+	* pitivi/formatters/etree.py:
+	  Save metadata within the formatters
+
+2011-06-30  Stéphane Maniaci <stephane.maniaci@gmail.com>
+
+	* pitivi/project.py:
+	* pitivi/projectmanager.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/projectsettings.py:
+	  Initialize project metadata properly and load them into the ProjectSettings dialog
+
+2011-07-25  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/previewer.py:
+	* pitivi/ui/timelinecanvas.py:
+	* pitivi/ui/trackobject.py:
+	  Clarify the wording of preferences
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/prefs.py:
+	  Add tooltips to preference widgets
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/gstwidget.py:
+	  Attach the label to checkbuttons for ToggleWidgets in gstwidget
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/prefs.py:
+	  Properly attach the label to checkbuttons for dynamic ToggleWidgets
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/prefs.py:
+	  Correct some important trivia
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/previewer.py:
+	  Increase thumbnailing period to one second for better performance
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/dynamic.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/prefs.py:
+	  Standardize spacing
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/previewer.py:
+	* pitivi/ui/timelinecanvas.py:
+	* pitivi/ui/trackobject.py:
+	  Use sentence capitalization for preference labels
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/previewer.py:
+	  Rearrange thumbnailing-related settings into a Performance section
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/previewer.py:
+	  Use translatable strings for thumbnailing periods
+
+2010-11-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	  previewer: change thumbnail period slider to combo box
+
+2010-11-03  Brandon Lewis <brandon_lewis@alum.berkeley.edu>
+
+	* pitivi/ui/previewer.py:
+	* pitivi/utils.py:
+	  previewer: allow specifying thumbnail period
+
+2011-08-08  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/formatters/base.py:
+	  Oops, removing prints introduced with d6e937
+
+2011-08-07  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* tests/test_pipeline.py:
+	  test: Don check PipelineError is raised in GetReleaseTeeForFactoryStream
+	  The f385ac9a510d0 commit removes that raising since it was not making sense anymore
+
+2011-08-07  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* pitivi/formatters/base.py:
+	  formatter: Make sure to have same char encoding format when comparing URI
+
+2011-07-11  Benjamin M. Schwartz <bens@alum.mit.edu>
+
+	* pitivi/ui/timeline.py:
+	  Disable updates during deletion Suggested by thiblahute.
+
+2011-07-09  Benjamin M. Schwartz <bens@alum.mit.edu>
+
+	* pitivi/timeline/timeline.py:
+	  Actually import collections as needed.
+	  Reported by nekohayo.
+
+2011-07-09  Benjamin M. Schwartz <bens@alum.mit.edu>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	  Fix mass-deletion bug, #634723
+	  The patch works by adding explicit methods for mass deletion, and delaying
+	  cleanup until after all the objects have been deleted.  I must admit that,
+	  since I have not diagnosed the cause of the hang, I am not sure why this
+	  resolves it, and a race condition may still be lurking.  However, I believe
+	  that this design is more sensible, and indeed the code seems to have been
+	  designed with the expectation that cleanup would be delayed until after
+	  many objects have been deleted.
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/prefs.py:
+	  prefs.py: use icons for reset buttons for consistency
+
+2011-07-15  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Enforce showing icons in the timeline "Zoom" button
+
+2011-07-15  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Enforce showing icons for the InfoStub question button
+
+2011-07-15  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/gstwidget.py:
+	  Enforce showing icons in gstwidget's reset buttons
+
+2011-07-15  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  Enforce showing icons in the play/pause button
+
+2011-07-15  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  Revert "Force the play button to be visible, regardless of the gtk-button-images setting."
+	  This reverts commit 24a13dae34de9c70bd51c39f1568454c4257dece.
+	  Fixes bug #608930
+
+2011-08-01  Thibault Saunier <thibault.saunier@collabora.com>
+
+	  Merging translations
+
+2011-07-25  Benjamin M. Schwartz <bens@alum.mit.edu>
+
+	* pitivi/elements/Makefile.am:
+	* pitivi/timeline/Makefile.am:
+	* pitivi/ui/Makefile.am:
+	  Add new files for autoalign to Makefile.am, so as not to break distcheck.
+
+2011-07-24  Benjamin M. Schwartz <bens@alum.mit.edu>
+
+	* data/pixmaps/Makefile.am:
+	* data/pixmaps/pitivi-align-24.svg:
+	* data/pixmaps/pitivi-align.svg:
+	* data/ui/alignmentprogress.ui:
+	* pitivi/elements/extractionsink.py:
+	* pitivi/timeline/align.py:
+	* pitivi/timeline/alignalgs.py:
+	* pitivi/timeline/extract.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/alignmentprogress.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/utils.py:
+	  Introduce a content-based auto-aligner.
+	  The auto-aligner shifts clips into the timeline so that their
+	  contents are synchronized.  It works by analyzing the audio track's
+	  volume as it changes over time, under the assumption that when there
+	  are multiple recordings of a single event, they will be loud, or quiet,
+	  at the same time.
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* data/ui/preferences.ui:
+	  preferences.ui: prevent scrolling in the categories list
+	  If we have more than a few categories, we have a problem.
+
+2011-07-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Show the Project Settings dialog when creating a new project
+	  Fixes bug #655224
+
+2011-07-24  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* data/ui/elementsettingsdialog.ui:
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/gstwidget.py:
+	  ui: Let user reset default codec settings values
+	  https://bugzilla.gnome.org/show_bug.cgi?id=655188
+
+2011-07-22  Peter Mráz <etkinator@gmail.com>
+
+	* po/sk.po:
+	  Updated Slovak translation
+
+2011-07-16  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-07-15  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2011-07-14  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-07-14  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  Merging translations
+
+2011-07-13  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-07-13  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-07-12  Alex Băluț <alexandru.balut@gmail.com>
+
+	* data/ui/startupwizard.ui:
+	* pitivi/ui/startupwizard.py:
+	  Correctly detect the closing of the StartUpWizard window by the user
+
+2011-07-10  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/startupwizard.py:
+	  Make sure the handlers connected when StartupWizardGuiPitivi is used are disconnected when a project is loaded successfully. Had to move logic from StartupWizardGuiPitivi to StartUpWizard, but the moved methods only concern StartUpWizard, so it's fine. Fixes bug 654338.
+
+2011-07-10  Alex Băluț <alexandru.balut@gmail.com>
+
+	* data/ui/startupwizard.ui:
+	* pitivi/ui/startupwizard.py:
+	  Move the StartUpWizard key-press-event connection to startupwizard.ui
+
+2011-07-10  Alex Băluț <alexandru.balut@gmail.com>
+
+	* data/ui/startupwizard.ui:
+	* pitivi/ui/startupwizard.py:
+	  Renamed StartUpWizard._quick_start_manual, for consistency
+
+2011-07-10  Alex Băluț <alexandru.balut@gmail.com>
+
+	* data/ui/startupwizard.ui:
+	  Removed unused objects from startupwizard.ui
+
+2011-07-10  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/startupwizard.py:
+	  Make project file type name translatable in StartUpWizard
+
+2011-07-10  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/startupwizard.py:
+	  Add copyright notice to startupwizard.py
+
+2011-07-11  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/signalinterface.py:
+	* tests/test_signallable.py:
+	  Fix Signallable to not skip next handler when a handler disconnects itself while handling a signal
+
+2011-07-09  Benjamin M. Schwartz <bens@alum.mit.edu>
+
+	* pre-commit.hook:
+	  Fix a typo in the pre-commit hook.
+	  Without this fix, the pre-commit hook does not actually run.
+
+2011-07-10  Daniel Korostil <ted.korostiled@gmail.com>
+
+	* po/uk.po:
+	  Uploaded Ukranian
+
+2011-07-09  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/startupwizard.py:
+	  Ensure the "welcome dialog" is hidden when loading a project
+
+2011-07-08  Мирослав Николић <miroslavnikolic@rocketmail.com>
+
+	* po/sr.po:
+	* po/sr@latin.po:
+	  Updated Serbian translation
+
+2011-07-08  Gil Forcada <gforcada@gnome.org>
+
+	* po/ca.po:
+	  [l10n]Updated Catalan translation
+
+2011-07-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Changed the title of the Error Loading File dialog to Error Loading Project
+
+2011-07-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Report a more descriptive error in ElementTreeFormatter._discovererDiscoveryErrorCb
+
+2011-07-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Fixed error message in ElementTreeFormatter._loadEffectTrackObject
+
+2011-07-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/discoverer.py:
+	  Fixed error message in Discoverer._busMessageStateChangedCb
+
+2011-07-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Fix ElementTreeFormatter._discovererDiscoveryErrorCb to report the project URI instead of the broken media file URI
+
+2011-07-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Removed unncecessary condition in ElementTreeFormatter._loadProject
+
+2011-07-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/projectmanager.py:
+	  Fixed noop in ProjectManager.saveProject
+
+2011-07-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* data/ui/startupwizard.ui:
+	* pitivi/ui/startupwizard.py:
+	  Simplified SartUpWizard by replacing the _getFileNameCb handler with a _getFileName method
+
+2011-07-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/ui/startupwizard.py:
+	  Rename misspelled variable in StartUpWizard
+
+2011-07-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/startupwizard.py:
+	  Changed StartupWizardGuiPitivi to forget about the wizard once a project has been loaded successfully
+
+2011-07-07  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/application.py:
+	  Make the errors messages in application.py translatable
+
+2011-07-07  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2011-07-06  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/settings.py:
+	  Initialize aencoder and vencoder with None in ExportSettings. This was part of the behaviour that changed in commit 8d2aa5ca04faef22a274d48b41aa85430156b559 which introduced bug 654035. Fixes bug 654035.
+
+2011-07-06  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-07-06  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/pipeline.py:
+	  Minichange to replace a dict element access with a local variable access
+
+2011-07-06  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/pipeline.py:
+	  Relax the Pipeline.releaseQueueForFactoryStream checks to not raise an exception if there is no queue
+
+2011-07-06  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/pipeline.py:
+	  Removed unused parameter and renamed Pipeline._getFactoryEntryForStream
+
+2011-07-06  Alex Băluț <alexandru.balut@gmail.com>
+
+	* pitivi/settings.py:
+	  Take out the depth parameter from the audio caps because in a lot of cases it causes pipeline errors
+
+2011-07-05  James Putt <putt.james@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Reuse filechooserpreview in the missing files dialog
+	  Fixes bug #650807
+
+2011-07-04  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-07-03  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* ChangeLog:
+	* configure.ac:
+	  Unstable release 0.14.1
+
+
 2011-07-03  Alex Băluț <alexandru.balut@gmail.com>
 
 	* tests/runtests.py:
