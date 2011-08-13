@@ -2,6 +2,9 @@
 # Please keep this file sorted alphabetically.
 # [encoding: UTF-8]
 data/pitivi.desktop.in.in
+data/ui/alignmentprogress.ui
+data/ui/cliptransformation.ui
+data/ui/depsmanager.ui
 data/ui/elementsettingsdialog.ui
 data/ui/encodingdialog.ui
 data/ui/encodingprogress.ui
@@ -16,6 +19,7 @@ pitivi/effects.py
 pitivi/factories/base.py
 pitivi/factories/file.py
 pitivi/formatters/format.py
+pitivi/formatters/etree.py
 pitivi/projectmanager.py
 pitivi/project.py
 pitivi/settings.py
