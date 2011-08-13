@@ -27,7 +27,6 @@ DOC_PAGES = \
     effects.page \
     effectsanimation.page \
     fadeinfadeout.page \
-    figures \
     gstreamer.page \
     importingmpegts.page \
     importing.page \
