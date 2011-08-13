@@ -3,7 +3,7 @@ Name:		@PACKAGE@
 Version:	@VERSION@
 Release:	@PACKAGE_VERSION_RELEASE@
 
-Source:		http://ftp.acc.umu.se/pub/gnome/sources/pitivi/0.11/%{name}-%{version}.tar.gz
+Source:		http://ftp.acc.umu.se/pub/gnome/sources/pitivi/0.14/%{name}-%{version}.tar.gz
 Packager:	bilboed@gmail.com
 License:	LGPL
 Group:		Applications/Multimedia
@@ -25,6 +25,7 @@ BuildRequires:	gstreamer-devel >= @GST_REQ@
 BuildRequires:	gstreamer-python >= @PYGST_REQ@
 BuildRequires:	python-devel >= 2.3
 BuildRequires:	pygtk2-devel >= @PYGTK_REQ@
+BuildRequires:	gnome-doc-utils
 BuildArch: 	noarch
 
 %description
