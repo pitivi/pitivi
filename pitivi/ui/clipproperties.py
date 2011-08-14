@@ -240,7 +240,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self._showInfoBar()
         self._vcontent.show()
         self.set_expanded(True)
-        self.set_label("Effects configuration")
+        self.set_label(_("Effects"))
 
     def _newProjectLoadedCb(self, app, project):
         self.clip_properties.project = project
@@ -478,7 +478,7 @@ class TransformationProperties(gtk.Expander):
         self._current_tl_obj = None
         self.spin_buttons = {}
         self.default_values = {}
-        self.set_label(_("Transformation configuration"))
+        self.set_label(_("Transformation"))
         self.set_sensitive(False)
 
         if not "Frei0r" in soft_deps:
