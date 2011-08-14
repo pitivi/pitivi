@@ -461,8 +461,7 @@ class Selection(Signallable):
     """
 
     __signals__ = {
-        "selection-changed": []
-    }
+        "selection-changed": []}
 
     def __init__(self):
         self.selected = set([])
@@ -556,13 +555,6 @@ class Selection(Signallable):
         return iter(self.selected)
 
 
-# FIXME : What is this for ? It's not used anywhere AFAICS (Edward)
-class LinkEntry(object):
-    def __init__(self, start, duration):
-        self.start = start
-        self.duration = duration
-
-
 class LinkPropertyChangeTracker(PropertyChangeTracker):
     """
     Tracker for private usage by L{Link}
@@ -571,8 +563,7 @@ class LinkPropertyChangeTracker(PropertyChangeTracker):
     """
     __signals__ = {
         'start-changed': ['old', 'new'],
-        'duration-changed': ['old', 'new']
-    }
+        'duration-changed': ['old', 'new']}
 
     property_names = ('start', 'duration')
 
@@ -1498,8 +1489,7 @@ class Timeline(Signallable, Loggable):
         'track-added': ['track'],
         'track-removed': ['track'],
         'selection-changed': [],
-        'disable-updates': ['bool']
-    }
+        'disable-updates': ['bool']}
 
     def __init__(self):
         Loggable.__init__(self)
@@ -1821,6 +1811,7 @@ class Timeline(Signallable, Loggable):
         if tracks is None:
             skip = None
         else:
+
             def skipIfNotInTheseTracks(timeline_object):
                 return self._skipIfNotInTracks(timeline_object, tracks)
             skip = skipIfNotInTheseTracks
@@ -1837,6 +1828,7 @@ class Timeline(Signallable, Loggable):
         if tracks is None:
             skip = None
         else:
+
             def skipIfNotInTheseTracks(timeline_object):
                 return self._skipIfNotInTracks(timeline_object, tracks)
             skip = skipIfNotInTheseTracks
