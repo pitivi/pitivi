@@ -269,7 +269,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
              None, _("Reload the current project"), self._revertToSavedProjectCb),
             ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"),
              None, _("Edit the project settings"), self._projectSettingsCb),
-            ("RenderProject", 'pitivi-render', _("_Render Project..."),
+            ("RenderProject", 'pitivi-render', _("_Render..."),
              None, _("Export your project as a finished movie"), self._recordCb),
             ("Undo", gtk.STOCK_UNDO,
              _("_Undo"),
