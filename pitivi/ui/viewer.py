@@ -1045,7 +1045,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         self.pipeline = pipeline
         if state == gst.STATE_PAUSED:
             self._store_pixbuf()
-            self.renderbox()
+        self.renderbox()
 
     def motion_notify_event(self, widget, event):
         if event.get_state() & gtk.gdk.BUTTON1_MASK:
@@ -1102,7 +1102,8 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
                 if self.box.area.width != self.pixbuf.get_width():
                     cr.restore()
 
-            self.box.draw(cr)
+            if self.pipeline.getState() == gst.STATE_PAUSED:
+                self.box.draw(cr)
             cr.pop_group_to_source()
             cr.paint()
 
