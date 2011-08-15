@@ -2,16 +2,16 @@
 # Please keep this file sorted alphabetically.
 # [encoding: UTF-8]
 data/pitivi.desktop.in.in
-data/ui/alignmentprogress.ui
-data/ui/cliptransformation.ui
-data/ui/depsmanager.ui
-data/ui/elementsettingsdialog.ui
-data/ui/encodingdialog.ui
-data/ui/encodingprogress.ui
-data/ui/filelisterrordialog.ui
-data/ui/preferences.ui
-data/ui/projectsettings.ui
-data/ui/startupwizard.ui
+[type: gettext/glade]data/ui/alignmentprogress.ui
+[type: gettext/glade]data/ui/cliptransformation.ui
+[type: gettext/glade]data/ui/depsmanager.ui
+[type: gettext/glade]data/ui/elementsettingsdialog.ui
+[type: gettext/glade]data/ui/encodingdialog.ui
+[type: gettext/glade]data/ui/encodingprogress.ui
+[type: gettext/glade]data/ui/filelisterrordialog.ui
+[type: gettext/glade]data/ui/preferences.ui
+[type: gettext/glade]data/ui/projectsettings.ui
+[type: gettext/glade]data/ui/startupwizard.ui
 pitivi/application.py
 pitivi/check.py
 pitivi/discoverer.py
