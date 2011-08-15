@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.14" version="0.2" date="2011-06-05" status="complete"/>
+    <revision pkgversion="0.14.2" version="0.3" date="2011-08-15" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -27,7 +27,7 @@
      <p>From the media library, you can insert one or more clips by selecting them (using the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) and:</p>
      <list>
       <item><p>Dragging and dropping them onto place in the timeline.</p></item>
-      <item><p>Using <guiseq><gui>Project</gui><gui>Insert at end of timeline</gui></guiseq>.</p></item>
+      <item><p>Using <guiseq><gui>Library</gui><gui>Insert at End of Timeline</gui></guiseq>.</p></item>
       <item><p>Pressing the <key>Insert</key> (Ins) key. Those clips will be inserted at the end of the timeline.</p></item>
      </list>
      <note style="bug">

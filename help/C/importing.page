@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.14" version="0.2" date="2011-06-05" status="incomplete"/>
+    <revision pkgversion="0.14.2" version="0.3" date="2011-08-15" status="incomplete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -42,14 +42,14 @@
        <title>Importing files</title>
        <section>
         <title>Using the file chooser</title>
-         <p>You can import media into the <gui>Media Library</gui> by using the file chooser dialog, which has the advantage of letting you preview the files you want to import. To do so, use the <guiseq><gui>Project</gui><gui>Import clips...</gui></guiseq> menu, the <gui>Import clips</gui> button on the main toolbar, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>.</p>
+         <p>You can import media into the <gui>Media Library</gui> by using the file chooser dialog, which has the advantage of letting you preview the files you want to import. To do so, use the <guiseq><gui>Library</gui><gui>Import Files...</gui></guiseq> menu, the <gui>Import Files...</gui> button on the main toolbar, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>.</p>
          <p>The following file chooser dialog window will appear:</p>
          <figure>
           <title>Filechooser dialog</title>
           <desc>Filechooser dialog</desc>
           <media type="image" src="figures/filechooser.png" mime="image/png" style="right"></media>
          </figure>
-         <p>Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the same time. You can also import all the files contained in a folder (and its subfolders) by using <guiseq><gui>Project</gui><gui>Import folder of clips</gui></guiseq> in the menu bar.</p>
+         <p>Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the same time. You can also import all the files contained in a folder (and its subfolders) by using <guiseq><gui>Library</gui><gui>Import Folders...</gui></guiseq> in the menu bar.</p>
        </section>
        <section>
         <title>Using drag and drop</title>

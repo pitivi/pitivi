@@ -7,7 +7,7 @@
     <link type="seealso" xref="medialibrary"/>
     <link type="seealso" xref="usingclips"/>
     <link type="seealso" xref="saveproject"/>
-    <revision pkgversion="0.15" version="0.1" date="2011-06-19" status="complete"/>
+    <revision pkgversion="0.14.2" version="0.2" date="2011-08-15" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -28,7 +28,7 @@
           <item><p>Check which clips you may have forgot to use in your movie</p></item>
           <item><p>Backup or share your project more easily</p></item>
       </list>
-      <p>To identify which clips are not being used in your project, use <guiseq><gui>Project</gui><gui>Select Unused Clips</gui></guiseq>. Unused clips will then be selected in the media library. If you want to remove them from your project, use <guiseq><gui>Project</gui><gui>Remove from Project</gui></guiseq>.</p>
+      <p>To identify which clips are not being used in your project, use <guiseq><gui>Library</gui><gui>Select Unused Media</gui></guiseq>. Unused clips will then be selected in the media library. If you want to remove them from your project, use <guiseq><gui>Library</gui><gui>Remove from Project</gui></guiseq>.</p>
       <note><p>If there are no unused clips in your project, nothing will be selected in the media library.</p></note>
 
 </page>

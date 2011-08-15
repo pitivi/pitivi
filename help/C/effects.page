@@ -6,7 +6,7 @@
   <info>
     <link type="guide" xref="index#effects"/>
     <link type="seealso" xref="gstreamer"/>
-    <revision pkgversion="0.14" version="0.1" date="2010-06-20" status="incomplete"/>
+    <revision pkgversion="0.14.2" version="0.2" date="2011-08-15" status="incomplete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -35,9 +35,9 @@
         <steps>
             <item><p>Select an existing clip on the timeline</p></item>
             <item><p>Choose an effect in the effect library</p></item>
-            <item><p>Drag the chosen effect into the <gui>Effect Properties</gui> pane</p></item>
+            <item><p>Drag the chosen effect into the <gui>Clip configuration</gui> pane's <gui>Effects</p> section</p></item>
         </steps>
-        <p>To remove an effect on a selected clip, select it in the effect properties pane and click the <gui>Remove</gui> button.</p>
+        <p>To remove an effect on a selected clip, select it in the clip's effect list and click the <gui>Remove</gui> button.</p>
     </section>
     <section>
         <title>Toggling effects on and off</title>

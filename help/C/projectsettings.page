@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.14" version="0.2" date="2011-06-05" status="complete"/>
+    <revision pkgversion="0.14.2" version="0.3" date="2011-08-15" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -25,7 +25,7 @@
     <title>Editing project settings</title>
 
     <p>When starting a new project, you should make sure to go adjust the project settings, such as framerate, resolution and preferred codecs. The video resolution and aspect ratio will affect the appearance of the previewer. If you do not set the resolution and aspect ratio to match those of your footage, the video may look squished or letterboxed.</p>
-    <p>To edit the project settings after initial creation, use the <guiseq><gui>Project</gui><gui>Project Settings</gui></guiseq> menu.</p>
+    <p>To edit the project settings after initial creation, use the <guiseq><gui>Edit</gui><gui>Project Settings</gui></guiseq> menu.</p>
 
     <section>
         <title>Pixel aspect ratio vs display aspect ratio</title>
