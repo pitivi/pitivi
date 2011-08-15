@@ -241,6 +241,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self._vcontent.show()
         self.set_expanded(True)
         self.set_label(_("Effects"))
+        self.connect('notify::expanded', self._expandedCb)
 
     def _newProjectLoadedCb(self, app, project):
         self.clip_properties.project = project
@@ -274,6 +275,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
             for timeline_object in self.timeline_objects:
                 timeline_object.connect("track-object-added", self._trackObjectAddedCb)
                 timeline_object.connect("track-object-removed", self._trackRemovedRemovedCb)
+            self.set_sensitive(True)
         else:
             self.timeline_objects = []
             self.set_sensitive(False)
