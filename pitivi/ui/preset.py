@@ -26,7 +26,7 @@ import gst
 import gtk
 
 from pitivi.settings import xdg_data_home
-from pitivi.configure import get_data_dir
+from pitivi.configure import get_data_dir, get_renderpresets_dir
 import json
 import os
 
@@ -288,7 +288,7 @@ class AudioPresetManager(PresetManager):
 class RenderPresetManager(PresetManager):
     """ load() and save() are rewritten to save widget values to json """
 
-    path = os.path.join(get_data_dir(), 'profiles')  # Temporary path for dev
+    path = get_renderpresets_dir()
 
     def load(self):
         for file in os.listdir(self.path):
