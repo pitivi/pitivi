@@ -450,6 +450,8 @@ class EncodingDialog(Renderer, Loggable):
         preset_changed = self.render_presets.isCurrentPresetChanged()
         self.save_render_preset_button.set_sensitive(preset_changed)
         preset_selected = bool(self.render_presets.cur_preset)
+        if self.render_presets.cur_preset == "No Preset":
+            preset_selected = 0 #  Disable "Remove" if "No Preset" is selected
         self.remove_render_preset_button.set_sensitive(preset_selected)
 
     def _removeRenderPresetButtonClickedCb(self, button):
