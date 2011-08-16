@@ -36,6 +36,7 @@ from pitivi.log.loggable import Loggable
 from pitivi.ui.encodingprogress import EncodingProgressDialog
 from pitivi.ui.gstwidget import GstElementSettingsDialog
 from pitivi.actioner import Renderer
+from pitivi.ui.ripple_update_group import RippleUpdateGroup
 from pitivi.ui.common import\
     model,\
     frame_rates,\
@@ -162,6 +163,18 @@ class EncodingDialog(Renderer, Loggable):
         self.window.connect("delete-event", self._deleteEventCb)
         self.settings.connect("settings-changed", self._settingsChanged)
 
+        # Monitor changes
+
+        self.wg = RippleUpdateGroup()
+        self.wg.addVertex(self.frame_rate_combo, signal="changed")
+        self.wg.addVertex(self.save_render_preset_button,
+                 update_func=self._updateRenderSaveButton)
+        self.wg.addVertex(self.channels_combo, signal="changed")
+        self.wg.addVertex(self.sample_rate_combo, signal="changed")
+        self.wg.addVertex(self.sample_depth_combo, signal="changed")
+        self.wg.addVertex(self.muxercombobox, signal="changed")
+        self.wg.addVertex(self.audio_encoder_combo, signal="changed")
+        self.wg.addVertex(self.video_encoder_combo, signal="changed")
         self.render_presets = RenderPresetManager()
         self.render_presets.load()
 
@@ -169,9 +182,23 @@ class EncodingDialog(Renderer, Loggable):
                 self.render_preset_treeview, self.render_presets,
                 self._updateRenderPresetButtons)
 
+        self.wg.addEdge(self.frame_rate_combo,
+            self.save_render_preset_button)
+        self.wg.addEdge(self.audio_encoder_combo,
+            self.save_render_preset_button)
+        self.wg.addEdge(self.video_encoder_combo,
+            self.save_render_preset_button)
+        self.wg.addEdge(self.muxercombobox,
+            self.save_render_preset_button)
+        self.wg.addEdge(self.channels_combo,
+            self.save_render_preset_button)
+        self.wg.addEdge(self.sample_rate_combo,
+            self.save_render_preset_button)
+        self.wg.addEdge(self.sample_depth_combo,
+            self.save_render_preset_button)
+
         self._infobarForPresetManager = {
                 self.render_presets: self.render_preset_infobar}
-
 
         # Bind widgets to RenderPresetsManager
         self.bindCombo(self.render_presets, "channels",
@@ -206,7 +233,6 @@ class EncodingDialog(Renderer, Loggable):
             "height": self.getDimension("height"),
             "width": self.getDimension("width")
         })
-
 
     def bindCombo(self, mgr, name, widget):
         if name == "container":
@@ -333,8 +359,6 @@ class EncodingDialog(Renderer, Loggable):
             mgr, update_buttons_func)
         treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
 
-
-
     def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
         """Handle the addition of a preset to the model of the preset manager.
         """
@@ -379,6 +403,10 @@ class EncodingDialog(Renderer, Loggable):
         infobar = self._infobarForPresetManager[mgr]
         infobar.hide()
 
+
+    def _updateRenderSaveButton(self, unused_in, button):
+        button.set_sensitive(self.render_presets.isCurrentPresetChanged())
+
     @staticmethod
     def _getUniquePresetName(mgr):
         """Get a unique name for a new preset for the specified PresetManager.
@@ -417,6 +445,12 @@ class EncodingDialog(Renderer, Loggable):
 
         self.render_presets.savePreset()
         self.render_presets.save()
+
+    def _updateRenderPresetButtons(self):
+        preset_changed = self.render_presets.isCurrentPresetChanged()
+        self.save_render_preset_button.set_sensitive(preset_changed)
+        preset_selected = bool(self.render_presets.cur_preset)
+        self.remove_render_preset_button.set_sensitive(preset_selected)
 
     def _removeRenderPresetButtonClickedCb(self, button):
         selection = self.render_preset_treeview.get_selection()
@@ -464,7 +498,6 @@ class EncodingDialog(Renderer, Loggable):
                                         "remove_render_preset_button")
         self.render_preset_infobar = self.builder.get_object(
             "render-preset-infobar")
-
 
     def _settingsChanged(self, settings):
         self.updateResolution()
