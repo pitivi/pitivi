@@ -303,8 +303,25 @@ class EncodingDialog(Renderer, Loggable):
         treeview.props.headers_visible = False
         model = mgr.getModel()
         treeview.set_model(model)
+        model.connect("row-inserted", self._newPresetCb,
+            column, renderer, treeview)
+        renderer.connect("edited", self._presetNameEditedCb, mgr)
         treeview.get_selection().connect("changed", self._presetChangedCb,
             mgr, update_buttons_func)
+
+    def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
+        """Handle the addition of a preset to the model of the preset manager.
+        """
+        treeview.set_cursor_on_cell(path, column, renderer, start_editing=True)
+        treeview.grab_focus()
+
+    def _presetNameEditedCb(self, renderer, path, new_text, mgr):
+        """Handle the renaming of a preset."""
+        try:
+            mgr.renamePreset(path, new_text)
+        except DuplicatePresetNameException:
+            error_markup = _('"%s" already exists.') % new_text
+            self._showPresetManagerError(mgr, error_markup)
 
     @staticmethod
     def _getUniquePresetName(mgr):
