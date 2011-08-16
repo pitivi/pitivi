@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-08-13 23:42+0000\n"
-"PO-Revision-Date: 2011-08-14 17:15+0200\n"
+"POT-Creation-Date: 2011-08-15 11:37+0000\n"
+"PO-Revision-Date: 2011-08-17 01:33+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -773,6 +773,14 @@ msgstr "Sonido |sonido"
 msgid "effect"
 msgstr "efecto"
 
+#: ../pitivi/formatters/format.py:81
+msgid "PiTiVi Native (XML)"
+msgstr "PiTiVi nativo (XML)"
+
+#: ../pitivi/formatters/format.py:82
+msgid "Playlist format"
+msgstr "Formato de la lista de reproducción"
+
 #. TODO: Find a way to install the missing effect.
 #: ../pitivi/formatters/etree.py:444
 msgid "The project contains effects which are not available on the system."
@@ -782,14 +790,6 @@ msgstr "El proyecto contiene efectos que no están disponibles en el sistema."
 #, python-format
 msgid "Failed loading %(uri)s."
 msgstr "Falló al cargar %(uri)s."
-
-#: ../pitivi/formatters/format.py:81
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi nativo (XML)"
-
-#: ../pitivi/formatters/format.py:82
-msgid "Playlist format"
-msgstr "Formato de la lista de reproducción"
 
 #: ../pitivi/projectmanager.py:106
 msgid "Not a valid project file."
@@ -847,14 +847,20 @@ msgstr "Tipo"
 msgid "Effect name"
 msgstr "Nombre del efecto"
 
+#: ../pitivi/ui/clipproperties.py:243
+#| msgid "effect"
+msgid "Effects"
+msgstr "Efectos"
+
 #: ../pitivi/ui/clipproperties.py:407
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Seleccionar un clip en la cronología para configurar sus efectos asociados"
 
 #: ../pitivi/ui/clipproperties.py:481
-msgid "Transformation configuration"
-msgstr "Configuración de la transformación"
+#| msgid "Information"
+msgid "Transformation"
+msgstr "Transformación"
 
 #: ../pitivi/ui/common.py:115
 #, python-format
@@ -1773,6 +1779,9 @@ msgstr[1] "%d segundos"
 #, python-format
 msgid "%s doesn't yet handle non-local projects"
 msgstr "%s no puede manipular aún proyectos no locales"
+
+#~ msgid "Transformation configuration"
+#~ msgstr "Configuración de la transformación"
 
 #~ msgid "Reset"
 #~ msgstr "Reiniciar"
