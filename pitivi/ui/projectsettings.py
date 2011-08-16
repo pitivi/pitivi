@@ -544,7 +544,7 @@ class ProjectSettingsDialog():
     def updateMetadata(self):
         self.project.name = self.title_entry.get_text()
         self.project.author = self.author_entry.get_text()
-        self.project.year = str(self.year_spinbutton.get_adjustment().get_value())
+        self.project.year = str(self.year_spinbutton.get_value_as_int())
 
     def updateSettings(self):
         width = int(self.width_spinbutton.get_value())
