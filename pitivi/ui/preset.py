@@ -35,6 +35,7 @@ class DuplicatePresetNameException(Exception):
     """Raised when an operation would result in a duplicated preset name."""
     pass
 
+
 class PresetManager(object):
     """Abstract class for storing a list of presets.
 
@@ -230,6 +231,7 @@ class PresetManager(object):
         return any((values[field] != getter()
                     for field, (setter, getter) in self.widget_map.iteritems()))
 
+
 class VideoPresetManager(PresetManager):
 
     filename = "video_presets"
@@ -265,6 +267,7 @@ class VideoPresetManager(PresetManager):
         parser.set(section, "par-denom",
             str(int(values["par"].denom)))
 
+
 class AudioPresetManager(PresetManager):
 
     filename = "audio_presets"
@@ -284,6 +287,7 @@ class AudioPresetManager(PresetManager):
         parser.set(section, "channels", str(values["channels"]))
         parser.set(section, "depth", str(values["depth"]))
         parser.set(section, "sample-rate", str(values["sample-rate"]))
+
 
 class RenderPresetManager(PresetManager):
     """ load() and save() are rewritten to save widget values to json """
@@ -333,7 +337,7 @@ class RenderPresetManager(PresetManager):
             except:
                 filename = name + ".json"
                 filepath = os.path.join(self.path, filename)
-            
+
             if not name == "No Preset":
                 fout = open(filepath, "w")
                 self.saveSection(fout, name)
@@ -350,7 +354,7 @@ class RenderPresetManager(PresetManager):
             "framerate-num": values["frame-rate"].num,
             "framerate-denom": values["frame-rate"].denom,
             "channels": values["channels"],
-            "depth":  int(values["depth"]),
+            "depth": int(values["depth"]),
             "sample-rate": int(values["sample-rate"]),
         }, indent=4)
         fout.write(data)
@@ -373,3 +377,19 @@ class RenderPresetManager(PresetManager):
         # Note: This generates a "row-inserted" signal in the model.
         self.ordered.prepend((name, values))
 
+    def isSaveButtonSensitive(self):
+        """Check if Save buttons should be sensitive"""
+        if self.cur_preset == "No Preset" or not self.cur_preset:
+            # There is no preset selected, nothing to do.
+            return False
+
+        values = self.presets[self.cur_preset]
+        return any((values[field] != getter()
+                    for field, (setter, getter) in self.widget_map.iteritems()))
+
+    def isRemoveButtonSensitive(self):
+        if self.cur_preset == "No Preset" or not self.cur_preset:
+            # There is no preset selected, nothing to do.
+            return False
+        else:
+            return True

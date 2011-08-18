@@ -48,6 +48,7 @@ from pitivi.ui.common import\
 
 from pitivi.ui.preset import RenderPresetManager, DuplicatePresetNameException
 
+
 def beautify_factoryname(factory):
     """Returns a nice name for the specified gst.ElementFactory instance."""
     # only replace lowercase versions of "format", "video", "audio"
@@ -231,8 +232,7 @@ class EncodingDialog(Renderer, Loggable):
             "frame-rate": gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
                                         int(get_combo_value(self.frame_rate_combo).denom)),
             "height": self.getDimension("height"),
-            "width": self.getDimension("width")
-        })
+            "width": self.getDimension("width")})
 
     def bindCombo(self, mgr, name, widget):
         if name == "container":
@@ -403,9 +403,8 @@ class EncodingDialog(Renderer, Loggable):
         infobar = self._infobarForPresetManager[mgr]
         infobar.hide()
 
-
     def _updateRenderSaveButton(self, unused_in, button):
-        button.set_sensitive(self.render_presets.isCurrentPresetChanged())
+        button.set_sensitive(self.render_presets.isSaveButtonSensitive())
 
     @staticmethod
     def _getUniquePresetName(mgr):
@@ -431,8 +430,8 @@ class EncodingDialog(Renderer, Loggable):
             "frame-rate": gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
                                         int(get_combo_value(self.frame_rate_combo).denom)),
             "height": self.getDimension("height"),
-            "width": self.getDimension("width")
-        })
+            "width": self.getDimension("width")})
+
         self.render_presets.restorePreset(preset_name)
         self._updateRenderPresetButtons()
 
@@ -447,11 +446,9 @@ class EncodingDialog(Renderer, Loggable):
         self.render_presets.save()
 
     def _updateRenderPresetButtons(self):
-        preset_changed = self.render_presets.isCurrentPresetChanged()
+        preset_changed = self.render_presets.isSaveButtonSensitive()
         self.save_render_preset_button.set_sensitive(preset_changed)
-        preset_selected = bool(self.render_presets.cur_preset)
-        if self.render_presets.cur_preset == "No Preset":
-            preset_selected = 0 #  Disable "Remove" if "No Preset" is selected
+        preset_selected = self.render_presets.isRemoveButtonSensitive()
         self.remove_render_preset_button.set_sensitive(preset_selected)
 
     def _removeRenderPresetButtonClickedCb(self, button):
