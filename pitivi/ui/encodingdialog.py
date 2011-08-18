@@ -306,6 +306,35 @@ class EncodingDialog(Renderer, Loggable):
         treeview.get_selection().connect("changed", self._presetChangedCb,
             mgr, update_buttons_func)
 
+    @staticmethod
+    def _getUniquePresetName(mgr):
+        """Get a unique name for a new preset for the specified PresetManager.
+        """
+        existing_preset_names = list(mgr.getPresetNames())
+        preset_name = _("New Preset")
+        i = 1
+        while preset_name in existing_preset_names:
+            preset_name = _("New Preset %d") % i
+            i += 1
+        return preset_name
+
+    def _addRenderPresetButtonClickedCb(self, button):
+        preset_name = self._getUniquePresetName(self.render_presets)
+        self.render_presets.addPreset(preset_name, {
+            "depth": int(get_combo_value(self.sample_depth_combo)),
+            "channels": int(get_combo_value(self.channels_combo)),
+            "sample-rate": int(get_combo_value(self.sample_rate_combo)),
+            "acodec": get_combo_value(self.audio_encoder_combo).get_name(),
+            "vcodec": get_combo_value(self.video_encoder_combo).get_name(),
+            "container": get_combo_value(self.muxercombobox).get_name(),
+            "frame-rate": gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
+                                        int(get_combo_value(self.frame_rate_combo).denom)),
+            "height": self.getDimension("height"),
+            "width": self.getDimension("width")
+        })
+        self.render_presets.restorePreset(preset_name)
+        self._updateRenderPresetButtons()
+
     def _presetChangedCb(self, selection, mgr, update_preset_buttons_func):
         """Handle the selection of a preset."""
         model, iter_ = selection.get_selected()
