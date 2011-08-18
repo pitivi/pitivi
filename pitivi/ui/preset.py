@@ -292,12 +292,22 @@ class AudioPresetManager(PresetManager):
 class RenderPresetManager(PresetManager):
     """ load() and save() are rewritten to save widget values to json """
 
-    path = get_renderpresets_dir()
+    default_path = get_renderpresets_dir()
+    user_path = os.path.join(xdg_data_home(), 'pitivi/render_presets')
 
     def load(self):
-        for file in os.listdir(self.path):
+        filepaths = []
+        try:
+            for uri in os.listdir(self.default_path):
+                filepaths.append(os.path.join(self.default_path, uri))
+            for uri in os.listdir(self.user_path):
+                filepaths.append(os.path.join(self.user_path, uri))
+        except Exception:
+            pass
+
+        for file in filepaths:
             if file.endswith("json"):
-                self.loadSection(os.path.join(self.path, file))
+                self.loadSection(os.path.join(self.default_path, file))
 
     def loadSection(self, filepath):
         parser = json.loads(open(filepath).read())
@@ -331,12 +341,14 @@ class RenderPresetManager(PresetManager):
         })
 
     def save(self):
+        if not os.path.exists(self.user_path):
+            os.makedirs(self.user_path)
         for name, properties in self.ordered:
             try:
                 filepath = self.presets[name]["filepath"]
             except:
                 filename = name + ".json"
-                filepath = os.path.join(self.path, filename)
+                filepath = os.path.join(self.user_path, filename)
 
             if not name == "No Preset":
                 fout = open(filepath, "w")
@@ -379,7 +391,12 @@ class RenderPresetManager(PresetManager):
 
     def isSaveButtonSensitive(self):
         """Check if Save buttons should be sensitive"""
-        if self.cur_preset == "No Preset" or not self.cur_preset:
+        try:
+            (dir, name) = os.path.split(self.presets[self.cur_preset]["filepath"])
+        except:
+            dir = None
+        if self.cur_preset == "No Preset" or not self.cur_preset or \
+                dir == self.default_path:
             # There is no preset selected, nothing to do.
             return False
 
@@ -388,7 +405,13 @@ class RenderPresetManager(PresetManager):
                     for field, (setter, getter) in self.widget_map.iteritems()))
 
     def isRemoveButtonSensitive(self):
-        if self.cur_preset == "No Preset" or not self.cur_preset:
+        """Check if Remove buttons should be sensitive"""
+        try:
+            (dir, name) = os.path.split(self.presets[self.cur_preset]["filepath"])
+        except:
+            dir = None
+        if self.cur_preset == "No Preset" or not self.cur_preset or \
+                dir == self.default_path:
             # There is no preset selected, nothing to do.
             return False
         else:
