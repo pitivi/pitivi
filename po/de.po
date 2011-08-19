@@ -1335,12 +1335,12 @@ msgstr "Vorschaubild alle"
 #: ../pitivi/ui/previewer.py:73
 #, python-format
 msgid "%s second"
-msgstr "%d Sekunde"
+msgstr "%s Sekunde"
 
 #: ../pitivi/ui/previewer.py:74 ../pitivi/ui/previewer.py:75
 #, python-format
 msgid "%s seconds"
-msgstr "%d Sekunden"
+msgstr "%s Sekunden"
 
 #: ../pitivi/ui/previewer.py:76
 msgid "minute"
