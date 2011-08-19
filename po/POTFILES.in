@@ -18,6 +18,7 @@ pitivi/discoverer.py
 pitivi/effects.py
 pitivi/factories/base.py
 pitivi/factories/file.py
+pitivi/formatters/etree.py
 pitivi/formatters/format.py
 pitivi/formatters/etree.py
 pitivi/projectmanager.py
