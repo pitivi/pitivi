@@ -16,7 +16,6 @@ Requires:	gstreamer-python >= @PYGST_REQ@
 Requires:	pygtk2 >= @PYGTK_REQ@
 Requires:	gnonlin >= @GNONLIN_REQ@
 Requires:	gnome-python2 >= @PYGNOME_REQ@
-Requires:	gnome-python2-gconf
 Requires:	pycairo >= @PYCAIRO_REQ@
 Requires:	pygoocanvas
 Requires:	pyxdg

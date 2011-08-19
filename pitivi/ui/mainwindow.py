@@ -33,13 +33,6 @@ import gst
 from urllib import unquote
 import webbrowser
 
-try:
-    import gconf
-except:
-    HAVE_GCONF = False
-else:
-    HAVE_GCONF = True
-
 from gettext import gettext as _
 from gtk import RecentManager
 
@@ -66,11 +59,6 @@ from pitivi.utils import beautify_length, show_user_manual
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.filechooserpreview import PreviewWidget
 
-if HAVE_GCONF:
-    D_G_INTERFACE = "/desktop/gnome/interface"
-
-    for gconf_dir in (D_G_INTERFACE, ):
-        gconf.client_get_default().add_dir(gconf_dir, gconf.CLIENT_PRELOAD_NONE)
 
 GlobalSettings.addConfigOption("fileSupportEnabled",
     environment="PITIVI_FILE_SUPPORT",
