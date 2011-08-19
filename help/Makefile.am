@@ -51,6 +51,8 @@ DOC_PAGES = \
     usingclips.page \
     welcomedialog.page
 
+DOC_LINGUAS = de
+
 html:
 	mkdir -p html
 	yelp-build cache C/*.page

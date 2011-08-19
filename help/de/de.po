@@ -1,0 +1,1763 @@
+# German translation of the pitivi manual.
+# Mario Blättermann <mariobl@freenet.de>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pitivi help master\n"
+"POT-Creation-Date: 2010-12-05 18:06+0100\n"
+"PO-Revision-Date: 2010-12-05 18:16+0100\n"
+"Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
+"Language-Team: German <gnome-de@gnome.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: GERMANY\n"
+
+#: C/welcome.page:10(name) C/usingclips.page:10(name) C/trimming.page:10(name)
+#: C/sysreq.page:10(name) C/splitting.page:10(name) C/saveproject.page:10(name)
+#: C/renderingproblems.page:10(name) C/rendering.page:10(name)
+#: C/othertransitions.page:10(name) C/movearoundtimeline.page:10(name)
+#: C/mediaintimeline.page:10(name) C/makeselections.page:10(name)
+#: C/layers.page:10(name) C/keyframecurves.page:10(name)
+#: C/interface.page:10(name) C/index.page:11(name)
+#: C/importingerrors.page:10(name) C/gstreamer.page:10(name)
+#: C/gettingmedia.page:10(name) C/fadeinfadeout.page:10(name)
+#: C/editsettings.page:10(name) C/crossfading.page:10(name)
+#: C/createproject.page:10(name) C/about.page:10(name)
+msgid "Jean-François Fortin Tam"
+msgstr "Jean-François Fortin Tam"
+
+#: C/welcome.page:11(email) C/usingclips.page:11(email)
+#: C/trimming.page:11(email) C/sysreq.page:11(email) C/splitting.page:11(email)
+#: C/saveproject.page:11(email) C/renderingproblems.page:11(email)
+#: C/rendering.page:11(email) C/othertransitions.page:11(email)
+#: C/movearoundtimeline.page:11(email) C/mediaintimeline.page:11(email)
+#: C/makeselections.page:11(email) C/layers.page:11(email)
+#: C/keyframecurves.page:11(email) C/interface.page:11(email)
+#: C/index.page:12(email) C/importingerrors.page:11(email)
+#: C/gstreamer.page:11(email) C/gettingmedia.page:11(email)
+#: C/fadeinfadeout.page:11(email) C/editsettings.page:11(email)
+#: C/crossfading.page:11(email) C/createproject.page:11(email)
+#: C/about.page:11(email)
+msgid "nekohayo@gmail.com"
+msgstr "nekohayo@gmail.com"
+
+#: C/welcome.page:14(name) C/usingclips.page:14(name) C/trimming.page:14(name)
+#: C/sysreq.page:14(name) C/splitting.page:14(name) C/saveproject.page:14(name)
+#: C/renderingproblems.page:14(name) C/rendering.page:14(name)
+#: C/othertransitions.page:14(name) C/movearoundtimeline.page:14(name)
+#: C/mediaintimeline.page:14(name) C/makeselections.page:14(name)
+#: C/layers.page:14(name) C/keyframecurves.page:14(name)
+#: C/interface.page:14(name) C/index.page:15(name)
+#: C/importingerrors.page:14(name) C/gstreamer.page:14(name)
+#: C/gettingmedia.page:14(name) C/fadeinfadeout.page:14(name)
+#: C/editsettings.page:14(name) C/crossfading.page:14(name)
+#: C/createproject.page:14(name) C/about.page:14(name)
+msgid "Mario Blättermann"
+msgstr "Mario Blättermann"
+
+#: C/welcome.page:15(email) C/usingclips.page:15(email)
+#: C/trimming.page:15(email) C/sysreq.page:15(email) C/splitting.page:15(email)
+#: C/saveproject.page:15(email) C/renderingproblems.page:15(email)
+#: C/rendering.page:15(email) C/othertransitions.page:15(email)
+#: C/movearoundtimeline.page:15(email) C/mediaintimeline.page:15(email)
+#: C/makeselections.page:15(email) C/layers.page:15(email)
+#: C/keyframecurves.page:15(email) C/interface.page:15(email)
+#: C/index.page:16(email) C/importingerrors.page:15(email)
+#: C/gstreamer.page:15(email) C/gettingmedia.page:15(email)
+#: C/fadeinfadeout.page:15(email) C/editsettings.page:15(email)
+#: C/crossfading.page:15(email) C/createproject.page:15(email)
+#: C/about.page:15(email)
+msgid "mariobl@gnome.org"
+msgstr "mariobl@gnome.org"
+
+#: C/welcome.page:17(desc) C/usingclips.page:17(desc) C/trimming.page:17(desc)
+#: C/sysreq.page:17(desc) C/splitting.page:17(desc) C/saveproject.page:17(desc)
+#: C/renderingproblems.page:17(desc) C/rendering.page:17(desc)
+#: C/othertransitions.page:17(desc) C/movearoundtimeline.page:17(desc)
+#: C/mediaintimeline.page:17(desc) C/makeselections.page:17(desc)
+#: C/layers.page:17(desc) C/keyframecurves.page:17(desc)
+#: C/interface.page:17(desc) C/importingerrors.page:17(desc)
+#: C/gstreamer.page:17(desc) C/gettingmedia.page:17(desc)
+#: C/fadeinfadeout.page:17(desc) C/editsettings.page:17(desc)
+#: C/crossfading.page:17(desc) C/createproject.page:17(desc)
+#: C/about.page:17(desc)
+msgid "XXX"
+msgstr "XXX"
+
+#: C/welcome.page:21(p) C/usingclips.page:21(p) C/trimming.page:21(p)
+#: C/sysreq.page:21(p) C/splitting.page:21(p) C/saveproject.page:21(p)
+#: C/renderingproblems.page:21(p) C/rendering.page:21(p)
+#: C/othertransitions.page:21(p) C/movearoundtimeline.page:21(p)
+#: C/mediaintimeline.page:21(p) C/makeselections.page:21(p) C/layers.page:21(p)
+#: C/keyframecurves.page:21(p) C/interface.page:21(p) C/index.page:19(p)
+#: C/importingerrors.page:21(p) C/gstreamer.page:21(p)
+#: C/gettingmedia.page:21(p) C/fadeinfadeout.page:21(p)
+#: C/editsettings.page:21(p) C/crossfading.page:21(p)
+#: C/createproject.page:21(p) C/about.page:21(p)
+msgid "Creative Commons Share Alike 3.0"
+msgstr "Creative Commons Share Alike 3.0"
+
+#: C/welcome.page:25(title)
+msgid "Welcome"
+msgstr "Willkommen"
+
+#: C/welcome.page:27(p)
+msgid ""
+"PiTiVi is a Free and Open Source nonlinear video editor built upon the "
+"GStreamer multimedia framework."
+msgstr ""
+
+#: C/welcome.page:30(p)
+msgid ""
+"It aims at being a powerful and flexible video editing solution for both the "
+"novice and the enthusiast. It aims at being enjoyable and efficient to use "
+"while not limiting your creativity. This manual is intended to help you grasp "
+"the concepts behind its design and get productive quickly."
+msgstr ""
+
+#: C/usingclips.page:25(title)
+msgid "Using clips"
+msgstr ""
+
+#: C/usingclips.page:28(title)
+msgid "Clips vs files"
+msgstr ""
+
+#: C/usingclips.page:31(p)
+msgid ""
+"<em>Files</em> are data on your hard disk (videos, music, pictures, etc.) "
+"that can be accessed by <app>PiTiVi</app> and incorporated in your video "
+"editing project."
+msgstr ""
+
+#: C/usingclips.page:36(p)
+msgid ""
+"<em>Clips</em> are a visual representation of your files on the timeline. "
+"They represent the period of time they consume on the timeline and can be "
+"edited independently: each time you drag a file from the source list to the "
+"timeline, a new clip is created. As such, a file can be reused as much as you "
+"want to create any amount of different clips."
+msgstr ""
+
+#: C/usingclips.page:44(p)
+msgid ""
+"Since PiTiVi is a non-destructive editor, clips are edited, not files. As "
+"such, your files stay intact."
+msgstr ""
+
+#: C/usingclips.page:50(title)
+msgid "Moving clips along the timeline"
+msgstr ""
+
+#: C/usingclips.page:51(p)
+msgid "You can move a clip within a layer or move it to a different layer."
+msgstr ""
+
+#: C/usingclips.page:53(p)
+msgid ""
+"Click and drag a single clip to move it, and release the mouse button to "
+"place it. Dragging horizontally keeps the clip on the same layer, but "
+"dragging it vertically moves the clip to a different layer."
+msgstr ""
+
+#: C/usingclips.page:57(p)
+msgid ""
+"To move multiple clips at the same time, use the <key>Ctrl</key> or "
+"<key>Shift</key> keys to select multiple clips. Selected clips do not need to "
+"be on the same layer. Then, drag the clips just as you would do for a single "
+"clip; their position relative to each other will be preserved."
+msgstr ""
+
+#: C/usingclips.page:63(title)
+msgid "Using ripple editing while moving clips"
+msgstr ""
+
+#: C/usingclips.page:64(p)
+msgid ""
+"While dragging clips around in the timeline, you can use the <link xref="
+"\"rippletechnique\">ripple technique</link> to move the <em>following</em> "
+"clips (the clips that start after the one you're directly editing) to fill "
+"the gap."
+msgstr ""
+
+#: C/usingclips.page:69(p)
+msgid ""
+"Click and drag the clip you want to move, with the mouse button held down"
+msgstr ""
+
+#: C/usingclips.page:70(p)
+msgid "During the drag, hold down <key>Shift</key> on the keyboard"
+msgstr ""
+
+#: C/usingclips.page:71(p)
+msgid ""
+"Release the mouse button to end the drag operation, then release the "
+"<key>Shift</key> key."
+msgstr ""
+
+#: C/usingclips.page:76(p)
+msgid ""
+"During the drag operation, if you changed your mind and only want to drag one "
+"clip at a time, just release the <key>Shift</key> key before you release the "
+"mouse button."
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:37(None)
+msgid ""
+"@@image: 'figures/trimming-individual.png'; "
+"md5=858585ad6ddc21696f7b9f0d597982b4"
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:60(None)
+msgid ""
+"@@image: 'figures/ripple-before.png'; md5=7052e3caadd1ccbf9a91a8c506aeca7d"
+msgstr ""
+"@@image: 'figures/ripple-before.png'; md5=7052e3caadd1ccbf9a91a8c506aeca7d"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:65(None)
+msgid ""
+"@@image: 'figures/ripple-after.png'; md5=3f2fdba79d1c69c2f2022fe08a62b5a7"
+msgstr ""
+"@@image: 'figures/ripple-after.png'; md5=3f2fdba79d1c69c2f2022fe08a62b5a7"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:93(None)
+msgid "@@image: 'figures/roll-before.png'; md5=a6c8ea270c5aa9953c07b493409637a2"
+msgstr ""
+"@@image: 'figures/roll-before.png'; md5=a6c8ea270c5aa9953c07b493409637a2"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:98(None)
+msgid "@@image: 'figures/roll-after.png'; md5=83653c2c984da5d10a0bea16dcee84e4"
+msgstr "@@image: 'figures/roll-after.png'; md5=83653c2c984da5d10a0bea16dcee84e4"
+
+#: C/trimming.page:25(title)
+msgid "Trimming"
+msgstr ""
+
+#: C/trimming.page:27(p)
+msgid ""
+"Trimming is the act of changing the beginning or end point of a clip in the "
+"timeline."
+msgstr ""
+
+#: C/trimming.page:32(title)
+msgid "Trimming an individual clip"
+msgstr ""
+
+#: C/trimming.page:33(p)
+msgid ""
+"Move the mouse cursor over a clip, and trimming handles will appear. Drag one "
+"of the trimming handles on the left or right edge of the clip to trim."
+msgstr ""
+
+#: C/trimming.page:40(p)
+msgid ""
+"Clips that are grouped together, such as a video clip with its associated "
+"audio clip, will trim in unison when you drag the trimming handles. To trim "
+"only the audio or only the video part, you need to ungroup them first (see "
+"the section on Grouping/linking)."
+msgstr ""
+
+#: C/trimming.page:48(title)
+msgid "Ripple editing"
+msgstr ""
+
+#: C/trimming.page:49(p)
+msgid ""
+"Ripple edits are a variant of basic trimming which, in addition to trimming a "
+"clip, moves the “following” clips (the clips that start after the one you're "
+"directly editing) to fill the gap."
+msgstr ""
+
+#: C/trimming.page:54(p)
+msgid ""
+"The ripple applies to all “following” clips, regardless of whether or not "
+"they are on the same layer."
+msgstr ""
+
+#: C/trimming.page:58(p) C/trimming.page:91(p)
+msgid "Before:"
+msgstr "Vorher:"
+
+#: C/trimming.page:63(p) C/trimming.page:96(p)
+msgid "After:"
+msgstr "Nachher:"
+
+#: C/trimming.page:68(p)
+msgid "To do a ripple edit:"
+msgstr ""
+
+#: C/trimming.page:71(p) C/trimming.page:104(p)
+msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
+msgstr ""
+
+#: C/trimming.page:72(p)
+msgid "Press and hold <key>Shift</key>."
+msgstr ""
+
+#: C/trimming.page:73(p) C/trimming.page:106(p)
+msgid "Drag the trimming handle."
+msgstr ""
+
+#: C/trimming.page:75(p)
+msgid ""
+"Ripple editing can also be used when moving clips around in the timeline. For "
+"detailed explanations on how to do this, see the section <link xref="
+"\"rippleusingclips\">Using ripple editing while moving clips</link>."
+msgstr ""
+
+#: C/trimming.page:82(title)
+msgid "Roll editing"
+msgstr ""
+
+#: C/trimming.page:83(p)
+msgid ""
+"Roll edits are a variant of basic trimming which, in addition to trimming a "
+"clip, <em>trims</em> the adjacent clips to prevent creating gaps."
+msgstr ""
+
+#: C/trimming.page:87(p)
+msgid ""
+"The roll applies to all temporally adjacent clips, regardless of whether or "
+"not they are on the same layer."
+msgstr ""
+
+#: C/trimming.page:101(p)
+msgid "To do a roll edit:"
+msgstr ""
+
+#: C/trimming.page:105(p)
+msgid "Press and hold <key>Ctrl</key>."
+msgstr ""
+
+#: C/sysreq.page:25(title)
+msgid "System requirements"
+msgstr "Systemvoraussetzungen"
+
+#: C/sysreq.page:27(p)
+msgid ""
+"In terms of hardware, video editing typically requires a powerful computer, "
+"depending on the type of video you are editing. While the processing power of "
+"computers has increased tremendously over the years, so has demand for higher "
+"quality video."
+msgstr ""
+
+#: C/sysreq.page:32(p)
+msgid ""
+"Editing HD (High Definition) video usually requires (at the time of this "
+"writing) state of the art hardware (depending on the codec used), while SD "
+"(Standard Definition) video editing can be done on modest hardware "
+"configurations. It is up to you to make sure that your equipment is adequate. "
+"It should at least be able to playback your media in <app>Totem</app> without "
+"lagging."
+msgstr ""
+
+#: C/sysreq.page:38(p)
+msgid ""
+"It is possible, however, to use low-quality versions of your footage during "
+"editing and use the high-quality versions when rendering the final output, "
+"thus allowing to bypass hardware limitations to some extent. This is called "
+"<em>proxy editing</em>. This feature, however, is not yet available in "
+"<app>PiTiVi</app>."
+msgstr ""
+
+#: C/splitting.page:25(title)
+msgid "Splitting"
+msgstr ""
+
+#: C/splitting.page:27(p)
+msgid ""
+"As the name implies, splitting a clip divides it into two adjacent clips, "
+"with new beginning/end points being created accordingly."
+msgstr ""
+
+#: C/splitting.page:30(p)
+msgid ""
+"In <app>PiTiVi</app>, splitting is a “non-modal” operation; this means that "
+"you do not have to “activate” a particular tool before doing the split "
+"action. Splitting occurs where the playhead is currently located (see also "
+"<link xref=\"movingplayhead\">Moving the playhead</link>). Combined with "
+"zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless "
+"splitting is not only fast and efficient, it is also very accurate."
+msgstr ""
+
+#: C/splitting.page:37(p)
+msgid "Selections affect splitting in the following ways:"
+msgstr ""
+
+#: C/splitting.page:40(p)
+msgid "Only the selected clips under the playhead will be split."
+msgstr ""
+
+#: C/splitting.page:41(p)
+msgid ""
+"If no clips are selected, all the clips under the playhead will be split."
+msgstr ""
+
+#: C/splitting.page:43(p)
+msgid "To split a single clip:"
+msgstr ""
+
+#: C/splitting.page:46(p)
+msgid "Click on the clip."
+msgstr ""
+
+#: C/splitting.page:47(p) C/splitting.page:60(p)
+msgid "Reposition the playhead (if needed)."
+msgstr ""
+
+#: C/splitting.page:48(p) C/splitting.page:61(p) C/splitting.page:74(p)
+msgid ""
+"Click on the <gui>Split</gui> button on the timeline toolbar or press <key>S</"
+"key>."
+msgstr ""
+
+#: C/splitting.page:53(p)
+msgid "To split all the clips across the all layers:"
+msgstr ""
+
+#: C/splitting.page:56(p)
+msgid ""
+"Click on a blank area of the timeline (this will deselect all selected clips, "
+"if any)."
+msgstr ""
+
+#: C/splitting.page:66(p)
+msgid "To split multiple selected clips:"
+msgstr ""
+
+#: C/splitting.page:69(p)
+msgid "Position the playhead where you want to split."
+msgstr ""
+
+#: C/splitting.page:70(p)
+msgid ""
+"Add or remove clips to the selection with the <key>Ctrl</key> modifier key. "
+"This will not affect the playhead's position."
+msgstr ""
+
+#: C/saveproject.page:25(title)
+msgid "Saving a project"
+msgstr "Speichern eines Projekts"
+
+#: C/saveproject.page:27(p)
+msgid ""
+"To save your project work, use the <guiseq><gui>File</gui><gui>Save</gui></"
+"guiseq> menu, the Save button on the main toolbar or press <keyseq><key>Ctrl</"
+"key><key>S</key></keyseq>."
+msgstr ""
+
+#: C/saveproject.page:32(p)
+msgid ""
+"A saved project file is not the rendered media file output. To render your "
+"project, see the <link xref=\"rendering\">Rendering</link> section."
+msgstr ""
+
+#: C/saveproject.page:37(p)
+msgid ""
+"When you save a project for the first time, a dialog window appears, asking "
+"you where to save the project file and how to name it."
+msgstr ""
+
+#: C/saveproject.page:40(p)
+msgid ""
+"If you want to save your project as a different file, use <guiseq><gui>File</"
+"gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</key><key>Shift</"
+"key><key>S</key></keyseq>. This can be used to create different versions of "
+"your project."
+msgstr ""
+
+#: C/renderingproblems.page:25(title)
+msgid "Rendering problems"
+msgstr ""
+
+#: C/renderingproblems.page:28(title)
+msgid "Sound crackles/choppy audio"
+msgstr ""
+
+#: C/renderingproblems.page:29(p)
+msgid ""
+"Check if your project audio sample rate is high enough. By default, "
+"<app>PiTiVi</app> renders audio at 44100 Hz. If you have audio content that "
+"is sampled at 48000 Hz, simply change the project settings to match the "
+"highest sample rate in your project."
+msgstr ""
+
+#: C/renderingproblems.page:35(p)
+msgid ""
+"See also <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=589684\">bug "
+"#589684</link>"
+msgstr ""
+"Siehe auch <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
+"id=589684\">Bug #589684</link>."
+
+#: C/renderingproblems.page:41(title)
+msgid "Rendering does not start"
+msgstr ""
+
+#: C/renderingproblems.page:42(p)
+msgid ""
+"Many users have experienced a problem where rendering did not behave "
+"correctly when you loaded a <app>PiTiVi</app> project and tried to render "
+"directly, without seeking (moving the playhead) in the timeline first. This "
+"issue (<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=603102\">bug "
+"#603102</link>) has been resolved in the development version."
+msgstr ""
+
+#: C/renderingproblems.page:48(p)
+msgid ""
+"If you are using <app>PiTiVi</app> 0.13.3 or earlier, the workaround is to "
+"try <link xref=\"movearoundtimeline#movingplayhead\">moving the playhead</"
+"link> on the timeline after loading a project file. Rendering should then "
+"function normally."
+msgstr ""
+
+#: C/renderingproblems.page:52(p)
+msgid ""
+"If you are using <app>PiTiVi</app> 0.13.4 or newer, feel free to file a "
+"detailed bug report."
+msgstr ""
+
+#: C/rendering.page:25(title) C/index.page:49(title)
+msgid "Rendering"
+msgstr ""
+
+#: C/rendering.page:27(p)
+msgid ""
+"Rendering is the process of exporting your project into a new, finalized "
+"media file. Rendering only creates a new “rendered” video file, and does not "
+"affect the project itself; you can still make edits to your project and "
+"render again as many times as needed."
+msgstr ""
+
+#: C/rendering.page:33(p)
+msgid "From the <gui>Project</gui> menu, use <gui>Render</gui>."
+msgstr ""
+
+#: C/rendering.page:34(p)
+msgid ""
+"Adjust the various encoding settings, if needed, to use settings different "
+"from the project settings."
+msgstr ""
+
+#: C/rendering.page:38(p)
+msgid "Click the <gui>Render</gui> button."
+msgstr ""
+
+#: C/rendering.page:41(p)
+msgid ""
+"If your computer is set to suspend or hibernate automatically, <app>PiTiVi</"
+"app> will automatically inhibit the power saving features during the render "
+"process (see bug <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
+"id=571885\">bug #571885</link>)."
+msgstr ""
+
+#: C/othertransitions.page:25(title)
+msgid "Other transitions"
+msgstr ""
+
+#: C/othertransitions.page:27(p)
+msgid ""
+"Other types of transitions (such as wipes) are not yet implemented (see <link "
+"href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug #609353</"
+"link>)."
+msgstr ""
+
+#: C/movearoundtimeline.page:25(title)
+msgid "Moving around the timeline"
+msgstr ""
+
+#: C/movearoundtimeline.page:28(title)
+msgid "Scrolling"
+msgstr ""
+
+#: C/movearoundtimeline.page:29(p)
+msgid ""
+"You can use the scrollbars (located on the right and bottom of the timeline), "
+"use the mouse wheel anywhere over the timeline to scroll horizontally, or "
+"hold down the <key>Shift</key> key while using the mousewheel to scroll the "
+"timeline layers vertically."
+msgstr ""
+
+#: C/movearoundtimeline.page:37(title)
+msgid "Zooming"
+msgstr ""
+
+#: C/movearoundtimeline.page:38(p)
+msgid ""
+"Zooming directly affects your editing accuracy and your ability to move "
+"quickly along the timeline:"
+msgstr ""
+
+#: C/movearoundtimeline.page:42(p)
+msgid ""
+"When zooming in, video clips display more thumbnails and audio clips display "
+"increasingly detailed waveforms, allowing you to do precise edits."
+msgstr ""
+
+#: C/movearoundtimeline.page:47(p)
+msgid ""
+"Zooming out allows you to scroll faster along the timeline. Zoom can thus be "
+"used in conjunction with scrolling to move quickly between distant points of "
+"your project's chronology."
+msgstr ""
+
+#: C/movearoundtimeline.page:53(p)
+msgid ""
+"You can zoom in and out by holding the <key>Ctrl</key> key while using the "
+"mousewheel over the timeline, using the <guiseq><gui>View</gui><gui>Zoom In</"
+"gui></guiseq> and <guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq>menu "
+"items, or dragging the zoom slider on the left of the ruler."
+msgstr ""
+
+#: C/movearoundtimeline.page:59(title)
+msgid "<em>Warping</em> between zoom levels"
+msgstr ""
+
+#: C/movearoundtimeline.page:60(p)
+msgid ""
+"Using your mouse's scroll wheel, you can also <em>warp</em> instantly from "
+"any zoom level to another in a single click. To do that, click with your "
+"mousewheel anywhere on the zoom slider."
+msgstr ""
+
+#: C/movearoundtimeline.page:68(title)
+msgid "Moving the playhead"
+msgstr ""
+
+#: C/movearoundtimeline.page:69(p)
+msgid ""
+"You can change the position of the playhead by clicking anywhere on the ruler "
+"or on the timeline."
+msgstr ""
+
+#: C/movearoundtimeline.page:72(p)
+msgid "When clicking on the <em>timeline</em>:"
+msgstr ""
+
+#: C/movearoundtimeline.page:75(p)
+msgid ""
+"If a clip is under the mouse cursor, it will replace the current clip "
+"selection (see the <link xref=\"selectmulti\">Selecting multiple items</link> "
+"section for more detailed instructions)."
+msgstr ""
+
+#: C/movearoundtimeline.page:80(p)
+msgid ""
+"If there is no clip under the cursor, all selected clips (if any) will be "
+"deselected."
+msgstr ""
+
+#: C/movearoundtimeline.page:85(p)
+msgid ""
+"When clicking on the ruler, only the playhead's position changes; clip "
+"selections are not affected."
+msgstr ""
+
+#: C/movearoundtimeline.page:91(title)
+msgid "Scrubbing"
+msgstr ""
+
+#: C/movearoundtimeline.page:92(p)
+msgid "<em>Scrubbing</em> is a way of moving the playhead that allows you to:"
+msgstr ""
+
+#: C/movearoundtimeline.page:95(p)
+msgid "Search for a specific position in time by approximation/trial and error."
+msgstr ""
+
+#: C/movearoundtimeline.page:98(p)
+msgid ""
+"Review repeatedly the visual motion in a scene by moving back and forth in "
+"time."
+msgstr ""
+
+#: C/movearoundtimeline.page:103(p)
+msgid ""
+"To scrub, click on the ruler and move the mouse with the button still held "
+"down."
+msgstr ""
+
+#: C/movearoundtimeline.page:106(p)
+msgid ""
+"You can also scrub by dragging the black vertical line that stems from the "
+"playhead and spans across the timeline."
+msgstr ""
+
+#: C/mediaintimeline.page:25(title)
+msgid "Putting media in the timeline"
+msgstr ""
+
+#: C/mediaintimeline.page:27(p)
+msgid ""
+"From the source list, you can insert one or more clips by selecting them "
+"(using the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) "
+"and:"
+msgstr ""
+
+#: C/mediaintimeline.page:31(p)
+msgid "Dragging and dropping them onto place in the timeline."
+msgstr ""
+
+#: C/mediaintimeline.page:32(p)
+msgid ""
+"Pressing the <key>Insert</key> (Ins) key or using the <guiseq><gui>Project</"
+"gui><gui>Insert</gui></guiseq> at end of timeline menu. Those clips will be "
+"inserted at the end of the timeline."
+msgstr ""
+
+#: C/mediaintimeline.page:38(p)
+msgid ""
+"It is also possible to import files directly into the timeline by dragging "
+"them from another application and dropping them onto PiTiVi's timeline. The "
+"files will automatically be added to the source list in the process. (see "
+"<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">bug #570118</"
+"link>)."
+msgstr ""
+
+#: C/makeselections.page:25(title)
+msgid "Making selections"
+msgstr ""
+
+#: C/makeselections.page:28(title)
+msgid "Selecting a single item"
+msgstr ""
+
+#: C/makeselections.page:29(p)
+msgid "To select a file or a clip in <app>PiTiVi</app>, click it."
+msgstr ""
+
+#: C/makeselections.page:34(title)
+msgid "Selecting multiple items"
+msgstr ""
+
+#: C/makeselections.page:35(p)
+msgid ""
+"Multiple selections allow you to apply actions (dragging, deleting, grouping, "
+"etc.) to many clips at once."
+msgstr ""
+
+#: C/makeselections.page:38(p)
+msgid "Selecting multiple adjacent items:"
+msgstr ""
+
+#: C/makeselections.page:41(p)
+msgid "Click the first item."
+msgstr ""
+
+#: C/makeselections.page:42(p)
+msgid "Hold the <key>Shift</key> key."
+msgstr ""
+
+#: C/makeselections.page:43(p)
+msgid "Click the last item."
+msgstr ""
+
+#: C/makeselections.page:45(p)
+msgid "Selecting multiple nonadjacent items:"
+msgstr ""
+
+#: C/makeselections.page:48(p)
+msgid "Hold down the <key>Ctrl</key> key."
+msgstr ""
+
+#: C/makeselections.page:49(p)
+msgid "Click on all the items you want to select."
+msgstr ""
+
+#: C/makeselections.page:51(p)
+msgid ""
+"You can deselect an individual item by clicking on it again with the "
+"<key>Ctrl</key> key held down. This can be used in conjunction with the "
+"<em>Selecting multiple adjacent items</em> technique above."
+msgstr ""
+
+#: C/license.page:8(desc)
+msgid "Legal information."
+msgstr "Rechtliche Informationen."
+
+#: C/license.page:11(title)
+msgid "License"
+msgstr "Lizenz"
+
+#: C/license.page:12(p)
+msgid ""
+"This work is distributed under a CreativeCommons Attribution-Share Alike 3.0 "
+"Unported license."
+msgstr ""
+"Dieses Werk wird unter einer »CreativeCommons Attribution-Share Alike 3.0 "
+"Unported license« verbreitet."
+
+#: C/license.page:20(p)
+msgid "You are free:"
+msgstr "Es ist Ihnen gestattet:"
+
+#: C/license.page:25(em)
+msgid "To share"
+msgstr "Freizugeben"
+
+#: C/license.page:26(p)
+msgid "To copy, distribute and transmit the work."
+msgstr ""
+"Das Werk bzw. den Inhalt vervielfältigen, verbreiten und öffentlich "
+"zugänglich machen."
+
+#: C/license.page:29(em)
+msgid "To remix"
+msgstr "Änderungen vorzunehmen"
+
+#: C/license.page:30(p)
+msgid "To adapt the work."
+msgstr "Abwandlungen und Bearbeitungen des Werkes bzw. Inhaltes anzufertigen."
+
+#: C/license.page:33(p)
+msgid "Under the following conditions:"
+msgstr "Unter den folgenden Bedingungen:"
+
+#: C/license.page:38(em)
+msgid "Attribution"
+msgstr "Weitergabe unter gleichen Bedingungen"
+
+#: C/license.page:39(p)
+msgid ""
+"You must attribute the work in the manner specified by the author or licensor "
+"(but not in any way that suggests that they endorse you or your use of the "
+"work)."
+msgstr ""
+"Sie dürfen das Werk nur unter gleichen Bedingungen weitergeben, wie Sie vom "
+"Autor oder Lizenzgeber festgelegt wurden (aber nicht so, dass es wie Ihr Werk "
+"aussieht)."
+
+#: C/license.page:46(em)
+msgid "Share Alike"
+msgstr "Share Alike"
+
+#: C/license.page:47(p)
+msgid ""
+"If you alter, transform, or build upon this work, you may distribute the "
+"resulting work only under the same, similar or a compatible license."
+msgstr ""
+"Wenn Sie das lizenzierte Werk bzw. den lizenzierten Inhalt bearbeiten, "
+"abwandeln oder in anderer Weise erkennbar als Grundlage für eigenes Schaffen "
+"verwenden, dürfen Sie die daraufhin neu entstandenen Werke bzw. Inhalte nur "
+"unter Verwendung von Lizenzbedingungen weitergeben, die mit denen dieses "
+"Lizenzvertrages identisch, vergleichbar oder kompatibel sind."
+
+#: C/license.page:53(p)
+msgid ""
+"For the full text of the license, see the <link href=\"http://creativecommons."
+"org/licenses/by-sa/3.0/legalcode\">CreativeCommons website</link>, or read "
+"the full <link href=\"http://creativecommons.org/licenses/by-sa/3.0/"
+"\">Commons Deed</link>."
+msgstr ""
+"Den vollständigen Text der Lizenz finden sie auf der <link href=\"http://"
+"creativecommons.org/licenses/by-sa/3.0/legalcode\">CreativeCommons-Webseite</"
+"link>. Oder Sie können den vollständigen <link href=\"http://creativecommons."
+"org/licenses/by-sa/3.0/\">Commons Deed</link> lesen."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/layers.page:60(None)
+msgid "@@image: 'figures/layers.png'; md5=27c5f543944b381bc7147ff90b3deaee"
+msgstr "@@image: 'figures/layers.png'; md5=27c5f543944b381bc7147ff90b3deaee"
+
+#: C/layers.page:25(title)
+msgid "Understanding layers"
+msgstr ""
+
+#: C/layers.page:27(p)
+msgid ""
+"<em>Layers</em> are a fundamental concept for advanced editing in the "
+"timeline: compositing, mixing multiple videos simultaneously, and adding "
+"titles depend on this feature."
+msgstr ""
+
+#: C/layers.page:31(p)
+msgid ""
+"It is easier to think of layers in terms of images painted on glass. With "
+"several pieces of glass stacked on top of each other, each of these pieces of "
+"glass is a layer. If the top piece of glass is completely painted over, none "
+"of the pieces of glass underneath will be visible."
+msgstr ""
+
+#: C/layers.page:36(p)
+msgid ""
+"If, on the other hand, you only paint over a portion of a piece of glass, you "
+"will be able to see what is underneath the non-painted parts."
+msgstr ""
+
+#: C/layers.page:41(title)
+msgid "Opacity (how solid “opaque” things are)"
+msgstr ""
+
+#: C/layers.page:42(p)
+msgid ""
+"Each layer (and each clip) has its own transparency. To continue the paint on "
+"glass metaphor, if the paint is thin enough, it can be seen through. "
+"Visually, an opacity of 100% means you cannot see the clips below that layer "
+"or clip, and an opacity of of 50% means you can partly see them."
+msgstr ""
+
+#: C/layers.page:50(title)
+msgid "How this translates in terms of user interface"
+msgstr ""
+
+#: C/layers.page:51(p)
+msgid ""
+"While, in real life, you can stack pieces of glass onto each other in three "
+"dimensions, your computer monitor only has two dimensions. Thus, the "
+"<em>layers on top</em> (the “Z” axis in the physical world) are also visually "
+"<em>on top</em>, albeit on the “Y” axis."
+msgstr ""
+
+#: C/layers.page:56(p)
+msgid ""
+"The following diagram illustrates the <em>pieces of glass</em> (left) and how "
+"they are show as <em>layers</em> in <app>PiTiVi</app>'s user interface "
+"(right)."
+msgstr ""
+
+#: C/layers.page:63(p)
+msgid ""
+"Clips located on a layer above will block the clips below from view, unless "
+"it has an opacity value lower than 100% (as shown with the two topmost layers "
+"in the previous illustration)."
+msgstr ""
+
+#: C/layers.page:70(title)
+msgid "Adding and removing layers"
+msgstr ""
+
+#: C/layers.page:71(p)
+msgid ""
+"Layers are created and removed automatically. There is no “layer management” "
+"interface in <app>PiTiVi</app> (at least, not yet)."
+msgstr ""
+
+#: C/layers.page:74(p)
+msgid ""
+"To create a layer, drag a clip downwards until a new layer appears for it."
+msgstr ""
+
+#: C/layers.page:76(p)
+msgid ""
+"If there are no more clips on a layer, it is automatically removed. Thus, to "
+"remove a layer, simply drag its clips upwards onto another layer."
+msgstr ""
+
+#: C/layers.page:82(title)
+msgid "What about audio layers?"
+msgstr ""
+
+#: C/layers.page:83(p)
+msgid ""
+"Unlike in vision, multiple sounds do not (objectively) “block” each other. As "
+"such, if you have multiple audio clips on separate layers, their sound will "
+"be mixed together. Controlling the volume of those audio clips simply changes "
+"their relative loudness."
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/keyframecurves.page:34(None)
+msgid ""
+"@@image: 'figures/keyframecurves.png'; md5=d91b335281ec48ab9f8fade73bf09852"
+msgstr ""
+
+#: C/keyframecurves.page:25(title)
+msgid "Keyframe curves"
+msgstr ""
+
+#: C/keyframecurves.page:27(p)
+msgid ""
+"Some types of clips (currently only audio clips) support interpolating "
+"property values over their time. The user can add one or more <em>keyframes</"
+"em> to control the interpolation, a term borrowed from animation. "
+"<app>PiTiVi</app> represents the value of the property in between keyframes "
+"as a <em>curve</em> drawn over the clip. Currently only linear interpolation "
+"is supported."
+msgstr ""
+
+#: C/keyframecurves.page:39(title)
+msgid "General usage"
+msgstr ""
+
+#: C/keyframecurves.page:40(p)
+msgid ""
+"Curves are an intrinsic property of clips and can not be removed by the user. "
+"The start and end points of the curve are fixed to the start and end points "
+"of the clip, and also can not be removed by the user."
+msgstr ""
+
+#: C/keyframecurves.page:45(p)
+msgid ""
+"You can add a new keyframe by double-clicking on an empty portion of a curve."
+msgstr ""
+
+#: C/keyframecurves.page:49(p)
+msgid "You can remove a keyframe by double-clicking on it."
+msgstr ""
+
+#: C/keyframecurves.page:52(p)
+msgid ""
+"You can adjust the time and value of a keyframe by moving it with the mouse. "
+"You can place the keyframe anywhere on the clip you like, even if this "
+"changes the order of the keyframes."
+msgstr ""
+
+#: C/keyframecurves.page:57(p)
+msgid ""
+"You can click-and-drag on a segment of a curve between two keyframes to "
+"adjust the vertical position of the segment."
+msgstr ""
+
+#: C/keyframecurves.page:65(title)
+msgid "Audio curves"
+msgstr ""
+
+#: C/keyframecurves.page:66(p)
+msgid ""
+"For volume curves the vertical position represents the volume of the clip on "
+"a scale from 0 to 200%."
+msgstr ""
+
+#: C/keyframecurves.page:72(title)
+msgid "Video compositing curves"
+msgstr ""
+
+#: C/keyframecurves.page:73(p)
+msgid ""
+"The vertical position represents the alpha (opacity) of the clip on a scale "
+"from 0 to 100%. See the <link xref=\"layers\">Understanding layers</link> "
+"section for more details."
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/interface.page:32(None)
+msgid "@@image: 'figures/mainwindow.png'; md5=1214d496f8e47dc42a630b1d588ac014"
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/interface.page:65(None)
+msgid "@@image: 'figures/hovering.png'; md5=b4a8bd739707a43056e55a5d2b31ed57"
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/interface.page:79(None)
+msgid "@@image: 'figures/ruler.png'; md5=2d2f2261c4bdb034be332fbcea37f273"
+msgstr ""
+
+#: C/interface.page:25(title)
+msgid "An overview of the user interface"
+msgstr ""
+
+#: C/interface.page:28(title)
+msgid "Main window"
+msgstr "Hauptfenster"
+
+#: C/interface.page:30(title) C/interface.page:31(desc)
+msgid "<app>PiTiVi</app> main window"
+msgstr "<app>PiTiVi</app>-Hauptfenster"
+
+#: C/interface.page:33(p)
+msgid "<app>PiTiVi</app> main window."
+msgstr "<app>PiTiVi</app>-Hauptfenster."
+
+#: C/interface.page:36(p)
+msgid ""
+"The main window, as the name implies, is the window containing the main "
+"components of the <app>PiTiVi</app> user interface, namely: the menu bar, the "
+"toolbars, the timeline and various customizable components (source list, "
+"previewer, effects list, transitions list, etc.)."
+msgstr ""
+
+#: C/interface.page:45(title)
+msgid "Menu bar"
+msgstr "Menüleiste"
+
+#: C/interface.page:46(p)
+msgid ""
+"The menu bar contains all the possible actions of the toolbars, plus many "
+"more. The menu bar also provides some instant-apply settings, as well as "
+"access to further customizations in the <gui>Project settings</gui> dialog "
+"and <gui>Preferences</gui> dialog."
+msgstr ""
+
+#: C/interface.page:51(p)
+msgid "The menu bar cannot be hidden."
+msgstr "Die Menüleiste kann nicht verborgen werden."
+
+#: C/interface.page:56(title)
+msgid "The toolbars"
+msgstr "Die Werkzeugleisten"
+
+#: C/interface.page:57(p)
+msgid ""
+"Toolbars provide access to the most commonly used functions of <app>PiTiVi</"
+"app>. All items in toolbars can also be accessed through the menu bar. "
+"Toolbars can be activated or deactivated in the <gui>View</gui> menu."
+msgstr ""
+
+#: C/interface.page:61(p)
+msgid ""
+"You can hover the mouse cursor over a toolbar item to reveal an information "
+"tooltip regarding its function."
+msgstr ""
+
+#: C/interface.page:71(title)
+msgid "Ruler"
+msgstr ""
+
+#: C/interface.page:72(p)
+msgid ""
+"The ruler plays a crucial role in your interaction with the timeline. In "
+"addition to giving you time measurements (in seconds), it is the primary way "
+"of moving the playhead (and thus, your position in time)."
+msgstr ""
+
+#: C/interface.page:76(p)
+msgid "The current playhead position is indicated by a red vertical line:"
+msgstr ""
+
+#: C/interface.page:83(p)
+msgid ""
+"When zoomed in, frames are visually represented on the ruler as alternating "
+"light and dark areas in the bottom part; those are based on the project "
+"framerate settings."
+msgstr ""
+
+#: C/interface.page:87(p)
+msgid ""
+"To move your position in time, click anywhere on the ruler. You can also "
+"<em>scrub</em> the timeline by clicking on the ruler and holding down the "
+"mouse button while moving. See the <link xref=\"scrubbing\">Scrubbing</link> "
+"section for more details."
+msgstr ""
+
+#: C/interface.page:95(title)
+msgid "Marker bar"
+msgstr ""
+
+#: C/interface.page:96(p)
+msgid ""
+"Markers are visual cues that you can create to <em>mark</em> important points "
+"or regions in your project's timeline. The marker bar allows you to view and "
+"edit markers that you created."
+msgstr ""
+
+#: C/interface.page:101(p)
+msgid ""
+"See <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">bug "
+"#608682</link> for more information."
+msgstr ""
+"Siehe <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">Bug "
+"#608682</link> für weitere Informationen."
+
+#: C/interface.page:108(title)
+msgid "Timeline"
+msgstr ""
+
+#: C/interface.page:109(p)
+msgid ""
+"The timeline is the core user interface component that you will use for "
+"editing. It is a visual, time-proportional representation of your project's "
+"chronology."
+msgstr ""
+
+#: C/interface.page:115(title)
+msgid "Playback toolbar"
+msgstr ""
+
+#: C/interface.page:116(p)
+msgid "This toolbar, located below the previewer, contains buttons controlling"
+msgstr ""
+
+#: C/interface.page:119(p)
+msgid "The playback of the timeline."
+msgstr ""
+
+#: C/interface.page:120(p)
+msgid "The playback of a clip being previewed from the source list."
+msgstr ""
+
+#: C/interface.page:122(p)
+msgid ""
+"The <gui>Play</gui> button transforms into a <gui>Pause</gui> button when "
+"playing, and reverts to a <gui>Play</gui> button again when not playing."
+msgstr ""
+
+#: C/interface.page:128(title)
+msgid "Previewer"
+msgstr ""
+
+#: C/interface.page:129(p)
+msgid "The previewer displays"
+msgstr ""
+
+#: C/interface.page:132(p)
+msgid "Your project's video when playing back."
+msgstr ""
+
+#: C/interface.page:133(p)
+msgid "The video frame at the current position of the playhead."
+msgstr ""
+
+#: C/interface.page:134(p)
+msgid "A <em>live preview</em> when trimming a clip's beginning/end point."
+msgstr ""
+
+#: C/interface.page:139(title)
+msgid "Source list"
+msgstr ""
+
+#: C/interface.page:140(p)
+msgid ""
+"The source list displays the imported media files in your project. This list "
+"is a flexible database that can be sorted and searched."
+msgstr ""
+
+#: C/interface.page:144(p)
+msgid ""
+"See <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=432664\">bug "
+"#432664</link> and <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
+"id=578710\">bug #578710</link> for more information."
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/index.page:24(None)
+msgid "@@image: 'figures/logo.png'; md5=694867eec987a61b070a11a7255a6de9"
+msgstr "@@image: 'figures/logo.png'; md5=694867eec987a61b070a11a7255a6de9"
+
+#: C/index.page:7(title) C/index.page:8(title)
+msgid "PiTiVi Quick Start Manual"
+msgstr "PiTiVi-Einsteigerhandbuch"
+
+#: C/index.page:23(title)
+msgid ""
+"<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">PiTiVi "
+"logo</media> PiTiVi Manual"
+msgstr ""
+
+#: C/index.page:28(p)
+msgid ""
+"<app>PiTiVi</app> is a free, intuitive and featureful movie editor for the "
+"Linux desktop."
+msgstr ""
+
+#: C/index.page:33(title)
+msgid "Introduction"
+msgstr "Einführung"
+
+#: C/index.page:37(title)
+msgid "Getting started"
+msgstr "Erste Schritte"
+
+#: C/index.page:41(title)
+msgid "Editing with the timeline"
+msgstr ""
+
+#: C/index.page:45(title)
+msgid "Transitions"
+msgstr ""
+
+#: C/index.page:53(title)
+msgid "Troubleshooting"
+msgstr ""
+
+#: C/importingerrors.page:25(title)
+msgid "Importing errors"
+msgstr ""
+
+#: C/importingerrors.page:27(p)
+msgid ""
+"There are currently four known types of errors that can happen when trying to "
+"import files in the source list:"
+msgstr ""
+
+#: C/importingerrors.page:31(p)
+msgid ""
+"<em>Timeouts:</em> if a file takes longer than 10 seconds to import, it will "
+"be ignored."
+msgstr ""
+
+#: C/importingerrors.page:35(p)
+msgid ""
+"<em>Broken codec:</em> this could be a broken codec in <app>GStreamer</app>'s "
+"plugins, or a codec that is not entirely compliant to <link xref=\"sysreq"
+"\"><app>PiTiVi</app>'s editing requirements</link>."
+msgstr ""
+
+#: C/importingerrors.page:40(p)
+msgid ""
+"<em>Unsupported file type:</em><app>PiTiVi</app> being intended for video "
+"editing, it can only import video, audio, and image files."
+msgstr ""
+
+#: C/importingerrors.page:44(p)
+msgid ""
+"<em>Bugs:</em> if none of the above apply, it could be a software bug in "
+"<app>GStreamer</app> or <app>PiTiVi</app>. Look in our current list of <link "
+"href=\"\">bug reports</link>, and if your case was not already reported, "
+"<link href=\"\">file a bug report</link>."
+msgstr ""
+
+#: C/gstreamer.page:25(title)
+msgid "Gstreamer and compatibility"
+msgstr ""
+
+#: C/gstreamer.page:27(p)
+msgid ""
+"A great strength in <app>PiTiVi</app> lies in its use of the <app>GStreamer</"
+"app> multimedia framework. <app>GStreamer</app> is used by dozens of "
+"multimedia applications across desktop environments, operating systems and "
+"architectures."
+msgstr ""
+
+#: C/gstreamer.page:31(p)
+msgid "This essentially means three things to you, the user:"
+msgstr ""
+
+#: C/gstreamer.page:35(p)
+msgid ""
+"You can, in theory, import pretty much any media file supported by "
+"<app>GStreamer</app> (but see the next section)."
+msgstr ""
+
+#: C/gstreamer.page:40(p)
+msgid ""
+"You can render your projects using any supported container and codec "
+"combination from <app>GStreamer</app>."
+msgstr ""
+
+#: C/gstreamer.page:45(p)
+msgid ""
+"You need a very recent version of <app>GStreamer</app> to maximize "
+"<app>PiTiVi's</app> capabilities and reduce the possibilities of bugs. This "
+"is because the <app>PiTiVi</app> project developers work hard in fixing "
+"problems directly in <app>GStreamer</app> (instead of putting temporary "
+"workarounds inside <app>PiTiVi</app>)."
+msgstr ""
+
+#: C/gstreamer.page:55(title)
+msgid "About “non-compliant” codecs"
+msgstr ""
+
+#: C/gstreamer.page:56(p)
+msgid ""
+"Some <app>GStreamer</app> codecs, such as the Fluendo MP3 and MPEG muxers, "
+"while providing you with a legal way to playback files (in countries where "
+"software patents laws are upheld), may not be <em>completely</em> compliant "
+"to the <app>GStreamer</app> specifications."
+msgstr ""
+
+#: C/gstreamer.page:61(p)
+msgid ""
+"Some users have reported problems when using those codecs (read: not being "
+"able to import MP3 files when those codecs are installed)."
+msgstr ""
+
+#: C/gstreamer.page:64(p)
+msgid ""
+"The reason for this behavior is that they are codecs oriented towards "
+"<em>playback</em>, and, being not entirely spec-compliant with "
+"<app>GStreamer</app>, cannot be used correctly by <app>PiTiVi</app> for "
+"<em>editing</em>."
+msgstr ""
+
+#: C/gstreamer.page:68(p)
+msgid ""
+"This situation is unfortunate. If, eventually, those codecs are fixed to "
+"become full-fledged <app>GStreamer</app>-compliant playback and editing "
+"codecs, they will work with <app>PiTiVi</app>."
+msgstr ""
+
+#: C/gstreamer.page:72(p)
+msgid ""
+"In countries where software patents are not upheld, you can simply use the "
+"<app>GStreamer</app> “ugly” set of plugins."
+msgstr ""
+
+#: C/gstreamer.page:77(title)
+msgid "A word about editing-friendly codecs"
+msgstr ""
+
+#: C/gstreamer.page:78(p)
+msgid ""
+"Some formats, like <em>MPEG</em>, are oriented towards playback only, and do "
+"not compress each frame independently. While it is the goal of <app>PiTiVi</"
+"app> to support working with these files, certain operations (like rapid "
+"seeking) will not perform as well as they would with frame-independent "
+"compressed video (such as <em>MJPEG</em> or <em>DV</em>)."
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/gettingmedia.page:63(None)
+msgid "@@image: 'figures/filechooser.png'; md5=7c99958f9d766b874c3994fd56870259"
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/gettingmedia.page:113(None)
+msgid ""
+"@@image: 'figures/previewsource.png'; md5=ec55ba71f7c9ec058d4619b342654a0e"
+msgstr ""
+
+#: C/gettingmedia.page:25(title)
+msgid "Getting media"
+msgstr ""
+
+#: C/gettingmedia.page:27(p)
+msgid ""
+"Multiple ways of getting media are planned. However, at the time of this "
+"writing, the only supported method is importing files from your hard drive."
+msgstr ""
+
+#: C/gettingmedia.page:31(p)
+msgid "It is planned to support the following additional sources in the future:"
+msgstr ""
+
+#: C/gettingmedia.page:34(p)
+msgid "Capture from a DV or HDV camcorder using an IEEE 1394 connection."
+msgstr ""
+
+#: C/gettingmedia.page:35(p)
+msgid "Capture from a webcam."
+msgstr ""
+
+#: C/gettingmedia.page:36(p)
+msgid "Dumping a network/Internet stream."
+msgstr ""
+
+#: C/gettingmedia.page:37(p)
+msgid "Importing from DVD."
+msgstr ""
+
+#: C/gettingmedia.page:38(p)
+msgid "Importing from an audio CD."
+msgstr ""
+
+#: C/gettingmedia.page:39(p)
+msgid ""
+"Downloading from content providers such as <link href=\"http://www.jamendo.com"
+"\"> Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</"
+"link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, etc."
+msgstr ""
+
+#: C/gettingmedia.page:48(title)
+msgid "Importing files"
+msgstr ""
+
+#: C/gettingmedia.page:50(title)
+msgid "Using the file chooser"
+msgstr ""
+
+#: C/gettingmedia.page:51(p)
+msgid ""
+"You can import media into the source list by using the file chooser dialog, "
+"which has the advantage of letting you preview the files you want to import "
+"( see <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=586003\">bug "
+"586003</link>). To do so, use the <guiseq><gui>Project</gui><gui>Import "
+"clips...</gui></guiseq> menu, the <gui>Import clips</gui> button on the main "
+"toolbar, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>."
+msgstr ""
+
+#: C/gettingmedia.page:58(p)
+msgid "The following file chooser dialog window will appear:"
+msgstr ""
+
+#: C/gettingmedia.page:61(title) C/gettingmedia.page:62(desc)
+msgid "Filechooser dialog"
+msgstr ""
+
+#: C/gettingmedia.page:66(p)
+msgid ""
+"Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the "
+"same time. You can also import all the files contained in a folder (and its "
+"subfolders) by using <guiseq><gui>Project</gui><gui>Import folder of clips</"
+"gui></guiseq> in the menu bar."
+msgstr ""
+
+#: C/gettingmedia.page:72(title)
+msgid "Using drag and drop"
+msgstr ""
+
+#: C/gettingmedia.page:73(p)
+msgid ""
+"The concept of drag and drop is a well-established method of bridging the gap "
+"between software applications. As such, this feature can be used to:"
+msgstr ""
+
+#: C/gettingmedia.page:78(p)
+msgid ""
+"Quickly and easily import music or video clips from a media player (such as "
+"<app>Rhythmbox</app> or <app>Totem</app>) by dragging them over <app>PiTiVi</"
+"app>'s source list."
+msgstr ""
+
+#: C/gettingmedia.page:84(p)
+msgid ""
+"Allow using a full-fledged file manager (such as <app>Nautilus</app>, "
+"<app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of the "
+"file chooser dialog."
+msgstr ""
+
+#: C/gettingmedia.page:89(p)
+msgid ""
+"Leverage the searching capability of another application (such as "
+"<app>Rhythmbox</app>, <app>Tracker</app>, <app>GNOME Search Tool</app>, etc.)."
+msgstr ""
+
+#: C/gettingmedia.page:98(title)
+msgid "Using the source list"
+msgstr ""
+
+#: C/gettingmedia.page:100(title)
+msgid "Sorting"
+msgstr ""
+
+#: C/gettingmedia.page:101(p)
+msgid ""
+"You can sort your project media by clicking on the columns' headers: (see "
+"<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=432664\">bug 432664</"
+"link>)"
+msgstr ""
+
+#: C/gettingmedia.page:106(title)
+msgid "Previewing a clip from the source list"
+msgstr ""
+
+#: C/gettingmedia.page:107(p)
+msgid ""
+"To preview a clip before placing it on the timeline, you can double-click on "
+"it in the source list, or right-click and choose <gui>Play clip</gui> from "
+"the popup menu."
+msgstr ""
+
+#: C/gettingmedia.page:112(desc)
+msgid "Popup menu"
+msgstr ""
+
+#: C/gettingmedia.page:118(title)
+msgid "Tagging"
+msgstr ""
+
+#: C/gettingmedia.page:119(p)
+msgid ""
+"This feature is not yet implemented (see <link href=\"https://bugzilla.gnome."
+"org/show_bug.cgi?id=432664\">bug 586071</link>)."
+msgstr ""
+
+#: C/gettingmedia.page:124(title)
+msgid "Quick search"
+msgstr ""
+
+#: C/gettingmedia.page:125(p)
+msgid ""
+"If you want to quickly locate a clip in the source list and know the "
+"beginning of its name, click anywhere in the source list and start typing the "
+"name of the file you're looking for."
+msgstr ""
+
+#: C/gettingmedia.page:130(p)
+msgid "As you type, the first matching file will become selected."
+msgstr ""
+
+#: C/gettingmedia.page:131(p)
+msgid "You can keep typing to refine your search."
+msgstr ""
+
+#: C/gettingmedia.page:132(p)
+msgid ""
+"When there are multiple results, you can use the <gui>up</gui> and <app>down</"
+"app> arrow keys to switch the selection between each search result."
+msgstr ""
+
+#: C/gettingmedia.page:138(p)
+msgid "This method only allows searching from the beginning of the filename."
+msgstr ""
+
+#: C/gettingmedia.page:142(title)
+msgid "Filtering"
+msgstr ""
+
+#: C/gettingmedia.page:143(p)
+msgid ""
+"This feature is not yet implemented (see <link href=\"https://bugzilla.gnome."
+"org/show_bug.cgi?id=432664\">bug 578710</link>)."
+msgstr ""
+
+#: C/gettingmedia.page:148(title)
+msgid "View modes"
+msgstr ""
+
+#: C/gettingmedia.page:149(p)
+msgid ""
+"The source list can display your clips in a list (<guiseq><gui>View</"
+"gui><gui>Show Clips as a List</gui></guiseq>) or in an icon view "
+"(<guiseq><gui>View</gui><gui>Show Clips as Icons</gui></guiseq>)."
+msgstr ""
+
+#: C/gettingmedia.page:153(p)
+msgid ""
+"The list view mode shows more details about each clip, but the icon view mode "
+"can display more clips without needing to scroll (especially on high "
+"resolution computer monitors)."
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/fadeinfadeout.page:39(None)
+msgid "@@image: 'figures/fadestep1.png'; md5=4bdb320d2ef57e3d09c67fcdba8ab103"
+msgstr "@@image: 'figures/fadestep1.png'; md5=4bdb320d2ef57e3d09c67fcdba8ab103"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/fadeinfadeout.page:43(None)
+msgid "@@image: 'figures/fadestep2.png'; md5=c4bafbd98aee44ec93cb41c857b501c5"
+msgstr "@@image: 'figures/fadestep2.png'; md5=c4bafbd98aee44ec93cb41c857b501c5"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/fadeinfadeout.page:51(None)
+msgid "@@image: 'figures/fadestep3.png'; md5=5aa08a9539d2d7bb6e39be379e88d778"
+msgstr "@@image: 'figures/fadestep3.png'; md5=5aa08a9539d2d7bb6e39be379e88d778"
+
+#: C/fadeinfadeout.page:25(title)
+msgid "Fade-ins and fade-outs"
+msgstr ""
+
+#: C/fadeinfadeout.page:27(p)
+msgid ""
+"You can do “fades” of single clip by using <app>PiTiVi</app>'s video mixing "
+"capabilities, which relies on keyframes controlling each clip's opacity (see "
+"also: <link xref=\"layers\">Understanding layers</link>)."
+msgstr ""
+
+#: C/fadeinfadeout.page:31(p)
+msgid "To fade a clip to black:"
+msgstr ""
+
+#: C/fadeinfadeout.page:35(p)
+msgid ""
+"Double-click on its opacity keyframe curve where you want the fade- out to "
+"start (or the fade-in to end)."
+msgstr ""
+
+#: C/fadeinfadeout.page:48(p)
+msgid "Click and drag the last (or first) keyframe of the clip downwards."
+msgstr ""
+
+#: C/editsettings.page:25(title)
+msgid "Editing project settings"
+msgstr ""
+
+#: C/editsettings.page:27(p)
+msgid ""
+"When starting a new project, you should make sure to go adjust the project "
+"settings, such as framerate, resolution and preferred codecs. The video "
+"resolution will affect the aspect ratio of the previewer."
+msgstr ""
+
+#: C/editsettings.page:31(p)
+msgid ""
+"To edit the project settings, use the <guiseq><gui>Project</gui><gui>Project "
+"Settings</gui></guiseq> menu."
+msgstr ""
+
+#: C/crossfading.page:25(title)
+msgid "Crossfading clips"
+msgstr ""
+
+#: C/crossfading.page:27(p)
+msgid ""
+"To do a crossfade between two clips on the same layer, simply drag one of the "
+"clips onto the other so that it overlaps. The overlapping region will be used "
+"for transitions (crossfade by default) between the two clips. You can adjust "
+"the length of the transition by moving or trimming the clips."
+msgstr ""
+
+#: C/crossfading.page:33(p)
+msgid ""
+"Crossfades are achieved using <app>PiTiVi</app>'s video mixing features, "
+"which use keyframes to control the opacity of clips."
+msgstr ""
+
+#: C/crossfading.page:36(p)
+msgid ""
+"This also means that if you set opacity keyframes for that clip, they will be "
+"taken into account for the crossfade."
+msgstr ""
+
+#: C/createproject.page:25(title)
+msgid "Creating a project"
+msgstr ""
+
+#: C/createproject.page:27(p)
+msgid ""
+"When you initially start <app>PiTiVi</app>, a new blank project is already "
+"created. To open an existing project, use <guiseq><gui>File</gui><gui>Open</"
+"gui></guiseq> or press <keyseq><key>Ctrl</key><key>O</key></keyseq>."
+msgstr ""
+
+#: C/createproject.page:31(p)
+msgid ""
+"If you currently have an active project and wish to start a new one, use "
+"<guiseq><gui> File</gui><gui>New</gui></guiseq> or press <keyseq><key>Ctrl</"
+"key><key>N</key></keyseq>."
+msgstr ""
+
+#: C/about.page:25(title)
+msgid "About this manual"
+msgstr "Info zu diesem Handbuch"
+
+#: C/about.page:28(title)
+msgid "Work in progress"
+msgstr ""
+
+#: C/about.page:29(p)
+msgid ""
+"You may encounter unwritten portions due to features that have not yet been "
+"implemented in PiTiVi at the time of writing."
+msgstr ""
+
+#: C/about.page:32(p)
+msgid ""
+"You may also encounter smaller areas which have been documented in this "
+"manual but have not been implemented in PiTiVi – those are areas where the "
+"design and expected user interaction are quite narrow/certain."
+msgstr ""
+
+#: C/about.page:39(title)
+msgid "Patches welcome"
+msgstr ""
+
+#: C/about.page:40(p)
+msgid ""
+"If you happen to find errors, missing information or unclear passages in this "
+"manual, please feel free to submit corrections. You can find contact "
+"information on <link href=\"http://jeff.ecchi.ca/\">my personal website</"
+"link>. You can also <link href=\"\">file bugs on the “documentation” "
+"component in our bug tracker</link>."
+msgstr ""
+
+#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
+#: C/about.page:0(None)
+msgid "translator-credits"
+msgstr "Mario Blättermann <mariobl@gnome.org>, 2010"
