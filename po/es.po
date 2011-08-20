@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-08-15 11:37+0000\n"
-"PO-Revision-Date: 2011-08-17 01:33+0200\n"
+"POT-Creation-Date: 2011-08-19 12:06+0000\n"
+"PO-Revision-Date: 2011-08-20 11:26+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -848,7 +848,6 @@ msgid "Effect name"
 msgstr "Nombre del efecto"
 
 #: ../pitivi/ui/clipproperties.py:243
-#| msgid "effect"
 msgid "Effects"
 msgstr "Efectos"
 
@@ -858,7 +857,6 @@ msgstr ""
 "Seleccionar un clip en la cronología para configurar sus efectos asociados"
 
 #: ../pitivi/ui/clipproperties.py:481
-#| msgid "Information"
 msgid "Transformation"
 msgstr "Transformación"
 
@@ -1121,8 +1119,9 @@ msgid "Edit the project settings"
 msgstr "Editar los ajustes del proyecto"
 
 #: ../pitivi/ui/mainwindow.py:272
-msgid "_Render Project..."
-msgstr "_Renderizar proyecto…"
+#| msgid "Render"
+msgid "_Render..."
+msgstr "_Renderizar…"
 
 #: ../pitivi/ui/mainwindow.py:273
 msgid "Export your project as a finished movie"
@@ -1779,6 +1778,9 @@ msgstr[1] "%d segundos"
 #, python-format
 msgid "%s doesn't yet handle non-local projects"
 msgstr "%s no puede manipular aún proyectos no locales"
+
+#~ msgid "_Render Project..."
+#~ msgstr "_Renderizar proyecto…"
 
 #~ msgid "Transformation configuration"
 #~ msgstr "Configuración de la transformación"
