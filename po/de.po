@@ -8,16 +8,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-08-15 11:37+0000\n"
-"PO-Revision-Date: 2011-08-19 09:36+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-08-19 14:06+0200\n"
+"PO-Revision-Date: 2011-08-19 14:06+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: GERMANY\n"
@@ -1108,8 +1107,8 @@ msgid "Edit the project settings"
 msgstr "Projekteinstellungen bearbeiten"
 
 #: ../pitivi/ui/mainwindow.py:272
-msgid "_Render Project..."
-msgstr "Projekt e_rstellen …"
+msgid "_Render..."
+msgstr "E_rstellen …"
 
 #: ../pitivi/ui/mainwindow.py:273
 msgid "Export your project as a finished movie"
@@ -1769,6 +1768,9 @@ msgstr[1] "%d Sekunden"
 #, python-format
 msgid "%s doesn't yet handle non-local projects"
 msgstr "%s behandelt bisher keine nicht lokal gespeicherten Projekte"
+
+#~ msgid "_Render Project..."
+#~ msgstr "Projekt e_rstellen …"
 
 #~ msgid "Reset"
 #~ msgstr "Zurücksetzen"
