@@ -191,12 +191,11 @@ class GlobalSettings(Signallable):
                 continue
             if key and self._config.has_option(section, key):
                 if typ == int or typ == long:
-                    # WARNING/FIXME : This try/except is for a small cockup in previous
-                    # configurations where we stored a float value... but declared it
-                    # as an integer.
                     try:
                         value = self._config.getint(section, key)
                     except ValueError:
+                        # In previous configurations we incorrectly stored
+                        # ints using float values.
                         value = int(self._config.getfloat(section, key))
                 elif typ == float:
                     value = self._config.getfloat(section, key)
