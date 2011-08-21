@@ -63,17 +63,6 @@ class Thread(threading.Thread, Signallable, Loggable):
         pass
 
 
-class CallbackThread(Thread):
-    def __init__(self, callback, *args, **kwargs):
-        self.callback = callback
-        self.args = args
-        self.kwargs = kwargs
-        Thread.__init__(self)
-
-    def process(self):
-        self.callback(*self.args, **self.kwargs)
-
-
 class ThreadMaster(Loggable):
     """
     Controls all the threads existing in Pitivi.
