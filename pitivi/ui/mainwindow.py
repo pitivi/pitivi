@@ -177,7 +177,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.toggleactions = None
         self.actiongroup = None
         self.settings = instance.settings
-        self.is_fullscreen = self.settings.mainWindowFullScreen
+        self.is_fullscreen = False
         self.timelinepos = 0
         self.prefsdialog = None
         create_stock_icons()
@@ -439,11 +439,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.set_default_size(width, height)
         if height == -1 and width == -1:
             self.maximize()
-        self._do_pending_fullscreen = False
-        # FIXME: don't know why this doesn't work
-        #if self.settings.mainWindowFullScreen:
-        #    self._do_pending_fullscreen = True
-
+        # Whether the window will be made fullscreen after it is available.
+        self._do_pending_fullscreen = self.settings.mainWindowFullScreen
         # timeline toolbar
         # FIXME: remove toolbar padding and shadow. In fullscreen mode, the
         # toolbar buttons should be clickable with the mouse cursor at the
