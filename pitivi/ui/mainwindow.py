@@ -316,11 +316,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 # this will be set sensitive when the timeline duration changes
                 action.set_sensitive(False)
                 action.props.is_important = True
-            elif action_name == "Screencast":
-                # FIXME : re-enable this action once istanbul integration is complete
-                # and upstream istanbul has applied packages for proper interaction.
-                action.set_sensitive(False)
-                action.set_visible(False)
             elif action_name in [
                 "ProjectSettings", "Quit", "File", "Edit", "Help", "About",
                 "View", "FullScreen", "FullScreenAlternate", "UserManual",
