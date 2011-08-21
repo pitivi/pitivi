@@ -34,7 +34,7 @@ from pitivi.configure import get_pixmap_dir
 
 from pitivi.log.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
-from pitivi.ui.common import SPACING, PADDING
+from pitivi.ui.common import SPACING
 from pitivi.settings import GlobalSettings
 
 SHOW_TREEVIEW = 1
@@ -286,7 +286,6 @@ class EffectList(gtk.VBox, Loggable):
         if len(path) < 1:
             context.drag_abort(int(time.time()))
         else:
-            row = self.storemodel[path[0]]
             if self._current_tooltip_icon:
                 context.set_icon_pixbuf(self._current_tooltip_icon, 0, 0)
 

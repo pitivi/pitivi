@@ -25,7 +25,6 @@ Main GTK+ window
 """
 
 import os
-import platform
 import gtk
 import gobject
 gobject.threads_init()
@@ -42,7 +41,7 @@ from pitivi.ui.timeline import Timeline
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
 from pitivi.configure import pitivi_version, APPNAME, APPURL, \
-     get_pixmap_dir, LIBDIR, get_ui_dir
+     get_pixmap_dir, get_ui_dir
 from pitivi.ui import dnd
 from pitivi.pipeline import Pipeline
 from pitivi.action import ViewAction
@@ -240,7 +239,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _setActions(self, instance):
         PLAY = _("Start Playback")
-        PAUSE = _("Stop Playback")
         LOOP = _("Loop over selected area")
 
         """ sets up the GtkActions """
@@ -429,7 +427,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.viewer.connect("expose-event", self._exposeEventCb)
 
         # window and pane position defaults
-        self.mainhpaned = self.mainhpaned
         self.hpaned = self.secondhpaned
         self.vpaned = vpaned
         height = -1
@@ -802,7 +799,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         hbox = gtk.HBox(False, SPACING * 2)
         hbox.pack_start(image, expand=False)
         hbox.pack_start(vbox, expand=True, fill=True)
-        action_area = dialog.get_action_area()
         hbox.set_border_width(SPACING)
 
         # stuff the hbox in the dialog

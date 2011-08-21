@@ -79,7 +79,6 @@ class DefaultVideoSink(SinkFactory):
             self._realsink = autovideosink
 
         if self._realsink:
-            props = list(self._realsink.props)
             try:
                 self._realsink.props.force_aspect_ratio = True
             except AttributeError:

@@ -30,7 +30,6 @@ from ConfigParser import SafeConfigParser, ParsingError
 import xdg.BaseDirectory as xdg_dirs  # Freedesktop directories spec
 
 from gettext import gettext as _
-from gettext import ngettext
 
 from pitivi.signalinterface import Signallable
 from pitivi.encode import available_combinations, \
