@@ -38,8 +38,7 @@ class Thread(threading.Thread, Signallable, Loggable):
     """
 
     __signals__ = {
-        "done": None
-        }
+        "done": None}
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -77,7 +76,7 @@ class CallbackThread(Thread):
 
 class ThreadMaster(Loggable):
     """
-    Controls all thread existing in pitivi
+    Controls all the threads existing in Pitivi.
     """
 
     def __init__(self):
@@ -85,10 +84,8 @@ class ThreadMaster(Loggable):
         self.threads = []
 
     def addThread(self, threadclass, *args):
-        """ Start the given Thread """
-        # IDEA : We might need a limit of concurrent threads ?
-        # ... or some priorities ?
-        # FIXME : we should only accept subclasses of our Thread class
+        """ Instantiate the specified Thread class and start it. """
+        assert issubclass(threadclass, Thread)
         self.log("Adding thread of type %r", threadclass)
         thread = threadclass(*args)
         thread.connect("done", self._threadDoneCb)
