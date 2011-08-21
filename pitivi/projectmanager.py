@@ -187,8 +187,10 @@ class ProjectManager(Signallable, Loggable):
         self.emit("new-project-created", project)
         self.current = project
 
-        # FIXME: this should not be hard-coded
-        # add default tracks for a new project
+        # Add default tracks to the timeline of the new project.
+        # The tracks of the timeline determine what tracks
+        # the rendered content will have. Pitivi currently supports
+        # projects with exactly one video track and one audio track.
         settings = project.getSettings()
         video = VideoStream(gst.Caps(settings.getVideoCaps()))
         track = Track(video)
