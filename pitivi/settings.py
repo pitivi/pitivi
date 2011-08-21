@@ -247,7 +247,7 @@ class GlobalSettings(Signallable):
         environment, value for each option)
         """
         for section, options in self.options.iteritems():
-            for attrname, (typ, key, environment) in self.options[section].iteritems():
+            for attrname, (typ, key, environment) in options.iteritems():
                 yield section, attrname, typ, key, environment, getattr(self, attrname)
 
     def iterSection(self, section):
