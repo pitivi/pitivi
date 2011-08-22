@@ -90,18 +90,13 @@ class PitiviViewer(gtk.VBox, Loggable):
     """
     A Widget to control and visualize a Pipeline
 
-    @cvar pipeline: The current pipeline
+    @ivar pipeline: The current pipeline
     @type pipeline: L{Pipeline}
-    @cvar action: The action controlled by this Pipeline
+    @ivar action: The action controlled by this Pipeline
     @type action: L{ViewAction}
     """
 
-    def __init__(self, app, undock_action=None, action=None,
-                 pipeline=None):
-        """
-        @param action: Specific action to use instead of auto-created one
-        @type action: L{ViewAction}
-        """
+    def __init__(self, app, undock_action=None, action=None, pipeline=None):
         gtk.VBox.__init__(self)
         self.set_border_width(SPACING)
         self.settings = app.settings
@@ -229,8 +224,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.debug("action: %r", action)
         # not sure what we need to do ...
         self.action = action
-        # FIXME: fix this properly?
-        self.internal.action = action
         dar = float(4 / 3)
         try:
             producer = action.producers[0]
@@ -280,7 +273,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.5, ratio=4.0 / 3.0,
                                       obey_child=False)
 
-        self.internal = ViewerWidget(self.action, self.app.settings)
+        self.internal = ViewerWidget(self.app.settings)
         self.internal.init_transformation_events()
         self.internal.show()
         self.aframe.add(self.internal)
@@ -290,7 +283,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         vbox = gtk.VBox()
         vbox.set_spacing(SPACING)
         self.external_window.add(vbox)
-        self.external = ViewerWidget(self.action, self.app.settings)
+        self.external = ViewerWidget(self.app.settings)
         vbox.pack_start(self.external)
         self.external_window.connect("delete-event",
             self._externalWindowDeleteCb)
@@ -951,15 +944,16 @@ class TransformationBox():
 class ViewerWidget(gtk.DrawingArea, Loggable):
     """
     Widget for displaying properly GStreamer video sink
+
+    @ivar settings: The settings of the application.
+    @type settings: L{GlobalSettings}
     """
 
     __gsignals__ = {}
 
-    def __init__(self, action=None, settings=None):
+    def __init__(self, settings=None):
         gtk.DrawingArea.__init__(self)
         Loggable.__init__(self)
-        # FIXME : Check if it's a view action
-        self.action = action
         self.settings = settings
         self.box = None
         self.stored = False
