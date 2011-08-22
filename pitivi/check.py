@@ -29,7 +29,7 @@ import gst
 from gettext import gettext as _
 
 from pitivi.instance import PiTiVi
-from pitivi.configure import APPNAME, PYGTK_REQ, PYGST_REQ, GST_REQ, GNONLIN_REQ, PYCAIRO_REQ
+from pitivi.configure import APPNAME, PYGTK_REQ, GTK_REQ, PYGST_REQ, GST_REQ, GNONLIN_REQ, PYCAIRO_REQ
 
 global soft_deps
 soft_deps = {}
@@ -86,9 +86,12 @@ def check_required_version(modulename):
     containing the strings of the required version and the installed version.
     This function does not check for the existence of the given module !
     """
-    if modulename == "gtk":
+    if modulename == "pygtk":
         if list(gtk.pygtk_version) < _string_to_list(PYGTK_REQ):
             return [PYGTK_REQ, _version_to_string(gtk.pygtk_version)]
+    if modulename == "gtk":
+        if list(gtk.gtk_version) < _string_to_list(GTK_REQ):
+            return [GTK_REQ, _version_to_string(gtk.gtk_version)]
     if modulename == "pygst":
         if list(gst.get_pygst_version()) < _string_to_list(PYGST_REQ):
             return [PYGST_REQ, _version_to_string(gst.get_pygst_version())]
@@ -135,10 +138,14 @@ def initial_checks():
     if not __try_import__("xdg"):
         return (_("Could not import the xdg Python library"),
                 _("Make sure you have the xdg Python library installed."))
-    req, inst = check_required_version("gtk")
+    req, inst = check_required_version("pygtk")
     if req:
         return (_("You do not have a recent enough version of the GTK+ Python bindings (your version %s)") % inst,
                 _("Install a version of the GTK+ Python bindings greater than or equal to %s.") % req)
+    req, inst = check_required_version("gtk")
+    if req:
+        return (_("You do not have a recent enough version of GTK+ (your version %s)") % inst,
+                _("Install a version of GTK+ greater than or equal to %s.") % req)
     req, inst = check_required_version("pygst")
     if req:
         return (_("You do not have a recent enough version of GStreamer Python bindings (your version %s)") % inst,
