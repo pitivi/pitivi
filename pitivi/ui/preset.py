@@ -26,7 +26,8 @@ import gst
 import gtk
 
 from pitivi.settings import xdg_data_home
-from pitivi.configure import get_data_dir, get_renderpresets_dir
+from pitivi.configure import get_data_dir, get_renderpresets_dir, \
+        get_audiopresets_dir, get_videopresets_dir
 import json
 import os
 
@@ -68,30 +69,32 @@ class PresetManager(object):
         return os.path.join(xdg_data_home(), self.filename)
 
     def load(self):
-        parser = ConfigParser.SafeConfigParser()
-        if not parser.read(self._getFilename()):
-            # The file probably does not exist yet.
-            return
-        self._loadPresetsFromParser(parser)
+        filepaths = []
+        try:
+            for uri in os.listdir(self.default_path):
+                filepaths.append(os.path.join(self.default_path, uri))
+            for uri in os.listdir(self.user_path):
+                filepaths.append(os.path.join(self.user_path, uri))
+        except Exception:
+            pass
+
+        for file in filepaths:
+            if file.endswith("json"):
+                self.loadSection(os.path.join(self.default_path, file))
 
     def save(self):
-        parser = ConfigParser.SafeConfigParser()
-        self._savePresetsToParser(parser)
-        fout = open(self._getFilename(), "w")
-        parser.write(fout)
-        fout.close()
+        if not os.path.exists(self.user_path):
+            os.makedirs(self.user_path)
+        for name, properties in self.ordered:
+            try:
+                filepath = self.presets[name]["filepath"]
+            except:
+                filename = name + ".json"
+                filepath = os.path.join(self.user_path, filename)
 
-    def _loadPresetsFromParser(self, parser):
-        for section in sorted(parser.sections()):
-            values = self._loadPreset(parser, section)
-            preset = self._convertSectionNameToPresetName(section)
-            self.addPreset(preset, values)
-
-    def _savePresetsToParser(self, parser):
-        for preset, properties in self.ordered:
-            values = self.presets[preset]
-            section = self._convertPresetNameToSectionName(preset)
-            self._savePreset(parser, section, values)
+            if not name == "No Preset":
+                fout = open(filepath, "w")
+                self.saveSection(fout, name)
 
     def _loadPreset(self, parser, section):
         """Load the specified section from the specified config parser.
@@ -231,146 +234,6 @@ class PresetManager(object):
         return any((values[field] != getter()
                     for field, (setter, getter) in self.widget_map.iteritems()))
 
-
-class VideoPresetManager(PresetManager):
-
-    filename = "video_presets"
-
-    def _loadPreset(self, parser, section):
-        width = parser.getint(section, "width")
-        height = parser.getint(section, "height")
-
-        rate_num = parser.getint(section, "framerate-num")
-        rate_denom = parser.getint(section, "framerate-denom")
-        rate = gst.Fraction(rate_num, rate_denom)
-
-        par_num = parser.getint(section, "par-num")
-        par_denom = parser.getint(section, "par-denom")
-        par = gst.Fraction(par_num, par_denom)
-
-        return {
-            "width": width,
-            "height": height,
-            "frame-rate": rate,
-            "par": par}
-
-    def _savePreset(self, parser, section, values):
-        parser.add_section(section)
-        parser.set(section, "width", str(values["width"]))
-        parser.set(section, "height", str(values["height"]))
-        parser.set(section, "framerate-num",
-            str(int(values["frame-rate"].num)))
-        parser.set(section, "framerate-denom",
-            str(int(values["frame-rate"].denom)))
-        parser.set(section, "par-num",
-            str(int(values["par"].num)))
-        parser.set(section, "par-denom",
-            str(int(values["par"].denom)))
-
-
-class AudioPresetManager(PresetManager):
-
-    filename = "audio_presets"
-
-    def _loadPreset(self, parser, section):
-        channels = parser.getint(section, "channels")
-        depth = parser.getint(section, "depth")
-        rate = parser.getint(section, "sample-rate")
-
-        return {
-            "channels": channels,
-            "depth": depth,
-            "sample-rate": rate}
-
-    def _savePreset(self, parser, section, values):
-        parser.add_section(section)
-        parser.set(section, "channels", str(values["channels"]))
-        parser.set(section, "depth", str(values["depth"]))
-        parser.set(section, "sample-rate", str(values["sample-rate"]))
-
-
-class RenderPresetManager(PresetManager):
-    """ load() and save() are rewritten to save widget values to json """
-
-    default_path = get_renderpresets_dir()
-    user_path = os.path.join(xdg_data_home(), 'pitivi/render_presets')
-
-    def load(self):
-        filepaths = []
-        try:
-            for uri in os.listdir(self.default_path):
-                filepaths.append(os.path.join(self.default_path, uri))
-            for uri in os.listdir(self.user_path):
-                filepaths.append(os.path.join(self.user_path, uri))
-        except Exception:
-            pass
-
-        for file in filepaths:
-            if file.endswith("json"):
-                self.loadSection(os.path.join(self.default_path, file))
-
-    def loadSection(self, filepath):
-        parser = json.loads(open(filepath).read())
-
-        name = parser["name"]
-        container = parser["container"]
-        acodec = parser["acodec"]
-        vcodec = parser["vcodec"]
-
-        width = parser["width"]
-        height = parser["height"]
-        framerate_num = parser["framerate-num"]
-        framerate_denom = parser["framerate-denom"]
-        framerate = gst.Fraction(framerate_num, framerate_denom)
-
-        channels = parser["channels"]
-        depth = parser["depth"]
-        sample_rate = parser["sample-rate"]
-
-        self.addPreset(name, {
-            "container": container,
-            "acodec": acodec,
-            "vcodec": vcodec,
-            "width": width,
-            "height": height,
-            "frame-rate": framerate,
-            "channels": channels,
-            "depth": depth,
-            "sample-rate": sample_rate,
-            "filepath": filepath,
-        })
-
-    def save(self):
-        if not os.path.exists(self.user_path):
-            os.makedirs(self.user_path)
-        for name, properties in self.ordered:
-            try:
-                filepath = self.presets[name]["filepath"]
-            except:
-                filename = name + ".json"
-                filepath = os.path.join(self.user_path, filename)
-
-            if not name == "No Preset":
-                fout = open(filepath, "w")
-                self.saveSection(fout, name)
-
-    def saveSection(self, fout, section):
-        values = self.presets[section]
-        data = json.dumps({
-            "name": section,
-            "container": str(values["container"]),
-            "acodec": str(values["acodec"]),
-            "vcodec": str(values["vcodec"]),
-            "width": int(values["width"]),
-            "height": int(values["height"]),
-            "framerate-num": values["frame-rate"].num,
-            "framerate-denom": values["frame-rate"].denom,
-            "channels": values["channels"],
-            "depth": int(values["depth"]),
-            "sample-rate": int(values["sample-rate"]),
-        }, indent=4)
-        fout.write(data)
-
     def removePreset(self, name):
         try:
             os.remove(self.presets[name]["filepath"])  # Deletes json file if exists
@@ -416,3 +279,139 @@ class RenderPresetManager(PresetManager):
             return False
         else:
             return True
+
+
+class VideoPresetManager(PresetManager):
+
+    default_path = get_videopresets_dir()
+    user_path = os.path.join(xdg_data_home(), 'pitivi/video_presets')
+
+
+    def loadSection(self, filepath):
+        parser = json.loads(open(filepath).read())
+
+        name = parser["name"]
+        width = parser["width"]
+        height = parser["height"]
+
+        framerate_num = parser["framerate-num"]
+        framerate_denom = parser["framerate-denom"]
+        framerate = gst.Fraction(framerate_num, framerate_denom)
+
+        par_num = parser["par-num"]
+        par_denom = parser["par-denom"]
+        par = gst.Fraction(par_num, par_denom)
+
+        self.addPreset(name, {
+            "width": width,
+            "height": height,
+            "frame-rate": framerate,
+            "par": par,
+            "filepath": filepath,
+
+        })
+
+
+    def saveSection(self, fout, section):
+        values = self.presets[section]
+        data = json.dumps({
+            "name": section,
+            "width": int(values["width"]),
+            "height": int(values["height"]),
+            "framerate-num": values["frame-rate"].num,
+            "framerate-denom": values["frame-rate"].denom,
+            "par-num": values["par"].num,
+            "par-denom": values["par"].denom,
+        }, indent=4)
+        fout.write(data)
+
+
+class AudioPresetManager(PresetManager):
+
+    default_path = get_audiopresets_dir()
+    user_path = os.path.join(xdg_data_home(), 'pitivi/audio_presets')
+
+
+    def loadSection(self, filepath):
+        parser = json.loads(open(filepath).read())
+
+        name = parser["name"]
+
+        channels = parser["channels"]
+        depth = parser["depth"]
+        sample_rate = parser["sample-rate"]
+
+        self.addPreset(name, {
+            "channels": channels,
+            "depth": depth,
+            "sample-rate": sample_rate,
+            "filepath": filepath,
+        })
+
+
+    def saveSection(self, fout, section):
+        values = self.presets[section]
+        data = json.dumps({
+            "name": section,
+            "channels": values["channels"],
+            "depth": int(values["depth"]),
+            "sample-rate": int(values["sample-rate"]),
+        }, indent=4)
+        fout.write(data)
+
+class RenderPresetManager(PresetManager):
+    """ load() and save() are rewritten to save widget values to json """
+
+    default_path = get_renderpresets_dir()
+    user_path = os.path.join(xdg_data_home(), 'pitivi/render_presets')
+
+
+    def loadSection(self, filepath):
+        parser = json.loads(open(filepath).read())
+
+        name = parser["name"]
+        container = parser["container"]
+        acodec = parser["acodec"]
+        vcodec = parser["vcodec"]
+
+        width = parser["width"]
+        height = parser["height"]
+        framerate_num = parser["framerate-num"]
+        framerate_denom = parser["framerate-denom"]
+        framerate = gst.Fraction(framerate_num, framerate_denom)
+
+        channels = parser["channels"]
+        depth = parser["depth"]
+        sample_rate = parser["sample-rate"]
+
+        self.addPreset(name, {
+            "container": container,
+            "acodec": acodec,
+            "vcodec": vcodec,
+            "width": width,
+            "height": height,
+            "frame-rate": framerate,
+            "channels": channels,
+            "depth": depth,
+            "sample-rate": sample_rate,
+            "filepath": filepath,
+        })
+
+
+    def saveSection(self, fout, section):
+        values = self.presets[section]
+        data = json.dumps({
+            "name": section,
+            "container": str(values["container"]),
+            "acodec": str(values["acodec"]),
+            "vcodec": str(values["vcodec"]),
+            "width": int(values["width"]),
+            "height": int(values["height"]),
+            "framerate-num": values["frame-rate"].num,
+            "framerate-denom": values["frame-rate"].denom,
+            "channels": values["channels"],
+            "depth": int(values["depth"]),
+            "sample-rate": int(values["sample-rate"]),
+        }, indent=4)
+        fout.write(data)
+

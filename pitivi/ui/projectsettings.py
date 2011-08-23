@@ -232,6 +232,10 @@ class ProjectSettingsDialog():
 
         self.updateUI()
 
+        self.createAudioNoPreset(self.audio_presets)
+        self.createVideoNoPreset(self.video_presets)
+
+
     def bindPar(self, mgr):
 
         def updatePar(value):
@@ -282,6 +286,22 @@ class ProjectSettingsDialog():
         treeview.get_selection().connect("changed", self._presetChangedCb,
             mgr, update_buttons_func)
         treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
+
+    def createAudioNoPreset(self, mgr):
+         mgr.prependPreset("No Preset", {
+            "depth": int(get_combo_value(self.sample_depth_combo)),
+            "channels": int(get_combo_value(self.channels_combo)),
+            "sample-rate": int(get_combo_value(self.sample_rate_combo))})
+
+    def createVideoNoPreset(self, mgr):
+        mgr.prependPreset("No Preset", {
+            "par": gst.Fraction(int(get_combo_value(self.par_combo).num),
+                                        int(get_combo_value(self.par_combo).denom)),
+            "frame-rate": gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
+                                        int(get_combo_value(self.frame_rate_combo).denom)),
+            "height": int(self.height_spinbutton.get_value()),
+            "width": int(self.width_spinbutton.get_value())})
+
 
     def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
         """Handle the addition of a preset to the model of the preset manager.
