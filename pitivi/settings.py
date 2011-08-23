@@ -24,7 +24,6 @@ Settings
 """
 
 import os
-import platform
 import gst
 from ConfigParser import SafeConfigParser, ParsingError
 import xdg.BaseDirectory as xdg_dirs  # Freedesktop directories spec
@@ -36,11 +35,6 @@ from pitivi.encode import available_combinations, \
      get_compatible_sink_caps
 from pitivi.stream import get_stream_for_caps
 from pitivi.log.loggable import Loggable
-
-if platform.system() == 'Windows':
-    HOME = 'USERPROFILE'
-else:
-    HOME = 'HOME'
 
 
 def get_bool_env(var):
