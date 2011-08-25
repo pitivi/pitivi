@@ -222,7 +222,7 @@ class EncodingDialog(Renderer, Loggable):
         self.createNoPreset(self.render_presets)
 
     def createNoPreset(self, mgr):
-        mgr.prependPreset("No Preset", {
+        mgr.prependPreset(_("No Preset"), {
             "depth": int(get_combo_value(self.sample_depth_combo)),
             "channels": int(get_combo_value(self.channels_combo)),
             "sample-rate": int(get_combo_value(self.sample_rate_combo)),

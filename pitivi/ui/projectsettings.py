@@ -288,13 +288,13 @@ class ProjectSettingsDialog():
         treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
 
     def createAudioNoPreset(self, mgr):
-         mgr.prependPreset("No Preset", {
+         mgr.prependPreset(_("No Preset"), {
             "depth": int(get_combo_value(self.sample_depth_combo)),
             "channels": int(get_combo_value(self.channels_combo)),
             "sample-rate": int(get_combo_value(self.sample_rate_combo))})
 
     def createVideoNoPreset(self, mgr):
-        mgr.prependPreset("No Preset", {
+        mgr.prependPreset(_("No Preset"), {
             "par": gst.Fraction(int(get_combo_value(self.par_combo).num),
                                         int(get_combo_value(self.par_combo).denom)),
             "frame-rate": gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
