@@ -216,7 +216,10 @@ class PresetManager(object):
         values = self.presets[preset]
         self.cur_preset = preset
         for field, (setter, getter) in self.widget_map.iteritems():
-            setter(values[field])
+            if values[field] != 0:
+                setter(values[field])
+            else:
+                setter(self.presets['No Preset'][field])
         self._ignore_update_requests = False
 
     def savePreset(self):
@@ -374,8 +377,13 @@ class RenderPresetManager(PresetManager):
         acodec = parser["acodec"]
         vcodec = parser["vcodec"]
 
-        width = parser["width"]
-        height = parser["height"]
+        try:
+            width = parser["width"]
+            height = parser["height"]
+        except:
+            width = 0
+            height = 0
+
         framerate_num = parser["framerate-num"]
         framerate_denom = parser["framerate-denom"]
         framerate = gst.Fraction(framerate_num, framerate_denom)
@@ -413,5 +421,6 @@ class RenderPresetManager(PresetManager):
             "depth": int(values["depth"]),
             "sample-rate": int(values["sample-rate"]),
         }, indent=4)
+
         fout.write(data)
 

@@ -318,12 +318,12 @@ class EncodingDialog(Renderer, Loggable):
     def bindHeight(self, mgr):
         mgr.bindWidget("height",
                        lambda x: self.settings.setVideoProperties(height=x),
-                       lambda: self.getDimension("height"))
+                       lambda: 0)
 
     def bindWidth(self, mgr):
         mgr.bindWidget("width",
                        lambda x: self.settings.setVideoProperties(width=x),
-                       lambda: self.getDimension("width"))
+                       lambda: 0)
 
     def getDimension(self, dimension):
         value = self.settings.getVideoWidthAndHeight()
@@ -429,8 +429,8 @@ class EncodingDialog(Renderer, Loggable):
             "container": get_combo_value(self.muxercombobox).get_name(),
             "frame-rate": gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
                                         int(get_combo_value(self.frame_rate_combo).denom)),
-            "height": self.getDimension("height"),
-            "width": self.getDimension("width")})
+            "height": 0,
+            "width": 0})
 
         self.render_presets.restorePreset(preset_name)
         self._updateRenderPresetButtons()
