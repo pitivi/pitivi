@@ -62,7 +62,7 @@ class PresetManager(object):
         self._ignore_update_requests = False
 
     def _getFilename(self):
-        return os.path.join(xdg_data_home(), "pitivi", self.filename)
+        return os.path.join(xdg_data_home(), self.filename)
 
     def load(self):
         parser = ConfigParser.SafeConfigParser()

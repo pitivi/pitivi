@@ -105,15 +105,18 @@ def get_env_dirs(var, default):
 
 
 def xdg_config_home(autocreate=True):
-    return get_dir(xdg_dirs.xdg_config_home, autocreate)
+    """Get the directory for storing the user's pitivi configuration"""
+    return get_dir(os.path.join(xdg_dirs.xdg_config_home, "pitivi"), autocreate)
 
 
 def xdg_data_home(autocreate=True):
-    return get_dir(xdg_dirs.xdg_data_home, autocreate)
+    """Get the directory for storing the user's data: presets, plugins, etc."""
+    return get_dir(os.path.join(xdg_dirs.xdg_data_home, "pitivi"), autocreate)
 
 
 def xdg_cache_home(autocreate=True):
-    return get_dir(xdg_dirs.xdg_cache_home, autocreate)
+    """Get the user cache directory"""
+    return get_dir(os.path.join(xdg_dirs.xdg_cache_home, "pitivi"), autocreate)
 
 
 def xdg_data_dirs():
@@ -177,9 +180,8 @@ class GlobalSettings(Signallable):
         # This reads the configuration from the user configuration file
 
         try:
-            pitivi_path = self.get_local_settings_path()
-            pitivi_conf_file_path = os.path.join(pitivi_path, "pitivi.conf")
-            self._config.read(pitivi_conf_file_path)
+            conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
+            self._config.read(conf_file_path)
 
         except ParsingError:
             return
@@ -213,8 +215,7 @@ class GlobalSettings(Signallable):
                 setattr(self, attrname, value)
 
     def _writeSettingsToConfigurationFile(self):
-        pitivi_path = self.get_local_settings_path()
-        pitivi_conf_file_path = os.path.join(pitivi_path, "pitivi.conf")
+        conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
 
         for (section, attrname, typ, key, env_var,
             value) in self.iterAllOptions():
@@ -226,7 +227,7 @@ class GlobalSettings(Signallable):
                 else:
                     self._config.remove_option(section, key)
         try:
-            file = open(pitivi_conf_file_path, 'w')
+            file = open(conf_file_path, 'w')
         except IOError, OSError:
             return
         self._config.write(file)
@@ -239,17 +240,6 @@ class GlobalSettings(Signallable):
         stored.
         """
         self._writeSettingsToConfigurationFile()
-
-    def get_local_settings_path(self, autocreate=True):
-        """
-        Compute the absolute path to local settings directory
-
-        @param autocreate: create the path if missing
-        @return: the plugin repository path
-        """
-
-        return get_dir(os.path.join(xdg_config_home(autocreate), "pitivi"),
-            autocreate)
 
     def iterAllOptions(self):
         """

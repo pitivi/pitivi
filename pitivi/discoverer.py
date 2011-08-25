@@ -526,19 +526,10 @@ class Discoverer(Signallable, Loggable):
         return tmp
 
     def _getThumbnailFilenameFromPad(self, pad):
-        base = xdg_cache_home()
         md5sum = hashlib.md5()
         md5sum.update(self.current_uri)
         name = md5sum.hexdigest() + '.png'
-        directory = os.path.join(base, "pitivi")
-        try:
-            os.makedirs(directory)
-        except OSError, e:
-            # 17 = file exists
-            if e.errno != 17:
-                raise
-        filename = os.path.join(base, "pitivi", name)
-
+        filename = os.path.join(xdg_cache_home(), name)
         return filename
 
     def _videoPadSeekCb(self, pad):
