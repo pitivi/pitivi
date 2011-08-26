@@ -419,7 +419,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
                            gtk.gdk.ACTION_COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
-        self.viewer.connect("expose-event", self._exposeEventCb)
 
         # window and pane position defaults
         self.hpaned = self.secondhpaned
@@ -439,8 +438,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.set_default_size(width, height)
         if height == -1 and width == -1:
             self.maximize()
-        # Whether the window will be made fullscreen after it is available.
-        self._do_pending_fullscreen = self.settings.mainWindowFullScreen
+        if self.settings.mainWindowFullScreen:
+            self.toggleFullScreen()
         # timeline toolbar
         # FIXME: remove toolbar padding and shadow. In fullscreen mode, the
         # toolbar buttons should be clickable with the mouse cursor at the
@@ -523,11 +522,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         return False
 
-    def _exposeEventCb(self, unused_widget, event):
-        if self._do_pending_fullscreen:
-            self._fullScreenAlternateCb(None)
-            self._do_pending_fullscreen = False
-
     def _saveWindowSettings(self):
         self.settings.mainWindowFullScreen = self.is_fullscreen
         self.settings.mainWindowHPanePosition = self.hpaned.get_position()
@@ -582,6 +576,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.toggleFullScreen()
 
     def _fullScreenAlternateCb(self, unused_action):
+        # Nothing more, nothing less.
         self.actiongroup.get_action("FullScreen").activate()
 
     def _showHideMainToolBar(self, action):
