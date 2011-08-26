@@ -168,7 +168,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     @cvar project: The current project
     @type project: L{Project}
     """
-    def __init__(self, instance):
+    def __init__(self, instance, allow_full_screen=True):
         """ initialize with the Pitivi object """
         gtk.Window.__init__(self)
         Loggable.__init__(self)
@@ -182,7 +182,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.prefsdialog = None
         create_stock_icons()
         self._setActions(instance)
-        self._createUi(instance)
+        self._createUi(instance, allow_full_screen)
 
         self.app = instance
         self.manager = RecentManager()
@@ -344,7 +344,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.uimanager.insert_action_group(self.actiongroup, 0)
         self.uimanager.add_ui_from_file(os.path.join(get_ui_dir(), "mainwindow.xml"))
 
-    def _createUi(self, instance):
+    def _createUi(self, instance, allow_full_screen):
         """ Create the graphical interface """
         self.set_title("%s" % (APPNAME))
         self.connect("delete-event", self._deleteCb)
@@ -438,8 +438,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.set_default_size(width, height)
         if height == -1 and width == -1:
             self.maximize()
-        if self.settings.mainWindowFullScreen:
-            self.toggleFullScreen()
+        if allow_full_screen and self.settings.mainWindowFullScreen:
+            self.setFullScreen(True)
         # timeline toolbar
         # FIXME: remove toolbar padding and shadow. In fullscreen mode, the
         # toolbar buttons should be clickable with the mouse cursor at the
@@ -464,14 +464,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _connectToSourceList(self):
         self.sourcelist.connect('play', self._sourceListPlayCb)
 
-    def toggleFullScreen(self):
+    def setFullScreen(self, fullscreen):
         """ Toggle the fullscreen mode of the application """
-        if not self.is_fullscreen:
+        if fullscreen:
             self.fullscreen()
-            self.is_fullscreen = True
         else:
             self.unfullscreen()
-            self.is_fullscreen = False
+        self.is_fullscreen = fullscreen
 
     #TODO check if it is the way to go
     def setActionsSensitive(self, action_names, sensitive):
@@ -573,7 +572,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.shutdown()
 
     def _fullScreenCb(self, unused_action):
-        self.toggleFullScreen()
+        self.setFullScreen(not self.is_fullscreen)
 
     def _fullScreenAlternateCb(self, unused_action):
         # Nothing more, nothing less.

@@ -301,8 +301,8 @@ class FullGuiPitivi(GuiPitivi):
     but not when we start with the welcome dialog.
     """
 
-    def _createGui(self):
-        return PitiviMainWindow(self)
+    def _createGui(self, **kargs):
+        return PitiviMainWindow(self, **kargs)
 
 
 class ProjectCreatorGuiPitivi(FullGuiPitivi):
@@ -373,7 +373,10 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
 
     def _createGui(self):
         self.wizard = StartUpWizard(self)
-        return FullGuiPitivi._createGui(self)
+        # Prevent the main window to go fullscreen because at least
+        # the Metacity window manager will refuse to bring
+        # the startup wizard window in front of the main window.
+        return FullGuiPitivi._createGui(self, allow_full_screen=False)
 
     def _showGui(self):
         FullGuiPitivi._showGui(self)
