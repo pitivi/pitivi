@@ -244,18 +244,6 @@ class GlobalSettings(Signallable):
             for attrname, (typ, key, environment) in options.iteritems():
                 yield section, attrname, typ, key, environment, getattr(self, attrname)
 
-    def iterSection(self, section):
-        """
-        Iterate over all registerd options within the given section
-
-        @param section:
-        @type section: C{str}
-        @return: an iterator which yields a tuple of (attrname, type, key,
-        environment, value) for each option
-        """
-        for attrname, (typ, key, environment) in self.options[section].iteritems():
-            yield section, attrname, typ, key, environment, getattr(self, attrname)
-
     def isDefault(self, attrname):
         return getattr(self, attrname) == self.defaults[attrname]
 
