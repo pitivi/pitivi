@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-08-15 11:37+0000\n"
-"PO-Revision-Date: 2011-08-16 14:07+0200\n"
+"POT-Creation-Date: 2011-08-19 12:06+0000\n"
+"PO-Revision-Date: 2011-08-27 08:45+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -43,17 +43,14 @@ msgid "Estimating..."
 msgstr "Odhaduje se…"
 
 #: ../data/ui/cliptransformation.ui.h:1
-#| msgid "<b>Duration</b>: %s"
 msgid "<b>Crop</b>"
 msgstr "<b>Oříznout</b>"
 
 #: ../data/ui/cliptransformation.ui.h:2
-#| msgid "<b>Duration</b>: %s"
 msgid "<b>Position</b>"
 msgstr "<b>Poloha</b> %s"
 
 #: ../data/ui/cliptransformation.ui.h:3
-#| msgid "<b>Text:</b> %s"
 msgid "<b>Size</b>"
 msgstr "<b>Velikost</b>"
 
@@ -98,7 +95,6 @@ msgid "label"
 msgstr "popisek"
 
 #: ../data/ui/elementsettingsdialog.ui.h:1
-#| msgid "Properties for %s"
 msgid "Properties for <element>"
 msgstr "Vlastnosti pro <element>"
 
@@ -111,7 +107,6 @@ msgid "29.97 fps"
 msgstr "29,97 snímků/s"
 
 #: ../data/ui/encodingdialog.ui.h:3
-#| msgid "6 Channels (5.1)"
 msgid "6 channels (5.1)"
 msgstr "6 kanálů (5.1)"
 
@@ -128,7 +123,6 @@ msgid "Advanced..."
 msgstr "Pokročilé…"
 
 #: ../data/ui/encodingdialog.ui.h:7 ../data/ui/projectsettings.ui.h:8
-#| msgid "Audio:"
 msgid "Audio"
 msgstr "Zvuk"
 
@@ -141,7 +135,6 @@ msgid "Container format"
 msgstr "Formát kontejneru"
 
 #: ../data/ui/encodingdialog.ui.h:10
-#| msgid "Extra information:"
 msgid "Container format:"
 msgstr "Formát kontejneru:"
 
@@ -150,12 +143,10 @@ msgid "Draft (no special effects, single pass)"
 msgstr "Pracovní verze (bez speciálních efektů, jeden průchod)"
 
 #: ../data/ui/encodingdialog.ui.h:12
-#| msgid "Project Settings"
 msgid "Edit Project Settings..."
 msgstr "Upravit nastavení projektu…"
 
 #: ../data/ui/encodingdialog.ui.h:13
-#| msgid "Effect name"
 msgid "File name"
 msgstr "Název souboru"
 
@@ -180,7 +171,6 @@ msgid "Framerate"
 msgstr "Snímková rychlost"
 
 #: ../data/ui/encodingdialog.ui.h:19
-#| msgid "Render"
 msgid "General"
 msgstr "Obecné"
 
@@ -244,7 +234,6 @@ msgid "<b>Frames per second:</b>"
 msgstr "<b>Snímků za sekundu:</b>"
 
 #: ../data/ui/encodingprogress.ui.h:4
-#| msgid "<b>Text:</b> %s"
 msgid "<b>Phase:</b>"
 msgstr "<b>Fáze:</b>"
 
@@ -253,17 +242,14 @@ msgid "Encoding first pass"
 msgstr "první průchod kódování"
 
 #: ../data/ui/encodingprogress.ui.h:7
-#| msgid "Render"
 msgid "Rendering"
 msgstr "Vykreslování"
 
 #: ../data/ui/encodingprogress.ui.h:8
-#| msgid "Unknown reason"
 msgid "Unknown"
 msgstr "neznámo"
 
 #: ../data/ui/encodingprogress.ui.h:9
-#| msgid "Unknown reason"
 msgid "Unknown Mib"
 msgstr "neznámo Mib"
 
@@ -272,7 +258,6 @@ msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
 msgstr "<b>Některé změny se neprojeví, dokud PiTiVi znovu nespustíte</b>"
 
 #: ../data/ui/preferences.ui.h:2
-#| msgid "_Preferences"
 msgid "Preferences"
 msgstr "Předvolby"
 
@@ -281,12 +266,10 @@ msgid "Reset to Factory Settings"
 msgstr "Výchozí nastavení"
 
 #: ../data/ui/preferences.ui.h:4
-#| msgid "Reset"
 msgid "Revert"
 msgstr "Vrátit"
 
 #: ../data/ui/preferences.ui.h:5
-#| msgid "Description"
 msgid "Section"
 msgstr "Oddíl"
 
@@ -299,12 +282,10 @@ msgid "<b>Aspect Ratio</b>"
 msgstr "<b>Poměr stran</b>"
 
 #: ../data/ui/projectsettings.ui.h:3
-#| msgid "<b>Unknown Audio format:</b> %s"
 msgid "<b>Audio Preset</b>"
 msgstr "<b>Přednastavení zvuku</b> %s"
 
 #: ../data/ui/projectsettings.ui.h:4
-#| msgid "<b>Duration</b>: %s"
 msgid "<b>Format</b>"
 msgstr "<b>Formát</b>"
 
@@ -317,17 +298,14 @@ msgid "<b>Size (Pixels)</b>"
 msgstr "<b>Velikost (v pixelech)</b>"
 
 #: ../data/ui/projectsettings.ui.h:7
-#| msgid "<b>Unknown Video format:</b> %s"
 msgid "<b>Video Preset</b>"
 msgstr "<b>Přednastavení videa</b>"
 
 #: ../data/ui/projectsettings.ui.h:9
-#| msgid "Audio:"
 msgid "Author:"
 msgstr "Autor:"
 
 #: ../data/ui/projectsettings.ui.h:10
-#| msgid "6 Channels (5.1)"
 msgid "Channels:"
 msgstr "Kanály:"
 
@@ -353,7 +331,6 @@ msgid "Project Settings"
 msgstr "Nastavení projektu"
 
 #: ../data/ui/projectsettings.ui.h:16
-#| msgid "Project Settings"
 msgid "Project title:"
 msgstr "Název projektu:"
 
@@ -370,12 +347,10 @@ msgid "Standard (4:3)"
 msgstr "Standardní (4:3)"
 
 #: ../data/ui/projectsettings.ui.h:20
-#| msgid "Standard (4:3)"
 msgid "Standard PAL"
 msgstr "Standardní PAL"
 
 #: ../data/ui/projectsettings.ui.h:22
-#| msgid "Search:"
 msgid "Year:"
 msgstr "Rok:"
 
@@ -384,7 +359,6 @@ msgid "x"
 msgstr "×"
 
 #: ../data/ui/startupwizard.ui.h:1
-#| msgid "No properties..."
 msgid "Browse projects..."
 msgstr "Procházet projekty…"
 
@@ -658,7 +632,6 @@ msgid "Enables the autoalign feature"
 msgstr "Zapnout funkci automatického zarovnání"
 
 #: ../pitivi/check.py:174
-#| msgid "Video effects"
 msgid "Additional video effects"
 msgstr "Dodatečné videoefekty"
 
@@ -861,7 +834,6 @@ msgid "Effect name"
 msgstr "Název efektu"
 
 #: ../pitivi/ui/clipproperties.py:243
-#| msgid "effect"
 msgid "Effects"
 msgstr "Efekty"
 
@@ -871,7 +843,6 @@ msgstr ""
 "Abyste mohli nastavit přidružené efekty, musíte na časové ose vybrat klip"
 
 #: ../pitivi/ui/clipproperties.py:481
-#| msgid "Information"
 msgid "Transformation"
 msgstr "Transformace"
 
@@ -1134,8 +1105,9 @@ msgid "Edit the project settings"
 msgstr "Upravit nastavení projektu"
 
 #: ../pitivi/ui/mainwindow.py:272
-msgid "_Render Project..."
-msgstr "Vyk_reslit projekt…"
+#| msgid "Render"
+msgid "_Render..."
+msgstr "Vyk_reslit…"
 
 #: ../pitivi/ui/mainwindow.py:273
 msgid "Export your project as a finished movie"
@@ -1231,7 +1203,6 @@ msgid "Effect Library"
 msgstr "Knihovna efektů"
 
 #: ../pitivi/ui/mainwindow.py:427
-#| msgid "Effects configurations"
 msgid "Clip configuration"
 msgstr "Nastavení klipu"
 
@@ -1329,7 +1300,6 @@ msgid "Detect Automatically"
 msgstr "Rozpoznat automaticky"
 
 #: ../pitivi/ui/mainwindow.py:1152
-#| msgid "Untitled.xptv"
 msgid "Untitled project"
 msgstr "Nepojmenovaný projekt"
 
@@ -1340,18 +1310,15 @@ msgid "Appearance"
 msgstr "Vzhled"
 
 #: ../pitivi/ui/previewer.py:61
-#| msgid "Thumbnail Gap (pixels)"
 msgid "Thumbnail gap"
 msgstr "Mezera u miniatur"
 
 #: ../pitivi/ui/previewer.py:63
-#| msgid "The gap between thumbnails"
 msgid "The spacing between thumbnails, in pixels"
 msgstr "Mezera (v pixelech) mezi miniaturami"
 
 #: ../pitivi/ui/previewer.py:66 ../pitivi/ui/previewer.py:102
 #: ../pitivi/ui/previewer.py:113
-#| msgid "_Preferences"
 msgid "Performance"
 msgstr "Výkon"
 
@@ -1363,36 +1330,27 @@ msgstr "Miniaturu každou"
 #: ../pitivi/ui/previewer.py:71 ../pitivi/ui/previewer.py:72
 #: ../pitivi/ui/previewer.py:73
 #, python-format
-#| msgid "%d second"
-#| msgid_plural "%d seconds"
 msgid "%s second"
 msgstr "%s sekunda"
 
 #: ../pitivi/ui/previewer.py:74 ../pitivi/ui/previewer.py:75
 #, python-format
-#| msgid "%d second"
-#| msgid_plural "%d seconds"
 msgid "%s seconds"
 msgstr "%s sekund"
 
 #: ../pitivi/ui/previewer.py:76
-#| msgid "%d minute"
-#| msgid_plural "%d minutes"
 msgid "minute"
 msgstr "minuta"
 
 #: ../pitivi/ui/previewer.py:77
-#| msgid "The gap between thumbnails"
 msgid "The interval, in seconds, between thumbnails."
 msgstr "Prodleva (v sekundách) mezi miniaturami"
 
 #: ../pitivi/ui/previewer.py:103
-#| msgid "The gap between thumbnails"
 msgid "Enable video thumbnails"
 msgstr "Povolit miniaturami videa"
 
 #: ../pitivi/ui/previewer.py:104
-#| msgid "Show Thumbnails on Video Clips"
 msgid "Show thumbnails on video clips"
 msgstr "Ve videoklipech zobrazovat miniatury snímků"
 
@@ -1401,7 +1359,6 @@ msgid "Enable audio waveforms"
 msgstr "Povolit zvukovou křivku"
 
 #: ../pitivi/ui/previewer.py:115
-#| msgid "Show Waveforms on Audio Clips"
 msgid "Show waveforms on audio clips"
 msgstr "Ve zvukových klipech zobrazovat křivku signálu"
 
@@ -1613,7 +1570,6 @@ msgid "Behavior"
 msgstr "Chování"
 
 #: ../pitivi/ui/timelinecanvas.py:53
-#| msgid "Snap Distance (pixels)"
 msgid "Snap distance"
 msgstr "Vzdálenost přichytávání"
 
@@ -1731,7 +1687,6 @@ msgid "The background color for clips in video tracks."
 msgstr "Barva pozadí klipů ve video stopách."
 
 #: ../pitivi/ui/trackobject.py:60
-#| msgid "Show Waveforms on Audio Clips"
 msgid "Color for audio clips"
 msgstr "Barva pro zvukové klipy"
 
@@ -1740,7 +1695,6 @@ msgid "The background color for clips in audio tracks."
 msgstr "Barva pozadí audio klipů ve zvukových stopách."
 
 #: ../pitivi/ui/trackobject.py:71
-#| msgid "Selection Color"
 msgid "Selection color"
 msgstr "Barva výběru"
 
@@ -1749,7 +1703,6 @@ msgid "Selected clips will be tinted with this color."
 msgstr "Vybrané klipy budou zbarveny do této barvy."
 
 #: ../pitivi/ui/trackobject.py:82
-#| msgid "Clip Font"
 msgid "Clip font"
 msgstr "Písmo klipu"
 
@@ -1815,3 +1768,4 @@ msgstr[2] "%d sekund"
 #, python-format
 msgid "%s doesn't yet handle non-local projects"
 msgstr "%s zatím nedokáže pracovat s jinými než místními projekty"
+
