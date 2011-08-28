@@ -35,7 +35,7 @@
         <steps>
             <item><p>Select an existing clip on the timeline</p></item>
             <item><p>Choose an effect in the effect library</p></item>
-            <item><p>Drag the chosen effect into the <gui>Clip configuration</gui> pane's <gui>Effects</p> section</p></item>
+            <item><p>Drag the chosen effect into the <gui>Clip configuration</gui> pane's <gui>Effects</gui> section</p></item>
         </steps>
         <p>To remove an effect on a selected clip, select it in the clip's effect list and click the <gui>Remove</gui> button.</p>
     </section>
