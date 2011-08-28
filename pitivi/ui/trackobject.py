@@ -109,28 +109,39 @@ class TimelineController(controller.Controller):
         self._view.unfocus()
 
     def drag_start(self, item, target, event):
-        return
         #if not self._view.element.selected:
             #self._view.timeline.selection.setToObj(self._view.element, SELECT)
-        #tx = self._view.props.parent.get_transform()
+        self._view.app.projectManager.current.timeline.enable_update(False)
+        tx = self._view.props.parent.get_transform()
         # store y offset for later priority calculation
-        #self._y_offset = tx[5]
+        self._y_offset = tx[5]
         # zero y component of mousdown coordiante
         #self._mousedown = Point(self._mousedown[0], 0)
 
     def drag_end(self, item, target, event):
-        print "drag ended"
         self._context.finish()
         self._context = None
+        self._view.app.projectManager.current.timeline.enable_update(True)
         self._view.app.action_log.commit()
+        self._view.element.starting_start = self._view.element.get_property("start")
+        obj = self._view.element.get_timeline_object()
+        obj.starting_start = obj.get_property("start")
 
     def set_pos(self, item, pos):
         x, y = pos
         position = Zoomable.pixelToNs(x + self._hadj.get_value())
-        priority = 0
-        #priority = int((y - self._y_offset + self._vadj.get_value()) //
-            #(LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
+        priority = int((y - self._y_offset + self._vadj.get_value()) //
+            (LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
         #self._context.setMode(self._getMode())
+        track = self._view.element.get_track()
+        start = self._view.element.get_start()
+        duration = self._view.element.get_duration()
+        if isinstance (self._view, EndHandle) or isinstance (self._view, StartHandle):
+            position = Zoomable.pixelToNs(x)
+            self._context.editTo(position, priority)
+            self._view.get_canvas().regroupTracks()
+            return
+
         prev = track.get_previous_track_object(self._view.element)
 
         if prev != None:
@@ -158,6 +169,7 @@ class TimelineController(controller.Controller):
                 self._view.snapped_after = False
 
         self._context.editTo(position, priority)
+        self._view.get_canvas().regroupTracks()
 
     def _getMode(self):
         if self._shift_down:
@@ -212,8 +224,12 @@ class StartHandle(TrimHandle):
 
         def drag_start(self, item, target, event):
             TimelineController.drag_start(self, item, target, event)
+            if self._view.element.is_locked():
+                elem = self._view.element.get_timeline_object()
+            else:
+                elem = self._view.element
             self._context = TrimStartContext(self._view.timeline,
-                self._view.element.get_timeline_object(),
+                elem,
                 set([]))
             self._view.app.action_log.begin("trim object")
 
@@ -228,8 +244,12 @@ class EndHandle(TrimHandle):
 
         def drag_start(self, item, target, event):
             TimelineController.drag_start(self, item, target, event)
+            if self._view.element.is_locked():
+                elem = self._view.element.get_timeline_object()
+            else:
+                elem = self._view.element
             self._context = TrimEndContext(self._view.timeline,
-                self._view.element.get_timeline_object(),
+                elem,
                 set([]))
             self._view.app.action_log.begin("trim object")
 
@@ -241,9 +261,11 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         _handle_enter_leave = True
 
         def drag_start(self, item, target, event):
+            point = self.from_item_event(item, event)
+            self.click(point)
             TimelineController.drag_start(self, item, target, event)
             self._context = MoveContext(self._view.timeline,
-                self._view.element.get_timeline_object(),
+                self._view.element,
                 set([]))
             self._view.app.action_log.begin("move object")
 
@@ -253,21 +275,26 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             return self._context.DEFAULT
 
         def click(self, pos):
-            timeline = self._view.timeline
+            #timeline = self._view.timeline
             element = self._view.element
-            element_end = element.get_property("start") + element.get_property("duration")
-            if self._last_event.get_state() & gtk.gdk.SHIFT_MASK:
-                timeline.setSelectionToObj(element, SELECT_BETWEEN)
-            elif self._last_event.get_state() & gtk.gdk.CONTROL_MASK:
-                if element.selected:
-                    mode = UNSELECT
-                else:
-                    mode = SELECT_ADD
-                timeline.setSelectionToObj(element, mode)
+            if element.is_locked():
+                elem = set(element.get_timeline_object().get_track_objects())
             else:
-                x, y = pos
-                x += self._hadj.get_value()
-                self._view.app.current.seeker.seek(Zoomable.pixelToNs(x))
+                elem = element
+            self._view.app.projectManager.current.emit("selected-changed", elem)
+            element_end = element.get_property("start") + element.get_property("duration")
+            #if self._last_event.get_state() & gtk.gdk.SHIFT_MASK:
+                #timeline.setSelectionToObj(element, SELECT_BETWEEN)
+            #elif self._last_event.get_state() & gtk.gdk.CONTROL_MASK:
+                #if element.selected:
+                    #mode = UNSELECT
+                #else:
+                    #mode = SELECT_ADD
+                #timeline.setSelectionToObj(element, mode)
+            #else:
+            x, y = pos
+            x += self._hadj.get_value()
+            #self._view.app.current.seeker.seek(Zoomable.pixelToNs(x))
                 #timeline.setSelectionToObj(element, SELECT)
 
     def __init__(self, instance, element, track, timeline, uTrack, is_transition = False):
@@ -321,7 +348,11 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         self.element = element
         self.element.get_timeline_object().max_duration = self.element.get_timeline_object().get_property("duration")
+        self.element.max_duration = self.element.get_property("duration")
         self.element.selected = False
+        self.element.starting_start = self.element.get_property("start")
+        obj = self.element.get_timeline_object()
+        obj.starting_start = obj.get_property("start")
         self.settings = instance.settings
         self.unfocus()
 
@@ -428,6 +459,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
     @handler(element, "notify::start")
     @handler(element, "notify::duration")
+    @handler(element, "notify::in-point")
     def startChangedCb(self, track_object, start):
         self._update()
 
