@@ -686,7 +686,19 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def deleteSelected(self, unused_action):
         if self.timeline:
             self.app.action_log.begin("delete clip")
-            self.timeline.deleteSelection()
+            for track_object in self.timeline.selected:
+                obj = track_object.get_timeline_object()
+                obj.release_track_object(track_object)
+                track = track_object.get_track()
+                track.remove_object(track_object)
+                remove = True
+                for tck_obj in obj.get_track_objects():
+                    if isinstance (tck_obj, ges.TrackSource):
+                        remove = False
+                if remove:
+                    lyr = obj.get_layer()
+                    lyr.remove_object(obj)
+                    print "removed"
             self.app.action_log.commit()
 
     def unlinkSelected(self, unused_action):
