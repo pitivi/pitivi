@@ -222,8 +222,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         """
         from encodingdialog import EncodingDialog
 
-        if pause:
-            project.pipeline.pause()
         dialog = EncodingDialog(self, project)
         dialog.window.connect("destroy", self._encodingDialogDestroyCb)
         self.set_sensitive(False)
@@ -312,7 +310,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
             if action_name == "RenderProject":
                 self.render_button = action
                 # this will be set sensitive when the timeline duration changes
-                action.set_sensitive(False)
                 action.props.is_important = True
             elif action_name in [
                 "ProjectSettings", "Quit", "File", "Edit", "Help", "About",
@@ -693,7 +690,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._connectToProjectSources(project.sources)
         duration = 0
         can_render = duration > 0
-        self.render_button.set_sensitive(can_render)
         self._syncDoUndo(self.app.action_log)
 
         if self._missingUriOnLoading:

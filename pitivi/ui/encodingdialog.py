@@ -684,15 +684,24 @@ class EncodingDialog(Renderer, Loggable):
         self.dialog.window.destroy()
 
     def _renderButtonClickedCb(self, unused_button):
-        self.outfile = os.path.join(self.filebutton.get_uri(),
-                                    self.fileentry.get_text())
-        self.progress = EncodingProgressDialog(self.app, self)
+        self.outfile = "file:///home/mathieu/Videos/pute3.ogv"
+        #self.progress = EncodingProgressDialog(self.app, self)
         self.window.hide()  # Hide the rendering settings dialog while rendering
-        self.progress.window.show()
-        self.startAction()
-        self.progress.connect("cancel", self._cancelRender)
-        self.progress.connect("pause", self._pauseRender)
-        self.pipeline.connect("state-changed", self._stateChanged)
+        self.containerprofile = gst.pbutils.EncodingContainerProfile ("ogg", None , gst.Caps("application/ogg"), None)
+        self.videoprofile = gst.pbutils.EncodingVideoProfile (gst.Caps("video/x-dirac"), None, gst.caps_new_any(), 0)
+        self.audioprofile = gst.pbutils.EncodingAudioProfile (gst.Caps("audio/x-vorbis"), None, gst.caps_new_any(), 0)
+        self.containerprofile.add_profile(self.videoprofile)
+        self.containerprofile.add_profile(self.audioprofile)
+        pipeline = self.app.app.projectManager.current.pipeline
+        pipeline.set_state(gst.STATE_NULL)
+        pipeline.set_render_settings(self.outfile, self.containerprofile)
+        print pipeline.set_mode("render")
+        pipeline.set_state(gst.STATE_PLAYING)
+        #self.progress.window.show()
+        #self.startAction()
+        #self.progress.connect("cancel", self._cancelRender)
+        #self.progress.connect("pause", self._pauseRender)
+        #self.pipeline.connect("state-changed", self._stateChanged)
 
     def _cancelRender(self, progress):
         self.debug("aborting render")
