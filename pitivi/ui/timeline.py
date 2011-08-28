@@ -46,7 +46,6 @@ from pitivi.ui.depsmanager import DepsManager
 from pitivi.timeline.align import AutoAligner
 from pitivi.check import soft_deps
 
-
 DND_EFFECT_LIST = [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
                   [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]
 VIDEO_EFFECT_LIST = [dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],
@@ -369,11 +368,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
             if kv == gtk.keysyms.Left:
                 if mod & gtk.gdk.SHIFT_MASK:
-                    self._seekRelative(-gst.SECOND)
+                    self._seekRelative(0 - gst.SECOND)
                 elif mod & gtk.gdk.CONTROL_MASK:
                     self._seeker.seek(ltime + 1)
                 else:
-                    self._seekRelative(-long(self.rate * gst.SECOND))
+                    self._seekRelative(0 - long(self.rate * gst.SECOND))
             elif kv == gtk.keysyms.Right:
                 if mod & gtk.gdk.SHIFT_MASK:
                     self._seekRelative(gst.SECOND)
@@ -489,7 +488,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         for layer in self.app.projectManager.current.timeline.get_layers():
             if layer.get_priority() != 99:
                 break
-        for uri in uris :
+        for uri in uris:
             src = ges.TimelineFileSource(uri)
             layer.add_object(src)
             self._temp_objects.insert(0, src)
@@ -548,8 +547,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def unsureVadjHeight (self):
         self._scroll_pos_ns = Zoomable.pixelToNs(self.hadj.get_value())
-        self._root_item.set_simple_transform(-self.hadj.get_value(),
-            -self.vadj.get_value(), 1.0, 0)
+        self._root_item.set_simple_transform(0 - self.hadj.get_value(),
+            0 - self.vadj.get_value(), 1.0, 0)
 
     def _updateScrollPosition(self, adjustment):
         self.unsureVadjHeight()
@@ -691,7 +690,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 track.remove_object(track_object)
                 remove = True
                 for tck_obj in obj.get_track_objects():
-                    if isinstance (tck_obj, ges.TrackSource):
+                    if isinstance(tck_obj, ges.TrackSource):
                         remove = False
                 if remove:
                     lyr = obj.get_layer()

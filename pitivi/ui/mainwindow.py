@@ -29,6 +29,7 @@ import gtk
 import gst
 from urllib import unquote
 import webbrowser
+import ges
 
 from gettext import gettext as _
 from gtk import RecentManager

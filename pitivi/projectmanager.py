@@ -22,6 +22,8 @@
 from gettext import gettext as _
 import gobject
 import os
+import gst
+import ges
 
 from urlparse import urlparse
 from pwd import getpwuid

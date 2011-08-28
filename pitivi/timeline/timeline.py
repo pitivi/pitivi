@@ -34,6 +34,7 @@ from pitivi.utils import start_insort_right, infinity, getPreviousObject, \
 from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
 from pitivi.stream import VideoStream
 from pitivi.timeline.align import AutoAligner
+import ges
 
 # Selection modes
 SELECT = 0
