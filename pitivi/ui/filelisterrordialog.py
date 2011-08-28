@@ -39,8 +39,7 @@ class FileListErrorDialog(Signallable, Loggable):
     """ Dialog box for showing errors in a list of files """
     __signals__ = {
         'close': None,
-        'response': ["something"]
-        }
+        'response': ["something"]}
 
     def __init__(self, title, headline):
         Loggable.__init__(self)
@@ -67,7 +66,6 @@ class FileListErrorDialog(Signallable, Loggable):
         if len(self.errorvbox.get_children()) < 3:
             exp.set_expanded(True)  # Let's save the user some clicks
         exp.show_all()
-        #self.storemodel.append([str(uri), str(reason)])
 
     def _createFileExpander(self, uri, reason, extra=None):
         if uri:
