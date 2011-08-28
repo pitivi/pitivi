@@ -1089,9 +1089,9 @@ class MoveContext(EditingContext):
         all_objects.add(focus)
         self.layersList = []
         for obj in all_objects:
-            if isinstance(obj, TrackObject):
-                timeline_object = obj.timeline_object
-                self.tracks.add(obj.track)
+            if isinstance(obj, ges.TrackFileSource):
+                timeline_object = obj
+                self.tracks.add(obj.get_track())
             else:
                 timeline_object = obj
                 timeline_object_tracks = set(track_object.get_track() for track_object
@@ -1340,13 +1340,16 @@ class TrimStartContext(EditingContext):
             #focus_timeline_object = self.focus.timeline_object
             #self.tracks.add(self.focus.track)
         #else:
-        focus_timeline_object = self.focus
-        tracks = set(track_object.get_track() for track_object in
-                    focus.get_track_objects())
-        self.tracks.update(tracks)
+        if isinstance(self.focus, ges.TrackFileSource):
+            focus_timeline_object = self.focus
+            self.tracks.add(focus.get_track())
+        else:
+            focus_timeline_object = self.focus
+            tracks = set(track_object.get_track() for track_object in
+                        focus.get_track_objects())
+            self.tracks.update(tracks)
         self.focus_timeline_object = focus_timeline_object
         self.default_originals = self._saveValues([focus_timeline_object])
-
         #ripple = self.timeline.getObjsBeforeTime(focus.start)
         #assert not focus.timeline_object in ripple or focus.duration == 0
         #self.ripple_originals = self._saveValues(ripple)
@@ -1387,14 +1390,16 @@ class TrimStartContext(EditingContext):
         self._restoreValues(self.ripple_originals)
 
     def _defaultTo(self, position, priority):
-        earliest = max(0, self.focus.get_property("start") - self.focus.get_property("in_point"))
-        self.focus.set_property("in_point", (max(position, earliest)))
-
+        start = self.focus.get_property("start")
+        earliest = max (0, position - self.focus.starting_start)
+        self.focus.set_property("in-point", earliest)
+        self.focus.set_property("start", position)
+        self.focus.set_property("duration", self.focus.get_property("max-duration") - self.focus.get_property("in-point"))
         return position, priority
 
     def finish(self):
         initial_position = self.default_originals[self.focus_timeline_object][0]
-
+        self.focus.starting_start = self.focus.get_property("start")
         timeline_objects = [self.focus_timeline_object]
         EditingContext.finish(self)
         return
@@ -1414,9 +1419,9 @@ class TrimEndContext(EditingContext):
         #self.adjacent = timeline.edges.getObjsAdjacentToEnd(focus)
         #self.adjacent_originals = self._saveValues(self.adjacent)
         self.tracks = set([])
-        if isinstance(self.focus, TrackObject):
-            focus_timeline_object = self.focus.timeline_object
-            self.tracks.add(focus.track)
+        if isinstance(self.focus, ges.TrackFileSource):
+            focus_timeline_object = self.focus
+            self.tracks.add(focus.get_track())
         else:
             focus_timeline_object = self.focus
             tracks = set(track_object.get_track() for track_object in
