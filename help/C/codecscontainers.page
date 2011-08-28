@@ -1,0 +1,28 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="codecscontainers">
+
+  <info>
+    <link type="guide" xref="index#rendering"/>
+    <revision pkgversion="0.15" version="0.1" date="2011-08-28" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+    <desc>What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? Learn about codecs and container formats here.</desc>
+  </info>
+
+    <title>Understanding codecs and containers</title>    
+    <p>The following is one of the most complex topics of video editing. Many people do not know the distinction between codecs and container file formats, thanks in part to the general lack of standardization, confusing marketing terms and filename extensions.</p>
+    <p>This guide is an attempt at clarifying this distinction without going into technical details. If you want to learn more about containers and codecs, you should probably look at Wikipedia's page on <link href="http://en.wikipedia.org/wiki/Container_format_(digital)">containers</link> and <link href="http://en.wikipedia.org/wiki/Codec">codecs</link>.</p>
+    <p>Basically, a container is what we typically associate with the file format. Containers "contain" the various components of a video: the stream of images, the sound, and anything else. For example, you could have multiple soundtracks and subtitles included in a video file, if the container format allows it. Example of popular containers are OGG, Matroska, AVI, MPEG.</p>
+    <p>Codecs are ways of "coding" and "decoding" streams. Their job is typically to compress data (and decompress it when playing it back) so that you can store and transmit files with a smaller filesize. There are many codecs available out there, each with their strengths, weaknesses and peculiarities, and choosing the right codec with the right settings for the right situation is a form of art.</p>
+    <p>The following figure should make things clearer:</p>
+    <figure>
+        <media type="image" mime="image/jpg" src="figures/codecscontainers.jpg"/>
+    </figure>
+</page>

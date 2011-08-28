@@ -4,6 +4,7 @@ dist-hook: doc-dist-hook
 
 DOC_ID = pitivi
 DOC_FIGURES = \
+    figures/codecscontainers.jpg \
     figures/fadestep1.png \
     figures/fadestep2.png \
     figures/fadestep3.png \
@@ -23,6 +24,7 @@ DOC_FIGURES = \
 
 DOC_PAGES = \
     about.page \
+    codecscontainers.page \
     crossfading.page \
     effects.page \
     effectsanimation.page \
