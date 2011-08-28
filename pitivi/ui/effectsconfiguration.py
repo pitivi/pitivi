@@ -60,9 +60,9 @@ class EffectsPropertiesHandling:
 
         self._current_effect_setting_ui = effect_set_ui
         element = self._current_effect_setting_ui.element
-        for prop in gobject.list_properties(element):
-            if prop.flags & gobject.PARAM_READABLE:
-                self._current_element_values[prop.name] = element.get_property(prop.name)
+        print element.list_children_properties(), "zobii !"
+        for prop in element.list_children_properties():
+            self._current_element_values[prop.name] = element.get_child_property(prop.name)
 
         return self.cache_dict[effect]
 
@@ -73,7 +73,7 @@ class EffectsPropertiesHandling:
             return conf_ui
 
     def _postConfiguration(self, effect, effect_set_ui):
-        if 'GstAspectRatioCrop' in effect.get_path_string():
+        if 'aspectratiocrop' in effect.get_property("bin-description"):
             for widget in effect_set_ui.get_children()[0].get_children():
                 if isinstance(widget, FractionWidget):
                     widget.addPresets(["4:3", "5:4", "9:3", "16:9", "16:10"])
@@ -103,6 +103,6 @@ class EffectsPropertiesHandling:
 
         if value != self._current_element_values.get(prop.name):
             self.action_log.begin("Effect property change")
-            self._current_effect_setting_ui.element.set_property(prop.name, value)
+            self._current_effect_setting_ui.element.set_child_property(prop.name, value)
             self.action_log.commit()
             self._current_element_values[prop.name] = value

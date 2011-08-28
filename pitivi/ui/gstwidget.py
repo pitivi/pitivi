@@ -96,7 +96,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         self._addWidgets(properties, default_btn, use_element_props)
 
     def _addWidgets(self, properties, default_btn, use_element_props):
-        props = [prop for prop in gobject.list_properties(self.element) if not prop.name in self.ignore]
+        props = [prop for prop in self.element.list_children_properties() if not prop.name in self.ignore]
         if not props:
             table = gtk.Table(rows=1, columns=1)
             widget = gtk.Label(_("No properties..."))
@@ -119,11 +119,10 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
               or not prop.flags & gobject.PARAM_READABLE:
                 continue
 
-            if use_element_props:
-                prop_value = self.element.get_property(prop.name)
-            else:
-                prop_value = properties.get(prop.name)
-
+            label = gtk.Label(prop.nick + ":")
+            label.set_alignment(0.0, 0.5)
+            table.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
+            prop_value = self.element.get_child_property(prop.name)
             widget = make_property_widget(self.element, prop, prop_value)
             if isinstance(widget, dynamic.ToggleWidget):
                 widget.set_label(prop.nick)
@@ -134,8 +133,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
                 table.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
                 table.attach(widget, 1, 2, y, y + 1, yoptions=gtk.FILL)
 
-            if hasattr(prop, 'blurb'):
-                widget.set_tooltip_text(prop.blurb)
+            table.attach(widget, 1, 2, y, y + 1, yoptions=gtk.FILL)
 
             self.properties[prop] = widget
             if default_btn:

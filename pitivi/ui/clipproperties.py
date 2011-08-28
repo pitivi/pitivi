@@ -42,6 +42,8 @@ from pitivi.configure import get_ui_dir
 from pitivi.check import soft_deps
 from pitivi.ui.effectlist import HIDDEN_EFFECTS
 
+import ges
+
 (COL_ACTIVATED,
  COL_TYPE,
  COL_NAME_TEXT,
@@ -168,7 +170,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self._toolbar.insert(self._removeEffectBt, 0)
         self._table.attach(self._toolbar, 0, 1, 0, 1, yoptions=gtk.FILL)
 
-        self.storemodel = gtk.ListStore(bool, str, str, str, object)
+        self.storemodel = gtk.ListStore(bool, str, str, object)
 
         #Treeview
         self.treeview_scrollwin = gtk.ScrolledWindow()
@@ -242,6 +244,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self.set_expanded(True)
         self.set_label(_("Effects"))
         self.connect('notify::expanded', self._expandedCb)
+        self.connected = False
 
     def _newProjectLoadedCb(self, app, project):
         self.clip_properties.project = project
@@ -259,28 +262,19 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
     def _setTimeline(self, timeline):
         self._timeline = timeline
-        #GES break, reimplement me
-        #if timeline:
-        #    self.timeline.connect('selection-changed', self._selectionChangedCb)
+        if not self.connected:
+            self.app.projectManager.current.connect("selected-changed", self._selectionChangedCb)
+            self.connected = True
 
     timeline = property(_getTimeline, _setTimeline)
 
-    def _selectionChangedCb(self, timeline):
-        for timeline_object in self.timeline_objects:
-            timeline_object.disconnect_by_func(self._trackObjectAddedCb)
-            timeline_object.disconnect_by_func(self._trackRemovedRemovedCb)
-
-        self.selected_effects = timeline.selection.getSelectedTrackEffects()
-
-        if timeline.selection.selected:
-            self.timeline_objects = list(timeline.selection.selected)
-            for timeline_object in self.timeline_objects:
-                timeline_object.connect("track-object-added", self._trackObjectAddedCb)
-                timeline_object.connect("track-object-removed", self._trackRemovedRemovedCb)
-            self.set_sensitive(True)
+    def _selectionChangedCb(self, project, element):
+        self.timeline_objects = []
+        if isinstance(element, set):
+            for elem in element:
+                self.timeline_objects.append(elem)
         else:
-            self.timeline_objects = []
-            self.set_sensitive(False)
+            self.timeline_objects.append(element)
         self._updateAll()
 
     def  _trackObjectAddedCb(self, unused_timeline_object, track_object):
@@ -309,20 +303,23 @@ class EffectProperties(gtk.Expander, gtk.HBox):
     def _removeEffect(self, effect):
         self.app.action_log.begin("remove effect")
         self._cleanCache(effect)
-        effect.timeline_object.removeTrackObject(effect)
-        effect.track.removeTrackObject(effect)
+        effect.get_track().remove_object(effect)
+        effect.get_timeline_object().release_track_object(effect)
+        self._updateTreeview()
         self.app.action_log.commit()
 
     def _cleanCache(self, effect):
-        element = effect.getElement()
-        config_ui = self.effect_props_handling.cleanCache(element)
+        config_ui = self.effect_props_handling.cleanCache(effect)
 
     def addEffectToCurrentSelection(self, factory_name):
         if self.timeline_objects:
             factory = self.app.effects.getFactoryFromName(factory_name)
             self.app.action_log.begin("add effect")
-            self.timeline.addEffectFactoryOnObject(factory,
-                                                   self.timeline_objects)
+            effect = ges.TrackParseLaunchEffect(factory_name)
+            self.timeline_objects[0].get_timeline_object().add_track_object(effect)
+            self.timeline_objects[1].get_track().add_object(effect)
+            self._updateAll()
+            print effect.get_property("priority"), "effect prio"
             self.app.action_log.commit()
 
     def _dragDataReceivedCb(self, unused_layout, context, unused_x, unused_y,
@@ -351,7 +348,9 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         iter = self.storemodel.get_iter(path)
         track_effect = self.storemodel.get_value(iter, COL_TRACK_EFFECT)
         self.app.action_log.begin("change active state")
-        track_effect.active = not track_effect.active
+        track_effect.set_active(not track_effect.is_active())
+        cellrenderertoggle.set_active(track_effect.is_active())
+        self._updateTreeview()
         self.app.action_log.commit()
 
     def _expandedCb(self, expander, params):
@@ -364,7 +363,6 @@ class EffectProperties(gtk.Expander, gtk.HBox):
             return False
 
         treeview.set_tooltip_row(tooltip, context[1][0])
-        tooltip.set_text(self.storemodel.get_value(context[2], COL_DESC_TEXT))
 
         return True
 
@@ -380,30 +378,31 @@ class EffectProperties(gtk.Expander, gtk.HBox):
                 self.storemodel.clear()
                 self._showInfoBar()
             self._vcontent.show()
+        self._removeEffectBt.set_sensitive(False)
+        if len(self.timeline_objects) >= 1:
+            print "ok"
+            self._setEffectDragable()
+            self._updateTreeview()
+            self._updateEffectConfigUi()
         else:
             self._vcontent.hide()
 
-    def _activeChangedCb(self, unusedObj, unusedActive):
-        self._updateTreeview()
-
     def _updateTreeview(self):
         self.storemodel.clear()
-        for track_effect in self.selected_effects:
-            if not track_effect.factory.effectname in HIDDEN_EFFECTS:
-                to_append = [track_effect.gnl_object.get_property("active")]
-                track_effect.gnl_object.connect("notify::active",
-                                                self._activeChangedCb)
-                if isinstance(track_effect.factory.getInputStreams()[0],
-                              VideoStream):
-                    to_append.append("Video")
-                else:
-                    to_append.append("Audio")
 
-                to_append.append(track_effect.factory.getHumanName())
-                to_append.append(track_effect.factory.getDescription())
-                to_append.append(track_effect)
+        obj = self.timeline_objects[0].get_timeline_object()
+        for track_effect in obj.get_top_effects():
+            print track_effect
+            to_append = [track_effect.get_property("active")]
+            if track_effect.get_track().get_caps().to_string() == "audio/x-raw-int; audio/x-raw-float":
+                to_append.append("Audio")
+            else:
+                to_append.append("Video")
 
-                self.storemodel.append(to_append)
+            to_append.append(track_effect.get_property("bin-description"))
+            to_append.append(track_effect)
+
+            self.storemodel.append(to_append)
 
     def _showInfoBar(self):
         if self._info_bar is None:
@@ -447,7 +446,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
                 if type(widget) in [gtk.ScrolledWindow, GstElementSettingsWidget]:
                     self._vcontent.remove(widget)
 
-            element = track_effect.getElement()
+            element = track_effect
             ui = self.effect_props_handling.getEffectConfigurationUI(element)
 
             self._effect_config_ui = ui
