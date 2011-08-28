@@ -67,6 +67,7 @@ class Project(Signallable, Loggable):
     __signals__ = {
         "settings-changed": ['old', 'new'],
         "project-changed": [],
+        "selected-changed": ['element']
         }
 
     def __init__(self, name="", uri=None, **kwargs):
@@ -91,6 +92,7 @@ class Project(Signallable, Loggable):
         self._dirty = False
 
         self.timeline = ges.timeline_new_audio_video()
+        self.timeline.selected = []
         self.layer = ges.TimelineLayer()
         self.timeline.add_layer(self.layer)
         self.back_layer = ges.TimelineLayer()

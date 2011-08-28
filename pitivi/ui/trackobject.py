@@ -255,6 +255,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.namewidth = 0
         self.nameheight = 0
         self.is_transition = is_transition
+        self.app.projectManager.current.connect("selected-changed", self.selected_changed)
 
         self.bg = goocanvas.Rect(
             height=self.height,

@@ -252,6 +252,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
                 mode = 1
             if event.get_state() & gtk.gdk.CONTROL_MASK:
                 mode = 2
+            selected = self._objectsUnderMarquee()
+            self.app.projectManager.current.emit("selected-changed", selected)
             #self.timeline.setSelectionTo(self._objectsUnderMarquee(), mode)
         return True
 
