@@ -1259,6 +1259,22 @@ class MoveContext(EditingContext):
         self._defaultTo(final_position, priority)
         EditingContext.finish(self)
 
+    def snapToEdge(self, start, end=None):
+        """
+        Snaps the given start/end value to the closest edge if it is within
+        the timeline's dead_band.
+
+        @param start: The start position to snap.
+        @param end: The stop position to snap.
+        @returns: The snapped value if within the dead_band.
+        """
+        edge, diff = self.edges.snapToEdge(start, end)
+
+        if self.dead_band != -1 and diff <= self.dead_band:
+            return edge
+
+        return start
+
     def _defaultTo(self, position, priority):
         if self._snap:
             position = self.timeline.snapToEdge(position,

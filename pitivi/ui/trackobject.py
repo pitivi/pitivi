@@ -131,6 +131,32 @@ class TimelineController(controller.Controller):
         #priority = int((y - self._y_offset + self._vadj.get_value()) //
             #(LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
         #self._context.setMode(self._getMode())
+        prev = track.get_previous_track_object(self._view.element)
+
+        if prev != None:
+            prev_end = prev.get_start() + prev.get_duration()
+            offset = Zoomable.nsToPixel(prev_end)
+            offset = (x + self._hadj.get_value()) - offset
+            if offset < 15 and offset >= 0:
+                self._view.element.set_start(prev.get_start() + prev.get_duration())
+                self._view.snapped_before = True
+                return
+            elif self._view.snapped_before:
+                self._view.snapped_before = False
+
+        next = track.get_next_track_object(self._view.element)
+        if next != None:
+            offset = Zoomable.nsToPixel(next.get_start())
+            dur_offset = Zoomable.nsToPixel(duration)
+            dur_offset = (dur_offset + x + self._hadj.get_value())
+            offset = offset - dur_offset
+            if offset < 15 and offset >= 0:
+                self._view.element.set_start(next.get_start() - duration)
+                self._view.snapped_after = True
+                return
+            elif self._view.snapped_after:
+                self._view.snapped_after = False
+
         self._context.editTo(position, priority)
 
     def _getMode(self):
@@ -256,6 +282,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.nameheight = 0
         self.is_transition = is_transition
         self.app.projectManager.current.connect("selected-changed", self.selected_changed)
+        self.snapped_before = False
+        self.snapped_after = False
 
         self.bg = goocanvas.Rect(
             height=self.height,
