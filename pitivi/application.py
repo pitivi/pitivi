@@ -30,6 +30,7 @@ from optparse import OptionParser
 import os
 import sys
 import urllib
+import ges
 
 from pitivi.pitivigstutils import patch_gst_python
 patch_gst_python()
@@ -62,6 +63,7 @@ from pitivi.ui.startupwizard import StartUpWizard
 # AND THEN load up the required parts.
 # This will result in a much better end-user experience
 
+ges.init()
 
 class Pitivi(Loggable, Signallable):
     """
