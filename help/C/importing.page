@@ -63,7 +63,7 @@
            <p>Allow using a full-fledged file manager (such as <app>Nautilus</app>, <app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of the file chooser dialog.</p>
           </item>
           <item>
-           <p>Import a combination of files and folders at the same time.</p>
+           <p>Import a combination of multiple files and folders at the same time.</p>
           </item>
           <item>
            <p>Leverage the searching capability of another application (such as <app>GNOME Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, <app>GNOME Search Tool</app>, etc.).</p>

@@ -36,13 +36,24 @@
         <item><p>When zooming in, video clips display more thumbnails and audio clips display increasingly detailed waveforms, allowing you to do precise edits.</p></item>
         <item><p>Zooming out allows you to scroll faster along the timeline. Zoom can thus be used in conjunction with scrolling to move quickly between distant points of your project's chronology.</p></item>
        </list>
-       <p>You can zoom in and out by holding the <key>Ctrl</key> key while using the mousewheel over the timeline, using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and <guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq>menu items, or dragging the zoom slider on the left of the ruler.</p>
+       <p>You can zoom in and out by:</p>
+       <list>
+           <item><p>Holding the <key>Ctrl</key> key while using the mousewheel over the timeline</p></item>
+           <item><p>Using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and <guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq> menu items</p></item>
+           <item><p>Dragging the zoom slider on the left of the ruler</p></item>
+           <item><p>Using keyboard shortcuts such as <key>Ctrl</key>+<key>-</key> to zoom out or <key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> on the numeric keypad) to zoom in</p></item>
+       </list>
+       <p>To get a better overview of your timeline, you may use the <guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the <gui>Zoom</gui> button on the left of the zoom slider.</p>
+
+       <note>
+           <title>Zooming is always centered around the location of your playhead</title>
+           <p>When using the mouse wheel to zoom in and out, remember that the zoom is not relative to the position of your mouse, only to the position of the playhead on the timeline.</p>
+       </note>
+
        <note style="tip">
         <title><em>Warping</em> between zoom levels</title>
         <p>Using your mouse's scroll wheel, you can also <em>warp</em> instantly from any zoom level to another in a single click. To do that, click with your mousewheel anywhere on the zoom slider.</p>
        </note>
-       
-       <p>To get a better overview of your timeline, you may use the <guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the <gui>Zoom</gui> button on the left of the zoom slider.</p>
      </section>
 
      <section id="movingplayhead">
