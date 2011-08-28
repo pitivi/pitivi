@@ -545,10 +545,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _saveProjectAsCb(self, unused_action):
         uri = self._showSaveAsDialog(self.app.current)
-        if uri is not None:
-            return self.app.projectManager.saveProject(self.project, uri, overwrite=True)
+        formatter = ges.PitiviFormatter()
+        formatter.save_to_uri(self.project.timeline, uri)
 
-        return False
+        return True
 
     def _revertToSavedProjectCb(self, unused_action):
         return self.app.projectManager.revertToSavedProject()
