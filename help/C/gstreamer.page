@@ -55,5 +55,13 @@
       <p></p>
     </section>
 
+    <section>
+        <title>Image file formats</title>
+        <p>While it is not feasible to list every possible combination of supported video or audio formats, it is however possible to list the static image formats that can be imported: JPEG, PNG, JPEG 2000, PNM and SVG.</p>
+        <!-- Note: this is obtained by doing:
+        gst-inspect -a | grep Decoder/Image | cut -d : -f1 | sed -e s/dec$//g
+        -->
+    </section>
+
 
 </page>
