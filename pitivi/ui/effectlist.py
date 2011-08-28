@@ -19,6 +19,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+import gobject
 import gtk
 import pango
 import os
@@ -182,6 +183,9 @@ class EffectList(gtk.VBox, Loggable):
         self.iconview.connect("button-release-event", self._buttonReleaseCb)
         self.iconview.connect("drag_begin", self._dndDragBeginCb)
         self.iconview.connect("drag_data_get", self._dndDataGetCb)
+        # Delay the loading of the available effects so the application
+        # starts faster.
+        gobject.idle_add(self._loadAvailableEffectsCb)
 
         self.pack_start(hfilters, expand=False)
         self.pack_start(hsearch, expand=False)
@@ -194,15 +198,16 @@ class EffectList(gtk.VBox, Loggable):
         self.treeview.set_model(self.modelFilter)
         self.iconview.set_model(self.modelFilter)
 
-        #Add factories
-        self._addFactories(self.app.effects.getAllVideoEffects(), VIDEO_EFFECT)
-        self._addFactories(self.app.effects.getAllAudioEffects(), AUDIO_EFFECT)
-
         self._addMenuItems(uiman)
         self.show_categories(VIDEO_EFFECT)
 
         hfilters.show_all()
         hsearch.show_all()
+
+    def _loadAvailableEffectsCb(self):
+        self._addFactories(self.app.effects.getAllVideoEffects(), VIDEO_EFFECT)
+        self._addFactories(self.app.effects.getAllAudioEffects(), AUDIO_EFFECT)
+        return False
 
     def _addMenuItems(self, uiman):
         view_menu_item = uiman.get_widget('/MainMenuBar/View')
