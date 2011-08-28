@@ -26,6 +26,7 @@ from gtk import gdk
 import gst
 from math import pi
 import cairo
+import ges
 
 from gettext import gettext as _
 
@@ -108,7 +109,10 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.seeker = Seeker(80)
         self.seeker.connect('seek', self._seekerSeekCb)
         self.action = action
-        self.pipeline = pipeline
+        self.pipeline = None
+
+        self.formatter = ges.PitiviFormatter()
+
         self.sink = None
         self.docked = True
 
@@ -122,7 +126,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         self._createUi()
         self.target = self.internal
         self.setAction(action)
-        self.setPipeline(pipeline)
         self.undock_action = undock_action
         if undock_action:
             self.undock_action.connect("activate", self._toggleDocked)
@@ -130,7 +133,16 @@ class PitiviViewer(gtk.VBox, Loggable):
             if not self.settings.viewerDocked:
                 self.undock()
 
-    def setPipeline(self, pipeline):
+    def loadProject(self, uri):
+        self.app.projectManager.current.pipeline.set_state(gst.STATE_NULL)
+        self.timeline = self.app.projectManager.current.timeline
+        for layer in self.timeline.get_layers():
+            self.timeline.remove_layer(layer)
+        self.formatter.load_from_uri(self.timeline, uri)
+        self.app.projectManager.emit("new-project-loading", uri)
+        self.app.projectManager.current.pipeline.set_state(gst.STATE_PAUSED)
+
+    def setPipeline(self):
         """
         Set the Viewer to the given Pipeline.
 
@@ -139,24 +151,17 @@ class PitiviViewer(gtk.VBox, Loggable):
         @param pipeline: The Pipeline to switch to.
         @type pipeline: L{Pipeline}.
         """
-        self.debug("self.pipeline:%r, pipeline:%r", self.pipeline, pipeline)
+        self.debug("self.pipeline:%r", self.pipeline)
 
-        if pipeline is not None and pipeline == self.pipeline:
-            return
-
+        self.pipeline = self.app.projectManager.current.pipeline
         if self.pipeline != None:
-            # remove previously set Pipeline
-            self._disconnectFromPipeline()
-            # make ui inactive
-            self._setUiActive(False)
-            # finally remove previous pipeline
-            self.pipeline = None
+            bus = self.pipeline.get_bus()
+            bus.add_signal_watch()
+            bus.connect('message', self._busMessageCb)
+            bus.set_sync_handler(self._elementMessageCb)
+            self.pipeline.set_state(gst.STATE_PAUSED)
             self.currentState = gst.STATE_PAUSED
-            self.playpause_button.setPause()
-        self._connectToPipeline(pipeline)
-        self.pipeline = pipeline
-        if self.pipeline is not None:
-            self._setUiActive()
+        self._setUiActive()
 
     def setAction(self, action):
         """
@@ -179,24 +184,19 @@ class PitiviViewer(gtk.VBox, Loggable):
         self._connectToAction(action)
         self.showControls()
 
-    def _connectToPipeline(self, pipeline):
-        self.debug("pipeline:%r", pipeline)
-        if self.pipeline != None:
-            raise ViewerError("previous pipeline wasn't disconnected")
-        self.pipeline = pipeline
-        if self.pipeline == None:
-            return
-        self.pipeline.connect('position', self._posCb)
-        self.pipeline.activatePositionListener()
-        self.pipeline.connect('state-changed', self._currentStateCb)
-        self.pipeline.connect('element-message', self._elementMessageCb)
-        self.pipeline.connect('duration-changed', self._durationChangedCb)
-        self.pipeline.connect('eos', self._eosCb)
-        self.pipeline.connect("state-changed", self.internal.currentStateCb)
-        # if we have an action set it to that new pipeline
-        if self.action:
-            self.pipeline.setAction(self.action)
-            self.action.activate()
+    def _busMessageCb(self, unused_bus, message):
+        if message.type == gst.MESSAGE_EOS:
+            print "eos"
+        elif message.type == gst.MESSAGE_STATE_CHANGED:
+            prev, new, pending = message.parse_state_changed()
+
+            if message.src == self.pipeline:
+                self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
+
+                state_change = pending == gst.STATE_VOID_PENDING
+
+                if state_change:
+                    self._currentStateCb(new)
 
     def _disconnectFromPipeline(self):
         self.debug("pipeline:%r", self.pipeline)
@@ -418,7 +418,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.info("button pressed")
         self.moving_slider = True
         self.valuechangedid = slider.connect("value-changed", self._sliderValueChangedCb)
-        self.pipeline.pause()
+        self.pipeline.set_state(gst.STATE_PAUSED)
         return False
 
     def _sliderButtonReleaseCb(self, slider, event):
@@ -431,9 +431,9 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.valuechangedid = 0
         # revert to previous state
         if self.currentState == gst.STATE_PAUSED:
-            self.pipeline.pause()
+            self.pipeline.set_state(gst.STATE_PAUSED)
         else:
-            self.pipeline.play()
+            self.pipeline.set_state(gst.STATE_PLAYING)
         return False
 
     def _sliderValueChangedCb(self, slider):
@@ -510,8 +510,11 @@ class PitiviViewer(gtk.VBox, Loggable):
     def _backCb(self, unused_button):
         self.seekRelative(-gst.SECOND)
 
-    def _playButtonCb(self, unused_button, isplaying):
-        self.togglePlayback()
+    def _playButtonCb(self, unused_button, playing):
+        if playing:
+            self.pipeline.set_state(gst.STATE_PLAYING)
+        else:
+            self.pipeline.set_state(gst.STATE_PAUSED)
 
     def _forwardCb(self, unused_button):
         self.seekRelative(gst.SECOND)
@@ -605,11 +608,11 @@ class PitiviViewer(gtk.VBox, Loggable):
     def _posCb(self, unused_pipeline, pos):
         self._newTime(pos)
 
-    def _currentStateCb(self, unused_pipeline, state):
+    def _currentStateCb(self, state):
         self.info("current state changed : %s", state)
-        if state == int(gst.STATE_PLAYING):
+        if int(state) == int(gst.STATE_PLAYING):
             self.playpause_button.setPause()
-        elif state == int(gst.STATE_PAUSED):
+        elif int(state) == int(gst.STATE_PAUSED):
             self.playpause_button.setPlay()
         else:
             self.sink = None
@@ -618,18 +621,21 @@ class PitiviViewer(gtk.VBox, Loggable):
     def _eosCb(self, unused_pipeline):
         self.playpause_button.setPlay()
 
-    def _elementMessageCb(self, unused_pipeline, message):
-        name = message.structure.get_name()
-        self.log('message:%s / %s', message, name)
-        if name == 'prepare-xwindow-id':
-            sink = message.src
-            self.sink = sink
-            self._switch_output_window()
+    def _elementMessageCb(self, unused_bus, message):
+        if message.type == gst.MESSAGE_ELEMENT:
+            name = message.structure.get_name()
+            self.log('message:%s / %s', message, name)
+            if name == 'prepare-xwindow-id':
+                sink = message.src
+                self.sink = sink
+                self._switch_output_window()
+        return gst.BUS_PASS
 
     def _switch_output_window(self):
         gtk.gdk.threads_enter()
         self.sink.set_xwindow_id(self.target.window_xid)
-        self.sink.expose()
+        #FIXME GES break
+        #self.sink.expose()
         gtk.gdk.threads_leave()
 
 
@@ -1115,6 +1121,9 @@ class PlayPauseButton(gtk.Button, Loggable):
         self.image = gtk.Image()
         self.add(self.image)
         self.playing = True
+
+        self.get_settings().props.gtk_button_images = True
+        self.playing = False
         self.setPlay()
         self.connect('clicked', self._clickedCb)
 
@@ -1122,6 +1131,7 @@ class PlayPauseButton(gtk.Button, Loggable):
         gtk.Button.set_sensitive(self, value)
 
     def _clickedCb(self, unused):
+        self.playing = not self.playing
         self.emit("play", self.playing)
 
     def setPlay(self):
@@ -1129,6 +1139,8 @@ class PlayPauseButton(gtk.Button, Loggable):
         self.log("setPlay")
         if self.playing:
             self.image.set_from_stock(gtk.STOCK_MEDIA_PLAY, gtk.ICON_SIZE_BUTTON)
+        if not self.playing:
+            self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PLAY, gtk.ICON_SIZE_BUTTON))
             self.set_tooltip_text(_("Play"))
             self.playing = False
 
@@ -1137,5 +1149,7 @@ class PlayPauseButton(gtk.Button, Loggable):
         """ display the pause image """
         if not self.playing:
             self.image.set_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON)
+        if self.playing:
+            self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON))
             self.set_tooltip_text(_("Pause"))
             self.playing = True

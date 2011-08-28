@@ -240,7 +240,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self._view.app.current.seeker.seek(Zoomable.pixelToNs(x))
                 timeline.setSelectionToObj(element, SELECT)
 
-    def __init__(self, instance, element, track, timeline):
+    def __init__(self, instance, element, track, timeline, is_transition = False):
         goocanvas.Group.__init__(self)
         View.__init__(self)
         Zoomable.__init__(self)
@@ -249,12 +249,11 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.timeline = timeline
         self.namewidth = 0
         self.nameheight = 0
+        self.is_transition = is_transition
 
         self.bg = goocanvas.Rect(
             height=self.height,
             line_width=1)
-
-        self.content = Preview(self.app, element)
 
         self.name = goocanvas.Text(
             x=NAME_HOFFSET + NAME_PADDING,
@@ -278,12 +277,14 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             line_width=0.0,
             height=self.height)
 
-        for thing in (self.bg, self.content, self.selection_indicator,
-            self.start_handle, self.end_handle, self.namebg, self.name):
-            self.add_child(thing)
-
-        for prop, interpolator in element.getInterpolators().itervalues():
-            self.add_child(Curve(instance, element, interpolator))
+        if not self.is_transition:
+            for thing in (self.bg, self.selection_indicator,
+                self.start_handle, self.end_handle, self.namebg, self.name):
+                self.add_child(thing)
+        else :
+            for thing in (self.bg, self.selection_indicator,
+                self.namebg, self.name):
+                self.add_child(thing)
 
         self.element = element
         self.settings = instance.settings
@@ -354,10 +355,10 @@ class TrackObject(View, goocanvas.Group, Zoomable):
     @handler(settings, "selectedColorChanged")
     @handler(settings, "clipFontDescChanged")
     def clipAppearanceSettingsChanged(self, *args):
-        if isinstance(self.element.stream, VideoStream):
-            color = self.settings.videoClipBg
-        elif isinstance(self.element.stream, AudioStream):
+        if self.element.get_track().props.track_type.first_value_name == 'GES_TRACK_TYPE_AUDIO':
             color = self.settings.audioClipBg
+        else:
+            color = self.settings.videoClipBg
         pattern = unpack_cairo_gradient(color)
         self.bg.props.fill_pattern = pattern
 
@@ -377,9 +378,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 ## element signals
 
     def _setElement(self):
-        if self.element:
-            self.name.props.text = os.path.basename(unquote(
-                self.element.factory.name))
+        if self.element and not self.is_transition:
+            self.name.props.text = self.element.get_property ("uri")
             twidth, theight = text_size(self.name)
             self.namewidth = twidth
             self.nameheight = theight
@@ -387,32 +387,50 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
     element = receiver(_setElement)
 
-    @handler(element, "start-changed")
-    @handler(element, "duration-changed")
+    @handler(element, "notify::start")
+    @handler(element, "notify::duration")
     def startChangedCb(self, track_object, start):
         self._update()
 
-    @handler(element, "selected-changed")
-    def selected_changed(self, element, state):
-        if element.selected:
+    def selected_changed(self, unused_project, element):
+        self.timeline.selected = []
+        if isinstance(element, set):
+            for elem in element:
+                elem.selected = True
+                self.timeline.selected.append(elem)
+            for elem in element:
+                if elem == self.element:
+                    print elem.get_timeline_object().get_property("priority"), "la pute !!"
+                    self.selection_indicator.props.visibility = goocanvas.ITEM_VISIBLE
+                    elem.selected = True
+                elif self.element.selected == False:
+                    self.selection_indicator.props.visibility = \
+                        goocanvas.ITEM_INVISIBLE
+            for elem in element:
+                elem.selected = False
+            return
+
+        else:
+            self.timeline.selected.append(element)
+
+        if element == self.element:
             self.selection_indicator.props.visibility = goocanvas.ITEM_VISIBLE
         else:
             self.selection_indicator.props.visibility = \
                 goocanvas.ITEM_INVISIBLE
 
-    @handler(element, "priority-changed")
-    def priority_changed(self, element, priority):
-        self._update()
-
     def _update(self):
         try:
-            x = self.nsToPixel(self.element.start)
+            x = self.nsToPixel(self.element.get_start())
         except Exception, e:
-            print self.element.start
+            print self.element.get_start()
             raise Exception(e)
-        y = (self.height + LAYER_SPACING) * self.element.priority
+        priority = (self.element.get_priority()) / 10
+        if priority < 0 :
+            priority = 0
+        y = (self.height + LAYER_SPACING) * priority
         self.set_simple_transform(x, y, 1, 0)
-        width = self.nsToPixel(self.element.duration)
+        width = self.nsToPixel(self.element.get_duration())
         min_width = self.start_handle.props.width * 2
         if width < min_width:
             width = min_width
@@ -430,3 +448,5 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
             else:
                 self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
+        self.app.gui.timeline._canvas.regroupTracks()
+        self.app.gui.timeline.unsureVadjHeight()

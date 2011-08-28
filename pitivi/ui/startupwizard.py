@@ -21,7 +21,6 @@
 
 import os
 import gtk
-import webbrowser
 
 from gettext import gettext as _
 
@@ -77,11 +76,11 @@ class StartUpWizard(object):
 
     def _loadCb(self, unused_recent_chooser):
         """Handle a double-click on the recent chooser."""
-        self.app.projectManager.loadProject(self._getFileName())
+        self.app.gui.viewer.loadProject(self._getFileName())
 
     def _getFileName(self):
         """Get the URI of the project selected in the recent chooser."""
-        uri = self.recent_chooser.get_current_uri()
+        uri = self.recent_chooser.get_current_uri()[7:]
         return unquote(uri)
 
     def _keyPressCb(self, widget, event):

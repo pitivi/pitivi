@@ -24,7 +24,6 @@ Project class
 """
 
 from pitivi.log.loggable import Loggable
-from pitivi.timeline.timeline import Timeline
 from pitivi.pipeline import Pipeline
 from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.sourcelist import SourceList
@@ -33,6 +32,7 @@ from pitivi.signalinterface import Signallable
 from pitivi.action import ViewAction
 from pitivi.utils import Seeker
 import gst
+import ges
 
 
 class ProjectError(Exception):
@@ -90,19 +90,20 @@ class Project(Signallable, Loggable):
 
         self._dirty = False
 
-        self.timeline = Timeline()
+        self.timeline = ges.timeline_new_audio_video()
+        self.layer = ges.TimelineLayer()
+        self.timeline.add_layer(self.layer)
 
-        self.factory = TimelineSourceFactory(self.timeline)
-        self.pipeline = Pipeline()
+        self.pipeline = ges.TimelinePipeline()
+        self.pipeline._setUp = False
+        self.pipeline.add_timeline(self.timeline)
         self.view_action = ViewAction()
-        self.view_action.addProducers(self.factory)
         self.seeker = Seeker(80)
 
         self.settings = ExportSettings()
         self._videocaps = self.settings.getVideoCaps()
 
     def release(self):
-        self.pipeline.release()
         self.pipeline = None
 
     #{ Settings methods
@@ -142,14 +143,12 @@ class Project(Signallable, Loggable):
     def _projectSettingsChanged(self):
         settings = self.getSettings()
         self._videocaps = settings.getVideoCaps()
-        if self.timeline:
-            self.timeline.updateVideoCaps(self._videocaps)
 
         for fact in self.sources.getSources():
             fact.setFilterCaps(self._videocaps)
-        if self.pipeline.getState() != gst.STATE_NULL:
-            self.pipeline.stop()
-            self.pipeline.pause()
+        if self.pipeline.get_state() != gst.STATE_NULL:
+            self.pipeline.set_state(gst.STATE_READY)
+            self.pipeline.set_state(gst.STATE_PAUSED)
 
     def _sourceAddedCb(self, sourcelist, factory):
         factory.setFilterCaps(self._videocaps)

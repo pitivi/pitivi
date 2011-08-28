@@ -21,7 +21,6 @@
 
 from gettext import gettext as _
 import gobject
-import gst
 import os
 
 from urlparse import urlparse
@@ -36,7 +35,6 @@ from pitivi.log.loggable import Loggable
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.timeline.track import Track
 from pitivi.undo import UndoableAction
-
 
 class ProjectSettingsChanged(UndoableAction):
 
@@ -191,12 +189,6 @@ class ProjectManager(Signallable, Loggable):
         # the rendered content will have. Pitivi currently supports
         # projects with exactly one video track and one audio track.
         settings = project.getSettings()
-        video = VideoStream(gst.Caps(settings.getVideoCaps()))
-        track = Track(video)
-        project.timeline.addTrack(track)
-        audio = AudioStream(gst.Caps(settings.getAudioCaps()))
-        track = Track(audio)
-        project.timeline.addTrack(track)
         project.connect("project-changed", self._projectChangedCb)
 
         self.emit("new-project-loaded", self.current)

@@ -305,17 +305,16 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
 ## Timeline callbacks
 
-    def _set_timeline(self):
+    def set_timeline(self):
         while self._tracks:
             self._trackRemoved(None, 0)
         if self.timeline:
-            for track in self.timeline.tracks:
+            for track in self.timeline.get_tracks():
                 self._trackAdded(None, track)
+            self.timeline.connect ("track-added", self._trackAdded)
+            self.timeline.connect ("track-removed", self._trackRemoved)
         self.zoomChanged()
 
-    timeline = receiver(_set_timeline)
-
-    @handler(timeline, "track-added")
     def _trackAdded(self, timeline, track):
         track = Track(self.app, track, self.timeline)
         self._tracks.append(track)
@@ -323,7 +322,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self.tracks.add_child(track)
         self.regroupTracks()
 
-    @handler(timeline, "track-removed")
     def _trackRemoved(self, unused_timeline, position):
         track = self._tracks[position]
         del self._tracks[position]

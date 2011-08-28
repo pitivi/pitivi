@@ -133,7 +133,8 @@ class Pitivi(Loggable, Signallable):
         self.action_log = UndoableActionLog()
         self.debug_action_log_observer = DebugActionLogObserver()
         self.debug_action_log_observer.startObserving(self.action_log)
-        self.timelineLogObserver = TimelineLogObserver(self.action_log)
+        # TODO reimplement the observing after GES port
+        #self.timelineLogObserver = TimelineLogObserver(self.action_log)
         self.projectLogObserver = ProjectLogObserver(self.action_log)
         self.sourcelist_log_observer = SourceListLogObserver(self.action_log)
 
@@ -184,7 +185,7 @@ class Pitivi(Loggable, Signallable):
     def _projectManagerNewProjectLoaded(self, projectManager, project):
         self.current = project
         self.action_log.clean()
-        self.timelineLogObserver.startObserving(project.timeline)
+        #self.timelineLogObserver.startObserving(project.timeline)
         self.projectLogObserver.startObserving(project)
         self.sourcelist_log_observer.startObserving(project.sources)
         self._newProjectLoaded(project)
@@ -197,7 +198,7 @@ class Pitivi(Loggable, Signallable):
         return self.emit("closing-project", project)
 
     def _projectManagerProjectClosed(self, projectManager, project):
-        self.timelineLogObserver.stopObserving(project.timeline)
+        #self.timelineLogObserver.stopObserving(project.timeline)
         self.projectLogObserver.stopObserving(project)
         self.current = None
         self.emit("project-closed", project)
@@ -369,6 +370,8 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
 
     def __init__(self, debug=False):
         FullGuiPitivi.__init__(self, debug)
+        self.projectManager.newBlankProject()
+        self.gui.viewer.setPipeline()
 
     def _createGui(self):
         self.wizard = StartUpWizard(self)

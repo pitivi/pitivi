@@ -364,7 +364,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vpaned.show()
 
         self.timeline = Timeline(instance, self.uimanager)
-        self.timeline.project = self.project
+        self.project = None
 
         vpaned.pack2(self.timeline, resize=True, shrink=False)
         self.timeline.show()
@@ -401,7 +401,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         #Clips properties
         self.propertiestabs = BaseTabs(instance, True)
         self.clipconfig = ClipProperties(instance, self.uimanager)
-        self.clipconfig.project = self.project
         self.propertiestabs.append_page(self.clipconfig,
                                         gtk.Label(_("Clip configuration")))
         self.clipconfig.show()
@@ -689,8 +688,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _projectManagerNewProjectLoadedCb(self, projectManager, project):
         self.log("A NEW project is loaded, update the UI!")
         self.project = project
+        self.timeline.project = self.project
+        self.clipconfig.project = self.project
         self._connectToProjectSources(project.sources)
-        can_render = project.timeline.duration > 0
+        duration = 0
+        can_render = duration > 0
         self.render_button.set_sensitive(can_render)
         self._syncDoUndo(self.app.action_log)
 
@@ -699,7 +701,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.actiongroup.get_action("SaveProject").set_sensitive(True)
             self._missingUriOnLoading = False
 
-        if project.timeline.duration != 0:
+        if duration != 0:
             self.setBestZoomRatio()
         else:
             self._zoom_duration_changed = True
@@ -714,7 +716,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         ruler_width = self.timeline.ruler.get_allocation()[2]
         # Add gst.SECOND - 1 to the timeline duration to make sure the
         # last second of the timeline will be in view.
-        timeline_duration = self.project.timeline.duration + gst.SECOND - 1
+        tracks = self.project.timeline.get_tracks()
+        duration = max (tracks[0].props.duration, tracks[1].props.duration)
+        self.project.timeline.duration = duration
+        timeline_duration = duration + gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / gst.SECOND)
 
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
@@ -807,10 +812,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _projectManagerProjectClosedCb(self, projectManager, project):
         # we must disconnect from the project pipeline before it is released
-        self._disconnectFromProjectSources(project.sources)
-        self.viewer.setAction(None)
-        self.viewer.setPipeline(None)
-        project.seeker.disconnect_by_func(self._timelineSeekCb)
         return False
 
     def _projectManagerRevertingToSavedCb(self, projectManager, project):
@@ -958,14 +959,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 self.clipconfig.project = self.project
                 self.app.timelineLogObserver.pipeline = self.project.pipeline
 
-    project = receiver(_setProject)
-
-    @handler(project, "settings-changed")
-    def _settingsChangedCb(self, project, old, new):
-        if self.viewer.action == self.project.view_action:
-            self.viewer.setDisplayAspectRatio(float(new.videopar *
-            new.videowidth) / float(new.videoheight))
-
     def _sourceListMissingPluginsCb(self, project, uri, factory,
             details, descriptions, missingPluginsCallback):
         res = self._installPlugins(details, missingPluginsCallback)
@@ -1081,26 +1074,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
         context.finish(True, False, ctime)
 
     def _viewFactory(self, factory):
-        # FIXME: we change the viewer pipeline unconditionally for now
-        # we need a pipeline for playback
-        pipeline = Pipeline()
-        action = ViewAction()
-        action.addProducers(factory)
-        self.viewer.setPipeline(None)
-        self.viewer.showSlider()
-        # FIXME: why do I have to call viewer.setAction ?
-        self.viewer.setAction(action)
-        self.viewer.setPipeline(pipeline)
-        self.viewer.play()
+        #GES crazyness... remove it or implement something?
+        pass
 
     def _timelineSeekCb(self, ruler, position, format):
         self.debug("position:%s", gst.TIME_ARGS(position))
         if self.viewer.action != self.project.view_action:
-            self.viewer.setPipeline(None)
-            self.viewer.hideSlider()
-            self.viewer.setAction(self.project.view_action)
-            self.viewer.setPipeline(self.project.pipeline)
-            # get the pipeline settings and set the DAR of the viewer
             sett = self.project.getSettings()
             self.viewer.setDisplayAspectRatio(float(sett.videopar * sett.videowidth) / float(sett.videoheight))
         # everything above only needs to be done if the viewer isn't already

@@ -332,7 +332,7 @@ class PropertyChangeTracker(Signallable):
         self.obj = obj
         self.properties = self._takeCurrentSnapshot(obj)
         for property_name in self.property_names:
-            signal_name = property_name + '-changed'
+            signal_name = "notify::" + property_name
             self.__signals__[signal_name] = []
             obj.connect(signal_name,
                     self._propertyChangedCb, property_name)
@@ -341,7 +341,7 @@ class PropertyChangeTracker(Signallable):
         properties = {}
         for property_name in self.property_names:
             properties[property_name] = \
-                    getattr(obj, property_name.replace("-", "_"))
+                    obj.get_property (property_name.replace("-", "_"))
 
         return properties
 

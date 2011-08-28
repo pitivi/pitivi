@@ -30,6 +30,7 @@ import ruler
 import dnd
 import gst
 import gobject
+import ges
 
 from gettext import gettext as _
 from timelinecanvas import TimelineCanvas
@@ -390,9 +391,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 ## Drag and Drop callbacks
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
-        self.warning("self._factories:%r, self._temp_objects:%r",
-                     not not self._factories,
-                     not not self._temp_objects)
 
         if self._factories is None:
             if  context.targets in DND_EFFECT_LIST:
@@ -405,12 +403,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         else:
             if  context.targets not in DND_EFFECT_LIST:
                 if not self._temp_objects:
-                    self.timeline.disableUpdates()
-                    self._add_temp_source()
-                    focus = self._temp_objects[0]
-                    self._move_context = MoveContext(self.timeline,
-                            focus, set(self._temp_objects[1:]))
-                self._move_temp_source(self.hadj.props.value + x, y)
+                    #GES break,FIXME
+                    pass
         return True
 
     def _dragLeaveCb(self, unused_layout, context, unused_tstamp):
@@ -422,25 +416,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 self._temp_objects = None
 
         self.drag_unhighlight()
-        self.timeline.enableUpdates()
+        #FIXME, GES break, temporary hack
+        uris = self.selection_data.split("\n")
+        layer = self.app.projectManager.current.timeline.get_layers()[0]
+        for uri in uris :
+            src = ges.TimelineFileSource(uri)
+            layer.add_object(src)
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
+            #FIXME GES break, reimplement me
         if  context.targets not in DND_EFFECT_LIST:
             self.app.action_log.begin("add clip")
-            self.timeline.disableUpdates()
-
-            self._add_temp_source()
-            self.timeline.selection.setSelection(self._temp_objects, SELECT)
-            focus = self._temp_objects[0]
-            self._move_context = MoveContext(self.timeline,
-                                             focus, set(self._temp_objects[1:]))
-            self._move_temp_source(self.hadj.props.value + x, y)
-            self._move_context.finish()
             self.app.action_log.commit()
-            context.drop_finish(True, timestamp)
-            self._factories = None
-            self._temp_objects = None
-            self.app.current.seeker.seek(self._position)
 
             return True
         elif context.targets in DND_EFFECT_LIST:
@@ -474,6 +461,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # tell current project to import the uri
         # wait for source-added signal, meanwhile ignore dragMotion signals
         # when ready, add factories to the timeline.
+        self.selection_data = selection.data
 
         if targetType not in [dnd.TYPE_PITIVI_FILESOURCE, dnd.TYPE_PITIVI_EFFECT]:
             context.finish(False, False, timestamp)
@@ -555,10 +543,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._vscrollbar.set_value(self._vscrollbar.get_value() +
             self.vadj.props.page_size ** (2.0 / 3.0))
 
-    def _updateScrollPosition(self, adjustment):
+    def unsureVadjHeight (self):
         self._scroll_pos_ns = Zoomable.pixelToNs(self.hadj.get_value())
         self._root_item.set_simple_transform(-self.hadj.get_value(),
             -self.vadj.get_value(), 1.0, 0)
+
+    def _updateScrollPosition(self, adjustment):
+        self.unsureVadjHeight()
 
     def _zoomAdjustmentChangedCb(self, adjustment):
         # GTK crack
@@ -643,6 +634,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.timeline = self.project.timeline
             self._controls.timeline = self.timeline
             self._canvas.timeline = self.timeline
+            self._canvas.set_timeline()
             self._canvas.zoomChanged()
             self.ruler.setProjectFrameRate(self.project.getSettings().videorate)
             self.ruler.zoomChanged()
@@ -667,16 +659,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         self._controls.timeline = self.timeline
 
-    timeline = receiver(_setTimeline)
-
-    @handler(timeline, "duration-changed")
-    def _timelineStartDurationChanged(self, unused_timeline, duration):
-        self._prev_duration = duration
-        self.ruler.setMaxDuration(duration + 60 * gst.SECOND)
-        self._canvas.setMaxDuration(duration + 60 * gst.SECOND)
-        self.ruler.setShadedDuration(duration)
-        self._updateScrollAdjustments()
-
     def _updateScrollAdjustments(self):
         a = self.get_allocation()
         size = Zoomable.nsToPixel(self.timeline.duration)
@@ -685,54 +667,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.hadj.props.page_size = a.width
         self.hadj.props.page_increment = size * 0.9
         self.hadj.props.step_increment = size * 0.1
-
-    @handler(timeline, "selection-changed")
-    def _timelineSelectionChanged(self, timeline):
-        delete = False
-        link = False
-        unlink = False
-        group = False
-        ungroup = False
-        align = False
-        split = False
-        keyframe = False
-        if timeline.selection:
-            delete = True
-            if len(timeline.selection) > 1:
-                link = True
-                group = True
-                align = AutoAligner.canAlign(timeline.selection)
-
-            start = None
-            duration = None
-            for obj in self.timeline.selection:
-                if obj.link:
-                    link = False
-                    unlink = True
-
-                if len(obj.track_objects) > 1:
-                    ungroup = True
-
-                if start is not None and duration is not None:
-                    if obj.start != start or obj.duration != duration:
-                        group = False
-                else:
-                    start = obj.start
-                    duration = obj.duration
-
-            keyframe = True
-
-        if (len(timeline.timeline_objects) > 0):
-            split = True
-
-        self.delete_action.set_sensitive(delete)
-        self.link_action.set_sensitive(link)
-        self.unlink_action.set_sensitive(unlink)
-        self.group_action.set_sensitive(group)
-        self.ungroup_action.set_sensitive(ungroup)
-        self.align_action.set_sensitive(align)
-        self.split_action.set_sensitive(split)
-        self.keyframe_action.set_sensitive(keyframe)
 
 ## ToolBar callbacks
     def _zoomFitCb(self, unused_action):

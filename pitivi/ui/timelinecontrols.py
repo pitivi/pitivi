@@ -31,11 +31,13 @@ class TrackControls(gtk.Label):
         if self.track:
             self._maxPriorityChanged(None, self.track.max_priority)
 
-    track = receiver(_setTrack)
-
-    @handler(track, "max-priority-changed")
-    def _maxPriorityChanged(self, track, max_priority):
-        self._setSize(max_priority + 1)
+    # FIXME Stop using the receiver
+    #
+    # TODO implement in GES
+    #track = receiver(_setTrack)
+    #@handler(track, "max-priority-changed")
+    #def _maxPriorityChanged(self, track, max_priority):
+    #    self._setSize(max_priority + 1)
 
     def _setSize(self, layers_count):
         assert layers_count >= 1
@@ -44,12 +46,13 @@ class TrackControls(gtk.Label):
 
     @staticmethod
     def _getTrackName(track):
-        stream_type = type(track.stream)
-        if stream_type == stream.AudioStream:
+        track_name = ""
+        #FIXME check that it is the best way to check the type
+        if track.props.track_type.first_value_name == 'GES_TRACK_TYPE_AUDIO':
             track_name = _("Audio:")
-        elif stream_type == stream.VideoStream:
+        elif track.props.track_type.first_value_name == 'GES_TRACK_TYPE_VIDEO':
             track_name = _("Video:")
-        elif stream_type == stream.TextStream:
+        elif track.props.track_type.first_value_name == 'GES_TRACK_TYPE_TEXT':
             track_name = _("Text:")
         return "<b>%s</b>" % track_name
 
@@ -69,7 +72,7 @@ class TimelineControls(gtk.VBox):
         while self._tracks:
             self._trackRemoved(None, 0)
         if self.timeline:
-            for track in self.timeline.tracks:
+            for track in self.timeline.get_tracks():
                 self._trackAdded(None, track)
 
     timeline = receiver(_set_timeline)

@@ -369,10 +369,11 @@ class TimelineLogObserver(object):
 
     def startObserving(self, timeline):
         self._connectToTimeline(timeline)
-        for timeline_object in timeline.timeline_objects:
-            self._connectToTimelineObject(timeline_object)
-            for track_object in timeline_object.track_objects:
-                self._connectToTrackObject(track_object)
+        for layer in timeline.get_layers():
+            for timeline_object in layer.get_objects():
+                self._connectToTimelineObject(timeline_object)
+                for track_object in timeline_object.track_objects:
+                    self._connectToTrackObject(track_object)
 
     def stopObserving(self, timeline):
         self._disconnectFromTimeline(timeline)
@@ -382,8 +383,9 @@ class TimelineLogObserver(object):
                 self._disconnectFromTrackObject(track_object)
 
     def _connectToTimeline(self, timeline):
-        timeline.connect("timeline-object-added", self._timelineObjectAddedCb)
-        timeline.connect("timeline-object-removed", self._timelineObjectRemovedCb)
+        for layer in timeline.get_layers():
+            layer.connect("object-added", self._timelineObjectAddedCb)
+            layer.connect("object-removed", self._timelineObjectRemovedCb)
 
     def _disconnectFromTimeline(self, timeline):
         timeline.disconnect_by_func(self._timelineObjectAddedCb)
