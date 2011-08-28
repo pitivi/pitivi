@@ -712,12 +712,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def ungroupSelected(self, unused_action):
         if self.timeline:
             self.app.action_log.begin("ungroup")
-            self.timeline.ungroupSelection()
+            for track_object in self.timeline.selected:
+                track_object.set_locked(False)
             self.app.action_log.commit()
 
     def groupSelected(self, unused_action):
         if self.timeline:
-            self.timeline.groupSelection()
+            for track_object in self.timeline.selected:
+                track_object.set_locked(True)
 
     def alignSelected(self, unused_action):
         if "NumPy" in soft_deps:
