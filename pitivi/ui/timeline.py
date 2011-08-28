@@ -490,6 +490,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 break
         for uri in uris:
             src = ges.TimelineFileSource(uri)
+            src.set_property("priority", 1)
             layer.add_object(src)
             self._temp_objects.insert(0, src)
 
