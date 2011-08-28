@@ -1087,6 +1087,7 @@ class MoveContext(EditingContext):
         self.tracks = set([])
         all_objects = set(other)
         all_objects.add(focus)
+        self.layersList = []
         for obj in all_objects:
             if isinstance(obj, TrackObject):
                 timeline_object = obj.timeline_object
@@ -1264,11 +1265,29 @@ class MoveContext(EditingContext):
                 position + self.default_span)
 
         priority = max(self.min_priority, priority)
-        self.focus.get_layer().set_property ("priority", priority)
-        #self.focus.set_property("start", long(position))
+        obj = self.focus
+        if isinstance (self.focus, ges.TrackFileSource):
+            obj = self.focus.get_timeline_object()
+        if obj.get_layer().get_property("priority") != priority:
+            origin_layer = obj.get_layer()
+            moved = False
+            for layer in self.timeline.get_layers():
+                if layer.get_property("priority") == priority:
+                    obj.move_to_layer(layer)
+                    moved = True
+            if not moved:
+                layer = ges.TimelineLayer()
+                layer.set_property("auto-transition", True)
+                self.timeline.add_layer(layer)
+                layer.set_property("priority", priority)
+                obj.move_to_layer(layer)
+                self.layersList.append(layer)
+        if position < 0:
+            position = 0
+        self.focus.set_property("start", long(position))
 
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
-            obj.set_property("start", position + s_offset)
+            obj.set_property("start", long(position + s_offset))
             #obj.get_layer().set_property ("priority", priority + p_offset)
 
         return position, priority

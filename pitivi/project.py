@@ -94,10 +94,12 @@ class Project(Signallable, Loggable):
         self.timeline = ges.timeline_new_audio_video()
         self.timeline.selected = []
         self.layer = ges.TimelineLayer()
+        self.layer.set_property("auto-transition", True)
         self.timeline.add_layer(self.layer)
         self.back_layer = ges.TimelineLayer()
         self.background = ges.TimelineTestSource()
         self.back_layer.set_priority(99)
+        self.background.set_property("duration", 313960000000)
         self.back_layer.add_object(self.background)
         self.timeline.add_layer(self.back_layer)
 
