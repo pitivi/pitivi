@@ -86,13 +86,13 @@ class Track(goocanvas.Group, Zoomable):
         max_priority = 0
         for track_object in track_objects :
             if isinstance (track_object, ges.TrackAudioTestSource):
-                break
+                continue
             if isinstance (track_object, ges.TrackVideoTestSource):
-                break
-            priority = track_object.get_priority()
+                continue
+            priority = track_object.get_timeline_object().get_layer().get_property("priority")
             if priority > max_priority:
                 max_priority = priority
-        self.track.max_priority = (max_priority) / 10
+        self.track.max_priority = max_priority
         if self.track.max_priority < 0:
             self.track.max_priority = 0
         if self._expanded:
