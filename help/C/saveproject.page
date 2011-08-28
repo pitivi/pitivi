@@ -28,5 +28,9 @@
      <p>To save your project work, use the <guiseq><gui>Project</gui><gui>Save</gui></guiseq> menu, the Save button on the main toolbar or press <keyseq><key>Ctrl</key><key>S</key></keyseq>.</p>
       <p>When you save a project for the first time, a dialog window appears, asking you where to save the project file and how to name it.</p>
       <p>If you want to save your project as a different file, use <guiseq><gui>Project</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be used to create different versions of your project.</p>
-<!-- TODO: document the "revert to saved" feature -->
+    <section>
+        <title>Reverting changes</title>
+        <p>In addition to undoing individual changes, you can also decide to revert all the changes you have made since the last time you saved your project. To do so, use <guiseq><gui>Project</gui><gui>Revert</gui></guiseq>.</p>
+    </section>
+    
 </page>
