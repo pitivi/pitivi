@@ -92,7 +92,7 @@ class PresetManager(object):
                 filename = name + ".json"
                 filepath = os.path.join(self.user_path, filename)
 
-            if not name == "No Preset":
+            if not name == "No preset":
                 fout = open(filepath, "w")
                 self.saveSection(fout, name)
 
@@ -219,7 +219,7 @@ class PresetManager(object):
             if values[field] != 0:
                 setter(values[field])
             else:
-                setter(self.presets['No Preset'][field])
+                setter(self.presets['No preset'][field])
         self._ignore_update_requests = False
 
     def savePreset(self):
@@ -261,7 +261,7 @@ class PresetManager(object):
             (dir, name) = os.path.split(self.presets[self.cur_preset]["filepath"])
         except:
             dir = None
-        if self.cur_preset == "No Preset" or not self.cur_preset or \
+        if self.cur_preset == "No preset" or not self.cur_preset or \
                 dir == self.default_path:
             # There is no preset selected, nothing to do.
             return False
@@ -276,7 +276,7 @@ class PresetManager(object):
             (dir, name) = os.path.split(self.presets[self.cur_preset]["filepath"])
         except:
             dir = None
-        if self.cur_preset == "No Preset" or not self.cur_preset or \
+        if self.cur_preset == "No preset" or not self.cur_preset or \
                 dir == self.default_path:
             # There is no preset selected, nothing to do.
             return False

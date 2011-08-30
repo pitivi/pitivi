@@ -288,13 +288,13 @@ class ProjectSettingsDialog():
         treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
 
     def createAudioNoPreset(self, mgr):
-         mgr.prependPreset(_("No Preset"), {
+         mgr.prependPreset(_("No preset"), {
             "depth": int(get_combo_value(self.sample_depth_combo)),
             "channels": int(get_combo_value(self.channels_combo)),
             "sample-rate": int(get_combo_value(self.sample_rate_combo))})
 
     def createVideoNoPreset(self, mgr):
-        mgr.prependPreset(_("No Preset"), {
+        mgr.prependPreset(_("No preset"), {
             "par": gst.Fraction(int(get_combo_value(self.par_combo).num),
                                         int(get_combo_value(self.par_combo).denom)),
             "frame-rate": gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
@@ -430,10 +430,10 @@ class ProjectSettingsDialog():
         """Get a unique name for a new preset for the specified PresetManager.
         """
         existing_preset_names = list(mgr.getPresetNames())
-        preset_name = _("New Preset")
+        preset_name = _("New preset")
         i = 1
         while preset_name in existing_preset_names:
-            preset_name = _("New Preset %d") % i
+            preset_name = _("New preset %d") % i
             i += 1
         return preset_name
 
