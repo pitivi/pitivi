@@ -468,10 +468,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def toggleFullScreen(self):
         """ Toggle the fullscreen mode of the application """
         if not self.is_fullscreen:
-            self.viewer.window.fullscreen()
+            self.fullscreen()
             self.is_fullscreen = True
         else:
-            self.viewer.window.unfullscreen()
+            self.unfullscreen()
             self.is_fullscreen = False
 
     #TODO check if it is the way to go
