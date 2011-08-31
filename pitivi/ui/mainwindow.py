@@ -714,7 +714,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # Add gst.SECOND - 1 to the timeline duration to make sure the
         # last second of the timeline will be in view.
         tracks = self.project.timeline.get_tracks()
-        duration = max (tracks[0].props.duration, tracks[1].props.duration)
+        duration = max(tracks[0].get_property("duration"), tracks[1].get_property("duration"))
         self.project.timeline.duration = duration
         timeline_duration = duration + gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / gst.SECOND)
@@ -1081,7 +1081,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.viewer.setDisplayAspectRatio(float(sett.videopar * sett.videowidth) / float(sett.videoheight))
         # everything above only needs to be done if the viewer isn't already
         # set to the pipeline.
-        self.project.pipeline.pause()
         try:
             self.project.pipeline.seek(position, format)
         except:
