@@ -61,7 +61,7 @@
        <p>You can change the position of the playhead by clicking anywhere on the ruler or on the timeline.</p>
        <p>When clicking on the <em>timeline</em>:</p>
        <list>
-        <item><p>If a clip is under the mouse cursor, it will replace the current clip selection (see the <link xref="selectmulti">Selecting multiple items</link> section for more detailed instructions).</p></item>
+        <item><p>If a clip is under the mouse cursor, it will replace the current clip selection (see the <link xref="makeselections">Selecting multiple items</link> section for more detailed instructions).</p></item>
         <item><p>If there is no clip under the cursor, all selected clips (if any) will be deselected.</p></item>
        </list>
        <p>When clicking on the ruler, only the playhead's position changes; clip selections are not affected.</p>

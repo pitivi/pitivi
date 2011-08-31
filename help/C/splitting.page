@@ -25,7 +25,7 @@
     <title>Splitting</title>
      
      <p>As the name implies, splitting a clip divides it into two adjacent clips, with new beginning/end points being created accordingly.</p>
-     <p>In <app>PiTiVi</app>, splitting is a “non-modal” operation; this means that you do not have to “activate” a particular tool before doing the split action. Splitting occurs where the playhead is currently located (see also <link xref="movingplayhead">Moving the playhead</link>). Combined with zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless splitting is not only fast and efficient, it is also very accurate.</p>
+     <p>In <app>PiTiVi</app>, splitting is a “non-modal” operation; this means that you do not have to “activate” a particular tool before doing the split action. Splitting occurs where the playhead is currently located (see also <link xref="movearoundtimeline">Moving the playhead</link>). Combined with zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless splitting is not only fast and efficient, it is also very accurate.</p>
      <p>Selections affect splitting in the following ways:</p>
      <list>
       <item><p>Only the selected clips under the playhead will be split.</p></item>

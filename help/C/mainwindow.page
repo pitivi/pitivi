@@ -56,7 +56,7 @@
       <note>
        <p>When zoomed in, frames are visually represented on the ruler as alternating light and dark areas in the bottom part; those are based on the project framerate settings.</p>
       </note>
-      <p>To move your position in time, click anywhere on the ruler. You can also <em>scrub</em> the timeline by clicking on the ruler and holding down the mouse button while moving. See the <link xref="scrubbing">Scrubbing</link> section for more details.</p>
+      <p>To move your position in time, click anywhere on the ruler. You can also <em>scrub</em> the timeline by clicking on the ruler and holding down the mouse button while moving. See the section on <link xref="movearoundtimeline">scrubbing</link> for more details.</p>
     </section>
 
     <section>

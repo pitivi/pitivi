@@ -40,7 +40,7 @@
        <p>To move multiple clips at the same time, use the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips. Selected clips do not need to be on the same layer. Then, drag the clips just as you would do for a single clip; their position relative to each other will be preserved.</p>
       <section>
        <title>Using ripple editing while moving clips</title>
-        <p>While dragging clips around in the timeline, you can use the <link xref="rippletechnique">ripple technique</link> to move the <em>following</em> clips (the clips that start after the one you're directly editing) to fill the gap.</p>
+        <p>While dragging clips around in the timeline, you can use the <link xref="trimming">ripple technique</link> to move the <em>following</em> clips (the clips that start after the one you're directly editing) to fill the gap.</p>
         <steps>
          <item><p>Click and drag the clip you want to move, with the mouse button held down</p></item>
          <item><p>During the drag, hold down <key>Shift</key> on the keyboard</p></item>
