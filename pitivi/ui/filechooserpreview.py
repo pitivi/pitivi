@@ -6,12 +6,9 @@ import pango
 import os
 
 from pitivi.log.loggable import Loggable
-from pitivi.discoverer import Discoverer
 from pitivi.ui.common import beautify_stream
-from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import beautify_length, uri_is_valid
 from pitivi.configure import get_pixmap_dir
-from pitivi.factories.file import PictureFileSourceFactory
 from pitivi.settings import GlobalSettings
 from gettext import gettext as _
 from pitivi.ui.common import SPACING
@@ -57,9 +54,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.preview_cache = {}
         self.preview_cache_errors = {}
 
-        self.discoverer = Discoverer()
-        self.discoverer.connect('discovery-done', self._update_preview_cb)
-        self.discoverer.connect('discovery-error', self._error_detected_cb)
+        self.discoverer = gst.pbutils.Discoverer(gst.SECOND)
 
         #playbin for play pics
         self.player = get_playbin()
@@ -149,43 +144,42 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.current_selected_uri = uri
         if uri in self.preview_cache:  # Already discovered
             self.log(uri + " already in cache")
-            self.show_preview(uri)
+            self.show_preview(uri, None)
         elif uri in self.preview_cache_errors:
             self.log(uri + " already in error cache")
             self.show_error(uri)
         else:
             self.log("Call discoverer for " + uri)
-            self.discoverer.addUri(uri)
+            try:
+                info = self.discoverer.discover_uri(uri)
+            except Exception, e:
+                if e is not None:
+                    self.preview_cache_errors[uri] = e
+                    if self.current_selected_uri == uri:
+                        self.show_error(uri)
+                    return
 
-    def _update_preview_cb(self, dscvr, uri, factory):
-        if factory is None:
-            self.error("Discoverer does not handle " + uri)
-        # Add to cache
-        self.preview_cache[uri] = factory
-        # Show uri only if is the selected one
-        if self.current_selected_uri == uri:
-            self.show_preview(uri)
-
-    def _error_detected_cb(self, discoverer, uri, mess, details):
-        if details is not None:
-            self.preview_cache_errors[uri] = (mess, details)
             if self.current_selected_uri == uri:
-                self.show_error(uri)
+                self.show_preview(uri, info)
 
-    def show_preview(self, uri):
-        self.log("Show preview for " + uri)
-        factory = self.preview_cache.get(uri, None)
-        if factory is None:
+    def show_preview(self, uri, info):
+
+        if info:
+            self.preview_cache[uri] = info
+        else:
+            self.log("Show preview for " + uri)
+            info = self.preview_cache.get(uri, None)
+
+        if info is None:
             self.log("No preview for " + uri)
             return
-        if not factory.duration or factory.duration == gst.CLOCK_TIME_NONE:
-            duration = ''
-        else:
-            duration = beautify_length(factory.duration)
-        video = factory.getOutputStreams(VideoStream)
-        if video:
-            video = video[0]
-            if type(factory) == PictureFileSourceFactory:
+
+        duration = beautify_length(info.get_duration())
+
+        videos = info.get_video_streams()
+        if videos:
+            video = videos[0]
+            if video.is_image():
                 self.current_preview_type = 'image'
                 self.preview_video.hide()
                 pixbuf = gtk.gdk.pixbuf_new_from_file(gst.uri_get_location(uri))
@@ -207,9 +201,10 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.player.set_property("video-sink", self.__videosink)
                 self.player.set_property("uri", self.current_selected_uri)
                 self.player.set_state(gst.STATE_PAUSED)
-                self.clip_duration = factory.duration
+                self.clip_duration = info.get_duration()
                 self.pos_adj.upper = self.clip_duration
-                w, h = self.__get_best_size(video.par * video.width, video.height)
+                w, h = self.__get_best_size((video.get_par_num() / video.get_par_denom()) * video.get_width(),
+                    video.get_height())
                 self.preview_video.set_size_request(w, h)
                 self.preview_video.show()
                 self.bbox.show()
@@ -218,14 +213,17 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.b_zoom_in.show()
                 self.b_zoom_out.show()
                 self.description = _(u"<b>Resolution</b>: %d×%d") % \
-                    (video.par * video.width, video.height) + "\n" + \
-                    _("<b>Duration</b>: %s") % duration + "\n"
+                    ((video.get_par_num() / video.get_par_denom()) * video.get_width(), video.get_height()) +\
+                     "\n" + _("<b>Duration</b>: %s") % duration + "\n"
         else:
             self.current_preview_type = 'audio'
             self.preview_video.hide()
-            audio = factory.getOutputStreams(AudioStream)
+            audio = info.get_video_streams()
+
+            if not audio:
+                return
+
             audio = audio[0]
-            self.clip_duration = factory.duration
             self.pos_adj.upper = self.clip_duration
             self.preview_image.set_from_file(DEFAULT_AUDIO_IMAGE)
             self.preview_image.show()
@@ -390,7 +388,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.l_tags.set_markup(text)
 
     def _on_b_details_clicked_cb(self, unused_button):
-        mess, detail = self.preview_cache_errors.get(self.current_selected_uri, (None, None))
+        mess = self.preview_cache_errors.get(self.current_selected_uri, None)
         if mess is not None:
             dialog = gtk.MessageDialog(None,
                 gtk.DIALOG_MODAL,
@@ -399,7 +397,6 @@ class PreviewWidget(gtk.VBox, Loggable):
                 mess)
             dialog.set_icon_name("pitivi")
             dialog.set_title(_("Error while analyzing a file"))
-            dialog.set_property("secondary-text", detail)
             dialog.run()
             dialog.destroy()
 

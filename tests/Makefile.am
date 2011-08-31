@@ -8,7 +8,6 @@ tests = \
 	test_binary_search.py \
 	test_cache.py \
 	test_common.py \
-	test_discoverer.py \
 	test_encode.py \
 	test_etree_formatter.py \
 	test_factories_base.py \

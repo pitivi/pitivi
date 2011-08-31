@@ -14,7 +14,6 @@ data/pitivi.desktop.in.in
 [type: gettext/glade]data/ui/startupwizard.ui
 pitivi/application.py
 pitivi/check.py
-pitivi/discoverer.py
 pitivi/effects.py
 pitivi/factories/base.py
 pitivi/factories/file.py

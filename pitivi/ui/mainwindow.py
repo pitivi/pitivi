@@ -688,7 +688,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.project = project
         self.timeline.project = self.project
         self.clipconfig.project = self.project
-        self._connectToProjectSources(project.sources)
+        #FIXME we should reanable it when possible with GES
+        #self._connectToProjectSources(project.sources)
         duration = 0
         can_render = duration > 0
         self._syncDoUndo(self.app.action_log)
@@ -908,9 +909,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _connectToProjectSources(self, sourcelist):
         sourcelist.connect("missing-plugins", self._sourceListMissingPluginsCb)
-
-    def _disconnectFromProjectSources(self, sourcelist):
-        sourcelist.disconnect_by_func(self._sourceListMissingPluginsCb)
 
     def _actionLogCommit(self, action_log, stack, nested):
         if nested:

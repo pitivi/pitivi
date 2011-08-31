@@ -28,6 +28,8 @@ import urllib
 from pitivi.discoverer import Discoverer
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
+import gst
+from pitivi.factories.file import FileSourceFactory
 
 
 class SourceListError(Exception):
@@ -35,7 +37,7 @@ class SourceListError(Exception):
 
 
 class SourceList(Signallable, Loggable):
-    discovererClass = Discoverer
+    discovererClass = gst.pbutils.Discoverer
 
     """
     Contains the sources for a project, stored as SourceFactory objects.
@@ -51,8 +53,6 @@ class SourceList(Signallable, Loggable):
     Signals:
      - C{source-added} : A source has been discovered and added to the SourceList.
      - C{source-removed} : A source was removed from the SourceList.
-     - C{missing-plugins} : A source has been discovered but some plugins are
-       missing in order to decode all of its streams.
      - C{discovery-error} : The given uri is not a media file.
      - C{ready} : No more files are being discovered/added.
      - C{starting} : Some files are being discovered/added.
@@ -61,7 +61,6 @@ class SourceList(Signallable, Loggable):
     __signals__ = {
         "ready": [],
         "starting": [],
-        "missing-plugins": ["uri", "factory", "details", "descriptions"],
         "source-added": ["factory"],
         "source-removed": ["uri"],
         "discovery-error": ["uri", "reason"],
@@ -77,13 +76,7 @@ class SourceList(Signallable, Loggable):
         self.nb_file_to_import = 1
         self.nb_imported_files = 0
 
-        self.discoverer = self.discovererClass()
-        self.discoverer.connect("discovery-error", self._discoveryErrorCb)
-        self.discoverer.connect("discovery-done", self._discoveryDoneCb)
-        self.discoverer.connect("starting", self._discovererStartingCb)
-        self.discoverer.connect("ready", self._discovererReadyCb)
-        self.discoverer.connect("missing-plugins",
-                self._discovererMissingPluginsCb)
+        self.discoverer = self.discovererClass(gst.SECOND)
 
     def addUri(self, uri):
         """
@@ -95,9 +88,15 @@ class SourceList(Signallable, Loggable):
             # uri is already added. Nothing to do.
             return
         self._sources[uri] = None
-        # Tell the discoverer to investigate the URI and report back when
-        # it has the info or failed.
-        self.discoverer.addUri(uri)
+
+        try:
+            self.discoverer.discover_uri(uri)
+        except Exception, e:
+            self.emit("discovery-error", uri, e, "")
+            return
+
+        factory = FileSourceFactory(uri)
+        self.addFactory(factory)
 
     def addUris(self, uris):
         """
@@ -109,6 +108,7 @@ class SourceList(Signallable, Loggable):
         self.nb_imported_files = 0
         for uri in uris:
             self.addUri(uri)
+        self.emit("ready")
 
     def removeUri(self, uri):
         """
@@ -155,35 +155,3 @@ class SourceList(Signallable, Loggable):
         @return: A list of SourceFactory objects which must not be changed.
         """
         return self._ordered_sources
-
-    def _discoveryDoneCb(self, discoverer, uri, factory):
-        """Handles the success of a URI info gathering operation."""
-        if factory.uri not in self._sources:
-            # The source was removed while it was being scanned. Nothing to do.
-            return
-        self.addFactory(factory)
-
-    def _discoveryErrorCb(self, discoverer, uri, reason, extra):
-        """Handles the failure of a URI info gathering operation."""
-        try:
-            del self._sources[uri]
-        except KeyError:
-            # The source was removed while it was being scanned. Nothing to do.
-            pass
-        self.emit("discovery-error", uri, reason, extra)
-
-    def _discovererStartingCb(self, unused_discoverer):
-        """Handles the start of the URI info gathering operations."""
-        self.emit("starting")
-
-    def _discovererReadyCb(self, unused_discoverer):
-        """Handles the finish of the URI info gathering operations."""
-        self.emit("ready")
-
-    def _discovererMissingPluginsCb(self, discoverer, uri, factory,
-            details, descriptions, missingPluginsCallback):
-        if factory.uri not in self._sources:
-            # The source was removed while it was being scanned. Nothing to do.
-            return None
-        return self.emit('missing-plugins', uri, factory,
-                details, descriptions, missingPluginsCallback)

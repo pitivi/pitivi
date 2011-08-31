@@ -453,8 +453,6 @@ class SourceList(gtk.VBox, Loggable):
         self.project_signals.connect(
             project.sources, "discovery-error", None, self._discoveryErrorCb)
         self.project_signals.connect(
-            project.sources, "missing-plugins", None, self._missingPluginsCb)
-        self.project_signals.connect(
             project.sources, "ready", None, self._sourcesStoppedImportingCb)
         self.project_signals.connect(
             project.sources, "starting", None, self._sourcesStartedImportingCb)
@@ -634,10 +632,6 @@ class SourceList(gtk.VBox, Loggable):
     def _discoveryErrorCb(self, unused_sourcelist, uri, reason, extra):
         """ The given uri isn't a media file """
         error = (uri, reason, extra)
-        self._errors.append(error)
-
-    def _missingPluginsCb(self, sourcelist, uri, factory, details, descriptions, cb):
-        error = (uri, "Missing plugins", "\n".join(descriptions))
         self._errors.append(error)
 
     def _sourcesStartedImportingCb(self, sourcelist):

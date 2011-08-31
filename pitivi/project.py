@@ -86,8 +86,6 @@ class Project(Signallable, Loggable):
         self.urichanged = False
         self.format = None
         self.sources = SourceList()
-        self.sources.connect("source-added", self._sourceAddedCb)
-        self.sources.connect("source-removed", self._sourceRemovedCb)
 
         self._dirty = False
 
@@ -155,12 +153,6 @@ class Project(Signallable, Loggable):
 
         for fact in self.sources.getSources():
             fact.setFilterCaps(self._videocaps)
-        if self.pipeline.get_state() != gst.STATE_NULL:
-            self.pipeline.set_state(gst.STATE_READY)
-            self.pipeline.set_state(gst.STATE_PAUSED)
-
-    def _sourceAddedCb(self, sourcelist, factory):
-        factory.setFilterCaps(self._videocaps)
-
-    def _sourceRemovedCb(self, sourclist, uri, factory):
-        self.timeline.removeFactory(factory)
+        if self.pipeline.getState() != gst.STATE_NULL:
+            self.pipeline.stop()
+            self.pipeline.pause()
