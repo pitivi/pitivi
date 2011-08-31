@@ -682,6 +682,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Zoomable.zoomOut()
 
     def deleteSelected(self, unused_action):
+        self.app.projectManager.current.pipeline.set_state(gst.STATE_NULL)
         if self.timeline:
             self.app.action_log.begin("delete clip")
             for track_object in self.timeline.selected:
@@ -698,6 +699,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     lyr.remove_object(obj)
                     print "removed"
             self.app.action_log.commit()
+        self.app.projectManager.current.pipeline.set_state(gst.STATE_PAUSED)
 
     def unlinkSelected(self, unused_action):
         if self.timeline:
