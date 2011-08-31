@@ -1,0 +1,50 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="presets">
+
+  <info>
+    <link type="seealso" xref="rendering"/>
+    <link type="seealso" xref="projectsettings"/>
+    <revision pkgversion="0.15" version="0.1" date="2011-08-28" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Presets</title>
+    <p>Both the project settings dialog and the rendering dialog allow you to save presets for later use. If you often deal with the same kind of project settings, with different cameras or target devices for rendering, you may want to create custom presets.</p>
+    <p>While project settings concern themselves with global settings (such as resolution, framerate, aspect ratio and number of audio channels), the rendering presets are concerned with codecs and device constraints (for example, a handheld device or television may have a maximum screen resolution and framerate, which is not necessarily the case if you are exporting to a laptop or a website). As such, the presets in the rendering dialog are related to the project settings, but they govern different things.</p>
+    <note><p>In project settings, video presets and audio presets are independent of each other.</p></note>
+    <section>
+        <title>Creating and editing presets</title>
+        <p>To create a preset:</p>
+        <steps>
+            <item><p>Change the settings to your liking.</p></item>
+            <item><p>Click the <gui>Add</gui> button.</p></item>
+            <item><p>Give your preset a unique name: while the preset is selected in the list, click on its name to toggle editing mode. When you're done, press <key>Enter</key>.</p></item>
+        </steps>
+        <p>To edit a preset:</p>
+        <steps>
+            <item><p>Select your preset in the list of existing presets.</p></item>
+            <item><p>Change the settings to your liking.</p></item>
+            <item><p>Click the <gui>Save</gui> button.</p></item>
+        </steps>
+        <p>To remove a preset, simply select it in the list of presets and press the <gui>Remove</gui> button.</p>
+        <note><p>Some presets are provided by default and cannot be removed.</p></note>
+    </section>
+    <section>
+        <title>Ignoring presets</title>
+        <p>Presets are there to save time and reduce complexity. Experts can choose to simply ignore them and set everything manually; the "No preset" preset is a special preset that automatically saves its changes directly in the project file.</p>
+    </section>
+    <section>
+        <title>Limiting the resolution of a rendering preset</title>
+        <p>If you want to make a preset with a fixed maximum resolution, you need to edit the preset file with a text editor. Presets files are typically stored in ~/.local/share/pitivi/ ; since many devices don't have a maximum resolution, the width/height are set to 0 (unlimited) by default. You can change these values to the maximum resolution of your target device.</p>
+    </section>
+    
+
+</page>

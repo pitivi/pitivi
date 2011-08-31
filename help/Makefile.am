@@ -41,6 +41,7 @@ DOC_PAGES = \
     medialibrary.page \
     movearoundtimeline.page \
     othertransitions.page \
+    presets.page \
     projectsettings.page \
     rendering.page \
     saveproject.page \

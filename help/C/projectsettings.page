@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.14.2" version="0.3" date="2011-08-15" status="complete"/>
+    <revision pkgversion="0.15" version="0.4" date="2011-08-28" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -33,24 +33,4 @@
         <p>In <app>PiTiVi</app>, pixel aspect ratio and display aspect ratio are related to each other by the video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with.</p>
         <p>You can use the ratios already provided in the combo boxes, or input a custom aspect ratio in the text entry below (using a syntax such as "4:3" or "1.3333", although the decimal version is less precise).</p>
     </section>
-
-    <section>
-        <title>Presets</title>
-        <p>The project settings dialog allows you to save presets for later use. If you often deal with the same kind of project settings or with different cameras using different settings, you may want to create custom presets.</p>
-        <note><p>Video presets and audio presets are independent of each other.</p></note>
-        <p>To create a preset:</p>
-        <steps>
-            <item><p>Change the video (or audio) settings to your liking.</p></item>
-            <item><p>Click the <gui>Add</gui> button.</p></item>
-            <item><p>Give your preset a unique name: while the preset is selected in the list, click on its name to toggle editing mode. When you're done, press <key>Enter</key>.</p></item>
-        </steps>
-        <p>To edit a preset:</p>
-        <steps>
-            <item><p>Select your preset in the list of existing presets.</p></item>
-            <item><p>Change the settings to your liking.</p></item>
-            <item><p>Click the <gui>Save</gui> button.</p></item>
-        </steps>
-        <p>To remove a preset, simply select it in the list of presets and press the <gui>Remove</gui> button.</p>
-    </section>
-
 </page>
