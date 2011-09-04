@@ -65,6 +65,7 @@ from pitivi.ui.startupwizard import StartUpWizard
 
 ges.init()
 
+
 class Pitivi(Loggable, Signallable):
     """
     Pitivi's main application class.
@@ -317,7 +318,7 @@ class ProjectCreatorGuiPitivi(FullGuiPitivi):
         FullGuiPitivi.__init__(self, debug)
         # load the passed filenames, optionally adding them to the timeline
         # (useful during development)
-        self.projectManager.newBlankProject()
+        self.projectManager.newBlankProject(False)
         uris = ["file://" + urllib.quote(os.path.abspath(media_filename))
                 for media_filename in media_filenames]
         self.current.sources.connect("source-added",
@@ -372,7 +373,7 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
 
     def __init__(self, debug=False):
         FullGuiPitivi.__init__(self, debug)
-        self.projectManager.newBlankProject()
+        self.projectManager.newBlankProject(False)
         self.gui.viewer.setPipeline()
 
     def _createGui(self):

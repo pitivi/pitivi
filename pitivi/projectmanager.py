@@ -95,8 +95,8 @@ class ProjectManager(Signallable, Loggable):
         self.avalaible_effects = avalaible_effects
 
     def loadProject(self, uri):
-        """ Load the given project file"""
 
+        """ Load the given project file"""
         self.emit("new-project-loading", uri)
 
         self.formatter = ges.PitiviFormatter()
@@ -165,14 +165,15 @@ class ProjectManager(Signallable, Loggable):
 
         return True
 
-    def newBlankProject(self):
+    def newBlankProject(self, emission=True):
         """ start up a new blank project """
         # if there's a running project we must close it
         if self.current is not None and not self.closeRunningProject():
             return False
 
         # we don't have an URI here, None means we're loading a new project
-        self.emit("new-project-loading", None)
+        if emission:
+            self.emit("new-project-loading", None)
         project = Project(_("New Project"))
 
         # setting default values for project metadata
@@ -187,7 +188,10 @@ class ProjectManager(Signallable, Loggable):
         # projects with exactly one video track and one audio track.
         settings = project.getSettings()
         project.connect("project-changed", self._projectChangedCb)
-
+        if emission:
+            self.current.disconnect = False
+        else:
+            self.current.disconnect = True
         self.emit("new-project-loaded", self.current)
 
         return True

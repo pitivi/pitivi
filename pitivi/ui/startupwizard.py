@@ -76,7 +76,7 @@ class StartUpWizard(object):
 
     def _loadCb(self, unused_recent_chooser):
         """Handle a double-click on the recent chooser."""
-        self.app.gui.viewer.loadProject(self._getFileName())
+        self.app.projectManager.loadProject(self._getFileName())
 
     def _getFileName(self):
         """Get the URI of the project selected in the recent chooser."""
@@ -118,12 +118,14 @@ class StartUpWizard(object):
         """Handle the failure of a project open operation."""
         self.show()
 
-    def _projectLoadedCb(self, unused_project_manager, unused_project):
+    def _projectLoadedCb(self, unused_project_manager, project):
         """Handle the success of a project load operation.
 
         All the create or load project usage scenarios must generate
         a new-project-loaded signal from self.app.projectManager!
         """
+        if project.disconnect:
+            return
         self.app.projectManager.disconnect_by_function(self._projectFailedCb)
         self.app.projectManager.disconnect_by_function(self._projectLoadedCb)
         self.app.projectManager.disconnect_by_function(self._projectLoadingCb)
