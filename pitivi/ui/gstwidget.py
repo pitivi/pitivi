@@ -27,6 +27,7 @@ import gobject
 import gtk
 import gst
 import os
+import ges
 
 from gettext import gettext as _
 from pitivi.log.loggable import Loggable
@@ -96,7 +97,12 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         self._addWidgets(properties, default_btn, use_element_props)
 
     def _addWidgets(self, properties, default_btn, use_element_props):
-        props = [prop for prop in self.element.list_children_properties() if not prop.name in self.ignore]
+        is_effect = False
+        if isinstance(self.element, ges.TrackParseLaunchEffect):
+            is_effect = True
+            props = [prop for prop in self.element.list_children_properties() if not prop.name in self.ignore]
+        else:
+            props = [prop for prop in gobject.list_properties(self.element) if not prop.name in self.ignore]
         if not props:
             table = gtk.Table(rows=1, columns=1)
             widget = gtk.Label(_("No properties..."))
@@ -119,10 +125,17 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
               or not prop.flags & gobject.PARAM_READABLE:
                 continue
 
-            label = gtk.Label(prop.nick + ":")
-            label.set_alignment(0.0, 0.5)
-            table.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
-            prop_value = self.element.get_child_property(prop.name)
+            if is_effect:
+                label = gtk.Label(prop.nick + ":")
+                label.set_alignment(0.0, 0.5)
+                table.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
+                prop_value = self.element.get_child_property(prop.name)
+            else:
+                if use_element_props:
+                    prop_value = self.element.get_property(prop.name)
+                else:
+                    prop_value = properties.get(prop.name)
+
             widget = make_property_widget(self.element, prop, prop_value)
             if isinstance(widget, dynamic.ToggleWidget):
                 widget.set_label(prop.nick)
@@ -133,7 +146,10 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
                 table.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
                 table.attach(widget, 1, 2, y, y + 1, yoptions=gtk.FILL)
 
-            table.attach(widget, 1, 2, y, y + 1, yoptions=gtk.FILL)
+            if is_effect:
+                table.attach(widget, 1, 2, y, y + 1, yoptions=gtk.FILL)
+            elif hasattr(prop, 'description'):   # TODO: check that
+                widget.set_tooltip_text(prop.description)
 
             self.properties[prop] = widget
             if default_btn:
@@ -183,6 +199,7 @@ class GstElementSettingsDialog(Loggable):
     """
     Dialog window for viewing/modifying properties of a gst.Element
     """
+
     def __init__(self, elementfactory, properties={}):
         Loggable.__init__(self)
         self.debug("factory:%s, properties:%s", elementfactory, properties)
