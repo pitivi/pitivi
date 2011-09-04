@@ -1,11 +1,13 @@
 {
     "framerate-num": 25, 
     "sample-rate": 96000, 
+    "height": 0, 
     "channels": 2, 
     "container": "mp4mux", 
     "name": "N800", 
     "vcodec": "x264enc", 
     "framerate-denom": 1, 
+    "width": 0, 
     "depth": 8, 
     "acodec": "lame"
 }
