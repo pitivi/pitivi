@@ -44,8 +44,7 @@ class Actioner(Loggable, Signallable):
 
     __signals__ = {
         "eos": None,
-        "error": None
-        }
+        "error": None}
 
     def __init__(self, project, pipeline=None, settings=None):
         Loggable.__init__(self)
@@ -178,7 +177,7 @@ class Renderer(Actioner):
         @type outfile: C{URI}
         """
         Actioner.__init__(self, project, pipeline, settings)
-        self.detectStreamTypes()
+        #self.detectStreamTypes()
         self.outfile = outfile
 
     def detectStreamTypes(self):

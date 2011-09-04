@@ -563,6 +563,9 @@ class EncodingDialog(Renderer, Loggable):
     def _muxerComboChangedCb(self, muxer_combo):
         """Handle the changing of the container format combobox."""
         muxer = get_combo_value(muxer_combo).get_name()
+        for template in gst.registry_get_default().lookup_feature(muxer).get_static_pad_templates():
+            if template.name_template == "src":
+                self.muxertype = template.get_caps().to_string()
         self.settings.setEncoders(muxer=muxer)
 
         # Update the extension of the filename.
@@ -635,6 +638,13 @@ class EncodingDialog(Renderer, Loggable):
 
     def _videoEncoderComboChangedCb(self, combo):
         vencoder = get_combo_value(combo).get_name()
+        for template in gst.registry_get_default().lookup_feature(vencoder).get_static_pad_templates():
+            if template.name_template == "src":
+                self.videotype = template.get_caps().to_string()
+                for elem in self.videotype.split(","):
+                    if "{" in elem or "[" in elem:
+                        self.videotype = self.videotype[:self.videotype.index(elem) - 1]
+                        break
         self.settings.setEncoders(vencoder=vencoder)
         if not self.muxer_combo_changing:
             # The user directly changed the video encoder combo.
@@ -656,6 +666,13 @@ class EncodingDialog(Renderer, Loggable):
     def _audioEncoderChangedComboCb(self, combo):
         aencoder = get_combo_value(combo).get_name()
         self.settings.setEncoders(aencoder=aencoder)
+        for template in gst.registry_get_default().lookup_feature(aencoder).get_static_pad_templates():
+            if template.name_template == "src":
+                self.audiotype = template.get_caps().to_string()
+                for elem in self.audiotype.split(","):
+                    if "{" in elem or "[" in elem:
+                        self.audiotype = self.audiotype[:self.audiotype.index(elem) - 1]
+                        break
         if not self.muxer_combo_changing:
             # The user directly changed the audio encoder combo.
             self.preferred_aencoder = aencoder
@@ -684,18 +701,19 @@ class EncodingDialog(Renderer, Loggable):
         self.dialog.window.destroy()
 
     def _renderButtonClickedCb(self, unused_button):
-        self.outfile = "file:///home/mathieu/Videos/pute3.ogv"
-        #self.progress = EncodingProgressDialog(self.app, self)
+        self.outfile = os.path.join(self.filebutton.get_uri(),
+                                    self.fileentry.get_text())
+        self.progress = EncodingProgressDialog(self.app, self)
         self.window.hide()  # Hide the rendering settings dialog while rendering
-        self.containerprofile = gst.pbutils.EncodingContainerProfile ("ogg", None , gst.Caps("application/ogg"), None)
-        self.videoprofile = gst.pbutils.EncodingVideoProfile (gst.Caps("video/x-dirac"), None, gst.caps_new_any(), 0)
-        self.audioprofile = gst.pbutils.EncodingAudioProfile (gst.Caps("audio/x-vorbis"), None, gst.caps_new_any(), 0)
+        self.containerprofile = gst.pbutils.EncodingContainerProfile(None, None, gst.Caps(self.muxertype), None)
+        self.videoprofile = gst.pbutils.EncodingVideoProfile(gst.Caps(self.videotype), None, gst.caps_new_any(), 0)
+        self.audioprofile = gst.pbutils.EncodingAudioProfile(gst.Caps(self.audiotype), None, gst.caps_new_any(), 0)
         self.containerprofile.add_profile(self.videoprofile)
         self.containerprofile.add_profile(self.audioprofile)
         pipeline = self.app.app.projectManager.current.pipeline
         pipeline.set_state(gst.STATE_NULL)
         pipeline.set_render_settings(self.outfile, self.containerprofile)
-        print pipeline.set_mode("render")
+        pipeline.set_mode("render")
         pipeline.set_state(gst.STATE_PLAYING)
         #self.progress.window.show()
         #self.startAction()
