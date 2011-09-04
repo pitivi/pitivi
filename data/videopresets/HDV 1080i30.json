@@ -1,0 +1,9 @@
+{
+    "par-num": 4.0, 
+    "name": "HDV 1080i30", 
+    "framerate-num": 30000.0, 
+    "framerate-denom": 1001.0, 
+    "height": 1080, 
+    "width": 1440, 
+    "par-denom": 3.0
+}

@@ -1,0 +1,9 @@
+{
+    "par-num": 1.0, 
+    "name": "1080p24", 
+    "framerate-num": 24000.0, 
+    "framerate-denom": 1001.0, 
+    "height": 1080, 
+    "width": 1920, 
+    "par-denom": 1.0
+}
