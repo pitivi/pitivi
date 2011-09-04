@@ -287,7 +287,7 @@ class PresetManager(object):
 class VideoPresetManager(PresetManager):
 
     default_path = get_videopresets_dir()
-    user_path = os.path.join(xdg_data_home(), 'pitivi/video_presets')
+    user_path = os.path.join(xdg_data_home(), 'video_presets')
 
 
     def loadSection(self, filepath):
@@ -332,7 +332,7 @@ class VideoPresetManager(PresetManager):
 class AudioPresetManager(PresetManager):
 
     default_path = get_audiopresets_dir()
-    user_path = os.path.join(xdg_data_home(), 'pitivi/audio_presets')
+    user_path = os.path.join(xdg_data_home(), 'audio_presets')
 
 
     def loadSection(self, filepath):
@@ -366,7 +366,7 @@ class RenderPresetManager(PresetManager):
     """ load() and save() are rewritten to save widget values to json """
 
     default_path = get_renderpresets_dir()
-    user_path = os.path.join(xdg_data_home(), 'pitivi/render_presets')
+    user_path = os.path.join(xdg_data_home(), 'render_presets')
 
 
     def loadSection(self, filepath):
