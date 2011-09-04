@@ -106,4 +106,6 @@ data/icons/scalable/Makefile
 data/pixmaps/Makefile
 data/ui/Makefile
 data/renderpresets/Makefile
+data/audiopresets/Makefile
+data/videopresets/Makefile
 )
