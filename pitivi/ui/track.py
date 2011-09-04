@@ -7,6 +7,7 @@ import goocanvas
 import ges
 import gobject
 
+
 class Transition(goocanvas.Rect, Zoomable):
 
     def __init__(self, transition):
@@ -14,7 +15,7 @@ class Transition(goocanvas.Rect, Zoomable):
         Zoomable.__init__(self)
         self.props.fill_color_rgba = 0xFFFFFF99
         self.props.stroke_color_rgba = 0x00000099
-        self.set_simple_transform(0, -LAYER_SPACING + 3, 1.0, 0)
+        self.set_simple_transform(0, - LAYER_SPACING + 3, 1.0, 0)
         self.props.height = LAYER_SPACING - 6
         self.props.pointer_events = goocanvas.EVENTS_NONE
         self.props.radius_x = 2
@@ -84,10 +85,10 @@ class Track(goocanvas.Group, Zoomable):
     def getHeight(self):
         track_objects = self.track.get_objects()
         max_priority = 0
-        for track_object in track_objects :
-            if isinstance (track_object, ges.TrackAudioTestSource):
+        for track_object in track_objects:
+            if isinstance(track_object, ges.TrackAudioTestSource):
                 continue
-            if isinstance (track_object, ges.TrackVideoTestSource):
+            if isinstance(track_object, ges.TrackVideoTestSource):
                 continue
             priority = track_object.get_timeline_object().get_layer().get_property("priority")
             if priority > max_priority:
@@ -116,19 +117,19 @@ class Track(goocanvas.Group, Zoomable):
 
     @handler(track, "track-object-added")
     def _objectAdded(self, unused_timeline, track_object):
-        if isinstance (track_object, ges.TrackParseLaunchEffect):
+        if isinstance(track_object, ges.TrackParseLaunchEffect):
             return
-        if isinstance (track_object, ges.TrackAudioTestSource):
+        if isinstance(track_object, ges.TrackAudioTestSource):
             return
-        if isinstance (track_object, ges.TrackVideoTestSource):
+        if isinstance(track_object, ges.TrackVideoTestSource):
             return
-        if isinstance (track_object, ges.TrackVideoTestSource):
+        if isinstance(track_object, ges.TrackVideoTestSource):
             return
-        if isinstance (track_object, ges.TrackAudioTransition):
-            self._transitionAdded (track_object)
+        if isinstance(track_object, ges.TrackAudioTransition):
+            self._transitionAdded(track_object)
             return
-        if isinstance (track_object, ges.TrackVideoTransition):
-            self._transitionAdded (track_object)
+        if isinstance(track_object, ges.TrackVideoTransition):
+            self._transitionAdded(track_object)
             return
         gobject.timeout_add(1, self.check, track_object)
 
@@ -142,11 +143,14 @@ class Track(goocanvas.Group, Zoomable):
 
     @handler(track, "track-object-removed")
     def _objectRemoved(self, unused_timeline, track_object):
-        if not isinstance(track_object, ges.TrackParseLaunchEffect):
-            w = self.widgets[track_object]
-            self.remove_child(w)
-            del self.widgets[track_object]
-            Zoomable.removeInstance(w)
+        if isinstance(track_object, ges.TrackVideoTestSource) or \
+            isinstance(track_object, ges.TrackAudioTestSource) or \
+            isinstance(track_object, ges.TrackParseLaunchEffect):
+            return
+        w = self.widgets[track_object]
+        self.remove_child(w)
+        del self.widgets[track_object]
+        Zoomable.removeInstance(w)
 
     def _transitionAdded(self, transition):
         w = TrackObject(self.app, transition, self.track, self.timeline, self, True)
