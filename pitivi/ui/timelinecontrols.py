@@ -19,6 +19,8 @@ def track_name(track):
 
 
 class TrackControls(gtk.Label):
+    """Contains a timeline track name."""
+
     __gtype_name__ = 'TrackControls'
 
     def __init__(self, track):
@@ -26,7 +28,7 @@ class TrackControls(gtk.Label):
         self.set_alignment(0.5, 0.1)
         self.set_markup(track_name(track))
         self.track = track
-        self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
+        self._setSize(layers_count=1)
 
     def _setTrack(self):
         if self.track:
@@ -36,12 +38,17 @@ class TrackControls(gtk.Label):
 
     @handler(track, "max-priority-changed")
     def _maxPriorityChanged(self, track, max_priority):
-        self.set_size_request(TRACK_CONTROL_WIDTH, (1 +
-            max_priority) * (LAYER_HEIGHT_EXPANDED +
-            LAYER_SPACING))
+        self._setSize(max_priority + 1)
+
+    def _setSize(self, layers_count):
+        assert layers_count >= 1
+        height = layers_count * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
+        self.set_size_request(TRACK_CONTROL_WIDTH, height)
 
 
 class TimelineControls(gtk.VBox):
+    """Contains the timeline track names."""
+
     def __init__(self):
         gtk.VBox.__init__(self)
         self._tracks = []
