@@ -7,26 +7,19 @@ from common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 TRACK_CONTROL_WIDTH = 75
 
 
-def track_name(track):
-    stream_type = type(track.stream)
-    if stream_type == stream.AudioStream:
-        track_name = _("Audio:")
-    elif stream_type == stream.VideoStream:
-        track_name = _("Video:")
-    elif stream_type == stream.TextStream:
-        track_name = _("Text:")
-    return "<b>%s</b>" % track_name
-
-
 class TrackControls(gtk.Label):
-    """Contains a timeline track name."""
+    """Contains a timeline track name.
+
+    @ivar track: The track for which to display the name.
+    @type track: An L{pitivi.timeline.track.Track} object
+    """
 
     __gtype_name__ = 'TrackControls'
 
     def __init__(self, track):
         gtk.Label.__init__(self)
         self.set_alignment(0.5, 0.1)
-        self.set_markup(track_name(track))
+        self.set_markup(self._getTrackName(track))
         self.track = track
         self._setSize(layers_count=1)
 
@@ -44,6 +37,17 @@ class TrackControls(gtk.Label):
         assert layers_count >= 1
         height = layers_count * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
         self.set_size_request(TRACK_CONTROL_WIDTH, height)
+
+    @staticmethod
+    def _getTrackName(track):
+        stream_type = type(track.stream)
+        if stream_type == stream.AudioStream:
+            track_name = _("Audio:")
+        elif stream_type == stream.VideoStream:
+            track_name = _("Video:")
+        elif stream_type == stream.TextStream:
+            track_name = _("Text:")
+        return "<b>%s</b>" % track_name
 
 
 class TimelineControls(gtk.VBox):
