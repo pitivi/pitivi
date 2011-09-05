@@ -24,7 +24,6 @@ Timeline widgets for the complex view
 """
 
 import gtk
-import urllib
 
 from pitivi.log.loggable import Loggable
 import ruler
@@ -39,16 +38,13 @@ from pitivi.receiver import receiver, handler
 from zoominterface import Zoomable
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING, TRACK_SPACING
 from pitivi.timeline.timeline import MoveContext, SELECT
-from pitivi.utils import Seeker
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
-from pitivi.ui.curve import Curve
 from pitivi.ui.common import SPACING
 from pitivi.ui.alignmentprogress import AlignmentProgressDialog
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.timeline.align import AutoAligner
 from pitivi.check import soft_deps
 
-from pitivi.factories.operation import EffectFactory
 
 DND_EFFECT_LIST = [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
                   [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]

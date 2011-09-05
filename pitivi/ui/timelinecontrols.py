@@ -1,9 +1,8 @@
 import gtk
-import gobject
 from pitivi.receiver import receiver, handler
 import pitivi.stream as stream
 from gettext import gettext as _
-from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
+from common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 
 TRACK_CONTROL_WIDTH = 75
 
