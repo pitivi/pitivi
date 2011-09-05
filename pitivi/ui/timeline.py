@@ -177,10 +177,6 @@ class InfoStub(gtk.HBox, Loggable):
         self.log("showing")
         self.show_all()
 
-    def hide(self):
-        self.log("hiding")
-        gtk.VBox.hide(self)
-
 
 class Timeline(gtk.Table, Loggable, Zoomable):
 
