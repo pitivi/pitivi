@@ -126,7 +126,6 @@ class InfoStub(gtk.HBox, Loggable):
         gtk.HBox.__init__(self)
         Loggable.__init__(self)
         self.errors = []
-        self.showing = False
         self._scroll_pos_ns = 0
         self._errorsmessage = _("One or more GStreamer errors occured!")
         self._makeUI()
@@ -177,12 +176,10 @@ class InfoStub(gtk.HBox, Loggable):
     def show(self):
         self.log("showing")
         self.show_all()
-        self.showing = True
 
     def hide(self):
         self.log("hiding")
         gtk.VBox.hide(self)
-        self.showing = False
 
 
 class Timeline(gtk.Table, Loggable, Zoomable):
