@@ -116,25 +116,6 @@ ui = '''
 </ui>
 '''
 
-# Complex Timeline Design v2 (08 Feb 2006)
-#
-#
-# Tree of contents (ClassName(ParentClass))
-# -----------------------------------------
-#
-# Timeline(gtk.VBox)
-# |  Top container
-# |
-# +--ScaleRuler(gtk.Layout)
-# |
-# +--gtk.ScrolledWindow
-#    |
-#    +--TimelineCanvas(goocanas.Canvas)
-#    |  |
-#    |  +--Track(SmartGroup)
-#    |
-#    +--Status Bar ??
-
 
 class InfoStub(gtk.HBox, Loggable):
     """
@@ -165,7 +146,6 @@ class InfoStub(gtk.HBox, Loggable):
         self.infoicon.set_from_stock(gtk.STOCK_INFO, gtk.ICON_SIZE_SMALL_TOOLBAR)
         self.questionbutton.add(self.infoicon)
         self.questionbutton.connect("clicked", self._questionButtonClickedCb)
-        self._questionshowing = False
 
         self.pack_start(self.infolabel, expand=True, fill=True)
         self.pack_start(self.questionbutton, expand=False)
@@ -206,11 +186,6 @@ class InfoStub(gtk.HBox, Loggable):
 
 
 class Timeline(gtk.Table, Loggable, Zoomable):
-
-    # the screen width of the current unit
-    unit_width = 10
-    # specific levels of zoom, in (multiplier, unit) pairs which
-    # from zoomed out to zoomed in
 
     def __init__(self, instance, ui_manager):
         gtk.Table.__init__(self, rows=2, columns=1, homogeneous=False)
