@@ -110,8 +110,7 @@ class SourceList(gtk.VBox, Loggable):
 
     __gsignals__ = {
         'play': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                (gobject.TYPE_PYOBJECT,))
-        }
+                (gobject.TYPE_PYOBJECT,))}
 
     def __init__(self, instance, uiman):
         gtk.VBox.__init__(self)
@@ -660,11 +659,11 @@ class SourceList(gtk.VBox, Loggable):
     ## Error Dialog Box callbacks
 
     def _errorDialogBoxCloseCb(self, unused_dialog):
-        self._error_dialogbox.window.destroy()
+        self._error_dialogbox.destroy()
         self._error_dialogbox = None
 
     def _errorDialogBoxResponseCb(self, unused_dialog, unused_response):
-        self._error_dialogbox.window.destroy()
+        self._error_dialogbox.destroy()
         self._error_dialogbox = None
 
     ## Import Sources Dialog Box callbacks

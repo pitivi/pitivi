@@ -107,6 +107,9 @@ class FileListErrorDialog(Signallable, Loggable):
         """ returns True if this dialog is currently shown """
         return self.window.get_property("visible")
 
+    def destroy(self):
+        self.window.destroy()
+
     ## Callbacks from glade
 
     def _closeCb(self, unused_dialog):
