@@ -739,10 +739,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.keyframe_action.set_sensitive(keyframe)
 
 ## ToolBar callbacks
-    def hide(self):
-        self.actiongroup.set_visible(False)
-        gtk.Vbox.hide(self)
-
     def _zoomFitCb(self, unused_action):
         self.app.gui.setBestZoomRatio()
 
