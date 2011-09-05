@@ -18,7 +18,11 @@ class TrackControls(gtk.Label):
 
     def __init__(self, track):
         gtk.Label.__init__(self)
-        self.set_alignment(0.5, 0.1)
+        # Center the label horizontally.
+        self.set_alignment(0.5, 0)
+        # The value below is arbitrarily chosen so the text appears
+        # centered vertically when the represented track has a single layer.
+        self.set_padding(0, LAYER_SPACING * 2)
         self.set_markup(self._getTrackName(track))
         self.track = track
         self._setSize(layers_count=1)
