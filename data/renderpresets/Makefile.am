@@ -1,5 +1,5 @@
-profilesdir = $(pkgdatadir)/renderpresets
-profiles_DATA = \
+renderpresetsdir = $(pkgdatadir)/renderpresets
+renderpresets_DATA = \
     Blu-ray.json \
     desire.json \
     DVD.json \
