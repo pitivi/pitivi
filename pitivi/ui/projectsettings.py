@@ -583,6 +583,4 @@ class ProjectSettingsDialog():
         if response == gtk.RESPONSE_OK:
             self.updateSettings()
             self.updateMetadata()
-        self.audio_presets.saveAll()
-        self.video_presets.saveAll()
         self.window.destroy()
