@@ -65,7 +65,7 @@ class PresetManager(object):
         # Whether to ignore the updateValue calls.
         self._ignore_update_requests = False
 
-    def load(self):
+    def loadAll(self):
         filepaths = []
         try:
             for uri in os.listdir(self.default_path):

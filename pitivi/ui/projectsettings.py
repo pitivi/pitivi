@@ -181,9 +181,9 @@ class ProjectSettingsDialog():
 
         # presets
         self.audio_presets = AudioPresetManager()
-        self.audio_presets.load()
+        self.audio_presets.loadAll()
         self.video_presets = VideoPresetManager()
-        self.video_presets.load()
+        self.video_presets.loadAll()
 
         self._fillPresetsTreeview(
                 self.audio_preset_treeview, self.audio_presets,

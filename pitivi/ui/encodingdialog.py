@@ -177,7 +177,7 @@ class EncodingDialog(Renderer, Loggable):
         self.wg.addVertex(self.audio_encoder_combo, signal="changed")
         self.wg.addVertex(self.video_encoder_combo, signal="changed")
         self.render_presets = RenderPresetManager()
-        self.render_presets.load()
+        self.render_presets.loadAll()
 
         self._fillPresetsTreeview(
                 self.render_preset_treeview, self.render_presets,
