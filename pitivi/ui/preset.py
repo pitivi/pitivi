@@ -87,15 +87,17 @@ class PresetManager(object):
         if not os.path.exists(self.user_path):
             os.makedirs(self.user_path)
         for name, properties in self.ordered:
-            try:
-                filepath = self.presets[name]["filepath"]
-            except KeyError:
-                filename = name + ".json"
-                filepath = os.path.join(self.user_path, filename)
-
             if not name == "No preset":
-                fout = open(filepath, "w")
-                self.saveSection(fout, name)
+                try:
+                    filepath = self.presets[name]["filepath"]
+                except KeyError:
+                    filename = name + ".json"
+                    filepath = os.path.join(self.user_path, filename)
+                try:
+                    fout = open(filepath, "w")
+                    self.saveSection(fout, name)
+                except IOError:
+                    pass  # TODO: show an error infobar
 
     def _loadPreset(self, parser, section):
         """Load the specified section from the specified config parser.
