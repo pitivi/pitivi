@@ -65,9 +65,6 @@ class PresetManager(object):
         # Whether to ignore the updateValue calls.
         self._ignore_update_requests = False
 
-    def _getFilename(self):
-        return os.path.join(xdg_data_home(), self.filename)
-
     def load(self):
         filepaths = []
         try:
@@ -98,29 +95,6 @@ class PresetManager(object):
                     self.saveSection(fout, name)
                 except IOError:
                     pass  # TODO: show an error infobar
-
-    def _loadPreset(self, parser, section):
-        """Load the specified section from the specified config parser.
-
-        @param parser: The config parser from which the section will be loaded.
-        @type parser: ConfigParser
-        @param section: The name of the section to be loaded.
-        @type section: str
-        @return: A dict representing a preset.
-        """
-        raise NotImplementedError()
-
-    def _savePreset(self, parser, section, values):
-        """Create the specified section into the specified config parser.
-
-        @param parser: The config parser in which the section will be created.
-        @type parser: ConfigParser
-        @param section: The name of the section to be created.
-        @type section: str
-        @param values: The values of a preset.
-        @type values: dict
-        """
-        raise NotImplementedError()
 
     def _convertSectionNameToPresetName(self, section):
         # A section name for a ConfigParser can have any name except "default"!
