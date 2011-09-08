@@ -32,7 +32,7 @@ class SimplePresetManager(PresetManager):
 
     def __init__(self, empty_dir):
         PresetManager.__init__(self)
-        self.dir = empty_dir
+        self.user_path = self.dir = empty_dir
 
     def _getFilename(self):
         return os.path.join(self.dir, 'simple')
@@ -85,7 +85,7 @@ class TestProjectManager(TestCase):
                 'default_x_',
                 self.manager._convertSectionNameToPresetName('default_x_'))
 
-        # Test that default_+ section names loose the last character.
+        # Test that default_+ section names lose the last character.
         self.assertEqual(
                 'Default',
                 self.manager._convertSectionNameToPresetName('Default_'))
@@ -97,10 +97,10 @@ class TestProjectManager(TestCase):
         self.manager.addPreset('preset one', {'name1': '1A'})
         self.manager.addPreset('default_', {'name2': '2A'})
         self.manager.addPreset('Default', {'name1': '1B', 'name2': '2B'})
-        self.manager.save()
+        self.manager.saveAll()
 
         other_manager = SimplePresetManager(self.tempdir)
-        other_manager.load()
+        other_manager.loadAll()
 
         default = other_manager.presets['Default']
         self.assertEqual(2, len(default))
