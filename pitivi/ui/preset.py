@@ -125,15 +125,6 @@ class PresetManager(object):
         # Note: This generates a "row-inserted" signal in the model.
         self.ordered.append((name, values))
 
-    def removePreset(self, name):
-        self.presets.pop(name)
-        for i, row in enumerate(self.ordered):
-            if row[0] == name:
-                del self.ordered[i]
-                break
-        if self.cur_preset == name:
-            self.cur_preset = None
-
     def renamePreset(self, path, new_name):
         """Change the name of a preset.
 
