@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # PiTiVi , Non-linear video editor
 #
 #       tests/test_preset.py
@@ -98,9 +99,15 @@ class TestProjectManager(TestCase):
         self.manager.addPreset('default_', {'name2': '2A'})
         self.manager.addPreset('Default', {'name1': '1B', 'name2': '2B'})
         self.manager.saveAll()
+        self.manager.addPreset('Solid Snake (ソリッド・スネーク) \#!"/$%?&*',
+            {'name': 'デイビッド'})
+        self.manager.saveAll()
 
         other_manager = SimplePresetManager(self.tempdir)
         other_manager.loadAll()
+        
+        snaaaake = other_manager.presets['Solid Snake (ソリッド・スネーク) \#!"/$%?&*']
+        self.assertEqual(1, len(snaaaake))
 
         default = other_manager.presets['Default']
         self.assertEqual(2, len(default))
