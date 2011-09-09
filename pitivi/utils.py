@@ -279,6 +279,15 @@ def filter_(caps):
 
 
 ## URI functions
+def isWritable(path):
+    """Check if the file/path is writable"""
+    try:
+        # Needs to be "rw", not "w", otherwise you'll corrupt files
+        f = open(path, "rw")
+    except:
+        return False
+    f.close()
+    return True
 
 
 def uri_is_valid(uri):

@@ -26,6 +26,7 @@ import gst
 import gtk
 
 from pitivi.settings import xdg_data_home
+from pitivi.utils import isWritable
 from pitivi.configure import get_data_dir, get_renderpresets_dir, \
         get_audiopresets_dir, get_videopresets_dir
 import json
@@ -242,32 +243,42 @@ class PresetManager(object):
         self.ordered.prepend((name, values))
 
     def isSaveButtonSensitive(self):
-        """Check if Save buttons should be sensitive"""
-        try:
-            (dir, name) = os.path.split(self.presets[self.cur_preset]["filepath"])
-        except:
-            dir = None
-        if self.cur_preset == "No preset" or not self.cur_preset or \
-                dir == self.default_path:
-            # There is no preset selected, nothing to do.
+        """Check if the Save button should be sensitive"""
+        if not self.cur_preset or self.cur_preset == "No preset":
             return False
-
-        values = self.presets[self.cur_preset]
-        return any((values[field] != getter()
-                    for field, (setter, getter) in self.widget_map.iteritems()))
+        try:
+            full_path = self.presets[self.cur_preset]["filepath"]
+            (dir, name) = os.path.split(full_path)
+        except KeyError:
+            # This is a newly created preset that has not yet been saved
+            return True
+        if dir == self.default_path or not isWritable(full_path):
+            # default_path is the system-wide directory where the default
+            # presets are installed; they are not expected to be editable.
+            return False
+        else:
+            values = self.presets[self.cur_preset]
+            return any((values[field] != getter()
+                for field, (setter, getter)
+                in self.widget_map.iteritems()))
 
     def isRemoveButtonSensitive(self):
         """Check if Remove buttons should be sensitive"""
-        try:
-            (dir, name) = os.path.split(self.presets[self.cur_preset]["filepath"])
-        except:
-            dir = None
-        if self.cur_preset == "No preset" or not self.cur_preset or \
-                dir == self.default_path:
-            # There is no preset selected, nothing to do.
-            return False
-        else:
-            return True
+        if not self.cur_preset or self.cur_preset == "No preset":
+            try:
+                full_path = self.presets[self.cur_preset]["filepath"]
+                (dir, name) = os.path.split(full_path)
+            except KeyError:
+                # This is a newly created preset that has not yet been saved
+                # We cannot remove it since it does not exist
+                return False
+            if dir == self.default_path or not isWritable(full_path):
+                # default_path is the system-wide directory where the default
+                # presets are installed; they are not expected to be editable.
+                return False
+            else:
+                return True
+        return False
 
 
 class VideoPresetManager(PresetManager):
