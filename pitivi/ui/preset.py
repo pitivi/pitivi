@@ -82,13 +82,14 @@ class PresetManager(object):
             if file.endswith("json"):
                 self.loadSection(os.path.join(self.default_path, file))
 
-    def save(self):
+    def saveAll(self):
+        """Write changes to disk for all presets"""
         if not os.path.exists(self.user_path):
             os.makedirs(self.user_path)
         for name, properties in self.ordered:
             try:
                 filepath = self.presets[name]["filepath"]
-            except:
+            except KeyError:
                 filename = name + ".json"
                 filepath = os.path.join(self.user_path, filename)
 
@@ -223,6 +224,24 @@ class PresetManager(object):
         self._ignore_update_requests = False
 
     def savePreset(self):
+        """Update the preset values and write to disk"""
+        if self.cur_preset != "No preset":
+            self._updatePreset()
+            if not os.path.exists(self.user_path):
+                os.makedirs(self.user_path)
+            try:
+                filepath = self.presets[self.cur_preset]["filepath"]
+            except KeyError:
+                filepath = os.path.join(self.user_path, self.cur_preset + ".json")
+            try:
+                fout = open(filepath, "w")
+                self.saveSection(fout, self.cur_preset)
+            except IOError:
+                # TODO: show an error infobar... but this should never happen,
+                # because the UI is supposed to disable the Save button
+                pass
+
+    def _updatePreset(self):
         """Copy the values from the widgets to the preset."""
         values = self.presets[self.cur_preset]
         for field, (setter, getter) in self.widget_map.iteritems():
@@ -289,7 +308,6 @@ class VideoPresetManager(PresetManager):
     default_path = get_videopresets_dir()
     user_path = os.path.join(xdg_data_home(), 'video_presets')
 
-
     def loadSection(self, filepath):
         parser = json.loads(open(filepath).read())
 
@@ -311,9 +329,7 @@ class VideoPresetManager(PresetManager):
             "frame-rate": framerate,
             "par": par,
             "filepath": filepath,
-
         })
-
 
     def saveSection(self, fout, section):
         values = self.presets[section]
@@ -334,7 +350,6 @@ class AudioPresetManager(PresetManager):
     default_path = get_audiopresets_dir()
     user_path = os.path.join(xdg_data_home(), 'audio_presets')
 
-
     def loadSection(self, filepath):
         parser = json.loads(open(filepath).read())
 
@@ -351,7 +366,6 @@ class AudioPresetManager(PresetManager):
             "filepath": filepath,
         })
 
-
     def saveSection(self, fout, section):
         values = self.presets[section]
         data = json.dumps({
@@ -362,12 +376,11 @@ class AudioPresetManager(PresetManager):
         }, indent=4)
         fout.write(data)
 
+
 class RenderPresetManager(PresetManager):
-    """ load() and save() are rewritten to save widget values to json """
 
     default_path = get_renderpresets_dir()
     user_path = os.path.join(xdg_data_home(), 'render_presets')
-
 
     def loadSection(self, filepath):
         parser = json.loads(open(filepath).read())
@@ -405,7 +418,6 @@ class RenderPresetManager(PresetManager):
             "filepath": filepath,
         })
 
-
     def saveSection(self, fout, section):
         values = self.presets[section]
         data = json.dumps({
@@ -421,6 +433,4 @@ class RenderPresetManager(PresetManager):
             "depth": int(values["depth"]),
             "sample-rate": int(values["sample-rate"]),
         }, indent=4)
-
         fout.write(data)
-

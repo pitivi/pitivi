@@ -235,7 +235,6 @@ class ProjectSettingsDialog():
         self.createAudioNoPreset(self.audio_presets)
         self.createVideoNoPreset(self.video_presets)
 
-
     def bindPar(self, mgr):
 
         def updatePar(value):
@@ -301,7 +300,6 @@ class ProjectSettingsDialog():
                                         int(get_combo_value(self.frame_rate_combo).denom)),
             "height": int(self.height_spinbutton.get_value()),
             "width": int(self.width_spinbutton.get_value())})
-
 
     def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
         """Handle the addition of a preset to the model of the preset manager.
@@ -585,6 +583,6 @@ class ProjectSettingsDialog():
         if response == gtk.RESPONSE_OK:
             self.updateSettings()
             self.updateMetadata()
-        self.audio_presets.save()
-        self.video_presets.save()
+        self.audio_presets.saveAll()
+        self.video_presets.saveAll()
         self.window.destroy()

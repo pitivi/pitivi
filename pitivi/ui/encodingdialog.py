@@ -442,8 +442,8 @@ class EncodingDialog(Renderer, Loggable):
     def _copyRenderPresets(self, cur_preset):
         #  Copies current settings to presets
 
-        self.render_presets.savePreset()
-        self.render_presets.save()
+        self.render_presets._updatePreset()
+        self.render_presets.saveAll()
 
     def _updateRenderPresetButtons(self):
         preset_changed = self.render_presets.isSaveButtonSensitive()
