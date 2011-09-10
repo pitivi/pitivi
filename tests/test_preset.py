@@ -46,42 +46,24 @@ class TestPresetBasics(TestCase):
         shutil.rmtree(self.user_path)
 
     def testConvertPresetNameToSectionName(self):
-        self.assertEqual(
-                'my preset',
-                self.manager._convertPresetNameToSectionName('my preset'))
-        self.assertEqual(
-                'my preset_',
-                self.manager._convertPresetNameToSectionName('my preset_'))
-        self.assertEqual(
-                'default_x_',
-                self.manager._convertPresetNameToSectionName('default_x_'))
+        self.presetToSection = self.manager._convertPresetNameToSectionName
+        self.assertEqual("my preset", self.presetToSection('my preset'))
+        self.assertEqual("my preset_", self.presetToSection('my preset_'))
+        self.assertEqual("default_x_", self.presetToSection('default_x_'))
 
         # Test that default_* preset names get a _ character at the end.
-        self.assertEqual(
-                'Default_',
-                self.manager._convertPresetNameToSectionName('Default'))
-        self.assertEqual(
-                'defaulT__',
-                self.manager._convertPresetNameToSectionName('defaulT_'))
+        self.assertEqual("Default_", self.presetToSection('Default'))
+        self.assertEqual("defaulT__", self.presetToSection('defaulT_'))
 
     def testConvertSectionNameToPresetName(self):
-        self.assertEqual(
-                'my preset',
-                self.manager._convertSectionNameToPresetName('my preset'))
-        self.assertEqual(
-                'my preset_',
-                self.manager._convertSectionNameToPresetName('my preset_'))
-        self.assertEqual(
-                'default_x_',
-                self.manager._convertSectionNameToPresetName('default_x_'))
+        self.sectionToPreset = self.manager._convertSectionNameToPresetName
+        self.assertEqual("my preset", self.sectionToPreset('my preset'))
+        self.assertEqual("my preset_", self.sectionToPreset('my preset_'))
+        self.assertEqual("default_x_", self.sectionToPreset('default_x_'))
 
         # Test that default_+ section names lose the last character.
-        self.assertEqual(
-                'Default',
-                self.manager._convertSectionNameToPresetName('Default_'))
-        self.assertEqual(
-                'defaulT_',
-                self.manager._convertSectionNameToPresetName('defaulT__'))
+        self.assertEqual("Default", self.sectionToPreset('Default_'))
+        self.assertEqual("defaulT_", self.sectionToPreset('defaulT__'))
 
     def testAddPreset(self):
         self.manager.addPreset('preseT onE', {'name1': '1A'})
@@ -110,7 +92,7 @@ class TestPresetsIO(TestCase):
         self.default_path = get_audiopresets_dir()
         # Create some fake dir to avoid messing actual data
         self.user_path = tempfile.mkdtemp()
-        
+
         self.manager = AudioPresetManager()
         self.manager.default_path = self.default_path
         self.manager.user_path = self.user_path
@@ -128,7 +110,7 @@ class TestPresetsIO(TestCase):
                 if file.endswith(".json"):
                     foo += 1
             return foo
-            
+
         def countUserPresets():
             return len(os.listdir(self.user_path))
 
@@ -140,7 +122,7 @@ class TestPresetsIO(TestCase):
         self.manager.cur_preset = "Vegeta"
         self.manager.savePreset()
         self.assertEqual(1, countUserPresets())
-        
+
         self.manager.addPreset("Nappa",
             {"channels": 4000,
             "depth": 16,
@@ -191,7 +173,6 @@ class TestPresetsIO(TestCase):
         other_manager.loadAll()
         # We only expect two valid, loaded presets: nappa and vegeta
         self.assertEqual(2 + countDefaultPresets(), len(other_manager.presets))
-        
 
     def testEsotericFilenames(self):
         self.manager.addPreset("Default",
