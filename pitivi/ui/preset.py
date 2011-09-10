@@ -149,9 +149,18 @@ class PresetManager(object):
             self.hasPreset(new_name)):
             raise DuplicatePresetNameException()
         self.ordered[path][0] = new_name
-        self.presets[new_name] = self.presets.pop(old_name)
-        if self.cur_preset == old_name:
-            self.cur_preset = new_name
+        self.presets[new_name] = self.presets[old_name]
+        if "filepath" in self.presets[old_name]:
+            # If the previous preset had already been saved,
+            # delete the file and pop it from the list
+            self.removePreset(old_name)
+        else:
+            # We're renaming an unsaved preset, so just pop it from the list
+            self.presets.pop(old_name)
+        new_filepath = os.path.join(self.user_path, new_name + ".json")
+        self.presets[new_name]["filepath"] = new_filepath
+        self.cur_preset = new_name
+        self.savePreset()
 
     def hasPreset(self, name):
         name = name.lower()
@@ -272,6 +281,8 @@ class PresetManager(object):
     def isRemoveButtonSensitive(self):
         """Check if Remove buttons should be sensitive"""
         if not self.cur_preset or self.cur_preset == "No preset":
+            return False
+        else:
             try:
                 full_path = self.presets[self.cur_preset]["filepath"]
                 (dir, name) = os.path.split(full_path)

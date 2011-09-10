@@ -369,6 +369,7 @@ class EncodingDialog(Renderer, Loggable):
         """Handle the renaming of a preset."""
         try:
             mgr.renamePreset(path, new_text)
+            self._updateRenderPresetButtons()
         except DuplicatePresetNameException:
             error_markup = _('"%s" already exists.') % new_text
             self._showPresetManagerError(mgr, error_markup)
