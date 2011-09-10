@@ -95,7 +95,11 @@ class PresetManager(object):
                     fout = open(filepath, "w")
                     self.saveSection(fout, name)
                 except IOError:
-                    pass  # TODO: show an error infobar
+                    # FIXME: this can happen in two cases: a permissions error,
+                    # or an invalid filename (ex: gibberish). In the latter case
+                    # we should log an error message or show an infobar, and
+                    # the test suite should verify this
+                    pass
 
     def _convertSectionNameToPresetName(self, section):
         # A section name for a ConfigParser can have any name except "default"!
@@ -207,6 +211,7 @@ class PresetManager(object):
             except IOError:
                 # TODO: show an error infobar... but this should never happen,
                 # because the UI is supposed to disable the Save button
+                # ...unless the user types an invalid filename (ex: gibberish)
                 pass
 
     def _updatePreset(self):
