@@ -25,6 +25,8 @@ import os.path
 import gst
 import gtk
 
+from pitivi.encode import available_muxers, available_video_encoders, \
+     available_audio_encoders
 from pitivi.settings import xdg_data_home
 from pitivi.utils import isWritable
 from pitivi.configure import get_data_dir, get_renderpresets_dir, \
@@ -372,6 +374,12 @@ class RenderPresetManager(PresetManager):
         container = parser["container"]
         acodec = parser["acodec"]
         vcodec = parser["vcodec"]
+
+        if (acodec not in [fact.get_name() for fact in available_audio_encoders()] or
+            vcodec not in [fact.get_name() for fact in available_video_encoders()] or
+            container not in [fact.get_name() for fact in available_muxers()]):
+
+            return
 
         try:
             width = parser["width"]
