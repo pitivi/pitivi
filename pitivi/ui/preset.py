@@ -243,8 +243,11 @@ class PresetManager(object):
     def removePreset(self, name):
         try:
             os.remove(self.presets[name]["filepath"])  # Deletes json file if exists
+        except KeyError:
+            # Trying to remove a preset that has not actually been saved
+            return
         except Exception:
-            pass
+            raise
         self.presets.pop(name)
         for i, row in enumerate(self.ordered):
             if row[0] == name:
