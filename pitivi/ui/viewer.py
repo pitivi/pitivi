@@ -358,8 +358,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.aframe.set_size_request(width, height)
         self.show_all()
         self.buttons = boxalign
-
-    _showingSlider = True
+        self.hideSlider()
 
     def showSlider(self):
         self._showingSlider = True
