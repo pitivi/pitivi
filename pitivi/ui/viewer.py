@@ -270,7 +270,7 @@ class PitiviViewer(gtk.VBox, Loggable):
     def _createUi(self):
         """ Creates the Viewer GUI """
         # drawing area
-        self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.5, ratio=4.0 / 3.0,
+        self.aframe = gtk.AspectFrame(xalign=0.5, yalign=1.0, ratio=4.0 / 3.0,
                                       obey_child=False)
 
         self.internal = ViewerWidget(self.app.settings)
