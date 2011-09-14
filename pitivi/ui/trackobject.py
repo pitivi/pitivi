@@ -101,6 +101,9 @@ class TimelineController(controller.Controller):
     _cursor = ARROW
     _context = None
     _handle_enter_leave = False
+    previous_x = None
+    next_previous_x = None
+    ref = None
 
     def enter(self, unused, unused2):
         self._view.focus()
@@ -111,6 +114,10 @@ class TimelineController(controller.Controller):
     def drag_start(self, item, target, event):
         #if not self._view.element.selected:
             #self._view.timeline.selection.setToObj(self._view.element, SELECT)
+        if self.previous_x != None:
+            ratio = float(self.ref / Zoomable.pixelToNs(10000000000))
+            self.previous_x = self.previous_x * ratio
+        self.ref = Zoomable.pixelToNs(10000000000)
         self._view.app.projectManager.current.timeline.enable_update(False)
         tx = self._view.props.parent.get_transform()
         # store y offset for later priority calculation
@@ -126,17 +133,24 @@ class TimelineController(controller.Controller):
         self._view.element.starting_start = self._view.element.get_property("start")
         obj = self._view.element.get_timeline_object()
         obj.starting_start = obj.get_property("start")
+        self.previous_x = self.next_previous_x
 
     def set_pos(self, item, pos):
         x, y = pos
-        position = Zoomable.pixelToNs(x + self._hadj.get_value())
+        x = x + self._hadj.get_value()
         priority = int((y - self._y_offset + self._vadj.get_value()) //
             (LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
         #self._context.setMode(self._getMode())
         track = self._view.element.get_track()
         start = self._view.element.get_start()
         duration = self._view.element.get_duration()
-        if isinstance (self._view, EndHandle) or isinstance (self._view, StartHandle):
+        if self.previous_x:
+            position = self._view.element.get_start() + Zoomable.pixelToNs(x - self.previous_x)
+        else:
+            position = Zoomable.pixelToNs(x)
+        self.previous_x = x
+
+        if isinstance(self._view, EndHandle) or isinstance(self._view, StartHandle):
             position = Zoomable.pixelToNs(x)
             self._context.editTo(position, priority)
             self._view.get_canvas().regroupTracks()
@@ -170,6 +184,7 @@ class TimelineController(controller.Controller):
 
         self._context.editTo(position, priority)
         self._view.get_canvas().regroupTracks()
+        self.next_previous_x = Zoomable.nsToPixel(self._view.element.get_start())
 
     def _getMode(self):
         if self._shift_down:
@@ -202,8 +217,7 @@ class TrimHandle(View, goocanvas.Image, Zoomable):
             pixbuf=TRIMBAR_PIXBUF,
             line_width=0,
             pointer_events=goocanvas.EVENTS_FILL,
-            **kwargs
-        )
+            **kwargs)
         View.__init__(self)
         Zoomable.__init__(self)
 
@@ -297,10 +311,11 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             #self._view.app.current.seeker.seek(Zoomable.pixelToNs(x))
                 #timeline.setSelectionToObj(element, SELECT)
 
-    def __init__(self, instance, element, track, timeline, uTrack, is_transition = False):
+    def __init__(self, instance, element, track, timeline, uTrack, is_transition=False):
         goocanvas.Group.__init__(self)
         View.__init__(self)
         Zoomable.__init__(self)
+        self.ref = Zoomable.nsToPixel(10000000000)
         self.app = instance
         self.track = track
         self.uTrack = uTrack
@@ -342,7 +357,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             for thing in (self.bg, self.selection_indicator,
                 self.start_handle, self.end_handle, self.namebg, self.name):
                 self.add_child(thing)
-        else :
+        else:
             for thing in (self.bg, self.name):
                 self.add_child(thing)
 
@@ -449,7 +464,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
     def _setElement(self):
         if self.element and not self.is_transition:
-            self.name.props.text = self.element.get_property ("uri")
+            self.name.props.text = self.element.get_property("uri")
             twidth, theight = text_size(self.name)
             self.namewidth = twidth
             self.nameheight = theight
@@ -497,7 +512,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             print self.element.get_start()
             raise Exception(e)
         priority = (self.element.get_priority()) / 10
-        if priority < 0 :
+        if priority < 0:
             priority = 0
         y = (self.height + LAYER_SPACING) * priority
         self.set_simple_transform(x, y, 1, 0)
