@@ -187,6 +187,7 @@ class PitiviViewer(gtk.VBox, Loggable):
                 state_change = pending == gst.STATE_VOID_PENDING
 
                 if state_change:
+                    self.internal.currentStateCb(self.pipeline, new)
                     self._currentStateCb(new)
 
     def _disconnectFromPipeline(self):
@@ -1113,7 +1114,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
                 if self.box.area.width != self.pixbuf.get_width():
                     cr.restore()
 
-            if self.pipeline.getState() == gst.STATE_PAUSED:
+            if self.pipeline.get_state() == gst.STATE_PAUSED:
                 self.box.draw(cr)
             cr.pop_group_to_source()
             cr.paint()
