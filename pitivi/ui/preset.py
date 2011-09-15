@@ -84,6 +84,9 @@ class PresetManager(object):
 
     def saveAll(self):
         """Write changes to disk for all presets"""
+        if os.path.isfile(self.user_path):
+            # We used to save presets as a single file instead of a directory
+            os.remove(self.user_path)
         if not os.path.exists(self.user_path):
             os.makedirs(self.user_path)
         for name, properties in self.ordered:
@@ -210,6 +213,9 @@ class PresetManager(object):
         """Update the preset values and write to disk"""
         if self.cur_preset != "No preset":
             self._updatePreset()
+            if os.path.isfile(self.user_path):
+                # We used to save presets as a single file instead of a directory
+                os.remove(self.user_path)
             if not os.path.exists(self.user_path):
                 os.makedirs(self.user_path)
             try:
