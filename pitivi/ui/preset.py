@@ -237,7 +237,7 @@ class PresetManager(object):
         for field, (setter, getter) in self.widget_map.iteritems():
             values[field] = getter()
 
-    def isCurrentPresetChanged(self):
+    def _isCurrentPresetChanged(self):
         """Return whether the widgets values differ from those of the preset."""
         if not self.cur_preset:
             # There is no preset selected, nothing to do.
@@ -282,29 +282,25 @@ class PresetManager(object):
             # presets are installed; they are not expected to be editable.
             return False
         else:
-            values = self.presets[self.cur_preset]
-            return any((values[field] != getter()
-                for field, (setter, getter)
-                in self.widget_map.iteritems()))
+            return self._isCurrentPresetChanged()
 
     def isRemoveButtonSensitive(self):
         """Check if Remove buttons should be sensitive"""
         if not self.cur_preset or self.cur_preset == "No preset":
             return False
+        try:
+            full_path = self.presets[self.cur_preset]["filepath"]
+            (dir, name) = os.path.split(full_path)
+        except KeyError:
+            # This is a newly created preset that has not yet been saved
+            # We cannot remove it since it does not exist
+            return False
+        if dir == self.default_path or not isWritable(full_path):
+            # default_path is the system-wide directory where the default
+            # presets are installed; they are not expected to be editable.
+            return False
         else:
-            try:
-                full_path = self.presets[self.cur_preset]["filepath"]
-                (dir, name) = os.path.split(full_path)
-            except KeyError:
-                # This is a newly created preset that has not yet been saved
-                # We cannot remove it since it does not exist
-                return False
-            if dir == self.default_path or not isWritable(full_path):
-                # default_path is the system-wide directory where the default
-                # presets are installed; they are not expected to be editable.
-                return False
-            else:
-                return True
+            return True
         return False
 
 
