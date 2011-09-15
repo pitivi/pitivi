@@ -422,6 +422,7 @@ class RenderingNoGuiPitivi(InteractivePitivi):
     def __init__(self, project_filename, output_filename, debug=False):
         InteractivePitivi.__init__(self, debug)
         self.outfile = "file://%s" % os.path.abspath(output_filename)
+        print _("Loading project...")
         self._loadProject(project_filename)
 
     def _eosCb(self, unused_obj):
@@ -430,6 +431,8 @@ class RenderingNoGuiPitivi(InteractivePitivi):
     def _newProjectLoaded(self, project):
         # create renderer and set output file
         renderer = Renderer(project, outfile=self.outfile)
+        print _("Project loaded.")
+        print _("Rendering...")
         self._setActioner(renderer)
 
     def shutdown(self):
