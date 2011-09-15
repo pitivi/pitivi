@@ -439,6 +439,7 @@ class EncodingDialog(Renderer, Loggable):
     def _saveRenderPresetButtonClickedCb(self, button):
         self.render_presets.savePreset()
         self.save_render_preset_button.set_sensitive(False)
+        self.remove_render_preset_button.set_sensitive(True)
 
     def _updateRenderPresetButtons(self):
         can_save = self.render_presets.isSaveButtonSensitive()

@@ -454,6 +454,7 @@ class ProjectSettingsDialog():
     def _saveAudioPresetButtonClickedCb(self, button):
         self.audio_presets.savePreset()
         self.save_audio_preset_button.set_sensitive(False)
+        self.remove_audio_preset_button.set_sensitive(True)
 
     def _addVideoPresetButtonClickedCb(self, button):
         preset_name = self._getUniquePresetName(self.video_presets)
@@ -475,6 +476,7 @@ class ProjectSettingsDialog():
     def _saveVideoPresetButtonClickedCb(self, button):
         self.video_presets.savePreset()
         self.save_video_preset_button.set_sensitive(False)
+        self.remove_video_preset_button.set_sensitive(True)
 
     def _updateAudioPresetButtons(self):
         can_save = self.audio_presets.isSaveButtonSensitive()
