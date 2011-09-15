@@ -441,10 +441,10 @@ class EncodingDialog(Renderer, Loggable):
         self.save_render_preset_button.set_sensitive(False)
 
     def _updateRenderPresetButtons(self):
-        preset_changed = self.render_presets.isSaveButtonSensitive()
-        self.save_render_preset_button.set_sensitive(preset_changed)
-        preset_selected = self.render_presets.isRemoveButtonSensitive()
-        self.remove_render_preset_button.set_sensitive(preset_selected)
+        can_save = self.render_presets.isSaveButtonSensitive()
+        self.save_render_preset_button.set_sensitive(can_save)
+        can_remove = self.render_presets.isRemoveButtonSensitive()
+        self.remove_render_preset_button.set_sensitive(can_remove)
 
     def _removeRenderPresetButtonClickedCb(self, button):
         selection = self.render_preset_treeview.get_selection()

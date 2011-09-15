@@ -477,22 +477,20 @@ class ProjectSettingsDialog():
         self.save_video_preset_button.set_sensitive(False)
 
     def _updateAudioPresetButtons(self):
-        preset_changed = self.audio_presets.isCurrentPresetChanged()
-        self.save_audio_preset_button.set_sensitive(preset_changed)
-        preset_selected = bool(self.audio_presets.cur_preset)
-        self.remove_audio_preset_button.set_sensitive(preset_selected)
+        can_save = self.audio_presets.isSaveButtonSensitive()
+        self.save_audio_preset_button.set_sensitive(can_save)
+        can_remove = self.audio_presets.isRemoveButtonSensitive()
+        self.remove_audio_preset_button.set_sensitive(can_remove)
 
     def _updateVideoPresetButtons(self):
-        preset_changed = self.video_presets.isCurrentPresetChanged()
-        self.save_video_preset_button.set_sensitive(preset_changed)
-        preset_selected = bool(self.video_presets.cur_preset)
-        self.remove_video_preset_button.set_sensitive(preset_selected)
+        self.save_video_preset_button.set_sensitive(self.video_presets.isSaveButtonSensitive())
+        self.remove_video_preset_button.set_sensitive(self.video_presets.isRemoveButtonSensitive())
 
     def _updateAudioSaveButton(self, unused_in, button):
-        button.set_sensitive(self.audio_presets.isCurrentPresetChanged())
+        button.set_sensitive(self.audio_presets.isSaveButtonSensitive())
 
     def _updateVideoSaveButton(self, unused_in, button):
-        button.set_sensitive(self.video_presets.isCurrentPresetChanged())
+        button.set_sensitive(self.video_presets.isSaveButtonSensitive())
 
     def darSelected(self):
         return self.select_dar_radiobutton.props.active
