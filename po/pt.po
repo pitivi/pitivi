@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.22\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-16 00:54+0100\n"
-"PO-Revision-Date: 2011-09-12 21:29+0000\n"
+"POT-Creation-Date: 2011-09-16 08:04+0100\n"
+"PO-Revision-Date: 2011-09-16 00:39+0000\n"
 "Last-Translator: António Lima <amrlima@gmail.com>\n"
 "Language-Team: gnome_pt@yahoogroups.com\n"
 "Language: pt\n"
@@ -109,9 +109,8 @@ msgid "6 channels (5.1)"
 msgstr "6 canais (5.1)"
 
 #: ../data/ui/encodingdialog.ui.h:4
-#, fuzzy
 msgid "<b>Render Preset</b>"
-msgstr "<b>Predefinição de Vídeo</b>"
+msgstr "<b>Predefinição de Renderização</b>"
 
 #: ../data/ui/encodingdialog.ui.h:5
 msgid "AAC"
@@ -559,15 +558,14 @@ msgid ""
 msgstr "Instale uma versão das ligações Python para GTK+ maior ou igual a %s."
 
 #: ../pitivi/check.py:147
-#, fuzzy, python-format
+#, python-format
 msgid "You do not have a recent enough version of GTK+ (your version %s)"
-msgstr ""
-"Não tem uma versão suficientemente recente do GStreamer (actualmente %s)"
+msgstr "Não tem uma versão suficientemente recente do GTK+ (actualmente %s)"
 
 #: ../pitivi/check.py:148
-#, fuzzy, python-format
+#, python-format
 msgid "Install a version of GTK+ greater than or equal to %s."
-msgstr "Instale uma versão de GStreamer maior ou igual a %s."
+msgstr "Instale uma versão de GTK+ maior ou igual a %s."
 
 #: ../pitivi/check.py:151
 #, python-format
@@ -998,9 +996,8 @@ msgstr "Apresentar Efeitos de Vídeo como Ícones"
 
 #: ../pitivi/ui/encodingdialog.py:225 ../pitivi/ui/projectsettings.py:290
 #: ../pitivi/ui/projectsettings.py:296
-#, fuzzy
 msgid "No preset"
-msgstr "Nova Predefinição"
+msgstr "Nova predefinição"
 
 #: ../pitivi/ui/encodingdialog.py:374 ../pitivi/ui/projectsettings.py:315
 #, python-format
@@ -1008,14 +1005,13 @@ msgid "\"%s\" already exists."
 msgstr "\"%s\" já existe."
 
 #: ../pitivi/ui/encodingdialog.py:415 ../pitivi/ui/projectsettings.py:431
-#, fuzzy
 msgid "New preset"
-msgstr "Nova Predefinição"
+msgstr "Nova predefinição"
 
 #: ../pitivi/ui/encodingdialog.py:418 ../pitivi/ui/projectsettings.py:434
-#, fuzzy, python-format
+#, python-format
 msgid "New preset %d"
-msgstr "Nova Predefinição %d"
+msgstr "Nova predefinição %d"
 
 #: ../pitivi/ui/encodingdialog.py:542
 msgid "A file name is required."
