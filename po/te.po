@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2011-09-21 05:57+0000\n"
-"PO-Revision-Date: 2011-09-21 16:07+0530\n"
+"PO-Revision-Date: 2011-09-21 16:40+0530\n"
 "Last-Translator: Praveen Illa <mail2ipn@gmail.com>\n"
 "Language-Team: తెలుగు <indlinux-telugu@lists.sourceforge.net>\n"
 "Language: te\n"
@@ -194,7 +194,7 @@ msgstr "రెండర్"
 
 #: ../data/ui/encodingdialog.ui.h:26
 msgid "Render only the selected clips"
-msgstr ""
+msgstr "ఎంచుకున్న క్లిప్‌లను మాత్రమే రెండర్ చేయి"
 
 #: ../data/ui/encodingdialog.ui.h:27
 msgid "Sample Depth:"
@@ -366,7 +366,7 @@ msgstr ""
 
 #: ../data/ui/startupwizard.ui.h:3
 msgid "Missing dependencies..."
-msgstr ""
+msgstr "తప్పిపోయిన ఆధారితత్వాలు..."
 
 #: ../data/ui/startupwizard.ui.h:4
 msgid "Welcome"
@@ -709,7 +709,7 @@ msgstr "రంగులు"
 
 #: ../pitivi/effects.py:85
 msgid "Noise"
-msgstr ""
+msgstr "రొద"
 
 #: ../pitivi/effects.py:87
 msgid "Analysis"
@@ -733,7 +733,7 @@ msgstr "సమయం"
 
 #: ../pitivi/effects.py:116 ../pitivi/effects.py:226
 msgid "Uncategorized"
-msgstr ""
+msgstr "వర్గీకరించనివి"
 
 #: ../pitivi/effects.py:245
 msgid "Audio |audio"
@@ -963,7 +963,7 @@ msgstr "వీడియో ప్రభావాలను ప్రతీకల 
 #: ../pitivi/ui/encodingdialog.py:225 ../pitivi/ui/projectsettings.py:290
 #: ../pitivi/ui/projectsettings.py:296
 msgid "No preset"
-msgstr ""
+msgstr "ఏ ప్రిసెట్ లేదు"
 
 #: ../pitivi/ui/encodingdialog.py:374 ../pitivi/ui/projectsettings.py:315
 #, python-format
@@ -977,7 +977,7 @@ msgstr "కొత్త ప్రిసెట్"
 #: ../pitivi/ui/encodingdialog.py:418 ../pitivi/ui/projectsettings.py:434
 #, python-format
 msgid "New preset %d"
-msgstr ""
+msgstr "కొత్త ప్రిసెట్ %d"
 
 #: ../pitivi/ui/encodingdialog.py:542
 msgid "A file name is required."
@@ -1202,7 +1202,7 @@ msgstr "క్లిప్ స్వరూపణం"
 
 #: ../pitivi/ui/mainwindow.py:608
 msgid "Contributors:"
-msgstr ""
+msgstr "సహాయకులు:"
 
 #: ../pitivi/ui/mainwindow.py:620
 msgid "translator-credits"
@@ -1459,7 +1459,7 @@ msgstr "ఫైళ్ళను దిగుమతిచేయి...(_I)"
 
 #: ../pitivi/ui/sourcelist.py:308
 msgid "Add media files to your project"
-msgstr ""
+msgstr "మీ ప్రోజెక్టుకు మాధ్యమ ఫైళ్ళను జతచేయి"
 
 #: ../pitivi/ui/sourcelist.py:311
 msgid "Import _Folders..."
@@ -1471,7 +1471,7 @@ msgstr ""
 
 #: ../pitivi/ui/sourcelist.py:314
 msgid "Select Unused Media"
-msgstr ""
+msgstr "వాడని మాధ్యమాన్ని ఎంచుకొను"
 
 #: ../pitivi/ui/sourcelist.py:315
 msgid "Select clips that have not been used in the project"
@@ -1487,19 +1487,19 @@ msgstr "సమయపరిధి చివరన చొప్పించు (_E
 
 #: ../pitivi/ui/sourcelist.py:345
 msgid "Show Clips as a List"
-msgstr ""
+msgstr "క్లిప్‌లను జాబితా వలె చూపించు"
 
 #: ../pitivi/ui/sourcelist.py:347
 msgid "Show Clips as Icons"
-msgstr ""
+msgstr "క్లిప్‌లను ప్రతీకల వలె చూపించు"
 
 #: ../pitivi/ui/sourcelist.py:514
 msgid "Select One or More Folders"
-msgstr ""
+msgstr "ఒకటి లేదా మరిన్ని సంచయాలను ఎంచుకొను"
 
 #: ../pitivi/ui/sourcelist.py:517
 msgid "Select One or More Files"
-msgstr ""
+msgstr "ఒకటి లేదా మరిన్ని ఫైళ్ళను ఎంచుకొను"
 
 #: ../pitivi/ui/sourcelist.py:518
 msgid "Close after importing files"
@@ -1651,7 +1651,7 @@ msgstr "తరువాత కీ ఫ్రేము (_N)"
 
 #: ../pitivi/ui/trackobject.py:49
 msgid "Color for video clips"
-msgstr ""
+msgstr "వీడియో క్లిప్‌లకు రంగు"
 
 #: ../pitivi/ui/trackobject.py:50
 msgid "The background color for clips in video tracks."
@@ -1659,7 +1659,7 @@ msgstr ""
 
 #: ../pitivi/ui/trackobject.py:60
 msgid "Color for audio clips"
-msgstr ""
+msgstr "ఆడియో క్లిప్‌లకు రంగు"
 
 #: ../pitivi/ui/trackobject.py:61
 msgid "The background color for clips in audio tracks."
@@ -1675,11 +1675,11 @@ msgstr ""
 
 #: ../pitivi/ui/trackobject.py:82
 msgid "Clip font"
-msgstr ""
+msgstr "క్లిప్ ఫాంటు"
 
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
-msgstr ""
+msgstr "క్లిప్ శీర్షికలకు వాడవలసిన ఫాంటు"
 
 #: ../pitivi/ui/viewer.py:314
 msgid "Go to the beginning of the timeline"
