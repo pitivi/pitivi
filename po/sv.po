@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-20 20:30+0200\n"
-"PO-Revision-Date: 2011-09-20 20:42+0100\n"
+"POT-Creation-Date: 2011-09-21 07:34+0200\n"
+"PO-Revision-Date: 2011-09-21 07:57+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -28,13 +28,12 @@ msgid "Pitivi Video Editor"
 msgstr "Videoredigeraren Pitivi"
 
 #: ../data/ui/alignmentprogress.ui.h:1
-#, fuzzy
 msgid "<b><big>Performing Auto-Alignment</big></b>"
-msgstr "<b><big>Renderar film</big></b>"
+msgstr "<b><big>Genomför automatisk justering</big></b>"
 
 #: ../data/ui/alignmentprogress.ui.h:2
 msgid "Auto-Alignment Starting"
-msgstr ""
+msgstr "Automatisk justering startar"
 
 #: ../data/ui/alignmentprogress.ui.h:3
 #: ../data/ui/encodingprogress.ui.h:6
@@ -54,9 +53,8 @@ msgid "<b>Size</b>"
 msgstr "<b>Storlek</b>"
 
 #: ../data/ui/cliptransformation.ui.h:4
-#, fuzzy
 msgid "<b>Viewer Zoom</b>"
-msgstr "<b>Video:</b>"
+msgstr "<b>Visningszoom</b>"
 
 #: ../data/ui/cliptransformation.ui.h:5
 msgid "Height:"
@@ -84,7 +82,7 @@ msgstr "Saknade beroenden"
 
 #: ../data/ui/depsmanager.ui.h:3
 msgid "To enable additional features, please install the following packages and restart PiTiVi:"
-msgstr ""
+msgstr "Installera följande paket och starta om PiTiVi för att aktivera ytterligare funktioner:"
 
 #: ../data/ui/depsmanager.ui.h:4
 msgid "label"
@@ -454,28 +452,24 @@ msgid "An instance of %s is already running in this script."
 msgstr "En instans av %s kör redan i det här skriptet."
 
 #: ../pitivi/check.py:118
-#, fuzzy
 msgid "Could not find the GNonLin plugins"
-msgstr "Kunde inte hitta GNonLin-insticksmodulerna!"
+msgstr "Kunde inte hitta GNonLin-insticksmodulerna"
 
 #: ../pitivi/check.py:119
 msgid "Make sure the plugins were installed and are available in the GStreamer plugins path."
 msgstr "Kontrollera att insticksmodulerna blev installerade och finns tillgängliga i sökvägen för GStreamer-insticksmodulerna."
 
 #: ../pitivi/check.py:121
-#, fuzzy
 msgid "Could not find the autodetect plugins"
-msgstr "Kunde inte hitta insticksmodulerna för automatisk identifiering!"
+msgstr "Kunde inte hitta insticksmodulerna för automatisk identifiering"
 
 #: ../pitivi/check.py:122
-#, fuzzy
 msgid "Make sure you have installed gst-plugins-good and that it's available in the GStreamer plugin path."
-msgstr "Kontrollera att du har installerat gst-plugins-good och finns tillgänglig i sökvägen för GStreamer-insticksmodulerna."
+msgstr "Försäkra dig om att du har installerat gst-plugins-good och att den finns tillgänglig i sökvägen för GStreamer-insticksmodulerna."
 
 #: ../pitivi/check.py:124
-#, fuzzy
 msgid "PyGTK doesn't have cairo support"
-msgstr "PyGTK har inte stöd för cairo!"
+msgstr "PyGTK har inte stöd för cairo"
 
 #: ../pitivi/check.py:125
 msgid "Please use a version of the GTK+ Python bindings built with cairo support."
@@ -486,128 +480,120 @@ msgid "Could not initiate the video output plugins"
 msgstr "Kunde inte initiera insticksmoduler för videoutmatning"
 
 #: ../pitivi/check.py:128
-#, fuzzy
 msgid "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)."
-msgstr "Kontrollera att du har åtminstone en giltig videoutmatningssink tillgängligt (xvimagesink eller ximagesink)"
+msgstr "Försäkra dig om att du har åtminstone ett giltigt videoutmatningssink tillgängligt (xvimagesink eller ximagesink)."
 
 #: ../pitivi/check.py:130
 msgid "Could not initiate the audio output plugins"
 msgstr "Kunde inte initiera insticksmoduler för ljudutmatning"
 
 #: ../pitivi/check.py:131
-#, fuzzy
 msgid "Make sure you have at least one valid audio output sink available (alsasink or osssink)."
-msgstr "Kontrollera att du har åtminstone en giltig ljudutmatningssink tillgängligt (alsasink eller osssink)"
+msgstr "Försäkra dig om att du har åtminstone ett giltig ljudutmatningssink tillgängligt (alsasink eller osssink)."
 
 #: ../pitivi/check.py:133
 msgid "Could not import the cairo Python bindings"
 msgstr "Kunde inte importera Python-bindningar för cairo"
 
 #: ../pitivi/check.py:134
-#, fuzzy
 msgid "Make sure you have the cairo Python bindings installed."
-msgstr "Försäkra dig om att du har Python-bindningar för cairo installerade"
+msgstr "Försäkra dig om att du har Python-bindningar för cairo installerat."
 
 #: ../pitivi/check.py:136
 msgid "Could not import the goocanvas Python bindings"
 msgstr "Kunde inte importera Python-bindningar för goocanvas"
 
 #: ../pitivi/check.py:137
-#, fuzzy
 msgid "Make sure you have the goocanvas Python bindings installed."
-msgstr "Försäkra dig om att du har Python-bindningar för goocanvas installerade"
+msgstr "Försäkra dig om att du har Python-bindningar för goocanvas installerat."
 
 #: ../pitivi/check.py:139
-#, fuzzy
 msgid "Could not import the xdg Python library"
-msgstr "Kunde inte importera Python-bindningar för cairo"
+msgstr "Kunde inte importera xdg Python-biblioteket"
 
 #: ../pitivi/check.py:140
-#, fuzzy
 msgid "Make sure you have the xdg Python library installed."
-msgstr "Försäkra dig om att du har Python-bindningar för cairo installerade"
+msgstr "Försäkra dig om att du har xdg Python-biblioteket installerat."
 
 #: ../pitivi/check.py:143
-#, fuzzy, python-format
+#, python-format
 msgid "You do not have a recent enough version of the GTK+ Python bindings (your version %s)"
-msgstr "Du har inte en tillräckligt ny version av Python-bindningar för GTK+  (för närvarande %s)"
+msgstr "Du har inte en tillräckligt ny version av Python-bindningar för GTK+  (din version är %s)"
 
 #: ../pitivi/check.py:144
-#, fuzzy, python-format
+#, python-format
 msgid "Install a version of the GTK+ Python bindings greater than or equal to %s."
-msgstr "Installera en version av GTK+ Python-bindningar som är större eller samma som %s"
+msgstr "Installera en version av GTK+ Python-bindningar som är senare eller samma som %s."
 
 #: ../pitivi/check.py:147
-#, fuzzy, python-format
+#, python-format
 msgid "You do not have a recent enough version of GTK+ (your version %s)"
-msgstr "Du har inte en tillräckligt ny version av GStreamer (för närvarande %s)"
+msgstr "Du har inte en tillräckligt ny version av GTK+ (din version är %s)"
 
 #: ../pitivi/check.py:148
-#, fuzzy, python-format
+#, python-format
 msgid "Install a version of GTK+ greater than or equal to %s."
-msgstr "Installera en version av GStreamer som är större eller samma som %s"
+msgstr "Installera en version av GTK+ som är senare eller samma som %s."
 
 #: ../pitivi/check.py:151
-#, fuzzy, python-format
+#, python-format
 msgid "You do not have a recent enough version of GStreamer Python bindings (your version %s)"
-msgstr "Du har inte en tillräckligt ny version av Python-bindningar för GStreamer (för närvarande %s)"
+msgstr "Du har inte en tillräckligt ny version av Python-bindningar för GStreamer (din version är %s)"
 
 #: ../pitivi/check.py:152
-#, fuzzy, python-format
+#, python-format
 msgid "Install a version of the GStreamer Python bindings greater than or equal to %s."
-msgstr "Installera en version av GStreamer Python-bindningar som är större eller samma som %s"
+msgstr "Installera en version av GStreamer Python-bindningar som är senare eller samma som %s."
 
 #: ../pitivi/check.py:155
-#, fuzzy, python-format
+#, python-format
 msgid "You do not have a recent enough version of GStreamer (your version %s)"
-msgstr "Du har inte en tillräckligt ny version av GStreamer (för närvarande %s)"
+msgstr "Du har inte en tillräckligt ny version av GStreamer (din version är %s)"
 
 #: ../pitivi/check.py:156
-#, fuzzy, python-format
+#, python-format
 msgid "Install a version of the GStreamer greater than or equal to %s."
-msgstr "Installera en version av GStreamer som är större eller samma som %s"
+msgstr "Installera en version av GStreamer som är senare eller samma som %s."
 
 #: ../pitivi/check.py:159
-#, fuzzy, python-format
+#, python-format
 msgid "You do not have a recent enough version of the cairo Python bindings (your version %s)"
-msgstr "Du har inte en tillräckligt ny version av Python-bindningar för cairo (för närvarande %s)"
+msgstr "Du har inte en tillräckligt ny version av Python-bindningar för cairo (din version är %s)"
 
 #: ../pitivi/check.py:160
-#, fuzzy, python-format
+#, python-format
 msgid "Install a version of the cairo Python bindings greater than or equal to %s."
-msgstr "Installera en version av cairo Python-bindningar som är större eller samma som %s"
+msgstr "Installera en version av cairo Python-bindningar som är senare eller samma som %s."
 
 #: ../pitivi/check.py:163
-#, fuzzy, python-format
+#, python-format
 msgid "You do not have a recent enough version of the GNonLin GStreamer plugin (your version %s)"
-msgstr "Du har inte en tillräckligt ny version av GStreamer-insticksmodulen GNonLin (för närvarande %s)"
+msgstr "Du har inte en tillräckligt ny version av GStreamer-insticksmodulen GNonLin (din version är %s)"
 
 #: ../pitivi/check.py:164
-#, fuzzy, python-format
+#, python-format
 msgid "Install a version of the GNonLin GStreamer plugin greater than or equal to %s."
-msgstr "Installera en version av GNonLin GStreamer-instick som är större eller samma som %s"
+msgstr "Installera en version av GNonLin GStreamer-instick som är senare eller samma som %s."
 
 #: ../pitivi/check.py:166
 msgid "Could not import the Zope interface module"
 msgstr "Kunde inte importera Zope-gränssnittsmodulen"
 
 #: ../pitivi/check.py:167
-#, fuzzy
 msgid "Make sure you have the zope.interface module installed."
-msgstr "Kontrollera att du har modulen zope.interface installerad"
+msgstr "Kontrollera att du har modulen zope.interface installerad."
 
 #: ../pitivi/check.py:169
 msgid "Could not import the distutils modules"
 msgstr "Kunde inte importera distutils-modulerna"
 
 #: ../pitivi/check.py:170
-#, fuzzy
 msgid "Make sure you have the distutils Python module installed."
-msgstr "Kontrollera att du har python-modulen distutils installerad"
+msgstr "Kontrollera att du har Python-modulen distutils installerad."
 
 #: ../pitivi/check.py:176
 msgid "Enables the autoalign feature"
-msgstr ""
+msgstr "Aktiverar automatisk justering"
 
 #: ../pitivi/check.py:181
 msgid "Additional video effects"
@@ -615,7 +601,7 @@ msgstr "Ytterligare videoeffekter"
 
 #: ../pitivi/check.py:183
 msgid "Additional multimedia codecs through the FFmpeg library"
-msgstr ""
+msgstr "Ytterligare kodekar för multimedia via FFmpeg-biblioteket"
 
 #: ../pitivi/discoverer.py:223
 #, python-format
@@ -656,7 +642,7 @@ msgid "No available source handler."
 msgstr "Ingen tillgänglig källhanterare."
 
 #: ../pitivi/discoverer.py:361
-#, fuzzy, python-format
+#, python-format
 msgid "You do not have a GStreamer source element to handle the \"%s\" protocol"
 msgstr "Du har inte ett GStreamer-källelement för att hantera protokollet \"%s\""
 
@@ -815,9 +801,8 @@ msgid "Effects"
 msgstr "Effekter"
 
 #: ../pitivi/ui/clipproperties.py:409
-#, fuzzy
 msgid "Select a clip on the timeline to configure its associated effects"
-msgstr "<span>Du måste välja <b>ett</b> klipp i tidslinjen för att konfigurera dess associerade effekter</span>"
+msgstr "Välj ett klipp i tidslinjen för att konfigurera dess associerade effekter"
 
 #: ../pitivi/ui/clipproperties.py:483
 msgid "Transformation"
@@ -1212,9 +1197,8 @@ msgid "Effect Library"
 msgstr "Effektbibliotek"
 
 #: ../pitivi/ui/mainwindow.py:406
-#, fuzzy
 msgid "Clip configuration"
-msgstr "Konfiguration för effekter"
+msgstr "Konfiguration för klipp"
 
 # Bra ord på svenska sökes
 #: ../pitivi/ui/mainwindow.py:608
@@ -1280,11 +1264,13 @@ msgstr "Leta upp saknad fil..."
 
 #. The file is probably an image, not video or audio.
 #: ../pitivi/ui/mainwindow.py:867
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
 "Please specify its new location:"
-msgstr "Följande fil har flyttats. Berätta för PiTiVi var den finns nu."
+msgstr ""
+"Följande fil har flyttats: \"<b>%s</b>\"\n"
+"Ange dess nya plats:"
 
 #: ../pitivi/ui/mainwindow.py:872
 #, python-format
@@ -1292,6 +1278,8 @@ msgid ""
 "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
 "Please specify its new location:"
 msgstr ""
+"Följande fil har flyttats: \"<b>%s</b>\" (längd: %s)\n"
+"Ange dess nya plats:"
 
 #: ../pitivi/ui/mainwindow.py:1016
 msgid "Save As..."
@@ -1334,7 +1322,7 @@ msgstr "Prestanda"
 
 #: ../pitivi/ui/previewer.py:67
 msgid "Thumbnail every"
-msgstr ""
+msgstr "Miniatyrbild var"
 
 #: ../pitivi/ui/previewer.py:69
 #: ../pitivi/ui/previewer.py:70
@@ -1570,7 +1558,7 @@ msgstr "Fästavstånd"
 
 #: ../pitivi/ui/timelinecanvas.py:54
 msgid "Threshold (in pixels) at which two clips will snap together when dragging or trimming."
-msgstr ""
+msgstr "Tröskelvärde (i bildpunkter) med vilket två klipp ska fästas tillsammans när de dras eller finjusteras."
 
 #: ../pitivi/ui/timelinecontrols.py:49
 msgid "Audio:"
@@ -1635,7 +1623,7 @@ msgstr "Gruppera videoklipp"
 
 #: ../pitivi/ui/timeline.py:67
 msgid "Align clips based on their soundtracks"
-msgstr ""
+msgstr "Justera klipp baserat på deras ljudspår"
 
 #: ../pitivi/ui/timeline.py:130
 msgid "One or more GStreamer errors occured!"
