@@ -556,8 +556,8 @@ msgstr ""
 msgid ""
 "Install a version of the GTK+ Python bindings greater than or equal to %s."
 msgstr ""
-"Installare una versione dei binding di Python per GTK+ uguale o maggiore a %"
-"s."
+"Installare una versione dei binding di Python per GTK+ uguale o maggiore a "
+"%s."
 
 #: ../pitivi/check.py:147
 #, python-format
@@ -581,8 +581,8 @@ msgstr ""
 #: ../pitivi/check.py:152
 #, python-format
 msgid ""
-"Install a version of the GStreamer Python bindings greater than or equal to %"
-"s."
+"Install a version of the GStreamer Python bindings greater than or equal to "
+"%s."
 msgstr ""
 "Installare una versione dei binding di Python per GStreamer uguale o "
 "maggiore a %s."
@@ -612,8 +612,8 @@ msgstr ""
 msgid ""
 "Install a version of the cairo Python bindings greater than or equal to %s."
 msgstr ""
-"Installare una versione dei binding di Python per Cairo uguale o maggiore a %"
-"s."
+"Installare una versione dei binding di Python per Cairo uguale o maggiore a "
+"%s."
 
 #: ../pitivi/check.py:163
 #, python-format
@@ -627,11 +627,11 @@ msgstr ""
 #: ../pitivi/check.py:164
 #, python-format
 msgid ""
-"Install a version of the GNonLin GStreamer plugin greater than or equal to %"
-"s."
+"Install a version of the GNonLin GStreamer plugin greater than or equal to "
+"%s."
 msgstr ""
-"Installare una versione del plugin GNonLin di GStreamer uguale o maggiore a %"
-"s."
+"Installare una versione del plugin GNonLin di GStreamer uguale o maggiore a "
+"%s."
 
 #: ../pitivi/check.py:166
 msgid "Could not import the Zope interface module"
