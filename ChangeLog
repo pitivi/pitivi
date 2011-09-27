@@ -1,3 +1,127 @@
+2011-09-27  Thibault Saunier <thibault.saunier@collabora.com>
+
+	* AUTHORS:
+	* ChangeLog:
+	* NEWS:
+	* RELEASE:
+	* configure.ac:
+	  Releasing 0.15.0 "Ich bin ein berliner"
+
+2011-09-27  Thibault Saunier <thibault.saunier@collabora.com>
+
+	  Merging translations
+
+2011-09-26  Gianvito Cavasoli <gianvito@gmx.it>
+
+	* po/it.po:
+	  [l10n] Updated Italian translation
+
+2011-09-24  Gianvito Cavasoli <gianvito@gmx.it>
+
+	* po/it.po:
+	  l10n: Added Italian translation
+
+2011-09-21  ipraveen <mail2ipn@gmail.com>
+
+	* po/LINGUAS:
+	  Added Telugu Translation
+
+2011-09-21  ipraveen <mail2ipn@gmail.com>
+
+	* po/te.po:
+	  Updates to Telugu translation
+
+2011-09-21  ipraveen <mail2ipn@gmail.com>
+
+	* po/te.po:
+	  Updated Telugu translation
+
+2011-09-21  Daniel Nylander <po@danielnylander.se>
+
+	* po/sv.po:
+	  Updated Swedish translation
+
+2011-09-20  Daniel Nylander <po@danielnylander.se>
+
+	* po/sv.po:
+	  Updated Swedish translation
+
+2011-09-19  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2011-09-19  Peteris Krisjanis <pecisk@gmail.com>
+
+	* po/lv.po:
+	  Updated Latvian translation.
+
+2011-09-16  António Lima <amrlima@gmail.com>
+
+	* po/pt.po:
+	  Updated Portuguese translation
+
+2011-09-16  António Lima <amrlima@gmail.com>
+
+	* po/pt.po:
+	  Updated Portuguese translation
+
+2011-09-15  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/projectsettings.py:
+	  Enable the preset Remove button when changes have been saved
+
+2011-09-15  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/projectsettings.py:
+	  Fix project settings' checks for Save and Remove preset buttons
+
+2011-09-15  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/preset.py:
+	  preset: Cleanup savePreset and isRemoveButtonSensitive
+
+2011-09-15  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/preset.py:
+	  Remove old presets files to allow creating preset directories
+
+2011-09-15  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/application.py:
+	  Print the status when using the commandline render mode
+
+2011-09-13  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-09-13  Martin Srebotnjak <miles@filmsi.net>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-09-13  Daniel Korostil <ted.korostiled@gmail.com>
+
+	* po/uk.po:
+	  Uploaded Ukranian
+
+2011-09-11  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/gstwidget.py:
+	  Properly show property descriptions (blurbs) for codecs
+
+2011-09-11  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2011-09-11  Thibault Saunier <thibault.saunier@collabora.com>
+
+	  Merging translations
+
 2011-09-11  Thibault Saunier <thibault.saunier@collabora.com>
 
 	* ChangeLog:

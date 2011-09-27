@@ -1,210 +1,145 @@
-0.14.0 Release "no longer kills kittens"
+0.15.0 Release "Ich bin ein berliner"
 ---------------------------------------
 
-The PiTiVi team is proud to announce the first release of the 0.14 series.
+The PiTiVi team is proud to announce the 0.15 release.
 
 Due to its dependency on GStreamer, The PiTiVi team strongly recommends users have
 all official latest gstreamer libraries and plugins installed for the best user
 experience.
 
-
 * Features of this release
 
- * Audio and video effects
- * Completely redesigned project settings dialog, with the ability to create presets
- * Completely redesigned rendering dialog
- * Welcome dialog that helps you start a project or load recent projects in two clicks
- * Ability to preview video, audio and image files before importing
- * Add a "best fit" zoom button
- * Ability to jump to an exact position in the timeline
- * Ability to specify custom aspect ratios and framerates
- * Show a progress bar when loading projects
- * 300% faster project timeline loading
- * Search bar in the Media Library
- * Ability to detach all the tabs and the previewer
- * New manpage
- * Commandline render mode
- * Use the standard infobar widget all around
+  * A new transformation feature allows resizing, panning and cropping clips directly in the previewer
+  * Automatic clip alignment by analyzing soundtracks to sync multicamera footage
+  * Ability to have presets for rendering
+  * Default set of project settings and rendering presets
+  * Cleaner preferences dialog
+  * Integrated offline user manual
+  * Cleaner advanced codec settings dialog
+  * Improved video thumbnailing performance
+  * "Soft depedencies" manager to warn the user of features requiring additional packages
+  * Port to gtkbuilder
+  * Respect GNOME's button icons setting
+  * Improved startup time
+  * Code cleanups and remove dead code
+  * Properly show property descriptions (blurbs) for advanced codec settings
 
-* Requirements
+== Hard requirements ==
+  * gstreamer >= 0.10.28
+  * gst-python >= 0.10.19
+  * gnonlin >= 0.10.16
+  * pygtk >= 2.18.0
+  * pygtk >= 2.24.0
+  * Python >= 2.5
+  * zope.interface (http://www.zope.org/Products/ZopeInterface)
+  * setuptools (http://peak.telecommunity.com/DevCenter/setuptools)
+  * pygoocanvas (http://live.gnome.org/GooCanvas)
+  * pyxdg (http://www.freedesktop.org/wiki/Software/pyxdg)
 
- * gstreamer >= 0.10.28
- * gst-python >= 0.10.19
- * gnonlin >= 0.10.16
- * pygtk >= 2.18.0
- * Python >= 2.5
- * zope.interface (http://www.zope.org/Products/ZopeInterface)
- * setuptools (http://peak.telecommunity.com/DevCenter/setuptools)
- * pygoocanvas (http://live.gnome.org/GooCanvas)
- * pyxdg (http://www.freedesktop.org/wiki/Software/pyxdg)
+== Soft requirements ==
+  * frei0r for the transformation feature
+  * Numpy for the auto aligner feature
+
+The PiTiVi team recommends satisfying those dependencies as much as possible
+for an optimal user experience.
 
 * Contributors
-
-   239  Thibault Saunier
-    94  Brandon Lewis
-    77  Jean-François Fortin Tam
-    39  Alessandro Decina
-    33  Edward Hervey
-    27  Alex Băluț
-    19  Andrej Žnidaršič
-    18  Pier Carteri
-    12  Mario Blättermann
-     9  Daniel Mustieles
-     9  Luis de Bethencourt
-     9  Marek Černocký
-     7  Alexandre Prokoudine
-     7  Jorge González
-     6  Mathieu Duponchelle
-     5  Bruno Brouard
-     5  Robert Swain
-     4  Gabor Kelemen
-     4  Petr Kovar
-     3  Djavan Fagundes
-     3  Gianvito Cavasoli
-     3  Hannie Dumoleyn
-     3  Jesse Aviles
-     3  Yaron Shahrabani
-     2  António Lima
-     2  Bruce Cowan
-     2  Daniel Korostil
-     2  Fran Diéguez
-     2  Karl Palsson
-     2  Kjartan Maraas
-     2  Mattias Põldaru
-     2  Maxim V. Dziumanenko
-     2  Stéphane Maniaci
-     2  Volker Sobek
-     2  Мирослав Николић
-     1  7 Stéphane Maniaci
-     1  Aron Xu
-     1  Arun Raghavan
-     1  Ben Asselstine
-     1  Benjamin Berg
-     1  Benjamin M. Schwartz
-     1  Carles Ferrando
-     1  Cheng-Chia Tseng
-     1  Claude Paroz
-     1  Daniel Nylander
-     1  Hicham HAOUARI
-     1  Ivaylo Valkov
-     1  Joe Hansen
-     1  Jordi Estrada
-     1  Kang Bundo
-     1  Khaled Hosny
-     1  Kim Boram
-     1  Kristjan SCHMIDT
-     1  Mateus Zenaide
-     1  Miroslav Nikolić
-     1  Nguyễn Thái Ngọc Duy
-     1  Peter Mráz
-     1  Rudolfs Mazurs
-     1  Takayuki KUSANO
-     1  Wouter Bolsterlee
-     1  Yinghua Wang
-     1  Yuri Myasoedov
+    108 Alex Băluț
+    88  Jean-François Fortin Tam
+    52  Thibault Saunier
+    25  Feroze Naina
+    10  Lubosz Sarnecki
+    10  Daniel Mustieles
+    10  Mario Blättermann
+    8   Marek Černocký
+    7   Benjamin M. Schwartz
+    7   Andrej Žnidaršič
+    6   Stéphane Maniaci
+    4   Hicham HAOUARI
+    4   Kjartan Maraas
+    3   Daniel Korostil
+    3   ipraveen
+    2   António Lima
+    2   Brandon Lewis
+    2   Bruno Brouard
+    2   Gianvito Cavasoli
+    2   Daniel Nylander
+    2   Matej Urbančič
+    2   Мирослав Николић
+    1   Edward Hervey
+    1   Gabriel Speckhahn
+    1   Gil Forcada
+    1   James Putt
+    1   Jorge González
+    1   Luis de Bethencourt
+    1   Martin Srebotnjak
+    1   Peter Mráz
+    1   Peteris Krisjanis
+    1   Piotr Drąg
+    1   Yuri Myasoedov
 
 * Download
 
   PiTiVi source tarballs are available on gnome FTP:
-   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.14/
+   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.15/
 
   See the website for distribution-specific packages.
 
 * Information and Feedback
 
  * Information for users and developers can be found on the PiTiVi website :
-     http://www.pitivi.org/
+   http://www.pitivi.org/
  * Comments and feedback are welcome.
  * Mailing-list : pitivi-pitivi@lists.sourceforge.net
  * PiTiVi bug-tracker : http://bugzilla.gnome.org/browse.cgi?product=pitivi
 
 * Bugs Fixed
 
-432723  [Rendering Dialog] Cleanups/enhancements
-605920  Switch to (g)udev for device detection/support (deprecation of HAL)
-403904  Rendering : provide a default filename
-433349  Pitivi should keep aspect ratio when resizing
-578710  filter as you type search bar
-583203  show a progress bar when loading projects or large amounts of clips and don't hardcode a timeout
-629327  Ability to jump to an exact position in the timeline
-629605  Video should come before Audio in the UI dialogs
-637497  plural forms needed
-638143  [PATCH] Missing files dialog: formatter does not correctly compare mappings when searching for probable matches
-644313  [regression] Splitting does not work if no clip is selected
-580167  do not block settings when applying a template
-582379  tooltips for preview playback controls
-584048  project/render : Allow any framerates
-585737  Attach extension to filenames
-585743  Control buttons are misplaced
-586003  Previewer in the importing file chooser
-587095  codec rendering settings are constantly reset
-590471  getAudioDescription and getVideoDescription strings are not translatable
-592248  Allow Pause/Resume During Render
-593682  make the containers/codecs/muxers/formats list human-readable/cleaner
-605445  Pitivi does not work on big endian machines
-607243  show the rendering progress percentage in the window title
-610127  Clip details tooltip for icon view in media library
-610188  zooming glitches / playhead and clips jump around
-611856  Ability to enter custom framerates manually
-613767  Rendering hang with transitions
-613960  Dragging an SVG to the timeline fails
-614758  Change aspect ratio when rendering
-615337  Project settings window is very tall
-615570  new project / recent projects startup wizard
-618467  The function xdg_get_dirs in pitivi/settings.py doesn't work
-621342  show "Quick Start guide" item in the Help menu
-627148  Scrubbing over still image start causes segfault
-629107  "Keyframe" menu item should read "Insert keyframe"
-629204  [regression] Adding PNG to timeline results in no video
-629218  vp8enc's quality setting constantly reset
-629220  missing clips dialog size too small
-629408  Double-clicking on a video within the library should launch it in the previewer
-629606  render dialog sometimes causes tracebacks when clicking the Settings button
-629611  splitting then deleting the first part of a clip causes a not-negotiated error
-629694  Importing a source which has already been imported raises an error and the import process doesn't continue
-629784  clips over each other cause excess work, performance drops
-629811  Labels of the keyframe control points at wrong positions or don't show up at all
-630015  preview (doubleclick/rightclick->play clip/DragDrop) fails for stills
-630359  Unable to commit a translation
-630368  Icon view for effects thumbnails
-630370  "&" shows up incorrectly in effects library
-630371  Show effect name in its tooltip
-630373  Can't move the zoom slider with the mouse wheel
-630453  update the dependencies/suggested packages for effects
-630608  hide the "not recommended" containers/codecs in the rendering dialog
-630827  Clips jump back to original position after drag and drop
-632366  Ellipsize the "Open" and "Save As" menu items
-632382  [patch] Effects list filtering spacing improvements
-632391  [regression] box selection marquee doesn't work properly when zoomed in
-632414  Transitions cause not-negotiated errors
-632974  Ungrouped audio gets stuck in lower layers
-633110  could not import actioner module
-633372  Add a "best fit" magnifier icon/button to make the zooming slider more discoverable
-633414  Cleaner XDG dirs spec implementation with pyxdg
-633506  Strings need to be translatable
-634933  Preview in the Timeline is weird and wrong for AYUV video
-634991  [patch] Auto-expand preferences contents area
-635719  Creates transitions when inserting clips to the end of the timeline
-635984  The -p command line flag for previewing a project is broken
-635994  The Startup Wizard should not appear in some specific cases
-635995  The Startup Wizard should not have the Skip button
-635996  The Cancel button in the Project Settings window does not work if the Audio/Video Codec Settings window has been opened
-636046  The -r command line argument does not work if specified after the project name
-636773  Segfault/crash on undo/redo after deleting clips
-636787  Add man page
-636807  test_still_image.py fails
-637522  Not-negotiated errors when there are gaps in the timeline
-638759  More precision for scaling in the rendering dialog
-639080  [gstreamer] Not-negotiated error when trying to render with matroskamux
-640238  A typo in a user visible message
-640936  Pitivi crashes with gst-plugins-good < 0.10.24
-645750  [regression] Welcome dialog not focused on startup
-646951  Application crashes after a few minutes of work
-648661  Specify top-level directory when running tests
-648714  clips vanish from the timeline window, vertical scrollbar ceases working
-651157  "Undock viewer" freezes Pitivi
-629207  [REGRESSION] can't load project with http-sourced images
-635124  Effects configurations list shuffled when adding effect
-635126  The Effects configurations list is not cleared when starting a new project
-636763  Getting backtrace removing an effect from a clip
-624618  Import from webcam is disabled
+600688  Migrate from libglade to GtkBuilder
+647023  When saving a project, the render settings are not saved
+353865  Allow users to define custom render profiles
+583254  Ability to view and remove unused files in a project
+587235  Improve terminology consistency in "Import media" window
+608930  Respect button icon setting
+639615  Improve error message for non-existing and non-readable files
+651186  More efficient translatable strings
+651483  String review
+652379  Source list's infobar text is outdated
+584041  a proper offline manual
+590009  DVD rendering profile
+593919  ability to edit a clip's cropping/panning/zooming properties
+594485  Ask for confirmation when overwriting a file when rendering
+603209  Stores blank properties
+612801  Audio label is not aligned to audio layers when loading a project
+614759  Rendering profiles
+625860  [patch] Incorrect duration of still images
+633644  Limit amount of clip thumbnails to 2 per second
+634723  Hang when mass-removing/deleting clips from the timeline
+635993  When creating a new project, the errors from the previous project are still visible
+636535  The sound does not play when previewing a project if there is a space at the beginning of the timeline
+638798  Project Settings: A newly added preset cannot be removed
+638799  Project Settings: When there are two presets with the same name, show a proper error message
+638803  Project Settings: The "Preset" label should say "Video(/Audio) Preset"
+646513  The project is changed when the "Render project" button is pressed
+650381  Move resources files to a data/ directory
+650807  Reuse filechooserpreview in the missing files dialog
+651821  Port PreferencesDialog to GtkBuilder
+651895  Fix typo in license in some headers
+651897  Update fsf address
+651898  Remove unneeded shebang
+652397  Crash when naming a preset "Default"
+652537  Cannot change any existing audio preset in the Project Settings dialog
+652567  Please lower pygtk requirement to 2.17.0
+654035  [regression] traceback on render: Couldn't find Queue for Stream/Factory
+654318  Pre-commit hook never runs
+654338  Startup Wizard regressions
+655188  Ability to reset advanced codec settings
+655224  Creating a new project from the main window does not call the "Project settings" dialog
+656581  Effects expander can get in an permanently unsensitive state
+656591  Transformation Box is not cleared when the viewer is zoomed out and the video is played
+656692  Trying to delete clips where the playhead is makes the UI hang
+657000  Viewer Zoom widget can not be used with recent Glade versions
+658307  Rendering does not work when using a render preset
+658745  Previewer aspect ratio not set up properly on startup
+651691  In the Project setting the Project Title is not saved
+656532  Traceback when trying to open project settings

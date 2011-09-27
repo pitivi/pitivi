@@ -1,3 +1,19 @@
+2011 Septembre 26 - PiTiVi 0.15
+  * A new transformation feature allows resizing, panning and cropping clips directly in the previewer
+  * Automatic clip alignment by analyzing soundtracks to sync multicamera footage
+  * Ability to have presets for rendering
+  * Default set of project settings and rendering presets
+  * Cleaner preferences dialog
+  * Integrated offline user manual
+  * Cleaner advanced codec settings dialog
+  * Improved video thumbnailing performance
+  * "Soft depedencies" manager to warn the user of features requiring additional packages
+  * Port to gtkbuilder
+  * Respect GNOME's button icons setting
+  * Improved startup time
+  * Code cleanups and remove dead code
+  * Properly show property descriptions (blurbs) for advanced codec settings
+
 2011 May 31 - PiTiVi 0.14
   * Audio and video effects
   * Completely redesigned project settings dialog, with the ability to create presets
