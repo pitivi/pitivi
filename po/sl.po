@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-09-11 16:12+0000\n"
+"POT-Creation-Date: 2011-09-28 05:26+0000\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Martin Srebotnjak  <miles@filmsi.net>\n"
+"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
 "X-Poedit-Language: Slovenian\n"
 "X-Poedit-Country: SLOVENIA\n"
@@ -108,7 +108,6 @@ msgid "6 channels (5.1)"
 msgstr "6 kanalov (5.1)"
 
 #: ../data/ui/encodingdialog.ui.h:4
-#| msgid "<b>Video Preset</b>"
 msgid "<b>Render Preset</b>"
 msgstr "<b>Prednastavitev izrisovanja</b>"
 
@@ -387,7 +386,19 @@ msgstr "Dobrodošli"
 msgid "There is already a %s instance, please inform the developers by filing a bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 msgstr "Primerek %s že teče; obvestite razvijalce s poročilom o hrošču na http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:444
+#: ../pitivi/application.py:425
+msgid "Loading project..."
+msgstr "Nalaganje projekta ..."
+
+#: ../pitivi/application.py:434
+msgid "Project loaded."
+msgstr "Projekt je naložen."
+
+#: ../pitivi/application.py:435
+msgid "Rendering..."
+msgstr "Izrisovanje ..."
+
+#: ../pitivi/application.py:447
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -401,47 +412,47 @@ msgstr ""
 "    %prog PROJECT_FILE -r OUTPUT_FILE  # Izriši projekt.\n"
 "    %prog PROJECT_FILE -p              # Predoglej projekt."
 
-#: ../pitivi/application.py:452
+#: ../pitivi/application.py:455
 msgid "Import each MEDIA_FILE into a new project."
 msgstr "Uvozi vsako VEČPREDSTAVNOSTNO_DATOTEKO v nov projekt."
 
-#: ../pitivi/application.py:455
+#: ../pitivi/application.py:458
 msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr "Dodaj vsako uvoženo VEČPREDSTAVNOSTNO_DATOTEKO v časovnico."
 
-#: ../pitivi/application.py:458
+#: ../pitivi/application.py:461
 msgid "Run Pitivi in the Python Debugger."
 msgstr "Zaženi pitivi v Python razhroščevalniku."
 
-#: ../pitivi/application.py:461
+#: ../pitivi/application.py:464
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr "Izriši dano projekt v IZHODNO_DATOTEKO brez grafičnega vmesnika."
 
-#: ../pitivi/application.py:464
+#: ../pitivi/application.py:467
 msgid "Preview the specified project file without the full UI."
 msgstr "Predogled določene datoteke projekta brez popolnega grafičnega vmesnika."
 
-#: ../pitivi/application.py:469
+#: ../pitivi/application.py:472
 msgid "-p and -r cannot be used simultaneously"
 msgstr "Možnosti -p in -r ne morete uporabiti hkrati"
 
-#: ../pitivi/application.py:472
+#: ../pitivi/application.py:475
 msgid "-r or -p and -i are incompatible"
 msgstr "Možnosti -r ali -p in -i sta nezdružljivi"
 
-#: ../pitivi/application.py:475
+#: ../pitivi/application.py:478
 msgid "-a requires -i"
 msgstr "Možnost -a zahteva možnost -i"
 
-#: ../pitivi/application.py:483
+#: ../pitivi/application.py:486
 msgid "-r requires exactly one PROJECT_FILE"
 msgstr "Možnost -r zahteva natanko eno datoteko projekta"
 
-#: ../pitivi/application.py:486
+#: ../pitivi/application.py:489
 msgid "-p requires exactly one PROJECT_FILE"
 msgstr "Možnost -p zahteva natanko eno datoteko projekta"
 
-#: ../pitivi/application.py:489
+#: ../pitivi/application.py:492
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "Ni mogoče določiti več kot ene datoteke projekta"
 
@@ -531,14 +542,11 @@ msgstr "Namestiti je treba različico vezav GTK+ Python večjih ali enakih %s."
 
 #: ../pitivi/check.py:147
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of GStreamer (your version %s)"
 msgid "You do not have a recent enough version of GTK+ (your version %s)"
 msgstr "Ni nameščene ustrezne različice GTK+ (nameščena različica je %s)"
 
 #: ../pitivi/check.py:148
 #, python-format
-#| msgid "Install a version of the GStreamer greater than or equal to %s."
 msgid "Install a version of GTK+ greater than or equal to %s."
 msgstr "Namestiti je treba različico GTK+ %s ali novejšo."
 
@@ -960,7 +968,6 @@ msgstr "Pokaži video učinke kot ikone"
 #: ../pitivi/ui/encodingdialog.py:225
 #: ../pitivi/ui/projectsettings.py:290
 #: ../pitivi/ui/projectsettings.py:296
-#| msgid "New Preset"
 msgid "No preset"
 msgstr "Ni prednastavitev"
 
@@ -972,22 +979,20 @@ msgstr "\"%s\" že obstaja."
 
 #: ../pitivi/ui/encodingdialog.py:415
 #: ../pitivi/ui/projectsettings.py:431
-#| msgid "New Preset"
 msgid "New preset"
 msgstr "Nova prednastavitev"
 
 #: ../pitivi/ui/encodingdialog.py:418
 #: ../pitivi/ui/projectsettings.py:434
 #, python-format
-#| msgid "New Preset %d"
 msgid "New preset %d"
 msgstr "Nova prednastavitev %d "
 
-#: ../pitivi/ui/encodingdialog.py:542
+#: ../pitivi/ui/encodingdialog.py:543
 msgid "A file name is required."
 msgstr "Zahtevano je ime datoteke."
 
-#: ../pitivi/ui/encodingdialog.py:544
+#: ../pitivi/ui/encodingdialog.py:545
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1191,7 +1196,7 @@ msgid "Timeline Toolbar"
 msgstr "Orodna vrstica časovnice"
 
 #: ../pitivi/ui/mainwindow.py:301
-#: ../pitivi/ui/viewer.py:581
+#: ../pitivi/ui/viewer.py:580
 msgid "Undock Viewer"
 msgstr "Odsidraj pregledovalnik"
 
@@ -1715,15 +1720,15 @@ msgstr "Pojdi naprej eno sekundo"
 msgid "Go to the end of the timeline"
 msgstr "Pojdi na konec časovnice"
 
-#: ../pitivi/ui/viewer.py:555
+#: ../pitivi/ui/viewer.py:554
 msgid "Dock Viewer"
 msgstr "Zasidraj pregledovalnik"
 
-#: ../pitivi/ui/viewer.py:1133
+#: ../pitivi/ui/viewer.py:1132
 msgid "Play"
 msgstr "Predvajaj"
 
-#: ../pitivi/ui/viewer.py:1141
+#: ../pitivi/ui/viewer.py:1140
 msgid "Pause"
 msgstr "Premor"
 
@@ -1763,3 +1768,4 @@ msgstr[3] "%d sekunde"
 #, python-format
 msgid "%s doesn't yet handle non-local projects"
 msgstr "%s še ne upravlja oddaljenih projektov"
+
