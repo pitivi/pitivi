@@ -538,7 +538,14 @@ class PitiviViewer(gtk.VBox, Loggable):
     def togglePlayback(self):
         if self.pipeline is None:
             return
-        self.pipeline.togglePlayback()
+
+        if int(self.pipeline.get_state()[1]) == int(gst.STATE_PLAYING):
+            state = gst.STATE_PAUSED
+            self.playpause_button.setPause()
+        else:
+            self.playpause_button.setPlay()
+            state = gst.STATE_PLAYING
+        self.pipeline.set_state(state)
 
     def undock(self):
         if not self.undock_action:
@@ -1145,19 +1152,15 @@ class PlayPauseButton(gtk.Button, Loggable):
     def setPlay(self):
         """ display the play image """
         self.log("setPlay")
-        if self.playing:
-            self.image.set_from_stock(gtk.STOCK_MEDIA_PLAY, gtk.ICON_SIZE_BUTTON)
-        if not self.playing:
-            self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PLAY, gtk.ICON_SIZE_BUTTON))
-            self.set_tooltip_text(_("Play"))
-            self.playing = False
+        self.playing = True
+        self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PLAY, gtk.ICON_SIZE_BUTTON))
+        self.set_tooltip_text(_("Play"))
+        self.playing = False
 
     def setPause(self):
         self.log("setPause")
         """ display the pause image """
-        if not self.playing:
-            self.image.set_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON)
-        if self.playing:
-            self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON))
-            self.set_tooltip_text(_("Pause"))
-            self.playing = True
+        self.playing = False
+        self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON))
+        self.set_tooltip_text(_("Pause"))
+        self.playing = True
