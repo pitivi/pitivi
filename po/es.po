@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-09-11 16:12+0000\n"
-"PO-Revision-Date: 2011-09-11 18:15+0200\n"
+"POT-Creation-Date: 2011-09-27 22:05+0000\n"
+"PO-Revision-Date: 2011-10-01 10:47+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -112,7 +112,6 @@ msgid "6 channels (5.1)"
 msgstr "6 canales (5.1)"
 
 #: ../data/ui/encodingdialog.ui.h:4
-#| msgid "<b>Video Preset</b>"
 msgid "<b>Render Preset</b>"
 msgstr "<b>Preconfiguración de renderizado</b>"
 
@@ -389,7 +388,22 @@ msgstr ""
 "Ya hay una instancia de %s, informe a los desarrolladores rellenando un "
 "informe de error en http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:444
+#: ../pitivi/application.py:425
+#| msgid "Error Loading Project"
+msgid "Loading project..."
+msgstr "Cargando proyecto…"
+
+#: ../pitivi/application.py:434
+#| msgid "Project title:"
+msgid "Project loaded."
+msgstr "Proyecto cargado."
+
+#: ../pitivi/application.py:435
+#| msgid "Rendering"
+msgid "Rendering..."
+msgstr "Renderizando…"
+
+#: ../pitivi/application.py:447
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -408,48 +422,48 @@ msgstr ""
 "    %prog ARCHIVO_DE_PROYECTO -p                    # Previsualizar un "
 "proyecto."
 
-#: ../pitivi/application.py:452
+#: ../pitivi/application.py:455
 msgid "Import each MEDIA_FILE into a new project."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:455
+#: ../pitivi/application.py:458
 msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:458
+#: ../pitivi/application.py:461
 msgid "Run Pitivi in the Python Debugger."
 msgstr "Ejecutar Pitivi en el depurador de Python"
 
-#: ../pitivi/application.py:461
+#: ../pitivi/application.py:464
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr ""
 "Renderizar en ARCHIVO_DE_SALIDA el archivo de proyecto proporcionado sin IGU."
 
-#: ../pitivi/application.py:464
+#: ../pitivi/application.py:467
 msgid "Preview the specified project file without the full UI."
 msgstr "Previsualizar el archivo de proyecto proporcionado sin el IU completo."
 
-#: ../pitivi/application.py:469
+#: ../pitivi/application.py:472
 msgid "-p and -r cannot be used simultaneously"
 msgstr "-p y -r no se pueden usar a la vez"
 
-#: ../pitivi/application.py:472
+#: ../pitivi/application.py:475
 msgid "-r or -p and -i are incompatible"
 msgstr "-r o -p y -i son incompatibles"
 
-#: ../pitivi/application.py:475
+#: ../pitivi/application.py:478
 msgid "-a requires -i"
 msgstr "-a requiere -i"
 
-#: ../pitivi/application.py:483
+#: ../pitivi/application.py:486
 msgid "-r requires exactly one PROJECT_FILE"
 msgstr "-r requiere exactamente un ARCHIVO_DE_PROYECTO"
 
-#: ../pitivi/application.py:486
+#: ../pitivi/application.py:489
 msgid "-p requires exactly one PROJECT_FILE"
 msgstr "-p requiere exactamente un ARCHIVO_DE_PROYECTO"
 
-#: ../pitivi/application.py:489
+#: ../pitivi/application.py:492
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "No se puede abrir más de un ARCHIVO_DE_PROYECTO"
 
@@ -567,14 +581,11 @@ msgstr ""
 
 #: ../pitivi/check.py:147
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of GStreamer (your version %s)"
 msgid "You do not have a recent enough version of GTK+ (your version %s)"
 msgstr "No tiene una versión reciente de GTK+ (su versión es %s)"
 
 #: ../pitivi/check.py:148
 #, python-format
-#| msgid "Install a version of the GStreamer greater than or equal to %s."
 msgid "Install a version of GTK+ greater than or equal to %s."
 msgstr "Instale una versión de GTK+ mayor o igual a %s."
 
@@ -1011,7 +1022,6 @@ msgstr "Mostrar efectos de vídeo como iconos"
 
 #: ../pitivi/ui/encodingdialog.py:225 ../pitivi/ui/projectsettings.py:290
 #: ../pitivi/ui/projectsettings.py:296
-#| msgid "New Preset"
 msgid "No preset"
 msgstr "No hay configuración"
 
@@ -1021,21 +1031,19 @@ msgid "\"%s\" already exists."
 msgstr "«%s» ya existe."
 
 #: ../pitivi/ui/encodingdialog.py:415 ../pitivi/ui/projectsettings.py:431
-#| msgid "New Preset"
 msgid "New preset"
 msgstr "Configuración nueva"
 
 #: ../pitivi/ui/encodingdialog.py:418 ../pitivi/ui/projectsettings.py:434
 #, python-format
-#| msgid "New Preset %d"
 msgid "New preset %d"
 msgstr "Configuración nueva %d"
 
-#: ../pitivi/ui/encodingdialog.py:542
+#: ../pitivi/ui/encodingdialog.py:543
 msgid "A file name is required."
 msgstr "Se necesita un nombre de archivo."
 
-#: ../pitivi/ui/encodingdialog.py:544
+#: ../pitivi/ui/encodingdialog.py:545
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1235,7 +1243,7 @@ msgstr "Barra de herramientas principal"
 msgid "Timeline Toolbar"
 msgstr "Barra de herramientas de la cronología"
 
-#: ../pitivi/ui/mainwindow.py:301 ../pitivi/ui/viewer.py:581
+#: ../pitivi/ui/mainwindow.py:301 ../pitivi/ui/viewer.py:580
 msgid "Undock Viewer"
 msgstr "Desbloquear visor"
 
@@ -1760,15 +1768,15 @@ msgstr "Ir al siguiente segundo"
 msgid "Go to the end of the timeline"
 msgstr "Ir al final de la cronología"
 
-#: ../pitivi/ui/viewer.py:555
+#: ../pitivi/ui/viewer.py:554
 msgid "Dock Viewer"
 msgstr "Anclar el visor"
 
-#: ../pitivi/ui/viewer.py:1133
+#: ../pitivi/ui/viewer.py:1132
 msgid "Play"
 msgstr "Reproducir"
 
-#: ../pitivi/ui/viewer.py:1141
+#: ../pitivi/ui/viewer.py:1140
 msgid "Pause"
 msgstr "Pausar"
 
