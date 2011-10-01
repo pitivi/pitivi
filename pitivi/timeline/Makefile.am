@@ -1,7 +1,7 @@
 timelinedir = $(libdir)/pitivi/python/pitivi/timeline
 
 timeline_PYTHON = 	\
-	__init__.py	\
+	__init__.py	    \
 	align.py        \
 	alignalgs.py    \
 	extract.py      \

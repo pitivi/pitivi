@@ -1,20 +1,18 @@
 import goocanvas
-import gobject
 import gtk
 import os.path
 import pango
 import cairo
+
 import pitivi.configure as configure
-from urllib import unquote
 from gettext import gettext as _
 from pitivi.receiver import receiver, handler
 from view import View
 import controller
+
 from zoominterface import Zoomable
 from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT, \
     SELECT_BETWEEN, MoveContext, TrimStartContext, TrimEndContext
-from preview import Preview
-from pitivi.ui.curve import Curve
 import gst
 from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
 from common import LAYER_SPACING, unpack_cairo_pattern, unpack_cairo_gradient

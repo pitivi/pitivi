@@ -19,274 +19,280 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from unittest import TestCase
 
-import gst
+####
+#
+# FIXME: This should all be reimplemented after the port to GES
+#
+####
 
-from pitivi.pipeline import Pipeline
-from pitivi.timeline.timeline import Timeline, TimelineObject, SELECT_ADD
-from pitivi.timeline.track import Track, SourceTrackObject, TrackEffect
-from pitivi.factories.test import VideoTestSourceFactory, TestEffectFactory
-from pitivi.stream import VideoStream
-from pitivi.timeline.timeline_undo import TimelineLogObserver, \
-        TimelineObjectAdded, TimelineObjectRemoved, \
-        TimelineObjectPropertyChanged, TrackEffectAdded
-from pitivi.undo import UndoableActionLog
+#from unittest import TestCase
 
+#import gst
 
-class TestTimelineLogObserver(TimelineLogObserver):
-    def _connectToTimeline(self, timeline):
-        TimelineLogObserver._connectToTimeline(self, timeline)
-        timeline.connected = True
+#from pitivi.pipeline import Pipeline
+#from pitivi.timeline.timeline import Timeline, TimelineObject, SELECT_ADD
+#from pitivi.timeline.track import Track, SourceTrackObject, TrackEffect
+#from pitivi.factories.test import VideoTestSourceFactory, TestEffectFactory
+#from pitivi.stream import VideoStream
+#from pitivi.timeline.timeline_undo import TimelineLogObserver, \
+        #TimelineObjectAdded, TimelineObjectRemoved, \
+        #TimelineObjectPropertyChanged, TrackEffectAdded
+#from pitivi.undo import UndoableActionLog
 
-    def _disconnectFromTimeline(self, timeline):
-        TimelineLogObserver._disconnectFromTimeline(self, timeline)
-        timeline.connected = False
+#class TestTimelineLogObserver(TimelineLogObserver):
+    #def _connectToTimeline(self, timeline):
+        #TimelineLogObserver._connectToTimeline(self, timeline)
+        #timeline.connected = True
 
-    def _connectToTimelineObject(self, timeline_object):
-        TimelineLogObserver._connectToTimelineObject(self, timeline_object)
-        timeline_object.connected = True
+    #def _disconnectFromTimeline(self, timeline):
+        #TimelineLogObserver._disconnectFromTimeline(self, timeline)
+        #timeline.connected = False
 
-    def _disconnectFromTimelineObject(self, timeline_object):
-        TimelineLogObserver._disconnectFromTimelineObject(self, timeline_object)
-        timeline_object.connected = False
+    #def _connectToTimelineObject(self, timeline_object):
+        #TimelineLogObserver._connectToTimelineObject(self, timeline_object)
+        #timeline_object.connected = True
 
-
-def new_stream():
-    return VideoStream(gst.Caps("video/x-raw-rgb"))
-
-
-def new_source_factory():
-    return VideoTestSourceFactory()
+    #def _disconnectFromTimelineObject(self, timeline_object):
+        #TimelineLogObserver._disconnectFromTimelineObject(self, timeline_object)
+        #timeline_object.connected = False
 
 
-class TestTimelineLogObserverConnections(TestCase):
-    def setUp(self):
-        self.action_log = UndoableActionLog()
-        self.observer = TestTimelineLogObserver(self.action_log)
-
-    def testConnectionAndDisconnection(self):
-        timeline = Timeline()
-        stream = new_stream()
-        factory = new_source_factory()
-        track = Track(stream)
-        track_object1 = SourceTrackObject(factory, stream)
-        track.addTrackObject(track_object1)
-        timeline.addTrack(track)
-        timeline_object1 = TimelineObject(factory)
-        timeline_object1.addTrackObject(track_object1)
-        timeline.addTimelineObject(timeline_object1)
-
-        self.observer.startObserving(timeline)
-        self.failUnless(timeline.connected)
-        self.failUnless(timeline_object1.connected)
-
-        timeline.removeTimelineObject(timeline_object1)
-        self.failIf(timeline_object1.connected)
-
-        timeline.addTimelineObject(timeline_object1)
-        self.failUnless(timeline_object1)
-
-        self.observer.stopObserving(timeline)
-        self.failIf(timeline.connected)
-        self.failIf(timeline_object1.connected)
+#def new_stream():
+    #return VideoStream(gst.Caps("video/x-raw-rgb"))
 
 
-class  TestTimelineUndo(TestCase):
-    def setUp(self):
-        self.stream = new_stream()
-        self.factory = new_source_factory()
-        self.effect_factory = TestEffectFactory(self.stream)
-        self.track1 = Track(self.stream)
-        self.track2 = Track(self.stream)
-        self.timeline = Timeline()
-        self.timeline.addTrack(self.track1)
-        self.timeline.addTrack(self.track2)
-        self.track_object1 = SourceTrackObject(self.factory, self.stream)
-        self.track_object2 = SourceTrackObject(self.factory, self.stream)
-        self.track_effect1 = TrackEffect(self.effect_factory, self.stream)
-        self.track_effect2 = TrackEffect(self.effect_factory, self.stream)
-        self.track1.addTrackObject(self.track_object1)
-        self.track2.addTrackObject(self.track_object2)
-        self.timeline_object1 = TimelineObject(self.factory)
-        self.timeline_object1.addTrackObject(self.track_object1)
-        self.timeline_object1.addTrackObject(self.track_object2)
-        self.action_log = UndoableActionLog()
-        self.observer = TestTimelineLogObserver(self.action_log)
-        self.observer.startObserving(self.timeline)
+#def new_source_factory():
+    #return VideoTestSourceFactory()
 
-    def testAddTimelineObject(self):
-        stacks = []
 
-        def commitCb(action_log, stack, nested):
-            stacks.append(stack)
-        self.action_log.connect("commit", commitCb)
+#class TestTimelineLogObserverConnections(TestCase):
+    #def setUp(self):
+        #self.action_log = UndoableActionLog()
+        #self.observer = TestTimelineLogObserver(self.action_log)
 
-        self.action_log.begin("add clip")
-        self.timeline.addTimelineObject(self.timeline_object1)
-        self.action_log.commit()
+    #def testConnectionAndDisconnection(self):
+        #timeline = Timeline()
+        #stream = new_stream()
+        #factory = new_source_factory()
+        #track = Track(stream)
+        #track_object1 = SourceTrackObject(factory, stream)
+        #track.addTrackObject(track_object1)
+        #timeline.addTrack(track)
+        #timeline_object1 = TimelineObject(factory)
+        #timeline_object1.addTrackObject(track_object1)
+        #timeline.addTimelineObject(timeline_object1)
 
-        self.failUnlessEqual(len(stacks), 1)
-        stack = stacks[0]
-        self.failUnlessEqual(len(stack.done_actions), 1)
-        action = stack.done_actions[0]
-        self.failUnless(isinstance(action, TimelineObjectAdded))
+        #self.observer.startObserving(timeline)
+        #self.failUnless(timeline.connected)
+        #self.failUnless(timeline_object1.connected)
 
-        self.failUnless(self.timeline_object1 \
-                in self.timeline.timeline_objects)
-        self.action_log.undo()
-        self.failIf(self.timeline_object1 \
-                in self.timeline.timeline_objects)
+        #timeline.removeTimelineObject(timeline_object1)
+        #self.failIf(timeline_object1.connected)
 
-        self.action_log.redo()
-        self.failUnless(self.timeline_object1 \
-                in self.timeline.timeline_objects)
+        #timeline.addTimelineObject(timeline_object1)
+        #self.failUnless(timeline_object1)
 
-    def testRemoveTimelineObject(self):
-        stacks = []
+        #self.observer.stopObserving(timeline)
+        #self.failIf(timeline.connected)
+        #self.failIf(timeline_object1.connected)
 
-        def commitCb(action_log, stack, nested):
-            stacks.append(stack)
-        self.action_log.connect("commit", commitCb)
 
-        self.timeline.addTimelineObject(self.timeline_object1)
-        self.action_log.begin("remove clip")
-        self.timeline.removeTimelineObject(self.timeline_object1, deep=True)
-        self.action_log.commit()
+#class  TestTimelineUndo(TestCase):
+    #def setUp(self):
+        #self.stream = new_stream()
+        #self.factory = new_source_factory()
+        #self.effect_factory = TestEffectFactory(self.stream)
+        #self.track1 = Track(self.stream)
+        #self.track2 = Track(self.stream)
+        #self.timeline = Timeline()
+        #self.timeline.addTrack(self.track1)
+        #self.timeline.addTrack(self.track2)
+        #self.track_object1 = SourceTrackObject(self.factory, self.stream)
+        #self.track_object2 = SourceTrackObject(self.factory, self.stream)
+        #self.track_effect1 = TrackEffect(self.effect_factory, self.stream)
+        #self.track_effect2 = TrackEffect(self.effect_factory, self.stream)
+        #self.track1.addTrackObject(self.track_object1)
+        #self.track2.addTrackObject(self.track_object2)
+        #self.timeline_object1 = TimelineObject(self.factory)
+        #self.timeline_object1.addTrackObject(self.track_object1)
+        #self.timeline_object1.addTrackObject(self.track_object2)
+        #self.action_log = UndoableActionLog()
+        #self.observer = TestTimelineLogObserver(self.action_log)
+        #self.observer.startObserving(self.timeline)
 
-        self.failUnlessEqual(len(stacks), 1)
-        stack = stacks[0]
-        self.failUnlessEqual(len(stack.done_actions), 1)
-        action = stack.done_actions[0]
-        self.failUnless(isinstance(action, TimelineObjectRemoved))
+    #def testAddTimelineObject(self):
+        #stacks = []
 
-        self.failIf(self.timeline_object1 \
-                in self.timeline.timeline_objects)
-        self.action_log.undo()
-        self.failUnless(self.timeline_object1 \
-                in self.timeline.timeline_objects)
+        #def commitCb(action_log, stack, nested):
+            #stacks.append(stack)
+        #self.action_log.connect("commit", commitCb)
 
-        self.action_log.redo()
-        self.failIf(self.timeline_object1 \
-                in self.timeline.timeline_objects)
+        #self.action_log.begin("add clip")
+        #self.timeline.addTimelineObject(self.timeline_object1)
+        #self.action_log.commit()
 
-    def testAddEffectToTimelineObject(self):
-        stacks = []
-        pipeline = Pipeline()
+        #self.failUnlessEqual(len(stacks), 1)
+        #stack = stacks[0]
+        #self.failUnlessEqual(len(stack.done_actions), 1)
+        #action = stack.done_actions[0]
+        #self.failUnless(isinstance(action, TimelineObjectAdded))
 
-        def commitCb(action_log, stack, nested):
-            stacks.append(stack)
-        self.action_log.connect("commit", commitCb)
-        self.observer.pipeline = pipeline
+        #self.failUnless(self.timeline_object1 \
+                #in self.timeline.timeline_objects)
+        #self.action_log.undo()
+        #self.failIf(self.timeline_object1 \
+                #in self.timeline.timeline_objects)
 
-        #FIXME Should I commit it and check there are 2 elements
-        #in the stacks
-        self.timeline.addTimelineObject(self.timeline_object1)
-        self.track1.addTrackObject(self.track_effect1)
+        #self.action_log.redo()
+        #self.failUnless(self.timeline_object1 \
+                #in self.timeline.timeline_objects)
 
-        self.action_log.begin("add effect")
-        self.timeline_object1.addTrackObject(self.track_effect1)
-        self.action_log.commit()
+    #def testRemoveTimelineObject(self):
+        #stacks = []
 
-        self.failUnlessEqual(len(stacks), 1)
-        stack = stacks[0]
-        self.failUnlessEqual(len(stack.done_actions), 1)
-        action = stack.done_actions[0]
-        self.failUnless(isinstance(action, TrackEffectAdded))
+        #def commitCb(action_log, stack, nested):
+            #stacks.append(stack)
+        #self.action_log.connect("commit", commitCb)
 
-        self.failUnless(self.track_effect1 \
-                in self.timeline_object1.track_objects)
-        self.failUnless(self.track_effect1 \
-                in self.track1.track_objects)
-        self.failUnless(len([effect for effect in \
-                                self.timeline_object1.track_objects
-                                if isinstance(effect, TrackEffect)]) == 1)
-        self.failUnless(len([effect for effect in self.track1.track_objects
-                             if isinstance(effect, TrackEffect)]) == 1)
+        #self.timeline.addTimelineObject(self.timeline_object1)
+        #self.action_log.begin("remove clip")
+        #self.timeline.removeTimelineObject(self.timeline_object1, deep=True)
+        #self.action_log.commit()
 
-        self.action_log.undo()
-        self.failIf(self.track_effect1 \
-                in self.timeline_object1.track_objects)
-        self.failIf(self.track_effect1 \
-                in self.track1.track_objects)
+        #self.failUnlessEqual(len(stacks), 1)
+        #stack = stacks[0]
+        #self.failUnlessEqual(len(stack.done_actions), 1)
+        #action = stack.done_actions[0]
+        #self.failUnless(isinstance(action, TimelineObjectRemoved))
 
-        self.action_log.redo()
-        self.failUnless(len([effect for effect in
-                                self.timeline_object1.track_objects
-                                if isinstance(effect, TrackEffect)]) == 1)
-        self.failUnless(len([effect for effect in self.track1.track_objects
-                             if isinstance(effect, TrackEffect)]) == 1)
+        #self.failIf(self.timeline_object1 \
+                #in self.timeline.timeline_objects)
+        #self.action_log.undo()
+        #self.failUnless(self.timeline_object1 \
+                #in self.timeline.timeline_objects)
 
-        self.timeline.removeTimelineObject(self.timeline_object1, deep=True)
+        #self.action_log.redo()
+        #self.failIf(self.timeline_object1 \
+                #in self.timeline.timeline_objects)
 
-    def testTimelineObjectPropertyChange(self):
-        stacks = []
+    #def testAddEffectToTimelineObject(self):
+        #stacks = []
+        #pipeline = Pipeline()
 
-        def commitCb(action_log, stack, nested):
-            stacks.append(stack)
-        self.action_log.connect("commit", commitCb)
+        #def commitCb(action_log, stack, nested):
+            #stacks.append(stack)
+        #self.action_log.connect("commit", commitCb)
+        #self.observer.pipeline = pipeline
 
-        self.timeline_object1.start = 5 * gst.SECOND
-        self.timeline_object1.duration = 20 * gst.SECOND
-        self.timeline.addTimelineObject(self.timeline_object1)
-        self.action_log.begin("modify clip")
-        self.timeline_object1.start = 10 * gst.SECOND
-        self.action_log.commit()
+        ##FIXME Should I commit it and check there are 2 elements
+        ##in the stacks
+        #self.timeline.addTimelineObject(self.timeline_object1)
+        #self.track1.addTrackObject(self.track_effect1)
 
-        self.failUnlessEqual(len(stacks), 1)
-        stack = stacks[0]
-        self.failUnlessEqual(len(stack.done_actions), 1)
-        action = stack.done_actions[0]
-        self.failUnless(isinstance(action, TimelineObjectPropertyChanged))
+        #self.action_log.begin("add effect")
+        #self.timeline_object1.addTrackObject(self.track_effect1)
+        #self.action_log.commit()
 
-        self.failUnlessEqual(self.timeline_object1.start, 10 * gst.SECOND)
-        self.action_log.undo()
-        self.failUnlessEqual(self.timeline_object1.start, 5 * gst.SECOND)
-        self.action_log.redo()
-        self.failUnlessEqual(self.timeline_object1.start, 10 * gst.SECOND)
+        #self.failUnlessEqual(len(stacks), 1)
+        #stack = stacks[0]
+        #self.failUnlessEqual(len(stack.done_actions), 1)
+        #action = stack.done_actions[0]
+        #self.failUnless(isinstance(action, TrackEffectAdded))
 
-        self.timeline_object1.priority = 10
-        self.action_log.begin("priority change")
-        self.timeline_object1.priority = 20
-        self.action_log.commit()
+        #self.failUnless(self.track_effect1 \
+                #in self.timeline_object1.track_objects)
+        #self.failUnless(self.track_effect1 \
+                #in self.track1.track_objects)
+        #self.failUnless(len([effect for effect in \
+                                #self.timeline_object1.track_objects
+                                #if isinstance(effect, TrackEffect)]) == 1)
+        #self.failUnless(len([effect for effect in self.track1.track_objects
+                             #if isinstance(effect, TrackEffect)]) == 1)
 
-        self.failUnlessEqual(self.timeline_object1.priority, 20)
-        self.action_log.undo()
-        self.failUnlessEqual(self.timeline_object1.priority, 10)
-        self.action_log.redo()
-        self.failUnlessEqual(self.timeline_object1.priority, 20)
+        #self.action_log.undo()
+        #self.failIf(self.track_effect1 \
+                #in self.timeline_object1.track_objects)
+        #self.failIf(self.track_effect1 \
+                #in self.track1.track_objects)
 
-    def testUngroup(self):
-        self.timeline_object1.start = 5 * gst.SECOND
-        self.timeline_object1.duration = 20 * gst.SECOND
+        #self.action_log.redo()
+        #self.failUnless(len([effect for effect in
+                                #self.timeline_object1.track_objects
+                                #if isinstance(effect, TrackEffect)]) == 1)
+        #self.failUnless(len([effect for effect in self.track1.track_objects
+                             #if isinstance(effect, TrackEffect)]) == 1)
 
-        self.timeline.addTimelineObject(self.timeline_object1)
-        self.timeline.setSelectionToObj(self.track_object1, SELECT_ADD)
+        #self.timeline.removeTimelineObject(self.timeline_object1, deep=True)
 
-        self.failUnlessEqual(len(self.timeline.timeline_objects), 1)
-        self.failUnlessEqual(self.timeline.timeline_objects[0].start,
-                5 * gst.SECOND)
-        self.failUnlessEqual(self.timeline.timeline_objects[0].duration,
-                20 * gst.SECOND)
+    #def testTimelineObjectPropertyChange(self):
+        #stacks = []
 
-        self.action_log.begin("ungroup")
-        self.timeline.ungroupSelection()
-        self.action_log.commit()
+        #def commitCb(action_log, stack, nested):
+            #stacks.append(stack)
+        #self.action_log.connect("commit", commitCb)
 
-        self.failUnlessEqual(len(self.timeline.timeline_objects), 2)
-        self.failUnlessEqual(self.timeline.timeline_objects[0].start,
-                5 * gst.SECOND)
-        self.failUnlessEqual(self.timeline.timeline_objects[0].duration,
-                20 * gst.SECOND)
-        self.failUnlessEqual(self.timeline.timeline_objects[1].start,
-                5 * gst.SECOND)
-        self.failUnlessEqual(self.timeline.timeline_objects[1].duration,
-                20 * gst.SECOND)
+        #self.timeline_object1.start = 5 * gst.SECOND
+        #self.timeline_object1.duration = 20 * gst.SECOND
+        #self.timeline.addTimelineObject(self.timeline_object1)
+        #self.action_log.begin("modify clip")
+        #self.timeline_object1.start = 10 * gst.SECOND
+        #self.action_log.commit()
 
-        self.action_log.undo()
+        #self.failUnlessEqual(len(stacks), 1)
+        #stack = stacks[0]
+        #self.failUnlessEqual(len(stack.done_actions), 1)
+        #action = stack.done_actions[0]
+        #self.failUnless(isinstance(action, TimelineObjectPropertyChanged))
 
-        self.failUnlessEqual(len(self.timeline.timeline_objects), 1)
-        self.failUnlessEqual(self.timeline.timeline_objects[0].start,
-                5 * gst.SECOND)
-        self.failUnlessEqual(self.timeline.timeline_objects[0].duration,
-                20 * gst.SECOND)
+        #self.failUnlessEqual(self.timeline_object1.start, 10 * gst.SECOND)
+        #self.action_log.undo()
+        #self.failUnlessEqual(self.timeline_object1.start, 5 * gst.SECOND)
+        #self.action_log.redo()
+        #self.failUnlessEqual(self.timeline_object1.start, 10 * gst.SECOND)
+
+        #self.timeline_object1.priority = 10
+        #self.action_log.begin("priority change")
+        #self.timeline_object1.priority = 20
+        #self.action_log.commit()
+
+        #self.failUnlessEqual(self.timeline_object1.priority, 20)
+        #self.action_log.undo()
+        #self.failUnlessEqual(self.timeline_object1.priority, 10)
+        #self.action_log.redo()
+        #self.failUnlessEqual(self.timeline_object1.priority, 20)
+
+    #def testUngroup(self):
+        #self.timeline_object1.start = 5 * gst.SECOND
+        #self.timeline_object1.duration = 20 * gst.SECOND
+
+        #self.timeline.addTimelineObject(self.timeline_object1)
+        #self.timeline.setSelectionToObj(self.track_object1, SELECT_ADD)
+
+        #self.failUnlessEqual(len(self.timeline.timeline_objects), 1)
+        #self.failUnlessEqual(self.timeline.timeline_objects[0].start,
+                #5 * gst.SECOND)
+        #self.failUnlessEqual(self.timeline.timeline_objects[0].duration,
+                #20 * gst.SECOND)
+
+        #self.action_log.begin("ungroup")
+        #self.timeline.ungroupSelection()
+        #self.action_log.commit()
+
+        #self.failUnlessEqual(len(self.timeline.timeline_objects), 2)
+        #self.failUnlessEqual(self.timeline.timeline_objects[0].start,
+                #5 * gst.SECOND)
+        #self.failUnlessEqual(self.timeline.timeline_objects[0].duration,
+                #20 * gst.SECOND)
+        #self.failUnlessEqual(self.timeline.timeline_objects[1].start,
+                #5 * gst.SECOND)
+        #self.failUnlessEqual(self.timeline.timeline_objects[1].duration,
+                #20 * gst.SECOND)
+
+        #self.action_log.undo()
+
+        #self.failUnlessEqual(len(self.timeline.timeline_objects), 1)
+        #self.failUnlessEqual(self.timeline.timeline_objects[0].start,
+                #5 * gst.SECOND)
+        #self.failUnlessEqual(self.timeline.timeline_objects[0].duration,
+                #20 * gst.SECOND)
