@@ -3,32 +3,35 @@
 # This file is distributed under the same license as the pitivi package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
+# Sylvia Sánchez <LailahFSF@gmail.com>, 2011.
+# Jorge González <jorgegonz@svn.gnome.org>, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2011-08-16 12:40+0000\n"
-"PO-Revision-Date: 2011-08-20 10:50+0200\n"
-"Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
-"Language-Team: Español <gnome-es-list@gnome.org>\n"
+"POT-Creation-Date: 2011-09-11 16:12+0000\n"
+"PO-Revision-Date: 2011-10-02 16:46+0200\n"
+"Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
+"Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: C/welcomedialog.page:10(name) C/usingclips.page:10(name)
 #: C/trimming.page:11(name) C/sysreq.page:11(name) C/splitting.page:10(name)
 #: C/selectunusedfiles.page:12(name) C/saveproject.page:11(name)
 #: C/rendering.page:10(name) C/projectsettings.page:10(name)
-#: C/othertransitions.page:10(name) C/movearoundtimeline.page:10(name)
-#: C/medialibrary.page:10(name) C/makeselections.page:10(name)
-#: C/mainwindow.page:12(name) C/layers.page:10(name)
-#: C/keyframecurves.page:10(name) C/interface.page:10(name)
-#: C/insertintimeline.page:10(name) C/index.page:11(name)
-#: C/importing.page:10(name) C/importingmpegts.page:11(name)
-#: C/gstreamer.page:10(name) C/fadeinfadeout.page:10(name)
-#: C/effectsanimation.page:10(name) C/effects.page:11(name)
-#: C/crossfading.page:11(name) C/about.page:10(name)
+#: C/presets.page:11(name) C/othertransitions.page:10(name)
+#: C/movearoundtimeline.page:10(name) C/medialibrary.page:10(name)
+#: C/makeselections.page:10(name) C/mainwindow.page:12(name)
+#: C/layers.page:10(name) C/keyframecurves.page:10(name)
+#: C/interface.page:10(name) C/insertintimeline.page:10(name)
+#: C/index.page:11(name) C/importing.page:10(name)
+#: C/importingmpegts.page:11(name) C/gstreamer.page:10(name)
+#: C/fadeinfadeout.page:10(name) C/effectsanimation.page:10(name)
+#: C/effects.page:11(name) C/crossfading.page:11(name)
+#: C/codecscontainers.page:10(name) C/about.page:10(name)
 msgid "Jean-François Fortin Tam"
 msgstr "Jean-François Fortin Tam"
 
@@ -36,40 +39,42 @@ msgstr "Jean-François Fortin Tam"
 #: C/trimming.page:12(email) C/sysreq.page:12(email)
 #: C/splitting.page:11(email) C/selectunusedfiles.page:13(email)
 #: C/saveproject.page:12(email) C/rendering.page:11(email)
-#: C/projectsettings.page:11(email) C/othertransitions.page:11(email)
-#: C/movearoundtimeline.page:11(email) C/medialibrary.page:11(email)
-#: C/makeselections.page:11(email) C/mainwindow.page:13(email)
-#: C/layers.page:11(email) C/keyframecurves.page:11(email)
-#: C/interface.page:11(email) C/insertintimeline.page:11(email)
-#: C/index.page:12(email) C/importing.page:11(email)
-#: C/importingmpegts.page:12(email) C/gstreamer.page:11(email)
-#: C/fadeinfadeout.page:11(email) C/effectsanimation.page:11(email)
-#: C/effects.page:12(email) C/crossfading.page:12(email)
+#: C/projectsettings.page:11(email) C/presets.page:12(email)
+#: C/othertransitions.page:11(email) C/movearoundtimeline.page:11(email)
+#: C/medialibrary.page:11(email) C/makeselections.page:11(email)
+#: C/mainwindow.page:13(email) C/layers.page:11(email)
+#: C/keyframecurves.page:11(email) C/interface.page:11(email)
+#: C/insertintimeline.page:11(email) C/index.page:12(email)
+#: C/importing.page:11(email) C/importingmpegts.page:12(email)
+#: C/gstreamer.page:11(email) C/fadeinfadeout.page:11(email)
+#: C/effectsanimation.page:11(email) C/effects.page:12(email)
+#: C/crossfading.page:12(email) C/codecscontainers.page:11(email)
 #: C/about.page:11(email)
 msgid "nekohayo@gmail.com"
 msgstr "nekohayo@gmail.com"
 
 #: C/welcomedialog.page:13(desc)
 msgid "Creating new projects and opening recent projects on startup"
-msgstr ""
+msgstr "Crear proyectos nuevos y abrir proyectos recientes al iniciar"
 
 #: C/welcomedialog.page:17(p) C/usingclips.page:21(p) C/trimming.page:22(p)
 #: C/sysreq.page:22(p) C/splitting.page:21(p) C/selectunusedfiles.page:19(p)
 #: C/saveproject.page:22(p) C/rendering.page:21(p)
-#: C/projectsettings.page:21(p) C/othertransitions.page:19(p)
-#: C/movearoundtimeline.page:21(p) C/medialibrary.page:17(p)
-#: C/makeselections.page:21(p) C/mainwindow.page:19(p) C/layers.page:21(p)
-#: C/keyframecurves.page:21(p) C/interface.page:15(p)
-#: C/insertintimeline.page:21(p) C/index.page:19(p) C/importing.page:21(p)
-#: C/importingmpegts.page:18(p) C/gstreamer.page:21(p)
+#: C/projectsettings.page:21(p) C/presets.page:15(p)
+#: C/othertransitions.page:19(p) C/movearoundtimeline.page:21(p)
+#: C/medialibrary.page:17(p) C/makeselections.page:21(p)
+#: C/mainwindow.page:19(p) C/layers.page:21(p) C/keyframecurves.page:21(p)
+#: C/interface.page:15(p) C/insertintimeline.page:21(p) C/index.page:19(p)
+#: C/importing.page:21(p) C/importingmpegts.page:18(p) C/gstreamer.page:21(p)
 #: C/fadeinfadeout.page:21(p) C/effectsanimation.page:15(p)
-#: C/effects.page:16(p) C/crossfading.page:22(p) C/about.page:21(p)
+#: C/effects.page:16(p) C/crossfading.page:22(p) C/codecscontainers.page:14(p)
+#: C/about.page:21(p)
 msgid "Creative Commons Share Alike 3.0"
 msgstr "Creative Commons Compartir Igual 3.0"
 
 #: C/welcomedialog.page:21(title)
 msgid "The welcome dialog"
-msgstr ""
+msgstr "Diálogo de bienvenida"
 
 #: C/welcomedialog.page:22(p)
 msgid ""
@@ -78,6 +83,10 @@ msgid ""
 "want to skip this dialog, press the <gui><key>Escape</key></gui> key on your "
 "keyboard or click the window's close button."
 msgstr ""
+"Cuando abre <app>PiTiVi</app>, aparece un asistente de inicio que le permite "
+"crear un proyecto nuevo o abrir un proyecto existente pulsando unas pocas "
+"veces. Si quiere omitir este diálogo, pulse la tecla <gui><key>Escape</key></"
+"gui> de su teclado o pulse en el botón de cerrar de la ventana."
 
 #: C/usingclips.page:14(name) C/trimming.page:15(name) C/sysreq.page:15(name)
 #: C/splitting.page:14(name) C/saveproject.page:15(name)
@@ -109,14 +118,16 @@ msgid ""
 "Learn the difference between clips and files and how to do basic operations "
 "on clips in the timeline."
 msgstr ""
+"Aprenda las diferencias entre clips y archivos y cómo hacer operaciones "
+"básicas en los clips a lo largo de la línea de tiempo."
 
 #: C/usingclips.page:25(title)
 msgid "Using clips"
-msgstr ""
+msgstr "Usar clips"
 
 #: C/usingclips.page:28(title)
 msgid "Clips vs files"
-msgstr ""
+msgstr "Clips y archivos"
 
 #: C/usingclips.page:30(p)
 msgid ""
@@ -124,6 +135,9 @@ msgid ""
 "that can be accessed by <app>PiTiVi</app> and incorporated in your video "
 "editing project."
 msgstr ""
+"Los <em>Archivos</em> son datos en su disco duro (vídeos, música, fotos, "
+"etc.) a los que se puede acceder en <app>PiTiVi</app> e incorporarlos en su "
+"proyecto de edición de vídeo."
 
 #: C/usingclips.page:31(p)
 msgid ""
@@ -133,20 +147,29 @@ msgid ""
 "the timeline, a new clip is created. As such, a file can be reused as much "
 "as you want to create any amount of different clips."
 msgstr ""
+"Los <em>Clips</em> son una representación visual de sus archivos en la línea "
+"de tiempo. Representan el periodo de tiempo que usan en la línea de tiempo y "
+"se pueden editar independientemente. Cada vez que arrastre un archivo desde "
+"la biblioteca hasta la línea de tiempo se crea un nuevo clip. De esta forma, "
+"un archivo se puede reutilizar tantas veces como quiera para crear cualquier "
+"cantidad de clips diferentes."
 
 #: C/usingclips.page:33(p)
 msgid ""
 "Since PiTiVi is a non-destructive editor, clips are edited, not files. As "
 "such, your files stay intact."
 msgstr ""
+"Ya que PiTiVi es un editor no-destructivo, lo que se editan son los clips, "
+"no los archivos. De esta forma sus archivos se mantienen intactos."
 
 #: C/usingclips.page:37(title)
 msgid "Moving clips along the timeline"
-msgstr ""
+msgstr "Mover clips a lo largo de la línea de tiempo"
 
 #: C/usingclips.page:38(p)
 msgid "You can move a clip within a layer or move it to a different layer."
 msgstr ""
+"Puede mover un clip a lo largo de una capa o moverlo a una capa diferente."
 
 #: C/usingclips.page:39(p)
 msgid ""
@@ -154,6 +177,9 @@ msgid ""
 "place it. Dragging horizontally keeps the clip on the same layer, but "
 "dragging it vertically moves the clip to a different layer."
 msgstr ""
+"Pulse y arrastre un sólo clip para moverlo y suelte el botón del ratón para "
+"ubicarlo. Arrastrarlo horizontalmente mantiene el clip en la misma capa, "
+"pero arrastrarlo verticalmente mueve el clip a una capa diferente."
 
 #: C/usingclips.page:40(p)
 msgid ""
@@ -162,6 +188,10 @@ msgid ""
 "to be on the same layer. Then, drag the clips just as you would do for a "
 "single clip; their position relative to each other will be preserved."
 msgstr ""
+"Para mover varios clips al mismo tiempo use las teclas <key>Ctrl</key> o "
+"<key>Mayús</key> para seleccionar varios clips. Los clips seleccionados no "
+"tienen porqué estar en la misma capa. Después, arrastre los clips de igual "
+"forma que si fuera uno solo; se preservarán sus posiciones relativas."
 
 #: C/usingclips.page:42(title)
 msgid "Using ripple editing while moving clips"
@@ -170,15 +200,14 @@ msgstr ""
 #: C/usingclips.page:43(p)
 msgid ""
 "While dragging clips around in the timeline, you can use the <link xref="
-"\"rippletechnique\">ripple technique</link> to move the <em>following</em> "
-"clips (the clips that start after the one you're directly editing) to fill "
-"the gap."
+"\"trimming\">ripple technique</link> to move the <em>following</em> clips "
+"(the clips that start after the one you're directly editing) to fill the gap."
 msgstr ""
 
 #: C/usingclips.page:45(p)
 msgid ""
 "Click and drag the clip you want to move, with the mouse button held down"
-msgstr ""
+msgstr "Pulse y arrastre el clip que quiere, con el botón del ratón apretado"
 
 #: C/usingclips.page:46(p)
 msgid "During the drag, hold down <key>Shift</key> on the keyboard"
@@ -317,7 +346,7 @@ msgstr ""
 msgid ""
 "Ripple editing can also be used when moving clips around in the timeline. "
 "For detailed explanations on how to do this, see the section <link xref="
-"\"rippleusingclips\">Using ripple editing while moving clips</link>."
+"\"usingclips\">Using ripple editing while moving clips</link>."
 msgstr ""
 
 #: C/trimming.page:64(title)
@@ -398,7 +427,7 @@ msgid ""
 "In <app>PiTiVi</app>, splitting is a “non-modal” operation; this means that "
 "you do not have to “activate” a particular tool before doing the split "
 "action. Splitting occurs where the playhead is currently located (see also "
-"<link xref=\"movingplayhead\">Moving the playhead</link>). Combined with "
+"<link xref=\"movearoundtimeline\">Moving the playhead</link>). Combined with "
 "zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless "
 "splitting is not only fast and efficient, it is also very accurate."
 msgstr ""
@@ -493,9 +522,9 @@ msgstr ""
 #: C/selectunusedfiles.page:31(p)
 msgid ""
 "To identify which clips are not being used in your project, use "
-"<guiseq><gui>Project</gui><gui>Select Unused Clips</gui></guiseq>. Unused "
+"<guiseq><gui>Library</gui><gui>Select Unused Media</gui></guiseq>. Unused "
 "clips will then be selected in the media library. If you want to remove them "
-"from your project, use <guiseq><gui>Project</gui><gui>Remove from Project</"
+"from your project, use <guiseq><gui>Library</gui><gui>Remove from Project</"
 "gui></guiseq>."
 msgstr ""
 
@@ -515,8 +544,8 @@ msgstr "Guardar un proyecto"
 
 #: C/saveproject.page:28(p)
 msgid ""
-"To save your project work, use the <guiseq><gui>File</gui><gui>Save</gui></"
-"guiseq> menu, the Save button on the main toolbar or press "
+"To save your project work, use the <guiseq><gui>Project</gui><gui>Save</"
+"gui></guiseq> menu, the Save button on the main toolbar or press "
 "<keyseq><key>Ctrl</key><key>S</key></keyseq>."
 msgstr ""
 
@@ -528,10 +557,21 @@ msgstr ""
 
 #: C/saveproject.page:30(p)
 msgid ""
-"If you want to save your project as a different file, use <guiseq><gui>File</"
-"gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</key><key>Shift</"
-"key><key>S</key></keyseq>. This can be used to create different versions of "
-"your project."
+"If you want to save your project as a different file, use "
+"<guiseq><gui>Project</gui><gui>Save as</gui></guiseq> or press "
+"<keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be "
+"used to create different versions of your project."
+msgstr ""
+
+#: C/saveproject.page:32(title)
+msgid "Reverting changes"
+msgstr ""
+
+#: C/saveproject.page:33(p)
+msgid ""
+"In addition to undoing individual changes, you can also decide to revert all "
+"the changes you have made since the last time you saved your project. To do "
+"so, use <guiseq><gui>Project</gui><gui>Revert</gui></guiseq>."
 msgstr ""
 
 #: C/rendering.page:17(desc)
@@ -595,7 +635,7 @@ msgstr ""
 #: C/projectsettings.page:28(p)
 msgid ""
 "To edit the project settings after initial creation, use the "
-"<guiseq><gui>Project</gui><gui>Project Settings</gui></guiseq> menu."
+"<guiseq><gui>Edit</gui><gui>Project Settings</gui></guiseq> menu."
 msgstr ""
 
 #: C/projectsettings.page:31(title)
@@ -628,60 +668,103 @@ msgid ""
 "or \"1.3333\", although the decimal version is less precise)."
 msgstr ""
 
-#: C/projectsettings.page:38(title)
+#: C/presets.page:19(title)
 msgid "Presets"
 msgstr "Preajustes"
 
-#: C/projectsettings.page:39(p)
+#: C/presets.page:20(p)
 msgid ""
-"The project settings dialog allows you to save presets for later use. If you "
-"often deal with the same kind of project settings or with different cameras "
-"using different settings, you may want to create custom presets."
+"Both the project settings dialog and the rendering dialog allow you to save "
+"presets for later use. If you often deal with the same kind of project "
+"settings, with different cameras or target devices for rendering, you may "
+"want to create custom presets."
 msgstr ""
 
-#: C/projectsettings.page:40(p)
-msgid "Video presets and audio presets are independent of each other."
+#: C/presets.page:21(p)
+msgid ""
+"While project settings concern themselves with global settings (such as "
+"resolution, framerate, aspect ratio and number of audio channels), the "
+"rendering presets are concerned with codecs and device constraints (for "
+"example, a handheld device or television may have a maximum screen "
+"resolution and framerate, which is not necessarily the case if you are "
+"exporting to a laptop or a website). As such, the presets in the rendering "
+"dialog are related to the project settings, but they govern different things."
 msgstr ""
 
-#: C/projectsettings.page:41(p)
+#: C/presets.page:22(p)
+msgid ""
+"In project settings, video presets and audio presets are independent of each "
+"other."
+msgstr ""
+
+#: C/presets.page:24(title)
+msgid "Creating and editing presets"
+msgstr ""
+
+#: C/presets.page:25(p)
 msgid "To create a preset:"
 msgstr "Para crear un preajuste:"
 
-#: C/projectsettings.page:43(p)
-msgid "Change the video (or audio) settings to your liking."
+#: C/presets.page:27(p) C/presets.page:34(p)
+msgid "Change the settings to your liking."
 msgstr ""
 
-#: C/projectsettings.page:44(p)
+#: C/presets.page:28(p)
 msgid "Click the <gui>Add</gui> button."
 msgstr "Pulse el botón <gui>Añadir</gui>."
 
-#: C/projectsettings.page:45(p)
+#: C/presets.page:29(p)
 msgid ""
 "Give your preset a unique name: while the preset is selected in the list, "
 "click on its name to toggle editing mode. When you're done, press "
 "<key>Enter</key>."
 msgstr ""
 
-#: C/projectsettings.page:47(p)
+#: C/presets.page:31(p)
 msgid "To edit a preset:"
 msgstr "Para editar un preajuste:"
 
-#: C/projectsettings.page:49(p)
+#: C/presets.page:33(p)
 msgid "Select your preset in the list of existing presets."
 msgstr ""
 
-#: C/projectsettings.page:50(p)
-msgid "Change the settings to your liking."
-msgstr ""
-
-#: C/projectsettings.page:51(p)
+#: C/presets.page:35(p)
 msgid "Click the <gui>Save</gui> button."
 msgstr "Pulse el botón <gui>Guardar</gui>."
 
-#: C/projectsettings.page:53(p)
+#: C/presets.page:37(p)
 msgid ""
 "To remove a preset, simply select it in the list of presets and press the "
 "<gui>Remove</gui> button."
+msgstr ""
+
+#: C/presets.page:38(p)
+msgid "Some presets are provided by default and cannot be removed."
+msgstr ""
+
+#: C/presets.page:41(title)
+msgid "Ignoring presets"
+msgstr ""
+
+#: C/presets.page:42(p)
+msgid ""
+"Presets are there to save time and reduce complexity. Experts can choose to "
+"simply ignore them and set everything manually; the \"No preset\" preset is "
+"a special preset that automatically saves its changes directly in the "
+"project file."
+msgstr ""
+
+#: C/presets.page:45(title)
+msgid "Limiting the resolution of a rendering preset"
+msgstr ""
+
+#: C/presets.page:46(p)
+msgid ""
+"If you want to make a preset with a fixed maximum resolution, you need to "
+"edit the preset file with a text editor. Presets files are typically stored "
+"in ~/.local/share/pitivi/ ; since many devices don't have a maximum "
+"resolution, the width/height are set to 0 (unlimited) by default. You can "
+"change these values to the maximum resolution of your target device."
 msgstr ""
 
 #: C/othertransitions.page:23(title)
@@ -739,25 +822,32 @@ msgid ""
 msgstr ""
 
 #: C/movearoundtimeline.page:39(p)
-msgid ""
-"You can zoom in and out by holding the <key>Ctrl</key> key while using the "
-"mousewheel over the timeline, using the <guiseq><gui>View</gui><gui>Zoom In</"
-"gui></guiseq> and <guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq>menu "
-"items, or dragging the zoom slider on the left of the ruler."
+msgid "You can zoom in and out by:"
 msgstr ""
 
-#: C/movearoundtimeline.page:41(title)
-msgid "<em>Warping</em> between zoom levels"
+#: C/movearoundtimeline.page:41(p)
+msgid ""
+"Holding the <key>Ctrl</key> key while using the mousewheel over the timeline"
 msgstr ""
 
 #: C/movearoundtimeline.page:42(p)
 msgid ""
-"Using your mouse's scroll wheel, you can also <em>warp</em> instantly from "
-"any zoom level to another in a single click. To do that, click with your "
-"mousewheel anywhere on the zoom slider."
+"Using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and "
+"<guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq> menu items"
 msgstr ""
 
-#: C/movearoundtimeline.page:45(p)
+#: C/movearoundtimeline.page:43(p)
+msgid "Dragging the zoom slider on the left of the ruler"
+msgstr ""
+
+#: C/movearoundtimeline.page:44(p)
+msgid ""
+"Using keyboard shortcuts such as <key>Ctrl</key>+<key>-</key> to zoom out or "
+"<key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> on the numeric "
+"keypad) to zoom in"
+msgstr ""
+
+#: C/movearoundtimeline.page:46(p)
 msgid ""
 "To get a better overview of your timeline, you may use the "
 "<guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the "
@@ -765,64 +855,86 @@ msgid ""
 msgstr ""
 
 #: C/movearoundtimeline.page:49(title)
-msgid "Moving the playhead"
+msgid "Zooming is always centered around the location of your playhead"
 msgstr ""
 
 #: C/movearoundtimeline.page:50(p)
+msgid ""
+"When using the mouse wheel to zoom in and out, remember that the zoom is not "
+"relative to the position of your mouse, only to the position of the playhead "
+"on the timeline."
+msgstr ""
+
+#: C/movearoundtimeline.page:54(title)
+msgid "<em>Warping</em> between zoom levels"
+msgstr ""
+
+#: C/movearoundtimeline.page:55(p)
+msgid ""
+"Using your mouse's scroll wheel, you can also <em>warp</em> instantly from "
+"any zoom level to another in a single click. To do that, click with your "
+"mousewheel anywhere on the zoom slider."
+msgstr ""
+
+#: C/movearoundtimeline.page:60(title)
+msgid "Moving the playhead"
+msgstr ""
+
+#: C/movearoundtimeline.page:61(p)
 msgid ""
 "You can change the position of the playhead by clicking anywhere on the "
 "ruler or on the timeline."
 msgstr ""
 
-#: C/movearoundtimeline.page:51(p)
+#: C/movearoundtimeline.page:62(p)
 msgid "When clicking on the <em>timeline</em>:"
 msgstr ""
 
-#: C/movearoundtimeline.page:53(p)
+#: C/movearoundtimeline.page:64(p)
 msgid ""
 "If a clip is under the mouse cursor, it will replace the current clip "
-"selection (see the <link xref=\"selectmulti\">Selecting multiple items</"
+"selection (see the <link xref=\"makeselections\">Selecting multiple items</"
 "link> section for more detailed instructions)."
 msgstr ""
 
-#: C/movearoundtimeline.page:54(p)
+#: C/movearoundtimeline.page:65(p)
 msgid ""
 "If there is no clip under the cursor, all selected clips (if any) will be "
 "deselected."
 msgstr ""
 
-#: C/movearoundtimeline.page:56(p)
+#: C/movearoundtimeline.page:67(p)
 msgid ""
 "When clicking on the ruler, only the playhead's position changes; clip "
 "selections are not affected."
 msgstr ""
 
-#: C/movearoundtimeline.page:60(title)
+#: C/movearoundtimeline.page:71(title)
 msgid "Scrubbing"
 msgstr ""
 
-#: C/movearoundtimeline.page:61(p)
+#: C/movearoundtimeline.page:72(p)
 msgid "<em>Scrubbing</em> is a way of moving the playhead that allows you to:"
 msgstr ""
 
-#: C/movearoundtimeline.page:63(p)
+#: C/movearoundtimeline.page:74(p)
 msgid ""
 "Search for a specific position in time by approximation/trial and error."
 msgstr ""
 
-#: C/movearoundtimeline.page:64(p)
+#: C/movearoundtimeline.page:75(p)
 msgid ""
 "Review repeatedly the visual motion in a scene by moving back and forth in "
 "time."
 msgstr ""
 
-#: C/movearoundtimeline.page:66(p)
+#: C/movearoundtimeline.page:77(p)
 msgid ""
 "To scrub, click on the ruler and move the mouse with the button still held "
 "down."
 msgstr ""
 
-#: C/movearoundtimeline.page:67(p)
+#: C/movearoundtimeline.page:78(p)
 msgid ""
 "You can also scrub by dragging the black vertical line that stems from the "
 "playhead and spans across the timeline."
@@ -1078,8 +1190,8 @@ msgstr ""
 msgid ""
 "To move your position in time, click anywhere on the ruler. You can also "
 "<em>scrub</em> the timeline by clicking on the ruler and holding down the "
-"mouse button while moving. See the <link xref=\"scrubbing\">Scrubbing</link> "
-"section for more details."
+"mouse button while moving. See the section on <link xref=\"movearoundtimeline"
+"\">scrubbing</link> for more details."
 msgstr ""
 
 #: C/mainwindow.page:63(title)
@@ -1454,7 +1566,7 @@ msgstr ""
 
 #: C/insertintimeline.page:30(p)
 msgid ""
-"Using <guiseq><gui>Project</gui><gui>Insert at end of timeline</gui></"
+"Using <guiseq><gui>Library</gui><gui>Insert at End of Timeline</gui></"
 "guiseq>."
 msgstr ""
 
@@ -1600,9 +1712,9 @@ msgstr "Usar el selector de archivos"
 msgid ""
 "You can import media into the <gui>Media Library</gui> by using the file "
 "chooser dialog, which has the advantage of letting you preview the files you "
-"want to import. To do so, use the <guiseq><gui>Project</gui><gui>Import "
-"clips...</gui></guiseq> menu, the <gui>Import clips</gui> button on the main "
-"toolbar, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>."
+"want to import. To do so, use the <guiseq><gui>Library</gui><gui>Import "
+"Files...</gui></guiseq> menu, the <gui>Import Files...</gui> button on the "
+"main toolbar, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>."
 msgstr ""
 
 #: C/importing.page:46(p)
@@ -1617,8 +1729,8 @@ msgstr "Diálogo del selector de archivos"
 msgid ""
 "Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the "
 "same time. You can also import all the files contained in a folder (and its "
-"subfolders) by using <guiseq><gui>Project</gui><gui>Import folder of clips</"
-"gui></guiseq> in the menu bar."
+"subfolders) by using <guiseq><gui>Library</gui><gui>Import Folders...</gui></"
+"guiseq> in the menu bar."
 msgstr ""
 
 #: C/importing.page:55(title)
@@ -1652,7 +1764,7 @@ msgid ""
 msgstr ""
 
 #: C/importing.page:66(p)
-msgid "Import a combination of files and folders at the same time."
+msgid "Import a combination of multiple files and folders at the same time."
 msgstr ""
 
 #: C/importing.page:69(p)
@@ -1781,6 +1893,17 @@ msgid ""
 "gstreamer-ffmpeg to have access to ffmpeg's set of codecs."
 msgstr ""
 
+#: C/gstreamer.page:59(title)
+msgid "Image file formats"
+msgstr ""
+
+#: C/gstreamer.page:60(p)
+msgid ""
+"While it is not feasible to list every possible combination of supported "
+"video or audio formats, it is however possible to list the static image "
+"formats that can be imported: JPEG, PNG, JPEG 2000, PNM and SVG."
+msgstr ""
+
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/fadeinfadeout.page:33(None)
@@ -1893,13 +2016,15 @@ msgid "Choose an effect in the effect library"
 msgstr "Elija un efecto en la biblioteca de efectos"
 
 #: C/effects.page:38(p)
-msgid "Drag the chosen effect into the <gui>Effect Properties</gui> pane"
+msgid ""
+"Drag the chosen effect into the <gui>Clip configuration</gui> pane's "
+"<gui>Effects</gui> section"
 msgstr ""
 
 #: C/effects.page:40(p)
 msgid ""
-"To remove an effect on a selected clip, select it in the effect properties "
-"pane and click the <gui>Remove</gui> button."
+"To remove an effect on a selected clip, select it in the clip's effect list "
+"and click the <gui>Remove</gui> button."
 msgstr ""
 
 #: C/effects.page:43(title)
@@ -1946,6 +2071,69 @@ msgid ""
 "This also means that if you set opacity keyframes for that clip, they will "
 "be taken into account for the crossfade."
 msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/codecscontainers.page:26(None)
+#, fuzzy
+#| msgid ""
+#| "@@image: 'figures/ripple-after.png'; md5=3f2fdba79d1c69c2f2022fe08a62b5a7"
+msgid ""
+"@@image: 'figures/codecscontainers.jpg'; md5=e43e6a92cda311d0cd8c24fb0df67a17"
+msgstr ""
+"@@image: 'figures/ripple-after.png'; md5=3f2fdba79d1c69c2f2022fe08a62b5a7"
+
+#: C/codecscontainers.page:16(desc)
+msgid ""
+"What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? "
+"Learn about codecs and container formats here."
+msgstr ""
+
+#: C/codecscontainers.page:19(title)
+msgid "Understanding codecs and containers"
+msgstr ""
+
+#: C/codecscontainers.page:20(p)
+msgid ""
+"The following is one of the most complex topics of video editing. Many "
+"people do not know the distinction between codecs and container file "
+"formats, thanks in part to the general lack of standardization, confusing "
+"marketing terms and filename extensions."
+msgstr ""
+
+#: C/codecscontainers.page:21(p)
+msgid ""
+"This guide is an attempt at clarifying this distinction without going into "
+"technical details. If you want to learn more about containers and codecs, "
+"you should probably look at Wikipedia's page on <link href=\"http://en."
+"wikipedia.org/wiki/Container_format_(digital)\">containers</link> and <link "
+"href=\"http://en.wikipedia.org/wiki/Codec\">codecs</link>."
+msgstr ""
+
+#: C/codecscontainers.page:22(p)
+msgid ""
+"Basically, a container is what we typically associate with the file format. "
+"Containers \"contain\" the various components of a video: the stream of "
+"images, the sound, and anything else. For example, you could have multiple "
+"soundtracks and subtitles included in a video file, if the container format "
+"allows it. Example of popular containers are OGG, Matroska, AVI, MPEG."
+msgstr ""
+
+#: C/codecscontainers.page:23(p)
+msgid ""
+"Codecs are ways of \"coding\" and \"decoding\" streams. Their job is "
+"typically to compress data (and decompress it when playing it back) so that "
+"you can store and transmit files with a smaller filesize. There are many "
+"codecs available out there, each with their strengths, weaknesses and "
+"peculiarities, and choosing the right codec with the right settings for the "
+"right situation is a form of art."
+msgstr ""
+
+#: C/codecscontainers.page:24(p)
+#, fuzzy
+#| msgid "The following file chooser dialog window will appear:"
+msgid "The following figure should make things clearer:"
+msgstr "Aparecerá la siguiente ventana de diálogo del selector de archivos:"
 
 #: C/about.page:17(desc)
 msgid "Current state of this user manual and call for participation."
