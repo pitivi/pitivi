@@ -66,13 +66,17 @@ PreferencesDialog.addChoicePreference("thumbnailPeriod",
     section=_("Performance"),
     label=_("Thumbnail every"),
     choices=(
-        (_("%s second") % "1/100", gst.SECOND / 100),
-        (_("%s second") % "1/10", gst.SECOND / 10),
-        (_("%s second") % "1/4", gst.SECOND / 4),
-        (_("%s second") % "1/2", gst.SECOND / 2),
-        (_("%s second") % "1", gst.SECOND),
-        (_("%s seconds") % "5", 5 * gst.SECOND),
-        (_("%s seconds") % "10", 10 * gst.SECOND),
+        # Note that we cannot use "%s second" or ngettext, because fractions
+        # are not supported by ngettext and their plurality is ambiguous
+        # in many languages.
+        # See http://www.gnu.org/software/hello/manual/gettext/Plural-forms.html
+        (_("1/100 second"), gst.SECOND / 100),
+        (_("1/10 second"), gst.SECOND / 10),
+        (_("1/4 second"), gst.SECOND / 4),
+        (_("1/2 second"), gst.SECOND / 2),
+        (_("1 second"), gst.SECOND),
+        (_("5 seconds"), 5 * gst.SECOND),
+        (_("10 seconds"), 10 * gst.SECOND),
         (_("minute"), 60 * gst.SECOND)),
     description=_("The interval, in seconds, between thumbnails."))
 
