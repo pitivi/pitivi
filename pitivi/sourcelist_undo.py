@@ -32,7 +32,7 @@ class SourceListSourceAddedAction(UndoableAction):
         self._undone()
 
     def do(self):
-        self.sourcelist.addFactory(self.source)
+        self.sourcelist.addDiscovererInfo(self.source)
         self._done()
 
 
@@ -43,7 +43,7 @@ class SourceListSourceRemovedAction(UndoableAction):
         self.source = source
 
     def undo(self):
-        self.sourcelist.addFactory(self.source)
+        self.sourcelist.addDiscovererInfo(self.source)
         self._undone()
 
     def do(self):

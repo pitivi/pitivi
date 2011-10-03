@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from pitivi.settings import GlobalSettings
 import cairo
-from pitivi.stream import VideoStream, AudioStream, TextStream, \
-        MultimediaStream
 from xml.sax.saxutils import escape
 from urllib import unquote
 from gettext import gettext as _
 from gettext import ngettext
 import gst
 import gtk
+import os
 
 GlobalSettings.addConfigSection("user-interface")
 LAYER_HEIGHT_EXPANDED = 50
@@ -93,47 +92,40 @@ def unpack_cairo_gradient(value):
     return gradient
 
 
-def beautify_factory(factory):
-    ranks = {VideoStream: 0, AudioStream: 1, TextStream: 2, MultimediaStream: 3}
+def beautify_info(info):
+    ranks = {gst.pbutils.DiscovererVideoInfo: 0, gst.pbutils.DiscovererAudioInfo: 1}
 
     def stream_sort_key(stream):
         return ranks[type(stream)]
 
-    streams = factory.getOutputStreams()
-    streams.sort(key=stream_sort_key)
-    return ("<b>" + escape(unquote(factory.name)) + "</b>\n" +
-        "\n".join((beautify_stream(stream) for stream in streams)))
+    info.get_stream_list().sort(key=stream_sort_key)
+    return ("<b>" + info_name(info) + "</b>\n" +
+        "\n".join((beautify_stream(stream) for stream in info.get_stream_list())))
 
 
-def factory_name(factory):
-    return escape(unquote(factory.name))
+def info_name(info):
+    return escape(unquote(os.path.basename(info.get_uri())))
 
 
 def beautify_stream(stream):
-    if type(stream) == AudioStream:
-        if stream.raw:
-            templ = ngettext("<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
-                    "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",
-                    stream.channels)
-            templ = templ % (stream.channels, stream.rate, stream.width)
-            return templ
+    if type(stream) == gst.pbutils.DiscovererAudioInfo:
+        templ = ngettext("<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
+                "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",
+                stream.get_channels())
+        templ = templ % (stream.get_channels(), stream.get_bitrate(),
+            stream.get_depth())
+        return templ
 
-        return _("<b>Unknown Audio format:</b> %s") % stream.audiotype
-
-    elif type(stream) == VideoStream:
-        if stream.raw:
-            if stream.framerate.num:
-                templ = _(u"<b>Video:</b> %d×%d <i>pixels</i> at %.2f<i>fps</i>")
-                templ = templ % (stream.par * stream.width, stream.height,
-                        float(stream.framerate))
-            else:
-                templ = _(u"<b>Image:</b> %d×%d <i>pixels</i>")
-                templ = templ % (stream.par * stream.width, stream.height)
-            return templ
-        return _("<b>Unknown Video format:</b> %s") % stream.videotype
-
-    elif type(stream) == TextStream:
-        return _("<b>Text:</b> %s") % stream.texttype
+    elif type(stream) == gst.pbutils.DiscovererVideoInfo:
+        par = stream.get_par_num() / stream.get_par_denom()
+        if not stream.is_image():
+            templ = _(u"<b>Video:</b> %d×%d <i>pixels</i> at %.2f<i>fps</i>")
+            templ = templ % (par * stream.get_height(), stream.get_height(),
+                float(stream.get_framerate_num() / stream.get_framerate_num()))
+        else:
+            templ = _(u"<b>Image:</b> %d×%d <i>pixels</i>")
+            templ = templ % (par * stream.get_height(), stream.get_height())
+        return templ
 
     raise NotImplementedError
 

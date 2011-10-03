@@ -341,7 +341,7 @@ class PropertyChangeTracker(Signallable):
         properties = {}
         for property_name in self.property_names:
             properties[property_name] = \
-                    obj.get_property (property_name.replace("-", "_"))
+                    obj.get_property(property_name.replace("-", "_"))
 
         return properties
 

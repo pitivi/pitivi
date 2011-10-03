@@ -35,12 +35,11 @@ from pitivi.ui.pathwalker import PathWalker, quote_uri
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.configure import get_pixmap_dir
 from pitivi.signalgroup import SignalGroup
-from pitivi.stream import VideoStream, AudioStream, TextStream, \
-        MultimediaStream
+
 from pitivi.settings import GlobalSettings
 from pitivi.utils import beautify_length
-from pitivi.ui.common import beautify_factory, factory_name, \
-    beautify_stream, SPACING, PADDING
+from pitivi.ui.common import beautify_info, info_name, \
+    SPACING, PADDING
 from pitivi.log.loggable import Loggable
 from pitivi.sourcelist import SourceListError
 from pitivi.ui.filechooserpreview import PreviewWidget
@@ -554,56 +553,58 @@ class SourceList(gtk.VBox, Loggable):
         elif total_clips != 0:
             self._progressbar.set_fraction((current_clip_iter - 1) / float(total_clips))
 
-    def _addFactory(self, factory):
-        video = factory.getOutputStreams(VideoStream)
-        if video and video[0].thumbnail:
-            thumbnail_file = video[0].thumbnail
-            try:
-                self.debug("attempting to open thumbnail file '%s'",
-                        thumbnail_file)
-                pixbuf = gtk.gdk.pixbuf_new_from_file(thumbnail_file)
-            except:
-                self.error("Failure to create thumbnail from file '%s'",
-                        thumbnail_file)
-                thumbnail = self.videofilepixbuf
-                thumbnail_large = self.videofilepixbuf
-            else:
-                desiredheight = int(64 / float(video[0].dar))
-                thumbnail = pixbuf.scale_simple(64,
-                        desiredheight, gtk.gdk.INTERP_BILINEAR)
-                desiredheight = int(96 / float(video[0].dar))
-                thumbnail_large = pixbuf.scale_simple(96,
-                        desiredheight, gtk.gdk.INTERP_BILINEAR)
+    def _addDiscovererInfo(self, info):
+        #FIXME GES port reimplement thunbnails
+        #video = factory.getOutputStreams()
+        #if video and video[0].thumbnail:
+            #thumbnail_file = video[0].thumbnail
+            #try:
+                #self.debug("attempting to open thumbnail file '%s'",
+                        #thumbnail_file)
+                #pixbuf = gtk.gdk.pixbuf_new_from_file(thumbnail_file)
+            #except:
+                #self.error("Failure to create thumbnail from file '%s'",
+                        #thumbnail_file)
+                #thumbnail = self.videofilepixbuf
+                #thumbnail_large = self.videofilepixbuf
+            #else:
+                #desiredheight = int(64 / float(video[0].dar))
+                #thumbnail = pixbuf.scale_simple(64,
+                        #desiredheight, gtk.gdk.INTERP_BILINEAR)
+                #desiredheight = int(96 / float(video[0].dar))
+                #thumbnail_large = pixbuf.scale_simple(96,
+                        #desiredheight, gtk.gdk.INTERP_BILINEAR)
+        #else:
+        if [i for i in info.get_stream_list() if\
+            isinstance(i, gst.pbutils.DiscovererVideoInfo)]:
+            thumbnail = self.videofilepixbuf
+            thumbnail_large = self.videofilepixbuf
         else:
-            if video:
-                thumbnail = self.videofilepixbuf
-                thumbnail_large = self.videofilepixbuf
-            else:
-                thumbnail = self.audiofilepixbuf
-                thumbnail_large = self.audiofilepixbuf
+            thumbnail = self.audiofilepixbuf
+            thumbnail_large = self.audiofilepixbuf
 
-        if not factory.duration or factory.duration == gst.CLOCK_TIME_NONE:
+        if info.get_duration() == gst.CLOCK_TIME_NONE:
             duration = ''
         else:
-            duration = beautify_length(factory.duration)
+            duration = beautify_length(info.get_duration())
 
         short_text = None
-        uni = unicode(factory_name(factory), 'utf-8')
+        uni = unicode(info_name(info), 'utf-8')
 
         if len(uni) > 34:
             short_uni = uni[0:29]
             short_uni += unicode('...')
             short_text = short_uni.encode('utf-8')
         else:
-            short_text = factory_name(factory)
+            short_text = info_name(info)
 
         self.storemodel.append([thumbnail,
             thumbnail_large,
-            beautify_factory(factory),
-            factory,
-            factory.uri,
+            beautify_info(info),
+            info,
+            info.get_uri(),
             duration,
-            factory_name(factory),
+            info_name(info),
             short_text])
         self._displayClipView()
 
@@ -612,7 +613,7 @@ class SourceList(gtk.VBox, Loggable):
     def _sourceAddedCb(self, sourcelist, factory):
         """ a file was added to the sourcelist """
         self._updateProgressbar()
-        self._addFactory(factory)
+        self._addDiscovererInfo(factory)
         if len(self.storemodel):
             self.infobar.hide_all()
             self.search_hbox.show_all()

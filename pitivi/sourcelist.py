@@ -25,11 +25,9 @@ Handles the list of source for a project
 """
 
 import urllib
-from pitivi.discoverer import Discoverer
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 import gst
-from pitivi.factories.file import FileSourceFactory
 
 
 class SourceListError(Exception):
@@ -61,7 +59,7 @@ class SourceList(Signallable, Loggable):
     __signals__ = {
         "ready": [],
         "starting": [],
-        "source-added": ["factory"],
+        "source-added": ["info"],
         "source-removed": ["uri"],
         "discovery-error": ["uri", "reason"],
         }
@@ -90,13 +88,12 @@ class SourceList(Signallable, Loggable):
         self._sources[uri] = None
 
         try:
-            self.discoverer.discover_uri(uri)
+            info = self.discoverer.discover_uri(uri)
         except Exception, e:
             self.emit("discovery-error", uri, e, "")
             return
 
-        factory = FileSourceFactory(uri)
-        self.addFactory(factory)
+        self.addDiscovererInfo(info)
 
     def addUris(self, uris):
         """
@@ -112,40 +109,41 @@ class SourceList(Signallable, Loggable):
 
     def removeUri(self, uri):
         """
-        Remove the factory for c{uri} from the source list.
+        Remove the info for c{uri} from the source list.
         """
         try:
-            factory = self._sources.pop(uri)
+            info = self._sources.pop(uri)
         except KeyError:
             raise SourceListError("URI not in the sourcelist", uri)
         try:
-            self._ordered_sources.remove(factory)
+            self._ordered_sources.remove(info)
         except ValueError:
             # this can only happen if discoverer hasn't finished scanning the
-            # source, so factory must be None
-            assert factory is None
-        self.emit("source-removed", uri, factory)
+            # source, so info must be None
+            assert info is None
+        self.emit("source-removed", uri, info)
 
     def getUri(self, uri):
         """
         Get the source corresponding to C{uri}.
         """
-        factory = self._sources.get(uri)
-        if factory is None:
+        info = self._sources.get(uri)
+        if info is None:
             raise SourceListError("URI not in the sourcelist", uri)
-        return factory
+        return info
 
-    def addFactory(self, factory):
+    def addDiscovererInfo(self, info):
         """
         Add the specified SourceFactory to the list of sources.
         """
-        if self._sources.get(factory.uri, None) is not None:
-            raise SourceListError("We already have a factory for this URI",
-                    factory.uri)
-        self._sources[factory.uri] = factory
-        self._ordered_sources.append(factory)
+        uri = info.get_uri()
+        if self._sources.get(uri, None) is not None:
+            raise SourceListError("We already have a info for this URI",
+                    uri)
+        self._sources[uri] = info
+        self._ordered_sources.append(info)
         self.nb_imported_files += 1
-        self.emit("source-added", factory)
+        self.emit("source-added", info)
 
     def getSources(self):
         """ Returns the list of sources used.

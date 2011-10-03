@@ -52,7 +52,7 @@ from pitivi.ui.sourcelist import SourceList
 from pitivi.ui.effectlist import EffectList
 from pitivi.ui.clipproperties import ClipProperties
 from pitivi.ui.common import SPACING
-from pitivi.ui.common import factory_name
+from pitivi.ui.common import info_name
 from pitivi.utils import beautify_length, show_user_manual
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.filechooserpreview import PreviewWidget
@@ -849,7 +849,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.destroy()
         self.set_sensitive(True)
 
-    def _projectManagerMissingUriCb(self, instance, formatter, uri, factory):
+    def _projectManagerMissingUriCb(self, instance, formatter, uri, info):
         dialog = gtk.Dialog(_("Locate missing file..."),
             self,
             gtk.DIALOG_MODAL,
@@ -861,16 +861,16 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.set_transient_for(self)
 
         # TODO: display the filesize to help the user identify the file
-        if not factory.duration or factory.duration == gst.CLOCK_TIME_NONE:
+        if info.get_duration() == gst.CLOCK_TIME_NONE:
             # The file is probably an image, not video or audio.
             text = _('The following file has moved: "<b>%s</b>"'
                      '\nPlease specify its new location:'
-                     % factory_name(factory))
+                     % info_name(info))
         else:
-            length = beautify_length(factory.duration)
+            length = beautify_length(info.get_duration())
             text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
                      '\nPlease specify its new location:'
-                     % (factory_name(factory), length))
+                     % (info_name(info), length))
 
         label = gtk.Label()
         label.set_markup(text)
