@@ -138,14 +138,11 @@ class EffectsHandler(object):
                                    self._getEffectCategories(name),
                                    self._getEffectName(element_factory),
                                    self._getEffectDescripton(element_factory))
-                added = self.addStreams(element_factory, effect)
-
-                if added is True:
-                    if 'Audio' in klass:
-                        self.audio_effects.append(element_factory)
-                    elif 'Video' in klass:
-                        self.video_effects.append(element_factory)
-                    self._addEffectToDic(name, effect)
+                if 'Audio' in klass:
+                    self.audio_effects.append(element_factory)
+                elif 'Video' in klass:
+                    self.video_effects.append(element_factory)
+                self._addEffectToDic(name, effect)
 
     def getAllAudioEffects(self):
         """
@@ -170,28 +167,6 @@ class EffectsHandler(object):
         @raises: KeyError if the name doesn't  exist
         """
         return self._effect_factories_dict.get(name)
-
-    def addStreams(self, element, factory):
-        """
-        Adds the good streams to the corresponding factory
-        """
-        pads = element.get_static_pad_templates()
-
-        if not factory:
-            return False
-
-        for padTmp in pads:
-            pad = gst.Pad(padTmp.get())
-            if pad.get_caps() == "ANY":
-                return False
-
-            if padTmp.direction == gst.PAD_SRC:
-                stream = get_stream_for_pad(pad)
-                factory.addInputStream(stream)
-            elif padTmp.direction == gst.PAD_SINK:
-                stream = get_stream_for_pad(pad)
-                factory.addOutputStream(stream)
-        return True
 
     def _getEffectDescripton(self, element_factory):
         """
