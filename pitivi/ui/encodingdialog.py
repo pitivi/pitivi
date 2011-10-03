@@ -27,7 +27,6 @@ Render dialog
 import os
 import gtk
 import gst
-import pango
 from gettext import gettext as _
 
 from pitivi import configure
@@ -35,7 +34,6 @@ from pitivi.settings import ExportSettings
 from pitivi.log.loggable import Loggable
 from pitivi.ui.encodingprogress import EncodingProgressDialog
 from pitivi.ui.gstwidget import GstElementSettingsDialog
-from pitivi.actioner import Renderer
 from pitivi.ui.ripple_update_group import RippleUpdateGroup
 from pitivi.ui.common import\
     model,\
@@ -108,7 +106,7 @@ def factorylist(factories):
     return model(columns, data)
 
 
-class EncodingDialog(Renderer, Loggable):
+class EncodingDialog(Loggable):
     """Render dialog box.
 
     @ivar preferred_aencoder: The last audio encoder selected by the user.
@@ -123,6 +121,14 @@ class EncodingDialog(Renderer, Loggable):
         Loggable.__init__(self)
 
         self.app = app
+        self.project = project
+        if pipeline != None:
+            self.pipeline = pipeline
+        else:
+            self.pipeline = self.project.pipeline
+
+        self.outfile = None
+        self.settings = project.getSettings()
 
         self.builder = gtk.Builder()
         self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
@@ -144,8 +150,6 @@ class EncodingDialog(Renderer, Loggable):
         # settings to be used by the Render dialog for rendering.
         render_settings = project.getSettings().copy()
         # Note: render_settings will end up as self.settings.
-        Renderer.__init__(self, project,
-                pipeline=pipeline, settings=render_settings)
 
         # Directory and Filename
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
