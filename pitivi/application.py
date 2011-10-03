@@ -50,10 +50,10 @@ from pitivi.log import log
 from pitivi.ui.mainwindow import PitiviMainWindow
 from pitivi.projectmanager import ProjectManager, ProjectLogObserver
 from pitivi.undo import UndoableActionLog, DebugActionLogObserver
-from pitivi.timeline.timeline_undo import TimelineLogObserver
+#FIXME GES port disabled it
+#from pitivi.timeline.timeline_undo import TimelineLogObserver
 from pitivi.sourcelist_undo import SourceListLogObserver
 from pitivi.ui.viewer import PitiviViewer
-from pitivi.actioner import Renderer, Previewer
 from pitivi.ui.startupwizard import StartUpWizard
 
 # FIXME : Speedup loading time
@@ -308,6 +308,7 @@ class FullGuiPitivi(GuiPitivi):
         return PitiviMainWindow(self, **kargs)
 
 
+#FIXME the GES port screwed the import to the timeline
 class ProjectCreatorGuiPitivi(FullGuiPitivi):
     """
     Creates an instance of PiTiVi with the UI and loading a list
@@ -327,12 +328,14 @@ class ProjectCreatorGuiPitivi(FullGuiPitivi):
                 self._discoveryErrorCb, uris)
         self.current.sources.addUris(uris)
 
-    def _sourceAddedCb(self, sourcelist, factory,
+    def _sourceAddedCb(self, sourcelist, info,
             startup_uris, add_to_timeline):
-        if self._maybePopStartupUri(startup_uris, factory.uri) \
+        if self._maybePopStartupUri(startup_uris, info.get_uri()) \
                 and add_to_timeline:
             self.action_log.begin("add clip")
-            self.current.timeline.addSourceFactory(factory)
+            src = ges.TimelineFileSource(info.get_uri())
+            src.set_property("priority", 1)
+            self.current.timeline.get_layers()[0].add_object(src)
             self.action_log.commit()
 
     def _discoveryErrorCb(self, sourcelist, uri, error, debug, startup_uris):
@@ -388,64 +391,66 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
         self.wizard.show()
 
 
-class PreviewGuiPitivi(GuiPitivi):
-    """
-    Creates an instance of PiTiVi which plays the @project_filename
-    in a basic UI.
-    """
+#FIXME GES port disable. We need to know if we want to implement
+#the commandline thing or just tell people to use ges-launch
+#class PreviewGuiPitivi(GuiPitivi):
+    #"""
+    #Creates an instance of PiTiVi which plays the @project_filename
+    #in a basic UI.
+    #"""
 
-    def __init__(self, project_filename, debug=False):
-        GuiPitivi.__init__(self, debug)
-        self._loadProject(project_filename)
+    #def __init__(self, project_filename, debug=False):
+        #GuiPitivi.__init__(self, debug)
+        #self._loadProject(project_filename)
 
-    def _createGui(self):
-        self.viewer = PitiviViewer(self)
-        window = gtk.Window()
-        window.connect("delete-event", self._deleteCb)
-        window.add(self.viewer)
-        return window
+    #def _createGui(self):
+        #self.viewer = PitiviViewer(self)
+        #window = gtk.Window()
+        #window.connect("delete-event", self._deleteCb)
+        #window.add(self.viewer)
+        #return window
 
-    def _deleteCb(self, unused_widget, unused_data):
-        self.shutdown()
+    #def _deleteCb(self, unused_widget, unused_data):
+        #self.shutdown()
 
-    def _eosCb(self, unused_obj):
-        self.viewer.seek(0)
+    #def _eosCb(self, unused_obj):
+        #self.viewer.seek(0)
 
-    def _newProjectLoaded(self, project):
-        # create previewer and set ui
-        previewer = Previewer(project, ui=self.viewer)
-        self._setActioner(previewer)
-        # hack to make the gtk.HScale seek slider UI behave properly
-        self.viewer._durationChangedCb(None, project.timeline.duration)
+    #def _newProjectLoaded(self, project):
+        ## create previewer and set ui
+        #previewer = Previewer(project, ui=self.viewer)
+        #self._setActioner(previewer)
+        ## hack to make the gtk.HScale seek slider UI behave properly
+        #self.viewer._durationChangedCb(None, project.timeline.duration)
 
 
-class RenderingNoGuiPitivi(InteractivePitivi):
-    """
-    Creates an instance of PiTiVi with no UI which aims
-    at rendering the @project_filename project in @output_filename file
-    """
+#class RenderingNoGuiPitivi(InteractivePitivi):
+    #"""
+    #Creates an instance of PiTiVi with no UI which aims
+    #at rendering the @project_filename project in @output_filename file
+    #"""
 
-    def __init__(self, project_filename, output_filename, debug=False):
-        InteractivePitivi.__init__(self, debug)
-        self.outfile = "file://%s" % os.path.abspath(output_filename)
-        print _("Loading project...")
-        self._loadProject(project_filename)
+    #def __init__(self, project_filename, output_filename, debug=False):
+        #InteractivePitivi.__init__(self, debug)
+        #self.outfile = "file://%s" % os.path.abspath(output_filename)
+        #print _("Loading project...")
+        #self._loadProject(project_filename)
 
-    def _eosCb(self, unused_obj):
-        self.shutdown()
+    #def _eosCb(self, unused_obj):
+        #self.shutdown()
 
-    def _newProjectLoaded(self, project):
-        # create renderer and set output file
-        renderer = Renderer(project, outfile=self.outfile)
-        print _("Project loaded.")
-        print _("Rendering...")
-        self._setActioner(renderer)
+    #def _newProjectLoaded(self, project):
+        ## create renderer and set output file
+        #renderer = Renderer(project, outfile=self.outfile)
+        #print _("Project loaded.")
+        #print _("Rendering...")
+        #self._setActioner(renderer)
 
-    def shutdown(self):
-        if Pitivi.shutdown(self):
-            self.mainloop.quit()
-            return True
-        return False
+    #def shutdown(self):
+        #if Pitivi.shutdown(self):
+            #self.mainloop.quit()
+            #return True
+        #return False
 
 
 def _parse_options(argv):
@@ -506,12 +511,12 @@ def main(argv):
         ptv = ProjectCreatorGuiPitivi(media_filenames=args,
                                       add_to_timeline=options.add_to_timeline,
                                       debug=options.debug)
-    elif options.render_output:
-        ptv = RenderingNoGuiPitivi(project_filename=args[0],
-                                   output_filename=options.render_output,
-                                   debug=options.debug)
-    elif options.preview:
-        ptv = PreviewGuiPitivi(project_filename=args[0], debug=options.debug)
+    #elif options.render_output:
+        #ptv = RenderingNoGuiPitivi(project_filename=args[0],
+                                   #output_filename=options.render_output,
+                                   #debug=options.debug)
+    #elif options.preview:
+        #ptv = PreviewGuiPitivi(project_filename=args[0], debug=options.debug)
     else:
         if args:
             ptv = ProjectLoaderGuiPitivi(project_filename=args[0],
