@@ -31,8 +31,6 @@ import os
 
 from gettext import gettext as _
 
-from pitivi.factories.operation import EffectFactory
-from pitivi.stream import get_stream_for_pad
 from pitivi.configure import get_pixmap_dir
 from pitivi.undo import UndoableAction
 
@@ -54,8 +52,31 @@ BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
                        "alphacolor", "cogcolorspace", "videodetect",
                        "navigationtest", "videoanalyse"]
 
+#FIXME Check if this is still true with GES
 #We should unblacklist it when #650985 is solved
 BLACKLISTED_PLUGINS = ["ldaspa"]
+
+
+class Effect():
+    """
+    Factories that applies an effect on a stream
+    """
+    def __init__(self, effect, name='', categories=[_("Uncategorized")],
+                  human_name="", description="", icon=None):
+        self.effectname = effect
+        self.categories = categories
+        self.description = description
+        self.human_name = human_name
+        self._icon = icon
+
+    def getHumanName(self):
+        return self.human_name
+
+    def getDescription(self):
+        return self.description
+
+    def getCategories(self):
+        return self.categories
 
 
 class EffectsHandler(object):
@@ -134,7 +155,7 @@ class EffectsHandler(object):
             name = element_factory.get_name()
             if "Effect" in klass and name not in BLACKLISTED_EFFECTS and not\
                 [bplug for bplug in BLACKLISTED_PLUGINS if bplug in name]:
-                effect = EffectFactory(name, name,
+                effect = Effect(name, name,
                                    self._getEffectCategories(name),
                                    self._getEffectName(element_factory),
                                    self._getEffectDescripton(element_factory))
@@ -163,7 +184,7 @@ class EffectsHandler(object):
         """
         @ivar name: Factory name.
         @type name: C{str}
-        @returns: The l{EffectFactory} corresponding to the name
+        @returns: The l{Effect} corresponding to the name
         @raises: KeyError if the name doesn't  exist
         """
         return self._effect_factories_dict.get(name)
