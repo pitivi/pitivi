@@ -1090,8 +1090,8 @@ class MoveContext(EditingContext):
         all_objects.add(focus)
         self.layersList = []
         for obj in all_objects:
-            if isinstance(obj, ges.TrackFileSource):
-                timeline_object = obj
+            if isinstance(obj, ges.TrackObject):
+                timeline_object = obj.get_timeline_object()
                 self.tracks.add(obj.get_track())
             else:
                 timeline_object = obj
@@ -1151,59 +1151,10 @@ class MoveContext(EditingContext):
     def _finishDefault(self):
         self._restoreValues(self.default_originals)
 
-    def _overlapsAreTransitions(self, focus, priority):
-        tracks = set(o.track for o in focus.track_objects)
-        left_gap, right_gap = Gap.findAroundObject(focus, tracks=tracks)
-
-        focus_end = focus.start + focus.duration
-
-        # left_transition
-        if left_gap.duration < 0:
-            left_obj = left_gap.left_object
-            left_end = left_obj.start + left_obj.duration
-
-            if left_end > focus_end:
-                return False
-
-            # check that the previous previous object doesn't end after
-            # our start time. we shouldn't have to go back further than
-            # this because
-            #   * we are only moving one object
-            #   * if there was more than one clip overlaping the previous
-            #   clip, it too would be invalid, since that clip would
-            #   overlap the previous and previous previous clips
-
-            try:
-                prev_prev = self.timeline.getPreviousTimelineObject(left_obj,
-                        tracks=tracks)
-                if prev_prev.start + prev_prev.duration > self.focus.start:
-                    return False
-            except TimelineError:
-                pass
-
-        # right transition
-        if right_gap.duration < 0:
-            right_obj = right_gap.right_object
-            right_end = right_obj.start + right_obj.duration
-
-            if right_end < focus_end:
-                return False
-
-            # check that the next next object starts after we end
-
-            try:
-                next_next = self.timeline.getNextTimelineObject(right_obj)
-                if next_next.start < focus_end:
-                    return False
-            except TimelineError:
-                pass
-
-        return True
-
     def finish(self):
 
-        if isinstance(self.focus, TrackObject):
-            focus_timeline_object = self.focus.timeline_object
+        if isinstance(self.focus, ges.TrackObject):
+            focus_timeline_object = self.focus.get_timeline_object()
         else:
             focus_timeline_object = self.focus
         initial_position = self.default_originals[focus_timeline_object][0]
@@ -1283,7 +1234,7 @@ class MoveContext(EditingContext):
 
         priority = max(self.min_priority, priority)
         obj = self.focus
-        if isinstance (self.focus, ges.TrackFileSource):
+        if isinstance(self.focus, ges.TrackFileSource):
             obj = self.focus.get_timeline_object()
         if obj.get_layer().get_property("priority") != priority:
             origin_layer = obj.get_layer()
@@ -1408,7 +1359,7 @@ class TrimStartContext(EditingContext):
 
     def _defaultTo(self, position, priority):
         start = self.focus.get_property("start")
-        earliest = max (0, position - self.focus.starting_start)
+        earliest = max(0, position - self.focus.starting_start)
         self.focus.set_property("in-point", earliest)
         self.focus.set_property("start", position)
         self.focus.set_property("duration", self.focus.get_property("max-duration") - self.focus.get_property("in-point"))
