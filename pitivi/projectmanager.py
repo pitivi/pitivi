@@ -29,14 +29,11 @@ from urlparse import urlparse
 from pwd import getpwuid
 
 from pitivi.project import Project
-from pitivi.formatters.format import get_formatter_for_uri
-from pitivi.formatters.base import FormatterLoadError, FormatterSaveError
 
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
-from pitivi.stream import AudioStream, VideoStream
-from pitivi.timeline.track import Track
 from pitivi.undo import UndoableAction
+
 
 class ProjectSettingsChanged(UndoableAction):
 

@@ -31,8 +31,6 @@ import os
 from gettext import gettext as _
 
 from pitivi.log.loggable import Loggable
-from pitivi.timeline.track import TrackEffect
-from pitivi.stream import VideoStream
 
 from pitivi.ui.gstwidget import GstElementSettingsWidget
 from pitivi.ui.effectsconfiguration import EffectsPropertiesHandling

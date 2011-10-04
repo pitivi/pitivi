@@ -33,7 +33,6 @@ from gettext import gettext as _
 from pitivi.signalinterface import Signallable
 from pitivi.encode import available_combinations, \
      get_compatible_sink_caps
-from pitivi.stream import get_stream_for_caps
 from pitivi.log.loggable import Loggable
 
 
@@ -320,61 +319,6 @@ class GlobalSettings(Signallable):
         cls.options[section] = {}
 
 
-class StreamEncodeSettings(object):
-    """
-    Settings for encoding a L{MultimediaStream}.
-
-    @ivar encoder: Name of the encoder used to encode this stream. If None, no
-    encoder is used and the incoming stream will be outputted directly.
-    @type encoder: C{str}
-    @ivar input_stream: The type of streams accepted by this settings. If
-    None are specified, the stream type will be extracted from the encoder.
-    @type input_stream: L{MultimediaStream}
-    @ivar output_stream: The type of streams accepted by this settings. If
-    None are specified, the stream type will be extracted from the encoder.
-    @type output_stream: L{MultimediaStream}
-    @ivar encodersettings: Encoder-specific settings.
-    @type encodersettings: C{dict}
-    """
-
-    def __init__(self, encoder=None, input_stream=None, output_stream=None,
-                 encodersettings={}):
-        """
-        @param encoder: The encoder to use. If None, no encoder is used and the
-        incoming stream will be outputted directly.
-        @type encoder: C{str}.
-        @param input_stream: The type of streams accepted by this settings. If
-        None are specified, the stream type will be extracted from the encoder.
-        If one is specified, then a L{StreamModifierFactory} will be use to
-        conform the incoming stream to the specified L{Stream}.
-        @type input_stream: L{MultimediaStream}
-        @param output_stream: The type of streams accepted by this settings. If
-        None are specified, the stream type will be extracted from the encoder.
-        @type output_stream: L{MultimediaStream}
-        @param encodersettings: Encoder-specific settings.
-        @type encodersettings: C{dict}
-        """
-        # FIXME : What if we need parsers after the encoder ??
-        self.encoder = encoder
-        self.input_stream = input_stream
-        self.output_stream = output_stream
-        self.encodersettings = encodersettings
-        self.modifyinput = (input_stream != None)
-        self.modifyoutput = (output_stream != None)
-        if not self.input_stream or not self.output_stream:
-            # extract stream from factory
-            for p in gst.registry_get_default().lookup_feature(self.encoder).get_static_pad_templates():
-                if p.direction == gst.PAD_SINK and not self.input_stream:
-                    self.input_stream = get_stream_for_caps(p.get_caps().copy())
-                    self.input_stream.pad_name = p.name_template
-                elif p.direction == gst.PAD_SRC and not self.output_stream:
-                    self.output_stream = get_stream_for_caps(p.get_caps().copy())
-                    self.output_stream.pad_name = p.name_template
-
-    def __str__(self):
-        return "<StreamEncodeSettings %s>" % self.encoder
-
-
 class RenderSettings(object):
     """
     Settings for rendering and multiplexing one or multiple streams.
@@ -595,30 +539,3 @@ class ExportSettings(Signallable, Loggable):
         """ Returns the list of video encoders compatible with the current
         muxer """
         return self.vencoders[self.muxer]
-
-
-def export_settings_to_render_settings(export,
-        have_video=True, have_audio=True):
-    """Convert the specified ExportSettings object to a RenderSettings object.
-    """
-    # Get the audio and video caps/encoder/settings
-    astream = get_stream_for_caps(export.getAudioCaps())
-    vstream = get_stream_for_caps(export.getVideoCaps(render=True))
-
-    encoder_settings = []
-    if export.vencoder is not None and have_video:
-        vset = StreamEncodeSettings(encoder=export.vencoder,
-                                    input_stream=vstream,
-                                    encodersettings=export.vcodecsettings)
-        encoder_settings.append(vset)
-
-    if export.aencoder is not None and have_audio:
-        aset = StreamEncodeSettings(encoder=export.aencoder,
-                                    input_stream=astream,
-                                    encodersettings=export.acodecsettings)
-        encoder_settings.append(aset)
-
-    settings = RenderSettings(settings=encoder_settings,
-                              muxer=export.muxer,
-                              muxersettings=export.containersettings)
-    return settings

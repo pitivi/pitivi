@@ -42,11 +42,8 @@ from pitivi.ui.viewer import PitiviViewer
 from pitivi.configure import pitivi_version, APPNAME, APPURL, \
      get_pixmap_dir, get_ui_dir
 from pitivi.ui import dnd
-from pitivi.pipeline import Pipeline
-from pitivi.action import ViewAction
 from pitivi.settings import GlobalSettings
 from pitivi.receiver import receiver, handler
-import pitivi.formatters.format as formatter
 from pitivi.sourcelist import SourceListError
 from pitivi.ui.sourcelist import SourceList
 from pitivi.ui.effectlist import EffectList

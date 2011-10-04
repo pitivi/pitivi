@@ -86,10 +86,7 @@ help/Makefile
 pitivi/Makefile
 pitivi/configure.py
 pitivi/ui/Makefile
-pitivi/elements/Makefile
-pitivi/factories/Makefile
 pitivi/log/Makefile
-pitivi/formatters/Makefile
 pitivi/timeline/Makefile
 pitivi.spec
 po/Makefile.in

@@ -1,6 +1,5 @@
 import gtk
 from pitivi.receiver import receiver, handler
-import pitivi.stream as stream
 from gettext import gettext as _
 from common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 

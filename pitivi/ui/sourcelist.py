@@ -28,7 +28,6 @@ import time
 
 from urllib import unquote
 from gettext import gettext as _
-from gettext import ngettext
 
 import pitivi.ui.dnd as dnd
 from pitivi.ui.pathwalker import PathWalker, quote_uri
@@ -41,7 +40,6 @@ from pitivi.utils import beautify_length
 from pitivi.ui.common import beautify_info, info_name, \
     SPACING, PADDING
 from pitivi.log.loggable import Loggable
-from pitivi.sourcelist import SourceListError
 from pitivi.ui.filechooserpreview import PreviewWidget
 
 SHOW_TREEVIEW = 1

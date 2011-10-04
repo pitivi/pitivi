@@ -43,7 +43,7 @@ from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.common import SPACING
 from pitivi.ui.alignmentprogress import AlignmentProgressDialog
 from pitivi.ui.depsmanager import DepsManager
-from pitivi.timeline.align import AutoAligner
+#from pitivi.timeline.align import AutoAligner
 from pitivi.check import soft_deps
 
 DND_EFFECT_LIST = [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
@@ -399,9 +399,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.drag_highlight()
         if  context.targets not in DND_EFFECT_LIST:
             if not self._temp_objects:
-                #GES break, FIXME
-                pass
-                self.timeline.disableUpdates()
                 self._add_temp_source()
                 focus = self._temp_objects[0]
                 self._move_context = MoveContext(self.timeline,
@@ -546,7 +543,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._vscrollbar.set_value(self._vscrollbar.get_value() +
             self.vadj.props.page_size ** (2.0 / 3.0))
 
-    def unsureVadjHeight (self):
+    def unsureVadjHeight(self):
         self._scroll_pos_ns = Zoomable.pixelToNs(self.hadj.get_value())
         self._root_item.set_simple_transform(0 - self.hadj.get_value(),
             0 - self.vadj.get_value(), 1.0, 0)
@@ -644,6 +641,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._settingsChangedCb(self.project, None, self.project.getSettings())
             self._seeker = self.project.seeker
 
+    #FIXME GES port
     project = receiver(_setProject)
 
     @handler(project, "settings-changed")

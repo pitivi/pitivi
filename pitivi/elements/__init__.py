@@ -1,3 +1,0 @@
-"""
-GStreamer elements
-"""

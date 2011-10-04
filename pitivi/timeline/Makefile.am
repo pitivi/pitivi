@@ -5,10 +5,8 @@ timeline_PYTHON = 	\
 	align.py        \
 	alignalgs.py    \
 	extract.py      \
-	timeline.py	\
-	timeline_undo.py \
-	track.py \
-	gap.py
+	timeline.py     \
+	timeline_undo.py
 
 clean-local:
 	rm -rf *.pyc *.pyo

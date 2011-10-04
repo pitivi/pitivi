@@ -11,7 +11,6 @@ from pitivi.receiver import receiver, handler
 from view import View
 import controller
 from zoominterface import Zoomable
-from pitivi.timeline.track import TrackError
 from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT, \
     SELECT_BETWEEN, MoveContext, TrimStartContext, TrimEndContext
 from preview import Preview
@@ -22,8 +21,6 @@ from common import LAYER_SPACING, unpack_cairo_pattern, unpack_cairo_gradient
 from pitivi.ui.point import Point
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
-from pitivi.stream import AudioStream, VideoStream
-import ges
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
@@ -486,7 +483,6 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self.timeline.selected.append(elem)
             for elem in element:
                 if elem == self.element:
-                    print elem.get_timeline_object().get_property("priority"), "la pute !!"
                     self.selection_indicator.props.visibility = goocanvas.ITEM_VISIBLE
                     elem.selected = True
                 elif self.element.selected == False:

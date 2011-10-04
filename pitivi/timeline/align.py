@@ -33,8 +33,6 @@ except ImportError:
 import gobject
 import gst
 from pitivi.utils import beautify_ETA, call_false
-from pitivi.timeline.extract import Extractee, RandomAccessAudioExtractor
-from pitivi.stream import AudioStream
 from pitivi.log.loggable import Loggable
 from pitivi.timeline.alignalgs import rigidalign
 

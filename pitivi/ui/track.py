@@ -1,6 +1,5 @@
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.trackobject import TrackObject
-from pitivi.timeline.track import TrackEffect
 from pitivi.receiver import receiver, handler
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
 import goocanvas

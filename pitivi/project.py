@@ -24,12 +24,9 @@ Project class
 """
 
 from pitivi.log.loggable import Loggable
-from pitivi.pipeline import Pipeline
-from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.sourcelist import SourceList
 from pitivi.settings import ExportSettings
 from pitivi.signalinterface import Signallable
-from pitivi.action import ViewAction
 from pitivi.utils import Seeker
 import gst
 import ges
@@ -104,7 +101,6 @@ class Project(Signallable, Loggable):
         self.pipeline = ges.TimelinePipeline()
         self.pipeline._setUp = False
         self.pipeline.add_timeline(self.timeline)
-        self.view_action = ViewAction()
         self.seeker = Seeker(80)
 
         self.settings = ExportSettings()

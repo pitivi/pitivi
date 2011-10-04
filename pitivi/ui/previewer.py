@@ -30,15 +30,10 @@ import os
 from gettext import gettext as _
 import pitivi.utils as utils
 from pitivi.configure import get_pixmap_dir
-from pitivi.elements.singledecodebin import SingleDecodeBin
-from pitivi.elements.thumbnailsink import CairoSurfaceThumbnailSink
-from pitivi.elements.arraysink import ArraySink
 from pitivi.signalinterface import Signallable
-import pitivi.stream as stream
 from pitivi.settings import GlobalSettings
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.log.loggable import Loggable
-from pitivi.factories.file import PictureFileSourceFactory
 from pitivi.thumbnailcache import ThumbnailCache
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.receiver import receiver, handler
