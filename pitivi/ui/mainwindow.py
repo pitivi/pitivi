@@ -633,7 +633,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
         chooser.set_current_folder(self.settings.lastProjectFolder)
-        formats = formatter.list_formats()
+        #FIXME reimplement when avalaible in GES
+        formats = [(None, _("PiTiVi Native (XML)"), ('xptv',))]
         for format in formats:
             filt = gtk.FileFilter()
             filt.set_name(format[1])
@@ -704,7 +705,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         else:
             self._zoom_duration_changed = True
 
-        self.project.seeker.connect("seek", self._timelineSeekCb)
+        #self.project.seeker.connect("seek", self._timelineSeekCb)
 
         # preliminary seek to ensure the project pipeline is configured
         self.project.seeker.seek(0)
@@ -1069,20 +1070,21 @@ class PitiviMainWindow(gtk.Window, Loggable):
         context.finish(True, False, ctime)
 
     def _viewFactory(self, factory):
-        #GES crazyness... remove it or implement something?
+        #GES crazyness... Implement
         pass
 
-    def _timelineSeekCb(self, ruler, position, format):
-        self.debug("position:%s", gst.TIME_ARGS(position))
-        if self.viewer.action != self.project.view_action:
-            sett = self.project.getSettings()
-            self.viewer.setDisplayAspectRatio(float(sett.videopar * sett.videowidth) / float(sett.videoheight))
-        # everything above only needs to be done if the viewer isn't already
-        # set to the pipeline.
-        try:
-            self.project.pipeline.seek(position, format)
-        except:
-            self.debug("Seeking failed")
+    #FIXME GES port, check where the seeking should be done
+    #def _timelineSeekCb(self, ruler, position, format):
+        #self.debug("position:%s", gst.TIME_ARGS(position))
+        #if self.viewer.action != self.project.view_action:
+            #sett = self.project.getSettings()
+            #self.viewer.setDisplayAspectRatio(float(sett.videopar * sett.videowidth) / float(sett.videoheight))
+        ## everything above only needs to be done if the viewer isn't already
+        ## set to the pipeline.
+        #try:
+            #self.project.pipeline.seek(position, format)
+        #except:
+            #self.debug("Seeking failed")
 
     def updateTitle(self):
         name = touched = ""
