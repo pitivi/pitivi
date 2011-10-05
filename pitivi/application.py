@@ -53,7 +53,6 @@ from pitivi.undo import UndoableActionLog, DebugActionLogObserver
 #FIXME GES port disabled it
 #from pitivi.timeline.timeline_undo import TimelineLogObserver
 from pitivi.sourcelist_undo import SourceListLogObserver
-from pitivi.ui.viewer import PitiviViewer
 from pitivi.ui.startupwizard import StartUpWizard
 
 # FIXME : Speedup loading time
@@ -114,8 +113,9 @@ class Pitivi(Loggable, Signallable):
 
         # store ourself in the instance global
         if instance.PiTiVi:
-            raise RuntimeWarning(
-                _("There is already a %s instance, please inform the developers by filing a bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi")
+            raise RuntimeWarning(_("There is already a %s instance, please inform "
+                "the developers by filing a bug at "
+                "http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi")
                 % APPNAME)
         instance.PiTiVi = self
 
@@ -389,75 +389,11 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
         self.wizard.show()
 
 
-#FIXME GES port disable. We need to know if we want to implement
-#the commandline thing or just tell people to use ges-launch
-#class PreviewGuiPitivi(GuiPitivi):
-    #"""
-    #Creates an instance of PiTiVi which plays the @project_filename
-    #in a basic UI.
-    #"""
-
-    #def __init__(self, project_filename, debug=False):
-        #GuiPitivi.__init__(self, debug)
-        #self._loadProject(project_filename)
-
-    #def _createGui(self):
-        #self.viewer = PitiviViewer(self)
-        #window = gtk.Window()
-        #window.connect("delete-event", self._deleteCb)
-        #window.add(self.viewer)
-        #return window
-
-    #def _deleteCb(self, unused_widget, unused_data):
-        #self.shutdown()
-
-    #def _eosCb(self, unused_obj):
-        #self.viewer.seek(0)
-
-    #def _newProjectLoaded(self, project):
-        ## create previewer and set ui
-        #previewer = Previewer(project, ui=self.viewer)
-        #self._setActioner(previewer)
-        ## hack to make the gtk.HScale seek slider UI behave properly
-        #self.viewer._durationChangedCb(None, project.timeline.duration)
-
-
-#class RenderingNoGuiPitivi(InteractivePitivi):
-    #"""
-    #Creates an instance of PiTiVi with no UI which aims
-    #at rendering the @project_filename project in @output_filename file
-    #"""
-
-    #def __init__(self, project_filename, output_filename, debug=False):
-        #InteractivePitivi.__init__(self, debug)
-        #self.outfile = "file://%s" % os.path.abspath(output_filename)
-        #print _("Loading project...")
-        #self._loadProject(project_filename)
-
-    #def _eosCb(self, unused_obj):
-        #self.shutdown()
-
-    #def _newProjectLoaded(self, project):
-        ## create renderer and set output file
-        #renderer = Renderer(project, outfile=self.outfile)
-        #print _("Project loaded.")
-        #print _("Rendering...")
-        #self._setActioner(renderer)
-
-    #def shutdown(self):
-        #if Pitivi.shutdown(self):
-            #self.mainloop.quit()
-            #return True
-        #return False
-
-
 def _parse_options(argv):
     parser = OptionParser(
             usage=_("""
     %prog [PROJECT_FILE]               # Start the video editor.
-    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a project.
-    %prog PROJECT_FILE -r OUTPUT_FILE  # Render a project.
-    %prog PROJECT_FILE -p              # Preview a project."""))
+    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a project."""))
 
     parser.add_option("-i", "--import", dest="import_sources",
             action="store_true", default=False,
@@ -468,21 +404,9 @@ def _parse_options(argv):
     parser.add_option("-d", "--debug",
             action="store_true", default=False,
             help=_("Run Pitivi in the Python Debugger."))
-    parser.add_option("-r", "--render", dest="render_output",
-            action="store", default=None,
-            help=_("Render the specified project to OUTPUT_FILE with no GUI."))
-    parser.add_option("-p", "--preview",
-            action="store_true", default=False,
-            help=_("Preview the specified project file without the full UI."))
     options, args = parser.parse_args(argv[1:])
 
     # Validate options.
-    if options.render_output and options.preview:
-        parser.error(_("-p and -r cannot be used simultaneously"))
-
-    if options.import_sources and (options.render_output or options.preview):
-        parser.error(_("-r or -p and -i are incompatible"))
-
     if options.add_to_timeline and not options.import_sources:
         parser.error(_("-a requires -i"))
 
@@ -490,12 +414,6 @@ def _parse_options(argv):
     if options.import_sources:
         # When no MEDIA_FILE is specified, we just create a new project.
         pass
-    elif options.render_output:
-        if len(args) != 1:
-            parser.error(_("-r requires exactly one PROJECT_FILE"))
-    elif options.preview:
-        if len(args) != 1:
-            parser.error(_("-p requires exactly one PROJECT_FILE"))
     else:
         if len(args) > 1:
             parser.error(_("Cannot open more than one PROJECT_FILE"))
@@ -509,12 +427,6 @@ def main(argv):
         ptv = ProjectCreatorGuiPitivi(media_filenames=args,
                                       add_to_timeline=options.add_to_timeline,
                                       debug=options.debug)
-    #elif options.render_output:
-        #ptv = RenderingNoGuiPitivi(project_filename=args[0],
-                                   #output_filename=options.render_output,
-                                   #debug=options.debug)
-    #elif options.preview:
-        #ptv = PreviewGuiPitivi(project_filename=args[0], debug=options.debug)
     else:
         if args:
             ptv = ProjectLoaderGuiPitivi(project_filename=args[0],
