@@ -26,13 +26,13 @@ Main application
 """
 import gobject
 import gtk
-from optparse import OptionParser
 import os
 import sys
 import urllib
 import ges
 
 from gettext import gettext as _
+from optparse import OptionParser
 
 import pitivi.instance as instance
 

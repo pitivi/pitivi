@@ -23,13 +23,14 @@
 Project class
 """
 
+import gst
+import ges
+
 from pitivi.log.loggable import Loggable
 from pitivi.sourcelist import SourceList
 from pitivi.settings import ExportSettings
 from pitivi.signalinterface import Signallable
 from pitivi.utils import Seeker
-import gst
-import ges
 
 
 class ProjectError(Exception):
@@ -47,11 +48,9 @@ class Project(Signallable, Loggable):
     @ivar sources: The sources used by this project
     @type sources: L{SourceList}
     @ivar timeline: The timeline
-    @type timeline: L{Timeline}
+    @type timeline: L{ges.Timeline}
     @ivar pipeline: The timeline's pipeline
-    @type pipeline: L{Pipeline}
-    @ivar factory: The timeline factory
-    @type factory: L{TimelineSourceFactory}
+    @type pipeline: L{ges.Pipeline}
     @ivar format: The format under which the project is currently stored.
     @type format: L{FormatterClass}
     @ivar loaded: Whether the project is fully loaded or not.

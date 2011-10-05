@@ -24,6 +24,7 @@ Encoding-related utilities and classes
 """
 
 import gst
+
 import pitivi.log.log as log
 
 
@@ -51,6 +52,7 @@ def get_compatible_sink_pad(factoryname, caps):
     return None
 
 
+#FIME GES port make it obselete, handle it properly again
 def get_compatible_sink_caps(factoryname, caps):
     """
     Returns the compatible caps between 'caps' and the sink pad caps of 'factoryname'
