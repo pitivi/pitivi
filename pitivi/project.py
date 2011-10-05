@@ -31,6 +31,7 @@ from pitivi.sourcelist import SourceList
 from pitivi.settings import ExportSettings
 from pitivi.signalinterface import Signallable
 from pitivi.utils import Seeker
+from pitivi.ui.timeline import BACKGROUND_PRIORITY
 
 
 class ProjectError(Exception):
@@ -92,7 +93,8 @@ class Project(Signallable, Loggable):
         self.timeline.add_layer(self.layer)
         self.back_layer = ges.TimelineLayer()
         self.background = ges.TimelineTestSource()
-        self.back_layer.set_priority(99)
+        self.back_layer.set_priority(BACKGROUND_PRIORITY)
+        #FIXME THIS IS SO DIRTY GES port
         self.background.set_property("duration", 313960000000)
         self.back_layer.add_object(self.background)
         self.timeline.add_layer(self.back_layer)

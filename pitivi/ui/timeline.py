@@ -68,6 +68,9 @@ ALIGN = _("Align clips based on their soundtracks")
 SELECT_BEFORE = ("Select all sources before selected")
 SELECT_AFTER = ("Select all after selected")
 
+#FIXME We should not use a background when gaps are properly handled in GES
+BACKGROUND_PRIORITY = 500
+
 ui = '''
 <ui>
     <menubar name="MainMenuBar">
@@ -483,7 +486,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _add_temp_source(self):
         uris = self.selection_data.split("\n")
         for layer in self.app.projectManager.current.timeline.get_layers():
-            if layer.get_priority() != 99:
+            if layer.get_priority() != BACKGROUND_PRIORITY:
                 break
         for uri in uris:
             src = ges.TimelineFileSource(uri)
