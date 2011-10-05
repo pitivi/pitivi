@@ -13,7 +13,6 @@ pitivi_PYTHON = \
 	effects.py	\
 	encode.py	\
 	instance.py 	\
-	pitivigstutils.py \
 	project.py 	\
 	projectmanager.py 	\
 	receiver.py	\

@@ -32,9 +32,6 @@ import sys
 import urllib
 import ges
 
-from pitivi.pitivigstutils import patch_gst_python
-patch_gst_python()
-
 from gettext import gettext as _
 
 import pitivi.instance as instance
