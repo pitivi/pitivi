@@ -25,7 +25,6 @@ Class handling the midle pane
 import gtk
 import pango
 import dnd
-import gst
 import os
 
 from gettext import gettext as _
@@ -389,16 +388,18 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
         obj = self.timeline_objects[0].get_timeline_object()
         for track_effect in obj.get_top_effects():
-            to_append = [track_effect.get_property("active")]
-            if track_effect.get_track().get_caps().to_string() == "audio/x-raw-int; audio/x-raw-float":
-                to_append.append("Audio")
-            else:
-                to_append.append("Video")
+            if not track_effect.factory.effectname in HIDDEN_EFFECTS:
+                to_append = [track_effect.get_property("active")]
+                #FIXME ugly GES -> use TrackType
+                if track_effect.get_track().get_caps().to_string() == "audio/x-raw-int; audio/x-raw-float":
+                    to_append.append("Audio")
+                else:
+                    to_append.append("Video")
 
-            to_append.append(track_effect.get_property("bin-description"))
-            to_append.append(track_effect)
+                to_append.append(track_effect.get_property("bin-description"))
+                to_append.append(track_effect)
 
-            self.storemodel.append(to_append)
+                self.storemodel.append(to_append)
 
     def _showInfoBar(self):
         if self._info_bar is None:
