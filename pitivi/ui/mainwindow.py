@@ -117,9 +117,8 @@ GlobalSettings.addConfigOption('effectVPanedPosition',
     key='effect-vpaned-position',
     type_=int)
 
-
-def supported(info):
-    return formatter.can_handle_location(info[1])
+#FIXME Hacky, reimplement when avalaible in GES
+formats = [(None, _("PiTiVi Native (XML)"), ('xptv',))]
 
 
 def create_stock_icons():
@@ -630,8 +629,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
         chooser.set_current_folder(self.settings.lastProjectFolder)
-        #FIXME reimplement when avalaible in GES
-        formats = [(None, _("PiTiVi Native (XML)"), ('xptv',))]
         for format in formats:
             filt = gtk.FileFilter()
             filt.set_name(format[1])
@@ -640,7 +637,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             chooser.add_filter(filt)
         default = gtk.FileFilter()
         default.set_name(_("All Supported Formats"))
-        default.add_custom(gtk.FILE_FILTER_URI, supported)
+        default.add_custom(gtk.FILE_FILTER_URI, ges.formatter_can_load_uri)
         chooser.add_filter(default)
 
         response = chooser.run()
@@ -1010,7 +1007,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         chooser.set_current_name(_("Untitled.xptv"))
         chooser.set_current_folder(self.settings.lastProjectFolder)
         chooser.props.do_overwrite_confirmation = True
-        formats = formatter.list_formats()
         for format in formats:
             filt = gtk.FileFilter()
             filt.set_name(format[1])
