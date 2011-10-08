@@ -475,7 +475,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def _busMessageErrorCb(self, bus, message):
         error, debug = message.parse_error()
-        print "Event bus error:", str(error), str(debug)
+        self.error("Event bus error: %s: %s", str(error), str(debug))
 
         return gst.BUS_PASS
 

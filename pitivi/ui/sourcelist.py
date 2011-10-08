@@ -30,13 +30,13 @@ from urllib import unquote
 from gettext import gettext as _
 
 import pitivi.ui.dnd as dnd
-from pitivi.ui.pathwalker import PathWalker, quote_uri
-from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.configure import get_pixmap_dir
 from pitivi.signalgroup import SignalGroup
-
 from pitivi.settings import GlobalSettings
 from pitivi.utils import beautify_length
+
+from pitivi.ui.pathwalker import PathWalker, quote_uri
+from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.common import beautify_info, info_name, \
     SPACING, PADDING
 from pitivi.log.loggable import Loggable
@@ -116,6 +116,7 @@ class SourceList(gtk.VBox, Loggable):
         self.app = instance
         self.settings = instance.settings
         self._errors = []
+        self._project = None
 
         # Store
         # icon, infotext, objectfactory, uri, length
@@ -991,16 +992,22 @@ class SourceList(gtk.VBox, Loggable):
         return False
 
     def _newProjectCreatedCb(self, app, project):
-        self._resetErrorList()
-        self.storemodel.clear()
-        self._connectToProject(project)
+        if not self._project is project:
+            self._project = project
+            self._resetErrorList()
+            self.storemodel.clear()
+            self._connectToProject(project)
 
     def _newProjectLoadedCb(self, unused_pitivi, project):
-        pass
+        if not self._project is project:
+            self._project = project
+            self.storemodel.clear()
+            self._connectToProject(project)
 
     def _newProjectFailedCb(self, unused_pitivi, unused_reason, unused_uri):
         self.storemodel.clear()
         self.project_signals.disconnectAll()
+        self._project = None
 
     ## Drag and Drop
     def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,

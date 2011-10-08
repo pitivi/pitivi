@@ -35,9 +35,8 @@ import ges
 from gettext import gettext as _
 from timelinecanvas import TimelineCanvas
 from timelinecontrols import TimelineControls
-from pitivi.receiver import receiver, handler
 from zoominterface import Zoomable
-from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING, TRACK_SPACING
+from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 from pitivi.timeline.timeline import MoveContext, SELECT
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.common import SPACING
@@ -69,7 +68,7 @@ SELECT_BEFORE = ("Select all sources before selected")
 SELECT_AFTER = ("Select all after selected")
 
 #FIXME We should not use a background when gaps are properly handled in GES
-BACKGROUND_PRIORITY = 500
+BACKGROUND_PRIORITY = 99
 
 ui = '''
 <ui>
@@ -190,7 +189,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.log("Creating Timeline")
 
         self._updateZoom = True
-        self.project = None
         self.ui_manager = ui_manager
         self.app = instance
         self._temp_objects = None
@@ -201,6 +199,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._createUI()
         self._prev_duration = 0
         self.rate = gst.Fraction(1, 1)
+        self._project = None
+        self._timeline = None
+        self._duration = 0
 
         self._temp_objects = []
 
@@ -366,8 +367,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         mod = event.get_state()
         try:
             if mod & gtk.gdk.CONTROL_MASK:
-                now = self.project.pipeline.getPosition()
-                ltime, rtime = self.project.timeline.edges.closest(now)
+                now = self._project.pipeline.getPosition()
+                ltime, rtime = self._project.timeline.edges.closest(now)
 
             if kv == gtk.keysyms.Left:
                 if mod & gtk.gdk.SHIFT_MASK:
@@ -387,7 +388,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             return True
 
     def _seekRelative(self, time):
-        pipeline = self.project.pipeline
+        pipeline = self._project.pipeline
         seekvalue = max(0, min(pipeline.getPosition() + time,
             pipeline.getDuration()))
         self._seeker.seek(seekvalue)
@@ -417,7 +418,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.app.projectManager.current.timeline.enable_update(True)
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
-            #FIXME GES break, reimplement me
+        #FIXME GES break, reimplement me
         if  context.targets not in DND_EFFECT_LIST:
             self.app.action_log.begin("add clip")
             self.app.action_log.commit()
@@ -443,6 +444,21 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         return False
 
+    def setDuration(self, unused1=None, unused2=None):
+        self._duration = 0
+
+        for track in self._timeline.get_tracks():
+            if track.props.duration > self._duration:
+                self._duration = track.props.duration
+
+        self.debug("Duration changed %s", self._duration)
+        return self._duration
+
+    def getDuration(self):
+        return self._duration
+
+    duration = property(getDuration, setDuration, None, "The duration property")
+
     def _dragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
         self.app.projectManager.current.timeline.enable_update(False)
@@ -463,7 +479,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         if targetType == dnd.TYPE_PITIVI_FILESOURCE:
             uris = selection.data.split("\n")
-            self._factories = [self.project.sources.getUri(uri) for uri in uris]
+            self._factories = [self._project.sources.getUri(uri) for uri in uris]
         else:
             if not self.timeline.timeline_objects:
                 return False
@@ -632,22 +648,22 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
 ## Project callbacks
 
-    def _setProject(self):
-        if self.project:
-            self.timeline = self.project.timeline
-            self._controls.timeline = self.timeline
-            self._canvas.timeline = self.timeline
-            self._canvas.set_timeline()
+    def setProject(self, project):
+        self.debug("Setting project %s", project)
+        if self._project:
+            self._project.disconnect_by_function(self._settingsChangedCb)
+
+        self._project = project
+        if self._project:
+            self.setTimeline(project.timeline)
+            self._canvas.setTimeline(project.timeline)
             self._canvas.zoomChanged()
-            self.ruler.setProjectFrameRate(self.project.getSettings().videorate)
+            self.ruler.setProjectFrameRate(self._project.getSettings().videorate)
             self.ruler.zoomChanged()
-            self._settingsChangedCb(self.project, None, self.project.getSettings())
-            self._seeker = self.project.seeker
+            self._settingsChangedCb(self._project, None, self._project.getSettings())
+            self._seeker = self._project.seeker
+            self._project.connect("settings-changed", self._settingsChangedCb)
 
-    #FIXME GES port
-    project = receiver(_setProject)
-
-    @handler(project, "settings-changed")
     def _settingsChangedCb(self, project, old, new):
         rate = new.videorate
         self.rate = float(1 / rate)
@@ -655,13 +671,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
 ## Timeline callbacks
 
-    def _setTimeline(self):
-        if self.timeline:
-            self._timelineSelectionChanged(self.timeline)
-            self._timelineStartDurationChanged(self.timeline,
-                self.timeline.duration)
+    def setTimeline(self, timeline):
+        self.debug("Setting timeline %s", timeline)
+        self._controls.timeline = self._timeline
 
-        self._controls.timeline = self.timeline
+        self._timeline = timeline
+        for track in self._timeline.get_tracks():
+            track.connect("notify::duration", self.setDuration)
+
+    def getTimeline(self):
+        return self._timeline
+
+    timeline = property(getTimeline, setTimeline, None, "The GESTimeline")
 
     def _updateScrollAdjustments(self):
         a = self.get_allocation()
@@ -698,7 +719,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 if remove:
                     lyr = obj.get_layer()
                     lyr.remove_object(obj)
-                    print "removed"
             self.app.action_log.commit()
         self.app.projectManager.current.pipeline.set_state(gst.STATE_PAUSED)
 

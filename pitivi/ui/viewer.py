@@ -26,11 +26,10 @@ from gtk import gdk
 import gst
 from math import pi
 import cairo
-import ges
 
 from gettext import gettext as _
 
-from pitivi.utils import time_to_string, Seeker
+from pitivi.utils import time_to_string
 from pitivi.log.loggable import Loggable
 from pitivi.ui.common import SPACING, hex_to_rgb
 from pitivi.settings import GlobalSettings
@@ -105,8 +104,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.action = action
         self.pipeline = None
 
-        self.formatter = ges.PitiviFormatter()
-
         self.sink = None
         self.docked = True
 
@@ -127,7 +124,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             if not self.settings.viewerDocked:
                 self.undock()
 
-    def setPipeline(self):
+    def setPipeline(self, pipeline):
         """
         Set the Viewer to the given Pipeline.
 
@@ -138,7 +135,10 @@ class PitiviViewer(gtk.VBox, Loggable):
         """
         self.debug("self.pipeline:%r", self.pipeline)
 
-        self.pipeline = self.app.projectManager.current.pipeline
+        if (self.pipeline):
+            self.pipeline.set_state(gst.STATE_NULL)
+
+        self.pipeline = pipeline
         if self.pipeline != None:
             bus = self.pipeline.get_bus()
             bus.add_signal_watch()
@@ -148,7 +148,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.currentState = gst.STATE_PAUSED
         self._setUiActive()
         self.seeker = self.app.projectManager.current.seeker
-        self.seeker.connect('seek', self._seekerSeekCb)
 
     def setAction(self, action):
         """
@@ -173,7 +172,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _busMessageCb(self, unused_bus, message):
         if message.type == gst.MESSAGE_EOS:
-            print "eos"
+            self.warning("eos")
         elif message.type == gst.MESSAGE_STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
 
@@ -443,15 +442,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         except:
             self.warning("seek failed")
 
-    def _seekerSeekCb(self, seeker, position, format):
-        try:
-            self.pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
-                                  gst.SEEK_TYPE_SET, position,
-                                  gst.SEEK_TYPE_NONE, -1)
-            self.app.gui.timeline.timelinePositionChanged(position)
-        except PipelineError:
-            self.error("seek failed %s %s", gst.TIME_ARGS(position), format)
-
     def _newTime(self, value, frame=-1):
         self.info("value:%s, frame:%d", gst.TIME_ARGS(value), frame)
         self.current_time = value
@@ -506,7 +496,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         if playing:
             self.playing = True
             self.pipeline.set_state(gst.STATE_PLAYING)
-            gobject.timeout_add(300, self._posCb)
         else:
             self.playing = False
             self.pipeline.set_state(gst.STATE_PAUSED)

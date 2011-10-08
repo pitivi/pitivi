@@ -60,7 +60,6 @@ class EffectsPropertiesHandling:
 
         self._current_effect_setting_ui = effect_set_ui
         element = self._current_effect_setting_ui.element
-        print element.list_children_properties(), "zobii !"
         for prop in element.list_children_properties():
             self._current_element_values[prop.name] = element.get_child_property(prop.name)
 

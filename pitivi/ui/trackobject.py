@@ -503,7 +503,6 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         try:
             x = self.nsToPixel(self.element.get_start())
         except Exception, e:
-            print self.element.get_start()
             raise Exception(e)
         priority = (self.element.get_priority()) / 10
         if priority < 0:

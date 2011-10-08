@@ -25,9 +25,12 @@ Handles the list of source for a project
 """
 
 import urllib
+import gst
+
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
-import gst
+
+from pitivi.ui.timeline import BACKGROUND_PRIORITY
 
 
 class SourceListError(Exception):
@@ -122,6 +125,12 @@ class SourceList(Signallable, Loggable):
             # source, so info must be None
             assert info is None
         self.emit("source-removed", uri, info)
+
+    def _newProjectLoadedCb(self, unused_pitivi, project):
+        for layer in project.timeline.get_layers():
+            if layer.props.priority < BACKGROUND_PRIORITY:
+                for obj in layer.get_objects():
+                    self.addUri(obj.get_uri())
 
     def getUri(self, uri):
         """

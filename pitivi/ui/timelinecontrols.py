@@ -2,11 +2,12 @@ import gtk
 from pitivi.receiver import receiver, handler
 from gettext import gettext as _
 from common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
+from pitivi.log.loggable import Loggable
 
 TRACK_CONTROL_WIDTH = 75
 
 
-class TrackControls(gtk.Label):
+class TrackControls(gtk.Label, Loggable):
     """Contains a timeline track name.
 
     @ivar track: The track for which to display the name.
@@ -17,6 +18,7 @@ class TrackControls(gtk.Label):
 
     def __init__(self, track):
         gtk.Label.__init__(self)
+        Loggable.__init__(self)
         # Center the label horizontally.
         self.set_alignment(0.5, 0)
         # The value below is arbitrarily chosen so the text appears
@@ -56,35 +58,46 @@ class TrackControls(gtk.Label):
         return "<b>%s</b>" % track_name
 
 
-class TimelineControls(gtk.VBox):
+class TimelineControls(gtk.VBox, Loggable):
     """Contains the timeline track names."""
 
     def __init__(self):
         gtk.VBox.__init__(self)
+        Loggable.__init__(self)
         self._tracks = []
+        self._timeline = None
         self.set_spacing(LAYER_SPACING)
         self.set_size_request(TRACK_CONTROL_WIDTH, -1)
 
 ## Timeline callbacks
 
-    def _set_timeline(self):
+    def getTimeline(self):
+        return self._timeline
+
+    def setTimeline(self, timeline):
+        self.debug("Setting timeline %s", timeline)
+
         while self._tracks:
-            self._trackRemoved(None, 0)
-        if self.timeline:
-            for track in self.timeline.get_tracks():
-                self._trackAdded(None, track)
+            self._trackRemovedCb(None, 0)
 
-    timeline = receiver(_set_timeline)
+        if self._timeline:
+            for track in self._timeline.get_tracks():
+                self._trackAddedCb(None, track)
 
-    @handler(timeline, "track-added")
-    def _trackAdded(self, timeline, track):
+            self._timeline.connect("track-added", self._trackAddedCb)
+            self._timeline.connect("track-removed", self._trackRemovedCb)
+
+    timeline = property(getTimeline, setTimeline, None, "The timeline property")
+
+    def _trackAddedCb(self, timeline, track):
         track = TrackControls(track)
         self._tracks.append(track)
         self.pack_start(track, False, False)
         track.show()
 
-    @handler(timeline, "track-removed")
-    def _trackRemoved(self, unused_timeline, position):
+    def _trackRemovedCb(self, unused_timeline, position):
+        self.timeline.disconnect_by_function(self._trackAddedCb)
+        self.timeline.disconnect_by_function(self._trackRemovedCb)
         track = self._tracks[position]
         del self._tracks[position]
         self.remove(track)

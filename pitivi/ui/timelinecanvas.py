@@ -95,7 +95,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self.get_root_item().set_simple_transform(0, 2.0, 1.0, 0)
 
         self._createUI()
-        self.timeline = timeline
+        self._timeline = timeline
         self.settings = instance.settings
 
     def _createUI(self):
@@ -243,7 +243,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._selecting = False
         self._marquee.props.visibility = goocanvas.ITEM_INVISIBLE
         if not self._got_motion_notify:
-            #self.timeline.setSelectionTo(set(), 0)
+            #self._timeline.setSelectionTo(set(), 0)
             seeker.seek(Zoomable.pixelToNs(event.x))
         else:
             self._got_motion_notify = False
@@ -254,7 +254,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
                 mode = 2
             selected = self._objectsUnderMarquee()
             self.app.projectManager.current.emit("selected-changed", selected)
-            #self.timeline.setSelectionTo(self._objectsUnderMarquee(), mode)
+            #self._timeline.setSelectionTo(self._objectsUnderMarquee(), mode)
         return True
 
     def _objectsUnderMarquee(self):
@@ -289,10 +289,10 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
     def zoomChanged(self):
         self.queue_draw()
-        if self.timeline:
-            self.timeline.dead_band = self.pixelToNs(
+        if self._timeline:
+            self._timeline.dead_band = self.pixelToNs(
                 self.settings.edgeSnapDeadband)
-            self.timelinePositionChanged(self.position)
+            #self._timelinePositionChanged(self.position)
 
 ## settings callbacks
 
@@ -307,18 +307,25 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
 ## Timeline callbacks
 
-    def set_timeline(self):
+    def setTimeline(self, timeline):
         while self._tracks:
             self._trackRemoved(None, 0)
-        if self.timeline:
-            for track in self.timeline.get_tracks():
+
+        self._timeline = timeline
+        if self._timeline:
+            for track in self._timeline.get_tracks():
                 self._trackAdded(None, track)
-            self.timeline.connect ("track-added", self._trackAdded)
-            self.timeline.connect ("track-removed", self._trackRemoved)
+            self._timeline.connect("track-added", self._trackAdded)
+            self._timeline.connect("track-removed", self._trackRemoved)
         self.zoomChanged()
 
+    def getTimeline(self):
+        return self._timeline
+
+    timeline = property(getTimeline, setTimeline, None, "The timeline property")
+
     def _trackAdded(self, timeline, track):
-        track = Track(self.app, track, self.timeline)
+        track = Track(self.app, track, self._timeline)
         self._tracks.append(track)
         track.set_canvas(self)
         self.tracks.add_child(track)

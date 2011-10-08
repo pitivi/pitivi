@@ -19,17 +19,15 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from gettext import gettext as _
 import gobject
 import os
-import gst
 import ges
 
+from gettext import gettext as _
 from urlparse import urlparse
 from pwd import getpwuid
 
 from pitivi.project import Project
-
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.undo import UndoableAction
@@ -90,21 +88,23 @@ class ProjectManager(Signallable, Loggable):
         self.current = None
         self.backup_lock = 0
         self.avalaible_effects = avalaible_effects
+        self.formatter = None
 
     def loadProject(self, uri):
 
         """ Load the given project file"""
         self.emit("new-project-loading", uri)
 
+        self.current = Project(uri=uri)
+
+        self.timeline = self.current.timeline
         self.formatter = ges.PitiviFormatter()
 
-        pipeline = self.current.pipeline
-        pipeline.set_state(gst.STATE_NULL)
-        self.timeline = self.current.timeline
-        for layer in self.timeline.get_layers():
-            self.timeline.remove_layer(layer)
-        self.formatter.load_from_uri(self.timeline, uri)
-        pipeline.set_state(gst.STATE_PAUSED)
+        if self.formatter.load_from_uri(self.timeline, uri):
+            self.current.connect("project-changed", self._projectChangedCb)
+            self.emit("new-project-loaded", self.current)
+            #FIXME GES hack to make sure sources are added to the sourcelist
+            self.current.loadSources()
 
     def saveProject(self, project, uri=None, overwrite=False, formatter=None, backup=False):
         """
@@ -126,23 +126,24 @@ class ProjectManager(Signallable, Loggable):
 
         @see: L{Formatter.saveProject}
         """
-        if formatter is None:
-            if project.format:
-                formatter = project.format
-            else:
-                from pitivi.formatters.etree import ElementTreeFormatter
-                formatter = ElementTreeFormatter(self.avalaible_effects)
+        #if formatter is None:
+            #if project.format:
+                #formatter = project.format
+            #else:
+        formatter = ges.PitiviFormatter()
 
         if uri is None:
             if project.uri is None:
-                self.emit("save-project-failed", project, uri,
-                        FormatterSaveError(_("No URI specified.")))
+                self.emit("save-project-failed", project, uri)
+                        #FIXME GES port break
+                        #FormatterSaveError(_("No URI specified.")))
                 return
 
             uri = project.uri
 
-        self._connectToFormatter(formatter)
-        return formatter.saveProject(project, uri, overwrite, backup)
+        #FIXME Implement when avalaible in GES
+        #self._connectToFormatter(formatter)
+        return formatter.save_to_uri(project.timeline, uri)
 
     def closeRunningProject(self):
         """ close the current project """
@@ -251,9 +252,9 @@ class ProjectManager(Signallable, Loggable):
             return name + "~" + ext
         return None
 
-    def _getFormatterForUri(self, uri):
-        return get_formatter_for_uri(uri, self.avalaible_effects)
-
+    ###
+    #FIXME reimplement with GES
+    ###
     def _connectToFormatter(self, formatter):
         formatter.connect("missing-uri", self._formatterMissingURICb)
         formatter.connect("new-project-created",

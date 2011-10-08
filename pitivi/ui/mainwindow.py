@@ -29,6 +29,7 @@ import gtk
 import gst
 from urllib import unquote
 import webbrowser
+import gobject
 import ges
 
 from gettext import gettext as _
@@ -43,7 +44,6 @@ from pitivi.configure import pitivi_version, APPNAME, APPURL, \
      get_pixmap_dir, get_ui_dir
 from pitivi.ui import dnd
 from pitivi.settings import GlobalSettings
-from pitivi.receiver import receiver, handler
 from pitivi.sourcelist import SourceListError
 from pitivi.ui.sourcelist import SourceList
 from pitivi.ui.effectlist import EffectList
@@ -542,10 +542,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _saveProjectAsCb(self, unused_action):
         uri = self._showSaveAsDialog(self.app.current)
-        formatter = ges.PitiviFormatter()
-        formatter.save_to_uri(self.project.timeline, uri)
+        if uri is not None:
+            return self.app.projectManager.saveProject(self.project, uri, overwrite=True)
 
-        return True
+        return False
 
     def _revertToSavedProjectCb(self, unused_action):
         return self.app.projectManager.revertToSavedProject()
@@ -680,26 +680,24 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _projectManagerNewProjectLoadedCb(self, projectManager, project):
         self.log("A NEW project is loaded, update the UI!")
-        self.project = project
-        self.timeline.project = self.project
-        self.clipconfig.project = self.project
+        self._setProject(project)
+
         #FIXME we should reanable it when possible with GES
         #self._connectToProjectSources(project.sources)
-        duration = 0
-        can_render = duration > 0
-        self._syncDoUndo(self.app.action_log)
+        #self._syncDoUndo(self.app.action_log)
 
+        #FIXME GES reimplement me
         if self._missingUriOnLoading:
             self.app.current.setModificationState(True)
             self.actiongroup.get_action("SaveProject").set_sensitive(True)
             self._missingUriOnLoading = False
 
-        if duration != 0:
+        if self.timeline.duration != 0:
             self.setBestZoomRatio()
         else:
             self._zoom_duration_changed = True
 
-        #self.project.seeker.connect("seek", self._timelineSeekCb)
+        self.project.seeker.connect("seek", self._timelineSeekCb)
 
         # preliminary seek to ensure the project pipeline is configured
         self.project.seeker.seek(0)
@@ -940,14 +938,16 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
 ## PiTiVi current project callbacks
 
-    def _setProject(self):
+    def _setProject(self, project):
+        self.project = project
         if self.project:
             self.project_pipeline = self.project.pipeline
             self.project_timeline = self.project.timeline
+            self.viewer.setPipeline(project.pipeline)
             if self.timeline:
-                self.timeline.project = self.project
+                self.timeline.setProject(self.project)
                 self.clipconfig.project = self.project
-                self.app.timelineLogObserver.pipeline = self.project.pipeline
+                #self.app.timelineLogObserver.pipeline = self.project.pipeline
 
     def _sourceListMissingPluginsCb(self, project, uri, factory,
             details, descriptions, missingPluginsCallback):
@@ -956,32 +956,35 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
 ## Current Project Pipeline
 
-    def _setProjectPipeline(self):
-        if self.project_pipeline:
+    def setProjectPipeline(self, pipeline):
+        self._project_pipeline = pipeline
+        if self._project_pipeline:
             # connect to timeline
-            self.project_pipeline.activatePositionListener()
-            self._timelinePipelinePositionChangedCb(self.project_pipeline, 0)
+            #self.project_pipeline.activatePositionListener()
+            gobject.timeout_add(300, self._timelinePipelinePositionChangedCb)
 
-    project_pipeline = receiver()
+    def getProjectPipeline(self):
+        return self._project_pipeline
 
-    @handler(project_pipeline, "error")
+    project_pipeline = property(getProjectPipeline, setProjectPipeline, None, "The Gst.Pipeline of the project")
+
+    #@handler(project_pipeline, "error")
     def _pipelineErrorCb(self, unused_pipeline, error, detail):
         pass
 
-    @handler(project_pipeline, "position")
     def _timelinePipelinePositionChangedCb(self, pipeline, position):
         self.timeline.timelinePositionChanged(position)
         self.timelinepos = position
 
-    @handler(project_pipeline, "state-changed")
+    #@handler(project_pipeline, "state-changed")
     def _timelinePipelineStateChangedCb(self, pipeline, state):
         self.timeline.stateChanged(state)
 
 ## Project Timeline (not to be confused with UI timeline)
 
-    project_timeline = receiver()
+    #project_timeline = receiver()
 
-    @handler(project_timeline, "duration-changed")
+    #@handler(project_timeline, "duration-changed")
     def _timelineDurationChangedCb(self, timeline, duration):
         if duration > 0:
             sensitive = True
@@ -1066,18 +1069,19 @@ class PitiviMainWindow(gtk.Window, Loggable):
         #GES crazyness... Implement
         pass
 
-    #FIXME GES port, check where the seeking should be done
-    #def _timelineSeekCb(self, ruler, position, format):
-        #self.debug("position:%s", gst.TIME_ARGS(position))
-        #if self.viewer.action != self.project.view_action:
-            #sett = self.project.getSettings()
-            #self.viewer.setDisplayAspectRatio(float(sett.videopar * sett.videowidth) / float(sett.videoheight))
-        ## everything above only needs to be done if the viewer isn't already
-        ## set to the pipeline.
-        #try:
-            #self.project.pipeline.seek(position, format)
-        #except:
-            #self.debug("Seeking failed")
+    def _timelineSeekCb(self, ruler, position, format):
+        try:
+            self.project_pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
+                                  gst.SEEK_TYPE_SET, position,
+                                  gst.SEEK_TYPE_NONE, -1)
+            if position < 0:
+                position = 0
+            elif position >= self.timeline.getDuration():
+                position = self.timeline.getDuration()
+            self.timeline.timelinePositionChanged(position)
+
+        except Exception, e:
+            self.error("seek failed %s %s %s", gst.TIME_ARGS(position), format, e)
 
     def updateTitle(self):
         name = touched = ""
