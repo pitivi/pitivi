@@ -146,6 +146,9 @@ class PitiviViewer(gtk.VBox, Loggable):
             bus.set_sync_handler(self._elementMessageCb)
             self.pipeline.set_state(gst.STATE_PAUSED)
             self.currentState = gst.STATE_PAUSED
+
+            gobject.timeout_add(300, self._posCb)
+
         self._setUiActive()
         self.seeker = self.app.projectManager.current.seeker
 
@@ -172,7 +175,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _busMessageCb(self, unused_bus, message):
         if message.type == gst.MESSAGE_EOS:
-            self.warning("eos")
+            print "eos"
         elif message.type == gst.MESSAGE_STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
 
@@ -601,8 +604,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.warning("seek failed")
 
     def _posCb(self):
-        if not self.playing:
-            return False
         try:
             position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
         except:

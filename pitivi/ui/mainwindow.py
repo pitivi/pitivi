@@ -358,6 +358,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vpaned.show()
 
         self.timeline = Timeline(instance, self.uimanager)
+        self.timeline.connect("duration-changed",
+                self._timelineDurationChangedCb)
         self.project = None
 
         vpaned.pack2(self.timeline, resize=True, shrink=False)
@@ -955,36 +957,25 @@ class PitiviMainWindow(gtk.Window, Loggable):
         return res
 
 ## Current Project Pipeline
+# We handle the pipeline here
 
     def setProjectPipeline(self, pipeline):
         self._project_pipeline = pipeline
         if self._project_pipeline:
-            # connect to timeline
-            #self.project_pipeline.activatePositionListener()
-            gobject.timeout_add(300, self._timelinePipelinePositionChangedCb)
+            bus = self._project_pipeline.get_bus()
+            bus.add_signal_watch()
+            bus.connect('message', self._busMessageCb)
 
     def getProjectPipeline(self):
         return self._project_pipeline
 
     project_pipeline = property(getProjectPipeline, setProjectPipeline, None, "The Gst.Pipeline of the project")
 
-    #@handler(project_pipeline, "error")
-    def _pipelineErrorCb(self, unused_pipeline, error, detail):
-        pass
-
-    def _timelinePipelinePositionChangedCb(self, pipeline, position):
-        self.timeline.timelinePositionChanged(position)
-        self.timelinepos = position
-
-    #@handler(project_pipeline, "state-changed")
-    def _timelinePipelineStateChangedCb(self, pipeline, state):
+    def _timelinePipelineStateChanged(self, pipeline, state):
         self.timeline.stateChanged(state)
 
 ## Project Timeline (not to be confused with UI timeline)
 
-    #project_timeline = receiver()
-
-    #@handler(project_timeline, "duration-changed")
     def _timelineDurationChangedCb(self, timeline, duration):
         if duration > 0:
             sensitive = True
@@ -995,6 +986,20 @@ class PitiviMainWindow(gtk.Window, Loggable):
             sensitive = False
         self.render_button.set_sensitive(sensitive)
 
+#Pipeline messages
+    def _busMessageCb(self, unused_bus, message):
+        if message.type == gst.MESSAGE_EOS:
+            self.warning("eos")
+        elif message.type == gst.MESSAGE_STATE_CHANGED:
+            prev, new, pending = message.parse_state_changed()
+
+            if message.src == self._project_pipeline:
+                self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
+
+                state_change = pending == gst.STATE_VOID_PENDING
+
+                if state_change:
+                    self._timelinePipelineStateChanged(self, new)
 ## other
 
     def _showSaveAsDialog(self, project):

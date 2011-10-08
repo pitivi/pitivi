@@ -182,6 +182,12 @@ class InfoStub(gtk.HBox, Loggable):
 
 class Timeline(gtk.Table, Loggable, Zoomable):
 
+    __gtype_name__ = 'Timeline'
+    __gsignals__ = {
+        "duration-changed": (gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE, (gobject.TYPE_INT,)),
+    }
+
     def __init__(self, instance, ui_manager):
         gtk.Table.__init__(self, rows=2, columns=1, homogeneous=False)
         Loggable.__init__(self)
@@ -202,6 +208,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._project = None
         self._timeline = None
         self._duration = 0
+
+        self._tcks_sig_ids = {}
 
         self._temp_objects = []
 
@@ -445,14 +453,16 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         return False
 
     def setDuration(self, unused1=None, unused2=None):
-        self._duration = 0
+        duration = 0
 
         for track in self._timeline.get_tracks():
-            if track.props.duration > self._duration:
-                self._duration = track.props.duration
+            if track.props.duration > duration:
+                duration = track.props.duration
 
-        self.debug("Duration changed %s", self._duration)
-        return self._duration
+        if (duration != self._duration):
+            self.debug("Duration changed %s", self._duration)
+            self._duration = duration
+            self.emit("duration-changed", duration)
 
     def getDuration(self):
         return self._duration
@@ -675,14 +685,23 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.debug("Setting timeline %s", timeline)
         self._controls.timeline = self._timeline
 
+        self.delTimeline()
         self._timeline = timeline
         for track in self._timeline.get_tracks():
-            track.connect("notify::duration", self.setDuration)
+            self._tcks_sig_ids[track] = track.connect("notify::duration",
+                    self.setDuration)
 
     def getTimeline(self):
         return self._timeline
 
-    timeline = property(getTimeline, setTimeline, None, "The GESTimeline")
+    def delTimeline(self):
+        for track, sigid in self._tcks_sig_ids.iteritems():
+            track.disconnect(sigid)
+
+        self._timeline = None
+
+    timeline = property(getTimeline, setTimeline, delTimeline,
+            "The GESTimeline")
 
     def _updateScrollAdjustments(self):
         a = self.get_allocation()
@@ -704,7 +723,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Zoomable.zoomOut()
 
     def deleteSelected(self, unused_action):
-        self.app.projectManager.current.pipeline.set_state(gst.STATE_NULL)
         if self.timeline:
             self.app.action_log.begin("delete clip")
             for track_object in self.timeline.selected:
@@ -720,7 +738,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     lyr = obj.get_layer()
                     lyr.remove_object(obj)
             self.app.action_log.commit()
-        self.app.projectManager.current.pipeline.set_state(gst.STATE_PAUSED)
 
     def unlinkSelected(self, unused_action):
         if self.timeline:
