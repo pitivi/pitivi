@@ -386,7 +386,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         keys.sort()
         text = self.description + "\n"
         for key in keys:
-            text = text + "<b>" + key + "</b>: " + self.tags[key] + "\n"
+            text = text + "<b>" + key.capitalize() + "</b>: " + self.tags[key] + "\n"
         self.l_tags.set_markup(text)
 
     def _on_b_details_clicked_cb(self, unused_button):
