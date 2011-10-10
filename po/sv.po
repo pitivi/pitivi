@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-21 07:34+0200\n"
-"PO-Revision-Date: 2011-09-21 07:57+0100\n"
+"POT-Creation-Date: 2011-10-10 07:55+0200\n"
+"PO-Revision-Date: 2011-10-10 07:56+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -383,7 +383,19 @@ msgstr "Välkommen"
 msgid "There is already a %s instance, please inform the developers by filing a bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 msgstr "Det finns redan en instans av %s. Informera gärna utvecklarna genom att skicka in en felrapport på http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:444
+#: ../pitivi/application.py:425
+msgid "Loading project..."
+msgstr "Läser in projekt..."
+
+#: ../pitivi/application.py:434
+msgid "Project loaded."
+msgstr "Projektet inläst."
+
+#: ../pitivi/application.py:435
+msgid "Rendering..."
+msgstr "Renderar..."
+
+#: ../pitivi/application.py:447
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -397,47 +409,47 @@ msgstr ""
 "    %prog PROJEKTFIL -r UTDATAFIL    # Rendera ett projekt.\n"
 "    %prog PROJEKTFIL -p                # Förhandsgranska ett projekt."
 
-#: ../pitivi/application.py:452
+#: ../pitivi/application.py:455
 msgid "Import each MEDIA_FILE into a new project."
 msgstr "Importera varje MEDIAFIL till ett nytt projekt."
 
-#: ../pitivi/application.py:455
+#: ../pitivi/application.py:458
 msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr "Lägg till varje importerad MEDIAFIL till tidslinjen."
 
-#: ../pitivi/application.py:458
+#: ../pitivi/application.py:461
 msgid "Run Pitivi in the Python Debugger."
 msgstr "Kör Pitivi i Python-felsökaren."
 
-#: ../pitivi/application.py:461
+#: ../pitivi/application.py:464
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr "Rendera det angivna projektet till UTDATAFIL utan grafiskt gränssnitt."
 
-#: ../pitivi/application.py:464
+#: ../pitivi/application.py:467
 msgid "Preview the specified project file without the full UI."
 msgstr "Förhandsvisa angivna projektfilen utan grafiskt gränssnitt."
 
-#: ../pitivi/application.py:469
+#: ../pitivi/application.py:472
 msgid "-p and -r cannot be used simultaneously"
 msgstr "-p och -r kan inte användas samtidigt"
 
-#: ../pitivi/application.py:472
+#: ../pitivi/application.py:475
 msgid "-r or -p and -i are incompatible"
 msgstr "-r eller -p och -i är inte kompatibla"
 
-#: ../pitivi/application.py:475
+#: ../pitivi/application.py:478
 msgid "-a requires -i"
 msgstr "-a kräver -i"
 
-#: ../pitivi/application.py:483
+#: ../pitivi/application.py:486
 msgid "-r requires exactly one PROJECT_FILE"
 msgstr "-r kräver exakt en PROJEKTFIL"
 
-#: ../pitivi/application.py:486
+#: ../pitivi/application.py:489
 msgid "-p requires exactly one PROJECT_FILE"
 msgstr "-p kräver exakt en PROJEKTFIL"
 
-#: ../pitivi/application.py:489
+#: ../pitivi/application.py:492
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "Kan inte öppna fler än en PROJEKTFIL"
 
@@ -972,11 +984,11 @@ msgstr "Nytt förval"
 msgid "New preset %d"
 msgstr "Nytt förval %d"
 
-#: ../pitivi/ui/encodingdialog.py:542
+#: ../pitivi/ui/encodingdialog.py:543
 msgid "A file name is required."
 msgstr "Ett filnamn krävs."
 
-#: ../pitivi/ui/encodingdialog.py:544
+#: ../pitivi/ui/encodingdialog.py:545
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
