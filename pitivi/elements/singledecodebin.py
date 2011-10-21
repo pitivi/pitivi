@@ -106,6 +106,7 @@ class SingleDecodeBin(gst.Bin):
         self._dynamics = []
 
         self._validelements = []  # added elements
+        self._usedfactories = []
 
         self.debug("stream:%r" % self.stream)
 
@@ -212,6 +213,10 @@ class SingleDecodeBin(gst.Bin):
 
         result = None
         for factory in factories:
+            # Never plug the same factory more than once (endless loop!)
+            if factory in self._usedfactories:
+                continue
+
             element = factory.create()
             if not element:
                 self.warning("weren't able to create element from %r" % factory)
@@ -229,6 +234,8 @@ class SingleDecodeBin(gst.Bin):
                 element.set_state(gst.STATE_NULL)
                 self.remove(element)
                 continue
+
+            self._usedfactories.append (factory)
 
             self._closeLink(element)
             element.set_state(gst.STATE_PAUSED)
