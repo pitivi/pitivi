@@ -67,9 +67,6 @@ ALIGN = _("Align clips based on their soundtracks")
 SELECT_BEFORE = ("Select all sources before selected")
 SELECT_AFTER = ("Select all after selected")
 
-#FIXME We should not use a background when gaps are properly handled in GES
-BACKGROUND_PRIORITY = 99
-
 ui = '''
 <ui>
     <menubar name="MainMenuBar">

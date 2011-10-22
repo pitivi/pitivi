@@ -31,7 +31,6 @@ from pitivi.sourcelist import SourceList
 from pitivi.settings import ExportSettings
 from pitivi.signalinterface import Signallable
 from pitivi.utils import Seeker
-from pitivi.ui.timeline import BACKGROUND_PRIORITY
 
 
 class ProjectError(Exception):
@@ -92,16 +91,6 @@ class Project(Signallable, Loggable):
         self.layer.set_property("auto-transition", True)
 
         self.timeline.add_layer(self.layer)
-        self.back_layer = ges.TimelineLayer()
-        self._background = ges.TimelineTestSource()
-        self.back_layer.set_priority(BACKGROUND_PRIORITY)
-
-        #FIXME THIS IS SO DIRTY GES port
-        for track in self.timeline.get_tracks():
-            track.connect("notify::duration", self._backgroundDurationCb)
-
-        self.back_layer.add_object(self._background)
-        self.timeline.add_layer(self.back_layer)
 
         self.pipeline = ges.TimelinePipeline()
         self.pipeline._setUp = False
@@ -110,9 +99,6 @@ class Project(Signallable, Loggable):
 
         self.settings = ExportSettings()
         self._videocaps = self.settings.getVideoCaps()
-
-    def _backgroundDurationCb(self, track, unused):
-        self._background.props.duration = track.props.duration
 
     def release(self):
         self.pipeline = None
@@ -163,6 +149,5 @@ class Project(Signallable, Loggable):
 
     def loadSources(self):
         for layer in self.timeline.get_layers():
-            if layer.props.priority < BACKGROUND_PRIORITY:
-                for obj in layer.get_objects():
-                    self.sources.addUri(obj.get_uri())
+            for obj in layer.get_objects():
+                self.sources.addUri(obj.get_uri())

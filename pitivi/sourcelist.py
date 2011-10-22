@@ -30,8 +30,6 @@ import gst
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 
-from pitivi.ui.timeline import BACKGROUND_PRIORITY
-
 
 class SourceListError(Exception):
     pass
@@ -128,9 +126,8 @@ class SourceList(Signallable, Loggable):
 
     def _newProjectLoadedCb(self, unused_pitivi, project):
         for layer in project.timeline.get_layers():
-            if layer.props.priority < BACKGROUND_PRIORITY:
-                for obj in layer.get_objects():
-                    self.addUri(obj.get_uri())
+            for obj in layer.get_objects():
+                self.addUri(obj.get_uri())
 
     def getUri(self, uri):
         """
