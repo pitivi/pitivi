@@ -23,6 +23,7 @@
 import ges
 
 from pitivi.utils import infinity
+from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
 
 #from pitivi.timeline.align import AutoAligner
 
@@ -52,13 +53,13 @@ class EditingContext(object):
     def __init__(self, timeline, focus, other):
         """
         @param timeline: the timeline to edit
-        @type timeline: instance of L{pitivi.timeline.timeline.Timeline}
+        @type timeline: instance of L{ges.Timeline}
 
-        @param focus: the TimelineObject or TrackObject which is to be the the
+        @param focus: the TimelineObject or TrackObject which is to be the
         main target of interactive editing, such as the object directly under the
         mouse pointer
-        @type focus: L{pitivi.timeline.timeline.TimelineObject} or
-        L{pitivi.timeline.trackTrackObject}
+        @type focus: L{ges.TimelineObject} or
+        L{ges.TrackObject}
 
         @param other: a set of objects which are the secondary targets of
         interactive editing, such as objects in the current selection.
@@ -73,39 +74,38 @@ class EditingContext(object):
         self.other = other
         self.focus = focus
         self.timeline = timeline
-        self._snap = False
+        self._snap = True
         self._mode = self.DEFAULT
-        self._last_position = focus.get_property("start")
-        self._last_priority = focus.get_property("priority")
+        self._last_position = focus.props.start
+        self._last_priority = focus.props.priority
 
-        #self.timeline.disableUpdates()
+        self.timeline.enable_update(False)
 
     def _getOffsets(self, start_offset, priority_offset, timeline_objects):
         offsets = {}
-        for timeline_object in timeline_objects:
-            offsets[timeline_object] = (timeline_object.get_property("start") - start_offset,
-                        timeline_object.get_property("priority") - priority_offset)
+        for tlobj in timeline_objects:
+            offsets[tlobj] = (tlobj.props.start - start_offset,
+                        tlobj.props.priority - priority_offset)
 
         return offsets
 
-    def _getTimelineObjectValues(self, timeline_object):
-        return (timeline_object.get_property("start"), timeline_object.get_property("duration"),
-                timeline_object.get_property("in_point"),
-                timeline_object.get_property("priority"))
+    def _getTimelineObjectValues(self, tlobj):
+        return (tlobj.props.start, tlobj.props.duration,
+                tlobj.props.in_point,
+                tlobj.props.priority)
 
     def _saveValues(self, timeline_objects):
-        return dict(((timeline_object,
-            self._getTimelineObjectValues(timeline_object))
-                for timeline_object in timeline_objects))
+        return dict(((tlobj,
+            self._getTimelineObjectValues(tlobj))
+                for tlobj in timeline_objects))
 
     def _restoreValues(self, values):
-        for timeline_object, (start, duration, in_point, media_dur, pri) in \
+        for tlobj, (start, duration, in_point, pri) in \
             values.iteritems():
-            timeline_object.start = start
-            timeline_object.duration = duration
-            timeline_object.in_point = in_point
-            timeline_object.media_duration = media_dur
-            timeline_object.priority = pri
+            tlobj.props.start = start
+            tlobj.props.duration = duration
+            tlobj.props.in_point = in_point
+            tlobj.props.priority = pri
 
     def _getSpan(self, earliest, objs):
         return max((obj.start + obj.duration for obj in objs)) - earliest
@@ -113,8 +113,7 @@ class EditingContext(object):
     def finish(self):
         """Clean up timeline for normal editing"""
         # TODO: post undo / redo action here
-        return
-        self.timeline.enableUpdates()
+        self.timeline.enable_update(True)
 
     def setMode(self, mode):
         """Set the current editing mode.
@@ -179,13 +178,11 @@ class EditingContext(object):
 
         return position, priority
 
-    def _getGapsAtPriority(self, priority, timeline_objects, tracks=None):
+    def _getGapsForLayer(self, timeline_objects, tracks=None):
         gaps = SmallestGapsFinder(timeline_objects)
-        prio_diff = priority - self.focus.priority
 
-        for timeline_object in timeline_objects:
-            left_gap, right_gap = Gap.findAroundObject(timeline_object,
-                    timeline_object.priority + prio_diff, tracks)
+        for tlobj in timeline_objects:
+            left_gap, right_gap = Gap.findAroundObject(tlobj)
             gaps.update(left_gap, right_gap)
 
         return gaps.left_gap, gaps.right_gap
@@ -207,60 +204,66 @@ class MoveContext(EditingContext):
         self.tracks = set([])
         all_objects = set(other)
         all_objects.add(focus)
-        self.layersList = []
+        self.layer_lst = []
         for obj in all_objects:
             if isinstance(obj, ges.TrackObject):
-                timeline_object = obj.get_timeline_object()
+                tlobj = obj.get_timeline_object()
                 self.tracks.add(obj.get_track())
             else:
-                timeline_object = obj
-                timeline_object_tracks = set(track_object.get_track() for track_object
-                        in timeline_object.get_track_objects())
+                tlobj = obj
+                timeline_object_tracks = \
+                    set(track_object.get_track() for track_object
+                        in tlobj.get_track_objects())
                 self.tracks.update(timeline_object_tracks)
 
-            self.timeline_objects.add(timeline_object)
+            self.timeline_objects.add(tlobj)
 
-            self.default_originals[timeline_object] = \
-                    self._getTimelineObjectValues(timeline_object)
+            self.default_originals[tlobj] = \
+                    self._getTimelineObjectValues(tlobj)
 
-            earliest = min(earliest, timeline_object.get_property("start"))
-            latest = max(latest,
-                    timeline_object.get_property("start") + timeline_object.get_property("duration"))
-            min_priority = min(min_priority, timeline_object.get_property("priority"))
+            earliest = min(earliest, tlobj.props.start)
+            latest = max(latest, tlobj.props.start + tlobj.props.duration)
+            min_priority = min(min_priority, tlobj.props.priority)
 
-        self.offsets = self._getOffsets(self.focus.get_property("start"), self.focus.get_property("priority"),
-                self.timeline_objects)
+        self.offsets = self._getOffsets(self.focus.props.start,
+                self.focus.props.priority, self.timeline_objects)
 
-        self.min_priority = focus.get_property("priority") - min_priority
-        self.min_position = focus.get_property("start") - earliest
+        self.min_priority = focus.props.priority - min_priority
+        self.min_position = focus.props.start - earliest
 
         # get the span over all clips for edge snapping
         self.default_span = latest - earliest
 
-        #ripple = timeline.getObjsAfterTime(latest)
-        #self.ripple_offsets = self._getOffsets(self.focus.get_property("start"),
-            #self.focus.get_property("priority"), ripple)
+        if isinstance(focus, ges.TrackObject):
+            layer = focus.get_timeline_object().get_layer()
+        else:
+            layer = focus.get_layer()
+
+        ripple = [obj for obj in layer.get_objects() \
+                  if obj.props.start > latest]
+        self.ripple_offsets = self._getOffsets(self.focus.props.start,
+            self.focus.props.priority, ripple)
 
         # get the span over all clips for ripple editing
-        #for timeline_object in ripple:
-            #latest = max(latest, timeline_object.get_property("start") +
-                #timeline_object.get_property("duration"))
-        #self.ripple_span = latest - earliest
+        for tlobj in ripple:
+            latest = max(latest, tlobj.props.start +
+                tlobj.props.duration)
+        self.ripple_span = latest - earliest
 
         # save default values
-        #self.ripple_originals = self._saveValues(ripple)
+        self.ripple_originals = self._saveValues(ripple)
 
-        #self.timeline_objects_plus_ripple = set(self.timeline_objects)
-        #self.timeline_objects_plus_ripple.update(ripple)
+        self.timeline_objects_plus_ripple = set(self.timeline_objects)
+        self.timeline_objects_plus_ripple.update(ripple)
 
-    def _getGapsAtPriority(self, priority):
+    def _getGapsForLayer(self):
         if self._mode == self.RIPPLE:
             timeline_objects = self.timeline_objects_plus_ripple
         else:
             timeline_objects = self.timeline_objects
 
-        return EditingContext._getGapsAtPriority(self,
-                priority, timeline_objects, self.tracks)
+        return EditingContext._getGapsForLayer(self,
+                timeline_objects, self.tracks)
 
     def setMode(self, mode):
         if mode == self.ROLL:
@@ -276,11 +279,12 @@ class MoveContext(EditingContext):
             focus_timeline_object = self.focus.get_timeline_object()
         else:
             focus_timeline_object = self.focus
+
         initial_position = self.default_originals[focus_timeline_object][0]
         initial_priority = self.default_originals[focus_timeline_object][-1]
 
-        final_priority = self.focus.get_property("priority")
-        final_position = self.focus.get_property("start")
+        final_priority = self.focus.props.priority
+        final_position = self.focus.props.start
 
         priority = final_priority
 
@@ -290,10 +294,10 @@ class MoveContext(EditingContext):
             EditingContext.finish(self)
             return
 
-        # adjust priority
+        # adjust layer
         overlap = False
         while True:
-            left_gap, right_gap = self._getGapsAtPriority(priority)
+            left_gap, right_gap = self._getGapsForLayer()
 
             if left_gap is invalid_gap or right_gap is invalid_gap:
                 overlap = True
@@ -317,7 +321,7 @@ class MoveContext(EditingContext):
 
         self._defaultTo(initial_position, priority)
         delta = final_position - initial_position
-        left_gap, right_gap = self._getGapsAtPriority(priority)
+        left_gap, right_gap = self._getGapsForLayer(priority)
 
         if delta > 0 and right_gap.duration < delta:
             final_position = initial_position + right_gap.duration
@@ -336,43 +340,51 @@ class MoveContext(EditingContext):
         @param end: The stop position to snap.
         @returns: The snapped value if within the dead_band.
         """
-        edge, diff = self.edges.snapToEdge(start, end)
+        #FIXME GES port, handle properly the snap to edge function
+        #edge, diff = self.edges.snapToEdge(start, end)
 
-        if self.dead_band != -1 and diff <= self.dead_band:
-            return edge
+        #if self.dead_band != -1 and diff <= self.dead_band:
+            #return edge
 
         return start
 
     def _defaultTo(self, position, priority):
         if self._snap:
-            position = self.timeline.snapToEdge(position,
+            position = self.snapToEdge(position,
                 position + self.default_span)
 
         priority = max(self.min_priority, priority)
         obj = self.focus
+
+        # We make sure to work with sources for the drag
+        # and drop
         if isinstance(self.focus, ges.TrackFileSource):
             obj = self.focus.get_timeline_object()
-        if obj.get_layer().get_property("priority") != priority:
+        elif isinstance(self.focus, ges.TrackOperation):
+            return
+
+        if obj.get_layer().props.priority != priority:
             origin_layer = obj.get_layer()
             moved = False
             for layer in self.timeline.get_layers():
-                if layer.get_property("priority") == priority:
+                if layer.props.priority == priority:
                     obj.move_to_layer(layer)
                     moved = True
             if not moved:
                 layer = ges.TimelineLayer()
-                layer.set_property("auto-transition", True)
+                layer.props.auto_transition = True
                 self.timeline.add_layer(layer)
-                layer.set_property("priority", priority)
+                layer.props.priority = priority
                 obj.move_to_layer(layer)
-                self.layersList.append(layer)
+                self.layer_lst.append(layer)
+
         if position < 0:
             position = 0
-        self.focus.set_property("start", long(position))
+
+        self.focus.props.start = long(position)
 
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
-            obj.set_property("start", long(position + s_offset))
-            #obj.get_layer().set_property ("priority", priority + p_offset)
+            obj.props.start = long(position + s_offset)
 
         return position, priority
 
@@ -381,11 +393,11 @@ class MoveContext(EditingContext):
 
     def _rippleTo(self, position, priority):
         if self._snap:
-            position = self.timeline.snapToEdge(position,
+            position = self.snapToEdge(position,
                 position + self.ripple_span)
 
         priority = max(self.min_priority, priority)
-        left_gap, right_gap = self._getGapsAtPriority(priority)
+        left_gap, right_gap = self._getGapsForLayer(priority)
 
         if left_gap is invalid_gap or right_gap is invalid_gap:
             if priority == self._last_priority:
@@ -421,7 +433,7 @@ class TrimStartContext(EditingContext):
         #self.adjacent_originals = self._saveValues(self.adjacent)
         self.tracks = set([])
         #if isinstance(self.focus, TrackObject):
-            #focus_timeline_object = self.focus.timeline_object
+            #focus_timeline_object = self.focus.tlobj
             #self.tracks.add(self.focus.track)
         #else:
         if isinstance(self.focus, ges.TrackFileSource):
@@ -435,7 +447,7 @@ class TrimStartContext(EditingContext):
         self.focus_timeline_object = focus_timeline_object
         self.default_originals = self._saveValues([focus_timeline_object])
         #ripple = self.timeline.getObjsBeforeTime(focus.start)
-        #assert not focus.timeline_object in ripple or focus.duration == 0
+        #assert not focus.tlobj in ripple or focus.duration == 0
         #self.ripple_originals = self._saveValues(ripple)
         #self.ripple_offsets = self._getOffsets(focus.start, focus.priority,
             #ripple)
@@ -460,7 +472,7 @@ class TrimStartContext(EditingContext):
         latest = earliest + self.focus.factory.duration
 
         if self.snap:
-            position = self.timeline.snapToEdge(position)
+            position = self.snapToEdge(position)
 
         position = min(latest, max(position, earliest))
         self.focus.trimStart(position)
@@ -474,20 +486,21 @@ class TrimStartContext(EditingContext):
         self._restoreValues(self.ripple_originals)
 
     def _defaultTo(self, position, priority):
-        start = self.focus.get_property("start")
+        start = self.focus.props.start
         earliest = max(0, position - self.focus.starting_start)
-        self.focus.set_property("in-point", earliest)
-        self.focus.set_property("start", position)
-        self.focus.set_property("duration", self.focus.get_property("max-duration") - self.focus.get_property("in-point"))
+        self.focus.props.in_point = earliest
+        self.focus.props.start = position
+        self.focus.props.duration = self.focus.props.max_duration - \
+                self.focus.props.in_point
         return position, priority
 
     def finish(self):
         initial_position = self.default_originals[self.focus_timeline_object][0]
-        self.focus.starting_start = self.focus.get_property("start")
+        self.focus.starting_start = self.focus.props.start
         timeline_objects = [self.focus_timeline_object]
         EditingContext.finish(self)
-        return
-        left_gap, right_gap = self._getGapsAtPriority(self.focus.priority,
+
+        left_gap, right_gap = self._getGapsForLayer(self.focus.priority,
                 timeline_objects, self.tracks)
 
         if left_gap is invalid_gap:
@@ -514,16 +527,21 @@ class TrimEndContext(EditingContext):
         self.focus_timeline_object = focus_timeline_object
         self.default_originals = self._saveValues([focus_timeline_object])
 
-        reference = focus.get_property("start") + focus.get_property("duration")
-        #ripple = self.timeline.getObjsAfterTime(reference)
+        if isinstance(focus, ges.TrackObject):
+            layer = focus.get_timeline_object().get_layer()
+        else:
+            layer = focus.get_layer()
+        reference = focus.props.start + focus.props.duration
+        ripple = [obj for obj in layer.get_objects() \
+                  if obj.props.start > reference]
 
-        #self.ripple_originals = self._saveValues(ripple)
-        #self.ripple_offsets = self._getOffsets(reference, self.focus.get_priority(),
-            #ripple)
+        self.ripple_originals = self._saveValues(ripple)
+        self.ripple_offsets = self._getOffsets(reference, self.focus.get_priority(),
+            ripple)
 
     def _rollTo(self, position, priority):
         if self._snap:
-            position = self.timeline.snapToEdge(position)
+            position = self.snapToEdge(position)
         duration = max(0, position - self.focus.start)
         self.focus.setDuration(duration)
         for obj in self.adjacent:
@@ -537,7 +555,7 @@ class TrimEndContext(EditingContext):
         earliest = self.focus.start - self.focus.in_point
         latest = earliest + self.focus.factory.duration
         if self.snap:
-            position = self.timeline.snapToEdge(position)
+            position = self.snapToEdge(position)
         position = min(latest, max(position, earliest))
         duration = position - self.focus.start
         self.focus.setDuration(duration)
@@ -550,9 +568,9 @@ class TrimEndContext(EditingContext):
         self._restoreValues(self.ripple_originals)
 
     def _defaultTo(self, position, priority):
-        duration = max(0, position - self.focus.get_property("start"))
+        duration = max(0, position - self.focus.props.start)
         duration = min(duration, self.focus.max_duration)
-        self.focus.set_property("duration", duration)
+        self.focus.props.duration = duration
 
         return position, priority
 
@@ -564,8 +582,8 @@ class TrimEndContext(EditingContext):
         absolute_initial_duration = initial_position + initial_duration
 
         timeline_objects = [self.focus_timeline_object]
-        return
-        left_gap, right_gap = self._getGapsAtPriority(self.focus.priority,
+
+        left_gap, right_gap = self._getGapsForLayer(self.focus.priority,
                 timeline_objects, self.tracks)
 
         if right_gap is invalid_gap:

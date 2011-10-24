@@ -194,7 +194,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._updateZoom = True
         self.ui_manager = ui_manager
         self.app = instance
-        self._temp_objects = None
+        self._temp_objects = []
         self._factories = None
         self._finish_drag = False
         self._position = 0
@@ -207,8 +207,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._duration = 0
 
         self._tcks_sig_ids = {}
-
-        self._temp_objects = []
 
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
@@ -402,33 +400,42 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
 
-        atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
+        if self._factories is None:
+            if  context.targets in DND_EFFECT_LIST:
+                atom = gtk.gdk.atom_intern(dnd.EFFECT_TUPLE[0])
+            else:
+                atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
 
-        self.drag_get_data(context, atom, timestamp)
-        self.drag_highlight()
-        if  context.targets not in DND_EFFECT_LIST:
-            if not self._temp_objects:
-                self._add_temp_source()
-                focus = self._temp_objects[0]
-                self._move_context = MoveContext(self.timeline,
-                        focus, set(self._temp_objects[1:]))
-            self._move_temp_source(self.hadj.props.value + x, y)
+            self.drag_get_data(context, atom, timestamp)
+            self.drag_highlight()
+        else:
+            if  context.targets not in DND_EFFECT_LIST:
+                if not self._temp_objects:
+                    self.timeline.enable_update(False)
+                    self._add_temp_source()
+                    focus = self._temp_objects[0]
+                    self._move_context = MoveContext(self.timeline,
+                            focus, set(self._temp_objects[1:]))
+                self._move_temp_source(self.hadj.props.value + x, y)
         return True
 
     def _dragLeaveCb(self, unused_layout, context, unused_tstamp):
-        if self._temp_objects:
-            self._temp_objects = []
-
+        self._temp_objects = []
         self.drag_unhighlight()
-        self.app.projectManager.current.timeline.enable_update(True)
+        self.timeline.enable_update(True)
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
-        #FIXME GES break, reimplement me
         if  context.targets not in DND_EFFECT_LIST:
             self.app.action_log.begin("add clip")
+            self.selected = self._temp_objects
+            self._project.emit("selected-changed", set(self.selected))
+
+            self._move_context.finish()
             self.app.action_log.commit()
+            context.drop_finish(True, timestamp)
 
             return True
+
         elif context.targets in DND_EFFECT_LIST:
             if not self.timeline.timeline_objects:
                 return False
@@ -437,7 +444,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             if timeline_objs:
                 self.app.action_log.begin("add effect")
                 self.timeline.addEffectFactoryOnObject(factory,
-                                               timeline_objects=timeline_objs)
+                        timeline_objects=timeline_objs)
                 self.app.action_log.commit()
                 self._factories = None
                 self.app.current.seeker.seek(self._position)
@@ -471,16 +478,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.app.projectManager.current.timeline.enable_update(False)
         self.log("SimpleTimeline, targetType:%d, selection.data:%s" %
             (targetType, selection.data))
-        # FIXME: let's have just one target type, call it
-        # TYPE_PITIVI_OBJECTFACTORY.
-        # TODO: handle uri targets by doign an import-add. This would look
-        # something like this:
-        # tell current project to import the uri
-        # wait for source-added signal, meanwhile ignore dragMotion signals
-        # when ready, add factories to the timeline.
         self.selection_data = selection.data
 
-        if targetType not in [dnd.TYPE_PITIVI_FILESOURCE, dnd.TYPE_PITIVI_EFFECT]:
+        if targetType not in [dnd.TYPE_PITIVI_FILESOURCE,
+                dnd.TYPE_PITIVI_EFFECT]:
             context.finish(False, False, timestamp)
             return
 
@@ -508,12 +509,16 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _add_temp_source(self):
         uris = self.selection_data.split("\n")
-        for layer in self.app.projectManager.current.timeline.get_layers():
-            if layer.get_priority() != BACKGROUND_PRIORITY:
-                break
+        layers = self.timeline.get_layers()
+
+        if layers:
+            layer = layers[0]
+        else:
+            self.error("No layer in the timeline")
+            return
+
         for uri in uris:
             src = ges.TimelineFileSource(uri)
-            src.set_property("priority", 1)
             layer.add_object(src)
             self._temp_objects.insert(0, src)
 
@@ -524,7 +529,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         priority = int((y // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
         delta = Zoomable.pixelToNs(x)
         obj = self._temp_objects[0]
-        obj.starting_start = obj.get_property("start")
+        obj.starting_start = obj.props.start
         self._move_context.editTo(delta, priority)
 
 ## Zooming and Scrolling
