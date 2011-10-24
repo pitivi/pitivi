@@ -614,7 +614,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.hadj.props.value
         new_pos = Zoomable.nsToPixel(self._position) - cur_playhead_offset
 
-        self._updateScrollAdjustments()
+        self.updateScrollAdjustments()
         self._scrollToPosition(new_pos)
         self.ruler.queue_resize()
         self.ruler.queue_draw()
@@ -705,9 +705,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     timeline = property(getTimeline, setTimeline, delTimeline,
             "The GESTimeline")
 
-    def _updateScrollAdjustments(self):
+    def updateScrollAdjustments(self):
         a = self.get_allocation()
-        size = Zoomable.nsToPixel(self.timeline.duration)
+        size = Zoomable.nsToPixel(self.duration)
         self.hadj.props.lower = 0
         self.hadj.props.upper = size + 200  # why is this necessary???
         self.hadj.props.page_size = a.width
@@ -783,9 +783,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.timeline.enable_update(False)
         tl_objs_dict = {}
         for track in self.timeline.get_tracks():
-            tck_objects = track.get_track_objects_at_position(long(self._position))
+            tck_objects = \
+                track.get_track_objects_at_position(long(self._position))
             for tck_obj in tck_objects:
-                if isinstance(tck_obj, ges.TrackAudioTestSource) or isinstance(tck_obj, ges.TrackVideoTestSource):
+                if isinstance(tck_obj, ges.TrackAudioTestSource) or \
+                    isinstance(tck_obj, ges.TrackVideoTestSource):
                     continue
                 obj = tck_obj.get_timeline_object()
                 if obj in tl_objs_dict.keys():

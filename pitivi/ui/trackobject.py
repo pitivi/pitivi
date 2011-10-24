@@ -13,10 +13,8 @@ import controller
 from zoominterface import Zoomable
 from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT, \
     SELECT_BETWEEN, MoveContext, TrimStartContext, TrimEndContext
-import gst
 from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
 from common import LAYER_SPACING, unpack_cairo_pattern, unpack_cairo_gradient
-from pitivi.ui.point import Point
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
 
@@ -31,8 +29,6 @@ NAME_HOFFSET = 10
 NAME_VOFFSET = 5
 NAME_PADDING = 2
 NAME_PADDING2X = 2 * NAME_PADDING
-
-import gst
 
 GlobalSettings.addConfigOption('videoClipBg',
     section='user-interface',

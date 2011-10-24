@@ -27,11 +27,10 @@ Main GTK+ window
 import os
 import gtk
 import gst
-from urllib import unquote
-import webbrowser
-import gobject
 import ges
+import webbrowser
 
+from urllib import unquote
 from gettext import gettext as _
 from gtk import RecentManager
 
@@ -709,9 +708,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         ruler_width = self.timeline.ruler.get_allocation()[2]
         # Add gst.SECOND - 1 to the timeline duration to make sure the
         # last second of the timeline will be in view.
-        tracks = self.project.timeline.get_tracks()
-        duration = max(tracks[0].get_property("duration"), tracks[1].get_property("duration"))
-        self.project.timeline.duration = duration
+        duration = self.timeline.duration
         timeline_duration = duration + gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / gst.SECOND)
 
@@ -977,11 +974,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
 ## Project Timeline (not to be confused with UI timeline)
 
     def _timelineDurationChangedCb(self, timeline, duration):
-        if duration > 0:
+        if timeline.duration > 0:
             sensitive = True
             if self._zoom_duration_changed:
                 self.setBestZoomRatio()
                 self._zoom_duration_changed = False
+            else:
+                self.timeline.updateScrollAdjustments()
         else:
             sensitive = False
         self.render_button.set_sensitive(sensitive)

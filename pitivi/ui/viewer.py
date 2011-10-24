@@ -74,7 +74,6 @@ class ViewerError(Exception):
     pass
 
 
-# TODO : Switch to using Pipeline and Action
 class PitiviViewer(gtk.VBox, Loggable):
 
     __gtype_name__ = 'PitiviViewer'
@@ -182,10 +181,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             if message.src == self.pipeline:
                 self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
 
-                state_change = pending == gst.STATE_VOID_PENDING
-
-                if state_change:
-                    self._currentStateCb(new)
+                self._currentStateCb(new)
 
     def _disconnectFromPipeline(self):
         self.debug("pipeline:%r", self.pipeline)
@@ -199,12 +195,9 @@ class PitiviViewer(gtk.VBox, Loggable):
                 self.action.deactivate()
             self.pipeline.removeAction(self.action)
 
-        self.pipeline.disconnect_by_function(self._posCb)
-        self.pipeline.disconnect_by_function(self._currentStateCb)
         self.pipeline.disconnect_by_function(self._elementMessageCb)
         self.pipeline.disconnect_by_function(self._durationChangedCb)
         self.pipeline.disconnect_by_function(self._eosCb)
-        self.pipeline.disconnect_by_function(self.internal.currentStateCb)
         self.pipeline.stop()
 
         self.pipeline = None
@@ -620,6 +613,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.playpause_button.setPlay()
         else:
             self.sink = None
+        self.internal._currentStateCb(self.pipeline, state)
         self.currentState = state
 
     def _eosCb(self, unused_pipeline):
@@ -995,7 +989,8 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
     def _sizeCb(self, widget, area):
         # TODO: box is cleared when using regular rendering
         # so we need to flush the pipeline
-        self.pipeline.flushSeekVideo()
+        #self.pipeline.flushSeekVideo()
+        self.pipeline.set_state()
 
     def hide_box(self):
         if self.box:
@@ -1003,7 +998,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
             self.disconnect_by_func(self.button_press_event)
             self.disconnect_by_func(self.button_release_event)
             self.disconnect_by_func(self.motion_notify_event)
-            self.pipeline.flushSeekVideo()
+            #self.pipeline.flushSeekVideo()
             self.zoom = 1.0
             if self.sink:
                 self.sink.set_render_rectangle(*self.area)
@@ -1045,7 +1040,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
             self.box.select_point(event)
         return True
 
-    def currentStateCb(self, pipeline, state):
+    def _currentStateCb(self, pipeline, state):
         self.pipeline = pipeline
         if state == gst.STATE_PAUSED:
             self._store_pixbuf()
