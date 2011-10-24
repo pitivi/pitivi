@@ -6,6 +6,7 @@ timeline_PYTHON = 	\
 	alignalgs.py    \
 	extract.py      \
 	timeline.py     \
+	gap.py     \
 	timeline_undo.py
 
 clean-local:
