@@ -596,19 +596,13 @@ class TransformationProperties(gtk.Expander):
         effect.freeze_notify()
         return self.effect
 
-    def _selectionChangedCb(self, project, element):
-        self.timeline_objects = []
-        if isinstance(element, set):
-            for elem in element:
-                self.timeline_objects.append(elem)
-        else:
-            self.timeline_objects.append(element)
-        if len(self.timeline_objects) > 0:
-            for tl_obj in self.timeline_objects:
-                pass
+    def _selectionChangedCb(self, project, selection):
+        self.timeline_objects = list(selection)
 
-            if tl_obj.get_timeline_object() != self._current_tl_obj:
-                self._current_tl_obj = tl_obj.get_timeline_object()
+        if len(self.timeline_objects) == 1:
+            tl_obj = self.timeline_objects[0]
+            if tl_obj != self._current_tl_obj:
+                self._current_tl_obj = tl_obj
                 self.effect = None
 
             self.set_sensitive(True)
