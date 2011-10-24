@@ -1075,13 +1075,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _timelineSeekCb(self, ruler, position, format):
         try:
-            self.project_pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
-                                  gst.SEEK_TYPE_SET, position,
-                                  gst.SEEK_TYPE_NONE, -1)
             if position < 0:
                 position = 0
             elif position >= self.timeline.getDuration():
                 position = self.timeline.getDuration()
+
+            self.project_pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
+                                  gst.SEEK_TYPE_SET, position,
+                                  gst.SEEK_TYPE_NONE, -1)
             self.timeline.timelinePositionChanged(position)
 
         except Exception, e:
