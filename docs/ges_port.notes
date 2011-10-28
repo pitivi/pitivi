@@ -1,0 +1,50 @@
+GES:
+    Critical
+    ========
+        todo
+        ----
+            -> Fill gaps -> BLOCKER -> Is background acceptable? (My guess is
+                                                                  yes)
+            -> Implement riple and roll (could be done in pitivi for the time
+                    being reusing old code)
+            -> Handle reslution and framerate -> BLOCKER
+                |-> Do we handle it as a "hack" in pitivi for the time being?
+
+        In progress
+        -----------
+            -> Merge Ges-Port branch (all the list is BLOCKER)
+                > Refactor a bit the formatter
+                > Add an entry point for saving sourcelist -> pitivi must
+                    take advantage of it afterward
+                > Handle project settings
+
+
+    Less critical
+    =============
+        => acceptable regressions
+            -> compostiting (To be discussed because it would be a big
+                             regression)
+            -> Handle keyframes
+
+PiTiVi:
+
+    Critical
+    ========
+        todo
+        ----
+            -> Make Seeker more powerfull, and rely only on it for all the
+               seeking
+            -> Refactor the DND
+            -> Handle effects properly, ie dnd, settings etc
+            -> Restore keyframes
+
+        In progress
+        -----------
+            -> Remove ALL references to the old PiTiVi core
+            -> Implement properly rendering
+
+    Less critical
+    =============
+        -> Add more debugging symbols all around
+        -> Kill the receiver
+        -> Implement titles :)
