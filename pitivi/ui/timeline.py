@@ -36,7 +36,7 @@ from gettext import gettext as _
 from timelinecanvas import TimelineCanvas
 from timelinecontrols import TimelineControls
 from zoominterface import Zoomable
-from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
+from pitivi.ui.common import TRACK_SPACING, LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 from pitivi.timeline.timeline import MoveContext, SELECT
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.common import SPACING
@@ -206,7 +206,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._timeline = None
         self._duration = 0
 
+        #Ids of the tracks notify::duration signals
         self._tcks_sig_ids = {}
+        #Ids of the layer-added and layer-removed signals
+        self._layer_sig_ids = []
 
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
@@ -266,7 +269,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._canvas = TimelineCanvas(self.app)
         self._root_item = self._canvas.get_root_item()
         self.attach(self._canvas, 1, 2, 1, 2)
-        self.vadj.connect("changed", self._unsureVadjHeightCb)
 
         # scrollbar
         self._hscrollbar = gtk.HScrollbar(self.hadj)
@@ -588,13 +590,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Zoomable.setZoomLevel(int(adjustment.get_value()))
         self._updateZoom = True
 
-    def _unsureVadjHeightCb(self, adj):
-        # GTK crack, without that, at loading a project, the vadj upper
-        # property is reset to be equal as the lower, right after the
-        # trackobjects are added to the timeline (bug: #648714)
-        if self.vadj.props.upper < self._canvas.height:
-            self.vadj.props.upper = self._canvas.height
-
     _scroll_pos_ns = 0
 
     def _zoomSliderScrollCb(self, unused_widget, event):
@@ -692,6 +687,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         for track in self._timeline.get_tracks():
             self._tcks_sig_ids[track] = track.connect("notify::duration",
                     self.setDuration)
+        self._layer_sig_ids.append(self._timeline.connect("layer-added", self._layerAddedCb))
+        self._layer_sig_ids.append(self._timeline.connect("layer-removed", self._layerRemovedCb))
+        self._layerAddedCb(None, None)
 
     def getTimeline(self):
         return self._timeline
@@ -700,10 +698,22 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         for track, sigid in self._tcks_sig_ids.iteritems():
             track.disconnect(sigid)
 
+        for sigid in self._layer_sig_ids:
+            self._timeline.disconnect(sigid)
+
         self._timeline = None
 
     timeline = property(getTimeline, setTimeline, delTimeline,
             "The GESTimeline")
+
+    def _layerAddedCb(self, unused_layer, unused_user_data):
+        num_layers = (self._timeline.get_layers()[-1].props.priority + 1)
+
+        self.vadj.props.upper = (LAYER_HEIGHT_EXPANDED + LAYER_SPACING + TRACK_SPACING) * 2 * num_layers
+
+    def _layerRemovedCb(self, unused_layer, unused_user_data):
+        self.vadj.props.upper = LAYER_HEIGHT_EXPANDED *\
+            (len(self._timeline.get_layers())) + TRACK_SPACING
 
     def updateScrollAdjustments(self):
         a = self.get_allocation()
