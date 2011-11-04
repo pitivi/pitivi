@@ -283,7 +283,7 @@ class MoveContext(EditingContext):
         initial_position = self.default_originals[focus_timeline_object][0]
         initial_priority = self.default_originals[focus_timeline_object][-1]
 
-        final_priority = self.focus.props.priority
+        final_priority = focus_timeline_object.props.priority
         final_position = self.focus.props.start
 
         priority = final_priority
@@ -353,11 +353,16 @@ class MoveContext(EditingContext):
             position = self.snapToEdge(position,
                 position + self.default_span)
 
-        priority = max(self.min_priority, priority)
-        obj = self.focus
+        num_layers = len(self.timeline.get_layers())
+
+        #Make sure the priority is between 0 and 1 not skipping
+        #any layer
+        priority = max(0, priority)
+        priority = min(num_layers + 1, priority)
 
         # We make sure to work with sources for the drag
         # and drop
+        obj = self.focus
         if isinstance(self.focus, ges.TrackFileSource):
             obj = self.focus.get_timeline_object()
         elif isinstance(self.focus, ges.TrackOperation):
@@ -370,11 +375,12 @@ class MoveContext(EditingContext):
                 if layer.props.priority == priority:
                     obj.move_to_layer(layer)
                     moved = True
+
             if not moved:
                 layer = ges.TimelineLayer()
                 layer.props.auto_transition = True
-                self.timeline.add_layer(layer)
                 layer.props.priority = priority
+                self.timeline.add_layer(layer)
                 obj.move_to_layer(layer)
                 self.layer_lst.append(layer)
 
@@ -385,6 +391,11 @@ class MoveContext(EditingContext):
 
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
             obj.props.start = long(position + s_offset)
+
+        #Remove empty layers
+        for layer in self.timeline.get_layers():
+            if not len(layer.get_objects()):
+                self.timeline.remove_layer(layer)
 
         return position, priority
 
@@ -429,15 +440,10 @@ class TrimStartContext(EditingContext):
 
     def __init__(self, timeline, focus, other):
         EditingContext.__init__(self, timeline, focus, other)
-        #self.adjacent = timeline.edges.getObjsAdjacentToStart(focus)
-        #self.adjacent_originals = self._saveValues(self.adjacent)
         self.tracks = set([])
-        #if isinstance(self.focus, TrackObject):
-            #focus_timeline_object = self.focus.tlobj
-            #self.tracks.add(self.focus.track)
-        #else:
-        if isinstance(self.focus, ges.TrackFileSource):
-            focus_timeline_object = self.focus
+
+        if isinstance(self.focus, ges.TrackObject):
+            focus_timeline_object = self.focus.get_timeline_object()
             self.tracks.add(focus.get_track())
         else:
             focus_timeline_object = self.focus
@@ -495,19 +501,24 @@ class TrimStartContext(EditingContext):
         return position, priority
 
     def finish(self):
+        if isinstance(self.focus, ges.TrackObject):
+            obj = self.focus.get_timeline_object()
+        else:
+            obj = self.focus
+
         initial_position = self.default_originals[self.focus_timeline_object][0]
         self.focus.starting_start = self.focus.props.start
         timeline_objects = [self.focus_timeline_object]
         EditingContext.finish(self)
 
-        left_gap, right_gap = self._getGapsForLayer(self.focus.priority,
+        left_gap, right_gap = self._getGapsForLayer(obj,
                 timeline_objects, self.tracks)
 
         if left_gap is invalid_gap:
-            self._defaultTo(initial_position, self.focus.priority)
+            self._defaultTo(initial_position, obj.priority)
             left_gap, right_gap = Gap.findAroundObject(self.focus_timeline_object)
             position = initial_position - left_gap.duration
-            self._defaultTo(position, self.focus.priority)
+            self._defaultTo(position, obj)
 
 
 class TrimEndContext(EditingContext):
@@ -577,17 +588,22 @@ class TrimEndContext(EditingContext):
     def finish(self):
         EditingContext.finish(self)
 
+        if isinstance(self.focus, ges.TrackObject):
+            obj = self.focus.get_timeline_object()
+        else:
+            obj = self.focus
+
         initial_position, initial_duration = \
                 self.default_originals[self.focus_timeline_object][0:2]
         absolute_initial_duration = initial_position + initial_duration
 
         timeline_objects = [self.focus_timeline_object]
 
-        left_gap, right_gap = self._getGapsForLayer(self.focus.priority,
+        left_gap, right_gap = self._getGapsForLayer(obj.priority,
                 timeline_objects, self.tracks)
 
         if right_gap is invalid_gap:
-            self._defaultTo(absolute_initial_duration, self.focus.priority)
+            self._defaultTo(absolute_initial_duration, obj.priority)
             left_gap, right_gap = Gap.findAroundObject(self.focus_timeline_object)
             duration = absolute_initial_duration + right_gap.duration
-            self._defaultTo(duration, self.focus.priority)
+            self._defaultTo(duration, obj.priority)
