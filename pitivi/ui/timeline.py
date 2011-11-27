@@ -402,7 +402,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
 
-        if self._factories is None:
+        if not self._factories:
             if  context.targets in DND_EFFECT_LIST:
                 atom = gtk.gdk.atom_intern(dnd.EFFECT_TUPLE[0])
             else:
@@ -435,6 +435,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._move_context.finish()
             self.app.action_log.commit()
             context.drop_finish(True, timestamp)
+            self._factories = []
 
             return True
 
