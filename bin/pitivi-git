@@ -1,0 +1,94 @@
+#!/bin/bash -i
+#
+# this script is in git as gstreamer/scripts/gst-uninstalled
+#
+# It will set up the environment to use and develop gstreamer and projects
+# that use gstreamer with an uninstalled git checkout of gstreamer and the
+# plugin modules.
+#
+# It will set up LD_LIBRARY_PATH, DYLD_LIBRARY_PATH, PKG_CONFIG_PATH,
+# to prefer the uninstalled versions but also contain the installed ones.
+# The only exception to this is, that no system installed plugins will be
+# used but only the uninstalled ones.
+#
+# This script assumes that the relevant modules are checked out one by one
+# under a given tree specified below in MYPITIVI.
+#
+# Symlink this script in a directory in your path (for example $HOME/bin). You
+# must name the symlink gst-something, where something is the subdirectory
+# of MYPITIVI that contains your gstreamer module checkouts.
+#
+# e.g.:
+# - mkdir $HOME/gst/head
+# - ln -sf gst-uninstalled $HOME/bin/gst-head
+# - checkout copies of gstreamer modules in $HOME/gst/head
+# - gst-head
+
+# This script is run -i so that PS1 doesn't get cleared
+
+# Change this variable to the location of your gstreamer git checkouts
+MYPITIVI=$HOME/pitivi-git
+
+#
+# Everything below this line shouldn't be edited!
+#
+
+# extract version from $0
+# if this script is called "gst-head" then version will be "head"
+VERSION=`echo $0 | sed s/.*gst-//g`
+
+# base path under which dirs are installed
+PITIVI=$MYPITIVI
+
+# GES launch
+export PATH="\
+$PITIVI/gst-editing-services/tools:\
+$PITIVI/pitivi/bin/:\
+$PATH"
+
+export PKG_CONFIG_PATH="\
+$PITIVI/gst-python/pkgconfig\
+${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+
+pythonver=`python -c "import sys; print sys.version[:3]"`
+export PYTHONPATH=$PITIVI/gst-editing-services/bindings/python/.libs/:$PITIVI/gst-python:$PITIVI_PREFIX/lib/python$pythonver/site-packages${PYTHONPATH:+:$PYTHONPATH}
+
+if test ! -e $PITIVI; then
+    mkdir $MYPITIVI &&\
+    cd $MYPITIVI &&\
+    #Get latest gst-python stable release \
+    wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.gz &&\
+    tar -xf gst-python-0.10.22.tar.gz &&\
+    mv gst-python-0.10.22 gst-python &&\
+    cd gst-python && ./configure && make &&\
+    #Get GES \
+    cd .. && git clone git://anongit.freedesktop.org/gstreamer/gst-editing-services &&\
+    cd gst-editing-services &&\
+    git remote add thiblahute git://git.collabora.co.uk/git/user/tsaunier/gst-editing-service &&\
+    git remote update thiblahute && \
+    git checkout ges-port && ./autogen.sh && make && cd ../ &&\
+    #Get pitivi \
+    git clone git://git.pitivi.org/git/pitivi.git &&\
+    cd pitivi && \
+    git remote add thiblahute git://github.com/thiblahute/Pitivi.git &&\
+    git remote update thiblahute &&\
+    git checkout ges-port && ./autogen.sh && make
+fi
+
+## if we got a command, run it, else start a shell
+if test ! -z "$1";
+then
+  $@
+  exit $?
+fi
+
+# set up prompt to help us remember we're in a subshell, cd to
+# the gstreamer base dir and start $SHELL
+cd $PITIVI/
+shell=$SHELL
+if test "x$SHELL" = "x/bin/bash"
+then
+  # debian/ubuntu resets our PS1.  bastards.
+  shell="$SHELL --noprofile"
+fi
+PS1="[gst-$VERSION] $PS1" $shell
