@@ -794,23 +794,21 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.timeline.enable_update(False)
         tl_objs_dict = {}
         for track in self.timeline.get_tracks():
-            tck_objects = \
-                track.get_track_objects_at_position(long(self._position))
-            for tck_obj in tck_objects:
-                if isinstance(tck_obj, ges.TrackAudioTestSource) or \
-                    isinstance(tck_obj, ges.TrackVideoTestSource):
-                    continue
-                obj = tck_obj.get_timeline_object()
-                if obj in tl_objs_dict.keys():
-                    tl_objs_dict[obj] = "both"
-                elif tck_obj.get_track().get_caps().to_string() == "audio/x-raw-int; audio/x-raw-float":
-                    tl_objs_dict[obj] = "audio"
-                else:
-                    tl_objs_dict[obj] = "video"
+            for tck_obj in track.get_objects():
+                start = tck_obj.props.start
+                end = start + tck_obj.props.duration
+                if start < self._position and end > self._position:
+                    obj = tck_obj.get_timeline_object()
+                    if obj in tl_objs_dict.keys():
+                        tl_objs_dict[obj] = "both"
+                    elif tck_obj.get_track().get_caps().to_string() == "audio/x-raw-int; audio/x-raw-float":
+                        tl_objs_dict[obj] = "audio"
+                    else:
+                        tl_objs_dict[obj] = "video"
+
         for src in tl_objs_dict:
             src.split(self._position)
-        self.timeline.enable_update(True)
-        # work-around for 603149
+            self.timeline.enable_update(True)
 
     def keyframe(self, action):
         timeline_position = self._position

@@ -3,6 +3,7 @@ import gtk
 import os.path
 import pango
 import cairo
+import ges
 
 import pitivi.configure as configure
 from gettext import gettext as _
@@ -87,6 +88,25 @@ def text_size(text):
     return x2 - x1, y2 - y1
 
 
+def  get_previous_track_source(track, tckobj):
+    tckobjs = track.get_objects()
+    i = tckobjs.index(tckobj) - 1
+    while (i > 0):
+        if(isinstance(tckobjs[i], ges.TrackSource)):
+            return tckobjs[i]
+        i -= 1
+
+
+def  get_next_track_source(track, tckobj):
+    tckobjs = track.get_objects()
+    i = tckobjs.index(tckobj) + 1
+    while(i < len(tckobjs)):
+        if(isinstance(tckobjs[i], ges.TrackSource)):
+            return tckobjs[i]
+        i += 1
+    return None
+
+
 class TimelineController(controller.Controller):
 
     _cursor = ARROW
@@ -147,7 +167,7 @@ class TimelineController(controller.Controller):
             self._view.get_canvas().regroupTracks()
             return
 
-        prev = track.get_previous_track_object(self._view.element)
+        prev = get_previous_track_source(track, self._view.element)
 
         if prev != None:
             prev_end = prev.get_start() + prev.get_duration()
@@ -160,7 +180,7 @@ class TimelineController(controller.Controller):
             elif self._view.snapped_before:
                 self._view.snapped_before = False
 
-        next = track.get_next_track_object(self._view.element)
+        next = get_next_track_source(track, self._view.element)
         if next != None:
             offset = Zoomable.nsToPixel(next.get_start())
             dur_offset = Zoomable.nsToPixel(duration)
