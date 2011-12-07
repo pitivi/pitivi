@@ -738,18 +738,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def deleteSelected(self, unused_action):
         if self.timeline:
             self.app.action_log.begin("delete clip")
-            for track_object in self.timeline.selected:
-                obj = track_object.get_timeline_object()
-                obj.release_track_object(track_object)
-                track = track_object.get_track()
-                track.remove_object(track_object)
-                remove = True
-                for tck_obj in obj.get_track_objects():
-                    if isinstance(tck_obj, ges.TrackSource):
-                        remove = False
-                if remove:
-                    lyr = obj.get_layer()
-                    lyr.remove_object(obj)
+            #FIXME GES port: Handle unlocked TrackObject-s
+            for obj in self.timeline.selection:
+                layer = obj.get_layer()
+                layer.remove_object(obj)
+
             self.app.action_log.commit()
 
     def unlinkSelected(self, unused_action):
@@ -763,14 +756,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def ungroupSelected(self, unused_action):
         if self.timeline:
             self.app.action_log.begin("ungroup")
-            for track_object in self.timeline.selected:
-                track_object.set_locked(False)
+            for tlobj in self.timeline.selection:
+                tlobj.objects_set_locked(False)
             self.app.action_log.commit()
 
     def groupSelected(self, unused_action):
         if self.timeline:
-            for track_object in self.timeline.selected:
-                track_object.set_locked(True)
+            for tlobj in self.timeline.selection:
+                tlobj.set_locked(True)
 
     def alignSelected(self, unused_action):
         if "NumPy" in soft_deps:
@@ -792,23 +785,17 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def split(self, action):
         self.timeline.enable_update(False)
-        tl_objs_dict = {}
+
+        #Splitting the objects at the current position
         for track in self.timeline.get_tracks():
             for tck_obj in track.get_objects():
                 start = tck_obj.props.start
                 end = start + tck_obj.props.duration
                 if start < self._position and end > self._position:
                     obj = tck_obj.get_timeline_object()
-                    if obj in tl_objs_dict.keys():
-                        tl_objs_dict[obj] = "both"
-                    elif tck_obj.get_track().get_caps().to_string() == "audio/x-raw-int; audio/x-raw-float":
-                        tl_objs_dict[obj] = "audio"
-                    else:
-                        tl_objs_dict[obj] = "video"
+                    obj.split(self._position)
 
-        for src in tl_objs_dict:
-            src.split(self._position)
-            self.timeline.enable_update(True)
+        self.timeline.enable_update(True)
 
     def keyframe(self, action):
         timeline_position = self._position

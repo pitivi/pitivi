@@ -14,12 +14,14 @@ from zoominterface import Zoomable
 from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
 from common import LAYER_SPACING, unpack_cairo_pattern, unpack_cairo_gradient
 
+from pitivi.ui.point import Point
 from pitivi.log.loggable import Loggable
 from pitivi.settings import GlobalSettings
 from pitivi.receiver import receiver, handler
 from pitivi.ui.prefs import PreferencesDialog
-from pitivi.timeline.timeline import MoveContext, TrimStartContext,\
-         TrimEndContext
+from pitivi.signalinterface import Signallable
+from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT, \
+    SELECT_BETWEEN, MoveContext, TrimStartContext, TrimEndContext
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
@@ -109,6 +111,31 @@ def  get_next_track_source(track, tckobj):
     return None
 
 
+class Selected (Signallable):
+    """
+        A simple class that let us emit a selected-changed signal
+        when need
+    """
+
+    __signals__ = {
+        "selected-changed": []}
+
+    def __init__(self):
+        self._selected = False
+
+    def __nonzero__(self):
+        return self._selected
+
+    def getSelected(self):
+        return self._selected
+
+    def setSelected(self, selected):
+        self._selected = selected
+        self.emit("selected-changed", selected)
+
+    selected = property(getSelected, setSelected)
+
+
 class TimelineController(controller.Controller):
 
     _cursor = ARROW
@@ -125,8 +152,9 @@ class TimelineController(controller.Controller):
         self._view.unfocus()
 
     def drag_start(self, item, target, event):
-        #if not self._view.element.selected:
-            #self._view.timeline.selection.setToObj(self._view.element, SELECT)
+        self.debug("Drag started")
+        if not self._view.element.selected:
+            self._view.timeline.selection.setToObj(self._view.element, SELECT)
         if self.previous_x != None:
             ratio = float(self.ref / Zoomable.pixelToNs(10000000000))
             self.previous_x = self.previous_x * ratio
@@ -136,16 +164,17 @@ class TimelineController(controller.Controller):
         # store y offset for later priority calculation
         self._y_offset = tx[5]
         # zero y component of mousdown coordiante
-        #self._mousedown = Point(self._mousedown[0], 0)
+        self._mousedown = Point(self._mousedown[0], 0)
 
     def drag_end(self, item, target, event):
+        self.debug("Drag end")
         self._context.finish()
         self._context = None
         self._view.app.projectManager.current.timeline.enable_update(True)
         self._view.app.action_log.commit()
-        self._view.element.starting_start = self._view.element.get_property("start")
+        self._view.element.starting_start = self._view.element.props.start
         obj = self._view.element.get_timeline_object()
-        obj.starting_start = obj.get_property("start")
+        obj.starting_start = obj.props.start
         self.previous_x = self.next_previous_x
 
     def set_pos(self, item, pos):
@@ -153,10 +182,11 @@ class TimelineController(controller.Controller):
         x = x + self._hadj.get_value()
         priority = int((y - self._y_offset + self._vadj.get_value()) //
             (LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
-        #self._context.setMode(self._getMode())
+        self._context.setMode(self._getMode())
         track = self._view.element.get_track()
         start = self._view.element.get_start()
         duration = self._view.element.get_duration()
+
         if self.previous_x:
             position = self._view.element.get_start() + Zoomable.pixelToNs(x - self.previous_x)
         else:
@@ -251,14 +281,14 @@ class StartHandle(TrimHandle):
         _cursor = LEFT_SIDE
 
         def drag_start(self, item, target, event):
+            self.debug("Trim start %s" % target)
             TimelineController.drag_start(self, item, target, event)
             if self._view.element.is_locked():
                 elem = self._view.element.get_timeline_object()
             else:
                 elem = self._view.element
             self._context = TrimStartContext(self._view.timeline,
-                elem,
-                set([]))
+                elem, set([]))
             self._view.app.action_log.begin("trim object")
 
 
@@ -271,14 +301,14 @@ class EndHandle(TrimHandle):
         _cursor = RIGHT_SIDE
 
         def drag_start(self, item, target, event):
+            self.debug("Trim end %s" % target)
             TimelineController.drag_start(self, item, target, event)
             if self._view.element.is_locked():
                 elem = self._view.element.get_timeline_object()
             else:
                 elem = self._view.element
             self._context = TrimEndContext(self._view.timeline,
-                elem,
-                set([]))
+                elem, set([]))
             self._view.app.action_log.begin("trim object")
 
 
@@ -303,27 +333,21 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             return self._context.DEFAULT
 
         def click(self, pos):
-            #timeline = self._view.timeline
+            timeline = self._view.timeline
             element = self._view.element
-            if element.is_locked():
-                elem = set(element.get_timeline_object().get_track_objects())
+            if self._last_event.get_state() & gtk.gdk.SHIFT_MASK:
+                timeline.selection.setToObj(element, SELECT_BETWEEN)
+            elif self._last_event.get_state() & gtk.gdk.CONTROL_MASK:
+                if element.selected:
+                    mode = UNSELECT
+                else:
+                    mode = SELECT_ADD
+                timeline.selection.setToObj(element, mode)
             else:
-                elem = element
-            self._view.app.projectManager.current.emit("selected-changed", elem)
-            element_end = element.get_property("start") + element.get_property("duration")
-            #if self._last_event.get_state() & gtk.gdk.SHIFT_MASK:
-                #timeline.setSelectionToObj(element, SELECT_BETWEEN)
-            #elif self._last_event.get_state() & gtk.gdk.CONTROL_MASK:
-                #if element.selected:
-                    #mode = UNSELECT
-                #else:
-                    #mode = SELECT_ADD
-                #timeline.setSelectionToObj(element, mode)
-            #else:
-            x, y = pos
-            x += self._hadj.get_value()
-            #self._view.app.current.seeker.seek(Zoomable.pixelToNs(x))
-                #timeline.setSelectionToObj(element, SELECT)
+                x, y = pos
+                x += self._hadj.get_value()
+                self._view.app.current.seeker.seek(Zoomable.pixelToNs(x))
+                timeline.selection.setToObj(element, SELECT)
 
     def __init__(self, instance, element, track, timeline, uTrack, is_transition=False):
         goocanvas.Group.__init__(self)
@@ -337,7 +361,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.namewidth = 0
         self.nameheight = 0
         self.is_transition = is_transition
-        self.app.projectManager.current.connect("selected-changed", self.selected_changed)
+
         self.snapped_before = False
         self.snapped_after = False
 
@@ -362,13 +386,13 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.end_handle = EndHandle(self.app, element, timeline,
             height=self.height)
 
-        self.selection_indicator = goocanvas.Rect(
+        self._selec_indic = goocanvas.Rect(
             visibility=goocanvas.ITEM_INVISIBLE,
             line_width=0.0,
             height=self.height)
 
         if not self.is_transition:
-            for thing in (self.bg, self.selection_indicator,
+            for thing in (self.bg, self._selec_indic,
                 self.start_handle, self.end_handle, self.namebg, self.name):
                 self.add_child(thing)
         else:
@@ -376,12 +400,15 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self.add_child(thing)
 
         self.element = element
-        self.element.get_timeline_object().max_duration = self.element.get_timeline_object().get_property("duration")
-        self.element.max_duration = self.element.get_property("duration")
-        self.element.selected = False
-        self.element.starting_start = self.element.get_property("start")
+        element.max_duration = element.props.duration
+        element.starting_start = element.props.start
+        element.selected = Selected()
+        element.selected.connect("selected-changed", self.selectedChangedCb)
+
         obj = self.element.get_timeline_object()
         obj.starting_start = obj.get_property("start")
+        obj.max_duration = obj.props.duration
+
         self.settings = instance.settings
         self.unfocus()
 
@@ -463,7 +490,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         self.namebg.props.fill_pattern = pattern
 
-        self.selection_indicator.props.fill_pattern = unpack_cairo_pattern(
+        self._selec_indic.props.fill_pattern = unpack_cairo_pattern(
             self.settings.selectedColor)
 
         self.name.props.font = self.settings.clipFontDesc
@@ -492,31 +519,11 @@ class TrackObject(View, goocanvas.Group, Zoomable):
     def startChangedCb(self, track_object, start):
         self._update()
 
-    def selected_changed(self, unused_project, element):
-        self.timeline.selected = []
-        if isinstance(element, set):
-            for elem in element:
-                elem.selected = True
-                self.timeline.selected.append(elem)
-            for elem in element:
-                if elem == self.element:
-                    self.selection_indicator.props.visibility = goocanvas.ITEM_VISIBLE
-                    elem.selected = True
-                elif self.element.selected == False:
-                    self.selection_indicator.props.visibility = \
-                        goocanvas.ITEM_INVISIBLE
-            for elem in element:
-                elem.selected = False
-            return
-
+    def selectedChangedCb(self, element, selected):
+        if element.selected:
+            self._selec_indic.props.visibility = goocanvas.ITEM_VISIBLE
         else:
-            self.timeline.selected.append(element)
-
-        if element == self.element:
-            self.selection_indicator.props.visibility = goocanvas.ITEM_VISIBLE
-        else:
-            self.selection_indicator.props.visibility = \
-                goocanvas.ITEM_INVISIBLE
+            self._selec_indic.props.visibility = goocanvas.ITEM_INVISIBLE
 
     def _update(self):
         try:
@@ -536,7 +543,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
             0, 0, w, self.height, w)
         self.bg.props.width = width
-        self.selection_indicator.props.width = width
+        self._selec_indic.props.width = width
         self.end_handle.props.x = w
         if self.expanded:
             if w - NAME_HOFFSET > 0:

@@ -26,11 +26,12 @@ Project class
 import gst
 import ges
 
+from pitivi.utils import Seeker
 from pitivi.log.loggable import Loggable
 from pitivi.sourcelist import SourceList
 from pitivi.settings import ExportSettings
 from pitivi.signalinterface import Signallable
-from pitivi.utils import Seeker
+from pitivi.timeline.timeline import Selection
 
 
 class ProjectError(Exception):
@@ -86,7 +87,9 @@ class Project(Signallable, Loggable):
         self._dirty = False
 
         self.timeline = ges.timeline_new_audio_video()
-        self.timeline.selected = []
+        # We add a Selection to the timeline as there is currently
+        # no such feature in GES
+        self.timeline.selection = Selection()
         self.layer = ges.TimelineLayer()
         self.layer.set_property("auto-transition", True)
 

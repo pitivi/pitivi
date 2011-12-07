@@ -243,7 +243,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._selecting = False
         self._marquee.props.visibility = goocanvas.ITEM_INVISIBLE
         if not self._got_motion_notify:
-            #self._timeline.setSelectionTo(set(), 0)
+            self._timeline.selection.setSelection([], 0)
             seeker.seek(Zoomable.pixelToNs(event.x))
         else:
             self._got_motion_notify = False
@@ -254,7 +254,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
                 mode = 2
             selected = self._objectsUnderMarquee()
             self.app.projectManager.current.emit("selected-changed", selected)
-            #self._timeline.setSelectionTo(self._objectsUnderMarquee(), mode)
+            self._timeline.selection.setSelection(self._objectsUnderMarquee(), mode)
         return True
 
     def _objectsUnderMarquee(self):

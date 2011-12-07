@@ -23,6 +23,7 @@
 import ges
 
 from pitivi.utils import infinity
+from pitivi.signalinterface import Signallable
 from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
 
 #from pitivi.timeline.align import AutoAligner
@@ -36,6 +37,11 @@ SELECT_ADD = 2
 """Extend the selection with the given set"""
 SELECT_BETWEEN = 3
 """Select a range of clips"""
+
+
+class TimelineError(Exception):
+    """Base Exception for errors happening in L{Timeline}s or L{TimelineObject}s"""
+    pass
 
 
 class EditingContext(object):
@@ -511,8 +517,8 @@ class TrimStartContext(EditingContext):
         timeline_objects = [self.focus_timeline_object]
         EditingContext.finish(self)
 
-        left_gap, right_gap = self._getGapsForLayer(obj,
-                timeline_objects, self.tracks)
+        left_gap, right_gap = self._getGapsForLayer(timeline_objects,
+            self.tracks)
 
         if left_gap is invalid_gap:
             self._defaultTo(initial_position, obj.priority)
@@ -547,7 +553,7 @@ class TrimEndContext(EditingContext):
                   if obj.props.start > reference]
 
         self.ripple_originals = self._saveValues(ripple)
-        self.ripple_offsets = self._getOffsets(reference, self.focus.get_priority(),
+        self.ripple_offsets = self._getOffsets(reference, self.focus.props.priority,
             ripple)
 
     def _rollTo(self, position, priority):
@@ -599,11 +605,122 @@ class TrimEndContext(EditingContext):
 
         timeline_objects = [self.focus_timeline_object]
 
-        left_gap, right_gap = self._getGapsForLayer(obj.priority,
-                timeline_objects, self.tracks)
+        left_gap, right_gap = self._getGapsForLayer(timeline_objects,
+                self.tracks)
 
         if right_gap is invalid_gap:
             self._defaultTo(absolute_initial_duration, obj.priority)
             left_gap, right_gap = Gap.findAroundObject(self.focus_timeline_object)
             duration = absolute_initial_duration + right_gap.duration
             self._defaultTo(duration, obj.priority)
+
+
+class Selection(Signallable):
+    """
+    A collection of L{ges.TimelineObject}.
+
+    Signals:
+     - C{selection-changed} : The contents of the L{ges.Selection} changed.
+
+    @ivar selected: Set of selected L{ges.TrackObject}
+    @type selected: C{list}
+    """
+
+    __signals__ = {
+        "selection-changed": []}
+
+    def __init__(self):
+        self.selected = set([])
+        self.last_single_obj = None
+
+    def setToObj(self, obj, mode):
+        """
+        Convenience method for calling L{setSelection} with a single L{ges.TimelineObject}
+
+        @see: L{setSelection}
+        """
+        self.setSelection(set([obj]), mode)
+
+    def addTimelineObject(self, timeline_object):
+        """
+        Add the given timeline_object to the selection.
+
+        @param timeline_object: The object to add
+        @type timeline_object: L{ges.TimelineObject}
+        @raises TimelineError: If the object is already controlled by this
+        Selection.
+        """
+        if timeline_object in self.timeline_objects:
+            raise TimelineError("TrackObject already in this selection")
+
+    def setSelection(self, objs, mode):
+        """
+        Update the current selection.
+
+        Depending on the value of C{mode}, the selection will be:
+         - L{SELECT} : set to the provided selection.
+         - L{UNSELECT} : the same minus the provided selection.
+         - L{SELECT_ADD} : extended with the provided selection.
+
+        @param selection: The list of timeline objects to update the selection with.
+        @param mode: The type of update to apply. Can be C{SELECT},C{UNSELECT} or C{SELECT_ADD}
+
+        @see: L{setToObj}
+        """
+        # get a list of timeline objects
+        selection = set()
+        for obj in objs:
+            # FIXME GES break, handle the fact that we have unlinked objects in GES
+            if isinstance(obj, ges.TrackObject):
+                selection.add(obj.get_timeline_object())
+            else:
+                selection.add(obj)
+
+        old_selection = self.selected
+        if mode == SELECT_ADD:
+            selection = self.selected | selection
+        elif mode == UNSELECT:
+            selection = self.selected - selection
+        self.selected = selection
+
+        if len(self.selected) == 1:
+            self.last_single_obj = iter(selection).next()
+
+        for obj in self.selected - old_selection:
+            for tckobj in obj.get_track_objects():
+                tckobj.selected.selected = True
+
+        for obj in old_selection - self.selected:
+            for tckobj in obj.get_track_objects():
+                tckobj.selected.selected = False
+
+        # FIXME : shouldn't we ONLY emit this IFF the selection has changed ?
+        self.emit("selection-changed")
+
+    def getSelectedTrackObjs(self):
+        """
+        Returns the list of L{TrackObject} contained in this selection.
+        """
+        objects = []
+        for timeline_object in self.selected:
+            objects.extend(timeline_object.get_track_objects())
+
+        return set(objects)
+
+    def getSelectedTrackEffects(self):
+        """
+        Returns the list of L{TrackEffect} contained in this selection.
+        """
+        track_effects = []
+        for timeline_object in self.selected:
+            for track in timeline_object.track_objects:
+                if isinstance(track, ges.TrackEffect):
+                    track_effects.append(track)
+
+        return track_effects
+
+    def __len__(self):
+        return len(self.selected)
+
+    def __iter__(self):
+        return iter(self.selected)
