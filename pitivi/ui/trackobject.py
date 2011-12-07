@@ -6,18 +6,20 @@ import cairo
 import ges
 
 import pitivi.configure as configure
-from gettext import gettext as _
-from pitivi.receiver import receiver, handler
-from view import View
 import controller
 
+from view import View
+from gettext import gettext as _
 from zoominterface import Zoomable
-from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT, \
-    SELECT_BETWEEN, MoveContext, TrimStartContext, TrimEndContext
 from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
 from common import LAYER_SPACING, unpack_cairo_pattern, unpack_cairo_gradient
-from pitivi.ui.prefs import PreferencesDialog
+
+from pitivi.log.loggable import Loggable
 from pitivi.settings import GlobalSettings
+from pitivi.receiver import receiver, handler
+from pitivi.ui.prefs import PreferencesDialog
+from pitivi.timeline.timeline import MoveContext, TrimStartContext,\
+         TrimEndContext
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
@@ -213,7 +215,7 @@ class TimelineController(controller.Controller):
             self._context.setMode(self._getMode())
 
 
-class TrimHandle(View, goocanvas.Image, Zoomable):
+class TrimHandle(View, goocanvas.Image, Loggable, Zoomable):
 
     """A component of a TrackObject which manage's the source's edit
     points"""
@@ -231,6 +233,7 @@ class TrimHandle(View, goocanvas.Image, Zoomable):
             **kwargs)
         View.__init__(self)
         Zoomable.__init__(self)
+        Loggable.__init__(self)
 
     def focus(self):
         self.props.pixbuf = TRIMBAR_PIXBUF_FOCUS
