@@ -20,8 +20,10 @@
 # Boston, MA 02110-1301, USA.
 
 import gtk.gdk
-from pitivi.receiver import receiver, handler
+
 from pitivi.ui.point import Point
+from pitivi.log.loggable import Loggable
+from pitivi.receiver import receiver, handler
 
 # Controllers are reusable and implement specific behaviors. Currently this
 # Includes only click, and drag. Multiple controllers could be attached to a
@@ -33,7 +35,7 @@ from pitivi.ui.point import Point
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
 
 
-class Controller(object):
+class Controller(Loggable):
 
     """A controller which implements drag-and-drop bahavior on connected view
     objects. Subclasses may override the drag_start, drag_end, pos, and
@@ -64,6 +66,7 @@ class Controller(object):
     def __init__(self, view=None):
         object.__init__(self)
         self._view = view
+        Loggable.__init__(self)
 
 ## convenience functions
 
