@@ -113,8 +113,9 @@ def  get_next_track_source(track, tckobj):
 
 class Selected (Signallable):
     """
-        A simple class that let us emit a selected-changed signal
-        when need
+    A simple class that let us emit a selected-changed signal
+    when needed, and that can be check directly to know if the
+    object is selected or not.
     """
 
     __signals__ = {
@@ -124,6 +125,10 @@ class Selected (Signallable):
         self._selected = False
 
     def __nonzero__(self):
+        """
+        checking a Selected object is the same as checking its _selected
+        property
+        """
         return self._selected
 
     def getSelected(self):

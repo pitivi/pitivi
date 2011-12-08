@@ -387,7 +387,7 @@ class MoveContext(EditingContext, Loggable):
         # We make sure to work with sources for the drag
         # and drop
         obj = self.focus
-        if isinstance(self.focus, ges.TrackFileSource):
+        if isinstance(self.focus, ges.TrackSource):
             obj = self.focus.get_timeline_object()
         elif isinstance(self.focus, ges.TrackOperation):
             return
@@ -553,7 +553,7 @@ class TrimEndContext(EditingContext):
         #self.adjacent = timeline.edges.getObjsAdjacentToEnd(focus)
         #self.adjacent_originals = self._saveValues(self.adjacent)
         self.tracks = set([])
-        if isinstance(self.focus, ges.TrackFileSource):
+        if isinstance(self.focus, ges.TrackSource):
             focus_timeline_object = self.focus
             self.tracks.add(focus.get_track())
         else:

@@ -87,13 +87,10 @@ class Project(Signallable, Loggable):
         self._dirty = False
 
         self.timeline = ges.timeline_new_audio_video()
+
         # We add a Selection to the timeline as there is currently
         # no such feature in GES
         self.timeline.selection = Selection()
-        self.layer = ges.TimelineLayer()
-        self.layer.set_property("auto-transition", True)
-
-        self.timeline.add_layer(self.layer)
 
         self.pipeline = ges.TimelinePipeline()
         self.pipeline._setUp = False
