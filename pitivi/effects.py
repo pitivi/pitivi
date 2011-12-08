@@ -61,9 +61,10 @@ class Effect():
     """
     Factories that applies an effect on a stream
     """
-    def __init__(self, effect, name='', categories=[_("Uncategorized")],
+    def __init__(self, effect, media_type, categories=[_("Uncategorized")],
                   human_name="", description="", icon=None):
         self.effectname = effect
+        self.media_type = media_type
         self.categories = categories
         self.description = description
         self.human_name = human_name
@@ -155,14 +156,16 @@ class EffectsHandler(object):
             name = element_factory.get_name()
             if "Effect" in klass and name not in BLACKLISTED_EFFECTS and not\
                 [bplug for bplug in BLACKLISTED_PLUGINS if bplug in name]:
-                effect = Effect(name, name,
+                if 'Audio' in klass:
+                    self.audio_effects.append(element_factory)
+                    media_type = AUDIO_EFFECT
+                elif 'Video' in klass:
+                    self.video_effects.append(element_factory)
+                    media_type = VIDEO_EFFECT
+                effect = Effect(name, media_type,
                                    self._getEffectCategories(name),
                                    self._getEffectName(element_factory),
                                    self._getEffectDescripton(element_factory))
-                if 'Audio' in klass:
-                    self.audio_effects.append(element_factory)
-                elif 'Video' in klass:
-                    self.video_effects.append(element_factory)
                 self._addEffectToDic(name, effect)
 
     def getAllAudioEffects(self):
@@ -375,5 +378,4 @@ class EffectGstElementPropertyChangeTracker:
         action = EffectPropertyChanged(gst_element, pspec.name, old_value,
                                        new_value)
         self._tracked_effects[gst_element][pspec.name] = new_value
-        self.pipeline.flushSeekVideo()
         self.action_log.push(action)

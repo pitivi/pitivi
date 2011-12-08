@@ -699,6 +699,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self._zoom_duration_changed = True
 
         self.project.seeker.connect("seek", self._timelineSeekCb)
+        self.project.seeker.connect("flush", self._timelineSeekFlushCb)
 
         # preliminary seek to ensure the project pipeline is configured
         self.project.seeker.seek(0)
@@ -1073,6 +1074,16 @@ class PitiviMainWindow(gtk.Window, Loggable):
         #GES crazyness... Implement
         pass
 
+    def _timelineSeekFlushCb(self, unused_seeker):
+        try:
+            position = self.project_pipeline.query_position(gst.FORMAT_TIME)[0]
+            self.project_pipeline.seek(1.0, gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH,
+                    gst.SEEK_TYPE_SET, position, gst.SEEK_TYPE_NONE, -1)
+            self.timeline.timelinePositionChanged(position)
+
+        except Exception, e:
+            self.error("seek failed %s %s %s", gst.TIME_ARGS(position), format, e)
+
     def _timelineSeekCb(self, ruler, position, format):
         try:
             if position < 0:
@@ -1081,8 +1092,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 position = self.timeline.getDuration()
 
             self.project_pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
-                                  gst.SEEK_TYPE_SET, position,
-                                  gst.SEEK_TYPE_NONE, -1)
+                    gst.SEEK_TYPE_SET, position, gst.SEEK_TYPE_NONE, -1)
+
             self.timeline.timelinePositionChanged(position)
 
         except Exception, e:

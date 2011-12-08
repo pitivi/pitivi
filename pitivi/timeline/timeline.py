@@ -708,11 +708,13 @@ class Selection(Signallable):
 
         for obj in self.selected - old_selection:
             for tckobj in obj.get_track_objects():
-                tckobj.selected.selected = True
+                if not isinstance(tckobj, ges.TrackEffect):
+                    tckobj.selected.selected = True
 
         for obj in old_selection - self.selected:
             for tckobj in obj.get_track_objects():
-                tckobj.selected.selected = False
+                if not isinstance(tckobj, ges.TrackEffect):
+                    tckobj.selected.selected = False
 
         # FIXME : shouldn't we ONLY emit this IFF the selection has changed ?
         self.emit("selection-changed")

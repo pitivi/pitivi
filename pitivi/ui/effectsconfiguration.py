@@ -22,6 +22,7 @@ import gst
 import gtk
 import gobject
 
+from pitivi.utils import Seeker
 from pitivi.ui.gstwidget import GstElementSettingsWidget
 from pitivi.ui.dynamic import FractionWidget
 
@@ -34,6 +35,7 @@ class EffectsPropertiesHandling:
         self._current_effect_setting_ui = None
         self._current_element_values = {}
         self.action_log = action_log
+        self._seeker = Seeker(80)
 
     def getEffectConfigurationUI(self, effect):
         """
@@ -104,4 +106,5 @@ class EffectsPropertiesHandling:
             self.action_log.begin("Effect property change")
             self._current_effect_setting_ui.element.set_child_property(prop.name, value)
             self.action_log.commit()
+            self._seeker.flush()
             self._current_element_values[prop.name] = value

@@ -26,20 +26,23 @@ import gtk
 import pango
 import dnd
 import os
+import ges
 
 from gettext import gettext as _
 
+from pitivi.utils import Seeker
+from pitivi.check import soft_deps
+from pitivi.configure import get_ui_dir
 from pitivi.log.loggable import Loggable
+from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 
-from pitivi.ui.gstwidget import GstElementSettingsWidget
-from pitivi.ui.effectsconfiguration import EffectsPropertiesHandling
+
+from pitivi.ui.track import track_is_type
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.ui.common import PADDING, SPACING
-from pitivi.configure import get_ui_dir
-from pitivi.check import soft_deps
 from pitivi.ui.effectlist import HIDDEN_EFFECTS
-
-import ges
+from pitivi.ui.gstwidget import GstElementSettingsWidget
+from pitivi.ui.effectsconfiguration import EffectsPropertiesHandling
 
 (COL_ACTIVATED,
  COL_TYPE,
@@ -51,6 +54,17 @@ import ges
 class ClipPropertiesError(Exception):
     """Base Exception for errors happening in L{ClipProperties}s or L{EffectProperties}s"""
     pass
+
+
+def compare_type(track, effect_type):
+
+    if track_is_type(track, 'GES_TRACK_TYPE_AUDIO') and \
+            effect_type == AUDIO_EFFECT:
+        return True
+    elif track_is_type(track, 'GES_TRACK_TYPE_VIDEO') and \
+             effect_type == VIDEO_EFFECT:
+        return True
+    return False
 
 
 class ClipProperties(gtk.ScrolledWindow, Loggable):
@@ -82,8 +96,7 @@ class ClipProperties(gtk.ScrolledWindow, Loggable):
         self.effect_properties_handling = EffectsPropertiesHandling(instance.action_log)
 
         self.effect_expander = EffectProperties(instance,
-                                                self.effect_properties_handling,
-                                                self)
+                self.effect_properties_handling, self)
 
         vbox.pack_start(self.info_bar_box, expand=False, fill=True)
 
@@ -153,6 +166,8 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self._info_bar = None
         self._config_ui_h_pos = None
         self._timeline = None
+        # We use the seeker to flush the pipeline when needed
+        self._seeker = Seeker(80)
 
         self._vcontent = gtk.VPaned()
         self.add(self._vcontent)
@@ -168,7 +183,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self._toolbar.insert(self._removeEffectBt, 0)
         self._table.attach(self._toolbar, 0, 1, 0, 1, yoptions=gtk.FILL)
 
-        self.storemodel = gtk.ListStore(bool, str, str, object)
+        self.storemodel = gtk.ListStore(bool, str, str, str, object)
 
         #Treeview
         self.treeview_scrollwin = gtk.ScrolledWindow()
@@ -246,8 +261,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
     def _newProjectLoadedCb(self, app, project):
         self.clip_properties.project = project
-        #GES break, reimplement me
-        #self.selected_effects = self.timeline.selection.getSelectedTrackEffects()
+        self.selected_effects = self.timeline.selection.getSelectedTrackEffects()
         self._updateAll()
 
     def _vcontentNotifyCb(self, paned, gparamspec):
@@ -260,29 +274,38 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
     def _setTimeline(self, timeline):
         self._timeline = timeline
-        if not self.connected:
-            self.app.projectManager.current.connect("selected-changed", self._selectionChangedCb)
-            self.connected = True
+        #if not self.connected:
+        self._timeline.selection.connect("selection-changed", self._selectionChangedCb)
+        self.connected = True
 
     timeline = property(_getTimeline, _setTimeline)
 
-    def _selectionChangedCb(self, project, element):
-        self.timeline_objects = []
-        if isinstance(element, set):
-            for elem in element:
-                self.timeline_objects.append(elem)
+    def _selectionChangedCb(self, selection,):
+        for timeline_object in self.timeline_objects:
+            timeline_object.disconnect_by_func(self._trackObjectAddedCb)
+            timeline_object.disconnect_by_func(self._trackRemovedRemovedCb)
+
+        self.selected_effects = selection.getSelectedTrackEffects()
+
+        if selection.selected:
+            self.timeline_objects = list(selection.selected)
+            for timeline_object in self.timeline_objects:
+                timeline_object.connect("track-object-added", self._trackObjectAddedCb)
+                timeline_object.connect("track-object-removed", self._trackRemovedRemovedCb)
+            self.set_sensitive(True)
         else:
-            self.timeline_objects.append(element)
+            self.timeline_objects = []
+            self.set_sensitive(False)
         self._updateAll()
 
     def  _trackObjectAddedCb(self, unused_timeline_object, track_object):
-        if isinstance(track_object, TrackEffect):
+        if isinstance(track_object, ges.TrackEffect):
             selec = self.timeline.selection.getSelectedTrackEffects()
             self.selected_effects = selec
             self._updateAll()
 
     def  _trackRemovedRemovedCb(self, unused_timeline_object, track_object):
-        if isinstance(track_object, TrackEffect):
+        if isinstance(track_object, ges.TrackEffect):
             selec = self.timeline.selection.getSelectedTrackEffects()
             self.selected_effects = selec
             self._updateAll()
@@ -309,26 +332,40 @@ class EffectProperties(gtk.Expander, gtk.HBox):
     def _cleanCache(self, effect):
         config_ui = self.effect_props_handling.cleanCache(effect)
 
-    def addEffectToCurrentSelection(self, factory_name):
+    def addEffectToCurrentSelection(self, bin_desc):
         if self.timeline_objects:
-            factory = self.app.effects.getFactoryFromName(factory_name)
-            self.app.action_log.begin("add effect")
-            effect = ges.TrackParseLaunchEffect(factory_name)
-            self.timeline_objects[0].get_timeline_object().add_track_object(effect)
-            self.timeline_objects[1].get_track().add_object(effect)
-            self._updateAll()
-            self.app.action_log.commit()
+            media_type = self.app.effects.getFactoryFromName(bin_desc).media_type
+
+            # Trying to apply effect only on the first object of the selection
+            tlobj = self.timeline_objects[0]
+
+            # Checking that this effect can be applied on this track object
+            # Which means, it has the corresponding media_type
+            for tckobj in tlobj.get_track_objects():
+                track = tckobj.get_track()
+                if track_is_type(track, 'GES_TRACK_TYPE_AUDIO') and \
+                        media_type == AUDIO_EFFECT or \
+                        track_is_type(track, 'GES_TRACK_TYPE_VIDEO') and \
+                        media_type == VIDEO_EFFECT:
+                    #Actually add the effect
+                    self.app.action_log.begin("add effect")
+                    effect = ges.TrackParseLaunchEffect(bin_desc)
+                    tlobj.add_track_object(effect)
+                    track.add_object(effect)
+                    self._updateAll()
+                    self.app.action_log.commit()
+                    self._seeker.flush()
+
+                    break
 
     def _dragDataReceivedCb(self, unused_layout, context, unused_x, unused_y,
-        selection, unused_targetType, unused_timestamp):
+            selection, unused_targetType, unused_timestamp):
         self._factory = self.app.effects.getFactoryFromName(selection.data)
 
-    def _dragDropCb(self, unused, context, unused_x, unused_y, unused_timestamp):
+    def _dragDropCb(self, unused, context, unused_x, unused_y,
+             unused_timestamp):
         if self._factory:
-            self.app.action_log.begin("add effect")
-            self.timeline.addEffectFactoryOnObject(self._factory,
-                                                   self.timeline_objects)
-            self.app.action_log.commit()
+            self.addEffectToCurrentSelection(self._factory.effectname)
         self._factory = None
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
@@ -343,10 +380,10 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
     def _effectActiveToggleCb(self, cellrenderertoggle, path):
         iter = self.storemodel.get_iter(path)
-        track_effect = self.storemodel.get_value(iter, COL_TRACK_EFFECT)
+        tck_effect = self.storemodel.get_value(iter, COL_TRACK_EFFECT)
         self.app.action_log.begin("change active state")
-        track_effect.set_active(not track_effect.is_active())
-        cellrenderertoggle.set_active(track_effect.is_active())
+        tck_effect.set_active(not tck_effect.is_active())
+        cellrenderertoggle.set_active(tck_effect.is_active())
         self._updateTreeview()
         self.app.action_log.commit()
 
@@ -375,28 +412,26 @@ class EffectProperties(gtk.Expander, gtk.HBox):
                 self.storemodel.clear()
                 self._showInfoBar()
             self._vcontent.show()
-        self._removeEffectBt.set_sensitive(False)
-        if len(self.timeline_objects) >= 1:
-            self._setEffectDragable()
-            self._updateTreeview()
-            self._updateEffectConfigUi()
         else:
             self._vcontent.hide()
 
     def _updateTreeview(self):
         self.storemodel.clear()
 
-        obj = self.timeline_objects[0].get_timeline_object()
+        obj = self.timeline_objects[0]
         for track_effect in obj.get_top_effects():
-            if not track_effect.factory.effectname in HIDDEN_EFFECTS:
-                to_append = [track_effect.get_property("active")]
-                #FIXME ugly GES -> use TrackType
-                if track_effect.get_track().get_caps().to_string() == "audio/x-raw-int; audio/x-raw-float":
+            if not track_effect.props.bin_description in HIDDEN_EFFECTS:
+                material = self.app.effects.getFactoryFromName(
+                        track_effect.props.bin_description)
+                to_append = [track_effect.props.active]
+                track = track_effect.get_track()
+                if track_is_type(track, 'GES_TRACK_TYPE_AUDIO'):
                     to_append.append("Audio")
-                else:
+                elif track_is_type(track, 'GES_TRACK_TYPE_VIDEO'):
                     to_append.append("Video")
 
-                to_append.append(track_effect.get_property("bin-description"))
+                to_append.append(track_effect.props.bin_description)
+                to_append.append(material.description)
                 to_append.append(track_effect)
 
                 self.storemodel.append(to_append)
@@ -596,11 +631,11 @@ class TransformationProperties(gtk.Expander):
         effect.freeze_notify()
         return self.effect
 
-    def _selectionChangedCb(self, project, selection):
-        self.timeline_objects = list(selection)
+    def _selectionChangedCb(self, timeline):
+        if self.timeline and len(self.timeline.selection.selected) > 0:
+            for tl_obj in self.timeline.selection.selected:
+                pass
 
-        if len(self.timeline_objects) == 1:
-            tl_obj = self.timeline_objects[0]
             if tl_obj != self._current_tl_obj:
                 self._current_tl_obj = tl_obj
                 self.effect = None
@@ -613,6 +648,7 @@ class TransformationProperties(gtk.Expander):
             if self._current_tl_obj:
                 self._current_tl_obj = None
                 self.zoom_scale.set_value(1.0)
+                self.app.gui.viewer.pipeline.flushSeekVideo()
             self.effect = None
             self.set_sensitive(False)
         self._updateBoxVisibility()
@@ -629,6 +665,6 @@ class TransformationProperties(gtk.Expander):
     def _setTimeline(self, timeline):
         self._timeline = timeline
         if timeline:
-            self.app.projectManager.current.connect('selected-changed', self._selectionChangedCb)
+            self._timeline.selection.connect('selection-changed', self._selectionChangedCb)
 
     timeline = property(_getTimeline, _setTimeline)

@@ -25,7 +25,6 @@ Timeline widgets for the complex view
 
 import gtk
 
-from pitivi.log.loggable import Loggable
 import ruler
 import dnd
 import gst
@@ -33,17 +32,24 @@ import gobject
 import ges
 
 from gettext import gettext as _
+
+from zoominterface import Zoomable
+from pitivi.check import soft_deps
+from pitivi.log.loggable import Loggable
 from timelinecanvas import TimelineCanvas
 from timelinecontrols import TimelineControls
-from zoominterface import Zoomable
-from pitivi.ui.common import TRACK_SPACING, LAYER_HEIGHT_EXPANDED, LAYER_SPACING
+from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.timeline.timeline import MoveContext, SELECT
-from pitivi.ui.filelisterrordialog import FileListErrorDialog
+
 from pitivi.ui.common import SPACING
-from pitivi.ui.alignmentprogress import AlignmentProgressDialog
+from pitivi.ui.track import track_is_type
 from pitivi.ui.depsmanager import DepsManager
-#from pitivi.timeline.align import AutoAligner
-from pitivi.check import soft_deps
+from pitivi.ui.filelisterrordialog import FileListErrorDialog
+from pitivi.ui.alignmentprogress import AlignmentProgressDialog
+from pitivi.ui.common import TRACK_SPACING, LAYER_HEIGHT_EXPANDED, LAYER_SPACING
+
+# FIXME GES Port regression
+# from pitivi.timeline.align import AutoAligner
 
 DND_EFFECT_LIST = [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
                   [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]
@@ -440,20 +446,40 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             return True
 
         elif context.targets in DND_EFFECT_LIST:
-            if not self.timeline.timeline_objects:
+            if self._duration == 0:
                 return False
-            factory = self._factories[0]
-            timeline_objs = self._getTimelineObjectUnderMouse(x, y, factory.getInputStreams()[0])
-            if timeline_objs:
-                self.app.action_log.begin("add effect")
-                self.timeline.addEffectFactoryOnObject(factory,
-                        timeline_objects=timeline_objs)
-                self.app.action_log.commit()
-                self._factories = None
-                self.app.current.seeker.seek(self._position)
-                context.drop_finish(True, timestamp)
 
-                self.timeline.selection.setSelection(timeline_objs, SELECT)
+            factory = self._factories[0]
+            timeline_objs = self._getTimelineObjectUnderMouse(x, y)
+            if timeline_objs:
+                # FIXME make a util function to add effects instead of copy/pasting it
+                # from cliproperties
+                bin_desc = factory.effectname
+                media_type = self.app.effects.getFactoryFromName(bin_desc).media_type
+
+                # Trying to apply effect only on the first object of the selection
+                tlobj = timeline_objs[0]
+
+                # Checking that this effect can be applied on this track object
+                # Which means, it has the corresponding media_type
+                for tckobj in tlobj.get_track_objects():
+                    track = tckobj.get_track()
+                    if track_is_type(track, 'GES_TRACK_TYPE_AUDIO') and \
+                            media_type == AUDIO_EFFECT or \
+                            track_is_type(track, 'GES_TRACK_TYPE_VIDEO') and \
+                            media_type == VIDEO_EFFECT:
+                        #Actually add the effect
+                        self.app.action_log.begin("add effect")
+                        effect = ges.TrackParseLaunchEffect(bin_desc)
+                        tlobj.add_track_object(effect)
+                        track.add_object(effect)
+                        self.app.action_log.commit()
+                        self._factories = None
+                        self.app.current.seeker.seek(self._position)
+                        context.drop_finish(True, timestamp)
+
+                        self.timeline.selection.setSelection(timeline_objs, SELECT)
+                        break
 
             return True
 
@@ -479,8 +505,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _dragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
         self.app.projectManager.current.timeline.enable_update(False)
-        self.log("SimpleTimeline, targetType:%d, selection.data:%s" %
-            (targetType, selection.data))
+        self.log("targetType:%d, selection.data:%s" % (targetType, selection.data))
         self.selection_data = selection.data
 
         if targetType not in [dnd.TYPE_PITIVI_FILESOURCE,
@@ -492,21 +517,20 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             uris = selection.data.split("\n")
             self._factories = [self._project.sources.getUri(uri) for uri in uris]
         else:
-            if not self.timeline.timeline_objects:
+            if not self._duration:
                 return False
             self._factories = [self.app.effects.getFactoryFromName(selection.data)]
 
         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
         return True
 
-    def _getTimelineObjectUnderMouse(self, x, y, stream):
+    def _getTimelineObjectUnderMouse(self, x, y):
         timeline_objs = []
         items_in_area = self._canvas.getItemsInArea(x, y - 15, x + 1, y - 30)
-        tracks = [obj for obj in items_in_area[0]]
+
         track_objects = [obj for obj in items_in_area[1]]
         for track_object in track_objects:
-            if (type(stream) == type(track_object.stream)):
-                timeline_objs.append(track_object.timeline_object)
+            timeline_objs.append(track_object.get_timeline_object())
 
         return timeline_objs
 
