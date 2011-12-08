@@ -23,7 +23,6 @@
 # set of utility functions
 
 import sys
-import gio
 import gobject
 import gst
 import gtk
@@ -174,29 +173,6 @@ def binary_search(col, value):
     return low
 
 
-# Returns the element of seq nearest to item, and the difference between them
-def closest_item(seq, item, lo=0):
-    index = bisect.bisect(seq, item, lo)
-    if index >= len(seq):
-        index = len(seq) - 1
-    res = seq[index]
-    diff = abs(res - item)
-
-    # binary_search returns largest element closest to item.
-    # if there is a smaller element...
-    if index - 1 >= 0:
-        res_a = seq[index - 1]
-        # ...and it is closer to the pointer...
-        diff_a = abs(res_a - item)
-        if diff_a < diff:
-            # ...use it instead.
-            res = res_a
-            diff = diff_a
-            index = index - 1
-
-    return res, diff, index
-
-
 def argmax(func, seq):
     """return the element of seq that gives max(map(func, seq))"""
     def compare(a1, b1):
@@ -215,34 +191,6 @@ def same(seq):
         if first != item:
             return None
     return first
-
-
-def data_probe(pad, data, section=""):
-    """Callback to use for gst.Pad.add_*_probe.
-
-    The extra argument will be used to prefix the debug messages
-    """
-    if section == "":
-        section = "%s:%s" % (pad.get_parent().get_name(), pad.get_name())
-    if isinstance(data, gst.Buffer):
-        log.debug("probe", "%s BUFFER timestamp:%s , duration:%s , size:%d , offset:%d , offset_end:%d",
-                  section, gst.TIME_ARGS(data.timestamp), gst.TIME_ARGS(data.duration),
-                  data.size, data.offset, data.offset_end)
-        if data.flags & gst.BUFFER_FLAG_DELTA_UNIT:
-            log.debug("probe", "%s DELTA_UNIT", section)
-        if data.flags & gst.BUFFER_FLAG_DISCONT:
-            log.debug("probe", "%s DISCONT", section)
-        if data.flags & gst.BUFFER_FLAG_GAP:
-            log.debug("probe", "%s GAP", section)
-        log.debug("probe", "%s flags:%r", section, data.flags)
-    else:
-        log.debug("probe", "%s EVENT %s", section, data.type)
-        if data.type == gst.EVENT_NEWSEGMENT:
-            upd, rat, fmt, start, stop, pos = data.parse_new_segment()
-            log.debug("probe", "%s Update:%r rate:%f fmt:%s, start:%s, stop:%s, pos:%s",
-                      section, upd, rat, fmt, gst.TIME_ARGS(start),
-                      gst.TIME_ARGS(stop), gst.TIME_ARGS(pos))
-    return True
 
 
 def linkDynamic(element, target):
@@ -466,74 +414,6 @@ class Infinity(object):
         return 1
 
 infinity = Infinity()
-
-
-def findObject(obj, objects):
-    low = 0
-    high = len(objects)
-    while low < high:
-        low = start_bisect_left(objects, obj, lo=low)
-        if low == high:
-            break
-
-        if objects[low] is obj:
-            return low
-        else:
-            low = low + 1
-
-    return low
-
-
-def getPreviousObject(obj, objects, priority=-1, skip=None):
-    if priority == -1:
-        priority = obj.priority
-
-    obj_index = findObject(obj, objects)
-    if obj_index is None:
-        raise Exception("woot this should never happen")
-    # check if there are same-start objects
-    prev_obj_index = obj_index + 1
-    while prev_obj_index < len(objects):
-        prev_obj = objects[prev_obj_index]
-        prev_obj_index += 1
-        if skip is not None and skip(prev_obj):
-            continue
-
-        if prev_obj.start != obj.start:
-            break
-
-        if priority is None or prev_obj.priority == priority:
-            return prev_obj
-
-    # check if there are objects with start < obj.start
-    prev_obj_index = obj_index - 1
-    while prev_obj_index >= 0:
-        prev_obj = objects[prev_obj_index]
-        if (priority is None or prev_obj.priority == priority) \
-                and (skip is None or not skip(prev_obj)):
-            return prev_obj
-
-        prev_obj_index -= 1
-
-    return None
-
-
-def getNextObject(obj, objects, priority=-1, skip=None):
-    if priority == -1:
-        priority = obj.priority
-
-    obj_index = findObject(obj, objects)
-    next_obj_index = obj_index + 1
-    objs_len = len(objects)
-    while next_obj_index < objs_len:
-        next_obj = objects[next_obj_index]
-        if (priority is None or next_obj.priority == priority) and \
-                (skip is None or not skip(next_obj)):
-            return next_obj
-
-        next_obj_index += 1
-
-    return None
 
 
 class CachedFactoryList(object):
