@@ -1,10 +1,35 @@
-from pitivi.ui.zoominterface import Zoomable
-from pitivi.ui.trackobject import TrackObject
-from pitivi.receiver import receiver, handler
-from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
+# PiTiVi , Non-linear video editor
+#
+#       pitivi/timeline/timeline.py
+#
+# Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2009, Alessandro Decina <alessandro.decina@collabora.co.uk>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
 import goocanvas
 import ges
 import gobject
+
+from pitivi.log.loggable import Loggable
+from pitivi.ui.zoominterface import Zoomable
+from pitivi.receiver import receiver, handler
+from pitivi.ui.trackobject import TrackObject
+from pitivi.ui.common import LAYER_HEIGHT_EXPANDED,\
+        LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
 
 
 class Transition(goocanvas.Rect, Zoomable):
@@ -57,18 +82,18 @@ class Transition(goocanvas.Rect, Zoomable):
         self._updateAll()
 
 
-class Track(goocanvas.Group, Zoomable):
+class Track(goocanvas.Group, Zoomable, Loggable):
     __gtype_name__ = 'Track'
 
     def __init__(self, instance, track, timeline=None):
         goocanvas.Group.__init__(self)
         Zoomable.__init__(self)
+        Loggable.__init__(self)
         self.app = instance
         self.widgets = {}
         self.transitions = []
         self.timeline = timeline
         self.track = track
-        self.max_priority = 0
         self._expanded = True
 
 ## Properties
@@ -82,22 +107,13 @@ class Track(goocanvas.Group, Zoomable):
             self.get_canvas().regroupTracks()
 
     def getHeight(self):
-        track_objects = self.track.get_objects()
-        max_priority = 0
-        for track_object in track_objects:
-            if isinstance(track_object, ges.TrackAudioTestSource):
-                continue
-            if isinstance(track_object, ges.TrackVideoTestSource):
-                continue
-            priority = track_object.get_timeline_object().get_layer().get_property("priority")
-            if priority > max_priority:
-                max_priority = priority
-        self.track.max_priority = max_priority
-        if self.track.max_priority < 0:
-            self.track.max_priority = 0
+        # FIXME we have a refcount issue somewhere, the following makes sure
+        # no to crash because of it
+        #track_objects = self.track.get_objects()
         if self._expanded:
-            return (1 + self.track.max_priority) * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
-            #return LAYER_HEIGHT_EXPANDED + LAYER_SPACING
+            nb_layers = len(self.timeline.get_layers())
+
+            return  nb_layers * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
         else:
             return LAYER_HEIGHT_COLLAPSED + LAYER_SPACING
 
@@ -108,6 +124,7 @@ class Track(goocanvas.Group, Zoomable):
 ## track signals
 
     def _setTrack(self):
+        self.debug("Setting track")
         if self.track:
             for trackobj in self.track.get_objects():
                 self._objectAdded(None, trackobj)
@@ -116,21 +133,12 @@ class Track(goocanvas.Group, Zoomable):
 
     @handler(track, "track-object-added")
     def _objectAdded(self, unused_timeline, track_object):
-        if isinstance(track_object, ges.TrackParseLaunchEffect):
-            return
-        if isinstance(track_object, ges.TrackAudioTestSource):
-            return
-        if isinstance(track_object, ges.TrackVideoTestSource):
-            return
-        if isinstance(track_object, ges.TrackVideoTestSource):
-            return
-        if isinstance(track_object, ges.TrackAudioTransition):
+        if isinstance(track_object, ges.TrackTransition):
             self._transitionAdded(track_object)
-            return
-        if isinstance(track_object, ges.TrackVideoTransition):
-            self._transitionAdded(track_object)
-            return
-        gobject.timeout_add(1, self.check, track_object)
+        elif not isinstance(track_object, ges.TrackEffect):
+            #FIXME GES hack, waiting for the discoverer to do its job
+            # so the duration properies are set properly
+            gobject.timeout_add(1, self.check, track_object)
 
     def check(self, tr_obj):
         if tr_obj.get_timeline_object():

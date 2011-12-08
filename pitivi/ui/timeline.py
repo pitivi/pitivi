@@ -708,7 +708,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             "The GESTimeline")
 
     def _layerAddedCb(self, unused_layer, unused_user_data):
-        num_layers = (self._timeline.get_layers()[-1].props.priority + 1)
+        layers = self._timeline.get_layers()
+        num_layers = len(layers)
 
         self.vadj.props.upper = (LAYER_HEIGHT_EXPANDED + LAYER_SPACING + TRACK_SPACING) * 2 * num_layers
 

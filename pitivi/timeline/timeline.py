@@ -23,6 +23,7 @@
 import ges
 
 from pitivi.utils import infinity
+from pitivi.log.loggable import Loggable
 from pitivi.signalinterface import Signallable
 from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
 
@@ -194,13 +195,14 @@ class EditingContext(object):
         return gaps.left_gap, gaps.right_gap
 
 
-class MoveContext(EditingContext):
+class MoveContext(EditingContext, Loggable):
 
     """An editing context which sets the start point of the editing targets.
     It has support for ripple, slip-and-slide editing modes."""
 
     def __init__(self, timeline, focus, other):
         EditingContext.__init__(self, timeline, focus, other)
+        Loggable.__init__(self)
 
         min_priority = infinity
         earliest = infinity
@@ -354,12 +356,28 @@ class MoveContext(EditingContext):
 
         return start
 
+    def _ensureLayer(self):
+        """
+        Make sure we have a layer in our timeline
+
+        Returns: The number of layer present in self.timeline
+        """
+        num_layers = len(self.timeline.get_layers())
+
+        if (num_layers == 0):
+            layer = ges.TimelineLayer()
+            layer.props.auto_transition = True
+            self.timeline.add_layer(layer)
+            num_layers = 1
+
+        return num_layers
+
     def _defaultTo(self, position, priority):
         if self._snap:
             position = self.snapToEdge(position,
                 position + self.default_span)
 
-        num_layers = len(self.timeline.get_layers())
+        num_layers = self._ensureLayer()
 
         #Make sure the priority is between 0 and 1 not skipping
         #any layer
@@ -383,6 +401,7 @@ class MoveContext(EditingContext):
                     moved = True
 
             if not moved:
+                self.debug("Adding layer")
                 layer = ges.TimelineLayer()
                 layer.props.auto_transition = True
                 layer.props.priority = priority
@@ -399,9 +418,10 @@ class MoveContext(EditingContext):
             obj.props.start = long(position + s_offset)
 
         #Remove empty layers
-        for layer in self.timeline.get_layers():
-            if not len(layer.get_objects()):
-                self.timeline.remove_layer(layer)
+        last_layer = self.timeline.get_layers()[-1]
+        if not last_layer.get_objects():
+            self.debug("Removing layer")
+            self.timeline.remove_layer(last_layer)
 
         return position, priority
 
@@ -713,7 +733,7 @@ class Selection(Signallable):
         """
         track_effects = []
         for timeline_object in self.selected:
-            for track in timeline_object.track_objects:
+            for track in timeline_object.get_track_objects():
                 if isinstance(track, ges.TrackEffect):
                     track_effects.append(track)
 
