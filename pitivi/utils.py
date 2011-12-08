@@ -305,7 +305,20 @@ class PropertyChangeTracker(Signallable):
 
 
 class Seeker(Signallable):
-    __signals__ = {'seek': ['position', 'format']}
+    """
+    The Seeker is a singleton helper class to do various seeking
+    operations in the pipeline.
+    """
+
+    __signals__ = {'seek': ['position', 'format'],
+                   'flush': []}
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Seeker, cls).__new__(
+                                cls, *args, **kwargs)
+        return cls._instance
 
     def __init__(self, timeout):
         self.timeout = timeout
@@ -324,6 +337,12 @@ class Seeker(Signallable):
                 self._seekTimeoutCb()
             self.pending_seek_id = self._scheduleSeek(self.timeout,
                     self._seekTimeoutCb)
+
+    def flush(self):
+        try:
+            self.emit('flush')
+        except:
+            log.doLog(log.ERROR, None, "seeker", "Error while flushing", None)
 
     def _scheduleSeek(self, timeout, callback):
         return gobject.timeout_add(timeout, callback)
