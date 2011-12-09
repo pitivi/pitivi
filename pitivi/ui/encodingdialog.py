@@ -225,6 +225,14 @@ class EncodingDialog(Loggable):
 
         self.createNoPreset(self.render_presets)
 
+    def _elementAddedCb(self, bin, element):
+        if element.get_factory() == get_combo_value(self.video_encoder_combo):
+            for setting in self.settings.vcodecsettings:
+                element.set_property(setting, self.settings.vcodecsettings[setting])
+        elif element.get_factory() == get_combo_value(self.audio_encoder_combo):
+            for setting in self.settings.acodecsettings:
+                element.set_property(setting, self.settings.vcodecsettings[setting])
+
     def createNoPreset(self, mgr):
         mgr.prependPreset(_("No preset"), {
             "depth": int(get_combo_value(self.sample_depth_combo)),
@@ -718,6 +726,8 @@ class EncodingDialog(Loggable):
         pipeline.set_state(gst.STATE_NULL)
         pipeline.set_render_settings(self.outfile, self.containerprofile)
         pipeline.set_mode("render")
+        bin = pipeline.get_by_name("internal-encodebin")
+        bin.connect("element-added", self._elementAddedCb)
         pipeline.set_state(gst.STATE_PLAYING)
         #self.progress.window.show()
         #self.startAction()
