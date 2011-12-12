@@ -2,21 +2,21 @@
 # Copyright (C) 2011 pitivi's COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
-# Sylvia Sánchez <LailahFSF@gmail.com>, 2011.
 # Jorge González <jorgegonz@svn.gnome.org>, 2011.
+# Sylvia Sánchez <LailahFSF@gmail.com>, 2011.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2011-09-11 16:12+0000\n"
-"PO-Revision-Date: 2011-10-02 16:46+0200\n"
-"Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
-"Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
+"POT-Creation-Date: 2011-12-10 23:43+0000\n"
+"PO-Revision-Date: 2011-12-12 16:50+0100\n"
+"Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
+"Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: C/welcomedialog.page:10(name) C/usingclips.page:10(name)
 #: C/trimming.page:11(name) C/sysreq.page:11(name) C/splitting.page:10(name)
@@ -212,12 +212,15 @@ msgstr "Pulse y arrastre el clip que quiere, con el botón del ratón apretado"
 #: C/usingclips.page:46(p)
 msgid "During the drag, hold down <key>Shift</key> on the keyboard"
 msgstr ""
+"Mientras arrastra, mantenga apretada la tecla <key>Mayús</key> del teclado."
 
 #: C/usingclips.page:47(p)
 msgid ""
 "Release the mouse button to end the drag operation, then release the "
 "<key>Shift</key> key."
 msgstr ""
+"Suelte el botón del ratón para terminar la operación de arrastre, entonces "
+"suelte la tecla <key>Mayús</key>."
 
 #: C/usingclips.page:49(p)
 msgid ""
@@ -225,6 +228,9 @@ msgid ""
 "one clip at a time, just release the <key>Shift</key> key before you release "
 "the mouse button."
 msgstr ""
+"Si durante la operación de arrastrar, cambia de opinión y sólo quiere "
+"arrastrar un vídeo cada vez, suelte la tecla <key>Mayús</key> antes de "
+"soltar el botón del ratón."
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -272,26 +278,33 @@ msgid ""
 "Shortening clips by changing the beginning and ending points. Also covers "
 "ripple and roll editing."
 msgstr ""
+"Recortar vídeos cambiando los puntos de comienzo yde  final. También cubre "
+"la edición en cascada y con desplazamiento."
 
 #: C/trimming.page:26(title)
 msgid "Trimming"
-msgstr ""
+msgstr "Recortar"
 
 #: C/trimming.page:28(p)
 msgid ""
 "Trimming is the act of changing the beginning or end point of a clip in the "
 "timeline."
 msgstr ""
+"Recortar es el acto de cambiar el punto de comienzo o final de un vídeo en "
+"la línea de tiempo."
 
 #: C/trimming.page:31(title)
 msgid "Trimming an individual clip"
-msgstr ""
+msgstr "Recortar un vídeo individual"
 
 #: C/trimming.page:32(p)
 msgid ""
 "Move the mouse cursor over a clip, and trimming handles will appear. Drag "
 "one of the trimming handles on the left or right edge of the clip to trim."
 msgstr ""
+"Mueva el cursor sobre un vídeo, y la herramienta de recortado aparecerá. "
+"Arrastre una de las herramientas de recortado hacia el borde izquierdo o "
+"derecho del vídeo para recortar."
 
 #: C/trimming.page:36(p)
 msgid ""
@@ -336,7 +349,7 @@ msgstr ""
 
 #: C/trimming.page:57(p)
 msgid "Press and hold <key>Shift</key>."
-msgstr ""
+msgstr "Mantenga pulsada la tecla <key>Mayús</key>."
 
 #: C/trimming.page:58(p) C/trimming.page:81(p)
 msgid "Drag the trimming handle."
@@ -371,11 +384,11 @@ msgstr ""
 
 #: C/trimming.page:80(p)
 msgid "Press and hold <key>Ctrl</key>."
-msgstr ""
+msgstr "Mantenga pulsada la tecla <key>Mayús</key>."
 
 #: C/sysreq.page:18(desc)
 msgid "What kind of hardware is needed to do video editing?"
-msgstr ""
+msgstr "¿Qué clase de hardware se necesita para editar vídeo?"
 
 #: C/sysreq.page:26(title)
 msgid "System requirements"
@@ -388,6 +401,10 @@ msgid ""
 "of computers has increased tremendously over the years, so has demand for "
 "higher quality video."
 msgstr ""
+"En términos de hardware, la edición de vídeo requiere un equipo potente, "
+"dependiendo del tipo de vídeo que esté editando. A lo largo de los años la "
+"potencia de procesado de los equipos se ha incrementado enormemente, lo "
+"mismo ha pasado con la demanda por una mayor calidad de vídeo. "
 
 #: C/sysreq.page:29(p)
 msgid ""
@@ -451,7 +468,7 @@ msgstr ""
 
 #: C/splitting.page:36(p)
 msgid "Click on the clip."
-msgstr ""
+msgstr "Pulse sobre el vídeo"
 
 #: C/splitting.page:37(p) C/splitting.page:43(p)
 msgid "Reposition the playhead (if needed)."
@@ -1273,7 +1290,7 @@ msgstr ""
 
 #: C/mainwindow.page:100(title)
 msgid "Media Library"
-msgstr ""
+msgstr "Biblioteca de medios"
 
 #: C/mainwindow.page:101(p)
 msgid ""
@@ -1594,7 +1611,7 @@ msgstr "@@image: 'figures/logo.png'; md5=694867eec987a61b070a11a7255a6de9"
 
 #: C/index.page:7(title) C/index.page:8(title)
 msgid "PiTiVi Quick Start Manual"
-msgstr ""
+msgstr "Manual de inicio rápido de PiTiVi"
 
 #: C/index.page:23(title)
 msgid ""
@@ -1735,7 +1752,7 @@ msgstr ""
 
 #: C/importing.page:55(title)
 msgid "Using drag and drop"
-msgstr ""
+msgstr "Usar arrastrar y soltar"
 
 #: C/importing.page:56(p)
 msgid ""
@@ -1783,7 +1800,7 @@ msgstr ""
 #. TODO: remove this manual page when gstreamer supports mpeg-ts files !
 #: C/importingmpegts.page:22(title)
 msgid "Dealing with AVCHD / MPEG-TS files"
-msgstr ""
+msgstr "Trabajar con archivo AVCHD / MPEG-TS"
 
 #: C/importingmpegts.page:24(p)
 msgid ""
@@ -1798,7 +1815,7 @@ msgstr ""
 #: C/importingmpegts.page:25(code)
 #, no-wrap
 msgid "ffmpeg -i your_clip.MTS -vcodec copy -acodec copy -sn test.mp4"
-msgstr ""
+msgstr "ffmpeg -i su_vídeo.MTS -vcodec copy -acodec copy -sn prueba.mp4"
 
 #: C/gstreamer.page:17(desc)
 msgid ""
@@ -1895,7 +1912,7 @@ msgstr ""
 
 #: C/gstreamer.page:59(title)
 msgid "Image file formats"
-msgstr ""
+msgstr "Formatos de archivo de imagen"
 
 #: C/gstreamer.page:60(p)
 msgid ""
@@ -1993,7 +2010,7 @@ msgstr ""
 
 #: C/effects.page:27(p)
 msgid "frei0r-plugins"
-msgstr ""
+msgstr "frei0r-plugins"
 
 #: C/effects.page:28(p)
 msgid "gnome-video-effects"
@@ -2075,13 +2092,12 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/codecscontainers.page:26(None)
-#, fuzzy
 #| msgid ""
 #| "@@image: 'figures/ripple-after.png'; md5=3f2fdba79d1c69c2f2022fe08a62b5a7"
 msgid ""
 "@@image: 'figures/codecscontainers.jpg'; md5=e43e6a92cda311d0cd8c24fb0df67a17"
 msgstr ""
-"@@image: 'figures/ripple-after.png'; md5=3f2fdba79d1c69c2f2022fe08a62b5a7"
+"@@image: 'figures/codecscontainers.jpg'; md5=e43e6a92cda311d0cd8c24fb0df67a17"
 
 #: C/codecscontainers.page:16(desc)
 msgid ""
@@ -2130,10 +2146,9 @@ msgid ""
 msgstr ""
 
 #: C/codecscontainers.page:24(p)
-#, fuzzy
 #| msgid "The following file chooser dialog window will appear:"
 msgid "The following figure should make things clearer:"
-msgstr "Aparecerá la siguiente ventana de diálogo del selector de archivos:"
+msgstr "Las siguientes imágenes debería aclarar las cosas:"
 
 #: C/about.page:17(desc)
 msgid "Current state of this user manual and call for participation."
