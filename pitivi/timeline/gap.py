@@ -44,33 +44,35 @@ class Gap(object):
 
         try:
             prev = [obj for obj in tlobjs[:index - 1]\
-                   if isinstance(obj, ges.TimelineSource)].pop()
+                    if isinstance(obj, ges.TimelineSource) and \
+                    obj != timeline_object].pop()
+            left_object = prev
+            right_object = timeline_object
+            start = prev.props.start + prev.props.duration
+            duration = timeline_object.props.start - start
         except IndexError:
             left_object = None
             right_object = timeline_object
             start = 0
             duration = timeline_object.props.start
-        else:
-            left_object = prev
-            right_object = timeline_object
-            start = prev.props.start + prev.props.duration
-            duration = timeline_object.props.start - start
 
         left_gap = Gap(left_object, right_object, start, duration)
 
         try:
             next = [obj for obj in tlobjs[index + 1:]\
-                   if isinstance(obj, ges.TimelineSource)][0]
+                   if isinstance(obj, ges.TimelineSource) and \
+                    obj != timeline_object][0]
+
+            left_object = timeline_object
+            right_object = next
+            start = timeline_object.props.start + timeline_object.props.duration
+            duration = next.props.start - start
+
         except IndexError:
             left_object = timeline_object
             right_object = None
             start = timeline_object.props.start + timeline_object.props.duration
             duration = infinity
-        else:
-            left_object = timeline_object
-            right_object = next
-            start = timeline_object.props.start + timeline_object.props.duration
-            duration = next.props.start - start
 
         right_gap = Gap(left_object, right_object, start, duration)
 

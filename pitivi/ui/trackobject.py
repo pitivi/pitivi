@@ -3,7 +3,6 @@ import gtk
 import os.path
 import pango
 import cairo
-import ges
 
 import pitivi.configure as configure
 import controller
@@ -23,6 +22,9 @@ from pitivi.signalinterface import Signallable
 from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT, \
     SELECT_BETWEEN, MoveContext, TrimStartContext, TrimEndContext
 
+
+#--------------------------------------------------------------#
+#                       Private stuff                          #
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
@@ -92,25 +94,8 @@ def text_size(text):
     return x2 - x1, y2 - y1
 
 
-def  get_previous_track_source(track, tckobj):
-    tckobjs = track.get_objects()
-    i = tckobjs.index(tckobj) - 1
-    while (i > 0):
-        if(isinstance(tckobjs[i], ges.TrackSource)):
-            return tckobjs[i]
-        i -= 1
-
-
-def  get_next_track_source(track, tckobj):
-    tckobjs = track.get_objects()
-    i = tckobjs.index(tckobj) + 1
-    while(i < len(tckobjs)):
-        if(isinstance(tckobjs[i], ges.TrackSource)):
-            return tckobjs[i]
-        i += 1
-    return None
-
-
+#--------------------------------------------------------------#
+#                            Main Classes                      #
 class Selected (Signallable):
     """
     A simple class that let us emit a selected-changed signal
@@ -185,54 +170,13 @@ class TimelineController(controller.Controller):
     def set_pos(self, item, pos):
         x, y = pos
         x = x + self._hadj.get_value()
+        position = Zoomable.pixelToNs(x)
         priority = int((y - self._y_offset + self._vadj.get_value()) //
             (LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
+
         self._context.setMode(self._getMode())
-        track = self._view.element.get_track()
-        start = self._view.element.get_start()
-        duration = self._view.element.get_duration()
-
-        if self.previous_x:
-            position = self._view.element.get_start() + Zoomable.pixelToNs(x - self.previous_x)
-        else:
-            position = Zoomable.pixelToNs(x)
-        self.previous_x = x
-
-        if isinstance(self._view, EndHandle) or isinstance(self._view, StartHandle):
-            position = Zoomable.pixelToNs(x)
-            self._context.editTo(position, priority)
-            self._view.get_canvas().regroupTracks()
-            return
-
-        prev = get_previous_track_source(track, self._view.element)
-
-        if prev != None:
-            prev_end = prev.get_start() + prev.get_duration()
-            offset = Zoomable.nsToPixel(prev_end)
-            offset = (x + self._hadj.get_value()) - offset
-            if offset < 15 and offset >= 0:
-                self._view.element.set_start(prev.get_start() + prev.get_duration())
-                self._view.snapped_before = True
-                return
-            elif self._view.snapped_before:
-                self._view.snapped_before = False
-
-        next = get_next_track_source(track, self._view.element)
-        if next != None:
-            offset = Zoomable.nsToPixel(next.get_start())
-            dur_offset = Zoomable.nsToPixel(duration)
-            dur_offset = (dur_offset + x + self._hadj.get_value())
-            offset = offset - dur_offset
-            if offset < 15 and offset >= 0:
-                self._view.element.set_start(next.get_start() - duration)
-                self._view.snapped_after = True
-                return
-            elif self._view.snapped_after:
-                self._view.snapped_after = False
-
+        self.debug("Setting position")
         self._context.editTo(position, priority)
-        self._view.get_canvas().regroupTracks()
-        self.next_previous_x = Zoomable.nsToPixel(self._view.element.get_start())
 
     def _getMode(self):
         if self._shift_down:
@@ -325,11 +269,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         def drag_start(self, item, target, event):
             point = self.from_item_event(item, event)
-            self.click(point)
             TimelineController.drag_start(self, item, target, event)
             self._context = MoveContext(self._view.timeline,
-                self._view.element,
-                set([]))
+                self._view.element, self._view.timeline.selection.getSelectedTrackObjs())
             self._view.app.action_log.begin("move object")
 
         def _getMode(self):
@@ -354,14 +296,14 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self._view.app.current.seeker.seek(Zoomable.pixelToNs(x))
                 timeline.selection.setToObj(element, SELECT)
 
-    def __init__(self, instance, element, track, timeline, uTrack, is_transition=False):
+    def __init__(self, instance, element, track, timeline, utrack, is_transition=False):
         goocanvas.Group.__init__(self)
         View.__init__(self)
         Zoomable.__init__(self)
         self.ref = Zoomable.nsToPixel(10000000000)
         self.app = instance
         self.track = track
-        self.uTrack = uTrack
+        self.utrack = utrack
         self.timeline = timeline
         self.namewidth = 0
         self.nameheight = 0
@@ -461,7 +403,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.start_handle.props.visibility = goocanvas.ITEM_VISIBLE
         self.end_handle.props.visibility = goocanvas.ITEM_VISIBLE
         self.raise_(None)
-        for transition in self.uTrack.transitions:
+        for transition in self.utrack.transitions:
             transition.raise_(None)
 
     def unfocus(self):
