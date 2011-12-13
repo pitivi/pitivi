@@ -310,8 +310,11 @@ class Seeker(Signallable):
     operations in the pipeline.
     """
 
-    __signals__ = {'seek': ['position', 'format'],
-                   'flush': []}
+    __signals__ = {
+        'seek': ['position', 'format'],
+        'flush': [],
+        'seek-relative': ['time']
+    }
     _instance = None
 
     def __new__(cls, *args, **kwargs):
@@ -325,6 +328,7 @@ class Seeker(Signallable):
         self.pending_seek_id = None
         self.position = None
         self.format = None
+        self._time = None
 
     def seek(self, position, format=gst.FORMAT_TIME, on_idle=False):
         self.position = position
@@ -338,6 +342,16 @@ class Seeker(Signallable):
             self.pending_seek_id = self._scheduleSeek(self.timeout,
                     self._seekTimeoutCb)
 
+    def seekRelative(self, time, on_idle=False):
+        if self.pending_seek_id is None:
+            self._time = time
+            if on_idle:
+                gobject.idle_add(self._seekRelativeTimeoutCb)
+            else:
+                self._seekTimeoutCb()
+            self.pending_seek_id = self._scheduleSeek(self.timeout,
+                    self._seekTimeoutCb, True)
+
     def flush(self):
         try:
             self.emit('flush')
@@ -347,9 +361,20 @@ class Seeker(Signallable):
     def _scheduleSeek(self, timeout, callback):
         return gobject.timeout_add(timeout, callback)
 
-    def _seekTimeoutCb(self):
+    def _seekTimeoutCb(self, relative=False):
         self.pending_seek_id = None
-        if self.position != None and self.format != None:
+        if relative:
+            try:
+                self.emit('seek-relative', self._time)
+            except:
+                log.doLog(log.ERROR, None, "seeker", "Error while seeking %s relative",
+                        self._time)
+                # if an exception happened while seeking, properly
+                # reset ourselves
+                return False
+
+            self._time = None
+        elif self.position != None and self.format != None:
             position, self.position = self.position, None
             format, self.format = self.format, None
             try:

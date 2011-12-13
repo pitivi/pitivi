@@ -383,26 +383,20 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
             if kv == gtk.keysyms.Left:
                 if mod & gtk.gdk.SHIFT_MASK:
-                    self._seekRelative(0 - gst.SECOND)
+                    self._seeker.seekRelative(0 - gst.SECOND)
                 elif mod & gtk.gdk.CONTROL_MASK:
                     self._seeker.seek(ltime + 1)
                 else:
-                    self._seekRelative(0 - long(self.rate * gst.SECOND))
+                    self._seeker.seekRelative(0 - long(self.rate * gst.SECOND))
             elif kv == gtk.keysyms.Right:
                 if mod & gtk.gdk.SHIFT_MASK:
-                    self._seekRelative(gst.SECOND)
+                    self._seeker.seekRelative(gst.SECOND)
                 elif mod & gtk.gdk.CONTROL_MASK:
                     self._seeker.seek(rtime + 1)
                 else:
-                    self._seekRelative(long(self.rate * gst.SECOND))
+                    self.seeker.seekRelative(long(self.rate * gst.SECOND))
         finally:
             return True
-
-    def _seekRelative(self, time):
-        pipeline = self._project.pipeline
-        seekvalue = max(0, min(pipeline.getPosition() + time,
-            pipeline.getDuration()))
-        self._seeker.seek(seekvalue)
 
 ## Drag and Drop callbacks
 

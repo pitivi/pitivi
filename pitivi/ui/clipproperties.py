@@ -515,6 +515,7 @@ class TransformationProperties(gtk.Expander):
         self.default_values = {}
         self.set_label(_("Transformation"))
         self.set_sensitive(False)
+        self._seeker = Seeker(80)
 
         if not "Frei0r" in soft_deps:
             self.builder = gtk.Builder()
@@ -604,7 +605,7 @@ class TransformationProperties(gtk.Expander):
             box.update_from_effect(self.effect)
 
     def _flushPipeLineCb(self, widget):
-        return
+        self._seeker.flush()
 
     def _findEffect(self, name):
         for track_effect in self._current_tl_obj.get_track_objects():
@@ -648,7 +649,7 @@ class TransformationProperties(gtk.Expander):
             if self._current_tl_obj:
                 self._current_tl_obj = None
                 self.zoom_scale.set_value(1.0)
-                self.app.gui.viewer.pipeline.flushSeekVideo()
+                self._seeker.flush()
             self.effect = None
             self.set_sensitive(False)
         self._updateBoxVisibility()
