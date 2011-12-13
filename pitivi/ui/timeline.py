@@ -730,37 +730,51 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         self.delTimeline()
         self._timeline = timeline
+
+        # Connecting to timeline signals
         for track in self._timeline.get_tracks():
             self._tcks_sig_ids[track] = track.connect("notify::duration",
                     self.setDuration)
-        self._layer_sig_ids.append(self._timeline.connect("layer-added", self._layerAddedCb))
-        self._layer_sig_ids.append(self._timeline.connect("layer-removed", self._layerRemovedCb))
+        self._layer_sig_ids.append(self._timeline.connect("layer-added",
+                self._layerAddedCb))
+        self._layer_sig_ids.append(self._timeline.connect("layer-removed",
+                self._layerRemovedCb))
+
+        # Make sure to set the current layer in use
         self._layerAddedCb(None, None)
 
     def getTimeline(self):
         return self._timeline
 
     def delTimeline(self):
+        # Disconnect signal
         for track, sigid in self._tcks_sig_ids.iteritems():
             track.disconnect(sigid)
 
         for sigid in self._layer_sig_ids:
             self._timeline.disconnect(sigid)
 
+        # clear dictionaries
+        self._tcks_sig_ids = {}
+        self._layer_sig_ids = []
         self._timeline = None
 
     timeline = property(getTimeline, setTimeline, delTimeline,
             "The GESTimeline")
 
     def _layerAddedCb(self, unused_layer, unused_user_data):
+        self.updateVScrollAdjustments()
+
+    def _layerRemovedCb(self, unused_layer, unused_user_data):
+        self.updateVScrollAdjustments()
+
+    def updateVScrollAdjustments(self):
         layers = self._timeline.get_layers()
         num_layers = len(layers)
 
-        self.vadj.props.upper = (LAYER_HEIGHT_EXPANDED + LAYER_SPACING + TRACK_SPACING) * 2 * num_layers
-
-    def _layerRemovedCb(self, unused_layer, unused_user_data):
-        self.vadj.props.upper = LAYER_HEIGHT_EXPANDED *\
-            (len(self._timeline.get_layers())) + TRACK_SPACING
+        # Ensure height of the scrollbar
+        self.vadj.props.upper = (LAYER_HEIGHT_EXPANDED + LAYER_SPACING
+                + TRACK_SPACING) * 2 * num_layers
 
     def updateScrollAdjustments(self):
         a = self.get_allocation()
