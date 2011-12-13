@@ -211,6 +211,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._project = None
         self._timeline = None
         self._duration = 0
+        self._creating_tckobjs_sigid = {}
 
         #Ids of the tracks notify::duration signals
         self._tcks_sig_ids = {}
@@ -412,13 +413,16 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.drag_highlight()
         else:
             if  context.targets not in DND_EFFECT_LIST:
-                if not self._temp_objects:
+                if not self._temp_objects and not self._creating_tckobjs_sigid:
                     self.timeline.enable_update(False)
-                    self._add_temp_source()
+                    self._create_temp_source()
+
+                # Let some time for TrackObject-s to be created
+                if self._temp_objects and not self._creating_tckobjs_sigid:
                     focus = self._temp_objects[0]
                     self._move_context = MoveContext(self.timeline,
                             focus, set(self._temp_objects[1:]))
-                self._move_temp_source(self.hadj.props.value + x, y)
+                    self._move_temp_source(self.hadj.props.value + x, y)
         return True
 
     def _dragLeaveCb(self, unused_layout, context, unused_tstamp):
@@ -528,20 +532,43 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         return timeline_objs
 
-    def _add_temp_source(self):
-        uris = self.selection_data.split("\n")
+    def _ensureLayer(self):
+        """
+        Make sure we have a layer in our timeline
+
+        Returns: The number of layer present in self.timeline
+        """
         layers = self.timeline.get_layers()
 
-        if layers:
-            layer = layers[0]
-        else:
-            self.error("No layer in the timeline")
-            return
+        if (len(layers) == 0):
+            layer = ges.TimelineLayer()
+            layer.props.auto_transition = True
+            self.timeline.add_layer(layer)
+            layers = [layer]
 
-        for uri in uris:
-            src = ges.TimelineFileSource(uri)
+        return layers
+
+    def _create_temp_source(self):
+        infos = self._factories
+        layer = self._ensureLayer()[0]
+        duration = 0
+
+        for info in infos:
+            src = ges.TimelineFileSource(info.get_uri())
+            src.props.start = duration
+            duration += info.get_duration()
             layer.add_object(src)
-            self._temp_objects.insert(0, src)
+            id = src.connect("track-object-added", self._trackObjectsCreatedCb, src)
+            self._creating_tckobjs_sigid[src] = id
+
+    def _trackObjectsCreatedCb(self, unused_tl, track_object, tlobj):
+        # Make sure not to start the moving process before the TrackObject-s
+        # are created. We concider that the time between the different
+        # TrackObject-s creation is short enough so we are all good when the
+        # first TrackObject is added to the TimelineObject
+        self._temp_objects.insert(0, tlobj)
+        tlobj.disconnect(self._creating_tckobjs_sigid[tlobj])
+        del self._creating_tckobjs_sigid[tlobj]
 
     def _move_temp_source(self, x, y):
         x1, y1, x2, y2 = self._controls.get_allocation()
