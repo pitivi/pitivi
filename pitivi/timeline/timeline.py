@@ -594,7 +594,6 @@ class TrimStartContext(EditingContext):
         self._restoreValues(self.ripple_originals)
 
     def _defaultTo(self, position, priority):
-        start = self.focus.props.start
         earliest = max(0, position - self.focus.starting_start)
         self.focus.props.in_point = earliest
         self.focus.props.start = position
@@ -613,8 +612,7 @@ class TrimStartContext(EditingContext):
         timeline_objects = [self.focus_timeline_object]
         EditingContext.finish(self)
 
-        left_gap, right_gap = self._getGapsForLayer(timeline_objects,
-            self.tracks)
+        left_gap, right_gap = self._getGapsForLayer(timeline_objects)
 
         if left_gap is invalid_gap:
             self._defaultTo(initial_position, obj.priority)
@@ -626,8 +624,6 @@ class TrimStartContext(EditingContext):
 class TrimEndContext(EditingContext):
     def __init__(self, timeline, focus, other):
         EditingContext.__init__(self, timeline, focus, other)
-        #self.adjacent = timeline.edges.getObjsAdjacentToEnd(focus)
-        #self.adjacent_originals = self._saveValues(self.adjacent)
         self.tracks = set([])
         if isinstance(self.focus, ges.TrackSource):
             focus_timeline_object = self.focus
@@ -649,8 +645,8 @@ class TrimEndContext(EditingContext):
                   if obj.props.start > reference]
 
         self.ripple_originals = self._saveValues(ripple)
-        self.ripple_offsets = self._getOffsets(reference, self.focus.props.priority,
-            ripple)
+        self.ripple_offsets = self._getOffsets(reference,
+            self.focus.get_layer().props.priority, ripple)
 
     def _rollTo(self, position, priority):
         if self._snap:
@@ -671,7 +667,7 @@ class TrimEndContext(EditingContext):
             position = self.snapToEdge(position)
         position = min(latest, max(position, earliest))
         duration = position - self.focus.start
-        self.focus.setDuration(duration)
+        self.focus.props.duration = duration
         for obj, (s_offset, p_offset) in self.ripple_offsets.iteritems():
             obj.setStart(position + s_offset)
 
@@ -705,10 +701,10 @@ class TrimEndContext(EditingContext):
                 self.tracks)
 
         if right_gap is invalid_gap:
-            self._defaultTo(absolute_initial_duration, obj.priority)
+            self._defaultTo(absolute_initial_duration, obj.props.priority)
             left_gap, right_gap = Gap.findAroundObject(self.focus_timeline_object)
             duration = absolute_initial_duration + right_gap.duration
-            self._defaultTo(duration, obj.priority)
+            self._defaultTo(duration, obj.props.priority)
 
 
 class Selection(Signallable):

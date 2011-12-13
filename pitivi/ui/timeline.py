@@ -815,15 +815,25 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def ungroupSelected(self, unused_action):
         if self.timeline:
+            self.debug("Ungouping selected clips %s" % self.timeline.selection)
+
+            self.timeline.enable_update(False)
             self.app.action_log.begin("ungroup")
             for tlobj in self.timeline.selection:
                 tlobj.objects_set_locked(False)
+            self.timeline.enable_update(True)
             self.app.action_log.commit()
 
     def groupSelected(self, unused_action):
         if self.timeline:
+            self.debug("Gouping selected clips %s" % self.timeline.selection)
+
+            self.timeline.enable_update(False)
+            self.app.action_log.begin("group")
             for tlobj in self.timeline.selection:
-                tlobj.set_locked(True)
+                tlobj.objects_set_locked(True)
+            self.app.action_log.commit()
+            self.timeline.enable_update(True)
 
     def alignSelected(self, unused_action):
         if "NumPy" in soft_deps:
@@ -833,10 +843,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             progress_dialog = AlignmentProgressDialog(self.app)
             progress_dialog.window.show()
             self.app.action_log.begin("align")
-            self.timeline.disableUpdates()
+            self.timeline.enable_update(False)
 
             def alignedCb():  # Called when alignment is complete
-                self.timeline.enableUpdates()
+                self.timeline.enable_update(True)
                 self.app.action_log.commit()
                 progress_dialog.window.destroy()
 

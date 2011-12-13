@@ -267,14 +267,13 @@ class EffectProperties(gtk.Expander, gtk.HBox):
     def _vcontentNotifyCb(self, paned, gparamspec):
         if gparamspec.name == 'position':
             self._config_ui_h_pos = self._vcontent.get_position()
-            self.app.settings.effectVPanedPosition = self._config_ui_h_pos
+            self.settings.effectVPanedPosition = self._config_ui_h_pos
 
     def _getTimeline(self):
         return self._timeline
 
     def _setTimeline(self, timeline):
         self._timeline = timeline
-        #if not self.connected:
         self._timeline.selection.connect("selection-changed", self._selectionChangedCb)
         self.connected = True
 
@@ -465,11 +464,10 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
     def _updateEffectConfigUi(self):
         if self._config_ui_h_pos is None:
-            self._config_ui_h_pos =\
-                        self.app.gui.settings.effectVPanedPosition
+            self._config_ui_h_pos = self.app.gui.settings.effectVPanedPosition
             if self._config_ui_h_pos is None:
-                self._config_ui_h_pos =\
-                        self.app.gui.settings.mainWindowHeight // 3
+                self._config_ui_h_pos = self.app.gui.settings.mainWindowHeight // 3
+
         if self.selection.get_selected()[1]:
             track_effect = self.storemodel.get_value(self.selection.get_selected()[1],
                                                COL_TRACK_EFFECT)
