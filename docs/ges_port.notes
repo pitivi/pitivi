@@ -3,7 +3,7 @@ GES:
     ========
         -> Implement riple and roll (could be done in pitivi for the time
                 being reusing old code)
-                => 3 to 5 days
+                => 3 to 5 days -- in progress --
 
         -> Handle reslution and framerate -> BLOCKER
             |-> Do we handle it as a "hack" in pitivi for the time being?
@@ -15,7 +15,7 @@ GES:
         -> Merge Ges-Port branch (all the list is BLOCKER)
             > Refactor and fix the formatter -> Done, needs some bugfixing
             > review and fix the whole branch
-                => 2  to 5 days
+                => 2  to 5 days -- in progress --
 
            > Add an entry point for saving sourcelist -> pitivi must
                 take advantage of it afterward
@@ -46,10 +46,10 @@ PiTiVi:
     ========
         -> Make Seeker more powerfull, and rely only on it for all the
            seeking
-            => 2 days
+            => 2 days DONE:
 
         -> Refactor the DND
-            => 1 days
+            => 1 days -- In progress --
 
         -> Handle effects properly, ie dnd, settings etc
             => 2 days
@@ -78,10 +78,10 @@ PiTiVi:
       Quality/margin tasks:
 
         -> Refactor the whole codebase
-            => 0 to 10 days
+            => 0 to 10 days -- In progress --
 
         -> Bug fixing
-            => 10 days
+            => 10 days -- In progress --
 
         total: 32 to 42 days
 
