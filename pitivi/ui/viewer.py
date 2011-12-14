@@ -29,7 +29,7 @@ import cairo
 
 from gettext import gettext as _
 
-from pitivi.utils import time_to_string
+from pitivi.utils import time_to_string, togglePlayback
 from pitivi.log.loggable import Loggable
 from pitivi.ui.common import SPACING, hex_to_rgb
 from pitivi.settings import GlobalSettings
@@ -488,12 +488,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.seekRelative(0 - gst.SECOND)
 
     def _playButtonCb(self, unused_button, playing):
-        if playing:
-            self.playing = True
-            self.pipeline.set_state(gst.STATE_PLAYING)
-        else:
-            self.playing = False
-            self.pipeline.set_state(gst.STATE_PAUSED)
+        self.togglePlayback()
 
     def _forwardCb(self, unused_button):
         self.seekRelative(gst.SECOND)
@@ -520,16 +515,9 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.pipeline.pause()
 
     def togglePlayback(self):
-        if self.pipeline is None:
-            return
-
-        if int(self.pipeline.get_state()[1]) == int(gst.STATE_PLAYING):
-            state = gst.STATE_PAUSED
-            self.playpause_button.setPause()
-        else:
-            self.playpause_button.setPlay()
-            state = gst.STATE_PLAYING
-        self.pipeline.set_state(state)
+        if self.pipeline:
+            state = togglePlayback(self.pipeline)
+            self.playing = (state == gst.STATE_PLAYING)
 
     def undock(self):
         if not self.undock_action:
