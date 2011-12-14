@@ -473,7 +473,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                         track.add_object(effect)
                         self.app.action_log.commit()
                         self._factories = None
-                        self.app.current.seeker.seek(self._position)
+                        self.seeker.seek(self._position)
                         context.drop_finish(True, timestamp)
 
                         self.timeline.selection.setSelection(timeline_objs, SELECT)
@@ -660,7 +660,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ruler.queue_resize()
         self.ruler.queue_draw()
 
-    def timelinePositionChanged(self, position):
+    def positionChangedCb(self, seeker, position):
         self._position = position
         self.ruler.timelinePositionChanged(position)
         self._canvas.timelinePositionChanged(position)
@@ -705,6 +705,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.debug("Setting project %s", project)
         if self._project:
             self._project.disconnect_by_function(self._settingsChangedCb)
+            self.seeker.disconnect_by_function(self.positionChangedCb)
 
         self._project = project
         if self._project:
@@ -714,7 +715,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.ruler.setProjectFrameRate(self._project.getSettings().videorate)
             self.ruler.zoomChanged()
             self._settingsChangedCb(self._project, None, self._project.getSettings())
-            self._seeker = self._project.seeker
+            self.seeker = self._project.seeker
+            self.seeker.connect("position-changed", self.positionChangedCb)
             self._project.connect("settings-changed", self._settingsChangedCb)
 
     def _settingsChangedCb(self, project, old, new):

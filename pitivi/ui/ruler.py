@@ -26,7 +26,9 @@ Widget for the complex view ruler
 import gobject
 import gtk
 import gst
-import cairo
+
+from pitivi.utils import Seeker
+
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.log.loggable import Loggable
 from pitivi.utils import time_to_string
@@ -79,6 +81,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.frame_rate = gst.Fraction(1 / 1)
         self.app = instance
         self.need_update = True
+
+        self._seeker = Seeker(80)
 
     def _hadjValueChangedCb(self, hadj):
         self.pixmap_offset = self.hadj.get_value()
@@ -181,7 +185,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         return False
 
     def _doSeek(self, value, format=gst.FORMAT_TIME, on_idle=False):
-        self.app.current.seeker.seek(value, format, on_idle)
+        self._seeker.seek(value, format, on_idle)
 
 ## Drawing methods
 

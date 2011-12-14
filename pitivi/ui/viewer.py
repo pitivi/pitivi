@@ -442,7 +442,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.timecode_entry.setWidgetValue(value, False)
 
         position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
-        self.app.gui.timeline.timelinePositionChanged(position)
+        self.seeker.setPosition(position)
 
         if not self.moving_slider:
             self.posadjust.set_value(float(value))

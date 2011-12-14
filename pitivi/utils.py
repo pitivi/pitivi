@@ -313,7 +313,8 @@ class Seeker(Signallable):
     __signals__ = {
         'seek': ['position', 'format'],
         'flush': [],
-        'seek-relative': ['time']
+        'seek-relative': ['time'],
+        'position-changed': ['position']
     }
     _instance = None
 
@@ -331,8 +332,8 @@ class Seeker(Signallable):
         self._time = None
 
     def seek(self, position, format=gst.FORMAT_TIME, on_idle=False):
-        self.position = position
         self.format = format
+        self.position = position
 
         if self.pending_seek_id is None:
             if on_idle:
@@ -386,6 +387,9 @@ class Seeker(Signallable):
                 # reset ourselves
                 return False
         return False
+
+    def setPosition(self, position):
+        self.emit("position-changed", position)
 
 
 def get_filesystem_encoding():
