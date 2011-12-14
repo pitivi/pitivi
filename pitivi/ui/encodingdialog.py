@@ -27,22 +27,20 @@ Render dialog
 import os
 import gtk
 import gst
+import time
+
 from gettext import gettext as _
 
 from pitivi import configure
+from pitivi.utils import togglePlayback, Seeker, beautify_ETA
 from pitivi.settings import ExportSettings
+from pitivi.signalinterface import Signallable
+
 from pitivi.log.loggable import Loggable
-from pitivi.ui.encodingprogress import EncodingProgressDialog
 from pitivi.ui.gstwidget import GstElementSettingsDialog
 from pitivi.ui.ripple_update_group import RippleUpdateGroup
-from pitivi.ui.common import\
-    model,\
-    frame_rates,\
-    audio_rates,\
-    audio_depths,\
-    audio_channels,\
-    get_combo_value,\
-    set_combo_value
+from pitivi.ui.common import model, frame_rates, audio_rates, audio_depths, \
+    audio_channels, get_combo_value, set_combo_value
 
 from pitivi.ui.preset import RenderPresetManager, DuplicatePresetNameException
 
@@ -106,6 +104,53 @@ def factorylist(factories):
     return model(columns, data)
 
 
+class EncodingProgressDialog(Signallable):
+    __signals__ = {
+        "pause": [],
+        "cancel": [],
+    }
+
+    def __init__(self, app, parent):
+        self.app = app
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
+            "encodingprogress.ui"))
+        self.builder.connect_signals(self)
+
+        self.window = self.builder.get_object("render-progress")
+        self.table1 = self.builder.get_object("table1")
+        self.progressbar = self.builder.get_object("progressbar")
+        self.play_pause_button = self.builder.get_object("play_pause_button")
+        # Parent the dialog with mainwindow, since encodingdialog is hidden.
+        # It allows this dialog to properly minimize together with mainwindow
+        self.window.set_transient_for(self.app)
+
+        # UI widgets
+        self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
+
+        # FIXME: re-enable these widgets when bugs #650710 and 637079 are fixed
+        self.play_pause_button.hide()
+        self.table1.hide()
+
+    def updatePosition(self, fraction, estimated):
+        self.progressbar.set_fraction(fraction)
+        self.window.set_title(_("%d%% Rendered") % int(100 * fraction))
+        if estimated:
+            self.progressbar.set_text(_("About %s left") % estimated)
+
+    def setState(self, state):
+        if state == gst.STATE_PLAYING:
+            self.play_pause_button.props.label = gtk.STOCK_MEDIA_PAUSE
+        else:
+            self.play_pause_button.props.label = 'pitivi-render'
+
+    def _cancelButtonClickedCb(self, unused_button):
+        self.emit("cancel")
+
+    def _pauseButtonClickedCb(self, unused_button):
+        self.emit("pause")
+
+
 class EncodingDialog(Loggable):
     """Render dialog box.
 
@@ -122,13 +167,20 @@ class EncodingDialog(Loggable):
 
         self.app = app
         self.project = project
+        self._timeline = self.app.timeline
+        self._seeker = Seeker(80)
         if pipeline != None:
-            self.pipeline = pipeline
+            self._pipeline = pipeline
         else:
-            self.pipeline = self.project.pipeline
+            self._pipeline = self.project.pipeline
 
         self.outfile = None
         self.settings = project.getSettings()
+        self.timestarted = 0
+
+        # Various gstreamer signal connection ID's
+        # {object: sigId}
+        self._gstSigId = {}
 
         self.builder = gtk.Builder()
         self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
@@ -224,14 +276,6 @@ class EncodingDialog(Loggable):
         self.bindWidth(self.render_presets)
 
         self.createNoPreset(self.render_presets)
-
-    def _elementAddedCb(self, bin, element):
-        if element.get_factory() == get_combo_value(self.video_encoder_combo):
-            for setting in self.settings.vcodecsettings:
-                element.set_property(setting, self.settings.vcodecsettings[setting])
-        elif element.get_factory() == get_combo_value(self.audio_encoder_combo):
-            for setting in self.settings.acodecsettings:
-                element.set_property(setting, self.settings.vcodecsettings[setting])
 
     def createNoPreset(self, mgr):
         mgr.prependPreset(_("No preset"), {
@@ -572,25 +616,6 @@ class EncodingDialog(Loggable):
             name = basename
         self.fileentry.set_text(name)
 
-    def _muxerComboChangedCb(self, muxer_combo):
-        """Handle the changing of the container format combobox."""
-        muxer = get_combo_value(muxer_combo).get_name()
-        for template in gst.registry_get_default().lookup_feature(muxer).get_static_pad_templates():
-            if template.name_template == "src":
-                self.muxertype = template.get_caps().to_string()
-        self.settings.setEncoders(muxer=muxer)
-
-        # Update the extension of the filename.
-        basename = os.path.splitext(self.fileentry.get_text())[0]
-        self.updateFilename(basename)
-
-        # Update muxer-dependent widgets.
-        self.muxer_combo_changing = True
-        try:
-            self.updateAvailableEncoders()
-        finally:
-            self.muxer_combo_changing = False
-
     def updateAvailableEncoders(self):
         """Update the encoder comboboxes to show the available encoders."""
         video_encoders = self.settings.getVideoEncoders()
@@ -618,6 +643,160 @@ class EncodingDialog(Loggable):
             # the current model of the combobox.
             encoder_combo.set_active(0)
 
+    def _elementSettingsDialog(self, factory, settings_attr):
+        """Open a dialog to edit the properties for the specified factory.
+
+        @param factory: An element factory whose properties the user will edit.
+        @type factory: gst.ElementFactory
+        @param settings_attr: The ExportSettings attribute holding
+        the properties.
+        @type settings_attr: str
+        """
+        properties = getattr(self.settings, settings_attr)
+        self.dialog = GstElementSettingsDialog(factory, properties=properties)
+        self.dialog.window.set_transient_for(self.window)
+        self.dialog.ok_btn.connect("clicked", self._okButtonClickedCb, settings_attr)
+        self.dialog.window.run()
+
+    def startAction(self):
+        self._pipeline.set_state(gst.STATE_NULL)
+        self._pipeline.set_mode("render")
+        encodebin = self._pipeline.get_by_name("internal-encodebin")
+        self._gstSigId[encodebin] = encodebin.connect("element-added",
+                self._elementAddedCb)
+        self.timestarted = time.time()
+        self._pipeline.set_state(gst.STATE_PLAYING)
+
+    def _cancelRender(self, progress):
+        self.debug("aborting render")
+        self._shutDown()
+        self._hideProgressWindow()
+
+    def _shutDown(self):
+        self._pipeline.set_state(gst.STATE_NULL)
+        self._disconnectFromGst()
+        self._pipeline.set_mode(3)
+
+    def _pauseRender(self, progress):
+        togglePlayback(self._pipeline)
+
+    def _hideProgressWindow(self):
+        """Handle the ending or the cancellation of the render process."""
+        self.progress.window.destroy()
+        self.progress = None
+        self.window.show()  # Show the encoding dialog again
+
+    def _disconnectFromGst(self):
+        for obj, id in self._gstSigId.iteritems():
+            obj.disconnect(id)
+        self._gstSigId = {}
+        self._seeker.disconnect_by_function(self._updatePositionCb)
+
+    def _updateProjectSettings(self):
+        """Updates the settings of the project if the render settings changed.
+        """
+        settings = self.project.getSettings()
+        if (settings.muxer == self.settings.muxer
+            and settings.aencoder == self.settings.aencoder
+            and settings.vencoder == self.settings.vencoder
+            and settings.containersettings == self.settings.containersettings
+            and settings.acodecsettings == self.settings.acodecsettings
+            and settings.vcodecsettings == self.settings.vcodecsettings
+            and settings.render_scale == self.settings.render_scale):
+            # No setting which can be changed in the Render dialog
+            # and which we want to save have been changed.
+            return
+        settings.setEncoders(muxer=self.settings.muxer,
+                             aencoder=self.settings.aencoder,
+                             vencoder=self.settings.vencoder)
+        settings.containersettings = self.settings.containersettings
+        settings.acodecsettings = self.settings.acodecsettings
+        settings.vcodecsettings = self.settings.vcodecsettings
+        settings.setVideoProperties(render_scale=self.settings.render_scale)
+        # Signal that the project settings have been changed.
+        self.project.setSettings(settings)
+
+    def destroy(self):
+        self._updateProjectSettings()
+        self._disconnectFromGst()
+        self._seeker.seek(0)    # FIXME, looks like it doesn't work properly
+        self._pipeline.set_state(gst.STATE_PAUSED)
+        self.window.destroy()
+
+    #------------------- Callabacks ------------------------------------------#
+
+    #-- UI callbacks
+    def _okButtonClickedCb(self, unused_button, settings_attr):
+        setattr(self.settings, settings_attr, self.dialog.getSettings())
+        self.dialog.window.destroy()
+
+    def _renderButtonClickedCb(self, unused_button):
+        self.outfile = os.path.join(self.filebutton.get_uri(),
+                                    self.fileentry.get_text())
+        self.progress = EncodingProgressDialog(self.app, self)
+        self.window.hide()  # Hide the rendering settings dialog while rendering
+
+        # FIXME GES: Handle presets here!
+        # FIXME: Handle audio-only or video-only here
+        self.containerprofile = gst.pbutils.EncodingContainerProfile(None, None,
+                gst.Caps(self.muxertype), None)
+        self.videoprofile = gst.pbutils.EncodingVideoProfile(gst.Caps(self.videotype),
+                None, self.settings.getVideoCaps(True), 0)
+        self.audioprofile = gst.pbutils.EncodingAudioProfile(gst.Caps(self.audiotype), None,
+                self.settings.getAudioCaps(), 0)
+
+        self.containerprofile.add_profile(self.videoprofile)
+        self.containerprofile.add_profile(self.audioprofile)
+        self._pipeline.set_render_settings(self.outfile, self.containerprofile)
+        self.startAction()
+        self.progress.window.show()
+        self.progress.connect("cancel", self._cancelRender)
+        self.progress.connect("pause", self._pauseRender)
+        bus = self._pipeline.get_bus()
+        bus.add_signal_watch()
+        self._gstSigId[bus] = bus.connect('message', self._busMessageCb)
+        self._seeker.connect("position-changed", self._updatePositionCb)
+
+    def _closeButtonClickedCb(self, unused_button):
+        self.debug("Render Close button clicked")
+        self.destroy()
+
+    def _deleteEventCb(self, window, event):
+        self.debug("Render window is being deleted")
+        self.destroy()
+
+    #-- GStreamer callbacks
+    def _busMessageCb(self, unused_bus, message):
+        if message.type == gst.MESSAGE_EOS:
+            self._hideProgressWindow()
+        elif message.type == gst.MESSAGE_STATE_CHANGED and self.progress:
+            prev, state, pending = message.parse_state_changed()
+            self.progress.setState(state)
+
+    def _updatePositionCb(self, seeker, position):
+        if self.progress:
+            text = None
+            timediff = time.time() - self.timestarted
+            length = self._timeline.duration
+            fraction = float(min(position, length)) / float(length)
+            if timediff > 5.0 and position:
+                # only display ETA after 5s in order to have enough averaging and
+                # if the position is non-null
+                totaltime = (timediff * float(length) / float(position)) - timediff
+                text = beautify_ETA(int(totaltime * gst.SECOND))
+            self.progress.updatePosition(fraction, text)
+
+    def _elementAddedCb(self, bin, element):
+        # Setting properties on gst.Element-s has they are added to the
+        # gst.Encodebin
+        if element.get_factory() == get_combo_value(self.video_encoder_combo):
+            for setting in self.settings.vcodecsettings:
+                element.set_property(setting, self.settings.vcodecsettings[setting])
+        elif element.get_factory() == get_combo_value(self.audio_encoder_combo):
+            for setting in self.settings.acodecsettings:
+                element.set_property(setting, self.settings.vcodecsettings[setting])
+
+    #-- Settings changed callbacks
     def _scaleSpinbuttonChangedCb(self, button):
         render_scale = self.scale_spinbutton.get_value()
         self.settings.setVideoProperties(render_scale=render_scale)
@@ -693,101 +872,21 @@ class EncodingDialog(Loggable):
         factory = get_combo_value(self.audio_encoder_combo)
         self._elementSettingsDialog(factory, 'acodecsettings')
 
-    def _elementSettingsDialog(self, factory, settings_attr):
-        """Open a dialog to edit the properties for the specified factory.
+    def _muxerComboChangedCb(self, muxer_combo):
+        """Handle the changing of the container format combobox."""
+        muxer = get_combo_value(muxer_combo).get_name()
+        for template in gst.registry_get_default().lookup_feature(muxer).get_static_pad_templates():
+            if template.name_template == "src":
+                self.muxertype = template.get_caps().to_string()
+        self.settings.setEncoders(muxer=muxer)
 
-        @param factory: An element factory whose properties the user will edit.
-        @type factory: gst.ElementFactory
-        @param settings_attr: The ExportSettings attribute holding
-        the properties.
-        @type settings_attr: str
-        """
-        properties = getattr(self.settings, settings_attr)
-        self.dialog = GstElementSettingsDialog(factory, properties=properties)
-        self.dialog.window.set_transient_for(self.window)
-        self.dialog.ok_btn.connect("clicked", self._okButtonClickedCb, settings_attr)
-        self.dialog.window.run()
+        # Update the extension of the filename.
+        basename = os.path.splitext(self.fileentry.get_text())[0]
+        self.updateFilename(basename)
 
-    def _okButtonClickedCb(self, unused_button, settings_attr):
-        setattr(self.settings, settings_attr, self.dialog.getSettings())
-        self.dialog.window.destroy()
-
-    def _renderButtonClickedCb(self, unused_button):
-        self.outfile = os.path.join(self.filebutton.get_uri(),
-                                    self.fileentry.get_text())
-        self.progress = EncodingProgressDialog(self.app, self)
-        self.window.hide()  # Hide the rendering settings dialog while rendering
-        self.containerprofile = gst.pbutils.EncodingContainerProfile(None, None, gst.Caps(self.muxertype), None)
-        self.videoprofile = gst.pbutils.EncodingVideoProfile(gst.Caps(self.videotype), None, gst.caps_new_any(), 0)
-        self.audioprofile = gst.pbutils.EncodingAudioProfile(gst.Caps(self.audiotype), None, gst.caps_new_any(), 0)
-        self.containerprofile.add_profile(self.videoprofile)
-        self.containerprofile.add_profile(self.audioprofile)
-        pipeline = self.app.app.projectManager.current.pipeline
-        pipeline.set_state(gst.STATE_NULL)
-        pipeline.set_render_settings(self.outfile, self.containerprofile)
-        pipeline.set_mode("render")
-        bin = pipeline.get_by_name("internal-encodebin")
-        bin.connect("element-added", self._elementAddedCb)
-        pipeline.set_state(gst.STATE_PLAYING)
-        #self.progress.window.show()
-        #self.startAction()
-        #self.progress.connect("cancel", self._cancelRender)
-        #self.progress.connect("pause", self._pauseRender)
-        #self.pipeline.connect("state-changed", self._stateChanged)
-
-    def _cancelRender(self, progress):
-        self.debug("aborting render")
-        self.shutdown()
-
-    def _pauseRender(self, progress):
-        self.pipeline.togglePlayback()
-
-    def _stateChanged(self, pipeline, state):
-        self.progress.setState(state)
-
-    def updatePosition(self, fraction, text):
-        if self.progress:
-            self.progress.updatePosition(fraction, text)
-
-    def updateUIOnEOS(self):
-        """Handle the ending or the cancellation of the render process."""
-        self.progress.window.destroy()
-        self.progress = None
-        self.window.show()  # Show the encoding dialog again
-        self.pipeline.disconnect_by_function(self._stateChanged)
-
-    def _closeButtonClickedCb(self, unused_button):
-        self.debug("Render Close button clicked")
-        self.destroy()
-
-    def _deleteEventCb(self, window, event):
-        self.debug("Render window is being deleted")
-        self.destroy()
-
-    def _updateProjectSettings(self):
-        """Updates the settings of the project if the render settings changed.
-        """
-        settings = self.project.getSettings()
-        if (settings.muxer == self.settings.muxer
-            and settings.aencoder == self.settings.aencoder
-            and settings.vencoder == self.settings.vencoder
-            and settings.containersettings == self.settings.containersettings
-            and settings.acodecsettings == self.settings.acodecsettings
-            and settings.vcodecsettings == self.settings.vcodecsettings
-            and settings.render_scale == self.settings.render_scale):
-            # No setting which can be changed in the Render dialog
-            # and which we want to save have been changed.
-            return
-        settings.setEncoders(muxer=self.settings.muxer,
-                             aencoder=self.settings.aencoder,
-                             vencoder=self.settings.vencoder)
-        settings.containersettings = self.settings.containersettings
-        settings.acodecsettings = self.settings.acodecsettings
-        settings.vcodecsettings = self.settings.vcodecsettings
-        settings.setVideoProperties(render_scale=self.settings.render_scale)
-        # Signal that the project settings have been changed.
-        self.project.setSettings(settings)
-
-    def destroy(self):
-        self._updateProjectSettings()
-        self.window.destroy()
+        # Update muxer-dependent widgets.
+        self.muxer_combo_changing = True
+        try:
+            self.updateAvailableEncoders()
+        finally:
+            self.muxer_combo_changing = False

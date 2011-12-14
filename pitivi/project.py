@@ -141,8 +141,6 @@ class Project(Signallable, Loggable):
         settings = self.getSettings()
         self._videocaps = settings.getVideoCaps()
 
-        for fact in self.sources.getSources():
-            fact.setFilterCaps(self._videocaps)
         if self.pipeline.get_state() != gst.STATE_NULL:
             self.pipeline.set_state(gst.STATE_READY)
             self.pipeline.set_state(gst.STATE_PAUSED)
