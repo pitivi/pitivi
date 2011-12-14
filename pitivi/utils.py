@@ -358,8 +358,8 @@ class Seeker(Signallable):
         except:
             log.doLog(log.ERROR, None, "seeker", "Error while flushing", None)
 
-    def _scheduleSeek(self, timeout, callback):
-        return gobject.timeout_add(timeout, callback)
+    def _scheduleSeek(self, timeout, callback, relative=False):
+        return gobject.timeout_add(timeout, callback, relative)
 
     def _seekTimeoutCb(self, relative=False):
         self.pending_seek_id = None

@@ -138,7 +138,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.pipeline.set_state(gst.STATE_NULL)
 
         self.pipeline = pipeline
-        if self.pipeline != None:
+        if self.pipeline:
             bus = self.pipeline.get_bus()
             bus.add_signal_watch()
             bus.connect('message', self._busMessageCb)
@@ -433,18 +433,17 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.seekRelative(amount)
 
     def seek(self, position, format=gst.FORMAT_TIME):
-        try:
-            self.seeker.seek(position, format)
-        except:
-            self.warning("seek failed")
+        self.seeker.seek(position, format)
 
     def _newTime(self, value, frame=-1):
         self.info("value:%s, frame:%d", gst.TIME_ARGS(value), frame)
         self.current_time = value
         self.current_frame = frame
         self.timecode_entry.setWidgetValue(value, False)
+
         position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
         self.app.gui.timeline.timelinePositionChanged(position)
+
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
         return False
@@ -587,22 +586,15 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.dock()
 
     def seekRelative(self, time):
-        try:
-            seekvalue = max(0, min(position + time,
-                self.getDuration()))
-            self.seek(seekvalue)
-            position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
-            self.pipeline.seekRelative(time)
-        except:
-            self.warning("seek failed")
+        self.seeker.seekRelative(time)
 
     def _posCb(self):
         try:
             position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
         except:
             return True
+
         self._newTime(position)
-        self.app.gui.timeline._canvas.timelinePositionChanged(position)
         return True
 
     def _currentStateCb(self, state):
