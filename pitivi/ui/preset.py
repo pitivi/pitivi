@@ -19,20 +19,18 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-import ConfigParser
 import os.path
 
 import gst
 import gtk
+import json
 
 from pitivi.encode import available_muxers, available_video_encoders, \
      available_audio_encoders
 from pitivi.settings import xdg_data_home
 from pitivi.utils import isWritable
-from pitivi.configure import get_data_dir, get_renderpresets_dir, \
+from pitivi.configure import get_renderpresets_dir, \
         get_audiopresets_dir, get_videopresets_dir
-import json
-import os
 
 
 class DuplicatePresetNameException(Exception):

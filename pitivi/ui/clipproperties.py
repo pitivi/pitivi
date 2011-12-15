@@ -158,6 +158,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self.timeline_objects = []
         self._factory = None
         self.app = instance
+        self.settings = instance.settings
         self.effectsHandler = self.app.effects
         self._effect_config_ui = None
         self.pipeline = None
