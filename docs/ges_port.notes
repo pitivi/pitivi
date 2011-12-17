@@ -3,11 +3,11 @@ GES:
     ========
         -> Implement riple and roll (could be done in pitivi for the time
                 being reusing old code)
-                => 3 to 5 days -- in progress --
+                => 3 to 5 days -- in progress 75 %--
 
         -> Handle reslution and framerate -> BLOCKER
             |-> Do we handle it as a "hack" in pitivi for the time being?
-                => 3 to 5 days
+                => 3 to 5 days -- In progress 30% (Done for encoding)--
 
         -> Implement waveform
             => 5 days
@@ -15,7 +15,7 @@ GES:
         -> Merge Ges-Port branch (all the list is BLOCKER)
             > Refactor and fix the formatter -> Done, needs some bugfixing
             > review and fix the whole branch
-                => 2  to 5 days -- in progress --
+                => 2  to 5 days -- in progress 70 %--
 
            > Add an entry point for saving sourcelist -> pitivi must
                 take advantage of it afterward
@@ -44,15 +44,15 @@ PiTiVi:
 
     Critical
     ========
-        -> Make Seeker more powerfull, and rely only on it for all the
-           seeking
+        -> Make Seeker more powerfull, and rely only on it for all the:
+           seeking:
             => 2 days DONE:
 
-        -> Refactor the DND
-            => 1 days -- In progress --
+        -> Refactor the DND:
+            => 1 days DONE:
 
-        -> Handle effects properly, ie dnd, settings etc
-            => 2 days
+        -> Handle effects properly, ie dnd, settings etc:
+            => 2 days DONE:
 
         -> reimplement thumbnail + waveform
             => 5 days
@@ -63,8 +63,8 @@ PiTiVi:
         -> Reimplement transformation
             => 1 days
 
-        -> Implement properly rendering
-            => 2 days
+        -> Implement properly rendering:
+            => 2 days DONE:
 
         -> Remove ALL references to the old PiTiVi core
             => 1 day left
@@ -73,6 +73,7 @@ PiTiVi:
             => 2 days
 
         > Reimplement thumbnail in the sourcelist
+            NOTE: Implement in gst.Discoverer right away
             => 1 days
 
       Quality/margin tasks:
