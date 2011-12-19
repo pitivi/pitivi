@@ -280,7 +280,7 @@ class InstanceRunner(Signallable):
 
     def _setupTimeline(self, configuration):
         for name, uri, props in configuration:
-            factory = self.project.sources.getUri(uri)
+            factory = self.project.sources.getInfoFromUri(uri)
             if not factory:
                 raise Exception("Could not find '%s' in sourcelist" %
                     source)

@@ -1065,7 +1065,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         # Use factory from our source list if we have the given uri
         try:
-            fact = self.project.sources.getUri(uri)
+            fact = self.project.sources.getInfoFromUri(uri)
         except SourceListError:
             from pitivi.factories.file import FileSourceFactory
             fact = FileSourceFactory(uri)

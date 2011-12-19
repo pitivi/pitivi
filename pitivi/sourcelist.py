@@ -129,7 +129,7 @@ class SourceList(Signallable, Loggable):
             for obj in layer.get_objects():
                 self.addUri(obj.get_uri())
 
-    def getUri(self, uri):
+    def getInfoFromUri(self, uri):
         """
         Get the source corresponding to C{uri}.
         """

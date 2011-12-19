@@ -26,6 +26,8 @@ import pango
 import os
 import time
 
+from ges import TimelineFileSource
+
 from urllib import unquote
 from gettext import gettext as _
 
@@ -390,15 +392,19 @@ class SourceList(gtk.VBox, Loggable):
 
     def _insertEndCb(self, unused_action):
         self.app.action_log.begin("add clip")
-        timeline = self.app.current.timeline
+        GEStimeline = self.app.current.timeline
+        ptvtimeline = self.app.gui.timeline
+        ptvtimeline._ensureLayer()  # Handle the case of a blank project
         sources = self.app.current.sources
-        start = timeline.duration
+        start = GEStimeline.props.duration
         self.app.current.seeker.seek(start)
+        layers = GEStimeline.get_layers()
         for uri in self.getSelectedItems():
-            factory = sources.getUri(uri)
-            source = timeline.addSourceFactory(factory)
-            source.setStart(start)
-            start += source.duration
+            source = TimelineFileSource(uri)
+            layer = layers[0]  # TODO: use the longest layer instead
+            layer.add_object(source)
+            source.props.start = start
+            start += source.props.duration
         self.app.action_log.commit()
 
     def searchEntryChangedCb(self, entry):
