@@ -119,6 +119,7 @@ class SourceList(gtk.VBox, Loggable):
         self.settings = instance.settings
         self._errors = []
         self._project = None
+        self._sources_to_add = []
 
         # Store
         # icon, infotext, objectfactory, uri, length
@@ -392,20 +393,51 @@ class SourceList(gtk.VBox, Loggable):
 
     def _insertEndCb(self, unused_action):
         self.app.action_log.begin("add clip")
-        GEStimeline = self.app.current.timeline
-        ptvtimeline = self.app.gui.timeline
-        ptvtimeline._ensureLayer()  # Handle the case of a blank project
-        sources = self.app.current.sources
-        start = GEStimeline.props.duration
-        self.app.current.seeker.seek(start)
-        layers = GEStimeline.get_layers()
-        for uri in self.getSelectedItems():
-            source = TimelineFileSource(uri)
-            layer = layers[0]  # TODO: use the longest layer instead
-            layer.add_object(source)
+        self.app.current.timeline.enable_update(False)
+
+        # Handle the case of a blank project
+        self.app.gui.timeline._ensureLayer()
+
+        self._sources_to_add = self.getSelectedItems()
+        #Start adding sources in the timeline
+        self._addNextSource()
+
+    def _addNextSource(self):
+        timeline = self.app.current.timeline
+
+        if not self._sources_to_add:
+            # OK, we added all the sources!
+            timeline.enable_update(True)
+            self.app.current.seeker.seek(timeline.props.duration)
+            self.app.action_log.commit()
+
+            return
+
+        uri = self._sources_to_add.pop()
+        source = TimelineFileSource(uri)
+        layer = timeline.get_layers()[0]
+        layer.add_object(source)
+
+        # Waiting for the TrackObject to be created because of a race
+        # condition, and to know the real length of the timeline when
+        # adding several sources at a time.
+        source.connect("track-object-added", self._trackObjectAddedCb)
+
+    def _trackObjectAddedCb(self, source, trackobj):
+        #FIXME Get the longest layer
+        timeline = self.app.current.timeline
+        start = timeline.props.duration
+
+        #Handle the case where are adding the first source
+        if len(timeline.get_layers()[0].get_objects()) == 1:
+            source.props.start = 0
+        else:
             source.props.start = start
-            start += source.props.duration
-        self.app.action_log.commit()
+
+        # Getting only one TrackObject is enough
+        source.disconnect_by_func(self._trackObjectAddedCb)
+
+        self._addNextSource()
 
     def searchEntryChangedCb(self, entry):
         self.modelFilter.refilter()
