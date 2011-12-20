@@ -1100,9 +1100,6 @@ class PlayPauseButton(gtk.Button, Loggable):
         Loggable.__init__(self)
         self.image = gtk.Image()
         self.add(self.image)
-        self.playing = True
-
-        self.get_settings().props.gtk_button_images = True
         self.playing = False
         self.setPlay()
         self.connect('clicked', self._clickedCb)
