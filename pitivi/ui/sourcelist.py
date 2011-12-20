@@ -400,10 +400,11 @@ class SourceList(gtk.VBox, Loggable):
         self.app.gui.timeline._ensureLayer()
 
         self._sources_to_add = self.getSelectedItems()
-        #Start adding sources in the timeline
+        # Start adding sources in the timeline
         self._addNextSource()
 
     def _addNextSource(self):
+        """ Insert a source at the end of the timeline's first track """
         timeline = self.app.current.timeline
 
         if not self._sources_to_add:
@@ -411,12 +412,11 @@ class SourceList(gtk.VBox, Loggable):
             timeline.enable_update(True)
             self.app.current.seeker.seek(timeline.props.duration)
             self.app.action_log.commit()
-
             return
 
         uri = self._sources_to_add.pop()
         source = TimelineFileSource(uri)
-        layer = timeline.get_layers()[0]
+        layer = timeline.get_layers()[0]  # FIXME Get the longest layer
         layer.add_object(source)
 
         # Waiting for the TrackObject to be created because of a race
@@ -425,19 +425,20 @@ class SourceList(gtk.VBox, Loggable):
         source.connect("track-object-added", self._trackObjectAddedCb)
 
     def _trackObjectAddedCb(self, source, trackobj):
-        #FIXME Get the longest layer
+        """ After an object has been added to the first track, position it
+        correctly and request the next source to be processed. """
         timeline = self.app.current.timeline
-        start = timeline.props.duration
+        layer = timeline.get_layers()[0]  # FIXME Get the longest layer
 
-        #Handle the case where are adding the first source
-        if len(timeline.get_layers()[0].get_objects()) == 1:
+        # Handle the case where we just inserted the first clip
+        if len(layer.get_objects()) == 1:
             source.props.start = 0
         else:
-            source.props.start = start
+            source.props.start = timeline.props.duration
 
-        # Getting only one TrackObject is enough
+        # We only need one TrackObject to estimate the new duration.
+        # Process the next source.
         source.disconnect_by_func(self._trackObjectAddedCb)
-
         self._addNextSource()
 
     def searchEntryChangedCb(self, entry):
