@@ -148,8 +148,8 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
 
             if is_effect:
                 table.attach(widget, 1, 2, y, y + 1, yoptions=gtk.FILL)
-            elif hasattr(prop, 'description'):   # TODO: check that
-                widget.set_tooltip_text(prop.description)
+            elif hasattr(prop, 'blurb'):
+                widget.set_tooltip_text(prop.blurb)
 
             self.properties[prop] = widget
             if default_btn:
