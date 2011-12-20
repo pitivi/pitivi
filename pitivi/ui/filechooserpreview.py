@@ -181,7 +181,8 @@ class PreviewWidget(gtk.VBox, Loggable):
             self.log("No preview for " + uri)
             return
 
-        duration = beautify_length(info.get_duration())
+        duration = info.get_duration()
+        pretty_duration = beautify_length(duration)
 
         videos = info.get_video_streams()
         if videos:
@@ -208,8 +209,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.player.set_property("video-sink", self.__videosink)
                 self.player.set_property("uri", self.current_selected_uri)
                 self.player.set_state(gst.STATE_PAUSED)
-                self.clip_duration = info.get_duration()
-                self.pos_adj.upper = self.clip_duration
+                self.pos_adj.upper = duration
                 w, h = self.__get_best_size((video.get_par_num() / video.get_par_denom()) * video.get_width(),
                     video.get_height())
                 self.preview_video.set_size_request(w, h)
@@ -221,22 +221,22 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.b_zoom_out.show()
                 self.description = _(u"<b>Resolution</b>: %d×%d") % \
                     ((video.get_par_num() / video.get_par_denom()) * video.get_width(), video.get_height()) +\
-                     "\n" + _("<b>Duration</b>: %s") % duration + "\n"
+                     "\n" + _("<b>Duration</b>: %s") % pretty_duration + "\n"
         else:
             self.current_preview_type = 'audio'
             self.preview_video.hide()
-            audio = info.get_video_streams()
+            audio = info.get_audio_streams()
 
             if not audio:
                 return
 
             audio = audio[0]
-            self.pos_adj.upper = self.clip_duration
+            self.pos_adj.upper = duration
             self.preview_image.set_from_file(DEFAULT_AUDIO_IMAGE)
             self.preview_image.show()
             self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
             self.description = beautify_stream(audio) + "\n" + \
-                _("<b>Duration</b>: %s") % duration + "\n"
+                _("<b>Duration</b>: %s") % pretty_duration + "\n"
             self.player.set_state(gst.STATE_NULL)
             self.player.set_property("uri", self.current_selected_uri)
             self.player.set_property("video-sink", self.__fakesink)
@@ -408,7 +408,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                 gtk.DIALOG_MODAL,
                 gtk.MESSAGE_WARNING,
                 gtk.BUTTONS_OK,
-                mess)
+                str(mess))
             dialog.set_icon_name("pitivi")
             dialog.set_title(_("Error while analyzing a file"))
             dialog.run()
