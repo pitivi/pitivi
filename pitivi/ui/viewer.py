@@ -134,7 +134,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         """
         self.debug("self.pipeline:%r", self.pipeline)
 
-        if (self.pipeline):
+        if self.pipeline:
             self.pipeline.set_state(gst.STATE_NULL)
 
         self.pipeline = pipeline
@@ -174,7 +174,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _busMessageCb(self, unused_bus, message):
         if message.type == gst.MESSAGE_EOS:
-            print "eos"
+            pass  # Playback (or rendering) reached the end of the timeline
         elif message.type == gst.MESSAGE_STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
 
