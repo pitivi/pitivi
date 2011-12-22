@@ -1015,7 +1015,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
-        chooser.set_current_name(_("Untitled.xptv"))
+        chooser.set_current_name(_("Untitled") + ".xptv")
         chooser.set_current_folder(self.settings.lastProjectFolder)
         chooser.props.do_overwrite_confirmation = True
         for format in formats:
@@ -1131,7 +1131,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             if self.project.name:
                 name = self.project.name
             else:
-                name = _("Untitled project")
+                name = _("Untitled")
             if self.project.hasUnsavedModifications():
                 touched = "*"
         title = u"%s%s \u2014 %s" % (touched, name, APPNAME)

@@ -205,7 +205,10 @@ class EncodingDialog(Loggable):
 
         # Directory and Filename
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
-        self.updateFilename(self.project.name)
+        if not self.project.name:
+            self.updateFilename(_("Untitled"))
+        else:
+            self.updateFilename(self.project.name)
 
         # We store these so that when the user tries various container formats,
         # (AKA muxers) we select these a/v encoders, if they are compatible with
@@ -580,10 +583,6 @@ class EncodingDialog(Loggable):
         # note: this will trigger an update of the codec comboboxes
         set_combo_value(self.muxercombobox,
             gst.element_factory_find(self.settings.muxer))
-
-        # File
-        self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
-        self.updateFilename(self.project.name)
 
     def _checkForExistingFile(self, *args):
         """
