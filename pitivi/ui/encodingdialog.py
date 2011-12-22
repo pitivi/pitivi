@@ -659,6 +659,7 @@ class EncodingDialog(Loggable):
         self.dialog.window.run()
 
     def startAction(self):
+        """ Start the render process """
         self._pipeline.set_state(gst.STATE_NULL)
         self._pipeline.set_mode("render")
         encodebin = self._pipeline.get_by_name("internal-encodebin")
@@ -670,18 +671,20 @@ class EncodingDialog(Loggable):
     def _cancelRender(self, progress):
         self.debug("aborting render")
         self._shutDown()
-        self._hideProgressWindow()
+        self._destroyProgressWindow()
 
     def _shutDown(self):
+        """ The render process has been aborted, shutdown the gstreamer pipeline
+        and disconnect from its signals """
         self._pipeline.set_state(gst.STATE_NULL)
         self._disconnectFromGst()
-        self._pipeline.set_mode(3)
+        self._pipeline.set_mode(3)  # Reset to preview mode for audio and video
 
     def _pauseRender(self, progress):
         togglePlayback(self._pipeline)
 
-    def _hideProgressWindow(self):
-        """Handle the ending or the cancellation of the render process."""
+    def _destroyProgressWindow(self):
+        """ Handle the completion or the cancellation of the render process. """
         self.progress.window.destroy()
         self.progress = None
         self.window.show()  # Show the encoding dialog again
@@ -718,12 +721,9 @@ class EncodingDialog(Loggable):
 
     def destroy(self):
         self._updateProjectSettings()
-        self._disconnectFromGst()
-        self._seeker.seek(0)    # FIXME, looks like it doesn't work properly
-        self._pipeline.set_state(gst.STATE_PAUSED)
         self.window.destroy()
 
-    #------------------- Callabacks ------------------------------------------#
+    #------------------- Callbacks ------------------------------------------#
 
     #-- UI callbacks
     def _okButtonClickedCb(self, unused_button, settings_attr):
@@ -731,6 +731,8 @@ class EncodingDialog(Loggable):
         self.dialog.window.destroy()
 
     def _renderButtonClickedCb(self, unused_button):
+        """ The render button inside the render dialog has been clicked,
+        start the rendering process. """
         self.outfile = os.path.join(self.filebutton.get_uri(),
                                     self.fileentry.get_text())
         self.progress = EncodingProgressDialog(self.app, self)
@@ -758,17 +760,19 @@ class EncodingDialog(Loggable):
         self._seeker.connect("position-changed", self._updatePositionCb)
 
     def _closeButtonClickedCb(self, unused_button):
-        self.debug("Render Close button clicked")
+        self.debug("Render dialog's Close button clicked")
         self.destroy()
 
     def _deleteEventCb(self, window, event):
-        self.debug("Render window is being deleted")
+        self.debug("Render dialog is being deleted")
         self.destroy()
 
     #-- GStreamer callbacks
     def _busMessageCb(self, unused_bus, message):
-        if message.type == gst.MESSAGE_EOS:
-            self._hideProgressWindow()
+        if message.type == gst.MESSAGE_EOS:  # Render complete
+            self.debug("got EOS message, render complete")
+            self._shutDown()
+            self._destroyProgressWindow()
         elif message.type == gst.MESSAGE_STATE_CHANGED and self.progress:
             prev, state, pending = message.parse_state_changed()
             self.progress.setState(state)
