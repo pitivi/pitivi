@@ -93,7 +93,7 @@ def unpack_cairo_gradient(value):
 
 
 def beautify_info(info):
-    ranks = {gst.pbutils.DiscovererVideoInfo: 0, gst.pbutils.DiscovererAudioInfo: 1}
+    ranks = {gst.pbutils.DiscovererVideoInfo: 0, gst.pbutils.DiscovererAudioInfo: 1, gst.pbutils.DiscovererStreamInfo: 2}
 
     def stream_sort_key(stream):
         return ranks[type(stream)]
@@ -126,7 +126,10 @@ def beautify_stream(stream):
             templ = _(u"<b>Image:</b> %d×%d <i>pixels</i>")
             templ = templ % (par * stream.get_height(), stream.get_height())
         return templ
-
+    #FIXME : lol I have absolutely no clue what I'm doing !
+    elif type(stream) == gst.pbutils.DiscovererStreamInfo:
+        print stream.get_caps()
+        return "And we have subtitles :)"
     raise NotImplementedError
 
 
