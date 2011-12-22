@@ -32,13 +32,6 @@ from pitivi.ui.common import LAYER_HEIGHT_EXPANDED,\
         LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
 
 
-def track_is_type(track, type_str):
-    """
-    Simple utility function to check the type of a ges.Track
-    """
-    return track.props.track_type.first_value_name == type_str
-
-
 class Transition(goocanvas.Rect, Zoomable):
 
     def __init__(self, transition):

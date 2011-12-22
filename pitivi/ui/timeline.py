@@ -42,7 +42,6 @@ from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.timeline.timeline import MoveContext, SELECT
 
 from pitivi.ui.common import SPACING
-from pitivi.ui.track import track_is_type
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.alignmentprogress import AlignmentProgressDialog
@@ -462,9 +461,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 # Which means, it has the corresponding media_type
                 for tckobj in tlobj.get_track_objects():
                     track = tckobj.get_track()
-                    if track_is_type(track, 'GES_TRACK_TYPE_AUDIO') and \
+                    if track.props.track_type == ges.TRACK_TYPE_AUDIO and \
                             media_type == AUDIO_EFFECT or \
-                            track_is_type(track, 'GES_TRACK_TYPE_VIDEO') and \
+                            track.props.track_objects == ges.TRACK_TYPE_VIDEO and \
                             media_type == VIDEO_EFFECT:
                         #Actually add the effect
                         self.app.action_log.begin("add effect")
