@@ -120,6 +120,7 @@ class SourceList(gtk.VBox, Loggable):
         self._errors = []
         self._project = None
         self._sources_to_add = []
+        self.dummy_selected = []
 
         # Store
         # icon, infotext, objectfactory, uri, length
@@ -784,10 +785,9 @@ class SourceList(gtk.VBox, Loggable):
         model = self.storemodel
         if len(paths) < 1:
             return
-        path = paths[0]
-        factory = model[path][COL_FACTORY]
-        self.debug("Let's play %s", factory.uri)
-        self.emit('play', factory)
+        paths = paths[0]
+        self.debug("Let's play %s", model[paths][COL_URI])
+        self.emit('play', model[paths][COL_URI])
 
     def _hideInfoBarClickedCb(self, unused_button):
         self._resetErrorList()
@@ -967,8 +967,8 @@ class SourceList(gtk.VBox, Loggable):
             self.selection_actions.set_sensitive(False)
 
     def _rowActivatedCb(self, unused_treeview, path, unused_column):
-        factory = self.storemodel[path][COL_FACTORY]
-        self.emit('play', factory)
+        path = self.storemodel[path][COL_URI]
+        self.emit('play', path)
 
     def _iconViewMotionNotifyEventCb(self, iconview, event):
         if not self._dragButton:

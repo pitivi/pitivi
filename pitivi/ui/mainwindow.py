@@ -28,6 +28,7 @@ import os
 import gtk
 import gst
 import ges
+import gobject
 import webbrowser
 
 from urllib import unquote
@@ -1072,9 +1073,23 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._viewFactory(fact)
         context.finish(True, False, ctime)
 
-    def _viewFactory(self, factory):
-        #GES crazyness... Implement
-        pass
+    def _leavePreviewCb(self, window, unused):
+        window.destroy()
+
+    def _viewFactory(self, path):
+        preview_window = gtk.Window()
+        preview_window.set_transient_for(self)
+        preview_window.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
+        preview_window.connect("focus-out-event", self._leavePreviewCb)
+        previewer = PreviewWidget(self)
+        preview_window.add(previewer)
+        preview_window.show_all()
+        previewer.hide_unnecessary_widgets()
+        previewer.preview_uri(path)
+        previewer.player.set_state(gst.STATE_PLAYING)
+        previewer.is_playing = True
+        previewer.play_button.set_stock_id(gtk.STOCK_MEDIA_PAUSE)
+        gobject.timeout_add(1000, previewer._update_position)
 
     def _timelineSeekRelativeCb(self, unused_seeker, time):
         try:

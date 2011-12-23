@@ -114,14 +114,14 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.bbox.pack_start(self.b_zoom_in, expand=False)
         self.bbox.pack_start(self.b_zoom_out, expand=False)
         self.bbox.show_all()
-        self.pack_start(self.bbox, expand=False)
+        self.pack_start(self.bbox, expand=False, fill=False)
 
         # Label for metadata tags
         self.l_tags = gtk.Label()
         self.l_tags.set_justify(gtk.JUSTIFY_LEFT)
         self.l_tags.set_ellipsize(pango.ELLIPSIZE_END)
         self.l_tags.show()
-        self.pack_start(self.l_tags, expand=False)
+        self.pack_start(self.l_tags, expand=False, fill=False)
 
         # Error handling
         vbox = gtk.VBox()
@@ -134,11 +134,18 @@ class PreviewWidget(gtk.VBox, Loggable):
         vbox.show()
         self.pack_start(vbox, expand=False, fill=False)
 
+    def hide_unnecessary_widgets(self):
+        self.remove(self.l_tags)
+        self.set_child_packing(self.preview_video, True, True, 0, gtk.PACK_START)
+
     def add_preview_request(self, dialogbox):
         """add a preview request """
         uri = dialogbox.get_preview_uri()
         if uri is None or not uri_is_valid(uri):
             return
+        self.preview_uri(uri)
+
+    def preview_uri(self, uri):
         self.log("Preview request for " + uri)
         self.clear_preview()
         self.current_selected_uri = uri
