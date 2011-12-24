@@ -136,6 +136,8 @@ class PreviewWidget(gtk.VBox, Loggable):
 
     def setMinimal(self):
         self.remove(self.l_tags)
+        self.b_zoom_in.hide()
+        self.b_zoom_out.hide()
         self.set_child_packing(self.preview_video, True, True, 0, gtk.PACK_START)
 
     def add_preview_request(self, dialogbox):

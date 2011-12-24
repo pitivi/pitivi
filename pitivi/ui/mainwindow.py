@@ -1078,14 +1078,31 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _viewUri(self, path):
         preview_window = gtk.Window()
+        preview_window.set_title(_("Preview - click outside to close"))
         preview_window.set_transient_for(self)
-        preview_window.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         preview_window.connect("focus-out-event", self._leavePreviewCb)
         previewer = PreviewWidget(self)
         preview_window.add(previewer)
-        preview_window.show_all()
-        previewer.setMinimal()
+
+        preview_window.show_all()  # Needed for PreviewWidget to do its magic
+        preview_window.hide()  # Hack to allow setting the window position
         previewer.previewUri(path)
+        previewer.setMinimal()
+        info = self.project.sources.getInfoFromUri(path)
+        try:
+            image_width = info.get_video_streams()[0].get_width()
+            image_height = info.get_video_streams()[0].get_height()
+            controls_height = previewer.bbox.size_request()[1]
+            preview_window.resize(image_width, image_height + controls_height)
+        except:
+            # There is no video/image stream. This is an audio file.
+            # Resize to the minimum and let the window manager deal with it
+            preview_window.resize(1, 1)
+        # Setting the position of the window only works if it's currently hidden
+        # otherwise, after the resize the position will not be readjusted
+        preview_window.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        preview_window.show()
+
         previewer.play()
 
     def _timelineSeekRelativeCb(self, unused_seeker, time):
