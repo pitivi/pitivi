@@ -259,7 +259,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.is_playing = True
         self.play_button.set_stock_id(gtk.STOCK_MEDIA_PAUSE)
         #Make sure position is updated regularly
-        gobject.timeout_add(1000, self._update_position)
+        gobject.timeout_add(500, self._update_position)
 
     def clear_preview(self):
         self.log("Reset PreviewWidget ")

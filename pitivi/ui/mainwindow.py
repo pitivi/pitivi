@@ -1077,6 +1077,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         window.destroy()
 
     def _viewUri(self, path):
+        """ Preview a media file from the media library """
         preview_window = gtk.Window()
         preview_window.set_title(_("Preview - click outside to close"))
         preview_window.set_transient_for(self)
