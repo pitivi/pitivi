@@ -524,8 +524,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.settings.mainWindowShowMainToolbar = mtb.props.active
         self.settings.mainWindowShowTimelineToolbar = ttb.props.active
 
-    def _sourceListPlayCb(self, sourcelist, factory):
-        self._viewFactory(factory)
+    def _sourceListPlayCb(self, sourcelist, uri):
+        self._viewUri(uri)
 
 ## Toolbar/Menu actions callback
 
@@ -1070,13 +1070,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
         except SourceListError:
             from pitivi.factories.file import FileSourceFactory
             fact = FileSourceFactory(uri)
-        self._viewFactory(fact)
+        self._viewUri(fact)
         context.finish(True, False, ctime)
 
     def _leavePreviewCb(self, window, unused):
         window.destroy()
 
-    def _viewFactory(self, path):
+    def _viewUri(self, path):
         preview_window = gtk.Window()
         preview_window.set_transient_for(self)
         preview_window.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
@@ -1084,12 +1084,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         previewer = PreviewWidget(self)
         preview_window.add(previewer)
         preview_window.show_all()
-        previewer.hide_unnecessary_widgets()
-        previewer.preview_uri(path)
-        previewer.player.set_state(gst.STATE_PLAYING)
-        previewer.is_playing = True
-        previewer.play_button.set_stock_id(gtk.STOCK_MEDIA_PAUSE)
-        gobject.timeout_add(1000, previewer._update_position)
+        previewer.setMinimal()
+        previewer.previewUri(path)
+        previewer.play()
 
     def _timelineSeekRelativeCb(self, unused_seeker, time):
         try:

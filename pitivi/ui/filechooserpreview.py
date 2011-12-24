@@ -134,7 +134,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         vbox.show()
         self.pack_start(vbox, expand=False, fill=False)
 
-    def hide_unnecessary_widgets(self):
+    def setMinimal(self):
         self.remove(self.l_tags)
         self.set_child_packing(self.preview_video, True, True, 0, gtk.PACK_START)
 
@@ -143,9 +143,9 @@ class PreviewWidget(gtk.VBox, Loggable):
         uri = dialogbox.get_preview_uri()
         if uri is None or not uri_is_valid(uri):
             return
-        self.preview_uri(uri)
+        self.previewUri(uri)
 
-    def preview_uri(self, uri):
+    def previewUri(self, uri):
         self.log("Preview request for " + uri)
         self.clear_preview()
         self.current_selected_uri = uri
@@ -250,6 +250,13 @@ class PreviewWidget(gtk.VBox, Loggable):
     def show_error(self, uri):
         self.l_error.show()
         self.b_details.show()
+
+    def play(self):
+        self.player.set_state(gst.STATE_PLAYING)
+        self.is_playing = True
+        self.play_button.set_stock_id(gtk.STOCK_MEDIA_PAUSE)
+        #Make sure position is updated regularly
+        gobject.timeout_add(1000, self._update_position)
 
     def clear_preview(self):
         self.log("Reset PreviewWidget ")
