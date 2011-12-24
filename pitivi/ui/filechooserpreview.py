@@ -260,6 +260,13 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.play_button.set_stock_id(gtk.STOCK_MEDIA_PAUSE)
         #Make sure position is updated regularly
         gobject.timeout_add(500, self._update_position)
+        self.debug("Preview started")
+
+    def pause(self):
+        self.player.set_state(gst.STATE_PAUSED)
+        self.is_playing = False
+        self.play_button.set_stock_id(gtk.STOCK_MEDIA_PLAY)
+        self.log("Preview paused")
 
     def clear_preview(self):
         self.log("Reset PreviewWidget ")
@@ -315,17 +322,10 @@ class PreviewWidget(gtk.VBox, Loggable):
         return self.is_playing
 
     def _on_start_stop_clicked_cb(self, button):
-        if button.get_stock_id() == gtk.STOCK_MEDIA_PLAY:
-            self.player.set_state(gst.STATE_PLAYING)
-            gobject.timeout_add(1000, self._update_position)
-            self.is_playing = True
-            button.set_stock_id(gtk.STOCK_MEDIA_PAUSE)
-            self.log("Preview started")
+        if self.is_playing:
+            self.pause()
         else:
-            self.player.set_state(gst.STATE_PAUSED)
-            self.is_playing = False
-            button.set_stock_id(gtk.STOCK_MEDIA_PLAY)
-            self.log("Preview paused")
+            self.play()
 
     def _on_zoom_clicked_cb(self, button, increment):
         if self.current_preview_type == 'video':
