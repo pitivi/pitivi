@@ -27,6 +27,7 @@ Render dialog
 import os
 import gtk
 import gst
+import ges
 import time
 
 from gettext import gettext as _
@@ -660,7 +661,7 @@ class EncodingDialog(Loggable):
     def startAction(self):
         """ Start the render process """
         self._pipeline.set_state(gst.STATE_NULL)
-        self._pipeline.set_mode("render")
+        self._pipeline.set_mode(ges.TIMELINE_MODE_SMART_RENDER)
         encodebin = self._pipeline.get_by_name("internal-encodebin")
         self._gstSigId[encodebin] = encodebin.connect("element-added",
                 self._elementAddedCb)
@@ -677,7 +678,7 @@ class EncodingDialog(Loggable):
         and disconnect from its signals """
         self._pipeline.set_state(gst.STATE_NULL)
         self._disconnectFromGst()
-        self._pipeline.set_mode(3)  # Reset to preview mode for audio and video
+        self._pipeline.set_mode(ges.TIMELINE_MODE_PREVIEW)
 
     def _pauseRender(self, progress):
         togglePlayback(self._pipeline)
