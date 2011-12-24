@@ -138,7 +138,8 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.remove(self.l_tags)
         self.b_zoom_in.hide()
         self.b_zoom_out.hide()
-        self.set_child_packing(self.preview_video, True, True, 0, gtk.PACK_START)
+        # Allow expanding/filling and pack the video preview below the controls
+        self.set_child_packing(self.preview_video, True, True, 0, gtk.PACK_END)
 
     def add_preview_request(self, dialogbox):
         """add a preview request """
