@@ -452,7 +452,12 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
     def _setElement(self):
         if self.element and not self.is_transition:
-            self.name.props.text = self.element.get_property("uri")
+            from pitivi.ui.common import info_name
+
+            sources = self.app.current.sources
+            uri = self.element.props.uri
+            info = sources.getInfoFromUri(uri)
+            self.name.props.text = info_name(info)
             twidth, theight = text_size(self.name)
             self.namewidth = twidth
             self.nameheight = theight
