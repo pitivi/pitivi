@@ -93,7 +93,7 @@ def _add_pitivi_path():
             # ld caches LD_LIBRARY_PATH at startup so we need to execv() here. LALA.
             jump_through_hoops()
 
-def _init_gobject_gtk_gst():
+def _init_gobject_gtk_gst_ges():
     global localedir
     try:
         import pygtk
@@ -118,6 +118,15 @@ def _init_gobject_gtk_gst():
     except ImportError:
         raise SystemExit("Gst-Python couldn't be found!")
 
+    try:
+        import ges
+    except ImportError:
+        raise SystemExit("GStreamer Editing Services couldn't be found!")
+
+    # Require GES 0.10
+    if ges.version()[1] != 10:
+        raise SystemExit("GStreamer Editing Services couldn't be found!")
+
 def _run_pitivi():
     import pitivi.application as ptv
 
@@ -130,7 +139,7 @@ def _run_pitivi():
 
 try:
     _add_pitivi_path()
-    _init_gobject_gtk_gst()
+    _init_gobject_gtk_gst_ges()
     _run_pitivi()
 except KeyboardInterrupt:
     print "Interrupted by user!"
