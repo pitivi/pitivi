@@ -876,6 +876,14 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             self.app.current.sources.removeUri(uri)
         self.app.action_log.commit()
 
+    def _checkUsedSource(self, timeline, uri):
+        layers = timeline.get_layers()
+        for layer in layers:
+            for tlobj in layer.get_objects():
+                if tlobj.get_uri() == uri:
+                    return True
+        return False
+
     def _selectUnusedSources(self):
         """
         Select, in the media library, unused sources in the project.
@@ -886,8 +894,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         model = self.storemodel
         selection = self.treeview.get_selection()
         for source in sources:
-            if not self.app.current.timeline.usesFactory(source):
-                unused_sources_uris.append(source.uri)
+            if not self._checkUsedSource(self.app.current.timeline, source.get_uri()):
+                unused_sources_uris.append(source.get_uri())
 
         # Hack around the fact that making selections (in a treeview/iconview)
         # deselects what was previously selected
