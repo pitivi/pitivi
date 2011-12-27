@@ -124,7 +124,7 @@ def beautify_stream(stream):
     elif type(stream) == gst.pbutils.DiscovererVideoInfo:
         par = stream.get_par_num() / stream.get_par_denom()
         if not stream.is_image():
-            templ = _(u"<b>Video:</b> %d×%d <i>pixels</i> at %.2f<i>fps</i>")
+            templ = _(u"<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>")
             templ = templ % (par * stream.get_width(), stream.get_height(),
                 float(stream.get_framerate_num()) / stream.get_framerate_denom())
         else:
