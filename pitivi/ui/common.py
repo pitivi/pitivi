@@ -116,8 +116,7 @@ def beautify_stream(stream):
         templ = ngettext("<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
                 "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",
                 stream.get_channels())
-        templ = templ % (stream.get_channels(),
-            stream.get_sample_rate(),
+        templ = templ % (stream.get_channels(), stream.get_bitrate(),
             stream.get_depth())
         return templ
 
