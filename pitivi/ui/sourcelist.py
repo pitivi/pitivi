@@ -30,6 +30,7 @@ from ges import TimelineFileSource
 
 from urllib import unquote
 from gettext import gettext as _
+from hashlib import md5
 
 import pitivi.ui.dnd as dnd
 from pitivi.configure import get_pixmap_dir
@@ -231,7 +232,7 @@ class SourceList(gtk.VBox, Loggable):
         self.iconview.set_text_column(COL_SHORT_TEXT)
         self.iconview.set_pixbuf_column(COL_ICON_LARGE)
         self.iconview.set_selection_mode(gtk.SELECTION_MULTIPLE)
-        self.iconview.set_item_width(106)
+        self.iconview.set_item_width(138)  # Needs to be icon width +10
 
         # Explanatory message InfoBar
         self.infobar = gtk.InfoBar()
@@ -593,31 +594,28 @@ class SourceList(gtk.VBox, Loggable):
             self._progressbar.set_fraction((current_clip_iter - 1) / float(total_clips))
 
     def _addDiscovererInfo(self, info):
-        #FIXME GES port reimplement thunbnails
-        #video = factory.getOutputStreams()
-        #if video and video[0].thumbnail:
-            #thumbnail_file = video[0].thumbnail
-            #try:
-                #self.debug("attempting to open thumbnail file '%s'",
-                        #thumbnail_file)
-                #pixbuf = gtk.gdk.pixbuf_new_from_file(thumbnail_file)
-            #except:
-                #self.error("Failure to create thumbnail from file '%s'",
-                        #thumbnail_file)
-                #thumbnail = self.videofilepixbuf
-                #thumbnail_large = self.videofilepixbuf
-            #else:
-                #desiredheight = int(64 / float(video[0].dar))
-                #thumbnail = pixbuf.scale_simple(64,
-                        #desiredheight, gtk.gdk.INTERP_BILINEAR)
-                #desiredheight = int(96 / float(video[0].dar))
-                #thumbnail_large = pixbuf.scale_simple(96,
-                        #desiredheight, gtk.gdk.INTERP_BILINEAR)
-        #else:
+        # The code below tries to read existing thumbnails from the freedesktop
+        # thumbnails directory (~/.thumbnails). The filenames are simply
+        # the file URI hashed with md5, so we can retrieve them easily.
         if [i for i in info.get_stream_list() if\
             isinstance(i, gst.pbutils.DiscovererVideoInfo)]:
-            thumbnail = self.videofilepixbuf
-            thumbnail_large = self.videofilepixbuf
+            thumbnail_hash = md5(info.get_uri()).hexdigest()
+            thumb_dir = os.path.expanduser("~/.thumbnails/")
+            thumb_path_normal = thumb_dir + "normal/" + thumbnail_hash + ".png"
+            thumb_path_large = thumb_dir + "large/" + thumbnail_hash + ".png"
+            # Pitivi used to consider 64 pixels as normal and 96 as large
+            # However, the fdo spec specifies 128 as normal and 256 as large.
+            # We will thus simply use the "normal" size and scale it down.
+            try:
+                thumbnail = gtk.gdk.pixbuf_new_from_file(thumb_path_normal)
+                thumbnail_large = thumbnail
+                thumbnail_height = int(thumbnail.get_height() / 2)
+                thumbnail = thumbnail.scale_simple(64, thumbnail_height, \
+                    gtk.gdk.INTERP_BILINEAR)
+            except:
+                # TODO gst discoverer should create missing thumbnails.
+                thumbnail = self.videofilepixbuf
+                thumbnail_large = thumbnail
         else:
             thumbnail = self.audiofilepixbuf
             thumbnail_large = self.audiofilepixbuf
