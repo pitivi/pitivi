@@ -22,17 +22,15 @@
 import platform
 import gobject
 import gtk
-from gtk import gdk
 import gst
-from math import pi
 import cairo
 
 from gettext import gettext as _
 
-from pitivi.utils import time_to_string, togglePlayback
 from pitivi.log.loggable import Loggable
-from pitivi.ui.common import SPACING, hex_to_rgb
 from pitivi.settings import GlobalSettings
+from pitivi.utils import togglePlayback
+from pitivi.ui.common import SPACING, hex_to_rgb
 from pitivi.ui.dynamic import TimeWidget
 
 GlobalSettings.addConfigSection("viewer")
@@ -318,7 +316,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         bbox.pack_start(self.timecode_entry, expand=False, padding=10)
         self._haveUI = True
 
-        screen = gdk.screen_get_default()
+        screen = gtk.gdk.screen_get_default()
         height = screen.get_height()
         if height >= 800:
             # show the controls and force the aspect frame to have at least the same
@@ -429,10 +427,13 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _goToEndCb(self, unused_button):
         try:
-            dur = self.pipeline.getDuration()
-            self.seek(dur - 1)
+            end = self.app.current.timeline.props.duration
         except:
-            self.warning("couldn't get duration")
+            self.warning("Couldn't get timeline duration")
+        try:
+            self.seek(end)
+        except:
+            self.warning("Couldn't seek to the end of the timeline")
 
     ## Callback for jumping to a specific timecode
 
