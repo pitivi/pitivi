@@ -206,7 +206,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.debug("action: %r", action)
         # not sure what we need to do ...
         self.action = action
-        dar = float(4 / 3)
+        dar = 16.0 / 9
         try:
             producer = action.producers[0]
             self.debug("producer:%r", producer)
@@ -218,7 +218,7 @@ class PitiviViewer(gtk.VBox, Loggable):
                     dar = stream.dar
                     continue
         except:
-            dar = float(4 / 3)
+            self.debug("Could not get the stream's aspect ratio")
         self.setDisplayAspectRatio(dar)
         self.showControls()
 
@@ -251,7 +251,8 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _createUi(self):
         """ Creates the Viewer GUI """
-        # drawing area
+        # Drawing area
+        # The aspect ratio gets overridden on startup by setDisplayAspectRatio
         self.aframe = gtk.AspectFrame(xalign=0.5, yalign=1.0, ratio=4.0 / 3.0,
                                       obey_child=False)
 
