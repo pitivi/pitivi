@@ -229,7 +229,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.debug("active %r", active)
         self.set_sensitive(active)
         if self._haveUI:
-            for item in [self.slider, self.goToStart_button, self.back_button,
+            for item in [self.goToStart_button, self.back_button,
                          self.playpause_button, self.forward_button,
                          self.goToEnd_button, self.timecode_entry]:
                 item.set_sensitive(active)
@@ -273,17 +273,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             self._externalWindowConfigureCb)
         self.external_vbox = vbox
         self.external_vbox.show_all()
-
-        # Slider
-        self.posadjust = gtk.Adjustment()
-        self.slider = gtk.HScale(self.posadjust)
-        self.slider.set_draw_value(False)
-        self.slider.connect("button-press-event", self._sliderButtonPressCb)
-        self.slider.connect("button-release-event", self._sliderButtonReleaseCb)
-        self.slider.connect("scroll-event", self._sliderScrollCb)
-        self.pack_start(self.slider, expand=False)
-        self.moving_slider = False
-        self.slider.set_sensitive(False)
 
         # Buttons/Controls
         bbox = gtk.HBox()
@@ -340,15 +329,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.aframe.set_size_request(width, height)
         self.show_all()
         self.buttons = boxalign
-        self.hideSlider()
-
-    def showSlider(self):
-        self._showingSlider = True
-        self.slider.show()
-
-    def hideSlider(self):
-        self._showingSlider = False
-        self.slider.hide()
 
     def showControls(self):
         if not self.action:
@@ -359,15 +339,12 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.playpause_button.show()
             self.forward_button.show()
             self.goToEnd_button.show()
-            if self._showingSlider:
-                self.slider.show()
         else:
             self.goToStart_button.hide()
             self.back_button.hide()
             self.playpause_button.hide()
             self.forward_button.hide()
             self.goToEnd_button.hide()
-            self.slider.hide()
 
     def setDisplayAspectRatio(self, ratio):
         """
@@ -382,8 +359,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         except:
             self.warning("could not set ratio !")
 
-    ## gtk.HScale callbacks for self.slider
-
     def _entryFocusInCb(self, entry, event):
         sensitive_actions = self.app.gui.sensitive_actions
         self.app.gui.setActionsSensitive(sensitive_actions, False)
@@ -394,44 +369,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.app.gui.setActionsSensitive(sensitive_actions, True)
         self.app.gui.setActionsSensitive(['DeleteObj'], True)
 
-    def _sliderButtonPressCb(self, slider, event):
-        # borrow totem hack for seek-on-click behavior
-        event.button = 2
-        self.info("button pressed")
-        self.moving_slider = True
-        self.valuechangedid = slider.connect("value-changed", self._sliderValueChangedCb)
-        self.pipeline.set_state(gst.STATE_PAUSED)
-        return False
-
-    def _sliderButtonReleaseCb(self, slider, event):
-        # borrow totem hack for seek-on-click behavior
-        event.button = 2
-        self.info("slider button release at %s", time_to_string(long(slider.get_value())))
-        self.moving_slider = False
-        if self.valuechangedid:
-            slider.disconnect(self.valuechangedid)
-            self.valuechangedid = 0
-        # revert to previous state
-        if self.currentState == gst.STATE_PAUSED:
-            self.pipeline.set_state(gst.STATE_PAUSED)
-        else:
-            self.pipeline.set_state(gst.STATE_PLAYING)
-        return False
-
-    def _sliderValueChangedCb(self, slider):
-        """ seeks when the value of the slider has changed """
-        value = long(slider.get_value())
-        self.info(gst.TIME_ARGS(value))
-        if self.moving_slider:
-            self.seek(value)
-
-    def _sliderScrollCb(self, unused_slider, event):
-        if event.direction == gtk.gdk.SCROLL_LEFT:
-            amount = - gst.SECOND
-        else:
-            amount = gst.SECOND
-        self.seekRelative(amount)
-
     def seek(self, position, format=gst.FORMAT_TIME):
         self.seeker.seek(position, format)
 
@@ -440,12 +377,8 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.current_time = value
         self.current_frame = frame
         self.timecode_entry.setWidgetValue(value, False)
-
         position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
         self.seeker.setPosition(position)
-
-        if not self.moving_slider:
-            self.posadjust.set_value(float(value))
         return False
 
     ## active Timeline calllbacks
@@ -531,8 +464,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.undock_action.set_label(_("Dock Viewer"))
 
         self.remove(self.buttons)
-        self.remove(self.slider)
-        self.external_vbox.pack_end(self.slider, False, False)
         self.external_vbox.pack_end(self.buttons, False, False)
         self.external_window.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_UTILITY)
         self.external_window.show()
@@ -557,9 +488,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.undock_action.set_label(_("Undock Viewer"))
 
         self.target = self.internal
-        self.external_vbox.remove(self.slider)
         self.external_vbox.remove(self.buttons)
-        self.pack_end(self.slider, False, False)
         self.pack_end(self.buttons, False, False)
         self.show()
         # if we are playing, switch output immediately
