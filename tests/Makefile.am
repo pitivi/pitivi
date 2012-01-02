@@ -11,7 +11,9 @@ tests = \
 	test_signallable.py \
 	test_timeline_undo.py \
 	test_undo.py \
-	test_utils.py
+	test_utils.py \
+	test_system.py \
+	test_system_gnome.py
 
 integration_tests = \
 	test_integration.py \

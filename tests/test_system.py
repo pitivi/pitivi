@@ -1,6 +1,7 @@
 from unittest import TestCase
 from pitivi.system import System
 
+
 class TestSystem(TestCase):
     def setUp(self):
         self.system = System()
@@ -21,9 +22,9 @@ class TestSystem(TestCase):
             self.system.inhibitScreensaver(str(c))
             self.assertTrue(self.system.screensaverIsInhibited(str(c)))
 
-        for c in range (0, 5):
+        for c in range(0, 5):
             self.system.uninhibitScreensaver(str(c))
-            self.assertTrue(not self.system.screensaverIsInhibited(str(c))) 
+            self.assertTrue(not self.system.screensaverIsInhibited(str(c)))
 
         self.assertTrue(not self.system.screensaverIsInhibited())
 
@@ -43,7 +44,7 @@ class TestSystem(TestCase):
             self.system.inhibitSleep(str(c))
             self.assertTrue(self.system.sleepIsInhibited(str(c)))
 
-        for c in range (0, 5):
+        for c in range(0, 5):
             self.system.uninhibitSleep(str(c))
             self.assertTrue(not self.system.sleepIsInhibited(str(c)))
 
