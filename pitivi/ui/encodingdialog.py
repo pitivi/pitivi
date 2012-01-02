@@ -142,8 +142,10 @@ class EncodingProgressDialog(Signallable):
     def setState(self, state):
         if state == gst.STATE_PLAYING:
             self.play_pause_button.props.label = gtk.STOCK_MEDIA_PAUSE
+            self.system.inhibitSleep(EncodingDialog.INHIBIT_REASON)
         else:
             self.play_pause_button.props.label = 'pitivi-render'
+            self.system.uninhibitSleep(EncodingDialog.INHIBIT_REASON)
 
     def _cancelButtonClickedCb(self, unused_button):
         self.emit("cancel")
@@ -224,7 +226,6 @@ class EncodingDialog(Loggable):
         self._displayRenderSettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
-        self.pipeline.connect("state-changed", self._pipelineStateChangedCb)
         self.settings.connect("settings-changed", self._settingsChanged)
 
         # Monitor changes
@@ -566,12 +567,6 @@ class EncodingDialog(Loggable):
         self.sample_rate_combo.set_model(audio_rates)
         self.sample_depth_combo.set_model(audio_depths)
         self.muxercombobox.set_model(factorylist(ExportSettings.muxers))
-
-    def _pipelineStateChangedCb(self, pipeline, state):
-        if state == gst.STATE_PLAYING:
-            self.system.inhibitSleep(EncodingDialog.INHIBIT_REASON)
-        else:
-            self.system.uninhibitSleep(EncodingDialog.INHIBIT_REASON)
 
     def _displaySettings(self):
         """Display the settings that also change in the ProjectSettingsDialog.
