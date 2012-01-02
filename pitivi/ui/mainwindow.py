@@ -1149,8 +1149,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
             elif position >= self.timeline.getDuration():
                 position = self.timeline.getDuration()
 
-            self.project_pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
-                    gst.SEEK_TYPE_SET, position, gst.SEEK_TYPE_NONE, -1)
+            if not self.project_pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
+                    gst.SEEK_TYPE_SET, position, gst.SEEK_TYPE_NONE, -1):
+                self.warning("Could not seek to %s", gst.TIME_ARGS(position))
 
             self._seeker.setPosition(position)
 
