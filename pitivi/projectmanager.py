@@ -22,6 +22,7 @@
 import gobject
 import os
 import ges
+import gio
 
 from gettext import gettext as _
 from urlparse import urlparse
@@ -100,11 +101,11 @@ class ProjectManager(Signallable, Loggable):
         self.timeline = self.current.timeline
         self.formatter = ges.PitiviFormatter()
 
+        self.formatter.connect("source-moved", self._formatterMissingURICb)
         if self.formatter.load_from_uri(self.timeline, uri):
             self.current.connect("project-changed", self._projectChangedCb)
             self.emit("new-project-loaded", self.current)
-            #FIXME GES hack to make sure sources are added to the sourcelist
-            self.current.loadSources()
+            self.current.sources.addUris(self.formatter.get_sources())
 
     def saveProject(self, project, uri=None, overwrite=False, formatter=None, backup=False):
         """
@@ -126,24 +127,22 @@ class ProjectManager(Signallable, Loggable):
 
         @see: L{Formatter.saveProject}
         """
-        #if formatter is None:
-            #if project.format:
-                #formatter = project.format
-            #else:
-        formatter = ges.PitiviFormatter()
+        if formatter is None:
+            formatter = ges.PitiviFormatter()
 
         if uri is None:
-            if project.uri is None:
-                self.emit("save-project-failed", project, uri)
-                        #FIXME GES port break
-                        #FormatterSaveError(_("No URI specified.")))
-                return
-
             uri = project.uri
 
-        #FIXME Implement when avalaible in GES
-        #self._connectToFormatter(formatter)
-        return formatter.save_to_uri(project.timeline, uri)
+        if uri is None or not ges.formatter_can_save_uri(uri):
+            self.emit("save-project-failed", project, uri)
+            return
+
+        # FIXME Using query_exist is not the best thing to do, but makes
+        # the trick for now
+        file = gio.File(uri)
+        if overwrite or not file.query_exist():
+            formatter.set_sources(project.sources.getSources())
+            return formatter.save_to_uri(project.timeline, uri)
 
     def closeRunningProject(self):
         """ close the current project """
@@ -252,52 +251,5 @@ class ProjectManager(Signallable, Loggable):
             return name + ext + "~"
         return None
 
-    ###
-    #FIXME reimplement with GES
-    ###
-    def _connectToFormatter(self, formatter):
-        formatter.connect("missing-uri", self._formatterMissingURICb)
-        formatter.connect("new-project-created",
-                self._formatterNewProjectCreated)
-        formatter.connect("new-project-loaded",
-                self._formatterNewProjectLoaded)
-        formatter.connect("new-project-failed",
-                self._formatterNewProjectFailed)
-        formatter.connect("save-project-failed",
-                self._formatterSaveProjectFailed)
-        formatter.connect("project-saved",
-                self._formatterProjectSaved)
-
-    def _disconnectFromFormatter(self, formatter):
-        formatter.disconnect_by_function(self._formatterMissingURICb)
-        formatter.disconnect_by_function(self._formatterNewProjectCreated)
-        formatter.disconnect_by_function(self._formatterNewProjectLoaded)
-        formatter.disconnect_by_function(self._formatterNewProjectFailed)
-        formatter.disconnect_by_function(self._formatterSaveProjectFailed)
-        formatter.disconnect_by_function(self._formatterProjectSaved)
-
-    def _formatterNewProjectCreated(self, formatter, project):
-        self.emit("new-project-created", project)
-
-    def _formatterNewProjectLoaded(self, formatter, project):
-        self._disconnectFromFormatter(formatter)
-
-        self.current = project
-        project.connect("project-changed", self._projectChangedCb)
-        self.emit("new-project-loaded", project)
-
-    def _formatterNewProjectFailed(self, formatter, uri, exception):
-        self._disconnectFromFormatter(formatter)
-        self.current = None
-        self.emit("new-project-failed", uri, exception)
-
-    def _formatterMissingURICb(self, formatter, uri, factory):
-        return self.emit("missing-uri", formatter, uri, factory)
-
-    def _formatterSaveProjectFailed(self, formatter, project, uri, exception):
-        self._disconnectFromFormatter(formatter)
-        self.emit("save-project-failed", project, uri, exception)
-
-    def _formatterProjectSaved(self, formatter, project, uri):
-        self._disconnectFromFormatter(formatter)
-        self.emit("project-saved", project, uri)
+    def _formatterMissingURICb(self, formatter, tfs):
+        return self.emit("missing-uri", formatter, tfs)

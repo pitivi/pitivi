@@ -726,7 +726,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.log("A NEW project is being loaded, deactivate UI")
 
     def _projectManagerSaveProjectFailedCb(self, projectManager,
-            project, uri, exception):
+            project, uri):
         # FIXME: do something here
         self.error("failed to save project")
 
@@ -845,7 +845,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.destroy()
         self.set_sensitive(True)
 
-    def _projectManagerMissingUriCb(self, instance, formatter, uri, info):
+    def _projectManagerMissingUriCb(self, instance, formatter, tfs):
         dialog = gtk.Dialog(_("Locate missing file..."),
             self,
             gtk.DIALOG_MODAL,
@@ -856,17 +856,23 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.get_content_area().set_spacing(SPACING)
         dialog.set_transient_for(self)
 
+        # FIXME GES port, help user identify files with more information
+        # need work to be done in GES directly
         # TODO: display the filesize to help the user identify the file
-        if info.get_duration() == gst.CLOCK_TIME_NONE:
-            # The file is probably an image, not video or audio.
-            text = _('The following file has moved: "<b>%s</b>"'
-                     '\nPlease specify its new location:'
-                     % info_name(info))
-        else:
-            length = beautify_length(info.get_duration())
-            text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
-                     '\nPlease specify its new location:'
-                     % (info_name(info), length))
+        #if info.get_duration() == gst.CLOCK_TIME_NONE:
+            ## The file is probably an image, not video or audio.
+            #text = _('The following file has moved: "<b>%s</b>"'
+                     #'\nPlease specify its new location:'
+                     #% info_name(info))
+        #else:
+            #length = beautify_length(info.get_duration())
+            #text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
+                     #'\nPlease specify its new location:'
+                     #% (info_name(info), length))
+
+        text = _('The following file has moved: "<b>%s</b>"'
+                 '\nPlease specify its new location:'
+                 % info_name(tfs))
 
         label = gtk.Label()
         label.set_markup(text)
@@ -890,9 +896,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         if response == gtk.RESPONSE_OK:
             self.log("User chose a new URI for the missing file")
-            new = chooser.get_uri()
-            if new:
-                formatter.addMapping(uri, unquote(new))
+            new_uri = chooser.get_uri()
+            if new_uri:
+                self.project.sources.addUri(new_uri)
+                formatter.update_source_uri(tfs, new_uri)
                 self._missingUriOnLoading = True
         else:
             self.log("User didn't choose a URI for the missing file")
@@ -942,15 +949,25 @@ class PitiviMainWindow(gtk.Window, Loggable):
 ## PiTiVi current project callbacks
 
     def _setProject(self, project):
-        self.project = project
         if self.project:
+            self.project.disconnect_by_func(self._settingsChangedCb)
+
+        if project:
+            self.project = project
             self.project_pipeline = self.project.pipeline
             self.project_timeline = self.project.timeline
             self.viewer.setPipeline(project.pipeline)
+            self._settingsChangedCb(project, None, project.settings)
             if self.timeline:
                 self.timeline.setProject(self.project)
                 self.clipconfig.project = self.project
+                #FIXME GES port undo/redo
                 #self.app.timelineLogObserver.pipeline = self.project.pipeline
+            self.project.connect("settings-changed", self._settingsChangedCb)
+
+    def _settingsChangedCb(self, project, old, new):
+        self.viewer.setDisplayAspectRatio(float(new.videopar * new.videowidth) /\
+                float(new.videoheight))
 
     def _sourceListMissingPluginsCb(self, project, uri, factory,
             details, descriptions, missingPluginsCallback):

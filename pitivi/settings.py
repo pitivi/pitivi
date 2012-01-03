@@ -319,30 +319,9 @@ class GlobalSettings(Signallable):
         cls.options[section] = {}
 
 
-class RenderSettings(object):
+class MultimediaSettings(Signallable, Loggable):
     """
-    Settings for rendering and multiplexing one or multiple streams.
-
-    @cvar settings: Ordered list of encoding stream settings.
-    @type settings: List of L{StreamEncodeSettings}
-    @cvar muxer: Name of the muxer to use.
-    @type muxer: C{str}
-    @cvar muxersettings: Muxer-specific settings.
-    @type muxersettings: C{dict}
-    """
-
-    def __init__(self, settings=[], muxer=None, muxersettings={}):
-        self.settings = settings
-        self.muxer = muxer
-        self.muxersettings = muxersettings
-
-    def __str__(self):
-        return "<RenderSettings %s [%d streams]>" % (self.muxer, len(self.settings))
-
-
-class ExportSettings(Signallable, Loggable):
-    """
-    Multimedia export settings
+    Multimedia encoding and previewing settings
 
     Signals:
     'settings-changed' : the settings have changed
@@ -385,7 +364,7 @@ class ExportSettings(Signallable, Loggable):
         self._acodecsettings_cache = {}
 
     def copy(self):
-        ret = ExportSettings()
+        ret = MultimediaSettings()
         ret.videowidth = self.videowidth
         ret.videoheight = self.videoheight
         ret.render_scale = self.render_scale

@@ -23,13 +23,13 @@
 Project class
 """
 
-import gst
 import ges
+import gst
 
 from pitivi.utils import Seeker
 from pitivi.log.loggable import Loggable
 from pitivi.sourcelist import SourceList
-from pitivi.settings import ExportSettings
+from pitivi.settings import MultimediaSettings
 from pitivi.signalinterface import Signallable
 from pitivi.timeline.timeline import Selection
 
@@ -93,12 +93,22 @@ class Project(Signallable, Loggable):
         self.timeline.selection = Selection()
 
         self.pipeline = ges.TimelinePipeline()
-        self.pipeline._setUp = False
         self.pipeline.add_timeline(self.timeline)
         self.seeker = Seeker(80)
 
-        self.settings = ExportSettings()
-        self._videocaps = self.settings.getVideoCaps()
+        self.settings = MultimediaSettings()
+
+    def getUri(self):
+        return self._uri
+
+    def setUri(self, uri):
+        # FIXME support not local project
+        if uri and not gst.uri_has_protocol(uri, "file"):
+            self._uri = gst.uri_construct("file", uri)
+        else:
+            self._uri = uri
+
+    uri = property(getUri, setUri)
 
     def release(self):
         self.pipeline = None
@@ -116,14 +126,14 @@ class Project(Signallable, Loggable):
         """
         Sets the given settings as the project's settings.
         @param settings: The new settings for the project.
-        @type settings: ExportSettings
+        @type settings: MultimediaSettings
         """
         assert settings
         self.log("Setting %s as the project's settings", settings)
         oldsettings = self.settings
         self.settings = settings
-        self._projectSettingsChanged()
         self.emit('settings-changed', oldsettings, settings)
+        self.seeker.flush()
 
     #}
 
@@ -136,16 +146,3 @@ class Project(Signallable, Loggable):
 
     def hasUnsavedModifications(self):
         return self._dirty
-
-    def _projectSettingsChanged(self):
-        settings = self.getSettings()
-        self._videocaps = settings.getVideoCaps()
-
-        if self.pipeline.get_state() != gst.STATE_NULL:
-            self.pipeline.set_state(gst.STATE_READY)
-            self.pipeline.set_state(gst.STATE_PAUSED)
-
-    def loadSources(self):
-        for layer in self.timeline.get_layers():
-            for obj in layer.get_objects():
-                self.sources.addUri(obj.get_uri())

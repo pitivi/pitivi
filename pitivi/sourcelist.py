@@ -124,11 +124,6 @@ class SourceList(Signallable, Loggable):
             assert info is None
         self.emit("source-removed", uri, info)
 
-    def _newProjectLoadedCb(self, unused_pitivi, project):
-        for layer in project.timeline.get_layers():
-            for obj in layer.get_objects():
-                self.addUri(obj.get_uri())
-
     def getInfoFromUri(self, uri):
         """
         Get the source corresponding to C{uri}.

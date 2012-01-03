@@ -34,7 +34,7 @@ from gettext import gettext as _
 
 from pitivi import configure
 from pitivi.utils import togglePlayback, Seeker, beautify_ETA
-from pitivi.settings import ExportSettings
+from pitivi.settings import MultimediaSettings
 from pitivi.signalinterface import Signallable
 
 from pitivi.log.loggable import Loggable
@@ -162,7 +162,7 @@ class EncodingDialog(Loggable):
     @ivar preferred_vencoder: The last video encoder selected by the user.
     @type preferred_vencoder: str
     @ivar settings: The settings used for rendering.
-    @type settings: ExportSettings
+    @type settings: MultimediaSettings
     """
     INHIBIT_REASON = _("Currently rendering media")
 
@@ -566,7 +566,7 @@ class EncodingDialog(Loggable):
         self.channels_combo.set_model(audio_channels)
         self.sample_rate_combo.set_model(audio_rates)
         self.sample_depth_combo.set_model(audio_depths)
-        self.muxercombobox.set_model(factorylist(ExportSettings.muxers))
+        self.muxercombobox.set_model(factorylist(MultimediaSettings.muxers))
 
     def _displaySettings(self):
         """Display the settings that also change in the ProjectSettingsDialog.
@@ -652,7 +652,7 @@ class EncodingDialog(Loggable):
 
         @param factory: An element factory whose properties the user will edit.
         @type factory: gst.ElementFactory
-        @param settings_attr: The ExportSettings attribute holding
+        @param settings_attr: The MultimediaSettings attribute holding
         the properties.
         @type settings_attr: str
         """
