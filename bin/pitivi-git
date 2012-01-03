@@ -62,9 +62,7 @@ if test ! -e $PITIVI; then
     #Get pitivi \
     git clone git://git.pitivi.org/git/pitivi.git &&\
     cd pitivi && \
-    git remote add thiblahute git://github.com/thiblahute/Pitivi.git &&\
-    git remote update thiblahute &&\
-    git checkout ges-port && ./autogen.sh && make
+    git checkout ges && ./autogen.sh && make
 fi
 
 ## if we got a command, run it, else start a shell
