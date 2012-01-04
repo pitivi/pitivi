@@ -113,6 +113,7 @@ class EncodingProgressDialog(Signallable):
 
     def __init__(self, app, parent):
         self.app = app
+        self.system = app.app.system
         self.builder = gtk.Builder()
         self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
             "encodingprogress.ui"))
