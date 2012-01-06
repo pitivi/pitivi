@@ -45,9 +45,7 @@ class System(Signallable, Loggable):
         self._screensaver_keys = []
         self._sleep_keys = []
 
-
     #generic functions
-
     def _inhibit(self, list_, key):
         is_blocked = self._isInhibited(list_, key)
 
@@ -92,9 +90,7 @@ class System(Signallable, Loggable):
 
         return False
 
-
     #screensaver
-
     def inhibitScreensaver(self, key):
         """increase screensaver inhibitor count
         @arg key: C{str} a unique translated string, giving the reason for
@@ -125,9 +121,7 @@ class System(Signallable, Loggable):
     def screensaverIsBlockable(self):
         return False
 
-
     # sleep
-
     def inhibitSleep(self, key):
         """increase sleep inhibitor count
         @arg key: C{str} a unique translated string, giving the reason for
@@ -158,22 +152,20 @@ class System(Signallable, Loggable):
     def sleepIsBlockable(self):
         return False
 
-
     # other
-
     def uninhibitAll(self):
         self._reset()
         self.emit('update-power-inhibition')
         pass
 
-    def desktopMessage(title, message, icon=None):
+    def desktopMessage(self, title, message, icon=None):
         """send a message to the desktop to be displayed to the user
         @arg title: C{str} the title of the message
         @arg message: C{str} the body of the message
         @arg icon: C{gtk.gdk.Pixbuf} icon to be shown with the message
         """
         self.debug("desktopMessage(): %s, %s" \
-            % key % message)
+            % title % message)
         pass
 
     def desktopIsMessageable():
@@ -185,7 +177,8 @@ class FreedesktopOrgSystem(System):
 
     def __init__(self):
         System.__init__(self)
-        pynotify.init(APPNAME)
+        # FIXME Notifications disabled for the time being
+        # pynotify.init(APPNAME)
 
     def desktopIsMesageable(self):
         return True
@@ -193,11 +186,12 @@ class FreedesktopOrgSystem(System):
     def desktopMessage(self, title, message, icon=None):
         #call super method for consistent logging
         System.desktopMessage(title, message, icon)
-        notification = pynotify.Notification(title, message)
-        if icon != None and isinstance(icon, gtk.gdk.Pixbuf):
-            notification.set_icon_from_pixbuf(icon)
 
-        notification.show()
+        # FIXME Notifications disabled for the time being
+        #notification = pynotify.Notification(title, message)
+        #if icon != None and isinstance(icon, gtk.gdk.Pixbuf):
+            #notification.set_icon_from_pixbuf(icon)
+        #notification.show()
 
 
 #org.gnome.SessionManager flags
@@ -209,6 +203,7 @@ INHIBIT_SESSION_IDLE = 8
 COOKIE_NONE = 0
 COOKIE_SCREENSAVER = 1
 COOKIE_SLEEP = 2
+
 
 class GnomeSystem(FreedesktopOrgSystem):
     def __init__(self):
@@ -281,17 +276,19 @@ system_ = None
 if os.name == 'posix':
     if 'GNOME_DESKTOP_SESSION_ID' in os.environ:
         try:
-            import pynotify
+            # FIXME Disable notifications for the time being as it causes
+            # various errors and the implementation is not done yet
+            #import pynotify
             import dbus
-            pynotify.init(APPNAME)
             system_ = GnomeSystem
         except:
             pass
 
     if  system_ == None:
         try:
-            import pynotify
-            pynotify.init(APPNAME)
+            # FIXME Disable notifications for the time being as it causes
+            # various errors and the implementation is not done yet
+            # import pynotify
             system_ = FreedesktopOrgSystem
         except:
             pass
