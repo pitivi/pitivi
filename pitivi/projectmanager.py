@@ -249,7 +249,7 @@ class ProjectManager(Signallable, Loggable):
     def _makeBackupURI(self, uri):
         name, ext = os.path.splitext(uri)
         if ext == '.xptv':
-            return name + "~" + ext
+            return name + ext + "~"
         return None
 
     ###
