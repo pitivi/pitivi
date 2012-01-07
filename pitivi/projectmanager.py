@@ -102,10 +102,9 @@ class ProjectManager(Signallable, Loggable):
         self.formatter = ges.PitiviFormatter()
 
         self.formatter.connect("source-moved", self._formatterMissingURICb)
+        self.formatter.connect("loaded", self._projectLoadedCb)
         if self.formatter.load_from_uri(self.timeline, uri):
             self.current.connect("project-changed", self._projectChangedCb)
-            self.emit("new-project-loaded", self.current)
-            self.current.sources.addUris(self.formatter.get_sources())
 
     def saveProject(self, project, uri=None, overwrite=False, formatter=None, backup=False):
         """
@@ -253,3 +252,8 @@ class ProjectManager(Signallable, Loggable):
 
     def _formatterMissingURICb(self, formatter, tfs):
         return self.emit("missing-uri", formatter, tfs)
+
+    def _projectLoadedCb(self, formatter, timeline):
+        self.debug("Project Loaded")
+        self.emit("new-project-loaded", self.current)
+        self.current.sources.addUris(self.formatter.get_sources())

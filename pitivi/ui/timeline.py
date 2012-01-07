@@ -744,6 +744,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # Make sure to set the current layer in use
         self._layerAddedCb(None, None)
+        self.setDuration()
 
     def getTimeline(self):
         return self._timeline
