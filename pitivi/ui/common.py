@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-from pitivi.settings import GlobalSettings
-import cairo
-from xml.sax.saxutils import escape
-from urllib import unquote
-from gettext import gettext as _
-from gettext import ngettext
 import gst
 import gtk
 import os
+import cairo
+
+from xml.sax.saxutils import escape
+from urllib import unquote
+from gettext import ngettext
+
+from gettext import gettext as _
+
+from pitivi.settings import GlobalSettings
+from pitivi.log.log import doLog, ERROR
 
 GlobalSettings.addConfigSection("user-interface")
 LAYER_HEIGHT_EXPANDED = 50
@@ -103,8 +107,16 @@ def beautify_info(info):
         return ranks[type(stream)]
 
     info.get_stream_list().sort(key=stream_sort_key)
+    nice_streams_txts = []
+    for stream in info.get_stream_list():
+        try:
+            beautifull = beautify_stream(stream)
+            nice_streams_txts.append(beautifull)
+        except NotImplementedError:
+            doLog(ERROR, "Beautify", "None", "Cannot beautify %s", stream)
+
     return ("<b>" + info_name(info) + "</b>\n" +
-        "\n".join((beautify_stream(stream) for stream in info.get_stream_list())))
+        "\n".join((nice for nice in nice_streams_txts)))
 
 
 def info_name(info):
@@ -136,6 +148,7 @@ def beautify_stream(stream):
     elif type(stream) == gst.pbutils.DiscovererStreamInfo and\
              "text" in  stream.get_caps().to_string():
         return _("Subtitles")
+
     raise NotImplementedError
 
 
