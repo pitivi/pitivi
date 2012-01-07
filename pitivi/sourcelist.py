@@ -106,6 +106,7 @@ class SourceList(Signallable, Loggable):
         self.nb_imported_files = 0
         for uri in uris:
             self.addUri(uri)
+        self.debug("Adding %s", uris)
         self.emit("ready")
 
     def removeUri(self, uri):
@@ -122,6 +123,8 @@ class SourceList(Signallable, Loggable):
             # this can only happen if discoverer hasn't finished scanning the
             # source, so info must be None
             assert info is None
+
+        self.debug("Removing %s", uri)
         self.emit("source-removed", uri, info)
 
     def getInfoFromUri(self, uri):

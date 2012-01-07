@@ -723,7 +723,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
         if uri != None:
             self.manager.add_item(uri)
-        self.log("A NEW project is being loaded, deactivate UI")
+        self.log("A NEW project is being loading, deactivate UI")
 
     def _projectManagerSaveProjectFailedCb(self, projectManager,
             project, uri):

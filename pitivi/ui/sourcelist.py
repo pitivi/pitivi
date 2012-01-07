@@ -666,6 +666,7 @@ class SourceList(gtk.VBox, Loggable):
         if not len(model):
             self._displayHelpText()
             self.search_hbox.hide()
+        self.debug("Removing %s", uri)
 
     def _discoveryErrorCb(self, unused_sourcelist, uri, reason, extra):
         """ The given uri isn't a media file """
