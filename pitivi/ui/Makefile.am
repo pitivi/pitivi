@@ -6,7 +6,6 @@ ui_PYTHON =			\
 	controller.py		\
 	curve.py		\
 	depsmanager.py	\
-	encodingdialog.py	\
 	filelisterrordialog.py	\
 	mainwindow.py		\
 	prefs.py		\
