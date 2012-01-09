@@ -22,7 +22,6 @@ ui_PYTHON =			\
 	ripple_update_group.py	\
 	basetabs.py		\
 	ruler.py		\
-	sourcelist.py		\
 	startupwizard.py 	\
 	timelinecanvas.py	\
 	timelinecontrols.py	\

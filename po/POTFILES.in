@@ -18,7 +18,7 @@ pitivi/effects.py
 pitivi/projectmanager.py
 pitivi/project.py
 pitivi/settings.py
-pitivi/ui/alignmentprogress.py
+pitivi/sourcelist.py
 pitivi/ui/basetabs.py
 pitivi/ui/clipproperties.py
 pitivi/ui/dynamic.py
@@ -33,7 +33,6 @@ pitivi/ui/mainwindow.py
 pitivi/ui/prefs.py
 pitivi/ui/previewer.py
 pitivi/ui/projectsettings.py
-pitivi/ui/sourcelist.py
 pitivi/ui/startupwizard.py
 pitivi/ui/timelinecanvas.py
 pitivi/ui/timelinecontrols.py

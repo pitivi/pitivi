@@ -37,7 +37,6 @@ from gtk import RecentManager
 
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
-from pitivi.sourcelist import SourceListError
 
 from pitivi.utils.misc import show_user_manual
 from pitivi.utils.ui import SPACING, info_name, FILESOURCE_TUPLE, URI_TUPLE, \
@@ -46,7 +45,7 @@ from pitivi.utils.ui import SPACING, info_name, FILESOURCE_TUPLE, URI_TUPLE, \
 from pitivi.ui.timeline import Timeline
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
-from pitivi.ui.sourcelist import SourceList
+from pitivi.sourcelist import SourceListWidget, SourceListError
 from pitivi.ui.effectlist import EffectList
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.clipproperties import ClipProperties
@@ -376,7 +375,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         self.projecttabs = BaseTabs(instance)
 
-        self.sourcelist = SourceList(instance, self.uimanager)
+        self.sourcelist = SourceListWidget(instance, self.uimanager)
         self.projecttabs.append_page(self.sourcelist, gtk.Label(_("Media Library")))
         self._connectToSourceList()
         self.sourcelist.show()
