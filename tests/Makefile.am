@@ -13,6 +13,7 @@ tests = \
 	test_undo.py \
 	test_utils.py \
 	test_system.py \
+	test_log.py \
 	test_system_gnome.py
 
 integration_tests = \

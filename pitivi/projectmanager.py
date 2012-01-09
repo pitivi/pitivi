@@ -30,7 +30,7 @@ from pwd import getpwuid
 
 from pitivi.project import Project
 from pitivi.signalinterface import Signallable
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.undo.undo import UndoableAction
 
 

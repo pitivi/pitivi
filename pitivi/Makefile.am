@@ -1,8 +1,7 @@
 SUBDIRS = \
 	ui 		\
 	utils	\
-	undo	\
-	log
+	undo
 
 pitividir = $(libdir)/pitivi/python/pitivi
 

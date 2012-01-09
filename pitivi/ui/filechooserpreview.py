@@ -5,7 +5,7 @@ import gtk
 import pango
 import os
 
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.ui.common import beautify_stream
 from pitivi.utils.misc import beautify_length, uri_is_valid
 from pitivi.configure import get_pixmap_dir

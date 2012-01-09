@@ -37,7 +37,7 @@ from pitivi.utils.misc import togglePlayback, Seeker, beautify_ETA
 from pitivi.settings import MultimediaSettings
 from pitivi.signalinterface import Signallable
 
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.ui.gstwidget import GstElementSettingsDialog
 from pitivi.ui.ripple_update_group import RippleUpdateGroup
 from pitivi.ui.common import model, frame_rates, audio_rates, audio_depths, \

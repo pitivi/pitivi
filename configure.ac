@@ -87,7 +87,6 @@ help/Makefile
 pitivi/Makefile
 pitivi/configure.py
 pitivi/ui/Makefile
-pitivi/log/Makefile
 pitivi/undo/Makefile
 pitivi/utils/Makefile
 pitivi.spec

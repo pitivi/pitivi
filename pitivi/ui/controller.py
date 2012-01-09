@@ -22,7 +22,7 @@
 import gtk.gdk
 
 from pitivi.ui.point import Point
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.receiver import receiver, handler
 
 # Controllers are reusable and implement specific behaviors. Currently this

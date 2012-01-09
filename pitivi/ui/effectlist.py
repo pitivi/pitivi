@@ -32,7 +32,7 @@ import pitivi.ui.dnd as dnd
 
 from pitivi.configure import get_pixmap_dir
 
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.ui.common import SPACING
 from pitivi.settings import GlobalSettings

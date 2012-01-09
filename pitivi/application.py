@@ -43,8 +43,8 @@ from pitivi.settings import GlobalSettings
 from pitivi.threads import ThreadMaster
 from pitivi.signalinterface import Signallable
 from pitivi.system import getSystem
-from pitivi.log.loggable import Loggable
-from pitivi.log import log
+from pitivi.utils.loggable import Loggable
+import pitivi.utils.loggable as log
 from pitivi.ui.mainwindow import PitiviMainWindow
 from pitivi.projectmanager import ProjectManager, ProjectLogObserver
 from pitivi.undo.undo import UndoableActionLog, DebugActionLogObserver

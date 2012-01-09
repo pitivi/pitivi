@@ -23,7 +23,7 @@ import gtk
 import goocanvas
 from gettext import gettext as _
 
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.receiver import receiver, handler
 from pitivi.ui.track import Track
 from pitivi.ui.trackobject import TrackObject

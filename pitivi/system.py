@@ -23,7 +23,7 @@
 import os
 
 from pitivi.configure import APPNAME
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.signalinterface import Signallable
 
 

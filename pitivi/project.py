@@ -27,7 +27,7 @@ import ges
 import gst
 
 from pitivi.utils.misc import Seeker
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.sourcelist import SourceList
 from pitivi.settings import MultimediaSettings
 from pitivi.signalinterface import Signallable

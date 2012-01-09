@@ -25,7 +25,7 @@ Encoding-related utilities and classes
 
 import gst
 
-import pitivi.log.log as log
+import pitivi.utils.loggable as log
 
 
 def get_compatible_sink_pad(factoryname, caps):

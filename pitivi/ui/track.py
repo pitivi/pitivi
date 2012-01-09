@@ -24,7 +24,7 @@ import goocanvas
 import ges
 import gobject
 
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.receiver import receiver, handler
 from pitivi.ui.trackobject import TrackObject

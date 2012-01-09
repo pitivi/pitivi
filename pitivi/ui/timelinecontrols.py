@@ -2,7 +2,7 @@ import gtk
 from pitivi.receiver import receiver, handler
 from gettext import gettext as _
 from common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 
 TRACK_CONTROL_WIDTH = 75
 

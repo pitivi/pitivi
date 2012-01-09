@@ -32,7 +32,7 @@ from gettext import gettext as _
 from urllib import unquote
 from pitivi.configure import get_ui_dir
 from pitivi.signalinterface import Signallable
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 
 
 class FileListErrorDialog(Signallable, Loggable):

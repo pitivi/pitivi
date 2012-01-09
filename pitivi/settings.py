@@ -33,7 +33,7 @@ from gettext import gettext as _
 from pitivi.signalinterface import Signallable
 from pitivi.encode import available_combinations, \
      get_compatible_sink_caps
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 
 
 def get_bool_env(var):

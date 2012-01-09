@@ -20,7 +20,7 @@
 # Boston, MA 02110-1301, USA.
 
 from pitivi.signalinterface import Signallable
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 
 
 class UndoError(Exception):

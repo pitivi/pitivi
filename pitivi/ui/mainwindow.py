@@ -35,7 +35,7 @@ from gettext import gettext as _
 from gtk import RecentManager
 
 
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
 from pitivi.sourcelist import SourceListError
 

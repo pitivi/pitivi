@@ -30,7 +30,7 @@ import os
 import ges
 
 from gettext import gettext as _
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.configure import get_ui_dir
 import pitivi.ui.dynamic as dynamic
 from pitivi.ui.common import SPACING

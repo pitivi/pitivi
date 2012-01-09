@@ -33,7 +33,7 @@ import time
 
 from pitivi.configure import APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE
 from pitivi.signalinterface import Signallable
-import pitivi.log.log as log
+import pitivi.utils.loggable as log
 from gettext import ngettext
 try:
     import cProfile

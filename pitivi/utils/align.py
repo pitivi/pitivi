@@ -33,7 +33,7 @@ except ImportError:
 import gobject
 import gst
 from pitivi.utils.misc import beautify_ETA, call_false
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.alignalgs import rigidalign
 
 

@@ -35,7 +35,7 @@ from gettext import gettext as _
 
 from zoominterface import Zoomable
 from pitivi.check import soft_deps
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from timelinecanvas import TimelineCanvas
 from timelinecontrols import TimelineControls
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT

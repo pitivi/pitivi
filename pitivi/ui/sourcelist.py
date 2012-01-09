@@ -42,7 +42,7 @@ from pitivi.ui.pathwalker import PathWalker, quote_uri
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.common import beautify_info, info_name, \
     SPACING, PADDING
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.ui.filechooserpreview import PreviewWidget
 
 SHOW_TREEVIEW = 1

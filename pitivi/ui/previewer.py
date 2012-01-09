@@ -33,7 +33,7 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.signalinterface import Signallable
 from pitivi.settings import GlobalSettings
 from pitivi.ui.zoominterface import Zoomable
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.thumbnailcache import ThumbnailCache
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.receiver import receiver, handler

@@ -6,6 +6,7 @@ utils_PYTHON = 	\
 	alignalgs.py    \
 	extract.py      \
 	timeline.py     \
+	loggable.py     \
 	misc.py
 
 clean-local:

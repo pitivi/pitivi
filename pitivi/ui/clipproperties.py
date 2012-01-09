@@ -33,7 +33,7 @@ from gettext import gettext as _
 from pitivi.utils.misc import Seeker
 from pitivi.check import soft_deps
 from pitivi.configure import get_ui_dir
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 
 

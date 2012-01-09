@@ -28,7 +28,7 @@ import urllib
 import gst
 
 from pitivi.signalinterface import Signallable
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 
 
 class SourceListError(Exception):

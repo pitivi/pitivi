@@ -30,7 +30,7 @@ import gst
 from pitivi.utils.misc import Seeker
 
 from pitivi.ui.zoominterface import Zoomable
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import time_to_string
 
 

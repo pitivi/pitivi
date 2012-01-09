@@ -11,7 +11,7 @@ from gettext import ngettext
 from gettext import gettext as _
 
 from pitivi.settings import GlobalSettings
-from pitivi.log.log import doLog, ERROR
+from pitivi.utils.loggable import doLog, ERROR
 
 GlobalSettings.addConfigSection("user-interface")
 LAYER_HEIGHT_EXPANDED = 50

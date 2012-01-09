@@ -30,7 +30,7 @@ import gst
 from collections import deque
 from pitivi.elements.singledecodebin import SingleDecodeBin
 from pitivi.elements.extractionsink import ExtractionSink
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import pipeline
 
 

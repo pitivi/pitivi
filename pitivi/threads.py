@@ -24,7 +24,7 @@ Threading support
 
 import threading
 from pitivi.signalinterface import Signallable
-from pitivi.log.loggable import Loggable
+from pitivi.utils.loggable import Loggable
 
 #
 # Following code was freely adapted by code from:
