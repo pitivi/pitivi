@@ -14,7 +14,8 @@ utils_PYTHON = 	\
 	threads.py      \
 	receiver.py     \
 	ripple_update_group.py	\
-	misc.py
+	misc.py         \
+	widgets.py
 
 clean-local:
 	rm -rf *.pyc *.pyo

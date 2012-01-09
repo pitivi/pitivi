@@ -21,12 +21,10 @@ pitivi/settings.py
 pitivi/sourcelist.py
 pitivi/ui/basetabs.py
 pitivi/ui/clipproperties.py
-pitivi/ui/dynamic.py
 pitivi/ui/encodingdialog.py
 pitivi/ui/encodingprogress.py
 pitivi/ui/filechooserpreview.py
 pitivi/ui/filelisterrordialog.py
-pitivi/ui/gstwidget.py
 pitivi/ui/mainwindow.py
 pitivi/ui/prefs.py
 pitivi/ui/previewer.py
@@ -39,3 +37,4 @@ pitivi/ui/trackobject.py
 pitivi/ui/viewer.py
 pitivi/utils/misc.py
 pitivi/utils/ui.py
+pitivi/utils/widgets.py

@@ -31,7 +31,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
 from pitivi.utils.playback import togglePlayback
 from pitivi.utils.ui import SPACING, hex_to_rgb
-from pitivi.ui.dynamic import TimeWidget
+from pitivi.utils.widgets import TimeWidget
 
 GlobalSettings.addConfigSection("viewer")
 GlobalSettings.addConfigOption("viewerDocked",

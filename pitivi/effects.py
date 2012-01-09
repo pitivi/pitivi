@@ -54,8 +54,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import SPACING
 from pitivi.utils.playback import Seeker
 
-from pitivi.ui.gstwidget import GstElementSettingsWidget
-from pitivi.ui.dynamic import FractionWidget
+from pitivi.utils.widgets import GstElementSettingsWidget, FractionWidget
 
 
 #------------- Helper to handle effect in the backend ---------------------------#

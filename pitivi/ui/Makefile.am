@@ -6,11 +6,9 @@ ui_PYTHON =			\
 	controller.py		\
 	curve.py		\
 	depsmanager.py	\
-	dynamic.py		\
 	encodingdialog.py	\
 	encodingprogress.py	\
 	filelisterrordialog.py	\
-	gstwidget.py		\
 	mainwindow.py		\
 	prefs.py		\
 	preset.py		\

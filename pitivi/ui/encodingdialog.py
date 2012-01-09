@@ -33,15 +33,15 @@ import time
 from gettext import gettext as _
 
 from pitivi import configure
-from pitivi.utils.playback import togglePlayback, Seeker, beautify_ETA
+from pitivi.utils.playback import togglePlayback, Seeker
 from pitivi.settings import MultimediaSettings
 from pitivi.utils.signal import Signallable
 
 from pitivi.utils.loggable import Loggable
-from pitivi.ui.gstwidget import GstElementSettingsDialog
+from pitivi.utils.widgets import GstElementSettingsDialog
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import model, frame_rates, audio_rates, audio_depths, \
-    audio_channels, get_combo_value, set_combo_value
+    audio_channels, get_combo_value, set_combo_value, beautify_ETA
 
 from pitivi.ui.preset import RenderPresetManager, DuplicatePresetNameException
 

@@ -35,13 +35,12 @@ from pitivi.configure import get_ui_dir
 
 from pitivi.utils.ui import EFFECT_TUPLE
 from pitivi.utils.loggable import Loggable
-from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS
-
+from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
+    EffectsPropertiesManager
 
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.utils.ui import PADDING, SPACING
-from pitivi.ui.gstwidget import GstElementSettingsWidget
-from pitivi.effects import EffectsPropertiesManager
+from pitivi.utils.widgets import GstElementSettingsWidget
 
 (COL_ACTIVATED,
  COL_TYPE,

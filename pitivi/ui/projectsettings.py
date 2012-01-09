@@ -32,7 +32,7 @@ from datetime import datetime
 
 from pitivi.configure import get_ui_dir
 from gettext import gettext as _
-from pitivi.ui.dynamic import FractionWidget
+from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import\
     model,\

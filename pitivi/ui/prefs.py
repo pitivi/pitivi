@@ -26,7 +26,7 @@ Dialog box for user preferences.
 import gtk
 import os
 
-import pitivi.ui.dynamic as dynamic
+import pitivi.utils.widgets as ptvWidgets
 
 from pitivi.configure import get_ui_dir
 from pitivi.settings import GlobalSettings
@@ -123,7 +123,7 @@ class PreferencesDialog():
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            dynamic.PathWidget)
+            ptvWidgets.PathWidget)
 
     @classmethod
     def addNumericPreference(cls, attrname, label, description, section=None,
@@ -147,7 +147,7 @@ class PreferencesDialog():
         @type lower: C{number}
         """
         cls.addPreference(attrname, label, description, section,
-            dynamic.NumericWidget, upper=upper, lower=lower)
+            ptvWidgets.NumericWidget, upper=upper, lower=lower)
 
     @classmethod
     def addTextPreference(cls, attrname, label, description, section=None,
@@ -167,7 +167,7 @@ class PreferencesDialog():
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            dynamic.TextWidget, matches=matches)
+            ptvWidgets.TextWidget, matches=matches)
 
     @classmethod
     def addChoicePreference(cls, attrname, label, description, choices,
@@ -189,7 +189,7 @@ class PreferencesDialog():
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            dynamic.ChoiceWidget, choices=choices)
+            ptvWidgets.ChoiceWidget, choices=choices)
 
     @classmethod
     def addTogglePreference(cls, attrname, label, description, section=None):
@@ -207,7 +207,7 @@ class PreferencesDialog():
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            dynamic.ToggleWidget)
+            ptvWidgets.ToggleWidget)
 
     @classmethod
     def addColorPreference(cls, attrname, label, description, section=None,
@@ -228,7 +228,7 @@ class PreferencesDialog():
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            dynamic.ColorWidget, value_type=value_type)
+            ptvWidgets.ColorWidget, value_type=value_type)
 
     @classmethod
     def addFontPreference(cls, attrname, label, description, section=None):
@@ -246,7 +246,7 @@ class PreferencesDialog():
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            dynamic.FontWidget)
+            ptvWidgets.FontWidget)
 
 ## Implementation
     def _fillContents(self):
@@ -268,7 +268,7 @@ class PreferencesDialog():
                 widget.connectValueChanged(self._valueChanged, widget,
                     attrname)
                 self.widgets[attrname] = widget
-                if isinstance(widget, dynamic.ToggleWidget):
+                if isinstance(widget, ptvWidgets.ToggleWidget):
                     # Don't add a semicolon for checkbuttons
                     label_widget = gtk.Label(_(label))
                 else:
@@ -290,7 +290,7 @@ class PreferencesDialog():
 
             for y, unlocalized in enumerate(sorted(prefs)):
                 label, widget, description, revert = prefs[unlocalized]
-                if isinstance(widget, dynamic.ToggleWidget):
+                if isinstance(widget, ptvWidgets.ToggleWidget):
                     # Avoid the separating the label from the checkbox
                     widget.set_label(label.get_text())
                     widgets.attach(widget, 0, 2, y, y + 1, yoptions=0)
