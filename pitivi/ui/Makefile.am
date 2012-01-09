@@ -7,7 +7,6 @@ ui_PYTHON =			\
 	curve.py		\
 	depsmanager.py	\
 	encodingdialog.py	\
-	encodingprogress.py	\
 	filelisterrordialog.py	\
 	mainwindow.py		\
 	prefs.py		\
