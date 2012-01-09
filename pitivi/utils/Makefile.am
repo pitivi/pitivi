@@ -13,6 +13,7 @@ utils_PYTHON = 	\
 	system.py       \
 	threads.py      \
 	receiver.py     \
+	pathwalker.py   \
 	misc.py
 
 clean-local:

@@ -12,7 +12,6 @@ ui_PYTHON =			\
 	filelisterrordialog.py	\
 	gstwidget.py		\
 	mainwindow.py		\
-	pathwalker.py		\
 	prefs.py		\
 	preset.py		\
 	previewer.py		\

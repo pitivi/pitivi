@@ -40,12 +40,11 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.settings import GlobalSettings
 
 from pitivi.utils.ui import beautify_length
-from pitivi.utils.signal import SignalGroup
-from pitivi.utils.signal import Signallable
+from pitivi.utils.misc import PathWalker, quote_uri
+from pitivi.utils.signal import SignalGroup, Signallable
 from pitivi.utils.loggable import Loggable
 
 import pitivi.utils.ui as dnd
-from pitivi.ui.pathwalker import PathWalker, quote_uri
 from pitivi.ui.filechooserpreview import PreviewWidget
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.utils.ui import beautify_info, info_name, \

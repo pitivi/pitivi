@@ -30,11 +30,16 @@ import bisect
 import os
 import struct
 import time
+import threading
+
+from urlparse import urlsplit, urlunsplit
+from urllib import quote, unquote
+
+import pitivi.utils.loggable as log
+from pitivi.utils.threads import Thread
 
 from pitivi.configure import APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE
-from pitivi.utils.signal import Signallable
-import pitivi.utils.loggable as log
-from gettext import ngettext
+
 try:
     import cProfile
 except ImportError:
@@ -127,6 +132,44 @@ def uri_is_reachable(uri):
 
 def get_filesystem_encoding():
     return sys.getfilesystemencoding() or "utf-8"
+
+
+def quote_uri(uri):
+    parts = list(urlsplit(uri, allow_fragments=False))
+    parts[2] = quote(parts[2])
+    uri = urlunsplit(parts)
+    return uri
+
+
+class PathWalker(Thread):
+    """
+    Thread for recursively searching in a list of directories
+    """
+
+    def __init__(self, paths, callback):
+        Thread.__init__(self)
+        self.log("New PathWalker for %s" % paths)
+        self.paths = paths
+        self.callback = callback
+        self.stopme = threading.Event()
+
+    def process(self):
+        for folder in self.paths:
+            self.log("folder %s" % folder)
+            if folder.startswith("file://"):
+                folder = unquote(folder[len("file://"):])
+            for path, dirs, files in os.walk(folder):
+                if self.stopme.isSet():
+                    return
+                uris = []
+                for afile in files:
+                    uris.append(quote_uri("file://%s" %
+                            os.path.join(path, afile)))
+                if uris:
+                    self.callback(uris)
+
+    def abort(self):
+        self.stopme.set()
 
 
 #------------------------------ Gst helpers   --------------------------------#
