@@ -31,7 +31,7 @@ from pitivi.utils.playback import Seeker
 
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import time_to_string
+from pitivi.utils.ui import time_to_string
 
 
 class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):

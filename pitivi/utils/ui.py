@@ -154,7 +154,7 @@ def hex_to_rgb(value):
     return tuple(float(int(value[i:i + 2], 16)) / 255.0 for i in range(0, 6, 2))
 
 
-#--- Utils to make gst.DiscovererInfo ready to be displayed in the UI --------#
+#------ Helper to help beatify indos so they can be displayed in the UI -----#
 def beautify_info(info):
     ranks = {
         gst.pbutils.DiscovererVideoInfo: 0,
@@ -209,6 +209,71 @@ def beautify_stream(stream):
         return _("Subtitles")
 
     raise NotImplementedError
+
+
+def time_to_string(value):
+    """
+    Converts the given time in nanoseconds to a human readable string
+
+    Format HH:MM:SS.XXX
+    """
+    if value == gst.CLOCK_TIME_NONE:
+        return "--:--:--.---"
+    ms = value / gst.MSECOND
+    sec = ms / 1000
+    ms = ms % 1000
+    mins = sec / 60
+    sec = sec % 60
+    hours = mins / 60
+    mins = mins % 60
+    return "%01d:%02d:%02d.%03d" % (hours, mins, sec, ms)
+
+
+def beautify_length(length):
+    """
+    Converts the given time in nanoseconds to a human readable string
+    """
+    sec = length / gst.SECOND
+    mins = sec / 60
+    sec = sec % 60
+    hours = mins / 60
+    mins = mins % 60
+
+    parts = []
+    if hours:
+        parts.append(ngettext("%d hour", "%d hours", hours) % hours)
+
+    if mins:
+        parts.append(ngettext("%d minute", "%d minutes", mins) % mins)
+
+    if not hours and sec:
+        parts.append(ngettext("%d second", "%d seconds", sec) % sec)
+
+    return ", ".join(parts)
+
+
+def beautify_ETA(length):
+    """
+    Converts the given time in nanoseconds to a fuzzy estimate,
+    intended for progress ETAs, not to indicate a clip's duration.
+    """
+    sec = length / gst.SECOND
+    mins = sec / 60
+    sec = sec % 60
+    hours = mins / 60
+    mins = mins % 60
+
+    parts = []
+    if hours:
+        parts.append(ngettext("%d hour", "%d hours", hours) % hours)
+
+    if mins:
+        parts.append(ngettext("%d minute", "%d minutes", mins) % mins)
+
+    if not hours and mins < 2 and sec:
+        parts.append(ngettext("%d second", "%d seconds", sec) % sec)
+
+    return ", ".join(parts)
 
 
 #--------------------- UI drawing helper -------------------------------------#

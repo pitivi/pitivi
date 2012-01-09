@@ -55,71 +55,6 @@ def between(a, b, c):
     return (a <= b) and (b <= c)
 
 
-def time_to_string(value):
-    """
-    Converts the given time in nanoseconds to a human readable string
-
-    Format HH:MM:SS.XXX
-    """
-    if value == gst.CLOCK_TIME_NONE:
-        return "--:--:--.---"
-    ms = value / gst.MSECOND
-    sec = ms / 1000
-    ms = ms % 1000
-    mins = sec / 60
-    sec = sec % 60
-    hours = mins / 60
-    mins = mins % 60
-    return "%01d:%02d:%02d.%03d" % (hours, mins, sec, ms)
-
-
-def beautify_length(length):
-    """
-    Converts the given time in nanoseconds to a human readable string
-    """
-    sec = length / gst.SECOND
-    mins = sec / 60
-    sec = sec % 60
-    hours = mins / 60
-    mins = mins % 60
-
-    parts = []
-    if hours:
-        parts.append(ngettext("%d hour", "%d hours", hours) % hours)
-
-    if mins:
-        parts.append(ngettext("%d minute", "%d minutes", mins) % mins)
-
-    if not hours and sec:
-        parts.append(ngettext("%d second", "%d seconds", sec) % sec)
-
-    return ", ".join(parts)
-
-
-def beautify_ETA(length):
-    """
-    Converts the given time in nanoseconds to a fuzzy estimate,
-    intended for progress ETAs, not to indicate a clip's duration.
-    """
-    sec = length / gst.SECOND
-    mins = sec / 60
-    sec = sec % 60
-    hours = mins / 60
-    mins = mins % 60
-
-    parts = []
-    if hours:
-        parts.append(ngettext("%d hour", "%d hours", hours) % hours)
-
-    if mins:
-        parts.append(ngettext("%d minute", "%d minutes", mins) % mins)
-
-    if not hours and mins < 2 and sec:
-        parts.append(ngettext("%d second", "%d seconds", sec) % sec)
-
-    return ", ".join(parts)
-
-
 def call_false(function, *args, **kwargs):
     """ Helper function for calling an arbitrary function once in the gobject
         mainloop.  Any positional or keyword arguments after the function will
@@ -147,86 +82,8 @@ def bin_contains(bin, element):
             return True
     return False
 
-# Python re-implementation of binary search algorithm found here:
-# http://en.wikipedia.org/wiki/Binary_search
-#
-# This is the iterative version without the early termination branch, which
-# also tells us the element of A that are nearest to Value, if the element we
-# want is not found. This is useful for implementing edge snaping in the UI,
-# where we repeatedly search through a list of control points for the one
-# closes to the cursor. Because we don't care whether the cursor position
-# matches the list, this function returns the index of the lement closest to
-# value in the array.
 
-
-def binary_search(col, value):
-    low = 0
-    high = len(col)
-    while (low < high):
-        mid = (low + high) / 2
-        if (col[mid] < value):
-            low = mid + 1
-        else:
-            #can't be high = mid-1: here col[mid] >= value,
-            #so high can't be < mid if col[mid] == value
-            high = mid
-    return low
-
-
-def argmax(func, seq):
-    """return the element of seq that gives max(map(func, seq))"""
-    def compare(a1, b1):
-        if a1[0] > b1[0]:
-            return a1
-        return b1
-    # using a generator expression here should save memory
-    objs = ((func(val), val) for val in seq)
-    return reduce(compare, objs)[1]
-
-
-def same(seq):
-    i = iter(seq)
-    first = i.next()
-    for item in i:
-        if first != item:
-            return None
-    return first
-
-
-def linkDynamic(element, target):
-
-    def pad_added(bin, pad, target):
-        compatpad = target.get_compatible_pad(pad)
-        if compatpad:
-            pad.link_full(compatpad, gst.PAD_LINK_CHECK_NOTHING)
-    element.connect("pad-added", pad_added, target)
-
-
-def element_make_many(*args):
-    return tuple((gst.element_factory_make(arg) for arg in args))
-
-
-def pipeline(graph):
-    E = graph.iteritems()
-    V = graph.iterkeys()
-    p = gst.Pipeline()
-    p.add(*V)
-    for u, v in E:
-        if v:
-            try:
-                u.link(v)
-            except gst.LinkError:
-                linkDynamic(u, v)
-    return p
-
-
-def filter_(caps):
-    f = gst.element_factory_make("capsfilter")
-    f.props.caps = gst.caps_from_string(caps)
-    return f
-
-
-## URI functions
+#------------------------------ URI helpers   --------------------------------#
 def isWritable(path):
     """Check if the file/path is writable"""
     try:
@@ -272,6 +129,7 @@ def get_filesystem_encoding():
     return sys.getfilesystemencoding() or "utf-8"
 
 
+#------------------------------ Gst helpers   --------------------------------#
 def get_controllable_properties(element):
     """
     Returns a list of controllable properties for the given
@@ -294,6 +152,40 @@ def get_controllable_properties(element):
     return res
 
 
+def linkDynamic(element, target):
+
+    def pad_added(bin, pad, target):
+        compatpad = target.get_compatible_pad(pad)
+        if compatpad:
+            pad.link_full(compatpad, gst.PAD_LINK_CHECK_NOTHING)
+    element.connect("pad-added", pad_added, target)
+
+
+def element_make_many(*args):
+    return tuple((gst.element_factory_make(arg) for arg in args))
+
+
+def pipeline(graph):
+    E = graph.iteritems()
+    V = graph.iterkeys()
+    p = gst.Pipeline()
+    p.add(*V)
+    for u, v in E:
+        if v:
+            try:
+                u.link(v)
+            except gst.LinkError:
+                linkDynamic(u, v)
+    return p
+
+
+def filter_(caps):
+    f = gst.element_factory_make("capsfilter")
+    f.props.caps = gst.caps_from_string(caps)
+    return f
+
+
+#-------------------------- Sorting helpers   --------------------------------#
 def start_insort_left(a, x, lo=0, hi=None):
     if hi is None:
         hi = len(a)
@@ -363,6 +255,52 @@ def formatPercent(value):
 
 def quantize(input, interval):
     return (input // interval) * interval
+
+
+# Python re-implementation of binary search algorithm found here:
+# http://en.wikipedia.org/wiki/Binary_search
+#
+# This is the iterative version without the early termination branch, which
+# also tells us the element of A that are nearest to Value, if the element we
+# want is not found. This is useful for implementing edge snaping in the UI,
+# where we repeatedly search through a list of control points for the one
+# closes to the cursor. Because we don't care whether the cursor position
+# matches the list, this function returns the index of the lement closest to
+# value in the array.
+
+
+def binary_search(col, value):
+    low = 0
+    high = len(col)
+    while (low < high):
+        mid = (low + high) / 2
+        if (col[mid] < value):
+            low = mid + 1
+        else:
+            #can't be high = mid-1: here col[mid] >= value,
+            #so high can't be < mid if col[mid] == value
+            high = mid
+    return low
+
+
+def argmax(func, seq):
+    """return the element of seq that gives max(map(func, seq))"""
+    def compare(a1, b1):
+        if a1[0] > b1[0]:
+            return a1
+        return b1
+    # using a generator expression here should save memory
+    objs = ((func(val), val) for val in seq)
+    return reduce(compare, objs)[1]
+
+
+def same(seq):
+    i = iter(seq)
+    first = i.next()
+    for item in i:
+        if first != item:
+            return None
+    return first
 
 
 def show_user_manual():

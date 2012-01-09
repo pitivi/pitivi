@@ -5,13 +5,16 @@ import gtk
 import pango
 import os
 
-from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import beautify_stream
-from pitivi.utils.misc import beautify_length, uri_is_valid
+from gettext import gettext as _
+
 from pitivi.configure import get_pixmap_dir
 from pitivi.settings import GlobalSettings
-from gettext import gettext as _
-from pitivi.utils.ui import SPACING
+
+from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import uri_is_valid
+from pitivi.utils.ui import beautify_length, beautify_stream,\
+    SPACING
+
 from pitivi.ui.viewer import ViewerWidget
 
 DEFAULT_AUDIO_IMAGE = os.path.join(get_pixmap_dir(), "pitivi-sound.png")

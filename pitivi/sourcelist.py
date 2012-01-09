@@ -39,7 +39,7 @@ from hashlib import md5
 from pitivi.configure import get_pixmap_dir
 from pitivi.settings import GlobalSettings
 
-from pitivi.utils.misc import beautify_length
+from pitivi.utils.ui import beautify_length
 from pitivi.utils.signal import SignalGroup
 from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable

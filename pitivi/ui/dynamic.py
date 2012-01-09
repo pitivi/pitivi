@@ -29,10 +29,9 @@ import re
 import sys
 import gst
 from gettext import gettext as _
-from pitivi.utils.misc import time_to_string
-from pitivi.utils.ui import unpack_color, pack_color_32, pack_color_64
 import pango
-from pitivi.utils.ui import SPACING
+from pitivi.utils.ui import unpack_color, pack_color_32, pack_color_64, \
+    time_to_string, SPACING
 
 
 class DynamicWidget(object):
