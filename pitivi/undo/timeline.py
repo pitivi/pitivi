@@ -21,7 +21,7 @@
 
 import gobject
 
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 from pitivi.undo.undo import PropertyChangeTracker
 from pitivi.undo.undo import UndoableAction
 

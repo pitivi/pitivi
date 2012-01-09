@@ -35,7 +35,7 @@ from gettext import gettext as _
 from pitivi import configure
 from pitivi.utils.misc import togglePlayback, Seeker, beautify_ETA
 from pitivi.settings import MultimediaSettings
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 
 from pitivi.utils.loggable import Loggable
 from pitivi.ui.gstwidget import GstElementSettingsDialog

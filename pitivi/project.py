@@ -30,7 +30,7 @@ from pitivi.utils.playback import Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.sourcelist import SourceList
 from pitivi.settings import MultimediaSettings
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 from pitivi.utils.timeline import Selection
 
 

@@ -27,7 +27,7 @@ TestCase = unittest.TestCase
 from pitivi.application import InteractivePitivi
 from pitivi.utils.timeline import MoveContext, TrimStartContext,\
     TrimEndContext
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 from pitivi.stream import AudioStream, VideoStream
 import pitivi.instance
 import gobject

@@ -32,7 +32,7 @@ import gtk
 import gst
 
 import pitivi.configure as configure
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 
 
 class AlignmentProgressDialog:

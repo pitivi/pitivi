@@ -23,7 +23,7 @@ Threading support
 """
 
 import threading
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 
 #

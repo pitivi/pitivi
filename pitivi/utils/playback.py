@@ -29,7 +29,7 @@ import gobject
 
 import pitivi.utils.loggable as log
 
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 
 
 class Seeker(Signallable):

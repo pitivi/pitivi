@@ -27,7 +27,7 @@ Handles the list of source for a project
 import urllib
 import gst
 
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 
 

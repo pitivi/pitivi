@@ -30,7 +30,7 @@ import os
 from gettext import gettext as _
 import pitivi.utils as utils
 from pitivi.configure import get_pixmap_dir
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 from pitivi.settings import GlobalSettings
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.utils.loggable import Loggable

@@ -34,9 +34,10 @@ from hashlib import md5
 
 import pitivi.ui.dnd as dnd
 from pitivi.configure import get_pixmap_dir
-from pitivi.signalgroup import SignalGroup
 from pitivi.settings import GlobalSettings
+
 from pitivi.utils.misc import beautify_length
+from pitivi.utils.signal import SignalGroup
 
 from pitivi.ui.pathwalker import PathWalker, quote_uri
 from pitivi.ui.filelisterrordialog import FileListErrorDialog

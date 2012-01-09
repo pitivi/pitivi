@@ -30,7 +30,7 @@ import xdg.BaseDirectory as xdg_dirs  # Freedesktop directories spec
 
 from gettext import gettext as _
 
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 from pitivi.encode import available_combinations, \
      get_compatible_sink_caps
 from pitivi.utils.loggable import Loggable

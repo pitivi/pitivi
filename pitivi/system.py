@@ -24,7 +24,7 @@ import os
 
 from pitivi.configure import APPNAME
 from pitivi.utils.loggable import Loggable
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 
 
 class System(Signallable, Loggable):

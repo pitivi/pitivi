@@ -26,7 +26,7 @@ from gst import SECOND
 
 from pitivi.utils.misc import infinity
 from pitivi.utils.loggable import Loggable
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 
 #from pitivi.utils.align import AutoAligner
 

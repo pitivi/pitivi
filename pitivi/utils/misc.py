@@ -32,7 +32,7 @@ import struct
 import time
 
 from pitivi.configure import APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 import pitivi.utils.loggable as log
 from gettext import ngettext
 try:

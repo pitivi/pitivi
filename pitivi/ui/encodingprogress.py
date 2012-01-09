@@ -29,7 +29,7 @@ import gst
 import pitivi.configure as configure
 from gettext import gettext as _
 import gobject
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 
 
 class EncodingProgressDialog(Signallable):

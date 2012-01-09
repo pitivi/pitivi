@@ -18,7 +18,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
 from pitivi.receiver import receiver, handler
 from pitivi.ui.prefs import PreferencesDialog
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 from pitivi.utils.timeline import SELECT, SELECT_ADD, UNSELECT, \
     SELECT_BETWEEN, MoveContext, TrimStartContext, TrimEndContext
 
