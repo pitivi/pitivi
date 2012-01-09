@@ -7,6 +7,7 @@ utils_PYTHON = 	\
 	extract.py      \
 	timeline.py     \
 	loggable.py     \
+	playback.py     \
 	misc.py
 
 clean-local:

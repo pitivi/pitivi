@@ -22,7 +22,7 @@ import gst
 import gtk
 import gobject
 
-from pitivi.utils.misc import Seeker
+from pitivi.utils.playback import Seeker
 from pitivi.ui.gstwidget import GstElementSettingsWidget
 from pitivi.ui.dynamic import FractionWidget
 

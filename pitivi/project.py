@@ -26,7 +26,7 @@ Project class
 import ges
 import gst
 
-from pitivi.utils.misc import Seeker
+from pitivi.utils.playback import Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.sourcelist import SourceList
 from pitivi.settings import MultimediaSettings

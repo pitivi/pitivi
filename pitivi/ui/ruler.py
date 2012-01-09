@@ -27,7 +27,7 @@ import gobject
 import gtk
 import gst
 
-from pitivi.utils.misc import Seeker
+from pitivi.utils.playback import Seeker
 
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.utils.loggable import Loggable
