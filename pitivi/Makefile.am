@@ -16,7 +16,6 @@ pitivi_PYTHON = \
 	project.py 	\
 	projectmanager.py 	\
 	receiver.py	\
-	reflect.py	\
 	settings.py 	\
 	signalgroup.py	\
 	signalinterface.py \
