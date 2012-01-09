@@ -40,7 +40,7 @@ from pitivi.check import initial_checks
 from pitivi.effects import EffectsHandler
 from pitivi.configure import APPNAME
 from pitivi.settings import GlobalSettings
-from pitivi.threads import ThreadMaster
+from pitivi.utils.threads import ThreadMaster
 
 from pitivi.utils.signal import Signallable
 from pitivi.utils.system import getSystem

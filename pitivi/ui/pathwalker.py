@@ -23,7 +23,7 @@ import os
 import threading
 from urllib import quote, unquote
 from urlparse import urlsplit, urlunsplit
-from pitivi.threads import Thread
+from pitivi.utils.threads import Thread
 
 
 def quote_uri(uri):

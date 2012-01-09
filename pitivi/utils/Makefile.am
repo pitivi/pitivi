@@ -11,6 +11,7 @@ utils_PYTHON = 	\
 	signal.py       \
 	ui.py           \
 	system.py       \
+	threads.py      \
 	misc.py
 
 clean-local:

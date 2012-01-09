@@ -18,7 +18,6 @@ pitivi_PYTHON = \
 	receiver.py	\
 	settings.py 	\
 	sourcelist.py 	\
-	threads.py	\
 	thumbnailcache.py
 
 BUILT_SOURCES=configure.py
