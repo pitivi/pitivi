@@ -241,10 +241,10 @@ class InstanceRunner(Signallable):
         if self.pending_configuration:
             self._loadSources(self.pending_configuration)
 
-    def _sourceAdded(self, sourcelist, factory):
+    def _sourceAdded(self, medialibrary, factory):
         self.factories.add(factory.uri)
 
-    def _discoveryError(self, sourcelist, uri, reason, unused):
+    def _discoveryError(self, medialibrary, uri, reason, unused):
         self.errors.add(uri)
 
     def _readyCb(self, soucelist):
@@ -282,7 +282,7 @@ class InstanceRunner(Signallable):
         for name, uri, props in configuration:
             factory = self.project.sources.getInfoFromUri(uri)
             if not factory:
-                raise Exception("Could not find '%s' in sourcelist" %
+                raise Exception("Could not find '%s' in medialibrary" %
                     source)
 
             if not props:

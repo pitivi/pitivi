@@ -28,7 +28,7 @@ import gst
 
 from pitivi.utils.playback import Seeker
 from pitivi.utils.loggable import Loggable
-from pitivi.sourcelist import SourceList
+from pitivi.medialibrary import MediaLibrary
 from pitivi.settings import MultimediaSettings
 from pitivi.utils.signal import Signallable
 from pitivi.utils.timeline import Selection
@@ -47,7 +47,7 @@ class Project(Signallable, Loggable):
     @ivar description: A description of the project
     @type description: C{str}
     @ivar sources: The sources used by this project
-    @type sources: L{SourceList}
+    @type sources: L{MediaLibrary}
     @ivar timeline: The timeline
     @type timeline: L{ges.Timeline}
     @ivar pipeline: The timeline's pipeline
@@ -82,7 +82,7 @@ class Project(Signallable, Loggable):
         self.uri = uri
         self.urichanged = False
         self.format = None
-        self.sources = SourceList()
+        self.sources = MediaLibrary()
 
         self._dirty = False
 

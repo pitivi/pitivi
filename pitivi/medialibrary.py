@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/sourcelist.py
+#       pitivi/medialibrary.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
@@ -87,7 +87,7 @@ ui = '''
 <ui>
     <menubar name="MainMenuBar">
         <menu action="Library">
-            <placeholder name="SourceList" >
+            <placeholder name="MediaLibrary" >
                 <menuitem action="ImportSources" />
                 <menuitem action="ImportSourcesFolder" />
                 <separator />
@@ -99,7 +99,7 @@ ui = '''
         </menu>
     </menubar>
     <toolbar name="MainToolBar">
-        <placeholder name="SourceList">
+        <placeholder name="MediaLibrary">
             <toolitem action="ImportSources" />
         </placeholder>
     </toolbar>
@@ -110,11 +110,11 @@ INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(),
     "invisible.png"))
 
 
-class SourceListError(Exception):
+class MediaLibraryError(Exception):
     pass
 
 
-class SourceList(Signallable, Loggable):
+class MediaLibrary(Signallable, Loggable):
     discovererClass = gst.pbutils.Discoverer
 
     """
@@ -129,8 +129,8 @@ class SourceList(Signallable, Loggable):
     @type nb_imported_files: int
 
     Signals:
-     - C{source-added} : A source has been discovered and added to the SourceList.
-     - C{source-removed} : A source was removed from the SourceList.
+     - C{source-added} : A source has been discovered and added to the MediaLibrary.
+     - C{source-removed} : A source was removed from the MediaLibrary.
      - C{discovery-error} : The given uri is not a media file.
      - C{ready} : No more files are being discovered/added.
      - C{starting} : Some files are being discovered/added.
@@ -195,7 +195,7 @@ class SourceList(Signallable, Loggable):
         try:
             info = self._sources.pop(uri)
         except KeyError:
-            raise SourceListError("URI not in the sourcelist", uri)
+            raise MediaLibraryError("URI not in the medialibrary", uri)
         try:
             self._ordered_sources.remove(info)
         except ValueError:
@@ -212,7 +212,7 @@ class SourceList(Signallable, Loggable):
         """
         info = self._sources.get(uri)
         if info is None:
-            raise SourceListError("URI not in the sourcelist", uri)
+            raise MediaLibraryError("URI not in the medialibrary", uri)
         return info
 
     def addDiscovererInfo(self, info):
@@ -221,7 +221,7 @@ class SourceList(Signallable, Loggable):
         """
         uri = info.get_uri()
         if self._sources.get(uri, None) is not None:
-            raise SourceListError("We already have a info for this URI",
+            raise MediaLibraryError("We already have a info for this URI",
                     uri)
         self._sources[uri] = info
         self._ordered_sources.append(info)
@@ -238,7 +238,7 @@ class SourceList(Signallable, Loggable):
         return self._ordered_sources
 
 
-class SourceListWidget(gtk.VBox, Loggable):
+class MediaLibraryWidget(gtk.VBox, Loggable):
     """ Widget for listing sources """
 
     __gsignals__ = {
@@ -462,12 +462,12 @@ class SourceListWidget(gtk.VBox, Loggable):
                 self._insertEndCb),
         )
 
-        actiongroup = gtk.ActionGroup("sourcelistpermanent")
+        actiongroup = gtk.ActionGroup("medialibrarypermanent")
         actiongroup.add_actions(actions)
         actiongroup.get_action("ImportSources").props.is_important = True
         uiman.insert_action_group(actiongroup, 0)
 
-        self.selection_actions = gtk.ActionGroup("sourcelistselection")
+        self.selection_actions = gtk.ActionGroup("medialibraryselection")
         self.selection_actions.add_actions(selection_actions)
         self.selection_actions.set_sensitive(False)
         uiman.insert_action_group(self.selection_actions, 0)
@@ -630,7 +630,7 @@ class SourceListWidget(gtk.VBox, Loggable):
             project.sources, "starting", None, self._sourcesStartedImportingCb)
 
     def _setClipView(self, show):
-        """ Set which clip view to use when sourcelist is showing clips. If
+        """ Set which clip view to use when medialibrary is showing clips. If
         none is given, the current one is used. Show: one of SHOW_TREEVIEW or
         SHOW_ICONVIEW """
 
@@ -778,18 +778,18 @@ class SourceListWidget(gtk.VBox, Loggable):
             short_text])
         self._displayClipView()
 
-    # sourcelist callbacks
+    # medialibrary callbacks
 
-    def _sourceAddedCb(self, sourcelist, factory):
-        """ a file was added to the sourcelist """
+    def _sourceAddedCb(self, medialibrary, factory):
+        """ a file was added to the medialibrary """
         self._updateProgressbar()
         self._addDiscovererInfo(factory)
         if len(self.storemodel):
             self.infobar.hide_all()
             self.search_hbox.show_all()
 
-    def _sourceRemovedCb(self, sourcelist, uri, factory):
-        """ the given uri was removed from the sourcelist """
+    def _sourceRemovedCb(self, medialibrary, uri, factory):
+        """ the given uri was removed from the medialibrary """
         # find the good line in the storemodel and remove it
         model = self.storemodel
         for row in model:
@@ -801,16 +801,16 @@ class SourceListWidget(gtk.VBox, Loggable):
             self.search_hbox.hide()
         self.debug("Removing %s", uri)
 
-    def _discoveryErrorCb(self, unused_sourcelist, uri, reason, extra):
+    def _discoveryErrorCb(self, unused_medialibrary, uri, reason, extra):
         """ The given uri isn't a media file """
         error = (uri, reason, extra)
         self._errors.append(error)
 
-    def _sourcesStartedImportingCb(self, sourcelist):
+    def _sourcesStartedImportingCb(self, medialibrary):
         self._progressbar.show()
         self._updateProgressbar()
 
-    def _sourcesStoppedImportingCb(self, unused_sourcelist):
+    def _sourcesStoppedImportingCb(self, unused_medialibrary):
         self._progressbar.hide()
         if self._errors:
             if len(self._errors) > 1:
@@ -1265,4 +1265,4 @@ class SourceListWidget(gtk.VBox, Loggable):
         selection.set(selection.target, 8, '\n'.join(uris))
         context.set_icon_pixbuf(INVISIBLE, 0, 0)
 
-gobject.type_register(SourceListWidget)
+gobject.type_register(MediaLibraryWidget)

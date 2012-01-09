@@ -259,7 +259,7 @@ class GlobalSettings(Signallable):
         the config file is read. Only options registered before the config
         file is read will be loaded.
 
-        see pitivi/ui/mainwindow.py, pitivi/ui/sourcelist.py for examples of
+        see pitivi/ui/mainwindow.py, pitivi/ui/medialibrary.py for examples of
         usage.
 
         @param attrname: the attribute of this class which represents the option

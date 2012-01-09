@@ -18,7 +18,7 @@ pitivi/effects.py
 pitivi/projectmanager.py
 pitivi/project.py
 pitivi/settings.py
-pitivi/sourcelist.py
+pitivi/medialibrary.py
 pitivi/ui/basetabs.py
 pitivi/ui/clipproperties.py
 pitivi/ui/encodingdialog.py

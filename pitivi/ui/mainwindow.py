@@ -45,7 +45,7 @@ from pitivi.utils.ui import SPACING, info_name, FILESOURCE_TUPLE, URI_TUPLE, \
 from pitivi.ui.timeline import Timeline
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
-from pitivi.sourcelist import SourceListWidget, SourceListError
+from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
 from pitivi.effects import EffectListWidget
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.clipproperties import ClipProperties
@@ -375,10 +375,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         self.projecttabs = BaseTabs(instance)
 
-        self.sourcelist = SourceListWidget(instance, self.uimanager)
-        self.projecttabs.append_page(self.sourcelist, gtk.Label(_("Media Library")))
-        self._connectToSourceList()
-        self.sourcelist.show()
+        self.medialibrary = MediaLibraryWidget(instance, self.uimanager)
+        self.projecttabs.append_page(self.medialibrary, gtk.Label(_("Media Library")))
+        self._connectToMediaLibrary()
+        self.medialibrary.show()
 
         self.effectlist = EffectListWidget(instance, self.uimanager)
         self.projecttabs.append_page(self.effectlist, gtk.Label(_("Effect Library")))
@@ -455,8 +455,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         os.environ["PULSE_PROP_media.role"] = "production"
         os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
 
-    def _connectToSourceList(self):
-        self.sourcelist.connect('play', self._sourceListPlayCb)
+    def _connectToMediaLibrary(self):
+        self.medialibrary.connect('play', self._sourceListPlayCb)
 
     def setFullScreen(self, fullscreen):
         """ Toggle the fullscreen mode of the application """
@@ -525,7 +525,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.settings.mainWindowShowMainToolbar = mtb.props.active
         self.settings.mainWindowShowTimelineToolbar = ttb.props.active
 
-    def _sourceListPlayCb(self, sourcelist, uri):
+    def _sourceListPlayCb(self, medialibrary, uri):
         self._viewUri(uri)
 
 ## Toolbar/Menu actions callback
@@ -911,8 +911,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         dialog.destroy()
 
-    def _connectToProjectSources(self, sourcelist):
-        sourcelist.connect("missing-plugins", self._sourceListMissingPluginsCb)
+    def _connectToProjectSources(self, medialibrary):
+        medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
 
     def _actionLogCommit(self, action_log, stack, nested):
         if nested:
@@ -1084,7 +1084,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         try:
             info = self.project.sources.getInfoFromUri(uri)
-        except SourceListError:
+        except MediaLibraryError:
             self.project.sources.addUri(uri)
             # FIXME Add a delay/catch signal when we start doing the discovering
             # async

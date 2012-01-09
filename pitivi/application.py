@@ -51,7 +51,7 @@ from pitivi.projectmanager import ProjectManager, ProjectLogObserver
 from pitivi.undo.undo import UndoableActionLog, DebugActionLogObserver
 #FIXME GES port disabled it
 #from pitivi.undo.timeline import TimelineLogObserver
-from pitivi.undo.sourcelist import SourceListLogObserver
+from pitivi.undo.medialibrary import MediaLibraryLogObserver
 from pitivi.ui.startupwizard import StartUpWizard
 
 # FIXME : Speedup loading time
@@ -137,7 +137,7 @@ class Pitivi(Loggable, Signallable):
         # TODO reimplement the observing after GES port
         #self.timelineLogObserver = TimelineLogObserver(self.action_log)
         self.projectLogObserver = ProjectLogObserver(self.action_log)
-        self.sourcelist_log_observer = SourceListLogObserver(self.action_log)
+        self.medialibrary_log_observer = MediaLibraryLogObserver(self.action_log)
 
     def shutdown(self):
         """
@@ -188,7 +188,7 @@ class Pitivi(Loggable, Signallable):
         self.action_log.clean()
         #self.timelineLogObserver.startObserving(project.timeline)
         self.projectLogObserver.startObserving(project)
-        self.sourcelist_log_observer.startObserving(project.sources)
+        self.medialibrary_log_observer.startObserving(project.sources)
         self._newProjectLoaded(project)
         self.emit("new-project-loaded", project)
 
@@ -326,7 +326,7 @@ class ProjectCreatorGuiPitivi(FullGuiPitivi):
                 self._discoveryErrorCb, uris)
         self.current.sources.addUris(uris)
 
-    def _sourceAddedCb(self, sourcelist, info,
+    def _sourceAddedCb(self, medialibrary, info,
             startup_uris, add_to_timeline):
         if self._maybePopStartupUri(startup_uris, info.get_uri()) \
                 and add_to_timeline:
@@ -336,7 +336,7 @@ class ProjectCreatorGuiPitivi(FullGuiPitivi):
             self.current.timeline.get_layers()[0].add_object(src)
             self.action_log.commit()
 
-    def _discoveryErrorCb(self, sourcelist, uri, error, debug, startup_uris):
+    def _discoveryErrorCb(self, medialibrary, uri, error, debug, startup_uris):
         self._maybePopStartupUri(startup_uris, uri)
 
     def _maybePopStartupUri(self, startup_uris, uri):
