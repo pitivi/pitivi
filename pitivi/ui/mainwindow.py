@@ -168,7 +168,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def __init__(self, instance, allow_full_screen=True):
         """ initialize with the Pitivi object """
         gtk.Window.__init__(self)
-        Loggable.__init__(self)
+        Loggable.__init__(self, "mainwindow")
         self.log("Creating MainWindow")
         self.actions = None
         self.toggleactions = None

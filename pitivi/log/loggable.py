@@ -24,8 +24,10 @@ from pitivi.log import log
 
 
 class Loggable(log.Loggable):
-    def __init__(self):
-        if not hasattr(self, 'logCategory'):
+    def __init__(self, logCategory=None):
+        if logCategory:
+            self.logCategory = logCategory
+        elif not hasattr(self, 'logCategory'):
             self.logCategory = self.__class__.__name__.lower()
 
     def logObjectName(self):
