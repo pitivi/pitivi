@@ -46,7 +46,7 @@ from pitivi.ui.timeline import Timeline
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
 from pitivi.sourcelist import SourceListWidget, SourceListError
-from pitivi.ui.effectlist import EffectList
+from pitivi.effects import EffectListWidget
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.clipproperties import ClipProperties
 from pitivi.ui.filechooserpreview import PreviewWidget
@@ -380,7 +380,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._connectToSourceList()
         self.sourcelist.show()
 
-        self.effectlist = EffectList(instance, self.uimanager)
+        self.effectlist = EffectListWidget(instance, self.uimanager)
         self.projecttabs.append_page(self.effectlist, gtk.Label(_("Effect Library")))
         self.effectlist.show()
 

@@ -35,14 +35,13 @@ from pitivi.configure import get_ui_dir
 
 from pitivi.utils.ui import EFFECT_TUPLE
 from pitivi.utils.loggable import Loggable
-from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
+from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS
 
 
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.utils.ui import PADDING, SPACING
-from pitivi.ui.effectlist import HIDDEN_EFFECTS
 from pitivi.ui.gstwidget import GstElementSettingsWidget
-from pitivi.ui.effectsconfiguration import EffectsPropertiesHandling
+from pitivi.effects import EffectsPropertiesManager
 
 (COL_ACTIVATED,
  COL_TYPE,
@@ -93,7 +92,7 @@ class ClipProperties(gtk.ScrolledWindow, Loggable):
         vbox.set_homogeneous(False)
         vp.add(vbox)
 
-        self.effect_properties_handling = EffectsPropertiesHandling(instance.action_log)
+        self.effect_properties_handling = EffectsPropertiesManager(instance.action_log)
 
         self.effect_expander = EffectProperties(instance,
                 self.effect_properties_handling, self)

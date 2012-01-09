@@ -27,9 +27,7 @@ ui_PYTHON =			\
 	track.py		\
 	viewer.py		\
 	view.py			\
-	effectlist.py	\
 	clipproperties.py	\
-	effectsconfiguration.py	\
 	filechooserpreview.py	\
 	zoominterface.py
 

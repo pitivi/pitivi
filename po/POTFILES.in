@@ -22,8 +22,6 @@ pitivi/sourcelist.py
 pitivi/ui/basetabs.py
 pitivi/ui/clipproperties.py
 pitivi/ui/dynamic.py
-pitivi/ui/effectlist.py
-pitivi/ui/effectsconfiguration.py
 pitivi/ui/encodingdialog.py
 pitivi/ui/encodingprogress.py
 pitivi/ui/filechooserpreview.py
