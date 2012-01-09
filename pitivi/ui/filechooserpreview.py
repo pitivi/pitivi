@@ -34,13 +34,6 @@ GlobalSettings.addConfigOption('FCpreviewHeight',
     default=PREVIEW_HEIGHT)
 
 
-def get_playbin():
-    try:
-        return gst.element_factory_make("playbin2", "preview-player")
-    except:
-        return gst.element_factory_make("playbin", "preview-player")
-
-
 class PreviewWidget(gtk.VBox, Loggable):
 
     def __init__(self, instance):
@@ -57,7 +50,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.discoverer = gst.pbutils.Discoverer(gst.SECOND)
 
         #playbin for play pics
-        self.player = get_playbin()
+        self._unsurePlaybin()
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.connect('message', self._bus_message_cb)
@@ -133,6 +126,12 @@ class PreviewWidget(gtk.VBox, Loggable):
         vbox.pack_start(self.b_details, expand=False, fill=False)
         vbox.show()
         self.pack_start(vbox, expand=False, fill=False)
+
+    def _unsurePlaybin(self):
+        try:
+            self.player = gst.element_factory_make("playbin2", "preview-player")
+        except:
+            self.player = gst.element_factory_make("playbin", "preview-player")
 
     def setMinimal(self):
         self.remove(self.l_tags)
