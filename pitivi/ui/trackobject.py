@@ -13,7 +13,7 @@ from zoominterface import Zoomable
 from pitivi.utils.ui import LAYER_SPACING, unpack_cairo_pattern, \
     unpack_cairo_gradient, LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
 
-from pitivi.ui.point import Point
+from pitivi.utils.ui import Point
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
 from pitivi.utils.receiver import receiver, handler

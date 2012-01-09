@@ -13,7 +13,6 @@ ui_PYTHON =			\
 	gstwidget.py		\
 	mainwindow.py		\
 	pathwalker.py		\
-	point.py		\
 	prefs.py		\
 	preset.py		\
 	previewer.py		\

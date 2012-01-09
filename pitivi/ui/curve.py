@@ -31,8 +31,7 @@ from pitivi.ui.zoominterface import Zoomable
 import pitivi.ui.previewer as previewer
 from pitivi.ui.view import View
 from pitivi.ui.controller import Controller
-from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED, roundedrec
-import pitivi.ui.point as point
+from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED, roundedrec, Point
 from pitivi.utils.misc import between
 
 
@@ -211,7 +210,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         x = self.nsToPixel(kf.time - self.element.in_point)
         y = KW_LABEL_Y_OVERFLOW + self._range - (((kf.value -
             interp.lower) / interp.range) * self._range)
-        return point.Point(x + self.bounds.x1, y + self.bounds.y1 + self._min)
+        return Point(x + self.bounds.x1, y + self.bounds.y1 + self._min)
 
     def _controlPoint(self, cr, kf):
         pos = self._getKeyframeXY(kf)
