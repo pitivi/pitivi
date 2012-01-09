@@ -47,10 +47,10 @@ from pitivi.log.loggable import Loggable
 from pitivi.log import log
 from pitivi.ui.mainwindow import PitiviMainWindow
 from pitivi.projectmanager import ProjectManager, ProjectLogObserver
-from pitivi.undo import UndoableActionLog, DebugActionLogObserver
+from pitivi.undo.undo import UndoableActionLog, DebugActionLogObserver
 #FIXME GES port disabled it
-#from pitivi.utils.timeline_undo import TimelineLogObserver
-from pitivi.sourcelist_undo import SourceListLogObserver
+#from pitivi.undo.timeline import TimelineLogObserver
+from pitivi.undo.sourcelist import SourceListLogObserver
 from pitivi.ui.startupwizard import StartUpWizard
 
 # FIXME : Speedup loading time

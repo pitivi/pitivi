@@ -1,6 +1,7 @@
 SUBDIRS = \
 	ui 		\
 	utils	\
+	undo	\
 	log
 
 pitividir = $(libdir)/pitivi/python/pitivi
@@ -21,11 +22,9 @@ pitivi_PYTHON = \
 	signalgroup.py	\
 	signalinterface.py \
 	sourcelist.py 	\
-	sourcelist_undo.py \
 	system.py	\
 	threads.py	\
-	thumbnailcache.py \
-	undo.py
+	thumbnailcache.py
 
 BUILT_SOURCES=configure.py
 

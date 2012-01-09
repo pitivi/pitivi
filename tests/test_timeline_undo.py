@@ -35,10 +35,10 @@
 #from pitivi.utils.track import Track, SourceTrackObject, TrackEffect
 #from pitivi.factories.test import VideoTestSourceFactory, TestEffectFactory
 #from pitivi.stream import VideoStream
-#from pitivi.utils.timeline_undo import TimelineLogObserver, \
+#from pitivi.undo.timeline import TimelineLogObserver, \
         #TimelineObjectAdded, TimelineObjectRemoved, \
         #TimelineObjectPropertyChanged, TrackEffectAdded
-#from pitivi.undo import UndoableActionLog
+#from pitivi.undo.undo import UndoableActionLog
 
 #class TestTimelineLogObserver(TimelineLogObserver):
     #def _connectToTimeline(self, timeline):

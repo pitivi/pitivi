@@ -21,7 +21,7 @@
 
 from unittest import TestCase
 
-from pitivi.undo import UndoError, UndoWrongStateError, UndoableAction, \
+from pitivi.undo.undo import UndoError, UndoWrongStateError, UndoableAction, \
         UndoableActionStack, UndoableActionLog
 
 

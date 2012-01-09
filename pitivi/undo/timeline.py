@@ -23,10 +23,10 @@ import gobject
 
 from pitivi.signalinterface import Signallable
 from pitivi.utils.misc import PropertyChangeTracker
-from pitivi.undo import UndoableAction
+from pitivi.undo.undo import UndoableAction
 
 from pitivi.ui.effectsconfiguration import PROPS_TO_IGNORE
-from pitivi.effects import EffectGstElementPropertyChangeTracker
+from pitivi.undo.effects import EffectGstElementPropertyChangeTracker
 
 
 class TimelineObjectPropertyChangeTracker(PropertyChangeTracker):

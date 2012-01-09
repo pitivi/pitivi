@@ -6,9 +6,7 @@ utils_PYTHON = 	\
 	alignalgs.py    \
 	extract.py      \
 	timeline.py     \
-	gap.py     \
-	misc.py     \
-	timeline_undo.py
+	misc.py
 
 clean-local:
 	rm -rf *.pyc *.pyo

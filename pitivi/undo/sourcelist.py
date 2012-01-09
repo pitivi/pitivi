@@ -19,7 +19,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from pitivi.undo import UndoableAction
+from pitivi.undo.undo import UndoableAction
 
 
 class SourceListSourceAddedAction(UndoableAction):
