@@ -26,7 +26,7 @@ import gobject
 
 from pitivi.utils.loggable import Loggable
 from pitivi.ui.zoominterface import Zoomable
-from pitivi.receiver import receiver, handler
+from pitivi.utils.receiver import receiver, handler
 from pitivi.ui.trackobject import TrackObject
 from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED,\
         LAYER_HEIGHT_COLLAPSED, LAYER_SPACING

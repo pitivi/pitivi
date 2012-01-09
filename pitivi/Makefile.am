@@ -15,7 +15,6 @@ pitivi_PYTHON = \
 	instance.py 	\
 	project.py 	\
 	projectmanager.py 	\
-	receiver.py	\
 	settings.py 	\
 	sourcelist.py 	\
 	thumbnailcache.py

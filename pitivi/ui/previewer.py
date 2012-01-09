@@ -36,7 +36,6 @@ from pitivi.ui.zoominterface import Zoomable
 from pitivi.utils.loggable import Loggable
 from pitivi.thumbnailcache import ThumbnailCache
 from pitivi.ui.prefs import PreferencesDialog
-from pitivi.receiver import receiver, handler
 
 GlobalSettings.addConfigSection("thumbnailing")
 GlobalSettings.addConfigOption("thumbnailSpacingHint",

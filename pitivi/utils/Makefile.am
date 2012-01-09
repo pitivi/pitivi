@@ -12,6 +12,7 @@ utils_PYTHON = 	\
 	ui.py           \
 	system.py       \
 	threads.py      \
+	receiver.py     \
 	misc.py
 
 clean-local:

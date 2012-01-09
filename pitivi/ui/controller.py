@@ -23,7 +23,7 @@ import gtk.gdk
 
 from pitivi.ui.point import Point
 from pitivi.utils.loggable import Loggable
-from pitivi.receiver import receiver, handler
+from pitivi.utils.receiver import receiver, handler
 
 # Controllers are reusable and implement specific behaviors. Currently this
 # Includes only click, and drag. Multiple controllers could be attached to a

@@ -27,7 +27,7 @@ The actual drawing is done by the pitivi.previewer.Previewer class.  """
 import goocanvas
 import gobject
 
-from pitivi.receiver import receiver, handler
+from pitivi.utils.receiver import receiver, handler
 from pitivi.ui.zoominterface import Zoomable
 import pitivi.ui.previewer as previewer
 

@@ -16,7 +16,7 @@ from pitivi.utils.ui import LAYER_SPACING, unpack_cairo_pattern, \
 from pitivi.ui.point import Point
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
-from pitivi.receiver import receiver, handler
+from pitivi.utils.receiver import receiver, handler
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.utils.signal import Signallable
 from pitivi.utils.timeline import SELECT, SELECT_ADD, UNSELECT, \

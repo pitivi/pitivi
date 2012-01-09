@@ -1,5 +1,4 @@
 import gtk
-from pitivi.receiver import receiver, handler
 from gettext import gettext as _
 from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 from pitivi.utils.loggable import Loggable
