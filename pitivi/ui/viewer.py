@@ -29,7 +29,7 @@ from gettext import gettext as _
 
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
-from pitivi.utils.misc import togglePlayback
+from pitivi.utils.playback import togglePlayback
 from pitivi.utils.ui import SPACING, hex_to_rgb
 from pitivi.ui.dynamic import TimeWidget
 

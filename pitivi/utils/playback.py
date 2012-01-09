@@ -118,3 +118,20 @@ class Seeker(Signallable):
 
     def setPosition(self, position):
         self.emit("position-changed", position)
+
+
+#-----------------------------------------------------------------------------#
+#                   Pipeline utils                                            #
+def togglePlayback(pipeline):
+    if int(pipeline.get_state()[1]) == int(gst.STATE_PLAYING):
+        state = gst.STATE_PAUSED
+    else:
+        state = gst.STATE_PLAYING
+
+    res = pipeline.set_state(state)
+    if res == gst.STATE_CHANGE_FAILURE:
+        gst.error("Could no set state to %s")
+        state = gst.STATE_NULL
+        pipeline.set_state(state)
+
+    return state

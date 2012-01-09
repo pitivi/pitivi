@@ -376,20 +376,3 @@ def show_user_manual():
             continue
     log.warning("utils", "Failed loading URIs")
     # TODO: Show an error message to the user.
-
-
-#-----------------------------------------------------------------------------#
-#                   Pipeline utils                                            #
-def togglePlayback(pipeline):
-    if int(pipeline.get_state()[1]) == int(gst.STATE_PLAYING):
-        state = gst.STATE_PAUSED
-    else:
-        state = gst.STATE_PLAYING
-
-    res = pipeline.set_state(state)
-    if res == gst.STATE_CHANGE_FAILURE:
-        gst.error("Could no set state to %s")
-        state = gst.STATE_NULL
-        pipeline.set_state(state)
-
-    return state
