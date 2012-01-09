@@ -27,7 +27,6 @@ from gst import SECOND
 from pitivi.utils.misc import infinity
 from pitivi.log.loggable import Loggable
 from pitivi.signalinterface import Signallable
-from pitivi.utils.gap import Gap, SmallestGapsFinder, invalid_gap
 
 #from pitivi.utils.align import AutoAligner
 
@@ -43,7 +42,7 @@ SELECT_BETWEEN = 3
 
 
 #------------------------------------------------------------------------------#
-#                              Private Functions                               #
+#                              Private utililities                             #
 def previous_track_source(focus, layer, start):
     """
     Get the source before @start in @track
@@ -81,6 +80,137 @@ def next_track_source(focus, layer, start, duration):
                 and isinstance(tckobj, ges.TrackSource):
             return tckobj
     return None
+
+
+class Gap(object):
+    """
+    """
+    def __init__(self, left_object, right_object, start, duration):
+        self.left_object = left_object
+        self.right_object = right_object
+        self.start = start
+        self.initial_duration = duration
+
+    def __cmp__(self, other):
+        if other is None or other is invalid_gap:
+            return -1
+        return cmp(self.duration, other.duration)
+
+    @classmethod
+    def findAroundObject(self, timeline_object, priority=-1, tracks=None):
+        layer = timeline_object.get_layer()
+        tlobjs = layer.get_objects()
+        index = tlobjs.index(timeline_object)
+
+        try:
+            prev = [obj for obj in tlobjs[:index - 1]\
+                    if isinstance(obj, ges.TimelineSource) and \
+                    obj != timeline_object].pop()
+            left_object = prev
+            right_object = timeline_object
+            start = prev.props.start + prev.props.duration
+            duration = timeline_object.props.start - start
+        except IndexError:
+            left_object = None
+            right_object = timeline_object
+            start = 0
+            duration = timeline_object.props.start
+
+        left_gap = Gap(left_object, right_object, start, duration)
+
+        try:
+            next = [obj for obj in tlobjs[index + 1:]\
+                   if isinstance(obj, ges.TimelineSource) and \
+                    obj != timeline_object][0]
+
+            left_object = timeline_object
+            right_object = next
+            start = timeline_object.props.start + timeline_object.props.duration
+            duration = next.props.start - start
+
+        except IndexError:
+            left_object = timeline_object
+            right_object = None
+            start = timeline_object.props.start + timeline_object.props.duration
+            duration = infinity
+
+        right_gap = Gap(left_object, right_object, start, duration)
+
+        return left_gap, right_gap
+
+    @classmethod
+    def findAllGaps(self, objs):
+        """Find all the gaps in a given set of objects: i.e. find all the
+        spans of time which are covered by no object in the given set"""
+        duration = 0
+        gaps = []
+        prev = None
+
+        # examine each object in order of increasing start time
+        for obj in sorted(objs, key=lambda x: x.props.start):
+            start = obj.props.start
+            end = obj.props.start + obj.props.duration
+
+            # only if the current object starts after the total timeline
+            # duration is a gap created.
+            if start > duration:
+                gaps.append(Gap(prev, obj, duration, start - duration))
+            duration = max(duration, end)
+            prev = obj
+        return gaps
+
+    @property
+    def duration(self):
+        if self.left_object is None and self.right_object is None:
+            return self.initial_duration
+
+        if self.initial_duration is infinity:
+            return self.initial_duration
+
+        if self.left_object is None:
+            return self.right_object.props.start
+
+        if self.right_object is None:
+            return infinity
+
+        res = self.right_object.props.start - \
+                (self.left_object.props.start + self.left_object.props.duration)
+        return res
+
+
+class InvalidGap(object):
+    pass
+
+invalid_gap = InvalidGap()
+
+
+class SmallestGapsFinder(object):
+    def __init__(self, internal_objects):
+        self.left_gap = None
+        self.right_gap = None
+        self.internal_objects = internal_objects
+
+    def update(self, left_gap, right_gap):
+        self.updateGap(left_gap, "left_gap")
+        self.updateGap(right_gap, "right_gap")
+
+    def updateGap(self, gap, min_gap_name):
+        if self.isInternalGap(gap):
+            return
+
+        min_gap = getattr(self, min_gap_name)
+
+        if min_gap is invalid_gap or gap.duration < 0:
+            setattr(self, min_gap_name, invalid_gap)
+            return
+
+        if min_gap is None or gap < min_gap:
+            setattr(self, min_gap_name, gap)
+
+    def isInternalGap(self, gap):
+        gap_objects = set([gap.left_object, gap.right_object])
+
+        return gap_objects.issubset(self.internal_objects)
 
 
 #-----------------------------------------------------------------------------#
