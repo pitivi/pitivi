@@ -28,31 +28,33 @@ import os
 import gtk
 import gst
 import ges
-import gobject
 import webbrowser
 
 from urllib import unquote
 from gettext import gettext as _
 from gtk import RecentManager
 
-from pitivi.log.loggable import Loggable
 
+from pitivi.log.loggable import Loggable
+from pitivi.settings import GlobalSettings
+from pitivi.sourcelist import SourceListError
+
+from pitivi.utils import show_user_manual
+
+from pitivi.ui import dnd
+from pitivi.ui.common import SPACING
+from pitivi.ui.common import info_name
 from pitivi.ui.timeline import Timeline
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
-from pitivi.configure import pitivi_version, APPNAME, APPURL, \
-     get_pixmap_dir, get_ui_dir
-from pitivi.ui import dnd
-from pitivi.settings import GlobalSettings
-from pitivi.sourcelist import SourceListError
 from pitivi.ui.sourcelist import SourceList
 from pitivi.ui.effectlist import EffectList
-from pitivi.ui.clipproperties import ClipProperties
-from pitivi.ui.common import SPACING
-from pitivi.ui.common import info_name
-from pitivi.utils import beautify_length, show_user_manual
 from pitivi.ui.zoominterface import Zoomable
+from pitivi.ui.clipproperties import ClipProperties
 from pitivi.ui.filechooserpreview import PreviewWidget
+
+from pitivi.configure import pitivi_version, APPNAME, APPURL, \
+     get_pixmap_dir, get_ui_dir
 
 
 GlobalSettings.addConfigOption("fileSupportEnabled",
