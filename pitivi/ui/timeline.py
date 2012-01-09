@@ -482,22 +482,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         return False
 
-    def setDuration(self, unused1=None, unused2=None):
-        duration = 0
-
-        for track in self._timeline.get_tracks():
-            if track.props.duration > duration:
-                duration = track.props.duration
-
-        if (duration != self._duration):
-            self.debug("Duration changed %s", self._duration)
-            self._duration = duration
-            self.emit("duration-changed", duration)
-
     def getDuration(self):
-        return self._duration
+        return self.timeline.props.duration
 
-    duration = property(getDuration, setDuration, None, "The duration property")
+    duration = property(getDuration, None, None, "The duration property")
 
     def _dragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
@@ -734,9 +722,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._timeline = timeline
 
         # Connecting to timeline signals
-        for track in self._timeline.get_tracks():
-            self._tcks_sig_ids[track] = track.connect("notify::duration",
-                    self.setDuration)
         self._layer_sig_ids.append(self._timeline.connect("layer-added",
                 self._layerAddedCb))
         self._layer_sig_ids.append(self._timeline.connect("layer-removed",
@@ -744,7 +729,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # Make sure to set the current layer in use
         self._layerAddedCb(None, None)
-        self.setDuration()
 
     def getTimeline(self):
         return self._timeline
