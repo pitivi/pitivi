@@ -34,7 +34,7 @@ from pitivi.configure import get_ui_dir
 from gettext import gettext as _
 from pitivi.ui.dynamic import FractionWidget
 from pitivi.ui.ripple_update_group import RippleUpdateGroup
-from pitivi.ui.common import\
+from pitivi.utils.ui import\
     model,\
     frame_rates,\
     audio_rates,\

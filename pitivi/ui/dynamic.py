@@ -30,9 +30,9 @@ import sys
 import gst
 from gettext import gettext as _
 from pitivi.utils.misc import time_to_string
-from pitivi.ui.common import unpack_color, pack_color_32, pack_color_64
+from pitivi.utils.ui import unpack_color, pack_color_32, pack_color_64
 import pango
-from pitivi.ui.common import SPACING
+from pitivi.utils.ui import SPACING
 
 
 class DynamicWidget(object):

@@ -26,7 +26,6 @@ Timeline widgets for the complex view
 import gtk
 
 import ruler
-import dnd
 import gst
 import gobject
 import ges
@@ -41,19 +40,20 @@ from timelinecontrols import TimelineControls
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.utils.timeline import MoveContext, SELECT
 
-from pitivi.ui.common import SPACING
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.alignmentprogress import AlignmentProgressDialog
-from pitivi.ui.common import TRACK_SPACING, LAYER_HEIGHT_EXPANDED, LAYER_SPACING
+from pitivi.utils.ui import SPACING, TRACK_SPACING, LAYER_HEIGHT_EXPANDED,\
+    LAYER_SPACING, TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, \
+    AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT
 
 # FIXME GES Port regression
 # from pitivi.utils.align import AutoAligner
 
-DND_EFFECT_LIST = [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
-                  [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]
-VIDEO_EFFECT_LIST = [dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],
-AUDIO_EFFECT_LIST = [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],
+DND_EFFECT_LIST = [[VIDEO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]],\
+                  [AUDIO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]]]
+VIDEO_EFFECT_LIST = [VIDEO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]],
+AUDIO_EFFECT_LIST = [AUDIO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]],
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
@@ -359,7 +359,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
-            [dnd.FILESOURCE_TUPLE, dnd.EFFECT_TUPLE],
+            [FILESOURCE_TUPLE, EFFECT_TUPLE],
             gtk.gdk.ACTION_COPY)
 
         self.connect("drag-data-received", self._dragDataReceivedCb)
@@ -404,9 +404,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         if not self._factories:
             if  context.targets in DND_EFFECT_LIST:
-                atom = gtk.gdk.atom_intern(dnd.EFFECT_TUPLE[0])
+                atom = gtk.gdk.atom_intern(EFFECT_TUPLE[0])
             else:
-                atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
+                atom = gtk.gdk.atom_intern(FILESOURCE_TUPLE[0])
 
             self.drag_get_data(context, atom, timestamp)
             self.drag_highlight()
@@ -493,12 +493,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.log("targetType:%d, selection.data:%s" % (targetType, selection.data))
         self.selection_data = selection.data
 
-        if targetType not in [dnd.TYPE_PITIVI_FILESOURCE,
-                dnd.TYPE_PITIVI_EFFECT]:
+        if targetType not in [TYPE_PITIVI_FILESOURCE,
+                TYPE_PITIVI_EFFECT]:
             context.finish(False, False, timestamp)
             return
 
-        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
+        if targetType == TYPE_PITIVI_FILESOURCE:
             uris = selection.data.split("\n")
             self._factories = \
                 [self._project.sources.getInfoFromUri(uri) for uri in uris]

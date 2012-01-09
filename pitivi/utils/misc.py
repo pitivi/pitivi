@@ -340,38 +340,6 @@ class Infinity(object):
 infinity = Infinity()
 
 
-class CachedFactoryList(object):
-    def __init__(self, factoryFilter=None):
-        self._factoryFilter = factoryFilter
-        self._factories = None
-        self._registry = gst.registry_get_default()
-        self._registry.connect("feature-added", self._registryFeatureAddedCb)
-
-    def get(self):
-        if self._factories is None:
-            self._buildFactories()
-
-        return self._factories
-
-    def _buildFactories(self):
-        # build the cache
-        log.debug("utils", "Getting factories list")
-        factories = self._registry.get_feature_list(gst.ElementFactory)
-        if self._factoryFilter is not None:
-            log.debug("utils", "filtering")
-            factories = filter(self._factoryFilter, factories)
-
-        log.debug("utils", "Sorting by rank")
-        factories.sort(key=lambda factory: factory.get_rank(), reverse=True)
-        self._factories = factories
-        log.debug("utils", "Cached factories is now %r", self._factories)
-
-    def _registryFeatureAddedCb(self, registry, feature):
-        # invalidate the cache
-        log.warning("utils", "New feature added, invalidating cached factories")
-        self._factories = None
-
-
 def profile(func, profiler_filename="result.prof"):
     import os.path
     counter = 1

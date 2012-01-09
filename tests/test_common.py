@@ -21,7 +21,7 @@
 
 import common
 from unittest import main
-from pitivi.ui import common as ui_common
+import pitivi.utils.ui as ui_common
 
 
 class TestColors(common.TestCase):

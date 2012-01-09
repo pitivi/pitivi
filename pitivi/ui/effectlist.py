@@ -28,13 +28,13 @@ import time
 from gettext import gettext as _
 from xml.sax.saxutils import escape
 
-import pitivi.ui.dnd as dnd
+import pitivi.utils.ui as dnd
 
 from pitivi.configure import get_pixmap_dir
 
 from pitivi.utils.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
-from pitivi.ui.common import SPACING
+from pitivi.utils.ui import SPACING
 from pitivi.settings import GlobalSettings
 
 SHOW_TREEVIEW = 1

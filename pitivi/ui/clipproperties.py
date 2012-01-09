@@ -24,7 +24,6 @@ Class handling the midle pane
 """
 import gtk
 import pango
-import dnd
 import os
 import ges
 
@@ -33,12 +32,14 @@ from gettext import gettext as _
 from pitivi.utils.playback import Seeker
 from pitivi.check import soft_deps
 from pitivi.configure import get_ui_dir
+
+from pitivi.utils.ui import EFFECT_TUPLE
 from pitivi.utils.loggable import Loggable
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 
 
 from pitivi.ui.depsmanager import DepsManager
-from pitivi.ui.common import PADDING, SPACING
+from pitivi.utils.ui import PADDING, SPACING
 from pitivi.ui.effectlist import HIDDEN_EFFECTS
 from pitivi.ui.gstwidget import GstElementSettingsWidget
 from pitivi.ui.effectsconfiguration import EffectsPropertiesHandling
@@ -231,7 +232,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         namecol.add_attribute(namecell, "text", COL_NAME_TEXT)
 
         self.treeview.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
-            [dnd.EFFECT_TUPLE],
+            [EFFECT_TUPLE],
             gtk.gdk.ACTION_COPY)
 
         self.selection = self.treeview.get_selection()
@@ -372,7 +373,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self.drag_unhighlight()
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
-        atom = gtk.gdk.atom_intern(dnd.EFFECT_TUPLE[0])
+        atom = gtk.gdk.atom_intern(EFFECT_TUPLE[0])
         if not self._factory:
             self.drag_get_data(context, atom, timestamp)
         self.drag_highlight()

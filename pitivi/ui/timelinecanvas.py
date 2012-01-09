@@ -31,11 +31,11 @@ from pitivi.ui.point import Point
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.settings import GlobalSettings
 from pitivi.ui.prefs import PreferencesDialog
-from pitivi.ui.common import TRACK_SPACING, unpack_cairo_pattern, \
+from pitivi.utils.ui import TRACK_SPACING, unpack_cairo_pattern, \
         LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 from pitivi.ui.controller import Controller
 from pitivi.ui.curve import KW_LABEL_Y_OVERFLOW
-from pitivi.ui.common import SPACING
+from pitivi.utils.ui import SPACING
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)

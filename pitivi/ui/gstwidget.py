@@ -33,7 +33,7 @@ from gettext import gettext as _
 from pitivi.utils.loggable import Loggable
 from pitivi.configure import get_ui_dir
 import pitivi.ui.dynamic as dynamic
-from pitivi.ui.common import SPACING
+from pitivi.utils.ui import SPACING
 
 
 def make_property_widget(unused_element, prop, value=None):

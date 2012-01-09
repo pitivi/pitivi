@@ -10,8 +10,8 @@ import controller
 from view import View
 from gettext import gettext as _
 from zoominterface import Zoomable
-from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
-from common import LAYER_SPACING, unpack_cairo_pattern, unpack_cairo_gradient
+from pitivi.utils.ui import LAYER_SPACING, unpack_cairo_pattern, \
+    unpack_cairo_gradient, LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
 
 from pitivi.ui.point import Point
 from pitivi.utils.loggable import Loggable
@@ -452,7 +452,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
     def _setElement(self):
         if self.element and not self.is_transition:
-            from pitivi.ui.common import info_name
+            from pitivi.utils.ui import info_name
 
             sources = self.app.current.sources
             uri = self.element.props.uri

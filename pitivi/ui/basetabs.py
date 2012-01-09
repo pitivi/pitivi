@@ -20,7 +20,7 @@
 # Boston, MA 02110-1301, USA.
 
 import gtk
-from pitivi.ui.common import SPACING
+from pitivi.utils.ui import SPACING
 
 
 class BaseTabs(gtk.Notebook):

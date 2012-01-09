@@ -30,8 +30,10 @@ import pitivi.ui.dynamic as dynamic
 
 from pitivi.configure import get_ui_dir
 from pitivi.settings import GlobalSettings
-from pitivi.ui.common import SPACING
+from pitivi.utils.ui import SPACING
 from gettext import gettext as _
+
+GlobalSettings.addConfigSection("user-interface")
 
 GlobalSettings.addConfigOption('prefsDialogWidth',
     section="user-interface",

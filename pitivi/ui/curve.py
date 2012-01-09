@@ -31,7 +31,7 @@ from pitivi.ui.zoominterface import Zoomable
 import pitivi.ui.previewer as previewer
 from pitivi.ui.view import View
 from pitivi.ui.controller import Controller
-from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, roundedrec
+from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED, roundedrec
 import pitivi.ui.point as point
 from pitivi.utils.misc import between
 

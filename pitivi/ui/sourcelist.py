@@ -32,7 +32,7 @@ from urllib import unquote
 from gettext import gettext as _
 from hashlib import md5
 
-import pitivi.ui.dnd as dnd
+import pitivi.utils.ui as dnd
 from pitivi.configure import get_pixmap_dir
 from pitivi.settings import GlobalSettings
 
@@ -41,7 +41,7 @@ from pitivi.utils.signal import SignalGroup
 
 from pitivi.ui.pathwalker import PathWalker, quote_uri
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
-from pitivi.ui.common import beautify_info, info_name, \
+from pitivi.utils.ui import beautify_info, info_name, \
     SPACING, PADDING
 from pitivi.utils.loggable import Loggable
 from pitivi.ui.filechooserpreview import PreviewWidget

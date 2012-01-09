@@ -3,10 +3,8 @@ uidir = $(libdir)/pitivi/python/pitivi/ui
 ui_PYTHON =			\
 	__init__.py		\
 	alignmentprogress.py    \
-	common.py		\
 	controller.py		\
 	curve.py		\
-	dnd.py			\
 	depsmanager.py	\
 	dynamic.py		\
 	encodingdialog.py	\

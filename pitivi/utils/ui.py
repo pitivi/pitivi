@@ -1,19 +1,47 @@
 # -*- coding: utf-8 -*-
+# PiTiVi , Non-linear video editor
+#
+#       pitivi/utils/ui.py
+#
+# Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2012, Thibault Saunier <thibault.saunier@collabora.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+"""
+UI utilities. This file contain the UI constants, and various functions and
+classes that help with UI drawing around the application
+"""
 import gst
 import gtk
 import os
 import cairo
 
-from xml.sax.saxutils import escape
+from itertools import izip
 from urllib import unquote
-from gettext import ngettext
+from gettext import ngettext, gettext as _
+from xml.sax.saxutils import escape
 
-from gettext import gettext as _
-
-from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import doLog, ERROR
 
-GlobalSettings.addConfigSection("user-interface")
+# ---------------------- Constants --------------------------------------------#
+
+##
+# UI pixels information constants
+##
 LAYER_HEIGHT_EXPANDED = 50
 LAYER_HEIGHT_COLLAPSED = 15
 LAYER_SPACING = 15
@@ -22,7 +50,33 @@ TRACK_SPACING = 8
 SPACING = 6
 PADDING = 6
 
+##
+#   Drag'n drop constants
+##
+TYPE_TEXT_PLAIN = 24
+TYPE_URI_LIST = 25
 
+# FileSourceFactory (or subclasses)
+TYPE_PITIVI_FILESOURCE = 26
+
+# What objects to these correspond to ???
+TYPE_PITIVI_EFFECT = 27
+TYPE_PITIVI_AUDIO_EFFECT = 28
+TYPE_PITIVI_VIDEO_EFFECT = 29
+TYPE_PITIVI_AUDIO_TRANSITION = 30
+TYPE_PITIVI_VIDEO_TRANSITION = 31
+
+FILE_TUPLE = ("text/plain", 0, TYPE_TEXT_PLAIN)
+URI_TUPLE = ("text/uri-list", 0, TYPE_URI_LIST)
+FILESOURCE_TUPLE = ("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)
+EFFECT_TUPLE = ("pitivi/effect", 0, TYPE_PITIVI_EFFECT)
+AUDIO_EFFECT_TUPLE = ("pitivi/audio-effect", 0, TYPE_PITIVI_AUDIO_EFFECT)
+VIDEO_EFFECT_TUPLE = ("pitivi/video-effect", 0, TYPE_PITIVI_VIDEO_EFFECT)
+AUDIO_TRANSITION_TUPLE = ("pitivi/audio-transition", 0, TYPE_PITIVI_AUDIO_TRANSITION)
+VIDEO_TRANSITION_TUPLE = ("pitivi/video-transition", 0, TYPE_PITIVI_VIDEO_TRANSITION)
+
+
+# ---------------------- ARGB color helper-------------------------------------#
 def pack_color_32(red, green, blue, alpha=0xFFFF):
     """Packs the specified 16bit color values in a 32bit RGBA value."""
     red = red >> 8
@@ -96,6 +150,11 @@ def unpack_cairo_gradient(value):
     return gradient
 
 
+def hex_to_rgb(value):
+    return tuple(float(int(value[i:i + 2], 16)) / 255.0 for i in range(0, 6, 2))
+
+
+#--- Utils to make gst.DiscovererInfo ready to be displayed in the UI --------#
 def beautify_info(info):
     ranks = {
         gst.pbutils.DiscovererVideoInfo: 0,
@@ -152,6 +211,7 @@ def beautify_stream(stream):
     raise NotImplementedError
 
 
+#--------------------- UI drawing helper -------------------------------------#
 # from http://cairographics.org/cookbook/roundedrectangles/
 def roundedrec(context, x, y, w, h, r=10):
     "Draw a rounded rectangle"
@@ -175,12 +235,30 @@ def roundedrec(context, x, y, w, h, r=10):
     return
 
 
+#--------------------- Gtk widget helpers ------------------------------------#
 def model(columns, data):
     ret = gtk.ListStore(*columns)
     for datum in data:
         ret.append(datum)
     return ret
 
+
+def set_combo_value(combo, value, default_index=-1):
+    model = combo.props.model
+    for i, row in enumerate(model):
+        if row[1] == value:
+            combo.set_active(i)
+            return
+    combo.set_active(default_index)
+
+
+def get_combo_value(combo):
+    active = combo.get_active()
+    return combo.props.model[active][1]
+
+
+#------------------------ encoding datas ----------------------------------------#
+# FIXME This should into a special file
 frame_rates = model((str, object), (
     # Translators: fps is for frames per second
     (_("%d fps") % 12, gst.Fraction(12.0, 1.0)),
@@ -216,21 +294,3 @@ audio_channels = model((str, int), (
     (_("4 Channels (4.0)"), 4),
     (_("Stereo"), 2),
     (_("Mono"), 1)))
-
-
-def set_combo_value(combo, value, default_index=-1):
-    model = combo.props.model
-    for i, row in enumerate(model):
-        if row[1] == value:
-            combo.set_active(i)
-            return
-    combo.set_active(default_index)
-
-
-def get_combo_value(combo):
-    active = combo.get_active()
-    return combo.props.model[active][1]
-
-
-def hex_to_rgb(value):
-    return tuple(float(int(value[i:i + 2], 16)) / 255.0 for i in range(0, 6, 2))

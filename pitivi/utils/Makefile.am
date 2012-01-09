@@ -8,7 +8,8 @@ utils_PYTHON = 	\
 	timeline.py     \
 	loggable.py     \
 	playback.py     \
-	signal.py     \
+	signal.py       \
+	ui.py          \
 	misc.py
 
 clean-local:

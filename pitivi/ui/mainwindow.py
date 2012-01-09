@@ -40,10 +40,9 @@ from pitivi.settings import GlobalSettings
 from pitivi.sourcelist import SourceListError
 
 from pitivi.utils.misc import show_user_manual
+from pitivi.utils.ui import SPACING, info_name, FILESOURCE_TUPLE, URI_TUPLE, \
+         TYPE_URI_LIST, TYPE_PITIVI_FILESOURCE
 
-from pitivi.ui import dnd
-from pitivi.ui.common import SPACING
-from pitivi.ui.common import info_name
 from pitivi.ui.timeline import Timeline
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
@@ -118,6 +117,7 @@ GlobalSettings.addConfigOption('effectVPanedPosition',
     section='effect-configuration',
     key='effect-vpaned-position',
     type_=int)
+
 
 #FIXME Hacky, reimplement when avalaible in GES
 formats = [(None, _("PiTiVi Native (XML)"), ('xptv',))]
@@ -410,7 +410,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.viewer = PitiviViewer(instance, undock_action=self.undock_action)
         # drag and drop
         self.viewer.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           [dnd.FILESOURCE_TUPLE, dnd.URI_TUPLE],
+                           [FILESOURCE_TUPLE, URI_TUPLE],
                            gtk.gdk.ACTION_COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
@@ -1075,9 +1075,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # FIXME : This should be handled by the main application who knows how
         # to switch between pipelines.
         self.info("context:%s, targetType:%s", context, targetType)
-        if targetType == dnd.TYPE_URI_LIST:
+        if targetType == TYPE_URI_LIST:
             uri = selection.data.strip().split("\n")[0].strip()
-        elif targetType == dnd.TYPE_PITIVI_FILESOURCE:
+        elif targetType == TYPE_PITIVI_FILESOURCE:
             uri = selection.data
         else:
             context.finish(False, False, ctime)
