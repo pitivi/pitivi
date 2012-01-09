@@ -39,7 +39,7 @@ from pitivi.utils.signal import Signallable
 
 from pitivi.utils.loggable import Loggable
 from pitivi.ui.gstwidget import GstElementSettingsDialog
-from pitivi.ui.ripple_update_group import RippleUpdateGroup
+from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import model, frame_rates, audio_rates, audio_depths, \
     audio_channels, get_combo_value, set_combo_value
 

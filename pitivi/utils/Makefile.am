@@ -13,7 +13,7 @@ utils_PYTHON = 	\
 	system.py       \
 	threads.py      \
 	receiver.py     \
-	pathwalker.py   \
+	ripple_update_group.py	\
 	misc.py
 
 clean-local:
