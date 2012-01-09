@@ -18,7 +18,6 @@ pitivi_PYTHON = \
 	receiver.py	\
 	settings.py 	\
 	sourcelist.py 	\
-	system.py	\
 	threads.py	\
 	thumbnailcache.py
 

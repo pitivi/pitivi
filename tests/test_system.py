@@ -1,5 +1,5 @@
 from unittest import TestCase
-from pitivi.system import System
+from pitivi.utils.system import System
 
 
 class TestSystem(TestCase):

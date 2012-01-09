@@ -41,8 +41,9 @@ from pitivi.effects import EffectsHandler
 from pitivi.configure import APPNAME
 from pitivi.settings import GlobalSettings
 from pitivi.threads import ThreadMaster
+
 from pitivi.utils.signal import Signallable
-from pitivi.system import getSystem
+from pitivi.utils.system import getSystem
 from pitivi.utils.loggable import Loggable
 import pitivi.utils.loggable as log
 from pitivi.ui.mainwindow import PitiviMainWindow

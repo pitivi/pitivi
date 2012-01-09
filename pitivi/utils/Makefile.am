@@ -9,7 +9,8 @@ utils_PYTHON = 	\
 	loggable.py     \
 	playback.py     \
 	signal.py       \
-	ui.py          \
+	ui.py           \
+	system.py       \
 	misc.py
 
 clean-local:

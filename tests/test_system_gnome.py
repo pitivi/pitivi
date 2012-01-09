@@ -1,5 +1,5 @@
 from unittest import TestCase
-from pitivi.system import getSystem, GnomeSystem, \
+from pitivi.utils.system import getSystem, GnomeSystem, \
   INHIBIT_LOGOUT, INHIBIT_SUSPEND, INHIBIT_SESSION_IDLE, \
   INHIBIT_USER_SWITCHING
 
