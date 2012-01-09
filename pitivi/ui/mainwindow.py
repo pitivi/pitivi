@@ -1083,13 +1083,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
             context.finish(False, False, ctime)
             return
 
-        # Use factory from our source list if we have the given uri
         try:
-            fact = self.project.sources.getInfoFromUri(uri)
+            info = self.project.sources.getInfoFromUri(uri)
         except SourceListError:
-            from pitivi.factories.file import FileSourceFactory
-            fact = FileSourceFactory(uri)
-        self._viewUri(fact)
+            self.project.sources.addUri(uri)
+            # FIXME Add a delay/catch signal when we start doing the discovering
+            # async
+            info = self.project.sources.getInfoFromUri(uri)
+        self._viewUri(info.get_uri())
         context.finish(True, False, ctime)
 
     def _leavePreviewCb(self, window, unused):
