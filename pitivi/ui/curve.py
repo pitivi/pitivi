@@ -33,7 +33,7 @@ from pitivi.ui.view import View
 from pitivi.ui.controller import Controller
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, roundedrec
 import pitivi.ui.point as point
-from pitivi.utils import between
+from pitivi.utils.misc import between
 
 
 def intersect(b1, b2):

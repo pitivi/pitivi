@@ -32,9 +32,9 @@ except ImportError:
 
 import gobject
 import gst
-from pitivi.utils import beautify_ETA, call_false
+from pitivi.utils.misc import beautify_ETA, call_false
 from pitivi.log.loggable import Loggable
-from pitivi.timeline.alignalgs import rigidalign
+from pitivi.utils.alignalgs import rigidalign
 
 
 def getAudioTrack(timeline_object):

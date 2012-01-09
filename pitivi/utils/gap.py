@@ -21,7 +21,7 @@
 
 import ges
 
-from pitivi.utils import infinity
+from pitivi.utils.misc import infinity
 
 
 class Gap(object):

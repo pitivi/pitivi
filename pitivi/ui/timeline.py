@@ -39,7 +39,7 @@ from pitivi.log.loggable import Loggable
 from timelinecanvas import TimelineCanvas
 from timelinecontrols import TimelineControls
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
-from pitivi.timeline.timeline import MoveContext, SELECT
+from pitivi.utils.timeline import MoveContext, SELECT
 
 from pitivi.ui.common import SPACING
 from pitivi.ui.depsmanager import DepsManager
@@ -48,7 +48,7 @@ from pitivi.ui.alignmentprogress import AlignmentProgressDialog
 from pitivi.ui.common import TRACK_SPACING, LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 
 # FIXME GES Port regression
-# from pitivi.timeline.align import AutoAligner
+# from pitivi.utils.align import AutoAligner
 
 DND_EFFECT_LIST = [[dnd.VIDEO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]],\
                   [dnd.AUDIO_EFFECT_TUPLE[0], dnd.EFFECT_TUPLE[0]]]

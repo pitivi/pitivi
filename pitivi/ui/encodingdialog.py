@@ -33,7 +33,7 @@ import time
 from gettext import gettext as _
 
 from pitivi import configure
-from pitivi.utils import togglePlayback, Seeker, beautify_ETA
+from pitivi.utils.misc import togglePlayback, Seeker, beautify_ETA
 from pitivi.settings import MultimediaSettings
 from pitivi.signalinterface import Signallable
 

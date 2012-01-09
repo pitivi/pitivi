@@ -29,8 +29,8 @@ import common
 
 from pitivi.factories.file import PictureFileSourceFactory
 from pitivi.factories.timeline import TimelineSourceFactory
-from pitivi.timeline.track import Track, SourceTrackObject
-from pitivi.timeline.timeline import Timeline
+from pitivi.utils.track import Track, SourceTrackObject
+from pitivi.utils.timeline import Timeline
 from pitivi.encode import RenderSinkFactory, RenderFactory
 from pitivi.action import RenderAction
 from pitivi.settings import StreamEncodeSettings, RenderSettings

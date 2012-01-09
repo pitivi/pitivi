@@ -27,7 +27,7 @@ from gettext import gettext as _
 from pitivi.configure import get_ui_dir
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.check import soft_deps
-from pitivi.utils import show_user_manual
+from pitivi.utils.misc import show_user_manual
 
 from urllib import unquote
 

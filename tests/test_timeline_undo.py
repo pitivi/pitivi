@@ -31,11 +31,11 @@
 #import gst
 
 #from pitivi.pipeline import Pipeline
-#from pitivi.timeline.timeline import Timeline, TimelineObject, SELECT_ADD
-#from pitivi.timeline.track import Track, SourceTrackObject, TrackEffect
+#from pitivi.utils.timeline import Timeline, TimelineObject, SELECT_ADD
+#from pitivi.utils.track import Track, SourceTrackObject, TrackEffect
 #from pitivi.factories.test import VideoTestSourceFactory, TestEffectFactory
 #from pitivi.stream import VideoStream
-#from pitivi.timeline.timeline_undo import TimelineLogObserver, \
+#from pitivi.utils.timeline_undo import TimelineLogObserver, \
         #TimelineObjectAdded, TimelineObjectRemoved, \
         #TimelineObjectPropertyChanged, TrackEffectAdded
 #from pitivi.undo import UndoableActionLog

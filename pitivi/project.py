@@ -26,12 +26,12 @@ Project class
 import ges
 import gst
 
-from pitivi.utils import Seeker
+from pitivi.utils.misc import Seeker
 from pitivi.log.loggable import Loggable
 from pitivi.sourcelist import SourceList
 from pitivi.settings import MultimediaSettings
 from pitivi.signalinterface import Signallable
-from pitivi.timeline.timeline import Selection
+from pitivi.utils.timeline import Selection
 
 
 class ProjectError(Exception):

@@ -24,12 +24,12 @@ import ges
 
 from gst import SECOND
 
-from pitivi.utils import infinity
+from pitivi.utils.misc import infinity
 from pitivi.log.loggable import Loggable
 from pitivi.signalinterface import Signallable
-from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
+from pitivi.utils.gap import Gap, SmallestGapsFinder, invalid_gap
 
-#from pitivi.timeline.align import AutoAligner
+#from pitivi.utils.align import AutoAligner
 
 # Selection modes
 SELECT = 0
@@ -117,7 +117,7 @@ class EditingContext(object):
         interactive editing, such as objects in the current selection.
         @type other: a set() of L{TimelineObject}s or L{TrackObject}s
 
-        @returns: An instance of L{pitivi.timeline.timeline.TimelineEditContex}
+        @returns: An instance of L{pitivi.utils.timeline.TimelineEditContex}
         """
 
         # make sure focus is not in secondary object list

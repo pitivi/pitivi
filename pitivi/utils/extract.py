@@ -31,7 +31,7 @@ from collections import deque
 from pitivi.elements.singledecodebin import SingleDecodeBin
 from pitivi.elements.extractionsink import ExtractionSink
 from pitivi.log.loggable import Loggable
-from pitivi.utils import pipeline
+from pitivi.utils.misc import pipeline
 
 
 class Extractee:

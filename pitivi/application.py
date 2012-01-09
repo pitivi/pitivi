@@ -49,7 +49,7 @@ from pitivi.ui.mainwindow import PitiviMainWindow
 from pitivi.projectmanager import ProjectManager, ProjectLogObserver
 from pitivi.undo import UndoableActionLog, DebugActionLogObserver
 #FIXME GES port disabled it
-#from pitivi.timeline.timeline_undo import TimelineLogObserver
+#from pitivi.utils.timeline_undo import TimelineLogObserver
 from pitivi.sourcelist_undo import SourceListLogObserver
 from pitivi.ui.startupwizard import StartUpWizard
 
@@ -125,7 +125,7 @@ class Pitivi(Loggable, Signallable):
         #self.screencast = False
 
         self.effects = EffectsHandler()
-        self.system = getSystem ()
+        self.system = getSystem()
 
         self.projectManager = ProjectManager(self.effects)
         self._connectToProjectManager(self.projectManager)

@@ -30,7 +30,7 @@ import ges
 
 from gettext import gettext as _
 
-from pitivi.utils import Seeker
+from pitivi.utils.misc import Seeker
 from pitivi.check import soft_deps
 from pitivi.configure import get_ui_dir
 from pitivi.log.loggable import Loggable

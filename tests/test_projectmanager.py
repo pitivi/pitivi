@@ -33,7 +33,7 @@
         #FormatterError, FormatterLoadError
 #import os
 #import gst
-#from pitivi.utils import uri_is_reachable
+#from pitivi.utils.misc import uri_is_reachable
 #import time
 
 

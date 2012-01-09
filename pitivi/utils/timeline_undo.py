@@ -22,7 +22,7 @@
 import gobject
 
 from pitivi.signalinterface import Signallable
-from pitivi.utils import PropertyChangeTracker
+from pitivi.utils.misc import PropertyChangeTracker
 from pitivi.undo import UndoableAction
 
 from pitivi.ui.effectsconfiguration import PROPS_TO_IGNORE

@@ -39,7 +39,7 @@ from pitivi.log.loggable import Loggable
 from pitivi.settings import GlobalSettings
 from pitivi.sourcelist import SourceListError
 
-from pitivi.utils import show_user_manual
+from pitivi.utils.misc import show_user_manual
 
 from pitivi.ui import dnd
 from pitivi.ui.common import SPACING

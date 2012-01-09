@@ -25,7 +25,7 @@ QA scenarios """
 import unittest
 TestCase = unittest.TestCase
 from pitivi.application import InteractivePitivi
-from pitivi.timeline.timeline import MoveContext, TrimStartContext,\
+from pitivi.utils.timeline import MoveContext, TrimStartContext,\
     TrimEndContext
 from pitivi.signalinterface import Signallable
 from pitivi.stream import AudioStream, VideoStream

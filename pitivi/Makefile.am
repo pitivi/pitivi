@@ -1,6 +1,6 @@
 SUBDIRS = \
 	ui 		\
-	timeline	\
+	utils	\
 	log
 
 pitividir = $(libdir)/pitivi/python/pitivi
@@ -25,8 +25,7 @@ pitivi_PYTHON = \
 	system.py	\
 	threads.py	\
 	thumbnailcache.py \
-	undo.py		\
-	utils.py
+	undo.py
 
 BUILT_SOURCES=configure.py
 

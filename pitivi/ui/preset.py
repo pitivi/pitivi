@@ -28,7 +28,7 @@ import json
 from pitivi.encode import available_muxers, available_video_encoders, \
      available_audio_encoders
 from pitivi.settings import xdg_data_home
-from pitivi.utils import isWritable
+from pitivi.utils.misc import isWritable
 from pitivi.configure import get_renderpresets_dir, \
         get_audiopresets_dir, get_videopresets_dir
 

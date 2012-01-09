@@ -88,7 +88,7 @@ pitivi/Makefile
 pitivi/configure.py
 pitivi/ui/Makefile
 pitivi/log/Makefile
-pitivi/timeline/Makefile
+pitivi/utils/Makefile
 pitivi.spec
 po/Makefile.in
 tests/Makefile
