@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/undo.py
+#       pitivi/undo/undo.py
 #
 # Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
 #
@@ -18,6 +18,10 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+
+"""
+Base classes for the undo/redo feature implementation
+"""
 
 from pitivi.signalinterface import Signallable
 from pitivi.utils.loggable import Loggable
@@ -259,3 +263,42 @@ class DebugActionLogObserver(Loggable):
 
     def _actionLogPushCb(self, log, stack, action):
         self.debug("push %s in %s", action, stack.action_group_name)
+
+
+class PropertyChangeTracker(Signallable):
+    """
+    BaseClasse to track a class property, Used for undo/redo
+    """
+
+    __signals__ = {}
+
+    def __init__(self):
+        self.properties = {}
+        self.obj = None
+
+    def connectToObject(self, obj):
+        self.obj = obj
+        self.properties = self._takeCurrentSnapshot(obj)
+        for property_name in self.property_names:
+            signal_name = "notify::" + property_name
+            self.__signals__[signal_name] = []
+            obj.connect(signal_name,
+                    self._propertyChangedCb, property_name)
+
+    def _takeCurrentSnapshot(self, obj):
+        properties = {}
+        for property_name in self.property_names:
+            properties[property_name] = \
+                    obj.get_property(property_name.replace("-", "_"))
+
+        return properties
+
+    def disconnectFromObject(self, obj):
+        self.obj = None
+        obj.disconnect_by_func(self._propertyChangedCb)
+
+    def _propertyChangedCb(self, object, value, property_name):
+        old_value = self.properties[property_name]
+        self.properties[property_name] = value
+
+        self.emit("notify::" + property_name, object, old_value, value)

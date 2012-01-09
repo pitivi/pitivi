@@ -23,6 +23,8 @@
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
 
+import gobject
+
 from pitivi.undo.undo import UndoableAction
 
 
@@ -42,6 +44,8 @@ class EffectPropertyChanged(UndoableAction):
         self._undone()
 
 
+# FIXME We should refactor pitivi.undo.PropertyChangeTracker so we can use it as
+# a baseclass here!
 class EffectGstElementPropertyChangeTracker:
     """
     Track effect configuration changes in its list of control effects

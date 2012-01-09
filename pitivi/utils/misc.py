@@ -268,42 +268,6 @@ def uri_is_reachable(uri):
     return os.path.isfile(gst.uri_get_location(uri))
 
 
-class PropertyChangeTracker(Signallable):
-
-    __signals__ = {}
-
-    def __init__(self):
-        self.properties = {}
-        self.obj = None
-
-    def connectToObject(self, obj):
-        self.obj = obj
-        self.properties = self._takeCurrentSnapshot(obj)
-        for property_name in self.property_names:
-            signal_name = "notify::" + property_name
-            self.__signals__[signal_name] = []
-            obj.connect(signal_name,
-                    self._propertyChangedCb, property_name)
-
-    def _takeCurrentSnapshot(self, obj):
-        properties = {}
-        for property_name in self.property_names:
-            properties[property_name] = \
-                    obj.get_property(property_name.replace("-", "_"))
-
-        return properties
-
-    def disconnectFromObject(self, obj):
-        self.obj = None
-        obj.disconnect_by_func(self._propertyChangedCb)
-
-    def _propertyChangedCb(self, object, value, property_name):
-        old_value = self.properties[property_name]
-        self.properties[property_name] = value
-
-        self.emit("notify::" + property_name, object, old_value, value)
-
-
 class Seeker(Signallable):
     """
     The Seeker is a singleton helper class to do various seeking
