@@ -210,27 +210,27 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.action_log.connect("redo", self._actionLogRedo)
         self.app.action_log.connect("cleaned", self._actionLogCleaned)
 
-    def showEncodingDialog(self, project, pause=True):
+    def showRenderDialog(self, project, pause=True):
         """
-        Shows the L{EncodingDialog} for the given project Timeline.
+        Shows the L{RenderDialog} for the given project Timeline.
 
         @param project: The project
         @type project: L{Project}
         @param pause: If C{True}, pause the timeline before displaying the dialog.
         @type pause: C{bool}
         """
-        from pitivi.render import EncodingDialog
+        from pitivi.render import RenderDialog
 
-        dialog = EncodingDialog(self, project)
-        dialog.window.connect("destroy", self._renderingDialogDestroyCb)
+        dialog = RenderDialog(self, project)
+        dialog.window.connect("destroy", self._renderDialogDestroyCb)
         self.set_sensitive(False)
         dialog.window.show()
 
-    def _renderingDialogDestroyCb(self, unused_dialog):
+    def _renderDialogDestroyCb(self, unused_dialog):
         self.set_sensitive(True)
 
     def _recordCb(self, unused_button):
-        self.showEncodingDialog(self.project)
+        self.showRenderDialog(self.project)
 
     def _setActions(self, instance):
         PLAY = _("Start Playback")

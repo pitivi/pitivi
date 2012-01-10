@@ -313,7 +313,7 @@ def factorylist(factories):
 
 
 #--------------------------------- Public classes -----------------------------#
-class EncodingProgressDialog(Signallable):
+class RenderingProgressDialog(Signallable):
     __signals__ = {
         "pause": [],
         "cancel": [],
@@ -351,10 +351,10 @@ class EncodingProgressDialog(Signallable):
     def setState(self, state):
         if state == gst.STATE_PLAYING:
             self.play_pause_button.props.label = gtk.STOCK_MEDIA_PAUSE
-            self.system.inhibitSleep(EncodingDialog.INHIBIT_REASON)
+            self.system.inhibitSleep(RenderDialog.INHIBIT_REASON)
         else:
             self.play_pause_button.props.label = 'pitivi-render'
-            self.system.uninhibitSleep(EncodingDialog.INHIBIT_REASON)
+            self.system.uninhibitSleep(RenderDialog.INHIBIT_REASON)
 
     def _cancelButtonClickedCb(self, unused_button):
         self.emit("cancel")
@@ -363,7 +363,7 @@ class EncodingProgressDialog(Signallable):
         self.emit("pause")
 
 
-class EncodingDialog(Loggable):
+class RenderDialog(Loggable):
     """Render dialog box.
 
     @ivar preferred_arenderer: The last audio renderer selected by the user.
@@ -795,7 +795,7 @@ class EncodingDialog(Loggable):
         set_combo_value(self.sample_depth_combo, self.settings.audiodepth)
 
     def _displayRenderSettings(self):
-        """Display the settings which can be changed only in the EncodingDialog.
+        """Display the settings which can be changed only in the RenderDialog.
         """
         # Video settings
         # note: this will trigger an update of the video resolution label
@@ -955,7 +955,7 @@ class EncodingDialog(Loggable):
         start the rendering process. """
         self.outfile = os.path.join(self.filebutton.get_uri(),
                                     self.fileentry.get_text())
-        self.progress = EncodingProgressDialog(self.app, self)
+        self.progress = RenderingProgressDialog(self.app, self)
         self.window.hide()  # Hide the rendering settings dialog while rendering
 
         # FIXME GES: Handle presets here!

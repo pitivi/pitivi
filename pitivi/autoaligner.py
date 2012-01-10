@@ -654,7 +654,7 @@ class AutoAligner(Loggable):
 
 class AlignmentProgressDialog:
     """ Dialog indicating the progress of the auto-alignment process.
-        Code derived from L{EncodingProgressDialog}, but greatly simplified
+        Code derived from L{RenderingProgressDialog}, but greatly simplified
         (read-only, no buttons)."""
 
     def __init__(self, app):
@@ -668,9 +668,9 @@ class AlignmentProgressDialog:
         # Parent this dialog with mainwindow
         # set_transient_for allows this dialog to properly
         # minimize together with the mainwindow.  This method is
-        # taken from EncodingProgressDialog.  In both cases, it appears
+        # taken from RenderingProgressDialog.  In both cases, it appears
         # to work correctly, although there is a known bug for Gnome 3 in
-        # EncodingProgressDialog (bug #652917)
+        # RenderingProgressDialog (bug #652917)
         self.window.set_transient_for(app.gui)
 
         # UI widgets
