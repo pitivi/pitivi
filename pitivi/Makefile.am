@@ -15,7 +15,6 @@ pitivi_PYTHON = \
 	render.py	\
 	instance.py 	\
 	project.py 	\
-	projectmanager.py 	\
 	settings.py 	\
 	medialibrary.py 	\
 	thumbnailcache.py

@@ -28,7 +28,7 @@
 
 #from unittest import TestCase
 
-#from pitivi.projectmanager import ProjectManager
+#from pitivi.project import ProjectManager
 #from pitivi.formatters.base import Formatter, \
         #FormatterError, FormatterLoadError
 #import os

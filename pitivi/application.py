@@ -47,7 +47,7 @@ from pitivi.utils.system import getSystem
 from pitivi.utils.loggable import Loggable
 import pitivi.utils.loggable as log
 from pitivi.ui.mainwindow import PitiviMainWindow
-from pitivi.projectmanager import ProjectManager, ProjectLogObserver
+from pitivi.project import ProjectManager, ProjectLogObserver
 from pitivi.undo.undo import UndoableActionLog, DebugActionLogObserver
 #FIXME GES port disabled it
 #from pitivi.undo.timeline import TimelineLogObserver
