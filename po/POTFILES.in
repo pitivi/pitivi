@@ -21,8 +21,8 @@ pitivi/project.py
 pitivi/settings.py
 pitivi/medialibrary.py
 
-pitivi/timeline/timelinecanvas.py
 pitivi/timeline/timeline.py
+pitivi/timeline/track.py
 
 pitivi/ui/basetabs.py
 pitivi/ui/clipproperties.py
