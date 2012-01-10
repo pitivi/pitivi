@@ -10,7 +10,6 @@ ui_PYTHON =			\
 	preset.py		\
 	previewer.py		\
 	preview.py		\
-	projectsettings.py	\
 	basetabs.py		\
 	startupwizard.py 	\
 	viewer.py		\

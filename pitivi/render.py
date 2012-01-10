@@ -1031,7 +1031,7 @@ class EncodingDialog(Loggable):
         self.resolution_label.set_text(u"%d×%d" % (width, height))
 
     def _projectSettingsButtonClickedCb(self, button):
-        from pitivi.ui.projectsettings import ProjectSettingsDialog
+        from pitivi.project import ProjectSettingsDialog
         dialog = ProjectSettingsDialog(self.window, self.project)
         dialog.window.connect("destroy", self._projectSettingsDestroyCb)
         dialog.window.run()

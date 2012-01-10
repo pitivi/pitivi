@@ -30,7 +30,6 @@ pitivi/ui/filelisterrordialog.py
 pitivi/ui/mainwindow.py
 pitivi/ui/prefs.py
 pitivi/ui/previewer.py
-pitivi/ui/projectsettings.py
 pitivi/ui/viewer.py
 
 pitivi/utils/misc.py

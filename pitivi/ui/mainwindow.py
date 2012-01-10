@@ -558,7 +558,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.showProjectSettingsDialog()
 
     def showProjectSettingsDialog(self):
-        from projectsettings import ProjectSettingsDialog
+        from pitivi.project import ProjectSettingsDialog
         ProjectSettingsDialog(self, self.app.current).window.run()
         self.updateTitle()
 
