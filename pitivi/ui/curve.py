@@ -27,10 +27,7 @@ import gobject
 import gtk
 
 from pitivi.utils.receiver import receiver, handler
-from pitivi.ui.zoominterface import Zoomable
-import pitivi.ui.previewer as previewer
-from pitivi.ui.view import View
-from pitivi.ui.controller import Controller
+from pitivi.utils.timeline import View, Controller, Zoomable
 from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED, roundedrec, Point
 from pitivi.utils.misc import between
 

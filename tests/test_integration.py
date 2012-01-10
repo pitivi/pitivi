@@ -307,7 +307,7 @@ class InstanceRunner(Signallable):
         if self.no_ui:
             self.instance.run(["--no-ui"])
         else:
-            from pitivi.ui.zoominterface import Zoomable
+            from pitivi.utils.timeline import Zoomable
             # set a common zoom ratio so that things like edge snapping values
             # are consistent
             Zoomable.setZoomLevel((3 * Zoomable.zoom_steps) / 4)

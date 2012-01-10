@@ -24,25 +24,25 @@ Timeline widgets for the complex view
 """
 
 import gtk
-
-import ruler
 import gst
-import gobject
 import ges
+import ruler
+import gobject
 
 from gettext import gettext as _
 
-from zoominterface import Zoomable
 from pitivi.check import soft_deps
-from pitivi.utils.loggable import Loggable
+from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
+
 from timelinecanvas import TimelineCanvas
 from timelinecontrols import TimelineControls
-from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
-from pitivi.utils.timeline import MoveContext, SELECT
 
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.alignmentprogress import AlignmentProgressDialog
+
+from pitivi.utils.loggable import Loggable
+from pitivi.utils.timeline import MoveContext, SELECT, Zoomable
 from pitivi.utils.ui import SPACING, TRACK_SPACING, LAYER_HEIGHT_EXPANDED,\
     LAYER_SPACING, TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, \
     AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT

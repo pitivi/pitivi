@@ -28,9 +28,9 @@ import gtk
 import gst
 
 from pitivi.utils.playback import Seeker
-
-from pitivi.ui.zoominterface import Zoomable
+from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
+
 from pitivi.utils.ui import time_to_string
 
 

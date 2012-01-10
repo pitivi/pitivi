@@ -3,7 +3,6 @@ uidir = $(libdir)/pitivi/python/pitivi/ui
 ui_PYTHON =			\
 	__init__.py		\
 	alignmentprogress.py    \
-	controller.py		\
 	curve.py		\
 	depsmanager.py	\
 	filelisterrordialog.py	\
@@ -22,10 +21,8 @@ ui_PYTHON =			\
 	trackobject.py		\
 	track.py		\
 	viewer.py		\
-	view.py			\
 	clipproperties.py	\
-	filechooserpreview.py	\
-	zoominterface.py
+	filechooserpreview.py
 
 clean-local:
 	rm -rf *.pyc *.pyo

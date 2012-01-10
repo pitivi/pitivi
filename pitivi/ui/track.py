@@ -25,11 +25,12 @@ import ges
 import gobject
 
 from pitivi.utils.loggable import Loggable
-from pitivi.ui.zoominterface import Zoomable
+from pitivi.utils.timeline import Zoomable
 from pitivi.utils.receiver import receiver, handler
-from pitivi.ui.trackobject import TrackObject
 from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED,\
         LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
+
+from pitivi.ui.trackobject import TrackObject
 
 
 class Transition(goocanvas.Rect, Zoomable):

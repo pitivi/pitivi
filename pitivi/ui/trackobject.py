@@ -5,11 +5,8 @@ import pango
 import cairo
 
 import pitivi.configure as configure
-import controller
 
-from view import View
 from gettext import gettext as _
-from zoominterface import Zoomable
 from pitivi.utils.ui import LAYER_SPACING, unpack_cairo_pattern, \
     unpack_cairo_gradient, LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
 
@@ -20,7 +17,8 @@ from pitivi.utils.receiver import receiver, handler
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.utils.signal import Signallable
 from pitivi.utils.timeline import SELECT, SELECT_ADD, UNSELECT, \
-    SELECT_BETWEEN, MoveContext, TrimStartContext, TrimEndContext
+    SELECT_BETWEEN, MoveContext, TrimStartContext, TrimEndContext, Controller, \
+    View, Zoomable
 
 
 #--------------------------------------------------------------#
@@ -126,7 +124,7 @@ class Selected (Signallable):
     selected = property(getSelected, setSelected)
 
 
-class TimelineController(controller.Controller):
+class TimelineController(Controller):
 
     _cursor = ARROW
     _context = None

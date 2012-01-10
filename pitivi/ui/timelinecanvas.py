@@ -23,17 +23,18 @@ import gtk
 import goocanvas
 from gettext import gettext as _
 
-from pitivi.utils.loggable import Loggable
-from pitivi.utils.receiver import receiver, handler
+from pitivi.settings import GlobalSettings
+
 from pitivi.ui.track import Track
 from pitivi.ui.trackobject import TrackObject
-from pitivi.ui.zoominterface import Zoomable
-from pitivi.settings import GlobalSettings
 from pitivi.ui.prefs import PreferencesDialog
+from pitivi.ui.curve import KW_LABEL_Y_OVERFLOW
+
+from pitivi.utils.loggable import Loggable
+from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.ui import TRACK_SPACING, unpack_cairo_pattern, \
         LAYER_HEIGHT_EXPANDED, LAYER_SPACING, Point
-from pitivi.ui.controller import Controller
-from pitivi.ui.curve import KW_LABEL_Y_OVERFLOW
+from pitivi.utils.timeline import Controller, Zoomable
 from pitivi.utils.ui import SPACING
 
 # cursors to be used for resizing objects

@@ -28,7 +28,7 @@ import goocanvas
 import gobject
 
 from pitivi.utils.receiver import receiver, handler
-from pitivi.ui.zoominterface import Zoomable
+from pitivi.utils.timeline import Zoomable
 import pitivi.ui.previewer as previewer
 
 

@@ -37,17 +37,17 @@ from gtk import RecentManager
 
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
+from pitivi.effects import EffectListWidget
+from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
 
 from pitivi.utils.misc import show_user_manual
 from pitivi.utils.ui import SPACING, info_name, FILESOURCE_TUPLE, URI_TUPLE, \
          TYPE_URI_LIST, TYPE_PITIVI_FILESOURCE
+from pitivi.utils.timeline import Zoomable
 
 from pitivi.ui.timeline import Timeline
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
-from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
-from pitivi.effects import EffectListWidget
-from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.clipproperties import ClipProperties
 from pitivi.ui.filechooserpreview import PreviewWidget
 
