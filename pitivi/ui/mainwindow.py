@@ -218,14 +218,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
         @param pause: If C{True}, pause the timeline before displaying the dialog.
         @type pause: C{bool}
         """
-        from encoding import EncodingDialog
+        from pitivi.render import EncodingDialog
 
         dialog = EncodingDialog(self, project)
-        dialog.window.connect("destroy", self._encodingDialogDestroyCb)
+        dialog.window.connect("destroy", self._renderingDialogDestroyCb)
         self.set_sensitive(False)
         dialog.window.show()
 
-    def _encodingDialogDestroyCb(self, unused_dialog):
+    def _renderingDialogDestroyCb(self, unused_dialog):
         self.set_sensitive(True)
 
     def _recordCb(self, unused_button):

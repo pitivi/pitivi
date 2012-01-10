@@ -64,7 +64,7 @@ class TestStillImage(TestCase):
         self.timeline = Timeline()
         self.timeline.addTrack(self.track)
 
-        vsettings = StreamEncodeSettings(encoder="theoraenc")
+        vsettings = StreamEncodeSettings(renderer="theoraenc")
         rsettings = RenderSettings(settings=[vsettings],
                                    muxer="oggmux")
         self.fakesink = common.FakeSinkFactory()

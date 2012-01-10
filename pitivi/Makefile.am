@@ -11,7 +11,7 @@ pitivi_PYTHON = \
 	check.py 	\
 	configure.py 	\
 	effects.py	\
-	encode.py	\
+	render.py	\
 	instance.py 	\
 	project.py 	\
 	projectmanager.py 	\

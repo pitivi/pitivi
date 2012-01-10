@@ -2,8 +2,8 @@ uidir = $(pkgdatadir)/ui
 ui_DATA = \
 	alignmentprogress.ui \
 	elementsettingsdialog.ui \
-	encodingdialog.ui	 \
-	encodingprogress.ui	 \
+	renderingdialog.ui	 \
+	renderingprogress.ui	 \
 	filelisterrordialog.ui	 \
 	mainwindow.xml		 \
 	preferences.ui		 \

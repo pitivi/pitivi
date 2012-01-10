@@ -25,8 +25,8 @@ import gst
 import gtk
 import json
 
-from pitivi.encode import available_muxers, available_video_encoders, \
-     available_audio_encoders
+from pitivi.render import available_muxers, available_video_renderers, \
+     available_audio_renderers
 from pitivi.settings import xdg_data_home
 from pitivi.utils.misc import isWritable
 from pitivi.configure import get_renderpresets_dir, \
@@ -389,8 +389,8 @@ class RenderPresetManager(PresetManager):
         acodec = parser["acodec"]
         vcodec = parser["vcodec"]
 
-        if (acodec not in [fact.get_name() for fact in available_audio_encoders()] or
-            vcodec not in [fact.get_name() for fact in available_video_encoders()] or
+        if (acodec not in [fact.get_name() for fact in available_audio_renderers()] or
+            vcodec not in [fact.get_name() for fact in available_video_renderers()] or
             container not in [fact.get_name() for fact in available_muxers()]):
 
             return

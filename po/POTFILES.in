@@ -6,8 +6,8 @@ data/pitivi.desktop.in.in
 [type: gettext/glade]data/ui/cliptransformation.ui
 [type: gettext/glade]data/ui/depsmanager.ui
 [type: gettext/glade]data/ui/elementsettingsdialog.ui
-[type: gettext/glade]data/ui/encodingdialog.ui
-[type: gettext/glade]data/ui/encodingprogress.ui
+[type: gettext/glade]data/ui/renderingdialog.ui
+[type: gettext/glade]data/ui/renderingprogress.ui
 [type: gettext/glade]data/ui/filelisterrordialog.ui
 [type: gettext/glade]data/ui/preferences.ui
 [type: gettext/glade]data/ui/projectsettings.ui
@@ -15,7 +15,7 @@ data/pitivi.desktop.in.in
 pitivi/application.py
 pitivi/check.py
 pitivi/effects.py
-pitivi/encode.py
+pitivi/render.py
 pitivi/projectmanager.py
 pitivi/project.py
 pitivi/settings.py

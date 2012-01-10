@@ -10,8 +10,8 @@ class TestExportSettings(unittest.TestCase):
 
     def testMasterAttributes(self):
         self._testMasterAttribute('muxer', dependant_attr='containersettings')
-        self._testMasterAttribute('vencoder', dependant_attr='vcodecsettings')
-        self._testMasterAttribute('aencoder', dependant_attr='acodecsettings')
+        self._testMasterAttribute('vrenderer', dependant_attr='vcodecsettings')
+        self._testMasterAttribute('arenderer', dependant_attr='acodecsettings')
 
     def _testMasterAttribute(self, attr, dependant_attr):
         """Test changing the specified attr has effect on its dependant attr."""
