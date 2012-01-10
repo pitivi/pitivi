@@ -23,7 +23,6 @@ pitivi/medialibrary.py
 
 pitivi/timeline/timelinecanvas.py
 pitivi/timeline/timeline.py
-pitivi/timeline/trackobject.py
 
 pitivi/ui/basetabs.py
 pitivi/ui/clipproperties.py

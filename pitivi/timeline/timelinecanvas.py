@@ -25,8 +25,7 @@ from gettext import gettext as _
 
 from pitivi.settings import GlobalSettings
 
-from pitivi.timeline.track import Track
-from pitivi.timeline.trackobject import TrackObject
+from pitivi.timeline.track import Track, TrackObject
 
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.timeline.curve import KW_LABEL_Y_OVERFLOW

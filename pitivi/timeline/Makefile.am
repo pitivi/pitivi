@@ -4,7 +4,6 @@ timeline_PYTHON =			\
 	__init__.py		\
 	timelinecanvas.py	\
 	timeline.py		\
-	trackobject.py		\
 	track.py	\
 	curve.py	\
 	ruler.py
