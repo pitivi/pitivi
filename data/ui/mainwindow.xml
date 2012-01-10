@@ -30,7 +30,7 @@
     </menu>
     <menu action="Library">
       <separator />
-      <placeholder name="SourceList" />
+      <placeholder name="MediaLibrary" />
       <separator />
       <placeholder name="Timeline" />
     </menu>
@@ -51,7 +51,7 @@
     <toolitem action="Undo" />
     <toolitem action="Redo" />
     <separator />
-    <placeholder name="SourceList" />
+    <placeholder name="MediaLibrary" />
     <separator />
     <toolitem action="SaveProject" />
     <toolitem action="RenderProject" />
