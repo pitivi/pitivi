@@ -29,39 +29,30 @@ import gst
 import ges
 import ruler
 import gobject
+import goocanvas
 
 from gettext import gettext as _
 
 from pitivi.check import soft_deps
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 
-from track import TrackControls, TRACK_CONTROL_WIDTH
+from pitivi.settings import GlobalSettings
+
+from curve import KW_LABEL_Y_OVERFLOW
+from track import TrackControls, TRACK_CONTROL_WIDTH, Track, TrackObject
+from pitivi.utils.timeline import Controller, MoveContext, SELECT, Zoomable
 
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.ui.alignmentprogress import AlignmentProgressDialog
+from pitivi.ui.prefs import PreferencesDialog
 
+from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.timeline import MoveContext, SELECT, Zoomable
 from pitivi.utils.ui import SPACING, TRACK_SPACING, LAYER_HEIGHT_EXPANDED,\
     LAYER_SPACING, TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, \
-    AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT
-import gtk
-import goocanvas
-from gettext import gettext as _
-
-from pitivi.settings import GlobalSettings
-
-from pitivi.timeline.track import Track, TrackObject
-
-from pitivi.ui.prefs import PreferencesDialog
-from pitivi.timeline.curve import KW_LABEL_Y_OVERFLOW
-
-from pitivi.utils.loggable import Loggable
-from pitivi.utils.receiver import receiver, handler
-from pitivi.utils.timeline import Controller, Zoomable
-from pitivi.utils.ui import TRACK_SPACING, unpack_cairo_pattern, \
-        LAYER_HEIGHT_EXPANDED, LAYER_SPACING, SPACING, Point
+    AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT, \
+    unpack_cairo_pattern, Point
 
 # FIXME GES Port regression
 # from pitivi.utils.align import AutoAligner
