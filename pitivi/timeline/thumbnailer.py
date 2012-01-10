@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/ui/preview.py
+#       pitivi/timeline/thumbnailing.py
 #
 # Copyright (c) 2006, Edward Hervey <bilboed@bilboed.com>
 #
@@ -21,20 +21,21 @@
 
 #FIXME GES port Reimplement me
 
+"""
+    Handle thumbnails in the UI timeline
+"""
+
 import gst
 import os
 import cairo
 import gobject
 import goocanvas
+import collections
 
 from gettext import gettext as _
 
 from pitivi.settings import GlobalSettings
 from pitivi.configure import get_pixmap_dir
-from pitivi.thumbnailcache import ThumbnailCache
-
-import pitivi.ui.previewer as previewer
-
 
 import pitivi.utils as utils
 
@@ -120,6 +121,44 @@ PreferencesDialog.addTogglePreference('showWaveforms',
     label=_("Enable audio waveforms"),
     description=_("Show waveforms on audio clips"))
 
+
+class ThumbnailCache(object):
+
+    """Caches thumbnails by key using LRU policy, implemented with heapq"""
+
+    def __init__(self, size=100):
+        object.__init__(self)
+        self.queue = collections.deque()
+        self.cache = {}
+        self.hits = 0
+        self.misses = 0
+        self.size = size
+
+    def __contains__(self, key):
+        if key in self.cache:
+            self.hits += 1
+            return True
+        self.misses += 1
+        return False
+
+    def __getitem__(self, key):
+        if key in self.cache:
+            # I guess this is why LRU is considered expensive
+            self.queue.remove(key)
+            self.queue.append(key)
+            return self.cache[key]
+        raise KeyError(key)
+
+    def __setitem__(self, key, value):
+        self.cache[key] = value
+        self.queue.append(key)
+        if len(self.cache) > self.size:
+            self.ejectLRU()
+
+    def ejectLRU(self):
+        key = self.queue.popleft()
+        del self.cache[key]
+
 # Previewer                      -- abstract base class with public interface for UI
 # |_DefaultPreviewer             -- draws a default thumbnail for UI
 # |_LivePreviewer                -- draws a continuously updated preview
@@ -129,6 +168,7 @@ PreferencesDialog.addTogglePreference('showWaveforms',
 #   |_RandomAccessAudioPreviewer -- audio-specific pipeline and rendering code
 #   |_RandomAccessVideoPreviewer -- video-specific pipeline and rendering
 #     |_StillImagePreviewer      -- only uses one segment
+
 
 previewers = {}
 
@@ -644,7 +684,7 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 ## element callbacks
 
     def _set_element(self):
-        self.previewer = previewer.get_preview_for_object(self.app,
+        self.previewer = get_preview_for_object(self.app,
             self.element)
     element = receiver(setter=_set_element)
 

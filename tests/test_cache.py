@@ -1,7 +1,6 @@
 import unittest
-import pitivi
 from common import TestCase
-from pitivi.thumbnailcache import ThumbnailCache
+from pitivi.timeline.thumbnailer import ThumbnailCache
 
 
 class CacheTest(TestCase):

@@ -16,8 +16,7 @@ pitivi_PYTHON = \
 	instance.py 	\
 	project.py 	\
 	settings.py 	\
-	medialibrary.py 	\
-	thumbnailcache.py
+	medialibrary.py
 
 BUILT_SOURCES=configure.py
 

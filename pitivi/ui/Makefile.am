@@ -8,7 +8,6 @@ ui_PYTHON =			\
 	mainwindow.py		\
 	prefs.py		\
 	preset.py		\
-	preview.py		\
 	basetabs.py		\
 	startupwizard.py 	\
 	viewer.py		\
