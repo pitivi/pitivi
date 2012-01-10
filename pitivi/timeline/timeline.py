@@ -20,7 +20,7 @@
 # Boston, MA 02110-1301, USA.
 
 """
-Timeline widgets for the complex view
+    Main Timeline widgets
 """
 
 import gtk
@@ -35,7 +35,7 @@ from pitivi.check import soft_deps
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 
 from timelinecanvas import TimelineCanvas
-from timelinecontrols import TimelineControls
+from track import TrackControls, TRACK_CONTROL_WIDTH
 
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
@@ -119,6 +119,51 @@ ui = '''
     <accelerator action="ControlKPSubtractAccel" />
 </ui>
 '''
+
+
+class TimelineControls(gtk.VBox, Loggable):
+    """Contains the timeline track names."""
+
+    def __init__(self):
+        gtk.VBox.__init__(self)
+        Loggable.__init__(self)
+        self._tracks = []
+        self._timeline = None
+        self.set_spacing(LAYER_SPACING)
+        self.set_size_request(TRACK_CONTROL_WIDTH, -1)
+
+## Timeline callbacks
+
+    def getTimeline(self):
+        return self._timeline
+
+    def setTimeline(self, timeline):
+        self.debug("Setting timeline %s", timeline)
+
+        while self._tracks:
+            self._trackRemovedCb(None, 0)
+
+        if self._timeline:
+            for track in self._timeline.get_tracks():
+                self._trackAddedCb(None, track)
+
+            self._timeline.connect("track-added", self._trackAddedCb)
+            self._timeline.connect("track-removed", self._trackRemovedCb)
+
+    timeline = property(getTimeline, setTimeline, None, "The timeline property")
+
+    def _trackAddedCb(self, timeline, track):
+        track = TrackControls(track)
+        self._tracks.append(track)
+        self.pack_start(track, False, False)
+        track.show()
+
+    def _trackRemovedCb(self, unused_timeline, position):
+        self.timeline.disconnect_by_function(self._trackAddedCb)
+        self.timeline.disconnect_by_function(self._trackRemovedCb)
+        track = self._tracks[position]
+        del self._tracks[position]
+        self.remove(track)
 
 
 class InfoStub(gtk.HBox, Loggable):

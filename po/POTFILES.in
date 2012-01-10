@@ -22,7 +22,6 @@ pitivi/settings.py
 pitivi/medialibrary.py
 
 pitivi/timeline/timelinecanvas.py
-pitivi/timeline/timelinecontrols.py
 pitivi/timeline/timeline.py
 pitivi/timeline/trackobject.py
 
