@@ -1,6 +1,7 @@
 SUBDIRS = \
 	ui 		\
 	utils	\
+	timeline	\
 	undo
 
 pitividir = $(libdir)/pitivi/python/pitivi

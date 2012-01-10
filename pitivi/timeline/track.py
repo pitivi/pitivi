@@ -30,7 +30,7 @@ from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED,\
         LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
 
-from pitivi.ui.trackobject import TrackObject
+from pitivi.timeline.trackobject import TrackObject
 
 
 class Transition(goocanvas.Rect, Zoomable):

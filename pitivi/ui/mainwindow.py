@@ -45,7 +45,8 @@ from pitivi.utils.ui import SPACING, info_name, FILESOURCE_TUPLE, URI_TUPLE, \
          TYPE_URI_LIST, TYPE_PITIVI_FILESOURCE
 from pitivi.utils.timeline import Zoomable
 
-from pitivi.ui.timeline import Timeline
+from pitivi.timeline.timeline import Timeline
+
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
 from pitivi.ui.clipproperties import ClipProperties

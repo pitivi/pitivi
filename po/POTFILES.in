@@ -20,6 +20,12 @@ pitivi/projectmanager.py
 pitivi/project.py
 pitivi/settings.py
 pitivi/medialibrary.py
+
+pitivi/timeline/timelinecanvas.py
+pitivi/timeline/timelinecontrols.py
+pitivi/timeline/timeline.py
+pitivi/timeline/trackobject.py
+
 pitivi/ui/basetabs.py
 pitivi/ui/clipproperties.py
 pitivi/ui/filechooserpreview.py
@@ -28,12 +34,8 @@ pitivi/ui/mainwindow.py
 pitivi/ui/prefs.py
 pitivi/ui/previewer.py
 pitivi/ui/projectsettings.py
-pitivi/ui/startupwizard.py
-pitivi/ui/timelinecanvas.py
-pitivi/ui/timelinecontrols.py
-pitivi/ui/timeline.py
-pitivi/ui/trackobject.py
 pitivi/ui/viewer.py
+
 pitivi/utils/misc.py
 pitivi/utils/ui.py
 pitivi/utils/widgets.py

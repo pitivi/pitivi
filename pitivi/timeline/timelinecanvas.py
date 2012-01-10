@@ -25,10 +25,11 @@ from gettext import gettext as _
 
 from pitivi.settings import GlobalSettings
 
-from pitivi.ui.track import Track
-from pitivi.ui.trackobject import TrackObject
+from pitivi.timeline.track import Track
+from pitivi.timeline.trackobject import TrackObject
+
 from pitivi.ui.prefs import PreferencesDialog
-from pitivi.ui.curve import KW_LABEL_Y_OVERFLOW
+from pitivi.timeline.curve import KW_LABEL_Y_OVERFLOW
 
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.receiver import receiver, handler
