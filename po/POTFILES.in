@@ -22,6 +22,7 @@ pitivi/settings.py
 pitivi/medialibrary.py
 pitivi/clipproperties.py
 pitivi/mediafilespreviewer.py
+pitivi/viewer.py
 
 pitivi/timeline/timeline.py
 pitivi/timeline/track.py
@@ -30,7 +31,6 @@ pitivi/timeline/thumbnailer.py
 pitivi/ui/filelisterrordialog.py
 pitivi/ui/mainwindow.py
 pitivi/ui/prefs.py
-pitivi/ui/viewer.py
 
 pitivi/utils/misc.py
 pitivi/utils/ui.py

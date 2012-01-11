@@ -15,7 +15,7 @@ from pitivi.utils.misc import uri_is_valid
 from pitivi.utils.ui import beautify_length, beautify_stream,\
     SPACING
 
-from pitivi.ui.viewer import ViewerWidget
+from pitivi.viewer import ViewerWidget
 
 DEFAULT_AUDIO_IMAGE = os.path.join(get_pixmap_dir(), "pitivi-sound.png")
 

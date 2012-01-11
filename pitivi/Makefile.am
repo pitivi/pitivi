@@ -16,12 +16,13 @@ pitivi_PYTHON = \
 	configure.py 	\
 	effects.py	\
 	mediafilespreviewer.py	\
+	medialibrary.py	\
 	render.py	\
 	instance.py 	\
 	preset.py		\
 	project.py 	\
 	settings.py 	\
-	medialibrary.py
+	viewer.py
 
 BUILT_SOURCES=configure.py
 

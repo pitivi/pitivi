@@ -47,7 +47,7 @@ from pitivi.utils.timeline import Zoomable
 
 from pitivi.timeline.timeline import Timeline
 
-from pitivi.ui.viewer import PitiviViewer
+from pitivi.viewer import PitiviViewer
 
 from pitivi.tabsmanager import BaseTabs
 from pitivi.mediafilespreviewer import PreviewWidget

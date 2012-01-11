@@ -6,8 +6,7 @@ ui_PYTHON =			\
 	filelisterrordialog.py	\
 	mainwindow.py		\
 	prefs.py		\
-	startupwizard.py 	\
-	viewer.py
+	startupwizard.py
 
 clean-local:
 	rm -rf *.pyc *.pyo
