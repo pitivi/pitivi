@@ -4,7 +4,6 @@ ui_PYTHON =			\
 	__init__.py		\
 	depsmanager.py	\
 	filelisterrordialog.py	\
-	mainwindow.py		\
 	prefs.py		\
 	startupwizard.py
 
