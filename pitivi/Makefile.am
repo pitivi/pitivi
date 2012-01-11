@@ -10,6 +10,7 @@ pitivi_PYTHON = \
 	__init__.py 	\
 	application.py	\
 	autoaligner.py	\
+	basetabs.py		\
 	check.py 	\
 	clipproperties.py	\
 	configure.py 	\

@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       ui/basetabs.py
+#       basetabs.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #
