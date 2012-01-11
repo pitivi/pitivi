@@ -876,8 +876,9 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             self.app.current.sources.removeUri(uri)
         self.app.action_log.commit()
 
-    def _checkUsedSource(self, timeline, uri):
-        layers = timeline.get_layers()
+    def _sourceIsUsed(self, uri):
+        """Check if a given URI is present in the timeline"""
+        layers = self.app.current.timeline.get_layers()
         for layer in layers:
             for tlobj in layer.get_objects():
                 if tlobj.get_uri() == uri:
@@ -894,7 +895,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         model = self.storemodel
         selection = self.treeview.get_selection()
         for source in sources:
-            if not self._checkUsedSource(self.app.current.timeline, source.get_uri()):
+            if not self._sourceIsUsed(source.get_uri()):
                 unused_sources_uris.append(source.get_uri())
 
         # Hack around the fact that making selections (in a treeview/iconview)
