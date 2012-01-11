@@ -156,12 +156,12 @@ class CachedEncoderList(object):
             self._buildFactories()
         return self._muxers
 
-    def available_audio_renderers(self):
+    def available_audio_encoders(self):
         if self._factories is None:
             self._buildFactories()
         return self._audioEncoders
 
-    def available_video_renderers(self):
+    def available_video_encoders(self):
         if self._factories is None:
             self._buildFactories()
         return self._videoEncoders
@@ -169,44 +169,44 @@ class CachedEncoderList(object):
     def _registryFeatureAddedCb(self, registry, feature):
         self._factories = None
 
-_cached_renderer_list = None
+_cached_encoder_list = None
 
 
-def rendererlist():
-    global _cached_renderer_list
-    if _cached_renderer_list is None:
-        _cached_renderer_list = CachedEncoderList()
-    return _cached_renderer_list
+def encoderlist():
+    global _cached_encoder_list
+    if _cached_encoder_list is None:
+        _cached_encoder_list = CachedEncoderList()
+    return _cached_encoder_list
 
 
 def available_muxers():
     """ return all available muxers """
-    enclist = rendererlist()
+    enclist = encoderlist()
     return enclist.available_muxers()
 
 
-def available_video_renderers():
-    """ returns all available video renderers """
-    enclist = rendererlist()
-    return enclist.available_video_renderers()
+def available_video_encoders():
+    """ returns all available video encoders """
+    enclist = encoderlist()
+    return enclist.available_video_encoders()
 
 
-def available_audio_renderers():
-    """ returns all available audio renderers """
-    enclist = rendererlist()
-    return enclist.available_audio_renderers()
+def available_audio_encoders():
+    """ returns all available audio encoders """
+    enclist = encoderlist()
+    return enclist.available_audio_encoders()
 
 
-def renderers_muxer_compatible(renderers, muxer, muxsinkcaps=[]):
-    """ returns the list of renderers compatible with the given muxer """
+def encoders_muxer_compatible(encoders, muxer, muxsinkcaps=[]):
+    """ returns the list of encoders compatible with the given muxer """
     res = []
     if muxsinkcaps == []:
         muxsinkcaps = [x.get_caps() for x in muxer.get_static_pad_templates() if x.direction == gst.PAD_SINK]
-    for renderer in renderers:
-        for tpl in renderer.get_static_pad_templates():
+    for encoder in encoders:
+        for tpl in encoder.get_static_pad_templates():
             if tpl.direction == gst.PAD_SRC:
                 if my_can_sink_caps(muxer, tpl.get_caps(), muxsinkcaps):
-                    res.append(renderer)
+                    res.append(encoder)
                     break
     return res
 
@@ -228,12 +228,12 @@ def muxer_can_sink_raw_video(muxer):
 def available_combinations():
     """Return a 3-tuple of (muxers, audio, video), where:
         - muxers is a list of muxer factories
-        - audio is a dictionary from muxer names to compatible audio renderers
-        - video is a dictionary from muxer names to compatible video renderers
+        - audio is a dictionary from muxer names to compatible audio encoders
+        - video is a dictionary from muxer names to compatible video encoders
     """
 
-    arenderers = available_audio_renderers()
-    vrenderers = available_video_renderers()
+    aencoders = available_audio_encoders()
+    vencoders = available_video_encoders()
     muxers = available_muxers()
 
     audio = {}
@@ -241,8 +241,8 @@ def available_combinations():
     containers = []
     for muxer in muxers:
         mux = muxer.get_name()
-        aencs = renderers_muxer_compatible(arenderers, muxer)
-        vencs = renderers_muxer_compatible(vrenderers, muxer)
+        aencs = encoders_muxer_compatible(aencoders, muxer)
+        vencs = encoders_muxer_compatible(vencoders, muxer)
         # only include muxers with audio and video
 
         if aencs and vencs:
@@ -366,10 +366,10 @@ class RenderingProgressDialog(Signallable):
 class RenderDialog(Loggable):
     """Render dialog box.
 
-    @ivar preferred_arenderer: The last audio renderer selected by the user.
-    @type preferred_arenderer: str
-    @ivar preferred_vrenderer: The last video renderer selected by the user.
-    @type preferred_vrenderer: str
+    @ivar preferred_aencoder: The last audio encoder selected by the user.
+    @type preferred_aencoder: str
+    @ivar preferred_vencoder: The last video encoder selected by the user.
+    @type preferred_vencoder: str
     @ivar settings: The settings used for rendering.
     @type settings: MultimediaSettings
     """
@@ -428,10 +428,10 @@ class RenderDialog(Loggable):
             self.updateFilename(self.project.name)
 
         # We store these so that when the user tries various container formats,
-        # (AKA muxers) we select these a/v renderers, if they are compatible with
+        # (AKA muxers) we select these a/v encoders, if they are compatible with
         # the current container format.
-        self.preferred_vrenderer = self.settings.vrenderer
-        self.preferred_arenderer = self.settings.arenderer
+        self.preferred_vencoder = self.settings.vencoder
+        self.preferred_aencoder = self.settings.aencoder
 
         self._initializeComboboxModels()
         self._displaySettings()
@@ -450,8 +450,8 @@ class RenderDialog(Loggable):
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
         self.wg.addVertex(self.sample_depth_combo, signal="changed")
         self.wg.addVertex(self.muxercombobox, signal="changed")
-        self.wg.addVertex(self.audio_renderer_combo, signal="changed")
-        self.wg.addVertex(self.video_renderer_combo, signal="changed")
+        self.wg.addVertex(self.audio_encoder_combo, signal="changed")
+        self.wg.addVertex(self.video_encoder_combo, signal="changed")
         self.render_presets = RenderPresetManager()
         self.render_presets.loadAll()
 
@@ -461,9 +461,9 @@ class RenderDialog(Loggable):
 
         self.wg.addEdge(self.frame_rate_combo,
             self.save_render_preset_button)
-        self.wg.addEdge(self.audio_renderer_combo,
+        self.wg.addEdge(self.audio_encoder_combo,
             self.save_render_preset_button)
-        self.wg.addEdge(self.video_renderer_combo,
+        self.wg.addEdge(self.video_encoder_combo,
             self.save_render_preset_button)
         self.wg.addEdge(self.muxercombobox,
             self.save_render_preset_button)
@@ -485,9 +485,9 @@ class RenderDialog(Loggable):
         self.bindCombo(self.render_presets, "depth",
             self.sample_depth_combo)
         self.bindCombo(self.render_presets, "acodec",
-            self.audio_renderer_combo)
+            self.audio_encoder_combo)
         self.bindCombo(self.render_presets, "vcodec",
-            self.video_renderer_combo)
+            self.video_encoder_combo)
         self.bindCombo(self.render_presets, "container",
             self.muxercombobox)
         self.bindCombo(self.render_presets, "frame-rate",
@@ -502,8 +502,8 @@ class RenderDialog(Loggable):
             "depth": int(get_combo_value(self.sample_depth_combo)),
             "channels": int(get_combo_value(self.channels_combo)),
             "sample-rate": int(get_combo_value(self.sample_rate_combo)),
-            "acodec": get_combo_value(self.audio_renderer_combo).get_name(),
-            "vcodec": get_combo_value(self.video_renderer_combo).get_name(),
+            "acodec": get_combo_value(self.audio_encoder_combo).get_name(),
+            "vcodec": get_combo_value(self.video_encoder_combo).get_name(),
             "container": get_combo_value(self.muxercombobox).get_name(),
             "frame-rate": gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
                                         int(get_combo_value(self.frame_rate_combo).denom)),
@@ -548,7 +548,7 @@ class RenderDialog(Loggable):
 
     def muxer_setter(self, widget, value):
         set_combo_value(widget, gst.element_factory_find(value))
-        self.settings.setRenderers(muxer=value)
+        self.settings.setEncoders(muxer=value)
 
         # Update the extension of the filename.
         basename = os.path.splitext(self.fileentry.get_text())[0]
@@ -563,17 +563,17 @@ class RenderDialog(Loggable):
 
     def acodec_setter(self, widget, value):
         set_combo_value(widget, gst.element_factory_find(value))
-        self.settings.setRenderers(arenderer=value)
+        self.settings.setEncoders(aencoder=value)
         if not self.muxer_combo_changing:
-            # The user directly changed the audio renderer combo.
-            self.preferred_arenderer = value
+            # The user directly changed the audio encoder combo.
+            self.preferred_aencoder = value
 
     def vcodec_setter(self, widget, value):
         set_combo_value(widget, gst.element_factory_find(value))
-        self.settings.setRenderers(vrenderer=value)
+        self.settings.setEncoders(vencoder=value)
         if not self.muxer_combo_changing:
-            # The user directly changed the video renderer combo.
-            self.preferred_vrenderer = value
+            # The user directly changed the video encoder combo.
+            self.preferred_vencoder = value
 
     def sample_depth_setter(self, widget, value):
         set_combo_value(widget, value)
@@ -703,8 +703,8 @@ class RenderDialog(Loggable):
             "depth": int(get_combo_value(self.sample_depth_combo)),
             "channels": int(get_combo_value(self.channels_combo)),
             "sample-rate": int(get_combo_value(self.sample_rate_combo)),
-            "acodec": get_combo_value(self.audio_renderer_combo).get_name(),
-            "vcodec": get_combo_value(self.video_renderer_combo).get_name(),
+            "acodec": get_combo_value(self.audio_encoder_combo).get_name(),
+            "vcodec": get_combo_value(self.video_encoder_combo).get_name(),
             "container": get_combo_value(self.muxercombobox).get_name(),
             "frame-rate": gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
                                         int(get_combo_value(self.frame_rate_combo).denom)),
@@ -756,10 +756,10 @@ class RenderDialog(Loggable):
         self.sample_depth_combo = self.builder.get_object(
                         "sample_depth_combo")
         self.muxercombobox = self.builder.get_object("muxercombobox")
-        self.audio_renderer_combo = self.builder.get_object(
-            "audio_renderer_combo")
-        self.video_renderer_combo = self.builder.get_object(
-            "video_renderer_combo")
+        self.audio_encoder_combo = self.builder.get_object(
+            "audio_encoder_combo")
+        self.video_encoder_combo = self.builder.get_object(
+            "video_encoder_combo")
         self.filebutton = self.builder.get_object("filebutton")
         self.fileentry = self.builder.get_object("fileentry")
         self.resolution_label = self.builder.get_object("resolution_label")
@@ -837,31 +837,31 @@ class RenderDialog(Loggable):
         self.fileentry.set_text(name)
 
     def updateAvailableEncoders(self):
-        """Update the renderer comboboxes to show the available renderers."""
-        video_renderers = self.settings.getVideoEncoders()
-        video_renderer_model = factorylist(video_renderers)
-        self.video_renderer_combo.set_model(video_renderer_model)
+        """Update the encoder comboboxes to show the available encoders."""
+        video_encoders = self.settings.getVideoEncoders()
+        video_encoder_model = factorylist(video_encoders)
+        self.video_encoder_combo.set_model(video_encoder_model)
 
-        audio_renderers = self.settings.getAudioEncoders()
-        audio_renderer_model = factorylist(audio_renderers)
-        self.audio_renderer_combo.set_model(audio_renderer_model)
+        audio_encoders = self.settings.getAudioEncoders()
+        audio_encoder_model = factorylist(audio_encoders)
+        self.audio_encoder_combo.set_model(audio_encoder_model)
 
         self._updateEncoderCombo(
-                self.video_renderer_combo, self.preferred_vrenderer)
+                self.video_encoder_combo, self.preferred_vencoder)
         self._updateEncoderCombo(
-                self.audio_renderer_combo, self.preferred_arenderer)
+                self.audio_encoder_combo, self.preferred_aencoder)
 
-    def _updateEncoderCombo(self, renderer_combo, preferred_renderer):
-        """Select the specified renderer for the specified renderer combo."""
-        if preferred_renderer:
-            # A preferrence exists, pick it if it can be found in
+    def _updateEncoderCombo(self, encoder_combo, preferred_encoder):
+        """Select the specified encoder for the specified encoder combo."""
+        if preferred_encoder:
+            # A preference exists, pick it if it can be found in
             # the current model of the combobox.
-            vrenderer = gst.element_factory_find(preferred_renderer)
-            set_combo_value(renderer_combo, vrenderer, default_index=0)
+            vencoder = gst.element_factory_find(preferred_encoder)
+            set_combo_value(encoder_combo, vencoder, default_index=0)
         else:
-            # No preferrence exists, pick the first renderer from
+            # No preference exists, pick the first encoder from
             # the current model of the combobox.
-            renderer_combo.set_active(0)
+            encoder_combo.set_active(0)
 
     def _elementSettingsDialog(self, factory, settings_attr):
         """Open a dialog to edit the properties for the specified factory.
@@ -920,8 +920,8 @@ class RenderDialog(Loggable):
         """
         settings = self.project.getSettings()
         if (settings.muxer == self.settings.muxer
-            and settings.arenderer == self.settings.arenderer
-            and settings.vrenderer == self.settings.vrenderer
+            and settings.aencoder == self.settings.aencoder
+            and settings.vencoder == self.settings.vencoder
             and settings.containersettings == self.settings.containersettings
             and settings.acodecsettings == self.settings.acodecsettings
             and settings.vcodecsettings == self.settings.vcodecsettings
@@ -929,9 +929,9 @@ class RenderDialog(Loggable):
             # No setting which can be changed in the Render dialog
             # and which we want to save have been changed.
             return
-        settings.setRenderers(muxer=self.settings.muxer,
-                             arenderer=self.settings.arenderer,
-                             vrenderer=self.settings.vrenderer)
+        settings.setEncoders(muxer=self.settings.muxer,
+                             aencoder=self.settings.aencoder,
+                             vencoder=self.settings.vencoder)
         settings.containersettings = self.settings.containersettings
         settings.acodecsettings = self.settings.acodecsettings
         settings.vcodecsettings = self.settings.vcodecsettings
@@ -1013,10 +1013,10 @@ class RenderDialog(Loggable):
     def _elementAddedCb(self, bin, element):
         # Setting properties on gst.Element-s has they are added to the
         # gst.Encodebin
-        if element.get_factory() == get_combo_value(self.video_renderer_combo):
+        if element.get_factory() == get_combo_value(self.video_encoder_combo):
             for setting in self.settings.vcodecsettings:
                 element.set_property(setting, self.settings.vcodecsettings[setting])
-        elif element.get_factory() == get_combo_value(self.audio_renderer_combo):
+        elif element.get_factory() == get_combo_value(self.audio_encoder_combo):
             for setting in self.settings.acodecsettings:
                 element.set_property(setting, self.settings.vcodecsettings[setting])
 
@@ -1052,21 +1052,21 @@ class RenderDialog(Loggable):
         self.settings.setVideoProperties(framerate=framerate)
 
     def _videoEncoderComboChangedCb(self, combo):
-        vrenderer = get_combo_value(combo).get_name()
-        for template in gst.registry_get_default().lookup_feature(vrenderer).get_static_pad_templates():
+        vencoder = get_combo_value(combo).get_name()
+        for template in gst.registry_get_default().lookup_feature(vencoder).get_static_pad_templates():
             if template.name_template == "src":
                 self.videotype = template.get_caps().to_string()
                 for elem in self.videotype.split(","):
                     if "{" in elem or "[" in elem:
                         self.videotype = self.videotype[:self.videotype.index(elem) - 1]
                         break
-        self.settings.setRenderers(vrenderer=vrenderer)
+        self.settings.setEncoders(vencoder=vencoder)
         if not self.muxer_combo_changing:
-            # The user directly changed the video renderer combo.
-            self.preferred_vrenderer = vrenderer
+            # The user directly changed the video encoder combo.
+            self.preferred_vencoder = vencoder
 
     def _videoSettingsButtonClickedCb(self, button):
-        factory = get_combo_value(self.video_renderer_combo)
+        factory = get_combo_value(self.video_encoder_combo)
         self._elementSettingsDialog(factory, 'vcodecsettings')
 
     def _channelsComboChangedCb(self, combo):
@@ -1079,9 +1079,9 @@ class RenderDialog(Loggable):
         self.settings.setAudioProperties(rate=get_combo_value(combo))
 
     def _audioEncoderChangedComboCb(self, combo):
-        arenderer = get_combo_value(combo).get_name()
-        self.settings.setRenderers(arenderer=arenderer)
-        for template in gst.registry_get_default().lookup_feature(arenderer).get_static_pad_templates():
+        aencoder = get_combo_value(combo).get_name()
+        self.settings.setEncoders(aencoder=aencoder)
+        for template in gst.registry_get_default().lookup_feature(aencoder).get_static_pad_templates():
             if template.name_template == "src":
                 self.audiotype = template.get_caps().to_string()
                 for elem in self.audiotype.split(","):
@@ -1089,11 +1089,11 @@ class RenderDialog(Loggable):
                         self.audiotype = self.audiotype[:self.audiotype.index(elem) - 1]
                         break
         if not self.muxer_combo_changing:
-            # The user directly changed the audio renderer combo.
-            self.preferred_arenderer = arenderer
+            # The user directly changed the audio encoder combo.
+            self.preferred_aencoder = aencoder
 
     def _audioSettingsButtonClickedCb(self, button):
-        factory = get_combo_value(self.audio_renderer_combo)
+        factory = get_combo_value(self.audio_encoder_combo)
         self._elementSettingsDialog(factory, 'acodecsettings')
 
     def _muxerComboChangedCb(self, muxer_combo):
@@ -1102,7 +1102,7 @@ class RenderDialog(Loggable):
         for template in gst.registry_get_default().lookup_feature(muxer).get_static_pad_templates():
             if template.name_template == "src":
                 self.muxertype = template.get_caps().to_string()
-        self.settings.setRenderers(muxer=muxer)
+        self.settings.setEncoders(muxer=muxer)
 
         # Update the extension of the filename.
         basename = os.path.splitext(self.fileentry.get_text())[0]

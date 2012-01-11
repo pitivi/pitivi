@@ -325,7 +325,7 @@ class MultimediaSettings(Signallable, Loggable):
 
     Signals:
     'settings-changed' : the settings have changed
-    'renderers-changed' : The renderers or muxer have changed
+    'encoders-changed' : The encoders or muxer have changed
 
     @ivar render_scale: The scale to be applied to the video width and height
     when rendering.
@@ -333,7 +333,7 @@ class MultimediaSettings(Signallable, Loggable):
     """
     __signals__ = {
         "settings-changed": None,
-        "renderers-changed": None,
+        "encoders-changed": None,
         }
 
     # Audio/Video settings for processing/export
@@ -341,7 +341,7 @@ class MultimediaSettings(Signallable, Loggable):
     # TODO : Add PAR/DAR for video
     # TODO : switch to using GstFraction internally where appliable
 
-    muxers, arenderers, vrenderers = available_combinations()
+    muxers, aencoders, vencoders = available_combinations()
 
     def __init__(self, **unused_kw):
         Loggable.__init__(self)
@@ -353,14 +353,14 @@ class MultimediaSettings(Signallable, Loggable):
         self.audiochannels = 2
         self.audiorate = 44100
         self.audiodepth = 16
-        self.vrenderer = None
-        self.arenderer = None
+        self.vencoder = None
+        self.aencoder = None
         self.muxer = "oggmux"
         # A (muxer -> containersettings) map.
         self._containersettings_cache = {}
-        # A (vrenderer -> vcodecsettings) map.
+        # A (vencoder -> vcodecsettings) map.
         self._vcodecsettings_cache = {}
-        # A (arenderer -> acodecsettings) map.
+        # A (aencoder -> acodecsettings) map.
         self._acodecsettings_cache = {}
 
     def copy(self):
@@ -373,8 +373,8 @@ class MultimediaSettings(Signallable, Loggable):
         ret.audiochannels = self.audiochannels
         ret.audiorate = self.audiorate
         ret.audiodepth = self.audiodepth
-        ret.vrenderer = self.vrenderer
-        ret.arenderer = self.arenderer
+        ret.vencoder = self.vencoder
+        ret.aencoder = self.aencoder
         ret.muxer = self.muxer
         ret.containersettings = dict(self.containersettings)
         ret.acodecsettings = dict(self.acodecsettings)
@@ -388,10 +388,10 @@ class MultimediaSettings(Signallable, Loggable):
         msg = _("Export Settings\n")
         msg += _("Video: ") + str(self.videowidth) + " " + str(self.videoheight) +\
                " " + str(self.videorate) + " " + str(self.videopar)
-        msg += "\n\t" + str(self.vrenderer) + " " + str(self.vcodecsettings)
+        msg += "\n\t" + str(self.vencoder) + " " + str(self.vcodecsettings)
         msg += _("\nAudio: ") + str(self.audiochannels) + " " + str(self.audiorate) +\
                " " + str(self.audiodepth)
-        msg += "\n\t" + str(self.arenderer) + " " + str(self.acodecsettings)
+        msg += "\n\t" + str(self.aencoder) + " " + str(self.acodecsettings)
         msg += _("\nMuxer: ") + str(self.muxer) + " " + str(self.containersettings)
         return msg
 
@@ -417,8 +417,8 @@ class MultimediaSettings(Signallable, Loggable):
                 self.videorate.num, self.videorate.denom)
         caps_str = "video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (vstr, vstr)
         video_caps = gst.caps_from_string(caps_str)
-        if self.vrenderer:
-            return get_compatible_sink_caps(self.vrenderer, video_caps)
+        if self.vencoder:
+            return get_compatible_sink_caps(self.vencoder, video_caps)
         return video_caps
 
     def getAudioCaps(self):
@@ -427,8 +427,8 @@ class MultimediaSettings(Signallable, Loggable):
         astr = "rate=%d,channels=%d" % (self.audiorate, self.audiochannels)
         caps_str = "audio/x-raw-int,%s;audio/x-raw-float,%s" % (astr, astr)
         audio_caps = gst.caps_from_string(caps_str)
-        if self.arenderer:
-            return get_compatible_sink_caps(self.arenderer, audio_caps)
+        if self.aencoder:
+            return get_compatible_sink_caps(self.aencoder, audio_caps)
         return audio_caps
 
     def setVideoProperties(self, width=-1, height=-1, framerate=-1, par=-1,
@@ -470,20 +470,20 @@ class MultimediaSettings(Signallable, Loggable):
         if changed:
             self.emit("settings-changed")
 
-    def setRenderers(self, muxer="", vrenderer="", arenderer=""):
-        """ Set the video/audio renderer and muxer """
+    def setEncoders(self, muxer="", vencoder="", aencoder=""):
+        """ Set the video/audio encoder and muxer """
         changed = False
         if not muxer == "" and not muxer == self.muxer:
             self.muxer = muxer
             changed = True
-        if not vrenderer == "" and not vrenderer == self.vrenderer:
-            self.vrenderer = vrenderer
+        if not vencoder == "" and not vencoder == self.vencoder:
+            self.vencoder = vencoder
             changed = True
-        if not arenderer == "" and not arenderer == self.arenderer:
-            self.arenderer = arenderer
+        if not aencoder == "" and not aencoder == self.aencoder:
+            self.aencoder = aencoder
             changed = True
         if changed:
-            self.emit("renderers-changed")
+            self.emit("encoders-changed")
 
     @property
     def containersettings(self):
@@ -495,26 +495,26 @@ class MultimediaSettings(Signallable, Loggable):
 
     @property
     def vcodecsettings(self):
-        return self._vcodecsettings_cache.setdefault(self.vrenderer, {})
+        return self._vcodecsettings_cache.setdefault(self.vencoder, {})
 
     @vcodecsettings.setter
     def vcodecsettings(self, value):
-        self._vcodecsettings_cache[self.vrenderer] = value
+        self._vcodecsettings_cache[self.vencoder] = value
 
     @property
     def acodecsettings(self):
-        return self._acodecsettings_cache.setdefault(self.arenderer, {})
+        return self._acodecsettings_cache.setdefault(self.aencoder, {})
 
     @acodecsettings.setter
     def acodecsettings(self, value):
-        self._acodecsettings_cache[self.arenderer] = value
+        self._acodecsettings_cache[self.aencoder] = value
 
     def getAudioEncoders(self):
-        """ Returns the list of audio renderers compatible with the current
+        """ Returns the list of audio encoders compatible with the current
         muxer """
-        return self.arenderers[self.muxer]
+        return self.aencoders[self.muxer]
 
     def getVideoEncoders(self):
-        """ Returns the list of video renderers compatible with the current
+        """ Returns the list of video encoders compatible with the current
         muxer """
-        return self.vrenderers[self.muxer]
+        return self.vencoders[self.muxer]
