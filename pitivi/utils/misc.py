@@ -135,8 +135,19 @@ def get_filesystem_encoding():
 
 
 def quote_uri(uri):
+    """
+    Encode a URI according to RFC 2396, without touching the file:/// part.
+    """
     parts = list(urlsplit(uri, allow_fragments=False))
-    parts[2] = quote(parts[2])
+    # Make absolutely sure the string is unquoted before quoting again!
+    raw = unquote(parts[2])
+    # For computing thumbnail md5 hashes in the source list, we must adhere to
+    # RFC 2396. However, urllib's quote method only uses alphanumeric and "/"
+    # as their safe chars. We need to add both the reserved and unreserved chars
+    RFC_2396_RESERVED = ";/?:@&=+$,"
+    RFC_2396_UNRESERVED = "-_.!~*'()"
+    URIC_SAFE_CHARS = "/" + "%" + RFC_2396_RESERVED + RFC_2396_UNRESERVED
+    parts[2] = quote(raw, URIC_SAFE_CHARS)
     uri = urlunsplit(parts)
     return uri
 

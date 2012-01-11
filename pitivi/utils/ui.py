@@ -179,6 +179,7 @@ def beautify_info(info):
 
 
 def info_name(info):
+    """Return a human-readable filename (without the path and quoting)."""
     return escape(unquote(os.path.basename(info.get_uri())))
 
 

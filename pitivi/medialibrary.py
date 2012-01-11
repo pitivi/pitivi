@@ -161,6 +161,10 @@ class MediaLibrary(Signallable, Loggable):
 
         The uri will be analyzed before being added.
         """
+        # Ensure we really have a correctly encoded URI according to RFC 2396.
+        # Otherwise, in some cases we'd get rogue characters that break
+        # searching for duplicates
+        uri = quote_uri(uri)
         if uri in self._sources:
             # uri is already added. Nothing to do.
             return
@@ -220,8 +224,7 @@ class MediaLibrary(Signallable, Loggable):
         """
         uri = info.get_uri()
         if self._sources.get(uri, None) is not None:
-            raise MediaLibraryError("We already have a info for this URI",
-                    uri)
+            raise MediaLibraryError("We already have info for this URI", uri)
         self._sources[uri] = info
         self._ordered_sources.append(info)
         self.nb_imported_files += 1
