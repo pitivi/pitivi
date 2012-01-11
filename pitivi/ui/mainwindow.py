@@ -49,9 +49,9 @@ from pitivi.timeline.timeline import Timeline
 
 from pitivi.ui.basetabs import BaseTabs
 from pitivi.ui.viewer import PitiviViewer
-from pitivi.ui.clipproperties import ClipProperties
 from pitivi.ui.filechooserpreview import PreviewWidget
 
+from pitivi.clipproperties import ClipProperties
 from pitivi.configure import pitivi_version, APPNAME, APPURL, \
      get_pixmap_dir, get_ui_dir
 

@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       ui/clipproperties.py
+#       clipproperties.py
 #
 # Copyright (C) 2010 Thibault Saunier <tsaunier@gnome.org>
 #

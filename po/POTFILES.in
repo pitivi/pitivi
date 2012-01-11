@@ -19,13 +19,13 @@ pitivi/render.py
 pitivi/project.py
 pitivi/settings.py
 pitivi/medialibrary.py
+pitivi/clipproperties.py
 
 pitivi/timeline/timeline.py
 pitivi/timeline/track.py
 pitivi/timeline/thumbnailer.py
 
 pitivi/ui/basetabs.py
-pitivi/ui/clipproperties.py
 pitivi/ui/filechooserpreview.py
 pitivi/ui/filelisterrordialog.py
 pitivi/ui/mainwindow.py

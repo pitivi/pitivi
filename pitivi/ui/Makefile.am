@@ -10,7 +10,6 @@ ui_PYTHON =			\
 	basetabs.py		\
 	startupwizard.py 	\
 	viewer.py		\
-	clipproperties.py	\
 	filechooserpreview.py
 
 clean-local:

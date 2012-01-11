@@ -11,6 +11,7 @@ pitivi_PYTHON = \
 	application.py	\
 	autoaligner.py	\
 	check.py 	\
+	clipproperties.py	\
 	configure.py 	\
 	effects.py	\
 	render.py	\
