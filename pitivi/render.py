@@ -377,7 +377,7 @@ class EncodingDialog(Loggable):
 
     def __init__(self, app, project, pipeline=None):
 
-        from pitivi.ui.preset import RenderPresetManager
+        from pitivi.preset import RenderPresetManager
 
         Loggable.__init__(self)
 
@@ -643,7 +643,7 @@ class EncodingDialog(Loggable):
 
     def _presetNameEditedCb(self, renderer, path, new_text, mgr):
         """Handle the renaming of a preset."""
-        from pitivi.ui.preset import DuplicatePresetNameException
+        from pitivi.preset import DuplicatePresetNameException
 
         try:
             mgr.renamePreset(path, new_text)

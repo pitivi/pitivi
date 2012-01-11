@@ -48,7 +48,7 @@ from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import model, frame_rates, audio_rates, audio_depths,\
     audio_channels, get_combo_value, set_combo_value
-from pitivi.ui.preset import AudioPresetManager, DuplicatePresetNameException,\
+from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
     VideoPresetManager
 
 # FIXME: are we sure the following tables correct?

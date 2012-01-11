@@ -17,6 +17,7 @@ pitivi_PYTHON = \
 	mediafilespreviewer.py	\
 	render.py	\
 	instance.py 	\
+	preset.py		\
 	project.py 	\
 	settings.py 	\
 	medialibrary.py

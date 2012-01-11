@@ -6,7 +6,6 @@ ui_PYTHON =			\
 	filelisterrordialog.py	\
 	mainwindow.py		\
 	prefs.py		\
-	preset.py		\
 	basetabs.py		\
 	startupwizard.py 	\
 	viewer.py
