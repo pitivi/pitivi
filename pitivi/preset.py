@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/ui/preset.py
+#       pitivi/preset.py
 #
 # Copyright (c) 2010, Brandon Lewis <brandon_lewis@berkeley.edu>
 #

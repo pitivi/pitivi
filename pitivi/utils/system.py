@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/ui/system.py
+#       pitivi/utils/system.py
 #
 # Copyright (c) 2010, Stephen Griffiths <scgmk5@gmail.com>
 #

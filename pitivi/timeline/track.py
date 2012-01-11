@@ -32,7 +32,7 @@ import pitivi.configure as configure
 
 from gettext import gettext as _
 
-from pitivi.ui.prefs import PreferencesDialog
+from pitivi.dialogs.prefs import PreferencesDialog
 
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.receiver import receiver, handler

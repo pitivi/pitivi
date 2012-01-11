@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/ui/depsmanager.py
+#       pitivi/dialogs/depsmanager.py
 #
 # Copyright (c) 2011 Jean-François Fortin Tam <nekohayo@gmail.com>
 #
@@ -22,7 +22,6 @@
 
 import gtk
 import os
-from gettext import gettext as _
 
 from pitivi.configure import get_ui_dir
 from pitivi.check import soft_deps
@@ -52,7 +51,7 @@ class DepsManager(object):
         self.hide()
         """
         # FIXME: this is not implemented properly. Here is some partially working code:
-        
+
         self.session_bus = dbus.SessionBus()
         self.dbus_path = "/org/freedesktop/PackageKit"
         self.dbus_name = "org.freedesktop.PackageKit"

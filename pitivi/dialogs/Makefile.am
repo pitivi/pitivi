@@ -1,4 +1,4 @@
-uidir = $(libdir)/pitivi/python/pitivi/ui
+uidir = $(libdir)/pitivi/python/pitivi/dialogs
 
 ui_PYTHON =			\
 	__init__.py		\

@@ -25,7 +25,7 @@ from pitivi.utils.signal import Signallable
 from pitivi.undo.undo import PropertyChangeTracker
 from pitivi.undo.undo import UndoableAction
 
-from pitivi.ui.effectsconfiguration import PROPS_TO_IGNORE
+from pitivi.effects import PROPS_TO_IGNORE
 from pitivi.undo.effects import EffectGstElementPropertyChangeTracker
 
 

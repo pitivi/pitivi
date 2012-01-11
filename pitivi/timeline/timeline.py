@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/ui/timeline.py
+#       pitivi/timeline/timeline.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2009, Brandon Lewis <brandon_lewis@berkeley.edu>
@@ -43,9 +43,9 @@ from curve import KW_LABEL_Y_OVERFLOW
 from track import TrackControls, TRACK_CONTROL_WIDTH, Track, TrackObject
 from pitivi.utils.timeline import Controller, MoveContext, SELECT, Zoomable
 
-from pitivi.ui.depsmanager import DepsManager
-from pitivi.ui.filelisterrordialog import FileListErrorDialog
-from pitivi.ui.prefs import PreferencesDialog
+from pitivi.dialogs.depsmanager import DepsManager
+from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
+from pitivi.dialogs.prefs import PreferencesDialog
 
 from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.loggable import Loggable

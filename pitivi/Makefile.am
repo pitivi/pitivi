@@ -1,5 +1,5 @@
 SUBDIRS = \
-	ui 		\
+	dialogs 		\
 	utils	\
 	timeline	\
 	undo

@@ -662,7 +662,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _prefsCb(self, unused_action):
         if not self.prefsdialog:
-            from pitivi.ui.prefs import PreferencesDialog
+            from pitivi.dialogs.prefs import PreferencesDialog
             self.prefsdialog = PreferencesDialog(self.app)
             self.prefsdialog.dialog.set_transient_for(self)
         self.prefsdialog.run()

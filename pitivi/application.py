@@ -42,17 +42,17 @@ from pitivi.configure import APPNAME
 from pitivi.settings import GlobalSettings
 from pitivi.utils.threads import ThreadMaster
 from pitivi.mainwindow import PitiviMainWindow
+from pitivi.project import ProjectManager, ProjectLogObserver
+from pitivi.undo.medialibrary import MediaLibraryLogObserver
+from pitivi.undo.undo import UndoableActionLog, DebugActionLogObserver
+from pitivi.dialogs.startupwizard import StartUpWizard
 
 from pitivi.utils.signal import Signallable
 from pitivi.utils.system import getSystem
 from pitivi.utils.loggable import Loggable
 import pitivi.utils.loggable as log
-from pitivi.project import ProjectManager, ProjectLogObserver
-from pitivi.undo.undo import UndoableActionLog, DebugActionLogObserver
 #FIXME GES port disabled it
 #from pitivi.undo.timeline import TimelineLogObserver
-from pitivi.undo.medialibrary import MediaLibraryLogObserver
-from pitivi.ui.startupwizard import StartUpWizard
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go

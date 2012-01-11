@@ -29,8 +29,8 @@ pitivi/timeline/timeline.py
 pitivi/timeline/track.py
 pitivi/timeline/thumbnailer.py
 
-pitivi/ui/filelisterrordialog.py
-pitivi/ui/prefs.py
+pitivi/dialogs/filelisterrordialog.py
+pitivi/dialogs/prefs.py
 
 pitivi/utils/misc.py
 pitivi/utils/ui.py

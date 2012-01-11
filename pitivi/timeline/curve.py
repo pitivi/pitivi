@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/ui/curve.py
+#       pitivi/timeline/curve.py
 #
 # Copyright (c) 2006, Edward Hervey <bilboed@bilboed.com>
 #

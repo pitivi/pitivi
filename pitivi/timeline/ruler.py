@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/ui/ruler.py
+#       pitivi/timeline/ruler.py
 #
 # Copyright (c) 2006, Edward Hervey <bilboed@bilboed.com>
 #

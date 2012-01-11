@@ -86,7 +86,7 @@ common/m4/Makefile
 help/Makefile
 pitivi/Makefile
 pitivi/configure.py
-pitivi/ui/Makefile
+pitivi/dialogs/Makefile
 pitivi/undo/Makefile
 pitivi/utils/Makefile
 pitivi/timeline/Makefile

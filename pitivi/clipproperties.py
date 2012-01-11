@@ -29,18 +29,19 @@ import ges
 
 from gettext import gettext as _
 
-from pitivi.utils.playback import Seeker
 from pitivi.check import soft_deps
 from pitivi.configure import get_ui_dir
 
+from pitivi.dialogs.depsmanager import DepsManager
+
+from pitivi.utils.playback import Seeker
 from pitivi.utils.ui import EFFECT_TUPLE
 from pitivi.utils.loggable import Loggable
-from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
-    EffectsPropertiesManager
-
-from pitivi.ui.depsmanager import DepsManager
 from pitivi.utils.ui import PADDING, SPACING
 from pitivi.utils.widgets import GstElementSettingsWidget
+
+from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
+    EffectsPropertiesManager
 
 (COL_ACTIVATED,
  COL_TYPE,
