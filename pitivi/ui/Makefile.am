@@ -9,8 +9,7 @@ ui_PYTHON =			\
 	preset.py		\
 	basetabs.py		\
 	startupwizard.py 	\
-	viewer.py		\
-	filechooserpreview.py
+	viewer.py
 
 clean-local:
 	rm -rf *.pyc *.pyo

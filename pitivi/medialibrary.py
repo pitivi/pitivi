@@ -45,7 +45,7 @@ from pitivi.utils.signal import SignalGroup, Signallable
 from pitivi.utils.loggable import Loggable
 
 import pitivi.utils.ui as dnd
-from pitivi.ui.filechooserpreview import PreviewWidget
+from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.utils.ui import beautify_info, info_name, \
     SPACING, PADDING
