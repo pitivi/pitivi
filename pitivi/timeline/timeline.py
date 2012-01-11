@@ -35,6 +35,7 @@ from gettext import gettext as _
 
 from pitivi.check import soft_deps
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
+from pitivi.autoaligner import AlignmentProgressDialog
 
 from pitivi.settings import GlobalSettings
 
@@ -44,7 +45,6 @@ from pitivi.utils.timeline import Controller, MoveContext, SELECT, Zoomable
 
 from pitivi.ui.depsmanager import DepsManager
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
-from pitivi.ui.alignmentprogress import AlignmentProgressDialog
 from pitivi.ui.prefs import PreferencesDialog
 
 from pitivi.utils.receiver import receiver, handler

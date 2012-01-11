@@ -9,6 +9,7 @@ pitividir = $(libdir)/pitivi/python/pitivi
 pitivi_PYTHON = \
 	__init__.py 	\
 	application.py	\
+	autoaligner.py	\
 	check.py 	\
 	configure.py 	\
 	effects.py	\

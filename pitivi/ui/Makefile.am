@@ -2,7 +2,6 @@ uidir = $(libdir)/pitivi/python/pitivi/ui
 
 ui_PYTHON =			\
 	__init__.py		\
-	alignmentprogress.py    \
 	depsmanager.py	\
 	filelisterrordialog.py	\
 	mainwindow.py		\

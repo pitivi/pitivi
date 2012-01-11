@@ -26,10 +26,12 @@ Classes for extracting decoded contents of streams into Python
 Code derived from ui/previewer.py.
 """
 
+# FIXME reimplement after GES port
+
 import gst
 from collections import deque
-from pitivi.elements.singledecodebin import SingleDecodeBin
-from pitivi.elements.extractionsink import ExtractionSink
+#from pitivi.elements.singledecodebin import SingleDecodeBin
+#from pitivi.elements.extractionsink import ExtractionSink
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import pipeline
 
