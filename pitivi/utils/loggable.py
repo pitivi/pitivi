@@ -443,7 +443,7 @@ def getFileLine(where=-1):
         stackFrame = sys._getframe()
         while stackFrame:
             co = stackFrame.f_code
-            if not co.co_filename.endswith('log.py'):
+            if not co.co_filename.endswith('loggable.py'):
                 # wind up the stack according to frame
                 while where < -1:
                     stackFrame = stackFrame.f_back
