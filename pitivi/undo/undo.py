@@ -97,7 +97,7 @@ class UndoableActionStack(UndoableAction):
         self.emit("cleaned")
 
 
-class UndoableActionLog(Signallable):
+class UndoableActionLog(Signallable, Loggable):
     __signals__ = {
         "begin": ["stack", "nested"],
         "push": ["stack", "action"],
@@ -109,6 +109,8 @@ class UndoableActionLog(Signallable):
     }
 
     def __init__(self):
+        Loggable.__init__(self)
+
         self.undo_stacks = []
         self.redo_stacks = []
         self.stacks = []
@@ -116,6 +118,7 @@ class UndoableActionLog(Signallable):
         self._checkpoint = self._takeSnapshot()
 
     def begin(self, action_group_name):
+        self.debug("Begining %s", action_group_name)
         if self.running:
             return
 
@@ -125,6 +128,7 @@ class UndoableActionLog(Signallable):
         self.emit("begin", stack, nested)
 
     def push(self, action):
+        self.debug("Pushing %s", action)
         if self.running:
             return
 
@@ -162,6 +166,8 @@ class UndoableActionLog(Signallable):
 
         if self.redo_stacks:
             self.redo_stacks = []
+
+        self.debug("%s pushed", stack)
 
         self.emit("commit", stack, nested)
 
