@@ -891,7 +891,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         Determine which clips are selected in the icon or list view,
         and ask MediaLibrary to remove them from the project.
         """
-        model = self.storemodel
+        model = self.treeview.get_model()
         paths = self.getSelectedPaths()
         if paths == None or paths < 1:
             return
@@ -924,7 +924,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         sources = self.app.current.medialibrary.getSources()
         unused_sources_uris = []
 
-        model = self.storemodel
+        model = self.treeview.get_model()
         selection = self.treeview.get_selection()
         for source in sources:
             if not self._sourceIsUsed(source.get_uri()):
@@ -958,7 +958,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         """ Called when a user clicks on the play button """
         # get the selected filesourcefactory
         paths = self.getSelectedPaths()
-        model = self.storemodel
+        model = self.treeview.get_model()
         if len(paths) < 1:
             return
         paths = paths[0]
