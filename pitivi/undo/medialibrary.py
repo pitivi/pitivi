@@ -28,7 +28,7 @@ class MediaLibrarySourceAddedAction(UndoableAction):
         self.source = source
 
     def undo(self):
-        self.medialibrary.removeUri(self.source.uri)
+        self.medialibrary.removeUri(self.source.get_uri())
         self._undone()
 
     def do(self):
