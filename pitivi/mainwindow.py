@@ -233,62 +233,86 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.showRenderDialog(self.project)
 
     def _setActions(self, instance):
-        PLAY = _("Start Playback")
-        LOOP = _("Loop over selected area")
-
-        """ sets up the GtkActions """
+        """
+        Sets up the GtkActions. This allows managing the sensitivity of widgets
+        to the mouse and keyboard shortcuts.
+        """
+        # Action list items can vary in size (1-6 items). The first one is the
+        # name, and it is the only mandatory option. All the other options are
+        # optional, and if omitted will default to None.
+        #
+        # name (required), stock ID, translatable label,
+        # keyboard shortcut, translatable tooltip, callback function
         self.actions = [
+            # In some cases we manually specify the translatable label,
+            # because we want to have the "..." at the end, indicating
+            # an action that requires "further interaction" from the user.
+            ("PlayPause", gtk.STOCK_MEDIA_PLAY, None,
+            "space", _("Start Playback"), self.playPause),
+
+            ("Loop", gtk.STOCK_REFRESH, _("Loop"),
+            None, _("Loop over selected area"), self.loop),
+
             ("NewProject", gtk.STOCK_NEW, None,
-             None, _("Create a new project"), self._newProjectMenuCb),
+            None, _("Create a new project"), self._newProjectMenuCb),
+
             ("OpenProject", gtk.STOCK_OPEN, _("_Open..."),
-             None, _("Open an existing project"), self._openProjectCb),
+            None, _("Open an existing project"), self._openProjectCb),
+
             ("SaveProject", gtk.STOCK_SAVE, None,
-             None, _("Save the current project"), self._saveProjectCb),
+            None, _("Save the current project"), self._saveProjectCb),
+
             ("SaveProjectAs", gtk.STOCK_SAVE_AS, _("Save _As..."),
-             None, _("Save the current project"), self._saveProjectAsCb),
+            None, _("Save the current project"), self._saveProjectAsCb),
+
             ("RevertToSavedProject", gtk.STOCK_REVERT_TO_SAVED, None,
-             None, _("Reload the current project"), self._revertToSavedProjectCb),
+            None, _("Reload the current project"), self._revertToSavedProjectCb),
+
             ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"),
-             None, _("Edit the project settings"), self._projectSettingsCb),
+            None, _("Edit the project settings"), self._projectSettingsCb),
+
             ("RenderProject", 'pitivi-render', _("_Render..."),
-             None, _("Export your project as a finished movie"), self._recordCb),
-            ("Undo", gtk.STOCK_UNDO,
-             _("_Undo"),
-             "<Ctrl>Z", _("Undo the last operation"), self._undoCb),
-            ("Redo", gtk.STOCK_REDO,
-             _("_Redo"),
-             "<Ctrl>Y", _("Redo the last operation that was undone"), self._redoCb),
-            ("Preferences", gtk.STOCK_PREFERENCES, _("_Preferences"),
-              None, None, self._prefsCb),
+            None, _("Export your project as a finished movie"), self._recordCb),
+
+            ("Undo", gtk.STOCK_UNDO, None,
+            "<Ctrl>Z", _("Undo the last operation"), self._undoCb),
+
+            ("Redo", gtk.STOCK_REDO, None,
+            "<Ctrl>Y", _("Redo the last operation that was undone"), self._redoCb),
+
+            ("Preferences", gtk.STOCK_PREFERENCES, None,
+            None, None, self._prefsCb),
+
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
-            ("About", gtk.STOCK_ABOUT, None, None,
-             _("Information about %s") % APPNAME, self._aboutCb),
+
+            ("About", gtk.STOCK_ABOUT, None,
+            None, _("Information about %s") % APPNAME, self._aboutCb),
+
             ("UserManual", gtk.STOCK_HELP, _("User Manual"),
              None, None, self._userManualCb),
+
+            # Set up the toplevel menu items for translation
             ("File", None, _("_Project")),
             ("Edit", None, _("_Edit")),
             ("View", None, _("_View")),
             ("Library", None, _("_Library")),
             ("Timeline", None, _("_Timeline")),
             ("Viewer", None, _("Previe_w")),
-            ("PlayPause", gtk.STOCK_MEDIA_PLAY, None, "space", PLAY,
-                self.playPause),
-            ("Loop", gtk.STOCK_REFRESH, _("Loop"), None, LOOP,
-                self.loop),
             ("Help", None, _("_Help")),
         ]
 
         self.toggleactions = [
-            ("FullScreen", gtk.STOCK_FULLSCREEN, None, "f",
-             _("View the main window on the whole screen"),
-                 self._fullScreenCb),
-            ("FullScreenAlternate", gtk.STOCK_FULLSCREEN, None, "F11", None,
-                self._fullScreenAlternateCb),
-            ("ShowHideMainToolbar", None, _("Main Toolbar"), None, None,
-                self._showHideMainToolBar,
+            ("FullScreen", gtk.STOCK_FULLSCREEN, None,
+            "f", _("View the main window on the whole screen"), self._fullScreenCb),
+
+            ("FullScreenAlternate", gtk.STOCK_FULLSCREEN, None,
+            "F11", None, self._fullScreenAlternateCb),
+
+            ("ShowHideMainToolbar", None, _("Main Toolbar"),
+            None, None, self._showHideMainToolBar,
                 self.settings.mainWindowShowMainToolbar),
-            ("ShowHideTimelineToolbar", None, _("Timeline Toolbar"), None,
-                None, self._showHideTimelineToolbar,
+            ("ShowHideTimelineToolbar", None, _("Timeline Toolbar"),
+            None, None, self._showHideTimelineToolbar,
                 self.settings.mainWindowShowTimelineToolbar),
         ]
 
@@ -299,37 +323,36 @@ class PitiviMainWindow(gtk.Window, Loggable):
             _("Put the viewer in a separate window"), None)
         self.actiongroup.add_action(self.undock_action)
 
-        # deactivating non-functional actions
-        # FIXME : reactivate them
-        save_action = self.actiongroup.get_action("SaveProject")
-        save_action.set_sensitive(False)
-
         for action in self.actiongroup.list_actions():
             action_name = action.get_name()
             if action_name == "RenderProject":
-                self.render_button = action
                 # this will be set sensitive when the timeline duration changes
+                self.render_button = action
                 action.props.is_important = True
-            elif action_name in [
-                "ProjectSettings", "Quit", "File", "Edit", "Help", "About",
-                "View", "FullScreen", "FullScreenAlternate", "UserManual",
-                "ImportSourcesFolder", "PlayPause",
-                "Project", "FrameForward", "FrameBackward",
-                "ShowHideMainToolbar", "ShowHideTimelineToolbar", "Library",
-                "Timeline", "Viewer", "FrameForward", "FrameBackward",
-                "SecondForward", "SecondBackward", "EdgeForward",
-                "EdgeBackward", "Preferences", "WindowizeViewer"]:
-                action.set_sensitive(True)
             elif action_name in ["NewProject", "SaveProjectAs", "OpenProject"]:
                 if instance.settings.fileSupportEnabled:
                     action.set_sensitive(True)
             elif action_name == "SaveProject":
+                action.props.is_important = True
                 if instance.settings.fileSupportEnabled:
                     action.set_sensitive(True)
-                action.props.is_important = True
+                else:
+                    action.set_sensitive(False)
             elif action_name == "Undo":
                 action.set_sensitive(True)
                 action.props.is_important = True
+            elif action_name in [
+                "File", "Edit", "View", "Help",
+                "About", "Quit", "ImportSourcesFolder",
+                "FullScreen", "FullScreenAlternate", "UserManual",
+                "ShowHideMainToolbar", "ShowHideTimelineToolbar",
+                "PlayPause",
+                "FrameForward", "FrameBackward",
+                "SecondForward", "SecondBackward",
+                "EdgeForward", "EdgeBackward",
+                "Preferences", "Project", "ProjectSettings",
+                "Library", "Timeline", "Viewer", "WindowizeViewer"]:
+                action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
 
