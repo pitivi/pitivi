@@ -659,46 +659,58 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # toolbar actions
         actions = (
-            ("ZoomIn", gtk.STOCK_ZOOM_IN, None, "<Control>plus", ZOOM_IN,
-                self._zoomInCb),
-            ("ZoomOut", gtk.STOCK_ZOOM_OUT, None, "<Control>minus", ZOOM_OUT,
-                self._zoomOutCb),
-            ("ZoomFit", gtk.STOCK_ZOOM_FIT, None, None, ZOOM_FIT,
-                self._zoomFitCb),
+            ("ZoomIn", gtk.STOCK_ZOOM_IN, None,
+            "<Control>plus", ZOOM_IN, self._zoomInCb),
 
-            # actions for adding additional accelerators
-            ("ControlEqualAccel", gtk.STOCK_ZOOM_IN, None, "<Control>equal", ZOOM_IN,
-                self._zoomInCb),
-            ("ControlKPAddAccel", gtk.STOCK_ZOOM_IN, None, "<Control>KP_Add", ZOOM_IN,
-                self._zoomInCb),
-            ("ControlKPSubtractAccel", gtk.STOCK_ZOOM_OUT, None, "<Control>KP_Subtract", ZOOM_OUT,
-                self._zoomOutCb),
+            ("ZoomOut", gtk.STOCK_ZOOM_OUT, None,
+            "<Control>minus", ZOOM_OUT, self._zoomOutCb),
+
+            ("ZoomFit", gtk.STOCK_ZOOM_FIT, None,
+            None, ZOOM_FIT, self._zoomFitCb),
+
+            # Alternate keyboard shortcuts to the actions above
+            ("ControlEqualAccel", gtk.STOCK_ZOOM_IN, None,
+            "<Control>equal", ZOOM_IN, self._zoomInCb),
+
+            ("ControlKPAddAccel", gtk.STOCK_ZOOM_IN, None,
+            "<Control>KP_Add", ZOOM_IN, self._zoomInCb),
+
+            ("ControlKPSubtractAccel", gtk.STOCK_ZOOM_OUT, None,
+            "<Control>KP_Subtract", ZOOM_OUT, self._zoomOutCb),
         )
 
         selection_actions = (
-            ("DeleteObj", gtk.STOCK_DELETE, None, "Delete", DELETE,
-                self.deleteSelected),
-            ("UnlinkObj", "pitivi-unlink", None, "<Shift><Control>L", UNLINK,
-                self.unlinkSelected),
-            ("LinkObj", "pitivi-link", None, "<Control>L", LINK,
-                self.linkSelected),
-            ("UngroupObj", "pitivi-ungroup", None, "<Shift><Control>G", UNGROUP,
-                self.ungroupSelected),
-            ("GroupObj", "pitivi-group", None, "<Control>G", GROUP,
-                self.groupSelected),
-            ("AlignObj", "pitivi-align", None, "<Shift><Control>A", ALIGN,
-                self.alignSelected),
+            ("DeleteObj", gtk.STOCK_DELETE, None,
+            "Delete", DELETE, self.deleteSelected),
+
+            ("UnlinkObj", "pitivi-unlink", None,
+            "<Shift><Control>L", UNLINK, self.unlinkSelected),
+
+            ("LinkObj", "pitivi-link", None,
+            "<Control>L", LINK, self.linkSelected),
+
+            ("UngroupObj", "pitivi-ungroup", None,
+            "<Shift><Control>G", UNGROUP, self.ungroupSelected),
+
+            ("GroupObj", "pitivi-group", None,
+            "<Control>G", GROUP, self.groupSelected),
+
+            ("AlignObj", "pitivi-align", None,
+            "<Shift><Control>A", ALIGN, self.alignSelected),
         )
 
         self.playhead_actions = (
-            ("Split", "pitivi-split", _("Split"), "S", SPLIT,
-                self.split),
-            ("Keyframe", "pitivi-keyframe", _("Add a Keyframe"), "K", KEYFRAME,
-                self.keyframe),
-            ("Prevframe", "pitivi-prevframe", _("_Previous Keyframe"), "E", PREVFRAME,
-                self.prevframe),
-            ("Nextframe", "pitivi-nextframe", _("_Next Keyframe"), "R", NEXTFRAME,
-                self.nextframe),
+            ("Split", "pitivi-split", _("Split"),
+            "S", SPLIT, self.split),
+
+            ("Keyframe", "pitivi-keyframe", _("Add a Keyframe"),
+            "K", KEYFRAME, self.keyframe),
+
+            ("Prevframe", "pitivi-prevframe", _("_Previous Keyframe"),
+            "E", PREVFRAME, self.prevframe),
+
+            ("Nextframe", "pitivi-nextframe", _("_Next Keyframe"),
+            "R", NEXTFRAME, self.nextframe),
         )
 
         actiongroup = gtk.ActionGroup("timelinepermanent")
@@ -769,7 +781,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _dragMotionCb(self, unused, context, x, y, timestamp):
 
         if not self._factories:
-            if  context.targets in DND_EFFECT_LIST:
+            if context.targets in DND_EFFECT_LIST:
                 atom = gtk.gdk.atom_intern(EFFECT_TUPLE[0])
             else:
                 atom = gtk.gdk.atom_intern(FILESOURCE_TUPLE[0])
@@ -777,7 +789,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.drag_get_data(context, atom, timestamp)
             self.drag_highlight()
         else:
-            if  context.targets not in DND_EFFECT_LIST:
+            if context.targets not in DND_EFFECT_LIST:
                 if not self._temp_objects and not self._creating_tckobjs_sigid:
                     self.timeline.enable_update(False)
                     self._create_temp_source()
@@ -859,8 +871,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.log("targetType:%d, selection.data:%s" % (targetType, selection.data))
         self.selection_data = selection.data
 
-        if targetType not in [TYPE_PITIVI_FILESOURCE,
-                TYPE_PITIVI_EFFECT]:
+        if targetType not in [TYPE_PITIVI_FILESOURCE, TYPE_PITIVI_EFFECT]:
             context.finish(False, False, timestamp)
             return
 
