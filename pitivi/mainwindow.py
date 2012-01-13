@@ -210,14 +210,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.action_log.connect("redo", self._actionLogRedo)
         self.app.action_log.connect("cleaned", self._actionLogCleaned)
 
-    def showRenderDialog(self, project, pause=True):
+    def showRenderDialog(self, project):
         """
         Shows the L{RenderDialog} for the given project Timeline.
 
         @param project: The project
         @type project: L{Project}
-        @param pause: If C{True}, pause the timeline before displaying the dialog.
-        @type pause: C{bool}
         """
         from pitivi.render import RenderDialog
 
@@ -690,17 +688,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.prefsdialog.dialog.set_transient_for(self)
         self.prefsdialog.run()
 
-    def rewind(self, unused_action):
-        pass
-
     def playPause(self, unused_action):
         self.viewer.togglePlayback()
-
-    def pause(self, unused_action):
-        self.viewer.pause()
-
-    def fastForward(self, unused_action):
-        pass
 
     def loop(self, unused_action):
         pass

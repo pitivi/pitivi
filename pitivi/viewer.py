@@ -446,12 +446,6 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     ## public methods for controlling playback
 
-    def play(self):
-        self.pipeline.play()
-
-    def pause(self):
-        self.pipeline.pause()
-
     def togglePlayback(self):
         if self.pipeline:
             state = togglePlayback(self.pipeline)
