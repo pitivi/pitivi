@@ -700,6 +700,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         )
 
         self.playhead_actions = (
+            ("PlayPause", gtk.STOCK_MEDIA_PLAY, None,
+            "space", _("Start Playback"), self.playPause),
+
             ("Split", "pitivi-split", _("Split"),
             "S", SPLIT, self.split),
 
@@ -1253,6 +1256,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     self.app.action_log.begin("add volume point")
                     interpolator.newKeyframe(position_in_obj)
                     self.app.action_log.commit()
+
+    def playPause(self, unused_action):
+        self.app.gui.viewer.togglePlayback()
 
     def prevframe(self, action):
         timeline_position = self._position

@@ -245,9 +245,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
             # In some cases we manually specify the translatable label,
             # because we want to have the "..." at the end, indicating
             # an action that requires "further interaction" from the user.
-            ("PlayPause", gtk.STOCK_MEDIA_PLAY, None,
-            "space", _("Start Playback"), self.playPause),
-
             ("Loop", gtk.STOCK_REFRESH, _("Loop"),
             None, _("Loop over selected area"), self.loop),
 
@@ -687,9 +684,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.prefsdialog = PreferencesDialog(self.app)
             self.prefsdialog.dialog.set_transient_for(self)
         self.prefsdialog.run()
-
-    def playPause(self, unused_action):
-        self.viewer.togglePlayback()
 
     def loop(self, unused_action):
         pass
