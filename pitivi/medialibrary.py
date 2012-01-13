@@ -305,8 +305,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         searchEntry = gtk.Entry()
         searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
         searchEntry.connect("changed", self._searchEntryChangedCb)
-        searchEntry.connect("focus-in-event", self._searchEntryActivateCb)
-        searchEntry.connect("focus-out-event", self._searchEntryDeactivateCb)
+        searchEntry.connect("focus-in-event", self._disableKeyboardShortcutsCb)
+        searchEntry.connect("focus-out-event", self._enableKeyboardShortcutsCb)
         searchEntry.connect("icon-press", self._searchEntryIconClickedCb)
         self.search_hbox.pack_start(searchLabel, expand=False)
         self.search_hbox.pack_end(searchEntry, expand=True)
@@ -320,6 +320,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.treeview = gtk.TreeView(self.modelFilter)
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
+        self.treeview.connect("focus-in-event", self._disableKeyboardShortcutsCb)
+        self.treeview.connect("focus-out-event", self._enableKeyboardShortcutsCb)
         self.treeview.connect("row-activated", self._rowActivatedCb)
         self.treeview.set_property("rules_hint", True)
         self.treeview.set_headers_visible(False)
@@ -360,6 +362,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.iconview = gtk.IconView(self.modelFilter)
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.connect("button-press-event", self._iconViewButtonPressEventCb)
+        self.iconview.connect("focus-in-event", self._disableKeyboardShortcutsCb)
+        self.iconview.connect("focus-out-event", self._enableKeyboardShortcutsCb)
         self.iconview.connect("selection-changed", self._viewSelectionChangedCb)
         self.iconview.set_orientation(gtk.ORIENTATION_VERTICAL)
         self.iconview.set_property("has_tooltip", True)
@@ -540,6 +544,24 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         # Start adding sources in the timeline
         self._addNextSource()
 
+    def _disableKeyboardShortcutsCb(self, *unused_args):
+        """
+        Disable the Delete keyboard shortcut and playback shortcuts
+        to prevent accidents or being unable to type various characters.
+
+        This is used when focusing the search entry, icon on tree view widgets.
+        """
+        self.app.gui.setActionsSensitive("default", False)
+        self.app.gui.setActionsSensitive(['DeleteObj'], False)
+
+    def _enableKeyboardShortcutsCb(self, *unused_args):
+        """
+        When focusing out of media library widgets,
+        re-enable the timeline keyboard shortcuts.
+        """
+        self.app.gui.setActionsSensitive("default", True)
+        self.app.gui.setActionsSensitive(['DeleteObj'], True)
+
     def _addNextSource(self):
         """ Insert a source at the end of the timeline's first track """
         timeline = self.app.current.timeline
@@ -583,14 +605,6 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
     def _searchEntryIconClickedCb(self, entry, unused, unsed1):
         entry.set_text("")
-
-    def _searchEntryDeactivateCb(self, entry, event):
-        self.app.gui.setActionsSensitive("default", True)
-        self.app.gui.setActionsSensitive(['DeleteObj'], True)
-
-    def _searchEntryActivateCb(self, entry, event):
-        self.app.gui.setActionsSensitive("default", False)
-        self.app.gui.setActionsSensitive(['DeleteObj'], False)
 
     def _setRowVisible(self, model, iter, data):
         """
