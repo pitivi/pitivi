@@ -452,7 +452,7 @@ class EffectListWidget(gtk.VBox, Loggable):
         self.effectCategory.connect("changed", self._effectCategoryChangedCb)
 
         self.searchEntry.connect("changed", self.searchEntryChangedCb)
-        self.searchEntry.connect("button-press-event", self.searchEntryActivateCb)
+        self.searchEntry.connect("focus-in-event", self.searchEntryActivateCb)
         self.searchEntry.connect("focus-out-event", self.searchEntryDesactvateCb)
         self.searchEntry.connect("icon-press", self.searchEntryIconClickedCb)
 

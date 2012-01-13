@@ -305,7 +305,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         searchEntry = gtk.Entry()
         searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
         searchEntry.connect("changed", self._searchEntryChangedCb)
-        searchEntry.connect("button-press-event", self._searchEntryActivateCb)
+        searchEntry.connect("focus-in-event", self._searchEntryActivateCb)
         searchEntry.connect("focus-out-event", self._searchEntryDeactivateCb)
         searchEntry.connect("icon-press", self._searchEntryIconClickedCb)
         self.search_hbox.pack_start(searchLabel, expand=False)
