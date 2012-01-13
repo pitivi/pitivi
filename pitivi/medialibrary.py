@@ -304,10 +304,10 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         searchLabel = gtk.Label(_("Search:"))
         searchEntry = gtk.Entry()
         searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
-        searchEntry.connect("changed", self.searchEntryChangedCb)
-        searchEntry.connect("button-press-event", self.searchEntryActivateCb)
-        searchEntry.connect("focus-out-event", self.searchEntryDeactivateCb)
-        searchEntry.connect("icon-press", self.searchEntryIconClickedCb)
+        searchEntry.connect("changed", self._searchEntryChangedCb)
+        searchEntry.connect("button-press-event", self._searchEntryActivateCb)
+        searchEntry.connect("focus-out-event", self._searchEntryDeactivateCb)
+        searchEntry.connect("icon-press", self._searchEntryIconClickedCb)
         self.search_hbox.pack_start(searchLabel, expand=False)
         self.search_hbox.pack_end(searchEntry, expand=True)
         # Filtering model for the search box.
@@ -577,16 +577,16 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         source.disconnect_by_func(self._trackObjectAddedCb)
         self._addNextSource()
 
-    def searchEntryChangedCb(self, entry):
+    def _searchEntryChangedCb(self, entry):
         self.modelFilter.refilter()
 
-    def searchEntryIconClickedCb(self, entry, unused, unsed1):
+    def _searchEntryIconClickedCb(self, entry, unused, unsed1):
         entry.set_text("")
 
-    def searchEntryDeactivateCb(self, entry, event):
+    def _searchEntryDeactivateCb(self, entry, event):
         self.app.gui.setActionsSensitive("default", True)
 
-    def searchEntryActivateCb(self, entry, event):
+    def _searchEntryActivateCb(self, entry, event):
         self.app.gui.setActionsSensitive("default", False)
 
     def _setRowVisible(self, model, iter, data):
@@ -691,9 +691,9 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         close_after.set_active(self.app.settings.closeImportDialog)
 
         self._importDialog = gtk.FileChooserDialog(dialogtitle, None,
-                                                   chooser_action,
-                                                   (gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE,
-                                                    gtk.STOCK_ADD, gtk.RESPONSE_OK))
+                                           chooser_action,
+                                           (gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE,
+                                            gtk.STOCK_ADD, gtk.RESPONSE_OK))
         self._importDialog.set_icon_name("pitivi")
         self._importDialog.props.extra_widget = close_after
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
@@ -709,7 +709,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self._importDialog.connect('close', self._dialogBoxCloseCb)
         self._importDialog.show()
 
-    def addFolders(self, folders):
+    def _addFolders(self, folders):
         """ walks the trees of the folders in the list and adds the files it finds """
         self.app.threads.addThread(PathWalker, folders, self.app.current.sources.addUris)
 
@@ -845,7 +845,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
                 dialogbox.props.extra_widget.get_active()
             filenames = dialogbox.get_uris()
             if select_folders:
-                self.addFolders(filenames)
+                self._addFolders(filenames)
             else:
                 self.app.current.sources.addUris(filenames)
             if self.app.settings.closeImportDialog:
@@ -860,6 +860,10 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self._importDialog = None
 
     def _removeSources(self):
+        """
+        Determine which clips are selected in the icon or list view,
+        and ask MediaLibrary to remove them from the project.
+        """
         model = self.storemodel
         paths = self.getSelectedPaths()
         if paths == None or paths < 1:
@@ -1227,7 +1231,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             elif file_type == LOCAL_DIR:
                 directories = [incoming]
         if directories:
-            self.addFolders(directories)
+            self._addFolders(directories)
 
         if remote_files:
             #TODO waiting for remote files downloader support to be implemented
