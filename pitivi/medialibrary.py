@@ -91,9 +91,10 @@ ui = '''
                 <menuitem action="ImportSourcesFolder" />
                 <separator />
                 <menuitem action="SelectUnusedSources" />
-                <menuitem action="RemoveSources" />
                 <separator />
                 <menuitem action="InsertEnd" />
+                <menuitem action="RemoveSources" />
+                <menuitem action="PreviewClip" />
             </placeholder>
         </menu>
     </menubar>
@@ -279,11 +280,11 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         image.set_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU)
         self.popup_importitem.set_image(image)
 
-        self.popup_remitem = gtk.ImageMenuItem(_("Remove Clip"))
+        self.popup_remitem = gtk.ImageMenuItem(_("_Remove from Project"))
         image = gtk.Image()
         image.set_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_MENU)
         self.popup_remitem.set_image(image)
-        self.popup_playmenuitem = gtk.MenuItem(_("Play Clip"))
+        self.popup_playmenuitem = gtk.MenuItem(_("_Preview Clip"))
         self.popup_importitem.connect("activate", self._importButtonClickedCb)
         self.popup_remitem.connect("activate", self._removeButtonClickedCb)
         self.popup_playmenuitem.connect("activate", self._playButtonClickedCb)
@@ -467,6 +468,9 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
             ("InsertEnd", gtk.STOCK_COPY, _("Insert at _End of Timeline"),
             "Insert", None, self._insertEndCb),
+
+            ("PreviewClip", gtk.STOCK_MEDIA_PLAY, _("_Preview Clip"),
+            None, None, self._playButtonClickedCb),
         )
 
         actiongroup = gtk.ActionGroup("medialibrarypermanent")
