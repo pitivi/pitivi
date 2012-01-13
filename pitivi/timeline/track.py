@@ -478,7 +478,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         if self.element and not self.is_transition:
             from pitivi.utils.ui import info_name
 
-            sources = self.app.current.sources
+            sources = self.app.current.medialibrary
             uri = self.element.props.uri
             info = sources.getInfoFromUri(uri)
             self.name.props.text = info_name(info)

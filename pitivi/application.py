@@ -188,7 +188,7 @@ class Pitivi(Loggable, Signallable):
         self.action_log.clean()
         #self.timelineLogObserver.startObserving(project.timeline)
         self.projectLogObserver.startObserving(project)
-        self.medialibrary_log_observer.startObserving(project.sources)
+        self.medialibrary_log_observer.startObserving(project.medialibrary)
         self._newProjectLoaded(project)
         self.emit("new-project-loaded", project)
 
@@ -320,11 +320,11 @@ class ProjectCreatorGuiPitivi(FullGuiPitivi):
         self.projectManager.newBlankProject(False)
         uris = ["file://" + urllib.quote(os.path.abspath(media_filename))
                 for media_filename in media_filenames]
-        self.current.sources.connect("source-added",
+        self.current.medialibrary.connect("source-added",
                 self._sourceAddedCb, uris, add_to_timeline)
-        self.current.sources.connect("discovery-error",
+        self.current.medialibrary.connect("discovery-error",
                 self._discoveryErrorCb, uris)
-        self.current.sources.addUris(uris)
+        self.current.medialibrary.addUris(uris)
 
     def _sourceAddedCb(self, medialibrary, info,
             startup_uris, add_to_timeline):
@@ -349,8 +349,8 @@ class ProjectCreatorGuiPitivi(FullGuiPitivi):
             return False
 
         if not startup_uris:
-            self.current.sources.disconnect_by_function(self._sourceAddedCb)
-            self.current.sources.disconnect_by_function(self._discoveryErrorCb)
+            self.current.medialibrary.disconnect_by_function(self._sourceAddedCb)
+            self.current.medialibrary.disconnect_by_function(self._discoveryErrorCb)
 
         return True
 

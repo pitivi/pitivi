@@ -687,7 +687,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._setProject(project)
 
         #FIXME we should reanable it when possible with GES
-        #self._connectToProjectSources(project.sources)
+        #self._connectToProjectSources(project.medialibrary)
         #self._syncDoUndo(self.app.action_log)
 
         #FIXME GES reimplement me
@@ -900,7 +900,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.log("User chose a new URI for the missing file")
             new_uri = chooser.get_uri()
             if new_uri:
-                self.project.sources.addUri(new_uri)
+                self.project.medialibrary.addUri(new_uri)
                 formatter.update_source_uri(tfs, new_uri)
                 self._missingUriOnLoading = True
         else:
@@ -1084,12 +1084,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
             return
 
         try:
-            info = self.project.sources.getInfoFromUri(uri)
+            info = self.project.medialibrary.getInfoFromUri(uri)
         except MediaLibraryError:
-            self.project.sources.addUri(uri)
+            self.project.medialibrary.addUri(uri)
             # FIXME Add a delay/catch signal when we start doing the discovering
             # async
-            info = self.project.sources.getInfoFromUri(uri)
+            info = self.project.medialibrary.getInfoFromUri(uri)
         self._viewUri(info.get_uri())
         context.finish(True, False, ctime)
 
@@ -1109,7 +1109,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         preview_window.hide()  # Hack to allow setting the window position
         previewer.previewUri(path)
         previewer.setMinimal()
-        info = self.project.sources.getInfoFromUri(path)
+        info = self.project.medialibrary.getInfoFromUri(path)
         try:
             # For videos and images, automatically resize the window
             # Try to keep it 1:1 if it can fit within 85% of the parent window

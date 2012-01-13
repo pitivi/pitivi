@@ -867,7 +867,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         if targetType == TYPE_PITIVI_FILESOURCE:
             uris = selection.data.split("\n")
             self._factories = \
-                [self._project.sources.getInfoFromUri(uri) for uri in uris]
+                [self._project.medialibrary.getInfoFromUri(uri) for uri in uris]
         else:
             if not self._duration:
                 return False

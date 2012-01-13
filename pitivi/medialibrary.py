@@ -621,15 +621,15 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
         """
         self.project_signals.connect(
-            project.sources, "source-added", None, self._sourceAddedCb)
+            project.medialibrary, "source-added", None, self._sourceAddedCb)
         self.project_signals.connect(
-            project.sources, "source-removed", None, self._sourceRemovedCb)
+            project.medialibrary, "source-removed", None, self._sourceRemovedCb)
         self.project_signals.connect(
-            project.sources, "discovery-error", None, self._discoveryErrorCb)
+            project.medialibrary, "discovery-error", None, self._discoveryErrorCb)
         self.project_signals.connect(
-            project.sources, "ready", None, self._sourcesStoppedImportingCb)
+            project.medialibrary, "ready", None, self._sourcesStoppedImportingCb)
         self.project_signals.connect(
-            project.sources, "starting", None, self._sourcesStartedImportingCb)
+            project.medialibrary, "starting", None, self._sourcesStartedImportingCb)
 
     def _setClipView(self, show):
         """ Set which clip view to use when medialibrary is showing clips. If
@@ -711,14 +711,14 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
     def _addFolders(self, folders):
         """ walks the trees of the folders in the list and adds the files it finds """
-        self.app.threads.addThread(PathWalker, folders, self.app.current.sources.addUris)
+        self.app.threads.addThread(PathWalker, folders, self.app.current.medialibrary.addUris)
 
     def _updateProgressbar(self):
         """
         Update the _progressbar with the ratio of clips imported vs the total
         """
-        current_clip_iter = self.app.current.sources.nb_imported_files
-        total_clips = self.app.current.sources.nb_file_to_import
+        current_clip_iter = self.app.current.medialibrary.nb_imported_files
+        total_clips = self.app.current.medialibrary.nb_file_to_import
         progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
             {"current_clip": current_clip_iter,
             "total": total_clips})
@@ -847,7 +847,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             if select_folders:
                 self._addFolders(filenames)
             else:
-                self.app.current.sources.addUris(filenames)
+                self.app.current.medialibrary.addUris(filenames)
             if self.app.settings.closeImportDialog:
                 dialogbox.destroy()
                 self._importDialog = None
@@ -877,7 +877,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.app.action_log.begin("remove clip from source list")
         for row in rows:
             uri = model[row.get_path()][COL_URI]
-            self.app.current.sources.removeUri(uri)
+            self.app.current.medialibrary.removeUri(uri)
         self.app.action_log.commit()
 
     def _sourceIsUsed(self, uri):
@@ -893,7 +893,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         """
         Select, in the media library, unused sources in the project.
         """
-        sources = self.app.current.sources.getSources()
+        sources = self.app.current.medialibrary.getSources()
         unused_sources_uris = []
 
         model = self.storemodel
@@ -1238,7 +1238,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             pass
 
         uris = [quote_uri(uri) for uri in filenames]
-        self.app.current.sources.addUris(uris)
+        self.app.current.medialibrary.addUris(uris)
 
     #used with TreeView and IconView
     def _dndDragBeginCb(self, view, context):

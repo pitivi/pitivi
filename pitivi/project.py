@@ -185,7 +185,7 @@ class ProjectManager(Signallable, Loggable):
         # the trick for now
         file = gio.File(uri)
         if overwrite or not file.query_exist():
-            formatter.set_sources(project.sources.getSources())
+            formatter.set_sources(project.medialibrary.getSources())
             return formatter.save_to_uri(project.timeline, uri)
 
     def closeRunningProject(self):
@@ -301,7 +301,7 @@ class ProjectManager(Signallable, Loggable):
     def _projectLoadedCb(self, formatter, timeline):
         self.debug("Project Loaded")
         self.emit("new-project-loaded", self.current)
-        self.current.sources.addUris(self.formatter.get_sources())
+        self.current.medialibrary.addUris(self.formatter.get_sources())
 
 
 class ProjectError(Exception):
@@ -316,8 +316,8 @@ class Project(Signallable, Loggable):
     @type name: C{str}
     @ivar description: A description of the project
     @type description: C{str}
-    @ivar sources: The sources used by this project
-    @type sources: L{MediaLibrary}
+    @ivar medialibrary: The sources used by this project
+    @type medialibrary: L{MediaLibrary}
     @ivar timeline: The timeline
     @type timeline: L{ges.Timeline}
     @ivar pipeline: The timeline's pipeline
@@ -352,7 +352,7 @@ class Project(Signallable, Loggable):
         self.uri = uri
         self.urichanged = False
         self.format = None
-        self.sources = MediaLibrary()
+        self.medialibrary = MediaLibrary()
 
         self._dirty = False
 
