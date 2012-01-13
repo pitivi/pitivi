@@ -443,25 +443,26 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         # always available
         actions = (
             ("ImportSources", gtk.STOCK_ADD, _("_Import Files..."),
-                None, _("Add media files to your project"),
-                self._importSourcesCb),
-            ("ImportSourcesFolder", gtk.STOCK_ADD,
-                _("Import _Folders..."), None,
-                _("Add the contents of a folder as clips in your project"),
-                self._importSourcesFolderCb),
-            ("SelectUnusedSources", None, _("Select Unused Media"), None,
-                _("Select clips that have not been used in the project"),
-                self._selectUnusedSourcesCb),
+            None, _("Add media files to your project"),
+            self._importSourcesCb),
+
+            ("ImportSourcesFolder", gtk.STOCK_ADD, _("Import _Folders..."),
+            None, _("Add the contents of a folder as clips in your project"),
+            self._importSourcesFolderCb),
+
+            # Translators: "select" means "find" rather than "choose"
+            ("SelectUnusedSources", None, _("Select Unused Media"),
+            None, _("Select clips that have not been used in the project"),
+            self._selectUnusedSourcesCb),
         )
 
         # only available when selection is non-empty
         selection_actions = (
-            ("RemoveSources", gtk.STOCK_DELETE,
-                _("_Remove from Project"), "<Control>Delete", None,
-                self._removeSourcesCb),
-            ("InsertEnd", gtk.STOCK_COPY,
-                _("Insert at _End of Timeline"), "Insert", None,
-                self._insertEndCb),
+            ("RemoveSources", gtk.STOCK_DELETE, _("_Remove from Project"),
+            "<Control>Delete", None, self._removeSourcesCb),
+
+            ("InsertEnd", gtk.STOCK_COPY, _("Insert at _End of Timeline"),
+            "Insert", None, self._insertEndCb),
         )
 
         actiongroup = gtk.ActionGroup("medialibrarypermanent")
