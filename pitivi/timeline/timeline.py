@@ -113,17 +113,20 @@ ui = '''
         <menu action="Timeline">
             <placeholder name="Timeline">
                 <menuitem action="Split" />
-                <menuitem action="Keyframe" />
-                <separator />
                 <menuitem action="DeleteObj" />
+                <separator />
                 <menuitem action="LinkObj" />
                 <menuitem action="UnlinkObj" />
                 <menuitem action="GroupObj" />
                 <menuitem action="UngroupObj" />
                 <menuitem action="AlignObj" />
                 <separator />
+                <menuitem action="Keyframe" />
                 <menuitem action="Prevframe" />
                 <menuitem action="Nextframe" />
+                <separator />
+                <menuitem action="PlayPause" />
+                <menuitem action="Loop" />
             </placeholder>
         </menu>
     </menubar>
@@ -141,6 +144,7 @@ ui = '''
             <toolitem action="AlignObj" />
         </placeholder>
     </toolbar>
+    <accelerator action="PlayPause" />
     <accelerator action="DeleteObj" />
     <accelerator action="ControlEqualAccel" />
     <accelerator action="ControlKPAddAccel" />

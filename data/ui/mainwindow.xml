@@ -37,11 +37,6 @@
     <menu action="Timeline">
       <placeholder name="Timeline" />
     </menu>
-    <menu action="Viewer">
-      <menuitem action="PlayPause" />
-      <menuitem action="Loop" />
-      <separator />
-    </menu>
     <menu action="Help">
       <menuitem action="UserManual" />
       <menuitem action="About" />
@@ -63,7 +58,6 @@
         <separator />
   </toolbar>
   <accelerator action="FullScreenAlternate" />
-  <accelerator action="PlayPause" />
   <accelerator action="RenderProject" />
   <accelerator action="Loop" />
 </ui>

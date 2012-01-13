@@ -341,7 +341,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 "About", "Quit", "ImportSourcesFolder",
                 "FullScreen", "FullScreenAlternate", "UserManual",
                 "ShowHideMainToolbar", "ShowHideTimelineToolbar",
-                "PlayPause",
                 "FrameForward", "FrameBackward",
                 "SecondForward", "SecondBackward",
                 "EdgeForward", "EdgeBackward",
