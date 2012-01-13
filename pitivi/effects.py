@@ -738,9 +738,11 @@ class EffectListWidget(gtk.VBox, Loggable):
 
     def searchEntryDesactvateCb(self, entry, event):
         self.app.gui.setActionsSensitive("default", True)
+        self.app.gui.setActionsSensitive(['DeleteObj'], True)
 
     def searchEntryActivateCb(self, entry, event):
         self.app.gui.setActionsSensitive("default", False)
+        self.app.gui.setActionsSensitive(['DeleteObj'], False)
 
     def _setRowVisible(self, model, iter, data):
         if self.effectType.get_active() == model.get_value(iter, COL_EFFECT_TYPE):

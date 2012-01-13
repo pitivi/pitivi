@@ -586,9 +586,11 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
     def _searchEntryDeactivateCb(self, entry, event):
         self.app.gui.setActionsSensitive("default", True)
+        self.app.gui.setActionsSensitive(['DeleteObj'], True)
 
     def _searchEntryActivateCb(self, entry, event):
         self.app.gui.setActionsSensitive("default", False)
+        self.app.gui.setActionsSensitive(['DeleteObj'], False)
 
     def _setRowVisible(self, model, iter, data):
         """
