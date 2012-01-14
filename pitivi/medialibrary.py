@@ -196,6 +196,9 @@ class MediaLibrary(Signallable, Loggable):
         """
         Remove the info for c{uri} from the source list.
         """
+        # In theory we don't need quote_uri here, but since removeUri is public,
+        # we can never be too sure.
+        uri = quote_uri(uri)
         try:
             info = self._sources.pop(uri)
         except KeyError:
@@ -214,6 +217,9 @@ class MediaLibrary(Signallable, Loggable):
         """
         Get the source corresponding to C{uri}.
         """
+        # Make sure the URI is properly quoted, as other modules calling this
+        # method do not necessarily provide URIs encoded in the same way.
+        uri = quote_uri(uri)
         info = self._sources.get(uri)
         if info is None:
             raise MediaLibraryError("URI not in the medialibrary", uri)
@@ -1258,8 +1264,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             #TODO waiting for remote files downloader support to be implemented
             pass
 
-        uris = [quote_uri(uri) for uri in filenames]
-        self.app.current.medialibrary.addUris(uris)
+        self.app.current.medialibrary.addUris(filenames)
 
     #used with TreeView and IconView
     def _dndDragBeginCb(self, view, context):
