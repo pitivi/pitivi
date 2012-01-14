@@ -205,9 +205,13 @@ def beautify_stream(stream):
             templ = _(u"<b>Image:</b> %d×%d <i>pixels</i>")
             templ = templ % (par * stream.get_width(), stream.get_height())
         return templ
-    elif type(stream) == gst.pbutils.DiscovererStreamInfo and\
-             "text" in  stream.get_caps().to_string():
-        return _("Subtitles")
+    elif type(stream) == gst.pbutils.DiscovererStreamInfo:
+        caps = stream.get_caps().to_string()
+        if "text" in caps:
+            return _("Subtitles")
+        elif "application/x-id3" in caps:
+            # TODO: most audio files have ID3 tags, but we don't show them.
+            return ''
 
     raise NotImplementedError
 
