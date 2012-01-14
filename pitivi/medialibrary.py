@@ -912,7 +912,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         layers = self.app.current.timeline.get_layers()
         for layer in layers:
             for tlobj in layer.get_objects():
-                if tlobj.get_uri() == uri:
+                tlobj_uri = quote_uri(tlobj.get_uri())
+                if tlobj_uri == uri:
                     return True
         return False
 
