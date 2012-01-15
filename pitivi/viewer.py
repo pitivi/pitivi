@@ -94,8 +94,8 @@ class PitiviViewer(gtk.VBox, Loggable):
     def __init__(self, app, undock_action=None, action=None, pipeline=None):
         gtk.VBox.__init__(self)
         self.set_border_width(SPACING)
-        self.settings = app.settings
         self.app = app
+        self.settings = app.settings
         self.system = app.system
 
         Loggable.__init__(self)
@@ -108,8 +108,8 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.docked = True
 
         self.current_time = long(0)
+        self.previous_time = self.current_time
         self._initial_seek = None
-        self.current_frame = -1
 
         self.currentState = gst.STATE_PAUSED
         self._haveUI = False
@@ -147,7 +147,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.pipeline.set_state(gst.STATE_PAUSED)
             self.currentState = gst.STATE_PAUSED
 
-            gobject.timeout_add(300, self._posCb)
+            gobject.timeout_add(300, self._positionCheckCb)
 
         self._setUiActive()
         self.seeker = self.app.projectManager.current.seeker
@@ -374,15 +374,6 @@ class PitiviViewer(gtk.VBox, Loggable):
     def seek(self, position, format=gst.FORMAT_TIME):
         self.seeker.seek(position, format)
 
-    def _newTime(self, value, frame=-1):
-        self.info("value:%s, frame:%d", gst.TIME_ARGS(value), frame)
-        self.current_time = value
-        self.current_frame = frame
-        self.timecode_entry.setWidgetValue(value, False)
-        position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
-        self.seeker.setPosition(position)
-        return False
-
     ## active Timeline calllbacks
     def _durationChangedCb(self, unused_pipeline, duration):
         self.debug("duration : %s", gst.TIME_ARGS(duration))
@@ -504,13 +495,19 @@ class PitiviViewer(gtk.VBox, Loggable):
     def seekRelative(self, time):
         self.seeker.seekRelative(time)
 
-    def _posCb(self):
-        try:
-            position = self.pipeline.query_position(gst.FORMAT_TIME)[0]
-        except:
-            return True
+    def _positionCheckCb(self):
+        """Every 300 ms, check if the timeline position changed.
 
-        self._newTime(position)
+        If so, update our viewer UI widgets."""
+        try:
+            self.current_time = self.pipeline.query_position(gst.FORMAT_TIME)[0]
+            if self.current_time != self.previous_time:
+                self.info("value:%s", gst.TIME_ARGS(self.current_time))
+                self.timecode_entry.setWidgetValue(self.current_time, False)
+                self.seeker.setPosition(self.current_time)
+                self.previous_time = self.current_time
+        except:
+            self.debug("could not check timeline position for the viewer")
         return True
 
     def _currentStateCb(self, state):
