@@ -920,6 +920,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         return layers
 
+    def purgeObject(self, uri):
+        """Remove all instances of a clip from the timeline."""
+        layers = self.timeline.get_layers()
+        for layer in layers:
+            for tlobj in layer.get_objects():
+                if uri == tlobj.get_uri():
+                    layer.remove_object(tlobj)
+
     def _create_temp_source(self):
         infos = self._factories
         layer = self._ensureLayer()[0]
