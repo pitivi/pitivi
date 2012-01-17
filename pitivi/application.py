@@ -298,8 +298,8 @@ class FullGuiPitivi(GuiPitivi):
     """
     Creates an instance of PiTiVi with the UI
 
-    This is called when we start the UI with a project passed as a parameter,
-    but not when we start with the welcome dialog.
+    This is called when we start the UI with a project passed as a parameter.
+    It is also called by StartupWizardGuiPitivi.
     """
 
     def _createGui(self, **kargs):
