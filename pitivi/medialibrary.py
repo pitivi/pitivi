@@ -817,7 +817,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             self.infobar.hide_all()
             self.search_hbox.show_all()
 
-    def _sourceRemovedCb(self, medialibrary, uri, factory):
+    def _sourceRemovedCb(self, medialibrary, uri, unused_info):
         """ the given uri was removed from the medialibrary """
         # find the good line in the storemodel and remove it
         model = self.storemodel

@@ -474,7 +474,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
 
     def _connectToMediaLibrary(self):
-        self.medialibrary.connect('play', self._sourceListPlayCb)
+        self.medialibrary.connect('play', self._mediaLibraryPlayCb)
 
     def setFullScreen(self, fullscreen):
         """ Toggle the fullscreen mode of the application """
@@ -543,8 +543,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.settings.mainWindowShowMainToolbar = mtb.props.active
         self.settings.mainWindowShowTimelineToolbar = ttb.props.active
 
-    def _sourceListPlayCb(self, medialibrary, uri):
+    def _mediaLibraryPlayCb(self, medialibrary, uri):
         self._viewUri(uri)
+
+    def _mediaLibrarySourceRemovedCb(self, medialibrary, uri, unused_info):
+        """When a clip is removed from the Media Library, tell the timeline
+        to remove all instances of that clip."""
+        self.timeline.purgeObject(uri)
 
 ## Toolbar/Menu actions callback
 
@@ -691,8 +696,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.log("A NEW project is loaded, update the UI!")
         self._setProject(project)
 
-        #FIXME we should reanable it when possible with GES
-        #self._connectToProjectSources(project.medialibrary)
+        self._connectToProjectSources(project.medialibrary)
+        #FIXME GES we should re-enable this when possible
         #self._syncDoUndo(self.app.action_log)
 
         #FIXME GES reimplement me
@@ -918,7 +923,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.destroy()
 
     def _connectToProjectSources(self, medialibrary):
-        medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
+        #FIXME GES we should re-enable this when possible
+        #medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
+        medialibrary.connect("source-removed",
+            self._mediaLibrarySourceRemovedCb)
 
     def _actionLogCommit(self, action_log, stack, nested):
         if nested:
