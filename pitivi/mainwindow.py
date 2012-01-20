@@ -756,6 +756,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
         Zoomable.setZoomLevel(nearest_zoom_level)
+        self.app.current.timeline.props.snapping_distance = \
+            Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband)
 
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
         if uri:

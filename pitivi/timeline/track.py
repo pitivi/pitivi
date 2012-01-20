@@ -22,6 +22,7 @@
 
 import goocanvas
 import ges
+import gst
 import gobject
 import gtk
 import os.path
@@ -40,8 +41,7 @@ from pitivi.utils.ui import Point, info_name
 from pitivi.settings import GlobalSettings
 from pitivi.utils.signal import Signallable
 from pitivi.utils.timeline import SELECT, SELECT_ADD, UNSELECT, \
-    SELECT_BETWEEN, MoveContext, TrimStartContext, TrimEndContext, Controller, \
-    View, Zoomable
+    SELECT_BETWEEN, EditingContext, Controller, View, Zoomable
 from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED,\
         LAYER_HEIGHT_COLLAPSED, LAYER_SPACING, \
         unpack_cairo_pattern, unpack_cairo_gradient
@@ -151,7 +151,7 @@ class Selected (Signallable):
     selected = property(getSelected, setSelected)
 
 
-class TimelineController(Controller):
+class TrackObjectController(Controller):
 
     _cursor = ARROW
     _context = None
@@ -160,6 +160,12 @@ class TimelineController(Controller):
     next_previous_x = None
     ref = None
 
+    def __init__(self, instance, default_mode, view=None):
+        # Used to force the editing mode in use
+        Controller.__init__(self, instance, view)
+
+        self.default_mode = default_mode
+
     def enter(self, unused, unused2):
         self._view.focus()
 
@@ -167,15 +173,21 @@ class TimelineController(Controller):
         self._view.unfocus()
 
     def drag_start(self, item, target, event):
+        """
+            Start draging an element in the Track
+        """
         self.debug("Drag started")
+
         if not self._view.element.selected:
             self._view.timeline.selection.setToObj(self._view.element, SELECT)
+
         if self.previous_x != None:
             ratio = float(self.ref / Zoomable.pixelToNs(10000000000))
             self.previous_x = self.previous_x * ratio
+
         self.ref = Zoomable.pixelToNs(10000000000)
-        self._view.app.projectManager.current.timeline.enable_update(False)
         tx = self._view.props.parent.get_transform()
+
         # store y offset for later priority calculation
         self._y_offset = tx[5]
         # zero y component of mousdown coordiante
@@ -185,16 +197,12 @@ class TimelineController(Controller):
         self.debug("Drag end")
         self._context.finish()
         self._context = None
-        self._view.app.projectManager.current.timeline.enable_update(True)
         self._view.app.action_log.commit()
-        self._view.element.starting_start = self._view.element.props.start
-        obj = self._view.element.get_timeline_object()
-        obj.starting_start = obj.props.start
-        self.previous_x = self.next_previous_x
 
     def set_pos(self, item, pos):
         x, y = pos
         x = x + self._hadj.get_value()
+
         position = Zoomable.pixelToNs(x)
         priority = int((y - self._y_offset + self._vadj.get_value()) //
             (LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
@@ -205,10 +213,10 @@ class TimelineController(Controller):
 
     def _getMode(self):
         if self._shift_down:
-            return self._context.RIPPLE
+            return ges.EDIT_MODE_RIPPLE
         elif self._control_down:
-            return self._context.ROLL
-        return self._context.DEFAULT
+            return ges.EDIT_MODE_ROLL
+        return self.default_mode
 
     def key_press(self, keyval):
         if self._context:
@@ -233,7 +241,7 @@ class TrimHandle(View, goocanvas.Image, Loggable, Zoomable):
             line_width=0,
             pointer_events=goocanvas.EVENTS_FILL,
             **kwargs)
-        View.__init__(self)
+        View.__init__(self, instance, ges.EDIT_MODE_TRIM)
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
@@ -248,7 +256,7 @@ class StartHandle(TrimHandle):
 
     """Subclass of TrimHandle wich sets the object's start time"""
 
-    class Controller(TimelineController, Signallable):
+    class Controller(TrackObjectController):
 
         _cursor = LEFT_SIDE
 
@@ -277,18 +285,21 @@ class EndHandle(TrimHandle):
 
     """Subclass of TrimHandle which sets the objects's end time"""
 
-    class Controller(TimelineController):
+    class Controller(TrackObjectController):
 
         _cursor = RIGHT_SIDE
 
         def drag_start(self, item, target, event):
             self.debug("Trim end %s" % target)
-            TimelineController.drag_start(self, item, target, event)
+            TrackObjectController.drag_start(self, item, target, event)
+
             if self._view.element.is_locked():
                 elem = self._view.element.get_timeline_object()
             else:
                 elem = self._view.element
-            self._context = TrimEndContext(self._view.timeline, elem, set([]))
+            self._context = EditingContext(elem, self._view.timeline,
+                ges.EDIT_MODE_TRIM, ges.EDGE_END, set([]),
+                self.app.settings)
             self._context.connect("clip-trim", self.clipTrimCb)
             self._context.connect("clip-trim-finished", self.clipTrimFinishedCb)
             self._view.app.action_log.begin("trim object")
@@ -304,22 +315,25 @@ class EndHandle(TrimHandle):
 
 class TrackObject(View, goocanvas.Group, Zoomable):
 
-    class Controller(TimelineController):
+    class Controller(TrackObjectController):
 
         _handle_enter_leave = True
 
         def drag_start(self, item, target, event):
             point = self.from_item_event(item, event)
-            TimelineController.drag_start(self, item, target, event)
-            self._context = MoveContext(self._view.timeline,
-                        self._view.element,
-                        self._view.timeline.selection.getSelectedTrackObjs())
+            TrackObjectController.drag_start(self, item, target, event)
+
+            self._context = EditingContext(self._view.element,
+                self._view.timeline, ges.EDIT_MODE_NORMAL, ges.EDGE_NONE,
+                self._view.timeline.selection.getSelectedTrackObjs(),
+                self.app.settings)
+
             self._view.app.action_log.begin("move object")
 
         def _getMode(self):
             if self._shift_down:
-                return self._context.RIPPLE
-            return self._context.DEFAULT
+                return ges.EDIT_MODE_RIPPLE
+            return ges.EDIT_MODE_NORMAL
 
         def click(self, pos):
             timeline = self._view.timeline
@@ -340,7 +354,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
     def __init__(self, instance, element, track, timeline, utrack):
         goocanvas.Group.__init__(self)
-        View.__init__(self)
+        View.__init__(self, instance)
         Zoomable.__init__(self)
         self.ref = Zoomable.nsToPixel(10000000000)
         self.app = instance
@@ -539,24 +553,32 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             self._selec_indic.props.visibility = goocanvas.ITEM_INVISIBLE
 
     def _update(self):
+        # Calculating the new position
         try:
             x = self.nsToPixel(self.element.get_start())
         except Exception, e:
             raise Exception(e)
-        priority = (self.element.get_priority()) / 1000
-        if priority < 0:
-            priority = 0
+
+        priority = self.element.get_timeline_object().get_layer().get_priority()
         y = (self.height + LAYER_SPACING) * priority
+
+        # Setting new position
         self.set_simple_transform(x, y, 1, 0)
         width = self.nsToPixel(self.element.get_duration())
-        min_width = self.start_handle.props.width * 2
+
+        # Handle a duration of 0
+        handles_width = self.start_handle.props.width
+        min_width = handles_width * 2
         if width < min_width:
             width = min_width
-        w = width - self.end_handle.props.width
-        self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (0, 0, w, self.height, w)
+        w = width - handles_width
+        self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
+            0, 0, w, self.height, w)
         self.bg.props.width = width
+
         self._selec_indic.props.width = width
         self.end_handle.props.x = w
+
         if self.expanded:
             if w - NAME_HOFFSET > 0:
                 self.namebg.props.height = self.nameheight + NAME_PADDING2X
@@ -565,6 +587,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
             else:
                 self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
+
         self.app.gui.timeline_ui._canvas.regroupTracks()
         self.app.gui.timeline_ui.unsureVadjHeight()
 
@@ -639,19 +662,21 @@ class TrackControls(gtk.Label, Loggable):
         self.set_padding(0, LAYER_SPACING * 2)
         self.set_markup(self._getTrackName(track))
         self.track = track
+        self.timeline = track.get_timeline()
         self._setSize(layers_count=1)
 
     def _setTrack(self):
+        self.timeline = self.track.get_timeline()
         if self.track:
             self._maxPriorityChanged(None, self.track.max_priority)
 
-    # FIXME Stop using the receiver
-    #
-    # TODO implement in GES
-    #track = receiver(_setTrack)
-    #@handler(track, "max-priority-changed")
-    #def _maxPriorityChanged(self, track, max_priority):
-    #    self._setSize(max_priority + 1)
+    def _layerAddedCb(self, timeline, unused_layer):
+        max_priority = len(timeline.get_layers())
+        self._setSize(max_priority)
+
+    def _layerRemovedCb(self, timeline, unused_layer):
+        max_priority = len(timeline.get_layers())
+        self._setSize(max_priority)
 
     def _setSize(self, layers_count):
         assert layers_count >= 1

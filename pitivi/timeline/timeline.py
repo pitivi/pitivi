@@ -42,7 +42,7 @@ from pitivi.settings import GlobalSettings
 
 from curve import KW_LABEL_Y_OVERFLOW
 from track import TrackControls, TRACK_CONTROL_WIDTH, Track, TrackObject
-from pitivi.utils.timeline import Controller, MoveContext, SELECT, Zoomable
+from pitivi.utils.timeline import EditingContext, SELECT, Zoomable
 
 from pitivi.dialogs.depsmanager import DepsManager
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
@@ -235,7 +235,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         return True
 
     def do_expose_event(self, event):
-        self.debug("exposing TimelineCanvas %s", list(event.area))
         allocation = self.get_allocation()
         width = allocation.width
         height = allocation.height
@@ -358,7 +357,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     position = 0
 
     def timelinePositionChanged(self, position):
-        self.debug("value : %r" % position)
         self.position = position
         self._playhead.props.x = self.nsToPixel(position)
 
@@ -378,13 +376,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
     def zoomChanged(self):
         self.queue_draw()
-        if self._timeline:
-            self._timeline.dead_band = self.pixelToNs(
-                self.settings.edgeSnapDeadband)
-            self.timelinePositionChanged(self.position)
 
 ## settings callbacks
-
     def _setSettings(self):
         self.zoomChanged()
 
@@ -398,14 +391,14 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
     def setTimeline(self, timeline):
         while self._tracks:
-            self._trackRemoved(None, 0)
+            self._trackRemovedCb(None, 0)
 
         self._timeline = timeline
         if self._timeline:
             for track in self._timeline.get_tracks():
-                self._trackAdded(None, track)
-            self._timeline.connect("track-added", self._trackAdded)
-            self._timeline.connect("track-removed", self._trackRemoved)
+                self._trackAddedCb(None, track)
+            self._timeline.connect("track-added", self._trackAddedCb)
+            self._timeline.connect("track-removed", self._trackRemovedCb)
         self.zoomChanged()
 
     def getTimeline(self):
@@ -413,20 +406,25 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
     timeline = property(getTimeline, setTimeline, None, "The timeline property")
 
-    def _trackAdded(self, timeline, track):
+    def _trackAddedCb(self, timeline, track):
         track = Track(self.app, track, self._timeline)
         self._tracks.append(track)
         track.set_canvas(self)
         self.tracks.add_child(track)
         self.regroupTracks()
 
-    def _trackRemoved(self, unused_timeline, position):
+    def _trackRemovedCb(self, unused_timeline, position):
         track = self._tracks[position]
         del self._tracks[position]
         track.remove()
         self.regroupTracks()
 
     def regroupTracks(self):
+        """
+        Make it so we have a real differentiation between the Audio tracks
+        and video tracks
+        This method should be called each time a change happen in the timeline
+        """
         height = 0
         for i, track in enumerate(self._tracks):
             track.set_simple_transform(0, height, 1, 0)
@@ -568,11 +566,16 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._project = None
         self._timeline = None
         self._creating_tckobjs_sigid = {}
+        self._move_context = None
 
         #Ids of the tracks notify::duration signals
         self._tcks_sig_ids = {}
         #Ids of the layer-added and layer-removed signals
         self._layer_sig_ids = []
+
+        self._settings = self.app.settings
+        self._settings.connect("edgeSnapDeadbandChanged",
+                self._snapDistanceChangedCb)
 
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
@@ -742,7 +745,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.connect("drag-leave", self._dragLeaveCb)
         self.connect("drag-drop", self._dragDropCb)
         self.connect("drag-motion", self._dragMotionCb)
-        self.app.connect("new-project-created", self._newProjectCreatedCb)
         self._canvas.connect("key-press-event", self._keyPressEventCb)
         self._canvas.connect("scroll-event", self._scrollEventCb)
 
@@ -791,39 +793,35 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             if context.targets not in DND_EFFECT_LIST:
                 if not self._temp_objects and not self._creating_tckobjs_sigid:
                     self.timeline.enable_update(False)
-                    self._create_temp_source(-1, -1)
+                    self._create_temp_source(x, y)
 
                 # Let some time for TrackObject-s to be created
                 if self._temp_objects and not self._creating_tckobjs_sigid:
                     focus = self._temp_objects[0]
-                    self._move_context = MoveContext(self.timeline,
-                            focus, set(self._temp_objects[1:]))
+
+                    self._move_context = EditingContext(focus, self.timeline,
+                        ges.EDIT_MODE_NORMAL, ges.EDGE_NONE, set(self._temp_objects[1:]),
+                        self.app.settings)
+
                     self._move_temp_source(self.hadj.props.value + x, y)
         return True
 
     def _dragLeaveCb(self, unused_layout, context, unused_tstamp):
-        """
-        During a drag and drop operation to the timeline, when the mouse exits
-        the timeline area, ensure the temporary objects we created are removed.
-        """
-        for tlobj in self._temp_objects:
-            layer = tlobj.get_layer()
-            layer.remove_object(tlobj)
         self._temp_objects = []
         self.drag_unhighlight()
-        self._move_context.finish()
-
-    def _recreateSource(self, x, y):
-        self.app.action_log.begin("add clip")
-        self.added = 0
-        self._create_temp_source(x, y)
-        self.app.action_log.commit()
-        self._factories = []
+        self.timeline.enable_update(True)
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
         if  context.targets not in DND_EFFECT_LIST:
-            gobject.timeout_add(300, self._recreateSource, x, y)
+            self.app.action_log.begin("add clip")
+            self.selected = self._temp_objects
+            self._project.emit("selected-changed", set(self.selected))
+
+            self._move_context.finish()
+            self.app.action_log.commit()
             context.drop_finish(True, timestamp)
+            self._factories = []
+
             return True
 
         elif context.targets in DND_EFFECT_LIST:
@@ -991,8 +989,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         del self._creating_tckobjs_sigid[tlobj]
         if x != -1 and not self.added:
             focus = self._temp_objects[0]
-            self._move_context = MoveContext(self.timeline, focus,
-                                             set(self._temp_objects[1:]))
+            self._move_context = EditingContext(focus, self.timeline,
+                        ges.EDIT_MODE_NORMAL, ges.EDGE_NONE, set(self._temp_objects[1:]),
+                       self.app.settings)
+
             self._move_temp_source(self.hadj.props.value + x, y)
             self.selected = self._temp_objects
             self._project.emit("selected-changed", set(self.selected))
@@ -1064,6 +1064,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # GTK crack
         self._updateZoom = False
         Zoomable.setZoomLevel(int(adjustment.get_value()))
+        self._timeline.props.snapping_distance = \
+            Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
         self._updateZoom = True
 
     def _zoomSliderScrollCb(self, unused_widget, event):
@@ -1123,6 +1125,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _rulerSizeAllocateCb(self, ruler, allocation):
         self._canvas.props.redraw_when_scrolled = False
 
+    def _snapDistanceChangedCb(self, settings):
+        if self._timeline:
+            self._timeline.props.snapping_distance = \
+                Zoomable.pixelToNs(settings.edgeSnapDeadband)
+
 ## Project callbacks
 
     def _newProjectCreatedCb(self, app, project):
@@ -1175,6 +1182,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # Make sure to set the current layer in use
         self._layerAddedCb(None, None)
+        self._timeline.props.snapping_distance = \
+            Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
 
     def getTimeline(self):
         return self._timeline
