@@ -257,6 +257,34 @@ def beautify_length(length):
     return ", ".join(parts)
 
 
+def beautify_time_delta(seconds):
+    """
+    Converts the given time in seconds to a human-readable estimate.
+
+    This is intended for "Unsaved changes" and "Backup file found" dialogs.
+    """
+    mins = seconds / 60
+    sec = int(seconds % 60)
+    hours = mins / 60
+    mins = int(mins % 60)
+    days = int(hours / 24)
+    hours = int(hours % 24)
+
+    parts = []
+    if days > 0:
+        parts.append(ngettext("%d day", "%d days", days) % days)
+    if hours > 0:
+        parts.append(ngettext("%d hour", "%d hours", hours) % hours)
+
+    if days == 0 and mins > 0:
+        parts.append(ngettext("%d minute", "%d minutes", mins) % mins)
+
+    if hours == 0 and mins < 2 and sec:
+        parts.append(ngettext("%d second", "%d seconds", sec) % sec)
+
+    return ", ".join(parts)
+
+
 def beautify_ETA(length):
     """
     Converts the given time in nanoseconds to a fuzzy estimate,
@@ -264,20 +292,19 @@ def beautify_ETA(length):
     """
     sec = length / gst.SECOND
     mins = sec / 60
-    sec = sec % 60
-    hours = mins / 60
-    mins = mins % 60
+    sec = int(sec % 60)
+    hours = int(mins / 60)
+    mins = int(mins % 60)
 
     parts = []
-    if hours:
+    if hours > 0:
         parts.append(ngettext("%d hour", "%d hours", hours) % hours)
 
-    if mins:
+    if mins > 0:
         parts.append(ngettext("%d minute", "%d minutes", mins) % mins)
 
-    if not hours and mins < 2 and sec:
+    if hours == 0 and mins < 2 and sec:
         parts.append(ngettext("%d second", "%d seconds", sec) % sec)
-
     return ", ".join(parts)
 
 
