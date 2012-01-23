@@ -10,6 +10,10 @@
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
     </credit>
+    <credit type="contributor">
+      <name>Brian Grohe</name>
+      <email>grohe43@gmail.com</email>
+    </credit>
     <desc>
       Managing your imported clips with the Media Library
     </desc>
@@ -22,7 +26,7 @@
 
        <section>
         <title>Previewing a clip from the <gui>Media Library</gui></title>
-         <p>To preview a clip before placing it on the timeline, you can double-click on it in the <gui>Media Library</gui>, or right-click and choose <gui>Play clip</gui> from the popup menu.</p>
+         <p>To preview a clip before placing it on the timeline, you can double-click on it in the <gui>Media Library</gui>, or right-click and choose <gui>Preview Clip</gui> from the popup menu. This will open the clip in a window that automatically closes whenever you click outside the window.</p>
          <figure>
           <desc>Popup menu</desc>
           <media type="image" src="figures/previewsource.png" mime="image/png" style="right"></media>
