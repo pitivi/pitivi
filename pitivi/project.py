@@ -30,6 +30,7 @@ import gtk
 import gio
 import gobject
 
+from time import time
 from datetime import datetime
 from gettext import gettext as _
 from urlparse import urlparse
@@ -234,6 +235,7 @@ class ProjectManager(Signallable, Loggable):
         else:
             self.current.disconnect = True
         self.emit("new-project-loaded", self.current)
+        self.time_loaded = time()
 
         return True
 

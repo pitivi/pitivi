@@ -30,6 +30,7 @@ import gst
 import ges
 import webbrowser
 
+from time import time
 from urllib import unquote
 from gettext import gettext as _
 from gtk import RecentManager
@@ -41,8 +42,8 @@ from pitivi.effects import EffectListWidget
 from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
 
 from pitivi.utils.misc import show_user_manual
-from pitivi.utils.ui import SPACING, info_name, FILESOURCE_TUPLE, URI_TUPLE, \
-         TYPE_URI_LIST, TYPE_PITIVI_FILESOURCE
+from pitivi.utils.ui import info_name, beautify_time_delta, SPACING,\
+         FILESOURCE_TUPLE, URI_TUPLE, TYPE_URI_LIST, TYPE_PITIVI_FILESOURCE
 from pitivi.utils.timeline import Zoomable
 
 from pitivi.timeline.timeline import Timeline
@@ -795,8 +796,17 @@ class PitiviMainWindow(gtk.Window, Loggable):
         secondary.set_line_wrap(True)
         secondary.set_use_markup(True)
         secondary.set_alignment(0, 0.5)
-        secondary.props.label = _("If you don't save some of your "
-                "changes will be lost")
+
+        if project.uri:
+            path = unquote(project.uri).split("file://")[1]
+            last_saved = max(os.path.getmtime(path), projectManager.time_loaded)
+            time_delta = time() - last_saved
+            secondary.props.label = _("If you don't save, "
+                "the changes from the last %s will be lost."
+                % beautify_time_delta(time_delta))
+        else:
+            secondary.props.label = _("If you don't save, "
+                                    "your changes will be lost.")
 
         # put the text in a vbox
         vbox = gtk.VBox(False, SPACING * 2)
