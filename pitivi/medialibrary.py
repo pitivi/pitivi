@@ -262,7 +262,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.settings = instance.settings
         self._errors = []
         self._project = None
-        self._sources_to_add = []
+        self._sources_to_insert = []
         self.dummy_selected = []
 
         # Store
@@ -550,9 +550,9 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         # Handle the case of a blank project
         self.app.gui.timeline._ensureLayer()
 
-        self._sources_to_add = self.getSelectedItems()
+        self._sources_to_insert = self.getSelectedItems()
         # Start adding sources in the timeline
-        self._addNextSource()
+        self._insertNextSource()
 
     def _disableKeyboardShortcutsCb(self, *unused_args):
         """
@@ -572,18 +572,18 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.app.gui.setActionsSensitive("default", True)
         self.app.gui.setActionsSensitive(['DeleteObj'], True)
 
-    def _addNextSource(self):
+    def _insertNextSource(self):
         """ Insert a source at the end of the timeline's first track """
         timeline = self.app.current.timeline
 
-        if not self._sources_to_add:
+        if not self._sources_to_insert:
             # OK, we added all the sources!
             timeline.enable_update(True)
             self.app.current.seeker.seek(timeline.props.duration)
             self.app.action_log.commit()
             return
 
-        uri = self._sources_to_add.pop()
+        uri = self._sources_to_insert.pop()
         source = ges.TimelineFileSource(uri)
         layer = timeline.get_layers()[0]  # FIXME Get the longest layer
         layer.add_object(source)
@@ -608,7 +608,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         # We only need one TrackObject to estimate the new duration.
         # Process the next source.
         source.disconnect_by_func(self._trackObjectAddedCb)
-        self._addNextSource()
+        self._insertNextSource()
 
     def _searchEntryChangedCb(self, entry):
         self.modelFilter.refilter()
