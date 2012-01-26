@@ -147,8 +147,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.pipeline.set_state(gst.STATE_PAUSED)
             self.currentState = gst.STATE_PAUSED
 
-            gobject.timeout_add(300, self._positionCheckCb)
-
         self._setUiActive()
         self.seeker = self.app.projectManager.current.seeker
 
@@ -508,6 +506,8 @@ class PitiviViewer(gtk.VBox, Loggable):
                 self.previous_time = self.current_time
         except:
             self.debug("could not check timeline position for the viewer")
+        if self.currentState == gst.STATE_PAUSED:
+            return False
         return True
 
     def _currentStateCb(self, state):
@@ -515,6 +515,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         if int(state) == int(gst.STATE_PLAYING):
             self.playpause_button.setPause()
             self.system.inhibitScreensaver(self.INHIBIT_REASON)
+            gobject.timeout_add(300, self._positionCheckCb)
         elif int(state) == int(gst.STATE_PAUSED):
             self.playpause_button.setPlay()
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
