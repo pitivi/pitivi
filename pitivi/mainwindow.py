@@ -693,10 +693,25 @@ class PitiviMainWindow(gtk.Window, Loggable):
         pass
 
     def _projectManagerNewProjectLoadedCb(self, projectManager, project):
-        self.log("A NEW project is loaded, update the UI!")
-        self._setProject(project)
-
+        """
+        Once a new project has been loaded, wait for media library's
+        "ready" signal to populate the timeline.
+        """
+        self.log("A new project is loaded, wait for clips")
         self._connectToProjectSources(project.medialibrary)
+
+        # This should only be done when loading a project, and disconnected
+        # as soon as we receive the signal.
+        project.medialibrary.connect("ready", self._projectClipsReady)
+
+    def _projectClipsReady(self, medialibrary):
+        """
+        After the project is loaded along with its media files, update the UI.
+        """
+        self.log("Project clips are ready, update the UI")
+        self.app.current.medialibrary.disconnect_by_func(self._projectClipsReady)
+        self._setProject(self.app.current)
+
         #FIXME GES we should re-enable this when possible
         #self._syncDoUndo(self.app.action_log)
 
