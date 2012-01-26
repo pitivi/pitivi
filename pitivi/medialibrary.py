@@ -137,11 +137,11 @@ class MediaLibrary(Signallable, Loggable):
     """
 
     __signals__ = {
-        "ready": [],
-        "starting": [],
         "source-added": ["info"],
         "source-removed": ["uri"],
         "discovery-error": ["uri", "reason"],
+        "ready": [],
+        "starting": [],
         }
 
     def __init__(self):
@@ -155,29 +155,13 @@ class MediaLibrary(Signallable, Loggable):
         self.nb_imported_files = 0
 
         self.discoverer = self.discovererClass(gst.SECOND)
+        self.discoverer.connect("discovered", self.addDiscovererInfo)
+        self.discoverer.connect("finished", self.finishDiscovererCb)
+        self.discoverer.start()
 
-    def addUri(self, uri):
-        """
-        Add c{uri} to the source list.
-
-        The uri will be analyzed before being added.
-        """
-        # Ensure we really have a correctly encoded URI according to RFC 2396.
-        # Otherwise, in some cases we'd get rogue characters that break
-        # searching for duplicates
-        uri = quote_uri(uri)
-        if uri in self._sources:
-            # uri is already added. Nothing to do.
-            return
-        self._sources[uri] = None
-
-        try:
-            info = self.discoverer.discover_uri(uri)
-        except Exception, e:
-            self.emit("discovery-error", uri, e, "")
-            return
-
-        self.addDiscovererInfo(info)
+    def finishDiscovererCb(self, unused_discoverer):
+        self.debug("Got the discoverer's finished signal")
+        self.emit("ready")
 
     def addUris(self, uris):
         """
@@ -185,12 +169,19 @@ class MediaLibrary(Signallable, Loggable):
 
         The uris will be analyzed before being added.
         """
+        self.emit("starting")
+        self.debug("Adding %s", uris)
         self.nb_file_to_import = len(uris)
         self.nb_imported_files = 0
         for uri in uris:
-            self.addUri(uri)
-        self.debug("Adding %s", uris)
-        self.emit("ready")
+            # Ensure we have a correctly encoded URI according to RFC 2396.
+            # Otherwise, in some cases we'd get rogue characters that break
+            # searching for duplicates
+            uri = quote_uri(uri)
+            if uri not in self._sources:
+                self.discoverer.discover_uri_async(uri)
+                self.debug("Added a uri to discoverer async")
+        self.debug("Done adding all URIs to discoverer async")
 
     def removeUri(self, uri):
         """
@@ -225,17 +216,20 @@ class MediaLibrary(Signallable, Loggable):
             raise MediaLibraryError("URI not in the medialibrary", uri)
         return info
 
-    def addDiscovererInfo(self, info):
+    def addDiscovererInfo(self, discoverer, info, error):
         """
         Add the specified SourceFactory to the list of sources.
         """
-        uri = info.get_uri()
-        if self._sources.get(uri, None) is not None:
-            raise MediaLibraryError("We already have info for this URI", uri)
-        self._sources[uri] = info
-        self._ordered_sources.append(info)
-        self.nb_imported_files += 1
-        self.emit("source-added", info)
+        if error:
+            self.emit("discovery-error", info.get_uri(), error.message)
+        else:
+            uri = info.get_uri()
+            if self._sources.get(uri, None) is not None:
+                raise MediaLibraryError("We already have info for this URI", uri)
+            self._sources[uri] = info
+            self._ordered_sources.append(info)
+            self.nb_imported_files += 1
+            self.emit("source-added", info)
 
     def getSources(self):
         """ Returns the list of sources used.
@@ -645,18 +639,17 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
         This first disconnects any handlers connected to an old project.
         If project is None, this just disconnects any connected handlers.
-
         """
-        self.project_signals.connect(
-            project.medialibrary, "source-added", None, self._sourceAddedCb)
-        self.project_signals.connect(
-            project.medialibrary, "source-removed", None, self._sourceRemovedCb)
-        self.project_signals.connect(
-            project.medialibrary, "discovery-error", None, self._discoveryErrorCb)
-        self.project_signals.connect(
-            project.medialibrary, "ready", None, self._sourcesStoppedImportingCb)
-        self.project_signals.connect(
-            project.medialibrary, "starting", None, self._sourcesStartedImportingCb)
+        self.project_signals.connect(project.medialibrary,
+            "source-added", None, self._sourceAddedCb)
+        self.project_signals.connect(project.medialibrary,
+            "source-removed", None, self._sourceRemovedCb)
+        self.project_signals.connect(project.medialibrary,
+            "discovery-error", None, self._discoveryErrorCb)
+        self.project_signals.connect(project.medialibrary,
+            "ready", None, self._sourcesStoppedImportingCb)
+        self.project_signals.connect(project.medialibrary,
+            "starting", None, self._sourcesStartedImportingCb)
 
     def _setClipView(self, show):
         """ Set which clip view to use when medialibrary is showing clips. If
@@ -809,7 +802,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
     # medialibrary callbacks
 
-    def _sourceAddedCb(self, medialibrary, factory):
+    def _sourceAddedCb(self, unused_medialibrary, factory):
         """ a file was added to the medialibrary """
         self._updateProgressbar()
         self._addDiscovererInfo(factory)
@@ -817,7 +810,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             self.infobar.hide_all()
             self.search_hbox.show_all()
 
-    def _sourceRemovedCb(self, medialibrary, uri, unused_info):
+    def _sourceRemovedCb(self, unused_medialibrary, uri, unused_info):
         """ the given uri was removed from the medialibrary """
         # find the good line in the storemodel and remove it
         model = self.storemodel
@@ -830,14 +823,13 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             self.search_hbox.hide()
         self.debug("Removing %s", uri)
 
-    def _discoveryErrorCb(self, unused_medialibrary, uri, reason, extra):
+    def _discoveryErrorCb(self, unused_medialibrary, uri, reason, extra=None):
         """ The given uri isn't a media file """
         error = (uri, reason, extra)
         self._errors.append(error)
 
-    def _sourcesStartedImportingCb(self, medialibrary):
+    def _sourcesStartedImportingCb(self, unused_medialibrary):
         self._progressbar.show()
-        self._updateProgressbar()
 
     def _sourcesStoppedImportingCb(self, unused_medialibrary):
         self._progressbar.hide()

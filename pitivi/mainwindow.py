@@ -910,7 +910,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.log("User chose a new URI for the missing file")
             new_uri = chooser.get_uri()
             if new_uri:
-                self.project.medialibrary.addUri(new_uri)
+                self.project.medialibrary.addUris([new_uri])
                 formatter.update_source_uri(tfs, new_uri)
                 self._missingUriOnLoading = True
         else:
@@ -1099,7 +1099,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         try:
             info = self.project.medialibrary.getInfoFromUri(uri)
         except MediaLibraryError:
-            self.project.medialibrary.addUri(uri)
+            self.project.medialibrary.addUris([uri])
             # FIXME Add a delay/catch signal when we start doing the discovering
             # async
             info = self.project.medialibrary.getInfoFromUri(uri)
