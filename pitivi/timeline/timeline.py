@@ -32,6 +32,7 @@ import gobject
 import goocanvas
 
 from gettext import gettext as _
+from os.path import join
 
 from pitivi.check import soft_deps
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
@@ -127,6 +128,7 @@ ui = '''
                 <separator />
                 <menuitem action="PlayPause" />
                 <menuitem action="Loop" />
+                <menuitem action="Screenshot" />
             </placeholder>
         </menu>
     </menubar>
@@ -672,6 +674,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             ("ZoomFit", gtk.STOCK_ZOOM_FIT, None,
             None, ZOOM_FIT, self._zoomFitCb),
 
+            ("Screenshot", None, _("Export current frame..."),
+            None, _("Export the frame at the current playhead "
+                    "position as an image file."), self._screenshotCb),
+
             # Alternate keyboard shortcuts to the actions above
             ("ControlEqualAccel", gtk.STOCK_ZOOM_IN, None,
             "<Control>equal", ZOOM_IN, self._zoomInCb),
@@ -903,6 +909,42 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             timeline_objs.append(track_object.get_timeline_object())
 
         return timeline_objs
+
+    def _showSaveScreenshotDialog(self):
+        """
+        Show a filechooser dialog asking the user where to save the snapshot
+        and what file type to use.
+
+        Returns a list containing the full path and the mimetype if successful,
+        returns none otherwise.
+        """
+        chooser = gtk.FileChooserDialog(_("Save As..."), self.app.gui,
+            action=gtk.FILE_CHOOSER_ACTION_SAVE,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+            gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+        chooser.set_icon_name("pitivi")
+        chooser.set_select_multiple(False)
+        chooser.set_current_name(_("Untitled"))
+        chooser.set_current_folder(self.app.settings.lastProjectFolder)
+        chooser.props.do_overwrite_confirmation = True
+        formats = {_("PNG image"): ["image/png", ("png",)],
+            _("JPEG image"): ["image/jpeg", ("jpg", "jpeg")]}
+        for format in formats:
+            filt = gtk.FileFilter()
+            filt.set_name(format)
+            filt.add_mime_type(formats.get(format)[0])
+            chooser.add_filter(filt)
+        response = chooser.run()
+        if response == gtk.RESPONSE_OK:
+            chosen_format = formats.get(filt.get_name())
+            chosen_ext = chosen_format[1][0]
+            chosen_mime = chosen_format[0]
+            uri = join(chooser.get_current_folder(), chooser.get_filename())
+            ret = [uri + "." + chosen_ext, chosen_mime]
+        else:
+            ret = None
+        chooser.destroy()
+        return ret
 
     def _ensureLayer(self):
         """
@@ -1287,3 +1329,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         if next_kf:
             self._seeker.seek(next_kf)
             self.scrollToPlayhead()
+
+    def _screenshotCb(self, unused_action):
+        """
+        Export a snapshot of the current frame as an image file.
+        """
+        foo = self._showSaveScreenshotDialog()
+        if foo:
+            path, mime = foo[0], foo[1]
+            self._project.pipeline.save_thumbnail(-1, -1, mime, path)
