@@ -1,0 +1,23 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="savescreenshot">
+
+  <info>
+    <link type="topic" xref="index"/>
+    <revision pkgversion="0.16" version="0.1" date="2012-01-27" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Saving a snapshot of the current frame</title>
+
+    <p>You can use <guiseq><gui>Timeline</gui><gui>Export current frame...</gui></guiseq> to save a copy of the current frame as an image file.</p>
+    <p>Currently, PNG and JPEG are supported as file formats. The image resolution will match the project settings and any effect or transformation will also be applied to the resulting image.</p>
+
+</page>

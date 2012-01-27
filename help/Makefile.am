@@ -47,6 +47,7 @@ DOC_PAGES = \
     projectsettings.page \
     rendering.page \
     saveproject.page \
+    savescreenshot.page \
     selectunusedfiles.page \
     splitting.page \
     sysreq.page \
