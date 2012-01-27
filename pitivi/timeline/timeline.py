@@ -231,7 +231,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
     def from_event(self, event):
         x, y = event.x, event.y
-        x += self.app.gui.timeline.hadj.get_value()
+        x += self.app.gui.timeline_ui.hadj.get_value()
         return Point(*self.convert_from_pixels(x, y))
 
     def setExpanded(self, track_object, expanded):
@@ -323,7 +323,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             self._got_motion_notify = True
             cur = self.from_event(event)
             pos, size = self._normalize(self._mousedown, cur,
-                self.app.gui.timeline.hadj.get_value())
+                self.app.gui.timeline_ui.hadj.get_value())
             self._marquee.props.x, self._marquee.props.y = pos
             self._marquee.props.width, self._marquee.props.height = size
             return True
@@ -555,12 +555,12 @@ class InfoStub(gtk.HBox, Loggable):
 
 
 class Timeline(gtk.Table, Loggable, Zoomable):
+    """
+    Initiate and manage the timeline's user interface components.
 
-    __gtype_name__ = 'Timeline'
-    __gsignals__ = {
-        "duration-changed": (gobject.SIGNAL_RUN_LAST,
-            gobject.TYPE_NONE, (gobject.TYPE_INT,)),
-    }
+    This class is not to be confused with project.py's
+    "timeline" instance of GESTimeline.
+    """
 
     def __init__(self, instance, ui_manager):
         gtk.Table.__init__(self, rows=2, columns=1, homogeneous=False)
@@ -577,11 +577,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._position = 0
         self._state = gst.STATE_NULL
         self._createUI()
-        self._prev_duration = 0
         self.rate = gst.Fraction(1, 1)
         self._project = None
         self._timeline = None
-        self._duration = 0
         self._creating_tckobjs_sigid = {}
 
         #Ids of the tracks notify::duration signals
@@ -834,7 +832,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             return True
 
         elif context.targets in DND_EFFECT_LIST:
-            if self._duration == 0:
+            if self.app.current.timeline.props.duration == 0:
                 return False
 
             factory = self._factories[0]
@@ -873,11 +871,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         return False
 
-    def getDuration(self):
-        return self.timeline.props.duration
-
-    duration = property(getDuration, None, None, "The duration property")
-
     def _dragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
         self.app.projectManager.current.timeline.enable_update(False)
@@ -893,7 +886,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._factories = \
                 [self._project.medialibrary.getInfoFromUri(uri) for uri in uris]
         else:
-            if not self._duration:
+            if not self.app.current.timeline.props.duration > 0:
                 return False
             self._factories = [self.app.effects.getFactoryFromName(selection.data)]
 
@@ -1199,7 +1192,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def updateScrollAdjustments(self):
         a = self.get_allocation()
-        size = Zoomable.nsToPixel(self.duration)
+        size = Zoomable.nsToPixel(self.app.current.timeline.props.duration)
         self.hadj.props.lower = 0
         self.hadj.props.upper = size + 200  # why is this necessary???
         self.hadj.props.page_size = a.width

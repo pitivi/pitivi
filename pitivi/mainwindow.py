@@ -176,7 +176,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.actiongroup = None
         self.settings = instance.settings
         self.is_fullscreen = False
-        self.timelinepos = 0
         self.prefsdialog = None
         create_stock_icons()
         self._setActions(instance)
@@ -220,7 +219,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         """
         from pitivi.render import RenderDialog
 
-        dialog = RenderDialog(self, project)
+        dialog = RenderDialog(self.app, project)
         dialog.window.connect("destroy", self._renderDialogDestroyCb)
         self.set_sensitive(False)
         dialog.window.show()
@@ -322,9 +321,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         for action in self.actiongroup.list_actions():
             action_name = action.get_name()
             if action_name == "RenderProject":
-                # this will be set sensitive when the timeline duration changes
-                self.render_button = action
+                # the button is set sensitive when the timeline duration changes
+                action.set_sensitive(False)
                 action.props.is_important = True
+                self.render_button = action
             elif action_name in ["NewProject", "SaveProjectAs", "OpenProject"]:
                 if instance.settings.fileSupportEnabled:
                     action.set_sensitive(True)
@@ -377,13 +377,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vbox.pack_start(vpaned)
         vpaned.show()
 
-        self.timeline = Timeline(instance, self.uimanager)
-        self.timeline.connect("duration-changed",
-                self._timelineDurationChangedCb)
+        self.timeline_ui = Timeline(instance, self.uimanager)
         self.project = None
 
-        vpaned.pack2(self.timeline, resize=True, shrink=False)
-        self.timeline.show()
+        vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
+        self.timeline_ui.show()
         self.mainhpaned = gtk.HPaned()
         vpaned.pack1(self.mainhpaned, resize=True, shrink=False)
 
@@ -409,7 +407,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # Actions with key accelerators that will be made unsensitive while
         # a gtk entry box is used to avoid conflicts.
         self.sensitive_actions = []
-        for action in self.timeline.playhead_actions:
+        for action in self.timeline_ui.playhead_actions:
             self.sensitive_actions.append(action[0])
         for action in self.toggleactions:
             self.sensitive_actions.append(action[0])
@@ -504,8 +502,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
             if action.get_name() in action_names:
                 action.set_sensitive(sensitive)
 
-        if self.timeline:
-            for action_group in self.timeline.ui_manager.get_action_groups():
+        if self.timeline_ui:
+            for action_group in self.timeline_ui.ui_manager.get_action_groups():
                 for action in action_group.list_actions():
                     if action.get_name() in action_names:
                         action.set_sensitive(sensitive)
@@ -550,7 +548,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _mediaLibrarySourceRemovedCb(self, medialibrary, uri, unused_info):
         """When a clip is removed from the Media Library, tell the timeline
         to remove all instances of that clip."""
-        self.timeline.purgeObject(uri)
+        self.timeline_ui.purgeObject(uri)
 
 ## Toolbar/Menu actions callback
 
@@ -700,6 +698,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         """
         self.log("A new project is loaded, wait for clips")
         self._connectToProjectSources(project.medialibrary)
+        project.timeline.connect("notify::duration",
+                self._timelineDurationChangedCb)
 
         # This should only be done when loading a project, and disconnected
         # as soon as we receive the signal.
@@ -722,8 +722,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.actiongroup.get_action("SaveProject").set_sensitive(True)
             self._missingUriOnLoading = False
 
-        if self.timeline.duration != 0:
+        if self.app.current.timeline.props.duration != 0:
             self.setBestZoomRatio()
+            self.render_button.set_sensitive(True)
         else:
             self._zoom_duration_changed = True
 
@@ -737,10 +738,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def setBestZoomRatio(self, p=0):
         """Set the zoom level so that the entire timeline is in view."""
-        ruler_width = self.timeline.ruler.get_allocation()[2]
+        ruler_width = self.timeline_ui.ruler.get_allocation()[2]
         # Add gst.SECOND - 1 to the timeline duration to make sure the
         # last second of the timeline will be in view.
-        duration = self.timeline.duration
+        duration = self.app.current.timeline.props.duration
         timeline_duration = duration + gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / gst.SECOND)
 
@@ -995,11 +996,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if project:
             self.project = project
             self.project_pipeline = self.project.pipeline
-            self.project_timeline = self.project.timeline
             self.viewer.setPipeline(project.pipeline)
             self._settingsChangedCb(project, None, project.settings)
-            if self.timeline:
-                self.timeline.setProject(self.project)
+            if self.timeline_ui:
+                self.timeline_ui.setProject(self.project)
                 self.clipconfig.project = self.project
                 #FIXME GES port undo/redo
                 #self.app.timelineLogObserver.pipeline = self.project.pipeline
@@ -1029,19 +1029,20 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     project_pipeline = property(getProjectPipeline, setProjectPipeline, None, "The Gst.Pipeline of the project")
 
-    def _timelinePipelineStateChanged(self, pipeline, state):
-        self.timeline.stateChanged(state)
+    def _timelinePipelineStateChanged(self, unused_pipeline, state):
+        self.timeline_ui.stateChanged(state)
 
 ## Project Timeline (not to be confused with UI timeline)
 
-    def _timelineDurationChangedCb(self, timeline, duration):
-        if timeline.duration > 0:
+    def _timelineDurationChangedCb(self, timeline, unused_duration):
+        self.debug("Timeline duration changed to %d", timeline.props.duration)
+        if timeline.props.duration > 0:
             sensitive = True
             if self._zoom_duration_changed:
                 self.setBestZoomRatio()
                 self._zoom_duration_changed = False
             else:
-                self.timeline.updateScrollAdjustments()
+                self.timeline_ui.updateScrollAdjustments()
         else:
             sensitive = False
         self.render_button.set_sensitive(sensitive)
@@ -1202,8 +1203,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _timelineSeekCb(self, ruler, position, format):
         try:
-            # CLAMP (0, position, self.timeline.getDuration())
-            position = sorted((0, position, self.timeline.getDuration()))[1]
+            # CLAMP (0, position, self.app.current.timeline.props.duration)
+            position = sorted((0, position, self.app.current.timeline.props.duration))[1]
 
             if not self.project_pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
                     gst.SEEK_TYPE_SET, position, gst.SEEK_TYPE_NONE, -1):

@@ -321,7 +321,7 @@ class RenderingProgressDialog(Signallable):
 
     def __init__(self, app, parent):
         self.app = app
-        self.system = app.app.system
+        self.system = app.system
         self.builder = gtk.Builder()
         self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
             "renderingprogress.ui"))
@@ -333,7 +333,7 @@ class RenderingProgressDialog(Signallable):
         self.play_pause_button = self.builder.get_object("play_pause_button")
         # Parent the dialog with mainwindow, since renderingdialog is hidden.
         # It allows this dialog to properly minimize together with mainwindow
-        self.window.set_transient_for(self.app)
+        self.window.set_transient_for(self.app.gui)
 
         # UI widgets
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
@@ -383,8 +383,7 @@ class RenderDialog(Loggable):
 
         self.app = app
         self.project = project
-        self.system = app.app.system
-        self._timeline = self.app.timeline
+        self.system = app.system
         self._seeker = Seeker(80)
         if pipeline != None:
             self._pipeline = pipeline
@@ -1001,7 +1000,7 @@ class RenderDialog(Loggable):
         if self.progress:
             text = None
             timediff = time.time() - self.timestarted
-            length = self._timeline.duration
+            length = self.app.current.timeline.props.duration
             fraction = float(min(position, length)) / float(length)
             if timediff > 5.0 and position:
                 # only display ETA after 5s in order to have enough averaging and

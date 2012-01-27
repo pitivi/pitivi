@@ -529,8 +529,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
             else:
                 self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
-        self.app.gui.timeline._canvas.regroupTracks()
-        self.app.gui.timeline.unsureVadjHeight()
+        self.app.gui.timeline_ui._canvas.regroupTracks()
+        self.app.gui.timeline_ui.unsureVadjHeight()
 
 TRACK_CONTROL_WIDTH = 75
 

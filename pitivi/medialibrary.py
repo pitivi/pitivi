@@ -542,7 +542,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.app.current.timeline.enable_update(False)
 
         # Handle the case of a blank project
-        self.app.gui.timeline._ensureLayer()
+        self.app.gui.timeline_ui._ensureLayer()
 
         self._sources_to_insert = self.getSelectedItems()
         # Start adding sources in the timeline
