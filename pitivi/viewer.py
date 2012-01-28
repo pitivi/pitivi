@@ -419,9 +419,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _goToEndCb(self, unused_button):
         try:
-            # FIXME: ideally gstreamer should allow seeking to the exact end...
-            # but since it doesn't, we seek one nanosecond before the end.
-            end = self.app.current.timeline.props.duration - 1
+            end = self.app.current.timeline.props.duration
         except:
             self.warning("Couldn't get timeline duration")
         try:

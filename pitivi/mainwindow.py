@@ -1202,9 +1202,18 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.error("seek failed %s %s %s", gst.TIME_ARGS(position), format, e)
 
     def _timelineSeekCb(self, ruler, position, format):
+        """
+        This is the main method used for seeking throughout the app.
+
+        We clamp the seeker position so that it cannot go past 0 or the
+        end of the timeline.
+        """
         try:
+            # FIXME: ideally gstreamer should allow seeking to the exact end...
+            # but since it doesn't, we seek one nanosecond before the end.
+            end = self.app.current.timeline.props.duration - 1
             # CLAMP (0, position, self.app.current.timeline.props.duration)
-            position = sorted((0, position, self.app.current.timeline.props.duration))[1]
+            position = sorted((0, position, end))[1]
 
             if not self.project_pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
                     gst.SEEK_TYPE_SET, position, gst.SEEK_TYPE_NONE, -1):
