@@ -13,6 +13,8 @@
     <credit type="contributor">
       <name>Mario Blättermann</name>
       <email>mariobl@gnome.org</email>
+      <name>Brian Grohe</name>
+      <email>grohe43@gmail.com</email>
     </credit>
     <desc>
       Moving the playhead, using the zoom feature, scrolling and scrubbing.
@@ -23,6 +25,11 @@
   </info>
 
     <title>Moving around the timeline</title>
+
+     <section>
+      <title>Activating tools in the Timeline toolbar</title>
+       <p>The Timeline toolbar contains many tools. These tools become active once a clip is selected in the timeline. To select a clip just click on the desired clip. The clip will become darker when selected. The Timeline toolbar should now be active</p>
+     </section>
 
      <section>
       <title>Scrolling</title>
