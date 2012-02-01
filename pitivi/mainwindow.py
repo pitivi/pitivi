@@ -40,6 +40,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import in_devel
 from pitivi.settings import GlobalSettings
 from pitivi.effects import EffectListWidget
+from pitivi.transitions import TransitionsListWidget
 from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
 
 from pitivi.utils.misc import show_user_manual
@@ -415,8 +416,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # Second set of tabs
         self.context_tabs = BaseTabs(instance)
         self.clipconfig = ClipProperties(instance, self.uimanager)
+        self.trans_list = TransitionsListWidget(instance, self.uimanager)
         self.context_tabs.append_page(self.clipconfig, gtk.Label(_("Clip configuration")))
+        self.context_tabs.append_page(self.trans_list, gtk.Label(_("Transitions")))
         self.clipconfig.show()
+        self.trans_list.show()
 
         self.secondhpaned.pack2(self.context_tabs, resize=True, shrink=False)
         self.context_tabs.show()
@@ -477,6 +481,26 @@ class PitiviMainWindow(gtk.Window, Loggable):
         #pulseaudio 'role' (http://0pointer.de/blog/projects/tagging-audio.htm
         os.environ["PULSE_PROP_media.role"] = "production"
         os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
+
+    def switchContextTab(self, tab=None):
+        """
+        Switch the tab being displayed on the second set of tabs,
+        depending on the context.
+
+        @param the name of the tab to switch to, or None to reset
+        """
+        if not tab:
+            page = 0
+        else:
+            tab = tab.lower()
+            if tab == "clip configuration":
+                page = 0
+            elif tab == "transitions":
+                page = 1
+            else:
+                self.debug("Invalid context tab switch requested")
+                return False
+        self.context_tabs.set_current_page(page)
 
     def setFullScreen(self, fullscreen):
         """ Toggle the fullscreen mode of the application """

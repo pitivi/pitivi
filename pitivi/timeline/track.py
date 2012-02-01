@@ -130,6 +130,7 @@ class Selected (Signallable):
 
     def __init__(self):
         self._selected = False
+        self.movable = True
 
     def __nonzero__(self):
         """
@@ -191,12 +192,16 @@ class TrackObjectController(Controller):
         self._mousedown = Point(self._mousedown[0], 0)
 
     def drag_end(self, item, target, event):
+        if not self._view.movable:
+            return
         self.debug("Drag end")
         self._context.finish()
         self._context = None
         self._view.app.action_log.commit()
 
     def set_pos(self, item, pos):
+        if not self._view.movable:
+            return
         x, y = pos
         x = x + self._hadj.get_value()
 
@@ -233,6 +238,7 @@ class TrimHandle(View, goocanvas.Image, Loggable, Zoomable):
         self.app = instance
         self.element = element
         self.timeline = timeline
+        self.movable = True
         goocanvas.Image.__init__(self,
             pixbuf=TRIMBAR_PIXBUF,
             line_width=0,
@@ -322,6 +328,8 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         _handle_enter_leave = True
 
         def drag_start(self, item, target, event):
+            if not self._view.movable:
+                return
             point = self.from_item_event(item, event)
             TrackObjectController.drag_start(self, item, target, event)
 
@@ -368,6 +376,7 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         self.nameheight = 0
         self._element = None
         self._settings = None
+        self.movable = True
 
         self.bg = goocanvas.Rect(height=self.height, line_width=1)
 
@@ -542,8 +551,17 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
     def _updateCb(self, track_object, start):
         self._update()
 
-    def selectedChangedCb(self, element, selected):
+    def selectedChangedCb(self, element, unused_selection):
+        # unused_selection is True only when no clip was selected before
+        # Note that element is a track.Selected object,
+        # whereas self.element is a GES object (ex: TrackVideoTransition)
         if element.selected:
+            if isinstance(self.element, ges.TrackTransition):
+                if isinstance(self.element, ges.TrackVideoTransition):
+                    self.app.gui.trans_list.activate(self.element)
+            else:
+                self.app.gui.trans_list.deactivate()
+                self.app.gui.switchContextTab()
             self._selec_indic.props.visibility = goocanvas.ITEM_VISIBLE
         else:
             self._selec_indic.props.visibility = goocanvas.ITEM_INVISIBLE
@@ -596,16 +614,22 @@ class TrackTransition(TrackObject):
     """
     def __init__(self, instance, element, track, timeline, utrack):
         TrackObject.__init__(self, instance, element, track, timeline, utrack)
-        for thing in (self.bg, self.name):
+        for thing in (self.bg, self._selec_indic, self.namebg, self.name):
             self.add_child(thing)
+        if isinstance(element, ges.TrackVideoTransition):
+            element.connect("notify::transition-type", self._changeVideoTransitionCb)
+        self.movable = False
 
     def _setElement(self, element):
-        # FIXME: add the transition name as the label
-        pass
+        if isinstance(element, ges.TrackVideoTransition):
+            self.name.props.text = element.props.transition_type.value_nick
 
     def _getColor(self):
         # Transitions are bright blue, independent of the user color settings
         return 0x0089CFF0
+
+    def _changeVideoTransitionCb(self, transition, unused_transition_type):
+        self.name.props.text = transition.props.transition_type.value_nick
 
 
 class TrackFileSource(TrackObject):
