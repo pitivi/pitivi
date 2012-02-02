@@ -510,6 +510,7 @@ class Project(Signallable, Loggable):
 
     def release(self):
         self.pipeline = None
+        self.timeline = None
 
     #{ Settings methods
 

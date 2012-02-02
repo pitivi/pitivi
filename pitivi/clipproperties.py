@@ -140,6 +140,16 @@ class ClipProperties(gtk.ScrolledWindow, Loggable):
 
         return label, info_bar
 
+    def _getTimeline(self):
+        return self._timeline
+
+    def _setTimeline(self, timeline):
+        self.effect_expander.timeline = timeline
+        self.transformation_expander.timeline = timeline
+        self._timeline = timeline
+
+    timeline = property(_getTimeline, _setTimeline)
+
 
 class EffectProperties(gtk.Expander, gtk.HBox):
     """
@@ -273,9 +283,16 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         return self._timeline
 
     def _setTimeline(self, timeline):
-        self._timeline = timeline
-        self._timeline.selection.connect("selection-changed", self._selectionChangedCb)
-        self.connected = True
+        if timeline:
+            self._timeline = timeline
+            self._timeline.selection.connect("selection-changed", self._selectionChangedCb)
+            self.connected = True
+        else:
+            if self.connected:
+                self._timeline.selection.disconnect_by_func(self._selectionChangedCb)
+
+            self.connected = False
+            self._timeline = None
 
     timeline = property(_getTimeline, _setTimeline)
 

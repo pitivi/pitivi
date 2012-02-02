@@ -854,6 +854,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _projectManagerProjectClosedCb(self, projectManager, unused_project):
         # we must disconnect from the project pipeline before it is released
+        self.timeline_ui.timeline = None
+        self.clipconfig.timeline = None
         return False
 
     def _projectManagerRevertingToSavedCb(self, projectManager, unused_project):
