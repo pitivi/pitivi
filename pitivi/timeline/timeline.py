@@ -1157,8 +1157,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._project = project
         if self._project:
             self.setTimeline(project.timeline)
-            self._canvas.setTimeline(project.timeline)
-            self._canvas.zoomChanged()
             self.ruler.setProjectFrameRate(self._project.getSettings().videorate)
             self.ruler.zoomChanged()
             self._settingsChangedCb(self._project, None, self._project.getSettings())
@@ -1180,16 +1178,20 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.delTimeline()
         self._timeline = timeline
 
-        # Connecting to timeline signals
-        self._layer_sig_ids.append(self._timeline.connect("layer-added",
-                self._layerAddedCb))
-        self._layer_sig_ids.append(self._timeline.connect("layer-removed",
-                self._layerRemovedCb))
+        if timeline:
+            # Connecting to timeline signals
+            self._layer_sig_ids.append(self._timeline.connect("layer-added",
+                    self._layerAddedCb))
+            self._layer_sig_ids.append(self._timeline.connect("layer-removed",
+                    self._layerRemovedCb))
 
-        # Make sure to set the current layer in use
-        self._layerAddedCb(None, None)
-        self._timeline.props.snapping_distance = \
-            Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
+            # Make sure to set the current layer in use
+            self._layerAddedCb(None, None)
+            self._timeline.props.snapping_distance = \
+                Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
+
+        self._canvas.setTimeline(timeline)
+        self._canvas.zoomChanged()
 
     def getTimeline(self):
         return self._timeline
@@ -1205,7 +1207,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # clear dictionaries
         self._tcks_sig_ids = {}
         self._layer_sig_ids = []
+
+        #Remove references to the ges timeline
         self._timeline = None
+        self._controls.timeline = None
 
     timeline = property(getTimeline, setTimeline, delTimeline,
             "The GESTimeline")
