@@ -22,8 +22,6 @@
 
 import goocanvas
 import ges
-import gst
-import gobject
 import gtk
 import os.path
 import pango
@@ -36,7 +34,6 @@ from gettext import gettext as _
 from pitivi.dialogs.prefs import PreferencesDialog
 
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.ui import Point, info_name
 from pitivi.settings import GlobalSettings
 from pitivi.utils.signal import Signallable
@@ -725,6 +722,7 @@ class Track(goocanvas.Group, Zoomable, Loggable):
         self.widgets = {}
         self.transitions = []
         self.timeline = timeline
+        self._track = None
         self.track = track
         self._expanded = True
 
@@ -754,40 +752,40 @@ class Track(goocanvas.Group, Zoomable, Loggable):
 
 ## track signals
 
-    def _setTrack(self):
-        self.debug("Setting track")
-        if self.track:
+    def getTrack(self):
+        return self._track
+
+    def setTrack(self, track):
+        if self._track:
+            self._track.disconnect_by_func(self._objectAddedCb)
+            self._track.disconnect_by_func(self._objectRemovedCb)
+            for trackobj in self._track.get_objects():
+                self._objectRemovedCb(None, trackobj)
+
+        self._track = track
+        if track:
             for trackobj in self.track.get_objects():
-                self._objectAdded(None, trackobj)
+                self._objectAddedCb(None, trackobj)
+            self._track.connect("track-object-added", self._objectAddedCb)
+            self._track.connect("track-object-removed", self._objectRemovedCb)
 
-    track = receiver(_setTrack)
+    track = property(getTrack, setTrack, None, "The timeline property")
 
-    @handler(track, "track-object-added")
-    def _objectAdded(self, unused_timeline, track_object):
+    def _objectAddedCb(self, unused_timeline, track_object):
         if isinstance(track_object, ges.TrackTransition):
             self._transitionAdded(track_object)
-        elif not isinstance(track_object, ges.TrackEffect):
-            #FIXME GES hack, waiting for the discoverer to do its job
-            # so the duration properies are set properly
-            gobject.timeout_add(1, self.check, track_object)
-
-    def check(self, tr_obj):
-        if tr_obj.get_timeline_object():
-            w = TrackFileSource(self.app, tr_obj, self.track, self.timeline, self)
-            self.widgets[tr_obj] = w
+        elif isinstance(track_object, ges.TrackSource):
+            w = TrackFileSource(self.app, track_object, self.track, self.timeline, self)
+            self.widgets[track_object] = w
             self.add_child(w)
             self.app.gui.setBestZoomRatio()
 
-    @handler(track, "track-object-removed")
-    def _objectRemoved(self, unused_timeline, track_object):
-        if isinstance(track_object, ges.TrackVideoTestSource) or \
-            isinstance(track_object, ges.TrackAudioTestSource) or \
-            isinstance(track_object, ges.TrackParseLaunchEffect):
-            return
-        w = self.widgets[track_object]
-        self.remove_child(w)
-        del self.widgets[track_object]
-        Zoomable.removeInstance(w)
+    def _objectRemovedCb(self, unused_timeline, track_object):
+        if not isinstance(track_object, ges.TrackEffect):
+            w = self.widgets[track_object]
+            self.remove_child(w)
+            del self.widgets[track_object]
+            Zoomable.removeInstance(w)
 
     def _transitionAdded(self, transition):
         w = TrackTransition(self.app, transition, self.track, self.timeline, self)
