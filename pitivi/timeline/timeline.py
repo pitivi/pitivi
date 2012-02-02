@@ -455,12 +455,19 @@ class TimelineControls(gtk.VBox, Loggable):
         while self._tracks:
             self._trackRemovedCb(None, 0)
 
-        if self._timeline:
-            for track in self._timeline.get_tracks():
+        if timeline:
+            for track in timeline.get_tracks():
                 self._trackAddedCb(None, track)
 
-            self._timeline.connect("track-added", self._trackAddedCb)
-            self._timeline.connect("track-removed", self._trackRemovedCb)
+            timeline.connect("track-added", self._trackAddedCb)
+            timeline.connect("track-removed", self._trackRemovedCb)
+            self.connect = True
+
+        elif self._timeline:
+            self._timeline.disconnect_by_func(self._trackAddedCb)
+            self._timeline.disconnect_by_func(self._trackRemovedCb)
+
+        self._timeline = timeline
 
     timeline = property(getTimeline, setTimeline, None, "The timeline property")
 
@@ -471,9 +478,8 @@ class TimelineControls(gtk.VBox, Loggable):
         track.show()
 
     def _trackRemovedCb(self, unused_timeline, position):
-        self.timeline.disconnect_by_function(self._trackAddedCb)
-        self.timeline.disconnect_by_function(self._trackRemovedCb)
         track = self._tracks[position]
+        track.track = None
         del self._tracks[position]
         self.remove(track)
 

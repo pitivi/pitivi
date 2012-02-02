@@ -262,14 +262,19 @@ class StartHandle(TrimHandle):
 
         def drag_start(self, item, target, event):
             self.debug("Trim start %s" % target)
-            TimelineController.drag_start(self, item, target, event)
+            TrackObjectController.drag_start(self, item, target, event)
+
             if self._view.element.is_locked():
                 elem = self._view.element.get_timeline_object()
             else:
                 elem = self._view.element
-            self._context = TrimStartContext(self._view.timeline, elem, set([]))
+
+            self._context = EditingContext(elem, self._view.timeline,
+                ges.EDIT_MODE_TRIM, ges.EDGE_START, set([]),
+                self.app.settings)
             self._context.connect("clip-trim", self.clipTrimCb)
             self._context.connect("clip-trim-finished", self.clipTrimFinishedCb)
+
             self._view.app.action_log.begin("trim object")
 
         def clipTrimCb(self, unused_TrimStartContext, clip_uri, position):
@@ -661,14 +666,28 @@ class TrackControls(gtk.Label, Loggable):
         # centered vertically when the represented track has a single layer.
         self.set_padding(0, LAYER_SPACING * 2)
         self.set_markup(self._getTrackName(track))
-        self.track = track
-        self.timeline = track.get_timeline()
+        self._track = None
+        self._timeline = None
+        self.setTrack(track)
         self._setSize(layers_count=1)
 
-    def _setTrack(self):
-        self.timeline = self.track.get_timeline()
-        if self.track:
-            self._maxPriorityChanged(None, self.track.max_priority)
+    def getTrack(self):
+        return self._track
+
+    def setTrack(self, track):
+        if self._track:
+            self._timeline.disconnect_by_func(self._layerAddedCb)
+            self._timeline.disconnect_by_func(self._layerRemovedCb)
+
+        self._track = track
+        if track:
+            self._timeline = track.get_timeline()
+            self._timeline.connect("layer-added", self._layerAddedCb)
+            self._timeline.connect("layer-removed", self._layerRemovedCb)
+        else:
+            self._timeline = None
+
+    track = property(getTrack, setTrack, None, "The (GESTrack property")
 
     def _layerAddedCb(self, timeline, unused_layer):
         max_priority = len(timeline.get_layers())
