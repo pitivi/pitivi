@@ -3,33 +3,38 @@ GES:
     ========
         -> Implement riple and roll (could be done in pitivi for the time
                 being reusing old code)
-                => 3 to 5 days -- in progress 75 %--
+                => 3 to 5 days -- in progress 90 %--
+                    -- Properly implemented but actually took like 10 days --
 
         -> Handle reslution and framerate -> BLOCKER
             |-> Do we handle it as a "hack" in pitivi for the time being?
-                => 3 to 5 days -- In progress 30% (Done for encoding)--
+                => 3 to 5 days -- In progress 90% (Done for encoding)--
                     * 05-01-2012: We got something, but still do not use the
                         project setting from xptv file.
 
         -> Implement waveform
             => 5 days
 
-        -> Merge Ges-Port branch (all the list is BLOCKER)
-            > Refactor and fix the formatter -> Done, needs some bugfixing
-            > review and fix the whole branch
-                => 2  to 5 days -- in progress 70 %--
-                * Waiting for a bug review before pushing the whole ges-port
-                  branch
+        -> Merge Ges-Port branch (all the list is BLOCKER) :
+            > Refactor and fix the formatter -> Done, needs some bugfixing :
+            > review and fix the whole branch :
+                => 2  to 5 days -- in progress 70 %--:
+                 Waiting for a bug review before pushing the whole ges-port:
+                *Done
 
 
            > Add an entry point for saving sourcelist -> pitivi must:
                 take advantage of it afterward:
                 *Done:
 
-        -> Add the timeline_edition API
-            => 4 more days
+        -> Implement groups
+                > Beteen 7 and 10 days
+
+        -> Add the timeline_edition API:
+            => 4 more days:
 
         total: 14 to 21 days left
+
 
 
     Less critical
@@ -80,14 +85,15 @@ PiTiVi:
         > Handle project settings:
             => Kind of done:
 
-        > Reimplement thumbnail in the sourcelist
-            NOTE: Implement in gst.Discoverer right away
+        > Reimplement thumbnail in the sourcelist :
+            NOTE: Implement in gst.Discoverer right away :
             => Kind of done:
 
       Quality/margin tasks:
 
-        -> Refactor the whole codebase
-            => 0 to 10 days -- In progress --
+        -> Refactor the whole codebase :
+            => 0 to 10 days -- In progress --:
+                => 3 days spent
 
         -> Bug fixing
             => 10 days -- In progress --
