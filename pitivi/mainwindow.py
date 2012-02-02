@@ -936,7 +936,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.log("User chose a new URI for the missing file")
             new_uri = chooser.get_uri()
             if new_uri:
-                self.project.medialibrary.addUris([new_uri])
+                self.app.current.medialibrary.addUris([new_uri])
                 formatter.update_source_uri(tfs, new_uri)
                 self._missingUriOnLoading = True
         else:
