@@ -48,7 +48,8 @@ from pitivi.utils.timeline import Selection
 from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import model, frame_rates, audio_rates, audio_depths,\
-    audio_channels, get_combo_value, set_combo_value
+    audio_channels, beautify_time_delta, get_combo_value, set_combo_value,\
+    SPACING
 from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
     VideoPresetManager
 
@@ -138,19 +139,89 @@ class ProjectManager(Signallable, Loggable):
         self.formatter = None
 
     def loadProject(self, uri):
-
-        """ Load the given project file"""
+        """
+        Load the given URI as a project. If a backup file exists, ask if it
+        should be loaded instead, and if so, force the user to use "Save as"
+        afterwards.
+        """
         self.emit("new-project-loading", uri)
 
-        self.current = Project(uri=uri)
+        backup_uri = self._makeBackupURI(uri)
+        use_backup = False
+        try:
+            time_diff = os.path.getmtime(backup_uri) - os.path.getmtime(uri)
+        except OSError:
+            self.debug('Backup file "%s" does not exist' % backup_uri)
+        else:
+            if time_diff > 0:
+                use_backup = self._restoreFromBackupDialog(time_diff)
+        if use_backup:
+            # Make a new project instance, but don't specify the URI.
+            # That way, we force the user to "Save as" (which ensures that the
+            # changes in the loaded backup file are approved by the user).
+            self.debug('Loading project from backup file "%s"' % backup_uri)
+            self.current = Project()
+        else:
+            # Load the project normally.
+            # The "old" backup file will eventually be deleted or overwritten.
+            self.current = Project(uri=uri)
 
         self.timeline = self.current.timeline
         self.formatter = ges.PitiviFormatter()
-
         self.formatter.connect("source-moved", self._formatterMissingURICb)
         self.formatter.connect("loaded", self._projectLoadedCb)
         if self.formatter.load_from_uri(self.timeline, uri):
             self.current.connect("project-changed", self._projectChangedCb)
+
+    def _restoreFromBackupDialog(self, time_diff):
+        """
+        Ask if we need to load the autosaved project backup or not.
+
+        @param time_diff: the difference, in seconds, between file mtimes
+        """
+        dialog = gtk.Dialog("", None, 0,
+                    (_("Ignore backup"), gtk.RESPONSE_REJECT,
+                    _("Restore from backup"), gtk.RESPONSE_YES))
+        dialog.set_icon_name("pitivi")
+        dialog.set_resizable(False)
+        dialog.set_has_separator(False)
+        dialog.set_default_response(gtk.RESPONSE_YES)
+
+        primary = gtk.Label()
+        primary.set_line_wrap(True)
+        primary.set_use_markup(True)
+        primary.set_alignment(0, 0.5)
+
+        message = _("An autosaved version of your project file was found. "
+                    "It is %s newer than the saved project.\n\n"
+                    "Would you like to load it instead?"
+                    % beautify_time_delta(time_diff))
+        primary.props.label = message
+
+        # put the text in a vbox
+        vbox = gtk.VBox(False, SPACING * 2)
+        vbox.pack_start(primary, expand=True, fill=True)
+
+        # make the [[image] text] hbox
+        image = gtk.image_new_from_stock(gtk.STOCK_DIALOG_QUESTION,
+               gtk.ICON_SIZE_DIALOG)
+        hbox = gtk.HBox(False, SPACING * 2)
+        hbox.pack_start(image, expand=False)
+        hbox.pack_start(vbox, expand=True, fill=True)
+        hbox.set_border_width(SPACING)
+
+        # stuff the hbox in the dialog
+        content_area = dialog.get_content_area()
+        content_area.pack_start(hbox, expand=True, fill=True)
+        content_area.set_spacing(SPACING * 2)
+        hbox.show_all()
+
+        response = dialog.run()
+        dialog.destroy()
+        if response == gtk.RESPONSE_YES:
+            return True
+        else:
+            return False
 
     def saveProject(self, project, uri=None, overwrite=False, formatter=None, backup=False):
         """
