@@ -367,10 +367,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.add(vbox)
         vbox.show()
         self.menu = self.uimanager.get_widget("/MainMenuBar")
-        vbox.pack_start(self.menu, expand=False)
-        self.menu.show()
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
+        vbox.pack_start(self.menu, expand=False)
         vbox.pack_start(self.toolbar, expand=False)
+        self.menu.show()
         self.toolbar.show()
         # timeline and project tabs
         vpaned = gtk.VPaned()
@@ -390,41 +390,30 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.secondhpaned.show()
         self.mainhpaned.show()
 
-        self.projecttabs = BaseTabs(instance)
-
+        # First set of tabs
+        self.main_tabs = BaseTabs(instance)
         self.medialibrary = MediaLibraryWidget(instance, self.uimanager)
-        self.projecttabs.append_page(self.medialibrary, gtk.Label(_("Media Library")))
-        self._connectToMediaLibrary()
-        self.medialibrary.show()
-
         self.effectlist = EffectListWidget(instance, self.uimanager)
-        self.projecttabs.append_page(self.effectlist, gtk.Label(_("Effect Library")))
+        self.main_tabs.append_page(self.medialibrary, gtk.Label(_("Media Library")))
+        self.main_tabs.append_page(self.effectlist, gtk.Label(_("Effect Library")))
+        self.medialibrary.connect('play', self._mediaLibraryPlayCb)
+        self.medialibrary.show()
         self.effectlist.show()
 
-        self.secondhpaned.pack1(self.projecttabs, resize=True, shrink=False)
-        self.projecttabs.show()
+        self.secondhpaned.pack1(self.main_tabs, resize=True, shrink=False)
+        self.main_tabs.show()
 
-        # Actions with key accelerators that will be made unsensitive while
-        # a gtk entry box is used to avoid conflicts.
-        self.sensitive_actions = []
-        for action in self.timeline_ui.playhead_actions:
-            self.sensitive_actions.append(action[0])
-        for action in self.toggleactions:
-            self.sensitive_actions.append(action[0])
-
-        #Clips properties
-        self.propertiestabs = BaseTabs(instance, True)
+        # Second set of tabs
+        self.context_tabs = BaseTabs(instance, True)
         self.clipconfig = ClipProperties(instance, self.uimanager)
-        self.propertiestabs.append_page(self.clipconfig,
-                                        gtk.Label(_("Clip configuration")))
+        self.context_tabs.append_page(self.clipconfig, gtk.Label(_("Clip configuration")))
         self.clipconfig.show()
 
-        self.secondhpaned.pack2(self.propertiestabs, resize=True, shrink=False)
-        self.propertiestabs.show()
+        self.secondhpaned.pack2(self.context_tabs, resize=True, shrink=False)
+        self.context_tabs.show()
 
         # Viewer
         self.viewer = PitiviViewer(instance, undock_action=self.undock_action)
-        # drag and drop
         self.viewer.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
                            [FILESOURCE_TUPLE, URI_TUPLE],
                            gtk.gdk.ACTION_COPY)
@@ -465,15 +454,20 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if not self.settings.mainWindowShowTimelineToolbar:
             ttb.props.visible = False
 
+        # Actions with key accelerators that will be made unsensitive while
+        # a gtk entry box is used to avoid conflicts.
+        self.sensitive_actions = []
+        for action in self.timeline_ui.playhead_actions:
+            self.sensitive_actions.append(action[0])
+        for action in self.toggleactions:
+            self.sensitive_actions.append(action[0])
+
         #application icon
         self.set_icon_name("pitivi")
 
         #pulseaudio 'role' (http://0pointer.de/blog/projects/tagging-audio.htm
         os.environ["PULSE_PROP_media.role"] = "production"
         os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
-
-    def _connectToMediaLibrary(self):
-        self.medialibrary.connect('play', self._mediaLibraryPlayCb)
 
     def setFullScreen(self, fullscreen):
         """ Toggle the fullscreen mode of the application """
