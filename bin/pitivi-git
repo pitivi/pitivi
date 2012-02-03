@@ -55,10 +55,7 @@ if test ! -e $PITIVI; then
     cd gst-python && ./configure && make &&\
     #Get GES \
     cd .. && git clone git://anongit.freedesktop.org/gstreamer/gst-editing-services &&\
-    cd gst-editing-services &&\
-    git remote add thiblahute git://git.collabora.co.uk/git/user/tsaunier/gst-editing-service &&\
-    git remote update thiblahute && \
-    git checkout ges-port && ./autogen.sh && make && cd ../ &&\
+    cd gst-editing-services && ./autogen.sh && make && cd ../ &&\
     #Get pitivi \
     git clone git://git.pitivi.org/git/pitivi.git &&\
     cd pitivi && \
