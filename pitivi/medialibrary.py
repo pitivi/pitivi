@@ -425,8 +425,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.app.connect("new-project-failed", self._newProjectFailedCb)
 
         # default pixbufs
-        self.audiofilepixbuf = self._getIcon("audio-x-generic", "pitivi-sound.png")
-        self.videofilepixbuf = self._getIcon("video-x-generic", "pitivi-video.png")
+        self.audiofilepixbuf = self._getIcon("audio-x-generic")
+        self.videofilepixbuf = self._getIcon("video-x-generic")
 
         # Drag and Drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
@@ -609,7 +609,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         else:
             return text in model.get_value(iter, COL_INFOTEXT).lower()
 
-    def _getIcon(self, iconname, alternate):
+    def _getIcon(self, iconname, alternate=None):
         icontheme = gtk.icon_theme_get_default()
         pixdir = get_pixmap_dir()
         icon = None

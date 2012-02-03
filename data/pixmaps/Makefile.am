@@ -14,7 +14,6 @@ pixmap_DATA = \
 	pitivi-render-16.png	\
 	pitivi-render-22.png	\
 	pitivi-render-24.png	\
-	pitivi-sound.png	\
 	pitivi-split-24.svg	\
 	pitivi-split.svg	\
 	pitivi-ungroup-24.svg	\
@@ -23,7 +22,6 @@ pixmap_DATA = \
 	pitivi-align.svg	\
 	pitivi-unlink-24.svg	\
 	pitivi-unlink.svg	\
-	pitivi-video.png	\
 	processing-clip.png	\
 	processing-clip.svg	\
 	trimbar-focused.png	\
