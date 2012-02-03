@@ -614,7 +614,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         pixdir = get_pixmap_dir()
         icon = None
         try:
-            icon = icontheme.load_icon(iconname, 32, 0)
+            icon = icontheme.load_icon(iconname, 48, 0)
         except:
             # empty except clause is bad but load_icon raises gio.Error.
             # Right, *gio*.
