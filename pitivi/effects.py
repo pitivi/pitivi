@@ -97,7 +97,7 @@ class EffectsHandler(object):
     """
     def __init__(self):
         object.__init__(self)
-        self._pixdir = get_pixmap_dir()
+        self._pixdir = os.path.join(get_pixmap_dir(), "effects")
         self._audio_categories_effects = ((_("All effects"), ("")),)
         self._video_categories_effects = (
             (_("All effects"), ("")),
