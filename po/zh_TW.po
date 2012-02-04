@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi 0.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-15 08:16+0800\n"
-"PO-Revision-Date: 2012-01-14 16:10+0800\n"
+"POT-Creation-Date: 2012-02-04 15:19+0800\n"
+"PO-Revision-Date: 2012-01-31 20:57+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese/Traditional <community@linuxhall.org>\n"
 "Language: zh_TW\n"
@@ -106,7 +106,7 @@ msgstr "6 聲道(5.1)"
 
 #: ../data/ui/encodingdialog.ui.h:4
 msgid "<b>Render Preset</b>"
-msgstr "<b>壓製預設</b>"
+msgstr "<b>壓製預置</b>"
 
 #: ../data/ui/encodingdialog.ui.h:5
 msgid "AAC"
@@ -233,11 +233,11 @@ msgstr "<b>每秒的幀數：</b>"
 
 #: ../data/ui/encodingprogress.ui.h:4
 msgid "<b>Phase:</b>"
-msgstr ""
+msgstr "<b>階段：</b>"
 
 #: ../data/ui/encodingprogress.ui.h:5
 msgid "Encoding first pass"
-msgstr ""
+msgstr "編碼先通過"
 
 #: ../data/ui/encodingprogress.ui.h:7
 msgid "Rendering"
@@ -245,11 +245,11 @@ msgstr "壓製中"
 
 #: ../data/ui/encodingprogress.ui.h:8
 msgid "Unknown"
-msgstr ""
+msgstr "未知"
 
 #: ../data/ui/encodingprogress.ui.h:9
 msgid "Unknown Mib"
-msgstr ""
+msgstr "未知 Mib"
 
 #: ../data/ui/preferences.ui.h:1
 msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
@@ -402,22 +402,27 @@ msgid ""
 "    %prog PROJECT_FILE -r OUTPUT_FILE  # Render a project.\n"
 "    %prog PROJECT_FILE -p              # Preview a project."
 msgstr ""
+"\n"
+"    %prog [PROJECT_FILE]               # 啟動視訊編輯器。\n"
+"    %prog -i [-a] [MEDIA_FILE1 ...]    # 啟動編輯器並建立一項專案。\n"
+"    %prog PROJECT_FILE -r OUTPUT_FILE  # 壓製一項專案。\n"
+"    %prog PROJECT_FILE -p              # 預覽一項專案。"
 
 #: ../pitivi/application.py:455
 msgid "Import each MEDIA_FILE into a new project."
-msgstr ""
+msgstr "匯入各個 MEDOA_FILE  至新專案。"
 
 #: ../pitivi/application.py:458
 msgid "Add each imported MEDIA_FILE to the timeline."
-msgstr ""
+msgstr "加入各個匯入的 MEDIA_FILE 至時間軸。"
 
 #: ../pitivi/application.py:461
 msgid "Run Pitivi in the Python Debugger."
-msgstr ""
+msgstr "於 Python 除錯器中執行 Pitivi。"
 
 #: ../pitivi/application.py:464
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
-msgstr ""
+msgstr "壓製指定的專案至 OUTPUT_FILE，但不透過 GUI。"
 
 #: ../pitivi/application.py:467
 msgid "Preview the specified project file without the full UI."
@@ -425,23 +430,23 @@ msgstr "預覽指定的專案檔，不用完整的使用者介面。"
 
 #: ../pitivi/application.py:472
 msgid "-p and -r cannot be used simultaneously"
-msgstr ""
+msgstr "-p 與 -r 無法同時使用"
 
 #: ../pitivi/application.py:475
 msgid "-r or -p and -i are incompatible"
-msgstr ""
+msgstr "-r 或 -p 與 -i 不相容"
 
 #: ../pitivi/application.py:478
 msgid "-a requires -i"
-msgstr ""
+msgstr "-a 需要 -i"
 
 #: ../pitivi/application.py:486
 msgid "-r requires exactly one PROJECT_FILE"
-msgstr ""
+msgstr "-r 只需要一項 PROJECT_FILE"
 
 #: ../pitivi/application.py:489
 msgid "-p requires exactly one PROJECT_FILE"
-msgstr ""
+msgstr "-p 只需要一項 PROJECT_FILE"
 
 #: ../pitivi/application.py:492
 msgid "Cannot open more than one PROJECT_FILE"
