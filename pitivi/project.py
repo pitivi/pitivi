@@ -41,6 +41,7 @@ from pitivi.settings import MultimediaSettings
 from pitivi.undo.undo import UndoableAction
 from pitivi.configure import get_ui_dir
 
+from pitivi.utils.misc import quote_uri
 from pitivi.utils.playback import Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
@@ -248,7 +249,13 @@ class ProjectManager(Signallable, Loggable):
 
         if uri is None:
             uri = project.uri
-
+        else:
+            # Ensure the URI we are given is properly encoded, or GIO will fail
+            uri = quote_uri(uri)
+            # Update the project instance's uri for the "Save as" scenario.
+            # Otherwise, subsequent saves will be to the old uri.
+            if not backup:
+                project.uri = uri
         if uri is None or not ges.formatter_can_save_uri(uri):
             self.emit("save-project-failed", project, uri)
             return
@@ -258,7 +265,11 @@ class ProjectManager(Signallable, Loggable):
         file = gio.File(uri)
         if overwrite or not file.query_exist():
             formatter.set_sources(project.medialibrary.getSources())
-            return formatter.save_to_uri(project.timeline, uri)
+            saved = formatter.save_to_uri(project.timeline, uri)
+            if saved and not backup:
+                # Do not emit the signal when autosaving a backup file
+                self.emit("project-saved", project, uri)
+            return saved
 
     def closeRunningProject(self):
         """ close the current project """
