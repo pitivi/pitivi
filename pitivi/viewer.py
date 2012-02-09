@@ -68,10 +68,6 @@ GlobalSettings.addConfigOption("pointColor",
     default='49a0e0')
 
 
-class ViewerError(Exception):
-    pass
-
-
 class PitiviViewer(gtk.VBox, Loggable):
 
     __gtype_name__ = 'PitiviViewer'
