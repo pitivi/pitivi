@@ -33,6 +33,7 @@ import gobject
 from time import time
 from datetime import datetime
 from gettext import gettext as _
+from urllib import unquote
 from urlparse import urlparse
 from pwd import getpwuid
 
@@ -367,9 +368,8 @@ class ProjectManager(Signallable, Loggable):
     def _cleanBackup(self, uri):
         if uri is None:
             return
-
         location = self._makeBackupURI(uri)
-        path = urlparse(location).path
+        path = unquote(urlparse(location).netloc)
         if os.path.exists(path):
             os.remove(path)
 
@@ -458,6 +458,7 @@ class Project(Signallable, Loggable):
     def setUri(self, uri):
         # FIXME support not local project
         if uri and not gst.uri_has_protocol(uri, "file"):
+            # Note that this does *not* give the same result as quote_uri()
             self._uri = gst.uri_construct("file", uri)
         else:
             self._uri = uri
