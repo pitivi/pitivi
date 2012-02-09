@@ -1023,9 +1023,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     project_pipeline = property(getProjectPipeline, setProjectPipeline, None, "The Gst.Pipeline of the project")
 
-    def _timelinePipelineStateChanged(self, unused_pipeline, state):
-        self.timeline_ui.stateChanged(state)
-
 ## Project Timeline (not to be confused with UI timeline)
 
     def _timelineDurationChangedCb(self, timeline, unused_duration):
@@ -1042,19 +1039,23 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.render_button.set_sensitive(sensitive)
 
 #Pipeline messages
+
     def _busMessageCb(self, unused_bus, message):
+        """
+        The pipeline has sent us a message. It could be that it reached the end
+        of the stream or that the pipeline state changed (ex: playback started
+        or stopped). In that case, tell the timeline UI about the new state.
+        """
         if message.type == gst.MESSAGE_EOS:
             self.warning("eos")
         elif message.type == gst.MESSAGE_STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
-
             if message.src == self._project_pipeline:
                 self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
-
                 state_change = pending == gst.STATE_VOID_PENDING
-
                 if state_change:
-                    self._timelinePipelineStateChanged(self, new)
+                    self.timeline_ui.pipeline_state = new
+
 ## other
 
     def _showSaveAsDialog(self, project):
