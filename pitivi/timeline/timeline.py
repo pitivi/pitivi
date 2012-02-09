@@ -155,19 +155,6 @@ ui = '''
 '''
 
 
-class PlayheadController(Controller, Zoomable):
-
-    _cursor = PLAYHEAD_CURSOR
-
-    def __init__(self, *args, **kwargs):
-        Controller.__init__(self, *args, **kwargs)
-
-    def set_pos(self, item, pos):
-        x, y = pos
-        x += self._hadj.get_value()
-        self._canvas.app.current.seeker.seek(Zoomable.pixelToNs(x))
-
-
 class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     """
         The goocanvas widget representing the timeline
@@ -218,7 +205,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             fill_color_rgba=0x000000FF,
             stroke_color_rgba=0xFFFFFFFF,
             width=3)
-        self._playhead_controller = PlayheadController(self._playhead)
         self.connect("size-allocate", self._size_allocate_cb)
         root.connect("motion-notify-event", self._selectionDrag)
         root.connect("button-press-event", self._selectionStart)
