@@ -749,6 +749,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _projectManagerProjectSavedCb(self, projectManager, project, uri):
         self.app.action_log.checkpoint()
         self._syncDoUndo(self.app.action_log)
+        if uri:
+            self.recent_manager.add_item(uri)
         if project.uri is None:
             project.uri = uri
 
