@@ -127,7 +127,6 @@ ui = '''
                 <menuitem action="Nextframe" />
                 <separator />
                 <menuitem action="PlayPause" />
-                <menuitem action="Loop" />
                 <menuitem action="Screenshot" />
             </placeholder>
         </menu>

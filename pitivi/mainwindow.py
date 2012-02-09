@@ -245,9 +245,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
             # In some cases we manually specify the translatable label,
             # because we want to have the "..." at the end, indicating
             # an action that requires "further interaction" from the user.
-            ("Loop", gtk.STOCK_REFRESH, _("Loop"),
-            None, _("Loop over selected area"), self.loop),
-
             ("NewProject", gtk.STOCK_NEW, None,
             None, _("Create a new project"), self._newProjectMenuCb),
 
@@ -681,9 +678,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.prefsdialog = PreferencesDialog(self.app)
             self.prefsdialog.dialog.set_transient_for(self)
         self.prefsdialog.run()
-
-    def loop(self, unused_action):
-        pass
 
     def _projectManagerNewProjectLoadedCb(self, projectManager, project):
         """
