@@ -170,6 +170,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         """ initialize with the Pitivi object """
         gtk.Window.__init__(self)
         Loggable.__init__(self, "mainwindow")
+        self.app = instance
         self.log("Creating MainWindow")
         self.actions = None
         self.toggleactions = None
@@ -180,9 +181,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         create_stock_icons()
         self._setActions(instance)
         self._createUi(instance, allow_full_screen)
-
-        self.app = instance
-        self.manager = RecentManager()
+        self.recent_manager = RecentManager()
         self._zoom_duration_changed = False
         self._missingUriOnLoading = False
 
@@ -227,8 +226,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _renderDialogDestroyCb(self, unused_dialog):
         self.set_sensitive(True)
 
-    def _recordCb(self, unused_button):
-        self.showRenderDialog(self.project)
+    def _renderCb(self, unused_button):
+        self.showRenderDialog(self.app.current)
 
     def _setActions(self, instance):
         """
@@ -264,7 +263,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             None, _("Edit the project settings"), self._projectSettingsCb),
 
             ("RenderProject", 'pitivi-render', _("_Render..."),
-            None, _("Export your project as a finished movie"), self._recordCb),
+            None, _("Export your project as a finished movie"), self._renderCb),
 
             ("Undo", gtk.STOCK_UNDO, None,
             "<Ctrl>Z", _("Undo the last operation"), self._undoCb),
