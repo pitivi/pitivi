@@ -374,8 +374,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vpaned.show()
 
         self.timeline_ui = Timeline(instance, self.uimanager)
-        self.project = None
-
+        self.app.current = None
         vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
         self.timeline_ui.show()
         self.mainhpaned = gtk.HPaned()
@@ -550,15 +549,15 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.openProject()
 
     def _saveProjectCb(self, unused_action):
-        if not self.project.uri:
+        if not self.app.current.uri:
             self._saveProjectAsCb(unused_action)
         else:
-            self.app.projectManager.saveProject(self.project, overwrite=True)
+            self.app.projectManager.saveProject(self.app.current, overwrite=True)
 
     def _saveProjectAsCb(self, unused_action):
         uri = self._showSaveAsDialog(self.app.current)
         if uri is not None:
-            return self.app.projectManager.saveProject(self.project, uri, overwrite=True)
+            return self.app.projectManager.saveProject(self.app.current, uri, overwrite=True)
 
         return False
 
@@ -678,19 +677,19 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.prefsdialog.dialog.set_transient_for(self)
         self.prefsdialog.run()
 
-    def _projectManagerNewProjectLoadedCb(self, projectManager, project):
+    def _projectManagerNewProjectLoadedCb(self, projectManager, unused_project):
         """
         Once a new project has been loaded, wait for media library's
         "ready" signal to populate the timeline.
         """
         self.log("A new project is loaded, wait for clips")
-        self._connectToProjectSources(project.medialibrary)
-        project.timeline.connect("notify::duration",
+        self._connectToProjectSources(self.app.current.medialibrary)
+        self.app.current.timeline.connect("notify::duration",
                 self._timelineDurationChangedCb)
 
         # This should only be done when loading a project, and disconnected
         # as soon as we receive the signal.
-        project.medialibrary.connect("ready", self._projectClipsReady)
+        self.app.current.medialibrary.connect("ready", self._projectClipsReady)
 
     def _projectClipsReady(self, medialibrary):
         """
@@ -698,7 +697,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         """
         self.log("Project clips are ready, update the UI")
         self.app.current.medialibrary.disconnect_by_func(self._projectClipsReady)
-        self._setProject(self.app.current)
+        self._setProject()
 
         #FIXME GES we should re-enable this when possible
         #self._syncDoUndo(self.app.action_log)
@@ -715,7 +714,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         else:
             self._zoom_duration_changed = True
 
-        self._seeker = self.project.seeker
+        self._seeker = self.app.current.seeker
         self._seeker.connect("seek", self._timelineSeekCb)
         self._seeker.connect("seek-relative", self._timelineSeekRelativeCb)
         self._seeker.connect("flush", self._timelineSeekFlushCb)
@@ -737,12 +736,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
         Zoomable.setZoomLevel(nearest_zoom_level)
 
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
-        if uri != None:
-            self.manager.add_item(uri)
-        self.log("A NEW project is being loading, deactivate UI")
+        if uri:
+            self.recent_manager.add_item(uri)
+        self.log("A NEW project is loading, deactivate UI")
 
     def _projectManagerSaveProjectFailedCb(self, projectManager,
-            project, uri):
+            unused_project, uri):
         # FIXME: do something here
         self.error("failed to save project")
 
@@ -831,12 +830,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         return res
 
-    def _projectManagerProjectClosedCb(self, projectManager, project):
+    def _projectManagerProjectClosedCb(self, projectManager, unused_project):
         # we must disconnect from the project pipeline before it is released
         return False
 
-    def _projectManagerRevertingToSavedCb(self, projectManager, project):
-        if project.hasUnsavedModifications():
+    def _projectManagerRevertingToSavedCb(self, projectManager, unused_project):
+        if self.app.current.hasUnsavedModifications():
             dialog = gtk.MessageDialog(self,
                     gtk.DIALOG_MODAL,
                     gtk.MESSAGE_WARNING,
@@ -978,23 +977,32 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
 ## PiTiVi current project callbacks
 
-    def _setProject(self, project):
-        if self.project:
-            self.project.disconnect_by_func(self._settingsChangedCb)
+    def _setProject(self):
+        """
+        Disconnect and reconnect callbacks to the new current project
+        """
+        if not self.app.current:
+            self.warning("Current project instance does not exist")
+            return False
+        try:
+            self.app.current.disconnect_by_func(self._settingsChangedCb)
+        except:
+            # When loading the first project, the signal has never been
+            # connected before.
+            pass
+        self.viewer.setPipeline(self.app.current.pipeline)
+        self._settingsChangedCb(self.app.current, None, self.app.current.settings)
+        if self.timeline_ui:
+            self.timeline_ui.setProject(self.app.current)
+            self.clipconfig.project = self.app.current
+            #FIXME GES port undo/redo
+            #self.app.timelineLogObserver.pipeline = self.app.current.pipeline
+        self.app.current.connect("settings-changed", self._settingsChangedCb)
 
-        if project:
-            self.project = project
-            self.project_pipeline = self.project.pipeline
-            self.viewer.setPipeline(project.pipeline)
-            self._settingsChangedCb(project, None, project.settings)
-            if self.timeline_ui:
-                self.timeline_ui.setProject(self.project)
-                self.clipconfig.project = self.project
-                #FIXME GES port undo/redo
-                #self.app.timelineLogObserver.pipeline = self.project.pipeline
-            self.project.connect("settings-changed", self._settingsChangedCb)
-
-    def _settingsChangedCb(self, project, old, new):
+    def _settingsChangedCb(self, project, unused_old, new):
+        # TODO: this method's signature should be changed:
+        # project = self.app.current,
+        # old is never used, and the new is equal to self.app.current.settings
         self.viewer.setDisplayAspectRatio(float(new.videopar * new.videowidth) /\
                 float(new.videoheight))
 
@@ -1113,12 +1121,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
             return
 
         try:
-            info = self.project.medialibrary.getInfoFromUri(uri)
+            info = self.app.current.medialibrary.getInfoFromUri(uri)
         except MediaLibraryError:
-            self.project.medialibrary.addUris([uri])
+            self.app.current.medialibrary.addUris([uri])
             # FIXME Add a delay/catch signal when we start doing the discovering
             # async
-            info = self.project.medialibrary.getInfoFromUri(uri)
+            info = self.app.current.medialibrary.getInfoFromUri(uri)
         self._viewUri(info.get_uri())
         context.finish(True, False, ctime)
 
@@ -1171,10 +1179,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _timelineSeekRelativeCb(self, unused_seeker, time):
         try:
-            position = self.project_pipeline.query_position(gst.FORMAT_TIME)[0]
+            position = self.app.current.pipeline.query_position(gst.FORMAT_TIME)[0]
             position += time
 
-            self.project_pipeline.seek(1.0, gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH,
+            self.app.current.pipeline.seek(1.0, gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH,
                     gst.SEEK_TYPE_SET, position, gst.SEEK_TYPE_NONE, -1)
             self._seeker.setPosition(position)
 
@@ -1183,8 +1191,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _timelineSeekFlushCb(self, unused_seeker):
         try:
-            position = self.project_pipeline.query_position(gst.FORMAT_TIME)[0]
-            self.project_pipeline.seek(1.0, gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH,
+            position = self.app.current.pipeline.query_position(gst.FORMAT_TIME)[0]
+            self.app.current.pipeline.seek(1.0, gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH,
                     gst.SEEK_TYPE_SET, position, gst.SEEK_TYPE_NONE, -1)
             self._seeker.setPosition(position)
 
@@ -1205,7 +1213,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             # CLAMP (0, position, self.app.current.timeline.props.duration)
             position = sorted((0, position, end))[1]
 
-            if not self.project_pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
+            if not self.app.current.pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
                     gst.SEEK_TYPE_SET, position, gst.SEEK_TYPE_NONE, -1):
                 self.warning("Could not seek to %s", gst.TIME_ARGS(position))
             else:
@@ -1216,12 +1224,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def updateTitle(self):
         name = touched = ""
-        if self.project:
-            if self.project.name:
-                name = self.project.name
+        if self.app.current:
+            if self.app.current.name:
+                name = self.app.current.name
             else:
                 name = _("Untitled")
-            if self.project.hasUnsavedModifications():
+            if self.app.current.hasUnsavedModifications():
                 touched = "*"
         title = u"%s%s \u2014 %s" % (touched, name, APPNAME)
         self.set_title(title)
