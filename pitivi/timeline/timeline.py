@@ -1037,8 +1037,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Zoomable.setZoomLevel(int(adjustment.get_value()))
         self._updateZoom = True
 
-    _scroll_pos_ns = 0
-
     def _zoomSliderScrollCb(self, unused_widget, event):
         value = self._zoomAdjustment.get_value()
         if event.direction in [gtk.gdk.SCROLL_UP, gtk.gdk.SCROLL_RIGHT]:
@@ -1052,8 +1050,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # the new scroll position should preserve the current horizontal
         # position of the playhead in the window
-        cur_playhead_offset = self._canvas._playhead.props.x -\
-            self.hadj.props.value
+        cur_playhead_offset = self._canvas._playhead.props.x - self.hadj.props.value
         new_pos = Zoomable.nsToPixel(self._position) - cur_playhead_offset
 
         self.updateScrollAdjustments()
@@ -1169,6 +1166,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.updateVScrollAdjustments()
 
     def updateVScrollAdjustments(self):
+        """
+        Recalculate the vertical scrollbar depending on the timeline duration.
+        """
         layers = self._timeline.get_layers()
         num_layers = len(layers)
 
@@ -1177,10 +1177,16 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 + TRACK_SPACING) * 2 * num_layers
 
     def updateScrollAdjustments(self):
+        """
+        Recalculate the horizontal scrollbar depending on the timeline duration.
+        """
         a = self.get_allocation()
         size = Zoomable.nsToPixel(self.app.current.timeline.props.duration)
         self.hadj.props.lower = 0
-        self.hadj.props.upper = size + 200  # why is this necessary???
+        # The "+ 200" below compensates the width of the
+        # layers column on the left + vertical scrollbar on the right
+        # FIXME: get those dynamically
+        self.hadj.props.upper = size + 200
         self.hadj.props.page_size = a.width
         self.hadj.props.page_increment = size * 0.9
         self.hadj.props.step_increment = size * 0.1
@@ -1202,7 +1208,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             for obj in self.timeline.selection:
                 layer = obj.get_layer()
                 layer.remove_object(obj)
-
             self.app.action_log.commit()
 
     def unlinkSelected(self, unused_action):
@@ -1216,7 +1221,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def ungroupSelected(self, unused_action):
         if self.timeline:
             self.debug("Ungouping selected clips %s" % self.timeline.selection)
-
             self.timeline.enable_update(False)
             self.app.action_log.begin("ungroup")
             for tlobj in self.timeline.selection:
@@ -1227,7 +1231,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def groupSelected(self, unused_action):
         if self.timeline:
             self.debug("Gouping selected clips %s" % self.timeline.selection)
-
             self.timeline.enable_update(False)
             self.app.action_log.begin("group")
             for tlobj in self.timeline.selection:
@@ -1254,9 +1257,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             pmeter.addWatcher(progress_dialog.updatePosition)
 
     def split(self, action):
+        """
+        Split clips at the current playhead position, regardless of selections.
+        """
         self.timeline.enable_update(False)
-
-        #Splitting the objects at the current position
         for track in self.timeline.get_tracks():
             for tck_obj in track.get_objects():
                 start = tck_obj.props.start
@@ -1264,17 +1268,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 if start < self._position and end > self._position:
                     obj = tck_obj.get_timeline_object()
                     obj.split(self._position)
-
         self.timeline.enable_update(True)
 
     def keyframe(self, action):
-        timeline_position = self._position
-        selected = self.timeline.selection.getSelectedTrackObjs()
+        """
+        Add or remove a keyframe at the current position of the selected clip.
 
+        FIXME GES: this method is currently not used anywhere
+        """
+        selected = self.timeline.selection.getSelectedTrackObjs()
         for obj in selected:
             keyframe_exists = False
-
-            position_in_obj = (timeline_position - obj.start) + obj.in_point
+            position_in_obj = (self._position - obj.start) + obj.in_point
             interpolators = obj.getInterpolators()
             for value in interpolators:
                 interpolator = obj.getInterpolator(value)
@@ -1294,17 +1299,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.app.gui.viewer.togglePlayback()
 
     def prevframe(self, action):
-        timeline_position = self._position
-
-        prev_kf = self.timeline.getPrevKeyframe(timeline_position)
-        if prev_kf != None:
+        prev_kf = self.timeline.getPrevKeyframe(self._position)
+        if prev_kf:
             self._seeker.seek(prev_kf)
             self.scrollToPlayhead()
 
     def nextframe(self, action):
-        timeline_position = self._position
-
-        next_kf = self.timeline.getNextKeyframe(timeline_position)
+        next_kf = self.timeline.getNextKeyframe(self._position)
         if next_kf:
             self._seeker.seek(next_kf)
             self.scrollToPlayhead()
