@@ -122,8 +122,8 @@ class MediaLibrary(Signallable, Loggable):
 
     @ivar discoverer: The discoverer object used internally
     @type discoverer: L{Discoverer}
-    @ivar nb_file_to_import: The number of URIs on the last addUris call.
-    @type nb_file_to_import: int
+    @ivar nb_files_to_import: The number of URIs on the last addUris call.
+    @type nb_files_to_import: int
     @ivar nb_imported_files: The number of URIs loaded since the last addUris
     call.
     @type nb_imported_files: int
@@ -132,6 +132,7 @@ class MediaLibrary(Signallable, Loggable):
      - C{source-added} : A source has been discovered and added to the MediaLibrary.
      - C{source-removed} : A source was removed from the MediaLibrary.
      - C{discovery-error} : The given uri is not a media file.
+     - C{nothing-to-import} : All the given uri were already imported
      - C{ready} : No more files are being discovered/added.
      - C{starting} : Some files are being discovered/added.
     """
@@ -140,6 +141,7 @@ class MediaLibrary(Signallable, Loggable):
         "source-added": ["info"],
         "source-removed": ["uri"],
         "discovery-error": ["uri", "reason"],
+        "nothing-to-import": [],
         "ready": [],
         "starting": [],
         }
@@ -151,16 +153,20 @@ class MediaLibrary(Signallable, Loggable):
         self._sources = {}
         # A list of SourceFactory objects.
         self._ordered_sources = []
-        self.nb_file_to_import = 1
-        self.nb_imported_files = 0
+        self._resetImportCounters()
 
         self.discoverer = self.discovererClass(gst.SECOND)
         self.discoverer.connect("discovered", self.addDiscovererInfo)
         self.discoverer.connect("finished", self.finishDiscovererCb)
         self.discoverer.start()
 
+    def _resetImportCounters(self):
+        self.nb_files_to_import = 0
+        self.nb_imported_files = 0
+
     def finishDiscovererCb(self, unused_discoverer):
         self.debug("Got the discoverer's finished signal")
+        self._resetImportCounters()
         self.emit("ready")
 
     def addUris(self, uris):
@@ -171,8 +177,7 @@ class MediaLibrary(Signallable, Loggable):
         """
         self.emit("starting")
         self.debug("Adding %s", uris)
-        self.nb_file_to_import = len(uris)
-        self.nb_imported_files = 0
+        self.nb_files_to_import += len(uris)
         for uri in uris:
             # Ensure we have a correctly encoded URI according to RFC 2396.
             # Otherwise, in some cases we'd get rogue characters that break
@@ -181,7 +186,16 @@ class MediaLibrary(Signallable, Loggable):
             if uri not in self._sources:
                 self.discoverer.discover_uri_async(uri)
                 self.debug("Added a uri to discoverer async")
-        self.debug("Done adding all URIs to discoverer async")
+            else:
+                self.nb_files_to_import -= 1
+                self.debug('"%s" is already in the media library' % uri)
+        if self.nb_files_to_import == 0:
+            # This is a cornercase hack for when you try to import a bunch of
+            # clips that are all present in the media library already.
+            # This will allow the progressbar to hide.
+            self.emit("nothing-to-import")
+        else:
+            self.debug("Done adding all URIs to discoverer async")
 
     def removeUri(self, uri):
         """
@@ -647,6 +661,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.project_signals.connect(project.medialibrary,
             "discovery-error", None, self._discoveryErrorCb)
         self.project_signals.connect(project.medialibrary,
+            "nothing-to-import", None, self._hideProgressBarCb)
+        self.project_signals.connect(project.medialibrary,
             "ready", None, self._sourcesStoppedImportingCb)
         self.project_signals.connect(project.medialibrary,
             "starting", None, self._sourcesStartedImportingCb)
@@ -738,7 +754,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         Update the _progressbar with the ratio of clips imported vs the total
         """
         current_clip_iter = self.app.current.medialibrary.nb_imported_files
-        total_clips = self.app.current.medialibrary.nb_file_to_import
+        total_clips = self.app.current.medialibrary.nb_files_to_import
         progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
             {"current_clip": current_clip_iter,
             "total": total_clips})
@@ -842,6 +858,14 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
                 self._view_error_btn.set_label(_("View error"))
 
             self._import_warning_infobar.show_all()
+
+    def _hideProgressBarCb(self, unused_medialibrary):
+        """
+        This is only called when all the uris we tried to import were already
+        present in the media library. We then need to hide the progressbar
+        because the media library is not going to emit the "ready" signal.
+        """
+        self._progressbar.hide()
 
     ## Error Dialog Box callbacks
 
