@@ -378,6 +378,10 @@ class PitiviViewer(gtk.VBox, Loggable):
     ## Control gtk.Button callbacks
 
     def setZoom(self, zoom):
+        """
+        Zoom in or out of the transformation box canvas.
+        This is called by clipproperties.
+        """
         if self.target.box:
             maxSize = self.target.area
             width = int(float(maxSize.width) * zoom)
