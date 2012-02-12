@@ -29,7 +29,7 @@ from gettext import gettext as _
 
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
-from pitivi.utils.playback import togglePlayback
+from pitivi.utils.playback import togglePlayback, Seeker
 from pitivi.utils.ui import SPACING, hex_to_rgb
 from pitivi.utils.widgets import TimeWidget
 
@@ -868,6 +868,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
     def __init__(self, settings=None):
         gtk.DrawingArea.__init__(self)
         Loggable.__init__(self)
+        self.seeker = Seeker(80)
         self.settings = settings
         self.box = None
         self.stored = False
@@ -897,9 +898,9 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
             self.renderbox()
 
     def _sizeCb(self, widget, area):
-        # TODO: box is cleared when using regular rendering
+        # The transformation box is cleared when using regular rendering
         # so we need to flush the pipeline
-        #self.pipeline.flushSeekVideo()
+        self.seeker.flush()
         self.pipeline.set_state()
 
     def hide_box(self):
@@ -908,7 +909,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
             self.disconnect_by_func(self.button_press_event)
             self.disconnect_by_func(self.button_release_event)
             self.disconnect_by_func(self.motion_notify_event)
-            #self.pipeline.flushSeekVideo()
+            self.seeker.flush()
             self.zoom = 1.0
             if self.sink:
                 self.sink.set_render_rectangle(*self.area)
@@ -947,7 +948,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         if event.button == 1:
             self.box.update_effect_properties()
             self.box.release_point()
-            self.pipeline.flushSeekVideo()
+            self.seeker.flush()
             self.stored = False
         return True
 
