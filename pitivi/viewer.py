@@ -69,15 +69,6 @@ GlobalSettings.addConfigOption("pointColor",
 
 
 class PitiviViewer(gtk.VBox, Loggable):
-
-    __gtype_name__ = 'PitiviViewer'
-    __gsignals__ = {
-        "activate-playback-controls": (gobject.SIGNAL_RUN_LAST,
-            gobject.TYPE_NONE, (gobject.TYPE_BOOLEAN,)),
-    }
-
-    INHIBIT_REASON = _("Currently playing media")
-
     """
     A Widget to control and visualize a Pipeline
 
@@ -86,6 +77,13 @@ class PitiviViewer(gtk.VBox, Loggable):
     @ivar action: The action controlled by this Pipeline
     @type action: L{ViewAction}
     """
+    __gtype_name__ = 'PitiviViewer'
+    __gsignals__ = {
+        "activate-playback-controls": (gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE, (gobject.TYPE_BOOLEAN,)),
+    }
+
+    INHIBIT_REASON = _("Currently playing media")
 
     def __init__(self, app, undock_action=None, action=None, pipeline=None):
         gtk.VBox.__init__(self)
@@ -490,9 +488,10 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.seeker.seekRelative(time)
 
     def _positionCheckCb(self):
-        """Every 300 ms, check if the timeline position changed.
-
-        If so, update our viewer UI widgets."""
+        """
+        Every 300 ms, check if the timeline position changed.
+        If so, update our viewer UI widgets.
+        """
         try:
             self.current_time = self.pipeline.query_position(gst.FORMAT_TIME)[0]
             if self.current_time != self.previous_time:
@@ -544,6 +543,9 @@ class PitiviViewer(gtk.VBox, Loggable):
 
 
 class Point():
+    """
+    Draw a point, used as a handle for the transformation box
+    """
 
     def __init__(self, x, y, settings):
         self.x = x
@@ -572,28 +574,32 @@ class Point():
             return True
 
     def draw(self, cr):
-        linear = cairo.LinearGradient(self.x, self.y - self.radius, self.x, self.y + self.radius)
+        linear = cairo.LinearGradient(self.x, self.y - self.radius,
+                                        self.x, self.y + self.radius)
         linear.add_color_stop_rgba(0.00, .6, .6, .6, 1)
         linear.add_color_stop_rgba(0.50, .4, .4, .4, .1)
         linear.add_color_stop_rgba(0.60, .4, .4, .4, .1)
         linear.add_color_stop_rgba(1.00, .6, .6, .6, 1)
 
-        radial = cairo.RadialGradient(self.x + self.radius / 2, self.y - self.radius / 2, 1, self.x, self.y, self.radius)
+        radial = cairo.RadialGradient(self.x + self.radius / 2,
+                                        self.y - self.radius / 2, 1,
+                                        self.x, self.y,
+                                        self.radius)
         if self.clicked:
             radial.add_color_stop_rgb(0, *self.clickedColor)
         else:
             radial.add_color_stop_rgb(0, *self.color)
         radial.add_color_stop_rgb(1, 0.1, 0.1, 0.1)
-
-        radial_glow = cairo.RadialGradient(self.x, self.y, self.radius * .9, self.x, self.y, self.radius * 1.2)
-
+        radial_glow = cairo.RadialGradient(self.x, self.y,
+                                            self.radius * .9,
+                                            self.x, self.y,
+                                            self.radius * 1.2)
         radial_glow.add_color_stop_rgba(0, 0.9, 0.9, 0.9, 1)
         radial_glow.add_color_stop_rgba(1, 0.9, 0.9, 0.9, 0)
 
         cr.set_source(radial_glow)
         cr.arc(self.x, self.y, self.radius * 1.2, 0, 2 * pi)
         cr.fill()
-
         cr.arc(self.x, self.y, self.radius * .9, 0, 2 * pi)
         cr.set_source(radial)
         cr.fill()
@@ -689,7 +695,6 @@ class TransformationBox():
         self.points[TOP_RIGHT] = Point(self.right, self.top, self.settings)
         self.points[BOTTOM_LEFT] = Point(self.left, self.bottom, self.settings)
         self.points[BOTTOM_RIGHT] = Point(self.right, self.bottom, self.settings)
-
         #edge boxes
         self.points[TOP] = Point(self.center.x, self.top, self.settings)
         self.points[BOTTOM] = Point(self.center.x, self.bottom, self.settings)
@@ -704,7 +709,6 @@ class TransformationBox():
         self.points[TOP_RIGHT].set_position(self.right, self.top)
         self.points[BOTTOM_LEFT].set_position(self.left, self.bottom)
         self.points[BOTTOM_RIGHT].set_position(self.right, self.bottom)
-
         #edge boxes
         self.points[TOP].set_position(self.center.x, self.top)
         self.points[BOTTOM].set_position(self.center.x, self.bottom)
@@ -916,14 +920,20 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         colormap = self.window.get_colormap()
         if self.box and self.zoom != 1.0:
             # crop away 1 pixel border to avoid artefacts on the pixbuf
-            pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, 0, 8, self.box.area.width - 2, self.box.area.height - 2)
+            pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, 0, 8,
+                                        self.box.area.width - 2,
+                                        self.box.area.height - 2)
             self.pixbuf = pixbuf.get_from_drawable(self.window, colormap,
-                                                   self.box.area.x + 1, self.box.area.y + 1,
+                                                   self.box.area.x + 1,
+                                                   self.box.area.y + 1,
                                                    0, 0,
-                                                   self.box.area.width - 2, self.box.area.height - 2)
+                                                   self.box.area.width - 2,
+                                                   self.box.area.height - 2)
         else:
-            pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, 0, 8, *self.window.get_size())
-            self.pixbuf = pixbuf.get_from_drawable(self.window, colormap, 0, 0, 0, 0, *self.window.get_size())
+            pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB,
+                                        0, 8, *self.window.get_size())
+            self.pixbuf = pixbuf.get_from_drawable(self.window, colormap,
+                                        0, 0, 0, 0, *self.window.get_size())
         self.stored = True
 
     def do_realize(self):
@@ -1014,12 +1024,12 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
 
 
 class PlayPauseButton(gtk.Button, Loggable):
-    """ Double state gtk.Button which displays play/pause """
-
+    """
+    Double state gtk.Button which displays play/pause
+    """
     __gsignals__ = {
-        "play": (gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE,
-                   (gobject.TYPE_BOOLEAN,))}
+        "play": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_BOOLEAN,))
+        }
 
     def __init__(self):
         gtk.Button.__init__(self)
