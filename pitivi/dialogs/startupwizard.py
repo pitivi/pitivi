@@ -75,13 +75,12 @@ class StartUpWizard(object):
         self.app.gui.showProjectSettingsDialog()
 
     def _loadCb(self, unused_recent_chooser):
-        """Handle a double-click on the recent chooser."""
-        self.app.projectManager.loadProject(self._getFileName())
-
-    def _getFileName(self):
-        """Get the URI of the project selected in the recent chooser."""
-        uri = self.recent_chooser.get_current_uri()[7:]
-        return unquote(uri)
+        """
+        Handle choosing a project on the recent chooser.
+        This calls the project manager to load the associated URI.
+        """
+        uri = self.recent_chooser.get_current_uri()
+        self.app.projectManager.loadProject(uri)
 
     def _keyPressCb(self, widget, event):
         """Handle a key press event on the dialog."""

@@ -657,9 +657,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         response = chooser.run()
         self.settings.lastProjectFolder = chooser.get_current_folder()
         if response == gtk.RESPONSE_OK:
-            uri = chooser.get_uri()
-            uri = unquote(uri)
-            self.app.projectManager.loadProject(uri)
+            self.app.projectManager.loadProject(chooser.get_uri())
 
         chooser.destroy()
         return True

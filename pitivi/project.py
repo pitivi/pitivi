@@ -33,8 +33,6 @@ import gobject
 from time import time
 from datetime import datetime
 from gettext import gettext as _
-from urllib import unquote
-from urlparse import urlparse
 from pwd import getpwuid
 
 from pitivi.medialibrary import MediaLibrary
@@ -42,7 +40,7 @@ from pitivi.settings import MultimediaSettings
 from pitivi.undo.undo import UndoableAction
 from pitivi.configure import get_ui_dir
 
-from pitivi.utils.misc import quote_uri
+from pitivi.utils.misc import quote_uri, path_from_uri
 from pitivi.utils.playback import Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
@@ -148,18 +146,21 @@ class ProjectManager(Signallable, Loggable):
         """
         self.emit("new-project-loading", uri)
 
-        backup_path = self._makeBackupURI(uri)
+        # We really want a path for os.path to work
+        path = path_from_uri(uri)
+        backup_path = self._makeBackupURI(path)
         use_backup = False
         try:
-            time_diff = os.path.getmtime(backup_path) - os.path.getmtime(uri)
+            time_diff = os.path.getmtime(backup_path) - os.path.getmtime(path)
+            self.debug('Backup file "%s" is %d secs newer' % (backup_path, time_diff))
         except OSError:
             self.debug('Backup file "%s" does not exist' % backup_path)
         else:
             if time_diff > 0:
                 use_backup = self._restoreFromBackupDialog(time_diff)
         if use_backup:
-            uri = backup_path
-            self.debug('Loading project from backup file "%s"' % uri)
+            path = backup_path
+            self.debug('Loading project from backup file "%s"' % path)
             # Make a new project instance, but don't specify the URI.
             # That way, we force the user to "Save as" (which ensures that the
             # changes in the loaded backup file are approved by the user).
@@ -167,13 +168,13 @@ class ProjectManager(Signallable, Loggable):
         else:
             # Load the project normally.
             # The "old" backup file will eventually be deleted or overwritten.
-            self.current = Project(uri=uri)
+            self.current = Project(uri=path)
 
         self.timeline = self.current.timeline
         self.formatter = ges.PitiviFormatter()
         self.formatter.connect("source-moved", self._formatterMissingURICb)
         self.formatter.connect("loaded", self._projectLoadedCb)
-        if self.formatter.load_from_uri(self.timeline, uri):
+        if self.formatter.load_from_uri(self.timeline, path):
             self.current.connect("project-changed", self._projectChangedCb)
 
     def _restoreFromBackupDialog(self, time_diff):
@@ -373,8 +374,7 @@ class ProjectManager(Signallable, Loggable):
     def _cleanBackup(self, uri):
         if uri is None:
             return
-        location = self._makeBackupURI(uri)
-        path = unquote(urlparse(location).netloc)
+        path = path_from_uri(self._makeBackupURI(uri))
         if os.path.exists(path):
             os.remove(path)
             self.debug('Removed backup file "%s"' % path)

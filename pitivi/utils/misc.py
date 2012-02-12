@@ -32,7 +32,7 @@ import struct
 import time
 import threading
 
-from urlparse import urlsplit, urlunsplit
+from urlparse import urlsplit, urlunsplit, urlparse
 from urllib import quote, unquote
 
 import pitivi.utils.loggable as log
@@ -132,6 +132,15 @@ def uri_is_reachable(uri):
 
 def get_filesystem_encoding():
     return sys.getfilesystemencoding() or "utf-8"
+
+
+def path_from_uri(uri):
+    """
+    Return a human-readable path that can be used with python's os.path
+    """
+    foo = urlparse(uri)
+    path = foo.netloc + foo.path
+    return unquote(path)
 
 
 def quote_uri(uri):
