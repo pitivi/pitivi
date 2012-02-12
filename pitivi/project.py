@@ -236,14 +236,14 @@ class ProjectManager(Signallable, Loggable):
         @type project: L{Project}
         @param project: The L{Project} to save.
         @type uri: L{str}
-        @param uri: The location to store the project to. Needs to
-        be an absolute URI.
+        @param uri: The absolute URI of the location to store the project to.
+        @param overwrite: Whether to overwrite existing location.
+        @type overwrite: C{bool}
         @type formatter: L{Formatter}
         @param formatter: The L{Formatter} to use to store the project if specified.
         If it is not specified, then it will be saved at its original format.
-        @param overwrite: Whether to overwrite existing location.
-        @type overwrite: C{bool}
-        @raise FormatterSaveError: If the file couldn't be properly stored.
+        @param backup: Whether the requested save operation is for a backup
+        @type backup: C{bool}
 
         @see: L{Formatter.saveProject}
         """
