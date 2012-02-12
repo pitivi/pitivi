@@ -809,46 +809,34 @@ class ProjectSettingsDialog():
         return gst.Fraction(width, height)
 
     def _setProperties(self):
-        self.window = self.builder.get_object("project-settings-dialog")
-        self.video_properties_table = self.builder.get_object(
-            "video_properties_table")
-        self.video_properties_table = self.builder.get_object(
-            "video_properties_table")
-        self.frame_rate_combo = self.builder.get_object("frame_rate_combo")
-        self.dar_combo = self.builder.get_object("dar_combo")
-        self.par_combo = self.builder.get_object("par_combo")
-        self.channels_combo = self.builder.get_object("channels_combo")
-        self.sample_rate_combo = self.builder.get_object("sample_rate_combo")
-        self.sample_depth_combo = self.builder.get_object("sample_depth_combo")
-        self.year_spinbutton = self.builder.get_object("year_spinbutton")
-        self.author_entry = self.builder.get_object("author_entry")
-        self.width_spinbutton = self.builder.get_object("width_spinbutton")
-        self.height_spinbutton = self.builder.get_object("height_spinbutton")
-        self.save_audio_preset_button = self.builder.get_object(
-            "save_audio_preset_button")
-        self.save_video_preset_button = self.builder.get_object(
-            "save_video_preset_button")
-        self.audio_preset_treeview = self.builder.get_object(
-            "audio_preset_treeview")
-        self.video_preset_treeview = self.builder.get_object(
-            "video_preset_treeview")
-        self.select_par_radiobutton = self.builder.get_object(
-            "select_par_radiobutton")
-        self.remove_audio_preset_button = self.builder.get_object(
-            "remove_audio_preset_button")
-        self.remove_video_preset_button = self.builder.get_object(
-            "remove_video_preset_button")
-        self.constrain_sar_button = self.builder.get_object(
-            "constrain_sar_button")
-        self.select_dar_radiobutton = self.builder.get_object(
-            "select_dar_radiobutton")
-        self.video_preset_infobar = self.builder.get_object(
-            "video-preset-infobar")
-        self.audio_preset_infobar = self.builder.get_object(
-            "audio-preset-infobar")
-        self.title_entry = self.builder.get_object("title_entry")
-        self.author_entry = self.builder.get_object("author_entry")
-        self.year_spinbutton = self.builder.get_object("year_spinbutton")
+        getObj = self.builder.get_object
+        self.window = getObj("project-settings-dialog")
+        self.video_properties_table = getObj("video_properties_table")
+        self.video_properties_table = getObj("video_properties_table")
+        self.frame_rate_combo = getObj("frame_rate_combo")
+        self.dar_combo = getObj("dar_combo")
+        self.par_combo = getObj("par_combo")
+        self.channels_combo = getObj("channels_combo")
+        self.sample_rate_combo = getObj("sample_rate_combo")
+        self.sample_depth_combo = getObj("sample_depth_combo")
+        self.year_spinbutton = getObj("year_spinbutton")
+        self.author_entry = getObj("author_entry")
+        self.width_spinbutton = getObj("width_spinbutton")
+        self.height_spinbutton = getObj("height_spinbutton")
+        self.save_audio_preset_button = getObj("save_audio_preset_button")
+        self.save_video_preset_button = getObj("save_video_preset_button")
+        self.audio_preset_treeview = getObj("audio_preset_treeview")
+        self.video_preset_treeview = getObj("video_preset_treeview")
+        self.select_par_radiobutton = getObj("select_par_radiobutton")
+        self.remove_audio_preset_button = getObj("remove_audio_preset_button")
+        self.remove_video_preset_button = getObj("remove_video_preset_button")
+        self.constrain_sar_button = getObj("constrain_sar_button")
+        self.select_dar_radiobutton = getObj("select_dar_radiobutton")
+        self.video_preset_infobar = getObj("video-preset-infobar")
+        self.audio_preset_infobar = getObj("audio-preset-infobar")
+        self.title_entry = getObj("title_entry")
+        self.author_entry = getObj("author_entry")
+        self.year_spinbutton = getObj("year_spinbutton")
 
     def _constrainSarButtonToggledCb(self, button):
         if button.props.active:
