@@ -249,8 +249,17 @@ class ProjectManager(Signallable, Loggable):
         """
         if formatter is None:
             formatter = ges.PitiviFormatter()
-
-        if uri is None:
+        if backup:
+            if project.uri and self.current.uri is not None:
+                # Ignore whatever URI that is passed on to us. It's a trap.
+                uri = self._makeBackupURI(project.uri)
+            else:
+                # Do not try to save backup files for blank projects.
+                # It is possible that self.current.uri == None when the backup
+                # timer sent us an old instance of the (now closed) project.
+                return
+        elif uri is None:
+            # This allows calling saveProject without specifying the target URI
             uri = project.uri
         else:
             # Ensure the URI we are given is properly encoded, or GIO will fail
@@ -361,13 +370,11 @@ class ProjectManager(Signallable, Loggable):
                 self.backup_lock += 5
 
     def _saveBackupCb(self, project, uri):
-        backup_uri = self._makeBackupURI(uri)
-
         if self.backup_lock > 10:
             self.backup_lock -= 5
             return True
         else:
-            self.saveProject(project, backup_uri, overwrite=True, backup=True)
+            self.saveProject(project, overwrite=True, backup=True)
             self.backup_lock = 0
         return False
 
