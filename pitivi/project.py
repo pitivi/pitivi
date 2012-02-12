@@ -148,7 +148,7 @@ class ProjectManager(Signallable, Loggable):
 
         # We really want a path for os.path to work
         path = path_from_uri(uri)
-        backup_path = self._makeBackupURI(path)
+        backup_path = self._makeBackupURI(path_from_uri(uri))
         use_backup = False
         try:
             time_diff = os.path.getmtime(backup_path) - os.path.getmtime(path)
@@ -159,8 +159,8 @@ class ProjectManager(Signallable, Loggable):
             if time_diff > 0:
                 use_backup = self._restoreFromBackupDialog(time_diff)
         if use_backup:
-            path = backup_path
-            self.debug('Loading project from backup file "%s"' % path)
+            uri = self._makeBackupURI(uri)
+            self.debug('Loading project from backup "%s"' % uri)
             # Make a new project instance, but don't specify the URI.
             # That way, we force the user to "Save as" (which ensures that the
             # changes in the loaded backup file are approved by the user).
@@ -168,13 +168,13 @@ class ProjectManager(Signallable, Loggable):
         else:
             # Load the project normally.
             # The "old" backup file will eventually be deleted or overwritten.
-            self.current = Project(uri=path)
+            self.current = Project(uri=uri)
 
         self.timeline = self.current.timeline
         self.formatter = ges.PitiviFormatter()
         self.formatter.connect("source-moved", self._formatterMissingURICb)
         self.formatter.connect("loaded", self._projectLoadedCb)
-        if self.formatter.load_from_uri(self.timeline, path):
+        if self.formatter.load_from_uri(self.timeline, uri):
             self.current.connect("project-changed", self._projectChangedCb)
 
     def _restoreFromBackupDialog(self, time_diff):
