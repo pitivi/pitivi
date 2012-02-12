@@ -901,7 +901,6 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         # The transformation box is cleared when using regular rendering
         # so we need to flush the pipeline
         self.seeker.flush()
-        self.pipeline.set_state()
 
     def hide_box(self):
         if self.box:
