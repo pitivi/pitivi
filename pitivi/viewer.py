@@ -34,36 +34,28 @@ from pitivi.utils.ui import SPACING, hex_to_rgb
 from pitivi.utils.widgets import TimeWidget
 
 GlobalSettings.addConfigSection("viewer")
-GlobalSettings.addConfigOption("viewerDocked",
-    section="viewer",
+GlobalSettings.addConfigOption("viewerDocked", section="viewer",
     key="docked",
     default=True)
-GlobalSettings.addConfigOption("viewerWidth",
-    section="viewer",
+GlobalSettings.addConfigOption("viewerWidth", section="viewer",
     key="width",
     default=320)
-GlobalSettings.addConfigOption("viewerHeight",
-    section="viewer",
+GlobalSettings.addConfigOption("viewerHeight", section="viewer",
     key="height",
     default=240)
-GlobalSettings.addConfigOption("viewerX",
-    section="viewer",
+GlobalSettings.addConfigOption("viewerX", section="viewer",
     key="x-pos",
     default=0)
-GlobalSettings.addConfigOption("viewerY",
-    section="viewer",
+GlobalSettings.addConfigOption("viewerY", section="viewer",
     key="y-pos",
     default=0)
-GlobalSettings.addConfigOption("pointSize",
-    section="viewer",
+GlobalSettings.addConfigOption("pointSize", section="viewer",
     key="point-size",
     default=25)
-GlobalSettings.addConfigOption("clickedPointColor",
-    section="viewer",
+GlobalSettings.addConfigOption("clickedPointColor", section="viewer",
     key="clicked-point-color",
     default='ffa854')
-GlobalSettings.addConfigOption("pointColor",
-    section="viewer",
+GlobalSettings.addConfigOption("pointColor", section="viewer",
     key="point-color",
     default='49a0e0')
 
