@@ -355,9 +355,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.app.gui.setActionsSensitive(sensitive_actions, True)
         self.app.gui.setActionsSensitive(['DeleteObj'], True)
 
-    def seek(self, position, format=gst.FORMAT_TIME):
-        self.seeker.seek(position, format)
-
     ## active Timeline calllbacks
     def _durationChangedCb(self, unused_pipeline, duration):
         self.debug("duration : %s", gst.TIME_ARGS(duration))
@@ -395,17 +392,19 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.target.sink = self.sink
             self.target.renderbox()
 
-    def _goToStartCb(self, unused_button):
-        self.seek(0)
-
-    def _backCb(self, unused_button):
-        self.seekRelative(0 - gst.SECOND)
-
     def _playButtonCb(self, unused_button, playing):
         self.togglePlayback()
 
+    def _goToStartCb(self, unused_button):
+        self.seeker.seek(0)
+
+    def _backCb(self, unused_button):
+        # Seek backwards one second
+        self.seeker.seekRelative(0 - gst.SECOND)
+
     def _forwardCb(self, unused_button):
-        self.seekRelative(gst.SECOND)
+        # Seek forward one second
+        self.seeker.seekRelative(gst.SECOND)
 
     def _goToEndCb(self, unused_button):
         try:
@@ -413,7 +412,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         except:
             self.warning("Couldn't get timeline duration")
         try:
-            self.seek(end)
+            self.seeker.seek(end)
         except:
             self.warning("Couldn't seek to the end of the timeline")
 
@@ -421,7 +420,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _jumpToTimecodeCb(self, widget):
         nanoseconds = widget.getWidgetValue()
-        self.seek(nanoseconds)
+        self.seeker.seek(nanoseconds)
 
     ## public methods for controlling playback
 
@@ -479,9 +478,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.undock()
         else:
             self.dock()
-
-    def seekRelative(self, time):
-        self.seeker.seekRelative(time)
 
     def _positionCheckCb(self):
         """
