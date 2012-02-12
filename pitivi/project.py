@@ -400,11 +400,6 @@ class ProjectManager(Signallable, Loggable):
         self.current.medialibrary.addUris(self.formatter.get_sources())
 
 
-class ProjectError(Exception):
-    """Project error"""
-    pass
-
-
 class Project(Signallable, Loggable):
     """The base class for PiTiVi projects
 
