@@ -723,6 +723,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         else:
             chooser_action = gtk.FILE_CHOOSER_ACTION_OPEN
             dialogtitle = _("Select One or More Files")
+
         close_after = gtk.CheckButton(_("Close after importing files"))
         close_after.set_active(self.app.settings.closeImportDialog)
 
@@ -735,14 +736,15 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
         self._importDialog.set_select_multiple(True)
         self._importDialog.set_modal(False)
-        pw = PreviewWidget(self.app)
-        self._importDialog.set_preview_widget(pw)
-        self._importDialog.set_use_preview_label(False)
-        self._importDialog.connect('update-preview', pw.add_preview_request)
         self._importDialog.set_current_folder(self.app.settings.lastImportFolder)
-
         self._importDialog.connect('response', self._dialogBoxResponseCb, select_folders)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
+        if not select_folders:
+            # Only show the preview widget when not in folder import mode
+            pw = PreviewWidget(self.app)
+            self._importDialog.set_preview_widget(pw)
+            self._importDialog.set_use_preview_label(False)
+            self._importDialog.connect('update-preview', pw.add_preview_request)
         self._importDialog.show()
 
     def _addFolders(self, folders):
