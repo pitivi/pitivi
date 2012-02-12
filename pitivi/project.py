@@ -148,20 +148,21 @@ class ProjectManager(Signallable, Loggable):
         """
         self.emit("new-project-loading", uri)
 
-        backup_uri = self._makeBackupURI(uri)
+        backup_path = self._makeBackupURI(uri)
         use_backup = False
         try:
-            time_diff = os.path.getmtime(backup_uri) - os.path.getmtime(uri)
+            time_diff = os.path.getmtime(backup_path) - os.path.getmtime(uri)
         except OSError:
-            self.debug('Backup file "%s" does not exist' % backup_uri)
+            self.debug('Backup file "%s" does not exist' % backup_path)
         else:
             if time_diff > 0:
                 use_backup = self._restoreFromBackupDialog(time_diff)
         if use_backup:
+            uri = backup_path
+            self.debug('Loading project from backup file "%s"' % uri)
             # Make a new project instance, but don't specify the URI.
             # That way, we force the user to "Save as" (which ensures that the
             # changes in the loaded backup file are approved by the user).
-            self.debug('Loading project from backup file "%s"' % backup_uri)
             self.current = Project()
         else:
             # Load the project normally.
@@ -267,9 +268,13 @@ class ProjectManager(Signallable, Loggable):
         if overwrite or not file.query_exist():
             formatter.set_sources(project.medialibrary.getSources())
             saved = formatter.save_to_uri(project.timeline, uri)
-            if saved and not backup:
-                # Do not emit the signal when autosaving a backup file
-                self.emit("project-saved", project, uri)
+            if saved:
+                if not backup:
+                    # Do not emit the signal when autosaving a backup file
+                    self.emit("project-saved", project, uri)
+                    self.debug('Saved project "%s"' % uri)
+                else:
+                    self.debug('Saved backup "%s"' % uri)
             return saved
 
     def closeRunningProject(self):
@@ -372,8 +377,15 @@ class ProjectManager(Signallable, Loggable):
         path = unquote(urlparse(location).netloc)
         if os.path.exists(path):
             os.remove(path)
+            self.debug('Removed backup file "%s"' % path)
 
     def _makeBackupURI(self, uri):
+        """
+        Returns a backup file URI (or path if the given arg is not a URI).
+        This does not guarantee that the backup file actually exists.
+
+        @Param the project file path or URI
+        """
         name, ext = os.path.splitext(uri)
         if ext == '.xptv':
             return name + ext + "~"
