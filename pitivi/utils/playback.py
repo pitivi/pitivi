@@ -37,19 +37,21 @@ class Seeker(Signallable):
     The Seeker is a singleton helper class to do various seeking
     operations in the pipeline.
     """
-
+    _instance = None
     __signals__ = {
         'seek': ['position', 'format'],
         'flush': [],
         'seek-relative': ['time'],
         'position-changed': ['position']
     }
-    _instance = None
 
     def __new__(cls, *args, **kwargs):
+        """
+        Override the new method to return the singleton instance if available.
+        Otherwise, create one.
+        """
         if not cls._instance:
-            cls._instance = super(Seeker, cls).__new__(
-                                cls, *args, **kwargs)
+            cls._instance = super(Seeker, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
     def __init__(self, timeout):
