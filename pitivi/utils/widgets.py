@@ -825,9 +825,6 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
                 continue
 
             if is_effect:
-                label = gtk.Label(prop.nick + ":")
-                label.set_alignment(0.0, 0.5)
-                table.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
                 prop_value = self.element.get_child_property(prop.name)
             else:
                 if use_element_props:
@@ -845,12 +842,12 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
                 table.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
                 table.attach(widget, 1, 2, y, y + 1, yoptions=gtk.FILL)
 
-            if is_effect:
-                table.attach(widget, 1, 2, y, y + 1, yoptions=gtk.FILL)
-            elif hasattr(prop, 'blurb'):
+            if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
 
             self.properties[prop] = widget
+
+            # The "reset to default" button associated with this property
             if default_btn:
                 button = self._getResetToDefaultValueButton(prop, widget)
                 table.attach(button, 2, 3, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
