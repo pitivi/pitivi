@@ -384,7 +384,7 @@ class RenderDialog(Loggable):
         self.app = app
         self.project = project
         self.system = app.system
-        self._seeker = Seeker(80)
+        self._seeker = Seeker()
         if pipeline != None:
             self._pipeline = pipeline
         else:

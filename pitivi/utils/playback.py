@@ -54,7 +54,10 @@ class Seeker(Signallable):
             cls._instance = super(Seeker, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-    def __init__(self, timeout):
+    def __init__(self, timeout=80):
+        """
+        @param timeout (optional): the amount of miliseconds for a seek attempt
+        """
         self.timeout = timeout
         self.pending_seek_id = None
         self.position = None

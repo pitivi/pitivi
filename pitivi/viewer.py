@@ -860,7 +860,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
     def __init__(self, settings=None):
         gtk.DrawingArea.__init__(self)
         Loggable.__init__(self)
-        self.seeker = Seeker(80)
+        self.seeker = Seeker()
         self.settings = settings
         self.box = None
         self.stored = False

@@ -462,7 +462,7 @@ class Project(Signallable, Loggable):
 
         self.pipeline = ges.TimelinePipeline()
         self.pipeline.add_timeline(self.timeline)
-        self.seeker = Seeker(80)
+        self.seeker = Seeker()
 
         self.settings = MultimediaSettings()
 

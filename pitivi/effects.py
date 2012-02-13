@@ -775,7 +775,7 @@ class EffectsPropertiesManager:
         self._current_effect_setting_ui = None
         self._current_element_values = {}
         self.action_log = action_log
-        self._seeker = Seeker(80)
+        self._seeker = Seeker()
 
     def getEffectConfigurationUI(self, effect):
         """

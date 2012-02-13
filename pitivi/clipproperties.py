@@ -167,7 +167,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self._config_ui_h_pos = None
         self._timeline = None
         # We use the seeker to flush the pipeline when needed
-        self._seeker = Seeker(80)
+        self._seeker = Seeker()
 
         self._vcontent = gtk.VPaned()
         self.add(self._vcontent)
@@ -513,7 +513,7 @@ class TransformationProperties(gtk.Expander):
         self.default_values = {}
         self.set_label(_("Transformation"))
         self.set_sensitive(False)
-        self._seeker = Seeker(80)
+        self._seeker = Seeker()
 
         if not "Frei0r" in soft_deps:
             self.builder = gtk.Builder()

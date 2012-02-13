@@ -82,7 +82,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.app = instance
         self.need_update = True
 
-        self._seeker = Seeker(80)
+        self._seeker = Seeker()
 
     def _hadjValueChangedCb(self, hadj):
         self.pixmap_offset = self.hadj.get_value()
