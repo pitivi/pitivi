@@ -788,7 +788,9 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
 
     def setElement(self, element, properties={}, ignore=['name'],
                    default_btn=False, use_element_props=False):
-        """ Set given element on Widget, with optional properties """
+        """
+        Set given element on Widget, with optional properties
+        """
         self.info("element:%s, use properties:%s", element, properties)
         self.element = element
         self.ignore = ignore
@@ -796,6 +798,14 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         self._addWidgets(properties, default_btn, use_element_props)
 
     def _addWidgets(self, properties, default_btn, use_element_props):
+        """
+        Prepare a gtk table containing the property widgets of an element.
+        Each property is on a separate row of the table.
+        A row is typically a label followed by the widget and a reset button.
+
+        If there are no properties, returns a table containing the label
+        "No properties."
+        """
         is_effect = False
         if isinstance(self.element, ges.TrackParseLaunchEffect):
             is_effect = True
@@ -819,6 +829,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         table.set_row_spacings(SPACING)
         table.set_col_spacings(SPACING)
         table.set_border_width(SPACING)
+
         y = 0
         for prop in props:
             if not prop.flags & gobject.PARAM_WRITABLE\
@@ -853,9 +864,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
                 button = self._getResetToDefaultValueButton(prop, widget)
                 table.attach(button, 2, 3, y, y + 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
                 self.buttons[button] = widget
-            self.element.connect('notify::' + prop.name,
-                                 self._propertyChangedCb,
-                                 widget)
+            self.element.connect('notify::' + prop.name, self._propertyChangedCb, widget)
 
             y += 1
 
