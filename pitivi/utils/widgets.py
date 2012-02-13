@@ -804,7 +804,8 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
             props = [prop for prop in gobject.list_properties(self.element) if not prop.name in self.ignore]
         if not props:
             table = gtk.Table(rows=1, columns=1)
-            widget = gtk.Label(_("No properties..."))
+            widget = gtk.Label(_("No properties."))
+            widget.set_sensitive(False)
             table.attach(widget, 0, 1, 0, 1, yoptions=gtk.FILL)
             self.pack_start(table)
             self.show_all()
