@@ -136,6 +136,25 @@ class PitiviViewer(gtk.VBox, Loggable):
         self._setUiActive()
         self.seeker = self.app.projectManager.current.seeker
 
+    def _disconnectFromPipeline(self):
+        self.debug("pipeline:%r", self.pipeline)
+        if self.pipeline == None:
+            # silently return, there's nothing to disconnect from
+            return
+        if self.action and (self.action in self.pipeline.actions):
+            # if we have an action, properly remove it from pipeline
+            if self.action.isActive():
+                self.pipeline.stop()
+                self.action.deactivate()
+            self.pipeline.removeAction(self.action)
+
+        self.pipeline.disconnect_by_function(self._elementMessageCb)
+        self.pipeline.disconnect_by_function(self._durationChangedCb)
+        self.pipeline.disconnect_by_function(self._eosCb)
+        self.pipeline.stop()
+
+        self.pipeline = None
+
     def setAction(self, action):
         """
         Set the controlled action.
@@ -156,36 +175,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             action = self._getDefaultAction()
         self._connectToAction(action)
         self.showControls()
-
-    def _busMessageCb(self, unused_bus, message):
-        if message.type == gst.MESSAGE_EOS:
-            pass  # Playback (or rendering) reached the end of the timeline
-        elif message.type == gst.MESSAGE_STATE_CHANGED:
-            prev, new, pending = message.parse_state_changed()
-
-            if message.src == self.pipeline:
-                self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
-
-                self._currentStateCb(new)
-
-    def _disconnectFromPipeline(self):
-        self.debug("pipeline:%r", self.pipeline)
-        if self.pipeline == None:
-            # silently return, there's nothing to disconnect from
-            return
-        if self.action and (self.action in self.pipeline.actions):
-            # if we have an action, properly remove it from pipeline
-            if self.action.isActive():
-                self.pipeline.stop()
-                self.action.deactivate()
-            self.pipeline.removeAction(self.action)
-
-        self.pipeline.disconnect_by_function(self._elementMessageCb)
-        self.pipeline.disconnect_by_function(self._durationChangedCb)
-        self.pipeline.disconnect_by_function(self._eosCb)
-        self.pipeline.stop()
-
-        self.pipeline = None
 
     def _connectToAction(self, action):
         self.debug("action: %r", action)
@@ -498,6 +487,10 @@ class PitiviViewer(gtk.VBox, Loggable):
         return True
 
     def _currentStateCb(self, state):
+        """
+        When playback starts/stops, update the viewer widget,
+        play/pause button and (un)inhibit the screensaver.
+        """
         self.info("current state changed : %s", state)
         if int(state) == int(gst.STATE_PLAYING):
             self.playpause_button.setPause()
@@ -512,11 +505,23 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.internal._currentStateCb(self.pipeline, state)
         self.currentState = state
 
-    def _eosCb(self, unused_pipeline):
-        self.playpause_button.setPlay()
-        self.system.uninhibitScreensaver(self.INHIBIT_REASON)
+    def _busMessageCb(self, unused_bus, message):
+        if message.type == gst.MESSAGE_EOS:
+            # Playback (or rendering) reached the end of the timeline
+            self.playpause_button.setPlay()
+            self.system.uninhibitScreensaver(self.INHIBIT_REASON)
+        elif message.type == gst.MESSAGE_STATE_CHANGED:
+            prev, new, pending = message.parse_state_changed()
+
+            if message.src == self.pipeline:
+                self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
+                self._currentStateCb(new)
 
     def _elementMessageCb(self, unused_bus, message):
+        """
+        When the pipeline sends us a message to prepare-xwindow-id,
+        tell the viewer to switch its output window.
+        """
         if message.type == gst.MESSAGE_ELEMENT:
             name = message.structure.get_name()
             self.log('message:%s / %s', message, name)
