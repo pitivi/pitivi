@@ -170,9 +170,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         if self.action != None:
             # if there was one previously, remove it
             self._disconnectFromAction()
-        if action == None:
-            # get the default action
-            action = self._getDefaultAction()
         self._connectToAction(action)
         self.showControls()
 
@@ -209,9 +206,6 @@ class PitiviViewer(gtk.VBox, Loggable):
                 item.set_sensitive(active)
         if active:
             self.emit("activate-playback-controls", True)
-
-    def _getDefaultAction(self):
-        return
 
     def _externalWindowDeleteCb(self, window, event):
         self.dock()
