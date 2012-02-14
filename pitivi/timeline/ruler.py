@@ -139,9 +139,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         if self.getShadedDuration() <= 0:
             self.debug("no timeline to seek on, ignoring")
         self.pressed = True
-        # seek at position
-        cur = self.pixelToNs(event.x + self.pixmap_offset)
-        self._doSeek(cur)
+        position = self.pixelToNs(event.x + self.pixmap_offset)
+        self._seeker.seek(position)
         return True
 
     def do_button_release_event(self, event):
@@ -152,9 +151,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
     def do_motion_notify_event(self, event):
         self.debug("motion at event.x %d", event.x)
         if self.pressed:
-            # seek at position
-            cur = self.pixelToNs(event.x + self.pixmap_offset)
-            self._doSeek(cur)
+            position = self.pixelToNs(event.x + self.pixmap_offset)
+            self._seeker.seek(position)
         return False
 
     def do_scroll_event(self, event):
@@ -167,25 +165,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             pass
         elif event.direction == gtk.gdk.SCROLL_RIGHT:
             pass
-
-## Seeking methods
-
-    def _seekerSeekCb(self, seeker, position, format):
-        # clamping values within acceptable range
-        duration = self.getShadedDuration()
-        if duration in (0, gst.CLOCK_TIME_NONE):
-            return
-        if position > duration:
-            position = duration - (1 * gst.MSECOND)
-        elif position < 0:
-            position = 0
-
-        self.emit('seek', position)
-
-        return False
-
-    def _doSeek(self, value, format=gst.FORMAT_TIME, on_idle=False):
-        self._seeker.seek(value, format, on_idle)
 
 ## Drawing methods
 
