@@ -128,7 +128,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         if self.pipeline:
             bus = self.pipeline.get_bus()
             bus.add_signal_watch()
-            bus.connect('message', self._busMessageCb)
             bus.set_sync_handler(self._elementMessageCb)
             self.pipeline.set_state(gst.STATE_PAUSED)
             self.currentState = gst.STATE_PAUSED
@@ -150,7 +149,6 @@ class PitiviViewer(gtk.VBox, Loggable):
 
         self.pipeline.disconnect_by_function(self._elementMessageCb)
         self.pipeline.disconnect_by_function(self._durationChangedCb)
-        self.pipeline.disconnect_by_function(self._eosCb)
         self.pipeline.stop()
 
         self.pipeline = None
@@ -480,10 +478,12 @@ class PitiviViewer(gtk.VBox, Loggable):
             return False
         return True
 
-    def _currentStateCb(self, state):
+    def pipelineStateChanged(self, state):
         """
         When playback starts/stops, update the viewer widget,
         play/pause button and (un)inhibit the screensaver.
+
+        This is meant to be called by mainwindow.
         """
         self.info("current state changed : %s", state)
         if int(state) == int(gst.STATE_PLAYING):
@@ -498,18 +498,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
         self.internal._currentStateCb(self.pipeline, state)
         self.currentState = state
-
-    def _busMessageCb(self, unused_bus, message):
-        if message.type == gst.MESSAGE_EOS:
-            # Playback (or rendering) reached the end of the timeline
-            self.playpause_button.setPlay()
-            self.system.uninhibitScreensaver(self.INHIBIT_REASON)
-        elif message.type == gst.MESSAGE_STATE_CHANGED:
-            prev, new, pending = message.parse_state_changed()
-
-            if message.src == self.pipeline:
-                self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
-                self._currentStateCb(new)
 
     def _elementMessageCb(self, unused_bus, message):
         """

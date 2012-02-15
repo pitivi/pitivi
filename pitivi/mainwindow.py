@@ -675,13 +675,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.prefsdialog.dialog.set_transient_for(self)
         self.prefsdialog.run()
 
-    def _projectManagerNewProjectLoadedCb(self, projectManager, unused_project):
+    def _projectManagerNewProjectLoadedCb(self, projectManager, project):
         """
         Once a new project has been loaded, wait for media library's
         "ready" signal to populate the timeline.
         """
         self.log("A new project is loaded, wait for clips")
         self._connectToProjectSources(self.app.current.medialibrary)
+        self.setProjectPipeline(project.pipeline)
         self.app.current.timeline.connect("notify::duration",
                 self._timelineDurationChangedCb)
 
@@ -1045,16 +1046,21 @@ class PitiviMainWindow(gtk.Window, Loggable):
         """
         The pipeline has sent us a message. It could be that it reached the end
         of the stream or that the pipeline state changed (ex: playback started
-        or stopped). In that case, tell the timeline UI about the new state.
+        or stopped).
+
+        In that case, tell the timeline UI and viewer about the new state.
         """
         if message.type == gst.MESSAGE_EOS:
-            self.warning("eos")
+            # Playback reached the end of the timeline. Pause the pipeline
+            # to prevent playback from resuming when the user seeks somewhere.
+            self.app.current.pipeline.set_state(gst.STATE_PAUSED)
         elif message.type == gst.MESSAGE_STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
             if message.src == self._project_pipeline:
-                self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
-                state_change = pending == gst.STATE_VOID_PENDING
-                if state_change:
+                self.debug("Pipeline state changed. Prev:%r, new:%r, pending:%r", prev, new, pending)
+                state_really_changed = pending == gst.STATE_VOID_PENDING
+                if state_really_changed:
+                    self.viewer.pipelineStateChanged(new)
                     self.timeline_ui.pipeline_state = new
 
 ## other
