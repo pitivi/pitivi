@@ -254,14 +254,22 @@ def available_combinations():
 
 
 def beautify_factoryname(factory):
-    """Returns a nice name for the specified gst.ElementFactory instance."""
+    """
+    Returns a nice name for the specified gst.ElementFactory instance.
+    This is intended to remove redundant words and shorten the codec names.
+    """
     # only replace lowercase versions of "format", "video", "audio"
     # otherwise they might be part of a trademark name
     words_to_remove = ["Muxer", "muxer", "Encoder", "encoder",
-            "format", "video", "audio", "instead"]
+            "format", "video", "audio", "instead",
+            "Flash Video (FLV) /",  # Incorrect naming for Sorenson Spark
+            ]
+    words_to_replace = [["version ", "v"], ["Microsoft", "MS"], ]
     name = factory.get_longname()
     for word in words_to_remove:
         name = name.replace(word, "")
+    for match, replacement in words_to_replace:
+        name = name.replace(match, replacement)
     return " ".join(word for word in name.split())
 
 
