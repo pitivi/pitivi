@@ -460,10 +460,12 @@ class PitiviViewer(gtk.VBox, Loggable):
         else:
             self.dock()
 
-    def _positionCheckCb(self):
+    def positionCheck(self):
         """
-        Every 300 ms, check if the timeline position changed.
-        If so, update our viewer UI widgets.
+        If the timeline position changed, update the viewer UI widgets.
+
+        This is meant to be called either by the gobject timer when playing,
+        or by mainwindow's _timelineSeekCb when the timer is disabled.
         """
         try:
             self.current_time = self.pipeline.query_position(gst.FORMAT_TIME)[0]
@@ -473,10 +475,15 @@ class PitiviViewer(gtk.VBox, Loggable):
                 self.seeker.setPosition(self.current_time)
                 self.previous_time = self.current_time
         except:
-            self.debug("could not check timeline position for the viewer")
-        if self.currentState == gst.STATE_PAUSED:
-            return False
-        return True
+            self.debug("Could not check timeline position for the viewer")
+
+    def _positionCheckTimerCb(self):
+        """
+        Every 300 ms, request to check if the timeline position changed.
+        If the pipeline is paused, this returns False to stop the gobject timer.
+        """
+        self.positionCheck()
+        return self.currentState != gst.STATE_PAUSED
 
     def pipelineStateChanged(self, state):
         """
@@ -489,7 +496,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         if int(state) == int(gst.STATE_PLAYING):
             self.playpause_button.setPause()
             self.system.inhibitScreensaver(self.INHIBIT_REASON)
-            gobject.timeout_add(300, self._positionCheckCb)
+            gobject.timeout_add(300, self._positionCheckTimerCb)
         elif int(state) == int(gst.STATE_PAUSED):
             self.playpause_button.setPlay()
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)

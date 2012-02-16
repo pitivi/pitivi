@@ -1205,7 +1205,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _timelineSeekCb(self, ruler, position, format):
         """
-        This is the main method used for seeking throughout the app.
+        The app's main seek method used when the user seeks manually.
 
         We clamp the seeker position so that it cannot go past 0 or the
         end of the timeline.
@@ -1222,6 +1222,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 self.warning("Could not seek to %s", gst.TIME_ARGS(position))
             else:
                 self._seeker.setPosition(position)
+            # Ensure that the viewer UI is updated when seeking while paused
+            self.viewer.positionCheck()
 
         except Exception, e:
             self.error("seek failed %s %s %s", gst.TIME_ARGS(position), format, e)
