@@ -515,15 +515,14 @@ class PitiviViewer(gtk.VBox, Loggable):
             name = message.structure.get_name()
             self.log('message:%s / %s', message, name)
             if name == 'prepare-xwindow-id':
-                sink = message.src
-                self.sink = sink
+                self.sink = message.src
                 self._switch_output_window()
         return gst.BUS_PASS
 
     def _switch_output_window(self):
         gtk.gdk.threads_enter()
         self.sink.set_xwindow_id(self.target.window_xid)
-        #FIXME GES break
+        #FIXME GES: the line below doesn't seem to do anything
         #self.sink.expose()
         gtk.gdk.threads_leave()
 
