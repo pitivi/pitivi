@@ -902,8 +902,13 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
             self.transformation_properties = transformation_properties
 
     def _store_pixbuf(self):
+        """
+        When not playing, store a pixbuf of the current viewer image.
+        This will allow it to be restored for the transformation box.
+        """
         colormap = self.window.get_colormap()
         if self.box and self.zoom != 1.0:
+            # The transformation box is active and dezoomed
             # crop away 1 pixel border to avoid artefacts on the pixbuf
             pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, 0, 8,
                                         self.box.area.width - 2,
@@ -915,6 +920,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
                                                    self.box.area.width - 2,
                                                    self.box.area.height - 2)
         else:
+            # Normal mode
             pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB,
                                         0, 8, *self.window.get_size())
             self.pixbuf = pixbuf.get_from_drawable(self.window, colormap,
@@ -922,6 +928,10 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         self.stored = True
 
     def do_realize(self):
+        """
+        Redefine gtk DrawingArea's do_realize method to handle multiple OSes.
+        This is called when creating the widget to get the window ID.
+        """
         gtk.DrawingArea.do_realize(self)
         if platform.system() == 'Windows':
             self.window_xid = self.window.handle
