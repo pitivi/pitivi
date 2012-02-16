@@ -234,10 +234,8 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.external_window.add(vbox)
         self.external = ViewerWidget(self.app.settings)
         vbox.pack_start(self.external)
-        self.external_window.connect("delete-event",
-            self._externalWindowDeleteCb)
-        self.external_window.connect("configure-event",
-            self._externalWindowConfigureCb)
+        self.external_window.connect("delete-event", self._externalWindowDeleteCb)
+        self.external_window.connect("configure-event", self._externalWindowConfigureCb)
         self.external_vbox = vbox
         self.external_vbox.show_all()
 
@@ -430,10 +428,8 @@ class PitiviViewer(gtk.VBox, Loggable):
         if self.sink:
             self._switch_output_window()
         self.hide()
-        self.external_window.move(self.settings.viewerX,
-            self.settings.viewerY)
-        self.external_window.resize(self.settings.viewerWidth,
-            self.settings.viewerHeight)
+        self.external_window.move(self.settings.viewerX, self.settings.viewerY)
+        self.external_window.resize(self.settings.viewerWidth, self.settings.viewerHeight)
 
     def dock(self):
         if not self.undock_action:
