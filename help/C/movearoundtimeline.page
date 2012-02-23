@@ -27,8 +27,8 @@
     <title>Moving around the timeline</title>
 
      <section>
-      <title>Activating tools in the Timeline toolbar</title>
-       <p>The Timeline toolbar contains many tools. These tools become active once a clip is selected in the timeline. To select a clip just click on the desired clip. The clip will become darker when selected. The Timeline toolbar should now be active</p>
+      <title>Activating the timeline toolbar</title>
+       <p>The timeline toolbar contains many tools, which become active once a clip is selected in the timeline. To select a clip, simply click on the desired clip in the timeline. When selected, the clip will become darker and the timeline toolbar items will now be clickable.</p>
      </section>
 
      <section>
