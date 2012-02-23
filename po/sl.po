@@ -9,79 +9,79 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-09-28 05:26+0000\n"
+"POT-Creation-Date: 2012-02-23 18:40+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
 "X-Poedit-Language: Slovenian\n"
 "X-Poedit-Country: SLOVENIA\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: ../data/pitivi.desktop.in.in.h:1
-msgid "Create and edit your own movies"
-msgstr "Ustvarjajte in urejajte svoje filme"
-
-#: ../data/pitivi.desktop.in.in.h:2
 msgid "Pitivi Video Editor"
 msgstr "Pitivi urejevalnik videa"
 
-#: ../data/ui/alignmentprogress.ui.h:1
-msgid "<b><big>Performing Auto-Alignment</big></b>"
-msgstr "<b><big>Izvajanje samodejnega poravnavanja</big></b>"
+#: ../data/pitivi.desktop.in.in.h:2
+msgid "Create and edit your own movies"
+msgstr "Ustvarjajte in urejajte svoje filme"
 
-#: ../data/ui/alignmentprogress.ui.h:2
+#: ../data/ui/alignmentprogress.ui.h:1
 msgid "Auto-Alignment Starting"
 msgstr "Začenjanje samodejne poravnave"
 
+#: ../data/ui/alignmentprogress.ui.h:2
+msgid "<b><big>Performing Auto-Alignment</big></b>"
+msgstr "<b><big>Izvajanje samodejnega poravnavanja</big></b>"
+
 #: ../data/ui/alignmentprogress.ui.h:3
-#: ../data/ui/encodingprogress.ui.h:6
+#: ../data/ui/encodingprogress.ui.h:9
 msgid "Estimating..."
 msgstr "Ocenjevanje ...."
 
 #: ../data/ui/cliptransformation.ui.h:1
-msgid "<b>Crop</b>"
-msgstr "<b>Obrez</b>"
-
-#: ../data/ui/cliptransformation.ui.h:2
-msgid "<b>Position</b>"
-msgstr "<b>Položaj</b>"
-
-#: ../data/ui/cliptransformation.ui.h:3
-msgid "<b>Size</b>"
-msgstr "<b>Velikost</b>"
-
-#: ../data/ui/cliptransformation.ui.h:4
 msgid "<b>Viewer Zoom</b>"
 msgstr "<b>Približanje pregledovalnika</b>"
 
-#: ../data/ui/cliptransformation.ui.h:5
-msgid "Height:"
-msgstr "Višina:"
-
-#: ../data/ui/cliptransformation.ui.h:6
-msgid "Width:"
-msgstr "Širina:"
-
-#: ../data/ui/cliptransformation.ui.h:7
+#: ../data/ui/cliptransformation.ui.h:2
 msgid "X:"
 msgstr "X:"
 
-#: ../data/ui/cliptransformation.ui.h:8
+#: ../data/ui/cliptransformation.ui.h:3
 msgid "Y:"
 msgstr "Y:"
 
-#: ../data/ui/depsmanager.ui.h:1
-msgid "Install"
-msgstr "Namesti"
+#: ../data/ui/cliptransformation.ui.h:4
+msgid "<b>Position</b>"
+msgstr "<b>Položaj</b>"
 
-#: ../data/ui/depsmanager.ui.h:2
+#: ../data/ui/cliptransformation.ui.h:5
+msgid "Width:"
+msgstr "Širina:"
+
+#: ../data/ui/cliptransformation.ui.h:6
+msgid "Height:"
+msgstr "Višina:"
+
+#: ../data/ui/cliptransformation.ui.h:7
+msgid "<b>Size</b>"
+msgstr "<b>Velikost</b>"
+
+#: ../data/ui/cliptransformation.ui.h:8
+msgid "<b>Crop</b>"
+msgstr "<b>Obrez</b>"
+
+#: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
 msgstr "Manjkajoče odvisnosti"
+
+#: ../data/ui/depsmanager.ui.h:2
+msgid "Install"
+msgstr "Namesti"
 
 #: ../data/ui/depsmanager.ui.h:3
 msgid "To enable additional features, please install the following packages and restart PiTiVi:"
@@ -96,41 +96,41 @@ msgid "Properties for <element>"
 msgstr "Lastnosti za <element>"
 
 #: ../data/ui/encodingdialog.ui.h:1
-msgid "1000 x 1000"
-msgstr "1000 x 1000"
+msgid "MP4"
+msgstr "MP4"
 
 #: ../data/ui/encodingdialog.ui.h:2
+msgid "H.264"
+msgstr "H.264"
+
+#: ../data/ui/encodingdialog.ui.h:3
 msgid "29.97 fps"
 msgstr "29.97 sl/s"
 
-#: ../data/ui/encodingdialog.ui.h:3
-msgid "6 channels (5.1)"
-msgstr "6 kanalov (5.1)"
-
 #: ../data/ui/encodingdialog.ui.h:4
-msgid "<b>Render Preset</b>"
-msgstr "<b>Prednastavitev izrisovanja</b>"
+msgid "AC-3"
+msgstr "AC-3"
 
 #: ../data/ui/encodingdialog.ui.h:5
 msgid "AAC"
 msgstr "AAC"
 
 #: ../data/ui/encodingdialog.ui.h:6
-msgid "AC-3"
-msgstr "AC-3"
+msgid "6 channels (5.1)"
+msgstr "6 kanalov (5.1)"
 
 #: ../data/ui/encodingdialog.ui.h:7
-msgid "Advanced..."
-msgstr "Napredno ..."
+#: ../pitivi/ui/mainwindow.py:130
+msgid "Render"
+msgstr "Izriši"
 
 #: ../data/ui/encodingdialog.ui.h:8
-#: ../data/ui/projectsettings.ui.h:8
-msgid "Audio"
-msgstr "Zvok"
+msgid "<b>Render Preset</b>"
+msgstr "<b>Prednastavitev izrisovanja</b>"
 
 #: ../data/ui/encodingdialog.ui.h:9
-msgid "Codec:"
-msgstr "Kodek:"
+msgid "Folder"
+msgstr "Mapa"
 
 #: ../data/ui/encodingdialog.ui.h:10
 msgid "Container format"
@@ -141,245 +141,245 @@ msgid "Container format:"
 msgstr "Oblika vsebnika:"
 
 #: ../data/ui/encodingdialog.ui.h:12
-msgid "Draft (no special effects, single pass)"
-msgstr "Osnutek (brez posebnih učinkov, en prehod)"
+msgid "Folder:"
+msgstr "Mapa:"
 
 #: ../data/ui/encodingdialog.ui.h:13
-msgid "Edit Project Settings..."
-msgstr "Uredi nastavitve projekta ..."
+msgid "File name:"
+msgstr "Ime datoteke:"
 
 #: ../data/ui/encodingdialog.ui.h:14
 msgid "File name"
 msgstr "Ime datoteke"
 
 #: ../data/ui/encodingdialog.ui.h:15
-msgid "File name:"
-msgstr "Ime datoteke:"
-
-#: ../data/ui/encodingdialog.ui.h:16
-msgid "Folder"
-msgstr "Mapa"
-
-#: ../data/ui/encodingdialog.ui.h:17
-msgid "Folder:"
-msgstr "Mapa:"
-
-#: ../data/ui/encodingdialog.ui.h:18
-msgid "Frame rate:"
-msgstr "Hitrost sličic:"
-
-#: ../data/ui/encodingdialog.ui.h:19
-msgid "Framerate"
-msgstr "Hitrost sličic"
-
-#: ../data/ui/encodingdialog.ui.h:20
-msgid "General"
-msgstr "Splošno"
-
-#: ../data/ui/encodingdialog.ui.h:21
-msgid "H.264"
-msgstr "H.264"
-
-#: ../data/ui/encodingdialog.ui.h:22
-msgid "Height"
-msgstr "Višina"
-
-#: ../data/ui/encodingdialog.ui.h:23
-msgid "MP4"
-msgstr "MP4"
-
-#: ../data/ui/encodingdialog.ui.h:24
-msgid "Number of channels:"
-msgstr "Število kanalov:"
-
-#: ../data/ui/encodingdialog.ui.h:25
-#: ../pitivi/ui/mainwindow.py:130
-msgid "Render"
-msgstr "Izriši"
-
-#: ../data/ui/encodingdialog.ui.h:26
 msgid "Render only the selected clips"
 msgstr "Izriši le izbrane posnetke"
 
-#: ../data/ui/encodingdialog.ui.h:27
-msgid "Sample Depth:"
-msgstr "Globina vzorca:"
+#: ../data/ui/encodingdialog.ui.h:16
+msgid "Draft (no special effects, single pass)"
+msgstr "Osnutek (brez posebnih učinkov, en prehod)"
 
-#: ../data/ui/encodingdialog.ui.h:28
-msgid "Sample Rate:"
-msgstr "Vzorčna hitrost:"
+#: ../data/ui/encodingdialog.ui.h:17
+msgid "General"
+msgstr "Splošno"
 
-#: ../data/ui/encodingdialog.ui.h:29
+#: ../data/ui/encodingdialog.ui.h:18
+msgid "Advanced..."
+msgstr "Napredno ..."
+
+#: ../data/ui/encodingdialog.ui.h:19
+msgid "Codec:"
+msgstr "Kodek:"
+
+#: ../data/ui/encodingdialog.ui.h:20
+msgid "Framerate"
+msgstr "Hitrost sličic"
+
+#: ../data/ui/encodingdialog.ui.h:21
 msgid "Scale"
 msgstr "Povečava"
 
-#: ../data/ui/encodingdialog.ui.h:30
+#: ../data/ui/encodingdialog.ui.h:22
+msgid "1000 x 1000"
+msgstr "1000 x 1000"
+
+#: ../data/ui/encodingdialog.ui.h:23
+msgid "Height"
+msgstr "Višina"
+
+#: ../data/ui/encodingdialog.ui.h:24
+msgid "Edit Project Settings..."
+msgstr "Uredi nastavitve projekta ..."
+
+#: ../data/ui/encodingdialog.ui.h:25
+msgid "Frame rate:"
+msgstr "Hitrost sličic:"
+
+#: ../data/ui/encodingdialog.ui.h:26
 msgid "Scale:"
 msgstr "Povečava:"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../data/ui/encodingdialog.ui.h:31
-#: ../data/ui/projectsettings.ui.h:21
+#: ../data/ui/encodingdialog.ui.h:27
+#: ../data/ui/projectsettings.ui.h:13
 #: ../pitivi/effects.py:244
 msgid "Video"
 msgstr "Video"
 
+#: ../data/ui/encodingdialog.ui.h:28
+msgid "Number of channels:"
+msgstr "Število kanalov:"
+
+#: ../data/ui/encodingdialog.ui.h:29
+msgid "Sample Rate:"
+msgstr "Vzorčna hitrost:"
+
+#: ../data/ui/encodingdialog.ui.h:30
+msgid "Sample Depth:"
+msgstr "Globina vzorca:"
+
+#: ../data/ui/encodingdialog.ui.h:31
+#: ../data/ui/projectsettings.ui.h:19
+msgid "Audio"
+msgstr "Zvok"
+
 #: ../data/ui/encodingprogress.ui.h:1
+msgid "Rendering"
+msgstr "Izrisovanje"
+
+#: ../data/ui/encodingprogress.ui.h:2
 msgid "<b><big>Rendering movie</big></b>"
 msgstr "<b><big>Izrisovanje filma</big></b>"
 
-#: ../data/ui/encodingprogress.ui.h:2
-msgid "<b>Estimated filesize:</b>"
-msgstr "<b>Ocenjena velikost:</b>"
-
 #: ../data/ui/encodingprogress.ui.h:3
-msgid "<b>Frames per second:</b>"
-msgstr "<b>Sličice na sekundo:</b>"
+msgid "Unknown Mib"
+msgstr "Naznano Mib"
 
 #: ../data/ui/encodingprogress.ui.h:4
-msgid "<b>Phase:</b>"
-msgstr "<b>Korak:</b>"
+msgid "Unknown"
+msgstr "Neznano"
 
 #: ../data/ui/encodingprogress.ui.h:5
 msgid "Encoding first pass"
 msgstr "Prvi prehod kodiranj"
 
+#: ../data/ui/encodingprogress.ui.h:6
+msgid "<b>Estimated filesize:</b>"
+msgstr "<b>Ocenjena velikost:</b>"
+
 #: ../data/ui/encodingprogress.ui.h:7
-msgid "Rendering"
-msgstr "Izrisovanje"
+msgid "<b>Frames per second:</b>"
+msgstr "<b>Sličice na sekundo:</b>"
 
 #: ../data/ui/encodingprogress.ui.h:8
-msgid "Unknown"
-msgstr "Neznano"
-
-#: ../data/ui/encodingprogress.ui.h:9
-msgid "Unknown Mib"
-msgstr "Naznano Mib"
+msgid "<b>Phase:</b>"
+msgstr "<b>Korak:</b>"
 
 #: ../data/ui/preferences.ui.h:1
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
-msgstr "<b>Nekatere spremembe ne bodo imele učinka do ponovnega zagona PiTiVi</b>"
-
-#: ../data/ui/preferences.ui.h:2
 msgid "Preferences"
 msgstr "Možnosti"
 
-#: ../data/ui/preferences.ui.h:3
-msgid "Reset to Factory Settings"
-msgstr "Ponastavi na tovarniške nastavitve"
-
-#: ../data/ui/preferences.ui.h:4
-msgid "Revert"
-msgstr "Povrni"
-
-#: ../data/ui/preferences.ui.h:5
+#: ../data/ui/preferences.ui.h:2
 msgid "Section"
 msgstr "Odsek"
 
+#: ../data/ui/preferences.ui.h:3
+msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
+msgstr "<b>Nekatere spremembe ne bodo imele učinka do ponovnega zagona PiTiVi</b>"
+
+#: ../data/ui/preferences.ui.h:4
+msgid "Reset to Factory Settings"
+msgstr "Ponastavi na tovarniške nastavitve"
+
+#: ../data/ui/preferences.ui.h:5
+msgid "Revert"
+msgstr "Povrni"
+
 #: ../data/ui/projectsettings.ui.h:1
+#: ../pitivi/ui/projectsettings.py:64
+msgid "Standard (4:3)"
+msgstr "Standardni (4:3)"
+
+#: ../data/ui/projectsettings.ui.h:2
+msgid "Standard PAL"
+msgstr "Standarni PAL"
+
+#: ../data/ui/projectsettings.ui.h:3
 msgid "25 FPS"
 msgstr "25 SL/S"
 
-#: ../data/ui/projectsettings.ui.h:2
-msgid "<b>Aspect Ratio</b>"
-msgstr "<b>Razmerje velikosti</b>"
-
-#: ../data/ui/projectsettings.ui.h:3
-msgid "<b>Audio Preset</b>"
-msgstr "<b>Prednastavljeni zvok</b>"
-
 #: ../data/ui/projectsettings.ui.h:4
-msgid "<b>Format</b>"
-msgstr "<b>Oblika</b>"
+#: ../pitivi/ui/mainwindow.py:254
+msgid "Project Settings"
+msgstr "Nastavitve projekta"
 
 #: ../data/ui/projectsettings.ui.h:5
-msgid "<b>Frame Rate</b>"
-msgstr "<b>Hitrost sličic</b>"
+msgid "<b>Video Preset</b>"
+msgstr "<b>Prednastavljen video</b>"
 
 #: ../data/ui/projectsettings.ui.h:6
 msgid "<b>Size (Pixels)</b>"
 msgstr "<b>Velikost (točke)</b>"
 
 #: ../data/ui/projectsettings.ui.h:7
-msgid "<b>Video Preset</b>"
-msgstr "<b>Prednastavljen video</b>"
+msgid "<b>Aspect Ratio</b>"
+msgstr "<b>Razmerje velikosti</b>"
 
-#: ../data/ui/projectsettings.ui.h:9
-msgid "Author:"
-msgstr "Avtor:"
-
-#: ../data/ui/projectsettings.ui.h:10
-msgid "Channels:"
-msgstr "Kanali:"
-
-#: ../data/ui/projectsettings.ui.h:11
+#: ../data/ui/projectsettings.ui.h:8
 msgid "Display Aspect Ratio"
 msgstr "Razmerje velikosti zaslona"
 
-#: ../data/ui/projectsettings.ui.h:12
-msgid "Info"
-msgstr "Podrobnosti"
+#: ../data/ui/projectsettings.ui.h:9
+msgid "Pixel Aspect Ratio"
+msgstr "Razmerje velikosti točk"
+
+#: ../data/ui/projectsettings.ui.h:10
+msgid "x"
+msgstr "x"
 
 #. Translators: This is an action, the title of a button
-#: ../data/ui/projectsettings.ui.h:13
+#: ../data/ui/projectsettings.ui.h:11
 #: ../pitivi/ui/mainwindow.py:135
 msgid "Link"
 msgstr "Poveži"
 
+#: ../data/ui/projectsettings.ui.h:12
+msgid "<b>Frame Rate</b>"
+msgstr "<b>Hitrost sličic</b>"
+
 #: ../data/ui/projectsettings.ui.h:14
-msgid "Pixel Aspect Ratio"
-msgstr "Razmerje velikosti točk"
+msgid "<b>Audio Preset</b>"
+msgstr "<b>Prednastavljeni zvok</b>"
 
 #: ../data/ui/projectsettings.ui.h:15
-#: ../pitivi/ui/mainwindow.py:254
-msgid "Project Settings"
-msgstr "Nastavitve projekta"
+msgid "<b>Format</b>"
+msgstr "<b>Oblika</b>"
 
 #: ../data/ui/projectsettings.ui.h:16
-msgid "Project title:"
-msgstr "Naslov projekta:"
+msgid "Channels:"
+msgstr "Kanali:"
 
 #: ../data/ui/projectsettings.ui.h:17
-msgid "Sample depth:"
-msgstr "Globina vzorca:"
-
-#: ../data/ui/projectsettings.ui.h:18
 msgid "Sample rate:"
 msgstr "Hitrost vzorca:"
 
-#: ../data/ui/projectsettings.ui.h:19
-#: ../pitivi/ui/projectsettings.py:64
-msgid "Standard (4:3)"
-msgstr "Standardni (4:3)"
+#: ../data/ui/projectsettings.ui.h:18
+msgid "Sample depth:"
+msgstr "Globina vzorca:"
 
 #: ../data/ui/projectsettings.ui.h:20
-msgid "Standard PAL"
-msgstr "Standarni PAL"
+msgid "Author:"
+msgstr "Avtor:"
 
-#: ../data/ui/projectsettings.ui.h:22
+#: ../data/ui/projectsettings.ui.h:21
 msgid "Year:"
 msgstr "Leto:"
 
+#: ../data/ui/projectsettings.ui.h:22
+msgid "Project title:"
+msgstr "Naslov projekta:"
+
 #: ../data/ui/projectsettings.ui.h:23
-msgid "x"
-msgstr "x"
+msgid "Info"
+msgstr "Podrobnosti"
 
 #: ../data/ui/startupwizard.ui.h:1
-msgid "Browse projects..."
-msgstr "Brksaj po projektih ..."
+msgid "Welcome"
+msgstr "Dobrodošli"
 
 #: ../data/ui/startupwizard.ui.h:2
 msgid "Double-click a project below to load it:"
-msgstr "Dvokliknite projekt spodaj za nalganje:"
+msgstr "Izberite projekt in ga z dvoklikom naložite:"
 
 #: ../data/ui/startupwizard.ui.h:3
-msgid "Missing dependencies..."
-msgstr "Manjkajoče odvisnosti ..."
+msgid "Browse projects..."
+msgstr "Brskanje med projekti ..."
 
 #: ../data/ui/startupwizard.ui.h:4
-msgid "Welcome"
-msgstr "Dobrodošli"
+msgid "Missing dependencies..."
+msgstr "Manjkajoče odvisnosti ..."
 
 #: ../pitivi/application.py:117
 #, python-format
@@ -725,6 +725,7 @@ msgstr "Čas"
 
 #: ../pitivi/effects.py:116
 #: ../pitivi/effects.py:226
+#: ../pitivi/factories/operation.py:66
 msgid "Uncategorized"
 msgstr "Nekategorizirano"
 
@@ -793,6 +794,21 @@ msgid ""
 msgstr ""
 "\n"
 "Zvijalnik: "
+
+#: ../pitivi/ui/alignmentprogress.py:69
+#, python-format
+msgid "%d%% Analyzed"
+msgstr "%d%% preučeno"
+
+#. Translators: This string indicates the estimated time
+#. remaining until the action completes.  The "%s" is an
+#. already-localized human-readable duration description like
+#. "31 seconds".
+#: ../pitivi/ui/alignmentprogress.py:75
+#: ../pitivi/ui/encodingprogress.py:67
+#, python-format
+msgid "About %s left"
+msgstr "Preostalo je še približno %s"
 
 #: ../pitivi/ui/clipproperties.py:164
 msgid "Remove effect"
@@ -999,6 +1015,11 @@ msgid ""
 msgstr ""
 "Ta datoteka že obstaja.\n"
 "V primeru da je ne želite prepisati, izberite drugo ime datoteke ali mapo."
+
+#: ../pitivi/ui/encodingprogress.py:65
+#, python-format
+msgid "%d%% Rendered"
+msgstr "%d%% izrisano"
 
 #: ../pitivi/ui/filechooserpreview.py:134
 msgid "PiTiVi can not preview this file."
@@ -1472,7 +1493,7 @@ msgstr "Trajanje"
 
 #: ../pitivi/ui/sourcelist.py:243
 msgid "Add media to your project by dragging files and folders here or by using the \"Import Files...\" button."
-msgstr "Dodajte predstavnost v svoj projekt z vlečenjem datotek ali map sem ali z uporabo gumba \"Uvozi datoteke ...\"."
+msgstr "Dodajte datoteke v projekt z vlečenjem datotek ali map na to mesto ali pa z uporabo gumba \"Uvozi datoteke ...\"."
 
 #: ../pitivi/ui/sourcelist.py:259
 msgid "Hide"
@@ -1562,6 +1583,10 @@ msgstr "S PiTiVi ni mogoče uporabiti naslednjih datotek."
 #: ../pitivi/ui/sourcelist.py:776
 msgid "The following file can not be used with PiTiVi."
 msgstr "PiTiVi ne more uporabiti naslednje datoteke."
+
+#: ../pitivi/ui/startupwizard.py:59
+msgid "Projects"
+msgstr "Projekti"
 
 #: ../pitivi/ui/timelinecanvas.py:52
 msgid "Behavior"
