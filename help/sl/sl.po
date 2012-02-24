@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PiTiVi help\n"
 "POT-Creation-Date: 2011-08-23 07:07+0000\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
+"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME translation team <gnome-si@googlegroups.com>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -407,7 +407,7 @@ msgstr "Sprememba položaja glave predvajanja (če je potrebno)."
 #: C/splitting.page:44(p)
 #: C/splitting.page:50(p)
 msgid "Click on the <gui>Split</gui> button on the timeline toolbar or press <key>S</key>."
-msgstr "Kliknite na gumb <gui>Razdeli</gui. v časovnici ali pritisnite <key>S</key>."
+msgstr "Kliknite na gumb <gui>Razdeli</gui> v časovnici ali pritisnite <key>S</key>."
 
 #: C/splitting.page:40(p)
 msgid "To split all the clips across the all layers:"
@@ -1081,7 +1081,7 @@ msgstr "Dodajanje in odstranjevanje plasti"
 
 #: C/layers.page:48(p)
 msgid "Layers are created and removed automatically. There is no “layer management” interface in <app>PiTiVi</app> (at least, not yet)."
-msgstr "Plasti so samodejno ustvarjene in odstranjene. V <app>PiTiVi/app> ni vmesnika za \"upravljanje plasti\" (vsaj za zdaj)."
+msgstr "Plasti so samodejno ustvarjene in odstranjene. V programu <app>PiTiVi</app> ni vmesnika za “upravljanje plasti“ (vsaj za zdaj)."
 
 #: C/layers.page:49(p)
 msgid "To create a layer, drag a clip downwards until a new layer appears for it."
@@ -1284,7 +1284,7 @@ msgstr "Uvažanje iz zvočnega CD-ja."
 
 #: C/importing.page:36(p)
 msgid "Downloading from content providers such as <link href=\"http://www.jamendo.com\">Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, etc."
-msgstr "Prejemanje od ponudnikov vsebine kot so link href=\"http://www.jamendo.com\">Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, itd."
+msgstr "Prejemanje od ponudnikov vsebine kot so <link href=\"http://www.jamendo.com\">Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, itd."
 
 #: C/importing.page:42(title)
 msgid "Importing files"
@@ -1579,14 +1579,17 @@ msgstr "Andrej Žnidaršič <andrej.znidarsic@gmail.com>"
 
 #~ msgid "Drag the chosen effect into the <gui>Effect Properties</gui> pane"
 #~ msgstr "Povlecite izbrani učinek na pladenj <gui>Lastnosti učinka</gui>"
+
 #~ msgid ""
 #~ "To remove an effect on a selected clip, select it in the effect "
 #~ "properties pane and click the <gui>Remove</gui> button."
 #~ msgstr ""
 #~ "Za odstranitev učinka izbranega posnetka ga izberite na pladnju lastnosti "
 #~ "in kliknite na gumb <gui>Odstrani</gui>."
+
 #~ msgid "Toggling effects on and off"
 #~ msgstr "Vklop in izklop učinkov"
+
 #~ msgid ""
 #~ "If you want to temporarily disable an effect (to compare with and without "
 #~ "the effect, or for performance reasons), click the corresponding checkbox "
@@ -1595,10 +1598,10 @@ msgstr "Andrej Žnidaršič <andrej.znidarsic@gmail.com>"
 #~ "V primeru da želite učinek začasno onemogočiti (za primerjavo videza z in "
 #~ "brez učinka ali zaradi večje hitrosti delovanja) kliknite na ustrezno "
 #~ "izbiro polje in pladenj lastnosti učinkov."
+
 #~ msgid ""
 #~ "Currently, effects are applied on a \"per-clip\" basis. It is not yet "
 #~ "possible to apply effects to timeline layers."
 #~ msgstr ""
 #~ "Trenutno so učinki uveljavljeni na posnetek. Trenutni še ni mogoče "
 #~ "uveljaviti učinkov na plasteh časovnic."
-

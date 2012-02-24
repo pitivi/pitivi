@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-09-11 16:12+0000\n"
-"PO-Revision-Date: 2011-09-11 20:10+0200\n"
+"POT-Creation-Date: 2011-09-27 22:05+0000\n"
+"PO-Revision-Date: 2011-09-28 07:25+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -111,7 +111,6 @@ msgid "6 channels (5.1)"
 msgstr "6 kanálů (5.1)"
 
 #: ../data/ui/encodingdialog.ui.h:4
-#| msgid "<b>Video Preset</b>"
 msgid "<b>Render Preset</b>"
 msgstr "<b>Přednastavení vykreslování</b>"
 
@@ -388,7 +387,22 @@ msgstr ""
 "Již existuje instance %s, informujte prosím vývojáře nahlášením chyby na "
 "http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:444
+#: ../pitivi/application.py:425
+#| msgid "Error Loading Project"
+msgid "Loading project..."
+msgstr "Načítá se projekt…"
+
+#: ../pitivi/application.py:434
+#| msgid "Project title:"
+msgid "Project loaded."
+msgstr "Projekt je načten."
+
+#: ../pitivi/application.py:435
+#| msgid "Rendering"
+msgid "Rendering..."
+msgstr "Vykresluje se…"
+
+#: ../pitivi/application.py:447
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -404,49 +418,49 @@ msgstr ""
 "  %prog PROJEKTOVÝ_SOUBOR -r VÝSTUPNÍ_SOUBOR  Vykreslit projekt.\n"
 "  %prog PROJEKTOVÝ_SOUBOR -p                  Náhled projektu."
 
-#: ../pitivi/application.py:452
+#: ../pitivi/application.py:455
 msgid "Import each MEDIA_FILE into a new project."
 msgstr "Importovat každý jednotlivý MEDIÁLNÍ_SOUBOR do projektu."
 
-#: ../pitivi/application.py:455
+#: ../pitivi/application.py:458
 msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr "Každý naimportovaný MEDIÁLNÍ_SOUBOR přidat do časové osy."
 
-#: ../pitivi/application.py:458
+#: ../pitivi/application.py:461
 msgid "Run Pitivi in the Python Debugger."
 msgstr "Spustit pitivi v ladicím programu jazyka Python"
 
-#: ../pitivi/application.py:461
+#: ../pitivi/application.py:464
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr ""
 "Vykreslit daný projektový soubor do VÝSTUPNÍHO_SOUBORU bez použití "
 "grafického prostředí."
 
-#: ../pitivi/application.py:464
+#: ../pitivi/application.py:467
 msgid "Preview the specified project file without the full UI."
 msgstr "Náhled daného projektového souboru bez plného grafického prostředí."
 
-#: ../pitivi/application.py:469
+#: ../pitivi/application.py:472
 msgid "-p and -r cannot be used simultaneously"
 msgstr "-p a -r nelze použít současně"
 
-#: ../pitivi/application.py:472
+#: ../pitivi/application.py:475
 msgid "-r or -p and -i are incompatible"
 msgstr "-r nebo -p a zároveň -i jsou nekompatibilní"
 
-#: ../pitivi/application.py:475
+#: ../pitivi/application.py:478
 msgid "-a requires -i"
 msgstr "-a vyžaduje -i"
 
-#: ../pitivi/application.py:483
+#: ../pitivi/application.py:486
 msgid "-r requires exactly one PROJECT_FILE"
 msgstr "-r vyžaduje právě jeden PROJEKTOVÝ_SOUBOR"
 
-#: ../pitivi/application.py:486
+#: ../pitivi/application.py:489
 msgid "-p requires exactly one PROJECT_FILE"
 msgstr "-p vyžaduje právě jeden PROJEKTOVÝ_SOUBOR"
 
-#: ../pitivi/application.py:489
+#: ../pitivi/application.py:492
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "Nelze otevřít více než jeden PROJEKTOVÝ_SOUBOR"
 
@@ -558,14 +572,11 @@ msgstr "Nainstalujte vazbu jazyka Python na GTK+ ve verzi %s nebo vyšší."
 
 #: ../pitivi/check.py:147
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of GStreamer (your version %s)"
 msgid "You do not have a recent enough version of GTK+ (your version %s)"
 msgstr "Nemáte nainstalovánu dostatečně novou verzi GTK+ (vaše verze je %s)"
 
 #: ../pitivi/check.py:148
 #, python-format
-#| msgid "Install a version of the GStreamer greater than or equal to %s."
 msgid "Install a version of GTK+ greater than or equal to %s."
 msgstr "Nainstalujte GTK+ ve verzi %s nebo vyšší."
 
@@ -998,7 +1009,6 @@ msgstr "Zobrazit videoefekty jako ikony"
 
 #: ../pitivi/ui/encodingdialog.py:225 ../pitivi/ui/projectsettings.py:290
 #: ../pitivi/ui/projectsettings.py:296
-#| msgid "New Preset"
 msgid "No preset"
 msgstr "Žádné přednastavení"
 
@@ -1008,21 +1018,19 @@ msgid "\"%s\" already exists."
 msgstr "„%s“ již existuje."
 
 #: ../pitivi/ui/encodingdialog.py:415 ../pitivi/ui/projectsettings.py:431
-#| msgid "New Preset"
 msgid "New preset"
 msgstr "Nové přednastavení"
 
 #: ../pitivi/ui/encodingdialog.py:418 ../pitivi/ui/projectsettings.py:434
 #, python-format
-#| msgid "New Preset %d"
 msgid "New preset %d"
 msgstr "Nové přednastavení %d"
 
-#: ../pitivi/ui/encodingdialog.py:542
+#: ../pitivi/ui/encodingdialog.py:543
 msgid "A file name is required."
 msgstr "Vyžadován název souboru."
 
-#: ../pitivi/ui/encodingdialog.py:544
+#: ../pitivi/ui/encodingdialog.py:545
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1221,7 +1229,7 @@ msgstr "Hlavní nástrojová lišta"
 msgid "Timeline Toolbar"
 msgstr "Nástrojová lišta časové osy"
 
-#: ../pitivi/ui/mainwindow.py:301 ../pitivi/ui/viewer.py:581
+#: ../pitivi/ui/mainwindow.py:301 ../pitivi/ui/viewer.py:580
 msgid "Undock Viewer"
 msgstr "Zobrazovač volně"
 
@@ -1747,15 +1755,15 @@ msgstr "Přejít o sekundu vpřed"
 msgid "Go to the end of the timeline"
 msgstr "Přejit na konec časové osy"
 
-#: ../pitivi/ui/viewer.py:555
+#: ../pitivi/ui/viewer.py:554
 msgid "Dock Viewer"
 msgstr "Ukotvit zobrazovač"
 
-#: ../pitivi/ui/viewer.py:1133
+#: ../pitivi/ui/viewer.py:1132
 msgid "Play"
 msgstr "Přehrát"
 
-#: ../pitivi/ui/viewer.py:1141
+#: ../pitivi/ui/viewer.py:1140
 msgid "Pause"
 msgstr "Pozastavit"
 

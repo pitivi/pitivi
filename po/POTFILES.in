@@ -18,12 +18,14 @@ pitivi/discoverer.py
 pitivi/effects.py
 pitivi/factories/base.py
 pitivi/factories/file.py
+pitivi/factories/operation.py
 pitivi/formatters/format.py
 pitivi/formatters/etree.py
 pitivi/projectmanager.py
 pitivi/project.py
 pitivi/settings.py
 pitivi/stream.py
+pitivi/ui/alignmentprogress.py
 pitivi/ui/basetabs.py
 pitivi/ui/clipproperties.py
 pitivi/ui/common.py
@@ -31,6 +33,7 @@ pitivi/ui/dynamic.py
 pitivi/ui/effectlist.py
 pitivi/ui/effectsconfiguration.py
 pitivi/ui/encodingdialog.py
+pitivi/ui/encodingprogress.py
 pitivi/ui/filechooserpreview.py
 pitivi/ui/filelisterrordialog.py
 pitivi/ui/gstwidget.py
@@ -39,6 +42,7 @@ pitivi/ui/prefs.py
 pitivi/ui/previewer.py
 pitivi/ui/projectsettings.py
 pitivi/ui/sourcelist.py
+pitivi/ui/startupwizard.py
 pitivi/ui/timelinecanvas.py
 pitivi/ui/timelinecontrols.py
 pitivi/ui/timeline.py

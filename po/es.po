@@ -6,15 +6,15 @@
 # Jesse Aviles <jesseaviles@gmail.com>, 2008, 2009, 2010.
 # Jesse Avilés <jesseaviles@gmail.com>, 2011.
 # Jorge González <jorgegonz@svn.gnome.org>, 2007, 2009, 2010, 2011.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-09-11 16:12+0000\n"
-"PO-Revision-Date: 2011-09-11 18:15+0200\n"
+"POT-Creation-Date: 2012-02-22 23:32+0000\n"
+"PO-Revision-Date: 2012-02-24 14:41+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -24,64 +24,64 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../data/pitivi.desktop.in.in.h:1
-msgid "Create and edit your own movies"
-msgstr "Cree y edite sus propias películas"
-
-#: ../data/pitivi.desktop.in.in.h:2
 msgid "Pitivi Video Editor"
 msgstr "Editor de vídeo Pitivi"
 
-#: ../data/ui/alignmentprogress.ui.h:1
-msgid "<b><big>Performing Auto-Alignment</big></b>"
-msgstr "<b><big>Realizando alineamiento automático</big></b>"
+#: ../data/pitivi.desktop.in.in.h:2
+msgid "Create and edit your own movies"
+msgstr "Cree y edite sus propias películas"
 
-#: ../data/ui/alignmentprogress.ui.h:2
+#: ../data/ui/alignmentprogress.ui.h:1
 msgid "Auto-Alignment Starting"
 msgstr "Iniciando el alineamiento automático"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../data/ui/encodingprogress.ui.h:6
+#: ../data/ui/alignmentprogress.ui.h:2
+msgid "<b><big>Performing Auto-Alignment</big></b>"
+msgstr "<b><big>Realizando alineamiento automático</big></b>"
+
+#: ../data/ui/alignmentprogress.ui.h:3 ../data/ui/encodingprogress.ui.h:9
 msgid "Estimating..."
 msgstr "Estimando…"
 
 #: ../data/ui/cliptransformation.ui.h:1
-msgid "<b>Crop</b>"
-msgstr "<b>Cortar</b>"
-
-#: ../data/ui/cliptransformation.ui.h:2
-msgid "<b>Position</b>"
-msgstr "<b>Posición</b>"
-
-#: ../data/ui/cliptransformation.ui.h:3
-msgid "<b>Size</b>"
-msgstr "<b>Tamaño</b>"
-
-#: ../data/ui/cliptransformation.ui.h:4
 msgid "<b>Viewer Zoom</b>"
 msgstr "<b>Ampliación del visor</b>"
 
-#: ../data/ui/cliptransformation.ui.h:5
-msgid "Height:"
-msgstr "Altura:"
-
-#: ../data/ui/cliptransformation.ui.h:6
-msgid "Width:"
-msgstr "Anchura:"
-
-#: ../data/ui/cliptransformation.ui.h:7
+#: ../data/ui/cliptransformation.ui.h:2
 msgid "X:"
 msgstr "X:"
 
-#: ../data/ui/cliptransformation.ui.h:8
+#: ../data/ui/cliptransformation.ui.h:3
 msgid "Y:"
 msgstr "Y:"
 
-#: ../data/ui/depsmanager.ui.h:1
-msgid "Install"
-msgstr "Instalar"
+#: ../data/ui/cliptransformation.ui.h:4
+msgid "<b>Position</b>"
+msgstr "<b>Posición</b>"
 
-#: ../data/ui/depsmanager.ui.h:2
+#: ../data/ui/cliptransformation.ui.h:5
+msgid "Width:"
+msgstr "Anchura:"
+
+#: ../data/ui/cliptransformation.ui.h:6
+msgid "Height:"
+msgstr "Altura:"
+
+#: ../data/ui/cliptransformation.ui.h:7
+msgid "<b>Size</b>"
+msgstr "<b>Tamaño</b>"
+
+#: ../data/ui/cliptransformation.ui.h:8
+msgid "<b>Crop</b>"
+msgstr "<b>Cortar</b>"
+
+#: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
 msgstr "Dependencias faltantes"
+
+#: ../data/ui/depsmanager.ui.h:2
+msgid "Install"
+msgstr "Instalar"
 
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
@@ -100,41 +100,40 @@ msgid "Properties for <element>"
 msgstr "Propiedades para <element>"
 
 #: ../data/ui/encodingdialog.ui.h:1
-msgid "1000 x 1000"
-msgstr "1000 x 1000"
+msgid "MP4"
+msgstr "MP4"
 
 #: ../data/ui/encodingdialog.ui.h:2
+msgid "H.264"
+msgstr "H.264"
+
+#: ../data/ui/encodingdialog.ui.h:3
 msgid "29.97 fps"
 msgstr "29.97 fps"
 
-#: ../data/ui/encodingdialog.ui.h:3
-msgid "6 channels (5.1)"
-msgstr "6 canales (5.1)"
-
 #: ../data/ui/encodingdialog.ui.h:4
-#| msgid "<b>Video Preset</b>"
-msgid "<b>Render Preset</b>"
-msgstr "<b>Preconfiguración de renderizado</b>"
+msgid "AC-3"
+msgstr "AC-3"
 
 #: ../data/ui/encodingdialog.ui.h:5
 msgid "AAC"
 msgstr "AAC"
 
 #: ../data/ui/encodingdialog.ui.h:6
-msgid "AC-3"
-msgstr "AC-3"
+msgid "6 channels (5.1)"
+msgstr "6 canales (5.1)"
 
-#: ../data/ui/encodingdialog.ui.h:7
-msgid "Advanced..."
-msgstr "Avanzadas…"
+#: ../data/ui/encodingdialog.ui.h:7 ../pitivi/ui/mainwindow.py:130
+msgid "Render"
+msgstr "Renderizar"
 
-#: ../data/ui/encodingdialog.ui.h:8 ../data/ui/projectsettings.ui.h:8
-msgid "Audio"
-msgstr "Sonido"
+#: ../data/ui/encodingdialog.ui.h:8
+msgid "<b>Render Preset</b>"
+msgstr "<b>Preconfiguración de renderizado</b>"
 
 #: ../data/ui/encodingdialog.ui.h:9
-msgid "Codec:"
-msgstr "Códec:"
+msgid "Folder"
+msgstr "Carpeta"
 
 #: ../data/ui/encodingdialog.ui.h:10
 msgid "Container format"
@@ -145,240 +144,240 @@ msgid "Container format:"
 msgstr "Formato del contenedor:"
 
 #: ../data/ui/encodingdialog.ui.h:12
-msgid "Draft (no special effects, single pass)"
-msgstr "Borrador (sin efectos especiales, una sola pasada)"
+msgid "Folder:"
+msgstr "Carpeta:"
 
 #: ../data/ui/encodingdialog.ui.h:13
-msgid "Edit Project Settings..."
-msgstr "Editar ajustes del proyecto…"
+msgid "File name:"
+msgstr "Nombre del archivo:"
 
 #: ../data/ui/encodingdialog.ui.h:14
 msgid "File name"
 msgstr "Nombre de archivo"
 
 #: ../data/ui/encodingdialog.ui.h:15
-msgid "File name:"
-msgstr "Nombre del archivo:"
-
-#: ../data/ui/encodingdialog.ui.h:16
-msgid "Folder"
-msgstr "Carpeta"
-
-#: ../data/ui/encodingdialog.ui.h:17
-msgid "Folder:"
-msgstr "Carpeta:"
-
-#: ../data/ui/encodingdialog.ui.h:18
-msgid "Frame rate:"
-msgstr "Tasa de fotogramas:"
-
-#: ../data/ui/encodingdialog.ui.h:19
-msgid "Framerate"
-msgstr "Tasa de fotogramas"
-
-#: ../data/ui/encodingdialog.ui.h:20
-msgid "General"
-msgstr "General"
-
-#: ../data/ui/encodingdialog.ui.h:21
-msgid "H.264"
-msgstr "H.264"
-
-#: ../data/ui/encodingdialog.ui.h:22
-msgid "Height"
-msgstr "Altura"
-
-#: ../data/ui/encodingdialog.ui.h:23
-msgid "MP4"
-msgstr "MP4"
-
-#: ../data/ui/encodingdialog.ui.h:24
-msgid "Number of channels:"
-msgstr "Número de canales:"
-
-#: ../data/ui/encodingdialog.ui.h:25 ../pitivi/ui/mainwindow.py:130
-msgid "Render"
-msgstr "Renderizar"
-
-#: ../data/ui/encodingdialog.ui.h:26
 msgid "Render only the selected clips"
 msgstr "Renderizar sólo los vídeos seleccionados"
 
-#: ../data/ui/encodingdialog.ui.h:27
-msgid "Sample Depth:"
-msgstr "Profundidad del muestreo:"
+#: ../data/ui/encodingdialog.ui.h:16
+msgid "Draft (no special effects, single pass)"
+msgstr "Borrador (sin efectos especiales, una sola pasada)"
 
-#: ../data/ui/encodingdialog.ui.h:28
-msgid "Sample Rate:"
-msgstr "Frecuencia de muestreo:"
+#: ../data/ui/encodingdialog.ui.h:17
+msgid "General"
+msgstr "General"
 
-#: ../data/ui/encodingdialog.ui.h:29
+#: ../data/ui/encodingdialog.ui.h:18
+msgid "Advanced..."
+msgstr "Avanzadas…"
+
+#: ../data/ui/encodingdialog.ui.h:19
+msgid "Codec:"
+msgstr "Códec:"
+
+#: ../data/ui/encodingdialog.ui.h:20
+msgid "Framerate"
+msgstr "Tasa de fotogramas"
+
+#: ../data/ui/encodingdialog.ui.h:21
 msgid "Scale"
 msgstr "Escala"
 
-#: ../data/ui/encodingdialog.ui.h:30
+#: ../data/ui/encodingdialog.ui.h:22
+msgid "1000 x 1000"
+msgstr "1000 x 1000"
+
+#: ../data/ui/encodingdialog.ui.h:23
+msgid "Height"
+msgstr "Altura"
+
+#: ../data/ui/encodingdialog.ui.h:24
+msgid "Edit Project Settings..."
+msgstr "Editar ajustes del proyecto…"
+
+#: ../data/ui/encodingdialog.ui.h:25
+msgid "Frame rate:"
+msgstr "Tasa de fotogramas:"
+
+#: ../data/ui/encodingdialog.ui.h:26
 msgid "Scale:"
 msgstr "Escala:"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../data/ui/encodingdialog.ui.h:31 ../data/ui/projectsettings.ui.h:21
+#: ../data/ui/encodingdialog.ui.h:27 ../data/ui/projectsettings.ui.h:13
 #: ../pitivi/effects.py:244
 msgid "Video"
 msgstr "Vídeo"
 
+#: ../data/ui/encodingdialog.ui.h:28
+msgid "Number of channels:"
+msgstr "Número de canales:"
+
+#: ../data/ui/encodingdialog.ui.h:29
+msgid "Sample Rate:"
+msgstr "Frecuencia de muestreo:"
+
+#: ../data/ui/encodingdialog.ui.h:30
+msgid "Sample Depth:"
+msgstr "Profundidad del muestreo:"
+
+#: ../data/ui/encodingdialog.ui.h:31 ../data/ui/projectsettings.ui.h:19
+msgid "Audio"
+msgstr "Sonido"
+
 #: ../data/ui/encodingprogress.ui.h:1
+msgid "Rendering"
+msgstr "Renderizando"
+
+#: ../data/ui/encodingprogress.ui.h:2
 msgid "<b><big>Rendering movie</big></b>"
 msgstr "<b><big>Renderizando película</big></b>"
 
-#: ../data/ui/encodingprogress.ui.h:2
-msgid "<b>Estimated filesize:</b>"
-msgstr "<b>Tamaño de archivo esperado:</b>"
-
 #: ../data/ui/encodingprogress.ui.h:3
-msgid "<b>Frames per second:</b>"
-msgstr "<b>Fotogramas por segundo:</b>"
+msgid "Unknown Mib"
+msgstr "Mib desconocido"
 
 #: ../data/ui/encodingprogress.ui.h:4
-msgid "<b>Phase:</b>"
-msgstr "<b>Fase:</b>"
+msgid "Unknown"
+msgstr "Desconocido"
 
 #: ../data/ui/encodingprogress.ui.h:5
 msgid "Encoding first pass"
 msgstr "Codificando la primera pasada"
 
+#: ../data/ui/encodingprogress.ui.h:6
+msgid "<b>Estimated filesize:</b>"
+msgstr "<b>Tamaño de archivo esperado:</b>"
+
 #: ../data/ui/encodingprogress.ui.h:7
-msgid "Rendering"
-msgstr "Renderizando"
+msgid "<b>Frames per second:</b>"
+msgstr "<b>Fotogramas por segundo:</b>"
 
 #: ../data/ui/encodingprogress.ui.h:8
-msgid "Unknown"
-msgstr "Desconocido"
-
-#: ../data/ui/encodingprogress.ui.h:9
-msgid "Unknown Mib"
-msgstr "Mib desconocido"
+msgid "<b>Phase:</b>"
+msgstr "<b>Fase:</b>"
 
 #: ../data/ui/preferences.ui.h:1
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
-msgstr "<b>Algunos cambios no tendrán efecto hasta que reinicie PiTiVi</b>"
-
-#: ../data/ui/preferences.ui.h:2
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: ../data/ui/preferences.ui.h:3
-msgid "Reset to Factory Settings"
-msgstr "Restaurar a los ajustes de fábrica"
-
-#: ../data/ui/preferences.ui.h:4
-msgid "Revert"
-msgstr "Revertir"
-
-#: ../data/ui/preferences.ui.h:5
+#: ../data/ui/preferences.ui.h:2
 msgid "Section"
 msgstr "Sección"
 
-#: ../data/ui/projectsettings.ui.h:1
+#: ../data/ui/preferences.ui.h:3
+msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
+msgstr "<b>Algunos cambios no tendrán efecto hasta que reinicie PiTiVi</b>"
+
+#: ../data/ui/preferences.ui.h:4
+msgid "Reset to Factory Settings"
+msgstr "Restaurar a los ajustes de fábrica"
+
+#: ../data/ui/preferences.ui.h:5
+msgid "Revert"
+msgstr "Revertir"
+
+#: ../data/ui/projectsettings.ui.h:1 ../pitivi/ui/projectsettings.py:64
+msgid "Standard (4:3)"
+msgstr "Estándar (4:3)"
+
+#: ../data/ui/projectsettings.ui.h:2
+msgid "Standard PAL"
+msgstr "PAL estándar"
+
+#: ../data/ui/projectsettings.ui.h:3
 msgid "25 FPS"
 msgstr "25 FPS"
 
-#: ../data/ui/projectsettings.ui.h:2
-msgid "<b>Aspect Ratio</b>"
-msgstr "<b>Proporción</b>"
-
-#: ../data/ui/projectsettings.ui.h:3
-msgid "<b>Audio Preset</b>"
-msgstr "<b>Preconfiguración de sonido</b>"
-
-#: ../data/ui/projectsettings.ui.h:4
-msgid "<b>Format</b>"
-msgstr "<b>Formato</b>"
+#: ../data/ui/projectsettings.ui.h:4 ../pitivi/ui/mainwindow.py:254
+msgid "Project Settings"
+msgstr "Ajustes del proyecto"
 
 #: ../data/ui/projectsettings.ui.h:5
-msgid "<b>Frame Rate</b>"
-msgstr "<b>Frecuencia de fotogramas</b>"
+msgid "<b>Video Preset</b>"
+msgstr "<b>Preconfiguración de vídeo</b>"
 
 #: ../data/ui/projectsettings.ui.h:6
 msgid "<b>Size (Pixels)</b>"
 msgstr "<b>Tamaño (píxeles)</b>"
 
 #: ../data/ui/projectsettings.ui.h:7
-msgid "<b>Video Preset</b>"
-msgstr "<b>Preconfiguración de vídeo</b>"
+msgid "<b>Aspect Ratio</b>"
+msgstr "<b>Proporción</b>"
 
-#: ../data/ui/projectsettings.ui.h:9
-msgid "Author:"
-msgstr "Autor:"
-
-#: ../data/ui/projectsettings.ui.h:10
-msgid "Channels:"
-msgstr "Canales:"
-
-#: ../data/ui/projectsettings.ui.h:11
+#: ../data/ui/projectsettings.ui.h:8
 msgid "Display Aspect Ratio"
 msgstr "Mostrar la proporción"
 
-#: ../data/ui/projectsettings.ui.h:12
-msgid "Info"
-msgstr "Información"
-
-#. Translators: This is an action, the title of a button
-#: ../data/ui/projectsettings.ui.h:13 ../pitivi/ui/mainwindow.py:135
-msgid "Link"
-msgstr "Unir"
-
-#: ../data/ui/projectsettings.ui.h:14
+#: ../data/ui/projectsettings.ui.h:9
 msgid "Pixel Aspect Ratio"
 msgstr "Proporción de los píxeles"
 
-#: ../data/ui/projectsettings.ui.h:15 ../pitivi/ui/mainwindow.py:254
-msgid "Project Settings"
-msgstr "Ajustes del proyecto"
-
-#: ../data/ui/projectsettings.ui.h:16
-msgid "Project title:"
-msgstr "Título del proyecto:"
-
-#: ../data/ui/projectsettings.ui.h:17
-msgid "Sample depth:"
-msgstr "Profundidad del muestreo:"
-
-#: ../data/ui/projectsettings.ui.h:18
-msgid "Sample rate:"
-msgstr "Frecuencia de muestreo:"
-
-#: ../data/ui/projectsettings.ui.h:19 ../pitivi/ui/projectsettings.py:64
-msgid "Standard (4:3)"
-msgstr "Estándar (4:3)"
-
-#: ../data/ui/projectsettings.ui.h:20
-msgid "Standard PAL"
-msgstr "PAL estándar"
-
-#: ../data/ui/projectsettings.ui.h:22
-msgid "Year:"
-msgstr "Año:"
-
-#: ../data/ui/projectsettings.ui.h:23
+#: ../data/ui/projectsettings.ui.h:10
 msgid "x"
 msgstr "x"
 
+#. Translators: This is an action, the title of a button
+#: ../data/ui/projectsettings.ui.h:11 ../pitivi/ui/mainwindow.py:135
+msgid "Link"
+msgstr "Unir"
+
+#: ../data/ui/projectsettings.ui.h:12
+msgid "<b>Frame Rate</b>"
+msgstr "<b>Frecuencia de fotogramas</b>"
+
+#: ../data/ui/projectsettings.ui.h:14
+msgid "<b>Audio Preset</b>"
+msgstr "<b>Preconfiguración de sonido</b>"
+
+#: ../data/ui/projectsettings.ui.h:15
+msgid "<b>Format</b>"
+msgstr "<b>Formato</b>"
+
+#: ../data/ui/projectsettings.ui.h:16
+msgid "Channels:"
+msgstr "Canales:"
+
+#: ../data/ui/projectsettings.ui.h:17
+msgid "Sample rate:"
+msgstr "Frecuencia de muestreo:"
+
+#: ../data/ui/projectsettings.ui.h:18
+msgid "Sample depth:"
+msgstr "Profundidad del muestreo:"
+
+#: ../data/ui/projectsettings.ui.h:20
+msgid "Author:"
+msgstr "Autor:"
+
+#: ../data/ui/projectsettings.ui.h:21
+msgid "Year:"
+msgstr "Año:"
+
+#: ../data/ui/projectsettings.ui.h:22
+msgid "Project title:"
+msgstr "Título del proyecto:"
+
+#: ../data/ui/projectsettings.ui.h:23
+msgid "Info"
+msgstr "Información"
+
 #: ../data/ui/startupwizard.ui.h:1
-msgid "Browse projects..."
-msgstr "Examinar proyectos…"
+msgid "Welcome"
+msgstr "Bienvenido"
 
 #: ../data/ui/startupwizard.ui.h:2
 msgid "Double-click a project below to load it:"
 msgstr "Pulsar abajo dos veces sobre un proyecto para cargarlo:"
 
 #: ../data/ui/startupwizard.ui.h:3
-msgid "Missing dependencies..."
-msgstr "Dependencias faltantes…"
+msgid "Browse projects..."
+msgstr "Examinar proyectos…"
 
 #: ../data/ui/startupwizard.ui.h:4
-msgid "Welcome"
-msgstr "Bienvenido"
+msgid "Missing dependencies..."
+msgstr "Dependencias faltantes…"
 
 #: ../pitivi/application.py:117
 #, python-format
@@ -389,7 +388,19 @@ msgstr ""
 "Ya hay una instancia de %s, informe a los desarrolladores rellenando un "
 "informe de error en http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:444
+#: ../pitivi/application.py:425
+msgid "Loading project..."
+msgstr "Cargando proyecto…"
+
+#: ../pitivi/application.py:434
+msgid "Project loaded."
+msgstr "Proyecto cargado."
+
+#: ../pitivi/application.py:435
+msgid "Rendering..."
+msgstr "Renderizando…"
+
+#: ../pitivi/application.py:447
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -408,48 +419,48 @@ msgstr ""
 "    %prog ARCHIVO_DE_PROYECTO -p                    # Previsualizar un "
 "proyecto."
 
-#: ../pitivi/application.py:452
+#: ../pitivi/application.py:455
 msgid "Import each MEDIA_FILE into a new project."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:455
+#: ../pitivi/application.py:458
 msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:458
+#: ../pitivi/application.py:461
 msgid "Run Pitivi in the Python Debugger."
 msgstr "Ejecutar Pitivi en el depurador de Python"
 
-#: ../pitivi/application.py:461
+#: ../pitivi/application.py:464
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr ""
 "Renderizar en ARCHIVO_DE_SALIDA el archivo de proyecto proporcionado sin IGU."
 
-#: ../pitivi/application.py:464
+#: ../pitivi/application.py:467
 msgid "Preview the specified project file without the full UI."
 msgstr "Previsualizar el archivo de proyecto proporcionado sin el IU completo."
 
-#: ../pitivi/application.py:469
+#: ../pitivi/application.py:472
 msgid "-p and -r cannot be used simultaneously"
 msgstr "-p y -r no se pueden usar a la vez"
 
-#: ../pitivi/application.py:472
+#: ../pitivi/application.py:475
 msgid "-r or -p and -i are incompatible"
 msgstr "-r o -p y -i son incompatibles"
 
-#: ../pitivi/application.py:475
+#: ../pitivi/application.py:478
 msgid "-a requires -i"
 msgstr "-a requiere -i"
 
-#: ../pitivi/application.py:483
+#: ../pitivi/application.py:486
 msgid "-r requires exactly one PROJECT_FILE"
 msgstr "-r requiere exactamente un ARCHIVO_DE_PROYECTO"
 
-#: ../pitivi/application.py:486
+#: ../pitivi/application.py:489
 msgid "-p requires exactly one PROJECT_FILE"
 msgstr "-p requiere exactamente un ARCHIVO_DE_PROYECTO"
 
-#: ../pitivi/application.py:489
+#: ../pitivi/application.py:492
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "No se puede abrir más de un ARCHIVO_DE_PROYECTO"
 
@@ -484,8 +495,8 @@ msgid ""
 "Make sure you have installed gst-plugins-good and that it's available in the "
 "GStreamer plugin path."
 msgstr ""
-"Asegúrese de que ha instalado los complementos «gst-plugins-good» y que "
-"están disponibles en la ruta de complementos de GStreamer."
+"Asegúrese de que ha instalado los complementos «gst-plugins-good» y que están "
+"disponibles en la ruta de complementos de GStreamer."
 
 #: ../pitivi/check.py:124
 msgid "PyGTK doesn't have cairo support"
@@ -567,14 +578,11 @@ msgstr ""
 
 #: ../pitivi/check.py:147
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of GStreamer (your version %s)"
 msgid "You do not have a recent enough version of GTK+ (your version %s)"
 msgstr "No tiene una versión reciente de GTK+ (su versión es %s)"
 
 #: ../pitivi/check.py:148
 #, python-format
-#| msgid "Install a version of the GStreamer greater than or equal to %s."
 msgid "Install a version of GTK+ greater than or equal to %s."
 msgstr "Instale una versión de GTK+ mayor o igual a %s."
 
@@ -590,8 +598,8 @@ msgstr ""
 #: ../pitivi/check.py:152
 #, python-format
 msgid ""
-"Install a version of the GStreamer Python bindings greater than or equal to "
-"%s."
+"Install a version of the GStreamer Python bindings greater than or equal to %"
+"s."
 msgstr ""
 "Instale una versión de los bindings de Python para GStreamer mayor o igual a "
 "%s."
@@ -634,11 +642,11 @@ msgstr ""
 #: ../pitivi/check.py:164
 #, python-format
 msgid ""
-"Install a version of the GNonLin GStreamer plugin greater than or equal to "
-"%s."
+"Install a version of the GNonLin GStreamer plugin greater than or equal to %"
+"s."
 msgstr ""
-"Instale una versión del complemento GNonLin para GStreamer mayor o igual a "
-"%s."
+"Instale una versión del complemento GNonLin para GStreamer mayor o igual a %"
+"s."
 
 #: ../pitivi/check.py:166
 msgid "Could not import the Zope interface module"
@@ -715,8 +723,7 @@ msgstr "No hay disponible un manejador de la fuente."
 #, python-format
 msgid ""
 "You do not have a GStreamer source element to handle the \"%s\" protocol"
-msgstr ""
-"No tiene un elemento fuente de GStreamer para manejar el protocolo «%s»"
+msgstr "No tiene un elemento fuente de GStreamer para manejar el protocolo «%s»"
 
 #: ../pitivi/discoverer.py:407
 msgid "File does not exist"
@@ -780,6 +787,7 @@ msgid "Time"
 msgstr "Duración"
 
 #: ../pitivi/effects.py:116 ../pitivi/effects.py:226
+#: ../pitivi/factories/operation.py:66
 msgid "Uncategorized"
 msgstr "Sin categorizar"
 
@@ -848,6 +856,20 @@ msgid ""
 msgstr ""
 "\n"
 "Mezclador:"
+
+#: ../pitivi/ui/alignmentprogress.py:69
+#, python-format
+msgid "%d%% Analyzed"
+msgstr "%d%% analizado"
+
+#. Translators: This string indicates the estimated time
+#. remaining until the action completes.  The "%s" is an
+#. already-localized human-readable duration description like
+#. "31 seconds".
+#: ../pitivi/ui/alignmentprogress.py:75 ../pitivi/ui/encodingprogress.py:67
+#, python-format
+msgid "About %s left"
+msgstr "Quedan alrededor de %s"
 
 #: ../pitivi/ui/clipproperties.py:164
 msgid "Remove effect"
@@ -1011,7 +1033,6 @@ msgstr "Mostrar efectos de vídeo como iconos"
 
 #: ../pitivi/ui/encodingdialog.py:225 ../pitivi/ui/projectsettings.py:290
 #: ../pitivi/ui/projectsettings.py:296
-#| msgid "New Preset"
 msgid "No preset"
 msgstr "No hay configuración"
 
@@ -1021,21 +1042,19 @@ msgid "\"%s\" already exists."
 msgstr "«%s» ya existe."
 
 #: ../pitivi/ui/encodingdialog.py:415 ../pitivi/ui/projectsettings.py:431
-#| msgid "New Preset"
 msgid "New preset"
 msgstr "Configuración nueva"
 
 #: ../pitivi/ui/encodingdialog.py:418 ../pitivi/ui/projectsettings.py:434
 #, python-format
-#| msgid "New Preset %d"
 msgid "New preset %d"
 msgstr "Configuración nueva %d"
 
-#: ../pitivi/ui/encodingdialog.py:542
+#: ../pitivi/ui/encodingdialog.py:543
 msgid "A file name is required."
 msgstr "Se necesita un nombre de archivo."
 
-#: ../pitivi/ui/encodingdialog.py:544
+#: ../pitivi/ui/encodingdialog.py:545
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1043,6 +1062,12 @@ msgstr ""
 "Este archivo ya existe.\n"
 "Si no quiere sobreescribirlo, elija un nombre de archivo o una carpeta "
 "diferentes."
+
+#: ../pitivi/ui/encodingprogress.py:65
+#, python-format
+#| msgid "%.0f%% rendered"
+msgid "%d%% Rendered"
+msgstr "%d%% renderizado"
 
 #: ../pitivi/ui/filechooserpreview.py:134
 msgid "PiTiVi can not preview this file."
@@ -1235,7 +1260,7 @@ msgstr "Barra de herramientas principal"
 msgid "Timeline Toolbar"
 msgstr "Barra de herramientas de la cronología"
 
-#: ../pitivi/ui/mainwindow.py:301 ../pitivi/ui/viewer.py:581
+#: ../pitivi/ui/mainwindow.py:301 ../pitivi/ui/viewer.py:580
 msgid "Undock Viewer"
 msgstr "Desbloquear visor"
 
@@ -1599,6 +1624,11 @@ msgstr "Los siguientes archivos no se pueden usar con PiTiVi."
 msgid "The following file can not be used with PiTiVi."
 msgstr "El siguiente archivo no se puede usar con PiTiVi."
 
+#: ../pitivi/ui/startupwizard.py:59
+#| msgid "_Project"
+msgid "Projects"
+msgstr "Proyectos"
+
 #: ../pitivi/ui/timelinecanvas.py:52
 msgid "Behavior"
 msgstr "Comportamiento"
@@ -1760,15 +1790,15 @@ msgstr "Ir al siguiente segundo"
 msgid "Go to the end of the timeline"
 msgstr "Ir al final de la cronología"
 
-#: ../pitivi/ui/viewer.py:555
+#: ../pitivi/ui/viewer.py:554
 msgid "Dock Viewer"
 msgstr "Anclar el visor"
 
-#: ../pitivi/ui/viewer.py:1133
+#: ../pitivi/ui/viewer.py:1132
 msgid "Play"
 msgstr "Reproducir"
 
-#: ../pitivi/ui/viewer.py:1141
+#: ../pitivi/ui/viewer.py:1140
 msgid "Pause"
 msgstr "Pausar"
 
@@ -2171,12 +2201,6 @@ msgstr "%s no puede manipular aún proyectos no locales"
 
 #~ msgid "Choose file to render to"
 #~ msgstr "Elegir un archivo que renderizar"
-
-#~ msgid "%.0f%% rendered"
-#~ msgstr "%.0f%% renderizado"
-
-#~ msgid "About %s left"
-#~ msgstr "Quedan alrededor de %s"
 
 #~ msgid "0% rendered"
 #~ msgstr "0% renderizado"

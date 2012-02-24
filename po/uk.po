@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-09-11 16:12+0000\n"
-"PO-Revision-Date: 2011-09-12 09:19+0300\n"
+"POT-Creation-Date: 2011-09-27 22:05+0000\n"
+"PO-Revision-Date: 2011-12-08 19:51+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "MIME-Version: 1.0\n"
@@ -108,7 +108,6 @@ msgid "6 channels (5.1)"
 msgstr "Шестиканальний (5.1)"
 
 #: ../data/ui/encodingdialog.ui.h:4
-#| msgid "<b>Video Preset</b>"
 msgid "<b>Render Preset</b>"
 msgstr "<b>Шаблон обробки</b>"
 
@@ -388,7 +387,22 @@ msgstr ""
 "допомогою звіту про ваду за адресою at http://bugzilla.gnome.org/enter_bug."
 "cgi?product=pitivi"
 
-#: ../pitivi/application.py:444
+#: ../pitivi/application.py:425
+#| msgid "Error Loading Project"
+msgid "Loading project..."
+msgstr "Завантаження проекту…"
+
+#: ../pitivi/application.py:434
+#| msgid "Project title:"
+msgid "Project loaded."
+msgstr "Проект завантажено."
+
+#: ../pitivi/application.py:435
+#| msgid "Rendering"
+msgid "Rendering..."
+msgstr "Обробка…"
+
+#: ../pitivi/application.py:447
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -404,51 +418,51 @@ msgstr ""
 "    %prog ФАЙЛ_ПРОЕКТУ -r ФАЙЛ_РЕЗУЛЬТАТУ # обробити проект.\n"
 "    %prog ФАЙЛ_ПРОЕКТУ -p                 # переглянути проект."
 
-#: ../pitivi/application.py:452
+#: ../pitivi/application.py:455
 msgid "Import each MEDIA_FILE into a new project."
 msgstr "Імпортувати всі вказані ФАЙЛИ_ДАНИХ до нового проекту"
 
-#: ../pitivi/application.py:455
-msgid "Add each imported MEDIA_FILE to the timeline."
-msgstr "Додати всі ФАЙЛИ_ДАНИХ до лінійки запису."
-
 #: ../pitivi/application.py:458
+msgid "Add each imported MEDIA_FILE to the timeline."
+msgstr "Додати всі ФАЙЛИ_ДАНИХ на монтажний стіл."
+
+#: ../pitivi/application.py:461
 msgid "Run Pitivi in the Python Debugger."
 msgstr "Запустити Pitivi у програмі зневаджування Python."
 
-#: ../pitivi/application.py:461
+#: ../pitivi/application.py:464
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr ""
 "Обробити дані вказаного проекту до ФАЙЛА_РЕЗУЛЬТАТУ без відкриття графічного "
 "інтерфейсу."
 
-#: ../pitivi/application.py:464
+#: ../pitivi/application.py:467
 msgid "Preview the specified project file without the full UI."
 msgstr ""
 "Попередньо переглянути вказаний файл проекту без відкриття графічного "
 "інтерфейсу."
 
-#: ../pitivi/application.py:469
+#: ../pitivi/application.py:472
 msgid "-p and -r cannot be used simultaneously"
 msgstr "-p і -r не можна використовувати одночасно"
 
-#: ../pitivi/application.py:472
+#: ../pitivi/application.py:475
 msgid "-r or -p and -i are incompatible"
 msgstr "-r або -p і -i є несумісними"
 
-#: ../pitivi/application.py:475
+#: ../pitivi/application.py:478
 msgid "-a requires -i"
 msgstr "для використання -a слід вказати параметр -i"
 
-#: ../pitivi/application.py:483
+#: ../pitivi/application.py:486
 msgid "-r requires exactly one PROJECT_FILE"
 msgstr "для використання -r слід вказати лише один ФАЙЛ_ПРОЕКТУ"
 
-#: ../pitivi/application.py:486
+#: ../pitivi/application.py:489
 msgid "-p requires exactly one PROJECT_FILE"
 msgstr "для використання -p слід вказати лише один ФАЙЛ_ПРОЕКТУ"
 
-#: ../pitivi/application.py:489
+#: ../pitivi/application.py:492
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "Відкриття декількох _файлів проектів неможливе"
 
@@ -562,15 +576,12 @@ msgstr "Встановіть бібліотеки Python для GTK+ версі�
 
 #: ../pitivi/check.py:147
 #, python-format
-#| msgid ""
-#| "You do not have a recent enough version of GStreamer (your version %s)"
 msgid "You do not have a recent enough version of GTK+ (your version %s)"
 msgstr ""
 "У вашій системі не виявлено достатньо нової версії GTK+ (поточна версія %s)"
 
 #: ../pitivi/check.py:148
 #, python-format
-#| msgid "Install a version of the GStreamer greater than or equal to %s."
 msgid "Install a version of GTK+ greater than or equal to %s."
 msgstr "Встановіть GTK+ версії не меншої, ніж %s."
 
@@ -869,7 +880,7 @@ msgstr "Ефекти"
 #: ../pitivi/ui/clipproperties.py:409
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
-"Позначте кліп на лінійці запису для налаштування пов’язаних з ним ефектів"
+"Позначте кліп на монтажному столі для налаштування пов’язаних з ним ефектів"
 
 #: ../pitivi/ui/clipproperties.py:483
 msgid "Transformation"
@@ -1009,7 +1020,6 @@ msgstr "Показувати відеоефекти як піктограми"
 
 #: ../pitivi/ui/encodingdialog.py:225 ../pitivi/ui/projectsettings.py:290
 #: ../pitivi/ui/projectsettings.py:296
-#| msgid "New Preset"
 msgid "No preset"
 msgstr "Без шаблону"
 
@@ -1019,21 +1029,19 @@ msgid "\"%s\" already exists."
 msgstr "«%s» вже існує."
 
 #: ../pitivi/ui/encodingdialog.py:415 ../pitivi/ui/projectsettings.py:431
-#| msgid "New Preset"
 msgid "New preset"
 msgstr "Новий шаблон"
 
 #: ../pitivi/ui/encodingdialog.py:418 ../pitivi/ui/projectsettings.py:434
 #, python-format
-#| msgid "New Preset %d"
 msgid "New preset %d"
 msgstr "Новий шаблон %d"
 
-#: ../pitivi/ui/encodingdialog.py:542
+#: ../pitivi/ui/encodingdialog.py:543
 msgid "A file name is required."
 msgstr "Слід вказати назву файла."
 
-#: ../pitivi/ui/encodingdialog.py:544
+#: ../pitivi/ui/encodingdialog.py:545
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1153,7 +1161,6 @@ msgid "Edit the project settings"
 msgstr "Змінити параметри проекту"
 
 #: ../pitivi/ui/mainwindow.py:256
-#| msgid "Render"
 msgid "_Render..."
 msgstr "_Обробити…"
 
@@ -1208,7 +1215,7 @@ msgstr "_Бібліотека"
 
 #: ../pitivi/ui/mainwindow.py:275
 msgid "_Timeline"
-msgstr "_Лінійка запису"
+msgstr "_Монтажний стіл"
 
 #: ../pitivi/ui/mainwindow.py:276
 msgid "Previe_w"
@@ -1232,9 +1239,9 @@ msgstr "Головна панель"
 
 #: ../pitivi/ui/mainwindow.py:293
 msgid "Timeline Toolbar"
-msgstr "Панель лінійки запису"
+msgstr "Панель інструментів монтажного стола"
 
-#: ../pitivi/ui/mainwindow.py:301 ../pitivi/ui/viewer.py:581
+#: ../pitivi/ui/mainwindow.py:301 ../pitivi/ui/viewer.py:580
 msgid "Undock Viewer"
 msgstr "Розблокувати панель перегляду"
 
@@ -1543,7 +1550,7 @@ msgstr "Ви_лучити з проекту"
 
 #: ../pitivi/ui/sourcelist.py:325
 msgid "Insert at _End of Timeline"
-msgstr "Вставити в _кінець лінійки запису"
+msgstr "Вставити в _кінець запису на монтажному столі"
 
 #: ../pitivi/ui/sourcelist.py:345
 msgid "Show Clips as a List"
@@ -1697,7 +1704,7 @@ msgstr "Масштаб"
 
 #: ../pitivi/ui/timeline.py:231
 msgid "Zoom Timeline"
-msgstr "Змінити масштаб лінійки запису"
+msgstr "Змінити масштаб на монтажному столі"
 
 #: ../pitivi/ui/timeline.py:313
 msgid "Add a Keyframe"
@@ -1745,7 +1752,7 @@ msgstr "Шрифт, який буде використано для титрів
 
 #: ../pitivi/ui/viewer.py:314
 msgid "Go to the beginning of the timeline"
-msgstr "Перейти до початку лінійки запису"
+msgstr "Перейти до початку запису на монтажному столі"
 
 #: ../pitivi/ui/viewer.py:320
 msgid "Go back one second"
@@ -1757,17 +1764,17 @@ msgstr "Вперед на одну секунду"
 
 #: ../pitivi/ui/viewer.py:337
 msgid "Go to the end of the timeline"
-msgstr "Перейти в кінець лінійки запису"
+msgstr "Перейти в кінець запису на монтажному столі"
 
-#: ../pitivi/ui/viewer.py:555
+#: ../pitivi/ui/viewer.py:554
 msgid "Dock Viewer"
 msgstr "Заблокувати панель перегляду"
 
-#: ../pitivi/ui/viewer.py:1133
+#: ../pitivi/ui/viewer.py:1132
 msgid "Play"
 msgstr "Пуск"
 
-#: ../pitivi/ui/viewer.py:1141
+#: ../pitivi/ui/viewer.py:1140
 msgid "Pause"
 msgstr "Пауза"
 
