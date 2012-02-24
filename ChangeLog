@@ -1,3 +1,178 @@
+2012-02-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* NEWS:
+	* RELEASE:
+	* configure.ac:
+	  Bugfix release 0.15.1
+
+2012-02-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* docs/release:
+	  Update docs/release for clarity
+
+2012-02-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	  Merging translations
+
+2011-10-21  René Stadler <rene.stadler@collabora.co.uk>
+
+	* pitivi/elements/singledecodebin.py:
+	  SingleDecodeBin: prevent endless loop with new parsers
+	  Parsers also accept their output as input now, so the old autoplugging logic
+	  causes an infinite loop.
+	  Fixes bug #662311.
+
+2012-02-24  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2012-02-23  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* help/C/movearoundtimeline.page:
+	  manual: Slight rewording of "Activating the timeline toolbar"
+
+2012-01-30  Brian Grohe <grohe43@gmail.com>
+
+	* help/C/movearoundtimeline.page:
+	  manual: Document how to activate the timeline toolbar
+
+2012-02-23  Matej Urbančič <mateju@svn.gnome.org>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2012-02-23  Joan Duran <jodufi@gmail.com>
+
+	* po/ca.po:
+	  [l10n] Updated Catalan translation
+
+2012-02-23  Gil Forcada <gforcada@gnome.org>
+
+	* po/POTFILES.in:
+	  Added missing files on POTFILES.in
+
+2012-02-17  Bruno Brouard <annoa.b@gmail.com>
+
+	* po/fr.po:
+	  Updated French translation
+
+2012-02-17  Bruno Brouard <annoa.b@gmail.com>
+
+	* help/Makefile.am:
+	* help/fr/figures/codecscontainers.jpg:
+	* help/fr/figures/filechooser.png:
+	* help/fr/figures/hovering.png:
+	* help/fr/figures/mainwindow.jpg:
+	* help/fr/figures/previewsource.png:
+	* help/fr/fr.po:
+	  New French doc translation
+
+2012-02-04  Cheng-Chia Tseng <pswo10680@gmail.com>
+
+	* po/zh_HK.po:
+	* po/zh_TW.po:
+	  Updated Traditional Chinese translation(Hong Kong and Taiwan)
+
+2012-01-15  Cheng-Chia Tseng <pswo10680@gmail.com>
+
+	* po/zh_HK.po:
+	* po/zh_TW.po:
+	  Updated Traditional Chinese translation(Hong Kong and Taiwan)
+
+2012-01-07  Timo Jyrinki <timo@debian.org>
+
+	* po/fi.po:
+	  Updated Finnish translation by Timo Jyrinki.
+
+2011-12-29  Мирослав Николић <miroslavnikolic@rocketmail.com>
+
+	* po/sr.po:
+	* po/sr@latin.po:
+	  Updated Serbian translation
+
+2011-12-27  Server Acim <serveracim@gmail.com>
+
+	* po/tr.po:
+	  [l10n]Updated Turkish translation
+
+2011-12-16  Matej Urbančič <mateju@svn.gnome.org>
+
+	* help/sl/sl.po:
+	  Updated Slovenian translation
+
+2011-12-12  Sylvia Sánchez <LailahFSF@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2011-12-11  Daniel Korostil <ted.korostiled@gmail.com>
+
+	* po/uk.po:
+	  Uploaded Ukranian
+
+2011-11-12  Mario Blättermann <mariobl@gnome.org>
+
+	* help/Makefile.am:
+	  [l10n] Added sl to DOC_LINGUAS
+
+2011-11-12  Taijuin <taijuin@gmail.com>
+
+	* po/zh_HK.po:
+	* po/zh_TW.po:
+	  Updated Traditional Chinese translation(Hong Kong and Taiwan)
+
+2011-10-20  Gabor Kelemen <kelemeng@gnome.hu>
+
+	* po/hu.po:
+	  Updated Hungarian translation
+
+2011-10-10  Daniel Nylander <po@danielnylander.se>
+
+	* po/sv.po:
+	  Updated Swedish translation
+
+2011-10-09  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* pitivi/ui/filechooserpreview.py:
+	  Capitalize the metadata labels in the file chooser preview
+
+2011-10-02  Marek Černocký <marek@manet.cz>
+
+	* pitivi/ui/previewer.py:
+	  Use separate translatable strings for thumbnail periods
+	  Fixes bug 656652
+
+2011-10-02  Sylvia Sánchez <lailahfsf@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2011-10-02  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  [l10n] Updated German translation
+
+2011-10-01  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2011-10-01  Stas Solovey <whats_up@tut.by>
+
+	* po/ru.po:
+	  Updated Russian translation
+
+2011-09-28  Matej Urbančič <mateju@svn.gnome.org>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2011-09-28  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
 2011-09-27  Thibault Saunier <thibault.saunier@collabora.com>
 
 	* AUTHORS:
@@ -144,6 +319,11 @@
 	* pitivi/ui/viewer.py:
 	  viewer: hide the slider on startup
 	  Fixes bug #658745
+
+2011-09-11  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
 
 2011-09-11  Thibault Saunier <thibault.saunier@collabora.com>
 

@@ -20,15 +20,15 @@ Preparing:
      * Re-autogen
      * Make sure pre-requisites are still valid
      * Commit
-     * Generate CHANGES file against previous release. Ex.: changes since 0.15.0:
-       * docs/makeChangelog.py RELEASE-0_15_0.. > CHANGES
+     * Generate the complete ChangeLog file:
+       * docs/makeChangelog.py > ChangeLog
 
     Releases (major or bugfixes):
      * Bump minor number up in configure.ac and remove the nano (ex: 0.15.92 -> 0.16)
      * Re-autogen
      * Make sure pre-requisites are still valid
      * Update the following files:
-      * CHANGES (see the instructions in the previous section)
+      * ChangeLog (see the instructions in the previous section)
       * RELEASE. To get the list of contributors,
         * 'git shortlog -s -n RELEASE-<previoustag>..'
       * NEWS (Using the changes from RELEASE)
