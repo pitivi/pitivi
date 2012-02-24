@@ -1,3 +1,8 @@
+2012 February 24 - PiTiVi 0.15.1
+  * Bug fix release to ensure compatibility with Gst "good" plugins >0.10.29
+  * Minor string fixes and additions to the user manual
+  * Translations have been updated
+
 2011 Septembre 26 - PiTiVi 0.15
   * A new transformation feature allows resizing, panning and cropping clips directly in the previewer
   * Automatic clip alignment by analyzing soundtracks to sync multicamera footage

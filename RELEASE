@@ -1,28 +1,13 @@
-0.15.0 Release "Ich bin ein berliner"
----------------------------------------
+0.15.1 Release "Endless Excursion"
+----------------------------------
 
-The PiTiVi team is proud to announce the 0.15 release.
+This is a special bug fix release to prevent PiTiVi from entering an endless
+recursion, due to a change introduced in the GStreamer "good" plugins.
+This ensures PiTiVi keeps working with the latest gst releases.
 
-Due to its dependency on GStreamer, The PiTiVi team strongly recommends users have
-all official latest gstreamer libraries and plugins installed for the best user
-experience.
+Translations have also been updated.
 
-* Features of this release
-
-  * A new transformation feature allows resizing, panning and cropping clips directly in the previewer
-  * Automatic clip alignment by analyzing soundtracks to sync multicamera footage
-  * Ability to have presets for rendering
-  * Default set of project settings and rendering presets
-  * Cleaner preferences dialog
-  * Integrated offline user manual
-  * Cleaner advanced codec settings dialog
-  * Improved video thumbnailing performance
-  * "Soft depedencies" manager to warn the user of features requiring additional packages
-  * Port to gtkbuilder
-  * Respect GNOME's button icons setting
-  * Improved startup time
-  * Code cleanups and remove dead code
-  * Properly show property descriptions (blurbs) for advanced codec settings
+Dependencies/requirements have been unchanged since the 0.15 release.
 
 == Hard requirements ==
   * gstreamer >= 0.10.28
@@ -44,39 +29,27 @@ The PiTiVi team recommends satisfying those dependencies as much as possible
 for an optimal user experience.
 
 * Contributors
-    108 Alex Băluț
-    88  Jean-François Fortin Tam
-    52  Thibault Saunier
-    25  Feroze Naina
-    10  Lubosz Sarnecki
-    10  Daniel Mustieles
-    10  Mario Blättermann
-    8   Marek Černocký
-    7   Benjamin M. Schwartz
-    7   Andrej Žnidaršič
-    6   Stéphane Maniaci
-    4   Hicham HAOUARI
-    4   Kjartan Maraas
-    3   Daniel Korostil
-    3   ipraveen
-    2   António Lima
-    2   Brandon Lewis
-    2   Bruno Brouard
-    2   Gianvito Cavasoli
-    2   Daniel Nylander
-    2   Matej Urbančič
-    2   Мирослав Николић
-    1   Edward Hervey
-    1   Gabriel Speckhahn
-    1   Gil Forcada
-    1   James Putt
-    1   Jorge González
-    1   Luis de Bethencourt
-    1   Martin Srebotnjak
-    1   Peter Mráz
-    1   Peteris Krisjanis
-    1   Piotr Drąg
-    1   Yuri Myasoedov
+     4  Jean-François Fortin Tam
+     3  Matej Urbančič
+     2  Bruno Brouard
+     2  Cheng-Chia Tseng
+     2  Daniel Mustieles
+     2  Marek Černocký
+     2  Mario Blättermann
+     2  Sylvia Sánchez
+     1  Brian Grohe
+     1  Daniel Korostil
+     1  Daniel Nylander
+     1  Gabor Kelemen
+     1  Gil Forcada
+     1  Joan Duran
+     1  René Stadler
+     1  Server Acim
+     1  Stas Solovey
+     1  Taijuin
+     1  Timo Jyrinki
+     1  Мирослав Николић
+
 
 * Download
 
@@ -95,51 +68,5 @@ for an optimal user experience.
 
 * Bugs Fixed
 
-600688  Migrate from libglade to GtkBuilder
-647023  When saving a project, the render settings are not saved
-353865  Allow users to define custom render profiles
-583254  Ability to view and remove unused files in a project
-587235  Improve terminology consistency in "Import media" window
-608930  Respect button icon setting
-639615  Improve error message for non-existing and non-readable files
-651186  More efficient translatable strings
-651483  String review
-652379  Source list's infobar text is outdated
-584041  a proper offline manual
-590009  DVD rendering profile
-593919  ability to edit a clip's cropping/panning/zooming properties
-594485  Ask for confirmation when overwriting a file when rendering
-603209  Stores blank properties
-612801  Audio label is not aligned to audio layers when loading a project
-614759  Rendering profiles
-625860  [patch] Incorrect duration of still images
-633644  Limit amount of clip thumbnails to 2 per second
-634723  Hang when mass-removing/deleting clips from the timeline
-635993  When creating a new project, the errors from the previous project are still visible
-636535  The sound does not play when previewing a project if there is a space at the beginning of the timeline
-638798  Project Settings: A newly added preset cannot be removed
-638799  Project Settings: When there are two presets with the same name, show a proper error message
-638803  Project Settings: The "Preset" label should say "Video(/Audio) Preset"
-646513  The project is changed when the "Render project" button is pressed
-650381  Move resources files to a data/ directory
-650807  Reuse filechooserpreview in the missing files dialog
-651821  Port PreferencesDialog to GtkBuilder
-651895  Fix typo in license in some headers
-651897  Update fsf address
-651898  Remove unneeded shebang
-652397  Crash when naming a preset "Default"
-652537  Cannot change any existing audio preset in the Project Settings dialog
-652567  Please lower pygtk requirement to 2.17.0
-654035  [regression] traceback on render: Couldn't find Queue for Stream/Factory
-654318  Pre-commit hook never runs
-654338  Startup Wizard regressions
-655188  Ability to reset advanced codec settings
-655224  Creating a new project from the main window does not call the "Project settings" dialog
-656581  Effects expander can get in an permanently unsensitive state
-656591  Transformation Box is not cleared when the viewer is zoomed out and the video is played
-656692  Trying to delete clips where the playhead is makes the UI hang
-657000  Viewer Zoom widget can not be used with recent Glade versions
-658307  Rendering does not work when using a render preset
-658745  Previewer aspect ratio not set up properly on startup
-651691  In the Project setting the Project Title is not saved
-656532  Traceback when trying to open project settings
+662311  Upgrading to git master of plugins-good breaks pitivi and jokosher
+656652  Bad strings for translation
