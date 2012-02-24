@@ -1,5 +1,11 @@
 Checklist for (pre)-releases
 ----------------------------
+See also: https://live.gnome.org/MaintainersCorner/Releasing
+Note on version numbers:
+* Releases are X.YY
+* Bugfix releases are X.YY.Z where Z is a relatively small number (1, 2, 3...)
+* Pre-releases (right before a major release) are X.YY.ZZ where ZZ = 91, 92, ...
+
 
 Pre-requisites:
  * 'make check' passes
@@ -7,36 +13,35 @@ Pre-requisites:
  * Do a test installation and make sure all files are properly dist-ed/install-ed
  * No 'blocker' bugs against the upcoming release in bugzilla
 
-pre-releases:
- * Bump nano number up in configure.ac (since cvs is .1, pre-releases start at .2)
- * re-autogen
- * Make sure pre-requisites are still valid
- * commit
- * generate CHANGES file against previous release
-   * docs/makeChangelog.py svn/RELEASE-0_11_X.. > CHANGES
- * 'make distcheck' to get the pre-release tarballs
- * 'scp pitivi-0.XX.YY.ZZ.tar.bz2 window.gnome.org:'
- * On window.gnome.org, run 'install-module pitivi-0.XX.YY.ZZ.tar.bz2' to make the tarballs
-   available on http://ftp.gnome.org/pub/gnome/sources/pitivi/0.11/
- * Send out an announcement mail for the pre-release to:
-  * pitivi-pitivi@lists.sourceforge.net
-  * gstreamer-devel@lists.sourceforge.net
-  * gnome-i18n@gnome.org (requesting translations update)
 
-release:
- * Bump minor number up in configure.ac and remove the nano (ex: 0.11.5)
- * re-autogen
- * Make sure pre-requisites are still valid
- * Update the following files:
-  * RELEASE
-  * NEWS (Using the changes from RELEASE)
-  * AUTHORS (if there are new contributors)
-  * CHANGES (using the docs/makeChangelog.py utility, only changes against previous release)
- * 'make distcheck'
- * 'scp pitivi-0.XX.YY.ZZ.tar.bz2 window.gnome.org:'
- * On window.gnome.org, run 'install-module pitivi-0.XX.YY.ZZ.tar.bz2' to make the tarballs
-   available on http://ftp.gnome.org/pub/gnome/sources/pitivi/0.11/
- * Send out an announcement mail for the pre-release to:
+Preparing:
+    Pre-releases:
+     * Bump nano number up in configure.ac (ex: 0.15.91 -> 0.15.92)
+     * Re-autogen
+     * Make sure pre-requisites are still valid
+     * Commit
+     * Generate CHANGES file against previous release. Ex.: changes since 0.15.0:
+       * docs/makeChangelog.py RELEASE-0_15_0.. > CHANGES
+
+    Releases (major or bugfixes):
+     * Bump minor number up in configure.ac and remove the nano (ex: 0.15.92 -> 0.16)
+     * Re-autogen
+     * Make sure pre-requisites are still valid
+     * Update the following files:
+      * CHANGES (see the instructions in the previous section)
+      * RELEASE. To get the list of contributors,
+        * 'git shortlog -s -n RELEASE-<previoustag>..'
+      * NEWS (Using the changes from RELEASE)
+      * AUTHORS (if there are new contributors)
+     * Commit
+     * git tag -a RELEASE-X_YY_Z  # For major releases, Z = 0
+
+Publishing (for both releases and pre-releases):
+ * 'make distcheck' again to get the tarball
+ * 'scp pitivi-X.YY.ZZ.tar.bz2 master.gnome.org:'
+ * On master.gnome.org, run 'ftpadmin install pitivi-X.YY.ZZ.tar.bz2'.
+   The tarball will appear on http://ftp.gnome.org/pub/gnome/sources/pitivi/X.YY/
+ * Send out an announcement mail to:
   * pitivi-pitivi@lists.sourceforge.net
   * gstreamer-devel@lists.sourceforge.net
   * gnome-i18n@gnome.org (requesting translations update)
