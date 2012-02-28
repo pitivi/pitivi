@@ -1,7 +1,7 @@
 # Swedish messages for pitivi.
-# Copyright (C) 2006-2011 Free Software Foundation, Inc.
+# Copyright (C) 2006-2012 Free Software Foundation, Inc.
 # Christian Rose <menthos@menthos.com>, 2006.
-# Daniel Nylander <po@danielnylander.se>, 2006, 2007, 2008, 2009, 2010, 2011.
+# Daniel Nylander <po@danielnylander.se>, 2006, 2007, 2008, 2009, 2010, 2011, 2012.
 #
 # $Id: sv.po,v 1.9 2006/12/26 13:09:16 dnylande Exp $
 #
@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-10 07:55+0200\n"
-"PO-Revision-Date: 2011-10-10 07:56+0100\n"
+"POT-Creation-Date: 2012-02-28 22:04+0100\n"
+"PO-Revision-Date: 2012-02-28 22:07+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -20,65 +20,65 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../data/pitivi.desktop.in.in.h:1
-msgid "Create and edit your own movies"
-msgstr "Skapa och redigera dina egna filmer"
-
-#: ../data/pitivi.desktop.in.in.h:2
 msgid "Pitivi Video Editor"
 msgstr "Videoredigeraren Pitivi"
 
-#: ../data/ui/alignmentprogress.ui.h:1
-msgid "<b><big>Performing Auto-Alignment</big></b>"
-msgstr "<b><big>Genomför automatisk justering</big></b>"
+#: ../data/pitivi.desktop.in.in.h:2
+msgid "Create and edit your own movies"
+msgstr "Skapa och redigera dina egna filmer"
 
-#: ../data/ui/alignmentprogress.ui.h:2
+#: ../data/ui/alignmentprogress.ui.h:1
 msgid "Auto-Alignment Starting"
 msgstr "Automatisk justering startar"
 
+#: ../data/ui/alignmentprogress.ui.h:2
+msgid "<b><big>Performing Auto-Alignment</big></b>"
+msgstr "<b><big>Genomför automatisk justering</big></b>"
+
 #: ../data/ui/alignmentprogress.ui.h:3
-#: ../data/ui/encodingprogress.ui.h:6
+#: ../data/ui/encodingprogress.ui.h:9
 msgid "Estimating..."
 msgstr "Uppskattar..."
 
 #: ../data/ui/cliptransformation.ui.h:1
-msgid "<b>Crop</b>"
-msgstr "<b>Beskär</b>"
-
-#: ../data/ui/cliptransformation.ui.h:2
-msgid "<b>Position</b>"
-msgstr "<b>Position</b>"
-
-#: ../data/ui/cliptransformation.ui.h:3
-msgid "<b>Size</b>"
-msgstr "<b>Storlek</b>"
-
-#: ../data/ui/cliptransformation.ui.h:4
 msgid "<b>Viewer Zoom</b>"
 msgstr "<b>Visningszoom</b>"
 
-#: ../data/ui/cliptransformation.ui.h:5
-msgid "Height:"
-msgstr "Höjd:"
-
-#: ../data/ui/cliptransformation.ui.h:6
-msgid "Width:"
-msgstr "Bredd:"
-
-#: ../data/ui/cliptransformation.ui.h:7
+#: ../data/ui/cliptransformation.ui.h:2
 msgid "X:"
 msgstr "X:"
 
-#: ../data/ui/cliptransformation.ui.h:8
+#: ../data/ui/cliptransformation.ui.h:3
 msgid "Y:"
 msgstr "Y:"
 
-#: ../data/ui/depsmanager.ui.h:1
-msgid "Install"
-msgstr "Installera"
+#: ../data/ui/cliptransformation.ui.h:4
+msgid "<b>Position</b>"
+msgstr "<b>Position</b>"
 
-#: ../data/ui/depsmanager.ui.h:2
+#: ../data/ui/cliptransformation.ui.h:5
+msgid "Width:"
+msgstr "Bredd:"
+
+#: ../data/ui/cliptransformation.ui.h:6
+msgid "Height:"
+msgstr "Höjd:"
+
+#: ../data/ui/cliptransformation.ui.h:7
+msgid "<b>Size</b>"
+msgstr "<b>Storlek</b>"
+
+#: ../data/ui/cliptransformation.ui.h:8
+msgid "<b>Crop</b>"
+msgstr "<b>Beskär</b>"
+
+#: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
 msgstr "Saknade beroenden"
+
+#: ../data/ui/depsmanager.ui.h:2
+msgid "Install"
+msgstr "Installera"
 
 #: ../data/ui/depsmanager.ui.h:3
 msgid "To enable additional features, please install the following packages and restart PiTiVi:"
@@ -93,41 +93,41 @@ msgid "Properties for <element>"
 msgstr "Egenskaper för <element>"
 
 #: ../data/ui/encodingdialog.ui.h:1
-msgid "1000 x 1000"
-msgstr "1000 x 1000"
+msgid "MP4"
+msgstr "MP4"
 
 #: ../data/ui/encodingdialog.ui.h:2
+msgid "H.264"
+msgstr "H.264"
+
+#: ../data/ui/encodingdialog.ui.h:3
 msgid "29.97 fps"
 msgstr "29.97 bilder/s"
 
-#: ../data/ui/encodingdialog.ui.h:3
-msgid "6 channels (5.1)"
-msgstr "6 kanaler (5.1)"
-
 #: ../data/ui/encodingdialog.ui.h:4
-msgid "<b>Render Preset</b>"
-msgstr "<b>Renderingsförval</b>"
+msgid "AC-3"
+msgstr "AC-3"
 
 #: ../data/ui/encodingdialog.ui.h:5
 msgid "AAC"
 msgstr "AAC"
 
 #: ../data/ui/encodingdialog.ui.h:6
-msgid "AC-3"
-msgstr "AC-3"
+msgid "6 channels (5.1)"
+msgstr "6 kanaler (5.1)"
 
 #: ../data/ui/encodingdialog.ui.h:7
-msgid "Advanced..."
-msgstr "Avancerat..."
+#: ../pitivi/ui/mainwindow.py:130
+msgid "Render"
+msgstr "Rendera"
 
 #: ../data/ui/encodingdialog.ui.h:8
-#: ../data/ui/projectsettings.ui.h:8
-msgid "Audio"
-msgstr "Ljud"
+msgid "<b>Render Preset</b>"
+msgstr "<b>Renderingsförval</b>"
 
 #: ../data/ui/encodingdialog.ui.h:9
-msgid "Codec:"
-msgstr "Kodek:"
+msgid "Folder"
+msgstr "Mapp"
 
 #: ../data/ui/encodingdialog.ui.h:10
 msgid "Container format"
@@ -138,245 +138,245 @@ msgid "Container format:"
 msgstr "Behållarformat:"
 
 #: ../data/ui/encodingdialog.ui.h:12
-msgid "Draft (no special effects, single pass)"
-msgstr "Utdrag (inga specialeffekter, ett pass)"
+msgid "Folder:"
+msgstr "Mapp:"
 
 #: ../data/ui/encodingdialog.ui.h:13
-msgid "Edit Project Settings..."
-msgstr "Redigera projektinställningar..."
+msgid "File name:"
+msgstr "Filnamn:"
 
 #: ../data/ui/encodingdialog.ui.h:14
 msgid "File name"
 msgstr "Filnamn"
 
 #: ../data/ui/encodingdialog.ui.h:15
-msgid "File name:"
-msgstr "Filnamn:"
-
-#: ../data/ui/encodingdialog.ui.h:16
-msgid "Folder"
-msgstr "Mapp"
-
-#: ../data/ui/encodingdialog.ui.h:17
-msgid "Folder:"
-msgstr "Mapp:"
-
-#: ../data/ui/encodingdialog.ui.h:18
-msgid "Frame rate:"
-msgstr "Bildfrekvens:"
-
-#: ../data/ui/encodingdialog.ui.h:19
-msgid "Framerate"
-msgstr "Bildfrekvens"
-
-#: ../data/ui/encodingdialog.ui.h:20
-msgid "General"
-msgstr "Allmänt"
-
-#: ../data/ui/encodingdialog.ui.h:21
-msgid "H.264"
-msgstr "H.264"
-
-#: ../data/ui/encodingdialog.ui.h:22
-msgid "Height"
-msgstr "Höjd"
-
-#: ../data/ui/encodingdialog.ui.h:23
-msgid "MP4"
-msgstr "MP4"
-
-#: ../data/ui/encodingdialog.ui.h:24
-msgid "Number of channels:"
-msgstr "Antal kanaler:"
-
-#: ../data/ui/encodingdialog.ui.h:25
-#: ../pitivi/ui/mainwindow.py:130
-msgid "Render"
-msgstr "Rendera"
-
-#: ../data/ui/encodingdialog.ui.h:26
 msgid "Render only the selected clips"
 msgstr "Rendera endast markerade klipp"
 
-#: ../data/ui/encodingdialog.ui.h:27
-msgid "Sample Depth:"
-msgstr "Samplingsdjup:"
+#: ../data/ui/encodingdialog.ui.h:16
+msgid "Draft (no special effects, single pass)"
+msgstr "Utdrag (inga specialeffekter, ett pass)"
 
-#: ../data/ui/encodingdialog.ui.h:28
-msgid "Sample Rate:"
-msgstr "Samplingsfrekvens:"
+#: ../data/ui/encodingdialog.ui.h:17
+msgid "General"
+msgstr "Allmänt"
 
-#: ../data/ui/encodingdialog.ui.h:29
+#: ../data/ui/encodingdialog.ui.h:18
+msgid "Advanced..."
+msgstr "Avancerat..."
+
+#: ../data/ui/encodingdialog.ui.h:19
+msgid "Codec:"
+msgstr "Kodek:"
+
+#: ../data/ui/encodingdialog.ui.h:20
+msgid "Framerate"
+msgstr "Bildfrekvens"
+
+#: ../data/ui/encodingdialog.ui.h:21
 msgid "Scale"
 msgstr "Skala"
 
-#: ../data/ui/encodingdialog.ui.h:30
+#: ../data/ui/encodingdialog.ui.h:22
+msgid "1000 x 1000"
+msgstr "1000 x 1000"
+
+#: ../data/ui/encodingdialog.ui.h:23
+msgid "Height"
+msgstr "Höjd"
+
+#: ../data/ui/encodingdialog.ui.h:24
+msgid "Edit Project Settings..."
+msgstr "Redigera projektinställningar..."
+
+#: ../data/ui/encodingdialog.ui.h:25
+msgid "Frame rate:"
+msgstr "Bildfrekvens:"
+
+#: ../data/ui/encodingdialog.ui.h:26
 msgid "Scale:"
 msgstr "Skala:"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../data/ui/encodingdialog.ui.h:31
-#: ../data/ui/projectsettings.ui.h:21
+#: ../data/ui/encodingdialog.ui.h:27
+#: ../data/ui/projectsettings.ui.h:13
 #: ../pitivi/effects.py:244
 msgid "Video"
 msgstr "Video"
 
+#: ../data/ui/encodingdialog.ui.h:28
+msgid "Number of channels:"
+msgstr "Antal kanaler:"
+
+#: ../data/ui/encodingdialog.ui.h:29
+msgid "Sample Rate:"
+msgstr "Samplingsfrekvens:"
+
+#: ../data/ui/encodingdialog.ui.h:30
+msgid "Sample Depth:"
+msgstr "Samplingsdjup:"
+
+#: ../data/ui/encodingdialog.ui.h:31
+#: ../data/ui/projectsettings.ui.h:19
+msgid "Audio"
+msgstr "Ljud"
+
 #: ../data/ui/encodingprogress.ui.h:1
+msgid "Rendering"
+msgstr "Rendering"
+
+#: ../data/ui/encodingprogress.ui.h:2
 msgid "<b><big>Rendering movie</big></b>"
 msgstr "<b><big>Renderar film</big></b>"
 
-#: ../data/ui/encodingprogress.ui.h:2
-msgid "<b>Estimated filesize:</b>"
-msgstr "<b>Beräknad filstorlek:</b>"
-
 #: ../data/ui/encodingprogress.ui.h:3
-msgid "<b>Frames per second:</b>"
-msgstr "<b>Bilder per sekund:</b>"
+msgid "Unknown Mib"
+msgstr "Okänd Mib"
 
 #: ../data/ui/encodingprogress.ui.h:4
-msgid "<b>Phase:</b>"
-msgstr "<b>Fas:</b>"
+msgid "Unknown"
+msgstr "Okänd"
 
 #: ../data/ui/encodingprogress.ui.h:5
 msgid "Encoding first pass"
 msgstr "Kodningens första pass"
 
+#: ../data/ui/encodingprogress.ui.h:6
+msgid "<b>Estimated filesize:</b>"
+msgstr "<b>Beräknad filstorlek:</b>"
+
 #: ../data/ui/encodingprogress.ui.h:7
-msgid "Rendering"
-msgstr "Rendering"
+msgid "<b>Frames per second:</b>"
+msgstr "<b>Bilder per sekund:</b>"
 
 #: ../data/ui/encodingprogress.ui.h:8
-msgid "Unknown"
-msgstr "Okänd"
-
-#: ../data/ui/encodingprogress.ui.h:9
-msgid "Unknown Mib"
-msgstr "Okänd Mib"
+msgid "<b>Phase:</b>"
+msgstr "<b>Fas:</b>"
 
 #: ../data/ui/preferences.ui.h:1
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
-msgstr "<b>Vissa ändringar kommer inte bli aktiva förrän du startar om PiTiVi</b>"
-
-#: ../data/ui/preferences.ui.h:2
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: ../data/ui/preferences.ui.h:3
-msgid "Reset to Factory Settings"
-msgstr "Återställ till ursprungsinställningar"
-
-#: ../data/ui/preferences.ui.h:4
-msgid "Revert"
-msgstr "Återställ"
-
-#: ../data/ui/preferences.ui.h:5
+#: ../data/ui/preferences.ui.h:2
 msgid "Section"
 msgstr "Sektion"
 
+#: ../data/ui/preferences.ui.h:3
+msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
+msgstr "<b>Vissa ändringar kommer inte bli aktiva förrän du startar om PiTiVi</b>"
+
+#: ../data/ui/preferences.ui.h:4
+msgid "Reset to Factory Settings"
+msgstr "Återställ till ursprungsinställningar"
+
+#: ../data/ui/preferences.ui.h:5
+msgid "Revert"
+msgstr "Återställ"
+
 #: ../data/ui/projectsettings.ui.h:1
+#: ../pitivi/ui/projectsettings.py:64
+msgid "Standard (4:3)"
+msgstr "Standard (4:3)"
+
+#: ../data/ui/projectsettings.ui.h:2
+msgid "Standard PAL"
+msgstr "Standard PAL"
+
+#: ../data/ui/projectsettings.ui.h:3
 msgid "25 FPS"
 msgstr "25 bilder/s"
 
-#: ../data/ui/projectsettings.ui.h:2
-msgid "<b>Aspect Ratio</b>"
-msgstr "<b>Bildförhållande</b>"
-
-#: ../data/ui/projectsettings.ui.h:3
-msgid "<b>Audio Preset</b>"
-msgstr "<b>Ljudförval</b>"
-
 #: ../data/ui/projectsettings.ui.h:4
-msgid "<b>Format</b>"
-msgstr "<b>Format</b>"
+#: ../pitivi/ui/mainwindow.py:254
+msgid "Project Settings"
+msgstr "Projektinställningar"
 
 #: ../data/ui/projectsettings.ui.h:5
-msgid "<b>Frame Rate</b>"
-msgstr "<b>Bildfrekvens</b>"
+msgid "<b>Video Preset</b>"
+msgstr "<b>Videoförval</b>"
 
 #: ../data/ui/projectsettings.ui.h:6
 msgid "<b>Size (Pixels)</b>"
 msgstr "<b>Storlek (bildpunkter)</b>"
 
 #: ../data/ui/projectsettings.ui.h:7
-msgid "<b>Video Preset</b>"
-msgstr "<b>Videoförval</b>"
+msgid "<b>Aspect Ratio</b>"
+msgstr "<b>Bildförhållande</b>"
 
-#: ../data/ui/projectsettings.ui.h:9
-msgid "Author:"
-msgstr "Författare:"
-
-#: ../data/ui/projectsettings.ui.h:10
-msgid "Channels:"
-msgstr "Kanaler:"
-
-#: ../data/ui/projectsettings.ui.h:11
+#: ../data/ui/projectsettings.ui.h:8
 msgid "Display Aspect Ratio"
 msgstr "Visa bildförhållande"
 
-#: ../data/ui/projectsettings.ui.h:12
-msgid "Info"
-msgstr "Info"
+#: ../data/ui/projectsettings.ui.h:9
+msgid "Pixel Aspect Ratio"
+msgstr "Bildförhållande (bildpunkter)"
+
+#: ../data/ui/projectsettings.ui.h:10
+msgid "x"
+msgstr "x"
 
 #. Translators: This is an action, the title of a button
-#: ../data/ui/projectsettings.ui.h:13
+#: ../data/ui/projectsettings.ui.h:11
 #: ../pitivi/ui/mainwindow.py:135
 msgid "Link"
 msgstr "Länka"
 
+#: ../data/ui/projectsettings.ui.h:12
+msgid "<b>Frame Rate</b>"
+msgstr "<b>Bildfrekvens</b>"
+
 #: ../data/ui/projectsettings.ui.h:14
-msgid "Pixel Aspect Ratio"
-msgstr "Bildförhållande (bildpunkter)"
+msgid "<b>Audio Preset</b>"
+msgstr "<b>Ljudförval</b>"
 
 #: ../data/ui/projectsettings.ui.h:15
-#: ../pitivi/ui/mainwindow.py:254
-msgid "Project Settings"
-msgstr "Projektinställningar"
+msgid "<b>Format</b>"
+msgstr "<b>Format</b>"
 
 #: ../data/ui/projectsettings.ui.h:16
-msgid "Project title:"
-msgstr "Projekttitel:"
+msgid "Channels:"
+msgstr "Kanaler:"
 
 #: ../data/ui/projectsettings.ui.h:17
-msgid "Sample depth:"
-msgstr "Samplingsdjup:"
-
-#: ../data/ui/projectsettings.ui.h:18
 msgid "Sample rate:"
 msgstr "Samplingsfrekvens:"
 
-#: ../data/ui/projectsettings.ui.h:19
-#: ../pitivi/ui/projectsettings.py:64
-msgid "Standard (4:3)"
-msgstr "Standard (4:3)"
+#: ../data/ui/projectsettings.ui.h:18
+msgid "Sample depth:"
+msgstr "Samplingsdjup:"
 
 #: ../data/ui/projectsettings.ui.h:20
-msgid "Standard PAL"
-msgstr "Standard PAL"
+msgid "Author:"
+msgstr "Författare:"
 
-#: ../data/ui/projectsettings.ui.h:22
+#: ../data/ui/projectsettings.ui.h:21
 msgid "Year:"
 msgstr "År:"
 
+#: ../data/ui/projectsettings.ui.h:22
+msgid "Project title:"
+msgstr "Projekttitel:"
+
 #: ../data/ui/projectsettings.ui.h:23
-msgid "x"
-msgstr "x"
+msgid "Info"
+msgstr "Info"
 
 #: ../data/ui/startupwizard.ui.h:1
-msgid "Browse projects..."
-msgstr "Bläddra projekt..."
+msgid "Welcome"
+msgstr "Välkommen"
 
 #: ../data/ui/startupwizard.ui.h:2
 msgid "Double-click a project below to load it:"
 msgstr "Dubbelklicka på ett projekt nedan för att läsa in det:"
 
 #: ../data/ui/startupwizard.ui.h:3
-msgid "Missing dependencies..."
-msgstr "Saknade beroenden..."
+msgid "Browse projects..."
+msgstr "Bläddra projekt..."
 
 #: ../data/ui/startupwizard.ui.h:4
-msgid "Welcome"
-msgstr "Välkommen"
+msgid "Missing dependencies..."
+msgstr "Saknade beroenden..."
 
 #: ../pitivi/application.py:117
 #, python-format
@@ -722,6 +722,7 @@ msgstr "Tid"
 
 #: ../pitivi/effects.py:116
 #: ../pitivi/effects.py:226
+#: ../pitivi/factories/operation.py:66
 msgid "Uncategorized"
 msgstr "Inte kategoriserad"
 
@@ -791,6 +792,21 @@ msgid ""
 msgstr ""
 "\n"
 "Muxer: "
+
+#: ../pitivi/ui/alignmentprogress.py:69
+#, python-format
+msgid "%d%% Analyzed"
+msgstr "%d%% analyserat"
+
+#. Translators: This string indicates the estimated time
+#. remaining until the action completes.  The "%s" is an
+#. already-localized human-readable duration description like
+#. "31 seconds".
+#: ../pitivi/ui/alignmentprogress.py:75
+#: ../pitivi/ui/encodingprogress.py:67
+#, python-format
+msgid "About %s left"
+msgstr "Ungefär %s kvar"
 
 #: ../pitivi/ui/clipproperties.py:164
 msgid "Remove effect"
@@ -995,6 +1011,11 @@ msgid ""
 msgstr ""
 "Denna fil finns redan.\n"
 "Välj ett annat filnamn eller mapp om du inte vill skriva över den."
+
+#: ../pitivi/ui/encodingprogress.py:65
+#, python-format
+msgid "%d%% Rendered"
+msgstr "%d%% renderat"
 
 #: ../pitivi/ui/filechooserpreview.py:134
 msgid "PiTiVi can not preview this file."
@@ -1327,8 +1348,8 @@ msgid "The spacing between thumbnails, in pixels"
 msgstr "Utrymme mellan miniatyrbilder, i bildpunkter"
 
 #: ../pitivi/ui/previewer.py:66
-#: ../pitivi/ui/previewer.py:102
-#: ../pitivi/ui/previewer.py:113
+#: ../pitivi/ui/previewer.py:106
+#: ../pitivi/ui/previewer.py:117
 msgid "Performance"
 msgstr "Prestanda"
 
@@ -1336,42 +1357,59 @@ msgstr "Prestanda"
 msgid "Thumbnail every"
 msgstr "Miniatyrbild var"
 
-#: ../pitivi/ui/previewer.py:69
-#: ../pitivi/ui/previewer.py:70
-#: ../pitivi/ui/previewer.py:71
-#: ../pitivi/ui/previewer.py:72
+#. Note that we cannot use "%s second" or ngettext, because fractions
+#. are not supported by ngettext and their plurality is ambiguous
+#. in many languages.
+#. See http://www.gnu.org/software/hello/manual/gettext/Plural-forms.html
 #: ../pitivi/ui/previewer.py:73
-#, python-format
-msgid "%s second"
-msgstr "%s sekund"
+msgid "1/100 second"
+msgstr "1/100 sekund"
 
 #: ../pitivi/ui/previewer.py:74
+msgid "1/10 second"
+msgstr "1/10 sekund"
+
 #: ../pitivi/ui/previewer.py:75
-#, python-format
-msgid "%s seconds"
-msgstr "%s sekunder"
+msgid "1/4 second"
+msgstr "1/4 sekund"
 
 #: ../pitivi/ui/previewer.py:76
+msgid "1/2 second"
+msgstr "1/2 sekund"
+
+#: ../pitivi/ui/previewer.py:77
+msgid "1 second"
+msgstr "1 sekund"
+
+#: ../pitivi/ui/previewer.py:78
+msgid "5 seconds"
+msgstr "5 sekunder"
+
+#: ../pitivi/ui/previewer.py:79
+msgid "10 seconds"
+msgstr "10 sekunder"
+
+#: ../pitivi/ui/previewer.py:80
 msgid "minute"
 msgstr "minut"
 
-#: ../pitivi/ui/previewer.py:77
+#: ../pitivi/ui/previewer.py:81
 msgid "The interval, in seconds, between thumbnails."
 msgstr "Intervallet, i sekunder, mellan miniatyrbilder."
 
-#: ../pitivi/ui/previewer.py:103
+#: ../pitivi/ui/previewer.py:107
 msgid "Enable video thumbnails"
 msgstr "Aktivera miniatyrbilder för video"
 
-#: ../pitivi/ui/previewer.py:104
+#: ../pitivi/ui/previewer.py:108
 msgid "Show thumbnails on video clips"
 msgstr "Visa miniatyrbilder för videoklipp"
 
-#: ../pitivi/ui/previewer.py:114
+#: ../pitivi/ui/previewer.py:118
 msgid "Enable audio waveforms"
 msgstr "Aktivera vågformer för ljud"
 
-#: ../pitivi/ui/previewer.py:115
+#: ../pitivi/ui/previewer.py:119
 msgid "Show waveforms on audio clips"
 msgstr "Visa vågformer för ljudklipp"
 
@@ -1559,6 +1597,10 @@ msgstr "Följande filer kan inte användas med PiTiVi."
 #: ../pitivi/ui/sourcelist.py:776
 msgid "The following file can not be used with PiTiVi."
 msgstr "Följande fil kan inte användas med PiTiVi."
+
+#: ../pitivi/ui/startupwizard.py:59
+msgid "Projects"
+msgstr "Projekt"
 
 #: ../pitivi/ui/timelinecanvas.py:52
 msgid "Behavior"
@@ -1760,196 +1802,286 @@ msgstr[1] "%d sekunder"
 msgid "%s doesn't yet handle non-local projects"
 msgstr "%s kan ännu inte hantera icke-lokala projekt"
 
+#~ msgid "%s seconds"
+#~ msgstr "%s sekunder"
+
 #~ msgid "Could not import the libglade Python bindings"
 #~ msgstr "Kunde inte importera Python-bindningar för libglade"
+
 #~ msgid "Make sure you have the libglade Python bindings installed"
 #~ msgstr "Kontrollera att du har Python-bindningar för libglade installerade"
+
 #~ msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
 #~ msgstr "%(width)d x %(height)d bildpunkter i %(framerate).2f bilder/s"
+
 #~ msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
 #~ msgstr "%(channels)d kanaler i %(frequency)d Hz (%(depth)d bitar)"
+
 #~ msgid "Audio Capture Device:"
 #~ msgstr "Enhet för ljudfångst:"
+
 #~ msgid "No device available"
 #~ msgstr "Ingen enhet tillgänglig"
+
 #~ msgid "Video Capture Device:"
 #~ msgstr "Enhet för videofångst:"
+
 #~ msgid "15 fps"
 #~ msgstr "15 bilder/s"
+
 #~ msgid "20 fps"
 #~ msgstr "20 bilder/s"
+
 #~ msgid "23,976 fps"
 #~ msgstr "23,976 bilder/s"
+
 #~ msgid "24 fps"
 #~ msgstr "24 bilder/s"
+
 #~ msgid "25 fps"
 #~ msgstr "25 bilder/s"
+
 #~ msgid "29,97 fps"
 #~ msgstr "29,97 bilder/s"
+
 #~ msgid "59,94 fps"
 #~ msgstr "59,94 bilder/s"
+
 #~ msgid "60 fps"
 #~ msgstr "60 bilder/s"
+
 #~ msgid "120 fps"
 #~ msgstr "120 bilder/s"
+
 #~ msgid "11 KHz"
 #~ msgstr "11 KHz"
+
 #~ msgid "22 KHz"
 #~ msgstr "22 KHz"
+
 #~ msgid "48 KHz"
 #~ msgstr "48 KHz"
+
 #~ msgid "96 KHz"
 #~ msgstr "96 KHz"
+
 #~ msgid "16 bit"
 #~ msgstr "16 bitar"
+
 #~ msgid "24 bit"
 #~ msgstr "24 bitar"
+
 #~ msgid "32 bit"
 #~ msgstr "32 bitar"
+
 #~ msgid "Properties For: %d object"
+
 #~ msgid_plural "Properties For: %d objects"
 #~ msgstr[0] "Egenskaper för: %d objekt"
 #~ msgstr[1] "Egenskaper för: %d objekt"
+
 #~ msgid "<b>Properties For Plugin</b>"
 #~ msgstr "<b>Egenskaper för instick</b>"
+
 #~ msgid "Sample rate"
 #~ msgstr "Samplingsfrekvens"
+
 #~ msgid "Summary"
 #~ msgstr "Sammandrag"
+
 #~ msgid "Stop Playback"
 #~ msgstr "Stoppa uppspelning"
+
 #~ msgid "_Render project"
 #~ msgstr "_Rendera projekt"
+
 #~ msgid "Render project..."
 #~ msgstr "Rendera projekt..."
+
 #~ msgid "_Plugins..."
 #~ msgstr "_Insticksmoduler..."
+
 #~ msgid "Manage plugins"
 #~ msgstr "Hantera insticksmoduler"
+
 #~ msgid "Import from _Webcam..."
 #~ msgstr "Importera från _webbkamera..."
+
 #~ msgid "Import Camera stream"
 #~ msgstr "Importera kameraström"
+
 #~ msgid "_Make screencast..."
 #~ msgstr "Skapa skär_minspelning..."
+
 #~ msgid "Capture the desktop"
 #~ msgstr "Fånga skrivbordet"
+
 #~ msgid "_Capture Network Stream..."
 #~ msgstr "_Fånga nätverksström..."
+
 #~ msgid "Capture Network Stream"
 #~ msgstr "Fånga nätverksström"
+
 #~ msgid "_File"
 #~ msgstr "_Arkiv"
+
 #~ msgid "Duration:"
 #~ msgstr "Speltid:"
+
 #~ msgid "Address"
 #~ msgstr "Adress"
+
 #~ msgid "Capture"
 #~ msgstr "Fånga"
+
 #~ msgid "Capture Stream from URI"
 #~ msgstr "Fånga ström från URI"
+
 #~ msgid "Capture network stream"
 #~ msgstr "Fånga nätverksström"
+
 #~ msgid "Close"
 #~ msgstr "Stäng"
+
 #~ msgid "Customize:"
 #~ msgstr "Anpassa:"
+
 #~ msgid "HTTP / HTTPS"
 #~ msgstr "HTTP / HTTPS"
+
 #~ msgid "Network stream video"
 #~ msgstr "Nätverksströmvideo"
+
 #~ msgid "Other protocol"
 #~ msgstr "Annat protokoll"
+
 #~ msgid "Port"
 #~ msgstr "Port"
+
 #~ msgid "Preview"
 #~ msgstr "Förhandsgranskning"
+
 #~ msgid "Preview Stream from URI"
 #~ msgstr "Förhandsgranska ström från URI"
+
 #~ msgid "Protocol"
 #~ msgstr "Protokoll"
+
 #~ msgid "RTSP"
 #~ msgstr "RTSP"
+
 #~ msgid "UDP / RDP"
 #~ msgstr "UDP / RDP"
+
 #~ msgid "http://"
 #~ msgstr "http://"
+
 #~ msgid "All categories"
 #~ msgstr "Alla kategorier"
+
 #~ msgid "Plugin manager"
 #~ msgstr "Hantera insticksmoduler"
+
 #~ msgid "Show:"
 #~ msgstr "Visa:"
+
 #~ msgid ""
 #~ "You may drag plugin files into the list to install them,\n"
 #~ "or type text to search for a specific plugin."
 #~ msgstr ""
 #~ "Du kan dra insticksmodulfiler till listan för att installera\n"
 #~ "dem, eller ange text för att söka efter en specifik modul."
+
 #~ msgid "Enabled"
 #~ msgstr "Aktiverad"
+
 #~ msgid "Plugin"
 #~ msgstr "Insticksmodul"
+
 #~ msgid "Category"
 #~ msgstr "Kategori"
+
 #~ msgid "Are you sure you want to remove the selected plugins?"
 #~ msgstr "Är du säker på att du vill ta bort de markerade insticksmodulerna?"
+
 #~ msgid "Confirm remove operation"
 #~ msgstr "Bekräfta borttagningsåtgärd"
+
 #~ msgid "Cannot remove %s"
 #~ msgstr "Kan inte ta bort %s"
+
 #~ msgid "Update the existing plugin?"
 #~ msgstr "Uppdatera den befintliga insticksmodulen?"
+
 #~ msgid ""
 #~ "This plugin is already installed in your system.\n"
 #~ "If you agree, version %(v1)s will be replaced with version %(v2)s"
 #~ msgstr ""
 #~ "Denna insticksmodul är redan installerad på ditt system.\n"
 #~ "Om du godkänner så kommer version %(v1)s att ersättas med version %(v2)s"
+
 #~ msgid "Duplicate plugin found"
 #~ msgstr "Dubblett av insticksmodul hittades"
+
 #~ msgid ""
 #~ "Cannot install %s\n"
 #~ "The file is not a valid plugin"
 #~ msgstr ""
 #~ "Kan inte installera %s\n"
 #~ "Filen är inte en giltig insticksmodul"
+
 #~ msgid "Reset"
 #~ msgstr "Återställ"
+
 #~ msgid "Show Thumbnails (Video)"
 #~ msgstr "Visa miniatyrbilder (Video)"
+
 #~ msgid "Show Waveforms (Audio)"
 #~ msgstr "Visa vågformer (Ljud)"
+
 #~ msgid "No Objects Selected"
 #~ msgstr "Inga objekt har markerats"
+
 #~ msgid "Screencast"
 #~ msgstr "Skärminspelning"
+
 #~ msgid "Screencast Desktop"
 #~ msgstr "Spela in skrivbordet"
+
 #~ msgid "Start Istanbul"
 #~ msgstr "Starta Istanbul"
+
 #~ msgid ""
 #~ "<span>Import your clips by dragging them here or by using the buttons "
 #~ "above.</span>"
 #~ msgstr ""
 #~ "<span>Importera dina videoklipp genom att dra dem hit eller med "
 #~ "ovanstående knappar.</span>"
+
 #~ msgid "Import clips to use"
 #~ msgstr "Importera videoklipp att använda"
+
 #~ msgid "Import folder of clips to use"
 #~ msgstr "Importera mapp med videoklipp att använda"
+
 #~ msgid "Import a folder"
 #~ msgstr "Importera en mapp"
+
 #~ msgid "Import a clip"
 #~ msgstr "Importera ett videoklipp"
+
 #~ msgid "Threshold distance (in pixels) used for all snapping operations"
 #~ msgstr "Tröskelavstånd (i bildpunkter) som används för alla fäståtgärder"
+
 #~ msgid "<b>Audio:</b>"
 #~ msgstr "<b>Ljud:</b>"
+
 #~ msgid "<b>Text:</b>"
 #~ msgstr "<b>Text:</b>"
+
 #~ msgid "Clip Background (Video)"
 #~ msgstr "Bakgrund för klipp (Video)"
+
 #~ msgid "Clip Background (Audio)"
 #~ msgstr "Bakgrund för klipp (Ljud)"
 
@@ -1981,10 +2113,13 @@ msgstr "%s kan ännu inte hantera icke-lokala projekt"
 #~ "projekt. Alternativt, när -i anges, behandlas argument som klipp att\n"
 #~ "importeras in i projektet. Om -a anges kommer dessa klipp även att\n"
 #~ "läggas till i slutet av projektets tidslinje."
+
 #~ msgid "Run pitivi with no gui"
 #~ msgstr "Kör pitivi utan grafiskt gränssnitt"
+
 #~ msgid "URI:"
 #~ msgstr "URI:"
+
 #~ msgid "Importing clips..."
 #~ msgstr "Importerar videoklipp..."
 
@@ -1995,28 +2130,37 @@ msgstr "%s kan ännu inte hantera icke-lokala projekt"
 #, fuzzy
 #~ msgid "Skip"
 #~ msgstr "Hoppa till"
+
 #~ msgid "<b>Author:</b>"
 #~ msgstr "<b>Upphovsman:</b>"
+
 #~ msgid "<b>Plugin Name</b>"
 #~ msgstr "<b>Namn på insticksmodul</b>"
+
 #~ msgid "Author"
 #~ msgstr "Författare"
+
 #~ msgid "<b>Nothing yet</b>"
 #~ msgstr "<b>Ingenting ännu</b>"
+
 #~ msgid "Choose File"
 #~ msgstr "Välj fil"
+
 #~ msgid "Modify"
 #~ msgstr "Ändra"
+
 #~ msgid "Output file:"
 #~ msgstr "Utdatafil:"
+
 #~ msgid "Please choose an output file"
 #~ msgstr "Välj en utdatafil"
+
 #~ msgid "Choose file to render to"
 #~ msgstr "Välj fil att rendera till"
-#~ msgid "About %s left"
-#~ msgstr "Ungefär %s kvar"
+
 #~ msgid "Rendering Complete"
 #~ msgstr "Rendering färdig"
+
 #~ msgid ""
 #~ "12 fps\n"
 #~ "23.97 fps\n"
@@ -2033,6 +2177,7 @@ msgstr "%s kan ännu inte hantera icke-lokala projekt"
 #~ "29,97 bilder/s\n"
 #~ "30 bilder/s\n"
 #~ "60 bilder/s"
+
 #~ msgid ""
 #~ "8 bit\n"
 #~ "16 bit\n"
@@ -2043,6 +2188,7 @@ msgstr "%s kan ännu inte hantera icke-lokala projekt"
 #~ "16 bitar\n"
 #~ "24 bitar\n"
 #~ "32 bitar"
+
 #~ msgid ""
 #~ "8000 Hz\n"
 #~ "11025 Hz\n"
@@ -2057,12 +2203,16 @@ msgstr "%s kan ännu inte hantera icke-lokala projekt"
 #~ "44100 Hz\n"
 #~ "48000 Hz\n"
 #~ "96000 Hz"
+
 #~ msgid "<b>Audio Output</b>"
 #~ msgstr "<b>Ljudutmatning</b>"
+
 #~ msgid "<b>Video Output</b>"
 #~ msgstr "<b>Videoutmatning</b>"
+
 #~ msgid "Audio Codec:"
 #~ msgstr "Ljudkodek:"
+
 #~ msgid ""
 #~ "Mono (1)\n"
 #~ "Stereo (2)"
@@ -2124,216 +2274,309 @@ msgstr "%s kan ännu inte hantera icke-lokala projekt"
 #, fuzzy
 #~ msgid "No streams found"
 #~ msgstr "Nätverksströmvideo"
+
 #~ msgid "see above"
 #~ msgstr "se ovan"
+
 #~ msgid "No location given."
 #~ msgstr "Ingen plats angiven."
+
 #~ msgid "There was an error loading the file."
 #~ msgstr "Det inträffade ett fel vid inläsning av filen."
+
 #~ msgid "Finished in %dm%ds"
 #~ msgstr "Färdig om %d min %d s"
+
 #~ msgid "Forward one frame"
 #~ msgstr "Framåt en bildruta"
+
 #~ msgid "Fast Forward"
 #~ msgstr "Snabbspola"
+
 #~ msgid "Back one frame"
 #~ msgstr "Bakåt en bildruta"
+
 #~ msgid "Frame Forward"
 #~ msgstr "Bildruta framåt"
+
 #~ msgid "Frame Backward"
 #~ msgstr "Bildruta bakåt"
+
 #~ msgid "1 Second Forward"
 #~ msgstr "1 sekund framåt"
+
 #~ msgid "1 Second Backward"
 #~ msgstr "1 sekund bakåt"
+
 #~ msgid "The project has unsaved changes. Do you wish to close the project?"
 #~ msgstr "Projektet innehåller osparade ändringar. Vill du stänga projektet?"
+
 #~ msgid "http / https"
 #~ msgstr "http / https"
+
 #~ msgid "rtsp"
 #~ msgstr "rtsp"
+
 #~ msgid "udp / rtp"
 #~ msgstr "udp / rtp"
+
 #~ msgid "Could not import the Python bindings for libglade"
 #~ msgstr "Kunde inte importera Python-bindningarna för libglade"
+
 #~ msgid "Make sure you have the Python bindings for libglade installed"
 #~ msgstr "Kontrollera att du har Python-bindningar för libglade installerade"
+
 #~ msgid "Could not import the Python bindings for goocanvas"
 #~ msgstr "Kunde inte importera Python-bindningarna för goocanvas"
+
 #~ msgid "Make sure you have the Python bindings for goocanvas installed"
 #~ msgstr "Kontrollera att du har Python-bindningar för goocanvas installerade"
+
 #~ msgid "Couldn't construct pipeline."
 #~ msgstr "Kunde inte konstruera rörledning."
+
 #~ msgid ""
 #~ "GStreamer does not have an element to handle files coming from this type "
 #~ "of file system."
 #~ msgstr ""
 #~ "GStreamer saknar ett element för att hantera filer som kommer från den "
 #~ "här typen av filsystem."
+
 #~ msgid "Video output is busy"
 #~ msgstr "Videoutmatning är upptagen"
+
 #~ msgid ""
 #~ "Please check that your video output device isn't already used by another "
 #~ "application"
 #~ msgstr ""
 #~ "Kontrollera att din videoutmatningsenhet inte redan används av ett annat "
 #~ "program."
+
 #~ msgid "Video output problem"
 #~ msgstr "Videoutmatningsproblem"
+
 #~ msgid "There is a problem with your video output device"
 #~ msgstr "Det inträffade ett problem med din videoutmatningsenhet"
+
 #~ msgid "Audio output device is busy"
 #~ msgstr "Ljudutmatningsenheten är upptagen"
+
 #~ msgid ""
 #~ "Please check that your audio output device isn't already used by another "
 #~ "application."
 #~ msgstr ""
 #~ "Kontrollera att din ljudutmatningsenhet inte redan används av ett annat "
 #~ "program."
+
 #~ msgid "Audio output problem"
 #~ msgstr "Ljudutmatningsproblem"
+
 #~ msgid "There is a problem with your audio output device"
 #~ msgstr "Det inträffade ett problem med din ljudutmatningsenhet"
+
 #~ msgid "No device available\t"
 #~ msgstr "Ingen enhet tillgänglig\t"
+
 #~ msgid "gtk-close"
 #~ msgstr "Stäng"
+
 #~ msgid "gtk-media-record"
 #~ msgstr "Spela in"
+
 #~ msgid "Project settings"
 #~ msgstr "Projektinställningar"
+
 #~ msgid "Do you wish to overwrite existing file \"%s\"?"
 #~ msgstr "Vill du skriva över befintliga filen \"%s\"?"
+
 #~ msgid "Overwrite Existing File?"
 #~ msgstr "Skriv över befintlig fil?"
+
 #~ msgid "Couldn't start rendering"
 #~ msgstr "Kunde inte påbörja rendering"
+
 #~ msgid "This plugin is already installed in your system.\n"
 #~ msgstr "Denna insticksmodul finns redan installerad på ditt system.\n"
+
 #~ msgid "Cannot install %s\n"
 #~ msgstr "Kan inte installera %s\n"
+
 #~ msgid "Got unknown stream type : %s"
 #~ msgstr "Fick okänd strömtyp : %s"
+
 #~ msgid "You are missing an element to handle this media type."
 #~ msgstr "Du saknar ett element för att hantera den här mediatypen."
+
 #~ msgid "<b>%s</b><small>"
 #~ msgstr "<b>%s</b><small>"
+
 #~ msgid "<b>%s</b> (%s)"
 #~ msgstr "<b>%s</b> (%s)"
+
 #~ msgid "<small><b>File:</b> %s"
 #~ msgstr "<small><b>Fil:</b> %s"
+
 #~ msgid " <i>(%s)</i>"
 #~ msgstr " <i>(%s)</i>"
 
 #, fuzzy
 #~ msgid "Properties"
 #~ msgstr "Egenskaper för "
+
 #~ msgid "Clips"
 #~ msgstr "Videoklipp"
+
 #~ msgid "Audio Track"
 #~ msgstr "Ljudspår"
+
 #~ msgid "Video Track"
 #~ msgstr "Videospår"
+
 #~ msgid "Empty"
 #~ msgstr "Tom"
+
 #~ msgid "Switch to advanced view"
 #~ msgstr "Växla till avancerad vy"
+
 #~ msgid "Done"
 #~ msgstr "Färdig"
+
 #~ msgid "Cancel"
 #~ msgstr "Avbryt"
+
 #~ msgid "Start"
 #~ msgstr "Start"
+
 #~ msgid "Trim"
 #~ msgstr "Justera"
+
 #~ msgid "End"
 #~ msgstr "Slut"
+
 #~ msgid "Edit"
 #~ msgstr "Redigera"
+
 #~ msgid "Sound"
 #~ msgstr "Ljud"
+
 #~ msgid "Cut"
 #~ msgstr "Klipp ut"
+
 #~ msgid ""
 #~ "<span size='x-large'>Add clips to the timeline by dragging them here.</"
 #~ "span>"
 #~ msgstr ""
 #~ "<span size='x-large'>Lägg till videoklipp till tidsaxeln genom att dra "
 #~ "dem hit.</span>"
+
 #~ msgid "gtk-about"
 #~ msgstr "Om"
+
 #~ msgid "gtk-delete"
 #~ msgstr "Ta bort"
+
 #~ msgid "Reason"
 #~ msgstr "Anledning"
+
 #~ msgid "Add Folder of Sources..."
 #~ msgstr "Lägg till mapp med källor..."
+
 #~ msgid "Remove Sources..."
 #~ msgstr "Ta bort källor..."
+
 #~ msgid "The following files weren't discovered properly."
 #~ msgstr "Följande filer blev inte identifierade korrekt."
+
 #~ msgid "Start working with your project by dragging clips here"
 #~ msgstr "Börja arbeta med ditt projekt genom att dra videoklipp hit"
+
 #~ msgid "Settings:"
 #~ msgstr "Inställningar:"
+
 #~ msgid "Export to"
 #~ msgstr "Exportera till"
+
 #~ msgid "Move Down"
 #~ msgstr "Flytta ned"
+
 #~ msgid "Move Up"
 #~ msgstr "Flytta upp"
+
 #~ msgid "_Copy Location"
 #~ msgstr "_Kopiera plats"
+
 #~ msgid "Next chapter or movie"
 #~ msgstr "Nästa kapitel eller film"
+
 #~ msgid "Play / Pa_use"
 #~ msgstr "Spela upp / Gör pa_us"
+
 #~ msgid "Play or pause the movie"
 #~ msgstr "Spela upp eller gör paus i filmen"
+
 #~ msgid "Previous chapter or movie"
 #~ msgstr "Föregående kapitel eller film"
+
 #~ msgid "Show _Controls"
 #~ msgstr "Visa _kontroller"
+
 #~ msgid "Show controls"
 #~ msgstr "Visa kontroller"
+
 #~ msgid "Skip backwards"
 #~ msgstr "Hoppa bakåt"
+
 #~ msgid "Skip forward"
 #~ msgstr "Hoppa framåt"
+
 #~ msgid "Volume Down"
 #~ msgstr "Volym ned"
+
 #~ msgid "Volume Up"
 #~ msgstr "Volym upp"
+
 #~ msgid "Volume up"
 #~ msgstr "Volym upp"
+
 #~ msgid "_Next Chapter/Movie"
 #~ msgstr "_Nästa kapitel/film"
+
 #~ msgid "    "
 #~ msgstr "    "
+
 #~ msgid "0 kbps"
 #~ msgstr "0 kb/s"
+
 #~ msgid "Album:"
 #~ msgstr "Album:"
+
 #~ msgid "Artist:"
 #~ msgstr "Artist:"
+
 #~ msgid "Bitrate:"
 #~ msgstr "Bitfrekvens:"
+
 #~ msgid "Dimensions:"
 #~ msgstr "Dimensioner:"
+
 #~ msgid "N/A"
 #~ msgstr "-"
+
 #~ msgid "*"
 #~ msgstr "*"
+
 #~ msgid "Save screenshot to _file:"
 #~ msgstr "Spara skärmdump i _filen:"
+
 #~ msgid "_Skip to:"
 #~ msgstr "_Hoppa till:"
-#~ msgid "seconds"
-#~ msgstr "sekunder"
+
 #~ msgid "Movie Player"
 #~ msgstr "Filmuppspelare"
+
 #~ msgid "Play movies and songs"
 #~ msgstr "Spela upp filmer och låtar"
+
 #~ msgid ""
 #~ "14.4 Kbps Modem\n"
 #~ "19.2 Kbps Modem\n"
@@ -2360,10 +2603,12 @@ msgstr "%s kan ännu inte hantera icke-lokala projekt"
 #~ "512 kbit/s DSL/kabelmodem\n"
 #~ "1,5 Mbit/s T1/Intranet/Lokalt nätverk\n"
 #~ "Intranet/Lokalt nätverk"
+
 #~ msgid "2.11:1 (DVB)"
 #~ msgstr "2,11:1 (DVB)"
+
 #~ msgid "4:3 (TV)"
 #~ msgstr "4:3 (TV)"
+
 #~ msgid "<b>Color balance</b>"
 #~ msgstr "<b>Färgbalans</b>"
-
