@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-02-23 18:40+0000\n"
+"POT-Creation-Date: 2012-02-27 10:17+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -105,7 +105,7 @@ msgstr "H.264"
 
 #: ../data/ui/encodingdialog.ui.h:3
 msgid "29.97 fps"
-msgstr "29.97 sl/s"
+msgstr "29.97 fps"
 
 #: ../data/ui/encodingdialog.ui.h:4
 msgid "AC-3"
@@ -126,7 +126,7 @@ msgstr "Izriši"
 
 #: ../data/ui/encodingdialog.ui.h:8
 msgid "<b>Render Preset</b>"
-msgstr "<b>Prednastavitev izrisovanja</b>"
+msgstr "<b>Nastavitev izrisovanja</b>"
 
 #: ../data/ui/encodingdialog.ui.h:9
 msgid "Folder"
@@ -284,11 +284,11 @@ msgstr "Standardni (4:3)"
 
 #: ../data/ui/projectsettings.ui.h:2
 msgid "Standard PAL"
-msgstr "Standarni PAL"
+msgstr "Standardni PAL"
 
 #: ../data/ui/projectsettings.ui.h:3
 msgid "25 FPS"
-msgstr "25 SL/S"
+msgstr "25 FPS"
 
 #: ../data/ui/projectsettings.ui.h:4
 #: ../pitivi/ui/mainwindow.py:254
@@ -297,7 +297,7 @@ msgstr "Nastavitve projekta"
 
 #: ../data/ui/projectsettings.ui.h:5
 msgid "<b>Video Preset</b>"
-msgstr "<b>Prednastavljen video</b>"
+msgstr "<b>Nastavitev videa</b>"
 
 #: ../data/ui/projectsettings.ui.h:6
 msgid "<b>Size (Pixels)</b>"
@@ -331,7 +331,7 @@ msgstr "<b>Hitrost sličic</b>"
 
 #: ../data/ui/projectsettings.ui.h:14
 msgid "<b>Audio Preset</b>"
-msgstr "<b>Prednastavljeni zvok</b>"
+msgstr "<b>Nastavitev zvoka</b>"
 
 #: ../data/ui/projectsettings.ui.h:15
 msgid "<b>Format</b>"
@@ -422,7 +422,7 @@ msgstr "Dodaj vsako uvoženo VEČPREDSTAVNOSTNO_DATOTEKO v časovnico."
 
 #: ../pitivi/application.py:461
 msgid "Run Pitivi in the Python Debugger."
-msgstr "Zaženi pitivi v Python razhroščevalniku."
+msgstr "Zaženi program Pitivi v Python razhroščevalniku."
 
 #: ../pitivi/application.py:464
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
@@ -1351,8 +1351,8 @@ msgid "The spacing between thumbnails, in pixels"
 msgstr "Razmik med sličicami v točkah"
 
 #: ../pitivi/ui/previewer.py:66
-#: ../pitivi/ui/previewer.py:102
-#: ../pitivi/ui/previewer.py:113
+#: ../pitivi/ui/previewer.py:106
+#: ../pitivi/ui/previewer.py:117
 msgid "Performance"
 msgstr "Zmogljivost"
 
@@ -1360,42 +1360,59 @@ msgstr "Zmogljivost"
 msgid "Thumbnail every"
 msgstr "Sličica vsakih"
 
-#: ../pitivi/ui/previewer.py:69
-#: ../pitivi/ui/previewer.py:70
-#: ../pitivi/ui/previewer.py:71
-#: ../pitivi/ui/previewer.py:72
+#. Note that we cannot use "%s second" or ngettext, because fractions
+#. are not supported by ngettext and their plurality is ambiguous
+#. in many languages.
+#. See http://www.gnu.org/software/hello/manual/gettext/Plural-forms.html
 #: ../pitivi/ui/previewer.py:73
-#, python-format
-msgid "%s second"
-msgstr "%s sekunda"
+msgid "1/100 second"
+msgstr "1/100 sekunde"
 
 #: ../pitivi/ui/previewer.py:74
+msgid "1/10 second"
+msgstr "1/10 sekunde"
+
 #: ../pitivi/ui/previewer.py:75
-#, python-format
-msgid "%s seconds"
-msgstr "%s sekund"
+msgid "1/4 second"
+msgstr "1/4 sekunde"
 
 #: ../pitivi/ui/previewer.py:76
+msgid "1/2 second"
+msgstr "1/2 sekunde"
+
+#: ../pitivi/ui/previewer.py:77
+msgid "1 second"
+msgstr "1 sekunda"
+
+#: ../pitivi/ui/previewer.py:78
+msgid "5 seconds"
+msgstr "5 sekund"
+
+#: ../pitivi/ui/previewer.py:79
+msgid "10 seconds"
+msgstr "10 sekund"
+
+#: ../pitivi/ui/previewer.py:80
 msgid "minute"
 msgstr "minut"
 
-#: ../pitivi/ui/previewer.py:77
+#: ../pitivi/ui/previewer.py:81
 msgid "The interval, in seconds, between thumbnails."
 msgstr "Čas med sličicami v sekundah."
 
-#: ../pitivi/ui/previewer.py:103
+#: ../pitivi/ui/previewer.py:107
 msgid "Enable video thumbnails"
 msgstr "Omogoči sličice videa"
 
-#: ../pitivi/ui/previewer.py:104
+#: ../pitivi/ui/previewer.py:108
 msgid "Show thumbnails on video clips"
 msgstr "Pokaži sličice na video posnetkih"
 
-#: ../pitivi/ui/previewer.py:114
+#: ../pitivi/ui/previewer.py:118
 msgid "Enable audio waveforms"
 msgstr "Omogoči oblike zvočnih valov"
 
-#: ../pitivi/ui/previewer.py:115
+#: ../pitivi/ui/previewer.py:119
 msgid "Show waveforms on audio clips"
 msgstr "Pokaži oblike valov na zvočnih posnetkih"
 
