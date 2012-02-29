@@ -4,13 +4,14 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # Jorge González <jorgegonz@svn.gnome.org>, 2011.
 # Sylvia Sánchez <LailahFSF@gmail.com>, 2011.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
+# Milagros Alessandra Infante Montero <maim92@gmail.com>, 2012.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2011-12-10 23:43+0000\n"
-"PO-Revision-Date: 2011-12-12 16:50+0100\n"
+"POT-Creation-Date: 2012-02-27 10:17+0000\n"
+"PO-Revision-Date: 2012-02-29 10:54+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -61,7 +62,7 @@ msgstr "Crear proyectos nuevos y abrir proyectos recientes al iniciar"
 #: C/sysreq.page:22(p) C/splitting.page:21(p) C/selectunusedfiles.page:19(p)
 #: C/saveproject.page:22(p) C/rendering.page:21(p)
 #: C/projectsettings.page:21(p) C/presets.page:15(p)
-#: C/othertransitions.page:19(p) C/movearoundtimeline.page:21(p)
+#: C/othertransitions.page:19(p) C/movearoundtimeline.page:23(p)
 #: C/medialibrary.page:17(p) C/makeselections.page:21(p)
 #: C/mainwindow.page:19(p) C/layers.page:21(p) C/keyframecurves.page:21(p)
 #: C/interface.page:15(p) C/insertintimeline.page:21(p) C/index.page:19(p)
@@ -127,7 +128,7 @@ msgstr "Usar clips"
 
 #: C/usingclips.page:28(title)
 msgid "Clips vs files"
-msgstr "Clips y archivos"
+msgstr "Clips frente a archivos"
 
 #: C/usingclips.page:30(p)
 msgid ""
@@ -195,7 +196,7 @@ msgstr ""
 
 #: C/usingclips.page:42(title)
 msgid "Using ripple editing while moving clips"
-msgstr ""
+msgstr "Use la edición de onda mientras se mueven los vídeos"
 
 #: C/usingclips.page:43(p)
 msgid ""
@@ -203,6 +204,10 @@ msgid ""
 "\"trimming\">ripple technique</link> to move the <em>following</em> clips "
 "(the clips that start after the one you're directly editing) to fill the gap."
 msgstr ""
+"Mientras arrastra los clips alrededor de la línea del tiempo, puede usar la "
+"<link xref=\"trimming\">técnica de onda</link> para mover los clips "
+"<em>siguientes</em> (los clips que empiezan después del que está editando "
+"directamente) para llenar el espacio vacío."
 
 #: C/usingclips.page:45(p)
 msgid ""
@@ -313,10 +318,14 @@ msgid ""
 "only the audio or only the video part, you need to ungroup them first (see "
 "the section on Grouping/linking)."
 msgstr ""
+"Los vídeos que están agrupados, como un vídeo con sonido asociado, se "
+"cortarán uniformemente cuando arrastre las herramientas de recorte. Para "
+"recortar solo la parte del sonido o solo la de vídeo, necesitas desagruparlo "
+"primero (consulte la sección en Agrupamiento/Enlazado)"
 
 #: C/trimming.page:40(title)
 msgid "Ripple editing"
-msgstr ""
+msgstr "Edición de onda"
 
 #: C/trimming.page:41(p)
 msgid ""
@@ -324,12 +333,17 @@ msgid ""
 "a clip, moves the “following” clips (the clips that start after the one "
 "you're directly editing) to fill the gap."
 msgstr ""
+"La edición de ondas son una variante del recorte básico que, además de "
+"recortar un clip, mueve el «siguiente» clip (los clips que empiezan después "
+"del primero que está editando directamente) para llenar el espacio vacío."
 
 #: C/trimming.page:43(p)
 msgid ""
 "The ripple applies to all “following” clips, regardless of whether or not "
 "they are on the same layer."
 msgstr ""
+"La onda se aplica a todos los clips «siguientes¢, independientemente de si "
+"están o no están en la misma capa."
 
 #: C/trimming.page:45(p) C/trimming.page:69(p)
 msgid "Before:"
@@ -341,11 +355,13 @@ msgstr "Después:"
 
 #: C/trimming.page:53(p)
 msgid "To do a ripple edit:"
-msgstr ""
+msgstr "Para hacer una edición de onda:"
 
 #: C/trimming.page:56(p) C/trimming.page:79(p)
 msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
 msgstr ""
+"Coloque el cursor del ratón en la herramienta de recorte entre dos clips "
+"adyacentes."
 
 #: C/trimming.page:57(p)
 msgid "Press and hold <key>Shift</key>."
@@ -353,7 +369,7 @@ msgstr "Mantenga pulsada la tecla <key>Mayús</key>."
 
 #: C/trimming.page:58(p) C/trimming.page:81(p)
 msgid "Drag the trimming handle."
-msgstr ""
+msgstr "Arrastre la herramienta de recorte."
 
 #: C/trimming.page:60(p)
 msgid ""
@@ -361,26 +377,35 @@ msgid ""
 "For detailed explanations on how to do this, see the section <link xref="
 "\"usingclips\">Using ripple editing while moving clips</link>."
 msgstr ""
+"La edición de onda puede también se puede usar cuando se mueve los clips "
+"alrededor de la línea del tiempo. Para explicaciones detalladas de como "
+"hacer esto, consulte la sección <link xref=\"usingclips\">Usar la edición de "
+"onda al mover los clips</link>."
 
 #: C/trimming.page:64(title)
 msgid "Roll editing"
-msgstr ""
+msgstr "Recorte con relleno"
 
 #: C/trimming.page:65(p)
 msgid ""
 "Roll edits are a variant of basic trimming which, in addition to trimming a "
 "clip, <em>trims</em> the adjacent clips to prevent creating gaps."
 msgstr ""
+"El recorte con relleno es una variante del recorte básico que, además de "
+"recortar un clip, <em>recorta</em> los clips adyacentes para evitar que se "
+"creen espacios vacíos."
 
 #: C/trimming.page:67(p)
 msgid ""
 "The roll applies to all temporally adjacent clips, regardless of whether or "
 "not they are on the same layer."
 msgstr ""
+"El relleno se aplica a todos los clips adyacentes temporales, "
+"independientemente de si están o no están en la misma capa."
 
 #: C/trimming.page:77(p)
 msgid "To do a roll edit:"
-msgstr ""
+msgstr "Para hacer una recorte con relleno:"
 
 #: C/trimming.page:80(p)
 msgid "Press and hold <key>Ctrl</key>."
@@ -415,6 +440,12 @@ msgid ""
 "adequate. It should at least be able to playback your media in <app>Totem</"
 "app> without lagging."
 msgstr ""
+"Editar vídeos en HD (Alta Definición) generalmente requiere (en el momento "
+"de escribir esto) un hardware potente (dependiendo del códec utilizado), "
+"mientras que la edición de vídeos en SD (Definición Estándar) se puede hacer "
+"con configuraciones medias de hardware. Depende de usted asegurarse que su "
+"equipo sea el adecuado. Este debe ser, por lo menos, apto para reproducir "
+"sus medios en <app>Totem</app> sin retrasos."
 
 #: C/sysreq.page:30(p)
 msgid ""
@@ -424,20 +455,27 @@ msgid ""
 "<em>proxy editing</em>. This feature, however, is not yet available in "
 "<app>PiTiVi</app>."
 msgstr ""
+"Sin embargo, es posible usar versiones de baja calidad de sus imágenes "
+"durante la edición y usar las versiones de alta calidad cuando se esté "
+"generando la última salida, esto permite evitar las limitaciones de hardware "
+"en cierta medida. Esto se conoce como <em>Edición intermedia</em>. Esta "
+"característica, sin embargo, aún no está disponible en <app>PiTiVi</app>"
 
 #: C/splitting.page:17(desc)
 msgid "Dividing clips in two parts."
-msgstr ""
+msgstr "Dividir clips en dos partes."
 
 #: C/splitting.page:25(title)
 msgid "Splitting"
-msgstr ""
+msgstr "División"
 
 #: C/splitting.page:27(p)
 msgid ""
 "As the name implies, splitting a clip divides it into two adjacent clips, "
 "with new beginning/end points being created accordingly."
 msgstr ""
+"Como el nombre indida, dividirá el vídeo en dos vídeos adyacentes, con "
+"nuevos puntos de inicio/fin creados en consecuencia."
 
 #: C/splitting.page:28(p)
 msgid ""
@@ -448,10 +486,16 @@ msgid ""
 "zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless "
 "splitting is not only fast and efficient, it is also very accurate."
 msgstr ""
+"En <app>PiTiVi</app>, la división es una operación no-modal; esto significa "
+"que no tiene que activar una herramienta particular antes de hacer la acción "
+"de dividir. La división ocurre en la posición actual (ver también <link xref="
+"\"movearoundtimeline\">Mover la posición actual</link>). Combinada con la "
+"ampliación, la búsqueda fotograma a fotograma con el teclado o el depurado, "
+"la división sin modo no es solo rápida y eficiente, es también muy precisa."
 
 #: C/splitting.page:29(p)
 msgid "Selections affect splitting in the following ways:"
-msgstr ""
+msgstr "Las selecciones afectan la división en las siguientes maneras:"
 
 #: C/splitting.page:31(p)
 msgid "Only the selected clips under the playhead will be split."
@@ -795,19 +839,41 @@ msgid ""
 "#609353</link>)."
 msgstr ""
 
-#: C/movearoundtimeline.page:17(desc)
+#: C/movearoundtimeline.page:16(name)
+msgid "Brian Grohe"
+msgstr ""
+
+#: C/movearoundtimeline.page:17(email)
+#, fuzzy
+#| msgid "nekohayo@gmail.com"
+msgid "grohe43@gmail.com"
+msgstr "nekohayo@gmail.com"
+
+#: C/movearoundtimeline.page:19(desc)
 msgid "Moving the playhead, using the zoom feature, scrolling and scrubbing."
 msgstr ""
 
-#: C/movearoundtimeline.page:25(title)
+#: C/movearoundtimeline.page:27(title)
 msgid "Moving around the timeline"
 msgstr ""
 
-#: C/movearoundtimeline.page:28(title)
+#: C/movearoundtimeline.page:30(title)
+msgid "Activating the timeline toolbar"
+msgstr ""
+
+#: C/movearoundtimeline.page:31(p)
+msgid ""
+"The timeline toolbar contains many tools, which become active once a clip is "
+"selected in the timeline. To select a clip, simply click on the desired clip "
+"in the timeline. When selected, the clip will become darker and the timeline "
+"toolbar items will now be clickable."
+msgstr ""
+
+#: C/movearoundtimeline.page:35(title)
 msgid "Scrolling"
 msgstr ""
 
-#: C/movearoundtimeline.page:29(p)
+#: C/movearoundtimeline.page:36(p)
 msgid ""
 "You can use the scrollbars (located on the right and bottom of the "
 "timeline), use the mouse wheel anywhere over the timeline to scroll "
@@ -815,143 +881,143 @@ msgid ""
 "mousewheel to scroll the timeline layers vertically."
 msgstr ""
 
-#: C/movearoundtimeline.page:33(title)
+#: C/movearoundtimeline.page:40(title)
 msgid "Zooming"
 msgstr ""
 
-#: C/movearoundtimeline.page:34(p)
+#: C/movearoundtimeline.page:41(p)
 msgid ""
 "Zooming directly affects your editing accuracy and your ability to move "
 "quickly along the timeline:"
 msgstr ""
 
-#: C/movearoundtimeline.page:36(p)
+#: C/movearoundtimeline.page:43(p)
 msgid ""
 "When zooming in, video clips display more thumbnails and audio clips display "
 "increasingly detailed waveforms, allowing you to do precise edits."
 msgstr ""
 
-#: C/movearoundtimeline.page:37(p)
+#: C/movearoundtimeline.page:44(p)
 msgid ""
 "Zooming out allows you to scroll faster along the timeline. Zoom can thus be "
 "used in conjunction with scrolling to move quickly between distant points of "
 "your project's chronology."
 msgstr ""
 
-#: C/movearoundtimeline.page:39(p)
+#: C/movearoundtimeline.page:46(p)
 msgid "You can zoom in and out by:"
 msgstr ""
 
-#: C/movearoundtimeline.page:41(p)
+#: C/movearoundtimeline.page:48(p)
 msgid ""
 "Holding the <key>Ctrl</key> key while using the mousewheel over the timeline"
 msgstr ""
 
-#: C/movearoundtimeline.page:42(p)
+#: C/movearoundtimeline.page:49(p)
 msgid ""
 "Using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and "
 "<guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq> menu items"
 msgstr ""
 
-#: C/movearoundtimeline.page:43(p)
+#: C/movearoundtimeline.page:50(p)
 msgid "Dragging the zoom slider on the left of the ruler"
 msgstr ""
 
-#: C/movearoundtimeline.page:44(p)
+#: C/movearoundtimeline.page:51(p)
 msgid ""
 "Using keyboard shortcuts such as <key>Ctrl</key>+<key>-</key> to zoom out or "
 "<key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> on the numeric "
 "keypad) to zoom in"
 msgstr ""
 
-#: C/movearoundtimeline.page:46(p)
+#: C/movearoundtimeline.page:53(p)
 msgid ""
 "To get a better overview of your timeline, you may use the "
 "<guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the "
 "<gui>Zoom</gui> button on the left of the zoom slider."
 msgstr ""
 
-#: C/movearoundtimeline.page:49(title)
+#: C/movearoundtimeline.page:56(title)
 msgid "Zooming is always centered around the location of your playhead"
 msgstr ""
 
-#: C/movearoundtimeline.page:50(p)
+#: C/movearoundtimeline.page:57(p)
 msgid ""
 "When using the mouse wheel to zoom in and out, remember that the zoom is not "
 "relative to the position of your mouse, only to the position of the playhead "
 "on the timeline."
 msgstr ""
 
-#: C/movearoundtimeline.page:54(title)
+#: C/movearoundtimeline.page:61(title)
 msgid "<em>Warping</em> between zoom levels"
 msgstr ""
 
-#: C/movearoundtimeline.page:55(p)
+#: C/movearoundtimeline.page:62(p)
 msgid ""
 "Using your mouse's scroll wheel, you can also <em>warp</em> instantly from "
 "any zoom level to another in a single click. To do that, click with your "
 "mousewheel anywhere on the zoom slider."
 msgstr ""
 
-#: C/movearoundtimeline.page:60(title)
+#: C/movearoundtimeline.page:67(title)
 msgid "Moving the playhead"
 msgstr ""
 
-#: C/movearoundtimeline.page:61(p)
+#: C/movearoundtimeline.page:68(p)
 msgid ""
 "You can change the position of the playhead by clicking anywhere on the "
 "ruler or on the timeline."
 msgstr ""
 
-#: C/movearoundtimeline.page:62(p)
+#: C/movearoundtimeline.page:69(p)
 msgid "When clicking on the <em>timeline</em>:"
 msgstr ""
 
-#: C/movearoundtimeline.page:64(p)
+#: C/movearoundtimeline.page:71(p)
 msgid ""
 "If a clip is under the mouse cursor, it will replace the current clip "
 "selection (see the <link xref=\"makeselections\">Selecting multiple items</"
 "link> section for more detailed instructions)."
 msgstr ""
 
-#: C/movearoundtimeline.page:65(p)
+#: C/movearoundtimeline.page:72(p)
 msgid ""
 "If there is no clip under the cursor, all selected clips (if any) will be "
 "deselected."
 msgstr ""
 
-#: C/movearoundtimeline.page:67(p)
+#: C/movearoundtimeline.page:74(p)
 msgid ""
 "When clicking on the ruler, only the playhead's position changes; clip "
 "selections are not affected."
 msgstr ""
 
-#: C/movearoundtimeline.page:71(title)
+#: C/movearoundtimeline.page:78(title)
 msgid "Scrubbing"
 msgstr ""
 
-#: C/movearoundtimeline.page:72(p)
+#: C/movearoundtimeline.page:79(p)
 msgid "<em>Scrubbing</em> is a way of moving the playhead that allows you to:"
 msgstr ""
 
-#: C/movearoundtimeline.page:74(p)
+#: C/movearoundtimeline.page:81(p)
 msgid ""
 "Search for a specific position in time by approximation/trial and error."
 msgstr ""
 
-#: C/movearoundtimeline.page:75(p)
+#: C/movearoundtimeline.page:82(p)
 msgid ""
 "Review repeatedly the visual motion in a scene by moving back and forth in "
 "time."
 msgstr ""
 
-#: C/movearoundtimeline.page:77(p)
+#: C/movearoundtimeline.page:84(p)
 msgid ""
 "To scrub, click on the ruler and move the mouse with the button still held "
 "down."
 msgstr ""
 
-#: C/movearoundtimeline.page:78(p)
+#: C/movearoundtimeline.page:85(p)
 msgid ""
 "You can also scrub by dragging the black vertical line that stems from the "
 "playhead and spans across the timeline."
@@ -2092,8 +2158,6 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/codecscontainers.page:26(None)
-#| msgid ""
-#| "@@image: 'figures/ripple-after.png'; md5=3f2fdba79d1c69c2f2022fe08a62b5a7"
 msgid ""
 "@@image: 'figures/codecscontainers.jpg'; md5=e43e6a92cda311d0cd8c24fb0df67a17"
 msgstr ""
@@ -2146,7 +2210,6 @@ msgid ""
 msgstr ""
 
 #: C/codecscontainers.page:24(p)
-#| msgid "The following file chooser dialog window will appear:"
 msgid "The following figure should make things clearer:"
 msgstr "Las siguientes imágenes debería aclarar las cosas:"
 
