@@ -1150,7 +1150,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         preview_window.hide()  # Hack to allow setting the window position
         previewer.previewUri(path)
         previewer.setMinimal()
-        info = self.project.medialibrary.getInfoFromUri(path)
+        info = self.app.current.medialibrary.getInfoFromUri(path)
         try:
             # For videos and images, automatically resize the window
             # Try to keep it 1:1 if it can fit within 85% of the parent window
