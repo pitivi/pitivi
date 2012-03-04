@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-02-27 10:17+0000\n"
-"PO-Revision-Date: 2012-02-29 10:54+0100\n"
+"POT-Creation-Date: 2012-02-29 09:58+0000\n"
+"PO-Revision-Date: 2012-03-04 20:24+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -377,10 +377,10 @@ msgid ""
 "For detailed explanations on how to do this, see the section <link xref="
 "\"usingclips\">Using ripple editing while moving clips</link>."
 msgstr ""
-"La edición de onda puede también se puede usar cuando se mueve los clips "
-"alrededor de la línea del tiempo. Para explicaciones detalladas de como "
-"hacer esto, consulte la sección <link xref=\"usingclips\">Usar la edición de "
-"onda al mover los clips</link>."
+"La edición de onda también se puede usar cuando se mueven los clips "
+"alrededor de la línea del tiempo. Para obtener una explicación detallada de "
+"cómo hacer esto, consulte la sección <link xref=\"usingclips\">Usar la "
+"edición de onda al mover los clips</link>."
 
 #: C/trimming.page:64(title)
 msgid "Roll editing"
@@ -474,8 +474,8 @@ msgid ""
 "As the name implies, splitting a clip divides it into two adjacent clips, "
 "with new beginning/end points being created accordingly."
 msgstr ""
-"Como el nombre indida, dividirá el vídeo en dos vídeos adyacentes, con "
-"nuevos puntos de inicio/fin creados en consecuencia."
+"Como el nombre indica, dividirá el clip en dos clip adyacentes, con nuevos "
+"puntos de inicio/fin creados en consecuencia."
 
 #: C/splitting.page:28(p)
 msgid ""
@@ -499,16 +499,18 @@ msgstr "Las selecciones afectan la división en las siguientes maneras:"
 
 #: C/splitting.page:31(p)
 msgid "Only the selected clips under the playhead will be split."
-msgstr ""
+msgstr "Sólo se dividirán los clips seleccionados bajo la posición actual."
 
 #: C/splitting.page:32(p)
 msgid ""
 "If no clips are selected, all the clips under the playhead will be split."
 msgstr ""
+"Si no hay ningún clip seleccionado, se dividirán todos los clips bajo la "
+"posición actual."
 
 #: C/splitting.page:34(p)
 msgid "To split a single clip:"
-msgstr ""
+msgstr "Para dividir un solo clip:"
 
 #: C/splitting.page:36(p)
 msgid "Click on the clip."
@@ -516,45 +518,51 @@ msgstr "Pulse sobre el vídeo"
 
 #: C/splitting.page:37(p) C/splitting.page:43(p)
 msgid "Reposition the playhead (if needed)."
-msgstr ""
+msgstr "Cambie la posición actual (si es necesario)."
 
 #: C/splitting.page:38(p) C/splitting.page:44(p) C/splitting.page:50(p)
 msgid ""
 "Click on the <gui>Split</gui> button on the timeline toolbar or press "
 "<key>S</key>."
 msgstr ""
+"Pulse en el botón <gui>Dividir</gui> en la barra de herramientas de la línea "
+"del tiempo o presione <key>S</key>."
 
 #: C/splitting.page:40(p)
 msgid "To split all the clips across the all layers:"
-msgstr ""
+msgstr "Para dividir todos los clips a través de todas las capas:"
 
 #: C/splitting.page:42(p)
 msgid ""
 "Click on a blank area of the timeline (this will deselect all selected "
 "clips, if any)."
 msgstr ""
+"Pulse en algun área blanca de la línea del tiempo (esto va a anular la "
+"selección de todos los clips, si la hubiera)."
 
 #: C/splitting.page:46(p)
 msgid "To split multiple selected clips:"
-msgstr ""
+msgstr "Para dividir los múltiples clips seleccionados:"
 
 #: C/splitting.page:48(p)
 msgid "Position the playhead where you want to split."
-msgstr ""
+msgstr "Sitúe la posición actual donde quiera dividir."
 
 #: C/splitting.page:49(p)
 msgid ""
 "Add or remove clips to the selection with the <key>Ctrl</key> modifier key. "
 "This will not affect the playhead's position."
 msgstr ""
+"Añada o quite clips de la selección con la tecla modificadora <key>Ctrl</"
+"key>. Esto no afectará a la posición actual."
 
 #: C/selectunusedfiles.page:15(desc)
 msgid "Finding and removing unused media to cleanup your project"
-msgstr ""
+msgstr "Encontrar y remover datos no utilizados para limpiar su proyecto."
 
 #: C/selectunusedfiles.page:23(title)
 msgid "Selecting unused files"
-msgstr ""
+msgstr "Seleccionar archivos no utilizados"
 
 #: C/selectunusedfiles.page:24(p)
 msgid ""
@@ -563,22 +571,27 @@ msgid ""
 "in the media library but not in the timeline. There are various reasons to "
 "do this:"
 msgstr ""
+"A veces puede encontrar que ha importado más clips de los que necesita en su "
+"proyecto. <app>PiTiVi</app> le permite seleccionar archivos que están "
+"presentes en la biblioteca de medios pero no en la línea de tiempo. Hay "
+"varias razones para hacer esto:"
 
 #: C/selectunusedfiles.page:26(p)
 msgid "Improving performance when loading the project"
-msgstr ""
+msgstr "Mejorar el rendimiento cuando se cargue el proyecto"
 
 #: C/selectunusedfiles.page:27(p)
 msgid "Simplifying your editing workflow"
-msgstr ""
+msgstr "Simplificar su flujo de trabajo de edición"
 
 #: C/selectunusedfiles.page:28(p)
 msgid "Check which clips you may have forgot to use in your movie"
 msgstr ""
+"Verificar cuales son los clips que puede haber olvidado usar en su película"
 
 #: C/selectunusedfiles.page:29(p)
 msgid "Backup or share your project more easily"
-msgstr ""
+msgstr "Sacar una copia de seguridad o comparta su proyecto con más facilidad"
 
 #: C/selectunusedfiles.page:31(p)
 msgid ""
@@ -588,16 +601,23 @@ msgid ""
 "from your project, use <guiseq><gui>Library</gui><gui>Remove from Project</"
 "gui></guiseq>."
 msgstr ""
+"Para identificar cuales son los clips que no se han usado en su proyecto, "
+"use <guiseq><gui>Biblioteca</gui><gui>Seleccione medios no utilizados</gui></"
+"guiseq>. Los clips no utilizados se seleccionarán luego en la biblioteca de "
+"medios. Si quiere quitarlos de su proyecto, use <guiseq><gui>Biblioteca</"
+"gui><gui>Quitar del Proyecto</gui></guiseq>."
 
 #: C/selectunusedfiles.page:32(p)
 msgid ""
 "If there are no unused clips in your project, nothing will be selected in "
 "the media library."
 msgstr ""
+"Si no hay clips sin usar en su proyecto, no se seleccionará nada en la "
+"biblioteca de medios."
 
 #: C/saveproject.page:18(desc)
 msgid "How to save your project for later editing use."
-msgstr ""
+msgstr "Como guardar su proyecto para su posterior uso de edición."
 
 #: C/saveproject.page:26(title)
 msgid "Saving a project"
