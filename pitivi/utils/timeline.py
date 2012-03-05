@@ -782,7 +782,12 @@ class MoveContext(EditingContext, Loggable):
         return position, priority
 
 
-class TrimStartContext(EditingContext):
+class TrimStartContext(EditingContext, Signallable):
+
+    __signals__ = {
+        "clip-trim": ["uri", "position"],
+        "clip-trim-finished": [],
+    }
 
     def __init__(self, timeline, focus, other):
         EditingContext.__init__(self, timeline, focus, other)
@@ -843,6 +848,7 @@ class TrimStartContext(EditingContext):
         self.focus.props.start = position
         self.focus.props.duration = self.focus.props.max_duration - \
                 self.focus.props.in_point
+        self.emit("clip-trim", self.focus.props.uri, self.focus.props.in_point)
         return position, priority
 
     def finish(self):
@@ -864,8 +870,16 @@ class TrimStartContext(EditingContext):
             position = initial_position - left_gap.duration
             self._defaultTo(position, obj)
 
+        self.emit("clip-trim-finished")
 
-class TrimEndContext(EditingContext):
+
+class TrimEndContext(EditingContext, Signallable):
+
+    __signals__ = {
+        "clip-trim": ["uri", "position"],
+        "clip-trim-finished": [],
+    }
+
     def __init__(self, timeline, focus, other):
         EditingContext.__init__(self, timeline, focus, other)
         self.tracks = set([])
@@ -924,7 +938,7 @@ class TrimEndContext(EditingContext):
         duration = max(0, position - self.focus.props.start)
         duration = min(duration, self.focus.max_duration)
         self.focus.props.duration = duration
-
+        self.emit("clip-trim", self.focus.props.uri, self.focus.props.duration)
         return position, priority
 
     def finish(self):
@@ -948,6 +962,8 @@ class TrimEndContext(EditingContext):
             left_gap, right_gap = Gap.findAroundObject(self.focus_timeline_object)
             duration = absolute_initial_duration + right_gap.duration
             self._defaultTo(duration, obj.props.priority)
+
+        self.emit("clip-trim-finished")
 
 
 #-------------------------- Interfaces ----------------------------------------#
