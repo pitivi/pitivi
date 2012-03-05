@@ -89,6 +89,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
         self.action = action
         self.pipeline = None
+        self._tmp_pipeline = None  # Used for displaying a preview when trimming
 
         self.sink = None
         self.docked = True
@@ -480,6 +481,23 @@ class PitiviViewer(gtk.VBox, Loggable):
         """
         self.positionCheck()
         return self.currentState != gst.STATE_PAUSED
+
+    def clipTrimPreview(self, clip_uri, position):
+        """
+        While a clip is being trimmed, show a live preview of it.
+        """
+        if not self._tmp_pipeline:
+            self._tmp_pipeline = gst.element_factory_make("playbin2")
+            self._tmp_pipeline.set_property("uri", clip_uri)
+            self.setPipeline(self._tmp_pipeline)
+        self._tmp_pipeline.seek_simple(gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH, position)
+
+    def clipTrimPreviewFinished(self):
+        """
+        After trimming a clip, reset the project pipeline into the viewer.
+        """
+        self._tmp_pipeline = None  # Free the memory
+        self.setPipeline(self.app.current.pipeline)
 
     def pipelineStateChanged(self, state):
         """
