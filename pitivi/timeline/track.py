@@ -249,7 +249,7 @@ class StartHandle(TrimHandle):
 
     """Subclass of TrimHandle wich sets the object's start time"""
 
-    class Controller(TimelineController):
+    class Controller(TimelineController, Signallable):
 
         _cursor = LEFT_SIDE
 
@@ -260,9 +260,18 @@ class StartHandle(TrimHandle):
                 elem = self._view.element.get_timeline_object()
             else:
                 elem = self._view.element
-            self._context = TrimStartContext(self._view.timeline,
-                elem, set([]))
+            self._context = TrimStartContext(self._view.timeline, elem, set([]))
+            self._context.connect("clip-trim", self.clipTrimCb)
+            self._context.connect("clip-trim-finished", self.clipTrimFinishedCb)
             self._view.app.action_log.begin("trim object")
+
+        def clipTrimCb(self, unused_TrimStartContext, clip_uri, position):
+            # While a clip is being trimmed, ask the viewer to preview it
+            self._view.app.gui.viewer.clipTrimPreview(clip_uri, position)
+
+        def clipTrimFinishedCb(self, unused_TrimStartContext):
+            # When a clip has finished trimming, tell the viewer to reset itself
+            self._view.app.gui.viewer.clipTrimPreviewFinished()
 
 
 class EndHandle(TrimHandle):
@@ -280,9 +289,18 @@ class EndHandle(TrimHandle):
                 elem = self._view.element.get_timeline_object()
             else:
                 elem = self._view.element
-            self._context = TrimEndContext(self._view.timeline,
-                elem, set([]))
+            self._context = TrimEndContext(self._view.timeline, elem, set([]))
+            self._context.connect("clip-trim", self.clipTrimCb)
+            self._context.connect("clip-trim-finished", self.clipTrimFinishedCb)
             self._view.app.action_log.begin("trim object")
+
+        def clipTrimCb(self, unused_TrimStartContext, clip_uri, position):
+            # While a clip is being trimmed, ask the viewer to preview it
+            self._view.app.gui.viewer.clipTrimPreview(clip_uri, position)
+
+        def clipTrimFinishedCb(self, unused_TrimStartContext):
+            # When a clip has finished trimming, tell the viewer to reset itself
+            self._view.app.gui.viewer.clipTrimPreviewFinished()
 
 
 class TrackObject(View, goocanvas.Group, Zoomable):
