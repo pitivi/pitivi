@@ -129,6 +129,9 @@ class PitiviViewer(gtk.VBox, Loggable):
         if self.pipeline:
             bus = self.pipeline.get_bus()
             bus.add_signal_watch()
+            # You cannot replace an existing sync_handler.
+            # You can pass NULL to clear it.
+            bus.set_sync_handler(None)
             bus.set_sync_handler(self._elementMessageCb)
             self.pipeline.set_state(gst.STATE_PAUSED)
             self.currentState = gst.STATE_PAUSED
