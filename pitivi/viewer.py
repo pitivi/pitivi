@@ -26,6 +26,7 @@ import gst
 import cairo
 
 from gettext import gettext as _
+from time import time
 
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
@@ -489,11 +490,16 @@ class PitiviViewer(gtk.VBox, Loggable):
         """
         While a clip is being trimmed, show a live preview of it.
         """
+        cur_time = time()
         if not self._tmp_pipeline:
             self._tmp_pipeline = gst.element_factory_make("playbin2")
             self._tmp_pipeline.set_property("uri", clip_uri)
             self.setPipeline(self._tmp_pipeline)
-        self._tmp_pipeline.seek_simple(gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH, position)
+            self._lastClipTrimTime = cur_time
+        if (cur_time - self._lastClipTrimTime) > 0.2:
+            # Do not seek more than once every 200 ms (for performance)
+            self._tmp_pipeline.seek_simple(gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH, position)
+            self._lastClipTrimTime = cur_time
 
     def clipTrimPreviewFinished(self):
         """
