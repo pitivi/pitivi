@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-02-29 09:58+0000\n"
-"PO-Revision-Date: 2012-03-04 20:24+0100\n"
+"POT-Creation-Date: 2012-03-04 19:27+0000\n"
+"PO-Revision-Date: 2012-03-08 12:11+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -204,7 +204,7 @@ msgid ""
 "\"trimming\">ripple technique</link> to move the <em>following</em> clips "
 "(the clips that start after the one you're directly editing) to fill the gap."
 msgstr ""
-"Mientras arrastra los clips alrededor de la línea del tiempo, puede usar la "
+"Mientras arrastra los clips alrededor de la línea de tiempo, puede usar la "
 "<link xref=\"trimming\">técnica de onda</link> para mover los clips "
 "<em>siguientes</em> (los clips que empiezan después del que está editando "
 "directamente) para llenar el espacio vacío."
@@ -378,7 +378,7 @@ msgid ""
 "\"usingclips\">Using ripple editing while moving clips</link>."
 msgstr ""
 "La edición de onda también se puede usar cuando se mueven los clips "
-"alrededor de la línea del tiempo. Para obtener una explicación detallada de "
+"alrededor de la línea de tiempo. Para obtener una explicación detallada de "
 "cómo hacer esto, consulte la sección <link xref=\"usingclips\">Usar la "
 "edición de onda al mover los clips</link>."
 
@@ -526,7 +526,7 @@ msgid ""
 "<key>S</key>."
 msgstr ""
 "Pulse en el botón <gui>Dividir</gui> en la barra de herramientas de la línea "
-"del tiempo o presione <key>S</key>."
+"de tiempo o presione <key>S</key>."
 
 #: C/splitting.page:40(p)
 msgid "To split all the clips across the all layers:"
@@ -537,7 +537,7 @@ msgid ""
 "Click on a blank area of the timeline (this will deselect all selected "
 "clips, if any)."
 msgstr ""
-"Pulse en algun área blanca de la línea del tiempo (esto va a anular la "
+"Pulse en algún área blanca de la línea de tiempo (esto va a anular la "
 "selección de todos los clips, si la hubiera)."
 
 #: C/splitting.page:46(p)
@@ -629,12 +629,17 @@ msgid ""
 "gui></guiseq> menu, the Save button on the main toolbar or press "
 "<keyseq><key>Ctrl</key><key>S</key></keyseq>."
 msgstr ""
+"Para guardar su trabajo del proyecto, use el menú <guiseq><gui>Proyecto</"
+"gui><gui>Guardar</gui></guiseq>, el botón «Guardar» en la barra de "
+"herramientas principal o pulse <keyseq><key>Ctrl</key><key>S</key></keyseq>."
 
 #: C/saveproject.page:29(p)
 msgid ""
 "When you save a project for the first time, a dialog window appears, asking "
 "you where to save the project file and how to name it."
 msgstr ""
+"Cuando guarde un proyecto por primera vez, aparecerá una ventana de diálogo, "
+"preguntándole dónde guardar el archivo del proyecto y cómo nombrarlo."
 
 #: C/saveproject.page:30(p)
 msgid ""
@@ -643,10 +648,14 @@ msgid ""
 "<keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be "
 "used to create different versions of your project."
 msgstr ""
+"Si quiere guardar su proyecto como un archivo diferente, use "
+"<guiseq><gui>Proyecto</gui><gui>Guardar como</gui></guiseq> o pulse "
+"<keyseq><key>Ctrl</key><key>Mayús</key><key>S</key></keyseq>. Esto se puede "
+"usar para crear versiones diferentes de su proyecto."
 
 #: C/saveproject.page:32(title)
 msgid "Reverting changes"
-msgstr ""
+msgstr "Deshacer cambios"
 
 #: C/saveproject.page:33(p)
 msgid ""
@@ -654,15 +663,20 @@ msgid ""
 "the changes you have made since the last time you saved your project. To do "
 "so, use <guiseq><gui>Project</gui><gui>Revert</gui></guiseq>."
 msgstr ""
+"Además de deshacer los cambios individuales, puede decidir también si "
+"deshace los cambios realizados desde la última vez que guardó su proyecto. "
+"Para hacer esto, use <guiseq><gui>Proyecto</gui><gui>Deshacer</gui></guiseq>."
 
 #: C/rendering.page:17(desc)
 msgid ""
 "Learn the difference between saving a project and exporting a rendered movie."
 msgstr ""
+"Aprenda la diferencia entre guardar un proyecto y exportar una película "
+"renderizada."
 
 #: C/rendering.page:25(title)
 msgid "Understanding rendering"
-msgstr ""
+msgstr "Entender la renderización"
 
 #: C/rendering.page:27(p)
 msgid ""
@@ -671,20 +685,26 @@ msgid ""
 "affect the project itself; you can still make edits to your project and "
 "render again as many times as needed."
 msgstr ""
+"La renderización es el proceso de exportar su proyecto en uno nuevo, un "
+"archivo multimedia finalizado. La renderización solo crea un nuevo archivo "
+"de vídeo «renderizado», no afecta al proyecto mismo; todavía se puede hacer "
+"ediciones a su proyecto y renderizarlo tantas veces como sea necesario."
 
 #: C/rendering.page:29(p)
 msgid "From the <gui>Project</gui> menu, use <gui>Render</gui>."
-msgstr ""
+msgstr "En el menú <gui>Proyecto</gui>, use <gui>Renderizar</gui>."
 
 #: C/rendering.page:30(p)
 msgid ""
 "Adjust the various encoding settings, if needed, to use settings different "
 "from the project settings."
 msgstr ""
+"Modofique las distintas configuraciones de codificación, si es necesario, "
+"para usar configuraciones diferentes a las del proyecto."
 
 #: C/rendering.page:31(p)
 msgid "Click the <gui>Render</gui> button."
-msgstr ""
+msgstr "Pulse el botón <gui>Renderizar</gui>."
 
 #: C/rendering.page:34(p)
 msgid ""
@@ -693,12 +713,19 @@ msgid ""
 "process (see bug <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
 "id=571885\">bug #571885</link>)."
 msgstr ""
+"Si su equipo está configurado para suspenderse o hibernar automáticamente, "
+"<app>PiTiVi</app> impedirá automáticamente las funciones de ahorro de "
+"energía durante el proceso de renderizado (consulte el informe de error "
+"error <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=571885"
+"\">#571885</link>)."
 
 #: C/projectsettings.page:17(desc)
 msgid ""
 "How to specify the global project resolution, framerate, aspect ratio, audio "
 "settings and project metadata."
 msgstr ""
+"Cómo especificar la resolución del proyecto global, imágenes por segundo, "
+"proporción de aspecto, configuraciones de sonido y metadatos del proyecto."
 
 #: C/projectsettings.page:25(title)
 msgid "Editing project settings"
@@ -712,16 +739,26 @@ msgid ""
 "you do not set the resolution and aspect ratio to match those of your "
 "footage, the video may look squished or letterboxed."
 msgstr ""
+"Cuando inicie un nuevo proyecto, debe asegurarse de modificar las "
+"configuraciones del proyecto, tales como imágenes por segundo, resolución y "
+"códecs preferidos. La resolución del vídeo y la proporción del aspecto "
+"afectarán a la apariencia de la vista previa. Si no configura la resolución "
+"y la proporción del aspecto para que coincida con los de su metraje, el "
+"vídeo puede verse aplastado o encajado."
 
 #: C/projectsettings.page:28(p)
 msgid ""
 "To edit the project settings after initial creation, use the "
 "<guiseq><gui>Edit</gui><gui>Project Settings</gui></guiseq> menu."
 msgstr ""
+"Para editar los ajustes del proyecto después de la creación inicial, use el "
+"menú <guiseq><gui>Editar</gui><gui>Ajustes del Proyecto</gui></guiseq>"
 
 #: C/projectsettings.page:31(title)
 msgid "Pixel aspect ratio vs display aspect ratio"
 msgstr ""
+"Proporción del aspecto en píxeles frente a proporción del aspecto "
+"visualizado "
 
 #: C/projectsettings.page:32(p)
 msgid ""
@@ -733,6 +770,14 @@ msgid ""
 "wiki/Display_aspect_ratio\">display aspect ratio</link> (DAR) is the "
 "mathematical ratio of width:height for the whole image."
 msgstr ""
+"Las imágenes digitales están compuestas de una cuadrícula de <link href="
+"\"http://en.wikipedia.org/wiki/Pixel\">píxeles</link>, que puede ser o no un "
+"cuadrado. Como tal, en algunos casos, podría necesitar configurar la <link "
+"href=\"http://en.wikipedia.org/wiki/Pixel_aspect_ratio\">proporción del "
+"aspecto en píxeles</link> (PAR) para que la imagen se muestre correctamente. "
+"Por otro lado la, <link href=\"http://en.wikipedia.org/wiki/"
+"Display_aspect_ratio\">proporción del aspecto visualizado</link> (DAR) es la "
+"proporción matemática de anchura:altura para la imagen entera."
 
 #: C/projectsettings.page:33(p)
 msgid ""
@@ -741,6 +786,11 @@ msgid ""
 "resolution is set, setting the DAR will influence the PAR and vice versa. "
 "You can use either DAR or PAR, whichever you are most comfortable with."
 msgstr ""
+"En <app>PiTiVi</app>, la proporción de aspecto en píxeles y la proporción "
+"del aspecto visualizado están relacionadas la una con la otra por la "
+"resolución del vídeo (ancho y altura). Una vez que su resolución se "
+"configura, configurar el DAR influenciará en el PAR y viceversa. Puede usar "
+"DAR o PAR, con la que esté más cómodo."
 
 #: C/projectsettings.page:34(p)
 msgid ""
@@ -748,6 +798,10 @@ msgid ""
 "custom aspect ratio in the text entry below (using a syntax such as \"4:3\" "
 "or \"1.3333\", although the decimal version is less precise)."
 msgstr ""
+"Puede usar las proporciones ya dadas en los cuadros combinados, o introducir "
+"una proporción del aspecto en la entrada de texto a continuación (usando una "
+"sintaxis tal como «4:3» o «1.3333», aunque la versión decimal es menos "
+"precisa)."
 
 #: C/presets.page:19(title)
 msgid "Presets"
@@ -760,6 +814,11 @@ msgid ""
 "settings, with different cameras or target devices for rendering, you may "
 "want to create custom presets."
 msgstr ""
+"Las configuraciones del proyecto y el diálogo de renderizado le permiten "
+"guardar ajustes predefinidos para su uso posterior. Si trata con frecuencia "
+"con el mismo tipo de configuraciones del proyecto, con diferentes cámaras o "
+"dispositivos de destino para renderizado, es posible que quiera crear "
+"ajustes predefinidos personalizados."
 
 #: C/presets.page:21(p)
 msgid ""
