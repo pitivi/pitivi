@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi 0.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-04 15:19+0800\n"
-"PO-Revision-Date: 2012-02-04 15:20+0800\n"
+"POT-Creation-Date: 2012-03-09 20:15+0800\n"
+"PO-Revision-Date: 2012-03-09 20:15+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
 "Language: zh_TW\n"
@@ -736,13 +736,14 @@ msgstr "幾何"
 
 #: ../pitivi/effects.py:106
 msgid "Fancy"
-msgstr ""
+msgstr "幻想"
 
 #: ../pitivi/effects.py:115
 msgid "Time"
 msgstr "時間"
 
 #: ../pitivi/effects.py:116 ../pitivi/effects.py:226
+#: ../pitivi/factories/operation.py:66
 msgid "Uncategorized"
 msgstr "尚未分類"
 
@@ -811,6 +812,20 @@ msgid ""
 msgstr ""
 "\n"
 "多工器： "
+
+#: ../pitivi/ui/alignmentprogress.py:69
+#, python-format
+msgid "%d%% Analyzed"
+msgstr "%d%% 已分析"
+
+#. Translators: This string indicates the estimated time
+#. remaining until the action completes.  The "%s" is an
+#. already-localized human-readable duration description like
+#. "31 seconds".
+#: ../pitivi/ui/alignmentprogress.py:75 ../pitivi/ui/encodingprogress.py:67
+#, python-format
+msgid "About %s left"
+msgstr "大約剩下 %s"
 
 #: ../pitivi/ui/clipproperties.py:164
 msgid "Remove effect"
@@ -1000,6 +1015,11 @@ msgid ""
 msgstr ""
 "這個檔案已經存在了。\n"
 "如果你不想覆蓋它，請選擇不同的檔案名稱或資料夾。"
+
+#: ../pitivi/ui/encodingprogress.py:65
+#, python-format
+msgid "%d%% Rendered"
+msgstr "%d%% 已壓製"
 
 #: ../pitivi/ui/filechooserpreview.py:134
 msgid "PiTiVi can not preview this file."
@@ -1327,8 +1347,8 @@ msgstr "縮圖間隙"
 msgid "The spacing between thumbnails, in pixels"
 msgstr "縮圖之間的間距，以像素為單位"
 
-#: ../pitivi/ui/previewer.py:66 ../pitivi/ui/previewer.py:102
-#: ../pitivi/ui/previewer.py:113
+#: ../pitivi/ui/previewer.py:66 ../pitivi/ui/previewer.py:106
+#: ../pitivi/ui/previewer.py:117
 msgid "Performance"
 msgstr "表現"
 
@@ -1336,39 +1356,59 @@ msgstr "表現"
 msgid "Thumbnail every"
 msgstr "新縮圖每隔"
 
-#: ../pitivi/ui/previewer.py:69 ../pitivi/ui/previewer.py:70
-#: ../pitivi/ui/previewer.py:71 ../pitivi/ui/previewer.py:72
+#. Note that we cannot use "%s second" or ngettext, because fractions
+#. are not supported by ngettext and their plurality is ambiguous
+#. in many languages.
+#. See http://www.gnu.org/software/hello/manual/gettext/Plural-forms.html
 #: ../pitivi/ui/previewer.py:73
-#, python-format
-msgid "%s second"
-msgstr "%s 秒"
+msgid "1/100 second"
+msgstr "1/100 秒"
 
-#: ../pitivi/ui/previewer.py:74 ../pitivi/ui/previewer.py:75
-#, python-format
-msgid "%s seconds"
-msgstr "%s 秒"
+#: ../pitivi/ui/previewer.py:74
+msgid "1/10 second"
+msgstr "1/10 秒"
+
+#: ../pitivi/ui/previewer.py:75
+msgid "1/4 second"
+msgstr "1/4 秒"
 
 #: ../pitivi/ui/previewer.py:76
+msgid "1/2 second"
+msgstr "1/2 秒"
+
+#: ../pitivi/ui/previewer.py:77
+msgid "1 second"
+msgstr "1 秒"
+
+#: ../pitivi/ui/previewer.py:78
+msgid "5 seconds"
+msgstr "5 秒"
+
+#: ../pitivi/ui/previewer.py:79
+msgid "10 seconds"
+msgstr "10 秒"
+
+#: ../pitivi/ui/previewer.py:80
 msgid "minute"
 msgstr "分鐘"
 
-#: ../pitivi/ui/previewer.py:77
+#: ../pitivi/ui/previewer.py:81
 msgid "The interval, in seconds, between thumbnails."
 msgstr "每隔多少秒，產生一新的縮圖"
 
-#: ../pitivi/ui/previewer.py:103
+#: ../pitivi/ui/previewer.py:107
 msgid "Enable video thumbnails"
 msgstr "啟用視像縮圖"
 
-#: ../pitivi/ui/previewer.py:104
+#: ../pitivi/ui/previewer.py:108
 msgid "Show thumbnails on video clips"
 msgstr "顯示視像剪輯的縮圖"
 
-#: ../pitivi/ui/previewer.py:114
+#: ../pitivi/ui/previewer.py:118
 msgid "Enable audio waveforms"
 msgstr "啟用音訊波形"
 
-#: ../pitivi/ui/previewer.py:115
+#: ../pitivi/ui/previewer.py:119
 msgid "Show waveforms on audio clips"
 msgstr "顯示音訊剪輯的波形"
 
@@ -1558,6 +1598,10 @@ msgstr "下列檔案不能與 PiTiVi 一起使用。"
 #: ../pitivi/ui/sourcelist.py:776
 msgid "The following file can not be used with PiTiVi."
 msgstr "下列檔案不能與 PiTiVi 一起使用。"
+
+#: ../pitivi/ui/startupwizard.py:59
+msgid "Projects"
+msgstr "專案"
 
 #: ../pitivi/ui/timelinecanvas.py:52
 msgid "Behavior"
@@ -2150,9 +2194,6 @@ msgstr "%s 尚無法處理非本地端的專案"
 
 #~ msgid "Please choose an output file"
 #~ msgstr "請選擇輸出的檔案"
-
-#~ msgid "About %s left"
-#~ msgstr "大約剩下 %s"
 
 #~ msgid "Raw Video"
 #~ msgstr "Raw 視訊"
