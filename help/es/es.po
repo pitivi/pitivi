@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-03-11 10:42+0000\n"
-"PO-Revision-Date: 2012-03-13 13:27+0100\n"
+"POT-Creation-Date: 2012-03-13 12:28+0000\n"
+"PO-Revision-Date: 2012-03-13 17:57+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -1008,19 +1008,24 @@ msgstr ""
 
 #: C/movearoundtimeline.page:40(title)
 msgid "Zooming"
-msgstr ""
+msgstr "Ampliación"
 
 #: C/movearoundtimeline.page:41(p)
 msgid ""
 "Zooming directly affects your editing accuracy and your ability to move "
 "quickly along the timeline:"
 msgstr ""
+"La ampliación afecta directamente a su precisión en la edición y a su "
+"habilidad para moverse a lo largo de la línea del tiempo:"
 
 #: C/movearoundtimeline.page:43(p)
 msgid ""
 "When zooming in, video clips display more thumbnails and audio clips display "
 "increasingly detailed waveforms, allowing you to do precise edits."
 msgstr ""
+"Cuando se acerca, los clips de vídeo muestran más miniaturas y los clips de "
+"sonido muestran las formas de onda cada vez más detalladas, permitiéndole "
+"hacer ediciones más precisas."
 
 #: C/movearoundtimeline.page:44(p)
 msgid ""
@@ -1028,25 +1033,33 @@ msgid ""
 "used in conjunction with scrolling to move quickly between distant points of "
 "your project's chronology."
 msgstr ""
+"Alejarse le permite desplazarse rápidamente a lo largo de la línea del "
+"tiempo. Por lo tanto, la ampliación se puede usar en junto con el "
+"desplazamiento para moverse rápido entre puntos distantes en la cronología "
+"de su proyecto."
 
 #: C/movearoundtimeline.page:46(p)
 msgid "You can zoom in and out by:"
-msgstr ""
+msgstr "Se puede acercar o alejar:"
 
 #: C/movearoundtimeline.page:48(p)
 msgid ""
 "Holding the <key>Ctrl</key> key while using the mousewheel over the timeline"
 msgstr ""
+"Manteniendo pulsada la tecla <key>Ctrl</key> mientras usa la rueda del ratón "
+"sobre la línea del tiempo."
 
 #: C/movearoundtimeline.page:49(p)
 msgid ""
 "Using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and "
 "<guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq> menu items"
 msgstr ""
+"Usando los elementos del menú <guiseq><gui>Ver</gui><gui>Ampliar</gui></"
+"guiseq> y <guiseq><gui>Ver</gui><gui>Alejar</gui></guiseq>"
 
 #: C/movearoundtimeline.page:50(p)
 msgid "Dragging the zoom slider on the left of the ruler"
-msgstr ""
+msgstr "Arrastrando el deslizador de la ampliación a la izquierda de la regla"
 
 #: C/movearoundtimeline.page:51(p)
 msgid ""
@@ -1054,6 +1067,9 @@ msgid ""
 "<key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> on the numeric "
 "keypad) to zoom in"
 msgstr ""
+"Usando atajos de teclado tales como <key>Ctrl</key>+<key>-</key> para alejar "
+"o <key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> en el teclado "
+"numérico) para ampliar"
 
 #: C/movearoundtimeline.page:53(p)
 msgid ""
@@ -1061,10 +1077,14 @@ msgid ""
 "<guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the "
 "<gui>Zoom</gui> button on the left of the zoom slider."
 msgstr ""
+"Para tener una mejor visión general de su línea del tiempo, puede usar el "
+"elemento del menú <guiseq><gui>Ver</gui><gui>Mejor ajuste</gui></guiseq> o "
+"pulse el botón <gui>Ampliación</gui> en la izquierda del deslizador del zoom."
 
 #: C/movearoundtimeline.page:56(title)
 msgid "Zooming is always centered around the location of your playhead"
 msgstr ""
+"La ampliación se centra siempre en torno a la locación de su posición actual"
 
 #: C/movearoundtimeline.page:57(p)
 msgid ""
@@ -1072,10 +1092,13 @@ msgid ""
 "relative to the position of your mouse, only to the position of the playhead "
 "on the timeline."
 msgstr ""
+"Cuando use la rueda del ratón para acercar o alejar, recuerde que la "
+"ampliación no es relativa a la posición de su ratón, solo de su posición "
+"actual en la línea del tiempo."
 
 #: C/movearoundtimeline.page:61(title)
 msgid "<em>Warping</em> between zoom levels"
-msgstr ""
+msgstr "<em>Deformación</em> entre niveles de ampliación"
 
 #: C/movearoundtimeline.page:62(p)
 msgid ""
@@ -1083,20 +1106,26 @@ msgid ""
 "any zoom level to another in a single click. To do that, click with your "
 "mousewheel anywhere on the zoom slider."
 msgstr ""
+"Usando la rueda de desplazamiento de su ratón, también puede <em>deformar</"
+"em> al instante desde cualquier nivel de ampliación a otro con una única "
+"pulsación. Para hacer esto, pulse con la rueda del ratón en cualquier lugar "
+"del deslizador de la ampliación."
 
 #: C/movearoundtimeline.page:67(title)
 msgid "Moving the playhead"
-msgstr ""
+msgstr "Mover la posición actual"
 
 #: C/movearoundtimeline.page:68(p)
 msgid ""
 "You can change the position of the playhead by clicking anywhere on the "
 "ruler or on the timeline."
 msgstr ""
+"Puede cambiar la posición actual, al pulsar en cualquier lugar de la regla o "
+"en la línea del tiempo."
 
 #: C/movearoundtimeline.page:69(p)
 msgid "When clicking on the <em>timeline</em>:"
-msgstr ""
+msgstr "Cuando pulse en la <em>línea del tiempo</em>:"
 
 #: C/movearoundtimeline.page:71(p)
 msgid ""
@@ -1104,18 +1133,25 @@ msgid ""
 "selection (see the <link xref=\"makeselections\">Selecting multiple items</"
 "link> section for more detailed instructions)."
 msgstr ""
+"Si un clip está debajo del cursor del ratón, reemplazará la selección actual "
+"del clip (consulte la sección <link xref=\"makeselections\">Seleccionar "
+"múltiples elementos</link> para obtener instrucciones más detalladas)."
 
 #: C/movearoundtimeline.page:72(p)
 msgid ""
 "If there is no clip under the cursor, all selected clips (if any) will be "
 "deselected."
 msgstr ""
+"Si no hay un clip debajo del cursor, se deseleccionarán todos los clips "
+"seleccionados (si los hubiera)."
 
 #: C/movearoundtimeline.page:74(p)
 msgid ""
 "When clicking on the ruler, only the playhead's position changes; clip "
 "selections are not affected."
 msgstr ""
+"Cuando pulse en la regla, solo cambia la posición actual, las selecciones de "
+"clips no se ven afectadas."
 
 #: C/movearoundtimeline.page:78(title)
 msgid "Scrubbing"
