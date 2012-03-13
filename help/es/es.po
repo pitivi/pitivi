@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-03-04 19:27+0000\n"
-"PO-Revision-Date: 2012-03-08 12:11+0100\n"
+"POT-Creation-Date: 2012-03-11 10:42+0000\n"
+"PO-Revision-Date: 2012-03-13 13:27+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -699,7 +699,7 @@ msgid ""
 "Adjust the various encoding settings, if needed, to use settings different "
 "from the project settings."
 msgstr ""
-"Modofique las distintas configuraciones de codificación, si es necesario, "
+"Modifique las distintas configuraciones de codificación, si es necesario, "
 "para usar configuraciones diferentes a las del proyecto."
 
 #: C/rendering.page:31(p)
@@ -830,24 +830,36 @@ msgid ""
 "exporting to a laptop or a website). As such, the presets in the rendering "
 "dialog are related to the project settings, but they govern different things."
 msgstr ""
+"Mientras las configuraciones del proyecto se refieren a sí mismas como "
+"configuraciones globales (tales como resolución, imágenes por segundo, "
+"proporción del aspecto y número de canales de sonido), los ajustes "
+"predefinidos del renderizado están referidos con códecs y dispositivos de "
+"limitación (por ejemplo, un dispositivo de mano o un televisor pueden tener "
+"una resolución de pantalla máxima e imágenes por segundo, que no es "
+"necesario en el caso de que esté exportando a un portátil o a un sitio web). "
+"Tal como, los ajustes predefinidos en el diálogo de renderizado están "
+"relacionados a las configuraciones del proyecto, pero estos rigen diferentes "
+"cosas."
 
 #: C/presets.page:22(p)
 msgid ""
 "In project settings, video presets and audio presets are independent of each "
 "other."
 msgstr ""
+"En las configuraciones del proyecto, los ajustes predefinidos de vídeo y los "
+"de sonido son independientes el uno del otro."
 
 #: C/presets.page:24(title)
 msgid "Creating and editing presets"
-msgstr ""
+msgstr "Crear y editar ajustes predefinidos"
 
 #: C/presets.page:25(p)
 msgid "To create a preset:"
-msgstr "Para crear un preajuste:"
+msgstr "Para crear un ajuste predefinido:"
 
 #: C/presets.page:27(p) C/presets.page:34(p)
 msgid "Change the settings to your liking."
-msgstr ""
+msgstr "Cambie los ajustes de acuerdo a sus preferencias."
 
 #: C/presets.page:28(p)
 msgid "Click the <gui>Add</gui> button."
@@ -859,14 +871,19 @@ msgid ""
 "click on its name to toggle editing mode. When you're done, press "
 "<key>Enter</key>."
 msgstr ""
+"Asigne al ajuste predefinido un nombre único: mientras se selecciona este "
+"ajuste predefinido, pulse en su nombre para cambiar el modo de edición. "
+"Cuando haya terminado, pulse <key>Intro</key>."
 
 #: C/presets.page:31(p)
 msgid "To edit a preset:"
-msgstr "Para editar un preajuste:"
+msgstr "Para editar un ajuste predefinido:"
 
 #: C/presets.page:33(p)
 msgid "Select your preset in the list of existing presets."
 msgstr ""
+"Seleccione su ajuste predefinido en la lista de ajustes predefinidos "
+"existentes."
 
 #: C/presets.page:35(p)
 msgid "Click the <gui>Save</gui> button."
@@ -877,14 +894,18 @@ msgid ""
 "To remove a preset, simply select it in the list of presets and press the "
 "<gui>Remove</gui> button."
 msgstr ""
+"Para quitar un ajuste predefinido, simplemente selecciónelo de la lista de "
+"ajustes predefinidos y pulse el botón <gui>Quitar</gui>."
 
 #: C/presets.page:38(p)
 msgid "Some presets are provided by default and cannot be removed."
 msgstr ""
+"Algunos ajustes predefinidos están determinados por defecto y no se pueden "
+"quitar."
 
 #: C/presets.page:41(title)
 msgid "Ignoring presets"
-msgstr ""
+msgstr "Ignorar ajustes predefinidos"
 
 #: C/presets.page:42(p)
 msgid ""
@@ -893,10 +914,15 @@ msgid ""
 "a special preset that automatically saves its changes directly in the "
 "project file."
 msgstr ""
+"Los ajustes predefinidos están ahí para ahorrar tiempo y reducir la "
+"complejidad. Los expertos pueden elegir simplemente ignorarlos y establecer "
+"todo manualmente; el ajuste predefinido «No hay configuración» es especial ya "
+"que automáticamente guarda sus cambios directamente en el archivo del "
+"proyecto."
 
 #: C/presets.page:45(title)
 msgid "Limiting the resolution of a rendering preset"
-msgstr ""
+msgstr "Limitar la resolución de un ajuste predefinido renderizado"
 
 #: C/presets.page:46(p)
 msgid ""
@@ -906,6 +932,13 @@ msgid ""
 "resolution, the width/height are set to 0 (unlimited) by default. You can "
 "change these values to the maximum resolution of your target device."
 msgstr ""
+"Si quiere hacer un ajuste predefinido con una resolución máxima fija, "
+"necesita editar el archivo del ajuste predefinido con un editor de texto. "
+"Los archivos de los ajustes predefinidos se guardan, generalmente, en ~/."
+"local/share/pitivi/ ; ya que muchos dispositivos no tienen una resolución "
+"máxima, el ancho/altura se establecen a cero (ilimitado) de manera "
+"predeterminada. Puede cambiar estos valores a la máxima resolución de su "
+"dispositivo de destino."
 
 #: C/othertransitions.page:23(title)
 msgid "Other transitions"
@@ -917,28 +950,31 @@ msgid ""
 "<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug "
 "#609353</link>)."
 msgstr ""
+"Otros tipos de transiciones (tales como transiciones de una película) no "
+"están aún implementadas (consulte el <link href=\"https://bugzilla.gnome.org/"
+"show_bug.cgi?id=609353\">error nº 609353</link>)."
 
 #: C/movearoundtimeline.page:16(name)
 msgid "Brian Grohe"
-msgstr ""
+msgstr "Brian Grohe"
 
 #: C/movearoundtimeline.page:17(email)
-#, fuzzy
-#| msgid "nekohayo@gmail.com"
 msgid "grohe43@gmail.com"
-msgstr "nekohayo@gmail.com"
+msgstr "grohe43@gmail.com"
 
 #: C/movearoundtimeline.page:19(desc)
 msgid "Moving the playhead, using the zoom feature, scrolling and scrubbing."
 msgstr ""
+"Mover la posición actual, usando la función de ampliación, desplazando y "
+"depurando."
 
 #: C/movearoundtimeline.page:27(title)
 msgid "Moving around the timeline"
-msgstr ""
+msgstr "Mover alrededor de la línea del tiempo"
 
 #: C/movearoundtimeline.page:30(title)
 msgid "Activating the timeline toolbar"
-msgstr ""
+msgstr "Activar la barra de herramientas de la línea de tiempo"
 
 #: C/movearoundtimeline.page:31(p)
 msgid ""
@@ -947,10 +983,15 @@ msgid ""
 "in the timeline. When selected, the clip will become darker and the timeline "
 "toolbar items will now be clickable."
 msgstr ""
+"La barra de herramientas de la línea de tiempo contiene muchas herramientas, "
+"que se activan una vez que se selecciona el clip en la línea del tiempo. "
+"Para seleccionar un clip, simplemente pulse sobre él en la línea del tiempo. "
+"Cuando se seleccione, el clip se oscurecerá y ahora se podrá pulsar sobre "
+"los elementos de la barra de herramientas de la línea de tiempo."
 
 #: C/movearoundtimeline.page:35(title)
 msgid "Scrolling"
-msgstr ""
+msgstr "Desplazamiento"
 
 #: C/movearoundtimeline.page:36(p)
 msgid ""
@@ -959,6 +1000,11 @@ msgid ""
 "horizontally, or hold down the <key>Shift</key> key while using the "
 "mousewheel to scroll the timeline layers vertically."
 msgstr ""
+"Puede usar las barras de desplazamiento (ubicadas en la derecha y en la "
+"parte inferior de la línea del tiempo), usar la rueda del ratón en cualquier "
+"lugar sobre la línea del tiempo para desplazarla horizontalmente, o mantener "
+"pulsada la tecla <key>Mayús</key> mientras usa la rueda del ratón para "
+"desplazar verticalmente las capas de la línea del tiempo."
 
 #: C/movearoundtimeline.page:40(title)
 msgid "Zooming"
