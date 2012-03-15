@@ -57,7 +57,7 @@ if test ! -e $PITIVI; then
     cd .. && git clone git://anongit.freedesktop.org/gstreamer/gst-editing-services &&\
     cd gst-editing-services && ./autogen.sh && make && cd ../ &&\
     #Get pitivi \
-    git clone git://git.pitivi.org/git/pitivi.git &&\
+    git clone git://git.gnome.org/pitivi &&\
     cd pitivi && \
     git checkout ges && ./autogen.sh && make
 fi
