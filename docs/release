@@ -43,5 +43,5 @@ Publishing (for both releases and pre-releases):
    The tarball will appear on http://ftp.gnome.org/pub/gnome/sources/pitivi/X.YY/
  * Send out an announcement mail to:
   * pitivi-pitivi@lists.sourceforge.net
-  * gstreamer-devel@lists.sourceforge.net
+  * gstreamer-devel@lists.freedesktop.org
   * gnome-i18n@gnome.org (requesting translations update)
