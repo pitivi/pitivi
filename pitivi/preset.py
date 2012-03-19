@@ -99,6 +99,7 @@ class PresetManager(object):
                 try:
                     fout = open(filepath, "w")
                     self.saveSection(fout, name)
+                    self.presets[name]["filepath"] = filepath
                 except IOError:
                     # FIXME: this can happen in two cases: a permissions error,
                     # or an invalid filename (ex: gibberish). In the latter case
@@ -225,6 +226,7 @@ class PresetManager(object):
             try:
                 fout = open(filepath, "w")
                 self.saveSection(fout, self.cur_preset)
+                self.presets[self.cur_preset]["filepath"] = filepath
             except IOError:
                 # TODO: show an error infobar... but this should never happen,
                 # because the UI is supposed to disable the Save button
