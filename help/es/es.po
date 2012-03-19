@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-03-13 12:28+0000\n"
-"PO-Revision-Date: 2012-03-13 17:57+0100\n"
+"POT-Creation-Date: 2012-03-17 00:20+0000\n"
+"PO-Revision-Date: 2012-03-19 20:11+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -716,8 +716,8 @@ msgstr ""
 "Si su equipo está configurado para suspenderse o hibernar automáticamente, "
 "<app>PiTiVi</app> impedirá automáticamente las funciones de ahorro de "
 "energía durante el proceso de renderizado (consulte el informe de error "
-"error <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=571885"
-"\">#571885</link>)."
+"error <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
+"id=571885\">#571885</link>)."
 
 #: C/projectsettings.page:17(desc)
 msgid ""
@@ -916,8 +916,8 @@ msgid ""
 msgstr ""
 "Los ajustes predefinidos están ahí para ahorrar tiempo y reducir la "
 "complejidad. Los expertos pueden elegir simplemente ignorarlos y establecer "
-"todo manualmente; el ajuste predefinido «No hay configuración» es especial ya "
-"que automáticamente guarda sus cambios directamente en el archivo del "
+"todo manualmente; el ajuste predefinido «No hay configuración» es especial "
+"ya que automáticamente guarda sus cambios directamente en el archivo del "
 "proyecto."
 
 #: C/presets.page:45(title)
@@ -1033,10 +1033,10 @@ msgid ""
 "used in conjunction with scrolling to move quickly between distant points of "
 "your project's chronology."
 msgstr ""
-"Alejarse le permite desplazarse rápidamente a lo largo de la línea del "
-"tiempo. Por lo tanto, la ampliación se puede usar en junto con el "
-"desplazamiento para moverse rápido entre puntos distantes en la cronología "
-"de su proyecto."
+"Alejarse le permite desplazarse rápidamente a lo largo de la línea del "
+"tiempo. Por lo tanto, la ampliación se puede usar en junto con el "
+"desplazamiento para moverse rápidamente entre puntos distantes en la "
+"cronología de su proyecto."
 
 #: C/movearoundtimeline.page:46(p)
 msgid "You can zoom in and out by:"
@@ -1155,34 +1155,41 @@ msgstr ""
 
 #: C/movearoundtimeline.page:78(title)
 msgid "Scrubbing"
-msgstr ""
+msgstr "Depuración"
 
 #: C/movearoundtimeline.page:79(p)
 msgid "<em>Scrubbing</em> is a way of moving the playhead that allows you to:"
 msgstr ""
+"<em>Depuración</em> es una manera de mover la posición actual que le "
+"permitirá:"
 
 #: C/movearoundtimeline.page:81(p)
 msgid ""
 "Search for a specific position in time by approximation/trial and error."
 msgstr ""
+"Buscar una posición específica en el tiempo por aproximación/prueba y error."
 
 #: C/movearoundtimeline.page:82(p)
 msgid ""
 "Review repeatedly the visual motion in a scene by moving back and forth in "
 "time."
 msgstr ""
+"Revisar repetidamente el movimiento visual en una escena moviéndose adelante "
+"y atrás en el tiempo."
 
 #: C/movearoundtimeline.page:84(p)
 msgid ""
 "To scrub, click on the ruler and move the mouse with the button still held "
 "down."
-msgstr ""
+msgstr "Para depurar, pulse en la regla y mueva el ratón con el botón pulsado."
 
 #: C/movearoundtimeline.page:85(p)
 msgid ""
 "You can also scrub by dragging the black vertical line that stems from the "
 "playhead and spans across the timeline."
 msgstr ""
+"Puede incluso depurar arrastrando la línea vertical negra que se deriva de "
+"la posición actual y que se expande a lo largo de la línea del tiempo."
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -1194,15 +1201,15 @@ msgstr ""
 
 #: C/medialibrary.page:13(desc)
 msgid "Managing your imported clips with the Media Library"
-msgstr ""
+msgstr "Gestione sus clips importados con la biblioteca de medios"
 
 #: C/medialibrary.page:21(title)
 msgid "Using the Media Library"
-msgstr ""
+msgstr "Usar la biblioteca de medios"
 
 #: C/medialibrary.page:24(title)
 msgid "Previewing a clip from the <gui>Media Library</gui>"
-msgstr ""
+msgstr "Vista previa de un clip desde la <gui>Biblioteca de medios</gui>"
 
 #: C/medialibrary.page:25(p)
 msgid ""
@@ -1210,6 +1217,9 @@ msgid ""
 "it in the <gui>Media Library</gui>, or right-click and choose <gui>Play "
 "clip</gui> from the popup menu."
 msgstr ""
+"Para la vista previa de un clip antes de colocarlo en la línea del tiempo, "
+"puede pulsar dos veces en él en la <gui>Biblioteca de medios</gui>, o pulsar "
+"con el botón derecho y elegir <gui>Reproducir clip</gui> del menú emergente."
 
 #: C/medialibrary.page:27(desc)
 msgid "Popup menu"
@@ -1217,7 +1227,7 @@ msgstr "Menú emergente"
 
 #: C/medialibrary.page:32(title)
 msgid "Filtering search"
-msgstr ""
+msgstr "Filtro de búsqueda"
 
 #: C/medialibrary.page:33(p)
 msgid ""
@@ -1226,10 +1236,16 @@ msgid ""
 "to show only clips whose filenames match your search terms. To reset the "
 "search entry, click the \"cleanup\" icon in the search entry."
 msgstr ""
+"En la parte superior de la <gui>Biblioteca de medios</gui> se muestra una "
+"barra de búsqueda. Escriba en los filtros de entrada de búsqueda los "
+"contenidos de la <gui>Biblioteca de medios</gui> para mostrar solo los clips "
+"cuyos nombres de archivo coincidan con sus términos de búsqueda. Para "
+"restablecer la entrada de búsqueda, pulse en el icono \"limpiar\" en la "
+"entrada de búsqueda."
 
 #: C/medialibrary.page:36(title)
 msgid "Typeahead search"
-msgstr ""
+msgstr "Búsqueda escrita por adelantado"
 
 #: C/medialibrary.page:37(p)
 msgid ""
@@ -1237,14 +1253,17 @@ msgid ""
 "filename, is to click anywhere in the <gui>Media Library</gui> and start "
 "typing the name of the file you're looking for."
 msgstr ""
+"Una forma alternativa de búsqueda, si sabe el inicio del nombre del archivo "
+"del clip, es pulsar en cualquier lugar de la <gui>Biblioteca de medios</gui> "
+"y empezar a escribir el nombre del archivo que esté buscando."
 
 #: C/medialibrary.page:39(p)
 msgid "As you type, the first matching file will become selected."
-msgstr ""
+msgstr "A medida que escriba, el primer archivo que coincida se seleccionará."
 
 #: C/medialibrary.page:40(p)
 msgid "You can keep typing to refine your search."
-msgstr ""
+msgstr "Puede seguir escribiendo para refinar su búsqueda."
 
 #: C/medialibrary.page:41(p)
 msgid ""
@@ -1252,10 +1271,15 @@ msgid ""
 "<app>down</app> arrow keys to switch the selection between each search "
 "result."
 msgstr ""
+"Cuando hay múltiples resultados, puede usar las flechas <gui>arriba</gui> y "
+"<app>abajo</app> para cambiar la selección entre cada resultado de la "
+"búsqueda."
 
 #: C/medialibrary.page:44(p)
 msgid "This method only allows searching from the beginning of the filename."
 msgstr ""
+"Este método solo permite la búsqueda desde el comienzo del nombre del "
+"archivo."
 
 #: C/medialibrary.page:47(title)
 msgid "View modes"
@@ -1267,6 +1291,10 @@ msgid ""
 "(<guiseq><gui>View</gui><gui>Show Clips as a List</gui></guiseq>) or in an "
 "icon view (<guiseq><gui>View</gui><gui>Show Clips as Icons</gui></guiseq>)."
 msgstr ""
+"La <gui>Biblioteca de medios</gui> puede mostrar sus clips en una lista "
+"(<guiseq><gui>Ver</gui><gui>Mostrar clips como una lista</gui></guiseq>) o "
+"en una vista de iconos (<guiseq><gui>Ver</gui><gui>Mostrar clips como "
+"iconos</gui></guiseq>)."
 
 #: C/medialibrary.page:49(p)
 msgid ""
@@ -1274,10 +1302,13 @@ msgid ""
 "mode can display more clips without needing to scroll (especially on high "
 "resolution computer monitors)."
 msgstr ""
+"El modo de vista de lista muestra más detalles acerca de cada clip, pero el "
+"modo de vista de iconos puede mostrar más clips sin la necesidad de "
+"desplazarse (especialmente en monitores de equipos de alta resolución)."
 
 #: C/makeselections.page:17(desc)
 msgid "Selecting and deselecting single or multiple items."
-msgstr ""
+msgstr "Seleccionar y deseleccionar elementos simples o varios."
 
 #: C/makeselections.page:25(title)
 msgid "Making selections"
@@ -1290,6 +1321,7 @@ msgstr "Seleccionar un solo elemento"
 #: C/makeselections.page:29(p)
 msgid "To select a file or a clip in <app>PiTiVi</app>, click it."
 msgstr ""
+"Para seleccionar un archivo o un clip en <app>PiTiVi</app>, pulse en él."
 
 #: C/makeselections.page:33(title)
 msgid "Selecting multiple items"
@@ -1300,10 +1332,12 @@ msgid ""
 "Multiple selections allow you to apply actions (dragging, deleting, "
 "grouping, etc.) to many clips at once."
 msgstr ""
+"Las selecciones múltiples permiten aplicar acciones (arrastrar, eliminar, "
+"agrupar, etc) a muchos clips a la vez."
 
 #: C/makeselections.page:35(p)
 msgid "Selecting multiple adjacent items:"
-msgstr ""
+msgstr "Seleccionar varios elementos adyacentes:"
 
 #: C/makeselections.page:37(p)
 msgid "Click the first item."
@@ -1311,7 +1345,7 @@ msgstr "Pulse sobre el primer elemento"
 
 #: C/makeselections.page:38(p)
 msgid "Hold the <key>Shift</key> key."
-msgstr "mantenga pulsada la tecla <key>Mayús</key>."
+msgstr "Mantenga pulsada la tecla <key>Mayús</key>."
 
 #: C/makeselections.page:39(p)
 msgid "Click the last item."
@@ -1335,6 +1369,9 @@ msgid ""
 "<key>Ctrl</key> key held down. This can be used in conjunction with the "
 "<em>Selecting multiple adjacent items</em> technique above."
 msgstr ""
+"Puede deseleccionar un elemento individual al pulsar en él otra vez y "
+"manteniendo la tecla <key>Ctrl</key> pulsada. Esto se puede usar junto con "
+"la técnica anterior <em>Seleccionar varios elementos adyacentes</em>."
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -1374,6 +1411,11 @@ msgid ""
 "the toolbars, the timeline and various customizable components (media "
 "library, previewer, effects library, transitions library, etc.)."
 msgstr ""
+"La ventana principal, como su nombre indica, es la ventana que contiene los "
+"componentes principales de la interfaz de usuario de <app>PiTiVi</app>, es "
+"decir: la barra de menú, las barras de herramientas, la línea del tiempo y "
+"los distintos componentes personalizados (la biblioteca de medios, la vista "
+"previa, la biblioteca de efectos, la biblioteca de transiciones, etc.)."
 
 #: C/mainwindow.page:34(title)
 msgid "Menu bar"
@@ -1386,6 +1428,11 @@ msgid ""
 "access to further customizations in the <gui>Project settings</gui> dialog "
 "and <gui>Preferences</gui> dialog."
 msgstr ""
+"La barra de menú contiene todas las acciones posibles de las barras de "
+"herramientas, así como cualquier otra. La barra de menú también ofrece "
+"algunos ajustes instantáneos aplicables, así como el acceso a más "
+"personalizaciones en el diálogo <gui>Configuraciones del proyecto</gui> y en "
+"el diálogo <gui>Preferencias</gui>."
 
 #: C/mainwindow.page:36(p)
 msgid "The menu bar cannot be hidden."
@@ -1401,16 +1448,22 @@ msgid ""
 "app>. All items in toolbars can also be accessed through the menu bar. "
 "Toolbars can be activated or deactivated in the <gui>View</gui> menu."
 msgstr ""
+"Las barras de herramientas ofrecen acceso a las funciones más comúnmente "
+"utilizadas de <app>PiTiVi</app>. Puede acceder a todos los elementos de las "
+"barras de herramientas a través de la barra de menú. Se pueden activar o "
+"desactivar las barras de herramientas en el menú <gui>Ver</gui>."
 
 #: C/mainwindow.page:43(p)
 msgid ""
 "You can hover the mouse cursor over a toolbar item to reveal an information "
 "tooltip regarding its function."
 msgstr ""
+"Puede situar el cursor del ratón sobre un elemento de la barra de "
+"herramientas para revelar una descripción emergente relativa a a su función."
 
 #: C/mainwindow.page:50(title)
 msgid "Ruler"
-msgstr ""
+msgstr "Regla"
 
 #: C/mainwindow.page:51(p)
 msgid ""
@@ -1418,10 +1471,13 @@ msgid ""
 "addition to giving you time measurements (in seconds), it is the primary way "
 "of moving the playhead (and thus, your position in time)."
 msgstr ""
+"La regla juega un papel crucial en su interacción con la línea del tiempo. "
+"Además de darle mediciones de tiempo (en segundos), es la forma principal de "
+"mover la posición actual (y por lo tanto, su posición en el tiempo)."
 
 #: C/mainwindow.page:52(p)
 msgid "The current playhead position is indicated by a red vertical line:"
-msgstr ""
+msgstr "La posición actual se indica mediante una línea vertical roja:"
 
 #: C/mainwindow.page:57(p)
 msgid ""
@@ -1429,6 +1485,9 @@ msgid ""
 "light and dark areas in the bottom part; those are based on the project "
 "framerate settings."
 msgstr ""
+"Cuando se amplía, las imágenes se representan visualmente en la regla como "
+"alternancia de zonas claras y oscuras en la parte inferior; estos se basan "
+"en las configuraciones del proyecto de imágenes por segundo."
 
 #: C/mainwindow.page:59(p)
 msgid ""
@@ -1437,10 +1496,14 @@ msgid ""
 "mouse button while moving. See the section on <link xref=\"movearoundtimeline"
 "\">scrubbing</link> for more details."
 msgstr ""
+"Para mover su posición, pulse en cualquier parte de la regla. Puede también "
+"<em>depurar</em> la línea del tiempo pulsando en la regla y manteniendo "
+"pulsado el botón del ratón mientras se mueve. Consulte la sección <link xref="
+"\"movearoundtimeline\">depuración</link> para obtener más detalles."
 
 #: C/mainwindow.page:63(title)
 msgid "Marker bar"
-msgstr ""
+msgstr "Barra de marcadores"
 
 #: C/mainwindow.page:64(p)
 msgid ""
@@ -1448,12 +1511,18 @@ msgid ""
 "points or regions in your project's timeline. The marker bar allows you to "
 "view and edit markers that you created."
 msgstr ""
+"Los marcadores son señales visuales que puede crear para <em>marcar</em> "
+"puntos o regiones importantes en la línea de tiempo de su proyecto. La barra "
+"de marcadores le permite ver y editar los marcadores que ha creado."
 
 #: C/mainwindow.page:66(p)
 msgid ""
 "This feature is not yet implemented. See <link href=\"https://bugzilla.gnome."
 "org/show_bug.cgi?id=608682\">bug #608682</link> for more information."
 msgstr ""
+"Esta función aún no está implementada. Consulte el <link href=\"https://"
+"bugzilla.gnome.org/show_bug.cgi?id=608682\">error nº 608682</link> para "
+"obtener más información."
 
 #: C/mainwindow.page:71(title)
 msgid "Timeline"
@@ -1465,6 +1534,9 @@ msgid ""
 "editing. It is a visual, time-proportional representation of your project's "
 "chronology."
 msgstr ""
+"La línea de tiempo es el componente central de la interfaz de usuario que "
+"puede utilizar para la edición. Es una representación visual del tiempo "
+"proporcional de la cronología de su proyecto."
 
 #: C/mainwindow.page:76(title)
 msgid "Playback toolbar"
@@ -1473,10 +1545,12 @@ msgstr "Barra de herramientas de reproducción"
 #: C/mainwindow.page:77(p)
 msgid "This toolbar, located below the previewer, contains buttons controlling"
 msgstr ""
+"Esta barra de herramienta, ubicada debajo de la vista previa, contiene los "
+"botones de control"
 
 #: C/mainwindow.page:79(p)
 msgid "The playback of the timeline."
-msgstr ""
+msgstr "Reproducción de la línea de tiempo."
 
 #: C/mainwindow.page:80(p)
 msgid "The playback of a clip being previewed from the media library."
