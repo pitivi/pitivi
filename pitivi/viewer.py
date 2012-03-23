@@ -98,6 +98,8 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.current_time = long(0)
         self.previous_time = self.current_time
         self._initial_seek = None
+        # Only used for restoring the pipeline position after a live clip trim preview:
+        self._oldTimelinePos = None
 
         self.currentState = gst.STATE_PAUSED
         self._haveUI = False
@@ -112,7 +114,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             if not self.settings.viewerDocked:
                 self.undock()
 
-    def setPipeline(self, pipeline):
+    def setPipeline(self, pipeline, position=None):
         """
         Set the Viewer to the given Pipeline.
 
@@ -120,6 +122,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
         @param pipeline: The Pipeline to switch to.
         @type pipeline: L{Pipeline}.
+        @param position: Optional position to seek to initially.
         """
         self.debug("self.pipeline:%r", self.pipeline)
 
@@ -136,6 +139,12 @@ class PitiviViewer(gtk.VBox, Loggable):
             bus.set_sync_handler(self._elementMessageCb)
             self.pipeline.set_state(gst.STATE_PAUSED)
             self.currentState = gst.STATE_PAUSED
+            if position:
+                # Since the pipeline is async, the line below is a hack
+                # to force waiting indefinitely until the state has been changed
+                # before actually trying to seek.
+                self.pipeline.get_state(-1)
+                self.pipeline.seek_simple(gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH, position)
 
         self._setUiActive()
         self.seeker = self.app.projectManager.current.seeker
@@ -492,6 +501,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         """
         cur_time = time()
         if not self._tmp_pipeline:
+            self._oldTimelinePos = self.pipeline.query_position(gst.FORMAT_TIME)[0]
             self._tmp_pipeline = gst.element_factory_make("playbin2")
             self._tmp_pipeline.set_property("uri", clip_uri)
             self.setPipeline(self._tmp_pipeline)
@@ -506,7 +516,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         After trimming a clip, reset the project pipeline into the viewer.
         """
         self._tmp_pipeline = None  # Free the memory
-        self.setPipeline(self.app.current.pipeline)
+        self.setPipeline(self.app.current.pipeline, self._oldTimelinePos)
 
     def pipelineStateChanged(self, state):
         """
