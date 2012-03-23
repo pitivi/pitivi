@@ -581,8 +581,7 @@ class MoveContext(EditingContext, Loggable):
         else:
             timeline_objects = self.timeline_objects
 
-        return EditingContext._getGapsForLayer(self,
-                timeline_objects)
+        return EditingContext._getGapsForLayer(self, timeline_objects)
 
     def setMode(self, mode):
         if mode == self.ROLL:
@@ -942,8 +941,7 @@ class TrimEndContext(EditingContext):
 
         timeline_objects = [self.focus_timeline_object]
 
-        left_gap, right_gap = self._getGapsForLayer(timeline_objects,
-                self.tracks)
+        left_gap, right_gap = self._getGapsForLayer(timeline_objects)
 
         if right_gap is invalid_gap:
             self._defaultTo(absolute_initial_duration, obj.props.priority)
