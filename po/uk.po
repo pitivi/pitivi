@@ -1,14 +1,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# Yuri Chornoivan <yurchor@ukr.net>, 2010, 2011.
+# Yuri Chornoivan <yurchor@ukr.net>, 2010, 2011, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-09-27 22:05+0000\n"
-"PO-Revision-Date: 2011-12-08 19:51+0200\n"
+"POT-Creation-Date: 2012-02-24 15:47+0000\n"
+"PO-Revision-Date: 2012-03-24 15:10+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "MIME-Version: 1.0\n"
@@ -17,67 +17,67 @@ msgstr ""
 "Language: uk\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Lokalize 1.2\n"
+"X-Generator: Lokalize 1.5\n"
 
 #: ../data/pitivi.desktop.in.in.h:1
-msgid "Create and edit your own movies"
-msgstr "Створюйте та редагуйте власні відео"
-
-#: ../data/pitivi.desktop.in.in.h:2
 msgid "Pitivi Video Editor"
 msgstr "Редактор відео Pitivi"
 
-#: ../data/ui/alignmentprogress.ui.h:1
-msgid "<b><big>Performing Auto-Alignment</big></b>"
-msgstr "<b><big>Виконання автовирівнювання</big></b>"
+#: ../data/pitivi.desktop.in.in.h:2
+msgid "Create and edit your own movies"
+msgstr "Створюйте та редагуйте власні відео"
 
-#: ../data/ui/alignmentprogress.ui.h:2
+#: ../data/ui/alignmentprogress.ui.h:1
 msgid "Auto-Alignment Starting"
 msgstr "Розпочинаємо автовирівнювання"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../data/ui/encodingprogress.ui.h:6
+#: ../data/ui/alignmentprogress.ui.h:2
+msgid "<b><big>Performing Auto-Alignment</big></b>"
+msgstr "<b><big>Виконання автовирівнювання</big></b>"
+
+#: ../data/ui/alignmentprogress.ui.h:3 ../data/ui/encodingprogress.ui.h:9
 msgid "Estimating..."
 msgstr "Визначення оцінки…"
 
 #: ../data/ui/cliptransformation.ui.h:1
-msgid "<b>Crop</b>"
-msgstr "<b>Обрізати</b>"
-
-#: ../data/ui/cliptransformation.ui.h:2
-msgid "<b>Position</b>"
-msgstr "<b>Позиція</b>"
-
-#: ../data/ui/cliptransformation.ui.h:3
-msgid "<b>Size</b>"
-msgstr "<b>Розмір</b>"
-
-#: ../data/ui/cliptransformation.ui.h:4
 msgid "<b>Viewer Zoom</b>"
 msgstr "<b>Масштаб відео</b>"
 
-#: ../data/ui/cliptransformation.ui.h:5
-msgid "Height:"
-msgstr "Висота:"
-
-#: ../data/ui/cliptransformation.ui.h:6
-msgid "Width:"
-msgstr "Ширина:"
-
-#: ../data/ui/cliptransformation.ui.h:7
+#: ../data/ui/cliptransformation.ui.h:2
 msgid "X:"
 msgstr "X:"
 
-#: ../data/ui/cliptransformation.ui.h:8
+#: ../data/ui/cliptransformation.ui.h:3
 msgid "Y:"
 msgstr "Y:"
 
-#: ../data/ui/depsmanager.ui.h:1
-msgid "Install"
-msgstr "Встановити"
+#: ../data/ui/cliptransformation.ui.h:4
+msgid "<b>Position</b>"
+msgstr "<b>Позиція</b>"
 
-#: ../data/ui/depsmanager.ui.h:2
+#: ../data/ui/cliptransformation.ui.h:5
+msgid "Width:"
+msgstr "Ширина:"
+
+#: ../data/ui/cliptransformation.ui.h:6
+msgid "Height:"
+msgstr "Висота:"
+
+#: ../data/ui/cliptransformation.ui.h:7
+msgid "<b>Size</b>"
+msgstr "<b>Розмір</b>"
+
+#: ../data/ui/cliptransformation.ui.h:8
+msgid "<b>Crop</b>"
+msgstr "<b>Обрізати</b>"
+
+#: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
 msgstr "Не знайдено потрібної програми"
+
+#: ../data/ui/depsmanager.ui.h:2
+msgid "Install"
+msgstr "Встановити"
 
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
@@ -96,40 +96,40 @@ msgid "Properties for <element>"
 msgstr "Властивості <element>"
 
 #: ../data/ui/encodingdialog.ui.h:1
-msgid "1000 x 1000"
-msgstr "1000 ⨯ 1000"
+msgid "MP4"
+msgstr "MP4"
 
 #: ../data/ui/encodingdialog.ui.h:2
+msgid "H.264"
+msgstr "H.264"
+
+#: ../data/ui/encodingdialog.ui.h:3
 msgid "29.97 fps"
 msgstr "29,97 кд/с"
 
-#: ../data/ui/encodingdialog.ui.h:3
-msgid "6 channels (5.1)"
-msgstr "Шестиканальний (5.1)"
-
 #: ../data/ui/encodingdialog.ui.h:4
-msgid "<b>Render Preset</b>"
-msgstr "<b>Шаблон обробки</b>"
+msgid "AC-3"
+msgstr "AC-3"
 
 #: ../data/ui/encodingdialog.ui.h:5
 msgid "AAC"
 msgstr "AAC"
 
 #: ../data/ui/encodingdialog.ui.h:6
-msgid "AC-3"
-msgstr "AC-3"
+msgid "6 channels (5.1)"
+msgstr "Шестиканальний (5.1)"
 
-#: ../data/ui/encodingdialog.ui.h:7
-msgid "Advanced..."
-msgstr "Додатково…"
+#: ../data/ui/encodingdialog.ui.h:7 ../pitivi/ui/mainwindow.py:130
+msgid "Render"
+msgstr "Обробити"
 
-#: ../data/ui/encodingdialog.ui.h:8 ../data/ui/projectsettings.ui.h:8
-msgid "Audio"
-msgstr "Звук"
+#: ../data/ui/encodingdialog.ui.h:8
+msgid "<b>Render Preset</b>"
+msgstr "<b>Шаблон обробки</b>"
 
 #: ../data/ui/encodingdialog.ui.h:9
-msgid "Codec:"
-msgstr "Кодек:"
+msgid "Folder"
+msgstr "Тека"
 
 #: ../data/ui/encodingdialog.ui.h:10
 msgid "Container format"
@@ -140,242 +140,242 @@ msgid "Container format:"
 msgstr "Формат контейнера:"
 
 #: ../data/ui/encodingdialog.ui.h:12
-msgid "Draft (no special effects, single pass)"
-msgstr "Чернетка (без спеціальних ефектів, єдиний прохід)"
+msgid "Folder:"
+msgstr "Тека:"
 
 #: ../data/ui/encodingdialog.ui.h:13
-msgid "Edit Project Settings..."
-msgstr "Змінити параметри проекту…"
+msgid "File name:"
+msgstr "Назва файла:"
 
 #: ../data/ui/encodingdialog.ui.h:14
 msgid "File name"
 msgstr "Назва файла"
 
 #: ../data/ui/encodingdialog.ui.h:15
-msgid "File name:"
-msgstr "Назва файла:"
-
-#: ../data/ui/encodingdialog.ui.h:16
-msgid "Folder"
-msgstr "Тека"
-
-#: ../data/ui/encodingdialog.ui.h:17
-msgid "Folder:"
-msgstr "Тека:"
-
-#: ../data/ui/encodingdialog.ui.h:18
-msgid "Frame rate:"
-msgstr "Частота кадрів:"
-
-#: ../data/ui/encodingdialog.ui.h:19
-msgid "Framerate"
-msgstr "Частота кадрів"
-
-#: ../data/ui/encodingdialog.ui.h:20
-msgid "General"
-msgstr "Загальне"
-
-#: ../data/ui/encodingdialog.ui.h:21
-msgid "H.264"
-msgstr "H.264"
-
-#: ../data/ui/encodingdialog.ui.h:22
-msgid "Height"
-msgstr "Висота"
-
-#: ../data/ui/encodingdialog.ui.h:23
-msgid "MP4"
-msgstr "MP4"
-
-#: ../data/ui/encodingdialog.ui.h:24
-msgid "Number of channels:"
-msgstr "Кількість каналів:"
-
-#: ../data/ui/encodingdialog.ui.h:25 ../pitivi/ui/mainwindow.py:130
-msgid "Render"
-msgstr "Обробити"
-
-#: ../data/ui/encodingdialog.ui.h:26
 msgid "Render only the selected clips"
 msgstr "Обробити лише позначені кліпи"
 
-#: ../data/ui/encodingdialog.ui.h:27
-msgid "Sample Depth:"
-msgstr "Глибина фрагмента:"
+#: ../data/ui/encodingdialog.ui.h:16
+msgid "Draft (no special effects, single pass)"
+msgstr "Чернетка (без спеціальних ефектів, єдиний прохід)"
 
-#: ../data/ui/encodingdialog.ui.h:28
-msgid "Sample Rate:"
-msgstr "Частота дискретизації:"
+#: ../data/ui/encodingdialog.ui.h:17
+msgid "General"
+msgstr "Загальне"
 
-#: ../data/ui/encodingdialog.ui.h:29
+#: ../data/ui/encodingdialog.ui.h:18
+msgid "Advanced..."
+msgstr "Додатково…"
+
+#: ../data/ui/encodingdialog.ui.h:19
+msgid "Codec:"
+msgstr "Кодек:"
+
+#: ../data/ui/encodingdialog.ui.h:20
+msgid "Framerate"
+msgstr "Частота кадрів"
+
+#: ../data/ui/encodingdialog.ui.h:21
 msgid "Scale"
 msgstr "Масштаб"
 
-#: ../data/ui/encodingdialog.ui.h:30
+#: ../data/ui/encodingdialog.ui.h:22
+msgid "1000 x 1000"
+msgstr "1000 ⨯ 1000"
+
+#: ../data/ui/encodingdialog.ui.h:23
+msgid "Height"
+msgstr "Висота"
+
+#: ../data/ui/encodingdialog.ui.h:24
+msgid "Edit Project Settings..."
+msgstr "Змінити параметри проекту…"
+
+#: ../data/ui/encodingdialog.ui.h:25
+msgid "Frame rate:"
+msgstr "Частота кадрів:"
+
+#: ../data/ui/encodingdialog.ui.h:26
 msgid "Scale:"
 msgstr "Масштаб:"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../data/ui/encodingdialog.ui.h:31 ../data/ui/projectsettings.ui.h:21
+#: ../data/ui/encodingdialog.ui.h:27 ../data/ui/projectsettings.ui.h:13
 #: ../pitivi/effects.py:244
 msgid "Video"
 msgstr "Відео"
 
+#: ../data/ui/encodingdialog.ui.h:28
+msgid "Number of channels:"
+msgstr "Кількість каналів:"
+
+#: ../data/ui/encodingdialog.ui.h:29
+msgid "Sample Rate:"
+msgstr "Частота дискретизації:"
+
+#: ../data/ui/encodingdialog.ui.h:30
+msgid "Sample Depth:"
+msgstr "Глибина фрагмента:"
+
+#: ../data/ui/encodingdialog.ui.h:31 ../data/ui/projectsettings.ui.h:19
+msgid "Audio"
+msgstr "Звук"
+
 #: ../data/ui/encodingprogress.ui.h:1
+msgid "Rendering"
+msgstr "Обробка"
+
+#: ../data/ui/encodingprogress.ui.h:2
 msgid "<b><big>Rendering movie</big></b>"
 msgstr "<b><big>Обробка відео</big></b>"
 
-#: ../data/ui/encodingprogress.ui.h:2
-msgid "<b>Estimated filesize:</b>"
-msgstr "<b>Оцінка розміру файла:</b>"
-
 #: ../data/ui/encodingprogress.ui.h:3
-msgid "<b>Frames per second:</b>"
-msgstr "<b>Кадрів на секунду:</b>"
+msgid "Unknown Mib"
+msgstr "Невідома кількість МіБ"
 
 #: ../data/ui/encodingprogress.ui.h:4
-msgid "<b>Phase:</b>"
-msgstr "<b>Фаза:</b>"
+msgid "Unknown"
+msgstr "Невідомо"
 
 #: ../data/ui/encodingprogress.ui.h:5
 msgid "Encoding first pass"
 msgstr "Перший прохід кодування"
 
+#: ../data/ui/encodingprogress.ui.h:6
+msgid "<b>Estimated filesize:</b>"
+msgstr "<b>Оцінка розміру файла:</b>"
+
 #: ../data/ui/encodingprogress.ui.h:7
-msgid "Rendering"
-msgstr "Обробка"
+msgid "<b>Frames per second:</b>"
+msgstr "<b>Кадрів на секунду:</b>"
 
 #: ../data/ui/encodingprogress.ui.h:8
-msgid "Unknown"
-msgstr "Невідомо"
-
-#: ../data/ui/encodingprogress.ui.h:9
-msgid "Unknown Mib"
-msgstr "Невідома кількість МіБ"
+msgid "<b>Phase:</b>"
+msgstr "<b>Фаза:</b>"
 
 #: ../data/ui/preferences.ui.h:1
+msgid "Preferences"
+msgstr "Параметри"
+
+#: ../data/ui/preferences.ui.h:2
+msgid "Section"
+msgstr "Розділ"
+
+#: ../data/ui/preferences.ui.h:3
 msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
 msgstr ""
 "<b>Деякі з внесених вами змін набудуть чинності лише після перезапуску "
 "PiTiVi</b>"
 
-#: ../data/ui/preferences.ui.h:2
-msgid "Preferences"
-msgstr "Параметри"
-
-#: ../data/ui/preferences.ui.h:3
+#: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
 msgstr "Повернутися до початкових значень"
 
-#: ../data/ui/preferences.ui.h:4
+#: ../data/ui/preferences.ui.h:5
 msgid "Revert"
 msgstr "Повернути"
 
-#: ../data/ui/preferences.ui.h:5
-msgid "Section"
-msgstr "Розділ"
+#: ../data/ui/projectsettings.ui.h:1 ../pitivi/ui/projectsettings.py:64
+msgid "Standard (4:3)"
+msgstr "Стандартне (4:3)"
 
-#: ../data/ui/projectsettings.ui.h:1
+#: ../data/ui/projectsettings.ui.h:2
+msgid "Standard PAL"
+msgstr "Стандартне PAL"
+
+#: ../data/ui/projectsettings.ui.h:3
 msgid "25 FPS"
 msgstr "25 кд/с"
 
-#: ../data/ui/projectsettings.ui.h:2
-msgid "<b>Aspect Ratio</b>"
-msgstr "<b>Співвідношення розмірів</b>"
-
-#: ../data/ui/projectsettings.ui.h:3
-msgid "<b>Audio Preset</b>"
-msgstr "<b>Аудіошаблон</b>"
-
-#: ../data/ui/projectsettings.ui.h:4
-msgid "<b>Format</b>"
-msgstr "<b>Формат</b>"
+#: ../data/ui/projectsettings.ui.h:4 ../pitivi/ui/mainwindow.py:254
+msgid "Project Settings"
+msgstr "Параметри проекту"
 
 #: ../data/ui/projectsettings.ui.h:5
-msgid "<b>Frame Rate</b>"
-msgstr "<b>Частота кадрів</b>"
+msgid "<b>Video Preset</b>"
+msgstr "<b>Шаблон відео</b>"
 
 #: ../data/ui/projectsettings.ui.h:6
 msgid "<b>Size (Pixels)</b>"
 msgstr "<b>Розмір (у пікселях)</b>"
 
 #: ../data/ui/projectsettings.ui.h:7
-msgid "<b>Video Preset</b>"
-msgstr "<b>Шаблон відео</b>"
+msgid "<b>Aspect Ratio</b>"
+msgstr "<b>Співвідношення розмірів</b>"
 
-#: ../data/ui/projectsettings.ui.h:9
-msgid "Author:"
-msgstr "Автор:"
-
-#: ../data/ui/projectsettings.ui.h:10
-msgid "Channels:"
-msgstr "Канали:"
-
-#: ../data/ui/projectsettings.ui.h:11
+#: ../data/ui/projectsettings.ui.h:8
 msgid "Display Aspect Ratio"
 msgstr "Співвідношення розмірів показу"
 
-#: ../data/ui/projectsettings.ui.h:12
-msgid "Info"
-msgstr "Інформація"
-
-#. Translators: This is an action, the title of a button
-#: ../data/ui/projectsettings.ui.h:13 ../pitivi/ui/mainwindow.py:135
-msgid "Link"
-msgstr "Пов’язати"
-
-#: ../data/ui/projectsettings.ui.h:14
+#: ../data/ui/projectsettings.ui.h:9
 msgid "Pixel Aspect Ratio"
 msgstr "Співвідношення розмірів у пікселях"
 
-#: ../data/ui/projectsettings.ui.h:15 ../pitivi/ui/mainwindow.py:254
-msgid "Project Settings"
-msgstr "Параметри проекту"
-
-#: ../data/ui/projectsettings.ui.h:16
-msgid "Project title:"
-msgstr "Назва проекту:"
-
-#: ../data/ui/projectsettings.ui.h:17
-msgid "Sample depth:"
-msgstr "Глибина фрагмента:"
-
-#: ../data/ui/projectsettings.ui.h:18
-msgid "Sample rate:"
-msgstr "Частота дискретизації:"
-
-#: ../data/ui/projectsettings.ui.h:19 ../pitivi/ui/projectsettings.py:64
-msgid "Standard (4:3)"
-msgstr "Стандартне (4:3)"
-
-#: ../data/ui/projectsettings.ui.h:20
-msgid "Standard PAL"
-msgstr "Стандартне PAL"
-
-#: ../data/ui/projectsettings.ui.h:22
-msgid "Year:"
-msgstr "Рік:"
-
-#: ../data/ui/projectsettings.ui.h:23
+#: ../data/ui/projectsettings.ui.h:10
 msgid "x"
 msgstr "⨯"
 
+#. Translators: This is an action, the title of a button
+#: ../data/ui/projectsettings.ui.h:11 ../pitivi/ui/mainwindow.py:135
+msgid "Link"
+msgstr "Пов’язати"
+
+#: ../data/ui/projectsettings.ui.h:12
+msgid "<b>Frame Rate</b>"
+msgstr "<b>Частота кадрів</b>"
+
+#: ../data/ui/projectsettings.ui.h:14
+msgid "<b>Audio Preset</b>"
+msgstr "<b>Аудіошаблон</b>"
+
+#: ../data/ui/projectsettings.ui.h:15
+msgid "<b>Format</b>"
+msgstr "<b>Формат</b>"
+
+#: ../data/ui/projectsettings.ui.h:16
+msgid "Channels:"
+msgstr "Канали:"
+
+#: ../data/ui/projectsettings.ui.h:17
+msgid "Sample rate:"
+msgstr "Частота дискретизації:"
+
+#: ../data/ui/projectsettings.ui.h:18
+msgid "Sample depth:"
+msgstr "Глибина фрагмента:"
+
+#: ../data/ui/projectsettings.ui.h:20
+msgid "Author:"
+msgstr "Автор:"
+
+#: ../data/ui/projectsettings.ui.h:21
+msgid "Year:"
+msgstr "Рік:"
+
+#: ../data/ui/projectsettings.ui.h:22
+msgid "Project title:"
+msgstr "Назва проекту:"
+
+#: ../data/ui/projectsettings.ui.h:23
+msgid "Info"
+msgstr "Інформація"
+
 #: ../data/ui/startupwizard.ui.h:1
-msgid "Browse projects..."
-msgstr "Переглянути проекти…"
+msgid "Welcome"
+msgstr "Вітаємо"
 
 #: ../data/ui/startupwizard.ui.h:2
 msgid "Double-click a project below to load it:"
 msgstr "Двічі клацніть на позначці проекту, щоб завантажити його:"
 
 #: ../data/ui/startupwizard.ui.h:3
-msgid "Missing dependencies..."
-msgstr "Не знайдено потрібної програми…"
+msgid "Browse projects..."
+msgstr "Переглянути проекти…"
 
 #: ../data/ui/startupwizard.ui.h:4
-msgid "Welcome"
-msgstr "Вітаємо"
+msgid "Missing dependencies..."
+msgstr "Не знайдено потрібної програми…"
 
 #: ../pitivi/application.py:117
 #, python-format
@@ -388,17 +388,14 @@ msgstr ""
 "cgi?product=pitivi"
 
 #: ../pitivi/application.py:425
-#| msgid "Error Loading Project"
 msgid "Loading project..."
 msgstr "Завантаження проекту…"
 
 #: ../pitivi/application.py:434
-#| msgid "Project title:"
 msgid "Project loaded."
 msgstr "Проект завантажено."
 
 #: ../pitivi/application.py:435
-#| msgid "Rendering"
 msgid "Rendering..."
 msgstr "Обробка…"
 
@@ -786,6 +783,7 @@ msgid "Time"
 msgstr "Час"
 
 #: ../pitivi/effects.py:116 ../pitivi/effects.py:226
+#: ../pitivi/factories/operation.py:66
 msgid "Uncategorized"
 msgstr "Без категорій"
 
@@ -856,6 +854,20 @@ msgid ""
 msgstr ""
 "\n"
 "Мультиплексор: "
+
+#: ../pitivi/ui/alignmentprogress.py:69
+#, python-format
+msgid "%d%% Analyzed"
+msgstr "Проаналізовано %d%%"
+
+#. Translators: This string indicates the estimated time
+#. remaining until the action completes.  The "%s" is an
+#. already-localized human-readable duration description like
+#. "31 seconds".
+#: ../pitivi/ui/alignmentprogress.py:75 ../pitivi/ui/encodingprogress.py:67
+#, python-format
+msgid "About %s left"
+msgstr "Залишилося близько %s"
 
 #: ../pitivi/ui/clipproperties.py:164
 msgid "Remove effect"
@@ -1049,6 +1061,12 @@ msgstr ""
 "Файл з такою назвою вже існує.\n"
 "Якщо ви не бажаєте перезаписати цей файл, виберіть іншу назву файла або іншу "
 "теку."
+
+#: ../pitivi/ui/encodingprogress.py:65
+#, python-format
+#| msgid "%.0f%% rendered"
+msgid "%d%% Rendered"
+msgstr "Оброблено %d%%"
 
 #: ../pitivi/ui/filechooserpreview.py:134
 msgid "PiTiVi can not preview this file."
@@ -1371,8 +1389,8 @@ msgstr "Інтервал між кліпами"
 msgid "The spacing between thumbnails, in pixels"
 msgstr "Інтервал, у пікселях, між мініатюрами"
 
-#: ../pitivi/ui/previewer.py:66 ../pitivi/ui/previewer.py:102
-#: ../pitivi/ui/previewer.py:113
+#: ../pitivi/ui/previewer.py:66 ../pitivi/ui/previewer.py:106
+#: ../pitivi/ui/previewer.py:117
 msgid "Performance"
 msgstr "Швидкодія"
 
@@ -1380,39 +1398,66 @@ msgstr "Швидкодія"
 msgid "Thumbnail every"
 msgstr "Створення мініатюри кожні"
 
-#: ../pitivi/ui/previewer.py:69 ../pitivi/ui/previewer.py:70
-#: ../pitivi/ui/previewer.py:71 ../pitivi/ui/previewer.py:72
+#. Note that we cannot use "%s second" or ngettext, because fractions
+#. are not supported by ngettext and their plurality is ambiguous
+#. in many languages.
+#. See http://www.gnu.org/software/hello/manual/gettext/Plural-forms.html
 #: ../pitivi/ui/previewer.py:73
-#, python-format
-msgid "%s second"
-msgstr "%s секунд"
+#| msgid "%s second"
+msgid "1/100 second"
+msgstr "1/100 секунди"
 
-#: ../pitivi/ui/previewer.py:74 ../pitivi/ui/previewer.py:75
-#, python-format
-msgid "%s seconds"
-msgstr "%s секунд"
+#: ../pitivi/ui/previewer.py:74
+#| msgid "%s second"
+msgid "1/10 second"
+msgstr "1/10 секунди"
+
+#: ../pitivi/ui/previewer.py:75
+#| msgid "%s second"
+msgid "1/4 second"
+msgstr "1/4 секунди"
 
 #: ../pitivi/ui/previewer.py:76
+#| msgid "%s second"
+msgid "1/2 second"
+msgstr "1/2 секунди"
+
+#: ../pitivi/ui/previewer.py:77
+#| msgid "%s second"
+msgid "1 second"
+msgstr "1 секунда"
+
+#: ../pitivi/ui/previewer.py:78
+#| msgid "%s seconds"
+msgid "5 seconds"
+msgstr "5 секунд"
+
+#: ../pitivi/ui/previewer.py:79
+#| msgid "%s seconds"
+msgid "10 seconds"
+msgstr "10 секунд"
+
+#: ../pitivi/ui/previewer.py:80
 msgid "minute"
 msgstr "хвилина"
 
-#: ../pitivi/ui/previewer.py:77
+#: ../pitivi/ui/previewer.py:81
 msgid "The interval, in seconds, between thumbnails."
 msgstr "Проміжок, у секундах, між мініатюрами."
 
-#: ../pitivi/ui/previewer.py:103
+#: ../pitivi/ui/previewer.py:107
 msgid "Enable video thumbnails"
 msgstr "Увімкнути мініатюри відео"
 
-#: ../pitivi/ui/previewer.py:104
+#: ../pitivi/ui/previewer.py:108
 msgid "Show thumbnails on video clips"
 msgstr "Показувати мініатюри відеокліпів"
 
-#: ../pitivi/ui/previewer.py:114
+#: ../pitivi/ui/previewer.py:118
 msgid "Enable audio waveforms"
 msgstr "Увімкнути показ форм звукових хвиль"
 
-#: ../pitivi/ui/previewer.py:115
+#: ../pitivi/ui/previewer.py:119
 msgid "Show waveforms on audio clips"
 msgstr "Показувати форму хвилі для звукових кліпів"
 
@@ -1604,6 +1649,11 @@ msgstr "Перелічені нижче файли не можна викори�
 #: ../pitivi/ui/sourcelist.py:776
 msgid "The following file can not be used with PiTiVi."
 msgstr "Вказаний нижче файл не можна використовувати у PiTiVi."
+
+#: ../pitivi/ui/startupwizard.py:59
+#| msgid "_Project"
+msgid "Projects"
+msgstr "Проекти"
 
 #: ../pitivi/ui/timelinecanvas.py:52
 msgid "Behavior"
@@ -2175,12 +2225,6 @@ msgstr "У %s ще не передбачено обробки нелокальн
 
 #~ msgid "Choose file to render to"
 #~ msgstr "Виберіть файл для виведення даних обробки"
-
-#~ msgid "%.0f%% rendered"
-#~ msgstr "Оброблено %.0f%%"
-
-#~ msgid "About %s left"
-#~ msgstr "Залишилося близько %s"
 
 #~ msgid "0% rendered"
 #~ msgstr "Оброблено 0%"
