@@ -25,6 +25,8 @@ import gst
 import gtk
 import json
 
+from gettext import gettext as _
+
 from pitivi.render import available_muxers, available_video_encoders, \
      available_audio_encoders
 from pitivi.settings import xdg_data_home
@@ -88,7 +90,7 @@ class PresetManager(object):
         if not os.path.exists(self.user_path):
             os.makedirs(self.user_path)
         for name, properties in self.ordered:
-            if not name == "No preset":
+            if not name == _("No preset"):
                 try:
                     filepath = self.presets[name]["filepath"]
                 except KeyError:
@@ -204,12 +206,12 @@ class PresetManager(object):
             if values[field] != 0:
                 setter(values[field])
             else:
-                setter(self.presets['No preset'][field])
+                setter(self.presets[_("No preset")][field])
         self._ignore_update_requests = False
 
     def savePreset(self):
         """Update the preset values and write to disk"""
-        if self.cur_preset != "No preset":
+        if self.cur_preset != _("No preset"):
             self._updatePreset()
             if os.path.isfile(self.user_path):
                 # We used to save presets as a single file instead of a directory
@@ -267,7 +269,7 @@ class PresetManager(object):
 
     def isSaveButtonSensitive(self):
         """Check if the Save button should be sensitive"""
-        if not self.cur_preset or self.cur_preset == "No preset":
+        if not self.cur_preset or self.cur_preset == _("No preset"):
             return False
         try:
             full_path = self.presets[self.cur_preset]["filepath"]
@@ -284,7 +286,7 @@ class PresetManager(object):
 
     def isRemoveButtonSensitive(self):
         """Check if Remove buttons should be sensitive"""
-        if not self.cur_preset or self.cur_preset == "No preset":
+        if not self.cur_preset or self.cur_preset == _("No preset"):
             return False
         try:
             full_path = self.presets[self.cur_preset]["filepath"]
