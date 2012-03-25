@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-03-17 00:20+0000\n"
-"PO-Revision-Date: 2012-03-19 20:11+0100\n"
+"POT-Creation-Date: 2012-03-19 19:16+0000\n"
+"PO-Revision-Date: 2012-03-25 18:19+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -715,9 +715,9 @@ msgid ""
 msgstr ""
 "Si su equipo está configurado para suspenderse o hibernar automáticamente, "
 "<app>PiTiVi</app> impedirá automáticamente las funciones de ahorro de "
-"energía durante el proceso de renderizado (consulte el informe de error "
-"error <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
-"id=571885\">#571885</link>)."
+"energía durante el proceso de renderizado (consulte <link href=\"https://"
+"bugzilla.gnome.org/show_bug.cgi?id=571885\">el informe de error nº 571885</"
+"link>)."
 
 #: C/projectsettings.page:17(desc)
 msgid ""
@@ -1554,33 +1554,38 @@ msgstr "Reproducción de la línea de tiempo."
 
 #: C/mainwindow.page:80(p)
 msgid "The playback of a clip being previewed from the media library."
-msgstr ""
+msgstr "La reproducción de un clip en vista previa de la biblioteca de medios."
 
 #: C/mainwindow.page:82(p)
 msgid ""
 "The <gui>Play</gui> button transforms into a <gui>Pause</gui> button when "
 "playing, and reverts to a <gui>Play</gui> button again when not playing."
 msgstr ""
+"El botón <gui>Reproducir</gui> se transforma en un botón <gui>Pausa</gui> "
+"durante la reproducción y vuelve otra vez al botón <gui>Reproducir</gui> "
+"cuando ya no se reproduce."
 
 #: C/mainwindow.page:86(title)
 msgid "Previewer"
-msgstr ""
+msgstr "Vista previa"
 
 #: C/mainwindow.page:87(p)
 msgid "The previewer displays"
-msgstr ""
+msgstr "La vista previa muestra"
 
 #: C/mainwindow.page:89(p)
 msgid "Your project's video when playing back."
-msgstr ""
+msgstr "El vídeo de su proyecto cuando se reproduce."
 
 #: C/mainwindow.page:90(p)
 msgid "The video frame at the current position of the playhead."
-msgstr ""
+msgstr "La imágen del vídeo en la posición actual."
 
 #: C/mainwindow.page:91(p)
 msgid "A <em>live preview</em> when trimming a clip's beginning/end point."
 msgstr ""
+"Una <em>vista previa en vivo</em> cuando recorte un punto inicio/final del "
+"clip."
 
 #: C/mainwindow.page:93(p)
 msgid ""
@@ -1588,6 +1593,10 @@ msgid ""
 "\"https://bugzilla.gnome.org/show_bug.cgi?id=569980\">bug #569980</link> for "
 "more information."
 msgstr ""
+"La característica <em>vista previa en vivo</em> aún no está implementada. "
+"Consulte el <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
+"id=569980\">el informe de error nº 569980</link> para obtener mayor "
+"información."
 
 #: C/mainwindow.page:100(title)
 msgid "Media Library"
@@ -1598,6 +1607,8 @@ msgid ""
 "The media library displays the imported media files in your project and "
 "allows you to manage them."
 msgstr ""
+"La biblioteca de medios muestra los archivos multimedia importados en su "
+"proyecto y le permite gestionarlos."
 
 #: C/license.page:8(desc)
 msgid "Legal information."
@@ -1672,6 +1683,10 @@ msgid ""
 "link>, or read the full <link href=\"http://creativecommons.org/licenses/by-"
 "sa/3.0/\">Commons Deed</link>."
 msgstr ""
+"Para ver el texto completo de la licencia consulte la <link href=\"http://"
+"creativecommons.org/licenses/by-sa/3.0/legalcode\">página web de Creative "
+"Commons</link> o lea el <link href=\"http://creativecommons.org/licenses/by-"
+"sa/3.0/\"> Escrito de Commons</link>."
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -1681,7 +1696,7 @@ msgstr "@@image: 'figures/layers.png'; md5=27c5f543944b381bc7147ff90b3deaee"
 
 #: C/layers.page:25(title)
 msgid "Understanding layers"
-msgstr ""
+msgstr "Entender las capas"
 
 #: C/layers.page:27(p)
 msgid ""
@@ -1689,6 +1704,9 @@ msgid ""
 "timeline: compositing, mixing multiple videos simultaneously, and adding "
 "titles depend on this feature."
 msgstr ""
+"Las <em>capas</em> son un concepto fundamental para la edición avanzada en "
+"la línea de tiempo: la composición, mezcla de varios vídeos al mismo tiempo, "
+"y la adición de títulos dependerán de esta característica."
 
 #: C/layers.page:28(p)
 msgid ""
@@ -1697,16 +1715,23 @@ msgid ""
 "of glass is a layer. If the top piece of glass is completely painted over, "
 "none of the pieces of glass underneath will be visible."
 msgstr ""
+"Es más fácil pensar en capas en términos de imágenes pintadas sobre vidrio. "
+"Con varias piezas de vidrio apiladas una encima de otra, cada una de estas "
+"piezas de vidrio es una capa. Si la pieza superior del vidrio está "
+"completamente pintada, ninguna de las piezas de vidrio por debajo será "
+"visible."
 
 #: C/layers.page:29(p)
 msgid ""
 "If, on the other hand, you only paint over a portion of a piece of glass, "
 "you will be able to see what is underneath the non-painted parts."
 msgstr ""
+"En cambio, si solo pinta sobre una porción de una pieza de vidrio, podrá ver "
+"qué hay debajo de las partes no pintadas"
 
 #: C/layers.page:32(title)
 msgid "Opacity (how solid “opaque” things are)"
-msgstr ""
+msgstr "Opacidad (cómo de sólidas son las cosas «opacas»)"
 
 #: C/layers.page:33(p)
 msgid ""
@@ -1715,10 +1740,15 @@ msgid ""
 "Visually, an opacity of 100% means you cannot see the clips below that layer "
 "or clip, and an opacity of of 50% means you can partly see them."
 msgstr ""
+"Cada capa (y cada clip) tiene su propia transparencia. Para continuar la "
+"metáfora de la pintura en el vidrio, si la pintura es lo suficientemente "
+"delgada, se puede ver a través de ella. Visualmente, una opacidad de 100% "
+"significa que no puede ver los clips por debajo de la capa o clip, y una "
+"opacidad de 50% significa que puede verlos parcialmente."
 
 #: C/layers.page:37(title)
 msgid "How this translates in terms of user interface"
-msgstr ""
+msgstr "Como esto se traduce en términos de interfaz de usuario"
 
 #: C/layers.page:38(p)
 msgid ""
