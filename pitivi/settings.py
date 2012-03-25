@@ -28,11 +28,8 @@ import gst
 from ConfigParser import SafeConfigParser, ParsingError
 import xdg.BaseDirectory as xdg_dirs  # Freedesktop directories spec
 
-from gettext import gettext as _
-
 from pitivi.utils.signal import Signallable
-from pitivi.render import available_combinations, \
-     get_compatible_sink_caps
+from pitivi.render import available_combinations, get_compatible_sink_caps
 from pitivi.utils.loggable import Loggable
 
 
@@ -383,17 +380,6 @@ class MultimediaSettings(Signallable, Loggable):
 
     def getDAR(self):
         return gst.Fraction(self.videowidth, self.videoheight) * self.videopar
-
-    def __str__(self):
-        msg = _("Export Settings\n")
-        msg += _("Video: ") + str(self.videowidth) + " " + str(self.videoheight) +\
-               " " + str(self.videorate) + " " + str(self.videopar)
-        msg += "\n\t" + str(self.vencoder) + " " + str(self.vcodecsettings)
-        msg += _("\nAudio: ") + str(self.audiochannels) + " " + str(self.audiorate) +\
-               " " + str(self.audiodepth)
-        msg += "\n\t" + str(self.aencoder) + " " + str(self.acodecsettings)
-        msg += _("\nMuxer: ") + str(self.muxer) + " " + str(self.containersettings)
-        return msg
 
     def getVideoWidthAndHeight(self, render=False):
         """ Returns the video width and height as a tuple
