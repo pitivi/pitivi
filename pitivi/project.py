@@ -49,35 +49,9 @@ from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import model, frame_rates, audio_rates, audio_depths,\
     audio_channels, beautify_time_delta, get_combo_value, set_combo_value,\
-    SPACING
+    pixel_aspect_ratios, display_aspect_ratios, SPACING
 from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
     VideoPresetManager
-
-# FIXME: are we sure the following tables correct?
-
-pixel_aspect_ratios = model((str, object), (
-    (_("Square"), gst.Fraction(1, 1)),
-    (_("480p"), gst.Fraction(10, 11)),
-    (_("480i"), gst.Fraction(8, 9)),
-    (_("480p Wide"), gst.Fraction(40, 33)),
-    (_("480i Wide"), gst.Fraction(32, 27)),
-    (_("576p"), gst.Fraction(12, 11)),
-    (_("576i"), gst.Fraction(16, 15)),
-    (_("576p Wide"), gst.Fraction(16, 11)),
-    (_("576i Wide"), gst.Fraction(64, 45)),
-))
-
-display_aspect_ratios = model((str, object), (
-    (_("Standard (4:3)"), gst.Fraction(4, 3)),
-    (_("DV (15:11)"), gst.Fraction(15, 11)),
-    (_("DV Widescreen (16:9)"), gst.Fraction(16, 9)),
-    (_("Cinema (1.37)"), gst.Fraction(11, 8)),
-    (_("Cinema (1.66)"), gst.Fraction(166, 100)),
-    (_("Cinema (1.85)"), gst.Fraction(185, 100)),
-    (_("Anamorphic (2.35)"), gst.Fraction(235, 100)),
-    (_("Anamorphic (2.39)"), gst.Fraction(239, 100)),
-    (_("Anamorphic (2.4)"), gst.Fraction(24, 10)),
-))
 
 
 #------------------ Backend classes ------------------------------------------#

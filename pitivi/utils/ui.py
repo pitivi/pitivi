@@ -37,7 +37,7 @@ from xml.sax.saxutils import escape
 
 from pitivi.utils.loggable import doLog, ERROR
 
-# ---------------------- Constants --------------------------------------------#
+# ---------------------- Constants -------------------------------------------#
 
 ##
 # UI pixels information constants
@@ -354,6 +354,12 @@ def get_combo_value(combo):
     return combo.props.model[active][1]
 
 
+def get_value_from_model(model, value):
+    for row in model:
+        if (row[1] == value):
+            return row[0]
+    return str(value)
+
 #------------------------ encoding datas ----------------------------------------#
 # FIXME This should into a special file
 frame_rates = model((str, object), (
@@ -391,6 +397,32 @@ audio_channels = model((str, int), (
     (_("4 Channels (4.0)"), 4),
     (_("Stereo"), 2),
     (_("Mono"), 1)))
+
+# FIXME: are we sure the following tables correct?
+
+pixel_aspect_ratios = model((str, object), (
+    (_("Square"), gst.Fraction(1, 1)),
+    (_("480p"), gst.Fraction(10, 11)),
+    (_("480i"), gst.Fraction(8, 9)),
+    (_("480p Wide"), gst.Fraction(40, 33)),
+    (_("480i Wide"), gst.Fraction(32, 27)),
+    (_("576p"), gst.Fraction(12, 11)),
+    (_("576i"), gst.Fraction(16, 15)),
+    (_("576p Wide"), gst.Fraction(16, 11)),
+    (_("576i Wide"), gst.Fraction(64, 45)),
+))
+
+display_aspect_ratios = model((str, object), (
+    (_("Standard (4:3)"), gst.Fraction(4, 3)),
+    (_("DV (15:11)"), gst.Fraction(15, 11)),
+    (_("DV Widescreen (16:9)"), gst.Fraction(16, 9)),
+    (_("Cinema (1.37)"), gst.Fraction(11, 8)),
+    (_("Cinema (1.66)"), gst.Fraction(166, 100)),
+    (_("Cinema (1.85)"), gst.Fraction(185, 100)),
+    (_("Anamorphic (2.35)"), gst.Fraction(235, 100)),
+    (_("Anamorphic (2.39)"), gst.Fraction(239, 100)),
+    (_("Anamorphic (2.4)"), gst.Fraction(24, 10)),
+))
 
 
 # ---------------------- Classes ---------------------------------------------#

@@ -40,7 +40,7 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.settings import GlobalSettings
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
-
+from pitivi.dialogs.clipmediaprops import clipmediapropsDialog
 from pitivi.utils.ui import beautify_length
 from pitivi.utils.misc import PathWalker, quote_uri
 from pitivi.utils.signal import SignalGroup, Signallable
@@ -299,15 +299,19 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         image.set_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_MENU)
         self.popup_remitem.set_image(image)
         self.popup_playmenuitem = gtk.MenuItem(_("_Preview Clip"))
+        self.popup_clipprop = gtk.MenuItem(_("_Clip properties"))
         self.popup_importitem.connect("activate", self._importButtonClickedCb)
         self.popup_remitem.connect("activate", self._removeButtonClickedCb)
         self.popup_playmenuitem.connect("activate", self._playButtonClickedCb)
+        self.popup_clipprop.connect("activate", self._clipPropButtonClickedCb)
         self.popup_importitem.show()
         self.popup_remitem.show()
         self.popup_playmenuitem.show()
+        self.popup_clipprop.show()
         self.popup.append(self.popup_importitem)
         self.popup.append(self.popup_remitem)
         self.popup.append(self.popup_playmenuitem)
+        self.popup.append(self.popup_clipprop)
 
         # import sources dialogbox
         self._importDialog = None
@@ -983,6 +987,19 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.debug("Let's play %s", model[paths][COL_URI])
         self.emit('play', model[paths][COL_URI])
 
+    def _clipPropButtonClickedCb(self, unused_widget=None):
+        """ Called when user clicks clip properties button """
+        paths = self.getSelectedPaths()
+        model = self.treeview.get_model()
+        if len(paths) < 1:
+            return
+        paths = paths[0]
+        factory = model[paths][COL_FACTORY]
+        self.debug("Let's import %s", model[paths][COL_URI])
+        d = clipmediapropsDialog(self.app.current,
+            factory.get_audio_streams(), factory.get_video_streams())
+        d.run()
+
     def _hideInfoBarClickedCb(self, unused_button):
         self._resetErrorList()
 
@@ -1047,6 +1064,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         if view != None and self._rowUnderMouseSelected(view, event):
             self.popup_remitem.set_sensitive(True)
             self.popup_playmenuitem.set_sensitive(True)
+            self.popup_clipprop.set_sensitive(True)
         elif view != None and (not self._nothingUnderMouse(view, event)):
             if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
                 self._viewUnselectAll()
@@ -1061,9 +1079,11 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             self._viewSelectPath(self._viewGetPathAtPos(event))
             self.popup_remitem.set_sensitive(True)
             self.popup_playmenuitem.set_sensitive(True)
+            self.popup_clipprop.set_sensitive(True)
         else:
             self.popup_remitem.set_sensitive(False)
             self.popup_playmenuitem.set_sensitive(False)
+            self.popup_clipprop.set_sensitive(False)
 
         self.popup.popup(None, None, None, event.button, event.time)
 

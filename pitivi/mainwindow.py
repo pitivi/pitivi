@@ -1002,7 +1002,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # TODO: this method's signature should be changed:
         # project = self.app.current,
         # old is never used, and the new is equal to self.app.current.settings
-        self.viewer.setDisplayAspectRatio(float(new.videopar * new.videowidth) /\
+        self.viewer.setDisplayAspectRatio(
+            float(new.videopar.num / new.videopar.denom * new.videowidth) /\
                 float(new.videoheight))
 
     def _sourceListMissingPluginsCb(self, project, uri, factory,
