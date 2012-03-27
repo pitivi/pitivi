@@ -259,6 +259,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("RevertToSavedProject", gtk.STOCK_REVERT_TO_SAVED, None,
             None, _("Reload the current project"), self._revertToSavedProjectCb),
 
+            ("ExportProject", gtk.STOCK_HARDDISK, _("Export as Archive..."),
+            None, _("Export the current project"), self._exportProjectAsTarCb),
+
             ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"),
             None, _("Edit the project settings"), self._projectSettingsCb),
 
@@ -564,6 +567,15 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _revertToSavedProjectCb(self, unused_action):
         return self.app.projectManager.revertToSavedProject()
 
+    def _exportProjectAsTarCb(self, unused_action):
+        uri = self._showExportDialog(self.app.current)
+        if uri:
+            result = self.app.projectManager.exportProject(self.app.current, uri)
+
+        if not result:
+            self.log("Project couldn't be exported")
+        return result
+
     def _projectSettingsCb(self, unused_action):
         self.showProjectSettingsDialog()
 
@@ -700,6 +712,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         #FIXME GES we should re-enable this when possible
         #self._syncDoUndo(self.app.action_log)
+
+        # Enable export functionality
+        self.actiongroup.get_action("ExportProject").set_sensitive(True)
 
         #FIXME GES reimplement me
         if self._missingUriOnLoading:
@@ -1065,6 +1080,54 @@ class PitiviMainWindow(gtk.Window, Loggable):
                     self.timeline_ui.pipeline_state = new
 
 ## other
+    def _showExportDialog(self, project):
+        self.log("Export requested")
+        chooser = gtk.FileChooserDialog(_("Export To..."),
+            self,
+            action=gtk.FILE_CHOOSER_ACTION_SAVE,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+            gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+
+        chooser.set_icon_name("pitivi")
+        chooser.set_select_multiple(False)
+
+        if not project.name:
+            chooser.set_current_name(_("Untitled") + ".tar")
+        else:
+            chooser.set_current_name(project.name + ".tar")
+        chooser.set_current_folder(self.settings.lastProjectFolder)
+        chooser.props.do_overwrite_confirmation = True
+
+        filt = gtk.FileFilter()
+        filt.set_name("Tar Archive")
+        filt.add_pattern("*.tar")
+        chooser.add_filter(filt)
+        default = gtk.FileFilter()
+        default.set_name(_("Detect Automatically"))
+        default.add_pattern("*")
+        chooser.add_filter(default)
+
+        response = chooser.run()
+        current_folder = chooser.get_current_folder()
+        if current_folder:
+            self.settings.lastProjectFolder = current_folder
+
+        if response == gtk.RESPONSE_OK:
+            self.log("User chose a URI to export project to")
+            # need to do this to work around bug in gst.uri_construct
+            # which escapes all /'s in path!
+            uri = "file://" + chooser.get_filename()
+            format = chooser.get_filter().get_name()
+            if format == _("Detect Automatically"):
+                format = None
+            self.log("uri:%s , format:%s", uri, format)
+            ret = uri
+        else:
+            self.log("User didn't choose a URI to export project to")
+            ret = None
+
+        chooser.destroy()
+        return ret
 
     def _showSaveAsDialog(self, project):
         self.log("Save URI requested")

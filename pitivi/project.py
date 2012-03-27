@@ -29,6 +29,7 @@ import gst
 import gtk
 import gio
 import gobject
+import tarfile
 
 from time import time
 from datetime import datetime
@@ -260,6 +261,59 @@ class ProjectManager(Signallable, Loggable):
                 else:
                     self.debug('Saved backup "%s"' % uri)
             return saved
+
+    def exportProject(self, project, uri):
+        """
+        Export a project to a *.tar archive which includes the project file
+        and all sources
+        """
+        # write project file to temporary file
+        project_name = project.name if project.name else "project"
+        tmp_name = "%s.xptv" % project_name
+
+        try:
+            directory = os.path.dirname(uri)
+            tmp_uri = os.path.join(directory, tmp_name)
+            self.saveProject(project, tmp_uri, overwrite=True)
+
+            # create tar file
+            with tarfile.open(path_from_uri(uri), mode="w") as tar:
+                # top directory in tar-file
+                top = "%s-export" % project_name
+                # add temporary project file
+                tar.add(path_from_uri(tmp_uri), os.path.join(top, tmp_name))
+
+                # get common path
+                sources = project.medialibrary.getSources()
+                if self._allSourcesInHomedir(sources):
+                    common = os.path.expanduser("~")
+                else:
+                    common = "/"
+
+                # add all sources
+                for source in sources:
+                    path = path_from_uri(source.get_uri())
+                    tar.add(path, os.path.join(top, os.path.relpath(path, common)))
+                tar.close()
+
+            # remove temporary file
+            os.remove(path_from_uri(tmp_uri))
+        except:
+            return False
+
+        return True
+
+    def _allSourcesInHomedir(self, sources):
+        """
+        Checks if all sources are located in the users home directory
+        """
+        homedir = os.path.expanduser("~")
+
+        for source in sources:
+            if not path_from_uri(source.get_uri()).startswith(homedir):
+                return False
+
+        return True
 
     def closeRunningProject(self):
         """ close the current project """

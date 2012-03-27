@@ -6,6 +6,7 @@
       <menuitem action="SaveProject" />
       <menuitem action="SaveProjectAs" />
       <menuitem action="RevertToSavedProject" />
+      <menuitem action="ExportProject" />
       <separator />
       <menuitem action="RenderProject" />
       <separator />
