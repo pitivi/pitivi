@@ -54,7 +54,7 @@ DOC_PAGES = \
     usingclips.page \
     welcomedialog.page
 
-DOC_LINGUAS = de es fr sl
+DOC_LINGUAS = de es fr sl uk
 
 html:
 	mkdir -p html
