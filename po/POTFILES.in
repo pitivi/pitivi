@@ -3,6 +3,7 @@
 # [encoding: UTF-8]
 data/pitivi.desktop.in.in
 [type: gettext/glade]data/ui/alignmentprogress.ui
+[type: gettext/glade]data/ui/clipmediaprops.ui
 [type: gettext/glade]data/ui/cliptransformation.ui
 [type: gettext/glade]data/ui/depsmanager.ui
 [type: gettext/glade]data/ui/elementsettingsdialog.ui
@@ -29,6 +30,7 @@ pitivi/timeline/timeline.py
 pitivi/timeline/track.py
 pitivi/timeline/thumbnailer.py
 
+pitivi/dialogs/clipmediaprops.py
 pitivi/dialogs/filelisterrordialog.py
 pitivi/dialogs/prefs.py
 
