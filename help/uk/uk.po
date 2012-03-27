@@ -1,0 +1,1700 @@
+# Ukrainian translation for pitivi.
+# Copyright (C) 2011 pitivi's COPYRIGHT HOLDER
+# This file is distributed under the same license as the pitivi package.
+# lxlalexlxl <pilipchukap@rambler.ru>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pitivi master\n"
+"POT-Creation-Date: 2011-11-12 12:16+0000\n"
+"PO-Revision-Date: 2011-12-11 22:52+0200\n"
+"Last-Translator: Олександр Пилипчук <pilipchukap@rambler.ru>\n"
+"Language-Team: Ukrainian <uk@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: C/welcomedialog.page:10(name)
+#: C/usingclips.page:10(name)
+#: C/trimming.page:11(name)
+#: C/sysreq.page:11(name)
+#: C/splitting.page:10(name)
+#: C/selectunusedfiles.page:12(name)
+#: C/saveproject.page:11(name)
+#: C/rendering.page:10(name)
+#: C/projectsettings.page:10(name)
+#: C/presets.page:11(name)
+#: C/othertransitions.page:10(name)
+#: C/movearoundtimeline.page:10(name)
+#: C/medialibrary.page:10(name)
+#: C/makeselections.page:10(name)
+#: C/mainwindow.page:12(name)
+#: C/layers.page:10(name)
+#: C/keyframecurves.page:10(name)
+#: C/interface.page:10(name)
+#: C/insertintimeline.page:10(name)
+#: C/index.page:11(name)
+#: C/importing.page:10(name)
+#: C/importingmpegts.page:11(name)
+#: C/gstreamer.page:10(name)
+#: C/fadeinfadeout.page:10(name)
+#: C/effectsanimation.page:10(name)
+#: C/effects.page:11(name)
+#: C/crossfading.page:11(name)
+#: C/codecscontainers.page:10(name)
+#: C/about.page:10(name)
+msgid "Jean-François Fortin Tam"
+msgstr "Jean-François Fortin Tam"
+
+#: C/welcomedialog.page:11(email)
+#: C/usingclips.page:11(email)
+#: C/trimming.page:12(email)
+#: C/sysreq.page:12(email)
+#: C/splitting.page:11(email)
+#: C/selectunusedfiles.page:13(email)
+#: C/saveproject.page:12(email)
+#: C/rendering.page:11(email)
+#: C/projectsettings.page:11(email)
+#: C/presets.page:12(email)
+#: C/othertransitions.page:11(email)
+#: C/movearoundtimeline.page:11(email)
+#: C/medialibrary.page:11(email)
+#: C/makeselections.page:11(email)
+#: C/mainwindow.page:13(email)
+#: C/layers.page:11(email)
+#: C/keyframecurves.page:11(email)
+#: C/interface.page:11(email)
+#: C/insertintimeline.page:11(email)
+#: C/index.page:12(email)
+#: C/importing.page:11(email)
+#: C/importingmpegts.page:12(email)
+#: C/gstreamer.page:11(email)
+#: C/fadeinfadeout.page:11(email)
+#: C/effectsanimation.page:11(email)
+#: C/effects.page:12(email)
+#: C/crossfading.page:12(email)
+#: C/codecscontainers.page:11(email)
+#: C/about.page:11(email)
+msgid "nekohayo@gmail.com"
+msgstr "nekohayo@gmail.com"
+
+#: C/welcomedialog.page:13(desc)
+msgid "Creating new projects and opening recent projects on startup"
+msgstr "Створення нових проектів і відкривання останніх проектів при запуску"
+
+#: C/welcomedialog.page:17(p)
+#: C/usingclips.page:21(p)
+#: C/trimming.page:22(p)
+#: C/sysreq.page:22(p)
+#: C/splitting.page:21(p)
+#: C/selectunusedfiles.page:19(p)
+#: C/saveproject.page:22(p)
+#: C/rendering.page:21(p)
+#: C/projectsettings.page:21(p)
+#: C/presets.page:15(p)
+#: C/othertransitions.page:19(p)
+#: C/movearoundtimeline.page:21(p)
+#: C/medialibrary.page:17(p)
+#: C/makeselections.page:21(p)
+#: C/mainwindow.page:19(p)
+#: C/layers.page:21(p)
+#: C/keyframecurves.page:21(p)
+#: C/interface.page:15(p)
+#: C/insertintimeline.page:21(p)
+#: C/index.page:19(p)
+#: C/importing.page:21(p)
+#: C/importingmpegts.page:18(p)
+#: C/gstreamer.page:21(p)
+#: C/fadeinfadeout.page:21(p)
+#: C/effectsanimation.page:15(p)
+#: C/effects.page:16(p)
+#: C/crossfading.page:22(p)
+#: C/codecscontainers.page:14(p)
+#: C/about.page:21(p)
+msgid "Creative Commons Share Alike 3.0"
+msgstr "Creative Commons Share Alike 3.0"
+
+#: C/welcomedialog.page:21(title)
+msgid "The welcome dialog"
+msgstr "Діалог привітання"
+
+#: C/welcomedialog.page:22(p)
+msgid "When you launch <app>PiTiVi</app>, a startup assistant appears, allowing you to create a new project or open an existing project in a few clicks. If you want to skip this dialog, press the <gui><key>Escape</key></gui> key on your keyboard or click the window's close button."
+msgstr "Коли ви запускаєте <app>PiTiVi</app>, з'являється помічник запуску, який дозволяє вам створити новий проект або відкрити наявний проект за декілька клацань. Якщо ви хочете пропустити цей діалог, натисніть <gui><key>Escape</key></gui> або клацніть кнопку закривання вікна."
+
+#: C/usingclips.page:14(name)
+#: C/trimming.page:15(name)
+#: C/sysreq.page:15(name)
+#: C/splitting.page:14(name)
+#: C/saveproject.page:15(name)
+#: C/rendering.page:14(name)
+#: C/projectsettings.page:14(name)
+#: C/othertransitions.page:14(name)
+#: C/movearoundtimeline.page:14(name)
+#: C/makeselections.page:14(name)
+#: C/layers.page:14(name)
+#: C/keyframecurves.page:14(name)
+#: C/insertintimeline.page:14(name)
+#: C/index.page:15(name)
+#: C/importing.page:14(name)
+#: C/gstreamer.page:14(name)
+#: C/fadeinfadeout.page:14(name)
+#: C/crossfading.page:15(name)
+#: C/about.page:14(name)
+msgid "Mario Blättermann"
+msgstr "Mario Blättermann"
+
+#: C/usingclips.page:15(email)
+#: C/trimming.page:16(email)
+#: C/sysreq.page:16(email)
+#: C/splitting.page:15(email)
+#: C/saveproject.page:16(email)
+#: C/rendering.page:15(email)
+#: C/projectsettings.page:15(email)
+#: C/othertransitions.page:15(email)
+#: C/movearoundtimeline.page:15(email)
+#: C/makeselections.page:15(email)
+#: C/layers.page:15(email)
+#: C/keyframecurves.page:15(email)
+#: C/insertintimeline.page:15(email)
+#: C/index.page:16(email)
+#: C/importing.page:15(email)
+#: C/gstreamer.page:15(email)
+#: C/fadeinfadeout.page:15(email)
+#: C/crossfading.page:16(email)
+#: C/about.page:15(email)
+msgid "mariobl@gnome.org"
+msgstr "mariobl@gnome.org"
+
+#: C/usingclips.page:17(desc)
+msgid "Learn the difference between clips and files and how to do basic operations on clips in the timeline."
+msgstr "Пояснюється відмінність між кліпами та файлами і як виконувати основні операції з кліпами на монтажному столі."
+
+#: C/usingclips.page:25(title)
+msgid "Using clips"
+msgstr "Використання кліпів"
+
+#: C/usingclips.page:28(title)
+msgid "Clips vs files"
+msgstr "Порівняння кліпів та файлів"
+
+#: C/usingclips.page:30(p)
+msgid "<em>Files</em> are data on your hard disk (videos, music, pictures, etc.) that can be accessed by <app>PiTiVi</app> and incorporated in your video editing project."
+msgstr "<em>Файли</em> містять дані записані на диску (відео, музика, картинки, тощо), які доступні з <app>PiTiVi</app> та можуть бути вставлені у ваш відеопроект."
+
+#: C/usingclips.page:31(p)
+msgid "<em>Clips</em> are a visual representation of your files on the timeline. They represent the period of time they consume on the timeline and can be edited independently: each time you drag a file from the media library to the timeline, a new clip is created. As such, a file can be reused as much as you want to create any amount of different clips."
+msgstr "<em>Кліпи</em> - це візуальне представлення ваших файлів на монтажному столі. Вони показують період часу, який займуть на монтажному столі, і можуть редагуватися незалежно: щоразу, коли ви перетягуєте файл з Бібліотеки творів на монтажний стіл, створюється новий кліп. Отже, файл можна використати стільки разів, скільки потрібно створити таких кліпів."
+
+#: C/usingclips.page:33(p)
+msgid "Since PiTiVi is a non-destructive editor, clips are edited, not files. As such, your files stay intact."
+msgstr "Оскільки PiTiVi - неруйнівний редактор, то редагуються кліпи, а не файли. Отже, файли залишаються незайманими."
+
+#: C/usingclips.page:37(title)
+msgid "Moving clips along the timeline"
+msgstr "Переміщення кліпів вздовж монтажного столу"
+
+#: C/usingclips.page:38(p)
+msgid "You can move a clip within a layer or move it to a different layer."
+msgstr "Ви можете пересувати кліп в межах шару або перемістити його на інший шар."
+
+#: C/usingclips.page:39(p)
+msgid "Click and drag a single clip to move it, and release the mouse button to place it. Dragging horizontally keeps the clip on the same layer, but dragging it vertically moves the clip to a different layer."
+msgstr "Перетягніть окремий кліп, щоб пересунути його, і відпустіть кнопку миші у потрібному місці. При перетягуванні по горизонталі кліп залишається на тому ж шарі, а перетягування по вертикалі зміщує кліп на інший шар."
+
+#: C/usingclips.page:40(p)
+msgid "To move multiple clips at the same time, use the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips. Selected clips do not need to be on the same layer. Then, drag the clips just as you would do for a single clip; their position relative to each other will be preserved."
+msgstr "Щоб пересунути одночасно багато кліпів, використовуйте клавіші <key>Ctrl</key> or <key>Shift</key> під час позначання. Можна позначити кліпи, що знаходяться у різних шарах. Після цього перемістіть кліпи так, як це робилось з одним кліпом; їхнє відносне розміщення буде збережене."
+
+#: C/usingclips.page:42(title)
+msgid "Using ripple editing while moving clips"
+msgstr "Використання ripple-підгонки при переміщенні кліпів"
+
+#: C/usingclips.page:43(p)
+msgid "While dragging clips around in the timeline, you can use the <link xref=\"trimming\">ripple technique</link> to move the <em>following</em> clips (the clips that start after the one you're directly editing) to fill the gap."
+msgstr "При перетягуванні кліпів вздовж монтажного столу, ви можете застосовувати <link xref=\"trimming\">ripple-підгонку</link> щоб перемістити <em>наступний</em> кліп (кліп, що починається після того, який зараз редагується) для заповнення прогалини."
+
+#: C/usingclips.page:45(p)
+msgid "Click and drag the clip you want to move, with the mouse button held down"
+msgstr "Перетягуйте кліп, який ви хочете перемістити, утримуючи натиснутою клавішу миші"
+
+#: C/usingclips.page:46(p)
+msgid "During the drag, hold down <key>Shift</key> on the keyboard"
+msgstr "Під час перетягування утримуйте клавішу <key>Shift</key>"
+
+#: C/usingclips.page:47(p)
+msgid "Release the mouse button to end the drag operation, then release the <key>Shift</key> key."
+msgstr "Відпустіть кнопку миші, щоб завершити перетягування, потім відпустіть <key>Shift</key>."
+
+#: C/usingclips.page:49(p)
+msgid "During the drag operation, if you changed your mind and only want to drag one clip at a time, just release the <key>Shift</key> key before you release the mouse button."
+msgstr "Під час операції перетягування, якщо ви передумали і хочете перетягти тільки один кліп, просто відпустіть <key>Shift</key> перед тим, як відпустити кнопку миші."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:34(None)
+msgid "@@image: 'figures/trimming-individual.png'; md5=858585ad6ddc21696f7b9f0d597982b4"
+msgstr "@@image: 'figures/trimming-individual.png'; md5=858585ad6ddc21696f7b9f0d597982b4"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:47(None)
+msgid "@@image: 'figures/ripple-before.png'; md5=7052e3caadd1ccbf9a91a8c506aeca7d"
+msgstr "@@image: 'figures/ripple-before.png'; md5=7052e3caadd1ccbf9a91a8c506aeca7d"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:51(None)
+msgid "@@image: 'figures/ripple-after.png'; md5=3f2fdba79d1c69c2f2022fe08a62b5a7"
+msgstr "@@image: 'figures/ripple-after.png'; md5=3f2fdba79d1c69c2f2022fe08a62b5a7"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:71(None)
+msgid "@@image: 'figures/roll-before.png'; md5=a6c8ea270c5aa9953c07b493409637a2"
+msgstr "@@image: 'figures/roll-before.png'; md5=a6c8ea270c5aa9953c07b493409637a2"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:75(None)
+msgid "@@image: 'figures/roll-after.png'; md5=83653c2c984da5d10a0bea16dcee84e4"
+msgstr "@@image: 'figures/roll-after.png'; md5=83653c2c984da5d10a0bea16dcee84e4"
+
+#: C/trimming.page:18(desc)
+msgid "Shortening clips by changing the beginning and ending points. Also covers ripple and roll editing."
+msgstr "Скорочення кліпів зміщенням початкової та кінцевої точок. Також розглянуто ripple- та roll-підгонку."
+
+#: C/trimming.page:26(title)
+msgid "Trimming"
+msgstr "Підгонка "
+
+#: C/trimming.page:28(p)
+msgid "Trimming is the act of changing the beginning or end point of a clip in the timeline."
+msgstr "Підгонка полягає у зміні початкової або кінцевої точки кліпу на монтажному столі."
+
+#: C/trimming.page:31(title)
+msgid "Trimming an individual clip"
+msgstr "Підгонка одного кліпу"
+
+#: C/trimming.page:32(p)
+msgid "Move the mouse cursor over a clip, and trimming handles will appear. Drag one of the trimming handles on the left or right edge of the clip to trim."
+msgstr "При наведенні вказівника миші на кліп з'являються смужки для \"підгонки\". Перетягніть одну зі смужок до лівого або правого краю кліпу, щоб виконати підгонку."
+
+#: C/trimming.page:36(p)
+msgid "Clips that are grouped together, such as a video clip with its associated audio clip, will trim in unison when you drag the trimming handles. To trim only the audio or only the video part, you need to ungroup them first (see the section on Grouping/linking)."
+msgstr "Згруповані кліпи, такі як відеокліп та пов'язаний з ним аудіокліп, підганяються при перетягування смужок одночасно. Щоб підігнати тільки аудіо або відео частину, потрібно спочатку їх розгрупувати (перегляньте розділ Групування/зв'язування)."
+
+#: C/trimming.page:40(title)
+msgid "Ripple editing"
+msgstr "Ripple-підгонка"
+
+#: C/trimming.page:41(p)
+msgid "Ripple edits are a variant of basic trimming which, in addition to trimming a clip, moves the “following” clips (the clips that start after the one you're directly editing) to fill the gap."
+msgstr "Ripple-підгонка - варіант підгонки, при якій на доповнення до підгонки кліпу, переміщується \"наступний\" кліп (кліп, що починається після того, що редагується), щоб заповнити прогалину. "
+
+#: C/trimming.page:43(p)
+msgid "The ripple applies to all “following” clips, regardless of whether or not they are on the same layer."
+msgstr "Ripple-підгонка впливає на всі \"наступні\" кліпи, незалежно від того, чи вони розміщені на тому самому рівні."
+
+#: C/trimming.page:45(p)
+#: C/trimming.page:69(p)
+msgid "Before:"
+msgstr "Перед:"
+
+#: C/trimming.page:49(p)
+#: C/trimming.page:73(p)
+msgid "After:"
+msgstr "Після:"
+
+#: C/trimming.page:53(p)
+msgid "To do a ripple edit:"
+msgstr "Щоб виконати Ripple-підгонку:"
+
+#: C/trimming.page:56(p)
+#: C/trimming.page:79(p)
+msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
+msgstr "Наведіть вказівник мишки на смужку підгонки між двома сусідніми кліпами."
+
+#: C/trimming.page:57(p)
+msgid "Press and hold <key>Shift</key>."
+msgstr "Натисніть і утримуйте <key>Shift</key>."
+
+#: C/trimming.page:58(p)
+#: C/trimming.page:81(p)
+msgid "Drag the trimming handle."
+msgstr "Перетягніть смужку підгонки."
+
+#: C/trimming.page:60(p)
+msgid "Ripple editing can also be used when moving clips around in the timeline. For detailed explanations on how to do this, see the section <link xref=\"usingclips\">Using ripple editing while moving clips</link>."
+msgstr "Ripple-підгонка може також використовуватись при переміщенні кліпів по шкалі часу. Для детального пояснення як це зробити, подивіться розділ <link xref=\"usingclips\">Використання ripple-підгонки при перетягуванні кліпів</link>."
+
+#: C/trimming.page:64(title)
+msgid "Roll editing"
+msgstr "Roll-підгонка"
+
+#: C/trimming.page:65(p)
+msgid "Roll edits are a variant of basic trimming which, in addition to trimming a clip, <em>trims</em> the adjacent clips to prevent creating gaps."
+msgstr "Roll-підгонка - варіант підгонки, що на доповнення до звичайної підгонки кліпу, <em>trims</em> підганяє наступні кліпи, щоб уникнути виникнення прогалин."
+
+#: C/trimming.page:67(p)
+msgid "The roll applies to all temporally adjacent clips, regardless of whether or not they are on the same layer."
+msgstr "Roll-підгонка впливає на всі сусідні кліпи, незалежно від того, на якому шарі вони розміщені."
+
+#: C/trimming.page:77(p)
+msgid "To do a roll edit:"
+msgstr "Щоб виконати roll-підгонку:"
+
+#: C/trimming.page:80(p)
+msgid "Press and hold <key>Ctrl</key>."
+msgstr "Натисніть та утримуйте <key>Ctrl</key>."
+
+#: C/sysreq.page:18(desc)
+msgid "What kind of hardware is needed to do video editing?"
+msgstr "Які апаратні засоби потрібні для редагування відео?"
+
+#: C/sysreq.page:26(title)
+msgid "System requirements"
+msgstr "Системні вимоги"
+
+#: C/sysreq.page:28(p)
+msgid "In terms of hardware, video editing typically requires a powerful computer, depending on the type of video you are editing. While the processing power of computers has increased tremendously over the years, so has demand for higher quality video."
+msgstr "Щодо апаратних засобів, редагування відео потребує потужного комп'ютера, залежно від типу редагованого відео. Стрімке зростання потужності процесорів супроводжується покращенням якості відео."
+
+#: C/sysreq.page:29(p)
+msgid "Editing HD (High Definition) video usually requires (at the time of this writing) state of the art hardware (depending on the codec used), while SD (Standard Definition) video editing can be done on modest hardware configurations. It is up to you to make sure that your equipment is adequate. It should at least be able to playback your media in <app>Totem</app> without lagging."
+msgstr "Редагування HD-відео (High Definition - висока чіткість) зазвичай потребує (на час написання цієї статті) сучасних апаратних засобів (залежно від використовуваного кодеку), тоді як редагування SD-відео (Standard Definition - стандартна чіткість) можна виконати на значно слабшому обладнанні. Вам слід переконатись, що ваше обладнання відповідає задачі. Воно має бути придатне принаймні для відтворення ваших файлів у <app>Totem</app> без гальмування."
+
+#: C/sysreq.page:30(p)
+msgid "It is possible, however, to use low-quality versions of your footage during editing and use the high-quality versions when rendering the final output, thus allowing to bypass hardware limitations to some extent. This is called <em>proxy editing</em>. This feature, however, is not yet available in <app>PiTiVi</app>."
+msgstr "Можна, звичайно, застосовувати низькоякісні версії відеоматеріалу під час редагування і високоякісні - під час кінцевої обробки матеріалу, що дозволяє частково обійти апаратні обмеження. Це називається <em>проксі-редагуванням</em>. Така можливість, поки що, відсутня у <app>PiTiVi</app>."
+
+#: C/splitting.page:17(desc)
+msgid "Dividing clips in two parts."
+msgstr "Поділ кліпу на дві частини."
+
+#: C/splitting.page:25(title)
+msgid "Splitting"
+msgstr "Розділення"
+
+#: C/splitting.page:27(p)
+msgid "As the name implies, splitting a clip divides it into two adjacent clips, with new beginning/end points being created accordingly."
+msgstr "Як зрозуміло з назви, при розділенні кліпу утворюється два сусідні кліпи, з новоствореними точками початку та закінчення."
+
+#: C/splitting.page:28(p)
+msgid "In <app>PiTiVi</app>, splitting is a “non-modal” operation; this means that you do not have to “activate” a particular tool before doing the split action. Splitting occurs where the playhead is currently located (see also <link xref=\"movearoundtimeline\">Moving the playhead</link>). Combined with zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless splitting is not only fast and efficient, it is also very accurate."
+msgstr "У <app>PiTiVi</app> розділення кліпу є немодальною операцією; це означає, що для розділення не потрібно активувати відповідний інструмент. Розділення відбувається у поточній позиції відтворення (див. також <link xref=\"movearoundtimeline\">Переміщення позиції відтворення</link>). У поєднанні з масштабуванням, покадровим пошуком з використанням клавіатури та протягуванням немодальне розділення є не тільки швидким і ефективним, але й дуже точним."
+
+#: C/splitting.page:29(p)
+msgid "Selections affect splitting in the following ways:"
+msgstr "Позначення впливає на розділення таким чином:"
+
+#: C/splitting.page:31(p)
+msgid "Only the selected clips under the playhead will be split."
+msgstr "Розділяються тільки позначені кліпи, що розміщені під позицією відтворення."
+
+#: C/splitting.page:32(p)
+msgid "If no clips are selected, all the clips under the playhead will be split."
+msgstr "Якщо позначених кліпів немає, то розділяються всі кліпи під позицією відтворення."
+
+#: C/splitting.page:34(p)
+msgid "To split a single clip:"
+msgstr "Щоб розділити окремий кліп:"
+
+#: C/splitting.page:36(p)
+msgid "Click on the clip."
+msgstr "Клацніть на кліпові."
+
+#: C/splitting.page:37(p)
+#: C/splitting.page:43(p)
+msgid "Reposition the playhead (if needed)."
+msgstr "Пересуньте позицію відтворення (за потреби)."
+
+#: C/splitting.page:38(p)
+#: C/splitting.page:44(p)
+#: C/splitting.page:50(p)
+msgid "Click on the <gui>Split</gui> button on the timeline toolbar or press <key>S</key>."
+msgstr "Клацніть кнопку <gui>Split</gui> на панелі шкали часу або натисніть <key>S</key>."
+
+#: C/splitting.page:40(p)
+msgid "To split all the clips across the all layers:"
+msgstr "Щоб розділити всі кліпи у всіх шарах:"
+
+#: C/splitting.page:42(p)
+msgid "Click on a blank area of the timeline (this will deselect all selected clips, if any)."
+msgstr "Клацніть вільне місце на шкалі часу (при цьому буде знято позначення з усіх кліпів)."
+
+#: C/splitting.page:46(p)
+msgid "To split multiple selected clips:"
+msgstr "Щоб розділити декілька позначених кліпів:"
+
+#: C/splitting.page:48(p)
+msgid "Position the playhead where you want to split."
+msgstr "Помістіть позицію відтворення у точку розділення."
+
+#: C/splitting.page:49(p)
+msgid "Add or remove clips to the selection with the <key>Ctrl</key> modifier key. This will not affect the playhead's position."
+msgstr "Додайте до позначеного або скасуйте позначення з окремих кліпів, утримуючи клавішу <key>Ctrl</key>. Це не змінить позицію відтворення."
+
+#: C/selectunusedfiles.page:15(desc)
+msgid "Finding and removing unused media to cleanup your project"
+msgstr "Пошук та вилучення невикористовуваних матеріалів для зачищення проекту."
+
+#: C/selectunusedfiles.page:23(title)
+msgid "Selecting unused files"
+msgstr "Позначення невикористовуваних файлів"
+
+#: C/selectunusedfiles.page:24(p)
+msgid "You may sometimes find that you have imported more clips that you needed in your project. <app>PiTiVi</app> allows you to select files that are present in the media library but not in the timeline. There are various reasons to do this:"
+msgstr "Іноді може виявитись, що ви імпортували кліпи, не потрібні для проекту. <app>PiTiVi</app> дозволяє позначити файли, наявні у Бібліотеці творів, але відсутні на шкалі часу. Для цього бувають різні причини:"
+
+#: C/selectunusedfiles.page:26(p)
+msgid "Improving performance when loading the project"
+msgstr "Прискорити завантаження проекту"
+
+#: C/selectunusedfiles.page:27(p)
+msgid "Simplifying your editing workflow"
+msgstr "Спростити процес редагування"
+
+#: C/selectunusedfiles.page:28(p)
+msgid "Check which clips you may have forgot to use in your movie"
+msgstr "Перевірити, чи не забули ви використати якийсь із кліпів у фільмі"
+
+#: C/selectunusedfiles.page:29(p)
+msgid "Backup or share your project more easily"
+msgstr "Полегшити резервне копіювання та розповсюдження проекту"
+
+#: C/selectunusedfiles.page:31(p)
+msgid "To identify which clips are not being used in your project, use <guiseq><gui>Library</gui><gui>Select Unused Media</gui></guiseq>. Unused clips will then be selected in the media library. If you want to remove them from your project, use <guiseq><gui>Library</gui><gui>Remove from Project</gui></guiseq>."
+msgstr "Щоб виявити, які кліпи не використовуються у проекті, виберіть <guiseq><gui>Бібліотека</gui><gui>Позначити невикористані дані</gui></guiseq>. Невикористані кліпи будуть позначені у медіабібліотеці. Якщо ви бажаєте вилучити їх з проекту, скористайтесь <guiseq><gui>Бібліотека</gui><gui>Вилучити з проекту</gui></guiseq>."
+
+#: C/selectunusedfiles.page:32(p)
+msgid "If there are no unused clips in your project, nothing will be selected in the media library."
+msgstr "Якщо проект не містить не використаних кліпів, у Бібліотеці творів не буде позначено нічого."
+
+#: C/saveproject.page:18(desc)
+msgid "How to save your project for later editing use."
+msgstr "Як зберегти проект для подальшого редагування."
+
+#: C/saveproject.page:26(title)
+msgid "Saving a project"
+msgstr "Збереження проекту"
+
+#: C/saveproject.page:28(p)
+msgid "To save your project work, use the <guiseq><gui>Project</gui><gui>Save</gui></guiseq> menu, the Save button on the main toolbar or press <keyseq><key>Ctrl</key><key>S</key></keyseq>."
+msgstr "Щоб зберегти проект, виберіть меню <guiseq><gui>Проект</gui><gui>Зберегти</gui></guiseq>, кнопку Зберегти на головній панелі або натисніть <keyseq><key>Ctrl</key><key>S</key></keyseq>."
+
+#: C/saveproject.page:29(p)
+msgid "When you save a project for the first time, a dialog window appears, asking you where to save the project file and how to name it."
+msgstr "Якщо проект зберігається вперше, з'явиться діалогове вікно з запитом, куди зберегти проект і як його назвати."
+
+#: C/saveproject.page:30(p)
+msgid "If you want to save your project as a different file, use <guiseq><gui>Project</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be used to create different versions of your project."
+msgstr "Якщо ви хочете зберегти проект в інший файл, виберіть <guiseq><gui>Проект</gui><gui>Зберегти як</gui></guiseq> або натисніть <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. Так можна створити різні версії вашого проекту."
+
+#: C/saveproject.page:32(title)
+msgid "Reverting changes"
+msgstr "Скасування змін"
+
+#: C/saveproject.page:33(p)
+msgid "In addition to undoing individual changes, you can also decide to revert all the changes you have made since the last time you saved your project. To do so, use <guiseq><gui>Project</gui><gui>Revert</gui></guiseq>."
+msgstr "На додачу до скасування окремих змін, ви можете також скасувати всі зміни, зроблені після останнього збереження проекту. Щоб зробити це, виберіть <guiseq><gui>Проект</gui><gui>Вернути</gui></guiseq>."
+
+#: C/rendering.page:17(desc)
+msgid "Learn the difference between saving a project and exporting a rendered movie."
+msgstr "Ознайомтесь, чим відрізняється збереження проекту від експортування обробленого фільму."
+
+#: C/rendering.page:25(title)
+msgid "Understanding rendering"
+msgstr "Поняття про обробку (rendering)"
+
+#: C/rendering.page:27(p)
+msgid "Rendering is the process of exporting your project into a new, finalized media file. Rendering only creates a new “rendered” video file, and does not affect the project itself; you can still make edits to your project and render again as many times as needed."
+msgstr "Обробка - це процес експорту вашого проекту до нового, кінцевого файлу. Під час обробки тільки створюється новий файл з обробленим відео, а до проекту не вносяться жодні зміни; ви можете продовжити редагування вашого проекту і виконувати обробку стільки разів, скільки потрібно."
+
+#: C/rendering.page:29(p)
+msgid "From the <gui>Project</gui> menu, use <gui>Render</gui>."
+msgstr "У меню <gui>Проект</gui>, виберіть <gui>Обробити проект</gui>."
+
+#: C/rendering.page:30(p)
+msgid "Adjust the various encoding settings, if needed, to use settings different from the project settings."
+msgstr "Скоригуйте параметри кодування, якщо потрібно використати параметри відмінні від встановлених у проекті."
+
+#: C/rendering.page:31(p)
+msgid "Click the <gui>Render</gui> button."
+msgstr "Клацніть кнопку <gui>Обробити</gui>."
+
+#: C/rendering.page:34(p)
+msgid "If your computer is set to suspend or hibernate automatically, <app>PiTiVi</app> will automatically inhibit the power saving features during the render process (see bug <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=571885\">bug #571885</link>)."
+msgstr "Якщо ваш комп'ютер налаштований на автоматичний перехід у режим очікування або сплячий режим, <app>PiTiVi</app> автоматично заблокує ці засоби енергозбереження на час обробки (див. помилку <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=571885\">bug #571885</link>)."
+
+#: C/projectsettings.page:17(desc)
+msgid "How to specify the global project resolution, framerate, aspect ratio, audio settings and project metadata."
+msgstr "Як для всього проекту вказати роздільну здатність, частоту кадрів, відношення сторін та метадані проекту."
+
+#: C/projectsettings.page:25(title)
+msgid "Editing project settings"
+msgstr "Редагування параметрів проекту"
+
+#: C/projectsettings.page:27(p)
+msgid "When starting a new project, you should make sure to go adjust the project settings, such as framerate, resolution and preferred codecs. The video resolution and aspect ratio will affect the appearance of the previewer. If you do not set the resolution and aspect ratio to match those of your footage, the video may look squished or letterboxed."
+msgstr "При започаткуванні нового проекту скоригуйте параметри проекту, такі як частота кадрів, розміри та основний кодек. Розміри та та відношення сторін  кадру впливають на попередній перегляд. Якщо ви не встановите розміри та відношення сторін відповідно до свого матеріалу, відео може виглядати стиснутим або розтягнутим."
+
+#: C/projectsettings.page:28(p)
+msgid "To edit the project settings after initial creation, use the <guiseq><gui>Edit</gui><gui>Project Settings</gui></guiseq> menu."
+msgstr "Щоб змінити параметри проекту після його створення, виберіть команду меню <guiseq><gui>Зміни</gui><gui>Параметри проекту</gui></guiseq>."
+
+#: C/projectsettings.page:31(title)
+msgid "Pixel aspect ratio vs display aspect ratio"
+msgstr "Порівняння піксельного та екранного відношень сторін"
+
+#: C/projectsettings.page:32(p)
+msgid "Digital images are composed of a grid of <link href=\"http://en.wikipedia.org/wiki/Pixel\">pixels</link>, which may or may not be square. As such, in some cases, you may need to set the <link href=\"http://en.wikipedia.org/wiki/Pixel_aspect_ratio\">pixel aspect ratio</link> (PAR) for the image to display correctly. On the other hand, <link href=\"http://en.wikipedia.org/wiki/Display_aspect_ratio\">display aspect ratio</link> (DAR) is the mathematical ratio of width:height for the whole image."
+msgstr "Цифрові зображення утворюються матрицею <link href=\"http://en.wikipedia.org/wiki/Pixel\">пікселів</link>, які можуть бути не квадратними. Отже, в деяких випадках, потрібно встановити <link href=\"http://en.wikipedia.org/wiki/Pixel_aspect_ratio\">піксельне співвідношення сторін</link> (PAR), щоб зображення виводилось коректно. З іншого боку, <link href=\"http://en.wikipedia.org/wiki/Display_aspect_ratio\">дисплейне співвідношення сторін</link> (DAR) є математичне відношення ширини до висоти для всього зображення."
+
+#: C/projectsettings.page:33(p)
+msgid "In <app>PiTiVi</app>, pixel aspect ratio and display aspect ratio are related to each other by the video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with."
+msgstr "У <app>PiTiVi</app> піксельне та дисплейне співвідношення сторін пов'язані між собою через роздільну здатність відео (ширину та висоту). Після встановлення роздільної здатності, встановлення DAR впливає на PAR і навпаки. Ви можете за бажанням користуватись DAR або PAR."
+
+#: C/projectsettings.page:34(p)
+msgid "You can use the ratios already provided in the combo boxes, or input a custom aspect ratio in the text entry below (using a syntax such as \"4:3\" or \"1.3333\", although the decimal version is less precise)."
+msgstr "Ви можете вибрати співвідношення сторін зі списку, або ввести власне значення у текстове поле внизу (використовуючи синтаксис \"4:3\" або \"1.3333\" і зважаючи на те, що десяткове значення менш точне)."
+
+#: C/presets.page:19(title)
+msgid "Presets"
+msgstr "Готові набори"
+
+#: C/presets.page:20(p)
+msgid "Both the project settings dialog and the rendering dialog allow you to save presets for later use. If you often deal with the same kind of project settings, with different cameras or target devices for rendering, you may want to create custom presets."
+msgstr "Як діалог параметрів проекту, так і діалог обробки дозволяють вам зберігати набори параметрів для подальшого використання. Якщо ви часто встановлюєте однакові параметри проектів, для різних камер або кінцевих пристроїв для обробки, ви можете захотіти зберегти власний набір параметрів."
+
+#: C/presets.page:21(p)
+msgid "While project settings concern themselves with global settings (such as resolution, framerate, aspect ratio and number of audio channels), the rendering presets are concerned with codecs and device constraints (for example, a handheld device or television may have a maximum screen resolution and framerate, which is not necessarily the case if you are exporting to a laptop or a website). As such, the presets in the rendering dialog are related to the project settings, but they govern different things."
+msgstr "Тоді як параметри проекту стосуються глобальних налаштувань (таких як роздільна здатність, частота кадрів, відношення сторін та кількість звукових каналів), параметри обробки стосуються кодеків та особливостей пристроїв (наприклад, переносний пристрій і телевізор можуть мати найбільші роздільну здатність та частоту кадрів, які не потрібні, якщо ви експортуєте для портативного комп'ютера або веб-сторінки). По суті, параметри в діалозі обробки пов'язані з параметрами проекту, але вони керують різними речами."
+
+#: C/presets.page:22(p)
+msgid "In project settings, video presets and audio presets are independent of each other."
+msgstr "У параметрах проекту, набори відео та аудіо параметрів незалежні один від одного."
+
+#: C/presets.page:24(title)
+msgid "Creating and editing presets"
+msgstr "Створення та редагування наборів параметрів"
+
+#: C/presets.page:25(p)
+msgid "To create a preset:"
+msgstr "Щоб створити набір параметрів:"
+
+#: C/presets.page:27(p)
+#: C/presets.page:34(p)
+msgid "Change the settings to your liking."
+msgstr "Змініть параметри на свій смак."
+
+#: C/presets.page:28(p)
+msgid "Click the <gui>Add</gui> button."
+msgstr "Клацніть кнопку <gui>Додати</gui>"
+
+#: C/presets.page:29(p)
+msgid "Give your preset a unique name: while the preset is selected in the list, click on its name to toggle editing mode. When you're done, press <key>Enter</key>."
+msgstr "Дайте вашому набору унікальне ім'я: коли набір вибраний у списку, клацніть в його назву, щоб перейти в режим редагування. По завершенні натисніть <key>Enter</key>."
+
+#: C/presets.page:31(p)
+msgid "To edit a preset:"
+msgstr "Для редагування набору:"
+
+#: C/presets.page:33(p)
+msgid "Select your preset in the list of existing presets."
+msgstr "Виберіть свій набір в списку наявних наборів."
+
+#: C/presets.page:35(p)
+msgid "Click the <gui>Save</gui> button."
+msgstr "Натисніть кнопку <gui>Зберегти</gui>."
+
+#: C/presets.page:37(p)
+msgid "To remove a preset, simply select it in the list of presets and press the <gui>Remove</gui> button."
+msgstr "Для вилучення набору, просто виберіть його в списку і натисніть <gui>Вилучити</gui>."
+
+#: C/presets.page:38(p)
+msgid "Some presets are provided by default and cannot be removed."
+msgstr "Деякі з наборів встановлені за замовчуванням і їх не можна вилучити. "
+
+#: C/presets.page:41(title)
+msgid "Ignoring presets"
+msgstr "Ігнорування наборів"
+
+#: C/presets.page:42(p)
+msgid "Presets are there to save time and reduce complexity. Experts can choose to simply ignore them and set everything manually; the \"No preset\" preset is a special preset that automatically saves its changes directly in the project file."
+msgstr "Набори покликані зберегти час і спростити роботу. Експерт може просто проігнорувати їх і все встановлювати вручну; набір \"No preset\" - це спеціальний набір, який автоматично зберігає свої зміни безпосередньо у проекті."
+
+#: C/presets.page:45(title)
+msgid "Limiting the resolution of a rendering preset"
+msgstr "Обмеження роздільної здатності при обробці набору"
+
+#: C/presets.page:46(p)
+msgid "If you want to make a preset with a fixed maximum resolution, you need to edit the preset file with a text editor. Presets files are typically stored in ~/.local/share/pitivi/ ; since many devices don't have a maximum resolution, the width/height are set to 0 (unlimited) by default. You can change these values to the maximum resolution of your target device."
+msgstr "Якщо ви хочете зробити набір параметрів з фіксованою найбільшою роздільною здатністю, потрібно відредагувати файл параметрів у текстовому редакторі. Файли з параметрами типово зберігаються у ~/.local/share/pitivi/ ; оскільки багато пристроїв не мають максимальної роздільної здатності, то ширина/висота типово встановлюється рівною 0 (необмежено). Ви можете змінити ці значення, вказавши найбільшу роздільну здатність цільового пристрою."
+
+#: C/othertransitions.page:23(title)
+msgid "Other transitions"
+msgstr "Інші переходи"
+
+#: C/othertransitions.page:25(p)
+msgid "Other types of transitions (such as wipes) are not yet implemented (see <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug #609353</link>)."
+msgstr "Інші типи переходів (наприклад, витирання) не реалізовані (див. <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug #609353</link>)."
+
+#: C/movearoundtimeline.page:17(desc)
+msgid "Moving the playhead, using the zoom feature, scrolling and scrubbing."
+msgstr "Переміщення позиції відтворення, масштабування, прокручування та протягування."
+
+#: C/movearoundtimeline.page:25(title)
+msgid "Moving around the timeline"
+msgstr "Переміщення вздовж монтажного столу"
+
+#: C/movearoundtimeline.page:28(title)
+msgid "Scrolling"
+msgstr "Прокручування"
+
+#: C/movearoundtimeline.page:29(p)
+msgid "You can use the scrollbars (located on the right and bottom of the timeline), use the mouse wheel anywhere over the timeline to scroll horizontally, or hold down the <key>Shift</key> key while using the mousewheel to scroll the timeline layers vertically."
+msgstr "Ви можете використовувати смуги прокручування (розміщені на праворуч та внизу монтажного столу), використовувати коліщатко миші в довільному місці монтажного столу для прокручування по горизонталі, або крутити коліщатко, утримуючи <key>Shift</key>,  для вертикального прокручування монтажного столу."
+
+#: C/movearoundtimeline.page:33(title)
+msgid "Zooming"
+msgstr "Масштабування"
+
+#: C/movearoundtimeline.page:34(p)
+msgid "Zooming directly affects your editing accuracy and your ability to move quickly along the timeline:"
+msgstr "Масштабування погіршує точність редагування та можливість швидко переміщуватись вздовж монтажного столу:"
+
+#: C/movearoundtimeline.page:36(p)
+msgid "When zooming in, video clips display more thumbnails and audio clips display increasingly detailed waveforms, allowing you to do precise edits."
+msgstr "При збільшенні масштабу, відеокліпи зображають більше кадрів, а аудіокліпи зображаються більш деталізованою кривою, даючи можливість точнішого редагування. "
+
+#: C/movearoundtimeline.page:37(p)
+msgid "Zooming out allows you to scroll faster along the timeline. Zoom can thus be used in conjunction with scrolling to move quickly between distant points of your project's chronology."
+msgstr "Зменшення масштабу дозволяє вам швидше переміщуватися вздовж монтажного столу. Таким чином масштабування використовують разом з прокручуванням для швидкого переміщення між віддаленими в часі точками проекту."
+
+#: C/movearoundtimeline.page:39(p)
+msgid "You can zoom in and out by:"
+msgstr "Ви можете збільшувати чи зменшувати:"
+
+#: C/movearoundtimeline.page:41(p)
+msgid "Holding the <key>Ctrl</key> key while using the mousewheel over the timeline"
+msgstr "Утримуючи <key>Ctrl</key> при прокручуванні коліщатка на монтажному столі"
+
+#: C/movearoundtimeline.page:42(p)
+msgid "Using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and <guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq> menu items"
+msgstr "Використовуючи команди меню <guiseq><gui>Перегляд</gui><gui>Збільшити</gui></guiseq> та <guiseq><gui>Перегляд</gui><gui>Зменшити</gui></guiseq>  "
+
+#: C/movearoundtimeline.page:43(p)
+msgid "Dragging the zoom slider on the left of the ruler"
+msgstr "Перетягуючи регулятор  в лівій частині монтажного столу"
+
+#: C/movearoundtimeline.page:44(p)
+msgid "Using keyboard shortcuts such as <key>Ctrl</key>+<key>-</key> to zoom out or <key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> on the numeric keypad) to zoom in"
+msgstr "Використовуючи комбінації клавіш: <key>Ctrl</key>+<key>-</key> для зменшення або <key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> на цифрових клавішах) для збільшення"
+
+#: C/movearoundtimeline.page:46(p)
+msgid "To get a better overview of your timeline, you may use the <guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the <gui>Zoom</gui> button on the left of the zoom slider."
+msgstr "Щоб краще оглянути монтажний стіл, скористайтесь командою меню <guiseq><gui>Перегляд</gui><gui>Найкраще заповнення</gui></guiseq> або клацніть кнопку <gui>Масштаб</gui> ліворуч від регулятора масштабу."
+
+#: C/movearoundtimeline.page:49(title)
+msgid "Zooming is always centered around the location of your playhead"
+msgstr "Центром масштабування завжди є позиція відтворення"
+
+#: C/movearoundtimeline.page:50(p)
+msgid "When using the mouse wheel to zoom in and out, remember that the zoom is not relative to the position of your mouse, only to the position of the playhead on the timeline."
+msgstr "Користуючись мишею для масштабування, пам'ятайте, що воно не пов'язане з положенням вказівника миші, а тільки з позицією відтворення на лінійці."
+
+#: C/movearoundtimeline.page:54(title)
+msgid "<em>Warping</em> between zoom levels"
+msgstr "Швидка зміна масштабу"
+
+#: C/movearoundtimeline.page:55(p)
+msgid "Using your mouse's scroll wheel, you can also <em>warp</em> instantly from any zoom level to another in a single click. To do that, click with your mousewheel anywhere on the zoom slider."
+msgstr "Коліщатко миші дозволяє змінювати масштаб одним клацанням: клацніть коліщатком у довільному місці регулятора масштабу."
+
+#: C/movearoundtimeline.page:60(title)
+msgid "Moving the playhead"
+msgstr "Переміщення позиції відтворення"
+
+#: C/movearoundtimeline.page:61(p)
+msgid "You can change the position of the playhead by clicking anywhere on the ruler or on the timeline."
+msgstr "Змінити позицію відтворення можна, клацнувши де завгодно на монтажному столі."
+
+#: C/movearoundtimeline.page:62(p)
+msgid "When clicking on the <em>timeline</em>:"
+msgstr "При клацанні на монтажному столі:"
+
+#: C/movearoundtimeline.page:64(p)
+msgid "If a clip is under the mouse cursor, it will replace the current clip selection (see the <link xref=\"makeselections\">Selecting multiple items</link> section for more detailed instructions)."
+msgstr "Якщо під вказівником - кліп, то він буде позначений замість раніше позначеного (див. детальніше <link xref=\"makeselections\">Позначення декількох елементів</link>)."
+
+#: C/movearoundtimeline.page:65(p)
+msgid "If there is no clip under the cursor, all selected clips (if any) will be deselected."
+msgstr "Якщо під вказівником немає кліпу, всі позначення кліпів будуть зняті."
+
+#: C/movearoundtimeline.page:67(p)
+msgid "When clicking on the ruler, only the playhead's position changes; clip selections are not affected."
+msgstr "При клацанні на лінійці, тільки позиція відтворення буде змінена, а позначення кліпів залишаться."
+
+#: C/movearoundtimeline.page:71(title)
+msgid "Scrubbing"
+msgstr "Протягування"
+
+#: C/movearoundtimeline.page:72(p)
+msgid "<em>Scrubbing</em> is a way of moving the playhead that allows you to:"
+msgstr "<em>Протягування</em> - спосіб пересування позиції відтворення, який дозволяє:"
+
+#: C/movearoundtimeline.page:74(p)
+msgid "Search for a specific position in time by approximation/trial and error."
+msgstr "Знаходити потрібну позицію методом спроб та помилок."
+
+#: C/movearoundtimeline.page:75(p)
+msgid "Review repeatedly the visual motion in a scene by moving back and forth in time."
+msgstr "Переглядати фрагмент декілька разів, пересуваючись вперед або назад."
+
+#: C/movearoundtimeline.page:77(p)
+msgid "To scrub, click on the ruler and move the mouse with the button still held down."
+msgstr "Для протягування клацніть лінійку і пересуньте мишу, утримуючи кнопку натиснутою."
+
+#: C/movearoundtimeline.page:78(p)
+msgid "You can also scrub by dragging the black vertical line that stems from the playhead and spans across the timeline."
+msgstr "Ви можете також перетягти чорну вертикальну лінію, що позначає позицію відтворення."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/medialibrary.page:28(None)
+msgid "@@image: 'figures/previewsource.png'; md5=ec55ba71f7c9ec058d4619b342654a0e"
+msgstr "@@image: 'figures/previewsource.png'; md5=07dc8886d6146aab9bbe590e1a5dfac2"
+
+#: C/medialibrary.page:13(desc)
+msgid "Managing your imported clips with the Media Library"
+msgstr "Керування імпортованими кліпами у Бібліотеці творів"
+
+#: C/medialibrary.page:21(title)
+msgid "Using the Media Library"
+msgstr "Використання Бібліотеки творів"
+
+#: C/medialibrary.page:24(title)
+msgid "Previewing a clip from the <gui>Media Library</gui>"
+msgstr "Попередній перегляд кліпу з <gui>Бібліотеки творів</gui>"
+
+#: C/medialibrary.page:25(p)
+msgid "To preview a clip before placing it on the timeline, you can double-click on it in the <gui>Media Library</gui>, or right-click and choose <gui>Play clip</gui> from the popup menu."
+msgstr "Щоб переглянути кліп перед вміщенням його на шкалу часу, двічі клацніть його у <gui>Бібліотеці творів</gui> або клацніть правою кнопкою і виберіть у контекстному меню <gui>Відтворити кліп</gui>."
+
+#: C/medialibrary.page:27(desc)
+msgid "Popup menu"
+msgstr "Контекстне меню"
+
+#: C/medialibrary.page:32(title)
+msgid "Filtering search"
+msgstr "Фільтрування пошуку"
+
+#: C/medialibrary.page:33(p)
+msgid "A search bar is shown at the top of the <gui>Media Library</gui>. Typing into the search entry filters the contents of the <gui>Media Library</gui> to show only clips whose filenames match your search terms. To reset the search entry, click the \"cleanup\" icon in the search entry."
+msgstr "Рядок пошуку знаходиться вгорі <gui>Бібліотеки творів</gui>. При набиранні у ньому тексту вміст бібліотеки фільтрується і відображаються тільки кліпи, імена яких містять цей текст. Щоб скасувати фільтр, клацніть кнопку \"Очищення\" в кінці рядка пошуку."
+
+#: C/medialibrary.page:36(title)
+msgid "Typeahead search"
+msgstr "Пошук набором тексту"
+
+#: C/medialibrary.page:37(p)
+msgid "An alternative way of searching, if you know the beginning of a clip's filename, is to click anywhere in the <gui>Media Library</gui> and start typing the name of the file you're looking for."
+msgstr "Альтернативний спосіб пошуку, якщо ви знаєте початок імені файлу кліпу: клацніть всередині <gui>Бібліотеки творів</gui> і почніть набирати ім'я шуканого файлу. "
+
+#: C/medialibrary.page:39(p)
+msgid "As you type, the first matching file will become selected."
+msgstr "Під час набору перший підходящий файл буде позначено."
+
+#: C/medialibrary.page:40(p)
+msgid "You can keep typing to refine your search."
+msgstr "Щоб уточнити пошук, можна продовжити набір."
+
+#: C/medialibrary.page:41(p)
+msgid "When there are multiple results, you can use the <gui>up</gui> and <app>down</app> arrow keys to switch the selection between each search result."
+msgstr "Якщо знайдено декілька файлів, то використайте клавіші зі стрілками <gui>вгору</gui> і <app>вниз</app>, щоб вибрати потрібний."
+
+#: C/medialibrary.page:44(p)
+msgid "This method only allows searching from the beginning of the filename."
+msgstr "Таким способом здійснюється пошук тільки за початком імені файлу."
+
+#: C/medialibrary.page:47(title)
+msgid "View modes"
+msgstr "Режими перегляду"
+
+#: C/medialibrary.page:48(p)
+msgid "The <gui>Media Library</gui> can display your clips in a list (<guiseq><gui>View</gui><gui>Show Clips as a List</gui></guiseq>) or in an icon view (<guiseq><gui>View</gui><gui>Show Clips as Icons</gui></guiseq>)."
+msgstr "<gui>Бібліотека творів</gui> може відображати кліпи списком (<guiseq><gui>Перегляд</gui><gui>Показувати кліпи як список</gui></guiseq>) або піктограмами (<guiseq><gui>Перегляд</gui><gui>Показувати кліпи як піктограми</gui></guiseq>)."
+
+#: C/medialibrary.page:49(p)
+msgid "The list view mode shows more details about each clip, but the icon view mode can display more clips without needing to scroll (especially on high resolution computer monitors)."
+msgstr "При відображенні список видно більш детальні дані про кожен з кліпів, а піктограми дозволяють побачити більше кліпів без прокручування (особливо на моніторах з великою роздільною здатністю)."
+
+#: C/makeselections.page:17(desc)
+msgid "Selecting and deselecting single or multiple items."
+msgstr "Позначення та скасування позначень одного та багатьох елементів."
+
+#: C/makeselections.page:25(title)
+msgid "Making selections"
+msgstr "Позначення"
+
+#: C/makeselections.page:28(title)
+msgid "Selecting a single item"
+msgstr "Позначення одного елемента"
+
+#: C/makeselections.page:29(p)
+msgid "To select a file or a clip in <app>PiTiVi</app>, click it."
+msgstr "Щоб вибрати файл або кліп у <app>PiTiVi</app>, клацніть його."
+
+#: C/makeselections.page:33(title)
+msgid "Selecting multiple items"
+msgstr "Позначення декількох елементів"
+
+#: C/makeselections.page:34(p)
+msgid "Multiple selections allow you to apply actions (dragging, deleting, grouping, etc.) to many clips at once."
+msgstr "Позначивши декілька елементів, ви отримуєте можливість виконати операцію (перетягування, вилучення, групування тощо) одночасно над всіма ними."
+
+#: C/makeselections.page:35(p)
+msgid "Selecting multiple adjacent items:"
+msgstr "Позначення декількох сусідніх елементів:"
+
+#: C/makeselections.page:37(p)
+msgid "Click the first item."
+msgstr "Клацніть перший елемент."
+
+#: C/makeselections.page:38(p)
+msgid "Hold the <key>Shift</key> key."
+msgstr "Утримуйте натиснутою клавішу <key>Shift</key>."
+
+#: C/makeselections.page:39(p)
+msgid "Click the last item."
+msgstr "Клацніть останній елемент."
+
+#: C/makeselections.page:41(p)
+msgid "Selecting multiple nonadjacent items:"
+msgstr "Позначення декількох несуміжних елементів:"
+
+#: C/makeselections.page:43(p)
+msgid "Hold down the <key>Ctrl</key> key."
+msgstr "Утримуйте натиснутою клавішу <key>Ctrl</key>."
+
+#: C/makeselections.page:44(p)
+msgid "Click on all the items you want to select."
+msgstr "Клацніть по черзі елементи, які хочете позначити."
+
+#: C/makeselections.page:46(p)
+msgid "You can deselect an individual item by clicking on it again with the <key>Ctrl</key> key held down. This can be used in conjunction with the <em>Selecting multiple adjacent items</em> technique above."
+msgstr "Ви можете зняти позначення з елемента, клацнувши його знову при натиснутій клавіші <key>Ctrl</key>. Це можна використати разом з описаним вище <em>Позначенням декількох сусідніх елементів</em>."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/mainwindow.page:28(None)
+msgid "@@image: 'figures/mainwindow.jpg'; md5=544f1d503faaec759beac50fd36670df"
+msgstr "@@image: 'figures/mainwindow.jpg'; md5=0310866a1b05cbd71c25882dba88c119"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/mainwindow.page:45(None)
+msgid "@@image: 'figures/hovering.png'; md5=b4a8bd739707a43056e55a5d2b31ed57"
+msgstr "@@image: 'figures/hovering.png'; md5=5af964eb40f16eb44e9bbcecfb8a43f0"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/mainwindow.page:54(None)
+msgid "@@image: 'figures/ruler.png'; md5=2d2f2261c4bdb034be332fbcea37f273"
+msgstr "@@image: 'figures/ruler.png'; md5=2d2f2261c4bdb034be332fbcea37f273"
+
+#: C/mainwindow.page:15(desc)
+msgid "Discover the components of the main window."
+msgstr "Дослідження компонентів головного вікна."
+
+#: C/mainwindow.page:23(title)
+msgid "The main window"
+msgstr "Головне вікно"
+
+#: C/mainwindow.page:26(title)
+msgid "<app>PiTiVi</app> main window"
+msgstr "Головне вікно  <app>PiTiVi</app>"
+
+#: C/mainwindow.page:27(desc)
+msgid "The main window, as the name implies, is the window containing the main components of the <app>PiTiVi</app> user interface, namely: the menu bar, the toolbars, the timeline and various customizable components (media library, previewer, effects library, transitions library, etc.)."
+msgstr "Головне вікно, як видно з назви, містить головні компоненти інтерфейсу користувача <app>PiTiVi</app>, а саме: рядок меню, панелі інструментів, монтажний стіл та інші налаштовувані компоненти (бібліотеку творів, вікно перегляду, бібліотеку ефектів, бібліотеку переходів тощо)."
+
+#: C/mainwindow.page:34(title)
+msgid "Menu bar"
+msgstr "Рядок меню"
+
+#: C/mainwindow.page:35(p)
+msgid "The menu bar contains all the possible actions of the toolbars, plus many more. The menu bar also provides some instant-apply settings, as well as access to further customizations in the <gui>Project settings</gui> dialog and <gui>Preferences</gui> dialog."
+msgstr "Рядок меню містить всі команди, доступні на панелях інструментів, та багато інших. Рядок меню включає також деякі миттєві налаштування, доступні також для більш детального налаштування в діалогах <gui>Параметри проекту</gui> та <gui>Параметри</gui>. "
+
+#: C/mainwindow.page:36(p)
+msgid "The menu bar cannot be hidden."
+msgstr "Рядок меню неможливо приховати."
+
+#: C/mainwindow.page:41(title)
+msgid "The toolbars"
+msgstr "Панелі інструментів"
+
+#: C/mainwindow.page:42(p)
+msgid "Toolbars provide access to the most commonly used functions of <app>PiTiVi</app>. All items in toolbars can also be accessed through the menu bar. Toolbars can be activated or deactivated in the <gui>View</gui> menu."
+msgstr "Панелі інструментів забезпечують доступ до найвживаніших функцій <app>PiTiVi</app>. Всі елементи панелі доступні також через рядок меню. Панелі можна вмикати і вимикати у меню <gui>Перегляд</gui>."
+
+#: C/mainwindow.page:43(p)
+msgid "You can hover the mouse cursor over a toolbar item to reveal an information tooltip regarding its function."
+msgstr "Наведіть вказівник миші на елемент панелі, щоб отримати спливаючу підказку про його призначення."
+
+#: C/mainwindow.page:50(title)
+msgid "Ruler"
+msgstr "Лінійка"
+
+#: C/mainwindow.page:51(p)
+msgid "The ruler plays a crucial role in your interaction with the timeline. In addition to giving you time measurements (in seconds), it is the primary way of moving the playhead (and thus, your position in time)."
+msgstr "Лінійка відіграє ключову роль у вашій взаємодії з монтажним столом. На доповнення до відліку часу (у секундах), це основний засіб для переміщення позиції відтворення."
+
+#: C/mainwindow.page:52(p)
+msgid "The current playhead position is indicated by a red vertical line:"
+msgstr "Поточна позиція відтворення вказується червоною вертикальною лінією:"
+
+#: C/mainwindow.page:57(p)
+msgid "When zoomed in, frames are visually represented on the ruler as alternating light and dark areas in the bottom part; those are based on the project framerate settings."
+msgstr "При збільшенні кадри візуально відображаються внизу лінійки світлими та темними ділянками, що чергуються; ця розмітка базується на вказаній для проекту частоті кадрів. "
+
+#: C/mainwindow.page:59(p)
+msgid "To move your position in time, click anywhere on the ruler. You can also <em>scrub</em> the timeline by clicking on the ruler and holding down the mouse button while moving. See the section on <link xref=\"movearoundtimeline\">scrubbing</link> for more details."
+msgstr "Щоб перемістити позицію відтворення, клацніть потрібне місце на лінійці. Ви можете також протягувати монтажний стіл, клацнувши на лінійці і утримуючи кнопку миші під час руху. Детальніше - у розділі <link xref=\"movearoundtimeline\">Протягування</link>."
+
+#: C/mainwindow.page:63(title)
+msgid "Marker bar"
+msgstr "Панель маркерів"
+
+#: C/mainwindow.page:64(p)
+msgid "Markers are visual cues that you can create to <em>mark</em> important points or regions in your project's timeline. The marker bar allows you to view and edit markers that you created."
+msgstr "Маркер - це візуальна позначка, яка вказує на важливі точки або ділянки на монтажному столі. Панель маркерів дозволяє бачити і змінювати створені маркери."
+
+#: C/mainwindow.page:66(p)
+msgid "This feature is not yet implemented. See <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">bug #608682</link> for more information."
+msgstr "Цей засіб ще не реалізований. Детальніше: <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">bug #608682</link>."
+
+#: C/mainwindow.page:71(title)
+msgid "Timeline"
+msgstr "Монтажний стіл"
+
+#: C/mainwindow.page:72(p)
+msgid "The timeline is the core user interface component that you will use for editing. It is a visual, time-proportional representation of your project's chronology."
+msgstr "Монтажний стіл - це головний компонент користувацького інтерфейсу, яким ви користуватиметесь для редагування. Він наочно демонструє хронологію, тобто розподіл в часі, вашого проекту."
+
+#: C/mainwindow.page:76(title)
+msgid "Playback toolbar"
+msgstr "Панель відтворення"
+
+#: C/mainwindow.page:77(p)
+msgid "This toolbar, located below the previewer, contains buttons controlling"
+msgstr "Ця панель, розміщена під вікном перегляду, містить керуючі кнопки"
+
+#: C/mainwindow.page:79(p)
+msgid "The playback of the timeline."
+msgstr "Відтворення з монтажного столу."
+
+#: C/mainwindow.page:80(p)
+msgid "The playback of a clip being previewed from the media library."
+msgstr "Відтворення кліпу, що переглядається з бібліотеки творів."
+
+#: C/mainwindow.page:82(p)
+msgid "The <gui>Play</gui> button transforms into a <gui>Pause</gui> button when playing, and reverts to a <gui>Play</gui> button again when not playing."
+msgstr "Кнопка <gui>Пуск</gui> перетворюється на <gui>Пауза</gui> при відтворенні, і знову стає <gui>Пуск</gui> по завершенні відтворення."
+
+#: C/mainwindow.page:86(title)
+msgid "Previewer"
+msgstr "Вікно перегляд"
+
+#: C/mainwindow.page:87(p)
+msgid "The previewer displays"
+msgstr "Вікно перегляду демонструє:"
+
+#: C/mainwindow.page:89(p)
+msgid "Your project's video when playing back."
+msgstr "Відео вашого проекту у під час відтворення."
+
+#: C/mainwindow.page:90(p)
+msgid "The video frame at the current position of the playhead."
+msgstr "Кадр у позиції відтворення."
+
+#: C/mainwindow.page:91(p)
+msgid "A <em>live preview</em> when trimming a clip's beginning/end point."
+msgstr "<em>Живий перегляд</em> при перетягуванні початкової/кінцевої точок кліпу."
+
+#: C/mainwindow.page:93(p)
+msgid "The <em>live preview</em> feature is not yet implemented. See <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=569980\">bug #569980</link> for more information."
+msgstr "Можливість <em>живого перегляду</em> ще не реалізована. Детальніше: <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=569980\">bug #569980</link>."
+
+#: C/mainwindow.page:100(title)
+msgid "Media Library"
+msgstr "Бібліотека творів"
+
+#: C/mainwindow.page:101(p)
+msgid "The media library displays the imported media files in your project and allows you to manage them."
+msgstr "Бібліотека творів відображає імпортовані до проекту файли та дозволяє керувати ними."
+
+#: C/license.page:8(desc)
+msgid "Legal information."
+msgstr "Юридична інформація"
+
+#: C/license.page:11(title)
+msgid "License"
+msgstr "Ліцензія"
+
+#: C/license.page:12(p)
+msgid "This work is distributed under a CreativeCommons Attribution-Share Alike 3.0 Unported license."
+msgstr "Цей продукт постачається за ліцензією CreativeCommons Attribution-Share Alike 3.0 Unported license."
+
+#: C/license.page:20(p)
+msgid "You are free:"
+msgstr "Ви можете:"
+
+#: C/license.page:25(em)
+msgid "To share"
+msgstr "Передавати"
+
+#: C/license.page:26(p)
+msgid "To copy, distribute and transmit the work."
+msgstr "Копіювати, розповсюджувати та пересилати продукт"
+
+#: C/license.page:29(em)
+msgid "To remix"
+msgstr "Змінювати"
+
+#: C/license.page:30(p)
+msgid "To adapt the work."
+msgstr "Пристосовувати продукт"
+
+#: C/license.page:33(p)
+msgid "Under the following conditions:"
+msgstr "На таких умовах:"
+
+#: C/license.page:36(em)
+msgid "Attribution"
+msgstr "Вказування авторства"
+
+#: C/license.page:37(p)
+msgid "You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work)."
+msgstr "Ви маєте вказувати авторство роботи так, як це обумовлено автором або ліцензіаром (проте це не означає, що вони підтримують вас або використання вами продукту)."
+
+#: C/license.page:40(em)
+msgid "Share Alike"
+msgstr "Поширення на тих самих умовах"
+
+#: C/license.page:41(p)
+msgid "If you alter, transform, or build upon this work, you may distribute the resulting work only under the same, similar or a compatible license."
+msgstr "Якщо ви змінили, переробили або доробили цей продукт, ви можете поширювати новий продукт тільки під цією ж, подібною або сумісною ліцензією."
+
+#: C/license.page:44(p)
+msgid "For the full text of the license, see the <link href=\"http://creativecommons.org/licenses/by-sa/3.0/legalcode\">CreativeCommons website</link>, or read the full <link href=\"http://creativecommons.org/licenses/by-sa/3.0/\">Commons Deed</link>."
+msgstr "Повний текст ліцензії дивіться на <link href=\"http://creativecommons.org/licenses/by-sa/3.0/legalcode\">сайті CreativeCommons</link>, або прочитайте повністю <link href=\"http://creativecommons.org/licenses/by-sa/3.0/\">Commons Deed</link>."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/layers.page:41(None)
+msgid "@@image: 'figures/layers.png'; md5=27c5f543944b381bc7147ff90b3deaee"
+msgstr "@@image: 'figures/layers.png'; md5=27c5f543944b381bc7147ff90b3deaee"
+
+#: C/layers.page:25(title)
+msgid "Understanding layers"
+msgstr "Поняття про шари"
+
+#: C/layers.page:27(p)
+msgid "<em>Layers</em> are a fundamental concept for advanced editing in the timeline: compositing, mixing multiple videos simultaneously, and adding titles depend on this feature."
+msgstr "<em>Шари</em> - це основа для поглибленого редагування на монтажному столі: компонування, одночасне змішування декількох відео та додавання титрів залежать від цього засобу."
+
+#: C/layers.page:28(p)
+msgid "It is easier to think of layers in terms of images painted on glass. With several pieces of glass stacked on top of each other, each of these pieces of glass is a layer. If the top piece of glass is completely painted over, none of the pieces of glass underneath will be visible."
+msgstr "Використання шарів легше зрозуміти, якщо уявити зображення, намальовані на склі. Якщо покласти декілька таких шматків скла один на інший, то кожен з них буде шаром. Якщо верхній шматок скла повністю замальований, то нижніх шматків скла не буде видно."
+
+#: C/layers.page:29(p)
+msgid "If, on the other hand, you only paint over a portion of a piece of glass, you will be able to see what is underneath the non-painted parts."
+msgstr "Якщо ж ви  замалюєте тільки частину шматка скла, то через незамальовані ділянки ви побачите намальоване на нижніх шматках."
+
+#: C/layers.page:32(title)
+msgid "Opacity (how solid “opaque” things are)"
+msgstr "Щільність"
+
+#: C/layers.page:33(p)
+msgid "Each layer (and each clip) has its own transparency. To continue the paint on glass metaphor, if the paint is thin enough, it can be seen through. Visually, an opacity of 100% means you cannot see the clips below that layer or clip, and an opacity of of 50% means you can partly see them."
+msgstr "Кожен шар і кожен кліп мають певну прозорість. На продовження аналогії зі склом, якщо шар фарби тонкий, через нього можна бачити інші шари. Візуально, щільність 100% означає, що через цей шар або кліп не видно нижніх, а щільність 50% означає. що їх частково видно."
+
+#: C/layers.page:37(title)
+msgid "How this translates in terms of user interface"
+msgstr "Як це пов'язано з інтерфейсом користувача."
+
+#: C/layers.page:38(p)
+msgid "While, in real life, you can stack pieces of glass onto each other in three dimensions, your computer monitor only has two dimensions. Thus, the <em>layers on top</em> (the “Z” axis in the physical world) are also visually <em>on top</em>, albeit on the “Y” axis."
+msgstr "Тоді як в реальному житті ви можете зміщувати шматки скла у трьох вимірах, комп'ютерний монітор має лише два виміри. Тому <em>верхні шари</em> (вздовж осі Z у реальному світі) зображаються також верхніми, але вздовж осі Y."
+
+#: C/layers.page:39(p)
+msgid "The following diagram illustrates the <em>pieces of glass</em> (left) and how they are show as <em>layers</em> in <app>PiTiVi</app>'s user interface (right)."
+msgstr "На малюнку ліворуч показані <em>шматки скла</em>, а праворуч - як вони відображаються як <em>шари</em> в користувацькому інтерфейсі <app>PiTiVi</app>."
+
+#: C/layers.page:43(p)
+msgid "Clips located on a layer above will block the clips below from view, unless it has an opacity value lower than 100% (as shown with the two topmost layers in the previous illustration)."
+msgstr "Кліпи, розміщені шаром вище, закриватимуть нижні, крім випадків, коли їхня щільність менша ніж 100% (як показано для двох верхніх шарів на попередньому малюнку)."
+
+#: C/layers.page:47(title)
+msgid "Adding and removing layers"
+msgstr "Додання та вилучення шарів"
+
+#: C/layers.page:48(p)
+msgid "Layers are created and removed automatically. There is no “layer management” interface in <app>PiTiVi</app> (at least, not yet)."
+msgstr "Шари створюються і вилучаються автоматично. <app>PiTiVi</app> не має інтерфейсу для керування шарами (принаймні, зараз)."
+
+#: C/layers.page:49(p)
+msgid "To create a layer, drag a clip downwards until a new layer appears for it."
+msgstr "Щоб створити шар перетягуйте кліп донизу, аж доки з'явиться новий шар."
+
+#: C/layers.page:50(p)
+msgid "If there are no more clips on a layer, it is automatically removed. Thus, to remove a layer, simply drag its clips upwards onto another layer."
+msgstr "Якщо шар не містить кліпів, він автоматично вилучається. Отже, щоб вилучити шар, просто перетягніть з нього кліпи на інший шар."
+
+#: C/layers.page:54(title)
+msgid "What about audio layers?"
+msgstr "Що таке звукові шари?"
+
+#: C/layers.page:55(p)
+msgid "Unlike in vision, multiple sounds do not (objectively) “block” each other. As such, if you have multiple audio clips on separate layers, their sound will be mixed together. Controlling the volume of those audio clips simply changes their relative loudness."
+msgstr "На відміну від зображень, декілька звуків не \"блокують\" один іншого. Таким чином, якщо ви маєте декілька звукових кліпів на окремих шарах, їхні звуки будуть змішані разом. Керування рівнем цих звукових кліпів просто змінює їх відносну гучність."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/keyframecurves.page:29(None)
+msgid "@@image: 'figures/keyframecurves.png'; md5=d91b335281ec48ab9f8fade73bf09852"
+msgstr "@@image: 'figures/keyframecurves.png'; md5=d91b335281ec48ab9f8fade73bf09852"
+
+#: C/keyframecurves.page:17(desc)
+msgid "Changing the opacity or volume of a clip over time."
+msgstr "Зміна з часом щільності та гучності кліпів."
+
+#: C/keyframecurves.page:25(title)
+msgid "Keyframe curves"
+msgstr "Ключові криві"
+
+#: C/keyframecurves.page:27(p)
+msgid "Some types of clips (currently only audio clips) support interpolating property values over their time. The user can add one or more <em>keyframes</em> to control the interpolation, a term borrowed from animation. <app>PiTiVi</app> represents the value of the property in between keyframes as a <em>curve</em> drawn over the clip. Currently only linear interpolation is supported."
+msgstr "Деякі типи кліпів (зараз - тільки звукові кліпи) підтримують інтерполювання значень властивостей з часом. Користувач може додати один або більше <em>ключових кадрів</em> для керування інтерполяцією, подібно до анімації. <app>PiTiVi</app> показує значення властивості між <em>ключовими кадрами</em> як <em>криву</em>, намальовану поверх кліпу. Зараз підтримується тільки лінійна інтерполяція."
+
+#: C/keyframecurves.page:33(title)
+msgid "General usage"
+msgstr "Використання"
+
+#: C/keyframecurves.page:34(p)
+msgid "Curves are an intrinsic property of clips and can not be removed by the user. The start and end points of the curve are fixed to the start and end points of the clip, and also can not be removed by the user."
+msgstr "Крива є невід'ємною властивістю кліпу і не може бути вилучена користувачем. Початкова та кінцева точки кривої зв'язані з початком та кінцем кліпу, і також не можуть бути вилучені."
+
+#: C/keyframecurves.page:36(p)
+msgid "You can add a new keyframe by double-clicking on an empty portion of a curve."
+msgstr "Ви можете додати ключовий кадр, двічі клацнувши вільну ділянку кривої."
+
+#: C/keyframecurves.page:37(p)
+msgid "You can remove a keyframe by double-clicking on it."
+msgstr "Ви можете вилучити ключовий кадр, двічі клацнувши на ньому."
+
+#: C/keyframecurves.page:38(p)
+msgid "You can adjust the time and value of a keyframe by moving it with the mouse. You can place the keyframe anywhere on the clip you like, even if this changes the order of the keyframes."
+msgstr "Ви можете змінювати час і значення ключових кадрів, пересуваючи їх мишею. Ви можете помістити ключовий кадр на кліпі де завгодно, навіть якщо це змінює порядок ключових кадрів."
+
+#: C/keyframecurves.page:39(p)
+msgid "You can click-and-drag on a segment of a curve between two keyframes to adjust the vertical position of the segment."
+msgstr "Ви можете перетягти сегмент кривої між двома ключовими кадрами, щоб змінити положення сегменту по вертикалі. "
+
+#: C/keyframecurves.page:44(title)
+msgid "Audio curves"
+msgstr "Криві звуку"
+
+#: C/keyframecurves.page:45(p)
+msgid "For volume curves the vertical position represents the volume of the clip on a scale from 0 to 200%."
+msgstr "Для кривих гучності вертикальне положення відповідає гучності кліпу за шкалою від 0 до 200%."
+
+#: C/keyframecurves.page:49(title)
+msgid "Video compositing curves"
+msgstr "Криві відеокомпозиції"
+
+#: C/keyframecurves.page:50(p)
+msgid "The vertical position represents the alpha (opacity) of the clip on a scale from 0 to 100%. See the <link xref=\"layers\">Understanding layers</link> section for more details."
+msgstr "Положення по вертикалі показує щільність кліпу за шкалою від 0 до 100%. Детальніше дивіться у розділі <link xref=\"layers\">Поняття про шари</link>."
+
+#: C/interface.page:13(desc)
+msgid "Discover the various windows, components and widgets."
+msgstr "Ознайомтесь з різними вікнами, компонентами та елементами керування."
+
+#: C/interface.page:19(title)
+msgid "An overview of the user interface"
+msgstr "Огляд інтерфейсу користувача"
+
+#: C/insertintimeline.page:17(desc)
+msgid "Putting your project media files into the timeline for editing."
+msgstr "Встановлення медіафайлів проекту на монтажний стіл для редагування."
+
+#: C/insertintimeline.page:25(title)
+msgid "Inserting clips"
+msgstr "Вставляння кліпів"
+
+#: C/insertintimeline.page:27(p)
+msgid "From the media library, you can insert one or more clips by selecting them (using the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) and:"
+msgstr "З бібліотеки творів ви можете вставити один або більше кліпів, позначивши їх (користуючись клавішами <key>Ctrl</key> або <key>Shift</key>, щоб позначити декілька кліпів) і:"
+
+#: C/insertintimeline.page:29(p)
+msgid "Dragging and dropping them onto place in the timeline."
+msgstr "Перетягши і відпустивши їх у потрібному місці монтажного столу."
+
+#: C/insertintimeline.page:30(p)
+msgid "Using <guiseq><gui>Library</gui><gui>Insert at End of Timeline</gui></guiseq>."
+msgstr "Скориставшись командою <guiseq><gui>Бібліотека</gui><gui>Вставити в кінець монтажного стола</gui></guiseq>."
+
+#: C/insertintimeline.page:31(p)
+msgid "Pressing the <key>Insert</key> (Ins) key. Those clips will be inserted at the end of the timeline."
+msgstr "Натиснувши клавішу <key>Insert</key> (Ins). Позначені кліпи будуть вставлені в кінці монтажного стола."
+
+#: C/insertintimeline.page:34(p)
+msgid "It should also be possible to import files directly into the timeline by dragging them from another application and dropping them onto <app>PiTiVi</app>'s timeline. The files would be added automatically to the media library in the process. This feature is not yet implemented, see <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">bug #570118</link> for more information."
+msgstr "У майбутньому буде можливо імпортувати файли безпосередньо на робочий стіл, перетягуючи їх з іншої програми та відпускаючи на монтажний стіл <app>PiTiVi</app>. При цьому файли автоматично додаватимуться і до бібліотеки творів. Ця можливість ще не реалізована; детальніше див.: <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">bug #570118</link>."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/index.page:24(None)
+msgid "@@image: 'figures/logo.png'; md5=694867eec987a61b070a11a7255a6de9"
+msgstr "@@image: 'figures/logo.png'; md5=694867eec987a61b070a11a7255a6de9"
+
+#: C/index.page:7(title)
+#: C/index.page:8(title)
+msgid "PiTiVi Quick Start Manual"
+msgstr "PiTiVi: підручник для початківця"
+
+#: C/index.page:23(title)
+msgid "<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">PiTiVi logo</media> PiTiVi Video Editor"
+msgstr "<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Емблема PiTiVi</media> Редактор відео PiTiVi"
+
+#: C/index.page:28(p)
+msgid "Built upon the <link href=\"http://en.wikipedia.org/wiki/GStreamer\"><app>GStreamer</app></link> multimedia framework, <app>PiTiVi</app> aims to be an intuitive and flexible video editor that integrates well with <link href=\"http://gnome.org\"><app>GNOME</app></link> and can appeal to newbies and professionals alike."
+msgstr "Побудований з використанням мультимедійної бібліотеки <link href=\"http://en.wikipedia.org/wiki/GStreamer\"><app>GStreamer</app></link>, <app>PiTiVi</app> покликаний стати інтуїтивно зрозумілим і гнучким відеоредактором, який добре інтегрується з <link href=\"http://gnome.org\"><app>GNOME</app></link> і буде привабливим як для новачків, так і для фахівців."
+
+#: C/index.page:29(p)
+msgid "This guide is intended to help you grasp the concepts behind its design and get productive quickly."
+msgstr "Цей посібник допоможе вам зрозуміти основи і швидко розпочати роботу."
+
+#: C/index.page:32(title)
+msgid "Introduction"
+msgstr "Вступ"
+
+#: C/index.page:36(title)
+msgid "Getting Started"
+msgstr "Перші кроки"
+
+#: C/index.page:40(title)
+msgid "Basic Editing with the Timeline"
+msgstr "Основи редагування на монтажному столі"
+
+#: C/index.page:44(title)
+msgid "Special Effects"
+msgstr "Спеціальні ефекти"
+
+#: C/index.page:48(title)
+msgid "Transitions"
+msgstr "Переходи"
+
+#: C/index.page:52(title)
+msgid "Exporting Your Finished Movie"
+msgstr "Експортування завершеного фільму"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/importing.page:50(None)
+msgid "@@image: 'figures/filechooser.png'; md5=7c99958f9d766b874c3994fd56870259"
+msgstr "@@image: 'figures/filechooser.png'; md5=5af964eb40f16eb44e9bbcecfb8a43f0"
+
+#: C/importing.page:17(desc)
+msgid "Importing files into your project as clips."
+msgstr "Імпортування файлів до проекту, як кліпів"
+
+#: C/importing.page:25(title)
+msgid "Getting media"
+msgstr "Отримання творів"
+
+#: C/importing.page:27(p)
+msgid "At the time of this writing, the only supported method is importing files from your hard drive. As such, you cannot use <app>PiTiVi</app> to capture directly from a camcorder. For DV/HDV camcorders using an IEEE 1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture footage."
+msgstr "На час написання цього документу, підтримувався тільки метод імпорту файлів з жорсткого диску. Таким чином, ви не можете використовувати <app>PiTiVi</app> для захоплення безпосередньо з камкордера. Для захоплення відзнятого матеріалу з DV/HDV-камкордерів, що використовують з'єднання IEEE 1394, можна використати програми <app>Kino</app> або <app>dvgrab</app>."
+
+#: C/importing.page:29(p)
+msgid "We would welcome good quality patches to implement the following:"
+msgstr "Ми готові прийняти якісні доповнення для реалізації:"
+
+#: C/importing.page:31(p)
+msgid "Capture from a DV or HDV camcorder using an IEEE 1394 connection."
+msgstr "Захоплення з DV або HDV камкордерів, що використовують з'єднання IEEE 1394."
+
+#: C/importing.page:32(p)
+msgid "Capture from a webcam."
+msgstr "Захоплення з веб-камери."
+
+#: C/importing.page:33(p)
+msgid "Dumping a network/Internet stream."
+msgstr "Захоплення мережевого/Інтернет потоку."
+
+#: C/importing.page:34(p)
+msgid "Importing from DVD."
+msgstr "Імпортування з DVD."
+
+#: C/importing.page:35(p)
+msgid "Importing from an audio CD."
+msgstr "Імпортування з аудіодиска."
+
+#: C/importing.page:36(p)
+msgid "Downloading from content providers such as <link href=\"http://www.jamendo.com\">Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, etc."
+msgstr "Завантаження з сайтів, що постачають контент, таких як <link href=\"http://www.jamendo.com\">Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link> тощо."
+
+#: C/importing.page:42(title)
+msgid "Importing files"
+msgstr "Імпортування файлів"
+
+#: C/importing.page:44(title)
+msgid "Using the file chooser"
+msgstr "Використання діалогу вибору файлів"
+
+#: C/importing.page:45(p)
+msgid "You can import media into the <gui>Media Library</gui> by using the file chooser dialog, which has the advantage of letting you preview the files you want to import. To do so, use the <guiseq><gui>Library</gui><gui>Import Files...</gui></guiseq> menu, the <gui>Import Files...</gui> button on the main toolbar, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>."
+msgstr "Ви можете імпортувати файли до <gui>Бібліотеки творів</gui>, користуючись діалогом вибору файлів, який надає можливість переглянути файли, які ви хочете імпортувати. Щоб зробити це, скористайтесь командою меню <guiseq><gui>Бібліотека</gui><gui>Імпортувати файли...</gui></guiseq>, кнопкою <gui>Імпортувати файли...</gui> на головній панелі або натисніть <keyseq><key>Ctrl</key><key>i</key></keyseq>."
+
+#: C/importing.page:46(p)
+msgid "The following file chooser dialog window will appear:"
+msgstr "З'явиться наведений на малюнку діалог вибору файлів:"
+
+#: C/importing.page:48(title)
+#: C/importing.page:49(desc)
+msgid "Filechooser dialog"
+msgstr "Діалог вибору файлу"
+
+#: C/importing.page:52(p)
+msgid "Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the same time. You can also import all the files contained in a folder (and its subfolders) by using <guiseq><gui>Library</gui><gui>Import Folders...</gui></guiseq> in the menu bar."
+msgstr "Натисніть <key>Ctrl</key> or <key>Shift</key>, щоб позначити декілька файлів одночасно. Ви можете також імпортувати всі файли, що є у теці (та у підтеках), скориставшись командою меню <guiseq><gui>Бібліотека</gui><gui>Імпортувати теки...</gui></guiseq>."
+
+#: C/importing.page:55(title)
+msgid "Using drag and drop"
+msgstr "Використання перетягування"
+
+#: C/importing.page:56(p)
+msgid "The concept of drag and drop is a well-established method of bridging the gap between software applications. Simply select the files you want to import in another application (such as a file manager or a multimedia app) and drag them with your mouse onto <app>PiTiVi</app>'s <gui>Media Library</gui>."
+msgstr "Перетягування (drag and drop) - загальноприйнятий метод для обміну між програмами. Просто виберіть в іншій програмі (файловому менеджері або мультимедійній програмі) файли для імпорту і перетягніть їх мишею до <gui>Бібліотеки творів</gui> <app>PiTiVi</app>."
+
+#: C/importing.page:57(p)
+msgid "This feature can be used to:"
+msgstr "Цю можливість використовують для:"
+
+#: C/importing.page:60(p)
+msgid "Easily import music or video clips from a media player (such as <app>Rhythmbox</app> or <app>Totem</app>)."
+msgstr "Простого імпорту музики або відео з програвача (такого як <app>Rhythmbox</app> або <app>Totem</app>)."
+
+#: C/importing.page:63(p)
+msgid "Allow using a full-fledged file manager (such as <app>Nautilus</app>, <app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of the file chooser dialog."
+msgstr "Використання повноцінного файлового менеджера (<app>Nautilus</app>, <app>Thunar</app>, <app>Dolphin</app> або <app>Konqueror</app>) замість діалогу вибору файлів."
+
+#: C/importing.page:66(p)
+msgid "Import a combination of multiple files and folders at the same time."
+msgstr "Одночасного імпорту комбінації з декількох файлів та тек."
+
+#: C/importing.page:69(p)
+msgid "Leverage the searching capability of another application (such as <app>GNOME Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, <app>GNOME Search Tool</app>, etc.)."
+msgstr "Використання можливостей пошуку іншої програми (наприклад, <app>GNOME Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, <app>GNOME Search Tool</app> тощо)."
+
+#: C/importingmpegts.page:14(desc)
+msgid "How to convert .mts and .m2ts files to a format that can be parsed by GStreamer and PiTiVi."
+msgstr "Як конвертувати файли .mts та .m2ts у формат, який можуть обробляти GStreamer та PiTiVi."
+
+#. TODO: remove this manual page when gstreamer supports mpeg-ts files !
+#: C/importingmpegts.page:22(title)
+msgid "Dealing with AVCHD / MPEG-TS files"
+msgstr "Що робити з файлами AVCHD / MPEG-TS"
+
+#: C/importingmpegts.page:24(p)
+msgid "At the time being, MPEG Transport Stream files (usually with file extensions such as .mts, .m2ts and sometimes .mpg or .mpeg), such as those used by some HD camcorders, cannot be played reliably with <app>GStreamer</app>. As such, you may want to remux them in a different container format by using <app>ffmpeg</app>. To convert losslessly to an MPEG4 container, you can use the following command:"
+msgstr "На даний час, файли MPEG Transport Stream (зазвичай з розширеннями .mts, .m2ts а іноді .mpg or .mpeg), використовувані деякими камкордерами, не можуть надійно відтворюватися <app>GStreamer</app>. Ви можете перетворити їх в інший формат, скориставшись <app>ffmpeg</app>. Щоб конвертувати без втрати якості у MPEG4, використайте таку команду:"
+
+#: C/importingmpegts.page:25(code)
+#, no-wrap
+msgid "ffmpeg -i your_clip.MTS -vcodec copy -acodec copy -sn test.mp4"
+msgstr "ffmpeg -i your_clip.MTS -vcodec copy -acodec copy -sn test.mp4"
+
+#: C/gstreamer.page:17(desc)
+msgid "Ensuring you have the proper multimedia codecs and plugins installed for maximum compatibility."
+msgstr "Переконайтесь, що ви маєте необхідні кодеки та додатки, налаштовані на найбільшу сумісність."
+
+#: C/gstreamer.page:25(title)
+msgid "Gstreamer and compatibility"
+msgstr "Gstreamer та сумісність"
+
+#: C/gstreamer.page:27(p)
+msgid "A great strength in <app>PiTiVi</app> lies in its use of the <app>GStreamer</app> multimedia framework. <app>GStreamer</app> is used by dozens of multimedia applications across desktop environments, operating systems and architectures."
+msgstr "Потужність <app>PiTiVi</app> пояснюється використанням мультимедійної бібліотеки <app>GStreamer</app>. <app>GStreamer</app> використовують багато мультимедійних програм у різних стільничних середовищах, операційних системах та архітектурах."
+
+#: C/gstreamer.page:28(p)
+msgid "This essentially means three things to you, the user:"
+msgstr "Для вас, як користувача, це, зокрема, означає:"
+
+#: C/gstreamer.page:31(p)
+msgid "You can, in theory, import pretty much any media file supported by <app>GStreamer</app> (but see the next section)."
+msgstr "Теоретично, ви можете легко імпортувати будь-які файли, підтримувати <app>GStreamer</app> (але перегляньте наступний розділ)."
+
+#: C/gstreamer.page:34(p)
+msgid "You can render your projects using any supported container and codec combination from <app>GStreamer</app>."
+msgstr "Ви можете обробляти проект, користуючись будь-якою комбінацією підтримуваних <app>GStreamer</app> контейнера та кодека."
+
+#: C/gstreamer.page:37(p)
+msgid "You need a very recent version of <app>GStreamer</app> to maximize <app>PiTiVi's</app> capabilities and reduce the possibilities of bugs. This is because the <app>PiTiVi</app> project developers work hard in fixing problems directly in <app>GStreamer</app> (instead of putting temporary workarounds inside <app>PiTiVi</app>)."
+msgstr "Потрібна остання версія <app>GStreamer</app> щоб покращити можливості <app>PiTiVi's</app> та зменшити ймовірність помилок. Це пояснюється тим, що розробники <app>PiTiVi</app> працюють і над усуненням проблем у <app>GStreamer</app> (замість пошуку тимчасових \"обхідних шляхів\" у <app>PiTiVi</app>)."
+
+#: C/gstreamer.page:42(title)
+msgid "A word about editing-friendly codecs"
+msgstr "Декілька слів про сприятливі для редагування кодеки"
+
+#: C/gstreamer.page:43(p)
+msgid "Some formats, like <em>MPEG</em>, are oriented towards playback only, and do not compress each frame independently. While it is the goal of <app>PiTiVi</app> to support working with these files, certain operations (like rapid seeking) will not perform as well as they would with frame-independent compressed video (such as <em>MJPEG</em> or <em>DV</em>)."
+msgstr "Деякі формати, такі як <em>MPEG</em>, орієнтовані лише на відтворення, і не стискають кожен кадр окремо. При роботі у <app>PiTiVi</app> з такими файлами деякі операції (наприклад, швидкий пошук) не виконуватимуться так, як це є для відео з незалежним стисканням кадрів (наприклад, <em>MJPEG</em> або <em>DV</em>)."
+
+#: C/gstreamer.page:47(title)
+msgid "The Good, the Bad and the Ugly"
+msgstr "Хороший, Поганий і Потворний"
+
+#: C/gstreamer.page:48(p)
+msgid "<app>GStreamer</app> plugins come into three categories: good, bad and ugly. To maximize your experience, you may need to install some of all of these plugins to ensure compatibility with your media files. Whether or not you install them is up to you, and may depend on your country's jurisdiction regarding software patents."
+msgstr "Доповнення до <app>GStreamer</app> бувають трьох категорій: хороші, погані і потворні. Щоб розширити можливості, вам може знадобитись встановити деякі з них, для досягнення сумісності  з вашими файлами. Встановлюючи їх, слід звертати увагу на патентне законодавство вашої країни."
+
+#: C/gstreamer.page:50(p)
+msgid "The \"Good\" plugins are good quality plugins under the LGPL license. These plugins are considered safe and recommended at any time."
+msgstr "\"Хороші\" доповнення - це якісні доповнення з ліцензією LGPL. Вони є безпечними і рекомендовані до використання."
+
+#: C/gstreamer.page:51(p)
+msgid "The \"Bad\" plugins are plugins whose code is not of good enough quality, or are not considered tested well enough. The licensing may or may not be LGPL."
+msgstr "\"Погані\" доповнення - це такі, код яких недостатньо якісний, або не повністю перевірений. Ліцензія може відрізнятись від LGPL."
+
+#: C/gstreamer.page:52(p)
+msgid "The \"Ugly\" plugins are good quality plugins whose license is not LGPL or with licensing issues."
+msgstr "\"Потворні\" доповнення - це якісні доповнення з ліцензією, відмінною від  LGPL або ліцензійними відрахуваннями."
+
+#: C/gstreamer.page:54(p)
+msgid "In addition to the Good, Bad and Ugly plugins, you may want to install gstreamer-ffmpeg to have access to ffmpeg's set of codecs."
+msgstr "Крім Хороших, Поганих і Потворних доповнень, ви можете встановити gstreamer-ffmpeg, щоб отримати доступ до набору кодеків ffmpeg."
+
+#: C/gstreamer.page:59(title)
+msgid "Image file formats"
+msgstr "Формат файла образу"
+
+#: C/gstreamer.page:60(p)
+msgid "While it is not feasible to list every possible combination of supported video or audio formats, it is however possible to list the static image formats that can be imported: JPEG, PNG, JPEG 2000, PNM and SVG."
+msgstr "Перелічити всі можливі комбінації підтримуваних відео- та звукових форматів, проте можна навести перелік статичних графічних форматів, придатних для імпорту: JPEG, PNG, JPEG 2000, PNM та SVG."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/fadeinfadeout.page:33(None)
+msgid "@@image: 'figures/fadestep1.png'; md5=4bdb320d2ef57e3d09c67fcdba8ab103"
+msgstr "@@image: 'figures/fadestep1.png'; md5=4bdb320d2ef57e3d09c67fcdba8ab103"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/fadeinfadeout.page:36(None)
+msgid "@@image: 'figures/fadestep2.png'; md5=c4bafbd98aee44ec93cb41c857b501c5"
+msgstr "@@image: 'figures/fadestep2.png'; md5=c4bafbd98aee44ec93cb41c857b501c5"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/fadeinfadeout.page:42(None)
+msgid "@@image: 'figures/fadestep3.png'; md5=5aa08a9539d2d7bb6e39be379e88d778"
+msgstr "@@image: 'figures/fadestep3.png'; md5=5aa08a9539d2d7bb6e39be379e88d778"
+
+#: C/fadeinfadeout.page:17(desc)
+msgid "Fading video to black or to a layer below, or fading audio."
+msgstr "Затухання відео до чорного або до нижчого шару та затухання звуку."
+
+#: C/fadeinfadeout.page:25(title)
+msgid "Fade-ins and fade-outs"
+msgstr "Зникнення та поява"
+
+#: C/fadeinfadeout.page:27(p)
+msgid "You can do “fades” of single clip by using <app>PiTiVi</app>'s video mixing capabilities, which relies on keyframes controlling each clip's opacity (see also: <link xref=\"layers\">Understanding layers</link>)."
+msgstr "Ви можете застосувати поступове зникнення або появу для окремого кліпу засобами змішування відео <app>PiTiVi</app>, які базуються на керуванні щільністю кожного кліпу ключовими кадрами (див. також <link xref=\"layers\">Поняття про шари</link>)."
+
+#: C/fadeinfadeout.page:28(p)
+msgid "To fade a clip to black:"
+msgstr "Щоб зробити зникнення кліпу до чорного:"
+
+#: C/fadeinfadeout.page:31(p)
+msgid "Double-click on its opacity keyframe curve where you want the fade-out to start (or the fade-in to end)."
+msgstr "Двічі клацніть його криву ключових кадрів там, де має починатись зникнення (або завершуватись поява)"
+
+#: C/fadeinfadeout.page:40(p)
+msgid "Click and drag the last (or first) keyframe of the clip downwards."
+msgstr "Перетягніть останній або перший ключовий кадр кліпу донизу."
+
+#: C/effectsanimation.page:13(desc)
+msgid "Changing the properties of effects over time"
+msgstr "Зміна властивостей ефектів у часі."
+
+#: C/effectsanimation.page:19(title)
+msgid "Animating effects with Keyframes"
+msgstr "Анімування ефектів ключовими кадрами"
+
+#: C/effectsanimation.page:21(p)
+msgid "This feature is not yet implemented, but is planned to be completed as a GSoC 2011 project."
+msgstr "Ця можливість ще не реалізована, але завершення планується як проект GSoC 2011."
+
+#: C/effects.page:14(desc)
+msgid "Adding special effects to your video and audio"
+msgstr "Додання спеціальних ефектів до відео та звуку."
+
+#: C/effects.page:20(title)
+msgid "Introduction to effects"
+msgstr "Вступ до ефектів"
+
+#: C/effects.page:22(p)
+msgid "<app>PiTiVi</app> offers a wide variety of video and audio effects to spice up your movies. Effects are non destructive: they are only applied to the resulting rendered movie and do not affect your source files."
+msgstr "<app>PiTiVi</app> пропонує широкий вибір відео- та звукових ефектів для підготовки ваших фільмів. Ефекти є неруйнівними: вони впливають лише на результат кінцевої обробки і не змінюють початкових файлів."
+
+#: C/effects.page:24(p)
+msgid "Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in <app>PiTiVi</app>'s effect library, make sure that the following are installed on your system:"
+msgstr "Доступні ефекти залежать від встановленого програмного забезпечення. Якщо ви не бачите нічого (або тільки декілька ефектів) у бібліотеці ефектів <app>PiTiVi</app>, переконайтесь, що в системі встановлено:"
+
+#: C/effects.page:26(p)
+msgid "The <link xref=\"gstreamer\">appropriate GStreamer plugins</link>"
+msgstr "<link xref=\"gstreamer\">належні доповнення GStreamer</link>"
+
+#: C/effects.page:27(p)
+msgid "frei0r-plugins"
+msgstr "frei0r-plugins"
+
+#: C/effects.page:28(p)
+msgid "gnome-video-effects"
+msgstr "gnome-video-effects"
+
+#: C/effects.page:33(title)
+msgid "Adding and removing effects to clips"
+msgstr "Додання та вилучення ефектів кліпів"
+
+#: C/effects.page:34(p)
+msgid "To add an effect:"
+msgstr "Щоб додати ефект:"
+
+#: C/effects.page:36(p)
+msgid "Select an existing clip on the timeline"
+msgstr "Позначте на монтажному столі кліп"
+
+#: C/effects.page:37(p)
+msgid "Choose an effect in the effect library"
+msgstr "Виберіть ефект з бібліотеки ефектів"
+
+#: C/effects.page:38(p)
+msgid "Drag the chosen effect into the <gui>Clip configuration</gui> pane's <gui>Effects</gui> section"
+msgstr "Перетягніть вибраний ефект на секцію <gui>Ефекти</gui> панелі <gui>Налаштування кліпів</gui>"
+
+#: C/effects.page:40(p)
+msgid "To remove an effect on a selected clip, select it in the clip's effect list and click the <gui>Remove</gui> button."
+msgstr "Щоб вилучити ефекти позначеного кліпу, позначте його в переліку ефектів кліпу і клацніть кнопку <gui>Remove</gui>."
+
+#: C/effects.page:43(title)
+msgid "Toggling effects on and off"
+msgstr "Вмикання та вимикання ефектів"
+
+#: C/effects.page:44(p)
+msgid "If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the effect properties pane."
+msgstr "Якщо ви хочете тимчасово вимкнути ефект (щоб порівняти результати з ним і без нього або з міркувань продуктивності), клацніть відповідний прапорець на панелі властивостей ефекту."
+
+#: C/effects.page:46(p)
+msgid "Currently, effects are applied on a \"per-clip\" basis. It is not yet possible to apply effects to timeline layers."
+msgstr "Наразі ефекти застосовуються до окремих кліпів. Поки що неможливо застосувати ефект до шару монтажного столу."
+
+#: C/crossfading.page:18(desc)
+msgid "Making two clips fade into each other."
+msgstr "Перетікання одного кліпу в інший."
+
+#: C/crossfading.page:26(title)
+msgid "Crossfading clips"
+msgstr "Перехід кліпів"
+
+#: C/crossfading.page:28(p)
+msgid "To do a crossfade between two clips on the same layer, simply drag one of the clips onto the other so that it overlaps. The overlapping region will be used for transitions (crossfade by default) between the two clips. You can adjust the length of the transition by moving or trimming the clips."
+msgstr "Щоб забезпечити перехід двох кліпів одного шару, перетягніть один з них так, щоб вони перекривались. Область перекриття буде використана для переходу між кліпами (за замовчанням - накладання). Ви можете змінити тривалість переходу, перемістивши або підігнавши кліп."
+
+#: C/crossfading.page:30(p)
+msgid "Crossfades are achieved using <app>PiTiVi</app>'s video mixing features, which use keyframes to control the opacity of clips."
+msgstr "Переходи реалізуються засобами змішування <app>PiTiVi</app>, які використовують ключові кадри для керування щільністю кліпів."
+
+#: C/crossfading.page:31(p)
+msgid "This also means that if you set opacity keyframes for that clip, they will be taken into account for the crossfade."
+msgstr "Це також означає, що, встановивши щільність для кліпу, ви цим самим налаштовуєте область переходу."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/codecscontainers.page:26(None)
+msgid "@@image: 'figures/codecscontainers.jpg'; md5=e43e6a92cda311d0cd8c24fb0df67a17"
+msgstr "@@image: 'figures/codecscontainers.jpg'; md5=35414726d169024cc80a0d056a931489"
+
+#: C/codecscontainers.page:16(desc)
+msgid "What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? Learn about codecs and container formats here."
+msgstr "Чим відрізняються OGG та Vorbis? AVI та DivX? x264 та H.264? Дізнайтесь тут про кодеки та формати контейнерів."
+
+#: C/codecscontainers.page:19(title)
+msgid "Understanding codecs and containers"
+msgstr "Поняття про кодеки та контейнери"
+
+#: C/codecscontainers.page:20(p)
+msgid "The following is one of the most complex topics of video editing. Many people do not know the distinction between codecs and container file formats, thanks in part to the general lack of standardization, confusing marketing terms and filename extensions."
+msgstr "Це - одна з найскладніших тем у редагуванні відео. Багато людей не розуміють різниці між кодеками та контейнерами, зокрема через недостатню стандартизацію, неточні торгівельні терміни та розширення імен файлів."
+
+#: C/codecscontainers.page:21(p)
+msgid "This guide is an attempt at clarifying this distinction without going into technical details. If you want to learn more about containers and codecs, you should probably look at Wikipedia's page on <link href=\"http://en.wikipedia.org/wiki/Container_format_(digital)\">containers</link> and <link href=\"http://en.wikipedia.org/wiki/Codec\">codecs</link>."
+msgstr "Ця стаття покликана пояснити цю відмінність без заглиблення у технічні деталі. Якщо ви бажаєте дізнатись більше про контейнери та кодеки, вам напевно буде цікаво переглянути сторінки Вікіпедії про <link href=\"http://en.wikipedia.org/wiki/Container_format_(digital)\">контейнери</link> та <link href=\"http://en.wikipedia.org/wiki/Codec\">кодеки</link>."
+
+#: C/codecscontainers.page:22(p)
+msgid "Basically, a container is what we typically associate with the file format. Containers \"contain\" the various components of a video: the stream of images, the sound, and anything else. For example, you could have multiple soundtracks and subtitles included in a video file, if the container format allows it. Example of popular containers are OGG, Matroska, AVI, MPEG."
+msgstr "Зазвичай контейнер - це те, що ми називаємо форматом файла. Контейнер \"містить\" різні компоненти відео: потік зображень, звук та інше. Наприклад, ви можете мати декілька звукових доріжок та субтитри у відеофайлі, якщо формат контейнера дозволяє це. Прикладами популярних контейнерів є OGG, Matroska, AVI, MPEG."
+
+#: C/codecscontainers.page:23(p)
+msgid "Codecs are ways of \"coding\" and \"decoding\" streams. Their job is typically to compress data (and decompress it when playing it back) so that you can store and transmit files with a smaller filesize. There are many codecs available out there, each with their strengths, weaknesses and peculiarities, and choosing the right codec with the right settings for the right situation is a form of art."
+msgstr "Кодеки реалізують \"кодування\" та \"декодування\". Їх основне призначення - пакування даних (та розпакування під час відтворення) завдяки чому ви можете зберігати та пересилати файли меншого розміру. Існує багато різних кодеків, кожен зі своїми якостями, недоліками та особливостями, і вибір правильного кодека в конкретному випадку є свого роду мистецтвом."
+
+#: C/codecscontainers.page:24(p)
+msgid "The following figure should make things clearer:"
+msgstr "Більш наочно це показано на малюнку:"
+
+#: C/about.page:17(desc)
+msgid "Current state of this user manual and call for participation."
+msgstr "Поточний стан цього підручника та заклик до співпраці."
+
+#: C/about.page:25(title)
+msgid "About this manual"
+msgstr "Про цей підручник"
+
+#: C/about.page:26(p)
+msgid "This user manual is written and maintained by Jean-François Fortin Tam."
+msgstr "Цей підручник створений Jean-François Fortin Tam."
+
+#: C/about.page:28(title)
+msgid "Work in progress"
+msgstr "Робота триває"
+
+#: C/about.page:29(p)
+msgid "You may encounter unwritten portions due to features that have not yet been implemented in PiTiVi at the time of writing."
+msgstr "Ви можете виявити, що відсутній опис можливостей, які не були реалізовані у PiTiVi на час написання підручника."
+
+#: C/about.page:30(p)
+msgid "You may also encounter smaller areas which have been documented in this manual but have not been implemented in PiTiVi – those are areas where the design and expected user interaction are quite narrow/certain."
+msgstr "Ви можете також виявити окремі елементи, що описані тут, але не реалізовані у PiTiVi – це елементи, де дизайн та очікувані дії користувача були спрощені або уточнені."
+
+#: C/about.page:34(title)
+msgid "Patches welcome"
+msgstr "Виправлення схвалюються"
+
+#: C/about.page:35(p)
+msgid "If you happen to find errors, missing information or unclear passages in this manual, please feel free to submit corrections. You can find contact information on <link href=\"http://jeff.ecchi.ca/\">my personal website</link>. You can also <link href=\"https://bugzilla.gnome.org/enter_bug.cgi?product=pitivi;component=documentation\">file bugs on the “documentation” component in our bug tracker</link>."
+msgstr "Якщо ви виявили помилку, відсутність інформації або неточності у цьому підручнику, будь ласка надішліть виправлення. Контактну інформацію відшукаєте на: <link href=\"http://jeff.ecchi.ca/\">моєму сайті</link>. Також можна звернутись на <link href=\"https://bugzilla.gnome.org/enter_bug.cgi?product=pitivi;component=documentation\">у розділ «Документація» на нашій системі відслідкування вад</link>."
+
+#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
+#: C/index.page:0(None)
+msgid "translator-credits"
+msgstr "lxlalexlxl"
+
