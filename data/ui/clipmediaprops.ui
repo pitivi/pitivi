@@ -20,13 +20,12 @@
             <child>
               <object class="GtkButton" id="button1">
                 <property name="label" translatable="yes">_Cancel</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="onCancelButtonClicked" swapped="no"/>
+                <signal name="clicked" handler="_cancelButtonCb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -37,13 +36,12 @@
             <child>
               <object class="GtkButton" id="button2">
                 <property name="label" translatable="yes">_Apply to project</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="onApplyButtonClicked" swapped="no"/>
+                <signal name="clicked" handler="_applyButtonCb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -82,10 +80,10 @@
                           <object class="GtkHBox" id="hbox1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="spacing">6</property>
                             <child>
                               <object class="GtkCheckButton" id="checkbutton1">
                                 <property name="label" translatable="yes">Size (pixels):</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -156,10 +154,10 @@
                           <object class="GtkHBox" id="hbox2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="spacing">6</property>
                             <child>
                               <object class="GtkCheckButton" id="checkbutton2">
-                                <property name="label" translatable="yes">Frame rate: </property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="label" translatable="yes">Frame rate:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -196,10 +194,10 @@
                           <object class="GtkHBox" id="hbox3">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="spacing">6</property>
                             <child>
                               <object class="GtkCheckButton" id="checkbutton3">
-                                <property name="label" translatable="yes">Pixel Aspect Ratio:</property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="label" translatable="yes">Pixel aspect ratio:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -240,7 +238,7 @@
                   <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes"> Video:</property>
+                    <property name="label" translatable="yes">Video:</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -272,10 +270,10 @@
                           <object class="GtkHBox" id="hbox4">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="spacing">6</property>
                             <child>
                               <object class="GtkCheckButton" id="checkbutton4">
                                 <property name="label" translatable="yes">Channels:</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -312,10 +310,10 @@
                           <object class="GtkHBox" id="hbox5">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="spacing">6</property>
                             <child>
                               <object class="GtkCheckButton" id="checkbutton5">
-                                <property name="label" translatable="yes">Sample Rate: </property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="label" translatable="yes">Sample rate:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -352,10 +350,10 @@
                           <object class="GtkHBox" id="hbox6">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="spacing">6</property>
                             <child>
                               <object class="GtkCheckButton" id="checkbutton6">
-                                <property name="label" translatable="yes">Sample Depth: </property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="label" translatable="yes">Sample depth:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>

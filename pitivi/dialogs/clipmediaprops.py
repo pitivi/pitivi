@@ -20,41 +20,35 @@
 # Boston, MA 02111-1307, USA.
 
 """
-Dialog box for display the properties of a clip from sources list
+Dialog box displaying the properties of a clip from media library, allowing
+to set those properties as the project settings.
 """
 
 import gtk
 import gst
 import os
-import random
-import string
 
-from pwd import getpwuid
-from datetime import datetime
 from gettext import gettext as _
 from pitivi.configure import get_ui_dir
-from pitivi.utils.ui import model, frame_rates, audio_rates, audio_depths,\
-    audio_channels, get_combo_value, set_combo_value, pixel_aspect_ratios,\
-    get_value_from_model
-from pitivi.preset import AudioPresetManager, VideoPresetManager
+from pitivi.utils.ui import frame_rates, audio_rates, audio_depths,\
+    audio_channels, pixel_aspect_ratios, get_value_from_model
 
 
 class clipmediapropsDialog():
+
     def __init__(self, project, audio_streams, video_streams):
         self.project = project
         self.settings = self.project.getSettings()
-        self.widgets = {}
-        self.resets = {}
-        self._current = None
-        self._createUi()
         self.audio_streams = audio_streams
         self.video_streams = video_streams
+        self.has_audio = self.has_video = self.is_image = False
+        self._createUi()
 
     def run(self):
-        self.is_audio = len(self.audio_streams) > 0
-        self.is_video = len(self.video_streams) > 0
-        self.is_image = False
-
+        # TODO: in "onApplyButtonClicked", we only use the first stream...
+        # If we have multiple audio or video streams, we should reflect that
+        # in the UI, instead of acting as if there was only one. But that means
+        # dynamically creating checkboxes and labels in a table and such.
         for stream in self.audio_streams:
             self.channels.set_text(
                 get_value_from_model(audio_channels, stream.get_channels()))
@@ -62,28 +56,33 @@ class clipmediapropsDialog():
                 get_value_from_model(audio_rates, stream.get_sample_rate()))
             self.sample_depth.set_text(
                 get_value_from_model(audio_depths, stream.get_depth()))
+            self.has_audio = True
+            break
 
         for stream in self.video_streams:
             self.size_width.set_text(str(stream.get_width()))
             self.size_height.set_text(str(stream.get_height()))
-            self.is_image = stream.get_framerate_num() == 0
+            self.is_image = stream.is_image()
             if not self.is_image:
-                self.frame_rate.set_text(get_value_from_model(frame_rates,
-                    gst.Fraction(stream.get_framerate_num(),
-                                 stream.get_framerate_denom())))
+                self.frame_rate.set_text(
+                    get_value_from_model(frame_rates, gst.Fraction(
+                                                stream.get_framerate_num(),
+                                                stream.get_framerate_denom())))
                 self.aspect_ratio.set_text(
-                    get_value_from_model(pixel_aspect_ratios,
-                        gst.Fraction(stream.get_par_num(),
-                                     stream.get_par_denom())))
+                    get_value_from_model(pixel_aspect_ratios, gst.Fraction(
+                                                    stream.get_par_num(),
+                                                    stream.get_par_denom())))
+            self.has_video = True
+            break
 
-        if not self.is_video:
+        if not self.has_video:
             self.frame1.hide()
-        if not self.is_audio:
+        if not self.has_audio:
             self.frame2.hide()
         if self.is_image:
             self.hbox2.hide()
             self.hbox3.hide()
-            self.label2.set_markup(_("<b>Image:</b>"))
+            self.label2.set_markup("<b>" + _("Image:") + "</b>")
         self.dialog.run()
 
     def _createUi(self):
@@ -110,15 +109,14 @@ class clipmediapropsDialog():
         self.checkbutton5 = builder.get_object("checkbutton5")
         self.checkbutton6 = builder.get_object("checkbutton6")
 
-    def onApplyButtonClicked(self, button):
+    def _applyButtonCb(self, unused_button):
+        _width = _height = _framerate = _par = -1
+        _channels = _rate = _depth = -1
 
-        if (self.is_video):
-            _width = -1
-            _height = -1
-            _framerate = -1
-            _par = -1
+        if self.has_video:
+            # This also handles the case where the video is a still image
             video = self.video_streams[0]
-            if (self.checkbutton1.get_active()):
+            if self.checkbutton1.get_active():
                 _width = video.get_width()
                 _height = video.get_height()
             if (self.checkbutton2.get_active() and not self.is_image):
@@ -127,31 +125,22 @@ class clipmediapropsDialog():
             if (self.checkbutton3.get_active() and not self.is_image):
                 _par = gst.Fraction(video.get_par_num(),
                                     video.get_par_denom())
-            self.settings.setVideoProperties(_width,
-                                             _height,
-                                             _framerate,
-                                             _par)
+            self.settings.setVideoProperties(_width, _height, _framerate, _par)
 
-        if (self.is_audio):
-            _channels = -1
-            _rate = -1
-            _depth = -1
+        if self.has_audio:
             audio = self.audio_streams[0]
-            if (self.checkbutton4.get_active()):
+            if self.checkbutton4.get_active():
                 _channels = audio.get_channels()
-            if (self.checkbutton5.get_active()):
+            if self.checkbutton5.get_active():
                 _rate = audio.get_sample_rate()
-            if (self.checkbutton6.get_active()):
+            if self.checkbutton6.get_active():
                 _depth = audio.get_depth()
+            self.settings.setAudioProperties(_channels, _rate, _depth)
 
-            self.settings.setAudioProperties(_channels,
-                                             _rate,
-                                             _depth)
-
-        if (self.is_video or self.is_audio):
+        if self.has_video or self.has_audio:
             self.project.setSettings(self.settings)
 
         self.dialog.destroy()
 
-    def onCancelButtonClicked(self, button):
+    def _cancelButtonCb(self, unused_button):
         self.dialog.destroy()

@@ -978,26 +978,22 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
     def _playButtonClickedCb(self, unused_widget=None):
         """ Called when a user clicks on the play button """
-        # get the selected filesourcefactory
-        paths = self.getSelectedPaths()
+        paths = self.getSelectedPaths()[0]  # Only use the first item
         model = self.treeview.get_model()
-        if len(paths) < 1:
-            return
-        paths = paths[0]
         self.debug("Let's play %s", model[paths][COL_URI])
         self.emit('play', model[paths][COL_URI])
 
     def _clipPropButtonClickedCb(self, unused_widget=None):
-        """ Called when user clicks clip properties button """
-        paths = self.getSelectedPaths()
+        """
+        Show the clip properties (resolution, framerate, audio channels...)
+        and allow setting them as the new project settings.
+        """
+        paths = self.getSelectedPaths()[0]  # Only use the first item
         model = self.treeview.get_model()
-        if len(paths) < 1:
-            return
-        paths = paths[0]
         factory = model[paths][COL_FACTORY]
-        self.debug("Let's import %s", model[paths][COL_URI])
         d = clipmediapropsDialog(self.app.current,
-            factory.get_audio_streams(), factory.get_video_streams())
+                                factory.get_audio_streams(),
+                                factory.get_video_streams())
         d.run()
 
     def _hideInfoBarClickedCb(self, unused_button):
