@@ -53,9 +53,9 @@ if test ! -e $PITIVI; then
     tar -xf gst-python-0.10.22.tar.gz &&\
     mv gst-python-0.10.22 gst-python &&\
     cd gst-python && ./configure && make &&\
-    #Get GES \
+    #Get GES 0.10 \
     cd .. && git clone git://anongit.freedesktop.org/gstreamer/gst-editing-services &&\
-    cd gst-editing-services && ./autogen.sh && make && cd ../ &&\
+    cd gst-editing-services && git checkout 0.10 && ./autogen.sh && make && cd ../ &&\
     #Get pitivi \
     git clone git://git.gnome.org/pitivi &&\
     cd pitivi && \
