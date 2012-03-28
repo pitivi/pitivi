@@ -149,8 +149,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         return False
 
     def do_motion_notify_event(self, event):
-        self.debug("motion at event.x %d", event.x)
         if self.pressed:
+            self.debug("motion at event.x %d", event.x)
             position = self.pixelToNs(event.x + self.pixmap_offset)
             self._seeker.seek(position)
         return False
