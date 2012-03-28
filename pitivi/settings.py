@@ -381,6 +381,28 @@ class MultimediaSettings(Signallable, Loggable):
     def getDAR(self):
         return gst.Fraction(self.videowidth, self.videoheight) * self.videopar
 
+    def __str__(self):
+        """
+        Redefine __str__ to allow printing the project audio/video settings.
+        This is used for debugging, do not make these strings translatable.
+        """
+        msg = "\n\n"
+        msg += "\tVideo: " + str(self.videowidth) + "x" + str(self.videoheight) +\
+               " " + str(self.videorate) + " fps, " + str(self.videopar) + " PAR"
+        msg += "\n\t\tEncoder: " + str(self.vencoder)
+        if self.vcodecsettings:
+            msg += "\n\t\tCodec settings: " + str(self.vcodecsettings)
+        msg += "\n\tAudio: " + str(self.audiochannels) + " channels, " +\
+                str(self.audiorate) + " Hz, " + str(self.audiodepth) + " bits"
+        msg += "\n\t\tEncoder: " + str(self.aencoder)
+        if self.acodecsettings:
+            msg += "\n\t\tCodec settings: " + str(self.acodecsettings)
+        msg += "\n\tMuxer: " + str(self.muxer)
+        if self.containersettings:
+            msg += "\n\t\t" + str(self.containersettings)
+        msg += "\n\n"
+        return msg
+
     def getVideoWidthAndHeight(self, render=False):
         """ Returns the video width and height as a tuple
 
