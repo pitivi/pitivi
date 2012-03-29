@@ -502,6 +502,9 @@ class PitiviViewer(gtk.VBox, Loggable):
         """
         cur_time = time()
         if not self._tmp_pipeline:
+            self.debug("Creating temporary pipeline for clip %s, position %s",
+                clip_uri, gst.TIME_ARGS(position))
+
             self._oldTimelinePos = self.pipeline.query_position(gst.FORMAT_TIME)[0]
             self._tmp_pipeline = gst.element_factory_make("playbin2")
             self._tmp_pipeline.set_property("uri", clip_uri)
@@ -518,6 +521,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         """
         self._tmp_pipeline = None  # Free the memory
         self.setPipeline(self.app.current.pipeline, self._oldTimelinePos)
+        self.debug("Back to old pipeline")
 
     def pipelineStateChanged(self, state):
         """
