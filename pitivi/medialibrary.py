@@ -46,8 +46,7 @@ from pitivi.utils.misc import PathWalker, quote_uri
 from pitivi.utils.signal import SignalGroup, Signallable
 from pitivi.utils.loggable import Loggable
 import pitivi.utils.ui as dnd
-from pitivi.utils.ui import beautify_info, info_name, \
-    SPACING, PADDING
+from pitivi.utils.ui import beautify_info, info_name, SPACING, PADDING
 
 SHOW_TREEVIEW = 1
 SHOW_ICONVIEW = 2
@@ -1309,22 +1308,23 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             context.set_icon_pixbuf(row[COL_ICON], 0, 0)
 
     def getSelectedPaths(self):
-        """ returns a list of selected items uri """
+        """ Returns a list of selected treeview or iconview items """
         if self.clip_view == SHOW_TREEVIEW:
-            return self.getSelectedPathsTreeView()
+            return self._getSelectedPathsTreeView()
         elif self.clip_view == SHOW_ICONVIEW:
-            return self.getSelectedPathsIconView()
+            return self._getSelectedPathsIconView()
 
-    def getSelectedPathsTreeView(self):
+    def _getSelectedPathsTreeView(self):
         model, rows = self.treeview.get_selection().get_selected_rows()
         return rows
 
-    def getSelectedPathsIconView(self):
+    def _getSelectedPathsIconView(self):
         paths = self.iconview.get_selected_items()
         paths.reverse()
         return paths
 
     def getSelectedItems(self):
+        """ Returns a list of selected items URIs """
         return [self.storemodel[path][COL_URI]
             for path in self.getSelectedPaths()]
 
