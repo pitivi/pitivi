@@ -378,6 +378,7 @@ class ProjectManager(Signallable, Loggable):
     def _projectLoadedCb(self, formatter, timeline):
         self.debug("Project Loaded")
         self.emit("new-project-loaded", self.current)
+        self.time_loaded = time()
         self.current.medialibrary.addUris(self.formatter.get_sources())
 
 
