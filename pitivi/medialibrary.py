@@ -1046,15 +1046,32 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
 
     def _viewShowPopup(self, view, event):
+        """
+        Handle the sensitivity of popup menu items when right-clicking.
+        """
+        # Default values
+        self.popup_remitem.set_sensitive(False)
+        self.popup_playmenuitem.set_sensitive(False)
+        self.popup_clipprop.set_sensitive(False)
+        self.popup_insertEnd.set_sensitive(False)
+
+        multiple_selected = len(self.getSelectedPaths()) > 1
         if view != None and self._rowUnderMouseSelected(view, event):
+            # An item was already selected, then the user right-clicked on it
+            self.popup_insertEnd.set_sensitive(True)
             self.popup_remitem.set_sensitive(True)
-            self.popup_playmenuitem.set_sensitive(True)
-            self.popup_clipprop.set_sensitive(True)
+            if not multiple_selected:
+                self.popup_playmenuitem.set_sensitive(True)
+                self.popup_clipprop.set_sensitive(True)
         elif view != None and (not self._nothingUnderMouse(view, event)):
             if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
+                # An item was previously selected, and the user
+                # right-clicked on a different item (selecting it).
                 self._viewUnselectAll()
+                multiple_selected = False
             elif self.clip_view == SHOW_TREEVIEW and self._viewHasSelection() \
                     and (event.state & gtk.gdk.SHIFT_MASK):
+                # FIXME: when does this section ever get called?
                 selection = self.treeview.get_selection()
                 start_path = self._viewGetFirstSelected()
                 end_path = self._viewGetPathAtPos(event)
@@ -1062,16 +1079,16 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
                 selection.select_range(start_path, end_path)
 
             self._viewSelectPath(self._viewGetPathAtPos(event))
-            self.popup_remitem.set_sensitive(True)
-            self.popup_playmenuitem.set_sensitive(True)
-            self.popup_clipprop.set_sensitive(True)
             self.popup_insertEnd.set_sensitive(True)
-        else:
-            self.popup_remitem.set_sensitive(False)
-            self.popup_playmenuitem.set_sensitive(False)
-            self.popup_clipprop.set_sensitive(False)
-            self.popup_insertEnd.set_sensitive(False)
+            self.popup_remitem.set_sensitive(True)
+            if not multiple_selected:
+                self.popup_playmenuitem.set_sensitive(True)
+                self.popup_clipprop.set_sensitive(True)
 
+        # If none of the conditions above match,
+        # An item may or may not have been selected,
+        # but the user right-clicked outside it.
+        # In that case, the sensitivity values will stay to the default.
         self.popup.popup(None, None, None, event.button, event.time)
 
     def _viewGetFirstSelected(self):
