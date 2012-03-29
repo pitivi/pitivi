@@ -95,6 +95,7 @@ ui = '''
                 <menuitem action="InsertEnd" />
                 <menuitem action="RemoveSources" />
                 <menuitem action="PreviewClip" />
+                <menuitem action="ClipProps" />
             </placeholder>
         </menu>
     </menubar>
@@ -289,29 +290,19 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
         # Popup Menu
         self.popup = gtk.Menu()
-        self.popup_importitem = gtk.ImageMenuItem(_("Import Files..."))
-        image = gtk.Image()
-        image.set_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU)
-        self.popup_importitem.set_image(image)
-
         self.popup_remitem = gtk.ImageMenuItem(_("_Remove from Project"))
-        image = gtk.Image()
-        image.set_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_MENU)
-        self.popup_remitem.set_image(image)
         self.popup_playmenuitem = gtk.MenuItem(_("_Preview Clip"))
-        self.popup_clipprop = gtk.MenuItem(_("_Clip properties"))
-        self.popup_importitem.connect("activate", self._importButtonClickedCb)
-        self.popup_remitem.connect("activate", self._removeButtonClickedCb)
-        self.popup_playmenuitem.connect("activate", self._playButtonClickedCb)
-        self.popup_clipprop.connect("activate", self._clipPropButtonClickedCb)
-        self.popup_importitem.show()
-        self.popup_remitem.show()
-        self.popup_playmenuitem.show()
-        self.popup_clipprop.show()
-        self.popup.append(self.popup_importitem)
+        self.popup_clipprop = gtk.MenuItem(_("_Clip Properties..."))
+        self.popup_insertEnd = gtk.MenuItem(_("Insert at _End of Timeline"))
+        self.popup_remitem.connect("activate", self._removeClickedCb)
+        self.popup_playmenuitem.connect("activate", self._previewClickedCb)
+        self.popup_clipprop.connect("activate", self._clipPropertiesCb)
+        self.popup_insertEnd.connect("activate", self._insertEndCb)
+        self.popup.append(self.popup_insertEnd)
         self.popup.append(self.popup_remitem)
         self.popup.append(self.popup_playmenuitem)
         self.popup.append(self.popup_clipprop)
+        self.popup.show_all()
 
         # import sources dialogbox
         self._importDialog = None
@@ -488,7 +479,10 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             "Insert", None, self._insertEndCb),
 
             ("PreviewClip", gtk.STOCK_MEDIA_PLAY, _("_Preview Clip"),
-            None, None, self._playButtonClickedCb),
+            None, None, self._previewClickedCb),
+
+            ("ClipProps", None, _("_Clip Properties..."),
+            None, None, self._previewClickedCb),
         )
 
         actiongroup = gtk.ActionGroup("medialibrarypermanent")
@@ -966,24 +960,20 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
                 else:
                     self.iconview.unselect_path(row.path)
 
-    ## UI Button callbacks
+    ## UI callbacks
 
-    def _importButtonClickedCb(self, unused_widget=None):
-        """ Called when a user clicks on the import button """
-        self.showImportSourcesDialog()
-
-    def _removeButtonClickedCb(self, unused_widget=None):
+    def _removeClickedCb(self, unused_widget=None):
         """ Called when a user clicks on the remove button """
         self._removeSources()
 
-    def _playButtonClickedCb(self, unused_widget=None):
-        """ Called when a user clicks on the play button """
+    def _previewClickedCb(self, unused_widget=None):
+        """ Called when a user clicks on the Preview Clip button """
         paths = self.getSelectedPaths()[0]  # Only use the first item
         model = self.treeview.get_model()
         self.debug("Let's play %s", model[paths][COL_URI])
         self.emit('play', model[paths][COL_URI])
 
-    def _clipPropButtonClickedCb(self, unused_widget=None):
+    def _clipPropertiesCb(self, unused_widget=None):
         """
         Show the clip properties (resolution, framerate, audio channels...)
         and allow setting them as the new project settings.
@@ -1076,10 +1066,12 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             self.popup_remitem.set_sensitive(True)
             self.popup_playmenuitem.set_sensitive(True)
             self.popup_clipprop.set_sensitive(True)
+            self.popup_insertEnd.set_sensitive(True)
         else:
             self.popup_remitem.set_sensitive(False)
             self.popup_playmenuitem.set_sensitive(False)
             self.popup_clipprop.set_sensitive(False)
+            self.popup_insertEnd.set_sensitive(False)
 
         self.popup.popup(None, None, None, event.button, event.time)
 
@@ -1116,7 +1108,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         chain_up = True
 
         if event.type == gtk.gdk._2BUTTON_PRESS:
-            self._playButtonClickedCb()
+            self._previewClickedCb()
             chain_up = False
         elif event.button == 3:
             self._viewShowPopup(treeview, event)
@@ -1204,7 +1196,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         chain_up = True
 
         if event.type == gtk.gdk._2BUTTON_PRESS:
-            self._playButtonClickedCb()
+            self._previewClickedCb()
             chain_up = False
         elif event.button == 3:
             self._viewShowPopup(iconview, event)
