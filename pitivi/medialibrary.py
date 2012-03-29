@@ -1108,7 +1108,9 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         chain_up = True
 
         if event.type == gtk.gdk._2BUTTON_PRESS:
-            self._previewClickedCb()
+            if self.getSelectedPaths() != []:
+                # It is possible to double-click outside of clips!
+                self._previewClickedCb()
             chain_up = False
         elif event.button == 3:
             self._viewShowPopup(treeview, event)
@@ -1196,7 +1198,9 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         chain_up = True
 
         if event.type == gtk.gdk._2BUTTON_PRESS:
-            self._previewClickedCb()
+            if self.getSelectedPaths() != []:
+                # It is possible to double-click outside of clips!
+                self._previewClickedCb()
             chain_up = False
         elif event.button == 3:
             self._viewShowPopup(iconview, event)
