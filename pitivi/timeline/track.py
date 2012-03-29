@@ -315,7 +315,7 @@ class EndHandle(TrimHandle):
             self._view.app.gui.viewer.clipTrimPreviewFinished()
 
 
-class TrackObject(View, goocanvas.Group, Zoomable):
+class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
 
     class Controller(TrackObjectController):
 
@@ -358,6 +358,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         goocanvas.Group.__init__(self)
         View.__init__(self, instance)
         Zoomable.__init__(self)
+        Loggable.__init__(self)
         self.ref = Zoomable.nsToPixel(10000000000)
         self.app = instance
         self.track = track
@@ -393,14 +394,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             height=self.height)
 
         self.element = element
-        element.max_duration = element.props.duration
-        element.starting_start = element.props.start
         element.selected = Selected()
         element.selected.connect("selected-changed", self.selectedChangedCb)
-
         obj = self.element.get_timeline_object()
-        obj.starting_start = obj.get_property("start")
-        obj.max_duration = obj.props.duration
 
         self.settings = instance.settings
         self.unfocus()

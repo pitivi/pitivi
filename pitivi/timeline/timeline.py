@@ -1013,7 +1013,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         priority = int((y // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
         delta = Zoomable.pixelToNs(x)
         obj = self._temp_objects[0]
-        obj.starting_start = obj.props.start
         self._move_context.editTo(delta, priority)
 
 ## Zooming and Scrolling
