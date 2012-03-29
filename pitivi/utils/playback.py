@@ -27,12 +27,12 @@
 import gst
 import gobject
 
-import pitivi.utils.loggable as log
+from pitivi.utils.loggable import Loggable
 
 from pitivi.utils.signal import Signallable
 
 
-class Seeker(Signallable):
+class Seeker(Signallable, Loggable):
     """
     The Seeker is a singleton helper class to do various seeking
     operations in the pipeline.
@@ -58,6 +58,9 @@ class Seeker(Signallable):
         """
         @param timeout (optional): the amount of miliseconds for a seek attempt
         """
+        Signallable.__init__(self)
+        Loggable.__init__(self)
+
         self.timeout = timeout
         self.pending_seek_id = None
         self.position = None
@@ -90,7 +93,7 @@ class Seeker(Signallable):
         try:
             self.emit('flush')
         except:
-            log.doLog(log.ERROR, None, "seeker", "Error while flushing", None)
+            self.error("Error while flushing")
 
     def _scheduleSeek(self, timeout, callback, relative=False):
         return gobject.timeout_add(timeout, callback, relative)
@@ -101,7 +104,7 @@ class Seeker(Signallable):
             try:
                 self.emit('seek-relative', self._time)
             except:
-                log.doLog(log.ERROR, None, "seeker", "Error while seeking %s relative",
+                self.error("Error while seeking %s relative",
                         self._time)
                 # if an exception happened while seeking, properly
                 # reset ourselves
@@ -114,8 +117,8 @@ class Seeker(Signallable):
             try:
                 self.emit('seek', position, format)
             except:
-                log.doLog(log.ERROR, None, "seeker", "Error while seeking to position:%s format:%r",
-                          (gst.TIME_ARGS(position), format))
+                self.error("Error while seeking to position:%s format: %r",
+                          gst.TIME_ARGS(position), format)
                 # if an exception happened while seeking, properly
                 # reset ourselves
                 return False
