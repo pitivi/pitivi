@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-03-19 19:16+0000\n"
-"PO-Revision-Date: 2012-03-25 18:19+0200\n"
+"POT-Creation-Date: 2012-03-27 08:13+0000\n"
+"PO-Revision-Date: 2012-04-02 11:08+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -916,8 +916,8 @@ msgid ""
 msgstr ""
 "Los ajustes predefinidos están ahí para ahorrar tiempo y reducir la "
 "complejidad. Los expertos pueden elegir simplemente ignorarlos y establecer "
-"todo manualmente; el ajuste predefinido «No hay configuración» es especial "
-"ya que automáticamente guarda sus cambios directamente en el archivo del "
+"todo manualmente; el ajuste predefinido «No hay configuración» es especial ya "
+"que automáticamente guarda sus cambios directamente en el archivo del "
 "proyecto."
 
 #: C/presets.page:45(title)
@@ -1579,7 +1579,7 @@ msgstr "El vídeo de su proyecto cuando se reproduce."
 
 #: C/mainwindow.page:90(p)
 msgid "The video frame at the current position of the playhead."
-msgstr "La imágen del vídeo en la posición actual."
+msgstr "El fotograma en la posición actual."
 
 #: C/mainwindow.page:91(p)
 msgid "A <em>live preview</em> when trimming a clip's beginning/end point."
@@ -1594,9 +1594,8 @@ msgid ""
 "more information."
 msgstr ""
 "La característica <em>vista previa en vivo</em> aún no está implementada. "
-"Consulte el <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
-"id=569980\">el informe de error nº 569980</link> para obtener mayor "
-"información."
+"Consulte el <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=569980"
+"\">el informe de error nº 569980</link> para obtener mayor información."
 
 #: C/mainwindow.page:100(title)
 msgid "Media Library"
@@ -1757,6 +1756,11 @@ msgid ""
 "<em>layers on top</em> (the “Z” axis in the physical world) are also "
 "visually <em>on top</em>, albeit on the “Y” axis."
 msgstr ""
+"Aunque en la vida real, puede apilar piezas de vidrio sobre otras en tres "
+"dimensiones, la pantalla de su equipo solo tiene dos dimensiones. Por lo "
+"tanto, las <em>capas en la parte superior</em> (el eje \"Z\" en el mundo "
+"físico) son también visibles <em>en la parte superior</em>, aunque en el eje "
+"\"Y\"."
 
 #: C/layers.page:39(p)
 msgid ""
@@ -1764,6 +1768,9 @@ msgid ""
 "how they are show as <em>layers</em> in <app>PiTiVi</app>'s user interface "
 "(right)."
 msgstr ""
+"Los siguientes diagramas ilustran las <em>piezas de vidrio</em> (izquierda) "
+"y como están mostradas como <em>capas</em> en la interfaz de usuario de "
+"<app>PiTiVi</app> (derecha)."
 
 #: C/layers.page:43(p)
 msgid ""
@@ -1771,6 +1778,9 @@ msgid ""
 "it has an opacity value lower than 100% (as shown with the two topmost "
 "layers in the previous illustration)."
 msgstr ""
+"Los clips ubicados en una capa por encima bloquearán los clips por debajo de "
+"la vista, a menos que tenga un valor de opacidad inferior al 100% (como se "
+"muestra con las dos capas superiores de la ilustración anterior)."
 
 #: C/layers.page:47(title)
 msgid "Adding and removing layers"
@@ -1781,21 +1791,28 @@ msgid ""
 "Layers are created and removed automatically. There is no “layer management” "
 "interface in <app>PiTiVi</app> (at least, not yet)."
 msgstr ""
+"Las capas se crean y se quitan automáticamente. No hay una interfaz para "
+"«gestionar las capas» en <app>PiTiVi</app> (al menos no todavía)."
 
 #: C/layers.page:49(p)
 msgid ""
 "To create a layer, drag a clip downwards until a new layer appears for it."
 msgstr ""
+"Para crear una capa, arrastre un clip hacia abajo hasta que una nueva capa "
+"aparezca."
 
 #: C/layers.page:50(p)
 msgid ""
 "If there are no more clips on a layer, it is automatically removed. Thus, to "
 "remove a layer, simply drag its clips upwards onto another layer."
 msgstr ""
+"Si no hubiera más clips en una capa, esta se quita automáticamente. Por lo "
+"tanto, para quitar una capa, simplemente arrastre sus clips hacia arriba "
+"sobre otra capa."
 
 #: C/layers.page:54(title)
 msgid "What about audio layers?"
-msgstr ""
+msgstr "¿Qué pasa con las capas de sonido?"
 
 #: C/layers.page:55(p)
 msgid ""
@@ -1804,6 +1821,10 @@ msgid ""
 "will be mixed together. Controlling the volume of those audio clips simply "
 "changes their relative loudness."
 msgstr ""
+"A diferencia de la visión, los sonidos múltiples (objetivamente) no "
+"«bloquean» a los otros. Por lo tanto, si tiene varios clips de sonido en "
+"capas separadas, sus sonidos se mezclarán juntos. Controle el volumen de "
+"esos clips de sonido simplemente cambiando sus volúmenes relativos."
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -1815,11 +1836,11 @@ msgstr ""
 
 #: C/keyframecurves.page:17(desc)
 msgid "Changing the opacity or volume of a clip over time."
-msgstr ""
+msgstr "Cambiar la opacidad o volumen de un clip en el tiempo."
 
 #: C/keyframecurves.page:25(title)
 msgid "Keyframe curves"
-msgstr ""
+msgstr "Curvas de fotograma clave"
 
 #: C/keyframecurves.page:27(p)
 msgid ""
@@ -1830,6 +1851,12 @@ msgid ""
 "as a <em>curve</em> drawn over the clip. Currently only linear interpolation "
 "is supported."
 msgstr ""
+"Algunos tipos de clips (actualmente solo clips de sonido) soportan valores "
+"de la propiedad de interpolación sobre su tiempo. El usuario puede añadir "
+"uno o mas <em>fotogramas clave</em> para controlar la interpolación, un "
+"término tomado de la animación. <app>PiTiVi</app> representa el valor de una "
+"propiedad entre los fotogramas clave como una <em>curva</em> dibujada sobre "
+"el clip. Actualmente solo se soporta la interpolación linear."
 
 #: C/keyframecurves.page:33(title)
 msgid "General usage"
@@ -1841,15 +1868,20 @@ msgid ""
 "user. The start and end points of the curve are fixed to the start and end "
 "points of the clip, and also can not be removed by the user."
 msgstr ""
+"Las curvas son una propiedad intrínseca de los clips y el usuario no puede "
+"quitarlas. Los puntos de inicio y fin de la curva se fijan en los puntos de "
+"inicio y fin del clip, e incluso el usuario no puede quitarlas."
 
 #: C/keyframecurves.page:36(p)
 msgid ""
 "You can add a new keyframe by double-clicking on an empty portion of a curve."
 msgstr ""
+"Puede añadir un nuevo fotograma pulsando dos veces en una porción vacía de "
+"una curva."
 
 #: C/keyframecurves.page:37(p)
 msgid "You can remove a keyframe by double-clicking on it."
-msgstr ""
+msgstr "Puede quitar un fotograma clave pulsando dos veces en él."
 
 #: C/keyframecurves.page:38(p)
 msgid ""
@@ -1857,26 +1889,33 @@ msgid ""
 "You can place the keyframe anywhere on the clip you like, even if this "
 "changes the order of the keyframes."
 msgstr ""
+"Puede modificar el tiempo y el valor de un fotograma clave moviéndolo con el "
+"ratón. Puede colocar el fotograma clave en cualquier lugar en el clip que "
+"quiera, incluso si esto cambia el orden de los fotogramas clave."
 
 #: C/keyframecurves.page:39(p)
 msgid ""
 "You can click-and-drag on a segment of a curve between two keyframes to "
 "adjust the vertical position of the segment."
 msgstr ""
+"Puede pulsar y arrastrar en un segmento de una curva entre dos fotogramas "
+"claves para modificar la posición vertical del segmento."
 
 #: C/keyframecurves.page:44(title)
 msgid "Audio curves"
-msgstr ""
+msgstr "Curvas de sonido"
 
 #: C/keyframecurves.page:45(p)
 msgid ""
 "For volume curves the vertical position represents the volume of the clip on "
 "a scale from 0 to 200%."
 msgstr ""
+"Para las curvas de volumen la posición vertical representa el volumen del "
+"clip en una escala del 0 al 200%"
 
 #: C/keyframecurves.page:49(title)
 msgid "Video compositing curves"
-msgstr ""
+msgstr "Curvas de composición de vídeo"
 
 #: C/keyframecurves.page:50(p)
 msgid ""
@@ -1884,6 +1923,9 @@ msgid ""
 "from 0 to 100%. See the <link xref=\"layers\">Understanding layers</link> "
 "section for more details."
 msgstr ""
+"La posición vertical representa el alfa (opacidad) del clip en una escala "
+"del 0 al 100%. Consulte la sección <link xref=\"layers\">Entender las capas</"
+"link> para obtener mayor información."
 
 #: C/interface.page:13(desc)
 msgid "Discover the various windows, components and widgets."
