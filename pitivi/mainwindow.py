@@ -34,7 +34,7 @@ from time import time
 from urllib import unquote
 from gettext import gettext as _
 from gtk import RecentManager
-
+from hashlib import md5
 
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
@@ -896,6 +896,23 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.get_content_area().set_spacing(SPACING)
         dialog.set_transient_for(self)
 
+        # This box will contain the label and optionally a thumbnail
+        hbox = gtk.HBox()
+        hbox.set_spacing(SPACING)
+
+        # Check if we have a thumbnail available.
+        # This can happen if the file was moved or deleted by an application
+        # that does not manage Freedesktop thumbnails. The user is in luck!
+        # This is based on medialibrary's addDiscovererInfo method.
+        thumbnail_hash = md5(tfs.get_uri()).hexdigest()
+        thumb_dir = os.path.expanduser("~/.thumbnails/normal/")
+        thumb_path_normal = thumb_dir + thumbnail_hash + ".png"
+        if os.path.exists(thumb_path_normal):
+            self.debug("A thumbnail file was found for %s" % tfs.get_uri())
+            thumbnail = gtk.image_new_from_file(thumb_path_normal)
+            thumbnail.set_padding(0, SPACING)
+            hbox.pack_start(thumbnail, False, False)
+
         # FIXME GES port, help user identify files with more information
         # need work to be done in GES directly
         # TODO: display the filesize to help the user identify the file
@@ -916,8 +933,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         label = gtk.Label()
         label.set_markup(text)
-        dialog.get_content_area().pack_start(label, False, False)
-        label.show()
+        hbox.pack_start(label, False, False)
+        dialog.get_content_area().pack_start(hbox, False, False)
+        hbox.show_all()
 
         chooser = gtk.FileChooserWidget(action=gtk.FILE_CHOOSER_ACTION_OPEN)
         chooser.set_select_multiple(False)
