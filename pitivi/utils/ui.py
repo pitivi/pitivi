@@ -34,6 +34,7 @@ from itertools import izip
 from urllib import unquote
 from gettext import ngettext, gettext as _
 from xml.sax.saxutils import escape
+from decimal import Decimal
 
 from pitivi.utils.loggable import doLog, ERROR
 
@@ -354,11 +355,18 @@ def get_combo_value(combo):
     return combo.props.model[active][1]
 
 
-def get_value_from_model(model, value):
+def get_value_from_model(model, key):
+    """
+    For a given key, search a gtk ListStore and return the value as a string.
+
+    If not found and the key is a gst fraction, return a beautified form.
+    """
     for row in model:
-        if (row[1] == value):
-            return row[0]
-    return str(value)
+        if row[1] == key:
+            return str(row[0])
+    if isinstance(key, gst.Fraction):
+        return "%.3f" % Decimal(float(key.num) / key.denom)
+    return str(key)
 
 #------------------------ encoding datas ----------------------------------------#
 # FIXME This should into a special file
