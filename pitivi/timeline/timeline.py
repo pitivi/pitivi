@@ -740,6 +740,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.connect("drag-leave", self._dragLeaveCb)
         self.connect("drag-drop", self._dragDropCb)
         self.connect("drag-motion", self._dragMotionCb)
+        self.app.connect("new-project-created", self._newProjectCreatedCb)
         self._canvas.connect("key-press-event", self._keyPressEventCb)
         self._canvas.connect("scroll-event", self._scrollEventCb)
 
@@ -1094,6 +1095,16 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._canvas.props.redraw_when_scrolled = False
 
 ## Project callbacks
+
+    def _newProjectCreatedCb(self, app, project):
+        """
+        When a new blank project is created, immediately clear the timeline.
+
+        Otherwise, we would sit around until a clip gets imported to the
+        media library, waiting for a "ready" signal.
+        """
+        self.debug("New blank project created, pre-emptively clearing the timeline")
+        self.setProject(self.app.current)
 
     def setProject(self, project):
         self.debug("Setting project %s", project)
