@@ -942,19 +942,19 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 formatter.update_source_uri(tfs, new_uri)
                 self._missingUriOnLoading = True
         else:
-            self.log("User didn't choose a URI for the missing file")
-            # FIXME: not calling addMapping doesn't keep the formatter from
-            # re-emitting the same signal. How do we get out of this
-            # situation?
-            pass
+            # FIXME: bug 661059
+            # If the user clicks Cancel, we keep trying to import the rest
+            # of the clips... However we don't have anything to handle missing
+            # clips in the media library.
+            # Also, the timeline does not get updated.
+            self.error("NOT IMPLEMENTED - User didn't choose a URI for the missing file")
 
         dialog.destroy()
 
     def _connectToProjectSources(self, medialibrary):
         #FIXME GES we should re-enable this when possible
         #medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
-        medialibrary.connect("source-removed",
-            self._mediaLibrarySourceRemovedCb)
+        medialibrary.connect("source-removed", self._mediaLibrarySourceRemovedCb)
 
     def _actionLogCommit(self, action_log, stack, nested):
         if nested:
