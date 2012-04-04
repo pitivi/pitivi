@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-03-27 08:13+0000\n"
-"PO-Revision-Date: 2012-04-02 11:08+0200\n"
+"POT-Creation-Date: 2012-04-02 09:11+0000\n"
+"PO-Revision-Date: 2012-04-04 09:47+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -1929,19 +1929,21 @@ msgstr ""
 
 #: C/interface.page:13(desc)
 msgid "Discover the various windows, components and widgets."
-msgstr ""
+msgstr "Descubrir varias ventanas, componentes y widgets."
 
 #: C/interface.page:19(title)
 msgid "An overview of the user interface"
-msgstr ""
+msgstr "Una visión general de la interfaz de usuario"
 
 #: C/insertintimeline.page:17(desc)
 msgid "Putting your project media files into the timeline for editing."
 msgstr ""
+"Poner sus archivos de medios del proyecto en la línea del tiempo para "
+"editarlos."
 
 #: C/insertintimeline.page:25(title)
 msgid "Inserting clips"
-msgstr ""
+msgstr "Insertar clips"
 
 #: C/insertintimeline.page:27(p)
 msgid ""
@@ -1949,22 +1951,29 @@ msgid ""
 "(using the <key>Ctrl</key> or <key>Shift</key> keys to select multiple "
 "clips) and:"
 msgstr ""
+"Puede insertar uno o más clips de la biblioteca de medios seleccionándolos "
+"(usando las teclas <key>Ctrl</key> o <key>Mayús</key> para seleccionar "
+"varios clips) y:"
 
 #: C/insertintimeline.page:29(p)
 msgid "Dragging and dropping them onto place in the timeline."
-msgstr ""
+msgstr "Arrastrarlos y soltarlos en el lugar en la línea del tiempo."
 
 #: C/insertintimeline.page:30(p)
 msgid ""
 "Using <guiseq><gui>Library</gui><gui>Insert at End of Timeline</gui></"
 "guiseq>."
 msgstr ""
+"Usar <guiseq><gui>Biblioteca</gui><gui>Insertar al final de la línea del "
+"tiempo</gui></guiseq>."
 
 #: C/insertintimeline.page:31(p)
 msgid ""
 "Pressing the <key>Insert</key> (Ins) key. Those clips will be inserted at "
 "the end of the timeline."
 msgstr ""
+"Pulsar la tecla <key>Ins</key>. Estos clips se insertarán al final de la "
+"línea del tiempo."
 
 #: C/insertintimeline.page:34(p)
 msgid ""
@@ -1975,6 +1984,12 @@ msgid ""
 "\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">bug #570118</link> for "
 "more information."
 msgstr ""
+"También será posible importar archivos directamente en la línea del tiempo "
+"arrastrándolos desde otra aplicación y soltándolos en la línea del tiempo de "
+"<app>PiTiVi</app>. Los archivos se añadirán automáticamente a la biblioteca "
+"de medios en el proceso. Esta función aún no está implementada, consulte el "
+"<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">error n° "
+"570118</link> para obtener más información."
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -2002,12 +2017,19 @@ msgid ""
 "href=\"http://gnome.org\"><app>GNOME</app></link> and can appeal to newbies "
 "and professionals alike."
 msgstr ""
+"Construido sobe el entorno de trabajo multimedia <link href=\"http://en."
+"wikipedia.org/wiki/GStreamer\"><app>GStreamer</app></link>, <app>PiTiVi</"
+"app> pretende ser un editor de vídeo intuitivo y flexible que se integre "
+"bien con <link href=\"http://gnome.org\"><app>GNOME</app></link> y puede "
+"atraer a novatos y profesionales por igual."
 
 #: C/index.page:29(p)
 msgid ""
 "This guide is intended to help you grasp the concepts behind its design and "
 "get productive quickly."
 msgstr ""
+"Esta guía está destinada a ayudarle a entender los conceptos detrás de su "
+"diseño y ser productivo con rapidez."
 
 #: C/index.page:32(title)
 msgid "Introduction"
@@ -2019,7 +2041,7 @@ msgstr "Primeros Pasos"
 
 #: C/index.page:40(title)
 msgid "Basic Editing with the Timeline"
-msgstr ""
+msgstr "Edición básica con la línea de tiempo"
 
 #: C/index.page:44(title)
 msgid "Special Effects"
@@ -2031,7 +2053,7 @@ msgstr "Transiciones"
 
 #: C/index.page:52(title)
 msgid "Exporting Your Finished Movie"
-msgstr ""
+msgstr "Exportar su película terminada"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -2043,11 +2065,11 @@ msgstr ""
 
 #: C/importing.page:17(desc)
 msgid "Importing files into your project as clips."
-msgstr ""
+msgstr "Importar archivos en su proyecto como clips."
 
 #: C/importing.page:25(title)
 msgid "Getting media"
-msgstr ""
+msgstr "Obtener medios"
 
 #: C/importing.page:27(p)
 msgid ""
@@ -2057,22 +2079,29 @@ msgid ""
 "connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture "
 "footage."
 msgstr ""
+"En el momento de escribir esto, el único método soportado es importar "
+"archivos de su disco duro. Por lo tanto, no puede usar <app>PiTiVi</app> "
+"para capturar directamente desde una cámara de vídeo. Para cámaras de vídeo "
+"DV/HDV que usen una conexión IEEE 1394, debe usar <app>Kino</app> o "
+"<app>dvgrab</app> para capturar imágenes."
 
 #: C/importing.page:29(p)
 msgid "We would welcome good quality patches to implement the following:"
 msgstr ""
+"Los parches de buena calidad son bien recibidos para implementar lo "
+"siguiente:"
 
 #: C/importing.page:31(p)
 msgid "Capture from a DV or HDV camcorder using an IEEE 1394 connection."
-msgstr ""
+msgstr "Capturar de una cámara DV o HDV usando una conexión IEEE 1394."
 
 #: C/importing.page:32(p)
 msgid "Capture from a webcam."
-msgstr ""
+msgstr "Capturar desde una cámara web."
 
 #: C/importing.page:33(p)
 msgid "Dumping a network/Internet stream."
-msgstr ""
+msgstr "Descargar un flujo de red/Internet."
 
 #: C/importing.page:34(p)
 msgid "Importing from DVD."
