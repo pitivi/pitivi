@@ -339,9 +339,9 @@ class ProjectManager(Signallable, Loggable):
         if self.current is not None and not self.closeRunningProject():
             return False
 
-        # we don't have an URI here, None means we're loading a new project
         if emission:
             self.emit("new-project-loading", None)
+        # We don't have a URI here, None means we're loading a new project
         project = Project(_("New Project"))
 
         # setting default values for project metadata
@@ -531,7 +531,6 @@ class Project(Signallable, Loggable):
         oldsettings = self.settings
         self.settings = settings
         self.emit('settings-changed', oldsettings, settings)
-        self.seeker.flush()
 
     #}
 
