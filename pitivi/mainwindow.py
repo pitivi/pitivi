@@ -618,6 +618,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         abt.set_version(pitivi_version)
         gtk.about_dialog_set_url_hook(self._showWebsiteCb)
         abt.set_website(APPURL)
+        ges_version_str = "GES %i.%i.%i.%i" % (ges.version())
+        gst_version_str = "GStreamer %i.%i.%i.%i" % (gst.version())
+        pygst_version_str = "PyGST %i.%i.%i.%i" % (gst.get_pygst_version())
+        abt.set_comments("%s\n%s\n%s" % (ges_version_str, pygst_version_str, gst_version_str))
         authors = ["Edward Hervey <bilboed@bilboed.com>",
                    "Alessandro Decina <alessandro.decina@collabora.co.uk>",
                    "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)",
