@@ -755,6 +755,11 @@ class RenderDialog(Loggable):
         self.window = self.builder.get_object("render-dialog")
         self.selected_only_button = self.builder.get_object(
             "selected_only_button")
+        self.video_output_checkbutton = self.builder.get_object("video_output_checkbutton")
+        self.audio_output_checkbutton = self.builder.get_object("audio_output_checkbutton")
+        self.render_button = self.builder.get_object("render_button")
+        self.video_settings_button = self.builder.get_object("video_settings_button")
+        self.audio_settings_button = self.builder.get_object("audio_settings_button")
         self.frame_rate_combo = self.builder.get_object("frame_rate_combo")
         self.scale_spinbutton = self.builder.get_object("scale_spinbutton")
         self.channels_combo = self.builder.get_object("channels_combo")
@@ -966,16 +971,20 @@ class RenderDialog(Loggable):
         self.window.hide()  # Hide the rendering settings dialog while rendering
 
         # FIXME GES: Handle presets here!
-        # FIXME: Handle audio-only or video-only here
         self.containerprofile = gst.pbutils.EncodingContainerProfile(None, None,
-                gst.Caps(self.muxertype), None)
-        self.videoprofile = gst.pbutils.EncodingVideoProfile(gst.Caps(self.videotype),
-                None, self.settings.getVideoCaps(True), 0)
-        self.audioprofile = gst.pbutils.EncodingAudioProfile(gst.Caps(self.audiotype), None,
-                self.settings.getAudioCaps(), 0)
+                                    gst.Caps(self.muxertype), None)
 
-        self.containerprofile.add_profile(self.videoprofile)
-        self.containerprofile.add_profile(self.audioprofile)
+        if self.video_output_checkbutton.get_active():
+            self.videoprofile = gst.pbutils.EncodingVideoProfile(
+                                    gst.Caps(self.videotype), None,
+                                    self.settings.getVideoCaps(True), 0)
+            self.containerprofile.add_profile(self.videoprofile)
+        if self.audio_output_checkbutton.get_active():
+            self.audioprofile = gst.pbutils.EncodingAudioProfile(
+                                    gst.Caps(self.audiotype), None,
+                                    self.settings.getAudioCaps(), 0)
+            self.containerprofile.add_profile(self.audioprofile)
+
         self._pipeline.set_render_settings(self.outfile, self.containerprofile)
         self.startAction()
         self.progress.window.show()
@@ -1053,6 +1062,40 @@ class RenderDialog(Loggable):
                                          rate=settings.audiorate,
                                          depth=settings.audiodepth)
         self._displaySettings()
+
+    def _audioOutputCheckbuttonToggledCb(self, audio):
+        active = self.audio_output_checkbutton.get_active()
+        if active:
+            self.channels_combo.set_sensitive(True)
+            self.sample_rate_combo.set_sensitive(True)
+            self.sample_depth_combo.set_sensitive(True)
+            self.audio_encoder_combo.set_sensitive(True)
+            self.audio_settings_button.set_sensitive(True)
+            self.render_button.set_sensitive(True)
+        else:
+            self.channels_combo.set_sensitive(False)
+            self.sample_rate_combo.set_sensitive(False)
+            self.sample_depth_combo.set_sensitive(False)
+            self.audio_encoder_combo.set_sensitive(False)
+            self.audio_settings_button.set_sensitive(False)
+            if not self.video_output_checkbutton.get_active():
+                self.render_button.set_sensitive(False)
+
+    def _videoOutputCheckbuttonToggledCb(self, video):
+        active = self.video_output_checkbutton.get_active()
+        if active:
+            self.scale_spinbutton.set_sensitive(True)
+            self.frame_rate_combo.set_sensitive(True)
+            self.video_encoder_combo.set_sensitive(True)
+            self.video_settings_button.set_sensitive(True)
+            self.render_button.set_sensitive(True)
+        else:
+            self.scale_spinbutton.set_sensitive(False)
+            self.frame_rate_combo.set_sensitive(False)
+            self.video_encoder_combo.set_sensitive(False)
+            self.video_settings_button.set_sensitive(False)
+            if not self.audio_output_checkbutton.get_active():
+                self.render_button.set_sensitive(False)
 
     def _frameRateComboChangedCb(self, combo):
         framerate = get_combo_value(combo)
