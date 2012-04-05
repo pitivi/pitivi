@@ -5,7 +5,8 @@ ui_PYTHON =			\
 	depsmanager.py	\
 	filelisterrordialog.py	\
 	prefs.py		\
-	startupwizard.py
+	startupwizard.py \
+	clipmediaprops.py
 
 clean-local:
 	rm -rf *.pyc *.pyo

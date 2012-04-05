@@ -10,7 +10,9 @@ ui_DATA = \
 	projectsettings.ui	 \
 	depsmanager.ui	\
 	cliptransformation.ui \
-	startupwizard.ui
+	startupwizard.ui \
+	clipmediaprops.ui \
+	$(NULL)
 
 EXTRA_DIST = \
 	$(ui_DATA)
