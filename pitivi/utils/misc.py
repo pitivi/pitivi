@@ -88,6 +88,18 @@ def bin_contains(bin, element):
     return False
 
 
+def in_devel():
+    """
+    Returns True if the current PiTiVi instance is run from a git checkout
+    """
+    try:
+        # This code is the same as in the configure files
+        rd = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
+        return os.path.exists(os.path.join(rd, '.git'))
+    except:
+        return False
+
+
 #------------------------------ URI helpers   --------------------------------#
 def isWritable(path):
     """Check if the file/path is writable"""

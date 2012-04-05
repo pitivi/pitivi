@@ -37,6 +37,7 @@ from gtk import RecentManager
 from hashlib import md5
 
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import in_devel
 from pitivi.settings import GlobalSettings
 from pitivi.effects import EffectListWidget
 from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
@@ -615,7 +616,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _aboutCb(self, unused_action):
         abt = gtk.AboutDialog()
         abt.set_name(APPNAME)
-        abt.set_version(pitivi_version)
+        if in_devel:
+            abt.set_version("git")
+        else:
+            abt.set_version(pitivi_version)
         gtk.about_dialog_set_url_hook(self._showWebsiteCb)
         abt.set_website(APPURL)
         ges_version_str = "GES %i.%i.%i.%i" % (ges.version())
