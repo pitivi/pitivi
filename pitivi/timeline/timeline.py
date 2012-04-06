@@ -789,7 +789,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             if context.targets not in DND_EFFECT_LIST:
                 if not self._temp_objects and not self._creating_tckobjs_sigid:
                     self.timeline.enable_update(False)
-                    self._create_temp_source()
+                    self._create_temp_source(-1, -1)
 
                 # Let some time for TrackObject-s to be created
                 if self._temp_objects and not self._creating_tckobjs_sigid:
@@ -800,21 +800,28 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         return True
 
     def _dragLeaveCb(self, unused_layout, context, unused_tstamp):
+        """
+        During a drag and drop operation to the timeline, when the mouse exits
+        the timeline area, ensure the temporary objects we created are removed.
+        """
+        for tlobj in self._temp_objects:
+            layer = tlobj.get_layer()
+            layer.remove_object(tlobj)
         self._temp_objects = []
         self.drag_unhighlight()
-        self.timeline.enable_update(True)
+        self._move_context.finish()
+
+    def _recreateSource(self, x, y):
+        self.app.action_log.begin("add clip")
+        self.added = 0
+        self._create_temp_source(x, y)
+        self.app.action_log.commit()
+        self._factories = []
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
         if  context.targets not in DND_EFFECT_LIST:
-            self.app.action_log.begin("add clip")
-            self.selected = self._temp_objects
-            self._project.emit("selected-changed", set(self.selected))
-
-            self._move_context.finish()
-            self.app.action_log.commit()
+            gobject.timeout_add(300, self._recreateSource, x, y)
             context.drop_finish(True, timestamp)
-            self._factories = []
-
             return True
 
         elif context.targets in DND_EFFECT_LIST:
@@ -949,7 +956,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 if uri == tlobj.get_uri():
                     layer.remove_object(tlobj)
 
-    def _create_temp_source(self):
+    def _create_temp_source(self, x, y):
+        """
+        Create temporary clips to be displayed on the timeline during a
+        drag-and-drop operation.
+        """
         infos = self._factories
         layer = self._ensureLayer()[0]
         duration = 0
@@ -959,10 +970,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             src.props.start = duration
             duration += info.get_duration()
             layer.add_object(src)
-            id = src.connect("track-object-added", self._trackObjectsCreatedCb, src)
+            id = src.connect("track-object-added", self._trackObjectsCreatedCb, src, x, y)
             self._creating_tckobjs_sigid[src] = id
 
-    def _trackObjectsCreatedCb(self, unused_tl, track_object, tlobj):
+    def _trackObjectsCreatedCb(self, unused_tl, track_object, tlobj, x, y):
         # Make sure not to start the moving process before the TrackObject-s
         # are created. We concider that the time between the different
         # TrackObject-s creation is short enough so we are all good when the
@@ -970,6 +981,16 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._temp_objects.insert(0, tlobj)
         tlobj.disconnect(self._creating_tckobjs_sigid[tlobj])
         del self._creating_tckobjs_sigid[tlobj]
+        if x != -1 and not self.added:
+            focus = self._temp_objects[0]
+            self._move_context = MoveContext(self.timeline, focus,
+                                             set(self._temp_objects[1:]))
+            self._move_temp_source(self.hadj.props.value + x, y)
+            self.selected = self._temp_objects
+            self._project.emit("selected-changed", set(self.selected))
+            self._move_context.finish()
+            self._temp_objects = []
+            self.added = 1
 
     def _move_temp_source(self, x, y):
         x1, y1, x2, y2 = self._controls.get_allocation()
