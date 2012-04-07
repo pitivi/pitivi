@@ -452,7 +452,7 @@ class RenderDialog(Loggable):
         self.wg = RippleUpdateGroup()
         self.wg.addVertex(self.frame_rate_combo, signal="changed")
         self.wg.addVertex(self.save_render_preset_button,
-                 update_func=self._updateRenderSaveButton)
+                            update_func=self._updateRenderSaveButton)
         self.wg.addVertex(self.channels_combo, signal="changed")
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
         self.wg.addVertex(self.sample_depth_combo, signal="changed")
@@ -466,39 +466,25 @@ class RenderDialog(Loggable):
                 self.render_preset_treeview, self.render_presets,
                 self._updateRenderPresetButtons)
 
-        self.wg.addEdge(self.frame_rate_combo,
-            self.save_render_preset_button)
-        self.wg.addEdge(self.audio_encoder_combo,
-            self.save_render_preset_button)
-        self.wg.addEdge(self.video_encoder_combo,
-            self.save_render_preset_button)
-        self.wg.addEdge(self.muxercombobox,
-            self.save_render_preset_button)
-        self.wg.addEdge(self.channels_combo,
-            self.save_render_preset_button)
-        self.wg.addEdge(self.sample_rate_combo,
-            self.save_render_preset_button)
-        self.wg.addEdge(self.sample_depth_combo,
-            self.save_render_preset_button)
+        self.wg.addEdge(self.frame_rate_combo, self.save_render_preset_button)
+        self.wg.addEdge(self.audio_encoder_combo, self.save_render_preset_button)
+        self.wg.addEdge(self.video_encoder_combo, self.save_render_preset_button)
+        self.wg.addEdge(self.muxercombobox, self.save_render_preset_button)
+        self.wg.addEdge(self.channels_combo, self.save_render_preset_button)
+        self.wg.addEdge(self.sample_rate_combo, self.save_render_preset_button)
+        self.wg.addEdge(self.sample_depth_combo, self.save_render_preset_button)
 
         self._infobarForPresetManager = {
                 self.render_presets: self.render_preset_infobar}
 
         # Bind widgets to RenderPresetsManager
-        self.bindCombo(self.render_presets, "channels",
-            self.channels_combo)
-        self.bindCombo(self.render_presets, "sample-rate",
-            self.sample_rate_combo)
-        self.bindCombo(self.render_presets, "depth",
-            self.sample_depth_combo)
-        self.bindCombo(self.render_presets, "acodec",
-            self.audio_encoder_combo)
-        self.bindCombo(self.render_presets, "vcodec",
-            self.video_encoder_combo)
-        self.bindCombo(self.render_presets, "container",
-            self.muxercombobox)
-        self.bindCombo(self.render_presets, "frame-rate",
-            self.frame_rate_combo)
+        self.bindCombo(self.render_presets, "channels", self.channels_combo)
+        self.bindCombo(self.render_presets, "sample-rate", self.sample_rate_combo)
+        self.bindCombo(self.render_presets, "depth", self.sample_depth_combo)
+        self.bindCombo(self.render_presets, "acodec", self.audio_encoder_combo)
+        self.bindCombo(self.render_presets, "vcodec", self.video_encoder_combo)
+        self.bindCombo(self.render_presets, "container", self.muxercombobox)
+        self.bindCombo(self.render_presets, "frame-rate", self.frame_rate_combo)
         self.bindHeight(self.render_presets)
         self.bindWidth(self.render_presets)
 
@@ -633,13 +619,11 @@ class RenderDialog(Loggable):
         treeview.props.headers_visible = False
         model = mgr.getModel()
         treeview.set_model(model)
-        model.connect("row-inserted", self._newPresetCb,
-            column, renderer, treeview)
+        model.connect("row-inserted", self._newPresetCb, column, renderer, treeview)
         renderer.connect("edited", self._presetNameEditedCb, mgr)
-        renderer.connect("editing-started", self._presetNameEditingStartedCb,
-            mgr)
+        renderer.connect("editing-started", self._presetNameEditingStartedCb, mgr)
         treeview.get_selection().connect("changed", self._presetChangedCb,
-            mgr, update_buttons_func)
+                                        mgr, update_buttons_func)
         treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
 
     def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
@@ -753,8 +737,7 @@ class RenderDialog(Loggable):
 
     def _setProperties(self):
         self.window = self.builder.get_object("render-dialog")
-        self.selected_only_button = self.builder.get_object(
-            "selected_only_button")
+        self.selected_only_button = self.builder.get_object("selected_only_button")
         self.video_output_checkbutton = self.builder.get_object("video_output_checkbutton")
         self.audio_output_checkbutton = self.builder.get_object("audio_output_checkbutton")
         self.render_button = self.builder.get_object("render_button")
@@ -763,26 +746,18 @@ class RenderDialog(Loggable):
         self.frame_rate_combo = self.builder.get_object("frame_rate_combo")
         self.scale_spinbutton = self.builder.get_object("scale_spinbutton")
         self.channels_combo = self.builder.get_object("channels_combo")
-        self.sample_rate_combo = self.builder.get_object(
-                        "sample_rate_combo")
-        self.sample_depth_combo = self.builder.get_object(
-                        "sample_depth_combo")
+        self.sample_rate_combo = self.builder.get_object("sample_rate_combo")
+        self.sample_depth_combo = self.builder.get_object("sample_depth_combo")
         self.muxercombobox = self.builder.get_object("muxercombobox")
-        self.audio_encoder_combo = self.builder.get_object(
-            "audio_encoder_combo")
-        self.video_encoder_combo = self.builder.get_object(
-            "video_encoder_combo")
+        self.audio_encoder_combo = self.builder.get_object("audio_encoder_combo")
+        self.video_encoder_combo = self.builder.get_object("video_encoder_combo")
         self.filebutton = self.builder.get_object("filebutton")
         self.fileentry = self.builder.get_object("fileentry")
         self.resolution_label = self.builder.get_object("resolution_label")
-        self.render_preset_treeview = self.builder.get_object(
-                                        "render_preset_treeview")
-        self.save_render_preset_button = self.builder.get_object(
-                                        "save_render_preset_button")
-        self.remove_render_preset_button = self.builder.get_object(
-                                        "remove_render_preset_button")
-        self.render_preset_infobar = self.builder.get_object(
-            "render-preset-infobar")
+        self.render_preset_treeview = self.builder.get_object("render_preset_treeview")
+        self.save_render_preset_button = self.builder.get_object("save_render_preset_button")
+        self.remove_render_preset_button = self.builder.get_object("remove_render_preset_button")
+        self.render_preset_infobar = self.builder.get_object("render-preset-infobar")
 
     def _settingsChanged(self, settings):
         self.updateResolution()
@@ -895,8 +870,7 @@ class RenderDialog(Loggable):
         self._pipeline.set_state(gst.STATE_NULL)
         self._pipeline.set_mode(ges.TIMELINE_MODE_SMART_RENDER)
         encodebin = self._pipeline.get_by_name("internal-encodebin")
-        self._gstSigId[encodebin] = encodebin.connect("element-added",
-                self._elementAddedCb)
+        self._gstSigId[encodebin] = encodebin.connect("element-added", self._elementAddedCb)
         self.timestarted = time.time()
         self._pipeline.set_state(gst.STATE_PLAYING)
 
@@ -963,8 +937,10 @@ class RenderDialog(Loggable):
         self.dialog.window.destroy()
 
     def _renderButtonClickedCb(self, unused_button):
-        """ The render button inside the render dialog has been clicked,
-        start the rendering process. """
+        """
+        The render button inside the render dialog has been clicked,
+        start the rendering process.
+        """
         self.outfile = os.path.join(self.filebutton.get_uri(),
                                     self.fileentry.get_text())
         self.progress = RenderingProgressDialog(self.app, self)
