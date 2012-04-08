@@ -105,6 +105,10 @@ class TextWidget(gtk.HBox, DynamicWidget):
     __NORMAL__ = gtk.gdk.Color(0, 0, 0)
 
     def __init__(self, matches=None, choices=None, default=None):
+        if not default:
+            # In the case of text widgets, a blank default is an empty string
+            default = ""
+
         gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
 
@@ -742,8 +746,8 @@ def make_property_widget(unused_element, prop, value=None):
 
     if value == None:
         value = prop.default_value
-    if (type_name == 'gchararray'):
-        widget = TextWidget()
+    if type_name == "gchararray":
+        widget = TextWidget(default=prop.default_value)
     elif (type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat',
         'gulong', 'gdouble']):
 
