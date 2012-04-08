@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-04-02 09:11+0000\n"
-"PO-Revision-Date: 2012-04-04 09:47+0200\n"
+"POT-Creation-Date: 2012-04-04 10:57+0000\n"
+"PO-Revision-Date: 2012-04-08 12:17+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -916,8 +916,8 @@ msgid ""
 msgstr ""
 "Los ajustes predefinidos están ahí para ahorrar tiempo y reducir la "
 "complejidad. Los expertos pueden elegir simplemente ignorarlos y establecer "
-"todo manualmente; el ajuste predefinido «No hay configuración» es especial ya "
-"que automáticamente guarda sus cambios directamente en el archivo del "
+"todo manualmente; el ajuste predefinido «No hay configuración» es especial "
+"ya que automáticamente guarda sus cambios directamente en el archivo del "
 "proyecto."
 
 #: C/presets.page:45(title)
@@ -1594,8 +1594,9 @@ msgid ""
 "more information."
 msgstr ""
 "La característica <em>vista previa en vivo</em> aún no está implementada. "
-"Consulte el <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=569980"
-"\">el informe de error nº 569980</link> para obtener mayor información."
+"Consulte el <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
+"id=569980\">el informe de error nº 569980</link> para obtener mayor "
+"información."
 
 #: C/mainwindow.page:100(title)
 msgid "Media Library"
@@ -2017,7 +2018,7 @@ msgid ""
 "href=\"http://gnome.org\"><app>GNOME</app></link> and can appeal to newbies "
 "and professionals alike."
 msgstr ""
-"Construido sobe el entorno de trabajo multimedia <link href=\"http://en."
+"Construido sobre el entorno de trabajo multimedia <link href=\"http://en."
 "wikipedia.org/wiki/GStreamer\"><app>GStreamer</app></link>, <app>PiTiVi</"
 "app> pretende ser un editor de vídeo intuitivo y flexible que se integre "
 "bien con <link href=\"http://gnome.org\"><app>GNOME</app></link> y puede "
@@ -2118,6 +2119,10 @@ msgid ""
 "link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, "
 "etc."
 msgstr ""
+"Descargar de los proveedores de contenido tales como <link href=\"http://www."
+"jamendo.com\">Jamendo</link>, <link href=\"http://www.magnatune.com/"
+"\">Magnatune</link>, <link href=\"http://creativecommons.org/"
+"\">CreativeCommons</link>, etc."
 
 #: C/importing.page:42(title)
 msgid "Importing files"
@@ -2135,6 +2140,12 @@ msgid ""
 "Files...</gui></guiseq> menu, the <gui>Import Files...</gui> button on the "
 "main toolbar, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>."
 msgstr ""
+"Puede importar medios a la <gui>Biblioteca de medios</gui> usando el diálogo "
+"del selector de archivos, que la ventaja de permitirle visualizar "
+"previamente los archivos que quiere importar. Para hacer esto, use el menú "
+"<guiseq><gui>Biblioteca</gui><gui>Importar archivos...</gui></guiseq>, el "
+"botón en la barra de herramientas principal <gui>Importar archivos...</gui>, "
+"o pulse <keyseq><key>Ctrl</key><key>i</key></keyseq>."
 
 #: C/importing.page:46(p)
 msgid "The following file chooser dialog window will appear:"
@@ -2151,6 +2162,10 @@ msgid ""
 "subfolders) by using <guiseq><gui>Library</gui><gui>Import Folders...</gui></"
 "guiseq> in the menu bar."
 msgstr ""
+"Pulse <key>Ctrl</key> o <key>Mayús</key> para seleccionar varios archivos al "
+"mismo tiempo. También puede importar todos los archivos contenidos en una "
+"carpeta (y sus subcarpetas) usando en la barra de menú "
+"<guiseq><gui>Biblioteca</gui><gui>Importar carpetas...</gui></guiseq>."
 
 #: C/importing.page:55(title)
 msgid "Using drag and drop"
@@ -2164,6 +2179,11 @@ msgid ""
 "and drag them with your mouse onto <app>PiTiVi</app>'s <gui>Media Library</"
 "gui>."
 msgstr ""
+"El concepto de arrastrar y soltar es un método bien establecido para reducir "
+"la brecha entre las aplicaciones de software. Simplemente seleccione los "
+"archivos que quiera importar en otra aplicación (tal como un gestor de "
+"archivos o una aplicación multimedia) y arrastrelos con su ratón a la "
+"<gui>Biblioteca de Medios</gui> de <app>PiTiVi</app>."
 
 #: C/importing.page:57(p)
 msgid "This feature can be used to:"
@@ -2174,6 +2194,8 @@ msgid ""
 "Easily import music or video clips from a media player (such as "
 "<app>Rhythmbox</app> or <app>Totem</app>)."
 msgstr ""
+"Importar con facilidad música o clips de vídeo de un reproductor multimedia "
+"(tal como <app>Rhythmbox</app> o <app>Totem</app>)."
 
 #: C/importing.page:63(p)
 msgid ""
@@ -2181,10 +2203,14 @@ msgid ""
 "<app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of "
 "the file chooser dialog."
 msgstr ""
+"Permitir el uso de un gestor de archivos completo (tales como <app>Nautilus</"
+"app>, <app>Thunar</app>, <app>Dolphin</app> o <app>Konqueror</app>) en lugar "
+"del diálogo del selector de archivos."
 
 #: C/importing.page:66(p)
 msgid "Import a combination of multiple files and folders at the same time."
 msgstr ""
+"Importar una combinación de varios archivos y carpetas al mismo tiempo."
 
 #: C/importing.page:69(p)
 msgid ""
@@ -2192,12 +2218,17 @@ msgid ""
 "Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
 "<app>GNOME Search Tool</app>, etc.)."
 msgstr ""
+"Aprovechar la capacidad de búsqueda de otra aplicación (tales como "
+"<app>GNOME Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</"
+"app>, <app>GNOME Search Tool</app>, etc.)."
 
 #: C/importingmpegts.page:14(desc)
 msgid ""
 "How to convert .mts and .m2ts files to a format that can be parsed by "
 "GStreamer and PiTiVi."
 msgstr ""
+"Cómo convertir archivos .mts y .m2ts a un formato que GStreamer y PiTiVi "
+"puedan analizar."
 
 #. TODO: remove this manual page when gstreamer supports mpeg-ts files !
 #: C/importingmpegts.page:22(title)
@@ -2213,6 +2244,13 @@ msgid ""
 "<app>ffmpeg</app>. To convert losslessly to an MPEG4 container, you can use "
 "the following command:"
 msgstr ""
+"En este momento, los archivos de flujo de transporte MPEG (por lo general "
+"con extensiones de archivo como .mts, .m2ts y aveces .mpg o .mpeg), tales "
+"como los utilizados por algunas cámaras de vídeo HD, no se pueden reproducir "
+"de forma fiable con <app>GStreamer</app>. Por lo tanto, es posible que desee "
+"cambiarlos a un formato de contenedor diferente utilizando <app>ffmpeg</"
+"app>. Para convertir sin pérdida a un contenedor MPEG4, puede usar el "
+"siguiente comando:"
 
 #: C/importingmpegts.page:25(code)
 #, no-wrap
@@ -2224,6 +2262,8 @@ msgid ""
 "Ensuring you have the proper multimedia codecs and plugins installed for "
 "maximum compatibility."
 msgstr ""
+"Asegurarse de que dispone de los códecs multimedia apropiados y los "
+"complementos instalados para una máxima compatibilidad."
 
 #: C/gstreamer.page:25(title)
 msgid "Gstreamer and compatibility"
@@ -2236,22 +2276,30 @@ msgid ""
 "multimedia applications across desktop environments, operating systems and "
 "architectures."
 msgstr ""
+"La gran fortaleza en <app>PiTiVi</app> radica en su uso del entorno de "
+"trabajo multimedia <app>GStreamer</app>. <app>GStreamer</app> lo usan "
+"docenas de aplicaciones multimedia a través de entornos de escritorio, "
+"sistemas operativos y arquitecturas."
 
 #: C/gstreamer.page:28(p)
 msgid "This essentially means three things to you, the user:"
-msgstr ""
+msgstr "Esto significa esencialmente tres cosas para usted, el usuario:"
 
 #: C/gstreamer.page:31(p)
 msgid ""
 "You can, in theory, import pretty much any media file supported by "
 "<app>GStreamer</app> (but see the next section)."
 msgstr ""
+"Puede, en teoría, importar casi cualquier archivo multimedia soportado por "
+"<app>GStreamer</app> (pero consulte la siguiente sección)."
 
 #: C/gstreamer.page:34(p)
 msgid ""
 "You can render your projects using any supported container and codec "
 "combination from <app>GStreamer</app>."
 msgstr ""
+"Puede renderizar sus proyectos utilizando cualquier contenedor compatible y "
+"combinación de códec de <app>GStreamer</app>."
 
 #: C/gstreamer.page:37(p)
 msgid ""
@@ -2261,10 +2309,15 @@ msgid ""
 "problems directly in <app>GStreamer</app> (instead of putting temporary "
 "workarounds inside <app>PiTiVi</app>)."
 msgstr ""
+"Necesita la versión más reciente de <app>GStreamer</app> para maximizar las "
+"capacidades de <app>PiTiVi</app> y reducir las posibilidades de errores. "
+"Esto es porque los desarrolladores del proyecto de <app>PiTiVi</app> "
+"trabajan duro solucionando problemas directamente en <app>GStreamer</app> "
+"(en lugar de poner soluciones temporales dentro de <app>PiTiVi</app>."
 
 #: C/gstreamer.page:42(title)
 msgid "A word about editing-friendly codecs"
-msgstr ""
+msgstr "Un comentario acerca de los códecs de edición amigable"
 
 #: C/gstreamer.page:43(p)
 msgid ""
@@ -2274,6 +2327,12 @@ msgid ""
 "seeking) will not perform as well as they would with frame-independent "
 "compressed video (such as <em>MJPEG</em> or <em>DV</em>)."
 msgstr ""
+"Algunos formatos, como <em>MPEG</em>, están orientados solo hacia la "
+"reproducción, no a comprimir cada imagen de forma independiente. Mientras "
+"este es el objetivo de <app>PiTiVi</app> para ser compatible con el trabajo "
+"de estos archivos, ciertas operaciones (como la búsqueda rápida) no "
+"funcionará tan bien como lo harían con el vídeo comprimido de imágenes "
+"independientes (tales como <em>MJPEG</em> o <em>DV</em>)."
 
 #: C/gstreamer.page:47(title)
 msgid "The Good, the Bad and the Ugly"
@@ -2287,12 +2346,20 @@ msgid ""
 "install them is up to you, and may depend on your country's jurisdiction "
 "regarding software patents."
 msgstr ""
+"Los complementos de <app>GStreamer</app> vienen en tres categorías: buenos, "
+"feos y malos. Para maximizar su experiencia, necesita instalar algunos de "
+"los complementos para asegurar compatibilidad con sus archivos de medios. "
+"Los instale o no depende de usted, y dependerá de la jurisdicción de su país "
+"en relación con las patentes de software."
 
 #: C/gstreamer.page:50(p)
 msgid ""
 "The \"Good\" plugins are good quality plugins under the LGPL license. These "
 "plugins are considered safe and recommended at any time."
 msgstr ""
+"Los complementos «buenos» son complementos de buena calidad bajo la licencia "
+"LGPL. Estos complementos se consideran seguros y recomendados en todo "
+"momento."
 
 #: C/gstreamer.page:51(p)
 msgid ""
