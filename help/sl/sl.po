@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi help\n"
-"POT-Creation-Date: 2011-08-23 07:07+0000\n"
+"POT-Creation-Date: 2012-04-08 10:21+0000\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
+"Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME translation team <gnome-si@googlegroups.com>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -23,6 +23,7 @@ msgstr ""
 #: C/saveproject.page:11(name)
 #: C/rendering.page:10(name)
 #: C/projectsettings.page:10(name)
+#: C/presets.page:11(name)
 #: C/othertransitions.page:10(name)
 #: C/movearoundtimeline.page:10(name)
 #: C/medialibrary.page:10(name)
@@ -40,6 +41,7 @@ msgstr ""
 #: C/effectsanimation.page:10(name)
 #: C/effects.page:11(name)
 #: C/crossfading.page:11(name)
+#: C/codecscontainers.page:10(name)
 #: C/about.page:10(name)
 msgid "Jean-François Fortin Tam"
 msgstr "Jean-François Fortin Tam"
@@ -53,6 +55,7 @@ msgstr "Jean-François Fortin Tam"
 #: C/saveproject.page:12(email)
 #: C/rendering.page:11(email)
 #: C/projectsettings.page:11(email)
+#: C/presets.page:12(email)
 #: C/othertransitions.page:11(email)
 #: C/movearoundtimeline.page:11(email)
 #: C/medialibrary.page:11(email)
@@ -70,6 +73,7 @@ msgstr "Jean-François Fortin Tam"
 #: C/effectsanimation.page:11(email)
 #: C/effects.page:12(email)
 #: C/crossfading.page:12(email)
+#: C/codecscontainers.page:11(email)
 #: C/about.page:11(email)
 msgid "nekohayo@gmail.com"
 msgstr "nekohayo@gmail.com"
@@ -87,8 +91,9 @@ msgstr "Ustvarjanje novih projektov in odpiranje nedavnih projektov ob zagonu"
 #: C/saveproject.page:22(p)
 #: C/rendering.page:21(p)
 #: C/projectsettings.page:21(p)
+#: C/presets.page:15(p)
 #: C/othertransitions.page:19(p)
-#: C/movearoundtimeline.page:21(p)
+#: C/movearoundtimeline.page:23(p)
 #: C/medialibrary.page:17(p)
 #: C/makeselections.page:21(p)
 #: C/mainwindow.page:19(p)
@@ -104,6 +109,7 @@ msgstr "Ustvarjanje novih projektov in odpiranje nedavnih projektov ob zagonu"
 #: C/effectsanimation.page:15(p)
 #: C/effects.page:16(p)
 #: C/crossfading.page:22(p)
+#: C/codecscontainers.page:14(p)
 #: C/about.page:21(p)
 msgid "Creative Commons Share Alike 3.0"
 msgstr "Creative Commons - deljenje pod enakimi pogoji 3.0"
@@ -205,8 +211,8 @@ msgid "Using ripple editing while moving clips"
 msgstr "Uporaba zaporednega urejanja med premikanjem posnetkov"
 
 #: C/usingclips.page:43(p)
-msgid "While dragging clips around in the timeline, you can use the <link xref=\"rippletechnique\">ripple technique</link> to move the <em>following</em> clips (the clips that start after the one you're directly editing) to fill the gap."
-msgstr "Med premikanjem posnetkov po časovnici lahko uporabite <link xref=\"rippletechnique\">zaporedno tehniko</link> za premik <em>naslednjih</em> posnetkov (posnetkov, ki se začnejo za tistim, ki ga neposredno urejate) za zapolnitev vrzeli."
+msgid "While dragging clips around in the timeline, you can use the <link xref=\"trimming\">ripple technique</link> to move the <em>following</em> clips (the clips that start after the one you're directly editing) to fill the gap."
+msgstr "Med premikanjem posnetkov po časovnici lahko uporabite <link xref=\"trimming\"zaporedno tehniko</link> za premik <em>naslednjih</em> posnetkov (posnetkov, ki se začnejo za tistim, ki ga neposredno urejate) za zapolnitev vrzeli."
 
 #: C/usingclips.page:45(p)
 msgid "Click and drag the clip you want to move, with the mouse button held down"
@@ -319,8 +325,8 @@ msgid "Drag the trimming handle."
 msgstr "Povlecite ročnik obrezovanja."
 
 #: C/trimming.page:60(p)
-msgid "Ripple editing can also be used when moving clips around in the timeline. For detailed explanations on how to do this, see the section <link xref=\"rippleusingclips\">Using ripple editing while moving clips</link>."
-msgstr "Zaporedno urejanje lahko uporabite tudi za premikanje posnetkov v časovnici. Za podrobne razlage kako to storiti, si oglejte odsek <link xref=\"rippleusingclips\">Uporaba sosednjega urejanja med premikanju posnetkov</link>."
+msgid "Ripple editing can also be used when moving clips around in the timeline. For detailed explanations on how to do this, see the section <link xref=\"usingclips\">Using ripple editing while moving clips</link>."
+msgstr "Zaporedno urejanje lahko uporabite tudi za premikanje posnetkov v časovnici. Za podrobne razlage kako to storiti, si oglejte odsek <link xref=\"usingclips\">Uporaba sosednjega urejanja med premikanjem posnetkov</link>."
 
 #: C/trimming.page:64(title)
 msgid "Roll editing"
@@ -375,8 +381,8 @@ msgid "As the name implies, splitting a clip divides it into two adjacent clips,
 msgstr "Razdelitev posnetka ustvari dva sosednja posnetka z ustrezno ustvarjenima začetnima/končnima točkama."
 
 #: C/splitting.page:28(p)
-msgid "In <app>PiTiVi</app>, splitting is a “non-modal” operation; this means that you do not have to “activate” a particular tool before doing the split action. Splitting occurs where the playhead is currently located (see also <link xref=\"movingplayhead\">Moving the playhead</link>). Combined with zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless splitting is not only fast and efficient, it is also very accurate."
-msgstr "V <app>PiTiVi</app> se razdelitev posnetka izvede, kjer je trenutno glava predvajanja (oglejte si tudi <link xref=\"movingplayhead\">Premikanje glave predvajanja</link>). Skupaj s približevanjem, iskanjem sličico za sličico s tipkovnico ali drgnjenjem je takšno razdeljevanje hitro in učinkovito ter tudi zelo natančno."
+msgid "In <app>PiTiVi</app>, splitting is a “non-modal” operation; this means that you do not have to “activate” a particular tool before doing the split action. Splitting occurs where the playhead is currently located (see also <link xref=\"movearoundtimeline\">Moving the playhead</link>). Combined with zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless splitting is not only fast and efficient, it is also very accurate."
+msgstr "V <app>PiTiVi</app> se razdelitev posnetka izvede kot \"ne-modalno\" opravilo, kar pomeni, da vam pred razdelitvijo ni treba \"omogočiti\" določenega orodja. Razdeljevanje se izvede kjer se trenutno nahaja glava predvajanja (oglejte si tudi <link xref=\"movearoundtimeline\">Premikanje glave predvajanja</link>). Skupaj s približevanjem, iskanjem sličico za sličico s tipkovnico ali drgnjenjem je takšno razdeljevanje hitro in učinkovito ter tudi zelo natančno."
 
 #: C/splitting.page:29(p)
 msgid "Selections affect splitting in the following ways:"
@@ -485,6 +491,14 @@ msgstr "Ko projekt prvič shranite, se pojavi pogovorno okno, ki vas bo vprašal
 msgid "If you want to save your project as a different file, use <guiseq><gui>Project</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be used to create different versions of your project."
 msgstr "V primeru da želite svoj projekt shraniti kot drugo datoteko uporabite <guiseq><gui>Projekt</gui><gui>Shrani kot</gui></guiseq> ali pritisnite <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. To lahko uporabite za ustvarjanje različnih različic svojega projekta."
 
+#: C/saveproject.page:32(title)
+msgid "Reverting changes"
+msgstr "Povrnitev sprememb"
+
+#: C/saveproject.page:33(p)
+msgid "In addition to undoing individual changes, you can also decide to revert all the changes you have made since the last time you saved your project. To do so, use <guiseq><gui>Project</gui><gui>Revert</gui></guiseq>."
+msgstr "Poleg razveljavitve posameznih sprememb se lahko tudi odločite za povrnitev vseh sprememb, ki ste jih naredili odkar ste zadnjič shranili svoj projekt. Za to uporabite <guiseq><gui>Projekt</gui><gui>Povrni</gui></guiseq>."
+
 #: C/rendering.page:17(desc)
 msgid "Learn the difference between saving a project and exporting a rendered movie."
 msgstr "Naučite se razliko med shranjevanjem projekta in izvozom izrisanega filma."
@@ -545,53 +559,78 @@ msgstr "V <app>PiTiVi</app> sta razmerje velikosti točk in zaslona povezana sku
 msgid "You can use the ratios already provided in the combo boxes, or input a custom aspect ratio in the text entry below (using a syntax such as \"4:3\" or \"1.3333\", although the decimal version is less precise)."
 msgstr "Uporabite lahko razmerja iz spustnih polj ali v besedilni vnos spodaj vnesete razmerje velikosti po meri (z uporabo skladnje kot je \"4:3\" ali \"1,3333\" . Decimalna različica je manj natančna)."
 
-#: C/projectsettings.page:38(title)
+#: C/presets.page:19(title)
 msgid "Presets"
 msgstr "Prednastavljene"
 
-#: C/projectsettings.page:39(p)
-msgid "The project settings dialog allows you to save presets for later use. If you often deal with the same kind of project settings or with different cameras using different settings, you may want to create custom presets."
-msgstr "Pogovorno okno nastavitev projekta vam omogoča nastavitev vrednosti za prihodnjo uporabo. V primeru da se pogosto ukvarjate z isto vrsto nastavitve projekta ali z različnimi kamerami z različnimi nastavitvami, boste morda želeli ustvariti prednastavljene vrednosti po meri."
+#: C/presets.page:20(p)
+msgid "Both the project settings dialog and the rendering dialog allow you to save presets for later use. If you often deal with the same kind of project settings, with different cameras or target devices for rendering, you may want to create custom presets."
+msgstr "Pogovorno okno nastavitev projekta in izrisovanja vam omogoča nastavitev prednstavljenih vrednosti za prihodnjo uporabo. V primeru da se pogosto ukvarjate z isto vrsto nastavitve projekta ali z različnimi kamerami z različnimi nastavitvami za izrisovanje, boste morda želeli ustvariti prednastavljene vrednosti po meri."
 
-#: C/projectsettings.page:40(p)
-msgid "Video presets and audio presets are independent of each other."
-msgstr "Prednastavljene vrednosti zvoka in videa so med sabo neodvisne. "
+#: C/presets.page:21(p)
+msgid "While project settings concern themselves with global settings (such as resolution, framerate, aspect ratio and number of audio channels), the rendering presets are concerned with codecs and device constraints (for example, a handheld device or television may have a maximum screen resolution and framerate, which is not necessarily the case if you are exporting to a laptop or a website). As such, the presets in the rendering dialog are related to the project settings, but they govern different things."
+msgstr "Nastavitve projekta se ukvarjajo s splošnimi nastavitvami (kot so ločljivost, hitrost sličic, razmerje velikosti in število zvočnih kanalov), prednastavljene vrednosti izrisovanja pa so omejene na kodeke in omejitve naprav (na primer prenosni predvajalnik ali televizija ima morda največjo ločljivost zaslona in hitrost sličic, ki ni v veljavi, če video izvažate na prenosnik ali spletišče). Prendnastavljene vrednosti v pogovornem oknu izrisovanja so povezane z nastavitvami projekta, vendar upravljajo z drugimi stvarmi."
 
-#: C/projectsettings.page:41(p)
+#: C/presets.page:22(p)
+msgid "In project settings, video presets and audio presets are independent of each other."
+msgstr "V nastavitvah projekta so prednastavljene vrednosti zvoka in videa med sabo neodvisne. "
+
+#: C/presets.page:24(title)
+msgid "Creating and editing presets"
+msgstr "Ustvarjanje in urejanje prednastavljenih"
+
+#: C/presets.page:25(p)
 msgid "To create a preset:"
 msgstr "Za ustvaritev prednastavljene vrendosti:"
 
-#: C/projectsettings.page:43(p)
-msgid "Change the video (or audio) settings to your liking."
-msgstr "Spremenite nastavitev videa (ali zvoka) po svojih željah."
-
-#: C/projectsettings.page:44(p)
-msgid "Click the <gui>Add</gui> button."
-msgstr "Kliknite <gui>Dodaj</gui>."
-
-#: C/projectsettings.page:45(p)
-msgid "Give your preset a unique name: while the preset is selected in the list, click on its name to toggle editing mode. When you're done, press <key>Enter</key>."
-msgstr "Prednastavljenim nastavitvam dajte edinstveno ime: medtem ko je prednastavljena nastavitev izbrana na seznamu kliknite na njeno ime za preklop na način urejanja. Ko ste končali, pritisnite <key>Enter</key>."
-
-#: C/projectsettings.page:47(p)
-msgid "To edit a preset:"
-msgstr "Za urejanje prednastavljene vrednosti:"
-
-#: C/projectsettings.page:49(p)
-msgid "Select your preset in the list of existing presets."
-msgstr "Izberite svoje prednastavljene nastavitve s seznama obstoječih prednastavljenih nastavitev."
-
-#: C/projectsettings.page:50(p)
+#: C/presets.page:27(p)
+#: C/presets.page:34(p)
 msgid "Change the settings to your liking."
 msgstr "Spremenite nastavitve po svojih željah."
 
-#: C/projectsettings.page:51(p)
+#: C/presets.page:28(p)
+msgid "Click the <gui>Add</gui> button."
+msgstr "Kliknite <gui>Dodaj</gui>."
+
+#: C/presets.page:29(p)
+msgid "Give your preset a unique name: while the preset is selected in the list, click on its name to toggle editing mode. When you're done, press <key>Enter</key>."
+msgstr "Prednastavljenim nastavitvam dajte edinstveno ime: medtem ko je prednastavljena nastavitev izbrana na seznamu kliknite na njeno ime za preklop na način urejanja. Ko ste končali, pritisnite <key>Enter</key>."
+
+#: C/presets.page:31(p)
+msgid "To edit a preset:"
+msgstr "Za urejanje prednastavljene vrednosti:"
+
+#: C/presets.page:33(p)
+msgid "Select your preset in the list of existing presets."
+msgstr "Izberite svoje prednastavljene nastavitve s seznama obstoječih prednastavljenih nastavitev."
+
+#: C/presets.page:35(p)
 msgid "Click the <gui>Save</gui> button."
 msgstr "Kliknite na gumb <gui>Shrani</gui>."
 
-#: C/projectsettings.page:53(p)
+#: C/presets.page:37(p)
 msgid "To remove a preset, simply select it in the list of presets and press the <gui>Remove</gui> button."
 msgstr "Za odstranitev prednastavljenih nastavitev, jih izberite s seznama nastavitev in pritisnite gumb <gui>Odstrani</gui>."
+
+#: C/presets.page:38(p)
+msgid "Some presets are provided by default and cannot be removed."
+msgstr "Nekatere prednastavljene vrednosti so privzeto zagotovljene in jih ni mogoče odstraniti."
+
+#: C/presets.page:41(title)
+msgid "Ignoring presets"
+msgstr "Prezrtje prednstavljenih"
+
+#: C/presets.page:42(p)
+msgid "Presets are there to save time and reduce complexity. Experts can choose to simply ignore them and set everything manually; the \"No preset\" preset is a special preset that automatically saves its changes directly in the project file."
+msgstr "Prednastavljene vrednosti poskušajo prihraniti čas in zmanjšati zapletenost. Izvedenci jih lahko prezrejo in vse nastavijo ročno, prednastavljena vrednost \"Brez prednastavljene vrednosti\" je posebna prednastavljena vredost, ki vse shrani neposredno v datoteko projekta."
+
+#: C/presets.page:45(title)
+msgid "Limiting the resolution of a rendering preset"
+msgstr "Omejitev ločljivosti prednastavljenega izrisovanja"
+
+#: C/presets.page:46(p)
+msgid "If you want to make a preset with a fixed maximum resolution, you need to edit the preset file with a text editor. Presets files are typically stored in ~/.local/share/pitivi/ ; since many devices don't have a maximum resolution, the width/height are set to 0 (unlimited) by default. You can change these values to the maximum resolution of your target device."
+msgstr "Če želite narediti prednastavljeno vrednost s stalno največjo ločljivostjo, boste morali urediti prednastavljeno datoteko z urejevalnikom besedila. Prednastavljene datoteke so običajno shranjene v ~/.local/share/pitivi/. Ker veliko naprav nima največje ločljivosti, sta širina/višina privzeto nastavljeni na 0 (neomejeno). Te vrednosti lahko spremenite na največjo vrednost ciljne naprave."
 
 #: C/othertransitions.page:23(title)
 msgid "Other transitions"
@@ -601,99 +640,139 @@ msgstr "Drugi prehodi"
 msgid "Other types of transitions (such as wipes) are not yet implemented (see <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug #609353</link>)."
 msgstr "Druge vrste prehodov (kot je brisanje) še niso podprte (oglejte si <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">hrošč 609353</link>)."
 
-#: C/movearoundtimeline.page:17(desc)
+#: C/movearoundtimeline.page:16(name)
+msgid "Brian Grohe"
+msgstr "Brian Grohe"
+
+#: C/movearoundtimeline.page:17(email)
+msgid "grohe43@gmail.com"
+msgstr "grohe43@gmail.com"
+
+#: C/movearoundtimeline.page:19(desc)
 msgid "Moving the playhead, using the zoom feature, scrolling and scrubbing."
 msgstr "Premikanje glave predvajanja, uporaba zmožnosti približanja, drsenje in drgnjenje."
 
-#: C/movearoundtimeline.page:25(title)
+#: C/movearoundtimeline.page:27(title)
 msgid "Moving around the timeline"
 msgstr "Premikanje okoli časovnice"
 
-#: C/movearoundtimeline.page:28(title)
+#: C/movearoundtimeline.page:30(title)
+msgid "Activating the timeline toolbar"
+msgstr "Omogočanje orodne vrstice časovnice"
+
+#: C/movearoundtimeline.page:31(p)
+msgid "The timeline toolbar contains many tools, which become active once a clip is selected in the timeline. To select a clip, simply click on the desired clip in the timeline. When selected, the clip will become darker and the timeline toolbar items will now be clickable."
+msgstr "Orodna vrstica časovnice vsebuje veliko orodij, ki postanejo dejavna, ko je posnetek izbran v časovnici. Za izbiro posnetka, enostavno kliknite na želen posnetek v časovnici. Ko je izbran, posnetek postane temnejši in na predmete orodne vrstice je mogoče klikniti."
+
+#: C/movearoundtimeline.page:35(title)
 msgid "Scrolling"
 msgstr "Drsenje"
 
-#: C/movearoundtimeline.page:29(p)
+#: C/movearoundtimeline.page:36(p)
 msgid "You can use the scrollbars (located on the right and bottom of the timeline), use the mouse wheel anywhere over the timeline to scroll horizontally, or hold down the <key>Shift</key> key while using the mousewheel to scroll the timeline layers vertically."
 msgstr "Za premik lahko uporabite drsnike (najdete jih na desni in pod časovnicami), miškin kolešček kjerkoli nad časovnico za drsenje vodoravno ali držite tipko <key>Shift</key> medtem ko z miškinim koleščkom navpično drsite po plasteh časovnice."
 
-#: C/movearoundtimeline.page:33(title)
+#: C/movearoundtimeline.page:40(title)
 msgid "Zooming"
 msgstr "Približevanje"
 
-#: C/movearoundtimeline.page:34(p)
+#: C/movearoundtimeline.page:41(p)
 msgid "Zooming directly affects your editing accuracy and your ability to move quickly along the timeline:"
 msgstr "Približanje vpliva na vašo natančnost urejanje in na zmožnost hitrega premikanja po časovnici:"
 
-#: C/movearoundtimeline.page:36(p)
+#: C/movearoundtimeline.page:43(p)
 msgid "When zooming in, video clips display more thumbnails and audio clips display increasingly detailed waveforms, allowing you to do precise edits."
 msgstr "Med približevanjem video posnetki prikažejo več sličic, zvočni posnetki pa prikazujejo čedalje boj podrobne valovne oblike, kar vam omogoča natančnejše urejanje."
 
-#: C/movearoundtimeline.page:37(p)
+#: C/movearoundtimeline.page:44(p)
 msgid "Zooming out allows you to scroll faster along the timeline. Zoom can thus be used in conjunction with scrolling to move quickly between distant points of your project's chronology."
 msgstr "Oddaljevanje vam omogoča hitrejše brskanje po časovnici. Približanje lahko uporabite skupaj z drsenjem za hitro premikanje med oddaljenimi točkami."
 
-#: C/movearoundtimeline.page:39(p)
-msgid "You can zoom in and out by holding the <key>Ctrl</key> key while using the mousewheel over the timeline, using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and <guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq>menu items, or dragging the zoom slider on the left of the ruler."
-msgstr "Približate in oddaljite se lahko s pritiskom na tipko <key>Ctrl</key> medtem ko uporabljate miškin kolešček nad časovnico, z uporabo predmetov menija <guiseq><gui>Pogled</gui><gui>Približaj</gui></guiseq> in <guiseq><gui>Pogled</gui><gui>Oddalji</gui></guiseq> ali z vlečenjem drsnika približanja levo od ravnila."
+#: C/movearoundtimeline.page:46(p)
+msgid "You can zoom in and out by:"
+msgstr "Približate in oddaljite se lahko z:"
 
-#: C/movearoundtimeline.page:41(title)
-msgid "<em>Warping</em> between zoom levels"
-msgstr "<em>Skok</em> med ravnmi približanja"
+#: C/movearoundtimeline.page:48(p)
+msgid "Holding the <key>Ctrl</key> key while using the mousewheel over the timeline"
+msgstr "Držanje tipke <key>Ctrl</key> medtem ko uporabljate miškin kolešček nad časovnico"
 
-#: C/movearoundtimeline.page:42(p)
-msgid "Using your mouse's scroll wheel, you can also <em>warp</em> instantly from any zoom level to another in a single click. To do that, click with your mousewheel anywhere on the zoom slider."
-msgstr "Z uporabo miškinega drsnega koleščka lahko hipno <em>skočite</em> iz ene ravni približanja na drugo. To lahko storite tako, da z miškim koleščkom kliknite kamorkoli na drsnik približanja."
+#: C/movearoundtimeline.page:49(p)
+msgid "Using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and <guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq> menu items"
+msgstr "Z uporabo predmetov menija <guiseq><gui>Pogled</gui><gui>Približaj</gui></guiseq> in <guiseq><gui>Pogled</gui><gui>Oddalji</gui></guiseq>"
 
-#: C/movearoundtimeline.page:45(p)
+#: C/movearoundtimeline.page:50(p)
+msgid "Dragging the zoom slider on the left of the ruler"
+msgstr "Vlečenjem drsnika približanja na levo stran ravnila"
+
+#: C/movearoundtimeline.page:51(p)
+msgid "Using keyboard shortcuts such as <key>Ctrl</key>+<key>-</key> to zoom out or <key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> on the numeric keypad) to zoom in"
+msgstr "Uporaba tipkovnih bližnjic kot je <key>Ctrl</key>+<key>-</key>  za oddaljevanje ali <key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> na številski tipkovnici) za približanje."
+
+#: C/movearoundtimeline.page:53(p)
 msgid "To get a better overview of your timeline, you may use the <guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the <gui>Zoom</gui> button on the left of the zoom slider."
 msgstr "Za boljši pregled svoje časovnice lahko uporabite predmet menija <guiseq><gui>Pogled</gui><gui>Najboljše prileganje</gui></guiseq> ali kliknite na gumb <gui>Približaj</gui> levo od drsnika približanja. "
 
-#: C/movearoundtimeline.page:49(title)
+#: C/movearoundtimeline.page:56(title)
+msgid "Zooming is always centered around the location of your playhead"
+msgstr "Približevanje je vedno središčeno okoli mesta glave predvajanja"
+
+#: C/movearoundtimeline.page:57(p)
+msgid "When using the mouse wheel to zoom in and out, remember that the zoom is not relative to the position of your mouse, only to the position of the playhead on the timeline."
+msgstr "Ko uporabljate miškin kolešček ta približanje in oddaljevanje, si zapomnite, da približanje ni relativno na položaj vaše miške ampak na položaj glave predvajanja na časovnici."
+
+#: C/movearoundtimeline.page:61(title)
+msgid "<em>Warping</em> between zoom levels"
+msgstr "<em>Skok</em> med ravnmi približanja"
+
+#: C/movearoundtimeline.page:62(p)
+msgid "Using your mouse's scroll wheel, you can also <em>warp</em> instantly from any zoom level to another in a single click. To do that, click with your mousewheel anywhere on the zoom slider."
+msgstr "Z uporabo miškinega drsnega koleščka lahko hipno <em>skočite</em> iz ene ravni približanja na drugo. To lahko storite tako, da z miškim koleščkom kliknite kamorkoli na drsnik približanja."
+
+#: C/movearoundtimeline.page:67(title)
 msgid "Moving the playhead"
 msgstr "Premikanje igralne glave"
 
-#: C/movearoundtimeline.page:50(p)
+#: C/movearoundtimeline.page:68(p)
 msgid "You can change the position of the playhead by clicking anywhere on the ruler or on the timeline."
 msgstr "Položaj glave predvajanja lahko spremenite s klikom kamorkoli na ravnilu ali na časovnici."
 
-#: C/movearoundtimeline.page:51(p)
+#: C/movearoundtimeline.page:69(p)
 msgid "When clicking on the <em>timeline</em>:"
 msgstr "Ko kliknete na <em>časovnico</em>:"
 
-#: C/movearoundtimeline.page:53(p)
-msgid "If a clip is under the mouse cursor, it will replace the current clip selection (see the <link xref=\"selectmulti\">Selecting multiple items</link> section for more detailed instructions)."
-msgstr "V primeru da je posnetek pod miškinim kazalcem, bo zamenjal trenutno izbiro posnetka (za podrobnejša navodila si oglejte odsek  <link xref=\"selectmulti\">Izbiranje več predmetov</link>)."
+#: C/movearoundtimeline.page:71(p)
+msgid "If a clip is under the mouse cursor, it will replace the current clip selection (see the <link xref=\"makeselections\">Selecting multiple items</link> section for more detailed instructions)."
+msgstr "V primeru da je posnetek pod miškinim kazalcem, bo zamenjal trenutno izbiro posnetka (za podrobnejša navodila si oglejte odsek  <link xref=\"makeselections\"\">Izbiranje več predmetov</link>)."
 
-#: C/movearoundtimeline.page:54(p)
+#: C/movearoundtimeline.page:72(p)
 msgid "If there is no clip under the cursor, all selected clips (if any) will be deselected."
 msgstr "V primeru da pod kazalcem ni posnetka, bo izbira morebitnih izbranih posnetkov odstranjena."
 
-#: C/movearoundtimeline.page:56(p)
+#: C/movearoundtimeline.page:74(p)
 msgid "When clicking on the ruler, only the playhead's position changes; clip selections are not affected."
 msgstr "Ob kliku na ravnilo se spremeni le položaj glave predvajanja. Na izbiro posnetkov ni vpliva."
 
-#: C/movearoundtimeline.page:60(title)
+#: C/movearoundtimeline.page:78(title)
 msgid "Scrubbing"
 msgstr "Drgnjenje"
 
-#: C/movearoundtimeline.page:61(p)
+#: C/movearoundtimeline.page:79(p)
 msgid "<em>Scrubbing</em> is a way of moving the playhead that allows you to:"
 msgstr "<em>Drgnjenje</em> je način premikanja glave predvajanja, ki vam omogoča:"
 
-#: C/movearoundtimeline.page:63(p)
+#: C/movearoundtimeline.page:81(p)
 msgid "Search for a specific position in time by approximation/trial and error."
 msgstr "Iskanje določenega položaja z oceno/poskušanjem."
 
-#: C/movearoundtimeline.page:64(p)
+#: C/movearoundtimeline.page:82(p)
 msgid "Review repeatedly the visual motion in a scene by moving back and forth in time."
 msgstr "Ponoven pregled vidnega gibanja na sceni s premikom naprej in nazaj v času. "
 
-#: C/movearoundtimeline.page:66(p)
+#: C/movearoundtimeline.page:84(p)
 msgid "To scrub, click on the ruler and move the mouse with the button still held down."
 msgstr "Za drgnjenje kliknite na ravnilo in premaknite miško medtem ko še vedno držite gumb."
 
-#: C/movearoundtimeline.page:67(p)
+#: C/movearoundtimeline.page:85(p)
 msgid "You can also scrub by dragging the black vertical line that stems from the playhead and spans across the timeline."
 msgstr "Drgnete lahko tudi z vlečenje črne navpične črte, ki izhaja iz glave predvajanja in sega čez časovnico."
 
@@ -898,8 +977,8 @@ msgid "When zoomed in, frames are visually represented on the ruler as alternati
 msgstr "Ko jih boste približali, bodo sličice vidno predstavljene na ravnilu kot izmenjujoča se svetla in temna področja na spodnjem delu. Področja so odvisna od nastavitev hitrosti sličic projekta."
 
 #: C/mainwindow.page:59(p)
-msgid "To move your position in time, click anywhere on the ruler. You can also <em>scrub</em> the timeline by clicking on the ruler and holding down the mouse button while moving. See the <link xref=\"scrubbing\">Scrubbing</link> section for more details."
-msgstr "Za premik vašega položaja v času kliknite kjerkoli na ravnilu. Časovnico lahko tudi <em>drgnete</em> s klikom na ravnilo in držanjem miškinga gumba medtem ko se premikate. Oglejte si odsek <link xref=\"scrubbing\">Drgnjenje</link> za več podrobnosti."
+msgid "To move your position in time, click anywhere on the ruler. You can also <em>scrub</em> the timeline by clicking on the ruler and holding down the mouse button while moving. See the section on <link xref=\"movearoundtimeline\">scrubbing</link> for more details."
+msgstr "Za premik vašega položaja v času kliknite kjerkoli na ravnilu. Časovnico lahko tudi <em>drgnete</em> s klikom na ravnilo in držanjem miškinega gumba medtem ko se premikate. Oglejte si odsek <link xref=\"movearoundtimeline\"\">Drgnjenje</link> za več podrobnosti."
 
 #: C/mainwindow.page:63(title)
 msgid "Marker bar"
@@ -1332,7 +1411,7 @@ msgid "Allow using a full-fledged file manager (such as <app>Nautilus</app>, <ap
 msgstr "Uporaba upravljalnika datotek (kot je <app>Nautilus</app>, <app>Thunar</app>, <app>Dolphin</app> ali <app>Konqueror</app>) namesto pogovornega okna izbirnika datotek."
 
 #: C/importing.page:66(p)
-msgid "Import a combination of files and folders at the same time."
+msgid "Import a combination of multiple files and folders at the same time."
 msgstr "Uvoz kombinacije map in datotek hkrati."
 
 #: C/importing.page:69(p)
@@ -1416,6 +1495,14 @@ msgstr "Vstavki \"Ugly\" so vstavki dobre kakovosti, ki niso licencirani pod LGP
 #: C/gstreamer.page:54(p)
 msgid "In addition to the Good, Bad and Ugly plugins, you may want to install gstreamer-ffmpeg to have access to ffmpeg's set of codecs."
 msgstr "Poleg vstavkov Good, Bad in Ugly boste morda želeli za dostop do zbirke kodekov ffmpeg namesti paket gstreamer-ffmpeg."
+
+#: C/gstreamer.page:59(title)
+msgid "Image file formats"
+msgstr "Podprte vrste datotek"
+
+#: C/gstreamer.page:60(p)
+msgid "While it is not feasible to list every possible combination of supported video or audio formats, it is however possible to list the static image formats that can be imported: JPEG, PNG, JPEG 2000, PNM and SVG."
+msgstr "Izpis vseh mogočih kombinacij podprtih vrst zvoka in videa nima smisla. Mogoče pa je izpisati seznam statičnih slik, ki jih je mogoče uvoziti: JPEG, PNG, JPEG 2000, PNM in SVG."
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -1516,9 +1603,24 @@ msgid "Choose an effect in the effect library"
 msgstr "Izberite učinek v knjižnici učinkov"
 
 #: C/effects.page:38(p)
-#, fuzzy
-msgid "Drag the chosen effect into the <gui>Clip configuration</gui> pane's <gui>Effects section To remove an effect on a selected clip, select it in the clip's effect list and click the Remove button. Toggling effects on and off If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the effect properties pane. Currently, effects are applied on a \"per-clip\" basis. It is not yet possible to apply effects to timeline layers. </gui>"
-msgstr "Povlecite izbrani učinek v odsek <gui>Učinki</gui> na pladnju <gui>Nastavitev posnetka</gui>. Za odstranitev učinka na izbranem posnetku ga izberite na seznamu učinkov posnetka in kliknite na gumb Odstrani. "
+msgid "Drag the chosen effect into the <gui>Clip configuration</gui> pane's <gui>Effects</gui> section"
+msgstr "Povlecite izbrani učinek na odsek <gui>Učinki</gui> na pladnju <gui>Nastavitev posnetka</gui>"
+
+#: C/effects.page:40(p)
+msgid "To remove an effect on a selected clip, select it in the clip's effect list and click the <gui>Remove</gui> button."
+msgstr "Za odstranitev učinka izbranega posnetka ga izberite na seznamu učinkov posnetka in kliknite na gumb <gui>Odstrani</gui>."
+
+#: C/effects.page:43(title)
+msgid "Toggling effects on and off"
+msgstr "Vklop in izklop učinkov"
+
+#: C/effects.page:44(p)
+msgid "If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the effect properties pane."
+msgstr "V primeru da želite učinek začasno onemogočiti (za primerjavo videza z in brez učinka ali zaradi večje hitrosti delovanja) kliknite na ustrezno izbiro polje in pladenj lastnosti učinkov."
+
+#: C/effects.page:46(p)
+msgid "Currently, effects are applied on a \"per-clip\" basis. It is not yet possible to apply effects to timeline layers."
+msgstr "Trenutno so učinki uveljavljeni na posnetek. Trenutni še ni mogoče uveljaviti učinkov na plasteh časovnic."
 
 #: C/crossfading.page:18(desc)
 msgid "Making two clips fade into each other."
@@ -1539,6 +1641,40 @@ msgstr "Postopne prehode je mogoče doseči z zmožnostmi mešanja videa <app>Pi
 #: C/crossfading.page:31(p)
 msgid "This also means that if you set opacity keyframes for that clip, they will be taken into account for the crossfade."
 msgstr "To pomeni tudi, da bodo nastavitve prekrivnosti ključne sličice za ta posnetek upoštevane pri postopnem prehodu. "
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/codecscontainers.page:26(None)
+msgid "@@image: 'figures/codecscontainers.jpg'; md5=e43e6a92cda311d0cd8c24fb0df67a17"
+msgstr "@@image: 'figures/codecscontainers.jpg'; md5=e43e6a92cda311d0cd8c24fb0df67a17"
+
+#: C/codecscontainers.page:16(desc)
+msgid "What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? Learn about codecs and container formats here."
+msgstr "Kakšna je razlika med OGG in Vorbis? AVI in DivX? x264 in H.264? Tukaj se naučite o kodekih in vsebnikih."
+
+#: C/codecscontainers.page:19(title)
+msgid "Understanding codecs and containers"
+msgstr "Razumevanje kodekov in vsebnikov"
+
+#: C/codecscontainers.page:20(p)
+msgid "The following is one of the most complex topics of video editing. Many people do not know the distinction between codecs and container file formats, thanks in part to the general lack of standardization, confusing marketing terms and filename extensions."
+msgstr "Naslednja tema je ena od najbolj zapletenih tem urejanja videa. Veliko ljudi ne pozna razlike med kodeki in datotekami vsebnika deloma po zaslugi pomanjkanju standardizacije, zmedenimi marketinškimi izrazi in pripon datotek."
+
+#: C/codecscontainers.page:21(p)
+msgid "This guide is an attempt at clarifying this distinction without going into technical details. If you want to learn more about containers and codecs, you should probably look at Wikipedia's page on <link href=\"http://en.wikipedia.org/wiki/Container_format_(digital)\">containers</link> and <link href=\"http://en.wikipedia.org/wiki/Codec\">codecs</link>."
+msgstr "Ta vodnik je poskus razjasniti to razliko ne da bi zašli v tehnične podrobnosti. Če se želite naučiti več o vsebnikih in kodekih, si oglejte strani Wikipedije o  <link href=\"http://en.wikipedia.org/wiki/Container_format_(digital)\">vsebnikih</link> in <link href=\"http://en.wikipedia.org/wiki/Codec\">kodekih</link>."
+
+#: C/codecscontainers.page:22(p)
+msgid "Basically, a container is what we typically associate with the file format. Containers \"contain\" the various components of a video: the stream of images, the sound, and anything else. For example, you could have multiple soundtracks and subtitles included in a video file, if the container format allows it. Example of popular containers are OGG, Matroska, AVI, MPEG."
+msgstr "Z vsebnikom običajno povežemo vrsto datoteke. Vsebiniki \"vsebujejo\" različne sestavne dele videa: pretok slik, zvok in vse drugo. Na primer, v video datoteki imate lahko vključenih več skladb in podnapisov, če to oblika vsebnika dovoljuje. Priemri priljubljenih vsebnikov so OGG, Matroska, AVI in MPEG. "
+
+#: C/codecscontainers.page:23(p)
+msgid "Codecs are ways of \"coding\" and \"decoding\" streams. Their job is typically to compress data (and decompress it when playing it back) so that you can store and transmit files with a smaller filesize. There are many codecs available out there, each with their strengths, weaknesses and peculiarities, and choosing the right codec with the right settings for the right situation is a form of art."
+msgstr "Kodeki so način \"kodiranja\" in \"odkodiranja\" pretokov. Njihova naloga je običajno stisniti podatke (in jih razširiti ob predvajanju), da lahko shranite in prenašate datoteke z manjšo velikostjo datoteke. Na voljo obstajajo številni kodeki, vsak s vojimi prednostmi, slabostmi in težavami. Izbira pravega kodeka s pravimi nastavitvami za pravo situacijo je neke vrste umetnosti."
+
+#: C/codecscontainers.page:24(p)
+msgid "The following figure should make things clearer:"
+msgstr "Naslednja slika bo pomagala razjasniti stvari:"
 
 #: C/about.page:17(desc)
 msgid "Current state of this user manual and call for participation."
@@ -1577,31 +1713,21 @@ msgstr "V primeru da najdete napake, manjkajoče podatke ali nejasne odseke v te
 msgid "translator-credits"
 msgstr "Andrej Žnidaršič <andrej.znidarsic@gmail.com>"
 
-#~ msgid "Drag the chosen effect into the <gui>Effect Properties</gui> pane"
-#~ msgstr "Povlecite izbrani učinek na pladenj <gui>Lastnosti učinka</gui>"
+#~ msgid "Change the video (or audio) settings to your liking."
+#~ msgstr "Spremenite nastavitev videa (ali zvoka) po svojih željah."
 
+#, fuzzy
 #~ msgid ""
-#~ "To remove an effect on a selected clip, select it in the effect "
-#~ "properties pane and click the <gui>Remove</gui> button."
+#~ "Drag the chosen effect into the <gui>Clip configuration</gui> pane's "
+#~ "<gui>Effects section To remove an effect on a selected clip, select it in "
+#~ "the clip's effect list and click the Remove button. Toggling effects on "
+#~ "and off If you want to temporarily disable an effect (to compare with and "
+#~ "without the effect, or for performance reasons), click the corresponding "
+#~ "checkbox in the effect properties pane. Currently, effects are applied on "
+#~ "a \"per-clip\" basis. It is not yet possible to apply effects to timeline "
+#~ "layers. </gui>"
 #~ msgstr ""
-#~ "Za odstranitev učinka izbranega posnetka ga izberite na pladnju lastnosti "
-#~ "in kliknite na gumb <gui>Odstrani</gui>."
-
-#~ msgid "Toggling effects on and off"
-#~ msgstr "Vklop in izklop učinkov"
-
-#~ msgid ""
-#~ "If you want to temporarily disable an effect (to compare with and without "
-#~ "the effect, or for performance reasons), click the corresponding checkbox "
-#~ "in the effect properties pane."
-#~ msgstr ""
-#~ "V primeru da želite učinek začasno onemogočiti (za primerjavo videza z in "
-#~ "brez učinka ali zaradi večje hitrosti delovanja) kliknite na ustrezno "
-#~ "izbiro polje in pladenj lastnosti učinkov."
-
-#~ msgid ""
-#~ "Currently, effects are applied on a \"per-clip\" basis. It is not yet "
-#~ "possible to apply effects to timeline layers."
-#~ msgstr ""
-#~ "Trenutno so učinki uveljavljeni na posnetek. Trenutni še ni mogoče "
-#~ "uveljaviti učinkov na plasteh časovnic."
+#~ "Povlecite izbrani učinek v odsek <gui>Učinki</gui> na pladnju "
+#~ "<gui>Nastavitev posnetka</gui>. Za odstranitev učinka na izbranem "
+#~ "posnetku ga izberite na seznamu učinkov posnetka in kliknite na gumb "
+#~ "Odstrani. "
