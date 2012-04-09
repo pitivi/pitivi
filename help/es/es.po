@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-04-04 10:57+0000\n"
-"PO-Revision-Date: 2012-04-08 12:17+0200\n"
+"POT-Creation-Date: 2012-04-08 10:21+0000\n"
+"PO-Revision-Date: 2012-04-09 13:25+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -2366,18 +2366,25 @@ msgid ""
 "The \"Bad\" plugins are plugins whose code is not of good enough quality, or "
 "are not considered tested well enough. The licensing may or may not be LGPL."
 msgstr ""
+"Los complementos «malos» son complementos cuyo código no es de suficiente "
+"buena calidad, o no son lo suficientemente buenos para probarlos. La "
+"licencia puede ser o no LGPL."
 
 #: C/gstreamer.page:52(p)
 msgid ""
 "The \"Ugly\" plugins are good quality plugins whose license is not LGPL or "
 "with licensing issues."
 msgstr ""
+"Los complementos «feos» son complementos de buena calidad cuya licencia no "
+"es LGPL o tienen problemas de licencia."
 
 #: C/gstreamer.page:54(p)
 msgid ""
 "In addition to the Good, Bad and Ugly plugins, you may want to install "
 "gstreamer-ffmpeg to have access to ffmpeg's set of codecs."
 msgstr ""
+"Además de los complementos Buenos, Malos y Feos, es posible que quiera "
+"instalar gstreamer-ffmpeg para tener acceso al conjunto de códecs de ffmpeg."
 
 #: C/gstreamer.page:59(title)
 msgid "Image file formats"
@@ -2389,6 +2396,9 @@ msgid ""
 "video or audio formats, it is however possible to list the static image "
 "formats that can be imported: JPEG, PNG, JPEG 2000, PNM and SVG."
 msgstr ""
+"Aunque no es factible listar todas las combinaciones posibles de formatos de "
+"vídeo y sonido soportados, de alguna manera es posible listar los formatos "
+"de imagen estática que se pueden importar: JPEG, PNG, JPEG 2000, PNM y SVG."
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -2411,10 +2421,12 @@ msgstr "@@image: 'figures/fadestep3.png'; md5=5aa08a9539d2d7bb6e39be379e88d778"
 #: C/fadeinfadeout.page:17(desc)
 msgid "Fading video to black or to a layer below, or fading audio."
 msgstr ""
+"Oscurecer el vídeo o moverse a una capa inferior, o aumentar/disminuir el "
+"sonido."
 
 #: C/fadeinfadeout.page:25(title)
 msgid "Fade-ins and fade-outs"
-msgstr ""
+msgstr "Desvanecimientos"
 
 #: C/fadeinfadeout.page:27(p)
 msgid ""
@@ -2422,38 +2434,48 @@ msgid ""
 "capabilities, which relies on keyframes controlling each clip's opacity (see "
 "also: <link xref=\"layers\">Understanding layers</link>)."
 msgstr ""
+"Puede hacer «desvanecimientos» de un solo clip usando las capacidades de "
+"mezcla de vídeo de <app>PiTiVi</app>, que se basan en fotogramas clave que "
+"controlan la opacidad de cada clip (consulte la sección: <link xref=\"layers"
+"\">entender las capas</link>)."
 
 #: C/fadeinfadeout.page:28(p)
 msgid "To fade a clip to black:"
-msgstr ""
+msgstr "Para oscurecer un clip:"
 
 #: C/fadeinfadeout.page:31(p)
 msgid ""
 "Double-click on its opacity keyframe curve where you want the fade-out to "
 "start (or the fade-in to end)."
 msgstr ""
+"Pulse dos veces en su curva de fotograma clave de opacidad donde quiere que "
+"empiece (o termine) el desvanecimiento.."
 
 #: C/fadeinfadeout.page:40(p)
 msgid "Click and drag the last (or first) keyframe of the clip downwards."
 msgstr ""
+"Pulse y arrastre el último (o el primer) fotograma clave del clip hacia "
+"abajo."
 
 #: C/effectsanimation.page:13(desc)
 msgid "Changing the properties of effects over time"
-msgstr ""
+msgstr "Cambiar las propiedades de los efectos en el tiempo"
 
 #: C/effectsanimation.page:19(title)
 msgid "Animating effects with Keyframes"
-msgstr ""
+msgstr "Animar efectos con fotogramas clave"
 
 #: C/effectsanimation.page:21(p)
 msgid ""
 "This feature is not yet implemented, but is planned to be completed as a "
 "GSoC 2011 project."
 msgstr ""
+"Está función aún no está implementada, pero está previsto que se complete "
+"como un proyecto en GSoC 2011."
 
 #: C/effects.page:14(desc)
 msgid "Adding special effects to your video and audio"
-msgstr ""
+msgstr "Añadir efectos especiales a su vídeo y sonido"
 
 #: C/effects.page:20(title)
 msgid "Introduction to effects"
@@ -2465,6 +2487,10 @@ msgid ""
 "up your movies. Effects are non destructive: they are only applied to the "
 "resulting rendered movie and do not affect your source files."
 msgstr ""
+"<app>PiTiVi</app> ofrece una amplia variedad de efectos de vídeo y sonido "
+"para darle vida a sus películas. Los efectos son no destructivos: sólo se "
+"aplican a la película renderizada resultante y no afectan sus archivos de "
+"origen."
 
 #: C/effects.page:24(p)
 msgid ""
@@ -2472,10 +2498,15 @@ msgid ""
 "don't see anything (or only a handful of effects) in <app>PiTiVi</app>'s "
 "effect library, make sure that the following are installed on your system:"
 msgstr ""
+"Los efectos disponibles dependen del software instalado en su equipo. Si no "
+"ve nada (o solo un puñado de efectos) en la biblioteca de efectos de "
+"<app>PiTiVi</app>, asegúrese que los siguientes paquetes están instalados en "
+"su sistema:"
 
 #: C/effects.page:26(p)
 msgid "The <link xref=\"gstreamer\">appropriate GStreamer plugins</link>"
 msgstr ""
+"Los <link xref=\"gstreamer\">complementos de GStreamer apropiados</link>"
 
 #: C/effects.page:27(p)
 msgid "frei0r-plugins"
@@ -2487,7 +2518,7 @@ msgstr "gnome-video-effects"
 
 #: C/effects.page:33(title)
 msgid "Adding and removing effects to clips"
-msgstr ""
+msgstr "Añadir y quitar efectos a los clips"
 
 #: C/effects.page:34(p)
 msgid "To add an effect:"
@@ -2495,7 +2526,7 @@ msgstr "Para añadir un efecto:"
 
 #: C/effects.page:36(p)
 msgid "Select an existing clip on the timeline"
-msgstr ""
+msgstr "Seleccione un clip existente en la línea del tiempo"
 
 #: C/effects.page:37(p)
 msgid "Choose an effect in the effect library"
@@ -2506,6 +2537,8 @@ msgid ""
 "Drag the chosen effect into the <gui>Clip configuration</gui> pane's "
 "<gui>Effects</gui> section"
 msgstr ""
+"Arrastre el efecto elegido dentro de la sección <gui>Efectos</gui> del panel "
+"de <gui>Configuración del clip</gui>"
 
 #: C/effects.page:40(p)
 msgid ""
