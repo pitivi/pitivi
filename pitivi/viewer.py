@@ -27,6 +27,7 @@ import cairo
 
 from gettext import gettext as _
 from time import time
+from math import pi
 
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
