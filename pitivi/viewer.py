@@ -893,6 +893,8 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         self.area = None
         self.zoom = 1.0
         self.sink = None
+        self.pixbuf = None
+        self.pipeline = None
         self.transformation_properties = None
         for state in range(gtk.STATE_INSENSITIVE + 1):
             self.modify_bg(state, self.style.black)
@@ -1045,7 +1047,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
                 if self.box.area.width != self.pixbuf.get_width():
                     cr.restore()
 
-            if self.pipeline.get_state() == gst.STATE_PAUSED:
+            if self.pipeline and self.pipeline.get_state()[1] == gst.STATE_PAUSED:
                 self.box.draw(cr)
             cr.pop_group_to_source()
             cr.paint()
