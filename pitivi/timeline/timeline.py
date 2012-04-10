@@ -953,8 +953,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         layers = self.timeline.get_layers()
         for layer in layers:
             for tlobj in layer.get_objects():
-                if uri == tlobj.get_uri():
-                    layer.remove_object(tlobj)
+                if hasattr(tlobj, "get_uri"):
+                    if tlobj.get_uri() == uri:
+                        layer.remove_object(tlobj)
+                else:
+                    # TimelineStandardTransition and the like don't have URIs
+                    # GES will remove those transitions automatically.
+                    self.debug("Not removing %s from timeline as it has no URI" % tlobj)
 
     def _create_temp_source(self, x, y):
         """
