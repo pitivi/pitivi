@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-04-08 10:21+0000\n"
-"PO-Revision-Date: 2012-04-09 13:25+0200\n"
+"POT-Creation-Date: 2012-04-09 11:27+0000\n"
+"PO-Revision-Date: 2012-04-11 13:03+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -2545,10 +2545,12 @@ msgid ""
 "To remove an effect on a selected clip, select it in the clip's effect list "
 "and click the <gui>Remove</gui> button."
 msgstr ""
+"Para quitar un efecto de un clip seleccionado, selecciónelo en la lista de "
+"efectos del clip y pulse el botón <gui>Quitar</gui>."
 
 #: C/effects.page:43(title)
 msgid "Toggling effects on and off"
-msgstr ""
+msgstr "Activar y desactivar efectos"
 
 #: C/effects.page:44(p)
 msgid ""
@@ -2556,20 +2558,25 @@ msgid ""
 "the effect, or for performance reasons), click the corresponding checkbox in "
 "the effect properties pane."
 msgstr ""
+"Si quiere desactivar temporalmente un efecto (para comparar con y sin el "
+"efecto, o por razones de rendimiento), pulse en la casilla correspondiente "
+"en el panel de propiedades del efecto."
 
 #: C/effects.page:46(p)
 msgid ""
 "Currently, effects are applied on a \"per-clip\" basis. It is not yet "
 "possible to apply effects to timeline layers."
 msgstr ""
+"Actualmente, los efectos se aplican «por clip\"». Todavía no es posible "
+"aplicar efectos a las capas de la línea del tiempo."
 
 #: C/crossfading.page:18(desc)
 msgid "Making two clips fade into each other."
-msgstr ""
+msgstr "Hacer que dos clips se desvanezcan uno en el otro."
 
 #: C/crossfading.page:26(title)
 msgid "Crossfading clips"
-msgstr ""
+msgstr "Mezclar clips"
 
 #: C/crossfading.page:28(p)
 msgid ""
@@ -2578,18 +2585,28 @@ msgid ""
 "used for transitions (crossfade by default) between the two clips. You can "
 "adjust the length of the transition by moving or trimming the clips."
 msgstr ""
+"Para hacer una mezcla entre dos clips en la misma capa, simplemente arrastre "
+"uno de los clips sobre el otro para que se superponga. La región de "
+"superposición se usará para transiciones (mezcla predeterminada) entre los "
+"dos clips. Puede modificar la longitud de la transición moviendo o "
+"recortando los clips."
 
 #: C/crossfading.page:30(p)
 msgid ""
 "Crossfades are achieved using <app>PiTiVi</app>'s video mixing features, "
 "which use keyframes to control the opacity of clips."
 msgstr ""
+"Las mezclas se logran utilizando las funciones de mezcla de vídeo de "
+"<app>PiTiVi</app>, que usan fotogramas clave para controlar la opacidad de "
+"los clips."
 
 #: C/crossfading.page:31(p)
 msgid ""
 "This also means that if you set opacity keyframes for that clip, they will "
 "be taken into account for the crossfade."
 msgstr ""
+"Esto también significa que si se establece fotogramas clave de opacidad para "
+"ese clip, se tendrán en cuenta para la mezcla."
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -2604,10 +2621,12 @@ msgid ""
 "What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? "
 "Learn about codecs and container formats here."
 msgstr ""
+"¿Cuál es la diferencia entre OGG y Vorbis? ¿AVI y DivX? ¿x264 y H.264? "
+"Aprenda acerca de códecs y formatos de contenedor aquí."
 
 #: C/codecscontainers.page:19(title)
 msgid "Understanding codecs and containers"
-msgstr ""
+msgstr "Entender los códecs y los contenedores"
 
 #: C/codecscontainers.page:20(p)
 msgid ""
@@ -2616,6 +2635,10 @@ msgid ""
 "formats, thanks in part to the general lack of standardization, confusing "
 "marketing terms and filename extensions."
 msgstr ""
+"El siguiente tema es uno de los más complejos de edición de vídeo. Muchas "
+"personas no saben la diferencia entre códecs y formatos de archivo de "
+"contenedor, en parte debido a la falta general de estandarización, "
+"confundiendo términos de marketing y extensiones de nombre de archivo."
 
 #: C/codecscontainers.page:21(p)
 msgid ""
@@ -2625,6 +2648,11 @@ msgid ""
 "wikipedia.org/wiki/Container_format_(digital)\">containers</link> and <link "
 "href=\"http://en.wikipedia.org/wiki/Codec\">codecs</link>."
 msgstr ""
+"Esta guía es un intento de aclarar esta diferencia, sin entrar en detalles "
+"técnicos. Si quiere aprender más acerca de los contenedores y códecs, "
+"probablemente debería revisar en la página de Wikipedia en <link href="
+"\"http://en.wikipedia.org/wiki/Container_format_(digital)\">contenedores</"
+"link> y <link href=\"http://en.wikipedia.org/wiki/Codec\">códecs</link>."
 
 #: C/codecscontainers.page:22(p)
 msgid ""
@@ -2634,6 +2662,12 @@ msgid ""
 "soundtracks and subtitles included in a video file, if the container format "
 "allows it. Example of popular containers are OGG, Matroska, AVI, MPEG."
 msgstr ""
+"Básicamente, un contenedor es lo que normalmente asociamos con el formato de "
+"archivo. Los contenedores «contienen» los diversos componentes de un vídeo: "
+"el flujo de imágenes, el sonido, y cualquier otra cosa. Por ejemplo, puede "
+"tener varias pistas de sonido y subtítulos incluidos en un archivo de vídeo, "
+"si el formato de contenedor lo permite. Ejemplos de contenedores populares "
+"son OGG, Matroska, AVI, MPEG."
 
 #: C/codecscontainers.page:23(p)
 msgid ""
@@ -2644,14 +2678,21 @@ msgid ""
 "peculiarities, and choosing the right codec with the right settings for the "
 "right situation is a form of art."
 msgstr ""
+"Los códecs son maneras de «codificar» y «decodificar» flujos. Su trabajo "
+"generalmente consiste en comprimir datos (y descomprimirlos cuando se "
+"reproducen) para que se puedan almacenar y transmitir archivos con un tamaño "
+"de archivo más pequeño. Hay muchos códecs disponibles por ahí, cada uno con "
+"sus bondades, debilidades y peculiaridades, y elegir el códec adecuado con "
+"los ajustes adecuados para la situación adecuada es una forma de arte."
 
 #: C/codecscontainers.page:24(p)
 msgid "The following figure should make things clearer:"
-msgstr "Las siguientes imágenes debería aclarar las cosas:"
+msgstr "Las siguientes imágenes deberían aclarar las cosas:"
 
 #: C/about.page:17(desc)
 msgid "Current state of this user manual and call for participation."
 msgstr ""
+"Estado actual de este manual del usuario e invitación a la participación."
 
 #: C/about.page:25(title)
 msgid "About this manual"
@@ -2659,17 +2700,19 @@ msgstr "Acerca de este manual"
 
 #: C/about.page:26(p)
 msgid "This user manual is written and maintained by Jean-François Fortin Tam."
-msgstr "Este manual lo ha escrito y lo mantiene Jean-François Fortin Tam."
+msgstr "Jean-François Fortin Tam ha escrito y mantiene este manual."
 
 #: C/about.page:28(title)
 msgid "Work in progress"
-msgstr ""
+msgstr "Trabajo en curso"
 
 #: C/about.page:29(p)
 msgid ""
 "You may encounter unwritten portions due to features that have not yet been "
 "implemented in PiTiVi at the time of writing."
 msgstr ""
+"Puede encontrar fragmentos no escritas, debido a que hay características que "
+"aún no se han implementado en PiTiVi en el momento de escribir esto."
 
 #: C/about.page:30(p)
 msgid ""
@@ -2677,6 +2720,10 @@ msgid ""
 "manual but have not been implemented in PiTiVi – those are areas where the "
 "design and expected user interaction are quite narrow/certain."
 msgstr ""
+"También puede encontrar pequeñas áreas que han sido documentadas en este "
+"manual, pero no han sido implementadas en PiTiVi; esas son las zonas donde "
+"el diseño y la interacción esperada con el usuario son bastante estrechas/"
+"seguras."
 
 #: C/about.page:34(title)
 msgid "Patches welcome"
@@ -2691,8 +2738,17 @@ msgid ""
 "product=pitivi;component=documentation\">file bugs on the “documentation” "
 "component in our bug tracker</link>."
 msgstr ""
+"Si por casualidad encuentra errores, falta de información o partes poco "
+"claras en este manual, no dude en enviar sus correcciones. Puede encontrar "
+"información de contacto en <link href=\"http://jeff.ecchi.ca/\">la página "
+"web personal</link>. También puede <link href=\"https://bugzilla.gnome.org/"
+"enter_bug.cgi?product=pitivi;component=documentation\">informar de un error "
+"en el componente «documentation» en el gestor de seguimiento de errores</"
+"link>."
 
 #. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
 #: C/index.page:0(None)
 msgid "translator-credits"
-msgstr "Daniel Mustieles <daniel.mustieles@gmail.com>, 2011"
+msgstr ""
+"Milagros Alessandra Infante Montero <maim92@gmail.com>, 2012\n"
+"Daniel Mustieles <daniel.mustieles@gmail.com>, 2011 - 2012"
