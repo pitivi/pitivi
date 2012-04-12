@@ -235,6 +235,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         return True
 
     def do_expose_event(self, event):
+        self.debug("exposing TimelineCanvas %s", list(event.area))
         allocation = self.get_allocation()
         width = allocation.width
         height = allocation.height
@@ -357,6 +358,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     position = 0
 
     def timelinePositionChanged(self, position):
+        self.debug("value : %r" % position)
         self.position = position
         self._playhead.props.x = self.nsToPixel(position)
 
@@ -379,7 +381,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         if self._timeline:
             self._timeline.dead_band = self.pixelToNs(
                 self.settings.edgeSnapDeadband)
-            #self._timelinePositionChanged(self.position)
+            self.timelinePositionChanged(self.position)
 
 ## settings callbacks
 
