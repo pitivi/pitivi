@@ -9,7 +9,7 @@ class _receiver_data(object):
 
 class receiver(object):
 
-    """A descriptor which wrapps signal connect and disconnect for a single
+    """A descriptor which wraps signal connect and disconnect for a single
     object (the sender). Signal handlers may be registered with the
     add_handler() method, after which point the handler will be automatically
     connected when the property value is set. Prior to connecting new signal

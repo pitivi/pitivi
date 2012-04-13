@@ -25,12 +25,14 @@
     Handle thumbnails in the UI timeline
 """
 
+import ges
 import gst
 import os
 import cairo
 import gobject
 import goocanvas
 import collections
+import array
 
 from gettext import gettext as _
 
@@ -39,6 +41,7 @@ from pitivi.configure import get_pixmap_dir
 
 import pitivi.utils as utils
 
+from pitivi.utils.misc import big_to_cairo_alpha_mask, big_to_cairo_red_mask, big_to_cairo_green_mask, big_to_cairo_blue_mask
 from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.signal import Signallable
@@ -174,24 +177,25 @@ previewers = {}
 
 
 def get_preview_for_object(instance, trackobject):
-    factory = trackobject.factory
-    stream_ = trackobject.stream
-    stream_type = type(stream_)
-    key = factory, stream_
+    uri = trackobject.props.uri
+    track_type = trackobject.get_track().props.track_type
+    key = uri, track_type
     if not key in previewers:
         # TODO: handle non-random access factories
         # TODO: handle non-source factories
-        # note that we switch on the stream_type, but we hash on the stream
+        # Note that we switch on the track_type, but we hash on the uri
         # itself.
-        if stream_type == stream.AudioStream:
-            previewers[key] = RandomAccessAudioPreviewer(instance, factory, stream_)
-        elif stream_type == stream.VideoStream:
-            if type(factory) == PictureFileSourceFactory:
-                previewers[key] = StillImagePreviewer(instance, factory, stream_)
+        if track_type == ges.TRACK_TYPE_AUDIO:
+            # FIXME: RandomAccessAudioPreviewer doesn't work yet
+            # previewers[key] = RandomAccessAudioPreviewer(instance, uri)
+            previewers[key] = DefaultPreviewer(instance, uri)
+        elif track_type == ges.TRACK_TYPE_VIDEO:
+            if trackobject.get_timeline_object().is_image():
+                previewers[key] = StillImagePreviewer(instance, uri)
             else:
-                previewers[key] = RandomAccessVideoPreviewer(instance, factory, stream_)
+                previewers[key] = RandomAccessVideoPreviewer(instance, uri)
         else:
-            previewers[key] = DefaultPreviewer(instance, factory, stream_)
+            previewers[key] = DefaultPreviewer(instance, uri)
     return previewers[key]
 
 
@@ -212,7 +216,7 @@ class Previewer(Signallable, Loggable):
 
     aspect = 4.0 / 3.0
 
-    def __init__(self, instance, factory, stream_):
+    def __init__(self, instance, uri):
         Loggable.__init__(self)
         # create default thumbnail
         path = os.path.join(get_pixmap_dir(), self.__DEFAULT_THUMB__)
@@ -238,34 +242,29 @@ class DefaultPreviewer(Previewer):
 
 class RandomAccessPreviewer(Previewer):
     """ Handles loading, caching, and drawing preview data for segments of
-    random-access streams.  There is one Previewer per stream per
-    ObjectFactory.  Preview data is read from an instance of an
-    ObjectFactory's Object, and when requested, drawn into a given cairo
-    context. If the requested data is not cached, an appropriate filler will
-    be substituted, and an asyncrhonous request for the data will be issued.
-    When the data becomes available, the update signal is emitted, along with
-    the stream, and time segments. This allows the UI to re-draw the affected
-    portion of a thumbnail sequence or audio waveform."""
+    random-access streams.  There is one Previewer per track_type per
+    TrackObject.  Preview data is read from a uri, and when requested, drawn
+    into a given cairo context. If the requested data is not cached, an
+    appropriate filler will be substituted, and an asyncrhonous request
+    for the data will be issued. When the data becomes available, the update
+    signal is emitted, along with the stream, and time segments. This allows
+    the UI to re-draw the affected portion of a thumbnail sequence or audio waveform."""
 
-    def __init__(self, instance, factory, stream_):
+    def __init__(self, instance, uri):
         self._view = True
-        Previewer.__init__(self, instance, factory, stream_)
+        Previewer.__init__(self, instance, uri)
         self._queue = []
 
-        # FIXME:
-        # why doesn't this work?
-        # bin = factory.makeBin(stream_)
-        uri = factory.uri
-        caps = stream_.caps
-        bin = SingleDecodeBin(uri=uri, caps=caps, stream=stream_)
+        bin = gst.element_factory_make("playbin2")
+        bin.props.uri = uri
 
         # assume 50 pixel height
         self.theight = 50
         self.waiting_timestamp = None
 
-        self._pipelineInit(factory, bin)
+        self._pipelineInit(uri, bin)
 
-    def _pipelineInit(self, factory, bin):
+    def _pipelineInit(self, uri, bin):
         """Create the pipeline for the preview process. Subclasses should
         override this method and create a pipeline, connecting to callbacks to
         the appropriate signals, and prerolling the pipeline if necessary."""
@@ -295,7 +294,7 @@ class RandomAccessPreviewer(Previewer):
         # tdur = duration in ns of thumbnail
         # sof  = start of file in pixel coordinates
         x1 = bounds.x1
-        sof = Zoomable.nsToPixel(element.start - element.in_point) +\
+        sof = Zoomable.nsToPixel(element.get_start() - element.get_inpoint()) +\
             hscroll_pos
 
         # i = left edge of thumbnail to be drawn. We start with x1 and
@@ -393,7 +392,7 @@ class RandomAccessPreviewer(Previewer):
         Typically this will be a flushing seek(). When the
         current segment has finished processing, subclasses should call
         _nextThumbnail() with the resulting cairo surface. Since seeking and
-        playback are asyncrhonous, you may have to call _nextThumbnail() in a
+        playback are asynchronous, you may have to call _nextThumbnail() in a
         message handler or other callback."""
         self.waiting_timestamp = segment
 
@@ -420,37 +419,62 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
     def tdur(self):
         return Zoomable.pixelToNs(self.twidth)
 
-    def __init__(self, instance, factory, stream_):
-        if stream_.dar and stream_.par:
-            self.aspect = float(stream_.dar)
-        rate = stream_.framerate
-        RandomAccessPreviewer.__init__(self, instance, factory, stream_)
+    def __init__(self, instance, uri):
+        RandomAccessPreviewer.__init__(self, instance, uri)
         self.tstep = Zoomable.pixelToNsAt(self.twidth, Zoomable.max_zoom)
-        if rate.num:
-            frame_duration = (gst.SECOND * rate.denom) / rate.num
+
+        if self.framerate.num:
+            frame_duration = (gst.SECOND * self.framerate.denom) / self.framerate.num
             self.tstep = max(frame_duration, self.tstep)
 
     def _pipelineInit(self, factory, sbin):
-        csp = gst.element_factory_make("ffmpegcolorspace")
-        sink = CairoSurfaceThumbnailSink()
-        scale = gst.element_factory_make("videoscale")
-        scale.props.method = 0
-        caps = ("video/x-raw-rgb,height=(int) %d,width=(int) %d" %
-            (self.theight, self.twidth + 2))
-        filter_ = utils.filter_(caps)
-        self.videopipeline = utils.pipeline({
-            sbin: csp,
-            csp: scale,
-            scale: filter_,
-            filter_: sink,
-            sink: None
-        })
-        sink.connect('thumbnail', self._thumbnailCb)
+        """
+        Create the pipeline.
+
+        It has the form "sbin ! thumbnailsink" where thumbnailsink
+        is a Bin made out of "capsfilter ! cairosink"
+        """
+        self.videopipeline = sbin
+        self.videopipeline.props.flags = 1  # Only render video
+
+        # Use a capsfilter to scale the video to the desired size
+        # (fixed height and par, variable width)
+        caps = gst.Caps("video/x-raw-rgb, height=(int)%d, pixel-aspect-ratio=(fraction)1/1" %
+            self.theight)
+        capsfilter = gst.element_factory_make("capsfilter", "thumbnailcapsfilter")
+        capsfilter.props.caps = caps
+        cairosink = CairoSurfaceThumbnailSink()
+        cairosink.connect("thumbnail", self._thumbnailCb)
+
+        # Set up the thumbnailsink and add a sink pad
+        thumbnailsink = gst.Bin("thumbnailsink")
+        thumbnailsink.add(capsfilter)
+        thumbnailsink.add(cairosink)
+        capsfilter.link(cairosink)
+        sinkpad = gst.GhostPad("sink", thumbnailsink.find_unlinked_pad(gst.PAD_SINK))
+        thumbnailsink.add_pad(sinkpad)
+
+        # Connect sbin and thumbnailsink
+        self.videopipeline.props.video_sink = thumbnailsink
+
         self.videopipeline.set_state(gst.STATE_PAUSED)
+        # Wait for the pipeline to be prerolled so we can check the width
+        # that the thumbnails will have and set the aspect ratio accordingly
+        # as well as getting the framerate of the video:
+        if gst.STATE_CHANGE_SUCCESS == self.videopipeline.get_state(gst.CLOCK_TIME_NONE)[0]:
+            neg_caps = sinkpad.get_negotiated_caps()[0]
+            self.aspect = neg_caps["width"] / float(self.theight)
+            self.framerate = neg_caps["framerate"]
+        else:
+            # the pipeline couldn't be prerolled so we can't determine the
+            # correct values. Set sane defaults (this should never happen)
+            self.warning("Couldn't preroll the pipeline")
+            self.aspect = 16.0 / 9
+            self.framerate = gst.Fraction(24, 1)
 
     def _segment_for_time(self, time):
         # quantize thumbnail timestamps to maximum granularity
-        return utils.quantize(time, self.tperiod)
+        return utils.misc.quantize(time, self.tperiod)
 
     def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
         gobject.idle_add(self._finishThumbnail, pixbuf, timestamp)
@@ -486,10 +510,10 @@ class StillImagePreviewer(RandomAccessVideoPreviewer):
 
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
-    def __init__(self, instance, factory, stream_):
+    def __init__(self, instance, uri):
         self.tdur = 30 * gst.SECOND
         self.base_width = int(Zoomable.max_zoom)
-        RandomAccessPreviewer.__init__(self, instance, factory, stream_)
+        RandomAccessPreviewer.__init__(self, instance, uri)
 
     @property
     def twidth(self):
@@ -642,6 +666,78 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         self.emit("update", None)
 
 
+class CairoSurfaceThumbnailSink(gst.BaseSink):
+    """
+    GStreamer thumbnailing sink element.
+
+    Can be used in pipelines to generates gtk.gdk.Pixbuf automatically.
+    """
+
+    __gsignals__ = {
+        "thumbnail": (gobject.SIGNAL_RUN_LAST,
+                      gobject.TYPE_NONE,
+                      (gobject.TYPE_PYOBJECT, gobject.TYPE_UINT64))
+        }
+
+    __gsttemplates__ = (
+        gst.PadTemplate("sink",
+                         gst.PAD_SINK,
+                         gst.PAD_ALWAYS,
+                         gst.Caps("video/x-raw-rgb,"
+                                  "bpp = (int) 32, depth = (int) 32,"
+                                  "endianness = (int) BIG_ENDIAN,"
+                                  "alpha_mask = (int) %i, "
+                                  "red_mask = (int)   %i, "
+                                  "green_mask = (int) %i, "
+                                  "blue_mask = (int)  %i, "
+                                  "width = (int) [ 1, max ], "
+                                  "height = (int) [ 1, max ], "
+                                  "framerate = (fraction) [ 0, max ]"
+                                  % (big_to_cairo_alpha_mask,
+                                     big_to_cairo_red_mask,
+                                     big_to_cairo_green_mask,
+                                     big_to_cairo_blue_mask)))
+        )
+
+    def __init__(self):
+        gst.BaseSink.__init__(self)
+        self._width = 1
+        self._height = 1
+        self.set_sync(False)
+
+    def do_set_caps(self, caps):
+        self.log("caps %s" % caps.to_string())
+        self.log("padcaps %s" % self.get_pad("sink").get_caps().to_string())
+        self.width = caps[0]["width"]
+        self.height = caps[0]["height"]
+        if not caps[0].get_name() == "video/x-raw-rgb":
+            return False
+        return True
+
+    def do_render(self, buf):
+        self.log("buffer %s %d" % (gst.TIME_ARGS(buf.timestamp),
+                                   len(buf.data)))
+        b = array.array("b")
+        b.fromstring(buf)
+        pixb = cairo.ImageSurface.create_for_data(b,
+            # We don't use FORMAT_ARGB32 because Cairo uses premultiplied
+            # alpha, and gstreamer does not.  Discarding the alpha channel
+            # is not ideal, but the alternative would be to compute the
+            # conversion in python (slow!).
+            cairo.FORMAT_RGB24,
+            self.width,
+            self.height,
+            self.width * 4)
+
+        self.emit("thumbnail", pixb, buf.timestamp)
+        return gst.FLOW_OK
+
+    def do_preroll(self, buf):
+        return self.do_render(buf)
+
+gobject.type_register(CairoSurfaceThumbnailSink)
+
+
 def between(a, b, c):
     return (a <= b) and (b <= c)
 
@@ -669,7 +765,7 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
         self.element = element
         self.props.pointer_events = False
         # ghetto hack
-        self.hadj = instance.gui.timeline.hadj
+        self.hadj = instance.gui.timeline_ui.hadj
 
 ## properties
 
@@ -688,8 +784,8 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
             self.element)
     element = receiver(setter=_set_element)
 
-    @handler(element, "in-point-changed")
-    @handler(element, "media-duration-changed")
+    @handler(element, "notify::in-point")
+    @handler(element, "notify::duration")
     def _media_props_changed(self, obj, unused_start_duration):
         self.changed(True)
 
@@ -715,19 +811,19 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 
     def do_simple_update(self, cr):
         cr.identity_matrix()
-        if self.element.factory:
+        if issubclass(self.previewer.__class__, RandomAccessPreviewer):
             border_width = self.previewer._spacing()
             self.bounds = goocanvas.Bounds(border_width, 4,
-            max(0, Zoomable.nsToPixel(self.element.duration) -
+            max(0, Zoomable.nsToPixel(self.element.get_duration()) -
                 border_width), self.height)
 
     def do_simple_paint(self, cr, bounds):
         x1 = -self.hadj.get_value()
         cr.identity_matrix()
-        if self.element.factory:
+        if issubclass(self.previewer.__class__, RandomAccessPreviewer):
             self.previewer.render_cairo(cr, intersect(self.bounds, bounds),
             self.element, x1, self.bounds.y1)
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
-        return (between(0, x, self.nsToPixel(self.element.duration)) and
+        return (between(0, x, self.nsToPixel(self.element.get_duration())) and
             between(0, y, self.height))

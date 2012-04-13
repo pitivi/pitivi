@@ -45,6 +45,7 @@ from pitivi.utils.timeline import SELECT, SELECT_ADD, UNSELECT, \
 from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED,\
         LAYER_HEIGHT_COLLAPSED, LAYER_SPACING, \
         unpack_cairo_pattern, unpack_cairo_gradient
+from thumbnailer import Preview
 
 
 #--------------------------------------------------------------#
@@ -358,6 +359,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             height=self.height,
             line_width=1)
 
+        self.preview = Preview(self.app, element)
+
         self.name = goocanvas.Text(
             x=NAME_HOFFSET + NAME_PADDING,
             y=NAME_VOFFSET + NAME_PADDING,
@@ -381,7 +384,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             height=self.height)
 
         if not self.is_transition:
-            for thing in (self.bg, self._selec_indic,
+            for thing in (self.bg, self.preview, self._selec_indic,
                 self.start_handle, self.end_handle, self.namebg, self.name):
                 self.add_child(thing)
         else:
@@ -422,13 +425,13 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self._expanded = expanded
         if not self._expanded:
             self.height = LAYER_HEIGHT_COLLAPSED
-            self.content.props.visibility = goocanvas.ITEM_INVISIBLE
+            self.preview.props.visibility = goocanvas.ITEM_INVISIBLE
             self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
             self.bg.props.height = LAYER_HEIGHT_COLLAPSED
             self.name.props.y = 0
         else:
             self.height = LAYER_HEIGHT_EXPANDED
-            self.content.props.visibility = goocanvas.ITEM_VISIBLE
+            self.preview.props.visibility = goocanvas.ITEM_VISIBLE
             self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
             self.bg.props.height = LAYER_HEIGHT_EXPANDED
             self.height = LAYER_HEIGHT_EXPANDED
