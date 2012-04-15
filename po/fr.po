@@ -1,5 +1,5 @@
 # French translation of Pitivi.
-# Copyright (C) 2006-2011 The Pitivi's copyright holder
+# Copyright (C) 2006-2012 The Pitivi's copyright holder
 # This file is distributed under the same license as the pitivi package.
 #
 # Lexique spécifique :
@@ -20,9 +20,9 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-02-17 20:51+0000\n"
-"PO-Revision-Date: 2012-02-16 23:23+0100\n"
-"Last-Translator: Bruno Brouard <annoa.b@gmail.com>\n"
+"POT-Creation-Date: 2012-03-24 16:45+0000\n"
+"PO-Revision-Date: 2012-03-25 09:45+0200\n"
+"Last-Translator: Alain Lojewski <allomervan@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -798,6 +798,7 @@ msgid "Time"
 msgstr "Temps"
 
 #: ../pitivi/effects.py:116 ../pitivi/effects.py:226
+#: ../pitivi/factories/operation.py:66
 msgid "Uncategorized"
 msgstr "Hors catégorie"
 
@@ -866,6 +867,20 @@ msgid ""
 msgstr ""
 "\n"
 "Multiplexeur : "
+
+#: ../pitivi/ui/alignmentprogress.py:69
+#, python-format
+msgid "%d%% Analyzed"
+msgstr "%d%% analysés"
+
+#. Translators: This string indicates the estimated time
+#. remaining until the action completes.  The "%s" is an
+#. already-localized human-readable duration description like
+#. "31 seconds".
+#: ../pitivi/ui/alignmentprogress.py:75 ../pitivi/ui/encodingprogress.py:67
+#, python-format
+msgid "About %s left"
+msgstr "À propos des %s restants"
 
 #: ../pitivi/ui/clipproperties.py:164
 msgid "Remove effect"
@@ -1059,6 +1074,11 @@ msgstr ""
 "Ce fichier existe déjà.\n"
 "Si vous ne voulez pas l'écraser, choisissez un nom de fichier ou un dossier "
 "différent."
+
+#: ../pitivi/ui/encodingprogress.py:65
+#, python-format
+msgid "%d%% Rendered"
+msgstr "%d%% de rendu"
 
 #: ../pitivi/ui/filechooserpreview.py:134
 msgid "PiTiVi can not preview this file."
@@ -1389,8 +1409,8 @@ msgstr "Espace entre vignettes"
 msgid "The spacing between thumbnails, in pixels"
 msgstr "L'espace entre les vignettes, en pixels"
 
-#: ../pitivi/ui/previewer.py:66 ../pitivi/ui/previewer.py:102
-#: ../pitivi/ui/previewer.py:113
+#: ../pitivi/ui/previewer.py:66 ../pitivi/ui/previewer.py:106
+#: ../pitivi/ui/previewer.py:117
 msgid "Performance"
 msgstr "Performance"
 
@@ -1398,39 +1418,59 @@ msgstr "Performance"
 msgid "Thumbnail every"
 msgstr "Vignette toutes les"
 
-#: ../pitivi/ui/previewer.py:69 ../pitivi/ui/previewer.py:70
-#: ../pitivi/ui/previewer.py:71 ../pitivi/ui/previewer.py:72
+#. Note that we cannot use "%s second" or ngettext, because fractions
+#. are not supported by ngettext and their plurality is ambiguous
+#. in many languages.
+#. See http://www.gnu.org/software/hello/manual/gettext/Plural-forms.html
 #: ../pitivi/ui/previewer.py:73
-#, python-format
-msgid "%s second"
-msgstr "%s seconde"
+msgid "1/100 second"
+msgstr "1/100ème de seconde"
 
-#: ../pitivi/ui/previewer.py:74 ../pitivi/ui/previewer.py:75
-#, python-format
-msgid "%s seconds"
-msgstr "%s secondes"
+#: ../pitivi/ui/previewer.py:74
+msgid "1/10 second"
+msgstr "1/10ème de seconde"
+
+#: ../pitivi/ui/previewer.py:75
+msgid "1/4 second"
+msgstr "1/4 de seconde"
 
 #: ../pitivi/ui/previewer.py:76
+msgid "1/2 second"
+msgstr "1/2 seconde"
+
+#: ../pitivi/ui/previewer.py:77
+msgid "1 second"
+msgstr "1 seconde"
+
+#: ../pitivi/ui/previewer.py:78
+msgid "5 seconds"
+msgstr "5 secondes"
+
+#: ../pitivi/ui/previewer.py:79
+msgid "10 seconds"
+msgstr "10 secondes"
+
+#: ../pitivi/ui/previewer.py:80
 msgid "minute"
 msgstr "minute"
 
-#: ../pitivi/ui/previewer.py:77
+#: ../pitivi/ui/previewer.py:81
 msgid "The interval, in seconds, between thumbnails."
 msgstr "L'intervalle, en secondes, entre les vignettes."
 
-#: ../pitivi/ui/previewer.py:103
+#: ../pitivi/ui/previewer.py:107
 msgid "Enable video thumbnails"
 msgstr "Activer les vignettes vidéo"
 
-#: ../pitivi/ui/previewer.py:104
+#: ../pitivi/ui/previewer.py:108
 msgid "Show thumbnails on video clips"
 msgstr "Affiche les vignettes sur les séquences vidéo"
 
-#: ../pitivi/ui/previewer.py:114
+#: ../pitivi/ui/previewer.py:118
 msgid "Enable audio waveforms"
 msgstr "Activer les ondes audio"
 
-#: ../pitivi/ui/previewer.py:115
+#: ../pitivi/ui/previewer.py:119
 msgid "Show waveforms on audio clips"
 msgstr "Affiche les ondes sur les séquences audio"
 
@@ -1622,6 +1662,10 @@ msgstr "Les fichiers suivants ne peuvent pas être utilisés par PiTiVi."
 #: ../pitivi/ui/sourcelist.py:776
 msgid "The following file can not be used with PiTiVi."
 msgstr "Le fichier suivant ne peut pas être utilisé par PiTiVi."
+
+#: ../pitivi/ui/startupwizard.py:59
+msgid "Projects"
+msgstr "Projets"
 
 #: ../pitivi/ui/timelinecanvas.py:52
 msgid "Behavior"
