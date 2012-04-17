@@ -359,8 +359,6 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             height=self.height,
             line_width=1)
 
-        self.preview = Preview(self.app, element)
-
         self.name = goocanvas.Text(
             x=NAME_HOFFSET + NAME_PADDING,
             y=NAME_VOFFSET + NAME_PADDING,
@@ -384,6 +382,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             height=self.height)
 
         if not self.is_transition:
+            self.preview = Preview(self.app, element)
             for thing in (self.bg, self.preview, self._selec_indic,
                 self.start_handle, self.end_handle, self.namebg, self.name):
                 self.add_child(thing)
