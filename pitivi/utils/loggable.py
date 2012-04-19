@@ -21,6 +21,7 @@
 
 import errno
 import sys
+import re
 import os
 import fnmatch
 import time
@@ -642,19 +643,11 @@ def stderrHandler(level, object, category, file, line, message):
 def _preformatLevels(noColorEnvVarName):
     format = '%-5s'
 
-    try:
-        import termcolor
-    except ImportError:
-        # we don't need to catch this if termcolor is in same package as
-        # log.py
-        termcolor = None
-
     if (noColorEnvVarName is not None
-        and termcolor is not None
         and (noColorEnvVarName not in os.environ
              or not os.environ[noColorEnvVarName])):
 
-        t = termcolor.TerminalController()
+        t = TerminalController()
         formatter = lambda level: ''.join((t.BOLD, getattr(t, COLORS[level]),
                             format % (_LEVEL_NAMES[level - 1], ), t.NORMAL))
     else:
