@@ -36,7 +36,7 @@ from pitivi.dialogs.prefs import PreferencesDialog
 
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.receiver import receiver, handler
-from pitivi.utils.ui import Point
+from pitivi.utils.ui import Point, info_name
 from pitivi.settings import GlobalSettings
 from pitivi.utils.signal import Signallable
 from pitivi.utils.timeline import SELECT, SELECT_ADD, UNSELECT, \
@@ -224,8 +224,6 @@ class TrimHandle(View, goocanvas.Image, Loggable, Zoomable):
     """A component of a TrackObject which manage's the source's edit
     points"""
 
-    element = receiver()
-
     def __init__(self, instance, element, timeline, **kwargs):
         self.app = instance
         self.element = element
@@ -354,6 +352,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         self.snapped_before = False
         self.snapped_after = False
+        self._element = None
+        self._settings = None
 
         self.bg = goocanvas.Rect(
             height=self.height,
@@ -459,23 +459,36 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
 ## settings signals
 
-    def _setSettings(self):
-        if self.settings:
-            self.clipAppearanceSettingsChanged()
-
-    settings = receiver(_setSettings)
-
-    @handler(settings, "audioClipBgChanged")
-    @handler(settings, "videoClipBgChanged")
-    @handler(settings, "selectedColorChanged")
-    @handler(settings, "clipFontDescChanged")
-    def clipAppearanceSettingsChanged(self, *args):
-        if self.element.get_track().props.track_type.first_value_name == 'GES_TRACK_TYPE_AUDIO':
-            color = self.settings.audioClipBg
+    def setSettings(self, settings):
+        if settings is not None:
+            settings.connect("audioClipBgChanged", self._clipAppearanceSettingsChangedCb)
+            settings.connect("videoClipBgChanged", self._clipAppearanceSettingsChangedCb)
+            settings.connect("selectedColorChanged", self._clipAppearanceSettingsChangedCb)
+            settings.connect("clipFontDescChanged", self._clipAppearanceSettingsChangedCb)
         else:
-            color = self.settings.videoClipBg
-        if self.is_transition:
-            color = 0x0089CFF0
+            self._settings.disconnect_by_func("audioClipBgChanged", self._clipAppearanceSettingsChangedCb)
+            self._settings.disconnect_by_func("videoClipBgChanged", self._clipAppearanceSettingsChangedCb)
+            self._settings.disconnect_by_func("selectedColorChanged", self._clipAppearanceSettingsChangedCb)
+            self._settings.disconnect_by_func("clipFontDescChanged", self._clipAppearanceSettingsChangedCb)
+        self._settings = settings
+        # Don't forget to actually create the UI now, or you'll get a segfault
+        self._clipAppearanceSettingsChangedCb()
+
+    def getSettings(self):
+        return self._settings
+
+    def delSettings(self):
+        if self._settings is not None:
+            self._settings.disconnect_by_func("audioClipBgChanged", self._clipAppearanceSettingsChangedCb)
+            self._settings.disconnect_by_func("videoClipBgChanged", self._clipAppearanceSettingsChangedCb)
+            self._settings.disconnect_by_func("selectedColorChanged", self._clipAppearanceSettingsChangedCb)
+            self._settings.disconnect_by_func("clipFontDescChanged", self._clipAppearanceSettingsChangedCb)
+        self._settings = None
+
+    settings = property(getSettings, setSettings, delSettings)
+
+    def _clipAppearanceSettingsChangedCb(self, *args):
+        color = self._getColor()
         pattern = unpack_cairo_gradient(color)
         self.bg.props.fill_pattern = pattern
 
@@ -494,25 +507,39 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
 ## element signals
 
-    def _setElement(self):
-        if self.element and not self.is_transition:
-            from pitivi.utils.ui import info_name
+    def _setElement(self, element):
+        """
+        Virtual method to allow subclasses to override the "setElement" method
+        """
+        pass
 
-            sources = self.app.current.medialibrary
-            uri = self.element.props.uri
-            info = sources.getInfoFromUri(uri)
-            self.name.props.text = info_name(info)
-            twidth, theight = text_size(self.name)
-            self.namewidth = twidth
-            self.nameheight = theight
-            self._update()
+    def setElement(self, element):
+        if element is not None:
+            element.connect("notify::start", self._updateCb)
+            element.connect("notify::duration", self._updateCb)
+            element.connect("notify::in-point", self._updateCb)
+        else:
+            self._element.disconnect_by_func("notify::start", self._updateCb)
+            self._element.disconnect_by_func("notify::duration", self._updateCb)
+            self._element.disconnect_by_func("notify::in-point", self._updateCb)
 
-    element = receiver(_setElement)
+        self._element = element
+        self._setElement(element)
 
-    @handler(element, "notify::start")
-    @handler(element, "notify::duration")
-    @handler(element, "notify::in-point")
-    def startChangedCb(self, track_object, start):
+    def getElement(self):
+        return self._element
+
+    def delElement(self):
+        if self._element is not None:
+            self._element.disconnect_by_func("notify::start", self._updateCb)
+            self._element.disconnect_by_func("notify::duration", self._updateCb)
+            self._element.disconnect_by_func("notify::in-point", self._updateCb)
+
+        self._element = None
+
+    element = property(getElement, setElement, delElement)
+
+    def _updateCb(self, track_object, start):
         self._update()
 
     def selectedChangedCb(self, element, selected):
