@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/timeline/timeline.py
+#       pitivi/timeline/track.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2009, Alessandro Decina <alessandro.decina@collabora.co.uk>
@@ -312,7 +312,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             point = self.from_item_event(item, event)
             TimelineController.drag_start(self, item, target, event)
             self._context = MoveContext(self._view.timeline,
-                self._view.element, self._view.timeline.selection.getSelectedTrackObjs())
+                        self._view.element,
+                        self._view.timeline.selection.getSelectedTrackObjs())
             self._view.app.action_log.begin("move object")
 
         def _getMode(self):
@@ -353,9 +354,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self._element = None
         self._settings = None
 
-        self.bg = goocanvas.Rect(
-            height=self.height,
-            line_width=1)
+        self.bg = goocanvas.Rect(height=self.height, line_width=1)
 
         self.name = goocanvas.Text(
             x=NAME_HOFFSET + NAME_PADDING,
@@ -369,10 +368,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             y=NAME_VOFFSET,
             line_width=0)
 
-        self.start_handle = StartHandle(self.app, element, timeline,
-            height=self.height)
-        self.end_handle = EndHandle(self.app, element, timeline,
-            height=self.height)
+        self.start_handle = StartHandle(self.app, element, timeline, height=self.height)
+        self.end_handle = EndHandle(self.app, element, timeline, height=self.height)
 
         self._selec_indic = goocanvas.Rect(
             visibility=goocanvas.ITEM_INVISIBLE,
@@ -440,6 +437,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.end_handle.props.visibility = goocanvas.ITEM_VISIBLE
         self.raise_(None)
         for transition in self.utrack.transitions:
+            # This is required to ensure that transitions always show on top
+            # of the clips on the canvas.
             transition.raise_(None)
 
     def unfocus(self):
@@ -452,16 +451,17 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 ## settings signals
 
     def setSettings(self, settings):
+        target = self._clipAppearanceSettingsChangedCb
         if settings is not None:
-            settings.connect("audioClipBgChanged", self._clipAppearanceSettingsChangedCb)
-            settings.connect("videoClipBgChanged", self._clipAppearanceSettingsChangedCb)
-            settings.connect("selectedColorChanged", self._clipAppearanceSettingsChangedCb)
-            settings.connect("clipFontDescChanged", self._clipAppearanceSettingsChangedCb)
+            settings.connect("audioClipBgChanged", target)
+            settings.connect("videoClipBgChanged", target)
+            settings.connect("selectedColorChanged", target)
+            settings.connect("clipFontDescChanged", target)
         else:
-            self._settings.disconnect_by_func("audioClipBgChanged", self._clipAppearanceSettingsChangedCb)
-            self._settings.disconnect_by_func("videoClipBgChanged", self._clipAppearanceSettingsChangedCb)
-            self._settings.disconnect_by_func("selectedColorChanged", self._clipAppearanceSettingsChangedCb)
-            self._settings.disconnect_by_func("clipFontDescChanged", self._clipAppearanceSettingsChangedCb)
+            self._settings.disconnect_by_func("audioClipBgChanged", target)
+            self._settings.disconnect_by_func("videoClipBgChanged", target)
+            self._settings.disconnect_by_func("selectedColorChanged", target)
+            self._settings.disconnect_by_func("clipFontDescChanged", target)
         self._settings = settings
         # Don't forget to actually create the UI now, or you'll get a segfault
         self._clipAppearanceSettingsChangedCb()
@@ -470,11 +470,12 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         return self._settings
 
     def delSettings(self):
+        target = self._clipAppearanceSettingsChangedCb
         if self._settings is not None:
-            self._settings.disconnect_by_func("audioClipBgChanged", self._clipAppearanceSettingsChangedCb)
-            self._settings.disconnect_by_func("videoClipBgChanged", self._clipAppearanceSettingsChangedCb)
-            self._settings.disconnect_by_func("selectedColorChanged", self._clipAppearanceSettingsChangedCb)
-            self._settings.disconnect_by_func("clipFontDescChanged", self._clipAppearanceSettingsChangedCb)
+            self._settings.disconnect_by_func("audioClipBgChanged", target)
+            self._settings.disconnect_by_func("videoClipBgChanged", target)
+            self._settings.disconnect_by_func("selectedColorChanged", target)
+            self._settings.disconnect_by_func("clipFontDescChanged", target)
         self._settings = None
 
     settings = property(getSettings, setSettings, delSettings)
@@ -483,12 +484,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         color = self._getColor()
         pattern = unpack_cairo_gradient(color)
         self.bg.props.fill_pattern = pattern
-
         self.namebg.props.fill_pattern = pattern
-
         self._selec_indic.props.fill_pattern = unpack_cairo_pattern(
             self.settings.selectedColor)
-
         self.name.props.font = self.settings.clipFontDesc
         self.name.props.fill_pattern = unpack_cairo_pattern(
             self.settings.clipFontColor)
@@ -555,8 +553,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         if width < min_width:
             width = min_width
         w = width - self.end_handle.props.width
-        self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
-            0, 0, w, self.height, w)
+        self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (0, 0, w, self.height, w)
         self.bg.props.width = width
         self._selec_indic.props.width = width
         self.end_handle.props.x = w
@@ -704,7 +701,6 @@ class Track(goocanvas.Group, Zoomable, Loggable):
         #track_objects = self.track.get_objects()
         if self._expanded:
             nb_layers = len(self.timeline.get_layers())
-
             return  nb_layers * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
         else:
             return LAYER_HEIGHT_COLLAPSED + LAYER_SPACING
