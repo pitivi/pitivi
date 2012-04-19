@@ -337,7 +337,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self._view.app.current.seeker.seek(Zoomable.pixelToNs(x))
                 timeline.selection.setToObj(element, SELECT)
 
-    def __init__(self, instance, element, track, timeline, utrack, is_transition=False):
+    def __init__(self, instance, element, track, timeline, utrack):
         goocanvas.Group.__init__(self)
         View.__init__(self)
         Zoomable.__init__(self)
@@ -348,8 +348,6 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.timeline = timeline
         self.namewidth = 0
         self.nameheight = 0
-        self.is_transition = is_transition
-
         self.snapped_before = False
         self.snapped_after = False
         self._element = None
@@ -380,15 +378,6 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             visibility=goocanvas.ITEM_INVISIBLE,
             line_width=0.0,
             height=self.height)
-
-        if not self.is_transition:
-            self.preview = Preview(self.app, element)
-            for thing in (self.bg, self.preview, self._selec_indic,
-                self.start_handle, self.end_handle, self.namebg, self.name):
-                self.add_child(thing)
-        else:
-            for thing in (self.bg, self.name):
-                self.add_child(thing)
 
         self.element = element
         element.max_duration = element.props.duration
@@ -440,6 +429,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         return self._expanded
 
     expanded = property(getExpanded, setExpanded)
+
+    def _getColor(self):
+        raise NotImplementedError
 
 ## Public API
 
@@ -580,6 +572,55 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.app.gui.timeline_ui.unsureVadjHeight()
 
 TRACK_CONTROL_WIDTH = 75
+
+
+class TrackTransition(TrackObject):
+    """
+    Subclass of TrackObject to account for the differences of transition objects
+    """
+    def __init__(self, instance, element, track, timeline, utrack):
+        TrackObject.__init__(self, instance, element, track, timeline, utrack)
+        for thing in (self.bg, self.name):
+            self.add_child(thing)
+
+    def _setElement(self, element):
+        # FIXME: add the transition name as the label
+        pass
+
+    def _getColor(self):
+        # Transitions are bright blue, independent of the user color settings
+        return 0x0089CFF0
+
+
+class TrackFileSource(TrackObject):
+    """
+    Subclass of TrackObject to allow thumbnailing of objects with URIs
+    """
+    def __init__(self, instance, element, track, timeline, utrack):
+        TrackObject.__init__(self, instance, element, track, timeline, utrack)
+        self.preview = Preview(self.app, element)
+        for thing in (self.bg, self.preview, self._selec_indic,
+            self.start_handle, self.end_handle, self.namebg, self.name):
+            self.add_child(thing)
+
+    def _setElement(self, element):
+        """
+        Set the human-readable file name as the clip's text label
+        """
+        if self.element:
+            uri = self.element.props.uri
+            info = self.app.current.medialibrary.getInfoFromUri(uri)
+            self.name.props.text = info_name(info)
+            twidth, theight = text_size(self.name)
+            self.namewidth = twidth
+            self.nameheight = theight
+            self._update()
+
+    def _getColor(self):
+        if self.element.get_track().props.track_type == ges.TRACK_TYPE_AUDIO:
+            return self.settings.audioClipBg
+        else:
+            return self.settings.videoClipBg
 
 
 class TrackControls(gtk.Label, Loggable):
@@ -743,7 +784,7 @@ class Track(goocanvas.Group, Zoomable, Loggable):
 
     def check(self, tr_obj):
         if tr_obj.get_timeline_object():
-            w = TrackObject(self.app, tr_obj, self.track, self.timeline, self)
+            w = TrackFileSource(self.app, tr_obj, self.track, self.timeline, self)
             self.widgets[tr_obj] = w
             self.add_child(w)
             self.app.gui.setBestZoomRatio()
@@ -760,7 +801,7 @@ class Track(goocanvas.Group, Zoomable, Loggable):
         Zoomable.removeInstance(w)
 
     def _transitionAdded(self, transition):
-        w = TrackObject(self.app, transition, self.track, self.timeline, self, True)
+        w = TrackTransition(self.app, transition, self.track, self.timeline, self)
         self.widgets[transition] = w
         self.add_child(w)
         self.transitions.append(w)
