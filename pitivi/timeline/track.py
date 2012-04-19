@@ -674,56 +674,6 @@ class TrackControls(gtk.Label, Loggable):
         return "<b>%s</b>" % track_name
 
 
-class Transition(goocanvas.Rect, Zoomable):
-
-    def __init__(self, transition):
-        goocanvas.Rect.__init__(self)
-        Zoomable.__init__(self)
-        self.props.fill_color_rgba = 0xFFFFFF99
-        self.props.stroke_color_rgba = 0x00000099
-        self.set_simple_transform(0, - LAYER_SPACING + 3, 1.0, 0)
-        self.props.height = LAYER_SPACING - 6
-        self.props.pointer_events = goocanvas.EVENTS_NONE
-        self.props.radius_x = 2
-        self.props.radius_y = 2
-        self.transition = transition
-
-    def _setTransition(self):
-        if self.transition:
-            self._updateAll()
-
-    def _updateAll(self):
-        transition = self.transition
-        start = transition.get_start()
-        duration = transition.get_duration()
-        priority = transition.get_priority()
-        self._updateStart(transition, start)
-        self._updateDuration(transition, duration)
-        self._updatePriority(transition, priority)
-
-    transition = receiver(_setTransition)
-
-    @handler(transition, "notify::start")
-    def _updateStart(self, transition, start):
-        self.props.x = self.nsToPixel(start)
-
-    @handler(transition, "notify::duration")
-    def _updateDuration(self, transition, duration):
-        width = max(0, self.nsToPixel(duration))
-        if width == 0:
-            self.props.visibility = goocanvas.ITEM_INVISIBLE
-        else:
-            self.props.visibility = goocanvas.ITEM_VISIBLE
-        self.props.width = width
-
-    @handler(transition, "notify::priority")
-    def _updatePriority(self, transition, priority):
-        self.props.y = (LAYER_HEIGHT_EXPANDED + LAYER_SPACING) * transition.get_priority()
-
-    def zoomChanged(self):
-        self._updateAll()
-
-
 class Track(goocanvas.Group, Zoomable, Loggable):
     __gtype_name__ = 'Track'
 
