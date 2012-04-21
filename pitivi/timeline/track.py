@@ -661,12 +661,11 @@ class TrackControls(gtk.Label, Loggable):
     @staticmethod
     def _getTrackName(track):
         track_name = ""
-        #FIXME check that it is the best way to check the type
-        if track.props.track_type.first_value_name == 'GES_TRACK_TYPE_AUDIO':
+        if track.props.track_type == ges.TRACK_TYPE_AUDIO:
             track_name = _("Audio:")
-        elif track.props.track_type.first_value_name == 'GES_TRACK_TYPE_VIDEO':
+        elif track.props.track_type == ges.TRACK_TYPE_VIDEO:
             track_name = _("Video:")
-        elif track.props.track_type.first_value_name == 'GES_TRACK_TYPE_TEXT':
+        elif track.props.track_type == ges.TRACK_TYPE_TEXT:
             track_name = _("Text:")
         return "<b>%s</b>" % track_name
 
