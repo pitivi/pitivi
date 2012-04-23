@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/timeline/thumbnailing.py
+#       pitivi/timeline/thumbnailer.py
 #
 # Copyright (c) 2006, Edward Hervey <bilboed@bilboed.com>
 #
@@ -19,10 +19,8 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-#FIXME GES port Reimplement me
-
 """
-    Handle thumbnails in the UI timeline
+Handle the creation, caching and display of thumbnails in the timeline.
 """
 
 import ges
@@ -33,9 +31,11 @@ import gobject
 import goocanvas
 import collections
 import array
+import sqlite3
 
 from gettext import gettext as _
 
+import pitivi.settings as settings
 from pitivi.settings import GlobalSettings
 from pitivi.configure import get_pixmap_dir
 
@@ -127,27 +127,48 @@ PreferencesDialog.addTogglePreference('showWaveforms',
 
 class ThumbnailCache(object):
 
-    """Caches thumbnails by key using LRU policy, implemented with heapq"""
+    """Caches thumbnails by key using LRU policy, implemented with heapq.
 
-    def __init__(self, size=100):
+    Uses a two stage caching mechanism. A limited number of elements are
+    held in memory, the rest is being cached on disk using an sqlite db."""
+
+    def __init__(self, uri, size=100):
         object.__init__(self)
-        self.queue = collections.deque()
+        self.hash = utils.misc.hash_file(gst.uri_get_location(uri))
         self.cache = {}
-        self.hits = 0
-        self.misses = 0
+        self.queue = collections.deque()
+        dbfile = os.path.join(settings.get_dir(os.path.join(settings.xdg_cache_home(), "thumbs")), self.hash)
+        self.conn = sqlite3.connect(dbfile)
+        self.cur = self.conn.cursor()
+        self.cur.execute("CREATE TABLE IF NOT EXISTS Thumbs (Time INTEGER NOT NULL PRIMARY KEY,\
+            Data BLOB NOT NULL, Width INTEGER NOT NULL, Height INTEGER NOT NULL)")
         self.size = size
 
     def __contains__(self, key):
+        # check if item is present in memory
         if key in self.cache:
-            self.hits += 1
             return True
-        self.misses += 1
+        # check if item is present in on disk cache
+        self.cur.execute("SELECT Time FROM Thumbs WHERE Time = ?", (key,))
+        if self.cur.fetchone():
+            return True
         return False
 
     def __getitem__(self, key):
+        # check if item is present in memory
         if key in self.cache:
             # I guess this is why LRU is considered expensive
             self.queue.remove(key)
+            self.queue.append(key)
+            return self.cache[key]
+        # check if item is present in on disk cache
+        # if so load it into memory
+        self.cur.execute("SELECT * FROM Thumbs WHERE Time = ?", (key,))
+        row = self.cur.fetchone()
+        if row:
+            if len(self.cache) > self.size:
+                self.ejectLRU()
+            self.cache[key] = cairo.ImageSurface.create_for_data(row[1], cairo.FORMAT_RGB24, row[2], row[3], 4 * row[2])
             self.queue.append(key)
             return self.cache[key]
         raise KeyError(key)
@@ -155,6 +176,9 @@ class ThumbnailCache(object):
     def __setitem__(self, key, value):
         self.cache[key] = value
         self.queue.append(key)
+        blob = sqlite3.Binary(bytearray(value.get_data()))
+        self.cur.execute("INSERT INTO Thumbs VALUES (?,?,?,?)", (key, blob, value.get_width(), value.get_height()))
+        self.conn.commit()
         if len(self.cache) > self.size:
             self.ejectLRU()
 
@@ -252,6 +276,7 @@ class RandomAccessPreviewer(Previewer):
 
     def __init__(self, instance, uri):
         self._view = True
+        self.uri = uri
         Previewer.__init__(self, instance, uri)
         self._queue = []
 
@@ -399,7 +424,7 @@ class RandomAccessPreviewer(Previewer):
     def _connectSettings(self, settings):
         Previewer._connectSettings(self, settings)
         self.spacing = settings.thumbnailSpacingHint
-        self._cache = ThumbnailCache(size=settings.thumbnailCacheSize)
+        self._cache = ThumbnailCache(uri=self.uri, size=settings.thumbnailCacheSize)
         self.max_requests = settings.thumbnailMaxRequests
         settings.connect("thumbnailSpacingHintChanged",
             self._thumbnailSpacingHintChanged)
@@ -427,6 +452,15 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
             frame_duration = (gst.SECOND * self.framerate.denom) / self.framerate.num
             self.tstep = max(frame_duration, self.tstep)
 
+    def bus_handler(self, unused_bus, message):
+        # set the scaling method of the videoscale element to Lanczos
+        element = message.src
+        if isinstance(element, gst.Element):
+            factory = element.get_factory()
+            if factory and "GstVideoScale" == factory.get_element_type().name:
+                element.props.method = 3
+        return gst.BUS_PASS
+
     def _pipelineInit(self, factory, sbin):
         """
         Create the pipeline.
@@ -436,6 +470,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         """
         self.videopipeline = sbin
         self.videopipeline.props.flags = 1  # Only render video
+        self.videopipeline.get_bus().set_sync_handler(self.bus_handler)
 
         # Use a capsfilter to scale the video to the desired size
         # (fixed height and par, variable width)
