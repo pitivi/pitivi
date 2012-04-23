@@ -26,6 +26,7 @@ import sys
 import gobject
 import gst
 import gtk
+import hashlib
 import bisect
 import os
 import struct
@@ -202,6 +203,18 @@ class PathWalker(Thread):
 
     def abort(self):
         self.stopme.set()
+
+
+def hash_file(uri):
+    """Hashes the first 256KB of the specified file"""
+    sha256 = hashlib.sha256()
+    with open(uri, "rb") as file:
+        for _ in range(1024):
+            chunk = file.read(256)
+            if not chunk:
+                break
+            sha256.update(chunk)
+    return sha256.hexdigest()
 
 
 #------------------------------ Gst helpers   --------------------------------#
