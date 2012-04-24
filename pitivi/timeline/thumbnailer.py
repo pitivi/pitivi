@@ -53,7 +53,7 @@ GlobalSettings.addConfigSection("thumbnailing")
 GlobalSettings.addConfigOption("thumbnailSpacingHint",
     section="thumbnailing",
     key="spacing-hint",
-    default=2,
+    default=5,
     notify=True)
 
 GlobalSettings.addConfigOption("thumbnailPeriod",
