@@ -204,10 +204,15 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             fill_color_rgba=0x000000FF,
             stroke_color_rgba=0xFFFFFFFF,
             width=3)
+        self._snap_indicator = goocanvas.Rect(
+            parent=root, x=0, y=0, width=3, line_width=0.5,
+            fill_color_rgba=0x85c0e6FF,
+            stroke_color_rgba=0x294f95FF)
         self.connect("size-allocate", self._size_allocate_cb)
         root.connect("motion-notify-event", self._selectionDrag)
         root.connect("button-press-event", self._selectionStart)
         root.connect("button-release-event", self._selectionEnd)
+        self.connect("button-release-event", self._snapEndedCb)
         self.height = (LAYER_HEIGHT_EXPANDED + TRACK_SPACING +
                 LAYER_SPACING) * 2
         # add some padding for the horizontal scrollbar
@@ -377,6 +382,22 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def zoomChanged(self):
         self.queue_draw()
 
+## snapping indicator
+    def _snapCb(self, unused_timeline, obj1, obj2, position):
+        """
+        Display or hide a snapping indicator line
+        """
+        if position == 0:
+            self._snapEndedCb()
+        else:
+            self.debug("Snapping indicator at", position)
+            self._snap_indicator.props.x = Zoomable.nsToPixel(position)
+            self._snap_indicator.props.height = self.height
+            self._snap_indicator.props.visibility = goocanvas.ITEM_VISIBLE
+
+    def _snapEndedCb(self, *args):
+        self._snap_indicator.props.visibility = goocanvas.ITEM_INVISIBLE
+
 ## settings callbacks
     def _setSettings(self):
         self.zoomChanged()
@@ -399,6 +420,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
                 self._trackAddedCb(None, track)
             self._timeline.connect("track-added", self._trackAddedCb)
             self._timeline.connect("track-removed", self._trackRemovedCb)
+            self._timeline.connect("snapping-started", self._snapCb)
+            self._timeline.connect("snapping-ended", self._snapEndedCb)
         self.zoomChanged()
 
     def getTimeline(self):

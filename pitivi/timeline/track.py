@@ -366,8 +366,6 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         self.timeline = timeline
         self.namewidth = 0
         self.nameheight = 0
-        self.snapped_before = False
-        self.snapped_after = False
         self._element = None
         self._settings = None
 
