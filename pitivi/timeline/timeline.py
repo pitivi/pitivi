@@ -37,7 +37,7 @@ from os.path import join
 from pitivi.check import soft_deps
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.autoaligner import AlignmentProgressDialog
-
+from pitivi.utils.misc import quote_uri
 from pitivi.settings import GlobalSettings
 
 from curve import KW_LABEL_Y_OVERFLOW
@@ -952,11 +952,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def purgeObject(self, uri):
         """Remove all instances of a clip from the timeline."""
+        quoted_uri = quote_uri(uri)
         layers = self.timeline.get_layers()
         for layer in layers:
             for tlobj in layer.get_objects():
                 if hasattr(tlobj, "get_uri"):
-                    if tlobj.get_uri() == uri:
+                    if quote_uri(tlobj.get_uri()) == quoted_uri:
                         layer.remove_object(tlobj)
                 else:
                     # TimelineStandardTransition and the like don't have URIs
