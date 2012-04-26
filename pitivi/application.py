@@ -30,6 +30,7 @@ import os
 import sys
 import urllib
 import ges
+import gio
 
 from gettext import gettext as _
 from optparse import OptionParser
@@ -38,7 +39,7 @@ import pitivi.instance as instance
 
 from pitivi.check import initial_checks
 from pitivi.effects import EffectsHandler
-from pitivi.configure import APPNAME
+from pitivi.configure import APPNAME, pitivi_version, RELEASES_URL
 from pitivi.settings import GlobalSettings
 from pitivi.utils.threads import ThreadMaster
 from pitivi.mainwindow import PitiviMainWindow
@@ -96,6 +97,7 @@ class Pitivi(Loggable, Signallable):
         "closing-project": ["project"],
         "project-closed": ["project"],
         "missing-uri": ["formatter", "uri"],
+        "version-info-received": ["versions"],
         "shutdown": None}
 
     def __init__(self):
@@ -138,6 +140,9 @@ class Pitivi(Loggable, Signallable):
         #self.timelineLogObserver = TimelineLogObserver(self.action_log)
         self.projectLogObserver = ProjectLogObserver(self.action_log)
         self.medialibrary_log_observer = MediaLibraryLogObserver(self.action_log)
+
+        self.version_information = {}
+        self._checkVersion()
 
     def shutdown(self):
         """
@@ -203,6 +208,36 @@ class Pitivi(Loggable, Signallable):
         self.projectLogObserver.stopObserving(project)
         self.current = None
         self.emit("project-closed", project)
+
+    # check if for version information online
+    def _checkVersion(self):
+        giofile = gio.File(uri=RELEASES_URL)
+        self.info("Requesting version information")
+        if giofile.query_exists(None):
+            giofile.load_contents_async(self._versionInfoReceivedCb, None, None)
+
+    def _versionInfoReceivedCb(self, giofile, result, data):
+        try:
+            # split data in lines
+            raw = giofile.load_contents_finish(result)[0].split("\n")
+            # split line at '=' if not empty or comment
+            data = [element.split("=") for element in raw
+                    if element and not element.startswith("#")]
+
+            # search newest version and status
+            status = "UNSUPPORTED"
+            for version, version_status in data:
+                if pitivi_version == version:
+                    status = version_status
+                if version_status.upper() == "CURRENT":
+                    current_version = version
+
+            self.info("Version information received")
+            self.version_information["current"] = current_version
+            self.version_information["status"] = status
+            self.emit("version-info-received", self.version_information)
+        except:
+            self.warning("Version information could not be read")
 
 
 class InteractivePitivi(Pitivi):

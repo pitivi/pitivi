@@ -24,10 +24,11 @@ import gtk
 
 from gettext import gettext as _
 
-from pitivi.configure import get_ui_dir
+from pitivi.configure import get_ui_dir, APPURL
 from pitivi.dialogs.depsmanager import DepsManager
 from pitivi.check import soft_deps
 from pitivi.utils.misc import show_user_manual
+from pitivi.settings import GlobalSettings
 
 from urllib import unquote
 
@@ -68,6 +69,14 @@ class StartUpWizard(object):
                 self._projectLoadedCb)
         self.app.projectManager.connect("new-project-loading",
                 self._projectLoadingCb)
+
+        vbox = self.builder.get_object("topvbox")
+        self.infobar = gtk.InfoBar()
+        vbox.pack_start(self.infobar)
+        if self.app.version_information:
+            self._appVersionInfoReceivedCb(None, self.app.version_information)
+        else:
+            self.app.connect("version-info-received", self._appVersionInfoReceivedCb)
 
     def _newProjectCb(self, unused_button):
         """Handle a click on the New (Project) button."""
@@ -132,3 +141,25 @@ class StartUpWizard(object):
     def _projectLoadingCb(self, unused_project_manager, unused_project):
         """Handle the start of a project load operation."""
         self.hide()
+
+    def _appVersionInfoReceivedCb(self, pitivi, version):
+        # current version, don't show message
+        if version["status"].upper() == "CURRENT":
+            return
+
+        # new current version, reset counter
+        if self.app.settings.lastCurrentVersion != version["current"]:
+            self.app.settings.lastCurrentVersion = version["current"]
+            self.app.settings.displayCounter = 0
+
+        # current version info already showed 5 times, don't show again
+        if self.app.settings.displayCounter >= 5:
+            return
+
+        # increment counter, create infobar and show info
+        self.app.settings.displayCounter = self.app.settings.displayCounter + 1
+        text = _("PiTiVi %s is available." % version["current"])
+        label = gtk.Label(text)
+        self.infobar.get_content_area().add(label)
+        self.infobar.set_message_type(gtk.MESSAGE_INFO)
+        self.infobar.show_all()

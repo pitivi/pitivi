@@ -119,6 +119,15 @@ GlobalSettings.addConfigOption('effectVPanedPosition',
     section='effect-configuration',
     key='effect-vpaned-position',
     type_=int)
+GlobalSettings.addConfigSection("version")
+GlobalSettings.addConfigOption('displayCounter',
+    section='version',
+    key='info-displayed-counter',
+    default=0)
+GlobalSettings.addConfigOption('lastCurrentVersion',
+    section='version',
+    key='last-current-version',
+    default='')
 
 
 #FIXME Hacky, reimplement when avalaible in GES
@@ -625,7 +634,15 @@ class PitiviMainWindow(gtk.Window, Loggable):
         ges_version_str = "GES %i.%i.%i.%i" % (ges.version())
         gst_version_str = "GStreamer %i.%i.%i.%i" % (gst.version())
         pygst_version_str = "PyGST %i.%i.%i.%i" % (gst.get_pygst_version())
-        abt.set_comments("%s\n%s\n%s" % (ges_version_str, pygst_version_str, gst_version_str))
+        if self.app.version_information and \
+           self.app.version_information["status"] != "CURRENT":
+            version_str = _("PiTiVi %s is available." %
+                (self.app.version_information["current"]))
+
+            abt.set_comments("%s\n%s\n%s\n\n%s" %
+                (ges_version_str, pygst_version_str, gst_version_str, version_str))
+        else:
+            abt.set_comments("%s\n%s\n%s" % (ges_version_str, pygst_version_str, gst_version_str))
         authors = ["Edward Hervey <bilboed@bilboed.com>",
                    "Alessandro Decina <alessandro.decina@collabora.co.uk>",
                    "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)",
