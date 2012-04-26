@@ -1118,7 +1118,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         cur_playhead_offset = self._canvas._playhead.props.x - self.hadj.props.value
         new_pos = Zoomable.nsToPixel(self._position) - cur_playhead_offset
 
-        self.updateScrollAdjustments()
+        self.updateHScrollAdjustments()
         self._scrollToPosition(new_pos)
         self.ruler.queue_resize()
         self.ruler.queue_draw()
@@ -1260,20 +1260,29 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.vadj.props.upper = (LAYER_HEIGHT_EXPANDED + LAYER_SPACING
                 + TRACK_SPACING) * 2 * num_layers
 
-    def updateScrollAdjustments(self):
+    def updateHScrollAdjustments(self):
         """
         Recalculate the horizontal scrollbar depending on the timeline duration.
         """
-        a = self.get_allocation()
-        size = Zoomable.nsToPixel(self.app.current.timeline.props.duration)
+        timeline_ui_width = self.get_allocation().width
+        controls_width = self._controls.get_allocation().width
+        scrollbar_width = self._vscrollbar.get_allocation().width
+        contents_size = Zoomable.nsToPixel(self.app.current.timeline.props.duration)
+
+        widgets_width = controls_width + scrollbar_width
+        end_padding = 250  # Provide some space for clip insertion at the end
+
         self.hadj.props.lower = 0
-        # The "+ 200" below compensates the width of the
-        # layers column on the left + vertical scrollbar on the right
-        # FIXME: get those dynamically
-        self.hadj.props.upper = size + 200
-        self.hadj.props.page_size = a.width
-        self.hadj.props.page_increment = size * 0.9
-        self.hadj.props.step_increment = size * 0.1
+        self.hadj.props.upper = contents_size + widgets_width + end_padding
+        self.hadj.props.page_size = timeline_ui_width
+        self.hadj.props.page_increment = contents_size * 0.9
+        self.hadj.props.step_increment = contents_size * 0.1
+
+        if contents_size + widgets_width <= timeline_ui_width:
+            # We're zoomed out completely, re-enable automatic zoom fitting
+            # when adding new clips.
+            self.log("Setting 'zoomed_fitted' to True")
+            self.app.gui.zoomed_fitted = True
 
 ## ToolBar callbacks
     def _zoomFitCb(self, unused_action):

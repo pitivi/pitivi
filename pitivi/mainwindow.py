@@ -1104,7 +1104,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 self.setBestZoomRatio()
             else:
                 self.log("User had changed the zoom, so not autozooming")
-                self.timeline_ui.updateScrollAdjustments()
+                self.timeline_ui.updateHScrollAdjustments()
         else:
             sensitive = False
         self.render_button.set_sensitive(sensitive)
