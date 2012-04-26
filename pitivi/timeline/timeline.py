@@ -582,7 +582,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Zoomable.__init__(self)
         self.log("Creating Timeline")
 
-        self._updateZoom = True
+        self._updateZoomSlider = True
         self.ui_manager = ui_manager
         self.app = instance
         self._temp_objects = []
@@ -1052,9 +1052,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             # zoom + scroll => zooming (up: zoom in)
             if event.direction == gtk.gdk.SCROLL_UP:
                 Zoomable.zoomIn()
+                self.log("Setting 'zoomed_fitted' to False")
+                self.app.gui.zoomed_fitted = False
                 return True
             elif event.direction == gtk.gdk.SCROLL_DOWN:
                 Zoomable.zoomOut()
+                self.log("Setting 'zoomed_fitted' to False")
+                self.app.gui.zoomed_fitted = False
                 return True
             return False
         else:
@@ -1090,11 +1094,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _zoomAdjustmentChangedCb(self, adjustment):
         # GTK crack
-        self._updateZoom = False
+        self._updateZoomSlider = False
         Zoomable.setZoomLevel(int(adjustment.get_value()))
+        self.log("Setting 'zoomed_fitted' to False")
+        self.app.gui.zoomed_fitted = False
         self._timeline.props.snapping_distance = \
             Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
-        self._updateZoom = True
+        self._updateZoomSlider = True
 
     def _zoomSliderScrollCb(self, unused_widget, event):
         value = self._zoomAdjustment.get_value()
@@ -1104,7 +1110,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._zoomAdjustment.set_value(value - 1)
 
     def zoomChanged(self):
-        if self._updateZoom:
+        if self._updateZoomSlider:
             self._zoomAdjustment.set_value(self.getCurrentZoomLevel())
 
         # the new scroll position should preserve the current horizontal
@@ -1274,10 +1280,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.app.gui.setBestZoomRatio()
 
     def _zoomInCb(self, unused_action):
+        # This only handles the button callbacks (from the menus),
+        # not keyboard shortcuts or the zoom slider!
         Zoomable.zoomIn()
+        self.log("Setting 'zoomed_fitted' to False")
+        self.app.gui.zoomed_fitted = False
 
     def _zoomOutCb(self, unused_action):
+        # This only handles the button callbacks (from the menus),
+        # not keyboard shortcuts or the zoom slider!
         Zoomable.zoomOut()
+        self.log("Setting 'zoomed_fitted' to False")
+        self.app.gui.zoomed_fitted = False
 
     def deleteSelected(self, unused_action):
         if self.timeline:

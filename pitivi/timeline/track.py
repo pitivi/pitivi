@@ -772,7 +772,6 @@ class Track(goocanvas.Group, Zoomable, Loggable):
             w = TrackFileSource(self.app, track_object, self.track, self.timeline, self)
             self.widgets[track_object] = w
             self.add_child(w)
-            self.app.gui.setBestZoomRatio()
 
     def _objectRemovedCb(self, unused_timeline, track_object):
         if not isinstance(track_object, ges.TrackEffect):

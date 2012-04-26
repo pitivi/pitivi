@@ -158,8 +158,12 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
     def do_scroll_event(self, event):
         if event.direction == gtk.gdk.SCROLL_UP:
             Zoomable.zoomIn()
+            self.log("Setting 'zoomed_fitted' to False")
+            self.app.gui.zoomed_fitted = False
         elif event.direction == gtk.gdk.SCROLL_DOWN:
             Zoomable.zoomOut()
+            self.log("Setting 'zoomed_fitted' to False")
+            self.app.gui.zoomed_fitted = False
         # TODO: seek timeline back/forward
         elif event.direction == gtk.gdk.SCROLL_LEFT:
             pass
