@@ -629,8 +629,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # zooming slider
         self._zoomAdjustment = gtk.Adjustment()
         self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
-        self._zoomAdjustment.connect("value-changed",
-            self._zoomAdjustmentChangedCb)
+        self._zoomAdjustment.connect("value-changed", self._zoomAdjustmentChangedCb)
         self._zoomAdjustment.props.lower = 0
         self._zoomAdjustment.props.upper = Zoomable.zoom_steps
         zoomslider = gtk.HScale(self._zoomAdjustment)
@@ -1136,7 +1135,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def scrollToPlayhead(self):
         """
-        If the current position is out of the view bouds, then scroll
+        If the current position is out of the view bounds, then scroll
         as close to the center of the view as possible or as close as the
         timeline canvas allows.
         """
@@ -1244,8 +1243,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._timeline = None
         self._controls.timeline = None
 
-    timeline = property(getTimeline, setTimeline, delTimeline,
-            "The GESTimeline")
+    timeline = property(getTimeline, setTimeline, delTimeline, "The GESTimeline")
 
     def _layerAddedCb(self, unused_layer, unused_user_data):
         self.updateVScrollAdjustments()
