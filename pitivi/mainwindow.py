@@ -767,6 +767,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # Add gst.SECOND - 1 to the timeline duration to make sure the
         # last second of the timeline will be in view.
         duration = self.app.current.timeline.props.duration
+        if duration == 0:
+            self.debug("The timeline duration is 0, impossible to calculate zoom")
+            return
         timeline_duration = duration + gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / gst.SECOND)
 
