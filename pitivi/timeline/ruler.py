@@ -156,19 +156,24 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         return False
 
     def do_scroll_event(self, event):
-        if event.direction == gtk.gdk.SCROLL_UP:
-            Zoomable.zoomIn()
-            self.log("Setting 'zoomed_fitted' to False")
-            self.app.gui.zoomed_fitted = False
-        elif event.direction == gtk.gdk.SCROLL_DOWN:
-            Zoomable.zoomOut()
-            self.log("Setting 'zoomed_fitted' to False")
-            self.app.gui.zoomed_fitted = False
-        # TODO: seek timeline back/forward
-        elif event.direction == gtk.gdk.SCROLL_LEFT:
-            pass
-        elif event.direction == gtk.gdk.SCROLL_RIGHT:
-            pass
+        if event.state & gtk.gdk.CONTROL_MASK:
+            # Control + scroll = zoom
+            if event.direction == gtk.gdk.SCROLL_UP:
+                Zoomable.zoomIn()
+                self.log("Setting 'zoomed_fitted' to False")
+                self.app.gui.zoomed_fitted = False
+            elif event.direction == gtk.gdk.SCROLL_DOWN:
+                Zoomable.zoomOut()
+                self.log("Setting 'zoomed_fitted' to False")
+                self.app.gui.zoomed_fitted = False
+        else:
+            # No modifier key held down, just scroll
+            if event.direction == gtk.gdk.SCROLL_UP or\
+                event.direction == gtk.gdk.SCROLL_LEFT:
+                self.app.gui.timeline_ui.scroll_left()
+            elif event.direction == gtk.gdk.SCROLL_DOWN or\
+                event.direction == gtk.gdk.SCROLL_RIGHT:
+                self.app.gui.timeline_ui.scroll_right()
 
 ## Drawing methods
 
