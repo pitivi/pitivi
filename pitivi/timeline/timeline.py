@@ -1144,7 +1144,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         new_pos = Zoomable.nsToPixel(self._position)
         scroll_pos = self.hadj.get_value()
         if (new_pos > scroll_pos + canvas_size) or (new_pos < scroll_pos):
-            self.scrollToPosition(min(new_pos - canvas_size / 2,
+            self.scrollToPosition(min(new_pos - canvas_size / 6,
                                       self.hadj.upper - canvas_size - 1))
         return False
 
