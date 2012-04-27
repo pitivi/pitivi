@@ -494,10 +494,10 @@ class TimelineControls(gtk.VBox, Loggable):
     timeline = property(getTimeline, setTimeline, None, "The timeline property")
 
     def _trackAddedCb(self, timeline, track):
-        track = TrackControls(track)
-        self._tracks.append(track)
-        self.pack_start(track, False, False)
-        track.show()
+        track_control = TrackControls(track)
+        self._tracks.append(track_control)
+        self.pack_start(track_control, False, False)
+        track_control.show()
 
     def _trackRemovedCb(self, unused_timeline, position):
         track = self._tracks[position]
@@ -1205,9 +1205,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def setTimeline(self, timeline):
         self.debug("Setting timeline %s", timeline)
-        self._controls.timeline = self._timeline
 
         self.delTimeline()
+        self._controls.timeline = timeline
         self._timeline = timeline
 
         if timeline:
