@@ -1118,8 +1118,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         cur_playhead_offset = self._canvas._playhead.props.x - self.hadj.props.value
         new_pos = Zoomable.nsToPixel(self._position) - cur_playhead_offset
 
+        # Update the position of the playhead's line on the canvas
+        # This does not actually change the timeline position
+        self._canvas._playhead.props.x = Zoomable.nsToPixel(self._position)
+
         self.updateHScrollAdjustments()
-        self._scrollToPosition(new_pos)
+        self.scrollToPosition(new_pos)
         self.ruler.queue_resize()
         self.ruler.queue_draw()
 
