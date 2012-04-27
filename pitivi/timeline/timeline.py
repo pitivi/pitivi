@@ -1140,12 +1140,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         as close to the center of the view as possible or as close as the
         timeline canvas allows.
         """
-        page_size = self.hadj.get_page_size()
-
+        canvas_size = self._canvas.get_allocation().width
         new_pos = Zoomable.nsToPixel(self._position)
         scroll_pos = self.hadj.get_value()
-        if (new_pos > scroll_pos + page_size) or (new_pos < scroll_pos):
-            self.scrollToPosition(min(new_pos - page_size / 2, self.hadj.upper - page_size - 1))
+        if (new_pos > scroll_pos + canvas_size) or (new_pos < scroll_pos):
+            self.scrollToPosition(min(new_pos - canvas_size / 2,
+                                      self.hadj.upper - canvas_size - 1))
         return False
 
     def scrollToPosition(self, position):
