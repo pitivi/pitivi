@@ -74,8 +74,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         # position is in nanoseconds
         self.position = 0
         self.pressed = False
-        self.shaded_duration = gst.CLOCK_TIME_NONE
-        self.max_duration = gst.CLOCK_TIME_NONE
         self.min_frame_spacing = 5.0
         self.frame_height = 5.0
         self.frame_rate = gst.Fraction(1 / 1)
@@ -136,8 +134,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     def do_button_press_event(self, event):
         self.debug("button pressed at x:%d", event.x)
-        if self.getShadedDuration() <= 0:
-            self.debug("no timeline to seek on, ignoring")
         self.pressed = True
         position = self.pixelToNs(event.x + self.pixmap_offset)
         self._seeker.seek(position)
@@ -216,35 +212,13 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.scale[1] = float(5 / rate)
         self.scale[2] = float(10 / rate)
 
-    def setShadedDuration(self, duration):
-        self.info("start/duration changed")
-
-        self.shaded_duration = duration
-
-        if duration < self.position:
-            position = duration - gst.NSECOND
-        else:
-            position = self.position
-        self.need_update = True
-        self.queue_draw()
-
-    def getShadedDuration(self):
-        return self.shaded_duration
-
-    def getShadedDurationWidth(self):
-        return self.nsToPixel(self.getShadedDuration())
-
-    def setMaxDuration(self, duration):
-        self.max_duration = duration
-
     def drawBackground(self, allocation):
         self.pixmap.draw_rectangle(
             self.style.bg_gc[gtk.STATE_NORMAL],
             True,
             0, 0,
             allocation.width, allocation.height)
-
-        offset = int(Zoomable.nsToPixel(self.getShadedDuration())) - self.pixmap_offset
+        offset = int(self.nsToPixel(gst.CLOCK_TIME_NONE)) - self.pixmap_offset
         if offset > 0:
             self.pixmap.draw_rectangle(
                 self.style.bg_gc[gtk.STATE_ACTIVE],
@@ -297,12 +271,11 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         if offset > 0:
             seconds = seconds - (seconds % interval) + interval
             paintpos += spacing - offset
-        shaded = self.getShadedDurationWidth()
 
         while paintpos < allocation.width:
             timevalue = time_to_string(long(seconds))
             layout.set_text(timevalue)
-            if paintpos < shaded:
+            if paintpos < self.nsToPixel(gst.CLOCK_TIME_NONE):
                 state = gtk.STATE_ACTIVE
             else:
                 state = gtk.STATE_NORMAL
@@ -332,8 +305,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
                 paintpos += frame_width
 
     def drawPosition(self, context, allocation):
-        if self.getShadedDuration() <= 0:
-            return
         # a simple RED line will do for now
         xpos = self.nsToPixel(self.position) + self.border -\
             self.pixmap_offset
