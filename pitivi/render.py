@@ -346,8 +346,7 @@ class RenderingProgressDialog(Signallable):
         # UI widgets
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
 
-        # FIXME: re-enable these widgets when bugs #650710 and 637079 are fixed
-        self.play_pause_button.hide()
+        # TODO: show this widget for rendering statistics (bug 637079)
         self.table1.hide()
 
     def updatePosition(self, fraction, estimated):
@@ -358,10 +357,8 @@ class RenderingProgressDialog(Signallable):
 
     def setState(self, state):
         if state == gst.STATE_PLAYING:
-            self.play_pause_button.props.label = gtk.STOCK_MEDIA_PAUSE
             self.system.inhibitSleep(RenderDialog.INHIBIT_REASON)
         else:
-            self.play_pause_button.props.label = 'pitivi-render'
             self.system.uninhibitSleep(RenderDialog.INHIBIT_REASON)
 
     def _cancelButtonClickedCb(self, unused_button):

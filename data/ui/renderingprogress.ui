@@ -2,13 +2,13 @@
 <interface>
   <!-- interface-requires gtk+ 2.6 -->
   <object class="GtkDialog" id="render-progress">
-    <property name="width_request">300</property>
     <property name="can_focus">False</property>
     <property name="border_width">12</property>
     <property name="title" translatable="yes">Rendering</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
-    <property name="type_hint">normal</property>
+    <property name="default_width">400</property>
+    <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox2">
         <property name="visible">True</property>
@@ -21,14 +21,14 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="play_pause_button">
+              <object class="GtkToggleButton" id="play_pause_button">
                 <property name="label">gtk-media-pause</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="_pauseButtonClickedCb" swapped="no"/>
+                <signal name="toggled" handler="_pauseButtonClickedCb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
