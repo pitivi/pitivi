@@ -329,7 +329,6 @@ class RenderingProgressDialog(Signallable):
 
     def __init__(self, app, parent):
         self.app = app
-        self.system = app.system
         self.builder = gtk.Builder()
         self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
             "renderingprogress.ui"))
@@ -356,12 +355,6 @@ class RenderingProgressDialog(Signallable):
             self.progressbar.set_text(_("About %s left") % estimated)
         else:
             self.progressbar.set_text(_("Estimating..."))
-
-    def setState(self, state):
-        if state == gst.STATE_PLAYING:
-            self.system.inhibitSleep(RenderDialog.INHIBIT_REASON)
-        else:
-            self.system.uninhibitSleep(RenderDialog.INHIBIT_REASON)
 
     def _cancelButtonClickedCb(self, unused_button):
         self.emit("cancel")
@@ -987,10 +980,13 @@ class RenderDialog(Loggable):
             prev, state, pending = message.parse_state_changed()
             if message.src == self._pipeline:
                 state_really_changed = pending == gst.STATE_VOID_PENDING
-                if state_really_changed and state == gst.STATE_PLAYING:
-                    self.log("Rendering started/resumed, resetting ETA calculation")
-                    self.timestarted = time.time()
-            self.progress.setState(state)
+                if state_really_changed:
+                    if state == gst.STATE_PLAYING:
+                        self.debug("Rendering started/resumed, resetting ETA calculation and inhibiting sleep")
+                        self.timestarted = time.time()
+                        self.system.inhibitSleep(RenderDialog.INHIBIT_REASON)
+                    else:
+                        self.system.uninhibitSleep(RenderDialog.INHIBIT_REASON)
 
     def _updatePositionCb(self, seeker, position):
         if self.progress:
