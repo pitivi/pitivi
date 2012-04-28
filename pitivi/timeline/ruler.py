@@ -146,6 +146,11 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
     def do_button_release_event(self, event):
         self.debug("button released at x:%d", event.x)
         self.pressed = False
+        # The distinction between the ruler and timeline canvas is theoretical.
+        # If the user interacts with the ruler, have the timeline steal focus
+        # from other widgets. This reactivates keyboard shortcuts for playback.
+        timeline = self.app.gui.timeline_ui
+        timeline._canvas.grab_focus(timeline._root_item)
         return False
 
     def do_motion_notify_event(self, event):
