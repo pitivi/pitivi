@@ -55,11 +55,13 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         gtk.DrawingArea.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
-        self.log("Creating new ScaleRule")
-        self.add_events(gtk.gdk.POINTER_MOTION_MASK |
-            gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
+        self.log("Creating new ScaleRuler")
+        self.app = instance
+        self._seeker = Seeker()
         self.hadj = hadj
         hadj.connect("value-changed", self._hadjValueChangedCb)
+        self.add_events(gtk.gdk.POINTER_MOTION_MASK |
+            gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
 
         # double-buffering properties
         self.pixmap = None
@@ -71,16 +73,12 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         # This is the number of visible_width we allocate for the pixmap
         self.pixmap_multiples = 2
 
-        # position is in nanoseconds
-        self.position = 0
+        self.position = 0  # In nanoseconds
         self.pressed = False
+        self.need_update = True
         self.min_frame_spacing = 5.0
         self.frame_height = 5.0
         self.frame_rate = gst.Fraction(1 / 1)
-        self.app = instance
-        self.need_update = True
-
-        self._seeker = Seeker()
 
     def _hadjValueChangedCb(self, hadj):
         self.pixmap_offset = self.hadj.get_value()
@@ -197,17 +195,17 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         if (allocation.width != self.pixmap_old_allocated_width):
             if self.pixmap:
                 del self.pixmap
-            self.pixmap = gtk.gdk.Pixmap(self.window, allocation.width,
-                                         allocation.height)
+            self.pixmap = gtk.gdk.Pixmap(self.window, allocation.width, allocation.height)
             self.pixmap_old_allocated_width = allocation.width
 
         self.drawBackground(allocation)
         self.drawRuler(allocation)
 
     def setProjectFrameRate(self, rate):
+        """
+        Set the lowest scale based on project framerate
+        """
         self.frame_rate = rate
-
-        # set the lowest scale based on project framerate
         self.scale[0] = float(2 / rate)
         self.scale[1] = float(5 / rate)
         self.scale[2] = float(10 / rate)
@@ -237,7 +235,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
                 break
 
         offset = self.pixmap_offset % spacing
-
         zoomRatio = self.zoomratio
         self.drawFrameBoundaries(allocation)
         self.drawTicks(allocation, offset, spacing, scale)
@@ -306,14 +303,11 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     def drawPosition(self, context, allocation):
         # a simple RED line will do for now
-        xpos = self.nsToPixel(self.position) + self.border -\
-            self.pixmap_offset
+        xpos = self.nsToPixel(self.position) + self.border - self.pixmap_offset
         context.save()
         context.set_line_width(1.5)
         context.set_source_rgb(1.0, 0, 0)
-
         context.move_to(xpos, 0)
         context.line_to(xpos, allocation.height)
         context.stroke()
-
         context.restore()

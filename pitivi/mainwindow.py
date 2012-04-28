@@ -491,9 +491,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         """
         Grab (or release) keyboard letter keys focus/sensitivity
         for operations such as typing text in an entry.
-        @param action_names: The name of actions we
-                             want to set to sensitive or not, if set to "default"
-                             we use the default actions.
+
+        @param action_names: The name of actions we want to set to (in)sensitive
+                             If set to "default", we use the default actions.
         @type action_names: A {list} of action names
         @param sensitive: %True if actions must be sensitive False otherwise
         @type action_names: C{Bool}

@@ -213,8 +213,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         root.connect("button-press-event", self._selectionStart)
         root.connect("button-release-event", self._selectionEnd)
         self.connect("button-release-event", self._snapEndedCb)
-        self.height = (LAYER_HEIGHT_EXPANDED + TRACK_SPACING +
-                LAYER_SPACING) * 2
+        self.height = (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING) * 2
         # add some padding for the horizontal scrollbar
         self.height += 21
         self.set_size_request(-1, self.height)
@@ -761,7 +760,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.nextframe_action = actiongroup.get_action("Nextframe")
 
         self.ui_manager.insert_action_group(actiongroup, -1)
-
         self.ui_manager.add_ui_from_string(ui)
 
         # drag and drop
