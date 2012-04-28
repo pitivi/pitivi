@@ -354,6 +354,8 @@ class RenderingProgressDialog(Signallable):
         self.window.set_title(_("%d%% Rendered") % int(100 * fraction))
         if estimated:
             self.progressbar.set_text(_("About %s left") % estimated)
+        else:
+            self.progressbar.set_text(_("Estimating..."))
 
     def setState(self, state):
         if state == gst.STATE_PLAYING:
@@ -868,7 +870,6 @@ class RenderDialog(Loggable):
         self._pipeline.set_mode(ges.TIMELINE_MODE_SMART_RENDER)
         encodebin = self._pipeline.get_by_name("internal-encodebin")
         self._gstSigId[encodebin] = encodebin.connect("element-added", self._elementAddedCb)
-        self.timestarted = time.time()
         self._pipeline.set_state(gst.STATE_PLAYING)
 
     def _cancelRender(self, progress):
@@ -984,6 +985,11 @@ class RenderDialog(Loggable):
             self._destroyProgressWindow()
         elif message.type == gst.MESSAGE_STATE_CHANGED and self.progress:
             prev, state, pending = message.parse_state_changed()
+            if message.src == self._pipeline:
+                state_really_changed = pending == gst.STATE_VOID_PENDING
+                if state_really_changed and state == gst.STATE_PLAYING:
+                    self.log("Rendering started/resumed, resetting ETA calculation")
+                    self.timestarted = time.time()
             self.progress.setState(state)
 
     def _updatePositionCb(self, seeker, position):
