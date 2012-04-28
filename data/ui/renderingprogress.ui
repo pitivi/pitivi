@@ -171,7 +171,7 @@
               <object class="GtkProgressBar" id="progressbar">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="text" translatable="yes">Estimating...</property>
+                <property name="text" translatable="yes">Initializing...</property>
                 <property name="show_text">True</property>
               </object>
               <packing>
