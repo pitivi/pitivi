@@ -1126,6 +1126,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             # Playback reached the end of the timeline. Pause the pipeline
             # to prevent playback from resuming when the user seeks somewhere.
             self.app.current.pipeline.set_state(gst.STATE_PAUSED)
+            self.viewer.pipelineStateChanged(gst.STATE_PAUSED)
         elif message.type == gst.MESSAGE_STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
             if message.src == self._project_pipeline:
