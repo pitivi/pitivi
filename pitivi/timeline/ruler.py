@@ -98,7 +98,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 ## timeline position changed method
 
     def timelinePositionChanged(self, value, unused_frame=None):
-        self.debug("value : %r", value)
+        self.log("value : %r", value)
         ppos = max(self.nsToPixel(self.position) - 1, 0)
         self.position = value
         npos = max(self.nsToPixel(self.position) - 1, 0)
@@ -110,7 +110,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 ## gtk.Widget overrides
 
     def do_expose_event(self, event):
-        self.debug("exposing ScaleRuler %s", list(event.area))
+        self.log("exposing ScaleRuler %s", list(event.area))
         x, y, width, height = event.area
         # if (x < self.pixmap_offset) or (x+width > self.pixmap_offset + self.pixmap_allocated_width):
         #     self.debug("exposing outside boundaries !")

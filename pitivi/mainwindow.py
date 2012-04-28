@@ -1130,7 +1130,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         elif message.type == gst.MESSAGE_STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
             if message.src == self._project_pipeline:
-                self.debug("Pipeline state changed. Prev:%r, new:%r, pending:%r", prev, new, pending)
+                self.info("Pipeline state changed. Prev:%r, new:%r, pending:%r", prev, new, pending)
                 state_really_changed = pending == gst.STATE_VOID_PENDING
                 if state_really_changed:
                     self.viewer.pipelineStateChanged(new)

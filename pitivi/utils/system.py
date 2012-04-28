@@ -54,14 +54,14 @@ class System(Signallable, Loggable):
 
         if not key in list_:
             list_.append(key)
-            self.debug("emitting 'update-power-inhibition'")
+            self.log("emitting 'update-power-inhibition'")
             self.emit('update-power-inhibition')
 
     def _uninhibit(self, list_, key):
         if key == None:
             if self._isInhibited(list_):
                 list_ = []
-                self.debug("emitting 'update-power-inhibition'")
+                self.log("emitting 'update-power-inhibition'")
                 self.emit('update-power-inhibition')
         else:
             if not isinstance(key, str):
@@ -69,7 +69,7 @@ class System(Signallable, Loggable):
 
             if key in list_:
                 list_.remove(key)
-                self.debug("emitting 'update-power-inhibition'")
+                self.log("emitting 'update-power-inhibition'")
                 self.emit('update-power-inhibition')
 
     def _listToString(self, list_):
@@ -98,7 +98,7 @@ class System(Signallable, Loggable):
         NOTE: it is safe to call this method with a key that is already
             inhibited
         """
-        self.debug("inhibitScreensaver()")
+        self.info("Inhibiting the screensaver")
         self._inhibit(self._screensaver_keys, key)
 
     def uninhibitScreensaver(self, key):
@@ -107,7 +107,7 @@ class System(Signallable, Loggable):
             inhibiting sleep
         NOTE: it is safe to call this method with a key that is not inhibited.
         """
-        self.debug("uninhibitScreensaver()")
+        self.info("Uninhibiting the screensaver")
         self._uninhibit(self._screensaver_keys, key)
 
     def screensaverIsInhibited(self, key=None):
@@ -129,7 +129,7 @@ class System(Signallable, Loggable):
         NOTE: it is safe to call this method with a key that is already
             inhibited
         """
-        self.debug("inhibitSleep()")
+        self.info("Inhibiting sleep")
         self._inhibit(self._sleep_keys, key)
 
     def uninhibitSleep(self, key):
@@ -138,7 +138,7 @@ class System(Signallable, Loggable):
             inhibiting sleep
         NOTE: it is safe to call this method with a key that is not inhibited.
         """
-        self.debug("uninhibitSleep()")
+        self.info("Uninhibiting sleep")
         self._uninhibit(self._sleep_keys, key)
 
     def sleepIsInhibited(self, key=None):
@@ -164,8 +164,7 @@ class System(Signallable, Loggable):
         @arg message: C{str} the body of the message
         @arg icon: C{gtk.gdk.Pixbuf} icon to be shown with the message
         """
-        self.debug("desktopMessage(): %s, %s" \
-            % title % message)
+        self.debug("desktopMessage(): %s, %s" % title % message)
         pass
 
     def desktopIsMessageable():
@@ -232,7 +231,7 @@ class GnomeSystem(FreedesktopOrgSystem):
         #or we inhibit sleep/powersaving when we are processing data
         #we do things the way we do here because the viewer shows the the output
         #of the render pipeline
-        self.debug("updating power inhibitors")
+        self.log("updating power inhibitors")
         toplevel_id = 0
 
         #inhibit power saving if we are rendering, maybe downloading a video

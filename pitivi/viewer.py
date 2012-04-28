@@ -481,12 +481,12 @@ class PitiviViewer(gtk.VBox, Loggable):
         try:
             self.current_time = self.pipeline.query_position(gst.FORMAT_TIME)[0]
             if self.current_time != self.previous_time:
-                self.info("value:%s", gst.TIME_ARGS(self.current_time))
+                self.debug("value:%s", gst.TIME_ARGS(self.current_time))
                 self.timecode_entry.setWidgetValue(self.current_time, False)
                 self.seeker.setPosition(self.current_time)
                 self.previous_time = self.current_time
         except:
-            self.debug("Could not check timeline position for the viewer")
+            self.info("Could not check timeline position for the viewer")
 
     def _positionCheckTimerCb(self):
         """
