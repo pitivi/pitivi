@@ -1095,8 +1095,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Zoomable.setZoomLevel(int(adjustment.get_value()))
         self.log("Setting 'zoomed_fitted' to False")
         self.app.gui.zoomed_fitted = False
-        self._timeline.props.snapping_distance = \
-            Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
         self._updateZoomSlider = True
 
     def _zoomSliderScrollCb(self, unused_widget, event):
@@ -1109,6 +1107,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def zoomChanged(self):
         if self._updateZoomSlider:
             self._zoomAdjustment.set_value(self.getCurrentZoomLevel())
+
+        if self._settings and self._timeline:
+            # zoomChanged might be called various times before the UI is ready
+            self._timeline.props.snapping_distance = \
+                Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
 
         # the new scroll position should preserve the current horizontal
         # position of the playhead in the window
