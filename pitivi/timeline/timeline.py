@@ -1400,7 +1400,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     self.app.action_log.commit()
 
     def playPause(self, unused_action):
-        self.app.gui.viewer.togglePlayback()
+        self.app.current.pipeline.togglePlayback()
 
     def prevframe(self, action):
         prev_kf = self.timeline.getPrevKeyframe(self._position)

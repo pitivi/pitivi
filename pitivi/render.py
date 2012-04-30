@@ -36,7 +36,7 @@ import pitivi.utils.loggable as log
 from gettext import gettext as _
 
 from pitivi import configure
-from pitivi.utils.playback import togglePlayback, Seeker
+from pitivi.utils.playback import Seeker
 from pitivi.utils.signal import Signallable
 
 from pitivi.utils.loggable import Loggable
@@ -878,7 +878,7 @@ class RenderDialog(Loggable):
         self._pipeline.set_mode(ges.TIMELINE_MODE_PREVIEW)
 
     def _pauseRender(self, progress):
-        togglePlayback(self._pipeline)
+        self.app.current.pipeline.togglePlayback()
 
     def _destroyProgressWindow(self):
         """ Handle the completion or the cancellation of the render process. """

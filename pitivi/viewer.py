@@ -31,7 +31,7 @@ from math import pi
 
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
-from pitivi.utils.playback import togglePlayback, Seeker
+from pitivi.utils.playback import Seeker
 from pitivi.utils.ui import SPACING, hex_to_rgb
 from pitivi.utils.widgets import TimeWidget
 
@@ -387,7 +387,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.target.renderbox()
 
     def _playButtonCb(self, unused_button, playing):
-        self.togglePlayback()
+        self.app.current.pipeline.togglePlayback()
 
     def _goToStartCb(self, unused_button):
         self.seeker.seek(0)
@@ -417,11 +417,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.seeker.seek(nanoseconds)
 
     ## public methods for controlling playback
-
-    def togglePlayback(self):
-        if self.pipeline:
-            state = togglePlayback(self.pipeline)
-            self.playing = (state == gst.STATE_PLAYING)
 
     def undock(self):
         if not self.undock_action:
