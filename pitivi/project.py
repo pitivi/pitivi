@@ -45,6 +45,7 @@ from pitivi.utils.misc import quote_uri, path_from_uri
 from pitivi.utils.playback import Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
+from pitivi.utils.pipeline import Pipeline
 from pitivi.utils.timeline import Selection
 from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
@@ -448,7 +449,7 @@ class Project(Signallable, Loggable):
     @ivar timeline: The timeline
     @type timeline: L{ges.Timeline}
     @ivar pipeline: The timeline's pipeline
-    @type pipeline: L{ges.Pipeline}
+    @type pipeline: L{Pipeline}
     @ivar format: The format under which the project is currently stored.
     @type format: L{FormatterClass}
     @ivar loaded: Whether the project is fully loaded or not.
@@ -489,7 +490,7 @@ class Project(Signallable, Loggable):
         # no such feature in GES
         self.timeline.selection = Selection()
 
-        self.pipeline = ges.TimelinePipeline()
+        self.pipeline = Pipeline()
         self.pipeline.add_timeline(self.timeline)
         self.seeker = Seeker()
 

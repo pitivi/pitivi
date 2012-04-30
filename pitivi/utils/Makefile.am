@@ -6,6 +6,7 @@ utils_PYTHON = 	\
 	timeline.py     \
 	loggable.py     \
 	playback.py     \
+	pipeline.py     \
 	signal.py       \
 	ui.py           \
 	system.py       \
