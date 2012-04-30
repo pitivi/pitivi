@@ -240,7 +240,7 @@ class EditingContext(Signallable):
         else:
             priority = max(0, priority)
 
-        res = self.focus.edit(None, priority, self.mode, self.edge, long(position))
+        res = self.focus.edit([], priority, self.mode, self.edge, long(position))
         if res and self.mode == ges.EDIT_MODE_TRIM:
             uri = self.focus.props.uri
             if self.edge == ges.EDGE_START:
