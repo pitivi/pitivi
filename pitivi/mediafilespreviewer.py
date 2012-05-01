@@ -370,12 +370,29 @@ class PreviewWidget(gtk.VBox, Loggable):
         if mess.type == gst.MESSAGE_ELEMENT:
             if mess.structure.get_name() == 'prepare-xwindow-id':
                 sink = mess.src
-                sink.set_property('force-aspect-ratio', True)
-                sink.set_property("handle-expose", True)
-                gtk.gdk.threads_enter()
-                sink.set_xwindow_id(self.preview_video.window_xid)
-                sink.expose()
-                gtk.gdk.threads_leave()
+
+                # We need to set force-aspect-ratio and handle-expose properties
+                # to the real videosink. Depending on how the pipeline was
+                # configured and the version of gstreamer, the source of this
+                # message could be the videosink itself or playsink. If it's
+                # playsink, we need to get the videosink that is inside it.
+                # Even better, the sink inside playsink could be autovideosink,
+                # which isn't a real sink, therefore we get the sink inside it.
+                try:
+                    if sink.get_factory().get_name() == 'playsink':
+                        realsink = sink.get_property('video-sink')
+                    else:
+                        realsink = sink
+                    if realsink.get_factory().get_name() == 'autovideosink':
+                        realsink = realsink.sinks().next()
+
+                    realsink.set_property('force-aspect-ratio', True)
+                    realsink.set_property("handle-expose", True)
+                finally:
+                    gtk.gdk.threads_enter()
+                    sink.set_xwindow_id(self.preview_video.window_xid)
+                    sink.expose()
+                    gtk.gdk.threads_leave()
         return gst.BUS_PASS
 
     def _tag_found_cb(self, abus, mess):
