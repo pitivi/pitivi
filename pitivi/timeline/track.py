@@ -274,9 +274,9 @@ class StartHandle(TrimHandle):
 
             self._view.app.action_log.begin("trim object")
 
-        def clipTrimCb(self, unused_TrimStartContext, clip_uri, position):
+        def clipTrimCb(self, unused_TrimStartContext, tl_obj, position):
             # While a clip is being trimmed, ask the viewer to preview it
-            self._view.app.gui.viewer.clipTrimPreview(clip_uri, position)
+            self._view.app.gui.viewer.clipTrimPreview(tl_obj, position)
 
         def clipTrimFinishedCb(self, unused_TrimStartContext):
             # When a clip has finished trimming, tell the viewer to reset itself
@@ -306,9 +306,9 @@ class EndHandle(TrimHandle):
             self._context.connect("clip-trim-finished", self.clipTrimFinishedCb)
             self._view.app.action_log.begin("trim object")
 
-        def clipTrimCb(self, unused_TrimStartContext, clip_uri, position):
+        def clipTrimCb(self, unused_TrimStartContext, tl_obj, position):
             # While a clip is being trimmed, ask the viewer to preview it
-            self._view.app.gui.viewer.clipTrimPreview(clip_uri, position)
+            self._view.app.gui.viewer.clipTrimPreview(tl_obj, position)
 
         def clipTrimFinishedCb(self, unused_TrimStartContext):
             # When a clip has finished trimming, tell the viewer to reset itself

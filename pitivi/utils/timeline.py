@@ -242,11 +242,10 @@ class EditingContext(Signallable):
 
         res = self.focus.edit([], priority, self.mode, self.edge, long(position))
         if res and self.mode == ges.EDIT_MODE_TRIM:
-            uri = self.focus.props.uri
             if self.edge == ges.EDGE_START:
-                self.emit("clip-trim", uri, self.focus.props.in_point)
+                self.emit("clip-trim", self.focus, self.focus.props.in_point)
             elif self.edge == ges.EDGE_END:
-                self.emit("clip-trim", uri, self.focus.props.duration)
+                self.emit("clip-trim", self.focus, self.focus.props.duration)
 
 
 #-------------------------- Interfaces ----------------------------------------#

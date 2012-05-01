@@ -496,10 +496,17 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.positionCheck()
         return self.currentState != gst.STATE_PAUSED
 
-    def clipTrimPreview(self, clip_uri, position):
+    def clipTrimPreview(self, tl_obj, position):
         """
         While a clip is being trimmed, show a live preview of it.
         """
+        self._clipTrimPreviewed = True
+        if tl_obj.props.is_image or not hasattr(tl_obj, "get_uri"):
+            self.log("%s is an image or has no URI, so not previewing trim" % tl_obj)
+            self._clipTrimPreviewed = False
+            return False
+
+        clip_uri = tl_obj.props.uri
         cur_time = time()
         if not self._tmp_pipeline:
             self.debug("Creating temporary pipeline for clip %s, position %s",
@@ -519,9 +526,10 @@ class PitiviViewer(gtk.VBox, Loggable):
         """
         After trimming a clip, reset the project pipeline into the viewer.
         """
-        self._tmp_pipeline = None  # Free the memory
-        self.setPipeline(self.app.current.pipeline, self._oldTimelinePos)
-        self.debug("Back to old pipeline")
+        if self._clipTrimPreviewed:
+            self._tmp_pipeline = None  # Free the memory
+            self.setPipeline(self.app.current.pipeline, self._oldTimelinePos)
+            self.debug("Back to old pipeline")
 
     def pipelineStateChanged(self, state):
         """
