@@ -120,6 +120,9 @@ class ProjectManager(Signallable, Loggable):
         should be loaded instead, and if so, force the user to use "Save as"
         afterwards.
         """
+        if self.current is not None and not self.closeRunningProject():
+            return False
+
         self.emit("new-project-loading", uri)
 
         # We really want a path for os.path to work
@@ -152,6 +155,8 @@ class ProjectManager(Signallable, Loggable):
         self.formatter.connect("loaded", self._projectLoadedCb)
         if self.formatter.load_from_uri(self.timeline, uri):
             self.current.connect("project-changed", self._projectChangedCb)
+
+        return True
 
     def _restoreFromBackupDialog(self, time_diff):
         """
