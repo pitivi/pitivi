@@ -67,11 +67,9 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.pixmap = None
         # all values are in pixels
         self.pixmap_offset = 0
-        self.pixmap_visible_width = 0
-        self.pixmap_allocated_width = 0
-        self.pixmap_old_allocated_width = -1
+        self.pixmap_offset_painted = 0
         # This is the number of visible_width we allocate for the pixmap
-        self.pixmap_multiples = 2
+        self.pixmap_multiples = 4
 
         self.position = 0  # In nanoseconds
         self.pressed = False
@@ -82,7 +80,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     def _hadjValueChangedCb(self, hadj):
         self.pixmap_offset = self.hadj.get_value()
-        self.need_update = True
         self.queue_draw()
 
 ## Zoomable interface override
@@ -108,26 +105,20 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
     def do_expose_event(self, event):
         self.log("exposing ScaleRuler %s", list(event.area))
         x, y, width, height = event.area
-        # if (x < self.pixmap_offset) or (x+width > self.pixmap_offset + self.pixmap_allocated_width):
-        #     self.debug("exposing outside boundaries !")
-        #     self.pixmap_offset = max(0, x + (width / 2) - (self.pixmap_allocated_width / 2))
-        #     self.debug("offset is now %d", self.pixmap_offset)
-        #     self.doPixmap()
-        #     width = self.pixmap_allocated_width
 
-        if self.need_update:
-            self.doPixmap()
-            self.need_update = False
+        self.repaintIfNeeded(width, height)
+        # offset in pixmap to paint
+        offset_to_paint = self.pixmap_offset - self.pixmap_offset_painted
 
-        # double buffering power !
         self.window.draw_drawable(
             self.style.fg_gc[gtk.STATE_NORMAL],
             self.pixmap,
-            x, y,
+            int(offset_to_paint), 0,
             x, y, width, height)
+
         # draw the position
         context = self.window.cairo_create()
-        self.drawPosition(context, self.get_allocation())
+        self.drawPosition(context)
         return False
 
     def do_button_press_event(self, event):
@@ -176,30 +167,30 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
 ## Drawing methods
 
-    def doPixmap(self):
+    def repaintIfNeeded(self, width, height):
         """ (re)create the buffered drawable for the Widget """
         # we can't create the pixmap if we're not realized
-        if not self.flags() & gtk.REALIZED:
-            return
+        if self.pixmap:
+            # The new offset starts before painted in pixmap
+            if (self.pixmap_offset < self.pixmap_offset_painted):
+                self.need_update = True
+            # The new offsets end after pixmap we have
+            if (self.pixmap_offset + width > self.pixmap_offset_painted + self.pixmap.get_size()[0]):
+                self.need_update = True
 
-        # We want to benefit from double-buffering (so as not to recreate the
-        # ruler graphics all the time) yet we don't want to allocate insanely
-        # big pixmaps (which would result in big memory usage, or even not being
-        # able to allocate such a big pixmap).
-        #
-        # We therefore create a pixmap with a width of 2 times the maximum viewable
-        # width (allocation.width)
-
-        allocation = self.get_allocation()
-
-        if (allocation.width != self.pixmap_old_allocated_width):
-            if self.pixmap:
-                del self.pixmap
-            self.pixmap = gtk.gdk.Pixmap(self.window, allocation.width, allocation.height)
-            self.pixmap_old_allocated_width = allocation.width
-
-        self.drawBackground(allocation)
-        self.drawRuler(allocation)
+        # Can't create pixmap if not REALIZED
+        if self.need_update and self.flags() & gtk.REALIZED:
+            self.debug("Ruller is repainted")
+            # We create biger pixmap to not repaint ruller every time
+            if self.pixmap is None or (width >= self.pixmap.get_size()[0]):
+                if self.pixmap:
+                    del self.pixmap
+                self.pixmap = gtk.gdk.Pixmap(self.window, width *
+                                         self.pixmap_multiples, height)
+            self.pixmap_offset_painted = self.pixmap_offset
+            self.drawBackground()
+            self.drawRuler()
+            self.need_update = False
 
     def setProjectFrameRate(self, rate):
         """
@@ -210,12 +201,12 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.scale[1] = float(5 / rate)
         self.scale[2] = float(10 / rate)
 
-    def drawBackground(self, allocation):
+    def drawBackground(self):
         self.pixmap.draw_rectangle(
             self.style.bg_gc[gtk.STATE_NORMAL],
             True,
             0, 0,
-            allocation.width, allocation.height)
+            self.pixmap.get_size()[0], self.pixmap.get_size()[1])
         offset = int(self.nsToPixel(gst.CLOCK_TIME_NONE)) - self.pixmap_offset
         if offset > 0:
             self.pixmap.draw_rectangle(
@@ -223,9 +214,9 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
                 True,
                 0, 0,
                 int(offset),
-                int(allocation.height))
+                int(self.pixmap.get_size()[1]))
 
-    def drawRuler(self, allocation):
+    def drawRuler(self):
         layout = self.create_pango_layout(time_to_string(0))
         textwidth, textheight = layout.get_pixel_size()
 
@@ -236,19 +227,19 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
         offset = self.pixmap_offset % spacing
         zoomRatio = self.zoomratio
-        self.drawFrameBoundaries(allocation)
-        self.drawTicks(allocation, offset, spacing, scale)
-        self.drawTimes(allocation, offset, spacing, scale, layout)
+        self.drawFrameBoundaries()
+        self.drawTicks(offset, spacing, scale)
+        self.drawTimes(offset, spacing, scale, layout)
 
-    def drawTick(self, allocation, paintpos, height):
+    def drawTick(self, paintpos, height):
         paintpos = int(paintpos)
-        height = allocation.height - int(allocation.height * height)
+        height = self.pixmap.get_size()[1] - int(self.pixmap.get_size()[1] * height)
         self.pixmap.draw_line(
             self.style.fg_gc[gtk.STATE_NORMAL],
             paintpos, height, paintpos,
-            allocation.height)
+            self.pixmap.get_size()[1])
 
-    def drawTicks(self, allocation, offset, spacing, scale):
+    def drawTicks(self, offset, spacing, scale):
         for subdivide, height in self.subdivide:
             spc = spacing / float(subdivide)
             dur = scale / float(subdivide)
@@ -256,11 +247,11 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
                 break
             paintpos = -spacing + 0.5
             paintpos += spacing - offset
-            while paintpos < allocation.width:
-                self.drawTick(allocation, paintpos, height)
+            while paintpos < self.pixmap.get_size()[0]:
+                self.drawTick(paintpos, height)
                 paintpos += spc
 
-    def drawTimes(self, allocation, offset, spacing, scale, layout):
+    def drawTimes(self, offset, spacing, scale, layout):
         # figure out what the optimal offset is
         interval = long(gst.SECOND * scale)
         seconds = self.pixelToNs(self.pixmap_offset)
@@ -269,7 +260,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             seconds = seconds - (seconds % interval) + interval
             paintpos += spacing - offset
 
-        while paintpos < allocation.width:
+        while paintpos < self.pixmap.get_size()[0]:
             timevalue = time_to_string(long(seconds))
             layout.set_text(timevalue)
             if paintpos < self.nsToPixel(gst.CLOCK_TIME_NONE):
@@ -282,18 +273,18 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             paintpos += spacing
             seconds += interval
 
-    def drawFrameBoundaries(self, allocation):
+    def drawFrameBoundaries(self):
         ns_per_frame = float(1 / self.frame_rate) * gst.SECOND
         frame_width = self.nsToPixel(ns_per_frame)
         if frame_width >= self.min_frame_spacing:
             offset = self.pixmap_offset % frame_width
             paintpos = -frame_width + 0.5
-            height = allocation.height
+            height = self.pixmap.get_size()[1]
             y = int(height - self.frame_height)
             states = [gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT]
             paintpos += frame_width - offset
             frame_num = int(paintpos // frame_width) % 2
-            while paintpos < allocation.width:
+            while paintpos < self.pixmap.get_size()[0]:
                 self.pixmap.draw_rectangle(
                     self.style.bg_gc[states[frame_num]],
                     True,
@@ -301,13 +292,13 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
                 frame_num = (frame_num + 1) % 2
                 paintpos += frame_width
 
-    def drawPosition(self, context, allocation):
+    def drawPosition(self, context):
         # a simple RED line will do for now
         xpos = self.nsToPixel(self.position) + self.border - self.pixmap_offset
         context.save()
         context.set_line_width(1.5)
         context.set_source_rgb(1.0, 0, 0)
         context.move_to(xpos, 0)
-        context.line_to(xpos, allocation.height)
+        context.line_to(xpos, self.pixmap.get_size()[1])
         context.stroke()
         context.restore()
