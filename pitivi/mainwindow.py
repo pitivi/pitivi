@@ -413,7 +413,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.main_tabs.show()
 
         # Second set of tabs
-        self.context_tabs = BaseTabs(instance, True)
+        self.context_tabs = BaseTabs(instance)
         self.clipconfig = ClipProperties(instance, self.uimanager)
         self.context_tabs.append_page(self.clipconfig, gtk.Label(_("Clip configuration")))
         self.clipconfig.show()
