@@ -26,12 +26,17 @@ Widget for the complex view ruler
 import gobject
 import gtk
 import gst
+import cairo
 
 from pitivi.utils.playback import Seeker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
 
 from pitivi.utils.ui import time_to_string
+
+
+def setCairoColor(cr, color):
+    cr.set_source_rgb(color.red_float, color.green_float, color.blue_float)
 
 
 class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
@@ -63,13 +68,12 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.add_events(gtk.gdk.POINTER_MOTION_MASK |
             gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
 
-        # double-buffering properties
-        self.pixmap = None
+        self.pixbuf = None
         # all values are in pixels
-        self.pixmap_offset = 0
-        self.pixmap_offset_painted = 0
-        # This is the number of visible_width we allocate for the pixmap
-        self.pixmap_multiples = 4
+        self.pixbuf_offset = 0
+        self.pixbuf_offset_painted = 0
+        # This is the number of width we allocate for the pixbuf
+        self.pixbuf_multiples = 4
 
         self.position = 0  # In nanoseconds
         self.pressed = False
@@ -79,7 +83,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.frame_rate = gst.Fraction(1 / 1)
 
     def _hadjValueChangedCb(self, hadj):
-        self.pixmap_offset = self.hadj.get_value()
+        self.pixbuf_offset = self.hadj.get_value()
         self.queue_draw()
 
 ## Zoomable interface override
@@ -91,14 +95,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 ## timeline position changed method
 
     def timelinePositionChanged(self, value, unused_frame=None):
-        self.log("value : %r", value)
-        ppos = max(self.nsToPixel(self.position) - 1, 0)
         self.position = value
-        npos = max(self.nsToPixel(self.position) - 1, 0)
-        self._hadjValueChangedCb(self.hadj)
-        height = self.get_allocation().height
-        self.window.invalidate_rect((ppos, 0, 2, height), True)
-        self.window.invalidate_rect((npos, 0, 2, height), True)
+        self.queue_draw()
 
 ## gtk.Widget overrides
 
@@ -107,14 +105,15 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         x, y, width, height = event.area
 
         self.repaintIfNeeded(width, height)
-        # offset in pixmap to paint
-        offset_to_paint = self.pixmap_offset - self.pixmap_offset_painted
+        # offset in pixbuf to paint
+        offset_to_paint = self.pixbuf_offset - self.pixbuf_offset_painted
 
-        self.window.draw_drawable(
+        self.window.draw_pixbuf(
             self.style.fg_gc[gtk.STATE_NORMAL],
-            self.pixmap,
+            self.pixbuf,
             int(offset_to_paint), 0,
-            x, y, width, height)
+            x, y, width, height,
+            gtk.gdk.RGB_DITHER_NONE)
 
         # draw the position
         context = self.window.cairo_create()
@@ -124,7 +123,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
     def do_button_press_event(self, event):
         self.debug("button pressed at x:%d", event.x)
         self.pressed = True
-        position = self.pixelToNs(event.x + self.pixmap_offset)
+        position = self.pixelToNs(event.x + self.pixbuf_offset)
         self._seeker.seek(position)
         return True
 
@@ -141,7 +140,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
     def do_motion_notify_event(self, event):
         if self.pressed:
             self.debug("motion at event.x %d", event.x)
-            position = self.pixelToNs(event.x + self.pixmap_offset)
+            position = self.pixelToNs(event.x + self.pixbuf_offset)
             self._seeker.seek(position)
         return False
 
@@ -169,27 +168,33 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     def repaintIfNeeded(self, width, height):
         """ (re)create the buffered drawable for the Widget """
-        # we can't create the pixmap if we're not realized
-        if self.pixmap:
-            # The new offset starts before painted in pixmap
-            if (self.pixmap_offset < self.pixmap_offset_painted):
+        # we can't create the pixbuf if we're not realized
+        if self.pixbuf:
+            # The new offset starts before painted in pixbuf
+            if (self.pixbuf_offset < self.pixbuf_offset_painted):
                 self.need_update = True
-            # The new offsets end after pixmap we have
-            if (self.pixmap_offset + width > self.pixmap_offset_painted + self.pixmap.get_size()[0]):
+            # The new offsets end after pixbuf we have
+            if (self.pixbuf_offset + width > self.pixbuf_offset_painted + self.pixbuf.get_width()):
                 self.need_update = True
+        else:
+            self.need_update = True
 
-        # Can't create pixmap if not REALIZED
-        if self.need_update and self.flags() & gtk.REALIZED:
+        if self.need_update:
             self.debug("Ruller is repainted")
-            # We create biger pixmap to not repaint ruller every time
-            if self.pixmap is None or (width >= self.pixmap.get_size()[0]):
-                if self.pixmap:
-                    del self.pixmap
-                self.pixmap = gtk.gdk.Pixmap(self.window, width *
-                                         self.pixmap_multiples, height)
-            self.pixmap_offset_painted = self.pixmap_offset
-            self.drawBackground()
-            self.drawRuler()
+            # We create biger pixbuf to not repaint ruller every time
+            if self.pixbuf:
+                del self.pixbuf
+            #Create image surface
+            surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width * self.pixbuf_multiples, height)
+            self.pixbuf_offset_painted = self.pixbuf_offset
+            cr = cairo.Context(surface)
+            self.drawBackground(cr)
+            self.drawRuler(cr)
+            cr = None
+            self.pixbuf = gtk.gdk.pixbuf_new_from_data(surface.get_data(),
+            gtk.gdk.COLORSPACE_RGB, True, 8, surface.get_width(),
+            surface.get_height(), 4 * surface.get_width())
+            surface = None
             self.need_update = False
 
     def setProjectFrameRate(self, rate):
@@ -201,104 +206,101 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.scale[1] = float(5 / rate)
         self.scale[2] = float(10 / rate)
 
-    def drawBackground(self):
-        self.pixmap.draw_rectangle(
-            self.style.bg_gc[gtk.STATE_NORMAL],
-            True,
-            0, 0,
-            self.pixmap.get_size()[0], self.pixmap.get_size()[1])
-        offset = int(self.nsToPixel(gst.CLOCK_TIME_NONE)) - self.pixmap_offset
+    def drawBackground(self, cr):
+        setCairoColor(cr, self.style.bg[gtk.STATE_NORMAL])
+        cr.rectangle(0, 0, cr.get_target().get_width(), cr.get_target().get_height())
+        cr.fill()
+        offset = int(self.nsToPixel(gst.CLOCK_TIME_NONE)) - self.pixbuf_offset
         if offset > 0:
-            self.pixmap.draw_rectangle(
-                self.style.bg_gc[gtk.STATE_ACTIVE],
-                True,
-                0, 0,
-                int(offset),
-                int(self.pixmap.get_size()[1]))
+            setCairoColor(cr, self.style.bg[gtk.STATE_ACTIVE])
+            cr.rectangle(0, 0, int(offset), cr.get_target().get_height())
+            cr.fill()
 
-    def drawRuler(self):
-        layout = self.create_pango_layout(time_to_string(0))
-        textwidth, textheight = layout.get_pixel_size()
+    def drawRuler(self, cr):
+        cr.set_font_face(cairo.ToyFontFace("Cantarell"))
+        cr.set_font_size(15)
+        textwidth = cr.text_extents(time_to_string(0))[2]
 
         for scale in self.scale:
             spacing = Zoomable.zoomratio * scale
             if spacing >= textwidth * 1.5:
                 break
 
-        offset = self.pixmap_offset % spacing
+        offset = self.pixbuf_offset % spacing
         zoomRatio = self.zoomratio
-        self.drawFrameBoundaries()
-        self.drawTicks(offset, spacing, scale)
-        self.drawTimes(offset, spacing, scale, layout)
+        self.drawFrameBoundaries(cr)
+        self.drawTicks(cr, offset, spacing, scale)
+        self.drawTimes(cr, offset, spacing, scale)
 
-    def drawTick(self, paintpos, height):
-        paintpos = int(paintpos)
-        height = self.pixmap.get_size()[1] - int(self.pixmap.get_size()[1] * height)
-        self.pixmap.draw_line(
-            self.style.fg_gc[gtk.STATE_NORMAL],
-            paintpos, height, paintpos,
-            self.pixmap.get_size()[1])
+    def drawTick(self, cr, paintpos, height):
+        #Line in midle to get 1 pixel width
+        paintpos = int(paintpos - 0.5) + 0.5
+        height = int(cr.get_target().get_height() * (1 - height))
+        setCairoColor(cr, self.style.fg[gtk.STATE_NORMAL])
+        cr.set_line_width(1)
+        cr.move_to(paintpos, height)
+        cr.line_to(paintpos, cr.get_target().get_height())
+        cr.close_path()
+        cr.stroke()
 
-    def drawTicks(self, offset, spacing, scale):
+    def drawTicks(self, cr, offset, spacing, scale):
         for subdivide, height in self.subdivide:
             spc = spacing / float(subdivide)
-            dur = scale / float(subdivide)
             if spc < self.min_tick_spacing:
                 break
             paintpos = -spacing + 0.5
             paintpos += spacing - offset
-            while paintpos < self.pixmap.get_size()[0]:
-                self.drawTick(paintpos, height)
+            while paintpos < cr.get_target().get_width():
+                self.drawTick(cr, paintpos, height)
                 paintpos += spc
 
-    def drawTimes(self, offset, spacing, scale, layout):
+    def drawTimes(self, cr, offset, spacing, scale):
         # figure out what the optimal offset is
         interval = long(gst.SECOND * scale)
-        seconds = self.pixelToNs(self.pixmap_offset)
+        seconds = self.pixelToNs(self.pixbuf_offset)
         paintpos = float(self.border) + 2
         if offset > 0:
             seconds = seconds - (seconds % interval) + interval
             paintpos += spacing - offset
 
-        while paintpos < self.pixmap.get_size()[0]:
-            timevalue = time_to_string(long(seconds))
-            layout.set_text(timevalue)
+        while paintpos < cr.get_target().get_width():
             if paintpos < self.nsToPixel(gst.CLOCK_TIME_NONE):
                 state = gtk.STATE_ACTIVE
             else:
                 state = gtk.STATE_NORMAL
-            self.pixmap.draw_layout(
-                self.style.fg_gc[state],
-                int(paintpos), 0, layout)
+            timevalue = time_to_string(long(seconds))
+            setCairoColor(cr, self.style.fg[state])
+            x_bearing, y_bearing = cr.text_extents("0")[:2]
+            cr.move_to(int(paintpos), 1 - y_bearing)
+            cr.show_text(timevalue)
             paintpos += spacing
             seconds += interval
 
-    def drawFrameBoundaries(self):
+    def drawFrameBoundaries(self, cr):
         ns_per_frame = float(1 / self.frame_rate) * gst.SECOND
         frame_width = self.nsToPixel(ns_per_frame)
         if frame_width >= self.min_frame_spacing:
-            offset = self.pixmap_offset % frame_width
+            offset = self.pixbuf_offset % frame_width
             paintpos = -frame_width + 0.5
-            height = self.pixmap.get_size()[1]
+            height = cr.get_target().get_height()
             y = int(height - self.frame_height)
             states = [gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT]
             paintpos += frame_width - offset
             frame_num = int(paintpos // frame_width) % 2
-            while paintpos < self.pixmap.get_size()[0]:
-                self.pixmap.draw_rectangle(
-                    self.style.bg_gc[states[frame_num]],
-                    True,
-                    int(paintpos), y, frame_width, height)
+            while paintpos < cr.get_target().get_width():
+                setCairoColor(cr, self.style.bg[states[frame_num]])
+                cr.rectangle(paintpos, y, frame_width, height)
+                cr.fill()
                 frame_num = (frame_num + 1) % 2
                 paintpos += frame_width
 
     def drawPosition(self, context):
         # a simple RED line will do for now
-        xpos = self.nsToPixel(self.position) + self.border - self.pixmap_offset
+        xpos = self.nsToPixel(self.position) + self.border - self.pixbuf_offset
         context.save()
         context.set_line_width(1.5)
         context.set_source_rgb(1.0, 0, 0)
         context.move_to(xpos, 0)
-        context.line_to(xpos, self.pixmap.get_size()[1])
+        context.line_to(xpos, context.get_target().get_height())
         context.stroke()
         context.restore()
