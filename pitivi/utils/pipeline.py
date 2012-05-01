@@ -27,6 +27,8 @@
 High-level pipelines
 """
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.signal import Signallable
+
 import gobject
 import gst
 import ges
@@ -35,6 +37,118 @@ import ges
 # FIXME : define/document a proper hierarchy
 class PipelineError(Exception):
     pass
+
+
+class Seeker(Signallable, Loggable):
+    """
+    The Seeker is a singleton helper class to do various seeking
+    operations in the pipeline.
+    """
+    _instance = None
+    __signals__ = {
+        'seek': ['position', 'format'],
+        'flush': [],
+        'seek-relative': ['time'],
+    }
+
+    def __new__(cls, *args, **kwargs):
+        """
+        Override the new method to return the singleton instance if available.
+        Otherwise, create one.
+        """
+        if not cls._instance:
+            cls._instance = super(Seeker, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+    def __init__(self, timeout=80):
+        """
+        @param timeout (optional): the amount of miliseconds for a seek attempt
+        """
+        Signallable.__init__(self)
+        Loggable.__init__(self)
+
+        self.timeout = timeout
+        self.pending_seek_id = None
+        self.position = None
+        self.format = None
+        self._time = None
+
+    def seek(self, position, format=gst.FORMAT_TIME, on_idle=False):
+        self.format = format
+        self.position = position
+
+        if self.pending_seek_id is None:
+            if on_idle:
+                gobject.idle_add(self._seekTimeoutCb)
+            else:
+                self._seekTimeoutCb()
+            self.pending_seek_id = self._scheduleSeek(self.timeout,
+                    self._seekTimeoutCb)
+
+    def seekRelative(self, time, on_idle=False):
+        if self.pending_seek_id is None:
+            self._time = time
+            if on_idle:
+                gobject.idle_add(self._seekRelativeTimeoutCb)
+            else:
+                self._seekTimeoutCb()
+            self.pending_seek_id = self._scheduleSeek(self.timeout,
+                    self._seekTimeoutCb, True)
+
+    def flush(self):
+        try:
+            self.emit('flush')
+        except:
+            self.error("Error while flushing")
+
+    def _scheduleSeek(self, timeout, callback, relative=False):
+        return gobject.timeout_add(timeout, callback, relative)
+
+    def _seekTimeoutCb(self, relative=False):
+        self.pending_seek_id = None
+        if relative:
+            try:
+                self.emit('seek-relative', self._time)
+            except:
+                self.error("Error while seeking %s relative",
+                        self._time)
+                # if an exception happened while seeking, properly
+                # reset ourselves
+                return False
+
+            self._time = None
+        elif self.position != None and self.format != None:
+            position, self.position = self.position, None
+            format, self.format = self.format, None
+            try:
+                self.emit('seek', position, format)
+            except:
+                self.error("Error while seeking to position:%s format: %r",
+                          gst.TIME_ARGS(position), format)
+                # if an exception happened while seeking, properly
+                # reset ourselves
+                return False
+        return False
+
+    def setPosition(self, position):
+        self.emit("position-changed", position)
+
+
+#-----------------------------------------------------------------------------#
+#                   Pipeline utils                                            #
+def togglePlayback(pipeline):
+    if int(pipeline.get_state()[1]) == int(gst.STATE_PLAYING):
+        state = gst.STATE_PAUSED
+    else:
+        state = gst.STATE_PLAYING
+
+    res = pipeline.set_state(state)
+    if res == gst.STATE_CHANGE_FAILURE:
+        gst.error("Could no set state to %s")
+        state = gst.STATE_NULL
+        pipeline.set_state(state)
+
+    return state
 
 
 class Pipeline(ges.TimelinePipeline, Loggable):
@@ -63,7 +177,7 @@ class Pipeline(ges.TimelinePipeline, Loggable):
         "eos": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
                         ()),
         "error": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        (gobject.TYPE_POINTER, gobject.TYPE_POINTER)),
+                        (gobject.TYPE_STRING, gobject.TYPE_STRING)),
         "element-message": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
                         (gobject.TYPE_POINTER,))}
 
@@ -77,6 +191,12 @@ class Pipeline(ges.TimelinePipeline, Loggable):
         self._listening = False  # for the position handler
         self._listeningInterval = 300  # default 300ms
         self._listeningSigId = 0
+        self._seeker = Seeker()
+
+        self._duration = gst.CLOCK_TIME_NONE
+        self._seeker.connect("seek", self._seekCb)
+        self._seeker.connect("seek-relative", self._seekRelativeCb)
+        self._seeker.connect("flush", self._seekFlushCb)
 
     def release(self):
         """
@@ -92,10 +212,30 @@ class Pipeline(ges.TimelinePipeline, Loggable):
         self._bus.disconnect_by_func(self._busMessageCb)
         self._bus.remove_signal_watch()
         self._bus.set_sync_handler(None)
+
+        self._seeker.disconnect_by_func(self._seekRelativeCb)
+        self._seeker.disconnect_by_func(self._seekFlushCb)
+        self._seeker.disconnect_by_func(self._seekCb)
+
         self.setState(gst.STATE_NULL)
         self._bus = None
 
-    def flushSeekVideo(self):
+    def _seekRelativeCb(self, unused_seeker, time):
+        self.seekRelative(time)
+
+    def _seekFlushCb(self, unused_seeker):
+        self.flushSeek()
+
+    def _seekCb(self, ruler, position, format):
+        """
+        The app's main seek method used when the user seeks manually.
+
+        We clamp the seeker position so that it cannot go past 0 or the
+        end of the timeline.
+        """
+        self.simple_seek(position)
+
+    def flushSeek(self):
         self.pause()
         try:
             self.seekRelative(0)
@@ -194,11 +334,16 @@ class Pipeline(ges.TimelinePipeline, Loggable):
         try:
             dur, format = self.query_duration(format)
         except Exception, e:
+
             self.handleException(e)
             raise PipelineError("Couldn't get duration")
 
         self.log("Got duration %s" % gst.TIME_ARGS(dur))
-        self.emit("duration-changed", dur)
+        if self._duration != dur:
+            self.emit("duration-changed", dur)
+
+        self._duration = dur
+
         return dur
 
     def activatePositionListener(self, interval=300):
@@ -275,13 +420,14 @@ class Pipeline(ges.TimelinePipeline, Loggable):
         if not res:
             self.debug("seeking failed")
             raise PipelineError("seek failed")
+
         self.debug("seeking succesfull")
         self.emit('position', position)
 
     def seekRelative(self, time):
         seekvalue = max(0, min(self.getPosition() + time,
             self.getDuration()))
-        self.seek(seekvalue)
+        self.simple_seek(seekvalue)
 
     #}
     ## Private methods
@@ -332,7 +478,7 @@ class Pipeline(ges.TimelinePipeline, Loggable):
 
     def _handleErrorMessage(self, error, detail, source):
         self.error("error from %s: %s (%s)" % (source, error, detail))
-        self.emit('error', error, detail)
+        self.emit('error', error.message, detail)
 
     def _busSyncMessageHandler(self, unused_bus, message):
         if message.type == gst.MESSAGE_ELEMENT:

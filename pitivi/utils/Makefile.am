@@ -5,7 +5,6 @@ utils_PYTHON = 	\
 	extract.py      \
 	timeline.py     \
 	loggable.py     \
-	playback.py     \
 	pipeline.py     \
 	signal.py       \
 	ui.py           \

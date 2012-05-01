@@ -34,7 +34,6 @@ from pitivi.configure import get_ui_dir
 
 from pitivi.dialogs.depsmanager import DepsManager
 
-from pitivi.utils.playback import Seeker
 from pitivi.utils.ui import EFFECT_TUPLE
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import PADDING, SPACING
@@ -92,7 +91,7 @@ class ClipProperties(gtk.ScrolledWindow, Loggable):
         vbox.set_homogeneous(False)
         vp.add(vbox)
 
-        self.effect_properties_handling = EffectsPropertiesManager(instance.action_log)
+        self.effect_properties_handling = EffectsPropertiesManager(instance)
 
         self.effect_expander = EffectProperties(instance,
                 self.effect_properties_handling, self)
@@ -176,8 +175,6 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self._info_bar = None
         self._config_ui_h_pos = None
         self._timeline = None
-        # We use the seeker to flush the pipeline when needed
-        self._seeker = Seeker()
 
         self._vcontent = gtk.VPaned()
         self.add(self._vcontent)
@@ -370,7 +367,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
                     track.add_object(effect)
                     self._updateAll()
                     self.app.action_log.commit()
-                    self._seeker.flush()
+                    self.app.current.pipeline.flushSeek()
 
                     break
 
@@ -530,7 +527,6 @@ class TransformationProperties(gtk.Expander):
         self.default_values = {}
         self.set_label(_("Transformation"))
         self.set_sensitive(False)
-        self._seeker = Seeker()
 
         if not "Frei0r" in soft_deps:
             self.builder = gtk.Builder()
@@ -620,7 +616,7 @@ class TransformationProperties(gtk.Expander):
             box.update_from_effect(self.effect)
 
     def _flushPipeLineCb(self, widget):
-        self._seeker.flush()
+        self.app.current.pipeline.flushSeek()
 
     def _findEffect(self, name):
         for track_effect in self._current_tl_obj.get_track_objects():
@@ -664,7 +660,7 @@ class TransformationProperties(gtk.Expander):
             if self._current_tl_obj:
                 self._current_tl_obj = None
                 self.zoom_scale.set_value(1.0)
-                self._seeker.flush()
+                self.app.current.pipeline.flushSeek()
             self.effect = None
             self.set_sensitive(False)
         self._updateBoxVisibility()

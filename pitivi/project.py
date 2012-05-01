@@ -42,7 +42,7 @@ from pitivi.undo.undo import UndoableAction
 from pitivi.configure import get_ui_dir
 
 from pitivi.utils.misc import quote_uri, path_from_uri
-from pitivi.utils.playback import Seeker
+from pitivi.utils.pipeline import Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
 from pitivi.utils.pipeline import Pipeline
@@ -515,6 +515,7 @@ class Project(Signallable, Loggable):
     uri = property(getUri, setUri)
 
     def release(self):
+        self.pipeline.release()
         self.pipeline = None
         self.timeline = None
 

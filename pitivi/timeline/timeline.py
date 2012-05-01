@@ -329,13 +329,13 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         return True
 
     def _selectionEnd(self, item, target, event):
-        seeker = self.app.current.seeker
         self.pointer_ungrab(self.get_root_item(), event.time)
         self._selecting = False
         self._marquee.props.visibility = goocanvas.ITEM_INVISIBLE
         if not self._got_motion_notify:
             self._timeline.selection.setSelection([], 0)
-            seeker.seek(Zoomable.pixelToNs(event.x))
+            #FIXME Do we need to seek here?
+            #self._pipeline.seek(Zoomable.pixelToNs(event.x))
         else:
             self._got_motion_notify = False
             mode = 0
@@ -799,7 +799,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 elif mod & gtk.gdk.CONTROL_MASK:
                     self._seeker.seek(rtime + 1)
                 else:
-                    self.seeker.seekRelative(long(self.rate * gst.SECOND))
+                    self._seeker.seekRelative(long(self.rate * gst.SECOND))
         finally:
             return True
 
@@ -880,7 +880,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                         track.add_object(effect)
                         self.app.action_log.commit()
                         self._factories = None
-                        self.seeker.seek(self._position)
+                        self._seeker.seek(self._position)
                         context.drop_finish(True, timestamp)
 
                         self.timeline.selection.setSelection(timeline_objs, SELECT)
@@ -1184,7 +1184,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.debug("Setting project %s", project)
         if self._project:
             self._project.disconnect_by_function(self._settingsChangedCb)
-            self.seeker.disconnect_by_function(self.positionChangedCb)
+            self._pipeline.disconnect_by_func(self.positionChangedCb)
+            self.pipeline = None
 
         self._project = project
         if self._project:
@@ -1192,8 +1193,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.ruler.setProjectFrameRate(self._project.getSettings().videorate)
             self.ruler.zoomChanged()
             self._settingsChangedCb(self._project, None, self._project.getSettings())
-            self.seeker = self._project.seeker
-            self.seeker.connect("position-changed", self.positionChangedCb)
+
+            self._seeker = self._project.seeker
+            self._pipeline = self._project.pipeline
+            self._pipeline.connect("position", self.positionChangedCb)
             self._project.connect("settings-changed", self._settingsChangedCb)
 
     def _settingsChangedCb(self, project, old, new):

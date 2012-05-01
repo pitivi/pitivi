@@ -52,7 +52,6 @@ from pitivi.settings import GlobalSettings
 import pitivi.utils.ui as dnd
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import SPACING
-from pitivi.utils.playback import Seeker
 
 from pitivi.utils.widgets import GstElementSettingsWidget, FractionWidget
 
@@ -770,12 +769,12 @@ PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
 
 
 class EffectsPropertiesManager:
-    def __init__(self, action_log):
+    def __init__(self, instance):
         self.cache_dict = {}
         self._current_effect_setting_ui = None
         self._current_element_values = {}
-        self.action_log = action_log
-        self._seeker = Seeker()
+        self.action_log = instance.action_log
+        self.app = instance
 
     def getEffectConfigurationUI(self, effect):
         """
@@ -846,5 +845,6 @@ class EffectsPropertiesManager:
             self.action_log.begin("Effect property change")
             self._current_effect_setting_ui.element.set_child_property(prop.name, value)
             self.action_log.commit()
-            self._seeker.flush()
+
+            self.app.current.pipeline.flushSeek()
             self._current_element_values[prop.name] = value

@@ -31,7 +31,7 @@ from math import pi
 
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
-from pitivi.utils.playback import Seeker
+from pitivi.utils.pipeline import Seeker
 from pitivi.utils.ui import SPACING, hex_to_rgb
 from pitivi.utils.widgets import TimeWidget
 
@@ -148,7 +148,7 @@ class PitiviViewer(gtk.VBox, Loggable):
                 self.pipeline.seek_simple(gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH, position)
 
         self._setUiActive()
-        self.seeker = self.app.projectManager.current.seeker
+        self.seeker = Seeker()
 
     def _disconnectFromPipeline(self):
         self.debug("pipeline:%r", self.pipeline)
@@ -402,7 +402,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _goToEndCb(self, unused_button):
         try:
-            end = self.app.current.timeline.props.duration
+            end = self.app.current.pipeline.getDuration()
         except:
             self.warning("Couldn't get timeline duration")
         try:

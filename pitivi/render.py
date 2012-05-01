@@ -29,14 +29,12 @@ import gtk
 import gst
 import ges
 import time
-import gst
 
 import pitivi.utils.loggable as log
 
 from gettext import gettext as _
 
 from pitivi import configure
-from pitivi.utils.playback import Seeker
 from pitivi.utils.signal import Signallable
 
 from pitivi.utils.loggable import Loggable
@@ -384,7 +382,6 @@ class RenderDialog(Loggable):
         self.app = app
         self.project = project
         self.system = app.system
-        self._seeker = Seeker()
         if pipeline != None:
             self._pipeline = pipeline
         else:
@@ -890,7 +887,7 @@ class RenderDialog(Loggable):
         for obj, id in self._gstSigId.iteritems():
             obj.disconnect(id)
         self._gstSigId = {}
-        self._seeker.disconnect_by_function(self._updatePositionCb)
+        self.app.current.pipeline.disconnect_by_function(self._updatePositionCb)
 
     def _updateProjectSettings(self):
         """Updates the settings of the project if the render settings changed.
@@ -960,7 +957,7 @@ class RenderDialog(Loggable):
         bus = self._pipeline.get_bus()
         bus.add_signal_watch()
         self._gstSigId[bus] = bus.connect('message', self._busMessageCb)
-        self._seeker.connect("position-changed", self._updatePositionCb)
+        self.app.current.connect("position", self._updatePositionCb)
 
     def _closeButtonClickedCb(self, unused_button):
         self.debug("Render dialog's Close button clicked")
@@ -988,7 +985,7 @@ class RenderDialog(Loggable):
                     else:
                         self.system.uninhibitSleep(RenderDialog.INHIBIT_REASON)
 
-    def _updatePositionCb(self, seeker, position):
+    def _updatePositionCb(self, pipeline, position):
         if self.progress:
             text = None
             timediff = time.time() - self.timestarted

@@ -36,7 +36,7 @@ from gettext import gettext as _
 from gtk import RecentManager
 from hashlib import md5
 
-from pitivi.utils.pipeline import PipelineError
+from pitivi.utils.pipeline import Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import in_devel
 from pitivi.settings import GlobalSettings
@@ -752,10 +752,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if self.app.current.timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
 
-        self._seeker = self.app.current.seeker
-        self._seeker.connect("seek", self._timelineSeekCb)
-        self._seeker.connect("seek-relative", self._timelineSeekRelativeCb)
-        self._seeker.connect("flush", self._timelineSeekFlushCb)
+        self._seeker = Seeker()
 
         # preliminary seek to ensure the project pipeline is configured
         self._seeker.seek(0)
@@ -1302,47 +1299,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         preview_window.show()
 
         previewer.play()
-
-    def _timelineSeekRelativeCb(self, unused_seeker, time):
-        try:
-            position = self.app.current.pipeline.getPosition()
-            position += time
-
-            self.app.current.pipeline.simple_seek(position)
-            self._seeker.setPosition(position)
-
-        except PipelineError:
-            self.error("seek failed %s %s %s", gst.TIME_ARGS(position), format, e)
-
-    def _timelineSeekFlushCb(self, unused_seeker):
-        try:
-            position = self.app.current.pipeline.getPosition()
-            self.app.current.pipeline.simple_seek(position)
-            self._seeker.setPosition(position)
-
-        except PipelineError:
-            self.error("seek failed %s %s %s", gst.TIME_ARGS(position), format, e)
-
-    def _timelineSeekCb(self, ruler, position, format):
-        """
-        The app's main seek method used when the user seeks manually.
-
-        We clamp the seeker position so that it cannot go past 0 or the
-        end of the timeline.
-        """
-        # FIXME: ideally gstreamer should allow seeking to the exact end...
-        # but since it doesn't, we seek one nanosecond before the end.
-        end = self.app.current.timeline.props.duration - 1
-        # CLAMP (0, position, self.app.current.timeline.props.duration)
-        position = sorted((0, position, end))[1]
-
-        try:
-            self.app.current.pipeline.simple_seek(position)
-            self._seeker.setPosition(position)
-        except PipelineError:
-            self.warning("Could not seek to %s", gst.TIME_ARGS(position))
-        # Ensure that the viewer UI is updated when seeking while paused
-        self.viewer.positionCheck()
 
     def updateTitle(self):
         name = touched = ""

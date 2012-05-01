@@ -28,7 +28,7 @@ import gtk
 import gst
 import cairo
 
-from pitivi.utils.playback import Seeker
+from pitivi.utils.pipeline import Seeker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
 
