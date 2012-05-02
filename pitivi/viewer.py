@@ -31,7 +31,7 @@ from math import pi
 
 from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
-from pitivi.utils.pipeline import Seeker
+from pitivi.utils.pipeline import Seeker, SimplePipeline
 from pitivi.utils.ui import SPACING, hex_to_rgb
 from pitivi.utils.widgets import TimeWidget
 
@@ -496,10 +496,10 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.debug("Creating temporary pipeline for clip %s, position %s",
                 clip_uri, gst.TIME_ARGS(position))
 
-            self._oldTimelinePos = self.pipeline.query_position(gst.FORMAT_TIME)[0]
+            self._oldTimelinePos = self.pipeline.getPosition()
             self._tmp_pipeline = gst.element_factory_make("playbin2")
             self._tmp_pipeline.set_property("uri", clip_uri)
-            self.setPipeline(self._tmp_pipeline)
+            self.setPipeline(SimplePipeline(self._tmp_pipeline))
             self._lastClipTrimTime = cur_time
         if (cur_time - self._lastClipTrimTime) > 0.2:
             # Do not seek more than once every 200 ms (for performance)
