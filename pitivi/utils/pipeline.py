@@ -148,9 +148,8 @@ def togglePlayback(pipeline):
     return state
 
 
-class Pipeline(ges.TimelinePipeline, Loggable):
+class SimplePipeline(Loggable, Signallable):
     """
-
     The Pipeline is only responsible for:
      - State changes
      - Position seeking
@@ -164,36 +163,26 @@ class Pipeline(ges.TimelinePipeline, Loggable):
      - C{error} : An error happened.
     """
 
-    __gsignals__ = {
-        "state-changed": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        (gobject.TYPE_INT,)),
-        "position": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        (gobject.TYPE_UINT64,)),
-        "duration-changed": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        (gobject.TYPE_UINT64,)),
-        "eos": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        ()),
-        "error": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        (gobject.TYPE_STRING, gobject.TYPE_STRING)),
-        "element-message": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        (gobject.TYPE_POINTER,))}
+    __signals__ = {
+        "state-changed": ["state"],
+        "position": ["position"],
+        "duration-changed": ["duration"],
+        "eos": [],
+        "error": ["message", "details"],
+        "element-message": ["message"]}
 
-    def __init__(self):
+    def __init__(self, pipeline):
         Loggable.__init__(self)
-        ges.TimelinePipeline.__init__(self)
-        self._bus = self.get_bus()
+        Signallable.__init__(self)
+        self._pipeline = pipeline
+        self._bus = self._pipeline.get_bus()
         self._bus.add_signal_watch()
         self._bus.connect("message", self._busMessageCb)
         self._bus.set_sync_handler(self._busSyncMessageHandler)
         self._listening = False  # for the position handler
         self._listeningInterval = 300  # default 300ms
         self._listeningSigId = 0
-        self._seeker = Seeker()
-
         self._duration = gst.CLOCK_TIME_NONE
-        self._seeker.connect("seek", self._seekCb)
-        self._seeker.connect("seek-relative", self._seekRelativeCb)
-        self._seeker.connect("flush", self._seekFlushCb)
 
     def release(self):
         """
@@ -210,27 +199,8 @@ class Pipeline(ges.TimelinePipeline, Loggable):
         self._bus.remove_signal_watch()
         self._bus.set_sync_handler(None)
 
-        self._seeker.disconnect_by_func(self._seekRelativeCb)
-        self._seeker.disconnect_by_func(self._seekFlushCb)
-        self._seeker.disconnect_by_func(self._seekCb)
-
-        self.setState(gst.STATE_NULL)
+        self._pipeline.setState(gst.STATE_NULL)
         self._bus = None
-
-    def _seekRelativeCb(self, unused_seeker, time):
-        self.seekRelative(time)
-
-    def _seekFlushCb(self, unused_seeker):
-        self.flushSeek()
-
-    def _seekCb(self, ruler, position, format):
-        """
-        The app's main seek method used when the user seeks manually.
-
-        We clamp the seeker position so that it cannot go past 0 or the
-        end of the timeline.
-        """
-        self.simple_seek(position)
 
     def flushSeek(self):
         self.pause()
@@ -247,10 +217,10 @@ class Pipeline(ges.TimelinePipeline, Loggable):
         the requested state.
         """
         self.debug("state:%r" % state)
-        res = self.set_state(state)
+        res = self._pipeline.set_state(state)
         if res == gst.STATE_CHANGE_FAILURE:
             # reset to NULL
-            self.set_state(gst.STATE_NULL)
+            self._pipeline.set_state(gst.STATE_NULL)
             raise PipelineError("Failure changing state of the gst.Pipeline to %r, currently reset to NULL" % state)
 
     def getState(self):
@@ -263,7 +233,7 @@ class Pipeline(ges.TimelinePipeline, Loggable):
         @return: The current state.
         @rtype: C{State}
         """
-        change, state, pending = self.get_state(0)
+        change, state, pending = self._pipeline.get_state(0)
         self.debug("change:%r, state:%r, pending:%r" % (change, state, pending))
         return state
 
@@ -315,7 +285,7 @@ class Pipeline(ges.TimelinePipeline, Loggable):
         """
         self.log("format %r" % format)
         try:
-            cur, format = self.query_position(format)
+            cur, format = self._pipeline.query_position(format)
         except Exception, e:
             self.handleException(e)
             raise PipelineError("Couldn't get position")
@@ -329,7 +299,7 @@ class Pipeline(ges.TimelinePipeline, Loggable):
         """
         self.log("format %r" % format)
         try:
-            dur, format = self.query_duration(format)
+            dur, format = self._pipeline.query_duration(format)
         except Exception, e:
 
             self.handleException(e)
@@ -411,7 +381,7 @@ class Pipeline(ges.TimelinePipeline, Loggable):
         if format == gst.FORMAT_TIME:
             position = max(0, min(position, self.getDuration()) - 1)
 
-        res = self.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
+        res = self._pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
                                   gst.SEEK_TYPE_SET, position,
                                   gst.SEEK_TYPE_NONE, -1)
         if not res:
@@ -438,7 +408,7 @@ class Pipeline(ges.TimelinePipeline, Loggable):
             self.debug("element %s state change %s" % (message.src,
                     (prev, new, pending)))
 
-            if message.src == self:
+            if message.src == self._pipeline:
                 self.debug("Pipeline change state prev:%r, new:%r, pending:%r" % (prev, new, pending))
 
                 emit_state_change = pending == gst.STATE_VOID_PENDING
@@ -450,9 +420,9 @@ class Pipeline(ges.TimelinePipeline, Loggable):
                         # no sinks??
                         pass
                 elif prev == gst.STATE_PAUSED and new == gst.STATE_PLAYING:
-                    self.activatePositionListener(True)
+                    self._listenToPosition(True)
                 elif prev == gst.STATE_PLAYING and new == gst.STATE_PAUSED:
-                    self.activatePositionListener(False)
+                    self._listenToPosition(False)
 
                 if emit_state_change:
                     self.emit('state-changed', new)
@@ -482,3 +452,72 @@ class Pipeline(ges.TimelinePipeline, Loggable):
             # handle element message synchronously
             self.emit('element-message', message)
         return gst.BUS_PASS
+
+
+class Pipeline(ges.TimelinePipeline, SimplePipeline):
+    """
+    The Pipeline is only responsible for:
+     - State changes
+     - Position seeking
+     - Position Querying
+       - Along with an periodic callback (optional)
+
+    Signals:
+     - C{state-changed} : The state of the pipeline changed.
+     - C{position} : The current position of the pipeline changed.
+     - C{eos} : The Pipeline has finished playing.
+     - C{error} : An error happened.
+    """
+
+    __gsignals__ = {
+        "state-changed": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+                        (gobject.TYPE_INT,)),
+        "position": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+                        (gobject.TYPE_UINT64,)),
+        "duration-changed": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+                        (gobject.TYPE_UINT64,)),
+        "eos": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+                        ()),
+        "error": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+                        (gobject.TYPE_STRING, gobject.TYPE_STRING)),
+        "element-message": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+                        (gobject.TYPE_PYOBJECT,))}
+
+    def __init__(self, pipeline=None):
+        ges.TimelinePipeline.__init__(self)
+        SimplePipeline.__init__(self, self)
+
+        self._seeker = Seeker()
+        self._seeker.connect("seek", self._seekCb)
+        self._seeker.connect("seek-relative", self._seekRelativeCb)
+        self._seeker.connect("flush", self._seekFlushCb)
+
+    def release(self):
+        """
+        Release the L{Pipeline} and all used L{ObjectFactory} and
+        L{Action}s.
+
+        Call this method when the L{Pipeline} is no longer used. Forgetting to do
+        so will result in memory loss.
+
+        @postcondition: The L{Pipeline} will no longer be usable.
+        """
+        self._seeker.disconnect_by_func(self._seekRelativeCb)
+        self._seeker.disconnect_by_func(self._seekFlushCb)
+        self._seeker.disconnect_by_func(self._seekCb)
+        SimplePipeline.release(self)
+
+    def _seekRelativeCb(self, unused_seeker, time):
+        self.seekRelative(time)
+
+    def _seekFlushCb(self, unused_seeker):
+        self.flushSeek()
+
+    def _seekCb(self, ruler, position, format):
+        """
+        The app's main seek method used when the user seeks manually.
+
+        We clamp the seeker position so that it cannot go past 0 or the
+        end of the timeline.
+        """
+        self.simple_seek(position)
