@@ -724,6 +724,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._connectToProjectSources(self.app.current.medialibrary)
         self.app.current.timeline.connect("notify::duration",
                 self._timelineDurationChangedCb)
+        self.app.current.pipeline.activatePositionListener()
 
         # This should only be done when loading a project, and disconnected
         # as soon as we receive the signal.
@@ -876,8 +877,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         return res
 
-    def _projectManagerProjectClosedCb(self, projectManager, unused_project):
+    def _projectManagerProjectClosedCb(self, projectManager, project):
         # we must disconnect from the project pipeline before it is released
+        if project.pipeline is not None:
+            project.pipeline.deactivatePositionListener()
+
         self.timeline_ui.timeline = None
         self.clipconfig.timeline = None
         return False
