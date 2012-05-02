@@ -29,11 +29,11 @@ from gettext import gettext as _
 from time import time
 from math import pi
 
-from pitivi.utils.loggable import Loggable
 from pitivi.settings import GlobalSettings
 from pitivi.utils.pipeline import Seeker, SimplePipeline
 from pitivi.utils.ui import SPACING, hex_to_rgb
 from pitivi.utils.widgets import TimeWidget
+from pitivi.utils.loggable import Loggable
 
 GlobalSettings.addConfigSection("viewer")
 GlobalSettings.addConfigOption("viewerDocked", section="viewer",
@@ -98,11 +98,9 @@ class PitiviViewer(gtk.VBox, Loggable):
 
         self.current_time = long(0)
         self.previous_time = self.current_time
-        self._initial_seek = None
         # Only used for restoring the pipeline position after a live clip trim preview:
         self._oldTimelinePos = None
 
-        self.currentState = gst.STATE_PAUSED
         self._haveUI = False
 
         self._createUi()
@@ -127,39 +125,29 @@ class PitiviViewer(gtk.VBox, Loggable):
         """
         self.debug("self.pipeline:%r", self.pipeline)
 
+        self.seeker = Seeker()
+        self._disconnectFromPipeline()
         if self.pipeline:
             self.pipeline.set_state(gst.STATE_NULL)
-            self.pipeline.disconnect_by_func(self._pipelineStateChangedCb)
-            self.pipeline.disconnect_by_func(self._positionCb)
 
         self.pipeline = pipeline
         if self.pipeline:
-            bus = self.pipeline.get_bus()
-            bus.add_signal_watch()
-            # You cannot replace an existing sync_handler.
-            # You can pass NULL to clear it.
-            bus.set_sync_handler(None)
-            bus.set_sync_handler(self._elementMessageCb)
-            self.pipeline.set_state(gst.STATE_PAUSED)
-            self.currentState = gst.STATE_PAUSED
-            if position:
-                # Since the pipeline is async, the line below is a hack
-                # to force waiting indefinitely until the state has been changed
-                # before actually trying to seek.
-                self.pipeline.get_state(-1)
-                self.pipeline.seek_simple(gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH, position)
+            self.pipeline.pause()
+            self.seeker.seek(position)
 
             self.pipeline.connect("state-changed", self._pipelineStateChangedCb)
             self.pipeline.connect("position", self._positionCb)
+            self.pipeline.connect("element-message", self._elementMessageCb)
+            self.pipeline.connect("duration-changed", self._durationChangedCb)
 
         self._setUiActive()
-        self.seeker = Seeker()
 
     def _disconnectFromPipeline(self):
         self.debug("pipeline:%r", self.pipeline)
-        if self.pipeline == None:
+        if self.pipeline is None:
             # silently return, there's nothing to disconnect from
             return
+
         if self.action and (self.action in self.pipeline.actions):
             # if we have an action, properly remove it from pipeline
             if self.action.isActive():
@@ -167,9 +155,10 @@ class PitiviViewer(gtk.VBox, Loggable):
                 self.action.deactivate()
             self.pipeline.removeAction(self.action)
 
-        self.pipeline.disconnect_by_function(self._elementMessageCb)
-        self.pipeline.disconnect_by_function(self._durationChangedCb)
-        self.pipeline.stop()
+        self.pipeline.disconnect_by_func(self._pipelineStateChangedCb)
+        self.pipeline.disconnect_by_func(self._elementMessageCb)
+        self.pipeline.disconnect_by_func(self._positionCb)
+        self.pipeline.disconnect_by_func(self._durationChangedCb)
 
         self.pipeline = None
 
@@ -356,20 +345,10 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     ## active Timeline calllbacks
     def _durationChangedCb(self, unused_pipeline, duration):
-        self.debug("duration : %s", gst.TIME_ARGS(duration))
-        position = self.posadjust.get_value()
-        if duration < position:
-            self.posadjust.set_value(float(duration))
-        self.posadjust.upper = float(duration)
-
         if duration == 0:
             self._setUiActive(False)
         else:
             self._setUiActive(True)
-
-        if self._initial_seek is not None:
-            seek, self._initial_seek = self._initial_seek, None
-            self.pipeline.seek(seek)
 
     ## Control gtk.Button callbacks
 
@@ -478,7 +457,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         This is meant to be called either by the gobject timer when playing,
         or by mainwindow's _timelineSeekCb when the timer is disabled.
         """
-        self.timecode_entry.setWidgetValue(self.current_time, False)
+        self.timecode_entry.setWidgetValue(position, False)
 
     def clipTrimPreview(self, tl_obj, position):
         """
@@ -533,9 +512,8 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.sink = None
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
         self.internal._currentStateCb(self.pipeline, state)
-        self.currentState = state
 
-    def _elementMessageCb(self, unused_bus, message):
+    def _elementMessageCb(self, unused_pipeline, message):
         """
         When the pipeline sends us a message to prepare-xwindow-id,
         tell the viewer to switch its output window.
