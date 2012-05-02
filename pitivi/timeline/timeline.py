@@ -588,7 +588,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._factories = None
         self._finish_drag = False
         self._position = 0
-        self.pipeline_state = gst.STATE_NULL
         self._createUI()
         self.rate = gst.Fraction(1, 1)
         self._timeline = None
@@ -1135,7 +1134,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._position = position
         self.ruler.timelinePositionChanged(position)
         self._canvas.timelinePositionChanged(position)
-        if self.pipeline_state == gst.STATE_PLAYING:
+        if self.app.current.pipeline.getState() == gst.STATE_PLAYING:
             self.scrollToPlayhead()
 
     def scrollToPlayhead(self):

@@ -130,9 +130,6 @@ class Seeker(Signallable, Loggable):
                 return False
         return False
 
-    def setPosition(self, position):
-        self.emit("position-changed", position)
-
 
 #-----------------------------------------------------------------------------#
 #                   Pipeline utils                                            #
@@ -208,7 +205,7 @@ class Pipeline(ges.TimelinePipeline, Loggable):
 
         @postcondition: The L{Pipeline} will no longer be usable.
         """
-        self._listenToPosition(False)
+        self.deactivatePositionListener()
         self._bus.disconnect_by_func(self._busMessageCb)
         self._bus.remove_signal_watch()
         self._bus.set_sync_handler(None)
@@ -412,7 +409,7 @@ class Pipeline(ges.TimelinePipeline, Loggable):
 
         # clamp between [0, duration]
         if format == gst.FORMAT_TIME:
-            position = max(0, min(position, self.getDuration()))
+            position = max(0, min(position, self.getDuration()) - 1)
 
         res = self.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
                                   gst.SEEK_TYPE_SET, position,
@@ -453,9 +450,9 @@ class Pipeline(ges.TimelinePipeline, Loggable):
                         # no sinks??
                         pass
                 elif prev == gst.STATE_PAUSED and new == gst.STATE_PLAYING:
-                    self._listenToPosition(True)
+                    self.activatePositionListener(True)
                 elif prev == gst.STATE_PLAYING and new == gst.STATE_PAUSED:
-                    self._listenToPosition(False)
+                    self.activatePositionListener(False)
 
                 if emit_state_change:
                     self.emit('state-changed', new)
