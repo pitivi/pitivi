@@ -591,10 +591,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.pipeline_state = gst.STATE_NULL
         self._createUI()
         self.rate = gst.Fraction(1, 1)
-        self._project = None
         self._timeline = None
+
+        # Timeline edition related fields
         self._creating_tckobjs_sigid = {}
         self._move_context = None
+
+        self._project = None
+        self._projectmanager = None
 
         #Ids of the tracks notify::duration signals
         self._tcks_sig_ids = {}
@@ -1170,7 +1174,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
 ## Project callbacks
 
-    def _newProjectCreatedCb(self, app, project):
+    def _projectChangedCb(self, app, project):
         """
         When a new blank project is created, immediately clear the timeline.
 
@@ -1178,7 +1182,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         media library, waiting for a "ready" signal.
         """
         self.debug("New blank project created, pre-emptively clearing the timeline")
-        self.setProject(self.app.current)
+        self.setProject(project)
 
     def setProject(self, project):
         self.debug("Setting project %s", project)
@@ -1198,6 +1202,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._pipeline = self._project.pipeline
             self._pipeline.connect("position", self.positionChangedCb)
             self._project.connect("settings-changed", self._settingsChangedCb)
+
+    def setProjectManager(self, projectmanager):
+        if self._projectmanager is not None:
+            self._projectmanager.disconnect_by_func(self._projectChangedCb)
+
+        self._projectmanager = projectmanager
+        if projectmanager is not None:
+            projectmanager.connect("new-project-loaded", self._projectChangedCb)
 
     def _settingsChangedCb(self, project, old, new):
         rate = new.videorate

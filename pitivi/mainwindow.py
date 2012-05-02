@@ -389,6 +389,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vpaned.show()
 
         self.timeline_ui = Timeline(instance, self.uimanager)
+        self.timeline_ui.setProjectManager(self.app.projectManager)
         self.app.current = None
         vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
         self.timeline_ui.show()
