@@ -49,7 +49,7 @@ from pitivi.utils.pipeline import Pipeline
 from pitivi.utils.timeline import Selection
 from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
-from pitivi.utils.ui import model, frame_rates, audio_rates, audio_depths,\
+from pitivi.utils.ui import frame_rates, audio_rates, audio_depths,\
     audio_channels, beautify_time_delta, get_combo_value, set_combo_value,\
     pixel_aspect_ratios, display_aspect_ratios, SPACING
 from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
@@ -113,6 +113,7 @@ class ProjectManager(Signallable, Loggable):
         self.backup_lock = 0
         self.avalaible_effects = avalaible_effects
         self.formatter = None
+        self._medialib_awaiting_discovery = []
 
     def loadProject(self, uri):
         """
@@ -148,6 +149,8 @@ class ProjectManager(Signallable, Loggable):
             # Load the project normally.
             # The "old" backup file will eventually be deleted or overwritten.
             self.current = Project(uri=uri)
+
+        self.emit("new-project-created", self.current)
 
         self.timeline = self.current.timeline
         self.formatter = ges.PitiviFormatter()
@@ -435,11 +438,27 @@ class ProjectManager(Signallable, Loggable):
     def _formatterMissingURICb(self, formatter, tfs):
         return self.emit("missing-uri", formatter, tfs)
 
+    def _sourceAddedCb(self, unused_medialib, info):
+        try:
+            self._medialib_awaiting_discovery.remove(info.get_uri())
+        except ValueError:
+            self.error("%s not awaited, user is really fast", info.get_uri)
+
+        if not self._medialib_awaiting_discovery:
+            self.current.medialibrary.disconnect_by_function(self._sourceAddedCb)
+            self.emit("new-project-loaded", self.current)
+            self.time_loaded = time()
+
     def _projectLoadedCb(self, formatter, timeline):
         self.debug("Project Loaded")
-        self.emit("new-project-loaded", self.current)
-        self.time_loaded = time()
-        self.current.medialibrary.addUris(self.formatter.get_sources())
+        for uri in self.formatter.get_sources():
+            self._medialib_awaiting_discovery.append(quote_uri(uri))
+        self.current.medialibrary.addUris(self._medialib_awaiting_discovery)
+        if self._medialib_awaiting_discovery:
+            self.current.medialibrary.connect("source-added", self._sourceAddedCb)
+        else:
+            self.emit("new-project-loaded", self.current)
+            self.time_loaded = time()
 
 
 class Project(Signallable, Loggable):
