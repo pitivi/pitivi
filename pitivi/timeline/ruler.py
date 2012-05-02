@@ -168,23 +168,27 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     def repaintIfNeeded(self, width, height):
         """ (re)create the buffered drawable for the Widget """
-        # we can't create the pixbuf if we're not realized
         if self.pixbuf:
             # The new offset starts before painted in pixbuf
-            if (self.pixbuf_offset < self.pixbuf_offset_painted):
+            if self.pixbuf_offset < self.pixbuf_offset_painted:
                 self.need_update = True
             # The new offsets end after pixbuf we have
-            if (self.pixbuf_offset + width > self.pixbuf_offset_painted + self.pixbuf.get_width()):
+            if self.pixbuf_offset + width > self.pixbuf_offset_painted + self.pixbuf.get_width():
                 self.need_update = True
         else:
             self.need_update = True
 
+        # We want to benefit from double-buffering (so as not to recreate the
+        # ruler graphics all the time) yet we don't want to allocate insanely
+        # big pixbufs (which would result in big memory usage, or even not being
+        # able to allocate such a big pixbuf).
+        #
+        # We therefore create a pixbuf with a width of 4 times the max viewable
+        # width (allocation.width)
         if self.need_update:
-            self.debug("Ruller is repainted")
-            # We create biger pixbuf to not repaint ruller every time
+            self.log("Repainting the ruler")
             if self.pixbuf:
                 del self.pixbuf
-            #Create image surface
             surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width * self.pixbuf_multiples, height)
             self.pixbuf_offset_painted = self.pixbuf_offset
             cr = cairo.Context(surface)
@@ -233,7 +237,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.drawTimes(cr, offset, spacing, scale)
 
     def drawTick(self, cr, paintpos, height):
-        #Line in midle to get 1 pixel width
+        # We need to use 0.5 pixel offsets to get a sharp 1 px line in cairo
         paintpos = int(paintpos - 0.5) + 0.5
         height = int(cr.get_target().get_height() * (1 - height))
         setCairoColor(cr, self.style.fg[gtk.STATE_NORMAL])
