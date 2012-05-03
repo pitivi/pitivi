@@ -479,7 +479,7 @@ class TimelineControls(gtk.VBox, Loggable):
         self._tracks_controls = []
         self._timeline = None
         self.set_spacing(LAYER_SPACING)
-        self.set_size_request(TRACK_CONTROL_WIDTH, -1)
+        #self.set_size_request(TRACK_CONTROL_WIDTH, -1)
 
 ## Timeline callbacks
 

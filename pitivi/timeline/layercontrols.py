@@ -1,3 +1,4 @@
+# -- coding: utf-8 --
 # PiTiVi , Non-linear video editor
 #
 #       pitivi/timeline/layercontrols.py
@@ -20,6 +21,7 @@
 # Boston, MA 02110-1301, USA.
 
 import gtk
+import gobject
 
 from gettext import gettext as _
 
@@ -49,9 +51,10 @@ class BaseLayerControl(gtk.Table, Loggable):
 
         # Folding button
         # TODO use images
-        self.fold_button = gtk.Button("V")
+        self.fold_button = TwoStateButton("▼", "▶")
         self.fold_button.set_relief(gtk.RELIEF_NONE)
         self.fold_button.set_focus_on_click(False)
+        self.fold_button.connect("changed-state", self._foldingChangedCb)
         self.attach(self.fold_button, 0, 1, 0, 1)
 
         # Name entry
@@ -88,6 +91,12 @@ class BaseLayerControl(gtk.Table, Loggable):
         self._timeline = None
         self.setTrack(track)
         self._setSize(layers_count=1)
+
+    def _foldingChangedCb(self, button, state):
+        if state:
+            self.lower_hbox.show()
+        else:
+            self.lower_hbox.hide()
 
     def getTrack(self):
         return self._track
@@ -132,7 +141,7 @@ class VideoLayerControl(BaseLayerControl):
         opacity = gtk.Label(_("Opacity:"))
 
         # Opacity scale
-        opacity_adjust = gtk.Adjustment(value=100, upper=100, step_incr=5, page_incr=10, page_size=10)
+        opacity_adjust = gtk.Adjustment(value=100, upper=100, step_incr=5, page_incr=10)
         self.opacity_scale = gtk.HScale(opacity_adjust)
         self.opacity_scale.set_value_pos(gtk.POS_LEFT)
         self.opacity_scale.set_digits(0)
@@ -165,3 +174,35 @@ class AudioLayerControl(BaseLayerControl):
         self.lower_hbox.pack_start(panning, False, False, 2)
         self.lower_hbox.pack_start(self.panning_scale, True, True, 3)
         self.lower_hbox.show_all()
+
+
+class TwoStateButton(gtk.Button):
+    """
+    Button with two states and according labels/images
+    """
+
+    __gsignals__ = {
+       "changed-state": (
+            gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE,
+            (gobject.TYPE_PYOBJECT,),)
+       }
+
+    def __init__(self, state1="", state2=""):
+        gtk.Button.__init__(self)
+        self.set_relief(gtk.RELIEF_NONE)
+        self.connect("clicked", self._clickedCb)
+
+        self.set_states(state1, state2)
+        self._state = True
+
+        self.set_label(self.states[self._state])
+
+    def set_states(self, state1, state2):
+        self.states = {True: state1, False: state2}
+
+    def  _clickedCb(self, widget):
+        self._state = not self._state
+
+        self.set_label(self.states[self._state])
+        self.emit("changed-state", self._state)
