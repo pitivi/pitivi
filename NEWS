@@ -1,3 +1,7 @@
+2012 May 3 - PiTiVi 0.15.2
+  * Bug fix release for a regression introduced by 0.15.1
+  * Translations have been updated
+
 2012 February 24 - PiTiVi 0.15.1
   * Bug fix release to ensure compatibility with Gst "good" plugins >0.10.29
   * Minor string fixes and additions to the user manual

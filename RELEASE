@@ -1,9 +1,10 @@
-0.15.1 Release "Endless Excursion"
-----------------------------------
+0.15.2 Release "I accidentally... the whole render"
+---------------------------------------------------
 
-This is a special bug fix release to prevent PiTiVi from entering an endless
-recursion, due to a change introduced in the GStreamer "good" plugins.
-This ensures PiTiVi keeps working with the latest gst releases.
+This is a one-liner bug fix release to allow rendering to work again.
+
+The regression was introduced by a fix in 0.15.1 to prevent an endless recursion
+due to a change introduced in the GStreamer "good" plugins.
 
 Translations have also been updated.
 
@@ -29,25 +30,25 @@ The PiTiVi team recommends satisfying those dependencies as much as possible
 for an optimal user experience.
 
 * Contributors
-     4  Jean-François Fortin Tam
-     3  Matej Urbančič
-     2  Bruno Brouard
-     2  Cheng-Chia Tseng
+     6  Milagros Infante Montero
+     3  Daniel Korostil
+     3  Milagros Alessandra Infante
+     3  Milagros Alessandra Infante Montero
      2  Daniel Mustieles
-     2  Marek Černocký
-     2  Mario Blättermann
-     2  Sylvia Sánchez
-     1  Brian Grohe
-     1  Daniel Korostil
+     2  Jean-François Fortin Tam
+     1  Adolfo Jayme Barrientos
+     1  Andrej Žnidaršič
+     1  António Lima
+     1  Breno Felipe Morais de Santana
+     1  Bruno Brouard
+     1  Cheng-Chia Tseng
      1  Daniel Nylander
-     1  Gabor Kelemen
-     1  Gil Forcada
-     1  Joan Duran
+     1  Marek Černocký
+     1  Matej Urbančič
+     1  OKANO Takayoshi
+     1  Peter Mráz
      1  René Stadler
-     1  Server Acim
-     1  Stas Solovey
-     1  Taijuin
-     1  Timo Jyrinki
+     1  Rudolfs Mazurs
      1  Мирослав Николић
 
 
@@ -68,5 +69,4 @@ for an optimal user experience.
 
 * Bugs Fixed
 
-662311  Upgrading to git master of plugins-good breaks pitivi and jokosher
-656652  Bad strings for translation
+None were reported

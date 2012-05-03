@@ -1,3 +1,174 @@
+2012-05-03  René Stadler <rene.stadler@collabora.co.uk>
+
+	* pitivi/elements/singledecodebin.py:
+	  SingleDecodeBin: fix not-linked error when element is reused
+	  My previous fix for the parser endless loop issue broke this; we need to re-set
+	  the blacklist on PAUSED->READY state change.
+
+2012-04-30  Breno Felipe Morais de Santana <breno_info@globomail.com>
+
+	* po/pt_BR.po:
+	  Updated Brazilian Portuguese translation
+
+2012-04-16  Peter Mráz <etkinator@gmail.com>
+
+	* po/sk.po:
+	  Updated Slovak translation
+
+2012-04-15  Bruno Brouard <annoa.b@gmail.com>
+
+	* po/fr.po:
+	  Updated French translation
+
+2012-04-11  Milagros Alessandra Infante Montero <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2012-04-09  Milagros Alessandra Infante Montero <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2012-04-09  Andrej Žnidaršič <andrej.znidarsic@gmail.com>
+
+	* help/sl/sl.po:
+	  Updated Slovenian translation
+
+2012-04-08  Milagros Alessandra Infante Montero <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2012-04-04  Adolfo Jayme Barrientos <fitoschido@gmail.com>
+
+	* help/es/figures/codecscontainers.jpg:
+	* help/es/figures/previewsource.png:
+	  Added spanish translated figures
+
+2012-04-04  Milagros Infante Montero <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2012-04-02  Milagros Infante Montero <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2012-03-27  Daniel Korostil <ted.korostiled@gmail.com>
+
+	* help/Makefile.am:
+	  Added uk translation
+
+2012-03-27  Daniel Korostil <ted.korostiled@gmail.com>
+
+	* help/uk/uk.po:
+	  Uploaded Ukranian
+
+2012-03-25  Marek Černocký <marek@manet.cz>
+
+	* po/cs.po:
+	  Updated Czech translation
+
+2012-03-25  Milagros Alessandra Infante <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated spanish translation
+
+2012-03-24  Daniel Korostil <ted.korostiled@gmail.com>
+
+	* po/uk.po:
+	  Uploaded Ukranian
+
+2012-03-25  OKANO Takayoshi <kano@na.rim.or.jp>
+
+	* po/ja.po:
+	  [l10n] Update Japanese translation
+
+2012-03-19  Milagros Alessandra Infante <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated spanish translation
+
+2012-03-17  Rudolfs Mazurs <rudolfs.mazurs@gmail.com>
+
+	* po/lv.po:
+	  Updated Latvian translation.
+
+2012-03-15  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* docs/release:
+	  Update the GStreamer mailing list address in the release docs
+
+2012-03-13  Milagros Infante Montero <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2012-03-13  Milagros Infante Montero <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2012-03-11  António Lima <amrlima@gmail.com>
+
+	* po/pt.po:
+	  Updated Portuguese translation
+
+2012-03-09  Cheng-Chia Tseng <pswo10680@gmail.com>
+
+	* po/zh_HK.po:
+	* po/zh_TW.po:
+	  Updated Traditional Chinese translation(Hong Kong and Taiwan)
+
+2012-03-08  Milagros Infante Montero <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2012-03-08  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2012-03-04  Milagros Alessandra Infante <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2012-03-02  Daniel Mustieles <daniel.mustieles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2012-02-29  Milagros Infante Montero <maim92@gmail.com>
+
+	* help/es/es.po:
+	  Updated Spanish translation
+
+2012-02-28  Daniel Nylander <po@danielnylander.se>
+
+	* po/sv.po:
+	  Updated Swedish translation
+
+2012-02-28  Matej Urbančič <mateju@svn.gnome.org>
+
+	* po/sl.po:
+	  Updated Slovenian translation
+
+2012-02-27  Мирослав Николић <miroslavnikolic@rocketmail.com>
+
+	* po/sr.po:
+	* po/sr@latin.po:
+	  Updated Serbian translation
+
+2012-02-24  Jean-François Fortin Tam <nekohayo@gmail.com>
+
+	* ChangeLog:
+	* docs/release:
+	  Update ChangeLog
+
 2012-02-24  Jean-François Fortin Tam <nekohayo@gmail.com>
 
 	* NEWS:
