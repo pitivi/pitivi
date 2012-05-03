@@ -392,6 +392,7 @@ class SingleDecodeBin(gst.Bin):
             element.set_state(gst.STATE_NULL)
             self.remove(element)
         self._validelements = []
+        self._usedfactories = []
 
     ## Overrides
 
