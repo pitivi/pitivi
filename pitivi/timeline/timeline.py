@@ -43,7 +43,8 @@ from pitivi.utils.pipeline import PipelineError
 from pitivi.settings import GlobalSettings
 
 from curve import KW_LABEL_Y_OVERFLOW
-from track import TrackControls, TRACK_CONTROL_WIDTH, Track, TrackObject
+from track import TRACK_CONTROL_WIDTH, Track, TrackObject
+from layercontrols import VideoLayerControl
 from pitivi.utils.timeline import EditingContext, SELECT, Zoomable
 
 from pitivi.dialogs.depsmanager import DepsManager
@@ -475,7 +476,7 @@ class TimelineControls(gtk.VBox, Loggable):
     def __init__(self):
         gtk.VBox.__init__(self)
         Loggable.__init__(self)
-        self._tracks = []
+        self._tracks_controls = []
         self._timeline = None
         self.set_spacing(LAYER_SPACING)
         self.set_size_request(TRACK_CONTROL_WIDTH, -1)
@@ -488,7 +489,7 @@ class TimelineControls(gtk.VBox, Loggable):
     def setTimeline(self, timeline):
         self.debug("Setting timeline %s", timeline)
 
-        while self._tracks:
+        while self._tracks_controls:
             self._trackRemovedCb(None, 0)
 
         if timeline:
@@ -508,15 +509,15 @@ class TimelineControls(gtk.VBox, Loggable):
     timeline = property(getTimeline, setTimeline, None, "The timeline property")
 
     def _trackAddedCb(self, timeline, track):
-        track_control = TrackControls(track)
-        self._tracks.append(track_control)
+        track_control = VideoLayerControl(track)
+        self._tracks_controls.append(track_control)
         self.pack_start(track_control, False, False)
         track_control.show()
 
     def _trackRemovedCb(self, unused_timeline, position):
-        track = self._tracks[position]
+        track = self._tracks_controls[position]
         track.track = None
-        del self._tracks[position]
+        del self._tracks_controls[position]
         self.remove(track)
 
 

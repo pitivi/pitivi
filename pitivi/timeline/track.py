@@ -606,7 +606,7 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         self.app.gui.timeline_ui._canvas.regroupTracks()
         self.app.gui.timeline_ui.unsureVadjHeight()
 
-TRACK_CONTROL_WIDTH = 75
+TRACK_CONTROL_WIDTH = 150
 
 
 class TrackTransition(TrackObject):
@@ -662,72 +662,6 @@ class TrackFileSource(TrackObject):
             return self.settings.audioClipBg
         else:
             return self.settings.videoClipBg
-
-
-class TrackControls(gtk.Label, Loggable):
-    """Contains a timeline track name.
-
-    @ivar track: The track for which to display the name.
-    @type track: An L{pitivi.timeline.track.Track} object
-    """
-
-    __gtype_name__ = 'TrackControls'
-
-    def __init__(self, track):
-        gtk.Label.__init__(self)
-        Loggable.__init__(self)
-        # Center the label horizontally.
-        self.set_alignment(0.5, 0)
-        # The value below is arbitrarily chosen so the text appears
-        # centered vertically when the represented track has a single layer.
-        self.set_padding(0, LAYER_SPACING * 2)
-        self.set_markup(self._getTrackName(track))
-        self._track = None
-        self._timeline = None
-        self.setTrack(track)
-        self._setSize(layers_count=1)
-
-    def getTrack(self):
-        return self._track
-
-    def setTrack(self, track):
-        if self._track:
-            self._timeline.disconnect_by_func(self._layerAddedCb)
-            self._timeline.disconnect_by_func(self._layerRemovedCb)
-
-        self._track = track
-        if track:
-            self._timeline = track.get_timeline()
-            self._timeline.connect("layer-added", self._layerAddedCb)
-            self._timeline.connect("layer-removed", self._layerRemovedCb)
-        else:
-            self._timeline = None
-
-    track = property(getTrack, setTrack, None, "The (GESTrack property")
-
-    def _layerAddedCb(self, timeline, unused_layer):
-        max_priority = len(timeline.get_layers())
-        self._setSize(max_priority)
-
-    def _layerRemovedCb(self, timeline, unused_layer):
-        max_priority = len(timeline.get_layers())
-        self._setSize(max_priority)
-
-    def _setSize(self, layers_count):
-        assert layers_count >= 1
-        height = layers_count * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
-        self.set_size_request(TRACK_CONTROL_WIDTH, height)
-
-    @staticmethod
-    def _getTrackName(track):
-        track_name = ""
-        if track.props.track_type == ges.TRACK_TYPE_AUDIO:
-            track_name = _("Audio:")
-        elif track.props.track_type == ges.TRACK_TYPE_VIDEO:
-            track_name = _("Video:")
-        elif track.props.track_type == ges.TRACK_TYPE_TEXT:
-            track_name = _("Text:")
-        return "<b>%s</b>" % track_name
 
 
 class Track(goocanvas.Group, Zoomable, Loggable):

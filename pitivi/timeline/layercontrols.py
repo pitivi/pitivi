@@ -21,7 +21,11 @@
 
 import gtk
 
+from gettext import gettext as _
+
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED,\
+        LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
 
 
 # TODO add tooltips
@@ -33,7 +37,7 @@ class BaseLayerControl(gtk.Table, Loggable):
 
     __gtype_name__ = 'LayerControl'
 
-    def __init__(self, layer_type):
+    def __init__(self, track, layer_type):
         gtk.Table.__init__(self, rows=2, columns=2)
         Loggable.__init__(self)
 
@@ -68,7 +72,7 @@ class BaseLayerControl(gtk.Table, Loggable):
         upper = gtk.HBox()
         upper.pack_start(self.name_entry, True, True, 0)
         upper.pack_start(self.solo_button, False, False, 1)
-        upper.pack_start(self.visivle_option, False, False, 2)
+        upper.pack_start(self.visible_option, False, False, 2)
 
         # Lower bar
         self.lower_hbox = gtk.HBox()
@@ -76,12 +80,10 @@ class BaseLayerControl(gtk.Table, Loggable):
         self.attach(upper, 1, 2, 0, 1)
         self.attach(self.lower_hbox, 1, 2, 1, 2)
 
-        # Center the label horizontally.
-        self.set_alignment(0.5, 0)
         # The value below is arbitrarily chosen so the text appears
         # centered vertically when the represented track has a single layer.
-        self.set_padding(0, LAYER_SPACING * 2)
-        self.set_markup(self._getTrackName(track))
+        #self.set_padding(0, LAYER_SPACING * 2)
+        self.show_all()
         self._track = None
         self._timeline = None
         self.setTrack(track)
@@ -116,18 +118,7 @@ class BaseLayerControl(gtk.Table, Loggable):
     def _setSize(self, layers_count):
         assert layers_count >= 1
         height = layers_count * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
-        self.set_size_request(TRACK_CONTROL_WIDTH, height)
-
-    @staticmethod
-    def _getTrackName(track):
-        track_name = ""
-        if track.props.track_type == ges.TRACK_TYPE_AUDIO:
-            track_name = _("Audio:")
-        elif track.props.track_type == ges.TRACK_TYPE_VIDEO:
-            track_name = _("Video:")
-        elif track.props.track_type == ges.TRACK_TYPE_TEXT:
-            track_name = _("Text:")
-        return "<b>%s</b>" % track_name
+        self.set_size_request(-1, height)
 
 
 class VideoLayerControl(BaseLayerControl):
@@ -135,8 +126,8 @@ class VideoLayerControl(BaseLayerControl):
     Layer control class for video layers
     """
 
-    def __init__(self):
-        BaseLayerControl.__init__(self, "video")
+    def __init__(self, track):
+        BaseLayerControl.__init__(self, track, "video")
 
         opacity = gtk.Label(_("Opacity:"))
 
@@ -148,6 +139,7 @@ class VideoLayerControl(BaseLayerControl):
 
         self.lower_hbox.pack_start(opacity, False, False, 0)
         self.lower_hbox.pack_start(self.opacity_scale, True, True, 0)
+        self.lower_hbox.show_all()
 
 
 class AudioLayerControl(BaseLayerControl):
@@ -172,3 +164,4 @@ class AudioLayerControl(BaseLayerControl):
         self.lower_hbox.pack_start(self.volume_button, False, False, 1)
         self.lower_hbox.pack_start(panning, False, False, 2)
         self.lower_hbox.pack_start(self.panning_scale, True, True, 3)
+        self.lower_hbox.show_all()
