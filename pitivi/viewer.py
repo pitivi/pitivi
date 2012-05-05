@@ -79,7 +79,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     INHIBIT_REASON = _("Currently playing media")
 
-    def __init__(self, app, undock_action=None, action=None, pipeline=None):
+    def __init__(self, app, undock_action=None):
         gtk.VBox.__init__(self)
         self.set_border_width(SPACING)
         self.app = app
@@ -89,15 +89,12 @@ class PitiviViewer(gtk.VBox, Loggable):
         Loggable.__init__(self)
         self.log("New PitiviViewer")
 
-        self.action = action
         self.pipeline = None
         self._tmp_pipeline = None  # Used for displaying a preview when trimming
 
         self.sink = None
         self.docked = True
 
-        self.current_time = long(0)
-        self.previous_time = self.current_time
         # Only used for restoring the pipeline position after a live clip trim preview:
         self._oldTimelinePos = None
 
@@ -105,7 +102,6 @@ class PitiviViewer(gtk.VBox, Loggable):
 
         self._createUi()
         self.target = self.internal
-        self.setAction(action)
         self.undock_action = undock_action
         if undock_action:
             self.undock_action.connect("activate", self._toggleDocked)
@@ -148,60 +144,12 @@ class PitiviViewer(gtk.VBox, Loggable):
             # silently return, there's nothing to disconnect from
             return
 
-        if self.action and (self.action in self.pipeline.actions):
-            # if we have an action, properly remove it from pipeline
-            if self.action.isActive():
-                self.pipeline.stop()
-                self.action.deactivate()
-            self.pipeline.removeAction(self.action)
-
         self.pipeline.disconnect_by_func(self._pipelineStateChangedCb)
         self.pipeline.disconnect_by_func(self._elementMessageCb)
         self.pipeline.disconnect_by_func(self._positionCb)
         self.pipeline.disconnect_by_func(self._durationChangedCb)
 
         self.pipeline = None
-
-    def setAction(self, action):
-        """
-        Set the controlled action.
-
-        @param action: The Action to set. If C{None}, a default L{ViewAction}
-        will be used.
-        @type action: L{ViewAction} or C{None}
-        """
-        self.debug("self.action:%r, action:%r", self.action, action)
-        if action is not None and action == self.action:
-            return
-
-        if self.action != None:
-            # if there was one previously, remove it
-            self._disconnectFromAction()
-        self._connectToAction(action)
-        self.showControls()
-
-    def _connectToAction(self, action):
-        self.debug("action: %r", action)
-        # not sure what we need to do ...
-        self.action = action
-        dar = 16.0 / 9
-        try:
-            producer = action.producers[0]
-            self.debug("producer:%r", producer)
-            for stream in producer.output_streams:
-                self.warning("stream:%r", stream)
-            for stream in producer.getOutputStreams(VideoStream):
-                self.debug("stream:%r", stream)
-                if stream.dar:
-                    dar = stream.dar
-                    continue
-        except:
-            self.debug("Could not get the stream's aspect ratio")
-        self.setDisplayAspectRatio(dar)
-        self.showControls()
-
-    def _disconnectFromAction(self):
-        self.action = None
 
     def _setUiActive(self, active=True):
         self.debug("active %r", active)
@@ -303,22 +251,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.aframe.set_size_request(width, height)
         self.show_all()
         self.buttons = boxalign
-
-    def showControls(self):
-        if not self.action:
-            return
-        if True:
-            self.goToStart_button.show()
-            self.back_button.show()
-            self.playpause_button.show()
-            self.forward_button.show()
-            self.goToEnd_button.show()
-        else:
-            self.goToStart_button.hide()
-            self.back_button.hide()
-            self.playpause_button.hide()
-            self.forward_button.hide()
-            self.goToEnd_button.hide()
 
     def setDisplayAspectRatio(self, ratio):
         """
@@ -529,8 +461,7 @@ class PitiviViewer(gtk.VBox, Loggable):
     def _switch_output_window(self):
         gtk.gdk.threads_enter()
         self.sink.set_xwindow_id(self.target.window_xid)
-        #FIXME GES: the line below doesn't seem to do anything
-        #self.sink.expose()
+        self.sink.expose()
         gtk.gdk.threads_leave()
 
 
