@@ -294,25 +294,23 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
         return tracks, track_objects
 
-    def _normalize(self, p1, p2, adjust=0):
-        w, h = p2 - p1
-        x, y = p1
-        if w - adjust < 0:
-            w = abs(w - adjust)
-            x -= w
-        else:
-            w -= adjust
-        if h < 0:
-            h = abs(h)
-            y -= h
+    def _normalize(self, p1, p2):
+        w, h = p1 - p2
+        w = abs(w)
+        h = abs(h)
+        x = min(p1[0], p2[0])
+        y = min(p1[1], p2[1])
         return (x, y), (w, h)
+
+    def _get_adjustment(self, xadj=True, yadj=True):
+        return Point(self.app.gui.timeline_ui.hadj.get_value() * xadj,
+                     self.app.gui.timeline_ui.vadj.get_value() * yadj)
 
     def _selectionDrag(self, item, target, event):
         if self._selecting:
             self._got_motion_notify = True
-            cur = self.from_event(event)
-            pos, size = self._normalize(self._mousedown, cur,
-                self.app.gui.timeline_ui.hadj.get_value())
+            cur = self.from_event(event) - self._get_adjustment(True, False)
+            pos, size = self._normalize(self._mousedown, cur)
             self._marquee.props.x, self._marquee.props.y = pos
             self._marquee.props.width, self._marquee.props.height = size
             return True
@@ -321,7 +319,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def _selectionStart(self, item, target, event):
         self._selecting = True
         self._marquee.props.visibility = goocanvas.ITEM_VISIBLE
-        self._mousedown = self.from_event(event)
+        self._mousedown = self.from_event(event) + self._get_adjustment(False, True)
         self._marquee.props.width = 0
         self._marquee.props.height = 0
         self.pointer_grab(self.get_root_item(), gtk.gdk.POINTER_MOTION_MASK |
@@ -335,7 +333,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         if not self._got_motion_notify:
             self._timeline.selection.setSelection([], 0)
             self.app.current.seeker.seek(Zoomable.pixelToNs(event.x))
-        else:
+        elif self._timeline is not None:
             self._got_motion_notify = False
             mode = 0
             if event.get_state() & gtk.gdk.SHIFT_MASK:
