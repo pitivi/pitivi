@@ -38,6 +38,7 @@ from pitivi.check import soft_deps
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.autoaligner import AlignmentProgressDialog
 from pitivi.utils.misc import quote_uri
+from pitivi.utils.pipeline import PipelineError
 from pitivi.settings import GlobalSettings
 
 from curve import KW_LABEL_Y_OVERFLOW
@@ -174,7 +175,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._selected_sources = []
         self._tracks = []
         self.height = 0
-        self._position = 0
 
         self._block_size_request = False
         self.props.integer_layout = True
@@ -587,7 +587,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._temp_objects = []
         self._factories = None
         self._finish_drag = False
-        self._position = 0
         self._createUI()
         self.rate = gst.Fraction(1, 1)
         self._timeline = None
@@ -883,7 +882,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                         track.add_object(effect)
                         self.app.action_log.commit()
                         self._factories = None
-                        self._seeker.seek(self._position)
+                        self._seeker.flush()
                         context.drop_finish(True, timestamp)
 
                         self.timeline.selection.setSelection(timeline_objs, SELECT)
@@ -1119,11 +1118,15 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # the new scroll position should preserve the current horizontal
         # position of the playhead in the window
         cur_playhead_offset = self._canvas._playhead.props.x - self.hadj.props.value
-        new_pos = Zoomable.nsToPixel(self._position) - cur_playhead_offset
+        try:
+            position = self.app.current.pipeline.getPosition()
+        except PipelineError:
+            position = 0
+        new_pos = Zoomable.nsToPixel(position) - cur_playhead_offset
 
         # Update the position of the playhead's line on the canvas
         # This does not actually change the timeline position
-        self._canvas._playhead.props.x = Zoomable.nsToPixel(self._position)
+        self._canvas._playhead.props.x = Zoomable.nsToPixel(position)
 
         self.updateHScrollAdjustments()
         self.scrollToPosition(new_pos)
@@ -1131,7 +1134,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ruler.queue_draw()
 
     def positionChangedCb(self, seeker, position):
-        self._position = position
         self.ruler.timelinePositionChanged(position)
         self._canvas.timelinePositionChanged(position)
         if self.app.current.pipeline.getState() == gst.STATE_PLAYING:
@@ -1144,7 +1146,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         timeline canvas allows.
         """
         canvas_size = self._canvas.get_allocation().width
-        new_pos = Zoomable.nsToPixel(self._position)
+        new_pos = Zoomable.nsToPixel(self.app.current.pipeline.getPosition())
         scroll_pos = self.hadj.get_value()
         if (new_pos > scroll_pos + canvas_size) or (new_pos < scroll_pos):
             self.scrollToPosition(min(new_pos - canvas_size / 6,
@@ -1379,13 +1381,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Split clips at the current playhead position, regardless of selections.
         """
         self.timeline.enable_update(False)
+        position = self.app.current.pipeline.getPosition()
         for track in self.timeline.get_tracks():
             for tck_obj in track.get_objects():
-                start = tck_obj.props.start
-                end = start + tck_obj.props.duration
-                if start < self._position and end > self._position:
+                start = tck_obj.get_start()
+                end = start + tck_obj.get_duration()
+                if start < position and end > position:
                     obj = tck_obj.get_timeline_object()
-                    obj.split(self._position)
+                    obj.split(position)
         self.timeline.enable_update(True)
 
     def keyframe(self, action):
@@ -1397,7 +1400,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         selected = self.timeline.selection.getSelectedTrackObjs()
         for obj in selected:
             keyframe_exists = False
-            position_in_obj = (self._position - obj.start) + obj.in_point
+            position = self.app.current.pipeline.getPosition()
+            position_in_obj = (position - obj.start) + obj.in_point
             interpolators = obj.getInterpolators()
             for value in interpolators:
                 interpolator = obj.getInterpolator(value)
@@ -1417,13 +1421,15 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.app.current.pipeline.togglePlayback()
 
     def prevframe(self, action):
-        prev_kf = self.timeline.getPrevKeyframe(self._position)
+        position = self.app.current.pipeline.getPosition()
+        prev_kf = self.timeline.getPrevKeyframe(position)
         if prev_kf:
             self._seeker.seek(prev_kf)
             self.scrollToPlayhead()
 
     def nextframe(self, action):
-        next_kf = self.timeline.getNextKeyframe(self._position)
+        position = self.app.current.pipeline.getPosition()
+        next_kf = self.timeline.getNextKeyframe(position)
         if next_kf:
             self._seeker.seek(next_kf)
             self.scrollToPlayhead()
