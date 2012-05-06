@@ -762,14 +762,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ui_manager.add_ui_from_string(ui)
 
         # drag and drop
-        self.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
+        self._canvas.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
             [FILESOURCE_TUPLE, EFFECT_TUPLE],
             gtk.gdk.ACTION_COPY)
 
-        self.connect("drag-data-received", self._dragDataReceivedCb)
-        self.connect("drag-leave", self._dragLeaveCb)
-        self.connect("drag-drop", self._dragDropCb)
-        self.connect("drag-motion", self._dragMotionCb)
+        self._canvas.connect("drag-data-received", self._dragDataReceivedCb)
+        self._canvas.connect("drag-leave", self._dragLeaveCb)
+        self._canvas.connect("drag-drop", self._dragDropCb)
+        self._canvas.connect("drag-motion", self._dragMotionCb)
         self._canvas.connect("key-press-event", self._keyPressEventCb)
         self._canvas.connect("scroll-event", self._scrollEventCb)
 
@@ -811,11 +811,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 atom = gtk.gdk.atom_intern(EFFECT_TUPLE[0])
             else:
                 atom = gtk.gdk.atom_intern(FILESOURCE_TUPLE[0])
-
-            self.drag_get_data(context, atom, timestamp)
-            self.drag_highlight()
-        else:
-            if context.targets not in DND_EFFECT_LIST:
+            self._canvas.drag_get_data(context, atom, timestamp)
+            self._canvas.drag_highlight()
+        elif context.targets not in DND_EFFECT_LIST:
                 if not self._temp_objects and not self._creating_tckobjs_sigid:
                     self.timeline.enable_update(False)
                     self._create_temp_source(x, y)
@@ -828,7 +826,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                         ges.EDIT_MODE_NORMAL, ges.EDGE_NONE, set(self._temp_objects[1:]),
                         self.app.settings)
 
-                    self._move_temp_source(self.hadj.props.value + x, y)
+                    self._move_temp_source(x, y)
         return True
 
     def _dragLeaveCb(self, unused_layout, context, unused_tstamp):
@@ -913,7 +911,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _getTimelineObjectUnderMouse(self, x, y):
         timeline_objs = []
-        items_in_area = self._canvas.getItemsInArea(x, y - 15, x + 1, y - 30)
+        items_in_area = self._canvas.getItemsInArea(x, y, x + 1, y + 1)
 
         track_objects = [obj for obj in items_in_area[1]]
         for track_object in track_objects:
@@ -1026,9 +1024,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.added = 1
 
     def _move_temp_source(self, x, y):
-        x1, y1, x2, y2 = self._controls.get_allocation()
-        offset = 10 + (x2 - x1)
-        x, y = self._canvas.convert_from_pixels(x - offset, y)
+        x = self.hadj.props.value + x
+        y = self.vadj.props.value + y
         priority = int((y // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
         delta = Zoomable.pixelToNs(x)
         obj = self._temp_objects[0]
