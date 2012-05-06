@@ -1,82 +1,82 @@
 # Telugu translation for pitivi.
 # Copyright (C) 2011 pitivi's COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.
-# Praveen Illa <mail2ipn@gmail.com>, 2011.
+# Praveen Illa <mail2ipn@gmail.com>, 2011, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2011-09-21 05:57+0000\n"
-"PO-Revision-Date: 2011-09-21 16:40+0530\n"
+"POT-Creation-Date: 2012-05-03 14:50+0000\n"
+"PO-Revision-Date: 2012-05-07 01:48+0530\n"
 "Last-Translator: Praveen Illa <mail2ipn@gmail.com>\n"
-"Language-Team: తెలుగు <indlinux-telugu@lists.sourceforge.net>\n"
+"Language-Team: Telugu <indlinux-telugu@lists.sourceforge.net>\n"
 "Language: te\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bits\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: ../data/pitivi.desktop.in.in.h:1
-msgid "Create and edit your own movies"
-msgstr "మీ సొంత చలనచిత్రాలను సృష్టించు మరియు సవరించు"
-
-#: ../data/pitivi.desktop.in.in.h:2
 msgid "Pitivi Video Editor"
 msgstr "పిటివి వీడియో కూర్పకము"
 
-#: ../data/ui/alignmentprogress.ui.h:1
-msgid "<b><big>Performing Auto-Alignment</big></b>"
-msgstr ""
+#: ../data/pitivi.desktop.in.in.h:2
+msgid "Create and edit your own movies"
+msgstr "మీ సొంత చలనచిత్రాలను సృష్టించండి మరియు సవరించండి"
 
-#: ../data/ui/alignmentprogress.ui.h:2
+#: ../data/ui/alignmentprogress.ui.h:1
 msgid "Auto-Alignment Starting"
 msgstr ""
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../data/ui/encodingprogress.ui.h:6
+#: ../data/ui/alignmentprogress.ui.h:2
+msgid "<b><big>Performing Auto-Alignment</big></b>"
+msgstr ""
+
+#: ../data/ui/alignmentprogress.ui.h:3 ../data/ui/encodingprogress.ui.h:9
 msgid "Estimating..."
 msgstr "అంచనావేస్తున్నది..."
 
 #: ../data/ui/cliptransformation.ui.h:1
-msgid "<b>Crop</b>"
-msgstr "<b>కత్తిరించు</b>"
+msgid "<b>Viewer Zoom</b>"
+msgstr "<b>వీక్షక జూమ్</b>"
 
 #: ../data/ui/cliptransformation.ui.h:2
-msgid "<b>Position</b>"
-msgstr "<b>స్థానము</b>"
-
-#: ../data/ui/cliptransformation.ui.h:3
-msgid "<b>Size</b>"
-msgstr "<b>పరిమాణం</b>"
-
-#: ../data/ui/cliptransformation.ui.h:4
-msgid "<b>Viewer Zoom</b>"
-msgstr "<b>వీక్షకుడి జూమ్</b>"
-
-#: ../data/ui/cliptransformation.ui.h:5
-msgid "Height:"
-msgstr "ఎత్తు:"
-
-#: ../data/ui/cliptransformation.ui.h:6
-msgid "Width:"
-msgstr "వెడల్పు:"
-
-#: ../data/ui/cliptransformation.ui.h:7
 msgid "X:"
 msgstr "X:"
 
-#: ../data/ui/cliptransformation.ui.h:8
+#: ../data/ui/cliptransformation.ui.h:3
 msgid "Y:"
 msgstr "Y:"
 
-#: ../data/ui/depsmanager.ui.h:1
-msgid "Install"
-msgstr "స్థాపించు"
+#: ../data/ui/cliptransformation.ui.h:4
+msgid "<b>Position</b>"
+msgstr "<b>స్థానము</b>"
 
-#: ../data/ui/depsmanager.ui.h:2
+#: ../data/ui/cliptransformation.ui.h:5
+msgid "Width:"
+msgstr "వెడల్పు:"
+
+#: ../data/ui/cliptransformation.ui.h:6
+msgid "Height:"
+msgstr "ఎత్తు:"
+
+#: ../data/ui/cliptransformation.ui.h:7
+msgid "<b>Size</b>"
+msgstr "<b>పరిమాణం</b>"
+
+#: ../data/ui/cliptransformation.ui.h:8
+msgid "<b>Crop</b>"
+msgstr "<b>కత్తిరించు</b>"
+
+#: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
 msgstr "తప్పిపోయిన ఆధారితత్వాలు"
+
+#: ../data/ui/depsmanager.ui.h:2
+msgid "Install"
+msgstr "స్థాపించు"
 
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
@@ -93,40 +93,40 @@ msgid "Properties for <element>"
 msgstr "<element> కొరకు లక్షణాలు"
 
 #: ../data/ui/encodingdialog.ui.h:1
-msgid "1000 x 1000"
-msgstr "1000 x 1000"
+msgid "MP4"
+msgstr "MP4"
 
 #: ../data/ui/encodingdialog.ui.h:2
+msgid "H.264"
+msgstr "H.264"
+
+#: ../data/ui/encodingdialog.ui.h:3
 msgid "29.97 fps"
 msgstr "29.97 fps"
 
-#: ../data/ui/encodingdialog.ui.h:3
-msgid "6 channels (5.1)"
-msgstr "6 ఛానళ్ళు (5.1)"
-
 #: ../data/ui/encodingdialog.ui.h:4
-msgid "<b>Render Preset</b>"
-msgstr "<b>రెండర్ ప్రిసెట్</b>"
+msgid "AC-3"
+msgstr "AC-3"
 
 #: ../data/ui/encodingdialog.ui.h:5
 msgid "AAC"
 msgstr "AAC"
 
 #: ../data/ui/encodingdialog.ui.h:6
-msgid "AC-3"
-msgstr "AC-3"
+msgid "6 channels (5.1)"
+msgstr "6 ఛానళ్ళు (5.1)"
 
-#: ../data/ui/encodingdialog.ui.h:7
-msgid "Advanced..."
-msgstr "ఉన్నత..."
+#: ../data/ui/encodingdialog.ui.h:7 ../pitivi/ui/mainwindow.py:130
+msgid "Render"
+msgstr "రెండర్"
 
-#: ../data/ui/encodingdialog.ui.h:8 ../data/ui/projectsettings.ui.h:8
-msgid "Audio"
-msgstr "ఆడియో"
+#: ../data/ui/encodingdialog.ui.h:8
+msgid "<b>Render Preset</b>"
+msgstr "<b>రెండర్ ప్రిసెట్</b>"
 
 #: ../data/ui/encodingdialog.ui.h:9
-msgid "Codec:"
-msgstr "కొడెక్:"
+msgid "Folder"
+msgstr "సంచయం"
 
 #: ../data/ui/encodingdialog.ui.h:10
 msgid "Container format"
@@ -137,240 +137,240 @@ msgid "Container format:"
 msgstr "కలిగివుండే ఫార్మేట్:"
 
 #: ../data/ui/encodingdialog.ui.h:12
-msgid "Draft (no special effects, single pass)"
-msgstr ""
+msgid "Folder:"
+msgstr "సంచయం:"
 
 #: ../data/ui/encodingdialog.ui.h:13
-msgid "Edit Project Settings..."
-msgstr "ప్రోజెక్టు అమరికలను సవరించు..."
+msgid "File name:"
+msgstr "ఫైల్ పేరు:"
 
 #: ../data/ui/encodingdialog.ui.h:14
 msgid "File name"
 msgstr "ఫైల్ పేరు"
 
 #: ../data/ui/encodingdialog.ui.h:15
-msgid "File name:"
-msgstr "ఫైల్ పేరు:"
-
-#: ../data/ui/encodingdialog.ui.h:16
-msgid "Folder"
-msgstr "సంచయం"
-
-#: ../data/ui/encodingdialog.ui.h:17
-msgid "Folder:"
-msgstr "సంచయం:"
-
-#: ../data/ui/encodingdialog.ui.h:18
-msgid "Frame rate:"
-msgstr "ఫ్రేమ్ రేటు:"
-
-#: ../data/ui/encodingdialog.ui.h:19
-msgid "Framerate"
-msgstr "ఫ్రేమ్ రేటు"
-
-#: ../data/ui/encodingdialog.ui.h:20
-msgid "General"
-msgstr "సాధారణ"
-
-#: ../data/ui/encodingdialog.ui.h:21
-msgid "H.264"
-msgstr "H.264"
-
-#: ../data/ui/encodingdialog.ui.h:22
-msgid "Height"
-msgstr "ఎత్తు"
-
-#: ../data/ui/encodingdialog.ui.h:23
-msgid "MP4"
-msgstr "MP4"
-
-#: ../data/ui/encodingdialog.ui.h:24
-msgid "Number of channels:"
-msgstr "చానళ్ళ సంఖ్య:"
-
-#: ../data/ui/encodingdialog.ui.h:25 ../pitivi/ui/mainwindow.py:130
-msgid "Render"
-msgstr "రెండర్"
-
-#: ../data/ui/encodingdialog.ui.h:26
 msgid "Render only the selected clips"
 msgstr "ఎంచుకున్న క్లిప్‌లను మాత్రమే రెండర్ చేయి"
 
-#: ../data/ui/encodingdialog.ui.h:27
-msgid "Sample Depth:"
-msgstr "మాదిరి లోతు:"
+#: ../data/ui/encodingdialog.ui.h:16
+msgid "Draft (no special effects, single pass)"
+msgstr ""
 
-#: ../data/ui/encodingdialog.ui.h:28
-msgid "Sample Rate:"
-msgstr "మాదిరి రేటు:"
+#: ../data/ui/encodingdialog.ui.h:17
+msgid "General"
+msgstr "సాధారణ"
 
-#: ../data/ui/encodingdialog.ui.h:29
+#: ../data/ui/encodingdialog.ui.h:18
+msgid "Advanced..."
+msgstr "ఉన్నత..."
+
+#: ../data/ui/encodingdialog.ui.h:19
+msgid "Codec:"
+msgstr "కొడెక్:"
+
+#: ../data/ui/encodingdialog.ui.h:20
+msgid "Framerate"
+msgstr "ఫ్రేమ్ రేటు"
+
+#: ../data/ui/encodingdialog.ui.h:21
 msgid "Scale"
 msgstr "కొలత"
 
-#: ../data/ui/encodingdialog.ui.h:30
+#: ../data/ui/encodingdialog.ui.h:22
+msgid "1000 x 1000"
+msgstr "1000 x 1000"
+
+#: ../data/ui/encodingdialog.ui.h:23
+msgid "Height"
+msgstr "ఎత్తు"
+
+#: ../data/ui/encodingdialog.ui.h:24
+msgid "Edit Project Settings..."
+msgstr "ప్రోజెక్టు అమరికలను సవరించు..."
+
+#: ../data/ui/encodingdialog.ui.h:25
+msgid "Frame rate:"
+msgstr "ఫ్రేమ్ రేటు:"
+
+#: ../data/ui/encodingdialog.ui.h:26
 msgid "Scale:"
 msgstr "కొలత:"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../data/ui/encodingdialog.ui.h:31 ../data/ui/projectsettings.ui.h:21
+#: ../data/ui/encodingdialog.ui.h:27 ../data/ui/projectsettings.ui.h:13
 #: ../pitivi/effects.py:244
 msgid "Video"
 msgstr "వీడియో"
 
+#: ../data/ui/encodingdialog.ui.h:28
+msgid "Number of channels:"
+msgstr "చానళ్ళ సంఖ్య:"
+
+#: ../data/ui/encodingdialog.ui.h:29
+msgid "Sample Rate:"
+msgstr "మాదిరి రేటు:"
+
+#: ../data/ui/encodingdialog.ui.h:30
+msgid "Sample Depth:"
+msgstr "మాదిరి లోతు:"
+
+#: ../data/ui/encodingdialog.ui.h:31 ../data/ui/projectsettings.ui.h:19
+msgid "Audio"
+msgstr "ఆడియో"
+
 #: ../data/ui/encodingprogress.ui.h:1
+msgid "Rendering"
+msgstr "రెండరింగ్ చేస్తోంది"
+
+#: ../data/ui/encodingprogress.ui.h:2
 msgid "<b><big>Rendering movie</big></b>"
 msgstr ""
 
-#: ../data/ui/encodingprogress.ui.h:2
-msgid "<b>Estimated filesize:</b>"
-msgstr "<b>ఫైల్ పరిమాణం అంచనా:</b>"
-
 #: ../data/ui/encodingprogress.ui.h:3
-msgid "<b>Frames per second:</b>"
-msgstr "<b>సెకనుకి గల ఫ్రేములు:</b>"
+msgid "Unknown Mib"
+msgstr "తెలియని Mib"
 
 #: ../data/ui/encodingprogress.ui.h:4
-msgid "<b>Phase:</b>"
-msgstr ""
+msgid "Unknown"
+msgstr "తెలియదు"
 
 #: ../data/ui/encodingprogress.ui.h:5
 msgid "Encoding first pass"
 msgstr ""
 
+#: ../data/ui/encodingprogress.ui.h:6
+msgid "<b>Estimated filesize:</b>"
+msgstr "<b>ఫైల్ పరిమాణం అంచనా:</b>"
+
 #: ../data/ui/encodingprogress.ui.h:7
-msgid "Rendering"
-msgstr "రెండరింగ్ చేస్తోంది"
+msgid "<b>Frames per second:</b>"
+msgstr "<b>సెకనుకి గల ఫ్రేములు:</b>"
 
 #: ../data/ui/encodingprogress.ui.h:8
-msgid "Unknown"
-msgstr "తెలియదు"
-
-#: ../data/ui/encodingprogress.ui.h:9
-msgid "Unknown Mib"
-msgstr "తెలియని Mib"
-
-#: ../data/ui/preferences.ui.h:1
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
+msgid "<b>Phase:</b>"
 msgstr ""
 
-#: ../data/ui/preferences.ui.h:2
+#: ../data/ui/preferences.ui.h:1
 msgid "Preferences"
 msgstr "ప్రాధాన్యతలు"
 
-#: ../data/ui/preferences.ui.h:3
-msgid "Reset to Factory Settings"
-msgstr "ఫ్యాక్టరీ అమరికలకు తిరిగి అమర్చు"
-
-#: ../data/ui/preferences.ui.h:4
-msgid "Revert"
-msgstr ""
-
-#: ../data/ui/preferences.ui.h:5
+#: ../data/ui/preferences.ui.h:2
 msgid "Section"
 msgstr "విభాగం"
 
-#: ../data/ui/projectsettings.ui.h:1
+#: ../data/ui/preferences.ui.h:3
+msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
+msgstr ""
+
+#: ../data/ui/preferences.ui.h:4
+msgid "Reset to Factory Settings"
+msgstr "ఫ్యాక్టరీ అమరికలకు తిరిగి అమర్చు"
+
+#: ../data/ui/preferences.ui.h:5
+msgid "Revert"
+msgstr ""
+
+#: ../data/ui/projectsettings.ui.h:1 ../pitivi/ui/projectsettings.py:64
+msgid "Standard (4:3)"
+msgstr "ప్రామాణికం (4:3)"
+
+#: ../data/ui/projectsettings.ui.h:2
+msgid "Standard PAL"
+msgstr "ప్రామాణిక PAL"
+
+#: ../data/ui/projectsettings.ui.h:3
 msgid "25 FPS"
 msgstr "25 FPS"
 
-#: ../data/ui/projectsettings.ui.h:2
-msgid "<b>Aspect Ratio</b>"
-msgstr "<b>అవస్థ నిష్పత్తి</b>"
-
-#: ../data/ui/projectsettings.ui.h:3
-msgid "<b>Audio Preset</b>"
-msgstr "<b>ఆడియో ప్రిసెట్</b>"
-
-#: ../data/ui/projectsettings.ui.h:4
-msgid "<b>Format</b>"
-msgstr "<b>ఫార్మేటు</b>"
+#: ../data/ui/projectsettings.ui.h:4 ../pitivi/ui/mainwindow.py:254
+msgid "Project Settings"
+msgstr "ప్రోజెక్టు అమరికలు"
 
 #: ../data/ui/projectsettings.ui.h:5
-msgid "<b>Frame Rate</b>"
-msgstr "<b>ఫ్రేమ్ రేటు</b>"
+msgid "<b>Video Preset</b>"
+msgstr "<b>వీడియో ప్రిసెట్</b>"
 
 #: ../data/ui/projectsettings.ui.h:6
 msgid "<b>Size (Pixels)</b>"
 msgstr "<b>పరిమాణం (పిక్సెళ్ళు)</b>"
 
 #: ../data/ui/projectsettings.ui.h:7
-msgid "<b>Video Preset</b>"
-msgstr "<b>వీడియో ప్రిసెట్</b>"
+msgid "<b>Aspect Ratio</b>"
+msgstr "<b>అవస్థ నిష్పత్తి</b>"
 
-#: ../data/ui/projectsettings.ui.h:9
-msgid "Author:"
-msgstr "మూలకర్త:"
-
-#: ../data/ui/projectsettings.ui.h:10
-msgid "Channels:"
-msgstr "ఛానళ్ళు:"
-
-#: ../data/ui/projectsettings.ui.h:11
+#: ../data/ui/projectsettings.ui.h:8
 msgid "Display Aspect Ratio"
 msgstr ""
 
-#: ../data/ui/projectsettings.ui.h:12
-msgid "Info"
-msgstr "సమాచారం"
-
-#. Translators: This is an action, the title of a button
-#: ../data/ui/projectsettings.ui.h:13 ../pitivi/ui/mainwindow.py:135
-msgid "Link"
-msgstr "లింకుచేయి"
-
-#: ../data/ui/projectsettings.ui.h:14
+#: ../data/ui/projectsettings.ui.h:9
 msgid "Pixel Aspect Ratio"
 msgstr ""
 
-#: ../data/ui/projectsettings.ui.h:15 ../pitivi/ui/mainwindow.py:254
-msgid "Project Settings"
-msgstr "ప్రోజెక్టు అమరికలు"
-
-#: ../data/ui/projectsettings.ui.h:16
-msgid "Project title:"
-msgstr "ప్రోజెక్టు శీర్షిక:"
-
-#: ../data/ui/projectsettings.ui.h:17
-msgid "Sample depth:"
-msgstr "మాదిరి లోతు:"
-
-#: ../data/ui/projectsettings.ui.h:18
-msgid "Sample rate:"
-msgstr "మాదిరి రేటు:"
-
-#: ../data/ui/projectsettings.ui.h:19 ../pitivi/ui/projectsettings.py:64
-msgid "Standard (4:3)"
-msgstr "ప్రామాణికం (4:3)"
-
-#: ../data/ui/projectsettings.ui.h:20
-msgid "Standard PAL"
-msgstr "ప్రామాణిక PAL"
-
-#: ../data/ui/projectsettings.ui.h:22
-msgid "Year:"
-msgstr "సంవత్సరం:"
-
-#: ../data/ui/projectsettings.ui.h:23
+#: ../data/ui/projectsettings.ui.h:10
 msgid "x"
 msgstr "x"
 
+#. Translators: This is an action, the title of a button
+#: ../data/ui/projectsettings.ui.h:11 ../pitivi/ui/mainwindow.py:135
+msgid "Link"
+msgstr "లింకుచేయి"
+
+#: ../data/ui/projectsettings.ui.h:12
+msgid "<b>Frame Rate</b>"
+msgstr "<b>ఫ్రేమ్ రేటు</b>"
+
+#: ../data/ui/projectsettings.ui.h:14
+msgid "<b>Audio Preset</b>"
+msgstr "<b>ఆడియో ప్రిసెట్</b>"
+
+#: ../data/ui/projectsettings.ui.h:15
+msgid "<b>Format</b>"
+msgstr "<b>ఫార్మేటు</b>"
+
+#: ../data/ui/projectsettings.ui.h:16
+msgid "Channels:"
+msgstr "ఛానళ్ళు:"
+
+#: ../data/ui/projectsettings.ui.h:17
+msgid "Sample rate:"
+msgstr "మాదిరి రేటు:"
+
+#: ../data/ui/projectsettings.ui.h:18
+msgid "Sample depth:"
+msgstr "మాదిరి లోతు:"
+
+#: ../data/ui/projectsettings.ui.h:20
+msgid "Author:"
+msgstr "మూలకర్త:"
+
+#: ../data/ui/projectsettings.ui.h:21
+msgid "Year:"
+msgstr "సంవత్సరం:"
+
+#: ../data/ui/projectsettings.ui.h:22
+msgid "Project title:"
+msgstr "ప్రోజెక్టు శీర్షిక:"
+
+#: ../data/ui/projectsettings.ui.h:23
+msgid "Info"
+msgstr "సమాచారం"
+
 #: ../data/ui/startupwizard.ui.h:1
-msgid "Browse projects..."
-msgstr "ప్రోజెక్టులను విహరించు..."
+msgid "Welcome"
+msgstr "స్వాగతం"
 
 #: ../data/ui/startupwizard.ui.h:2
 msgid "Double-click a project below to load it:"
 msgstr ""
 
 #: ../data/ui/startupwizard.ui.h:3
-msgid "Missing dependencies..."
-msgstr "తప్పిపోయిన ఆధారితత్వాలు..."
+msgid "Browse projects..."
+msgstr "ప్రోజెక్టులను విహరించు..."
 
 #: ../data/ui/startupwizard.ui.h:4
-msgid "Welcome"
-msgstr "స్వాగతం"
+msgid "Missing dependencies..."
+msgstr "తప్పిపోయిన ఆధారితత్వాలు..."
 
 #: ../pitivi/application.py:117
 #, python-format
@@ -379,7 +379,19 @@ msgid ""
 "at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 msgstr ""
 
-#: ../pitivi/application.py:444
+#: ../pitivi/application.py:425
+msgid "Loading project..."
+msgstr "పరియోజనను నింపుతోంది..."
+
+#: ../pitivi/application.py:434
+msgid "Project loaded."
+msgstr "పరియోజన లోడయింది."
+
+#: ../pitivi/application.py:435
+msgid "Rendering..."
+msgstr "రెండరింగ్ చేస్తోంది..."
+
+#: ../pitivi/application.py:447
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -395,47 +407,47 @@ msgstr ""
 "    %prog PROJECT_FILE -r OUTPUT_FILE  # ఒక ప్రోజెక్టుని రెండర్ చేయి.\n"
 "    %prog PROJECT_FILE -p              # ఒక ప్రోజెక్టుని మునుజూపు."
 
-#: ../pitivi/application.py:452
+#: ../pitivi/application.py:455
 msgid "Import each MEDIA_FILE into a new project."
 msgstr ""
 
-#: ../pitivi/application.py:455
+#: ../pitivi/application.py:458
 msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr ""
 
-#: ../pitivi/application.py:458
+#: ../pitivi/application.py:461
 msgid "Run Pitivi in the Python Debugger."
 msgstr ""
 
-#: ../pitivi/application.py:461
+#: ../pitivi/application.py:464
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
 msgstr ""
 
-#: ../pitivi/application.py:464
+#: ../pitivi/application.py:467
 msgid "Preview the specified project file without the full UI."
 msgstr ""
 
-#: ../pitivi/application.py:469
+#: ../pitivi/application.py:472
 msgid "-p and -r cannot be used simultaneously"
 msgstr ""
 
-#: ../pitivi/application.py:472
+#: ../pitivi/application.py:475
 msgid "-r or -p and -i are incompatible"
 msgstr ""
 
-#: ../pitivi/application.py:475
+#: ../pitivi/application.py:478
 msgid "-a requires -i"
 msgstr ""
 
-#: ../pitivi/application.py:483
+#: ../pitivi/application.py:486
 msgid "-r requires exactly one PROJECT_FILE"
 msgstr ""
 
-#: ../pitivi/application.py:486
+#: ../pitivi/application.py:489
 msgid "-p requires exactly one PROJECT_FILE"
 msgstr ""
 
-#: ../pitivi/application.py:489
+#: ../pitivi/application.py:492
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr ""
 
@@ -732,6 +744,7 @@ msgid "Time"
 msgstr "సమయం"
 
 #: ../pitivi/effects.py:116 ../pitivi/effects.py:226
+#: ../pitivi/factories/operation.py:66
 msgid "Uncategorized"
 msgstr "వర్గీకరించనివి"
 
@@ -800,6 +813,20 @@ msgid ""
 msgstr ""
 "\n"
 "మక్సర్"
+
+#: ../pitivi/ui/alignmentprogress.py:69
+#, python-format
+msgid "%d%% Analyzed"
+msgstr ""
+
+#. Translators: This string indicates the estimated time
+#. remaining until the action completes.  The "%s" is an
+#. already-localized human-readable duration description like
+#. "31 seconds".
+#: ../pitivi/ui/alignmentprogress.py:75 ../pitivi/ui/encodingprogress.py:67
+#, python-format
+msgid "About %s left"
+msgstr ""
 
 #: ../pitivi/ui/clipproperties.py:164
 msgid "Remove effect"
@@ -979,15 +1006,20 @@ msgstr "కొత్త ప్రిసెట్"
 msgid "New preset %d"
 msgstr "కొత్త ప్రిసెట్ %d"
 
-#: ../pitivi/ui/encodingdialog.py:542
+#: ../pitivi/ui/encodingdialog.py:543
 msgid "A file name is required."
 msgstr ""
 
-#: ../pitivi/ui/encodingdialog.py:544
+#: ../pitivi/ui/encodingdialog.py:545
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
 msgstr ""
+
+#: ../pitivi/ui/encodingprogress.py:65
+#, python-format
+msgid "%d%% Rendered"
+msgstr "%d%% రెండరయినవి"
 
 #: ../pitivi/ui/filechooserpreview.py:134
 msgid "PiTiVi can not preview this file."
@@ -1206,7 +1238,7 @@ msgstr "సహాయకులు:"
 
 #: ../pitivi/ui/mainwindow.py:620
 msgid "translator-credits"
-msgstr "Praveen Illa <mail2ipn@gmail.com>, 2011"
+msgstr "Praveen Illa <mail2ipn@gmail.com>, 2011-12"
 
 #: ../pitivi/ui/mainwindow.py:623
 msgid ""
@@ -1306,8 +1338,8 @@ msgstr "చిరుచిత్ర అంతరం"
 msgid "The spacing between thumbnails, in pixels"
 msgstr "చిరుచిత్రాల మధ్య అంతరం, పిక్సెళ్ళలో"
 
-#: ../pitivi/ui/previewer.py:66 ../pitivi/ui/previewer.py:102
-#: ../pitivi/ui/previewer.py:113
+#: ../pitivi/ui/previewer.py:66 ../pitivi/ui/previewer.py:106
+#: ../pitivi/ui/previewer.py:117
 msgid "Performance"
 msgstr "ప్రదర్శన"
 
@@ -1315,39 +1347,59 @@ msgstr "ప్రదర్శన"
 msgid "Thumbnail every"
 msgstr ""
 
-#: ../pitivi/ui/previewer.py:69 ../pitivi/ui/previewer.py:70
-#: ../pitivi/ui/previewer.py:71 ../pitivi/ui/previewer.py:72
+#. Note that we cannot use "%s second" or ngettext, because fractions
+#. are not supported by ngettext and their plurality is ambiguous
+#. in many languages.
+#. See http://www.gnu.org/software/hello/manual/gettext/Plural-forms.html
 #: ../pitivi/ui/previewer.py:73
-#, python-format
-msgid "%s second"
-msgstr "%s సెకను"
+msgid "1/100 second"
+msgstr "1/100 సెకను"
 
-#: ../pitivi/ui/previewer.py:74 ../pitivi/ui/previewer.py:75
-#, python-format
-msgid "%s seconds"
-msgstr "%s సెకన్లు"
+#: ../pitivi/ui/previewer.py:74
+msgid "1/10 second"
+msgstr "1/10 సెకను"
+
+#: ../pitivi/ui/previewer.py:75
+msgid "1/4 second"
+msgstr "1/4 సెకను"
 
 #: ../pitivi/ui/previewer.py:76
+msgid "1/2 second"
+msgstr "1/2 సెకను"
+
+#: ../pitivi/ui/previewer.py:77
+msgid "1 second"
+msgstr "1 సెకను"
+
+#: ../pitivi/ui/previewer.py:78
+msgid "5 seconds"
+msgstr "5 సెకన్లు"
+
+#: ../pitivi/ui/previewer.py:79
+msgid "10 seconds"
+msgstr "10 సెకన్లు"
+
+#: ../pitivi/ui/previewer.py:80
 msgid "minute"
 msgstr "నిమిషం"
 
-#: ../pitivi/ui/previewer.py:77
+#: ../pitivi/ui/previewer.py:81
 msgid "The interval, in seconds, between thumbnails."
 msgstr "చిరుచిత్రాల మధ్య అంతరం, సెకన్లలో."
 
-#: ../pitivi/ui/previewer.py:103
+#: ../pitivi/ui/previewer.py:107
 msgid "Enable video thumbnails"
 msgstr "వీడియో చిరుచిత్రాలను చేతనపరుచు"
 
-#: ../pitivi/ui/previewer.py:104
+#: ../pitivi/ui/previewer.py:108
 msgid "Show thumbnails on video clips"
 msgstr "వీడియో క్లిప్‌లపై చిరుచిత్రాలను చూపించు"
 
-#: ../pitivi/ui/previewer.py:114
+#: ../pitivi/ui/previewer.py:118
 msgid "Enable audio waveforms"
 msgstr ""
 
-#: ../pitivi/ui/previewer.py:115
+#: ../pitivi/ui/previewer.py:119
 msgid "Show waveforms on audio clips"
 msgstr ""
 
@@ -1537,6 +1589,10 @@ msgstr ""
 #: ../pitivi/ui/sourcelist.py:776
 msgid "The following file can not be used with PiTiVi."
 msgstr ""
+
+#: ../pitivi/ui/startupwizard.py:59
+msgid "Projects"
+msgstr "పరియోజనలు"
 
 #: ../pitivi/ui/timelinecanvas.py:52
 msgid "Behavior"
