@@ -584,6 +584,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ui_manager = ui_manager
         self.app = instance
         self._temp_objects = []
+        self._drag_started = False
         self._factories = None
         self._finish_drag = False
         self._createUI()
@@ -806,11 +807,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
 
-        if not self._factories:
+        if not self._drag_started:
+            self.debug("Drag start")
             if context.targets in DND_EFFECT_LIST:
                 atom = gtk.gdk.atom_intern(EFFECT_TUPLE[0])
             else:
                 atom = gtk.gdk.atom_intern(FILESOURCE_TUPLE[0])
+            self._drag_started = True
             self._canvas.drag_get_data(context, atom, timestamp)
             self._canvas.drag_highlight()
         elif context.targets not in DND_EFFECT_LIST:
@@ -830,27 +833,57 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         return True
 
     def _dragLeaveCb(self, unused_layout, context, unused_tstamp):
-        self._temp_objects = []
-        self.drag_unhighlight()
-        self.timeline.enable_update(True)
+        # Drag leave could be emited for two reasons - user drops or leaves
+        # area. We don't need clean up if it is drop, so we try to wait for
+        # drop signal (which abort cleanup).
+        self.debug("Drag leave")
+        self._canvas.handler_block_by_func(self._dragMotionCb)
+        gobject.timeout_add(75, self._dragCleanUp, context)
+
+    def _dragCleanUp(self, context):
+        # If TrackObject-s still being created, wait before deleting
+        if self._creating_tckobjs_sigid:
+            return True
+
+        # Clean up only if clip was not dropped
+        if self._drag_started:
+            self.debug("Drag cleanup")
+            self._drag_started = False
+            self._factories = []
+            if context.targets not in DND_EFFECT_LIST:
+                if self._move_context is not None:
+                    self._move_context.finish()
+                self._canvas.drag_unhighlight()
+                for obj in self._temp_objects:
+                    layer = obj.get_layer()
+                    layer.remove_object(obj)
+                self._temp_objects = []
+                self.timeline.enable_update(True)
+            self.debug("Drag cleanup ended")
+        self._canvas.handler_unblock_by_func(self._dragMotionCb)
+        return False
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
-        if  context.targets not in DND_EFFECT_LIST:
+        # Handles drop. Blocks cleanup, by setting internal value
+        self.debug("Drag drop")
+        self._drag_started = False
+        if context.targets not in DND_EFFECT_LIST:
+            self._canvas.drag_unhighlight()
             self.app.action_log.begin("add clip")
             self.selected = self._temp_objects
             self._project.emit("selected-changed", set(self.selected))
-
-            self._move_context.finish()
+            if self._move_context is not None:
+                self._move_context.finish()
             self.app.action_log.commit()
-            context.drop_finish(True, timestamp)
+            # The conversion is done, clear the temporary objects
+            self._temp_objects = []
             self._factories = []
-
+            context.drop_finish(True, timestamp)
+            self.timeline.enable_update(True)
             return True
-
         elif context.targets in DND_EFFECT_LIST:
             if self.app.current.timeline.props.duration == 0:
                 return False
-
             factory = self._factories[0]
             timeline_objs = self._getTimelineObjectUnderMouse(x, y)
             if timeline_objs:
@@ -1010,18 +1043,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._temp_objects.insert(0, tlobj)
         tlobj.disconnect(self._creating_tckobjs_sigid[tlobj])
         del self._creating_tckobjs_sigid[tlobj]
-        if x != -1 and not self.added:
-            focus = self._temp_objects[0]
-            self._move_context = EditingContext(focus, self.timeline,
-                        ges.EDIT_MODE_NORMAL, ges.EDGE_NONE, set(self._temp_objects[1:]),
-                       self.app.settings)
-
-            self._move_temp_source(self.hadj.props.value + x, y)
-            self.selected = self._temp_objects
-            self._project.emit("selected-changed", set(self.selected))
-            self._move_context.finish()
-            self._temp_objects = []
-            self.added = 1
 
     def _move_temp_source(self, x, y):
         x = self.hadj.props.value + x
