@@ -388,7 +388,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         if position == 0:
             self._snapEndedCb()
         else:
-            self.debug("Snapping indicator at", position)
+            self.debug("Snapping indicator at %d" % position)
             self._snap_indicator.props.x = Zoomable.nsToPixel(position)
             self._snap_indicator.props.height = self.height
             self._snap_indicator.props.visibility = goocanvas.ITEM_VISIBLE
@@ -651,9 +651,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # timeline ruler
         self.ruler = ruler.ScaleRuler(self.app, self.hadj)
         self.ruler.set_size_request(0, 25)
-        #self.ruler.set_border_width(2)
         self.ruler.connect("key-press-event", self._keyPressEventCb)
-        self.ruler.connect("size-allocate", self._rulerSizeAllocateCb)
         rulerframe = gtk.Frame()
         rulerframe.set_shadow_type(gtk.SHADOW_OUT)
         rulerframe.add(self.ruler)
@@ -872,7 +870,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     track = tckobj.get_track()
                     if track.props.track_type == ges.TRACK_TYPE_AUDIO and \
                             media_type == AUDIO_EFFECT or \
-                            track.props.track_objects == ges.TRACK_TYPE_VIDEO and \
+                            track.props.track_type == ges.TRACK_TYPE_VIDEO and \
                             media_type == VIDEO_EFFECT:
                         #Actually add the effect
                         self.app.action_log.begin("add effect")
@@ -1163,9 +1161,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _scrollToPosition(self, position):
         self._hscrollbar.set_value(position)
         return False
-
-    def _rulerSizeAllocateCb(self, ruler, allocation):
-        self._canvas.props.redraw_when_scrolled = False
 
     def _snapDistanceChangedCb(self, settings):
         if self._timeline:
