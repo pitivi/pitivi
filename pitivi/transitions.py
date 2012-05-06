@@ -348,7 +348,7 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
 
     def getSelectedItem(self):
         path = self.iconview.get_selected_items()
-        return self.storemodel[path[0]][COL_TRANSITION_ID]
+        return self.modelFilter[path[0]][COL_TRANSITION_ID]
 
     def _setRowVisible(self, model, iter, data):
         """

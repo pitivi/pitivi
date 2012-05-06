@@ -1163,7 +1163,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             self.selection_actions.set_sensitive(False)
 
     def _rowActivatedCb(self, unused_treeview, path, unused_column):
-        path = self.storemodel[path][COL_URI]
+        path = self.modelFilter[path][COL_URI]
         self.emit('play', path)
 
     def _iconViewMotionNotifyEventCb(self, iconview, event):
@@ -1297,7 +1297,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         if len(paths) < 1:
             context.drag_abort(int(time.time()))
         else:
-            row = self.storemodel[paths[0]]
+            row = self.modelFilter[paths[0]]
             context.set_icon_pixbuf(row[COL_ICON], 0, 0)
 
     def getSelectedPaths(self):
@@ -1318,7 +1318,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
     def getSelectedItems(self):
         """ Returns a list of selected items URIs """
-        return [self.storemodel[path][COL_URI]
+        return [self.modelFilter[path][COL_URI]
             for path in self.getSelectedPaths()]
 
     def _dndDataGetCb(self, unused_widget, context, selection,
