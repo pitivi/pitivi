@@ -887,7 +887,7 @@ class RenderDialog(Loggable):
         for obj, id in self._gstSigId.iteritems():
             obj.disconnect(id)
         self._gstSigId = {}
-        self.app.current.pipeline.disconnect_by_function(self._updatePositionCb)
+        self.app.current.pipeline.disconnect_by_func(self._updatePositionCb)
 
     def _updateProjectSettings(self):
         """Updates the settings of the project if the render settings changed.
@@ -957,7 +957,7 @@ class RenderDialog(Loggable):
         bus = self._pipeline.get_bus()
         bus.add_signal_watch()
         self._gstSigId[bus] = bus.connect('message', self._busMessageCb)
-        self.app.current.connect("position", self._updatePositionCb)
+        self.app.current.pipeline.connect("position", self._updatePositionCb)
 
     def _closeButtonClickedCb(self, unused_button):
         self.debug("Render dialog's Close button clicked")
