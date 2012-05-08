@@ -334,8 +334,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._marquee.props.visibility = goocanvas.ITEM_INVISIBLE
         if not self._got_motion_notify:
             self._timeline.selection.setSelection([], 0)
-            #FIXME Do we need to seek here?
-            #self._pipeline.seek(Zoomable.pixelToNs(event.x))
+            self.app.current.seeker.seek(Zoomable.pixelToNs(event.x))
         else:
             self._got_motion_notify = False
             mode = 0
