@@ -804,7 +804,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 ## Drag and Drop callbacks
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
-
+        # Set up the initial data when we first initiate the drag operation
         if not self._drag_started:
             self.debug("Drag start")
             if context.targets in DND_EFFECT_LIST:
@@ -814,36 +814,47 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._drag_started = True
             self._canvas.drag_get_data(context, atom, timestamp)
             self._canvas.drag_highlight()
+        # We want to show the clips being dragged to the timeline (not effects)
         elif context.targets not in DND_EFFECT_LIST:
-                if not self._temp_objects and not self._creating_tckobjs_sigid:
-                    self.timeline.enable_update(False)
-                    self._create_temp_source(x, y)
+            if not self._temp_objects and not self._creating_tckobjs_sigid:
+                self.timeline.enable_update(False)
+                self._create_temp_source(x, y)
 
-                # Let some time for TrackObject-s to be created
-                if self._temp_objects and not self._creating_tckobjs_sigid:
-                    focus = self._temp_objects[0]
+            # Let some time for TrackObject-s to be created
+            if self._temp_objects and not self._creating_tckobjs_sigid:
+                focus = self._temp_objects[0]
+                self._move_context = EditingContext(focus,
+                                            self.timeline,
+                                            ges.EDIT_MODE_NORMAL,
+                                            ges.EDGE_NONE,
+                                            set(self._temp_objects[1:]),
+                                            self.app.settings)
 
-                    self._move_context = EditingContext(focus, self.timeline,
-                        ges.EDIT_MODE_NORMAL, ges.EDGE_NONE, set(self._temp_objects[1:]),
-                        self.app.settings)
-
-                    self._move_temp_source(x, y)
+                self._move_temp_source(x, y)
         return True
 
     def _dragLeaveCb(self, unused_layout, context, unused_tstamp):
-        # Drag leave could be emited for two reasons - user drops or leaves
-        # area. We don't need clean up if it is drop, so we try to wait for
-        # drop signal (which abort cleanup).
+        """
+        This occurs when the user leaves the canvas area during a drag,
+        or when the item being dragged has been dropped.
+
+        Since we always get a "drag-dropped" signal right after "drag-leave",
+        we wait 75 ms to see if a drop happens and if we need to cleanup or not.
+        """
         self.debug("Drag leave")
         self._canvas.handler_block_by_func(self._dragMotionCb)
         gobject.timeout_add(75, self._dragCleanUp, context)
 
     def _dragCleanUp(self, context):
+        """
+        If the user drags outside the timeline,
+        remove the temporary objects we had created during the drap operation.
+        """
         # If TrackObject-s still being created, wait before deleting
         if self._creating_tckobjs_sigid:
             return True
 
-        # Clean up only if clip was not dropped
+        # Clean up only if clip was not dropped already
         if self._drag_started:
             self.debug("Drag cleanup")
             self._drag_started = False
@@ -852,8 +863,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 if self._move_context is not None:
                     self._move_context.finish()
                 self._canvas.drag_unhighlight()
+                self.debug("Need to cleanup %d objects" % len(self._temp_objects))
                 for obj in self._temp_objects:
                     layer = obj.get_layer()
+                    self.log("Cleaning temporary %s on %s" % (obj, layer))
                     layer.remove_object(obj)
                 self._temp_objects = []
                 self.timeline.enable_update(True)
@@ -862,9 +875,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         return False
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
-        # Handles drop. Blocks cleanup, by setting internal value
-        self.debug("Drag drop")
+        # Resetting _drag_started will tell _dragCleanUp to not do anything
         self._drag_started = False
+        self.debug("Drag drop")
         if context.targets not in DND_EFFECT_LIST:
             self._canvas.drag_unhighlight()
             self.app.action_log.begin("add clip")
@@ -873,20 +886,21 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             if self._move_context is not None:
                 self._move_context.finish()
             self.app.action_log.commit()
-            # The conversion is done, clear the temporary objects
+            # The temporary objects and factories that we had created
+            # in _dragMotionCb are now kept for good.
+            # Clear the temporary references to objects, as they are real now.
             self._temp_objects = []
             self._factories = []
             context.drop_finish(True, timestamp)
             self.timeline.enable_update(True)
-            return True
-        elif context.targets in DND_EFFECT_LIST:
+        else:
             if self.app.current.timeline.props.duration == 0:
                 return False
             factory = self._factories[0]
             timeline_objs = self._getTimelineObjectUnderMouse(x, y)
             if timeline_objs:
-                # FIXME make a util function to add effects instead of copy/pasting it
-                # from cliproperties
+                # FIXME make a util function to add effects
+                # instead of copy/pasting it from cliproperties
                 bin_desc = factory.effectname
                 media_type = self.app.effects.getFactoryFromName(bin_desc).media_type
 
@@ -913,10 +927,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
                         self.timeline.selection.setSelection(timeline_objs, SELECT)
                         break
-
-            return True
-
-        return False
+        return True
 
     def _dragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
@@ -930,8 +941,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         if targetType == TYPE_PITIVI_FILESOURCE:
             uris = selection.data.split("\n")
-            self._factories = \
-                [self._project.medialibrary.getInfoFromUri(uri) for uri in uris]
+            self._factories = [self._project.medialibrary.getInfoFromUri(uri) for uri in uris]
         else:
             if not self.app.current.timeline.props.duration > 0:
                 return False
