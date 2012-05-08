@@ -103,8 +103,11 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         self.storemodel = gtk.ListStore(str, str, str, gtk.gdk.Pixbuf)
 
         self.iconview_scrollwin = gtk.ScrolledWindow()
-        self.iconview_scrollwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.iconview_scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        # FIXME: the "never" horizontal scroll policy in GTK2 messes up iconview
+        # Re-enable this when we switch to GTK3
+        # See also http://python.6.n6.nabble.com/Cannot-shrink-width-of-scrolled-textview-tp1945060.html
+        #self.iconview_scrollwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
 
         self.iconview = gtk.IconView(self.storemodel)
         self.iconview.set_pixbuf_column(COL_ICON)
