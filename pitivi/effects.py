@@ -594,7 +594,8 @@ class EffectListWidget(gtk.VBox, Loggable):
 
     def _enterPressEventCb(self, view, event=None):
         factory_name = self.getSelectedItems()
-        self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
+        if factory_name is not None:
+            self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
 
     def _buttonPressEventCb(self, view, event):
         chain_up = True
@@ -603,7 +604,8 @@ class EffectListWidget(gtk.VBox, Loggable):
             chain_up = False
         elif event.type is gtk.gdk._2BUTTON_PRESS:
             factory_name = self.getSelectedItems()
-            self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
+            if factory_name is not None:
+                self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
         else:
             chain_up = not self._rowUnderMouseSelected(view, event)
 
@@ -708,6 +710,8 @@ class EffectListWidget(gtk.VBox, Loggable):
             path = self.modelFilter.convert_path_to_child_path(rows[0])
         elif self.effect_view == SHOW_ICONVIEW:
             path = self.iconview.get_selected_items()
+            if path == []:
+                return None
             path = self.modelFilter.convert_path_to_child_path(path[0])
 
         return self.storemodel[path][COL_ELEMENT_NAME]
@@ -716,7 +720,7 @@ class EffectListWidget(gtk.VBox, Loggable):
                       targettype, unused_eventtime):
         self.info("data get, type:%d", targettype)
         factory = self.getSelectedItems()
-        if len(factory) < 1:
+        if factory is None or len(factory) < 1:
             return
 
         selection.set(selection.target, 8, factory)

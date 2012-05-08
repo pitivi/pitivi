@@ -151,7 +151,11 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
 
     def _transitionSelectedCb(self, unused_view, event):
         if event.button == 1:
-            transition_id = int(self.getSelectedItem())
+            selected_item = self.getSelectedItem()
+            if not selected_item:
+                # The user clicked between icons
+                return False
+            transition_id = int(selected_item)
             transition = self.available_transitions.get(transition_id)
             self.debug("New transition type selected: %s" % transition)
             if transition.value_nick == "crossfade":
@@ -351,6 +355,8 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
 
     def getSelectedItem(self):
         path = self.iconview.get_selected_items()
+        if path == []:
+            return None
         return self.modelFilter[path[0]][COL_TRANSITION_ID]
 
     def _setRowVisible(self, model, iter, data):
