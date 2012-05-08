@@ -213,8 +213,7 @@ class Pitivi(Loggable, Signallable):
     def _checkVersion(self):
         giofile = gio.File(uri=RELEASES_URL)
         self.info("Requesting version information")
-        if giofile.query_exists(None):
-            giofile.load_contents_async(self._versionInfoReceivedCb, None, None)
+        giofile.load_contents_async(self._versionInfoReceivedCb, None, None)
 
     def _versionInfoReceivedCb(self, giofile, result, data):
         try:
