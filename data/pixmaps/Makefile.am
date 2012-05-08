@@ -88,8 +88,77 @@ pixmap_DATA = \
     effects/stretch.png \
     effects/threshold0r.png \
     effects/tunnel.png \
-    effects/twirl.png
-
+    effects/twirl.png \
+    transitions/barndoor-dtl.png \
+    transitions/barndoor-h.png \
+    transitions/barndoor-v.png \
+    transitions/barnvee-d.png \
+    transitions/barnvee-l.png \
+    transitions/barnvee-r.png \
+    transitions/barnvee-u.png \
+    transitions/bar-wipe-lr.png \
+    transitions/bar-wipe-tb.png \
+    transitions/bowtie-h.png \
+    transitions/bowtie-v.png \
+    transitions/box-wipe-bc.png \
+    transitions/box-wipe-bl.png \
+    transitions/box-wipe-br.png \
+    transitions/box-wipe-lc.png \
+    transitions/box-wipe-rc.png \
+    transitions/box-wipe-tc.png \
+    transitions/box-wipe-tl.png \
+    transitions/box-wipe-tr.png \
+    transitions/clock-cw12.png \
+    transitions/clock-cw3.png \
+    transitions/clock-cw6.png \
+    transitions/clock-cw9.png \
+    transitions/crossfade.png \
+    transitions/diagonal-tl.png \
+    transitions/diagonal-tr.png \
+    transitions/doublefan-fih.png \
+    transitions/doublefan-fiv.png \
+    transitions/doublefan-foh.png \
+    transitions/doublefan-fov.png \
+    transitions/doublesweep-oh.png \
+    transitions/doublesweep-ov.png \
+    transitions/doublesweep-pdbl.png \
+    transitions/doublesweep-pd.png \
+    transitions/doublesweep-pdtl.png \
+    transitions/doublesweep-pv.png \
+    transitions/fan-b.png \
+    transitions/fan-cr.png \
+    transitions/fan-ct.png \
+    transitions/fan-l.png \
+    transitions/fan-r.png \
+    transitions/fan-t.png \
+    transitions/four-box-wipe-ci.png \
+    transitions/four-box-wipe-co.png \
+    transitions/iris-rect.png \
+    transitions/misc-diagonal-dbd.png \
+    transitions/misc-diagonal-dd.png \
+    transitions/pinwheel-fb.png \
+    transitions/pinwheel-tbh.png \
+    transitions/pinwheel-tbv.png \
+    transitions/saloondoor-b.png \
+    transitions/saloondoor-l.png \
+    transitions/saloondoor-r.png \
+    transitions/saloondoor-t.png \
+    transitions/singlesweep-cwbl.png \
+    transitions/singlesweep-cwb.png \
+    transitions/singlesweep-cwbr.png \
+    transitions/singlesweep-cwl.png \
+    transitions/singlesweep-cwr.png \
+    transitions/singlesweep-cwtl.png \
+    transitions/singlesweep-cwt.png \
+    transitions/singlesweep-cwtr.png \
+    transitions/vee-d.png \
+    transitions/vee-l.png \
+    transitions/vee-r.png \
+    transitions/vee-u.png \
+    transitions/windshield-h.png \
+    transitions/windshield-r.png \
+    transitions/windshield-u.png \
+    transitions/windshield-v.png
 
 EXTRA_DIST = \
 	$(pixmap_DATA)
