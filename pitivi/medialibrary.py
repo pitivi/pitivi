@@ -584,6 +584,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         if not self._sources_to_insert:
             # OK, we added all the sources!
             timeline.enable_update(True)
+            if timeline.props.duration <= 0:
+                self.error("The timeline duration is still 0, which makes no sense")
             self.app.current.seeker.seek(timeline.props.duration)
             self.app.action_log.commit()
             return
