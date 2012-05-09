@@ -817,7 +817,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # We want to show the clips being dragged to the timeline (not effects)
         elif context.targets not in DND_EFFECT_LIST:
             if not self._temp_objects and not self._creating_tckobjs_sigid:
-                self.timeline.enable_update(False)
                 self._create_temp_source(x, y)
 
             # Let some time for TrackObject-s to be created
@@ -860,8 +859,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._drag_started = False
             self._factories = []
             if context.targets not in DND_EFFECT_LIST:
-                if self._move_context is not None:
-                    self._move_context.finish()
                 self._canvas.drag_unhighlight()
                 self.debug("Need to cleanup %d objects" % len(self._temp_objects))
                 for obj in self._temp_objects:
@@ -869,7 +866,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     self.log("Cleaning temporary %s on %s" % (obj, layer))
                     layer.remove_object(obj)
                 self._temp_objects = []
-                self.timeline.enable_update(True)
             self.debug("Drag cleanup ended")
         self._canvas.handler_unblock_by_func(self._dragMotionCb)
         return False
@@ -892,7 +888,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._temp_objects = []
             self._factories = []
             context.drop_finish(True, timestamp)
-            self.timeline.enable_update(True)
         else:
             if self.app.current.timeline.props.duration == 0:
                 return False
@@ -931,7 +926,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _dragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
-        self.app.projectManager.current.timeline.enable_update(False)
         self.log("targetType:%d, selection.data:%s" % (targetType, selection.data))
         self.selection_data = selection.data
 
