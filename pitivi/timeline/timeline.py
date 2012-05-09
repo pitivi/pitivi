@@ -44,7 +44,7 @@ from pitivi.settings import GlobalSettings
 
 from curve import KW_LABEL_Y_OVERFLOW
 from track import TRACK_CONTROL_WIDTH, Track, TrackObject
-from layercontrols import VideoLayerControl
+from layercontrols import VideoLayerControl, AudioLayerControl
 from pitivi.utils.timeline import EditingContext, SELECT, Zoomable
 
 from pitivi.dialogs.depsmanager import DepsManager
@@ -509,7 +509,7 @@ class TimelineControls(gtk.VBox, Loggable):
     timeline = property(getTimeline, setTimeline, None, "The timeline property")
 
     def _trackAddedCb(self, timeline, track):
-        track_control = VideoLayerControl(track)
+        track_control = self._getControlForTrack(track)
         self._tracks_controls.append(track_control)
         self.pack_start(track_control, False, False)
         track_control.show()
@@ -519,6 +519,14 @@ class TimelineControls(gtk.VBox, Loggable):
         track.track = None
         del self._tracks_controls[position]
         self.remove(track)
+
+    def _getControlForTrack(self, track):
+        if track.props.track_type == ges.TRACK_TYPE_AUDIO:
+            return AudioLayerControl()
+        elif track.props.track_type == ges.TRACK_TYPE_VIDEO:
+            return VideoLayerControl()
+        elif track.props.track_type == ges.TRACK_TYPE_TEXT:
+            return None
 
 
 class InfoStub(gtk.HBox, Loggable):

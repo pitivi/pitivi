@@ -39,7 +39,7 @@ class BaseLayerControl(gtk.Table, Loggable):
 
     __gtype_name__ = 'LayerControl'
 
-    def __init__(self, track, layer_type):
+    def __init__(self, layer_type):
         gtk.Table.__init__(self, rows=2, columns=2)
         Loggable.__init__(self)
 
@@ -83,14 +83,7 @@ class BaseLayerControl(gtk.Table, Loggable):
         self.attach(upper, 1, 2, 0, 1)
         self.attach(self.lower_hbox, 1, 2, 1, 2)
 
-        # The value below is arbitrarily chosen so the text appears
-        # centered vertically when the represented track has a single layer.
-        #self.set_padding(0, LAYER_SPACING * 2)
         self.show_all()
-        self._track = None
-        self._timeline = None
-        self.setTrack(track)
-        self._setSize(layers_count=1)
 
     def _foldingChangedCb(self, button, state):
         if state:
@@ -98,45 +91,14 @@ class BaseLayerControl(gtk.Table, Loggable):
         else:
             self.lower_hbox.hide()
 
-    def getTrack(self):
-        return self._track
-
-    def setTrack(self, track):
-        if self._track:
-            self._timeline.disconnect_by_func(self._layerAddedCb)
-            self._timeline.disconnect_by_func(self._layerRemovedCb)
-
-        self._track = track
-        if track:
-            self._timeline = track.get_timeline()
-            self._timeline.connect("layer-added", self._layerAddedCb)
-            self._timeline.connect("layer-removed", self._layerRemovedCb)
-        else:
-            self._timeline = None
-
-    track = property(getTrack, setTrack, None, "The (GESTrack property")
-
-    def _layerAddedCb(self, timeline, unused_layer):
-        max_priority = len(timeline.get_layers())
-        self._setSize(max_priority)
-
-    def _layerRemovedCb(self, timeline, unused_layer):
-        max_priority = len(timeline.get_layers())
-        self._setSize(max_priority)
-
-    def _setSize(self, layers_count):
-        assert layers_count >= 1
-        height = layers_count * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
-        self.set_size_request(-1, height)
-
 
 class VideoLayerControl(BaseLayerControl):
     """
     Layer control class for video layers
     """
 
-    def __init__(self, track):
-        BaseLayerControl.__init__(self, track, "video")
+    def __init__(self):
+        BaseLayerControl.__init__(self, "video")
 
         opacity = gtk.Label(_("Opacity:"))
 
