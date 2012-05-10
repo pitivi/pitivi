@@ -39,9 +39,11 @@ class BaseLayerControl(gtk.Table, Loggable):
 
     __gtype_name__ = 'LayerControl'
 
-    def __init__(self, layer_type):
+    def __init__(self, layer, layer_type):
         gtk.Table.__init__(self, rows=2, columns=2)
         Loggable.__init__(self)
+
+        self._layer = layer
 
         self.set_row_spacings(3)
         self.set_col_spacings(3)
@@ -99,8 +101,8 @@ class VideoLayerControl(BaseLayerControl):
 
     __gtype_name__ = 'VideoLayerControl'
 
-    def __init__(self):
-        BaseLayerControl.__init__(self, "video")
+    def __init__(self, layer):
+        BaseLayerControl.__init__(self, layer, "video")
 
         opacity = gtk.Label(_("Opacity:"))
 
@@ -122,15 +124,15 @@ class AudioLayerControl(BaseLayerControl):
 
     __gtype_name__ = 'AudioLayerControl'
 
-    def __init__(self):
-        BaseLayerControl.__init__(self, "audio")
+    def __init__(self, layer):
+        BaseLayerControl.__init__(self, layer, "audio")
 
         volume = gtk.Label(_("Vol:"))
         self.volume_button = gtk.VolumeButton()
 
         panning = gtk.Label(_("Pan:"))
         # Volume scale
-        panning_adjust = gtk.Adjustment(value=50, lower=-100, upper=100, step_incr=5, page_incr=10)
+        panning_adjust = gtk.Adjustment(value=0, lower=-100, upper=100, step_incr=5, page_incr=10)
         self.panning_scale = gtk.HScale(panning_adjust)
         self.panning_scale.set_value_pos(gtk.POS_LEFT)
         self.panning_scale.set_digits(0)

@@ -490,7 +490,6 @@ class TimelineControls(gtk.VBox, Loggable):
         self.debug("Setting timeline %s", timeline)
 
         # remove old layer controls
-        print self._track_controls
         for layer in self._track_controls.copy():
             self._layerRemovedCb(None, layer)
 
@@ -511,8 +510,8 @@ class TimelineControls(gtk.VBox, Loggable):
     timeline = property(getTimeline, setTimeline, None, "The timeline property")
 
     def _layerAddedCb(self, timeline, layer):
-        video_control = VideoLayerControl()
-        audio_control = AudioLayerControl()
+        video_control = VideoLayerControl(layer)
+        audio_control = AudioLayerControl(layer)
 
         map = {"audio": audio_control, "video": video_control}
         self._track_controls[layer] = map
