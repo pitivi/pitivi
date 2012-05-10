@@ -97,6 +97,8 @@ class VideoLayerControl(BaseLayerControl):
     Layer control class for video layers
     """
 
+    __gtype_name__ = 'VideoLayerControl'
+
     def __init__(self):
         BaseLayerControl.__init__(self, "video")
 
@@ -117,6 +119,8 @@ class AudioLayerControl(BaseLayerControl):
     """
     Layer control class for audio layers
     """
+
+    __gtype_name__ = 'AudioLayerControl'
 
     def __init__(self):
         BaseLayerControl.__init__(self, "audio")

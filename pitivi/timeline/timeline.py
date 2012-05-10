@@ -476,7 +476,7 @@ class TimelineControls(gtk.VBox, Loggable):
     def __init__(self):
         gtk.VBox.__init__(self)
         Loggable.__init__(self)
-        self._tracks_controls = []
+        self._track_controls = {}
         self._timeline = None
         self.set_spacing(LAYER_SPACING)
         #self.set_size_request(TRACK_CONTROL_WIDTH, -1)
@@ -489,44 +489,48 @@ class TimelineControls(gtk.VBox, Loggable):
     def setTimeline(self, timeline):
         self.debug("Setting timeline %s", timeline)
 
-        while self._tracks_controls:
-            self._trackRemovedCb(None, 0)
+        # remove old layer controls
+        print self._track_controls
+        for layer in self._track_controls.copy():
+            self._layerRemovedCb(None, layer)
 
         if timeline:
-            for track in timeline.get_tracks():
-                self._trackAddedCb(None, track)
+            for layer in timeline.get_layers():
+                self._layerAddedCb(None, layer)
 
-            timeline.connect("track-added", self._trackAddedCb)
-            timeline.connect("track-removed", self._trackRemovedCb)
+            timeline.connect("layer-added", self._layerAddedCb)
+            timeline.connect("layer-removed", self._layerRemovedCb)
             self.connect = True
 
         elif self._timeline:
-            self._timeline.disconnect_by_func(self._trackAddedCb)
-            self._timeline.disconnect_by_func(self._trackRemovedCb)
+            self._timeline.disconnect_by_func(self._layerAddedCb)
+            self._timeline.disconnect_by_func(self._layerRemovedCb)
 
         self._timeline = timeline
 
     timeline = property(getTimeline, setTimeline, None, "The timeline property")
 
-    def _trackAddedCb(self, timeline, track):
-        track_control = self._getControlForTrack(track)
-        self._tracks_controls.append(track_control)
-        self.pack_start(track_control, False, False)
-        track_control.show()
+    def _layerAddedCb(self, timeline, layer):
+        video_control = VideoLayerControl()
+        audio_control = AudioLayerControl()
 
-    def _trackRemovedCb(self, unused_timeline, position):
-        track = self._tracks_controls[position]
-        track.track = None
-        del self._tracks_controls[position]
-        self.remove(track)
+        map = {"audio": audio_control, "video": video_control}
+        self._track_controls[layer] = map
 
-    def _getControlForTrack(self, track):
-        if track.props.track_type == ges.TRACK_TYPE_AUDIO:
-            return AudioLayerControl()
-        elif track.props.track_type == ges.TRACK_TYPE_VIDEO:
-            return VideoLayerControl()
-        elif track.props.track_type == ges.TRACK_TYPE_TEXT:
-            return None
+        self.pack_start(video_control, False, False)
+        self.pack_start(audio_control, False, False)
+
+        audio_control.show()
+        video_control.show()
+
+    def _layerRemovedCb(self, timeline, layer):
+        audio_control = self._track_controls[layer]["audio"]
+        video_control = self._track_controls[layer]["video"]
+
+        self.remove(audio_control)
+        self.remove(video_control)
+
+        del self._track_controls[layer]
 
 
 class InfoStub(gtk.HBox, Loggable):
