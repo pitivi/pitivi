@@ -815,7 +815,6 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             duration,
             info_name(info),
             short_text])
-        self._displayClipView()
 
     # medialibrary callbacks
 
