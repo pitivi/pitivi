@@ -108,7 +108,10 @@ class Pitivi(Loggable, Signallable):
 
         # init logging as early as possible so we can log startup code
         enable_color = os.environ.get('PITIVI_DEBUG_NO_COLOR', '0') in ('', '0')
-        log.init('PITIVI_DEBUG', enable_color)
+        # Let's show a human-readable pitivi debug output by default, and only
+        # show a crazy unreadable mess when surrounded by gst debug statements.
+        enable_crack_output = "GST_DEBUG" in os.environ
+        log.init('PITIVI_DEBUG', enable_color, enable_crack_output)
 
         self.info('starting up')
 

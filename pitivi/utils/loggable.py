@@ -619,6 +619,8 @@ def safeprintf(file, format, *args):
 def stderrHandler(level, object, category, file, line, message):
     """
     A log handler that writes to stderr.
+    The output will be different depending the value of "_enableCrackOutput";
+    in Pitivi's case, that is True when the GST_DEBUG env var is defined.
 
     @type level:    string
     @type object:   string (or None)
@@ -626,17 +628,26 @@ def stderrHandler(level, object, category, file, line, message):
     @type message:  string
     """
 
-    o = ""
-    if object:
-        o = '"' + object + '"'
-
+    # Make the file path more compact for readability
+    file = os.path.relpath(file)
     where = "(%s:%d)" % (file, line)
 
-    # level   pid     object   cat      time
-    # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
-    safeprintf(sys.stderr, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
-               getFormattedLevelName(level), os.getpid(), thread.get_ident(),
-               o[:32], category, time.strftime("%b %d %H:%M:%S"), "", message, where)
+    # If GST_DEBUG is not set, we can assume only PITIVI_DEBUG is set, so don't
+    # show a bazillion of debug details that are not relevant to Pitivi.
+    if not _enableCrackOutput:
+        safeprintf(sys.stderr, '%s %-8s %-17s %-2s %s %s\n',
+               getFormattedLevelName(level), time.strftime("%H:%M:%S"),
+               category, "", message, where)
+    else:
+        o = ""
+        if object:
+            o = '"' + object + '"'
+        # level   pid     object   cat      time
+        # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
+        safeprintf(sys.stderr, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
+                   getFormattedLevelName(level), os.getpid(), thread.get_ident(),
+                   o[:32], category, time.strftime("%b %d %H:%M:%S"), "",
+                   message, where)
     sys.stderr.flush()
 
 
@@ -661,13 +672,15 @@ def _preformatLevels(noColorEnvVarName):
 # setup functions
 
 
-def init(envVarName, enableColorOutput=False):
+def init(envVarName, enableColorOutput=False, enableCrackOutput=True):
     """
     Initialize the logging system and parse the environment variable
     of the given name.
     Needs to be called before starting the actual application.
     """
     global _initialized
+    global _enableCrackOutput
+    _enableCrackOutput = enableCrackOutput
 
     if _initialized:
         return
@@ -942,36 +955,31 @@ class BaseLoggable(object):
         """Log an error.  By default this will also raise an exception."""
         if _canShortcutLogging(self.logCategory, ERROR):
             return
-        errorObject(self.logObjectName(), self.logCategory,
-            *self.logFunction(*args))
+        errorObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
 
     def warning(self, *args):
         """Log a warning.  Used for non-fatal problems."""
         if _canShortcutLogging(self.logCategory, WARN):
             return
-        warningObject(self.logObjectName(), self.logCategory,
-            *self.logFunction(*args))
+        warningObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
 
     def info(self, *args):
         """Log an informational message.  Used for normal operation."""
         if _canShortcutLogging(self.logCategory, INFO):
             return
-        infoObject(self.logObjectName(), self.logCategory,
-            *self.logFunction(*args))
+        infoObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
 
     def debug(self, *args):
         """Log a debug message.  Used for debugging."""
         if _canShortcutLogging(self.logCategory, DEBUG):
             return
-        debugObject(self.logObjectName(), self.logCategory,
-            *self.logFunction(*args))
+        debugObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
 
     def log(self, *args):
         """Log a log message.  Used for debugging recurring events."""
         if _canShortcutLogging(self.logCategory, LOG):
             return
-        logObject(self.logObjectName(), self.logCategory,
-            *self.logFunction(*args))
+        logObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
 
     def doLog(self, level, where, format, *args, **kwargs):
         """
@@ -995,7 +1003,7 @@ class BaseLoggable(object):
             return {}
         args = self.logFunction(*args)
         return doLog(level, self.logObjectName(), self.logCategory,
-            format, args, where=where, **kwargs)
+                      format, args, where=where, **kwargs)
 
     def warningFailure(self, failure, swallow=True):
         """
@@ -1064,8 +1072,7 @@ def getFailureMessage(failure):
 
     (func, filename, line, some, other) = failure.frames[-1]
     filename = scrubFilename(filename)
-    return "failure %(exc)s at %(filename)s:%(line)s: %(func)s(): %(msg)s" \
-        % locals()
+    return "failure %(exc)s at %(filename)s:%(line)s: %(func)s(): %(msg)s" % locals()
 
 
 def warningFailure(failure, swallow=True):
@@ -1134,8 +1141,7 @@ class TwistedLogObserver(BaseLoggable):
                 for failureType in self._ignoreErrors:
                     r = f.check(failureType)
                     if r:
-                        self.debug("Failure of type %r, ignoring" %
-                                   failureType)
+                        self.debug("Failure of type %r, ignoring" % failureType)
                         return
 
                 self.log("Failure %r" % f)
