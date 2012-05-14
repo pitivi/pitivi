@@ -177,6 +177,8 @@ class ThumbnailCache(object):
         self.cache[key] = value
         self.queue.append(key)
         blob = sqlite3.Binary(bytearray(value.get_data()))
+        #Replace if the key already existed
+        self.cur.execute("DELETE FROM Thumbs WHERE  time=?", (key,))
         self.cur.execute("INSERT INTO Thumbs VALUES (?,?,?,?)", (key, blob, value.get_width(), value.get_height()))
         self.conn.commit()
         if len(self.cache) > self.size:
