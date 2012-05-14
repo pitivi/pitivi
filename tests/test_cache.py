@@ -1,29 +1,53 @@
 import unittest
+import cairo
+import tempfile
+import gst
+import os
+
+from urllib import unquote
 from common import TestCase
+import pitivi.settings as settings
+
 from pitivi.timeline.thumbnailer import ThumbnailCache
+from pitivi.utils.misc import hash_file
 
 
-class CacheTest(TestCase):
+class ThumbnailsCacheTest(TestCase):
     """
-    Basic test to create the proper creation of the Pitivi object
+    Basic test for thumbnails caching
     """
 
     def testCache(self):
-        c = ThumbnailCache(size=32)
+        # Crete a tmp file so we provide a valid file for sure
+        tmpfile = tempfile.NamedTemporaryFile()
+        uri = unquote(gst.uri_construct("file", tmpfile.name))
+        hash = hash_file(tmpfile.name)
+        try:
+            os.remove(os.path.join(settings.get_dir(os.path.join(settings.xdg_cache_home(),
+                "thumbs", hash))))
+        except OSError:
+            pass
+        c = ThumbnailCache(uri, size=32)
+
         for i in xrange(0, 64):
-            c[i] = i
+            c[i] = cairo.ImageSurface(cairo.FORMAT_RGB24, 10, 10)
         assert len(c.cache) == 32
-        assert not 31 in c
-        assert 32 in c
+
+        # 31 should be in the Database, but not in the memory direct cache
+        assert not 31 in c.cache
+        assert 31 in c
+        # 32 is in both
+        assert 32 in c.cache
 
         # touch the LRU item, and then add something to the queue
         # the item should still remain in the queue
 
         c[32]
-        c[65] = 65
+        c[65] = cairo.ImageSurface(cairo.FORMAT_RGB24, 10, 10)
 
         assert 32 in c
-        assert not 33 in c
+        assert 33 not in c.cache
+        del tmpfile
 
 if __name__ == "__main__":
     unittest.main()
