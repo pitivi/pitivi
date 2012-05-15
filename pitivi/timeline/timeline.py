@@ -522,6 +522,19 @@ class TimelineControls(gtk.VBox, Loggable):
         audio_control.show()
         video_control.show()
 
+        self._orderControls()
+
+    def _orderControls(self):
+        i = 0
+        j = len(self.get_children()) / 2
+        for child in self.get_children():
+            if isinstance(child, VideoLayerControl):
+                self.reorder_child(child, i)
+                i += 1
+            elif isinstance(child, AudioLayerControl):
+                self.reorder_child(child, j)
+                j += 1
+
     def _layerRemovedCb(self, timeline, layer):
         audio_control = self._track_controls[layer]["audio"]
         video_control = self._track_controls[layer]["video"]
