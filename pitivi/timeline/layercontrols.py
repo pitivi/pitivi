@@ -61,23 +61,27 @@ class BaseLayerControl(gtk.Table, Loggable):
 
         # Name entry
         self.name_entry = gtk.Entry()
+        self.name_entry.set_tooltip_text(_("Set or change this layers name"))
         self.name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
 
         # 'Solo' toggle button
         self.solo_button = gtk.ToggleButton()
+        self.solo_button.set_tooltip_text(_("Only show this layer\n\nOther layers won't" +
+                                            "be visible as long a this is enabled"))
         solo_image = gtk.Image()
         solo_image.set_from_icon_name("avatar-default-symbolic", gtk.ICON_SIZE_BUTTON)
         self.solo_button.add(solo_image)
 
         # CheckButton
         self.visible_option = gtk.CheckButton()
+        self.visible_option.connect("toggled", self._visibilityChangedCb)
         self.visible_option.set_active(True)
 
         # Upper bar
         upper = gtk.HBox()
-        upper.pack_start(self.name_entry, True, True, 0)
-        upper.pack_start(self.solo_button, False, False, 1)
-        upper.pack_start(self.visible_option, False, False, 2)
+        upper.pack_start(self.name_entry, True, True)
+        upper.pack_start(self.solo_button, False, False)
+        upper.pack_start(self.visible_option, False, False)
 
         # Lower bar
         self.lower_hbox = gtk.HBox()
@@ -92,6 +96,12 @@ class BaseLayerControl(gtk.Table, Loggable):
             self.lower_hbox.show()
         else:
             self.lower_hbox.hide()
+
+    def _visibilityChangedCb(self, button):
+        if button.get_active():
+            button.set_tooltip_text(_("Make layer invisible"))
+        else:
+            button.set_tooltip_text(_("Make layer visible"))
 
 
 class VideoLayerControl(BaseLayerControl):
@@ -111,9 +121,10 @@ class VideoLayerControl(BaseLayerControl):
         self.opacity_scale = gtk.HScale(opacity_adjust)
         self.opacity_scale.set_value_pos(gtk.POS_LEFT)
         self.opacity_scale.set_digits(0)
+        self.opacity_scale.set_tooltip_text(_("Change video opacity"))
 
-        self.lower_hbox.pack_start(opacity, False, False, 0)
-        self.lower_hbox.pack_start(self.opacity_scale, True, True, 0)
+        self.lower_hbox.pack_start(opacity, False, False)
+        self.lower_hbox.pack_start(self.opacity_scale, True, True)
         self.lower_hbox.show_all()
 
 
@@ -136,11 +147,12 @@ class AudioLayerControl(BaseLayerControl):
         self.panning_scale = gtk.HScale(panning_adjust)
         self.panning_scale.set_value_pos(gtk.POS_LEFT)
         self.panning_scale.set_digits(0)
+        self.panning_scale.set_tooltip_text(_("Change audio panning"))
 
-        self.lower_hbox.pack_start(volume, False, False, 0)
-        self.lower_hbox.pack_start(self.volume_button, False, False, 1)
-        self.lower_hbox.pack_start(panning, False, False, 2)
-        self.lower_hbox.pack_start(self.panning_scale, True, True, 3)
+        self.lower_hbox.pack_start(volume, False, False)
+        self.lower_hbox.pack_start(self.volume_button, False, False)
+        self.lower_hbox.pack_start(panning, False, False)
+        self.lower_hbox.pack_start(self.panning_scale, True, True)
         self.lower_hbox.show_all()
 
 

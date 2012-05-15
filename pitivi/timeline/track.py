@@ -575,6 +575,7 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         except Exception, e:
             raise Exception(e)
 
+        # calculate correct y-position, highest priority on top
         priority = self.element.get_timeline_object().get_layer().get_priority()
         y = (self.height + LAYER_SPACING) * priority
 
@@ -665,6 +666,9 @@ class TrackFileSource(TrackObject):
 
 
 class Track(goocanvas.Group, Zoomable, Loggable):
+    """
+    Groups all TrackObjects of one Track
+    """
     __gtype_name__ = 'Track'
 
     def __init__(self, instance, track, timeline=None):
