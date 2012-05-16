@@ -472,7 +472,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         """
         self.videopipeline = sbin
         self.videopipeline.props.flags = 1  # Only render video
-        self.videopipeline.get_bus().set_sync_handler(self.bus_handler)
+        self.videopipeline.get_bus().connect("message", self.bus_handler)
 
         # Use a capsfilter to scale the video to the desired size
         # (fixed height and par, variable width)
