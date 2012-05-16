@@ -550,7 +550,6 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
     def _insertEndCb(self, unused_action):
         self.app.action_log.begin("add clip")
-        self.app.current.timeline.enable_update(False)
 
         # Handle the case of a blank project
         self.app.gui.timeline_ui._ensureLayer()
@@ -583,7 +582,6 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
         if not self._sources_to_insert:
             # OK, we added all the sources!
-            timeline.enable_update(True)
             if timeline.props.duration <= 0:
                 self.error("The timeline duration is still 0, which makes no sense")
             self.app.current.seeker.seek(timeline.props.duration)
