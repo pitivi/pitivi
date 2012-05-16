@@ -607,8 +607,6 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         self.app.gui.timeline_ui._canvas.regroupTracks()
         self.app.gui.timeline_ui.unsureVadjHeight()
 
-TRACK_CONTROL_WIDTH = 150
-
 
 class TrackTransition(TrackObject):
     """

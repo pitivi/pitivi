@@ -43,7 +43,7 @@ from pitivi.utils.pipeline import PipelineError
 from pitivi.settings import GlobalSettings
 
 from curve import KW_LABEL_Y_OVERFLOW
-from track import TRACK_CONTROL_WIDTH, Track, TrackObject
+from track import Track, TrackObject
 from layercontrols import VideoLayerControl, AudioLayerControl
 from pitivi.utils.timeline import EditingContext, SELECT, Zoomable
 
@@ -479,7 +479,6 @@ class TimelineControls(gtk.VBox, Loggable):
         self._track_controls = {}
         self._timeline = None
         self.set_spacing(LAYER_SPACING)
-        #self.set_size_request(TRACK_CONTROL_WIDTH, -1)
 
 ## Timeline callbacks
 
