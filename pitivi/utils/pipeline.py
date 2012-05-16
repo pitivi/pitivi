@@ -152,7 +152,7 @@ class SimplePipeline(Loggable, Signallable):
         "duration-changed": ["duration"],
         "eos": [],
         "error": ["message", "details"],
-        "element-message": ["message"]}
+        "xid-message": ["message"]}
 
     def __init__(self, pipeline):
         Loggable.__init__(self)
@@ -161,7 +161,12 @@ class SimplePipeline(Loggable, Signallable):
         self._bus = self._pipeline.get_bus()
         self._bus.add_signal_watch()
         self._bus.connect("message", self._busMessageCb)
+        # Initially, we set a synchronous bus message handler so that the xid
+        # is known right away and we can set the viewer synchronously, avoiding
+        # the creation of an external window.
+        # Afterwards, the xid-message is handled async (to avoid deadlocks).
         self._bus.set_sync_handler(self._busSyncMessageHandler)
+        self._has_sync_bus_handler = True
         self._listening = False  # for the position handler
         self._listeningInterval = 300  # default 300ms
         self._listeningSigId = 0
@@ -180,7 +185,6 @@ class SimplePipeline(Loggable, Signallable):
         self.deactivatePositionListener()
         self._bus.disconnect_by_func(self._busMessageCb)
         self._bus.remove_signal_watch()
-        self._bus.set_sync_handler(None)
 
         self._pipeline.setState(gst.STATE_NULL)
         self._bus = None
@@ -417,6 +421,9 @@ class SimplePipeline(Loggable, Signallable):
             self.debug("Duration might have changed, querying it")
             gobject.idle_add(self._queryDurationAsync)
         else:
+            if self._has_sync_bus_handler is False:
+                # Pass message async to the sync bus handler
+                self._busSyncMessageHandler(unused_bus, message)
             self.info("%s [%r]" % (message.type, message.src))
 
     def _queryDurationAsync(self, *args, **kwargs):
@@ -432,18 +439,20 @@ class SimplePipeline(Loggable, Signallable):
 
     def _busSyncMessageHandler(self, unused_bus, message):
         if message.type == gst.MESSAGE_ELEMENT:
-            # handle element message synchronously
-            self.emit('element-message', message)
+            name = message.structure.get_name()
+            if name == 'prepare-xwindow-id':
+                # handle element message synchronously
+                self.emit('xid-message', message)
+                #Remove the bus sync handler avoiding deadlocks
+                self._bus.set_sync_handler(None)
+                self._has_sync_bus_handler = False
         return gst.BUS_PASS
 
 
 class Pipeline(ges.TimelinePipeline, SimplePipeline):
     """
-    The Pipeline is only responsible for:
-     - State changes
-     - Position seeking
-     - Position Querying
-       - Along with an periodic callback (optional)
+    Helper to handle ges.TimelinePipeline through the SimplePipeline API
+    and handle the Seeker properly
 
     Signals:
      - C{state-changed} : The state of the pipeline changed.
@@ -463,7 +472,7 @@ class Pipeline(ges.TimelinePipeline, SimplePipeline):
                         ()),
         "error": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
                         (gobject.TYPE_STRING, gobject.TYPE_STRING)),
-        "element-message": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+        "xid-message": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
                         (gobject.TYPE_PYOBJECT,))}
 
     def __init__(self, pipeline=None):

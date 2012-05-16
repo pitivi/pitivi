@@ -24,7 +24,6 @@ import ges
 import gtk
 import gst
 
-from pitivi.utils.misc import infinity
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
 from pitivi.utils.receiver import receiver, handler
