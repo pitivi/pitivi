@@ -36,7 +36,6 @@ from gettext import gettext as _
 from gtk import RecentManager
 from hashlib import md5
 
-from pitivi.utils.pipeline import Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import in_devel
 from pitivi.settings import GlobalSettings
@@ -752,11 +751,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         if self.app.current.timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
-
-        self._seeker = Seeker()
-
-        # preliminary seek to ensure the project pipeline is configured
-        self._seeker.seek(0)
 
     def setBestZoomRatio(self):
         """
