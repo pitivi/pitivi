@@ -564,6 +564,16 @@ class TimelineControls(gtk.VBox, Loggable):
 
         return 0
 
+    # maybe do a list with values
+    def getHeightOfVideo(self):
+        y = 0
+        for child in self.get_children():
+            if isinstance(child, VideoLayerControl):
+                y += child.getHeight()
+                y += LAYER_SPACING
+
+        return y
+
 
 class InfoStub(gtk.HBox, Loggable):
     """

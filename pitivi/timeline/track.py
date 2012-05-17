@@ -578,10 +578,13 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         layer = self.element.get_timeline_object().get_layer()
         track_type = self.element.get_track().props.track_type
 
-        # calculate correct y-position, highest priority on top
+        # get y position for layer
         y = self.app.gui.timeline_ui._controls.getYOfLayer(track_type, layer)
         #priority = self.element.get_timeline_object().get_layer().get_priority()
         #y = (self.height + LAYER_SPACING) * priority
+        # get relative y for audio
+        if track_type == ges.TRACK_TYPE_AUDIO:
+            y -= self.app.gui.timeline_ui._controls.getHeightOfVideo()
         print y
 
         # Setting new position
