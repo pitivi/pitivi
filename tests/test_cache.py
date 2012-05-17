@@ -16,18 +16,17 @@ class ThumbnailsCacheTest(TestCase):
     """
     Basic test for thumbnails caching
     """
+    def setUp(self):
+        self.tmpfile = tempfile.NamedTemporaryFile()
+        self.uri = unquote(gst.uri_construct("file", self.tmpfile.name))
+        self.hash = hash_file(self.tmpfile.name)
+
+    def tearDown(self):
+        del self.tmpfile
+        os.remove(os.path.join(settings.xdg_cache_home(), "thumbs", self.hash))
 
     def testCache(self):
-        # Crete a tmp file so we provide a valid file for sure
-        tmpfile = tempfile.NamedTemporaryFile()
-        uri = unquote(gst.uri_construct("file", tmpfile.name))
-        hash = hash_file(tmpfile.name)
-        try:
-            os.remove(os.path.join(settings.get_dir(os.path.join(settings.xdg_cache_home(),
-                "thumbs", hash))))
-        except OSError:
-            pass
-        c = ThumbnailCache(uri, size=32)
+        c = ThumbnailCache(self.uri, size=32)
 
         for i in xrange(0, 64):
             c[i] = cairo.ImageSurface(cairo.FORMAT_RGB24, 10, 10)
@@ -47,7 +46,7 @@ class ThumbnailsCacheTest(TestCase):
 
         assert 32 in c
         assert 33 not in c.cache
-        del tmpfile
+
 
 if __name__ == "__main__":
     unittest.main()
