@@ -772,7 +772,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         timeline_duration = duration + gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / gst.SECOND)
 
-        self.debug("duration: %s, timeline_duration_s: %s" % (duration, timeline_duration_s))
+        self.debug("duration: %s, timeline duration: %s" % (duration,
+           gst.TIME_ARGS(timeline_duration)))
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
         Zoomable.setZoomLevel(nearest_zoom_level)
@@ -1084,7 +1085,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         return res
 
     def _timelineDurationChangedCb(self, timeline, unused_duration):
-        self.debug("Timeline duration changed to %d", timeline.props.duration)
+        self.debug("Timeline duration changed to %s",
+            gst.TIME_ARGS(timeline.props.duration))
         if timeline.props.duration > 0:
             sensitive = True
             if self.zoomed_fitted:
