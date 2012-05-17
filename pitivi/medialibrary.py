@@ -27,6 +27,7 @@ Handles the list of source for a project
 import gst
 import ges
 import gobject
+import glib
 import gtk
 import pango
 import os
@@ -581,10 +582,10 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         timeline = self.app.current.timeline
 
         if not self._sources_to_insert:
-            # OK, we added all the sources!
-            if timeline.props.duration <= 0:
-                self.error("The timeline duration is still 0, which makes no sense")
-            self.app.current.seeker.seek(timeline.props.duration)
+            # We need to wait (100ms is enoug for sure) for TrackObject-s to
+            # be added to the Tracks
+            # FIXME remove this "hack" when Materials are merged
+            glib.timeout_add(100, self._seekToEnd)
             self.app.action_log.commit()
             return
 
@@ -597,6 +598,11 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         # condition, and to know the real length of the timeline when
         # adding several sources at a time.
         source.connect("track-object-added", self._trackObjectAddedCb)
+
+    def _seekToEnd(self):
+        timeline = self.app.current.timeline
+        self.app.current.seeker.seek(timeline.props.duration)
+        return False
 
     def _trackObjectAddedCb(self, source, trackobj):
         """ After an object has been added to the first track, position it
