@@ -596,8 +596,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._project = None
         self._projectmanager = None
 
-        #Ids of the tracks notify::duration signals
-        self._tcks_sig_ids = {}
         #Ids of the layer-added and layer-removed signals
         self._layer_sig_ids = []
 
@@ -1260,14 +1258,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def delTimeline(self):
         # Disconnect signal
-        for track, sigid in self._tcks_sig_ids.iteritems():
-            track.disconnect(sigid)
-
         for sigid in self._layer_sig_ids:
             self._timeline.disconnect(sigid)
 
         # clear dictionaries
-        self._tcks_sig_ids = {}
         self._layer_sig_ids = []
 
         #Remove references to the ges timeline
@@ -1284,7 +1278,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def updateVScrollAdjustments(self):
         """
-        Recalculate the vertical scrollbar depending on the timeline duration.
+        Recalculate the vertical scrollbar depending on the number of layer in
+        the timeline.
         """
         layers = self._timeline.get_layers()
         num_layers = len(layers)
