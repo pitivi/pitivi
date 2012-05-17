@@ -575,9 +575,14 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         except Exception, e:
             raise Exception(e)
 
+        layer = self.element.get_timeline_object().get_layer()
+        track_type = self.element.get_track().props.track_type
+
         # calculate correct y-position, highest priority on top
-        priority = self.element.get_timeline_object().get_layer().get_priority()
-        y = (self.height + LAYER_SPACING) * priority
+        y = self.app.gui.timeline_ui._controls.getYOfLayer(track_type, layer)
+        #priority = self.element.get_timeline_object().get_layer().get_priority()
+        #y = (self.height + LAYER_SPACING) * priority
+        print y
 
         # Setting new position
         self.set_simple_transform(x, y, 1, 0)

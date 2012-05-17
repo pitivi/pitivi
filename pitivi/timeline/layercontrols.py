@@ -103,6 +103,9 @@ class BaseLayerControl(gtk.Table, Loggable):
         else:
             button.set_tooltip_text(_("Make layer visible"))
 
+    def getHeight(self):
+        return self.get_allocation().height
+
 
 class VideoLayerControl(BaseLayerControl):
     """

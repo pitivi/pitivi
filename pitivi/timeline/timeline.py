@@ -479,6 +479,8 @@ class TimelineControls(gtk.VBox, Loggable):
         self._track_controls = {}
         self._timeline = None
         self.set_spacing(LAYER_SPACING)
+        self.type_map = {ges.TRACK_TYPE_AUDIO: AudioLayerControl,
+                         ges.TRACK_TYPE_VIDEO: VideoLayerControl}
 
 ## Timeline callbacks
 
@@ -542,6 +544,25 @@ class TimelineControls(gtk.VBox, Loggable):
         self.remove(video_control)
 
         del self._track_controls[layer]
+
+    def getYOfLayer(self, track_type, layer):
+        y = 0
+        print "start new calculation of y"
+        for child in self.get_children():
+            print type(child)
+            print isinstance(child, self.type_map[track_type])
+            print layer == child._layer
+            if layer == child._layer and \
+                isinstance(child, self.type_map[track_type]):
+                print "return y = %s" % y
+                return y
+
+            y += child.getHeight()
+            print "h %s of %s" % (child.getHeight(), child)
+            y += LAYER_SPACING
+            print "iter y = %s" % y
+
+        return 0
 
 
 class InfoStub(gtk.HBox, Loggable):
