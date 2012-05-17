@@ -441,7 +441,6 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
             self.preview.props.visibility = goocanvas.ITEM_VISIBLE
             self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
             self.bg.props.height = LAYER_HEIGHT_EXPANDED
-            self.height = LAYER_HEIGHT_EXPANDED
             self.name.props.y = NAME_VOFFSET + NAME_PADDING
 
     def getExpanded(self):
