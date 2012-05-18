@@ -830,12 +830,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             # Let some time for TrackObject-s to be created
             if self._temp_objects and not self._creating_tckobjs_sigid:
                 focus = self._temp_objects[0]
-                self._move_context = EditingContext(focus,
-                                            self.timeline,
-                                            ges.EDIT_MODE_NORMAL,
-                                            ges.EDGE_NONE,
-                                            set(self._temp_objects[1:]),
-                                            self.app.settings)
+                if self._move_context is  None:
+                    self._move_context = EditingContext(focus,
+                            self.timeline, ges.EDIT_MODE_NORMAL, ges.EDGE_NONE,
+                            set(self._temp_objects[1:]), self.app.settings)
 
                 self._move_temp_source(x, y)
         return True
@@ -867,13 +865,15 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._drag_started = False
             self._factories = []
             if context.targets not in DND_EFFECT_LIST:
+                self.timeline.enable_update(True)
                 self._canvas.drag_unhighlight()
                 self.debug("Need to cleanup %d objects" % len(self._temp_objects))
                 for obj in self._temp_objects:
                     layer = obj.get_layer()
-                    self.log("Cleaning temporary %s on %s" % (obj, layer))
                     layer.remove_object(obj)
                 self._temp_objects = []
+                self._move_context = None
+
             self.debug("Drag cleanup ended")
         self._canvas.handler_unblock_by_func(self._dragMotionCb)
         return False
@@ -889,6 +889,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._project.emit("selected-changed", set(self.selected))
             if self._move_context is not None:
                 self._move_context.finish()
+                self._move_context = None
             self.app.action_log.commit()
             # The temporary objects and factories that we had created
             # in _dragMotionCb are now kept for good.
