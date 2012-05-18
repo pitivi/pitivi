@@ -598,7 +598,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.rate = gst.Fraction(1, 1)
         self._timeline = None
 
-        # Used to insert source to the end of the timeline
+        # Used to insert sources at the end of the timeline
         self._sources_to_insert = []
 
         self.zoomed_fitted = True
@@ -758,16 +758,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         actiongroup = gtk.ActionGroup("timelineselection")
         actiongroup.add_actions(selection_actions)
         actiongroup.add_actions(self.playhead_actions)
-        self.link_action = actiongroup.get_action("LinkObj")
-        self.unlink_action = actiongroup.get_action("UnlinkObj")
-        self.group_action = actiongroup.get_action("GroupObj")
-        self.ungroup_action = actiongroup.get_action("UngroupObj")
-        self.align_action = actiongroup.get_action("AlignObj")
-        self.delete_action = actiongroup.get_action("DeleteObj")
-        self.split_action = actiongroup.get_action("Split")
-        self.keyframe_action = actiongroup.get_action("Keyframe")
-        self.prevframe_action = actiongroup.get_action("Prevframe")
-        self.nextframe_action = actiongroup.get_action("Nextframe")
 
         self.ui_manager.insert_action_group(actiongroup, -1)
         self.ui_manager.add_ui_from_string(ui)

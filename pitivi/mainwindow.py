@@ -742,7 +742,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # Enable export functionality
         self.actiongroup.get_action("ExportProject").set_sensitive(True)
 
-        #FIXME GES reimplement me
         if self._missingUriOnLoading:
             self.app.current.setModificationState(True)
             self.actiongroup.get_action("SaveProject").set_sensitive(True)
