@@ -380,7 +380,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def _request_size(self):
         alloc = self.get_allocation()
         self.set_bounds(0, 0, alloc.width, alloc.height)
-        self._playhead.props.height = (self.height + SPACING)
+        self._playhead.props.height = self.height + SPACING
 
     def _size_allocate_cb(self, widget, allocation):
         self._request_size()
@@ -465,7 +465,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         height = 0
         for i, track in enumerate(self._tracks):
             track.set_simple_transform(0, height, 1, 0)
-            height += track.height + TRACK_SPACING
+            height += track.height
         self.height = height
         self._request_size()
 
@@ -581,7 +581,7 @@ class TimelineControls(gtk.VBox, Loggable):
                 y += child.getHeight()
                 y += LAYER_SPACING
 
-        return y
+        return y - LAYER_SPACING
 
 
 class InfoStub(gtk.HBox, Loggable):
