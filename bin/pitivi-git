@@ -59,7 +59,7 @@ if test ! -e $PITIVI; then
     #Get pitivi \
     git clone git://git.gnome.org/pitivi &&\
     cd pitivi && \
-    git checkout ges && ./autogen.sh && make
+    git checkout master && ./autogen.sh && make
 fi
 
 ## if we got a command, run it, else start a shell
