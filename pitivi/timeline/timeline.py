@@ -572,16 +572,6 @@ class TimelineControls(gtk.VBox, Loggable):
             y += LAYER_SPACING
         return 0
 
-    # maybe do a list with values
-    def getHeightOfVideo(self):
-        y = 0
-        for child in self.get_children():
-            if isinstance(child, VideoLayerControl):
-                y += child.getHeight()
-                y += LAYER_SPACING
-
-        return y
-
     def getHeightOfTrack(self, track_type):
         map = {ges.TRACK_TYPE_AUDIO: AudioLayerControl,
                ges.TRACK_TYPE_VIDEO: VideoLayerControl}

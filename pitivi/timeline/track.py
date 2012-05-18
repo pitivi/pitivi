@@ -591,7 +591,7 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         #y = (self.height + LAYER_SPACING) * priority
         # get relative y for audio
         if track_type == ges.TRACK_TYPE_AUDIO:
-            y -= self.app.gui.timeline_ui._controls.getHeightOfVideo()
+            y -= self.app.gui.timeline_ui._controls.getHeightOfTrack(ges.TRACK_TYPE_VIDEO)
 
         # Setting new position
         self.set_simple_transform(x, y, 1, 0)
