@@ -53,10 +53,9 @@ from pitivi.dialogs.prefs import PreferencesDialog
 
 from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import SPACING, TRACK_SPACING, LAYER_HEIGHT_EXPANDED,\
-    LAYER_SPACING, TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, \
-    AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT, \
-    unpack_cairo_pattern, Point
+from pitivi.utils.ui import SPACING, TRACK_SPACING, unpack_cairo_pattern, \
+    LAYER_SPACING, TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, Point, \
+    AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT
 
 # FIXME GES Port regression
 # from pitivi.utils.align import AutoAligner
@@ -586,6 +585,18 @@ class TimelineControls(gtk.VBox, Loggable):
                 y += LAYER_SPACING
 
         return y - LAYER_SPACING
+
+    def getPriorityForY(self, y):
+        priority = -1
+        current = 0
+        for child in self.get_children():
+            if y <= current:
+                return priority
+
+            current += child.getHeight() + LAYER_SPACING
+            priority += 1
+
+        return 0
 
 
 class InfoStub(gtk.HBox, Loggable):
@@ -1136,7 +1147,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _move_temp_source(self, x, y):
         x = self.hadj.props.value + x
         y = self.vadj.props.value + y
-        priority = int((y // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
+
+        priority = self._controls.getPriorityForY(y)
+
         delta = Zoomable.pixelToNs(x)
         obj = self._temp_objects[0]
         self._move_context.editTo(delta, priority)

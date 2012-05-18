@@ -39,8 +39,7 @@ from pitivi.settings import GlobalSettings
 from pitivi.utils.signal import Signallable
 from pitivi.utils.timeline import SELECT, SELECT_ADD, UNSELECT, \
     SELECT_BETWEEN, EditingContext, Controller, View, Zoomable
-from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED,\
-        LAYER_HEIGHT_COLLAPSED, LAYER_SPACING, \
+from pitivi.utils.ui import LAYER_SPACING, \
         unpack_cairo_pattern, unpack_cairo_gradient
 from thumbnailer import Preview
 
@@ -209,8 +208,8 @@ class TrackObjectController(Controller):
         x = x + self._hadj.get_value()
 
         position = Zoomable.pixelToNs(x)
-        priority = int((y - self._y_offset + self._vadj.get_value()) //
-            (LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
+        priority = self.app.gui.timeline_ui._controls.getPriorityForY(
+                        y - self._y_offset + self._vadj.get_value())
 
         self._context.setMode(self._getMode())
         self.debug("Setting position")
@@ -413,7 +412,7 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
 
 ## Properties
 
-    _height = LAYER_HEIGHT_EXPANDED
+    _height = 0
 
     def setHeight(self, height):
         self._height = height
@@ -433,16 +432,12 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
     def setExpanded(self, expanded):
         self._expanded = expanded
         if not self._expanded:
-            self.height = LAYER_HEIGHT_COLLAPSED
             self.preview.props.visibility = goocanvas.ITEM_INVISIBLE
             self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
-            self.bg.props.height = LAYER_HEIGHT_COLLAPSED
             self.name.props.y = 0
         else:
-            self.height = LAYER_HEIGHT_EXPANDED
             self.preview.props.visibility = goocanvas.ITEM_VISIBLE
             self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
-            self.bg.props.height = LAYER_HEIGHT_EXPANDED
             self.name.props.y = NAME_VOFFSET + NAME_PADDING
 
     def getExpanded(self):
@@ -706,11 +701,8 @@ class Track(goocanvas.Group, Zoomable, Loggable):
             self.get_canvas().regroupTracks()
 
     def getHeight(self):
-        if self._expanded:
-            track_type = self.track.props.track_type
-            return self.app.gui.timeline_ui._controls.getHeightOfTrack(track_type)
-        else:
-            return LAYER_HEIGHT_COLLAPSED + LAYER_SPACING
+        track_type = self.track.props.track_type
+        return self.app.gui.timeline_ui._controls.getHeightOfTrack(track_type)
 
     height = property(getHeight)
 
