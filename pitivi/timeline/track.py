@@ -417,8 +417,10 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
 
     def setHeight(self, height):
         self._height = height
+        self.bg.props.height = height
         self.start_handle.props.height = height
         self.end_handle.props.height = height
+        self._selec_indic.props.height = height
         self._update()
 
     def getHeight(self):
@@ -574,8 +576,15 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         except Exception, e:
             raise Exception(e)
 
+        # get layer and track_type
         layer = self.element.get_timeline_object().get_layer()
         track_type = self.element.get_track().props.track_type
+
+        # update height, compare with current height to not run into recursion
+        new_height = self.app.gui.timeline_ui._controls.getHeightOfLayer(track_type, layer)
+        if self.height != new_height:
+            print "update heigth %s" % new_height
+            self.height = new_height
 
         # get y position for layer
         y = self.app.gui.timeline_ui._controls.getYOfLayer(track_type, layer)
@@ -584,7 +593,6 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         # get relative y for audio
         if track_type == ges.TRACK_TYPE_AUDIO:
             y -= self.app.gui.timeline_ui._controls.getHeightOfVideo()
-        print y
 
         # Setting new position
         self.set_simple_transform(x, y, 1, 0)
@@ -754,3 +762,7 @@ class Track(goocanvas.Group, Zoomable, Loggable):
         self.add_child(w)
         self.transitions.append(w)
         w.raise_(None)
+
+    def updateTrackObjects(self):
+        for track_object in self.widgets.itervalues():
+            track_object._update()

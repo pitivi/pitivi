@@ -469,18 +469,28 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self.height = height
         self._request_size()
 
+    def updateTracks(self):
+        print("Updating all TrackObjects")
+        for track in self._tracks:
+            track.updateTrackObjects()
+
 
 class TimelineControls(gtk.VBox, Loggable):
     """Contains the timeline track names."""
 
-    def __init__(self):
+    def __init__(self, instance):
         gtk.VBox.__init__(self)
         Loggable.__init__(self)
+        self.app = instance
         self._track_controls = {}
         self._timeline = None
         self.set_spacing(LAYER_SPACING)
         self.type_map = {ges.TRACK_TYPE_AUDIO: AudioLayerControl,
                          ges.TRACK_TYPE_VIDEO: VideoLayerControl}
+        self.connect("size-allocate", self._sizeAllocatedCb)
+
+    def _sizeAllocatedCb(self, widget, alloc):
+        self.app.gui.timeline_ui._canvas.updateTracks()
 
 ## Timeline callbacks
 
@@ -545,23 +555,21 @@ class TimelineControls(gtk.VBox, Loggable):
 
         del self._track_controls[layer]
 
+    def getHeightOfLayer(self, track_type, layer):
+        if track_type == ges.TRACK_TYPE_VIDEO:
+            return self._track_controls[layer]["video"].getHeight()
+        else:
+            return self._track_controls[layer]["audio"].getHeight()
+
     def getYOfLayer(self, track_type, layer):
         y = 0
-        print "start new calculation of y"
         for child in self.get_children():
-            print type(child)
-            print isinstance(child, self.type_map[track_type])
-            print layer == child._layer
             if layer == child._layer and \
                 isinstance(child, self.type_map[track_type]):
-                print "return y = %s" % y
                 return y
 
             y += child.getHeight()
-            print "h %s of %s" % (child.getHeight(), child)
             y += LAYER_SPACING
-            print "iter y = %s" % y
-
         return 0
 
     # maybe do a list with values
@@ -715,7 +723,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.attach(zoom_controls_hbox, 0, 1, 0, 1, yoptions=0, xoptions=gtk.FILL)
 
         # controls for tracks and layers
-        self._controls = TimelineControls()
+        self._controls = TimelineControls(self.app)
         controlwindow = gtk.Viewport(None, self.vadj)
         controlwindow.add(self._controls)
         controlwindow.set_size_request(-1, 1)
