@@ -1290,6 +1290,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     self._layerRemovedCb))
             self._layer_sig_ids.append(timeline.connect("notify::update",
                     self._timelineUpdateChangedCb))
+            self._layer_sig_ids.append(timeline.connect("notify::duration",
+                    self._timelineDurationChangedCb))
 
             # Make sure to set the current layer in use
             self._layerAddedCb(None, None)
@@ -1307,7 +1309,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         for sigid in self._layer_sig_ids:
             self._timeline.disconnect(sigid)
 
-        # clear dictionaries
+        # clear list
         self._layer_sig_ids = []
 
         #Remove references to the ges timeline
@@ -1315,6 +1317,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._controls.timeline = None
 
     timeline = property(getTimeline, setTimeline, delTimeline, "The GESTimeline")
+
+    def _timelineDurationChangedCb(self, timeline, unused_duration):
+        self.updateHScrollAdjustments()
 
     def _timelineUpdateChangedCb(self, unused, unsued2=None):
         if self.zoomed_fitted is True:
@@ -1561,6 +1566,4 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.app.current.seeker.seek(timeline.props.duration)
         if self.zoomed_fitted is True:
             self._setBestZoomRatio()
-        else:
-            self.updateHScrollAdjustments()
         return False
