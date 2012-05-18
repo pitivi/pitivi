@@ -6,6 +6,7 @@
       <menuitem action="SaveProject" />
       <menuitem action="SaveProjectAs" />
       <menuitem action="RevertToSavedProject" />
+      <menuitem action="ExportProject" />
       <separator />
       <menuitem action="RenderProject" />
       <separator />
@@ -30,17 +31,12 @@
     </menu>
     <menu action="Library">
       <separator />
-      <placeholder name="SourceList" />
+      <placeholder name="MediaLibrary" />
       <separator />
       <placeholder name="Timeline" />
     </menu>
     <menu action="Timeline">
       <placeholder name="Timeline" />
-    </menu>
-    <menu action="Viewer">
-      <menuitem action="PlayPause" />
-      <menuitem action="Loop" />
-      <separator />
     </menu>
     <menu action="Help">
       <menuitem action="UserManual" />
@@ -51,7 +47,7 @@
     <toolitem action="Undo" />
     <toolitem action="Redo" />
     <separator />
-    <placeholder name="SourceList" />
+    <placeholder name="MediaLibrary" />
     <separator />
     <toolitem action="SaveProject" />
     <toolitem action="RenderProject" />
@@ -63,7 +59,5 @@
         <separator />
   </toolbar>
   <accelerator action="FullScreenAlternate" />
-  <accelerator action="PlayPause" />
   <accelerator action="RenderProject" />
-  <accelerator action="Loop" />
 </ui>

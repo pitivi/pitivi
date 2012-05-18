@@ -23,7 +23,7 @@
 from unittest import TestCase
 
 import gst
-from pitivi.utils import beautify_length
+from pitivi.utils.ui import beautify_length
 
 second = gst.SECOND
 minute = second * 60

@@ -1,7 +1,7 @@
 import unittest
 import pitivi
 from pitivi.application import Pitivi
-from pitivi.utils import binary_search
+from pitivi.utils.misc import binary_search
 from common import TestCase
 
 

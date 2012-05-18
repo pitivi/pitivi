@@ -3,7 +3,7 @@
 #       pitivi/timeline/timeline.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
-# Copyright (c) 2009, Alessandro Decina <alessandro.decina@collabora.co.uk>
+# Copyright (c) 2009, Brandon Lewis <brandon_lewis@berkeley.edu>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,2153 +20,1434 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-import collections
-from bisect import bisect_left
+"""
+    Main Timeline widgets
+"""
 
-from pitivi.signalinterface import Signallable
-from pitivi.log.loggable import Loggable
-from pitivi.utils import UNKNOWN_DURATION, closest_item, PropertyChangeTracker
-from pitivi.timeline.track import TrackObject, SourceTrackObject,\
-     TrackEffect, TrackError
-from pitivi.stream import match_stream_groups_map
-from pitivi.utils import start_insort_right, infinity, getPreviousObject, \
-        getNextObject
-from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
-from pitivi.stream import VideoStream
-from pitivi.timeline.align import AutoAligner
+import gtk
+import gst
+import ges
+import ruler
+import gobject
+import goocanvas
 
-# Selection modes
-SELECT = 0
-"""Set the selection to the given set."""
-UNSELECT = 1
-"""Remove the given set from the selection."""
-SELECT_ADD = 2
-"""Extend the selection with the given set"""
-SELECT_BETWEEN = 3
-"""Select a range of clips"""
+from gettext import gettext as _
+from os.path import join
+
+from pitivi.check import soft_deps
+from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
+from pitivi.autoaligner import AlignmentProgressDialog
+from pitivi.utils.misc import quote_uri
+from pitivi.utils.pipeline import PipelineError
+from pitivi.settings import GlobalSettings
+
+from curve import KW_LABEL_Y_OVERFLOW
+from track import TrackControls, TRACK_CONTROL_WIDTH, Track, TrackObject
+from pitivi.utils.timeline import EditingContext, SELECT, Zoomable
+
+from pitivi.dialogs.depsmanager import DepsManager
+from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
+from pitivi.dialogs.prefs import PreferencesDialog
+
+from pitivi.utils.receiver import receiver, handler
+from pitivi.utils.loggable import Loggable
+from pitivi.utils.ui import SPACING, TRACK_SPACING, LAYER_HEIGHT_EXPANDED,\
+    LAYER_SPACING, TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, \
+    AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT, \
+    unpack_cairo_pattern, Point
+
+# FIXME GES Port regression
+# from pitivi.utils.align import AutoAligner
+
+GlobalSettings.addConfigOption('edgeSnapDeadband',
+    section="user-interface",
+    key="edge-snap-deadband",
+    default=5,
+    notify=True)
+
+PreferencesDialog.addNumericPreference('edgeSnapDeadband',
+    section=_("Behavior"),
+    label=_("Snap distance"),
+    description=_("Threshold (in pixels) at which two clips will snap together "
+        "when dragging or trimming."),
+    lower=0)
 
 
-class TimelineError(Exception):
-    """Base Exception for errors happening in L{Timeline}s or L{TimelineObject}s"""
-    pass
+# cursors to be used for resizing objects
+ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
+# TODO: replace this with custom cursor
+PLAYHEAD_CURSOR = gtk.gdk.Cursor(gtk.gdk.SB_H_DOUBLE_ARROW)
+
+# Drag and drop constants/tuples
+# FIXME, rethink the way we handle that as it is quite 'hacky'
+DND_EFFECT_LIST = [[VIDEO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]],\
+                  [AUDIO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]]]
+VIDEO_EFFECT_LIST = [VIDEO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]],
+AUDIO_EFFECT_LIST = [AUDIO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]],
+
+# tooltip text for toolbar
+DELETE = _("Delete Selected")
+SPLIT = _("Split clip at playhead position")
+KEYFRAME = _("Add a keyframe")
+PREVFRAME = _("Move to the previous keyframe")
+NEXTFRAME = _("Move to the next keyframe")
+ZOOM_IN = _("Zoom In")
+ZOOM_OUT = _("Zoom Out")
+ZOOM_FIT = _("Zoom Fit")
+UNLINK = _("Break links between clips")
+LINK = _("Link together arbitrary clips")
+UNGROUP = _("Ungroup clips")
+GROUP = _("Group clips")
+ALIGN = _("Align clips based on their soundtracks")
+SELECT_BEFORE = ("Select all sources before selected")
+SELECT_AFTER = ("Select all after selected")
+
+ui = '''
+<ui>
+    <menubar name="MainMenuBar">
+        <menu action="View">
+            <placeholder name="Timeline">
+                <menuitem action="ZoomIn" />
+                <menuitem action="ZoomOut" />
+                <menuitem action="ZoomFit" />
+            </placeholder>
+        </menu>
+        <menu action="Timeline">
+            <placeholder name="Timeline">
+                <menuitem action="Split" />
+                <menuitem action="DeleteObj" />
+                <separator />
+                <menuitem action="LinkObj" />
+                <menuitem action="UnlinkObj" />
+                <menuitem action="GroupObj" />
+                <menuitem action="UngroupObj" />
+                <menuitem action="AlignObj" />
+                <separator />
+                <menuitem action="Keyframe" />
+                <menuitem action="Prevframe" />
+                <menuitem action="Nextframe" />
+                <separator />
+                <menuitem action="PlayPause" />
+                <menuitem action="Screenshot" />
+            </placeholder>
+        </menu>
+    </menubar>
+    <toolbar name="TimelineToolBar">
+        <placeholder name="Timeline">
+            <separator />
+            <toolitem action="Split" />
+            <toolitem action="Keyframe" />
+            <separator />
+            <toolitem action="DeleteObj" />
+            <toolitem action="UnlinkObj" />
+            <toolitem action="LinkObj" />
+            <toolitem action="GroupObj" />
+            <toolitem action="UngroupObj" />
+            <toolitem action="AlignObj" />
+        </placeholder>
+    </toolbar>
+    <accelerator action="PlayPause" />
+    <accelerator action="DeleteObj" />
+    <accelerator action="ControlEqualAccel" />
+    <accelerator action="ControlKPAddAccel" />
+    <accelerator action="ControlKPSubtractAccel" />
+</ui>
+'''
 
 
-class TimelineObject(Signallable, Loggable):
+class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     """
-    Base class for contents of a C{Timeline}.
-
-    A L{TimelineObject} controls one or many L{TrackObject}.
-
-    Signals:
-     - C{start-changed} : The position changed.
-     - C{duration-changed} : The duration changed.
-     - C{in-point-changed} : The in-point changed.
-     - C{out-point-changed} : The out-point changed.
-     - C{media-duration-changed} : The used media duration changed.
-     - C{priority-changed} : The priority changed.
-     - C{selected-changed} : The selected status changed.
-
-    @ivar start: The position of the object in a timeline (nanoseconds)
-    @type start: L{long}
-    @ivar duration: The duration of the object in a timeline (nanoseconds)
-    @type duration: L{long}
-    @ivar in_point: The in-point of the object (nanoseconds)
-    @type in_point: L{long}
-    @ivar out_point: The out-point of the object (nanoseconds)
-    @type out_point: L{long}
-    @ivar media_duration: The duration to use from the object (nanoseconds)
-    @type media_duration: L{long}
-    @ivar priority: The priority of the object in a timeline. 0 is top-priority.
-    @type priority: L{int}
-    @ivar selected: Whether the object is selected or not.
-    @type selected: L{bool}
-    @ivar track_objects: The Track objects controlled.
-    @type track_objects: list of L{TrackObject}
-    @ivar timeline: The L{Timeline} to which this object belongs
-    @type timeline: L{Timeline}
+        The goocanvas widget representing the timeline
     """
-    __signals__ = {
-        'start-changed': ['start'],
-        'duration-changed': ['duration'],
-        'in-point-changed': ['in-point'],
-        'out-point-changed': ['in-point'],
-        'media-duration-changed': ['media-duration'],
-        'priority-changed': ['priority'],
-        'selected-changed': ['state'],
-        'track-object-added': ["track_object"],
-        'track-object-removed': ["track_object"],
+
+    __gtype_name__ = 'TimelineCanvas'
+    __gsignals__ = {
+        "expose-event": "override",
     }
 
-    DEFAULT_START = 0
-    DEFAULT_DURATION = UNKNOWN_DURATION
-    DEFAULT_IN_POINT = 0
-    DEFAULT_OUT_POINT = UNKNOWN_DURATION
-    DEFAULT_PRIORITY = 0
+    _tracks = None
 
-    def __init__(self, factory):
+    def __init__(self, instance, timeline=None):
+        goocanvas.Canvas.__init__(self)
+        Zoomable.__init__(self)
         Loggable.__init__(self)
-        self.factory = factory
-        self.track_objects = []
-        self.timeline = None
-        self.link = None
-        self._selected = False
-
-    def copy(self, copy_track_objects=True):
-        cls = self.__class__
-        other = cls(self.factory)
-        other.track_objects = []
-        if copy_track_objects:
-            for track_object in self.track_objects:
-                other.addTrackObject(track_object.copy())
-
-        return other
-
-    #{ Property methods
-
-    def _getStart(self):
-        if not self.track_objects:
-            return self.DEFAULT_START
-
-        return self.track_objects[0].start
-
-    def setStart(self, position, snap=False):
-        """
-        Set the start position of the object.
-
-        If snap is L{True}, then L{position} will be modified if it is close
-        to a timeline edge.
-
-        @param position: The position in nanoseconds.
-        @type position: L{long}
-        @param snap: Whether to snap to the nearest edge or not.
-        @type snap: L{bool}
-        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
-        """
-        if not self.track_objects:
-            raise TimelineError("TimelineObject doesn't control any TrackObjects")
-
-        if snap:
-            position = self.timeline.snapToEdge(position, position + self.duration)
-
-        if self.link is not None:
-            # if we're part of a link, we need to check if it's necessary to
-            # clamp position so that we don't push the earliest element before 0s
-            delta = position - self.start
-            off = self.link.earliest_start + delta
-            if off < 0:
-                # clamp so that the earliest element is shifted to 0s
-                position -= off
-
-        for track_object in self.track_objects:
-            track_object.setObjectStart(position)
-
-        self.emit('start-changed', position)
-
-    def _getDuration(self):
-        if not self.track_objects:
-            return self.DEFAULT_DURATION
-
-        return self.track_objects[0].duration
-
-    def setDuration(self, duration, snap=False, set_media_stop=True):
-        """
-        Sets the duration of the object.
-
-        If snap is L{True}, then L{duration} will be modified if it is close
-        to a timeline edge.
-
-        If set_media_stop is L{False} then the change will not be propagated
-        to the C{TrackObject}s this object controls.
-
-        @param duration: The duration in nanoseconds.
-        @type duration: L{long}
-        @param snap: Whether to snap to the nearest edge or not.
-        @type snap: L{bool}
-        @param set_media_stop: propagate changes to track objects.
-        @type set_media_stop: L{bool}
-        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
-        """
-        if not self.track_objects:
-            raise TimelineError("TimelineObject doesn't control any TrackObjects")
-
-        if snap:
-            position = self.start + duration
-            position = self.timeline.snapToEdge(position)
-            duration = position - self.start
-
-        duration = min(duration, self.factory.duration -
-                self.track_objects[0].in_point)
-
-        for track_object in self.track_objects:
-            track_object.setObjectDuration(duration)
-            if set_media_stop:
-                track_object.setObjectMediaDuration(duration)
-
-        self.emit('duration-changed', duration)
-
-    def _getInPoint(self):
-        if not self.track_objects:
-            return self.DEFAULT_IN_POINT
-
-        return self.track_objects[0].in_point
-
-    # FIXME: 'snap' is a bogus argument here !
-    def setInPoint(self, position, snap=False):
-        """
-        Sets the in-point of the object.
-
-        @param position: The position in nanoseconds.
-        @type position: L{long}
-        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
-        """
-        if not self.track_objects:
-            raise TimelineError("TimelineObject doesn't control any TrackObjects")
-
-        for track_object in self.track_objects:
-            track_object.setObjectInPoint(position)
-
-        self.emit('in-point-changed', position)
-
-    def _getOutPoint(self):
-        if not self.track_objects:
-            return self.DEFAULT_IN_POINT
-
-        return self.track_objects[0].out_point
-
-    def _getMediaDuration(self):
-        if not self.track_objects:
-            return self.DEFAULT_OUT_POINT
-
-        return self.track_objects[0].media_duration
-
-    # FIXME: 'snaps' is a bogus argument here !
-    def setMediaDuration(self, position, snap=False):
-        """
-        Sets the media-duration of the object.
-
-        @param position: The position in nanoseconds.
-        @type position: L{long}
-        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
-        """
-        if not self.track_objects:
-            raise TimelineError("TimelineObject doesn't control any TrackObjects")
-
-        for track_object in self.track_objects:
-            track_object.setObjectMediaDuration(position)
-
-        self.emit('media-duration-changed', position)
-
-    def _getPriority(self):
-        if not self.track_objects:
-            return self.DEFAULT_PRIORITY
-
-        return self.track_objects[0].priority
-
-    def setPriority(self, priority):
-        """
-        Sets the priority of the object. 0 is the highest priority.
-
-        @param priority: The priority (0 : highest)
-        @type priority: L{int}
-        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
-        """
-        if not self.track_objects:
-            raise TimelineError("TimelineObject doesn't control any TrackObjects")
-
-        for track_object in self.track_objects:
-            track_object.setObjectPriority(priority)
-
-        self.emit('priority-changed', priority)
-
-    # True when the timeline object is part of the track object's current
-    # selection.
-
-    def _getSelected(self):
-        return self._selected
-
-    def setSelected(self, state):
-        """
-        Sets the selected state of the object.
-
-        @param state: L{True} if the object should be selected.
-        @type state: L{bool}
-        """
-        self._selected = state
-
-        for obj in self.track_objects:
-            obj.setObjectSelected(state)
-
-        self.emit("selected-changed", state)
-
-    #}
-
-    selected = property(_getSelected, setSelected)
-    start = property(_getStart, setStart)
-    duration = property(_getDuration, setDuration)
-    in_point = property(_getInPoint, setInPoint)
-    out_point = property(_getOutPoint)
-    media_duration = property(_getMediaDuration, setMediaDuration)
-    priority = property(_getPriority, setPriority)
-
-    #{ Time-related methods
-
-    def trimStart(self, position, snap=False):
-        """
-        Trim the beginning of the object to the given L{position} in nanoseconds.
-
-        If snap is L{True}, then L{position} will be modified if it is close
-        to a timeline edge.
-
-        @param position: The position in nanoseconds.
-        @type position: L{long}
-        @param snap: Whether to snap to the nearest edge or not.
-        @type snap: L{bool}
-        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
-        """
-        if not self.track_objects:
-            raise TimelineError("TimelineObject doesn't control any TrackObjects")
-
-        if snap:
-            position = self.timeline.snapToEdge(position)
-
-        for track_object in self.track_objects:
-            track_object.trimObjectStart(position)
-
-        self.emit('start-changed', self.start)
-        self.emit('duration-changed', self.duration)
-        self.emit('in-point-changed', self.in_point)
-
-    def split(self, position, snap=False):
-        """
-        Split the given object at the given position in nanoseconds.
-
-        The object will be resized to the given position, and another object will
-        be created which starts just after and ends at the initial end position.
-
-        If snap is L{True}, then L{position} will be modified if it is close
-        to a timeline edge.
-
-        @param position: The position in nanoseconds.
-        @type position: L{long}
-        @param snap: Whether to snap to the nearest edge or not.
-        @type snap: L{bool}
-        @returns: The object corresponding to the other half.
-        @rtype: L{TimelineObject}
-        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
-        @postcondition: If the originating object was not yet in a C{Timeline}, then
-        it is up to the caller to add the returned 'half' object to a C{Timeline}.
-        """
-        if not self.track_objects:
-            raise TimelineError("TimelineObject doesn't control any TrackObjects")
-
-        other = self.copy(copy_track_objects=False)
-
-        for track_object in self.track_objects:
-            try:
-                other_track_object = track_object.splitObject(position)
-            except TrackError, e:
-                # FIXME: hallo exception hierarchy?
-                raise TimelineError(str(e))
-
-            other.addTrackObject(other_track_object)
-
-        if self.timeline is not None:
-            # if self is not yet in a timeline, the caller needs to add "other"
-            # as well when it adds self
-            self.timeline.addTimelineObject(other)
-
-        self.emit('duration-changed', self.duration)
-
-        return other
-
-    #{ TrackObject methods
-
-    def addTrackObject(self, obj):
-        """
-        Add the given C{TrackObject} to the list of controlled track objects.
-
-        @param obj: The track object to add
-        @type obj: C{TrackObject}
-        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
-        @raises TimelineError: If the provided C{TrackObject} is already controlled
-        by this L{TimelineObject}
-        @raises TimelineError: If the newly provided C{TrackObject} doesn't have the
-        same start position as the other objects controlled.
-        @raises TimelineError: If the newly provided C{TrackObject} doesn't have the
-        same duration as the other objects controlled.
-        """
-        if obj.timeline_object is not None:
-            raise TimelineError("TrackObject already controlled by another TimelineObject")
-
-        if obj in self.track_objects:
-            # FIXME : couldn't we just silently return ?
-            raise TimelineError("TrackObject already controlled by this TimelineObject")
-
-        if self.track_objects:
-            # multiple track objects are used for groups.
-            # For example if you have the timeline:
-            #
-            # |sourceA|gap|sourceB|
-            # | sourceC |gap
-            #
-            # If you group A B and C the group will create two gnl compositions,
-            # one [A, B] with start A.start and duration B.duration and another
-            # [C] with start C.start and duration B.duration (with silence used
-            # as padding).
-            # The compositions will always be aligned with the same start and
-            # duration.
-
-            # FIXME : We really should be able to support controlling more than
-            # one trackobject with offseted start/duration/in-/out-point/priorities
-            existing_track_object = self.track_objects[0]
-            if obj.start != existing_track_object.start or \
-                    obj.duration != existing_track_object.duration:
-                raise TimelineError("New TrackObject doesn't have same duration as other controlled TrackObjects")
-
-        # FIXME: cycle
-        obj.timeline_object = self
-        start_insort_right(self.track_objects, obj)
-
-        self.emit("track-object-added", obj)
-
-    def removeTrackObject(self, obj):
-        """
-        Remove the given object from the list of controlled C{TrackObject}.
-
-        @param obj: The Track Object to remove.
-        @type obj: C{TrackObject}
-        @raises TimelineError: If the Track object isn't controlled by this TimelineObject.
-        """
-        if obj.track is None:
-            raise TimelineError("TrackObject doesn't belong to any Track")
-
-        try:
-            self.track_objects.remove(obj)
-            obj.timeline_object = None
-        except ValueError:
-            raise TimelineError("TrackObject doesn't belong to this TimelineObject")
-
-        self.emit("track-object-removed", obj)
-
-
-class Selection(Signallable):
-    """
-    A collection of L{TimelineObject}.
-
-    Signals:
-     - C{selection-changed} : The contents of the L{Selection} changed.
-
-    @ivar selected: Set of selected L{TrackObject}
-    @type selected: C{list}
-    """
-
-    __signals__ = {
-        "selection-changed": []}
-
-    def __init__(self):
-        self.selected = set([])
-        self.last_single_obj = None
-
-    def setToObj(self, obj, mode):
-        """
-        Convenience method for calling L{setSelection} with a single L{TimelineObject}
-
-        @see: L{setSelection}
-        """
-        self.setSelection(set([obj]), mode)
-
-    def addTimelineObject(self, timeline_object):
-        """
-        Add the given timeline_object to the selection.
-
-        @param timeline_object: The object to add
-        @type timeline_object: L{TimelineObject}
-        @raises TimelineError: If the object is already controlled by this
-        Selection.
-        """
-        if timeline_object in self.timeline_objects:
-            raise TimelineError("TrackObject already in this selection")
-
-    def setSelection(self, objs, mode):
-        """
-        Update the current selection.
-
-        Depending on the value of C{mode}, the selection will be:
-         - L{SELECT} : set to the provided selection.
-         - L{UNSELECT} : the same minus the provided selection.
-         - L{SELECT_ADD} : extended with the provided selection.
-
-        @param selection: The list of timeline objects to update the selection with.
-        @param mode: The type of update to apply. Can be C{SELECT},C{UNSELECT} or C{SELECT_ADD}
-
-        @see: L{setToObj}
-        """
-        # get a list of timeline objects
-        selection = set()
-        for obj in objs:
-            if isinstance(obj, TrackObject):
-                selection.add(obj.timeline_object)
-            else:
-                selection.add(obj)
-        old_selection = self.selected
-        if mode == SELECT_ADD:
-            selection = self.selected | selection
-        elif mode == UNSELECT:
-            selection = self.selected - selection
-        self.selected = selection
-
-        if len(self.selected) == 1:
-            self.last_single_obj = iter(selection).next()
-
-        for obj in self.selected - old_selection:
-            obj.selected = True
-        for obj in old_selection - self.selected:
-            obj.selected = False
-
-        # FIXME : shouldn't we ONLY emit this IFF the selection has changed ?
-        self.emit("selection-changed")
-
-    def getSelectedTrackObjs(self):
-        """
-        Returns the list of L{TrackObject} contained in this selection.
-        """
-        objects = []
-        for timeline_object in self.selected:
-            objects.extend(timeline_object.track_objects)
-
-        return set(objects)
-
-    def getSelectedTrackEffects(self):
-        """
-        Returns the list of L{TrackEffect} contained in this selection.
-        """
-        track_effects = []
-        for timeline_object in self.selected:
-            for track in timeline_object.track_objects:
-                if isinstance(track, TrackEffect):
-                    track_effects.append(track)
-
-        return track_effects
-
-    def __len__(self):
-        return len(self.selected)
-
-    def __iter__(self):
-        return iter(self.selected)
-
-
-class LinkPropertyChangeTracker(PropertyChangeTracker):
-    """
-    Tracker for private usage by L{Link}
-
-    @see: L{Link}
-    """
-    __signals__ = {
-        'start-changed': ['old', 'new'],
-        'duration-changed': ['old', 'new']}
-
-    property_names = ('start', 'duration')
-
-
-class Link(object):
-
-    def __init__(self):
-        self.timeline_objects = set([])
-        self.property_trackers = {}
-        self.waiting_update = []
-        self.earliest_object = None
-        self.earliest_start = None
-
-    def addTimelineObject(self, timeline_object):
-        if timeline_object.link is not None:
-            raise TimelineError("TimelineObject already in a Link")
-
-        if timeline_object in self.timeline_objects:
-            raise TimelineError("TimelineObject already controlled by this Link")
-
-        self.timeline_objects.add(timeline_object)
-
-        tracker = LinkPropertyChangeTracker()
-        tracker.connectToObject(timeline_object)
-        self.property_trackers[timeline_object] = tracker
-
-        tracker.connect('start-changed', self._startChangedCb)
-
-        # FIXME: cycle
-        # Edward : maybe use a weak reference instead ? pydoc weakref
-        timeline_object.link = self
-
-        if self.earliest_start is None or \
-                timeline_object.start < self.earliest_start:
-            self.earliest_object = timeline_object
-            self.earliest_start = timeline_object.start
-
-    def removeTimelineObject(self, timeline_object):
-        try:
-            self.timeline_objects.remove(timeline_object)
-        except KeyError:
-            raise TimelineError("TimelineObject not controlled by this Link")
-
-        tracker = self.property_trackers.pop(timeline_object)
-        tracker.disconnectFromObject(timeline_object)
-
-        timeline_object.link = None
-
-    def join(self, other_link):
-        """
-        Joins this Link with another and returns the resulting link.
-
-        @type other_link: C{Link}
-        @postcondition: L{self} and L{other_link} must not be used after
-        calling this method !!
-        """
-        new_link = Link()
-
-        for timeline_object in list(self.timeline_objects):
-            self.removeTimelineObject(timeline_object)
-            new_link.addTimelineObject(timeline_object)
-
-        for timeline_object in list(other_link.timeline_objects):
-            other_link.removeTimelineObject(timeline_object)
-            new_link.addTimelineObject(timeline_object)
-
-        return new_link
-
-    def _startChangedCb(self, tracker, timeline_object, old_start, start):
-        if not self.waiting_update:
-            delta = start - old_start
-            earliest = timeline_object
-
-            self.waiting_update = list(self.timeline_objects)
-            # we aren't waiting
-            self.waiting_update.remove(timeline_object)
-            for linked_object in list(self.waiting_update):
-                # this will trigger signals that modify self.waiting_update so
-                # we iterate over a copy
-                linked_object.start += delta
-
-                if linked_object.start < earliest.start:
-                    earliest = linked_object
-
-            assert not self.waiting_update
-
-            self.earliest_object = earliest
-            self.earliest_start = earliest.start
-
-        else:
-            self.waiting_update.remove(timeline_object)
-
-
-# FIXME: This seems overly complicated and (therefore) a potential speed bottleneck.
-# It would be much simpler to just track objects, and specify for each object
-# which property we would like to track (start, end, both). We could then have
-# two lists of those objects, one sorted by start values, and another sorted by
-# end values.
-# Bonus : GnlComposition already has all this information, we could maybe add
-# an action signal to it to drastically speed up this process.
-#
-# Alessandro: this is faster than having two separate lists. By keeping start
-# and end edges in the same list, we reduce the time we scan the list
-# of edges. In fact once we find a start edge at pos X, we then scan for an end
-# edge by starting at edges[X] and going forward, avoiding to rescan the edges
-# from 0 to X.
-# I don't see how exposing the gnl lists would make things faster, what's taking
-# time here is scanning the lists, and it's something you'd have to do anyway.
-class TimelineEdges(object):
-    """
-    Tracks start/stop values and offers convenience methods to find the
-    closest value for a given position.
-    """
-    def __init__(self):
-        self.edges = []
-        self.by_start = {}
-        self.by_end = {}
-        self.by_time = {}
-        self.by_object = {}
-        self.changed_objects = {}
-        self.enable_updates = True
-
-    def addTimelineObject(self, timeline_object):
-        """
-        Add this object's start/stop values to the edges.
-
-        @param timeline_object: The object whose start/stop we want to track.
-        @type timeline_object: L{TimelineObject}
-        """
-        for obj in timeline_object.track_objects:
-            self.addTrackObject(obj)
-
-        self._connectToTimelineObject(timeline_object)
-
-    def removeTimelineObject(self, timeline_object):
-        """
-        Remove this object's start/stop values from the edges.
-
-        @param timeline_object: The object whose start/stop we no longer want
-        to track.
-        @type timeline_object: L{TimelineObject}
-        """
-        self._disconnectFromTimelineObject(timeline_object)
-        for obj in timeline_object.track_objects:
-            self.removeTrackObject(obj)
-
-    def _connectToTimelineObject(self, timeline_object):
-        timeline_object.connect("track-object-added", self._trackObjectAddedCb)
-        timeline_object.connect("track-object-removed", self._trackObjectRemovedCb)
-
-    def _disconnectFromTimelineObject(self, timeline_object):
-        timeline_object.disconnect_by_func(self._trackObjectAddedCb)
-        timeline_object.disconnect_by_func(self._trackObjectRemovedCb)
-
-    def _trackObjectAddedCb(self, timeline_object, track_object):
-        self.addTrackObject(track_object)
-
-    def _trackObjectRemovedCb(self, timeline_object, track_object):
-        self.removeTrackObject(track_object)
-
-    def addTrackObject(self, track_object):
-        if track_object in self.by_object:
-            raise TimelineError("TrackObject already controlled by this TimelineEdge")
-
-        start = track_object.start
-        end = track_object.start + track_object.duration
-
-        self.addStartEnd(start, end)
-
-        self.by_start.setdefault(start, []).append(track_object)
-        self.by_end.setdefault(end, []).append(track_object)
-        self.by_time.setdefault(start, []).append(track_object)
-        self.by_time.setdefault(end, []).append(track_object)
-        self.by_object[track_object] = (start, end)
-        self._connectToTrackObject(track_object)
-
-    def removeTrackObject(self, track_object):
-        try:
-            old_start, old_end = self.by_object.pop(track_object)
-        except KeyError:
-            raise TimelineError("TrackObject not controlled by this TimelineEdge")
-
-        try:
-            del self.changed_objects[track_object]
-            start = old_start
-            end = old_end
-        except KeyError:
-            start = track_object.start
-            end = track_object.start + track_object.duration
-
-        self.removeStartEnd(start, end)
-
-        # remove start and end from self.by_start, self.by_end and self.by_time
-        for time, time_dict in ((start, self.by_start), (end, self.by_end),
-                (start, self.by_time), (end, self.by_time)):
-            time_dict[time].remove(track_object)
-            if not time_dict[time]:
-                del time_dict[time]
-
-        self._disconnectFromTrackObject(track_object)
-
-    def _connectToTrackObject(self, track_object):
-        track_object.connect("start-changed", self._trackObjectStartChangedCb)
-        track_object.connect("duration-changed", self._trackObjectDurationChangedCb)
-
-    def _disconnectFromTrackObject(self, track_object):
-        track_object.disconnect_by_func(self._trackObjectStartChangedCb)
-        track_object.disconnect_by_func(self._trackObjectDurationChangedCb)
-
-    def _trackObjectStartChangedCb(self, track_object, start):
-        start = track_object.start
-        end = start + track_object.duration
-
-        self.changed_objects[track_object] = (start, end)
-
-        self._maybeProcessChanges()
-
-    def _trackObjectDurationChangedCb(self, track_object, duration):
-        start = track_object.start
-        end = start + track_object.duration
-
-        self.changed_objects[track_object] = (start, end)
-
-        self._maybeProcessChanges()
-
-    def addStartEnd(self, start, end=None):
-        lo = 0
-        index = bisect_left(self.edges, start, lo=lo)
-        lo = index
-        self.edges.insert(index, start)
-
-        if end is not None:
-            index = bisect_left(self.edges, end, lo=lo)
-            self.edges.insert(index, end)
-
-    def removeStartEnd(self, start, end=None):
-        lo = 0
-        index = bisect_left(self.edges, start, lo=lo)
-        # check if start is a valid edge
-        if index == len(self.edges) or self.edges[index] != start:
-            raise TimelineError("Start (%r) is not a valid edge" % start)
-
-        del self.edges[index]
-        lo = index
-
-        if end is not None:
-            index = bisect_left(self.edges, end, lo=lo)
-            # check if end is a valid edge
-            if index == len(self.edges) or self.edges[index] != end:
-                raise TimelineError("End (%r) is not a valid edge")
-
-            del self.edges[index]
-
-    def enableUpdates(self):
-        self.enable_updates = True
-        self._maybeProcessChanges()
-
-    def _maybeProcessChanges(self):
-        if not self.enable_updates:
-            return
-
-        changed, self.changed_objects = self.changed_objects, {}
-
-        for track_object, (start, end) in changed.iteritems():
-            old_start, old_end = self.by_object[track_object]
-
-            for old_time, time, time_dict in ((old_start, start, self.by_start),
-                    (old_end, end, self.by_end), (old_start, start, self.by_time),
-                    (old_end, end, self.by_time)):
-                time_dict[old_time].remove(track_object)
-                if not time_dict[old_time]:
-                    del time_dict[old_time]
-                time_dict.setdefault(time, []).append(track_object)
-
-            old_edges = []
-            new_edges = []
-            if start != old_start:
-                old_edges.append(old_start)
-                new_edges.append(start)
-
-            if end != old_end:
-                old_edges.append(old_end)
-                new_edges.append(end)
-
-            if old_edges:
-                self.removeStartEnd(*old_edges)
-            if new_edges:
-                self.addStartEnd(*new_edges)
-
-            self.by_object[track_object] = (start, end)
-
-    def disableUpdates(self):
-        self.enable_updates = False
-
-    def snapToEdge(self, start, end=None):
-        """
-        Returns:
-         - the closest edge to the given start/stop position.
-         - the difference between the provided position and the returned edge.
-        """
-        if len(self.edges) == 0:
-            return start, 0
-
-        start_closest, start_diff, start_index = \
-                closest_item(self.edges, start)
-
-        if end is None or len(self.edges) == 1:
-            return start_closest, start_diff,
-
-        end_closest, end_diff, end_index = \
-                closest_item(self.edges, end, start_index)
-
-        if start_diff <= end_diff:
-            return start_closest, start_diff
-
-        return start + end_diff, end_diff
-
-    def closest(self, position):
-        """
-        Returns two values:
-         - The closest value just *before* the given position.
-         - The closest value just *after* the given position.
-
-        @param position: The position to search for.
-        @type position: L{long}
-        """
-        closest, diff, index = closest_item(self.edges, position)
-        return self.edges[max(0, index - 2)], self.edges[min(
-            len(self.edges) - 1, index + 1)]
-
-    def getObjsIncidentOnTime(self, time):
-        """Return a list of all track objects whose start or end (start +
-        duration) are exactly equal to a given time"""
-        if time in self.by_time:
-            return self.by_time[time]
-        return []
-
-    def getObjsAdjacentToStart(self, trackobj):
-        """Return a list of all track objects whose ends (start + duration)
-        are equal to the given track object's start"""
-        if trackobj.start in self.by_end:
-            return self.by_end[trackobj.start]
-        return []
-
-    def getObjsAdjacentToEnd(self, trackobj):
-        """Return a list of all track objects whose start property are
-        adjacent to the given track object's end (start + duration)"""
-        end = trackobj.start + trackobj.duration
-        if end in self.by_start:
-            return self.by_start[end]
-        return []
-
-
-class EditingContext(object):
-
-    DEFAULT = 0
-    ROLL = 1
-    RIPPLE = 2
-    SLIP_SLIDE = 3
-
-    """Encapsulates interactive editing.
-
-    This is the base class for interactive editing contexts.
-    """
-
-    def __init__(self, timeline, focus, other):
-        """
-        @param timeline: the timeline to edit
-        @type timeline: instance of L{pitivi.timeline.timeline.Timeline}
-
-        @param focus: the TimelineObject or TrackObject which is to be the the
-        main target of interactive editing, such as the object directly under the
-        mouse pointer
-        @type focus: L{pitivi.timeline.timeline.TimelineObject} or
-        L{pitivi.timeline.trackTrackObject}
-
-        @param other: a set of objects which are the secondary targets of
-        interactive editing, such as objects in the current selection.
-        @type other: a set() of L{TimelineObject}s or L{TrackObject}s
-
-        @returns: An instance of L{pitivi.timeline.timeline.TimelineEditContex}
-        """
-
-        # make sure focus is not in secondary object list
-        other.difference_update(set((focus,)))
-
-        self.other = other
-        self.focus = focus
-        self.timeline = timeline
-        self._snap = True
-        self._mode = self.DEFAULT
-        self._last_position = focus.start
-        self._last_priority = focus.priority
-
-        self.timeline.disableUpdates()
-
-    def _getOffsets(self, start_offset, priority_offset, timeline_objects):
-        offsets = {}
-        for timeline_object in timeline_objects:
-            offsets[timeline_object] = (timeline_object.start - start_offset,
-                        timeline_object.priority - priority_offset)
-
-        return offsets
-
-    def _getTimelineObjectValues(self, timeline_object):
-        return (timeline_object.start, timeline_object.duration,
-                timeline_object.in_point, timeline_object.media_duration,
-                timeline_object.priority)
-
-    def _saveValues(self, timeline_objects):
-        return dict(((timeline_object,
-            self._getTimelineObjectValues(timeline_object))
-                for timeline_object in timeline_objects))
-
-    def _restoreValues(self, values):
-        for timeline_object, (start, duration, in_point, media_dur, pri) in \
-            values.iteritems():
-            timeline_object.start = start
-            timeline_object.duration = duration
-            timeline_object.in_point = in_point
-            timeline_object.media_duration = media_dur
-            timeline_object.priority = pri
-
-    def _getSpan(self, earliest, objs):
-        return max((obj.start + obj.duration for obj in objs)) - earliest
-
-    def finish(self):
-        """Clean up timeline for normal editing"""
-        # TODO: post undo / redo action here
-        self.timeline.enableUpdates()
-
-    def setMode(self, mode):
-        """Set the current editing mode.
-        @param mode: the editing mode. Must be one of DEFAULT, ROLL, or
-        RIPPLE.
-        """
-        if mode != self._mode:
-            self._finishMode(self._mode)
-            self._beginMode(mode)
-            self._mode = mode
-
-    def _finishMode(self, mode):
-        if mode == self.DEFAULT:
-            self._finishDefault()
-        elif mode == self.ROLL:
-            self._finishRoll()
-        elif mode == self.RIPPLE:
-            self._finishRipple()
-
-    def _beginMode(self, mode):
-        if self._last_position:
-            if mode == self.DEFAULT:
-                self._defaultTo(self._last_position, self._last_priority)
-            elif mode == self.ROLL:
-                self._rollTo(self._last_position, self._last_priority)
-            elif mode == self.RIPPLE:
-                self._rippleTo(self._last_position, self._last_priority)
-
-    def _finishRoll(self):
-        pass
-
-    def _rollTo(self, position, priority):
-        return position, priority
-
-    def _finishRipple(self):
-        pass
-
-    def _rippleTo(self, position, priority):
-        return position, priority
-
-    def _finishDefault(self):
-        pass
-
-    def _defaultTo(self, position, priority):
-        return position, priority
-
-    def snap(self, snap):
-        """Set whether edge snapping is currently enabled"""
-        if snap != self._snap:
-            self.editTo(self._last_position, self._last_priority)
-        self._snap = snap
-
-    def editTo(self, position, priority):
-        if self._mode == self.DEFAULT:
-            position, priority = self._defaultTo(position, priority)
-        if self._mode == self.ROLL:
-            position, priority = self._rollTo(position, priority)
-        elif self._mode == self.RIPPLE:
-            position, priority = self._rippleTo(position, priority)
-        self._last_position = position
-        self._last_priority = priority
-
-        return position, priority
-
-    def _getGapsAtPriority(self, priority, timeline_objects, tracks=None):
-        gaps = SmallestGapsFinder(timeline_objects)
-        prio_diff = priority - self.focus.priority
-
-        for timeline_object in timeline_objects:
-            left_gap, right_gap = Gap.findAroundObject(timeline_object,
-                    timeline_object.priority + prio_diff, tracks)
-            gaps.update(left_gap, right_gap)
-
-        return gaps.left_gap, gaps.right_gap
-
-
-class MoveContext(EditingContext):
-
-    """An editing context which sets the start point of the editing targets.
-    It has support for ripple, slip-and-slide editing modes."""
-
-    def __init__(self, timeline, focus, other):
-        EditingContext.__init__(self, timeline, focus, other)
-
-        min_priority = infinity
-        earliest = infinity
-        latest = 0
-        self.default_originals = {}
-        self.timeline_objects = set([])
-        self.tracks = set([])
-        all_objects = set(other)
-        all_objects.add(focus)
-        for obj in all_objects:
-            if isinstance(obj, TrackObject):
-                timeline_object = obj.timeline_object
-                self.tracks.add(obj.track)
-            else:
-                timeline_object = obj
-                timeline_object_tracks = set(track_object.track for track_object
-                        in timeline_object.track_objects)
-                self.tracks.update(timeline_object_tracks)
-
-            self.timeline_objects.add(timeline_object)
-
-            self.default_originals[timeline_object] = \
-                    self._getTimelineObjectValues(timeline_object)
-
-            earliest = min(earliest, timeline_object.start)
-            latest = max(latest,
-                    timeline_object.start + timeline_object.duration)
-            min_priority = min(min_priority, timeline_object.priority)
-
-        self.offsets = self._getOffsets(self.focus.start, self.focus.priority,
-                self.timeline_objects)
-
-        self.min_priority = focus.priority - min_priority
-        self.min_position = focus.start - earliest
-
-        # get the span over all clips for edge snapping
-        self.default_span = latest - earliest
-
-        ripple = timeline.getObjsAfterTime(latest)
-        self.ripple_offsets = self._getOffsets(self.focus.start,
-            self.focus.priority, ripple)
-
-        # get the span over all clips for ripple editing
-        for timeline_object in ripple:
-            latest = max(latest, timeline_object.start +
-                timeline_object.duration)
-        self.ripple_span = latest - earliest
-
-        # save default values
-        self.ripple_originals = self._saveValues(ripple)
-
-        self.timeline_objects_plus_ripple = set(self.timeline_objects)
-        self.timeline_objects_plus_ripple.update(ripple)
-
-    def _getGapsAtPriority(self, priority):
-        if self._mode == self.RIPPLE:
-            timeline_objects = self.timeline_objects_plus_ripple
-        else:
-            timeline_objects = self.timeline_objects
-
-        return EditingContext._getGapsAtPriority(self,
-                priority, timeline_objects, self.tracks)
-
-    def setMode(self, mode):
-        if mode == self.ROLL:
-            raise Exception("invalid mode ROLL")
-        EditingContext.setMode(self, mode)
-
-    def _finishDefault(self):
-        self._restoreValues(self.default_originals)
-
-    def _overlapsAreTransitions(self, focus, priority):
-        tracks = set(o.track for o in focus.track_objects)
-        left_gap, right_gap = Gap.findAroundObject(focus, tracks=tracks)
-
-        focus_end = focus.start + focus.duration
-
-        # left_transition
-        if left_gap.duration < 0:
-            left_obj = left_gap.left_object
-            left_end = left_obj.start + left_obj.duration
-
-            if left_end > focus_end:
-                return False
-
-            # check that the previous previous object doesn't end after
-            # our start time. we shouldn't have to go back further than
-            # this because
-            #   * we are only moving one object
-            #   * if there was more than one clip overlaping the previous
-            #   clip, it too would be invalid, since that clip would
-            #   overlap the previous and previous previous clips
-
-            try:
-                prev_prev = self.timeline.getPreviousTimelineObject(left_obj,
-                        tracks=tracks)
-                if prev_prev.start + prev_prev.duration > self.focus.start:
-                    return False
-            except TimelineError:
-                pass
-
-        # right transition
-        if right_gap.duration < 0:
-            right_obj = right_gap.right_object
-            right_end = right_obj.start + right_obj.duration
-
-            if right_end < focus_end:
-                return False
-
-            # check that the next next object starts after we end
-
-            try:
-                next_next = self.timeline.getNextTimelineObject(right_obj)
-                if next_next.start < focus_end:
-                    return False
-            except TimelineError:
-                pass
-
+        self.app = instance
+        self._selected_sources = []
+        self._tracks = []
+        self.height = 0
+
+        self._block_size_request = False
+        self.props.integer_layout = True
+        self.props.automatic_bounds = False
+        self.props.clear_background = False
+        self.get_root_item().set_simple_transform(0, 2.0, 1.0, 0)
+
+        self._createUI()
+        self._timeline = timeline
+        self.settings = instance.settings
+
+    def _createUI(self):
+        self._cursor = ARROW
+        root = self.get_root_item()
+        self.tracks = goocanvas.Group()
+        self.tracks.set_simple_transform(0, KW_LABEL_Y_OVERFLOW, 1.0, 0)
+        root.add_child(self.tracks)
+        self._marquee = goocanvas.Rect(
+            parent=root,
+            stroke_pattern=unpack_cairo_pattern(0x33CCFF66),
+            fill_pattern=unpack_cairo_pattern(0x33CCFF66),
+            visibility=goocanvas.ITEM_INVISIBLE)
+        self._playhead = goocanvas.Rect(
+            y=-10,
+            parent=root,
+            line_width=1,
+            fill_color_rgba=0x000000FF,
+            stroke_color_rgba=0xFFFFFFFF,
+            width=3)
+        self._snap_indicator = goocanvas.Rect(
+            parent=root, x=0, y=0, width=3, line_width=0.5,
+            fill_color_rgba=0x85c0e6FF,
+            stroke_color_rgba=0x294f95FF)
+        self.connect("size-allocate", self._size_allocate_cb)
+        root.connect("motion-notify-event", self._selectionDrag)
+        root.connect("button-press-event", self._selectionStart)
+        root.connect("button-release-event", self._selectionEnd)
+        self.connect("button-release-event", self._snapEndedCb)
+        self.height = (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING) * 2
+        # add some padding for the horizontal scrollbar
+        self.height += 21
+        self.set_size_request(-1, self.height)
+
+    def from_event(self, event):
+        x, y = event.x, event.y
+        x += self.app.gui.timeline_ui.hadj.get_value()
+        return Point(*self.convert_from_pixels(x, y))
+
+    def setExpanded(self, track_object, expanded):
+        track_ui = None
+        for track in self._tracks:
+            if track.track == track_object:
+                track_ui = track
+                break
+
+        track_ui.setExpanded(expanded)
+
+## sets the cursor as appropriate
+
+    def _mouseEnterCb(self, unused_item, unused_target, event):
+        event.window.set_cursor(self._cursor)
         return True
 
-    def finish(self):
-
-        if isinstance(self.focus, TrackObject):
-            focus_timeline_object = self.focus.timeline_object
-        else:
-            focus_timeline_object = self.focus
-        initial_position = self.default_originals[focus_timeline_object][0]
-        initial_priority = self.default_originals[focus_timeline_object][-1]
-
-        final_priority = self.focus.priority
-        final_position = self.focus.start
-
-        priority = final_priority
-
-        # special case for transitions. Allow a single object to overlap
-        # either of its two neighbors if it overlaps no other objects
-        if len(self.timeline_objects) == 1:
-            if not self._overlapsAreTransitions(focus_timeline_object,
-                priority):
-                self._defaultTo(initial_position, initial_priority)
-            EditingContext.finish(self)
-            return
-
-        # adjust priority
-        overlap = False
-        while True:
-            left_gap, right_gap = self._getGapsAtPriority(priority)
-
-            if left_gap is invalid_gap or right_gap is invalid_gap:
-                overlap = True
-
-                if priority == initial_priority:
-                    break
-
-                if priority > initial_priority:
-                    priority -= 1
-                else:
-                    priority += 1
-
-                self._defaultTo(final_position, priority)
-            else:
-                overlap = False
-                break
-
-        if not overlap:
-            EditingContext.finish(self)
-            return
-
-        self._defaultTo(initial_position, priority)
-        delta = final_position - initial_position
-        left_gap, right_gap = self._getGapsAtPriority(priority)
-
-        if delta > 0 and right_gap.duration < delta:
-            final_position = initial_position + right_gap.duration
-        elif delta < 0 and left_gap.duration < abs(delta):
-            final_position = initial_position - left_gap.duration
-
-        self._defaultTo(final_position, priority)
-        EditingContext.finish(self)
-
-    def _defaultTo(self, position, priority):
-        if self._snap:
-            position = self.timeline.snapToEdge(position,
-                position + self.default_span)
-
-        priority = max(self.min_priority, priority)
-        position = max(self.min_position, position)
-
-        self.focus.priority = priority
-        self.focus.setStart(position, snap=self._snap)
-
-        for obj, (s_offset, p_offset) in self.offsets.iteritems():
-            obj.setStart(position + s_offset)
-            obj.priority = priority + p_offset
-
-        return position, priority
-
-    def _finishRipple(self):
-        self._restoreValues(self.ripple_originals)
-
-    def _rippleTo(self, position, priority):
-        if self._snap:
-            position = self.timeline.snapToEdge(position,
-                position + self.ripple_span)
-
-        priority = max(self.min_priority, priority)
-        left_gap, right_gap = self._getGapsAtPriority(priority)
-
-        if left_gap is invalid_gap or right_gap is invalid_gap:
-            if priority == self._last_priority:
-                # abort move
-                return self._last_position, self._last_priority
-
-            # try to do the same time move, using the current priority
-            return self._defaultTo(position, self._last_priority)
-
-        delta = position - self.focus.start
-        if delta > 0 and right_gap.duration < delta:
-            position = self.focus.start + right_gap.duration
-        elif delta < 0 and left_gap.duration < abs(delta):
-            position = self.focus.start - left_gap.duration
-
-        self.focus.setStart(position)
-        self.focus.priority = priority
-        for obj, (s_offset, p_offset) in self.offsets.iteritems():
-            obj.setStart(position + s_offset)
-            obj.priority = priority + p_offset
-        for obj, (s_offset, p_offset) in self.ripple_offsets.iteritems():
-            obj.setStart(position + s_offset)
-            obj.priority = priority + p_offset
-
-        return position, priority
-
-
-class TrimStartContext(EditingContext):
-
-    def __init__(self, timeline, focus, other):
-        EditingContext.__init__(self, timeline, focus, other)
-        self.adjacent = timeline.edges.getObjsAdjacentToStart(focus)
-        self.adjacent_originals = self._saveValues(self.adjacent)
-        self.tracks = set([])
-        if isinstance(self.focus, TrackObject):
-            focus_timeline_object = self.focus.timeline_object
-            self.tracks.add(self.focus.track)
-        else:
-            focus_timeline_object = self.focus
-            tracks = set(track_object.track for track_object in
-                    focus.track_objects)
-            self.tracks.update(tracks)
-        self.focus_timeline_object = focus_timeline_object
-        self.default_originals = self._saveValues([focus_timeline_object])
-
-        ripple = self.timeline.getObjsBeforeTime(focus.start)
-        assert not focus.timeline_object in ripple or focus.duration == 0
-        self.ripple_originals = self._saveValues(ripple)
-        self.ripple_offsets = self._getOffsets(focus.start, focus.priority,
-            ripple)
-        if ripple:
-            self.ripple_min = focus.start - min((obj.start for obj in ripple))
-        else:
-            self.ripple_min = 0
-
-    def _rollTo(self, position, priority):
-        earliest = self.focus.start - self.focus.in_point
-        self.focus.trimStart(max(position, earliest))
-        for obj in self.adjacent:
-            duration = max(0, position - obj.start)
-            obj.setDuration(duration, snap=False)
-        return position, priority
-
-    def _finishRoll(self):
-        self._restoreValues(self.adjacent_originals)
-
-    def _rippleTo(self, position, priority):
-        earliest = self.focus.start - self.focus.in_point
-        latest = earliest + self.focus.factory.duration
-
-        if self.snap:
-            position = self.timeline.snapToEdge(position)
-
-        position = min(latest, max(position, earliest))
-        self.focus.trimStart(position)
-        r_position = max(position, self.ripple_min)
-        for obj, (s_offset, p_offset) in self.ripple_offsets.iteritems():
-            obj.setStart(r_position + s_offset)
-
-        return position, priority
-
-    def _finishRipple(self):
-        self._restoreValues(self.ripple_originals)
-
-    def _defaultTo(self, position, priority):
-        earliest = max(0, self.focus.start - self.focus.in_point)
-        self.focus.trimStart(max(position, earliest), snap=self.snap)
-
-        return position, priority
-
-    def finish(self):
-        initial_position = self.default_originals[self.focus_timeline_object][0]
-
-        timeline_objects = [self.focus_timeline_object]
-        left_gap, right_gap = self._getGapsAtPriority(self.focus.priority,
-                timeline_objects, self.tracks)
-
-        if left_gap is invalid_gap:
-            self._defaultTo(initial_position, self.focus.priority)
-            left_gap, right_gap = Gap.findAroundObject(self.focus_timeline_object)
-            position = initial_position - left_gap.duration
-            self._defaultTo(position, self.focus.priority)
-        EditingContext.finish(self)
-
-
-class TrimEndContext(EditingContext):
-    def __init__(self, timeline, focus, other):
-        EditingContext.__init__(self, timeline, focus, other)
-        self.adjacent = timeline.edges.getObjsAdjacentToEnd(focus)
-        self.adjacent_originals = self._saveValues(self.adjacent)
-        self.tracks = set([])
-        if isinstance(self.focus, TrackObject):
-            focus_timeline_object = self.focus.timeline_object
-            self.tracks.add(focus.track)
-        else:
-            focus_timeline_object = self.focus
-            tracks = set(track_object.track for track_object in
-                    focus.track_objects)
-            self.tracks.update(tracks)
-        self.focus_timeline_object = focus_timeline_object
-        self.default_originals = self._saveValues([focus_timeline_object])
-
-        reference = focus.start + focus.duration
-        ripple = self.timeline.getObjsAfterTime(reference)
-
-        self.ripple_originals = self._saveValues(ripple)
-        self.ripple_offsets = self._getOffsets(reference, self.focus.priority,
-            ripple)
-
-    def _rollTo(self, position, priority):
-        if self._snap:
-            position = self.timeline.snapToEdge(position)
-        duration = max(0, position - self.focus.start)
-        self.focus.setDuration(duration)
-        for obj in self.adjacent:
-            obj.trimStart(position)
-        return position, priority
-
-    def _finishRoll(self):
-        self._restoreValues(self.adjacent_originals)
-
-    def _rippleTo(self, position, priority):
-        earliest = self.focus.start - self.focus.in_point
-        latest = earliest + self.focus.factory.duration
-        if self.snap:
-            position = self.timeline.snapToEdge(position)
-        position = min(latest, max(position, earliest))
-        duration = position - self.focus.start
-        self.focus.setDuration(duration)
-        for obj, (s_offset, p_offset) in self.ripple_offsets.iteritems():
-            obj.setStart(position + s_offset)
-
-        return position, priority
-
-    def _finishRipple(self):
-        self._restoreValues(self.ripple_originals)
-
-    def _defaultTo(self, position, priority):
-        duration = max(0, position - self.focus.start)
-        self.focus.setDuration(duration, snap=self.snap)
-
-        return position, priority
-
-    def finish(self):
-        EditingContext.finish(self)
-
-        initial_position, initial_duration = \
-                self.default_originals[self.focus_timeline_object][0:2]
-        absolute_initial_duration = initial_position + initial_duration
-
-        timeline_objects = [self.focus_timeline_object]
-        left_gap, right_gap = self._getGapsAtPriority(self.focus.priority,
-                timeline_objects, self.tracks)
-
-        if right_gap is invalid_gap:
-            self._defaultTo(absolute_initial_duration, self.focus.priority)
-            left_gap, right_gap = Gap.findAroundObject(self.focus_timeline_object)
-            duration = absolute_initial_duration + right_gap.duration
-            self._defaultTo(duration, self.focus.priority)
-
-
-class Timeline(Signallable, Loggable):
-    """
-    Top-level container for L{TimelineObject}s.
-
-    Signals:
-     - C{duration-changed} : The duration changed.
-     - C{track-added} : A L{timeline.Track} was added.
-     - C{track-removed} : A L{timeline.Track} was removed.
-     - C{selection-changed} : The current selection changed.
-
-    @ivar tracks: list of Tracks controlled by the Timeline
-    @type tracks: List of L{timeline.Track}
-    @ivar duration: Duration of the Timeline in nanoseconds.
-    @type duration: C{long}
-    @ivar selection: The currently selected TimelineObjects
-    @type selection: L{Selection}
-    """
-    __signals__ = {
-        'duration-changed': ['duration'],
-        'timeline-object-added': ['timeline_object'],
-        'timeline-object-removed': ['timeline_object'],
-        'track-added': ['track'],
-        'track-removed': ['track'],
-        'selection-changed': [],
-        'disable-updates': ['bool']}
-
-    def __init__(self):
-        Loggable.__init__(self)
-        self.tracks = []
-        self.selection = Selection()
-        self.selection.connect("selection-changed", self._selectionChanged)
-        self.timeline_objects = []
-        self.duration = 0
-        self.links = []
-        # FIXME : What's the unit of dead_band ?
-        self.dead_band = 10
-        self.edges = TimelineEdges()
-        self.property_trackers = {}
-        self._video_caps = None
-
-    def addTrack(self, track):
-        """
-        Add the track to the timeline.
-
-        @param track: The track to add
-        @type track: L{timeline.Track}
-        @raises TimelineError: If the track is already in the timeline.
-        """
-        if track in self.tracks:
-            raise TimelineError("Provided track already controlled by the timeline")
-
-        self.tracks.append(track)
-        self.updateVideoCaps()
-        self._updateDuration()
-        track.connect('start-changed', self._trackDurationChangedCb)
-        track.connect('duration-changed', self._trackDurationChangedCb)
-
-        self.emit('track-added', track)
-
-    def removeTrack(self, track, removeTrackObjects=True):
-        """
-        Remove the track from the timeline.
-
-        @param track: The track to remove.
-        @type track: L{timeline.Track}
-        @param removeTrackObjects: If C{True}, clear the Track from its objects.
-        @type removeTrackObjects: C{bool}
-        @raises TimelineError: If the track isn't in the timeline.
-        """
-        try:
-            self.tracks.remove(track)
-        except ValueError:
-            raise TimelineError("Track not controlled by this Timeline")
-
-        if removeTrackObjects:
-            track.removeAllTrackObjects()
-
-        self.emit('track-removed', track)
-
-    def _selectionChanged(self, selection):
-        self.emit("selection-changed")
-
-    def _trackStartChangedCb(self, track, duration):
-        self._updateDuration()
-
-    def _trackDurationChangedCb(self, track, duration):
-        self._updateDuration()
-
-    def _updateDuration(self):
-        duration = max([track.start + track.duration for track in self.tracks])
-        if duration != self.duration:
-            self.duration = duration
-            self.emit('duration-changed', duration)
-
-    def updateVideoCaps(self, caps=None):
-        if caps:
-            self._video_caps = caps
-
-        if self._video_caps:
-            for track in self.tracks:
-                if type(track.stream) is VideoStream:
-                    track.updateCaps(self._video_caps)
-
-    def addTimelineObject(self, obj):
-        """
-        Add the TimelineObject to the Timeline.
-
-        @param obj: The object to add
-        @type obj: L{TimelineObject}
-        @raises TimelineError: if the object is used in another Timeline.
-        """
-        self.debug("obj:%r", obj)
-        if obj.timeline is not None:
-            raise TimelineError("TimelineObject already controlled by another Timeline")
-
-        # FIXME : wait... what's wrong with having empty timeline objects ??
-        # And even if it was.. this shouldn't be checked here imho.
-        if not obj.track_objects:
-            raise TimelineError("TimelineObject doesn't have any TrackObject (THIS IS A VERY DUBIOUS CHECK, WE SHOULD ACCEPT THIS)")
-
-        self._connectToTimelineObject(obj)
-
-        start_insort_right(self.timeline_objects, obj)
-        obj.timeline = self
-
-        self.edges.addTimelineObject(obj)
-
-        self.emit("timeline-object-added", obj)
-
-    def removeTimelineObject(self, obj, deep=False):
-        """
-        Remove the given object from the Timeline.
-
-        @param obj: The object to remove
-        @type obj: L{TimelineObject}
-        @param deep: If C{True}, remove the L{TrackObject}s associated to the object.
-        @type deep: C{bool}
-        @raises TimelineError: If the object doesn't belong to the timeline.
-        """
-        try:
-            self.timeline_objects.remove(obj)
-        except ValueError:
-            raise TimelineError("TimelineObject not controlled by this Timeline")
-
-        if obj.link is not None:
-            obj.link.removeTimelineObject(obj)
-
-        self._disconnectFromTimelineObject(obj)
-
-        obj.timeline = None
-
-        self.edges.removeTimelineObject(obj)
-
-        self.emit("timeline-object-removed", obj)
-
-        if deep:
-            for track_object in obj.track_objects:
-                track = track_object.track
-                track.removeTrackObject(track_object)
-
-    def removeMultipleTimelineObjects(self, objs, deep=False):
-        """
-        Remove multiple objects from the Timeline.
-
-        @param objs: The collection of objects to remove
-        @type obj: collection(L{TimelineObject})
-        @param deep: If C{True}, remove the L{TrackObject}s associated with
-             these objects.
-        @type deep: C{bool}
-        @raises TimelineError: If the object doesn't belong to the timeline.
-        """
-        for obj in objs:
-            self.removeTimelineObject(obj, False)
-
-        # If we are going to remove the associated track objects, first
-        # group them by track so we can use the track's removeMultiple method.
-        if deep:
-            track_aggregate = collections.defaultdict(list)
-            for obj in objs:
-                for track_object in obj.track_objects:
-                    track_aggregate[track_object.track].append(track_object)
-            for track, objects_to_remove in track_aggregate.items():
-                track.removeMultipleTrackObjects(objects_to_remove)
-
-    def removeFactory(self, factory):
-        """Remove every instance factory in the timeline
-        @param factory: the factory to remove from the timeline
-        """
-        objs = [obj for obj in self.timeline_objects if obj.factory is
-            factory]
-        self.removeMultipleTimelineObjects(objs, deep=True)
-
-    def usesFactory(self, factory):
-        """
-        Return whether the specified factory is present in the timeline.
-        @param the factory you are looking for
-        @type factory
-        @returns True if found, or False if not in the timeline.
-        """
-        for obj in self.timeline_objects:
-            if obj.factory is factory:
-                return True
+    def do_expose_event(self, event):
+        allocation = self.get_allocation()
+        width = allocation.width
+        height = allocation.height
+        # draw the canvas background
+        # we must have props.clear_background set to False
+
+        self.style.apply_default_background(event.window,
+            True,
+            gtk.STATE_ACTIVE,
+            event.area,
+            event.area.x, event.area.y,
+            event.area.width, event.area.height)
+
+        goocanvas.Canvas.do_expose_event(self, event)
+
+## implements selection marquee
+
+    _selecting = False
+    _mousedown = None
+    _marquee = None
+    _got_motion_notify = False
+
+    def getItemsInArea(self, x1, y1, x2, y2):
+        '''
+        Permits to get the Non UI L{Track}/L{TrackObject} in a list of set
+        corresponding to the L{Track}/L{TrackObject} which are in the are
+
+        @param x1: The horizontal coordinate of the up left corner of the area
+        @type x1: An C{int}
+        @param y1: The vertical coordinate of the up left corner of the area
+        @type y1: An C{int}
+        @param x2: The horizontal coordinate of the down right corner of the
+                   area
+        @type x2: An C{int}
+        @param x2: The vertical coordinate of the down right corner of the area
+        @type x2: An C{int}
+
+        @returns: A list of L{Track}, L{TrackObject} tuples
+        '''
+        items = self.get_items_in_area(goocanvas.Bounds(x1, y1, x2, y2), True,
+            True, True)
+        if not items:
+            return [], []
+
+        tracks = set()
+        track_objects = set()
+
+        for item in items:
+            if isinstance(item, Track):
+                tracks.add(item.track)
+            elif isinstance(item, TrackObject):
+                track_objects.add(item.element)
+
+        return tracks, track_objects
+
+    def _normalize(self, p1, p2):
+        w, h = p1 - p2
+        w = abs(w)
+        h = abs(h)
+        x = min(p1[0], p2[0])
+        y = min(p1[1], p2[1])
+        return (x, y), (w, h)
+
+    def _get_adjustment(self, xadj=True, yadj=True):
+        return Point(self.app.gui.timeline_ui.hadj.get_value() * xadj,
+                     self.app.gui.timeline_ui.vadj.get_value() * yadj)
+
+    def _selectionDrag(self, item, target, event):
+        if self._selecting:
+            self._got_motion_notify = True
+            cur = self.from_event(event) - self._get_adjustment(True, False)
+            pos, size = self._normalize(self._mousedown, cur)
+            self._marquee.props.x, self._marquee.props.y = pos
+            self._marquee.props.width, self._marquee.props.height = size
+            return True
         return False
 
-    def _timelineObjectStartChangedCb(self, timeline_object, start):
-        self.timeline_objects.remove(timeline_object)
-        start_insort_right(self.timeline_objects, timeline_object)
+    def _selectionStart(self, item, target, event):
+        self._selecting = True
+        self._marquee.props.visibility = goocanvas.ITEM_VISIBLE
+        self._mousedown = self.from_event(event) + self._get_adjustment(False, True)
+        self._marquee.props.width = 0
+        self._marquee.props.height = 0
+        self.pointer_grab(self.get_root_item(), gtk.gdk.POINTER_MOTION_MASK |
+            gtk.gdk.BUTTON_RELEASE_MASK, self._cursor, event.time)
+        return True
 
-    def _timelineObjectDurationChangedCb(self, timeline_object, duration):
-        pass
+    def _selectionEnd(self, item, target, event):
+        self.pointer_ungrab(self.get_root_item(), event.time)
+        self._selecting = False
+        self._marquee.props.visibility = goocanvas.ITEM_INVISIBLE
+        if not self._got_motion_notify:
+            self._timeline.selection.setSelection([], 0)
+            self.app.current.seeker.seek(Zoomable.pixelToNs(event.x))
+        elif self._timeline is not None:
+            self._got_motion_notify = False
+            mode = 0
+            if event.get_state() & gtk.gdk.SHIFT_MASK:
+                mode = 1
+            if event.get_state() & gtk.gdk.CONTROL_MASK:
+                mode = 2
+            selected = self._objectsUnderMarquee()
+            self.app.projectManager.current.emit("selected-changed", selected)
+            self._timeline.selection.setSelection(self._objectsUnderMarquee(), mode)
+        return True
 
-    def _connectToTimelineObject(self, timeline_object):
-        timeline_object.connect('start-changed',
-                self._timelineObjectStartChangedCb)
-        timeline_object.connect('duration-changed',
-                self._timelineObjectDurationChangedCb)
+    def _objectsUnderMarquee(self):
+        items = self.get_items_in_area(self._marquee.get_bounds(), True, True,
+            True)
+        if items:
+            return set((item.element for item in items if isinstance(item,
+                TrackObject) and item.bg in items))
+        return set()
 
-    def _disconnectFromTimelineObject(self, timeline_object):
-        timeline_object.disconnect_by_function(self._timelineObjectStartChangedCb)
-        timeline_object.disconnect_by_function(self._timelineObjectDurationChangedCb)
+## playhead implementation
 
-    # FIXME : shouldn't this be made more generic (i.e. not specific to source factories) ?
-    # FIXME : Maybe it should be up to the ObjectFactory to create the TimelineObject since
-    #    it would know the exact type of TimelineObject to create with what properties (essential
-    #    for being able to create Groups and importing Timelines within Timelines.
-    def addSourceFactory(self, factory, stream_map=None, strict=False):
+    position = 0
+
+    def timelinePositionChanged(self, position):
+        self.position = position
+        self._playhead.props.x = self.nsToPixel(position)
+
+    max_duration = 0
+
+    def setMaxDuration(self, duration):
+        self.max_duration = duration
+        self._request_size()
+
+    def _request_size(self):
+        alloc = self.get_allocation()
+        self.set_bounds(0, 0, alloc.width, alloc.height)
+        self._playhead.props.height = (self.height + SPACING)
+
+    def _size_allocate_cb(self, widget, allocation):
+        self._request_size()
+
+    def zoomChanged(self):
+        self.queue_draw()
+
+## snapping indicator
+    def _snapCb(self, unused_timeline, obj1, obj2, position):
         """
-        Creates a TimelineObject for the given SourceFactory and adds it to the timeline.
-
-        @param factory: The factory to add.
-        @type factory: L{SourceFactory}
-        @param stream_map: A mapping of factory streams to track streams.
-        @type stream_map: C{dict} of MultimediaStream => MultimediaStream
-        @param strict: If C{True} only add the factory if an exact stream mapping can be
-        calculated.
-        @type strict: C{bool}
-        @raises TimelineError: if C{strict} is True and no exact mapping could be calculated.
+        Display or hide a snapping indicator line
         """
-        self.debug("factory:%r", factory)
-        output_streams = factory.getOutputStreams()
-        if not output_streams:
-            raise TimelineError("SourceFactory doesn't provide any Output Streams")
-
-        if stream_map is None:
-            stream_map = self._getSourceFactoryStreamMap(factory)
-            if len(stream_map) < len(output_streams):
-                # we couldn't assign each stream to a track automatically,
-                # error out and require the caller to pass a stream_map
-                self.error("Couldn't find a complete stream mapping (self:%d < factory:%d)",
-                           len(stream_map), len(output_streams))
-                if strict:
-                    raise TimelineError("Couldn't map all streams to available Tracks")
-
-        timeline_object = TimelineObject(factory)
-        start = 0
-        for stream, track in stream_map.iteritems():
-            self.debug("Stream: %s, Track: %s, Track duration: %d", str(stream),
-                       str(track), track.duration)
-            start = max(start, track.duration)
-            track_object = SourceTrackObject(factory, stream)
-            track.addTrackObject(track_object)
-            timeline_object.addTrackObject(track_object)
-
-        timeline_object.start = start
-        self.addTimelineObject(timeline_object)
-        return timeline_object
-
-    def addEffectFactoryOnObject(self, factory, timeline_objects):
-        """
-        Add EffectTracks corresponding to the effect from the factory to the corresponding
-        L{TimelineObject}s on the timeline
-
-        @param factory: The EffectFactory to add.
-        @type factory: L{EffectFactory}
-        @timeline_objects: The L{TimelineObject}s on whiches you want to add TrackObjects
-                           corresponding to the L{EffectFactory}
-        @type timeline_objects: A C{List} of L{TimelineObject}s
-
-        @raises TimelineError: if the factory doesn't have input or output streams
-        @returns: A list of L{TimelineObject}, L{TrackObject} tuples
-        """
-        #Note: We should maybe be able to handle several streams for effects which
-        #are actually working on audio/video streams
-        self.debug("factory:%r", factory)
-
-        output_stream = factory.getOutputStreams()
-        if not output_stream:
-            raise TimelineError()
-        output_stream = output_stream[0]
-
-        input_stream = factory.getInputStreams()
-        if not input_stream:
-            raise TimelineError()
-        input_stream = input_stream[0]
-
-        track = None
-        for track_ in self.tracks:
-            if type(track_.stream) == type(input_stream):
-                track = track_
-                break
-
-        if track is None:
-            raise TimelineError("There is no Track to add the effect to")
-
-        if not timeline_objects:
-            raise TimelineError("There is no timeline object to add effect to")
-
-        listTimelineObjectTrackObject = []
-        track_object = TrackEffect(factory, input_stream)
-
-        for obj in timeline_objects:
-            copy_track_obj = track_object.copy()
-            track.addTrackObject(copy_track_obj)
-            copy_track_obj.start = obj.start
-            copy_track_obj.duration = obj.duration
-            copy_track_obj.media_duration = obj.media_duration
-            obj.addTrackObject(copy_track_obj)
-            listTimelineObjectTrackObject.append((obj, copy_track_obj))
-
-        self.debug("%s", ["TimelineObject %s => Track object: %s |"\
-                           % (listTo[0], listTo[1])\
-                           for listTo in listTimelineObjectTrackObject])
-        return listTimelineObjectTrackObject
-
-    def _getSourceFactoryStreamMap(self, factory):
-        # track.stream -> track
-        track_stream_to_track_map = dict((track.stream, track)
-                for track in self.tracks)
-
-        # output_stream -> track.stream
-        output_stream_to_track_stream_map = \
-                match_stream_groups_map(factory.output_streams,
-                        [track.stream for track in self.tracks])
-
-        # output_stream -> track (result)
-        output_stream_to_track_map = {}
-        for stream, track_stream in output_stream_to_track_stream_map.iteritems():
-            output_stream_to_track_map[stream] = \
-                    track_stream_to_track_map[track_stream]
-
-        return output_stream_to_track_map
-
-    def getPreviousTimelineObject(self, obj, priority=-1, tracks=None):
-        if tracks is None:
-            skip = None
+        if position == 0:
+            self._snapEndedCb()
         else:
+            self.debug("Snapping indicator at %d" % position)
+            self._snap_indicator.props.x = Zoomable.nsToPixel(position)
+            self._snap_indicator.props.height = self.height
+            self._snap_indicator.props.visibility = goocanvas.ITEM_VISIBLE
 
-            def skipIfNotInTheseTracks(timeline_object):
-                return self._skipIfNotInTracks(timeline_object, tracks)
-            skip = skipIfNotInTheseTracks
+    def _snapEndedCb(self, *args):
+        self._snap_indicator.props.visibility = goocanvas.ITEM_INVISIBLE
 
-        prev = getPreviousObject(obj, self.timeline_objects,
-                priority, skip=skip)
+## settings callbacks
+    def _setSettings(self):
+        self.zoomChanged()
 
-        if prev is None:
-            raise TimelineError("no previous timeline object", obj)
+    settings = receiver(_setSettings)
 
-        return prev
+    @handler(settings, "edgeSnapDeadbandChanged")
+    def _edgeSnapDeadbandChangedCb(self, settings):
+        self.zoomChanged()
 
-    def getNextTimelineObject(self, obj, priority=-1, tracks=None):
-        if tracks is None:
-            skip = None
-        else:
+## Timeline callbacks
 
-            def skipIfNotInTheseTracks(timeline_object):
-                return self._skipIfNotInTracks(timeline_object, tracks)
-            skip = skipIfNotInTheseTracks
+    def setTimeline(self, timeline):
+        while self._tracks:
+            self._trackRemovedCb(None, 0)
 
-        next = getNextObject(obj, self.timeline_objects, priority, skip)
-        if next is None:
-            raise TimelineError("no next timeline object", obj)
+        self._timeline = timeline
+        if self._timeline:
+            for track in self._timeline.get_tracks():
+                self._trackAddedCb(None, track)
+            self._timeline.connect("track-added", self._trackAddedCb)
+            self._timeline.connect("track-removed", self._trackRemovedCb)
+            self._timeline.connect("snapping-started", self._snapCb)
+            self._timeline.connect("snapping-ended", self._snapEndedCb)
+        self.zoomChanged()
 
-        return next
+    def getTimeline(self):
+        return self._timeline
 
-    def _skipIfNotInTracks(self, timeline_object, tracks):
-        timeline_object_tracks = set(track_object.track for track_object in
-                timeline_object.track_objects)
+    timeline = property(getTimeline, setTimeline, None, "The timeline property")
 
-        return not tracks.intersection(timeline_object_tracks)
+    def _trackAddedCb(self, timeline, track):
+        track = Track(self.app, track, self._timeline)
+        self._tracks.append(track)
+        track.set_canvas(self)
+        self.tracks.add_child(track)
+        self.regroupTracks()
 
-    def setSelectionToObj(self, obj, mode):
+    def _trackRemovedCb(self, unused_timeline, position):
+        track = self._tracks[position]
+        del self._tracks[position]
+        track.remove()
+        self.regroupTracks()
+
+    def regroupTracks(self):
         """
-        Update the timeline's selection with the given object and mode.
-
-        @see: L{Selection.setToObj}
+        Make it so we have a real differentiation between the Audio tracks
+        and video tracks
+        This method should be called each time a change happen in the timeline
         """
-        if mode == SELECT_BETWEEN:
-            if self.selection.last_single_obj:
-                last = self.selection.last_single_obj
-                earliest = min(last.start, obj.start)
-                latest = max(last.start + last.duration,
-                    obj.start + obj.duration)
-                min_priority = min(last.priority, obj.priority)
-                max_priority = max(last.priority, obj.priority)
-                objs = self.getObjsInRegion(earliest, latest,
-                    min_priority, max_priority)
-                self.setSelectionTo(objs, SELECT)
-                return
+        height = 0
+        for i, track in enumerate(self._tracks):
+            track.set_simple_transform(0, height, 1, 0)
+            height += track.height + TRACK_SPACING
+        self.height = height
+        self._request_size()
 
-        self.selection.setToObj(obj, mode)
 
-    def setSelectionTo(self, selection, mode):
-        """
-        Update the timeline's selection with the given selection and mode.
+class TimelineControls(gtk.VBox, Loggable):
+    """Contains the timeline track names."""
 
-        @see: L{Selection.setSelection}
-        """
-        self.selection.setSelection(selection, mode)
+    def __init__(self):
+        gtk.VBox.__init__(self)
+        Loggable.__init__(self)
+        self._tracks = []
+        self._timeline = None
+        self.set_spacing(LAYER_SPACING)
+        self.set_size_request(TRACK_CONTROL_WIDTH, -1)
 
-    def linkSelection(self):
-        """
-        Link the currently selected timeline objects.
-        """
-        if len(self.selection) < 2:
-            return
+## Timeline callbacks
 
-        # list of links that we joined and so need to be removed
-        old_links = []
+    def getTimeline(self):
+        return self._timeline
 
-        # we start with a new empty link and we expand it as we find new objects
-        # and links
-        link = Link()
-        for timeline_object in self.selection:
-            if timeline_object.link is not None:
-                old_links.append(timeline_object.link)
+    def setTimeline(self, timeline):
+        self.debug("Setting timeline %s", timeline)
 
-                link = link.join(timeline_object.link)
-            else:
-                link.addTimelineObject(timeline_object)
+        while self._tracks:
+            self._trackRemovedCb(None, 0)
 
-        for old_link in old_links:
-            self.links.remove(old_link)
+        if timeline:
+            for track in timeline.get_tracks():
+                self._trackAddedCb(None, track)
 
-        self.links.append(link)
-        self.emit("selection-changed")
+            timeline.connect("track-added", self._trackAddedCb)
+            timeline.connect("track-removed", self._trackRemovedCb)
+            self.connect = True
 
-    def unlinkSelection(self):
-        """
-        Unlink the currently selected timeline objects.
-        """
-        empty_links = set()
-        for timeline_object in self.selection:
-            if timeline_object.link is None:
-                continue
+        elif self._timeline:
+            self._timeline.disconnect_by_func(self._trackAddedCb)
+            self._timeline.disconnect_by_func(self._trackRemovedCb)
 
-            link = timeline_object.link
-            link.removeTimelineObject(timeline_object)
-            if not link.timeline_objects:
-                empty_links.add(link)
+        self._timeline = timeline
 
-        for link in empty_links:
-            self.links.remove(link)
-        self.emit("selection-changed")
+    timeline = property(getTimeline, setTimeline, None, "The timeline property")
 
-    def groupSelection(self):
-        if len(self.selection.selected) < 2:
-            return
+    def _trackAddedCb(self, timeline, track):
+        track_control = TrackControls(track)
+        self._tracks.append(track_control)
+        self.pack_start(track_control, False, False)
+        track_control.show()
 
-        # FIXME: pass a proper factory
-        new_timeline_object = TimelineObject(factory=None)
+    def _trackRemovedCb(self, unused_timeline, position):
+        track = self._tracks[position]
+        track.track = None
+        del self._tracks[position]
+        self.remove(track)
 
-        tracks = []
-        for timeline_object in self.selection.selected:
-            for track_object in timeline_object.track_objects:
-                new_track_object = track_object.copy()
-                tracks.append(track_object.track)
-                new_timeline_object.addTrackObject(new_track_object)
 
-        self.addTimelineObject(new_timeline_object)
+class InfoStub(gtk.HBox, Loggable):
+    """
+    Box used to display information on the current state of the timeline
+    """
 
-        old_track_objects = []
-        for timeline_object in list(self.selection.selected):
-            old_track_objects.extend(timeline_object.track_objects)
-            self.removeTimelineObject(timeline_object, deep=True)
+    def __init__(self):
+        gtk.HBox.__init__(self)
+        Loggable.__init__(self)
+        self.errors = []
+        self._scroll_pos_ns = 0
+        self._errorsmessage = _("One or more GStreamer errors occured!")
+        self._makeUI()
 
-        self.selection.setSelection(old_track_objects, UNSELECT)
-        self.selection.setSelection(new_timeline_object.track_objects, SELECT_ADD)
+    def _makeUI(self):
+        self.set_spacing(SPACING)
+        self.erroricon = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
+                                                  gtk.ICON_SIZE_SMALL_TOOLBAR)
 
-    def ungroupSelection(self):
-        new_track_objects = []
-        for timeline_object in list(self.selection.selected):
-            if len(timeline_object.track_objects) == 1:
-                continue
+        self.pack_start(self.erroricon, expand=False)
 
-            self.selection.setSelection(timeline_object.track_objects, UNSELECT)
-            n_track_effects = []
-            n_tl_objects = []
+        self.infolabel = gtk.Label(self._errorsmessage)
+        self.infolabel.set_alignment(0, 0.5)
 
-            for track_object in list(timeline_object.track_objects):
-                if isinstance(track_object, TrackEffect):
-                    n_track_effects.append(track_object)
+        self.questionbutton = gtk.Button()
+        self.infoicon = gtk.Image()
+        self.infoicon.set_from_stock(gtk.STOCK_INFO, gtk.ICON_SIZE_SMALL_TOOLBAR)
+        self.questionbutton.add(self.infoicon)
+        self.questionbutton.connect("clicked", self._questionButtonClickedCb)
+
+        self.pack_start(self.infolabel, expand=True, fill=True)
+        self.pack_start(self.questionbutton, expand=False)
+
+    def addErrors(self, *args):
+        self.errors.append(args)
+        self.show()
+
+    def _errorDialogBoxCloseCb(self, dialog):
+        dialog.destroy()
+
+    def _errorDialogBoxResponseCb(self, dialog, unused_response):
+        dialog.destroy()
+
+    def _questionButtonClickedCb(self, unused_button):
+        msgs = (_("Error List"),
+            _("The following errors have been reported:"))
+        # show error dialog
+        dbox = FileListErrorDialog(*msgs)
+        dbox.connect("close", self._errorDialogBoxCloseCb)
+        dbox.connect("response", self._errorDialogBoxResponseCb)
+        for reason, extra in self.errors:
+            dbox.addFailedFile(None, reason, extra)
+        dbox.show()
+        # reset error list
+        self.errors = []
+        self.hide()
+
+    def show(self):
+        self.log("showing")
+        self.show_all()
+
+
+class Timeline(gtk.Table, Loggable, Zoomable):
+    """
+    Initiate and manage the timeline's user interface components.
+
+    This class is not to be confused with project.py's
+    "timeline" instance of GESTimeline.
+    """
+
+    def __init__(self, instance, ui_manager):
+        gtk.Table.__init__(self, rows=2, columns=1, homogeneous=False)
+        Loggable.__init__(self)
+        Zoomable.__init__(self)
+        self.log("Creating Timeline")
+
+        self._updateZoomSlider = True
+        self.ui_manager = ui_manager
+        self.app = instance
+        self._temp_objects = []
+        self._drag_started = False
+        self._factories = None
+        self._finish_drag = False
+        self._createUI()
+        self.rate = gst.Fraction(1, 1)
+        self._timeline = None
+
+        # Timeline edition related fields
+        self._creating_tckobjs_sigid = {}
+        self._move_context = None
+
+        self._project = None
+        self._projectmanager = None
+
+        #Ids of the layer-added and layer-removed signals
+        self._layer_sig_ids = []
+
+        self._settings = self.app.settings
+        self._settings.connect("edgeSnapDeadbandChanged",
+                self._snapDistanceChangedCb)
+
+    def _createUI(self):
+        self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        self.props.row_spacing = 2
+        self.props.column_spacing = 2
+        self.hadj = gtk.Adjustment()
+        self.vadj = gtk.Adjustment()
+
+        # zooming slider's "zoom fit" button
+        zoom_controls_hbox = gtk.HBox()
+        zoom_fit_btn = gtk.Button()
+        zoom_fit_btn.set_relief(gtk.RELIEF_NONE)
+        zoom_fit_btn.set_tooltip_text(ZOOM_FIT)
+        zoom_fit_icon = gtk.Image()
+        zoom_fit_icon.set_from_stock(gtk.STOCK_ZOOM_FIT, gtk.ICON_SIZE_BUTTON)
+        zoom_fit_btn_hbox = gtk.HBox()
+        zoom_fit_btn_hbox.pack_start(zoom_fit_icon)
+        zoom_fit_btn_hbox.pack_start(gtk.Label(_("Zoom")))
+        zoom_fit_btn.add(zoom_fit_btn_hbox)
+        zoom_fit_btn.connect("clicked", self._zoomFitCb)
+        zoom_controls_hbox.pack_start(zoom_fit_btn)
+        # zooming slider
+        self._zoomAdjustment = gtk.Adjustment()
+        self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
+        self._zoomAdjustment.connect("value-changed", self._zoomAdjustmentChangedCb)
+        self._zoomAdjustment.props.lower = 0
+        self._zoomAdjustment.props.upper = Zoomable.zoom_steps
+        zoomslider = gtk.HScale(self._zoomAdjustment)
+        zoomslider.props.draw_value = False
+        zoomslider.set_tooltip_text(_("Zoom Timeline"))
+        zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
+        zoomslider.set_size_request(100, 0)  # At least 100px wide for precision
+        zoom_controls_hbox.pack_start(zoomslider)
+        self.attach(zoom_controls_hbox, 0, 1, 0, 1, yoptions=0, xoptions=gtk.FILL)
+
+        # controls for tracks and layers
+        self._controls = TimelineControls()
+        controlwindow = gtk.Viewport(None, self.vadj)
+        controlwindow.add(self._controls)
+        controlwindow.set_size_request(-1, 1)
+        controlwindow.set_shadow_type(gtk.SHADOW_OUT)
+        self.attach(controlwindow, 0, 1, 1, 2, xoptions=gtk.FILL)
+
+        # timeline ruler
+        self.ruler = ruler.ScaleRuler(self.app, self.hadj)
+        self.ruler.set_size_request(0, 25)
+        self.ruler.connect("key-press-event", self._keyPressEventCb)
+        rulerframe = gtk.Frame()
+        rulerframe.set_shadow_type(gtk.SHADOW_OUT)
+        rulerframe.add(self.ruler)
+        self.attach(rulerframe, 1, 2, 0, 1, yoptions=0)
+
+        # proportional timeline
+        self._canvas = TimelineCanvas(self.app)
+        self._root_item = self._canvas.get_root_item()
+        self.attach(self._canvas, 1, 2, 1, 2)
+
+        # scrollbar
+        self._hscrollbar = gtk.HScrollbar(self.hadj)
+        self._vscrollbar = gtk.VScrollbar(self.vadj)
+        self.attach(self._hscrollbar, 1, 2, 2, 3, yoptions=0)
+        self.attach(self._vscrollbar, 2, 3, 1, 2, xoptions=0)
+        self.hadj.connect("value-changed", self._updateScrollPosition)
+        self.vadj.connect("value-changed", self._updateScrollPosition)
+
+        # error infostub
+        self.infostub = InfoStub()
+        self.attach(self.infostub, 1, 2, 4, 5, yoptions=0)
+
+        self.show_all()
+        self.infostub.hide()
+
+        # toolbar actions
+        actions = (
+            ("ZoomIn", gtk.STOCK_ZOOM_IN, None,
+            "<Control>plus", ZOOM_IN, self._zoomInCb),
+
+            ("ZoomOut", gtk.STOCK_ZOOM_OUT, None,
+            "<Control>minus", ZOOM_OUT, self._zoomOutCb),
+
+            ("ZoomFit", gtk.STOCK_ZOOM_FIT, None,
+            None, ZOOM_FIT, self._zoomFitCb),
+
+            ("Screenshot", None, _("Export current frame..."),
+            None, _("Export the frame at the current playhead "
+                    "position as an image file."), self._screenshotCb),
+
+            # Alternate keyboard shortcuts to the actions above
+            ("ControlEqualAccel", gtk.STOCK_ZOOM_IN, None,
+            "<Control>equal", ZOOM_IN, self._zoomInCb),
+
+            ("ControlKPAddAccel", gtk.STOCK_ZOOM_IN, None,
+            "<Control>KP_Add", ZOOM_IN, self._zoomInCb),
+
+            ("ControlKPSubtractAccel", gtk.STOCK_ZOOM_OUT, None,
+            "<Control>KP_Subtract", ZOOM_OUT, self._zoomOutCb),
+        )
+
+        selection_actions = (
+            ("DeleteObj", gtk.STOCK_DELETE, None,
+            "Delete", DELETE, self.deleteSelected),
+
+            ("UnlinkObj", "pitivi-unlink", None,
+            "<Shift><Control>L", UNLINK, self.unlinkSelected),
+
+            ("LinkObj", "pitivi-link", None,
+            "<Control>L", LINK, self.linkSelected),
+
+            ("UngroupObj", "pitivi-ungroup", None,
+            "<Shift><Control>G", UNGROUP, self.ungroupSelected),
+
+            ("GroupObj", "pitivi-group", None,
+            "<Control>G", GROUP, self.groupSelected),
+
+            ("AlignObj", "pitivi-align", None,
+            "<Shift><Control>A", ALIGN, self.alignSelected),
+        )
+
+        self.playhead_actions = (
+            ("PlayPause", gtk.STOCK_MEDIA_PLAY, None,
+            "space", _("Start Playback"), self.playPause),
+
+            ("Split", "pitivi-split", _("Split"),
+            "S", SPLIT, self.split),
+
+            ("Keyframe", "pitivi-keyframe", _("Add a Keyframe"),
+            "K", KEYFRAME, self.keyframe),
+
+            ("Prevframe", "pitivi-prevframe", _("_Previous Keyframe"),
+            "E", PREVFRAME, self.prevframe),
+
+            ("Nextframe", "pitivi-nextframe", _("_Next Keyframe"),
+            "R", NEXTFRAME, self.nextframe),
+        )
+
+        actiongroup = gtk.ActionGroup("timelinepermanent")
+        actiongroup.add_actions(actions)
+        self.ui_manager.insert_action_group(actiongroup, 0)
+
+        actiongroup = gtk.ActionGroup("timelineselection")
+        actiongroup.add_actions(selection_actions)
+        actiongroup.add_actions(self.playhead_actions)
+        self.link_action = actiongroup.get_action("LinkObj")
+        self.unlink_action = actiongroup.get_action("UnlinkObj")
+        self.group_action = actiongroup.get_action("GroupObj")
+        self.ungroup_action = actiongroup.get_action("UngroupObj")
+        self.align_action = actiongroup.get_action("AlignObj")
+        self.delete_action = actiongroup.get_action("DeleteObj")
+        self.split_action = actiongroup.get_action("Split")
+        self.keyframe_action = actiongroup.get_action("Keyframe")
+        self.prevframe_action = actiongroup.get_action("Prevframe")
+        self.nextframe_action = actiongroup.get_action("Nextframe")
+
+        self.ui_manager.insert_action_group(actiongroup, -1)
+        self.ui_manager.add_ui_from_string(ui)
+
+        # drag and drop
+        self._canvas.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
+            [FILESOURCE_TUPLE, EFFECT_TUPLE],
+            gtk.gdk.ACTION_COPY)
+
+        self._canvas.connect("drag-data-received", self._dragDataReceivedCb)
+        self._canvas.connect("drag-leave", self._dragLeaveCb)
+        self._canvas.connect("drag-drop", self._dragDropCb)
+        self._canvas.connect("drag-motion", self._dragMotionCb)
+        self._canvas.connect("key-press-event", self._keyPressEventCb)
+        self._canvas.connect("scroll-event", self._scrollEventCb)
+
+## Event callbacks
+    def _keyPressEventCb(self, unused_widget, event):
+        kv = event.keyval
+        self.debug("kv:%r", kv)
+        if kv not in [gtk.keysyms.Left, gtk.keysyms.Right]:
+            return False
+        mod = event.get_state()
+        try:
+            if mod & gtk.gdk.CONTROL_MASK:
+                now = self._project.pipeline.getPosition()
+                ltime, rtime = self._project.timeline.edges.closest(now)
+
+            if kv == gtk.keysyms.Left:
+                if mod & gtk.gdk.SHIFT_MASK:
+                    self._seeker.seekRelative(0 - gst.SECOND)
+                elif mod & gtk.gdk.CONTROL_MASK:
+                    self._seeker.seek(ltime + 1)
                 else:
-                    new_track_object = track_object.copy()
-                    new_timeline_object = TimelineObject(new_track_object.factory)
-                    new_timeline_object.addTrackObject(new_track_object)
-                    n_tl_objects.append(new_timeline_object)
+                    self._seeker.seekRelative(0 - long(self.rate * gst.SECOND))
+            elif kv == gtk.keysyms.Right:
+                if mod & gtk.gdk.SHIFT_MASK:
+                    self._seeker.seekRelative(gst.SECOND)
+                elif mod & gtk.gdk.CONTROL_MASK:
+                    self._seeker.seek(rtime + 1)
+                else:
+                    self._seeker.seekRelative(long(self.rate * gst.SECOND))
+        finally:
+            return True
 
-            for tl_object in n_tl_objects:
-                for tck_effect in n_track_effects:
-                    if tl_object.track_objects[0].stream_type == tck_effect.stream_type:
-                        self.addEffectFactoryOnObject(tck_effect.factory, [tl_object])
+## Drag and Drop callbacks
 
-                self.addTimelineObject(tl_object)
-
-            new_track_objects.extend(new_timeline_object.track_objects)
-
-            self.removeTimelineObject(timeline_object, deep=True)
-
-        self.selection.setSelection(new_track_objects, SELECT_ADD)
-
-    def alignSelection(self, callback):
-        """
-        Auto-align the selected set of L{TimelineObject}s based on their
-        contents.  Return asynchronously, and call back when finished.
-
-        @param callback: function to call (with no arguments) when finished.
-        @type callback: function
-        @returns: a L{ProgressMeter} indicating the state of the alignment
-            process
-        @rtype: L{ProgressMeter}
-        """
-        auto_aligner = AutoAligner(self.selection.selected, callback)
-        progress_meter = auto_aligner.start()
-        return progress_meter
-
-    def deleteSelection(self):
-        """
-        Removes all the currently selected L{TimelineObject}s from the Timeline.
-        """
-        self.unlinkSelection()
-        self.removeMultipleTimelineObjects(self.selection, deep=True)
-        self.selection.setSelection(set([]), SELECT)
-
-    def split(self, time):
-        """
-        Splits objects under the playehad. If the selection is not empty, the
-        split only applies to selected clips. Otherwise it applies to all
-        clips"""
-        objs = set(self.getObjsAtTime(time))
-        if len(self.selection):
-            objs = self.selection.selected.intersection(objs)
-        for obj in objs:
-            obj.split(time)
-
-    def rebuildEdges(self):
-        self.edges = TimelineEdges()
-        for timeline_object in self.timeline_objects:
-            self.edges.addTimelineObject(timeline_object)
-
-    def snapToEdge(self, start, end=None):
-        """
-        Snaps the given start/end value to the closest edge if it is within
-        the timeline's dead_band.
-
-        @param start: The start position to snap.
-        @param end: The stop position to snap.
-        @returns: The snapped value if within the dead_band.
-        """
-        edge, diff = self.edges.snapToEdge(start, end)
-
-        if self.dead_band != -1 and diff <= self.dead_band:
-            return edge
-
-        return start
-
-    def disableUpdates(self):
-        """
-        Block internal updates. Use this when doing more than one consecutive
-        modification in the pipeline.
-        """
-        for track in self.tracks:
-            track.disableUpdates()
-
-        self.edges.disableUpdates()
-
-        self.emit("disable-updates", True)
-
-    def enableUpdates(self):
-        """
-        Unblock internal updates. Use this after calling L{disableUpdates}.
-        """
-
-        for track in self.tracks:
-            track.enableUpdates()
-
-        self.edges.enableUpdates()
-
-        self.emit("disable-updates", False)
-
-    def getObjsAtTime(self, time):
-        objects = []
-        for obj in self.timeline_objects:
-            if obj.start < time:
-                if (obj.start + obj.duration) > time:
-                    objects.append(obj)
+    def _dragMotionCb(self, unused, context, x, y, timestamp):
+        # Set up the initial data when we first initiate the drag operation
+        if not self._drag_started:
+            self.debug("Drag start")
+            if context.targets in DND_EFFECT_LIST:
+                atom = gtk.gdk.atom_intern(EFFECT_TUPLE[0])
             else:
-                break
-        return objects
+                atom = gtk.gdk.atom_intern(FILESOURCE_TUPLE[0])
+            self._drag_started = True
+            self._canvas.drag_get_data(context, atom, timestamp)
+            self._canvas.drag_highlight()
+        # We want to show the clips being dragged to the timeline (not effects)
+        elif context.targets not in DND_EFFECT_LIST:
+            if not self._temp_objects and not self._creating_tckobjs_sigid:
+                self._create_temp_source(x, y)
 
-    def getObjsAfterObj(self, obj):
-        return self.getObjsAfterTime(obj.start + obj.duration)
+            # Let some time for TrackObject-s to be created
+            if self._temp_objects and not self._creating_tckobjs_sigid:
+                focus = self._temp_objects[0]
+                self._move_context = EditingContext(focus,
+                                            self.timeline,
+                                            ges.EDIT_MODE_NORMAL,
+                                            ges.EDGE_NONE,
+                                            set(self._temp_objects[1:]),
+                                            self.app.settings)
 
-    def getObjsAfterTime(self, target):
-        objects = []
-        for i in range(0, len(self.timeline_objects)):
-            if self.timeline_objects[i].start >= target:
-                objects.extend(self.timeline_objects[i:])
-                break
-        return objects
+                self._move_temp_source(x, y)
+        return True
 
-    def getObjsBeforeObj(self, obj):
-        return self.getObjsBeforeTime(obj.start)
+    def _dragLeaveCb(self, unused_layout, context, unused_tstamp):
+        """
+        This occurs when the user leaves the canvas area during a drag,
+        or when the item being dragged has been dropped.
 
-    def getObjsBeforeTime(self, target):
-        objects = []
-        for obj in self.timeline_objects:
-            if obj.start > target:
-                break
-            elif obj.start + obj.duration <= target:
-                objects.append(obj)
-        return objects
+        Since we always get a "drag-dropped" signal right after "drag-leave",
+        we wait 75 ms to see if a drop happens and if we need to cleanup or not.
+        """
+        self.debug("Drag leave")
+        self._canvas.handler_block_by_func(self._dragMotionCb)
+        gobject.timeout_add(75, self._dragCleanUp, context)
 
-    def getObjsInRegion(self, start, end, min_priority=0,
-        max_priority=4294967295L):
-        objects = []
-        for obj in self.timeline_objects:
-            if obj.start >= start:
-                if ((obj.start + obj.duration) <= end and
-                obj.priority >= min_priority and
-                obj.priority <= max_priority):
-                    objects.append(obj)
-            elif obj.start > end:
-                break
-        return objects
+    def _dragCleanUp(self, context):
+        """
+        If the user drags outside the timeline,
+        remove the temporary objects we had created during the drap operation.
+        """
+        # If TrackObject-s still being created, wait before deleting
+        if self._creating_tckobjs_sigid:
+            return True
 
-    def getPrevKeyframe(self, time):
-        tl_objs = []
+        # Clean up only if clip was not dropped already
+        if self._drag_started:
+            self.debug("Drag cleanup")
+            self._drag_started = False
+            self._factories = []
+            if context.targets not in DND_EFFECT_LIST:
+                self._canvas.drag_unhighlight()
+                self.debug("Need to cleanup %d objects" % len(self._temp_objects))
+                for obj in self._temp_objects:
+                    layer = obj.get_layer()
+                    self.log("Cleaning temporary %s on %s" % (obj, layer))
+                    layer.remove_object(obj)
+                self._temp_objects = []
+            self.debug("Drag cleanup ended")
+        self._canvas.handler_unblock_by_func(self._dragMotionCb)
+        return False
 
-        # Exclude objects that start after current position.
-        for obj in self.timeline_objects:
-            tl_objs.append(obj)
-            if obj.start > time:
-                break
-
-        keyframe_positions = self._getKeyframePositions(tl_objs)
-        for n in range(len(keyframe_positions) - 1, -1, -1):
-            if keyframe_positions[n] < time:
-                return keyframe_positions[n]
-        return None
-
-    def getNextKeyframe(self, time):
-        tl_objs = []
-
-        # Include from first object whose end is after the current
-        # position onward.
-        for obj in self.timeline_objects:
-            if (obj.start + obj.duration) > time:
-                n = self.timeline_objects.index(obj)
-                tl_objs.extend(self.timeline_objects[n:])
-                break
-
-        keyframe_positions = self._getKeyframePositions(tl_objs)
-        for n in range(0, len(keyframe_positions)):
-            if keyframe_positions[n] > time:
-                return keyframe_positions[n]
-
-        return None
-
-    def _getKeyframePositions(self, timeline_objects):
-        keyframe_positions = set([])
-        for tl_obj in timeline_objects:
-            first_track = True
-            for track_obj in tl_obj.track_objects:
-                start = track_obj.start
-                in_point = track_obj.in_point
-                if first_track:
-                    keyframe_positions.add(start)
-                    keyframe_positions.add(start + track_obj.duration)
-                    first_track = False
-
-                interpolators = track_obj.getInterpolators()
-                for value in interpolators:
-                    interpolator = track_obj.getInterpolator(value)
-                    keyframes = interpolator.getInteriorKeyframes()
-                    for kf in keyframes:
-                        position_in_obj = kf.getTime() + start - in_point
-                        keyframe_positions.add(position_in_obj)
-        keyframe_positions = list(keyframe_positions)
-        keyframe_positions.sort()
-        return keyframe_positions
-
-    def getObjsToAddEffectTo(self, point, priority):
-        timeline_objects = []
-        if point == -1:
-            for obj in self.timeline_objects:
-                if obj.priority == priority:
-                    timeline_objects.append(obj)
+    def _dragDropCb(self, widget, context, x, y, timestamp):
+        # Resetting _drag_started will tell _dragCleanUp to not do anything
+        self._drag_started = False
+        self.debug("Drag drop")
+        if context.targets not in DND_EFFECT_LIST:
+            self._canvas.drag_unhighlight()
+            self.app.action_log.begin("add clip")
+            self.selected = self._temp_objects
+            self._project.emit("selected-changed", set(self.selected))
+            if self._move_context is not None:
+                self._move_context.finish()
+            self.app.action_log.commit()
+            # The temporary objects and factories that we had created
+            # in _dragMotionCb are now kept for good.
+            # Clear the temporary references to objects, as they are real now.
+            self._temp_objects = []
+            self._factories = []
+            context.drop_finish(True, timestamp)
         else:
-            for obj in self.timeline_objects:
-                if (obj.start <= point and
-                    point <= (obj.start + obj.duration) and\
-                    obj.priority == priority):
-                    timeline_objects.append(obj)
+            if self.app.current.timeline.props.duration == 0:
+                return False
+            factory = self._factories[0]
+            timeline_objs = self._getTimelineObjectUnderMouse(x, y)
+            if timeline_objs:
+                # FIXME make a util function to add effects
+                # instead of copy/pasting it from cliproperties
+                bin_desc = factory.effectname
+                media_type = self.app.effects.getFactoryFromName(bin_desc).media_type
 
-        return timeline_objects
+                # Trying to apply effect only on the first object of the selection
+                tlobj = timeline_objs[0]
+
+                # Checking that this effect can be applied on this track object
+                # Which means, it has the corresponding media_type
+                for tckobj in tlobj.get_track_objects():
+                    track = tckobj.get_track()
+                    if track.props.track_type == ges.TRACK_TYPE_AUDIO and \
+                            media_type == AUDIO_EFFECT or \
+                            track.props.track_type == ges.TRACK_TYPE_VIDEO and \
+                            media_type == VIDEO_EFFECT:
+                        #Actually add the effect
+                        self.app.action_log.begin("add effect")
+                        effect = ges.TrackParseLaunchEffect(bin_desc)
+                        tlobj.add_track_object(effect)
+                        track.add_object(effect)
+                        self.app.action_log.commit()
+                        self._factories = None
+                        self._seeker.flush()
+                        context.drop_finish(True, timestamp)
+
+                        self.timeline.selection.setSelection(timeline_objs, SELECT)
+                        break
+        return True
+
+    def _dragDataReceivedCb(self, unused_layout, context, x, y,
+        selection, targetType, timestamp):
+        self.log("targetType:%d, selection.data:%s" % (targetType, selection.data))
+        self.selection_data = selection.data
+
+        if targetType not in [TYPE_PITIVI_FILESOURCE, TYPE_PITIVI_EFFECT]:
+            context.finish(False, False, timestamp)
+            return
+
+        if targetType == TYPE_PITIVI_FILESOURCE:
+            uris = selection.data.split("\n")
+            self._factories = [self._project.medialibrary.getInfoFromUri(uri) for uri in uris]
+        else:
+            if not self.app.current.timeline.props.duration > 0:
+                return False
+            self._factories = [self.app.effects.getFactoryFromName(selection.data)]
+
+        context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
+        return True
+
+    def _getTimelineObjectUnderMouse(self, x, y):
+        timeline_objs = []
+        items_in_area = self._canvas.getItemsInArea(x, y, x + 1, y + 1)
+
+        track_objects = [obj for obj in items_in_area[1]]
+        for track_object in track_objects:
+            timeline_objs.append(track_object.get_timeline_object())
+
+        return timeline_objs
+
+    def _showSaveScreenshotDialog(self):
+        """
+        Show a filechooser dialog asking the user where to save the snapshot
+        and what file type to use.
+
+        Returns a list containing the full path and the mimetype if successful,
+        returns none otherwise.
+        """
+        chooser = gtk.FileChooserDialog(_("Save As..."), self.app.gui,
+            action=gtk.FILE_CHOOSER_ACTION_SAVE,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+            gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+        chooser.set_icon_name("pitivi")
+        chooser.set_select_multiple(False)
+        chooser.set_current_name(_("Untitled"))
+        chooser.set_current_folder(self.app.settings.lastProjectFolder)
+        chooser.props.do_overwrite_confirmation = True
+        formats = {_("PNG image"): ["image/png", ("png",)],
+            _("JPEG image"): ["image/jpeg", ("jpg", "jpeg")]}
+        for format in formats:
+            filt = gtk.FileFilter()
+            filt.set_name(format)
+            filt.add_mime_type(formats.get(format)[0])
+            chooser.add_filter(filt)
+        response = chooser.run()
+        if response == gtk.RESPONSE_OK:
+            chosen_format = formats.get(filt.get_name())
+            chosen_ext = chosen_format[1][0]
+            chosen_mime = chosen_format[0]
+            uri = join(chooser.get_current_folder(), chooser.get_filename())
+            ret = [uri + "." + chosen_ext, chosen_mime]
+        else:
+            ret = None
+        chooser.destroy()
+        return ret
+
+    def _ensureLayer(self):
+        """
+        Make sure we have a layer in our timeline
+
+        Returns: The number of layer present in self.timeline
+        """
+        layers = self.timeline.get_layers()
+
+        if (len(layers) == 0):
+            layer = ges.TimelineLayer()
+            layer.props.auto_transition = True
+            self.timeline.add_layer(layer)
+            layers = [layer]
+
+        return layers
+
+    def purgeObject(self, uri):
+        """Remove all instances of a clip from the timeline."""
+        quoted_uri = quote_uri(uri)
+        layers = self.timeline.get_layers()
+        for layer in layers:
+            for tlobj in layer.get_objects():
+                if hasattr(tlobj, "get_uri"):
+                    if quote_uri(tlobj.get_uri()) == quoted_uri:
+                        layer.remove_object(tlobj)
+                else:
+                    # TimelineStandardTransition and the like don't have URIs
+                    # GES will remove those transitions automatically.
+                    self.debug("Not removing %s from timeline as it has no URI" % tlobj)
+
+    def _create_temp_source(self, x, y):
+        """
+        Create temporary clips to be displayed on the timeline during a
+        drag-and-drop operation.
+        """
+        infos = self._factories
+        layer = self._ensureLayer()[0]
+        duration = 0
+
+        for info in infos:
+            src = ges.TimelineFileSource(info.get_uri())
+            src.props.start = duration
+            duration += info.get_duration()
+            layer.add_object(src)
+            id = src.connect("track-object-added", self._trackObjectsCreatedCb, src, x, y)
+            self._creating_tckobjs_sigid[src] = id
+
+    def _trackObjectsCreatedCb(self, unused_tl, track_object, tlobj, x, y):
+        # Make sure not to start the moving process before the TrackObject-s
+        # are created. We concider that the time between the different
+        # TrackObject-s creation is short enough so we are all good when the
+        # first TrackObject is added to the TimelineObject
+        self._temp_objects.insert(0, tlobj)
+        tlobj.disconnect(self._creating_tckobjs_sigid[tlobj])
+        del self._creating_tckobjs_sigid[tlobj]
+
+    def _move_temp_source(self, x, y):
+        x = self.hadj.props.value + x
+        y = self.vadj.props.value + y
+        priority = int((y // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
+        delta = Zoomable.pixelToNs(x)
+        obj = self._temp_objects[0]
+        self._move_context.editTo(delta, priority)
+
+## Zooming and Scrolling
+
+    def _scrollEventCb(self, canvas, event):
+        if event.state & gtk.gdk.SHIFT_MASK:
+            # shift + scroll => vertical (up/down) scroll
+            if event.direction == gtk.gdk.SCROLL_UP:
+                self.scroll_up()
+            elif event.direction == gtk.gdk.SCROLL_DOWN:
+                self.scroll_down()
+            event.state &= ~gtk.gdk.SHIFT_MASK
+        elif event.state & gtk.gdk.CONTROL_MASK:
+            # zoom + scroll => zooming (up: zoom in)
+            if event.direction == gtk.gdk.SCROLL_UP:
+                Zoomable.zoomIn()
+                self.log("Setting 'zoomed_fitted' to False")
+                self.app.gui.zoomed_fitted = False
+                return True
+            elif event.direction == gtk.gdk.SCROLL_DOWN:
+                Zoomable.zoomOut()
+                self.log("Setting 'zoomed_fitted' to False")
+                self.app.gui.zoomed_fitted = False
+                return True
+            return False
+        else:
+            if event.direction == gtk.gdk.SCROLL_UP:
+                self.scroll_left()
+            elif event.direction == gtk.gdk.SCROLL_DOWN:
+                self.scroll_right()
+        return True
+
+    def scroll_left(self):
+        self._hscrollbar.set_value(self._hscrollbar.get_value() -
+            self.hadj.props.page_size ** (2.0 / 3.0))
+
+    def scroll_right(self):
+        self._hscrollbar.set_value(self._hscrollbar.get_value() +
+            self.hadj.props.page_size ** (2.0 / 3.0))
+
+    def scroll_up(self):
+        self._vscrollbar.set_value(self._vscrollbar.get_value() -
+            self.vadj.props.page_size ** (2.0 / 3.0))
+
+    def scroll_down(self):
+        self._vscrollbar.set_value(self._vscrollbar.get_value() +
+            self.vadj.props.page_size ** (2.0 / 3.0))
+
+    def unsureVadjHeight(self):
+        self._scroll_pos_ns = Zoomable.pixelToNs(self.hadj.get_value())
+        self._root_item.set_simple_transform(0 - self.hadj.get_value(),
+            0 - self.vadj.get_value(), 1.0, 0)
+
+    def _updateScrollPosition(self, adjustment):
+        self.unsureVadjHeight()
+
+    def _zoomAdjustmentChangedCb(self, adjustment):
+        # GTK crack
+        self._updateZoomSlider = False
+        Zoomable.setZoomLevel(int(adjustment.get_value()))
+        self.log("Setting 'zoomed_fitted' to False")
+        self.app.gui.zoomed_fitted = False
+        self._updateZoomSlider = True
+
+    def _zoomSliderScrollCb(self, unused_widget, event):
+        value = self._zoomAdjustment.get_value()
+        if event.direction in [gtk.gdk.SCROLL_UP, gtk.gdk.SCROLL_RIGHT]:
+            self._zoomAdjustment.set_value(value + 1)
+        elif event.direction in [gtk.gdk.SCROLL_DOWN, gtk.gdk.SCROLL_LEFT]:
+            self._zoomAdjustment.set_value(value - 1)
+
+    def zoomChanged(self):
+        if self._updateZoomSlider:
+            self._zoomAdjustment.set_value(self.getCurrentZoomLevel())
+
+        if self._settings and self._timeline:
+            # zoomChanged might be called various times before the UI is ready
+            self._timeline.props.snapping_distance = \
+                Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
+
+        # the new scroll position should preserve the current horizontal
+        # position of the playhead in the window
+        cur_playhead_offset = self._canvas._playhead.props.x - self.hadj.props.value
+        try:
+            position = self.app.current.pipeline.getPosition()
+        except PipelineError:
+            position = 0
+        new_pos = Zoomable.nsToPixel(position) - cur_playhead_offset
+
+        # Update the position of the playhead's line on the canvas
+        # This does not actually change the timeline position
+        self._canvas._playhead.props.x = Zoomable.nsToPixel(position)
+
+        self.updateHScrollAdjustments()
+        self.scrollToPosition(new_pos)
+        self.ruler.queue_resize()
+        self.ruler.queue_draw()
+
+    def positionChangedCb(self, seeker, position):
+        self.ruler.timelinePositionChanged(position)
+        self._canvas.timelinePositionChanged(position)
+        if self.app.current.pipeline.getState() == gst.STATE_PLAYING:
+            self.scrollToPlayhead()
+
+    def scrollToPlayhead(self):
+        """
+        If the current position is out of the view bounds, then scroll
+        as close to the center of the view as possible or as close as the
+        timeline canvas allows.
+        """
+        canvas_size = self._canvas.get_allocation().width
+        new_pos = Zoomable.nsToPixel(self.app.current.pipeline.getPosition())
+        scroll_pos = self.hadj.get_value()
+        if (new_pos > scroll_pos + canvas_size) or (new_pos < scroll_pos):
+            self.scrollToPosition(min(new_pos - canvas_size / 6,
+                                      self.hadj.upper - canvas_size - 1))
+        return False
+
+    def scrollToPosition(self, position):
+        if position > self.hadj.upper:
+            # we can't perform the scroll because the canvas needs to be
+            # updated
+            gobject.idle_add(self._scrollToPosition, position)
+        else:
+            self._scrollToPosition(position)
+
+    def _scrollToPosition(self, position):
+        self._hscrollbar.set_value(position)
+        return False
+
+    def _snapDistanceChangedCb(self, settings):
+        if self._timeline:
+            self._timeline.props.snapping_distance = \
+                Zoomable.pixelToNs(settings.edgeSnapDeadband)
+
+## Project callbacks
+
+    def _projectChangedCb(self, app, project):
+        """
+        When a new blank project is created, immediately clear the timeline.
+
+        Otherwise, we would sit around until a clip gets imported to the
+        media library, waiting for a "ready" signal.
+        """
+        self.debug("New blank project created, pre-emptively clearing the timeline")
+        self.setProject(project)
+
+    def setProject(self, project):
+        self.debug("Setting project %s", project)
+        if self._project:
+            self._project.disconnect_by_function(self._settingsChangedCb)
+            self._pipeline.disconnect_by_func(self.positionChangedCb)
+            self.pipeline = None
+
+        self._project = project
+        if self._project:
+            self.setTimeline(project.timeline)
+            self.ruler.setProjectFrameRate(self._project.getSettings().videorate)
+            self.ruler.zoomChanged()
+            self._settingsChangedCb(self._project, None, self._project.getSettings())
+
+            self._seeker = self._project.seeker
+            self._pipeline = self._project.pipeline
+            self._pipeline.connect("position", self.positionChangedCb)
+            self._project.connect("settings-changed", self._settingsChangedCb)
+
+    def setProjectManager(self, projectmanager):
+        if self._projectmanager is not None:
+            self._projectmanager.disconnect_by_func(self._projectChangedCb)
+
+        self._projectmanager = projectmanager
+        if projectmanager is not None:
+            projectmanager.connect("new-project-loaded", self._projectChangedCb)
+
+    def _settingsChangedCb(self, project, old, new):
+        rate = new.videorate
+        self.rate = float(1 / rate)
+        self.ruler.setProjectFrameRate(rate)
+
+## Timeline callbacks
+
+    def setTimeline(self, timeline):
+        self.debug("Setting timeline %s", timeline)
+
+        self.delTimeline()
+        self._controls.timeline = timeline
+        self._timeline = timeline
+
+        if timeline:
+            # Connecting to timeline signals
+            self._layer_sig_ids.append(self._timeline.connect("layer-added",
+                    self._layerAddedCb))
+            self._layer_sig_ids.append(self._timeline.connect("layer-removed",
+                    self._layerRemovedCb))
+
+            # Make sure to set the current layer in use
+            self._layerAddedCb(None, None)
+            self._timeline.props.snapping_distance = \
+                Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
+
+        self._canvas.setTimeline(timeline)
+        self._canvas.zoomChanged()
+
+    def getTimeline(self):
+        return self._timeline
+
+    def delTimeline(self):
+        # Disconnect signal
+        for sigid in self._layer_sig_ids:
+            self._timeline.disconnect(sigid)
+
+        # clear dictionaries
+        self._layer_sig_ids = []
+
+        #Remove references to the ges timeline
+        self._timeline = None
+        self._controls.timeline = None
+
+    timeline = property(getTimeline, setTimeline, delTimeline, "The GESTimeline")
+
+    def _layerAddedCb(self, unused_layer, unused_user_data):
+        self.updateVScrollAdjustments()
+
+    def _layerRemovedCb(self, unused_layer, unused_user_data):
+        self.updateVScrollAdjustments()
+
+    def updateVScrollAdjustments(self):
+        """
+        Recalculate the vertical scrollbar depending on the number of layer in
+        the timeline.
+        """
+        layers = self._timeline.get_layers()
+        num_layers = len(layers)
+
+        # Ensure height of the scrollbar
+        self.vadj.props.upper = (LAYER_HEIGHT_EXPANDED + LAYER_SPACING
+                + TRACK_SPACING) * 2 * num_layers
+
+    def updateHScrollAdjustments(self):
+        """
+        Recalculate the horizontal scrollbar depending on the timeline duration.
+        """
+        timeline_ui_width = self.get_allocation().width
+        controls_width = self._controls.get_allocation().width
+        scrollbar_width = self._vscrollbar.get_allocation().width
+        contents_size = Zoomable.nsToPixel(self.app.current.timeline.props.duration)
+
+        widgets_width = controls_width + scrollbar_width
+        end_padding = 250  # Provide some space for clip insertion at the end
+
+        self.hadj.props.lower = 0
+        self.hadj.props.upper = contents_size + widgets_width + end_padding
+        self.hadj.props.page_size = timeline_ui_width
+        self.hadj.props.page_increment = contents_size * 0.9
+        self.hadj.props.step_increment = contents_size * 0.1
+
+        if contents_size + widgets_width <= timeline_ui_width:
+            # We're zoomed out completely, re-enable automatic zoom fitting
+            # when adding new clips.
+            self.log("Setting 'zoomed_fitted' to True")
+            self.app.gui.zoomed_fitted = True
+
+## ToolBar callbacks
+    def _zoomFitCb(self, unused_action):
+        self.app.gui.setBestZoomRatio()
+
+    def _zoomInCb(self, unused_action):
+        # This only handles the button callbacks (from the menus),
+        # not keyboard shortcuts or the zoom slider!
+        Zoomable.zoomIn()
+        self.log("Setting 'zoomed_fitted' to False")
+        self.app.gui.zoomed_fitted = False
+
+    def _zoomOutCb(self, unused_action):
+        # This only handles the button callbacks (from the menus),
+        # not keyboard shortcuts or the zoom slider!
+        Zoomable.zoomOut()
+        self.log("Setting 'zoomed_fitted' to False")
+        self.app.gui.zoomed_fitted = False
+
+    def deleteSelected(self, unused_action):
+        if self.timeline:
+            self.app.action_log.begin("delete clip")
+            #FIXME GES port: Handle unlocked TrackObject-s
+            for obj in self.timeline.selection:
+                layer = obj.get_layer()
+                layer.remove_object(obj)
+            self.app.action_log.commit()
+
+    def unlinkSelected(self, unused_action):
+        if self.timeline:
+            self.timeline.unlinkSelection()
+
+    def linkSelected(self, unused_action):
+        if self.timeline:
+            self.timeline.linkSelection()
+
+    def ungroupSelected(self, unused_action):
+        if self.timeline:
+            self.debug("Ungouping selected clips %s" % self.timeline.selection)
+            self.timeline.enable_update(False)
+            self.app.action_log.begin("ungroup")
+            for tlobj in self.timeline.selection:
+                tlobj.objects_set_locked(False)
+            self.timeline.enable_update(True)
+            self.app.action_log.commit()
+
+    def groupSelected(self, unused_action):
+        if self.timeline:
+            self.debug("Gouping selected clips %s" % self.timeline.selection)
+            self.timeline.enable_update(False)
+            self.app.action_log.begin("group")
+            for tlobj in self.timeline.selection:
+                tlobj.objects_set_locked(True)
+            self.app.action_log.commit()
+            self.timeline.enable_update(True)
+
+    def alignSelected(self, unused_action):
+        if "NumPy" in soft_deps:
+            DepsManager(self.app)
+
+        elif self.timeline:
+            progress_dialog = AlignmentProgressDialog(self.app)
+            progress_dialog.window.show()
+            self.app.action_log.begin("align")
+            self.timeline.enable_update(False)
+
+            def alignedCb():  # Called when alignment is complete
+                self.timeline.enable_update(True)
+                self.app.action_log.commit()
+                progress_dialog.window.destroy()
+
+            pmeter = self.timeline.alignSelection(alignedCb)
+            pmeter.addWatcher(progress_dialog.updatePosition)
+
+    def split(self, action):
+        """
+        Split clips at the current playhead position, regardless of selections.
+        """
+        self.timeline.enable_update(False)
+        position = self.app.current.pipeline.getPosition()
+        for track in self.timeline.get_tracks():
+            for tck_obj in track.get_objects():
+                start = tck_obj.get_start()
+                end = start + tck_obj.get_duration()
+                if start < position and end > position:
+                    obj = tck_obj.get_timeline_object()
+                    obj.split(position)
+        self.timeline.enable_update(True)
+
+    def keyframe(self, action):
+        """
+        Add or remove a keyframe at the current position of the selected clip.
+
+        FIXME GES: this method is currently not used anywhere
+        """
+        selected = self.timeline.selection.getSelectedTrackObjs()
+        for obj in selected:
+            keyframe_exists = False
+            position = self.app.current.pipeline.getPosition()
+            position_in_obj = (position - obj.start) + obj.in_point
+            interpolators = obj.getInterpolators()
+            for value in interpolators:
+                interpolator = obj.getInterpolator(value)
+                keyframes = interpolator.getInteriorKeyframes()
+                for kf in keyframes:
+                    if kf.getTime() == position_in_obj:
+                        keyframe_exists = True
+                        self.app.action_log.begin("remove volume point")
+                        interpolator.removeKeyframe(kf)
+                        self.app.action_log.commit()
+                if keyframe_exists == False:
+                    self.app.action_log.begin("add volume point")
+                    interpolator.newKeyframe(position_in_obj)
+                    self.app.action_log.commit()
+
+    def playPause(self, unused_action):
+        self.app.current.pipeline.togglePlayback()
+
+    def prevframe(self, action):
+        position = self.app.current.pipeline.getPosition()
+        prev_kf = self.timeline.getPrevKeyframe(position)
+        if prev_kf:
+            self._seeker.seek(prev_kf)
+            self.scrollToPlayhead()
+
+    def nextframe(self, action):
+        position = self.app.current.pipeline.getPosition()
+        next_kf = self.timeline.getNextKeyframe(position)
+        if next_kf:
+            self._seeker.seek(next_kf)
+            self.scrollToPlayhead()
+
+    def _screenshotCb(self, unused_action):
+        """
+        Export a snapshot of the current frame as an image file.
+        """
+        foo = self._showSaveScreenshotDialog()
+        if foo:
+            path, mime = foo[0], foo[1]
+            self._project.pipeline.save_thumbnail(-1, -1, mime, path)

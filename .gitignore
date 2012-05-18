@@ -48,3 +48,8 @@ log
 *.xptv
 /po/.intltool-merge-cache
 /config.status.lineno
+*.LOCAL.*
+*.REMOTE.*
+*.BASE.*
+*.BACKUP.*
+*.so

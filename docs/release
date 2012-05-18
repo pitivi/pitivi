@@ -28,6 +28,7 @@ Preparing:
      * Re-autogen
      * Make sure pre-requisites are still valid
      * Update the following files:
+      * pitivi.org/versions.txt: add new release as current
       * ChangeLog (see the instructions in the previous section)
       * RELEASE. To get the list of contributors,
         * 'git shortlog -s -n RELEASE-<previoustag>..'

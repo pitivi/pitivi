@@ -28,13 +28,9 @@ import gst
 from ConfigParser import SafeConfigParser, ParsingError
 import xdg.BaseDirectory as xdg_dirs  # Freedesktop directories spec
 
-from gettext import gettext as _
-
-from pitivi.signalinterface import Signallable
-from pitivi.encode import available_combinations, \
-     get_compatible_sink_caps
-from pitivi.stream import get_stream_for_caps
-from pitivi.log.loggable import Loggable
+from pitivi.utils.signal import Signallable
+from pitivi.render import available_combinations, get_compatible_sink_caps
+from pitivi.utils.loggable import Loggable
 
 
 def get_bool_env(var):
@@ -260,7 +256,7 @@ class GlobalSettings(Signallable):
         the config file is read. Only options registered before the config
         file is read will be loaded.
 
-        see pitivi/ui/mainwindow.py, pitivi/ui/sourcelist.py for examples of
+        see pitivi/mainwindow.py, pitivi/ui/medialibrary.py for examples of
         usage.
 
         @param attrname: the attribute of this class which represents the option
@@ -320,85 +316,9 @@ class GlobalSettings(Signallable):
         cls.options[section] = {}
 
 
-class StreamEncodeSettings(object):
+class MultimediaSettings(Signallable, Loggable):
     """
-    Settings for encoding a L{MultimediaStream}.
-
-    @ivar encoder: Name of the encoder used to encode this stream. If None, no
-    encoder is used and the incoming stream will be outputted directly.
-    @type encoder: C{str}
-    @ivar input_stream: The type of streams accepted by this settings. If
-    None are specified, the stream type will be extracted from the encoder.
-    @type input_stream: L{MultimediaStream}
-    @ivar output_stream: The type of streams accepted by this settings. If
-    None are specified, the stream type will be extracted from the encoder.
-    @type output_stream: L{MultimediaStream}
-    @ivar encodersettings: Encoder-specific settings.
-    @type encodersettings: C{dict}
-    """
-
-    def __init__(self, encoder=None, input_stream=None, output_stream=None,
-                 encodersettings={}):
-        """
-        @param encoder: The encoder to use. If None, no encoder is used and the
-        incoming stream will be outputted directly.
-        @type encoder: C{str}.
-        @param input_stream: The type of streams accepted by this settings. If
-        None are specified, the stream type will be extracted from the encoder.
-        If one is specified, then a L{StreamModifierFactory} will be use to
-        conform the incoming stream to the specified L{Stream}.
-        @type input_stream: L{MultimediaStream}
-        @param output_stream: The type of streams accepted by this settings. If
-        None are specified, the stream type will be extracted from the encoder.
-        @type output_stream: L{MultimediaStream}
-        @param encodersettings: Encoder-specific settings.
-        @type encodersettings: C{dict}
-        """
-        # FIXME : What if we need parsers after the encoder ??
-        self.encoder = encoder
-        self.input_stream = input_stream
-        self.output_stream = output_stream
-        self.encodersettings = encodersettings
-        self.modifyinput = (input_stream != None)
-        self.modifyoutput = (output_stream != None)
-        if not self.input_stream or not self.output_stream:
-            # extract stream from factory
-            for p in gst.registry_get_default().lookup_feature(self.encoder).get_static_pad_templates():
-                if p.direction == gst.PAD_SINK and not self.input_stream:
-                    self.input_stream = get_stream_for_caps(p.get_caps().copy())
-                    self.input_stream.pad_name = p.name_template
-                elif p.direction == gst.PAD_SRC and not self.output_stream:
-                    self.output_stream = get_stream_for_caps(p.get_caps().copy())
-                    self.output_stream.pad_name = p.name_template
-
-    def __str__(self):
-        return "<StreamEncodeSettings %s>" % self.encoder
-
-
-class RenderSettings(object):
-    """
-    Settings for rendering and multiplexing one or multiple streams.
-
-    @cvar settings: Ordered list of encoding stream settings.
-    @type settings: List of L{StreamEncodeSettings}
-    @cvar muxer: Name of the muxer to use.
-    @type muxer: C{str}
-    @cvar muxersettings: Muxer-specific settings.
-    @type muxersettings: C{dict}
-    """
-
-    def __init__(self, settings=[], muxer=None, muxersettings={}):
-        self.settings = settings
-        self.muxer = muxer
-        self.muxersettings = muxersettings
-
-    def __str__(self):
-        return "<RenderSettings %s [%d streams]>" % (self.muxer, len(self.settings))
-
-
-class ExportSettings(Signallable, Loggable):
-    """
-    Multimedia export settings
+    Multimedia rendering and previewing settings
 
     Signals:
     'settings-changed' : the settings have changed
@@ -441,7 +361,7 @@ class ExportSettings(Signallable, Loggable):
         self._acodecsettings_cache = {}
 
     def copy(self):
-        ret = ExportSettings()
+        ret = MultimediaSettings()
         ret.videowidth = self.videowidth
         ret.videoheight = self.videoheight
         ret.render_scale = self.render_scale
@@ -462,14 +382,25 @@ class ExportSettings(Signallable, Loggable):
         return gst.Fraction(self.videowidth, self.videoheight) * self.videopar
 
     def __str__(self):
-        msg = _("Export Settings\n")
-        msg += _("Video: ") + str(self.videowidth) + " " + str(self.videoheight) +\
-               " " + str(self.videorate) + " " + str(self.videopar)
-        msg += "\n\t" + str(self.vencoder) + " " + str(self.vcodecsettings)
-        msg += _("\nAudio: ") + str(self.audiochannels) + " " + str(self.audiorate) +\
-               " " + str(self.audiodepth)
-        msg += "\n\t" + str(self.aencoder) + " " + str(self.acodecsettings)
-        msg += _("\nMuxer: ") + str(self.muxer) + " " + str(self.containersettings)
+        """
+        Redefine __str__ to allow printing the project audio/video settings.
+        This is used for debugging, do not make these strings translatable.
+        """
+        msg = "\n\n"
+        msg += "\tVideo: " + str(self.videowidth) + "x" + str(self.videoheight) +\
+               " " + str(self.videorate) + " fps, " + str(self.videopar) + " PAR"
+        msg += "\n\t\tEncoder: " + str(self.vencoder)
+        if self.vcodecsettings:
+            msg += "\n\t\tCodec settings: " + str(self.vcodecsettings)
+        msg += "\n\tAudio: " + str(self.audiochannels) + " channels, " +\
+                str(self.audiorate) + " Hz, " + str(self.audiodepth) + " bits"
+        msg += "\n\t\tEncoder: " + str(self.aencoder)
+        if self.acodecsettings:
+            msg += "\n\t\tCodec settings: " + str(self.acodecsettings)
+        msg += "\n\tMuxer: " + str(self.muxer)
+        if self.containersettings:
+            msg += "\n\t\t" + str(self.containersettings)
+        msg += "\n\n"
         return msg
 
     def getVideoWidthAndHeight(self, render=False):
@@ -595,30 +526,3 @@ class ExportSettings(Signallable, Loggable):
         """ Returns the list of video encoders compatible with the current
         muxer """
         return self.vencoders[self.muxer]
-
-
-def export_settings_to_render_settings(export,
-        have_video=True, have_audio=True):
-    """Convert the specified ExportSettings object to a RenderSettings object.
-    """
-    # Get the audio and video caps/encoder/settings
-    astream = get_stream_for_caps(export.getAudioCaps())
-    vstream = get_stream_for_caps(export.getVideoCaps(render=True))
-
-    encoder_settings = []
-    if export.vencoder is not None and have_video:
-        vset = StreamEncodeSettings(encoder=export.vencoder,
-                                    input_stream=vstream,
-                                    encodersettings=export.vcodecsettings)
-        encoder_settings.append(vset)
-
-    if export.aencoder is not None and have_audio:
-        aset = StreamEncodeSettings(encoder=export.aencoder,
-                                    input_stream=astream,
-                                    encodersettings=export.acodecsettings)
-        encoder_settings.append(aset)
-
-    settings = RenderSettings(settings=encoder_settings,
-                              muxer=export.muxer,
-                              muxersettings=export.containersettings)
-    return settings

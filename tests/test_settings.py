@@ -1,12 +1,12 @@
 import unittest
-from pitivi.settings import ExportSettings
+from pitivi.settings import MultimediaSettings
 
 
 class TestExportSettings(unittest.TestCase):
-    """Test the settings.ExportSettings class."""
+    """Test the settings.MultimediaSettings class."""
 
     def setUp(self):
-        self.settings = ExportSettings()
+        self.settings = MultimediaSettings()
 
     def testMasterAttributes(self):
         self._testMasterAttribute('muxer', dependant_attr='containersettings')

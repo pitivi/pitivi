@@ -5,6 +5,26 @@ Hacking on PiTiVi
 - We rely on the Python Style Guide PEP-8
 	(http://www.python.org/doc/peps/pep-0008/)
 
+  The only exception to it is regarding the "80 columns" rule.
+  Since Python is a very concise/compact language, we can afford to be
+  a little bit more flexible on the line length than languages such as C.
+
+  When deciding whether or not you should split your line when it exceeds
+  79 characters, ask yourself: "does it truly improve legibility?"
+
+  What this translates to is:
+    - Try to respect the "80 columns/chars" rule of PEP8 when reasonable,
+      that is when the line is really too long.
+
+    - When the contents can fit within the 80 chars,
+      or when it only "slightly" exceeds that limit, keep it on one line.
+      Otherwise, it just hurts legibility and gives a weird "shape" to the code.
+
+      As you can see, it depends on the context
+      and what you think makes the most easily readable code.
+
+
+
 - for method names we use the mixedCase style
   Ex :
   class MyClass:

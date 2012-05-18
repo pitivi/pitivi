@@ -6,16 +6,12 @@ import gst
 import os
 import gc
 import unittest
-from pitivi.factories.base import ObjectFactory, SourceFactory, SinkFactory
-from pitivi.factories.operation import EffectFactory
-from pitivi.pipeline import Pipeline
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "1") not in ("0", "")
 
 
 class TestCase(unittest.TestCase):
-    _tracked_types = (gst.MiniObject, gst.Element, gst.Pad, gst.Caps,
-            ObjectFactory, Pipeline)
+    _tracked_types = (gst.MiniObject, gst.Element, gst.Pad, gst.Caps)
 
     def gctrack(self):
         self.gccollect()
@@ -80,49 +76,6 @@ class TestCase(unittest.TestCase):
         unittest.TestCase.run(self, result)
 
 
-# Some fake factories
-class FakeSourceFactory(SourceFactory):
-    def __init__(self, factoryname="fakesrc", *args, **kwargs):
-        SourceFactory.__init__(self, "fakesrc://", *args, **kwargs)
-        self._factoryname = factoryname
-
-    def _makeBin(self, output_stream=None):
-        return gst.element_factory_make(self._factoryname)
-
-    def _releaseBin(self, bin):
-        pass
-
-
-class FakeSinkFactory(SinkFactory):
-    def __init__(self, factoryname="fakesink", *args, **kwargs):
-        SinkFactory.__init__(self, *args, **kwargs)
-        self.__factoryname = factoryname
-
-    def _makeBin(self, output_stream=None):
-        return gst.element_factory_make(self.__factoryname)
-
-
-class FakeGnlFactory(SourceFactory):
-
-    def __init__(self, duration=10 * gst.SECOND, media_duration=10 * gst.SECOND,
-                 *args, **kwargs):
-        self.__duration = duration
-        self.__media_duration = media_duration
-        SourceFactory.__init__(self, "fakegnl://", *args, **kwargs)
-
-    def _makeBin(self, output_stream=None):
-        # let's make a gnlsource with videotestsrc inside of it
-        gnl = gst.element_factory_make("gnlsource")
-        vs = gst.element_factory_make("videotestsrc")
-        gnl.add(vs)
-        gnl.props.duration = self.__duration
-        gnl.props.media_duration = self.__media_duration
-        return gnl
-
-    def _releaseBin(self, bin):
-        pass
-
-
 class SignalMonitor(object):
     def __init__(self, obj, *signals):
         self.signals = signals
@@ -153,21 +106,3 @@ class SignalMonitor(object):
         setattr(self, field, getattr(self, field, 0) + 1)
         field = self._getSignalCollectName(name)
         setattr(self, field, getattr(self, field, []) + [args[:-1]])
-
-
-class StubFactory(SourceFactory):
-    def __init__(self):
-        SourceFactory.__init__(self, "stub://")
-        self.duration = 42 * gst.SECOND
-
-    def _makeBin(self, stream=None):
-        return gst.element_factory_make('fakesrc')
-
-    def _releaseBin(self, bin):
-        pass
-
-
-class FakeEffectFactory(EffectFactory):
-    def __init__(self):
-        EffectFactory.__init__(self, 'identity', "identity")
-        self.duration = 42 * gst.SECOND

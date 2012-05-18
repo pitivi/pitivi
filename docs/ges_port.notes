@@ -1,0 +1,114 @@
+GES:
+    Critical
+    ========
+        -> Implement riple and roll (could be done in pitivi for the time
+                being reusing old code)
+                => 3 to 5 days -- in progress 90 %--
+                    -- Properly implemented but actually took like 10 days --
+
+        -> Handle reslution and framerate -> BLOCKER
+            |-> Do we handle it as a "hack" in pitivi for the time being?
+                => 3 to 5 days -- In progress 90% (Done for encoding)--
+                    * 05-01-2012: We got something, but still do not use the
+                        project setting from xptv file.
+
+        -> Implement waveform
+            => 5 days
+
+        -> Merge Ges-Port branch (all the list is BLOCKER) :
+            > Refactor and fix the formatter -> Done, needs some bugfixing :
+            > review and fix the whole branch :
+                => 2  to 5 days -- in progress 70 %--:
+                 Waiting for a bug review before pushing the whole ges-port:
+                *Done
+
+
+           > Add an entry point for saving sourcelist -> pitivi must:
+                take advantage of it afterward:
+                *Done:
+
+        -> Implement groups
+                > Beteen 7 and 10 days
+
+        -> Add the timeline_edition API:
+            => 4 more days:
+
+        total: 14 to 21 days left
+
+
+
+    Less critical
+    =============
+        => acceptable regressions
+            -> compostiting, this one implies a proper implementation of
+                    "Handle reslution and framerate"
+                => 15 to 20 days
+
+            -> Handle keyframes
+                => 5 days
+
+            -> Fill gaps -> BLOCKER -> Background done:
+                        660d3f09ddb1c660d3f09ddb1c660d3f09ddb1c
+                => proper implementation 5 days
+
+            total: 20 to 30 days
+
+PiTiVi:
+
+    Critical
+    ========
+        -> Make Seeker more powerfull, and rely only on it for all the:
+           seeking:
+            => 2 days DONE:
+
+        -> Refactor the DND:
+            => 1 days DONE:
+
+        -> Handle effects properly, ie dnd, settings etc:
+            => 2 days DONE:
+
+        -> reimplement thumbnail + waveform
+            => 5 days
+
+        -> Reimplement undo-redo
+            => 5 days
+
+        -> Reimplement transformation
+            => 1 days
+
+        -> Implement properly rendering:
+            => 2 days DONE:
+
+        -> Remove ALL references to the old PiTiVi core
+            => 1 day left
+
+        > Handle project settings:
+            => Kind of done:
+
+        > Reimplement thumbnail in the sourcelist :
+            NOTE: Implement in gst.Discoverer right away :
+            => Kind of done:
+
+      Quality/margin tasks:
+
+        -> Refactor the whole codebase :
+            => 0 to 10 days -- In progress --:
+                => 3 days spent
+
+        -> Bug fixing
+            => 10 days -- In progress --
+
+        total: 32 to 42 days
+
+TOTAL: between 46 and 92 days of work
+
+
+
+    Less critical
+    =============
+        -> Reimplement the auto-aligner
+        -> Restore keyframes
+            => 3 days
+        -> Add more debugging symbols all around
+        -> Kill the receiver
+        -> Implement titles :)

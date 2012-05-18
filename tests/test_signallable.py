@@ -1,5 +1,5 @@
 import unittest
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 
 
 class myobject(Signallable):

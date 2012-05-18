@@ -1,41 +1,31 @@
 SUBDIRS = \
-	ui 		\
-	elements 	\
-	factories	\
-	formatters	\
-	timeline	\
-	log
+	dialogs \
+	utils \
+	timeline \
+	undo \
+	$(NULL)
 
 pitividir = $(libdir)/pitivi/python/pitivi
 
 pitivi_PYTHON = \
-	__init__.py 	\
-	action.py	\
-	actioner.py	\
-	application.py	\
-	check.py 	\
-	configure.py 	\
-	discoverer.py 	\
-	effects.py	\
-	encode.py	\
-	instance.py 	\
-	pipeline.py	\
-	pitivigstutils.py \
-	plumber.py	\
-	project.py 	\
-	projectmanager.py 	\
-	receiver.py	\
-	reflect.py	\
-	settings.py 	\
-	signalgroup.py	\
-	signalinterface.py \
-	sourcelist.py 	\
-	sourcelist_undo.py \
-	stream.py	\
-	threads.py	\
-	thumbnailcache.py \
-	undo.py		\
-	utils.py
+	__init__.py \
+	application.py \
+	autoaligner.py \
+	check.py \
+	clipproperties.py \
+	configure.py \
+	effects.py \
+	instance.py \
+	mainwindow.py \
+	mediafilespreviewer.py \
+	medialibrary.py \
+	preset.py \
+	project.py \
+	render.py \
+	settings.py \
+	tabsmanager.py \
+	viewer.py \
+	$(NULL)
 
 BUILT_SOURCES=configure.py
 

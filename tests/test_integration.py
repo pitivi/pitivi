@@ -25,9 +25,9 @@ QA scenarios """
 import unittest
 TestCase = unittest.TestCase
 from pitivi.application import InteractivePitivi
-from pitivi.timeline.timeline import MoveContext, TrimStartContext,\
+from pitivi.utils.timeline import MoveContext, TrimStartContext,\
     TrimEndContext
-from pitivi.signalinterface import Signallable
+from pitivi.utils.signal import Signallable
 from pitivi.stream import AudioStream, VideoStream
 import pitivi.instance
 import gobject
@@ -241,10 +241,10 @@ class InstanceRunner(Signallable):
         if self.pending_configuration:
             self._loadSources(self.pending_configuration)
 
-    def _sourceAdded(self, sourcelist, factory):
+    def _sourceAdded(self, medialibrary, factory):
         self.factories.add(factory.uri)
 
-    def _discoveryError(self, sourcelist, uri, reason, unused):
+    def _discoveryError(self, medialibrary, uri, reason, unused):
         self.errors.add(uri)
 
     def _readyCb(self, soucelist):
@@ -280,9 +280,9 @@ class InstanceRunner(Signallable):
 
     def _setupTimeline(self, configuration):
         for name, uri, props in configuration:
-            factory = self.project.sources.getUri(uri)
+            factory = self.project.sources.getInfoFromUri(uri)
             if not factory:
-                raise Exception("Could not find '%s' in sourcelist" %
+                raise Exception("Could not find '%s' in medialibrary" %
                     source)
 
             if not props:
@@ -307,7 +307,7 @@ class InstanceRunner(Signallable):
         if self.no_ui:
             self.instance.run(["--no-ui"])
         else:
-            from pitivi.ui.zoominterface import Zoomable
+            from pitivi.utils.timeline import Zoomable
             # set a common zoom ratio so that things like edge snapping values
             # are consistent
             Zoomable.setZoomLevel((3 * Zoomable.zoom_steps) / 4)

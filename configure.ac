@@ -34,7 +34,8 @@ dnl the runtime checks in pitivi/check.py
 AC_SUBST(GTK_REQ, 2.24.0)
 AC_SUBST(PYGTK_REQ, 2.17.0)
 AC_SUBST(PYGST_REQ, 0.10.19)
-AC_SUBST(GST_REQ, 0.10.28)
+AC_SUBST(GST_REQ, 0.10.36)
+AC_SUBST(GES_REQ, 0.10.01)
 AC_SUBST(GNONLIN_REQ, 0.10.16)
 AC_SUBST(PYCAIRO_REQ, 1.0.0)
 
@@ -85,11 +86,9 @@ common/m4/Makefile
 help/Makefile
 pitivi/Makefile
 pitivi/configure.py
-pitivi/ui/Makefile
-pitivi/elements/Makefile
-pitivi/factories/Makefile
-pitivi/log/Makefile
-pitivi/formatters/Makefile
+pitivi/dialogs/Makefile
+pitivi/undo/Makefile
+pitivi/utils/Makefile
 pitivi/timeline/Makefile
 pitivi.spec
 po/Makefile.in

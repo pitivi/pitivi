@@ -1,0 +1,81 @@
+#!/bin/bash -i
+#
+# this script is in git as bin/pitivi-git
+#
+# It will set up the environment to use and develop pitivi with an
+# uninstalled git checkout of pitivi and GES.
+#
+# It will set up LD_LIBRARY_PATH, DYLD_LIBRARY_PATH, PKG_CONFIG_PATH,
+# to prefer the uninstalled versions but also contain the installed ones.
+#
+# When you run the script for the first time, the script will checkout
+# everything you need to get started. If you want to do it yourself, set
+# MYPITIVI accordinly
+
+# Change this variable to the location of you choice, that either:
+#  + contains pitivi, ges and gst-python checkouts that you have already
+#    compiled.
+#
+#  + an empty location where you have R+W access, so the script sets up
+#    everything for you.  (better choice in the case you are starting
+#    with PiTiVi devel)
+MYPITIVI=$HOME/pitivi-git
+
+#
+# Everything below this line shouldn't be edited!
+#
+
+# extract version from $0
+# if this script is called "gst-head" then version will be "head"
+VERSION=`echo $0 | sed s/.*gst-//g`
+
+# base path under which dirs are installed
+PITIVI=$MYPITIVI
+
+# GES launch
+export PATH="\
+$PITIVI/gst-editing-services/tools:\
+$PITIVI/pitivi/bin/:\
+$PATH"
+
+export PKG_CONFIG_PATH="\
+$PITIVI/gst-python/pkgconfig\
+${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+
+pythonver=`python -c "import sys; print sys.version[:3]"`
+export PYTHONPATH=$PITIVI/gst-editing-services/bindings/python/.libs/:$PITIVI/gst-python:$PITIVI_PREFIX/lib/python$pythonver/site-packages${PYTHONPATH:+:$PYTHONPATH}
+
+if test ! -e $PITIVI; then
+    mkdir $MYPITIVI &&\
+    cd $MYPITIVI &&\
+    #Get latest gst-python stable release \
+    wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.gz &&\
+    tar -xf gst-python-0.10.22.tar.gz &&\
+    mv gst-python-0.10.22 gst-python &&\
+    cd gst-python && ./configure && make &&\
+    #Get GES 0.10 \
+    cd .. && git clone git://anongit.freedesktop.org/gstreamer/gst-editing-services &&\
+    cd gst-editing-services && git checkout 0.10 && ./autogen.sh && make && cd ../ &&\
+    #Get pitivi \
+    git clone git://git.gnome.org/pitivi &&\
+    cd pitivi && \
+    git checkout master && ./autogen.sh && make
+fi
+
+## if we got a command, run it, else start a shell
+if test ! -z "$1";
+then
+  $@
+  exit $?
+fi
+
+# set up prompt to help us remember we're in a subshell, cd to
+# the gstreamer base dir and start $SHELL
+cd $PITIVI/
+shell=$SHELL
+if test "x$SHELL" = "x/bin/bash"
+then
+  # debian/ubuntu resets our PS1.  bastards.
+  shell="$SHELL --noprofile"
+fi
+PS1="[gst-$VERSION] $PS1" $shell

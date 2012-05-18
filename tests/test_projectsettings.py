@@ -21,8 +21,8 @@
 
 from unittest import TestCase
 
-from pitivi.ui.preset import PresetManager
-from pitivi.ui.projectsettings import ProjectSettingsDialog
+from pitivi.preset import PresetManager
+from pitivi.project import ProjectSettingsDialog
 
 
 class TestProjectSettingsDialog(TestCase):

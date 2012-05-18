@@ -21,7 +21,7 @@ verbosity = 1
 if 'VERBOSE' in os.environ:
     descriptions = 2
     verbosity = 2
-from pitivi.log import log
+from pitivi.utils import loggable as log
 log.init('PITIVI_DEBUG', 1)
 
 # Make available to configure.py the top level dir.

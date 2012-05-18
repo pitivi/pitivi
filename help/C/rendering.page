@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#rendering"/>
-    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="incomplete"/>
+    <revision pkgversion="0.16" version="0.1" date="2012-01-02" status="incomplete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -31,7 +31,7 @@
       <item><p>Click the <gui>Render</gui> button.</p></item>
      </steps>
      <note style="bug">
-      <p>If your computer is set to suspend or hibernate automatically, <app>PiTiVi</app> will automatically inhibit the power saving features during the render process (see bug <link href="https://bugzilla.gnome.org/show_bug.cgi?id=571885">bug #571885</link>).</p>
+      <p>If your computer is set to suspend or hibernate automatically, <app>PiTiVi</app> will automatically inhibit the power saving features during the render process.</p>
      </note>
 
 </page>
