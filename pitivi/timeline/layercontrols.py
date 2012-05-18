@@ -26,8 +26,7 @@ import gobject
 from gettext import gettext as _
 
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import LAYER_HEIGHT_EXPANDED,\
-        LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
+from pitivi.utils.ui import LAYER_SPACING
 
 
 # TODO add tooltips

@@ -470,7 +470,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._request_size()
 
     def updateTracks(self):
-        print("Updating all TrackObjects")
+        self.debug("Updating all TrackObjects")
         for track in self._tracks:
             track.updateTrackObjects()
 
@@ -577,6 +577,17 @@ class TimelineControls(gtk.VBox, Loggable):
         y = 0
         for child in self.get_children():
             if isinstance(child, VideoLayerControl):
+                y += child.getHeight()
+                y += LAYER_SPACING
+
+        return y
+
+    def getHeightOfTrack(self, track_type):
+        map = {ges.TRACK_TYPE_AUDIO: AudioLayerControl,
+               ges.TRACK_TYPE_VIDEO: VideoLayerControl}
+        y = 0
+        for child in self.get_children():
+            if isinstance(child, map[track_type]):
                 y += child.getHeight()
                 y += LAYER_SPACING
 
@@ -1409,12 +1420,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Recalculate the vertical scrollbar depending on the number of layer in
         the timeline.
         """
-        layers = self._timeline.get_layers()
-        num_layers = len(layers)
-
-        # Ensure height of the scrollbar
-        self.vadj.props.upper = (LAYER_HEIGHT_EXPANDED + LAYER_SPACING
-                + TRACK_SPACING) * 2 * num_layers
+        self.vadj.props.upper = self._controls.get_allocation().height + 50
 
     def updateHScrollAdjustments(self):
         """

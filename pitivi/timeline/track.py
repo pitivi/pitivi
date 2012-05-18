@@ -583,7 +583,6 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         # update height, compare with current height to not run into recursion
         new_height = self.app.gui.timeline_ui._controls.getHeightOfLayer(track_type, layer)
         if self.height != new_height:
-            print "update heigth %s" % new_height
             self.height = new_height
 
         # get y position for layer
@@ -707,12 +706,9 @@ class Track(goocanvas.Group, Zoomable, Loggable):
             self.get_canvas().regroupTracks()
 
     def getHeight(self):
-        # FIXME we have a refcount issue somewhere, the following makes sure
-        # no to crash because of it
-        #track_objects = self.track.get_objects()
         if self._expanded:
-            nb_layers = len(self.timeline.get_layers())
-            return  nb_layers * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
+            track_type = self.track.props.track_type
+            return self.app.gui.timeline_ui._controls.getHeightOfTrack(track_type)
         else:
             return LAYER_HEIGHT_COLLAPSED + LAYER_SPACING
 
