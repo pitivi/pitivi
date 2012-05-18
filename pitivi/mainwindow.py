@@ -193,7 +193,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._createUi(instance, allow_full_screen)
         self.recent_manager = RecentManager()
         self._zoom_duration_changed = False
-        self.zoomed_fitted = True
         self._missingUriOnLoading = False
 
         self.app.projectManager.connect("new-project-loading",
@@ -752,31 +751,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if self.app.current.timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
 
-    def setBestZoomRatio(self):
-        """
-        Set the zoom level so that the entire timeline is in view.
-        """
-        ruler_width = self.timeline_ui.ruler.get_allocation()[2]
-        # Add gst.SECOND - 1 to the timeline duration to make sure the
-        # last second of the timeline will be in view.
-        duration = self.app.current.timeline.props.duration
-        if duration == 0:
-            self.debug("The timeline duration is 0, impossible to calculate zoom")
-            return
-        timeline_duration = duration + gst.SECOND - 1
-        timeline_duration_s = int(timeline_duration / gst.SECOND)
-
-        self.debug("duration: %s, timeline duration: %s" % (duration,
-           gst.TIME_ARGS(timeline_duration)))
-        ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
-        nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
-        Zoomable.setZoomLevel(nearest_zoom_level)
-        self.app.current.timeline.props.snapping_distance = \
-            Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband)
-        # Only do this at the very end, after updating the other widgets.
-        self.log("Setting 'zoomed_fitted' to True")
-        self.zoomed_fitted = True
-
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
         if uri:
             self.recent_manager.add_item(uri)
@@ -1059,7 +1033,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._settingsChangedCb(self.app.current, None, self.app.current.settings)
         if self.timeline_ui:
             self.timeline_ui.setProject(self.app.current)
-            self.setBestZoomRatio()
             self.clipconfig.project = self.app.current
             #FIXME GES port undo/redo
             #self.app.timelineLogObserver.pipeline = self.app.current.pipeline

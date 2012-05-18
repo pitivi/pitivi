@@ -597,6 +597,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.rate = gst.Fraction(1, 1)
         self._timeline = None
 
+        self.zoomed_fitted = True
+
         # Timeline edition related fields
         self._creating_tckobjs_sigid = {}
         self._move_context = None
@@ -1075,12 +1077,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             if event.direction == gtk.gdk.SCROLL_UP:
                 Zoomable.zoomIn()
                 self.log("Setting 'zoomed_fitted' to False")
-                self.app.gui.zoomed_fitted = False
+                self.zoomed_fitted = False
                 return True
             elif event.direction == gtk.gdk.SCROLL_DOWN:
                 Zoomable.zoomOut()
                 self.log("Setting 'zoomed_fitted' to False")
-                self.app.gui.zoomed_fitted = False
+                self.zoomed_fitted = False
                 return True
             return False
         else:
@@ -1119,7 +1121,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._updateZoomSlider = False
         Zoomable.setZoomLevel(int(adjustment.get_value()))
         self.log("Setting 'zoomed_fitted' to False")
-        self.app.gui.zoomed_fitted = False
+        self.zoomed_fitted = False
         self._updateZoomSlider = True
 
     def _zoomSliderScrollCb(self, unused_widget, event):
@@ -1193,6 +1195,34 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._timeline.props.snapping_distance = \
                 Zoomable.pixelToNs(settings.edgeSnapDeadband)
 
+    def _setBestZoomRatio(self):
+        """
+        Set the zoom level so that the entire timeline is in view.
+        """
+        ruler_width = self.ruler.get_allocation()[2]
+        # Add gst.SECOND - 1 to the timeline duration to make sure the
+        # last second of the timeline will be in view.
+        duration = self.timeline.get_duration()
+        if duration == 0:
+            self.debug("The timeline duration is 0, impossible to calculate zoom")
+            return
+
+        timeline_duration = duration + gst.SECOND - 1
+        timeline_duration_s = int(timeline_duration / gst.SECOND)
+
+        self.debug("duration: %s, timeline duration: %s" % (duration,
+           gst.TIME_ARGS(timeline_duration)))
+
+        ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
+        nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
+        Zoomable.setZoomLevel(nearest_zoom_level)
+        self.timeline.props.snapping_distance = \
+            Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband)
+
+        # Only do this at the very end, after updating the other widgets.
+        self.log("Setting 'zoomed_fitted' to True")
+        self.zoomed_fitted = True
+
 ## Project callbacks
 
     def _projectChangedCb(self, app, project):
@@ -1223,6 +1253,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._pipeline = self._project.pipeline
             self._pipeline.connect("position", self.positionChangedCb)
             self._project.connect("settings-changed", self._settingsChangedCb)
+            self._setBestZoomRatio()
 
     def setProjectManager(self, projectmanager):
         if self._projectmanager is not None:
@@ -1253,7 +1284,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._layer_sig_ids.append(self._timeline.connect("layer-removed",
                     self._layerRemovedCb))
             self._layer_sig_ids.append(timeline.connect("notify::update",
-                    self._zoomFitCb))
+                    self._timelineUpdateChangedCb))
 
             # Make sure to set the current layer in use
             self._layerAddedCb(None, None)
@@ -1279,6 +1310,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._controls.timeline = None
 
     timeline = property(getTimeline, setTimeline, delTimeline, "The GESTimeline")
+
+    def _timelineUpdateChangedCb(self, unused, unsued2=None):
+        if self.zoomed_fitted is True:
+            self._setBestZoomRatio()
 
     def _layerAddedCb(self, unused_layer, unused_user_data):
         self.updateVScrollAdjustments()
@@ -1320,25 +1355,25 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             # We're zoomed out completely, re-enable automatic zoom fitting
             # when adding new clips.
             self.log("Setting 'zoomed_fitted' to True")
-            self.app.gui.zoomed_fitted = True
+            self.zoomed_fitted = True
 
 ## ToolBar callbacks
     def _zoomFitCb(self, unused, unsued2=None):
-        self.app.gui.setBestZoomRatio()
+        self._setBestZoomRatio()
 
     def _zoomInCb(self, unused_action):
         # This only handles the button callbacks (from the menus),
         # not keyboard shortcuts or the zoom slider!
         Zoomable.zoomIn()
         self.log("Setting 'zoomed_fitted' to False")
-        self.app.gui.zoomed_fitted = False
+        self.zoomed_fitted = False
 
     def _zoomOutCb(self, unused_action):
         # This only handles the button callbacks (from the menus),
         # not keyboard shortcuts or the zoom slider!
         Zoomable.zoomOut()
         self.log("Setting 'zoomed_fitted' to False")
-        self.app.gui.zoomed_fitted = False
+        self.zoomed_fitted = False
 
     def deleteSelected(self, unused_action):
         if self.timeline:

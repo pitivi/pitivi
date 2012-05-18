@@ -149,12 +149,10 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             # Control + scroll = zoom
             if event.direction == gtk.gdk.SCROLL_UP:
                 Zoomable.zoomIn()
-                self.log("Setting 'zoomed_fitted' to False")
-                self.app.gui.zoomed_fitted = False
+                self.app.gui.timeline_ui.zoomed_fitted = False
             elif event.direction == gtk.gdk.SCROLL_DOWN:
                 Zoomable.zoomOut()
-                self.log("Setting 'zoomed_fitted' to False")
-                self.app.gui.zoomed_fitted = False
+                self.app.gui.timeline_ui.zoomed_fitted = False
         else:
             # No modifier key held down, just scroll
             if event.direction == gtk.gdk.SCROLL_UP or\
