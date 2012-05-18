@@ -350,6 +350,12 @@ class RenderingProgressDialog(Signallable):
         self.progressbar.set_fraction(fraction)
         self.window.set_title(_("%d%% Rendered") % int(100 * fraction))
         if estimated:
+            # Translators: this string indicates the estimated time
+            # remaining until an action (such as rendering) completes.
+            # The "%s" is an already-localized human-readable duration,
+            # such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
+            # In some languages, "About %s left" can be expressed roughly as
+            # "There remains approximatively %s" (to handle gender and plurals).
             self.progressbar.set_text(_("About %s left") % estimated)
         else:
             self.progressbar.set_text(_("Estimating..."))

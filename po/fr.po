@@ -880,7 +880,7 @@ msgstr "%d%% analysés"
 #: ../pitivi/ui/alignmentprogress.py:75 ../pitivi/ui/encodingprogress.py:67
 #, python-format
 msgid "About %s left"
-msgstr "À propos des %s restants"
+msgstr "Il reste environ %s"
 
 #: ../pitivi/ui/clipproperties.py:164
 msgid "Remove effect"

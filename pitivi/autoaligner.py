@@ -685,10 +685,6 @@ class AlignmentProgressDialog:
         self.progressbar.set_fraction(fraction)
         self.window.set_title(_("%d%% Analyzed") % int(100 * fraction))
         if estimated:
-            # Translators: This string indicates the estimated time
-            # remaining until the action completes.  The "%s" is an
-            # already-localized human-readable duration description like
-            # "31 seconds".
             self.progressbar.set_text(_("About %s left") % estimated)
 
 
