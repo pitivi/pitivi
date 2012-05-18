@@ -226,7 +226,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         root.connect("button-press-event", self._selectionStart)
         root.connect("button-release-event", self._selectionEnd)
         self.connect("button-release-event", self._snapEndedCb)
-        self.height = (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING) * 2
         # add some padding for the horizontal scrollbar
         self.height += 21
         self.set_size_request(-1, self.height)
@@ -380,7 +379,12 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def _request_size(self):
         alloc = self.get_allocation()
         self.set_bounds(0, 0, alloc.width, alloc.height)
-        self._playhead.props.height = self.height + SPACING
+
+        playhead_height = self.height + SPACING
+        if playhead_height >= 0:
+            self._playhead.props.height = playhead_height
+        else:
+            self._playhead.props.height = 0
 
     def _size_allocate_cb(self, widget, allocation):
         self._request_size()
