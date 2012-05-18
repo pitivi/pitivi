@@ -410,14 +410,22 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         while self._tracks:
             self._trackRemovedCb(None, 0)
 
+        if self._timeline is not None:
+            self._timeline.disconnect_by_func(self._trackAddedCb)
+            self._timeline.disconnect_by_func(self._trackRemovedCb)
+            self._timeline.disconnect_by_func(self._snapCb)
+            self._timeline.disconnect_by_func(self._snapEndedCb)
+
         self._timeline = timeline
-        if self._timeline:
+        if self._timeline is not None:
             for track in self._timeline.get_tracks():
                 self._trackAddedCb(None, track)
+
             self._timeline.connect("track-added", self._trackAddedCb)
             self._timeline.connect("track-removed", self._trackRemovedCb)
             self._timeline.connect("snapping-started", self._snapCb)
             self._timeline.connect("snapping-ended", self._snapEndedCb)
+
         self.zoomChanged()
 
     def getTimeline(self):
