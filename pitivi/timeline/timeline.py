@@ -27,6 +27,7 @@
 import gtk
 import gst
 import ges
+import glib
 import ruler
 import gobject
 import goocanvas
@@ -596,6 +597,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._createUI()
         self.rate = gst.Fraction(1, 1)
         self._timeline = None
+
+        # Used to insert source to the end of the timeline
+        self._sources_to_insert = []
 
         self.zoomed_fitted = True
 
@@ -1497,3 +1501,66 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         if foo:
             path, mime = foo[0], foo[1]
             self._project.pipeline.save_thumbnail(-1, -1, mime, path)
+
+    def insertEnd(self, sources):
+        """
+        Add source at the end of the timeline
+        @type sources: An L{ges.TimelineSource}
+        @param x2: A list of sources to add to the timeline
+        """
+        self.app.action_log.begin("add clip")
+        # Handle the case of a blank project
+        self._ensureLayer()
+        self._sources_to_insert = sources
+
+        # Start adding sources in the timeline
+        self._insertNextSource()
+
+    def _insertNextSource(self):
+        """ Insert a source at the end of the timeline's first track """
+        timeline = self.app.current.timeline
+
+        if not self._sources_to_insert:
+            # We need to wait (100ms is enoug for sure) for TrackObject-s to
+            # be added to the Tracks
+            # FIXME remove this "hack" when Materials are merged
+            glib.timeout_add(100, self._finalizeSourceAdded)
+            self.app.action_log.commit()
+
+            # Update zoom level if needed
+            return
+
+        source = self._sources_to_insert.pop()
+        layer = timeline.get_layers()[0]  # FIXME Get the longest layer
+        layer.add_object(source)
+
+        # Waiting for the TrackObject to be created because of a race
+        # condition, and to know the real length of the timeline when
+        # adding several sources at a time.
+        source.connect("track-object-added", self._trackObjectAddedCb)
+
+    def _trackObjectAddedCb(self, source, trackobj):
+        """ After an object has been added to the first track, position it
+        correctly and request the next source to be processed. """
+        timeline = self.app.current.timeline
+        layer = timeline.get_layers()[0]  # FIXME Get the longest layer
+
+        # Handle the case where we just inserted the first clip
+        if len(layer.get_objects()) == 1:
+            source.props.start = 0
+        else:
+            source.props.start = timeline.props.duration
+
+        # We only need one TrackObject to estimate the new duration.
+        # Process the next source.
+        source.disconnect_by_func(self._trackObjectAddedCb)
+        self._insertNextSource()
+
+    def _finalizeSourceAdded(self):
+        timeline = self.app.current.timeline
+        self.app.current.seeker.seek(timeline.props.duration)
+        if self.zoomed_fitted is True:
+            self._setBestZoomRatio()
+        else:
+            self.updateHScrollAdjustments()
+        return False

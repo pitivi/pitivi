@@ -271,7 +271,6 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.settings = instance.settings
         self._errors = []
         self._project = None
-        self._sources_to_insert = []
         self.dummy_selected = []
 
         # Store
@@ -550,14 +549,13 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self._selectUnusedSources()
 
     def _insertEndCb(self, unused_action):
-        self.app.action_log.begin("add clip")
+        sources = []
+        for uri in self.getSelectedItems():
+            sources.append(ges.TimelineFileSource(uri))
 
-        # Handle the case of a blank project
-        self.app.gui.timeline_ui._ensureLayer()
+        self.app.gui.timeline_ui.insertEnd(sources)
 
         self._sources_to_insert = self.getSelectedItems()
-        # Start adding sources in the timeline
-        self._insertNextSource()
 
     def _disableKeyboardShortcutsCb(self, *unused_args):
         """
@@ -576,33 +574,6 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         """
         self.app.gui.setActionsSensitive("default", True)
         self.app.gui.setActionsSensitive(['DeleteObj'], True)
-
-    def _insertNextSource(self):
-        """ Insert a source at the end of the timeline's first track """
-        timeline = self.app.current.timeline
-
-        if not self._sources_to_insert:
-            # We need to wait (100ms is enoug for sure) for TrackObject-s to
-            # be added to the Tracks
-            # FIXME remove this "hack" when Materials are merged
-            glib.timeout_add(100, self._seekToEnd)
-            self.app.action_log.commit()
-            return
-
-        uri = self._sources_to_insert.pop()
-        source = ges.TimelineFileSource(uri)
-        layer = timeline.get_layers()[0]  # FIXME Get the longest layer
-        layer.add_object(source)
-
-        # Waiting for the TrackObject to be created because of a race
-        # condition, and to know the real length of the timeline when
-        # adding several sources at a time.
-        source.connect("track-object-added", self._trackObjectAddedCb)
-
-    def _seekToEnd(self):
-        timeline = self.app.current.timeline
-        self.app.current.seeker.seek(timeline.props.duration)
-        return False
 
     def _trackObjectAddedCb(self, source, trackobj):
         """ After an object has been added to the first track, position it
