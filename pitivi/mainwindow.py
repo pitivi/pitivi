@@ -1079,19 +1079,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         return res
 
     def _timelineDurationChangedCb(self, timeline, unused_duration):
+        duration = timeline.get_duration()
         self.debug("Timeline duration changed to %s",
-            gst.TIME_ARGS(timeline.props.duration))
-        if timeline.props.duration > 0:
-            sensitive = True
-            if self.zoomed_fitted:
-                self.log("The timeline was zoomed fitted, readjusting to fit again")
-                self.setBestZoomRatio()
-            else:
-                self.log("User had changed the zoom, so not autozooming")
-                self.timeline_ui.updateHScrollAdjustments()
-        else:
-            sensitive = False
-        self.render_button.set_sensitive(sensitive)
+            gst.TIME_ARGS(duration))
+        self.render_button.set_sensitive(duration > 0)
 
 ## other
     def _showExportDialog(self, project):

@@ -1244,6 +1244,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     self._layerAddedCb))
             self._layer_sig_ids.append(self._timeline.connect("layer-removed",
                     self._layerRemovedCb))
+            self._layer_sig_ids.append(timeline.connect("notify::update",
+                    self._zoomFitCb))
 
             # Make sure to set the current layer in use
             self._layerAddedCb(None, None)
@@ -1313,7 +1315,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.app.gui.zoomed_fitted = True
 
 ## ToolBar callbacks
-    def _zoomFitCb(self, unused_action):
+    def _zoomFitCb(self, unused, unsued2=None):
         self.app.gui.setBestZoomRatio()
 
     def _zoomInCb(self, unused_action):
