@@ -138,12 +138,8 @@ msgid "Install"
 msgstr "Installer"
 
 #: ../data/ui/depsmanager.ui.h:3
-msgid ""
-"To enable additional features, please install the following packages and "
-"restart PiTiVi:"
-msgstr ""
-"Pour disposer de fonctions supplémentaires, veuillez installer les paquets "
-"suivants et redémarrer PiTiVi :"
+msgid "To enable additional features, please install the following packages and restart PiTiVi:"
+msgstr "Pour disposer de fonctions supplémentaires, veuillez installer les paquets suivants et redémarrer PiTiVi :"
 
 #: ../data/ui/depsmanager.ui.h:4
 msgid "label"
@@ -163,9 +159,7 @@ msgstr "Section"
 
 #: ../data/ui/preferences.ui.h:3
 msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr ""
-"Certaines modifications ne seront pas effectives tant que vous ne redémarrez "
-"pas PiTiVi"
+msgstr "Certaines modifications ne seront pas appliquées tant que vous n'aurez pas redémarré PiTiVi"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -235,7 +229,8 @@ msgstr "Pré-réglages audio"
 msgid "Format"
 msgstr "Format"
 
-#: ../data/ui/projectsettings.ui.h:19 ../data/ui/renderingdialog.ui.h:33
+#: ../data/ui/projectsettings.ui.h:19
+#: ../data/ui/renderingdialog.ui.h:33
 msgid "Audio"
 msgstr "Audio"
 
@@ -682,7 +677,7 @@ msgstr "Codecs multimédias supplémentaires de la bibliothèque FFmpeg"
 
 #: ../pitivi/clipproperties.py:186
 msgid "Remove effect"
-msgstr "Supprimer les effets"
+msgstr "Supprimer l'effet"
 
 #: ../pitivi/clipproperties.py:213
 msgid "Activated"
@@ -1046,7 +1041,7 @@ msgstr "Exporter vers..."
 #: ../pitivi/mainwindow.py:1231 ../pitivi/render.py:428
 #: ../pitivi/timeline/timeline.py:974
 msgid "Untitled"
-msgstr "SansTitre"
+msgstr "Sans titre"
 
 #: ../pitivi/mainwindow.py:1083 ../pitivi/mainwindow.py:1098
 #: ../pitivi/mainwindow.py:1129 ../pitivi/mainwindow.py:1144
@@ -1264,8 +1259,8 @@ msgid "About %s left"
 msgstr "Il reste environ %s"
 
 #: ../pitivi/render.py:380
-msgid "Currently rendering media"
-msgstr "Média de rendu actuel"
+msgid "Currently rendering"
+msgstr "En cours de rendu"
 
 #: ../pitivi/render.py:801
 msgid "A file name is required."
@@ -1281,8 +1276,8 @@ msgstr ""
 "différent."
 
 #: ../pitivi/viewer.py:80
-msgid "Currently playing media"
-msgstr "Média en cours de lecture"
+msgid "Currently playing"
+msgstr "En cours de lecture"
 
 #: ../pitivi/viewer.py:207
 msgid "Go to the beginning of the timeline"

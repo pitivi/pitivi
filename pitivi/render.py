@@ -377,7 +377,7 @@ class RenderDialog(Loggable):
     @ivar settings: The settings used for rendering.
     @type settings: MultimediaSettings
     """
-    INHIBIT_REASON = _("Currently rendering media")
+    INHIBIT_REASON = _("Currently rendering")
 
     def __init__(self, app, project, pipeline=None):
 

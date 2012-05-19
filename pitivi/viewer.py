@@ -77,7 +77,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             gobject.TYPE_NONE, (gobject.TYPE_BOOLEAN,)),
     }
 
-    INHIBIT_REASON = _("Currently playing media")
+    INHIBIT_REASON = _("Currently playing")
 
     def __init__(self, app, undock_action=None):
         gtk.VBox.__init__(self)
