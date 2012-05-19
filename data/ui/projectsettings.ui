@@ -525,7 +525,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Video</property>
-                <property name="use_markup">True</property>
               </object>
               <packing>
                 <property name="tab_fill">False</property>
@@ -853,7 +852,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Audio</property>
-                <property name="use_markup">True</property>
               </object>
               <packing>
                 <property name="position">1</property>
@@ -960,7 +958,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Info</property>
-                <property name="use_markup">True</property>
               </object>
               <packing>
                 <property name="position">2</property>

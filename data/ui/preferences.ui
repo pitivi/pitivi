@@ -93,10 +93,12 @@
           <object class="GtkLabel" id="restartWarning">
             <property name="can_focus">False</property>
             <property name="no_show_all">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Some changes will not take effect until you restart PiTiVi&lt;/b&gt;</property>
-            <property name="use_markup">True</property>
+            <property name="label" translatable="yes">Some changes will not take effect until you restart PiTiVi</property>
             <property name="justify">center</property>
             <property name="wrap">True</property>
+            <attributes>
+              <attribute name="weight" value="bold"/>
+            </attributes>
           </object>
           <packing>
             <property name="expand">False</property>
