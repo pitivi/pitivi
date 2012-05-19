@@ -7,32 +7,34 @@ data/pitivi.desktop.in.in
 [type: gettext/glade]data/ui/cliptransformation.ui
 [type: gettext/glade]data/ui/depsmanager.ui
 [type: gettext/glade]data/ui/elementsettingsdialog.ui
-[type: gettext/glade]data/ui/renderingdialog.ui
-[type: gettext/glade]data/ui/renderingprogress.ui
 [type: gettext/glade]data/ui/filelisterrordialog.ui
 [type: gettext/glade]data/ui/preferences.ui
 [type: gettext/glade]data/ui/projectsettings.ui
+[type: gettext/glade]data/ui/renderingdialog.ui
+[type: gettext/glade]data/ui/renderingprogress.ui
 [type: gettext/glade]data/ui/startupwizard.ui
 pitivi/application.py
-pitivi/tabsmanager.py
 pitivi/check.py
-pitivi/effects.py
-pitivi/render.py
-pitivi/project.py
-pitivi/settings.py
-pitivi/medialibrary.py
 pitivi/clipproperties.py
+pitivi/effects.py
 pitivi/mainwindow.py
 pitivi/mediafilespreviewer.py
+pitivi/medialibrary.py
+pitivi/preset.py
+pitivi/project.py
+pitivi/render.py
+pitivi/settings.py
+pitivi/tabsmanager.py
 pitivi/viewer.py
 
+pitivi/timeline/thumbnailer.py
 pitivi/timeline/timeline.py
 pitivi/timeline/track.py
-pitivi/timeline/thumbnailer.py
 
 pitivi/dialogs/clipmediaprops.py
 pitivi/dialogs/filelisterrordialog.py
 pitivi/dialogs/prefs.py
+pitivi/dialogs/startupwizard.py
 
 pitivi/utils/misc.py
 pitivi/utils/ui.py
