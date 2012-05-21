@@ -47,7 +47,6 @@ class Seeker(Signallable, Loggable):
     _instance = None
     __signals__ = {
         'seek': ['position', 'format'],
-        'flush': [],
         'seek-relative': ['time'],
     }
 
@@ -89,17 +88,14 @@ class Seeker(Signallable, Loggable):
         if self.pending_seek_id is None:
             self._time = time
             if on_idle:
-                gobject.idle_add(self._seekRelativeTimeoutCb)
+                gobject.idle_add(self._seekTimeoutCb, True)
             else:
                 self._seekTimeoutCb()
             self.pending_seek_id = self._scheduleSeek(self.timeout,
                     self._seekTimeoutCb, True)
 
-    def flush(self):
-        try:
-            self.emit('flush')
-        except:
-            self.error("Error while flushing")
+    def flush(self, on_idle=False):
+        self.seekRelative(0, on_idle)
 
     def _scheduleSeek(self, timeout, callback, relative=False):
         return gobject.timeout_add(timeout, callback, relative)
@@ -482,7 +478,6 @@ class Pipeline(ges.TimelinePipeline, SimplePipeline):
         self._seeker = Seeker()
         self._seeker.connect("seek", self._seekCb)
         self._seeker.connect("seek-relative", self._seekRelativeCb)
-        self._seeker.connect("flush", self._seekFlushCb)
 
     def release(self):
         """
@@ -495,15 +490,11 @@ class Pipeline(ges.TimelinePipeline, SimplePipeline):
         @postcondition: The L{Pipeline} will no longer be usable.
         """
         self._seeker.disconnect_by_func(self._seekRelativeCb)
-        self._seeker.disconnect_by_func(self._seekFlushCb)
         self._seeker.disconnect_by_func(self._seekCb)
         SimplePipeline.release(self)
 
     def _seekRelativeCb(self, unused_seeker, time):
         self.seekRelative(time)
-
-    def _seekFlushCb(self, unused_seeker):
-        self.flushSeek()
 
     def _seekCb(self, ruler, position, format):
         """
