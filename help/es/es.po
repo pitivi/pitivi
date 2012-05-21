@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-04-09 11:27+0000\n"
-"PO-Revision-Date: 2012-04-11 13:03+0200\n"
+"POT-Creation-Date: 2012-05-18 15:51+0000\n"
+"PO-Revision-Date: 2012-05-21 14:00+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -21,36 +21,37 @@ msgstr ""
 
 #: C/welcomedialog.page:10(name) C/usingclips.page:10(name)
 #: C/trimming.page:11(name) C/sysreq.page:11(name) C/splitting.page:10(name)
-#: C/selectunusedfiles.page:12(name) C/saveproject.page:11(name)
-#: C/rendering.page:10(name) C/projectsettings.page:10(name)
-#: C/presets.page:11(name) C/othertransitions.page:10(name)
-#: C/movearoundtimeline.page:10(name) C/medialibrary.page:10(name)
-#: C/makeselections.page:10(name) C/mainwindow.page:12(name)
-#: C/layers.page:10(name) C/keyframecurves.page:10(name)
-#: C/interface.page:10(name) C/insertintimeline.page:10(name)
-#: C/index.page:11(name) C/importing.page:10(name)
-#: C/importingmpegts.page:11(name) C/gstreamer.page:10(name)
-#: C/fadeinfadeout.page:10(name) C/effectsanimation.page:10(name)
-#: C/effects.page:11(name) C/crossfading.page:11(name)
-#: C/codecscontainers.page:10(name) C/about.page:10(name)
+#: C/selectunusedfiles.page:12(name) C/savescreenshot.page:10(name)
+#: C/saveproject.page:11(name) C/rendering.page:10(name)
+#: C/projectsettings.page:10(name) C/presets.page:11(name)
+#: C/othertransitions.page:10(name) C/movearoundtimeline.page:10(name)
+#: C/medialibrary.page:10(name) C/makeselections.page:10(name)
+#: C/mainwindow.page:12(name) C/layers.page:10(name)
+#: C/keyframecurves.page:10(name) C/interface.page:10(name)
+#: C/insertintimeline.page:10(name) C/index.page:11(name)
+#: C/importing.page:10(name) C/importingmpegts.page:11(name)
+#: C/gstreamer.page:10(name) C/fadeinfadeout.page:10(name)
+#: C/effectsanimation.page:10(name) C/effects.page:11(name)
+#: C/crossfading.page:11(name) C/codecscontainers.page:10(name)
+#: C/about.page:10(name)
 msgid "Jean-François Fortin Tam"
 msgstr "Jean-François Fortin Tam"
 
 #: C/welcomedialog.page:11(email) C/usingclips.page:11(email)
 #: C/trimming.page:12(email) C/sysreq.page:12(email)
 #: C/splitting.page:11(email) C/selectunusedfiles.page:13(email)
-#: C/saveproject.page:12(email) C/rendering.page:11(email)
-#: C/projectsettings.page:11(email) C/presets.page:12(email)
-#: C/othertransitions.page:11(email) C/movearoundtimeline.page:11(email)
-#: C/medialibrary.page:11(email) C/makeselections.page:11(email)
-#: C/mainwindow.page:13(email) C/layers.page:11(email)
-#: C/keyframecurves.page:11(email) C/interface.page:11(email)
-#: C/insertintimeline.page:11(email) C/index.page:12(email)
-#: C/importing.page:11(email) C/importingmpegts.page:12(email)
-#: C/gstreamer.page:11(email) C/fadeinfadeout.page:11(email)
-#: C/effectsanimation.page:11(email) C/effects.page:12(email)
-#: C/crossfading.page:12(email) C/codecscontainers.page:11(email)
-#: C/about.page:11(email)
+#: C/savescreenshot.page:11(email) C/saveproject.page:12(email)
+#: C/rendering.page:11(email) C/projectsettings.page:11(email)
+#: C/presets.page:12(email) C/othertransitions.page:11(email)
+#: C/movearoundtimeline.page:11(email) C/medialibrary.page:11(email)
+#: C/makeselections.page:11(email) C/mainwindow.page:13(email)
+#: C/layers.page:11(email) C/keyframecurves.page:11(email)
+#: C/interface.page:11(email) C/insertintimeline.page:11(email)
+#: C/index.page:12(email) C/importing.page:11(email)
+#: C/importingmpegts.page:12(email) C/gstreamer.page:11(email)
+#: C/fadeinfadeout.page:11(email) C/effectsanimation.page:11(email)
+#: C/effects.page:12(email) C/crossfading.page:12(email)
+#: C/codecscontainers.page:11(email) C/about.page:11(email)
 msgid "nekohayo@gmail.com"
 msgstr "nekohayo@gmail.com"
 
@@ -60,10 +61,10 @@ msgstr "Crear proyectos nuevos y abrir proyectos recientes al iniciar"
 
 #: C/welcomedialog.page:17(p) C/usingclips.page:21(p) C/trimming.page:22(p)
 #: C/sysreq.page:22(p) C/splitting.page:21(p) C/selectunusedfiles.page:19(p)
-#: C/saveproject.page:22(p) C/rendering.page:21(p)
+#: C/savescreenshot.page:14(p) C/saveproject.page:22(p) C/rendering.page:21(p)
 #: C/projectsettings.page:21(p) C/presets.page:15(p)
 #: C/othertransitions.page:19(p) C/movearoundtimeline.page:23(p)
-#: C/medialibrary.page:17(p) C/makeselections.page:21(p)
+#: C/medialibrary.page:21(p) C/makeselections.page:21(p)
 #: C/mainwindow.page:19(p) C/layers.page:21(p) C/keyframecurves.page:21(p)
 #: C/interface.page:15(p) C/insertintimeline.page:21(p) C/index.page:19(p)
 #: C/importing.page:21(p) C/importingmpegts.page:18(p) C/gstreamer.page:21(p)
@@ -615,6 +616,29 @@ msgstr ""
 "Si no hay clips sin usar en su proyecto, no se seleccionará nada en la "
 "biblioteca de medios."
 
+#: C/savescreenshot.page:18(title)
+msgid "Saving a snapshot of the current frame"
+msgstr "Guardar una instantánea del fotograma actual"
+
+#: C/savescreenshot.page:20(p)
+msgid ""
+"You can use <guiseq><gui>Timeline</gui><gui>Export current frame...</gui></"
+"guiseq> to save a copy of the current frame as an image file."
+msgstr ""
+"Puede usar <guiseq><gui>Línea del tiempo</gui><gui>Exportar fotograma "
+"actual...</gui></guiseq> para guardar una copia del fotograma actual como un "
+"archivo de imagen."
+
+#: C/savescreenshot.page:21(p)
+msgid ""
+"Currently, PNG and JPEG are supported as file formats. The image resolution "
+"will match the project settings and any effect or transformation will also "
+"be applied to the resulting image."
+msgstr ""
+"Actualmente, PNG y JPEG se soportan como formatos de archivo. La resolución "
+"de la imagen coincidirá con las configuraciones del proyecto y cualquier "
+"efecto o transformación se aplicará a la imagen resultante."
+
 #: C/saveproject.page:18(desc)
 msgid "How to save your project for later editing use."
 msgstr "Como guardar su proyecto para su posterior uso de edición."
@@ -710,14 +734,11 @@ msgstr "Pulse el botón <gui>Renderizar</gui>."
 msgid ""
 "If your computer is set to suspend or hibernate automatically, <app>PiTiVi</"
 "app> will automatically inhibit the power saving features during the render "
-"process (see bug <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
-"id=571885\">bug #571885</link>)."
+"process."
 msgstr ""
 "Si su equipo está configurado para suspenderse o hibernar automáticamente, "
 "<app>PiTiVi</app> impedirá automáticamente las funciones de ahorro de "
-"energía durante el proceso de renderizado (consulte <link href=\"https://"
-"bugzilla.gnome.org/show_bug.cgi?id=571885\">el informe de error nº 571885</"
-"link>)."
+"energía durante el proceso de renderizado."
 
 #: C/projectsettings.page:17(desc)
 msgid ""
@@ -916,8 +937,8 @@ msgid ""
 msgstr ""
 "Los ajustes predefinidos están ahí para ahorrar tiempo y reducir la "
 "complejidad. Los expertos pueden elegir simplemente ignorarlos y establecer "
-"todo manualmente; el ajuste predefinido «No hay configuración» es especial "
-"ya que automáticamente guarda sus cambios directamente en el archivo del "
+"todo manualmente; el ajuste predefinido «No hay configuración» es especial ya "
+"que automáticamente guarda sus cambios directamente en el archivo del "
 "proyecto."
 
 #: C/presets.page:45(title)
@@ -954,11 +975,11 @@ msgstr ""
 "están aún implementadas (consulte el <link href=\"https://bugzilla.gnome.org/"
 "show_bug.cgi?id=609353\">error nº 609353</link>)."
 
-#: C/movearoundtimeline.page:16(name)
+#: C/movearoundtimeline.page:16(name) C/medialibrary.page:14(name)
 msgid "Brian Grohe"
 msgstr "Brian Grohe"
 
-#: C/movearoundtimeline.page:17(email)
+#: C/movearoundtimeline.page:17(email) C/medialibrary.page:15(email)
 msgid "grohe43@gmail.com"
 msgstr "grohe43@gmail.com"
 
@@ -1193,43 +1214,46 @@ msgstr ""
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: C/medialibrary.page:28(None)
+#: C/medialibrary.page:32(None)
 msgid ""
 "@@image: 'figures/previewsource.png'; md5=ec55ba71f7c9ec058d4619b342654a0e"
 msgstr ""
 "@@image: 'figures/previewsource.png'; md5=ec55ba71f7c9ec058d4619b342654a0e"
 
-#: C/medialibrary.page:13(desc)
+#: C/medialibrary.page:17(desc)
 msgid "Managing your imported clips with the Media Library"
 msgstr "Gestione sus clips importados con la biblioteca de medios"
 
-#: C/medialibrary.page:21(title)
+#: C/medialibrary.page:25(title)
 msgid "Using the Media Library"
 msgstr "Usar la biblioteca de medios"
 
-#: C/medialibrary.page:24(title)
+#: C/medialibrary.page:28(title)
 msgid "Previewing a clip from the <gui>Media Library</gui>"
 msgstr "Vista previa de un clip desde la <gui>Biblioteca de medios</gui>"
 
-#: C/medialibrary.page:25(p)
+#: C/medialibrary.page:29(p)
 msgid ""
 "To preview a clip before placing it on the timeline, you can double-click on "
-"it in the <gui>Media Library</gui>, or right-click and choose <gui>Play "
-"clip</gui> from the popup menu."
+"it in the <gui>Media Library</gui>, or right-click and choose <gui>Preview "
+"Clip</gui> from the popup menu. This will open the clip in a window that "
+"automatically closes whenever you click outside the window."
 msgstr ""
-"Para la vista previa de un clip antes de colocarlo en la línea del tiempo, "
+"Para previsualizar de un clip antes de colocarlo en la línea del tiempo, "
 "puede pulsar dos veces en él en la <gui>Biblioteca de medios</gui>, o pulsar "
-"con el botón derecho y elegir <gui>Reproducir clip</gui> del menú emergente."
+"con el botón derecho y elegir <gui>Reproducir clip</gui> del menú emergente. "
+"Esto abrirá el clip en una ventana que se cierra automáticamente cuando "
+"pulse fuera de la ventana."
 
-#: C/medialibrary.page:27(desc)
+#: C/medialibrary.page:31(desc)
 msgid "Popup menu"
 msgstr "Menú emergente"
 
-#: C/medialibrary.page:32(title)
+#: C/medialibrary.page:36(title)
 msgid "Filtering search"
 msgstr "Filtro de búsqueda"
 
-#: C/medialibrary.page:33(p)
+#: C/medialibrary.page:37(p)
 msgid ""
 "A search bar is shown at the top of the <gui>Media Library</gui>. Typing "
 "into the search entry filters the contents of the <gui>Media Library</gui> "
@@ -1243,11 +1267,11 @@ msgstr ""
 "restablecer la entrada de búsqueda, pulse en el icono \"limpiar\" en la "
 "entrada de búsqueda."
 
-#: C/medialibrary.page:36(title)
+#: C/medialibrary.page:40(title)
 msgid "Typeahead search"
 msgstr "Búsqueda escrita por adelantado"
 
-#: C/medialibrary.page:37(p)
+#: C/medialibrary.page:41(p)
 msgid ""
 "An alternative way of searching, if you know the beginning of a clip's "
 "filename, is to click anywhere in the <gui>Media Library</gui> and start "
@@ -1257,15 +1281,15 @@ msgstr ""
 "del clip, es pulsar en cualquier lugar de la <gui>Biblioteca de medios</gui> "
 "y empezar a escribir el nombre del archivo que esté buscando."
 
-#: C/medialibrary.page:39(p)
+#: C/medialibrary.page:43(p)
 msgid "As you type, the first matching file will become selected."
 msgstr "A medida que escriba, el primer archivo que coincida se seleccionará."
 
-#: C/medialibrary.page:40(p)
+#: C/medialibrary.page:44(p)
 msgid "You can keep typing to refine your search."
 msgstr "Puede seguir escribiendo para refinar su búsqueda."
 
-#: C/medialibrary.page:41(p)
+#: C/medialibrary.page:45(p)
 msgid ""
 "When there are multiple results, you can use the <gui>up</gui> and "
 "<app>down</app> arrow keys to switch the selection between each search "
@@ -1275,17 +1299,17 @@ msgstr ""
 "<app>abajo</app> para cambiar la selección entre cada resultado de la "
 "búsqueda."
 
-#: C/medialibrary.page:44(p)
+#: C/medialibrary.page:48(p)
 msgid "This method only allows searching from the beginning of the filename."
 msgstr ""
 "Este método solo permite la búsqueda desde el comienzo del nombre del "
 "archivo."
 
-#: C/medialibrary.page:47(title)
+#: C/medialibrary.page:51(title)
 msgid "View modes"
 msgstr "Modos de vistas"
 
-#: C/medialibrary.page:48(p)
+#: C/medialibrary.page:52(p)
 msgid ""
 "The <gui>Media Library</gui> can display your clips in a list "
 "(<guiseq><gui>View</gui><gui>Show Clips as a List</gui></guiseq>) or in an "
@@ -1296,7 +1320,7 @@ msgstr ""
 "en una vista de iconos (<guiseq><gui>Ver</gui><gui>Mostrar clips como "
 "iconos</gui></guiseq>)."
 
-#: C/medialibrary.page:49(p)
+#: C/medialibrary.page:53(p)
 msgid ""
 "The list view mode shows more details about each clip, but the icon view "
 "mode can display more clips without needing to scroll (especially on high "
@@ -1594,9 +1618,8 @@ msgid ""
 "more information."
 msgstr ""
 "La característica <em>vista previa en vivo</em> aún no está implementada. "
-"Consulte el <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
-"id=569980\">el informe de error nº 569980</link> para obtener mayor "
-"información."
+"Consulte el <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=569980"
+"\">el informe de error nº 569980</link> para obtener mayor información."
 
 #: C/mainwindow.page:100(title)
 msgid "Media Library"
@@ -2375,8 +2398,8 @@ msgid ""
 "The \"Ugly\" plugins are good quality plugins whose license is not LGPL or "
 "with licensing issues."
 msgstr ""
-"Los complementos «feos» son complementos de buena calidad cuya licencia no "
-"es LGPL o tienen problemas de licencia."
+"Los complementos «feos» son complementos de buena calidad cuya licencia no es "
+"LGPL o tienen problemas de licencia."
 
 #: C/gstreamer.page:54(p)
 msgid ""
