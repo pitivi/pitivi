@@ -36,6 +36,7 @@ Preparing:
       * AUTHORS (if there are new contributors)
      * Commit
      * git tag -a RELEASE-X_YY_Z  # For major releases, Z = 0
+     * Use git push --tags to ensure the tags are published on the remote
 
 Publishing (for both releases and pre-releases):
  * 'make distcheck' again to get the tarball
