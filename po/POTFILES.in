@@ -25,6 +25,7 @@ pitivi/project.py
 pitivi/render.py
 pitivi/settings.py
 pitivi/tabsmanager.py
+pitivi/transitions.py
 pitivi/viewer.py
 
 pitivi/timeline/thumbnailer.py
