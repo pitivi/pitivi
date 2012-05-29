@@ -325,6 +325,12 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
             self.element.disconnect_by_func(self._transitionTypeChangedCb)
         except TypeError:
             pass
+        except AttributeError:
+            # This happens when selecting a normal track object before any
+            # transition object has been created. Normal track objects don't
+            # have these signals, so we just ignore them. Anyway, we just want
+            # to deactivate the UI now.
+            pass
         self.iconview.unselect_all()
         self.iconview.set_sensitive(False)
         self.props_widgets.set_sensitive(False)
