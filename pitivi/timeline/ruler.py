@@ -28,11 +28,12 @@ import gtk
 import gst
 import cairo
 
+from gettext import gettext as _
+
 from pitivi.utils.pipeline import Seeker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
-
-from pitivi.utils.ui import time_to_string
+from pitivi.utils.ui import time_to_string, beautify_length
 
 
 def setCairoColor(cr, color):
@@ -138,10 +139,14 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         return False
 
     def do_motion_notify_event(self, event):
+        position = self.pixelToNs(event.x + self.pixbuf_offset)
         if self.pressed:
             self.debug("motion at event.x %d", event.x)
-            position = self.pixelToNs(event.x + self.pixbuf_offset)
             self._seeker.seek(position)
+        else:
+            human_time = beautify_length(position)
+            cur_frame = int(position / self.ns_per_frame) + 1
+            self.set_tooltip_text(human_time + "\n" + _("Frame #%d" % cur_frame))
         return False
 
     def do_scroll_event(self, event):
@@ -204,6 +209,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         Set the lowest scale based on project framerate
         """
         self.frame_rate = rate
+        self.ns_per_frame = float(1 / self.frame_rate) * gst.SECOND
         self.scale[0] = float(2 / rate)
         self.scale[1] = float(5 / rate)
         self.scale[2] = float(10 / rate)
@@ -279,8 +285,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             seconds += interval
 
     def drawFrameBoundaries(self, cr):
-        ns_per_frame = float(1 / self.frame_rate) * gst.SECOND
-        frame_width = self.nsToPixel(ns_per_frame)
+        frame_width = self.nsToPixel(self.ns_per_frame)
         if frame_width >= self.min_frame_spacing:
             offset = self.pixbuf_offset % frame_width
             paintpos = -frame_width + 0.5
