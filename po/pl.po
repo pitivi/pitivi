@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-27 23:17+0200\n"
-"PO-Revision-Date: 2012-05-27 23:18+0200\n"
+"POT-Creation-Date: 2012-05-30 18:25+0200\n"
+"PO-Revision-Date: 2012-05-30 18:26+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -23,7 +23,7 @@ msgstr ""
 
 #: ../data/pitivi.desktop.in.in.h:1
 msgid "Pitivi Video Editor"
-msgstr "Program do edycji wideo Pitivi"
+msgstr "Program do edycji wideo PiTiVi"
 
 #: ../data/pitivi.desktop.in.in.h:2
 msgid "Create and edit your own movies"
@@ -1345,6 +1345,11 @@ msgstr "Odtwórz"
 #: ../pitivi/viewer.py:992
 msgid "Pause"
 msgstr "Wstrzymaj"
+
+#: ../pitivi/timeline/ruler.py:149
+#, python-format
+msgid "Frame #%d"
+msgstr "Klatka #%d"
 
 #: ../pitivi/timeline/thumbnailer.py:66 ../pitivi/timeline/track.py:69
 #: ../pitivi/timeline/track.py:80 ../pitivi/timeline/track.py:91
