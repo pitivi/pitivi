@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-27 21:12+0000\n"
-"PO-Revision-Date: 2012-05-28 16:38+0200\n"
+"POT-Creation-Date: 2012-05-30 16:25+0000\n"
+"PO-Revision-Date: 2012-05-31 11:07+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -924,7 +924,6 @@ msgid "Clip configuration"
 msgstr "Configuraciones del vídeo"
 
 #: ../pitivi/mainwindow.py:421
-#| msgid "Transformation"
 msgid "Transitions"
 msgstr "Transiciones"
 
@@ -1264,7 +1263,6 @@ msgstr ""
 "diferentes."
 
 #: ../pitivi/transitions.py:72
-#| msgid "Format"
 msgid "Normal"
 msgstr "Normal"
 
@@ -1273,7 +1271,6 @@ msgid "Loop"
 msgstr "Circular"
 
 #: ../pitivi/transitions.py:83
-#| msgid "Revert to saved project"
 msgid "Reverse direction"
 msgstr "Invertir dirección"
 
@@ -1287,12 +1284,10 @@ msgstr ""
 "transición."
 
 #: ../pitivi/transitions.py:198
-#| msgid "Show:"
 msgid "Slow"
 msgstr "Lenta"
 
 #: ../pitivi/transitions.py:199
-#| msgid "Format"
 msgid "Fast"
 msgstr "Rápida"
 
@@ -1301,7 +1296,6 @@ msgid "Epileptic"
 msgstr "Epiléptica"
 
 #: ../pitivi/transitions.py:204
-#| msgid "Start"
 msgid "Sharp"
 msgstr "Brusca"
 
@@ -1340,6 +1334,12 @@ msgstr "Reproducir"
 #: ../pitivi/viewer.py:992
 msgid "Pause"
 msgstr "Pausar"
+
+#: ../pitivi/timeline/ruler.py:149
+#, python-format
+#| msgid "Frame Forward"
+msgid "Frame #%d"
+msgstr "Fotograma nº %d"
 
 #: ../pitivi/timeline/thumbnailer.py:66 ../pitivi/timeline/track.py:69
 #: ../pitivi/timeline/track.py:80 ../pitivi/timeline/track.py:91
@@ -2546,10 +2546,6 @@ msgstr "Propiedades para %s"
 
 #~ msgid "Back one frame"
 #~ msgstr "Retroceder un fotograma"
-
-#~| msgid "Frame rate:"
-#~ msgid "Frame Forward"
-#~ msgstr "Fotograma adelante"
 
 #~ msgid "Frame Backward"
 #~ msgstr "Fotograma atrás"
