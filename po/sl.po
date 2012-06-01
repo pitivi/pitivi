@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-28 15:45+0000\n"
+"POT-Creation-Date: 2012-05-31 10:12+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -1301,6 +1301,11 @@ msgstr "Predvajaj"
 #: ../pitivi/viewer.py:992
 msgid "Pause"
 msgstr "Premor"
+
+#: ../pitivi/timeline/ruler.py:149
+#, python-format
+msgid "Frame #%d"
+msgstr "Sličica #%d"
 
 #: ../pitivi/timeline/thumbnailer.py:66
 #: ../pitivi/timeline/track.py:69
