@@ -115,6 +115,10 @@ class Selection(Signallable):
             selection = self.selected | selection
         elif mode == UNSELECT:
             selection = self.selected - selection
+
+        if selection == old_selection:
+            # The user clicked on the same clip
+            return
         self.selected = selection
 
         if len(self.selected) == 1:
@@ -130,7 +134,6 @@ class Selection(Signallable):
                 if not isinstance(tckobj, ges.TrackEffect):
                     tckobj.selected.selected = False
 
-        # FIXME : shouldn't we ONLY emit this IFF the selection has changed ?
         self.emit("selection-changed")
 
     def getSelectedTrackObjs(self):
