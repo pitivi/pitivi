@@ -879,8 +879,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         if context.targets not in DND_EFFECT_LIST:
             self._canvas.drag_unhighlight()
             self.app.action_log.begin("add clip")
-            self.selected = self._temp_objects
-            self._project.emit("selected-changed", set(self.selected))
             if self._move_context is not None:
                 self._move_context.finish()
                 self._move_context = None
