@@ -331,7 +331,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
         self.treeview.connect("focus-in-event", self._disableKeyboardShortcutsCb)
         self.treeview.connect("focus-out-event", self._enableKeyboardShortcutsCb)
-        self.treeview.connect("row-activated", self._rowActivatedCb)
+        self.treeview.connect("row-activated", self._itemOrRowActivatedCb)
         self.treeview.set_property("rules_hint", True)
         self.treeview.set_headers_visible(False)
         self.treeview.set_property("search_column", COL_SEARCH_TEXT)
@@ -373,6 +373,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.iconview.connect("button-press-event", self._iconViewButtonPressEventCb)
         self.iconview.connect("focus-in-event", self._disableKeyboardShortcutsCb)
         self.iconview.connect("focus-out-event", self._enableKeyboardShortcutsCb)
+        self.iconview.connect("item-activated", self._itemOrRowActivatedCb)
         self.iconview.connect("selection-changed", self._viewSelectionChangedCb)
         self.iconview.set_orientation(gtk.ORIENTATION_VERTICAL)
         self.iconview.set_property("has_tooltip", True)
@@ -1162,7 +1163,11 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         else:
             self.selection_actions.set_sensitive(False)
 
-    def _rowActivatedCb(self, unused_treeview, path, unused_column):
+    def _itemOrRowActivatedCb(self, unused_view, path, *unused_column):
+        """
+        When Space, Shift+Space, Return or Enter is pressed, preview the clip.
+        This method is the same for both iconview and treeview.
+        """
         path = self.modelFilter[path][COL_URI]
         self.emit('play', path)
 
