@@ -695,7 +695,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             "<Control>minus", ZOOM_OUT, self._zoomOutCb),
 
             ("ZoomFit", gtk.STOCK_ZOOM_FIT, None,
-            None, ZOOM_FIT, self._zoomFitCb),
+            "<Control>0", ZOOM_FIT, self._zoomFitCb),
 
             ("Screenshot", None, _("Export current frame..."),
             None, _("Export the frame at the current playhead "
