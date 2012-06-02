@@ -173,7 +173,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         Zoomable.__init__(self)
         Loggable.__init__(self)
         self.app = instance
-        self._selected_sources = []
         self._tracks = []
         self.height = 0
 
@@ -342,7 +341,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             if event.get_state() & gtk.gdk.CONTROL_MASK:
                 mode = 2
             selected = self._objectsUnderMarquee()
-            self.app.projectManager.current.emit("selected-changed", selected)
             self._timeline.selection.setSelection(self._objectsUnderMarquee(), mode)
         return True
 

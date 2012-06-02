@@ -479,13 +479,13 @@ class Project(Signallable, Loggable):
     @type loaded: C{bool}
 
     Signals:
-     - C{loaded} : The project is now fully loaded.
+     - C{settings-changed}: The project settings changed
+     - C{project-changed}: Modifications were made to the project
     """
 
     __signals__ = {
         "settings-changed": ['old', 'new'],
         "project-changed": [],
-        "selected-changed": ['element']
         }
 
     def __init__(self, name="", uri=None, **kwargs):
