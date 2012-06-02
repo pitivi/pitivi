@@ -400,8 +400,7 @@ class ProjectManager(Signallable, Loggable):
 
         if self.backup_lock == 0:
             self.backup_lock = 10
-            gobject.timeout_add_seconds(self.backup_lock,
-                    self._saveBackupCb, project, uri)
+            gobject.timeout_add_seconds(self.backup_lock, self._saveBackupCb, project, uri)
         else:
             if self.backup_lock < 60:
                 self.backup_lock += 5
@@ -538,7 +537,7 @@ class Project(Signallable, Loggable):
         self.pipeline = None
         self.timeline = None
 
-    #{ Settings methods
+    # Project settings methods
 
     def getSettings(self):
         """
@@ -559,9 +558,7 @@ class Project(Signallable, Loggable):
         self.settings = settings
         self.emit('settings-changed', oldsettings, settings)
 
-    #}
-
-    #{ Save and Load features
+    # Save and Load features
 
     def setModificationState(self, state):
         self._dirty = state
@@ -580,8 +577,7 @@ class ProjectSettingsDialog():
         self.settings = project.getSettings()
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(os.path.join(get_ui_dir(),
-            "projectsettings.ui"))
+        self.builder.add_from_file(os.path.join(get_ui_dir(), "projectsettings.ui"))
         self._setProperties()
         self.builder.connect_signals(self)
 
@@ -643,8 +639,7 @@ class ProjectSettingsDialog():
             predicate=self.constrained, edge_func=self.updateWidth)
 
         # keep framereate text field and combo in sync
-        self.wg.addBiEdge(self.frame_rate_combo,
-           self.frame_rate_fraction_widget)
+        self.wg.addBiEdge(self.frame_rate_combo, self.frame_rate_fraction_widget)
 
         # keep dar text field and combo in sync
         self.wg.addEdge(self.dar_combo, self.dar_fraction_widget,
@@ -700,35 +695,23 @@ class ProjectSettingsDialog():
 
         # Bind the widgets in the Video tab to the Video Presets Manager.
         self.bindSpinbutton(self.video_presets, "width", self.width_spinbutton)
-        self.bindSpinbutton(self.video_presets, "height",
-            self.height_spinbutton)
-        self.bindFractionWidget(self.video_presets, "frame-rate",
-            self.frame_rate_fraction_widget)
+        self.bindSpinbutton(self.video_presets, "height", self.height_spinbutton)
+        self.bindFractionWidget(self.video_presets, "frame-rate", self.frame_rate_fraction_widget)
         self.bindPar(self.video_presets)
 
         # Bind the widgets in the Audio tab to the Audio Presets Manager.
-        self.bindCombo(self.audio_presets, "channels",
-            self.channels_combo)
-        self.bindCombo(self.audio_presets, "sample-rate",
-            self.sample_rate_combo)
-        self.bindCombo(self.audio_presets, "depth",
-            self.sample_depth_combo)
+        self.bindCombo(self.audio_presets, "channels", self.channels_combo)
+        self.bindCombo(self.audio_presets, "sample-rate", self.sample_rate_combo)
+        self.bindCombo(self.audio_presets, "depth", self.sample_depth_combo)
 
-        self.wg.addEdge(self.par_fraction_widget,
-            self.save_video_preset_button)
-        self.wg.addEdge(self.frame_rate_fraction_widget,
-            self.save_video_preset_button)
-        self.wg.addEdge(self.width_spinbutton,
-            self.save_video_preset_button)
-        self.wg.addEdge(self.height_spinbutton,
-            self.save_video_preset_button)
+        self.wg.addEdge(self.par_fraction_widget, self.save_video_preset_button)
+        self.wg.addEdge(self.frame_rate_fraction_widget, self.save_video_preset_button)
+        self.wg.addEdge(self.width_spinbutton, self.save_video_preset_button)
+        self.wg.addEdge(self.height_spinbutton, self.save_video_preset_button)
 
-        self.wg.addEdge(self.channels_combo,
-            self.save_audio_preset_button)
-        self.wg.addEdge(self.sample_rate_combo,
-            self.save_audio_preset_button)
-        self.wg.addEdge(self.sample_depth_combo,
-            self.save_audio_preset_button)
+        self.wg.addEdge(self.channels_combo, self.save_audio_preset_button)
+        self.wg.addEdge(self.sample_rate_combo, self.save_audio_preset_button)
+        self.wg.addEdge(self.sample_depth_combo, self.save_audio_preset_button)
 
         self.updateUI()
 
@@ -777,13 +760,11 @@ class ProjectSettingsDialog():
         treeview.props.headers_visible = False
         model = mgr.getModel()
         treeview.set_model(model)
-        model.connect("row-inserted", self._newPresetCb,
-            column, renderer, treeview)
+        model.connect("row-inserted", self._newPresetCb, column, renderer, treeview)
         renderer.connect("edited", self._presetNameEditedCb, mgr)
-        renderer.connect("editing-started", self._presetNameEditingStartedCb,
-            mgr)
-        treeview.get_selection().connect("changed", self._presetChangedCb,
-            mgr, update_buttons_func)
+        renderer.connect("editing-started", self._presetNameEditingStartedCb, mgr)
+        treeview.get_selection().connect("changed", self._presetChangedCb, mgr,
+                                                    update_buttons_func)
         treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
 
     def createAudioNoPreset(self, mgr):
@@ -831,7 +812,6 @@ class ProjectSettingsDialog():
         self._hidePresetManagerError(mgr)
 
     def _treeviewDefocusedCb(self, widget, event, mgr):
-        """Handle the treeview loosing the focus."""
         self._hidePresetManagerError(mgr)
 
     def _showPresetManagerError(self, mgr, error_markup):
@@ -1007,20 +987,16 @@ class ProjectSettingsDialog():
         self.par_fraction_widget.setWidgetValue(dar * (1 / sar))
 
     def updateDarFromCombo(self):
-        self.dar_fraction_widget.setWidgetValue(get_combo_value(
-            self.dar_combo))
+        self.dar_fraction_widget.setWidgetValue(get_combo_value(self.dar_combo))
 
     def updateDarFromFractionWidget(self):
-        set_combo_value(self.dar_combo,
-            self.dar_fraction_widget.getWidgetValue())
+        set_combo_value(self.dar_combo, self.dar_fraction_widget.getWidgetValue())
 
     def updateParFromCombo(self):
-        self.par_fraction_widget.setWidgetValue(get_combo_value(
-            self.par_combo))
+        self.par_fraction_widget.setWidgetValue(get_combo_value(self.par_combo))
 
     def updateParFromFractionWidget(self):
-        set_combo_value(self.par_combo,
-            self.par_fraction_widget.getWidgetValue())
+        set_combo_value(self.par_combo, self.par_fraction_widget.getWidgetValue())
 
     def updateUI(self):
 
