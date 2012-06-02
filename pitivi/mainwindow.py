@@ -294,7 +294,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             None, _("Information about %s") % APPNAME, self._aboutCb),
 
             ("UserManual", gtk.STOCK_HELP, _("User Manual"),
-             None, None, self._userManualCb),
+             "F1", None, self._userManualCb),
 
             # Set up the toplevel menu items for translation
             ("File", None, _("_Project")),
@@ -308,10 +308,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         self.toggleactions = [
             ("FullScreen", gtk.STOCK_FULLSCREEN, None,
-            "f", _("View the main window on the whole screen"), self._fullScreenCb),
-
-            ("FullScreenAlternate", gtk.STOCK_FULLSCREEN, None,
-            "F11", None, self._fullScreenAlternateCb),
+            "F11", _("View the main window on the whole screen"), self._fullScreenCb),
 
             ("ShowHideMainToolbar", None, _("Main Toolbar"),
             None, None, self._showHideMainToolBar,
@@ -350,7 +347,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             elif action_name in [
                 "File", "Edit", "View", "Help",
                 "About", "Quit", "ImportSourcesFolder",
-                "FullScreen", "FullScreenAlternate", "UserManual",
+                "FullScreen", "UserManual",
                 "ShowHideMainToolbar", "ShowHideTimelineToolbar",
                 "FrameForward", "FrameBackward",
                 "SecondForward", "SecondBackward",
@@ -625,10 +622,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _fullScreenCb(self, unused_action):
         self.setFullScreen(not self.is_fullscreen)
-
-    def _fullScreenAlternateCb(self, unused_action):
-        # Nothing more, nothing less.
-        self.actiongroup.get_action("FullScreen").activate()
 
     def _showHideMainToolBar(self, action):
         self.uimanager.get_widget("/MainToolBar").props.visible = \

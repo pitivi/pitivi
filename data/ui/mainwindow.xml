@@ -58,6 +58,5 @@
         <placeholder name="Timeline" />
         <separator />
   </toolbar>
-  <accelerator action="FullScreenAlternate" />
   <accelerator action="RenderProject" />
 </ui>
