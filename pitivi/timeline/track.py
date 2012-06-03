@@ -507,11 +507,9 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         pattern = unpack_cairo_gradient(color)
         self.bg.props.fill_pattern = pattern
         self.namebg.props.fill_pattern = pattern
-        self._selec_indic.props.fill_pattern = unpack_cairo_pattern(
-            self.settings.selectedColor)
+        self._selec_indic.props.fill_pattern = unpack_cairo_pattern(self.settings.selectedColor)
         self.name.props.font = self.settings.clipFontDesc
-        self.name.props.fill_pattern = unpack_cairo_pattern(
-            self.settings.clipFontColor)
+        self.name.props.fill_pattern = unpack_cairo_pattern(self.settings.clipFontColor)
         twidth, theight = text_size(self.name)
         self.namewidth = twidth
         self.nameheight = theight
@@ -590,8 +588,7 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         if width < min_width:
             width = min_width
         w = width - handles_width
-        self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
-            0, 0, w, self.height, w)
+        self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (0, 0, w, self.height, w)
         self.bg.props.width = width
 
         self._selec_indic.props.width = width

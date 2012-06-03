@@ -270,8 +270,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         @type x1: An C{int}
         @param y1: The vertical coordinate of the up left corner of the area
         @type y1: An C{int}
-        @param x2: The horizontal coordinate of the down right corner of the
-                   area
+        @param x2: The horizontal coordinate of the down right area corner
         @type x2: An C{int}
         @param x2: The vertical coordinate of the down right corner of the area
         @type x2: An C{int}
@@ -345,8 +344,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         return True
 
     def _objectsUnderMarquee(self):
-        items = self.get_items_in_area(self._marquee.get_bounds(), True, True,
-            True)
+        items = self.get_items_in_area(self._marquee.get_bounds(), True, True, True)
         if items:
             return set((item.element for item in items if isinstance(item,
                 TrackObject) and item.bg in items))
