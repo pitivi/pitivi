@@ -732,7 +732,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             "<Shift><Control>A", ALIGN, self.alignSelected),
         )
 
-        self.playhead_actions = (
+        playhead_actions = (
             ("PlayPause", gtk.STOCK_MEDIA_PLAY, None,
             "space", _("Start Playback"), self.playPause),
 
@@ -753,11 +753,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         actiongroup.add_actions(actions)
         self.ui_manager.insert_action_group(actiongroup, 0)
 
-        actiongroup = gtk.ActionGroup("timelineselection")
-        actiongroup.add_actions(selection_actions)
-        actiongroup.add_actions(self.playhead_actions)
+        self.selection_actions = gtk.ActionGroup("timelineselection")
+        self.selection_actions.add_actions(selection_actions)
+        self.selection_actions.set_sensitive(False)
+        self.ui_manager.insert_action_group(self.selection_actions, -1)
+        self.playhead_actions = gtk.ActionGroup("timelineplayhead")
+        self.playhead_actions.add_actions(playhead_actions)
+        self.ui_manager.insert_action_group(self.playhead_actions, -1)
 
-        self.ui_manager.insert_action_group(actiongroup, -1)
         self.ui_manager.add_ui_from_string(ui)
 
         # drag and drop

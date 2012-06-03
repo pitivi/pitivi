@@ -565,16 +565,14 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
         This is used when focusing the search entry, icon on tree view widgets.
         """
-        self.app.gui.setActionsSensitive("default", False)
-        self.app.gui.setActionsSensitive(['DeleteObj'], False)
+        self.app.gui.setActionsSensitive(False)
 
     def _enableKeyboardShortcutsCb(self, *unused_args):
         """
         When focusing out of media library widgets,
         re-enable the timeline keyboard shortcuts.
         """
-        self.app.gui.setActionsSensitive("default", True)
-        self.app.gui.setActionsSensitive(['DeleteObj'], True)
+        self.app.gui.setActionsSensitive(True)
 
     def _trackObjectAddedCb(self, source, trackobj):
         """ After an object has been added to the first track, position it

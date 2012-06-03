@@ -468,10 +468,10 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
     def _treeviewSelectionChangedCb(self, treeview):
         if self.selection.count_selected_rows() == 0 and self.timeline_objects:
-            self.app.gui.setActionsSensitive(['DeleteObj'], True)
+            self.app.gui.setActionsSensitive(True)
             self._removeEffectBt.set_sensitive(False)
         else:
-            self.app.gui.setActionsSensitive(['DeleteObj'], False)
+            self.app.gui.setActionsSensitive(False)
             self._removeEffectBt.set_sensitive(True)
 
         self._updateEffectConfigUi()
@@ -593,8 +593,7 @@ class TransformationProperties(gtk.Expander):
 
     def _getAndConnectToEffect(self, widget_name, property_name):
         spinbtn = self.builder.get_object(widget_name)
-        spinbtn.connect("output",
-                        self._onValueChangedCb, property_name)
+        spinbtn.connect("output", self._onValueChangedCb, property_name)
         self.spin_buttons[property_name] = spinbtn
         self.default_values[property_name] = spinbtn.get_value()
 

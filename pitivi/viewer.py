@@ -266,14 +266,10 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.warning("could not set ratio !")
 
     def _entryFocusInCb(self, entry, event):
-        sensitive_actions = self.app.gui.sensitive_actions
-        self.app.gui.setActionsSensitive(sensitive_actions, False)
-        self.app.gui.setActionsSensitive(['DeleteObj'], False)
+        self.app.gui.setActionsSensitive(False)
 
     def _entryFocusOutCb(self, entry, event):
-        sensitive_actions = self.app.gui.sensitive_actions
-        self.app.gui.setActionsSensitive(sensitive_actions, True)
-        self.app.gui.setActionsSensitive(['DeleteObj'], True)
+        self.app.gui.setActionsSensitive(True)
 
     ## active Timeline calllbacks
     def _durationChangedCb(self, unused_pipeline, duration):

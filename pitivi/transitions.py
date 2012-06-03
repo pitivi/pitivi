@@ -211,12 +211,10 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         entry.set_text("")
 
     def _searchEntryDeactivateCb(self, entry, event):
-        self.app.gui.setActionsSensitive("default", True)
-        self.app.gui.setActionsSensitive(['DeleteObj'], True)
+        self.app.gui.setActionsSensitive(True)
 
     def _searchEntryActivateCb(self, entry, event):
-        self.app.gui.setActionsSensitive("default", False)
-        self.app.gui.setActionsSensitive(['DeleteObj'], False)
+        self.app.gui.setActionsSensitive(False)
 
 # GES callbacks
 
