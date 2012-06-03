@@ -608,8 +608,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._project = None
         self._projectmanager = None
 
-        #Ids of the layer-added and layer-removed signals
-        self._layer_sig_ids = []
+        # The IDs of the various gobject signals we connect to
+        self._signal_ids = []
 
         self._settings = self.app.settings
         self._settings.connect("edgeSnapDeadbandChanged",
@@ -1272,15 +1272,19 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._timeline = timeline
 
         if timeline:
-            # Connecting to timeline signals
-            self._layer_sig_ids.append(self._timeline.connect("layer-added",
+            # Connecting to timeline gobject signals
+            self._signal_ids.append(timeline.connect("layer-added",
                     self._layerAddedCb))
-            self._layer_sig_ids.append(self._timeline.connect("layer-removed",
+            self._signal_ids.append(timeline.connect("layer-removed",
                     self._layerRemovedCb))
-            self._layer_sig_ids.append(timeline.connect("notify::update",
+            self._signal_ids.append(timeline.connect("notify::update",
                     self._timelineUpdateChangedCb))
-            self._layer_sig_ids.append(timeline.connect("notify::duration",
+            self._signal_ids.append(timeline.connect("notify::duration",
                     self._timelineDurationChangedCb))
+
+            # The Selection object of _timeline inherits signallable
+            # We will be able to disconnect it with disconnect_by_func
+            self._timeline.selection.connect("selection-changed", self._selectionChangedCb)
 
             # Make sure to set the current layer in use
             self._layerAddedCb(None, None)
@@ -1294,12 +1298,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         return self._timeline
 
     def delTimeline(self):
-        # Disconnect signal
-        for sigid in self._layer_sig_ids:
+        # Disconnect signals
+        for sigid in self._signal_ids:
             self._timeline.disconnect(sigid)
-
-        # clear list
-        self._layer_sig_ids = []
+        self._signal_ids = []
+        if hasattr(self._timeline, "selection"):
+            self._timeline.selection.disconnect_by_func(self._selectionChangedCb)
 
         #Remove references to the ges timeline
         self._timeline = None
@@ -1355,6 +1359,19 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             # when adding new clips.
             self.log("Setting 'zoomed_fitted' to True")
             self.zoomed_fitted = True
+
+    def _selectionChangedCb(self, selection):
+        """
+        The selected clips on the timeline canvas have changed with the
+        "selection-changed" signal.
+
+        This is where you apply global UI changes, unlike individual
+        track elements' "selected-changed" signal from the Selected class.
+        """
+        if selection:
+            self.selection_actions.set_sensitive(True)
+        else:
+            self.selection_actions.set_sensitive(False)
 
 ## ToolBar callbacks
     def _zoomFitCb(self, unused, unsued2=None):

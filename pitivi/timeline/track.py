@@ -118,11 +118,14 @@ def text_size(text):
 
 #--------------------------------------------------------------#
 #                            Main Classes                      #
-class Selected (Signallable):
+class Selected(Signallable):
     """
     A simple class that let us emit a selected-changed signal
     when needed, and that can be check directly to know if the
     object is selected or not.
+
+    This is meant only for individual elements, do not confuse this with
+    utils.timeline's "Selection" class.
     """
 
     __signals__ = {
@@ -552,6 +555,7 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         self._update()
 
     def selectedChangedCb(self, element, unused_selection):
+        # Do not confuse this method with _selectionChangedCb in Timeline
         # unused_selection is True only when no clip was selected before
         # Note that element is a track.Selected object,
         # whereas self.element is a GES object (ex: TrackVideoTransition)
