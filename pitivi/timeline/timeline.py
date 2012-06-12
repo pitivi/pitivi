@@ -44,7 +44,7 @@ from pitivi.settings import GlobalSettings
 
 from curve import KW_LABEL_Y_OVERFLOW
 from track import Track, TrackObject
-from layercontrols import VideoLayerControl, AudioLayerControl
+from layer import VideoLayerControl, AudioLayerControl
 from pitivi.utils.timeline import EditingContext, SELECT, Zoomable
 
 from pitivi.dialogs.depsmanager import DepsManager
