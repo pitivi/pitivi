@@ -21,6 +21,7 @@
 # Boston, MA 02110-1301, USA.
 
 import gtk
+import ges
 import gobject
 
 from gettext import gettext as _
@@ -47,8 +48,8 @@ class BaseLayerControl(gtk.Table, Loggable):
         self.set_row_spacings(3)
         self.set_col_spacings(3)
 
-        icon_mapping = {"audio": "audio-x-generic",
-                        "video": "video-x-generic"}
+        icon_mapping = {ges.TRACK_TYPE_AUDIO: "audio-x-generic",
+                        ges.TRACK_TYPE_VIDEO: "video-x-generic"}
 
         # Folding button
         # TODO use images
@@ -114,7 +115,7 @@ class VideoLayerControl(BaseLayerControl):
     __gtype_name__ = 'VideoLayerControl'
 
     def __init__(self, layer):
-        BaseLayerControl.__init__(self, layer, "video")
+        BaseLayerControl.__init__(self, layer, ges.TRACK_TYPE_VIDEO)
 
         opacity = gtk.Label(_("Opacity:"))
 
@@ -138,7 +139,7 @@ class AudioLayerControl(BaseLayerControl):
     __gtype_name__ = 'AudioLayerControl'
 
     def __init__(self, layer):
-        BaseLayerControl.__init__(self, layer, "audio")
+        BaseLayerControl.__init__(self, layer, ges.TRACK_TYPE_AUDIO)
 
         volume = gtk.Label(_("Vol:"))
         self.volume_button = gtk.VolumeButton()

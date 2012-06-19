@@ -527,7 +527,8 @@ class TimelineControls(gtk.VBox, Loggable):
         video_control = VideoLayerControl(layer)
         audio_control = AudioLayerControl(layer)
 
-        map = {"audio": audio_control, "video": video_control}
+        map = {ges.TRACK_TYPE_AUDIO: audio_control,
+               ges.TRACK_TYPE_VIDEO: video_control}
         self._track_controls[layer] = map
 
         self.pack_start(video_control, False, False)
@@ -550,8 +551,8 @@ class TimelineControls(gtk.VBox, Loggable):
                 j += 1
 
     def _layerRemovedCb(self, timeline, layer):
-        audio_control = self._track_controls[layer]["audio"]
-        video_control = self._track_controls[layer]["video"]
+        audio_control = self._track_controls[layer][ges.TRACK_TYPE_AUDIO]
+        video_control = self._track_controls[layer][ges.TRACK_TYPE_VIDEO]
 
         self.remove(audio_control)
         self.remove(video_control)
@@ -560,9 +561,9 @@ class TimelineControls(gtk.VBox, Loggable):
 
     def getHeightOfLayer(self, track_type, layer):
         if track_type == ges.TRACK_TYPE_VIDEO:
-            return self._track_controls[layer]["video"].getHeight()
+            return self._track_controls[layer][ges.TRACK_TYPE_VIDEO].getHeight()
         else:
-            return self._track_controls[layer]["audio"].getHeight()
+            return self._track_controls[layer][ges.TRACK_TYPE_AUDIO].getHeight()
 
     def getYOfLayer(self, track_type, layer):
         y = 0
@@ -576,11 +577,9 @@ class TimelineControls(gtk.VBox, Loggable):
         return 0
 
     def getHeightOfTrack(self, track_type):
-        map = {ges.TRACK_TYPE_AUDIO: AudioLayerControl,
-               ges.TRACK_TYPE_VIDEO: VideoLayerControl}
         y = 0
         for child in self.get_children():
-            if isinstance(child, map[track_type]):
+            if isinstance(child, self.type_map[track_type]):
                 y += child.getHeight()
                 y += LAYER_SPACING
 
