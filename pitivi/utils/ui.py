@@ -51,6 +51,8 @@ TRACK_SPACING = 8
 SPACING = 6
 PADDING = 6
 
+CANVAS_SPACING = 21
+
 ##
 #   Drag'n drop constants
 ##

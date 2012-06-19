@@ -52,7 +52,7 @@ from pitivi.dialogs.prefs import PreferencesDialog
 
 from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import SPACING, unpack_cairo_pattern, \
+from pitivi.utils.ui import SPACING, CANVAS_SPACING, unpack_cairo_pattern, \
     LAYER_SPACING, TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, Point, \
     AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT
 
@@ -185,7 +185,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         Loggable.__init__(self)
         self.app = instance
         self._tracks = []
-        self.height = 0
+        self.height = CANVAS_SPACING
 
         self._block_size_request = False
         self.props.integer_layout = True
@@ -225,7 +225,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         root.connect("button-release-event", self._selectionEnd)
         self.connect("button-release-event", self._snapEndedCb)
         # add some padding for the horizontal scrollbar
-        self.height += 21
         self.set_size_request(-1, self.height)
 
     def from_event(self, event):
