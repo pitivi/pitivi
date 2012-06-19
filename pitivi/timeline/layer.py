@@ -53,35 +53,35 @@ class BaseLayerControl(gtk.Table, Loggable):
 
         # Folding button
         # TODO use images
-        self.fold_button = TwoStateButton("▼", "▶")
-        self.fold_button.set_relief(gtk.RELIEF_NONE)
-        self.fold_button.set_focus_on_click(False)
-        self.fold_button.connect("changed-state", self._foldingChangedCb)
-        self.attach(self.fold_button, 0, 1, 0, 1)
+        fold_button = TwoStateButton("▼", "▶")
+        fold_button.set_relief(gtk.RELIEF_NONE)
+        fold_button.set_focus_on_click(False)
+        fold_button.connect("changed-state", self._foldingChangedCb)
+        self.attach(fold_button, 0, 1, 0, 1)
 
         # Name entry
-        self.name_entry = gtk.Entry()
-        self.name_entry.set_tooltip_text(_("Set or change this layers name"))
-        self.name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
+        name_entry = gtk.Entry()
+        name_entry.set_tooltip_text(_("Set or change this layers name"))
+        name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
 
         # 'Solo' toggle button
-        self.solo_button = gtk.ToggleButton()
-        self.solo_button.set_tooltip_text(_("Only show this layer\n\nOther layers won't" +
+        solo_button = gtk.ToggleButton()
+        solo_button.set_tooltip_text(_("Only show this layer\n\nOther layers won't" +
                                             "be visible as long a this is enabled"))
         solo_image = gtk.Image()
         solo_image.set_from_icon_name("avatar-default-symbolic", gtk.ICON_SIZE_BUTTON)
-        self.solo_button.add(solo_image)
+        solo_button.add(solo_image)
 
         # CheckButton
-        self.visible_option = gtk.CheckButton()
-        self.visible_option.connect("toggled", self._visibilityChangedCb)
-        self.visible_option.set_active(True)
+        visible_option = gtk.CheckButton()
+        visible_option.connect("toggled", self._visibilityChangedCb)
+        visible_option.set_active(True)
 
         # Upper bar
         upper = gtk.HBox()
-        upper.pack_start(self.name_entry, True, True)
-        upper.pack_start(self.solo_button, False, False)
-        upper.pack_start(self.visible_option, False, False)
+        upper.pack_start(name_entry, True, True)
+        upper.pack_start(solo_button, False, False)
+        upper.pack_start(visible_option, False, False)
 
         # Lower bar
         self.lower_hbox = gtk.HBox()
@@ -121,13 +121,13 @@ class VideoLayerControl(BaseLayerControl):
 
         # Opacity scale
         opacity_adjust = gtk.Adjustment(value=100, upper=100, step_incr=5, page_incr=10)
-        self.opacity_scale = gtk.HScale(opacity_adjust)
-        self.opacity_scale.set_value_pos(gtk.POS_LEFT)
-        self.opacity_scale.set_digits(0)
-        self.opacity_scale.set_tooltip_text(_("Change video opacity"))
+        opacity_scale = gtk.HScale(opacity_adjust)
+        opacity_scale.set_value_pos(gtk.POS_LEFT)
+        opacity_scale.set_digits(0)
+        opacity_scale.set_tooltip_text(_("Change video opacity"))
 
         self.lower_hbox.pack_start(opacity, False, False)
-        self.lower_hbox.pack_start(self.opacity_scale, True, True)
+        self.lower_hbox.pack_start(opacity_scale, True, True)
         self.lower_hbox.show_all()
 
 
@@ -142,20 +142,20 @@ class AudioLayerControl(BaseLayerControl):
         BaseLayerControl.__init__(self, layer, ges.TRACK_TYPE_AUDIO)
 
         volume = gtk.Label(_("Vol:"))
-        self.volume_button = gtk.VolumeButton()
+        volume_button = gtk.VolumeButton()
 
         panning = gtk.Label(_("Pan:"))
         # Volume scale
         panning_adjust = gtk.Adjustment(value=0, lower=-100, upper=100, step_incr=5, page_incr=10)
-        self.panning_scale = gtk.HScale(panning_adjust)
-        self.panning_scale.set_value_pos(gtk.POS_LEFT)
-        self.panning_scale.set_digits(0)
-        self.panning_scale.set_tooltip_text(_("Change audio panning"))
+        panning_scale = gtk.HScale(panning_adjust)
+        panning_scale.set_value_pos(gtk.POS_LEFT)
+        panning_scale.set_digits(0)
+        panning_scale.set_tooltip_text(_("Change audio panning"))
 
         self.lower_hbox.pack_start(volume, False, False)
-        self.lower_hbox.pack_start(self.volume_button, False, False)
+        self.lower_hbox.pack_start(volume_button, False, False)
         self.lower_hbox.pack_start(panning, False, False)
-        self.lower_hbox.pack_start(self.panning_scale, True, True)
+        self.lower_hbox.pack_start(panning_scale, True, True)
         self.lower_hbox.show_all()
 
 
