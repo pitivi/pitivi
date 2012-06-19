@@ -42,7 +42,6 @@ from pitivi.utils.misc import quote_uri
 from pitivi.utils.pipeline import PipelineError
 from pitivi.settings import GlobalSettings
 
-from curve import KW_LABEL_Y_OVERFLOW
 from track import Track, TrackObject
 from layer import VideoLayerControl, AudioLayerControl
 from pitivi.utils.timeline import EditingContext, SELECT, Zoomable
@@ -53,7 +52,7 @@ from pitivi.dialogs.prefs import PreferencesDialog
 
 from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import SPACING, TRACK_SPACING, unpack_cairo_pattern, \
+from pitivi.utils.ui import SPACING, unpack_cairo_pattern, \
     LAYER_SPACING, TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, Point, \
     AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT
 
