@@ -378,12 +378,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def _request_size(self):
         alloc = self.get_allocation()
         self.set_bounds(0, 0, alloc.width, alloc.height)
-
-        playhead_height = self.height + SPACING
-        if playhead_height >= 0:
-            self._playhead.props.height = playhead_height
-        else:
-            self._playhead.props.height = 0
+        self._playhead.props.height = max(0, self.height + SPACING)
 
     def _size_allocate_cb(self, widget, allocation):
         self._request_size()
