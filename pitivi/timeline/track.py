@@ -420,6 +420,8 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         self.start_handle.props.height = height
         self.end_handle.props.height = height
         self._selec_indic.props.height = height
+        if hasattr(self, "preview"):
+            self.preview.height = height
         self._update()
 
     def getHeight(self):
