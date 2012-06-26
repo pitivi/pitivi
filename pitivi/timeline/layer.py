@@ -39,10 +39,11 @@ class BaseLayerControl(gtk.Table, Loggable):
 
     __gtype_name__ = 'LayerControl'
 
-    def __init__(self, layer, layer_type):
+    def __init__(self, app, layer, layer_type):
         gtk.Table.__init__(self, rows=2, columns=2)
         Loggable.__init__(self)
 
+        self._app = app
         self._layer = layer
 
         self.set_row_spacings(3)
@@ -63,6 +64,8 @@ class BaseLayerControl(gtk.Table, Loggable):
         name_entry = gtk.Entry()
         name_entry.set_tooltip_text(_("Set or change this layers name"))
         name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
+        name_entry.connect("focus-in-event", self._focusChangeCb, False)
+        name_entry.connect("focus-out-event", self._focusChangeCb, True)
 
         # 'Solo' toggle button
         solo_button = gtk.ToggleButton()
@@ -106,6 +109,9 @@ class BaseLayerControl(gtk.Table, Loggable):
     def getHeight(self):
         return self.get_allocation().height
 
+    def _focusChangeCb(self, widget, direction, sensitive_actions):
+        self._app.gui.setActionsSensitive(sensitive_actions)
+
 
 class VideoLayerControl(BaseLayerControl):
     """
@@ -114,8 +120,8 @@ class VideoLayerControl(BaseLayerControl):
 
     __gtype_name__ = 'VideoLayerControl'
 
-    def __init__(self, layer):
-        BaseLayerControl.__init__(self, layer, ges.TRACK_TYPE_VIDEO)
+    def __init__(self, app, layer):
+        BaseLayerControl.__init__(self, app, layer, ges.TRACK_TYPE_VIDEO)
 
         opacity = gtk.Label(_("Opacity:"))
 
@@ -138,8 +144,8 @@ class AudioLayerControl(BaseLayerControl):
 
     __gtype_name__ = 'AudioLayerControl'
 
-    def __init__(self, layer):
-        BaseLayerControl.__init__(self, layer, ges.TRACK_TYPE_AUDIO)
+    def __init__(self, app, layer):
+        BaseLayerControl.__init__(self, app, layer, ges.TRACK_TYPE_AUDIO)
 
         volume = gtk.Label(_("Vol:"))
         volume_button = gtk.VolumeButton()

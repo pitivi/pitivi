@@ -517,8 +517,8 @@ class TimelineControls(gtk.VBox, Loggable):
     timeline = property(getTimeline, setTimeline, None, "The timeline property")
 
     def _layerAddedCb(self, timeline, layer):
-        video_control = VideoLayerControl(layer)
-        audio_control = AudioLayerControl(layer)
+        video_control = VideoLayerControl(self.app, layer)
+        audio_control = AudioLayerControl(self.app, layer)
 
         map = {ges.TRACK_TYPE_AUDIO: audio_control,
                ges.TRACK_TYPE_VIDEO: video_control}
