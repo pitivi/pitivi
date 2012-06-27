@@ -72,7 +72,7 @@ class BaseLayerControl(gtk.Table, Loggable):
         solo_button.set_tooltip_text(_("Only show this layer\n\nOther layers won't" +
                                             "be visible as long a this is enabled"))
         solo_image = gtk.Image()
-        solo_image.set_from_icon_name("avatar-default-symbolic", gtk.ICON_SIZE_BUTTON)
+        solo_image.set_from_icon_name("avatar-default-symbolic", gtk.ICON_SIZE_MENU)
         solo_button.add(solo_image)
 
         # CheckButton
@@ -80,11 +80,21 @@ class BaseLayerControl(gtk.Table, Loggable):
         visible_option.connect("toggled", self._visibilityChangedCb)
         visible_option.set_active(True)
 
+        # Temporary delete button
+        del_button = gtk.Button()
+        del_button.set_tooltip_text(_("Delete this layer"))
+        del_button.connect("clicked", self._deleteLayerCb)
+
+        del_image = gtk.Image()
+        del_image.set_from_icon_name("edit-delete", gtk.ICON_SIZE_MENU)
+        del_button.add(del_image)
+
         # Upper bar
         upper = gtk.HBox()
         upper.pack_start(name_entry, True, True)
         upper.pack_start(solo_button, False, False)
         upper.pack_start(visible_option, False, False)
+        upper.pack_start(del_button, False, False)
 
         # Lower bar
         self.lower_hbox = gtk.HBox()
@@ -111,6 +121,10 @@ class BaseLayerControl(gtk.Table, Loggable):
 
     def _focusChangeCb(self, widget, direction, sensitive_actions):
         self._app.gui.setActionsSensitive(sensitive_actions)
+
+    def _deleteLayerCb(self, widget):
+        timeline = self._layer.get_timeline()
+        timeline.remove_layer(self._layer)
 
 
 class VideoLayerControl(BaseLayerControl):
