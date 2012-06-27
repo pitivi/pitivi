@@ -649,7 +649,7 @@ class TrackFileSource(TrackObject):
     """
     def __init__(self, instance, element, track, timeline, utrack):
         TrackObject.__init__(self, instance, element, track, timeline, utrack)
-        self.preview = Preview(self.app, element)
+        self.preview = Preview(self.app, element, self.height)
         for thing in (self.bg, self.preview, self._selec_indic,
             self.start_handle, self.end_handle, self.namebg, self.name):
             self.add_child(thing)
