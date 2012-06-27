@@ -66,6 +66,7 @@ class BaseLayerControl(gtk.Table, Loggable):
         name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
         name_entry.connect("focus-in-event", self._focusChangeCb, False)
         name_entry.connect("focus-out-event", self._focusChangeCb, True)
+        name_entry.props.sensitive = False
 
         # 'Solo' toggle button
         solo_button = gtk.ToggleButton()
@@ -74,11 +75,13 @@ class BaseLayerControl(gtk.Table, Loggable):
         solo_image = gtk.Image()
         solo_image.set_from_icon_name("avatar-default-symbolic", gtk.ICON_SIZE_MENU)
         solo_button.add(solo_image)
+        solo_button.props.sensitive = False
 
         # CheckButton
         visible_option = gtk.CheckButton()
         visible_option.connect("toggled", self._visibilityChangedCb)
         visible_option.set_active(True)
+        visible_option.props.sensitive = False
 
         # Temporary delete button
         del_button = gtk.Button()
@@ -98,6 +101,7 @@ class BaseLayerControl(gtk.Table, Loggable):
 
         # Lower bar
         self.lower_hbox = gtk.HBox()
+        self.lower_hbox.props.sensitive = False
 
         self.attach(upper, 1, 2, 0, 1)
         self.attach(self.lower_hbox, 1, 2, 1, 2)
