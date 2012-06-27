@@ -581,12 +581,19 @@ class TimelineControls(gtk.VBox, Loggable):
     def getPriorityForY(self, y):
         priority = -1
         current = 0
+
+        # increment priority for each layer we pass
         for child in self.get_children():
             if y <= current:
                 return priority
 
             current += child.getHeight() + LAYER_SPACING
             priority += 1
+
+        # another check if priority has been incremented but not returned
+        # because there were no more children
+        if y <= current:
+            return priority
 
         return 0
 
