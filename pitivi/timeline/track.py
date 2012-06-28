@@ -23,6 +23,7 @@
 import goocanvas
 import ges
 import gtk
+import gtk.gdk
 import os.path
 import pango
 import cairo
@@ -241,8 +242,9 @@ class TrimHandle(View, goocanvas.Image, Loggable, Zoomable):
         self.element = element
         self.timeline = timeline
         self.movable = True
+        self.current_pixbuf = TRIMBAR_PIXBUF
         goocanvas.Image.__init__(self,
-            pixbuf=TRIMBAR_PIXBUF,
+            pixbuf=self.current_pixbuf,
             line_width=0,
             pointer_events=goocanvas.EVENTS_FILL,
             **kwargs)
@@ -251,10 +253,30 @@ class TrimHandle(View, goocanvas.Image, Loggable, Zoomable):
         Loggable.__init__(self)
 
     def focus(self):
-        self.props.pixbuf = TRIMBAR_PIXBUF_FOCUS
+        self.current_pixbuf = TRIMBAR_PIXBUF_FOCUS
+        self._scalePixbuf()
 
     def unfocus(self):
-        self.props.pixbuf = TRIMBAR_PIXBUF
+        self.current_pixbuf = TRIMBAR_PIXBUF
+        self._scalePixbuf()
+
+    _height = 0
+
+    def setHeight(self, height):
+        self._height = height
+        self.props.height = height
+        self._scalePixbuf()
+
+    def getHeight(self):
+        return self._height
+
+    height = property(getHeight, setHeight)
+
+    def _scalePixbuf(self):
+        self.props.pixbuf = self.current_pixbuf.scale_simple(
+                                                self.current_pixbuf.get_width(),
+                                                self.height,
+                                                gtk.gdk.INTERP_BILINEAR)
 
 
 class StartHandle(TrimHandle):
@@ -417,8 +439,8 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
     def setHeight(self, height):
         self._height = height
         self.bg.props.height = height
-        self.start_handle.props.height = height
-        self.end_handle.props.height = height
+        self.start_handle.height = height
+        self.end_handle.height = height
         self._selec_indic.props.height = height
         if hasattr(self, "preview"):
             self.preview.height = height
