@@ -167,6 +167,7 @@ class AudioLayerControl(BaseLayerControl):
 
         volume = gtk.Label(_("Vol:"))
         volume_button = gtk.VolumeButton()
+        volume_button.props.size = gtk.ICON_SIZE_MENU
 
         panning = gtk.Label(_("Pan:"))
         # Volume scale
