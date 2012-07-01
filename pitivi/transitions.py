@@ -121,7 +121,7 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         self.searchEntry.connect("focus-in-event", self._searchEntryActivateCb)
         self.searchEntry.connect("focus-out-event", self._searchEntryDeactivateCb)
         self.searchEntry.connect("icon-press", self._searchEntryIconClickedCb)
-        self.iconview.connect("button-release-event", self._transitionSelectedCb)
+        self.iconview.connect("selection-changed", self._transitionSelectedCb)
         self.iconview.connect("query-tooltip", self._queryTooltipCb)
         self.borderScale.connect("value-changed", self._borderScaleCb)
         self.invert_checkbox.connect("toggled", self._invertCheckboxCb)
@@ -149,28 +149,28 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
 
 # UI callbacks
 
-    def _transitionSelectedCb(self, unused_view, event):
-        if event.button == 1:
-            selected_item = self.getSelectedItem()
-            if not selected_item:
-                # The user clicked between icons
-                return False
-            transition_id = int(selected_item)
-            transition = self.available_transitions.get(transition_id)
-            self.debug("New transition type selected: %s" % transition)
-            if transition.value_nick == "crossfade":
-                self.props_widgets.set_sensitive(False)
-            else:
-                self.props_widgets.set_sensitive(True)
+    def _transitionSelectedCb(self, event):
+        selected_item = self.getSelectedItem()
+        if not selected_item:
+        # The user clicked between icons
+            return False
+        transition_id = int(selected_item)
+        transition = self.available_transitions.get(transition_id)
+        self.debug("New transition type selected: %s" % transition)
+        if transition.value_nick == "crossfade":
+            self.props_widgets.set_sensitive(False)
+        else:
+            self.props_widgets.set_sensitive(True)
 
-            # Avoid deadlocks by seeking to 0 before changing type
-            position = self.app.current.pipeline.getPosition()
-            self.app.current.pipeline.simple_seek(0)
+        # Avoid deadlocks by seeking to 0 before changing type
+        position = self.app.current.pipeline.getPosition()
+        self.app.current.pipeline.simple_seek(0)
 
-            self.element.set_transition_type(transition)
+        self.element.set_transition_type(transition)
 
-            # Seek back into the previous position, refreshing the preview
-            self.app.current.pipeline.simple_seek(position)
+        # Seek back into the previous position, refreshing the preview
+        self.app.current.pipeline.simple_seek(position)
+
         return True
 
     def _borderScaleCb(self, range_changed):
@@ -272,11 +272,10 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
                 pass
             else:
                 self.available_transitions[transition.numerator] = transition
-                self.storemodel.append(\
-                    [transition.numerator,
-                    transition.value_nick,
-                    transition.value_name,
-                    self._getIcon(transition.value_nick)])
+                self.storemodel.append([transition.numerator,
+                                        transition.value_nick,
+                                        transition.value_name,
+                                        self._getIcon(transition.value_nick)])
 
         # Now that the UI is fully ready, enable searching
         self.modelFilter.set_visible_func(self._setRowVisible, data=None)
@@ -378,5 +377,5 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         """
         text = self.searchEntry.get_text().lower()
         return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
-               text in model.get_value(iter, COL_NAME_TEXT).lower()
+            text in model.get_value(iter, COL_NAME_TEXT).lower()
         return False
