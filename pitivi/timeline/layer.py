@@ -69,13 +69,14 @@ class BaseLayerControl(gtk.Table, Loggable):
         name_entry.props.sensitive = False
 
         # 'Solo' toggle button
-        solo_button = gtk.ToggleButton()
-        solo_button.set_tooltip_text(_("Only show this layer\n\nOther layers won't" +
+        self.solo_button = gtk.ToggleButton()
+        self.solo_button.set_tooltip_text(_("Only show this layer\n\nOther layers won't" +
                                             "be visible as long a this is enabled"))
         solo_image = gtk.Image()
         solo_image.set_from_icon_name("avatar-default-symbolic", gtk.ICON_SIZE_MENU)
-        solo_button.add(solo_image)
-        solo_button.props.sensitive = False
+        self.solo_button.add(solo_image)
+        self.solo_button.connect("toggled", self._soloToggledCb)
+        self.solo_button.props.sensitive = False
 
         # CheckButton
         visible_option = gtk.CheckButton()
@@ -95,7 +96,7 @@ class BaseLayerControl(gtk.Table, Loggable):
         # Upper bar
         upper = gtk.HBox()
         upper.pack_start(name_entry, True, True)
-        upper.pack_start(solo_button, False, False)
+        upper.pack_start(self.solo_button, False, False)
         upper.pack_start(visible_option, False, False)
         upper.pack_start(del_button, False, False)
 
@@ -120,15 +121,26 @@ class BaseLayerControl(gtk.Table, Loggable):
         else:
             button.set_tooltip_text(_("Make layer visible"))
 
-    def getHeight(self):
-        return self.get_allocation().height
-
     def _focusChangeCb(self, widget, direction, sensitive_actions):
         self._app.gui.setActionsSensitive(sensitive_actions)
 
     def _deleteLayerCb(self, widget):
         timeline = self._layer.get_timeline()
         timeline.remove_layer(self._layer)
+
+    def _soloToggledCb(self, button):
+        if button.get_active():
+            # Disable all other layers
+            self._app.gui.timeline_ui._controls.soloLayer(self._layer)
+        else:
+            # Enable all layers
+            self._app.gui.timeline_ui._controls.soloLayer(None)
+
+    def getHeight(self):
+        return self.get_allocation().height
+
+    def setSoloState(self, state):
+        self.solo_button.set_active(state)
 
 
 class VideoLayerControl(BaseLayerControl):

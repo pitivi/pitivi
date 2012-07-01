@@ -472,13 +472,15 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
 
 class TimelineControls(gtk.VBox, Loggable):
-    """Contains the timeline track names."""
+    """
+    Holds and manages the LayerControlWidgets
+    """
 
     def __init__(self, instance):
         gtk.VBox.__init__(self)
         Loggable.__init__(self)
         self.app = instance
-        self._track_controls = {}
+        self._layer_controls = {}
         self._timeline = None
         self.set_spacing(LAYER_SPACING)
         self.type_map = {ges.TRACK_TYPE_AUDIO: AudioLayerControl,
@@ -497,7 +499,7 @@ class TimelineControls(gtk.VBox, Loggable):
         self.debug("Setting timeline %s", timeline)
 
         # remove old layer controls
-        for layer in self._track_controls.copy():
+        for layer in self._layer_controls.copy():
             self._layerRemovedCb(None, layer)
 
         if timeline:
@@ -522,7 +524,7 @@ class TimelineControls(gtk.VBox, Loggable):
 
         map = {ges.TRACK_TYPE_AUDIO: audio_control,
                ges.TRACK_TYPE_VIDEO: video_control}
-        self._track_controls[layer] = map
+        self._layer_controls[layer] = map
 
         self.pack_start(video_control, False, False)
         self.pack_start(audio_control, False, False)
@@ -544,19 +546,19 @@ class TimelineControls(gtk.VBox, Loggable):
                 j += 1
 
     def _layerRemovedCb(self, timeline, layer):
-        audio_control = self._track_controls[layer][ges.TRACK_TYPE_AUDIO]
-        video_control = self._track_controls[layer][ges.TRACK_TYPE_VIDEO]
+        audio_control = self._layer_controls[layer][ges.TRACK_TYPE_AUDIO]
+        video_control = self._layer_controls[layer][ges.TRACK_TYPE_VIDEO]
 
         self.remove(audio_control)
         self.remove(video_control)
 
-        del self._track_controls[layer]
+        del self._layer_controls[layer]
 
     def getHeightOfLayer(self, track_type, layer):
         if track_type == ges.TRACK_TYPE_VIDEO:
-            return self._track_controls[layer][ges.TRACK_TYPE_VIDEO].getHeight()
+            return self._layer_controls[layer][ges.TRACK_TYPE_VIDEO].getHeight()
         else:
-            return self._track_controls[layer][ges.TRACK_TYPE_AUDIO].getHeight()
+            return self._layer_controls[layer][ges.TRACK_TYPE_AUDIO].getHeight()
 
     def getYOfLayer(self, track_type, layer):
         y = 0
@@ -596,6 +598,14 @@ class TimelineControls(gtk.VBox, Loggable):
             return priority
 
         return 0
+
+    def soloLayer(self, layer):
+        """
+        Enable this layer and disable all others
+        """
+        for key, controls in self._layer_controls.iteritems():
+            controls[ges.TRACK_TYPE_VIDEO].setSoloState(key == layer)
+            controls[ges.TRACK_TYPE_AUDIO].setSoloState(key == layer)
 
 
 class InfoStub(gtk.HBox, Loggable):
