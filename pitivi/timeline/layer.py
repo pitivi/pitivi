@@ -131,10 +131,10 @@ class BaseLayerControl(gtk.Table, Loggable):
     def _soloToggledCb(self, button):
         if button.get_active():
             # Disable all other layers
-            self._app.gui.timeline_ui._controls.soloLayer(self._layer)
+            self._app.gui.timeline_ui.controls.soloLayer(self._layer)
         else:
             # Enable all layers
-            self._app.gui.timeline_ui._controls.soloLayer(None)
+            self._app.gui.timeline_ui.controls.soloLayer(None)
 
     def getHeight(self):
         return self.get_allocation().height

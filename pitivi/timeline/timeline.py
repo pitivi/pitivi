@@ -748,9 +748,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.attach(zoom_controls_hbox, 0, 1, 0, 1, yoptions=0, xoptions=gtk.FILL)
 
         # controls for tracks and layers
-        self._controls = TimelineControls(self.app)
+        self.controls = TimelineControls(self.app)
         controlwindow = gtk.Viewport(None, self.vadj)
-        controlwindow.add(self._controls)
+        controlwindow.add(self.controls)
         controlwindow.set_size_request(-1, 1)
         controlwindow.set_shadow_type(gtk.SHADOW_OUT)
         self.attach(controlwindow, 0, 1, 1, 2, xoptions=gtk.FILL)
@@ -1157,7 +1157,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         x = self.hadj.props.value + x
         y = self.vadj.props.value + y
 
-        priority = self._controls.getPriorityForY(y)
+        priority = self.controls.getPriorityForY(y)
 
         delta = Zoomable.pixelToNs(x)
         obj = self._temp_objects[0]
@@ -1375,7 +1375,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.debug("Setting timeline %s", timeline)
 
         self.delTimeline()
-        self._controls.timeline = timeline
+        self.controls.timeline = timeline
         self._timeline = timeline
 
         if timeline:
@@ -1414,7 +1414,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         #Remove references to the ges timeline
         self._timeline = None
-        self._controls.timeline = None
+        self.controls.timeline = None
 
     timeline = property(getTimeline, setTimeline, delTimeline, "The GESTimeline")
 
@@ -1436,14 +1436,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Recalculate the vertical scrollbar depending on the number of layer in
         the timeline.
         """
-        self.vadj.props.upper = self._controls.get_allocation().height + 50
+        self.vadj.props.upper = self.controls.get_allocation().height + 50
 
     def updateHScrollAdjustments(self):
         """
         Recalculate the horizontal scrollbar depending on the timeline duration.
         """
         timeline_ui_width = self.get_allocation().width
-        controls_width = self._controls.get_allocation().width
+        controls_width = self.controls.get_allocation().width
         scrollbar_width = self._vscrollbar.get_allocation().width
         contents_size = Zoomable.nsToPixel(self.app.current.timeline.props.duration)
 

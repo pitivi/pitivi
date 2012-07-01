@@ -209,7 +209,7 @@ class TrackObjectController(Controller):
         x = x + self._hadj.get_value()
 
         position = Zoomable.pixelToNs(x)
-        priority = self.app.gui.timeline_ui._controls.getPriorityForY(
+        priority = self.app.gui.timeline_ui.controls.getPriorityForY(
                         y - self._y_offset + self._vadj.get_value())
 
         self._context.setMode(self._getMode())
@@ -600,17 +600,17 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         track_type = self.element.get_track().props.track_type
 
         # update height, compare with current height to not run into recursion
-        new_height = self.app.gui.timeline_ui._controls.getHeightOfLayer(track_type, layer)
+        new_height = self.app.gui.timeline_ui.controls.getHeightOfLayer(track_type, layer)
         if self.height != new_height:
             self.height = new_height
 
         # get y position for layer
-        y = self.app.gui.timeline_ui._controls.getYOfLayer(track_type, layer)
+        y = self.app.gui.timeline_ui.controls.getYOfLayer(track_type, layer)
         #priority = self.element.get_timeline_object().get_layer().get_priority()
         #y = (self.height + LAYER_SPACING) * priority
         # get relative y for audio
         if track_type == ges.TRACK_TYPE_AUDIO:
-            y -= self.app.gui.timeline_ui._controls.getHeightOfTrack(ges.TRACK_TYPE_VIDEO)
+            y -= self.app.gui.timeline_ui.controls.getHeightOfTrack(ges.TRACK_TYPE_VIDEO)
 
         # Setting new position
         self.set_simple_transform(x, y, 1, 0)
@@ -726,7 +726,7 @@ class Track(goocanvas.Group, Zoomable, Loggable):
 
     def getHeight(self):
         track_type = self.track.props.track_type
-        return self.app.gui.timeline_ui._controls.getHeightOfTrack(track_type)
+        return self.app.gui.timeline_ui.controls.getHeightOfTrack(track_type)
 
     height = property(getHeight)
 
