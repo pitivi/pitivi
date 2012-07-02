@@ -500,10 +500,9 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         view_menu_item = uiman.get_widget('/MainMenuBar/View')
         view_menu = view_menu_item.get_submenu()
         seperator = gtk.SeparatorMenuItem()
-        self.treeview_menuitem = gtk.RadioMenuItem(None,
-                _("Show Clips as a List"))
-        self.iconview_menuitem = gtk.RadioMenuItem(self.treeview_menuitem,
-                _("Show Clips as Icons"))
+        self.treeview_menuitem = gtk.RadioMenuItem(label=_("Show Clips as a List"))
+        self.iconview_menuitem = gtk.RadioMenuItem.new_with_label(group=[self.treeview_menuitem],
+                label=_("Show Clips as Icons"))
 
         # update menu items with current clip view before we connect to item
         # signals
