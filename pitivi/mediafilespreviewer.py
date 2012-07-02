@@ -6,6 +6,7 @@ import pango
 import os
 
 from gettext import gettext as _
+from gst.pbutils import Discoverer
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.settings import GlobalSettings
@@ -50,7 +51,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.preview_cache = {}
         self.preview_cache_errors = {}
 
-        self.discoverer = gst.pbutils.Discoverer(gst.SECOND)
+        self.discoverer = Discoverer.new(gst.SECOND)
 
         #playbin for play pics
         self._unsurePlaybin()
@@ -151,7 +152,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.previewUri(uri)
 
     def previewUri(self, uri):
-        self.log("Preview request for " + uri)
+        self.log("Preview request for %s", uri)
         self.clear_preview()
         self.current_selected_uri = uri
         if uri in self.preview_cache:  # Already discovered

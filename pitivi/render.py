@@ -33,6 +33,8 @@ import time
 import pitivi.utils.loggable as log
 
 from gettext import gettext as _
+from gst.pbutils import EncodingContainerProfile, EncodingVideoProfile, \
+    EncodingAudioProfile
 
 from pitivi import configure
 from pitivi.utils.signal import Signallable
@@ -941,16 +943,16 @@ class RenderDialog(Loggable):
         self.window.hide()  # Hide the rendering settings dialog while rendering
 
         # FIXME GES: Handle presets here!
-        self.containerprofile = gst.pbutils.EncodingContainerProfile(None, None,
+        self.containerprofile = EncodingContainerProfile(None, None,
                                     gst.Caps(self.muxertype), None)
 
         if self.video_output_checkbutton.get_active():
-            self.videoprofile = gst.pbutils.EncodingVideoProfile(
+            self.videoprofile = EncodingVideoProfile(
                                     gst.Caps(self.videotype), None,
                                     self.settings.getVideoCaps(True), 0)
             self.containerprofile.add_profile(self.videoprofile)
         if self.audio_output_checkbutton.get_active():
-            self.audioprofile = gst.pbutils.EncodingAudioProfile(
+            self.audioprofile = EncodingAudioProfile(
                                     gst.Caps(self.audiotype), None,
                                     self.settings.getAudioCaps(), 0)
             self.containerprofile.add_profile(self.audioprofile)

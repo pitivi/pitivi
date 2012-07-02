@@ -27,7 +27,6 @@ Handles the list of source for a project
 import gst
 import ges
 import gobject
-import glib
 import gtk
 import pango
 import os
@@ -36,6 +35,7 @@ import time
 from urllib import unquote
 from gettext import gettext as _
 from hashlib import md5
+from gst.pbutils import Discoverer, DiscovererVideoInfo
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.settings import GlobalSettings
@@ -116,7 +116,7 @@ class MediaLibraryError(Exception):
 
 
 class MediaLibrary(Signallable, Loggable):
-    discovererClass = gst.pbutils.Discoverer
+    discovererClass = Discoverer
 
     """
     Contains the sources for a project, stored as SourceFactory objects.
@@ -156,7 +156,7 @@ class MediaLibrary(Signallable, Loggable):
         self._ordered_sources = []
         self._resetImportCounters()
 
-        self.discoverer = self.discovererClass(gst.SECOND)
+        self.discoverer = self.discovererClass.new(gst.SECOND)
         self.discoverer.connect("discovered", self.addDiscovererInfo)
         self.discoverer.connect("finished", self.finishDiscovererCb)
         self.discoverer.start()
@@ -746,7 +746,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         # thumbnails directory (~/.thumbnails). The filenames are simply
         # the file URI hashed with md5, so we can retrieve them easily.
         if [i for i in info.get_stream_list() if\
-            isinstance(i, gst.pbutils.DiscovererVideoInfo)]:
+            isinstance(i, DiscovererVideoInfo)]:
             thumbnail_hash = md5(info.get_uri()).hexdigest()
             thumb_dir = os.path.expanduser("~/.thumbnails/")
             thumb_path_normal = thumb_dir + "normal/" + thumbnail_hash + ".png"

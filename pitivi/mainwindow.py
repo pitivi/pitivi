@@ -35,6 +35,7 @@ from urllib import unquote
 from gettext import gettext as _
 from gtk import RecentManager
 from hashlib import md5
+from gst.pbutils import InstallPluginsContext, install_plugins_async
 
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import in_devel
@@ -517,10 +518,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
 ## Missing Plugin Support
 
     def _installPlugins(self, details, missingPluginsCallback):
-        context = gst.pbutils.InstallPluginsContext()
+        context = InstallPluginsContext()
         context.set_xid(self.window.xid)
 
-        res = gst.pbutils.install_plugins_async(details, context,
+        res = install_plugins_async(details, context,
                 missingPluginsCallback)
         return res
 

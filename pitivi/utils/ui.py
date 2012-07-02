@@ -35,6 +35,7 @@ from itertools import izip
 from urllib import unquote
 from gettext import ngettext, gettext as _
 from decimal import Decimal
+from gst.pbutils import DiscovererVideoInfo, DiscovererAudioInfo, DiscovererStreamInfo
 
 from pitivi.utils.loggable import doLog, ERROR
 
@@ -165,9 +166,9 @@ def hex_to_rgb(value):
 #------ Helper to help beatify indos so they can be displayed in the UI -----#
 def beautify_info(info):
     ranks = {
-        gst.pbutils.DiscovererVideoInfo: 0,
-        gst.pbutils.DiscovererAudioInfo: 1,
-        gst.pbutils.DiscovererStreamInfo: 2
+        DiscovererVideoInfo: 0,
+        DiscovererAudioInfo: 1,
+        DiscovererStreamInfo: 2
     }
 
     def stream_sort_key(stream):
@@ -193,7 +194,7 @@ def info_name(info):
 
 
 def beautify_stream(stream):
-    if type(stream) == gst.pbutils.DiscovererAudioInfo:
+    if type(stream) == DiscovererAudioInfo:
         templ = ngettext("<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
                 "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",
                 stream.get_channels())
@@ -201,7 +202,7 @@ def beautify_stream(stream):
             stream.get_depth())
         return templ
 
-    elif type(stream) == gst.pbutils.DiscovererVideoInfo:
+    elif type(stream) == DiscovererVideoInfo:
         par = stream.get_par_num() / stream.get_par_denom()
         if not stream.is_image():
             templ = _(u"<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>")
@@ -214,7 +215,7 @@ def beautify_stream(stream):
             templ = _(u"<b>Image:</b> %d×%d <i>pixels</i>")
             templ = templ % (par * stream.get_width(), stream.get_height())
         return templ
-    elif type(stream) == gst.pbutils.DiscovererStreamInfo:
+    elif type(stream) == DiscovererStreamInfo:
         caps = stream.get_caps().to_string()
         if "text" in caps:
             return _("Subtitles")
