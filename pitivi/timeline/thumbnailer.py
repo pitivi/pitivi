@@ -476,7 +476,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
         # Use a capsfilter to scale the video to the desired size
         # (fixed height and par, variable width)
-        caps = gst.Caps("video/x-raw-rgb, height=(int)%d, pixel-aspect-ratio=(fraction)1/1" %
+        caps = gst.Caps("video/x-raw, height=(int)%d, pixel-aspect-ratio=(fraction)1/1" %
             self.theight)
         capsfilter = gst.element_factory_make("capsfilter", "thumbnailcapsfilter")
         capsfilter.props.caps = caps
@@ -717,10 +717,10 @@ class CairoSurfaceThumbnailSink(gst.BaseSink):
         }
 
     __gsttemplates__ = (
-        gst.PadTemplate("sink",
+        gst.PadTemplate.new("sink",
                          gst.PAD_SINK,
                          gst.PAD_ALWAYS,
-                         gst.Caps("video/x-raw-rgb,"
+                         gst.caps_from_string("video/x-raw,"
                                   "bpp = (int) 32, depth = (int) 32,"
                                   "endianness = (int) BIG_ENDIAN,"
                                   "alpha_mask = (int) %i, "
@@ -747,7 +747,7 @@ class CairoSurfaceThumbnailSink(gst.BaseSink):
         self.log("padcaps %s" % self.get_pad("sink").get_caps().to_string())
         self.width = caps[0]["width"]
         self.height = caps[0]["height"]
-        if not caps[0].get_name() == "video/x-raw-rgb":
+        if not caps[0].get_name() == "video/x-raw":
             return False
         return True
 

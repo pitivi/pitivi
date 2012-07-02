@@ -643,7 +643,7 @@ class TransformationProperties(gtk.Expander):
             self._current_tl_obj.add_track_object(effect)
             tracks = self.app.projectManager.current.timeline.get_tracks()
             for track in tracks:
-                if track.get_caps().to_string() == "video/x-raw-yuv; video/x-raw-rgb":
+                if track.get_caps().to_string() == "video/x-raw":
                     track.add_object(effect)
             effect = self._findEffect(name)
             # disable the effect on default

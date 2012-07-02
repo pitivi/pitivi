@@ -211,8 +211,8 @@ def encoders_muxer_compatible(encoders, muxer, muxsinkcaps=[]):
     return res
 
 
-raw_audio_caps = gst.Caps("audio/x-raw-float;audio/x-raw-int")
-raw_video_caps = gst.Caps("video/x-raw-yuv;video/x-raw-rgb")
+raw_audio_caps = gst.caps_from_string("audio/x-raw")
+raw_video_caps = gst.caps_from_string("video/x-raw")
 
 
 def muxer_can_sink_raw_audio(muxer):
