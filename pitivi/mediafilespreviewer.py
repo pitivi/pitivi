@@ -95,7 +95,6 @@ class PreviewWidget(gtk.VBox, Loggable):
         #Scale for position handling
         self.pos_adj = gtk.Adjustment()
         self.seeker = gtk.HScale(self.pos_adj)
-        self.seeker.set_update_policy(gtk.UPDATE_DISCONTINUOUS)
         self.seeker.connect('button-press-event', self._on_seeker_press_cb)
         self.seeker.connect('button-release-event', self._on_seeker_press_cb)
         self.seeker.connect('motion-notify-event', self._on_motion_notify_cb)
