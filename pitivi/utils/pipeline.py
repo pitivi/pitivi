@@ -161,7 +161,7 @@ class SimplePipeline(Loggable, Signallable):
         # is known right away and we can set the viewer synchronously, avoiding
         # the creation of an external window.
         # Afterwards, the xid-message is handled async (to avoid deadlocks).
-        self._bus.set_sync_handler(self._busSyncMessageHandler)
+        self._bus.set_sync_handler(self._busSyncMessageHandler, None)
         self._has_sync_bus_handler = True
         self._listening = False  # for the position handler
         self._listeningInterval = 300  # default 300ms
@@ -419,7 +419,7 @@ class SimplePipeline(Loggable, Signallable):
         else:
             if self._has_sync_bus_handler is False:
                 # Pass message async to the sync bus handler
-                self._busSyncMessageHandler(unused_bus, message)
+                self._busSyncMessageHandler(unused_bus, message, None)
             self.info("%s [%r]" % (message.type, message.src))
 
     def _queryDurationAsync(self, *args, **kwargs):
@@ -433,7 +433,7 @@ class SimplePipeline(Loggable, Signallable):
         self.error("error from %s: %s (%s)" % (source, error, detail))
         self.emit('error', error.message, detail)
 
-    def _busSyncMessageHandler(self, unused_bus, message):
+    def _busSyncMessageHandler(self, unused_bus, message, unused_user_data):
         if message.type == gst.MESSAGE_ELEMENT:
             name = message.structure.get_name()
             if name == 'prepare-xwindow-id':
