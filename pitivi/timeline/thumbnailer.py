@@ -282,7 +282,7 @@ class RandomAccessPreviewer(Previewer):
         Previewer.__init__(self, instance, uri)
         self._queue = []
 
-        bin = gst.element_factory_make("playbin2")
+        bin = gst.element_factory_make("playbin")
         bin.props.uri = uri
 
         # assume 50 pixel height

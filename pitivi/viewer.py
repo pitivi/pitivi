@@ -402,7 +402,7 @@ class PitiviViewer(gtk.VBox, Loggable):
                 clip_uri, gst.TIME_ARGS(position))
 
             self._oldTimelinePos = self.pipeline.getPosition()
-            self._tmp_pipeline = gst.element_factory_make("playbin2")
+            self._tmp_pipeline = gst.element_factory_make("playbin")
             self._tmp_pipeline.set_property("uri", clip_uri)
             self.setPipeline(SimplePipeline(self._tmp_pipeline))
             self._lastClipTrimTime = cur_time

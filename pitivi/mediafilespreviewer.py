@@ -132,10 +132,8 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.pack_start(vbox, expand=False, fill=False)
 
     def _unsurePlaybin(self):
-        try:
-            self.player = gst.element_factory_make("playbin2", "preview-player")
-        except:
-            self.player = gst.element_factory_make("playbin", "preview-player")
+        # FIXME GI, remove that method
+        self.player = gst.element_factory_make("playbin", "preview-player")
 
     def setMinimal(self):
         self.remove(self.l_tags)
