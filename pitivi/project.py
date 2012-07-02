@@ -57,6 +57,14 @@ from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
 
 
 #------------------ Backend classes ------------------------------------------#
+class Timeline(ges.Timeline):
+    def __init__(self):
+        ges.Timeline.__init__(self)
+        self.add_track(ges.track_audio_raw_new())
+        self.add_track(ges.track_video_raw_new())
+        self.selection = Selection()
+
+
 class ProjectSettingsChanged(UndoableAction):
 
     def __init__(self, project, old, new):
@@ -157,14 +165,15 @@ class ProjectManager(Signallable, Loggable):
 
         self.emit("new-project-created", self.current)
 
-        self.timeline = self.current.timeline
+        self.timeline = Timeline()
         self.formatter = ges.PitiviFormatter()
         self.formatter.connect("source-moved", self._formatterMissingURICb)
         self.formatter.connect("loaded", self._projectLoadedCb)
         if self.formatter.load_from_uri(self.timeline, uri):
             self.current.connect("project-changed", self._projectChangedCb)
-
-        return True
+            return True
+        self.warn("Could not load project %s", uri)
+        return False
 
     def _restoreFromBackupDialog(self, time_diff):
         """
@@ -521,12 +530,7 @@ class Project(Signallable, Loggable):
         self.medialibrary = MediaLibrary()
 
         self._dirty = False
-
-        self.timeline = ges.timeline_new_audio_video()
-
-        # We add a Selection to the timeline as there is currently
-        # no such feature in GES
-        self.timeline.selection = Selection()
+        self.timeline = Timeline()
 
         self.pipeline = Pipeline()
         self.pipeline.add_timeline(self.timeline)
