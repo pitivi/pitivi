@@ -76,6 +76,7 @@ class BaseLayerControl(gtk.Table, Loggable):
         solo_image.set_from_icon_name("avatar-default-symbolic", gtk.ICON_SIZE_MENU)
         self.solo_button.add(solo_image)
         self.solo_button.connect("toggled", self._soloToggledCb)
+        self.solo_button.set_relief(gtk.RELIEF_NONE)
         self.solo_button.props.sensitive = False
 
         # CheckButton
@@ -88,6 +89,7 @@ class BaseLayerControl(gtk.Table, Loggable):
         del_button = gtk.Button()
         del_button.set_tooltip_text(_("Delete this layer"))
         del_button.connect("clicked", self._deleteLayerCb)
+        del_button.set_relief(gtk.RELIEF_NONE)
 
         del_image = gtk.Image()
         del_image.set_from_icon_name("edit-delete", gtk.ICON_SIZE_MENU)
