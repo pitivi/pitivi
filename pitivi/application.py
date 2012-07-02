@@ -214,9 +214,9 @@ class Pitivi(Loggable, Signallable):
 
     # check if for version information online
     def _checkVersion(self):
-        giofile = gio.File(uri=RELEASES_URL)
+        giofile = gio.File.new_for_uri(RELEASES_URL)
         self.info("Requesting version information")
-        giofile.load_contents_async(self._versionInfoReceivedCb, None, None)
+        giofile.load_contents_async(None, self._versionInfoReceivedCb, None)
 
     def _versionInfoReceivedCb(self, giofile, result, data):
         try:
