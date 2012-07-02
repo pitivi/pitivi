@@ -28,13 +28,13 @@ import sys
 import time
 
 import gtk
-import gtk.gdk
 import gst
 import ges
 import glib
 import ruler
 import gobject
 import goocanvas
+import cairo
 
 from gettext import gettext as _
 from os.path import join
@@ -56,10 +56,10 @@ from pitivi.dialogs.prefs import PreferencesDialog
 
 from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import SPACING, CANVAS_SPACING, unpack_cairo_pattern, \
-    TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, Point, \
-    AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT, \
-    LAYER_CREATION_BLOCK_TIME, LAYER_CONTROL_TUPLE
+from pitivi.utils.ui import SPACING, CANVAS_SPACING, \
+    TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TARGET_ENTRY, Point, \
+    AUDIO_EFFECT_TARGET_ENTRY, EFFECT_TARGET_ENTRY, FILESOURCE_TARGET_ENTRY, TYPE_PITIVI_EFFECT, \
+    LAYER_CREATION_BLOCK_TIME, LAYER_CONTROL_TARGET_ENTRY
 
 # FIXME GES Port regression
 # from pitivi.utils.align import AutoAligner
@@ -97,10 +97,10 @@ PLAYHEAD_CURSOR = gtk.gdk.Cursor(gtk.gdk.SB_H_DOUBLE_ARROW)
 
 # Drag and drop constants/tuples
 # FIXME, rethink the way we handle that as it is quite 'hacky'
-DND_EFFECT_LIST = [[VIDEO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]],\
-                  [AUDIO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]]]
-VIDEO_EFFECT_LIST = [VIDEO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]],
-AUDIO_EFFECT_LIST = [AUDIO_EFFECT_TUPLE[0], EFFECT_TUPLE[0]],
+DND_EFFECT_LIST = [[VIDEO_EFFECT_TARGET_ENTRY.target, EFFECT_TARGET_ENTRY.target],\
+                  [AUDIO_EFFECT_TARGET_ENTRY.target, EFFECT_TARGET_ENTRY.target]]
+VIDEO_EFFECT_LIST = [VIDEO_EFFECT_TARGET_ENTRY.target, EFFECT_TARGET_ENTRY.target],
+AUDIO_EFFECT_LIST = [AUDIO_EFFECT_TARGET_ENTRY.target, EFFECT_TARGET_ENTRY.target],
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
@@ -178,9 +178,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     """
 
     __gtype_name__ = 'TimelineCanvas'
-    __gsignals__ = {
-        "expose-event": "override",
-    }
 
     _tracks = None
 
@@ -201,17 +198,19 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._createUI()
         self._timeline = timeline
         self.settings = instance.settings
+        self.connect("draw", self.drawCb)
 
     def _createUI(self):
         self._cursor = ARROW
         root = self.get_root_item()
         self.tracks = goocanvas.Group()
         self.tracks.set_simple_transform(0, 0, 1.0, 0)
-        root.add_child(self.tracks)
+        root.add_child(self.tracks, -1)
         self._marquee = goocanvas.Rect(
             parent=root,
-            stroke_pattern=unpack_cairo_pattern(0x33CCFF66),
-            fill_pattern=unpack_cairo_pattern(0x33CCFF66),
+            # FIXME GObject Introspection port
+            #stroke_pattern=unpack_cairo_pattern(0x33CCFF66),
+            #fill_pattern=unpack_cairo_pattern(0x33CCFF66),
             visibility=goocanvas.ITEM_INVISIBLE)
         self._playhead = goocanvas.Rect(
             y=-10,
@@ -252,21 +251,22 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         event.window.set_cursor(self._cursor)
         return True
 
-    def do_expose_event(self, event):
+    def drawCb(self, widget, cr):
         allocation = self.get_allocation()
         width = allocation.width
         height = allocation.height
         # draw the canvas background
         # we must have props.clear_background set to False
 
-        self.style.apply_default_background(event.window,
-            True,
-            gtk.STATE_ACTIVE,
-            event.area,
-            event.area.x, event.area.y,
-            event.area.width, event.area.height)
+        # FIXME GObject Introspection -> move to Gtk.StyleContext
+        #self.style.apply_default_background(event.window,
+            #True,
+            #gtk.STATE_ACTIVE,
+            #event.area,
+            #event.area.x, event.area.y,
+            #event.area.width, event.area.height)
 
-        goocanvas.Canvas.do_expose_event(self, event)
+        #goocanvas.Canvas.do_expose_event(self, event)
 
 ## implements selection marquee
 
@@ -372,6 +372,12 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self.position = position
         self._playhead.props.x = self.nsToPixel(position)
 
+    max_duration = 0
+
+    def setMaxDuration(self, duration):
+        self.max_duration = duration
+        self._request_size()
+
     def _request_size(self):
         alloc = self.get_allocation()
         self.set_bounds(0, 0, alloc.width, alloc.height)
@@ -450,7 +456,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         track = Track(self.app, track, self._timeline)
         self._tracks.append(track)
         track.set_canvas(self)
-        self.tracks.add_child(track)
+        self.tracks.add_child(track, -1)
         self.regroupTracks()
 
     def _trackRemovedCb(self, unused_timeline, position):
@@ -511,10 +517,10 @@ class TimelineControls(gtk.VBox, Loggable):
         self.connect("drag_leave", self._dragLeaveCb)
         self.drag_dest_set(gtk.DEST_DEFAULT_MOTION |
                              gtk.DEST_DEFAULT_DROP,
-                             [LAYER_CONTROL_TUPLE], gtk.gdk.ACTION_MOVE)
+                             [LAYER_CONTROL_TARGET_ENTRY], gtk.gdk.ACTION_MOVE)
 
     def _sizeAllocatedCb(self, widget, alloc):
-        if self.children():
+        if self.get_children():
             self.separator_height = self.children()[0].getSeparatorHeight()
         self.app.gui.timeline_ui._canvas.updateTracks()
 
@@ -1119,7 +1125,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # drag and drop
         self._canvas.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
-            [FILESOURCE_TUPLE, EFFECT_TUPLE],
+            [FILESOURCE_TARGET_ENTRY, EFFECT_TARGET_ENTRY],
             gtk.gdk.ACTION_COPY)
 
         self._canvas.connect("drag-data-received", self._dragDataReceivedCb)
@@ -1165,9 +1171,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         if not self._drag_started:
             self.debug("Drag start")
             if context.targets in DND_EFFECT_LIST:
-                atom = gtk.gdk.atom_intern(EFFECT_TUPLE[0])
+                atom = gtk.gdk.atom_intern(EFFECT_TARGET_ENTRY.target)
             else:
-                atom = gtk.gdk.atom_intern(FILESOURCE_TUPLE[0])
+                atom = gtk.gdk.atom_intern(FILESOURCE_TARGET_ENTRY.target)
             self._drag_started = True
             self._canvas.drag_get_data(context, atom, timestamp)
             self._canvas.drag_highlight()
@@ -1556,7 +1562,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         """
         Set the zoom level so that the entire timeline is in view.
         """
-        ruler_width = self.ruler.get_allocation()[2]
+        ruler_width = self.ruler.get_allocation().width
         # Add gst.SECOND - 1 to the timeline duration to make sure the
         # last second of the timeline will be in view.
         duration = self.timeline.get_duration()

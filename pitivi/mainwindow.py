@@ -46,8 +46,8 @@ from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
 
 from pitivi.utils.misc import show_user_manual
 from pitivi.utils.ui import info_name, beautify_time_delta, SPACING,\
-         FILESOURCE_TUPLE, URI_TUPLE, TYPE_URI_LIST, TYPE_PITIVI_FILESOURCE
-from pitivi.utils.timeline import Zoomable
+        FILESOURCE_TARGET_ENTRY, URI_TARGET_ENTRY, TYPE_URI_LIST, \
+        TYPE_PITIVI_FILESOURCE
 
 from pitivi.timeline.timeline import Timeline
 
@@ -419,7 +419,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # Viewer
         self.viewer = PitiviViewer(instance, undock_action=self.undock_action)
         self.viewer.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           [FILESOURCE_TUPLE, URI_TUPLE],
+                           [FILESOURCE_TARGET_ENTRY, URI_TARGET_ENTRY],
                            gtk.gdk.ACTION_COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)

@@ -27,7 +27,7 @@ import gobject
 from gettext import gettext as _
 
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import LAYER_CONTROL_TUPLE, TYPE_PITIVI_LAYER_CONTROL
+from pitivi.utils.ui import LAYER_CONTROL_TARGET_ENTRY, TYPE_PITIVI_LAYER_CONTROL
 
 
 # TODO add tooltips
@@ -150,7 +150,7 @@ class BaseLayerControl(gtk.VBox, Loggable):
 
         # Drag and drop
         self.drag_source_set(gtk.gdk.BUTTON1_MASK,
-                             [LAYER_CONTROL_TUPLE],
+                             [LAYER_CONTROL_TARGET_ENTRY],
                              gtk.gdk.ACTION_MOVE)
 
     def getSelected(self):

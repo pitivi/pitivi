@@ -431,7 +431,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
         # Drag and Drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           [dnd.URI_TUPLE, dnd.FILE_TUPLE],
+                           [dnd.URI_TARGET_ENTRY, dnd.FILE_TARGET_ENTRY],
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
@@ -1139,7 +1139,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         if treeview.drag_check_threshold(self._dragX, self._dragY,
             int(event.x), int(event.y)):
             context = treeview.drag_begin(
-                [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
+                [dnd.URI_TARGET_ENTRY, dnd.FILESOURCE_TARGET_ENTRY],
                 gtk.gdk.ACTION_COPY,
                 self._dragButton,
                 event)
@@ -1184,7 +1184,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         if iconview.drag_check_threshold(self._dragX, self._dragY,
             int(event.x), int(event.y)):
             context = iconview.drag_begin(
-                [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
+                [dnd.URI_TARGET_ENTRY, dnd.FILESOURCE_TARGET_ENTRY],
                 gtk.gdk.ACTION_COPY,
                 self._dragButton,
                 event)

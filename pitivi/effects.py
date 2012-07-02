@@ -566,7 +566,7 @@ class EffectListWidget(gtk.VBox, Loggable):
         if view.drag_check_threshold(self._dragX, self._dragY,
             int(event.x), int(event.y)):
             context = view.drag_begin(
-                self._getDndTuple(),
+                self._getTargetEntries(),
                 gtk.gdk.ACTION_COPY,
                 self._dragButton,
                 event)
@@ -635,11 +635,11 @@ class EffectListWidget(gtk.VBox, Loggable):
     def _nothingUnderMouse(self, view, event):
         return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
 
-    def _getDndTuple(self):
+    def _getTargetEntries(self):
         if self.effectType.get_active() == VIDEO_EFFECT:
-            return [dnd.VIDEO_EFFECT_TUPLE, dnd.EFFECT_TUPLE]
+            return [dnd.VIDEO_EFFECT_TARGET_ENTRY, dnd.EFFECT_TARGET_ENTRY]
         else:
-            return [dnd.AUDIO_EFFECT_TUPLE, dnd.EFFECT_TUPLE]
+            return [dnd.AUDIO_EFFECT_TARGET_ENTRY, dnd.EFFECT_TARGET_ENTRY]
 
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
 
