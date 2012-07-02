@@ -272,9 +272,9 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
                 pass
             else:
                 self.available_transitions[transition.numerator] = transition
-                self.storemodel.append([transition.numerator,
-                                        transition.value_nick,
-                                        transition.value_name,
+                self.storemodel.append([str(transition.numerator),
+                                        str(transition.value_nick),
+                                        str(transition.value_name),
                                         self._getIcon(transition.value_nick)])
 
         # Now that the UI is fully ready, enable searching
