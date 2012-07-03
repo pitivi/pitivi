@@ -596,7 +596,7 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
 
         # get layer and track_type
         layer = self.element.get_timeline_object().get_layer()
-        track_type = self.element.get_track().props.track_type
+        track_type = self.element.get_track().get_property("track-type")
 
         # update height, compare with current height to not run into recursion
         new_height = self.app.gui.timeline_ui.controls.getHeightOfLayer(track_type, layer)
@@ -687,7 +687,7 @@ class TrackFileSource(TrackObject):
             self._update()
 
     def _getColor(self):
-        if self.element.get_track().props.track_type == ges.TRACK_TYPE_AUDIO:
+        if self.element.get_track().get_property("track-type") == ges.TRACK_TYPE_AUDIO:
             return self.settings.audioClipBg
         else:
             return self.settings.videoClipBg
@@ -722,7 +722,7 @@ class Track(goocanvas.Group, Zoomable, Loggable):
             self.get_canvas().regroupTracks()
 
     def getHeight(self):
-        track_type = self.track.props.track_type
+        track_type = self.track.get_property("track-type")
         return self.app.gui.timeline_ui.controls.getHeightOfTrack(track_type)
 
     height = property(getHeight)
