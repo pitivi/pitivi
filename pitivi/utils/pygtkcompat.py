@@ -133,6 +133,7 @@ def enable_gtk(version='2.0'):
     Gdk.Pixbuf = GdkPixbuf.Pixbuf
     Gdk.pixbuf_new_from_file = GdkPixbuf.Pixbuf.new_from_file
     Gdk.PixbufLoader = GdkPixbuf.PixbufLoader.new_with_type
+    Gdk.pixbuf_new_from_data = GdkPixbuf.Pixbuf.new_from_data
 
     orig_get_formats = GdkPixbuf.Pixbuf.get_formats
 
@@ -188,6 +189,7 @@ def enable_gtk(version='2.0'):
     Gtk.gtk_version = (Gtk.MAJOR_VERSION,
                        Gtk.MINOR_VERSION,
                        Gtk.MICRO_VERSION)
+    Gtk.IconView.set_orientation = Gtk.IconView.set_item_orientation
     _install_enums(Gtk)
 
     # Action
@@ -286,6 +288,11 @@ def enable_gtk(version='2.0'):
             return func(*args)
         orig_combo_row_separator_func(self, callback, user_data)
     Gtk.ComboBox.set_row_separator_func = combo_row_separator_func
+
+    def combo_get_active_text(self):
+        return self.get_model().get(self.get_active_iter())
+
+    Gtk.ComboBox.get_active_text = combo_get_active_text
 
     # ComboBoxEntry
 
@@ -396,7 +403,7 @@ def enable_gtk(version='2.0'):
     class StyleDescriptor(object):
         def __get__(self, instance, class_):
             return Styles(instance)
-    Gtk.Widget.style = StyleDescriptor()
+    Gtk.Widget.style = Gtk.Style()
 
     # gtk.unixprint
 
