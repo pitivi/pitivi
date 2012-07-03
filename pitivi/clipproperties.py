@@ -159,7 +159,8 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
     def __init__(self, instance, effect_properties_handling, clip_properties):
         gtk.Expander.__init__(self)
-        gtk.HBox.__init__(self)
+        # FIXME GObject Introspection
+        #gtk.HBox.__init__(self)
         #self.set_expanded(True)
 
         self.selected_effects = []
@@ -272,7 +273,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self.updateAll()
 
     def _vcontentNotifyCb(self, paned, gparamspec):
-        if gparamspec.name == 'position':
+        if gparamspec and gparamspec.name == 'position':
             self._config_ui_h_pos = self._vcontent.get_position()
             self.settings.effectVPanedPosition = self._config_ui_h_pos
 
@@ -409,7 +410,8 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         if context is None:
             return False
 
-        treeview.set_tooltip_row(tooltip, context[1][0])
+        # FIXME GObject Introspection, make sure forth is the path
+        #treeview.set_tooltip_row(tooltip, context[1])
 
         return True
 
