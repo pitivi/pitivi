@@ -454,8 +454,17 @@ def enable_gudev():
     sys.modules['gudev'] = GUdev
 
 
-def enable_gst():
-    gi.require_version('Gst', '0.10')
+def enable_ges(version='1.0'):
+    gi.require_version('GES', version)
+    from gi.repository import GES
+    sys.modules['ges'] = GES
+    GES.init()
+    GES.timeline_new_audio_video = GES.Timeline.new_audio_video
+    GES.track_audio_raw_new = GES.Track.audio_raw_new
+    GES.track_video_raw_new = GES.Track.audio_raw_new
+    GES.formatter_can_load_uri = GES.Formatter.can_load_uri
+    _install_enums(GES)
+
     from gi.repository import Gst
     sys.modules['gst'] = Gst
     _install_enums(Gst)
