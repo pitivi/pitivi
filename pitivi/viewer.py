@@ -864,9 +864,9 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         """
         gtk.DrawingArea.do_realize(self)
         if platform.system() == 'Windows':
-            self.window_xid = self.window.handle
+            self.window_xid = self.props.window.handle
         else:
-            self.window_xid = self.window.xid
+            self.window_xid = self.get_property('window').get_xid()
 
     def button_release_event(self, widget, event):
         if event.button == 1:
