@@ -484,9 +484,115 @@ def enable_gst(version='1.0'):
         Gst.get_pygst_version = Gst.version
         Gst.get_gst_version = Gst.version
 
+    class Fraction():
+        def __init__(self, num, denom=1):
+            def __gcd(a, b):
+                while b != 0:
+                    tmp = a
+                    a = b
+                    b = tmp % b
+                return abs(a)
+
+            def __simplify():
+                num = self.num
+                denom = self.denom
+
+                if num < 0:
+                    num = -num
+                    denom = -denom
+
+                # Compute greatest common divisor
+                gcd = __gcd(num, denom)
+                if gcd != 0:
+                    num /= gcd
+                    denom /= gcd
+
+                self.num = num
+                self.denom = denom
+
+            self.num = num
+            self.denom = denom
+
+            __simplify()
+            self.type = "fraction"
+
+        def __repr__(self):
+            return '<gst.Fraction %d/%d>' % (self.num, self.denom)
+
+        def __value__(self):
+            return self.num / self.denom
+
+        def __eq__(self, other):
+            if isinstance(other, Fraction):
+                return self.num * other.denom == other.num * self.denom
+            return False
+
+        def __ne__(self, other):
+            return not self.__eq__(other)
+
+        def __mul__(self, other):
+            if isinstance(other, Fraction):
+                return Fraction(self.num * other.num,
+                                self.denom * other.denom)
+            elif isinstance(other, int):
+                return Fraction(self.num * other, self.denom)
+            raise TypeError
+
+        __rmul__ = __mul__
+
+        def __div__(self, other):
+            if isinstance(other, Fraction):
+                return Fraction(self.num * other.denom,
+                                self.denom * other.num)
+            elif isinstance(other, int):
+                return Fraction(self.num, self.denom * other)
+            return TypeError
+
+        def __rdiv__(self, other):
+            if isinstance(other, int):
+                return Fraction(self.denom * other, self.num)
+            return TypeError
+
+        def __float__(self):
+            return float(self.num) / float(self.denom)
+
+    Gst.Fraction = Fraction
+
+    def printTimeArgs(time):
+        if time == Gst.CLOCK_TIME_NONE:
+            return "CLOCK_TIME_NONE"
+
+        return str(time / (Gst.SECOND * 60 * 60)) + ':' + \
+               str((time / (Gst.SECOND * 60)) % 60) + ':' + \
+               str(time / (Gst.SECOND % 60)) + ':' + \
+               str(time % Gst.SECOND)
+
+    Gst.TIME_ARGS = printTimeArgs
+
+    # Caps helpers
+    Gst.caps_from_string = Gst.Caps.from_string
     Gst.caps_new_any = Gst.Caps.new_any
-    Gst.get_pygst_version = lambda: (0, 10, 19)
-    Gst.get_gst_version = lambda: (0, 10, 40)
+
+    # ElementFactory
+    def get_longname(self):
+        return self.get_metadata("long-name")
+
+    Gst.ElementFactory.get_longname = get_longname
+
+    def get_description(self):
+        return self.get_metadata("description")
+
+    Gst.ElementFactory.get_description = get_description
+
+    def get_klass(self):
+        return self.get_metadata("klass")
+
+    Gst.ElementFactory.get_klass = get_klass
+
+    def element_factory_make(factoryname, name=None):
+        return Gst.ElementFactory.make(factoryname, name)
+
+    Gst.element_factory_make = element_factory_make
 
     from gi.repository import GstInterfaces
     sys.modules['gst.interfaces'] = GstInterfaces
