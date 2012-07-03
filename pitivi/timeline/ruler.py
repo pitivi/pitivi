@@ -37,13 +37,12 @@ from pitivi.utils.ui import time_to_string, beautify_length
 
 
 def setCairoColor(cr, color):
-    cr.set_source_rgb(color.red_float, color.green_float, color.blue_float)
+    cr.set_source_rgb(float(color.red), float(color.green), float(color.blue))
 
 
 class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     __gsignals__ = {
-        "expose-event": "override",
         "button-press-event": "override",
         "button-release-event": "override",
         "motion-notify-event": "override",
@@ -70,6 +69,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
 
         self.pixbuf = None
+
         # all values are in pixels
         self.pixbuf_offset = 0
         self.pixbuf_offset_painted = 0
@@ -82,6 +82,9 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.min_frame_spacing = 5.0
         self.frame_height = 5.0
         self.frame_rate = gst.Fraction(1 / 1)
+        self.ns_per_frame = float(1 / self.frame_rate) * gst.SECOND
+        self.connect('draw', self.drawCb)
+        self.connect('configure-event', self.configureEventCb)
 
     def _hadjValueChangedCb(self, hadj):
         self.pixbuf_offset = self.hadj.get_value()
@@ -100,25 +103,39 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.queue_draw()
 
 ## gtk.Widget overrides
+    def configureEventCb(self, widget, event, data=None):
+        self.debug("Configuring, height %d, width %d",
+            widget.get_allocated_width(), widget.get_allocated_height())
 
-    def do_expose_event(self, event):
-        self.log("exposing ScaleRuler %s", list(event.area))
-        x, y, width, height = event.area
+        # Destroy previous buffer
+        if self.pixbuf is not None:
+            self.pixbuf.finish()
+            self.pixbuf = None
 
-        self.repaintIfNeeded(width, height)
-        # offset in pixbuf to paint
-        offset_to_paint = self.pixbuf_offset - self.pixbuf_offset_painted
+        # Create a new buffer
+        self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32,
+                widget.get_allocated_width(), widget.get_allocated_height())
 
-        self.window.draw_pixbuf(
-            self.style.fg_gc[gtk.STATE_NORMAL],
-            self.pixbuf,
-            int(offset_to_paint), 0,
-            x, y, width, height,
-            gtk.gdk.RGB_DITHER_NONE)
+        return False
 
-        # draw the position
-        context = self.window.cairo_create()
-        self.drawPosition(context)
+    def drawCb(self, widget, cr):
+        if self.pixbuf is not None:
+            db = self.pixbuf
+
+            # Create cairo context with double buffer as is DESTINATION
+            cc = cairo.Context(db)
+
+            #draw everything
+            self.drawBackground(cc)
+            self.drawRuler(cc)
+            self.drawPosition(cc)
+            db.flush()
+
+            cr.set_source_surface(self.pixbuf, 0.0, 0.0)
+            cr.paint()
+        else:
+            self.info('No buffer to paint buffer')
+
         return False
 
     def do_button_press_event(self, event):
@@ -167,43 +184,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
                 event.direction == gtk.gdk.SCROLL_RIGHT:
                 self.app.gui.timeline_ui.scroll_right()
 
-## Drawing methods
-
-    def repaintIfNeeded(self, width, height):
-        """ (re)create the buffered drawable for the Widget """
-        if self.pixbuf:
-            # The new offset starts before painted in pixbuf
-            if self.pixbuf_offset < self.pixbuf_offset_painted:
-                self.need_update = True
-            # The new offsets end after pixbuf we have
-            if self.pixbuf_offset + width > self.pixbuf_offset_painted + self.pixbuf.get_width():
-                self.need_update = True
-        else:
-            self.need_update = True
-
-        # We want to benefit from double-buffering (so as not to recreate the
-        # ruler graphics all the time) yet we don't want to allocate insanely
-        # big pixbufs (which would result in big memory usage, or even not being
-        # able to allocate such a big pixbuf).
-        #
-        # We therefore create a pixbuf with a width of 4 times the max viewable
-        # width (allocation.width)
-        if self.need_update:
-            self.log("Repainting the ruler")
-            if self.pixbuf:
-                del self.pixbuf
-            surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width * self.pixbuf_multiples, height)
-            self.pixbuf_offset_painted = self.pixbuf_offset
-            cr = cairo.Context(surface)
-            self.drawBackground(cr)
-            self.drawRuler(cr)
-            cr = None
-            self.pixbuf = gtk.gdk.pixbuf_new_from_data(surface.get_data(),
-            gtk.gdk.COLORSPACE_RGB, True, 8, surface.get_width(),
-            surface.get_height(), 4 * surface.get_width())
-            surface = None
-            self.need_update = False
-
     def setProjectFrameRate(self, rate):
         """
         Set the lowest scale based on project framerate
@@ -213,6 +193,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.scale[0] = float(2 / rate)
         self.scale[1] = float(5 / rate)
         self.scale[2] = float(10 / rate)
+
+## Drawing methods
 
     def drawBackground(self, cr):
         setCairoColor(cr, self.style.bg[gtk.STATE_NORMAL])
@@ -225,7 +207,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             cr.fill()
 
     def drawRuler(self, cr):
-        cr.set_font_face(cairo.ToyFontFace("Cantarell"))
+        # FIXME GObject Introspection ToyFontFace not wraped with the introspection
+        #cr.set_font_face(cairo.ToyFontFace("Cantarell"))
         cr.set_font_size(15)
         textwidth = cr.text_extents(time_to_string(0))[2]
 
