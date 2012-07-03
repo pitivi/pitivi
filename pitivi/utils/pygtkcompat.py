@@ -465,12 +465,25 @@ def enable_ges(version='1.0'):
     GES.formatter_can_load_uri = GES.Formatter.can_load_uri
     _install_enums(GES)
 
+
+def enable_gst(version='1.0'):
+    gi.require_version('Gst', version)
     from gi.repository import Gst
     sys.modules['gst'] = Gst
     _install_enums(Gst)
-    Gst.registry_get_default = Gst.Registry.get_default
-    Gst.element_register = Gst.Element.register
-    Gst.element_factory_make = Gst.ElementFactory.make
+
+    Gst.init(sys.argv)
+    if version == '0.10':
+        Gst.registry_get_default = Gst.Registry.get_default
+        Gst.get_pygst_version = lambda: (0, 10, 19)
+        Gst.get_gst_version = lambda: (0, 10, 40)
+    else:
+        Gst.registry_get_default = Gst.Registry.get
+        Gst.element_register = Gst.Element.register
+        Gst.caps_new_any = Gst.Caps.new_any
+        Gst.get_pygst_version = Gst.version
+        Gst.get_gst_version = Gst.version
+
     Gst.caps_new_any = Gst.Caps.new_any
     Gst.get_pygst_version = lambda: (0, 10, 19)
     Gst.get_gst_version = lambda: (0, 10, 40)
