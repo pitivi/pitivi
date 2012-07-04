@@ -4,7 +4,7 @@ dist-hook: doc-dist-hook
 
 DOC_ID = pitivi
 DOC_FIGURES = \
-    figures/codecscontainers.jpg \
+    figures/codecscontainers.jpg\
     figures/fadestep1.png \
     figures/fadestep2.png \
     figures/fadestep3.png \
@@ -13,7 +13,7 @@ DOC_FIGURES = \
     figures/keyframecurves.png \
     figures/layers.png \
     figures/logo.png \
-    figures/mainwindow.png \
+    figures/mainwindow.jpg \
     figures/previewsource.png \
     figures/ripple-after.png \
     figures/ripple-before.png \
