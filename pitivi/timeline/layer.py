@@ -32,7 +32,7 @@ from pitivi.utils.ui import LAYER_SPACING
 
 # TODO add tooltips
 # TODO GTK3 port to GtkGrid
-class BaseLayerControl(gtk.Table, Loggable):
+class BaseLayerControl(gtk.EventBox, Loggable):
     """
     Base Layer control classes
     """
@@ -40,14 +40,27 @@ class BaseLayerControl(gtk.Table, Loggable):
     __gtype_name__ = 'LayerControl'
 
     def __init__(self, app, layer, layer_type):
-        gtk.Table.__init__(self, rows=2, columns=2)
+        gtk.EventBox.__init__(self)
         Loggable.__init__(self)
+
+        table = gtk.Table(rows=2, columns=2)
+        table.props.border_width = 2
+        self.add(table)
 
         self._app = app
         self._layer = layer
+        self._selected = False
 
-        self.set_row_spacings(3)
-        self.set_col_spacings(3)
+        # get the default colour for the current theme
+        self.UNSELECTED_COLOR = self.rc_get_style().bg[gtk.STATE_NORMAL]
+        # use base instead of bg colours so that we get the lighter colour
+        # that is used for list items in TreeView.
+        self.SELECTED_COLOR = self.rc_get_style().base[gtk.STATE_SELECTED]
+
+        self.connect("button_press_event", self._selectedCb)
+
+        table.set_row_spacings(3)
+        table.set_col_spacings(3)
 
         icon_mapping = {ges.TRACK_TYPE_AUDIO: "audio-x-generic",
                         ges.TRACK_TYPE_VIDEO: "video-x-generic"}
@@ -58,15 +71,15 @@ class BaseLayerControl(gtk.Table, Loggable):
         fold_button.set_relief(gtk.RELIEF_NONE)
         fold_button.set_focus_on_click(False)
         fold_button.connect("changed-state", self._foldingChangedCb)
-        self.attach(fold_button, 0, 1, 0, 1)
+        table.attach(fold_button, 0, 1, 0, 1)
 
         # Name entry
-        name_entry = gtk.Entry()
-        name_entry.set_tooltip_text(_("Set or change this layers name"))
-        name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
-        name_entry.connect("focus-in-event", self._focusChangeCb, False)
-        name_entry.connect("focus-out-event", self._focusChangeCb, True)
-        name_entry.props.sensitive = False
+        self.name_entry = gtk.Entry()
+        self.name_entry.set_tooltip_text(_("Set or change this layers name"))
+        self.name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
+        self.name_entry.connect("focus-in-event", self._focusChangeCb, False)
+        self.name_entry.connect("focus-out-event", self._focusChangeCb, True)
+        self.name_entry.props.sensitive = False
 
         # 'Solo' toggle button
         self.solo_button = gtk.ToggleButton()
@@ -97,7 +110,7 @@ class BaseLayerControl(gtk.Table, Loggable):
 
         # Upper bar
         upper = gtk.HBox()
-        upper.pack_start(name_entry, True, True)
+        upper.pack_start(self.name_entry, True, True)
         upper.pack_start(self.solo_button, False, False)
         upper.pack_start(visible_option, False, False)
         upper.pack_start(del_button, False, False)
@@ -106,10 +119,20 @@ class BaseLayerControl(gtk.Table, Loggable):
         self.lower_hbox = gtk.HBox()
         self.lower_hbox.props.sensitive = False
 
-        self.attach(upper, 1, 2, 0, 1)
-        self.attach(self.lower_hbox, 1, 2, 1, 2)
+        table.attach(upper, 1, 2, 0, 1)
+        table.attach(self.lower_hbox, 1, 2, 1, 2)
 
         self.show_all()
+
+    def getSelected(self):
+        return self._selected
+
+    def setSelected(self, selected):
+        if selected != self._selected:
+            self._selected = selected
+            self._selectionChangedCb()
+
+    selected = property(getSelected, setSelected, None, "Selection state")
 
     def _foldingChangedCb(self, button, state):
         if state:
@@ -127,16 +150,44 @@ class BaseLayerControl(gtk.Table, Loggable):
         self._app.gui.setActionsSensitive(sensitive_actions)
 
     def _deleteLayerCb(self, widget):
+        """
+        Remove layer associated with this widget
+
+        Disposal of widget is handles by TimelineControls
+        """
         timeline = self._layer.get_timeline()
         timeline.remove_layer(self._layer)
 
     def _soloToggledCb(self, button):
+        """
+        Send TimelineControls the new solo-ed layer
+        """
         if button.get_active():
             # Disable all other layers
             self._app.gui.timeline_ui.controls.soloLayer(self._layer)
         else:
             # Enable all layers
             self._app.gui.timeline_ui.controls.soloLayer(None)
+
+    def _selectedCb(self, widget, event):
+        """
+        Send TimelineControls the changed selection
+        """
+        self._app.gui.timeline_ui.controls.selectLayerControl(self._layer, self)
+
+    def _selectionChangedCb(self):
+        """
+        Called when the selection state changes
+        """
+        if self.selected:
+            self.modify_bg(gtk.STATE_NORMAL, self.SELECTED_COLOR)
+            self.name_entry.modify_bg(gtk.STATE_NORMAL, self.SELECTED_COLOR)
+        else:
+            self.modify_bg(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
+            self.name_entry.modify_bg(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
+
+        # continue GTK signal propagation
+        return True
 
     def getHeight(self):
         return self.get_allocation().height

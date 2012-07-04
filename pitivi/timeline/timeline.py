@@ -607,6 +607,24 @@ class TimelineControls(gtk.VBox, Loggable):
             controls[ges.TRACK_TYPE_VIDEO].setSoloState(key == layer)
             controls[ges.TRACK_TYPE_AUDIO].setSoloState(key == layer)
 
+    def selectLayerControl(self, layer, layer_control):
+        """
+        Select layer_control and unselect all other controls
+        """
+        for key, controls in self._layer_controls.iteritems():
+            # selected widget not in this layer
+            if key != layer:
+                controls[ges.TRACK_TYPE_VIDEO].selected = False
+                controls[ges.TRACK_TYPE_AUDIO].selected = False
+            # selected widget in this layer
+            else:
+                if type(layer_control) is AudioLayerControl:
+                    controls[ges.TRACK_TYPE_VIDEO].selected = False
+                    controls[ges.TRACK_TYPE_AUDIO].selected = True
+                else:  # video
+                    controls[ges.TRACK_TYPE_VIDEO].selected = True
+                    controls[ges.TRACK_TYPE_AUDIO].selected = False
+
 
 class InfoStub(gtk.HBox, Loggable):
     """
