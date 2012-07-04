@@ -285,6 +285,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("Preferences", gtk.STOCK_PREFERENCES, None,
             None, None, self._prefsCb),
 
+            ("RemoveLayer", gtk.STOCK_REMOVE, _("Remove layer"),
+             None, _("Remove the selected layer from the project"), self._removeLayerCb),
+
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
 
             ("About", gtk.STOCK_ABOUT, None,
@@ -375,6 +378,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         self.timeline_ui = Timeline(instance, self.uimanager)
         self.timeline_ui.setProjectManager(self.app.projectManager)
+        self.timeline_ui.controls.connect("selection-changed", self._selectedLayerChangedCb)
         self.app.current = None
         vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
         self.timeline_ui.show()
@@ -552,6 +556,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         to remove all instances of that clip."""
         self.timeline_ui.purgeObject(uri)
 
+    def _selectedLayerChangedCb(self, widget, layer):
+        self.main_actions.get_action("RemoveLayer").set_sensitive(layer != None)
+
 ## Toolbar/Menu actions callback
 
     def _newProjectMenuCb(self, unused_action):
@@ -588,6 +595,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _projectSettingsCb(self, unused_action):
         self.showProjectSettingsDialog()
+
+    def _removeLayerCb(self, unused_action):
+        layer = self.timeline_ui.controls.getSelectedLayer()
+        timeline = layer.get_timeline()
+        timeline.remove_layer(layer)
 
     def showProjectSettingsDialog(self):
         from pitivi.project import ProjectSettingsDialog

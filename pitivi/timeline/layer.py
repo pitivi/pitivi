@@ -98,22 +98,11 @@ class BaseLayerControl(gtk.EventBox, Loggable):
         visible_option.set_active(True)
         visible_option.props.sensitive = False
 
-        # Temporary delete button
-        del_button = gtk.Button()
-        del_button.set_tooltip_text(_("Delete this layer"))
-        del_button.connect("clicked", self._deleteLayerCb)
-        del_button.set_relief(gtk.RELIEF_NONE)
-
-        del_image = gtk.Image()
-        del_image.set_from_icon_name("edit-delete", gtk.ICON_SIZE_MENU)
-        del_button.add(del_image)
-
         # Upper bar
         upper = gtk.HBox()
         upper.pack_start(self.name_entry, True, True)
         upper.pack_start(self.solo_button, False, False)
         upper.pack_start(visible_option, False, False)
-        upper.pack_start(del_button, False, False)
 
         # Lower bar
         self.lower_hbox = gtk.HBox()
@@ -148,15 +137,6 @@ class BaseLayerControl(gtk.EventBox, Loggable):
 
     def _focusChangeCb(self, widget, direction, sensitive_actions):
         self._app.gui.setActionsSensitive(sensitive_actions)
-
-    def _deleteLayerCb(self, widget):
-        """
-        Remove layer associated with this widget
-
-        Disposal of widget is handles by TimelineControls
-        """
-        timeline = self._layer.get_timeline()
-        timeline.remove_layer(self._layer)
 
     def _soloToggledCb(self, button):
         """

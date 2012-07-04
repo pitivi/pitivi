@@ -37,6 +37,8 @@
     </menu>
     <menu action="Timeline">
       <placeholder name="Timeline" />
+      <separator />
+      <menuitem action="RemoveLayer" />
     </menu>
     <menu action="Help">
       <menuitem action="UserManual" />

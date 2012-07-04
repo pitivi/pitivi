@@ -476,11 +476,19 @@ class TimelineControls(gtk.VBox, Loggable):
     Holds and manages the LayerControlWidgets
     """
 
+    __gsignals__ = {
+       "selection-changed": (
+            gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE,
+            (gobject.TYPE_PYOBJECT,),)
+       }
+
     def __init__(self, instance):
         gtk.VBox.__init__(self)
         Loggable.__init__(self)
         self.app = instance
         self._layer_controls = {}
+        self._selected_layer = None
         self._timeline = None
         self.set_spacing(LAYER_SPACING)
         self.type_map = {ges.TRACK_TYPE_AUDIO: AudioLayerControl,
@@ -611,6 +619,11 @@ class TimelineControls(gtk.VBox, Loggable):
         """
         Select layer_control and unselect all other controls
         """
+        # if selected layer changed
+        if self._selected_layer != layer:
+            self._selected_layer = layer
+            self.emit("selection-changed", layer)
+
         for key, controls in self._layer_controls.iteritems():
             # selected widget not in this layer
             if key != layer:
@@ -624,6 +637,9 @@ class TimelineControls(gtk.VBox, Loggable):
                 else:  # video
                     controls[ges.TRACK_TYPE_VIDEO].selected = True
                     controls[ges.TRACK_TYPE_AUDIO].selected = False
+
+    def getSelectedLayer(self):
+        return self._selected_layer
 
 
 class InfoStub(gtk.HBox, Loggable):
