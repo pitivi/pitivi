@@ -79,6 +79,7 @@ class BaseLayerControl(gtk.EventBox, Loggable):
         self.name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
         self.name_entry.connect("focus-in-event", self._focusChangeCb, False)
         self.name_entry.connect("focus-out-event", self._focusChangeCb, True)
+        self.name_entry.connect("button_press_event", self._selectedCb)
         self.name_entry.props.sensitive = False
 
         # 'Solo' toggle button
