@@ -57,7 +57,7 @@ class BaseLayerControl(gtk.EventBox, Loggable):
         # that is used for list items in TreeView.
         self.SELECTED_COLOR = self.rc_get_style().base[gtk.STATE_SELECTED]
 
-        self.connect("button_press_event", self._selectedCb)
+        self.connect("button_press_event", self._buttonPressCb)
 
         table.set_row_spacings(3)
         table.set_col_spacings(3)
@@ -79,7 +79,7 @@ class BaseLayerControl(gtk.EventBox, Loggable):
         self.name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
         self.name_entry.connect("focus-in-event", self._focusChangeCb, False)
         self.name_entry.connect("focus-out-event", self._focusChangeCb, True)
-        self.name_entry.connect("button_press_event", self._selectedCb)
+        self.name_entry.connect("button_press_event", self._buttonPressCb)
         self.name_entry.props.sensitive = False
 
         # 'Solo' toggle button
@@ -113,6 +113,13 @@ class BaseLayerControl(gtk.EventBox, Loggable):
         table.attach(self.lower_hbox, 1, 2, 1, 2)
 
         self.show_all()
+
+        # Popup Menu
+        self.popup = gtk.Menu()
+        menu_dellayer = gtk.ImageMenuItem(_("_Delete layer"))
+        menu_dellayer.connect("activate", self._deleteLayerCb)
+        self.popup.append(menu_dellayer)
+        self.popup.show_all()
 
     def getSelected(self):
         return self._selected
@@ -150,11 +157,14 @@ class BaseLayerControl(gtk.EventBox, Loggable):
             # Enable all layers
             self._app.gui.timeline_ui.controls.soloLayer(None)
 
-    def _selectedCb(self, widget, event):
+    def _buttonPressCb(self, widget, event):
         """
-        Send TimelineControls the changed selection
+        Look if user selected layer or wants popup menu
         """
-        self._app.gui.timeline_ui.controls.selectLayerControl(self)
+        if event.button == 1:
+            self._app.gui.timeline_ui.controls.selectLayerControl(self)
+        elif event.button == 3:
+            self.popup.popup(None, None, None, event.button, event.time)
 
     def _selectionChangedCb(self):
         """
@@ -169,6 +179,10 @@ class BaseLayerControl(gtk.EventBox, Loggable):
 
         # continue GTK signal propagation
         return True
+
+    def _deleteLayerCb(self, widget):
+        timeline = self._layer.get_timeline()
+        timeline.remove_layer(self._layer)
 
     def getHeight(self):
         return self.get_allocation().height
