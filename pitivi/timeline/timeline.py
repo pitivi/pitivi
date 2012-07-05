@@ -223,7 +223,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         root.connect("motion-notify-event", self._selectionDrag)
         root.connect("button-press-event", self._selectionStart)
         root.connect("button-release-event", self._selectionEnd)
-        self.connect("button-release-event", self._snapEndedCb)
+        self.connect("button-release-event", self._buttonReleasedCb)
         # add some padding for the horizontal scrollbar
         self.set_size_request(-1, self.height)
 
@@ -397,7 +397,12 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             self._snap_indicator.props.height = self.height
             self._snap_indicator.props.visibility = goocanvas.ITEM_VISIBLE
 
-    def _snapEndedCb(self, *args):
+    def _buttonReleasedCb(self, canvas, event):
+        # select clicked layer, if any
+        x, y = self.from_event(event) + self._get_adjustment(True, True)
+        self.app.gui.timeline_ui.controls.selectLayerControlForY(y)
+
+        # also hide snap indicator
         self._snap_indicator.props.visibility = goocanvas.ITEM_INVISIBLE
 
 ## settings callbacks
@@ -420,7 +425,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             self._timeline.disconnect_by_func(self._trackAddedCb)
             self._timeline.disconnect_by_func(self._trackRemovedCb)
             self._timeline.disconnect_by_func(self._snapCb)
-            self._timeline.disconnect_by_func(self._snapEndedCb)
+            self._timeline.disconnect_by_func(self._buttonReleasedCb)
 
         self._timeline = timeline
         if self._timeline is not None:
@@ -430,7 +435,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             self._timeline.connect("track-added", self._trackAddedCb)
             self._timeline.connect("track-removed", self._trackRemovedCb)
             self._timeline.connect("snapping-started", self._snapCb)
-            self._timeline.connect("snapping-ended", self._snapEndedCb)
+            self._timeline.connect("snapping-ended", self._buttonReleasedCb)
 
         self.zoomChanged()
 
@@ -615,10 +620,11 @@ class TimelineControls(gtk.VBox, Loggable):
             controls[ges.TRACK_TYPE_VIDEO].setSoloState(key == layer)
             controls[ges.TRACK_TYPE_AUDIO].setSoloState(key == layer)
 
-    def selectLayerControl(self, layer, layer_control):
+    def selectLayerControl(self, layer_control):
         """
         Select layer_control and unselect all other controls
         """
+        layer = layer_control._layer
         # if selected layer changed
         if self._selected_layer != layer:
             self._selected_layer = layer
@@ -640,6 +646,24 @@ class TimelineControls(gtk.VBox, Loggable):
 
     def getSelectedLayer(self):
         return self._selected_layer
+
+    def selectLayerControlForY(self, y):
+        """
+        Check if y is in the bounds of a layer control
+        """
+        current_y = 0
+        # count height
+        for child in self.get_children():
+            # calculate upper bound
+            next_y = current_y + child.getHeight()
+
+            # if y is in bounds, activate control and terminate
+            if y >= current_y and y <= next_y:
+                self.selectLayerControl(child)
+                return
+            # else check next control
+            else:
+                current_y = next_y + LAYER_SPACING
 
 
 class InfoStub(gtk.HBox, Loggable):

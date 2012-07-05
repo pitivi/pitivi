@@ -154,7 +154,7 @@ class BaseLayerControl(gtk.EventBox, Loggable):
         """
         Send TimelineControls the changed selection
         """
-        self._app.gui.timeline_ui.controls.selectLayerControl(self._layer, self)
+        self._app.gui.timeline_ui.controls.selectLayerControl(self)
 
     def _selectionChangedCb(self):
         """
