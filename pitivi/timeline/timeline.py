@@ -495,12 +495,15 @@ class TimelineControls(gtk.VBox, Loggable):
         self._layer_controls = {}
         self._selected_layer = None
         self._timeline = None
-        self.set_spacing(LAYER_SPACING)
+        self.set_spacing(0)
+        self.separator_height = 0
         self.type_map = {ges.TRACK_TYPE_AUDIO: AudioLayerControl,
                          ges.TRACK_TYPE_VIDEO: VideoLayerControl}
         self.connect("size-allocate", self._sizeAllocatedCb)
 
     def _sizeAllocatedCb(self, widget, alloc):
+        if self.children():
+            self.separator_height = self.children()[0].getSeparatorHeight()
         self.app.gui.timeline_ui._canvas.updateTracks()
 
 ## Timeline callbacks
@@ -569,9 +572,9 @@ class TimelineControls(gtk.VBox, Loggable):
 
     def getHeightOfLayer(self, track_type, layer):
         if track_type == ges.TRACK_TYPE_VIDEO:
-            return self._layer_controls[layer][ges.TRACK_TYPE_VIDEO].getHeight()
+            return self._layer_controls[layer][ges.TRACK_TYPE_VIDEO].getControlHeight()
         else:
-            return self._layer_controls[layer][ges.TRACK_TYPE_AUDIO].getHeight()
+            return self._layer_controls[layer][ges.TRACK_TYPE_AUDIO].getControlHeight()
 
     def getYOfLayer(self, track_type, layer):
         y = 0
@@ -581,7 +584,6 @@ class TimelineControls(gtk.VBox, Loggable):
                 return y
 
             y += child.getHeight()
-            y += LAYER_SPACING
         return 0
 
     def getHeightOfTrack(self, track_type):
@@ -589,9 +591,8 @@ class TimelineControls(gtk.VBox, Loggable):
         for child in self.get_children():
             if isinstance(child, self.type_map[track_type]):
                 y += child.getHeight()
-                y += LAYER_SPACING
 
-        return y - LAYER_SPACING
+        return y - self.separator_height
 
     def getPriorityForY(self, y):
         priority = -1
@@ -602,7 +603,7 @@ class TimelineControls(gtk.VBox, Loggable):
             if y <= current:
                 return priority
 
-            current += child.getHeight() + LAYER_SPACING
+            current += child.getHeight()
             priority += 1
 
         # another check if priority has been incremented but not returned
@@ -655,7 +656,7 @@ class TimelineControls(gtk.VBox, Loggable):
         # count height
         for child in self.get_children():
             # calculate upper bound
-            next_y = current_y + child.getHeight()
+            next_y = current_y + child.getControlHeight()
 
             # if y is in bounds, activate control and terminate
             if y >= current_y and y <= next_y:
@@ -663,7 +664,7 @@ class TimelineControls(gtk.VBox, Loggable):
                 return
             # else check next control
             else:
-                current_y = next_y + LAYER_SPACING
+                current_y += child.getHeight()
 
 
 class InfoStub(gtk.HBox, Loggable):

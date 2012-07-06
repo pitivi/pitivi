@@ -1,7 +1,7 @@
 # -- coding: utf-8 --
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/timeline/layercontrols.py
+#       pitivi/timeline/layer.py
 #
 # Copyright (c) 2012, Paul Lange <palango@gmx.de>
 #
@@ -32,7 +32,7 @@ from pitivi.utils.ui import LAYER_SPACING
 
 # TODO add tooltips
 # TODO GTK3 port to GtkGrid
-class BaseLayerControl(gtk.EventBox, Loggable):
+class BaseLayerControl(gtk.VBox, Loggable):
     """
     Base Layer control classes
     """
@@ -40,12 +40,8 @@ class BaseLayerControl(gtk.EventBox, Loggable):
     __gtype_name__ = 'LayerControl'
 
     def __init__(self, app, layer, layer_type):
-        gtk.EventBox.__init__(self)
+        gtk.VBox.__init__(self, spacing=0)
         Loggable.__init__(self)
-
-        table = gtk.Table(rows=2, columns=2)
-        table.props.border_width = 2
-        self.add(table)
 
         self._app = app
         self._layer = layer
@@ -57,10 +53,18 @@ class BaseLayerControl(gtk.EventBox, Loggable):
         # that is used for list items in TreeView.
         self.SELECTED_COLOR = self.rc_get_style().base[gtk.STATE_SELECTED]
 
-        self.connect("button_press_event", self._buttonPressCb)
-
+        table = gtk.Table(rows=2, columns=2)
+        table.props.border_width = 2
         table.set_row_spacings(3)
         table.set_col_spacings(3)
+
+        self.eventbox = gtk.EventBox()
+        self.eventbox.add(table)
+        self.eventbox.connect("button_press_event", self._buttonPressCb)
+        self.pack_start(self.eventbox)
+
+        self.sep = SpacedSeparator()
+        self.pack_start(self.sep)
 
         icon_mapping = {ges.TRACK_TYPE_AUDIO: "audio-x-generic",
                         ges.TRACK_TYPE_VIDEO: "video-x-generic"}
@@ -171,10 +175,10 @@ class BaseLayerControl(gtk.EventBox, Loggable):
         Called when the selection state changes
         """
         if self.selected:
-            self.modify_bg(gtk.STATE_NORMAL, self.SELECTED_COLOR)
+            self.eventbox.modify_bg(gtk.STATE_NORMAL, self.SELECTED_COLOR)
             self.name_entry.modify_bg(gtk.STATE_NORMAL, self.SELECTED_COLOR)
         else:
-            self.modify_bg(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
+            self.eventbox.modify_bg(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
             self.name_entry.modify_bg(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
 
         # continue GTK signal propagation
@@ -186,6 +190,12 @@ class BaseLayerControl(gtk.EventBox, Loggable):
 
     def getHeight(self):
         return self.get_allocation().height
+
+    def getSeparatorHeight(self):
+        return self.sep.get_allocation().height
+
+    def getControlHeight(self):
+        return self.getHeight() - self.getSeparatorHeight()
 
     def setSoloState(self, state):
         self.solo_button.set_active(state)
@@ -274,3 +284,12 @@ class TwoStateButton(gtk.Button):
 
         self.set_label(self.states[self._state])
         self.emit("changed-state", self._state)
+
+
+class SpacedSeparator(gtk.VBox):
+
+    def __init__(self):
+        gtk.VBox.__init__(self)
+
+        self.add(gtk.HSeparator())
+        self.props.border_width = 6
