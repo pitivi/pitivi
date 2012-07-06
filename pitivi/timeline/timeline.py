@@ -390,7 +390,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         Display or hide a snapping indicator line
         """
         if position == 0:
-            self._snapEndedCb()
+            self._buttonReleasedCb(None, None)
         else:
             self.debug("Snapping indicator at %d" % position)
             self._snap_indicator.props.x = Zoomable.nsToPixel(position)
@@ -399,8 +399,9 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
     def _buttonReleasedCb(self, canvas, event):
         # select clicked layer, if any
-        x, y = self.from_event(event) + self._get_adjustment(True, True)
-        self.app.gui.timeline_ui.controls.selectLayerControlForY(y)
+        if event and canvas:
+            x, y = self.from_event(event) + self._get_adjustment(True, True)
+            self.app.gui.timeline_ui.controls.selectLayerControlForY(y)
 
         # also hide snap indicator
         self._snap_indicator.props.visibility = goocanvas.ITEM_INVISIBLE
