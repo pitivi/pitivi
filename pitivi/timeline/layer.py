@@ -200,6 +200,12 @@ class BaseLayerControl(gtk.VBox, Loggable):
     def setSoloState(self, state):
         self.solo_button.set_active(state)
 
+    def setSeparatorVisibility(self, visible):
+        if visible:
+            self.sep.show()
+        else:
+            self.sep.hide()
+
 
 class VideoLayerControl(BaseLayerControl):
     """

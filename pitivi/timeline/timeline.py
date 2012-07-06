@@ -550,6 +550,7 @@ class TimelineControls(gtk.VBox, Loggable):
         video_control.show()
 
         self._orderControls()
+        self._hideLastSeparator()
 
     def _orderControls(self):
         i = 0
@@ -562,6 +563,13 @@ class TimelineControls(gtk.VBox, Loggable):
                 self.reorder_child(child, j)
                 j += 1
 
+    def _hideLastSeparator(self):
+        if self.children():
+            for child in self.children():
+                child.setSeparatorVisibility(True)
+
+            self.children()[-1].setSeparatorVisibility(False)
+
     def _layerRemovedCb(self, timeline, layer):
         audio_control = self._layer_controls[layer][ges.TRACK_TYPE_AUDIO]
         video_control = self._layer_controls[layer][ges.TRACK_TYPE_VIDEO]
@@ -570,6 +578,7 @@ class TimelineControls(gtk.VBox, Loggable):
         self.remove(video_control)
 
         del self._layer_controls[layer]
+        self._hideLastSeparator()
 
     def getHeightOfLayer(self, track_type, layer):
         if track_type == ges.TRACK_TYPE_VIDEO:
