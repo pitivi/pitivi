@@ -24,6 +24,9 @@
     Main Timeline widgets
 """
 
+import sys
+import time
+
 import gtk
 import gst
 import ges
@@ -54,7 +57,8 @@ from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import SPACING, CANVAS_SPACING, unpack_cairo_pattern, \
     LAYER_SPACING, TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, Point, \
-    AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT
+    AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT, \
+    LAYER_CREATION_BLOCK_TIME
 
 # FIXME GES Port regression
 # from pitivi.utils.align import AutoAligner
@@ -390,21 +394,23 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         Display or hide a snapping indicator line
         """
         if position == 0:
-            self._buttonReleasedCb(None, None)
+            self._snapEndedCb()
         else:
             self.debug("Snapping indicator at %d" % position)
             self._snap_indicator.props.x = Zoomable.nsToPixel(position)
             self._snap_indicator.props.height = self.height
             self._snap_indicator.props.visibility = goocanvas.ITEM_VISIBLE
 
+    def _snapEndedCb(self, *args):
+        self._snap_indicator.props.visibility = goocanvas.ITEM_INVISIBLE
+
     def _buttonReleasedCb(self, canvas, event):
         # select clicked layer, if any
-        if event and canvas:
-            x, y = self.from_event(event) + self._get_adjustment(True, True)
-            self.app.gui.timeline_ui.controls.selectLayerControlForY(y)
+        x, y = self.from_event(event) + self._get_adjustment(True, True)
+        self.app.gui.timeline_ui.controls.selectLayerControlForY(y)
 
         # also hide snap indicator
-        self._snap_indicator.props.visibility = goocanvas.ITEM_INVISIBLE
+        self._snapEndedCb()
 
 ## settings callbacks
     def _setSettings(self):
@@ -426,7 +432,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             self._timeline.disconnect_by_func(self._trackAddedCb)
             self._timeline.disconnect_by_func(self._trackRemovedCb)
             self._timeline.disconnect_by_func(self._snapCb)
-            self._timeline.disconnect_by_func(self._buttonReleasedCb)
+            self._timeline.disconnect_by_func(self._snapEndedCb)
 
         self._timeline = timeline
         if self._timeline is not None:
@@ -436,7 +442,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             self._timeline.connect("track-added", self._trackAddedCb)
             self._timeline.connect("track-removed", self._trackRemovedCb)
             self._timeline.connect("snapping-started", self._snapCb)
-            self._timeline.connect("snapping-ended", self._buttonReleasedCb)
+            self._timeline.connect("snapping-ended", self._snapEndedCb)
 
         self.zoomChanged()
 
@@ -501,6 +507,8 @@ class TimelineControls(gtk.VBox, Loggable):
         self.type_map = {ges.TRACK_TYPE_AUDIO: AudioLayerControl,
                          ges.TRACK_TYPE_VIDEO: VideoLayerControl}
         self.connect("size-allocate", self._sizeAllocatedCb)
+        self.priority_block = sys.maxint
+        self.priority_block_time = time.time()
 
     def _sizeAllocatedCb(self, widget, alloc):
         if self.children():
@@ -608,10 +616,10 @@ class TimelineControls(gtk.VBox, Loggable):
         priority = -1
         current = 0
 
-        # increment priority for each layer we pass
+        # increment priority for each control we pass
         for child in self.get_children():
             if y <= current:
-                return priority
+                return self._limitPriority(priority)
 
             current += child.getHeight()
             priority += 1
@@ -619,9 +627,26 @@ class TimelineControls(gtk.VBox, Loggable):
         # another check if priority has been incremented but not returned
         # because there were no more children
         if y <= current:
-            return priority
+            return self._limitPriority(priority)
 
         return 0
+
+    def _limitPriority(self, calculated):
+        priority = min(self._getLayerBlock(), calculated)
+        self._setLayerBlock(priority)
+        return priority
+
+    def _setLayerBlock(self, n):
+        if self.priority_block != n:
+            self.debug("Blocking UI layer creation")
+            self.priority_block = n
+            self.priority_block_time = time.time()
+
+    def _getLayerBlock(self):
+        if time.time() - self.priority_block_time >= LAYER_CREATION_BLOCK_TIME:
+            return sys.maxint
+        else:
+            return self.priority_block
 
     def soloLayer(self, layer):
         """
