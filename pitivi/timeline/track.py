@@ -40,8 +40,7 @@ from pitivi.settings import GlobalSettings
 from pitivi.utils.signal import Signallable
 from pitivi.utils.timeline import SELECT, SELECT_ADD, UNSELECT, \
     SELECT_BETWEEN, EditingContext, Controller, View, Zoomable
-from pitivi.utils.ui import LAYER_SPACING, \
-        unpack_cairo_pattern, unpack_cairo_gradient
+from pitivi.utils.ui import unpack_cairo_pattern, unpack_cairo_gradient
 from thumbnailer import Preview
 
 
@@ -606,8 +605,6 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
 
         # get y position for layer
         y = self.app.gui.timeline_ui.controls.getYOfLayer(track_type, layer)
-        #priority = self.element.get_timeline_object().get_layer().get_priority()
-        #y = (self.height + LAYER_SPACING) * priority
         # get relative y for audio
         if track_type == ges.TRACK_TYPE_AUDIO:
             y -= self.app.gui.timeline_ui.controls.getHeightOfTrack(ges.TRACK_TYPE_VIDEO)

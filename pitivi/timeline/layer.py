@@ -27,8 +27,7 @@ import gobject
 from gettext import gettext as _
 
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import LAYER_SPACING, LAYER_CONTROL_TUPLE, \
-    TYPE_PITIVI_LAYER_CONTROL
+from pitivi.utils.ui import LAYER_CONTROL_TUPLE, TYPE_PITIVI_LAYER_CONTROL
 
 
 # TODO add tooltips

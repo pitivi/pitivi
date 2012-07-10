@@ -57,7 +57,7 @@ from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import SPACING, CANVAS_SPACING, unpack_cairo_pattern, \
-    LAYER_SPACING, TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, Point, \
+    TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, Point, \
     AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT, \
     LAYER_CREATION_BLOCK_TIME, LAYER_CONTROL_TUPLE
 

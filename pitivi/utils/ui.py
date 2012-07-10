@@ -45,7 +45,6 @@ from pitivi.utils.loggable import doLog, ERROR
 ##
 LAYER_HEIGHT_EXPANDED = 50
 LAYER_HEIGHT_COLLAPSED = 15
-LAYER_SPACING = 15
 TRACK_SPACING = 8
 
 SPACING = 6
