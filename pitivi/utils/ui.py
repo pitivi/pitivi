@@ -53,6 +53,9 @@ PADDING = 6
 
 CANVAS_SPACING = 21
 
+# Layer creation blocking time in s
+LAYER_CREATION_BLOCK_TIME = 0.2
+
 ##
 #   Drag'n drop constants
 ##
@@ -69,8 +72,7 @@ TYPE_PITIVI_VIDEO_EFFECT = 29
 TYPE_PITIVI_AUDIO_TRANSITION = 30
 TYPE_PITIVI_VIDEO_TRANSITION = 31
 
-# Layer creation blocking time in s
-LAYER_CREATION_BLOCK_TIME = 0.2
+TYPE_PITIVI_LAYER_CONTROL = 32
 
 FILE_TUPLE = ("text/plain", 0, TYPE_TEXT_PLAIN)
 URI_TUPLE = ("text/uri-list", 0, TYPE_URI_LIST)
@@ -80,6 +82,7 @@ AUDIO_EFFECT_TUPLE = ("pitivi/audio-effect", 0, TYPE_PITIVI_AUDIO_EFFECT)
 VIDEO_EFFECT_TUPLE = ("pitivi/video-effect", 0, TYPE_PITIVI_VIDEO_EFFECT)
 AUDIO_TRANSITION_TUPLE = ("pitivi/audio-transition", 0, TYPE_PITIVI_AUDIO_TRANSITION)
 VIDEO_TRANSITION_TUPLE = ("pitivi/video-transition", 0, TYPE_PITIVI_VIDEO_TRANSITION)
+LAYER_CONTROL_TUPLE = ("pitivi/layer-control", 0, TYPE_PITIVI_LAYER_CONTROL)
 
 
 # ---------------------- ARGB color helper-------------------------------------#

@@ -28,6 +28,7 @@ import sys
 import time
 
 import gtk
+import gtk.gdk
 import gst
 import ges
 import glib
@@ -58,7 +59,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import SPACING, CANVAS_SPACING, unpack_cairo_pattern, \
     LAYER_SPACING, TYPE_PITIVI_FILESOURCE, VIDEO_EFFECT_TUPLE, Point, \
     AUDIO_EFFECT_TUPLE, EFFECT_TUPLE, FILESOURCE_TUPLE, TYPE_PITIVI_EFFECT, \
-    LAYER_CREATION_BLOCK_TIME
+    LAYER_CREATION_BLOCK_TIME, LAYER_CONTROL_TUPLE
 
 # FIXME GES Port regression
 # from pitivi.utils.align import AutoAligner
@@ -510,6 +511,13 @@ class TimelineControls(gtk.VBox, Loggable):
         self.priority_block = sys.maxint
         self.priority_block_time = time.time()
 
+        # drag'n' drop
+        self.connect("drag_data_received", self._dragDataReceivedCb)
+        self.drag_dest_set(gtk.DEST_DEFAULT_MOTION |
+                             gtk.DEST_DEFAULT_HIGHLIGHT |
+                             gtk.DEST_DEFAULT_DROP,
+                             [LAYER_CONTROL_TUPLE], gtk.gdk.ACTION_MOVE)
+
     def _sizeAllocatedCb(self, widget, alloc):
         if self.children():
             self.separator_height = self.children()[0].getSeparatorHeight()
@@ -561,15 +569,12 @@ class TimelineControls(gtk.VBox, Loggable):
         self._hideLastSeparator()
 
     def _orderControls(self):
-        i = 0
-        j = len(self.get_children()) / 2
+        middle = len(self.get_children()) / 2
         for child in self.get_children():
             if isinstance(child, VideoLayerControl):
-                self.reorder_child(child, i)
-                i += 1
+                self.reorder_child(child, child._layer.get_priority())
             elif isinstance(child, AudioLayerControl):
-                self.reorder_child(child, j)
-                j += 1
+                self.reorder_child(child, middle + child._layer.get_priority())
 
     def _hideLastSeparator(self):
         if self.children():
@@ -700,6 +705,65 @@ class TimelineControls(gtk.VBox, Loggable):
             # else check next control
             else:
                 current_y += child.getHeight()
+
+    def _dragDataReceivedCb(self, widget, context, x, y, selection,
+                            targetType, time):
+        """
+        Handles received drag data to reorder layers
+        """
+        # get the moved control widget
+        widget = self.getControlFromId(int(selection.data))
+        widget_type = type(widget)
+
+        counter = 0
+        index = 0
+
+        # find new position
+        for child in self.get_children():
+            next = counter + child.getHeight()
+            if y >= counter and y < next:
+                self.reorder_child(widget, index)
+
+            counter = next
+            index += 1
+
+        # reorder linked audio/video layer
+        index = 0
+        for child in self.get_children():
+            # only set layer priority once
+            if type(child) == widget_type:
+                child._layer.set_priority(index)
+                index += 1
+
+        # order controls and update separators
+        self._orderControls()
+        self._hideLastSeparator()
+
+    def getControlIdString(self, control):
+        """
+        Returns an unique ID of a control
+
+        Used for drag and drop
+        """
+        counter = 0
+        for child in self.get_children():
+            if child == control:
+                return counter
+
+            counter += 1
+
+    def getControlFromId(self, id):
+        """
+        Returns the control for an ID
+
+        Used for drag and drop
+        """
+        counter = 0
+        for child in self.get_children():
+            if counter == id:
+                return child
+
+            counter += 1
 
 
 class InfoStub(gtk.HBox, Loggable):
