@@ -915,6 +915,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                         effect = ges.TrackParseLaunchEffect(bin_desc)
                         tlobj.add_track_object(effect)
                         track.add_object(effect)
+                        self.app.gui.clipconfig.effect_expander.updateAll()
                         self.app.action_log.commit()
                         self._factories = None
                         self._seeker.flush()

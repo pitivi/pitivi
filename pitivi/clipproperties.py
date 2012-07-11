@@ -269,7 +269,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
     def _newProjectLoadedCb(self, app, project):
         self.clip_properties.project = project
         self.selected_effects = self.timeline.selection.getSelectedTrackEffects()
-        self._updateAll()
+        self.updateAll()
 
     def _vcontentNotifyCb(self, paned, gparamspec):
         if gparamspec.name == 'position':
@@ -309,19 +309,19 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         else:
             self.timeline_objects = []
             self.set_sensitive(False)
-        self._updateAll()
+        self.updateAll()
 
     def  _trackObjectAddedCb(self, unused_timeline_object, track_object):
         if isinstance(track_object, ges.TrackEffect):
             selec = self.timeline.selection.getSelectedTrackEffects()
             self.selected_effects = selec
-            self._updateAll()
+            self.updateAll()
 
     def  _trackRemovedRemovedCb(self, unused_timeline_object, track_object):
         if isinstance(track_object, ges.TrackEffect):
             selec = self.timeline.selection.getSelectedTrackEffects()
             self.selected_effects = selec
-            self._updateAll()
+            self.updateAll()
 
     def _connectTimelineSelection(self, timeline):
         self.timeline = timeline
@@ -365,7 +365,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
                     effect = ges.TrackParseLaunchEffect(bin_desc)
                     tlobj.add_track_object(effect)
                     track.add_object(effect)
-                    self._updateAll()
+                    self.updateAll()
                     self.app.action_log.commit()
                     self.app.current.pipeline.flushSeek()
 
@@ -401,7 +401,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self.app.action_log.commit()
 
     def _expandedCb(self, expander, params):
-        self._updateAll()
+        self.updateAll()
 
     def _treeViewQueryTooltipCb(self, treeview, x, y, keyboard_mode, tooltip):
         context = treeview.get_tooltip_context(x, y, keyboard_mode)
@@ -413,7 +413,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
         return True
 
-    def _updateAll(self):
+    def updateAll(self):
         if self.get_expanded():
             self._removeEffectBt.set_sensitive(False)
             if len(self.timeline_objects) == 1:
