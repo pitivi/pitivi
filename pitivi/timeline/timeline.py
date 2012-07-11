@@ -721,12 +721,21 @@ class TimelineControls(gtk.VBox, Loggable):
         for child in self.get_children():
             next = counter + child.getHeight()
             if y >= counter and y < next:
-                self.reorder_child(widget, index)
+                self.moveControlWidget(widget, index)
+                return
 
             counter = next
             index += 1
 
+    def moveControlWidget(self, control, index):
+        """
+        Moves control to the given index and cares for moving the linked layer
+        as well as updating separators
+        """
+        self.reorder_child(control, index)
+
         # reorder linked audio/video layer
+        widget_type = type(control)
         index = 0
         for child in self.get_children():
             # only set layer priority once
@@ -738,7 +747,7 @@ class TimelineControls(gtk.VBox, Loggable):
         self._orderControls()
         self._hideLastSeparator()
 
-    def getControlIdString(self, control):
+    def getControlIndex(self, control):
         """
         Returns an unique ID of a control
 

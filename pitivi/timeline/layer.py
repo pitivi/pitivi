@@ -119,10 +119,25 @@ class BaseLayerControl(gtk.VBox, Loggable):
         self.show_all()
 
         # Popup Menu
+        # TODO: add icons
         self.popup = gtk.Menu()
-        menu_dellayer = gtk.ImageMenuItem(_("_Delete layer"))
-        menu_dellayer.connect("activate", self._deleteLayerCb)
-        self.popup.append(menu_dellayer)
+        layer_delete = gtk.ImageMenuItem(_("_Delete layer"))
+        layer_delete.connect("activate", self._deleteLayerCb)
+        layer_up = gtk.ImageMenuItem(_("Move layer up"))
+        layer_up.connect("activate", self._moveLayerCb, -1)
+        layer_down = gtk.ImageMenuItem(_("Move layer down"))
+        layer_down.connect("activate", self._moveLayerCb, 1)
+        layer_first = gtk.ImageMenuItem(_("Move layer to top"))
+        layer_first.connect("activate", self._moveLayerCb, -2)
+        layer_last = gtk.ImageMenuItem(_("Move layer to bottom"))
+        layer_last.connect("activate", self._moveLayerCb, 2)
+
+        self.popup.append(layer_first)
+        self.popup.append(layer_up)
+        self.popup.append(layer_down)
+        self.popup.append(layer_last)
+        self.popup.append(gtk.SeparatorMenuItem())
+        self.popup.append(layer_delete)
         self.popup.show_all()
 
         # Drag and drop
@@ -134,7 +149,7 @@ class BaseLayerControl(gtk.VBox, Loggable):
     def _dragDataGetCb(self, widget, context, selection, targetType, eventTime):
         if targetType == TYPE_PITIVI_LAYER_CONTROL:
             selection.set(selection.target, 8,
-                          str(self._app.gui.timeline_ui.controls.getControlIdString(self)))
+                          str(self._app.gui.timeline_ui.controls.getControlIndex(self)))
 
     def getSelected(self):
         return self._selected
@@ -198,6 +213,17 @@ class BaseLayerControl(gtk.VBox, Loggable):
     def _deleteLayerCb(self, widget):
         timeline = self._layer.get_timeline()
         timeline.remove_layer(self._layer)
+
+    def _moveLayerCb(self, widget, step):
+        index = self._app.gui.timeline_ui.controls.getControlIndex(self)
+        if abs(step) == 1:
+            index += step
+        elif step == -2:
+            index = 0
+        else:
+            index = self._layer.get_timeline().get_layers()
+
+        self._app.gui.timeline_ui.controls.moveControlWidget(self, index)
 
     def getHeight(self):
         return self.get_allocation().height
