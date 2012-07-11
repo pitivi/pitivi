@@ -514,7 +514,6 @@ class TimelineControls(gtk.VBox, Loggable):
         # drag'n' drop
         self.connect("drag_data_received", self._dragDataReceivedCb)
         self.drag_dest_set(gtk.DEST_DEFAULT_MOTION |
-                             gtk.DEST_DEFAULT_HIGHLIGHT |
                              gtk.DEST_DEFAULT_DROP,
                              [LAYER_CONTROL_TUPLE], gtk.gdk.ACTION_MOVE)
 
