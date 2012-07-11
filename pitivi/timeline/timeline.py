@@ -571,9 +571,9 @@ class TimelineControls(gtk.VBox, Loggable):
         middle = len(self.get_children()) / 2
         for child in self.get_children():
             if isinstance(child, VideoLayerControl):
-                self.reorder_child(child, child._layer.get_priority())
+                self.reorder_child(child, child.layer.get_priority())
             elif isinstance(child, AudioLayerControl):
-                self.reorder_child(child, middle + child._layer.get_priority())
+                self.reorder_child(child, middle + child.layer.get_priority())
 
     def _hideLastSeparator(self):
         if self.children():
@@ -601,7 +601,7 @@ class TimelineControls(gtk.VBox, Loggable):
     def getYOfLayer(self, track_type, layer):
         y = 0
         for child in self.get_children():
-            if layer == child._layer and \
+            if layer == child.layer and \
                 isinstance(child, self.type_map[track_type]):
                 return y
 
@@ -664,7 +664,7 @@ class TimelineControls(gtk.VBox, Loggable):
         """
         Select layer_control and unselect all other controls
         """
-        layer = layer_control._layer
+        layer = layer_control.layer
         # if selected layer changed
         if self._selected_layer != layer:
             self._selected_layer = layer
@@ -740,7 +740,7 @@ class TimelineControls(gtk.VBox, Loggable):
         for child in self.get_children():
             # only set layer priority once
             if type(child) == widget_type:
-                child._layer.set_priority(index)
+                child.layer.set_priority(index)
                 index += 1
 
         # order controls and update separators

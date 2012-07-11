@@ -44,7 +44,7 @@ class BaseLayerControl(gtk.VBox, Loggable):
         Loggable.__init__(self)
 
         self._app = app
-        self._layer = layer
+        self.layer = layer
         self._selected = False
 
         # get the default colour for the current theme
@@ -119,18 +119,22 @@ class BaseLayerControl(gtk.VBox, Loggable):
         self.show_all()
 
         # Popup Menu
-        # TODO: add icons
         self.popup = gtk.Menu()
         layer_delete = gtk.ImageMenuItem(_("_Delete layer"))
         layer_delete.connect("activate", self._deleteLayerCb)
+        layer_delete.set_image(gtk.image_new_from_icon_name("edit-delete", gtk.ICON_SIZE_MENU))
         layer_up = gtk.ImageMenuItem(_("Move layer up"))
         layer_up.connect("activate", self._moveLayerCb, -1)
+        layer_up.set_image(gtk.image_new_from_icon_name("go-up", gtk.ICON_SIZE_MENU))
         layer_down = gtk.ImageMenuItem(_("Move layer down"))
         layer_down.connect("activate", self._moveLayerCb, 1)
+        layer_down.set_image(gtk.image_new_from_icon_name("go-down", gtk.ICON_SIZE_MENU))
         layer_first = gtk.ImageMenuItem(_("Move layer to top"))
         layer_first.connect("activate", self._moveLayerCb, -2)
+        layer_first.set_image(gtk.image_new_from_icon_name("go-top", gtk.ICON_SIZE_MENU))
         layer_last = gtk.ImageMenuItem(_("Move layer to bottom"))
         layer_last.connect("activate", self._moveLayerCb, 2)
+        layer_last.set_image(gtk.image_new_from_icon_name("go-bottom", gtk.ICON_SIZE_MENU))
 
         self.popup.append(layer_first)
         self.popup.append(layer_up)
@@ -182,7 +186,7 @@ class BaseLayerControl(gtk.VBox, Loggable):
         """
         if button.get_active():
             # Disable all other layers
-            self._app.gui.timeline_ui.controls.soloLayer(self._layer)
+            self._app.gui.timeline_ui.controls.soloLayer(self.layer)
         else:
             # Enable all layers
             self._app.gui.timeline_ui.controls.soloLayer(None)
@@ -211,8 +215,8 @@ class BaseLayerControl(gtk.VBox, Loggable):
         return True
 
     def _deleteLayerCb(self, widget):
-        timeline = self._layer.get_timeline()
-        timeline.remove_layer(self._layer)
+        timeline = self.layer.get_timeline()
+        timeline.remove_layer(self.layer)
 
     def _moveLayerCb(self, widget, step):
         index = self._app.gui.timeline_ui.controls.getControlIndex(self)
@@ -221,7 +225,7 @@ class BaseLayerControl(gtk.VBox, Loggable):
         elif step == -2:
             index = 0
         else:
-            index = self._layer.get_timeline().get_layers()
+            index = self.layer.get_timeline().get_layers()
 
         self._app.gui.timeline_ui.controls.moveControlWidget(self, index)
 
