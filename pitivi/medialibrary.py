@@ -617,8 +617,10 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         except:
             # empty except clause is bad but load_icon raises gio.Error.
             # Right, *gio*.
-            if not icon:
+            if alternate:
                 icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, alternate))
+            else:
+                icon = icontheme.load_icon("dialog-question", 48, 0)
         return icon
 
     def _connectToProject(self, project):
