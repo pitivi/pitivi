@@ -399,7 +399,11 @@ class ProjectLoaderGuiPitivi(FullGuiPitivi):
 
     def __init__(self, project_filename, debug=False):
         FullGuiPitivi.__init__(self, debug)
-        self._loadProject(project_filename)
+        if not os.path.exists(project_filename):
+            self.error("Project file does not exist: %s" % project_filename)
+            sys.exit(1)
+        else:
+            self._loadProject(project_filename)
 
 
 class StartupWizardGuiPitivi(FullGuiPitivi):
