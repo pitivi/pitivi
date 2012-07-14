@@ -63,12 +63,9 @@ class StartUpWizard(object):
         if not soft_deps:
             self.builder.get_object("missing_deps_button").hide()
 
-        self.app.projectManager.connect("new-project-failed",
-                self._projectFailedCb)
-        self.app.projectManager.connect("new-project-loaded",
-                self._projectLoadedCb)
-        self.app.projectManager.connect("new-project-loading",
-                self._projectLoadingCb)
+        self.app.projectManager.connect("new-project-failed", self._projectFailedCb)
+        self.app.projectManager.connect("new-project-loaded", self._projectLoadedCb)
+        self.app.projectManager.connect("new-project-loading", self._projectLoadingCb)
 
         vbox = self.builder.get_object("topvbox")
         self.infobar = gtk.InfoBar()
