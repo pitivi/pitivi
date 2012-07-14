@@ -82,7 +82,12 @@ class ProjectLogObserver(UndoableAction):
         project.connect("settings-changed", self._settingsChangedCb)
 
     def stopObserving(self, project):
-        project.disconnect_by_function(self._settingsChangedCb)
+        try:
+            project.disconnect_by_function(self._settingsChangedCb)
+        except Exception:
+            # This can happen when we interrupt the loading of a project,
+            # such as in mainwindow's _projectManagerMissingUriCb
+            pass
 
     def _settingsChangedCb(self, project, old, new):
         action = ProjectSettingsChanged(project, old, new)

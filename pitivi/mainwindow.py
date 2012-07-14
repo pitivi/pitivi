@@ -894,13 +894,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
             gtk.MESSAGE_ERROR,
             gtk.BUTTONS_OK,
             _('Unable to load project "%s"') % project_filename)
-        dialog.set_icon_name("pitivi")
         dialog.set_title(_("Error Loading Project"))
+        dialog.set_property("secondary-use-markup", True)
         dialog.set_property("secondary-text", unquote(str(exception)))
         dialog.set_transient_for(self)
         dialog.run()
         dialog.destroy()
-        self.set_sensitive(True)
 
     def _projectManagerMissingUriCb(self, instance, formatter, tfs):
         dialog = gtk.Dialog(_("Locate missing file..."),
@@ -977,12 +976,28 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 formatter.update_source_uri(tfs, new_uri)
                 self._missingUriOnLoading = True
         else:
-            # FIXME: bug 661059
-            # If the user clicks Cancel, we keep trying to import the rest
-            # of the clips... However we don't have anything to handle missing
-            # clips in the media library.
-            # Also, the timeline does not get updated.
-            self.error("NOT IMPLEMENTED - User didn't choose a URI for the missing file")
+            # Even if the user clicks Cancel, the discoverer keeps trying to
+            # import the rest of the clips...
+            # However, since we don't yet have proxy editing, we need to break
+            # this async operation, or the filechooser will keep showing up
+            # and all sorts of weird things will happen.
+            # TODO: bugs #661059, 609136
+            attempted_uri = self.app.current.uri
+            reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
+                        'PiTiVi does not currently support partial projects.'
+                        % info_name(tfs))
+            # Put an end to the async signals spamming us with dialogs:
+            self.app.projectManager.disconnect_by_func(self._projectManagerMissingUriCb)
+            # Don't overlap the file chooser with our error dialog
+            # The chooser will be destroyed further below, so let's hide it now.
+            dialog.hide()
+            # Reset projectManager and disconnect all the signals:
+            self.app.projectManager.newBlankProject()
+            # Force the project load to fail:
+            # This will show an error using _projectManagerNewProjectFailedCb
+            # You have to do this *after* successfully creating a blank project,
+            # or the startupwizard will still be connected to that signal too.
+            self.app.projectManager.emit("new-project-failed", attempted_uri, reason)
 
         dialog.destroy()
 
