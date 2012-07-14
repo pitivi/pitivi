@@ -766,9 +766,20 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.recent_manager.add_item(uri)
         self.log("A NEW project is loading, deactivate UI")
 
-    def _projectManagerSaveProjectFailedCb(self, projectManager,
-            unused_project, uri):
-        # FIXME: do something here
+    def _projectManagerSaveProjectFailedCb(self, projectManager, uri, exception=None):
+        project_filename = unquote(uri.split("/")[-1])
+        dialog = gtk.MessageDialog(self,
+            gtk.DIALOG_MODAL,
+            gtk.MESSAGE_ERROR,
+            gtk.BUTTONS_OK,
+            _('Unable to save project "%s"') % project_filename)
+        dialog.set_title(_("Error Saving Project"))
+        if exception:
+            dialog.set_property("secondary-use-markup", True)
+            dialog.set_property("secondary-text", unquote(str(exception)))
+        dialog.set_transient_for(self)
+        dialog.run()
+        dialog.destroy()
         self.error("failed to save project")
 
     def _projectManagerProjectSavedCb(self, projectManager, project, uri):

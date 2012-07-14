@@ -41,7 +41,7 @@ from pitivi.settings import MultimediaSettings
 from pitivi.undo.undo import UndoableAction
 from pitivi.configure import get_ui_dir
 
-from pitivi.utils.misc import quote_uri, path_from_uri
+from pitivi.utils.misc import quote_uri, path_from_uri, isWritable
 from pitivi.utils.pipeline import Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
@@ -102,7 +102,7 @@ class ProjectManager(Signallable, Loggable):
         "new-project-created": ["project"],
         "new-project-failed": ["uri", "exception"],
         "new-project-loaded": ["project"],
-        "save-project-failed": ["project", "uri", "exception"],
+        "save-project-failed": ["uri", "exception"],
         "project-saved": ["project", "uri"],
         "closing-project": ["project"],
         "project-closed": ["project"],
@@ -253,12 +253,22 @@ class ProjectManager(Signallable, Loggable):
         else:
             # Ensure the URI we are given is properly encoded, or GIO will fail
             uri = quote_uri(uri)
+
+            # The following needs to happen before we change project.uri:
+            if not isWritable(path_from_uri(uri)):
+                # TODO: this will not be needed when GTK+ bug #601451 is fixed
+                self.emit("save-project-failed", uri,
+                        _("You do not have permissions to write to this folder."))
+                return
+
             # Update the project instance's uri for the "Save as" scenario.
             # Otherwise, subsequent saves will be to the old uri.
             if not backup:
                 project.uri = uri
+
         if uri is None or not ges.formatter_can_save_uri(uri):
-            self.emit("save-project-failed", project, uri)
+            self.emit("save-project-failed", uri,
+                    _("Cannot save with this file format."))
             return
 
         # FIXME Using query_exist is not the best thing to do, but makes
