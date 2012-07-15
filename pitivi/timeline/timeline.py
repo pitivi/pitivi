@@ -783,16 +783,26 @@ class TimelineControls(gtk.VBox, Loggable):
         """
         counter = 0
         index = 0
+        last = None
 
-        # find new position
+        # find new index
         for child in self.get_children():
-            next = counter + child.getHeight()
+            next = counter + child.getControlHeight()
+
+            # add height of last separator
+            if last:
+                next += last.getSeparatorHeight()
+
+            # check if current interval matches y
             if y >= counter and y < next:
                 return self._limitPositionIndex(index, widget)
 
+            # setup next iteration
             counter = next
             index += 1
+            last = child
 
+        # return a limited index
         return self._limitPositionIndex(index, widget)
 
     def _limitPositionIndex(self, index, widget):
