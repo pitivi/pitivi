@@ -219,7 +219,10 @@ class BaseLayerControl(gtk.VBox, Loggable):
         elif step == -2:
             index = 0
         else:
-            index = self.layer.get_timeline().get_layers()
+            index = len(self.layer.get_timeline().get_layers())
+            # if audio, set last position
+            if type(self) == AudioLayerControl:
+                index *= 2
 
         self._app.gui.timeline_ui.controls.moveControlWidget(self, index)
 
