@@ -619,10 +619,12 @@ class TimelineControls(gtk.VBox, Loggable):
         # all other cases
         last = None
         index = 0
+        first = True
         for child in children:
-            if type(child) == AudioLayerControl:
+            if type(child) == AudioLayerControl and first:
                 index = 0
                 last.updateMenuSensitivity(-1)
+                first = False
 
             child.updateMenuSensitivity(index)
             index += 1
