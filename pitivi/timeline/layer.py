@@ -123,23 +123,23 @@ class BaseLayerControl(gtk.VBox, Loggable):
         layer_delete = gtk.ImageMenuItem(_("_Delete layer"))
         layer_delete.connect("activate", self._deleteLayerCb)
         layer_delete.set_image(gtk.image_new_from_icon_name("edit-delete", gtk.ICON_SIZE_MENU))
-        layer_up = gtk.ImageMenuItem(_("Move layer up"))
-        layer_up.connect("activate", self._moveLayerCb, -1)
-        layer_up.set_image(gtk.image_new_from_icon_name("go-up", gtk.ICON_SIZE_MENU))
-        layer_down = gtk.ImageMenuItem(_("Move layer down"))
-        layer_down.connect("activate", self._moveLayerCb, 1)
-        layer_down.set_image(gtk.image_new_from_icon_name("go-down", gtk.ICON_SIZE_MENU))
-        layer_first = gtk.ImageMenuItem(_("Move layer to top"))
-        layer_first.connect("activate", self._moveLayerCb, -2)
-        layer_first.set_image(gtk.image_new_from_icon_name("go-top", gtk.ICON_SIZE_MENU))
-        layer_last = gtk.ImageMenuItem(_("Move layer to bottom"))
-        layer_last.connect("activate", self._moveLayerCb, 2)
-        layer_last.set_image(gtk.image_new_from_icon_name("go-bottom", gtk.ICON_SIZE_MENU))
+        self.layer_up = gtk.ImageMenuItem(_("Move layer up"))
+        self.layer_up.connect("activate", self._moveLayerCb, -1)
+        self.layer_up.set_image(gtk.image_new_from_icon_name("go-up", gtk.ICON_SIZE_MENU))
+        self.layer_down = gtk.ImageMenuItem(_("Move layer down"))
+        self.layer_down.connect("activate", self._moveLayerCb, 1)
+        self.layer_down.set_image(gtk.image_new_from_icon_name("go-down", gtk.ICON_SIZE_MENU))
+        self.layer_first = gtk.ImageMenuItem(_("Move layer to top"))
+        self.layer_first.connect("activate", self._moveLayerCb, -2)
+        self.layer_first.set_image(gtk.image_new_from_icon_name("go-top", gtk.ICON_SIZE_MENU))
+        self.layer_last = gtk.ImageMenuItem(_("Move layer to bottom"))
+        self.layer_last.connect("activate", self._moveLayerCb, 2)
+        self.layer_last.set_image(gtk.image_new_from_icon_name("go-bottom", gtk.ICON_SIZE_MENU))
 
-        self.popup.append(layer_first)
-        self.popup.append(layer_up)
-        self.popup.append(layer_down)
-        self.popup.append(layer_last)
+        self.popup.append(self.layer_first)
+        self.popup.append(self.layer_up)
+        self.popup.append(self.layer_down)
+        self.popup.append(self.layer_last)
         self.popup.append(gtk.SeparatorMenuItem())
         self.popup.append(layer_delete)
         self.popup.show_all()
@@ -246,6 +246,26 @@ class BaseLayerControl(gtk.VBox, Loggable):
             self.sep.show()
         else:
             self.sep.hide()
+
+    def updateMenuSensitivity(self, position):
+        """
+        Update Menu item sensitivity
+
+        0 = first item -> disable "up" and "first"
+        -1 = last item -> disable "down" and "last"
+        -2 = first and last item -> all disabled
+        """
+        for menu_item in (self.layer_up, self.layer_first,
+                              self.layer_down, self.layer_last):
+            menu_item.set_sensitive(True)
+
+        if position == -2 or position == 0:
+            self.layer_first.set_sensitive(False)
+            self.layer_up.set_sensitive(False)
+
+        if position == -2 or position == -1:
+            self.layer_down.set_sensitive(False)
+            self.layer_last.set_sensitive(False)
 
 
 class VideoLayerControl(BaseLayerControl):

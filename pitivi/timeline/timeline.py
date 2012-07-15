@@ -566,8 +566,21 @@ class TimelineControls(gtk.VBox, Loggable):
 
         self._orderControls()
         self._hideLastSeparator()
+        self._updatePopupMenus()
+
+    def _layerRemovedCb(self, timeline, layer):
+        audio_control = self._layer_controls[layer][ges.TRACK_TYPE_AUDIO]
+        video_control = self._layer_controls[layer][ges.TRACK_TYPE_VIDEO]
+
+        self.remove(audio_control)
+        self.remove(video_control)
+
+        del self._layer_controls[layer]
+        self._hideLastSeparator()
+        self._updatePopupMenus()
 
     def _orderControls(self):
+        # this works since every layer has audio and video
         middle = len(self.get_children()) / 2
         for child in self.get_children():
             if isinstance(child, VideoLayerControl):
@@ -582,15 +595,38 @@ class TimelineControls(gtk.VBox, Loggable):
 
             self.children()[-1].setSeparatorVisibility(False)
 
-    def _layerRemovedCb(self, timeline, layer):
-        audio_control = self._layer_controls[layer][ges.TRACK_TYPE_AUDIO]
-        video_control = self._layer_controls[layer][ges.TRACK_TYPE_VIDEO]
+    def _updatePopupMenus(self):
+        """
+        Update sensitivity of menus
 
-        self.remove(audio_control)
-        self.remove(video_control)
+        Should be called after _orderControls as it expects the controls
+        in ordered state
+        """
+        children = self.get_children()
 
-        del self._layer_controls[layer]
-        self._hideLastSeparator()
+        # handle no layer case
+        if not children:
+            return
+
+        # handle one layer case
+        if len(children) == 2:
+            for child in children:
+                child.updateMenuSensitivity(-2)
+            return
+
+        # all other cases
+        last = None
+        index = 0
+        for child in children:
+            if type(child) == AudioLayerControl:
+                index = 0
+                last.updateMenuSensitivity(-1)
+
+            child.updateMenuSensitivity(index)
+            index += 1
+            last = child
+
+        last.updateMenuSensitivity(-1)
 
     def getHeightOfLayer(self, track_type, layer):
         if track_type == ges.TRACK_TYPE_VIDEO:
@@ -746,6 +782,7 @@ class TimelineControls(gtk.VBox, Loggable):
         # order controls and update separators
         self._orderControls()
         self._hideLastSeparator()
+        self._updatePopupMenus()
 
     def getControlIndex(self, control):
         """
