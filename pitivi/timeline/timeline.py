@@ -514,6 +514,7 @@ class TimelineControls(gtk.VBox, Loggable):
         # drag'n' drop
         self.connect("drag_data_received", self._dragDataReceivedCb)
         self.connect("drag_motion", self._dragMotionCb)
+        self.connect("drag_leave", self._dragLeaveCb)
         self.drag_dest_set(gtk.DEST_DEFAULT_MOTION |
                              gtk.DEST_DEFAULT_DROP,
                              [LAYER_CONTROL_TUPLE], gtk.gdk.ACTION_MOVE)
@@ -751,10 +752,12 @@ class TimelineControls(gtk.VBox, Loggable):
         widget = self.getControlFromId(int(selection.data))
         widget_type = type(widget)
 
-        for child in self.get_children():
-            child.setSeparatorHighlight(False)
+        self._unhighlightSeparators()
 
         self.moveControlWidget(widget, self._getIndexForPosition(y, widget))
+
+    def _dragLeaveCb(self, widget, context, timestamp):
+        self._unhighlightSeparators()
 
     def _dragMotionCb(self, widget, context, x, y, timestamp):
         """
@@ -762,14 +765,17 @@ class TimelineControls(gtk.VBox, Loggable):
         """
         index = self._getIndexForPosition(y, context.get_source_widget())
 
-        for child in self.get_children():
-            child.setSeparatorHighlight(False)
+        self._unhighlightSeparators()
 
         # control would go in first position
         if index == 0:
             pass
         else:
             self.get_children()[index - 1].setSeparatorHighlight(True)
+
+    def _unhighlightSeparators(self):
+        for child in self.get_children():
+            child.setSeparatorHighlight(False)
 
     def _getIndexForPosition(self, y, widget):
         """
