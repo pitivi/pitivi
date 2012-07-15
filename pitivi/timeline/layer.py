@@ -189,9 +189,8 @@ class BaseLayerControl(gtk.VBox, Loggable):
         """
         Look if user selected layer or wants popup menu
         """
-        if event.button == 1:
-            self._app.gui.timeline_ui.controls.selectLayerControl(self)
-        elif event.button == 3:
+        self._app.gui.timeline_ui.controls.selectLayerControl(self)
+        if event.button == 3:
             self.popup.popup(None, None, None, event.button, event.time)
 
     def _selectionChangedCb(self):
