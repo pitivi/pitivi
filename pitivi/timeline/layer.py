@@ -145,15 +145,9 @@ class BaseLayerControl(gtk.VBox, Loggable):
         self.popup.show_all()
 
         # Drag and drop
-        self.connect("drag_data_get", self._dragDataGetCb)
         self.drag_source_set(gtk.gdk.BUTTON1_MASK,
                              [LAYER_CONTROL_TUPLE],
                              gtk.gdk.ACTION_MOVE)
-
-    def _dragDataGetCb(self, widget, context, selection, targetType, eventTime):
-        if targetType == TYPE_PITIVI_LAYER_CONTROL:
-            selection.set(selection.target, 8,
-                          str(self._app.gui.timeline_ui.controls.getControlIndex(self)))
 
     def getSelected(self):
         return self._selected

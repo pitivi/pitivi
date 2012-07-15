@@ -512,7 +512,7 @@ class TimelineControls(gtk.VBox, Loggable):
         self.priority_block_time = time.time()
 
         # drag'n' drop
-        self.connect("drag_data_received", self._dragDataReceivedCb)
+        self.connect("drag_drop", self._dragDropCb)
         self.connect("drag_motion", self._dragMotionCb)
         self.connect("drag_leave", self._dragLeaveCb)
         self.drag_dest_set(gtk.DEST_DEFAULT_MOTION |
@@ -743,13 +743,11 @@ class TimelineControls(gtk.VBox, Loggable):
             else:
                 current_y += child.getHeight()
 
-    def _dragDataReceivedCb(self, widget, context, x, y, selection,
-                            targetType, time):
+    def _dragDropCb(self, widget, context, x, y, time):
         """
         Handles received drag data to reorder layers
         """
-        # get the moved control widget
-        widget = self.getControlFromId(int(selection.data))
+        widget = context.get_source_widget()
         widget_type = type(widget)
 
         self._unhighlightSeparators()
