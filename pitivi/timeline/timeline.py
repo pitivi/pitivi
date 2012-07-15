@@ -754,13 +754,13 @@ class TimelineControls(gtk.VBox, Loggable):
         for child in self.get_children():
             child.setSeparatorHighlight(False)
 
-        self.moveControlWidget(widget, self._getIndexForPosition(y))
+        self.moveControlWidget(widget, self._getIndexForPosition(y, widget))
 
     def _dragMotionCb(self, widget, context, x, y, timestamp):
         """
         Highlight separator where control would go when dropping
         """
-        index = self._getIndexForPosition(y)
+        index = self._getIndexForPosition(y, context.get_source_widget())
 
         for child in self.get_children():
             child.setSeparatorHighlight(False)
@@ -771,7 +771,7 @@ class TimelineControls(gtk.VBox, Loggable):
         else:
             self.get_children()[index - 1].setSeparatorHighlight(True)
 
-    def _getIndexForPosition(self, y):
+    def _getIndexForPosition(self, y, widget):
         """
         Calculates the new index for a dragged layer
         """
@@ -782,12 +782,22 @@ class TimelineControls(gtk.VBox, Loggable):
         for child in self.get_children():
             next = counter + child.getHeight()
             if y >= counter and y < next:
-                return index
+                return self._limitPositionIndex(index, widget)
 
             counter = next
             index += 1
 
-        return index
+        return self._limitPositionIndex(index, widget)
+
+    def _limitPositionIndex(self, index, widget):
+        """
+        Limit the index depending on the type of widget
+        """
+        limit = len(self.get_children()) / 2
+        if type(widget) == AudioLayerControl:
+            return max(index, limit)
+        else:
+            return min(index, limit)
 
     def moveControlWidget(self, control, index):
         """
