@@ -47,9 +47,9 @@ class BaseLayerControl(gtk.VBox, Loggable):
         self.layer = layer
         self._selected = False
 
-        # get the default colour for the current theme
+        # get the default color for the current theme
         self.UNSELECTED_COLOR = self.rc_get_style().bg[gtk.STATE_NORMAL]
-        # use base instead of bg colours so that we get the lighter colour
+        # use base instead of bg colors so that we get the lighter color
         # that is used for list items in TreeView.
         self.SELECTED_COLOR = self.rc_get_style().base[gtk.STATE_SELECTED]
 
@@ -256,7 +256,7 @@ class BaseLayerControl(gtk.VBox, Loggable):
         -2 = first and last item -> all disabled
         """
         for menu_item in (self.layer_up, self.layer_first,
-                              self.layer_down, self.layer_last):
+                          self.layer_down, self.layer_last):
             menu_item.set_sensitive(True)
 
         if position == -2 or position == 0:
@@ -266,6 +266,17 @@ class BaseLayerControl(gtk.VBox, Loggable):
         if position == -2 or position == -1:
             self.layer_down.set_sensitive(False)
             self.layer_last.set_sensitive(False)
+
+    def setSeparatorHighlight(self, highlighted):
+        """
+        Sets if the Separator should be highlighted
+
+        Used for visual drag'n'drop feedback
+        """
+        if highlighted:
+            self.sep.modify_bg(gtk.STATE_NORMAL, self.SELECTED_COLOR)
+        else:
+            self.sep.modify_bg(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
 
 
 class VideoLayerControl(BaseLayerControl):
@@ -353,10 +364,18 @@ class TwoStateButton(gtk.Button):
         self.emit("changed-state", self._state)
 
 
-class SpacedSeparator(gtk.VBox):
+class SpacedSeparator(gtk.EventBox):
+    """
+    A Separator with vertical spacing
+
+    Inherits from EventBox since we want to change background color
+    """
 
     def __init__(self):
-        gtk.VBox.__init__(self)
+        gtk.EventBox.__init__(self)
 
-        self.add(gtk.HSeparator())
-        self.props.border_width = 6
+        self.box = gtk.VBox()
+        self.box.add(gtk.HSeparator())
+        self.box.props.border_width = 6
+
+        self.add(self.box)
