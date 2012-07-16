@@ -754,7 +754,14 @@ class TimelineControls(gtk.VBox, Loggable):
 
         self._unhighlightSeparators()
 
-        self.moveControlWidget(widget, self._getIndexForPosition(y, widget))
+        current = self.getControlIndex(widget)
+        index = self._getIndexForPosition(y, widget)
+
+        # if current control is before desired index move one place less
+        if current < index:
+            index -= 1
+
+        self.moveControlWidget(widget, index)
 
     def _dragLeaveCb(self, widget, context, timestamp):
         self._unhighlightSeparators()
