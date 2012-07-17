@@ -73,6 +73,18 @@ PreferencesDialog.addNumericPreference('edgeSnapDeadband',
         "when dragging or trimming."),
     lower=0)
 
+GlobalSettings.addConfigOption('imageClipLength',
+    section="user-interface",
+    key="image-clip-length",
+    default=1000,
+    notify=True)
+
+PreferencesDialog.addNumericPreference('imageClipLength',
+    section=_("Behavior"),
+    label=_("Image clip duration"),
+    description=_("Default clip length (in miliseconds) of images when inserting on the timeline."),
+    lower=1)
+
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
@@ -1033,6 +1045,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         for info in infos:
             src = ges.TimelineFileSource(info.get_uri())
             src.props.start = duration
+            # Set image duration
+            # FIXME: after GES Materials are merged, check if image instead
+            if src.props.duration == 0:
+                src.set_duration(long(self._settings.imageClipLength) * gst.SECOND / 1000)
             duration += info.get_duration()
             layer.add_object(src)
             id = src.connect("track-object-added", self._trackObjectsCreatedCb, src, x, y)
@@ -1043,6 +1059,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # are created. We concider that the time between the different
         # TrackObject-s creation is short enough so we are all good when the
         # first TrackObject is added to the TimelineObject
+        if tlobj.is_image():
+           tlobj.set_duration(long(self._settings.imageClipLength) * gst.SECOND / 1000)
         self._temp_objects.insert(0, tlobj)
         tlobj.disconnect(self._creating_tckobjs_sigid[tlobj])
         del self._creating_tckobjs_sigid[tlobj]
@@ -1554,6 +1572,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         correctly and request the next source to be processed. """
         timeline = self.app.current.timeline
         layer = timeline.get_layers()[0]  # FIXME Get the longest layer
+
+        # Set the duration of the clip if it is an image
+        if source.is_image():
+            source.set_duration(long(self._settings.imageClipLength) * gst.SECOND / 1000)
 
         # Handle the case where we just inserted the first clip
         if len(layer.get_objects()) == 1:
