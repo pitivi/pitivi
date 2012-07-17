@@ -634,6 +634,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         abt = gtk.AboutDialog()
         abt.set_name(APPNAME)
         if in_devel:
+            # TODO GTK3: use this string instead: _("Development version")
             abt.set_version("git")
         else:
             abt.set_version(pitivi_version)
@@ -651,27 +652,30 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 (ges_version_str, pygst_version_str, gst_version_str, version_str))
         else:
             abt.set_comments("%s\n%s\n%s" % (ges_version_str, pygst_version_str, gst_version_str))
-        authors = ["Edward Hervey <bilboed@bilboed.com>",
-                   "Alessandro Decina <alessandro.decina@collabora.co.uk>",
-                   "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)",
-                   "Jean-François Fortin Tam <nekohayo@gmail.com> (UI)",
+        authors = [_("Current maintainers:"),
+                   "Jean-François Fortin Tam <nekohayo@gmail.com>",
                    "Thibault Saunier <thibault.saunier@collabora.com>",
                    "",
-                   _("Contributors:"),
-                   "Christophe Sauthier <christophe.sauthier@gmail.com> (i18n)",
-                   "Laszlo Pandy <laszlok2@gmail.com> (UI)",
-                   "Ernst Persson  <ernstp@gmail.com>",
-                   "Richard Boulton <richard@tartarus.org>",
-                   "Thibaut Girka <thibaut.girka@free.fr> (UI)",
-                   "Johan Dahlin <jdahlin@async.com.br> (UI)",
-                   "Luca Della Santina <dellasantina@farm.unipi.it>",
-                   "Thijs Vermeir <thijsvermeir@gmail.com>",
-                   "Sarath Lakshman <sarathlakshman@slynux.org>",
-                   "Alex Balut <alexandru.balut@gmail.com>"]
+                   _("Past maintainers:"),
+                   "Edward Hervey <bilboed@bilboed.com>",
+                   "Alessandro Decina <alessandro.decina@collabora.co.uk>",
+                   "Brandon Lewis <brandon_lewis@berkeley.edu>",
+                   "",
+                   _("Contributors:\n" +
+                   "A handwritten list here would...\n" +
+                   "• be too long,\n" +
+                   "• be frequently outdated,\n" +
+                   "• not show their relative merit.\n\n" +
+                   "Out of respect for our contributors, we point you instead to:\n" +
+                   "http://ohloh.net/p/pitivi/contributors\n" +
+                   "Or you can run: git shortlog -s -n"), ]
         abt.set_authors(authors)
         translators = _("translator-credits")
         if translators != "translator-credits":
             abt.set_translator_credits(translators)
+        documenters = ["Jean-François Fortin Tam <nekohayo@gmail.com>", ]
+        abt.set_documenters(documenters)
+        # TODO GTK3: use set_license_type instead
         abt.set_license(_("GNU Lesser General Public License\n"
                           "See http://www.gnu.org/copyleft/lesser.html for more details"))
         abt.set_icon_name("pitivi")
