@@ -43,13 +43,13 @@ class HelpFunc(BaseDogTail):
             return
 
     def search_by_text(self, text, parent, name=None, roleName=None):
-        children = parent.findChildren(GenericPredicate(roleName=roleName,
-                                                        name=name))
-        searched = None
+        """
+        Search a parent widget for childs containing the given text
+        """
+        children = parent.findChildren(GenericPredicate(roleName=roleName, name=name))
         for child in children:
             if child.text == text:
-                searched = child
-        return searched
+                return child
 
     def insert_clip(self, icon, n=1):
         icon.select()
