@@ -79,7 +79,7 @@ class BaseLayerControl(gtk.VBox, Loggable):
 
         # Name entry
         self.name_entry = gtk.Entry()
-        self.name_entry.set_tooltip_text(_("Set or change this layers name"))
+        self.name_entry.set_tooltip_text(_("Set a personalized name for this layer"))
         self.name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
         self.name_entry.connect("focus-in-event", self._focusChangeCb, False)
         self.name_entry.connect("focus-out-event", self._focusChangeCb, True)
@@ -89,8 +89,9 @@ class BaseLayerControl(gtk.VBox, Loggable):
 
         # 'Solo' toggle button
         self.solo_button = gtk.ToggleButton()
-        self.solo_button.set_tooltip_text(_("Only show this layer\n\nOther layers won't" +
-                                            "be visible as long a this is enabled"))
+        self.solo_button.set_tooltip_markup(_("<b>Solo mode</b>\n" +
+                        "Other non-soloed layers will be disabled as long as " +
+                        "this is enabled."))
         solo_image = gtk.Image()
         solo_image.set_from_icon_name("avatar-default-symbolic", gtk.ICON_SIZE_MENU)
         self.solo_button.add(solo_image)
@@ -103,6 +104,8 @@ class BaseLayerControl(gtk.VBox, Loggable):
         visible_option.connect("toggled", self._visibilityChangedCb)
         visible_option.set_active(True)
         visible_option.props.sensitive = False
+        visible_option.set_tooltip_markup(_("<b>Enable or disable this layer</b>\n" +
+                                    "Disabled layers will not play nor render."))
 
         # Upper bar
         upper = gtk.HBox()
