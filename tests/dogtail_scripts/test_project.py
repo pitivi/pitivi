@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from test_help_func import HelpFunc
+from helper_functions import HelpFunc
 from dogtail.predicate import IsATextEntryNamed, GenericPredicate
 from time import time, sleep
 import os

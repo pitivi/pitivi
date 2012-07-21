@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-from test_help_func import HelpFunc
+from helper_functions import HelpFunc
 from dogtail.predicate import GenericPredicate
-from helper_functions import improved_drag
 import dogtail.rawinput
 from time import sleep
 from pyatspi import Registry as registry
@@ -49,7 +48,7 @@ class TimelineTest(HelpFunc):
         timeline = self.get_timeline()
 
         center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
-        improved_drag(center(sample), center(timeline))
+        self.improved_drag(center(sample), center(timeline))
         self.nextb.click()
         self.assertNotEqual(seektime.text, "0:00:00.000")
 
@@ -66,12 +65,12 @@ class TimelineTest(HelpFunc):
         endpos.append((timeline.position[0] + timeline.size[0] - 30, timeline.position[1] + 80))
         for i in range(20):
             if (i % 4 == 0):
-                #Drag to center, next layer, out, and then back in
-                improved_drag(center(sample), endpos[i % 3], middle=[center(timeline), endpos[(i + 1) % 2], center(sample)])
+                # Drag to center, next layer, out, and then back in
+                self.improved_drag(center(sample), endpos[i % 3], middle=[center(timeline), endpos[(i + 1) % 2], center(sample)])
             else:
-                #Simple drag
-                improved_drag(center(sample), endpos[i % 3])
-            #Give time to insert object
+                # Simple drag
+                self.improved_drag(center(sample), endpos[i % 3])
+            # Give time to insert object
             sleep(0.5)
             self.nextb.click()
             self.assertNotEqual(oldseek, seektime.text)
@@ -190,7 +189,7 @@ class TimelineTest(HelpFunc):
         center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
         table = conftab.child(roleName="table")
         icon = self.search_by_text("Agingtv ", tab, roleName="icon")
-        improved_drag(center(icon), center(table))
+        self.improved_drag(center(icon), center(table))
         self.nextb.click()
         seekbefore = seektime.text
         #Try riple and roll

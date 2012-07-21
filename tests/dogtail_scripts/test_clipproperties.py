@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from test_help_func import HelpFunc
+from helper_functions import HelpFunc
 from dogtail.predicate import GenericPredicate
 import dogtail.rawinput
 from time import sleep

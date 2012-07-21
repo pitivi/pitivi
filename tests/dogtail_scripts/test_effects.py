@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-from test_help_func import HelpFunc
-from helper_functions import improved_drag
+from helper_functions import HelpFunc
 import dogtail.rawinput
 
 
@@ -51,23 +50,23 @@ class EffectLibraryTest(HelpFunc):
         icon = self.search_by_text("Agingtv ", tab, roleName="icon")
 
         #Drag video effect on the clip
-        improved_drag(center(icon), clippos)
+        self.improved_drag(center(icon), clippos)
         self.assertEqual(len(table.children), 6)
         #Drag video effect to the table
         icon = self.search_by_text("3Dflippo", tab, roleName="icon")
-        improved_drag(center(icon), center(table))
+        self.improved_drag(center(icon), center(table))
         self.assertEqual(len(table.children), 9)
 
         #Drag audio effect on the clip
         tab.child(name="Video effects", roleName="combo box").click()
         tab.menuItem("Audio effects").click()
         effect = tab.child(name="Amplifier")
-        improved_drag(center(effect), clippos)
+        self.improved_drag(center(effect), clippos)
         self.assertEqual(len(table.children), 12)
 
         #Drag audio effect on the table
         effect = tab.child(name="Audiokaraoke")
-        improved_drag(center(effect), center(table))
+        self.improved_drag(center(effect), center(table))
         self.assertEqual(len(table.children), 15)
 
     def test_change_effect_settings(self):
