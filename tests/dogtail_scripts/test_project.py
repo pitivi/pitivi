@@ -95,10 +95,11 @@ class ProjectPropertiesTest(HelpFunc):
         spin[0].click()
         self.assertEqual(spin[0].text, "500")
 
-        #Create project, test saving without any object
+        # A blank project was created, test saving without any clips/objects
         self.pitivi.child(name="OK", roleName="push button").click()
         self.saveProject("/tmp/settings.xptv")
-        #Load project and test settings
+        self.assertTrue(os.path.exists("/tmp/settings.xptv"))
+        # Load project and test settings
         self.loadProject("/tmp/settings.xptv")
         self.pitivi.menu("Edit").click()
         self.pitivi.child(name="Project Settings", roleName="menu item").click()
@@ -169,7 +170,7 @@ class ProjectPropertiesTest(HelpFunc):
 
         #If finds button, means it warned
         self.pitivi.child("Cancel").click()
-        self.saveProject(url=None, saveAs=False)
+        self.saveProject(saveAs=False)
         #Backup should be deleted, and no warning displayed
         self.menubar.menu("Project").click()
         self.menubar.menu("Project").menuItem("Quit").click()
@@ -209,7 +210,7 @@ class ProjectPropertiesTest(HelpFunc):
 
         #If finds button, means it warned
         self.pitivi.child("Cancel").click()
-        self.saveProject(url=None, saveAs=False)
+        self.saveProject(saveAs=False)
 
         #Backup should be deleted, and no warning displayed
         self.menubar.menu("Project").click()

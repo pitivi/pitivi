@@ -12,17 +12,24 @@ from pyatspi import (KEY_SYM, KEY_PRESS, KEY_PRESSRELEASE, KEY_RELEASE)
 
 class HelpFunc(BaseDogTail):
 
-    def saveProject(self, url=None, saveAs=True):
+    def saveProject(self, path=None, saveAs=True):
         proj_menu = self.menubar.menu("Project")
         proj_menu.click()
         if saveAs:
+            self.assertIsNotNone(path)
             saveas_menu_item = proj_menu.child("Save As...")
             saveas_menu_item.click()
             saveas = self.pitivi.child(roleName='dialog')
-            saveas.child(roleName='text').text = url
+            # In GTK3's file chooser, you can enter /tmp/foo.xptv directly
+            # In GTK2 however, you must do it in two steps:
+            path_dir, filename = os.path.split(path)
+            saveas.child(roleName="text").text = path_dir
+            saveas.button('Save').click()
+            sleep(0.05)
+            saveas.child(roleName='text').text = filename
             saveas.button('Save').click()
             # Save to the list of items to cleanup afterwards
-            self.unlink.append(url)
+            self.unlink.append(path)
         else:
             # Just save
             self.menubar.menu("Project").menuItem("Save").click()
