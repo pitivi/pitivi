@@ -125,21 +125,35 @@ class HelpFunc(BaseDogTail):
         return self.pitivi.children[0].children[0].children[2].children[1].children[3]
 
     def improved_drag(self, from_coords, to_coords, middle=[], absolute=True, moveAround=True):
-        dogtail.rawinput.press(from_coords[0], from_coords[1])
-        if moveAround:
-            dogtail.rawinput.relativeMotion(5, 5)
-            dogtail.rawinput.relativeMotion(-5, -5)
+        """
+        Allow dragging from a set of coordinates to another set of coords,
+        with an optional list of intermediate coordinates and the ability to
+        wiggle the mouse slightly at each set of coordinates.
+        """
+        # Choose the default type of motion calculation
         if absolute:
             fun = dogtail.rawinput.absoluteMotion
         else:
             fun = dogtail.rawinput.relativeMotion
+
+        # Do the initial click
+        dogtail.rawinput.press(from_coords[0], from_coords[1])
+        if moveAround:
+            dogtail.rawinput.relativeMotion(5, 5)
+            dogtail.rawinput.relativeMotion(-5, -5)
+
+        # Do all the intermediate move operations
         for mid in middle:
             fun(mid[0], mid[1])
             if moveAround:
                 dogtail.rawinput.relativeMotion(5, 5)
                 dogtail.rawinput.relativeMotion(-5, -5)
+
+        # Move to the final coordinates
         dogtail.rawinput.absoluteMotion(to_coords[0], to_coords[1])
         if moveAround:
             dogtail.rawinput.relativeMotion(5, 5)
             dogtail.rawinput.relativeMotion(-5, -5)
+
+        # Release the mouse button
         dogtail.rawinput.release(to_coords[0], to_coords[1])
