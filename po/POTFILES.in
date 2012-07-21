@@ -28,6 +28,7 @@ pitivi/tabsmanager.py
 pitivi/transitions.py
 pitivi/viewer.py
 
+pitivi/timeline/layer.py
 pitivi/timeline/ruler.py
 pitivi/timeline/thumbnailer.py
 pitivi/timeline/timeline.py
