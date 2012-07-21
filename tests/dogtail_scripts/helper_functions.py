@@ -11,24 +11,27 @@ from pyatspi import (KEY_SYM, KEY_PRESS, KEY_PRESSRELEASE, KEY_RELEASE)
 
 
 class HelpFunc(BaseDogTail):
+
     def saveProject(self, url=None, saveAs=True):
-        self.menubar.menu("Project").click()
+        proj_menu = self.menubar.menu("Project")
+        proj_menu.click()
         if saveAs:
-            #FIXME: cant get working with searching for Save As…
-            self.menubar.menu("Project").children[4].click()
+            saveas_menu_item = proj_menu.child("Save As...")
+            saveas_menu_item.click()
             saveas = self.pitivi.child(roleName='dialog')
             saveas.child(roleName='text').text = url
-            #Click the Save button.
             saveas.button('Save').click()
-            #Save for deleting afterwards
+            # Save to the list of items to cleanup afterwards
             self.unlink.append(url)
         else:
-            #Just save
+            # Just save
             self.menubar.menu("Project").menuItem("Save").click()
 
     def loadProject(self, url, save=False):
-        self.menubar.menu("Project").click()
-        self.menubar.menu("Project").children[2].click()
+        proj_menu = self.menubar.menu("Project")
+        proj_menu.click()
+        open_menu_item = proj_menu.child("Open...")
+        open_menu_item.click()
         load = self.pitivi.child(roleName='dialog')
         load.child(name="Type a file name", roleName="toggle button").click()
         load.child(roleName='text').text = url
@@ -60,18 +63,21 @@ class HelpFunc(BaseDogTail):
         icon.deselect()
 
     def import_media(self, filename="1sec_simpsons_trailer.mp4"):
-        #Just try search for object without retries
-        dogtail.rawinput.pressKey("Esc")
-        self.pitivi.child(name="Import Files...",
-                          roleName="push button").click()
-        add = self.pitivi.child(roleName='dialog')
-        textf = add.findChildren(GenericPredicate(roleName="text"))
+        dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
+        # Use the menus, as the main toolbar might be hidden
+        lib_menu = self.menubar.menu("Library")
+        lib_menu.click()
+        import_menu_item = lib_menu.child("Import Files...")
+        import_menu_item.click()
+
+        import_dialog = self.pitivi.child(roleName='dialog')
+        textf = import_dialog.findChildren(GenericPredicate(roleName="text"))
         if len(textf) == 0:
-            add.child(name="Type a file name", roleName="toggle button").click()
+            import_dialog.child(name="Type a file name", roleName="toggle button").click()
         filepath = os.path.realpath(__file__).split("dogtail_scripts/")[0]
         filepath += "samples/" + filename
-        add.child(roleName='text').text = filepath
-        add.button('Add').click()
+        import_dialog.child(roleName='text').text = filepath
+        import_dialog.button('Add').click()
         libtab = self.pitivi.tab("Media Library")
         for i in range(5):
             icons = libtab.findChildren(GenericPredicate(roleName="icon"))
@@ -86,26 +92,30 @@ class HelpFunc(BaseDogTail):
         return sample
 
     def import_media_multiple(self, files):
-        dogtail.rawinput.pressKey("Esc")
-        self.pitivi.child(name="Import Files...",
-                          roleName="push button").click()
-        add = self.pitivi.child(roleName='dialog')
-        textf = add.findChildren(GenericPredicate(roleName="text"))
+        dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
+        # Use the menus, as the main toolbar might be hidden
+        lib_menu = self.menubar.menu("Library")
+        lib_menu.click()
+        import_menu_item = lib_menu.child("Import Files...")
+        import_menu_item.click()
+
+        import_dialog = self.pitivi.child(roleName='dialog')
+        textf = import_dialog.findChildren(GenericPredicate(roleName="text"))
         if len(textf) == 0:
-            add.child(name="Type a file name", roleName="toggle button").click()
+            import_dialog.child(name="Type a file name", roleName="toggle button").click()
         filepath = os.path.realpath(__file__).split("dogtail_scripts/")[0]
         filepath += "samples/"
-        add.child(roleName='text').click()
-        add.child(roleName='text').text = filepath
+        import_dialog.child(roleName='text').click()
+        import_dialog.child(roleName='text').text = filepath
         dogtail.rawinput.pressKey("Enter")
         #Now select them
         code = dogtail.rawinput.keyNameToKeyCode("Control_L")
         registry.generateKeyboardEvent(code, None, KEY_PRESS)
         for f in files:
             sleep(1)
-            add.child(name=f).click()
+            import_dialog.child(name=f).click()
         registry.generateKeyboardEvent(code, None, KEY_RELEASE)
-        add.button('Add').click()
+        import_dialog.button('Add').click()
         libtab = self.pitivi.tab("Media Library")
         samples = []
         for i in range(5):
@@ -121,7 +131,7 @@ class HelpFunc(BaseDogTail):
         return samples
 
     def get_timeline(self):
-        #TODO: found better way to identify
+        # TODO: find a better way to identify
         return self.pitivi.children[0].children[0].children[2].children[1].children[3]
 
     def improved_drag(self, from_coords, to_coords, middle=[], absolute=True, moveAround=True):
