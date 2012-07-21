@@ -372,12 +372,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self.position = position
         self._playhead.props.x = self.nsToPixel(position)
 
-    max_duration = 0
-
-    def setMaxDuration(self, duration):
-        self.max_duration = duration
-        self._request_size()
-
     def _request_size(self):
         alloc = self.get_allocation()
         self.set_bounds(0, 0, alloc.width, alloc.height)
