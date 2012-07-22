@@ -482,7 +482,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             None, None, self._previewClickedCb),
 
             ("ClipProps", None, _("_Clip Properties..."),
-            None, None, self._previewClickedCb),
+            None, None, self._clipPropertiesCb),
         )
 
         actiongroup = gtk.ActionGroup("medialibrarypermanent")
