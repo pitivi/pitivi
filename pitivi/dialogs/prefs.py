@@ -265,8 +265,7 @@ class PreferencesDialog():
                 label, description, klass, args = options[attrname]
                 widget = klass(**args)
                 widget.setWidgetValue(getattr(self.settings, attrname))
-                widget.connectValueChanged(self._valueChanged, widget,
-                    attrname)
+                widget.connectValueChanged(self._valueChanged, widget, attrname)
                 self.widgets[attrname] = widget
                 if isinstance(widget, ptvWidgets.ToggleWidget):
                     # Don't add a semicolon for checkbuttons
@@ -325,11 +324,18 @@ class PreferencesDialog():
         self.revert_button.set_sensitive(False)
 
     def _factorySettingsButtonCb(self, unused_button):
+        """
+        Reset all settings to the defaults
+        """
         for section in self.prefs.itervalues():
             for attrname in section:
                 self._resetOptionCb(self.resets[attrname], attrname)
 
     def _revertButtonCb(self, unused_button):
+        """
+        Resets all settings to the values from before the user opened the
+        preferences dialog.
+        """
         for attrname, value in self.original_values.iteritems():
             self.widgets[attrname].setWidgetValue(value)
             setattr(self.settings, attrname, value)
@@ -337,10 +343,12 @@ class PreferencesDialog():
         self.factory_settings.set_sensitive(self._canReset())
 
     def _resetOptionCb(self, button, attrname):
+        """
+        Reset a particular setting to the factory default
+        """
         if not self.settings.isDefault(attrname):
             self.settings.setDefault(attrname)
-        self.widgets[attrname].setWidgetValue(getattr(self.settings,
-            attrname))
+        self.widgets[attrname].setWidgetValue(getattr(self.settings, attrname))
         button.set_sensitive(False)
         self.factory_settings.set_sensitive(self._canReset())
 
@@ -362,8 +370,7 @@ class PreferencesDialog():
         setattr(self.settings, attrname, value)
 
         # adjust controls as appropriate
-        self.resets[attrname].set_sensitive(not self.settings.isDefault(
-            attrname))
+        self.resets[attrname].set_sensitive(not self.settings.isDefault(attrname))
         self.factory_settings.set_sensitive(True)
 
     def _configureCb(self, unused_widget, event):
