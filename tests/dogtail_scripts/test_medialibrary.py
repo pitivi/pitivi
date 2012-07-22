@@ -22,9 +22,11 @@ class MediaLibraryTest(HelpFunc):
         iconview = tab.child(roleName="layered pane")
         self.assertEqual(len(iconview.children), 3)
         search = tab.textentry("")
-        search.text = "colour2"
+        search.click()
+        search.typeText("colour2")
         self.assertEqual(len(iconview.children), 1)
-        search.text = "640"
+        search.text = ""
+        search.typeText("640")
         self.assertEqual(len(iconview.children), 2)
         search.text = ""
         self.assertEqual(len(iconview.children), 3)
