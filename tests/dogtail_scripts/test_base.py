@@ -30,9 +30,13 @@ class BaseDogTail(unittest.TestCase):
         except AttributeError:
             self.unlink = []
 
-    def tearDown(self, clean=True):
-        # Try to kill pitivi before leaving test
-        os.system("kill -9 %i" % self.pid)
+    def tearDown(self, clean=True, kill=True):
+        if kill:
+            os.system("kill -9 %i" % self.pid)
+        else:
+            proj_menu = self.menubar.menu("Project")
+            proj_menu.click()
+            proj_menu.child("Quit").click()
         if clean:
             for filename in self.unlink:
                 try:
