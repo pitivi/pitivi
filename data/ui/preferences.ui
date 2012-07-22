@@ -117,6 +117,7 @@
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Reset all settings to their default values</property>
                 <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="_factorySettingsButtonCb" swapped="no"/>
               </object>
@@ -134,6 +135,7 @@
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Revert all settings to the previous values (before you opened the preferences dialog)</property>
                 <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="_revertButtonCb" swapped="no"/>
               </object>
