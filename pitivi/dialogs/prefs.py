@@ -309,6 +309,7 @@ class PreferencesDialog():
             self.contents.pack_start(widgets, True, True)
 
         self.treeview.get_selection().select_path((0,))
+        self.factory_settings.set_sensitive(self._canReset())
 
     def _treeSelectionChangedCb(self, selection):
         model, iter = selection.get_selected()
