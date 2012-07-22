@@ -7,12 +7,12 @@ import os
 
 class ProjectPropertiesTest(HelpFunc):
     def test_settings_video(self):
-        #Just create new project
-        self.pitivi.child(name="New", roleName='push button').click()
+        welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
+        welcome_dialog.button("New").click()
 
         #Play with project settings, look if they are correctly represented
-        dialog = self.pitivi.child(name="Project Settings", roleName="dialog")
-        video = self.pitivi.tab("Video")
+        dialog = self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False)
+        video = dialog.tab("Video")
 
         #Test presets
         video.child(name="720p24", roleName="table cell").click()
@@ -95,16 +95,16 @@ class ProjectPropertiesTest(HelpFunc):
         spin[0].click()
         self.assertEqual(spin[0].text, "500")
 
+        # Finally create the blank project
+        dialog.button("OK").click()
+
         # A blank project was created, test saving without any clips/objects
-        self.pitivi.child(name="OK", roleName="push button").click()
         self.saveProject("/tmp/settings.xptv")
         self.assertTrue(os.path.exists("/tmp/settings.xptv"))
         # Load project and test settings
         self.loadProject("/tmp/settings.xptv")
         self.pitivi.menu("Edit").click()
-        self.pitivi.child(name="Project Settings", roleName="menu item").click()
-
-        video = self.pitivi.tab("Video")
+        self.pitivi.menuItem("Project Settings").click()
 
         children = video.findChildren(IsATextEntryNamed(""))
         childtext = {}
@@ -169,7 +169,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.menubar.menu("Project").menuItem("Quit").click()
 
         #If finds button, means it warned
-        self.pitivi.child("Cancel").click()
+        self.pitivi.child(roleName="dialog", recursive=False).button("Cancel").click()
         self.saveProject(saveAs=False)
         #Backup should be deleted, and no warning displayed
         self.menubar.menu("Project").click()
@@ -177,14 +177,16 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertFalse(os.path.exists(backup_path))
         #Test if backup is found
         self.setUp()
-        self.pitivi.child(name=filename).doubleClick()
+        welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
+        welcome_dialog.child(name=filename).doubleClick()
         sample = self.import_media("flat_colour1_640x480.png")
         self.assertTrue(self.wait_for_file(backup_path, 120), "Backup not created")
         self.tearDown(clean=False)
         self.setUp()
-        self.pitivi.child(name=filename).doubleClick()
+        welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
+        welcome_dialog.child(name=filename).doubleClick()
         #Try restoring from backup
-        self.pitivi.child(name="Restore from backup").click()
+        self.pitivi.child(roleName="dialog", recursive=False).button("Restore from backup").click()
         samples = self.pitivi.tab("Media Library").findChildren(GenericPredicate(roleName="icon"))
         self.assertEqual(len(samples), 2)
         self.menubar.menu("Project").click()
@@ -195,8 +197,9 @@ class ProjectPropertiesTest(HelpFunc):
         self.tearDown(clean=False)
         timestamp = os.path.getmtime(backup_path)
         self.setUp()
-        self.pitivi.child(name=filename).doubleClick()
-        self.pitivi.child(name="Ignore backup").click()
+        welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
+        welcome_dialog.child(name=filename).doubleClick()
+        self.pitivi.child(roleName="dialog", recursive=False).button("Ignore backup").click()
         #Backup is not deleted, not changed
         self.assertEqual(timestamp, os.path.getmtime(backup_path))
 
@@ -208,8 +211,8 @@ class ProjectPropertiesTest(HelpFunc):
         self.menubar.menu("Project").click()
         self.menubar.menu("Project").menuItem("Quit").click()
 
-        #If finds button, means it warned
-        self.pitivi.child("Cancel").click()
+        # Dismiss the unsaved changes warning by cancelling it:
+        self.pitivi.child(roleName="dialog", recursive=False).button("Cancel").click()
         self.saveProject(saveAs=False)
 
         #Backup should be deleted, and no warning displayed
@@ -236,7 +239,7 @@ class ProjectPropertiesTest(HelpFunc):
         sleep(0.5)
         self.menubar.menu("Project").click()
         self.menubar.menu("Project").menuItem("New").click()
-        self.pitivi.child(name="OK", roleName="push button").click()
+        self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False).button("OK").click()
 
         icons = tab.findChildren(GenericPredicate(roleName="icon"))
         self.nextb.click()
