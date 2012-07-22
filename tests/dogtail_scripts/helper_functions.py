@@ -77,14 +77,21 @@ class HelpFunc(BaseDogTail):
         import_menu_item = lib_menu.child("Import Files...")
         import_menu_item.click()
 
-        import_dialog = self.pitivi.child(roleName='dialog')
-        textf = import_dialog.findChildren(GenericPredicate(roleName="text"))
-        if len(textf) == 0:
-            import_dialog.child(name="Type a file name", roleName="toggle button").click()
+        # Force dogtail to look only one level deep, which is much faster
+        # as it doesn't have to analyze the whole mainwindow.
+        import_dialog = self.pitivi.child(name="Select One or More Files",
+                                          roleName="dialog", recursive=False)
+        # Instead of checking for the presence of the path text field and then
+        # searching for the toggle button to enable it, use the fact that GTK's
+        # file chooser allows typing the path directly if it starts with "/".
+        dogtail.rawinput.pressKey("/")  # This text will be replaced later
+
         filepath = os.path.realpath(__file__).split("dogtail_scripts/")[0]
         filepath += "samples/" + filename
         import_dialog.child(roleName='text').text = filepath
-        import_dialog.button('Add').click()
+        dogtail.rawinput.pressKey("Enter")  # Don't search for the Add button
+        sleep(0.6)
+
         libtab = self.pitivi.tab("Media Library")
         for i in range(5):
             icons = libtab.findChildren(GenericPredicate(roleName="icon"))
@@ -106,16 +113,15 @@ class HelpFunc(BaseDogTail):
         import_menu_item = lib_menu.child("Import Files...")
         import_menu_item.click()
 
-        import_dialog = self.pitivi.child(roleName='dialog')
-        textf = import_dialog.findChildren(GenericPredicate(roleName="text"))
-        if len(textf) == 0:
-            import_dialog.child(name="Type a file name", roleName="toggle button").click()
-        filepath = os.path.realpath(__file__).split("dogtail_scripts/")[0]
-        filepath += "samples/"
-        import_dialog.child(roleName='text').click()
-        import_dialog.child(roleName='text').text = filepath
+        # Same performance hack as in the import_media method
+        import_dialog = self.pitivi.child(name="Select One or More Files",
+                                          roleName="dialog", recursive=False)
+        dogtail.rawinput.pressKey("/")
+        dir_path = os.path.realpath(__file__).split("dogtail_scripts/")[0] + "samples/"
+        import_dialog.child(roleName='text').text = dir_path
         dogtail.rawinput.pressKey("Enter")
-        #Now select them
+
+        # We are now in the samples directory, select various items
         code = dogtail.rawinput.keyNameToKeyCode("Control_L")
         registry.generateKeyboardEvent(code, None, KEY_PRESS)
         for f in files:
