@@ -19,10 +19,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-"""
-Settings
-"""
-
 import os
 import gst
 from ConfigParser import SafeConfigParser, ParsingError
@@ -54,18 +50,16 @@ def get_env_by_type(type_, var):
     @type type_: C{type}
     @arg var: The name of the environment variable.
     @type var: C{str}
-    @returns: The content of the environment variable, or C{None} if it doesn't
-    exist.
+    @returns: Contents of the environment variable, or C{None} if it doesn't exist.
     """
     if var is None:
         return None
     if type_ == bool:
         return get_bool_env(var)
-    else:
-        value = os.getenv(var)
-        if value:
-            return type_(os.getenv(var))
-        return None
+    value = os.getenv(var)
+    if value:
+        return type_(os.getenv(var))
+    return None
 
 
 def get_env_default(var, default):
@@ -167,16 +161,13 @@ class GlobalSettings(Signallable):
 
     def _readSettingsFromConfigurationFile(self):
         # This reads the configuration from the user configuration file
-
         try:
             conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
             self._config.read(conf_file_path)
-
         except ParsingError:
             return
 
-        for (section, attrname, typ, key, env,
-            value) in self.iterAllOptions():
+        for (section, attrname, typ, key, env, value) in self.iterAllOptions():
             if not self._config.has_section(section):
                 continue
             if key and self._config.has_option(section, key):
@@ -196,8 +187,7 @@ class GlobalSettings(Signallable):
                 setattr(self, attrname, value)
 
     def _readSettingsFromEnvironmentVariables(self):
-        for (section, attrname, typ, key, env,
-            value) in self.iterAllOptions():
+        for (section, attrname, typ, key, env, value) in self.iterAllOptions():
             var = get_env_by_type(typ, env)
             if var is not None:
                 setattr(self, attrname, value)
@@ -205,8 +195,7 @@ class GlobalSettings(Signallable):
     def _writeSettingsToConfigurationFile(self):
         conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
 
-        for (section, attrname, typ, key, env_var,
-            value) in self.iterAllOptions():
+        for (section, attrname, typ, key, env_var, value) in self.iterAllOptions():
             if not self._config.has_section(section):
                 self._config.add_section(section)
             if key:
@@ -256,13 +245,11 @@ class GlobalSettings(Signallable):
         the config file is read. Only options registered before the config
         file is read will be loaded.
 
-        see pitivi/mainwindow.py, pitivi/ui/medialibrary.py for examples of
-        usage.
+        See mainwindow.py and medialibrary.py for examples of usage.
 
         @param attrname: the attribute of this class which represents the option
         @type attrname: C{str}
-        @param type_: the type of the attribute. not necessary if default is
-        given.
+        @param type_: type of the attribute. Unnecessary if default is given.
         @type type_: a builtin or class
         @param section: The section of the config file under which this option is
         saved. This section must have been added with addConfigSection(). Not
@@ -275,11 +262,9 @@ class GlobalSettings(Signallable):
         @type notify: C{boolean}
         """
         if section and not section in cls.options:
-            raise ConfigError("You must add the section \"%s\" first." %
-                section)
+            raise ConfigError("You must add the section \"%s\" first." % section)
         if key and not section:
-            raise ConfigError("You must specify a section for key \"%s\"" %
-                key)
+            raise ConfigError("You must specify a section for key \"%s\"" % key)
         if section and key in cls.options[section]:
             raise ConfigError("Option \"%s\" is already in use.")
         if hasattr(cls, attrname):
@@ -406,8 +391,7 @@ class MultimediaSettings(Signallable, Loggable):
     def getVideoWidthAndHeight(self, render=False):
         """ Returns the video width and height as a tuple
 
-        @param render: Whether to apply self.render_scale to the returned
-        values.
+        @param render: Whether to apply self.render_scale to the returned values
         @type render: bool
         """
         if render:
@@ -518,11 +502,9 @@ class MultimediaSettings(Signallable, Loggable):
         self._acodecsettings_cache[self.aencoder] = value
 
     def getAudioEncoders(self):
-        """ Returns the list of audio encoders compatible with the current
-        muxer """
+        """ List audio encoders compatible with the current muxer """
         return self.aencoders[self.muxer]
 
     def getVideoEncoders(self):
-        """ Returns the list of video encoders compatible with the current
-        muxer """
+        """ List video encoders compatible with the current muxer """
         return self.vencoders[self.muxer]
