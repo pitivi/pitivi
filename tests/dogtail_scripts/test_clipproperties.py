@@ -22,9 +22,11 @@ class ClipTransforamtionTest(HelpFunc):
         conftab.child(name="Transformation", roleName="toggle button").click()
         #Just try changing values
         #Test slider
-        self.assertEqual(conftab.child(roleName="slider").value, 1)
-        conftab.child(roleName="slider").click()
-        self.assertNotEqual(conftab.child(roleName="slider").value, 1)
+        slider = conftab.child(roleName="slider")
+        self.assertEqual(slider.value, 1.0)
+        slider.click()
+        # Clicking in the middle of the slider will set it backwards to 0.9
+        self.assertNotEqual(slider.value, 1.0)
 
         #Test position
         spinb = conftab.child(roleName="panel", name="Position").findChildren(GenericPredicate(roleName="spin button"))
