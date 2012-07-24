@@ -18,11 +18,11 @@ class HelpFunc(BaseDogTail):
         if saveAs:
             self.assertIsNotNone(path)
             proj_menu.menuItem("Save As...").click()
-            saveas = self.pitivi.child(name="Save As...", roleName='dialog', recursive=False)
+            save_dialog = self.pitivi.child(name="Save As...", roleName='dialog', recursive=False)
             # In GTK3's file chooser, you can enter /tmp/foo.xptv directly
             # In GTK2 however, you must do it in two steps:
             path_dir, filename = os.path.split(path)
-            text_field = saveas.child(roleName="text")
+            text_field = save_dialog.child(roleName="text")
             text_field.text = path_dir
             dogtail.rawinput.pressKey("Enter")
             sleep(0.05)
@@ -34,20 +34,19 @@ class HelpFunc(BaseDogTail):
             # Just save
             proj_menu.menuItem("Save").click()
 
-    def loadProject(self, url, save=False):
+    def loadProject(self, url, expect_unsaved_changes=False):
         proj_menu = self.menubar.menu("Project")
         proj_menu.click()
-        open_menu_item = proj_menu.child("Open...")
-        open_menu_item.click()
-        load = self.pitivi.child(roleName='dialog')
+        proj_menu.menuItem("Open...").click()
+        load = self.pitivi.child(roleName='dialog', recursive=False)
         load.child(name="Type a file name", roleName="toggle button").click()
         load.child(roleName='text').text = url
         load.button('Open').click()
-        try:
-            if save:
-                load.child(name="Close without saving", roleName="push button")
-        except:
-            return
+        # If an unsaved changes confirmation dialog shows up, deal with it
+        if expect_unsaved_changes:
+            # Simply try searching for the existence of the dialog's widgets
+            # If it fails, dogtail will fail with a SearchError, which is fine
+            self.pitivi.child(name="Close without saving", roleName="push button").click()
 
     def search_by_text(self, text, parent, name=None, roleName=None):
         """
