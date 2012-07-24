@@ -124,13 +124,20 @@ class HelpFunc(BaseDogTail):
         import_dialog.child(roleName='text').text = dir_path
         dogtail.rawinput.pressKey("Enter")
 
-        # We are now in the samples directory, select various items
-        code = dogtail.rawinput.keyNameToKeyCode("Control_L")
-        registry.generateKeyboardEvent(code, None, KEY_PRESS)
+        # We are now in the samples directory, select various items.
+        # We use Ctrl click to select multiple items. However, since the first
+        # row of the filechooser is always selected by default, we must not use
+        # ctrl when selecting the first item of our list, in order to deselect.
+        ctrl_code = dogtail.rawinput.keyNameToKeyCode("Control_L")
+        file_list = import_dialog.child(name="Files", roleName="table")
+        first = True
         for f in files:
-            sleep(1)
-            import_dialog.child(name=f).click()
-        registry.generateKeyboardEvent(code, None, KEY_RELEASE)
+            sleep(0.5)
+            file_list.child(name=f).click()
+            if first:
+                registry.generateKeyboardEvent(ctrl_code, None, KEY_PRESS)
+                first = False
+        registry.generateKeyboardEvent(ctrl_code, None, KEY_RELEASE)
         import_dialog.button('Add').click()
 
         libtab = self.pitivi.tab("Media Library")
