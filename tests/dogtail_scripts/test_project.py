@@ -19,7 +19,7 @@ class ProjectPropertiesTest(HelpFunc):
         children = video.findChildren(IsATextEntryNamed(""))
         childtext = {}
         for child in children:
-                childtext[child.text] = child
+            childtext[child.text] = child
 
         self.assertIn("1:1", childtext)
         self.assertIn("24M", childtext)
@@ -28,7 +28,7 @@ class ProjectPropertiesTest(HelpFunc):
         children = video.findChildren(GenericPredicate(roleName="spin button"))
         spintext = {}
         for child in children:
-                spintext[child.text] = child
+            spintext[child.text] = child
         self.assertIn("1280", spintext)
         self.assertIn("720", spintext)
 
@@ -45,8 +45,7 @@ class ProjectPropertiesTest(HelpFunc):
         #Test pixel and display ascpect ratio
         pixelCombo = video.child(name="Square", roleName="combo box")
         pixelText = childtext["1:1"]
-        displayCombo = video.child(name="DV Widescreen (16:9)",
-                                   roleName="combo box")
+        displayCombo = video.child(name="DV Widescreen (16:9)", roleName="combo box")
         displayText = childtext["16:9"]
 
         pixelCombo.click()
@@ -64,8 +63,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertEqual(displayCombo.combovalue, "Standard (4:3)")
         self.assertEqual(displayText.text, "4:3")
 
-        video.child(name="Display aspect ratio",
-                    roleName="radio button").click()
+        video.child(name="Display aspect ratio", roleName="radio button").click()
         displayCombo.click()
         video.child(name="Cinema (1.37)", roleName="menu item").click()
         #self.assertEqual(pixelCombo.combovalue, "")
@@ -99,17 +97,23 @@ class ProjectPropertiesTest(HelpFunc):
         dialog.button("OK").click()
 
         # A blank project was created, test saving without any clips/objects
-        self.saveProject("/tmp/settings.xptv")
-        self.assertTrue(os.path.exists("/tmp/settings.xptv"))
+        settings_test_project_file = "/tmp/settings.xptv"
+        self.unlink.append(settings_test_project_file)
+        self.saveProject(settings_test_project_file)
+        sleep(1)  # Give enough time for GES to save the project
+        self.assertTrue(os.path.exists(settings_test_project_file))
         # Load project and test settings
-        self.loadProject("/tmp/settings.xptv")
+        self.loadProject(settings_test_project_file)
+        sleep(1)  # Give enough time for GES to load the project
         self.pitivi.menu("Edit").click()
         self.pitivi.menuItem("Project Settings").click()
 
+        dialog = self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False)
+        video = dialog.tab("Video")
         children = video.findChildren(IsATextEntryNamed(""))
         childtext = {}
         for child in children:
-                childtext[child.text] = child
+            childtext[child.text] = child
 
         self.assertIn("333:320", childtext, "Pixel aspect ration not saved")
         self.assertIn("37:20", childtext, "Display aspect ratio not saved")
@@ -117,7 +121,7 @@ class ProjectPropertiesTest(HelpFunc):
         children = video.findChildren(GenericPredicate(roleName="spin button"))
         spintext = {}
         for child in children:
-                spintext[child.text] = child
+            spintext[child.text] = child
         self.assertIn("500", spintext, "Video height is not saved")
         self.assertIn("1000", spintext, "Video width is not saved")
 
@@ -144,7 +148,7 @@ class ProjectPropertiesTest(HelpFunc):
         sample = self.import_media()
 
         #Save project
-        filename = "test_project%i.xptv" % time()
+        filename = "test_project-%i.xptv" % time()
         path = "/tmp/" + filename
         backup_path = path + "~"
         self.unlink.append(backup_path)
@@ -181,7 +185,7 @@ class ProjectPropertiesTest(HelpFunc):
         welcome_dialog.child(name=filename).doubleClick()
         sample = self.import_media("flat_colour1_640x480.png")
         self.assertTrue(self.wait_for_file(backup_path, 120), "Backup not created")
-        self.tearDown(clean=False)
+        self.tearDown(clean=False, kill=True)
         self.setUp()
         welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
         welcome_dialog.child(name=filename).doubleClick()
@@ -193,8 +197,8 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertFalse(self.menubar.menu("Project").menuItem("Save").sensitive)
         #Behaved as saveAs
 
-        #Kill once more
-        self.tearDown(clean=False)
+        # Kill once more
+        self.tearDown(clean=False, kill=True)
         timestamp = os.path.getmtime(backup_path)
         self.setUp()
         welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
@@ -244,7 +248,6 @@ class ProjectPropertiesTest(HelpFunc):
         icons = tab.findChildren(GenericPredicate(roleName="icon"))
         self.nextb.click()
         self.assertEqual(len(icons), 0)
-        self.assertEqual(seektime.text, "0:00:00.000")
         self.assertTrue(infobar_media.showing)
 
         #Create bigger project
