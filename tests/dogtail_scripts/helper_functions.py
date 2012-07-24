@@ -92,18 +92,21 @@ class HelpFunc(BaseDogTail):
         dogtail.rawinput.pressKey("Enter")  # Don't search for the Add button
         sleep(0.6)
 
+        # Check if the item is now visible in the media library.
         libtab = self.pitivi.tab("Media Library")
         for i in range(5):
+            # The time it takes for the icon to appear is unpredictable,
+            # therefore we try up to 5 times to look for it
             icons = libtab.findChildren(GenericPredicate(roleName="icon"))
-            sample = None
             for icon in icons:
                 if icon.text == filename:
-                    sample = icon
-            if sample is not None:
-                break
+                    return icon
             sleep(0.5)
-        self.assertIsNotNone(sample)
-        return sample
+        # Failure to find an icon might be because it is hidden due to a search
+        current_search_text = libtab.child(roleName="text").text.lower()
+        self.assertNotEqual(current_search_text, "")
+        self.assertNotIn(filename.lower(), current_search_text)
+        return None
 
     def import_media_multiple(self, files):
         dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
@@ -129,9 +132,20 @@ class HelpFunc(BaseDogTail):
             import_dialog.child(name=f).click()
         registry.generateKeyboardEvent(code, None, KEY_RELEASE)
         import_dialog.button('Add').click()
+
         libtab = self.pitivi.tab("Media Library")
+        current_search_text = libtab.child(roleName="text").text.lower()
+        if current_search_text != "":
+            # Failure to find some icons might be because of search filtering.
+            # The following avoids searching for files that can't be found.
+            for f in files:
+                if current_search_text not in f.lower():
+                    files.remove(f)
+        # Check if non-filtered items are now visible in the media library.
         samples = []
         for i in range(5):
+            # The time it takes for icons to appear is unpredictable,
+            # therefore we try up to 5 times to look for them
             icons = libtab.findChildren(GenericPredicate(roleName="icon"))
             for icon in icons:
                 for f in files:
