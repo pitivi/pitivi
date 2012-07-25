@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-21 22:39+0200\n"
-"PO-Revision-Date: 2012-07-21 22:40+0200\n"
+"POT-Creation-Date: 2012-07-25 14:47+0200\n"
+"PO-Revision-Date: 2012-07-25 14:48+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -162,8 +162,20 @@ msgid "Reset to Factory Settings"
 msgstr "Przywróć ustawienia fabryczne"
 
 #: ../data/ui/preferences.ui.h:5
+msgid "Reset all settings to their default values"
+msgstr "Przywraca wszystkie ustawienia do ich domyślnych wartości"
+
+#: ../data/ui/preferences.ui.h:6
 msgid "Revert"
 msgstr "Przywróć"
+
+#: ../data/ui/preferences.ui.h:7
+msgid ""
+"Revert all settings to the previous values (before you opened the "
+"preferences dialog)"
+msgstr ""
+"Przywraca wszystkie ustawienia do poprzednich wartości (sprzed otwarcia okna "
+"preferencji)"
 
 #: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:431
 msgid "Standard (4:3)"
@@ -782,7 +794,7 @@ msgstr "Wyświetlanie efektów wideo jako ikony"
 msgid "PiTiVi Native (XML)"
 msgstr "Natywny format programu PiTiVi (XML)"
 
-#: ../pitivi/mainwindow.py:142 ../pitivi/timeline/timeline.py:1099
+#: ../pitivi/mainwindow.py:142 ../pitivi/timeline/timeline.py:1093
 msgid "Split"
 msgstr "Podziel"
 
@@ -1046,7 +1058,7 @@ msgstr "Wyeksportuj do..."
 
 #: ../pitivi/mainwindow.py:1079 ../pitivi/mainwindow.py:1126
 #: ../pitivi/mainwindow.py:1238 ../pitivi/render.py:428
-#: ../pitivi/timeline/timeline.py:1334
+#: ../pitivi/timeline/timeline.py:1328
 msgid "Untitled"
 msgstr "Bez tytułu"
 
@@ -1055,7 +1067,7 @@ msgstr "Bez tytułu"
 msgid "Detect Automatically"
 msgstr "Wykrycie automatyczne"
 
-#: ../pitivi/mainwindow.py:1118 ../pitivi/timeline/timeline.py:1328
+#: ../pitivi/mainwindow.py:1118 ../pitivi/timeline/timeline.py:1322
 msgid "Save As..."
 msgstr "Zapisz jako..."
 
@@ -1579,55 +1591,55 @@ msgstr "Grupuje klipy"
 msgid "Align clips based on their soundtracks"
 msgstr "Wyrównuje klipy na podstawie ich ścieżki dźwiękowej"
 
-#: ../pitivi/timeline/timeline.py:883
+#: ../pitivi/timeline/timeline.py:877
 msgid "One or more GStreamer errors occured!"
 msgstr "Wystąpił jeden lub więcej błędów biblioteki GStreamer."
 
-#: ../pitivi/timeline/timeline.py:916
+#: ../pitivi/timeline/timeline.py:910
 msgid "Error List"
 msgstr "Lista błędów"
 
-#: ../pitivi/timeline/timeline.py:917
+#: ../pitivi/timeline/timeline.py:911
 msgid "The following errors have been reported:"
 msgstr "Następujące błędy zostały zgłoszone:"
 
-#: ../pitivi/timeline/timeline.py:994
+#: ../pitivi/timeline/timeline.py:988
 msgid "Zoom"
 msgstr "Powiększenie"
 
-#: ../pitivi/timeline/timeline.py:1006
+#: ../pitivi/timeline/timeline.py:1000
 msgid "Zoom Timeline"
 msgstr "Przybliżenie osi czasu"
 
-#: ../pitivi/timeline/timeline.py:1060
+#: ../pitivi/timeline/timeline.py:1054
 msgid "Export current frame..."
 msgstr "Wyeksportuj bieżącą klatkę..."
 
-#: ../pitivi/timeline/timeline.py:1061
+#: ../pitivi/timeline/timeline.py:1055
 msgid "Export the frame at the current playhead position as an image file."
 msgstr "Eksportuje klatkę na bieżącym pozycji głowicy jako plik obrazu."
 
-#: ../pitivi/timeline/timeline.py:1097
+#: ../pitivi/timeline/timeline.py:1091
 msgid "Start Playback"
 msgstr "Rozpocznij odtwarzanie"
 
-#: ../pitivi/timeline/timeline.py:1102
+#: ../pitivi/timeline/timeline.py:1096
 msgid "Add a Keyframe"
 msgstr "Dodaj klatkę kluczową"
 
-#: ../pitivi/timeline/timeline.py:1105
+#: ../pitivi/timeline/timeline.py:1099
 msgid "_Previous Keyframe"
 msgstr "_Poprzednia klatka kluczowa"
 
-#: ../pitivi/timeline/timeline.py:1108
+#: ../pitivi/timeline/timeline.py:1102
 msgid "_Next Keyframe"
 msgstr "_Następna klatka kluczowa"
 
-#: ../pitivi/timeline/timeline.py:1337
+#: ../pitivi/timeline/timeline.py:1331
 msgid "PNG image"
 msgstr "Obraz PNG"
 
-#: ../pitivi/timeline/timeline.py:1338
+#: ../pitivi/timeline/timeline.py:1332
 msgid "JPEG image"
 msgstr "Obraz JPEG"
 
@@ -1679,7 +1691,7 @@ msgstr "Problem:"
 msgid "Extra information:"
 msgstr "Informacje dodatkowe:"
 
-#: ../pitivi/dialogs/prefs.py:280 ../pitivi/utils/widgets.py:886
+#: ../pitivi/dialogs/prefs.py:279 ../pitivi/utils/widgets.py:886
 msgid "Reset to default value"
 msgstr "Przywróć domyślne wartości"
 
