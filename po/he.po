@@ -478,7 +478,7 @@ msgstr ""
 "span>"
 
 #: ../pitivi/ui/common.py:91 ../pitivi/ui/common.py:133
-#, python-format
+#, fuzzy, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>שמע:</b> ערוץ אחד בתדירות %d <i>הרץ</i> (%d <i>סיביות</i>)"
@@ -611,7 +611,7 @@ msgid "Mono"
 msgstr "מונו"
 
 #: ../pitivi/ui/defaultpropertyeditor.py:104
-#, python-format
+#, fuzzy, python-format
 msgid "Properties For: %d object"
 msgid_plural "Properties For: %d objects"
 msgstr[0] "מאפיינים עבור: פריט אחד"
@@ -1760,7 +1760,7 @@ msgid "Pause"
 msgstr "השהיה"
 
 #: ../pitivi/utils.py:75
-#, python-format
+#, fuzzy, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "שעה אחת"
@@ -1768,7 +1768,7 @@ msgstr[1] "%d שעות"
 msgstr[2] "שעתיים"
 
 #: ../pitivi/utils.py:78
-#, python-format
+#, fuzzy, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "דקה אחת"
@@ -1776,7 +1776,7 @@ msgstr[1] "%d דקות"
 msgstr[2] "שתי דקות"
 
 #: ../pitivi/utils.py:81
-#, python-format
+#, fuzzy, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "שנייה אחת"
