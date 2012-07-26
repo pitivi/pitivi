@@ -1365,7 +1365,7 @@ msgstr "Establecer un nombre personalizado para esta capa"
 #: ../pitivi/timeline/layer.py:92
 #| msgid "<b>Size</b>"
 msgid "<b>Solo mode</b>\n"
-msgstr "<b>Modo solitario</b>"
+msgstr "<b>Modo solitario</b>\n"
 
 #: ../pitivi/timeline/layer.py:107
 msgid "<b>Enable or disable this layer</b>\n"
