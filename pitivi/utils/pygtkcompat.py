@@ -594,18 +594,22 @@ def enable_gst(version='1.0'):
 
     Gst.element_factory_make = element_factory_make
 
-    from gi.repository import GstInterfaces
-    sys.modules['gst.interfaces'] = GstInterfaces
-    _install_enums(GstInterfaces)
+    if version < 1.0:
+        from gi.repository import GstInterfaces
+        sys.modules['gst.interfaces'] = GstInterfaces
+        _install_enums(GstInterfaces)
 
+    gi.require_version('GstAudio', version)
     from gi.repository import GstAudio
     sys.modules['gst.audio'] = GstAudio
     _install_enums(GstAudio)
 
+    gi.require_version('GstVideo', version)
     from gi.repository import GstVideo
     sys.modules['gst.video'] = GstVideo
     _install_enums(GstVideo)
 
+    gi.require_version('GstBase', version)
     from gi.repository import GstBase
     sys.modules['gst.base'] = GstBase
     _install_enums(GstBase)
@@ -613,10 +617,12 @@ def enable_gst(version='1.0'):
     Gst.BaseTransform = GstBase.BaseTransform
     Gst.BaseSink = GstBase.BaseSink
 
+    gi.require_version('GstController', version)
     from gi.repository import GstController
     sys.modules['gst.controller'] = GstController
     _install_enums(GstController, dest=Gst)
 
+    gi.require_version('GstPbutils', version)
     from gi.repository import GstPbutils
     sys.modules['gst.pbutils'] = GstPbutils
     _install_enums(GstPbutils)
