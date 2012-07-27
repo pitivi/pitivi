@@ -22,7 +22,7 @@
 MYPITIVI=$HOME/pitivi-git
 
 # Change those variable to 'master' if you prefer to work with the master branch
-GST_RELEASE_TAG="RELEASE-0.11.92"
+GST_RELEASE_TAG="master"
 
 #
 # Everything below this line shouldn't be edited!
@@ -215,9 +215,6 @@ if test ! -e $PITIVI; then
 
     cd $m
     git checkout $GST_RELEASE_TAG
-    if [ $? -ne 0 ]; then
-      echo "Could not run checkout $GST_RELEASE_TAG for $m result: $?"
-    fi
 
     ./autogen.sh
     if [ $? -ne 0 ]; then
