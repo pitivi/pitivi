@@ -37,6 +37,16 @@ GlobalSettings.addConfigOption('FCpreviewHeight',
     key='video-preview-height',
     default=PREVIEW_HEIGHT)
 
+acceptable_tags = [gst.TAG_ALBUM_ARTIST,
+                    gst.TAG_ARTIST,
+                    gst.TAG_TITLE,
+                    gst.TAG_ALBUM,
+                    gst.TAG_BITRATE,
+                    gst.TAG_COMPOSER,
+                    gst.TAG_GENRE,
+                    gst.TAG_PERFORMER,
+                    gst.TAG_DATE]
+
 
 class PreviewWidget(gtk.VBox, Loggable):
 
@@ -366,7 +376,7 @@ class PreviewWidget(gtk.VBox, Loggable):
 
     def _sync_message_cb(self, bus, mess):
         if mess.type == gst.MESSAGE_ELEMENT:
-            if mess.structure.get_name() == 'prepare-xwindow-id':
+            if mess.has_name('prepare-xwindow-id'):
                 sink = mess.src
 
                 # We need to set force-aspect-ratio and handle-expose properties
@@ -388,25 +398,13 @@ class PreviewWidget(gtk.VBox, Loggable):
                     realsink.set_property("handle-expose", True)
                 finally:
                     gtk.gdk.threads_enter()
-                    sink.set_xwindow_id(self.preview_video.window_xid)
+                    sink.set_window_handle(self.preview_video.window_xid)
                     sink.expose()
                     gtk.gdk.threads_leave()
         return gst.BUS_PASS
 
-    def _tag_found_cb(self, abus, mess):
-        tag_list = mess.parse_tag()
-        acceptable_tags = [gst.TAG_ALBUM_ARTIST,
-                            gst.TAG_ARTIST,
-                            gst.TAG_TITLE,
-                            gst.TAG_ALBUM,
-                            gst.TAG_BITRATE,
-                            gst.TAG_COMPOSER,
-                            gst.TAG_GENRE,
-                            gst.TAG_PERFORMER,
-                            gst.TAG_DATE]
-        for tag in tag_list.keys():
-            tag_type = gst.tag_get_tag_type(tag)
-            if tag in acceptable_tags and tag_type in (gobject.TYPE_STRING,
+    def _appendTag(self, taglist, tag, unused_udata):
+            if tag in acceptable_tags and gst.tag_get_type(tag) in (gobject.TYPE_STRING,
                                    gobject.TYPE_DOUBLE,
                                    gobject.TYPE_FLOAT,
                                    gobject.TYPE_INT,
@@ -414,6 +412,10 @@ class PreviewWidget(gtk.VBox, Loggable):
                 name = gst.tag_get_nick(tag)
                 value = unicode(tag_list[tag]).replace('<', ' ').replace('>', ' ')
                 self.tags[name] = value
+
+    def _tag_found_cb(self, abus, mess):
+        tag_list = mess.parse_tag()
+        tag_list.foreach(self._appendTag, None)
         keys = self.tags.keys()
         keys.sort()
         text = self.description + "\n"
