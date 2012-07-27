@@ -133,7 +133,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
             self.pipeline.connect("state-changed", self._pipelineStateChangedCb)
             self.pipeline.connect("position", self._positionCb)
-            self.pipeline.connect("xid-message", self.xidMessageCb)
+            self.pipeline.connect("window-handle-message", self._windowHandleMessageCb)
             self.pipeline.connect("duration-changed", self._durationChangedCb)
 
         self._setUiActive()
@@ -145,7 +145,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             return
 
         self.pipeline.disconnect_by_func(self._pipelineStateChangedCb)
-        self.pipeline.disconnect_by_func(self.xidMessageCb)
+        self.pipeline.disconnect_by_func(self._windowHandleMessageCb)
         self.pipeline.disconnect_by_func(self._positionCb)
         self.pipeline.disconnect_by_func(self._durationChangedCb)
 
@@ -440,7 +440,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
         self.internal._currentStateCb(self.pipeline, state)
 
-    def xidMessageCb(self, unused_pipeline, message):
+    def _windowHandleMessageCb(self, unused_pipeline, message):
         """
         When the pipeline sends us a message to prepare-xwindow-id,
         tell the viewer to switch its output window.
@@ -450,7 +450,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _switch_output_window(self):
         gtk.gdk.threads_enter()
-        self.sink.set_xwindow_id(self.target.window_xid)
+        self.sink.set_window_handle(self.target.window_xid)
         self.sink.expose()
         gtk.gdk.threads_leave()
 

@@ -148,7 +148,7 @@ class SimplePipeline(Loggable, Signallable):
         "duration-changed": ["duration"],
         "eos": [],
         "error": ["message", "details"],
-        "xid-message": ["message"]}
+        "window-handle-message": ["message"]}
 
     def __init__(self, pipeline):
         Loggable.__init__(self)
@@ -157,10 +157,10 @@ class SimplePipeline(Loggable, Signallable):
         self._bus = self._pipeline.get_bus()
         self._bus.add_signal_watch()
         self._bus.connect("message", self._busMessageCb)
-        # Initially, we set a synchronous bus message handler so that the xid
+        # Initially, we set a synchronous bus message handler so that the window handle
         # is known right away and we can set the viewer synchronously, avoiding
         # the creation of an external window.
-        # Afterwards, the xid-message is handled async (to avoid deadlocks).
+        # Afterwards, the window-handle-message is handled async (to avoid deadlocks).
         self._bus.set_sync_handler(self._busSyncMessageHandler, None)
         self._has_sync_bus_handler = True
         self._listening = False  # for the position handler
@@ -435,10 +435,9 @@ class SimplePipeline(Loggable, Signallable):
 
     def _busSyncMessageHandler(self, unused_bus, message, unused_user_data):
         if message.type == gst.MESSAGE_ELEMENT:
-            name = message.structure.get_name()
-            if name == 'prepare-xwindow-id':
+            if message.has_name('prepare-window-handle'):
                 # handle element message synchronously
-                self.emit('xid-message', message)
+                self.emit('window-handle-message', message)
                 #Remove the bus sync handler avoiding deadlocks
                 self._bus.set_sync_handler(None)
                 self._has_sync_bus_handler = False
@@ -468,7 +467,7 @@ class Pipeline(ges.TimelinePipeline, SimplePipeline):
                         ()),
         "error": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
                         (gobject.TYPE_STRING, gobject.TYPE_STRING)),
-        "xid-message": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+        "window-handle-message": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
                         (gobject.TYPE_PYOBJECT,))}
 
     def __init__(self, pipeline=None):

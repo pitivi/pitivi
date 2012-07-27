@@ -376,7 +376,7 @@ class PreviewWidget(gtk.VBox, Loggable):
 
     def _sync_message_cb(self, bus, mess):
         if mess.type == gst.MESSAGE_ELEMENT:
-            if mess.has_name('prepare-xwindow-id'):
+            if mess.has_name('prepare-window-handle'):
                 sink = mess.src
 
                 # We need to set force-aspect-ratio and handle-expose properties
