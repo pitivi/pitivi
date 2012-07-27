@@ -21,6 +21,9 @@
 #    with PiTiVi devel)
 MYPITIVI=$HOME/pitivi-git
 
+# Change those variable to 'master' if you prefer to work with the master branch
+GST_RELEASE_TAG="RELEASE-0.11.92"
+
 #
 # Everything below this line shouldn't be edited!
 #
@@ -32,41 +35,227 @@ VERSION=`echo $0 | sed s/.*gst-//g`
 # base path under which dirs are installed
 PITIVI=$MYPITIVI
 
-# GES launch
+# base path under which dirs are installed
+PITIVI_PREFIX=$PITIVI/prefix
+
+# set up a bunch of paths
 export PATH="\
 $PITIVI/gst-editing-services/tools:\
 $PITIVI/pitivi/bin/:\
+$PITIVI/gstreamer/tools:\
+$PITIVI/gst-plugins-base/tools:\
+$PITIVI_PREFIX/bin:\
 $PATH"
 
-export PKG_CONFIG_PATH="\
-$PITIVI/gst-python/pkgconfig\
+# /some/path: makes the dynamic linker look in . too, so avoid this
+LD_LIBRARY_PATH=$PITIVI_PREFIX/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+DYLD_LIBRARY_PATH=$PITIVI_PREFIX/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
+GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}
+
+
+if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null; then
+  echo "Using System wide GStreamer 1.0"
+else
+  # GStreamer ffmpeg libraries
+  for path in libavformat libavutil libavcodec libpostproc libavdevice
+  do
+     LD_LIBRARY_PATH=$PITIVI/gst-ffmpeg/gst-libs/ext/ffmpeg/$path:$LD_LIBRARY_PATH
+     DYLD_LIBRARY_PATH=$PITIVI/gst-ffmpeg/gst-libs/ext/ffmpeg/$path:$DYLD_LIBRARY_PATH
+  done
+
+  # GStreamer plugins base libraries
+  for path in app audio cdda fft interfaces pbutils netbuffer riff rtp rtsp sdp tag utils video
+  do
+    LD_LIBRARY_PATH=$PITIVI/gst-plugins-base/gst-libs/gst/$path/.libs:$LD_LIBRARY_PATH
+    DYLD_LIBRARY_PATH=$PITIVI/gst-plugins-base/gst-libs/gst/$path/.libs:$DYLD_LIBRARY_PATH
+    GI_TYPELIB_PATH=$PITIVI/gst-plugins-base/gst-libs/gst/$path:$GI_TYPELIB_PATH
+  done
+
+  # GStreamer plugins bad libraries
+  for path in basecamerabinsrc codecparsers interfaces
+  do
+    LD_LIBRARY_PATH=$PITIVI/gst-plugins-bad/gst-libs/gst/$path/.libs:$LD_LIBRARY_PATH
+    DYLD_LIBRARY_PATH=$PITIVI/gst-plugins-bad/gst-libs/gst/$path/.libs:$DYLD_LIBRARY_PATH
+    GI_TYPELIB_PATH=$PITIVI/gst-plugins-bad/gst-libs/gst/$path:$GI_TYPELIB_PATH
+  done
+
+  # GStreamer core libraries
+  for path in base net check controller
+  do
+    LD_LIBRARY_PATH=$PITIVI/gstreamer/libs/gst/$path/.libs:$LD_LIBRARY_PATH
+    DYLD_LIBRARY_PATH=$PITIVI/gstreamer/libs/gst/$path/.libs:$DYLD_LIBRARY_PATH
+    GI_TYPELIB_PATH=$PITIVI/gstreamer/libs/gst/$path:$GI_TYPELIB_PATH
+  done
+
+  LD_LIBRARY_PATH=$PITIVI/gstreamer/gst/.libs:$LD_LIBRARY_PATH
+  DYLD_LIBRARY_PATH=$PITIVI/gstreamer/gst/.libs:$DYLD_LIBRARY_PATH
+  GI_TYPELIB_PATH=$PITIVI/gstreamer/gst:$GI_TYPELIB_PATH
+
+export PKG_CONFIG_PATH="$PITIVI_PREFIX/lib/pkgconfig\
+:$PITIVI/gstreamer/pkgconfig\
+:$PITIVI/gst-plugins-base/pkgconfig\
+:$PITIVI/gst-plugins-good/pkgconfig\
+:$PITIVI/gst-plugins-ugly/pkgconfig\
+:$PITIVI/gst-plugins-bad/pkgconfig\
+:$PITIVI/gst-ffmpeg/pkgconfig\
 ${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
-pythonver=`python -c "import sys; print sys.version[:3]"`
-export PYTHONPATH=$PITIVI/gst-editing-services/bindings/python/.libs/:$PITIVI/gst-python:$PITIVI_PREFIX/lib/python$pythonver/site-packages${PYTHONPATH:+:$PYTHONPATH}
+export GST_PLUGIN_PATH="\
+$PITIVI/gstreamer/plugins\
+:$PITIVI/gst-plugins-base/ext\
+:$PITIVI/gst-plugins-base/gst\
+:$PITIVI/gst-plugins-base/sys\
+:$PITIVI/gst-plugins-good/ext\
+:$PITIVI/gst-plugins-good/gst\
+:$PITIVI/gst-plugins-good/sys\
+:$PITIVI/gst-plugins-ugly/ext\
+:$PITIVI/gst-plugins-ugly/gst\
+:$PITIVI/gst-plugins-ugly/sys\
+:$PITIVI/gst-plugins-bad/ext\
+:$PITIVI/gst-plugins-bad/gst\
+:$PITIVI/gst-plugins-bad/sys\
+:$PITIVI/gst-ffmpeg/ext/\
+:$PITIVI/gst-openmax/omx/.libs\
+:$PITIVI/gst-omx/omx/.libs\
+:$PITIVI/gst-plugins-gl/gst/.libs\
+:$PITIVI/clutter-gst/clutter-gst/.libs\
+:$PITIVI/plugins\
+:$PITIVI/farsight2/gst\
+:$PITIVI/farsight2/transmitters\
+:$PITIVI/libnice/gst\
+${GST_PLUGIN_PATH:+:$GST_PLUGIN_PATH}"
 
-if test ! -e $PITIVI; then
-    mkdir $MYPITIVI &&\
-    cd $MYPITIVI &&\
-    #Get latest gst-python stable release \
-    wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.gz &&\
-    tar -xf gst-python-0.10.22.tar.gz &&\
-    mv gst-python-0.10.22 gst-python &&\
-    cd gst-python && ./configure && make &&\
-    #Get GES 0.10 \
-    cd .. && git clone git://anongit.freedesktop.org/gstreamer/gst-editing-services &&\
-    cd gst-editing-services && git checkout 0.10 && ./autogen.sh && make && cd ../ &&\
-    #Get pitivi \
-    git clone git://git.gnome.org/pitivi &&\
-    cd pitivi && \
-    git checkout master && ./autogen.sh && make
+  # don't use any system-installed plug-ins at all
+  export GST_PLUGIN_SYSTEM_PATH=
+  # set our registry somewhere else so we don't mess up the registry generated
+  # by an installed copy
+  export GST_REGISTRY=$PITIVI/gstreamer/registry.dat
+  # Point at the uninstalled plugin scanner
+  export GST_PLUGIN_SCANNER=$PITIVI/gstreamer/libs/gst/helpers/gst-plugin-scanner
+
+  # once MANPATH is set, it needs at least an "empty"component to keep pulling
+  # in the system-configured man paths from man.config
+  # this still doesn't make it work for the uninstalled case, since man goes
+  # look for a man directory "nearby" instead of the directory I'm telling it to
+  export MANPATH=$PITIVI/gstreamer/tools:$PITIVI_PREFIX/share/man:$MANPATH
+  pythonver=`python -c "import sys; print sys.version[:3]"`
 fi
 
-## if we got a command, run it, else start a shell
-if test ! -z "$1";
-then
-  $@
-  exit $?
+# And anyway add GStreamer editing services library
+export LD_LIBRARY_PATH=$PITIVI/gst-editing-services/ges/.libs:$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$PITIVI/gst-editing-services/ges/.libs:$DYLD_LIBRARY_PATH
+export PATH=$PITIVI/gst-editing-services/tools:$PATH
+GI_TYPELIB_PATH=$PITIVI/gst-editing-services/ges:$GI_TYPELIB_PATH
+
+# And GNonLin
+export GST_PLUGIN_PATH=$GST_PLUGIN_PATH:$PITIVI/gnonlin/gnl/.libs
+
+export LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH
+export GI_TYPELIB_PATH
+
+# First run? Build everything
+if test ! -e $PITIVI; then
+  echo "==========================================================================================="
+  echo "Creating new Pitivi development environment in $PITIVI"
+  echo "==========================================================================================="
+
+  echo "New $PITIVI directory"
+  mkdir $PITIVI/
+  if [ $? -ne 0 ]; then
+    echo "Could not create directory"
+    exit 1
+  fi
+  echo "New $PITIVI/prefix directory"
+  mkdir $PITIVI/prefix
+  if [ $? -ne 0 ]; then
+    echo "Could not create directory"
+    exit 1
+  fi
+
+  cd $PITIVI
+
+  if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null
+      then echo "GSt 1.0 is installed, not building it"
+      MODULES="gnonlin gst-editing-services"
+  else
+    echo "GSt 1.0 is not installed, building it"
+    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services"
+  fi
+
+  # Build GLib... if needed
+  if  pkg-config glib-2.0 --atleast-version=2.32; then
+    git clone git://git.gnome.org/glib
+    cd glib
+    git checkout glib-2-32
+    ./autogen.sh --prefix=$PITIVI/prefix
+    if [ $? -ne 0 ]; then
+      echo "Could not run autogen for GLib result: $?"
+      exit 1
+    fi
+    make
+    if [ $? -ne 0 ]; then
+      echo "Could not make GLib result: $?"
+      exit 1
+    fi
+    make install
+    if [ $? -ne 0 ]; then
+      echo "Could not install GLib result: $?"
+      exit 1
+    fi
+    cd ..
+  else
+      echo "GLib is in a recent enough version, not installing it"
+  fi
+
+  # Build all the necessary modules
+  for m in $MODULES
+  do
+    git clone git://anongit.freedesktop.org/gstreamer/$m
+
+    cd $m
+    git checkout $GST_RELEASE_TAG
+    if [ $? -ne 0 ]; then
+      echo "Could not run checkout $GST_RELEASE_TAG for $m result: $?"
+    fi
+
+    ./autogen.sh
+    if [ $? -ne 0 ]; then
+      echo "Could not run autogen for $m result: $?"
+      exit 1
+    fi
+
+    make
+    if [ $? -ne 0 ]; then
+      echo "Could not run autogen for $m result: $?"
+      exit 1
+    fi
+    cd ..
+  done
+
+  # And obviously ... PiTiVi itself
+  git clone git://git.gnome.org/pitivi
+  cd pitivi
+  git remote add thiblahute https://github.com/thiblahute/Pitivi.git
+  git remote update thiblahute
+  git checkout gtkcompat
+
+  ./autogen.sh
+  if [ $? -ne 0 ]; then
+    echo "Could not run autogen for $m result: $?"
+    exit 1
+  fi
+
+  make
+  if [ $? -ne 0 ]; then
+    echo "Could not run autogen for $m result: $?"
+    exit 1
+  fi
+  cd ..
+fi
+
+if [ "$1" == "--update" ]; then
+  echo "Updating repos"
 fi
 
 # set up prompt to help us remember we're in a subshell, cd to
