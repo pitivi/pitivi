@@ -180,6 +180,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
     """
     def __init__(self, instance, allow_full_screen=True):
         """ initialize with the Pitivi object """
+        gtksettings = gtk.Settings.get_default()
+        gtksettings.set_property("gtk-application-prefer-dark-theme", True)
         gtk.Window.__init__(self)
         Loggable.__init__(self, "mainwindow")
         self.app = instance
