@@ -634,8 +634,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         abt = gtk.AboutDialog()
         abt.set_name(APPNAME)
         if in_devel:
-            # TODO GTK3: use this string instead: _("Development version")
-            abt.set_version("git")
+            abt.set_version(_("Development version"))
         else:
             abt.set_version(pitivi_version)
         abt.set_website(APPURL)
@@ -675,8 +674,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         documenters = ["Jean-François Fortin Tam <nekohayo@gmail.com>", ]
         abt.set_documenters(documenters)
         # TODO GTK3: use set_license_type instead
-        abt.set_license(_("GNU Lesser General Public License\n"
-                          "See http://www.gnu.org/copyleft/lesser.html for more details"))
+        abt.set_license_type(gtk.License.LGPL_2_1)
         abt.set_icon_name("pitivi")
         abt.set_logo_icon_name("pitivi")
         abt.connect("response", self._aboutResponseCb)
