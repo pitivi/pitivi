@@ -166,9 +166,6 @@ def initial_checks():
         #FIXME enable version checking in GES
         return (_("Could not import GStreamer Editing Services "),
                 _("Make sure you have GStreamer Editing Services installed."))
-    if not __try_import__("zope.interface"):
-        return (_("Could not import the Zope interface module"),
-                _("Make sure you have the zope.interface module installed."))
     if not __try_import__("pkg_resources"):
         return (_("Could not import the distutils modules"),
                 _("Make sure you have the distutils Python module installed."))

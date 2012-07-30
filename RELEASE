@@ -17,7 +17,6 @@ Dependencies/requirements have been unchanged since the 0.15 release.
   * pygtk >= 2.18.0
   * pygtk >= 2.24.0
   * Python >= 2.5
-  * zope.interface (http://www.zope.org/Products/ZopeInterface)
   * setuptools (http://peak.telecommunity.com/DevCenter/setuptools)
   * pygoocanvas (http://live.gnome.org/GooCanvas)
   * pyxdg (http://www.freedesktop.org/wiki/Software/pyxdg)
