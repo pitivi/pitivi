@@ -212,7 +212,7 @@ class NumericWidget(gtk.HBox, DynamicWidget):
         range = upper - lower
         self.adjustment.props.lower = lower
         self.adjustment.props.upper = upper
-        self.spinner = gtk.SpinButton(self.adjustment)
+        self.spinner = gtk.SpinButton(adjustment=self.adjustment)
         self.pack_end(self.spinner, expand=not hasattr(self, 'slider'))
         self.spinner.show()
 
@@ -243,7 +243,7 @@ class NumericWidget(gtk.HBox, DynamicWidget):
             minimum = self.lower
         if self.upper is not None:
             maximum = self.upper
-        self.adjustment.set_all(value, minimum, maximum, step, page, 0)
+        self.adjustment.configure(value, minimum, maximum, step, page, 0)
         self.spinner.set_adjustment(self.adjustment)
 
 
