@@ -28,7 +28,6 @@ import os
 import gtk
 import gst
 import ges
-import webbrowser
 
 from time import time
 from urllib import unquote
@@ -631,9 +630,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _aboutResponseCb(self, dialog, unused_response):
         dialog.destroy()
 
-    def _showWebsiteCb(self, dialog, uri):
-        webbrowser.open_new(uri)
-
     def _aboutCb(self, unused_action):
         abt = gtk.AboutDialog()
         abt.set_name(APPNAME)
@@ -642,7 +638,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
             abt.set_version("git")
         else:
             abt.set_version(pitivi_version)
-        gtk.about_dialog_set_url_hook(self._showWebsiteCb)
         abt.set_website(APPURL)
         ges_version_str = "GES %i.%i.%i.%i" % (ges.version())
         gst_version_str = "GStreamer %i.%i.%i.%i" % (gst.version())
