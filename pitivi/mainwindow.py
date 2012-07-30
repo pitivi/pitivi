@@ -704,7 +704,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             chooser.add_filter(filt)
         default = gtk.FileFilter()
         default.set_name(_("All Supported Formats"))
-        default.add_custom(gtk.FILE_FILTER_URI, ges.formatter_can_load_uri)
+        default.add_custom(gtk.FILE_FILTER_URI, ges.formatter_can_load_uri, None)
         chooser.add_filter(default)
 
         response = chooser.run()
