@@ -391,14 +391,14 @@ class ChoiceWidget(gtk.HBox, DynamicWidget):
 
     """Abstractly, represents a choice between a list of named values. The
     association between value names and values is arbitrary. The current
-    implementation uses a gtk.ComboBox."""
+    implementation uses a gtk.ComboBoxText for simplicity."""
 
     def __init__(self, choices, default=None):
         gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
         self.choices = None
         self.values = None
-        self.contents = gtk.combo_box_new_text()
+        self.contents = gtk.ComboBoxText()
         self.pack_start(self.contents)
         self.setChoices(choices)
         self.contents.show()
