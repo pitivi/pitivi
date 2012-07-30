@@ -1538,11 +1538,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         scroll_pos = self.hadj.get_value()
         if (new_pos > scroll_pos + canvas_size) or (new_pos < scroll_pos):
             self.scrollToPosition(min(new_pos - canvas_size / 6,
-                                      self.hadj.upper - canvas_size - 1))
+                                      self.hadj.props.upper - canvas_size - 1))
         return False
 
     def scrollToPosition(self, position):
-        if position > self.hadj.upper:
+        if position > self.hadj.props.upper:
             # we can't perform the scroll because the canvas needs to be
             # updated
             gobject.idle_add(self._scrollToPosition, position)

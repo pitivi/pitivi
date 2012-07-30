@@ -222,7 +222,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                 self.player.set_property("video-sink", self.__videosink)
                 self.player.set_property("uri", self.current_selected_uri)
                 self.player.set_state(gst.STATE_PAUSED)
-                self.pos_adj.upper = duration
+                self.pos_adj.props.upper = duration
                 w, h = self.__get_best_size((video.get_par_num() / video.get_par_denom()) * video.get_width(),
                     video.get_height())
                 self.preview_video.set_size_request(w, h)
@@ -244,7 +244,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                 return
 
             audio = audio[0]
-            self.pos_adj.upper = duration
+            self.pos_adj.props.upper = duration
             self.preview_image.set_from_file(DEFAULT_AUDIO_IMAGE)
             self.preview_image.show()
             self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
