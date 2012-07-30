@@ -362,10 +362,10 @@ class EffectListWidget(gtk.VBox, Loggable):
         hfilters = gtk.HBox()
         hfilters.set_spacing(SPACING)
         hfilters.set_border_width(3)  # Prevents being flush against the notebook
-        self.effectType = gtk.combo_box_new_text()
+        self.effectType = gtk.ComboBoxText()
         self.effectType.append_text(_("Video effects"))
         self.effectType.append_text(_("Audio effects"))
-        self.effectCategory = gtk.combo_box_new_text()
+        self.effectCategory = gtk.ComboBoxText()
         self.effectType.set_active(VIDEO_EFFECT)
 
         hfilters.pack_start(self.effectType, expand=True)
