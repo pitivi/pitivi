@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-07-25 11:56+0000\n"
-"PO-Revision-Date: 2012-07-26 10:54+0200\n"
+"POT-Creation-Date: 2012-07-30 13:14+0000\n"
+"PO-Revision-Date: 2012-07-30 16:05+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Gtranslator 2.91.5\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../data/pitivi.desktop.in.in.h:1
 msgid "Pitivi Video Editor"
@@ -164,7 +164,6 @@ msgid "Reset to Factory Settings"
 msgstr "Restaurar a los ajustes de fábrica"
 
 #: ../data/ui/preferences.ui.h:5
-#| msgid "Reset to default value"
 msgid "Reset all settings to their default values"
 msgstr "Restablecer toda la configuración a sus valores predeterminados"
 
@@ -492,8 +491,8 @@ msgid ""
 "Make sure you have installed gst-plugins-good and that it's available in the "
 "GStreamer plugin path."
 msgstr ""
-"Asegúrese de que ha instalado los complementos «gst-plugins-good» y que están "
-"disponibles en la ruta de complementos de GStreamer."
+"Asegúrese de que ha instalado los complementos «gst-plugins-good» y que "
+"están disponibles en la ruta de complementos de GStreamer."
 
 #: ../pitivi/check.py:124
 msgid "PyGTK doesn't have cairo support"
@@ -595,8 +594,8 @@ msgstr ""
 #: ../pitivi/check.py:152
 #, python-format
 msgid ""
-"Install a version of the GStreamer Python bindings greater than or equal to %"
-"s."
+"Install a version of the GStreamer Python bindings greater than or equal to "
+"%s."
 msgstr ""
 "Instale una versión de los bindings de Python para GStreamer mayor o igual a "
 "%s."
@@ -639,11 +638,11 @@ msgstr ""
 #: ../pitivi/check.py:164
 #, python-format
 msgid ""
-"Install a version of the GNonLin GStreamer plugin greater than or equal to %"
-"s."
+"Install a version of the GNonLin GStreamer plugin greater than or equal to "
+"%s."
 msgstr ""
-"Instale una versión del complemento GNonLin para GStreamer mayor o igual a %"
-"s."
+"Instale una versión del complemento GNonLin para GStreamer mayor o igual a "
+"%s."
 
 #. FIXME enable version checking in GES
 #: ../pitivi/check.py:167
@@ -868,7 +867,6 @@ msgid "Redo the last operation that was undone"
 msgstr "Rehacer la última operación deshecha"
 
 #: ../pitivi/mainwindow.py:288
-#| msgid "Remove Clip"
 msgid "Remove layer"
 msgstr "Quitar capa"
 
@@ -950,20 +948,30 @@ msgstr "Configuraciones del vídeo"
 msgid "Transitions"
 msgstr "Transiciones"
 
-#: ../pitivi/mainwindow.py:647 ../pitivi/dialogs/startupwizard.py:161
+#: ../pitivi/mainwindow.py:648 ../pitivi/dialogs/startupwizard.py:161
 #, python-format
 msgid "PiTiVi %s is available."
 msgstr "PiTiVi %s está disponible."
 
-#: ../pitivi/mainwindow.py:660
-msgid "Contributors:"
-msgstr "Contribuidores:"
+#: ../pitivi/mainwindow.py:655
+msgid "Current maintainers:"
+msgstr "Mantenedores actuales:"
 
-#: ../pitivi/mainwindow.py:672
+#: ../pitivi/mainwindow.py:659
+msgid "Past maintainers:"
+msgstr "Mantenedores anteriores:"
+
+#: ../pitivi/mainwindow.py:664
+#| msgid "Contributors:"
+msgid "Contributors:\n"
+msgstr "Colaboradores:\n"
+
+#: ../pitivi/mainwindow.py:673
 msgid "translator-credits"
 msgstr "Daniel Mustieles <daniel.mustieles@gmail.com>, 2011"
 
-#: ../pitivi/mainwindow.py:675
+#. TODO GTK3: use set_license_type instead
+#: ../pitivi/mainwindow.py:679
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -971,53 +979,53 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Vea http://www.gnu.org/copyleft/lesser.html para más detalles"
 
-#: ../pitivi/mainwindow.py:683
+#: ../pitivi/mainwindow.py:687
 msgid "Open File..."
 msgstr "Abrir archivo…"
 
-#: ../pitivi/mainwindow.py:698
+#: ../pitivi/mainwindow.py:702
 msgid "All Supported Formats"
 msgstr "Todos los formatos soportados"
 
-#: ../pitivi/mainwindow.py:789
+#: ../pitivi/mainwindow.py:793
 msgid "Close without saving"
 msgstr "Cerrar sin guardar"
 
-#: ../pitivi/mainwindow.py:803
+#: ../pitivi/mainwindow.py:807
 msgid "Save changes to the current project before closing?"
 msgstr "¿Guardar el proyecto actual antes de cerrar?"
 
-#: ../pitivi/mainwindow.py:815
+#: ../pitivi/mainwindow.py:819
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "Si no guarda se perderán sus cambios desde el último %s."
 
-#: ../pitivi/mainwindow.py:819
+#: ../pitivi/mainwindow.py:823
 msgid "If you don't save, your changes will be lost."
 msgstr "Si no guarda sus cambios se perderán"
 
-#: ../pitivi/mainwindow.py:870
+#: ../pitivi/mainwindow.py:874
 msgid "Do you want to reload current project?"
 msgstr "¿Quiere recargar el proyecto actual?"
 
-#: ../pitivi/mainwindow.py:874
+#: ../pitivi/mainwindow.py:878
 msgid "Revert to saved project"
 msgstr "Revertir al proyecto guardado"
 
-#: ../pitivi/mainwindow.py:877
+#: ../pitivi/mainwindow.py:881
 msgid "All unsaved changes will be lost."
 msgstr "Se perderán todos los cambios sin guardar."
 
-#: ../pitivi/mainwindow.py:892
+#: ../pitivi/mainwindow.py:896
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "No se pudo cargar el proyecto «%s»"
 
-#: ../pitivi/mainwindow.py:894
+#: ../pitivi/mainwindow.py:898
 msgid "Error Loading Project"
 msgstr "Error al cargar el proyecto"
 
-#: ../pitivi/mainwindow.py:902
+#: ../pitivi/mainwindow.py:906
 msgid "Locate missing file..."
 msgstr "Encontrar archivo perdido…"
 
@@ -1034,7 +1042,7 @@ msgstr "Encontrar archivo perdido…"
 #. text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
 #. '\nPlease specify its new location:'
 #. % (info_name(info), length))
-#: ../pitivi/mainwindow.py:943
+#: ../pitivi/mainwindow.py:947
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
@@ -1043,26 +1051,26 @@ msgstr ""
 "El siguiente archivo se ha movido: «<b>%s</b>»\n"
 "Especifique su nueva ubicación:"
 
-#: ../pitivi/mainwindow.py:1069
+#: ../pitivi/mainwindow.py:1073
 msgid "Export To..."
 msgstr "Exportar a…"
 
-#: ../pitivi/mainwindow.py:1079 ../pitivi/mainwindow.py:1126
-#: ../pitivi/mainwindow.py:1238 ../pitivi/render.py:428
+#: ../pitivi/mainwindow.py:1083 ../pitivi/mainwindow.py:1130
+#: ../pitivi/mainwindow.py:1242 ../pitivi/render.py:428
 #: ../pitivi/timeline/timeline.py:1328
 msgid "Untitled"
 msgstr "Sin título"
 
-#: ../pitivi/mainwindow.py:1090 ../pitivi/mainwindow.py:1105
-#: ../pitivi/mainwindow.py:1136 ../pitivi/mainwindow.py:1151
+#: ../pitivi/mainwindow.py:1094 ../pitivi/mainwindow.py:1109
+#: ../pitivi/mainwindow.py:1140 ../pitivi/mainwindow.py:1155
 msgid "Detect Automatically"
 msgstr "Detectar automáticamente"
 
-#: ../pitivi/mainwindow.py:1118 ../pitivi/timeline/timeline.py:1322
+#: ../pitivi/mainwindow.py:1122 ../pitivi/timeline/timeline.py:1322
 msgid "Save As..."
 msgstr "Guardar como…"
 
-#: ../pitivi/mainwindow.py:1191
+#: ../pitivi/mainwindow.py:1195
 msgid "Preview - click outside to close"
 msgstr "Vista previa; pulse fuera para cerrar"
 
@@ -1363,7 +1371,6 @@ msgid "Set a personalized name for this layer"
 msgstr "Establecer un nombre personalizado para esta capa"
 
 #: ../pitivi/timeline/layer.py:92
-#| msgid "<b>Size</b>"
 msgid "<b>Solo mode</b>\n"
 msgstr "<b>Modo solitario</b>\n"
 
@@ -1372,7 +1379,6 @@ msgid "<b>Enable or disable this layer</b>\n"
 msgstr "<b>Activar o desactivar esta capa</b>\n"
 
 #: ../pitivi/timeline/layer.py:127
-#| msgid "Delete Selected"
 msgid "_Delete layer"
 msgstr "_Eliminar capa"
 
