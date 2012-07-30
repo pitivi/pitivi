@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-25 14:47+0200\n"
-"PO-Revision-Date: 2012-07-25 14:48+0200\n"
+"POT-Creation-Date: 2012-07-30 16:57+0200\n"
+"PO-Revision-Date: 2012-07-30 16:59+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -953,22 +953,31 @@ msgstr "Konfiguracja klipu"
 msgid "Transitions"
 msgstr "Przejścia"
 
-#: ../pitivi/mainwindow.py:647 ../pitivi/dialogs/startupwizard.py:161
+#: ../pitivi/mainwindow.py:648 ../pitivi/dialogs/startupwizard.py:161
 #, python-format
 msgid "PiTiVi %s is available."
 msgstr "PiTiVi %s jest dostępny."
 
-#: ../pitivi/mainwindow.py:660
-msgid "Contributors:"
-msgstr "Współautorzy:"
+#: ../pitivi/mainwindow.py:655
+msgid "Current maintainers:"
+msgstr "Obecni opiekunowie:"
 
-#: ../pitivi/mainwindow.py:672
+#: ../pitivi/mainwindow.py:659
+msgid "Past maintainers:"
+msgstr "Poprzedni opiekunowie:"
+
+#: ../pitivi/mainwindow.py:664
+msgid "Contributors:\n"
+msgstr "Współautorzy:\n"
+
+#: ../pitivi/mainwindow.py:673
 msgid "translator-credits"
 msgstr ""
 "Aleksander Łukasiewicz <aleksander@lukasiewicz.org>, 2009\n"
 "Aviary.pl <gnomepl@aviary.pl>, 2009, 2010, 2012"
 
-#: ../pitivi/mainwindow.py:675
+#. TODO GTK3: use set_license_type instead
+#: ../pitivi/mainwindow.py:679
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -977,56 +986,56 @@ msgstr ""
 "Więcej informacji jest dostępnych na stronie http://www.gnu.org/copyleft/"
 "lesser.html"
 
-#: ../pitivi/mainwindow.py:683
+#: ../pitivi/mainwindow.py:687
 msgid "Open File..."
 msgstr "Otwórz plik..."
 
-#: ../pitivi/mainwindow.py:698
+#: ../pitivi/mainwindow.py:702
 msgid "All Supported Formats"
 msgstr "Wszystkie obsługiwane formaty"
 
-#: ../pitivi/mainwindow.py:789
+#: ../pitivi/mainwindow.py:793
 msgid "Close without saving"
 msgstr "Zamknij bez zapisywania"
 
-#: ../pitivi/mainwindow.py:803
+#: ../pitivi/mainwindow.py:807
 msgid "Save changes to the current project before closing?"
 msgstr "Zapisać zmiany w bieżącym projekcie przed zamknięciem?"
 
-#: ../pitivi/mainwindow.py:815
+#: ../pitivi/mainwindow.py:819
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr ""
 "Jeżeli projekt nie zostanie zapisany, to zmiany z ostatnich %s zostaną "
 "utracone."
 
-#: ../pitivi/mainwindow.py:819
+#: ../pitivi/mainwindow.py:823
 msgid "If you don't save, your changes will be lost."
 msgstr ""
 "Jeżeli projekt nie zostanie zapisany, to wprowadzone zmiany zostaną utracone."
 
-#: ../pitivi/mainwindow.py:870
+#: ../pitivi/mainwindow.py:874
 msgid "Do you want to reload current project?"
 msgstr "Wczytać ponownie bieżący projekt?"
 
-#: ../pitivi/mainwindow.py:874
+#: ../pitivi/mainwindow.py:878
 msgid "Revert to saved project"
 msgstr "Przywróć do zapisanego projektu"
 
-#: ../pitivi/mainwindow.py:877
+#: ../pitivi/mainwindow.py:881
 msgid "All unsaved changes will be lost."
 msgstr "Wszystkie niezapisane zmiany zostaną utracone."
 
-#: ../pitivi/mainwindow.py:892
+#: ../pitivi/mainwindow.py:896
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Nie można wczytać projektu \"%s\""
 
-#: ../pitivi/mainwindow.py:894
+#: ../pitivi/mainwindow.py:898
 msgid "Error Loading Project"
 msgstr "Błąd podczas wczytywania projektu"
 
-#: ../pitivi/mainwindow.py:902
+#: ../pitivi/mainwindow.py:906
 msgid "Locate missing file..."
 msgstr "Znajdź brakujące pliki..."
 
@@ -1043,7 +1052,7 @@ msgstr "Znajdź brakujące pliki..."
 #. text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
 #. '\nPlease specify its new location:'
 #. % (info_name(info), length))
-#: ../pitivi/mainwindow.py:943
+#: ../pitivi/mainwindow.py:947
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
@@ -1052,26 +1061,26 @@ msgstr ""
 "Następujący plik został przeniesiony: \"<b>%s</b>\"\n"
 "Proszę podać jego nowe położenie:"
 
-#: ../pitivi/mainwindow.py:1069
+#: ../pitivi/mainwindow.py:1073
 msgid "Export To..."
 msgstr "Wyeksportuj do..."
 
-#: ../pitivi/mainwindow.py:1079 ../pitivi/mainwindow.py:1126
-#: ../pitivi/mainwindow.py:1238 ../pitivi/render.py:428
+#: ../pitivi/mainwindow.py:1083 ../pitivi/mainwindow.py:1130
+#: ../pitivi/mainwindow.py:1242 ../pitivi/render.py:428
 #: ../pitivi/timeline/timeline.py:1328
 msgid "Untitled"
 msgstr "Bez tytułu"
 
-#: ../pitivi/mainwindow.py:1090 ../pitivi/mainwindow.py:1105
-#: ../pitivi/mainwindow.py:1136 ../pitivi/mainwindow.py:1151
+#: ../pitivi/mainwindow.py:1094 ../pitivi/mainwindow.py:1109
+#: ../pitivi/mainwindow.py:1140 ../pitivi/mainwindow.py:1155
 msgid "Detect Automatically"
 msgstr "Wykrycie automatyczne"
 
-#: ../pitivi/mainwindow.py:1118 ../pitivi/timeline/timeline.py:1322
+#: ../pitivi/mainwindow.py:1122 ../pitivi/timeline/timeline.py:1322
 msgid "Save As..."
 msgstr "Zapisz jako..."
 
-#: ../pitivi/mainwindow.py:1191
+#: ../pitivi/mainwindow.py:1195
 msgid "Preview - click outside to close"
 msgstr "Podgląd - kliknięcie poza nim zamknie"
 
