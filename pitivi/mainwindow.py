@@ -370,6 +370,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vbox.show()
         self.menu = self.uimanager.get_widget("/MainMenuBar")
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
+        self.toolbar.get_style_context().add_class("primary-toolbar")
         vbox.pack_start(self.menu, expand=False)
         vbox.pack_start(self.toolbar, expand=False)
         self.menu.show()
