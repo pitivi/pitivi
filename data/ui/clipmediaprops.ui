@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
+  <requires lib="gtk+" version="3.4"/>
   <object class="GtkDialog" id="Import Settings">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
