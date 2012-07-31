@@ -197,12 +197,13 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 ## Drawing methods
 
     def drawBackground(self, cr):
-        setCairoColor(cr, self.style.bg[gtk.STATE_NORMAL])
+        style = self.get_style_context()
+        setCairoColor(cr, style.get_background_color(gtk.STATE_NORMAL))
         cr.rectangle(0, 0, cr.get_target().get_width(), cr.get_target().get_height())
         cr.fill()
         offset = int(self.nsToPixel(gst.CLOCK_TIME_NONE)) - self.pixbuf_offset
         if offset > 0:
-            setCairoColor(cr, self.style.bg[gtk.STATE_ACTIVE])
+            setCairoColor(cr, style.get_background_color(gtk.STATE_ACTIVE))
             cr.rectangle(0, 0, int(offset), cr.get_target().get_height())
             cr.fill()
 
@@ -227,7 +228,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         # We need to use 0.5 pixel offsets to get a sharp 1 px line in cairo
         paintpos = int(paintpos - 0.5) + 0.5
         height = int(cr.get_target().get_height() * (1 - height))
-        setCairoColor(cr, self.style.fg[gtk.STATE_NORMAL])
+        style = self.get_style_context()
+        setCairoColor(cr, style.get_color(gtk.STATE_NORMAL))
         cr.set_line_width(1)
         cr.move_to(paintpos, height)
         cr.line_to(paintpos, cr.get_target().get_height())
@@ -260,7 +262,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             else:
                 state = gtk.STATE_NORMAL
             timevalue = time_to_string(long(seconds))
-            setCairoColor(cr, self.style.fg[state])
+            style = self.get_style_context()
+            setCairoColor(cr, style.get_color(state))
             x_bearing, y_bearing = cr.text_extents("0")[:2]
             cr.move_to(int(paintpos), 1 - y_bearing)
             cr.show_text(timevalue)
@@ -277,8 +280,9 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             states = [gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT]
             paintpos += frame_width - offset
             frame_num = int(paintpos // frame_width) % 2
+            style = self.get_style_context()
             while paintpos < cr.get_target().get_width():
-                setCairoColor(cr, self.style.bg[states[frame_num]])
+                setCairoColor(cr, style.get_background_color(states[frame_num]))
                 cr.rectangle(paintpos, y, frame_width, height)
                 cr.fill()
                 frame_num = (frame_num + 1) % 2
