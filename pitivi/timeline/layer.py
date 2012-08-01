@@ -146,6 +146,8 @@ class BaseLayerControl(gtk.VBox, Loggable):
         self.popup.append(self.layer_last)
         self.popup.append(gtk.SeparatorMenuItem())
         self.popup.append(layer_delete)
+        for menu_item in self.popup:
+            menu_item.set_use_underline(True)
         self.popup.show_all()
 
         # Drag and drop
@@ -195,7 +197,7 @@ class BaseLayerControl(gtk.VBox, Loggable):
         """
         self._app.gui.timeline_ui.controls.selectLayerControl(self)
         if event.button == 3:
-            self.popup.popup(None, None, None, event.button, event.time)
+            self.popup.popup(None, None, None, None, event.button, event.time)
 
     def _selectionChangedCb(self):
         """

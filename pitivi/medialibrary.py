@@ -301,6 +301,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.popup.append(self.popup_remitem)
         self.popup.append(self.popup_playmenuitem)
         self.popup.append(self.popup_clipprop)
+        for menu_item in self.popup:
+            menu_item.set_use_underline(True)
         self.popup.show_all()
 
         # import sources dialogbox
@@ -1064,7 +1066,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         # An item may or may not have been selected,
         # but the user right-clicked outside it.
         # In that case, the sensitivity values will stay to the default.
-        self.popup.popup(None, None, None, event.button, event.time)
+        self.popup.popup(None, None, None, None, event.button, event.time)
 
     def _viewGetFirstSelected(self):
         paths = self.getSelectedPaths()
