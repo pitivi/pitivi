@@ -186,7 +186,6 @@ class ProjectManager(Signallable, Loggable):
                     _("Restore from backup"), gtk.RESPONSE_YES))
         dialog.set_icon_name("pitivi")
         dialog.set_resizable(False)
-        dialog.set_has_separator(False)
         dialog.set_default_response(gtk.RESPONSE_YES)
 
         primary = gtk.Label()

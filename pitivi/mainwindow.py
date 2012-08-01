@@ -797,13 +797,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
             save = gtk.STOCK_SAVE_AS
 
         dialog = gtk.Dialog("",
-            self, gtk.DIALOG_MODAL | gtk.DIALOG_NO_SEPARATOR,
+            self, gtk.DIALOG_MODAL,
             (_("Close without saving"), gtk.RESPONSE_REJECT,
                     gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                     save, gtk.RESPONSE_YES))
         dialog.set_icon_name("pitivi")
         dialog.set_resizable(False)
-        dialog.set_has_separator(False)
         dialog.set_default_response(gtk.RESPONSE_YES)
         dialog.set_transient_for(self)
 
