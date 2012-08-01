@@ -1274,7 +1274,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                             media_type == VIDEO_EFFECT:
                         #Actually add the effect
                         self.app.action_log.begin("add effect")
-                        effect = ges.TrackParseLaunchEffect(bin_desc)
+                        effect = ges.TrackParseLaunchEffect(bin_description=bin_desc)
                         tlobj.add_track_object(effect)
                         track.add_object(effect)
                         self.app.gui.clipconfig.effect_expander.updateAll()
@@ -1393,7 +1393,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         duration = 0
 
         for info in infos:
-            src = ges.TimelineFileSource(info.get_uri())
+            src = ges.TimelineFileSource(uri=info.get_uri())
             src.props.start = duration
             # Set image duration
             # FIXME: after GES Materials are merged, check if image instead

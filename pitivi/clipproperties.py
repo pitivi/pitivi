@@ -363,7 +363,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
                         media_type == VIDEO_EFFECT:
                     #Actually add the effect
                     self.app.action_log.begin("add effect")
-                    effect = ges.TrackParseLaunchEffect(bin_desc)
+                    effect = ges.TrackParseLaunchEffect(bin_description=bin_desc)
                     tlobj.add_track_object(effect)
                     track.add_object(effect)
                     self.updateAll()
@@ -641,7 +641,7 @@ class TransformationProperties(gtk.Expander):
     def _findOrCreateEffect(self, name):
         effect = self._findEffect(name)
         if not effect:
-            effect = ges.TrackParseLaunchEffect(name)
+            effect = ges.TrackParseLaunchEffect(bin_description=name)
             self._current_tl_obj.add_track_object(effect)
             tracks = self.app.projectManager.current.timeline.get_tracks()
             for track in tracks:
