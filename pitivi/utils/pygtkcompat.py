@@ -72,6 +72,8 @@ def _install_enums(module, dest=None, strip=''):
             if issubclass(obj, GObject.GFlags):
                 for value, flag in obj.__flags_values__.items():
                     name = flag.value_names[-1].replace(modname + '_', '')
+                    if strip and name.startswith(strip):
+                        name = name[len(strip):]
                     setattr(dest, name, flag)
         except TypeError:
             continue
@@ -341,6 +343,7 @@ def enable_gtk(version='2.0'):
     Gtk.image_new_from_animation = Gtk.Image.new_from_animation
     Gtk.image_new_from_icon_set = Gtk.Image.new_from_icon_set
     Gtk.image_new_from_file = Gtk.Image.new_from_file
+    Gtk.image_new_from_icon_name = Gtk.Image.new_from_icon_name
     Gtk.settings_get_default = Gtk.Settings.get_default
     Gtk.window_set_default_icon = Gtk.Window.set_default_icon
     Gtk.clipboard_get = Gtk.Clipboard.get
@@ -627,7 +630,6 @@ def enable_gst(version='1.0'):
     sys.modules['gst.pbutils'] = GstPbutils
     _install_enums(GstPbutils)
 
-
 def enable_goocanvas():
     gi.require_version('GooCanvas', '2.0')
     from gi.repository import GooCanvas
@@ -638,3 +640,22 @@ def enable_goocanvas():
     GooCanvas.Image = GooCanvas.CanvasImage
     GooCanvas.Group = GooCanvas.CanvasGroup
     GooCanvas.Rect = GooCanvas.CanvasRect
+    GooCanvas.Text = GooCanvas.CanvasText
+    #FIXME Missing anotation in GooItem(bug 677013), reimplement
+    def raise_new(self, above):
+        parent = self.get_parent()
+        if parent is None or above == self:
+            return
+        n_children = parent.get_n_children()
+        for i in range(n_children):
+            child = parent.get_child(i)
+            if (child == self):
+                item_pos = i
+            if (child == above):
+                above_pos = i
+        if above is None:
+            above_pos = n_children - 1
+        if (above_pos > item_pos):
+            parent.move_child(item_pos, above_pos)
+
+    setattr(GooCanvas.Item, "raise_", raise_new)
