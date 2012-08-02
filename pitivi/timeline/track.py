@@ -110,9 +110,11 @@ GlobalSettings.addConfigOption('clipFontColor',
 
 
 def text_size(text):
-    ink, logical = text.get_natural_extents()
-    x1, y1, x2, y2 = [pango.PIXELS(x) for x in logical]
-    return x2 - x1, y2 - y1
+    logical = pango.Rectangle()
+    tmp = pango.Rectangle()
+    text.get_natural_extents(tmp, logical)
+    pango.extents_to_pixels(logical, tmp)
+    return tmp.width, tmp.height
 
 
 #--------------------------------------------------------------#
