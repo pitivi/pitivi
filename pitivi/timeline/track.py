@@ -371,9 +371,9 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         def click(self, pos):
             timeline = self._view.timeline
             element = self._view.element
-            if self._last_event.get_state() & gtk.gdk.SHIFT_MASK:
+            if self._last_event.get_state()[1] & gtk.gdk.SHIFT_MASK:
                 timeline.selection.setToObj(element, SELECT_BETWEEN)
-            elif self._last_event.get_state() & gtk.gdk.CONTROL_MASK:
+            elif self._last_event.get_state()[1] & gtk.gdk.CONTROL_MASK:
                 if element.selected:
                     mode = UNSELECT
                 else:
@@ -645,7 +645,7 @@ class TrackTransition(TrackObject):
     def __init__(self, instance, element, track, timeline, utrack):
         TrackObject.__init__(self, instance, element, track, timeline, utrack)
         for thing in (self.bg, self._selec_indic, self.namebg, self.name):
-            self.add_child(thing)
+            self.add_child(thing, -1)
         if isinstance(element, ges.TrackVideoTransition):
             element.connect("notify::transition-type", self._changeVideoTransitionCb)
         self.movable = False
@@ -671,7 +671,7 @@ class TrackFileSource(TrackObject):
         self.preview = Preview(self.app, element, self.height)
         for thing in (self.bg, self.preview, self._selec_indic,
             self.start_handle, self.end_handle, self.namebg, self.name):
-            self.add_child(thing)
+            self.add_child(thing, -1)
 
     def _setElement(self, element):
         """
@@ -756,7 +756,7 @@ class Track(goocanvas.Group, Zoomable, Loggable):
         elif isinstance(track_object, ges.TrackSource):
             w = TrackFileSource(self.app, track_object, self.track, self.timeline, self)
             self.widgets[track_object] = w
-            self.add_child(w)
+            self.add_child(w, -1)
 
     def _objectRemovedCb(self, unused_timeline, track_object):
         if not isinstance(track_object, ges.TrackEffect) and track_object in self.widgets:
@@ -768,7 +768,7 @@ class Track(goocanvas.Group, Zoomable, Loggable):
     def _transitionAdded(self, transition):
         w = TrackTransition(self.app, transition, self.track, self.timeline, self)
         self.widgets[transition] = w
-        self.add_child(w)
+        self.add_child(w, -1)
         self.transitions.append(w)
         w.raise_(None)
 

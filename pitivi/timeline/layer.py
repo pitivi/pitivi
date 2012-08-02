@@ -47,11 +47,14 @@ class BaseLayerControl(gtk.VBox, Loggable):
         self.layer = layer
         self._selected = False
 
+        context = self.get_style_context()
+
         # get the default color for the current theme
-        self.UNSELECTED_COLOR = self.rc_get_style().bg[gtk.STATE_NORMAL]
+        self.UNSELECTED_COLOR = context.get_background_color(gtk.STATE_NORMAL)
         # use base instead of bg colors so that we get the lighter color
         # that is used for list items in TreeView.
-        self.SELECTED_COLOR = self.rc_get_style().base[gtk.STATE_SELECTED]
+        #FIXME gtk.STATE_SELECTED fails
+        self.SELECTED_COLOR = context.get_background_color(gtk.STATE_NORMAL)
 
         table = gtk.Table(rows=2, columns=2)
         table.props.border_width = 2
@@ -204,11 +207,11 @@ class BaseLayerControl(gtk.VBox, Loggable):
         Called when the selection state changes
         """
         if self.selected:
-            self.eventbox.modify_bg(gtk.STATE_NORMAL, self.SELECTED_COLOR)
-            self.name_entry.modify_bg(gtk.STATE_NORMAL, self.SELECTED_COLOR)
+            self.eventbox.override_background_color(gtk.STATE_NORMAL, self.SELECTED_COLOR)
+            self.name_entry.override_background_color(gtk.STATE_NORMAL, self.SELECTED_COLOR)
         else:
-            self.eventbox.modify_bg(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
-            self.name_entry.modify_bg(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
+            self.eventbox.override_background_color(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
+            self.name_entry.override_background_color(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
 
         # continue GTK signal propagation
         return True
@@ -276,9 +279,9 @@ class BaseLayerControl(gtk.VBox, Loggable):
         Used for visual drag'n'drop feedback
         """
         if highlighted:
-            self.sep.modify_bg(gtk.STATE_NORMAL, self.SELECTED_COLOR)
+            self.sep.override_background_color(gtk.STATE_NORMAL, self.SELECTED_COLOR)
         else:
-            self.sep.modify_bg(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
+            self.sep.override_background_color(gtk.STATE_NORMAL, self.UNSELECTED_COLOR)
 
 
 class VideoLayerControl(BaseLayerControl):

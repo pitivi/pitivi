@@ -397,7 +397,7 @@ class Controller(Loggable):
             self._hadj = self._canvas.app.gui.timeline_ui.hadj
             self._vadj = self._canvas.app.gui.timeline_ui.vadj
         self._last_event = event
-        s = event.get_state()
+        _, s = event.get_state()
         self._shift_down = s & gtk.gdk.SHIFT_MASK
         self._control_down = s & gtk.gdk.CONTROL_MASK
 

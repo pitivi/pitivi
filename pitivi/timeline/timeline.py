@@ -349,9 +349,9 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         elif self._timeline is not None:
             self._got_motion_notify = False
             mode = 0
-            if event.get_state() & gtk.gdk.SHIFT_MASK:
+            if event.get_state()[1] & gtk.gdk.SHIFT_MASK:
                 mode = 1
-            if event.get_state() & gtk.gdk.CONTROL_MASK:
+            if event.get_state()[1] & gtk.gdk.CONTROL_MASK:
                 mode = 2
             selected = self._objectsUnderMarquee()
             self._timeline.selection.setSelection(self._objectsUnderMarquee(), mode)
@@ -521,7 +521,7 @@ class TimelineControls(gtk.VBox, Loggable):
 
     def _sizeAllocatedCb(self, widget, alloc):
         if self.get_children():
-            self.separator_height = self.children()[0].getSeparatorHeight()
+            self.separator_height = self.get_children()[0].getSeparatorHeight()
         self.app.gui.timeline_ui._canvas.updateTracks()
 
 ## Timeline callbacks
@@ -591,11 +591,11 @@ class TimelineControls(gtk.VBox, Loggable):
                 self.reorder_child(child, middle + child.layer.get_priority())
 
     def _hideLastSeparator(self):
-        if self.children():
-            for child in self.children():
+        if self.get_children():
+            for child in self.get_children():
                 child.setSeparatorVisibility(True)
 
-            self.children()[-1].setSeparatorVisibility(False)
+            self.get_children()[-1].setSeparatorVisibility(False)
 
     def _updatePopupMenus(self):
         """
