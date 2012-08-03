@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import os
+import re
 from dogtail.predicate import GenericPredicate
 from test_base import BaseDogTail
 import dogtail.rawinput
@@ -55,6 +56,16 @@ class HelpFunc(BaseDogTail):
         children = parent.findChildren(GenericPredicate(roleName=roleName, name=name))
         for child in children:
             if child.text == text:
+                return child
+
+    def search_by_regex(self, regex, parent, name=None, roleName=None, regex_flags=0):
+        """
+        Search a parent widget for childs containing the given regular expression
+        """
+        children = parent.findChildren(GenericPredicate(roleName=roleName, name=name))
+        r = re.compile(regex, regex_flags)
+        for child in children:
+            if child.text is not None and r.match(child.text):
                 return child
 
     def insert_clip(self, icon, n=1):

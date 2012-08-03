@@ -10,17 +10,18 @@ class EffectLibraryTest(HelpFunc):
         tab = self.pitivi.tab("Effect Library")
         tab.click()
         search = tab.textentry("")
-        iconview = tab.child(roleName="layered pane")
+        view = tab.child(roleName="table")
         combotypes = tab.child(name="All effects", roleName="combo box")
-        #Some test of video effects and search
+        # Some test of video effects and search. The two column headers are
+        # also children and are always present, and each row has two children:
         search.text = "Crop"
-        self.assertEqual(len(iconview.children), 3)
+        self.assertEqual(len(view.children), 2 + 2 * 3)
         combotypes.click()
         tab.menuItem("Colors").click()
-        self.assertEqual(len(iconview.children), 0)
+        self.assertEqual(len(view.children), 2 + 2 * 0)
         combotypes.click()
         tab.menuItem("Geometry").click()
-        self.assertEqual(len(iconview.children), 3)
+        self.assertEqual(len(view.children), 2 + 2 * 3)
 
         #Audio effects
         tab.child(name="Video effects", roleName="combo box").click()
@@ -47,25 +48,25 @@ class EffectLibraryTest(HelpFunc):
         self.assertEqual(len(table.children), 3)
 
         center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
-        icon = self.search_by_text("Agingtv ", tab, roleName="icon")
+        icon = self.search_by_regex("^Agingtv", tab, roleName="table cell")
 
         #Drag video effect on the clip
         self.improved_drag(center(icon), clippos)
         self.assertEqual(len(table.children), 6)
         #Drag video effect to the table
-        icon = self.search_by_text("3Dflippo", tab, roleName="icon")
+        icon = self.search_by_regex("^3Dflippo", tab, roleName="table cell")
         self.improved_drag(center(icon), center(table))
         self.assertEqual(len(table.children), 9)
 
         #Drag audio effect on the clip
         tab.child(name="Video effects", roleName="combo box").click()
         tab.menuItem("Audio effects").click()
-        effect = tab.child(name="Amplifier")
+        effect = self.search_by_regex("^Amplifier", tab, roleName="table cell")
         self.improved_drag(center(effect), clippos)
         self.assertEqual(len(table.children), 12)
 
         #Drag audio effect on the table
-        effect = tab.child(name="Audiokaraoke")
+        effect = self.search_by_regex("^Audiokaraoke", tab, roleName="table cell")
         self.improved_drag(center(effect), center(table))
         self.assertEqual(len(table.children), 15)
 
