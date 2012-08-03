@@ -327,7 +327,7 @@ class PreviewWidget(gtk.VBox, Loggable):
 
     def _update_position(self, *args):
         if self.is_playing:
-            curr_pos = self.player.query_position(self.time_format, None)[0]
+            curr_pos = self.player.query_position(self.time_format)[1]
             self.pos_adj.set_value(long(curr_pos))
         return self.is_playing
 
@@ -392,7 +392,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                     else:
                         realsink = sink
                     if realsink.get_factory().get_name() == 'autovideosink':
-                        realsink = realsink.sinks().next()
+                        realsink = realsink.iterate_sinks().next()[1]
 
                     realsink.set_property('force-aspect-ratio', True)
                     realsink.set_property("handle-expose", True)
@@ -410,7 +410,7 @@ class PreviewWidget(gtk.VBox, Loggable):
                                    gobject.TYPE_INT,
                                    gobject.TYPE_UINT):
                 name = gst.tag_get_nick(tag)
-                value = unicode(tag_list[tag]).replace('<', ' ').replace('>', ' ')
+                value = unicode(taglist.get_string(tag)[1]).replace('<', ' ').replace('>', ' ')
                 self.tags[name] = value
 
     def _tag_found_cb(self, abus, mess):

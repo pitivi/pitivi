@@ -188,10 +188,10 @@ class TrackObjectController(Controller):
             self.previous_x = self.previous_x * ratio
 
         self.ref = Zoomable.pixelToNs(10000000000)
-        tx = self._view.props.parent.get_transform()
+        tx = self._view.props.parent.get_simple_transform()
 
         # store y offset for later priority calculation
-        self._y_offset = tx[5]
+        self._y_offset = tx[4]
         # zero y component of mousdown coordiante
         self._mousedown = Point(self._mousedown[0], 0)
 

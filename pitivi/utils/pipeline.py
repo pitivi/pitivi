@@ -439,7 +439,8 @@ class SimplePipeline(Loggable, Signallable):
                 # handle element message synchronously
                 self.emit('window-handle-message', message)
                 #Remove the bus sync handler avoiding deadlocks
-                self._bus.set_sync_handler(None)
+                #FIXME wrong anotation dont allow none, reported as bug b681139
+                #self._bus.set_sync_handler(None, None)
                 self._has_sync_bus_handler = False
         return gst.BUS_PASS
 
