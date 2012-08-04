@@ -347,20 +347,20 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         return icon
 
     def _queryTooltipCb(self, view, x, y, keyboard_mode, tooltip):
-        context = view.get_tooltip_context(x, y, keyboard_mode)
-        if context is None:
+        is_row, x, y, model, path, iter_ = view.get_tooltip_context(x, y, keyboard_mode)
+        if not is_row:
             return False
 
-        view.set_tooltip_item(tooltip, context[1][0])
+        view.set_tooltip_item(tooltip, path)
 
-        name = self.modelFilter.get_value(context[2], COL_TRANSITION_ID)
+        name = model.get_value(iter_, COL_TRANSITION_ID)
         if self._current_transition_name != name:
             self._current_transition_name = name
-            icon = self.modelFilter.get_value(context[2], COL_ICON)
+            icon = model.get_value(iter_, COL_ICON)
             self._current_tooltip_icon = icon
 
-        longname = self.modelFilter.get_value(context[2], COL_NAME_TEXT).strip()
-        description = self.modelFilter.get_value(context[2], COL_DESC_TEXT)
+        longname = model.get_value(iter_, COL_NAME_TEXT).strip()
+        description = model.get_value(iter_, COL_DESC_TEXT)
         txt = "<b>%s:</b>\n%s" % (glib.markup_escape_text(longname),
                                   glib.markup_escape_text(description),)
         tooltip.set_markup(txt)

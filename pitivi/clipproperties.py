@@ -404,14 +404,14 @@ class EffectProperties(gtk.Expander, gtk.HBox):
     def _expandedCb(self, expander, params):
         self.updateAll()
 
-    def _treeViewQueryTooltipCb(self, treeview, x, y, keyboard_mode, tooltip):
-        context = treeview.get_tooltip_context(x, y, keyboard_mode)
+    def _treeViewQueryTooltipCb(self, view, x, y, keyboard_mode, tooltip):
+        is_row, x, y, model, path, iter_ = view.get_tooltip_context(x, y, keyboard_mode)
 
-        if context is None:
+        if not is_row:
             return False
 
         # FIXME GObject Introspection, make sure forth is the path
-        #treeview.set_tooltip_row(tooltip, context[1])
+        #view.set_tooltip_row(tooltip, path)
 
         return True
 
