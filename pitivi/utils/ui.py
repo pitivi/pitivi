@@ -25,6 +25,7 @@
 UI utilities. This file contain the UI constants, and various functions and
 classes that help with UI drawing around the application
 """
+import glib
 import gst
 import gtk
 import os
@@ -33,7 +34,6 @@ import cairo
 from itertools import izip
 from urllib import unquote
 from gettext import ngettext, gettext as _
-from xml.sax.saxutils import escape
 from decimal import Decimal
 
 from pitivi.utils.loggable import doLog, ERROR
@@ -188,7 +188,8 @@ def beautify_info(info):
 
 def info_name(info):
     """Return a human-readable filename (without the path and quoting)."""
-    return escape(unquote(os.path.basename(info.get_uri())))
+    filename = unquote(os.path.basename(info.get_uri()))
+    return glib.markup_escape_text(filename)
 
 
 def beautify_stream(stream):

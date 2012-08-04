@@ -34,6 +34,7 @@ Effects global handling
      that are too cumbersome to use as such
   _ Complex Audio/Video Effects
 """
+import glib
 import gst
 import gtk
 import re
@@ -44,7 +45,6 @@ import pango
 
 
 from gettext import gettext as _
-from xml.sax.saxutils import escape
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.settings import GlobalSettings
@@ -457,6 +457,7 @@ class EffectListWidget(gtk.VBox, Loggable):
     def view_description_cell_data_func(column, cell, model, iter_, data):
 
         name, desc = model.get(iter_, COL_NAME_TEXT, COL_DESC_TEXT)
+        escape = glib.markup_escape_text
         cell.props.markup = "<b>%s</b>\n%s" % (escape(name),
                                                escape(desc),)
 

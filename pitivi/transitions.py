@@ -21,12 +21,12 @@
 # Boston, MA 02110-1301, USA.
 
 import ges
+import glib
 import gtk
 import os
 import gobject
 
 from gettext import gettext as _
-from xml.sax.saxutils import escape
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.utils.loggable import Loggable
@@ -359,9 +359,10 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
             icon = self.modelFilter.get_value(context[2], COL_ICON)
             self._current_tooltip_icon = icon
 
-        longname = escape(self.modelFilter.get_value(context[2], COL_NAME_TEXT).strip())
-        description = escape(self.modelFilter.get_value(context[2], COL_DESC_TEXT))
-        txt = "<b>%s:</b>\n%s" % (longname, description)
+        longname = self.modelFilter.get_value(context[2], COL_NAME_TEXT).strip()
+        description = self.modelFilter.get_value(context[2], COL_DESC_TEXT)
+        txt = "<b>%s:</b>\n%s" % (glib.markup_escape_text(longname),
+                                  glib.markup_escape_text(description),)
         tooltip.set_markup(txt)
         return True
 
