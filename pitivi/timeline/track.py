@@ -40,7 +40,6 @@ from pitivi.settings import GlobalSettings
 from pitivi.utils.signal import Signallable
 from pitivi.utils.timeline import SELECT, SELECT_ADD, UNSELECT, \
     SELECT_BETWEEN, EditingContext, Controller, View, Zoomable
-from pitivi.utils.ui import unpack_cairo_pattern, unpack_cairo_gradient
 from thumbnailer import Preview
 
 
@@ -525,12 +524,11 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
 
     def _clipAppearanceSettingsChangedCb(self, *args):
         color = self._getColor()
-        pattern = unpack_cairo_gradient(color)
-        self.bg.props.fill_pattern = pattern
-        self.namebg.props.fill_pattern = pattern
-        self._selec_indic.props.fill_pattern = unpack_cairo_pattern(self.settings.selectedColor)
+        self.bg.props.fill_color_rgba = color
+        self.namebg.props.fill_color_rgba = color
+        self._selec_indic.props.fill_color_rgba = self.settings.selectedColor
         self.name.props.font = self.settings.clipFontDesc
-        self.name.props.fill_pattern = unpack_cairo_pattern(self.settings.clipFontColor)
+        self.name.props.fill_color_rgba = self.settings.clipFontColor
         twidth, theight = text_size(self.name)
         self.namewidth = twidth
         self.nameheight = theight

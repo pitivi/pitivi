@@ -417,7 +417,7 @@ class MultimediaSettings(Signallable, Loggable):
         """ Returns the GstCaps corresponding to the audio settings """
         # TODO: Figure out why including 'depth' causes pipeline failures:
         astr = "rate=%d,channels=%d" % (self.audiorate, self.audiochannels)
-        caps_str = "audio/x-raw-int,%s;audio/x-raw-float,%s" % (astr, astr)
+        caps_str = "audio/x-raw,%s" % (astr)
         audio_caps = gst.caps_from_string(caps_str)
         if self.aencoder:
             return get_compatible_sink_caps(self.aencoder, audio_caps)

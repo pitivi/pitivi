@@ -208,9 +208,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         root.add_child(self.tracks, -1)
         self._marquee = goocanvas.Rect(
             parent=root,
-            # FIXME GObject Introspection port
-            #stroke_pattern=unpack_cairo_pattern(0x33CCFF66),
-            #fill_pattern=unpack_cairo_pattern(0x33CCFF66),
+            stroke_color_rgba=0x33CCFF66,
+            fill_color_rgba=0x33CCFF66,
             visibility=goocanvas.ITEM_INVISIBLE)
         self._playhead = goocanvas.Rect(
             y=-10,

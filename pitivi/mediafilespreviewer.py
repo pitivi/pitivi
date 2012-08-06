@@ -64,7 +64,7 @@ class PreviewWidget(gtk.VBox, Loggable):
         self.discoverer = Discoverer.new(gst.SECOND)
 
         #playbin for play pics
-        self._unsurePlaybin()
+        self.player = gst.element_factory_make("playbin", "preview-player")
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.connect('message', self._bus_message_cb)
@@ -139,10 +139,6 @@ class PreviewWidget(gtk.VBox, Loggable):
         vbox.pack_start(self.b_details, expand=False, fill=False)
         vbox.show()
         self.pack_start(vbox, expand=False, fill=False)
-
-    def _unsurePlaybin(self):
-        # FIXME GI, remove that method
-        self.player = gst.element_factory_make("playbin", "preview-player")
 
     def setMinimal(self):
         self.remove(self.l_tags)
