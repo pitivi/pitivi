@@ -451,7 +451,11 @@ class EffectListWidget(gtk.VBox, Loggable):
 
         self.show_categories(VIDEO_EFFECT)
 
-        self.show_all()
+        # Individually show the tab's widgets.
+        # If you use self.show_all(), the tab will steal focus on startup.
+        hfilters.show_all()
+        hsearch.show_all()
+        scrollwin.show_all()
 
     @staticmethod
     def view_description_cell_data_func(column, cell, model, iter_, data):
