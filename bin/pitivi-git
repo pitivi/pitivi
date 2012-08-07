@@ -184,7 +184,7 @@ if test ! -e $PITIVI; then
   fi
 
   # Build GLib... if needed
-  if  pkg-config glib-2.0 --atleast-version=2.32; then
+  if  ! pkg-config glib-2.0 --atleast-version=2.32; then
     git clone git://git.gnome.org/glib
     cd glib
     git checkout glib-2-32
