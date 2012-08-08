@@ -114,6 +114,10 @@ def _init_gobject_gtk_gst_ges():
     except ImportError:
         raise SystemExit("GStreamer Editing Services couldn't be found!")
 
+    from gi.repository import GObject
+
+    GObject.threads_init()
+
     try:
         pitivi.utils.pygtkcompat.enable_goocanvas()
     except ImportError:
