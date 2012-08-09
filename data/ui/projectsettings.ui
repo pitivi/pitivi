@@ -403,6 +403,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
                                 <property name="adjustment">adjustment1</property>
+                                <property name="numeric">True</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -428,6 +429,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
                                 <property name="adjustment">adjustment2</property>
+                                <property name="numeric">True</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
