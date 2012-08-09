@@ -589,6 +589,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _exportProjectAsTarCb(self, unused_action):
         uri = self._showExportDialog(self.app.current)
+        result = None
         if uri:
             result = self.app.projectManager.exportProject(self.app.current, uri)
 
