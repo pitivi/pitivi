@@ -180,8 +180,8 @@ def initial_checks():
         gst.element_factory_make("frei0r-filter-scale0tilt")
     except gst.ElementNotFoundError:
         soft_deps["Frei0r"] = _("Additional video effects")
-    if not gst.registry_get_default().find_plugin("ffmpeg"):
-        soft_deps["GStreamer FFmpeg plugin"] = _('Additional multimedia codecs through the FFmpeg library')
+    if not gst.registry_get_default().find_plugin("libav"):
+        soft_deps["GStreamer Libav plugin"] = _('Additional multimedia codecs through the Libav library')
     # Test for gst bad
     # This is disabled because, by definition, gst bad is a set of plugins that can
     # move to gst good or ugly, and we don't really have something to rely upon.
