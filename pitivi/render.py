@@ -413,6 +413,10 @@ class RenderDialog(Loggable):
         icon = os.path.join(configure.get_pixmap_dir(), "pitivi-render-16.png")
         self.window.set_icon_from_file(icon)
 
+        # Set the shading style in the toolbar below presets
+        presets_toolbar = self.builder.get_object("render_presets_toolbar")
+        presets_toolbar.get_style_context().add_class("inline-toolbar")
+
         # FIXME: re-enable this widget when bug #637078 is implemented
         self.selected_only_button.destroy()
 

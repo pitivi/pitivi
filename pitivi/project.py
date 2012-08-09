@@ -727,6 +727,12 @@ class ProjectSettingsDialog():
         self.wg.addEdge(self.sample_rate_combo, self.save_audio_preset_button)
         self.wg.addEdge(self.sample_depth_combo, self.save_audio_preset_button)
 
+        # Set the shading style in the contextual toolbars below presets
+        video_presets_toolbar = self.builder.get_object("video_presets_toolbar")
+        audio_presets_toolbar = self.builder.get_object("audio_presets_toolbar")
+        video_presets_toolbar.get_style_context().add_class("inline-toolbar")
+        audio_presets_toolbar.get_style_context().add_class("inline-toolbar")
+
         self.updateUI()
 
         self.createAudioNoPreset(self.audio_presets)

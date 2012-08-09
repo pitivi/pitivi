@@ -127,7 +127,6 @@
                   <object class="GtkVBox" id="vbox2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="spacing">6</property>
                     <child>
                       <object class="GtkLabel" id="label11">
                         <property name="visible">True</property>
@@ -197,6 +196,7 @@
                       <object class="GtkScrolledWindow" id="scrolledwindow2">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="hscrollbar_policy">never</property>
                         <property name="shadow_type">in</property>
                         <child>
                           <object class="GtkTreeView" id="video_preset_treeview">
@@ -215,72 +215,68 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkHBox" id="hbox5">
+                      <object class="GtkToolbar" id="video_presets_toolbar">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="spacing">6</property>
+                        <property name="show_arrow">False</property>
                         <child>
-                          <object class="GtkButton" id="add_video_preset_button">
-                            <property name="label">gtk-add</property>
+                          <object class="GtkToolButton" id="add_video_preset_button">
                             <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Create a new preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="use_stock">True</property>
+                            <property name="stock_id">gtk-add</property>
                             <signal name="clicked" handler="_addVideoPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">0</property>
+                            <property name="homogeneous">True</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="remove_video_preset_button">
-                            <property name="label">gtk-remove</property>
+                          <object class="GtkToolButton" id="remove_video_preset_button">
                             <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Remove the selected preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="use_stock">True</property>
+                            <property name="stock_id">gtk-remove</property>
                             <signal name="clicked" handler="_removeVideoPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">1</property>
+                            <property name="homogeneous">True</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="save_video_preset_button">
-                            <property name="label">gtk-save</property>
+                          <object class="GtkToolButton" id="save_video_preset_button">
                             <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Save changes to the currently selected preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="use_stock">True</property>
+                            <property name="stock_id">gtk-save</property>
                             <signal name="clicked" handler="_saveVideoPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
-                            <property name="position">2</property>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">3</property>
                       </packing>
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
+                    <property name="expand">True</property>
                     <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
@@ -289,6 +285,7 @@
                   <object class="GtkTable" id="video_properties_table">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="halign">end</property>
                     <property name="valign">start</property>
                     <property name="n_rows">7</property>
                     <property name="n_columns">2</property>
@@ -559,7 +556,6 @@
                   <object class="GtkVBox" id="vbox1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="spacing">6</property>
                     <child>
                       <object class="GtkLabel" id="label10">
                         <property name="visible">True</property>
@@ -647,61 +643,57 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkHBox" id="hbox6">
+                      <object class="GtkToolbar" id="audio_presets_toolbar">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="spacing">6</property>
                         <child>
-                          <object class="GtkButton" id="add_audio_preset_button">
-                            <property name="label">gtk-add</property>
+                          <object class="GtkToolButton" id="add_audio_preset_button">
                             <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Create a new preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="use_stock">True</property>
+                            <property name="stock_id">gtk-add</property>
                             <signal name="clicked" handler="_addAudioPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">0</property>
+                            <property name="homogeneous">True</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="remove_audio_preset_button">
-                            <property name="label">gtk-remove</property>
+                          <object class="GtkToolButton" id="remove_audio_preset_button">
                             <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Remove the selected preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="use_stock">True</property>
+                            <property name="stock_id">gtk-remove</property>
                             <signal name="clicked" handler="_removeAudioPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">1</property>
+                            <property name="homogeneous">True</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="save_audio_preset_button">
-                            <property name="label">gtk-save</property>
+                          <object class="GtkToolButton" id="save_audio_preset_button">
                             <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Save changes to the currently selected preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="use_stock">True</property>
+                            <property name="stock_id">gtk-save</property>
                             <signal name="clicked" handler="_saveAudioPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
-                            <property name="position">2</property>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
                           </packing>
                         </child>
                       </object>
