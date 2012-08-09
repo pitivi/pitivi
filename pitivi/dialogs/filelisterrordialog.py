@@ -73,9 +73,9 @@ class FileListErrorDialog(Signallable, Loggable):
                 uri = uri[7:]
             uri = uri.split('/')[-1]
             uri = unquote(uri)
-            exp = gtk.Expander(uri)
+            exp = gtk.Expander(label=uri)
         else:
-            exp = gtk.Expander(reason)
+            exp = gtk.Expander(label=reason)
 
         textbuffer = gtk.TextBuffer()
         table = textbuffer.get_tag_table()
@@ -96,7 +96,7 @@ class FileListErrorDialog(Signallable, Loggable):
             end = textbuffer.get_end_iter()
             textbuffer.insert(end, "%s\n" % extra)
 
-        textview = gtk.TextView(textbuffer)
+        textview = gtk.TextView(buffer=textbuffer)
         textview.set_wrap_mode(gtk.WRAP_WORD)
 
         exp.add(textview)
