@@ -537,7 +537,7 @@ class RenderDialog(Loggable):
                 lambda: get_combo_value(widget))
 
     def muxer_setter(self, widget, value):
-        set_combo_value(widget, gst.element_factory_find(value))
+        set_combo_value(widget, gst.ElementFactory.find(value))
         self.settings.setEncoders(muxer=value)
 
         # Update the extension of the filename.
@@ -552,14 +552,14 @@ class RenderDialog(Loggable):
             self.muxer_combo_changing = False
 
     def acodec_setter(self, widget, value):
-        set_combo_value(widget, gst.element_factory_find(value))
+        set_combo_value(widget, gst.ElementFactory.find(value))
         self.settings.setEncoders(aencoder=value)
         if not self.muxer_combo_changing:
             # The user directly changed the audio encoder combo.
             self.preferred_aencoder = value
 
     def vcodec_setter(self, widget, value):
-        set_combo_value(widget, gst.element_factory_find(value))
+        set_combo_value(widget, gst.ElementFactory.find(value))
         self.settings.setEncoders(vencoder=value)
         if not self.muxer_combo_changing:
             # The user directly changed the video encoder combo.
@@ -787,7 +787,7 @@ class RenderDialog(Loggable):
         # Muxer settings
         # note: this will trigger an update of the codec comboboxes
         set_combo_value(self.muxercombobox,
-            gst.element_factory_find(self.settings.muxer))
+            gst.ElementFactory.find(self.settings.muxer))
 
     def _checkForExistingFile(self, *args):
         """
@@ -840,7 +840,7 @@ class RenderDialog(Loggable):
         if preferred_encoder:
             # A preference exists, pick it if it can be found in
             # the current model of the combobox.
-            vencoder = gst.element_factory_find(preferred_encoder)
+            vencoder = gst.ElementFactory.find(preferred_encoder)
             set_combo_value(encoder_combo, vencoder, default_index=0)
         else:
             # No preference exists, pick the first encoder from
