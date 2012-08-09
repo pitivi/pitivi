@@ -274,7 +274,7 @@ class ProjectManager(Signallable, Loggable):
             if not backup:
                 project.uri = uri
 
-        if uri is None or not ges.formatter_can_save_uri(uri):
+        if uri is None or not formatter.can_save_uri(uri):
             self.emit("save-project-failed", uri,
                     _("Cannot save with this file format."))
             return
