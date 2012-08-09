@@ -104,12 +104,17 @@ def in_devel():
 #------------------------------ URI helpers   --------------------------------#
 def isWritable(path):
     """Check if the file/path is writable"""
-    try:
-        # Needs to be "rw", not "w", otherwise you'll corrupt files
-        f = open(path, "rw")
-    except:
-        return False
-    f.close()
+    if os.path.isdir(path):
+        # The given path is an existing directory.
+        # To properly check if it is writable, you need to use os.access.
+        return os.access(path, os.W_OK)
+    else:
+        # The given path is supposed to be a file.
+        # Avoid using open(path, "w"), as it might corrupt existing files.
+        # And yet, even if the parent directory is actually writable,
+        # open(path, "rw") will IOError if the file doesn't already exist.
+        # Therefore, simply check the directory permissions instead:
+        return os.access(os.path.dirname(path), os.W_OK)
     return True
 
 
@@ -127,8 +132,7 @@ def uri_is_valid(uri):
 
 
 def uri_is_reachable(uri):
-    """ Check whether the given uri is reachable and we can read/write
-    to it.
+    """ Check whether the given uri is reachable by GStreamer.
 
     @param uri: The location to check
     @type uri: C{URI}
