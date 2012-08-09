@@ -26,7 +26,7 @@ class HelpFunc(BaseDogTail):
             text_field = save_dialog.child(roleName="text")
             text_field.text = path_dir
             dogtail.rawinput.pressKey("Enter")
-            sleep(0.05)
+            sleep(0.15)
             text_field.text = filename
             dogtail.rawinput.pressKey("Enter")
             # Save to the list of items to cleanup afterwards

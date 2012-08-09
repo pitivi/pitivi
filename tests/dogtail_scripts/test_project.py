@@ -152,7 +152,7 @@ class ProjectPropertiesTest(HelpFunc):
         path = "/tmp/" + filename
         backup_path = path + "~"
         self.unlink.append(backup_path)
-        self.saveProject("/tmp/" + filename)
+        self.saveProject(path)
 
         #Change somthing
         seektime = self.search_by_text("0:00:00.000", self.pitivi, roleName="text")
@@ -229,8 +229,8 @@ class ProjectPropertiesTest(HelpFunc):
         tab = self.pitivi.tab("Media Library")
         seektime = self.search_by_text("0:00:00.000", self.pitivi, roleName="text")
         infobar_media = tab.child(name="Add media to your project by dragging files and folders here or by using the \"Import Files...\" button.")
-        filename1 = "/tmp/test_project%i.xptv" % time()
-        filename2 = "/tmp/test_project%i.xptv" % time()
+        filename1 = "/tmp/test_project-%i.xptv" % time()
+        filename2 = "/tmp/test_project-%i.xptv" % time()
 
         #Create project
         self.assertTrue(infobar_media.showing)
