@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="3.4"/>
+  <!-- interface-requires gtk+ 3.4 -->
   <object class="GtkAdjustment" id="adjustment1">
     <property name="lower">1</property>
     <property name="upper">100</property>
@@ -74,18 +74,20 @@
     <property name="default_height">400</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox3">
+      <object class="GtkBox" id="dialog-vbox3">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
         <property name="spacing">12</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area3">
+          <object class="GtkButtonBox" id="dialog-action_area3">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="closebutton">
                 <property name="label">gtk-close</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -102,6 +104,7 @@
             <child>
               <object class="GtkButton" id="render_button">
                 <property name="label">pitivi-render</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -150,36 +153,39 @@
                     <property name="position">0</property>
                   </packing>
                 </child>
-                    <child>
-                      <object class="GtkInfoBar" id="render-preset-infobar">
-                        <property name="app_paintable">True</property>
+                <child>
+                  <object class="GtkInfoBar" id="render-preset-infobar">
+                    <property name="app_paintable">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="message_type">error</property>
+                    <child internal-child="content_area">
+                      <object class="GtkBox" id="infobar-content_area3">
                         <property name="can_focus">False</property>
-                        <property name="message_type">error</property>
-                        <child internal-child="content_area">
-                          <object class="GtkBox" id="infobar-content_area3">
+                        <child>
+                          <object class="GtkLabel" id="render-preset-error-label">
+                            <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <child>
-                              <object class="GtkLabel" id="render-preset-error-label">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
                         </child>
-                        <child internal-child="action_area">
-                          <object class="GtkButtonBox" id="infobar-action_area3">
-                            <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <property name="layout_style">center</property>
-                            <child>
-                              <placeholder/>
-                            </child>
-                          </object>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child internal-child="action_area">
+                      <object class="GtkButtonBox" id="infobar-action_area3">
+                        <property name="can_focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <property name="layout_style">center</property>
+                        <child>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -188,18 +194,25 @@
                         <property name="position">1</property>
                       </packing>
                     </child>
-                    
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow2">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-                    <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
                     <property name="shadow_type">in</property>
                     <child>
                       <object class="GtkTreeView" id="render_preset_treeview">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="treeview-selection1"/>
+                        </child>
                       </object>
                     </child>
                   </object>
@@ -217,6 +230,7 @@
                     <child>
                       <object class="GtkButton" id="add_render_preset_button">
                         <property name="label">gtk-add</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
@@ -233,6 +247,7 @@
                     <child>
                       <object class="GtkButton" id="remove_render_preset_button">
                         <property name="label">gtk-remove</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -250,6 +265,7 @@
                     <child>
                       <object class="GtkButton" id="save_render_preset_button">
                         <property name="label">gtk-save</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
@@ -272,8 +288,8 @@
                 </child>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
                 <property name="padding">5</property>
                 <property name="position">0</property>
               </packing>
@@ -286,6 +302,7 @@
                   <object class="GtkVBox" id="vbox1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="valign">start</property>
                     <property name="border_width">12</property>
                     <property name="spacing">12</property>
                     <child>
@@ -352,6 +369,7 @@
                           <packing>
                             <property name="top_attach">2</property>
                             <property name="bottom_attach">3</property>
+                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -364,6 +382,9 @@
                               <relation type="label-for" target="filebutton"/>
                             </accessibility>
                           </object>
+                          <packing>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="label5">
@@ -378,6 +399,7 @@
                           <packing>
                             <property name="top_attach">1</property>
                             <property name="bottom_attach">2</property>
+                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -388,8 +410,6 @@
                             <property name="invisible_char_set">True</property>
                             <property name="primary_icon_activatable">False</property>
                             <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                             <child internal-child="accessible">
                               <object class="AtkObject" id="fileentry-atkobject">
                                 <property name="AtkObject::accessible-name" translatable="yes">File name</property>
@@ -407,13 +427,14 @@
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkCheckButton" id="selected_only_button">
                         <property name="label" translatable="yes">Render only the selected clips</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -430,6 +451,7 @@
                     <child>
                       <object class="GtkCheckButton" id="draft_button">
                         <property name="label" translatable="yes">Draft (no special effects, single pass)</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="use_action_appearance">False</property>
@@ -458,6 +480,7 @@
                   <object class="GtkVBox" id="vbox2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="valign">start</property>
                     <property name="border_width">12</property>
                     <property name="spacing">6</property>
                     <child>
@@ -495,6 +518,7 @@
                             <child>
                               <object class="GtkButton" id="video_settings_button">
                                 <property name="label" translatable="yes">Advanced...</property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -565,8 +589,6 @@
                                 <property name="invisible_char">•</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">adjustment1</property>
                                 <property name="digits">1</property>
                                 <property name="numeric">True</property>
@@ -604,6 +626,7 @@
                             <child>
                               <object class="GtkButton" id="project_settings_button">
                                 <property name="label" translatable="yes">Edit Project Settings...</property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -654,16 +677,19 @@
                         <child>
                           <object class="GtkCheckButton" id="video_output_checkbutton">
                             <property name="label" translatable="yes">Enable video</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="use_action_appearance">False</property>
+                            <property name="xalign">0</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                             <signal name="toggled" handler="_videoOutputCheckbuttonToggledCb" swapped="no"/>
                           </object>
                           <packing>
                             <property name="right_attach">2</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                       </object>
@@ -693,6 +719,7 @@
                   <object class="GtkVBox" id="vbox3">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="valign">start</property>
                     <property name="border_width">12</property>
                     <property name="spacing">6</property>
                     <child>
@@ -730,6 +757,7 @@
                             <child>
                               <object class="GtkButton" id="audio_settings_button">
                                 <property name="label" translatable="yes">Advanced...</property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -738,7 +766,7 @@
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -863,16 +891,19 @@
                         <child>
                           <object class="GtkCheckButton" id="audio_output_checkbutton">
                             <property name="label" translatable="yes">Enable audio</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="use_action_appearance">False</property>
+                            <property name="xalign">0</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                             <signal name="toggled" handler="_audioOutputCheckbuttonToggledCb" swapped="no"/>
                           </object>
                           <packing>
                             <property name="right_attach">2</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                       </object>
