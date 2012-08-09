@@ -891,7 +891,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         # use row references so we don't have to care if a path has been removed
         rows = []
         for path in paths:
-            row = gtk.TreeRowReference(model, path)
+            row = gtk.TreeRowReference.new(model, path)
             rows.append(row)
 
         self.app.action_log.begin("remove clip from source list")

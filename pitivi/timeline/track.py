@@ -762,7 +762,7 @@ class Track(goocanvas.Group, Zoomable, Loggable):
         if not isinstance(track_object, ges.TrackEffect) and track_object in self.widgets:
             w = self.widgets[track_object]
             del self.widgets[track_object]
-            self.remove_child(w)
+            self.remove_child(self.find_child(w))
             Zoomable.removeInstance(w)
 
     def _transitionAdded(self, transition):
