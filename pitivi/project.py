@@ -27,7 +27,6 @@ import os
 import ges
 import gst
 import gtk
-import gio
 import gobject
 import tarfile
 
@@ -279,10 +278,7 @@ class ProjectManager(Signallable, Loggable):
                     _("Cannot save with this file format."))
             return
 
-        # FIXME Using query_exist is not the best thing to do, but makes
-        # the trick for now
-        file = gio.File(uri)
-        if overwrite or not file.query_exist():
+        if overwrite or not os.path.exists(path_from_uri(uri)):
             formatter.set_sources(project.medialibrary.getSources())
             saved = formatter.save_to_uri(project.timeline, uri)
             if saved:
