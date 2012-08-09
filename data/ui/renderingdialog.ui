@@ -103,7 +103,7 @@
             </child>
             <child>
               <object class="GtkButton" id="render_button">
-                <property name="label">pitivi-render</property>
+                <property name="label" translatable="yes">Render</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
