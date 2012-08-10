@@ -43,6 +43,7 @@ import gobject
 import time
 import pango
 
+from gi.repository import Gdk
 
 from gettext import gettext as _
 
@@ -531,7 +532,7 @@ class EffectListWidget(gtk.VBox, Loggable):
 
         if event.button == 3:
             chain_up = False
-        elif event.type is gtk.gdk._2BUTTON_PRESS:
+        elif event.type == Gdk.EventType._2BUTTON_PRESS:
             factory_name = self.getSelectedItems()
             if factory_name is not None:
                 self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
