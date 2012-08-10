@@ -476,19 +476,19 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
         # Use a capsfilter to scale the video to the desired size
         # (fixed height and par, variable width)
-        caps = gst.Caps("video/x-raw, height=(int)%d, pixel-aspect-ratio=(fraction)1/1" %
-            self.theight)
+        type = "video/x-raw, height=(int)%d, pixel-aspect-ratio=(fraction)1/1" % self.theight
+        caps = gst.caps_from_string(type)
         capsfilter = gst.element_factory_make("capsfilter", "thumbnailcapsfilter")
         capsfilter.props.caps = caps
         cairosink = CairoSurfaceThumbnailSink()
         cairosink.connect("thumbnail", self._thumbnailCb)
 
         # Set up the thumbnailsink and add a sink pad
-        thumbnailsink = gst.Bin("thumbnailsink")
+        thumbnailsink = gst.Bin(name="thumbnailsink")
         thumbnailsink.add(capsfilter)
         thumbnailsink.add(cairosink)
         capsfilter.link(cairosink)
-        sinkpad = gst.GhostPad("sink", thumbnailsink.find_unlinked_pad(gst.PAD_SINK))
+        sinkpad = gst.GhostPad.new(name="sink", target=(thumbnailsink.find_unlinked_pad(gst.PAD_SINK)))
         thumbnailsink.add_pad(sinkpad)
 
         # Connect sbin and thumbnailsink
