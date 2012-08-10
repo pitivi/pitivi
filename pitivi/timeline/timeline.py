@@ -1265,9 +1265,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 # Which means, it has the corresponding media_type
                 for tckobj in tlobj.get_track_objects():
                     track = tckobj.get_track()
-                    if track.props.track_type == ges.TRACK_TYPE_AUDIO and \
+                    if track.get_property("track_type") == ges.TRACK_TYPE_AUDIO and \
                             media_type == AUDIO_EFFECT or \
-                            track.props.track_type == ges.TRACK_TYPE_VIDEO and \
+                            track.get_property("track_type") == ges.TRACK_TYPE_VIDEO and \
                             media_type == VIDEO_EFFECT:
                         #Actually add the effect
                         self.app.action_log.begin("add effect")

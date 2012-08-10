@@ -56,10 +56,10 @@ class ClipPropertiesError(Exception):
 
 def compare_type(track, effect_type):
 
-    if track.props.track_type == ges.TRACK_TYPE_AUDIO and \
+    if track.get_property("track_type") == ges.TRACK_TYPE_AUDIO and \
             effect_type == AUDIO_EFFECT:
         return True
-    elif track.props.track_type == ges.TRACK_TYPE_VIDEO and \
+    elif track.get_property("track_type") == ges.TRACK_TYPE_VIDEO and \
              effect_type == VIDEO_EFFECT:
         return True
     return False
@@ -353,9 +353,9 @@ class EffectProperties(gtk.Expander, gtk.HBox):
             # Which means, it has the corresponding media_type
             for tckobj in tlobj.get_track_objects():
                 track = tckobj.get_track()
-                if track.props.track_type == ges.TRACK_TYPE_AUDIO and \
+                if track.get_property("track_type") == ges.TRACK_TYPE_AUDIO and \
                         media_type == AUDIO_EFFECT or \
-                        track.props.track_type == ges.TRACK_TYPE_VIDEO and \
+                        track.get_property("track_type") == ges.TRACK_TYPE_VIDEO and \
                         media_type == VIDEO_EFFECT:
                     #Actually add the effect
                     self.app.action_log.begin("add effect")
@@ -436,9 +436,9 @@ class EffectProperties(gtk.Expander, gtk.HBox):
                         track_effect.props.bin_description)
                 to_append = [track_effect.props.active]
                 track = track_effect.get_track()
-                if track.props.track_type == ges.TRACK_TYPE_AUDIO:
+                if track.get_property("track_type") == ges.TRACK_TYPE_AUDIO:
                     to_append.append("Audio")
-                elif track.props.track_type == ges.TRACK_TYPE_VIDEO:
+                elif track.get_property("track_type") == ges.TRACK_TYPE_VIDEO:
                     to_append.append("Video")
 
                 to_append.append(track_effect.props.bin_description)
