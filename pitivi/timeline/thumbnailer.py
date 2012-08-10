@@ -780,8 +780,12 @@ def between(a, b, c):
 
 
 def intersect(b1, b2):
-    return goocanvas.Bounds(max(b1.x1, b2.x1), max(b1.y1, b2.y1),
-        min(b1.x2, b2.x2), min(b1.y2, b2.y2))
+    bounds = goocanvas.CanvasBounds()
+    bounds.x1 = max(b1.x1, b2.x1)
+    bounds.y1 = max(b1.y1, b2.y1)
+    bounds.x2 = min(b1.x2, b2.x2)
+    bounds.y2 = min(b1.y2, b2.y2)
+    return bounds
 
 
 class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
@@ -850,15 +854,17 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
         cr.identity_matrix()
         if issubclass(self.previewer.__class__, RandomAccessPreviewer):
             border_width = self.previewer._spacing()
-            self.bounds = goocanvas.Bounds(border_width, 4,
-            max(0, Zoomable.nsToPixel(self.element.get_duration()) -
-                border_width), self.height)
+            self.boundz = goocanvas.CanvasBounds()
+            self.boundz.x1 = border_width
+            self.boundz.x2 = max(0, Zoomable.nsToPixel(self.element.get_duration()))
+            self.boundz.y1 = 4
+            self.boundz.y2 = self.height
 
     def do_simple_paint(self, cr, bounds):
         x1 = -self.hadj.get_value()
         cr.identity_matrix()
         if issubclass(self.previewer.__class__, RandomAccessPreviewer):
-            self.previewer.render_cairo(cr, intersect(self.bounds, bounds),
+            self.previewer.render_cairo(cr, intersect(self.boundz, bounds),
             self.element, x1, self.bounds.y1)
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
