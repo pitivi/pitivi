@@ -268,9 +268,12 @@ class SimplePipeline(Loggable, Signallable):
         """
         self.log("format %r" % format)
         try:
-            cur, format = self._pipeline.query_position(format)
+            res, cur = self._pipeline.query_position(format)
         except Exception, e:
             self.handleException(e)
+            raise PipelineError("Couldn't get position")
+
+        if not res:
             raise PipelineError("Couldn't get position")
 
         self.log("Got position %s" % gst.TIME_ARGS(cur))
@@ -282,10 +285,13 @@ class SimplePipeline(Loggable, Signallable):
         """
         self.log("format %r" % format)
         try:
-            dur, format = self._pipeline.query_duration(format)
+            res, dur = self._pipeline.query_duration(format)
         except Exception, e:
 
             self.handleException(e)
+            raise PipelineError("Couldn't get duration")
+
+        if not res:
             raise PipelineError("Couldn't get duration")
 
         self.log("Got duration %s" % gst.TIME_ARGS(dur))
