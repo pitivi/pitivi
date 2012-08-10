@@ -947,17 +947,17 @@ class RenderDialog(Loggable):
         self.window.hide()  # Hide the rendering settings dialog while rendering
 
         # FIXME GES: Handle presets here!
-        self.containerprofile = EncodingContainerProfile(None, None,
-                                    gst.Caps(self.muxertype), None)
+        self.containerprofile = EncodingContainerProfile.new(None, None,
+                                    gst.caps_from_string(self.muxertype), None)
 
         if self.video_output_checkbutton.get_active():
-            self.videoprofile = EncodingVideoProfile(
-                                    gst.Caps(self.videotype), None,
+            self.videoprofile = EncodingVideoProfile.new(
+                                    gst.caps_from_string(self.videotype), None,
                                     self.settings.getVideoCaps(True), 0)
             self.containerprofile.add_profile(self.videoprofile)
         if self.audio_output_checkbutton.get_active():
-            self.audioprofile = EncodingAudioProfile(
-                                    gst.Caps(self.audiotype), None,
+            self.audioprofile = EncodingAudioProfile.new(
+                                    gst.caps_from_string(self.audiotype), None,
                                     self.settings.getAudioCaps(), 0)
             self.containerprofile.add_profile(self.audioprofile)
 

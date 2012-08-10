@@ -407,7 +407,7 @@ class MultimediaSettings(Signallable, Loggable):
                 videowidth, videoheight,
                 self.videopar.num, self.videopar.denom,
                 self.videorate.num, self.videorate.denom)
-        caps_str = "video/x-raw,%s" % (vstr, vstr)
+        caps_str = "video/x-raw,%s" % (vstr)
         video_caps = gst.caps_from_string(caps_str)
         if self.vencoder:
             return get_compatible_sink_caps(self.vencoder, video_caps)
