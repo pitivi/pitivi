@@ -131,7 +131,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.pipeline.pause()
             self.seeker.seek(position)
 
-            self.pipeline.connect("state-changed", self._pipelineStateChangedCb)
+            self.pipeline.connect("state-change", self._pipelineStateChangedCb)
             self.pipeline.connect("position", self._positionCb)
             self.pipeline.connect("window-handle-message", self._windowHandleMessageCb)
             self.pipeline.connect("duration-changed", self._durationChangedCb)

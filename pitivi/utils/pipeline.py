@@ -136,14 +136,14 @@ class SimplePipeline(Loggable, Signallable):
        - Along with an periodic callback (optional)
 
     Signals:
-     - C{state-changed} : The state of the pipeline changed.
+     - C{state-change} : The state of the pipeline changed.
      - C{position} : The current position of the pipeline changed.
      - C{eos} : The Pipeline has finished playing.
      - C{error} : An error happened.
     """
 
     __signals__ = {
-        "state-changed": ["state"],
+        "state-change": ["state"],
         "position": ["position"],
         "duration-changed": ["duration"],
         "eos": [],
@@ -408,7 +408,7 @@ class SimplePipeline(Loggable, Signallable):
                     self._listenToPosition(False)
 
                 if emit_state_change:
-                    self.emit('state-changed', new)
+                    self.emit('state-change', new)
 
         elif message.type == gst.MESSAGE_ERROR:
             error, detail = message.parse_error()
@@ -458,7 +458,7 @@ class Pipeline(ges.TimelinePipeline, SimplePipeline):
     """
 
     __gsignals__ = {
-        "state-changed": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+        "state-change": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
                         (gobject.TYPE_INT,)),
         "position": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
                         (gobject.TYPE_UINT64,)),
