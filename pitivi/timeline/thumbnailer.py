@@ -498,7 +498,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         # Wait for the pipeline to be prerolled so we can check the width
         # that the thumbnails will have and set the aspect ratio accordingly
         # as well as getting the framerate of the video:
-        if gst.STATE_CHANGE_SUCCESS == self.videopipeline.get_state(gst.CLOCK_TIME_NONE)[0]:
+        if gst.STATE_CHANGE_SUCCESS == self.videopipeline.get_state(0)[0]:
             neg_caps = sinkpad.get_negotiated_caps()[0]
             self.aspect = neg_caps["width"] / float(self.theight)
             self.framerate = neg_caps["framerate"]
