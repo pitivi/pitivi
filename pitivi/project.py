@@ -164,11 +164,11 @@ class ProjectManager(Signallable, Loggable):
 
         self.emit("new-project-created", self.current)
 
-        self.timeline = Timeline()
+        timeline = self.current.timeline
         self.formatter = ges.PitiviFormatter()
         self.formatter.connect("source-moved", self._formatterMissingURICb)
         self.formatter.connect("loaded", self._projectLoadedCb)
-        if self.formatter.load_from_uri(self.timeline, uri):
+        if self.formatter.load_from_uri(timeline, uri):
             self.current.connect("project-changed", self._projectChangedCb)
             return True
         self.warn("Could not load project %s", uri)
