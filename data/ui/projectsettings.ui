@@ -219,6 +219,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="show_arrow">False</property>
+                        <property name="icon_size">1</property>
                         <child>
                           <object class="GtkToolButton" id="add_video_preset_button">
                             <property name="use_action_appearance">False</property>
@@ -226,7 +227,7 @@
                             <property name="can_focus">True</property>
                             <property name="tooltip_text" translatable="yes">Create a new preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="stock_id">gtk-add</property>
+                            <property name="icon_name">list-add-symbolic</property>
                             <signal name="clicked" handler="_addVideoPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
@@ -243,7 +244,7 @@
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Remove the selected preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="stock_id">gtk-remove</property>
+                            <property name="icon_name">list-remove-symbolic</property>
                             <signal name="clicked" handler="_removeVideoPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
@@ -259,7 +260,7 @@
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Save changes to the currently selected preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="stock_id">gtk-save</property>
+                            <property name="icon_name">document-save-symbolic</property>
                             <signal name="clicked" handler="_saveVideoPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
@@ -646,6 +647,7 @@
                       <object class="GtkToolbar" id="audio_presets_toolbar">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="icon_size">1</property>
                         <child>
                           <object class="GtkToolButton" id="add_audio_preset_button">
                             <property name="use_action_appearance">False</property>
@@ -654,7 +656,7 @@
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Create a new preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="stock_id">gtk-add</property>
+                            <property name="icon_name">list-add-symbolic</property>
                             <signal name="clicked" handler="_addAudioPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
@@ -671,7 +673,7 @@
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Remove the selected preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="stock_id">gtk-remove</property>
+                            <property name="icon_name">list-remove-symbolic</property>
                             <signal name="clicked" handler="_removeAudioPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
@@ -688,7 +690,7 @@
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Save changes to the currently selected preset</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="stock_id">gtk-save</property>
+                            <property name="icon_name">document-save-symbolic</property>
                             <signal name="clicked" handler="_saveAudioPresetButtonClickedCb" swapped="no"/>
                           </object>
                           <packing>
