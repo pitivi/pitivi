@@ -836,25 +836,20 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         When not playing, store a pixbuf of the current viewer image.
         This will allow it to be restored for the transformation box.
         """
-        colormap = self.get_window().get_colormap()
+
         if self.box and self.zoom != 1.0:
             # The transformation box is active and dezoomed
             # crop away 1 pixel border to avoid artefacts on the pixbuf
-            pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, 0, 8,
-                                        self.box.area.width - 2,
-                                        self.box.area.height - 2)
-            self.pixbuf = pixbuf.get_from_drawable(self.window, colormap,
-                                                   self.box.area.x + 1,
-                                                   self.box.area.y + 1,
-                                                   0, 0,
-                                                   self.box.area.width - 2,
-                                                   self.box.area.height - 2)
+
+            self.pixbuf = gtk.gdk.pixbuf_get_from_window(self.get_window(),
+                self.box.area.x + 1, self.box.area.y + 1,
+                self.box.area.width - 2, self.box.area.height - 2)
         else:
-            # Normal mode
-            pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB,
-                                        0, 8, *self.window.get_size())
-            self.pixbuf = pixbuf.get_from_drawable(self.window, colormap,
-                                        0, 0, 0, 0, *self.window.get_size())
+            self.pixbuf = gtk.gdk.pixbuf_get_from_window(self.get_window(),
+                0, 0,
+                self.get_window().get_width(),
+                self.get_window().get_height())
+
         self.stored = True
 
     def do_realize(self):
