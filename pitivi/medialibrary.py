@@ -32,6 +32,8 @@ import pango
 import os
 import time
 
+from gi.repository import Gdk
+
 from urllib import unquote
 from gettext import gettext as _
 from hashlib import md5
@@ -49,6 +51,7 @@ from pitivi.utils.loggable import Loggable
 import pitivi.utils.ui as dnd
 from pitivi.utils.ui import beautify_info, info_name, SPACING, PADDING
 
+from pitivi.utils.ui import TYPE_PITIVI_FILESOURCE
 SHOW_TREEVIEW = 1
 SHOW_ICONVIEW = 2
 
@@ -272,6 +275,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self._errors = []
         self._project = None
         self.dummy_selected = []
+        self._draggedItems = None
 
         # Store
         # icon, infotext, objectfactory, uri, length
@@ -438,20 +442,20 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
         self.treeview.drag_source_set(0, [], gtk.gdk.ACTION_COPY)
-        self.treeview.connect("motion-notify-event",
-            self._treeViewMotionNotifyEventCb)
-        self.treeview.connect("button-release-event",
-            self._treeViewButtonReleaseCb)
+        self.treeview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)], Gdk.DragAction.COPY)
+        self.treeview.drag_source_set_target_list(None)
+        self.treeview.drag_source_add_uri_targets()
+        self.treeview.drag_source_add_text_targets()
+
         self.treeview.connect("drag_begin", self._dndDragBeginCb)
-        self.treeview.connect("drag_data_get", self._dndDataGetCb)
 
         self.iconview.drag_source_set(0, [], gtk.gdk.ACTION_COPY)
-        self.iconview.connect("motion-notify-event",
-            self._iconViewMotionNotifyEventCb)
-        self.iconview.connect("button-release-event",
-            self._iconViewButtonReleaseCb)
+        self.iconview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)], Gdk.DragAction.COPY)
+        self.iconview.drag_source_set_target_list(None)
+        self.iconview.drag_source_add_uri_targets()
+        self.iconview.drag_source_add_text_targets()
+
         self.iconview.connect("drag_begin", self._dndDragBeginCb)
-        self.iconview.connect("drag_data_get", self._dndDataGetCb)
 
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems
@@ -1108,54 +1112,18 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             self._viewShowPopup(treeview, event)
             chain_up = False
 
+        elif not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
+            chain_up = not self._rowUnderMouseSelected(treeview, event)
+
+        if not chain_up:
+            self._draggedItems = self.getSelectedItems()
         else:
+            self._draggedItems = None
 
-            if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
-                chain_up = not self._rowUnderMouseSelected(treeview, event)
-
-            self._dragStarted = False
-            self._dragSelection = False
-            self._dragButton = event.button
-            self._dragX = int(event.x)
-            self._dragY = int(event.y)
-
-        if chain_up:
-            gtk.TreeView.do_button_press_event(treeview, event)
-        else:
-            treeview.grab_focus()
-
+        gtk.TreeView.do_button_press_event(treeview, event)
         self._ignoreRelease = chain_up
 
         return True
-
-    def _treeViewMotionNotifyEventCb(self, treeview, event):
-        if not self._dragButton:
-            return True
-
-        if self._nothingUnderMouse(treeview, event):
-            return True
-
-        if treeview.drag_check_threshold(self._dragX, self._dragY,
-            int(event.x), int(event.y)):
-            context = treeview.drag_begin(
-                gtk.TargetList.new([dnd.URI_TARGET_ENTRY,
-                                    dnd.FILESOURCE_TARGET_ENTRY]),
-                gtk.gdk.ACTION_COPY,
-                self._dragButton,
-                event)
-            self._dragStarted = True
-        return False
-
-    def _treeViewButtonReleaseCb(self, treeview, event):
-        if event.button == self._dragButton:
-            self._dragButton = None
-            if (not self._ignoreRelease) and (not self._dragStarted):
-                treeview.get_selection().unselect_all()
-                result = treeview.get_path_at_pos(int(event.x), int(event.y))
-                if result:
-                    path = result[0]
-                    treeview.get_selection().select_path(path)
-        return False
 
     def _viewSelectionChangedCb(self, unused):
         if self._viewHasSelection():
@@ -1171,27 +1139,6 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         path = self.modelFilter[path][COL_URI]
         self.emit('play', path)
 
-    def _iconViewMotionNotifyEventCb(self, iconview, event):
-        if not self._dragButton:
-            return True
-
-        if self._dragSelection:
-            return False
-
-        if self._nothingUnderMouse(iconview, event):
-            return True
-
-        if iconview.drag_check_threshold(self._dragX, self._dragY,
-            int(event.x), int(event.y)):
-            context = iconview.drag_begin(
-                gtk.TargetList([dnd.URI_TARGET_ENTRY,
-                                dnd.FILESOURCE_TARGET_ENTRY]),
-                gtk.gdk.ACTION_COPY,
-                self._dragButton,
-                event)
-            self._dragStarted = True
-        return False
-
     def _iconViewButtonPressEventCb(self, iconview, event):
         chain_up = True
 
@@ -1203,35 +1150,17 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         elif event.button == 3:
             self._viewShowPopup(iconview, event)
             chain_up = False
+        elif not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
+            chain_up = not self._rowUnderMouseSelected(iconview, event)
+
+        if not chain_up:
+            self._draggedItems = self.getSelectedItems()
         else:
-            if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
-                chain_up = not self._rowUnderMouseSelected(iconview, event)
-
-            self._dragStarted = False
-            self._dragSelection = self._nothingUnderMouse(iconview, event)
-            self._dragButton = event.button
-            self._dragX = int(event.x)
-            self._dragY = int(event.y)
-
-        if chain_up:
-            gtk.IconView.do_button_press_event(iconview, event)
-        else:
-            iconview.grab_focus()
-
+            self._draggedItems = None
+        gtk.IconView.do_button_press_event(iconview, event)
         self._ignoreRelease = chain_up
 
         return True
-
-    def _iconViewButtonReleaseCb(self, iconview, event):
-        if event.button == self._dragButton:
-            self._dragButton = None
-            self._dragSelection = False
-            if (not self._ignoreRelease) and (not self._dragStarted):
-                iconview.unselect_all()
-                path = iconview.get_path_at_pos(int(event.x), int(event.y))
-                if path:
-                    iconview.select_path(path)
-        return False
 
     def _newProjectCreatedCb(self, app, project):
         if not self._project is project:
@@ -1324,16 +1253,9 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
     def getSelectedItems(self):
         """ Returns a list of selected items URIs """
+        if self._draggedItems:
+            return self._draggedItems
         return [self.modelFilter[path][COL_URI]
             for path in self.getSelectedPaths()]
-
-    def _dndDataGetCb(self, unused_widget, context, selection,
-                      targettype, unused_eventtime):
-        self.info("data get, type:%d", targettype)
-        uris = self.getSelectedItems()
-        if len(uris) < 1:
-            return
-        selection.set(selection.target, 8, '\n'.join(uris))
-        gtk.drag_set_icon_pixbuf(context, INVISIBLE, 0, 0)
 
 gobject.type_register(MediaLibraryWidget)

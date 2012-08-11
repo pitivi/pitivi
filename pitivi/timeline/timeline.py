@@ -35,6 +35,9 @@ import ruler
 import gobject
 import goocanvas
 
+from gi.repository import Gtk
+from gi.repository import Gdk
+
 from gettext import gettext as _
 from os.path import join
 
@@ -513,8 +516,7 @@ class TimelineControls(gtk.VBox, Loggable):
         self.connect("drag_drop", self._dragDropCb)
         self.connect("drag_motion", self._dragMotionCb)
         self.connect("drag_leave", self._dragLeaveCb)
-        self.drag_dest_set(gtk.DEST_DEFAULT_MOTION |
-                             gtk.DEST_DEFAULT_DROP,
+        self.drag_dest_set(gtk.DEST_DEFAULT_ALL,
                              [LAYER_CONTROL_TARGET_ENTRY], gtk.gdk.ACTION_MOVE)
 
     def _sizeAllocatedCb(self, widget, alloc):
@@ -1121,11 +1123,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ui_manager.add_ui_from_string(ui)
 
         # drag and drop
-        self._canvas.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
-            [FILESOURCE_TARGET_ENTRY, EFFECT_TARGET_ENTRY],
-            gtk.gdk.ACTION_COPY)
 
-        self._canvas.connect("drag-data-received", self._dragDataReceivedCb)
+        self._canvas.drag_dest_set(gtk.DEST_DEFAULT_MOTION | gtk.DEST_DEFAULT_HIGHLIGHT,
+                                   [FILESOURCE_TARGET_ENTRY, EFFECT_TARGET_ENTRY],
+                                   gtk.gdk.ACTION_COPY)
+
+        self._canvas.drag_dest_add_text_targets()
+
         self._canvas.connect("drag-leave", self._dragLeaveCb)
         self._canvas.connect("drag-drop", self._dragDropCb)
         self._canvas.connect("drag-motion", self._dragMotionCb)
@@ -1165,17 +1169,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
         # Set up the initial data when we first initiate the drag operation
+
         if not self._drag_started:
-            self.debug("Drag start")
-            if context.targets in DND_EFFECT_LIST:
-                atom = gtk.gdk.atom_intern(EFFECT_TARGET_ENTRY.target)
-            else:
-                atom = gtk.gdk.atom_intern(FILESOURCE_TARGET_ENTRY.target)
             self._drag_started = True
-            self._canvas.drag_get_data(context, atom, timestamp)
-            self._canvas.drag_highlight()
-        # We want to show the clips being dragged to the timeline (not effects)
-        elif context.targets not in DND_EFFECT_LIST:
+        elif context.list_targets() not in DND_EFFECT_LIST:
             if not self._temp_objects and not self._creating_tckobjs_sigid:
                 self._create_temp_source(x, y)
 
@@ -1216,9 +1213,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self.debug("Drag cleanup")
             self._drag_started = False
             self._factories = []
-            if context.targets not in DND_EFFECT_LIST:
+            if context.list_targets() not in DND_EFFECT_LIST:
                 self.timeline.enable_update(True)
-                self._canvas.drag_unhighlight()
                 self.debug("Need to cleanup %d objects" % len(self._temp_objects))
                 for obj in self._temp_objects:
                     layer = obj.get_layer()
@@ -1234,7 +1230,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # Resetting _drag_started will tell _dragCleanUp to not do anything
         self._drag_started = False
         self.debug("Drag drop")
-        if context.targets not in DND_EFFECT_LIST:
+        if context.list_targets() not in DND_EFFECT_LIST:
             self._canvas.drag_unhighlight()
             self.app.action_log.begin("add clip")
             if self._move_context is not None:
@@ -1246,7 +1242,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             # Clear the temporary references to objects, as they are real now.
             self._temp_objects = []
             self._factories = []
-            context.drop_finish(True, timestamp)
+            #context.drop_finish(True, timestamp)
         else:
             if self.app.current.timeline.props.duration == 0:
                 return False
@@ -1278,30 +1274,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                         self.app.action_log.commit()
                         self._factories = None
                         self._seeker.flush()
-                        context.drop_finish(True, timestamp)
 
                         self.timeline.selection.setSelection(timeline_objs, SELECT)
                         break
-        return True
-
-    def _dragDataReceivedCb(self, unused_layout, context, x, y,
-        selection, targetType, timestamp):
-        self.log("targetType:%d, selection.data:%s" % (targetType, selection.data))
-        self.selection_data = selection.data
-
-        if targetType not in [TYPE_PITIVI_FILESOURCE, TYPE_PITIVI_EFFECT]:
-            context.finish(False, False, timestamp)
-            return
-
-        if targetType == TYPE_PITIVI_FILESOURCE:
-            uris = selection.data.split("\n")
-            self._factories = [self._project.medialibrary.getInfoFromUri(uri) for uri in uris]
-        else:
-            if not self.app.current.timeline.props.duration > 0:
-                return False
-            self._factories = [self.app.effects.getFactoryFromName(selection.data)]
-
-        context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
         return True
 
     def _getTimelineObjectUnderMouse(self, x, y):
@@ -1385,12 +1360,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Create temporary clips to be displayed on the timeline during a
         drag-and-drop operation.
         """
-        infos = self._factories
         layer = self._ensureLayer()[0]
         duration = 0
 
-        for info in infos:
-            src = ges.TimelineFileSource(uri=info.get_uri())
+        for uri in self.app.gui.medialibrary.getSelectedItems():
+            info = self._project.medialibrary.getInfoFromUri(uri)
+            src = ges.TimelineFileSource(uri=uri)
             src.props.start = duration
             # Set image duration
             # FIXME: after GES Materials are merged, check if image instead
