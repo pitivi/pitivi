@@ -24,6 +24,7 @@ pitivi_PYTHON = \
 	render.py \
 	settings.py \
 	tabsmanager.py \
+	transitions.py \
 	viewer.py \
 	$(NULL)
 
