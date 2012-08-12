@@ -208,9 +208,9 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             cr.fill()
 
     def drawRuler(self, cr):
-        # FIXME GObject Introspection ToyFontFace not wraped with the introspection
-        #cr.set_font_face(cairo.ToyFontFace("Cantarell"))
-        cr.set_font_size(15)
+        # FIXME use system defaults
+        cr.set_font_face(cairo.ToyFontFace("Cantarell"))
+        cr.set_font_size(13)
         textwidth = cr.text_extents(time_to_string(0))[2]
 
         for scale in self.scale:
