@@ -34,7 +34,6 @@ import glib
 import ruler
 import gobject
 import goocanvas
-import cairo
 
 from gettext import gettext as _
 from os.path import join
@@ -749,7 +748,6 @@ class TimelineControls(gtk.VBox, Loggable):
         Handles received drag data to reorder layers
         """
         widget = context.get_source_widget()
-        widget_type = type(widget)
 
         self._unhighlightSeparators()
 
@@ -1421,7 +1419,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         priority = self.controls.getPriorityForY(y)
 
         delta = Zoomable.pixelToNs(x)
-        obj = self._temp_objects[0]
         self._move_context.editTo(delta, priority)
 
 ## Zooming and Scrolling

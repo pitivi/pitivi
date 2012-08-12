@@ -423,7 +423,6 @@ class Controller(Loggable):
 
     def _drag_threshold(self):
         last = self.pos(self._dragging)
-        difference = abs(self._initial - last)
         if abs(self._initial - last) > self.__DRAG_THRESHOLD__:
             return False
         return True

@@ -677,7 +677,6 @@ class ResolutionWidget(gtk.HBox, DynamicWidget):
 
     def setWidgetValue(self, value):
         width, height = value
-        dar = gst.Fraction(width, height)
 
         self.dwidthWidget.setWidgetValue(width)
         self.dheightWidget.setWidgetValue(height)
@@ -761,7 +760,6 @@ def make_property_widget(unused_element, prop, value=None):
     elif (type_name == 'gboolean'):
         widget = ToggleWidget(default=prop.default_value)
     elif (type_name == 'GEnum'):
-        idx = 0
         choices = []
         for key, val in prop.enum_class.__enum_values__.iteritems():
             choices.append([val.value_name, int(val)])

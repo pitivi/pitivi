@@ -210,10 +210,6 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
         activatedcell = gtk.CellRendererToggle()
         activatedcell.props.xpad = PADDING
-        activatedcol = self.treeview.insert_column_with_attributes(-1,
-                                                        _("Activated"),
-                                                        activatedcell,
-                                                        active=COL_ACTIVATED)
         activatedcell.connect("toggled", self._effectActiveToggleCb)
 
         typecol = gtk.TreeViewColumn(_("Type"))

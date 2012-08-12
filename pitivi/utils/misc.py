@@ -27,11 +27,12 @@ import gobject
 import gst
 import gtk
 import hashlib
-import bisect
 import os
 import struct
 import time
 import threading
+
+from gettext import gettext as _
 
 from urlparse import urlsplit, urlunsplit, urlparse
 from urllib import quote, unquote
@@ -39,7 +40,7 @@ from urllib import quote, unquote
 import pitivi.utils.loggable as log
 from pitivi.utils.threads import Thread
 
-from pitivi.configure import APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE
+from pitivi.configure import APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE, APPNAME
 
 try:
     import cProfile

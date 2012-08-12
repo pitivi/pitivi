@@ -219,7 +219,6 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
                 break
 
         offset = self.pixbuf_offset % spacing
-        zoomRatio = self.zoomratio
         self.drawFrameBoundaries(cr)
         self.drawTicks(cr, offset, spacing, scale)
         self.drawTimes(cr, offset, spacing, scale)

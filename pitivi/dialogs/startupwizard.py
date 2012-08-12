@@ -24,13 +24,10 @@ import gtk
 
 from gettext import gettext as _
 
-from pitivi.configure import get_ui_dir, APPURL
+from pitivi.configure import get_ui_dir
 from pitivi.dialogs.depsmanager import DepsManager
 from pitivi.check import soft_deps
 from pitivi.utils.misc import show_user_manual
-from pitivi.settings import GlobalSettings
-
-from urllib import unquote
 
 
 class StartUpWizard(object):

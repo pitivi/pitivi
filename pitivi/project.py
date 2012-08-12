@@ -382,7 +382,6 @@ class ProjectManager(Signallable, Loggable):
         # The tracks of the timeline determine what tracks
         # the rendered content will have. Pitivi currently supports
         # projects with exactly one video track and one audio track.
-        settings = project.getSettings()
         project.connect("project-changed", self._projectChangedCb)
         if emission:
             self.current.disconnect = False

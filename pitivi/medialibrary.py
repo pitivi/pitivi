@@ -751,7 +751,6 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             thumbnail_hash = md5(info.get_uri()).hexdigest()
             thumb_dir = os.path.expanduser("~/.thumbnails/")
             thumb_path_normal = thumb_dir + "normal/" + thumbnail_hash + ".png"
-            thumb_path_large = thumb_dir + "large/" + thumbnail_hash + ".png"
             # Pitivi used to consider 64 pixels as normal and 96 as large
             # However, the fdo spec specifies 128 as normal and 256 as large.
             # We will thus simply use the "normal" size and scale it down.

@@ -420,14 +420,6 @@ class RenderDialog(Loggable):
         # FIXME: re-enable this widget when bug #637078 is implemented
         self.selected_only_button.destroy()
 
-        # The Render dialog and the Project Settings dialog have some
-        # common settings, for example the audio sample rate.
-        # When these common settings are changed in the Render dialog,
-        # we don't want them to be saved, so we create a copy of the project's
-        # settings to be used by the Render dialog for rendering.
-        render_settings = project.getSettings().copy()
-        # Note: render_settings will end up as self.settings.
-
         # Directory and Filename
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
         if not self.project.name:

@@ -47,8 +47,6 @@ class System(Signallable, Loggable):
 
     #generic functions
     def _inhibit(self, list_, key):
-        is_blocked = self._isInhibited(list_, key)
-
         if key == None or (not isinstance(key, str)):
             assert False
 

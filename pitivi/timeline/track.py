@@ -354,7 +354,7 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         def drag_start(self, item, target, event):
             if not self._view.movable:
                 return
-            point = self.from_item_event(item, event)
+
             TrackObjectController.drag_start(self, item, target, event)
 
             self._context = EditingContext(self._view.element,
@@ -427,7 +427,6 @@ class TrackObject(View, goocanvas.Group, Zoomable, Loggable):
         self.element = element
         element.selected = Selected()
         element.selected.connect("selected-changed", self.selectedChangedCb)
-        obj = self.element.get_timeline_object()
 
         self.settings = instance.settings
         self.unfocus()
