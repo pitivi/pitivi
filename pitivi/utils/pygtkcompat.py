@@ -464,7 +464,7 @@ def enable_ges(version='1.0'):
     GES.init()
     GES.timeline_new_audio_video = GES.Timeline.new_audio_video
     GES.track_audio_raw_new = GES.Track.audio_raw_new
-    GES.track_video_raw_new = GES.Track.audio_raw_new
+    GES.track_video_raw_new = GES.Track.video_raw_new
     GES.formatter_can_load_uri = GES.Formatter.can_load_uri
     _install_enums(GES)
 
@@ -630,6 +630,7 @@ def enable_gst(version='1.0'):
     sys.modules['gst.pbutils'] = GstPbutils
     _install_enums(GstPbutils)
 
+
 def enable_goocanvas():
     gi.require_version('GooCanvas', '2.0')
     from gi.repository import GooCanvas
@@ -641,6 +642,7 @@ def enable_goocanvas():
     GooCanvas.Group = GooCanvas.CanvasGroup
     GooCanvas.Rect = GooCanvas.CanvasRect
     GooCanvas.Text = GooCanvas.CanvasText
+
     #FIXME Missing anotation in GooItem(bug 677013), reimplement
     def raise_new(self, above):
         parent = self.get_parent()
