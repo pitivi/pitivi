@@ -1890,15 +1890,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
             # Update zoom level if needed
             return
-
         source = self._sources_to_insert.pop()
         layer = timeline.get_layers()[0]  # FIXME Get the longest layer
-        layer.add_object(source)
-
         # Waiting for the TrackObject to be created because of a race
         # condition, and to know the real length of the timeline when
         # adding several sources at a time.
+        # connecting before adding, as it signaled before connection
         source.connect("track-object-added", self._trackObjectAddedCb)
+        layer.add_object(source)
 
     def _trackObjectAddedCb(self, source, trackobj):
         """ After an object has been added to the first track, position it
@@ -1907,7 +1906,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         layer = timeline.get_layers()[0]  # FIXME Get the longest layer
 
         # Set the duration of the clip if it is an image
-        if source.is_image():
+        if hasattr(source,"is_image") and source.is_image():
             source.set_duration(long(self._settings.imageClipLength) * gst.SECOND / 1000)
 
         # Handle the case where we just inserted the first clip
