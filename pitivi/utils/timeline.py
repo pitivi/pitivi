@@ -126,12 +126,12 @@ class Selection(Signallable):
 
         for obj in old_selection - self.selected:
             for tckobj in obj.get_track_objects():
-                if not isinstance(tckobj, ges.TrackEffect):
+                if not isinstance(tckobj, ges.TrackEffect) and not isinstance(tckobj, ges.TrackTextOverlay):
                     tckobj.selected.selected = False
 
         for obj in self.selected - old_selection:
             for tckobj in obj.get_track_objects():
-                if not isinstance(tckobj, ges.TrackEffect):
+                if not isinstance(tckobj, ges.TrackEffect) and not isinstance(tckobj, ges.TrackTextOverlay):
                     tckobj.selected.selected = True
 
 

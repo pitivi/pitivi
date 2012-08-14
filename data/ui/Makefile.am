@@ -12,6 +12,7 @@ ui_DATA = \
 	cliptransformation.ui \
 	startupwizard.ui \
 	clipmediaprops.ui \
+	titleeditor.ui \
 	$(NULL)
 
 EXTRA_DIST = \

@@ -24,6 +24,7 @@ import gobject
 import gtk
 import gst
 import cairo
+import ges
 
 from gettext import gettext as _
 from time import time
@@ -391,7 +392,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         """
         While a clip is being trimmed, show a live preview of it.
         """
-        if tl_obj.props.is_image or not hasattr(tl_obj, "get_uri"):
+        if isinstance(tl_obj, ges.TimelineTitleSource) or tl_obj.props.is_image or not hasattr(tl_obj, "get_uri"):
             self.log("%s is an image or has no URI, so not previewing trim" % tl_obj)
             return False
 

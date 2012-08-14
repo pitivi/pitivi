@@ -42,7 +42,7 @@ from pitivi.settings import GlobalSettings
 from pitivi.effects import EffectListWidget
 from pitivi.transitions import TransitionsListWidget
 from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
-
+from pitivi.titleeditor import TitleEditor
 from pitivi.utils.misc import show_user_manual
 from pitivi.utils.ui import info_name, beautify_time_delta, SPACING,\
         FILESOURCE_TARGET_ENTRY, URI_TARGET_ENTRY, TYPE_URI_LIST, \
@@ -410,8 +410,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.context_tabs = BaseTabs(instance)
         self.clipconfig = ClipProperties(instance, self.uimanager)
         self.trans_list = TransitionsListWidget(instance, self.uimanager)
+        self.title_editor = TitleEditor(instance, self.uimanager)
         self.context_tabs.append_page(self.clipconfig, gtk.Label(_("Clip configuration")))
         self.context_tabs.append_page(self.trans_list, gtk.Label(_("Transitions")))
+        self.context_tabs.append_page(self.title_editor.widget, gtk.Label(_("Title editor")))
+        self.context_tabs.connect("switch-page", self.title_editor.tab_switched)
         self.clipconfig.show()
         self.trans_list.show()
 
@@ -482,6 +485,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 page = 0
             elif tab == "transitions":
                 page = 1
+            elif tab == "title editor":
+                page = 2
             else:
                 self.debug("Invalid context tab switch requested")
                 return False

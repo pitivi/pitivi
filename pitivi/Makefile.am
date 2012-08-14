@@ -26,6 +26,7 @@ pitivi_PYTHON = \
 	tabsmanager.py \
 	transitions.py \
 	viewer.py \
+	titleeditor.py \
 	$(NULL)
 
 BUILT_SOURCES=configure.py
