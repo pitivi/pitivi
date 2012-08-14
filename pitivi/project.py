@@ -59,8 +59,8 @@ from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
 class Timeline(ges.Timeline):
     def __init__(self):
         ges.Timeline.__init__(self)
-        self.add_track(ges.Track.audio_raw_new())
         self.add_track(ges.Track.video_raw_new())
+        self.add_track(ges.Track.audio_raw_new())
         self.selection = Selection()
 
 
