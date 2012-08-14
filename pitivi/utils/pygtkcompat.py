@@ -430,6 +430,95 @@ def enable_gtk(version='2.0'):
             value = getattr(Gdk, name)
             setattr(keysyms, target, value)
 
+    #Pango.AttrList
+    class AttrIterator():
+        def __init__ (self, attributes=[]):
+            self.attributes = attributes
+            self.attribute_stack = []
+            self.start_index = 0
+            self.end_index = 0
+            if not self.next():
+                self.end_index = 2**32 -1
+
+        def next(self):
+            if len(self.attributes) == 0 and len(self.attribute_stack) == 0:
+                return False
+            self.start_index = self.end_index
+            self.end_index = 2**32 - 1
+
+            to_remove = []
+            for attr in self.attribute_stack:
+                if attr.end_index == self.start_index:
+                    to_remove.append(attr)
+                else:
+                    self.end_index = min(self.end_index, attr.end_index)
+
+            while len(to_remove) > 0:
+                attr = to_remove[0]
+                self.attribute_stack.remove(to_remove[0])
+                try:
+                    to_remove.remove(attr)
+                except:
+                    pass
+
+            while len(self.attributes) != 0 and \
+                  self.attributes[0].start_index == self.start_index:
+                if self.attributes[0].end_index > self.start_index:
+                    self.attribute_stack.append(self.attributes[0])
+                    self.end_index = min(self.end_index, self.attributes[0].end_index)
+                self.attributes = self.attributes[1:]
+            if len(self.attributes) > 0:
+                self.end_index = min(self.end_index, self.attributes[0].start_index)
+            return True
+
+        def range(self):
+            return (self.start_index, self.end_index)
+
+        def get_font(self):
+            tmp_list1 = self.attribute_stack
+            fontdesc = Pango.FontDescription()
+            for attr in self.attribute_stack:
+                if attr.klass.type == Pango.ATTR_FONT_DESC:
+                    tmp_list1.remove(attr)
+                    attr.__class__ = gi.repository.Pango.AttrFontDesc
+                    fontdesc = attr.desc
+            return (fontdesc, None, self.attribute_stack)
+
+
+
+    def get_iterator(self):
+        tmplist = []
+        def fil(val, data):
+            tmplist.append(val)
+            return False
+        self.filter(fil, None)
+        return AttrIterator(tmplist)
+
+
+    setattr(Pango.AttrList, 'get_iterator', get_iterator)
+    class AttrFamily(Pango.Attribute):
+       pass
+    Pango.AttrFamily = AttrFamily
+
+    class AttrStyle(Pango.Attribute):
+       pass
+    Pango.AttrStyle = AttrStyle
+
+    class AttrVariant(Pango.Attribute):
+       pass
+    Pango.AttrVariant = AttrVariant
+
+    class AttrWeight(Pango.Attribute):
+       pass
+    Pango.AttrWeight = AttrWeight
+
+    class AttrVariant(Pango.Attribute):
+       pass
+    Pango.AttrVariant = AttrVariant
+
+    class AttrStretch(Pango.Attribute):
+       pass
+    Pango.AttrStretch = AttrStretch
 
 def enable_vte():
     gi.require_version('Vte', '0.0')
