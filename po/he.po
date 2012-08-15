@@ -6,1058 +6,949 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-23 13:52+0200\n"
-"PO-Revision-Date: 2011-01-23 15:20+0200\n"
+"POT-Creation-Date: 2012-08-15 23:39+0300\n"
+"PO-Revision-Date: 2012-08-15 23:40+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Gezer (Hebrew) <gezer@lists.launchpad.net>\n"
+"Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: he\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n>2||n==0) ? 1 : 2;\n"
 "X-Generator: Virtaal 0.6.1\n"
 "X-Poedit-Language: Hebrew\n"
 "X-Poedit-Country: ISRAEL\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: ../pitivi/application.py:124
+#: ../data/pitivi.desktop.in.in.h:1
+msgid "Pitivi Video Editor"
+msgstr "עורך הווידאו Pitivi"
+
+#: ../data/pitivi.desktop.in.in.h:2
+msgid "Create and edit your own movies"
+msgstr "יצירה ועריכה של סרטים עצמיים"
+
+#: ../data/ui/alignmentprogress.ui.h:1
+msgid "Auto-Alignment Starting"
+msgstr ""
+
+#: ../data/ui/alignmentprogress.ui.h:2
+#, fuzzy
+msgid "<b><big>Performing Auto-Alignment</big></b>"
+msgstr "<b><big>הסרט בהליכי עיבוד</big></b>"
+
+#: ../data/ui/alignmentprogress.ui.h:3
+#: ../pitivi/render.py:361
+msgid "Estimating..."
+msgstr "מתבצעת הערכה..."
+
+#: ../data/ui/clipmediaprops.ui.h:1
+#, fuzzy
+msgid "Clip Properties"
+msgstr "אין מאפיינים..."
+
+#: ../data/ui/clipmediaprops.ui.h:2
+msgid "_Cancel"
+msgstr "_ביטול"
+
+#: ../data/ui/clipmediaprops.ui.h:3
+msgid "_Apply to project"
+msgstr "ה_חלה למיזם"
+
+#: ../data/ui/clipmediaprops.ui.h:4
+#: ../data/ui/projectsettings.ui.h:6
+#, fuzzy
+msgid "Size (pixels):"
+msgstr "<b>גודל (פיקסלים)</b>"
+
+#: ../data/ui/clipmediaprops.ui.h:5
+#: ../data/ui/renderingdialog.ui.h:25
+msgid "Frame rate:"
+msgstr "קצב השקופיות:"
+
+#: ../data/ui/clipmediaprops.ui.h:6
+#, fuzzy
+msgid "Pixel aspect ratio:"
+msgstr "יחס התצוגה לפיקסלים"
+
+#: ../data/ui/clipmediaprops.ui.h:7
+#, fuzzy
+msgid "Video:"
+msgstr "וידאו: "
+
+#: ../data/ui/clipmediaprops.ui.h:8
+#: ../data/ui/projectsettings.ui.h:16
+#: ../data/ui/renderingdialog.ui.h:29
+msgid "Channels:"
+msgstr "ערוצים:"
+
+#: ../data/ui/clipmediaprops.ui.h:9
+#: ../data/ui/projectsettings.ui.h:17
+#: ../data/ui/renderingdialog.ui.h:30
+msgid "Sample rate:"
+msgstr "קצב הדגימה:"
+
+#: ../data/ui/clipmediaprops.ui.h:10
+#: ../data/ui/projectsettings.ui.h:18
+#: ../data/ui/renderingdialog.ui.h:31
+msgid "Sample depth:"
+msgstr "עומק הדגימה:"
+
+#: ../data/ui/clipmediaprops.ui.h:11
+#, fuzzy
+msgid "Audio:"
+msgstr "שמע"
+
+#: ../data/ui/cliptransformation.ui.h:1
+msgid "Viewer Zoom"
+msgstr "תקריב המציג"
+
+#: ../data/ui/cliptransformation.ui.h:2
+msgid "X:"
+msgstr "X:"
+
+#: ../data/ui/cliptransformation.ui.h:3
+msgid "Y:"
+msgstr "Y:"
+
+#: ../data/ui/cliptransformation.ui.h:4
+#, fuzzy
+msgid "Position"
+msgstr "תיאור"
+
+#: ../data/ui/cliptransformation.ui.h:5
+msgid "Width:"
+msgstr "רוחב:"
+
+#: ../data/ui/cliptransformation.ui.h:6
+#, fuzzy
+msgid "Height:"
+msgstr "גובה"
+
+#: ../data/ui/cliptransformation.ui.h:7
+msgid "Size"
+msgstr "גודל"
+
+#: ../data/ui/cliptransformation.ui.h:8
+msgid "Crop"
+msgstr "חיתוך"
+
+#: ../data/ui/depsmanager.ui.h:1
+msgid "Missing Dependencies"
+msgstr "תלויות חסרות"
+
+#: ../data/ui/depsmanager.ui.h:2
+msgid "Install"
+msgstr "התקנה"
+
+#: ../data/ui/depsmanager.ui.h:3
+msgid "To enable additional features, please install the following packages and restart PiTiVi:"
+msgstr ""
+
+#: ../data/ui/depsmanager.ui.h:4
+msgid "label"
+msgstr ""
+
+#: ../data/ui/elementsettingsdialog.ui.h:1
+msgid "Properties for <element>"
+msgstr "מאפיינים עבור <element>"
+
+#: ../data/ui/preferences.ui.h:1
+msgid "Preferences"
+msgstr "העדפות"
+
+#: ../data/ui/preferences.ui.h:2
+msgid "Section"
+msgstr "אזור"
+
+#: ../data/ui/preferences.ui.h:3
+msgid "Some changes will not take effect until you restart PiTiVi"
+msgstr "חלק מהשינויים שבוצעו לא ייכנסו לתוקף עד להפעלת PiTiVi מחדש"
+
+#: ../data/ui/preferences.ui.h:4
+msgid "Reset to Factory Settings"
+msgstr "איפוס להגדרות היצרן"
+
+#: ../data/ui/preferences.ui.h:5
+#, fuzzy
+msgid "Reset all settings to their default values"
+msgstr "איפוס לערך בררת המחדל"
+
+#: ../data/ui/preferences.ui.h:6
+msgid "Revert"
+msgstr "החזרת השינויים"
+
+#: ../data/ui/preferences.ui.h:7
+msgid "Revert all settings to the previous values (before you opened the preferences dialog)"
+msgstr ""
+
+#: ../data/ui/projectsettings.ui.h:1
+#: ../pitivi/utils/ui.py:432
+msgid "Standard (4:3)"
+msgstr "תקני (4:3)"
+
+#: ../data/ui/projectsettings.ui.h:2
+msgid "Standard PAL"
+msgstr "PAL תקני"
+
+#: ../data/ui/projectsettings.ui.h:3
+msgid "25 FPS"
+msgstr "25 FPS"
+
+#: ../data/ui/projectsettings.ui.h:4
+#: ../pitivi/mainwindow.py:273
+msgid "Project Settings"
+msgstr "הגדרות המיזם"
+
+#: ../data/ui/projectsettings.ui.h:5
+msgid "Video Preset"
+msgstr "ערכת הווידאו"
+
+#: ../data/ui/projectsettings.ui.h:7
+#, fuzzy
+msgid "Aspect Ratio:"
+msgstr "יחס התצוגה לפיקסלים"
+
+#: ../data/ui/projectsettings.ui.h:8
+#, fuzzy
+msgid "Display aspect ratio"
+msgstr "יחס התצוגה לצג"
+
+#: ../data/ui/projectsettings.ui.h:9
+#, fuzzy
+msgid "Pixel aspect ratio"
+msgstr "יחס התצוגה לפיקסלים"
+
+#: ../data/ui/projectsettings.ui.h:10
+msgid "x"
+msgstr "x"
+
+#. Translators: This is an action, the title of a button
+#: ../data/ui/projectsettings.ui.h:11
+#: ../pitivi/mainwindow.py:146
+msgid "Link"
+msgstr "קישור"
+
+#: ../data/ui/projectsettings.ui.h:12
+#, fuzzy
+msgid "Frame Rate:"
+msgstr "קצב השקופיות:"
+
+#. TODO check if it is the good way to make it translatable
+#. And to filter actually!
+#: ../data/ui/projectsettings.ui.h:13
+#: ../data/ui/renderingdialog.ui.h:28
+#: ../pitivi/effects.py:254
+msgid "Video"
+msgstr "וידאו"
+
+#: ../data/ui/projectsettings.ui.h:14
+msgid "Audio Preset"
+msgstr "ערכת שמע"
+
+#: ../data/ui/projectsettings.ui.h:15
+#, fuzzy
+msgid "Format"
+msgstr "<b>מבנה</b>"
+
+#: ../data/ui/projectsettings.ui.h:19
+#: ../data/ui/renderingdialog.ui.h:33
+msgid "Audio"
+msgstr "שמע"
+
+#: ../data/ui/projectsettings.ui.h:20
+msgid "Author:"
+msgstr "יוצר:"
+
+#: ../data/ui/projectsettings.ui.h:21
+msgid "Year:"
+msgstr "שנה:"
+
+#: ../data/ui/projectsettings.ui.h:22
+msgid "Project title:"
+msgstr "כותרת המיזם:"
+
+#: ../data/ui/projectsettings.ui.h:23
+msgid "Info"
+msgstr "פרטים"
+
+#: ../data/ui/renderingdialog.ui.h:1
+msgid "MP4"
+msgstr "MP4"
+
+#: ../data/ui/renderingdialog.ui.h:2
+msgid "H.264"
+msgstr "H.264"
+
+#: ../data/ui/renderingdialog.ui.h:3
+msgid "29.97 fps"
+msgstr "29.97 fps"
+
+#: ../data/ui/renderingdialog.ui.h:4
+#, fuzzy
+msgid "AC-3"
+msgstr ""
+"AC-3\n"
+"AAC"
+
+#: ../data/ui/renderingdialog.ui.h:5
+msgid "AAC"
+msgstr ""
+
+#: ../data/ui/renderingdialog.ui.h:6
+#, fuzzy
+msgid "6 channels (5.1)"
+msgstr "6 ערוצים (5.1)\n"
+
+#: ../data/ui/renderingdialog.ui.h:7
+#: ../pitivi/mainwindow.py:141
+msgid "Render"
+msgstr "עיבוד"
+
+#: ../data/ui/renderingdialog.ui.h:8
+#, fuzzy
+msgid "Render Preset"
+msgstr "עיבוד מיזם"
+
+#: ../data/ui/renderingdialog.ui.h:9
+msgid "Folder"
+msgstr "תיקייה"
+
+#: ../data/ui/renderingdialog.ui.h:10
+msgid "Container format"
+msgstr "מבנה מכיל"
+
+#: ../data/ui/renderingdialog.ui.h:11
+msgid "Container format:"
+msgstr "מבנה מכיל:"
+
+#: ../data/ui/renderingdialog.ui.h:12
+msgid "Folder:"
+msgstr "תיקייה:"
+
+#: ../data/ui/renderingdialog.ui.h:13
+msgid "File name:"
+msgstr "שם הקובץ"
+
+#: ../data/ui/renderingdialog.ui.h:14
+msgid "File name"
+msgstr "שם הקובץ"
+
+#: ../data/ui/renderingdialog.ui.h:15
+msgid "Render only the selected clips"
+msgstr "יש לעבד רק את הקטעים הנבחרים"
+
+#: ../data/ui/renderingdialog.ui.h:16
+msgid "Draft (no special effects, single pass)"
+msgstr "טיוטה (ללא אפקטים מיוחדים, מעבר אחיד)"
+
+#: ../data/ui/renderingdialog.ui.h:17
+msgid "General"
+msgstr "כללי"
+
+#: ../data/ui/renderingdialog.ui.h:18
+msgid "Advanced..."
+msgstr "מתקדם..."
+
+#: ../data/ui/renderingdialog.ui.h:19
+msgid "Codec:"
+msgstr "מקודד:"
+
+#: ../data/ui/renderingdialog.ui.h:20
+msgid "Framerate"
+msgstr "קצב שקופיות"
+
+#: ../data/ui/renderingdialog.ui.h:21
+msgid "Scale"
+msgstr "קנה מידה"
+
+#: ../data/ui/renderingdialog.ui.h:22
+msgid "1000 x 1000"
+msgstr "1000 x 1000"
+
+#: ../data/ui/renderingdialog.ui.h:23
+msgid "Height"
+msgstr "גובה"
+
+#: ../data/ui/renderingdialog.ui.h:24
+msgid "Edit Project Settings..."
+msgstr "עריכת הגדרות המיזם..."
+
+#: ../data/ui/renderingdialog.ui.h:26
+msgid "Scale:"
+msgstr "קנה מידה:"
+
+#: ../data/ui/renderingdialog.ui.h:27
+#, fuzzy
+msgid "Enable video"
+msgstr "פעיל"
+
+#: ../data/ui/renderingdialog.ui.h:32
+#, fuzzy
+msgid "Enable audio"
+msgstr "פעיל"
+
+#: ../data/ui/renderingprogress.ui.h:1
+msgid "Rendering"
+msgstr "בהליכי עיבוד"
+
+#: ../data/ui/renderingprogress.ui.h:2
+msgid "<b><big>Rendering movie</big></b>"
+msgstr "<b><big>הסרט בהליכי עיבוד</big></b>"
+
+#: ../data/ui/renderingprogress.ui.h:3
+msgid "Unknown Mib"
+msgstr "ה־MiB לא ידוע"
+
+#: ../data/ui/renderingprogress.ui.h:4
+msgid "Unknown"
+msgstr "לא ידוע"
+
+#: ../data/ui/renderingprogress.ui.h:5
+#, fuzzy
+msgid "Rendering first pass"
+msgstr "מעבר ראשון של ההצפנה"
+
+#: ../data/ui/renderingprogress.ui.h:6
+#, fuzzy
+msgid "Estimated filesize:"
+msgstr "<b>גודל הקובץ המוערך:</b>"
+
+#: ../data/ui/renderingprogress.ui.h:7
+#, fuzzy
+msgid "Frames per second:"
+msgstr "<b>שקופיות לשנייה:</b>"
+
+#: ../data/ui/renderingprogress.ui.h:8
+#, fuzzy
+msgid "Phase:"
+msgstr "<b>שלב:</b>"
+
+#: ../data/ui/renderingprogress.ui.h:9
+msgid "Initializing..."
+msgstr ""
+
+#: ../data/ui/startupwizard.ui.h:1
+msgid "Welcome"
+msgstr "ברוך בואך"
+
+#: ../data/ui/startupwizard.ui.h:2
+msgid "Double-click a project below to load it:"
+msgstr "יש ללחוץ לחיצה כפולה על מיזם להלן כדי לטעון אותו:"
+
+#: ../data/ui/startupwizard.ui.h:3
+msgid "Browse projects..."
+msgstr "עיון במיזמים..."
+
+#: ../data/ui/startupwizard.ui.h:4
+msgid "Missing dependencies..."
+msgstr "תלויות חסרות..."
+
+#: ../pitivi/application.py:120
 #, python-format
-msgid ""
-"There is already a %s instance, please inform the developers by filing a bug "
-"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-msgstr ""
-"There is already a %s instance, please inform the developers by filing a bug "
-"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgid "There is already a %s instance, please inform the developers by filing a bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgstr "There is already a %s instance, please inform the developers by filing a bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:225
+#: ../pitivi/application.py:434
 msgid ""
 "\n"
-"      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
-"      %prog -p [PROJECT_FILE]\n"
-"      %prog -i [-a] [MEDIA_FILE]..."
+"    %prog [PROJECT_FILE]               # Start the video editor.\n"
+"    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a project."
 msgstr ""
-"\n"
-"      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
-"      %prog -p [PROJECT_FILE]\n"
-"      %prog -i [-a] [MEDIA_FILE]..."
 
-#: ../pitivi/application.py:230
-msgid ""
-"Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"no project is given, %prog creates a new project.\n"
-"Alternatively, when -i is specified, arguments are treated as clips to be\n"
-"imported into the project. If -a is specified, these clips will also be "
-"added to\n"
-"the end of the project timeline.\n"
-"When -r is specified, the given project file is rendered without opening the "
-"GUI."
-msgstr ""
-"Starts the video editor, optionally loading PROJECT_FILE. If\n"
-"no project is given, %prog creates a new project.\n"
-"Alternatively, when -i is specified, arguments are treated as clips to be\n"
-"imported into the project. If -a is specified, these clips will also be "
-"added to\n"
-"the end of the project timeline.\n"
-"When -r is specified, the given project file is rendered without opening the "
-"GUI."
-
-#: ../pitivi/application.py:237
-msgid "Import each MEDIA_FILE into the project."
+#: ../pitivi/application.py:440
+#, fuzzy
+msgid "Import each MEDIA_FILE into a new project."
 msgstr "Import each MEDIA_FILE into the project."
 
-#: ../pitivi/application.py:239
-msgid "Add each MEDIA_FILE to timeline after importing."
+#: ../pitivi/application.py:443
+#, fuzzy
+msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr "Add each MEDIA_FILE to timeline after importing."
 
-#: ../pitivi/application.py:240
-msgid "Run pitivi in the Python Debugger"
+#: ../pitivi/application.py:446
+#, fuzzy
+msgid "Run Pitivi in the Python Debugger."
 msgstr "Run pitivi in the Python Debugger"
 
-#: ../pitivi/application.py:242
-msgid "Run pitivi with no gui"
-msgstr "Run pitivi with no gui"
+#: ../pitivi/application.py:451
+msgid "-a requires -i"
+msgstr ""
 
-#: ../pitivi/application.py:243
-msgid "Render the given project file to OUTPUT_FILE with no GUI."
-msgstr "Render the given project file to OUTPUT_FILE with no GUI."
+#: ../pitivi/application.py:459
+msgid "Cannot open more than one PROJECT_FILE"
+msgstr ""
 
-#: ../pitivi/application.py:244
-msgid "Preview the given project file without the full UI."
-msgstr "Preview the given project file without the full UI."
-
-#: ../pitivi/check.py:102
-#, python-format
-msgid "%s is already running!"
+#: ../pitivi/check.py:115
+#, fuzzy, python-format
+msgid "%s is already running"
 msgstr "%s כבר פעיל!"
 
-#: ../pitivi/check.py:103
+#: ../pitivi/check.py:116
 #, python-format
 msgid "An instance of %s is already running in this script."
 msgstr "מופע של %s כבר הופעל בסקריפט זה."
 
-#: ../pitivi/check.py:105
-msgid "Could not find the GNonLin plugins!"
+#: ../pitivi/check.py:118
+#, fuzzy
+msgid "Could not find the GNonLin plugins"
 msgstr "לא ניתן לאתר את תוספי ה־GNonLin!"
 
-#: ../pitivi/check.py:106
-msgid ""
-"Make sure the plugins were installed and are available in the GStreamer "
-"plugins path."
+#: ../pitivi/check.py:119
+msgid "Make sure the plugins were installed and are available in the GStreamer plugins path."
 msgstr "יש לוודא שהתוספים הותקנו ושהם זמינים בנתיב של תוספי GStreamer."
 
-#: ../pitivi/check.py:108
-msgid "Could not find the autodetect plugins!"
+#: ../pitivi/check.py:121
+#, fuzzy
+msgid "Could not find the autodetect plugins"
 msgstr "לא ניתן לאתר את תוספי הזיהוי האוטומטי!"
 
-#: ../pitivi/check.py:109
-msgid ""
-"Make sure you have installed gst-plugins-good and is available in the "
-"GStreamer plugin path."
-msgstr ""
-"יש לוודא ש־gst-plugins-good הותקן ושהוא וזמין בנתיב של תוספי GStreamer."
+#: ../pitivi/check.py:122
+#, fuzzy
+msgid "Make sure you have installed gst-plugins-good and that it's available in the GStreamer plugin path."
+msgstr "יש לוודא ש־gst-plugins-good הותקן ושהוא וזמין בנתיב של תוספי GStreamer."
 
-#: ../pitivi/check.py:111
-msgid "PyGTK doesn't have cairo support!"
+#: ../pitivi/check.py:124
+#, fuzzy
+msgid "PyGTK doesn't have cairo support"
 msgstr "ל־PyGTK אין תמיכה ב־cairo!"
 
-#: ../pitivi/check.py:112
-msgid ""
-"Please use a version of the GTK+ Python bindings built with cairo support."
+#: ../pitivi/check.py:125
+msgid "Please use a version of the GTK+ Python bindings built with cairo support."
 msgstr "נא להשתמש בגרסה של מאגדי Python ל־GTK+‎ שנבנו עם תמיכה ב־cairo."
 
-#: ../pitivi/check.py:114
+#: ../pitivi/check.py:127
 msgid "Could not initiate the video output plugins"
 msgstr "לא ניתן להפעיל את תוספי פלט הווידאו"
 
-#: ../pitivi/check.py:115
-msgid ""
-"Make sure you have at least one valid video output sink available "
-"(xvimagesink or ximagesink)"
-msgstr ""
-"נא לוודא שיש לפחות קולט פלט וידאו תקני אחד זמין (xvimagesink או ximagesink)"
+#: ../pitivi/check.py:128
+#, fuzzy
+msgid "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)."
+msgstr "נא לוודא שיש לפחות קולט פלט וידאו תקני אחד זמין (xvimagesink או ximagesink)"
 
-#: ../pitivi/check.py:117
+#: ../pitivi/check.py:130
 msgid "Could not initiate the audio output plugins"
 msgstr "לא ניתן להפעיל את תוספי פלט השמע"
 
-#: ../pitivi/check.py:118
-msgid ""
-"Make sure you have at least one valid audio output sink available (alsasink "
-"or osssink)"
+#: ../pitivi/check.py:131
+#, fuzzy
+msgid "Make sure you have at least one valid audio output sink available (alsasink or osssink)."
 msgstr "נא לוודא שיש לפחות קולט פלט שמע תקני אחד זמין (alsasink או osssink)"
 
-#: ../pitivi/check.py:120
+#: ../pitivi/check.py:133
 msgid "Could not import the cairo Python bindings"
 msgstr "לא ניתן לייבא את מאגדי ה־Python של cairo"
 
-#: ../pitivi/check.py:121
-msgid "Make sure you have the cairo Python bindings installed"
+#: ../pitivi/check.py:134
+#, fuzzy
+msgid "Make sure you have the cairo Python bindings installed."
 msgstr "נא לוודא כי מאגדי ה־Python של cairo מותקנים"
 
-#: ../pitivi/check.py:123
-msgid "Could not import the libglade Python bindings"
-msgstr "לא ניתן לייבא את מאגדי ה־Python של libglade"
-
-#: ../pitivi/check.py:124
-msgid "Make sure you have the libglade Python bindings installed"
-msgstr "נא לוודא כי מאגדי ה־Python של libglade מותקנים"
-
-#: ../pitivi/check.py:126
+#: ../pitivi/check.py:136
 msgid "Could not import the goocanvas Python bindings"
 msgstr "לא ניתן לייבא את מאגדי ה־Python של goocanvas"
 
-#: ../pitivi/check.py:127
-msgid "Make sure you have the goocanvas Python bindings installed"
+#: ../pitivi/check.py:137
+#, fuzzy
+msgid "Make sure you have the goocanvas Python bindings installed."
 msgstr "נא לוודא כי מאגדי ה־Python של goocanvas מותקנים"
 
-#: ../pitivi/check.py:130
-#, python-format
-msgid ""
-"You do not have a recent enough version of the GTK+ Python bindings "
-"(currently %s)"
-msgstr "אין לך גרסה עדכנית מספיק של מאגדי ה־GTK+‎ של Python (נוכחית %s)"
-
-#: ../pitivi/check.py:131
-#, python-format
-msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
-msgstr "עליך להתקין גרסה גדולה או שווה ל־%s  של מאגדי ה־GTK+‎ של Python"
-
-#: ../pitivi/check.py:134
-#, python-format
-msgid ""
-"You do not have a recent enough version of the GStreamer Python bindings "
-"(currently %s)"
-msgstr ""
-"אין לך גרסה עדכנית מספיק של מאגדי ה־Python של GStreamer (הנוכחית היא %s)"
-
-#: ../pitivi/check.py:135
-#, python-format
-msgid ""
-"Install a version of the GStreamer Python bindings greater or equal to %s"
-msgstr "יש להתקין גרסה %s או עדכנית יותר של מאגדי Python ל־GStreamer"
-
-#: ../pitivi/check.py:138
-#, python-format
-msgid "You do not have a recent enough version of GStreamer (currently %s)"
-msgstr "אין לך גרסה עדכנית מספיק של GStreamer (הנוכחית היא %s)"
-
 #: ../pitivi/check.py:139
-#, python-format
-msgid "Install a version of the GStreamer greater or equal to %s"
-msgstr "יש להתקין גרסה %s או עדכנית יותר של GStreamer"
+#, fuzzy
+msgid "Could not import the xdg Python library"
+msgstr "לא ניתן לייבא את מאגדי ה־Python של cairo"
 
-#: ../pitivi/check.py:142
-#, python-format
-msgid ""
-"You do not have a recent enough version of the cairo Python bindings "
-"(currently %s)"
-msgstr "אין לך גרסה עדכנית מספיק של מאגדי ה־Python של cairo (הנוכחית היא %s)"
+#: ../pitivi/check.py:140
+#, fuzzy
+msgid "Make sure you have the xdg Python library installed."
+msgstr "נא לוודא כי מאגדי ה־Python של cairo מותקנים"
 
 #: ../pitivi/check.py:143
-#, python-format
-msgid "Install a version of the cairo Python bindings greater or equal to %s"
-msgstr "יש להתקין את מאגדי ה־Python ל־cairo בגרסה %s או עדכנית יותר"
+#, fuzzy, python-format
+msgid "You do not have a recent enough version of the GTK+ Python bindings (your version %s)"
+msgstr "אין לך גרסה עדכנית מספיק של מאגדי ה־GTK+‎ של Python (נוכחית %s)"
 
-#: ../pitivi/check.py:146
-#, python-format
-msgid ""
-"You do not have a recent enough version of the GNonLin GStreamer plugin "
-"(currently %s)"
-msgstr ""
-"אין לך גרסה עדכנית מספיק של תוסף ה־GStreamer של GNonLin (הנוכחית היא %s)"
+#: ../pitivi/check.py:144
+#, fuzzy, python-format
+msgid "Install a version of the GTK+ Python bindings greater than or equal to %s."
+msgstr "עליך להתקין גרסה גדולה או שווה ל־%s  של מאגדי ה־GTK+‎ של Python"
 
 #: ../pitivi/check.py:147
-#, python-format
-msgid ""
-"Install a version of the GNonLin GStreamer plugin greater or equal to %s"
-msgstr "יש להתקין את תוסף ה־GStreamer של GNonLin בגרסה %s או עדכנית יותר"
+#, fuzzy, python-format
+msgid "You do not have a recent enough version of GTK+ (your version %s)"
+msgstr "אין לך גרסה עדכנית מספיק של GStreamer (הנוכחית היא %s)"
 
-#: ../pitivi/check.py:149
-msgid "Could not import the Zope interface module"
-msgstr "לא ניתן לייבא את מודול המנשק של Zope"
+#: ../pitivi/check.py:148
+#, fuzzy, python-format
+msgid "Install a version of GTK+ greater than or equal to %s."
+msgstr "יש להתקין גרסה %s או עדכנית יותר של GStreamer"
 
-#: ../pitivi/check.py:150
-msgid "Make sure you have the zope.interface module installed"
-msgstr "נא לוודא שמותקן אצלך המודול zope.interface"
+#: ../pitivi/check.py:151
+#, fuzzy, python-format
+msgid "You do not have a recent enough version of GStreamer Python bindings (your version %s)"
+msgstr "אין לך גרסה עדכנית מספיק של מאגדי ה־Python של GStreamer (הנוכחית היא %s)"
 
 #: ../pitivi/check.py:152
+#, fuzzy, python-format
+msgid "Install a version of the GStreamer Python bindings greater than or equal to %s."
+msgstr "יש להתקין גרסה %s או עדכנית יותר של מאגדי Python ל־GStreamer"
+
+#: ../pitivi/check.py:155
+#, fuzzy, python-format
+msgid "You do not have a recent enough version of GStreamer (your version %s)"
+msgstr "אין לך גרסה עדכנית מספיק של GStreamer (הנוכחית היא %s)"
+
+#: ../pitivi/check.py:156
+#, fuzzy, python-format
+msgid "Install a version of the GStreamer greater than or equal to %s."
+msgstr "יש להתקין גרסה %s או עדכנית יותר של GStreamer"
+
+#: ../pitivi/check.py:159
+#, fuzzy, python-format
+msgid "You do not have a recent enough version of the cairo Python bindings (your version %s)"
+msgstr "אין לך גרסה עדכנית מספיק של מאגדי ה־Python של cairo (הנוכחית היא %s)"
+
+#: ../pitivi/check.py:160
+#, fuzzy, python-format
+msgid "Install a version of the cairo Python bindings greater than or equal to %s."
+msgstr "יש להתקין את מאגדי ה־Python ל־cairo בגרסה %s או עדכנית יותר"
+
+#: ../pitivi/check.py:163
+#, fuzzy, python-format
+msgid "You do not have a recent enough version of the GNonLin GStreamer plugin (your version %s)"
+msgstr "אין לך גרסה עדכנית מספיק של תוסף ה־GStreamer של GNonLin (הנוכחית היא %s)"
+
+#: ../pitivi/check.py:164
+#, fuzzy, python-format
+msgid "Install a version of the GNonLin GStreamer plugin greater than or equal to %s."
+msgstr "יש להתקין את תוסף ה־GStreamer של GNonLin בגרסה %s או עדכנית יותר"
+
+#. FIXME enable version checking in GES
+#: ../pitivi/check.py:167
+#, fuzzy
+msgid "Could not import GStreamer Editing Services "
+msgstr "לא ניתן לייבא את מודול ה־distutils"
+
+#: ../pitivi/check.py:168
+#, fuzzy
+msgid "Make sure you have GStreamer Editing Services installed."
+msgstr "נא לוודא כי מאגדי ה־Python של cairo מותקנים"
+
+#: ../pitivi/check.py:170
 msgid "Could not import the distutils modules"
 msgstr "לא ניתן לייבא את מודול ה־distutils"
 
-#: ../pitivi/check.py:153
-msgid "Make sure you have the distutils python module installed"
+#: ../pitivi/check.py:171
+#, fuzzy
+msgid "Make sure you have the distutils Python module installed."
 msgstr "נא לוודא שמותקן אצלך מודול ה־python בשם distutils"
 
-#: ../pitivi.desktop.in.in.h:1
-msgid "Create and edit your own movies"
-msgstr "יצירה ועריכה של סרטים עצמיים"
-
-#: ../pitivi.desktop.in.in.h:2
-msgid "Pitivi Video Editor"
-msgstr "עורך הווידאו Pitivi"
-
-#: ../pitivi/discoverer.py:228
-#, python-format
-msgid ""
-"Missing plugins:\n"
-"%s"
+#: ../pitivi/check.py:177
+msgid "Enables the autoalign feature"
 msgstr ""
-"תוספים חסרים:\n"
-"%s"
 
-#. woot, nothing decodable
-#: ../pitivi/discoverer.py:248
-msgid "Can not decode file."
-msgstr "לא ניתן לפענח את הקובץ."
+#: ../pitivi/check.py:182
+#, fuzzy
+msgid "Additional video effects"
+msgstr "אפקטי וידאו"
 
-#: ../pitivi/discoverer.py:249
-msgid "The given file does not contain audio, video or picture streams."
-msgstr "הקובץ הניתן אינו מכיל תזרימי שמע, וידאו או תמונה."
-
-#: ../pitivi/discoverer.py:269
-msgid "Could not establish the duration of the file."
-msgstr "לא ניתן לזהות את אורך הקובץ."
-
-#: ../pitivi/discoverer.py:270
-msgid ""
-"This clip seems to be in a format which cannot be accessed in a random "
-"fashion."
-msgstr "נראה כי מקטע זה הוא במבנה שלא ניתן לגשת אליו בצורה אקראית."
-
-#: ../pitivi/discoverer.py:336
-msgid "Timeout while analyzing file."
-msgstr "עבר זמן רב מדי בעת ניסיון לפענח את הקובץ."
-
-#: ../pitivi/discoverer.py:337
-msgid "Analyzing the file took too long."
-msgstr "ניתוח הקובץ ארך זמן רב מדי."
-
-#: ../pitivi/discoverer.py:366
-msgid "No available source handler."
-msgstr "אין מטפל זמין למקור."
-
-#: ../pitivi/discoverer.py:367
-#, python-format
-msgid "You do not have a GStreamer source element to handle protocol '%s'"
-msgstr "אין לך את רכיב המקור של GStreamer לטיפול בפרוטוקול '%s'"
-
-#: ../pitivi/discoverer.py:432
-msgid "Pipeline didn't want to go to PAUSED."
-msgstr "צינורית הפקודה סרבה לעבור למצב PAUSED."
-
-#: ../pitivi/discoverer.py:455
-#, python-format
-msgid "An internal error occurred while analyzing this file: %s"
-msgstr "אירעה שגיאה פנימית בעת הניסיון לנתח את הקובץ הבא: %s"
-
-#: ../pitivi/discoverer.py:465
-msgid "File contains a redirection to another clip."
-msgstr "הקובץ מכיל הפניה למקטע אחר."
-
-#: ../pitivi/discoverer.py:466
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "התכנית PiTiVi כרגע אינה מסוגלת לטפל בקובצי הפניה."
-
-#: ../pitivi/discoverer.py:492
-msgid "Pipeline didn't want to go to PLAYING."
-msgstr "צינורית הפקודה סרבה לעבור למצב PLAYING."
-
-#: ../pitivi/effects.py:63 ../pitivi/effects.py:65
-msgid "All effects"
-msgstr "כל האפקטים"
-
-#: ../pitivi/effects.py:66
-msgid "Colors"
-msgstr "צבעים"
-
-#: ../pitivi/effects.py:80
-msgid "Noise"
-msgstr "רעש"
-
-#: ../pitivi/effects.py:82
-msgid "Analysis"
-msgstr "ניתוח"
-
-#: ../pitivi/effects.py:87
-msgid "Blur"
-msgstr "טשטוש"
-
-#: ../pitivi/effects.py:89
-msgid "Geometry"
-msgstr "צורות הנדסיות"
-
-#: ../pitivi/effects.py:101
-msgid "Fancy"
-msgstr "מהודר"
-
-#: ../pitivi/effects.py:112
-msgid "Time"
-msgstr "זמן"
-
-#: ../pitivi/effects.py:113 ../pitivi/effects.py:221
-msgid "Uncategorized"
-msgstr "לא בקטגוריה"
-
-#. TODO check if it is the good way to make it translatable
-#. And to filter actually!
-#: ../pitivi/effects.py:239 ../pitivi/ui/encodingdialog.glade.h:33
-#: ../pitivi/ui/projectsettings.glade.h:20
-msgid "Video"
-msgstr "וידאו"
-
-#: ../pitivi/effects.py:240
-msgid "Audio |audio"
-msgstr "שמע"
-
-#: ../pitivi/effects.py:241
-msgid "effect"
-msgstr "אפקט"
-
-#: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
-msgstr "טבעי של PiTiVi‏ (XML)"
-
-#: ../pitivi/formatters/format.py:78
-msgid "Playlist format"
-msgstr "מבנה רשימת הנגינה"
-
-#: ../pitivi/projectmanager.py:102
-msgid "Not a valid project file."
-msgstr "אינו קובץ מיזם תקני."
-
-#: ../pitivi/projectmanager.py:107
-msgid "Couldn't close current project"
-msgstr "לא ניתן לסגור את המיזם הנוכחי"
-
-#: ../pitivi/projectmanager.py:144
-msgid "No URI specified."
-msgstr "לא צוינה כתובת."
-
-#: ../pitivi/projectmanager.py:178
-msgid "New Project"
-msgstr "מיזם חדש"
-
-#: ../pitivi/settings.py:501
-msgid "Export Settings\n"
-msgstr "הגדרות יצוא\n"
-
-#: ../pitivi/settings.py:502
-msgid "Video: "
-msgstr "וידאו: "
-
-#: ../pitivi/settings.py:505
-msgid ""
-"\n"
-"Audio: "
+#: ../pitivi/check.py:184
+msgid "Additional multimedia codecs through the FFmpeg library"
 msgstr ""
-"\n"
-"שמע: "
 
-#: ../pitivi/settings.py:508
-msgid ""
-"\n"
-"Muxer: "
-msgstr ""
-"\n"
-"מרבב: "
-
-#: ../pitivi/settings.py:526
-#, python-format
-msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
-msgstr "%(width)d x %(height)d פיקסלים בקצב של %(framerate).2f fps"
-
-#: ../pitivi/settings.py:537
-#, python-format
-msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
-msgstr "%(channels)d ערוצים בתדירות של %(frequency)d הרץ (%(depth)d סיביות)"
-
-#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/effectlist.py:126
-#: ../pitivi/ui/videofxlist.py:53
-msgid "Name"
-msgstr "שם"
-
-#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/effectlist.py:138
-#: ../pitivi/ui/videofxlist.py:59
-msgid "Description"
-msgstr "תיאור"
-
-#: ../pitivi/ui/cam_capture.glade.h:1
-msgid "Audio Capture Device:"
-msgstr "התקן לכידת שמע:"
-
-#: ../pitivi/ui/cam_capture.glade.h:2
-msgid "No device available"
-msgstr "אין התקן זמין"
-
-#: ../pitivi/ui/cam_capture.glade.h:3
-msgid "Video Capture Device:"
-msgstr "התקן לכידת וידאו:"
-
-#: ../pitivi/ui/clipproperties.py:135
+#: ../pitivi/clipproperties.py:186
 msgid "Remove effect"
 msgstr "הסרת האפקט"
 
-#: ../pitivi/ui/clipproperties.py:162
+#: ../pitivi/clipproperties.py:213
 msgid "Activated"
 msgstr "מופעל"
 
-#: ../pitivi/ui/clipproperties.py:167
+#: ../pitivi/clipproperties.py:218
 msgid "Type"
 msgstr "סוג"
 
-#: ../pitivi/ui/clipproperties.py:179
+#: ../pitivi/clipproperties.py:230
 msgid "Effect name"
 msgstr "שם האפקט"
 
-#: ../pitivi/ui/clipproperties.py:376
-msgid ""
-"<span>You must select <b>one</b> clip on the timeline to configure its "
-"associated effects</span>"
-msgstr ""
-"<span>עליך לבחור מקטע <b>אחד</b> בציר הזמנים כדי להגדיר אפקטים שישויכו אליו</"
-"span>"
+#: ../pitivi/clipproperties.py:265
+#, fuzzy
+msgid "Effects"
+msgstr "אפקט"
 
-#: ../pitivi/ui/common.py:91 ../pitivi/ui/common.py:133
-#, fuzzy, python-format
-msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
-msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] "<b>שמע:</b> ערוץ אחד בתדירות %d <i>הרץ</i> (%d <i>סיביות</i>)"
-msgstr[1] "<b>שמע:</b> %d ערוצים בתדירות %d <i>הרץ</i> (%d <i>סיביות</i>)"
-msgstr[2] "<b>שמע:</b> שני ערוצים בתדירות %d <i>הרץ</i> (%d <i>סיביות</i>)"
+#: ../pitivi/clipproperties.py:455
+#, fuzzy
+msgid "Select a clip on the timeline to configure its associated effects"
+msgstr "<span>עליך לבחור מקטע <b>אחד</b> בציר הזמנים כדי להגדיר אפקטים שישויכו אליו</span>"
 
-#: ../pitivi/ui/common.py:97 ../pitivi/ui/common.py:139
-#, python-format
-msgid "<b>Unknown Audio format:</b> %s"
-msgstr "<b>מבנה השמע בלתי מזוהה:</b> %s"
+#: ../pitivi/clipproperties.py:528
+#, fuzzy
+msgid "Transformation"
+msgstr "פרטים"
 
-#: ../pitivi/ui/common.py:102 ../pitivi/ui/common.py:144
-#, python-format
-msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
-msgstr "<b>וידאו:</b> %d x %d <i>פיקסלים</i> בקצב רענון של %.2f<i>fps</i>"
+#: ../pitivi/effects.py:75
+#: ../pitivi/effects.py:149
+#: ../pitivi/effects.py:236
+msgid "Uncategorized"
+msgstr "לא בקטגוריה"
 
-#: ../pitivi/ui/common.py:106 ../pitivi/ui/common.py:148
-#, python-format
-msgid "<b>Image:</b> %d x %d <i>pixels</i>"
-msgstr "<b>תמונה:</b> %d x %d <i>פיקסלים</i>"
+#: ../pitivi/effects.py:101
+#: ../pitivi/effects.py:103
+msgid "All effects"
+msgstr "כל האפקטים"
 
-#: ../pitivi/ui/common.py:109 ../pitivi/ui/common.py:151
-#, python-format
-msgid "<b>Unknown Video format:</b> %s"
-msgstr "<b>מבנה הווידאו בלתי מזוהה:</b> %s"
+#: ../pitivi/effects.py:104
+msgid "Colors"
+msgstr "צבעים"
 
-#: ../pitivi/ui/common.py:112 ../pitivi/ui/common.py:154
-#, python-format
-msgid "<b>Text:</b> %s"
-msgstr "<b>טקסט:</b> %s"
+#: ../pitivi/effects.py:118
+msgid "Noise"
+msgstr "רעש"
 
-#: ../pitivi/ui/common.py:185
-msgid "12 fps"
-msgstr "12 fps"
+#: ../pitivi/effects.py:120
+msgid "Analysis"
+msgstr "ניתוח"
 
-#: ../pitivi/ui/common.py:186
-msgid "15 fps"
-msgstr "15 fps"
+#: ../pitivi/effects.py:124
+msgid "Blur"
+msgstr "טשטוש"
 
-#: ../pitivi/ui/common.py:187
-msgid "20 fps"
-msgstr "20 fps"
+#: ../pitivi/effects.py:126
+msgid "Geometry"
+msgstr "צורות הנדסיות"
 
-#: ../pitivi/ui/common.py:188
-msgid "23,976 fps"
-msgstr "23,976 fps"
+#: ../pitivi/effects.py:139
+msgid "Fancy"
+msgstr "מהודר"
 
-#: ../pitivi/ui/common.py:189
-msgid "24 fps"
-msgstr "24 fps"
+#: ../pitivi/effects.py:148
+msgid "Time"
+msgstr "זמן"
 
-#: ../pitivi/ui/common.py:190
-msgid "25 fps"
-msgstr "25 fps"
+#: ../pitivi/effects.py:255
+msgid "Audio |audio"
+msgstr "שמע"
 
-#: ../pitivi/ui/common.py:191
-msgid "29,97 fps"
-msgstr "29,97 fps"
+#: ../pitivi/effects.py:256
+msgid "effect"
+msgstr "אפקט"
 
-#: ../pitivi/ui/common.py:192
-msgid "30 fps"
-msgstr "30 fps"
-
-#: ../pitivi/ui/common.py:193
-msgid "59,94 fps"
-msgstr "59,94 fps"
-
-#: ../pitivi/ui/common.py:194
-msgid "60 fps"
-msgstr "60 fps"
-
-#: ../pitivi/ui/common.py:195
-msgid "120 fps"
-msgstr "120 fps"
-
-#: ../pitivi/ui/common.py:199
-msgid "8 KHz"
-msgstr "8 KHz"
-
-#: ../pitivi/ui/common.py:200
-msgid "11 KHz"
-msgstr "11 KHz"
-
-#: ../pitivi/ui/common.py:201
-msgid "22 KHz"
-msgstr "22 KHz"
-
-#: ../pitivi/ui/common.py:202
-msgid "44.1 KHz"
-msgstr "44.1 KHz"
-
-#: ../pitivi/ui/common.py:203
-msgid "48 KHz"
-msgstr "48 KHz"
-
-#: ../pitivi/ui/common.py:204
-msgid "96 KHz"
-msgstr "96 KHz"
-
-#: ../pitivi/ui/common.py:208
-msgid "8 bit"
-msgstr "8 סיביות"
-
-#: ../pitivi/ui/common.py:209
-msgid "16 bit"
-msgstr "16 סיביות"
-
-#: ../pitivi/ui/common.py:210
-msgid "24 bit"
-msgstr "24 סיביות"
-
-#: ../pitivi/ui/common.py:211
-msgid "32 bit"
-msgstr "32 סיביות"
-
-#: ../pitivi/ui/common.py:215
-msgid "6 Channels (5.1)"
-msgstr "6 ערוצים (5.1)"
-
-#: ../pitivi/ui/common.py:216
-msgid "4 Channels (4.0)"
-msgstr "4 ערוצים (4.0)"
-
-#: ../pitivi/ui/common.py:217
-msgid "Stereo"
-msgstr "סטריאו"
-
-#: ../pitivi/ui/common.py:218
-msgid "Mono"
-msgstr "מונו"
-
-#: ../pitivi/ui/defaultpropertyeditor.py:104
-#, fuzzy, python-format
-msgid "Properties For: %d object"
-msgid_plural "Properties For: %d objects"
-msgstr[0] "מאפיינים עבור: פריט אחד"
-msgstr[1] "מאפיינים עבור: %d פריטים"
-msgstr[2] "מאפיינים עבור: שני פריטים"
-
-#: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:98
-msgid "No properties..."
-msgstr "אין מאפיינים..."
-
-#: ../pitivi/ui/dynamic.py:67
-msgid "Implement Me"
-msgstr "למימוש"
-
-#: ../pitivi/ui/dynamic.py:423
-msgid "Custom"
-msgstr "התאמה אישית"
-
-#: ../pitivi/ui/dynamic.py:447
-msgid "Save Preset"
-msgstr "שמירת הערכה"
-
-#: ../pitivi/ui/dynamic.py:516
-msgid "Choose..."
-msgstr "בחירה..."
-
-#: ../pitivi/ui/effectlist.py:86
+#: ../pitivi/effects.py:366
 msgid "Video effects"
 msgstr "אפקטי וידאו"
 
-#: ../pitivi/ui/effectlist.py:87
+#: ../pitivi/effects.py:367
 msgid "Audio effects"
 msgstr "אפקטי שמע"
 
 #. Prevents being flush against the notebook
-#: ../pitivi/ui/effectlist.py:98 ../pitivi/ui/pluginmanagerdialog.glade.h:3
+#: ../pitivi/effects.py:377
+#: ../pitivi/medialibrary.py:313
+#: ../pitivi/transitions.py:63
 msgid "Search:"
 msgstr "חיפוש:"
 
-#: ../pitivi/ui/effectlist.py:211
-msgid "Show Video Effects as a List"
-msgstr "הצגת האפקטים של הווידאו כרשימה"
+#. FIXME Hacky, reimplement when avalaible in GES
+#: ../pitivi/mainwindow.py:135
+msgid "PiTiVi Native (XML)"
+msgstr "טבעי של PiTiVi‏ (XML)"
 
-#: ../pitivi/ui/effectlist.py:213
-msgid "Show Video Effects as Icons"
-msgstr "הצגת אפקטים של וידאו כסמלים"
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:1
-msgid "<b>Properties For Plugin</b>"
-msgstr "<b>מאפיינים עבור התוסף</b>"
-
-#: ../pitivi/ui/elementsettingsdialog.glade.h:2
-msgid "Properties for <element>"
-msgstr "מאפיינים עבור <element>"
-
-#: ../pitivi/ui/encodingdialog.glade.h:1
-msgid "1000 x 1000"
-msgstr "1000 x 1000"
-
-#: ../pitivi/ui/encodingdialog.glade.h:2
-msgid "29.97 fps"
-msgstr "29.97 fps"
-
-#: ../pitivi/ui/encodingdialog.glade.h:3
-msgid "6 channels (5.1)\n"
-msgstr "6 ערוצים (5.1)\n"
-
-#: ../pitivi/ui/encodingdialog.glade.h:5
-msgid ""
-"AC-3\n"
-"AAC"
-msgstr ""
-"AC-3\n"
-"AAC"
-
-#: ../pitivi/ui/encodingdialog.glade.h:7
-msgid "Advanced..."
-msgstr "מתקדם..."
-
-#: ../pitivi/ui/encodingdialog.glade.h:8
-#: ../pitivi/ui/projectsettings.glade.h:7
-msgid "Audio"
-msgstr "שמע"
-
-#: ../pitivi/ui/encodingdialog.glade.h:9
-msgid "Codec:"
-msgstr "מקודד:"
-
-#: ../pitivi/ui/encodingdialog.glade.h:10
-msgid "Container format"
-msgstr "מבנה מכיל"
-
-#: ../pitivi/ui/encodingdialog.glade.h:11
-msgid "Container format:"
-msgstr "מבנה מכיל:"
-
-#: ../pitivi/ui/encodingdialog.glade.h:12
-msgid "Draft (no special effects, single pass)"
-msgstr "טיוטה (ללא אפקטים מיוחדים, מעבר אחיד)"
-
-#: ../pitivi/ui/encodingdialog.glade.h:13
-msgid "Edit Project Settings..."
-msgstr "עריכת הגדרות המיזם..."
-
-#: ../pitivi/ui/encodingdialog.glade.h:14
-msgid "File name"
-msgstr "שם הקובץ"
-
-#: ../pitivi/ui/encodingdialog.glade.h:15
-msgid "File name:"
-msgstr "שם הקובץ"
-
-#: ../pitivi/ui/encodingdialog.glade.h:16
-msgid "Folder"
-msgstr "תיקייה"
-
-#: ../pitivi/ui/encodingdialog.glade.h:17
-msgid "Folder:"
-msgstr "תיקייה:"
-
-#: ../pitivi/ui/encodingdialog.glade.h:18
-msgid "Frame rate:"
-msgstr "קצב השקופיות:"
-
-#: ../pitivi/ui/encodingdialog.glade.h:19
-msgid "Framerate"
-msgstr "קצב שקופיות"
-
-#: ../pitivi/ui/encodingdialog.glade.h:20
-msgid "General"
-msgstr "כללי"
-
-#: ../pitivi/ui/encodingdialog.glade.h:21
-msgid "H.264"
-msgstr "H.264"
-
-#: ../pitivi/ui/encodingdialog.glade.h:22
-msgid "Height"
-msgstr "גובה"
-
-#: ../pitivi/ui/encodingdialog.glade.h:23
-msgid "MP4"
-msgstr "MP4"
-
-#: ../pitivi/ui/encodingdialog.glade.h:24
-msgid "Number of channels:"
-msgstr "מספר הערוצים:"
-
-#: ../pitivi/ui/encodingdialog.glade.h:25 ../pitivi/ui/mainwindow.py:143
-msgid "Render"
-msgstr "עיבוד"
-
-#: ../pitivi/ui/encodingdialog.glade.h:26
-msgid "Render only the selected clips"
-msgstr "יש לעבד רק את הקטעים הנבחרים"
-
-#: ../pitivi/ui/encodingdialog.glade.h:27
-msgid "Sample Depth:"
-msgstr "עומק הדגימה:"
-
-#: ../pitivi/ui/encodingdialog.glade.h:28
-msgid "Sample Rate:"
-msgstr "קצב הדגימה:"
-
-#: ../pitivi/ui/encodingdialog.glade.h:29
-msgid "Sample rate"
-msgstr "קצב הדגימה"
-
-#: ../pitivi/ui/encodingdialog.glade.h:30
-msgid "Scale"
-msgstr "קנה מידה"
-
-#: ../pitivi/ui/encodingdialog.glade.h:31
-msgid "Scale:"
-msgstr "קנה מידה:"
-
-#: ../pitivi/ui/encodingdialog.glade.h:32
-msgid "Summary"
-msgstr "תקציר"
-
-#: ../pitivi/ui/encodingprogress.glade.h:1
-msgid "<b><big>Rendering movie</big></b>"
-msgstr "<b><big>הסרט בהליכי עיבוד</big></b>"
-
-#: ../pitivi/ui/encodingprogress.glade.h:2
-msgid "<b>Estimated filesize:</b>"
-msgstr "<b>גודל הקובץ המוערך:</b>"
-
-#: ../pitivi/ui/encodingprogress.glade.h:3
-msgid "<b>Frames per second:</b>"
-msgstr "<b>שקופיות לשנייה:</b>"
-
-#: ../pitivi/ui/encodingprogress.glade.h:4
-msgid "<b>Phase:</b>"
-msgstr "<b>שלב:</b>"
-
-#: ../pitivi/ui/encodingprogress.glade.h:5
-msgid "Encoding first pass"
-msgstr "מעבר ראשון של ההצפנה"
-
-#: ../pitivi/ui/encodingprogress.glade.h:6
-msgid "Rendering"
-msgstr "בהליכי עיבוד"
-
-#: ../pitivi/ui/encodingprogress.glade.h:7
-msgid "Unknown"
-msgstr "לא ידוע"
-
-#: ../pitivi/ui/encodingprogress.glade.h:8
-msgid "Unknown Mib"
-msgstr "ה־MiB לא ידוע"
-
-#: ../pitivi/ui/filelisterrordialog.py:52
-msgid "Unknown reason"
-msgstr "סיבה בלתי ידועה"
-
-#: ../pitivi/ui/filelisterrordialog.py:82
-msgid "URI:"
-msgstr "כתובת:"
-
-#: ../pitivi/ui/filelisterrordialog.py:87
-msgid "Problem:"
-msgstr "בעיה:"
-
-#: ../pitivi/ui/filelisterrordialog.py:94
-msgid "Extra information:"
-msgstr "פרטים נוספים:"
-
-#: ../pitivi/ui/gstwidget.py:153
-msgid "Reset to default value"
-msgstr "איפוס לערך בררת המחדל"
-
-#. set title and frame label
-#: ../pitivi/ui/gstwidget.py:195
-#, python-format
-msgid "Properties for %s"
-msgstr "מאפיינים עבור %s"
-
-#: ../pitivi/ui/mainwindow.py:144 ../pitivi/ui/timeline.py:315
+#: ../pitivi/mainwindow.py:142
+#: ../pitivi/timeline/timeline.py:1093
 msgid "Split"
 msgstr "פיצול"
 
-#: ../pitivi/ui/mainwindow.py:145
+#: ../pitivi/mainwindow.py:143
 msgid "Keyframe"
 msgstr "שקופית מפתח"
 
-#: ../pitivi/ui/mainwindow.py:146
+#: ../pitivi/mainwindow.py:144
 msgid "Unlink"
 msgstr "הפרדה"
 
-#. Translators: This is an action, the title of a button
-#: ../pitivi/ui/mainwindow.py:148 ../pitivi/ui/projectsettings.glade.h:12
-msgid "Link"
-msgstr "קישור"
-
-#: ../pitivi/ui/mainwindow.py:149
+#: ../pitivi/mainwindow.py:147
 msgid "Ungroup"
 msgstr "פירוק"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/ui/mainwindow.py:151
+#: ../pitivi/mainwindow.py:149
 msgid "Group"
 msgstr "קבוצה"
 
-#: ../pitivi/ui/mainwindow.py:268
-msgid "Start Playback"
-msgstr "התחלה בניגון"
+#: ../pitivi/mainwindow.py:150
+msgid "Align"
+msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:269
-msgid "Stop Playback"
-msgstr "עצירת הניגון"
-
-#: ../pitivi/ui/mainwindow.py:270
-msgid "Loop over selected area"
-msgstr "נגינת קטע נבחר במחזוריות (לולאה)"
-
-#: ../pitivi/ui/mainwindow.py:275
+#: ../pitivi/mainwindow.py:256
 msgid "Create a new project"
 msgstr "יצירת מיזם חדש"
 
-#: ../pitivi/ui/mainwindow.py:276
+#: ../pitivi/mainwindow.py:258
 msgid "_Open..."
 msgstr "_פתיחה..."
 
-#: ../pitivi/ui/mainwindow.py:277
+#: ../pitivi/mainwindow.py:259
 msgid "Open an existing project"
 msgstr "פתיחת מיזם קיים"
 
-#: ../pitivi/ui/mainwindow.py:279 ../pitivi/ui/mainwindow.py:281
+#: ../pitivi/mainwindow.py:262
+#: ../pitivi/mainwindow.py:265
 msgid "Save the current project"
 msgstr "שמירת המיזם הנוכחי"
 
-#: ../pitivi/ui/mainwindow.py:280
+#: ../pitivi/mainwindow.py:264
 msgid "Save _As..."
 msgstr "שמירה _בשם..."
 
-#: ../pitivi/ui/mainwindow.py:283
+#: ../pitivi/mainwindow.py:268
 msgid "Reload the current project"
 msgstr "טעינת המיזם הנוכחי מחדש"
 
-#: ../pitivi/ui/mainwindow.py:284 ../pitivi/ui/projectsettings.glade.h:14
-msgid "Project Settings"
-msgstr "הגדרות המיזם"
+#: ../pitivi/mainwindow.py:270
+msgid "Export as Archive..."
+msgstr "יצוא כארכיון..."
 
-#: ../pitivi/ui/mainwindow.py:285
+#: ../pitivi/mainwindow.py:271
+#, fuzzy
+msgid "Export the current project"
+msgstr "טעינת המיזם הנוכחי מחדש"
+
+#: ../pitivi/mainwindow.py:274
 msgid "Edit the project settings"
 msgstr "עריכת הגדרות המיזם"
 
-#: ../pitivi/ui/mainwindow.py:286
-msgid "_Render project"
-msgstr "_עיבוד המיזם"
+#: ../pitivi/mainwindow.py:276
+#, fuzzy
+msgid "_Render..."
+msgstr "עיבוד"
 
-#: ../pitivi/ui/mainwindow.py:287
-msgid "Render project..."
-msgstr "עיבוד מיזם..."
+#: ../pitivi/mainwindow.py:277
+msgid "Export your project as a finished movie"
+msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:289
-msgid "_Undo"
-msgstr "בי_טול"
-
-#: ../pitivi/ui/mainwindow.py:290
+#: ../pitivi/mainwindow.py:280
 msgid "Undo the last operation"
 msgstr "ביטול הפעולה האחרונה שבוצעה"
 
-#: ../pitivi/ui/mainwindow.py:292
-msgid "_Redo"
-msgstr "_ביצוע חוזר"
-
-#: ../pitivi/ui/mainwindow.py:293
+#: ../pitivi/mainwindow.py:283
 msgid "Redo the last operation that was undone"
 msgstr "חזרה על הפעולה האחרונה שבוטלה"
 
-#: ../pitivi/ui/mainwindow.py:295
-msgid "_Plugins..."
-msgstr "_תוספים..."
+#: ../pitivi/mainwindow.py:288
+#, fuzzy
+msgid "Remove layer"
+msgstr "הסרת מקטע"
 
-#: ../pitivi/ui/mainwindow.py:296
-msgid "Manage plugins"
-msgstr "ניהול התוספים"
+#: ../pitivi/mainwindow.py:289
+#, fuzzy
+msgid "Remove the selected layer from the project"
+msgstr "הס_רה מהמיזם"
 
-#: ../pitivi/ui/mainwindow.py:297
-msgid "_Preferences"
-msgstr "ה_עדפות"
-
-#: ../pitivi/ui/mainwindow.py:300
-msgid "Import from _Webcam..."
-msgstr "יבוא ממצלמת _רשת..."
-
-#: ../pitivi/ui/mainwindow.py:301
-msgid "Import Camera stream"
-msgstr "יבוא תזרים ממצלמה"
-
-#: ../pitivi/ui/mainwindow.py:303
-msgid "_Make screencast..."
-msgstr "ה_סרטת המסך..."
-
-#: ../pitivi/ui/mainwindow.py:304
-msgid "Capture the desktop"
-msgstr "לכידת שולחן העבודה"
-
-#: ../pitivi/ui/mainwindow.py:306
-msgid "_Capture Network Stream..."
-msgstr "ל_כידת תזרים מהאינטרנט..."
-
-#: ../pitivi/ui/mainwindow.py:307
-msgid "Capture Network Stream"
-msgstr "לכידת תזרים מהאינטרנט"
-
-#: ../pitivi/ui/mainwindow.py:310
+#: ../pitivi/mainwindow.py:294
 #, python-format
 msgid "Information about %s"
 msgstr "פרטים על %s"
 
-#: ../pitivi/ui/mainwindow.py:311
-msgid "User manual"
+#: ../pitivi/mainwindow.py:296
+#, fuzzy
+msgid "User Manual"
 msgstr "מדריך למשתמשים"
 
-#: ../pitivi/ui/mainwindow.py:313
-msgid "_File"
-msgstr "_קובץ"
-
-#: ../pitivi/ui/mainwindow.py:314
-msgid "_Edit"
-msgstr "ע_ריכה"
-
-#: ../pitivi/ui/mainwindow.py:315
-msgid "_View"
-msgstr "_תצוגה"
-
-#: ../pitivi/ui/mainwindow.py:316
+#. Set up the toplevel menu items for translation
+#: ../pitivi/mainwindow.py:300
 msgid "_Project"
 msgstr "_מיזם"
 
-#: ../pitivi/ui/mainwindow.py:317
+#: ../pitivi/mainwindow.py:301
+msgid "_Edit"
+msgstr "ע_ריכה"
+
+#: ../pitivi/mainwindow.py:302
+msgid "_View"
+msgstr "_תצוגה"
+
+#: ../pitivi/mainwindow.py:303
+#, fuzzy
+msgid "_Library"
+msgstr "ספריית המדיה"
+
+#: ../pitivi/mainwindow.py:304
 msgid "_Timeline"
 msgstr "ציר ה_זמן"
 
-#: ../pitivi/ui/mainwindow.py:318
+#: ../pitivi/mainwindow.py:305
 msgid "Previe_w"
 msgstr "ת_צוגה מקדימה"
 
-#: ../pitivi/ui/mainwindow.py:321
-msgid "Loop"
-msgstr "לולאה"
-
-#: ../pitivi/ui/mainwindow.py:323
+#: ../pitivi/mainwindow.py:306
 msgid "_Help"
 msgstr "ע_זרה"
 
-#: ../pitivi/ui/mainwindow.py:328
+#: ../pitivi/mainwindow.py:311
 msgid "View the main window on the whole screen"
 msgstr "צפייה בחלון הראשי במסך מלא"
 
-#: ../pitivi/ui/mainwindow.py:332
+#: ../pitivi/mainwindow.py:313
 msgid "Main Toolbar"
 msgstr "סרגל הכלים הראשי"
 
-#: ../pitivi/ui/mainwindow.py:335
+#: ../pitivi/mainwindow.py:316
 msgid "Timeline Toolbar"
 msgstr "סרגל הכלים של ציר הזמן"
 
-#: ../pitivi/ui/mainwindow.py:343 ../pitivi/ui/viewer.py:539
+#: ../pitivi/mainwindow.py:323
+#: ../pitivi/viewer.py:364
 msgid "Undock Viewer"
 msgstr "ביטול הצמדת המציג"
 
-#: ../pitivi/ui/mainwindow.py:344
+#: ../pitivi/mainwindow.py:324
 msgid "Put the viewer in a separate window"
 msgstr "הצגת המציג בחלון נפרד"
 
-#: ../pitivi/ui/mainwindow.py:437
+#: ../pitivi/mainwindow.py:397
 msgid "Media Library"
 msgstr "ספריית המדיה"
 
-#: ../pitivi/ui/mainwindow.py:442
+#: ../pitivi/mainwindow.py:398
 msgid "Effect Library"
 msgstr "ספריית האפקטים"
 
-#: ../pitivi/ui/mainwindow.py:461
-msgid "Effects configurations"
+#: ../pitivi/mainwindow.py:410
+#, fuzzy
+msgid "Clip configuration"
 msgstr "תצורת האפקטים"
 
-#: ../pitivi/ui/mainwindow.py:675
-msgid "Contributors:"
+#: ../pitivi/mainwindow.py:411
+#, fuzzy
+msgid "Transitions"
+msgstr "משך"
+
+#: ../pitivi/mainwindow.py:648
+#: ../pitivi/dialogs/startupwizard.py:158
+#, python-format
+msgid "PiTiVi %s is available."
+msgstr ""
+
+#: ../pitivi/mainwindow.py:655
+msgid "Current maintainers:"
+msgstr ""
+
+#: ../pitivi/mainwindow.py:659
+msgid "Past maintainers:"
+msgstr ""
+
+#: ../pitivi/mainwindow.py:664
+#, fuzzy
+msgid "Contributors:\n"
 msgstr "תורמים:"
 
-#: ../pitivi/ui/mainwindow.py:687
+#: ../pitivi/mainwindow.py:673
+msgid "translator-credits"
+msgstr ""
+
+#. TODO GTK3: use set_license_type instead
+#: ../pitivi/mainwindow.py:679
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -1065,701 +956,825 @@ msgstr ""
 "הרישיון הציבורי הפחות כללי של GNU\n"
 "יש לעיין ב־http://www.gnu.org/copyleft/lesser.html לפרטים נוספים"
 
-#: ../pitivi/ui/mainwindow.py:695
+#: ../pitivi/mainwindow.py:687
 msgid "Open File..."
 msgstr "פתיחת קובץ..."
 
-#: ../pitivi/ui/mainwindow.py:711
+#: ../pitivi/mainwindow.py:702
 msgid "All Supported Formats"
 msgstr "כל מבני הקובץ הנתמכים"
 
-#: ../pitivi/ui/mainwindow.py:843
+#: ../pitivi/mainwindow.py:775
+#, fuzzy, python-format
+msgid "Unable to save project \"%s\""
+msgstr "חזרה למיזם שנשמר"
+
+#: ../pitivi/mainwindow.py:776
+#, fuzzy
+msgid "Error Saving Project"
+msgstr "שגיאה בטעינת קובץ"
+
+#: ../pitivi/mainwindow.py:804
 msgid "Close without saving"
 msgstr "סגירה ללא שמירה"
 
-#: ../pitivi/ui/mainwindow.py:856
+#: ../pitivi/mainwindow.py:818
 msgid "Save changes to the current project before closing?"
 msgstr "האם לשמור שינויים במיזם הנוכחי לפני הסגירה?"
 
-#: ../pitivi/ui/mainwindow.py:863
-msgid "If you don't save some of your changes will be lost"
+#: ../pitivi/mainwindow.py:830
+#, fuzzy, python-format
+msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "ללא שמירה השינויים שביצעת ילכו לאיבוד"
 
-#: ../pitivi/ui/mainwindow.py:916
+#: ../pitivi/mainwindow.py:834
+#, fuzzy
+msgid "If you don't save, your changes will be lost."
+msgstr "ללא שמירה השינויים שביצעת ילכו לאיבוד"
+
+#: ../pitivi/mainwindow.py:885
 msgid "Do you want to reload current project?"
 msgstr "האם ברצונך לטעון מחדש את המיזם הנוכחי?"
 
-#: ../pitivi/ui/mainwindow.py:921
+#: ../pitivi/mainwindow.py:889
 msgid "Revert to saved project"
 msgstr "חזרה למיזם שנשמר"
 
-#: ../pitivi/ui/mainwindow.py:924
+#: ../pitivi/mainwindow.py:892
 msgid "All unsaved changes will be lost."
 msgstr "כל השינויים שלא נשמרו ילכו לאיבוד."
 
-#: ../pitivi/ui/mainwindow.py:940
-#, python-format
-msgid "PiTiVi is unable to load file \"%s\""
+#: ../pitivi/mainwindow.py:907
+#, fuzzy, python-format
+msgid "Unable to load project \"%s\""
 msgstr "התכנית PiTiVi לא הצליחה לטעון את הקובץ \"%s\""
 
-#: ../pitivi/ui/mainwindow.py:943
-msgid "Error Loading File"
+#: ../pitivi/mainwindow.py:908
+#, fuzzy
+msgid "Error Loading Project"
 msgstr "שגיאה בטעינת קובץ"
 
-#: ../pitivi/ui/mainwindow.py:950
+#: ../pitivi/mainwindow.py:916
 msgid "Locate missing file..."
 msgstr "איתור קובץ חסר..."
 
-#: ../pitivi/ui/mainwindow.py:959
-msgid "The following file has moved, please tell PiTiVi where to find it."
+#. FIXME GES port, help user identify files with more information
+#. need work to be done in GES directly
+#. TODO: display the filesize to help the user identify the file
+#. if info.get_duration() == gst.CLOCK_TIME_NONE:
+#. # The file is probably an image, not video or audio.
+#. text = _('The following file has moved: "<b>%s</b>"'
+#. '\nPlease specify its new location:'
+#. % info_name(info))
+#. else:
+#. length = beautify_length(info.get_duration())
+#. text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
+#. '\nPlease specify its new location:'
+#. % (info_name(info), length))
+#: ../pitivi/mainwindow.py:957
+#, fuzzy, python-format
+msgid ""
+"The following file has moved: \"<b>%s</b>\"\n"
+"Please specify its new location:"
 msgstr "הקוב. הבא הועבר, נא לגלות ל־PiTiVi היכן למצוא אותו."
 
-#: ../pitivi/ui/mainwindow.py:961
-msgid "Duration:"
-msgstr "משך:"
+#: ../pitivi/mainwindow.py:997
+#, python-format
+msgid ""
+"No replacement file was provided for \"<i>%s</i>\".\n"
+"\n"
+"PiTiVi does not currently support partial projects."
+msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:1105
-msgid "Save As..."
-msgstr "שמירה בשם..."
+#: ../pitivi/mainwindow.py:1099
+msgid "Export To..."
+msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:1113
-msgid "Untitled.xptv"
+#: ../pitivi/mainwindow.py:1109
+#: ../pitivi/mainwindow.py:1156
+#: ../pitivi/mainwindow.py:1268
+#: ../pitivi/render.py:428
+#: ../pitivi/timeline/timeline.py:1328
+#, fuzzy
+msgid "Untitled"
 msgstr "ללא שם.xptv"
 
-#: ../pitivi/ui/mainwindow.py:1124 ../pitivi/ui/mainwindow.py:1137
+#: ../pitivi/mainwindow.py:1120
+#: ../pitivi/mainwindow.py:1135
+#: ../pitivi/mainwindow.py:1166
+#: ../pitivi/mainwindow.py:1181
 msgid "Detect Automatically"
 msgstr "זיהוי אוטומטי"
 
-#: ../pitivi/ui/net_capture.glade.h:1
-msgid "Address"
-msgstr "כתובת"
+#: ../pitivi/mainwindow.py:1148
+#: ../pitivi/timeline/timeline.py:1322
+msgid "Save As..."
+msgstr "שמירה בשם..."
 
-#: ../pitivi/ui/net_capture.glade.h:2
-msgid "Capture"
-msgstr "לכידה"
-
-#: ../pitivi/ui/net_capture.glade.h:3
-msgid "Capture Stream from URI"
-msgstr "לכידת תזרים מהאינטרנט"
-
-#: ../pitivi/ui/net_capture.glade.h:4
-msgid "Capture network stream"
-msgstr "לכידת תזרים מהאינטרנט"
-
-#: ../pitivi/ui/net_capture.glade.h:5
-msgid "Close"
-msgstr "סגירה"
-
-#: ../pitivi/ui/net_capture.glade.h:6
-msgid "Customize:"
-msgstr "התאמה אישית:"
-
-#: ../pitivi/ui/net_capture.glade.h:7
-msgid "HTTP / HTTPS"
-msgstr "HTTP / HTTPS"
-
-#: ../pitivi/ui/net_capture.glade.h:8
-msgid "Network stream video"
-msgstr "וידאו מתזרים מהאינטרנט"
-
-#: ../pitivi/ui/net_capture.glade.h:9
-msgid "Other protocol"
-msgstr "פרוטוקול אחר"
-
-#: ../pitivi/ui/net_capture.glade.h:10
-msgid "Port"
-msgstr "פתחה"
-
-#: ../pitivi/ui/net_capture.glade.h:11
-msgid "Preview"
-msgstr "תצוגה מקדימה"
-
-#: ../pitivi/ui/net_capture.glade.h:12
-msgid "Preview Stream from URI"
-msgstr "תצוגה מקדימה של תזרים מהאינטרנט"
-
-#: ../pitivi/ui/net_capture.glade.h:13
-msgid "Protocol"
-msgstr "פרוטוקול"
-
-#: ../pitivi/ui/net_capture.glade.h:14
-msgid "RTSP"
-msgstr "RTSP"
-
-#: ../pitivi/ui/net_capture.glade.h:15
-msgid "UDP / RDP"
-msgstr "UDP / RDP"
-
-#: ../pitivi/ui/net_capture.glade.h:16
-msgid "http://"
-msgstr "http://"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:1
-#: ../pitivi/ui/pluginmanagerdialog.py:177
-msgid "All categories"
-msgstr "כל הקטגוריות"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:2
-msgid "Plugin manager"
-msgstr "מנהל התוספים"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:4
-msgid "Show:"
-msgstr "הצגה:"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:5
-msgid ""
-"You may drag plugin files into the list to install them,\n"
-"or type text to search for a specific plugin."
+#: ../pitivi/mainwindow.py:1221
+msgid "Preview - click outside to close"
 msgstr ""
-"ניתן לגרור את קובצי התוספים לרשימה כדי להתקין אותם\n"
-"או להקליד טקסט כדי לחפש תוסף מסוים."
 
-#: ../pitivi/ui/pluginmanagerdialog.py:93
-msgid "Enabled"
-msgstr "פעיל"
+#: ../pitivi/mediafilespreviewer.py:125
+#, fuzzy
+msgid "PiTiVi can not preview this file."
+msgstr "התכנית PiTiVi כרגע אינה מסוגלת לטפל בקובצי הפניה."
 
-#: ../pitivi/ui/pluginmanagerdialog.py:103
-msgid "Plugin"
-msgstr "תוסף"
+#: ../pitivi/mediafilespreviewer.py:126
+msgid "More info"
+msgstr ""
 
-#: ../pitivi/ui/pluginmanagerdialog.py:113
-msgid "Category"
-msgstr "קטגוריה"
-
-#: ../pitivi/ui/pluginmanagerdialog.py:275
-msgid "Are you sure you want to remove the selected plugins?"
-msgstr "האם אכן ברצונך להסיר את התוספים הנבחרים?"
-
-#: ../pitivi/ui/pluginmanagerdialog.py:276
-msgid "Confirm remove operation"
-msgstr "אישור פעולת ההסרה"
-
-#: ../pitivi/ui/pluginmanagerdialog.py:293
+#: ../pitivi/mediafilespreviewer.py:227
 #, python-format
-msgid "Cannot remove %s"
-msgstr "לא ניתן להסיר את %s"
-
-#: ../pitivi/ui/pluginmanagerdialog.py:325
-msgid "Update the existing plugin?"
-msgstr "האם לעדכן את התוסף הקיים?"
-
-#: ../pitivi/ui/pluginmanagerdialog.py:328
-#, python-format
-msgid ""
-"This plugin is already installed in your system.\n"
-"If you agree, version %(v1)s will be replaced with version %(v2)s"
+msgid "<b>Resolution</b>: %d×%d"
 msgstr ""
-"תוסף זה כבר מותקן במערכת שלך.\n"
-"אם מוסכם בעיניך, הגרסה %(v1)s תוחלף בגרסה %(v2)s"
 
-#: ../pitivi/ui/pluginmanagerdialog.py:331
-msgid "Duplicate plugin found"
-msgstr "נמצא כפל תוספים"
-
-#: ../pitivi/ui/pluginmanagerdialog.py:345
-#, python-format
-msgid ""
-"Cannot install %s\n"
-"The file is not a valid plugin"
-msgstr ""
-"לא ניתן להתקין את %s\n"
-"הקובץ אינו תוסף תקני"
-
-#: ../pitivi/ui/prefs.py:61
-msgid "Preferences"
-msgstr "העדפות"
-
-#: ../pitivi/ui/prefs.py:85
-msgid "Section"
-msgstr "אזור"
-
-#. revert, close buttons
-#: ../pitivi/ui/prefs.py:106
-msgid "Reset to Factory Settings"
-msgstr "איפוס להגדרות היצרן"
-
-#: ../pitivi/ui/prefs.py:110
-msgid "Revert"
-msgstr "החזרת השינויים"
-
-#: ../pitivi/ui/prefs.py:125
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "חלק מהשינויים שבוצעו לא ייכנסו לתוקף עד להפעלת PiTiVi מחדש"
-
-#: ../pitivi/ui/prefs.py:320
-msgid "Reset"
-msgstr "איפוס"
-
-#: ../pitivi/ui/previewer.py:55 ../pitivi/ui/previewer.py:83
-#: ../pitivi/ui/previewer.py:94 ../pitivi/ui/trackobject.py:48
-#: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
-#: ../pitivi/ui/trackobject.py:81
-msgid "Appearance"
-msgstr "מראה"
-
-#: ../pitivi/ui/previewer.py:56
-msgid "Thumbnail Gap (pixels)"
-msgstr "מרווח בין התמונות הממוזערות (בפיקסלים)"
-
-#: ../pitivi/ui/previewer.py:58
-msgid "The gap between thumbnails"
-msgstr "המרווח בין התמונות הממוזערות"
-
-#: ../pitivi/ui/previewer.py:84
-msgid "Show Thumbnails (Video)"
-msgstr "הצגת תמונות ממוזערות (וידאו)"
-
-#: ../pitivi/ui/previewer.py:85
-msgid "Show Thumbnails on Video Clips"
-msgstr "הצגת תמונות ממוזערות עבור מקטעי וידאו"
-
-#: ../pitivi/ui/previewer.py:95
-msgid "Show Waveforms (Audio)"
-msgstr "הצגת תרשימי גל (שמע)"
-
-#: ../pitivi/ui/previewer.py:96
-msgid "Show Waveforms on Audio Clips"
-msgstr "הצגת תרשימי גל עבור מקטעי שמע"
-
-#: ../pitivi/ui/projectsettings.glade.h:1
-msgid "25 FPS"
-msgstr "25 FPS"
-
-#: ../pitivi/ui/projectsettings.glade.h:2
-msgid "<b>Aspect Ratio</b>"
-msgstr "<b>יחס תצוגה</b>"
-
-#: ../pitivi/ui/projectsettings.glade.h:3
-msgid "<b>Format</b>"
-msgstr "<b>מבנה</b>"
-
-#: ../pitivi/ui/projectsettings.glade.h:4
-msgid "<b>Frame Rate</b>"
-msgstr "<b>קצב השקופיות</b>"
-
-#: ../pitivi/ui/projectsettings.glade.h:5
-msgid "<b>Preset</b>"
-msgstr "<b>ערכה</b>"
-
-#: ../pitivi/ui/projectsettings.glade.h:6
-msgid "<b>Size (Pixels)</b>"
-msgstr "<b>גודל (פיקסלים)</b>"
-
-#: ../pitivi/ui/projectsettings.glade.h:8
-msgid "Author:"
-msgstr "יוצר:"
-
-#: ../pitivi/ui/projectsettings.glade.h:9
-msgid "Channels:"
-msgstr "ערוצים:"
-
-#: ../pitivi/ui/projectsettings.glade.h:10
-msgid "Display Aspect Ratio"
-msgstr "יחס התצוגה לצג"
-
-#: ../pitivi/ui/projectsettings.glade.h:11
-msgid "Info"
-msgstr "פרטים"
-
-#: ../pitivi/ui/projectsettings.glade.h:13
-msgid "Pixel Aspect Ratio"
-msgstr "יחס התצוגה לפיקסלים"
-
-#: ../pitivi/ui/projectsettings.glade.h:15
-msgid "Project title:"
-msgstr "כותרת המיזם:"
-
-#: ../pitivi/ui/projectsettings.glade.h:16
-msgid "Sample depth:"
-msgstr "עומק הדגימה:"
-
-#: ../pitivi/ui/projectsettings.glade.h:17
-msgid "Sample rate:"
-msgstr "קצב הדגימה:"
-
-#: ../pitivi/ui/projectsettings.glade.h:18 ../pitivi/ui/projectsettings.py:62
-msgid "Standard (4:3)"
-msgstr "תקני (4:3)"
-
-#: ../pitivi/ui/projectsettings.glade.h:19
-msgid "Standard PAL"
-msgstr "PAL תקני"
-
-#: ../pitivi/ui/projectsettings.glade.h:21
-msgid "Year:"
-msgstr "שנה:"
-
-#: ../pitivi/ui/projectsettings.glade.h:22
-msgid "x"
-msgstr "x"
-
-#: ../pitivi/ui/projectsettings.py:50
-msgid "Square"
-msgstr "ריבוע"
-
-#: ../pitivi/ui/projectsettings.py:51
-msgid "480p"
-msgstr "480p"
-
-#: ../pitivi/ui/projectsettings.py:52
-msgid "480i"
-msgstr "480i"
-
-#: ../pitivi/ui/projectsettings.py:53
-msgid "480p Wide"
-msgstr "רוחב של 480p"
-
-#: ../pitivi/ui/projectsettings.py:54
-msgid "480i Wide"
-msgstr "רוחב של 480i"
-
-#: ../pitivi/ui/projectsettings.py:55
-msgid "576p"
-msgstr "576p"
-
-#: ../pitivi/ui/projectsettings.py:56
-msgid "576i"
-msgstr "576i"
-
-#: ../pitivi/ui/projectsettings.py:57
-msgid "576p Wide"
-msgstr "רוחב של 576p"
-
-#: ../pitivi/ui/projectsettings.py:58
-msgid "576i Wide"
-msgstr "רוחב של 576i"
-
-#: ../pitivi/ui/projectsettings.py:63
-msgid "DV (15:11)"
-msgstr "DV (15:11)"
-
-#: ../pitivi/ui/projectsettings.py:64
-msgid "DV Widescreen (16:9)"
-msgstr "DV במסך רחב (16:9)"
-
-#: ../pitivi/ui/projectsettings.py:65
-msgid "Cinema (1.37)"
-msgstr "קולנוע (1.37)"
-
-#: ../pitivi/ui/projectsettings.py:66
-msgid "Cinema (1.66)"
-msgstr "קולנוע (1.66)"
-
-#: ../pitivi/ui/projectsettings.py:67
-msgid "Cinema (1.85)"
-msgstr "קולנוע (1.85)"
-
-#: ../pitivi/ui/projectsettings.py:68
-msgid "Anamorphic (2.35)"
-msgstr "אנמורפי (2.35)"
-
-#: ../pitivi/ui/projectsettings.py:69
-msgid "Anamorphic (2.39)"
-msgstr "אנמורפי (2.39)"
-
-#: ../pitivi/ui/projectsettings.py:70
-msgid "Anamorphic (2.4)"
-msgstr "אנמורפי (2.4)"
-
-#: ../pitivi/ui/projectsettings.py:306 ../pitivi/ui/projectsettings.py:323
-msgid "New Preset"
-msgstr "ערכה חדשה"
-
-#: ../pitivi/ui/propertyeditor.py:54
-msgid "No Objects Selected"
-msgstr "לא נבחרו פריטים"
-
-#: ../pitivi/ui/screencast_manager.glade.h:1
-msgid "Screencast"
-msgstr "הסרטת מסך"
-
-#: ../pitivi/ui/screencast_manager.glade.h:2
-msgid "Screencast Desktop"
-msgstr "הסרטת שולחן העבודה"
-
-#: ../pitivi/ui/screencast_manager.glade.h:3
-msgid "Start Istanbul"
-msgstr "הפעלת איסטנבול"
-
-#: ../pitivi/ui/sourcelist.py:135
-msgid "Import clips..."
-msgstr "יבוא מקטעים..."
-
-#: ../pitivi/ui/sourcelist.py:140
-msgid "Remove Clip"
-msgstr "הסרת מקטע"
-
-#: ../pitivi/ui/sourcelist.py:144
-msgid "Play Clip"
-msgstr "נגינת המקטע"
-
-#: ../pitivi/ui/sourcelist.py:171
-msgid "Icon"
-msgstr "סמל"
-
-#: ../pitivi/ui/sourcelist.py:180
-msgid "Information"
-msgstr "פרטים"
-
-#: ../pitivi/ui/sourcelist.py:191
-msgid "Duration"
-msgstr "משך"
-
-#: ../pitivi/ui/sourcelist.py:219
-msgid ""
-"<span>Import your clips by dragging them here or by using the buttons above."
-"</span>"
-msgstr ""
-"<span>באפשרותך לייבא את המקטעים שלך על ידי גרירתם לכאן או על ידי שימוש "
-"בלחצנים שלהלן.</span>"
-
-#: ../pitivi/ui/sourcelist.py:272
-msgid "_Import clips..."
-msgstr "י_בוא מקטעים..."
-
-#: ../pitivi/ui/sourcelist.py:273
-msgid "Import clips to use"
-msgstr "יבוא מקטעים לשימוש"
-
-#: ../pitivi/ui/sourcelist.py:275
-msgid "Import _folder of clips..."
-msgstr "יבוא _תיקיית מקטעים..."
-
-#: ../pitivi/ui/sourcelist.py:276
-msgid "Import folder of clips to use"
-msgstr "יבוא תיקיית מקטעים לשימוש"
-
-#: ../pitivi/ui/sourcelist.py:282
-msgid "_Remove from project"
-msgstr "הס_רה מהמיזם"
-
-#: ../pitivi/ui/sourcelist.py:285
-msgid "Insert at _end of timeline"
-msgstr "הוספה ב_סוף ציר הזמן"
-
-#: ../pitivi/ui/sourcelist.py:305
-msgid "Show Clips as a List"
-msgstr "הצגת קטעים כרשימה"
-
-#: ../pitivi/ui/sourcelist.py:307
-msgid "Show Clips as Icons"
-msgstr "הצגת קטעים כסמלים"
-
-#: ../pitivi/ui/sourcelist.py:448
-msgid "Import a folder"
-msgstr "יבוא תיקייה"
-
-#: ../pitivi/ui/sourcelist.py:451
-msgid "Import a clip"
-msgstr "יבוא מקטע"
-
-#: ../pitivi/ui/sourcelist.py:452
-msgid "Close after importing files"
-msgstr "יש לסגור לאחר יבוא הקבצים"
-
-#: ../pitivi/ui/sourcelist.py:986
-msgid "Importing clips..."
-msgstr "המקטעים מיובאים..."
-
-#: ../pitivi/ui/sourcelist.py:987
-msgid "Error(s) occurred while importing"
-msgstr "אירעה תקלה אחת או יותר בעת היבוא"
-
-#: ../pitivi/ui/sourcelist.py:988
-msgid "An error occurred while importing"
-msgstr "אירעה שגיאה בעת היבוא"
-
-#: ../pitivi/ui/sourcelist.py:1077
-msgid "Error while analyzing files"
-msgstr "שגיאה בעת ניתוח הקבצים"
-
-#: ../pitivi/ui/sourcelist.py:1078
-msgid "The following files can not be used with PiTiVi."
-msgstr "לא ניתן להשתמש ב־PiTiVi לעיבוד קבצים אלה."
-
-#: ../pitivi/ui/sourcelist.py:1080
+#: ../pitivi/mediafilespreviewer.py:229
+#: ../pitivi/mediafilespreviewer.py:244
+#, fuzzy, python-format
+msgid "<b>Duration</b>: %s"
+msgstr "<b>תיאור:</b>"
+
+#: ../pitivi/mediafilespreviewer.py:435
+#: ../pitivi/medialibrary.py:980
 msgid "Error while analyzing a file"
 msgstr "אירעה שגיאה בעת ניתוח הקובץ"
 
-#: ../pitivi/ui/sourcelist.py:1081
+#: ../pitivi/medialibrary.py:292
+#: ../pitivi/medialibrary.py:475
+#, fuzzy
+msgid "_Remove from Project"
+msgstr "הס_רה מהמיזם"
+
+#: ../pitivi/medialibrary.py:293
+#: ../pitivi/medialibrary.py:481
+#, fuzzy
+msgid "_Preview Clip"
+msgstr "תצוגה מקדימה"
+
+#: ../pitivi/medialibrary.py:294
+#: ../pitivi/medialibrary.py:484
+#, fuzzy
+msgid "_Clip Properties..."
+msgstr "אין מאפיינים..."
+
+#: ../pitivi/medialibrary.py:295
+#: ../pitivi/medialibrary.py:478
+#, fuzzy
+msgid "Insert at _End of Timeline"
+msgstr "הוספה ב_סוף ציר הזמן"
+
+#: ../pitivi/medialibrary.py:342
+msgid "Icon"
+msgstr "סמל"
+
+#: ../pitivi/medialibrary.py:351
+msgid "Information"
+msgstr "פרטים"
+
+#: ../pitivi/medialibrary.py:362
+msgid "Duration"
+msgstr "משך"
+
+#: ../pitivi/medialibrary.py:395
+msgid "Add media to your project by dragging files and folders here or by using the \"Import Files...\" button."
+msgstr ""
+
+#: ../pitivi/medialibrary.py:411
+msgid "Hide"
+msgstr "הסתרה"
+
+#: ../pitivi/medialibrary.py:459
+#, fuzzy
+msgid "_Import Files..."
+msgstr "י_בוא מקטעים..."
+
+#: ../pitivi/medialibrary.py:460
+#, fuzzy
+msgid "Add media files to your project"
+msgstr "שם המיזם שלך."
+
+#: ../pitivi/medialibrary.py:463
+#, fuzzy
+msgid "Import _Folders..."
+msgstr "יבוא _תיקיית מקטעים..."
+
+#: ../pitivi/medialibrary.py:464
+#, fuzzy
+msgid "Add the contents of a folder as clips in your project"
+msgstr "תיאור קצר של המיזם שלך."
+
+#. Translators: "select" means "find" rather than "choose"
+#: ../pitivi/medialibrary.py:468
+msgid "Select Unused Media"
+msgstr ""
+
+#: ../pitivi/medialibrary.py:469
+msgid "Select clips that have not been used in the project"
+msgstr ""
+
+#: ../pitivi/medialibrary.py:504
+msgid "Show Clips as a List"
+msgstr "הצגת קטעים כרשימה"
+
+#: ../pitivi/medialibrary.py:506
+msgid "Show Clips as Icons"
+msgstr "הצגת קטעים כסמלים"
+
+#: ../pitivi/medialibrary.py:697
+msgid "Select One or More Folders"
+msgstr ""
+
+#: ../pitivi/medialibrary.py:700
+msgid "Select One or More Files"
+msgstr ""
+
+#: ../pitivi/medialibrary.py:702
+msgid "Close after importing files"
+msgstr "יש לסגור לאחר יבוא הקבצים"
+
+#: ../pitivi/medialibrary.py:735
+#, python-format
+msgid "Importing clip %(current_clip)d of %(total)d"
+msgstr ""
+
+#: ../pitivi/medialibrary.py:830
+#, fuzzy
+msgid "Errors occurred while importing."
+msgstr "אירעה תקלה אחת או יותר בעת היבוא"
+
+#: ../pitivi/medialibrary.py:831
+msgid "View errors"
+msgstr ""
+
+#: ../pitivi/medialibrary.py:833
+#, fuzzy
+msgid "An error occurred while importing."
+msgstr "אירעה שגיאה בעת היבוא"
+
+#: ../pitivi/medialibrary.py:834
+msgid "View error"
+msgstr ""
+
+#: ../pitivi/medialibrary.py:977
+msgid "Error while analyzing files"
+msgstr "שגיאה בעת ניתוח הקבצים"
+
+#: ../pitivi/medialibrary.py:978
+msgid "The following files can not be used with PiTiVi."
+msgstr "לא ניתן להשתמש ב־PiTiVi לעיבוד קבצים אלה."
+
+#: ../pitivi/medialibrary.py:981
 msgid "The following file can not be used with PiTiVi."
 msgstr "לא ניתן להשתמש ב־PiTiVi לעיבוד קובץ זה."
 
-#: ../pitivi/ui/startupwizard.glade.h:1
-msgid "Browse projects..."
-msgstr "עיון במיזמים..."
+#: ../pitivi/preset.py:93
+#: ../pitivi/preset.py:210
+#: ../pitivi/preset.py:215
+#: ../pitivi/preset.py:274
+#: ../pitivi/preset.py:291
+#: ../pitivi/project.py:786
+#: ../pitivi/project.py:792
+#: ../pitivi/render.py:489
+#, fuzzy
+msgid "No preset"
+msgstr "ערכה חדשה"
 
-#: ../pitivi/ui/startupwizard.glade.h:2
-msgid "Double-click a project below to load it:"
-msgstr "יש ללחוץ לחיצה כפולה על מיזם להלן כדי לטעון אותו:"
+#: ../pitivi/project.py:176
+msgid "Ignore backup"
+msgstr ""
 
-#: ../pitivi/ui/startupwizard.glade.h:3
-msgid "Help"
-msgstr "עזרה"
+#: ../pitivi/project.py:177
+msgid "Restore from backup"
+msgstr ""
 
-#: ../pitivi/ui/startupwizard.glade.h:4
-msgid "Skip"
-msgstr "דילוג"
+#: ../pitivi/project.py:188
+#, python-format
+msgid ""
+"An autosaved version of your project file was found. It is %s newer than the saved project.\n"
+"\n"
+"Would you like to load it instead?"
+msgstr ""
 
-#: ../pitivi/ui/startupwizard.glade.h:5
-msgid "Startup Wizard"
-msgstr "אשף ההפעלה"
+#: ../pitivi/project.py:261
+msgid "You do not have permissions to write to this folder."
+msgstr ""
 
-#: ../pitivi/ui/timelinecanvas.py:51
-msgid "Behavior"
-msgstr "התנהגות"
+#: ../pitivi/project.py:271
+msgid "Cannot save with this file format."
+msgstr ""
 
-#: ../pitivi/ui/timelinecanvas.py:52
-msgid "Snap Distance (pixels)"
-msgstr "מרחק הגזירה (בפיקסלים)"
+#. We don't have a URI here, None means we're loading a new project
+#: ../pitivi/project.py:369
+msgid "New Project"
+msgstr "מיזם חדש"
 
-#: ../pitivi/ui/timelinecanvas.py:53
-msgid "Threshold distance (in pixels) used for all snapping operations"
-msgstr "סף המרחק (בפיקסלים) שישמש לכל פעולות הגזירה"
+#: ../pitivi/project.py:811
+#: ../pitivi/render.py:638
+#, python-format
+msgid "\"%s\" already exists."
+msgstr ""
 
-#: ../pitivi/ui/timelinecontrols.py:13
-msgid "<b>Audio:</b>"
-msgstr "<b>שמע:</b>"
+#: ../pitivi/project.py:914
+#: ../pitivi/render.py:679
+#, fuzzy
+msgid "New preset"
+msgstr "ערכה חדשה"
 
-#: ../pitivi/ui/timelinecontrols.py:15
-msgid "<b>Video:</b>"
-msgstr "<b>וידאו:</b>"
+#: ../pitivi/project.py:917
+#: ../pitivi/render.py:682
+#, fuzzy, python-format
+msgid "New preset %d"
+msgstr "ערכה חדשה"
 
-#: ../pitivi/ui/timelinecontrols.py:17
-msgid "<b>Text:</b>"
-msgstr "<b>טקסט:</b>"
+#: ../pitivi/render.py:351
+#, fuzzy, python-format
+msgid "%d%% Rendered"
+msgstr "%.0f%% עובדו"
 
-#. tooltip text for toolbar
-#: ../pitivi/ui/timeline.py:54
-msgid "Delete Selected"
-msgstr "מחיקת הנבחרים"
+#. Translators: this string indicates the estimated time
+#. remaining until an action (such as rendering) completes.
+#. The "%s" is an already-localized human-readable duration,
+#. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
+#. In some languages, "About %s left" can be expressed roughly as
+#. "There remains approximatively %s" (to handle gender and plurals).
+#: ../pitivi/render.py:359
+#, python-format
+msgid "About %s left"
+msgstr "בערך %s נותרו"
 
-#: ../pitivi/ui/timeline.py:55
-msgid "Split clip at playhead position"
-msgstr "פיצול מקטע במיקום סמן הניגון"
+#: ../pitivi/render.py:380
+msgid "Currently rendering"
+msgstr ""
 
-#: ../pitivi/ui/timeline.py:56 ../pitivi/ui/timeline.py:317
-msgid "Add a keyframe"
-msgstr "הוספת שקופית מפתח"
+#: ../pitivi/render.py:801
+msgid "A file name is required."
+msgstr ""
 
-#: ../pitivi/ui/timeline.py:57
-msgid "Move to the previous keyframe"
-msgstr "מעבר לשקופית המפתח הקודמת "
+#: ../pitivi/render.py:803
+msgid ""
+"This file already exists.\n"
+"If you don't want to overwrite it, choose a different file name or folder."
+msgstr ""
 
-#: ../pitivi/ui/timeline.py:58
-msgid "Move to the next keyframe"
-msgstr "מעבר לשקופית המפתח הבאה"
+#: ../pitivi/transitions.py:72
+msgid "Normal"
+msgstr ""
 
-#: ../pitivi/ui/timeline.py:59
-msgid "Zoom In"
-msgstr "התקרבות"
+#: ../pitivi/transitions.py:73
+msgid "Loop"
+msgstr "לולאה"
 
-#: ../pitivi/ui/timeline.py:60
-msgid "Zoom Out"
-msgstr "התרחקות"
+#: ../pitivi/transitions.py:83
+#, fuzzy
+msgid "Reverse direction"
+msgstr "חזרה למיזם שנשמר"
 
-#: ../pitivi/ui/timeline.py:61
-msgid "Break links between clips"
-msgstr "הפרדה בין מקטעים מקושרים"
+#: ../pitivi/transitions.py:97
+msgid "Create a transition by overlapping two adjacent clips on the same layer. Click the transition on the timeline to change the transition type."
+msgstr ""
 
-#: ../pitivi/ui/timeline.py:62
-msgid "Link together arbitrary clips"
-msgstr "קישור מקטעים יחד באופן שרירותי"
+#: ../pitivi/transitions.py:198
+msgid "Slow"
+msgstr ""
 
-#: ../pitivi/ui/timeline.py:63
-msgid "Ungroup clips"
-msgstr "פירוק מקטעים"
+#: ../pitivi/transitions.py:199
+msgid "Fast"
+msgstr ""
 
-#: ../pitivi/ui/timeline.py:64
-msgid "Group clips"
-msgstr "קיבוץ מקטעים"
+#: ../pitivi/transitions.py:200
+msgid "Epileptic"
+msgstr ""
 
-#: ../pitivi/ui/timeline.py:143
-msgid "One or more GStreamer errors has occured!"
-msgstr "אירעה שגיאה אחת לפחות ב־GStreamer!"
+#: ../pitivi/transitions.py:204
+msgid "Sharp"
+msgstr ""
 
-#: ../pitivi/ui/timeline.py:177
-msgid "Error List"
-msgstr "רשימת השגיאות"
+#: ../pitivi/transitions.py:205
+msgid "Smooth"
+msgstr ""
 
-#: ../pitivi/ui/timeline.py:178
-msgid "The following errors have been reported:"
-msgstr "דווח על השגיאות הבאות:"
+#: ../pitivi/viewer.py:80
+msgid "Currently playing"
+msgstr ""
 
-#: ../pitivi/ui/timeline.py:242
-msgid "Zoom Timeline"
-msgstr "תקריב ציר הזמן"
-
-#: ../pitivi/ui/timeline.py:319
-msgid "_Previous keyframe"
-msgstr "שקופית המפתח ה_קודמת"
-
-#: ../pitivi/ui/timeline.py:321
-msgid "_Next keyframe"
-msgstr "שקופית המפתח ה_באה"
-
-#: ../pitivi/ui/trackobject.py:49
-msgid "Clip Background (Video)"
-msgstr "רקע המקטע (וידאו)"
-
-#: ../pitivi/ui/trackobject.py:50
-msgid "The background color for clips in video tracks."
-msgstr "צבע הרקע למקטעי רצועות וידאו."
-
-#: ../pitivi/ui/trackobject.py:60
-msgid "Clip Background (Audio)"
-msgstr "רקע המקטע (שמע)"
-
-#: ../pitivi/ui/trackobject.py:61
-msgid "The background color for clips in audio tracks."
-msgstr "צבע הרקע למקטעי רצועות שמע."
-
-#: ../pitivi/ui/trackobject.py:71
-msgid "Selection Color"
-msgstr "צבע הבחירה"
-
-#: ../pitivi/ui/trackobject.py:72
-msgid "Selected clips will be tinted with this color."
-msgstr "המקטעים הנבחרים יצבעו בצבע זה."
-
-#: ../pitivi/ui/trackobject.py:82
-msgid "Clip Font"
-msgstr "גופן המקטעים"
-
-#: ../pitivi/ui/trackobject.py:83
-msgid "The font to use for clip titles"
-msgstr "הגופן לשימוש לכותרות מקטעי הווידאו"
-
-#: ../pitivi/ui/viewer.py:302
+#: ../pitivi/viewer.py:207
 msgid "Go to the beginning of the timeline"
 msgstr "מעבר לתחילת ציר הזמן"
 
-#: ../pitivi/ui/viewer.py:308
+#: ../pitivi/viewer.py:213
 msgid "Go back one second"
 msgstr "חזרה בשנייה אחת"
 
-#: ../pitivi/ui/viewer.py:319
+#: ../pitivi/viewer.py:224
 msgid "Go forward one second"
 msgstr "התקדמות בשנייה אחת"
 
-#: ../pitivi/ui/viewer.py:325
+#: ../pitivi/viewer.py:230
 msgid "Go to the end of the timeline"
 msgstr "מעבר לסיום ציר הזמן"
 
-#: ../pitivi/ui/viewer.py:514
+#: ../pitivi/viewer.py:342
 msgid "Dock Viewer"
 msgstr "הצמדת המציג"
 
-#: ../pitivi/ui/viewer.py:645
+#: ../pitivi/viewer.py:980
 msgid "Play"
 msgstr "נגינה"
 
-#: ../pitivi/ui/viewer.py:653
+#: ../pitivi/viewer.py:988
 msgid "Pause"
 msgstr "השהיה"
 
-#: ../pitivi/utils.py:75
+#: ../pitivi/timeline/layer.py:82
+msgid "Set a personalized name for this layer"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:92
+#, fuzzy
+msgid "<b>Solo mode</b>\n"
+msgstr "<b>שם התוסף</b>"
+
+#: ../pitivi/timeline/layer.py:107
+msgid "<b>Enable or disable this layer</b>\n"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:127
+#, fuzzy
+msgid "_Delete layer"
+msgstr "מחיקת הנבחרים"
+
+#: ../pitivi/timeline/layer.py:130
+msgid "Move layer up"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:133
+msgid "Move layer down"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:136
+msgid "Move layer to top"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:139
+msgid "Move layer to bottom"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:174
+msgid "Make layer invisible"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:176
+msgid "Make layer visible"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:292
+msgid "Opacity:"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:299
+msgid "Change video opacity"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:316
+msgid "Vol:"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:320
+msgid "Pan:"
+msgstr ""
+
+#: ../pitivi/timeline/layer.py:326
+msgid "Change audio panning"
+msgstr ""
+
+#: ../pitivi/timeline/ruler.py:149
+#, fuzzy, python-format
+msgid "Frame #%d"
+msgstr "קצב השקופיות:"
+
+#: ../pitivi/timeline/thumbnailer.py:66
+#: ../pitivi/timeline/track.py:68
+#: ../pitivi/timeline/track.py:79
+#: ../pitivi/timeline/track.py:90
+#: ../pitivi/timeline/track.py:101
+msgid "Appearance"
+msgstr "מראה"
+
+#: ../pitivi/timeline/thumbnailer.py:67
+#, fuzzy
+msgid "Thumbnail gap"
+msgstr "מרווח בין התמונות הממוזערות (בפיקסלים)"
+
+#: ../pitivi/timeline/thumbnailer.py:69
+#, fuzzy
+msgid "The spacing between thumbnails, in pixels"
+msgstr "המרווח בין התמונות הממוזערות"
+
+#: ../pitivi/timeline/thumbnailer.py:72
+#: ../pitivi/timeline/thumbnailer.py:112
+#: ../pitivi/timeline/thumbnailer.py:123
+msgid "Performance"
+msgstr ""
+
+#: ../pitivi/timeline/thumbnailer.py:73
+msgid "Thumbnail every"
+msgstr ""
+
+#. Note that we cannot use "%s second" or ngettext, because fractions
+#. are not supported by ngettext and their plurality is ambiguous
+#. in many languages.
+#. See http://www.gnu.org/software/hello/manual/gettext/Plural-forms.html
+#: ../pitivi/timeline/thumbnailer.py:79
+#, fuzzy
+msgid "1/100 second"
+msgstr "שנייה אחת"
+
+#: ../pitivi/timeline/thumbnailer.py:80
+#, fuzzy
+msgid "1/10 second"
+msgstr "שנייה אחת"
+
+#: ../pitivi/timeline/thumbnailer.py:81
+#, fuzzy
+msgid "1/4 second"
+msgstr "שנייה אחת"
+
+#: ../pitivi/timeline/thumbnailer.py:82
+#, fuzzy
+msgid "1/2 second"
+msgstr "שנייה אחת"
+
+#: ../pitivi/timeline/thumbnailer.py:83
+#, fuzzy
+msgid "1 second"
+msgstr "שנייה אחת"
+
+#: ../pitivi/timeline/thumbnailer.py:84
+#, fuzzy
+msgid "5 seconds"
+msgstr "שנייה אחת"
+
+#: ../pitivi/timeline/thumbnailer.py:85
+#, fuzzy
+msgid "10 seconds"
+msgstr "שנייה אחת"
+
+#: ../pitivi/timeline/thumbnailer.py:86
+#, fuzzy
+msgid "minute"
+msgstr "דקה אחת"
+
+#: ../pitivi/timeline/thumbnailer.py:87
+#, fuzzy
+msgid "The interval, in seconds, between thumbnails."
+msgstr "המרווח בין התמונות הממוזערות"
+
+#: ../pitivi/timeline/thumbnailer.py:113
+#, fuzzy
+msgid "Enable video thumbnails"
+msgstr "המרווח בין התמונות הממוזערות"
+
+#: ../pitivi/timeline/thumbnailer.py:114
+#, fuzzy
+msgid "Show thumbnails on video clips"
+msgstr "הצגת תמונות ממוזערות עבור מקטעי וידאו"
+
+#: ../pitivi/timeline/thumbnailer.py:124
+msgid "Enable audio waveforms"
+msgstr ""
+
+#: ../pitivi/timeline/thumbnailer.py:125
+#, fuzzy
+msgid "Show waveforms on audio clips"
+msgstr "הצגת תרשימי גל עבור מקטעי שמע"
+
+#: ../pitivi/timeline/timeline.py:74
+#: ../pitivi/timeline/timeline.py:87
+msgid "Behavior"
+msgstr "התנהגות"
+
+#: ../pitivi/timeline/timeline.py:75
+#, fuzzy
+msgid "Snap distance"
+msgstr "מרחק הגזירה (בפיקסלים)"
+
+#: ../pitivi/timeline/timeline.py:76
+msgid "Threshold (in pixels) at which two clips will snap together when dragging or trimming."
+msgstr ""
+
+#: ../pitivi/timeline/timeline.py:88
+msgid "Image clip duration"
+msgstr ""
+
+#: ../pitivi/timeline/timeline.py:89
+msgid "Default clip length (in miliseconds) of images when inserting on the timeline."
+msgstr ""
+
+#. tooltip text for toolbar
+#: ../pitivi/timeline/timeline.py:106
+msgid "Delete Selected"
+msgstr "מחיקת הנבחרים"
+
+#: ../pitivi/timeline/timeline.py:107
+msgid "Split clip at playhead position"
+msgstr "פיצול מקטע במיקום סמן הניגון"
+
+#: ../pitivi/timeline/timeline.py:108
+msgid "Add a keyframe"
+msgstr "הוספת שקופית מפתח"
+
+#: ../pitivi/timeline/timeline.py:109
+msgid "Move to the previous keyframe"
+msgstr "מעבר לשקופית המפתח הקודמת "
+
+#: ../pitivi/timeline/timeline.py:110
+msgid "Move to the next keyframe"
+msgstr "מעבר לשקופית המפתח הבאה"
+
+#: ../pitivi/timeline/timeline.py:111
+msgid "Zoom In"
+msgstr "התקרבות"
+
+#: ../pitivi/timeline/timeline.py:112
+msgid "Zoom Out"
+msgstr "התרחקות"
+
+#: ../pitivi/timeline/timeline.py:113
+#, fuzzy
+msgid "Zoom Fit"
+msgstr "התרחקות"
+
+#: ../pitivi/timeline/timeline.py:114
+msgid "Break links between clips"
+msgstr "הפרדה בין מקטעים מקושרים"
+
+#: ../pitivi/timeline/timeline.py:115
+msgid "Link together arbitrary clips"
+msgstr "קישור מקטעים יחד באופן שרירותי"
+
+#: ../pitivi/timeline/timeline.py:116
+msgid "Ungroup clips"
+msgstr "פירוק מקטעים"
+
+#: ../pitivi/timeline/timeline.py:117
+msgid "Group clips"
+msgstr "קיבוץ מקטעים"
+
+#: ../pitivi/timeline/timeline.py:118
+msgid "Align clips based on their soundtracks"
+msgstr ""
+
+#: ../pitivi/timeline/timeline.py:877
+#, fuzzy
+msgid "One or more GStreamer errors occured!"
+msgstr "אירעה שגיאה אחת לפחות ב־GStreamer!"
+
+#: ../pitivi/timeline/timeline.py:910
+msgid "Error List"
+msgstr "רשימת השגיאות"
+
+#: ../pitivi/timeline/timeline.py:911
+msgid "The following errors have been reported:"
+msgstr "דווח על השגיאות הבאות:"
+
+#: ../pitivi/timeline/timeline.py:988
+#, fuzzy
+msgid "Zoom"
+msgstr "התקרבות"
+
+#: ../pitivi/timeline/timeline.py:1000
+msgid "Zoom Timeline"
+msgstr "תקריב ציר הזמן"
+
+#: ../pitivi/timeline/timeline.py:1054
+msgid "Export current frame..."
+msgstr ""
+
+#: ../pitivi/timeline/timeline.py:1055
+msgid "Export the frame at the current playhead position as an image file."
+msgstr ""
+
+#: ../pitivi/timeline/timeline.py:1091
+msgid "Start Playback"
+msgstr "התחלה בניגון"
+
+#: ../pitivi/timeline/timeline.py:1096
+#, fuzzy
+msgid "Add a Keyframe"
+msgstr "הוספת שקופית מפתח"
+
+#: ../pitivi/timeline/timeline.py:1099
+#, fuzzy
+msgid "_Previous Keyframe"
+msgstr "שקופית המפתח ה_קודמת"
+
+#: ../pitivi/timeline/timeline.py:1102
+#, fuzzy
+msgid "_Next Keyframe"
+msgstr "שקופית המפתח ה_באה"
+
+#: ../pitivi/timeline/timeline.py:1331
+msgid "PNG image"
+msgstr "תמונת PNG"
+
+#: ../pitivi/timeline/timeline.py:1332
+msgid "JPEG image"
+msgstr "תמונת JPEG"
+
+#: ../pitivi/timeline/track.py:69
+msgid "Color for video clips"
+msgstr ""
+
+#: ../pitivi/timeline/track.py:70
+msgid "The background color for clips in video tracks."
+msgstr "צבע הרקע למקטעי רצועות וידאו."
+
+#: ../pitivi/timeline/track.py:80
+#, fuzzy
+msgid "Color for audio clips"
+msgstr "הצגת תרשימי גל עבור מקטעי שמע"
+
+#: ../pitivi/timeline/track.py:81
+msgid "The background color for clips in audio tracks."
+msgstr "צבע הרקע למקטעי רצועות שמע."
+
+#: ../pitivi/timeline/track.py:91
+#, fuzzy
+msgid "Selection color"
+msgstr "צבע הבחירה"
+
+#: ../pitivi/timeline/track.py:92
+msgid "Selected clips will be tinted with this color."
+msgstr "המקטעים הנבחרים יצבעו בצבע זה."
+
+#: ../pitivi/timeline/track.py:102
+#, fuzzy
+msgid "Clip font"
+msgstr "גופן המקטעים"
+
+#: ../pitivi/timeline/track.py:103
+msgid "The font to use for clip titles"
+msgstr "הגופן לשימוש לכותרות מקטעי הווידאו"
+
+#: ../pitivi/dialogs/clipmediaprops.py:85
+msgid "Image:"
+msgstr "תמונה:"
+
+#: ../pitivi/dialogs/filelisterrordialog.py:58
+msgid "Unknown reason"
+msgstr "סיבה בלתי ידועה"
+
+#: ../pitivi/dialogs/filelisterrordialog.py:87
+msgid "Problem:"
+msgstr "בעיה:"
+
+#: ../pitivi/dialogs/filelisterrordialog.py:94
+msgid "Extra information:"
+msgstr "פרטים נוספים:"
+
+#: ../pitivi/dialogs/prefs.py:279
+#: ../pitivi/utils/widgets.py:886
+msgid "Reset to default value"
+msgstr "איפוס לערך בררת המחדל"
+
+#: ../pitivi/dialogs/startupwizard.py:59
+#, fuzzy
+msgid "Projects"
+msgstr "_מיזם"
+
+#. Translators: "non local" means the project is not stored
+#. on a local filesystem
+#: ../pitivi/utils/misc.py:146
+#, fuzzy, python-format
+msgid "%s doesn't yet handle non-local projects"
+msgstr "עדיין אין באפשרות %s לטפל במיזמים מרוחקים"
+
+#: ../pitivi/utils/ui.py:197
+#, fuzzy, python-format
+msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
+msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[0] "<b>שמע:</b> ערוץ אחד בתדירות %d <i>הרץ</i> (%d <i>סיביות</i>)"
+msgstr[1] "<b>שמע:</b> %d ערוצים בתדירות %d <i>הרץ</i> (%d <i>סיביות</i>)"
+msgstr[2] "<b>שמע:</b> שני ערוצים בתדירות %d <i>הרץ</i> (%d <i>סיביות</i>)"
+
+#: ../pitivi/utils/ui.py:207
+#, fuzzy, python-format
+msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
+msgstr "<b>וידאו:</b> %d x %d <i>פיקסלים</i> בקצב רענון של %.2f<i>fps</i>"
+
+#: ../pitivi/utils/ui.py:214
+#, fuzzy, python-format
+msgid "<b>Image:</b> %d×%d <i>pixels</i>"
+msgstr "<b>תמונה:</b> %d x %d <i>פיקסלים</i>"
+
+#: ../pitivi/utils/ui.py:220
+msgid "Subtitles"
+msgstr "כתוביות"
+
+#: ../pitivi/utils/ui.py:258
+#: ../pitivi/utils/ui.py:286
+#: ../pitivi/utils/ui.py:310
 #, fuzzy, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
@@ -1767,7 +1782,9 @@ msgstr[0] "שעה אחת"
 msgstr[1] "%d שעות"
 msgstr[2] "שעתיים"
 
-#: ../pitivi/utils.py:78
+#: ../pitivi/utils/ui.py:261
+#: ../pitivi/utils/ui.py:289
+#: ../pitivi/utils/ui.py:313
 #, fuzzy, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -1775,7 +1792,9 @@ msgstr[0] "דקה אחת"
 msgstr[1] "%d דקות"
 msgstr[2] "שתי דקות"
 
-#: ../pitivi/utils.py:81
+#: ../pitivi/utils/ui.py:264
+#: ../pitivi/utils/ui.py:292
+#: ../pitivi/utils/ui.py:316
 #, fuzzy, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
@@ -1783,21 +1802,643 @@ msgstr[0] "שנייה אחת"
 msgstr[1] "%d שניות"
 msgstr[2] "שתי שניות"
 
-#. Translators: "non local" means the project is not stored
-#. on a local filesystem
-#: ../pitivi/utils.py:249
+#: ../pitivi/utils/ui.py:284
 #, python-format
-msgid "%s doesn't yet handle non local projects"
-msgstr "עדיין אין באפשרות %s לטפל במיזמים מרוחקים"
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#. Translators: fps is for frames per second
+#: ../pitivi/utils/ui.py:383
+#: ../pitivi/utils/ui.py:384
+#: ../pitivi/utils/ui.py:385
+#: ../pitivi/utils/ui.py:387
+#: ../pitivi/utils/ui.py:388
+#: ../pitivi/utils/ui.py:390
+#: ../pitivi/utils/ui.py:391
+#: ../pitivi/utils/ui.py:393
+#: ../pitivi/utils/ui.py:394
+#, fuzzy, python-format
+msgid "%d fps"
+msgstr "12 fps"
+
+#: ../pitivi/utils/ui.py:386
+#, fuzzy, python-format
+msgid "%.3f fps"
+msgstr "30 fps"
+
+#: ../pitivi/utils/ui.py:389
+#: ../pitivi/utils/ui.py:392
+#, fuzzy, python-format
+msgid "%.2f fps"
+msgstr "12 fps"
+
+#: ../pitivi/utils/ui.py:398
+#: ../pitivi/utils/ui.py:399
+#: ../pitivi/utils/ui.py:400
+#: ../pitivi/utils/ui.py:402
+#: ../pitivi/utils/ui.py:403
+#, fuzzy, python-format
+msgid "%d KHz"
+msgstr "8 KHz"
+
+#: ../pitivi/utils/ui.py:401
+#, fuzzy, python-format
+msgid "%.1f KHz"
+msgstr "44.1 KHz"
+
+#: ../pitivi/utils/ui.py:406
+#: ../pitivi/utils/ui.py:407
+#: ../pitivi/utils/ui.py:408
+#: ../pitivi/utils/ui.py:409
+#, fuzzy, python-format
+msgid "%d bit"
+msgstr "8 סיביות"
+
+#: ../pitivi/utils/ui.py:412
+msgid "6 Channels (5.1)"
+msgstr "6 ערוצים (5.1)"
+
+#: ../pitivi/utils/ui.py:413
+msgid "4 Channels (4.0)"
+msgstr "4 ערוצים (4.0)"
+
+#: ../pitivi/utils/ui.py:414
+msgid "Stereo"
+msgstr "סטריאו"
+
+#: ../pitivi/utils/ui.py:415
+msgid "Mono"
+msgstr "מונו"
+
+#: ../pitivi/utils/ui.py:420
+msgid "Square"
+msgstr "ריבוע"
+
+#: ../pitivi/utils/ui.py:421
+msgid "480p"
+msgstr "480p"
+
+#: ../pitivi/utils/ui.py:422
+msgid "480i"
+msgstr "480i"
+
+#: ../pitivi/utils/ui.py:423
+msgid "480p Wide"
+msgstr "רוחב של 480p"
+
+#: ../pitivi/utils/ui.py:424
+msgid "480i Wide"
+msgstr "רוחב של 480i"
+
+#: ../pitivi/utils/ui.py:425
+msgid "576p"
+msgstr "576p"
+
+#: ../pitivi/utils/ui.py:426
+msgid "576i"
+msgstr "576i"
+
+#: ../pitivi/utils/ui.py:427
+msgid "576p Wide"
+msgstr "רוחב של 576p"
+
+#: ../pitivi/utils/ui.py:428
+msgid "576i Wide"
+msgstr "רוחב של 576i"
+
+#: ../pitivi/utils/ui.py:433
+msgid "DV (15:11)"
+msgstr "DV (15:11)"
+
+#: ../pitivi/utils/ui.py:434
+msgid "DV Widescreen (16:9)"
+msgstr "DV במסך רחב (16:9)"
+
+#: ../pitivi/utils/ui.py:435
+msgid "Cinema (1.37)"
+msgstr "קולנוע (1.37)"
+
+#: ../pitivi/utils/ui.py:436
+msgid "Cinema (1.66)"
+msgstr "קולנוע (1.66)"
+
+#: ../pitivi/utils/ui.py:437
+msgid "Cinema (1.85)"
+msgstr "קולנוע (1.85)"
+
+#: ../pitivi/utils/ui.py:438
+msgid "Anamorphic (2.35)"
+msgstr "אנמורפי (2.35)"
+
+#: ../pitivi/utils/ui.py:439
+msgid "Anamorphic (2.39)"
+msgstr "אנמורפי (2.39)"
+
+#: ../pitivi/utils/ui.py:440
+msgid "Anamorphic (2.4)"
+msgstr "אנמורפי (2.4)"
+
+#: ../pitivi/utils/widgets.py:77
+msgid "Implement Me"
+msgstr "למימוש"
+
+#: ../pitivi/utils/widgets.py:486
+msgid "Custom"
+msgstr "התאמה אישית"
+
+#: ../pitivi/utils/widgets.py:510
+msgid "Save Preset"
+msgstr "שמירת הערכה"
+
+#: ../pitivi/utils/widgets.py:579
+msgid "Choose..."
+msgstr "בחירה..."
+
+#: ../pitivi/utils/widgets.py:821
+#, fuzzy
+msgid "No properties."
+msgstr "אין מאפיינים..."
+
+#. set title and frame label
+#: ../pitivi/utils/widgets.py:953
+#, python-format
+msgid "Properties for %s"
+msgstr "מאפיינים עבור %s"
+
+#~ msgid ""
+#~ "\n"
+#~ "      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
+#~ "      %prog -p [PROJECT_FILE]\n"
+#~ "      %prog -i [-a] [MEDIA_FILE]..."
+#~ msgstr ""
+#~ "\n"
+#~ "      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
+#~ "      %prog -p [PROJECT_FILE]\n"
+#~ "      %prog -i [-a] [MEDIA_FILE]..."
+
+#~ msgid ""
+#~ "Starts the video editor, optionally loading PROJECT_FILE. If\n"
+#~ "no project is given, %prog creates a new project.\n"
+#~ "Alternatively, when -i is specified, arguments are treated as clips to "
+#~ "be\n"
+#~ "imported into the project. If -a is specified, these clips will also be "
+#~ "added to\n"
+#~ "the end of the project timeline.\n"
+#~ "When -r is specified, the given project file is rendered without opening "
+#~ "the GUI."
+#~ msgstr ""
+#~ "Starts the video editor, optionally loading PROJECT_FILE. If\n"
+#~ "no project is given, %prog creates a new project.\n"
+#~ "Alternatively, when -i is specified, arguments are treated as clips to "
+#~ "be\n"
+#~ "imported into the project. If -a is specified, these clips will also be "
+#~ "added to\n"
+#~ "the end of the project timeline.\n"
+#~ "When -r is specified, the given project file is rendered without opening "
+#~ "the GUI."
+
+#~ msgid "Run pitivi with no gui"
+#~ msgstr "Run pitivi with no gui"
+
+#~ msgid "Render the given project file to OUTPUT_FILE with no GUI."
+#~ msgstr "Render the given project file to OUTPUT_FILE with no GUI."
+
+#~ msgid "Preview the given project file without the full UI."
+#~ msgstr "Preview the given project file without the full UI."
+
+#~ msgid "Could not import the libglade Python bindings"
+#~ msgstr "לא ניתן לייבא את מאגדי ה־Python של libglade"
+
+#~ msgid "Make sure you have the libglade Python bindings installed"
+#~ msgstr "נא לוודא כי מאגדי ה־Python של libglade מותקנים"
+
+#~ msgid "Could not import the Zope interface module"
+#~ msgstr "לא ניתן לייבא את מודול המנשק של Zope"
+
+#~ msgid "Make sure you have the zope.interface module installed"
+#~ msgstr "נא לוודא שמותקן אצלך המודול zope.interface"
+
+#~ msgid ""
+#~ "Missing plugins:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "תוספים חסרים:\n"
+#~ "%s"
+
+#~ msgid "Can not decode file."
+#~ msgstr "לא ניתן לפענח את הקובץ."
+
+#~ msgid "The given file does not contain audio, video or picture streams."
+#~ msgstr "הקובץ הניתן אינו מכיל תזרימי שמע, וידאו או תמונה."
+
+#~ msgid "Could not establish the duration of the file."
+#~ msgstr "לא ניתן לזהות את אורך הקובץ."
+
+#~ msgid ""
+#~ "This clip seems to be in a format which cannot be accessed in a random "
+#~ "fashion."
+#~ msgstr "נראה כי מקטע זה הוא במבנה שלא ניתן לגשת אליו בצורה אקראית."
+
+#~ msgid "Timeout while analyzing file."
+#~ msgstr "עבר זמן רב מדי בעת ניסיון לפענח את הקובץ."
+
+#~ msgid "Analyzing the file took too long."
+#~ msgstr "ניתוח הקובץ ארך זמן רב מדי."
+
+#~ msgid "No available source handler."
+#~ msgstr "אין מטפל זמין למקור."
+
+#~ msgid "You do not have a GStreamer source element to handle protocol '%s'"
+#~ msgstr "אין לך את רכיב המקור של GStreamer לטיפול בפרוטוקול '%s'"
+
+#~ msgid "Pipeline didn't want to go to PAUSED."
+#~ msgstr "צינורית הפקודה סרבה לעבור למצב PAUSED."
+
+#~ msgid "An internal error occurred while analyzing this file: %s"
+#~ msgstr "אירעה שגיאה פנימית בעת הניסיון לנתח את הקובץ הבא: %s"
+
+#~ msgid "File contains a redirection to another clip."
+#~ msgstr "הקובץ מכיל הפניה למקטע אחר."
+
+#~ msgid "Pipeline didn't want to go to PLAYING."
+#~ msgstr "צינורית הפקודה סרבה לעבור למצב PLAYING."
+
+#~ msgid "Playlist format"
+#~ msgstr "מבנה רשימת הנגינה"
+
+#~ msgid "Not a valid project file."
+#~ msgstr "אינו קובץ מיזם תקני."
+
+#~ msgid "Couldn't close current project"
+#~ msgstr "לא ניתן לסגור את המיזם הנוכחי"
+
+#~ msgid "No URI specified."
+#~ msgstr "לא צוינה כתובת."
+
+#~ msgid "Export Settings\n"
+#~ msgstr "הגדרות יצוא\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "Audio: "
+#~ msgstr ""
+#~ "\n"
+#~ "שמע: "
+
+#~ msgid ""
+#~ "\n"
+#~ "Muxer: "
+#~ msgstr ""
+#~ "\n"
+#~ "מרבב: "
+
+#~ msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
+#~ msgstr "%(width)d x %(height)d פיקסלים בקצב של %(framerate).2f fps"
+
+#~ msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
+#~ msgstr "%(channels)d ערוצים בתדירות של %(frequency)d הרץ (%(depth)d סיביות)"
+
+#~ msgid "Name"
+#~ msgstr "שם"
+
+#~ msgid "Audio Capture Device:"
+#~ msgstr "התקן לכידת שמע:"
+
+#~ msgid "No device available"
+#~ msgstr "אין התקן זמין"
+
+#~ msgid "Video Capture Device:"
+#~ msgstr "התקן לכידת וידאו:"
+
+#~ msgid "<b>Unknown Audio format:</b> %s"
+#~ msgstr "<b>מבנה השמע בלתי מזוהה:</b> %s"
+
+#~ msgid "<b>Unknown Video format:</b> %s"
+#~ msgstr "<b>מבנה הווידאו בלתי מזוהה:</b> %s"
+
+#~ msgid "<b>Text:</b> %s"
+#~ msgstr "<b>טקסט:</b> %s"
+
+#~ msgid "15 fps"
+#~ msgstr "15 fps"
+
+#~ msgid "20 fps"
+#~ msgstr "20 fps"
+
+#~ msgid "23,976 fps"
+#~ msgstr "23,976 fps"
+
+#~ msgid "24 fps"
+#~ msgstr "24 fps"
+
+#~ msgid "25 fps"
+#~ msgstr "25 fps"
+
+#~ msgid "29,97 fps"
+#~ msgstr "29,97 fps"
+
+#~ msgid "59,94 fps"
+#~ msgstr "59,94 fps"
+
+#~ msgid "60 fps"
+#~ msgstr "60 fps"
+
+#~ msgid "120 fps"
+#~ msgstr "120 fps"
+
+#~ msgid "11 KHz"
+#~ msgstr "11 KHz"
+
+#~ msgid "22 KHz"
+#~ msgstr "22 KHz"
+
+#~ msgid "48 KHz"
+#~ msgstr "48 KHz"
+
+#~ msgid "96 KHz"
+#~ msgstr "96 KHz"
+
+#~ msgid "16 bit"
+#~ msgstr "16 סיביות"
+
+#~ msgid "24 bit"
+#~ msgstr "24 סיביות"
+
+#~ msgid "32 bit"
+#~ msgstr "32 סיביות"
+
+#, fuzzy
+#~ msgid "Properties For: %d object"
+
+#~ msgid_plural "Properties For: %d objects"
+#~ msgstr[0] "מאפיינים עבור: פריט אחד"
+#~ msgstr[1] "מאפיינים עבור: %d פריטים"
+#~ msgstr[2] "מאפיינים עבור: שני פריטים"
+
+#~ msgid "Show Video Effects as a List"
+#~ msgstr "הצגת האפקטים של הווידאו כרשימה"
+
+#~ msgid "Show Video Effects as Icons"
+#~ msgstr "הצגת אפקטים של וידאו כסמלים"
+
+#~ msgid "<b>Properties For Plugin</b>"
+#~ msgstr "<b>מאפיינים עבור התוסף</b>"
+
+#~ msgid "Number of channels:"
+#~ msgstr "מספר הערוצים:"
+
+#~ msgid "Sample Depth:"
+#~ msgstr "עומק הדגימה:"
+
+#~ msgid "Sample Rate:"
+#~ msgstr "קצב הדגימה:"
+
+#~ msgid "Sample rate"
+#~ msgstr "קצב הדגימה"
+
+#~ msgid "Summary"
+#~ msgstr "תקציר"
+
+#~ msgid "URI:"
+#~ msgstr "כתובת:"
+
+#~ msgid "Stop Playback"
+#~ msgstr "עצירת הניגון"
+
+#~ msgid "Loop over selected area"
+#~ msgstr "נגינת קטע נבחר במחזוריות (לולאה)"
+
+#~ msgid "_Render project"
+#~ msgstr "_עיבוד המיזם"
+
+#~ msgid "Render project..."
+#~ msgstr "עיבוד מיזם..."
+
+#~ msgid "_Undo"
+#~ msgstr "בי_טול"
+
+#~ msgid "_Redo"
+#~ msgstr "_ביצוע חוזר"
+
+#~ msgid "_Plugins..."
+#~ msgstr "_תוספים..."
+
+#~ msgid "Manage plugins"
+#~ msgstr "ניהול התוספים"
+
+#~ msgid "_Preferences"
+#~ msgstr "ה_עדפות"
+
+#~ msgid "Import from _Webcam..."
+#~ msgstr "יבוא ממצלמת _רשת..."
+
+#~ msgid "Import Camera stream"
+#~ msgstr "יבוא תזרים ממצלמה"
+
+#~ msgid "_Make screencast..."
+#~ msgstr "ה_סרטת המסך..."
+
+#~ msgid "Capture the desktop"
+#~ msgstr "לכידת שולחן העבודה"
+
+#~ msgid "_Capture Network Stream..."
+#~ msgstr "ל_כידת תזרים מהאינטרנט..."
+
+#~ msgid "Capture Network Stream"
+#~ msgstr "לכידת תזרים מהאינטרנט"
+
+#~ msgid "_File"
+#~ msgstr "_קובץ"
+
+#~ msgid "Duration:"
+#~ msgstr "משך:"
+
+#~ msgid "Address"
+#~ msgstr "כתובת"
+
+#~ msgid "Capture"
+#~ msgstr "לכידה"
+
+#~ msgid "Capture Stream from URI"
+#~ msgstr "לכידת תזרים מהאינטרנט"
+
+#~ msgid "Capture network stream"
+#~ msgstr "לכידת תזרים מהאינטרנט"
+
+#~ msgid "Close"
+#~ msgstr "סגירה"
+
+#~ msgid "Customize:"
+#~ msgstr "התאמה אישית:"
+
+#~ msgid "HTTP / HTTPS"
+#~ msgstr "HTTP / HTTPS"
+
+#~ msgid "Network stream video"
+#~ msgstr "וידאו מתזרים מהאינטרנט"
+
+#~ msgid "Other protocol"
+#~ msgstr "פרוטוקול אחר"
+
+#~ msgid "Port"
+#~ msgstr "פתחה"
+
+#~ msgid "Preview Stream from URI"
+#~ msgstr "תצוגה מקדימה של תזרים מהאינטרנט"
+
+#~ msgid "Protocol"
+#~ msgstr "פרוטוקול"
+
+#~ msgid "RTSP"
+#~ msgstr "RTSP"
+
+#~ msgid "UDP / RDP"
+#~ msgstr "UDP / RDP"
+
+#~ msgid "http://"
+#~ msgstr "http://"
+
+#~ msgid "All categories"
+#~ msgstr "כל הקטגוריות"
+
+#~ msgid "Plugin manager"
+#~ msgstr "מנהל התוספים"
+
+#~ msgid "Show:"
+#~ msgstr "הצגה:"
+
+#~ msgid ""
+#~ "You may drag plugin files into the list to install them,\n"
+#~ "or type text to search for a specific plugin."
+#~ msgstr ""
+#~ "ניתן לגרור את קובצי התוספים לרשימה כדי להתקין אותם\n"
+#~ "או להקליד טקסט כדי לחפש תוסף מסוים."
+
+#~ msgid "Plugin"
+#~ msgstr "תוסף"
+
+#~ msgid "Category"
+#~ msgstr "קטגוריה"
+
+#~ msgid "Are you sure you want to remove the selected plugins?"
+#~ msgstr "האם אכן ברצונך להסיר את התוספים הנבחרים?"
+
+#~ msgid "Confirm remove operation"
+#~ msgstr "אישור פעולת ההסרה"
+
+#~ msgid "Cannot remove %s"
+#~ msgstr "לא ניתן להסיר את %s"
+
+#~ msgid "Update the existing plugin?"
+#~ msgstr "האם לעדכן את התוסף הקיים?"
+
+#~ msgid ""
+#~ "This plugin is already installed in your system.\n"
+#~ "If you agree, version %(v1)s will be replaced with version %(v2)s"
+#~ msgstr ""
+#~ "תוסף זה כבר מותקן במערכת שלך.\n"
+#~ "אם מוסכם בעיניך, הגרסה %(v1)s תוחלף בגרסה %(v2)s"
+
+#~ msgid "Duplicate plugin found"
+#~ msgstr "נמצא כפל תוספים"
+
+#~ msgid ""
+#~ "Cannot install %s\n"
+#~ "The file is not a valid plugin"
+#~ msgstr ""
+#~ "לא ניתן להתקין את %s\n"
+#~ "הקובץ אינו תוסף תקני"
+
+#~ msgid "Reset"
+#~ msgstr "איפוס"
+
+#~ msgid "Show Thumbnails (Video)"
+#~ msgstr "הצגת תמונות ממוזערות (וידאו)"
+
+#~ msgid "Show Waveforms (Audio)"
+#~ msgstr "הצגת תרשימי גל (שמע)"
+
+#~ msgid "<b>Aspect Ratio</b>"
+#~ msgstr "<b>יחס תצוגה</b>"
+
+#~ msgid "<b>Frame Rate</b>"
+#~ msgstr "<b>קצב השקופיות</b>"
+
+#~ msgid "<b>Preset</b>"
+#~ msgstr "<b>ערכה</b>"
+
+#~ msgid "No Objects Selected"
+#~ msgstr "לא נבחרו פריטים"
+
+#~ msgid "Screencast"
+#~ msgstr "הסרטת מסך"
+
+#~ msgid "Screencast Desktop"
+#~ msgstr "הסרטת שולחן העבודה"
+
+#~ msgid "Start Istanbul"
+#~ msgstr "הפעלת איסטנבול"
+
+#~ msgid "Import clips..."
+#~ msgstr "יבוא מקטעים..."
+
+#~ msgid "Play Clip"
+#~ msgstr "נגינת המקטע"
+
+#~ msgid ""
+#~ "<span>Import your clips by dragging them here or by using the buttons "
+#~ "above.</span>"
+#~ msgstr ""
+#~ "<span>באפשרותך לייבא את המקטעים שלך על ידי גרירתם לכאן או על ידי שימוש "
+#~ "בלחצנים שלהלן.</span>"
+
+#~ msgid "Import clips to use"
+#~ msgstr "יבוא מקטעים לשימוש"
+
+#~ msgid "Import folder of clips to use"
+#~ msgstr "יבוא תיקיית מקטעים לשימוש"
+
+#~ msgid "Import a folder"
+#~ msgstr "יבוא תיקייה"
+
+#~ msgid "Import a clip"
+#~ msgstr "יבוא מקטע"
+
+#~ msgid "Importing clips..."
+#~ msgstr "המקטעים מיובאים..."
+
+#~ msgid "Help"
+#~ msgstr "עזרה"
+
+#~ msgid "Skip"
+#~ msgstr "דילוג"
+
+#~ msgid "Startup Wizard"
+#~ msgstr "אשף ההפעלה"
+
+#~ msgid "Threshold distance (in pixels) used for all snapping operations"
+#~ msgstr "סף המרחק (בפיקסלים) שישמש לכל פעולות הגזירה"
+
+#~ msgid "<b>Audio:</b>"
+#~ msgstr "<b>שמע:</b>"
+
+#~ msgid "<b>Video:</b>"
+#~ msgstr "<b>וידאו:</b>"
+
+#~ msgid "<b>Text:</b>"
+#~ msgstr "<b>טקסט:</b>"
+
+#~ msgid "Clip Background (Video)"
+#~ msgstr "רקע המקטע (וידאו)"
+
+#~ msgid "Clip Background (Audio)"
+#~ msgstr "רקע המקטע (שמע)"
 
 #~ msgid "<b>Author:</b>"
 #~ msgstr "<b>יוצר:</b>"
-
-#~ msgid "<b>Description:</b>"
-#~ msgstr "<b>תיאור:</b>"
-
-#~ msgid "<b>Plugin Name</b>"
-#~ msgstr "<b>שם התוסף</b>"
 
 #~ msgid "<b>Nothing yet</b>"
 #~ msgstr "<b>שום דבר עדיין</b>"
@@ -1814,17 +2455,8 @@ msgstr "עדיין אין באפשרות %s לטפל במיזמים מרוחקי
 #~ msgid "Please choose an output file"
 #~ msgstr "נא לבחור בקובץ פלט"
 
-#~ msgid "Render project"
-#~ msgstr "עיבוד מיזם"
-
 #~ msgid "Choose file to render to"
 #~ msgstr "נא לבחור קובץ אליו ישמר החומר המעובד"
-
-#~ msgid "%.0f%% rendered"
-#~ msgstr "%.0f%% עובדו"
-
-#~ msgid "About %s left"
-#~ msgstr "בערך %s נותרו"
 
 #~ msgid "0% rendered"
 #~ msgstr "0% rעובדו"
@@ -1884,9 +2516,6 @@ msgstr "עדיין אין באפשרות %s לטפל במיזמים מרוחקי
 #~ msgid "Audio Codec"
 #~ msgstr "מקודד שמע"
 
-#~ msgid "Audio Preset"
-#~ msgstr "ערכת שמע"
-
 #~ msgid ""
 #~ "Mono (1)\n"
 #~ "Stereo (2)"
@@ -1908,12 +2537,6 @@ msgstr "עדיין אין באפשרות %s לטפל במיזמים מרוחקי
 
 #~ msgid "Video Codec:"
 #~ msgstr "מקודד וידאו:"
-
-#~ msgid "Video Preset"
-#~ msgstr "ערכת הווידאו"
-
-#~ msgid "Width:"
-#~ msgstr "רוחב:"
 
 #~ msgid "576p (PAL DV/DVD)"
 #~ msgstr "576p (PAL DV/DVD)"
@@ -1948,14 +2571,8 @@ msgstr "עדיין אין באפשרות %s לטפל במיזמים מרוחקי
 #~ msgid "Export settings"
 #~ msgstr "הגדרות היצוא"
 
-#~ msgid "A short description of your project."
-#~ msgstr "תיאור קצר של המיזם שלך."
-
 #~ msgid "Description:"
 #~ msgstr "תיאור:"
 
 #~ msgid "Name:"
 #~ msgstr "שם:"
-
-#~ msgid "The name of your project."
-#~ msgstr "שם המיזם שלך."
