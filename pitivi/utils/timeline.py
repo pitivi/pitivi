@@ -124,15 +124,16 @@ class Selection(Signallable):
         if len(self.selected) == 1:
             self.last_single_obj = iter(selection).next()
 
+        for obj in old_selection - self.selected:
+            for tckobj in obj.get_track_objects():
+                if not isinstance(tckobj, ges.TrackEffect):
+                    tckobj.selected.selected = False
+
         for obj in self.selected - old_selection:
             for tckobj in obj.get_track_objects():
                 if not isinstance(tckobj, ges.TrackEffect):
                     tckobj.selected.selected = True
 
-        for obj in old_selection - self.selected:
-            for tckobj in obj.get_track_objects():
-                if not isinstance(tckobj, ges.TrackEffect):
-                    tckobj.selected.selected = False
 
         self.emit("selection-changed")
 
