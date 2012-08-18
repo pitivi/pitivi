@@ -25,16 +25,13 @@ from pitivi.utils.ui import SPACING
 
 class BaseTabs(gtk.Notebook):
     def __init__(self, app):
-        """ initialize """
         gtk.Notebook.__init__(self)
         self.set_border_width(SPACING)
-
         self.connect("create-window", self._createWindowCb)
         self.app = app
         self._createUi()
 
     def _createUi(self):
-        """ set up the gui """
         settings = self.get_settings()
         settings.props.gtk_dnd_drag_threshold = 1
         self.set_tab_pos(gtk.POS_TOP)
@@ -51,32 +48,26 @@ class BaseTabs(gtk.Notebook):
         self.child_set_property(child, "tab-fill", True)
         label.props.xalign = 0.0
 
-    def _detachedComponentWindowDestroyCb(self, window, child,
-            original_position, label):
-        notebook = window.child
-        position = notebook.child_get_property(child, "position")
-        notebook.remove_page(position)
-        label = gtk.Label(label)
-        self.insert_page(child, label, original_position)
-        self._set_child_properties(child, label)
-        self.child_set_property(child, "detachable", True)
+    def _detachedWindowDestroyCb(self, window, page, orig_pos, label):
+        # We assume there's only one notebook and one tab per utility window
+        notebook = window.get_children()[0]
+        notebook.remove_page(0)
+        self.insert_page(page, label, orig_pos)
+        self._set_child_properties(page, label)
 
-    def _createWindowCb(self, from_notebook, child, x, y):
-        original_position = self.child_get_property(child, "position")
-        label = self.child_get_property(child, "tab-label")
+    def _createWindowCb(self, unused_notebook, page, x, y):
+        # unused_notebook here is the same as "self"
+        original_position = self.page_num(page)
+        label = self.get_tab_label(page)
         window = gtk.Window()
         window.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_UTILITY)
-
-        window.set_title(label)
+        window.set_title(label.get_text())
         window.set_default_size(600, 400)
-        window.connect("destroy", self._detachedComponentWindowDestroyCb,
-                        child, original_position, label)
+        window.connect("destroy", self._detachedWindowDestroyCb,
+                        page, original_position, label)
         notebook = gtk.Notebook()
         notebook.props.show_tabs = False
         window.add(notebook)
-
         window.show_all()
-        # set_uposition is deprecated but what should I use instead?
-        window.set_uposition(x, y)
-
+        window.move(x, y)
         return notebook
