@@ -154,6 +154,9 @@ export LD_LIBRARY_PATH
 export DYLD_LIBRARY_PATH
 export GI_TYPELIB_PATH
 
+MODULES_ALL="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services"
+MODULES_MINIMAL="gnonlin gst-editing-services"
+
 # First run? Build everything
 if test ! -e $PITIVI; then
   echo "==========================================================================================="
@@ -177,10 +180,10 @@ if test ! -e $PITIVI; then
 
   if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null
       then echo "GSt 1.0 is installed, not building it"
-      MODULES="gnonlin gst-editing-services"
+      MODULES=$MODULES_MINIMAL
   else
     echo "GSt 1.0 is not installed, building it"
-    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services"
+    MODULES=$MODULES_ALL
   fi
 
   # Build GLib... if needed
@@ -252,7 +255,28 @@ if test ! -e $PITIVI; then
 fi
 
 if [ "$1" == "--update" ]; then
-  echo "Updating repos"
+  echo "Updating repos for dependencies (but not pitivi itself)"
+  MODULES=$MODULES_ALL
+  cd $PITIVI
+  for m in $MODULES
+  do
+    cd $m
+    git checkout $GST_RELEASE_TAG
+    git pull --rebase
+
+    ./autogen.sh
+    if [ $? -ne 0 ]; then
+      echo "Could not run autogen for $m result: $?"
+      exit 1
+    fi
+
+    make
+    if [ $? -ne 0 ]; then
+      echo "Could not run autogen for $m result: $?"
+      exit 1
+    fi
+    cd ..
+  done
 fi
 
 # set up prompt to help us remember we're in a subshell, cd to
