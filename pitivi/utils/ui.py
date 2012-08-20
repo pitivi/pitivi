@@ -31,6 +31,8 @@ import gtk
 import os
 import cairo
 
+from gi.repository import Gtk
+
 from itertools import izip
 from urllib import unquote
 from gettext import ngettext, gettext as _
@@ -73,7 +75,7 @@ TYPE_PITIVI_AUDIO_TRANSITION = 30
 TYPE_PITIVI_VIDEO_TRANSITION = 31
 TYPE_PITIVI_LAYER_CONTROL = 32
 
-FILE_TARGET_ENTRY = gtk.TargetEntry.new("text/plain", 0, TYPE_TEXT_PLAIN)
+FILE_TARGET_ENTRY = gtk.TargetEntry.new("text/plain", Gtk.TargetFlags.OTHER_APP, TYPE_TEXT_PLAIN)
 URI_TARGET_ENTRY = gtk.TargetEntry.new("text/uri-list", 0, TYPE_URI_LIST)
 FILESOURCE_TARGET_ENTRY = gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)
 EFFECT_TARGET_ENTRY = gtk.TargetEntry.new("pitivi/effect", 0, TYPE_PITIVI_EFFECT)

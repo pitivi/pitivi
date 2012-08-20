@@ -439,6 +439,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
                            [dnd.URI_TARGET_ENTRY, dnd.FILE_TARGET_ENTRY],
                            gtk.gdk.ACTION_COPY)
+        self.drag_dest_add_uri_targets()
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
         self.treeview.drag_source_set(0, [], gtk.gdk.ACTION_COPY)
@@ -1183,46 +1184,32 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
     ## Drag and Drop
     def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
                            unused_y, selection, targettype, unused_time):
-        def get_file_type(path):
-            if path[:7] == "file://":
-                if os.path.isfile(path[7:]):
-                    return LOCAL_FILE
-                return LOCAL_DIR
-            elif "://" in path:  # we concider it is a remote file
-                return REMOTE_FILE
-            return NOT_A_FILE
 
-        self.debug("targettype:%d, selection.data:%r", targettype, selection.data)
+        self.debug("targettype:%d, selection.data:%r", targettype, selection.get_data())
+
         directories = []
-        if targettype == dnd.TYPE_URI_LIST:
-            filenames = []
-            directories = []
-            remote_files = []
-            incoming = [unquote(x.strip('\x00')) for x in selection.data.strip().split("\r\n")
-                        if x.strip('\x00')]
-            for x in incoming:
-                filetype = get_file_type(x)
-                if filetype == LOCAL_FILE:
-                    filenames.append(x)
-                elif filetype == LOCAL_DIR:
-                    directories.append(x)
-                elif filetype == REMOTE_FILE:
-                    remote_files.append(x)
-        elif targettype == dnd.TYPE_TEXT_PLAIN:
-            incoming = selection.data.strip()
-            file_type = get_file_type(incoming)
-            if file_type == LOCAL_FILE:
-                filenames = [incoming]
-            elif file_type == LOCAL_DIR:
-                directories = [incoming]
-        if directories:
-            self._addFolders(directories)
+        remote_files = []
+        filenames = []
 
-        if remote_files:
+        uris = selection.get_data().split("\r\n")
+        uris = filter(lambda x: x != "", uris)
+
+        for uri in uris:
+            if os.path.isfile(uri[7:]):
+                filenames.append(uri)
+            elif os.path.isdir(uri[7:]):
+                directories.append(uri)
+            elif "://" in uri:
+                #FIXME Very dubious check.
+                remote_files.append(uri)
+
+        if len(directories):
+            self._addFolders(directories)
+        if len(remote_files):
             #TODO waiting for remote files downloader support to be implemented
             pass
-
-        self.app.current.medialibrary.addUris(filenames)
+        if len(filenames):
+            self.app.current.medialibrary.addUris(filenames)
 
     #used with TreeView and IconView
     def _dndDragBeginCb(self, view, context):
