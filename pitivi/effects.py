@@ -52,7 +52,7 @@ from pitivi.settings import GlobalSettings
 
 import pitivi.utils.ui as dnd
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import SPACING
+from pitivi.utils.ui import SPACING, TYPE_PITIVI_EFFECT
 
 from pitivi.utils.widgets import GstElementSettingsWidget, FractionWidget
 
@@ -353,11 +353,7 @@ class EffectListWidget(gtk.VBox, Loggable):
         self.app = instance
         self.settings = instance.settings
 
-        self._dragButton = None
-        self._dragStarted = False
-        self._dragSelection = False
-        self._dragX = 0
-        self._dragY = 0
+        self._draggedItems = None
 
         #Searchbox and combobox
         hfilters = gtk.HBox()
@@ -431,11 +427,13 @@ class EffectListWidget(gtk.VBox, Loggable):
 
         self.view.connect("button-press-event", self._buttonPressEventCb)
         self.view.connect("select-cursor-row", self._enterPressEventCb)
-        self.view.connect("motion-notify-event", self._motionNotifyEventCb)
-        self.view.connect("button-release-event", self._buttonReleaseCb)
+
         self.view.drag_source_set(0, [], gtk.gdk.ACTION_COPY)
+        self.view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [("pitivi/effect", 0, TYPE_PITIVI_EFFECT)], Gdk.DragAction.COPY)
+        self.view.drag_source_set_target_list(None)
+        self.view.drag_source_add_text_targets()
+
         self.view.connect("drag_begin", self._dndDragBeginCb)
-        self.view.connect("drag_data_get", self._dndDataGetCb)
 
         # Delay the loading of the available effects so the application
         # starts faster.
@@ -501,7 +499,6 @@ class EffectListWidget(gtk.VBox, Loggable):
 
     def _dndDragBeginCb(self, view, context):
         self.info("tree drag_begin")
-
         model, paths = self.view.get_selection().get_selected_rows()
 
         if not paths:
@@ -539,67 +536,21 @@ class EffectListWidget(gtk.VBox, Loggable):
         else:
             chain_up = not self._rowUnderMouseSelected(view, event)
 
-            self._dragStarted = False
-            self._dragSelection = False
-            self._dragButton = event.button
-            self._dragX = int(event.x)
-            self._dragY = int(event.y)
-
         if chain_up:
-            gtk.TreeView.do_button_press_event(view, event)
+            self._draggedItems = None
         else:
-            view.grab_focus()
+            self._draggedItems = self.getSelectedItems()
 
+        gtk.TreeView.do_button_press_event(view, event)
         return True
 
-    def _motionNotifyEventCb(self, view, event):
-        chain_up = True
-
-        if not self._dragButton:
-            return True
-
-        if self._nothingUnderMouse(view, event):
-            return True
-
-        if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
-            chain_up = not self._rowUnderMouseSelected(view, event)
-
-        if view.drag_check_threshold(self._dragX, self._dragY,
-            int(event.x), int(event.y)):
-            context = view.drag_begin(
-                gtk.TargetList.new(self._getTargetEntries()),
-                gtk.gdk.ACTION_COPY,
-                self._dragButton,
-                event)
-            self._dragStarted = True
-
-        if chain_up:
-            gtk.TreeView.do_button_press_event(view, event)
-        else:
-            view.grab_focus()
-
-        return False
-
-    def _buttonReleaseCb(self, treeview, event):
-        if event.button == self._dragButton:
-            self._dragButton = None
-        return False
-
     def getSelectedItems(self):
+        if self._draggedItems:
+            return self._draggedItems
         model, rows = self.view.get_selection().get_selected_rows()
         path = self.modelFilter.convert_path_to_child_path(rows[0])
 
         return self.storemodel[path][COL_ELEMENT_NAME]
-
-    def _dndDataGetCb(self, unused_widget, context, selection,
-                      targettype, unused_eventtime):
-        self.info("data get, type:%d", targettype)
-        factory = self.getSelectedItems()
-        if factory is None or len(factory) < 1:
-            return
-
-        selection.set(selection.target, 8, factory)
-        gtk.drag_set_icon_pixbuf(context, INVISIBLE, 0, 0)
 
     def _effectTypeChangedCb(self, combobox):
         self.modelFilter.refilter()

@@ -1173,10 +1173,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
         # Set up the initial data when we first initiate the drag operation
-
         if not self._drag_started:
             self._drag_started = True
-        elif context.list_targets() not in DND_EFFECT_LIST:
+        elif context.list_targets() not in DND_EFFECT_LIST and self.app.gui.medialibrary.dragged:
             if not self._temp_objects and not self._creating_tckobjs_sigid:
                 self._create_temp_source(x, y)
 
@@ -1234,7 +1233,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # Resetting _drag_started will tell _dragCleanUp to not do anything
         self._drag_started = False
         self.debug("Drag drop")
-        if context.list_targets() not in DND_EFFECT_LIST:
+
+        if self.app.gui.medialibrary.dragged:
             self._canvas.drag_unhighlight()
             self.app.action_log.begin("add clip")
             if self._move_context is not None:
@@ -1250,12 +1250,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         else:
             if self.app.current.timeline.props.duration == 0:
                 return False
-            factory = self._factories[0]
             timeline_objs = self._getTimelineObjectUnderMouse(x, y)
             if timeline_objs:
                 # FIXME make a util function to add effects
                 # instead of copy/pasting it from cliproperties
-                bin_desc = factory.effectname
+                bin_desc = self.app.gui.effectlist.getSelectedItems()
                 media_type = self.app.effects.getFactoryFromName(bin_desc).media_type
 
                 # Trying to apply effect only on the first object of the selection
@@ -1281,6 +1280,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
                         self.timeline.selection.setSelection(timeline_objs, SELECT)
                         break
+        Gtk.drag_finish(context, True, False, timestamp)
         return True
 
     def _getTimelineObjectUnderMouse(self, x, y):

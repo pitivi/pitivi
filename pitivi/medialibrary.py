@@ -276,6 +276,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self._project = None
         self.dummy_selected = []
         self._draggedItems = None
+        self.dragged = False
 
         # Store
         # icon, infotext, objectfactory, uri, length
@@ -449,6 +450,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.treeview.drag_source_add_text_targets()
 
         self.treeview.connect("drag_begin", self._dndDragBeginCb)
+        self.treeview.connect("drag-end", self._dndDragEndCb)
 
         self.iconview.drag_source_set(0, [], gtk.gdk.ACTION_COPY)
         self.iconview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)], Gdk.DragAction.COPY)
@@ -457,6 +459,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.iconview.drag_source_add_text_targets()
 
         self.iconview.connect("drag_begin", self._dndDragBeginCb)
+        self.iconview.connect("drag-end", self._dndDragEndCb)
 
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems
@@ -1214,6 +1217,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
     #used with TreeView and IconView
     def _dndDragBeginCb(self, view, context):
         self.info("tree drag_begin")
+        self.dragged = True
         paths = self.getSelectedPaths()
 
         if len(paths) < 1:
@@ -1221,6 +1225,9 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         else:
             row = self.modelFilter[paths[0]]
             gtk.drag_set_icon_pixbuf(context, row[COL_ICON], 0, 0)
+
+    def _dndDragEndCb(self, view, context):
+        self.dragged = False
 
     def getSelectedPaths(self):
         """ Returns a list of selected treeview or iconview items """
