@@ -292,8 +292,12 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
         @returns: A list of L{Track}, L{TrackObject} tuples
         '''
-        items = self.get_items_in_area(goocanvas.Bounds(x1, y1, x2, y2), True,
-            True, True)
+        bounds = goocanvas.CanvasBounds()
+        bounds.x1 = x1
+        bounds.x2 = x2
+        bounds.y1 = y1
+        bounds.y2 = y2
+        items = self.get_items_in_area(bounds, True, True, True)
         if not items:
             return [], []
 
