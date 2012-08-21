@@ -238,12 +238,13 @@ class EffectProperties(gtk.Expander, gtk.HBox):
             [EFFECT_TARGET_ENTRY],
             gtk.gdk.ACTION_COPY)
 
+        self.treeview.drag_dest_add_text_targets()
+
         self.selection = self.treeview.get_selection()
 
         self.selection.connect("changed", self._treeviewSelectionChangedCb)
         self._removeEffectBt.connect("clicked", self._removeEffectClicked)
 
-        self.connect("drag-data-received", self._dragDataReceivedCb)
         self.treeview.connect("drag-leave", self._dragLeaveCb)
         self.treeview.connect("drag-drop", self._dragDropCb)
         self.treeview.connect("drag-motion", self._dragMotionCb)
@@ -368,24 +369,14 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
                     break
 
-    def _dragDataReceivedCb(self, unused_layout, context, unused_x, unused_y,
-            selection, unused_targetType, unused_timestamp):
-        self._factory = self.app.effects.getFactoryFromName(selection.data)
-
     def _dragDropCb(self, unused, context, unused_x, unused_y,
              unused_timestamp):
-        if self._factory:
-            self.addEffectToCurrentSelection(self._factory.effectname)
-        self._factory = None
+        self.addEffectToCurrentSelection(self.app.gui.effectlist.getSelectedItems())
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
-        self.factory = None
         self.drag_unhighlight()
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
-        atom = gtk.gdk.atom_intern(EFFECT_TARGET_ENTRY.name)
-        if not self._factory:
-            self.drag_get_data(context, atom, timestamp)
         self.drag_highlight()
 
     def _effectActiveToggleCb(self, cellrenderertoggle, path):
