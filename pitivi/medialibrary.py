@@ -1012,7 +1012,10 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
     def _rowUnderMouseSelected(self, view, event):
         if isinstance(view, gtk.TreeView):
-            path, column, x, y = view.get_path_at_pos(int(event.x), int(event.y))
+            path = None
+            tup = view.get_path_at_pos(int(event.x), int(event.y))
+            if tup:
+                path, column, x, y = tup
             if path:
                 selection = view.get_selection()
                 return selection.path_is_selected(path) and selection.count_selected_rows() > 0
