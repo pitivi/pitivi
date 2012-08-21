@@ -1198,6 +1198,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         uris = filter(lambda x: x != "", uris)
 
         for uri in uris:
+            uri = unquote(uri.strip('\x00'))
             if os.path.isfile(uri[7:]):
                 filenames.append(uri)
             elif os.path.isdir(uri[7:]):
