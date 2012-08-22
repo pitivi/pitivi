@@ -73,44 +73,28 @@ class ClipProperties(gtk.ScrolledWindow, Loggable):
     def __init__(self, instance, uiman):
         gtk.ScrolledWindow.__init__(self)
         Loggable.__init__(self)
-
-        self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        self.set_shadow_type(gtk.SHADOW_NONE)
-
-        vp = gtk.Viewport()
-        vp.set_shadow_type(gtk.SHADOW_NONE)
-        self.add(vp)
-
         self.app = instance
         self.settings = instance.settings
         self._project = None
-        self.transformation_expander = None
-        self.info_bar_box = gtk.VBox()
+
+        self.infobar_box = gtk.VBox()
+        effect_properties_handling = EffectsPropertiesManager(instance)
+        self.effect_expander = EffectProperties(instance, effect_properties_handling, self)
+        self.transformation_expander = TransformationProperties(instance, instance.action_log)
+        self.effect_expander.set_vexpand(False)
+        self.transformation_expander.set_vexpand(False)
 
         vbox = gtk.VBox()
-        vbox.set_homogeneous(False)
-        vp.add(vbox)
-
-        self.effect_properties_handling = EffectsPropertiesManager(instance)
-
-        self.effect_expander = EffectProperties(instance,
-                self.effect_properties_handling, self)
-
-        vbox.pack_start(self.info_bar_box, expand=False, fill=True)
-
-        self.transformation_expander = TransformationProperties(
-            instance, instance.action_log)
-        vbox.pack_start(self.transformation_expander, expand=False, fill=False)
-        self.transformation_expander.show()
-
-        vbox.pack_end(self.effect_expander, expand=True, fill=True)
         vbox.set_spacing(SPACING)
+        vbox.pack_start(self.infobar_box, expand=False, fill=True)
+        vbox.pack_start(self.transformation_expander, expand=False, fill=True)
+        vbox.pack_start(self.effect_expander, expand=True, fill=True)
 
-        self.info_bar_box.show()
-        self.effect_expander.show()
-        vbox.show()
-        vp.show()
-        self.show()
+        viewport = gtk.Viewport()
+        viewport.add(vbox)
+        self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        self.add(viewport)
+        self.show_all()
 
     def _setProject(self, project):
         self._project = project
@@ -125,19 +109,12 @@ class ClipProperties(gtk.ScrolledWindow, Loggable):
     project = property(_getProject, _setProject)
 
     def addInfoBar(self, text):
-        info_bar = gtk.InfoBar()
-
-        label = gtk.Label()
-        label.set_padding(PADDING, PADDING)
+        label = gtk.Label(label=text)
         label.set_line_wrap(True)
-        label.set_line_wrap_mode(pango.WRAP_WORD)
-        label.set_justify(gtk.JUSTIFY_CENTER)
-        label.set_text(text)
-
-        info_bar.add(label)
-        self.info_bar_box.pack_start(info_bar, expand=False, fill=False)
-
-        return label, info_bar
+        info_bar = gtk.InfoBar()
+        info_bar.get_content_area().add(label)
+        self.infobar_box.pack_start(info_bar, expand=False, fill=False)
+        return info_bar
 
     def _getTimeline(self):
         return self._timeline
@@ -150,7 +127,7 @@ class ClipProperties(gtk.ScrolledWindow, Loggable):
     timeline = property(_getTimeline, _setTimeline)
 
 
-class EffectProperties(gtk.Expander, gtk.HBox):
+class EffectProperties(gtk.Expander):
     """
     Widget for viewing and configuring effects
     """
@@ -159,9 +136,6 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
     def __init__(self, instance, effect_properties_handling, clip_properties):
         gtk.Expander.__init__(self)
-        # FIXME GObject Introspection
-        #gtk.HBox.__init__(self)
-        #self.set_expanded(True)
 
         self.selected_effects = []
         self.timeline_objects = []
@@ -251,8 +225,7 @@ class EffectProperties(gtk.Expander, gtk.HBox):
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
         self._vcontent.connect("notify", self._vcontentNotifyCb)
         self.treeview.set_headers_clickable(False)
-        self.app.connect("new-project-loaded",
-            self._newProjectLoadedCb)
+        self.app.connect("new-project-loaded", self._newProjectLoadedCb)
 
         self._table.attach(self.treeview_scrollwin, 0, 1, 2, 3)
 
@@ -440,13 +413,10 @@ class EffectProperties(gtk.Expander, gtk.HBox):
 
     def _showInfoBar(self):
         if self._info_bar is None:
-            self.txtlabel, self._info_bar = self.clip_properties.addInfoBar(
+            self._info_bar = self.clip_properties.addInfoBar(
                                 _("Select a clip on the timeline "
                                   "to configure its associated effects"))
-        self._info_bar.hide_all()
-        self.txtlabel.show()
-        self._info_bar.show()
-
+        self._info_bar.show_all()
         self.set_sensitive(False)
         self._table.show_all()
 
