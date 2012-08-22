@@ -27,6 +27,7 @@ class BaseTabs(gtk.Notebook):
     def __init__(self, app):
         gtk.Notebook.__init__(self)
         self.set_border_width(SPACING)
+        self.set_scrollable(True)
         self.connect("create-window", self._createWindowCb)
         self.app = app
         self._createUi()
