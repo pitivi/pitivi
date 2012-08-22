@@ -50,11 +50,10 @@ class BaseLayerControl(gtk.VBox, Loggable):
         context = self.get_style_context()
 
         # get the default color for the current theme
-        self.UNSELECTED_COLOR = context.get_background_color(gtk.STATE_NORMAL)
+        self.UNSELECTED_COLOR = context.get_background_color(gtk.StateFlags.NORMAL)
         # use base instead of bg colors so that we get the lighter color
         # that is used for list items in TreeView.
-        #FIXME gtk.STATE_SELECTED fails
-        self.SELECTED_COLOR = context.get_background_color(gtk.STATE_NORMAL)
+        self.SELECTED_COLOR = context.get_background_color(gtk.StateFlags.SELECTED)
 
         table = gtk.Table(rows=2, columns=2)
         table.props.border_width = 2

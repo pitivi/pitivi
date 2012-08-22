@@ -198,12 +198,12 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     def drawBackground(self, cr):
         style = self.get_style_context()
-        setCairoColor(cr, style.get_background_color(gtk.STATE_NORMAL))
+        setCairoColor(cr, style.get_background_color(gtk.StateFlags.NORMAL))
         cr.rectangle(0, 0, cr.get_target().get_width(), cr.get_target().get_height())
         cr.fill()
         offset = int(self.nsToPixel(gst.CLOCK_TIME_NONE)) - self.pixbuf_offset
         if offset > 0:
-            setCairoColor(cr, style.get_background_color(gtk.STATE_ACTIVE))
+            setCairoColor(cr, style.get_background_color(gtk.StateFlags.ACTIVE))
             cr.rectangle(0, 0, int(offset), cr.get_target().get_height())
             cr.fill()
 
@@ -276,7 +276,9 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             paintpos = -frame_width + 0.5
             height = cr.get_target().get_height()
             y = int(height - self.frame_height)
-            states = [gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT]
+            # INSENSITIVE is a dark shade of gray, but lacks contrast
+            # SELECTED will be bright blue and more visible to represent frames
+            states = [gtk.StateFlags.ACTIVE, gtk.StateFlags.SELECTED]
             paintpos += frame_width - offset
             frame_num = int(paintpos // frame_width) % 2
             style = self.get_style_context()
