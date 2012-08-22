@@ -142,10 +142,10 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
 
         self.infobar.show()
         self.iconview_scrollwin.show_all()
-        self.iconview.set_sensitive(False)
+        self.iconview.hide()
         self.props_widgets.set_sensitive(False)
-        self.props_widgets.show_all()
-        self.searchbar.hide_all()
+        self.props_widgets.hide()
+        self.searchbar.hide()
 
 # UI callbacks
 
@@ -284,7 +284,7 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
 
     def activate(self, element):
         """
-        Hide the infobar and make the transitions UI sensitive.
+        Hide the infobar and show the transitions UI.
         """
         self.element = element
         self.element.connect("notify::border", self._borderChangedCb)
@@ -295,7 +295,8 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
             self.props_widgets.set_sensitive(False)
         else:
             self.props_widgets.set_sensitive(True)
-        self.iconview.set_sensitive(True)
+        self.iconview.show_all()
+        self.props_widgets.show_all()
         self.infobar.hide()
         self.searchbar.show_all()
         self.selectTransition(transition)
@@ -314,7 +315,7 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
 
     def deactivate(self):
         """
-        Show the infobar and make the transitions UI insensitive.
+        Show the infobar and hide the transitions UI.
         """
         try:
             self.element.disconnect_by_func(self._borderChangedCb)
@@ -329,10 +330,10 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
             # to deactivate the UI now.
             pass
         self.iconview.unselect_all()
-        self.iconview.set_sensitive(False)
-        self.props_widgets.set_sensitive(False)
+        self.iconview.hide()
+        self.props_widgets.hide()
+        self.searchbar.hide()
         self.infobar.show()
-        self.searchbar.hide_all()
 
     def _getIcon(self, transition_nick):
         """

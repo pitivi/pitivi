@@ -94,7 +94,9 @@ class ClipProperties(gtk.ScrolledWindow, Loggable):
         viewport.add(vbox)
         self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.add(viewport)
-        self.show_all()
+        viewport.show()
+        vbox.show()
+        self.infobar_box.show()
 
     def _setProject(self, project):
         self._project = project
@@ -232,10 +234,12 @@ class EffectProperties(gtk.Expander):
         self._vcontent.pack1(self._table, resize=True, shrink=False)
         self._showInfoBar()
         self._vcontent.show()
+        self._table.show_all()
         self.set_expanded(True)
         self.set_label(_("Effects"))
         self.connect('notify::expanded', self._expandedCb)
         self.connected = False
+        self.hide()
 
     def _newProjectLoadedCb(self, app, project):
         self.clip_properties.project = project
@@ -276,10 +280,10 @@ class EffectProperties(gtk.Expander):
             for timeline_object in self.timeline_objects:
                 timeline_object.connect("track-object-added", self._trackObjectAddedCb)
                 timeline_object.connect("track-object-removed", self._trackRemovedRemovedCb)
-            self.set_sensitive(True)
+            self.show()
         else:
             self.timeline_objects = []
-            self.set_sensitive(False)
+            self.hide()
         self.updateAll()
 
     def  _trackObjectAddedCb(self, unused_timeline_object, track_object):
@@ -417,12 +421,9 @@ class EffectProperties(gtk.Expander):
                                 _("Select a clip on the timeline "
                                   "to configure its associated effects"))
         self._info_bar.show_all()
-        self.set_sensitive(False)
-        self._table.show_all()
 
     def _setEffectDragable(self):
-        self.set_sensitive(True)
-        self._table.show_all()
+        self.show()
         self._info_bar.hide_all()
 
     def _treeviewSelectionChangedCb(self, treeview):
@@ -485,7 +486,6 @@ class TransformationProperties(gtk.Expander):
         self.spin_buttons = {}
         self.default_values = {}
         self.set_label(_("Transformation"))
-        self.set_sensitive(False)
 
         if not "Frei0r" in soft_deps:
             self.builder = gtk.Builder()
@@ -496,6 +496,7 @@ class TransformationProperties(gtk.Expander):
             self.show_all()
             self._initButtons()
         self.connect('notify::expanded', self._expandedCb)
+        self.hide()
 
     def _initButtons(self):
         self.zoom_scale = self.builder.get_object("zoom_scale")
@@ -622,7 +623,7 @@ class TransformationProperties(gtk.Expander):
                 self._current_tl_obj = tl_obj
                 self.effect = None
 
-            self.set_sensitive(True)
+            self.show()
             if self.get_expanded():
                 self.effect = self._findOrCreateEffect("frei0r-filter-scale0tilt")
                 self._updateSpinButtons()
@@ -632,7 +633,7 @@ class TransformationProperties(gtk.Expander):
                 self.zoom_scale.set_value(1.0)
                 self.app.current.pipeline.flushSeek()
             self.effect = None
-            self.set_sensitive(False)
+            self.hide()
         self._updateBoxVisibility()
 
     def _updateBoxVisibility(self):
