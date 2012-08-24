@@ -510,6 +510,9 @@ class Pipeline(ges.TimelinePipeline, SimplePipeline):
         cur_frame = int(round(self.getPosition() * framerate.num / float(gst.SECOND * framerate.denom), 2))
         new_frame = cur_frame + frames_offset
         new_pos = long(new_frame * gst.SECOND * framerate.denom / framerate.num)
+        Loggable.info(self, "From frame %d to %d at %f fps, seek to %s s" % (cur_frame,
+                    new_frame, framerate.num / framerate.denom,
+                    new_pos / float(gst.SECOND)))
         self.simple_seek(new_pos)
 
     def _seekCb(self, ruler, position, format):
