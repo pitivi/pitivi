@@ -377,7 +377,7 @@ class SimplePipeline(Loggable, Signallable):
             self.debug("seeking failed")
             raise PipelineError("seek failed")
 
-        self.debug("seeking succesfull")
+        self.debug("seeking successful")
         self.emit('position', position)
 
     def seekRelative(self, time):
@@ -501,6 +501,16 @@ class Pipeline(ges.TimelinePipeline, SimplePipeline):
 
     def _seekRelativeCb(self, unused_seeker, time):
         self.seekRelative(time)
+
+    def stepFrame(self, framerate, frames_offset):
+        """
+        Seek backwards or forwards a certain amount of frames (frames_offset).
+        This clamps the playhead to the project frames.
+        """
+        cur_frame = int(round(self.getPosition() * framerate.num / float(gst.SECOND * framerate.denom), 2))
+        new_frame = cur_frame + frames_offset
+        new_pos = long(new_frame * gst.SECOND * framerate.denom / framerate.num)
+        self.simple_seek(new_pos)
 
     def _seekCb(self, ruler, position, format):
         """
