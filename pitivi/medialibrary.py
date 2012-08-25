@@ -424,6 +424,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
         # The _progressbar that shows up when importing clips
         self._progressbar = gtk.ProgressBar()
+        self._progressbar.set_show_text(True)
 
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
