@@ -56,7 +56,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         self.SELECTED_COLOR = context.get_background_color(Gtk.StateFlags.SELECTED)
 
         table = Gtk.Table(rows=2, columns=2)
-        table.props.border_width = 2
+        table.set_border_width(2)
         table.set_row_spacings(3)
         table.set_col_spacings(3)
 
@@ -87,7 +87,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         self.name_entry.connect("focus-out-event", self._focusChangeCb, True)
         self.name_entry.connect("button_press_event", self._buttonPressCb)
         self.name_entry.drag_dest_unset()
-        self.name_entry.props.sensitive = False
+        self.name_entry.set_sensitive(False)
 
         # 'Solo' toggle button
         self.solo_button = Gtk.ToggleButton()
@@ -99,13 +99,13 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         self.solo_button.add(solo_image)
         self.solo_button.connect("toggled", self._soloToggledCb)
         self.solo_button.set_relief(Gtk.ReliefStyle.NONE)
-        self.solo_button.props.sensitive = False
+        self.solo_button.set_sensitive(False)
 
         # CheckButton
         visible_option = Gtk.CheckButton()
         visible_option.connect("toggled", self._visibilityChangedCb)
         visible_option.set_active(True)
-        visible_option.props.sensitive = False
+        visible_option.set_sensitive(False)
         visible_option.set_tooltip_markup(_("<b>Enable or disable this layer</b>\n" +
                                     "Disabled layers will not play nor render."))
 
@@ -117,7 +117,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
 
         # Lower bar
         self.lower_hbox = Gtk.HBox()
-        self.lower_hbox.props.sensitive = False
+        self.lower_hbox.set_sensitive(False)
 
         table.attach(upper, 1, 2, 0, 1)
         table.attach(self.lower_hbox, 1, 2, 1, 2)
@@ -320,8 +320,7 @@ class AudioLayerControl(BaseLayerControl):
         BaseLayerControl.__init__(self, app, layer, ges.TRACK_TYPE_AUDIO)
 
         volume = Gtk.Label(label=_("Vol:"))
-        volume_button = Gtk.VolumeButton()
-        volume_button.props.size = Gtk.IconSize.MENU
+        volume_button = Gtk.VolumeButton(size=Gtk.IconSize.MENU)
 
         panning = Gtk.Label(label=_("Pan:"))
         # Volume scale
@@ -382,6 +381,6 @@ class SpacedSeparator(Gtk.EventBox):
 
         self.box = Gtk.VBox()
         self.box.add(Gtk.HSeparator())
-        self.box.props.border_width = 6
+        self.box.set_border_width(6)
 
         self.add(self.box)
