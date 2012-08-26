@@ -338,6 +338,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.treeview = gtk.TreeView(self.modelFilter)
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
+        self.treeview.connect("button-release-event", self._treeViewButtonReleaseEventCb)
         self.treeview.connect("focus-in-event", self._disableKeyboardShortcutsCb)
         self.treeview.connect("focus-out-event", self._enableKeyboardShortcutsCb)
         self.treeview.connect("row-activated", self._itemOrRowActivatedCb)
@@ -380,6 +381,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.iconview = gtk.IconView(self.modelFilter)
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.connect("button-press-event", self._iconViewButtonPressEventCb)
+        self.iconview.connect("button-release-event", self._iconViewButtonReleaseEventCb)
         self.iconview.connect("focus-in-event", self._disableKeyboardShortcutsCb)
         self.iconview.connect("focus-out-event", self._enableKeyboardShortcutsCb)
         self.iconview.connect("item-activated", self._itemOrRowActivatedCb)
@@ -1151,6 +1153,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         elif not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
             chain_up = not self._rowUnderMouseSelected(treeview, event)
 
+        self.clickedPath = self.getSelectedPaths()
+
         if not chain_up:
             self._draggedPaths = self.getSelectedPaths()
         else:
@@ -1160,13 +1164,21 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
         ts = self.treeview.get_selection()
 
-        if (self._draggedPaths):
+        if self._draggedPaths:
             for path in self._draggedPaths:
                 ts.select_path(path)
 
-        self._ignoreRelease = chain_up
-
         return True
+
+    def _treeViewButtonReleaseEventCb(self, treeview, event):
+        ts = self.treeview.get_selection()
+        state = event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK)
+        path = self.treeview.get_path_at_pos(event.x, event.y)
+
+        if not state and not self.dragged:
+            ts.unselect_all()
+            if path:
+                ts.select_path(path[0])
 
     def _viewSelectionChangedCb(self, unused):
         if self._viewHasSelection():
@@ -1210,6 +1222,15 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self._ignoreRelease = chain_up
 
         return True
+
+    def _iconViewButtonReleaseEventCb(self, iconview, event):
+        state = event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK)
+        path = self.iconview.get_path_at_pos(event.x, event.y)
+
+        if not state and not self.dragged:
+            iconview.unselect_all()
+            if path:
+                iconview.select_path(path)
 
     def _newProjectCreatedCb(self, app, project):
         if not self._project is project:
@@ -1265,10 +1286,6 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.info("tree drag_begin")
         self.dragged = True
         paths = self.getSelectedPaths()
-        ts = self.treeview.get_selection()
-
-        for path in self._draggedPaths:
-            ts.select_path(path)
 
         if len(paths) < 1:
             context.drag_abort(int(time.time()))
