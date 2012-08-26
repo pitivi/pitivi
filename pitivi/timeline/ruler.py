@@ -270,24 +270,33 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             seconds += interval
 
     def drawFrameBoundaries(self, cr):
+        """
+        Draw the alternating rectangles that represent the project frames at
+        high zoom levels. These are based on the framerate set in the project
+        settings, not the actual frames on a video codec level.
+        """
         frame_width = self.nsToPixel(self.ns_per_frame)
-        if frame_width >= self.min_frame_spacing:
-            offset = self.pixbuf_offset % frame_width
-            paintpos = -frame_width + 0.5
-            height = cr.get_target().get_height()
-            y = int(height - self.frame_height)
-            # INSENSITIVE is a dark shade of gray, but lacks contrast
-            # SELECTED will be bright blue and more visible to represent frames
-            states = [gtk.StateFlags.ACTIVE, gtk.StateFlags.SELECTED]
-            paintpos += frame_width - offset
-            frame_num = int(paintpos // frame_width) % 2
-            style = self.get_style_context()
-            while paintpos < cr.get_target().get_width():
-                setCairoColor(cr, style.get_background_color(states[frame_num]))
-                cr.rectangle(paintpos, y, frame_width, height)
-                cr.fill()
-                frame_num = (frame_num + 1) % 2
-                paintpos += frame_width
+        if not frame_width >= self.min_frame_spacing:
+            return
+
+        offset = self.pixbuf_offset % frame_width
+        height = cr.get_target().get_height()
+        y = int(height - self.frame_height)
+        # INSENSITIVE is a dark shade of gray, but lacks contrast
+        # SELECTED will be bright blue and more visible to represent frames
+        style = self.get_style_context()
+        states = [style.get_background_color(gtk.StateFlags.ACTIVE),
+                  style.get_background_color(gtk.StateFlags.SELECTED)]
+
+        frame_num = int(self.pixelToNs(self.pixbuf_offset) * float(self.frame_rate) / gst.SECOND)
+        paintpos = self.pixbuf_offset - offset
+        max_pos = cr.get_target().get_width() + self.pixbuf_offset
+        while paintpos < max_pos:
+            paintpos = self.nsToPixel(1 / float(self.frame_rate) * gst.SECOND * frame_num)
+            setCairoColor(cr, states[(frame_num + 1) % 2])
+            cr.rectangle(0.5 + paintpos - self.pixbuf_offset, y, frame_width, height)
+            cr.fill()
+            frame_num += 1
 
     def drawPosition(self, context):
         # a simple RED line will do for now
