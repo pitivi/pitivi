@@ -277,7 +277,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self._errors = []
         self._project = None
         self.dummy_selected = []
-        self._draggedItems = None
+        self._draggedPaths = None
         self.dragged = False
 
         # Store
@@ -1152,11 +1152,18 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             chain_up = not self._rowUnderMouseSelected(treeview, event)
 
         if not chain_up:
-            self._draggedItems = self.getSelectedItems()
+            self._draggedPaths = self.getSelectedPaths()
         else:
-            self._draggedItems = None
+            self._draggedPaths = None
 
         gtk.TreeView.do_button_press_event(treeview, event)
+
+        ts = self.treeview.get_selection()
+
+        if (self._draggedPaths):
+            for path in self._draggedPaths:
+                ts.select_path(path)
+
         self._ignoreRelease = chain_up
 
         return True
@@ -1190,10 +1197,16 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
             chain_up = not self._rowUnderMouseSelected(iconview, event)
 
         if not chain_up:
-            self._draggedItems = self.getSelectedItems()
+            self._draggedPaths = self.getSelectedPaths()
         else:
-            self._draggedItems = None
+            self._draggedPaths = None
+
         gtk.IconView.do_button_press_event(iconview, event)
+
+        if self._draggedPaths:
+            for path in self._draggedPaths:
+                self.iconview.select_path(path)
+
         self._ignoreRelease = chain_up
 
         return True
@@ -1252,6 +1265,10 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.info("tree drag_begin")
         self.dragged = True
         paths = self.getSelectedPaths()
+        ts = self.treeview.get_selection()
+
+        for path in self._draggedPaths:
+            ts.select_path(path)
 
         if len(paths) < 1:
             context.drag_abort(int(time.time()))
@@ -1280,8 +1297,9 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
     def getSelectedItems(self):
         """ Returns a list of selected items URIs """
-        if self._draggedItems:
-            return self._draggedItems
+        if self._draggedPaths:
+            return [self.modelFilter[path][COL_URI]
+                    for path in self._draggedPaths]
         return [self.modelFilter[path][COL_URI]
             for path in self.getSelectedPaths()]
 
