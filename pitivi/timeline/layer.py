@@ -91,8 +91,8 @@ class BaseLayerControl(Gtk.VBox, Loggable):
 
         # 'Solo' toggle button
         self.solo_button = Gtk.ToggleButton()
-        self.solo_button.set_tooltip_markup(_("<b>Solo mode</b>\n" +
-                        "Other non-soloed layers will be disabled as long as " +
+        self.solo_button.set_tooltip_markup(_("<b>Solo mode</b>\n"
+                        "Other non-soloed layers will be disabled as long as "
                         "this is enabled."))
         solo_image = Gtk.Image()
         solo_image.set_from_icon_name("avatar-default-symbolic", Gtk.IconSize.MENU)
@@ -106,7 +106,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         visible_option.connect("toggled", self._visibilityChangedCb)
         visible_option.set_active(True)
         visible_option.set_sensitive(False)
-        visible_option.set_tooltip_markup(_("<b>Enable or disable this layer</b>\n" +
+        visible_option.set_tooltip_markup(_("<b>Enable or disable this layer</b>\n"
                                     "Disabled layers will not play nor render."))
 
         # Upper bar
