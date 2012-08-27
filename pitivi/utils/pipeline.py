@@ -127,7 +127,7 @@ class Seeker(Signallable, Loggable):
         return False
 
 
-class SimplePipeline(Loggable, Signallable):
+class SimplePipeline(Signallable, Loggable):
     """
     The Pipeline is only responsible for:
      - State changes
