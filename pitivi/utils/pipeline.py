@@ -81,8 +81,7 @@ class Seeker(Signallable, Loggable):
                 gobject.idle_add(self._seekTimeoutCb)
             else:
                 self._seekTimeoutCb()
-            self.pending_seek_id = self._scheduleSeek(self.timeout,
-                    self._seekTimeoutCb)
+            self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb)
 
     def seekRelative(self, time, on_idle=False):
         if self.pending_seek_id is None:
@@ -91,8 +90,7 @@ class Seeker(Signallable, Loggable):
                 gobject.idle_add(self._seekTimeoutCb, True)
             else:
                 self._seekTimeoutCb()
-            self.pending_seek_id = self._scheduleSeek(self.timeout,
-                    self._seekTimeoutCb, True)
+            self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb, True)
 
     def flush(self, on_idle=False):
         self.seekRelative(0, on_idle)
@@ -106,8 +104,7 @@ class Seeker(Signallable, Loggable):
             try:
                 self.emit('seek-relative', self._time)
             except:
-                self.error("Error while seeking %s relative",
-                        self._time)
+                self.error("Error while seeking %s relative", self._time)
                 # if an exception happened while seeking, properly
                 # reset ourselves
                 return False
@@ -381,8 +378,7 @@ class SimplePipeline(Signallable, Loggable):
         self.emit('position', position)
 
     def seekRelative(self, time):
-        seekvalue = max(0, min(self.getPosition() + time,
-            self.getDuration()))
+        seekvalue = max(0, min(self.getPosition() + time, self.getDuration()))
         self.simple_seek(seekvalue)
 
     #}
@@ -394,8 +390,7 @@ class SimplePipeline(Signallable, Loggable):
             self.emit('eos')
         elif message.type == gst.MESSAGE_STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
-            self.debug("element %s state change %s" % (message.src,
-                    (prev, new, pending)))
+            self.debug("element %s state change %s" % (message.src, (prev, new, pending)))
 
             if message.src == self._pipeline:
                 self.debug("Pipeline change state prev:%r, new:%r, pending:%r" % (prev, new, pending))
