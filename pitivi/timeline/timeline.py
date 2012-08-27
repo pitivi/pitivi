@@ -1014,11 +1014,23 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # controls for tracks and layers
         self.controls = TimelineControls(self.app)
-        controlwindow = gtk.Viewport(None, self.vadj)
+        controlwindow = gtk.Viewport(None, None)
         controlwindow.add(self.controls)
         controlwindow.set_size_request(-1, 1)
         controlwindow.set_shadow_type(gtk.SHADOW_OUT)
-        self.attach(controlwindow, 0, 1, 1, 2, xoptions=gtk.FILL)
+        scrolledwindow = gtk.ScrolledWindow()
+        scrolledwindow.add(controlwindow)
+        scrolledwindow.props.hscrollbar_policy = gtk.POLICY_NEVER
+        scrolledwindow.props.vscrollbar_policy = gtk.POLICY_ALWAYS
+        scrolledwindow.props.vadjustment = self.vadj
+        # We need ALWAYS policy for correct sizing, but we don't want the
+        # scrollbar to be visible. Yay gtk3!
+        scrollbar = scrolledwindow.get_vscrollbar()
+        def scrollbar_show_cb(scrollbar):
+            scrollbar.hide()
+        scrollbar.connect("show", scrollbar_show_cb)
+        scrollbar.hide()
+        self.attach(scrolledwindow, 0, 1, 1, 2, xoptions=gtk.FILL)
 
         # timeline ruler
         self.ruler = ruler.ScaleRuler(self.app, self.hadj)
