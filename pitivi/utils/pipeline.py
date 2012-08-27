@@ -426,7 +426,7 @@ class SimplePipeline(Loggable, Signallable):
             if self._has_sync_bus_handler is False:
                 # Pass message async to the sync bus handler
                 self._busSyncMessageHandler(unused_bus, message, None)
-            self.info("%s [%r]" % (message.type, message.src))
+            self.log("%s [%r]" % (message.type, message.src))
 
     def _queryDurationAsync(self, *args, **kwargs):
         try:
