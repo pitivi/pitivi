@@ -110,7 +110,6 @@ class StartUpWizard(object):
     def show(self):
         self.window.set_transient_for(self.app.gui)
         self.window.show()
-        self.window.grab_focus()
 
     def hide(self):
         self.window.hide()
