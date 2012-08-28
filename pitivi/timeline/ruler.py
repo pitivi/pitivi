@@ -66,7 +66,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.hadj = hadj
         hadj.connect("value-changed", self._hadjValueChangedCb)
         self.add_events(gtk.gdk.POINTER_MOTION_MASK |
-            gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
+            gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK |
+            gtk.gdk.SCROLL_MASK)
 
         self.pixbuf = None
 
@@ -167,21 +168,21 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         return False
 
     def do_scroll_event(self, event):
-        if event.state & gtk.gdk.CONTROL_MASK:
+        if event.scroll.state & gtk.gdk.CONTROL_MASK:
             # Control + scroll = zoom
-            if event.direction == gtk.gdk.SCROLL_UP:
+            if event.scroll.direction == gtk.gdk.SCROLL_UP:
                 Zoomable.zoomIn()
                 self.app.gui.timeline_ui.zoomed_fitted = False
-            elif event.direction == gtk.gdk.SCROLL_DOWN:
+            elif event.scroll.direction == gtk.gdk.SCROLL_DOWN:
                 Zoomable.zoomOut()
                 self.app.gui.timeline_ui.zoomed_fitted = False
         else:
             # No modifier key held down, just scroll
-            if event.direction == gtk.gdk.SCROLL_UP or\
-                event.direction == gtk.gdk.SCROLL_LEFT:
+            if event.scroll.direction == gtk.gdk.SCROLL_UP or\
+                event.scroll.direction == gtk.gdk.SCROLL_LEFT:
                 self.app.gui.timeline_ui.scroll_left()
-            elif event.direction == gtk.gdk.SCROLL_DOWN or\
-                event.direction == gtk.gdk.SCROLL_RIGHT:
+            elif event.scroll.direction == gtk.gdk.SCROLL_DOWN or\
+                event.scroll.direction == gtk.gdk.SCROLL_RIGHT:
                 self.app.gui.timeline_ui.scroll_right()
 
     def setProjectFrameRate(self, rate):
