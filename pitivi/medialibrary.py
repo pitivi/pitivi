@@ -834,9 +834,6 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         """ a file was added to the medialibrary """
         self._updateProgressbar()
         self._addDiscovererInfo(factory)
-        if len(self.storemodel):
-            self.infobar.hide_all()
-            self.search_hbox.show_all()
 
     def _sourceRemovedCb(self, unused_medialibrary, uri, unused_info):
         """ the given uri was removed from the medialibrary """
@@ -858,6 +855,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
 
     def _sourcesStartedImportingCb(self, unused_medialibrary):
         self.import_start_time = time.time()
+        self.infobar.hide_all()
+        self.search_hbox.show_all()
         self._progressbar.show()
 
     def _sourcesStoppedImportingCb(self, unused_medialibrary):
