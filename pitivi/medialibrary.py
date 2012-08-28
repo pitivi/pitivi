@@ -855,9 +855,11 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self._errors.append(error)
 
     def _sourcesStartedImportingCb(self, unused_medialibrary):
+        self.import_start_time = time.time()
         self._progressbar.show()
 
     def _sourcesStoppedImportingCb(self, unused_medialibrary):
+        self.debug("Importing took %.3f seconds" % (time.time() - self.import_start_time))
         self.flush_pending_rows()
         self._progressbar.hide()
         if self._errors:
