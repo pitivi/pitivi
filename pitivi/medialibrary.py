@@ -270,6 +270,8 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         gtk.VBox.__init__(self)
         Loggable.__init__(self)
 
+        self.pending_rows = []
+
         self.app = instance
         self.settings = instance.settings
         self._errors = []
@@ -807,14 +809,22 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         else:
             short_text = info_name(info)
 
-        self.storemodel.append([thumbnail,
-            thumbnail_large,
-            beautify_info(info),
-            info,
-            info.get_uri(),
-            duration,
-            info_name(info),
-            short_text])
+        self.pending_rows.append((thumbnail,
+                                  thumbnail_large,
+                                  beautify_info(info),
+                                  info,
+                                  info.get_uri(),
+                                  duration,
+                                  info_name(info),
+                                  short_text))
+        if len(self.pending_rows) > 50:
+            self.flush_pending_rows()
+
+    def flush_pending_rows(self):
+
+        for row in self.pending_rows:
+            self.storemodel.append(row)
+        del self.pending_rows[:]
 
     # medialibrary callbacks
 
@@ -848,6 +858,7 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self._progressbar.show()
 
     def _sourcesStoppedImportingCb(self, unused_medialibrary):
+        self.flush_pending_rows()
         self._progressbar.hide()
         if self._errors:
             if len(self._errors) > 1:
