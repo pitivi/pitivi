@@ -385,10 +385,25 @@ class MediaLibraryWidget(gtk.VBox, Loggable):
         self.iconview.set_orientation(gtk.ORIENTATION_VERTICAL)
         self.iconview.set_property("has_tooltip", True)
         self.iconview.set_tooltip_column(COL_INFOTEXT)
-        self.iconview.set_text_column(COL_SHORT_TEXT)
-        self.iconview.set_pixbuf_column(COL_ICON_LARGE)
+        self.iconview.props.item_padding = 3
+        self.iconview.props.margin = 3
+
+        cell = gtk.CellRendererPixbuf()
+        self.iconview.pack_start(cell, False)
+        self.iconview.add_attribute(cell, "pixbuf", COL_ICON_LARGE)
+
+        cell = gtk.CellRendererText()
+        cell.props.alignment = pango.ALIGN_CENTER
+        cell.props.xalign = 0.5
+        cell.props.yalign = 0.0
+        cell.props.xpad = 0
+        cell.props.ypad = 0
+        cell.props.width = 128
+        cell.props.wrap_width = 128
+        self.iconview.pack_start(cell, False)
+        self.iconview.add_attribute(cell, "text", COL_SHORT_TEXT)
+
         self.iconview.set_selection_mode(gtk.SELECTION_MULTIPLE)
-        self.iconview.set_item_width(138)  # Needs to be icon width +10
 
         # Explanatory message InfoBar
         self.infobar = gtk.InfoBar()
