@@ -390,7 +390,6 @@ class SimplePipeline(Signallable, Loggable):
             self.emit('eos')
         elif message.type == gst.MESSAGE_STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
-            self.debug("element %s state change %s" % (message.src, (prev, new, pending)))
 
             if message.src == self._pipeline:
                 self.debug("Pipeline change state prev:%r, new:%r, pending:%r" % (prev, new, pending))
