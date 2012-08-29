@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="3.4"/>
+  <!-- interface-requires gtk+ 3.4 -->
   <object class="GtkDialog" id="dialog1">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -91,15 +91,50 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="restartWarning">
+          <object class="GtkInfoBar" id="restartWarning">
             <property name="can_focus">False</property>
-            <property name="no_show_all">True</property>
-            <property name="label" translatable="yes">Some changes will not take effect until you restart PiTiVi</property>
-            <property name="justify">center</property>
-            <property name="wrap">True</property>
-            <attributes>
-              <attribute name="weight" value="bold"/>
-            </attributes>
+            <property name="message_type">warning</property>
+            <child internal-child="content_area">
+              <object class="GtkBox" id="infobar-content_area1">
+                <property name="can_focus">False</property>
+                <property name="border_width">8</property>
+                <child>
+                  <object class="GtkLabel" id="restartWarning_label">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Some changes will not take effect until you restart PiTiVi</property>
+                    <property name="wrap">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child internal-child="action_area">
+              <object class="GtkButtonBox" id="infobar-action_area1">
+                <property name="can_focus">False</property>
+                <property name="border_width">5</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">6</property>
+                <property name="layout_style">end</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -114,6 +149,7 @@
             <child>
               <object class="GtkButton" id="resetButton">
                 <property name="label" translatable="yes">Reset to Factory Settings</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
@@ -132,6 +168,7 @@
             <child>
               <object class="GtkButton" id="revertButton">
                 <property name="label" translatable="yes">Revert</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
@@ -149,6 +186,7 @@
             <child>
               <object class="GtkButton" id="acceptButton">
                 <property name="label">gtk-close</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
