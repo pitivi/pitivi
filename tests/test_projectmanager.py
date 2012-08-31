@@ -32,7 +32,7 @@
 #from pitivi.formatters.base import Formatter, \
         #FormatterError, FormatterLoadError
 #import os
-#import gst
+#from gi.repository import Gst
 #from pitivi.utils.misc import uri_is_reachable
 #import time
 
@@ -304,8 +304,8 @@
     #def testSaveProject(self):
         #uri = "file://" + os.path.abspath("testproject.xptv")
         #uri2 = "file://" + os.path.abspath("testproject2.xptv")
-        #path = gst.uri_get_location(uri)
-        #path2 = gst.uri_get_location(uri2)
+        #path = Gst.uri_get_location(uri)
+        #path2 = Gst.uri_get_location(uri2)
 
         ## unlink any existing project files
         #try:

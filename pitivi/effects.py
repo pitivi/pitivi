@@ -35,15 +35,16 @@ Effects global handling
   _ Complex Audio/Video Effects
 """
 import glib
-import gst
-import gtk
 import re
 import os
-import gobject
 import time
-import pango
 
+from gi.repository import Gst
+from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import Pango
+from gi.repository import GObject
+from gi.repository import GdkPixbuf
 
 from gettext import gettext as _
 
@@ -161,8 +162,8 @@ class EffectsHandler(object):
         go trough the list of element factories and
         add them to the correct list filtering if necessary
         """
-        factlist = gst.registry_get_default().get_feature_list(
-            gst.ElementFactory)
+        factlist = Gst.Registry.get().get_feature_list(
+            Gst.ElementFactory)
         for element_factory in factlist:
             klass = element_factory.get_klass()
             name = element_factory.get_name()
@@ -207,7 +208,7 @@ class EffectsHandler(object):
     def _getEffectDescripton(self, element_factory):
         """
         @ivar element_factory: The element factory
-        @type element_factory: L{gst.ElementFactory}
+        @type element_factory: L{Gst.ElementFactory}
         @returns: A human description C{str} for the effect
         """
         return element_factory.get_description()
@@ -247,7 +248,7 @@ class EffectsHandler(object):
     def _getEffectName(self, element_factory):
         """
         @ivar element_factory: The element factory
-        @type element_factory: L{gst.ElementFactory}
+        @type element_factory: L{Gst.ElementFactory}
         @returns: A human readable name C{str} for the effect
         """
         #TODO check if it is the good way to make it translatable
@@ -312,13 +313,13 @@ class EffectsHandler(object):
         effect_name = effect_name + ".png"
         icon = None
         try:
-            icon = gtk.gdk.pixbuf_new_from_file(os.path.join(self._pixdir,
+            icon = GdkPixbuf.Pixbuf.new_from_file(os.path.join(self._pixdir,
                 effect_name))
-        # empty except clause is bad but load_icon raises gio.Error.
+        # empty except clause is bad but load_icon raises Gio.Error.
         ## Right, *gio*.
         except:
             try:
-                icon = gtk.gdk.pixbuf_new_from_file(os.path.join(self._pixdir,
+                icon = GdkPixbuf.Pixbuf.new_from_file(os.path.join(self._pixdir,
                     "defaultthumbnail.svg"))
             except:
                 return None
@@ -339,15 +340,15 @@ GlobalSettings.addConfigSection('effect-library')
  COL_ELEMENT_NAME,
  COL_ICON) = range(7)
 
-INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(),
+INVISIBLE = GdkPixbuf.Pixbuf.new_from_file(os.path.join(get_pixmap_dir(),
     "invisible.png"))
 
 
-class EffectListWidget(gtk.VBox, Loggable):
+class EffectListWidget(Gtk.VBox, Loggable):
     """ Widget for listing effects """
 
     def __init__(self, instance, uiman):
-        gtk.VBox.__init__(self)
+        GObject.GObject.__init__(self)
         Loggable.__init__(self)
 
         self.app = instance
@@ -356,62 +357,62 @@ class EffectListWidget(gtk.VBox, Loggable):
         self._draggedItems = None
 
         #Searchbox and combobox
-        hfilters = gtk.HBox()
+        hfilters = Gtk.HBox()
         hfilters.set_spacing(SPACING)
         hfilters.set_border_width(3)  # Prevents being flush against the notebook
-        self.effectType = gtk.ComboBoxText()
+        self.effectType = Gtk.ComboBoxText()
         self.effectType.append_text(_("Video effects"))
         self.effectType.append_text(_("Audio effects"))
-        self.effectCategory = gtk.ComboBoxText()
+        self.effectCategory = Gtk.ComboBoxText()
         self.effectType.set_active(VIDEO_EFFECT)
 
-        hfilters.pack_start(self.effectType, expand=True)
-        hfilters.pack_end(self.effectCategory, expand=True)
+        hfilters.pack_start(self.effectType, True, True, 0)
+        hfilters.pack_end(self.effectCategory, True, True, 0)
 
-        hsearch = gtk.HBox()
+        hsearch = Gtk.HBox()
         hsearch.set_spacing(SPACING)
         hsearch.set_border_width(3)  # Prevents being flush against the notebook
-        searchStr = gtk.Label(_("Search:"))
-        self.searchEntry = gtk.Entry()
-        self.searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
-        hsearch.pack_start(searchStr, expand=False)
-        hsearch.pack_end(self.searchEntry, expand=True)
+        searchStr = Gtk.Label(label=_("Search:"))
+        self.searchEntry = Gtk.Entry()
+        self.searchEntry.set_icon_from_stock(Gtk.EntryIconPosition.SECONDARY, "gtk-clear")
+        hsearch.pack_start(searchStr, False, True, 0)
+        hsearch.pack_end(self.searchEntry, True, True, 0)
 
         # Store
-        self.storemodel = gtk.ListStore(str, str, int, object, object, str, gtk.gdk.Pixbuf)
+        self.storemodel = Gtk.ListStore(str, str, int, object, object, str, GdkPixbuf.Pixbuf)
 
-        scrollwin = gtk.ScrolledWindow()
-        scrollwin.props.hscrollbar_policy = gtk.POLICY_NEVER
-        scrollwin.props.vscrollbar_policy = gtk.POLICY_AUTOMATIC
-        scrollwin.props.shadow_type = gtk.SHADOW_ETCHED_IN
+        scrollwin = Gtk.ScrolledWindow()
+        scrollwin.props.hscrollbar_policy = Gtk.PolicyType.NEVER
+        scrollwin.props.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC
+        scrollwin.props.shadow_type = Gtk.ShadowType.ETCHED_IN
 
-        self.view = gtk.TreeView(self.storemodel)
+        self.view = Gtk.TreeView(self.storemodel)
         scrollwin.add(self.view)
         self.view.props.headers_visible = False
         tsel = self.view.get_selection()
-        tsel.set_mode(gtk.SELECTION_SINGLE)
+        tsel.set_mode(Gtk.SelectionMode.SINGLE)
 
-        icon_col = gtk.TreeViewColumn()
+        icon_col = Gtk.TreeViewColumn()
         self.view.append_column(icon_col)
         icon_col.props.spacing = SPACING
-        icon_col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        icon_col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         icon_col.props.fixed_width = 96
-        icon_cell = gtk.CellRendererPixbuf()
+        icon_cell = Gtk.CellRendererPixbuf()
         icon_cell.props.xpad = 6
-        icon_col.pack_start(icon_cell)
+        icon_col.pack_start(icon_cell, True)
         icon_col.add_attribute(icon_cell, "pixbuf", COL_ICON)
 
-        text_col = gtk.TreeViewColumn()
+        text_col = Gtk.TreeViewColumn()
         self.view.append_column(text_col)
         text_col.set_expand(True)
         text_col.set_spacing(SPACING)
-        text_col.set_sizing(gtk.TREE_VIEW_COLUMN_AUTOSIZE)
+        text_col.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
         text_col.set_min_width(150)
-        text_cell = gtk.CellRendererText()
+        text_cell = Gtk.CellRendererText()
         text_cell.props.yalign = 0.0
         text_cell.props.xpad = 6
-        text_cell.set_property("ellipsize", pango.ELLIPSIZE_END)
-        text_col.pack_start(text_cell)
+        text_cell.set_property("ellipsize", Pango.EllipsizeMode.END)
+        text_col.pack_start(text_cell, True)
         text_col.set_cell_data_func(text_cell,
                                     self.view_description_cell_data_func,
                                     None)
@@ -428,7 +429,7 @@ class EffectListWidget(gtk.VBox, Loggable):
         self.view.connect("button-press-event", self._buttonPressEventCb)
         self.view.connect("select-cursor-row", self._enterPressEventCb)
 
-        self.view.drag_source_set(0, [], gtk.gdk.ACTION_COPY)
+        self.view.drag_source_set(0, [], Gdk.DragAction.COPY)
         self.view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [("pitivi/effect", 0, TYPE_PITIVI_EFFECT)], Gdk.DragAction.COPY)
         self.view.drag_source_set_target_list(None)
         self.view.drag_source_add_text_targets()
@@ -437,11 +438,11 @@ class EffectListWidget(gtk.VBox, Loggable):
 
         # Delay the loading of the available effects so the application
         # starts faster.
-        gobject.idle_add(self._loadAvailableEffectsCb)
+        GObject.idle_add(self._loadAvailableEffectsCb)
 
-        self.pack_start(hfilters, expand=False)
-        self.pack_start(hsearch, expand=False)
-        self.pack_end(scrollwin, expand=True)
+        self.pack_start(hfilters, False, True, 0)
+        self.pack_start(hsearch, False, True, 0)
+        self.pack_end(scrollwin, True, True, 0)
 
         #create the filterModel
         self.modelFilter = self.storemodel.filter_new()
@@ -479,7 +480,7 @@ class EffectListWidget(gtk.VBox, Loggable):
                                          effect.getCategories(),
                                          effect, name,
                                          self.app.effects.getEffectIcon(name)])
-                self.storemodel.set_sort_column_id(COL_NAME_TEXT, gtk.SORT_ASCENDING)
+                self.storemodel.set_sort_column_id(COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
     def show_categories(self, effectType):
         self.effectCategory.get_model().clear()
@@ -508,7 +509,7 @@ class EffectListWidget(gtk.VBox, Loggable):
         path = paths[0]
         pixbuf = model.get_value(model.get_iter(path), COL_ICON)
         if pixbuf:
-            gtk.drag_set_icon_pixbuf(context, pixbuf, 0, 0)
+            Gtk.drag_set_icon_pixbuf(context, pixbuf, 0, 0)
 
     def _rowUnderMouseSelected(self, view, event):
         result = view.get_path_at_pos(int(event.x), int(event.y))
@@ -541,7 +542,7 @@ class EffectListWidget(gtk.VBox, Loggable):
         else:
             self._draggedItems = self.getSelectedItems()
 
-        gtk.TreeView.do_button_press_event(view, event)
+        Gtk.TreeView.do_button_press_event(view, event)
         return True
 
     def getSelectedItems(self):
@@ -608,7 +609,7 @@ class EffectsPropertiesManager:
         """
             Permit to get a configuration GUI for the effect
             @param effect: The effect for which we want the configuration UI
-            @type effect: C{gst.Element}
+            @type effect: C{Gst.Element}
         """
 
         if effect not in self.cache_dict:
@@ -617,10 +618,10 @@ class EffectsPropertiesManager:
             effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
                                      default_btn=True, use_element_props=True)
             nb_rows = effect_set_ui.get_children()[0].get_property('n-rows')
-            effect_configuration_ui = gtk.ScrolledWindow()
+            effect_configuration_ui = Gtk.ScrolledWindow()
             effect_configuration_ui.add_with_viewport(effect_set_ui)
-            effect_configuration_ui.set_policy(gtk.POLICY_AUTOMATIC,
-                                               gtk.POLICY_AUTOMATIC)
+            effect_configuration_ui.set_policy(Gtk.PolicyType.AUTOMATIC,
+                                               Gtk.PolicyType.AUTOMATIC)
             self.cache_dict[effect] = effect_configuration_ui
             self._connectAllWidgetCbs(effect_set_ui, effect)
             self._postConfiguration(effect, effect_set_ui)
@@ -648,7 +649,7 @@ class EffectsPropertiesManager:
 
     def _getUiToSetEffect(self, effect):
         """ Permit to get the widget to set the effect and not its container """
-        if type(self.cache_dict[effect]) is gtk.ScrolledWindow:
+        if type(self.cache_dict[effect]) is Gtk.ScrolledWindow:
             effect_set_ui = self.cache_dict[effect].get_children()[0].get_children()[0]
         else:
             effect_set_ui = self.cache_dict[effect]
@@ -666,8 +667,8 @@ class EffectsPropertiesManager:
         value = dynamic.getWidgetValue()
 
         #FIXME Workaround in order to make aspectratiocrop working
-        if isinstance(value, gst.Fraction):
-            value = gst.Fraction(int(value.num), int(value.denom))
+        if isinstance(value, Gst.Fraction):
+            value = Gst.Fraction(int(value.num), int(value.denom))
 
         if value != self._current_element_values.get(prop.name):
             self.action_log.begin("Effect property change")

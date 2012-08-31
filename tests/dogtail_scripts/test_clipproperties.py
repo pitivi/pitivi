@@ -19,29 +19,29 @@ class ClipTransforamtionTest(HelpFunc):
 
         conftab = self.pitivi.tab("Clip configuration")
         conftab.click()
-        conftab.child(name="Transformation", roleName="toggle button").click()
+        conftab.get_child()(name="Transformation", roleName="toggle button").click()
         #Just try changing values
         #Test slider
-        slider = conftab.child(roleName="slider")
+        slider = conftab.get_child()(roleName="slider")
         self.assertEqual(slider.value, 1.0)
         slider.click()
         # Clicking in the middle of the slider will set it backwards to 0.9
         self.assertNotEqual(slider.value, 1.0)
 
         #Test position
-        spinb = conftab.child(roleName="panel", name="Position").findChildren(GenericPredicate(roleName="spin button"))
+        spinb = conftab.get_child()(roleName="panel", name="Position").findChildren(GenericPredicate(roleName="spin button"))
         self.assertEqual(len(spinb), 2)
         spinb[0].text = "0.3"
         spinb[1].text = "0.2"
 
         #Test size
-        spinb = conftab.child(roleName="panel", name="Size").findChildren(GenericPredicate(roleName="spin button"))
+        spinb = conftab.get_child()(roleName="panel", name="Size").findChildren(GenericPredicate(roleName="spin button"))
         self.assertEqual(len(spinb), 2)
         spinb[0].text = "0.4"
         spinb[1].text = "0.1"
 
         #Test crop
-        spinb = conftab.child(roleName="panel", name="Crop").findChildren(GenericPredicate(roleName="spin button"))
+        spinb = conftab.get_child()(roleName="panel", name="Crop").findChildren(GenericPredicate(roleName="spin button"))
         self.assertEqual(len(spinb), 4)
         spinb[0].text = "0.05"
         spinb[1].text = "0.12"
@@ -50,36 +50,36 @@ class ClipTransforamtionTest(HelpFunc):
 
         #Click second clip, look that settings not changed(not linked)
         dogtail.rawinput.click(clippos[1][0], clippos[1][1])
-        self.assertEqual(conftab.child(roleName="slider").value, 1.0)
+        self.assertEqual(conftab.get_child()(roleName="slider").value, 1.0)
 
         #Click back, look if settings saved
         dogtail.rawinput.click(clippos[0][0], clippos[0][1])
-        self.assertNotEqual(conftab.child(roleName="slider").value, 1.0)
+        self.assertNotEqual(conftab.get_child()(roleName="slider").value, 1.0)
 
-        self.assertNotNone(self.search_by_text("0.3", conftab.child(roleName="panel", name="Position")))
-        self.assertNotNone(self.search_by_text("0.2", conftab.child(roleName="panel", name="Position")))
+        self.assertNotNone(self.search_by_text("0.3", conftab.get_child()(roleName="panel", name="Position")))
+        self.assertNotNone(self.search_by_text("0.2", conftab.get_child()(roleName="panel", name="Position")))
 
-        self.assertNotNone(self.search_by_text("0.4", conftab.child(roleName="panel", name="Size")))
-        self.assertNotNone(self.search_by_text("0.1", conftab.child(roleName="panel", name="Size")))
+        self.assertNotNone(self.search_by_text("0.4", conftab.get_child()(roleName="panel", name="Size")))
+        self.assertNotNone(self.search_by_text("0.1", conftab.get_child()(roleName="panel", name="Size")))
 
-        self.assertNotNone(self.search_by_text("0.05", conftab.child(roleName="panel", name="Crop")))
-        self.assertNotNone(self.search_by_text("0.12", conftab.child(roleName="panel", name="Crop")))
-        self.assertNotNone(self.search_by_text("0.14", conftab.child(roleName="panel", name="Crop")))
-        self.assertNotNone(self.search_by_text("0.07", conftab.child(roleName="panel", name="Crop")))
+        self.assertNotNone(self.search_by_text("0.05", conftab.get_child()(roleName="panel", name="Crop")))
+        self.assertNotNone(self.search_by_text("0.12", conftab.get_child()(roleName="panel", name="Crop")))
+        self.assertNotNone(self.search_by_text("0.14", conftab.get_child()(roleName="panel", name="Crop")))
+        self.assertNotNone(self.search_by_text("0.07", conftab.get_child()(roleName="panel", name="Crop")))
 
         #Push clear
-        conftab.child(roleName="scroll bar").value = 140
+        conftab.get_child()(roleName="scroll bar").value = 140
         conftab.button("Clear")
 
-        self.assertEqual(conftab.child(roleName="slider").value, 1.0)
+        self.assertEqual(conftab.get_child()(roleName="slider").value, 1.0)
 
-        self.assertNone(self.search_by_text("0.3", conftab.child(roleName="panel", name="Position")))
-        self.assertNone(self.search_by_text("0.2", conftab.child(roleName="panel", name="Position")))
+        self.assertNone(self.search_by_text("0.3", conftab.get_child()(roleName="panel", name="Position")))
+        self.assertNone(self.search_by_text("0.2", conftab.get_child()(roleName="panel", name="Position")))
 
-        self.assertNone(self.search_by_text("0.4", conftab.child(roleName="panel", name="Size")))
-        self.assertNone(self.search_by_text("0.1", conftab.child(roleName="panel", name="Size")))
+        self.assertNone(self.search_by_text("0.4", conftab.get_child()(roleName="panel", name="Size")))
+        self.assertNone(self.search_by_text("0.1", conftab.get_child()(roleName="panel", name="Size")))
 
-        self.assertNone(self.search_by_text("0.05", conftab.child(roleName="panel", name="Crop")))
-        self.assertNone(self.search_by_text("0.12", conftab.child(roleName="panel", name="Crop")))
-        self.assertNone(self.search_by_text("0.14", conftab.child(roleName="panel", name="Crop")))
-        self.assertNone(self.search_by_text("0.07", conftab.child(roleName="panel", name="Crop")))
+        self.assertNone(self.search_by_text("0.05", conftab.get_child()(roleName="panel", name="Crop")))
+        self.assertNone(self.search_by_text("0.12", conftab.get_child()(roleName="panel", name="Crop")))
+        self.assertNone(self.search_by_text("0.14", conftab.get_child()(roleName="panel", name="Crop")))
+        self.assertNone(self.search_by_text("0.07", conftab.get_child()(roleName="panel", name="Crop")))

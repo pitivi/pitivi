@@ -30,9 +30,9 @@ from pitivi.utils.timeline import MoveContext, TrimStartContext,\
 from pitivi.utils.signal import Signallable
 from pitivi.stream import AudioStream, VideoStream
 import pitivi.instance
-import gobject
+from gi.repository import GObject
 import os.path
-import gst
+from gi.repository import Gst
 import random
 
 base_uri = "file:///" + os.getcwd() + "/media/"
@@ -57,7 +57,7 @@ class WatchDog(object):
     def start(self):
         self.will_quit = False
         self.keep_going = True
-        gobject.timeout_add(self.timeout, self._timeoutcb)
+        GObject.timeout_add(self.timeout, self._timeoutcb)
 
     def suspend(self):
         self.keepAlive()
@@ -78,33 +78,33 @@ class WatchDog(object):
 class TestWatchdog(TestCase):
 
     def testWatchdog(self):
-        self.ml = gobject.MainLoop()
+        self.ml = GObject.MainLoop()
         wd = WatchDog(self.ml, 100)
         self.timeout_called = False
         wd.start()
-        gobject.timeout_add(2000, self._timeoutCb)
+        GObject.timeout_add(2000, self._timeoutCb)
         self.ml.run()
         self.assertFalse(self.timeout_called)
         self.assertTrue(wd.activated)
 
     def testKeepAlive(self):
-        self.ml = gobject.MainLoop()
+        self.ml = GObject.MainLoop()
         wd = WatchDog(self.ml, 2000)
         self.timeout_called = False
         wd.start()
-        gobject.timeout_add(500, wd.keepAlive)
-        gobject.timeout_add(2500, self._timeoutCb)
+        GObject.timeout_add(500, wd.keepAlive)
+        GObject.timeout_add(2500, self._timeoutCb)
         self.ml.run()
         self.assertTrue(self.timeout_called)
         self.assertFalse(wd.activated)
 
     def testSuspend(self):
-        self.ml = gobject.MainLoop()
+        self.ml = GObject.MainLoop()
         wd = WatchDog(self.ml, 500)
         self.timeout_called = False
         wd.start()
         wd.suspend()
-        gobject.timeout_add(2000, self._timeoutCb)
+        GObject.timeout_add(2000, self._timeoutCb)
         self.ml.run()
         self.assertTrue(self.timeout_called)
         self.assertFalse(wd.activated)
@@ -314,7 +314,7 @@ class InstanceRunner(Signallable):
             self.instance.run([])
 
     def shutDown(self):
-        gobject.idle_add(self.instance.shutdown)
+        GObject.idle_add(self.instance.shutdown)
         self.project._dirty = False
 
 
@@ -344,7 +344,7 @@ class Brush(Signallable):
         self.priority = finalPriority
         self.count = 0
         self.steps = steps
-        gobject.timeout_add(self.delay, self._scrubTimeoutCb)
+        GObject.timeout_add(self.delay, self._scrubTimeoutCb)
 
     def _scrubTimeoutCb(self):
         self.watchdog.keepAlive()
@@ -451,15 +451,15 @@ class TestBasic(Base):
             test1,
             {
                 "start": 0,
-                "duration": gst.SECOND,
-                "media-start": gst.SECOND,
+                "duration": Gst.SECOND,
+                "media-start": Gst.SECOND,
             })
         config.addSource(
             "object2",
             test2,
             {
-                "start": gst.SECOND,
-                "duration": gst.SECOND,
+                "start": Gst.SECOND,
+                "duration": Gst.SECOND,
             })
 
         def timelineConfigured(runner):
@@ -482,16 +482,16 @@ class TestBasic(Base):
             test1,
             {
                 "start": 0,
-                "duration": gst.SECOND,
-                "media-start": gst.SECOND,
+                "duration": Gst.SECOND,
+                "media-start": Gst.SECOND,
                 "priority": 0
             })
         initial.addSource(
             "object2",
             test2,
             {
-                "start": gst.SECOND,
-                "duration": gst.SECOND,
+                "start": Gst.SECOND,
+                "duration": Gst.SECOND,
                 "priority": 1,
             })
         final = Configuration()
@@ -499,13 +499,13 @@ class TestBasic(Base):
             "object1",
             test1,
             {
-                "start": 10 * gst.SECOND,
+                "start": 10 * Gst.SECOND,
             })
         final.addSource(
             "object2",
             test2,
             {
-                "start": 11 * gst.SECOND,
+                "start": 11 * Gst.SECOND,
                 "priority": 2,
             })
 
@@ -513,7 +513,7 @@ class TestBasic(Base):
             context = MoveContext(self.runner.timeline,
                 self.runner.video1.object1,
                 set((self.runner.audio1.object2,)))
-            brush.scrub(context, 10 * gst.SECOND, 1, steps=10)
+            brush.scrub(context, 10 * Gst.SECOND, 1, steps=10)
 
         def scrubStep(brush, time, priority):
             pass
@@ -535,21 +535,21 @@ class TestBasic(Base):
 
         initial = Configuration()
         initial.addSource('clip1', test1, {
-            "duration": gst.SECOND,
-            "start": gst.SECOND,
+            "duration": Gst.SECOND,
+            "start": Gst.SECOND,
             "priority": 2})
         initial.addSource('clip2', test1, {
-            "duration": gst.SECOND,
-            "start": 2 * gst.SECOND,
+            "duration": Gst.SECOND,
+            "start": 2 * Gst.SECOND,
             "priority": 5})
         final = Configuration()
         final.addSource('clip1', test1, {
-            "duration": gst.SECOND,
-            "start": 11 * gst.SECOND,
+            "duration": Gst.SECOND,
+            "start": 11 * Gst.SECOND,
             "priority": 0})
         final.addSource('clip2', test1, {
-            "duration": gst.SECOND,
-            "start": 12 * gst.SECOND,
+            "duration": Gst.SECOND,
+            "start": 12 * Gst.SECOND,
             "priority": 3})
 
         def timelineConfigured(runner):
@@ -557,7 +557,7 @@ class TestBasic(Base):
             context = MoveContext(self.runner.timeline,
                 self.runner.video1.clip1, set())
             context.setMode(context.RIPPLE)
-            brush.scrub(context, 11 * gst.SECOND, 0, steps=0)
+            brush.scrub(context, 11 * Gst.SECOND, 0, steps=0)
 
         def scrubDone(brush):
             final.matches(self.runner)
@@ -574,35 +574,35 @@ class TestBasic(Base):
         initial = Configuration()
         initial.addSource('clip1', test1,
             {
-                "start": gst.SECOND,
-                "duration": gst.SECOND,
+                "start": Gst.SECOND,
+                "duration": Gst.SECOND,
             })
         initial.addSource('clip2', test1,
             {
-                "start": 2 * gst.SECOND,
-                "duration": gst.SECOND,
+                "start": 2 * Gst.SECOND,
+                "duration": Gst.SECOND,
             })
         initial.addSource('clip3', test1,
             {
-                "start": 5 * gst.SECOND,
-                "duration": 10 * gst.SECOND,
+                "start": 5 * Gst.SECOND,
+                "duration": 10 * Gst.SECOND,
             })
 
         final = Configuration()
         final.addSource('clip1', test1,
             {
-                "start": 6 * gst.SECOND,
-                "duration": gst.SECOND,
+                "start": 6 * Gst.SECOND,
+                "duration": Gst.SECOND,
             })
         final.addSource('clip2', test1,
             {
-                "start": 7 * gst.SECOND,
-                "duration": gst.SECOND,
+                "start": 7 * Gst.SECOND,
+                "duration": Gst.SECOND,
             })
         final.addSource('clip3', test1,
             {
-                "start": 10 * gst.SECOND,
-                "duration": 5 * gst.SECOND,
+                "start": 10 * Gst.SECOND,
+                "duration": 5 * Gst.SECOND,
             })
 
         self.runner.loadConfiguration(initial)
@@ -611,7 +611,7 @@ class TestBasic(Base):
             context = TrimStartContext(self.runner.timeline,
                 self.runner.video1.clip3, set())
             context.setMode(context.RIPPLE)
-            brush.scrub(context, 10 * gst.SECOND, 0)
+            brush.scrub(context, 10 * Gst.SECOND, 0)
         self.runner.connect("timeline-configured", timelineConfigured)
 
         def scrubDone(brush):
@@ -634,8 +634,8 @@ class TestSeeking(Base):
     config = Configuration()
     for i in xrange(0, 10):
         config.addSource("clip%d" % i, test1, {
-            "start": i * gst.SECOND,
-            "duration": gst.SECOND,
+            "start": i * Gst.SECOND,
+            "duration": Gst.SECOND,
             "priority": i % 2,
         })
 
@@ -644,7 +644,7 @@ class TestSeeking(Base):
         self.steps = steps
         self.positions = 0
         self.runner.project.pipeline.connect("position", self._positionCb)
-        gobject.timeout_add(interval, self._seekTimeoutCb)
+        GObject.timeout_add(interval, self._seekTimeoutCb)
 
     def _seekTimeoutCb(self):
         if self.count < self.steps:
@@ -699,7 +699,7 @@ class TestRippleExtensive(Base):
         self.finals = []
         for i in xrange(0, 10):
             self.initial.addSource('clip%d' % i, test1,
-                {'start': gst.SECOND * i, 'duration': gst.SECOND,
+                {'start': Gst.SECOND * i, 'duration': Gst.SECOND,
                     'priority': i % 2})
             # we're going to repeat the same operation using each clip as the
             # focus of the editing context. We create one final
@@ -708,13 +708,13 @@ class TestRippleExtensive(Base):
             for j in xrange(0, 10):
                 if j < i:
                     final.addSource('clip%d' % j, test1,
-                        {'start': gst.SECOND * j,
-                          'duration': gst.SECOND,
+                        {'start': Gst.SECOND * j,
+                          'duration': Gst.SECOND,
                           'priority': j % 2})
                 else:
                     final.addSource('clip%d' % j, test1,
-                        {'start': gst.SECOND * (j + 10),
-                          'duration': gst.SECOND,
+                        {'start': Gst.SECOND * (j + 10),
+                          'duration': Gst.SECOND,
                           'priority': (j % 2) + 1})
             self.finals.append(final)
         Base.__init__(self, unknown)
@@ -745,7 +745,7 @@ class TestRippleExtensive(Base):
         self.context = context
         # this isn't a method, but an attribute that will be set by specific
         # test cases
-        self.scrub_func(context, (cur + 10) * gst.SECOND, (cur % 2) + 1)
+        self.scrub_func(context, (cur + 10) * Gst.SECOND, (cur % 2) + 1)
 
     # when each scrub has finished, verify the current configuration is
     # correct, reset the timeline, and kick off the next scenario. Shut down
@@ -758,7 +758,7 @@ class TestRippleExtensive(Base):
         config.matches(self.runner)
         restore = MoveContext(self.runner.timeline, context.focus, set())
         restore.setMode(restore.RIPPLE)
-        restore.editTo(cur * gst.SECOND, (cur % 2))
+        restore.editTo(cur * Gst.SECOND, (cur % 2))
         restore.finish()
         self.initial.matches(self.runner)
         self.cur += 1
@@ -792,34 +792,34 @@ class TestTransitions(Base):
             test1,
             {
                 "start": 0,
-                "duration": 5 * gst.SECOND,
+                "duration": 5 * Gst.SECOND,
                 "priority": 0,
             })
         initial.addSource(
             "object2",
             test1,
             {
-                "start": 5 * gst.SECOND,
-                "duration": 5 * gst.SECOND,
+                "start": 5 * Gst.SECOND,
+                "duration": 5 * Gst.SECOND,
                 "priority": 0,
             })
         initial.addSource(
             "object3",
             test1,
             {
-                "start": 10 * gst.SECOND,
-                "duration": 5 * gst.SECOND,
+                "start": 10 * Gst.SECOND,
+                "duration": 5 * Gst.SECOND,
                 "priority": 0,
             })
 
         moves = [
-            (9 * gst.SECOND, 0),
-            (1 * gst.SECOND, 0),
+            (9 * Gst.SECOND, 0),
+            (1 * Gst.SECOND, 0),
         ]
 
         expected = [
-            ("object2", "object3", 10 * gst.SECOND, 4 * gst.SECOND, 0),
-            ("object1", "object2", 1 * gst.SECOND, 4 * gst.SECOND, 0),
+            ("object2", "object3", 10 * Gst.SECOND, 4 * Gst.SECOND, 0),
+            ("object1", "object2", 1 * Gst.SECOND, 4 * Gst.SECOND, 0),
         ]
 
         def timelineConfigured(runner):
@@ -867,29 +867,29 @@ class TestTransitions(Base):
             test1,
             {
                 "start": 0,
-                "duration": 5 * gst.SECOND,
+                "duration": 5 * Gst.SECOND,
                 "priority": 0,
             })
         initial.addSource(
             "object2",
             test1,
             {
-                "start": 5 * gst.SECOND,
-                "duration": 5 * gst.SECOND,
+                "start": 5 * Gst.SECOND,
+                "duration": 5 * Gst.SECOND,
                 "priority": 0,
             })
         initial.addSource(
             "object3",
             test1,
             {
-                "start": 10 * gst.SECOND,
-                "duration": 5 * gst.SECOND,
+                "start": 10 * Gst.SECOND,
+                "duration": 5 * Gst.SECOND,
                 "priority": 0,
             })
 
         moves = [
-            ("object1", 9 * gst.SECOND, 0),
-            ("object3", 1 * gst.SECOND, 0),
+            ("object1", 9 * Gst.SECOND, 0),
+            ("object3", 1 * Gst.SECOND, 0),
         ]
 
         def timelineConfigured(runner):
@@ -927,23 +927,23 @@ class TestTransitions(Base):
             test1,
             {
                 "start": 0,
-                "duration": 5 * gst.SECOND,
+                "duration": 5 * Gst.SECOND,
                 "priority": 0,
             })
         initial.addSource(
             "object2",
             test1,
             {
-                "start": 5 * gst.SECOND,
-                "duration": 3 * gst.SECOND,
+                "start": 5 * Gst.SECOND,
+                "duration": 3 * Gst.SECOND,
                 "priority": 0,
             })
         initial.addSource(
             "object3",
             test1,
             {
-                "start": 8 * gst.SECOND,
-                "duration": 5 * gst.SECOND,
+                "start": 8 * Gst.SECOND,
+                "duration": 5 * Gst.SECOND,
                 "priority": 0,
             })
 
@@ -951,39 +951,39 @@ class TestTransitions(Base):
         phase2.updateSource(
             "object2",
             props={
-                "start": 4 * gst.SECOND,
+                "start": 4 * Gst.SECOND,
             })
 
         phase3 = phase2.clone()
         phase3.updateSource(
             "object3",
             props={
-                "duration": 1 * gst.SECOND
+                "duration": 1 * Gst.SECOND
             })
 
         phase4 = initial.clone()
         phase4.updateSource(
             "object2",
             props={
-                "start": 3 * gst.SECOND,
+                "start": 3 * Gst.SECOND,
             })
         phase4.updateSource(
             "object3",
             props={
-                "start": 5 * gst.SECOND,
-                "duration": 5 * gst.SECOND,
+                "start": 5 * Gst.SECOND,
+                "duration": 5 * Gst.SECOND,
             })
 
         moves = [
             # [1------]    [3--[2==]]
-            (MoveContext, "object2", 9 * gst.SECOND, 0, initial, []),
+            (MoveContext, "object2", 9 * Gst.SECOND, 0, initial, []),
 
             # [1--[2=]]    [3-------]
-            (MoveContext, "object2", 1 * gst.SECOND, 0, initial, []),
+            (MoveContext, "object2", 1 * Gst.SECOND, 0, initial, []),
 
             # [1------]    [3-------]
             #        [2--]
-            (MoveContext, "object2", 4 * gst.SECOND, 0, phase2,
+            (MoveContext, "object2", 4 * Gst.SECOND, 0, phase2,
                 [("object1", "object2")]),
 
             # Activates overlap prevention
@@ -991,33 +991,33 @@ class TestTransitions(Base):
             #      [3-------]
             #        [2--]
 
-            (MoveContext, "object3", 3 * gst.SECOND, 0, phase2,
+            (MoveContext, "object3", 3 * Gst.SECOND, 0, phase2,
                 [("object1", "object2")]),
 
             # [1------]  [3-]
             #        [2--]
-            (TrimEndContext, "object3", 9 * gst.SECOND, 0, phase3,
+            (TrimEndContext, "object3", 9 * Gst.SECOND, 0, phase3,
                 [("object1", "object2")]),
 
             # Activates overlap prevention
             # [1------]
             #        [3-]
             #        [2--]
-            (MoveContext, "object3", 4 * gst.SECOND, 0, phase3,
+            (MoveContext, "object3", 4 * Gst.SECOND, 0, phase3,
                 [("object1", "object2")]),
 
             # Activates overlap prevention
             # [1------]
             #       [3]
             #        [2--]
-            (MoveContext, "object3", long(3.5 * gst.SECOND), 0, phase3,
+            (MoveContext, "object3", long(3.5 * Gst.SECOND), 0, phase3,
                 [("object1", "object2")]),
 
             # Activates overlap prevention
             # [1      ]
             #         [3]
             #        [2  ]
-            (MoveContext, "object3", long(4.5 * gst.SECOND), 0,
+            (MoveContext, "object3", long(4.5 * Gst.SECOND), 0,
                 phase3, [("object1", "object2")]),
 
             # Next few commands build this arrangement
@@ -1025,11 +1025,11 @@ class TestTransitions(Base):
             #     [2    ]
             #          [3   ]
 
-            (MoveContext, "object2", 3 * gst.SECOND, 0,
+            (MoveContext, "object2", 3 * Gst.SECOND, 0,
                 None, None),
-            (MoveContext, "object3", 5 * gst.SECOND, 0,
+            (MoveContext, "object3", 5 * Gst.SECOND, 0,
                 None, None),
-            (TrimEndContext, "object3", 10 * gst.SECOND, 0,
+            (TrimEndContext, "object3", 10 * Gst.SECOND, 0,
                 phase4, [("object1", "object2"), ("object2",
                     "object3")]),
 
@@ -1038,7 +1038,7 @@ class TestTransitions(Base):
             #     [2    ]
             #       [3   ]
 
-            (MoveContext, "object3", 4 * gst.SECOND, 0,
+            (MoveContext, "object3", 4 * Gst.SECOND, 0,
                 phase4, [("object1", "object2"),
                     ("object2", "object3")]),
 

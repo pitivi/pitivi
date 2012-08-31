@@ -20,9 +20,9 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-import ges
-import gtk
-import gst
+from gi.repository import GES
+from gi.repository import Gdk
+from gi.repository import Gst
 
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
@@ -51,12 +51,12 @@ class TimelineError(Exception):
 
 class Selection(Signallable):
     """
-    A collection of L{ges.TimelineObject}.
+    A collection of L{GES.TimelineObject}.
 
     Signals:
-     - C{selection-changed} : The contents of the L{ges.Selection} changed.
+     - C{selection-changed} : The contents of the L{GES.Selection} changed.
 
-    @ivar selected: Set of selected L{ges.TrackObject}
+    @ivar selected: Set of selected L{GES.TrackObject}
     @type selected: C{list}
     """
 
@@ -69,7 +69,7 @@ class Selection(Signallable):
 
     def setToObj(self, obj, mode):
         """
-        Convenience method for calling L{setSelection} with a single L{ges.TimelineObject}
+        Convenience method for calling L{setSelection} with a single L{GES.TimelineObject}
 
         @see: L{setSelection}
         """
@@ -80,7 +80,7 @@ class Selection(Signallable):
         Add the given timeline_object to the selection.
 
         @param timeline_object: The object to add
-        @type timeline_object: L{ges.TimelineObject}
+        @type timeline_object: L{GES.TimelineObject}
         @raises TimelineError: If the object is already controlled by this
         Selection.
         """
@@ -105,7 +105,7 @@ class Selection(Signallable):
         selection = set()
         for obj in objs:
             # FIXME GES break, handle the fact that we have unlinked objects in GES
-            if isinstance(obj, ges.TrackObject):
+            if isinstance(obj, GES.TrackObject):
                 selection.add(obj.get_timeline_object())
             else:
                 selection.add(obj)
@@ -126,14 +126,13 @@ class Selection(Signallable):
 
         for obj in old_selection - self.selected:
             for tckobj in obj.get_track_objects():
-                if not isinstance(tckobj, ges.TrackEffect) and not isinstance(tckobj, ges.TrackTextOverlay):
+                if not isinstance(tckobj, GES.TrackEffect) and not isinstance(tckobj, GES.TrackTextOverlay):
                     tckobj.selected.selected = False
 
         for obj in self.selected - old_selection:
             for tckobj in obj.get_track_objects():
-                if not isinstance(tckobj, ges.TrackEffect) and not isinstance(tckobj, ges.TrackTextOverlay):
+                if not isinstance(tckobj, GES.TrackEffect) and not isinstance(tckobj, GES.TrackTextOverlay):
                     tckobj.selected.selected = True
-
 
         self.emit("selection-changed")
 
@@ -154,7 +153,7 @@ class Selection(Signallable):
         track_effects = []
         for timeline_object in self.selected:
             for track in timeline_object.get_track_objects():
-                if isinstance(track, ges.TrackEffect):
+                if isinstance(track, GES.TrackEffect):
                     track_effects.append(track)
 
         return track_effects
@@ -185,18 +184,18 @@ class EditingContext(Signallable):
         @param focus: the TimelineObject or TrackObject which is to be the
         main target of interactive editing, such as the object directly under the
         mouse pointer
-        @type focus: L{ges.TimelineObject} or L{ges.TrackObject}
+        @type focus: L{GES.TimelineObject} or L{GES.TrackObject}
 
         @param timeline: the timeline to edit
-        @type timeline: instance of L{ges.Timeline}
+        @type timeline: instance of L{GES.Timeline}
 
         @param edge: The edge on which the edition will happen, this parametter
         can be change during the time using the same context.
-        @type edge: L{ges.Edge}
+        @type edge: L{GES.Edge}
 
         @param mode: The mode in which the edition will happen, this parametter
         can be change during the time using the same context.
-        @type mode: L{ges.EditMode}
+        @type mode: L{GES.EditMode}
 
         @param other: a set of objects which are the secondary targets of
         interactive editing, such as objects in the current selection.
@@ -213,7 +212,7 @@ class EditingContext(Signallable):
         other.difference_update(set((focus,)))
 
         self.other = other
-        if isinstance(focus, ges.TrackObject):
+        if isinstance(focus, GES.TrackObject):
             self.focus = focus.get_timeline_object()
         else:
             self.focus = focus
@@ -232,28 +231,28 @@ class EditingContext(Signallable):
 
     def setMode(self, mode):
         """Set the current editing mode.
-        @param mode: the editing mode. Must be a ges.EditMode
+        @param mode: the editing mode. Must be a GES.EditMode
         """
         self.mode = mode
 
     def editTo(self, position, priority):
         position = max(0, position)
-        if self.edge in [ges.EDGE_START, ges.EDGE_END]:
+        if self.edge in [GES.Edge.EDGE_START, GES.Edge.EDGE_END]:
             priority = -1
         else:
             priority = max(0, priority)
 
         res = self.focus.edit([], priority, self.mode, self.edge, long(position))
-        if res and self.mode == ges.EDIT_MODE_TRIM:
-            if self.edge == ges.EDGE_START:
+        if res and self.mode == GES.EditMode.EDIT_TRIM:
+            if self.edge == GES.Edge.EDGE_START:
                 self.emit("clip-trim", self.focus, self.focus.props.in_point)
-            elif self.edge == ges.EDGE_END:
+            elif self.edge == GES.Edge.EDGE_END:
                 self.emit("clip-trim", self.focus, self.focus.props.duration)
 
 
 #-------------------------- Interfaces ----------------------------------------#
 
-ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
+ARROW = Gdk.Cursor.new(Gdk.CursorType.ARROW)
 
 
 class Controller(Loggable):
@@ -373,9 +372,9 @@ class Controller(Loggable):
     def key_press_event(self, item, target, event):
         self._event_common(item, target, event)
         kv = event.keyval
-        if kv in (gtk.keysyms.Shift_L, gtk.keysyms.Shift_R):
+        if kv in (Gdk.KEY_Shift_L, Gdk.KEY_Shift_R):
             self._shift_down = True
-        elif kv in (gtk.keysyms.Control_L, gtk.keysyms.Control_R):
+        elif kv in (Gdk.KEY_Control_L, Gdk.KEY_Control_R):
             self._control_down = True
         return self.key_press(kv)
 
@@ -383,9 +382,9 @@ class Controller(Loggable):
     def key_release_event(self, item, target, event):
         self._event_common(item, target, event)
         kv = event.keyval
-        if kv in (gtk.keysyms.Shift_L, gtk.keysyms.Shift_R):
+        if kv in (Gdk.KEY_Shift_L, Gdk.KEY_Shift_R):
             self._shift_down = False
-        elif kv in (gtk.keysyms.Control_L, gtk.keysyms.Control_R):
+        elif kv in (Gdk.KEY_Control_L, Gdk.KEY_Control_R):
             self._control_down = False
         return self.key_release(kv)
 
@@ -399,8 +398,8 @@ class Controller(Loggable):
             self._vadj = self._canvas.app.gui.timeline_ui.vadj
         self._last_event = event
         _, s = event.get_state()
-        self._shift_down = s & gtk.gdk.SHIFT_MASK
-        self._control_down = s & gtk.gdk.CONTROL_MASK
+        self._shift_down = s & Gdk.ModifierType.SHIFT_MASK
+        self._control_down = s & Gdk.ModifierType.CONTROL_MASK
 
     def _drag_start(self, item, target, event):
         self.drag_start(item, target, event)
@@ -468,7 +467,7 @@ class View(object):
 
     Controller = Controller
 
-    def __init__(self, instance, default_mode=ges.EDIT_MODE_NORMAL):
+    def __init__(self, instance, default_mode=GES.EditMode.EDIT_NORMAL):
         object.__init__(self)
         self._controller = self.Controller(instance, default_mode, view=self)
 
@@ -581,14 +580,14 @@ class Zoomable(object):
         """
         Returns the pixel equivalent in nanoseconds according to the zoomratio
         """
-        return long(pixel * gst.SECOND / cls.zoomratio)
+        return long(pixel * Gst.SECOND / cls.zoomratio)
 
     @classmethod
     def pixelToNsAt(cls, pixel, ratio):
         """
         Returns the pixel equivalent in nanoseconds according to the zoomratio
         """
-        return long(pixel * gst.SECOND / ratio)
+        return long(pixel * Gst.SECOND / ratio)
 
     @classmethod
     def nsToPixel(cls, duration):
@@ -598,9 +597,9 @@ class Zoomable(object):
         """
         ## DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!!!!!
         if duration == 18446744073709551615 or \
-               long(duration) == long(gst.CLOCK_TIME_NONE):
+               long(duration) == long(Gst.CLOCK_TIME_NONE):
             return 0
-        return int((float(duration) / gst.SECOND) * cls.zoomratio)
+        return int((float(duration) / Gst.SECOND) * cls.zoomratio)
 
     @classmethod
     def _zoomChanged(cls):

@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
-# Boston, MA 02110-1301, USA.import gst
+# Boston, MA 02110-1301, USA.from gi.repository import Gst
 
 """
 Classes for extracting decoded contents of streams into Python
@@ -28,7 +28,7 @@ Code derived from ui/previewer.py.
 
 # FIXME reimplement after GES port
 
-import gst
+from gi.repository import Gst
 from collections import deque
 #from pitivi.elements.singledecodebin import SingleDecodeBin
 #from pitivi.elements.extractionsink import ExtractionSink
@@ -153,9 +153,9 @@ class RandomAccessAudioExtractor(RandomAccessExtractor):
         # This audiorate element ensures that the extracted raw-data
         # timeline matches the timestamps used for seeking, even if the
         # audio source has gaps or other timestamp abnormalities.
-        audiorate = gst.element_factory_make("audiorate")
-        conv = gst.element_factory_make("audioconvert")
-        q = gst.element_factory_make("queue")
+        audiorate = Gst.ElementFactory.make("audiorate")
+        conv = Gst.ElementFactory.make("audioconvert")
+        q = Gst.ElementFactory.make("queue")
         self.audioPipeline = pipeline({
             sbin: audiorate,
             audiorate: conv,
@@ -168,11 +168,11 @@ class RandomAccessAudioExtractor(RandomAccessExtractor):
         self._donecb_id = bus.connect("message::async-done",
                                       self._busMessageAsyncDoneCb)
 
-        self.audioPipeline.set_state(gst.STATE_PAUSED)
+        self.audioPipeline.set_state(Gst.State.PAUSED)
         # The audiopipeline.set_state() method does not take effect
         # immediately, but the extraction process (and in particular
         # self._startSegment) will not work properly until
-        # self.audioPipeline reaches the desired state (STATE_PAUSED).
+        # self.audioPipeline reaches the desired state (State.PAUSED).
         # To ensure that this is the case, we wait until the ASYNC_DONE
         # message is received before setting self._ready = True,
         # which enables extraction to proceed.
@@ -181,7 +181,7 @@ class RandomAccessAudioExtractor(RandomAccessExtractor):
         error, debug = message.parse_error()
         self.error("Event bus error: %s; %s", error, debug)
 
-        return gst.BUS_PASS
+        return Gst.BUS_PASS
 
     def _busMessageAsyncDoneCb(self, bus, message):
         self.debug("Pipeline is ready for seeking")
@@ -194,13 +194,13 @@ class RandomAccessAudioExtractor(RandomAccessExtractor):
         self.debug("processing segment with timestamp=%i and duration=%i",
                    timestamp, duration)
         res = self.audioPipeline.seek(1.0,
-            gst.FORMAT_TIME,
-            gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
-            gst.SEEK_TYPE_SET, timestamp,
-            gst.SEEK_TYPE_SET, timestamp + duration)
+            Gst.FORMAT_TIME,
+            Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
+            Gst.SeekType.SET, timestamp,
+            Gst.SeekType.SET, timestamp + duration)
         if not res:
             self.warning("seek failed %s", timestamp)
-        self.audioPipeline.set_state(gst.STATE_PLAYING)
+        self.audioPipeline.set_state(Gst.State.PLAYING)
 
         return res
 

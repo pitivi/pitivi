@@ -20,11 +20,13 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-import ges
 import glib
-import gtk
 import os
-import gobject
+
+from gi.repository import GES
+from gi.repository import Gtk
+from gi.repository import GObject
+from gi.repository import GdkPixbuf
 
 from gettext import gettext as _
 
@@ -39,17 +41,17 @@ from pitivi.utils.ui import SPACING, PADDING
  COL_ICON) = range(4)
 
 
-class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
+class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
 
     def __init__(self, instance, uiman):
-        gtk.VBox.__init__(self)
+        GObject.GObject.__init__(self)
         Loggable.__init__(self)
         Signallable.__init__(self)
 
         self.app = instance
         self.element = None
         self._pixdir = os.path.join(get_pixmap_dir(), "transitions")
-        icon_theme = gtk.icon_theme_get_default()
+        icon_theme = Gtk.IconTheme.get_default()
         self._question_icon = icon_theme.load_icon("dialog-question", 48, 0)
 
         #Tooltip handling
@@ -57,30 +59,30 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         self._current_tooltip_icon = None
 
         #Searchbox
-        self.searchbar = gtk.HBox()
+        self.searchbar = Gtk.HBox()
         self.searchbar.set_spacing(SPACING)
         self.searchbar.set_border_width(3)  # Prevents being flush against the notebook
-        searchStr = gtk.Label(_("Search:"))
-        self.searchEntry = gtk.Entry()
-        self.searchEntry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, "gtk-clear")
-        self.searchbar.pack_start(searchStr, expand=False)
-        self.searchbar.pack_end(self.searchEntry, expand=True)
+        searchStr = Gtk.Label(label=_("Search:"))
+        self.searchEntry = Gtk.Entry()
+        self.searchEntry.set_icon_from_stock(Gtk.EntryIconPosition.SECONDARY, "gtk-clear")
+        self.searchbar.pack_start(searchStr, False, True, 0)
+        self.searchbar.pack_end(self.searchEntry, True, True, 0)
 
-        self.props_widgets = gtk.VBox()
-        borderTable = gtk.Table(rows=2, columns=3)
+        self.props_widgets = Gtk.VBox()
+        borderTable = Gtk.Table(rows=2, columns=3)
 
-        self.border_mode_normal = gtk.RadioButton(group=None, label=_("Normal"))
-        self.border_mode_loop = gtk.RadioButton(group=self.border_mode_normal, label=_("Loop"))
+        self.border_mode_normal = Gtk.RadioButton(group=None, label=_("Normal"))
+        self.border_mode_loop = Gtk.RadioButton(group=self.border_mode_normal, label=_("Loop"))
         self.border_mode_normal.set_active(True)
-        self.borderScale = gtk.HScale()
+        self.borderScale = Gtk.HScale()
         self.borderScale.set_draw_value(False)
 
-        borderTable.attach(self.border_mode_normal, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
-        borderTable.attach(self.border_mode_loop, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
+        borderTable.attach(self.border_mode_normal, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
+        borderTable.attach(self.border_mode_loop, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
         # The ypadding is a hack to make the slider widget align with the radiobuttons.
         borderTable.attach(self.borderScale, 2, 3, 0, 2, ypadding=SPACING * 2)
 
-        self.invert_checkbox = gtk.CheckButton(_("Reverse direction"))
+        self.invert_checkbox = Gtk.CheckButton(_("Reverse direction"))
         self.invert_checkbox.set_border_width(SPACING)
 
         self.props_widgets.add(borderTable)
@@ -89,8 +91,8 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         # Set the default values
         self._borderTypeChangedCb()
 
-        self.infobar = gtk.InfoBar()
-        txtlabel = gtk.Label()
+        self.infobar = Gtk.InfoBar()
+        txtlabel = Gtk.Label()
         txtlabel.set_padding(PADDING, PADDING)
         txtlabel.set_line_wrap(True)
         txtlabel.set_text(
@@ -100,16 +102,16 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         self.infobar.add(txtlabel)
         self.infobar.show_all()
 
-        self.storemodel = gtk.ListStore(str, str, str, gtk.gdk.Pixbuf)
+        self.storemodel = Gtk.ListStore(str, str, str, GdkPixbuf.Pixbuf)
 
-        self.iconview_scrollwin = gtk.ScrolledWindow()
-        self.iconview_scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        self.iconview_scrollwin = Gtk.ScrolledWindow()
+        self.iconview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         # FIXME: the "never" horizontal scroll policy in GTK2 messes up iconview
         # Re-enable this when we switch to GTK3
         # See also http://python.6.n6.nabble.com/Cannot-shrink-width-of-scrolled-textview-tp1945060.html
-        #self.iconview_scrollwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        #self.iconview_scrollwin.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 
-        self.iconview = gtk.IconView(self.storemodel)
+        self.iconview = Gtk.IconView(self.storemodel)
         self.iconview.set_pixbuf_column(COL_ICON)
         # We don't show text because we have a searchbar and the names are ugly
         #self.iconview.set_text_column(COL_NAME_TEXT)
@@ -129,12 +131,12 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         self.border_mode_loop.connect("released", self._borderTypeChangedCb)
 
         # Speed-up startup by only checking available transitions on idle
-        gobject.idle_add(self._loadAvailableTransitionsCb)
+        GObject.idle_add(self._loadAvailableTransitionsCb)
 
-        self.pack_start(self.infobar, expand=False)
-        self.pack_start(self.searchbar, expand=False)
-        self.pack_start(self.iconview_scrollwin, expand=True)
-        self.pack_start(self.props_widgets, expand=False)
+        self.pack_start(self.infobar, False, True, 0)
+        self.pack_start(self.searchbar, False, True, 0)
+        self.pack_start(self.iconview_scrollwin, True, True, 0)
+        self.pack_start(self.props_widgets, False, True, 0)
 
         # Create the filterModel for searching
         self.modelFilter = self.storemodel.filter_new()
@@ -195,14 +197,14 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         if widget == self.border_mode_loop:
             self.borderScale.set_range(50000, 500000)
             self.borderScale.clear_marks()
-            self.borderScale.add_mark(50000, gtk.POS_BOTTOM, _("Slow"))
-            self.borderScale.add_mark(200000, gtk.POS_BOTTOM, _("Fast"))
-            self.borderScale.add_mark(500000, gtk.POS_BOTTOM, _("Epileptic"))
+            self.borderScale.add_mark(50000, Gtk.PositionType.BOTTOM, _("Slow"))
+            self.borderScale.add_mark(200000, Gtk.PositionType.BOTTOM, _("Fast"))
+            self.borderScale.add_mark(500000, Gtk.PositionType.BOTTOM, _("Epileptic"))
         else:
             self.borderScale.set_range(0, 25000)
             self.borderScale.clear_marks()
-            self.borderScale.add_mark(0, gtk.POS_BOTTOM, _("Sharp"))
-            self.borderScale.add_mark(25000, gtk.POS_BOTTOM, _("Smooth"))
+            self.borderScale.add_mark(0, Gtk.PositionType.BOTTOM, _("Sharp"))
+            self.borderScale.add_mark(25000, Gtk.PositionType.BOTTOM, _("Smooth"))
 
     def _searchEntryChangedCb(self, entry):
         self.modelFilter.refilter()
@@ -266,7 +268,7 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         # Number 0 means "no transition", so we might just as well skip it.
         for i in range(1, 513):
             try:
-                transition = ges.VideoStandardTransitionType(i)
+                transition = GES.VideoStandardTransitionType(i)
             except ValueError:
                 # We hit a gap in the enum
                 pass
@@ -280,7 +282,7 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         # Now that the UI is fully ready, enable searching
         self.modelFilter.set_visible_func(self._setRowVisible, data=None)
         # Alphabetical/name sorting instead of based on the ID number
-        #self.storemodel.set_sort_column_id(COL_NAME_TEXT, gtk.SORT_ASCENDING)
+        #self.storemodel.set_sort_column_id(COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
     def activate(self, element):
         """
@@ -342,7 +344,7 @@ class TransitionsListWidget(Signallable, gtk.VBox, Loggable):
         name = transition_nick + ".png"
         icon = None
         try:
-            icon = gtk.gdk.pixbuf_new_from_file(os.path.join(self._pixdir, name))
+            icon = GdkPixbuf.Pixbuf.new_from_file(os.path.join(self._pixdir, name))
         except:
             icon = self._question_icon
         return icon

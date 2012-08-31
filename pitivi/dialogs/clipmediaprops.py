@@ -24,8 +24,8 @@ Dialog box displaying the properties of a clip from media library, allowing
 to set those properties as the project settings.
 """
 
-import gtk
-import gst
+from gi.repository import Gtk
+from gi.repository import Gst
 import os
 
 from gettext import gettext as _
@@ -65,11 +65,11 @@ class clipmediapropsDialog():
             self.is_image = stream.is_image()
             if not self.is_image:
                 self.frame_rate.set_text(
-                    get_value_from_model(frame_rates, gst.Fraction(
+                    get_value_from_model(frame_rates, Gst.Fraction(
                                                 stream.get_framerate_num(),
                                                 stream.get_framerate_denom())))
                 self.aspect_ratio.set_text(
-                    get_value_from_model(pixel_aspect_ratios, gst.Fraction(
+                    get_value_from_model(pixel_aspect_ratios, Gst.Fraction(
                                                     stream.get_par_num(),
                                                     stream.get_par_denom())))
             self.has_video = True
@@ -86,7 +86,7 @@ class clipmediapropsDialog():
         self.dialog.run()
 
     def _createUi(self):
-        builder = gtk.Builder()
+        builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "clipmediaprops.ui"))
         builder.connect_signals(self)
         self.dialog = builder.get_object("Import Settings")
@@ -120,10 +120,10 @@ class clipmediapropsDialog():
                 _width = video.get_width()
                 _height = video.get_height()
             if (self.checkbutton2.get_active() and not self.is_image):
-                _framerate = gst.Fraction(video.get_framerate_num(),
+                _framerate = Gst.Fraction(video.get_framerate_num(),
                                           video.get_framerate_denom())
             if (self.checkbutton3.get_active() and not self.is_image):
-                _par = gst.Fraction(video.get_par_num(),
+                _par = Gst.Fraction(video.get_par_num(),
                                     video.get_par_denom())
             self.settings.setVideoProperties(_width, _height, _framerate, _par)
 

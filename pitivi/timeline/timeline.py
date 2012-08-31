@@ -27,24 +27,22 @@
 import sys
 import time
 
-import gtk
-import gst
-import ges
-import glib
-import ruler
-import gobject
-import goocanvas
-
 from gi.repository import Gtk
+from gi.repository import Gst
+from gi.repository import GES
+from gi.repository import GObject
+from gi.repository import GooCanvas
+
 from gi.repository import Gdk
 
 from gettext import gettext as _
 from os.path import join
 
+from pitivi.timeline import ruler
 from pitivi.check import soft_deps
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.autoaligner import AlignmentProgressDialog
-from pitivi.utils.misc import quote_uri
+from pitivi.utils.misc import quote_uri, print_ns
 from pitivi.utils.pipeline import PipelineError
 from pitivi.settings import GlobalSettings
 
@@ -93,9 +91,9 @@ PreferencesDialog.addNumericPreference('imageClipLength',
 
 
 # cursors to be used for resizing objects
-ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
+ARROW = Gdk.Cursor.new(Gdk.CursorType.ARROW)
 # TODO: replace this with custom cursor
-PLAYHEAD_CURSOR = gtk.gdk.Cursor(gtk.gdk.SB_H_DOUBLE_ARROW)
+PLAYHEAD_CURSOR = Gdk.Cursor.new(Gdk.CursorType.SB_H_DOUBLE_ARROW)
 
 # Drag and drop constants/tuples
 # FIXME, rethink the way we handle that as it is quite 'hacky'
@@ -174,9 +172,9 @@ ui = '''
 '''
 
 
-class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
+class TimelineCanvas(GooCanvas.Canvas, Zoomable, Loggable):
     """
-        The goocanvas widget representing the timeline
+        The GooCanvas widget representing the timeline
     """
 
     __gtype_name__ = 'TimelineCanvas'
@@ -184,7 +182,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     _tracks = None
 
     def __init__(self, instance, timeline=None):
-        goocanvas.Canvas.__init__(self)
+        GooCanvas.Canvas.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
         self.app = instance
@@ -205,22 +203,22 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def _createUI(self):
         self._cursor = ARROW
         root = self.get_root_item()
-        self.tracks = goocanvas.Group()
+        self.tracks = GooCanvas.CanvasGroup()
         self.tracks.set_simple_transform(0, 0, 1.0, 0)
         root.add_child(self.tracks, -1)
-        self._marquee = goocanvas.Rect(
+        self._marquee = GooCanvas.CanvasRect(
             parent=root,
             stroke_color_rgba=0x33CCFF66,
             fill_color_rgba=0x33CCFF66,
-            visibility=goocanvas.ITEM_INVISIBLE)
-        self._playhead = goocanvas.Rect(
+            visibility=GooCanvas.CanvasItemVisibility.INVISIBLE)
+        self._playhead = GooCanvas.CanvasRect(
             y=-10,
             parent=root,
             line_width=1,
             fill_color_rgba=0x000000FF,
             stroke_color_rgba=0xFFFFFFFF,
             width=3)
-        self._snap_indicator = goocanvas.Rect(
+        self._snap_indicator = GooCanvas.CanvasRect(
             parent=root, x=0, y=0, width=3, line_width=0.5,
             fill_color_rgba=0x85c0e6FF,
             stroke_color_rgba=0x294f95FF)
@@ -262,12 +260,12 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         # FIXME GObject Introspection -> move to Gtk.StyleContext
         #self.style.apply_default_background(event.window,
             #True,
-            #gtk.STATE_ACTIVE,
+            #Gtk.StateType.ACTIVE,
             #event.area,
             #event.area.x, event.area.y,
             #event.area.width, event.area.height)
 
-        #goocanvas.Canvas.do_expose_event(self, event)
+        #GooCanvas.Canvas.do_expose_event(self, event)
 
 ## implements selection marquee
 
@@ -292,7 +290,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
         @returns: A list of L{Track}, L{TrackObject} tuples
         '''
-        bounds = goocanvas.CanvasBounds()
+        bounds = GooCanvas.CanvasBounds()
         bounds.x1 = x1
         bounds.x2 = x2
         bounds.y1 = y1
@@ -336,27 +334,27 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
 
     def _selectionStart(self, item, target, event):
         self._selecting = True
-        self._marquee.props.visibility = goocanvas.ITEM_VISIBLE
+        self._marquee.props.visibility = GooCanvas.CanvasItemVisibility.VISIBLE
         self._mousedown = self.from_event(event) + self._get_adjustment(False, True)
         self._marquee.props.width = 0
         self._marquee.props.height = 0
-        self.pointer_grab(self.get_root_item(), gtk.gdk.POINTER_MOTION_MASK |
-            gtk.gdk.BUTTON_RELEASE_MASK, self._cursor, event.time)
+        self.pointer_grab(self.get_root_item(), Gdk.EventMask.POINTER_MOTION_MASK |
+            Gdk.EventMask.BUTTON_RELEASE_MASK, self._cursor, event.time)
         return True
 
     def _selectionEnd(self, item, target, event):
         self.pointer_ungrab(self.get_root_item(), event.time)
         self._selecting = False
-        self._marquee.props.visibility = goocanvas.ITEM_INVISIBLE
+        self._marquee.props.visibility = GooCanvas.CanvasItemVisibility.INVISIBLE
         if not self._got_motion_notify:
             self._timeline.selection.setSelection([], 0)
             self.app.current.seeker.seek(Zoomable.pixelToNs(event.x))
         elif self._timeline is not None:
             self._got_motion_notify = False
             mode = 0
-            if event.get_state()[1] & gtk.gdk.SHIFT_MASK:
+            if event.get_state()[1] & Gdk.ModifierType.SHIFT_MASK:
                 mode = 1
-            if event.get_state()[1] & gtk.gdk.CONTROL_MASK:
+            if event.get_state()[1] & Gdk.ModifierType.CONTROL_MASK:
                 mode = 2
             selected = self._objectsUnderMarquee()
             self._timeline.selection.setSelection(self._objectsUnderMarquee(), mode)
@@ -405,10 +403,10 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             self.debug("Snapping indicator at %d" % position)
             self._snap_indicator.props.x = Zoomable.nsToPixel(position)
             self._snap_indicator.props.height = self.height
-            self._snap_indicator.props.visibility = goocanvas.ITEM_VISIBLE
+            self._snap_indicator.props.visibility = GooCanvas.CanvasItemVisibility.VISIBLE
 
     def _snapEndedCb(self, *args):
-        self._snap_indicator.props.visibility = goocanvas.ITEM_INVISIBLE
+        self._snap_indicator.props.visibility = GooCanvas.CanvasItemVisibility.INVISIBLE
 
     def _buttonReleasedCb(self, canvas, event):
         # select clicked layer, if any
@@ -489,20 +487,20 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             track.updateTrackObjects()
 
 
-class TimelineControls(gtk.VBox, Loggable):
+class TimelineControls(Gtk.VBox, Loggable):
     """
     Holds and manages the LayerControlWidgets
     """
 
     __gsignals__ = {
        "selection-changed": (
-            gobject.SIGNAL_RUN_LAST,
-            gobject.TYPE_NONE,
-            (gobject.TYPE_PYOBJECT,),)
+            GObject.SignalFlags.RUN_LAST,
+            None,
+            (GObject.TYPE_PYOBJECT,),)
        }
 
     def __init__(self, instance):
-        gtk.VBox.__init__(self)
+        GObject.GObject.__init__(self)
         Loggable.__init__(self)
         self.app = instance
         self._layer_controls = {}
@@ -510,8 +508,8 @@ class TimelineControls(gtk.VBox, Loggable):
         self._timeline = None
         self.set_spacing(0)
         self.separator_height = 0
-        self.type_map = {ges.TRACK_TYPE_AUDIO: AudioLayerControl,
-                         ges.TRACK_TYPE_VIDEO: VideoLayerControl}
+        self.type_map = {GES.TrackType.AUDIO: AudioLayerControl,
+                         GES.TrackType.VIDEO: VideoLayerControl}
         self.connect("size-allocate", self._sizeAllocatedCb)
         self.priority_block = sys.maxint
         self.priority_block_time = time.time()
@@ -520,8 +518,8 @@ class TimelineControls(gtk.VBox, Loggable):
         self.connect("drag_drop", self._dragDropCb)
         self.connect("drag_motion", self._dragMotionCb)
         self.connect("drag_leave", self._dragLeaveCb)
-        self.drag_dest_set(gtk.DEST_DEFAULT_ALL,
-                             [LAYER_CONTROL_TARGET_ENTRY], gtk.gdk.ACTION_MOVE)
+        self.drag_dest_set(Gtk.DestDefaults.ALL,
+                             [LAYER_CONTROL_TARGET_ENTRY], Gdk.DragAction.MOVE)
 
     def _sizeAllocatedCb(self, widget, alloc):
         if self.get_children():
@@ -560,12 +558,12 @@ class TimelineControls(gtk.VBox, Loggable):
         video_control = VideoLayerControl(self.app, layer)
         audio_control = AudioLayerControl(self.app, layer)
 
-        map = {ges.TRACK_TYPE_AUDIO: audio_control,
-               ges.TRACK_TYPE_VIDEO: video_control}
+        map = {GES.TrackType.AUDIO: audio_control,
+               GES.TrackType.VIDEO: video_control}
         self._layer_controls[layer] = map
 
-        self.pack_start(video_control, False, False)
-        self.pack_start(audio_control, False, False)
+        self.pack_start(video_control, False, False, 0)
+        self.pack_start(audio_control, False, False, 0)
 
         audio_control.show()
         video_control.show()
@@ -575,8 +573,8 @@ class TimelineControls(gtk.VBox, Loggable):
         self._updatePopupMenus()
 
     def _layerRemovedCb(self, timeline, layer):
-        audio_control = self._layer_controls[layer][ges.TRACK_TYPE_AUDIO]
-        video_control = self._layer_controls[layer][ges.TRACK_TYPE_VIDEO]
+        audio_control = self._layer_controls[layer][GES.TrackType.AUDIO]
+        video_control = self._layer_controls[layer][GES.TrackType.VIDEO]
 
         self.remove(audio_control)
         self.remove(video_control)
@@ -637,10 +635,10 @@ class TimelineControls(gtk.VBox, Loggable):
         last.updateMenuSensitivity(-1)
 
     def getHeightOfLayer(self, track_type, layer):
-        if track_type == ges.TRACK_TYPE_VIDEO:
-            return self._layer_controls[layer][ges.TRACK_TYPE_VIDEO].getControlHeight()
+        if track_type == GES.TrackType.VIDEO:
+            return self._layer_controls[layer][GES.TrackType.VIDEO].getControlHeight()
         else:
-            return self._layer_controls[layer][ges.TRACK_TYPE_AUDIO].getControlHeight()
+            return self._layer_controls[layer][GES.TrackType.AUDIO].getControlHeight()
 
     def getYOfLayer(self, track_type, layer):
         y = 0
@@ -701,8 +699,8 @@ class TimelineControls(gtk.VBox, Loggable):
         Enable this layer and disable all others
         """
         for key, controls in self._layer_controls.iteritems():
-            controls[ges.TRACK_TYPE_VIDEO].setSoloState(key == layer)
-            controls[ges.TRACK_TYPE_AUDIO].setSoloState(key == layer)
+            controls[GES.TrackType.VIDEO].setSoloState(key == layer)
+            controls[GES.TrackType.AUDIO].setSoloState(key == layer)
 
     def selectLayerControl(self, layer_control):
         """
@@ -717,16 +715,16 @@ class TimelineControls(gtk.VBox, Loggable):
         for key, controls in self._layer_controls.iteritems():
             # selected widget not in this layer
             if key != layer:
-                controls[ges.TRACK_TYPE_VIDEO].selected = False
-                controls[ges.TRACK_TYPE_AUDIO].selected = False
+                controls[GES.TrackType.VIDEO].selected = False
+                controls[GES.TrackType.AUDIO].selected = False
             # selected widget in this layer
             else:
                 if type(layer_control) is AudioLayerControl:
-                    controls[ges.TRACK_TYPE_VIDEO].selected = False
-                    controls[ges.TRACK_TYPE_AUDIO].selected = True
+                    controls[GES.TrackType.VIDEO].selected = False
+                    controls[GES.TrackType.AUDIO].selected = True
                 else:  # video
-                    controls[ges.TRACK_TYPE_VIDEO].selected = True
-                    controls[ges.TRACK_TYPE_AUDIO].selected = False
+                    controls[GES.TrackType.VIDEO].selected = True
+                    controls[GES.TrackType.AUDIO].selected = False
 
     def getSelectedLayer(self):
         return self._selected_layer
@@ -873,13 +871,13 @@ class TimelineControls(gtk.VBox, Loggable):
             counter += 1
 
 
-class InfoStub(gtk.HBox, Loggable):
+class InfoStub(Gtk.HBox, Loggable):
     """
     Box used to display information on the current state of the timeline
     """
 
     def __init__(self):
-        gtk.HBox.__init__(self)
+        GObject.GObject.__init__(self)
         Loggable.__init__(self)
         self.errors = []
         self._scroll_pos_ns = 0
@@ -888,22 +886,22 @@ class InfoStub(gtk.HBox, Loggable):
 
     def _makeUI(self):
         self.set_spacing(SPACING)
-        self.erroricon = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
-                                                  gtk.ICON_SIZE_SMALL_TOOLBAR)
+        self.erroricon = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_WARNING,
+                                                  Gtk.IconSize.SMALL_TOOLBAR)
 
-        self.pack_start(self.erroricon, expand=False)
+        self.pack_start(self.erroricon, False, True, 0)
 
-        self.infolabel = gtk.Label(self._errorsmessage)
+        self.infolabel = Gtk.Label(label=self._errorsmessage)
         self.infolabel.set_alignment(0, 0.5)
 
-        self.questionbutton = gtk.Button()
-        self.infoicon = gtk.Image()
-        self.infoicon.set_from_stock(gtk.STOCK_INFO, gtk.ICON_SIZE_SMALL_TOOLBAR)
+        self.questionbutton = Gtk.Button()
+        self.infoicon = Gtk.Image()
+        self.infoicon.set_from_stock(Gtk.STOCK_INFO, Gtk.IconSize.SMALL_TOOLBAR)
         self.questionbutton.add(self.infoicon)
         self.questionbutton.connect("clicked", self._questionButtonClickedCb)
 
-        self.pack_start(self.infolabel, expand=True, fill=True)
-        self.pack_start(self.questionbutton, expand=False)
+        self.pack_start(self.infolabel, True, True, 0)
+        self.pack_start(self.questionbutton, False, True, 0)
 
     def addErrors(self, *args):
         self.errors.append(args)
@@ -934,7 +932,7 @@ class InfoStub(gtk.HBox, Loggable):
         self.show_all()
 
 
-class Timeline(gtk.Table, Loggable, Zoomable):
+class Timeline(Gtk.Table, Loggable, Zoomable):
     """
     Initiate and manage the timeline's user interface components.
 
@@ -943,7 +941,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     """
 
     def __init__(self, instance, ui_manager):
-        gtk.Table.__init__(self, rows=2, columns=1, homogeneous=False)
+        Gtk.Table.__init__(self, rows=2, columns=1, homogeneous=False)
         Loggable.__init__(self)
         Zoomable.__init__(self)
         self.log("Creating Timeline")
@@ -956,7 +954,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._factories = None
         self._finish_drag = False
         self._createUI()
-        self._framerate = gst.Fraction(1, 1)
+        self._framerate = Gst.Fraction(1, 1)
         self._timeline = None
 
         # Used to insert sources at the end of the timeline
@@ -979,65 +977,67 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 self._snapDistanceChangedCb)
 
     def _createUI(self):
-        self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        self.leftSizeGroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         self.props.row_spacing = 2
         self.props.column_spacing = 2
-        self.hadj = gtk.Adjustment()
-        self.vadj = gtk.Adjustment()
+        self.hadj = Gtk.Adjustment()
+        self.vadj = Gtk.Adjustment()
 
         # zooming slider's "zoom fit" button
-        zoom_controls_hbox = gtk.HBox()
-        zoom_fit_btn = gtk.Button()
-        zoom_fit_btn.set_relief(gtk.RELIEF_NONE)
+        zoom_controls_hbox = Gtk.HBox()
+        zoom_fit_btn = Gtk.Button()
+        zoom_fit_btn.set_relief(Gtk.ReliefStyle.NONE)
         zoom_fit_btn.set_tooltip_text(ZOOM_FIT)
-        zoom_fit_icon = gtk.Image()
-        zoom_fit_icon.set_from_stock(gtk.STOCK_ZOOM_FIT, gtk.ICON_SIZE_BUTTON)
-        zoom_fit_btn_hbox = gtk.HBox()
-        zoom_fit_btn_hbox.pack_start(zoom_fit_icon, expand=False)
-        zoom_fit_btn_hbox.pack_start(gtk.Label(_("Zoom")), expand=False)
+        zoom_fit_icon = Gtk.Image()
+        zoom_fit_icon.set_from_stock(Gtk.STOCK_ZOOM_FIT, Gtk.IconSize.BUTTON)
+        zoom_fit_btn_hbox = Gtk.HBox()
+        zoom_fit_btn_hbox.pack_start(zoom_fit_icon, False, True, 0)
+        zoom_fit_btn_hbox.pack_start(Gtk.Label(_("Zoom")), False, True, 0)
         zoom_fit_btn.add(zoom_fit_btn_hbox)
         zoom_fit_btn.connect("clicked", self._zoomFitCb)
-        zoom_controls_hbox.pack_start(zoom_fit_btn, expand=False)
+        zoom_controls_hbox.pack_start(zoom_fit_btn, False, True, 0)
         # zooming slider
-        self._zoomAdjustment = gtk.Adjustment()
+        self._zoomAdjustment = Gtk.Adjustment()
         self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
         self._zoomAdjustment.connect("value-changed", self._zoomAdjustmentChangedCb)
         self._zoomAdjustment.props.lower = 0
         self._zoomAdjustment.props.upper = Zoomable.zoom_steps
-        zoomslider = gtk.HScale(self._zoomAdjustment)
+        zoomslider = Gtk.HScale(adjustment=self._zoomAdjustment)
         zoomslider.props.draw_value = False
         zoomslider.set_tooltip_text(_("Zoom Timeline"))
         zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
         zoomslider.set_size_request(100, 0)  # At least 100px wide for precision
-        zoom_controls_hbox.pack_start(zoomslider)
-        self.attach(zoom_controls_hbox, 0, 1, 0, 1, yoptions=0, xoptions=gtk.FILL)
+        zoom_controls_hbox.pack_start(zoomslider, True, True, 0)
+        self.attach(zoom_controls_hbox, 0, 1, 0, 1, yoptions=0, xoptions=Gtk.AttachOptions.FILL)
 
         # controls for tracks and layers
         self.controls = TimelineControls(self.app)
-        controlwindow = gtk.Viewport(None, None)
+        controlwindow = Gtk.Viewport(None, None)
         controlwindow.add(self.controls)
         controlwindow.set_size_request(-1, 1)
-        controlwindow.set_shadow_type(gtk.SHADOW_OUT)
-        scrolledwindow = gtk.ScrolledWindow()
+        controlwindow.set_shadow_type(Gtk.ShadowType.OUT)
+        scrolledwindow = Gtk.ScrolledWindow()
         scrolledwindow.add(controlwindow)
-        scrolledwindow.props.hscrollbar_policy = gtk.POLICY_NEVER
-        scrolledwindow.props.vscrollbar_policy = gtk.POLICY_ALWAYS
+        scrolledwindow.props.hscrollbar_policy = Gtk.PolicyType.NEVER
+        scrolledwindow.props.vscrollbar_policy = Gtk.PolicyType.ALWAYS
         scrolledwindow.props.vadjustment = self.vadj
         # We need ALWAYS policy for correct sizing, but we don't want the
         # scrollbar to be visible. Yay gtk3!
         scrollbar = scrolledwindow.get_vscrollbar()
+
         def scrollbar_show_cb(scrollbar):
             scrollbar.hide()
+
         scrollbar.connect("show", scrollbar_show_cb)
         scrollbar.hide()
-        self.attach(scrolledwindow, 0, 1, 1, 2, xoptions=gtk.FILL)
+        self.attach(scrolledwindow, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL)
 
         # timeline ruler
         self.ruler = ruler.ScaleRuler(self.app, self.hadj)
         self.ruler.set_size_request(0, 25)
         self.ruler.connect("key-press-event", self._keyPressEventCb)
-        rulerframe = gtk.Frame()
-        rulerframe.set_shadow_type(gtk.SHADOW_OUT)
+        rulerframe = Gtk.Frame()
+        rulerframe.set_shadow_type(Gtk.ShadowType.OUT)
         rulerframe.add(self.ruler)
         self.attach(rulerframe, 1, 2, 0, 1, yoptions=0)
 
@@ -1047,8 +1047,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.attach(self._canvas, 1, 2, 1, 2)
 
         # scrollbar
-        self._hscrollbar = gtk.HScrollbar(self.hadj)
-        self._vscrollbar = gtk.VScrollbar(self.vadj)
+        self._hscrollbar = Gtk.HScrollbar(self.hadj)
+        self._vscrollbar = Gtk.VScrollbar(self.vadj)
         self.attach(self._hscrollbar, 1, 2, 2, 3, yoptions=0)
         self.attach(self._vscrollbar, 2, 3, 1, 2, xoptions=0)
         self.hadj.connect("value-changed", self._updateScrollPosition)
@@ -1063,13 +1063,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # toolbar actions
         actions = (
-            ("ZoomIn", gtk.STOCK_ZOOM_IN, None,
+            ("ZoomIn", Gtk.STOCK_ZOOM_IN, None,
             "<Control>plus", ZOOM_IN, self._zoomInCb),
 
-            ("ZoomOut", gtk.STOCK_ZOOM_OUT, None,
+            ("ZoomOut", Gtk.STOCK_ZOOM_OUT, None,
             "<Control>minus", ZOOM_OUT, self._zoomOutCb),
 
-            ("ZoomFit", gtk.STOCK_ZOOM_FIT, None,
+            ("ZoomFit", Gtk.STOCK_ZOOM_FIT, None,
             "<Control>0", ZOOM_FIT, self._zoomFitCb),
 
             ("Screenshot", None, _("Export current frame..."),
@@ -1077,18 +1077,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                     "position as an image file."), self._screenshotCb),
 
             # Alternate keyboard shortcuts to the actions above
-            ("ControlEqualAccel", gtk.STOCK_ZOOM_IN, None,
+            ("ControlEqualAccel", Gtk.STOCK_ZOOM_IN, None,
             "<Control>equal", ZOOM_IN, self._zoomInCb),
 
-            ("ControlKPAddAccel", gtk.STOCK_ZOOM_IN, None,
+            ("ControlKPAddAccel", Gtk.STOCK_ZOOM_IN, None,
             "<Control>KP_Add", ZOOM_IN, self._zoomInCb),
 
-            ("ControlKPSubtractAccel", gtk.STOCK_ZOOM_OUT, None,
+            ("ControlKPSubtractAccel", Gtk.STOCK_ZOOM_OUT, None,
             "<Control>KP_Subtract", ZOOM_OUT, self._zoomOutCb),
         )
 
         selection_actions = (
-            ("DeleteObj", gtk.STOCK_DELETE, None,
+            ("DeleteObj", Gtk.STOCK_DELETE, None,
             "Delete", DELETE, self.deleteSelected),
 
             ("UnlinkObj", "pitivi-unlink", None,
@@ -1108,7 +1108,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         )
 
         playhead_actions = (
-            ("PlayPause", gtk.STOCK_MEDIA_PLAY, None,
+            ("PlayPause", Gtk.STOCK_MEDIA_PLAY, None,
             "space", _("Start Playback"), self.playPause),
 
             ("Split", "pitivi-split", _("Split"),
@@ -1124,15 +1124,15 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             "R", NEXTKEYFRAME, self._nextKeyframeCb),
         )
 
-        actiongroup = gtk.ActionGroup("timelinepermanent")
+        actiongroup = Gtk.ActionGroup("timelinepermanent")
         actiongroup.add_actions(actions)
         self.ui_manager.insert_action_group(actiongroup, 0)
 
-        self.selection_actions = gtk.ActionGroup("timelineselection")
+        self.selection_actions = Gtk.ActionGroup("timelineselection")
         self.selection_actions.add_actions(selection_actions)
         self.selection_actions.set_sensitive(False)
         self.ui_manager.insert_action_group(self.selection_actions, -1)
-        self.playhead_actions = gtk.ActionGroup("timelineplayhead")
+        self.playhead_actions = Gtk.ActionGroup("timelineplayhead")
         self.playhead_actions.add_actions(playhead_actions)
         self.ui_manager.insert_action_group(self.playhead_actions, -1)
 
@@ -1140,9 +1140,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # drag and drop
 
-        self._canvas.drag_dest_set(gtk.DEST_DEFAULT_MOTION | gtk.DEST_DEFAULT_HIGHLIGHT,
+        self._canvas.drag_dest_set(Gtk.DestDefaults.MOTION | Gtk.DestDefaults.HIGHLIGHT,
                                    [FILESOURCE_TARGET_ENTRY, EFFECT_TARGET_ENTRY],
-                                   gtk.gdk.ACTION_COPY)
+                                   Gdk.DragAction.COPY)
 
         self._canvas.drag_dest_add_text_targets()
 
@@ -1156,25 +1156,25 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _keyPressEventCb(self, unused_widget, event):
         kv = event.keyval
         self.debug("kv:%r", kv)
-        if kv not in [gtk.keysyms.Left, gtk.keysyms.Right]:
+        if kv not in [Gdk.KEY_Left, Gdk.KEY_Right]:
             return False
         mod = event.get_state()
         try:
-            if mod & gtk.gdk.CONTROL_MASK:
+            if mod & Gdk.ModifierType.CONTROL_MASK:
                 now = self._project.pipeline.getPosition()
-                ltime, rtime = self._project.timeline.edges.closest(now)
+                ltime, rtime = self._project.timeline.edGES.closest(now)
 
-            if kv == gtk.keysyms.Left:
-                if mod & gtk.gdk.SHIFT_MASK:
-                    self._seeker.seekRelative(0 - gst.SECOND)
-                elif mod & gtk.gdk.CONTROL_MASK:
+            if kv == Gdk.KEY_Left:
+                if mod & Gdk.ModifierType.SHIFT_MASK:
+                    self._seeker.seekRelative(0 - Gst.SECOND)
+                elif mod & Gdk.ModifierType.CONTROL_MASK:
                     self._seeker.seek(ltime + 1)
                 else:
                     self.app.current.pipeline.stepFrame(self._framerate, -1)
-            elif kv == gtk.keysyms.Right:
-                if mod & gtk.gdk.SHIFT_MASK:
-                    self._seeker.seekRelative(gst.SECOND)
-                elif mod & gtk.gdk.CONTROL_MASK:
+            elif kv == Gdk.KEY_Right:
+                if mod & Gdk.ModifierType.SHIFT_MASK:
+                    self._seeker.seekRelative(Gst.SECOND)
+                elif mod & Gdk.ModifierType.CONTROL_MASK:
                     self._seeker.seek(rtime + 1)
                 else:
                     self.app.current.pipeline.stepFrame(self._framerate, 1)
@@ -1196,7 +1196,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 focus = self._temp_objects[0]
                 if self._move_context is  None:
                     self._move_context = EditingContext(focus,
-                            self.timeline, ges.EDIT_MODE_NORMAL, ges.EDGE_NONE,
+                            self.timeline, GES.EditMode.EDIT_NORMAL, GES.Edge.EDGE_NONE,
                             set(self._temp_objects[1:]), self.app.settings)
 
                 self._move_temp_source(x, y)
@@ -1212,7 +1212,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         """
         self.debug("Drag leave")
         self._canvas.handler_block_by_func(self._dragMotionCb)
-        gobject.timeout_add(75, self._dragCleanUp, context)
+        GObject.timeout_add(75, self._dragCleanUp, context)
 
     def _dragCleanUp(self, context):
         """
@@ -1276,13 +1276,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 # Which means, it has the corresponding media_type
                 for tckobj in tlobj.get_track_objects():
                     track = tckobj.get_track()
-                    if track.get_property("track_type") == ges.TRACK_TYPE_AUDIO and \
+                    if track.get_property("track_type") == GES.TrackType.AUDIO and \
                             media_type == AUDIO_EFFECT or \
-                            track.get_property("track_type") == ges.TRACK_TYPE_VIDEO and \
+                            track.get_property("track_type") == GES.TrackType.VIDEO and \
                             media_type == VIDEO_EFFECT:
                         #Actually add the effect
                         self.app.action_log.begin("add effect")
-                        effect = ges.TrackParseLaunchEffect(bin_description=bin_desc)
+                        effect = GES.TrackParseLaunchEffect(bin_description=bin_desc)
                         tlobj.add_track_object(effect)
                         track.add_object(effect)
                         self.app.gui.clipconfig.effect_expander.updateAll()
@@ -1313,10 +1313,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Returns a list containing the full path and the mimetype if successful,
         returns none otherwise.
         """
-        chooser = gtk.FileChooserDialog(_("Save As..."), self.app.gui,
-            action=gtk.FILE_CHOOSER_ACTION_SAVE,
-            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-            gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+        chooser = Gtk.FileChooserDialog(_("Save As..."), self.app.gui,
+            action=Gtk.FileChooserAction.SAVE,
+            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
         chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled"))
@@ -1325,12 +1325,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         formats = {_("PNG image"): ["image/png", ("png",)],
             _("JPEG image"): ["image/jpeg", ("jpg", "jpeg")]}
         for format in formats:
-            filt = gtk.FileFilter()
+            filt = Gtk.FileFilter()
             filt.set_name(format)
             filt.add_mime_type(formats.get(format)[0])
             chooser.add_filter(filt)
         response = chooser.run()
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
             chosen_format = formats.get(filt.get_name())
             chosen_ext = chosen_format[1][0]
             chosen_mime = chosen_format[0]
@@ -1350,7 +1350,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         layers = self.timeline.get_layers()
 
         if (len(layers) == 0):
-            layer = ges.TimelineLayer()
+            layer = GES.TimelineLayer()
             layer.props.auto_transition = True
             self.timeline.add_layer(layer)
             layers = [layer]
@@ -1381,12 +1381,12 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         for uri in self.app.gui.medialibrary.getSelectedItems():
             info = self._project.medialibrary.getInfoFromUri(uri)
-            src = ges.TimelineFileSource(uri=uri)
+            src = GES.TimelineFileSource(uri=uri)
             src.props.start = duration
             # Set image duration
             # FIXME: after GES Materials are merged, check if image instead
             if src.props.duration == 0:
-                src.set_duration(long(self._settings.imageClipLength) * gst.SECOND / 1000)
+                src.set_duration(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
             duration += info.get_duration()
             layer.add_object(src)
             id = src.connect("track-object-added", self._trackObjectsCreatedCb, src, x, y)
@@ -1398,7 +1398,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         # TrackObject-s creation is short enough so we are all good when the
         # first TrackObject is added to the TimelineObject
         if tlobj.is_image():
-            tlobj.set_duration(long(self._settings.imageClipLength) * gst.SECOND / 1000)
+            tlobj.set_duration(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
         self._temp_objects.insert(0, tlobj)
         tlobj.disconnect(self._creating_tckobjs_sigid[tlobj])
         del self._creating_tckobjs_sigid[tlobj]
@@ -1415,30 +1415,30 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 ## Zooming and Scrolling
 
     def _scrollEventCb(self, canvas, event):
-        if event.state & gtk.gdk.SHIFT_MASK:
+        if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
             # shift + scroll => vertical (up/down) scroll
-            if event.direction == gtk.gdk.SCROLL_UP:
+            if event.direction == Gdk.ScrollDirection.UP:
                 self.scroll_up()
-            elif event.direction == gtk.gdk.SCROLL_DOWN:
+            elif event.direction == Gdk.ScrollDirection.DOWN:
                 self.scroll_down()
-            event.state &= ~gtk.gdk.SHIFT_MASK
-        elif event.state & gtk.gdk.CONTROL_MASK:
+            event.props.state &= ~Gdk.SHIFT_MASK
+        elif event.get_state() & Gdk.ModifierType.CONTROL_MASK:
             # zoom + scroll => zooming (up: zoom in)
-            if event.direction == gtk.gdk.SCROLL_UP:
+            if event.direction == Gdk.ScrollDirection.UP:
                 Zoomable.zoomIn()
                 self.log("Setting 'zoomed_fitted' to False")
                 self.zoomed_fitted = False
                 return True
-            elif event.direction == gtk.gdk.SCROLL_DOWN:
+            elif event.direction == Gdk.ScrollDirection.DOWN:
                 Zoomable.zoomOut()
                 self.log("Setting 'zoomed_fitted' to False")
                 self.zoomed_fitted = False
                 return True
             return False
         else:
-            if event.direction == gtk.gdk.SCROLL_UP:
+            if event.direction == Gdk.ScrollDirection.UP:
                 self.scroll_left()
-            elif event.direction == gtk.gdk.SCROLL_DOWN:
+            elif event.direction == Gdk.ScrollDirection.DOWN:
                 self.scroll_right()
         return True
 
@@ -1476,9 +1476,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _zoomSliderScrollCb(self, unused_widget, event):
         value = self._zoomAdjustment.get_value()
-        if event.direction in [gtk.gdk.SCROLL_UP, gtk.gdk.SCROLL_RIGHT]:
+        if event.direction in [Gdk.ScrollDirection.UP, Gdk.ScrollDirection.RIGHT]:
             self._zoomAdjustment.set_value(value + 1)
-        elif event.direction in [gtk.gdk.SCROLL_DOWN, gtk.gdk.SCROLL_LEFT]:
+        elif event.direction in [Gdk.ScrollDirection.DOWN, Gdk.ScrollDirection.LEFT]:
             self._zoomAdjustment.set_value(value - 1)
 
     def zoomChanged(self):
@@ -1511,7 +1511,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def positionChangedCb(self, seeker, position):
         self.ruler.timelinePositionChanged(position)
         self._canvas.timelinePositionChanged(position)
-        if self.app.current.pipeline.getState() == gst.STATE_PLAYING:
+        if self.app.current.pipeline.getState() == Gst.State.PLAYING:
             self.scrollToPlayhead()
 
     def scrollToPlayhead(self):
@@ -1532,7 +1532,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         if position > self.hadj.props.upper:
             # we can't perform the scroll because the canvas needs to be
             # updated
-            gobject.idle_add(self._scrollToPosition, position)
+            GObject.idle_add(self._scrollToPosition, position)
         else:
             self._scrollToPosition(position)
 
@@ -1550,18 +1550,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         Set the zoom level so that the entire timeline is in view.
         """
         ruler_width = self.ruler.get_allocation().width
-        # Add gst.SECOND - 1 to the timeline duration to make sure the
+        # Add Gst.SECOND - 1 to the timeline duration to make sure the
         # last second of the timeline will be in view.
         duration = self.timeline.get_duration()
         if duration == 0:
             self.debug("The timeline duration is 0, impossible to calculate zoom")
             return
 
-        timeline_duration = duration + gst.SECOND - 1
-        timeline_duration_s = int(timeline_duration / gst.SECOND)
+        timeline_duration = duration + Gst.SECOND - 1
+        timeline_duration_s = int(timeline_duration / Gst.SECOND)
 
         self.debug("duration: %s, timeline duration: %s" % (duration,
-           gst.TIME_ARGS(timeline_duration)))
+           print_ns(timeline_duration)))
 
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
@@ -1866,7 +1866,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def insertEnd(self, sources):
         """
         Add source at the end of the timeline
-        @type sources: An L{ges.TimelineSource}
+        @type sources: An L{GES.TimelineSource}
         @param x2: A list of sources to add to the timeline
         """
         self.app.action_log.begin("add clip")
@@ -1885,7 +1885,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             # We need to wait (100ms is enoug for sure) for TrackObject-s to
             # be added to the Tracks
             # FIXME remove this "hack" when Materials are merged
-            glib.timeout_add(100, self._finalizeSourceAdded)
+            GObject.timeout_add(100, self._finalizeSourceAdded)
             self.app.action_log.commit()
 
             # Update zoom level if needed
@@ -1907,7 +1907,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # Set the duration of the clip if it is an image
         if hasattr(source,"is_image") and source.is_image():
-            source.set_duration(long(self._settings.imageClipLength) * gst.SECOND / 1000)
+            source.set_duration(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
 
         # Handle the case where we just inserted the first clip
         if len(layer.get_objects()) == 1:

@@ -22,8 +22,8 @@
 import os.path
 from unittest import TestCase
 
-import gobject
-import gst
+from gi.repository import GObject
+from gi.repository import Gst
 
 import common
 
@@ -40,18 +40,18 @@ from pitivi.pipeline import Pipeline
 
 
 class TestStillImage(TestCase):
-    clip_duration = 3 * gst.SECOND
+    clip_duration = 3 * Gst.SECOND
 
     def setUp(self):
-        self.mainloop = gobject.MainLoop()
+        self.mainloop = GObject.MainLoop()
 
         samples = os.path.join(os.path.dirname(__file__), "samples")
         self.facs = []
-        self.facs.append([PictureFileSourceFactory('file://' + os.path.join(samples, "flat_colour1_640x480.png")), VideoStream(gst.Caps("video/x-raw-rgb,bpp=(int)24,depth=(int)24,endianness=(int)4321,red_mask=(int)16711680,green_mask=(int)65280,blue_mask=(int)255"))])
-        self.facs.append([PictureFileSourceFactory('file://' + os.path.join(samples, "flat_colour2_640x480.png")), VideoStream(gst.Caps("video/x-raw-rgb,bpp=(int)24,depth=(int)24,endianness=(int)4321,red_mask=(int)16711680,green_mask=(int)65280,blue_mask=(int)255"))])
-        self.facs.append([PictureFileSourceFactory('file://' + os.path.join(samples, "flat_colour3_320x180.png")), VideoStream(gst.Caps("video/x-raw-rgb,bpp=(int)24,depth=(int)24,endianness=(int)4321,red_mask=(int)16711680,green_mask=(int)65280,blue_mask=(int)255"))])
+        self.facs.append([PictureFileSourceFactory('file://' + os.path.join(samples, "flat_colour1_640x480.png")), VideoStream(Gst.Caps("video/x-raw-rgb,bpp=(int)24,depth=(int)24,endianness=(int)4321,red_mask=(int)16711680,green_mask=(int)65280,blue_mask=(int)255"))])
+        self.facs.append([PictureFileSourceFactory('file://' + os.path.join(samples, "flat_colour2_640x480.png")), VideoStream(Gst.Caps("video/x-raw-rgb,bpp=(int)24,depth=(int)24,endianness=(int)4321,red_mask=(int)16711680,green_mask=(int)65280,blue_mask=(int)255"))])
+        self.facs.append([PictureFileSourceFactory('file://' + os.path.join(samples, "flat_colour3_320x180.png")), VideoStream(Gst.Caps("video/x-raw-rgb,bpp=(int)24,depth=(int)24,endianness=(int)4321,red_mask=(int)16711680,green_mask=(int)65280,blue_mask=(int)255"))])
         # one video with a different resolution
-        self.facs.append([VideoTestSourceFactory(), VideoStream(gst.Caps('video/x-raw-yuv,width=(int)640,height=(int)480,format=(fourcc)I420'))])
+        self.facs.append([VideoTestSourceFactory(), VideoStream(Gst.Caps('video/x-raw-yuv,width=(int)640,height=(int)480,format=(fourcc)I420'))])
 
         # configure durations and add output streams to factories
         for fac in self.facs:

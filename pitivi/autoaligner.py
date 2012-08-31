@@ -24,11 +24,11 @@
 Classes for automatic alignment of L{TimelineObject}s
 """
 
-import gobject
-import gst
+from gi.repository import GObject
+from gi.repository import Gst
 import array
 import time
-import gtk
+from gi.repository import Gtk
 import os
 
 
@@ -374,7 +374,7 @@ class ProgressAggregator(ProgressMeter):
 
         def cb(thusfar):
             self._portions[i] = thusfar
-            gobject.idle_add(self._callForward)
+            GObject.idle_add(self._callForward)
         return cb
 
     def addWatcher(self, function):
@@ -382,7 +382,7 @@ class ProgressAggregator(ProgressMeter):
 
     def _callForward(self):
         # This function always returns False so that it may be safely
-        # invoked via gobject.idle_add(). Use of idle_add() is necessary
+        # invoked via GObject.idle_add(). Use of idle_add() is necessary
         # to ensure that watchers are always called from the main thread,
         # even if progress updates are received from other threads.
         total_target = sum(self._targets)
@@ -393,7 +393,7 @@ class ProgressAggregator(ProgressMeter):
         now = time.time()
         remaining = (now - self._start) * (1 - frac) / frac
         for function in self._watchers:
-            function(frac, beautify_ETA(int(remaining * gst.SECOND)))
+            function(frac, beautify_ETA(int(remaining * Gst.SECOND)))
         return False
 
 
@@ -585,13 +585,13 @@ class AutoAligner(Loggable):
                 # numsamples is the total number of samples in the track,
                 # which is used by progress_aggregator to determine
                 # the percent completion.
-                numsamples = ((audiotrack.duration / gst.SECOND) *
+                numsamples = ((audiotrack.duration / Gst.SECOND) *
                               audiotrack.stream.rate)
                 extractee.addWatcher(
                         progress_aggregator.getPortionCB(numsamples))
                 self._extraction_stack.append((audiotrack, extractee))
             # After we return, start the extraction cycle.
-            # This gobject.idle_add call should not be necessary;
+            # This GObject.idle_add call should not be necessary;
             # we should be able to invoke _extractNextEnvelope directly
             # here.  However, there is some as-yet-unexplained
             # race condition between the Python GIL, GTK UI updates,
@@ -599,10 +599,10 @@ class AutoAligner(Loggable):
             # occasional deadlocks during autoalignment.
             # This call to idle_add() reportedly eliminates the deadlock.
             # No one knows why.
-            gobject.idle_add(self._extractNextEnvelope)
+            GObject.idle_add(self._extractNextEnvelope)
         else:  # We can't do anything without at least two audio tracks
             # After we return, call the callback function (once)
-            gobject.idle_add(call_false, self._callback)
+            GObject.idle_add(call_false, self._callback)
         return progress_aggregator
 
     def _chooseReference(self):
@@ -636,7 +636,7 @@ class AutoAligner(Loggable):
         offsets = rigidalign(reference_envelope, envelopes)
         for (movable, envelope), offset in zip(pairs, offsets):
             # tshift is the offset rescaled to units of nanoseconds
-            tshift = int((offset * gst.SECOND) / self.BLOCKRATE)
+            tshift = int((offset * Gst.SECOND) / self.BLOCKRATE)
             self.debug("Shifting %s to %i ns from %i",
                        movable, tshift, reference.start)
             newstart = reference.start + tshift
@@ -658,7 +658,7 @@ class AlignmentProgressDialog:
         (read-only, no buttons)."""
 
     def __init__(self, app):
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
                                    "alignmentprogress.ui"))
         self.builder.connect_signals(self)
@@ -671,7 +671,7 @@ class AlignmentProgressDialog:
         # taken from RenderingProgressDialog.  In both cases, it appears
         # to work correctly, although there is a known bug for Gnome 3 in
         # RenderingProgressDialog (bug #652917)
-        self.window.set_transient_for(app.gui)
+        self.set_transient_for(app.gui)
 
         # UI widgets
         # We currently reuse the render icon for this dialog.

@@ -79,7 +79,7 @@ class RippleUpdateGroup(object):
         """Add a widget to the list of vertexes.
 
         @param widget: The vertex to be added.
-        @type widget: gtk.Widget
+        @type widget: Gtk.Widget
         @param signal: A signal of the widget to be monitored.
         @type signal: str
         @param update_func: A callable object called when the vertex is visited.
@@ -96,9 +96,9 @@ class RippleUpdateGroup(object):
         """Add a directional edge from widget_a to widget_b.
 
         @param widget_a: The source vertex.
-        @type widget_a: gtk.Widget
+        @type widget_a: Gtk.Widget
         @param widget_b: The target vertex.
-        @type widget_b: gtk.Widget
+        @type widget_b: Gtk.Widget
         @param predicate: A callable object returning whether the edge may be
             traversed.
         @type predicate: function

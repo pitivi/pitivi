@@ -22,13 +22,15 @@
 """
 Handle the creation, caching and display of thumbnails in the timeline.
 """
-
-import ges
-import gst
 import os
 import cairo
-import gobject
-import goocanvas
+
+from gi.repository import GES
+from gi.repository import Gst
+from gi.repository import GstBase
+from gi.repository import GooCanvas
+from gi.repository import GObject
+
 import collections
 import array
 import sqlite3
@@ -59,7 +61,7 @@ GlobalSettings.addConfigOption("thumbnailSpacingHint",
 GlobalSettings.addConfigOption("thumbnailPeriod",
     section="thumbnailing",
     key="thumbnail-period",
-    default=gst.SECOND,
+    default=Gst.SECOND,
     notify=True)
 
 PreferencesDialog.addNumericPreference("thumbnailSpacingHint",
@@ -76,14 +78,14 @@ PreferencesDialog.addChoicePreference("thumbnailPeriod",
         # are not supported by ngettext and their plurality is ambiguous
         # in many languages.
         # See http://www.gnu.org/software/hello/manual/gettext/Plural-forms.html
-        (_("1/100 second"), gst.SECOND / 100),
-        (_("1/10 second"), gst.SECOND / 10),
-        (_("1/4 second"), gst.SECOND / 4),
-        (_("1/2 second"), gst.SECOND / 2),
-        (_("1 second"), gst.SECOND),
-        (_("5 seconds"), 5 * gst.SECOND),
-        (_("10 seconds"), 10 * gst.SECOND),
-        (_("minute"), 60 * gst.SECOND)),
+        (_("1/100 second"), Gst.SECOND / 100),
+        (_("1/10 second"), Gst.SECOND / 10),
+        (_("1/4 second"), Gst.SECOND / 4),
+        (_("1/2 second"), Gst.SECOND / 2),
+        (_("1 second"), Gst.SECOND),
+        (_("5 seconds"), 5 * Gst.SECOND),
+        (_("10 seconds"), 10 * Gst.SECOND),
+        (_("minute"), 60 * Gst.SECOND)),
     description=_("The interval, in seconds, between thumbnails."))
 
 # this default works out to a maximum of ~ 1.78 MiB per factory, assuming:
@@ -134,7 +136,7 @@ class ThumbnailCache(object):
 
     def __init__(self, uri, size=100):
         object.__init__(self)
-        self.hash = utils.misc.hash_file(gst.uri_get_location(uri))
+        self.hash = utils.misc.hash_file(Gst.uri_get_location(uri))
         self.cache = {}
         self.queue = collections.deque()
         dbfile = os.path.join(settings.get_dir(os.path.join(settings.xdg_cache_home(), "thumbs")), self.hash)
@@ -211,11 +213,11 @@ def get_preview_for_object(instance, trackobject):
         # TODO: handle non-source factories
         # Note that we switch on the track_type, but we hash on the uri
         # itself.
-        if track_type == ges.TRACK_TYPE_AUDIO:
+        if track_type == GES.TrackType.AUDIO:
             # FIXME: RandomAccessAudioPreviewer doesn't work yet
             # previewers[key] = RandomAccessAudioPreviewer(instance, uri)
             previewers[key] = DefaultPreviewer(instance, uri)
-        elif track_type == ges.TRACK_TYPE_VIDEO:
+        elif track_type == GES.TrackType.VIDEO:
             if trackobject.get_timeline_object().is_image():
                 previewers[key] = StillImagePreviewer(instance, uri)
             else:
@@ -282,7 +284,7 @@ class RandomAccessPreviewer(Previewer):
         Previewer.__init__(self, instance, uri)
         self._queue = []
 
-        bin = gst.element_factory_make("playbin")
+        bin = Gst.ElementFactory.make("playbin", None)
         bin.props.uri = uri
 
         # assume 50 pixel height
@@ -451,17 +453,17 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         self.tstep = Zoomable.pixelToNsAt(self.twidth, Zoomable.max_zoom)
 
         if self.framerate.num:
-            frame_duration = (gst.SECOND * self.framerate.denom) / self.framerate.num
+            frame_duration = (Gst.SECOND * self.framerate.denom) / self.framerate.num
             self.tstep = max(frame_duration, self.tstep)
 
     def bus_handler(self, unused_bus, message):
         # set the scaling method of the videoscale element to Lanczos
         element = message.src
-        if isinstance(element, gst.Element):
+        if isinstance(element, Gst.Element):
             factory = element.get_factory()
             if factory and "GstVideoScale" == factory.get_element_type().name:
                 element.props.method = 3
-        return gst.BUS_PASS
+        return Gst.BUS_PASS
 
     def _pipelineInit(self, factory, sbin):
         """
@@ -477,28 +479,28 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         # Use a capsfilter to scale the video to the desired size
         # (fixed height and par, variable width)
         type = "video/x-raw, height=(int)%d, pixel-aspect-ratio=(fraction)1/1" % self.theight
-        caps = gst.caps_from_string(type)
-        capsfilter = gst.element_factory_make("capsfilter", "thumbnailcapsfilter")
+        caps = Gst.caps_from_string(type)
+        capsfilter = Gst.ElementFactory.make("capsfilter", "thumbnailcapsfilter")
         capsfilter.props.caps = caps
         cairosink = CairoSurfaceThumbnailSink()
         cairosink.connect("thumbnail", self._thumbnailCb)
 
         # Set up the thumbnailsink and add a sink pad
-        thumbnailsink = gst.Bin(name="thumbnailsink")
+        thumbnailsink = Gst.Bin(name="thumbnailsink")
         thumbnailsink.add(capsfilter)
         thumbnailsink.add(cairosink)
         capsfilter.link(cairosink)
-        sinkpad = gst.GhostPad.new(name="sink", target=(thumbnailsink.find_unlinked_pad(gst.PAD_SINK)))
+        sinkpad = Gst.GhostPad.new(name="sink", target=(thumbnailsink.find_unlinked_pad(Gst.PadDirection.SINK)))
         thumbnailsink.add_pad(sinkpad)
 
         # Connect sbin and thumbnailsink
         self.videopipeline.props.video_sink = thumbnailsink
 
-        self.videopipeline.set_state(gst.STATE_PAUSED)
+        self.videopipeline.set_state(Gst.State.PAUSED)
         # Wait for the pipeline to be prerolled so we can check the width
         # that the thumbnails will have and set the aspect ratio accordingly
         # as well as getting the framerate of the video:
-        if gst.STATE_CHANGE_SUCCESS == self.videopipeline.get_state(0)[0]:
+        if Gst.StateChangeReturn.SUCCESS == self.videopipeline.get_state(0)[0]:
             neg_caps = sinkpad.get_negotiated_caps()[0]
             self.aspect = neg_caps["width"] / float(self.theight)
             self.framerate = neg_caps["framerate"]
@@ -507,21 +509,21 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
             # correct values. Set sane defaults (this should never happen)
             self.warning("Couldn't preroll the pipeline")
             self.aspect = 16.0 / 9
-            self.framerate = gst.Fraction(24, 1)
+            self.framerate = Gst.Fraction(24, 1)
 
     def _segment_for_time(self, time):
         # quantize thumbnail timestamps to maximum granularity
         return utils.misc.quantize(time, self.tperiod)
 
     def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
-        gobject.idle_add(self._finishThumbnail, pixbuf, timestamp)
+        GObject.idle_add(self._finishThumbnail, pixbuf, timestamp)
 
     def _startThumbnail(self, timestamp):
         RandomAccessPreviewer._startThumbnail(self, timestamp)
         return self.videopipeline.seek(1.0,
-            gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
-            gst.SEEK_TYPE_SET, timestamp,
-            gst.SEEK_TYPE_NONE, -1)
+            Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
+            Gst.SeekType.SET, timestamp,
+            Gst.SeekType.NONE, -1)
 
     def _connectSettings(self, settings):
         RandomAccessPreviewer._connectSettings(self, settings)
@@ -548,7 +550,7 @@ class StillImagePreviewer(RandomAccessVideoPreviewer):
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def __init__(self, instance, uri):
-        self.tdur = 30 * gst.SECOND
+        self.tdur = 30 * Gst.SECOND
         self.base_width = int(Zoomable.max_zoom)
         RandomAccessPreviewer.__init__(self, instance, uri)
 
@@ -560,7 +562,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         self.spacing = 0
 
         self.audioSink = ArraySink()
-        conv = gst.element_factory_make("audioconvert")
+        conv = Gst.ElementFactory.make("audioconvert", None)
         self.audioPipeline = utils.pipeline({
             sbin: conv,
             conv: self.audioSink,
@@ -571,7 +573,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         bus.connect("message::error", self._busMessageErrorCb)
 
         self._audio_cur = None
-        self.audioPipeline.set_state(gst.STATE_PAUSED)
+        self.audioPipeline.set_state(Gst.State.PAUSED)
 
     def _spacing(self):
         return 0
@@ -588,19 +590,19 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         error, debug = message.parse_error()
         self.error("Event bus error: %s: %s", str(error), str(debug))
 
-        return gst.BUS_PASS
+        return Gst.BUS_PASS
 
     def _startThumbnail(self, (timestamp, duration)):
         RandomAccessPreviewer._startThumbnail(self, (timestamp, duration))
         self._audio_cur = timestamp, duration
         res = self.audioPipeline.seek(1.0,
-            gst.FORMAT_TIME,
-            gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE | gst.SEEK_FLAG_SEGMENT,
-            gst.SEEK_TYPE_SET, timestamp,
-            gst.SEEK_TYPE_SET, timestamp + duration)
+            Gst.FORMAT_TIME,
+            Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE | Gst.SeekFlags.SEGMENT,
+            Gst.SeekType.SET, timestamp,
+            Gst.SeekType.SET, timestamp + duration)
         if not res:
             self.warning("seek failed %s", timestamp)
-        self.audioPipeline.set_state(gst.STATE_PLAYING)
+        self.audioPipeline.set_state(Gst.State.PLAYING)
 
         return res
 
@@ -624,7 +626,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
             cr.fill()
             surfaces.append(scaled)
         surfaces.append(surface)
-        gobject.idle_add(self._finishThumbnail, surfaces, self._audio_cur)
+        GObject.idle_add(self._finishThumbnail, surfaces, self._audio_cur)
 
     def _plotWaveform(self, cr, base_width):
         # clear background
@@ -703,24 +705,24 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         self.emit("update", None)
 
 
-class CairoSurfaceThumbnailSink(gst.BaseSink):
+class CairoSurfaceThumbnailSink(GstBase.BaseSink):
     """
     GStreamer thumbnailing sink element.
 
-    Can be used in pipelines to generates gtk.gdk.Pixbuf automatically.
+    Can be used in pipelines to generates GdkPixbuf.Pixbuf automatically.
     """
 
     __gsignals__ = {
-        "thumbnail": (gobject.SIGNAL_RUN_LAST,
-                      gobject.TYPE_NONE,
-                      (gobject.TYPE_PYOBJECT, gobject.TYPE_UINT64))
+        "thumbnail": (GObject.SignalFlags.RUN_LAST,
+                      None,
+                      (GObject.TYPE_PYOBJECT, GObject.TYPE_UINT64))
         }
 
     __gsttemplates__ = (
-        gst.PadTemplate.new("sink",
-                         gst.PAD_SINK,
-                         gst.PAD_ALWAYS,
-                         gst.caps_from_string("video/x-raw,"
+        Gst.PadTemplate.new("sink",
+                         Gst.PadDirection.SINK,
+                         Gst.PadPresence.ALWAYS,
+                         Gst.caps_from_string("video/x-raw,"
                                   "bpp = (int) 32, depth = (int) 32,"
                                   "endianness = (int) BIG_ENDIAN,"
                                   "alpha_mask = (int) %i, "
@@ -737,7 +739,7 @@ class CairoSurfaceThumbnailSink(gst.BaseSink):
         )
 
     def __init__(self):
-        gst.BaseSink.__init__(self)
+        GstBase.BaseSink.__init__(self)
         self._width = 1
         self._height = 1
         self.set_sync(False)
@@ -752,8 +754,7 @@ class CairoSurfaceThumbnailSink(gst.BaseSink):
         return True
 
     def do_render(self, buf):
-        self.log("buffer %s %d" % (gst.TIME_ARGS(buf.timestamp),
-                                   len(buf.data)))
+        self.log("buffer %s %d" % (buf.timestamp, len(buf.data)))
         b = array.array("b")
         b.fromstring(buf)
         pixb = cairo.ImageSurface.create_for_data(b,
@@ -767,12 +768,12 @@ class CairoSurfaceThumbnailSink(gst.BaseSink):
             self.width * 4)
 
         self.emit("thumbnail", pixb, buf.timestamp)
-        return gst.FLOW_OK
+        return Gst.FLOW_OK
 
     def do_preroll(self, buf):
         return self.do_render(buf)
 
-gobject.type_register(CairoSurfaceThumbnailSink)
+GObject.type_register(CairoSurfaceThumbnailSink)
 
 
 def between(a, b, c):
@@ -780,7 +781,7 @@ def between(a, b, c):
 
 
 def intersect(b1, b2):
-    bounds = goocanvas.CanvasBounds()
+    bounds = GooCanvas.CanvasBounds()
     bounds.x1 = max(b1.x1, b2.x1)
     bounds.y1 = max(b1.y1, b2.y1)
     bounds.x2 = min(b1.x2, b2.x2)
@@ -788,7 +789,7 @@ def intersect(b1, b2):
     return bounds
 
 
-class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
+class Preview(GooCanvas.CanvasItemSimple, GooCanvas.CanvasItem, Zoomable):
 
     """
     Custom canvas item for timeline object previews. This code is just a thin
@@ -816,7 +817,7 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
     def _set_height(self, value):
         self._height = value
         self.changed(True)
-    height = gobject.property(_get_height, _set_height, type=float)
+    height = GObject.property(_get_height, _set_height, type=float)
 
 ## element callbacks
 
@@ -848,13 +849,13 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
     def zoomChanged(self):
         self.changed(True)
 
-## goocanvas item methods
+## GooCanvas item methods
 
     def do_simple_update(self, cr):
         cr.identity_matrix()
         if issubclass(self.previewer.__class__, RandomAccessPreviewer):
             border_width = self.previewer._spacing()
-            self.boundz = goocanvas.CanvasBounds()
+            self.boundz = GooCanvas.CanvasBounds()
             self.boundz.x1 = border_width
             self.boundz.x2 = max(0, Zoomable.nsToPixel(self.element.get_duration()))
             self.boundz.y1 = 4

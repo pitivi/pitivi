@@ -24,7 +24,7 @@ class BaseDogTail(unittest.TestCase):
         # making the tests take ages to start up.
         self.pid = run('bin/pitivi', dumb=False, appName="pitivi")
         self.pitivi = root.application('pitivi')
-        self.menubar = self.pitivi.child(roleName='menu bar')
+        self.menubar = self.pitivi.get_child()(roleName='menu bar')
         try:
             self.unlink
         except AttributeError:
@@ -36,7 +36,7 @@ class BaseDogTail(unittest.TestCase):
         else:
             proj_menu = self.menubar.menu("Project")
             proj_menu.click()
-            proj_menu.child("Quit").click()
+            proj_menu.get_child()("Quit").click()
         if clean:
             for filename in self.unlink:
                 try:

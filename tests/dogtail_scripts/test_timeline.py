@@ -10,7 +10,7 @@ from pyatspi import (KEY_SYM, KEY_PRESS, KEY_PRESSRELEASE, KEY_RELEASE)
 class TimelineTest(HelpFunc):
     def setUp(self):
         super(TimelineTest, self).setUp()
-        self.nextb = self.pitivi.child(name="Next", roleName="push button")
+        self.nextb = self.pitivi.get_child()(name="Next", roleName="push button")
 
     def help_test_insertEnd(self):
         sample = self.import_media()
@@ -84,16 +84,16 @@ class TimelineTest(HelpFunc):
         adj = (float)(timeline.size[0]) / 883
 
         dogtail.rawinput.click(timeline.position[0] + 500 * adj, timeline.position[1] + 50)
-        self.pitivi.child(name="Split", roleName="push button").click()
+        self.pitivi.get_child()(name="Split", roleName="push button").click()
         dogtail.rawinput.click(timeline.position[0] + 450 * adj, timeline.position[1] + 50)
-        self.pitivi.child(name="Delete", roleName="push button").click()
+        self.pitivi.get_child()(name="Delete", roleName="push button").click()
 
         self.nextb.click()
         self.assertEqual(seektime.text, "0:00:02.455")
 
         dogtail.rawinput.click(timeline.position[0] + 550 * adj, timeline.position[1] + 50)
         dogtail.rawinput.pressKey("Del")
-        #self.pitivi.child(name="Delete", roleName="push button").click()
+        #self.pitivi.get_child()(name="Delete", roleName="push button").click()
 
         self.nextb.click()
         self.assertEqual(seektime.text, "0:00:01.227")
@@ -113,7 +113,7 @@ class TimelineTest(HelpFunc):
                 sleep(0.1)
                 dogtail.rawinput.pressKey("s")
                 #Just search some object to look if it still alive
-                self.pitivi.child(roleName="icon")
+                self.pitivi.get_child()(roleName="icon")
 
     def test_transition(self):
         self.help_test_insertEndFast()
@@ -136,12 +136,12 @@ class TimelineTest(HelpFunc):
         sleep(1)
         dogtail.rawinput.click(tpos[0] + 250 * adj, tpos[1] + 50)
         #Check if we selected transition
-        transitions = self.pitivi.child(name="Transitions", roleName="page tab")
-        iconlist = transitions.child(roleName="layered pane")
+        transitions = self.pitivi.get_child()(name="Transitions", roleName="page tab")
+        iconlist = transitions.get_child()(roleName="layered pane")
         self.assertTrue(iconlist.sensitive)
         iconlist.children[-2].select()
-        self.assertTrue(transitions.child(roleName="slider").sensitive)
-        transitions.child(roleName="slider").value = 50
+        self.assertTrue(transitions.get_child()(roleName="slider").sensitive)
+        transitions.get_child()(roleName="slider").value = 50
 
     def search_clip_end(self, y, seek, timeline):
         minx = timeline.position[0] + 10.
@@ -187,7 +187,7 @@ class TimelineTest(HelpFunc):
         conftab = self.pitivi.tab("Clip configuration")
         conftab.click()
         center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
-        table = conftab.child(roleName="table")
+        table = conftab.get_child()(roleName="table")
         icon = self.search_by_text("Agingtv ", tab, roleName="icon")
         self.improved_drag(center(icon), center(table))
         self.nextb.click()

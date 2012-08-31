@@ -1,7 +1,7 @@
 import unittest
 import cairo
 import tempfile
-import gst
+from gi.repository import Gst
 import os
 
 from urllib import unquote
@@ -18,7 +18,7 @@ class ThumbnailsCacheTest(TestCase):
     """
     def setUp(self):
         self.tmpfile = tempfile.NamedTemporaryFile()
-        self.uri = unquote(gst.uri_construct("file", self.tmpfile.name))
+        self.uri = unquote(Gst.uri_construct("file", self.tmpfile.name))
         self.hash = hash_file(self.tmpfile.name)
 
     def tearDown(self):

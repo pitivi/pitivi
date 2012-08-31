@@ -22,7 +22,7 @@
 
 from gi.repository import Gtk
 from gi.repository import Gdk
-import ges
+from gi.repository import GES
 from gi.repository import GObject
 
 from gettext import gettext as _
@@ -68,8 +68,8 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         self.sep = SpacedSeparator()
         self.pack_start(self.sep, True, True, 0)
 
-        icon_mapping = {ges.TRACK_TYPE_AUDIO: "audio-x-generic",
-                        ges.TRACK_TYPE_VIDEO: "video-x-generic"}
+        icon_mapping = {GES.TrackType.AUDIO: "audio-x-generic",
+                        GES.TrackType.VIDEO: "video-x-generic"}
 
         # Folding button
         # TODO use images
@@ -111,9 +111,9 @@ class BaseLayerControl(Gtk.VBox, Loggable):
 
         # Upper bar
         upper = Gtk.HBox()
-        upper.pack_start(self.name_entry, True, True)
-        upper.pack_start(self.solo_button, False, False)
-        upper.pack_start(visible_option, False, False)
+        upper.pack_start(self.name_entry, True, True, 0)
+        upper.pack_start(self.solo_button, False, False, 0)
+        upper.pack_start(visible_option, False, False, 0)
 
         # Lower bar
         self.lower_hbox = Gtk.HBox()
@@ -293,19 +293,19 @@ class VideoLayerControl(BaseLayerControl):
     __gtype_name__ = 'VideoLayerControl'
 
     def __init__(self, app, layer):
-        BaseLayerControl.__init__(self, app, layer, ges.TRACK_TYPE_VIDEO)
+        BaseLayerControl.__init__(self, app, layer, GES.TrackType.VIDEO)
 
         opacity = Gtk.Label(label=_("Opacity:"))
 
         # Opacity scale
         opacity_adjust = Gtk.Adjustment(value=100, upper=100, step_incr=5, page_incr=10)
-        opacity_scale = Gtk.HScale(opacity_adjust)
+        opacity_scale = Gtk.HScale(adjustment=opacity_adjust)
         opacity_scale.set_value_pos(Gtk.PositionType.LEFT)
         opacity_scale.set_digits(0)
         opacity_scale.set_tooltip_text(_("Change video opacity"))
 
-        self.lower_hbox.pack_start(opacity, False, False)
-        self.lower_hbox.pack_start(opacity_scale, True, True)
+        self.lower_hbox.pack_start(opacity, False, False, 0)
+        self.lower_hbox.pack_start(opacity_scale, True, True, 0)
         self.lower_hbox.show_all()
 
 
@@ -317,7 +317,7 @@ class AudioLayerControl(BaseLayerControl):
     __gtype_name__ = 'AudioLayerControl'
 
     def __init__(self, app, layer):
-        BaseLayerControl.__init__(self, app, layer, ges.TRACK_TYPE_AUDIO)
+        BaseLayerControl.__init__(self, app, layer, GES.TrackType.AUDIO)
 
         volume = Gtk.Label(label=_("Vol:"))
         volume_button = Gtk.VolumeButton(size=Gtk.IconSize.MENU)
@@ -325,15 +325,15 @@ class AudioLayerControl(BaseLayerControl):
         panning = Gtk.Label(label=_("Pan:"))
         # Volume scale
         panning_adjust = Gtk.Adjustment(value=0, lower=-100, upper=100, step_incr=5, page_incr=10)
-        panning_scale = Gtk.HScale(panning_adjust)
+        panning_scale = Gtk.HScale(adjustment=panning_adjust)
         panning_scale.set_value_pos(Gtk.PositionType.LEFT)
         panning_scale.set_digits(0)
         panning_scale.set_tooltip_text(_("Change audio panning"))
 
-        self.lower_hbox.pack_start(volume, False, False)
-        self.lower_hbox.pack_start(volume_button, False, False)
-        self.lower_hbox.pack_start(panning, False, False)
-        self.lower_hbox.pack_start(panning_scale, True, True)
+        self.lower_hbox.pack_start(volume, False, False, 0)
+        self.lower_hbox.pack_start(volume_button, False, False, 0)
+        self.lower_hbox.pack_start(panning, False, False, 0)
+        self.lower_hbox.pack_start(panning_scale, True, True, 0)
         self.lower_hbox.show_all()
 
 

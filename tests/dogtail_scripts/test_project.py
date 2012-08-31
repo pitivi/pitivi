@@ -7,15 +7,15 @@ import os
 
 class ProjectPropertiesTest(HelpFunc):
     def test_settings_video(self):
-        welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
+        welcome_dialog = self.pitivi.get_child()(name="Welcome", roleName="frame", recursive=False)
         welcome_dialog.button("New").click()
 
         #Play with project settings, look if they are correctly represented
-        dialog = self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False)
+        dialog = self.pitivi.get_child()(name="Project Settings", roleName="dialog", recursive=False)
         video = dialog.tab("Video")
 
         #Test presets
-        video.child(name="720p24", roleName="table cell").click()
+        video.get_child()(name="720p24", roleName="table cell").click()
         children = video.findChildren(IsATextEntryNamed(""))
         childtext = {}
         for child in children:
@@ -33,23 +33,23 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertIn("720", spintext)
 
         #Test frame rate combinations, link button
-        frameCombo = video.child(name="23.976 fps", roleName="combo box")
+        frameCombo = video.get_child()(name="23.976 fps", roleName="combo box")
         frameText = childtext["24M"]
         frameCombo.click()
-        video.child(name="120 fps", roleName="menu item").click()
+        video.get_child()(name="120 fps", roleName="menu item").click()
         self.assertEqual(frameText.text, "120:1")
         frameText.click()
         frameText.typeText("0")
-        video.child(name="12 fps", roleName="combo box")
+        video.get_child()(name="12 fps", roleName="combo box")
 
         #Test pixel and display ascpect ratio
-        pixelCombo = video.child(name="Square", roleName="combo box")
+        pixelCombo = video.get_child()(name="Square", roleName="combo box")
         pixelText = childtext["1:1"]
-        displayCombo = video.child(name="DV Widescreen (16:9)", roleName="combo box")
+        displayCombo = video.get_child()(name="DV Widescreen (16:9)", roleName="combo box")
         displayText = childtext["16:9"]
 
         pixelCombo.click()
-        video.child(name="576p", roleName="menu item").click()
+        video.get_child()(name="576p", roleName="menu item").click()
         self.assertEqual(pixelCombo.combovalue, "576p")
         self.assertEqual(pixelText.text, "12:11")
         #self.assertEqual(displayCombo.combovalue, "")
@@ -63,9 +63,9 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertEqual(displayCombo.combovalue, "Standard (4:3)")
         self.assertEqual(displayText.text, "4:3")
 
-        video.child(name="Display aspect ratio", roleName="radio button").click()
+        video.get_child()(name="Display aspect ratio", roleName="radio button").click()
         displayCombo.click()
-        video.child(name="Cinema (1.37)", roleName="menu item").click()
+        video.get_child()(name="Cinema (1.37)", roleName="menu item").click()
         #self.assertEqual(pixelCombo.combovalue, "")
         self.assertEqual(pixelText.text, "99:128")
         self.assertEqual(displayCombo.combovalue, "Cinema (1.37)")
@@ -87,7 +87,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertEqual(spin[1].text, oldtext)
         spin[1].doubleClick()
         spin[1].typeText("2000")
-        video.child(name="Link").click()
+        video.get_child()(name="Link").click()
         spin[1].doubleClick()
         spin[1].typeText("1000")
         spin[0].click()
@@ -108,7 +108,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.pitivi.menu("Edit").click()
         self.pitivi.menuItem("Project Settings").click()
 
-        dialog = self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False)
+        dialog = self.pitivi.get_child()(name="Project Settings", roleName="dialog", recursive=False)
         video = dialog.tab("Video")
         children = video.findChildren(IsATextEntryNamed(""))
         childtext = {}
@@ -158,7 +158,7 @@ class ProjectPropertiesTest(HelpFunc):
         seektime = self.search_by_text("0:00:00.000", self.pitivi, roleName="text")
         self.assertIsNotNone(seektime)
         self.insert_clip(sample)
-        self.nextb = self.pitivi.child(name="Next", roleName="push button")
+        self.nextb = self.pitivi.get_child()(name="Next", roleName="push button")
         self.nextb.click()
         self.assertEqual(seektime.text, "0:00:01.227")
 
@@ -173,7 +173,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.menubar.menu("Project").menuItem("Quit").click()
 
         #If finds button, means it warned
-        self.pitivi.child(roleName="dialog", recursive=False).button("Cancel").click()
+        self.pitivi.get_child()(roleName="dialog", recursive=False).button("Cancel").click()
         self.saveProject(saveAs=False)
         #Backup should be deleted, and no warning displayed
         self.menubar.menu("Project").click()
@@ -181,16 +181,16 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertFalse(os.path.exists(backup_path))
         #Test if backup is found
         self.setUp()
-        welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
-        welcome_dialog.child(name=filename).doubleClick()
+        welcome_dialog = self.pitivi.get_child()(name="Welcome", roleName="frame", recursive=False)
+        welcome_dialog.get_child()(name=filename).doubleClick()
         sample = self.import_media("flat_colour1_640x480.png")
         self.assertTrue(self.wait_for_file(backup_path, 120), "Backup not created")
         self.tearDown(clean=False, kill=True)
         self.setUp()
-        welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
-        welcome_dialog.child(name=filename).doubleClick()
+        welcome_dialog = self.pitivi.get_child()(name="Welcome", roleName="frame", recursive=False)
+        welcome_dialog.get_child()(name=filename).doubleClick()
         #Try restoring from backup
-        self.pitivi.child(roleName="dialog", recursive=False).button("Restore from backup").click()
+        self.pitivi.get_child()(roleName="dialog", recursive=False).button("Restore from backup").click()
         samples = self.pitivi.tab("Media Library").findChildren(GenericPredicate(roleName="icon"))
         self.assertEqual(len(samples), 2)
         self.menubar.menu("Project").click()
@@ -201,9 +201,9 @@ class ProjectPropertiesTest(HelpFunc):
         self.tearDown(clean=False, kill=True)
         timestamp = os.path.getmtime(backup_path)
         self.setUp()
-        welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
-        welcome_dialog.child(name=filename).doubleClick()
-        self.pitivi.child(roleName="dialog", recursive=False).button("Ignore backup").click()
+        welcome_dialog = self.pitivi.get_child()(name="Welcome", roleName="frame", recursive=False)
+        welcome_dialog.get_child()(name=filename).doubleClick()
+        self.pitivi.get_child()(roleName="dialog", recursive=False).button("Ignore backup").click()
         #Backup is not deleted, not changed
         self.assertEqual(timestamp, os.path.getmtime(backup_path))
 
@@ -216,7 +216,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.menubar.menu("Project").menuItem("Quit").click()
 
         # Dismiss the unsaved changes warning by cancelling it:
-        self.pitivi.child(roleName="dialog", recursive=False).button("Cancel").click()
+        self.pitivi.get_child()(roleName="dialog", recursive=False).button("Cancel").click()
         self.saveProject(saveAs=False)
 
         #Backup should be deleted, and no warning displayed
@@ -225,10 +225,10 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertFalse(os.path.exists(backup_path))
 
     def test_load_save(self):
-        self.nextb = self.pitivi.child(name="Next", roleName="push button")
+        self.nextb = self.pitivi.get_child()(name="Next", roleName="push button")
         tab = self.pitivi.tab("Media Library")
         seektime = self.search_by_text("0:00:00.000", self.pitivi, roleName="text")
-        infobar_media = tab.child(name="Add media to your project by dragging files and folders here or by using the \"Import Files...\" button.")
+        infobar_media = tab.get_child()(name="Add media to your project by dragging files and folders here or by using the \"Import Files...\" button.")
         filename1 = "/tmp/test_project-%i.xptv" % time()
         filename2 = "/tmp/test_project-%i.xptv" % time()
 
@@ -243,7 +243,7 @@ class ProjectPropertiesTest(HelpFunc):
         sleep(0.5)
         self.menubar.menu("Project").click()
         self.menubar.menu("Project").menuItem("New").click()
-        self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False).button("OK").click()
+        self.pitivi.get_child()(name="Project Settings", roleName="dialog", recursive=False).button("OK").click()
 
         icons = tab.findChildren(GenericPredicate(roleName="icon"))
         self.nextb.click()

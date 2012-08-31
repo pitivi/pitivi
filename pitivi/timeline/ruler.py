@@ -22,11 +22,12 @@
 """
 Widget for the complex view ruler
 """
-
-import gobject
-import gtk
-import gst
 import cairo
+
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import Gst
+from gi.repository import GObject
 
 from gettext import gettext as _
 
@@ -40,15 +41,15 @@ def setCairoColor(cr, color):
     cr.set_source_rgb(float(color.red), float(color.green), float(color.blue))
 
 
-class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
+class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     __gsignals__ = {
         "button-press-event": "override",
         "button-release-event": "override",
         "motion-notify-event": "override",
         "scroll-event": "override",
-        "seek": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                [gobject.TYPE_UINT64])
+        "seek": (GObject.SignalFlags.RUN_LAST, None,
+                [GObject.TYPE_UINT64])
         }
 
     border = 0
@@ -57,7 +58,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
     subdivide = ((1, 1.0), (2, 0.5), (10, .25))
 
     def __init__(self, instance, hadj):
-        gtk.DrawingArea.__init__(self)
+        GObject.GObject.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
         self.log("Creating new ScaleRuler")
@@ -65,9 +66,9 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self._seeker = Seeker()
         self.hadj = hadj
         hadj.connect("value-changed", self._hadjValueChangedCb)
-        self.add_events(gtk.gdk.POINTER_MOTION_MASK |
-            gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK |
-            gtk.gdk.SCROLL_MASK)
+        self.add_events(Gdk.EventMask.POINTER_MOTION_MASK |
+            Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK |
+            Gdk.EventMask.SCROLL_MASK)
 
         self.pixbuf = None
 
@@ -82,8 +83,8 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.need_update = True
         self.min_frame_spacing = 5.0
         self.frame_height = 5.0
-        self.frame_rate = gst.Fraction(1 / 1)
-        self.ns_per_frame = float(1 / self.frame_rate) * gst.SECOND
+        self.frame_rate = Gst.Fraction(1 / 1)
+        self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
         self.connect('draw', self.drawCb)
         self.connect('configure-event', self.configureEventCb)
 
@@ -103,7 +104,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         self.position = value
         self.queue_draw()
 
-## gtk.Widget overrides
+## Gtk.Widget overrides
     def configureEventCb(self, widget, event, data=None):
         self.debug("Configuring, height %d, width %d",
             widget.get_allocated_width(), widget.get_allocated_height())
@@ -168,21 +169,21 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         return False
 
     def do_scroll_event(self, event):
-        if event.scroll.state & gtk.gdk.CONTROL_MASK:
+        if event.scroll.state & Gdk.ModifierType.CONTROL_MASK:
             # Control + scroll = zoom
-            if event.scroll.direction == gtk.gdk.SCROLL_UP:
+            if event.scroll.direction == Gdk.ScrollDirection.UP:
                 Zoomable.zoomIn()
                 self.app.gui.timeline_ui.zoomed_fitted = False
-            elif event.scroll.direction == gtk.gdk.SCROLL_DOWN:
+            elif event.scroll.direction == Gdk.ScrollDirection.DOWN:
                 Zoomable.zoomOut()
                 self.app.gui.timeline_ui.zoomed_fitted = False
         else:
             # No modifier key held down, just scroll
-            if event.scroll.direction == gtk.gdk.SCROLL_UP or\
-                event.scroll.direction == gtk.gdk.SCROLL_LEFT:
+            if event.scroll.direction == Gdk.ScrollDirection.UP or\
+                event.scroll.direction == Gdk.ScrollDirection.LEFT:
                 self.app.gui.timeline_ui.scroll_left()
-            elif event.scroll.direction == gtk.gdk.SCROLL_DOWN or\
-                event.scroll.direction == gtk.gdk.SCROLL_RIGHT:
+            elif event.scroll.direction == Gdk.ScrollDirection.DOWN or\
+                event.scroll.direction == Gdk.ScrollDirection.RIGHT:
                 self.app.gui.timeline_ui.scroll_right()
 
     def setProjectFrameRate(self, rate):
@@ -190,7 +191,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         Set the lowest scale based on project framerate
         """
         self.frame_rate = rate
-        self.ns_per_frame = float(1 / self.frame_rate) * gst.SECOND
+        self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
         self.scale[0] = float(2 / rate)
         self.scale[1] = float(5 / rate)
         self.scale[2] = float(10 / rate)
@@ -199,12 +200,12 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     def drawBackground(self, cr):
         style = self.get_style_context()
-        setCairoColor(cr, style.get_background_color(gtk.StateFlags.NORMAL))
+        setCairoColor(cr, style.get_background_color(Gtk.StateFlags.NORMAL))
         cr.rectangle(0, 0, cr.get_target().get_width(), cr.get_target().get_height())
         cr.fill()
-        offset = int(self.nsToPixel(gst.CLOCK_TIME_NONE)) - self.pixbuf_offset
+        offset = int(self.nsToPixel(Gst.CLOCK_TIME_NONE)) - self.pixbuf_offset
         if offset > 0:
-            setCairoColor(cr, style.get_background_color(gtk.StateFlags.ACTIVE))
+            setCairoColor(cr, style.get_background_color(Gtk.StateFlags.ACTIVE))
             cr.rectangle(0, 0, int(offset), cr.get_target().get_height())
             cr.fill()
 
@@ -229,7 +230,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         paintpos = int(paintpos - 0.5) + 0.5
         height = int(cr.get_target().get_height() * (1 - height))
         style = self.get_style_context()
-        setCairoColor(cr, style.get_color(gtk.STATE_NORMAL))
+        setCairoColor(cr, style.get_color(Gtk.StateType.NORMAL))
         cr.set_line_width(1)
         cr.move_to(paintpos, height)
         cr.line_to(paintpos, cr.get_target().get_height())
@@ -249,7 +250,7 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
 
     def drawTimes(self, cr, offset, spacing, scale):
         # figure out what the optimal offset is
-        interval = long(gst.SECOND * scale)
+        interval = long(Gst.SECOND * scale)
         seconds = self.pixelToNs(self.pixbuf_offset)
         paintpos = float(self.border) + 2
         if offset > 0:
@@ -257,10 +258,10 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
             paintpos += spacing - offset
 
         while paintpos < cr.get_target().get_width():
-            if paintpos < self.nsToPixel(gst.CLOCK_TIME_NONE):
-                state = gtk.STATE_ACTIVE
+            if paintpos < self.nsToPixel(Gst.CLOCK_TIME_NONE):
+                state = Gtk.StateType.ACTIVE
             else:
-                state = gtk.STATE_NORMAL
+                state = Gtk.StateType.NORMAL
             timevalue = time_to_string(long(seconds))
             style = self.get_style_context()
             setCairoColor(cr, style.get_color(state))
@@ -286,14 +287,14 @@ class ScaleRuler(gtk.DrawingArea, Zoomable, Loggable):
         # INSENSITIVE is a dark shade of gray, but lacks contrast
         # SELECTED will be bright blue and more visible to represent frames
         style = self.get_style_context()
-        states = [style.get_background_color(gtk.StateFlags.ACTIVE),
-                  style.get_background_color(gtk.StateFlags.SELECTED)]
+        states = [style.get_background_color(Gtk.StateFlags.ACTIVE),
+                  style.get_background_color(Gtk.StateFlags.SELECTED)]
 
-        frame_num = int(self.pixelToNs(self.pixbuf_offset) * float(self.frame_rate) / gst.SECOND)
+        frame_num = int(self.pixelToNs(self.pixbuf_offset) * float(self.frame_rate) / Gst.SECOND)
         paintpos = self.pixbuf_offset - offset
         max_pos = cr.get_target().get_width() + self.pixbuf_offset
         while paintpos < max_pos:
-            paintpos = self.nsToPixel(1 / float(self.frame_rate) * gst.SECOND * frame_num)
+            paintpos = self.nsToPixel(1 / float(self.frame_rate) * Gst.SECOND * frame_num)
             setCairoColor(cr, states[(frame_num + 1) % 2])
             cr.rectangle(0.5 + paintpos - self.pixbuf_offset, y, frame_width, height)
             cr.fill()

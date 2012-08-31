@@ -24,10 +24,10 @@ Project related classes
 """
 
 import os
-import ges
-import gst
-import gtk
-import gobject
+from gi.repository import GES
+from gi.repository import Gst
+from gi.repository import Gtk
+from gi.repository import GObject
 import tarfile
 
 from time import time
@@ -56,11 +56,11 @@ from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
 
 
 #------------------ Backend classes ------------------------------------------#
-class Timeline(ges.Timeline):
+class Timeline(GES.Timeline):
     def __init__(self):
-        ges.Timeline.__init__(self)
-        self.add_track(ges.Track.video_raw_new())
-        self.add_track(ges.Track.audio_raw_new())
+        GES.Timeline.__init__(self)
+        self.add_track(GES.Track.video_raw_new())
+        self.add_track(GES.Track.audio_raw_new())
         self.selection = Selection()
 
 
@@ -165,7 +165,7 @@ class ProjectManager(Signallable, Loggable):
         self.emit("new-project-created", self.current)
 
         timeline = self.current.timeline
-        self.formatter = ges.PitiviFormatter()
+        self.formatter = GES.PitiviFormatter()
         self.formatter.connect("source-moved", self._formatterMissingURICb)
         self.formatter.connect("loaded", self._projectLoadedCb)
         if self.formatter.load_from_uri(timeline, uri):
@@ -180,14 +180,14 @@ class ProjectManager(Signallable, Loggable):
 
         @param time_diff: the difference, in seconds, between file mtimes
         """
-        dialog = gtk.Dialog("", None, 0,
-                    (_("Ignore backup"), gtk.RESPONSE_REJECT,
-                    _("Restore from backup"), gtk.RESPONSE_YES))
+        dialog = Gtk.Dialog("", None, 0,
+                    (_("Ignore backup"), Gtk.ResponseType.REJECT,
+                    _("Restore from backup"), Gtk.ResponseType.YES))
         dialog.set_icon_name("pitivi")
         dialog.set_resizable(False)
-        dialog.set_default_response(gtk.RESPONSE_YES)
+        dialog.set_default_response(Gtk.ResponseType.YES)
 
-        primary = gtk.Label()
+        primary = Gtk.Label()
         primary.set_line_wrap(True)
         primary.set_use_markup(True)
         primary.set_alignment(0, 0.5)
@@ -199,26 +199,26 @@ class ProjectManager(Signallable, Loggable):
         primary.props.label = message
 
         # put the text in a vbox
-        vbox = gtk.VBox(False, SPACING * 2)
-        vbox.pack_start(primary, expand=True, fill=True)
+        vbox = Gtk.VBox(False, SPACING * 2)
+        vbox.pack_start(primary, True, True, 0)
 
         # make the [[image] text] hbox
-        image = gtk.image_new_from_stock(gtk.STOCK_DIALOG_QUESTION,
-               gtk.ICON_SIZE_DIALOG)
-        hbox = gtk.HBox(False, SPACING * 2)
-        hbox.pack_start(image, expand=False)
-        hbox.pack_start(vbox, expand=True, fill=True)
+        image = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_QUESTION,
+               Gtk.IconSize.DIALOG)
+        hbox = Gtk.HBox(False, SPACING * 2)
+        hbox.pack_start(image, False, True, 0)
+        hbox.pack_start(vbox, True, True, 0)
         hbox.set_border_width(SPACING)
 
         # stuff the hbox in the dialog
         content_area = dialog.get_content_area()
-        content_area.pack_start(hbox, expand=True, fill=True)
+        content_area.pack_start(hbox, True, True, 0)
         content_area.set_spacing(SPACING * 2)
         hbox.show_all()
 
         response = dialog.run()
         dialog.destroy()
-        if response == gtk.RESPONSE_YES:
+        if response == Gtk.ResponseType.YES:
             return True
         else:
             return False
@@ -244,7 +244,7 @@ class ProjectManager(Signallable, Loggable):
         @see: L{Formatter.saveProject}
         """
         if formatter is None:
-            formatter = ges.PitiviFormatter()
+            formatter = GES.PitiviFormatter()
         if backup:
             if project.uri and self.current.uri is not None:
                 # Ignore whatever URI that is passed on to us. It's a trap.
@@ -418,7 +418,7 @@ class ProjectManager(Signallable, Loggable):
 
         if self.backup_lock == 0:
             self.backup_lock = 10
-            gobject.timeout_add_seconds(self.backup_lock, self._saveBackupCb, project, uri)
+            GObject.timeout_add_seconds(self.backup_lock, self._saveBackupCb, project, uri)
         else:
             if self.backup_lock < 60:
                 self.backup_lock += 5
@@ -488,7 +488,7 @@ class Project(Signallable, Loggable):
     @ivar medialibrary: The sources used by this project
     @type medialibrary: L{MediaLibrary}
     @ivar timeline: The timeline
-    @type timeline: L{ges.Timeline}
+    @type timeline: L{GES.Timeline}
     @ivar pipeline: The timeline's pipeline
     @type pipeline: L{Pipeline}
     @ivar format: The format under which the project is currently stored.
@@ -537,9 +537,9 @@ class Project(Signallable, Loggable):
 
     def setUri(self, uri):
         # FIXME support not local project
-        if uri and not gst.uri_has_protocol(uri, "file"):
+        if uri and not Gst.uri_has_protocol(uri, "file"):
             # Note that this does *not* give the same result as quote_uri()
-            self._uri = gst.uri_construct("file", uri)
+            self._uri = Gst.uri_construct("file", uri)
         else:
             self._uri = uri
 
@@ -589,7 +589,7 @@ class ProjectSettingsDialog():
         self.project = project
         self.settings = project.getSettings()
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(), "projectsettings.ui"))
         self._setProperties()
         self.builder.connect_signals(self)
@@ -597,19 +597,19 @@ class ProjectSettingsDialog():
         # add custom display aspect ratio widget
         self.dar_fraction_widget = FractionWidget()
         self.video_properties_table.attach(self.dar_fraction_widget,
-            0, 1, 6, 7, xoptions=gtk.EXPAND | gtk.FILL, yoptions=0)
+            0, 1, 6, 7, xoptions=Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL, yoptions=0)
         self.dar_fraction_widget.show()
 
         # add custom pixel aspect ratio widget
         self.par_fraction_widget = FractionWidget()
         self.video_properties_table.attach(self.par_fraction_widget,
-            1, 2, 6, 7, xoptions=gtk.EXPAND | gtk.FILL, yoptions=0)
+            1, 2, 6, 7, xoptions=Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL, yoptions=0)
         self.par_fraction_widget.show()
 
         # add custom framerate widget
         self.frame_rate_fraction_widget = FractionWidget()
         self.video_properties_table.attach(self.frame_rate_fraction_widget,
-            1, 2, 2, 3, xoptions=gtk.EXPAND | gtk.FILL, yoptions=0)
+            1, 2, 2, 3, xoptions=Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL, yoptions=0)
         self.frame_rate_fraction_widget.show()
 
         # populate coboboxes with appropriate data
@@ -772,9 +772,9 @@ class ProjectSettingsDialog():
         removing and saving a preset, enabling or disabling them accordingly.
         @type update_buttons_func: function
         """
-        renderer = gtk.CellRendererText()
+        renderer = Gtk.CellRendererText()
         renderer.props.editable = True
-        column = gtk.TreeViewColumn("Preset", renderer, text=0)
+        column = Gtk.TreeViewColumn("Preset", renderer, text=0)
         treeview.append_column(column)
         treeview.props.headers_visible = False
         model = mgr.getModel()
@@ -794,9 +794,9 @@ class ProjectSettingsDialog():
 
     def createVideoNoPreset(self, mgr):
         mgr.prependPreset(_("No preset"), {
-            "par": gst.Fraction(int(get_combo_value(self.par_combo).num),
+            "par": Gst.Fraction(int(get_combo_value(self.par_combo).num),
                                     int(get_combo_value(self.par_combo).denom)),
-            "frame-rate": gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
+            "frame-rate": Gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
                             int(get_combo_value(self.frame_rate_combo).denom)),
             "height": int(self.height_spinbutton.get_value()),
             "width": int(self.width_spinbutton.get_value())})
@@ -867,7 +867,7 @@ class ProjectSettingsDialog():
     def getSAR(self):
         width = int(self.width_spinbutton.get_value())
         height = int(self.height_spinbutton.get_value())
-        return gst.Fraction(width, height)
+        return Gst.Fraction(width, height)
 
     def _setProperties(self):
         getObj = self.builder.get_object
@@ -1063,7 +1063,7 @@ class ProjectSettingsDialog():
         self.project.setSettings(self.settings)
 
     def _responseCb(self, unused_widget, response):
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
             self.updateSettings()
             self.updateMetadata()
         self.window.destroy()

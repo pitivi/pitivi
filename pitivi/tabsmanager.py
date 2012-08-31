@@ -19,13 +19,13 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-import gtk
+from gi.repository import Gtk
 from pitivi.utils.ui import SPACING
 
 
-class BaseTabs(gtk.Notebook):
+class BaseTabs(Gtk.Notebook):
     def __init__(self, app):
-        gtk.Notebook.__init__(self)
+        Gtk.Notebook.__init__(self)
         self.set_border_width(SPACING)
         self.set_scrollable(True)
         self.connect("create-window", self._createWindowCb)
@@ -35,10 +35,10 @@ class BaseTabs(gtk.Notebook):
     def _createUi(self):
         settings = self.get_settings()
         settings.props.gtk_dnd_drag_threshold = 1
-        self.set_tab_pos(gtk.POS_TOP)
+        self.set_tab_pos(Gtk.PositionType.TOP)
 
     def append_page(self, child, label):
-        gtk.Notebook.append_page(self, child, label)
+        Gtk.Notebook.append_page(self, child, label)
         self._set_child_properties(child, label)
         child.show()
         label.show()
@@ -60,13 +60,13 @@ class BaseTabs(gtk.Notebook):
         # unused_notebook here is the same as "self"
         original_position = self.page_num(page)
         label = self.get_tab_label(page)
-        window = gtk.Window()
-        window.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_UTILITY)
+        window = Gtk.Window()
+        window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         window.set_title(label.get_text())
         window.set_default_size(600, 400)
         window.connect("destroy", self._detachedWindowDestroyCb,
                         page, original_position, label)
-        notebook = gtk.Notebook()
+        notebook = Gtk.Notebook()
         notebook.props.show_tabs = False
         window.add(notebook)
         window.show_all()

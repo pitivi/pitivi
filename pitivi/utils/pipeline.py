@@ -28,10 +28,11 @@ High-level pipelines
 """
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
+from pitivi.utils.misc import print_ns
 
-import gobject
-import gst
-import ges
+from gi.repository import GObject
+from gi.repository import Gst
+from gi.repository import GES
 
 
 # FIXME : define/document a proper hierarchy
@@ -72,13 +73,13 @@ class Seeker(Signallable, Loggable):
         self.format = None
         self._time = None
 
-    def seek(self, position, format=gst.FORMAT_TIME, on_idle=False):
+    def seek(self, position, format=Gst.Format.TIME, on_idle=False):
         self.format = format
         self.position = position
 
         if self.pending_seek_id is None:
             if on_idle:
-                gobject.idle_add(self._seekTimeoutCb)
+                GObject.idle_add(self._seekTimeoutCb)
             else:
                 self._seekTimeoutCb()
             self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb)
@@ -87,7 +88,7 @@ class Seeker(Signallable, Loggable):
         if self.pending_seek_id is None:
             self._time = time
             if on_idle:
-                gobject.idle_add(self._seekTimeoutCb, True)
+                GObject.idle_add(self._seekTimeoutCb, True)
             else:
                 self._seekTimeoutCb()
             self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb, True)
@@ -96,14 +97,14 @@ class Seeker(Signallable, Loggable):
         self.seekRelative(0, on_idle)
 
     def _scheduleSeek(self, timeout, callback, relative=False):
-        return gobject.timeout_add(timeout, callback, relative)
+        return GObject.timeout_add(timeout, callback, relative)
 
     def _seekTimeoutCb(self, relative=False):
         self.pending_seek_id = None
         if relative:
             try:
                 self.emit('seek-relative', self._time)
-            except:
+            except PipelineError:
                 self.error("Error while seeking %s relative", self._time)
                 # if an exception happened while seeking, properly
                 # reset ourselves
@@ -115,9 +116,9 @@ class Seeker(Signallable, Loggable):
             format, self.format = self.format, None
             try:
                 self.emit('seek', position, format)
-            except:
+            except PipelineError:
                 self.error("Error while seeking to position:%s format: %r",
-                          gst.TIME_ARGS(position), format)
+                          print_ns(position), format)
                 # if an exception happened while seeking, properly
                 # reset ourselves
                 return False
@@ -163,7 +164,7 @@ class SimplePipeline(Signallable, Loggable):
         self._listening = False  # for the position handler
         self._listeningInterval = 300  # default 300ms
         self._listeningSigId = 0
-        self._duration = gst.CLOCK_TIME_NONE
+        self._duration = Gst.CLOCK_TIME_NONE
 
     def release(self):
         """
@@ -179,7 +180,7 @@ class SimplePipeline(Signallable, Loggable):
         self._bus.disconnect_by_func(self._busMessageCb)
         self._bus.remove_signal_watch()
 
-        self._pipeline.setState(gst.STATE_NULL)
+        self._pipeline.setState(Gst.State.NULL)
         self._bus = None
 
     def flushSeek(self):
@@ -193,15 +194,15 @@ class SimplePipeline(Signallable, Loggable):
         """
         Set the L{Pipeline} to the given state.
 
-        @raises PipelineError: If the C{gst.Pipeline} could not be changed to
+        @raises PipelineError: If the C{Gst.Pipeline} could not be changed to
         the requested state.
         """
         self.debug("state:%r" % state)
         res = self._pipeline.set_state(state)
-        if res == gst.STATE_CHANGE_FAILURE:
+        if res == Gst.StateChangeReturn.FAILURE:
             # reset to NULL
-            self._pipeline.set_state(gst.STATE_NULL)
-            raise PipelineError("Failure changing state of the gst.Pipeline to %r, currently reset to NULL" % state)
+            self._pipeline.set_state(Gst.State.NULL)
+            raise PipelineError("Failure changing state of the Gst.Pipeline to %r, currently reset to NULL" % state)
 
     def getState(self):
         """
@@ -221,13 +222,13 @@ class SimplePipeline(Signallable, Loggable):
         """
         Sets the L{Pipeline} to PLAYING
         """
-        self.setState(gst.STATE_PLAYING)
+        self.setState(Gst.State.PLAYING)
 
     def pause(self):
         """
         Sets the L{Pipeline} to PAUSED
         """
-        self.setState(gst.STATE_PAUSED)
+        self.setState(Gst.State.PAUSED)
 
         # When the pipeline has been paused we need to update the
         # timeline/playhead position, as the 'position' signal
@@ -243,23 +244,23 @@ class SimplePipeline(Signallable, Loggable):
         """
         Sets the L{Pipeline} to READY
         """
-        self.setState(gst.STATE_READY)
+        self.setState(Gst.State.READY)
 
     def togglePlayback(self):
-        if self.getState() == gst.STATE_PLAYING:
+        if self.getState() == Gst.State.PLAYING:
             self.pause()
         else:
             self.play()
 
     #{ Position and Seeking methods
 
-    def getPosition(self, format=gst.FORMAT_TIME):
+    def getPosition(self, format=Gst.Format.TIME):
         """
         Get the current position of the L{Pipeline}.
 
         @param format: The format to return the current position in
-        @type format: C{gst.Format}
-        @return: The current position or gst.CLOCK_TIME_NONE
+        @type format: C{Gst.Format}
+        @return: The current position or Gst.CLOCK_TIME_NONE
         @rtype: L{long}
         @raise PipelineError: If the position couldn't be obtained.
         """
@@ -273,10 +274,10 @@ class SimplePipeline(Signallable, Loggable):
         if not res:
             raise PipelineError("Couldn't get position")
 
-        self.log("Got position %s" % gst.TIME_ARGS(cur))
+        self.log("Got position %s" % print_ns(cur))
         return cur
 
-    def getDuration(self, format=gst.FORMAT_TIME):
+    def getDuration(self, format=Gst.Format.TIME):
         """
         Get the duration of the C{Pipeline}.
         """
@@ -291,7 +292,7 @@ class SimplePipeline(Signallable, Loggable):
         if not res:
             raise PipelineError("Couldn't get duration")
 
-        self.log("Got duration %s" % gst.TIME_ARGS(dur))
+        self.log("Got duration %s" % print_ns(dur))
         if self._duration != dur:
             self.emit("duration-changed", dur)
 
@@ -317,7 +318,7 @@ class SimplePipeline(Signallable, Loggable):
         self._listening = True
         self._listeningInterval = interval
         # if we're in paused or playing, switch it on
-        self._listenToPosition(self.getState() == gst.STATE_PLAYING)
+        self._listenToPosition(self.getState() == Gst.State.PLAYING)
         return True
 
     def deactivatePositionListener(self):
@@ -332,7 +333,7 @@ class SimplePipeline(Signallable, Loggable):
     def _positionListenerCb(self):
         try:
             cur = self.getPosition()
-            if cur != gst.CLOCK_TIME_NONE:
+            if cur != Gst.CLOCK_TIME_NONE:
                 self.emit('position', cur)
         finally:
             return True
@@ -342,34 +343,34 @@ class SimplePipeline(Signallable, Loggable):
         # i.e. it does NOT check for current state
         if listen:
             if self._listening and self._listeningSigId == 0:
-                self._listeningSigId = gobject.timeout_add(self._listeningInterval,
+                self._listeningSigId = GObject.timeout_add(self._listeningInterval,
                     self._positionListenerCb)
         elif self._listeningSigId != 0:
-            gobject.source_remove(self._listeningSigId)
+            GObject.source_remove(self._listeningSigId)
             self._listeningSigId = 0
 
-    def simple_seek(self, position, format=gst.FORMAT_TIME):
+    def simple_seek(self, position, format=Gst.Format.TIME):
         """
         Seeks in the L{Pipeline} to the given position.
 
         @param position: Position to seek to
         @type position: L{long}
         @param format: The C{Format} of the seek position
-        @type format: C{gst.Format}
+        @type format: C{Gst.Format}
         @raise PipelineError: If seek failed
         """
-        if format == gst.FORMAT_TIME:
-            self.debug("position : %s" % gst.TIME_ARGS(position))
+        if format == Gst.Format.TIME:
+            self.debug("position : %s" % print_ns(position))
         else:
             self.debug("position : %d , format:%d" % (position, format))
 
         # clamp between [0, duration]
-        if format == gst.FORMAT_TIME:
+        if format == Gst.Format.TIME:
             position = max(0, min(position, self.getDuration()) - 1)
 
-        res = self._pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
-                                  gst.SEEK_TYPE_SET, position,
-                                  gst.SEEK_TYPE_NONE, -1)
+        res = self._pipeline.seek(1.0, format, Gst.SeekFlags.FLUSH,
+                                  Gst.SeekType.SET, position,
+                                  Gst.SeekType.NONE, -1)
         if not res:
             self.debug("seeking failed")
             raise PipelineError("seek failed")
@@ -385,37 +386,37 @@ class SimplePipeline(Signallable, Loggable):
     ## Private methods
 
     def _busMessageCb(self, unused_bus, message):
-        if message.type == gst.MESSAGE_EOS:
+        if message.type == Gst.MessageType.EOS:
             self.pause()
             self.emit('eos')
-        elif message.type == gst.MESSAGE_STATE_CHANGED:
+        elif message.type == Gst.MessageType.STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
 
             if message.src == self._pipeline:
                 self.debug("Pipeline change state prev:%r, new:%r, pending:%r" % (prev, new, pending))
 
-                emit_state_change = pending == gst.STATE_VOID_PENDING
-                if prev == gst.STATE_READY and new == gst.STATE_PAUSED:
+                emit_state_change = pending == Gst.State.VOID_PENDING
+                if prev == Gst.State.READY and new == Gst.State.PAUSED:
                     # trigger duration-changed
                     try:
                         self.getDuration()
                     except PipelineError:
                         # no sinks??
                         pass
-                elif prev == gst.STATE_PAUSED and new == gst.STATE_PLAYING:
+                elif prev == Gst.State.PAUSED and new == Gst.State.PLAYING:
                     self._listenToPosition(True)
-                elif prev == gst.STATE_PLAYING and new == gst.STATE_PAUSED:
+                elif prev == Gst.State.PLAYING and new == Gst.State.PAUSED:
                     self._listenToPosition(False)
 
                 if emit_state_change:
                     self.emit('state-change', new)
 
-        elif message.type == gst.MESSAGE_ERROR:
+        elif message.type == Gst.MessageType.ERROR:
             error, detail = message.parse_error()
             self._handleErrorMessage(error, detail, message.src)
-        elif message.type == gst.MESSAGE_DURATION:
+        elif message.type == Gst.MessageType.DURATION:
             self.debug("Duration might have changed, querying it")
-            gobject.idle_add(self._queryDurationAsync)
+            GObject.idle_add(self._queryDurationAsync)
         else:
             if self._has_sync_bus_handler is False:
                 # Pass message async to the sync bus handler
@@ -434,7 +435,7 @@ class SimplePipeline(Signallable, Loggable):
         self.emit('error', error.message, detail)
 
     def _busSyncMessageHandler(self, unused_bus, message, unused_user_data):
-        if message.type == gst.MESSAGE_ELEMENT:
+        if message.type == Gst.MessageType.ELEMENT:
             if message.has_name('prepare-window-handle'):
                 # handle element message synchronously
                 self.emit('window-handle-message', message)
@@ -442,12 +443,12 @@ class SimplePipeline(Signallable, Loggable):
                 #FIXME wrong anotation dont allow none, reported as bug b681139
                 #self._bus.set_sync_handler(None, None)
                 self._has_sync_bus_handler = False
-        return gst.BUS_PASS
+        return Gst.BusSyncReply.PASS
 
 
-class Pipeline(ges.TimelinePipeline, SimplePipeline):
+class Pipeline(GES.TimelinePipeline, SimplePipeline):
     """
-    Helper to handle ges.TimelinePipeline through the SimplePipeline API
+    Helper to handle GES.TimelinePipeline through the SimplePipeline API
     and handle the Seeker properly
 
     Signals:
@@ -458,21 +459,21 @@ class Pipeline(ges.TimelinePipeline, SimplePipeline):
     """
 
     __gsignals__ = {
-        "state-change": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        (gobject.TYPE_INT,)),
-        "position": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        (gobject.TYPE_UINT64,)),
-        "duration-changed": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        (gobject.TYPE_UINT64,)),
-        "eos": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+        "state-change": (GObject.SignalFlags.RUN_LAST, None,
+                        (GObject.TYPE_INT,)),
+        "position": (GObject.SignalFlags.RUN_LAST, None,
+                        (GObject.TYPE_UINT64,)),
+        "duration-changed": (GObject.SignalFlags.RUN_LAST, None,
+                        (GObject.TYPE_UINT64,)),
+        "eos": (GObject.SignalFlags.RUN_LAST, None,
                         ()),
-        "error": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        (gobject.TYPE_STRING, gobject.TYPE_STRING)),
-        "window-handle-message": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                        (gobject.TYPE_PYOBJECT,))}
+        "error": (GObject.SignalFlags.RUN_LAST, None,
+                        (GObject.TYPE_STRING, GObject.TYPE_STRING)),
+        "window-handle-message": (GObject.SignalFlags.RUN_LAST, None,
+                        (GObject.TYPE_PYOBJECT,))}
 
     def __init__(self, pipeline=None):
-        ges.TimelinePipeline.__init__(self)
+        GES.TimelinePipeline.__init__(self)
         SimplePipeline.__init__(self, self)
 
         self._seeker = Seeker()
@@ -501,12 +502,12 @@ class Pipeline(ges.TimelinePipeline, SimplePipeline):
         Seek backwards or forwards a certain amount of frames (frames_offset).
         This clamps the playhead to the project frames.
         """
-        cur_frame = int(round(self.getPosition() * framerate.num / float(gst.SECOND * framerate.denom), 2))
+        cur_frame = int(round(self.getPosition() * framerate.num / float(Gst.SECOND * framerate.denom), 2))
         new_frame = cur_frame + frames_offset
-        new_pos = long(new_frame * gst.SECOND * framerate.denom / framerate.num)
+        new_pos = long(new_frame * Gst.SECOND * framerate.denom / framerate.num)
         Loggable.info(self, "From frame %d to %d at %f fps, seek to %s s" % (cur_frame,
                     new_frame, framerate.num / framerate.denom,
-                    new_pos / float(gst.SECOND)))
+                    new_pos / float(Gst.SECOND)))
         self.simple_seek(new_pos)
 
     def _seekCb(self, ruler, position, format):

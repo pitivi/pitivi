@@ -28,7 +28,7 @@
 
 #from unittest import TestCase
 
-#import gst
+#from gi.repository import Gst
 
 #from pitivi.pipeline import Pipeline
 #from pitivi.utils.timeline import Timeline, TimelineObject, SELECT_ADD
@@ -59,7 +59,7 @@
 
 
 #def new_stream():
-    #return VideoStream(gst.Caps("video/x-raw-rgb"))
+    #return VideoStream(Gst.Caps("video/x-raw-rgb"))
 
 
 #def new_source_factory():
@@ -232,11 +232,11 @@
             #stacks.append(stack)
         #self.action_log.connect("commit", commitCb)
 
-        #self.timeline_object1.start = 5 * gst.SECOND
-        #self.timeline_object1.duration = 20 * gst.SECOND
+        #self.timeline_object1.start = 5 * Gst.SECOND
+        #self.timeline_object1.duration = 20 * Gst.SECOND
         #self.timeline.addTimelineObject(self.timeline_object1)
         #self.action_log.begin("modify clip")
-        #self.timeline_object1.start = 10 * gst.SECOND
+        #self.timeline_object1.start = 10 * Gst.SECOND
         #self.action_log.commit()
 
         #self.failUnlessEqual(len(stacks), 1)
@@ -245,11 +245,11 @@
         #action = stack.done_actions[0]
         #self.failUnless(isinstance(action, TimelineObjectPropertyChanged))
 
-        #self.failUnlessEqual(self.timeline_object1.start, 10 * gst.SECOND)
+        #self.failUnlessEqual(self.timeline_object1.start, 10 * Gst.SECOND)
         #self.action_log.undo()
-        #self.failUnlessEqual(self.timeline_object1.start, 5 * gst.SECOND)
+        #self.failUnlessEqual(self.timeline_object1.start, 5 * Gst.SECOND)
         #self.action_log.redo()
-        #self.failUnlessEqual(self.timeline_object1.start, 10 * gst.SECOND)
+        #self.failUnlessEqual(self.timeline_object1.start, 10 * Gst.SECOND)
 
         #self.timeline_object1.priority = 10
         #self.action_log.begin("priority change")
@@ -263,17 +263,17 @@
         #self.failUnlessEqual(self.timeline_object1.priority, 20)
 
     #def testUngroup(self):
-        #self.timeline_object1.start = 5 * gst.SECOND
-        #self.timeline_object1.duration = 20 * gst.SECOND
+        #self.timeline_object1.start = 5 * Gst.SECOND
+        #self.timeline_object1.duration = 20 * Gst.SECOND
 
         #self.timeline.addTimelineObject(self.timeline_object1)
         #self.timeline.setSelectionToObj(self.track_object1, SELECT_ADD)
 
         #self.failUnlessEqual(len(self.timeline.timeline_objects), 1)
         #self.failUnlessEqual(self.timeline.timeline_objects[0].start,
-                #5 * gst.SECOND)
+                #5 * Gst.SECOND)
         #self.failUnlessEqual(self.timeline.timeline_objects[0].duration,
-                #20 * gst.SECOND)
+                #20 * Gst.SECOND)
 
         #self.action_log.begin("ungroup")
         #self.timeline.ungroupSelection()
@@ -281,18 +281,18 @@
 
         #self.failUnlessEqual(len(self.timeline.timeline_objects), 2)
         #self.failUnlessEqual(self.timeline.timeline_objects[0].start,
-                #5 * gst.SECOND)
+                #5 * Gst.SECOND)
         #self.failUnlessEqual(self.timeline.timeline_objects[0].duration,
-                #20 * gst.SECOND)
+                #20 * Gst.SECOND)
         #self.failUnlessEqual(self.timeline.timeline_objects[1].start,
-                #5 * gst.SECOND)
+                #5 * Gst.SECOND)
         #self.failUnlessEqual(self.timeline.timeline_objects[1].duration,
-                #20 * gst.SECOND)
+                #20 * Gst.SECOND)
 
         #self.action_log.undo()
 
         #self.failUnlessEqual(len(self.timeline.timeline_objects), 1)
         #self.failUnlessEqual(self.timeline.timeline_objects[0].start,
-                #5 * gst.SECOND)
+                #5 * Gst.SECOND)
         #self.failUnlessEqual(self.timeline.timeline_objects[0].duration,
-                #20 * gst.SECOND)
+                #20 * Gst.SECOND)

@@ -160,7 +160,7 @@ class System(Signallable, Loggable):
         """send a message to the desktop to be displayed to the user
         @arg title: C{str} the title of the message
         @arg message: C{str} the body of the message
-        @arg icon: C{gtk.gdk.Pixbuf} icon to be shown with the message
+        @arg icon: C{GdkPixbuf.Pixbuf} icon to be shown with the message
         """
         self.debug("desktopMessage(): %s, %s" % title % message)
         pass
@@ -175,7 +175,7 @@ class FreedesktopOrgSystem(System):
     def __init__(self):
         System.__init__(self)
         # FIXME Notifications disabled for the time being
-        # pynotify.init(APPNAME)
+        # Notify.init(APPNAME)
 
     def desktopIsMesageable(self):
         return True
@@ -185,8 +185,8 @@ class FreedesktopOrgSystem(System):
         System.desktopMessage(title, message, icon)
 
         # FIXME Notifications disabled for the time being
-        #notification = pynotify.Notification(title, message)
-        #if icon != None and isinstance(icon, gtk.gdk.Pixbuf):
+        #notification = Notify.Notification(title, message)
+        #if icon != None and isinstance(icon, GdkPixbuf.Pixbuf):
             #notification.set_icon_from_pixbuf(icon)
         #notification.show()
 
@@ -275,7 +275,7 @@ if os.name == 'posix':
         try:
             # FIXME Disable notifications for the time being as it causes
             # various errors and the implementation is not done yet
-            #import pynotify
+            #from gi.repository import Notify
             import dbus
             system_ = GnomeSystem
         except:
@@ -285,7 +285,7 @@ if os.name == 'posix':
         try:
             # FIXME Disable notifications for the time being as it causes
             # various errors and the implementation is not done yet
-            # import pynotify
+            # from gi.repository import Notify
             system_ = FreedesktopOrgSystem
         except:
             pass

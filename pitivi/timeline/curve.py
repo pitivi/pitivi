@@ -22,9 +22,9 @@
 """
 Custom canvas item for track object keyframe curves."""
 
-import goocanvas
-import gobject
-import gtk
+from gi.repository import GooCanvas
+from gi.repository import GObject
+from gi.repository import Gtk
 
 from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.timeline import View, Controller, Zoomable
@@ -33,7 +33,7 @@ from pitivi.utils.misc import between
 
 
 def intersect(b1, b2):
-    return goocanvas.Bounds(max(b1.x1, b2.x1), max(b1.y1, b2.y1),
+    return GooCanvas.CanvasBounds(max(b1.x1, b2.x1), max(b1.y1, b2.y1),
         min(b1.x2, b2.x2), min(b1.y2, b2.y2))
 
 KW_WIDTH = 10
@@ -51,10 +51,10 @@ KW_LABEL_VPAD = 4
 KW_LABEL_HPAD2 = KW_LABEL_VPAD / 2
 KW_LABEL_VPAD2 = KW_LABEL_VPAD / 2
 CURVE_STROKE_WIDTH = 2.0
-HAND = gtk.gdk.Cursor(gtk.gdk.HAND2)
+HAND = Gdk.Cursor.new(Gdk.HAND2)
 
 
-class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
+class Curve(GooCanvas.CanvasItemSimple, GooCanvas.CanvasItem, View, Zoomable):
 
     __gtype_name__ = 'Curve'
 
@@ -139,7 +139,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         self.keyframes = {}
         self.height = float(height)
         self.element = element
-        self.props.pointer_events = goocanvas.EVENTS_STROKE
+        # FIXME PyGI port
+        #self.props.pointer_events = GooCanvas.EVENTS_STROKE
         self.interpolator = interpolator
         self._focused_kf = None
         self.normal()
@@ -156,7 +157,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         self._max = value - (CURVE_STROKE_WIDTH / 2)
         self._range = self._max - self._min
         self.changed(True)
-    height = gobject.property(_get_height, _set_height, type=float)
+    height = GObject.property(_get_height, _set_height, type=float)
 
 ## element callbacks
 
@@ -192,13 +193,13 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     def zoomChanged(self):
         self.changed(True)
 
-## goocanvas item methods
+## GooCanvas item methods
 
     def do_simple_update(self, cr):
         cr.identity_matrix()
         if self.element.factory:
             self.visible_width = self.nsToPixel(self.element.duration)
-            self.bounds = goocanvas.Bounds(0, 0,
+            self.bounds = GooCanvas.CanvasBounds(0, 0,
                 self.visible_width + KW_LABEL_X_OVERFLOW,
                 self.height + KW_LABEL_Y_OVERFLOW)
 
@@ -221,7 +222,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             cr.save()
             # set clipping region to the visible portion of the clip
             vis_bounds = intersect(
-                goocanvas.Bounds(
+                GooCanvas.CanvasBounds(
                     self.bounds.x1, self.bounds.y1 + KW_LABEL_Y_OVERFLOW,
                     self.bounds.x2 - KW_LABEL_X_OVERFLOW, self.bounds.y2), bounds)
             vis_width = vis_bounds.x2 - vis_bounds.x1

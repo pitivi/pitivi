@@ -24,13 +24,13 @@
 """
 Main application
 """
-import gobject
-import gtk
 import os
 import sys
 import urllib
-import ges
-import gio
+from gi.repository import GES
+from gi.repository import Gio
+from gi.repository import GObject
+from gi.repository import Gtk
 
 from gettext import gettext as _
 from optparse import OptionParser
@@ -214,7 +214,7 @@ class Pitivi(Loggable, Signallable):
 
     # check if for version information online
     def _checkVersion(self):
-        giofile = gio.File.new_for_uri(RELEASES_URL)
+        giofile = Gio.File.new_for_uri(RELEASES_URL)
         self.info("Requesting version information")
         giofile.load_contents_async(None, self._versionInfoReceivedCb, None)
 
@@ -249,7 +249,7 @@ class InteractivePitivi(Pitivi):
 
     def __init__(self, debug=False):
         Pitivi.__init__(self)
-        self.mainloop = gobject.MainLoop()
+        self.mainloop = GObject.MainLoop()
         self.actioner = None
         self.gui = None
 
@@ -291,6 +291,7 @@ class InteractivePitivi(Pitivi):
 
     def run(self):
         """Runs the main loop."""
+        print "SELF,", self
         self.mainloop.run()
 
 
@@ -304,8 +305,8 @@ class GuiPitivi(InteractivePitivi):
         self._showGui()
 
     def _showStartupError(self, message, detail):
-        dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-                                   buttons=gtk.BUTTONS_OK)
+        dialog = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                                   buttons=Gtk.ButtonsType.OK)
         dialog.set_icon_name("pitivi")
         dialog.set_markup("<b>" + message + "</b>")
         dialog.format_secondary_text(detail)
@@ -315,7 +316,7 @@ class GuiPitivi(InteractivePitivi):
         self.shutdown()
 
     def _createGui(self):
-        """Returns a gtk.Widget which represents the UI."""
+        """Returns a Gtk.Widget which represents the UI."""
         raise NotImplementedError()
 
     def _showGui(self):
@@ -368,7 +369,7 @@ class ProjectCreatorGuiPitivi(FullGuiPitivi):
         if self._maybePopStartupUri(startup_uris, info.get_uri()) \
                 and add_to_timeline:
             self.action_log.begin("add clip")
-            src = ges.TimelineFileSource(uri=info.get_uri())
+            src = GES.TimelineFileSource(uri=info.get_uri())
             src.set_property("priority", 1)
             self.current.timeline.get_layers()[0].add_object(src)
             self.action_log.commit()

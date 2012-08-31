@@ -26,8 +26,8 @@ UI utilities. This file contain the UI constants, and various functions and
 classes that help with UI drawing around the application
 """
 import glib
-import gst
-import gtk
+from gi.repository import Gst
+from gi.repository import Gtk
 import os
 import cairo
 
@@ -37,7 +37,7 @@ from itertools import izip
 from urllib import unquote
 from gettext import ngettext, gettext as _
 from decimal import Decimal
-from gst.pbutils import DiscovererVideoInfo, DiscovererAudioInfo, DiscovererStreamInfo
+from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo, DiscovererStreamInfo
 
 from pitivi.utils.loggable import doLog, ERROR
 
@@ -75,15 +75,15 @@ TYPE_PITIVI_AUDIO_TRANSITION = 30
 TYPE_PITIVI_VIDEO_TRANSITION = 31
 TYPE_PITIVI_LAYER_CONTROL = 32
 
-FILE_TARGET_ENTRY = gtk.TargetEntry.new("text/plain", Gtk.TargetFlags.OTHER_APP, TYPE_TEXT_PLAIN)
-URI_TARGET_ENTRY = gtk.TargetEntry.new("text/uri-list", 0, TYPE_URI_LIST)
-FILESOURCE_TARGET_ENTRY = gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)
-EFFECT_TARGET_ENTRY = gtk.TargetEntry.new("pitivi/effect", 0, TYPE_PITIVI_EFFECT)
-AUDIO_EFFECT_TARGET_ENTRY = gtk.TargetEntry.new("pitivi/audio-effect", 0, TYPE_PITIVI_AUDIO_EFFECT)
-VIDEO_EFFECT_TARGET_ENTRY = gtk.TargetEntry.new("pitivi/video-effect", 0, TYPE_PITIVI_VIDEO_EFFECT)
-AUDIO_TRANSITION_TARGET_ENTRY = gtk.TargetEntry.new("pitivi/audio-transition", 0, TYPE_PITIVI_AUDIO_TRANSITION)
-VIDEO_TRANSITION_TARGET_ENTRY = gtk.TargetEntry.new("pitivi/video-transition", 0, TYPE_PITIVI_VIDEO_TRANSITION)
-LAYER_CONTROL_TARGET_ENTRY = gtk.TargetEntry.new("pitivi/layer-control", 0, TYPE_PITIVI_LAYER_CONTROL)
+FILE_TARGET_ENTRY = Gtk.TargetEntry.new("text/plain", Gtk.TargetFlags.OTHER_APP, TYPE_TEXT_PLAIN)
+URI_TARGET_ENTRY = Gtk.TargetEntry.new("text/uri-list", 0, TYPE_URI_LIST)
+FILESOURCE_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)
+EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/effect", 0, TYPE_PITIVI_EFFECT)
+AUDIO_EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/audio-effect", 0, TYPE_PITIVI_AUDIO_EFFECT)
+VIDEO_EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/video-effect", 0, TYPE_PITIVI_VIDEO_EFFECT)
+AUDIO_TRANSITION_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/audio-transition", 0, TYPE_PITIVI_AUDIO_TRANSITION)
+VIDEO_TRANSITION_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/video-transition", 0, TYPE_PITIVI_VIDEO_TRANSITION)
+LAYER_CONTROL_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/layer-control", 0, TYPE_PITIVI_LAYER_CONTROL)
 
 
 # ---------------------- ARGB color helper-------------------------------------#
@@ -233,9 +233,9 @@ def time_to_string(value):
 
     Format HH:MM:SS.XXX
     """
-    if value == gst.CLOCK_TIME_NONE:
+    if value == Gst.CLOCK_TIME_NONE:
         return "--:--:--.---"
-    ms = value / gst.MSECOND
+    ms = value / Gst.MSECOND
     sec = ms / 1000
     ms = ms % 1000
     mins = sec / 60
@@ -249,7 +249,7 @@ def beautify_length(length):
     """
     Converts the given time in nanoseconds to a human readable string
     """
-    sec = length / gst.SECOND
+    sec = length / Gst.SECOND
     mins = sec / 60
     sec = sec % 60
     hours = mins / 60
@@ -301,7 +301,7 @@ def beautify_ETA(length):
     Converts the given time in nanoseconds to a fuzzy estimate,
     intended for progress ETAs, not to indicate a clip's duration.
     """
-    sec = length / gst.SECOND
+    sec = length / Gst.SECOND
     mins = sec / 60
     sec = int(sec % 60)
     hours = int(mins / 60)
@@ -345,7 +345,7 @@ def roundedrec(context, x, y, w, h, r=10):
 
 #--------------------- Gtk widget helpers ------------------------------------#
 def model(columns, data):
-    ret = gtk.ListStore(*columns)
+    ret = Gtk.ListStore(*columns)
     for datum in data:
         ret.append(datum)
     return ret
@@ -374,7 +374,7 @@ def get_value_from_model(model, key):
     for row in model:
         if row[1] == key:
             return str(row[0])
-    if isinstance(key, gst.Fraction):
+    if isinstance(key, Gst.Fraction):
         return "%.3f" % Decimal(float(key.num) / key.denom)
     return str(key)
 
@@ -382,18 +382,18 @@ def get_value_from_model(model, key):
 # FIXME This should into a special file
 frame_rates = model((str, object), (
     # Translators: fps is for frames per second
-    (_("%d fps") % 12, gst.Fraction(12.0, 1.0)),
-    (_("%d fps") % 15, gst.Fraction(15.0, 1.0)),
-    (_("%d fps") % 20, gst.Fraction(20.0, 1.0)),
-    (_("%.3f fps") % 23.976, gst.Fraction(24000.0, 1001.0)),
-    (_("%d fps") % 24, gst.Fraction(24.0, 1.0)),
-    (_("%d fps") % 25, gst.Fraction(25.0, 1.0)),
-    (_("%.2f fps") % 29.97, gst.Fraction(30000.0, 1001.0)),
-    (_("%d fps") % 30, gst.Fraction(30.0, 1.0)),
-    (_("%d fps") % 50, gst.Fraction(50.0, 1.0)),
-    (_("%.2f fps") % 59.94, gst.Fraction(60000.0, 1001.0)),
-    (_("%d fps") % 60, gst.Fraction(60.0, 1.0)),
-    (_("%d fps") % 120, gst.Fraction(120.0, 1.0)),
+    (_("%d fps") % 12, Gst.Fraction(12.0, 1.0)),
+    (_("%d fps") % 15, Gst.Fraction(15.0, 1.0)),
+    (_("%d fps") % 20, Gst.Fraction(20.0, 1.0)),
+    (_("%.3f fps") % 23.976, Gst.Fraction(24000.0, 1001.0)),
+    (_("%d fps") % 24, Gst.Fraction(24.0, 1.0)),
+    (_("%d fps") % 25, Gst.Fraction(25.0, 1.0)),
+    (_("%.2f fps") % 29.97, Gst.Fraction(30000.0, 1001.0)),
+    (_("%d fps") % 30, Gst.Fraction(30.0, 1.0)),
+    (_("%d fps") % 50, Gst.Fraction(50.0, 1.0)),
+    (_("%.2f fps") % 59.94, Gst.Fraction(60000.0, 1001.0)),
+    (_("%d fps") % 60, Gst.Fraction(60.0, 1.0)),
+    (_("%d fps") % 120, Gst.Fraction(120.0, 1.0)),
 ))
 
 audio_rates = model((str, int), (
@@ -419,27 +419,27 @@ audio_channels = model((str, int), (
 # FIXME: are we sure the following tables correct?
 
 pixel_aspect_ratios = model((str, object), (
-    (_("Square"), gst.Fraction(1, 1)),
-    (_("480p"), gst.Fraction(10, 11)),
-    (_("480i"), gst.Fraction(8, 9)),
-    (_("480p Wide"), gst.Fraction(40, 33)),
-    (_("480i Wide"), gst.Fraction(32, 27)),
-    (_("576p"), gst.Fraction(12, 11)),
-    (_("576i"), gst.Fraction(16, 15)),
-    (_("576p Wide"), gst.Fraction(16, 11)),
-    (_("576i Wide"), gst.Fraction(64, 45)),
+    (_("Square"), Gst.Fraction(1, 1)),
+    (_("480p"), Gst.Fraction(10, 11)),
+    (_("480i"), Gst.Fraction(8, 9)),
+    (_("480p Wide"), Gst.Fraction(40, 33)),
+    (_("480i Wide"), Gst.Fraction(32, 27)),
+    (_("576p"), Gst.Fraction(12, 11)),
+    (_("576i"), Gst.Fraction(16, 15)),
+    (_("576p Wide"), Gst.Fraction(16, 11)),
+    (_("576i Wide"), Gst.Fraction(64, 45)),
 ))
 
 display_aspect_ratios = model((str, object), (
-    (_("Standard (4:3)"), gst.Fraction(4, 3)),
-    (_("DV (15:11)"), gst.Fraction(15, 11)),
-    (_("DV Widescreen (16:9)"), gst.Fraction(16, 9)),
-    (_("Cinema (1.37)"), gst.Fraction(11, 8)),
-    (_("Cinema (1.66)"), gst.Fraction(166, 100)),
-    (_("Cinema (1.85)"), gst.Fraction(185, 100)),
-    (_("Anamorphic (2.35)"), gst.Fraction(235, 100)),
-    (_("Anamorphic (2.39)"), gst.Fraction(239, 100)),
-    (_("Anamorphic (2.4)"), gst.Fraction(24, 10)),
+    (_("Standard (4:3)"), Gst.Fraction(4, 3)),
+    (_("DV (15:11)"), Gst.Fraction(15, 11)),
+    (_("DV Widescreen (16:9)"), Gst.Fraction(16, 9)),
+    (_("Cinema (1.37)"), Gst.Fraction(11, 8)),
+    (_("Cinema (1.66)"), Gst.Fraction(166, 100)),
+    (_("Cinema (1.85)"), Gst.Fraction(185, 100)),
+    (_("Anamorphic (2.35)"), Gst.Fraction(235, 100)),
+    (_("Anamorphic (2.39)"), Gst.Fraction(239, 100)),
+    (_("Anamorphic (2.4)"), Gst.Fraction(24, 10)),
 ))
 
 

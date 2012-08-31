@@ -23,9 +23,9 @@
 Dialog box listing files which had errors, and the reasons.
 """
 
-import gtk
+from gi.repository import Gtk
 import os
-import pango
+from gi.repository import Pango
 
 from gettext import gettext as _
 
@@ -43,7 +43,7 @@ class FileListErrorDialog(Signallable, Loggable):
 
     def __init__(self, title, headline):
         Loggable.__init__(self)
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
             "filelisterrordialog.ui"))
         self.builder.connect_signals(self)
@@ -62,7 +62,7 @@ class FileListErrorDialog(Signallable, Loggable):
         """
         self.debug("Uri:%s, reason:%s, extra:%s", uri, reason, extra)
         exp = self._createFileExpander(uri, reason, extra)
-        self.errorvbox.pack_start(exp, expand=False, fill=False)
+        self.errorvbox.pack_start(exp, False, False, 0)
         if len(self.errorvbox.get_children()) < 3:
             exp.set_expanded(True)  # Let's save the user some clicks
         exp.show_all()
@@ -73,14 +73,14 @@ class FileListErrorDialog(Signallable, Loggable):
                 uri = uri[7:]
             uri = uri.split('/')[-1]
             uri = unquote(uri)
-            exp = gtk.Expander(label=uri)
+            exp = Gtk.Expander(label=uri)
         else:
-            exp = gtk.Expander(label=reason)
+            exp = Gtk.Expander(label=reason)
 
-        textbuffer = gtk.TextBuffer()
+        textbuffer = Gtk.TextBuffer()
         table = textbuffer.get_tag_table()
-        boldtag = gtk.TextTag()
-        boldtag.props.weight = pango.WEIGHT_BOLD
+        boldtag = Gtk.TextTag()
+        boldtag.props.weight = Pango.Weight.BOLD
         table.add(boldtag)
 
         end = textbuffer.get_end_iter()
@@ -96,8 +96,8 @@ class FileListErrorDialog(Signallable, Loggable):
             end = textbuffer.get_end_iter()
             textbuffer.insert(end, "%s\n" % extra)
 
-        textview = gtk.TextView(buffer=textbuffer)
-        textview.set_wrap_mode(gtk.WRAP_WORD)
+        textview = Gtk.TextView(buffer=textbuffer)
+        textview.set_wrap_mode(Gtk.WrapMode.WORD)
 
         exp.add(textview)
 

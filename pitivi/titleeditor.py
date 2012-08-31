@@ -23,11 +23,14 @@
 Shows title editor
 """
 import os
-import gtk
-import pango
-import ges
-import gst
-import gobject
+
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import Pango
+from gi.repository import GES
+from gi.repository import Gst
+from gi.repository import GObject
+from gi.repository import GdkPixbuf
 
 from gettext import gettext as _
 from xml.sax import saxutils
@@ -37,64 +40,175 @@ from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
 from pitivi.utils.pipeline import Seeker
-INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(), "invisible.png"))
+INVISIBLE = GdkPixbuf.Pixbuf.new_from_file(os.path.join(get_pixmap_dir(), "invisible.png"))
 
 
-class PangoBuffer(gtk.TextBuffer):
+# FIXME Fix Pango so we do NOT need that dirty reimplementation
+# Pango.AttrList
+class AttrIterator():
+    def __init__(self, attributes=[]):
+        self.attributes = attributes
+        self.attribute_stack = []
+        self.start_index = 0
+        self.end_index = 0
+        if not self.next():
+            self.end_index = 2 ** 32 - 1
+
+    def next(self):
+        if len(self.attributes) == 0 and len(self.attribute_stack) == 0:
+            return False
+        self.start_index = self.end_index
+        self.end_index = 2 ** 32 - 1
+
+        to_remove = []
+        for attr in self.attribute_stack:
+            if attr.end_index == self.start_index:
+                to_remove.append(attr)
+            else:
+                self.end_index = min(self.end_index, attr.end_index)
+
+        while len(to_remove) > 0:
+            attr = to_remove[0]
+            self.attribute_stack.remove(to_remove[0])
+            try:
+                to_remove.remove(attr)
+            except:
+                pass
+
+        while len(self.attributes) != 0 and \
+              self.attributes[0].start_index == self.start_index:
+            if self.attributes[0].end_index > self.start_index:
+                self.attribute_stack.append(self.attributes[0])
+                self.end_index = min(self.end_index, self.attributes[0].end_index)
+            self.attributes = self.attributes[1:]
+        if len(self.attributes) > 0:
+            self.end_index = min(self.end_index, self.attributes[0].start_index)
+        return True
+
+    def range(self):
+        return (self.start_index, self.end_index)
+
+    def get_font(self):
+        tmp_list1 = self.attribute_stack
+        fontdesc = Pango.FontDescription()
+        for attr in self.attribute_stack:
+            if attr.klass.type == Pango.AttrType.FONT_DESC:
+                tmp_list1.remove(attr)
+                attr.__class__ = Pango.AttrFontDesc
+                fontdesc = attr.desc
+        return (fontdesc, None, self.attribute_stack)
+
+
+def get_iterator(self):
+    tmplist = []
+
+    def fil(val, data):
+        tmplist.append(val)
+        return False
+
+    self.filter(fil, None)
+    return AttrIterator(tmplist)
+
+
+setattr(Pango.AttrList, 'get_iterator', get_iterator)
+
+
+class AttrFamily(Pango.Attribute):
+    pass
+
+Pango.AttrFamily = AttrFamily
+
+
+class AttrStyle(Pango.Attribute):
+    pass
+
+
+Pango.AttrStyle = AttrStyle
+
+
+class AttrVariant(Pango.Attribute):
+    pass
+
+
+Pango.AttrVariant = AttrVariant
+
+
+class AttrWeight(Pango.Attribute):
+    pass
+
+
+Pango.AttrWeight = AttrWeight
+
+
+class AttrVariant(Pango.Attribute):
+    pass
+
+
+Pango.AttrVariant = AttrVariant
+
+
+class AttrStretch(Pango.Attribute):
+    pass
+
+
+Pango.AttrStretch = AttrStretch
+
+
+class PangoBuffer(Gtk.TextBuffer):
     desc_to_attr_table = {
-        'family': [pango.AttrFamily, ""],
-        'size': [pango.AttrSize, 14 * 1024],
-        'style': [pango.AttrStyle, pango.STYLE_NORMAL],
-        'variant': [pango.AttrVariant, pango.VARIANT_NORMAL],
-        'weight': [pango.AttrWeight, pango.WEIGHT_NORMAL],
-        'stretch': [pango.AttrStretch, pango.STRETCH_NORMAL]}
+        'family': [Pango.AttrFamily, ""],
+        'size': [Pango.AttrSize, 14 * 1024],
+        'style': [Pango.AttrStyle, Pango.Style.NORMAL],
+        'variant': [Pango.AttrVariant, Pango.Variant.NORMAL],
+        'weight': [Pango.AttrWeight, Pango.Weight.NORMAL],
+        'stretch': [Pango.AttrStretch, Pango.Stretch.NORMAL]}
     # pango ATTR TYPE :(pango attr property / tag property)
     pango_translation_properties = {
-        pango.ATTR_SIZE: 'size',
-        pango.ATTR_WEIGHT: 'weight',
-        pango.ATTR_UNDERLINE: 'underline',
-        pango.ATTR_STRETCH: 'stretch',
-        pango.ATTR_VARIANT: 'variant',
-        pango.ATTR_STYLE: 'style',
-        pango.ATTR_SCALE: 'scale',
-        pango.ATTR_FAMILY: 'family',
-        pango.ATTR_STRIKETHROUGH: 'strikethrough',
-        pango.ATTR_RISE: 'rise'}
+        Pango.AttrType.SIZE: 'size',
+        Pango.AttrType.WEIGHT: 'weight',
+        Pango.AttrType.UNDERLINE: 'underline',
+        Pango.AttrType.STRETCH: 'stretch',
+        Pango.AttrType.VARIANT: 'variant',
+        Pango.AttrType.STYLE: 'style',
+        Pango.AttrType.SCALE: 'scale',
+        Pango.AttrType.FAMILY: 'family',
+        Pango.AttrType.STRIKETHROUGH: 'strikethrough',
+        Pango.AttrType.RISE: 'rise'}
     pango_type_table = {
-        pango.ATTR_SIZE: pango.AttrInt,
-        pango.ATTR_WEIGHT: pango.AttrInt,
-        pango.ATTR_UNDERLINE: pango.AttrInt,
-        pango.ATTR_STRETCH: pango.AttrInt,
-        pango.ATTR_VARIANT: pango.AttrInt,
-        pango.ATTR_STYLE: pango.AttrInt,
-        pango.ATTR_SCALE: pango.AttrFloat,
-        pango.ATTR_FAMILY: pango.AttrString,
-        pango.ATTR_FONT_DESC: pango.AttrFontDesc,
-        pango.ATTR_STRIKETHROUGH: pango.AttrInt,
-        pango.ATTR_BACKGROUND: pango.AttrColor,
-        pango.ATTR_FOREGROUND: pango.AttrColor,
-        pango.ATTR_RISE: pango.AttrInt}
+        Pango.AttrType.SIZE: Pango.AttrInt,
+        Pango.AttrType.WEIGHT: Pango.AttrInt,
+        Pango.AttrType.UNDERLINE: Pango.AttrInt,
+        Pango.AttrType.STRETCH: Pango.AttrInt,
+        Pango.AttrType.VARIANT: Pango.AttrInt,
+        Pango.AttrType.STYLE: Pango.AttrInt,
+        Pango.AttrType.SCALE: Pango.AttrFloat,
+        Pango.AttrType.FAMILY: Pango.AttrString,
+        Pango.AttrType.FONT_DESC: Pango.AttrFontDesc,
+        Pango.AttrType.STRIKETHROUGH: Pango.AttrInt,
+        Pango.AttrType.BACKGROUND: Pango.AttrColor,
+        Pango.AttrType.FOREGROUND: Pango.AttrColor,
+        Pango.AttrType.RISE: Pango.AttrInt}
 
     attval_to_markup = {
-        'underline': {pango.UNDERLINE_SINGLE: 'single',
-                      pango.UNDERLINE_DOUBLE: 'double',
-                      pango.UNDERLINE_LOW: 'low',
-                      pango.UNDERLINE_NONE: 'none'
+        'underline': {Pango.Underline.SINGLE: 'single',
+                      Pango.Underline.DOUBLE: 'double',
+                      Pango.Underline.LOW: 'low',
+                      Pango.Underline.NONE: 'none'
                       },
-        'stretch': {pango.STRETCH_ULTRA_EXPANDED: 'ultraexpanded',
-                    pango.STRETCH_EXPANDED: 'expanded',
-                    pango.STRETCH_EXTRA_EXPANDED: 'extraexpanded',
-                    pango.STRETCH_EXTRA_CONDENSED: 'extracondensed',
-                    pango.STRETCH_ULTRA_CONDENSED: 'ultracondensed',
-                    pango.STRETCH_CONDENSED: 'condensed',
-                    pango.STRETCH_NORMAL: 'normal',
+        'stretch': {Pango.Stretch.ULTRA_EXPANDED: 'ultraexpanded',
+                    Pango.Stretch.EXPANDED: 'expanded',
+                    Pango.Stretch.EXTRA_EXPANDED: 'extraexpanded',
+                    Pango.Stretch.EXTRA_CONDENSED: 'extracondensed',
+                    Pango.Stretch.ULTRA_CONDENSED: 'ultracondensed',
+                    Pango.Stretch.CONDENSED: 'condensed',
+                    Pango.Stretch.NORMAL: 'normal',
                     },
-        'variant': {pango.VARIANT_NORMAL: 'normal',
-                    pango.VARIANT_SMALL_CAPS: 'smallcaps',
+        'variant': {Pango.Variant.NORMAL: 'normal',
+                    Pango.Variant.SMALL_CAPS: 'smallcaps',
                     },
-        'style': {pango.STYLE_NORMAL: 'normal',
-                  pango.STYLE_OBLIQUE: 'oblique',
-                  pango.STYLE_ITALIC: 'italic',
+        'style': {Pango.Style.NORMAL: 'normal',
+                  Pango.Style.OBLIQUE: 'oblique',
+                  Pango.Style.ITALIC: 'italic',
                   },
         'stikethrough': {1: 'true',
                          True: 'true',
@@ -105,16 +219,16 @@ class PangoBuffer(gtk.TextBuffer):
     def __init__(self):
         self.tagdict = {}
         self.tags = {}
-        gtk.TextBuffer.__init__(self)
+        GObject.GObject.__init__(self)
 
     def set_text(self, txt):
-        gtk.TextBuffer.set_text(self, "")
-        suc, self.parsed, self.txt, self.separator = pango.parse_markup(txt, -1, u'\x00')
+        Gtk.TextBuffer.set_text(self, "")
+        suc, self.parsed, self.txt, self.separator = Pango.parse_markup(txt, -1, u'\x00')
         if not suc:
             oldtxt = txt
             txt = saxutils.escape(txt)
             self.warn("Marked text is not correct. Escape %s to %s", oldtxt, txt)
-            suc, self.parsed, self.txt, self.separator = pango.parse_markup(txt, -1, u'\x00')
+            suc, self.parsed, self.txt, self.separator = Pango.parse_markup(txt, -1, u'\x00')
         self.attrIter = self.parsed.get_iterator()
         self.add_iter_to_buffer()
         while self.attrIter.next():
@@ -155,7 +269,7 @@ class PangoBuffer(gtk.TextBuffer):
                 a.start_index = start_index
                 a.end_index = end_index
                 a.klass = klass
-                if a.type == pango.ATTR_FOREGROUND:
+                if a.type == Pango.AttrType.FOREGROUND:
                     gdkcolor = self.pango_color_to_gdk(a.color)
                     key = 'foreground%s' % self.color_to_hex(gdkcolor)
                     if not key in self.tags:
@@ -164,7 +278,7 @@ class PangoBuffer(gtk.TextBuffer):
                         self.tagdict[self.tags[key]] = {}
                         self.tagdict[self.tags[key]]['foreground'] = "#%s" % self.color_to_hex(gdkcolor)
                     tags.append(self.tags[key])
-                if a.type == pango.ATTR_BACKGROUND:
+                if a.type == Pango.AttrType.BACKGROUND:
                     gdkcolor = self.pango_color_to_gdk(a.color)
                     key = 'background%s' % self.color_to_hex(gdkcolor)
                     if not key in self.tags:
@@ -262,7 +376,7 @@ class PangoBuffer(gtk.TextBuffer):
             start = self.get_start_iter()
         if not end:
             end = self.get_end_iter()
-        txt = unicode(gtk.TextBuffer.get_text(self, start, end, True))
+        txt = unicode(Gtk.TextBuffer.get_text(self, start, end, True))
         #Important step, split that no tags overlap
         tagdict = self.split_overlap(tagdict)
         cuts = {}
@@ -316,7 +430,7 @@ class PangoBuffer(gtk.TextBuffer):
         return attrs
 
     def pango_color_to_gdk(self, pc):
-        return gtk.gdk.Color(pc.red, pc.green, pc.blue)
+        return Gdk.Color(pc.red, pc.green, pc.blue)
 
     def color_to_hex(self, color):
         hexstring = ""
@@ -376,8 +490,8 @@ class PangoBuffer(gtk.TextBuffer):
 class InteractivePangoBuffer(PangoBuffer):
     def __init__(self, normal_button=None, toggle_widget_alist=[]):
         """
-        An interactive interface to allow marking up a gtk.TextBuffer.
-        txt is initial text, with markup.  buf is the gtk.TextBuffer
+        An interactive interface to allow marking up a Gtk.TextBuffer.
+        txt is initial text, with markup.  buf is the Gtk.TextBuffer
         normal_button is a widget whose clicked signal will make us normal
         toggle_widget_alist is a list that looks like this:
             [(widget,(font, attr)), (widget2, (font, attr))]
@@ -402,8 +516,8 @@ class InteractivePangoBuffer(PangoBuffer):
 
     def setup_widget_from_pango(self, widg, markupstring):
         """setup widget from a pango markup string"""
-        #font = pango.FontDescription(fontstring)
-        suc, a, t, s = pango.parse_markup(markupstring, -1, u'\x00')
+        #font = Pango.FontDescription(fontstring)
+        suc, a, t, s = Pango.parse_markup(markupstring, -1, u'\x00')
         ai = a.get_iterator()
         font, lang, attrs = ai.get_font()
 
@@ -479,7 +593,7 @@ class TitleEditor(Loggable):
 
         #Creat UI
         self._createUI()
-        self.textbuffer = gtk.TextBuffer()
+        self.textbuffer = Gtk.TextBuffer()
         self.pangobuffer = InteractivePangoBuffer()
         self.textarea.set_buffer(self.pangobuffer)
 
@@ -493,7 +607,7 @@ class TitleEditor(Loggable):
         self.pangobuffer.setup_widget_from_pango(self.bt["underline"], "<u>underline</u>")
 
     def _createUI(self):
-        builder = gtk.Builder()
+        builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "titleeditor.ui"))
         builder.connect_signals(self)
         self.widget = builder.get_object("box1")
@@ -545,14 +659,14 @@ class TitleEditor(Loggable):
         self.source.set_background(color_int)
 
     def _frontTextColorButtonCb(self, widget):
-        suc, a, t, s = pango.parse_markup("<span color='" + widget.get_color().to_string() + "'>color</span>", -1, u'\x00')
+        suc, a, t, s = Pango.parse_markup("<span color='" + widget.get_color().to_string() + "'>color</span>", -1, u'\x00')
         ai = a.get_iterator()
         font, lang, attrs = ai.get_font()
         tags = self.pangobuffer.get_tags_from_attrs(None, None, attrs)
         self.pangobuffer.apply_tag_to_selection(tags[0])
 
     def _backTextColorButtonCb(self, widget):
-        suc, a, t, s = pango.parse_markup("<span background='" + widget.get_color().to_string() + "'>color</span>", -1, u'\x00')
+        suc, a, t, s = Pango.parse_markup("<span background='" + widget.get_color().to_string() + "'>color</span>", -1, u'\x00')
         ai = a.get_iterator()
         font, lang, attrs = ai.get_font()
         tags = self.pangobuffer.get_tags_from_attrs(None, None, attrs)
@@ -563,7 +677,7 @@ class TitleEditor(Loggable):
         font_face = " ".join(font_desc[:-1])
         font_size = str(int(font_desc[-1]) * 1024)
         text = "<span face='" + font_face + "'><span size='" + font_size + "'>text</span></span>"
-        suc, a, t, s = pango.parse_markup(text, -1, u'\x00')
+        suc, a, t, s = Pango.parse_markup(text, -1, u'\x00')
         ai = a.get_iterator()
         font, lang, attrs = ai.get_font()
         tags = self.pangobuffer.get_tags_from_attrs(font, None, attrs)
@@ -612,7 +726,7 @@ class TitleEditor(Loggable):
             if hasattr(self.source, "get_background"):
                 self.bt["back_color"].set_visible(True)
                 color = self.source.get_background()
-                color = gtk.gdk.RGBA(color / 256 ** 2 % 256 / 255.,
+                color = Gdk.RGBA(color / 256 ** 2 % 256 / 255.,
                                      color / 256 ** 1 % 256 / 255.,
                                      color / 256 ** 0 % 256 / 255.,
                                      color / 256 ** 3 % 256 / 255.)
@@ -637,10 +751,10 @@ class TitleEditor(Loggable):
             for name, obj in self.settings.items():
                 if obj == updated_obj:
                     if name == "valignment":
-                        self.source.set_valignment(getattr(ges.TextVAlign, obj.get_active_id().upper()))
+                        self.source.set_valignment(getattr(GES.TextVAlign, obj.get_active_id().upper()))
                         self.settings["ypos"].set_visible(obj.get_active_id() == "position")
                     elif name == "halignment":
-                        self.source.set_halignment(getattr(ges.TextHAlign, obj.get_active_id().upper()))
+                        self.source.set_halignment(getattr(GES.TextHAlign, obj.get_active_id().upper()))
                         self.settings["xpos"].set_visible(obj.get_active_id() == "position")
                     elif name == "xpos":
                         self.settings["halignment"].set_active_id("position")
@@ -672,9 +786,9 @@ class TitleEditor(Loggable):
             self.set_sensitive(True)
 
     def _createCb(self, unused_button):
-        source = ges.TimelineTitleSource()
+        source = GES.TimelineTitleSource()
         source.set_text("")
-        source.set_duration(long(gst.SECOND * 5))
+        source.set_duration(long(Gst.SECOND * 5))
         #Show insert infobar only if created new source
         self.info_bar_insert.show()
         self.set_source(source, True)
@@ -707,10 +821,10 @@ class TitleEditor(Loggable):
         if event.button == 1:
             self._drag_events = [(event.x, event.y)]
             #Update drag by drag event change, but not too often
-            self.timeout = gobject.timeout_add(100, self.drag_update_event)
+            self.timeout = GObject.timeout_add(100, self.drag_update_event)
             #If drag goes out for 0.3 second, and do not come back, consider drag end
             self._drag_updated = True
-            self.timeout = gobject.timeout_add(1000, self.drag_posible_end_event)
+            self.timeout = GObject.timeout_add(1000, self.drag_posible_end_event)
 
     def drag_posible_end_event(self):
         if self._drag_updated:
@@ -742,7 +856,7 @@ class TitleEditor(Loggable):
             return False
 
     def drag_notify_event(self, widget, event):
-        if len(self._drag_events) > 0 and event.get_state() & gtk.gdk.BUTTON1_MASK:
+        if len(self._drag_events) > 0 and event.get_state() & Gdk.ModifierType.BUTTON1_MASK:
             self._drag_updated = True
             self._drag_events.append((event.x, event.y))
             st = self._drag_events[0]

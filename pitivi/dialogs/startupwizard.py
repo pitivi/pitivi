@@ -20,7 +20,9 @@
 # Boston, MA 02110-1301, USA.
 
 import os
-import gtk
+
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from gettext import gettext as _
 
@@ -43,7 +45,7 @@ class StartUpWizard(object):
 
     def __init__(self, app):
         self.app = app
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(), "startupwizard.ui"))
         self.builder.connect_signals(self)
 
@@ -52,7 +54,7 @@ class StartUpWizard(object):
         self.recent_chooser = self.builder.get_object("recentchooser2")
         # FIXME: gtk creates a combo box with only one item, but there is no
         # simple way to hide it.
-        filter = gtk.RecentFilter()
+        filter = Gtk.RecentFilter()
         filter.set_name(_("Projects"))
         filter.add_pattern("*.xptv")
         self.recent_chooser.add_filter(filter)
@@ -65,8 +67,8 @@ class StartUpWizard(object):
         self.app.projectManager.connect("new-project-loading", self._projectLoadingCb)
 
         vbox = self.builder.get_object("topvbox")
-        self.infobar = gtk.InfoBar()
-        vbox.pack_start(self.infobar)
+        self.infobar = Gtk.InfoBar()
+        vbox.pack_start(self.infobar, True, True, 0)
         if self.app.version_information:
             self._appVersionInfoReceivedCb(None, self.app.version_information)
         else:
@@ -87,7 +89,7 @@ class StartUpWizard(object):
 
     def _keyPressCb(self, widget, event):
         """Handle a key press event on the dialog."""
-        if event.keyval == gtk.keysyms.Escape:
+        if event.keyval == Gdk.KEY_Escape:
             # The user pressed "Esc".
             self.app.projectManager.newBlankProject()
 
@@ -152,7 +154,7 @@ class StartUpWizard(object):
         # increment counter, create infobar and show info
         self.app.settings.displayCounter = self.app.settings.displayCounter + 1
         text = _("PiTiVi %s is available." % version["current"])
-        label = gtk.Label(text)
+        label = Gtk.Label(label=text)
         self.infobar.get_content_area().add(label)
-        self.infobar.set_message_type(gtk.MESSAGE_INFO)
+        self.infobar.set_message_type(Gtk.MessageType.INFO)
         self.infobar.show_all()

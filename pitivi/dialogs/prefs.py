@@ -23,7 +23,7 @@
 Dialog box for user preferences.
 """
 
-import gtk
+from gi.repository import Gtk
 import os
 
 import pitivi.utils.widgets as ptvWidgets
@@ -67,7 +67,7 @@ class PreferencesDialog():
         self.dialog.run()
 
     def _createUi(self):
-        builder = gtk.Builder()
+        builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "preferences.ui"))
         builder.connect_signals(self)
 
@@ -111,7 +111,7 @@ class PreferencesDialog():
     def addPathPreference(cls, attrname, label, description, section=None):
         """
         Add an auto-generated user preference that will show up as a
-        gtk.FileChooserButton.
+        Gtk.FileChooserButton.
 
         @param label: user-visible name for this option
         @type label: C{str}
@@ -130,7 +130,7 @@ class PreferencesDialog():
         upper=None, lower=None):
         """
         Add an auto-generated user preference that will show up as either a
-        gtk.SpinButton or a gtk.HScale, depending whether both the upper and lower
+        Gtk.SpinButton or a Gtk.HScale, depending whether both the upper and lower
         limits are set.
 
         @param label: user-visible name for this option
@@ -154,7 +154,7 @@ class PreferencesDialog():
         matches=None):
         """
         Add an auto-generated user preference that will show up as either a
-        gtk.SpinButton or a gtk.HScale, depending on the upper and lower
+        Gtk.SpinButton or a Gtk.HScale, depending on the upper and lower
         limits
 
         @param label: user-visible name for this option
@@ -174,7 +174,7 @@ class PreferencesDialog():
         section=None):
         """
         Add an auto-generated user preference that will show up as either a
-        gtk.ComboBox or a group of radio buttons, depending on the number of
+        Gtk.ComboBox or a group of radio buttons, depending on the number of
         choices.
 
         @param label: user-visible name for this option
@@ -195,7 +195,7 @@ class PreferencesDialog():
     def addTogglePreference(cls, attrname, label, description, section=None):
         """
         Add an auto-generated user preference that will show up as a
-        gtk.CheckButton.
+        Gtk.CheckButton.
 
         @param label: user-visible name for this option
         @type label: C{str}
@@ -215,7 +215,7 @@ class PreferencesDialog():
         """
         Add an auto-generated user preference for specifying colors. The
         colors can be returned as either int, a string colorspec, or a
-        gtk.gdk.Color object. See the gtk.gdk.color_parse() function for info
+        Gdk.Color object. See the Gdk.color_parse() function for info
         on colorspecs.
 
         @param label: user-visible name for this option
@@ -254,7 +254,7 @@ class PreferencesDialog():
         for section in sorted(self.prefs):
             options = self.prefs[section]
             self.model.append((_(section), section))
-            widgets = gtk.Table()
+            widgets = Gtk.Table()
             widgets.set_border_width(SPACING)
             widgets.props.column_spacing = SPACING
             widgets.props.row_spacing = SPACING / 2
@@ -269,12 +269,12 @@ class PreferencesDialog():
                 self.widgets[attrname] = widget
                 if isinstance(widget, ptvWidgets.ToggleWidget):
                     # Don't add a semicolon for checkbuttons
-                    label_widget = gtk.Label(_(label))
+                    label_widget = Gtk.Label(label=_(label))
                 else:
-                    label_widget = gtk.Label(_(label) + ":")
-                icon = gtk.Image()
-                icon.set_from_stock('gtk-clear', gtk.ICON_SIZE_MENU)
-                revert = gtk.Button()
+                    label_widget = Gtk.Label(label=_(label) + ":")
+                icon = Gtk.Image()
+                icon.set_from_stock('gtk-clear', Gtk.IconSize.MENU)
+                revert = Gtk.Button()
                 revert.add(icon)
                 revert.set_tooltip_text(_("Reset to default value"))
                 revert.set_sensitive(not self.settings.isDefault(attrname))
@@ -297,7 +297,7 @@ class PreferencesDialog():
                 else:
                     label.set_alignment(1.0, 0.5)
                     label.set_tooltip_text(description)
-                    widgets.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=0)
+                    widgets.attach(label, 0, 1, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0)
                     widgets.attach(widget, 1, 2, y, y + 1, yoptions=0)
                     widgets.attach(revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
                     label.show()
@@ -305,7 +305,7 @@ class PreferencesDialog():
                 widget.show()
                 revert.show()
 
-            self.contents.pack_start(widgets, True, True)
+            self.contents.pack_start(widgets, True, True, 0)
 
         self.treeview.get_selection().select_path((0,))
         self.factory_settings.set_sensitive(self._canReset())

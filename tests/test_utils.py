@@ -22,10 +22,10 @@
 
 from unittest import TestCase
 
-import gst
+from gi.repository import Gst
 from pitivi.utils.ui import beautify_length
 
-second = gst.SECOND
+second = Gst.SECOND
 minute = second * 60
 hour = minute * 60
 

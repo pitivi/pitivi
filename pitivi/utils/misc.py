@@ -23,9 +23,9 @@
 # set of utility functions
 
 import sys
-import gobject
-import gst
-import gtk
+from gi.repository import GObject
+from gi.repository import Gst
+from gi.repository import Gtk
 import hashlib
 import os
 import struct
@@ -62,6 +62,16 @@ def between(a, b, c):
     return (a <= b) and (b <= c)
 
 
+def print_ns(time):
+    if time == Gst.CLOCK_TIME_NONE:
+        return "CLOCK_TIME_NONE"
+
+    return str(time / (Gst.SECOND * 60 * 60)) + ':' + \
+           str((time / (Gst.SECOND * 60)) % 60) + ':' + \
+           str((time / Gst.SECOND) % 60) + ':' + \
+           str(time % Gst.SECOND)
+
+
 def call_false(function, *args, **kwargs):
     """ Helper function for calling an arbitrary function once in the gobject
         mainloop.  Any positional or keyword arguments after the function will
@@ -78,14 +88,14 @@ def call_false(function, *args, **kwargs):
 
 def bin_contains(bin, element):
     """ Returns True if the bin contains the given element, the search is recursive """
-    if not isinstance(bin, gst.Bin):
+    if not isinstance(bin, Gst.Bin):
         return False
-    if not isinstance(element, gst.Element):
+    if not isinstance(element, Gst.Element):
         return False
     for elt in bin:
         if element is elt:
             return True
-        if isinstance(elt, gst.Bin) and bin_contains(elt, element):
+        if isinstance(elt, Gst.Bin) and bin_contains(elt, element):
             return True
     return False
 
@@ -127,9 +137,9 @@ def uri_is_valid(uri):
     @param uri: The location to check
     @type uri: C{URI}
     """
-    return (gst.uri_is_valid(uri) and
-            gst.uri_get_protocol(uri) == "file" and
-            len(os.path.basename(gst.uri_get_location(uri))) > 0)
+    return (Gst.uri_is_valid(uri) and
+            Gst.uri_get_protocol(uri) == "file" and
+            len(os.path.basename(Gst.uri_get_location(uri))) > 0)
 
 
 def uri_is_reachable(uri):
@@ -145,7 +155,7 @@ def uri_is_reachable(uri):
             # Translators: "non local" means the project is not stored
             # on a local filesystem
             _("%s doesn't yet handle non-local projects") % APPNAME)
-    return os.path.isfile(gst.uri_get_location(uri))
+    return os.path.isfile(Gst.uri_get_location(uri))
 
 
 def get_filesystem_encoding():
@@ -232,14 +242,14 @@ def get_controllable_properties(element):
     * The GstObject
     * The GParamspec
     """
-    log.debug("utils", "element %r, %d", element, isinstance(element, gst.Bin))
+    log.debug("utils", "element %r, %d", element, isinstance(element, Gst.Bin))
     res = []
-    if isinstance(element, gst.Bin):
+    if isinstance(element, Gst.Bin):
         for child in element.elements():
             res.extend(get_controllable_properties(child))
     else:
-        for prop in gobject.list_properties(element):
-            if prop.flags & gst.PARAM_CONTROLLABLE:
+        for prop in GObject.list_properties(element):
+            if prop.flags & Gst.PARAM_CONTROLLABLE:
                 log.debug("utils", "adding property %r", prop)
                 res.append((element, prop))
     return res
@@ -250,31 +260,31 @@ def linkDynamic(element, target):
     def pad_added(bin, pad, target):
         compatpad = target.get_compatible_pad(pad)
         if compatpad:
-            pad.link_full(compatpad, gst.PAD_LINK_CHECK_NOTHING)
+            pad.link_full(compatpad, Gst.PAD_LINK_CHECK_NOTHING)
     element.connect("pad-added", pad_added, target)
 
 
 def element_make_many(*args):
-    return tuple((gst.element_factory_make(arg) for arg in args))
+    return tuple((Gst.ElementFactory.make(arg) for arg in args))
 
 
 def pipeline(graph):
     E = graph.iteritems()
     V = graph.iterkeys()
-    p = gst.Pipeline()
+    p = Gst.Pipeline()
     p.add(*V)
     for u, v in E:
         if v:
             try:
                 u.link(v)
-            except gst.LinkError:
+            except Gst.LinkError:
                 linkDynamic(u, v)
     return p
 
 
 def filter_(caps):
-    f = gst.element_factory_make("capsfilter")
-    f.props.caps = gst.caps_from_string(caps)
+    f = Gst.ElementFactory.make("capsfilter")
+    f.props.caps = Gst.caps_from_string(caps)
     return f
 
 
@@ -400,7 +410,7 @@ def show_user_manual():
     time_now = int(time.time())
     for uri in (APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE):
         try:
-            gtk.show_uri(None, uri, time_now)
+            Gtk.show_uri(None, uri, time_now)
             return
         except Exception, e:
             log.debug("utils", "Failed loading URI %s: %s", uri, e)

@@ -21,6 +21,7 @@
 # Boston, MA 02110-1301, USA.
 
 import os
+import gi
 import sys
 import string
 import locale
@@ -93,24 +94,27 @@ def _add_pitivi_path():
             # ld caches LD_LIBRARY_PATH at startup so we need to execv() here. LALA.
             jump_through_hoops()
 
+
 def _init_gobject_gtk_gst_ges():
     global localedir
     try:
-        import pitivi.utils.pygtkcompat
-        pitivi.utils.pygtkcompat.enable()
-        pitivi.utils.pygtkcompat.enable_gtk(version='3.0')
-        from gi.repository import GdkX11
-        GdkX11 #pyflakes
+        gi.require_version('Gtk', '3.0')
+        from gi.repository import Gtk
+        Gtk #pyflakes
     except ImportError, e:
         raise SystemExit("PyGTK couldn't be found !", str(e))
 
     try:
-        pitivi.utils.pygtkcompat.enable_gst()
+        gi.require_version('Gst', '1.0')
+        from gi.repository import Gst
+        Gst #pyflakes
     except ImportError:
-        raise SystemExit("Gst-Python couldn't be found!")
+        raise SystemExit("Gst 1.0 couldn't be found!")
 
     try:
-        pitivi.utils.pygtkcompat.enable_ges()
+        gi.require_version('GES', '1.0')
+        from gi.repository import GES
+        GES #pyflakes
     except ImportError:
         raise SystemExit("GStreamer Editing Services couldn't be found!")
 
@@ -119,7 +123,9 @@ def _init_gobject_gtk_gst_ges():
     GObject.threads_init()
 
     try:
-        pitivi.utils.pygtkcompat.enable_goocanvas()
+        gi.require_version('GooCanvas', '2.0')
+        from gi.repository import GooCanvas
+        GooCanvas # pyflakes
     except ImportError:
         raise SystemExit("GooCanvas couldn't be found!")
 

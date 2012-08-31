@@ -20,7 +20,7 @@
 # Boston, MA 02110-1301, USA.
 
 import os
-import gst
+from gi.repository import Gst
 from ConfigParser import SafeConfigParser, ParsingError
 import xdg.BaseDirectory as xdg_dirs  # Freedesktop directories spec
 
@@ -330,8 +330,8 @@ class MultimediaSettings(Signallable, Loggable):
         self.videowidth = 720
         self.videoheight = 576
         self.render_scale = 100
-        self.videorate = gst.Fraction(25, 1)
-        self.videopar = gst.Fraction(16, 15)
+        self.videorate = Gst.Fraction(25, 1)
+        self.videopar = Gst.Fraction(16, 15)
         self.audiochannels = 2
         self.audiorate = 44100
         self.audiodepth = 16
@@ -350,8 +350,8 @@ class MultimediaSettings(Signallable, Loggable):
         ret.videowidth = self.videowidth
         ret.videoheight = self.videoheight
         ret.render_scale = self.render_scale
-        ret.videorate = gst.Fraction(self.videorate.num, self.videorate.denom)
-        ret.videopar = gst.Fraction(self.videopar.num, self.videopar.denom)
+        ret.videorate = Gst.Fraction(self.videorate.num, self.videorate.denom)
+        ret.videopar = Gst.Fraction(self.videopar.num, self.videopar.denom)
         ret.audiochannels = self.audiochannels
         ret.audiorate = self.audiorate
         ret.audiodepth = self.audiodepth
@@ -364,7 +364,7 @@ class MultimediaSettings(Signallable, Loggable):
         return ret
 
     def getDAR(self):
-        return gst.Fraction(self.videowidth, self.videoheight) * self.videopar
+        return Gst.Fraction(self.videowidth, self.videoheight) * self.videopar
 
     def __str__(self):
         """
@@ -408,7 +408,7 @@ class MultimediaSettings(Signallable, Loggable):
                 self.videopar.num, self.videopar.denom,
                 self.videorate.num, self.videorate.denom)
         caps_str = "video/x-raw,%s" % (vstr)
-        video_caps = gst.caps_from_string(caps_str)
+        video_caps = Gst.caps_from_string(caps_str)
         if self.vencoder:
             return get_compatible_sink_caps(self.vencoder, video_caps)
         return video_caps
@@ -418,7 +418,7 @@ class MultimediaSettings(Signallable, Loggable):
         # TODO: Figure out why including 'depth' causes pipeline failures:
         astr = "rate=%d,channels=%d" % (self.audiorate, self.audiochannels)
         caps_str = "audio/x-raw,%s" % (astr)
-        audio_caps = gst.caps_from_string(caps_str)
+        audio_caps = Gst.caps_from_string(caps_str)
         if self.aencoder:
             return get_compatible_sink_caps(self.aencoder, audio_caps)
         return audio_caps

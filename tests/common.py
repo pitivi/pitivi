@@ -2,7 +2,7 @@
 A collection of objects to use for testing
 """
 
-import gst
+from gi.repository import Gst
 import os
 import gc
 import unittest
@@ -11,7 +11,7 @@ detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "1") not in ("0", "")
 
 
 class TestCase(unittest.TestCase):
-    _tracked_types = (gst.MiniObject, gst.Element, gst.Pad, gst.Caps)
+    _tracked_types = (Gst.MiniObject, Gst.Element, Gst.Pad, Gst.Caps)
 
     def gctrack(self):
         self.gccollect()
