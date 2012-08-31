@@ -24,6 +24,15 @@ Hacking on PiTiVi
       and what you think makes the most easily readable code.
 
 
+  For translatable multiline strings, use Python's implicit line continuation
+  instead of manually concatenating with the plus (+) sign. For example, this
+  is incorrect, gettext will consider it as two separate strings:
+        _("<b>First line</b>\n" +
+          "Some second line that is too long to fit on the first line anyway"
+
+  Instead, this is the translator-friendly version:
+        _("<b>First line</b>\n"
+          "Some second line that is too long to fit on the first line anyway"
 
 - for method names we use the mixedCase style
   Ex :
