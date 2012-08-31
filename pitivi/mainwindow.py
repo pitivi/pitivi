@@ -184,7 +184,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         """ initialize with the Pitivi object """
         gtksettings = Gtk.Settings.get_default()
         gtksettings.set_property("gtk-application-prefer-dark-theme", True)
-        GObject.GObject.__init__(self)
+        Gtk.Window.__init__(self)
         Loggable.__init__(self, "mainwindow")
         self.app = instance
         self.log("Creating MainWindow")

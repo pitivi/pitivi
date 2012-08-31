@@ -340,7 +340,7 @@ class RenderingProgressDialog(Signallable):
         self.play_pause_button = self.builder.get_object("play_pause_button")
         # Parent the dialog with mainwindow, since renderingdialog is hidden.
         # It allows this dialog to properly minimize together with mainwindow
-        self.set_transient_for(self.app.gui)
+        self.window.set_transient_for(self.app.gui)
 
         # UI widgets
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
@@ -854,7 +854,7 @@ class RenderDialog(Loggable):
         """
         properties = getattr(self.settings, settings_attr)
         self.dialog = GstElementSettingsDialog(factory, properties=properties)
-        self.dialog.set_transient_for(self.window)
+        self.dialog.window.set_transient_for(self.window)
         self.dialog.ok_btn.connect("clicked", self._okButtonClickedCb, settings_attr)
         self.dialog.window.run()
 

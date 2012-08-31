@@ -671,7 +671,7 @@ class AlignmentProgressDialog:
         # taken from RenderingProgressDialog.  In both cases, it appears
         # to work correctly, although there is a known bug for Gnome 3 in
         # RenderingProgressDialog (bug #652917)
-        self.set_transient_for(app.gui)
+        self.window.set_transient_for(app.gui)
 
         # UI widgets
         # We currently reuse the render icon for this dialog.

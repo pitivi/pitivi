@@ -88,7 +88,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
     INHIBIT_REASON = _("Currently playing")
 
     def __init__(self, app, undock_action=None):
-        GObject.GObject.__init__(self)
+        Gtk.VBox.__init__(self)
         self.set_border_width(SPACING)
         self.app = app
         self.settings = app.settings
@@ -961,7 +961,7 @@ class PlayPauseButton(Gtk.Button, Loggable):
         }
 
     def __init__(self):
-        GObject.GObject.__init__(self)
+        Gtk.Button.__init__(self)
         Loggable.__init__(self)
         self.image = Gtk.Image()
         self.add(self.image)

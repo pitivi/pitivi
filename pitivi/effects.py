@@ -348,7 +348,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
     """ Widget for listing effects """
 
     def __init__(self, instance, uiman):
-        GObject.GObject.__init__(self)
+        Gtk.VBox.__init__(self)
         Loggable.__init__(self)
 
         self.app = instance

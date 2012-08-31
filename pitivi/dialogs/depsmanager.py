@@ -79,7 +79,7 @@ class DepsManager(object):
         self.builder.get_object("pkg_list").set_text(label_contents)
 
     def show(self):
-        self.set_transient_for(self.app.gui)
+        self.window.set_transient_for(self.app.gui)
         self.window.set_modal(True)
         self._setDepsLabel()
         self.window.show()

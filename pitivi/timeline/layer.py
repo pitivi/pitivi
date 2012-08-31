@@ -40,7 +40,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
     __gtype_name__ = 'LayerControl'
 
     def __init__(self, app, layer, layer_type):
-        GObject.GObject.__init__(self, spacing=0)
+        Gtk.VBox.__init__(self, spacing=0)
         Loggable.__init__(self)
 
         self._app = app
@@ -350,7 +350,7 @@ class TwoStateButton(Gtk.Button):
        }
 
     def __init__(self, state1="", state2=""):
-        GObject.GObject.__init__(self)
+        Gtk.Button.__init__(self)
         self.set_relief(Gtk.ReliefStyle.NONE)
         self.connect("clicked", self._clickedCb)
 
@@ -377,7 +377,7 @@ class SpacedSeparator(Gtk.EventBox):
     """
 
     def __init__(self):
-        GObject.GObject.__init__(self)
+        Gtk.EventBox.__init__(self)
 
         self.box = Gtk.VBox()
         self.box.add(Gtk.HSeparator())

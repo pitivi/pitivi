@@ -58,7 +58,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
     subdivide = ((1, 1.0), (2, 0.5), (10, .25))
 
     def __init__(self, instance, hadj):
-        GObject.GObject.__init__(self)
+        Gtk.DrawingArea.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
         self.log("Creating new ScaleRuler")

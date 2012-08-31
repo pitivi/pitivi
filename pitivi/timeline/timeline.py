@@ -500,7 +500,7 @@ class TimelineControls(Gtk.VBox, Loggable):
        }
 
     def __init__(self, instance):
-        GObject.GObject.__init__(self)
+        Gtk.VBox.__init__(self)
         Loggable.__init__(self)
         self.app = instance
         self._layer_controls = {}
@@ -877,7 +877,7 @@ class InfoStub(Gtk.HBox, Loggable):
     """
 
     def __init__(self):
-        GObject.GObject.__init__(self)
+        Gtk.HBox.__init__(self)
         Loggable.__init__(self)
         self.errors = []
         self._scroll_pos_ns = 0
@@ -1162,7 +1162,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         try:
             if mod & Gdk.ModifierType.CONTROL_MASK:
                 now = self._project.pipeline.getPosition()
-                ltime, rtime = self._project.timeline.edGES.closest(now)
+                ltime, rtime = self._project.timeline.edges.closest(now)
 
             if kv == Gdk.KEY_Left:
                 if mod & Gdk.ModifierType.SHIFT_MASK:
@@ -1906,7 +1906,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         layer = timeline.get_layers()[0]  # FIXME Get the longest layer
 
         # Set the duration of the clip if it is an image
-        if hasattr(source,"is_image") and source.is_image():
+        if hasattr(source, "is_image") and source.is_image():
             source.set_duration(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
 
         # Handle the case where we just inserted the first clip

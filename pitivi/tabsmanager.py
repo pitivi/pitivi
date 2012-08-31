@@ -20,6 +20,7 @@
 # Boston, MA 02110-1301, USA.
 
 from gi.repository import Gtk
+from gi.repository import Gdk
 from pitivi.utils.ui import SPACING
 
 

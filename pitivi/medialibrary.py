@@ -269,7 +269,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 (GObject.TYPE_PYOBJECT,))}
 
     def __init__(self, instance, uiman):
-        GObject.GObject.__init__(self)
+        Gtk.VBox.__init__(self)
         Loggable.__init__(self)
 
         self.pending_rows = []

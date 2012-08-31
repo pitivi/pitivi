@@ -219,7 +219,7 @@ class PangoBuffer(Gtk.TextBuffer):
     def __init__(self):
         self.tagdict = {}
         self.tags = {}
-        GObject.GObject.__init__(self)
+        Gtk.TextBuffer.__init__(self)
 
     def set_text(self, txt):
         Gtk.TextBuffer.set_text(self, "")

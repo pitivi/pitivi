@@ -2,6 +2,7 @@
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import Pango
 import os
 
@@ -51,7 +52,7 @@ acceptable_tags = [Gst.TAG_ALBUM_ARTIST,
 class PreviewWidget(Gtk.VBox, Loggable):
 
     def __init__(self, instance):
-        GObject.GObject.__init__(self)
+        Gtk.VBox.__init__(self)
         Loggable.__init__(self)
 
         self.log("Init PreviewWidget")

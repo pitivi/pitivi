@@ -32,6 +32,7 @@ import sys
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Gst
+from gi.repository import GES
 from gi.repository import Pango
 from gi.repository import GObject
 
@@ -75,7 +76,7 @@ class DefaultWidget(Gtk.Label, DynamicWidget):
     """When all hope fails...."""
 
     def __init__(self, default=None, *unused, **kw_unused):
-        GObject.GObject.__init__(self, _("Implement Me"))
+        Gtk.Label.__init__(self, _("Implement Me"))
         DynamicWidget.__init__(self, default)
 
     def connectValueChanged(self, callback, *args):
@@ -110,7 +111,7 @@ class TextWidget(Gtk.HBox, DynamicWidget):
             # In the case of text widgets, a blank default is an empty string
             default = ""
 
-        GObject.GObject.__init__(self)
+        Gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
 
         self.set_border_width(0)
@@ -191,7 +192,7 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
     lower and upper bounds are defined"""
 
     def __init__(self, upper=None, lower=None, default=None):
-        GObject.GObject.__init__(self)
+        Gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
 
         self.spacing = SPACING
@@ -214,7 +215,7 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
         self.adjustment.props.lower = lower
         self.adjustment.props.upper = upper
         self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
-        self.pack_end(self.spinner, fille=True, expand=not hasattr(self, 'slider'), padding=0)
+        self.pack_end(self.spinner, fill=True, expand=not hasattr(self, 'slider'), padding=0)
         self.spinner.show()
 
     def connectValueChanged(self, callback, *args):
@@ -375,7 +376,7 @@ class ToggleWidget(Gtk.CheckButton, DynamicWidget):
     """A Gtk.CheckButton which supports the DynamicWidget interface."""
 
     def __init__(self, default=None):
-        GObject.GObject.__init__(self)
+        Gtk.CheckButton.__init__(self)
         DynamicWidget.__init__(self, default)
 
     def connectValueChanged(self, callback, *args):
@@ -395,7 +396,7 @@ class ChoiceWidget(Gtk.HBox, DynamicWidget):
     implementation uses a Gtk.ComboBoxText for simplicity."""
 
     def __init__(self, choices, default=None):
-        GObject.GObject.__init__(self)
+        Gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
         self.choices = None
         self.values = None
@@ -470,7 +471,7 @@ class PresetChoiceWidget(Gtk.HBox, DynamicWidget):
             return [w.getWidgetValue() for w in self.widgets if w]
 
     def __init__(self, presets, default=None):
-        GObject.GObject.__init__(self)
+        Gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
         self._block_update = False
         self._widget_map = None
@@ -576,7 +577,7 @@ class PathWidget(Gtk.FileChooserButton, DynamicWidget):
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_CLOSE,
              Gtk.ResponseType.CLOSE))
         self.dialog.set_default_response(Gtk.ResponseType.OK)
-        GObject.GObject.__init__(self, self.dialog)
+        Gtk.FileChooserButton.__init__(self, self.dialog)
         self.set_title(_("Choose..."))
         self.dialog.connect("response", self._responseCb)
         self.uri = ""
@@ -601,7 +602,7 @@ class PathWidget(Gtk.FileChooserButton, DynamicWidget):
 class ColorWidget(Gtk.ColorButton, DynamicWidget):
 
     def __init__(self, value_type=str, default=None):
-        GObject.GObject.__init__(self)
+        Gtk.ColorButton.__init__(self)
         DynamicWidget.__init__(self, default)
         self.value_type = value_type
         self.set_use_alpha(True)
@@ -641,7 +642,7 @@ class ColorWidget(Gtk.ColorButton, DynamicWidget):
 class FontWidget(Gtk.FontButton, DynamicWidget):
 
     def __init__(self, default=None):
-        GObject.GObject.__init__(self)
+        Gtk.FontButton.__init__(self)
         DynamicWidget.__init__(self, default)
         self.set_use_font(True)
 
@@ -658,7 +659,7 @@ class FontWidget(Gtk.FontButton, DynamicWidget):
 class ResolutionWidget(Gtk.HBox, DynamicWidget):
 
     def __init__(self, default=None):
-        GObject.GObject.__init__(self)
+        Gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
         self.props.spacing = SPACING
 
@@ -782,7 +783,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
     """
 
     def __init__(self):
-        GObject.GObject.__init__(self)
+        Gtk.VBox.__init__(self)
         Loggable.__init__(self)
         self.element = None
         self.ignore = None
@@ -810,7 +811,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         "No properties."
         """
         is_effect = False
-        if isinstance(self.element, ges.TrackParseLaunchEffect):
+        if isinstance(self.element, GES.TrackParseLaunchEffect):
             is_effect = True
             props = [prop for prop in self.element.list_children_properties() if not prop.name in self.ignore]
         else:
@@ -967,7 +968,7 @@ class GstElementSettingsDialog(Loggable):
 class BaseTabs(Gtk.Notebook):
     def __init__(self, app, hide_hpaned=False):
         """ initialize """
-        GObject.GObject.__init__(self)
+        Gtk.Notebook.__init__(self)
         self.set_border_width(SPACING)
 
         self.connect("create-window", self._createWindowCb)

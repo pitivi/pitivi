@@ -44,7 +44,7 @@ from pitivi.utils.ui import SPACING, PADDING
 class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
 
     def __init__(self, instance, uiman):
-        GObject.GObject.__init__(self)
+        Gtk.VBox.__init__(self)
         Loggable.__init__(self)
         Signallable.__init__(self)
 
