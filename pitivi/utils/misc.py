@@ -406,9 +406,15 @@ def same(seq):
     return first
 
 
-def show_user_manual():
+def show_user_manual(page=None):
+    """
+    Display the user manual with Yelp.
+    Optional: for contextual help, a page ID can be specified.
+    """
     time_now = int(time.time())
     for uri in (APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE):
+        if page is not None:
+            uri += "#" + page
         try:
             Gtk.show_uri(None, uri, time_now)
             return

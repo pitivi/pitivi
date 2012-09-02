@@ -1,0 +1,64 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="cheatsheet">
+
+  <info>
+    <link type="topic" xref="index"/>
+    <link type="seealso" xref="movearoundtimeline"/>
+    <link type="seealso" xref="trimming"/>
+    <revision pkgversion="0.16" version="0.1" date="2012-09-03" status="complete"/>
+    <credit type="author">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Keyboard shortcuts and cheatsheet</title>
+
+    <p>This page is a list of important shortcuts to access commonly used or hidden features. Take the time to get familiar with them as they will improve your productivity tremendously.</p>
+
+    <section>
+      <title>General</title>
+        <list>
+          <item><p><key>Ctrl+N</key>: Create a new project</p></item>
+          <item><p><key>Ctrl+O</key>: Open a project file</p></item>
+          <item><p><key>Ctrl+S</key>: Save the current project</p></item>
+          <item><p><key>Ctrl+Q</key>: Quit the application</p></item>
+          <item><p><key>Ctrl+Z</key>: Undo</p></item>
+          <item><p><key>Ctrl+Y</key>: Redo</p></item>
+          <item><p><key>F11</key>: Toggle fullscreen mode</p></item>
+          <item><p><key>F1</key>: Show the user manual</p></item>
+        </list>
+    </section>
+
+    <section>
+      <title>Media Library</title>
+        <list>
+          <item><p><key>Enter</key>: Preview (playback) the selected clip</p></item>
+          <item><p><key>Insert</key>: Insert the selected clips into the timeline</p></item>
+          <item><p><key>Ctrl+Delete</key>: Remove the selected clips from the project</p></item>
+        </list>
+    </section>
+
+    <section>
+      <title>Timeline</title>
+        <list>
+          <item><p><key>Spacebar</key>: Toggle playback.</p></item>
+          <item><p><key>S</key>: Split the clips at the current playhead position. If there are selected clips, only those will be split.</p></item>
+          <item><p><key>Delete</key>: Remove selected clips from the timeline.</p></item>
+          <item><p><key>←</key> and <key>→</key>: Seek one frame backwards or forwards. This depends on your project framerate.</p></item>
+          <item><p><key>Ctrl+←</key> and <key>Ctrl+→</key>: Seek one clip backwards or forwards.</p></item>
+          <item><p><key>Shift+←</key> and <key>Shift+→</key>: Seek one second backwards or forwards.</p></item>
+          <item><p><key>Ctrl++</key> and <key>Ctrl+-</key>: Zoom in or zoom out. You can also use <key>Ctrl</key> with the mouse wheel to control the zoom more efficiently.</p></item>
+          <item><p><key>Ctrl+0</key>: Adjust the zoom to fit the timeline.</p></item>
+          <item><p><key>Shift</key>+drag: Ripple edit.</p></item>
+          <item><p><key>Ctrl</key>+drag: Roll edit.</p></item>
+          <item><p><key>K</key>: Add a property keyframe at the current playhead position.</p></item>
+          <item><p><key>.</key> and <key>,</key>: Go to the next or previous property keyframe.</p></item>
+        </list>
+    </section>
+</page>

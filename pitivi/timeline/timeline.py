@@ -1118,10 +1118,10 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             "K", KEYFRAME, self.keyframe),
 
             ("Prevkeyframe", None, _("_Previous Keyframe"),
-            "E", PREVKEYFRAME, self._previousKeyframeCb),
+            "comma", PREVKEYFRAME, self._previousKeyframeCb),
 
             ("Nextkeyframe", None, _("_Next Keyframe"),
-            "R", NEXTKEYFRAME, self._nextKeyframeCb),
+            "period", NEXTKEYFRAME, self._nextKeyframeCb),
         )
 
         actiongroup = Gtk.ActionGroup("timelinepermanent")

@@ -105,6 +105,10 @@ class StartUpWizard(object):
         """Handle a click on the Help button."""
         show_user_manual()
 
+    def _cheatsheetCb(self, unused_button):
+        """Show the cheatsheet section of the user manual"""
+        show_user_manual("cheatsheet")
+
     def _deleteCb(self, unused_widget, event):
         """Handle a click on the X button of the dialog."""
         self.app.projectManager.newBlankProject()

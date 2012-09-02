@@ -24,6 +24,7 @@ DOC_FIGURES = \
 
 DOC_PAGES = \
     about.page \
+    cheatsheet.page \
     codecscontainers.page \
     crossfading.page \
     effects.page \
