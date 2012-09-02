@@ -579,15 +579,14 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         view_type: one of SHOW_TREEVIEW or SHOW_ICONVIEW
         """
         self.settings.lastClipView = view_type
-        self.clip_view = view_type
-
-        # transfer selection to next view
-        self._viewUnselectAll()
+        # Gather some info before switching views
         paths = self.getSelectedPaths()
+        self._viewUnselectAll()
+        # Now that we've got all the info, we can actually change the view type
+        self.clip_view = view_type
+        self._displayClipView()
         for path in paths:
             self._viewSelectPath(path)
-
-        self._displayClipView()
 
     def _displayClipView(self):
         if self.clip_view == SHOW_TREEVIEW:
