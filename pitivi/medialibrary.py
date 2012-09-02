@@ -571,17 +571,13 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         if not len(self.storemodel):
             self._welcome_infobar.show_all()
 
-    def showImportSourcesDialog(self, select_folders=False):
+    def showImportSourcesDialog(self):
         """Pop up the "Import Sources" dialog box"""
         if self._importDialog:
             return
 
-        if select_folders:
-            chooser_action = Gtk.FileChooserAction.SELECT_FOLDER
-            dialogtitle = _("Select One or More Folders")
-        else:
-            chooser_action = Gtk.FileChooserAction.OPEN
-            dialogtitle = _("Select One or More Files")
+        chooser_action = Gtk.FileChooserAction.OPEN
+        dialogtitle = _("Select One or More Files")
 
         close_after = Gtk.CheckButton(_("Close after importing files"))
         close_after.set_active(self.app.settings.closeImportDialog)
@@ -596,19 +592,13 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._importDialog.set_select_multiple(True)
         self._importDialog.set_modal(False)
         self._importDialog.set_current_folder(self.app.settings.lastImportFolder)
-        self._importDialog.connect('response', self._dialogBoxResponseCb, select_folders)
+        self._importDialog.connect('response', self._dialogBoxResponseCb)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
-        if not select_folders:
-            # Only show the preview widget when not in folder import mode
-            pw = PreviewWidget(self.app)
-            self._importDialog.set_preview_widget(pw)
-            self._importDialog.set_use_preview_label(False)
-            self._importDialog.connect('update-preview', pw.add_preview_request)
+        pw = PreviewWidget(self.app)
+        self._importDialog.set_preview_widget(pw)
+        self._importDialog.set_use_preview_label(False)
+        self._importDialog.connect('update-preview', pw.add_preview_request)
         self._importDialog.show()
-
-    def _addFolders(self, folders):
-        """ walks the trees of the folders in the list and adds the files it finds """
-        self.app.threads.addThread(PathWalker, folders, self.app.current.medialibrary.addUris)
 
     def _updateProgressbar(self):
         """
@@ -746,7 +736,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     ## Import Sources Dialog Box callbacks
 
-    def _dialogBoxResponseCb(self, dialogbox, response, select_folders):
+    def _dialogBoxResponseCb(self, dialogbox, response):
         self.debug("response:%r", response)
         if response == Gtk.ResponseType.OK:
             lastfolder = dialogbox.get_current_folder()
@@ -754,10 +744,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.app.settings.closeImportDialog = \
                 dialogbox.props.extra_widget.get_active()
             filenames = dialogbox.get_uris()
-            if select_folders:
-                self._addFolders(filenames)
-            else:
-                self.app.current.medialibrary.addUris(filenames)
+            self.app.current.medialibrary.addUris(filenames)
             if self.app.settings.closeImportDialog:
                 dialogbox.destroy()
                 self._importDialog = None
@@ -1071,7 +1058,9 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 remote_files.append(uri)
 
         if len(directories):
-            self._addFolders(directories)
+            # Recursively import from folders that were dragged into the library
+            self.app.threads.addThread(PathWalker, directories,
+                                        self.app.current.medialibrary.addUris)
         if len(remote_files):
             #TODO waiting for remote files downloader support to be implemented
             pass
