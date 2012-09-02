@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 # PiTiVi , Non-linear video editor
 #
 #       pitivi/medialibrary.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
+# Copyright (c) 2012, Jean-François Fortin Tam <nekohayo@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,10 +21,6 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
-"""
-Handles the list of source for a project
-"""
 
 from gi.repository import Gst
 from gi.repository import GES
@@ -41,7 +39,7 @@ from gettext import gettext as _
 from hashlib import md5
 from gi.repository.GstPbutils import Discoverer, DiscovererVideoInfo
 
-from pitivi.configure import get_pixmap_dir
+from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.settings import GlobalSettings
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
@@ -89,26 +87,8 @@ GlobalSettings.addConfigOption('lastClipView',
 
 ui = '''
 <ui>
-    <menubar name="MainMenuBar">
-        <menu action="Library">
-            <placeholder name="MediaLibrary" >
-                <menuitem action="ImportSources" />
-                <menuitem action="ImportSourcesFolder" />
-                <separator />
-                <menuitem action="SelectUnusedSources" />
-                <separator />
-                <menuitem action="InsertEnd" />
-                <menuitem action="RemoveSources" />
-                <menuitem action="PreviewClip" />
-                <menuitem action="ClipProps" />
-            </placeholder>
-        </menu>
-    </menubar>
-    <toolbar name="MainToolBar">
-        <placeholder name="MediaLibrary">
-            <toolitem action="ImportSources" />
-        </placeholder>
-    </toolbar>
+    <accelerator action="RemoveSources" />
+    <accelerator action="InsertEnd" />
 </ui>
 '''
 
@@ -252,12 +232,6 @@ class MediaLibrary(Signallable, Loggable):
             self.emit("source-added", info)
 
     def getSources(self):
-        """ Returns the list of sources used.
-
-        The list will be ordered by the order in which they were added.
-
-        @return: A list of SourceFactory objects which must not be changed.
-        """
         return self._ordered_sources
 
 
@@ -282,6 +256,17 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._draggedPaths = None
         self.dragged = False
 
+        builder = Gtk.Builder()
+        builder.add_from_file(os.path.join(get_ui_dir(), "medialibrary.ui"))
+        builder.connect_signals(self)
+        toolbar = builder.get_object("medialibrary_toolbar")
+        toolbar.get_style_context().add_class("inline-toolbar")
+        self._remove_button = builder.get_object("media_remove_button")
+        self._clipprops_button = builder.get_object("media_props_button")
+        self._insert_button = builder.get_object("media_insert_button")
+        self._listview_button = builder.get_object("media_listview_button")
+        searchEntry = builder.get_object("media_search_entry")
+
         # Store
         # icon, infotext, objectfactory, uri, length
         self.storemodel = Gtk.ListStore(GdkPixbuf.Pixbuf, GdkPixbuf.Pixbuf,
@@ -296,40 +281,9 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.iconview_scrollwin.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.iconview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
 
-        # Popup Menu
-        self.popup = Gtk.Menu()
-        self.popup_remitem = Gtk.ImageMenuItem(_("_Remove from Project"))
-        self.popup_playmenuitem = Gtk.MenuItem(_("_Preview Clip"))
-        self.popup_clipprop = Gtk.MenuItem(_("_Clip Properties..."))
-        self.popup_insertEnd = Gtk.MenuItem(_("Insert at _End of Timeline"))
-        self.popup_remitem.connect("activate", self._removeClickedCb)
-        self.popup_playmenuitem.connect("activate", self._previewClickedCb)
-        self.popup_clipprop.connect("activate", self._clipPropertiesCb)
-        self.popup_insertEnd.connect("activate", self._insertEndCb)
-        self.popup.append(self.popup_insertEnd)
-        self.popup.append(self.popup_remitem)
-        self.popup.append(self.popup_playmenuitem)
-        self.popup.append(self.popup_clipprop)
-        for menu_item in self.popup:
-            menu_item.set_use_underline(True)
-        self.popup.show_all()
-
         # import sources dialogbox
         self._importDialog = None
 
-        # Search/filter box
-        self.search_hbox = Gtk.HBox()
-        self.search_hbox.set_spacing(SPACING)
-        self.search_hbox.set_border_width(3)  # Prevents being flush against the notebook
-        searchLabel = Gtk.Label(label=_("Search:"))
-        searchEntry = Gtk.Entry()
-        searchEntry.set_icon_from_stock(Gtk.EntryIconPosition.SECONDARY, "gtk-clear")
-        searchEntry.connect("changed", self._searchEntryChangedCb)
-        searchEntry.connect("focus-in-event", self._disableKeyboardShortcutsCb)
-        searchEntry.connect("focus-out-event", self._enableKeyboardShortcutsCb)
-        searchEntry.connect("icon-press", self._searchEntryIconClickedCb)
-        self.search_hbox.pack_start(searchLabel, False, True, 0)
-        self.search_hbox.pack_end(searchEntry, True, True, 0)
         # Filtering model for the search box.
         # Use this instead of using self.storemodel directly
         self.modelFilter = self.storemodel.filter_new()
@@ -486,83 +440,33 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems
 
-        # always available
-        actions = (
-            ("ImportSources", Gtk.STOCK_ADD, _("_Import Files..."),
-            None, _("Add media files to your project"),
-            self._importSourcesCb),
-
-            ("ImportSourcesFolder", Gtk.STOCK_ADD, _("Import _Folders..."),
-            None, _("Add the contents of a folder as clips in your project"),
-            self._importSourcesFolderCb),
-
-            # Translators: "select" means "find" rather than "choose"
-            ("SelectUnusedSources", None, _("Select Unused Media"),
-            None, _("Select clips that have not been used in the project"),
-            self._selectUnusedSourcesCb),
-        )
-
-        # only available when selection is non-empty
+        # Keyboard shortcuts for some items in the gtkbuilder file
         selection_actions = (
             ("RemoveSources", Gtk.STOCK_DELETE, _("_Remove from Project"),
             "<Control>Delete", None, self._removeSourcesCb),
 
             ("InsertEnd", Gtk.STOCK_COPY, _("Insert at _End of Timeline"),
             "Insert", None, self._insertEndCb),
-
-            ("PreviewClip", Gtk.STOCK_MEDIA_PLAY, _("_Preview Clip"),
-            None, None, self._previewClickedCb),
-
-            ("ClipProps", None, _("_Clip Properties..."),
-            None, None, self._clipPropertiesCb),
         )
-
-        actiongroup = Gtk.ActionGroup("medialibrarypermanent")
-        actiongroup.add_actions(actions)
-        actiongroup.get_action("ImportSources").props.is_important = True
-        uiman.insert_action_group(actiongroup, 0)
-
         self.selection_actions = Gtk.ActionGroup("medialibraryselection")
         self.selection_actions.add_actions(selection_actions)
         self.selection_actions.set_sensitive(False)
         uiman.insert_action_group(self.selection_actions, 0)
         uiman.add_ui_from_string(ui)
 
-        # clip view menu items
-        view_menu_item = uiman.get_widget('/MainMenuBar/View')
-        view_menu = view_menu_item.get_submenu()
-        seperator = Gtk.SeparatorMenuItem()
-        self.treeview_menuitem = Gtk.RadioMenuItem(label=_("Show Clips as a List"))
-        self.iconview_menuitem = Gtk.RadioMenuItem.new_with_label(group=[self.treeview_menuitem],
-                label=_("Show Clips as Icons"))
-
-        # update menu items with current clip view before we connect to item
-        # signals
+        # Set the state of the view mode toggle button before connecting signals
         if self.settings.lastClipView == SHOW_TREEVIEW:
-            self.treeview_menuitem.set_active(True)
-            self.iconview_menuitem.set_active(False)
+            self._listview_button.set_active(True)
         else:
-            self.treeview_menuitem.set_active(False)
-            self.iconview_menuitem.set_active(True)
-
-        # we only need to connect to one menu item because we get a signal
-        # from each radio item in the group
-        self.treeview_menuitem.connect("toggled", self._treeViewMenuItemToggledCb)
-
-        view_menu.append(seperator)
-        view_menu.append(self.treeview_menuitem)
-        view_menu.append(self.iconview_menuitem)
-        self.treeview_menuitem.show()
-        self.iconview_menuitem.show()
-        seperator.show()
+            self._listview_button.set_active(False)
 
         # add all child widgets
         self.pack_start(self.infobar, False, False, 0)
         self.pack_start(self._import_warning_infobar, False, False, 0)
-        self.pack_start(self.search_hbox, False, True, 0)
         self.pack_start(self.iconview_scrollwin, True, True, 0)
         self.pack_start(self.treeview_scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, True, 0)
+        self.pack_start(toolbar, expand=False)
 
         # display the help text
         self.clip_view = self.settings.lastClipView
@@ -571,14 +475,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     def _importSourcesCb(self, unused_action):
         self.showImportSourcesDialog()
 
-    def _importSourcesFolderCb(self, unused_action):
-        self.showImportSourcesDialog(True)
-
     def _removeSourcesCb(self, unused_action):
         self._removeSources()
-
-    def _selectUnusedSourcesCb(self, widget):
-        self._selectUnusedSources()
 
     def _insertEndCb(self, unused_action):
         sources = []
@@ -586,7 +484,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             sources.append(GES.TimelineFileSource(uri=uri))
 
         self.app.gui.timeline_ui.insertEnd(sources)
-
         self._sources_to_insert = self.getSelectedItems()
 
     def _disableKeyboardShortcutsCb(self, *unused_args):
@@ -625,8 +522,11 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     def _searchEntryChangedCb(self, entry):
         self.modelFilter.refilter()
 
-    def _searchEntryIconClickedCb(self, entry, unused, unsed1):
-        entry.set_text("")
+    def _searchEntryIconClickedCb(self, entry, icon_pos, unused_event):
+        if icon_pos == Gtk.EntryIconPosition.SECONDARY:
+            entry.set_text("")
+        elif icon_pos == Gtk.EntryIconPosition.PRIMARY:
+            self._selectUnusedSources()
 
     def _setRowVisible(self, model, iter, data):
         """
@@ -673,44 +573,32 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.project_signals.connect(project.medialibrary,
             "starting", None, self._sourcesStartedImportingCb)
 
-    def _setClipView(self, show):
-        """ Set which clip view to use when medialibrary is showing clips. If
-        none is given, the current one is used. Show: one of SHOW_TREEVIEW or
-        SHOW_ICONVIEW """
-
-        # save current selection
-        paths = self.getSelectedPaths()
-
-        # update saved clip view
-        self.settings.lastClipView = show
-        self.clip_view = show
+    def _setClipView(self, view_type):
+        """
+        Set which clip view to use when medialibrary is showing clips.
+        view_type: one of SHOW_TREEVIEW or SHOW_ICONVIEW
+        """
+        self.settings.lastClipView = view_type
+        self.clip_view = view_type
 
         # transfer selection to next view
         self._viewUnselectAll()
+        paths = self.getSelectedPaths()
         for path in paths:
             self._viewSelectPath(path)
 
         self._displayClipView()
 
     def _displayClipView(self):
-
-        # first hide all the child widgets
-        self.treeview_scrollwin.hide()
-        self.iconview_scrollwin.hide()
-
-        # pick the widget we're actually showing
         if self.clip_view == SHOW_TREEVIEW:
-            self.debug("displaying tree view")
-            widget = self.treeview_scrollwin
+            self.iconview_scrollwin.hide()
+            self.treeview_scrollwin.show_all()
         elif self.clip_view == SHOW_ICONVIEW:
-            self.debug("displaying icon view")
-            widget = self.iconview_scrollwin
+            self.treeview_scrollwin.hide()
+            self.iconview_scrollwin.show_all()
 
         if not len(self.storemodel):
             self._displayHelpText()
-
-        # now un-hide the view
-        widget.show_all()
 
     def _displayHelpText(self):
         """Display the InfoBar help message"""
@@ -847,7 +735,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 break
         if not len(model):
             self._displayHelpText()
-            self.search_hbox.hide()
         self.debug("Removing %s", uri)
 
     def _discoveryErrorCb(self, unused_medialibrary, uri, reason, extra=None):
@@ -858,7 +745,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     def _sourcesStartedImportingCb(self, unused_medialibrary):
         self.import_start_time = time.time()
         self.infobar.hide()
-        self.search_hbox.show_all()
         self._progressbar.show()
 
     def _sourcesStoppedImportingCb(self, unused_medialibrary):
@@ -1028,19 +914,11 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # Reset the error list, since the user has read them.
         self._resetErrorList()
 
-    def _treeViewMenuItemToggledCb(self, unused_widget):
-        if self.treeview_menuitem.get_active():
-            show = SHOW_TREEVIEW
+    def _toggleViewTypeCb(self, widget):
+        if widget.get_active():
+            self._setClipView(SHOW_TREEVIEW)
         else:
-            show = SHOW_ICONVIEW
-        self._setClipView(show)
-
-    _dragStarted = False
-    _dragSelection = False
-    _dragButton = None
-    _dragX = 0
-    _dragY = 0
-    _ignoreRelease = False
+            self._setClipView(SHOW_ICONVIEW)
 
     def _rowUnderMouseSelected(self, view, event):
         if isinstance(view, Gtk.TreeView):
@@ -1057,58 +935,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 selection = view.get_selected_items()
                 return view.path_is_selected(path) and len(selection)
         else:
-                assert False
+            assert False
 
         return False
 
     def _nothingUnderMouse(self, view, event):
         return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
-
-    def _viewShowPopup(self, view, event):
-        """
-        Handle the sensitivity of popup menu items when right-clicking.
-        """
-        # Default values
-        self.popup_remitem.set_sensitive(False)
-        self.popup_playmenuitem.set_sensitive(False)
-        self.popup_clipprop.set_sensitive(False)
-        self.popup_insertEnd.set_sensitive(False)
-
-        multiple_selected = len(self.getSelectedPaths()) > 1
-        if view != None and self._rowUnderMouseSelected(view, event):
-            # An item was already selected, then the user right-clicked on it
-            self.popup_insertEnd.set_sensitive(True)
-            self.popup_remitem.set_sensitive(True)
-            if not multiple_selected:
-                self.popup_playmenuitem.set_sensitive(True)
-                self.popup_clipprop.set_sensitive(True)
-        elif view != None and (not self._nothingUnderMouse(view, event)):
-            if not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
-                # An item was previously selected, and the user
-                # right-clicked on a different item (selecting it).
-                self._viewUnselectAll()
-                multiple_selected = False
-            elif self.clip_view == SHOW_TREEVIEW and self._viewHasSelection() \
-                    and (event.get_state() & Gdk.ModifierType.SHIFT_MASK):
-                # FIXME: when does this section ever get called?
-                selection = self.treeview.get_selection()
-                start_path = self._viewGetFirstSelected()
-                end_path = self._viewGetPathAtPos(event)
-                self._viewUnselectAll()
-                selection.select_range(start_path, end_path)
-
-            self._viewSelectPath(self._viewGetPathAtPos(event))
-            self.popup_insertEnd.set_sensitive(True)
-            self.popup_remitem.set_sensitive(True)
-            if not multiple_selected:
-                self.popup_playmenuitem.set_sensitive(True)
-                self.popup_clipprop.set_sensitive(True)
-
-        # If none of the conditions above match,
-        # An item may or may not have been selected,
-        # but the user right-clicked outside it.
-        # In that case, the sensitivity values will stay to the default.
-        self.popup.popup(None, None, None, None, event.button, event.time)
 
     def _viewGetFirstSelected(self):
         paths = self.getSelectedPaths()
@@ -1147,14 +979,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 # It is possible to double-click outside of clips!
                 self._previewClickedCb()
             chain_up = False
-        elif event.button == 3:
-            self._viewShowPopup(treeview, event)
-            chain_up = False
-
         elif not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
             chain_up = not self._rowUnderMouseSelected(treeview, event)
-
-        self.clickedPath = self.getSelectedPaths()
 
         if not chain_up:
             self._draggedPaths = self.getSelectedPaths()
@@ -1164,7 +990,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         Gtk.TreeView.do_button_press_event(treeview, event)
 
         ts = self.treeview.get_selection()
-
         if self._draggedPaths:
             for path in self._draggedPaths:
                 ts.select_path(path)
@@ -1182,10 +1007,20 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 ts.select_path(path[0])
 
     def _viewSelectionChangedCb(self, unused):
-        if self._viewHasSelection():
+        selected_items = len(self.getSelectedPaths())
+        if selected_items:
             self.selection_actions.set_sensitive(True)
+            self._remove_button.set_sensitive(True)
+            self._insert_button.set_sensitive(True)
+            # Some actions can only be done on a single item at a time:
+            self._clipprops_button.set_sensitive(False)
+            if selected_items == 1:
+                self._clipprops_button.set_sensitive(True)
         else:
             self.selection_actions.set_sensitive(False)
+            self._remove_button.set_sensitive(False)
+            self._insert_button.set_sensitive(False)
+            self._clipprops_button.set_sensitive(False)
 
     def _itemOrRowActivatedCb(self, unused_view, path, *unused_column):
         """
@@ -1202,9 +1037,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             if self.getSelectedPaths() != []:
                 # It is possible to double-click outside of clips!
                 self._previewClickedCb()
-            chain_up = False
-        elif event.button == 3:
-            self._viewShowPopup(iconview, event)
             chain_up = False
         elif not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
             chain_up = not self._rowUnderMouseSelected(iconview, event)

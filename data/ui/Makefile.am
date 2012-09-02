@@ -1,17 +1,18 @@
 uidir = $(pkgdatadir)/ui
 ui_DATA = \
 	alignmentprogress.ui \
-	elementsettingsdialog.ui \
-	renderingdialog.ui	 \
-	renderingprogress.ui	 \
-	filelisterrordialog.ui	 \
-	mainwindow.xml		 \
-	preferences.ui		 \
-	projectsettings.ui	 \
-	depsmanager.ui	\
-	cliptransformation.ui \
-	startupwizard.ui \
 	clipmediaprops.ui \
+	cliptransformation.ui \
+	depsmanager.ui \
+	elementsettingsdialog.ui \
+	filelisterrordialog.ui \
+	mainwindow.xml \
+	medialibrary.ui \
+	preferences.ui \
+	projectsettings.ui \
+	renderingdialog.ui \
+	renderingprogress.ui \
+	startupwizard.ui \
 	titleeditor.ui \
 	$(NULL)
 
