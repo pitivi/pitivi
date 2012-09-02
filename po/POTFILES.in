@@ -13,6 +13,7 @@ data/pitivi.desktop.in.in
 [type: gettext/glade]data/ui/renderingdialog.ui
 [type: gettext/glade]data/ui/renderingprogress.ui
 [type: gettext/glade]data/ui/startupwizard.ui
+[type: gettext/glade]data/ui/titleeditor.ui
 pitivi/application.py
 pitivi/check.py
 pitivi/clipproperties.py
@@ -25,6 +26,7 @@ pitivi/project.py
 pitivi/render.py
 pitivi/settings.py
 pitivi/tabsmanager.py
+pitivi/titleeditor.py
 pitivi/transitions.py
 pitivi/viewer.py
 
