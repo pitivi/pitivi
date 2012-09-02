@@ -48,7 +48,7 @@ from gi.repository import GdkPixbuf
 
 from gettext import gettext as _
 
-from pitivi.configure import get_pixmap_dir
+from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.settings import GlobalSettings
 
 import pitivi.utils.ui as dnd
@@ -217,8 +217,7 @@ class EffectsHandler(object):
         """
         @ivar effect_name: the name of the effect for wich we want the category
         @type effect_name: L{str}
-        @returns: A C{list} of name C{str} of categories corresponding the
-        effect
+        @returns: A C{list} of name C{str} of categories corresponding the effect
         """
         categories = []
 
@@ -262,8 +261,7 @@ class EffectsHandler(object):
 
     def getVideoCategories(self, aware=True):
         """
-        @ivar  aware: C{True} if you want it to return only categories on
-        whichs
+        @ivar aware: C{True} if you want it to return only categories on which
         there are effects on the system, else C{False}
         @type aware: C{bool}
         @returns: All video effect categories names C{str} that are available
@@ -313,8 +311,7 @@ class EffectsHandler(object):
         effect_name = effect_name + ".png"
         icon = None
         try:
-            icon = GdkPixbuf.Pixbuf.new_from_file(os.path.join(self._pixdir,
-                effect_name))
+            icon = GdkPixbuf.Pixbuf.new_from_file(os.path.join(self._pixdir, effect_name))
         # empty except clause is bad but load_icon raises Gio.Error.
         ## Right, *gio*.
         except:
@@ -340,9 +337,6 @@ GlobalSettings.addConfigSection('effect-library')
  COL_ELEMENT_NAME,
  COL_ICON) = range(7)
 
-INVISIBLE = GdkPixbuf.Pixbuf.new_from_file(os.path.join(get_pixmap_dir(),
-    "invisible.png"))
-
 
 class EffectListWidget(Gtk.VBox, Loggable):
     """ Widget for listing effects """
@@ -352,48 +346,33 @@ class EffectListWidget(Gtk.VBox, Loggable):
         Loggable.__init__(self)
 
         self.app = instance
-        self.settings = instance.settings
 
         self._draggedItems = None
+        self._effectType = VIDEO_EFFECT
 
-        #Searchbox and combobox
-        hfilters = Gtk.HBox()
-        hfilters.set_spacing(SPACING)
-        hfilters.set_border_width(3)  # Prevents being flush against the notebook
-        self.effectType = Gtk.ComboBoxText()
-        self.effectType.append_text(_("Video effects"))
-        self.effectType.append_text(_("Audio effects"))
-        self.effectCategory = Gtk.ComboBoxText()
-        self.effectType.set_active(VIDEO_EFFECT)
-
-        hfilters.pack_start(self.effectType, True, True, 0)
-        hfilters.pack_end(self.effectCategory, True, True, 0)
-
-        hsearch = Gtk.HBox()
-        hsearch.set_spacing(SPACING)
-        hsearch.set_border_width(3)  # Prevents being flush against the notebook
-        searchStr = Gtk.Label(label=_("Search:"))
-        self.searchEntry = Gtk.Entry()
-        self.searchEntry.set_icon_from_stock(Gtk.EntryIconPosition.SECONDARY, "gtk-clear")
-        hsearch.pack_start(searchStr, False, True, 0)
-        hsearch.pack_end(self.searchEntry, True, True, 0)
+        builder = Gtk.Builder()
+        builder.add_from_file(os.path.join(get_ui_dir(), "effectslibrary.ui"))
+        builder.connect_signals(self)
+        toolbar = builder.get_object("effectslibrary_toolbar")
+        toolbar.get_style_context().add_class("inline-toolbar")
+        self.video_togglebutton = builder.get_object("video_togglebutton")
+        self.audio_togglebutton = builder.get_object("audio_togglebutton")
+        self.categoriesWidget = builder.get_object("categories")
+        self.searchEntry = builder.get_object("search_entry")
 
         # Store
         self.storemodel = Gtk.ListStore(str, str, int, object, object, str, GdkPixbuf.Pixbuf)
 
-        scrollwin = Gtk.ScrolledWindow()
-        scrollwin.props.hscrollbar_policy = Gtk.PolicyType.NEVER
-        scrollwin.props.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC
-        scrollwin.props.shadow_type = Gtk.ShadowType.ETCHED_IN
-
         self.view = Gtk.TreeView(self.storemodel)
-        scrollwin.add(self.view)
         self.view.props.headers_visible = False
-        tsel = self.view.get_selection()
-        tsel.set_mode(Gtk.SelectionMode.SINGLE)
+        self.view.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+
+        # Create the filterModel for searching the storemodel
+        self.modelFilter = self.storemodel.filter_new()
+        self.modelFilter.set_visible_func(self._setRowVisible, data=None)
+        self.view.set_model(self.modelFilter)
 
         icon_col = Gtk.TreeViewColumn()
-        self.view.append_column(icon_col)
         icon_col.props.spacing = SPACING
         icon_col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         icon_col.props.fixed_width = 96
@@ -403,7 +382,6 @@ class EffectListWidget(Gtk.VBox, Loggable):
         icon_col.add_attribute(icon_cell, "pixbuf", COL_ICON)
 
         text_col = Gtk.TreeViewColumn()
-        self.view.append_column(text_col)
         text_col.set_expand(True)
         text_col.set_spacing(SPACING)
         text_col.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
@@ -413,49 +391,37 @@ class EffectListWidget(Gtk.VBox, Loggable):
         text_cell.props.xpad = 6
         text_cell.set_property("ellipsize", Pango.EllipsizeMode.END)
         text_col.pack_start(text_cell, True)
-        text_col.set_cell_data_func(text_cell,
-                                    self.view_description_cell_data_func,
-                                    None)
+        text_col.set_cell_data_func(text_cell, self.view_description_cell_data_func, None)
 
-        self.effectType.connect("changed", self._effectTypeChangedCb)
-
-        self.effectCategory.connect("changed", self._effectCategoryChangedCb)
-
-        self.searchEntry.connect("changed", self.searchEntryChangedCb)
-        self.searchEntry.connect("focus-in-event", self.searchEntryActivateCb)
-        self.searchEntry.connect("focus-out-event", self.searchEntryDesactvateCb)
-        self.searchEntry.connect("icon-press", self.searchEntryIconClickedCb)
-
-        self.view.connect("button-press-event", self._buttonPressEventCb)
-        self.view.connect("select-cursor-row", self._enterPressEventCb)
+        self.view.append_column(icon_col)
+        self.view.append_column(text_col)
 
         self.view.drag_source_set(0, [], Gdk.DragAction.COPY)
         self.view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [("pitivi/effect", 0, TYPE_PITIVI_EFFECT)], Gdk.DragAction.COPY)
         self.view.drag_source_set_target_list(None)
         self.view.drag_source_add_text_targets()
 
+        self.view.connect("button-press-event", self._buttonPressEventCb)
+        self.view.connect("select-cursor-row", self._enterPressEventCb)
         self.view.connect("drag_begin", self._dndDragBeginCb)
+
+        scrollwin = Gtk.ScrolledWindow()
+        scrollwin.props.hscrollbar_policy = Gtk.PolicyType.NEVER
+        scrollwin.props.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC
+        scrollwin.add(self.view)
+
+        self.pack_start(scrollwin, True, True, 0)
+        self.pack_end(toolbar, expand=False)
 
         # Delay the loading of the available effects so the application
         # starts faster.
         GObject.idle_add(self._loadAvailableEffectsCb)
-
-        self.pack_start(hfilters, False, True, 0)
-        self.pack_start(hsearch, False, True, 0)
-        self.pack_end(scrollwin, True, True, 0)
-
-        #create the filterModel
-        self.modelFilter = self.storemodel.filter_new()
-        self.modelFilter.set_visible_func(self._setRowVisible, data=None)
-        self.view.set_model(self.modelFilter)
-
-        self.show_categories(VIDEO_EFFECT)
+        self.populate_categories_widget()
 
         # Individually show the tab's widgets.
         # If you use self.show_all(), the tab will steal focus on startup.
-        hfilters.show_all()
-        hsearch.show_all()
         scrollwin.show_all()
+        toolbar.show_all()
 
     @staticmethod
     def view_description_cell_data_func(column, cell, model, iter_, data):
@@ -482,21 +448,20 @@ class EffectListWidget(Gtk.VBox, Loggable):
                                          self.app.effects.getEffectIcon(name)])
                 self.storemodel.set_sort_column_id(COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
-    def show_categories(self, effectType):
-        self.effectCategory.get_model().clear()
-        self._effect_type_ref = effectType
+    def populate_categories_widget(self):
+        self.categoriesWidget.get_model().clear()
         icon_column = self.view.get_column(0)
 
-        if effectType is VIDEO_EFFECT:
-            for categorie in self.app.effects.video_categories:
-                self.effectCategory.append_text(categorie)
+        if self._effectType is VIDEO_EFFECT:
+            for category in self.app.effects.video_categories:
+                self.categoriesWidget.append_text(category)
             icon_column.props.visible = True
         else:
-            for categorie in self.app.effects.audio_categories:
-                self.effectCategory.append_text(categorie)
+            for category in self.app.effects.audio_categories:
+                self.categoriesWidget.append_text(category)
             icon_column.props.visible = False
 
-        self.effectCategory.set_active(0)
+        self.categoriesWidget.set_active(0)
 
     def _dndDragBeginCb(self, view, context):
         self.info("tree drag_begin")
@@ -553,30 +518,45 @@ class EffectListWidget(Gtk.VBox, Loggable):
 
         return self.storemodel[path][COL_ELEMENT_NAME]
 
-    def _effectTypeChangedCb(self, combobox):
-        self.modelFilter.refilter()
-        self.show_categories(combobox.get_active())
+    def _toggleViewTypeCb(self, widget):
+        """
+        Handle the switching of the view mode between video and audio.
+        This makes the two togglebuttons behave like a group of radiobuttons.
+        """
+        if widget is self.video_togglebutton:
+            self.audio_togglebutton.set_active(not widget.get_active())
+        else:
+            assert widget is self.audio_togglebutton
+            self.video_togglebutton.set_active(not widget.get_active())
 
-    def _effectCategoryChangedCb(self, combobox):
+        if self.video_togglebutton.get_active():
+            self._effectType = VIDEO_EFFECT
+        else:
+            self._effectType = AUDIO_EFFECT
+
+        self.populate_categories_widget()
         self.modelFilter.refilter()
 
-    def searchEntryChangedCb(self, entry):
+    def _categoryChangedCb(self, combobox):
         self.modelFilter.refilter()
 
-    def searchEntryIconClickedCb(self, entry, unused, unsed1):
+    def _searchEntryChangedCb(self, entry):
+        self.modelFilter.refilter()
+
+    def _searchEntryIconClickedCb(self, entry, unused, unused1):
         entry.set_text("")
 
-    def searchEntryDesactvateCb(self, entry, event):
-        self.app.gui.setActionsSensitive(True)
-
-    def searchEntryActivateCb(self, entry, event):
+    def _searchEntryFocusedCb(self, entry, event):
         self.app.gui.setActionsSensitive(False)
 
+    def _searchEntryDefocusedCb(self, entry, event):
+        self.app.gui.setActionsSensitive(True)
+
     def _setRowVisible(self, model, iter, data):
-        if self.effectType.get_active() == model.get_value(iter, COL_EFFECT_TYPE):
+        if self._effectType == model.get_value(iter, COL_EFFECT_TYPE):
             if model.get_value(iter, COL_EFFECT_CATEGORIES) is None:
                 return False
-            if self.effectCategory.get_active_text() in model.get_value(iter, COL_EFFECT_CATEGORIES):
+            if self.categoriesWidget.get_active_text() in model.get_value(iter, COL_EFFECT_CATEGORIES):
                 text = self.searchEntry.get_text().lower()
                 return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
                        text in model.get_value(iter, COL_NAME_TEXT).lower()
@@ -589,7 +569,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
         return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
 
     def _getTargetEntries(self):
-        if self.effectType.get_active() == VIDEO_EFFECT:
+        if self._effectType == VIDEO_EFFECT:
             return [dnd.VIDEO_EFFECT_TARGET_ENTRY, dnd.EFFECT_TARGET_ENTRY]
         else:
             return [dnd.AUDIO_EFFECT_TARGET_ENTRY, dnd.EFFECT_TARGET_ENTRY]

@@ -30,7 +30,6 @@ from gi.repository import Pango
 from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import GObject
-from gi.repository import GdkPixbuf
 
 from gettext import gettext as _
 from xml.sax import saxutils
@@ -40,7 +39,6 @@ from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
 from pitivi.utils.pipeline import Seeker
-INVISIBLE = GdkPixbuf.Pixbuf.new_from_file(os.path.join(get_pixmap_dir(), "invisible.png"))
 
 
 # FIXME Fix Pango so we do NOT need that dirty reimplementation
