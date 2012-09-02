@@ -92,9 +92,6 @@ ui = '''
 </ui>
 '''
 
-INVISIBLE = GdkPixbuf.Pixbuf.new_from_file(os.path.join(get_pixmap_dir(),
-    "invisible.png"))
-
 
 class MediaLibraryError(Exception):
     pass
@@ -249,10 +246,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.pending_rows = []
 
         self.app = instance
-        self.settings = instance.settings
         self._errors = []
         self._project = None
-        self.dummy_selected = []
         self._draggedPaths = None
         self.dragged = False
 
@@ -427,7 +422,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         uiman.add_ui_from_string(ui)
 
         # Set the state of the view mode toggle button before connecting signals
-        if self.settings.lastClipView == SHOW_TREEVIEW:
+        if self.app.settings.lastClipView == SHOW_TREEVIEW:
             self._listview_button.set_active(True)
         else:
             self._listview_button.set_active(False)
@@ -441,7 +436,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.pack_start(toolbar, expand=False)
 
         # display the help text
-        self.clip_view = self.settings.lastClipView
+        self.clip_view = self.app.settings.lastClipView
         self._displayClipView()
 
     def _importSourcesCb(self, unused_action):
@@ -550,7 +545,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         Set which clip view to use when medialibrary is showing clips.
         view_type: one of SHOW_TREEVIEW or SHOW_ICONVIEW
         """
-        self.settings.lastClipView = view_type
+        self.app.settings.lastClipView = view_type
         # Gather some info before switching views
         paths = self.getSelectedPaths()
         self._viewUnselectAll()
@@ -1105,5 +1100,3 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                     for path in self._draggedPaths]
         return [self.modelFilter[path][COL_URI]
             for path in self.getSelectedPaths()]
-
-GObject.type_register(MediaLibraryWidget)
