@@ -259,6 +259,10 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "medialibrary.ui"))
         builder.connect_signals(self)
+        self._welcome_infobar = builder.get_object("welcome_infobar")
+        self._import_warning_infobar = builder.get_object("warning_infobar")
+        self._warning_label = builder.get_object("warning_label")
+        self._view_error_button = builder.get_object("view_error_button")
         toolbar = builder.get_object("medialibrary_toolbar")
         toolbar.get_style_context().add_class("inline-toolbar")
         self._remove_button = builder.get_object("media_remove_button")
@@ -365,38 +369,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         self.iconview.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
 
-        # Explanatory message InfoBar
-        self.infobar = Gtk.InfoBar()
-
-        txtlabel = Gtk.Label()
-        txtlabel.set_padding(PADDING, PADDING)
-        txtlabel.set_line_wrap(True)
-        txtlabel.set_line_wrap_mode(Pango.WrapMode.WORD)
-        txtlabel.set_justify(Gtk.Justification.CENTER)
-        txtlabel.set_text(
-            _('Add media to your project by dragging files and folders here or '
-              'by using the "Import Files..." button.'))
-        self.infobar.add(txtlabel)
-        self.txtlabel = txtlabel
-
-        # The infobar that shows up if there are _errors when importing clips
-        self._import_warning_infobar = Gtk.InfoBar()
-        self._import_warning_infobar.set_message_type(Gtk.MessageType.WARNING)
-        content_area = self._import_warning_infobar.get_content_area()
-        actions_area = self._import_warning_infobar.get_action_area()
-        self._warning_label = Gtk.Label()
-        self._warning_label.set_line_wrap(True)
-        self._warning_label.set_line_wrap_mode(Pango.WrapMode.WORD)
-        self._warning_label.set_justify(Gtk.Justification.CENTER)
-        self._view_error_btn = Gtk.Button()
-        self._hide_infobar_btn = Gtk.Button()
-        self._hide_infobar_btn.set_label(_("Hide"))
-        self._view_error_btn.connect("clicked", self._viewErrorsButtonClickedCb)
-        self._hide_infobar_btn.connect("clicked", self._hideInfoBarClickedCb)
-        content_area.add(self._warning_label)
-        actions_area.add(self._view_error_btn)
-        actions_area.add(self._hide_infobar_btn)
-
         # The _progressbar that shows up when importing clips
         self._progressbar = Gtk.ProgressBar()
         self._progressbar.set_show_text(True)
@@ -461,7 +433,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self._listview_button.set_active(False)
 
         # add all child widgets
-        self.pack_start(self.infobar, False, False, 0)
+        self.pack_start(self._welcome_infobar, False, False, 0)
         self.pack_start(self._import_warning_infobar, False, False, 0)
         self.pack_start(self.iconview_scrollwin, True, True, 0)
         self.pack_start(self.treeview_scrollwin, True, True, 0)
@@ -597,13 +569,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.iconview_scrollwin.show_all()
 
         if not len(self.storemodel):
-            self._displayHelpText()
-
-    def _displayHelpText(self):
-        """Display the InfoBar help message"""
-        self.infobar.hide()
-        self.txtlabel.show()
-        self.infobar.show()
+            self._welcome_infobar.show_all()
 
     def showImportSourcesDialog(self, select_folders=False):
         """Pop up the "Import Sources" dialog box"""
@@ -733,7 +699,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 model.remove(row.iter)
                 break
         if not len(model):
-            self._displayHelpText()
+            self._welcome_infobar.show_all()
         self.debug("Removing %s", uri)
 
     def _discoveryErrorCb(self, unused_medialibrary, uri, reason, extra=None):
@@ -743,7 +709,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     def _sourcesStartedImportingCb(self, unused_medialibrary):
         self.import_start_time = time.time()
-        self.infobar.hide()
+        self._welcome_infobar.hide()
         self._progressbar.show()
 
     def _sourcesStoppedImportingCb(self, unused_medialibrary):
@@ -753,10 +719,10 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         if self._errors:
             if len(self._errors) > 1:
                 self._warning_label.set_text(_("Errors occurred while importing."))
-                self._view_error_btn.set_label(_("View errors"))
+                self._view_error_button.set_label(_("View errors"))
             else:
                 self._warning_label.set_text(_("An error occurred while importing."))
-                self._view_error_btn.set_label(_("View error"))
+                self._view_error_button.set_label(_("View error"))
 
             self._import_warning_infobar.show_all()
 
@@ -867,8 +833,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """ Called when a user clicks on the remove button """
         self._removeSources()
 
-    def _previewClickedCb(self, unused_widget=None):
-        """ Called when a user clicks on the Preview Clip button """
+    def _previewClip(self):
         paths = self.getSelectedPaths()[0]  # Only use the first item
         model = self.treeview.get_model()
         self.debug("Let's play %s", model[paths][COL_URI])
@@ -887,7 +852,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                                 factory.get_video_streams())
         d.run()
 
-    def _hideInfoBarClickedCb(self, unused_button):
+    def _warningInfoBarDismissedCb(self, unused_button):
         self._resetErrorList()
 
     def _resetErrorList(self):
@@ -976,7 +941,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         if event.type == Gdk._2BUTTON_PRESS:
             if self.getSelectedPaths() != []:
                 # It is possible to double-click outside of clips!
-                self._previewClickedCb()
+                self._previewClip()
             chain_up = False
         elif not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
             chain_up = not self._rowUnderMouseSelected(treeview, event)
@@ -1035,7 +1000,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         if event.type == Gdk._2BUTTON_PRESS:
             if self.getSelectedPaths() != []:
                 # It is possible to double-click outside of clips!
-                self._previewClickedCb()
+                self._previewClip()
             chain_up = False
         elif not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
             chain_up = not self._rowUnderMouseSelected(iconview, event)
