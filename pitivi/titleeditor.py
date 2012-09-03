@@ -612,6 +612,8 @@ class TitleEditor(Loggable):
         self.editing_box = builder.get_object("editing_box")
         self.textarea = builder.get_object("textview1")
         self.markup_button = builder.get_object("markupToggle")
+        toolbar = builder.get_object("toolbar")
+        toolbar.get_style_context().add_class("inline-toolbar")
 
         buttons = ["bold", "italic", "font", "font_fore_color", "back_color"]
         for button in buttons:
