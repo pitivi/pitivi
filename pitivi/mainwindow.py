@@ -488,6 +488,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                 page = 0
             elif tab == "transitions":
                 page = 1
+            elif tab == "title editor":
+                page = 2
             else:
                 self.debug("Invalid context tab switch requested")
                 return False

@@ -631,6 +631,7 @@ class TrackObject(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
                         title.set_text("")
                         title.set_start(self.element.get_start())
                         title.set_duration(self.element.get_duration())
+                        # FIXME: Creating a text overlay everytime we select a video track object is madness
                         self.element.get_timeline_object().add_track_object(title)
                         self.element.get_track().add_object(title)
                     self.app.gui.title_editor.set_source(title)

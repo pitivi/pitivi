@@ -771,7 +771,7 @@ class TitleEditor(Loggable):
         #Set right buffer
         self._markupToggleCb(self.markup_button)
 
-    def set_source(self, source, created=False):
+    def set_source(self, source, created=False):  # FIXME: this "created" boolean param is a hack
         """
         Set the GESTimelineTitleSource to be used with the title editor.
         This can be called either from the title editor in _createCb, or by

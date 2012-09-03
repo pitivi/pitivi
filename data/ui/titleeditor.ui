@@ -134,6 +134,8 @@
                     <property name="preview_text"></property>
                     <property name="show_preview_entry">False</property>
                     <property name="title" translatable="yes">Choose a font</property>
+                    <property name="font_name">Cantarell 12</property>
+                    <property name="show_style">False</property>
                     <signal name="font-set" handler="_fontButtonCb" swapped="no"/>
                   </object>
                 </child>
