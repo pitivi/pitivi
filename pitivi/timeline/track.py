@@ -619,14 +619,14 @@ class TrackObject(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
                 self.app.gui.title_editor.set_source(self.element.get_timeline_object())
             else:
                 if self.element.get_track().get_property("track_type") == GES.TrackType.VIDEO:
-                    has = False
+                    has_text_overlay = False
                     tlobj = self.element.get_timeline_object()
                     trackobjs = tlobj.get_track_objects()
                     for trackobj in trackobjs:
                         if isinstance(trackobj, GES.TrackTextOverlay):
-                            has = True
+                            has_text_overlay = True
                             title = trackobj
-                    if not has:
+                    if not has_text_overlay:
                         title = GES.TrackTextOverlay()
                         title.set_text("")
                         title.set_start(self.element.get_start())

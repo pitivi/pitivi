@@ -19,9 +19,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-"""
-Shows title editor
-"""
 import os
 
 from gi.repository import Gtk
@@ -586,16 +583,13 @@ class TitleEditor(Loggable):
 
         #Drag attributes
         self._drag_events = []
-        self._drag_connected = False
-        self._tab_opened = False
+        self._signals_connected = False
 
-        #Creat UI
         self._createUI()
         self.textbuffer = Gtk.TextBuffer()
         self.pangobuffer = InteractivePangoBuffer()
         self.textarea.set_buffer(self.pangobuffer)
 
-        #Conect updates
         self.textbuffer.connect("changed", self._updateSourceText)
         self.pangobuffer.connect("changed", self._updateSourceText)
 
@@ -610,7 +604,7 @@ class TitleEditor(Loggable):
         self.widget = builder.get_object("box1")  # To be used by tabsmanager
         self.infobar = builder.get_object("infobar")
         self.editing_box = builder.get_object("editing_box")
-        self.textarea = builder.get_object("textview1")
+        self.textarea = builder.get_object("textview")
         self.markup_button = builder.get_object("markupToggle")
         toolbar = builder.get_object("toolbar")
         toolbar.get_style_context().add_class("inline-toolbar")
@@ -618,8 +612,8 @@ class TitleEditor(Loggable):
         buttons = ["bold", "italic", "font", "font_fore_color", "back_color"]
         for button in buttons:
             self.bt[button] = builder.get_object(button)
-        settings = ["valignment", "halignment", "xpos", "ypos"]
 
+        settings = ["valignment", "halignment", "xpos", "ypos"]
         for setting in settings:
             self.settings[setting] = builder.get_object(setting)
 
@@ -635,15 +629,13 @@ class TitleEditor(Loggable):
                       _("Center"): "center",
                       _("Right"): "right"}.items():
             self.settings["halignment"].append(en, n)
-        self.set_sensitive(False)
+        self._deactivate()
 
-    def _focusedTextView(self, widget, notused_event):
-        self.app.gui.timeline_ui.playhead_actions.set_sensitive(False)
-        self.app.gui.timeline_ui.selection_actions.set_sensitive(False)
+    def _textviewFocusedCb(self, unused_widget, unused_event):
+        self.app.gui.setActionsSensitive(False)
 
-    def _unfocusedTextView(self, widget, notused_event):
-        self.app.gui.timeline_ui.playhead_actions.set_sensitive(True)
-        self.app.gui.timeline_ui.selection_actions.set_sensitive(True)
+    def _textviewUnfocusedCb(self, unused_widget, unused_event):
+        self.app.gui.setActionsSensitive(True)
 
     def _backgroundColorButtonCb(self, widget):
         self.textarea.modify_base(self.textarea.get_state(), widget.get_color())
@@ -676,34 +668,44 @@ class TitleEditor(Loggable):
             self.pangobuffer.apply_tag_to_selection(tag)
 
     def _markupToggleCb(self, markup_button):
+        # FIXME: either make this feature rock-solid or replace it by a
+        # Clear markup" button. Currently it is possible for the user to create
+        # invalid markup (causing errors) or to get our textbuffer confused
         self.textbuffer.disconnect_by_func(self._updateSourceText)
         self.pangobuffer.disconnect_by_func(self._updateSourceText)
         if markup_button.get_active():
-            for name in self.bt:
-                self.bt[name].set_sensitive(False)
             self.textbuffer.set_text(self.pangobuffer.get_text())
             self.textarea.set_buffer(self.textbuffer)
+            for name in self.bt:
+                self.bt[name].set_sensitive(False)
         else:
+            txt = self.textbuffer.get_text(self.textbuffer.get_start_iter(),
+                                           self.textbuffer.get_end_iter(), True)
+            self.pangobuffer.set_text(txt)
+            self.textarea.set_buffer(self.pangobuffer)
             for name in self.bt:
                 self.bt[name].set_sensitive(True)
-            self.pangobuffer.set_text(
-                self.textbuffer.get_text(self.textbuffer.get_start_iter(),
-                                         self.textbuffer.get_end_iter(), True))
-            self.textarea.set_buffer(self.pangobuffer)
+
         self.textbuffer.connect("changed", self._updateSourceText)
         self.pangobuffer.connect("changed", self._updateSourceText)
 
-    def set_sensitive(self, sensitive):
-        if sensitive:
-            self.infobar.hide()
-            self.textarea.show()
-            self.editing_box.show()
-        else:
-            self.infobar.show()
-            self.textarea.hide()
-            self.editing_box.hide()
+    def _activate(self):
+        """
+        Show the title editing UI widgets and hide the infobar
+        """
+        self.infobar.hide()
+        self.textarea.show()
+        self.editing_box.show()
+        self._connect_signals()
 
-        self.preview(sensitive)
+    def _deactivate(self):
+        """
+        Reset the title editor interface to its default look
+        """
+        self.infobar.show()
+        self.textarea.hide()
+        self.editing_box.hide()
+        self._disconnect_signals()
 
     def _updateFromSource(self):
         if self.source is not None:
@@ -736,26 +738,30 @@ class TitleEditor(Loggable):
                 text = self.pangobuffer.get_text()
             self.log("Source text updated to %s", text)
             self.source.set_text(text)
-            self.preview()
+            self.seeker.flush()
 
     def _updateSource(self, updated_obj):
-        if self.source is not None:
-            for name, obj in self.settings.items():
-                if obj == updated_obj:
-                    if name == "valignment":
-                        self.source.set_valignment(getattr(GES.TextVAlign, obj.get_active_id().upper()))
-                        self.settings["ypos"].set_visible(obj.get_active_id() == "position")
-                    elif name == "halignment":
-                        self.source.set_halignment(getattr(GES.TextHAlign, obj.get_active_id().upper()))
-                        self.settings["xpos"].set_visible(obj.get_active_id() == "position")
-                    elif name == "xpos":
-                        self.settings["halignment"].set_active_id("position")
-                        self.source.set_xpos(obj.get_value())
-                    elif name == "ypos":
-                        self.settings["valignment"].set_active_id("position")
-                        self.source.set_ypos(obj.get_value())
-                    self.preview()
-                    return
+        """
+        Handle changes in one of the advanced property widgets at the bottom
+        """
+        if self.source is None:
+            return
+        for name, obj in self.settings.items():
+            if obj == updated_obj:
+                if name == "valignment":
+                    self.source.set_valignment(getattr(GES.TextVAlign, obj.get_active_id().upper()))
+                    self.settings["ypos"].set_visible(obj.get_active_id() == "position")
+                elif name == "halignment":
+                    self.source.set_halignment(getattr(GES.TextHAlign, obj.get_active_id().upper()))
+                    self.settings["xpos"].set_visible(obj.get_active_id() == "position")
+                elif name == "xpos":
+                    self.settings["halignment"].set_active_id("position")
+                    self.source.set_xpos(obj.get_value())
+                elif name == "ypos":
+                    self.settings["valignment"].set_active_id("position")
+                    self.source.set_ypos(obj.get_value())
+                self.seeker.flush()
+                return
 
     def _reset(self):
         #TODO: reset not only text
@@ -766,18 +772,27 @@ class TitleEditor(Loggable):
         self._markupToggleCb(self.markup_button)
 
     def set_source(self, source, created=False):
+        """
+        Set the GESTimelineTitleSource to be used with the title editor.
+        This can be called either from the title editor in _createCb, or by
+        track.py to set the source to None.
+        """
         self.debug("Source set to %s", str(source))
-        self.source = None
+        self.source = source
         self._reset()
         self.created = created
+        # We can't just assert source is not None... because track.py may ask us
+        # to reset the source to None
         if source is None:
-            self.set_sensitive(False)
+            self._deactivate()
         else:
-            self.source = source
             self._updateFromSource()
-            self.set_sensitive(True)
+            self._activate()
 
     def _createCb(self, unused_button):
+        """
+        The user clicked the "Create and insert" button, initialize the UI
+        """
         source = GES.TimelineTitleSource()
         source.set_text("")
         source.set_duration(long(Gst.SECOND * 5))
@@ -789,22 +804,20 @@ class TitleEditor(Loggable):
         #After insertion consider as not created
         self.created = False
 
-    def preview(self, show=True):
-        if not show:
-            #Disconect
-            if self._drag_connected:
-                self.app.gui.viewer.target.disconnect_by_func(self.drag_notify_event)
-                self.app.gui.viewer.target.disconnect_by_func(self.drag_press_event)
-                self.app.gui.viewer.target.disconnect_by_func(self.drag_release_event)
-                self._drag_connected = False
-        elif self.source is not None and not self.created:
-            self.seeker.flush()
-            if not self._drag_connected and self._tab_opened:
-                #If source is in timeline and title tab opened enable title drag
-                self._drag_connected = True
-                self.app.gui.viewer.target.connect("motion-notify-event", self.drag_notify_event)
-                self.app.gui.viewer.target.connect("button-press-event", self.drag_press_event)
-                self.app.gui.viewer.target.connect("button-release-event", self.drag_release_event)
+    def _connect_signals(self):
+        if not self._signals_connected:
+            self.app.gui.viewer.target.connect("motion-notify-event", self.drag_notify_event)
+            self.app.gui.viewer.target.connect("button-press-event", self.drag_press_event)
+            self.app.gui.viewer.target.connect("button-release-event", self.drag_release_event)
+            self._signals_connected = True
+
+    def _disconnect_signals(self):
+        if not self._signals_connected:
+            return
+        self.app.gui.viewer.target.disconnect_by_func(self.drag_notify_event)
+        self.app.gui.viewer.target.disconnect_by_func(self.drag_press_event)
+        self.app.gui.viewer.target.disconnect_by_func(self.drag_release_event)
+        self._signals_connected = False
 
     def drag_press_event(self, widget, event):
         if event.button == 1:
@@ -813,9 +826,9 @@ class TitleEditor(Loggable):
             self.timeout = GObject.timeout_add(100, self.drag_update_event)
             #If drag goes out for 0.3 second, and do not come back, consider drag end
             self._drag_updated = True
-            self.timeout = GObject.timeout_add(1000, self.drag_posible_end_event)
+            self.timeout = GObject.timeout_add(1000, self.drag_possible_end_event)
 
-    def drag_posible_end_event(self):
+    def drag_possible_end_event(self):
         if self._drag_updated:
             #Updated during last timeout, wait more
             self._drag_updated = False
@@ -856,8 +869,6 @@ class TitleEditor(Loggable):
 
     def tab_switched(self, unused_notebook, arg1, arg2):
         if arg2 == 2:
-            self._tab_opened = True
-            self.preview(True)
+            self._connect_signals()
         else:
-            self._tab_opened = False
-            self.preview(False)
+            self._disconnect_signals()
