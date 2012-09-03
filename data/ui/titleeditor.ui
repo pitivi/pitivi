@@ -240,32 +240,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolItem" id="font_back_color">
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="has_tooltip">True</property>
-                <property name="tooltip_markup" translatable="yes">Font background color</property>
-                <property name="tooltip_text" translatable="yes">Font background color</property>
-                <property name="use_action_appearance">False</property>
-                <child>
-                  <object class="GtkColorButton" id="back_text_color">
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="title" translatable="yes">Pick a Font Foreground Color</property>
-                    <property name="color">#ffffffffffff</property>
-                    <signal name="color-set" handler="_backTextColorButtonCb" swapped="no"/>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkToolItem" id="background_color">
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>

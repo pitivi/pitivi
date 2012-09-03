@@ -614,7 +614,7 @@ class TitleEditor(Loggable):
         self.info_bar_create = builder.get_object("infobar1")
         self.info_bar_insert = builder.get_object("infobar2")
 
-        buttons = ["bold", "italic", "font", "font_fore_color", "font_back_color", "back_color"]
+        buttons = ["bold", "italic", "font", "font_fore_color", "back_color"]
         for button in buttons:
             self.bt[button] = builder.get_object(button)
         settings = ["valignment", "halignment", "xpos", "ypos"]
@@ -657,13 +657,6 @@ class TitleEditor(Loggable):
 
     def _frontTextColorButtonCb(self, widget):
         suc, a, t, s = Pango.parse_markup("<span color='" + widget.get_color().to_string() + "'>color</span>", -1, u'\x00')
-        ai = a.get_iterator()
-        font, lang, attrs = ai.get_font()
-        tags = self.pangobuffer.get_tags_from_attrs(None, None, attrs)
-        self.pangobuffer.apply_tag_to_selection(tags[0])
-
-    def _backTextColorButtonCb(self, widget):
-        suc, a, t, s = Pango.parse_markup("<span background='" + widget.get_color().to_string() + "'>color</span>", -1, u'\x00')
         ai = a.get_iterator()
         font, lang, attrs = ai.get_font()
         tags = self.pangobuffer.get_tags_from_attrs(None, None, attrs)
