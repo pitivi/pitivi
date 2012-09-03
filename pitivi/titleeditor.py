@@ -602,7 +602,6 @@ class TitleEditor(Loggable):
         #Connect buttons
         self.pangobuffer.setup_widget_from_pango(self.bt["bold"], "<b>bold</b>")
         self.pangobuffer.setup_widget_from_pango(self.bt["italic"], "<i>italic</i>")
-        self.pangobuffer.setup_widget_from_pango(self.bt["underline"], "<u>underline</u>")
 
     def _createUI(self):
         builder = Gtk.Builder()
@@ -614,8 +613,8 @@ class TitleEditor(Loggable):
         self.markup_button = builder.get_object("markupToggle")
         self.info_bar_create = builder.get_object("infobar1")
         self.info_bar_insert = builder.get_object("infobar2")
-        buttons = ["bold", "italic", "underline", "font", "font_fore_color", "font_back_color", "back_color"]
 
+        buttons = ["bold", "italic", "font", "font_fore_color", "font_back_color", "back_color"]
         for button in buttons:
             self.bt[button] = builder.get_object(button)
         settings = ["valignment", "halignment", "xpos", "ypos"]
