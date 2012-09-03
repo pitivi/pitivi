@@ -703,11 +703,13 @@ class TitleEditor(Loggable):
     def set_sensitive(self, sensitive):
         if sensitive:
             self.info_bar_create.hide()
-            self.editing_box.set_sensitive(True)
+            self.textarea.show()
+            self.editing_box.show()
         else:
             self.info_bar_create.show()
             self.info_bar_insert.hide()
-            self.editing_box.set_sensitive(False)
+            self.textarea.hide()
+            self.editing_box.hide()
 
         self.preview(sensitive)
 
