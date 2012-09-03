@@ -5,7 +5,7 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <child>
-      <object class="GtkInfoBar" id="infobar1">
+      <object class="GtkInfoBar" id="infobar">
         <property name="visible">True</property>
         <property name="app_paintable">True</property>
         <property name="can_focus">False</property>
@@ -45,7 +45,7 @@
             <property name="spacing">6</property>
             <child>
               <object class="GtkButton" id="create">
-                <property name="label" translatable="yes">Create text clip</property>
+                <property name="label" translatable="yes">Create and insert</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -74,78 +74,6 @@
         <property name="expand">False</property>
         <property name="fill">True</property>
         <property name="position">0</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkInfoBar" id="infobar2">
-        <property name="visible">True</property>
-        <property name="app_paintable">True</property>
-        <property name="can_focus">False</property>
-        <child internal-child="content_area">
-          <object class="GtkBox" id="infobar-content_area3">
-            <property name="can_focus">False</property>
-            <property name="border_width">8</property>
-            <property name="spacing">16</property>
-            <child>
-              <object class="GtkLabel" id="info_bar_label1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Text clip not in timeline.</property>
-                <property name="wrap">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <action-widgets>
-          <action-widget response="0">insert</action-widget>
-        </action-widgets>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="infobar-action_area3">
-            <property name="can_focus">False</property>
-            <property name="border_width">5</property>
-            <property name="spacing">6</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="insert">
-                <property name="label" translatable="yes">Insert at End of Timeline</property>
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <signal name="clicked" handler="_insertEndCb" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <action-widgets>
-          <action-widget response="0">insert</action-widget>
-        </action-widgets>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">True</property>
-        <property name="position">1</property>
       </packing>
     </child>
     <child>

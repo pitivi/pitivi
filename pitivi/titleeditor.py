@@ -607,12 +607,11 @@ class TitleEditor(Loggable):
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "titleeditor.ui"))
         builder.connect_signals(self)
-        self.widget = builder.get_object("box1")
+        self.widget = builder.get_object("box1")  # To be used by tabsmanager
+        self.infobar = builder.get_object("infobar")
         self.editing_box = builder.get_object("editing_box")
         self.textarea = builder.get_object("textview1")
         self.markup_button = builder.get_object("markupToggle")
-        self.info_bar_create = builder.get_object("infobar1")
-        self.info_bar_insert = builder.get_object("infobar2")
 
         buttons = ["bold", "italic", "font", "font_fore_color", "back_color"]
         for button in buttons:
@@ -694,12 +693,11 @@ class TitleEditor(Loggable):
 
     def set_sensitive(self, sensitive):
         if sensitive:
-            self.info_bar_create.hide()
+            self.infobar.hide()
             self.textarea.show()
             self.editing_box.show()
         else:
-            self.info_bar_create.show()
-            self.info_bar_insert.hide()
+            self.infobar.show()
             self.textarea.hide()
             self.editing_box.hide()
 
@@ -781,12 +779,9 @@ class TitleEditor(Loggable):
         source = GES.TimelineTitleSource()
         source.set_text("")
         source.set_duration(long(Gst.SECOND * 5))
-        #Show insert infobar only if created new source
-        self.info_bar_insert.show()
         self.set_source(source, True)
-
-    def _insertEndCb(self, unused_button):
-        self.info_bar_insert.hide()
+        # TODO: insert on the current layer at the playhead position.
+        # If no space is available, create a new layer to insert to on top.
         self.app.gui.timeline_ui.insertEnd([self.source])
         self.app.gui.timeline_ui.timeline.selection.setToObj(self.source, SELECT)
         #After insertion consider as not created
