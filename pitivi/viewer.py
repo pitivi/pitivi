@@ -253,7 +253,9 @@ class PitiviViewer(Gtk.VBox, Loggable):
             # show the controls and force the aspect frame to have at least the same
             # width (+110, which is a magic number to minimize dead padding).
             bbox.show_all()
-            width, height = bbox.size_request()
+            req = bbox.size_request()
+            width = req.width
+            height = req.height
             width += 110
             height = int(width / self.aframe.props.ratio)
             self.aframe.set_size_request(width, height)
