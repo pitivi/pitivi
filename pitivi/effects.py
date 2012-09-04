@@ -410,8 +410,8 @@ class EffectListWidget(Gtk.VBox, Loggable):
         scrollwin.props.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC
         scrollwin.add(self.view)
 
+        self.pack_start(toolbar, expand=False)
         self.pack_start(scrollwin, True, True, 0)
-        self.pack_end(toolbar, expand=False)
 
         # Delay the loading of the available effects so the application
         # starts faster.

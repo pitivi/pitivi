@@ -428,12 +428,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self._listview_button.set_active(False)
 
         # add all child widgets
+        self.pack_start(toolbar, expand=False)
         self.pack_start(self._welcome_infobar, False, False, 0)
         self.pack_start(self._import_warning_infobar, False, False, 0)
         self.pack_start(self.iconview_scrollwin, True, True, 0)
         self.pack_start(self.treeview_scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, True, 0)
-        self.pack_start(toolbar, expand=False)
 
         # display the help text
         self.clip_view = self.app.settings.lastClipView
