@@ -60,12 +60,10 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
 
         #Searchbox
         self.searchbar = Gtk.HBox()
-        self.searchbar.set_spacing(SPACING)
         self.searchbar.set_border_width(3)  # Prevents being flush against the notebook
-        searchStr = Gtk.Label(label=_("Search:"))
         self.searchEntry = Gtk.Entry()
-        self.searchEntry.set_icon_from_stock(Gtk.EntryIconPosition.SECONDARY, "gtk-clear")
-        self.searchbar.pack_start(searchStr, False, True, 0)
+        self.searchEntry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "edit-clear-symbolic")
+        self.searchEntry.set_placeholder_text(_("Search..."))
         self.searchbar.pack_end(self.searchEntry, True, True, 0)
 
         self.props_widgets = Gtk.VBox()
