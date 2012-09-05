@@ -299,7 +299,7 @@ class VideoLayerControl(BaseLayerControl):
 
         # Opacity scale
         opacity_adjust = Gtk.Adjustment(value=100, upper=100, step_incr=5, page_incr=10)
-        opacity_scale = Gtk.HScale(adjustment=opacity_adjust)
+        opacity_scale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adjustment=opacity_adjust)
         opacity_scale.set_value_pos(Gtk.PositionType.LEFT)
         opacity_scale.set_digits(0)
         opacity_scale.set_tooltip_text(_("Change video opacity"))
@@ -325,7 +325,7 @@ class AudioLayerControl(BaseLayerControl):
         panning = Gtk.Label(label=_("Pan:"))
         # Volume scale
         panning_adjust = Gtk.Adjustment(value=0, lower=-100, upper=100, step_incr=5, page_incr=10)
-        panning_scale = Gtk.HScale(adjustment=panning_adjust)
+        panning_scale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adjustment=panning_adjust)
         panning_scale.set_value_pos(Gtk.PositionType.LEFT)
         panning_scale.set_digits(0)
         panning_scale.set_tooltip_text(_("Change audio panning"))

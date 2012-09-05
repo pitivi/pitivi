@@ -385,7 +385,6 @@ class EffectListWidget(Gtk.VBox, Loggable):
         text_col.set_expand(True)
         text_col.set_spacing(SPACING)
         text_col.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
-        text_col.set_min_width(150)
         text_cell = Gtk.CellRendererText()
         text_cell.props.yalign = 0.0
         text_cell.props.xpad = 6
@@ -410,7 +409,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
         scrollwin.props.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC
         scrollwin.add(self.view)
 
-        self.pack_start(toolbar, expand=False)
+        self.pack_start(toolbar, False, False, 0)
         self.pack_start(scrollwin, True, True, 0)
 
         # Delay the loading of the available effects so the application
@@ -495,7 +494,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
 
         if event.button == 3:
             chain_up = False
-        elif event.type == Gdk.EventType._2BUTTON_PRESS:
+        elif event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
             factory_name = self.getSelectedItems()
             if factory_name is not None:
                 self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)

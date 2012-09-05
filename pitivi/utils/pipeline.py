@@ -414,7 +414,7 @@ class SimplePipeline(Signallable, Loggable):
         elif message.type == Gst.MessageType.ERROR:
             error, detail = message.parse_error()
             self._handleErrorMessage(error, detail, message.src)
-        elif message.type == Gst.MessageType.DURATION:
+        elif message.type == Gst.MessageType.DURATION_CHANGED:
             self.debug("Duration might have changed, querying it")
             GObject.idle_add(self._queryDurationAsync)
         else:

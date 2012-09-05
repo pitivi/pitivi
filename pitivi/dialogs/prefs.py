@@ -58,7 +58,9 @@ class PreferencesDialog():
         self._current = None
         self._createUi()
         self._fillContents()
-        min_width, min_height = self.contents.size_request()
+        req = self.contents.size_request()
+        min_width = req.width
+        min_height = req.height
         width = max(min_width, self.settings.prefsDialogWidth)
         height = max(min_height, self.settings.prefsDialogHeight)
         self.dialog.set_default_size(width, height)
@@ -130,8 +132,8 @@ class PreferencesDialog():
         upper=None, lower=None):
         """
         Add an auto-generated user preference that will show up as either a
-        Gtk.SpinButton or a Gtk.HScale, depending whether both the upper and lower
-        limits are set.
+        Gtk.SpinButton or an horizontal Gtk.Scale, depending whether both the
+        upper and lower limits are set.
 
         @param label: user-visible name for this option
         @type label: C{str}
@@ -154,8 +156,8 @@ class PreferencesDialog():
         matches=None):
         """
         Add an auto-generated user preference that will show up as either a
-        Gtk.SpinButton or a Gtk.HScale, depending on the upper and lower
-        limits
+        Gtk.SpinButton or an horizontal Gtk.Scale, depending on the upper and
+        lower limits
 
         @param label: user-visible name for this option
         @type label: C{str}

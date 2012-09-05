@@ -72,7 +72,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         self.border_mode_normal = Gtk.RadioButton(group=None, label=_("Normal"))
         self.border_mode_loop = Gtk.RadioButton(group=self.border_mode_normal, label=_("Loop"))
         self.border_mode_normal.set_active(True)
-        self.borderScale = Gtk.HScale()
+        self.borderScale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, None)
         self.borderScale.set_draw_value(False)
 
         borderTable.attach(self.border_mode_normal, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)

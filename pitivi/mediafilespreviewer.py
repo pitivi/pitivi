@@ -3,6 +3,7 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import Pango
 import os
 
@@ -77,7 +78,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
 
         #some global variables for preview handling
         self.is_playing = False
-        self.time_format = Gst.Format(Gst.FORMAT_TIME)
+        self.time_format = Gst.Format(Gst.Format.TIME)
         self.original_dims = (PREVIEW_WIDTH, PREVIEW_HEIGHT)
         self.countinuous_seek = False
         self.current_selected_uri = ""
@@ -88,7 +89,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         # Gui elements:
         # Drawing area for video output
         self.preview_video = ViewerWidget()
-        self.preview_video.modify_bg(Gtk.StateType.NORMAL, self.preview_video.style.black)
+        self.preview_video.modify_bg(Gtk.StateType.NORMAL, self.preview_video.get_style().black)
         self.pack_start(self.preview_video, False, True, 0)
 
         # An image for images and audio
@@ -105,7 +106,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
 
         #Scale for position handling
         self.pos_adj = Gtk.Adjustment()
-        self.seeker = Gtk.HScale(self.pos_adj)
+        self.seeker = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, self.pos_adj)
         self.seeker.connect('button-press-event', self._on_seeker_press_cb)
         self.seeker.connect('button-release-event', self._on_seeker_press_cb)
         self.seeker.connect('motion-notify-event', self._on_motion_notify_cb)
@@ -146,7 +147,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.b_zoom_in.hide()
         self.b_zoom_out.hide()
         # Allow expanding/filling and pack the video preview below the controls
-        self.set_child_packing(self.preview_video, True, True, 0, Gtk.PACK_END)
+        self.set_child_packing(self.preview_video, True, True, 0, Gtk.PackType.END)
 
     def add_preview_request(self, dialogbox):
         """add a preview request """
@@ -298,7 +299,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.countinuous_seek = True
             if self.is_playing:
                 self.player.set_state(Gst.State.PAUSED)
-        elif event.type == Gdk.BUTTON_RELEASE:
+        elif event.type == Gdk.EventType.BUTTON_RELEASE:
             self.countinuous_seek = False
             value = long(widget.get_value())
             self.player.seek_simple(self.time_format, Gst.SeekFlags.FLUSH, value)
@@ -311,12 +312,12 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.player.seek_simple(self.time_format, Gst.SeekFlags.FLUSH, value)
 
     def _bus_message_cb(self, bus, message):
-        if message.type == Gst.MESSAGE_EOS:
+        if message.type == Gst.MessageType.EOS:
             self.player.set_state(Gst.State.NULL)
             self.is_playing = False
             self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
             self.pos_adj.set_value(0)
-        elif message.type == Gst.MESSAGE_ERROR:
+        elif message.type == Gst.MessageType.ERROR:
             self.player.set_state(Gst.State.NULL)
             self.is_playing = False
             err, dbg = message.parse_error()
@@ -372,7 +373,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.settings.FCpreviewHeight = int(h)
 
     def _sync_message_cb(self, bus, mess):
-        if mess.type == Gst.MESSAGE_ELEMENT:
+        if mess.type == Gst.MessageType.ELEMENT:
             if mess.has_name('prepare-window-handle'):
                 sink = mess.src
 
@@ -398,7 +399,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
                     sink.set_window_handle(self.preview_video.window_xid)
                     sink.expose()
                     Gdk.threads_leave()
-        return Gst.BUS_PASS
+        return Gst.BusSyncReply.PASS
 
     def _appendTag(self, taglist, tag, unused_udata):
             if tag in acceptable_tags and Gst.tag_get_type(tag) in (GObject.TYPE_STRING,

@@ -463,7 +463,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
             factory = element.get_factory()
             if factory and "GstVideoScale" == factory.get_element_type().name:
                 element.props.method = 3
-        return Gst.BUS_PASS
+        return Gst.BusSyncReply.PASS
 
     def _pipelineInit(self, factory, sbin):
         """
@@ -590,13 +590,13 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         error, debug = message.parse_error()
         self.error("Event bus error: %s: %s", str(error), str(debug))
 
-        return Gst.BUS_PASS
+        return Gst.BusSyncReply.PASS
 
     def _startThumbnail(self, (timestamp, duration)):
         RandomAccessPreviewer._startThumbnail(self, (timestamp, duration))
         self._audio_cur = timestamp, duration
         res = self.audioPipeline.seek(1.0,
-            Gst.FORMAT_TIME,
+            Gst.Format.TIME,
             Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE | Gst.SeekFlags.SEGMENT,
             Gst.SeekType.SET, timestamp,
             Gst.SeekType.SET, timestamp + duration)

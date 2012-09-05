@@ -195,7 +195,6 @@ class EffectProperties(Gtk.Expander):
         self.treeview.append_column(typecol)
         typecol.set_spacing(SPACING)
         typecol.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
-        typecol.set_min_width(50)
         typecell = Gtk.CellRendererText()
         typecell.props.xpad = PADDING
         typecell.set_property("ellipsize", Pango.EllipsizeMode.END)

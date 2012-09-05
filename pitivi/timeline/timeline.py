@@ -1002,7 +1002,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         self._zoomAdjustment.connect("value-changed", self._zoomAdjustmentChangedCb)
         self._zoomAdjustment.props.lower = 0
         self._zoomAdjustment.props.upper = Zoomable.zoom_steps
-        zoomslider = Gtk.HScale(adjustment=self._zoomAdjustment)
+        zoomslider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adjustment=self._zoomAdjustment)
         zoomslider.props.draw_value = False
         zoomslider.set_tooltip_text(_("Zoom Timeline"))
         zoomslider.connect("scroll-event", self._zoomSliderScrollCb)

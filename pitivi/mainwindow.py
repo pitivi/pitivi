@@ -705,7 +705,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             chooser.add_filter(filt)
         default = Gtk.FileFilter()
         default.set_name(_("All Supported Formats"))
-        default.add_custom(Gtk.FILE_FILTER_URI, GES.formatter_can_load_uri, None)
+        default.add_custom(Gtk.FileFilterFlags.URI, GES.formatter_can_load_uri, None)
         chooser.add_filter(default)
 
         response = chooser.run()
@@ -1237,7 +1237,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # Try to keep it 1:1 if it can fit within 85% of the parent window
             img_width = info.get_video_streams()[0].get_width()
             img_height = info.get_video_streams()[0].get_height()
-            controls_height = previewer.bbox.size_request()[1]
+            controls_height = previewer.bbox.size_request().height
             mainwindow_width, mainwindow_height = self.get_size()
             max_width = 0.85 * mainwindow_width
             max_height = 0.85 * mainwindow_height

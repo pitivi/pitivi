@@ -26,6 +26,7 @@ from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import GObject
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import Pango
 from gi.repository import GdkPixbuf
 
@@ -428,7 +429,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self._listview_button.set_active(False)
 
         # add all child widgets
-        self.pack_start(toolbar, expand=False)
+        self.pack_start(toolbar, False, False, 0)
         self.pack_start(self._welcome_infobar, False, False, 0)
         self.pack_start(self._import_warning_infobar, False, False, 0)
         self.pack_start(self.iconview_scrollwin, True, True, 0)
@@ -920,7 +921,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     def _treeViewButtonPressEventCb(self, treeview, event):
         chain_up = True
 
-        if event.type == Gdk._2BUTTON_PRESS:
+        if event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
             if self.getSelectedPaths() != []:
                 # It is possible to double-click outside of clips!
                 self._previewClip()
@@ -979,7 +980,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     def _iconViewButtonPressEventCb(self, iconview, event):
         chain_up = True
 
-        if event.type == Gdk._2BUTTON_PRESS:
+        if event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
             if self.getSelectedPaths() != []:
                 # It is possible to double-click outside of clips!
                 self._previewClip()

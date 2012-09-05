@@ -187,8 +187,8 @@ class TextWidget(Gtk.HBox, DynamicWidget):
 
 class NumericWidget(Gtk.HBox, DynamicWidget):
 
-    """A Gtk.HScale and a Gtk.SpinButton which share an adjustment. The
-    SpinButton is always displayed, while the HScale only appears if both
+    """An horizontal Gtk.Scale and a Gtk.SpinButton which share an adjustment.
+    The SpinButton is always displayed, while the Scale only appears if both
     lower and upper bounds are defined"""
 
     def __init__(self, upper=None, lower=None, default=None):
@@ -202,8 +202,8 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
         self._type = None
         if (upper != None) and (lower != None) and\
             (upper < 5000) and (lower > -5000):
-            self.slider = Gtk.HScale(self.adjustment)
-            self.pack_start(self.slider, fill=True, expand=True)
+            self.slider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, self.adjustment)
+            self.pack_start(self.slider, fill=True, expand=True, padding=0)
             self.slider.show()
             self.slider.props.draw_value = False
 
@@ -491,7 +491,7 @@ class PresetChoiceWidget(Gtk.HBox, DynamicWidget):
 
         save_button = Gtk.Button(stock=Gtk.STOCK_SAVE)
         self._save_button = save_button
-        self.pack_start(save_button, False, False)
+        self.pack_start(save_button, False, False, 0)
         save_button.connect("clicked", self._savePreset)
         self.show_all()
 
@@ -933,7 +933,7 @@ class GstElementSettingsDialog(Loggable):
 
         # Try to avoid scrolling, whenever possible.
         screen_height = self.window.get_screen().get_height()
-        contents_height = self.elementsettings.size_request()[1]
+        contents_height = self.elementsettings.size_request().height
         maximum_contents_height = max(500, 0.7 * screen_height)
         if contents_height < maximum_contents_height:
             # The height of the content is small enough, disable the scrollbars.

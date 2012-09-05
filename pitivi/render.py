@@ -973,7 +973,7 @@ class RenderDialog(Loggable):
 
     #-- GStreamer callbacks
     def _busMessageCb(self, unused_bus, message):
-        if message.type == Gst.MESSAGE_EOS:  # Render complete
+        if message.type == Gst.MessageType.EOS:  # Render complete
             self.debug("got EOS message, render complete")
             self._shutDown()
             self._destroyProgressWindow()
