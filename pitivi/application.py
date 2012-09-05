@@ -291,7 +291,6 @@ class InteractivePitivi(Pitivi):
 
     def run(self):
         """Runs the main loop."""
-        print "SELF,", self
         self.mainloop.run()
 
 
