@@ -98,6 +98,7 @@ export PKG_CONFIG_PATH="$PITIVI_PREFIX/lib/pkgconfig\
 :$PITIVI/gst-plugins-ugly/pkgconfig\
 :$PITIVI/gst-plugins-bad/pkgconfig\
 :$PITIVI/gst-ffmpeg/pkgconfig\
+:$PITIVI/pygobject\
 ${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
 export GST_PLUGIN_PATH="\
@@ -146,16 +147,22 @@ export LD_LIBRARY_PATH=$PITIVI/gst-editing-services/ges/.libs:$LD_LIBRARY_PATH
 export DYLD_LIBRARY_PATH=$PITIVI/gst-editing-services/ges/.libs:$DYLD_LIBRARY_PATH
 export PATH=$PITIVI/gst-editing-services/tools:$PATH
 GI_TYPELIB_PATH=$PITIVI/gst-editing-services/ges:$GI_TYPELIB_PATH
+GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}/usr/lib64/girepository-1.0
 
 # And GNonLin
 export GST_PLUGIN_PATH=$GST_PLUGIN_PATH:$PITIVI/gnonlin/gnl/.libs
 
+# And python
+PYTHONPATH=$MYPITIVI/pygobject:$MYPITIVI/gst-python${PYTHONPATH:+:$PYTHONPATH}
+
 export LD_LIBRARY_PATH
 export DYLD_LIBRARY_PATH
 export GI_TYPELIB_PATH
+export PYTHONPATH
 
 MODULES_ALL="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services"
-MODULES_MINIMAL="gnonlin gst-editing-services"
+MODULES_MINIMAL="gnonlin gst-editing-services gst-python"
+MODULES_CORE="glib gobject-introspection pygobject"
 
 # First run? Build everything
 if test ! -e $PITIVI; then
@@ -178,37 +185,43 @@ if test ! -e $PITIVI; then
 
   cd $PITIVI
 
+  for m in $MODULES_CORE
+  do
+    git clone git://git.gnome.org/$m
+    cd $m
+    git checkout $GST_RELEASE_TAG
+    if [ $? -ne 0 ]; then
+      echo "Could not run checkout $GST_RELEASE_TAG for $m result: $?"
+    fi
+
+    ./autogen.sh --prefix=$PITIVI/prefix
+    if [ $? -ne 0 ]; then
+      echo "Could not run autogen for $m result: $?"
+      exit 1
+    fi
+
+    make
+    if [ $? -ne 0 ]; then
+      echo "Could not run autogen for $m result: $?"
+      exit 1
+    fi
+
+    if [ "$m" != "pygobject" ]; then
+      make install
+      if [ $? -ne 0 ]; then
+        echo "Could not install $m result: $?"
+        exit 1
+      fi
+    fi
+    cd ..
+  done
+
   if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null
       then echo "GSt 1.0 is installed, not building it"
       MODULES=$MODULES_MINIMAL
   else
     echo "GSt 1.0 is not installed, building it"
     MODULES=$MODULES_ALL
-  fi
-
-  # Build GLib... if needed
-  if  ! pkg-config glib-2.0 --atleast-version=2.32; then
-    git clone git://git.gnome.org/glib
-    cd glib
-    git checkout glib-2-32
-    ./autogen.sh --prefix=$PITIVI/prefix
-    if [ $? -ne 0 ]; then
-      echo "Could not run autogen for GLib result: $?"
-      exit 1
-    fi
-    make
-    if [ $? -ne 0 ]; then
-      echo "Could not make GLib result: $?"
-      exit 1
-    fi
-    make install
-    if [ $? -ne 0 ]; then
-      echo "Could not install GLib result: $?"
-      exit 1
-    fi
-    cd ..
-  else
-      echo "GLib is in a recent enough version, not installing it"
   fi
 
   # Build all the necessary modules
@@ -218,6 +231,9 @@ if test ! -e $PITIVI; then
 
     cd $m
     git checkout $GST_RELEASE_TAG
+    if [ $? -ne 0 ]; then
+      echo "Could not run checkout $GST_RELEASE_TAG for $m result: $?"
+    fi
 
     ./autogen.sh
     if [ $? -ne 0 ]; then
@@ -260,6 +276,9 @@ if [ "$1" == "--update" ]; then
   cd $PITIVI
   for m in $MODULES
   do
+    if test ! -e $m; then
+      git clone git://anongit.freedesktop.org/gstreamer/$m
+    fi
     cd $m
     git checkout $GST_RELEASE_TAG
     git pull --rebase
@@ -281,7 +300,13 @@ fi
 
 # set up prompt to help us remember we're in a subshell, cd to
 # the gstreamer base dir and start $SHELL
-cd $PITIVI/
+if test ! -z "$1";
+then
+  cd $PITIVI/$1
+else
+  cd $PITIVI/pitivi
+fi
+
 shell=$SHELL
 if test "x$SHELL" = "x/bin/bash"
 then
