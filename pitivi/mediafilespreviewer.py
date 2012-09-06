@@ -47,7 +47,8 @@ acceptable_tags = [Gst.TAG_ALBUM_ARTIST,
                     Gst.TAG_COMPOSER,
                     Gst.TAG_GENRE,
                     Gst.TAG_PERFORMER,
-                    Gst.TAG_DATE]
+                    Gst.TAG_DATE,
+                    Gst.TAG_COPYRIGHT]
 
 
 class PreviewWidget(Gtk.VBox, Loggable):
