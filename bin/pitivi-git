@@ -48,9 +48,9 @@ $PITIVI_PREFIX/bin:\
 $PATH"
 
 # /some/path: makes the dynamic linker look in . too, so avoid this
-LD_LIBRARY_PATH=$PITIVI_PREFIX/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-DYLD_LIBRARY_PATH=$PITIVI_PREFIX/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
-GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}
+LD_LIBRARY_PATH=$PITIVI_PREFIX/lib:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+DYLD_LIBRARY_PATH=$PITIVI_PREFIX/lib:${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
+GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}
 
 
 if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null; then
@@ -99,7 +99,7 @@ export PKG_CONFIG_PATH="$PITIVI_PREFIX/lib/pkgconfig\
 :$PITIVI/gst-plugins-bad/pkgconfig\
 :$PITIVI/gst-ffmpeg/pkgconfig\
 :$PITIVI/pygobject\
-${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+:${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
 export GST_PLUGIN_PATH="\
 $PITIVI/gstreamer/plugins\
@@ -124,7 +124,7 @@ $PITIVI/gstreamer/plugins\
 :$PITIVI/farsight2/gst\
 :$PITIVI/farsight2/transmitters\
 :$PITIVI/libnice/gst\
-${GST_PLUGIN_PATH:+:$GST_PLUGIN_PATH}"
+:${GST_PLUGIN_PATH:+:$GST_PLUGIN_PATH}"
 
   # don't use any system-installed plug-ins at all
   export GST_PLUGIN_SYSTEM_PATH=
@@ -147,20 +147,22 @@ export LD_LIBRARY_PATH=$PITIVI/gst-editing-services/ges/.libs:$LD_LIBRARY_PATH
 export DYLD_LIBRARY_PATH=$PITIVI/gst-editing-services/ges/.libs:$DYLD_LIBRARY_PATH
 export PATH=$PITIVI/gst-editing-services/tools:$PATH
 GI_TYPELIB_PATH=$PITIVI/gst-editing-services/ges:$GI_TYPELIB_PATH
-GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0
+GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0:/usr/lib/girepository-1.0
 
 # And GNonLin
 export GST_PLUGIN_PATH=$GST_PLUGIN_PATH:$PITIVI/gnonlin/gnl/.libs
 
 # And python
 PYTHONPATH=$MYPITIVI/pygobject:$MYPITIVI/gst-python${PYTHONPATH:+:$PYTHONPATH}
+export LD_LIBRARY_PATH=$PITIVI/pygobject/gi/.libs:$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$PITIVI/pygobject/gi/.libs:$DYLD_LIBRARY_PATH
 
 export LD_LIBRARY_PATH
 export DYLD_LIBRARY_PATH
 export GI_TYPELIB_PATH
 export PYTHONPATH
 
-MODULES_ALL="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services"
+MODULES_ALL="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python"
 MODULES_MINIMAL="gnonlin gst-editing-services gst-python"
 MODULES_CORE="glib gobject-introspection pygobject"
 
