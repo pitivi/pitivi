@@ -230,7 +230,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
                 self.seeker.show()
                 self.b_zoom_in.show()
                 self.b_zoom_out.show()
-                self.description = _(u"<b>Resolution</b>: %d×%d") % \
+                self.description = _("<b>Resolution</b>: %d×%d") % \
                     ((video.get_par_num() / video.get_par_denom()) * video.get_width(), video.get_height()) +\
                      "\n" + _("<b>Duration</b>: %s") % pretty_duration + "\n"
         else:
@@ -402,13 +402,20 @@ class PreviewWidget(Gtk.VBox, Loggable):
         return Gst.BusSyncReply.PASS
 
     def _appendTag(self, taglist, tag, unused_udata):
-            if tag in acceptable_tags and Gst.tag_get_type(tag) in (GObject.TYPE_STRING,
-                                   GObject.TYPE_DOUBLE,
-                                   GObject.TYPE_FLOAT,
-                                   GObject.TYPE_INT,
-                                   GObject.TYPE_UINT):
-                name = Gst.tag_get_nick(tag)
-                value = unicode(taglist.get_string(tag)[1]).replace('<', ' ').replace('>', ' ')
+        if tag in acceptable_tags:
+            name = Gst.tag_get_nick(tag)
+            type = Gst.tag_get_type(tag)
+            type_getters = {GObject.TYPE_STRING: 'get_string',
+                            GObject.TYPE_DOUBLE: 'get_double',
+                            GObject.TYPE_FLOAT: 'get_float',
+                            GObject.TYPE_INT: 'get_int',
+                            GObject.TYPE_UINT: 'get_uint'}
+            if type in type_getters:
+                if type == GObject.TYPE_STRING:
+                    value = getattr(taglist, type_getters[type])(tag)[1]
+                    value = value.replace('<', ' ').replace('>', ' ')
+                else:
+                    value = str(getattr(taglist, type_getters[type])(tag)[1])
                 self.tags[name] = value
 
     def _tag_found_cb(self, abus, mess):
