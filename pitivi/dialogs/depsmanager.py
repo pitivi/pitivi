@@ -75,7 +75,7 @@ class DepsManager(object):
         """Set the contents of the label containing the list of missing dependencies"""
         label_contents = ""
         for dep in soft_deps:
-            label_contents += u"• " + dep + " (" + soft_deps[dep] + ")\n"
+            label_contents += "• " + dep + " (" + soft_deps[dep] + ")\n"
         self.builder.get_object("pkg_list").set_text(label_contents)
 
     def show(self):
