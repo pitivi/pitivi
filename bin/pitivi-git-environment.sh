@@ -1,36 +1,23 @@
 #!/bin/bash -i
+# Indentation = 4 spaces.
 #
-# this script is in git as bin/pitivi-git
-#
-# It will set up the environment to use and develop pitivi with an
+# This script sets up the environment to use and develop pitivi with an
 # uninstalled git checkout of pitivi and GES.
 #
 # It will set up LD_LIBRARY_PATH, DYLD_LIBRARY_PATH, PKG_CONFIG_PATH,
 # to prefer the uninstalled versions but also contain the installed ones.
 #
-# When you run the script for the first time, the script will checkout
-# everything you need to get started. If you want to do it yourself, set
-# MYPITIVI accordinly
-
-# Change this variable to the location of you choice, that either:
-#  + contains pitivi, ges and gst-python checkouts that you have already
-#    compiled.
+# You can change the MYPITIVI variable your preferred location, that either:
+#  + contains your own build of pitivi, ges, gst-python, etc.
 #
-#  + an empty location where you have R+W access, so the script sets up
-#    everything for you.  (better choice in the case you are starting
-#    with PiTiVi devel)
+#  + an empty location where you have R+W access, so that the script
+#    can set up everything for you (recommended).
 MYPITIVI=$HOME/pitivi-git
-
-# Change those variable to 'master' if you prefer to work with the master branch
+# Change this variable to 'master' if you prefer to work with the master branch
 GST_RELEASE_TAG="master"
-
 #
 # Everything below this line shouldn't be edited!
 #
-
-# extract version from $0
-# if this script is called "gst-head" then version will be "head"
-VERSION=`echo $0 | sed s/.*gst-//g`
 
 # base path under which dirs are installed
 PITIVI=$MYPITIVI
@@ -166,153 +153,153 @@ MODULES_ALL="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-pl
 MODULES_MINIMAL="gnonlin gst-editing-services gst-python"
 MODULES_CORE="glib gobject-introspection pygobject"
 
-# First run? Build everything
-if test ! -e $PITIVI; then
-  echo "==========================================================================================="
-  echo "Creating new Pitivi development environment in $PITIVI"
-  echo "==========================================================================================="
+# Force build to happen automatically if the folders are missing
+# or if the --build parameter is used:
+ready_to_run=0
 
-  echo "New $PITIVI directory"
-  mkdir $PITIVI/
-  if [ $? -ne 0 ]; then
-    echo "Could not create directory"
-    exit 1
-  fi
-  echo "New $PITIVI/prefix directory"
-  mkdir $PITIVI/prefix
-  if [ $? -ne 0 ]; then
-    echo "Could not create directory"
-    exit 1
-  fi
+if test ! -d $PITIVI; then
+    echo "===================================================================="
+    echo "Creating initial set of folders in $PITIVI"
+    echo "===================================================================="
 
-  cd $PITIVI
-
-  for m in $MODULES_CORE
-  do
-    git clone git://git.gnome.org/$m
-    cd $m
-    git checkout $GST_RELEASE_TAG
+    echo "New $PITIVI directory"
+    mkdir $PITIVI/
     if [ $? -ne 0 ]; then
-      echo "Could not run checkout $GST_RELEASE_TAG for $m result: $?"
-    fi
-
-    ./autogen.sh --prefix=$PITIVI/prefix
-    if [ $? -ne 0 ]; then
-      echo "Could not run autogen for $m result: $?"
-      exit 1
-    fi
-
-    make
-    if [ $? -ne 0 ]; then
-      echo "Could not run autogen for $m result: $?"
-      exit 1
-    fi
-
-    if [ "$m" != "pygobject" ]; then
-      make install
-      if [ $? -ne 0 ]; then
-        echo "Could not install $m result: $?"
         exit 1
-      fi
     fi
-    cd ..
-  done
-
-  if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null
-      then echo "GSt 1.0 is installed, not building it"
-      MODULES=$MODULES_MINIMAL
-  else
-    echo "GSt 1.0 is not installed, building it"
-    MODULES=$MODULES_ALL
-  fi
-
-  # Build all the necessary modules
-  for m in $MODULES
-  do
-    git clone git://anongit.freedesktop.org/gstreamer/$m
-
-    cd $m
-    git checkout $GST_RELEASE_TAG
+    echo "New $PITIVI_PREFIX directory"
+    mkdir $PITIVI_PREFIX
     if [ $? -ne 0 ]; then
-      echo "Could not run checkout $GST_RELEASE_TAG for $m result: $?"
+        exit 1
+    fi
+elif [ "$1" != "--build" ]; then
+    # The folders existed, and the user just wants to set the shell environment
+    ready_to_run=1
+fi
+
+
+if [ "$ready_to_run" != "1" ]; then
+    cd $PITIVI
+    for m in $MODULES_CORE
+    do
+        echo ""
+        echo "Building $m"
+        # If the folder doesn't exist, check out the module. Later on, we will
+        # update it anyway.
+        if test ! -d $m; then
+            git clone git://git.gnome.org/$m
+            if [ $? -ne 0 ]; then
+                echo "Could not download the code for $m ; result: $?"
+                exit 1
+            fi
+        fi
+        cd $m
+        git pull --rebase
+        if [ $? -ne 0 ]; then
+            exit 1
+        fi
+
+
+        # Now compile that module
+        ./autogen.sh --prefix=$PITIVI/prefix
+        if [ $? -ne 0 ]; then
+            echo "Could not run autogen for $m ; result: $?"
+            exit 1
+        fi
+
+        make
+        if [ $? -ne 0 ]; then
+            echo "Could not run make for $m ; result: $?"
+            exit 1
+        fi
+
+        if [ "$m" != "pygobject" ]; then
+            make install
+            if [ $? -ne 0 ]; then
+                echo "Could not install $m ; result: $?"
+                exit 1
+            fi
+        fi
+
+        cd ..
+    done
+
+
+
+    if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null
+        then echo "GSt 1.0 is installed, not building it"
+        MODULES=$MODULES_MINIMAL
+    else
+        echo "GSt 1.0 is not installed, building it"
+        MODULES=$MODULES_ALL
     fi
 
+    # Build all the necessary gstreamer modules.
+    for m in $MODULES
+    do
+        echo ""
+        echo "Building $m"
+        # If the folder doesn't exist, check out the module. Later on, we will
+        # update it anyway.
+        if test ! -d $m; then
+            git clone git://anongit.freedesktop.org/gstreamer/$m
+            if [ $? -ne 0 ]; then
+                echo "Could not run checkout $GST_RELEASE_TAG for $m ; result: $?"
+                exit 1
+            fi
+        fi
+
+        cd $m
+        git checkout $GST_RELEASE_TAG
+        if [ $? -ne 0 ]; then
+            echo "Could not run checkout $GST_RELEASE_TAG for $m ; result: $?"
+            exit 1
+        fi
+        git pull --rebase
+        if [ $? -ne 0 ]; then
+            exit 1
+        fi
+
+
+        ./autogen.sh
+        if [ $? -ne 0 ]; then
+            echo "Could not run autogen for $m ; result: $?"
+            exit 1
+        fi
+
+        make
+        if [ $? -ne 0 ]; then
+            echo "Could not compile $m ; result: $?"
+            exit 1
+        fi
+        cd ..
+    done
+
+    # And obviously ... PiTiVi itself
+    if test ! -d $PITIVI/pitivi; then
+        git clone git://git.gnome.org/pitivi
+    fi
+    cd pitivi
     ./autogen.sh
     if [ $? -ne 0 ]; then
-      echo "Could not run autogen for $m result: $?"
-      exit 1
+        echo "Could not run autogen for Pitivi ; result: $?"
+        exit 1
     fi
-
     make
-    if [ $? -ne 0 ]; then
-      echo "Could not run autogen for $m result: $?"
-      exit 1
-    fi
-    cd ..
-  done
-
-  # And obviously ... PiTiVi itself
-  git clone git://git.gnome.org/pitivi
-  cd pitivi
-  git remote add thiblahute https://github.com/thiblahute/Pitivi.git
-  git remote update thiblahute
-  git checkout gtkcompat
-
-  ./autogen.sh
-  if [ $? -ne 0 ]; then
-    echo "Could not run autogen for $m result: $?"
-    exit 1
-  fi
-
-  make
-  if [ $? -ne 0 ]; then
-    echo "Could not run autogen for $m result: $?"
-    exit 1
-  fi
-  cd ..
+    ready_to_run=1
+    echo "===================================================================="
+    echo "                   BATTLECRUISER OPERATIONAL                        "
+    echo "                          >(°)__/                                   "
+    echo "                           (_~_/                                    "
+    echo "                         ~~~~~~~~~~~~                               "
+    echo "===================================================================="
 fi
 
-if [ "$1" == "--update" ]; then
-  echo "Updating repos for dependencies (but not pitivi itself)"
-  MODULES=$MODULES_ALL
-  cd $PITIVI
-  for m in $MODULES
-  do
-    if test ! -e $m; then
-      git clone git://anongit.freedesktop.org/gstreamer/$m
-    fi
-    cd $m
-    git checkout $GST_RELEASE_TAG
-    git pull --rebase
 
-    ./autogen.sh
-    if [ $? -ne 0 ]; then
-      echo "Could not run autogen for $m result: $?"
-      exit 1
-    fi
 
-    make
-    if [ $? -ne 0 ]; then
-      echo "Could not run autogen for $m result: $?"
-      exit 1
-    fi
-    cd ..
-  done
+if [ $ready_to_run == 1 ]; then
+    cd $PITIVI/pitivi
+    # Change the looks of the prompt, to help us remember we're in a subshell.
+    changed_PS1='PS1="\[$(tput bold)$(tput setb 1)$(tput setaf 7)\]PiTiVi env:\w $ \[$(tput sgr0)\]"'
+    bash --rcfile <(cat ~/.bashrc; echo $changed_PS1)
 fi
-
-# set up prompt to help us remember we're in a subshell, cd to
-# the gstreamer base dir and start $SHELL
-if test ! -z "$1";
-then
-  cd $PITIVI/$1
-else
-  cd $PITIVI/pitivi
-fi
-
-shell=$SHELL
-if test "x$SHELL" = "x/bin/bash"
-then
-  # debian/ubuntu resets our PS1.  bastards.
-  shell="$SHELL --noprofile"
-fi
-PS1="[gst-$VERSION] $PS1" $shell
