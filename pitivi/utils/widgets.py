@@ -915,8 +915,7 @@ class GstElementSettingsDialog(Loggable):
         self.debug("factory:%s, properties:%s", elementfactory, properties)
 
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(get_ui_dir(),
-            "elementsettingsdialog.ui"))
+        self.builder.add_from_file(os.path.join(get_ui_dir(), "elementsettingsdialog.ui"))
         self.builder.connect_signals(self)
         self.ok_btn = self.builder.get_object("okbutton1")
 
@@ -944,7 +943,7 @@ class GstElementSettingsDialog(Loggable):
         else:
             # If we need to scroll, set a reasonable height for the window.
             default_height = 600
-        self.window.set_default_size(300, default_height)
+        self.window.set_default_size(400, default_height)
 
         if parent_window:
             self.window.set_transient_for(parent_window)
