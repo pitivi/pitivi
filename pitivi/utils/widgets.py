@@ -910,7 +910,7 @@ class GstElementSettingsDialog(Loggable):
     Dialog window for viewing/modifying properties of a Gst.Element
     """
 
-    def __init__(self, elementfactory, properties={}):
+    def __init__(self, elementfactory, properties={}, parent_window=None):
         Loggable.__init__(self)
         self.debug("factory:%s, properties:%s", elementfactory, properties)
 
@@ -946,6 +946,8 @@ class GstElementSettingsDialog(Loggable):
             default_height = 600
         self.window.set_default_size(300, default_height)
 
+        if parent_window:
+            self.window.set_transient_for(parent_window)
         self.window.show()
 
     def _fillWindow(self):

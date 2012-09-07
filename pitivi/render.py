@@ -853,10 +853,9 @@ class RenderDialog(Loggable):
         @type settings_attr: str
         """
         properties = getattr(self.settings, settings_attr)
-        self.dialog = GstElementSettingsDialog(factory, properties=properties)
-        self.dialog.window.set_transient_for(self.window)
+        self.dialog = GstElementSettingsDialog(factory, properties=properties,
+                                                parent_window=self.window)
         self.dialog.ok_btn.connect("clicked", self._okButtonClickedCb, settings_attr)
-        self.dialog.window.run()
 
     def startAction(self):
         """ Start the render process """
