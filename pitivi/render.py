@@ -860,7 +860,7 @@ class RenderDialog(Loggable):
     def startAction(self):
         """ Start the render process """
         self._pipeline.set_state(Gst.State.NULL)
-        self._pipeline.set_mode(GES.TimelineMode.SMART_RENDER)
+        self._pipeline.set_mode(GES.PipelineFlags.SMART_RENDER)
         encodebin = self._pipeline.get_by_name("internal-encodebin")
         self._gstSigId[encodebin] = encodebin.connect("element-added", self._elementAddedCb)
         self._pipeline.set_state(Gst.State.PLAYING)
@@ -875,7 +875,7 @@ class RenderDialog(Loggable):
         and disconnect from its signals """
         self._pipeline.set_state(Gst.State.NULL)
         self._disconnectFromGst()
-        self._pipeline.set_mode(GES.TimelineMode.PREVIEW)
+        self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
 
     def _pauseRender(self, progress):
         self.app.current.pipeline.togglePlayback()
@@ -976,7 +976,7 @@ class RenderDialog(Loggable):
             self.debug("got EOS message, render complete")
             self._shutDown()
             self._destroyProgressWindow()
-        elif message.type == Gst.MessageType.CHANGED and self.progress:
+        elif message.type == Gst.MessageType.STATE_CHANGED and self.progress:
             prev, state, pending = message.parse_state_changed()
             if message.src == self._pipeline:
                 state_really_changed = pending == Gst.State.VOID_PENDING
