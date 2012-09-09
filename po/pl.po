@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-05 19:42+0200\n"
-"PO-Revision-Date: 2012-09-05 19:43+0200\n"
+"POT-Creation-Date: 2012-09-09 23:29+0200\n"
+"PO-Revision-Date: 2012-09-09 23:30+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -172,7 +172,7 @@ msgstr "Zaimportuj"
 msgid "Remove selected clips from the project"
 msgstr "Usuwa zaznaczone klipy z projektu"
 
-#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:412
+#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:413
 msgid "_Remove from Project"
 msgstr "_Usuń z projektu"
 
@@ -184,7 +184,7 @@ msgstr "Właściwości klipu..."
 msgid "Insert the selected clips at the end of the timeline"
 msgstr "Wstawia zaznaczone klipy na koniec osi czasu"
 
-#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:415
+#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:416
 msgid "Insert at _End of Timeline"
 msgstr "Wstaw na końcu _osi czasu"
 
@@ -613,21 +613,21 @@ msgstr "-a wymaga -i"
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "Nie można otworzyć więcej niż jednego PLIKU_PROJEKTU"
 
-#: ../pitivi/check.py:126
+#: ../pitivi/check.py:127
 #, python-format
 msgid "%s is already running"
 msgstr "%s jest już uruchomione"
 
-#: ../pitivi/check.py:127
+#: ../pitivi/check.py:128
 #, python-format
 msgid "An instance of %s is already running in this script."
 msgstr "Jedna kopia %s jest już uruchomiona w tym skrypcie."
 
-#: ../pitivi/check.py:129
+#: ../pitivi/check.py:130
 msgid "Could not find the GNonLin plugins"
 msgstr "Nie można odnaleźć wtyczek GNonLin"
 
-#: ../pitivi/check.py:130
+#: ../pitivi/check.py:131
 msgid ""
 "Make sure the plugins were installed and are available in the GStreamer "
 "plugins path."
@@ -635,11 +635,11 @@ msgstr ""
 "Proszę się upewnić, że wtyczki zostały zainstalowane i są dostępne w ścieżce "
 "dostępu do wtyczek biblioteki GStreamer."
 
-#: ../pitivi/check.py:132
+#: ../pitivi/check.py:133
 msgid "Could not find the autodetect plugins"
 msgstr "Nie można automatycznie wykryć wtyczek"
 
-#: ../pitivi/check.py:133
+#: ../pitivi/check.py:134
 msgid ""
 "Make sure you have installed gst-plugins-good and that it's available in the "
 "GStreamer plugin path."
@@ -647,22 +647,22 @@ msgstr ""
 "Proszę się upewnić, że zostały zainstalowane wtyczki gst-plugins-good i są "
 "one dostępne w ścieżce dostępu do wtyczek biblioteki GStreamer."
 
-#: ../pitivi/check.py:135
+#: ../pitivi/check.py:136
 msgid "PyGTK doesn't have cairo support"
 msgstr "PyGTK nie obsługuje biblioteki cairo"
 
-#: ../pitivi/check.py:136
+#: ../pitivi/check.py:137
 msgid ""
 "Please use a version of the GTK+ Python bindings built with cairo support."
 msgstr ""
 "Proszę użyć wersji dowiązań języka Python do biblioteki GTK+ skompilowanych "
 "z obsługą biblioteki cairo."
 
-#: ../pitivi/check.py:138
+#: ../pitivi/check.py:139
 msgid "Could not initiate the video output plugins"
 msgstr "Nie można zainicjować wtyczek wyjścia wideo"
 
-#: ../pitivi/check.py:139
+#: ../pitivi/check.py:140
 msgid ""
 "Make sure you have at least one valid video output sink available "
 "(xvimagesink or ximagesink)."
@@ -670,11 +670,11 @@ msgstr ""
 "Proszę się upewnić, że przynajmniej jedno działające wyjście wideo jest "
 "dostępne (xvimagesink lub ximagesink)."
 
-#: ../pitivi/check.py:141
+#: ../pitivi/check.py:142
 msgid "Could not initiate the audio output plugins"
 msgstr "Nie można zainicjować wtyczek wyjścia dźwięku"
 
-#: ../pitivi/check.py:142
+#: ../pitivi/check.py:143
 msgid ""
 "Make sure you have at least one valid audio output sink available (alsasink "
 "or osssink)."
@@ -682,47 +682,47 @@ msgstr ""
 "Proszę się upewnić, że przynajmniej jedno działające wyjście dźwięku jest "
 "dostępne (alsasink lub osssink)."
 
-#: ../pitivi/check.py:144
+#: ../pitivi/check.py:145
 msgid "Could not import the cairo Python bindings"
 msgstr "Nie można zaimportować dowiązań języka Python do biblioteki cairo"
 
-#: ../pitivi/check.py:145
+#: ../pitivi/check.py:146
 msgid "Make sure you have the cairo Python bindings installed."
 msgstr ""
 "Proszę się upewnić, że dowiązania języka Python do biblioteki cairo są "
 "zainstalowane."
 
-#: ../pitivi/check.py:147
+#: ../pitivi/check.py:148
 msgid "Could not import the goocanvas Python bindings"
 msgstr "Nie można zaimportować dowiązań języka Python do biblioteki goocanvas"
 
-#: ../pitivi/check.py:148
+#: ../pitivi/check.py:149
 msgid "Make sure you have the goocanvas Python bindings installed."
 msgstr ""
 "Proszę się upewnić, że dowiązania języka Python do biblioteki goocanvas są "
 "zainstalowane."
 
-#: ../pitivi/check.py:150
+#: ../pitivi/check.py:151
 msgid "Could not import the xdg Python library"
 msgstr "Nie można zaimportować dowiązań języka Python do biblioteki xdg"
 
-#: ../pitivi/check.py:151
+#: ../pitivi/check.py:152
 msgid "Make sure you have the xdg Python library installed."
 msgstr ""
 "Proszę się upewnić, że dowiązania języka Python do biblioteki xdg są "
 "zainstalowane."
 
-#: ../pitivi/check.py:154
+#: ../pitivi/check.py:155
 #, python-format
 msgid "You do not have a recent enough version of GTK+ (your version %s)"
 msgstr "Brak wystarczająco aktualnej wersji biblioteki GTK+ (obecnie %s)"
 
-#: ../pitivi/check.py:155
+#: ../pitivi/check.py:156
 #, python-format
 msgid "Install a version of GTK+ greater than or equal to %s."
 msgstr "Proszę zainstalować wersję biblioteki GTK+ wyższą lub równą %s."
 
-#: ../pitivi/check.py:158
+#: ../pitivi/check.py:159
 #, python-format
 msgid ""
 "You do not have a recent enough version of GStreamer Python bindings (your "
@@ -731,7 +731,7 @@ msgstr ""
 "Brak wystarczająco aktualnej wersji dowiązań języka Python do biblioteki "
 "GStreamer (obecnie %s)"
 
-#: ../pitivi/check.py:159
+#: ../pitivi/check.py:160
 #, python-format
 msgid ""
 "Install a version of the GStreamer Python bindings greater than or equal to "
@@ -740,17 +740,17 @@ msgstr ""
 "Proszę zainstalować wersję dowiązań języka Python do biblioteki GStreamer "
 "wyższą lub równą %s."
 
-#: ../pitivi/check.py:162
+#: ../pitivi/check.py:163
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (your version %s)"
 msgstr "Brak wystarczająco aktualnej wersji biblioteki GStreamer (obecnie %s)"
 
-#: ../pitivi/check.py:163
+#: ../pitivi/check.py:164
 #, python-format
 msgid "Install a version of the GStreamer greater than or equal to %s."
 msgstr "Proszę zainstalować wersję biblioteki GStreamer wyższą lub równą %s."
 
-#: ../pitivi/check.py:166
+#: ../pitivi/check.py:167
 #, python-format
 msgid ""
 "You do not have a recent enough version of the cairo Python bindings (your "
@@ -759,7 +759,7 @@ msgstr ""
 "Brak wystarczająco aktualnej wersji dowiązań języka Python do biblioteki "
 "cairo (obecnie %s)"
 
-#: ../pitivi/check.py:167
+#: ../pitivi/check.py:168
 #, python-format
 msgid ""
 "Install a version of the cairo Python bindings greater than or equal to %s."
@@ -767,7 +767,7 @@ msgstr ""
 "Proszę zainstalować wersję dowiązań języka Python do biblioteki cairo wyższą "
 "lub równą %s."
 
-#: ../pitivi/check.py:170
+#: ../pitivi/check.py:171
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
@@ -776,7 +776,7 @@ msgstr ""
 "Brak wystarczająco aktualnej wersji wtyczki GNonLin biblioteki GStreamer "
 "(obecnie %s)"
 
-#: ../pitivi/check.py:171
+#: ../pitivi/check.py:172
 #, python-format
 msgid ""
 "Install a version of the GNonLin GStreamer plugin greater than or equal to "
@@ -786,35 +786,43 @@ msgstr ""
 "równą %s."
 
 #. FIXME enable version checking in GES
-#: ../pitivi/check.py:174
+#: ../pitivi/check.py:175
 msgid "Could not import GStreamer Editing Services "
 msgstr "Nie można zaimportować usług edycji biblioteki GStreamer "
 
-#: ../pitivi/check.py:175
+#: ../pitivi/check.py:176
 msgid "Make sure you have GStreamer Editing Services installed."
 msgstr ""
 "Proszę się upewnić, że usługi edycji biblioteki GStreamer są zainstalowane."
 
-#: ../pitivi/check.py:177
+#: ../pitivi/check.py:178
 msgid "Could not import the distutils modules"
 msgstr "Nie można zaimportować modułów distutils"
 
-#: ../pitivi/check.py:178
+#: ../pitivi/check.py:179
 msgid "Make sure you have the distutils Python module installed."
 msgstr ""
 "Proszę się upewnić, że moduł distutils języka Python jest zainstalowany."
 
-#: ../pitivi/check.py:184
+#: ../pitivi/check.py:185
 msgid "Enables the autoalign feature"
 msgstr "Włącza funkcję automatycznego wyrównania"
 
-#: ../pitivi/check.py:186
+#: ../pitivi/check.py:187
 msgid "Additional video effects"
 msgstr "Dodatkowe efekty wideo"
 
-#: ../pitivi/check.py:188
+#: ../pitivi/check.py:189
 msgid "Additional multimedia codecs through the Libav library"
 msgstr "Dodatkowe kodeki multimedialne przez bibliotekę libav"
+
+#: ../pitivi/check.py:200
+msgid "Could not initialize GStreamer Editing Services"
+msgstr "Nie można zainicjować usług edycji biblioteki GStreamer"
+
+#: ../pitivi/check.py:201
+msgid "Make sure you have the gst-editing-services installed."
+msgstr "Proszę się upewnić, że pakiet gst-editing-services jest zainstalowany."
 
 #: ../pitivi/clipproperties.py:165
 msgid "Remove effect"
@@ -824,20 +832,20 @@ msgstr "Usuń efekt"
 msgid "Type"
 msgstr "Typ"
 
-#: ../pitivi/clipproperties.py:205
+#: ../pitivi/clipproperties.py:204
 msgid "Effect name"
 msgstr "Nazwa efektu"
 
-#: ../pitivi/clipproperties.py:241
+#: ../pitivi/clipproperties.py:240
 msgid "Effects"
 msgstr "Efekty"
 
-#: ../pitivi/clipproperties.py:423
+#: ../pitivi/clipproperties.py:422
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Proszę wybrać klip na osi czasu, aby skonfigurować jego powiązane efekty"
 
-#: ../pitivi/clipproperties.py:490
+#: ../pitivi/clipproperties.py:489
 msgid "Transformation"
 msgstr "Przekształcenie"
 
@@ -1206,78 +1214,78 @@ msgstr "Zapisz jako..."
 msgid "Preview - click outside to close"
 msgstr "Podgląd - kliknięcie poza nim zamknie"
 
-#: ../pitivi/mediafilespreviewer.py:136
+#: ../pitivi/mediafilespreviewer.py:138
 msgid "PiTiVi can not preview this file."
 msgstr "Program PiTiVi nie może wyświetlić podglądu tego pliku."
 
-#: ../pitivi/mediafilespreviewer.py:137
+#: ../pitivi/mediafilespreviewer.py:139
 msgid "More info"
 msgstr "Więcej informacji"
 
-#: ../pitivi/mediafilespreviewer.py:232
+#: ../pitivi/mediafilespreviewer.py:234
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Rozdzielczość</b>: %d×%d"
 
-#: ../pitivi/mediafilespreviewer.py:234 ../pitivi/mediafilespreviewer.py:249
+#: ../pitivi/mediafilespreviewer.py:236 ../pitivi/mediafilespreviewer.py:251
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Czas trwania</b>: %s"
 
-#: ../pitivi/mediafilespreviewer.py:432 ../pitivi/medialibrary.py:852
+#: ../pitivi/mediafilespreviewer.py:441 ../pitivi/medialibrary.py:853
 msgid "Error while analyzing a file"
 msgstr "Wystąpił błąd podczas analizowania pliku"
 
-#: ../pitivi/medialibrary.py:307
+#: ../pitivi/medialibrary.py:308
 msgid "Icon"
 msgstr "Ikona"
 
-#: ../pitivi/medialibrary.py:316
+#: ../pitivi/medialibrary.py:317
 msgid "Information"
 msgstr "Informacje"
 
-#: ../pitivi/medialibrary.py:327
+#: ../pitivi/medialibrary.py:328
 msgid "Duration"
 msgstr "Czas trwania"
 
-#: ../pitivi/medialibrary.py:575
+#: ../pitivi/medialibrary.py:576
 msgid "Select One or More Files"
 msgstr "Wybór jednego lub więcej plików"
 
-#: ../pitivi/medialibrary.py:577
+#: ../pitivi/medialibrary.py:578
 msgid "Close after importing files"
 msgstr "Zamknięcie po zaimportowaniu plików"
 
-#: ../pitivi/medialibrary.py:604
+#: ../pitivi/medialibrary.py:605
 #, python-format
 msgid "Importing clip %(current_clip)d of %(total)d"
 msgstr "Importowanie klipu %(current_clip)d z %(total)d"
 
-#: ../pitivi/medialibrary.py:706
+#: ../pitivi/medialibrary.py:707
 msgid "Errors occurred while importing."
 msgstr "Wystąpiły błędy podczas importowania."
 
-#: ../pitivi/medialibrary.py:707
+#: ../pitivi/medialibrary.py:708
 msgid "View errors"
 msgstr "Wyświetl błędy"
 
-#: ../pitivi/medialibrary.py:709
+#: ../pitivi/medialibrary.py:710
 msgid "An error occurred while importing."
 msgstr "Wystąpił błąd podczas importowania."
 
-#: ../pitivi/medialibrary.py:710
+#: ../pitivi/medialibrary.py:711
 msgid "View error"
 msgstr "Wyświetl błąd"
 
-#: ../pitivi/medialibrary.py:849
+#: ../pitivi/medialibrary.py:850
 msgid "Error while analyzing files"
 msgstr "Wystąpił błąd podczas analizowania plików"
 
-#: ../pitivi/medialibrary.py:850
+#: ../pitivi/medialibrary.py:851
 msgid "The following files can not be used with PiTiVi."
 msgstr "Następujące pliki nie mogą być używane w programie PiTiVi."
 
-#: ../pitivi/medialibrary.py:853
+#: ../pitivi/medialibrary.py:854
 msgid "The following file can not be used with PiTiVi."
 msgstr "Następujący plik nie może być używane w programie PiTiVi."
 
@@ -1814,7 +1822,7 @@ msgstr "Problem:"
 msgid "Extra information:"
 msgstr "Informacje dodatkowe:"
 
-#: ../pitivi/dialogs/prefs.py:279 ../pitivi/utils/widgets.py:886
+#: ../pitivi/dialogs/prefs.py:281 ../pitivi/utils/widgets.py:886
 msgid "Reset to default value"
 msgstr "Przywróć domyślne wartości"
 
@@ -2028,7 +2036,7 @@ msgid "No properties."
 msgstr "Brak właściwości."
 
 #. set title and frame label
-#: ../pitivi/utils/widgets.py:953
+#: ../pitivi/utils/widgets.py:954
 #, python-format
 msgid "Properties for %s"
 msgstr "Właściwości dla %s"
