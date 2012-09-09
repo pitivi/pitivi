@@ -26,6 +26,7 @@ Runtime checks.
 from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import Gst
+from gi.repository import GES
 
 from gettext import gettext as _
 
@@ -194,4 +195,9 @@ def initial_checks():
     # Test for gst ugly
     #if not Gst.Registry.get().find_plugin("x264"):
     #    soft_deps["GStreamer ugly plugins"] = _('Additional good quality GStreamer plugins whose license is not LGPL or with licensing issues')
+
+    if not GES.init():
+        return (_("Could not initialize GStreamer Editing Services"),
+                _("Make sure you have the gst-editing-services installed."))
+
     return None
