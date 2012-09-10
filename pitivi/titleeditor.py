@@ -709,10 +709,15 @@ class TitleEditor(Loggable):
 
     def _updateFromSource(self):
         if self.source is not None:
-            self.log("Title text set to %s", self.source.get_text())
-
-            self.pangobuffer.set_text(self.source.get_text())
-            self.textbuffer.set_text(self.source.get_text())
+            source_text = self.source.get_text()
+            self.log("Title text set to %s", source_text)
+            if source_text is None:
+                # FIXME: sometimes we get a TrackTextOverlay/TrackTitleSource
+                # without a valid text property. This should not happen.
+                source_text = ""
+                self.warning('Source did not have a text property, setting it to "" to avoid pango choking up on None')
+            self.pangobuffer.set_text(source_text)
+            self.textbuffer.set_text(source_text)
             self.settings['xpos'].set_value(self.source.get_xpos())
             self.settings['ypos'].set_value(self.source.get_ypos())
             self.settings['valignment'].set_active_id(self.source.get_valignment().value_name)
@@ -786,6 +791,9 @@ class TitleEditor(Loggable):
         if source is None:
             self._deactivate()
         else:
+            assert isinstance(source, GES.TrackTextOverlay) or \
+                   isinstance(source, GES.TrackTitleSource) or \
+                   isinstance(source, GES.TimelineTitleSource)
             self._updateFromSource()
             self._activate()
 
