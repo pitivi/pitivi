@@ -751,8 +751,7 @@ class TimelineControls(Gtk.VBox, Loggable):
         """
         Handles received drag data to reorder layers
         """
-        widget = context.get_source_widget()
-
+        widget = Gtk.drag_get_source_widget(context)
         self._unhighlightSeparators()
 
         current = self.getControlIndex(widget)
@@ -771,7 +770,7 @@ class TimelineControls(Gtk.VBox, Loggable):
         """
         Highlight separator where control would go when dropping
         """
-        index = self._getIndexForPosition(y, context.get_source_widget())
+        index = self._getIndexForPosition(y, Gtk.drag_get_source_widget(context))
 
         self._unhighlightSeparators()
 

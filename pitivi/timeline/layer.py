@@ -278,10 +278,8 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         Used for visual drag'n'drop feedback
         """
         if highlighted:
-            print "set normal highlight"
             self.sep.override_background_color(Gtk.StateType.NORMAL, self.SELECTED_COLOR)
         else:
-            print "set highlight highlight"
             self.sep.override_background_color(Gtk.StateType.NORMAL, self.UNSELECTED_COLOR)
 
 
