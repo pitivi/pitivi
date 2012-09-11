@@ -683,7 +683,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             abt.set_translator_credits(translators)
         documenters = ["Jean-François Fortin Tam <nekohayo@gmail.com>", ]
         abt.set_documenters(documenters)
-        # TODO GTK3: use set_license_type instead
         abt.set_license_type(Gtk.License.LGPL_2_1)
         abt.set_icon_name("pitivi")
         abt.set_logo_icon_name("pitivi")
@@ -707,7 +706,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             chooser.add_filter(filt)
         default = Gtk.FileFilter()
         default.set_name(_("All Supported Formats"))
-        default.add_custom(Gtk.FileFilterFlags.URI, GES.formatter_can_load_uri, None)
+        default.add_custom(Gtk.FileFilterFlags.URI, GES.Formatter.can_load_uri, None)
         chooser.add_filter(default)
 
         response = chooser.run()
