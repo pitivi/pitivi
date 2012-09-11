@@ -1331,7 +1331,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             chooser.add_filter(filt)
         response = chooser.run()
         if response == Gtk.ResponseType.OK:
-            chosen_format = formats.get(filt.get_name())
+            chosen_format = formats.get(chooser.get_filter().get_name())
             chosen_ext = chosen_format[1][0]
             chosen_mime = chosen_format[0]
             uri = join(chooser.get_current_folder(), chooser.get_filename())
