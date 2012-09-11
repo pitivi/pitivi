@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-09 23:29+0200\n"
-"PO-Revision-Date: 2012-09-09 23:30+0200\n"
+"POT-Creation-Date: 2012-09-11 03:30+0200\n"
+"PO-Revision-Date: 2012-09-11 03:32+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -499,78 +499,58 @@ msgid "Missing dependencies..."
 msgstr "Brakujące zależności..."
 
 #: ../data/ui/titleeditor.ui.h:1
-msgid "No title clip selected. Select to edit or create new."
+msgid "No title clip selected. Select a clip to edit or create a new one."
 msgstr ""
-"Nie zaznaczono klipu tytułowego. Należy zaznaczyć istniejący klip, aby go "
-"zmodyfikować lub należy utworzyć nowy."
+"Nie zaznaczono klipu tytułowego. Należy zaznaczyć klip, aby go zmodyfikować "
+"lub należy utworzyć nowy."
 
 #: ../data/ui/titleeditor.ui.h:2
-msgid "Create text clip"
-msgstr "Utwórz klip tekstowy"
+msgid "Create and insert"
+msgstr "Utwórz i wstaw"
 
 #: ../data/ui/titleeditor.ui.h:3
-msgid "Text clip not in timeline."
-msgstr "Klip tekstowy nie jest na osi czasu."
-
-#: ../data/ui/titleeditor.ui.h:4
-msgid "Insert at End of Timeline"
-msgstr "Wstaw na końcu osi czasu"
-
-#: ../data/ui/titleeditor.ui.h:5
 msgid "Bold"
 msgstr "Pogrubienie"
 
-#: ../data/ui/titleeditor.ui.h:6
+#: ../data/ui/titleeditor.ui.h:4
 msgid "Italic"
 msgstr "Pochylenie"
 
-#: ../data/ui/titleeditor.ui.h:7
-msgid "Underline"
-msgstr "Podkreślenie"
+#: ../data/ui/titleeditor.ui.h:5
+msgid "Choose a font"
+msgstr "Wybór czcionki"
 
-#: ../data/ui/titleeditor.ui.h:8
+#: ../data/ui/titleeditor.ui.h:6
 msgid "Font color"
 msgstr "Kolor czcionki"
 
-#: ../data/ui/titleeditor.ui.h:9
-msgid "Pick a Font colour"
+#: ../data/ui/titleeditor.ui.h:7
+msgid "Pick a font color"
 msgstr "Wybór koloru czcionki"
 
-#: ../data/ui/titleeditor.ui.h:10
-msgid "Font background color"
-msgstr "Kolor tła czcionki"
-
-#: ../data/ui/titleeditor.ui.h:11
-msgid "Pick a Font Foreground Colour"
-msgstr "Wybór koloru czcionki"
-
-#: ../data/ui/titleeditor.ui.h:12
+#: ../data/ui/titleeditor.ui.h:8
 msgid "Background color"
 msgstr "Kolor tła"
 
-#: ../data/ui/titleeditor.ui.h:13
-msgid "Pick a Background Colour"
+#: ../data/ui/titleeditor.ui.h:9
+msgid "Pick a background color"
 msgstr "Wybór koloru tła"
 
-#: ../data/ui/titleeditor.ui.h:14
+#: ../data/ui/titleeditor.ui.h:10
 msgid "Convert to markup"
 msgstr "Przekształć na znaczniki"
 
-#: ../data/ui/titleeditor.ui.h:15
-msgid "<>"
-msgstr "<>"
+#: ../data/ui/titleeditor.ui.h:11
+msgid "Horizontal alignment:"
+msgstr "Wyrównanie poziome:"
 
-#: ../data/ui/titleeditor.ui.h:16
-msgid "Horizontal alignment"
-msgstr "Wyrównanie poziome"
+#: ../data/ui/titleeditor.ui.h:12
+msgid "Vertical alignment:"
+msgstr "Wyrównanie pionowe:"
 
-#: ../data/ui/titleeditor.ui.h:17
-msgid "Vertical alignment"
-msgstr "Wyrównanie pionowe"
-
-#: ../data/ui/titleeditor.ui.h:18
-msgid "Settings"
-msgstr "Ustawienia"
+#: ../data/ui/titleeditor.ui.h:13
+msgid "Advanced positioning"
+msgstr "Zaawansowane pozycjonowanie"
 
 #: ../pitivi/application.py:120
 #, python-format
@@ -1061,34 +1041,34 @@ msgstr "Przejścia"
 msgid "Title editor"
 msgstr "Edytor tytułów"
 
-#: ../pitivi/mainwindow.py:644
+#: ../pitivi/mainwindow.py:646
 msgid "Development version"
 msgstr "Wersja rozwojowa"
 
-#: ../pitivi/mainwindow.py:652 ../pitivi/dialogs/startupwizard.py:160
+#: ../pitivi/mainwindow.py:654 ../pitivi/dialogs/startupwizard.py:160
 #, python-format
 msgid "PiTiVi %s is available."
 msgstr "PiTiVi %s jest dostępny."
 
-#: ../pitivi/mainwindow.py:659
+#: ../pitivi/mainwindow.py:661
 msgid "Current maintainers:"
 msgstr "Obecni opiekunowie:"
 
-#: ../pitivi/mainwindow.py:663
+#: ../pitivi/mainwindow.py:665
 msgid "Past maintainers:"
 msgstr "Poprzedni opiekunowie:"
 
-#: ../pitivi/mainwindow.py:668
+#: ../pitivi/mainwindow.py:670
 msgid "Contributors:\n"
 msgstr "Współautorzy:\n"
 
 #. Translators: keep the %s at the end of the 1st line
-#: ../pitivi/mainwindow.py:675
+#: ../pitivi/mainwindow.py:677
 #, python-format
 msgid "The list of contributors on Ohloh %s\n"
 msgstr "Lista współtwórców znajduje się w serwisie Ohloh %s\n"
 
-#: ../pitivi/mainwindow.py:679
+#: ../pitivi/mainwindow.py:681
 msgid "translator-credits"
 msgstr ""
 "Aleksander Łukasiewicz <aleksander@lukasiewicz.org>, 2009\n"
@@ -1096,65 +1076,65 @@ msgstr ""
 "Piotr Drąg <piotrdrag@gmail.com>, 2012\n"
 "Aviary.pl <gnomepl@aviary.pl>, 2009-2012"
 
-#: ../pitivi/mainwindow.py:692
+#: ../pitivi/mainwindow.py:694
 msgid "Open File..."
 msgstr "Otwórz plik..."
 
-#: ../pitivi/mainwindow.py:707
+#: ../pitivi/mainwindow.py:709
 msgid "All Supported Formats"
 msgstr "Wszystkie obsługiwane formaty"
 
-#: ../pitivi/mainwindow.py:780
+#: ../pitivi/mainwindow.py:782
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "Nie można zapisać projektu \"%s\""
 
-#: ../pitivi/mainwindow.py:781
+#: ../pitivi/mainwindow.py:783
 msgid "Error Saving Project"
 msgstr "Błąd podczas zapisywania projektu"
 
-#: ../pitivi/mainwindow.py:809
+#: ../pitivi/mainwindow.py:811
 msgid "Close without saving"
 msgstr "Zamknij bez zapisywania"
 
-#: ../pitivi/mainwindow.py:822
+#: ../pitivi/mainwindow.py:824
 msgid "Save changes to the current project before closing?"
 msgstr "Zapisać zmiany w bieżącym projekcie przed zamknięciem?"
 
-#: ../pitivi/mainwindow.py:834
+#: ../pitivi/mainwindow.py:836
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr ""
 "Jeżeli projekt nie zostanie zapisany, to zmiany z ostatnich %s zostaną "
 "utracone."
 
-#: ../pitivi/mainwindow.py:838
+#: ../pitivi/mainwindow.py:840
 msgid "If you don't save, your changes will be lost."
 msgstr ""
 "Jeżeli projekt nie zostanie zapisany, to wprowadzone zmiany zostaną utracone."
 
-#: ../pitivi/mainwindow.py:889
+#: ../pitivi/mainwindow.py:891
 msgid "Do you want to reload current project?"
 msgstr "Wczytać ponownie bieżący projekt?"
 
-#: ../pitivi/mainwindow.py:893
+#: ../pitivi/mainwindow.py:895
 msgid "Revert to saved project"
 msgstr "Przywróć do zapisanego projektu"
 
-#: ../pitivi/mainwindow.py:896
+#: ../pitivi/mainwindow.py:898
 msgid "All unsaved changes will be lost."
 msgstr "Wszystkie niezapisane zmiany zostaną utracone."
 
-#: ../pitivi/mainwindow.py:911
+#: ../pitivi/mainwindow.py:913
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Nie można wczytać projektu \"%s\""
 
-#: ../pitivi/mainwindow.py:912
+#: ../pitivi/mainwindow.py:914
 msgid "Error Loading Project"
 msgstr "Błąd podczas wczytywania projektu"
 
-#: ../pitivi/mainwindow.py:920
+#: ../pitivi/mainwindow.py:922
 msgid "Locate missing file..."
 msgstr "Znajdź brakujące pliki..."
 
@@ -1171,7 +1151,7 @@ msgstr "Znajdź brakujące pliki..."
 #. text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
 #. '\nPlease specify its new location:'
 #. % (info_name(info), length))
-#: ../pitivi/mainwindow.py:961
+#: ../pitivi/mainwindow.py:963
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
@@ -1180,7 +1160,7 @@ msgstr ""
 "Następujący plik został przeniesiony: \"<b>%s</b>\"\n"
 "Proszę podać jego nowe położenie:"
 
-#: ../pitivi/mainwindow.py:1001
+#: ../pitivi/mainwindow.py:1003
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1191,26 +1171,26 @@ msgstr ""
 "\n"
 "Program PiTiVi obecnie nie obsługuje częściowych projektów."
 
-#: ../pitivi/mainwindow.py:1102
+#: ../pitivi/mainwindow.py:1104
 msgid "Export To..."
 msgstr "Wyeksportuj do..."
 
-#: ../pitivi/mainwindow.py:1112 ../pitivi/mainwindow.py:1159
-#: ../pitivi/mainwindow.py:1271 ../pitivi/render.py:426
+#: ../pitivi/mainwindow.py:1114 ../pitivi/mainwindow.py:1161
+#: ../pitivi/mainwindow.py:1273 ../pitivi/render.py:426
 #: ../pitivi/timeline/timeline.py:1322
 msgid "Untitled"
 msgstr "Bez tytułu"
 
-#: ../pitivi/mainwindow.py:1123 ../pitivi/mainwindow.py:1138
-#: ../pitivi/mainwindow.py:1169 ../pitivi/mainwindow.py:1184
+#: ../pitivi/mainwindow.py:1125 ../pitivi/mainwindow.py:1140
+#: ../pitivi/mainwindow.py:1171 ../pitivi/mainwindow.py:1186
 msgid "Detect Automatically"
 msgstr "Wykrycie automatyczne"
 
-#: ../pitivi/mainwindow.py:1151 ../pitivi/timeline/timeline.py:1316
+#: ../pitivi/mainwindow.py:1153 ../pitivi/timeline/timeline.py:1316
 msgid "Save As..."
 msgstr "Zapisz jako..."
 
-#: ../pitivi/mainwindow.py:1224
+#: ../pitivi/mainwindow.py:1226
 msgid "Preview - click outside to close"
 msgstr "Podgląd - kliknięcie poza nim zamknie"
 
@@ -1376,32 +1356,32 @@ msgstr ""
 "Jeśli nie ma zostać zastąpiony, to proszę wybrać inną nazwę pliku lub inny "
 "katalog."
 
-#: ../pitivi/titleeditor.py:626 ../pitivi/titleeditor.py:633
+#: ../pitivi/titleeditor.py:620 ../pitivi/titleeditor.py:627
 #: ../pitivi/utils/widgets.py:488
 msgid "Custom"
 msgstr "Własne"
 
-#: ../pitivi/titleeditor.py:627
+#: ../pitivi/titleeditor.py:621
 msgid "Top"
 msgstr "Góra"
 
-#: ../pitivi/titleeditor.py:628 ../pitivi/titleeditor.py:635
+#: ../pitivi/titleeditor.py:622 ../pitivi/titleeditor.py:629
 msgid "Center"
 msgstr "Środek"
 
-#: ../pitivi/titleeditor.py:629
+#: ../pitivi/titleeditor.py:623
 msgid "Bottom"
 msgstr "Dół"
 
-#: ../pitivi/titleeditor.py:630
+#: ../pitivi/titleeditor.py:624
 msgid "Baseline"
 msgstr "Linia podstawowa"
 
-#: ../pitivi/titleeditor.py:634
+#: ../pitivi/titleeditor.py:628
 msgid "Left"
 msgstr "Lewo"
 
-#: ../pitivi/titleeditor.py:636
+#: ../pitivi/titleeditor.py:630
 msgid "Right"
 msgstr "Prawo"
 
