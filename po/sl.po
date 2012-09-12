@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the pitivi package.
 #
 # Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2009 - 2011.
-# Martin Srebotnjak  <miles@filmsi.net>, 2011.
+# Martin Srebotnjak  <miles@filmsi.net>, 2011 - 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-09-09 17:19+0000\n"
+"POT-Creation-Date: 2012-09-11 01:31+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -500,76 +500,56 @@ msgid "Missing dependencies..."
 msgstr "Manjkajoče odvisnosti ..."
 
 #: ../data/ui/titleeditor.ui.h:1
-msgid "No title clip selected. Select to edit or create new."
+msgid "No title clip selected. Select a clip to edit or create a new one."
 msgstr "Posnetek z naslovom ni izbran. Za urejanje ga izberite ali ustvarite novega."
 
 #: ../data/ui/titleeditor.ui.h:2
-msgid "Create text clip"
-msgstr "Ustvari besedilni posnetek"
+msgid "Create and insert"
+msgstr "Ustvari in vstavi"
 
 #: ../data/ui/titleeditor.ui.h:3
-msgid "Text clip not in timeline."
-msgstr "Posnetek z napisom ni na časovnici."
-
-#: ../data/ui/titleeditor.ui.h:4
-msgid "Insert at End of Timeline"
-msgstr "Vstavi na koncu časovnice"
-
-#: ../data/ui/titleeditor.ui.h:5
 msgid "Bold"
 msgstr "Krepko"
 
-#: ../data/ui/titleeditor.ui.h:6
+#: ../data/ui/titleeditor.ui.h:4
 msgid "Italic"
 msgstr "Ležeče"
 
-#: ../data/ui/titleeditor.ui.h:7
-msgid "Underline"
-msgstr "Podčrtano"
+#: ../data/ui/titleeditor.ui.h:5
+msgid "Choose a font"
+msgstr "Izbor pisave"
 
-#: ../data/ui/titleeditor.ui.h:8
+#: ../data/ui/titleeditor.ui.h:6
 msgid "Font color"
 msgstr "Barva pisave"
 
-#: ../data/ui/titleeditor.ui.h:9
-msgid "Pick a Font colour"
+#: ../data/ui/titleeditor.ui.h:7
+msgid "Pick a font color"
 msgstr "Izbor barve pisave"
 
-#: ../data/ui/titleeditor.ui.h:10
-msgid "Font background color"
-msgstr "Barva ozadja pisave"
-
-#: ../data/ui/titleeditor.ui.h:11
-msgid "Pick a Font Foreground Colour"
-msgstr "Izbor barve pisave"
-
-#: ../data/ui/titleeditor.ui.h:12
+#: ../data/ui/titleeditor.ui.h:8
 msgid "Background color"
 msgstr "Barva ozadja"
 
-#: ../data/ui/titleeditor.ui.h:13
-msgid "Pick a Background Colour"
+#: ../data/ui/titleeditor.ui.h:9
+msgid "Pick a background color"
 msgstr "Izbor barve ozadja"
 
-#: ../data/ui/titleeditor.ui.h:14
+#: ../data/ui/titleeditor.ui.h:10
 msgid "Convert to markup"
 msgstr "Pretvori v označeno besedilo"
 
-#: ../data/ui/titleeditor.ui.h:15
-msgid "<>"
-msgstr "<>"
+#: ../data/ui/titleeditor.ui.h:11
+msgid "Horizontal alignment:"
+msgstr "Vodoravna poravnava:"
 
-#: ../data/ui/titleeditor.ui.h:16
-msgid "Horizontal alignment"
-msgstr "Vodoravna poravnava"
+#: ../data/ui/titleeditor.ui.h:12
+msgid "Vertical alignment:"
+msgstr "Navpična poravnava:"
 
-#: ../data/ui/titleeditor.ui.h:17
-msgid "Vertical alignment"
-msgstr "Navpična poravnava"
-
-#: ../data/ui/titleeditor.ui.h:18
-msgid "Settings"
-msgstr "Nastavitve"
+#: ../data/ui/titleeditor.ui.h:13
+msgid "Advanced positioning"
+msgstr "Napredna postavitev"
 
 #: ../pitivi/application.py:120
 #, python-format
@@ -606,158 +586,166 @@ msgstr "Možnost -a zahteva možnost -i"
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "Ni mogoče določiti več kot ene datoteke projekta"
 
-#: ../pitivi/check.py:126
+#: ../pitivi/check.py:127
 #, python-format
 msgid "%s is already running"
 msgstr "%s se že izvaja"
 
-#: ../pitivi/check.py:127
+#: ../pitivi/check.py:128
 #, python-format
 msgid "An instance of %s is already running in this script."
 msgstr "Primerek %s že teče v tem skriptu."
 
-#: ../pitivi/check.py:129
+#: ../pitivi/check.py:130
 msgid "Could not find the GNonLin plugins"
 msgstr "Ni mogoče najti vstavkov GNonLin"
 
-#: ../pitivi/check.py:130
+#: ../pitivi/check.py:131
 msgid "Make sure the plugins were installed and are available in the GStreamer plugins path."
 msgstr "Prepričajte se, da so bili vstavki nameščeni in da so na voljo v poti vstavkov GStreamer."
 
-#: ../pitivi/check.py:132
+#: ../pitivi/check.py:133
 msgid "Could not find the autodetect plugins"
 msgstr "Ni mogoče najti samodejno zaznanih vstavkov"
 
-#: ../pitivi/check.py:133
+#: ../pitivi/check.py:134
 msgid "Make sure you have installed gst-plugins-good and that it's available in the GStreamer plugin path."
 msgstr "Prepričajte se, da ste namestili gst-plugins-good in je na voljo v poti vstavkov Gstreamer."
 
-#: ../pitivi/check.py:135
+#: ../pitivi/check.py:136
 msgid "PyGTK doesn't have cairo support"
 msgstr "PyGTK nima podpore cairo"
 
-#: ../pitivi/check.py:136
+#: ../pitivi/check.py:137
 msgid "Please use a version of the GTK+ Python bindings built with cairo support."
 msgstr "Uporabite različico vezav GTK+ Python zgrajeno s podporo cairo."
 
-#: ../pitivi/check.py:138
+#: ../pitivi/check.py:139
 msgid "Could not initiate the video output plugins"
 msgstr "Ni mogoče zagnati vstavkov video izhoda"
 
-#: ../pitivi/check.py:139
+#: ../pitivi/check.py:140
 msgid "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)."
 msgstr "Prepričajte se, da imate dostopno vsaj en veljaven video izhodni ponor (xvimagesink ali ximagesink)."
 
-#: ../pitivi/check.py:141
+#: ../pitivi/check.py:142
 msgid "Could not initiate the audio output plugins"
 msgstr "Ni mogoče zagnati vstavkov zvočnega izhoda"
 
-#: ../pitivi/check.py:142
+#: ../pitivi/check.py:143
 msgid "Make sure you have at least one valid audio output sink available (alsasink or osssink)."
 msgstr "Prepričajte se, da imate dostopen vsaj en veljaven zvočni izhodni ponor (alsasink ali osssink)."
 
-#: ../pitivi/check.py:144
+#: ../pitivi/check.py:145
 msgid "Could not import the cairo Python bindings"
 msgstr "Ni mogoče uvoziti vezav cairo Python"
 
-#: ../pitivi/check.py:145
+#: ../pitivi/check.py:146
 msgid "Make sure you have the cairo Python bindings installed."
 msgstr "Prepričajte se, da imate nameščene cairo Python  vezave."
 
-#: ../pitivi/check.py:147
+#: ../pitivi/check.py:148
 msgid "Could not import the goocanvas Python bindings"
 msgstr "Ni mogoče uvoziti vezave goocanvas Python"
 
-#: ../pitivi/check.py:148
+#: ../pitivi/check.py:149
 msgid "Make sure you have the goocanvas Python bindings installed."
 msgstr "Prepričajte se, da imate nameščene goocanvas Python vezave."
 
-#: ../pitivi/check.py:150
+#: ../pitivi/check.py:151
 msgid "Could not import the xdg Python library"
 msgstr "Knjižnice Python xdg ni mogoče uvoziti"
 
-#: ../pitivi/check.py:151
+#: ../pitivi/check.py:152
 msgid "Make sure you have the xdg Python library installed."
 msgstr "Prepričajte se, da imate nameščene cairo Python  vezave."
 
-#: ../pitivi/check.py:154
+#: ../pitivi/check.py:155
 #, python-format
 msgid "You do not have a recent enough version of GTK+ (your version %s)"
 msgstr "Ni nameščene ustrezne različice GTK+ (nameščena različica je %s)"
 
-#: ../pitivi/check.py:155
+#: ../pitivi/check.py:156
 #, python-format
 msgid "Install a version of GTK+ greater than or equal to %s."
 msgstr "Namestiti je treba različico GTK+ %s ali novejšo."
 
-#: ../pitivi/check.py:158
+#: ../pitivi/check.py:159
 #, python-format
 msgid "You do not have a recent enough version of GStreamer Python bindings (your version %s)"
 msgstr "Ni nameščene ustrezne različice GStreamer Python vezav (vaša različica je %s)"
 
-#: ../pitivi/check.py:159
+#: ../pitivi/check.py:160
 #, python-format
 msgid "Install a version of the GStreamer Python bindings greater than or equal to %s."
 msgstr "Namestiti je treba različico vezave GStreamer Python večjo ali enako %s."
 
-#: ../pitivi/check.py:162
+#: ../pitivi/check.py:163
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (your version %s)"
 msgstr "Ni nameščene ustrezne različice GStreamer (vaša različica je %s)"
 
-#: ../pitivi/check.py:163
+#: ../pitivi/check.py:164
 #, python-format
 msgid "Install a version of the GStreamer greater than or equal to %s."
 msgstr "Namestiti je treba različico GStreamer Python vezave večjo ali enako %s."
 
-#: ../pitivi/check.py:166
+#: ../pitivi/check.py:167
 #, python-format
 msgid "You do not have a recent enough version of the cairo Python bindings (your version %s)"
 msgstr "Ni nameščene ustrezne različice cairo Python vezav (vaša različica je %s)"
 
-#: ../pitivi/check.py:167
+#: ../pitivi/check.py:168
 #, python-format
 msgid "Install a version of the cairo Python bindings greater than or equal to %s."
 msgstr "Namestiti je treba različico vezav cairo Python večjo ali enako %s."
 
-#: ../pitivi/check.py:170
+#: ../pitivi/check.py:171
 #, python-format
 msgid "You do not have a recent enough version of the GNonLin GStreamer plugin (your version %s)"
 msgstr "Ni nameščene ustrezne različice GNonLin GSteamer vstavka (vaša različica je %s)"
 
-#: ../pitivi/check.py:171
+#: ../pitivi/check.py:172
 #, python-format
 msgid "Install a version of the GNonLin GStreamer plugin greater than or equal to %s."
 msgstr "Namestiti je treba različico vstavka GNonLin GStreamer večjo ali enako %s."
 
 #. FIXME enable version checking in GES
-#: ../pitivi/check.py:174
+#: ../pitivi/check.py:175
 msgid "Could not import GStreamer Editing Services "
 msgstr "Ni mogoče uvoziti storitev GStreamer Editing Services"
 
-#: ../pitivi/check.py:175
+#: ../pitivi/check.py:176
 msgid "Make sure you have GStreamer Editing Services installed."
 msgstr "Prepričajte se, da so nameščene storitve za urejanje GStreamer."
 
-#: ../pitivi/check.py:177
+#: ../pitivi/check.py:178
 msgid "Could not import the distutils modules"
 msgstr "Ni mogoče uvoziti modulov distutils"
 
-#: ../pitivi/check.py:178
+#: ../pitivi/check.py:179
 msgid "Make sure you have the distutils Python module installed."
 msgstr "Prepričajte se, da imate nameščen python modul distutils."
 
-#: ../pitivi/check.py:184
+#: ../pitivi/check.py:185
 msgid "Enables the autoalign feature"
 msgstr "Omogočanje zmožnost samodejnega poravnavanja."
 
-#: ../pitivi/check.py:186
+#: ../pitivi/check.py:187
 msgid "Additional video effects"
 msgstr "Dodatni video učinki"
 
-#: ../pitivi/check.py:188
+#: ../pitivi/check.py:189
 msgid "Additional multimedia codecs through the Libav library"
 msgstr "Dodatni kodeki predstavnosti preko knjižnice Libav"
+
+#: ../pitivi/check.py:200
+msgid "Could not initialize GStreamer Editing Services"
+msgstr "Ni mogoče začeti storitev urejanja GStreamer"
+
+#: ../pitivi/check.py:201
+msgid "Make sure you have the gst-editing-services installed."
+msgstr "Prepričajte se, da je nameščen paket gst-editing-services."
 
 #: ../pitivi/clipproperties.py:165
 msgid "Remove effect"
@@ -1001,94 +989,94 @@ msgstr "Prehodi"
 msgid "Title editor"
 msgstr "Urejevalnik naslova"
 
-#: ../pitivi/mainwindow.py:644
+#: ../pitivi/mainwindow.py:646
 msgid "Development version"
 msgstr "Rrazvojna različica"
 
-#: ../pitivi/mainwindow.py:652
+#: ../pitivi/mainwindow.py:654
 #: ../pitivi/dialogs/startupwizard.py:160
 #, python-format
 msgid "PiTiVi %s is available."
 msgstr "Na voljo je PiTiVi %s."
 
-#: ../pitivi/mainwindow.py:659
+#: ../pitivi/mainwindow.py:661
 msgid "Current maintainers:"
 msgstr "Trenutni vzdrževalci:"
 
-#: ../pitivi/mainwindow.py:663
+#: ../pitivi/mainwindow.py:665
 msgid "Past maintainers:"
 msgstr "Predhodni vzdrževalci:"
 
-#: ../pitivi/mainwindow.py:668
+#: ../pitivi/mainwindow.py:670
 msgid "Contributors:\n"
 msgstr "Sodelavci:\n"
 
 #. Translators: keep the %s at the end of the 1st line
-#: ../pitivi/mainwindow.py:675
+#: ../pitivi/mainwindow.py:677
 #, python-format
 msgid "The list of contributors on Ohloh %s\n"
 msgstr "Seznam sodelavcev na Ohloh %s\n"
 
-#: ../pitivi/mainwindow.py:679
+#: ../pitivi/mainwindow.py:681
 msgid "translator-credits"
 msgstr "Andrej Žnidaršič <andrej.znidarsic@gmail.com>"
 
-#: ../pitivi/mainwindow.py:692
+#: ../pitivi/mainwindow.py:694
 msgid "Open File..."
 msgstr "Odpri datoteko ..."
 
-#: ../pitivi/mainwindow.py:707
+#: ../pitivi/mainwindow.py:709
 msgid "All Supported Formats"
 msgstr "Vse podprte vrste datotek"
 
-#: ../pitivi/mainwindow.py:780
+#: ../pitivi/mainwindow.py:782
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "Shranjevanje projekta \"%s\" je spodletelo."
 
-#: ../pitivi/mainwindow.py:781
+#: ../pitivi/mainwindow.py:783
 msgid "Error Saving Project"
 msgstr "Prišlo je do napake med shranjevanjem projekta"
 
-#: ../pitivi/mainwindow.py:809
+#: ../pitivi/mainwindow.py:811
 msgid "Close without saving"
 msgstr "Zapri brez shranjevanja"
 
-#: ../pitivi/mainwindow.py:822
+#: ../pitivi/mainwindow.py:824
 msgid "Save changes to the current project before closing?"
 msgstr "Ali naj bodo spremembe trenutnega projekta pred zaprtjem shranjene?"
 
-#: ../pitivi/mainwindow.py:834
+#: ../pitivi/mainwindow.py:836
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "Če projekta ne shranite, bodo spremembe zadnjih %s izgubljene. "
 
-#: ../pitivi/mainwindow.py:838
+#: ../pitivi/mainwindow.py:840
 msgid "If you don't save, your changes will be lost."
 msgstr "Če projekta ne shranite, bodo spremembe izgubljene. "
 
-#: ../pitivi/mainwindow.py:889
+#: ../pitivi/mainwindow.py:891
 msgid "Do you want to reload current project?"
 msgstr "Ali želite ponovno naložiti trenutni projekt?"
 
-#: ../pitivi/mainwindow.py:893
+#: ../pitivi/mainwindow.py:895
 msgid "Revert to saved project"
 msgstr "Povrni na shranjen projekt"
 
-#: ../pitivi/mainwindow.py:896
+#: ../pitivi/mainwindow.py:898
 msgid "All unsaved changes will be lost."
 msgstr "Vse neshranjene spremembe bodo izgubljene."
 
-#: ../pitivi/mainwindow.py:911
+#: ../pitivi/mainwindow.py:913
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Nalaganje projekta \"%s\" je spodletelo"
 
-#: ../pitivi/mainwindow.py:912
+#: ../pitivi/mainwindow.py:914
 msgid "Error Loading Project"
 msgstr "Napaka med nalaganjem projekta"
 
-#: ../pitivi/mainwindow.py:920
+#: ../pitivi/mainwindow.py:922
 msgid "Locate missing file..."
 msgstr "Najdi manjkajočo datoteko ..."
 
@@ -1105,7 +1093,7 @@ msgstr "Najdi manjkajočo datoteko ..."
 #. text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
 #. '\nPlease specify its new location:'
 #. % (info_name(info), length))
-#: ../pitivi/mainwindow.py:961
+#: ../pitivi/mainwindow.py:963
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
@@ -1114,7 +1102,7 @@ msgstr ""
 "Datoteka je bila premaknjena: \"<b>%s</b>\"\n"
 "Navedite njeno novo mesto:"
 
-#: ../pitivi/mainwindow.py:1001
+#: ../pitivi/mainwindow.py:1003
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1125,31 +1113,31 @@ msgstr ""
 "\n"
 "PiTiVi trenutno ne podpira delnih projektov."
 
-#: ../pitivi/mainwindow.py:1102
+#: ../pitivi/mainwindow.py:1104
 msgid "Export To..."
 msgstr "Izvozi v ..."
 
-#: ../pitivi/mainwindow.py:1112
-#: ../pitivi/mainwindow.py:1159
-#: ../pitivi/mainwindow.py:1271
+#: ../pitivi/mainwindow.py:1114
+#: ../pitivi/mainwindow.py:1161
+#: ../pitivi/mainwindow.py:1273
 #: ../pitivi/render.py:426
 #: ../pitivi/timeline/timeline.py:1322
 msgid "Untitled"
 msgstr "Neimenovano"
 
-#: ../pitivi/mainwindow.py:1123
-#: ../pitivi/mainwindow.py:1138
-#: ../pitivi/mainwindow.py:1169
-#: ../pitivi/mainwindow.py:1184
+#: ../pitivi/mainwindow.py:1125
+#: ../pitivi/mainwindow.py:1140
+#: ../pitivi/mainwindow.py:1171
+#: ../pitivi/mainwindow.py:1186
 msgid "Detect Automatically"
 msgstr "Samodejno zaznaj"
 
-#: ../pitivi/mainwindow.py:1151
+#: ../pitivi/mainwindow.py:1153
 #: ../pitivi/timeline/timeline.py:1316
 msgid "Save As..."
 msgstr "Shrani kot ..."
 
-#: ../pitivi/mainwindow.py:1224
+#: ../pitivi/mainwindow.py:1226
 msgid "Preview - click outside to close"
 msgstr "Predogled - kliknite zunaj okvira za izhod"
 
@@ -1322,34 +1310,34 @@ msgstr ""
 "Ta datoteka že obstaja.\n"
 "V primeru da je ne želite prepisati, izberite drugo ime datoteke ali mapo."
 
-#: ../pitivi/titleeditor.py:626
-#: ../pitivi/titleeditor.py:633
+#: ../pitivi/titleeditor.py:620
+#: ../pitivi/titleeditor.py:627
 #: ../pitivi/utils/widgets.py:488
 msgid "Custom"
 msgstr "Po meri"
 
-#: ../pitivi/titleeditor.py:627
+#: ../pitivi/titleeditor.py:621
 msgid "Top"
 msgstr "Na vrhu"
 
-#: ../pitivi/titleeditor.py:628
-#: ../pitivi/titleeditor.py:635
+#: ../pitivi/titleeditor.py:622
+#: ../pitivi/titleeditor.py:629
 msgid "Center"
 msgstr "Sredinsko"
 
-#: ../pitivi/titleeditor.py:629
+#: ../pitivi/titleeditor.py:623
 msgid "Bottom"
 msgstr "Na dnu"
 
-#: ../pitivi/titleeditor.py:630
+#: ../pitivi/titleeditor.py:624
 msgid "Baseline"
 msgstr "Osnovnica besedila"
 
-#: ../pitivi/titleeditor.py:634
+#: ../pitivi/titleeditor.py:628
 msgid "Left"
 msgstr "Levo"
 
-#: ../pitivi/titleeditor.py:636
+#: ../pitivi/titleeditor.py:630
 msgid "Right"
 msgstr "Desno"
 
@@ -1996,3 +1984,27 @@ msgstr "Ni lastnosti."
 #, python-format
 msgid "Properties for %s"
 msgstr "Lastnosti %s"
+
+#~ msgid "Create text clip"
+#~ msgstr "Ustvari besedilni posnetek"
+
+#~ msgid "Text clip not in timeline."
+#~ msgstr "Posnetek z napisom ni na časovnici."
+
+#~ msgid "Insert at End of Timeline"
+#~ msgstr "Vstavi na koncu časovnice"
+
+#~ msgid "Underline"
+#~ msgstr "Podčrtano"
+
+#~ msgid "Font background color"
+#~ msgstr "Barva ozadja pisave"
+
+#~ msgid "Pick a Font Foreground Colour"
+#~ msgstr "Izbor barve pisave"
+
+#~ msgid "<>"
+#~ msgstr "<>"
+
+#~ msgid "Settings"
+#~ msgstr "Nastavitve"
