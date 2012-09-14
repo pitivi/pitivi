@@ -46,7 +46,7 @@ from pitivi.effects import EffectListWidget
 from pitivi.transitions import TransitionsListWidget
 from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
 from pitivi.titleeditor import TitleEditor
-from pitivi.utils.misc import show_user_manual
+from pitivi.utils.misc import show_user_manual, path_from_uri
 from pitivi.utils.ui import info_name, beautify_time_delta, SPACING,\
         FILESOURCE_TARGET_ENTRY, URI_TARGET_ENTRY, TYPE_URI_LIST, \
         TYPE_PITIVI_FILESOURCE
@@ -697,6 +697,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                 Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
+        # TODO: Remove this set_current_folder call when GTK bug 683999 is fixed
         chooser.set_current_folder(self.settings.lastProjectFolder)
         for format in formats:
             filt = Gtk.FileFilter()
@@ -710,10 +711,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         chooser.add_filter(default)
 
         response = chooser.run()
-        self.settings.lastProjectFolder = chooser.get_current_folder()
         if response == Gtk.ResponseType.OK:
             self.app.projectManager.loadProject(chooser.get_uri())
-
         chooser.destroy()
         return True
 
@@ -969,6 +968,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         dialog.get_content_area().pack_start(hbox, False, False, 0)
         hbox.show_all()
 
+        # TODO: use a Gtk FileFilter to only show files with the same ext/mime
         chooser = Gtk.FileChooserWidget(action=Gtk.FileChooserAction.OPEN)
         chooser.set_select_multiple(False)
         pw = PreviewWidget(self.app)
@@ -1078,6 +1078,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             #FIXME GES port undo/redo
             #self.app.timelineLogObserver.pipeline = self.app.current.pipeline
         self.app.current.connect("settings-changed", self._settingsChangedCb)
+        self.settings.lastProjectFolder = os.path.dirname(path_from_uri(self.app.current.uri))
 
     def _settingsChangedCb(self, project, unused_old, new):
         # TODO: this method's signature should be changed:
@@ -1108,13 +1109,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
+        chooser.props.do_overwrite_confirmation = True
 
         if not project.name:
             chooser.set_current_name(_("Untitled") + ".tar")
         else:
             chooser.set_current_name(project.name + ".tar")
-        chooser.set_current_folder(self.settings.lastProjectFolder)
-        chooser.props.do_overwrite_confirmation = True
 
         filt = Gtk.FileFilter()
         filt.set_name("Tar Archive")
@@ -1126,10 +1126,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         chooser.add_filter(default)
 
         response = chooser.run()
-        current_folder = chooser.get_current_folder()
-        if current_folder:
-            self.settings.lastProjectFolder = current_folder
-
         if response == Gtk.ResponseType.OK:
             self.log("User chose a URI to export project to")
             # need to do this to work around bug in Gst.uri_construct
@@ -1172,19 +1168,16 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         chooser.add_filter(default)
 
         response = chooser.run()
-        current_folder = chooser.get_current_folder()
-        if current_folder:
-            self.settings.lastProjectFolder = current_folder
-
         if response == Gtk.ResponseType.OK:
             self.log("User chose a URI to save project to")
             # need to do this to work around bug in Gst.uri_construct
             # which escapes all /'s in path!
             uri = "file://" + chooser.get_filename()
+            self.log("uri:%s , format:%s", uri, format)
             format = chooser.get_filter().get_name()
             if format == _("Detect Automatically"):
                 format = None
-            self.log("uri:%s , format:%s", uri, format)
+            self.settings.lastProjectFolder = chooser.get_current_folder()
             ret = uri
         else:
             self.log("User didn't choose a URI to save project to")

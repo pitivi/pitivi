@@ -1319,7 +1319,6 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled"))
-        chooser.set_current_folder(self.app.settings.lastProjectFolder)
         chooser.props.do_overwrite_confirmation = True
         formats = {_("PNG image"): ["image/png", ("png",)],
             _("JPEG image"): ["image/jpeg", ("jpg", "jpeg")]}
