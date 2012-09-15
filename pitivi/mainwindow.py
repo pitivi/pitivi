@@ -1078,7 +1078,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             #FIXME GES port undo/redo
             #self.app.timelineLogObserver.pipeline = self.app.current.pipeline
         self.app.current.connect("settings-changed", self._settingsChangedCb)
-        self.settings.lastProjectFolder = os.path.dirname(path_from_uri(self.app.current.uri))
+        # When creating a blank project, medialibrary will eventually trigger
+        # this _setProject method, but there's no project URI yet.
+        if self.app.current.uri:
+            folder_path = os.path.dirname(path_from_uri(self.app.current.uri))
+            self.settings.lastProjectFolder = folder_path
 
     def _settingsChangedCb(self, project, unused_old, new):
         # TODO: this method's signature should be changed:
