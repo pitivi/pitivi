@@ -206,14 +206,14 @@ def beautify_stream(stream):
     elif type(stream) == DiscovererVideoInfo:
         par = stream.get_par_num() / stream.get_par_denom()
         if not stream.is_image():
-            templ = _(u"<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>")
+            templ = _("<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>")
             try:
                 templ = templ % (par * stream.get_width(), stream.get_height(),
                     float(stream.get_framerate_num()) / stream.get_framerate_denom())
             except ZeroDivisionError:
                 templ = templ % (par * stream.get_width(), stream.get_height(), 0)
         else:
-            templ = _(u"<b>Image:</b> %d×%d <i>pixels</i>")
+            templ = _("<b>Image:</b> %d×%d <i>pixels</i>")
             templ = templ % (par * stream.get_width(), stream.get_height())
         return templ
     elif type(stream) == DiscovererStreamInfo:
