@@ -1,6 +1,6 @@
-# Galician translation of Pitivi.
+# Galician translation of PiTiVi.
 # Copyright (C) 2009
-# This file is distributed under the same license as the Pitivi package.
+# This file is distributed under the same license as the PiTiVi package.
 #
 # Proxecto Trasno - Adaptación do software libre á lingua galega:  Se desexas
 # colaborar connosco, podes atopar máis información en http://www.trasno.net
@@ -11,21 +11,21 @@
 # Fran Diéguez <frandieguez@ubuntu.com>, 2010, 2011.
 # Leandro Regueiro <leandro.regueiro@gmail.com>, 2012.
 # Fran Dieguez <frandieguez@gnome.org>, 2012.
-#
+# Marcos Chavarría Teijeiro <chavarria1991@gmail.com>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master.gl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-01 02:48+0200\n"
-"PO-Revision-Date: 2012-09-01 02:56+0200\n"
+"POT-Creation-Date: 2012-09-22 01:57+0200\n"
+"PO-Revision-Date: 2012-09-22 01:57+0200\n"
 "Last-Translator: Fran Dieguez <frandieguez@gnome.org>\n"
-"Language-Team: Galician <gnome-l10n-gl@gnome.org>\n"
+"Language-Team: gnome-l10n-gl@gnome.org\n"
 "Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Gtranslator 2.91.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
 "X-Poedit-Language: Galician\n"
 "X-Poedit-Country: SPAIN\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -115,11 +115,11 @@ msgstr "Posición"
 
 #: ../data/ui/cliptransformation.ui.h:5
 msgid "Width:"
-msgstr "Largura:"
+msgstr "Ancho:"
 
 #: ../data/ui/cliptransformation.ui.h:6
 msgid "Height:"
-msgstr "Altura:"
+msgstr "Alto:"
 
 #: ../data/ui/cliptransformation.ui.h:7
 msgid "Size"
@@ -140,10 +140,10 @@ msgstr "Instalar"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart Pitivi:"
+"restart PiTiVi:"
 msgstr ""
 "Para activar características adicionais instale os seguintes paquetes e "
-"reinicie Pitivi:"
+"reinicie PiTiVi:"
 
 #: ../data/ui/depsmanager.ui.h:4
 msgid "label"
@@ -162,8 +162,8 @@ msgid "Section"
 msgstr "Sección"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart Pitivi"
-msgstr "Algúns cambios non terán efecto ata que reinicie Pitivi"
+msgid "Some changes will not take effect until you restart PiTiVi"
+msgstr "Algúns cambios non terán efecto ata que reinicie PiTiVi"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -203,7 +203,7 @@ msgstr "Configuracións do proxecto"
 
 #: ../data/ui/projectsettings.ui.h:5
 msgid "Video Preset"
-msgstr "Configuración do vídeo"
+msgstr "Preconfiguración do vídeo"
 
 #: ../data/ui/projectsettings.ui.h:7
 msgid "Aspect Ratio:"
@@ -239,7 +239,7 @@ msgstr "Vídeo"
 
 #: ../data/ui/projectsettings.ui.h:14
 msgid "Audio Preset"
-msgstr "Configuración do son"
+msgstr "Preconfiguración do son"
 
 #: ../data/ui/projectsettings.ui.h:15
 msgid "Format"
@@ -295,7 +295,7 @@ msgstr "Renderizando"
 
 #: ../data/ui/renderingdialog.ui.h:8
 msgid "Render Preset"
-msgstr "Preconfiguración de rendereizado"
+msgstr "Preconfiguración de renderizado"
 
 #: ../data/ui/renderingdialog.ui.h:9
 msgid "Folder"
@@ -772,8 +772,8 @@ msgstr "Buscar:"
 
 #. FIXME Hacky, reimplement when avalaible in GES
 #: ../pitivi/mainwindow.py:135
-msgid "Pitivi Native (XML)"
-msgstr "Pitivi nativo (XML)"
+msgid "PiTiVi Native (XML)"
+msgstr "PiTiVi nativo (XML)"
 
 #: ../pitivi/mainwindow.py:142 ../pitivi/timeline/timeline.py:1093
 msgid "Split"
@@ -936,8 +936,8 @@ msgstr "Transicións"
 
 #: ../pitivi/mainwindow.py:648 ../pitivi/dialogs/startupwizard.py:158
 #, python-format
-msgid "Pitivi %s is available."
-msgstr "Pitivi %s está dispoñíbel."
+msgid "PiTiVi %s is available."
+msgstr "PiTiVi %s está dispoñíbel."
 
 #: ../pitivi/mainwindow.py:655
 msgid "Current maintainers:"
@@ -1016,7 +1016,7 @@ msgstr "Reverter ao proxecto gardado"
 
 #: ../pitivi/mainwindow.py:892
 msgid "All unsaved changes will be lost."
-msgstr "Perderanse tódolos cambios sen gardar."
+msgstr "Perderanse todos os cambios sen gardar."
 
 #: ../pitivi/mainwindow.py:907
 #, python-format
@@ -1058,11 +1058,11 @@ msgstr ""
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"Pitivi does not currently support partial projects."
+"PiTiVi does not currently support partial projects."
 msgstr ""
 "Non se forneceu un reemprazo para «<i>%s</i>».\n"
 "\n"
-"Actualmente, Pitivi non admite proxectos parciais."
+"Actualmente, PiTiVi non admite proxectos parciais."
 
 #: ../pitivi/mainwindow.py:1099
 msgid "Export To..."
@@ -1088,8 +1088,8 @@ msgid "Preview - click outside to close"
 msgstr "Vista previa - prema fóra para pechar"
 
 #: ../pitivi/mediafilespreviewer.py:125
-msgid "Pitivi can not preview this file."
-msgstr "Pitivi non pode previsualizar este ficheiro."
+msgid "PiTiVi can not preview this file."
+msgstr "PiTiVi non pode previsualizar este ficheiro."
 
 #: ../pitivi/mediafilespreviewer.py:126
 msgid "More info"
@@ -1119,11 +1119,11 @@ msgstr "_Previsualizar Clip"
 
 #: ../pitivi/medialibrary.py:294 ../pitivi/medialibrary.py:484
 msgid "_Clip Properties..."
-msgstr "Propiedades do _clip…"
+msgstr "Propiedades do _video…"
 
 #: ../pitivi/medialibrary.py:295 ../pitivi/medialibrary.py:478
 msgid "Insert at _End of Timeline"
-msgstr "Inserir ao _final da cronoloxía"
+msgstr "Inserir ao _final da liña de tempo"
 
 #: ../pitivi/medialibrary.py:342
 msgid "Icon"
@@ -1220,12 +1220,12 @@ msgid "Error while analyzing files"
 msgstr "Produciuse un erro ao analizar os ficheiros"
 
 #: ../pitivi/medialibrary.py:978
-msgid "The following files can not be used with Pitivi."
-msgstr "Non é posíbel usar os seguintes ficheiros con Pitivi."
+msgid "The following files can not be used with PiTiVi."
+msgstr "Non é posíbel usar os seguintes ficheiros con PiTiVi."
 
 #: ../pitivi/medialibrary.py:981
-msgid "The following file can not be used with Pitivi."
-msgstr "Non é posíbel usar o seguinte ficheiro con Pitivi."
+msgid "The following file can not be used with PiTiVi."
+msgstr "Non é posíbel usar o seguinte ficheiro con PiTiVi."
 
 #: ../pitivi/preset.py:93 ../pitivi/preset.py:210 ../pitivi/preset.py:215
 #: ../pitivi/preset.py:274 ../pitivi/preset.py:291 ../pitivi/project.py:786
@@ -1802,13 +1802,13 @@ msgstr "%.2f fps"
 #: ../pitivi/utils/ui.py:400 ../pitivi/utils/ui.py:402
 #: ../pitivi/utils/ui.py:403
 #, python-format
-msgid "%d kHz"
-msgstr "%d kHz"
+msgid "%d KHz"
+msgstr "%d KHz"
 
 #: ../pitivi/utils/ui.py:401
 #, python-format
-msgid "%.1f kHz"
-msgstr "%.1f kHz"
+msgid "%.1f KHz"
+msgstr "%.1f KHz"
 
 #: ../pitivi/utils/ui.py:406 ../pitivi/utils/ui.py:407
 #: ../pitivi/utils/ui.py:408 ../pitivi/utils/ui.py:409
@@ -1926,466 +1926,6 @@ msgstr "Non hai propiedades…"
 msgid "Properties for %s"
 msgstr "Propiedades para %s"
 
-#~ msgid "Could not import the libglade Python bindings"
-#~ msgstr "Non foi posíbel importar os «bindings» de Python para libglade"
-
-#~ msgid "Make sure you have the libglade Python bindings installed"
-#~ msgstr ""
-#~ "Asegúrese de que ten os «bindings» de Python para libglade instaladas"
-
-#~ msgid "Could not import the Zope interface module"
-#~ msgstr "Non foi posíbel importar o módulo de interface de Zope"
-
-#~ msgid "Make sure you have the zope.interface module installed"
-#~ msgstr "Asegúrese de que ten instalado o módulo zope.interface"
-
-#~ msgid ""
-#~ "Missing plugins:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Faltan os engadidos:\n"
-#~ "%s"
-
-#~ msgid "Can not decode file."
-#~ msgstr "Non foi posíbel descodificar o ficheiro."
-
-#~ msgid "The given file does not contain audio, video or picture streams."
-#~ msgstr ""
-#~ "O ficheiro fornecido non contén un fluxo de son, vídeos ou fotogramas."
-
-#~ msgid "Could not establish the duration of the file."
-#~ msgstr "Non foi posíbel estabelecer a duración do ficheiro."
-
-#~ msgid ""
-#~ "This clip seems to be in a format which cannot be accessed in a random "
-#~ "fashion."
-#~ msgstr ""
-#~ "Este vídeo parece estar nun formato ao que non é posíbel acceder de "
-#~ "maneira aleatoria."
-
-#~ msgid "Timeout while analyzing file."
-#~ msgstr "Esgotouse o límite de tempo ao analizar o ficheiro."
-
-#~ msgid "Analyzing the file took too long."
-#~ msgstr "Levou demasiado tempo analizar o ficheiro."
-
-#~ msgid "No available source handler."
-#~ msgstr "Non hai dispoñíbel un manexador da fonte."
-
-#~ msgid "You do not have a GStreamer source element to handle protocol '%s'"
-#~ msgstr ""
-#~ "Non ten un elemento fonte de GStreamer para manexar o protocolo «%s»"
-
-#~ msgid "Pipeline didn't want to go to PAUSED."
-#~ msgstr "A tubería non quixo PAUSAR."
-
-#~ msgid "An internal error occurred while analyzing this file: %s"
-#~ msgstr "Produciuse un erro interno ao analizar este ficheiro: %s"
-
-#~ msgid "File contains a redirection to another clip."
-#~ msgstr "O ficheiro contén unha redirección a outro vídeo."
-
-#~ msgid "Pipeline didn't want to go to PLAYING."
-#~ msgstr "A tubería non quixo REPRODUCIR."
-
-#~ msgid ""
-#~ "\n"
-#~ "      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
-#~ "      %prog -p [PROJECT_FILE]\n"
-#~ "      %prog -i [-a] [MEDIA_FILE]..."
-#~ msgstr ""
-#~ "\n"
-#~ "      %prog [-r FICHEIRO_DE_SAIDA] [FICHEIRO_DE_PROXECTO]\n"
-#~ "      %prog -p [FICHEIRO_DE_PROXECTO]\n"
-#~ "      %prog -i [-a] [FICHEIRO_MULTIMEDIA]..."
-
-#~ msgid ""
-#~ "Starts the video editor, optionally loading PROJECT_FILE. If\n"
-#~ "no project is given, %prog creates a new project.\n"
-#~ "Alternatively, when -i is specified, arguments are treated as clips to "
-#~ "be\n"
-#~ "imported into the project. If -a is specified, these clips will also be "
-#~ "added to\n"
-#~ "the end of the project timeline.\n"
-#~ "When -r is specified, the given project file is rendered without opening "
-#~ "the GUI."
-#~ msgstr ""
-#~ "Inicia o editor de vídeo, opcionalmente cargando o FICHEIRO_DE_PROXECTO.\n"
-#~ "Se non lle carga un proxecto, %prog crea un novo proxecto. \n"
-#~ "Alternativamente, cando se especifica -i, os argumentos son considerados\n"
-#~ "como vídeos para seren importados no proxecto. Ao especificar -a, eses "
-#~ "clips serán\n"
-#~ " tamén engadidos ao remate da secuencia cronolóxica do proxecto.\n"
-#~ "Ao especificar -r, o ficheiro do proxecto dado renderízase sen abrir a "
-#~ "IGU."
-
-#~ msgid "Run pitivi with no gui"
-#~ msgstr "Executar Pitivi sen IGU"
-
-#~ msgid "Render the given project file to OUTPUT_FILE with no GUI."
-#~ msgstr ""
-#~ "Renderizar en FICHEIRO_DE_SAIDA no ficheiro de proxecto fornecido sen IGU."
-
-#~ msgid "Preview the given project file without the full UI."
-#~ msgstr "Ver o ficheiro de proxecto fornecido sen a IU completa."
-
-#~ msgid "Not a valid project file."
-#~ msgstr "Non é un ficheiro de proxecto válido."
-
-#~ msgid "Couldn't close current project"
-#~ msgstr "Non foi posíbel pechar o proxecto actual"
-
-#~ msgid "No URI specified."
-#~ msgstr "Non se especificou ningún URI."
-
-#~ msgid "Export Settings\n"
-#~ msgstr "Exportar configuración\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Audio: "
-#~ msgstr ""
-#~ "\n"
-#~ "Son: "
-
-#~ msgid ""
-#~ "\n"
-#~ "Muxer: "
-#~ msgstr ""
-#~ "\n"
-#~ "Multiplexador: "
-
-#~ msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
-#~ msgstr "%(width)d x %(height)d píxels a %(framerate).2f fps"
-
-#~ msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
-#~ msgstr "%(channels)d canles a %(frequency)d Hz (%(depth)d bits)"
-
-#~ msgid "Playlist format"
-#~ msgstr "Formato de lista de reprodución"
-
-#~ msgid "Name"
-#~ msgstr "Nome"
-
-#~ msgid "Audio Capture Device:"
-#~ msgstr "Dispositivo de captura de son:"
-
-#~ msgid "No device available"
-#~ msgstr "Non hai ningún dispositivo dispoñíbel"
-
-#~ msgid "Video Capture Device:"
-#~ msgstr "O dispositivo de captura de vídeo:"
-
-#~ msgid "<b>Unknown Audio format:</b> %s"
-#~ msgstr "<b>Formato de son descoñecido:</b> %s"
-
-#~ msgid "<b>Unknown Video format:</b> %s"
-#~ msgstr "<b>O formato de vídeo é descoñecido:</b> %s"
-
-#~ msgid "15 fps"
-#~ msgstr "15 fps"
-
-#~ msgid "20 fps"
-#~ msgstr "20 fps"
-
-#~ msgid "23,976 fps"
-#~ msgstr "23,976 fps"
-
-#~ msgid "24 fps"
-#~ msgstr "24 fps"
-
-#~ msgid "25 fps"
-#~ msgstr "25 fps"
-
-#~ msgid "29,97 fps"
-#~ msgstr "29,97 fps"
-
-#~ msgid "59,94 fps"
-#~ msgstr "59,94 fps"
-
-#~ msgid "60 fps"
-#~ msgstr "60 fps"
-
-#~ msgid "120 fps"
-#~ msgstr "120 fps"
-
-#~ msgid "11 kHz"
-#~ msgstr "11 kHz"
-
-#~ msgid "22 kHz"
-#~ msgstr "22 kHz"
-
-#~ msgid "48 kHz"
-#~ msgstr "48 kHz"
-
-#~ msgid "96 kHz"
-#~ msgstr "96 kHz"
-
-#~ msgid "16 bit"
-#~ msgstr "16 bit"
-
-#~ msgid "24 bit"
-#~ msgstr "24 bit"
-
-#~ msgid "32 bit"
-#~ msgstr "32 bit"
-
-#~ msgid "Properties For: %d object"
-#~ msgid_plural "Properties For: %d objects"
-#~ msgstr[0] "Propiedades para: %d obxecto "
-#~ msgstr[1] "Propiedades para: %d obxectos"
-
-#~ msgid "<b>Properties For Plugin</b>"
-#~ msgstr "<b>Propiedades do engadido</b>"
-
-#~ msgid "Number of channels:"
-#~ msgstr "Número de canles:"
-
-#~ msgid "Sample Depth:"
-#~ msgstr "Profundidade da mostraxe:"
-
-#~ msgid "Sample Rate:"
-#~ msgstr "Frecuencia da mostraxe:"
-
-#~ msgid "Sample rate"
-#~ msgstr "Frecuencia da mostraxe"
-
-#~ msgid "Summary"
-#~ msgstr "Resumo"
-
-#~ msgid "Unkown"
-#~ msgstr "Descoñecido"
-
-#~ msgid "URI:"
-#~ msgstr "URI:"
-
-#~ msgid "Stop Playback"
-#~ msgstr "Deter reprodución"
-
-#~ msgid "Loop over selected area"
-#~ msgstr "Circular sobre a área seleccionada"
-
-#~ msgid "Render project..."
-#~ msgstr "Renderizar proxecto..."
-
-#~ msgid "_Undo"
-#~ msgstr "_Desfacer"
-
-#~ msgid "_Redo"
-#~ msgstr "_Refacer"
-
-#~ msgid "_Plugins..."
-#~ msgstr "_Engadidos..."
-
-#~ msgid "Manage plugins"
-#~ msgstr "Xestionar os engadidos"
-
-#~ msgid "_Preferences"
-#~ msgstr "_Preferencias"
-
-#~ msgid "Import from _Webcam..."
-#~ msgstr "Importar da _cámara web..."
-
-#~ msgid "Import Camera stream"
-#~ msgstr "Importar fluxo de datos da cámara"
-
-#~ msgid "_Make screencast..."
-#~ msgstr "Crear un _screencast…"
-
-#~ msgid "Capture the desktop"
-#~ msgstr "Capturar o escritorio"
-
-#~ msgid "_Capture Network Stream..."
-#~ msgstr "_Capturar fluxo de datos da rede..."
-
-#~ msgid "Capture Network Stream"
-#~ msgstr "Capturar fluxo de datos da rede..."
-
-#~ msgid "_File"
-#~ msgstr "_Ficheiro"
-
-#~ msgid "Duration:"
-#~ msgstr "Duración:"
-
-#~ msgid "Address"
-#~ msgstr "Enderezo"
-
-#~ msgid "Capture"
-#~ msgstr "Capturar"
-
-#~ msgid "Capture Stream from URI"
-#~ msgstr "Capturando fluxo de datos dun URI"
-
-#~ msgid "Capture network stream"
-#~ msgstr "Capturar o fluxo de datos da rede"
-
-#~ msgid "Close"
-#~ msgstr "Cerrar"
-
-#~ msgid "Customize:"
-#~ msgstr "Personalizar:"
-
-#~ msgid "HTTP / HTTPS"
-#~ msgstr "HTTP / HTTPS"
-
-#~ msgid "Network stream video"
-#~ msgstr "Vídeo de fluxo de datos da rede"
-
-#~ msgid "Other protocol"
-#~ msgstr "Outro protocolo"
-
-#~ msgid "Port"
-#~ msgstr "Porto"
-
-#~ msgid "Preview Stream from URI"
-#~ msgstr "Revisar fluxo de datos do URI"
-
-#~ msgid "Protocol"
-#~ msgstr "Protocolo"
-
-#~ msgid "RTSP"
-#~ msgstr "RTSP"
-
-#~ msgid "UDP / RDP"
-#~ msgstr "UDP / RDP"
-
-#~ msgid "http://"
-#~ msgstr "http://"
-
-#~ msgid "All categories"
-#~ msgstr "Tódalas categorías"
-
-#~ msgid "Plugin manager"
-#~ msgstr "Xestor de engadidos"
-
-#~ msgid "Show:"
-#~ msgstr "Mostrar:"
-
-#~ msgid ""
-#~ "You may drag plugin files into the list to install them,\n"
-#~ "or type text to search for a specific plugin."
-#~ msgstr ""
-#~ "Pode arrastrar os ficheiros dos engadidos á lista para instalalos,\n"
-#~ "ou escribir un texto para buscar por un engadido específico."
-
-#~ msgid "Plugin"
-#~ msgstr "complemento"
-
-#~ msgid "Category"
-#~ msgstr "Categoría"
-
-#~ msgid "Are you sure you want to remove the selected plugins?"
-#~ msgstr "Está seguro de que quere quitar os engadidos seleccionados?"
-
-#~ msgid "Confirm remove operation"
-#~ msgstr "Confirmar a operación de eliminación"
-
-#~ msgid "Cannot remove %s"
-#~ msgstr "Non se pode eliminar %s"
-
-#~ msgid "Update the existing plugin?"
-#~ msgstr "Actualizar o engadido existente?"
-
-#~ msgid ""
-#~ "This plugin is already installed in your system.\n"
-#~ "If you agree, version %(v1)s will be replaced with version %(v2)s"
-#~ msgstr ""
-#~ "Este engadido xa está instalado no seu sistema.\n"
-#~ "Se está de acordo, a versión %(v1)s será substituída pola versión %(v2)s"
-
-#~ msgid "Duplicate plugin found"
-#~ msgstr "Encontrouse un complemento duplicado"
-
-#~ msgid ""
-#~ "Cannot install %s\n"
-#~ "The file is not a valid plugin"
-#~ msgstr ""
-#~ "Non foi posíbel instalar %s\n"
-#~ "O ficheiro non é un complemento válido"
-
-#~ msgid "Reset"
-#~ msgstr "Reinicializar"
-
-#~ msgid "Show Thumbnails (Video)"
-#~ msgstr "Mostrar miniaturas (vídeo)"
-
-#~ msgid "Show Waveforms (Audio)"
-#~ msgstr "Mostrar formas de onda (son)"
-
-#~ msgid "<b>Aspect Ratio</b>"
-#~ msgstr "<b>Proporción</b>"
-
-#~ msgid "<b>Frame Rate</b>"
-#~ msgstr "<b>Taxa de fotogramas</b>"
-
-#~ msgid "<b>Preset</b>"
-#~ msgstr "<b>Preestabelecidos</b>"
-
-#~ msgid "No Objects Selected"
-#~ msgstr "Non hai obxectos seleccionados"
-
-#~ msgid "Screencast"
-#~ msgstr "Screencast"
-
-#~ msgid "Screencast Desktop"
-#~ msgstr "Screencast de escritorio"
-
-#~ msgid "Start Istanbul"
-#~ msgstr "Iniciar Istanbul"
-
-#~ msgid "Import clips..."
-#~ msgstr "_Importar clips..."
-
-#~ msgid "Play Clip"
-#~ msgstr "Reproducir vídeo"
-
-#~ msgid ""
-#~ "<span>Import your clips by dragging them here or by using the buttons "
-#~ "above.</span>"
-#~ msgstr ""
-#~ "<span>Importe os seus vídeos arrastrándoos aquí ou usando os botóns de "
-#~ "embaixo.</span>"
-
-#~ msgid "Import clips to use"
-#~ msgstr "Importar os vídeos a usar"
-
-#~ msgid "Import folder of clips to use"
-#~ msgstr "Importar un cartafol de vídeos para usar"
-
-#~ msgid "Import a folder"
-#~ msgstr "Importar un cartafol"
-
-#~ msgid "Import a clip"
-#~ msgstr "Importar un vídeo"
-
-#~ msgid "Importing clips..."
-#~ msgstr "Importación de vídeos..."
-
-#~ msgid "Help"
-#~ msgstr "Axuda"
-
-#~ msgid "Skip"
-#~ msgstr "Omitir"
-
-#~ msgid "Startup Wizard"
-#~ msgstr "Asistente de inicio"
-
-#~ msgid "Threshold distance (in pixels) used for all snapping operations"
-#~ msgstr ""
-#~ "Umbral de distancia (en píxels) usada para todas as operacións de axuste "
-#~ "de reixa. "
-
-#~ msgid "<b>Audio:</b>"
-#~ msgstr "<b>Son:</b>"
-
-#~ msgid "<b>Video:</b>"
-#~ msgstr "<b>Vídeo:</b>"
-
-#~ msgid "<b>Text:</b>"
-#~ msgstr "<b>Texto:</b>"
-
-#~ msgid "Clip Background (Video)"
-#~ msgstr "Fondo do vídeo (vídeo)"
 
 #~ msgid "Clip Background (Audio)"
 #~ msgstr "Fondo do vídeo (son)"
