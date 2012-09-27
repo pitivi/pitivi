@@ -4,6 +4,7 @@ ui_DATA = \
 	clipmediaprops.ui \
 	cliptransformation.ui \
 	depsmanager.ui \
+	effectslibrary.ui \
 	elementsettingsdialog.ui \
 	filelisterrordialog.ui \
 	mainwindow.xml \
