@@ -206,6 +206,11 @@ if [ "$ready_to_run" != "1" ]; then
             fi
         fi
         cd $m
+        # Silly hack for the fact that glib changes the "mkinstalldirs" file
+        # when compiling, which prevents git pull --rebase from working
+        if [ $m == "glib" ]; then
+            git checkout -- mkinstalldirs
+        fi
         git pull --rebase
         if [ $? -ne 0 ]; then
             exit 1
@@ -258,6 +263,12 @@ if [ "$ready_to_run" != "1" ]; then
         if [ $? -ne 0 ]; then
             echo "Could not run checkout $GST_RELEASE_TAG for $m ; result: $?"
             exit 1
+        fi
+        # Silly hack for the fact that the version-controlled po/ files are
+        # changed during compilation of the "gstreamer" module, which prevents
+        # git pull --rebase from working
+        if [ $m == "gstreamer" ]; then
+            git checkout -- po
         fi
         git pull --rebase
         if [ $? -ne 0 ]; then
