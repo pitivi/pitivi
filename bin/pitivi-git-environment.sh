@@ -19,6 +19,21 @@ GST_RELEASE_TAG="master"
 # Everything below this line shouldn't be edited!
 #
 
+MODULES_CORE="glib gobject-introspection pygobject"
+# Do NOT use the following two variables directly, use $MODULES instead
+MODULES_ALL="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python"
+MODULES_MINIMAL="gnonlin gst-editing-services gst-python"
+# The following decision has to be made before we've set any env variables,
+# otherwise the script will detect our "gst uninstalled" and think it's the
+# system-wide install.
+if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null
+    then echo "GSt 1.0 is installed, not building it"
+    MODULES=$MODULES_MINIMAL
+else
+    echo "GSt 1.0 is not installed, building it"
+    MODULES=$MODULES_ALL
+fi
+
 # base path under which dirs are installed
 PITIVI=$MYPITIVI
 
@@ -149,9 +164,6 @@ export DYLD_LIBRARY_PATH
 export GI_TYPELIB_PATH
 export PYTHONPATH
 
-MODULES_ALL="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python"
-MODULES_MINIMAL="gnonlin gst-editing-services gst-python"
-MODULES_CORE="glib gobject-introspection pygobject"
 
 # Force build to happen automatically if the folders are missing
 # or if the --build parameter is used:
@@ -225,14 +237,6 @@ if [ "$ready_to_run" != "1" ]; then
     done
 
 
-
-    if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null
-        then echo "GSt 1.0 is installed, not building it"
-        MODULES=$MODULES_MINIMAL
-    else
-        echo "GSt 1.0 is not installed, building it"
-        MODULES=$MODULES_ALL
-    fi
 
     # Build all the necessary gstreamer modules.
     for m in $MODULES
