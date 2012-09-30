@@ -10,14 +10,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2012-05-18 15:51+0000\n"
-"PO-Revision-Date: 2012-05-21 14:00+0200\n"
+"POT-Creation-Date: 2012-09-26 14:36+0000\n"
+"PO-Revision-Date: 2012-09-30 12:00+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
-"Language-Team: Español <gnome-es-list@gnome.org>\n"
+"Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.5\n"
 
 #: C/welcomedialog.page:10(name) C/usingclips.page:10(name)
 #: C/trimming.page:11(name) C/sysreq.page:11(name) C/splitting.page:10(name)
@@ -33,7 +35,7 @@ msgstr ""
 #: C/gstreamer.page:10(name) C/fadeinfadeout.page:10(name)
 #: C/effectsanimation.page:10(name) C/effects.page:11(name)
 #: C/crossfading.page:11(name) C/codecscontainers.page:10(name)
-#: C/about.page:10(name)
+#: C/cheatsheet.page:12(name) C/about.page:10(name)
 msgid "Jean-François Fortin Tam"
 msgstr "Jean-François Fortin Tam"
 
@@ -51,7 +53,8 @@ msgstr "Jean-François Fortin Tam"
 #: C/importingmpegts.page:12(email) C/gstreamer.page:11(email)
 #: C/fadeinfadeout.page:11(email) C/effectsanimation.page:11(email)
 #: C/effects.page:12(email) C/crossfading.page:12(email)
-#: C/codecscontainers.page:11(email) C/about.page:11(email)
+#: C/codecscontainers.page:11(email) C/cheatsheet.page:13(email)
+#: C/about.page:11(email)
 msgid "nekohayo@gmail.com"
 msgstr "nekohayo@gmail.com"
 
@@ -70,7 +73,7 @@ msgstr "Crear proyectos nuevos y abrir proyectos recientes al iniciar"
 #: C/importing.page:21(p) C/importingmpegts.page:18(p) C/gstreamer.page:21(p)
 #: C/fadeinfadeout.page:21(p) C/effectsanimation.page:15(p)
 #: C/effects.page:16(p) C/crossfading.page:22(p) C/codecscontainers.page:14(p)
-#: C/about.page:21(p)
+#: C/cheatsheet.page:16(p) C/about.page:21(p)
 msgid "Creative Commons Share Alike 3.0"
 msgstr "Creative Commons Compartir Igual 3.0"
 
@@ -284,7 +287,7 @@ msgid ""
 "Shortening clips by changing the beginning and ending points. Also covers "
 "ripple and roll editing."
 msgstr ""
-"Recortar vídeos cambiando los puntos de comienzo yde  final. También cubre "
+"Recortar vídeos cambiando los puntos de comienzo y de final. También cubre "
 "la edición en cascada y con desplazamiento."
 
 #: C/trimming.page:26(title)
@@ -937,8 +940,8 @@ msgid ""
 msgstr ""
 "Los ajustes predefinidos están ahí para ahorrar tiempo y reducir la "
 "complejidad. Los expertos pueden elegir simplemente ignorarlos y establecer "
-"todo manualmente; el ajuste predefinido «No hay configuración» es especial ya "
-"que automáticamente guarda sus cambios directamente en el archivo del "
+"todo manualmente; el ajuste predefinido «No hay configuración» es especial "
+"ya que automáticamente guarda sus cambios directamente en el archivo del "
 "proyecto."
 
 #: C/presets.page:45(title)
@@ -1548,7 +1551,7 @@ msgstr ""
 "bugzilla.gnome.org/show_bug.cgi?id=608682\">error nº 608682</link> para "
 "obtener más información."
 
-#: C/mainwindow.page:71(title)
+#: C/mainwindow.page:71(title) C/cheatsheet.page:48(title)
 msgid "Timeline"
 msgstr "Línea de tiempo"
 
@@ -1618,10 +1621,11 @@ msgid ""
 "more information."
 msgstr ""
 "La característica <em>vista previa en vivo</em> aún no está implementada. "
-"Consulte el <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=569980"
-"\">el informe de error nº 569980</link> para obtener mayor información."
+"Consulte el <link href=\"https://bugzilla.gnome.org/show_bug.cgi?"
+"id=569980\">el informe de error nº 569980</link> para obtener mayor "
+"información."
 
-#: C/mainwindow.page:100(title)
+#: C/mainwindow.page:100(title) C/cheatsheet.page:39(title)
 msgid "Media Library"
 msgstr "Biblioteca de medios"
 
@@ -2398,8 +2402,8 @@ msgid ""
 "The \"Ugly\" plugins are good quality plugins whose license is not LGPL or "
 "with licensing issues."
 msgstr ""
-"Los complementos «feos» son complementos de buena calidad cuya licencia no es "
-"LGPL o tienen problemas de licencia."
+"Los complementos «feos» son complementos de buena calidad cuya licencia no "
+"es LGPL o tienen problemas de licencia."
 
 #: C/gstreamer.page:54(p)
 msgid ""
@@ -2711,6 +2715,144 @@ msgstr ""
 #: C/codecscontainers.page:24(p)
 msgid "The following figure should make things clearer:"
 msgstr "Las siguientes imágenes deberían aclarar las cosas:"
+
+#: C/cheatsheet.page:20(title)
+msgid "Keyboard shortcuts and cheatsheet"
+msgstr "Atajos de teclado y lista de trucos"
+
+#: C/cheatsheet.page:22(p)
+msgid ""
+"This page is a list of important shortcuts to access commonly used or hidden "
+"features. Take the time to get familiar with them as they will improve your "
+"productivity tremendously."
+msgstr ""
+"Esta página es una lista de atajos importantes para acceder a las funciones "
+"más usadas u ocultas. Tómese el tiempo para familiarizarse con ellos ya que "
+"mejorarán su productividad enormemente."
+
+#: C/cheatsheet.page:25(title)
+msgid "General"
+msgstr "General"
+
+#: C/cheatsheet.page:27(p)
+msgid "<key>Ctrl+N</key>: Create a new project"
+msgstr "<key>Ctrl+N</key>: crear un proyecto nuevo"
+
+#: C/cheatsheet.page:28(p)
+msgid "<key>Ctrl+O</key>: Open a project file"
+msgstr "<key>Ctrl+O</key>: abrir un archivo de proyecto"
+
+#: C/cheatsheet.page:29(p)
+msgid "<key>Ctrl+S</key>: Save the current project"
+msgstr "<key>Ctrl+S</key>: guardar el proyecto actual"
+
+#: C/cheatsheet.page:30(p)
+msgid "<key>Ctrl+Q</key>: Quit the application"
+msgstr "<key>Ctrl+Q</key>: salir de la aplicación"
+
+#: C/cheatsheet.page:31(p)
+msgid "<key>Ctrl+Z</key>: Undo"
+msgstr "<key>Ctrl+Z</key>: deshacer"
+
+#: C/cheatsheet.page:32(p)
+msgid "<key>Ctrl+Y</key>: Redo"
+msgstr "<key>Ctrl+Y</key>: rehacer"
+
+#: C/cheatsheet.page:33(p)
+msgid "<key>F11</key>: Toggle fullscreen mode"
+msgstr "<key>F11</key>: cambiar el modo de pantalla completa"
+
+#: C/cheatsheet.page:34(p)
+msgid "<key>F1</key>: Show the user manual"
+msgstr "<key>F1</key>: mostrar el manual de usuario"
+
+#: C/cheatsheet.page:41(p)
+msgid "<key>Enter</key>: Preview (playback) the selected clip"
+msgstr "<key>Intro</key>: previsualizar (reproducción) el clip seleccionado"
+
+#: C/cheatsheet.page:42(p)
+msgid "<key>Insert</key>: Insert the selected clips into the timeline"
+msgstr ""
+"<key>Insertar</key>: insertar los clips seleccionados en la línea del tiempo"
+
+#: C/cheatsheet.page:43(p)
+msgid "<key>Ctrl+Delete</key>: Remove the selected clips from the project"
+msgstr "<key>Ctrl+Eliminar</key>: quitar los clips seleccionados del proyecto"
+
+#: C/cheatsheet.page:50(p)
+msgid "<key>Spacebar</key>: Toggle playback."
+msgstr "<key>Barra espaciadora</key>: alternar reproducción."
+
+#: C/cheatsheet.page:51(p)
+msgid ""
+"<key>S</key>: Split the clips at the current playhead position. If there are "
+"selected clips, only those will be split."
+msgstr ""
+"<key>S</key>: dividir los clips en la posición actual. Si hay clips "
+"seleccionados, sólo esos se dividirán."
+
+#: C/cheatsheet.page:52(p)
+msgid "<key>Delete</key>: Remove selected clips from the timeline."
+msgstr ""
+"<key>Eliminar</key>: quitar los clips seleccionados de la línea del tiempo."
+
+#: C/cheatsheet.page:53(p)
+msgid ""
+"<key>←</key> and <key>→</key>: Seek one frame backwards or forwards. This "
+"depends on your project framerate."
+msgstr ""
+"<key>←</key> y <key>→</key>: bucar una imagen hacia atrás o hacia adelante. "
+"Esto depende de las imágenes por segundo en su proyecto."
+
+#: C/cheatsheet.page:54(p)
+msgid ""
+"<key>Ctrl+←</key> and <key>Ctrl+→</key>: Seek one clip backwards or forwards."
+msgstr ""
+"<key>Ctrl+←</key> y <key>Ctrl+→</key>: buscar un clip hacia atrás o hacia "
+"adelante."
+
+#: C/cheatsheet.page:55(p)
+msgid ""
+"<key>Shift+←</key> and <key>Shift+→</key>: Seek one second backwards or "
+"forwards."
+msgstr ""
+"<key>Mayús+←</key> y <key>Mayús+→</key>: buscar un segundo hacia atrás o "
+"hacia adelante."
+
+#: C/cheatsheet.page:56(p)
+msgid ""
+"<key>Ctrl++</key> and <key>Ctrl+-</key>: Zoom in or zoom out. You can also "
+"use <key>Ctrl</key> with the mouse wheel to control the zoom more "
+"efficiently."
+msgstr ""
+"<key>Ctrl++</key> y <key>Ctrl+-</key>: acercar o alejar. Puede usar también "
+"<key>Ctrl</key> con la rueda del ratón para controlar la ampliación más "
+"eficientemente."
+
+#: C/cheatsheet.page:57(p)
+msgid "<key>Ctrl+0</key>: Adjust the zoom to fit the timeline."
+msgstr ""
+"<key>Ctrl+0</key>: ajustar la ampliación para encajar en la línea del tiempo."
+
+#: C/cheatsheet.page:58(p)
+msgid "<key>Shift</key>+drag: Ripple edit."
+msgstr "<key>Mayús</key>+arrastrar: edición de onda."
+
+#: C/cheatsheet.page:59(p)
+msgid "<key>Ctrl</key>+drag: Roll edit."
+msgstr "<key>Ctrl</key>+arrastrar: edición de desplazamiento."
+
+#: C/cheatsheet.page:60(p)
+msgid "<key>K</key>: Add a property keyframe at the current playhead position."
+msgstr ""
+"<key>K</key>: añadir una propiedad de fotograma clave en la posición actual."
+
+#: C/cheatsheet.page:61(p)
+msgid ""
+"<key>.</key> and <key>,</key>: Go to the next or previous property keyframe."
+msgstr ""
+"<key>.</key> y <key>,</key>: ir a la siguiente o anterior propiedad de "
+"fotograma clave."
 
 #: C/about.page:17(desc)
 msgid "Current state of this user manual and call for participation."
