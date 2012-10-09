@@ -184,6 +184,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         """ initialize with the Pitivi object """
         gtksettings = Gtk.Settings.get_default()
         gtksettings.set_property("gtk-application-prefer-dark-theme", True)
+        # Pulseaudio "role" (http://0pointer.de/blog/projects/tagging-audio.htm)
+        os.environ["PULSE_PROP_media.role"] = "production"
+        os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
+
         Gtk.Window.__init__(self)
         Loggable.__init__(self, "mainwindow")
         self.app = instance
@@ -361,15 +365,27 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.uimanager.add_ui_from_file(os.path.join(get_ui_dir(), "mainwindow.xml"))
 
     def _createUi(self, instance, allow_full_screen):
-        """ Create the graphical interface """
+        """
+        Create the graphical interface with the following hierarchy in a vbox:
+        -- Menubar
+        -- Main toolbar
+        -- self.vpaned
+        ---- self.mainhpaned (upper half)
+        ------ self.secondaryhpaned (upper-left)
+        -------- Primary tabs
+        -------- Context tabs
+        ------ Viewer (upper-right)
+        ---- Timeline (bottom half)
+        """
         self.set_title("%s" % (APPNAME))
+        self.set_icon_name("pitivi")
         self.connect("delete-event", self._deleteCb)
         self.connect("configure-event", self._configureCb)
-
-        # main menu & toolbar
         vbox = Gtk.VBox(False)
         self.add(vbox)
         vbox.show()
+
+        # Main menu & toolbar
         self.menu = self.uimanager.get_widget("/MainMenuBar")
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
         self.toolbar.get_style_context().add_class("primary-toolbar")
@@ -377,22 +393,15 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         vbox.pack_start(self.toolbar, False, True, 0)
         self.menu.show()
         self.toolbar.show()
-        # timeline and project tabs
-        vpaned = Gtk.VPaned()
-        vbox.pack_start(vpaned, True, True, 0)
-        vpaned.show()
 
-        self.timeline_ui = Timeline(instance, self.uimanager)
-        self.timeline_ui.setProjectManager(self.app.projectManager)
-        self.timeline_ui.controls.connect("selection-changed", self._selectedLayerChangedCb)
-        self.app.current = None
-        vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
-        self.timeline_ui.show()
-        self.mainhpaned = Gtk.HPaned()
-        vpaned.pack1(self.mainhpaned, resize=True, shrink=False)
-
-        self.secondhpaned = Gtk.HPaned()
+        # Set up our main containers, in the order documented above
+        self.vpaned = Gtk.VPaned()  # Separates the timeline from tabs+viewer
+        self.mainhpaned = Gtk.HPaned()  # Separates the viewer from tabs
+        self.secondhpaned = Gtk.HPaned()  # Separates the two sets of tabs
+        self.vpaned.pack1(self.mainhpaned, resize=True, shrink=False)
         self.mainhpaned.pack1(self.secondhpaned, resize=True, shrink=False)
+        vbox.pack_start(self.vpaned, True, True, 0)
+        self.vpaned.show()
         self.secondhpaned.show()
         self.mainhpaned.show()
 
@@ -406,9 +415,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.medialibrary.show()
         self.effectlist.show()
 
-        self.secondhpaned.pack1(self.main_tabs, resize=True, shrink=False)
-        self.main_tabs.show()
-
         # Second set of tabs
         self.context_tabs = BaseTabs(instance)
         self.clipconfig = ClipProperties(instance, self.uimanager)
@@ -421,7 +427,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.clipconfig.show()
         self.trans_list.show()
 
+        self.secondhpaned.pack1(self.main_tabs, resize=True, shrink=False)
         self.secondhpaned.pack2(self.context_tabs, resize=True, shrink=False)
+        self.main_tabs.show()
         self.context_tabs.show()
 
         # Viewer
@@ -432,13 +440,24 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
 
-        # window and pane position defaults
-        self.hpaned = self.secondhpaned
-        self.vpaned = vpaned
+        # Now, the lower part: the timeline
+        self.timeline_ui = Timeline(instance, self.uimanager)
+        self.timeline_ui.setProjectManager(self.app.projectManager)
+        self.timeline_ui.controls.connect("selection-changed", self._selectedLayerChangedCb)
+        self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
+        self.timeline_ui.show()
+        self.app.current = None
+
+        # Timeline toolbar, below the timeline
+        ttb = self.uimanager.get_widget("/TimelineToolBar")
+        vbox.pack_start(ttb, False, True, 0)
+        ttb.show()
+
+        # Restore settings (or set defaults) for position and visibility
         height = -1
         width = -1
         if self.settings.mainWindowHPanePosition:
-            self.hpaned.set_position(self.settings.mainWindowHPanePosition)
+            self.secondhpaned.set_position(self.settings.mainWindowHPanePosition)
         if self.settings.mainWindowMainHPanePosition:
             self.mainhpaned.set_position(self.settings.mainWindowMainHPanePosition)
         if self.settings.mainWindowVPanePosition:
@@ -452,26 +471,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.maximize()
         if allow_full_screen and self.settings.mainWindowFullScreen:
             self.setFullScreen(True)
-        # timeline toolbar
-        # FIXME: remove toolbar padding and shadow. In fullscreen mode, the
-        # toolbar buttons should be clickable with the mouse cursor at the
-        # very bottom of the screen.
-        ttb = self.uimanager.get_widget("/TimelineToolBar")
-        vbox.pack_start(ttb, False, True, 0)
-        ttb.show()
-
         if not self.settings.mainWindowShowMainToolbar:
             self.toolbar.props.visible = False
-
         if not self.settings.mainWindowShowTimelineToolbar:
             ttb.props.visible = False
-
-        #application icon
-        self.set_icon_name("pitivi")
-
-        #pulseaudio 'role' (http://0pointer.de/blog/projects/tagging-audio.htm
-        os.environ["PULSE_PROP_media.role"] = "production"
-        os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
 
     def switchContextTab(self, tab=None):
         """
@@ -551,7 +554,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _saveWindowSettings(self):
         self.settings.mainWindowFullScreen = self.is_fullscreen
-        self.settings.mainWindowHPanePosition = self.hpaned.get_position()
+        self.settings.mainWindowHPanePosition = self.secondhpaned.get_position()
         self.settings.mainWindowMainHPanePosition = self.mainhpaned.get_position()
         self.settings.mainWindowVPanePosition = self.vpaned.get_position()
         mtb = self.toggle_actions.get_action("ShowHideMainToolbar")
