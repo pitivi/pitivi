@@ -446,7 +446,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.timeline_ui.controls.connect("selection-changed", self._selectedLayerChangedCb)
         self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
         self.timeline_ui.show()
-        self.app.current = None
 
         # Timeline toolbar, below the timeline
         ttb = self.uimanager.get_widget("/TimelineToolBar")
