@@ -295,7 +295,6 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.preview_video.hide()
 
     def _on_seeker_press_cb(self, widget, event):
-        event.button = 2
         if event.type == Gdk.EventType.BUTTON_PRESS:
             self.countinuous_seek = True
             if self.is_playing:
