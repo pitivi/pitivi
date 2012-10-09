@@ -19,7 +19,12 @@ GST_RELEASE_TAG="master"
 # Everything below this line shouldn't be edited!
 #
 
-MODULES_CORE="glib gobject-introspection pygobject"
+# For some reason, gobject-introspection won't compile with glib 2.32
+if pkg-config glib-2.0 --atleast-version=2.34; then
+    MODULES_CORE="gobject-introspection pygobject"
+else
+    MODULES_CORE="glib gobject-introspection pygobject"
+fi
 # Do NOT use the following two variables directly, use $MODULES instead
 MODULES_ALL="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python"
 MODULES_MINIMAL="gnonlin gst-editing-services gst-python"
