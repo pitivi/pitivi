@@ -441,15 +441,20 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
 
         # Now, the lower part: the timeline
+        timeline_area = Gtk.HBox()
         self.timeline_ui = Timeline(instance, self.uimanager)
         self.timeline_ui.setProjectManager(self.app.projectManager)
         self.timeline_ui.controls.connect("selection-changed", self._selectedLayerChangedCb)
-        self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
-        self.timeline_ui.show()
-
-        # Timeline toolbar, below the timeline
         ttb = self.uimanager.get_widget("/TimelineToolBar")
-        vbox.pack_start(ttb, False, True, 0)
+        ttb.get_style_context().add_class("inline-toolbar")
+        ttb.set_orientation(Gtk.Orientation.VERTICAL)
+        ttb.set_style(Gtk.ToolbarStyle.ICONS)
+
+        self.vpaned.pack2(timeline_area, resize=True, shrink=False)
+        timeline_area.pack_start(self.timeline_ui, expand=True, fill=True, padding=0)
+        timeline_area.pack_start(ttb, expand=False, fill=True, padding=0)
+        timeline_area.show()
+        self.timeline_ui.show()
         ttb.show()
 
         # Restore settings (or set defaults) for position and visibility
