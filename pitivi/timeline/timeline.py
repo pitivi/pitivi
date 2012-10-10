@@ -111,8 +111,6 @@ NEXTKEYFRAME = _("Move to the next keyframe")
 ZOOM_IN = _("Zoom In")
 ZOOM_OUT = _("Zoom Out")
 ZOOM_FIT = _("Zoom Fit")
-UNLINK = _("Break links between clips")
-LINK = _("Link together arbitrary clips")
 UNGROUP = _("Ungroup clips")
 GROUP = _("Group clips")
 ALIGN = _("Align clips based on their soundtracks")
@@ -134,8 +132,6 @@ ui = '''
                 <menuitem action="Split" />
                 <menuitem action="DeleteObj" />
                 <separator />
-                <menuitem action="LinkObj" />
-                <menuitem action="UnlinkObj" />
                 <menuitem action="GroupObj" />
                 <menuitem action="UngroupObj" />
                 <menuitem action="AlignObj" />
@@ -156,8 +152,6 @@ ui = '''
             <toolitem action="Keyframe" />
             <separator />
             <toolitem action="DeleteObj" />
-            <toolitem action="UnlinkObj" />
-            <toolitem action="LinkObj" />
             <toolitem action="GroupObj" />
             <toolitem action="UngroupObj" />
             <toolitem action="AlignObj" />
@@ -1090,12 +1084,6 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             ("DeleteObj", Gtk.STOCK_DELETE, None,
             "Delete", DELETE, self.deleteSelected),
 
-            ("UnlinkObj", "pitivi-unlink", None,
-            "<Shift><Control>L", UNLINK, self.unlinkSelected),
-
-            ("LinkObj", "pitivi-link", None,
-            "<Control>L", LINK, self.linkSelected),
-
             ("UngroupObj", "pitivi-ungroup", None,
             "<Shift><Control>G", UNGROUP, self.ungroupSelected),
 
@@ -1747,14 +1735,6 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                 layer = obj.get_layer()
                 layer.remove_object(obj)
             self.app.action_log.commit()
-
-    def unlinkSelected(self, unused_action):
-        if self.timeline:
-            self.timeline.unlinkSelection()
-
-    def linkSelected(self, unused_action):
-        if self.timeline:
-            self.timeline.linkSelection()
 
     def ungroupSelected(self, unused_action):
         if self.timeline:
