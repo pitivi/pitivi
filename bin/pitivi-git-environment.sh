@@ -56,6 +56,7 @@ $PATH"
 LD_LIBRARY_PATH=$PITIVI_PREFIX/lib:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 DYLD_LIBRARY_PATH=$PITIVI_PREFIX/lib:${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
 GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}
+export PKG_CONFIG_PATH="$PITIVI_PREFIX/lib/pkgconfig:$PITIVI/pygobject:$PKG_CONFIG_PATH"
 
 
 if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null; then
@@ -97,14 +98,12 @@ else
   DYLD_LIBRARY_PATH=$PITIVI/gstreamer/gst/.libs:$DYLD_LIBRARY_PATH
   GI_TYPELIB_PATH=$PITIVI/gstreamer/gst:$GI_TYPELIB_PATH
 
-export PKG_CONFIG_PATH="$PITIVI_PREFIX/lib/pkgconfig\
-:$PITIVI/gstreamer/pkgconfig\
+export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
 :$PITIVI/gst-plugins-base/pkgconfig\
 :$PITIVI/gst-plugins-good/pkgconfig\
 :$PITIVI/gst-plugins-ugly/pkgconfig\
 :$PITIVI/gst-plugins-bad/pkgconfig\
 :$PITIVI/gst-ffmpeg/pkgconfig\
-:$PITIVI/pygobject\
 :${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
 export GST_PLUGIN_PATH="\
