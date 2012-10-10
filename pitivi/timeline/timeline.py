@@ -1083,13 +1083,14 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             ("DeleteObj", Gtk.STOCK_DELETE, None,
             "Delete", DELETE, self.deleteSelected),
 
-            ("UngroupObj", "pitivi-ungroup", None,
+            ("UngroupObj", "pitivi-ungroup", _("Ungroup"),
             "<Shift><Control>G", UNGROUP, self.ungroupSelected),
 
-            ("GroupObj", "pitivi-group", None,
+            # Translators: This is an action, the title of a button
+            ("GroupObj", "pitivi-group", _("Group"),
             "<Control>G", GROUP, self.groupSelected),
 
-            ("AlignObj", "pitivi-align", None,
+            ("AlignObj", "pitivi-align", _("Align"),
             "<Shift><Control>A", ALIGN, self.alignSelected),
         )
 
