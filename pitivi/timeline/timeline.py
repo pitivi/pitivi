@@ -149,8 +149,6 @@ ui = '''
         <placeholder name="Timeline">
             <separator />
             <toolitem action="Split" />
-            <toolitem action="Keyframe" />
-            <separator />
             <toolitem action="DeleteObj" />
             <toolitem action="GroupObj" />
             <toolitem action="UngroupObj" />
@@ -162,6 +160,7 @@ ui = '''
     <accelerator action="ControlEqualAccel" />
     <accelerator action="ControlKPAddAccel" />
     <accelerator action="ControlKPSubtractAccel" />
+    <accelerator action="Keyframe" />
 </ui>
 '''
 
