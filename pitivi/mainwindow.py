@@ -382,12 +382,21 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         # Main menu & toolbar
         self.menu = self.uimanager.get_widget("/MainMenuBar")
+        self._main_toolbar_box = Gtk.VBox()  # To reparent after fullscreen
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
         self.toolbar.get_style_context().add_class("primary-toolbar")
+        self._main_toolbar_box.add(self.toolbar)
         vbox.pack_start(self.menu, False, True, 0)
-        vbox.pack_start(self.toolbar, False, True, 0)
+        vbox.pack_start(self._main_toolbar_box, False, True, 0)
         self.menu.show()
-        self.toolbar.show()
+        self._main_toolbar_box.show_all()
+        # Auto-hiding fullscreen toolbar
+        self._main_toolbar_height = self.toolbar.size_request().height
+        self._fullscreen_toolbar_win = Gtk.Window(Gtk.WindowType.POPUP)
+        self._fullscreen_toolbar_win.resize(self.get_screen().get_width(), self._main_toolbar_height)
+        self._fullscreen_toolbar_win.set_transient_for(self)
+        self._fullscreen_toolbar_win.connect("enter-notify-event", self._slideFullscreenToolbarIn)
+        self._fullscreen_toolbar_win.connect("leave-notify-event", self._slideFullscreenToolbarOut)
 
         # Set up our main containers, in the order documented above
         self.vpaned = Gtk.VPaned()  # Separates the timeline from tabs+viewer
@@ -501,9 +510,54 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         """ Toggle the fullscreen mode of the application """
         if fullscreen:
             self.fullscreen()
+            self._main_toolbar_box.remove(self.toolbar)
+            self._fullscreen_toolbar_win.add(self.toolbar)
+            self._fullscreen_toolbar_win.show()
+            # The first time, wait a little before sliding out the toolbar:
+            GObject.timeout_add(750, self._slideFullscreenToolbarOut)
         else:
             self.unfullscreen()
+            self._fullscreen_toolbar_win.remove(self.toolbar)
+            self._main_toolbar_box.add(self.toolbar)
+            self._fullscreen_toolbar_win.hide()
         self.is_fullscreen = fullscreen
+
+    def _slideFullscreenToolbarIn(self, *args):
+        self._fullscreenToolbarDirection = "down"
+        GObject.timeout_add(25, self._animateFullscreenToolbar)
+
+    def _slideFullscreenToolbarOut(self, *args):
+        self._fullscreenToolbarDirection = "up"
+        GObject.timeout_add(25, self._animateFullscreenToolbar)
+        return False  # Stop the initial gobject timer
+
+    def _animateFullscreenToolbar(self, *args):
+        """
+        Animate the fullscreen toolbar by moving it up or down by a few pixels.
+        This is meant to be called repeatedly by a GObject timer.
+        """
+        # Believe it or not, that's how it's done in Gedit!
+        # However, it seems like moving by 1 pixel is too slow with the overhead
+        # of introspected python, so using increments of 10 works.
+        INCREMENT = 10
+        # Provide one extra pixel as a mouse target when retracted:
+        MIN_POSITION = 1 - self._main_toolbar_height
+        (current_x, current_y) = self._fullscreen_toolbar_win.get_position()
+        if self._fullscreenToolbarDirection == "down":
+            # Remember: current_y is initially negative (when retracted),
+            # we just want to move towards the target "0" position!
+            if current_y < 0:
+                target_y = min(0, current_y + INCREMENT)
+                self._fullscreen_toolbar_win.move(current_x, target_y)
+                return True
+        else:
+            target_y = max(MIN_POSITION, current_y - INCREMENT)
+            if target_y > MIN_POSITION:
+                self._fullscreen_toolbar_win.move(current_x, target_y)
+                return True
+        # We're done moving, stop the gobject timer
+        self._fullscreenToolbarDirection = None
+        return False
 
     def setActionsSensitive(self, sensitive):
         """
