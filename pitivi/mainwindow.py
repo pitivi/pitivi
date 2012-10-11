@@ -510,6 +510,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         """ Toggle the fullscreen mode of the application """
         if fullscreen:
             self.fullscreen()
+            self.menu.hide()
             self._main_toolbar_box.remove(self.toolbar)
             self._fullscreen_toolbar_win.add(self.toolbar)
             self._fullscreen_toolbar_win.show()
@@ -517,6 +518,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             GObject.timeout_add(750, self._slideFullscreenToolbarOut)
         else:
             self.unfullscreen()
+            self.menu.show()
             self._fullscreen_toolbar_win.remove(self.toolbar)
             self._main_toolbar_box.add(self.toolbar)
             self._fullscreen_toolbar_win.hide()
