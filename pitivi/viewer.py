@@ -241,7 +241,8 @@ class PitiviViewer(Gtk.VBox, Loggable):
         # current time
         self.timecode_entry = TimeWidget()
         self.timecode_entry.setWidgetValue(0)
-        self.timecode_entry.connect("value-changed", self._jumpToTimecodeCb)
+        self.timecode_entry.set_tooltip_text(_('Enter a timecode or frame number\nand press "Enter" to go to that position'))
+        self.timecode_entry.connectActivateEvent(self._entryActivateCb)
         self.timecode_entry.connectFocusEvents(self._entryFocusInCb, self._entryFocusOutCb)
         bbox.pack_start(self.timecode_entry, False, 10, 0)
         self._haveUI = True
@@ -284,11 +285,19 @@ class PitiviViewer(Gtk.VBox, Loggable):
         except:
             self.warning("could not set ratio !")
 
+    def _entryActivateCb(self, entry):
+        self._seekFromTimecodeWidget()
+
     def _entryFocusInCb(self, entry, event):
         self.app.gui.setActionsSensitive(False)
 
     def _entryFocusOutCb(self, entry, event):
+        self._seekFromTimecodeWidget()
         self.app.gui.setActionsSensitive(True)
+
+    def _seekFromTimecodeWidget(self):
+        nanoseconds = self.timecode_entry.getWidgetValue()
+        self.seeker.seek(nanoseconds)
 
     ## active Timeline calllbacks
     def _durationChangedCb(self, unused_pipeline, duration):
@@ -340,12 +349,6 @@ class PitiviViewer(Gtk.VBox, Loggable):
             self.seeker.seek(end)
         except:
             self.warning("Couldn't seek to the end of the timeline")
-
-    ## Callback for jumping to a specific timecode
-
-    def _jumpToTimecodeCb(self, widget):
-        nanoseconds = widget.getWidgetValue()
-        self.seeker.seek(nanoseconds)
 
     ## public methods for controlling playback
 

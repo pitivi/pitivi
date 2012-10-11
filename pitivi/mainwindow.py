@@ -1165,6 +1165,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         ratio = float(project.videopar.num / project.videopar.denom *
                       project.videowidth) / float(project.videoheight)
         self.viewer.setDisplayAspectRatio(ratio)
+        self.viewer.timecode_entry.setFramerate(project.videorate)
 
     def _sourceListMissingPluginsCb(self, project, uri, factory,
             details, descriptions, missingPluginsCallback):

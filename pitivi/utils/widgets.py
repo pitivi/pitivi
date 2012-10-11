@@ -90,17 +90,20 @@ class DefaultWidget(Gtk.Label, DynamicWidget):
 
 
 class TextWidget(Gtk.HBox, DynamicWidget):
-
-    """A Gtk.Entry which emits a value-changed signal only when its input is
+    """
+    A Gtk.Entry which emits a "value-changed" signal only when its input is
     valid (matches the provided regex). If the input is invalid, a warning
-    icon is displayed."""
+    icon is displayed.
+
+    You can also connect to the "activate" signal if you don't want to watch
+    for live changes, but it will only be emitted if the input is valid when
+    the user presses Enter.
+    """
 
     __gtype_name__ = 'TextWidget'
     __gsignals__ = {
-        "value-changed": (
-            GObject.SignalFlags.RUN_LAST,
-            None,
-            (),)
+        "value-changed": (GObject.SignalFlags.RUN_LAST, None, (),),
+        "activate": (GObject.SignalFlags.RUN_LAST, None, (),)
     }
 
     __INVALID__ = Gdk.Color(0xFFFF, 0, 0)
@@ -132,6 +135,7 @@ class TextWidget(Gtk.HBox, DynamicWidget):
         self.valid = False
         self.send_signal = True
         self.text.connect("changed", self._textChanged)
+        self.text.connect("activate", self._activateCb)
         if matches:
             if type(matches) is str:
                 self.matches = re.compile(matches)
@@ -173,6 +177,17 @@ class TextWidget(Gtk.HBox, DynamicWidget):
             self.emit("value-changed")
 
         self.send_signal = True
+
+    def _activateCb(self, unused_widget):
+        """
+        Similar to _textChanged, to account for the case where we connect to
+        the "activate" signal instead of "text-changed".
+
+        We don't need to set the icons or anything like that, as _textChanged
+        does it already.
+        """
+        if self.matches and self.send_signal:
+            self.emit("activate")
 
     def _filter(self, text):
         match = self.matches.match(text)
@@ -249,39 +264,56 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
 
 
 class TimeWidget(TextWidget, DynamicWidget):
-    """ A widget that contains a time in nanosconds"""
-
-    regex = re.compile("^([0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
+    """
+    A widget that contains a time in nanoseconds. Accepts timecode formats
+    or a frame number (integer).
+    """
+    # The "frame number" match rule is ^([0-9]+)$ (with a + to require 1 digit)
+    # The "timecode" rule is ^([0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$"
+    # Combining the two, we get:
+    regex = re.compile("^([0-9]+)$|^([0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
     __gtype_name__ = 'TimeWidget'
 
     def __init__(self, default=None):
         DynamicWidget.__init__(self, default)
         TextWidget.__init__(self, self.regex)
         TextWidget.set_width_chars(self, 10)
+        self._framerate = None
 
     def getWidgetValue(self):
         timecode = TextWidget.getWidgetValue(self)
 
-        hh, mm, end = timecode.split(":")
-        ss, xxx = end.split(".")
-        nanosecs = int(hh) * 3.6 * 10e12 \
-            + int(mm) * 6 * 10e10 \
-            + int(ss) * 10e9 \
-            + int(xxx) * 10e6
-
-        nanosecs = nanosecs / 10  # Compensate the 10 factor of e notation
-
-        return nanosecs
+        if ":" in timecode:
+            hh, mm, end = timecode.split(":")
+            ss, xxx = end.split(".")
+            nanosecs = int(hh) * 3.6 * 10e12 \
+                + int(mm) * 6 * 10e10 \
+                + int(ss) * 10e9 \
+                + int(xxx) * 10e6
+            nanosecs = nanosecs / 10  # Compensate the 10 factor of e notation
+        else:
+            # We were given a frame number. Convert from the project framerate.
+            frame_no = int(timecode)
+            nanosecs = frame_no / float(self._framerate) * Gst.SECOND
+        # The seeker won't like floating point nanoseconds!
+        return int(nanosecs)
 
     def setWidgetValue(self, value, send_signal=True):
         TextWidget.setWidgetValue(self, time_to_string(value),
                                 send_signal=send_signal)
 
+    # No need to define connectValueChanged as it is inherited from DynamicWidget
+    def connectActivateEvent(self, activateCb):
+        return self.connect("activate", activateCb)
+
     def connectFocusEvents(self, focusInCb, focusOutCb):
-        fIn = self.text.connect("button-press-event", focusInCb)
+        fIn = self.text.connect("focus-in-event", focusInCb)
         fOut = self.text.connect("focus-out-event", focusOutCb)
 
         return [fIn, fOut]
+
+    def setFramerate(self, framerate):
+        self._framerate = framerate
 
 
 class FractionWidget(TextWidget, DynamicWidget):
