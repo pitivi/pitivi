@@ -443,14 +443,13 @@ class ProjectManager(Signallable, Loggable):
     def _makeBackupURI(self, uri):
         """
         Returns a backup file URI (or path if the given arg is not a URI).
-        This does not guarantee that the backup file actually exists.
+        This does not guarantee that the backup file actually exists or that
+        the file extension is actually a project file.
 
         @Param the project file path or URI
         """
         name, ext = os.path.splitext(uri)
-        if ext == '.xptv':
-            return name + ext + "~"
-        return None
+        return name + ext + "~"
 
     def _formatterMissingURICb(self, formatter, tfs):
         return self.emit("missing-uri", formatter, tfs)
