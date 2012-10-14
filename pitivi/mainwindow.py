@@ -132,7 +132,7 @@ GlobalSettings.addConfigOption('lastCurrentVersion',
 
 
 #FIXME Hacky, reimplement when avalaible in GES
-formats = [(None, _("PiTiVi Native (XML)"), ('xptv',))]
+formats = [(None, _("PiTiVi native (XML)"), ('xptv',))]
 
 # FIXME PyGi to get stock_add working
 Gtk.stock_add = lambda items: None
@@ -706,7 +706,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                 filt.add_pattern("*%s" % ext)
             chooser.add_filter(filt)
         default = Gtk.FileFilter()
-        default.set_name(_("All Supported Formats"))
+        default.set_name(_("All supported formats"))
         default.add_custom(Gtk.FileFilterFlags.URI, GES.Formatter.can_load_uri, None)
         chooser.add_filter(default)
 
@@ -1121,11 +1121,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             chooser.set_current_name(project.name + ".tar")
 
         filt = Gtk.FileFilter()
-        filt.set_name("Tar Archive")
+        filt.set_name(_("Tar archive"))
         filt.add_pattern("*.tar")
         chooser.add_filter(filt)
         default = Gtk.FileFilter()
-        default.set_name(_("Detect Automatically"))
+        default.set_name(_("Detect automatically"))
         default.add_pattern("*")
         chooser.add_filter(default)
 
@@ -1136,7 +1136,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # which escapes all /'s in path!
             uri = "file://" + chooser.get_filename()
             format = chooser.get_filter().get_name()
-            if format == _("Detect Automatically"):
+            if format == _("Detect automatically"):
                 format = None
             self.log("uri:%s , format:%s", uri, format)
             ret = uri
@@ -1167,7 +1167,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                 filt.add_pattern("*.%s" % ext)
             chooser.add_filter(filt)
         default = Gtk.FileFilter()
-        default.set_name(_("Detect Automatically"))
+        default.set_name(_("Detect automatically"))
         default.add_pattern("*")
         chooser.add_filter(default)
 
@@ -1179,7 +1179,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             uri = "file://" + chooser.get_filename()
             self.log("uri:%s , format:%s", uri, format)
             format = chooser.get_filter().get_name()
-            if format == _("Detect Automatically"):
+            if format == _("Detect automatically"):
                 format = None
             self.settings.lastProjectFolder = chooser.get_current_folder()
             ret = uri
