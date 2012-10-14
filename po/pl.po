@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-14 17:47+0200\n"
-"PO-Revision-Date: 2012-10-14 17:48+0200\n"
+"POT-Creation-Date: 2012-10-14 20:04+0200\n"
+"PO-Revision-Date: 2012-10-14 20:05+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -172,7 +172,7 @@ msgstr "Zaimportuj"
 msgid "Remove selected clips from the project"
 msgstr "Usuwa zaznaczone klipy z projektu"
 
-#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:413
+#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:425
 msgid "_Remove from Project"
 msgstr "_Usuń z projektu"
 
@@ -184,7 +184,7 @@ msgstr "Właściwości klipu..."
 msgid "Insert the selected clips at the end of the timeline"
 msgstr "Wstawia zaznaczone klipy na koniec osi czasu"
 
-#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:416
+#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:428
 msgid "Insert at _End of Timeline"
 msgstr "Wstaw na końcu _osi czasu"
 
@@ -875,7 +875,7 @@ msgstr "efekt"
 
 #. FIXME Hacky, reimplement when avalaible in GES
 #: ../pitivi/mainwindow.py:135
-msgid "PiTiVi Native (XML)"
+msgid "PiTiVi native (XML)"
 msgstr "Natywny format programu PiTiVi (XML)"
 
 #: ../pitivi/mainwindow.py:145 ../pitivi/timeline/timeline.py:1113
@@ -1081,7 +1081,7 @@ msgid "Open File..."
 msgstr "Otwórz plik..."
 
 #: ../pitivi/mainwindow.py:709
-msgid "All Supported Formats"
+msgid "All supported formats"
 msgstr "Wszystkie obsługiwane formaty"
 
 #: ../pitivi/mainwindow.py:780
@@ -1160,7 +1160,17 @@ msgstr ""
 "Następujący plik został przeniesiony: \"<b>%s</b>\"\n"
 "Proszę podać jego nowe położenie:"
 
-#: ../pitivi/mainwindow.py:1002
+#. Translators: this is a format filter in a filechooser. Ex: "AVI files"
+#: ../pitivi/mainwindow.py:984
+#, python-format
+msgid "%s files"
+msgstr "Pliki %s"
+
+#: ../pitivi/mainwindow.py:988 ../pitivi/medialibrary.py:626
+msgid "All files"
+msgstr "Wszystkie pliki"
+
+#: ../pitivi/mainwindow.py:1015
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1171,26 +1181,30 @@ msgstr ""
 "\n"
 "Program PiTiVi obecnie nie obsługuje częściowych projektów."
 
-#: ../pitivi/mainwindow.py:1108
+#: ../pitivi/mainwindow.py:1121
 msgid "Export To..."
 msgstr "Wyeksportuj do..."
 
-#: ../pitivi/mainwindow.py:1119 ../pitivi/mainwindow.py:1160
-#: ../pitivi/mainwindow.py:1269 ../pitivi/render.py:426
+#: ../pitivi/mainwindow.py:1132 ../pitivi/mainwindow.py:1173
+#: ../pitivi/mainwindow.py:1282 ../pitivi/render.py:426
 #: ../pitivi/timeline/timeline.py:1321
 msgid "Untitled"
 msgstr "Bez tytułu"
 
-#: ../pitivi/mainwindow.py:1128 ../pitivi/mainwindow.py:1139
-#: ../pitivi/mainwindow.py:1170 ../pitivi/mainwindow.py:1182
-msgid "Detect Automatically"
+#: ../pitivi/mainwindow.py:1137
+msgid "Tar archive"
+msgstr "Archiwum tar"
+
+#: ../pitivi/mainwindow.py:1141 ../pitivi/mainwindow.py:1152
+#: ../pitivi/mainwindow.py:1183 ../pitivi/mainwindow.py:1195
+msgid "Detect automatically"
 msgstr "Wykrycie automatyczne"
 
-#: ../pitivi/mainwindow.py:1152 ../pitivi/timeline/timeline.py:1315
+#: ../pitivi/mainwindow.py:1165 ../pitivi/timeline/timeline.py:1315
 msgid "Save As..."
 msgstr "Zapisz jako..."
 
-#: ../pitivi/mainwindow.py:1222
+#: ../pitivi/mainwindow.py:1235
 msgid "Preview - click outside to close"
 msgstr "Podgląd - kliknięcie poza nim zamknie"
 
@@ -1212,60 +1226,68 @@ msgstr "<b>Rozdzielczość</b>: %d×%d"
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Czas trwania</b>: %s"
 
-#: ../pitivi/mediafilespreviewer.py:440 ../pitivi/medialibrary.py:853
+#: ../pitivi/mediafilespreviewer.py:440 ../pitivi/medialibrary.py:887
 msgid "Error while analyzing a file"
 msgstr "Wystąpił błąd podczas analizowania pliku"
 
-#: ../pitivi/medialibrary.py:308
+#: ../pitivi/medialibrary.py:320
 msgid "Icon"
 msgstr "Ikona"
 
-#: ../pitivi/medialibrary.py:317
+#: ../pitivi/medialibrary.py:329
 msgid "Information"
 msgstr "Informacje"
 
-#: ../pitivi/medialibrary.py:328
+#: ../pitivi/medialibrary.py:340
 msgid "Duration"
 msgstr "Czas trwania"
 
-#: ../pitivi/medialibrary.py:576
+#: ../pitivi/medialibrary.py:588
 msgid "Select One or More Files"
 msgstr "Wybór jednego lub więcej plików"
 
-#: ../pitivi/medialibrary.py:578
+#: ../pitivi/medialibrary.py:590
 msgid "Close after importing files"
 msgstr "Zamknięcie po zaimportowaniu plików"
 
-#: ../pitivi/medialibrary.py:605
+#: ../pitivi/medialibrary.py:611
+msgid "Supported file formats"
+msgstr "Obsługiwane formaty plików"
+
+#: ../pitivi/medialibrary.py:617
+msgid "All known file formats"
+msgstr "Wszystkie znane formaty plików"
+
+#: ../pitivi/medialibrary.py:639
 #, python-format
 msgid "Importing clip %(current_clip)d of %(total)d"
 msgstr "Importowanie klipu %(current_clip)d z %(total)d"
 
-#: ../pitivi/medialibrary.py:707
+#: ../pitivi/medialibrary.py:741
 msgid "Errors occurred while importing."
 msgstr "Wystąpiły błędy podczas importowania."
 
-#: ../pitivi/medialibrary.py:708
+#: ../pitivi/medialibrary.py:742
 msgid "View errors"
 msgstr "Wyświetl błędy"
 
-#: ../pitivi/medialibrary.py:710
+#: ../pitivi/medialibrary.py:744
 msgid "An error occurred while importing."
 msgstr "Wystąpił błąd podczas importowania."
 
-#: ../pitivi/medialibrary.py:711
+#: ../pitivi/medialibrary.py:745
 msgid "View error"
 msgstr "Wyświetl błąd"
 
-#: ../pitivi/medialibrary.py:850
+#: ../pitivi/medialibrary.py:884
 msgid "Error while analyzing files"
 msgstr "Wystąpił błąd podczas analizowania plików"
 
-#: ../pitivi/medialibrary.py:851
+#: ../pitivi/medialibrary.py:885
 msgid "The following files can not be used with PiTiVi."
 msgstr "Następujące pliki nie mogą być używane w programie PiTiVi."
 
-#: ../pitivi/medialibrary.py:854
+#: ../pitivi/medialibrary.py:888
 msgid "The following file can not be used with PiTiVi."
 msgstr "Następujący plik nie może być używane w programie PiTiVi."
 
