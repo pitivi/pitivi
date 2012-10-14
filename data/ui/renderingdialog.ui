@@ -87,11 +87,9 @@
             <child>
               <object class="GtkButton" id="closebutton">
                 <property name="label">gtk-close</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <signal name="clicked" handler="_closeButtonClickedCb" swapped="no"/>
               </object>
@@ -104,11 +102,11 @@
             <child>
               <object class="GtkButton" id="render_button">
                 <property name="label" translatable="yes">Render</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_underline">True</property>
                 <property name="use_stock">True</property>
                 <signal name="clicked" handler="_renderButtonClickedCb" swapped="no"/>
@@ -229,12 +227,10 @@
                     <property name="icon_size">1</property>
                     <child>
                       <object class="GtkToolButton" id="add_render_preset_button">
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="tooltip_text" translatable="yes">Create a new preset</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="icon_name">list-add-symbolic</property>
                         <signal name="clicked" handler="_addRenderPresetButtonClickedCb" swapped="no"/>
                       </object>
@@ -245,13 +241,11 @@
                     </child>
                     <child>
                       <object class="GtkToolButton" id="remove_render_preset_button">
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="tooltip_text" translatable="yes">Remove the selected preset</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="icon_name">list-remove-symbolic</property>
                         <signal name="clicked" handler="_removeRenderPresetButtonClickedCb" swapped="no"/>
                       </object>
@@ -262,12 +256,10 @@
                     </child>
                     <child>
                       <object class="GtkToolButton" id="save_render_preset_button">
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="tooltip_text" translatable="yes">Save changes to the currently selected preset</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="icon_name">document-save-symbolic</property>
                         <signal name="clicked" handler="_saveRenderPresetButtonClickedCb" swapped="no"/>
                       </object>
@@ -403,10 +395,7 @@
                           <object class="GtkEntry" id="fileentry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="invisible_char">●</property>
-                            <property name="invisible_char_set">True</property>
-                            <property name="primary_icon_activatable">False</property>
-                            <property name="secondary_icon_activatable">False</property>
+                            <property name="activates_default">True</property>
                             <child internal-child="accessible">
                               <object class="AtkObject" id="fileentry-atkobject">
                                 <property name="AtkObject::accessible-name" translatable="yes">File name</property>
@@ -431,11 +420,9 @@
                     <child>
                       <object class="GtkCheckButton" id="selected_only_button">
                         <property name="label" translatable="yes">Render only the selected clips</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="xalign">0</property>
                         <property name="draw_indicator">True</property>
                       </object>
@@ -448,10 +435,8 @@
                     <child>
                       <object class="GtkCheckButton" id="draft_button">
                         <property name="label" translatable="yes">Draft (no special effects, single pass)</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="xalign">0</property>
                         <property name="draw_indicator">True</property>
                       </object>
@@ -515,11 +500,9 @@
                             <child>
                               <object class="GtkButton" id="video_settings_button">
                                 <property name="label" translatable="yes">Advanced...</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="_videoSettingsButtonClickedCb" swapped="no"/>
                               </object>
                               <packing>
@@ -623,11 +606,9 @@
                             <child>
                               <object class="GtkButton" id="project_settings_button">
                                 <property name="label" translatable="yes">Edit Project Settings...</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="_projectSettingsButtonClickedCb" swapped="no"/>
                               </object>
                               <packing>
@@ -674,11 +655,9 @@
                         <child>
                           <object class="GtkCheckButton" id="video_output_checkbutton">
                             <property name="label" translatable="yes">Enable video</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="xalign">0</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
@@ -754,11 +733,9 @@
                             <child>
                               <object class="GtkButton" id="audio_settings_button">
                                 <property name="label" translatable="yes">Advanced...</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="_audioSettingsButtonClickedCb" swapped="no"/>
                               </object>
                               <packing>
@@ -888,11 +865,9 @@
                         <child>
                           <object class="GtkCheckButton" id="audio_output_checkbutton">
                             <property name="label" translatable="yes">Enable audio</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="xalign">0</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
