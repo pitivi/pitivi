@@ -93,6 +93,18 @@ ui = '''
 </ui>
 '''
 
+# This whitelist is made from personal knowledge of file extensions in the wild,
+# from gst-inspect |grep demux,
+# http://en.wikipedia.org/wiki/Comparison_of_container_formats and
+# http://en.wikipedia.org/wiki/List_of_file_formats#Video
+SUPPORTED_FILE_FORMATS = ("3g2", "3gp", "asf", "avi", "divx", "dv", "f4v", "flv", "m4a", "m4b", "m4p", "m4r", "m4v", "mj2", "mkv", "mov", "mpeg", "mpg", "mve", "mxf", "ogv", "qt", "webm", "wmv",
+    # Don't forget audio formats
+    "aac", "aiff", "ape", "au", "flac", "mka", "mp2", "mp3", "oga", "ogg", "opus", "spx", "wav", "wma",
+    # ...and image formats
+    "jpg", "jpeg", "jp2", "j2k", "jpf", "jpm", "jpx", "png", "pnm", "svg",)
+# Stuff that we're not too confident about but might improve eventually:
+OTHER_KNOWN_FORMATS = ("ac3", "m2ts", "mk3d", "mts", "ps", "raw", "rm", "rmvb", "ts", "vob",)
+
 
 class MediaLibraryError(Exception):
     pass
@@ -594,6 +606,28 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._importDialog.set_preview_widget(pw)
         self._importDialog.set_use_preview_label(False)
         self._importDialog.connect('update-preview', pw.add_preview_request)
+        # Filter for the "known good" formats by default
+        filt_supported = Gtk.FileFilter()
+        filt_supported.set_name(_("Supported file formats"))
+        for extension in SUPPORTED_FILE_FORMATS:
+            filt_supported.add_pattern("*." + extension)
+            filt_supported.add_pattern("*." + extension.upper())
+        # Also allow showing known but not reliable demuxers
+        filt_known = Gtk.FileFilter()
+        filt_known.set_name(_("All known file formats"))
+        for extension in SUPPORTED_FILE_FORMATS:
+            filt_known.add_pattern("*." + extension)
+            filt_known.add_pattern("*." + extension.upper())
+        for extension in OTHER_KNOWN_FORMATS:
+            filt_known.add_pattern("*." + extension)
+            filt_known.add_pattern("*." + extension.upper())
+        # ...and allow the user to override our whitelists
+        default = Gtk.FileFilter()
+        default.set_name(_("All files"))
+        default.add_pattern("*")
+        self._importDialog.add_filter(filt_supported)
+        self._importDialog.add_filter(filt_known)
+        self._importDialog.add_filter(default)
         self._importDialog.show()
 
     def _updateProgressbar(self):
