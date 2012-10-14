@@ -968,7 +968,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         dialog.get_content_area().pack_start(hbox, False, False, 0)
         hbox.show_all()
 
-        # TODO: use a Gtk FileFilter to only show files with the same ext/mime
         chooser = Gtk.FileChooserWidget(action=Gtk.FileChooserAction.OPEN)
         chooser.set_select_multiple(False)
         pw = PreviewWidget(self.app)
@@ -976,6 +975,20 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         chooser.set_use_preview_label(False)
         chooser.connect('update-preview', pw.add_preview_request)
         chooser.set_current_folder(self.settings.lastProjectFolder)
+        # Use a Gtk FileFilter to only show files with the same extension
+        # Note that splitext gives us the extension with the ".", no need to
+        # add it inside the filter string.
+        filename, extension = os.path.splitext(tfs.get_uri())
+        filter = Gtk.FileFilter()
+        # Translators: this is a format filter in a filechooser. Ex: "AVI files"
+        filter.set_name(_("%s files" % extension))
+        filter.add_pattern("*" + extension.lower())
+        filter.add_pattern("*" + extension.upper())
+        default = Gtk.FileFilter()
+        default.set_name(_("All files"))
+        default.add_pattern("*")
+        chooser.add_filter(filter)
+        chooser.add_filter(default)
         dialog.get_content_area().pack_start(chooser, True, True, 0)
         chooser.show()
 
