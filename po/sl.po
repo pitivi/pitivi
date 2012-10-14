@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-10-14 03:36+0000\n"
+"POT-Creation-Date: 2012-10-14 16:39+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -172,7 +172,7 @@ msgid "Remove selected clips from the project"
 msgstr "Odstrani izbrane posnetke iz projekta"
 
 #: ../data/ui/medialibrary.ui.h:4
-#: ../pitivi/medialibrary.py:413
+#: ../pitivi/medialibrary.py:425
 msgid "_Remove from Project"
 msgstr "_Odstrani iz projekta"
 
@@ -185,7 +185,7 @@ msgid "Insert the selected clips at the end of the timeline"
 msgstr "Vstavi izbrane posnetke na konec časovnice"
 
 #: ../data/ui/medialibrary.ui.h:7
-#: ../pitivi/medialibrary.py:416
+#: ../pitivi/medialibrary.py:428
 msgid "Insert at _End of Timeline"
 msgstr "Vstavi na _koncu časovnice"
 
@@ -820,8 +820,8 @@ msgstr "učinek"
 
 #. FIXME Hacky, reimplement when avalaible in GES
 #: ../pitivi/mainwindow.py:135
-msgid "PiTiVi Native (XML)"
-msgstr "Privzeti PiTiVi zapis (XML)"
+msgid "PiTiVi native (XML)"
+msgstr "Izvorni PiTiVi zapis (XML)"
 
 #: ../pitivi/mainwindow.py:145
 #: ../pitivi/timeline/timeline.py:1113
@@ -1026,7 +1026,7 @@ msgid "Open File..."
 msgstr "Odpri datoteko ..."
 
 #: ../pitivi/mainwindow.py:709
-msgid "All Supported Formats"
+msgid "All supported formats"
 msgstr "Vse podprte vrste datotek"
 
 #: ../pitivi/mainwindow.py:780
@@ -1102,7 +1102,18 @@ msgstr ""
 "Datoteka je bila premaknjena: \"<b>%s</b>\"\n"
 "Navedite njeno novo mesto:"
 
-#: ../pitivi/mainwindow.py:1002
+#. Translators: this is a format filter in a filechooser. Ex: "AVI files"
+#: ../pitivi/mainwindow.py:984
+#, python-format
+msgid "%s files"
+msgstr "Datoteke %s"
+
+#: ../pitivi/mainwindow.py:988
+#: ../pitivi/medialibrary.py:626
+msgid "All files"
+msgstr "Vse datoteke"
+
+#: ../pitivi/mainwindow.py:1015
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1113,31 +1124,35 @@ msgstr ""
 "\n"
 "PiTiVi trenutno ne podpira delnih projektov."
 
-#: ../pitivi/mainwindow.py:1108
+#: ../pitivi/mainwindow.py:1121
 msgid "Export To..."
 msgstr "Izvozi v ..."
 
-#: ../pitivi/mainwindow.py:1119
-#: ../pitivi/mainwindow.py:1160
-#: ../pitivi/mainwindow.py:1269
+#: ../pitivi/mainwindow.py:1132
+#: ../pitivi/mainwindow.py:1173
+#: ../pitivi/mainwindow.py:1282
 #: ../pitivi/render.py:426
 #: ../pitivi/timeline/timeline.py:1321
 msgid "Untitled"
 msgstr "Neimenovano"
 
-#: ../pitivi/mainwindow.py:1128
-#: ../pitivi/mainwindow.py:1139
-#: ../pitivi/mainwindow.py:1170
-#: ../pitivi/mainwindow.py:1182
-msgid "Detect Automatically"
+#: ../pitivi/mainwindow.py:1137
+msgid "Tar archive"
+msgstr "Datoteka arhiva Tar"
+
+#: ../pitivi/mainwindow.py:1141
+#: ../pitivi/mainwindow.py:1152
+#: ../pitivi/mainwindow.py:1183
+#: ../pitivi/mainwindow.py:1195
+msgid "Detect automatically"
 msgstr "Samodejno zaznaj"
 
-#: ../pitivi/mainwindow.py:1152
+#: ../pitivi/mainwindow.py:1165
 #: ../pitivi/timeline/timeline.py:1315
 msgid "Save As..."
 msgstr "Shrani kot ..."
 
-#: ../pitivi/mainwindow.py:1222
+#: ../pitivi/mainwindow.py:1235
 msgid "Preview - click outside to close"
 msgstr "Predogled - kliknite zunaj okvira za izhod"
 
@@ -1161,60 +1176,68 @@ msgid "<b>Duration</b>: %s"
 msgstr "<b>Trajanje</b>: %s"
 
 #: ../pitivi/mediafilespreviewer.py:440
-#: ../pitivi/medialibrary.py:853
+#: ../pitivi/medialibrary.py:887
 msgid "Error while analyzing a file"
 msgstr "Napaka med preučevanjem datoteke"
 
-#: ../pitivi/medialibrary.py:308
+#: ../pitivi/medialibrary.py:320
 msgid "Icon"
 msgstr "Ikona"
 
-#: ../pitivi/medialibrary.py:317
+#: ../pitivi/medialibrary.py:329
 msgid "Information"
 msgstr "Podatki"
 
-#: ../pitivi/medialibrary.py:328
+#: ../pitivi/medialibrary.py:340
 msgid "Duration"
 msgstr "Trajanje"
 
-#: ../pitivi/medialibrary.py:576
+#: ../pitivi/medialibrary.py:588
 msgid "Select One or More Files"
 msgstr "Izbor ene ali več datotek"
 
-#: ../pitivi/medialibrary.py:578
+#: ../pitivi/medialibrary.py:590
 msgid "Close after importing files"
 msgstr "Zapri po uvažanju datotek"
 
-#: ../pitivi/medialibrary.py:605
+#: ../pitivi/medialibrary.py:611
+msgid "Supported file formats"
+msgstr "Vse podprte vrste datotek"
+
+#: ../pitivi/medialibrary.py:617
+msgid "All known file formats"
+msgstr "Vse znane vrste datotek"
+
+#: ../pitivi/medialibrary.py:639
 #, python-format
 msgid "Importing clip %(current_clip)d of %(total)d"
 msgstr "Urejanje posnetka %(current_clip)d od %(total)d"
 
-#: ../pitivi/medialibrary.py:707
+#: ../pitivi/medialibrary.py:741
 msgid "Errors occurred while importing."
 msgstr "Med uvažanjem je prišlo do napak."
 
-#: ../pitivi/medialibrary.py:708
+#: ../pitivi/medialibrary.py:742
 msgid "View errors"
 msgstr "Napake ogleda"
 
-#: ../pitivi/medialibrary.py:710
+#: ../pitivi/medialibrary.py:744
 msgid "An error occurred while importing."
 msgstr "Med uvažanjem je prišlo do napake."
 
-#: ../pitivi/medialibrary.py:711
+#: ../pitivi/medialibrary.py:745
 msgid "View error"
 msgstr "Napaka ogleda"
 
-#: ../pitivi/medialibrary.py:850
+#: ../pitivi/medialibrary.py:884
 msgid "Error while analyzing files"
 msgstr "Napaka med preučevanjem datotek"
 
-#: ../pitivi/medialibrary.py:851
+#: ../pitivi/medialibrary.py:885
 msgid "The following files can not be used with PiTiVi."
 msgstr "S PiTiVi ni mogoče uporabiti naslednjih datotek."
 
-#: ../pitivi/medialibrary.py:854
+#: ../pitivi/medialibrary.py:888
 msgid "The following file can not be used with PiTiVi."
 msgstr "PiTiVi ne more uporabiti naslednje datoteke."
 
