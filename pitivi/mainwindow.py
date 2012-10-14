@@ -940,7 +940,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         thumb_path_normal = thumb_dir + thumbnail_hash + ".png"
         if os.path.exists(thumb_path_normal):
             self.debug("A thumbnail file was found for %s" % tfs.get_uri())
-            thumbnail = Gtk.image_new_from_file(thumb_path_normal)
+            thumbnail = Gtk.Image.new_from_file(thumb_path_normal)
             thumbnail.set_padding(0, SPACING)
             hbox.pack_start(thumbnail, False, False, 0)
 
