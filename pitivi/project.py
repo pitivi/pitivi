@@ -171,7 +171,12 @@ class ProjectManager(Signallable, Loggable):
         if self.formatter.load_from_uri(timeline, uri):
             self.current.connect("project-changed", self._projectChangedCb)
             return True
-        self.warn("Could not load project %s", uri)
+        self.emit("new-project-failed", uri,
+            _('This might be due to a bug or an unsupported project file format. '
+                'If you were trying to add a media file to your project, '
+                'use the "Import" button instead.'))
+        # Reset projectManager and disconnect all the signals:
+        self.newBlankProject()
         return False
 
     def _restoreFromBackupDialog(self, time_diff):
@@ -354,7 +359,13 @@ class ProjectManager(Signallable, Loggable):
             return False
 
         self.emit("project-closed", self.current)
-        self.current.disconnect_by_function(self._projectChangedCb)
+        # We should never choke on silly stuff like disconnecting signals
+        # that were already disconnected. It blocks the UI for nothing.
+        # This can easily happen when a project load/creation failed.
+        try:
+            self.current.disconnect_by_function(self._projectChangedCb)
+        except Exception:
+            self.debug("Tried disconnecting signals, but they were not connected")
         self._cleanBackup(self.current.uri)
         self.current.release()
         self.current = None
