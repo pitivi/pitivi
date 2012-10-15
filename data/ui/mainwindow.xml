@@ -21,9 +21,6 @@
       <menuitem action="Preferences" />
     </menu>
     <menu action="View">
-      <menuitem action="ShowHideMainToolbar" />
-      <menuitem action="ShowHideTimelineToolbar" />
-      <separator />
       <placeholder name="Timeline" />
       <separator />
       <menuitem action="FullScreen" />

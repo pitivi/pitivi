@@ -93,14 +93,6 @@ GlobalSettings.addConfigOption('lastProjectFolder',
     key="last-folder",
     environment="PITIVI_PROJECT_FOLDER",
     default=os.path.expanduser("~"))
-GlobalSettings.addConfigOption('mainWindowShowMainToolbar',
-    section="main-window",
-    key="show-main-toolbar",
-    default=True)
-GlobalSettings.addConfigOption('mainWindowShowTimelineToolbar',
-    section="main-window",
-    key="show-timeline-toolbar",
-    default=True)
 GlobalSettings.addConfigSection('export')
 GlobalSettings.addConfigOption('lastExportFolder',
                                 section='export',
@@ -313,13 +305,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         toggleactions = [
             ("FullScreen", Gtk.STOCK_FULLSCREEN, None,
             "F11", _("View the main window on the whole screen"), self._fullScreenCb),
-
-            ("ShowHideMainToolbar", None, _("Main Toolbar"),
-            None, None, self._showHideMainToolBar,
-                self.settings.mainWindowShowMainToolbar),
-            ("ShowHideTimelineToolbar", None, _("Timeline Toolbar"),
-            None, None, self._showHideTimelineToolbar,
-                self.settings.mainWindowShowTimelineToolbar),
         ]
 
         self.main_actions = Gtk.ActionGroup("mainwindow")
@@ -479,10 +464,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.maximize()
         if allow_full_screen and self.settings.mainWindowFullScreen:
             self.setFullScreen(True)
-        if not self.settings.mainWindowShowMainToolbar:
-            self.toolbar.props.visible = False
-        if not self.settings.mainWindowShowTimelineToolbar:
-            ttb.props.visible = False
 
     def switchContextTab(self, tab=None):
         """
@@ -612,10 +593,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.settings.mainWindowHPanePosition = self.secondhpaned.get_position()
         self.settings.mainWindowMainHPanePosition = self.mainhpaned.get_position()
         self.settings.mainWindowVPanePosition = self.vpaned.get_position()
-        mtb = self.toggle_actions.get_action("ShowHideMainToolbar")
-        ttb = self.toggle_actions.get_action("ShowHideTimelineToolbar")
-        self.settings.mainWindowShowMainToolbar = mtb.props.active
-        self.settings.mainWindowShowTimelineToolbar = ttb.props.active
 
     def _mediaLibraryPlayCb(self, medialibrary, uri):
         self._viewUri(uri)
@@ -682,14 +659,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _fullScreenCb(self, unused_action):
         self.setFullScreen(not self.is_fullscreen)
-
-    def _showHideMainToolBar(self, action):
-        self.uimanager.get_widget("/MainToolBar").props.visible = \
-            action.props.active
-
-    def _showHideTimelineToolbar(self, action):
-        self.uimanager.get_widget("/TimelineToolBar").props.visible = \
-            action.props.active
 
     def _userManualCb(self, unused_action):
         show_user_manual()
