@@ -14,8 +14,8 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-09-18 03:21+0000\n"
-"PO-Revision-Date: 2012-09-26 16:34+0200\n"
+"POT-Creation-Date: 2012-10-15 20:17+0000\n"
+"PO-Revision-Date: 2012-10-16 11:11+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -172,7 +172,7 @@ msgstr "Importar"
 msgid "Remove selected clips from the project"
 msgstr "Quitar los clips seleccionados del proyecto"
 
-#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:413
+#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:425
 msgid "_Remove from Project"
 msgstr "_Quitar del proyecto"
 
@@ -184,7 +184,7 @@ msgstr "Propiedades del clip…"
 msgid "Insert the selected clips at the end of the timeline"
 msgstr "Insertar los clips seleccionados al final de la cronología"
 
-#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:416
+#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:428
 msgid "Insert at _End of Timeline"
 msgstr "Insertar al _final de la cronología"
 
@@ -253,7 +253,7 @@ msgstr "PAL estándar"
 msgid "25 FPS"
 msgstr "25 FPS"
 
-#: ../data/ui/projectsettings.ui.h:4 ../pitivi/mainwindow.py:278
+#: ../data/ui/projectsettings.ui.h:4 ../pitivi/mainwindow.py:269
 msgid "Project Settings"
 msgstr "Ajustes del proyecto"
 
@@ -289,8 +289,7 @@ msgstr "Proporción de aspecto de los píxeles"
 msgid "x"
 msgstr "x"
 
-#. Translators: This is an action, the title of a button
-#: ../data/ui/projectsettings.ui.h:14 ../pitivi/mainwindow.py:149
+#: ../data/ui/projectsettings.ui.h:14
 msgid "Link"
 msgstr "Unir"
 
@@ -357,7 +356,7 @@ msgstr "AAC"
 msgid "6 channels (5.1)"
 msgstr "6 canales (5.1)"
 
-#: ../data/ui/renderingdialog.ui.h:7 ../pitivi/mainwindow.py:144
+#: ../data/ui/renderingdialog.ui.h:7 ../pitivi/mainwindow.py:136
 msgid "Render"
 msgstr "Renderizar"
 
@@ -786,17 +785,14 @@ msgid "Additional video effects"
 msgstr "Efectos de vídeo adicionales"
 
 #: ../pitivi/check.py:189
-#| msgid "Additional multimedia codecs through the FFmpeg library"
 msgid "Additional multimedia codecs through the Libav library"
 msgstr "Códecs multimedia adicionales mediante la biblioteca Libav"
 
 #: ../pitivi/check.py:200
-#| msgid "Could not import GStreamer Editing Services "
 msgid "Could not initialize GStreamer Editing Services"
 msgstr "No se pudieron inicializar los servicios de edición de GStreamer"
 
 #: ../pitivi/check.py:201
-#| msgid "Make sure you have GStreamer Editing Services installed."
 msgid "Make sure you have the gst-editing-services installed."
 msgstr "Asegúrese de que tiene instalado «gst-editing-services»."
 
@@ -870,260 +866,250 @@ msgid "effect"
 msgstr "efecto"
 
 #. FIXME Hacky, reimplement when avalaible in GES
-#: ../pitivi/mainwindow.py:135
-msgid "PiTiVi Native (XML)"
+#: ../pitivi/mainwindow.py:127
+#| msgid "PiTiVi Native (XML)"
+msgid "PiTiVi native (XML)"
 msgstr "PiTiVi nativo (XML)"
 
-#: ../pitivi/mainwindow.py:145 ../pitivi/timeline/timeline.py:1113
+#: ../pitivi/mainwindow.py:137 ../pitivi/timeline/timeline.py:1101
 msgid "Split"
 msgstr "Dividir"
 
-#: ../pitivi/mainwindow.py:146
+#: ../pitivi/mainwindow.py:138
 msgid "Keyframe"
 msgstr "Fotograma clave"
 
-#: ../pitivi/mainwindow.py:147
-msgid "Unlink"
-msgstr "Desunir"
-
-#: ../pitivi/mainwindow.py:150
+#: ../pitivi/mainwindow.py:139 ../pitivi/timeline/timeline.py:1086
 msgid "Ungroup"
 msgstr "Desagrupar"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/mainwindow.py:152
+#: ../pitivi/mainwindow.py:141 ../pitivi/timeline/timeline.py:1090
 msgid "Group"
 msgstr "Agrupar"
 
-#: ../pitivi/mainwindow.py:153
+#: ../pitivi/mainwindow.py:142 ../pitivi/timeline/timeline.py:1093
 msgid "Align"
 msgstr "Alinear"
 
-#: ../pitivi/mainwindow.py:261
+#: ../pitivi/mainwindow.py:252
 msgid "Create a new project"
 msgstr "Crear un proyecto nuevo"
 
-#: ../pitivi/mainwindow.py:263
+#: ../pitivi/mainwindow.py:254
 msgid "_Open..."
 msgstr "_Abrir…"
 
-#: ../pitivi/mainwindow.py:264
+#: ../pitivi/mainwindow.py:255
 msgid "Open an existing project"
 msgstr "Abrir un proyecto existente"
 
-#: ../pitivi/mainwindow.py:267 ../pitivi/mainwindow.py:270
+#: ../pitivi/mainwindow.py:258 ../pitivi/mainwindow.py:261
 msgid "Save the current project"
 msgstr "Guardar el proyecto actual"
 
-#: ../pitivi/mainwindow.py:269
+#: ../pitivi/mainwindow.py:260
 msgid "Save _As..."
 msgstr "Guardar co_mo…"
 
-#: ../pitivi/mainwindow.py:273
+#: ../pitivi/mainwindow.py:264
 msgid "Reload the current project"
 msgstr "Recargar el proyecto actual"
 
-#: ../pitivi/mainwindow.py:275
+#: ../pitivi/mainwindow.py:266
 msgid "Export as Archive..."
 msgstr "Exportar como archivo…"
 
-#: ../pitivi/mainwindow.py:276
+#: ../pitivi/mainwindow.py:267
 msgid "Export the current project"
 msgstr "Exportar el proyecto actual"
 
-#: ../pitivi/mainwindow.py:279
+#: ../pitivi/mainwindow.py:270
 msgid "Edit the project settings"
 msgstr "Editar los ajustes del proyecto"
 
-#: ../pitivi/mainwindow.py:281
+#: ../pitivi/mainwindow.py:272
 msgid "_Render..."
 msgstr "_Renderizar…"
 
-#: ../pitivi/mainwindow.py:282
+#: ../pitivi/mainwindow.py:273
 msgid "Export your project as a finished movie"
 msgstr "Exportar su proyecto como película terminada"
 
-#: ../pitivi/mainwindow.py:285
+#: ../pitivi/mainwindow.py:276
 msgid "Undo the last operation"
 msgstr "Deshacer la última operación"
 
-#: ../pitivi/mainwindow.py:288
+#: ../pitivi/mainwindow.py:279
 msgid "Redo the last operation that was undone"
 msgstr "Rehacer la última operación deshecha"
 
-#: ../pitivi/mainwindow.py:293
+#: ../pitivi/mainwindow.py:284
 msgid "Remove layer"
 msgstr "Quitar capa"
 
-#: ../pitivi/mainwindow.py:294
+#: ../pitivi/mainwindow.py:285
 msgid "Remove the selected layer from the project"
 msgstr "Quitar la capa seleccionada del proyecto"
 
-#: ../pitivi/mainwindow.py:299
+#: ../pitivi/mainwindow.py:290
 #, python-format
 msgid "Information about %s"
 msgstr "Información acerca de %s"
 
-#: ../pitivi/mainwindow.py:301
+#: ../pitivi/mainwindow.py:292
 msgid "User Manual"
 msgstr "Manual del usuario"
 
 #. Set up the toplevel menu items for translation
-#: ../pitivi/mainwindow.py:305
+#: ../pitivi/mainwindow.py:296
 msgid "_Project"
 msgstr "_Proyecto"
 
-#: ../pitivi/mainwindow.py:306
+#: ../pitivi/mainwindow.py:297
 msgid "_Edit"
 msgstr "_Editar"
 
-#: ../pitivi/mainwindow.py:307
+#: ../pitivi/mainwindow.py:298
 msgid "_View"
 msgstr "_Ver"
 
-#: ../pitivi/mainwindow.py:308
+#: ../pitivi/mainwindow.py:299
 msgid "_Library"
 msgstr "_Biblioteca"
 
-#: ../pitivi/mainwindow.py:309
+#: ../pitivi/mainwindow.py:300
 msgid "_Timeline"
 msgstr "Crono_logía"
 
-#: ../pitivi/mainwindow.py:310
+#: ../pitivi/mainwindow.py:301
 msgid "Previe_w"
 msgstr "Revisa_r"
 
-#: ../pitivi/mainwindow.py:311
+#: ../pitivi/mainwindow.py:302
 msgid "_Help"
 msgstr "Ay_uda"
 
-#: ../pitivi/mainwindow.py:316
+#: ../pitivi/mainwindow.py:307
 msgid "View the main window on the whole screen"
 msgstr "Ver la ventana principal en la pantalla completa"
 
-#: ../pitivi/mainwindow.py:318
-msgid "Main Toolbar"
-msgstr "Barra de herramientas principal"
-
-#: ../pitivi/mainwindow.py:321
-msgid "Timeline Toolbar"
-msgstr "Barra de herramientas de la cronología"
-
-#: ../pitivi/mainwindow.py:328 ../pitivi/viewer.py:374
+#: ../pitivi/mainwindow.py:312 ../pitivi/viewer.py:374
 msgid "Undock Viewer"
 msgstr "Desbloquear visor"
 
-#: ../pitivi/mainwindow.py:329
+#: ../pitivi/mainwindow.py:313
 msgid "Put the viewer in a separate window"
 msgstr "Poner el visor en una ventana separada"
 
-#: ../pitivi/mainwindow.py:403
+#: ../pitivi/mainwindow.py:401
 msgid "Media Library"
 msgstr "Biblioteca multimedia"
 
-#: ../pitivi/mainwindow.py:404
+#: ../pitivi/mainwindow.py:402
 msgid "Effect Library"
 msgstr "Biblioteca de efectos"
 
-#: ../pitivi/mainwindow.py:417
+#: ../pitivi/mainwindow.py:412
 msgid "Clip configuration"
 msgstr "Configuraciones del vídeo"
 
-#: ../pitivi/mainwindow.py:418
+#: ../pitivi/mainwindow.py:413
 msgid "Transitions"
 msgstr "Transiciones"
 
-#: ../pitivi/mainwindow.py:419
+#: ../pitivi/mainwindow.py:414
 msgid "Title editor"
 msgstr "Editor de títulos"
 
-#: ../pitivi/mainwindow.py:646
+#: ../pitivi/mainwindow.py:673
 msgid "Development version"
 msgstr "Versión de desarrollo"
 
-#: ../pitivi/mainwindow.py:654 ../pitivi/dialogs/startupwizard.py:160
+#: ../pitivi/mainwindow.py:681 ../pitivi/dialogs/startupwizard.py:160
 #, python-format
 msgid "PiTiVi %s is available."
 msgstr "PiTiVi %s está disponible."
 
-#: ../pitivi/mainwindow.py:661
+#: ../pitivi/mainwindow.py:688
 msgid "Current maintainers:"
 msgstr "Mantenedores actuales:"
 
-#: ../pitivi/mainwindow.py:665
+#: ../pitivi/mainwindow.py:692
 msgid "Past maintainers:"
 msgstr "Mantenedores anteriores:"
 
-#: ../pitivi/mainwindow.py:670
+#: ../pitivi/mainwindow.py:697
 msgid "Contributors:\n"
 msgstr "Colaboradores:\n"
 
 #. Translators: keep the %s at the end of the 1st line
-#: ../pitivi/mainwindow.py:677
+#: ../pitivi/mainwindow.py:704
 #, python-format
 msgid "The list of contributors on Ohloh %s\n"
 msgstr "La lista de colaboradores en Ohloh %s\n"
 
-#: ../pitivi/mainwindow.py:681
+#: ../pitivi/mainwindow.py:708
 msgid "translator-credits"
 msgstr "Daniel Mustieles <daniel.mustieles@gmail.com>, 2011"
 
-#: ../pitivi/mainwindow.py:693
+#: ../pitivi/mainwindow.py:720
 msgid "Open File..."
 msgstr "Abrir archivo…"
 
-#: ../pitivi/mainwindow.py:709
-msgid "All Supported Formats"
+#: ../pitivi/mainwindow.py:736
+#| msgid "All Supported Formats"
+msgid "All supported formats"
 msgstr "Todos los formatos soportados"
 
-#: ../pitivi/mainwindow.py:780
+#: ../pitivi/mainwindow.py:807
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "No se pudo guardar el proyecto «%s»"
 
-#: ../pitivi/mainwindow.py:781
+#: ../pitivi/mainwindow.py:808
 msgid "Error Saving Project"
 msgstr "Error al guardar el proyecto"
 
-#: ../pitivi/mainwindow.py:809
+#: ../pitivi/mainwindow.py:836
 msgid "Close without saving"
 msgstr "Cerrar sin guardar"
 
-#: ../pitivi/mainwindow.py:822
+#: ../pitivi/mainwindow.py:849
 msgid "Save changes to the current project before closing?"
 msgstr "¿Guardar el proyecto actual antes de cerrar?"
 
-#: ../pitivi/mainwindow.py:834
+#: ../pitivi/mainwindow.py:861
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "Si no guarda se perderán sus cambios desde el último %s."
 
-#: ../pitivi/mainwindow.py:838
+#: ../pitivi/mainwindow.py:865
 msgid "If you don't save, your changes will be lost."
 msgstr "Si no guarda sus cambios se perderán"
 
-#: ../pitivi/mainwindow.py:889
+#: ../pitivi/mainwindow.py:916
 msgid "Do you want to reload current project?"
 msgstr "¿Quiere recargar el proyecto actual?"
 
-#: ../pitivi/mainwindow.py:893
+#: ../pitivi/mainwindow.py:920
 msgid "Revert to saved project"
 msgstr "Revertir al proyecto guardado"
 
-#: ../pitivi/mainwindow.py:896
+#: ../pitivi/mainwindow.py:923
 msgid "All unsaved changes will be lost."
 msgstr "Se perderán todos los cambios sin guardar."
 
-#: ../pitivi/mainwindow.py:911
+#: ../pitivi/mainwindow.py:938
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "No se pudo cargar el proyecto «%s»"
 
-#: ../pitivi/mainwindow.py:912
+#: ../pitivi/mainwindow.py:939
 msgid "Error Loading Project"
 msgstr "Error al cargar el proyecto"
 
-#: ../pitivi/mainwindow.py:920
+#: ../pitivi/mainwindow.py:947
 msgid "Locate missing file..."
 msgstr "Encontrar archivo perdido…"
 
@@ -1140,7 +1126,7 @@ msgstr "Encontrar archivo perdido…"
 #. text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
 #. '\nPlease specify its new location:'
 #. % (info_name(info), length))
-#: ../pitivi/mainwindow.py:961
+#: ../pitivi/mainwindow.py:988
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
@@ -1149,7 +1135,18 @@ msgstr ""
 "El siguiente archivo se ha movido: «<b>%s</b>»\n"
 "Especifique su nueva ubicación:"
 
-#: ../pitivi/mainwindow.py:1002
+#. Translators: this is a format filter in a filechooser. Ex: "AVI files"
+#: ../pitivi/mainwindow.py:1011
+#, python-format
+msgid "%s files"
+msgstr "Archivos %s"
+
+#: ../pitivi/mainwindow.py:1015 ../pitivi/medialibrary.py:626
+#| msgid "All effects"
+msgid "All files"
+msgstr "Todos los archivos"
+
+#: ../pitivi/mainwindow.py:1042
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1160,26 +1157,31 @@ msgstr ""
 "\n"
 "Actualmente, PiTiVi no soporta proyectos parciales."
 
-#: ../pitivi/mainwindow.py:1108
+#: ../pitivi/mainwindow.py:1148
 msgid "Export To..."
 msgstr "Exportar a…"
 
-#: ../pitivi/mainwindow.py:1119 ../pitivi/mainwindow.py:1160
-#: ../pitivi/mainwindow.py:1269 ../pitivi/render.py:426
-#: ../pitivi/timeline/timeline.py:1321
+#: ../pitivi/mainwindow.py:1159 ../pitivi/mainwindow.py:1200
+#: ../pitivi/mainwindow.py:1309 ../pitivi/render.py:426
+#: ../pitivi/timeline/timeline.py:1309
 msgid "Untitled"
 msgstr "Sin título"
 
-#: ../pitivi/mainwindow.py:1128 ../pitivi/mainwindow.py:1139
-#: ../pitivi/mainwindow.py:1170 ../pitivi/mainwindow.py:1182
-msgid "Detect Automatically"
+#: ../pitivi/mainwindow.py:1164
+msgid "Tar archive"
+msgstr "Archivador tar"
+
+#: ../pitivi/mainwindow.py:1168 ../pitivi/mainwindow.py:1179
+#: ../pitivi/mainwindow.py:1210 ../pitivi/mainwindow.py:1222
+#| msgid "Detect Automatically"
+msgid "Detect automatically"
 msgstr "Detectar automáticamente"
 
-#: ../pitivi/mainwindow.py:1152 ../pitivi/timeline/timeline.py:1315
+#: ../pitivi/mainwindow.py:1192 ../pitivi/timeline/timeline.py:1303
 msgid "Save As..."
 msgstr "Guardar como…"
 
-#: ../pitivi/mainwindow.py:1222
+#: ../pitivi/mainwindow.py:1262
 msgid "Preview - click outside to close"
 msgstr "Vista previa; pulse fuera para cerrar"
 
@@ -1201,78 +1203,98 @@ msgstr "<b>Resolución</b>: %d × %d"
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Duración:</b>: %s"
 
-#: ../pitivi/mediafilespreviewer.py:441 ../pitivi/medialibrary.py:853
+#: ../pitivi/mediafilespreviewer.py:440 ../pitivi/medialibrary.py:887
 msgid "Error while analyzing a file"
 msgstr "Error al analizar un archivo"
 
-#: ../pitivi/medialibrary.py:308
+#: ../pitivi/medialibrary.py:320
 msgid "Icon"
 msgstr "Icono"
 
-#: ../pitivi/medialibrary.py:317
+#: ../pitivi/medialibrary.py:329
 msgid "Information"
 msgstr "Información"
 
-#: ../pitivi/medialibrary.py:328
+#: ../pitivi/medialibrary.py:340
 msgid "Duration"
 msgstr "Duración"
 
-#: ../pitivi/medialibrary.py:576
+#: ../pitivi/medialibrary.py:588
 msgid "Select One or More Files"
 msgstr "Seleccionar uno o más archivos"
 
-#: ../pitivi/medialibrary.py:578
+#: ../pitivi/medialibrary.py:590
 msgid "Close after importing files"
 msgstr "Cerrar después de importar los archivos"
 
-#: ../pitivi/medialibrary.py:605
+#: ../pitivi/medialibrary.py:611
+#| msgid "All Supported Formats"
+msgid "Supported file formats"
+msgstr "Formatos de archivo soportados"
+
+#: ../pitivi/medialibrary.py:617
+#| msgid "All Supported Formats"
+msgid "All known file formats"
+msgstr "Todos los formatos de archivo conocidos"
+
+#: ../pitivi/medialibrary.py:639
 #, python-format
 msgid "Importing clip %(current_clip)d of %(total)d"
 msgstr "Importando clip %(current_clip)d de %(total)d"
 
-#: ../pitivi/medialibrary.py:707
+#: ../pitivi/medialibrary.py:741
 msgid "Errors occurred while importing."
 msgstr "Hubo errores al importar."
 
-#: ../pitivi/medialibrary.py:708
+#: ../pitivi/medialibrary.py:742
 msgid "View errors"
 msgstr "Ver errores"
 
-#: ../pitivi/medialibrary.py:710
+#: ../pitivi/medialibrary.py:744
 msgid "An error occurred while importing."
 msgstr "Ocurrió un error al importar."
 
-#: ../pitivi/medialibrary.py:711
+#: ../pitivi/medialibrary.py:745
 msgid "View error"
 msgstr "Ver error"
 
-#: ../pitivi/medialibrary.py:850
+#: ../pitivi/medialibrary.py:884
 msgid "Error while analyzing files"
 msgstr "Error al analizar los archivos"
 
-#: ../pitivi/medialibrary.py:851
+#: ../pitivi/medialibrary.py:885
 msgid "The following files can not be used with PiTiVi."
 msgstr "Los siguientes archivos no se pueden usar con PiTiVi."
 
-#: ../pitivi/medialibrary.py:854
+#: ../pitivi/medialibrary.py:888
 msgid "The following file can not be used with PiTiVi."
 msgstr "El siguiente archivo no se puede usar con PiTiVi."
 
 #: ../pitivi/preset.py:93 ../pitivi/preset.py:210 ../pitivi/preset.py:215
-#: ../pitivi/preset.py:274 ../pitivi/preset.py:291 ../pitivi/project.py:790
-#: ../pitivi/project.py:796 ../pitivi/render.py:487
+#: ../pitivi/preset.py:274 ../pitivi/preset.py:291 ../pitivi/project.py:800
+#: ../pitivi/project.py:806 ../pitivi/render.py:487
 msgid "No preset"
 msgstr "No hay configuración"
 
-#: ../pitivi/project.py:184
+#: ../pitivi/project.py:175
+msgid ""
+"This might be due to a bug or an unsupported project file format. If you "
+"were trying to add a media file to your project, use the \"Import\" button "
+"instead."
+msgstr ""
+"Esto puede deberse a un error o a un formato de archivo de proyecto no "
+"soportado. Si está intentando añadir un archivo multimedia a su proyecto, "
+"use el botón «Importar» en su lugar."
+
+#: ../pitivi/project.py:189
 msgid "Ignore backup"
 msgstr "Ignorar respaldo"
 
-#: ../pitivi/project.py:185
+#: ../pitivi/project.py:190
 msgid "Restore from backup"
 msgstr "Restaurar desde un respaldo"
 
-#: ../pitivi/project.py:195
+#: ../pitivi/project.py:200
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1285,29 +1307,29 @@ msgstr ""
 "\n"
 "¿Quiere cargarla en su lugar?"
 
-#: ../pitivi/project.py:268
+#: ../pitivi/project.py:273
 msgid "You do not have permissions to write to this folder."
 msgstr "No tiene permiso para escribir en esta carpeta."
 
-#: ../pitivi/project.py:278
+#: ../pitivi/project.py:283
 msgid "Cannot save with this file format."
 msgstr "No se puede guardar con este formato de archivo."
 
 #. We don't have a URI here, None means we're loading a new project
-#: ../pitivi/project.py:373
+#: ../pitivi/project.py:384
 msgid "New Project"
 msgstr "Proyecto nuevo"
 
-#: ../pitivi/project.py:815 ../pitivi/render.py:636
+#: ../pitivi/project.py:825 ../pitivi/render.py:636
 #, python-format
 msgid "\"%s\" already exists."
 msgstr "«%s» ya existe."
 
-#: ../pitivi/project.py:918 ../pitivi/render.py:677
+#: ../pitivi/project.py:928 ../pitivi/render.py:677
 msgid "New preset"
 msgstr "Configuración nueva"
 
-#: ../pitivi/project.py:921 ../pitivi/render.py:680
+#: ../pitivi/project.py:931 ../pitivi/render.py:680
 #, python-format
 msgid "New preset %d"
 msgstr "Configuración nueva %d"
@@ -1375,7 +1397,6 @@ msgid "Right"
 msgstr "Derecha"
 
 #: ../pitivi/transitions.py:66
-#| msgid "Search:"
 msgid "Search..."
 msgstr "Buscar…"
 
@@ -1464,7 +1485,6 @@ msgstr ""
 "Sólo se desactivarán en modo no solo mientras esto esté activado."
 
 #: ../pitivi/timeline/layer.py:109
-#| msgid "<b>Enable or disable this layer</b>\n"
 msgid ""
 "<b>Enable or disable this layer</b>\n"
 "Disabled layers will not play nor render."
@@ -1666,74 +1686,66 @@ msgid "Zoom Fit"
 msgstr "Ajustar ampliación"
 
 #: ../pitivi/timeline/timeline.py:114
-msgid "Break links between clips"
-msgstr "Romper enlaces entre los vídeos"
-
-#: ../pitivi/timeline/timeline.py:115
-msgid "Link together arbitrary clips"
-msgstr "Enlazar vídeos arbitrariamente"
-
-#: ../pitivi/timeline/timeline.py:116
 msgid "Ungroup clips"
 msgstr "Desagrupar vídeos"
 
-#: ../pitivi/timeline/timeline.py:117
+#: ../pitivi/timeline/timeline.py:115
 msgid "Group clips"
 msgstr "Agrupar vídeos"
 
-#: ../pitivi/timeline/timeline.py:118
+#: ../pitivi/timeline/timeline.py:116
 msgid "Align clips based on their soundtracks"
 msgstr "Alinear vídeos basándose en sus pistas de sonido"
 
-#: ../pitivi/timeline/timeline.py:883
+#: ../pitivi/timeline/timeline.py:876
 msgid "One or more GStreamer errors occured!"
 msgstr "Ocurrieron uno o más errores de GStreamer"
 
-#: ../pitivi/timeline/timeline.py:916
+#: ../pitivi/timeline/timeline.py:909
 msgid "Error List"
 msgstr "Lista de errores"
 
-#: ../pitivi/timeline/timeline.py:917
+#: ../pitivi/timeline/timeline.py:910
 msgid "The following errors have been reported:"
 msgstr "Se han encontrado los siguientes errores:"
 
-#: ../pitivi/timeline/timeline.py:994
+#: ../pitivi/timeline/timeline.py:987
 msgid "Zoom"
 msgstr "Ampliación"
 
-#: ../pitivi/timeline/timeline.py:1006
+#: ../pitivi/timeline/timeline.py:999
 msgid "Zoom Timeline"
 msgstr "Cronología de la ampliación"
 
-#: ../pitivi/timeline/timeline.py:1074
+#: ../pitivi/timeline/timeline.py:1067
 msgid "Export current frame..."
 msgstr "Exportar fotograma actual…"
 
-#: ../pitivi/timeline/timeline.py:1075
+#: ../pitivi/timeline/timeline.py:1068
 msgid "Export the frame at the current playhead position as an image file."
 msgstr "Exportar el marco en la posición actual como un archivo de imagen."
 
-#: ../pitivi/timeline/timeline.py:1111
+#: ../pitivi/timeline/timeline.py:1099
 msgid "Start Playback"
 msgstr "Iniciar reproducción"
 
-#: ../pitivi/timeline/timeline.py:1116
+#: ../pitivi/timeline/timeline.py:1104
 msgid "Add a Keyframe"
 msgstr "Añadir un fotograma clave"
 
-#: ../pitivi/timeline/timeline.py:1119
+#: ../pitivi/timeline/timeline.py:1107
 msgid "_Previous Keyframe"
 msgstr "Fotograma _anterior"
 
-#: ../pitivi/timeline/timeline.py:1122
+#: ../pitivi/timeline/timeline.py:1110
 msgid "_Next Keyframe"
 msgstr "_Siguiente fotograma"
 
-#: ../pitivi/timeline/timeline.py:1323
+#: ../pitivi/timeline/timeline.py:1311
 msgid "PNG image"
 msgstr "Imagen PNG"
 
-#: ../pitivi/timeline/timeline.py:1324
+#: ../pitivi/timeline/timeline.py:1312
 msgid "JPEG image"
 msgstr "Imagen JPEG"
 
@@ -1754,12 +1766,10 @@ msgid "The background color for clips in audio tracks."
 msgstr "El color de fondo para vídeos en las pistas de sonido."
 
 #: ../pitivi/timeline/track.py:89
-#| msgid "Color for video clips"
 msgid "Color for title clips"
 msgstr "Color para el clips de título"
 
 #: ../pitivi/timeline/track.py:90
-#| msgid "The background color for clips in video tracks."
 msgid "The background color for clips in title tracks."
 msgstr "El color de fondo para clips en las pistas de título."
 
@@ -2005,6 +2015,21 @@ msgstr "No hay propiedades."
 #, python-format
 msgid "Properties for %s"
 msgstr "Propiedades para %s"
+
+#~ msgid "Unlink"
+#~ msgstr "Desunir"
+
+#~ msgid "Main Toolbar"
+#~ msgstr "Barra de herramientas principal"
+
+#~ msgid "Timeline Toolbar"
+#~ msgstr "Barra de herramientas de la cronología"
+
+#~ msgid "Break links between clips"
+#~ msgstr "Romper enlaces entre los vídeos"
+
+#~ msgid "Link together arbitrary clips"
+#~ msgstr "Enlazar vídeos arbitrariamente"
 
 #, fuzzy
 #~| msgid "Insert at _End of Timeline"
