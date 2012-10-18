@@ -12,14 +12,14 @@ class DialogsClipMediaPropsTest(HelpFunc):
         buttons[1].click()
 
         #Check if we have real info, can't check if in correct place.
-        dialog = self.pitivi.get_child()(name="Clip Properties", roleName="dialog", recursive=False)
+        dialog = self.pitivi.child(name="Clip Properties", roleName="dialog", recursive=False)
         labels = {"640", "480"}
         real_labels = set([])
         for label in dialog.findChildren(GenericPredicate(roleName="label")):
             real_labels.add(label.text)
         self.assertEqual(len(labels.difference(real_labels)), 0, "Not all info is displayed")
-        self.assertFalse(dialog.get_child()(name="Audio:", roleName="panel").showing)
-        dialog.get_child()(name="Cancel").click()
+        self.assertFalse(dialog.child(name="Audio:", roleName="panel").showing)
+        dialog.child(name="Cancel").click()
         sample.deselect()
 
         sample = self.import_media()
@@ -28,7 +28,7 @@ class DialogsClipMediaPropsTest(HelpFunc):
         self.menubar.menuItem("Clip Properties...").click()
 
         #Check if we have real info, can't check if in correct place.
-        dialog = self.pitivi.get_child()(name="Clip Properties", roleName="dialog", recursive=False)
+        dialog = self.pitivi.child(name="Clip Properties", roleName="dialog", recursive=False)
         labels = {"1280", "544", "23.976 fps", "Square", "Stereo", "48 KHz", "16 bit"}
         real_labels = set([])
         for label in dialog.findChildren(GenericPredicate(roleName="label")):
@@ -36,13 +36,13 @@ class DialogsClipMediaPropsTest(HelpFunc):
         self.assertEqual(len(labels.difference(real_labels)), 0, "Not all info is displayed")
 
         #Uncheck frame rate
-        dialog.get_child()(name="Frame rate:").click()
-        dialog.get_child()(name="Apply to project").click()
+        dialog.child(name="Frame rate:").click()
+        dialog.child(name="Apply to project").click()
 
         #Check if correctly applied
         self.menubar.menu("Edit").click()
         self.menubar.menuItem("Project Settings").click()
-        dialog = self.pitivi.get_child()(name="Project Settings", roleName="dialog", recursive=False)
+        dialog = self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False)
 
         children = dialog.findChildren(IsATextEntryNamed(""))
         childtext = {}

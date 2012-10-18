@@ -19,11 +19,11 @@ class HelpFunc(BaseDogTail):
         if saveAs:
             self.assertIsNotNone(path)
             proj_menu.menuItem("Save As...").click()
-            save_dialog = self.pitivi.get_child()(name="Save As...", roleName='dialog', recursive=False)
+            save_dialog = self.pitivi.child(name="Save As...", roleName='dialog', recursive=False)
             # In GTK3's file chooser, you can enter /tmp/foo.xptv directly
             # In GTK2 however, you must do it in two steps:
             path_dir, filename = os.path.split(path)
-            text_field = save_dialog.get_child()(roleName="text")
+            text_field = save_dialog.child(roleName="text")
             text_field.text = path_dir
             dogtail.rawinput.pressKey("Enter")
             sleep(0.15)
@@ -39,15 +39,15 @@ class HelpFunc(BaseDogTail):
         proj_menu = self.menubar.menu("Project")
         proj_menu.click()
         proj_menu.menuItem("Open...").click()
-        load = self.pitivi.get_child()(roleName='dialog', recursive=False)
-        load.get_child()(name="Type a file name", roleName="toggle button").click()
-        load.get_child()(roleName='text').text = url
+        load = self.pitivi.child(roleName='dialog', recursive=False)
+        load.child(name="Type a file name", roleName="toggle button").click()
+        load.child(roleName='text').text = url
         load.button('Open').click()
         # If an unsaved changes confirmation dialog shows up, deal with it
         if expect_unsaved_changes:
             # Simply try searching for the existence of the dialog's widgets
             # If it fails, dogtail will fail with a SearchError, which is fine
-            self.pitivi.get_child()(name="Close without saving", roleName="push button").click()
+            self.pitivi.child(name="Close without saving", roleName="push button").click()
 
     def search_by_text(self, text, parent, name=None, roleName=None):
         """
@@ -71,7 +71,7 @@ class HelpFunc(BaseDogTail):
     def insert_clip(self, icon, n=1):
         icon.select()
         lib = self.menubar.menu("Library")
-        insert = lib.get_child()("Insert at End of Timeline")
+        insert = lib.child("Insert at End of Timeline")
         for i in range(n):
             sleep(0.3)
             lib.click()
@@ -84,12 +84,12 @@ class HelpFunc(BaseDogTail):
         # Use the menus, as the main toolbar might be hidden
         lib_menu = self.menubar.menu("Library")
         lib_menu.click()
-        import_menu_item = lib_menu.get_child()("Import Files...")
+        import_menu_item = lib_menu.child("Import Files...")
         import_menu_item.click()
 
         # Force dogtail to look only one level deep, which is much faster
         # as it doesn't have to analyze the whole mainwindow.
-        import_dialog = self.pitivi.get_child()(name="Select One or More Files",
+        import_dialog = self.pitivi.child(name="Select One or More Files",
                                           roleName="dialog", recursive=False)
         # Instead of checking for the presence of the path text field and then
         # searching for the toggle button to enable it, use the fact that GTK's
@@ -98,7 +98,7 @@ class HelpFunc(BaseDogTail):
 
         filepath = os.path.realpath(__file__).split("dogtail_scripts/")[0]
         filepath += "samples/" + filename
-        import_dialog.get_child()(roleName='text').text = filepath
+        import_dialog.child(roleName='text').text = filepath
         dogtail.rawinput.pressKey("Enter")  # Don't search for the Add button
         sleep(0.6)
 
@@ -113,7 +113,7 @@ class HelpFunc(BaseDogTail):
                     return icon
             sleep(0.5)
         # Failure to find an icon might be because it is hidden due to a search
-        current_search_text = libtab.get_child()(roleName="text").text.lower()
+        current_search_text = libtab.child(roleName="text").text.lower()
         self.assertNotEqual(current_search_text, "")
         self.assertNotIn(filename.lower(), current_search_text)
         return None
@@ -123,15 +123,15 @@ class HelpFunc(BaseDogTail):
         # Use the menus, as the main toolbar might be hidden
         lib_menu = self.menubar.menu("Library")
         lib_menu.click()
-        import_menu_item = lib_menu.get_child()("Import Files...")
+        import_menu_item = lib_menu.child("Import Files...")
         import_menu_item.click()
 
         # Same performance hack as in the import_media method
-        import_dialog = self.pitivi.get_child()(name="Select One or More Files",
+        import_dialog = self.pitivi.child(name="Select One or More Files",
                                           roleName="dialog", recursive=False)
         dogtail.rawinput.pressKey("/")
         dir_path = os.path.realpath(__file__).split("dogtail_scripts/")[0] + "samples/"
-        import_dialog.get_child()(roleName='text').text = dir_path
+        import_dialog.child(roleName='text').text = dir_path
         dogtail.rawinput.pressKey("Enter")
 
         # We are now in the samples directory, select various items.
@@ -139,11 +139,11 @@ class HelpFunc(BaseDogTail):
         # row of the filechooser is always selected by default, we must not use
         # ctrl when selecting the first item of our list, in order to deselect.
         ctrl_code = dogtail.rawinput.keyNameToKeyCode("Control_L")
-        file_list = import_dialog.get_child()(name="Files", roleName="table")
+        file_list = import_dialog.child(name="Files", roleName="table")
         first = True
         for f in files:
             sleep(0.5)
-            file_list.get_child()(name=f).click()
+            file_list.child(name=f).click()
             if first:
                 registry.generateKeyboardEvent(ctrl_code, None, KEY_PRESS)
                 first = False
@@ -151,7 +151,7 @@ class HelpFunc(BaseDogTail):
         import_dialog.button('Add').click()
 
         libtab = self.pitivi.tab("Media Library")
-        current_search_text = libtab.get_child()(roleName="text").text.lower()
+        current_search_text = libtab.child(roleName="text").text.lower()
         if current_search_text != "":
             # Failure to find some icons might be because of search filtering.
             # The following avoids searching for files that can't be found.
