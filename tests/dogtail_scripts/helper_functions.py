@@ -20,15 +20,10 @@ class HelpFunc(BaseDogTail):
             self.assertIsNotNone(path)
             proj_menu.menuItem("Save As...").click()
             save_dialog = self.pitivi.child(name="Save As...", roleName='file chooser', recursive=False)
-            # In GTK3's file chooser, you can enter /tmp/foo.xptv directly
-            # In GTK2 however, you must do it in two steps:
-            path_dir, filename = os.path.split(path)
             text_field = save_dialog.child(roleName="text")
-            text_field.text = path_dir
+            text_field.text = path
             dogtail.rawinput.pressKey("Enter")
             sleep(0.15)
-            text_field.text = filename
-            dogtail.rawinput.pressKey("Enter")
             # Save to the list of items to cleanup afterwards
             self.unlink.append(path)
         else:
