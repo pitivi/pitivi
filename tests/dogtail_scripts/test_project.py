@@ -155,11 +155,11 @@ class ProjectPropertiesTest(HelpFunc):
         self.saveProject(path)
 
         #Change somthing
-        seektime = self.search_by_text("0:00:00.000", self.pitivi, roleName="text")
+        seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
         self.assertIsNotNone(seektime)
         self.insert_clip(sample)
-        self.nextb = self.pitivi.child(name="Next", roleName="push button")
-        self.nextb.click()
+        self.goToEnd_button = self.viewer.child(name="goToEnd_button")
+        self.goToEnd_button.click()
         self.assertEqual(seektime.text, "0:00:01.227")
 
         #It should save after 10 seconds if no changes made
@@ -191,7 +191,7 @@ class ProjectPropertiesTest(HelpFunc):
         welcome_dialog.child(name=filename).doubleClick()
         #Try restoring from backup
         self.pitivi.child(roleName="dialog", recursive=False).button("Restore from backup").click()
-        samples = self.pitivi.tab("Media Library").findChildren(GenericPredicate(roleName="icon"))
+        samples = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
         self.assertEqual(len(samples), 2)
         self.menubar.menu("Project").click()
         self.assertFalse(self.menubar.menu("Project").menuItem("Save").sensitive)
@@ -225,10 +225,9 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertFalse(os.path.exists(backup_path))
 
     def test_load_save(self):
-        self.nextb = self.pitivi.child(name="Next", roleName="push button")
-        tab = self.pitivi.tab("Media Library")
-        seektime = self.search_by_text("0:00:00.000", self.pitivi, roleName="text")
-        infobar_media = tab.child(name="Add media to your project by dragging files and folders here or by using the \"Import Files...\" button.")
+        self.goToEnd_button = self.viewer.child(name="goToEnd_button")
+        seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
+        infobar_media = self.medialibrary.child(name="Information", roleName="alert")
         filename1 = "/tmp/test_project-%i.xptv" % time()
         filename2 = "/tmp/test_project-%i.xptv" % time()
 
@@ -245,8 +244,8 @@ class ProjectPropertiesTest(HelpFunc):
         self.menubar.menu("Project").menuItem("New").click()
         self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False).button("OK").click()
 
-        icons = tab.findChildren(GenericPredicate(roleName="icon"))
-        self.nextb.click()
+        icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
+        self.goToEnd_button.click()
         self.assertEqual(len(icons), 0)
         self.assertTrue(infobar_media.showing)
 
@@ -259,16 +258,16 @@ class ProjectPropertiesTest(HelpFunc):
 
         #Load first, check if populated
         self.load_project(filename1)
-        icons = tab.findChildren(GenericPredicate(roleName="icon"))
-        self.nextb.click()
+        icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
+        self.goToEnd_button.click()
         self.assertEqual(len(icons), 1)
         self.assertEqual(seektime.text, "0:00:01.227")
         self.assertFalse(infobar_media.showing)
 
         #Load second, check if populated
         self.load_project(filename2)
-        icons = tab.findChildren(GenericPredicate(roleName="icon"))
-        self.nextb.click()
+        icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
+        self.goToEnd_button.click()
         self.assertEqual(len(icons), 2)
         self.assertEqual(seektime.text, "0:00:02.455")
         self.assertFalse(infobar_media.showing)

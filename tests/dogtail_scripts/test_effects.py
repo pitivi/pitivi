@@ -3,11 +3,12 @@ from helper_functions import HelpFunc
 import dogtail.rawinput
 
 
+# FIXME: cleanup the weird use of variable names for tabs here
 class EffectLibraryTest(HelpFunc):
     def test_effect_library(self):
         #Load sample
         self.import_media()
-        tab = self.pitivi.tab("Effect Library")
+        tab = self.effectslibrary
         tab.click()
         search = tab.textentry("")
         view = tab.child(roleName="table")
@@ -33,12 +34,11 @@ class EffectLibraryTest(HelpFunc):
     def help_test_effect_drag(self):
         sample = self.import_media()
         self.insert_clip(sample)
-        timeline = self.get_timeline()
-        clippos = (timeline.position[0] + 20, timeline.position[1] + 20)
+        clippos = (self.timeline.position[0] + 20, self.timeline.position[1] + 20)
 
-        tab = self.pitivi.tab("Effect Library")
+        tab = self.effectslibrary
         tab.click()
-        conftab = self.pitivi.tab("Clip configuration")
+        conftab = self.clipproperties
         conftab.click()
         table = conftab.child(roleName="table")
 
@@ -72,8 +72,7 @@ class EffectLibraryTest(HelpFunc):
 
     def test_change_effect_settings(self):
         self.help_test_effect_drag()
-        conftab = self.pitivi.tab("Clip configuration")
-        conftab.child(roleName="table").child(name="audioamplify").click()
-        eftab = conftab.child(name="Effects", roleName="toggle button")
-        eftab.child(name="Normal clipping (default)", roleName="combo box")
-        eftab.child(roleName="spin button").text = "2"
+        self.clipproperties.child(roleName="table").child(name="audioamplify").click()
+        fx_expander = self.clipproperties.child(name="Effects", roleName="toggle button")
+        fx_expander.child(name="Normal clipping (default)", roleName="combo box")
+        fx_expander.child(roleName="spin button").text = "2"

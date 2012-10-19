@@ -20,10 +20,9 @@ class MediaLibraryTest(HelpFunc):
         self.assertTrue(samples[1].isSelected)
         self.assertFalse(samples[2].isSelected)
 
-        tab = self.pitivi.tab("Media Library")
-        iconview = tab.child(roleName="layered pane")
+        iconview = self.medialibrary.child(roleName="layered pane")
         self.assertEqual(len(iconview.children), 3)
-        search = tab.textentry("")
+        search = self.medialibrary.textentry("")
         search.click()
         search.typeText("colour2")
         self.assertEqual(len(iconview.children), 1)

@@ -95,17 +95,16 @@ class HelpFunc(BaseDogTail):
         sleep(0.6)
 
         # Check if the item is now visible in the media library.
-        libtab = self.pitivi.tab("Media Library")
         for i in range(5):
             # The time it takes for the icon to appear is unpredictable,
             # therefore we try up to 5 times to look for it
-            icons = libtab.findChildren(GenericPredicate(roleName="icon"))
+            icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
             for icon in icons:
                 if icon.text == filename:
                     return icon
             sleep(0.5)
         # Failure to find an icon might be because it is hidden due to a search
-        current_search_text = libtab.child(roleName="text").text.lower()
+        current_search_text = self.medialibrary.child(name="media_search_entry", roleName="text").text.lower()
         self.assertNotEqual(current_search_text, "")
         self.assertNotIn(filename.lower(), current_search_text)
         return None
@@ -138,8 +137,7 @@ class HelpFunc(BaseDogTail):
         registry.generateKeyboardEvent(ctrl_code, None, KEY_RELEASE)
         import_dialog.button('Add').click()
 
-        libtab = self.pitivi.tab("Media Library")
-        current_search_text = libtab.child(roleName="text").text.lower()
+        current_search_text = self.medialibrary.child(name="media_search_entry", roleName="text").text.lower()
         if current_search_text != "":
             # Failure to find some icons might be because of search filtering.
             # The following avoids searching for files that can't be found.
@@ -151,7 +149,7 @@ class HelpFunc(BaseDogTail):
         for i in range(5):
             # The time it takes for icons to appear is unpredictable,
             # therefore we try up to 5 times to look for them
-            icons = libtab.findChildren(GenericPredicate(roleName="icon"))
+            icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
             for icon in icons:
                 for f in files:
                     if icon.text == f:
@@ -161,10 +159,6 @@ class HelpFunc(BaseDogTail):
                 break
             sleep(0.5)
         return samples
-
-    def get_timeline(self):
-        # TODO: find a better way to identify
-        return self.pitivi.children[0].children[0].children[2].children[1].children[3]
 
     def improved_drag(self, from_coords, to_coords, middle=[], absolute=True, moveAround=True):
         """
