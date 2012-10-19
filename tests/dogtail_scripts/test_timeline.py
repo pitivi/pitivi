@@ -6,34 +6,19 @@ from time import sleep
 from pyatspi import Registry as registry
 from pyatspi import (KEY_SYM, KEY_PRESS, KEY_PRESSRELEASE, KEY_RELEASE)
 
+# These are the timecodes we expect for "tears of steel.webm", depending on
+# if we insert it once in a blank timeline or twice in a blank timeline.
+DURATION_OF_ONE_CLIP = "0:00:01.999"
+DURATION_OF_TWO_CLIPS = "0:00:03.999"
+
 
 class TimelineTest(HelpFunc):
     def setUp(self):
         super(TimelineTest, self).setUp()
         self.goToEnd_button = self.viewer.child(name="goToEnd_button")
 
-    def help_test_insertEnd(self):
-        # Test insertion with the right-click popup menu
-        sample = self.import_media()
-        seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertIsNotNone(seektime)
-        # TODO: remove the help_test_insertEnd* methods, the menu is deprecated
-        sample.click(3)
-        buttons = self.pitivi.findChildren(
-            GenericPredicate(name="Insert at End of Timeline"))
-        buttons[1].click()
-        self.goToEnd_button.click()
-        self.assertEqual(seektime.text, "0:00:01.227")
-
-        #Add one more
-        sample.click(3)
-        buttons = self.pitivi.findChildren(
-            GenericPredicate(name="Insert at End of Timeline"))
-        buttons[1].click()
-        self.goToEnd_button.click()
-        self.assertEqual(seektime.text, "0:00:02.455")
-
-    def help_test_insertEndFast(self):
+    def insertTwoClipsAndSeekToEnd(self):
+        # Just a small helper method to facilitate timeline setup
         sample = self.import_media()
         self.insert_clip(sample, 2)
         self.goToEnd_button.click()
@@ -73,9 +58,9 @@ class TimelineTest(HelpFunc):
             oldseek = seektime.text
 
     def test_split(self):
-        self.help_test_insertEnd()
+        self.insertTwoClipsAndSeekToEnd()
         seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(seektime.text, "0:00:02.455")
+        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
         timeline = self.timeline
         #Adjust to different screen sizes
         adj = (float)(timeline.size[0]) / 883
@@ -86,19 +71,19 @@ class TimelineTest(HelpFunc):
         self.timeline_toolbar.child(name="Delete", roleName="push button").click()
 
         self.goToEnd_button.click()
-        self.assertEqual(seektime.text, "0:00:02.455")
+        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
 
         dogtail.rawinput.click(timeline.position[0] + 550 * adj, timeline.position[1] + 50)
         dogtail.rawinput.pressKey("Del")
         #self.timeline_toolbar.child(name="Delete", roleName="push button").click()
 
         self.goToEnd_button.click()
-        self.assertEqual(seektime.text, "0:00:01.227")
+        self.assertEqual(seektime.text, DURATION_OF_ONE_CLIP)
 
     def test_multiple_split(self):
-        self.help_test_insertEndFast()
+        self.insertTwoClipsAndSeekToEnd()
         seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(seektime.text, "0:00:02.455")
+        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
         #Adjust to different screen sizes
         adj = (float)(self.timeline.size[0]) / 883
         tpos = self.timeline.position
@@ -113,9 +98,9 @@ class TimelineTest(HelpFunc):
                 self.pitivi.child(roleName="icon")
 
     def test_transition(self):
-        self.help_test_insertEndFast()
+        self.insertTwoClipsAndSeekToEnd()
         seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(seektime.text, "0:00:02.455")
+        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
         tpos = self.timeline.position
 
         #Adjust to different screen sizes
@@ -159,9 +144,9 @@ class TimelineTest(HelpFunc):
         return maxx - timeline.position[0] + 5
 
     def test_riple_roll(self):
-        self.help_test_insertEndFast()
+        self.insertTwoClipsAndSeekToEnd()
         seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(seektime.text, "0:00:02.455")
+        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
         tpos = self.timeline.position
         end = self.search_clip_end(30, seektime, self.timeline)
 
@@ -174,7 +159,7 @@ class TimelineTest(HelpFunc):
         dogtail.rawinput.release(tpos[0] + end / 2 - 100, tpos[1] + 30)
         registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Control_L"), None, KEY_RELEASE)
         self.goToEnd_button.click()
-        self.assertNotEqual(seektime.text, "0:00:02.455", "Not ripled, but trimed")
+        self.assertNotEqual(seektime.text, DURATION_OF_TWO_CLIPS, "Not rippled, but trimmed")
 
         #Regresion test of adding effect
         #Add effect
@@ -199,7 +184,7 @@ class TimelineTest(HelpFunc):
         self.assertNotEqual(seektime.text, seekbefore, "Not ripled affter adding effect")
 
     def test_image_video_mix(self):
-        files = ["1sec_simpsons_trailer.mp4", "flat_colour2_640x480.png",
+        files = ["tears of steel.webm", "flat_colour2_640x480.png",
                  "flat_colour4_1600x1200.jpg", "flat_colour1_640x480.png",
                  "flat_colour3_320x180.png", "flat_colour5_1600x1200.jpg"]
         samples = self.import_media_multiple(files)

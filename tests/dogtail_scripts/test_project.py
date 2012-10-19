@@ -4,6 +4,11 @@ from dogtail.predicate import IsATextEntryNamed, GenericPredicate
 from time import time, sleep
 import os
 
+# These are the timecodes we expect for "tears of steel.webm", depending on
+# if we insert it once in a blank timeline or twice in a blank timeline.
+DURATION_OF_ONE_CLIP = "0:00:01.999"
+DURATION_OF_TWO_CLIPS = "0:00:03.999"
+
 
 class ProjectPropertiesTest(HelpFunc):
     def test_settings_video(self):
@@ -160,7 +165,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.insert_clip(sample)
         self.goToEnd_button = self.viewer.child(name="goToEnd_button")
         self.goToEnd_button.click()
-        self.assertEqual(seektime.text, "0:00:01.227")
+        self.assertEqual(seektime.text, DURATION_OF_ONE_CLIP)
 
         #It should save after 10 seconds if no changes made
         self.assertTrue(self.wait_for_file(backup_path), "Backup not created")
@@ -261,7 +266,7 @@ class ProjectPropertiesTest(HelpFunc):
         icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
         self.goToEnd_button.click()
         self.assertEqual(len(icons), 1)
-        self.assertEqual(seektime.text, "0:00:01.227")
+        self.assertEqual(seektime.text, DURATION_OF_ONE_CLIP)
         self.assertFalse(infobar_media.showing)
 
         #Load second, check if populated
@@ -269,5 +274,5 @@ class ProjectPropertiesTest(HelpFunc):
         icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
         self.goToEnd_button.click()
         self.assertEqual(len(icons), 2)
-        self.assertEqual(seektime.text, "0:00:02.455")
+        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
         self.assertFalse(infobar_media.showing)

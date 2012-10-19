@@ -75,7 +75,7 @@ class HelpFunc(BaseDogTail):
             self.insert_button.click()
         icon.deselect()
 
-    def import_media(self, filename="1sec_simpsons_trailer.mp4"):
+    def import_media(self, filename="tears of steel.webm"):
         dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
         self.import_button.click()
 
