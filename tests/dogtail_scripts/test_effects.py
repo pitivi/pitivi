@@ -10,23 +10,22 @@ class EffectLibraryTest(HelpFunc):
         self.import_media()
         tab = self.effectslibrary
         tab.click()
-        search = tab.textentry("")
+        search = tab.child(name="effects library search entry")
         view = tab.child(roleName="table")
-        combotypes = tab.child(name="All effects", roleName="combo box")
+        combotypes = tab.child(name="effect category combobox", roleName="combo box")
         # Some test of video effects and search. The two column headers are
         # also children and are always present, and each row has two children:
         search.text = "Crop"
         self.assertEqual(len(view.children), 2 + 2 * 3)
         combotypes.click()
-        tab.menuItem("Colors").click()
+        combotypes.menuItem("Colors").click()
         self.assertEqual(len(view.children), 2 + 2 * 0)
         combotypes.click()
-        tab.menuItem("Geometry").click()
+        combotypes.menuItem("Geometry").click()
         self.assertEqual(len(view.children), 2 + 2 * 3)
 
-        #Audio effects
-        tab.child(name="Video effects", roleName="combo box").click()
-        tab.menuItem("Audio effects").click()
+        # Switch to audio effects view
+        tab.child(name="effects library audio togglebutton").click()
         search.text = "Equa"
         #Titles plus 3 plugins, two collumns = 8
         self.assertEqual(len(tab.child(roleName="table").children), 8)
@@ -59,8 +58,7 @@ class EffectLibraryTest(HelpFunc):
         self.assertEqual(len(table.children), 9)
 
         #Drag audio effect on the clip
-        tab.child(name="Video effects", roleName="combo box").click()
-        tab.menuItem("Audio effects").click()
+        tab.child(name="effects library audio togglebutton").click()
         effect = self.search_by_regex("^Amplifier", tab, roleName="table cell")
         self.improved_drag(center(effect), clippos)
         self.assertEqual(len(table.children), 12)

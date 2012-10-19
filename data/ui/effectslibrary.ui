@@ -8,14 +8,17 @@
     <property name="icon_size">1</property>
     <child>
       <object class="GtkToggleToolButton" id="video_togglebutton">
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Show video effects</property>
-        <property name="use_action_appearance">False</property>
         <property name="use_underline">True</property>
         <property name="icon_name">video-x-generic</property>
         <property name="active">True</property>
+        <child internal-child="accessible">
+          <object class="AtkObject" id="video_togglebutton-atkobject">
+            <property name="AtkObject::accessible-name">effects library video togglebutton</property>
+          </object>
+        </child>
         <signal name="toggled" handler="_toggleViewTypeCb" swapped="no"/>
       </object>
       <packing>
@@ -25,13 +28,16 @@
     </child>
     <child>
       <object class="GtkToggleToolButton" id="audio_togglebutton">
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Show audio effects</property>
-        <property name="use_action_appearance">False</property>
         <property name="use_underline">True</property>
         <property name="icon_name">audio-x-generic</property>
+        <child internal-child="accessible">
+          <object class="AtkObject" id="audio_togglebutton-atkobject">
+            <property name="AtkObject::accessible-name">effects library audio togglebutton</property>
+          </object>
+        </child>
         <signal name="toggled" handler="_toggleViewTypeCb" swapped="no"/>
       </object>
       <packing>
@@ -41,16 +47,19 @@
     </child>
     <child>
       <object class="GtkToolItem" id="toolbutton1">
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="use_action_appearance">False</property>
         <child>
           <object class="GtkComboBoxText" id="categories">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="entry_text_column">0</property>
             <property name="id_column">1</property>
+            <child internal-child="accessible">
+              <object class="AtkObject" id="categories-atkobject">
+                <property name="AtkObject::accessible-name">effect category combobox</property>
+              </object>
+            </child>
             <signal name="changed" handler="_categoryChangedCb" swapped="no"/>
           </object>
         </child>
@@ -62,10 +71,8 @@
     </child>
     <child>
       <object class="GtkToolItem" id="toolbutton7">
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="use_action_appearance">False</property>
         <child>
           <object class="GtkEntry" id="search_entry">
             <property name="visible">True</property>
@@ -78,6 +85,11 @@
             <property name="secondary_icon_tooltip_text" translatable="yes">Clear the current search</property>
             <property name="secondary_icon_tooltip_markup" translatable="yes">Clear the current search</property>
             <property name="placeholder_text">Search...</property>
+            <child internal-child="accessible">
+              <object class="AtkObject" id="search_entry-atkobject">
+                <property name="AtkObject::accessible-name">effects library search entry</property>
+              </object>
+            </child>
             <signal name="changed" handler="_searchEntryChangedCb" swapped="no"/>
             <signal name="focus-in-event" handler="_searchEntryFocusedCb" swapped="no"/>
             <signal name="focus-out-event" handler="_searchEntryDefocusedCb" swapped="no"/>
