@@ -70,22 +70,14 @@ class HelpFunc(BaseDogTail):
 
     def insert_clip(self, icon, n=1):
         icon.select()
-        lib = self.menubar.menu("Library")
-        insert = lib.child("Insert at End of Timeline")
         for i in range(n):
             sleep(0.3)
-            lib.click()
-            sleep(0.1)
-            insert.click()
+            self.insert_button.click()
         icon.deselect()
 
     def import_media(self, filename="1sec_simpsons_trailer.mp4"):
         dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
-        # Use the menus, as the main toolbar might be hidden
-        lib_menu = self.menubar.menu("Library")
-        lib_menu.click()
-        import_menu_item = lib_menu.child("Import Files...")
-        import_menu_item.click()
+        self.import_button.click()
 
         # Force dogtail to look only one level deep, which is much faster
         # as it doesn't have to analyze the whole mainwindow.
@@ -120,11 +112,7 @@ class HelpFunc(BaseDogTail):
 
     def import_media_multiple(self, files):
         dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
-        # Use the menus, as the main toolbar might be hidden
-        lib_menu = self.menubar.menu("Library")
-        lib_menu.click()
-        import_menu_item = lib_menu.child("Import Files...")
-        import_menu_item.click()
+        self.import_button.click()
 
         # Same performance hack as in the import_media method
         import_dialog = self.pitivi.child(name="Select One or More Files",
