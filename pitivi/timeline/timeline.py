@@ -1026,6 +1026,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
 
         # timeline ruler
         self.ruler = ruler.ScaleRuler(self.app, self.hadj)
+        self.ruler.get_accessible().set_name("timeline ruler")  # used for dogtail
         self.ruler.set_size_request(0, 25)
         self.ruler.connect("key-press-event", self._keyPressEventCb)
         rulerframe = Gtk.Frame()
@@ -1035,6 +1036,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
 
         # proportional timeline
         self._canvas = TimelineCanvas(self.app)
+        self._canvas.get_accessible().set_name("timeline canvas")  # used for dogtail
         self._root_item = self._canvas.get_root_item()
         self.attach(self._canvas, 1, 2, 1, 2)
 

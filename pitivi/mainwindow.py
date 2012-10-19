@@ -356,6 +356,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         -------- Context tabs
         ------ Viewer (upper-right)
         ---- Timeline (bottom half)
+
+        The full hierarchy is also visible with accessibility tools like "sniff"
         """
         self.set_title("%s" % (APPNAME))
         self.set_icon_name("pitivi")
@@ -445,6 +447,20 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         timeline_area.show()
         self.timeline_ui.show()
         ttb.show()
+
+        # Identify widgets for AT-SPI, making our test suite easier to develop
+        # These will show up in sniff, accerciser, etc.
+        self.get_accessible().set_name("main window")
+        self.toolbar.get_accessible().set_name("main toolbar")
+        self.vpaned.get_accessible().set_name("contents")
+        self.mainhpaned.get_accessible().set_name("upper half")
+        timeline_area.get_accessible().set_name("lower half")
+        self.secondhpaned.get_accessible().set_name("tabs")
+        self.main_tabs.get_accessible().set_name("primary tabs")
+        self.context_tabs.get_accessible().set_name("secondary tabs")
+        self.viewer.get_accessible().set_name("viewer")
+        self.timeline_ui.get_accessible().set_name("timeline ui")
+        ttb.get_accessible().set_name("timeline toolbar")
 
         # Restore settings (or set defaults) for position and visibility
         height = -1

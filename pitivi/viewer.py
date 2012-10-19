@@ -247,6 +247,15 @@ class PitiviViewer(Gtk.VBox, Loggable):
         bbox.pack_start(self.timecode_entry, False, 10, 0)
         self._haveUI = True
 
+        # Identify widgets for AT-SPI, making our test suite easier to develop
+        # These will show up in sniff, accerciser, etc.
+        self.goToStart_button.get_accessible().set_name("goToStart_button")
+        self.back_button.get_accessible().set_name("back_button")
+        self.playpause_button.get_accessible().set_name("playpause_button")
+        self.forward_button.get_accessible().set_name("forward_button")
+        self.goToEnd_button.get_accessible().set_name("goToEnd_button")
+        self.timecode_entry.get_accessible().set_name("timecode_entry")
+
         screen = Gdk.Screen.get_default()
         height = screen.get_height()
         if height >= 800:

@@ -6,18 +6,26 @@
     <property name="can_focus">False</property>
     <property name="show_arrow">False</property>
     <property name="icon_size">1</property>
+    <child internal-child="accessible">
+      <object class="AtkObject" id="medialibrary_toolbar-atkobject">
+        <property name="AtkObject::accessible-name">medialibrary_toolbar</property>
+      </object>
+    </child>
     <child>
       <object class="GtkToolButton" id="media_import_button">
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="has_tooltip">True</property>
         <property name="tooltip_markup" translatable="yes">Add media files to your project</property>
-        <property name="use_action_appearance">False</property>
         <property name="is_important">True</property>
         <property name="label" translatable="yes">Import</property>
         <property name="use_underline">True</property>
         <property name="icon_name">list-add</property>
+        <child internal-child="accessible">
+          <object class="AtkObject" id="media_import_button-atkobject">
+            <property name="AtkObject::accessible-name">media_import_button</property>
+          </object>
+        </child>
         <signal name="clicked" handler="_importSourcesCb" swapped="no"/>
       </object>
       <packing>
@@ -27,17 +35,20 @@
     </child>
     <child>
       <object class="GtkToolButton" id="media_remove_button">
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="sensitive">False</property>
         <property name="can_focus">False</property>
         <property name="has_tooltip">True</property>
         <property name="tooltip_markup" translatable="yes">Remove selected clips from the project</property>
         <property name="tooltip_text" translatable="yes">Remove selected clips from the project</property>
-        <property name="use_action_appearance">False</property>
         <property name="label" translatable="yes">_Remove from Project</property>
         <property name="use_underline">True</property>
         <property name="icon_name">list-remove</property>
+        <child internal-child="accessible">
+          <object class="AtkObject" id="media_remove_button-atkobject">
+            <property name="AtkObject::accessible-name">media_remove_button</property>
+          </object>
+        </child>
         <signal name="clicked" handler="_removeClickedCb" swapped="no"/>
       </object>
       <packing>
@@ -47,16 +58,19 @@
     </child>
     <child>
       <object class="GtkToolButton" id="media_props_button">
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="sensitive">False</property>
         <property name="can_focus">False</property>
         <property name="has_tooltip">True</property>
         <property name="tooltip_markup" translatable="yes">Clip Properties...</property>
         <property name="tooltip_text" translatable="yes">Clip Properties...</property>
-        <property name="use_action_appearance">False</property>
         <property name="use_underline">True</property>
         <property name="icon_name">document-properties</property>
+        <child internal-child="accessible">
+          <object class="AtkObject" id="media_props_button-atkobject">
+            <property name="AtkObject::accessible-name">media_props_button</property>
+          </object>
+        </child>
         <signal name="clicked" handler="_clipPropertiesCb" swapped="no"/>
       </object>
       <packing>
@@ -66,17 +80,20 @@
     </child>
     <child>
       <object class="GtkToolButton" id="media_insert_button">
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="sensitive">False</property>
         <property name="can_focus">False</property>
         <property name="has_tooltip">True</property>
         <property name="tooltip_markup" translatable="yes">Insert the selected clips at the end of the timeline</property>
         <property name="tooltip_text" translatable="yes">Insert the selected clips at the end of the timeline</property>
-        <property name="use_action_appearance">False</property>
         <property name="label" translatable="yes">Insert at _End of Timeline</property>
         <property name="use_underline">True</property>
         <property name="icon_name">insert-object</property>
+        <child internal-child="accessible">
+          <object class="AtkObject" id="media_insert_button-atkobject">
+            <property name="AtkObject::accessible-name">media_insert_button</property>
+          </object>
+        </child>
         <signal name="clicked" handler="_insertEndCb" swapped="no"/>
       </object>
       <packing>
@@ -86,13 +103,16 @@
     </child>
     <child>
       <object class="GtkToggleToolButton" id="media_listview_button">
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_markup" translatable="yes">Show clips as a detailed list</property>
-        <property name="use_action_appearance">False</property>
         <property name="use_underline">True</property>
         <property name="icon_name">view-list-symbolic</property>
+        <child internal-child="accessible">
+          <object class="AtkObject" id="media_listview_button-atkobject">
+            <property name="AtkObject::accessible-name">media_listview_button</property>
+          </object>
+        </child>
         <signal name="toggled" handler="_toggleViewTypeCb" swapped="no"/>
       </object>
       <packing>
@@ -102,10 +122,8 @@
     </child>
     <child>
       <object class="GtkToolItem" id="toolbutton7">
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="use_action_appearance">False</property>
         <child>
           <object class="GtkEntry" id="media_search_entry">
             <property name="visible">True</property>
@@ -120,6 +138,11 @@
             <property name="secondary_icon_tooltip_text" translatable="yes">Show all clips</property>
             <property name="secondary_icon_tooltip_markup" translatable="yes">Show all clips</property>
             <property name="placeholder_text">Search...</property>
+            <child internal-child="accessible">
+              <object class="AtkObject" id="media_search_entry-atkobject">
+                <property name="AtkObject::accessible-name">media_search_entry</property>
+              </object>
+            </child>
             <signal name="changed" handler="_searchEntryChangedCb" swapped="no"/>
             <signal name="focus-in-event" handler="_disableKeyboardShortcutsCb" swapped="no"/>
             <signal name="focus-out-event" handler="_enableKeyboardShortcutsCb" swapped="no"/>
@@ -175,11 +198,9 @@
         <property name="layout_style">end</property>
         <child>
           <object class="GtkButton" id="view_error_button">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="use_action_appearance">False</property>
             <signal name="clicked" handler="_viewErrorsButtonClickedCb" swapped="no"/>
           </object>
           <packing>
@@ -191,11 +212,9 @@
         <child>
           <object class="GtkButton" id="warnings_dismiss_button">
             <property name="label">gtk-close</property>
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="use_action_appearance">False</property>
             <property name="use_stock">True</property>
             <signal name="clicked" handler="_warningInfoBarDismissedCb" swapped="no"/>
           </object>
