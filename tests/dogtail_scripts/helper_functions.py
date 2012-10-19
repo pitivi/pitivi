@@ -19,7 +19,7 @@ class HelpFunc(BaseDogTail):
         if saveAs:
             self.assertIsNotNone(path)
             proj_menu.menuItem("Save As...").click()
-            save_dialog = self.pitivi.child(name="Save As...", roleName='dialog', recursive=False)
+            save_dialog = self.pitivi.child(name="Save As...", roleName='file chooser', recursive=False)
             # In GTK3's file chooser, you can enter /tmp/foo.xptv directly
             # In GTK2 however, you must do it in two steps:
             path_dir, filename = os.path.split(path)
@@ -39,7 +39,7 @@ class HelpFunc(BaseDogTail):
         proj_menu = self.menubar.menu("Project")
         proj_menu.click()
         proj_menu.menuItem("Open...").click()
-        load = self.pitivi.child(roleName='dialog', recursive=False)
+        load = self.pitivi.child(roleName='file chooser', recursive=False)
         load.child(name="Type a file name", roleName="toggle button").click()
         load.child(roleName='text').text = url
         load.button('Open').click()
@@ -90,7 +90,7 @@ class HelpFunc(BaseDogTail):
         # Force dogtail to look only one level deep, which is much faster
         # as it doesn't have to analyze the whole mainwindow.
         import_dialog = self.pitivi.child(name="Select One or More Files",
-                                          roleName="dialog", recursive=False)
+                                          roleName="file chooser", recursive=False)
         # Instead of checking for the presence of the path text field and then
         # searching for the toggle button to enable it, use the fact that GTK's
         # file chooser allows typing the path directly if it starts with "/".
@@ -128,7 +128,7 @@ class HelpFunc(BaseDogTail):
 
         # Same performance hack as in the import_media method
         import_dialog = self.pitivi.child(name="Select One or More Files",
-                                          roleName="dialog", recursive=False)
+                                          roleName="file chooser", recursive=False)
         dogtail.rawinput.pressKey("/")
         dir_path = os.path.realpath(__file__).split("dogtail_scripts/")[0] + "samples/"
         import_dialog.child(roleName='text').text = dir_path
