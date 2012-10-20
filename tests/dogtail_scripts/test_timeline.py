@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from helper_functions import HelpFunc
 from dogtail.predicate import GenericPredicate
+from dogtail.tree import SearchError
 import dogtail.rawinput
 from time import sleep
 from pyatspi import Registry as registry
@@ -21,24 +22,31 @@ class TimelineTest(HelpFunc):
         # Just a small helper method to facilitate timeline setup
         sample = self.import_media()
         self.insert_clip(sample, 2)
-        self.goToEnd_button.click()
+        try:
+            self.goToEnd_button.click()
+        except NotImplementedError:
+            # That's a lie. pyatspi's Accessibility.py is just raising that
+            # when it didn't have enough time to find and click the widget.
+            # Wait and try again.
+            sleep(0.5)
+            self.goToEnd_button.click()
 
     def test_drag_clip(self):
         sample = self.import_media()
-        seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertIsNotNone(seektime)
+        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
+        self.assertIsNotNone(timecode_widget)
 
         center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
         self.improved_drag(center(sample), center(self.timeline))
         self.goToEnd_button.click()
-        self.assertNotEqual(seektime.text, "0:00:00.000")
+        self.assertNotEqual(timecode_widget.text, "0:00:00.000")
 
     def test_multiple_drag(self):
         sample = self.import_media()
-        seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
+        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
         timeline = self.timeline
-        self.assertIsNotNone(seektime)
-        oldseek = seektime.text
+        self.assertIsNotNone(timecode_widget)
+        oldseek = timecode_widget.text
         center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
         endpos = []
         endpos.append((timeline.position[0] + timeline.size[0] - 30, timeline.position[1] + 30))
@@ -51,16 +59,24 @@ class TimelineTest(HelpFunc):
             else:
                 # Simple drag
                 self.improved_drag(center(sample), endpos[i % 3])
-            # Give time to insert object
-            sleep(0.5)
-            self.goToEnd_button.click()
-            self.assertNotEqual(oldseek, seektime.text)
-            oldseek = seektime.text
+            # Give time to insert the object. If you don't wait long enough,
+            # dogtail won't be able to click goToEnd_button:
+            sleep(0.7)
+            try:
+                self.goToEnd_button.click()
+            except NotImplementedError:
+                # That's a lie. pyatspi's Accessibility.py is just raising that
+                # when it didn't have enough time to find and click the widget.
+                # Wait and try again.
+                sleep(0.5)
+                self.goToEnd_button.click()
+            self.assertNotEqual(oldseek, timecode_widget.text)
+            oldseek = timecode_widget.text
 
     def test_split(self):
         self.insertTwoClipsAndSeekToEnd()
-        seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
+        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
+        self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
         timeline = self.timeline
         #Adjust to different screen sizes
         adj = (float)(timeline.size[0]) / 883
@@ -71,19 +87,19 @@ class TimelineTest(HelpFunc):
         self.timeline_toolbar.child(name="Delete", roleName="push button").click()
 
         self.goToEnd_button.click()
-        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
+        self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
 
         dogtail.rawinput.click(timeline.position[0] + 550 * adj, timeline.position[1] + 50)
         dogtail.rawinput.pressKey("Del")
         #self.timeline_toolbar.child(name="Delete", roleName="push button").click()
 
         self.goToEnd_button.click()
-        self.assertEqual(seektime.text, DURATION_OF_ONE_CLIP)
+        self.assertEqual(timecode_widget.text, DURATION_OF_ONE_CLIP)
 
     def test_multiple_split(self):
         self.insertTwoClipsAndSeekToEnd()
-        seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
+        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
+        self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
         #Adjust to different screen sizes
         adj = (float)(self.timeline.size[0]) / 883
         tpos = self.timeline.position
@@ -94,13 +110,15 @@ class TimelineTest(HelpFunc):
                 dogtail.rawinput.click(tpos[0] + (p + k / 10) * adj, tpos[1] + 50)
                 sleep(0.1)
                 dogtail.rawinput.pressKey("s")
-                #Just search some object to look if it still alive
-                self.pitivi.child(roleName="icon")
+                try:
+                    self.pitivi.child(roleName="icon")
+                except SearchError:
+                    self.fail("App stopped responding while splitting clips")
 
     def test_transition(self):
         self.insertTwoClipsAndSeekToEnd()
-        seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
+        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
+        self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
         tpos = self.timeline.position
 
         #Adjust to different screen sizes
@@ -124,31 +142,30 @@ class TimelineTest(HelpFunc):
         self.assertTrue(self.transitions.child(roleName="slider").sensitive)
         self.transitions.child(roleName="slider").value = 50
 
-    def search_clip_end(self, y, seek, timeline):
+    def search_clip_end(self, y, timecode_widget, timeline):
         minx = timeline.position[0] + 10.
         maxx = timeline.position[0] + timeline.size[0] - 10.
         minx = (minx + maxx) / 2
         y += timeline.position[1]
         dogtail.rawinput.click(maxx, y)
-        maxseek = seek.text
-        print maxseek
+        maxseek = timecode_widget.text
         while maxx - minx > 2:
             middle = (maxx + minx) / 2
             dogtail.rawinput.click(middle, y)
             sleep(0.1)
-            if seek.text == maxseek:
+            if timecode_widget.text == maxseek:
                 maxx = middle
             else:
                 minx = middle
         #+5 due to handle size
         return maxx - timeline.position[0] + 5
 
-    def test_riple_roll(self):
+    def test_ripple_roll(self):
         self.insertTwoClipsAndSeekToEnd()
-        seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
+        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
+        self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
         tpos = self.timeline.position
-        end = self.search_clip_end(30, seektime, self.timeline)
+        end = self.search_clip_end(30, timecode_widget, self.timeline)
 
         dogtail.rawinput.absoluteMotion(tpos[0] + end / 2 - 2, tpos[1] + 30)
         registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Control_L"), None, KEY_PRESS)
@@ -159,10 +176,9 @@ class TimelineTest(HelpFunc):
         dogtail.rawinput.release(tpos[0] + end / 2 - 100, tpos[1] + 30)
         registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Control_L"), None, KEY_RELEASE)
         self.goToEnd_button.click()
-        self.assertNotEqual(seektime.text, DURATION_OF_TWO_CLIPS, "Not rippled, but trimmed")
+        self.assertNotEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS, "Not rippled, but trimmed")
 
-        #Regresion test of adding effect
-        #Add effect
+        # Check if adding an effect causes a regression in behavior
         self.effectslibrary.click()
         self.clipproperties.click()
         center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
@@ -170,8 +186,8 @@ class TimelineTest(HelpFunc):
         effect_from_library = self.search_by_text("Agingtv", self.effectslibrary, roleName="table cell", exactMatchOnly=False)
         self.improved_drag(center(effect_from_library), center(table))
         self.goToEnd_button.click()
-        seekbefore = seektime.text
-        #Try riple and roll
+        seekbefore = timecode_widget.text
+        # Try ripple and roll
         dogtail.rawinput.absoluteMotion(tpos[0] + end / 2 - 102, tpos[1] + 30)
         registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Control_L"), None, KEY_PRESS)
         dogtail.rawinput.press(tpos[0] + end / 2 - 102, tpos[1] + 30)
@@ -181,14 +197,14 @@ class TimelineTest(HelpFunc):
         dogtail.rawinput.release(tpos[0] + end / 2 - 200, tpos[1] + 30)
         registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Control_L"), None, KEY_RELEASE)
         self.goToEnd_button.click()
-        self.assertNotEqual(seektime.text, seekbefore, "Not ripled affter adding effect")
+        self.assertNotEqual(timecode_widget.text, seekbefore, "Not rippled after adding effect")
 
     def test_image_video_mix(self):
         files = ["tears of steel.webm", "flat_colour2_640x480.png",
                  "flat_colour4_1600x1200.jpg", "flat_colour1_640x480.png",
                  "flat_colour3_320x180.png", "flat_colour5_1600x1200.jpg"]
         samples = self.import_media_multiple(files)
-        seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
+        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
         tpos = self.timeline.position
 
         #One video, one image
@@ -196,7 +212,8 @@ class TimelineTest(HelpFunc):
             self.insert_clip(sample)
             self.insert_clip(samples[0])
 
-        end = self.search_clip_end(30, seektime, self.timeline)
+        sleep(0.3)
+        end = self.search_clip_end(30, timecode_widget, self.timeline)
         cend = end / 11.139
         dogtail.rawinput.absoluteMotion(tpos[0] + cend - 2, tpos[1] + 30)
         registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Shift_L"), None, KEY_PRESS)
@@ -207,6 +224,6 @@ class TimelineTest(HelpFunc):
         dogtail.rawinput.release(tpos[0] + cend - 40, tpos[1] + 30)
         registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Shift_L"), None, KEY_RELEASE)
         self.goToEnd_button.click()
-        self.assertNotEqual(seektime.text, "0:00:11.139")
+        self.assertNotEqual(timecode_widget.text, "0:00:11.139")
 
         #TODO: do something more with clips
