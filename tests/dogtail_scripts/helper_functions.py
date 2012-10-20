@@ -44,14 +44,26 @@ class HelpFunc(BaseDogTail):
             # If it fails, dogtail will fail with a SearchError, which is fine
             self.pitivi.child(name="Close without saving", roleName="push button").click()
 
-    def search_by_text(self, text, parent, name=None, roleName=None):
+    def search_by_text(self, text, parent, name=None, roleName=None, exactMatchOnly=True):
         """
-        Search a parent widget for childs containing the given text
+        Search a parent widget for the first child whose text matches exactly.
+        If you want to search for a widget "containing" the text, set the
+        "exactMatchOnly" parameter to False (it will also be case-insensitive).
         """
         children = parent.findChildren(GenericPredicate(roleName=roleName, name=name))
         for child in children:
-            if child.text == text:
-                return child
+            if hasattr(child, "text"):
+                # This is cute and all, but we're not just searching inside
+                # text entry widgets or labels... we can also be in a table cell
+                # and that means we can't assume that it's a text cell. Many
+                # listviews/treeviews/etc have cells for icons (text is None)
+                if child.text is not None:
+                    print "Searching for", text, "in", child.text
+                    if exactMatchOnly:
+                        if text == child.text:
+                            return child
+                    elif text.lower() in child.text.lower():
+                        return child
 
     def search_by_regex(self, regex, parent, name=None, roleName=None, regex_flags=0):
         """

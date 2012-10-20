@@ -167,8 +167,8 @@ class TimelineTest(HelpFunc):
         self.clipproperties.click()
         center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
         table = self.clipproperties.child(roleName="table")
-        icon = self.search_by_text("Agingtv ", self.effectslibrary, roleName="icon")
-        self.improved_drag(center(icon), center(table))
+        effect_from_library = self.search_by_text("Agingtv", self.effectslibrary, roleName="table cell", exactMatchOnly=False)
+        self.improved_drag(center(effect_from_library), center(table))
         self.goToEnd_button.click()
         seekbefore = seektime.text
         #Try riple and roll
