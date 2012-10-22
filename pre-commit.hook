@@ -34,7 +34,7 @@ def main():
 
     tempdir = copy_files_to_tmp_dir(modified_files)
     try:
-        pep8_errors = system('pep8', '--repeat', '--ignore', 'E501', '.',
+        pep8_errors = system('pep8', '--repeat', '--ignore', 'E501,E128', '.',
             cwd=tempdir)
         if pep8_errors != "":
             output_message = "Your code is not fully pep8 compliant and contains"\
