@@ -404,15 +404,14 @@ class ProjectManager(Signallable, Loggable):
         return True
 
     def revertToSavedProject(self):
-        """ discard all unsaved changes and reload current open project """
-        #no running project or
-        #project has not been modified
-        if self.current.uri is None \
-           or not self.current.hasUnsavedModifications():
+        """
+        Discard all unsaved changes and reload current open project
+        """
+        if self.current.uri is None or not self.current.hasUnsavedModifications():
             return True
-
         if not self.emit("reverting-to-saved", self.current):
             return False
+
         uri = self.current.uri
         self.current.setModificationState(False)
         self.closeRunningProject()
@@ -514,7 +513,7 @@ class Project(Signallable, Loggable):
     __signals__ = {
         "settings-changed": ['old', 'new'],
         "project-changed": [],
-        }
+    }
 
     def __init__(self, name="", uri=None, **kwargs):
         """
@@ -704,17 +703,17 @@ class ProjectSettingsDialog():
         self.video_presets.loadAll()
 
         self._fillPresetsTreeview(
-                self.audio_preset_treeview, self.audio_presets,
-                self._updateAudioPresetButtons)
+            self.audio_preset_treeview, self.audio_presets,
+            self._updateAudioPresetButtons)
         self._fillPresetsTreeview(
-                self.video_preset_treeview, self.video_presets,
-                self._updateVideoPresetButtons)
+            self.video_preset_treeview, self.video_presets,
+            self._updateVideoPresetButtons)
 
         # A map which tells which infobar should be used when displaying
         # an error for a preset manager.
         self._infobarForPresetManager = {
-                self.audio_presets: self.audio_preset_infobar,
-                self.video_presets: self.video_preset_infobar}
+            self.audio_presets: self.audio_preset_infobar,
+            self.video_presets: self.video_preset_infobar}
 
         # Bind the widgets in the Video tab to the Video Presets Manager.
         self.bindSpinbutton(self.video_presets, "width", self.width_spinbutton)
@@ -793,7 +792,7 @@ class ProjectSettingsDialog():
         renderer.connect("edited", self._presetNameEditedCb, mgr)
         renderer.connect("editing-started", self._presetNameEditingStartedCb, mgr)
         treeview.get_selection().connect("changed", self._presetChangedCb, mgr,
-                                                    update_buttons_func)
+                                        update_buttons_func)
         treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
 
     def createAudioNoPreset(self, mgr):
@@ -805,7 +804,7 @@ class ProjectSettingsDialog():
     def createVideoNoPreset(self, mgr):
         mgr.prependPreset(_("No preset"), {
             "par": Gst.Fraction(int(get_combo_value(self.par_combo).num),
-                                    int(get_combo_value(self.par_combo).denom)),
+                                int(get_combo_value(self.par_combo).denom)),
             "frame-rate": Gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
                             int(get_combo_value(self.frame_rate_combo).denom)),
             "height": int(self.height_spinbutton.get_value()),

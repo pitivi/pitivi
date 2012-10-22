@@ -67,9 +67,9 @@ def print_ns(time):
         return "CLOCK_TIME_NONE"
 
     return str(time / (Gst.SECOND * 60 * 60)) + ':' + \
-           str((time / (Gst.SECOND * 60)) % 60) + ':' + \
-           str((time / Gst.SECOND) % 60) + ':' + \
-           str(time % Gst.SECOND)
+        str((time / (Gst.SECOND * 60)) % 60) + ':' + \
+        str((time / Gst.SECOND) % 60) + ':' + \
+        str(time % Gst.SECOND)
 
 
 def call_false(function, *args, **kwargs):

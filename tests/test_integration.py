@@ -396,8 +396,8 @@ class Base(TestCase):
         self.assertFalse(self.runner.watchdog.activated)
         # make sure the instance has been unset
         will_fail = False
-        if ((self._num_errors == self._result.errors) and
-            (self._num_failures == self._result.failures)):
+        if (self._num_errors == self._result.errors
+        and self._num_failures == self._result.failures):
             will_fail = not (pitivi.instance.PiTiVi is None)
 
         pitivi.instance.PiTiVi = None
@@ -709,13 +709,13 @@ class TestRippleExtensive(Base):
                 if j < i:
                     final.addSource('clip%d' % j, test1,
                         {'start': Gst.SECOND * j,
-                          'duration': Gst.SECOND,
-                          'priority': j % 2})
+                         'duration': Gst.SECOND,
+                         'priority': j % 2})
                 else:
                     final.addSource('clip%d' % j, test1,
                         {'start': Gst.SECOND * (j + 10),
-                          'duration': Gst.SECOND,
-                          'priority': (j % 2) + 1})
+                         'duration': Gst.SECOND,
+                         'priority': (j % 2) + 1})
             self.finals.append(final)
         Base.__init__(self, unknown)
 
@@ -1069,8 +1069,7 @@ class TestTransitions(Base):
 
             if trans:
                 expected = set([(getattr(self.runner.video1, a),
-                    getattr(self.runner.video1, b)) for a, b in
-                        trans])
+                    getattr(self.runner.video1, b)) for a, b in trans])
 
                 self.failUnlessEqual(set(self.runner.video1.transitions.keys()),
                    expected)

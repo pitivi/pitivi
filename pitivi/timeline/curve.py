@@ -130,8 +130,7 @@ class Curve(GooCanvas.CanvasItemSimple, GooCanvas.CanvasItem, View, Zoomable):
         def leave(self, item, target):
             self._view.normal()
 
-    def __init__(self, instance, element, interpolator, height=LAYER_HEIGHT_EXPANDED,
-        **kwargs):
+    def __init__(self, instance, element, interpolator, height=LAYER_HEIGHT_EXPANDED, **kwargs):
         super(Curve, self).__init__(**kwargs)
         View.__init__(self)
         Zoomable.__init__(self)
@@ -290,9 +289,8 @@ class Curve(GooCanvas.CanvasItemSimple, GooCanvas.CanvasItem, View, Zoomable):
             self._controlPoint(cr, kf)
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
-        if (between(0, x, self.visible_width) and
-            between(KW_LABEL_Y_OVERFLOW, y, self.height +
-            KW_LABEL_Y_OVERFLOW)):
+        if between(0, x, self.visible_width) and
+        between(KW_LABEL_Y_OVERFLOW, y, self.height + KW_LABEL_Y_OVERFLOW):
             x += self.bounds.x1
             y += self.bounds.y1
             cr.new_path()
@@ -322,8 +320,8 @@ class Curve(GooCanvas.CanvasItemSimple, GooCanvas.CanvasItem, View, Zoomable):
         x, y = pos
         for keyframe, value in self.keyframes.iteritems():
             kx, ky = value
-            if (between(kx - KW_MOUSE_WIDTH, x, kx + KW_MOUSE_WIDTH) and
-                between(ky - KW_MOUSE_HEIGHT, y, ky + KW_MOUSE_HEIGHT)):
+            if between(kx - KW_MOUSE_WIDTH, x, kx + KW_MOUSE_WIDTH) and
+            between(ky - KW_MOUSE_HEIGHT, y, ky + KW_MOUSE_HEIGHT):
                 return keyframe
         return None
 

@@ -70,8 +70,7 @@ class AttrIterator():
             except:
                 pass
 
-        while len(self.attributes) != 0 and \
-              self.attributes[0].start_index == self.start_index:
+        while len(self.attributes) != 0 and self.attributes[0].start_index == self.start_index:
             if self.attributes[0].end_index > self.start_index:
                 self.attribute_stack.append(self.attributes[0])
                 self.end_index = min(self.end_index, self.attributes[0].end_index)
@@ -332,14 +331,14 @@ class PangoBuffer(Gtk.TextBuffer):
         if interval[0] < split_interval[0]:
             if interval[1] == split_interval[1]:
                 return [(interval[0], split_interval[0] - 1),
-                         (split_interval[0], interval[1])]
+                     (split_interval[0], interval[1])]
             elif interval[1] < split_interval[1]:
                 return [(interval[0], split_interval[0] - 1),
-                         (split_interval[0], interval[1])]
+                     (split_interval[0], interval[1])]
             else:  # interval[1] > split_interval[1]
                 return [(interval[0], split_interval[0] - 1),
-                         (split_interval[0], split_interval[1]),
-                         (split_interval[1] + 1, interval[1])]
+                     (split_interval[0], split_interval[1]),
+                     (split_interval[1] + 1, interval[1])]
 
         if interval[0] > split_interval[0]:
             if interval[1] == split_interval[1]:
@@ -726,9 +725,9 @@ class TitleEditor(Loggable):
                 self.bt["back_color"].set_visible(True)
                 color = self.source.get_background()
                 color = Gdk.RGBA(color / 256 ** 2 % 256 / 255.,
-                                     color / 256 ** 1 % 256 / 255.,
-                                     color / 256 ** 0 % 256 / 255.,
-                                     color / 256 ** 3 % 256 / 255.)
+                                 color / 256 ** 1 % 256 / 255.,
+                                 color / 256 ** 0 % 256 / 255.,
+                                 color / 256 ** 3 % 256 / 255.)
                 self.bt["back_color"].set_rgba(color)
             else:
                 self.bt["back_color"].set_visible(False)
@@ -792,8 +791,8 @@ class TitleEditor(Loggable):
             self._deactivate()
         else:
             assert isinstance(source, GES.TrackTextOverlay) or \
-                   isinstance(source, GES.TrackTitleSource) or \
-                   isinstance(source, GES.TimelineTitleSource)
+                isinstance(source, GES.TrackTitleSource) or \
+                isinstance(source, GES.TimelineTitleSource)
             self._updateFromSource()
             self._activate()
 

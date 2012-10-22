@@ -88,7 +88,7 @@ class SignalGroup:
         """
         Disconnects all signal in the group connect on the given object
         """
-        assert obj != None
+        assert obj is not None
         objids = [sid for sid in self.signal_handler_ids.keys() if self.signal_handler_ids[sid][0] == obj]
         for sid in objids:
             old_object, handler_id = self.signal_handler_ids.pop(id)
@@ -225,8 +225,7 @@ class Signallable(object):
         if not hasattr(self, "_signal_group"):
             self._signal_group = self.SignalGroup(self)
 
-        return self._signal_group.connect(signame,
-                                           cb, args, kwargs)
+        return self._signal_group.connect(signame, cb, args, kwargs)
 
     def disconnect(self, sigid):
         """

@@ -228,8 +228,7 @@ class TestSignalisation(unittest.TestCase):
     def test04_emit03(self):
         # signal: named argument
         # connect: no arguments
-        oneargsigid = self.object.connect("signal-oneargs",
-                                            self._cb_oneargs)
+        oneargsigid = self.object.connect("signal-oneargs", self._cb_oneargs)
         self.assert_(oneargsigid)
         self.object.emit_signal_one_args(firstarg="yep")
         self.assertEquals(self.s_oneargs_triggered, 1)
@@ -241,8 +240,7 @@ class TestSignalisation(unittest.TestCase):
     def test04_emit04(self):
         # signal: named argument
         # connect: extra arguments
-        oneargsigid = self.object.connect("signal-oneargs",
-                                            self._cb_oneargs,
+        oneargsigid = self.object.connect("signal-oneargs", self._cb_oneargs,
                                           1, 2, 3, myvalue=42)
         self.assert_(oneargsigid)
         self.object.emit_signal_one_args(firstarg="yep")

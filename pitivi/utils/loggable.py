@@ -279,7 +279,7 @@ def getLevelName(level):
     @rtype: str
     """
     assert isinstance(level, int) and level > 0 and level < 6, \
-           TypeError("Bad debug level")
+        TypeError("Bad debug level")
     return getLevelNames()[level - 1]
 
 
@@ -307,7 +307,7 @@ def getLevelInt(levelName):
 
 def getFormattedLevelName(level):
     assert isinstance(level, int) and level > 0 and level < 6, \
-           TypeError("Bad debug level")
+        TypeError("Bad debug level")
     return _FORMATTED_LEVELS[level - 1]
 
 
@@ -486,15 +486,14 @@ def getFormatArgs(startFormat, startArgs, endFormat, endArgs, args, kwargs):
         debugArgs.extend(items)
     debugArgs.extend(endArgs)
     format = startFormat \
-              + ', '.join(('%s', ) * len(args)) \
-              + (kwargs and ', ' or '') \
-              + ', '.join(('%s=%r', ) * len(kwargs)) \
-              + endFormat
+        + ', '.join(('%s', ) * len(args)) \
+        + (kwargs and ', ' or '') \
+        + ', '.join(('%s=%r', ) * len(kwargs)) \
+        + endFormat
     return format, debugArgs
 
 
-def doLog(level, object, category, format, args, where=-1,
-    filePath=None, line=None):
+def doLog(level, object, category, format, args, where=-1, filePath=None, line=None):
     """
     @param where:     what to log file and line number for;
                       -1 for one frame above log.py; -2 and down for higher up;
@@ -1003,7 +1002,7 @@ class BaseLoggable(object):
             return {}
         args = self.logFunction(*args)
         return doLog(level, self.logObjectName(), self.logCategory,
-                      format, args, where=where, **kwargs)
+                  format, args, where=where, **kwargs)
 
     def warningFailure(self, failure, swallow=True):
         """

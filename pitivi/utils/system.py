@@ -47,7 +47,7 @@ class System(Signallable, Loggable):
 
     #generic functions
     def _inhibit(self, list_, key):
-        if key == None or (not isinstance(key, str)):
+        if key is None or (not isinstance(key, str)):
             assert False
 
         if not key in list_:
@@ -56,7 +56,7 @@ class System(Signallable, Loggable):
             self.emit('update-power-inhibition')
 
     def _uninhibit(self, list_, key):
-        if key == None:
+        if key is None:
             if self._isInhibited(list_):
                 list_ = []
                 self.log("emitting 'update-power-inhibition'")
@@ -80,7 +80,7 @@ class System(Signallable, Loggable):
         return keys
 
     def _isInhibited(self, list_, key=None):
-        if key == None:
+        if key is None:
             if len(list_) > 0:
                 return True
         elif key in list_:
@@ -186,7 +186,7 @@ class FreedesktopOrgSystem(System):
 
         # FIXME Notifications disabled for the time being
         #notification = Notify.Notification(title, message)
-        #if icon != None and isinstance(icon, GdkPixbuf.Pixbuf):
+        #if icon is not None and isinstance(icon, GdkPixbuf.Pixbuf):
             #notification.set_icon_from_pixbuf(icon)
         #notification.show()
 
@@ -237,7 +237,7 @@ class GnomeSystem(FreedesktopOrgSystem):
             if self.cookie_type != COOKIE_SLEEP:
                 new_cookie = self.session_iface.Inhibit(APPNAME, toplevel_id,
                     self.getSleepInhibitors(), INHIBIT_SUSPEND | INHIBIT_LOGOUT)
-                if self.cookie != None:
+                if self.cookie is not None:
                     self.session_iface.Uninhibit(self.cookie)
                 self.cookie = new_cookie
                 self.cookie_type = COOKIE_SLEEP
@@ -249,7 +249,7 @@ class GnomeSystem(FreedesktopOrgSystem):
             if self.cookie_type != COOKIE_SCREENSAVER:
                 new_cookie = self.session_iface.Inhibit(APPNAME, toplevel_id,
                     self.getScreensaverInhibitors(), INHIBIT_SESSION_IDLE)
-                if self.cookie != None:
+                if self.cookie is not None:
                     self.session_iface.Uninhibit(self.cookie)
                 self.cookie = new_cookie
                 self.cookie_type = COOKIE_SCREENSAVER
@@ -281,7 +281,7 @@ if os.name == 'posix':
         except:
             pass
 
-    if  system_ == None:
+    if system_ is None:
         try:
             # FIXME Disable notifications for the time being as it causes
             # various errors and the implementation is not done yet
@@ -297,10 +297,10 @@ elif os.name == 'mac':
 
 def getSystem():
     system = None
-    if system_ != None:
+    if system_ is not None:
         system = system_()
 
-    if system == None:
+    if system is None:
         system = System()
 
     return system

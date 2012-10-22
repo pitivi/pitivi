@@ -66,12 +66,12 @@ class clipmediapropsDialog():
             if not self.is_image:
                 self.frame_rate.set_text(
                     get_value_from_model(frame_rates, Gst.Fraction(
-                                                stream.get_framerate_num(),
-                                                stream.get_framerate_denom())))
+                        stream.get_framerate_num(),
+                        stream.get_framerate_denom())))
                 self.aspect_ratio.set_text(
                     get_value_from_model(pixel_aspect_ratios, Gst.Fraction(
-                                                    stream.get_par_num(),
-                                                    stream.get_par_denom())))
+                        stream.get_par_num(),
+                        stream.get_par_denom())))
             self.has_video = True
             break
 

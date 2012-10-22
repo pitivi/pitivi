@@ -193,7 +193,7 @@ class TrackObjectController(Controller):
         if not self._view.element.selected:
             self._view.timeline.selection.setToObj(self._view.element, SELECT)
 
-        if self.previous_x != None:
+        if self.previous_x is not None:
             ratio = float(self.ref / Zoomable.pixelToNs(10000000000))
             self.previous_x = self.previous_x * ratio
 
@@ -221,7 +221,7 @@ class TrackObjectController(Controller):
 
         position = Zoomable.pixelToNs(x)
         priority = self.app.gui.timeline_ui.controls.getPriorityForY(
-                        y - self._y_offset + self._vadj.get_value())
+            y - self._y_offset + self._vadj.get_value())
 
         self._context.setMode(self._getMode())
         self.debug("Setting position")
@@ -285,9 +285,9 @@ class TrimHandle(View, GooCanvas.CanvasImage, Loggable, Zoomable):
 
     def _scalePixbuf(self):
         self.props.pixbuf = self.current_pixbuf.scale_simple(
-                                                self.current_pixbuf.get_width(),
-                                                self.height,
-                                                GdkPixbuf.InterpType.BILINEAR)
+            self.current_pixbuf.get_width(),
+            self.height,
+            GdkPixbuf.InterpType.BILINEAR)
 
 
 class StartHandle(TrimHandle):
@@ -724,8 +724,10 @@ class TrackTitleSource(TrackObject):
     def __init__(self, instance, element, track, timeline, utrack):
         TrackObject.__init__(self, instance, element, track, timeline, utrack)
         #self.preview = Preview(self.app, element)
-        for thing in (self.bg, self._selec_indic,
-            self.start_handle, self.end_handle, self.namebg, self.name):
+        object_thingies = (self.bg, self._selec_indic,
+                        self.start_handle, self.end_handle,
+                        self.namebg, self.name)
+        for thing in object_thingies:
             self.add_child(thing, -1)
 
     def _getColor(self):
@@ -750,8 +752,10 @@ class TrackFileSource(TrackObject):
     def __init__(self, instance, element, track, timeline, utrack):
         TrackObject.__init__(self, instance, element, track, timeline, utrack)
         self.preview = Preview(self.app, element, self.height)
-        for thing in (self.bg, self.preview, self._selec_indic,
-            self.start_handle, self.end_handle, self.namebg, self.name):
+        object_thingies = (self.bg, self.preview, self._selec_indic,
+                        self.start_handle, self.end_handle,
+                        self.namebg, self.name)
+        for thing in object_thingies:
             self.add_child(thing, -1)
 
     def _setElement(self, element):

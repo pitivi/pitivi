@@ -309,8 +309,8 @@ class PitiviViewer(Gtk.VBox, Loggable):
             width = int(float(maxSize.width) * zoom)
             height = int(float(maxSize.height) * zoom)
             area = ((maxSize.width - width) / 2,
-                                     (maxSize.height - height) / 2,
-                                     width, height)
+                    (maxSize.height - height) / 2,
+                    width, height)
             self.sink.set_render_rectangle(*area)
             self.target.box.update_size(area)
             self.target.zoom = zoom
@@ -507,25 +507,25 @@ class Point():
 
     def draw(self, cr):
         linear = cairo.LinearGradient(self.x, self.y - self.radius,
-                                        self.x, self.y + self.radius)
+                                    self.x, self.y + self.radius)
         linear.add_color_stop_rgba(0.00, .6, .6, .6, 1)
         linear.add_color_stop_rgba(0.50, .4, .4, .4, .1)
         linear.add_color_stop_rgba(0.60, .4, .4, .4, .1)
         linear.add_color_stop_rgba(1.00, .6, .6, .6, 1)
 
         radial = cairo.RadialGradient(self.x + self.radius / 2,
-                                        self.y - self.radius / 2, 1,
-                                        self.x, self.y,
-                                        self.radius)
+                                    self.y - self.radius / 2, 1,
+                                    self.x, self.y,
+                                    self.radius)
         if self.clicked:
             radial.add_color_stop_rgb(0, *self.clickedColor)
         else:
             radial.add_color_stop_rgb(0, *self.color)
         radial.add_color_stop_rgb(1, 0.1, 0.1, 0.1)
         radial_glow = cairo.RadialGradient(self.x, self.y,
-                                            self.radius * .9,
-                                            self.x, self.y,
-                                            self.radius * 1.2)
+                                        self.radius * .9,
+                                        self.x, self.y,
+                                        self.radius * 1.2)
         radial_glow.add_color_stop_rgba(0, 0.9, 0.9, 0.9, 1)
         radial_glow.add_color_stop_rgba(1, 0.9, 0.9, 0.9, 0)
 
@@ -917,8 +917,8 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
                 width = int(float(self.area.width) * self.zoom)
                 height = int(float(self.area.height) * self.zoom)
                 area = ((self.area.width - width) / 2,
-                                     (self.area.height - height) / 2,
-                                     width, height)
+                        (self.area.height - height) / 2,
+                        width, height)
                 self.sink.set_render_rectangle(*area)
             else:
                 area = self.area
@@ -969,7 +969,7 @@ class PlayPauseButton(Gtk.Button, Loggable):
     """
     __gsignals__ = {
         "play": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_BOOLEAN,))
-        }
+    }
 
     def __init__(self):
         Gtk.Button.__init__(self)

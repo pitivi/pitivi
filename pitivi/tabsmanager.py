@@ -66,7 +66,7 @@ class BaseTabs(Gtk.Notebook):
         window.set_title(label.get_text())
         window.set_default_size(600, 400)
         window.connect("destroy", self._detachedWindowDestroyCb,
-                        page, original_position, label)
+                    page, original_position, label)
         notebook = Gtk.Notebook()
         notebook.props.show_tabs = False
         window.add(notebook)

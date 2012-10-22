@@ -86,7 +86,7 @@ class PreferencesDialog():
 
     @classmethod
     def addPreference(cls, attrname, label, description, section=None,
-        widget_klass=None, **args):
+                    widget_klass=None, **args):
         """
         Add a user preference. The preferences dialog will try
         to guess the appropriate widget to use based on the type of the
@@ -129,7 +129,7 @@ class PreferencesDialog():
 
     @classmethod
     def addNumericPreference(cls, attrname, label, description, section=None,
-        upper=None, lower=None):
+                            upper=None, lower=None):
         """
         Add an auto-generated user preference that will show up as either a
         Gtk.SpinButton or an horizontal Gtk.Scale, depending whether both the
@@ -152,8 +152,7 @@ class PreferencesDialog():
             ptvWidgets.NumericWidget, upper=upper, lower=lower)
 
     @classmethod
-    def addTextPreference(cls, attrname, label, description, section=None,
-        matches=None):
+    def addTextPreference(cls, attrname, label, description, section=None, matches=None):
         """
         Add an auto-generated user preference that will show up as either a
         Gtk.SpinButton or an horizontal Gtk.Scale, depending on the upper and
@@ -172,8 +171,7 @@ class PreferencesDialog():
             ptvWidgets.TextWidget, matches=matches)
 
     @classmethod
-    def addChoicePreference(cls, attrname, label, description, choices,
-        section=None):
+    def addChoicePreference(cls, attrname, label, description, choices, section=None):
         """
         Add an auto-generated user preference that will show up as either a
         Gtk.ComboBox or a group of radio buttons, depending on the number of
@@ -212,8 +210,7 @@ class PreferencesDialog():
             ptvWidgets.ToggleWidget)
 
     @classmethod
-    def addColorPreference(cls, attrname, label, description, section=None,
-        value_type=int):
+    def addColorPreference(cls, attrname, label, description, section=None, value_type=int):
         """
         Add an auto-generated user preference for specifying colors. The
         colors can be returned as either int, a string colorspec, or a

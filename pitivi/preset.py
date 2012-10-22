@@ -27,12 +27,10 @@ import json
 
 from gettext import gettext as _
 
-from pitivi.render import available_muxers, available_video_encoders, \
-     available_audio_encoders
+from pitivi.render import available_muxers, available_video_encoders, available_audio_encoders
 from pitivi.settings import xdg_data_home
 from pitivi.utils.misc import isWritable
-from pitivi.configure import get_renderpresets_dir, \
-        get_audiopresets_dir, get_videopresets_dir
+from pitivi.configure import get_renderpresets_dir, get_audiopresets_dir, get_videopresets_dir
 
 
 class DuplicatePresetNameException(Exception):
@@ -149,8 +147,7 @@ class PresetManager(object):
         if old_name == new_name:
             # Nothing to do.
             return
-        if (not old_name.lower() == new_name.lower() and
-            self.hasPreset(new_name)):
+        if old_name.lower() != new_name.lower() and self.hasPreset(new_name):
             raise DuplicatePresetNameException()
         self.ordered[path][0] = new_name
         self.presets[new_name] = self.presets[old_name]
@@ -393,10 +390,9 @@ class RenderPresetManager(PresetManager):
         acodec = parser["acodec"]
         vcodec = parser["vcodec"]
 
-        if (acodec not in [fact.get_name() for fact in available_audio_encoders()] or
-            vcodec not in [fact.get_name() for fact in available_video_encoders()] or
-            container not in [fact.get_name() for fact in available_muxers()]):
-
+        if (acodec not in [fact.get_name() for fact in available_audio_encoders()]
+        or vcodec not in [fact.get_name() for fact in available_video_encoders()]
+        or container not in [fact.get_name() for fact in available_muxers()]):
             return
 
         try:

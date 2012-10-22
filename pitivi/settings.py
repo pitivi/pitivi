@@ -237,7 +237,7 @@ class GlobalSettings(Signallable):
 
     @classmethod
     def addConfigOption(cls, attrname, type_=None, section=None, key=None,
-        environment=None, default=None, notify=False,):
+                        environment=None, default=None, notify=False,):
         """
         Add a configuration option.
 
@@ -272,7 +272,7 @@ class GlobalSettings(Signallable):
         if environment and environment in cls.environment:
             raise ConfigError("Settings environment varaible \"%s\" is"
                 "already in use.")
-        if not type_ and default == None:
+        if not type_ and default is None:
             raise ConfigError("Settings attribute \"%s\" has must have a"
                 " type or a default." % attrname)
         if not type_:
@@ -316,7 +316,7 @@ class MultimediaSettings(Signallable, Loggable):
     __signals__ = {
         "settings-changed": None,
         "encoders-changed": None,
-        }
+    }
 
     # Audio/Video settings for processing/export
 
@@ -378,7 +378,7 @@ class MultimediaSettings(Signallable, Loggable):
         if self.vcodecsettings:
             msg += "\n\t\tCodec settings: " + str(self.vcodecsettings)
         msg += "\n\tAudio: " + str(self.audiochannels) + " channels, " +\
-                str(self.audiorate) + " Hz, " + str(self.audiodepth) + " bits"
+            str(self.audiorate) + " Hz, " + str(self.audiodepth) + " bits"
         msg += "\n\t\tEncoder: " + str(self.aencoder)
         if self.acodecsettings:
             msg += "\n\t\tCodec settings: " + str(self.acodecsettings)
@@ -404,9 +404,9 @@ class MultimediaSettings(Signallable, Loggable):
         """ Returns the GstCaps corresponding to the video settings """
         videowidth, videoheight = self.getVideoWidthAndHeight(render=render)
         vstr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (
-                videowidth, videoheight,
-                self.videopar.num, self.videopar.denom,
-                self.videorate.num, self.videorate.denom)
+            videowidth, videoheight,
+            self.videopar.num, self.videopar.denom,
+            self.videorate.num, self.videorate.denom)
         caps_str = "video/x-raw,%s" % (vstr)
         video_caps = Gst.caps_from_string(caps_str)
         if self.vencoder:

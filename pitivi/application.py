@@ -431,7 +431,7 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
 
 def _parse_options(argv):
     parser = OptionParser(
-            usage=_("""
+        usage=_("""
     %prog [PROJECT_FILE]               # Start the video editor.
     %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a project."""))
 

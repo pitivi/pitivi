@@ -75,7 +75,7 @@ class Effect():
     Factories that applies an effect on a stream
     """
     def __init__(self, effect, media_type, categories=[_("Uncategorized")],
-                  human_name="", description="", icon=None):
+                human_name="", description="", icon=None):
         self.effectname = effect
         self.media_type = media_type
         self.categories = categories
@@ -103,50 +103,55 @@ class EffectsHandler(object):
         self._audio_categories_effects = ((_("All effects"), ("")),)
         self._video_categories_effects = (
             (_("All effects"), ("")),
-            (_("Colors"), ("cogcolorspace", "alphacolor", "videobalance",
-                  "gamma", "alpha", "frei0r-filter-color-distance",
-                  "frei0r-filter-contrast0r", "frei0r-filter-invert0r",
-                  "frei0r-filter-saturat0r", "frei0r-filter-r",
-                  "frei0r-filter-white-balance", "frei0r-filter-brightness",
-                  "frei0r-filter-b", "frei0r-filter-gamma",
-                  "frei0r-filter-hueshift0r", "frei0r-filter-transparency",
-                  "frei0r-filter-equaliz0r", "frei0r-filter-glow",
-                  "frei0r-filter-g", "frei0r-filter-bw0r", "burn", "dodge",
-                  "coloreffects", "chromium", "exclusion", "glfiltersobel",
-                  "Solarize", "frei0r-filter-threshold0r",
-                  "frei0r-filter-twolay0r",
-                )
-            ),
-            (_("Noise"), ("videorate", "frei0r-filter-edgeglow",
-                  "gaussianblur", "diffuse", "dilate", "marble", )),
-            (_("Analysis"), ("videoanalyse", "videodetect", "videomark",
-                 "revtv", "navigationtest", "frei0r-filter-rgb-parade",
-                 "frei0r-filter-vectorscope", "frei0r-filter-luminance",
-                          )),
-            (_("Blur"), ("frei0r-filter-squareblur", "gaussianblur", "diffuse",
-                 "dilate", "marble", )),
-            (_("Geometry"), ("cogscale", "aspectratiocrop", "cogdownsample",
-                  "videocrop", "videoflip", "videobox", "gdkpixbufscale",
-                  "frei0r-filter-letterb0xed",
-                  "frei0r-filter-k-means-clustering",
-                  "videoscale", "frei0r-filter-lens-correction",
-                  "frei0r-filter-perspective",
-                  "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",
-                  "frei0r-filter-flippo", "frei0r-filter-3dflippo",
-                  "frei0r-filter-letterb0xed", "bulge", "circle", "fisheye",
-                  "kaleidoscope", "mirror", "pinch", "sphere", "square",
-                  "stretch", "twirl", "waterriple",
-                  )
-            ),
-            (_("Fancy"), ("rippletv", "streaktv", "radioactv", "optv",
-                 "quarktv", "vertigotv", "shagadelictv", "warptv", "dicetv",
-                 "agingtv", "edgetv", "frei0r-filter-cartoon",
-                 "frei0r-filter-water", "frei0r-filter-nosync0r",
-                 "frei0r-filter-k-means-clustering", "frei0r-filter-delay0r",
-                 "bulge", "circle", "fisheye", "kaleidoscope", "mirror",
-                 "pinch", "sphere", "square", "stretch", "twirl", "waterriple",
-             )
-            ),
+            (_("Colors"), (
+                "cogcolorspace", "alphacolor", "videobalance",
+                "gamma", "alpha", "frei0r-filter-color-distance",
+                "frei0r-filter-contrast0r", "frei0r-filter-invert0r",
+                "frei0r-filter-saturat0r", "frei0r-filter-r",
+                "frei0r-filter-white-balance", "frei0r-filter-brightness",
+                "frei0r-filter-b", "frei0r-filter-gamma",
+                "frei0r-filter-hueshift0r", "frei0r-filter-transparency",
+                "frei0r-filter-equaliz0r", "frei0r-filter-glow",
+                "frei0r-filter-g", "frei0r-filter-bw0r", "burn", "dodge",
+                "coloreffects", "chromium", "exclusion", "glfiltersobel",
+                "Solarize", "frei0r-filter-threshold0r",
+                "frei0r-filter-twolay0r",
+            )),
+            (_("Noise"), (
+                "videorate", "frei0r-filter-edgeglow",
+                "gaussianblur", "diffuse", "dilate", "marble",
+            )),
+            (_("Analysis"), (
+                "videoanalyse", "videodetect", "videomark",
+                "revtv", "navigationtest", "frei0r-filter-rgb-parade",
+                "frei0r-filter-vectorscope", "frei0r-filter-luminance",
+            )),
+            (_("Blur"), (
+                "frei0r-filter-squareblur", "gaussianblur", "diffuse",
+                "dilate", "marble",
+            )),
+            (_("Geometry"), (
+                "cogscale", "aspectratiocrop", "cogdownsample",
+                "videocrop", "videoflip", "videobox", "gdkpixbufscale",
+                "frei0r-filter-letterb0xed",
+                "frei0r-filter-k-means-clustering",
+                "videoscale", "frei0r-filter-lens-correction",
+                "frei0r-filter-perspective",
+                "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",
+                "frei0r-filter-flippo", "frei0r-filter-3dflippo",
+                "frei0r-filter-letterb0xed", "bulge", "circle", "fisheye",
+                "kaleidoscope", "mirror", "pinch", "sphere", "square",
+                "stretch", "twirl", "waterriple",
+            )),
+            (_("Fancy"), (
+                "rippletv", "streaktv", "radioactv", "optv",
+                "quarktv", "vertigotv", "shagadelictv", "warptv", "dicetv",
+                "agingtv", "edgetv", "frei0r-filter-cartoon",
+                "frei0r-filter-water", "frei0r-filter-nosync0r",
+                "frei0r-filter-k-means-clustering", "frei0r-filter-delay0r",
+                "bulge", "circle", "fisheye", "kaleidoscope", "mirror",
+                "pinch", "sphere", "square", "stretch", "twirl", "waterriple",
+            )),
             (_("Time"), ("frei0r-filter-delay0r",)),
             (_("Uncategorized"), ("",))
         )
@@ -162,23 +167,25 @@ class EffectsHandler(object):
         go trough the list of element factories and
         add them to the correct list filtering if necessary
         """
-        factlist = Gst.Registry.get().get_feature_list(
-            Gst.ElementFactory)
+        factlist = Gst.Registry.get().get_feature_list(Gst.ElementFactory)
         for element_factory in factlist:
             klass = element_factory.get_klass()
             name = element_factory.get_name()
-            if "Effect" in klass and name not in BLACKLISTED_EFFECTS and not\
-                [bplug for bplug in BLACKLISTED_PLUGINS if bplug in name]:
-                if 'Audio' in klass:
+
+            if ("Effect" in klass and name not in BLACKLISTED_EFFECTS
+            and not [bplug for bplug in BLACKLISTED_PLUGINS if bplug in name]):
+
+                if "Audio" in klass:
                     self.audio_effects.append(element_factory)
                     media_type = AUDIO_EFFECT
-                elif 'Video' in klass:
+                elif "Video" in klass:
                     self.video_effects.append(element_factory)
                     media_type = VIDEO_EFFECT
+
                 effect = Effect(name, media_type,
-                                   self._getEffectCategories(name),
-                                   self._getEffectName(element_factory),
-                                   self._getEffectDescripton(element_factory))
+                               self._getEffectCategories(name),
+                               self._getEffectName(element_factory),
+                               self._getEffectDescripton(element_factory))
                 self._addEffectToDic(name, effect)
 
     def getAllAudioEffects(self):
@@ -441,10 +448,10 @@ class EffectListWidget(Gtk.VBox, Loggable):
             if name not in HIDDEN_EFFECTS:
                 effect = self.app.effects.getFactoryFromName(name)
                 self.storemodel.append([effect.getHumanName(),
-                                         effect.getDescription(), effectType,
-                                         effect.getCategories(),
-                                         effect, name,
-                                         self.app.effects.getEffectIcon(name)])
+                                        effect.getDescription(), effectType,
+                                        effect.getCategories(),
+                                        effect, name,
+                                        self.app.effects.getEffectIcon(name)])
                 self.storemodel.set_sort_column_id(COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
     def populate_categories_widget(self):
@@ -558,7 +565,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
             if self.categoriesWidget.get_active_text() in model.get_value(iter, COL_EFFECT_CATEGORIES):
                 text = self.searchEntry.get_text().lower()
                 return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
-                       text in model.get_value(iter, COL_NAME_TEXT).lower()
+                    text in model.get_value(iter, COL_NAME_TEXT).lower()
             else:
                 return False
         else:

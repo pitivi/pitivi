@@ -97,7 +97,7 @@ PLAYHEAD_CURSOR = Gdk.Cursor.new(Gdk.CursorType.SB_H_DOUBLE_ARROW)
 
 # Drag and drop constants/tuples
 # FIXME, rethink the way we handle that as it is quite 'hacky'
-DND_EFFECT_LIST = [[VIDEO_EFFECT_TARGET_ENTRY.target, EFFECT_TARGET_ENTRY.target],\
+DND_EFFECT_LIST = [[VIDEO_EFFECT_TARGET_ENTRY.target, EFFECT_TARGET_ENTRY.target],
                   [AUDIO_EFFECT_TARGET_ENTRY.target, EFFECT_TARGET_ENTRY.target]]
 VIDEO_EFFECT_LIST = [VIDEO_EFFECT_TARGET_ENTRY.target, EFFECT_TARGET_ENTRY.target],
 AUDIO_EFFECT_LIST = [AUDIO_EFFECT_TARGET_ENTRY.target, EFFECT_TARGET_ENTRY.target],
@@ -486,11 +486,8 @@ class TimelineControls(Gtk.VBox, Loggable):
     """
 
     __gsignals__ = {
-       "selection-changed": (
-            GObject.SignalFlags.RUN_LAST,
-            None,
-            (GObject.TYPE_PYOBJECT,),)
-       }
+        "selection-changed": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_PYOBJECT,),)
+    }
 
     def __init__(self, instance):
         Gtk.VBox.__init__(self)
@@ -512,7 +509,7 @@ class TimelineControls(Gtk.VBox, Loggable):
         self.connect("drag_motion", self._dragMotionCb)
         self.connect("drag_leave", self._dragLeaveCb)
         self.drag_dest_set(Gtk.DestDefaults.ALL,
-                             [LAYER_CONTROL_TARGET_ENTRY], Gdk.DragAction.MOVE)
+                         [LAYER_CONTROL_TARGET_ENTRY], Gdk.DragAction.MOVE)
 
     def _sizeAllocatedCb(self, widget, alloc):
         if self.get_children():
@@ -636,8 +633,7 @@ class TimelineControls(Gtk.VBox, Loggable):
     def getYOfLayer(self, track_type, layer):
         y = 0
         for child in self.get_children():
-            if layer == child.layer and \
-                isinstance(child, self.type_map[track_type]):
+            if layer == child.layer and isinstance(child, self.type_map[track_type]):
                 return y
 
             y += child.getHeight()
@@ -1183,7 +1179,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             # Let some time for TrackObject-s to be created
             if self._temp_objects and not self._creating_tckobjs_sigid:
                 focus = self._temp_objects[0]
-                if self._move_context is  None:
+                if self._move_context is None:
                     self._move_context = EditingContext(focus,
                             self.timeline, GES.EditMode.EDIT_NORMAL, GES.Edge.EDGE_NONE,
                             set(self._temp_objects[1:]), self.app.settings)
@@ -1812,7 +1808,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                         self.app.action_log.begin("remove volume point")
                         interpolator.removeKeyframe(kf)
                         self.app.action_log.commit()
-                if keyframe_exists == False:
+                if keyframe_exists is False:
                     self.app.action_log.begin("add volume point")
                     interpolator.newKeyframe(position_in_obj)
                     self.app.action_log.commit()

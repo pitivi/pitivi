@@ -341,11 +341,8 @@ class TwoStateButton(Gtk.Button):
     """
 
     __gsignals__ = {
-       "changed-state": (
-            GObject.SignalFlags.RUN_LAST,
-            None,
-            (GObject.TYPE_PYOBJECT,),)
-       }
+        "changed-state": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_PYOBJECT,),)
+    }
 
     def __init__(self, state1="", state2=""):
         Gtk.Button.__init__(self)

@@ -111,7 +111,7 @@ class Seeker(Signallable, Loggable):
                 return False
 
             self._time = None
-        elif self.position != None and self.format != None:
+        elif self.position is not None and self.format is not None:
             position, self.position = self.position, None
             format, self.format = self.format, None
             try:
@@ -465,10 +465,9 @@ class Pipeline(GES.TimelinePipeline, SimplePipeline):
                         (GObject.TYPE_UINT64,)),
         "duration-changed": (GObject.SignalFlags.RUN_LAST, None,
                         (GObject.TYPE_UINT64,)),
-        "eos": (GObject.SignalFlags.RUN_LAST, None,
-                        ()),
+        "eos": (GObject.SignalFlags.RUN_LAST, None, ()),
         "error": (GObject.SignalFlags.RUN_LAST, None,
-                        (GObject.TYPE_STRING, GObject.TYPE_STRING)),
+                (GObject.TYPE_STRING, GObject.TYPE_STRING)),
         "window-handle-message": (GObject.SignalFlags.RUN_LAST, None,
                         (GObject.TYPE_PYOBJECT,))}
 

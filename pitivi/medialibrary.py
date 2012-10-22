@@ -140,7 +140,7 @@ class MediaLibrary(Signallable, Loggable):
         "nothing-to-import": [],
         "ready": [],
         "starting": [],
-        }
+    }
 
     def __init__(self):
         Loggable.__init__(self)
@@ -649,8 +649,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # The code below tries to read existing thumbnails from the freedesktop
         # thumbnails directory (~/.thumbnails). The filenames are simply
         # the file URI hashed with md5, so we can retrieve them easily.
-        if [i for i in info.get_stream_list() if\
-            isinstance(i, DiscovererVideoInfo)]:
+        if [i for i in info.get_stream_list() if isinstance(i, DiscovererVideoInfo)]:
             thumbnail_hash = md5(info.get_uri()).hexdigest()
             thumb_dir = os.path.expanduser("~/.thumbnails/")
             thumb_path_normal = thumb_dir + "normal/" + thumbnail_hash + ".png"
@@ -661,7 +660,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 thumbnail = GdkPixbuf.Pixbuf.new_from_file(thumb_path_normal)
                 thumbnail_large = thumbnail
                 thumbnail_height = int(thumbnail.get_height() / 2)
-                thumbnail = thumbnail.scale_simple(64, thumbnail_height, \
+                thumbnail = thumbnail.scale_simple(64, thumbnail_height,
                     GdkPixbuf.InterpType.BILINEAR)
             except:
                 # TODO gst discoverer should create missing thumbnails.
@@ -793,7 +792,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         model = self.treeview.get_model()
         paths = self.getSelectedPaths()
-        if paths == None or paths < 1:
+        if paths is None or paths < 1:
             return
         # use row references so we don't have to care if a path has been removed
         rows = []
@@ -1090,7 +1089,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         if len(directories):
             # Recursively import from folders that were dragged into the library
             self.app.threads.addThread(PathWalker, directories,
-                                        self.app.current.medialibrary.addUris)
+                                    self.app.current.medialibrary.addUris)
         if len(remote_files):
             #TODO waiting for remote files downloader support to be implemented
             pass

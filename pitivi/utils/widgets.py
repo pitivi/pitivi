@@ -200,8 +200,7 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
         self.upper = upper
         self.lower = lower
         self._type = None
-        if (upper != None) and (lower != None) and\
-            (upper < 5000) and (lower > -5000):
+        if (lower is not None and upper is not None) and (lower > -5000 and upper < 5000):
             self.slider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, self.adjustment)
             self.pack_start(self.slider, fill=True, expand=True, padding=0)
             self.slider.show()
@@ -706,18 +705,17 @@ if __name__ == '__main__':
             ("pear", "pear")),)),
         (ColorWidget, 0x336699FF, (int,)),
         (FontWidget, "Sans 9", ()),
-        (FractionWidget, "30M",
-            (Gst.FractionRange(Gst.Fraction(1, 1),
-                Gst.Fraction(30000, 1001)),)),
-        (FractionWidget, Gst.Fraction(25000, 1001),
-            (
-                Gst.FractionRange(
-                    Gst.Fraction(1, 1),
-                    Gst.Fraction(30000, 1001)
-                ),
-                ("25:1", Gst.Fraction(30, 1), "30M", ),
-            )
-        ),
+        (FractionWidget, "30M", (
+            Gst.FractionRange(Gst.Fraction(1, 1),
+            Gst.Fraction(30000, 1001)),
+        )),
+        (FractionWidget, Gst.Fraction(25000, 1001), (
+            Gst.FractionRange(
+                Gst.Fraction(1, 1),
+                Gst.Fraction(30000, 1001)
+            ),
+            ("25:1", Gst.Fraction(30, 1), "30M", ),
+        )),
     )
 
     W = Gtk.Window()
@@ -745,33 +743,30 @@ def make_property_widget(unused_element, prop, value=None):
     # FIXME : implement the case for flags
     type_name = GObject.type_name(prop.value_type.fundamental)
 
-    if value == None:
+    if value is None:
         value = prop.default_value
     if type_name == "gchararray":
         widget = TextWidget(default=prop.default_value)
-    elif (type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat',
-        'gulong', 'gdouble']):
-
+    elif type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat', 'gulong', 'gdouble']:
         maximum, minimum = None, None
         if hasattr(prop, "minimum"):
             minimum = prop.minimum
         if hasattr(prop, "maximum"):
             maximum = prop.maximum
-        widget = NumericWidget(default=prop.default_value,
-                                       upper=maximum, lower=minimum)
-    elif (type_name == 'gboolean'):
+        widget = NumericWidget(default=prop.default_value, upper=maximum, lower=minimum)
+    elif type_name == "gboolean":
         widget = ToggleWidget(default=prop.default_value)
-    elif (type_name == 'GEnum'):
+    elif type_name == "GEnum":
         choices = []
         for key, val in prop.enum_class.__enum_values__.iteritems():
             choices.append([val.value_name, int(val)])
         widget = ChoiceWidget(choices, default=prop.default_value)
-    elif type_name == 'GstFraction':
+    elif type_name == "GstFraction":
         widget = FractionWidget(None, presets=["0:1"], default=prop.default_value)
     else:
         widget = DefaultWidget(type_name)
 
-    if value is not None and type_name != 'GFlags':
+    if value is not None and type_name != "GFlags":
         widget.setWidgetValue(value)
 
     return widget
@@ -836,8 +831,8 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
 
         y = 0
         for prop in props:
-            if not prop.flags & GObject.PARAM_WRITABLE\
-              or not prop.flags & GObject.PARAM_READABLE:
+            if (not prop.flags & GObject.PARAM_WRITABLE
+            or not prop.flags & GObject.PARAM_READABLE):
                 continue
 
             if is_effect:
@@ -896,11 +891,11 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         """
         d = {}
         for prop, widget in self.properties.iteritems():
-            if not prop.flags & GObject.PARAM_WRITABLE\
-              or isinstance(widget, DefaultWidget):
+            if (not prop.flags & GObject.PARAM_WRITABLE
+            or isinstance(widget, DefaultWidget)):
                 continue
             value = widget.getWidgetValue()
-            if value != None and (value != prop.default_value or with_default):
+            if value is not None and (value != prop.default_value or with_default):
                 d[prop.name] = value
         return d
 

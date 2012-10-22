@@ -58,11 +58,11 @@ class ClipPropertiesError(Exception):
 
 def compare_type(track, effect_type):
 
-    if track.get_property("track_type") == GES.TrackType.AUDIO and \
-            effect_type == AUDIO_EFFECT:
+    if (track.get_property("track_type") == GES.TrackType.AUDIO
+    and effect_type == AUDIO_EFFECT):
         return True
-    elif track.get_property("track_type") == GES.TrackType.VIDEO and \
-             effect_type == VIDEO_EFFECT:
+    elif (track.get_property("track_type") == GES.TrackType.VIDEO
+    and effect_type == VIDEO_EFFECT):
         return True
     return False
 
@@ -402,7 +402,7 @@ class EffectProperties(Gtk.Expander):
         for track_effect in obj.get_top_effects():
             if not track_effect.props.bin_description in HIDDEN_EFFECTS:
                 material = self.app.effects.getFactoryFromName(
-                        track_effect.props.bin_description)
+                    track_effect.props.bin_description)
                 to_append = [track_effect.props.active]
                 track = track_effect.get_track()
                 if track.get_property("track_type") == GES.TrackType.AUDIO:
@@ -419,8 +419,7 @@ class EffectProperties(Gtk.Expander):
     def _showInfoBar(self):
         if self._info_bar is None:
             self._info_bar = self.clip_properties.addInfoBar(
-                                _("Select a clip on the timeline "
-                                  "to configure its associated effects"))
+                _("Select a clip on the timeline to configure its associated effects"))
         self._info_bar.show_all()
 
     def _setEffectDragable(self):
@@ -456,9 +455,7 @@ class EffectProperties(Gtk.Expander):
 
             self._effect_config_ui = ui
             if self._effect_config_ui:
-                self._vcontent.pack2(self._effect_config_ui,
-                                         resize=False,
-                                         shrink=False)
+                self._vcontent.pack2(self._effect_config_ui, resize=False, shrink=False)
                 self._vcontent.set_position(int(self._config_ui_h_pos))
                 self._effect_config_ui.show_all()
             self.selected_on_treeview = track_effect

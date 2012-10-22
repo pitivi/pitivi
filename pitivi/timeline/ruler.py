@@ -50,7 +50,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         "scroll-event": "override",
         "seek": (GObject.SignalFlags.RUN_LAST, None,
                 [GObject.TYPE_UINT64])
-        }
+    }
 
     border = 0
     min_tick_spacing = 3
@@ -179,11 +179,11 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                 self.app.gui.timeline_ui.zoomed_fitted = False
         else:
             # No modifier key held down, just scroll
-            if event.scroll.direction == Gdk.ScrollDirection.UP or\
-                event.scroll.direction == Gdk.ScrollDirection.LEFT:
+            if (event.scroll.direction == Gdk.ScrollDirection.UP
+            or event.scroll.direction == Gdk.ScrollDirection.LEFT):
                 self.app.gui.timeline_ui.scroll_left()
-            elif event.scroll.direction == Gdk.ScrollDirection.DOWN or\
-                event.scroll.direction == Gdk.ScrollDirection.RIGHT:
+            elif (event.scroll.direction == Gdk.ScrollDirection.DOWN
+            or event.scroll.direction == Gdk.ScrollDirection.RIGHT):
                 self.app.gui.timeline_ui.scroll_right()
 
     def setProjectFrameRate(self, rate):

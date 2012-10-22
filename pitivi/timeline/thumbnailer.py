@@ -407,8 +407,7 @@ class RandomAccessPreviewer(Previewer):
     def _requestThumbnail(self, segment):
         """Queue a thumbnail request for the given segment"""
 
-        if (segment not in self._queue) and (len(self._queue) <=
-            self.max_requests):
+        if segment not in self._queue and len(self._queue) <= self.max_requests:
             if self._queue:
                 self._queue.append(segment)
             else:
@@ -714,9 +713,9 @@ class CairoSurfaceThumbnailSink(GstBase.BaseSink):
 
     __gsignals__ = {
         "thumbnail": (GObject.SignalFlags.RUN_LAST,
-                      None,
-                      (GObject.TYPE_PYOBJECT, GObject.TYPE_UINT64))
-        }
+                    None,
+                    (GObject.TYPE_PYOBJECT, GObject.TYPE_UINT64))
+    }
 
     __gsttemplates__ = (
         Gst.PadTemplate.new("sink",
@@ -736,7 +735,7 @@ class CairoSurfaceThumbnailSink(GstBase.BaseSink):
                                      big_to_cairo_red_mask,
                                      big_to_cairo_green_mask,
                                      big_to_cairo_blue_mask)))
-        )
+    )
 
     def __init__(self):
         GstBase.BaseSink.__init__(self)
@@ -839,7 +838,7 @@ class Preview(GooCanvas.CanvasItemSimple, GooCanvas.CanvasItem, Zoomable):
     def _update_preview(self, previewer, segment):
         # if segment is none we are not just drawing a new thumbnail, so we
         # should update bounds
-        if segment == None:
+        if segment is None:
             self.changed(True)
         else:
             self.changed(False)

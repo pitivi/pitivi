@@ -1,7 +1,7 @@
 from unittest import TestCase
 from pitivi.utils.system import getSystem, GnomeSystem, \
-  INHIBIT_LOGOUT, INHIBIT_SUSPEND, INHIBIT_SESSION_IDLE, \
-  INHIBIT_USER_SWITCHING
+    INHIBIT_LOGOUT, INHIBIT_SUSPEND, INHIBIT_SESSION_IDLE, \
+    INHIBIT_USER_SWITCHING
 
 
 class TestGnomeSystem(TestCase):

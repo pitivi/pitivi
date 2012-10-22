@@ -336,8 +336,7 @@ class Controller(Loggable):
         self._event_common(item, target, event)
         if not self._canvas:
             self._canvas = item.get_canvas()
-        self._mousedown = self.pos(item) - self.transform(self.from_item_event(
-            item, event))
+        self._mousedown = self.pos(item) - self.transform(self.from_item_event(item, event))
         self._dragging = target
         self._initial = self.pos(target)
         self._pending_drag_start = (item, target, event)
@@ -348,14 +347,12 @@ class Controller(Loggable):
         self._event_common(item, target, event)
         if self._dragging:
             if self._pending_drag_start is not None:
-                pending_drag_start, self._pending_drag_start = \
-                        self._pending_drag_start, None
+                pending_drag_start, self._pending_drag_start = self._pending_drag_start, None
                 self._pending_drag_end = True
                 self._drag_start(*pending_drag_start)
 
             self.set_pos(self._dragging,
-                self.transform(self._mousedown + self.from_item_event(item,
-                    event)))
+                self.transform(self._mousedown + self.from_item_event(item, event)))
             return self._handle_motion_notify
         else:
             self.hover(item, target, event)
@@ -572,8 +569,7 @@ class Zoomable(object):
     def computeZoomLevel(cls, ratio):
         return int((
             (max(0, ratio - cls.min_zoom) /
-                cls.zoom_range) ** (1.0 / 3.0)) *
-                    cls.zoom_steps)
+                cls.zoom_range) ** (1.0 / 3.0)) * cls.zoom_steps)
 
     @classmethod
     def pixelToNs(cls, pixel):
@@ -596,8 +592,7 @@ class Zoomable(object):
         set zoom ratio
         """
         ## DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!!!!!
-        if duration == 18446744073709551615 or \
-               long(duration) == long(Gst.CLOCK_TIME_NONE):
+        if duration == Gst.CLOCK_TIME_NONE:
             return 0
         return int((float(duration) / Gst.SECOND) * cls.zoomratio)
 

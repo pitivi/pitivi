@@ -53,7 +53,7 @@ def get_compatible_sink_pad(factoryname, caps):
     compatible with the given caps.
     """
     factory = Gst.Registry.get().lookup_feature(factoryname)
-    if factory == None:
+    if factory is None:
         log.warning("render", "%s is not a valid factoryname", factoryname)
         return None
 
@@ -78,7 +78,7 @@ def get_compatible_sink_caps(factoryname, caps):
     """
     log.log("render", "factoryname : %s , caps : %s", factoryname, caps.to_string())
     factory = Gst.Registry.get().lookup_feature(factoryname)
-    if factory == None:
+    if factory is None:
         log.warning("render", "%s is not a valid factoryname", factoryname)
         return None
 
@@ -261,9 +261,9 @@ def beautify_factoryname(factory):
     # only replace lowercase versions of "format", "video", "audio"
     # otherwise they might be part of a trademark name
     words_to_remove = ["Muxer", "muxer", "Encoder", "encoder",
-            "format", "video", "audio", "instead",
-            "Flash Video (FLV) /",  # Incorrect naming for Sorenson Spark
-            ]
+                    "format", "video", "audio", "instead",
+                    # Incorrect naming for Sorenson Spark:
+                    "Flash Video (FLV) /", ]
     words_to_replace = [["version ", "v"], ["Microsoft", "MS"], ]
     name = factory.get_longname()
     for word in words_to_remove:
@@ -390,7 +390,7 @@ class RenderDialog(Loggable):
         self.app = app
         self.project = project
         self.system = app.system
-        if pipeline != None:
+        if pipeline is not None:
             self._pipeline = pipeline
         else:
             self._pipeline = self.project.pipeline
@@ -444,8 +444,7 @@ class RenderDialog(Loggable):
 
         self.wg = RippleUpdateGroup()
         self.wg.addVertex(self.frame_rate_combo, signal="changed")
-        self.wg.addVertex(self.save_render_preset_button,
-                            update_func=self._updateRenderSaveButton)
+        self.wg.addVertex(self.save_render_preset_button, update_func=self._updateRenderSaveButton)
         self.wg.addVertex(self.channels_combo, signal="changed")
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
         self.wg.addVertex(self.sample_depth_combo, signal="changed")
@@ -456,8 +455,9 @@ class RenderDialog(Loggable):
         self.render_presets.loadAll()
 
         self._fillPresetsTreeview(
-                self.render_preset_treeview, self.render_presets,
-                self._updateRenderPresetButtons)
+            self.render_preset_treeview,
+            self.render_presets,
+            self._updateRenderPresetButtons)
 
         self.wg.addEdge(self.frame_rate_combo, self.save_render_preset_button)
         self.wg.addEdge(self.audio_encoder_combo, self.save_render_preset_button)
@@ -467,8 +467,7 @@ class RenderDialog(Loggable):
         self.wg.addEdge(self.sample_rate_combo, self.save_render_preset_button)
         self.wg.addEdge(self.sample_depth_combo, self.save_render_preset_button)
 
-        self._infobarForPresetManager = {
-                self.render_presets: self.render_preset_infobar}
+        self._infobarForPresetManager = {self.render_presets: self.render_preset_infobar}
 
         # Bind widgets to RenderPresetsManager
         self.bindCombo(self.render_presets, "channels", self.channels_combo)
@@ -491,8 +490,9 @@ class RenderDialog(Loggable):
             "acodec": get_combo_value(self.audio_encoder_combo).get_name(),
             "vcodec": get_combo_value(self.video_encoder_combo).get_name(),
             "container": get_combo_value(self.muxercombobox).get_name(),
-            "frame-rate": Gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
-                                        int(get_combo_value(self.frame_rate_combo).denom)),
+            "frame-rate": Gst.Fraction(
+                int(get_combo_value(self.frame_rate_combo).num),
+                int(get_combo_value(self.frame_rate_combo).denom)),
             "height": self.getDimension("height"),
             "width": self.getDimension("width")})
 
@@ -579,13 +579,13 @@ class RenderDialog(Loggable):
 
     def bindHeight(self, mgr):
         mgr.bindWidget("height",
-                       lambda x: self.settings.setVideoProperties(height=x),
-                       lambda: 0)
+                    lambda x: self.settings.setVideoProperties(height=x),
+                    lambda: 0)
 
     def bindWidth(self, mgr):
         mgr.bindWidget("width",
-                       lambda x: self.settings.setVideoProperties(width=x),
-                       lambda: 0)
+                    lambda x: self.settings.setVideoProperties(width=x),
+                    lambda: 0)
 
     def getDimension(self, dimension):
         value = self.settings.getVideoWidthAndHeight()
@@ -691,7 +691,7 @@ class RenderDialog(Loggable):
             "vcodec": get_combo_value(self.video_encoder_combo).get_name(),
             "container": get_combo_value(self.muxercombobox).get_name(),
             "frame-rate": Gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
-                                        int(get_combo_value(self.frame_rate_combo).denom)),
+                            int(get_combo_value(self.frame_rate_combo).denom)),
             "height": 0,
             "width": 0})
 
@@ -826,10 +826,8 @@ class RenderDialog(Loggable):
         audio_encoder_model = factorylist(audio_encoders)
         self.audio_encoder_combo.set_model(audio_encoder_model)
 
-        self._updateEncoderCombo(
-                self.video_encoder_combo, self.preferred_vencoder)
-        self._updateEncoderCombo(
-                self.audio_encoder_combo, self.preferred_aencoder)
+        self._updateEncoderCombo(self.video_encoder_combo, self.preferred_vencoder)
+        self._updateEncoderCombo(self.audio_encoder_combo, self.preferred_aencoder)
 
     def _updateEncoderCombo(self, encoder_combo, preferred_encoder):
         """Select the specified encoder for the specified encoder combo."""
@@ -854,7 +852,7 @@ class RenderDialog(Loggable):
         """
         properties = getattr(self.settings, settings_attr)
         self.dialog = GstElementSettingsDialog(factory, properties=properties,
-                                                parent_window=self.window)
+                                            parent_window=self.window)
         self.dialog.ok_btn.connect("clicked", self._okButtonClickedCb, settings_attr)
 
     def startAction(self):
@@ -897,15 +895,16 @@ class RenderDialog(Loggable):
         """
         settings = self.project.getSettings()
         if (settings.muxer == self.settings.muxer
-            and settings.aencoder == self.settings.aencoder
-            and settings.vencoder == self.settings.vencoder
-            and settings.containersettings == self.settings.containersettings
-            and settings.acodecsettings == self.settings.acodecsettings
-            and settings.vcodecsettings == self.settings.vcodecsettings
-            and settings.render_scale == self.settings.render_scale):
+        and settings.aencoder == self.settings.aencoder
+        and settings.vencoder == self.settings.vencoder
+        and settings.containersettings == self.settings.containersettings
+        and settings.acodecsettings == self.settings.acodecsettings
+        and settings.vcodecsettings == self.settings.vcodecsettings
+        and settings.render_scale == self.settings.render_scale):
             # No setting which can be changed in the Render dialog
             # and which we want to save have been changed.
             return
+
         settings.setEncoders(muxer=self.settings.muxer,
                              aencoder=self.settings.aencoder,
                              vencoder=self.settings.vencoder)
@@ -939,17 +938,18 @@ class RenderDialog(Loggable):
 
         # FIXME GES: Handle presets here!
         self.containerprofile = EncodingContainerProfile.new(None, None,
-                                    Gst.caps_from_string(self.muxertype), None)
+            Gst.caps_from_string(self.muxertype), None)
 
         if self.video_output_checkbutton.get_active():
             self.videoprofile = EncodingVideoProfile.new(
-                                    Gst.caps_from_string(self.videotype), None,
-                                    self.settings.getVideoCaps(True), 0)
+                Gst.caps_from_string(self.videotype), None,
+                self.settings.getVideoCaps(True), 0)
             self.containerprofile.add_profile(self.videoprofile)
+
         if self.audio_output_checkbutton.get_active():
             self.audioprofile = EncodingAudioProfile.new(
-                                    Gst.caps_from_string(self.audiotype), None,
-                                    self.settings.getAudioCaps(), 0)
+                Gst.caps_from_string(self.audiotype), None,
+                self.settings.getAudioCaps(), 0)
             self.containerprofile.add_profile(self.audioprofile)
 
         self._pipeline.set_render_settings(self.outfile, self.containerprofile)

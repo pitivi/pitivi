@@ -76,15 +76,13 @@ class EffectGstElementPropertyChangeTracker:
         for undo_stack in self.action_log.undo_stacks:
             for done_prop_change in undo_stack.done_actions:
                 if isinstance(done_prop_change, EffectPropertyChanged):
-                    if done_prop_change.gst_element is\
-                                        track_effect.getElement():
+                    if done_prop_change.gst_element is track_effect.getElement():
                         prop_changed.append(done_prop_change)
 
         for redo_stack in self.action_log.redo_stacks:
             for done_prop_change in redo_stack.done_actions:
                 if isinstance(done_prop_change, EffectPropertyChanged):
-                    if done_prop_change.gst_element is\
-                                        track_effect.getElement():
+                    if done_prop_change.gst_element is track_effect.getElement():
                         prop_changed.append(done_prop_change)
 
         return prop_changed
@@ -92,8 +90,7 @@ class EffectGstElementPropertyChangeTracker:
     def _propertyChangedCb(self, gst_element, pspec, unused):
         old_value = self._tracked_effects[gst_element][pspec.name]
         new_value = gst_element.get_property(pspec.name)
-        action = EffectPropertyChanged(gst_element, pspec.name, old_value,
-                                       new_value)
+        action = EffectPropertyChanged(gst_element, pspec.name, old_value, new_value)
         self._tracked_effects[gst_element][pspec.name] = new_value
         self.action_log.push(action)
 
@@ -136,14 +133,14 @@ class TrackEffectAdded(UndoableAction):
         element = self.track_object.getElement()
         props = GObject.list_properties(element)
         self.effect_props = [(prop.name, element.get_property(prop.name))
-                              for prop in props
-                              if prop.flags & GObject.PARAM_WRITABLE
-                              and prop.name not in PROPS_TO_IGNORE]
+                          for prop in props
+                          if prop.flags & GObject.PARAM_WRITABLE
+                          and prop.name not in PROPS_TO_IGNORE]
         gnl_props = GObject.list_properties(self.track_object.gnl_object)
         gnl_obj = self.track_object.gnl_object
         self.gnl_obj_props = [(prop.name, gnl_obj.get_property(prop.name))
-                              for prop in gnl_props
-                              if prop.flags & GObject.PARAM_WRITABLE]
+                          for prop in gnl_props
+                          if prop.flags & GObject.PARAM_WRITABLE]
 
         self.timeline_object.removeTrackObject(self.track_object)
         self.track_object.track.removeTrackObject(self.track_object)
@@ -169,15 +166,15 @@ class TrackEffectRemoved(UndoableAction):
         element = self.track_object.getElement()
         props = GObject.list_properties(element)
         self.effect_props = [(prop.name, element.get_property(prop.name))
-                              for prop in props
-                              if prop.flags & GObject.PARAM_WRITABLE
-                              and prop.name not in PROPS_TO_IGNORE]
+                          for prop in props
+                          if prop.flags & GObject.PARAM_WRITABLE
+                          and prop.name not in PROPS_TO_IGNORE]
 
         gnl_props = GObject.list_properties(self.track_object.gnl_object)
         gnl_obj = self.track_object.gnl_object
         self.gnl_obj_props = [(prop.name, gnl_obj.get_property(prop.name))
-                              for prop in gnl_props
-                              if prop.flags & GObject.PARAM_WRITABLE]
+                          for prop in gnl_props
+                          if prop.flags & GObject.PARAM_WRITABLE]
 
         self.timeline_object.removeTrackObject(self.track_object)
         self.track_object.track.removeTrackObject(self.track_object)

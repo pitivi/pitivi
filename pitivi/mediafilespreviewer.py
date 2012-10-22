@@ -39,16 +39,17 @@ GlobalSettings.addConfigOption('FCpreviewHeight',
     key='video-preview-height',
     default=PREVIEW_HEIGHT)
 
-acceptable_tags = [Gst.TAG_ALBUM_ARTIST,
-                    Gst.TAG_ARTIST,
-                    Gst.TAG_TITLE,
-                    Gst.TAG_ALBUM,
-                    Gst.TAG_BITRATE,
-                    Gst.TAG_COMPOSER,
-                    Gst.TAG_GENRE,
-                    Gst.TAG_PERFORMER,
-                    Gst.TAG_DATE,
-                    Gst.TAG_COPYRIGHT]
+acceptable_tags = [
+    Gst.TAG_ALBUM_ARTIST,
+    Gst.TAG_ARTIST,
+    Gst.TAG_TITLE,
+    Gst.TAG_ALBUM,
+    Gst.TAG_BITRATE,
+    Gst.TAG_COMPOSER,
+    Gst.TAG_GENRE,
+    Gst.TAG_PERFORMER,
+    Gst.TAG_DATE,
+    Gst.TAG_COPYRIGHT]
 
 
 class PreviewWidget(Gtk.VBox, Loggable):
@@ -233,7 +234,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
                 self.b_zoom_out.show()
                 self.description = _("<b>Resolution</b>: %d×%d") % \
                     ((video.get_par_num() / video.get_par_denom()) * video.get_width(), video.get_height()) +\
-                     "\n" + _("<b>Duration</b>: %s") % pretty_duration + "\n"
+                    "\n" + _("<b>Duration</b>: %s") % pretty_duration + "\n"
         else:
             self.current_preview_type = 'audio'
             self.preview_video.hide()

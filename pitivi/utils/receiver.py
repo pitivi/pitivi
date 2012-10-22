@@ -37,7 +37,7 @@ class receiver(object):
         # False truth value. We don't want to forget to disconnect any signals,
         # and at the same time we don't want to fail to connect a valid
         # instance of, say, an empty container.
-        if rd.sender != None:
+        if rd.sender is not None:
             for sid in rd.sigids.itervalues():
                 instance._receiver_data[self].sender.disconnect(sid)
             rd.sender = None

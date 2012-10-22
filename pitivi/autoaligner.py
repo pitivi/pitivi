@@ -218,8 +218,7 @@ def affinealign(reference, targets, max_drift=0.02):
                                     dtype=numpy.complex)
         for i in xrange(num_blocks):
             fxcorr_blocks[:, i] = ft * freference_blocks[:, i]
-            fxcorr_blocks[:, i] /= numpy.sqrt(numpy.sum(
-                    fxcorr_blocks[:, i] ** 2))
+            fxcorr_blocks[:, i] /= numpy.sqrt(numpy.sum(fxcorr_blocks[:, i] ** 2))
         del ft
         # At this point xcorr_blocks would show a distinct bright line, nearly
         # orthogonal to time, indicating where each of these blocks found their
@@ -254,8 +253,7 @@ def affinealign(reference, targets, max_drift=0.02):
         halfautocorr[-1:2, -1:2] = 0  # NEEDS TUNING
         # Normalize each column (appears to be necessary)
         for i in xrange(2 * num_blocks):
-            halfautocorr[:, i] /= numpy.sqrt(numpy.sum(
-                    halfautocorr[:, i] ** 2))
+            halfautocorr[:, i] /= numpy.sqrt(numpy.sum(halfautocorr[:, i] ** 2))
         #from matplotlib.pyplot import imshow,show
         #imshow(halfautocorr,interpolation='nearest',aspect='auto');show()
         drift = _findslope(halfautocorr) / bspace
@@ -459,7 +457,7 @@ class EnvelopeExtractee(Extractee, Loggable):
                    len(samples_to_process), len(self._blocks))
         newblocks = len(samples_to_process) // self._blocksize
         samples_abs = numpy.abs(
-                samples_to_process).reshape((newblocks, self._blocksize))
+            samples_to_process).reshape((newblocks, self._blocksize))
         self._blocks.resize((len(self._blocks) + newblocks,))
         # This numpy.sum() call relies on samples_abs being a
         # floating-point type. If samples_abs.dtype is int16
@@ -587,8 +585,7 @@ class AutoAligner(Loggable):
                 # the percent completion.
                 numsamples = ((audiotrack.duration / Gst.SECOND) *
                               audiotrack.stream.rate)
-                extractee.addWatcher(
-                        progress_aggregator.getPortionCB(numsamples))
+                extractee.addWatcher(progress_aggregator.getPortionCB(numsamples))
                 self._extraction_stack.append((audiotrack, extractee))
             # After we return, start the extraction cycle.
             # This GObject.idle_add call should not be necessary;

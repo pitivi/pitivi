@@ -39,24 +39,22 @@ from gi.repository import GObject
 from gi.repository import GdkPixbuf
 from gi.repository.GstPbutils import InstallPluginsContext, install_plugins_async
 
-from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import in_devel
-from pitivi.settings import GlobalSettings
-from pitivi.effects import EffectListWidget
-from pitivi.transitions import TransitionsListWidget
-from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
-from pitivi.titleeditor import TitleEditor
-from pitivi.utils.misc import show_user_manual, path_from_uri
-from pitivi.utils.ui import info_name, beautify_time_delta, SPACING,\
-        FILESOURCE_TARGET_ENTRY, URI_TARGET_ENTRY, TYPE_URI_LIST, \
-        TYPE_PITIVI_FILESOURCE
-from pitivi.timeline.timeline import Timeline
-from pitivi.viewer import PitiviViewer
-from pitivi.tabsmanager import BaseTabs
-from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.clipproperties import ClipProperties
-from pitivi.configure import pitivi_version, APPNAME, APPURL, \
-     get_pixmap_dir, get_ui_dir
+from pitivi.configure import pitivi_version, APPNAME, APPURL, get_pixmap_dir, get_ui_dir
+from pitivi.effects import EffectListWidget
+from pitivi.mediafilespreviewer import PreviewWidget
+from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
+from pitivi.settings import GlobalSettings
+from pitivi.tabsmanager import BaseTabs
+from pitivi.timeline.timeline import Timeline
+from pitivi.titleeditor import TitleEditor
+from pitivi.transitions import TransitionsListWidget
+from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import in_devel, show_user_manual, path_from_uri
+from pitivi.utils.ui import info_name, beautify_time_delta, SPACING, \
+    FILESOURCE_TARGET_ENTRY, URI_TARGET_ENTRY, \
+    TYPE_URI_LIST, TYPE_PITIVI_FILESOURCE
+from pitivi.viewer import PitiviViewer
 
 
 GlobalSettings.addConfigOption("fileSupportEnabled",
@@ -95,10 +93,10 @@ GlobalSettings.addConfigOption('lastProjectFolder',
     default=os.path.expanduser("~"))
 GlobalSettings.addConfigSection('export')
 GlobalSettings.addConfigOption('lastExportFolder',
-                                section='export',
-                                key="last-export-folder",
-                                environment="PITIVI_EXPORT_FOLDER",
-                                default=os.path.expanduser("~"))
+                            section='export',
+                            key="last-export-folder",
+                            environment="PITIVI_EXPORT_FOLDER",
+                            default=os.path.expanduser("~"))
 GlobalSettings.addConfigOption('elementSettingsDialogWidth',
     section='export',
     key='element-settings-dialog-width',
@@ -133,14 +131,14 @@ Gtk.stock_add = lambda items: None
 def create_stock_icons():
     """ Creates the pitivi-only stock icons """
     Gtk.stock_add([
-            ('pitivi-render', _('Render'), 0, 0, 'pitivi'),
-            ('pitivi-split', _('Split'), 0, 0, 'pitivi'),
-            ('pitivi-keyframe', _('Keyframe'), 0, 0, 'pitivi'),
-            ('pitivi-ungroup', _('Ungroup'), 0, 0, 'pitivi'),
-            # Translators: This is an action, the title of a button
-            ('pitivi-group', _('Group'), 0, 0, 'pitivi'),
-            ('pitivi-align', _('Align'), 0, 0, 'pitivi'),
-            ])
+        ('pitivi-render', _('Render'), 0, 0, 'pitivi'),
+        ('pitivi-split', _('Split'), 0, 0, 'pitivi'),
+        ('pitivi-keyframe', _('Keyframe'), 0, 0, 'pitivi'),
+        ('pitivi-ungroup', _('Ungroup'), 0, 0, 'pitivi'),
+        # Translators: This is an action, the title of a button
+        ('pitivi-group', _('Group'), 0, 0, 'pitivi'),
+        ('pitivi-align', _('Align'), 0, 0, 'pitivi'),
+    ])
     pixmaps = {
         "pitivi-render": "pitivi-render-24.png",
         "pitivi-split": "pitivi-split-24.svg",
@@ -332,7 +330,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                 "File", "Edit", "View", "Help",
                 "UserManual", "About", "Quit", "ImportSourcesFolder",
                 "Preferences", "Project", "ProjectSettings",
-                "Library", "Timeline", "Viewer", "WindowizeViewer"]:
+                "Library", "Timeline", "Viewer", "WindowizeViewer"
+            ]:  # One of the remaining known actions we expect to be sensitive
                 action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
@@ -426,8 +425,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # Viewer
         self.viewer = PitiviViewer(instance, undock_action=self.undock_action)
         self.viewer.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
-                           [FILESOURCE_TARGET_ENTRY, URI_TARGET_ENTRY],
-                           Gdk.DragAction.COPY)
+            [FILESOURCE_TARGET_ENTRY, URI_TARGET_ENTRY],
+            Gdk.DragAction.COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
 
@@ -619,7 +618,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.timeline_ui.purgeObject(uri)
 
     def _selectedLayerChangedCb(self, widget, layer):
-        self.main_actions.get_action("RemoveLayer").set_sensitive(layer != None)
+        self.main_actions.get_action("RemoveLayer").set_sensitive(layer is not None)
 
 ## Toolbar/Menu actions callback
 
@@ -692,8 +691,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         abt.set_website(APPURL)
         ges_version_str = "GES %i.%i.%i.%i" % (GES.version())
         gst_version_str = "GStreamer %i.%i.%i.%i" % (Gst.version())
-        if self.app.version_information and \
-           self.app.version_information["status"] != "CURRENT":
+        if (self.app.version_information and
+           self.app.version_information["status"] != "CURRENT"):
             version_str = _("PiTiVi %s is available." %
                 (self.app.version_information["current"]))
 
@@ -718,7 +717,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                    "Out of respect for our contributors, we point you instead to:\n"),
                    # Translators: keep the %s at the end of the 1st line
                    _("The list of contributors on Ohloh %s\n" +
-                   "Or you can run: git shortlog -s -n")\
+                   "Or you can run: git shortlog -s -n")
                    % "http://ohloh.net/p/pitivi/contributors", ]
         abt.set_authors(authors)
         translators = _("translator-credits")
@@ -850,8 +849,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         dialog = Gtk.Dialog("",
             self, Gtk.DialogFlags.MODAL,
             (_("Close without saving"), Gtk.ResponseType.REJECT,
-                    Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                    save, Gtk.ResponseType.YES))
+                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                save, Gtk.ResponseType.YES))
         dialog.set_icon_name("pitivi")
         dialog.set_resizable(False)
         dialog.set_default_response(Gtk.ResponseType.YES)
@@ -1056,8 +1055,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # TODO: bugs #661059, 609136
             attempted_uri = self.app.current.uri
             reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
-                        'PiTiVi does not currently support partial projects.'
-                        % info_name(tfs))
+                    'PiTiVi does not currently support partial projects.'
+                    % info_name(tfs))
             # Put an end to the async signals spamming us with dialogs:
             self.app.projectManager.disconnect_by_func(self._projectManagerMissingUriCb)
             # Don't overlap the file chooser with our error dialog
@@ -1145,8 +1144,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # project = self.app.current,
         # old is never used, and the new is equal to self.app.current.settings
         self.viewer.setDisplayAspectRatio(
-            float(new.videopar.num / new.videopar.denom * new.videowidth) /\
-                float(new.videoheight))
+            float(new.videopar.num / new.videopar.denom * new.videowidth) / float(new.videoheight))
 
     def _sourceListMissingPluginsCb(self, project, uri, factory,
             details, descriptions, missingPluginsCallback):
@@ -1295,8 +1293,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             mainwindow_width, mainwindow_height = self.get_size()
             max_width = 0.85 * mainwindow_width
             max_height = 0.85 * mainwindow_height
-            if img_width < max_width \
-                and (img_height + controls_height) < max_height:
+            if img_width < max_width and (img_height + controls_height) < max_height:
                 # The video is small enough, keep it 1:1
                 preview_window.resize(img_width, img_height + controls_height)
             else:
