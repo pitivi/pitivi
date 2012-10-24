@@ -80,11 +80,13 @@ def _add_pitivi_path():
         locale.setlocale(locale.LC_ALL, '')
         locale.bindtextdomain('pitivi', localedir)
         locale.textdomain('pitivi')
-
+    except:
+        print "Couldn't set locale."
+    try:
         gettext.bindtextdomain('pitivi', localedir)
         gettext.textdomain('pitivi')
     except:
-        print "Couldn't set locale !, reverting to C locale"
+        print "Couldn't set the gettext domain. Translations will not work."
 
     if CONFIGURED_LD_LIBRARY_PATH or CONFIGURED_GST_PLUGIN_PATH:
         _prepend_env_path("LD_LIBRARY_PATH", [CONFIGURED_LD_LIBRARY_PATH])
