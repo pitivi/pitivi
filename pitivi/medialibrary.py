@@ -97,7 +97,7 @@ ui = '''
 # from gst-inspect |grep demux,
 # http://en.wikipedia.org/wiki/Comparison_of_container_formats and
 # http://en.wikipedia.org/wiki/List_of_file_formats#Video
-SUPPORTED_FILE_FORMATS = ("3g2", "3gp", "asf", "avi", "divx", "dv", "f4v", "flv", "m4a", "m4b", "m4p", "m4r", "m4v", "mj2", "mkv", "mov", "mpeg", "mpg", "mve", "mxf", "ogv", "qt", "webm", "wmv",
+SUPPORTED_FILE_FORMATS = ("3g2", "3gp", "asf", "avi", "divx", "dv", "f4v", "flv", "m4a", "m4b", "m4p", "m4r", "m4v", "mj2", "mkv", "mov", "mp4", "mpeg", "mpg", "mve", "mxf", "ogv", "qt", "webm", "wmv",
     # Don't forget audio formats
     "aac", "aiff", "ape", "au", "flac", "mka", "mp2", "mp3", "oga", "ogg", "opus", "spx", "wav", "wma",
     # ...and image formats
@@ -111,17 +111,14 @@ class MediaLibraryError(Exception):
 
 
 class MediaLibrary(Signallable, Loggable):
-    discovererClass = Discoverer
-
     """
     Contains the sources for a project, stored as SourceFactory objects.
 
     @ivar discoverer: The discoverer object used internally
     @type discoverer: L{Discoverer}
-    @ivar nb_files_to_import: The number of URIs on the last addUris call.
+    @ivar nb_files_to_import: Total number of URIs on the last addUris call.
     @type nb_files_to_import: int
-    @ivar nb_imported_files: The number of URIs loaded since the last addUris
-    call.
+    @ivar nb_imported_files: Number of URIs loaded since the last addUris call.
     @type nb_imported_files: int
 
     Signals:
@@ -151,7 +148,7 @@ class MediaLibrary(Signallable, Loggable):
         self._ordered_sources = []
         self._resetImportCounters()
 
-        self.discoverer = self.discovererClass.new(Gst.SECOND)
+        self.discoverer = Discoverer.new(Gst.SECOND)
         self.discoverer.connect("discovered", self.addDiscovererInfo)
         self.discoverer.connect("finished", self.finishDiscovererCb)
         self.discoverer.start()
@@ -173,6 +170,10 @@ class MediaLibrary(Signallable, Loggable):
         """
         self.emit("starting")
         self.debug("Adding %s", uris)
+        if type(uris) is str:
+            # A single URI string was provided... make it a list, otherwise
+            # we would loop over the characters of the string!
+            uris = [uris]
         self.nb_files_to_import += len(uris)
         for uri in uris:
             # Ensure we have a correctly encoded URI according to RFC 2396.
