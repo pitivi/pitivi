@@ -28,14 +28,21 @@ from pitivi.utils.loggable import Loggable
 
 
 class UndoError(Exception):
+    """ Any exception related to the undo/redo feature."""
     pass
 
 
 class UndoWrongStateError(UndoError):
+    """ Exception related to the current state of the undo/redo stack. """
     pass
 
 
 class UndoableAction(Signallable):
+    """
+    This class represents an action that can be undone.
+    In other words, when your object's state changes, create an UndoableAction
+    to allow reverting the change if needed later on.
+    """
     __signals__ = {
         "done": [],
         "undone": [],
@@ -49,6 +56,7 @@ class UndoableAction(Signallable):
         raise NotImplementedError()
 
     def clean(self):
+        # Meant to be overridden by UndoableActionStack?
         pass
 
     def _done(self):
@@ -59,6 +67,9 @@ class UndoableAction(Signallable):
 
 
 class UndoableActionStack(UndoableAction):
+    """
+    Simply a stack of UndoableAction objects.
+    """
     __signals__ = {
         "done": [],
         "undone": [],
@@ -98,6 +109,10 @@ class UndoableActionStack(UndoableAction):
 
 
 class UndoableActionLog(Signallable, Loggable):
+    """
+    This is the "master" class that handles all the undo/redo system. There is
+    only one instance of it in PiTiVi: application.py's "action_log" property.
+    """
     __signals__ = {
         "begin": ["stack", "nested"],
         "push": ["stack", "action"],
@@ -168,7 +183,6 @@ class UndoableActionLog(Signallable, Loggable):
             self.redo_stacks = []
 
         self.debug("%s pushed", stack)
-
         self.emit("commit", stack, nested)
 
     def undo(self):
@@ -176,9 +190,7 @@ class UndoableActionLog(Signallable, Loggable):
             raise UndoWrongStateError()
 
         stack = self.undo_stacks.pop(-1)
-
         self._runStack(stack, stack.undo)
-
         self.redo_stacks.append(stack)
         self.emit("undo", stack)
 
@@ -187,7 +199,6 @@ class UndoableActionLog(Signallable, Loggable):
             raise UndoWrongStateError()
 
         stack = self.redo_stacks.pop(-1)
-
         self._runStack(stack, stack.do)
         self.undo_stacks.append(stack)
         self.emit("redo", stack)
@@ -238,6 +249,12 @@ class UndoableActionLog(Signallable, Loggable):
 
 
 class DebugActionLogObserver(Loggable):
+    """
+    Allows getting more debug output from the UndoableActionLog than the default
+    """
+    # FIXME: this looks overengineered at first glance. This is used in only one
+    # place in the codebase (in application.py). Why not just put the debug
+    # directly in UndoableActionLog if we really need them anyway?
     def startObserving(self, log):
         self._connectToActionLog(log)
 
@@ -256,16 +273,13 @@ class DebugActionLogObserver(Loggable):
             log.disconnect_by_func(method)
 
     def _actionLogBeginCb(self, log, stack, nested):
-        self.debug("begin action %s nested %s",
-                stack.action_group_name, nested)
+        self.debug("begin action %s nested %s", stack.action_group_name, nested)
 
     def _actionLogCommitCb(self, log, stack, nested):
-        self.debug("commit action %s nested %s",
-                stack.action_group_name, nested)
+        self.debug("commit action %s nested %s", stack.action_group_name, nested)
 
     def _actionLogRollbackCb(self, log, stack, nested):
-        self.debug("rollback action %s nested %s",
-                stack.action_group_name, nested)
+        self.debug("rollback action %s nested %s", stack.action_group_name, nested)
 
     def _actionLogPushCb(self, log, stack, action):
         self.debug("push %s in %s", action, stack.action_group_name)
@@ -273,9 +287,8 @@ class DebugActionLogObserver(Loggable):
 
 class PropertyChangeTracker(Signallable):
     """
-    BaseClasse to track a class property, Used for undo/redo
+    BaseClass to track a class property, Used for undo/redo
     """
-
     __signals__ = {}
 
     def __init__(self):
@@ -305,5 +318,4 @@ class PropertyChangeTracker(Signallable):
     def _propertyChangedCb(self, object, value, property_name):
         old_value = self.properties[property_name]
         self.properties[property_name] = value
-
         self.emit("notify::" + property_name, object, old_value, value)
