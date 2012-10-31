@@ -1768,12 +1768,12 @@ msgstr "%.2f fps"
 #: ../pitivi/utils/ui.py:399 ../pitivi/utils/ui.py:401
 #: ../pitivi/utils/ui.py:402
 #, python-format
-msgid "%d KHz"
+msgid "%d kHz"
 msgstr "%d kHz"
 
 #: ../pitivi/utils/ui.py:400
 #, python-format
-msgid "%.1f KHz"
+msgid "%.1f kHz"
 msgstr "%.1f kHz"
 
 #: ../pitivi/utils/ui.py:405 ../pitivi/utils/ui.py:406
@@ -2139,16 +2139,16 @@ msgstr "Eigenschaften für %s"
 #~ msgid "120 fps"
 #~ msgstr "120 fps"
 
-#~ msgid "11 KHz"
+#~ msgid "11 kHz"
 #~ msgstr "11 kHz"
 
-#~ msgid "22 KHz"
+#~ msgid "22 kHz"
 #~ msgstr "22 kHz"
 
-#~ msgid "48 KHz"
+#~ msgid "48 kHz"
 #~ msgstr "48 kHz"
 
-#~ msgid "96 KHz"
+#~ msgid "96 kHz"
 #~ msgstr "96 kHz"
 
 #~ msgid "16 bit"

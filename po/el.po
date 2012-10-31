@@ -1730,13 +1730,13 @@ msgstr "%.2f fps"
 #: ../pitivi/utils/ui.py:394
 #: ../pitivi/utils/ui.py:395
 #, python-format
-msgid "%d KHz"
-msgstr "%d KHz"
+msgid "%d kHz"
+msgstr "%d kHz"
 
 #: ../pitivi/utils/ui.py:393
 #, python-format
-msgid "%.1f KHz"
-msgstr "%.1f KHz"
+msgid "%.1f kHz"
+msgstr "%.1f kHz"
 
 #: ../pitivi/utils/ui.py:398
 #: ../pitivi/utils/ui.py:399

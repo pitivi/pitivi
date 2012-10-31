@@ -1437,11 +1437,11 @@ msgid "%.2f fps"
 msgstr "%.2f k/s"
 
 #, python-format
-msgid "%d KHz"
+msgid "%d kHz"
 msgstr "%d kHz"
 
 #, python-format
-msgid "%.1f KHz"
+msgid "%.1f kHz"
 msgstr "%.1f kHz"
 
 #, python-format

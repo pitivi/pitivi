@@ -927,13 +927,13 @@ msgstr "%.2f fps"
 #: ../pitivi/ui/common.py:189 ../pitivi/ui/common.py:191
 #: ../pitivi/ui/common.py:192
 #, python-format
-msgid "%d KHz"
-msgstr "%d KHz"
+msgid "%d kHz"
+msgstr "%d kHz"
 
 #: ../pitivi/ui/common.py:190
 #, python-format
-msgid "%.1f KHz"
-msgstr "%.1f KHz"
+msgid "%.1f kHz"
+msgstr "%.1f kHz"
 
 #: ../pitivi/ui/common.py:195 ../pitivi/ui/common.py:196
 #: ../pitivi/ui/common.py:197 ../pitivi/ui/common.py:198
@@ -1838,17 +1838,17 @@ msgstr "A(z) %s még nem kezeli a nem helyileg tárolt projekteket"
 #~ msgid "120 fps"
 #~ msgstr "120 fps"
 
-#~ msgid "11 KHz"
-#~ msgstr "11 KHz"
+#~ msgid "11 kHz"
+#~ msgstr "11 kHz"
 
-#~ msgid "22 KHz"
-#~ msgstr "22 KHz"
+#~ msgid "22 kHz"
+#~ msgstr "22 kHz"
 
-#~ msgid "48 KHz"
-#~ msgstr "48 KHz"
+#~ msgid "48 kHz"
+#~ msgstr "48 kHz"
 
-#~ msgid "96 KHz"
-#~ msgstr "96 KHz"
+#~ msgid "96 kHz"
+#~ msgstr "96 kHz"
 
 #~ msgid "16 bit"
 #~ msgstr "16 bit"

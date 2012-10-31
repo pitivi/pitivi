@@ -552,27 +552,27 @@ msgid "120 fps"
 msgstr "120 fps"
 
 #: ../pitivi/ui/common.py:171
-msgid "8 KHz"
+msgid "8 kHz"
 msgstr "8 kHz"
 
 #: ../pitivi/ui/common.py:172
-msgid "11 KHz"
+msgid "11 kHz"
 msgstr "11 kHz"
 
 #: ../pitivi/ui/common.py:173
-msgid "22 KHz"
+msgid "22 kHz"
 msgstr "22 kHz"
 
 #: ../pitivi/ui/common.py:174
-msgid "44.1 KHz"
+msgid "44.1 kHz"
 msgstr "44.1 kHz"
 
 #: ../pitivi/ui/common.py:175
-msgid "48 KHz"
+msgid "48 kHz"
 msgstr "48 kHz"
 
 #: ../pitivi/ui/common.py:176
-msgid "96 KHz"
+msgid "96 kHz"
 msgstr "96 kHz"
 
 #: ../pitivi/ui/common.py:180

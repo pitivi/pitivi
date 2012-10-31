@@ -32,7 +32,7 @@ class DialogsClipMediaPropsTest(HelpFunc):
         dialog = self.pitivi.child(name="Clip Properties", roleName="dialog", recursive=False)
         # These are the properties of "tears of steel.webm":
         labels = {"Video:", "960", "400", "25 fps", "Square",
-                "Audio:", "Mono", "44.1 KHz", "32 bit"}
+                "Audio:", "Mono", "44.1 kHz", "32 bit"}
         real_labels = set([])
         for label in dialog.findChildren(GenericPredicate(roleName="label")):
             real_labels.add(label.text)

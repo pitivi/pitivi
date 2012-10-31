@@ -1055,12 +1055,12 @@ msgstr ""
 #: ../pitivi/ui/common.py:189 ../pitivi/ui/common.py:191
 #: ../pitivi/ui/common.py:192
 #, python-format
-msgid "%d KHz"
+msgid "%d kHz"
 msgstr ""
 
 #: ../pitivi/ui/common.py:190
 #, python-format
-msgid "%.1f KHz"
+msgid "%.1f kHz"
 msgstr ""
 
 #: ../pitivi/ui/common.py:195 ../pitivi/ui/common.py:196

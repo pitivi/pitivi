@@ -888,12 +888,12 @@ msgstr "%.2f кадр/с"
 #: ../pitivi/ui/common.py:191
 #: ../pitivi/ui/common.py:192
 #, python-format
-msgid "%d KHz"
+msgid "%d kHz"
 msgstr "%d КГц"
 
 #: ../pitivi/ui/common.py:190
 #, python-format
-msgid "%.1f KHz"
+msgid "%.1f kHz"
 msgstr "%.1f КГц"
 
 #: ../pitivi/ui/common.py:195

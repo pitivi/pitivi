@@ -1841,13 +1841,13 @@ msgstr "12 fps"
 #: ../pitivi/utils/ui.py:402
 #: ../pitivi/utils/ui.py:403
 #, fuzzy, python-format
-msgid "%d KHz"
-msgstr "8 KHz"
+msgid "%d kHz"
+msgstr "8 kHz"
 
 #: ../pitivi/utils/ui.py:401
 #, fuzzy, python-format
-msgid "%.1f KHz"
-msgstr "44.1 KHz"
+msgid "%.1f kHz"
+msgstr "44.1 kHz"
 
 #: ../pitivi/utils/ui.py:406
 #: ../pitivi/utils/ui.py:407
@@ -2149,17 +2149,17 @@ msgstr "מאפיינים עבור %s"
 #~ msgid "120 fps"
 #~ msgstr "120 fps"
 
-#~ msgid "11 KHz"
-#~ msgstr "11 KHz"
+#~ msgid "11 kHz"
+#~ msgstr "11 kHz"
 
-#~ msgid "22 KHz"
-#~ msgstr "22 KHz"
+#~ msgid "22 kHz"
+#~ msgstr "22 kHz"
 
-#~ msgid "48 KHz"
-#~ msgstr "48 KHz"
+#~ msgid "48 kHz"
+#~ msgstr "48 kHz"
 
-#~ msgid "96 KHz"
-#~ msgstr "96 KHz"
+#~ msgid "96 kHz"
+#~ msgstr "96 kHz"
 
 #~ msgid "16 bit"
 #~ msgstr "16 סיביות"
