@@ -18,11 +18,18 @@ MYPITIVI=$HOME/pitivi-git
 GST_RELEASE_TAG="1.0.2"
 # If you care about building the GStreamer/GES developer API documentation:
 BUILD_DOCS=false
+# Here are some dependencies for building GStreamer and GES. If they're missing,
+# we'll fetch the git repositories at the given version tag and compile.
+# If you set those variables to "master", it will grab the latest dev version
+GLIB_RELEASE_TAG="2.34.0" # "gobject-introspection" needs glib > 2.32
+PYGOBJECT_RELEASE_TAG="3.4.0"
+GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_1_34_0"
 #
 # Everything below this line shouldn't be edited!
 #
 
-# For some reason, gobject-introspection won't compile with glib 2.32
+# Avoid building glib if we can, because it is annoying to use the "memory"
+# backend for gsettings (which happens when we compile glib for some reason)
 if pkg-config glib-2.0 --atleast-version=2.34; then
     MODULES_CORE="gobject-introspection pygobject"
 else
@@ -212,14 +219,39 @@ if [ "$ready_to_run" != "1" ]; then
             fi
         fi
         cd $m
-        # Silly hack for the fact that glib changes the "mkinstalldirs" file
-        # when compiling, which prevents git pull --rebase from working
+        # Take into account whether the user want stable releases or "master"
         if [ $m == "glib" ]; then
+            # Silly hack for the fact that glib changes the "mkinstalldirs" file
+            # when compiling, which prevents git pull --rebase from working
             git checkout -- mkinstalldirs
-        fi
-        git pull --rebase
-        if [ $? -ne 0 ]; then
-            exit 1
+            git checkout $GLIB_RELEASE_TAG
+            if [ $GLIB_RELEASE_TAG == "master" ]; then
+                git pull --rebase
+                if [ $? -ne 0 ]; then
+                    exit 1
+                fi
+            fi
+        elif [ $m == "gobject-introspection" ]; then
+            git checkout $GOBJECT_INTROSPECTION_RELEASE_TAG
+            if [ $GOBJECT_INTROSPECTION_RELEASE_TAG == "master" ]; then
+                git pull --rebase
+                if [ $? -ne 0 ]; then
+                    exit 1
+                fi
+            fi
+        elif [ $m == "pygobject" ]; then
+            git checkout $PYGOBJECT_RELEASE_TAG
+            if [ $PYGOBJECT_RELEASE_TAG == "master" ]; then
+                git pull --rebase
+                if [ $? -ne 0 ]; then
+                    exit 1
+                fi
+            fi
+        else
+            git pull --rebase
+            if [ $? -ne 0 ]; then
+                exit 1
+            fi
         fi
 
 
