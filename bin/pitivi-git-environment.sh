@@ -14,7 +14,8 @@
 #    can set up everything for you (recommended).
 MYPITIVI=$HOME/pitivi-git
 # Change this variable to 'master' if you prefer to work with the master branch
-GST_RELEASE_TAG="master"
+# When using "master", this script will automatically "pull --rebase" modules.
+GST_RELEASE_TAG="1.0.2"
 # If you care about building the GStreamer/GES developer API documentation:
 BUILD_DOCS=false
 #
@@ -258,16 +259,22 @@ if [ "$ready_to_run" != "1" ]; then
         if test ! -d $m; then
             git clone git://anongit.freedesktop.org/gstreamer/$m
             if [ $? -ne 0 ]; then
-                echo "Could not run checkout $GST_RELEASE_TAG for $m ; result: $?"
+                echo "Could not checkout $m ; result: $?"
                 exit 1
             fi
         fi
 
         cd $m
+        git remote update  # In case you haven't got the latest release tags...
         git checkout $GST_RELEASE_TAG
         if [ $? -ne 0 ]; then
             echo "Could not run checkout $GST_RELEASE_TAG for $m ; result: $?"
-            exit 1
+            echo 'Trying "master" instead...'
+            git checkout master && git pull --rebase
+            if [ $? -ne 0 ]; then
+                echo "Checkout and rebase failed, aborting"
+                exit 1
+            fi
         fi
         # Silly hack for the fact that the version-controlled po/ files are
         # changed during compilation of the "gstreamer" module, which prevents
@@ -275,9 +282,11 @@ if [ "$ready_to_run" != "1" ]; then
         if [ $m == "gstreamer" ]; then
             git checkout -- po
         fi
-        git pull --rebase
-        if [ $? -ne 0 ]; then
-            exit 1
+        if [ $GST_RELEASE_TAG == "master" ]; then
+            git pull --rebase
+            if [ $? -ne 0 ]; then
+                exit 1
+            fi
         fi
 
         if $BUILD_DOCS; then
