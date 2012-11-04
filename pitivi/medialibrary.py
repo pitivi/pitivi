@@ -97,13 +97,16 @@ ui = '''
 # from gst-inspect |grep demux,
 # http://en.wikipedia.org/wiki/Comparison_of_container_formats and
 # http://en.wikipedia.org/wiki/List_of_file_formats#Video
-SUPPORTED_FILE_FORMATS = ("3g2", "3gp", "asf", "avi", "divx", "dv", "f4v", "flv", "m4a", "m4b", "m4p", "m4r", "m4v", "mj2", "mkv", "mov", "mp4", "mpeg", "mpg", "mve", "mxf", "ogv", "qt", "webm", "wmv",
+# ...and looking at the contents of /usr/share/mime
+SUPPORTED_FILE_FORMATS = {"video": ("3gpp", "3gpp2", "dv", "mp4", "mpeg", "ogg", "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf", "x-msvideo", "x-ms-wmp", "x-ms-wmv", "x-ogm+ogg", "x-theora+ogg"),
+    "application": ("mxf"),
     # Don't forget audio formats
-    "aac", "aiff", "ape", "au", "flac", "mka", "mp2", "mp3", "oga", "ogg", "opus", "spx", "wav", "wma",
+    "audio": ("aac", "ac3", "basic", "flac", "mp2", "mp4", "mpeg", "ogg", "opus", "webm", "x-adpcm", "x-aifc", "x-aiff", "x-aiffc", "x-ape", "x-flac+ogg", "x-m4b", "x-matroska", "x-ms-asx", "x-ms-wma", "x-speex", "x-speex+ogg", "x-vorbis+ogg", "x-wav"),
     # ...and image formats
-    "jpg", "jpeg", "jp2", "j2k", "jpf", "jpm", "jpx", "png", "pnm", "svg",)
+    "image": ("jp2", "jpeg", "png", "svg+xml"),
+}
 # Stuff that we're not too confident about but might improve eventually:
-OTHER_KNOWN_FORMATS = ("ac3", "m2ts", "mk3d", "mts", "ps", "raw", "rm", "rmvb", "ts", "vob",)
+OTHER_KNOWN_FORMATS = ("video/mp2t")
 
 
 class MediaLibraryError(Exception):
@@ -609,19 +612,17 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._importDialog.connect('update-preview', pw.add_preview_request)
         # Filter for the "known good" formats by default
         filt_supported = Gtk.FileFilter()
-        filt_supported.set_name(_("Supported file formats"))
-        for extension in SUPPORTED_FILE_FORMATS:
-            filt_supported.add_pattern("*." + extension)
-            filt_supported.add_pattern("*." + extension.upper())
-        # Also allow showing known but not reliable demuxers
         filt_known = Gtk.FileFilter()
+        filt_supported.set_name(_("Supported file formats"))
+        for category in SUPPORTED_FILE_FORMATS:
+            # Category can be "video", "audio", "image", "application"
+            for mime in SUPPORTED_FILE_FORMATS[category]:
+                filt_supported.add_mime_type(category + "/" + mime)
+                filt_known.add_mime_type(category + "/" + mime)
+        # Also allow showing known but not reliable demuxers
         filt_known.set_name(_("All known file formats"))
-        for extension in SUPPORTED_FILE_FORMATS:
-            filt_known.add_pattern("*." + extension)
-            filt_known.add_pattern("*." + extension.upper())
-        for extension in OTHER_KNOWN_FORMATS:
-            filt_known.add_pattern("*." + extension)
-            filt_known.add_pattern("*." + extension.upper())
+        for fullmime in OTHER_KNOWN_FORMATS:
+            filt_known.add_mime_type(fullmime)
         # ...and allow the user to override our whitelists
         default = Gtk.FileFilter()
         default.set_name(_("All files"))
