@@ -15,6 +15,8 @@
 MYPITIVI=$HOME/pitivi-git
 # Change this variable to 'master' if you prefer to work with the master branch
 GST_RELEASE_TAG="master"
+# If you care about building the GStreamer/GES developer API documentation:
+BUILD_DOCS=false
 #
 # Everything below this line shouldn't be edited!
 #
@@ -221,7 +223,7 @@ if [ "$ready_to_run" != "1" ]; then
 
 
         # Now compile that module
-        ./autogen.sh --prefix=$PITIVI/prefix
+        ./autogen.sh --prefix=$PITIVI/prefix --disable-gtk-doc
         if [ $? -ne 0 ]; then
             echo "Could not run autogen for $m ; result: $?"
             exit 1
@@ -278,8 +280,11 @@ if [ "$ready_to_run" != "1" ]; then
             exit 1
         fi
 
-
-        ./autogen.sh
+        if $BUILD_DOCS; then
+            ./autogen.sh
+        else
+            ./autogen.sh --disable-gtk-doc
+        fi
         if [ $? -ne 0 ]; then
             echo "Could not run autogen for $m ; result: $?"
             exit 1
