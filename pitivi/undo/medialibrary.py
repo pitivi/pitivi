@@ -32,7 +32,7 @@ class MediaLibrarySourceAddedAction(UndoableAction):
         self._undone()
 
     def do(self):
-        self.medialibrary.addDiscovererInfo(self.source)
+        self.medialibrary.addUris(self.source.get_uri())
         self._done()
 
 
@@ -43,11 +43,11 @@ class MediaLibrarySourceRemovedAction(UndoableAction):
         self.source = source
 
     def undo(self):
-        self.medialibrary.addDiscovererInfo(self.source)
+        self.medialibrary.addUris(self.source.get_uri())
         self._undone()
 
     def do(self):
-        self.medialibrary.removeUri(self.source.uri)
+        self.medialibrary.removeUri(self.source.get_uri())
         self._done()
 
 
