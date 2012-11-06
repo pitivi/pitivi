@@ -30,13 +30,8 @@ class BaseTabs(Gtk.Notebook):
         self.set_border_width(SPACING)
         self.set_scrollable(True)
         self.connect("create-window", self._createWindowCb)
-        self.app = app
-        self._createUi()
-
-    def _createUi(self):
         settings = self.get_settings()
         settings.props.gtk_dnd_drag_threshold = 1
-        self.set_tab_pos(Gtk.PositionType.TOP)
 
     def append_page(self, child, label):
         Gtk.Notebook.append_page(self, child, label)
