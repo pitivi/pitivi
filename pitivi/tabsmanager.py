@@ -59,16 +59,29 @@ class BaseTabs(Gtk.Notebook):
         self.insert_page(page, label, orig_pos)
         self._set_child_properties(page, label)
 
-    def _createWindowCb(self, unused_notebook, page, x, y):
-        # unused_notebook here is the same as "self"
-        original_position = self.page_num(page)
-        label = self.get_tab_label(page)
+    def _createWindowCb(self, from_notebook, child, unused_x, unused_y):
+        """
+        Callback that occurs when tearing off a tab to create a new window
+        """
+        # from_notebook == BaseTabs instance == self. It is a group of tabs.
+        # child is the widget inside the notebook's tab's content area.
+        # The return statement here is important to provide the notebook widget
+        # that gtk should insert into the window at the end:
+        return self.createWindow(child)
+
+    def createWindow(self, child):
+        """
+        Create a window out of the tab. This can be called by _createWindowCb
+        or manually (to restore a previously undocked state)
+        """
+        original_position = self.page_num(child)
+        child_name = self.get_tab_label(child).get_text()
         window = Gtk.Window()
         window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
-        window.set_title(label.get_text())
         window.set_default_size(600, 400)
         window.connect("destroy", self._detachedWindowDestroyCb,
                     page, original_position, label)
+        window.set_title(child_name)
         notebook = Gtk.Notebook()
         notebook.props.show_tabs = False
         window.add(notebook)
