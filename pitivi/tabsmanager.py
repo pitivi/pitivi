@@ -31,10 +31,12 @@ class BaseTabs(Gtk.Notebook):
         self.set_border_width(SPACING)
         self.set_scrollable(True)
         self.connect("create-window", self._createWindowCb)
-        settings = self.get_settings()
-        settings.props.gtk_dnd_drag_threshold = 1
+        self.settings = app.settings  # To save/restore states of detached tabs
+        notebook_widget_settings = self.get_settings()
+        notebook_widget_settings.props.gtk_dnd_drag_threshold = 1
 
     def append_page(self, child, label):
+        child_name = label.get_text()
         Gtk.Notebook.append_page(self, child, label)
         self._set_child_properties(child, label)
         child.show()
@@ -42,6 +44,8 @@ class BaseTabs(Gtk.Notebook):
 
         try:
             docked = getattr(self.settings, child_name + "Docked")
+            if not docked:
+                self.createWindow(child)
         except AttributeError:
             # Create the default config ONLY if keys don't already exist
             self._createDefaultConfig(child_name)
@@ -52,12 +56,15 @@ class BaseTabs(Gtk.Notebook):
         self.child_set_property(child, "tab-fill", True)
         label.props.xalign = 0.0
 
-    def _detachedWindowDestroyCb(self, window, page, orig_pos, label):
-        # We assume there's only one notebook and one tab per utility window
-        notebook = window.get_children()[0]
-        notebook.remove_page(0)
-        self.insert_page(page, label, orig_pos)
-        self._set_child_properties(page, label)
+    def _detachedComponentWindowDestroyCb(self, window, child,
+            original_position, child_name):
+        notebook = window.get_child()
+        position = notebook.page_num(child)
+        notebook.remove_page(position)
+        setattr(self.settings, child_name + "Docked", True)
+        label = Gtk.Label(child_name)
+        self.insert_page(child, label, original_position)
+        self._set_child_properties(child, label)
 
     def _createWindowCb(self, from_notebook, child, unused_x, unused_y):
         """
@@ -78,16 +85,39 @@ class BaseTabs(Gtk.Notebook):
         child_name = self.get_tab_label(child).get_text()
         window = Gtk.Window()
         window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
-        window.set_default_size(600, 400)
-        window.connect("destroy", self._detachedWindowDestroyCb,
-                    page, original_position, label)
         window.set_title(child_name)
+
+        # Get the previous window state settings
+        width = getattr(self.settings, child_name + "Width")
+        height = getattr(self.settings, child_name + "Height")
+        x = getattr(self.settings, child_name + "X")
+        y = getattr(self.settings, child_name + "Y")
+
+        # Save the fact that the window is now detached
+        setattr(self.settings, child_name + "Docked", False)
+
+        window.set_default_size(width, height)
         notebook = Gtk.Notebook()
         notebook.props.show_tabs = False
         window.add(notebook)
         window.show_all()
         window.move(x, y)
+        window.connect("configure-event", self._detachedComponentWindowConfiguredCb, child_name)
+        window.connect("destroy", self._detachedComponentWindowDestroyCb, child,
+                        original_position, child_name)
         return notebook
+
+    def _detachedComponentWindowConfiguredCb(self, window, event, child_name):
+        """
+        When the user configures the detached window
+        (changes its size, position, etc.), save the settings.
+
+        The config key's name depends on the name (label) of the tab widget.
+        """
+        setattr(self.settings, child_name + "Width", event.width)
+        setattr(self.settings, child_name + "Height", event.height)
+        setattr(self.settings, child_name + "X", event.x)
+        setattr(self.settings, child_name + "Y", event.y)
 
     def _createDefaultConfig(self, child_name):
         """
