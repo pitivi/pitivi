@@ -22,6 +22,7 @@
 from gi.repository import Gtk
 from gi.repository import Gdk
 from pitivi.utils.ui import SPACING
+from pitivi.settings import GlobalSettings
 
 
 class BaseTabs(Gtk.Notebook):
@@ -38,6 +39,12 @@ class BaseTabs(Gtk.Notebook):
         self._set_child_properties(child, label)
         child.show()
         label.show()
+
+        try:
+            docked = getattr(self.settings, child_name + "Docked")
+        except AttributeError:
+            # Create the default config ONLY if keys don't already exist
+            self._createDefaultConfig(child_name)
 
     def _set_child_properties(self, child, label):
         self.child_set_property(child, "detachable", True)
@@ -68,3 +75,30 @@ class BaseTabs(Gtk.Notebook):
         window.show_all()
         window.move(x, y)
         return notebook
+
+    def _createDefaultConfig(self, child_name):
+        """
+        If they do not exist already, create default settings
+        to save the state of a detachable widget.
+        """
+        GlobalSettings.addConfigSection("tabs - " + child_name)
+        GlobalSettings.addConfigOption(child_name + "Docked",
+            section="tabs - " + child_name,
+            key="docked",
+            default=True)
+        GlobalSettings.addConfigOption(child_name + "Width",
+            section="tabs - " + child_name,
+            key="width",
+            default=320)
+        GlobalSettings.addConfigOption(child_name + "Height",
+            section="tabs - " + child_name,
+            key="height",
+            default=400)
+        GlobalSettings.addConfigOption(child_name + "X",
+            section="tabs - " + child_name,
+            key="x-pos",
+            default=0)
+        GlobalSettings.addConfigOption(child_name + "Y",
+            section="tabs - " + child_name,
+            key="y-pos",
+            default=0)
