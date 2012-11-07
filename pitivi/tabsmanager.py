@@ -43,7 +43,7 @@ class BaseTabs(Gtk.Notebook):
         label.show()
 
         self._createDefaultConfig(child_name)
-        docked = getattr(self.settings, child_name + "Docked")
+        docked = getattr(self.settings, child_name + "docked")
         if not docked:
             self.createWindow(child)
 
@@ -58,7 +58,7 @@ class BaseTabs(Gtk.Notebook):
         notebook = window.get_child()
         position = notebook.page_num(child)
         notebook.remove_page(position)
-        setattr(self.settings, child_name + "Docked", True)
+        setattr(self.settings, child_name + "docked", True)
         label = Gtk.Label(child_name)
         self.insert_page(child, label, original_position)
         self._set_child_properties(child, label)
@@ -85,13 +85,13 @@ class BaseTabs(Gtk.Notebook):
         window.set_title(child_name)
 
         # Get the previous window state settings
-        width = getattr(self.settings, child_name + "Width")
-        height = getattr(self.settings, child_name + "Height")
-        x = getattr(self.settings, child_name + "X")
-        y = getattr(self.settings, child_name + "Y")
+        width = getattr(self.settings, child_name + "width")
+        height = getattr(self.settings, child_name + "height")
+        x = getattr(self.settings, child_name + "x")
+        y = getattr(self.settings, child_name + "y")
 
         # Save the fact that the window is now detached
-        setattr(self.settings, child_name + "Docked", False)
+        setattr(self.settings, child_name + "docked", False)
 
         window.set_default_size(width, height)
         notebook = Gtk.Notebook()
@@ -111,40 +111,36 @@ class BaseTabs(Gtk.Notebook):
 
         The config key's name depends on the name (label) of the tab widget.
         """
-        setattr(self.settings, child_name + "Width", event.width)
-        setattr(self.settings, child_name + "Height", event.height)
-        setattr(self.settings, child_name + "X", event.x)
-        setattr(self.settings, child_name + "Y", event.y)
+        setattr(self.settings, child_name + "width", event.width)
+        setattr(self.settings, child_name + "height", event.height)
+        setattr(self.settings, child_name + "x", event.x)
+        setattr(self.settings, child_name + "y", event.y)
 
     def _createDefaultConfig(self, child_name):
         """
         If they do not exist already, create default settings
         to save the state of a detachable widget.
         """
-        GlobalSettings.addConfigSection("tabs - " + child_name)
-        GlobalSettings.addConfigOption(child_name + "Docked",
-            section="tabs - " + child_name,
+        GlobalSettings.addConfigSection(child_name)
+        GlobalSettings.addConfigOption(child_name + "docked",
+            section=child_name,
             key="docked",
             default=True)
-        GlobalSettings.addConfigOption(child_name + "Width",
-            section="tabs - " + child_name,
+        GlobalSettings.addConfigOption(child_name + "width",
+            section=child_name,
             key="width",
             default=320)
-        GlobalSettings.addConfigOption(child_name + "Height",
-            section="tabs - " + child_name,
+        GlobalSettings.addConfigOption(child_name + "height",
+            section=child_name,
             key="height",
             default=400)
-        GlobalSettings.addConfigOption(child_name + "X",
-            section="tabs - " + child_name,
-            key="x-pos",
+        GlobalSettings.addConfigOption(child_name + "x",
+            section=child_name,
+            key="x",
             default=0)
-        GlobalSettings.addConfigOption(child_name + "Y",
-            section="tabs - " + child_name,
-            key="y-pos",
+        GlobalSettings.addConfigOption(child_name + "y",
+            section=child_name,
+            key="y",
             default=0)
 
-        GlobalSettings.readSettingSectionFromFile(self.settings, "tabs - " + child_name, child_name + "Docked", bool, "docked")
-        GlobalSettings.readSettingSectionFromFile(self.settings, "tabs - " + child_name, child_name + "Width", int, "width")
-        GlobalSettings.readSettingSectionFromFile(self.settings, "tabs - " + child_name, child_name + "Height", int, "height")
-        GlobalSettings.readSettingSectionFromFile(self.settings, "tabs - " + child_name, child_name + "X", int, "x-pos")
-        GlobalSettings.readSettingSectionFromFile(self.settings, "tabs - " + child_name, child_name + "Y", int, "y-pos")
+        GlobalSettings.readSettingSectionFromFile(self.settings, child_name)
