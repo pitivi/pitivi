@@ -1,12 +1,10 @@
 pixmapdir = $(pkgdatadir)/pixmaps
 pixmap_DATA = \
-	busy.gif		\
-	invisible.png 		\
 	pitivi-advanced-16.png	\
 	pitivi-advanced-22.png	\
 	pitivi-advanced-24.png	\
+	pitivi-align-24.svg	\
 	pitivi-group-24.svg  \
-	pitivi-group.svg  \
 	pitivi-keyframe-24.svg  \
 	pitivi-keyframe.svg     \
 	pitivi-relink-24.svg	\
@@ -15,11 +13,7 @@ pixmap_DATA = \
 	pitivi-render-22.png	\
 	pitivi-render-24.png	\
 	pitivi-split-24.svg	\
-	pitivi-split.svg	\
 	pitivi-ungroup-24.svg	\
-	pitivi-ungroup.svg	\
-	pitivi-align-24.svg	\
-	pitivi-align.svg	\
 	pitivi-unlink-24.svg	\
 	pitivi-unlink.svg	\
 	processing-clip.png	\
