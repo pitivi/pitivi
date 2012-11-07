@@ -42,13 +42,10 @@ class BaseTabs(Gtk.Notebook):
         child.show()
         label.show()
 
-        try:
-            docked = getattr(self.settings, child_name + "Docked")
-            if not docked:
-                self.createWindow(child)
-        except AttributeError:
-            # Create the default config ONLY if keys don't already exist
-            self._createDefaultConfig(child_name)
+        self._createDefaultConfig(child_name)
+        docked = getattr(self.settings, child_name + "Docked")
+        if not docked:
+            self.createWindow(child)
 
     def _set_child_properties(self, child, label):
         self.child_set_property(child, "detachable", True)
@@ -145,3 +142,9 @@ class BaseTabs(Gtk.Notebook):
             section="tabs - " + child_name,
             key="y-pos",
             default=0)
+
+        GlobalSettings.readSettingSectionFromFile(self.settings, "tabs - " + child_name, child_name + "Docked", bool, "docked")
+        GlobalSettings.readSettingSectionFromFile(self.settings, "tabs - " + child_name, child_name + "Width", int, "width")
+        GlobalSettings.readSettingSectionFromFile(self.settings, "tabs - " + child_name, child_name + "Height", int, "height")
+        GlobalSettings.readSettingSectionFromFile(self.settings, "tabs - " + child_name, child_name + "X", int, "x-pos")
+        GlobalSettings.readSettingSectionFromFile(self.settings, "tabs - " + child_name, child_name + "Y", int, "y-pos")

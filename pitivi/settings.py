@@ -186,6 +186,20 @@ class GlobalSettings(Signallable):
                     value = self._config.get(section, key)
                 setattr(self, attrname, value)
 
+    @classmethod
+    def readSettingSectionFromFile(self, cls, section, attrname, typ, key):
+        if cls._config.has_section(section):
+            if cls._config.has_option(section, key):
+                if typ == int or typ == long:
+                    value = cls._config.getint(section, key)
+                elif typ == float:
+                    value = cls._config.getfloat(section, key)
+                elif typ == bool:
+                    value = cls._config.getboolean(section, key)
+                else:
+                    value = cls._config.get(section, key)
+                setattr(cls, attrname, value)
+
     def _readSettingsFromEnvironmentVariables(self):
         for (section, attrname, typ, key, env, value) in self.iterAllOptions():
             var = get_env_by_type(typ, env)
