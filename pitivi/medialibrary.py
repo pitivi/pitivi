@@ -267,6 +267,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._project = None
         self._draggedPaths = None
         self.dragged = False
+        self.clip_view = self.app.settings.lastClipView
 
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "medialibrary.ui"))
@@ -438,23 +439,18 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         uiman.insert_action_group(self.selection_actions, 0)
         uiman.add_ui_from_string(ui)
 
-        # Set the state of the view mode toggle button before connecting signals
-        if self.app.settings.lastClipView == SHOW_TREEVIEW:
-            self._listview_button.set_active(True)
-        else:
-            self._listview_button.set_active(False)
+        # Set the state of the view mode toggle button.
+        self._listview_button.set_active(self.clip_view == SHOW_TREEVIEW)
+        # Make sure the proper view is displayed.
+        self._displayClipView()
 
-        # add all child widgets
+        # Add all the child widgets.
         self.pack_start(toolbar, False, False, 0)
         self.pack_start(self._welcome_infobar, False, False, 0)
         self.pack_start(self._import_warning_infobar, False, False, 0)
         self.pack_start(self.iconview_scrollwin, True, True, 0)
         self.pack_start(self.treeview_scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, True, 0)
-
-        # display the help text
-        self.clip_view = self.app.settings.lastClipView
-        self._displayClipView()
 
     def _importSourcesCb(self, unused_action):
         self.showImportSourcesDialog()
