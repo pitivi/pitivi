@@ -188,6 +188,15 @@ class GlobalSettings(Signallable):
 
     @classmethod
     def readSettingSectionFromFile(self, cls, section, attrname, typ, key):
+        """
+        Force reading a particular section of the settings file.
+
+        Use this if you dynamically determine settings sections/keys at runtime
+        (like in tabsmanager.py). Otherwise, the settings file would be read
+        only once (at the initialization phase of your module) and your config
+        sections would never be read, and thus values would be reset to defaults
+        on every startup because GlobalSettings would think they don't exist.
+        """
         if cls._config.has_section(section):
             if cls._config.has_option(section, key):
                 if typ == int or typ == long:
@@ -256,10 +265,13 @@ class GlobalSettings(Signallable):
         Add a configuration option.
 
         This function should be called during module initialization, before
-        the config file is read. Only options registered before the config
-        file is read will be loaded.
-
+        the config file is actually read. By default, only options registered
+        beforehand will be loaded.
         See mainwindow.py and medialibrary.py for examples of usage.
+
+        If you want to add configuration options after initialization,
+        use the readSettingSectionFromFile method to force reading later on.
+        See tabsmanager.py for an example of such a scenario.
 
         @param attrname: the attribute of this class which represents the option
         @type attrname: C{str}
