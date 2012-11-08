@@ -39,13 +39,14 @@ class BaseTabs(Gtk.Notebook):
         child_name = label.get_text()
         Gtk.Notebook.append_page(self, child, label)
         self._set_child_properties(child, label)
-        child.show()
         label.show()
 
         self._createDefaultConfig(child_name)
         docked = getattr(self.settings, child_name + "docked")
-        if not docked:
-            self.createWindow(child)
+        if docked is False:
+            self.createWindow(child, created_by_signal=False)
+        # Wait till the tab or floating window is ready before showing contents:
+        child.show()
 
     def _set_child_properties(self, child, label):
         self.child_set_property(child, "detachable", True)
@@ -73,10 +74,11 @@ class BaseTabs(Gtk.Notebook):
         # that gtk should insert into the window at the end:
         return self.createWindow(child)
 
-    def createWindow(self, child):
+    def createWindow(self, child, created_by_signal=True):
         """
         Create a window out of the tab. This can be called by _createWindowCb
-        or manually (to restore a previously undocked state)
+        or manually (to restore a previously undocked state) by specifying
+        created_by_signal=False.
         """
         original_position = self.page_num(child)
         child_name = self.get_tab_label(child).get_text()
@@ -102,7 +104,14 @@ class BaseTabs(Gtk.Notebook):
         window.connect("configure-event", self._detachedComponentWindowConfiguredCb, child_name)
         window.connect("destroy", self._detachedComponentWindowDestroyCb, child,
                         original_position, child_name)
-        return notebook
+
+        if not created_by_signal:
+            # Delete the tab from the original notebook (since it was not
+            # torn off by GTK) and add its contents to our newly created window
+            self.remove_page(original_position)
+            notebook.append_page(child, Gtk.Label(child_name))
+        else:
+            return notebook
 
     def _detachedComponentWindowConfiguredCb(self, window, event, child_name):
         """
