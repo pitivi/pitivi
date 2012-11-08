@@ -476,7 +476,7 @@ class ProjectManager(Signallable, Loggable):
             self.time_loaded = time()
 
     def _projectLoadedCb(self, formatter, timeline):
-        self.debug("Project Loaded")
+        self.debug("Project loaded, starting media discovery")
         for uri in self.formatter.get_sources():
             self._medialib_awaiting_discovery.append(quote_uri(uri))
         self.current.medialibrary.addUris(self._medialib_awaiting_discovery)

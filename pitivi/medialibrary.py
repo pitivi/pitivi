@@ -51,6 +51,8 @@ import pitivi.utils.ui as dnd
 from pitivi.utils.ui import beautify_info, info_name, SPACING, PADDING
 
 from pitivi.utils.ui import TYPE_PITIVI_FILESOURCE
+
+# Values used in the settings file.
 SHOW_TREEVIEW = 1
 SHOW_ICONVIEW = 2
 
@@ -70,6 +72,10 @@ GlobalSettings.addConfigOption('lastClipView',
     type_=int,
     default=SHOW_ICONVIEW)
 
+STORE_MODEL_STRUCTURE = (
+    GdkPixbuf.Pixbuf, GdkPixbuf.Pixbuf,
+    str, object, str, str, str, str)
+
 (COL_ICON,
  COL_ICON_LARGE,
  COL_INFOTEXT,
@@ -77,12 +83,7 @@ GlobalSettings.addConfigOption('lastClipView',
  COL_URI,
  COL_LENGTH,
  COL_SEARCH_TEXT,
- COL_SHORT_TEXT) = range(8)
-
-(LOCAL_FILE,
- LOCAL_DIR,
- REMOTE_FILE,
- NOT_A_FILE) = range(4)
+ COL_SHORT_TEXT) = range(len(STORE_MODEL_STRUCTURE))
 
 ui = '''
 <ui>
@@ -247,6 +248,13 @@ class MediaLibrary(Signallable, Loggable):
         return self._ordered_sources
 
 
+def compare_simple(model, iter1, iter2, user_data):
+    if model[iter1][user_data] < model[iter2][user_data]:
+        return -1
+    # Each element is unique, there is a strict order.
+    return 1
+
+
 class MediaLibraryWidget(Gtk.VBox, Loggable):
     """ Widget for listing sources """
 
@@ -283,9 +291,11 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         searchEntry = builder.get_object("media_search_entry")
 
         # Store
-        # icon, infotext, objectfactory, uri, length
-        self.storemodel = Gtk.ListStore(GdkPixbuf.Pixbuf, GdkPixbuf.Pixbuf,
-            str, object, str, str, str, str)
+        self.storemodel = Gtk.ListStore(*STORE_MODEL_STRUCTURE)
+        self.storemodel.set_sort_func(COL_URI, compare_simple, user_data=COL_URI)
+        # Prefer to sort the media library elements by URI
+        # rather than show them randomly.
+        self.storemodel.set_sort_column_id(COL_URI, Gtk.SortType.ASCENDING)
 
         # Scrolled Windows
         self.treeview_scrollwin = Gtk.ScrolledWindow()
