@@ -199,9 +199,18 @@ class GlobalSettings(Signallable):
         """
         if cls._config.has_section(section):
             for option in cls._config.options(section):
-                value = cls._config.get(section, option)
-                if value.isdigit():
-                    value = int(value)
+                # We don't know the value type in advance, just try them all.
+                try:
+                    value = cls._config.getfloat(section, option)
+                except:
+                    try:
+                        value = cls._config.getint(section, option)
+                    except:
+                        try:
+                            value = cls._config.getboolean(section, option)
+                        except:
+                            value = cls._config.get(section, option)
+
                 setattr(cls, section + option, value)
 
     def _readSettingsFromEnvironmentVariables(self):
