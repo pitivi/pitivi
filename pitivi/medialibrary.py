@@ -33,8 +33,6 @@ from gi.repository import GdkPixbuf
 import os
 import time
 
-from gi.repository import Gdk
-
 from urllib import unquote
 from gettext import gettext as _
 from hashlib import md5
@@ -404,23 +402,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.drag_dest_add_uri_targets()
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
-        self.treeview.drag_source_set(0, [], Gdk.DragAction.COPY)
-        self.treeview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)], Gdk.DragAction.COPY)
-        self.treeview.drag_source_set_target_list(None)
-        self.treeview.drag_source_add_uri_targets()
-        self.treeview.drag_source_add_text_targets()
-
-        self.treeview.connect("drag_begin", self._dndDragBeginCb)
-        self.treeview.connect("drag-end", self._dndDragEndCb)
-
-        self.iconview.drag_source_set(0, [], Gdk.DragAction.COPY)
-        self.iconview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [Gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)], Gdk.DragAction.COPY)
-        self.iconview.drag_source_set_target_list(None)
-        self.iconview.drag_source_add_uri_targets()
-        self.iconview.drag_source_add_text_targets()
-
-        self.iconview.connect("drag_begin", self._dndDragBeginCb)
-        self.iconview.connect("drag-end", self._dndDragEndCb)
+        self._setup_view_for_drag_and_drop(self.treeview)
+        self._setup_view_for_drag_and_drop(self.iconview)
 
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems
@@ -451,6 +434,16 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.pack_start(self.iconview_scrollwin, True, True, 0)
         self.pack_start(self.treeview_scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, True, 0)
+
+    def _setup_view_for_drag_and_drop(self, view):
+        self.iconview.drag_source_set(0, [], Gdk.DragAction.COPY)
+        self.iconview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [Gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)], Gdk.DragAction.COPY)
+        self.iconview.drag_source_set_target_list(None)
+        self.iconview.drag_source_add_uri_targets()
+        self.iconview.drag_source_add_text_targets()
+
+        self.iconview.connect("drag_begin", self._dndDragBeginCb)
+        self.iconview.connect("drag-end", self._dndDragEndCb)
 
     def _importSourcesCb(self, unused_action):
         self.showImportSourcesDialog()
