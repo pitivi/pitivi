@@ -12,7 +12,8 @@
 #
 #  + an empty location where you have R+W access, so that the script
 #    can set up everything for you (recommended).
-MYPITIVI=$HOME/pitivi-git
+# Either set $MYPITIVI in your ~/.bashrc, or edit the line below:
+MYPITIVI=${MYPITIVI:-$HOME/pitivi-git}
 # Change this variable to 'master' if you prefer to work with the master branch
 # When using "master", this script will automatically "pull --rebase" modules.
 GST_RELEASE_TAG="1.0.2"
