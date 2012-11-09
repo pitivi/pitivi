@@ -44,6 +44,17 @@ from pitivi.utils.widgets import GstElementSettingsDialog
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import model, frame_rates, audio_rates, audio_depths, \
     audio_channels, get_combo_value, set_combo_value, beautify_ETA
+try:
+    import pycanberra
+    has_canberra = True
+except ImportError:
+    has_canberra = False
+
+try:
+    from gi.repository import Notify
+    has_libnotify = True
+except ImportError:
+    has_libnotify = False
 
 
 #---------------- Private utils ---------------------------------------#
@@ -329,6 +340,7 @@ class RenderingProgressDialog(Signallable):
 
     def __init__(self, app, parent):
         self.app = app
+        self.main_render_dialog = parent
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
             "renderingprogress.ui"))
@@ -338,6 +350,9 @@ class RenderingProgressDialog(Signallable):
         self.table1 = self.builder.get_object("table1")
         self.progressbar = self.builder.get_object("progressbar")
         self.play_pause_button = self.builder.get_object("play_pause_button")
+        self.play_rendered_file_button = self.builder.get_object("play_rendered_file_button")
+        self.close_button = self.builder.get_object("close_button")
+        self.cancel_button = self.builder.get_object("cancel_button")
         # Parent the dialog with mainwindow, since renderingdialog is hidden.
         # It allows this dialog to properly minimize together with mainwindow
         self.window.set_transient_for(self.app.gui)
@@ -347,6 +362,10 @@ class RenderingProgressDialog(Signallable):
 
         # TODO: show this widget for rendering statistics (bug 637079)
         self.table1.hide()
+
+        # We will only show the close/play buttons when the render is done:
+        self.play_rendered_file_button.hide()
+        self.close_button.hide()
 
     def updatePosition(self, fraction, estimated):
         self.progressbar.set_fraction(fraction)
@@ -367,6 +386,15 @@ class RenderingProgressDialog(Signallable):
 
     def _pauseButtonClickedCb(self, unused_button):
         self.emit("pause")
+
+    def _closeButtonClickedCb(self, unused_button):
+        self.window.destroy()
+        if self.main_render_dialog.notification is not None:
+            self.main_render_dialog.notification.close()
+        self.main_render_dialog.window.show()
+
+    def _playRenderedFileButtonClickedCb(self, unused_button):
+        os.system('xdg-open "%s"' % self.main_render_dialog.outfile)
 
 
 class RenderDialog(Loggable):
@@ -396,6 +424,7 @@ class RenderDialog(Loggable):
             self._pipeline = self.project.pipeline
 
         self.outfile = None
+        self.notification = None
         self.settings = project.getSettings()
         self.timestarted = 0
 
@@ -975,7 +1004,21 @@ class RenderDialog(Loggable):
         if message.type == Gst.MessageType.EOS:  # Render complete
             self.debug("got EOS message, render complete")
             self._shutDown()
-            self._destroyProgressWindow()
+            self.progress.progressbar.set_text(_("Render complete"))
+            self.progress.window.set_title(_("Render complete"))
+            if has_libnotify:
+                Notify.init("pitivi")
+                if not self.progress.window.is_active():
+                    self.notification = Notify.Notification.new(_("Render complete"), _("<i>%s</i> has finished rendering." % self.fileentry.get_text()), "pitivi")
+                    self.notification.show()
+            if has_canberra:
+                canberra = pycanberra.Canberra()
+                canberra.play(1, pycanberra.CA_PROP_EVENT_ID, "complete-media", None)
+            self.progress.play_rendered_file_button.show()
+            self.progress.close_button.show()
+            self.progress.cancel_button.hide()
+            self.progress.play_pause_button.hide()
+
         elif message.type == Gst.MessageType.STATE_CHANGED and self.progress:
             prev, state, pending = message.parse_state_changed()
             if message.src == self._pipeline:

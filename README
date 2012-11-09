@@ -1,3 +1,5 @@
-In order to get more video effects, you should install the frei0r library
+In order to get more video effects, you should install the frei0r library.
+Other "soft" dependencies include:
+- pycanberra and libnotify for sounds and notifications when rendering completes
 
-Packagers should add it as a recommended package.
+Packagers should add them as recommended packages.
