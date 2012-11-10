@@ -30,14 +30,14 @@ class TestProjectSettingsDialog(TestCase):
     def testGetUniquePresetName(self):
         preset_manager = PresetManager()
         name = ProjectSettingsDialog._getUniquePresetName(preset_manager)
-        self.assertEqual('New Preset', name)
+        self.assertEqual('New preset', name)
 
         preset_manager.addPreset(name, {})
         new_preset1 = ProjectSettingsDialog._getUniquePresetName(preset_manager)
-        self.assertEqual('New Preset 1', new_preset1)
+        self.assertEqual('New preset 1', new_preset1)
 
-        # Intentionally add 'New Preset 2' before 'New Preset 1'.
-        preset_manager.addPreset('New Preset 2', {})
-        preset_manager.addPreset(new_preset1, {})
+        # Intentionally add 'New preset 2' before 'New preset 1'.
+        preset_manager.addPreset('New preset 2', {})
+        preset_manager.addPreset('New preset 1', {})
         new_preset3 = ProjectSettingsDialog._getUniquePresetName(preset_manager)
-        self.assertEqual('New Preset 3', new_preset3)
+        self.assertEqual('New preset 3', new_preset3)
