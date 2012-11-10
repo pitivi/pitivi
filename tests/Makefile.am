@@ -17,10 +17,8 @@ tests = \
 	test_system_gnome.py
 
 integration_tests = \
-	test_integration.py \
 	test_preset.py \
-	test_projectsettings.py \
-	test_still_image.py
+	test_projectsettings.py
 
 EXTRA_DIST = \
 	__init__.py \
