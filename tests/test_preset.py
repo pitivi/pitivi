@@ -153,35 +153,6 @@ class TestAudioPresetsIO(TestCase):
         total_presets = countDefaultPresets(self.manager) + countUserPresets(self.manager)
         self.assertEqual(total_presets, len(other_manager.presets))
 
-        # Test invalid filenames/filepaths
-
-        # Testing with an invalid filepath:
-        self.manager.addPreset("Sangoku",
-            {"channels": 8001,
-            "depth": 32,
-            "sample-rate": 44100,
-            "filepath": "INVALID FILENAME?!"})
-        self.assertEqual(2 + countDefaultPresets(self.manager), len(other_manager.presets))
-        self.manager.saveAll()
-        # The filepath was invalid. It was not actually a path.
-        self.assertEqual(2, len(os.listdir(self.manager.user_path)))
-
-        # Testing with an invalid filename:
-        self.manager.presets["Sangoku"]["filepath"] = os.path.join(self.manager.user_path,
-            "INVALID FILENAME?!")
-        self.manager.saveAll()
-        # The filepath did not have a ".json" file extension
-        # While such a file would be written to disk, it would not be loaded
-        self.assertEqual(3, len(os.listdir(self.manager.user_path)))
-
-        # So let's reset it to a clean state:
-        other_manager = AudioPresetManager()
-        other_manager.default_path = self.manager.default_path
-        other_manager.user_path = self.manager.user_path
-        other_manager.loadAll()
-        # We only expect two valid, loaded presets: nappa and vegeta
-        self.assertEqual(2 + countDefaultPresets(self.manager), len(other_manager.presets))
-
     def testEsotericFilenames(self):
         self.manager.addPreset("Default",
             {"channels": 2,
