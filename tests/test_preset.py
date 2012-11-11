@@ -83,6 +83,10 @@ class TestPresetBasics(TestCase):
         self.assertRaises(DuplicatePresetNameException,
                 self.manager.addPreset, 'Preset One', {'name1': '2A'})
 
+    def testAddDuplicatePreset(self):
+        self.manager.addPreset('x', {})
+        self.assertRaises(DuplicatePresetNameException, self.manager.addPreset, 'x', {})
+
     def testRenamePreset(self):
         self.manager.addPreset('preseT onE', {'name1': '1A'})
         self.manager.addPreset('Preset Two', {'name1': '2A'})
@@ -170,8 +174,6 @@ class TestAudioPresetsIO(TestCase):
         # While such a file would be written to disk, it would not be loaded
         self.assertEqual(3, len(os.listdir(self.manager.user_path)))
 
-        # Trying to load all presets multiple times will create duplicates...
-        self.assertRaises(DuplicatePresetNameException, other_manager.loadAll)
         # So let's reset it to a clean state:
         other_manager = AudioPresetManager()
         other_manager.default_path = self.manager.default_path
