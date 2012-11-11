@@ -101,6 +101,11 @@ class TestPresetBasics(TestCase):
         self.manager.addPreset('x', {})
         self.assertRaises(DuplicatePresetNameException, self.manager.addPreset, 'x', {})
 
+    def testAddPresetWithNonAsciiName(self):
+        unicode_name = u"ソリッド・スネーク"
+        self.manager.addPreset(unicode_name, {})
+        self.assertTrue(unicode_name.encode("utf-8") in self.manager.getPresetNames())
+
     def testRenamePreset(self):
         self.manager.addPreset('preseT onE', {'name1': '1A'})
         self.manager.addPreset('Preset Two', {'name1': '2A'})

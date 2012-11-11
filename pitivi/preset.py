@@ -128,6 +128,9 @@ class PresetManager(object):
         @param values: The values of the new preset.
         @type values: dict
         """
+        if type(name) == unicode:
+            # We need utf-8 string objects, not unicode objects!
+            name = name.encode("utf-8")
         if self.hasPreset(name):
             raise DuplicatePresetNameException(name)
         self.presets[name] = values
