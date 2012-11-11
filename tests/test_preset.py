@@ -34,10 +34,16 @@ from pitivi.preset import DuplicatePresetNameException, \
     AudioPresetManager
 
 
+class FakePresetManager(PresetManager):
+
+    def saveSection(self, fout, section):
+        pass
+
+
 class TestPresetBasics(TestCase):
 
     def setUp(self):
-        self.manager = PresetManager()
+        self.manager = FakePresetManager()
         self.user_path = tempfile.mkdtemp()
         self.manager.user_path = self.user_path  # Keep PresetManager happy
 

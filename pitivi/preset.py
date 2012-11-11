@@ -302,6 +302,16 @@ class PresetManager(object):
             return True
         return False
 
+    def saveSection(self, fout, section):
+        """Save the specified section into the specified file.
+
+        @param fout: The file where to save the section.
+        @type parser: file
+        @param section: The name of the section to be saved.
+        @type section: string
+        """
+        raise NotImplementedError()
+
 
 class VideoPresetManager(PresetManager):
 
