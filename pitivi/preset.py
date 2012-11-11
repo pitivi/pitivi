@@ -71,6 +71,9 @@ class PresetManager(object):
         try:
             for uri in os.listdir(self.default_path):
                 filepaths.append(os.path.join(self.default_path, uri))
+        except Exception:
+            pass
+        try:
             for uri in os.listdir(self.user_path):
                 filepaths.append(os.path.join(self.user_path, uri))
         except Exception:
