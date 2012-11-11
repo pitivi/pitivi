@@ -158,27 +158,14 @@ class TestAudioPresetsIO(TestCase):
         total_presets = countDefaultPresets(self.manager) + countUserPresets(self.manager)
         self.assertEqual(total_presets, len(other_manager.presets))
 
-    def testEsotericFilenames(self):
-        self.manager.addPreset("Default",
-            {"channels": 2,
-            "depth": -9000,
-            "sample-rate": 44100,
-            "filepath": os.path.join(self.manager.user_path, "Default.json")})
-        self.manager.saveAll()
-
-        self.manager.addPreset('Solid Snake (ソリッド・スネーク) \#!"/$%?&*',
+    def testNonAsciiFilenamesSaveAndLoad(self):
+        non_ascii_preset_name = "Solid Snake (ソリッド・スネーク) \\#!\"'$%?&*"
+        self.manager.addPreset(non_ascii_preset_name,
             {"channels": 2,
             "depth": 16,
-            "sample-rate": 44100,
-            "filepath": os.path.join(self.manager.user_path,
-                'Solid Snake (ソリッド・スネーク) \#!"/$%?&*' + ".json")})
-        snake = self.manager.presets['Solid Snake (ソリッド・スネーク) \#!"/$%?&*']
-        self.assertEqual(4, len(snake))
-        # The slash ("/") in the filename is supposed to make it choke
-        #self.assertRaises(IOError, self.manager.saveAll)
-        # Let's be slightly more gentle
-        snake["filepath"] = os.path.join(self.manager.user_path,
-                'Solid Snake (ソリッド・スネーク)' + ".json")
+            "sample-rate": 44100})
+        snake = self.manager.presets[non_ascii_preset_name]
+        self.assertEqual(3, len(snake))
         self.manager.saveAll()
 
         # Create a second concurrent instance with the same paths,
@@ -188,11 +175,6 @@ class TestAudioPresetsIO(TestCase):
         other_manager.user_path = self.manager.user_path
         other_manager.loadAll()
 
-        snaaaake = other_manager.presets['Solid Snake (ソリッド・スネーク)']
-        self.assertEqual(2, snaaaake["channels"])
-
-        foo = other_manager.presets['Default']
-        self.assertEqual(4, len(foo))
-        self.assertEqual(-9000, foo["depth"])
-
-        self.assertEquals(2, len(other_manager.presets))
+        snaaaake = other_manager.presets[non_ascii_preset_name]
+        self.assertEqual(snake, snaaaake)
+        self.assertEquals(1 + countDefaultPresets(other_manager), len(other_manager.presets))
