@@ -162,14 +162,13 @@ class TestAudioPresetsIO(TestCase):
         self.manager.saveAll()
 
         self.manager.addPreset('Solid Snake (ソリッド・スネーク) \#!"/$%?&*',
-            {"name": "デイビッド",
-            "channels": 2,
+            {"channels": 2,
             "depth": 16,
             "sample-rate": 44100,
             "filepath": os.path.join(self.manager.user_path,
                 'Solid Snake (ソリッド・スネーク) \#!"/$%?&*' + ".json")})
         snake = self.manager.presets['Solid Snake (ソリッド・スネーク) \#!"/$%?&*']
-        self.assertEqual(5, len(snake))
+        self.assertEqual(4, len(snake))
         # The slash ("/") in the filename is supposed to make it choke
         #self.assertRaises(IOError, self.manager.saveAll)
         # Let's be slightly more gentle
