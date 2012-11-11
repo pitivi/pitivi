@@ -76,9 +76,9 @@ class PresetManager(object):
         except Exception:
             pass
 
-        for file in filepaths:
-            if file.endswith("json"):
-                self.loadSection(os.path.join(self.default_path, file))
+        for filepath in filepaths:
+            if filepath.endswith("json"):
+                self._loadSection(os.path.join(self.default_path, filepath))
 
     def saveAll(self):
         """Write changes to disk for all presets"""
@@ -96,7 +96,7 @@ class PresetManager(object):
                     filepath = os.path.join(self.user_path, filename)
                 try:
                     fout = open(filepath, "w")
-                    self.saveSection(fout, name)
+                    self._saveSection(fout, name)
                     self.presets[name]["filepath"] = filepath
                 except IOError:
                     # FIXME: this can happen in two cases: a permissions error,
@@ -208,7 +208,7 @@ class PresetManager(object):
         self._ignore_update_requests = False
 
     def savePreset(self):
-        """Update the preset values and write to disk"""
+        """Update the current preset values from the widgets and save it."""
         if self.cur_preset != _("No preset"):
             self._updatePreset()
             if os.path.isfile(self.user_path):
@@ -222,7 +222,7 @@ class PresetManager(object):
                 filepath = os.path.join(self.user_path, self.cur_preset + ".json")
             try:
                 fout = open(filepath, "w")
-                self.saveSection(fout, self.cur_preset)
+                self._saveSection(fout, self.cur_preset)
                 self.presets[self.cur_preset]["filepath"] = filepath
             except IOError:
                 # TODO: show an error infobar... but this should never happen,
@@ -302,7 +302,7 @@ class PresetManager(object):
             return True
         return False
 
-    def saveSection(self, fout, section):
+    def _saveSection(self, fout, section):
         """Save the specified section into the specified file.
 
         @param fout: The file where to save the section.
@@ -318,7 +318,7 @@ class VideoPresetManager(PresetManager):
     default_path = get_videopresets_dir()
     user_path = os.path.join(xdg_data_home(), 'video_presets')
 
-    def loadSection(self, filepath):
+    def _loadSection(self, filepath):
         parser = json.loads(open(filepath).read())
 
         name = parser["name"]
@@ -341,7 +341,7 @@ class VideoPresetManager(PresetManager):
             "filepath": filepath,
         })
 
-    def saveSection(self, fout, section):
+    def _saveSection(self, fout, section):
         values = self.presets[section]
         data = json.dumps({
             "name": section,
@@ -360,7 +360,7 @@ class AudioPresetManager(PresetManager):
     default_path = get_audiopresets_dir()
     user_path = os.path.join(xdg_data_home(), 'audio_presets')
 
-    def loadSection(self, filepath):
+    def _loadSection(self, filepath):
         parser = json.loads(open(filepath).read())
 
         name = parser["name"]
@@ -376,7 +376,7 @@ class AudioPresetManager(PresetManager):
             "filepath": filepath,
         })
 
-    def saveSection(self, fout, section):
+    def _saveSection(self, fout, section):
         values = self.presets[section]
         data = json.dumps({
             "name": section,
@@ -392,7 +392,7 @@ class RenderPresetManager(PresetManager):
     default_path = get_renderpresets_dir()
     user_path = os.path.join(xdg_data_home(), 'render_presets')
 
-    def loadSection(self, filepath):
+    def _loadSection(self, filepath):
         parser = json.loads(open(filepath).read())
 
         name = parser["name"]
@@ -433,7 +433,7 @@ class RenderPresetManager(PresetManager):
             "filepath": filepath,
         })
 
-    def saveSection(self, fout, section):
+    def _saveSection(self, fout, section):
         values = self.presets[section]
         data = json.dumps({
             "name": section,

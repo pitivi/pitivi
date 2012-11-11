@@ -36,7 +36,7 @@ from pitivi.preset import DuplicatePresetNameException, \
 
 class FakePresetManager(PresetManager):
 
-    def saveSection(self, fout, section):
+    def _saveSection(self, fout, section):
         pass
 
 
