@@ -40,16 +40,23 @@ class FakePresetManager(PresetManager):
         pass
 
 
+def setPresetManagerPaths(preset_manager, default_path):
+    preset_manager.default_path = default_path
+    preset_manager.user_path = tempfile.mkdtemp()
+
+
+def clearPresetManagerPaths(preset_manager):
+    shutil.rmtree(preset_manager.user_path)
+
+
 class TestPresetBasics(TestCase):
 
     def setUp(self):
         self.manager = FakePresetManager()
-        self.user_path = tempfile.mkdtemp()
-        self.manager.user_path = self.user_path  # Keep PresetManager happy
+        setPresetManagerPaths(self.manager, None)
 
     def tearDown(self):
-        # Delete the user directory we created (but not the default directory)
-        shutil.rmtree(self.user_path)
+        clearPresetManagerPaths(self.manager)
 
     def testConvertPresetNameToSectionName(self):
         self.presetToSection = self.manager._convertPresetNameToSectionName
@@ -91,40 +98,33 @@ class TestPresetBasics(TestCase):
                 self.manager.renamePreset, '0', 'Preset two')
 
 
-class TestPresetsIO(TestCase):
+class TestAudioPresetsIO(TestCase):
 
     def setUp(self):
-        # We use a real default path to get some real presets
-        self.default_path = get_audiopresets_dir()
-        # Create some fake dir to avoid messing actual data
-        self.user_path = tempfile.mkdtemp()
-
         self.manager = AudioPresetManager()
-        self.manager.default_path = self.default_path
-        self.manager.user_path = self.user_path
+        setPresetManagerPaths(self.manager, get_audiopresets_dir())
 
     def tearDown(self):
-        # Delete the user directory we created (but not the default directory)
-        shutil.rmtree(self.user_path)
+        clearPresetManagerPaths(self.manager)
 
     def testSaveAndLoad(self):
 
         def countDefaultPresets():
             foo = 0
-            for file in os.listdir(self.default_path):
+            for file in os.listdir(self.manager.default_path):
                 # This is needed to avoid a miscount with makefiles and such
                 if file.endswith(".json"):
                     foo += 1
             return foo
 
         def countUserPresets():
-            return len(os.listdir(self.user_path))
+            return len(os.listdir(self.manager.user_path))
 
         self.manager.addPreset("Vegeta",
             {"channels": 6000,
             "depth": 16,
             "sample-rate": 44100,
-            "filepath": os.path.join(self.user_path, "vegeta.json")})
+            "filepath": os.path.join(self.manager.user_path, "vegeta.json")})
         self.manager.cur_preset = "Vegeta"
         self.manager.savePreset()
         self.assertEqual(1, countUserPresets())
@@ -133,17 +133,17 @@ class TestPresetsIO(TestCase):
             {"channels": 4000,
             "depth": 16,
             "sample-rate": 44100,
-            "filepath": os.path.join(self.user_path, "nappa.json")})
+            "filepath": os.path.join(self.manager.user_path, "nappa.json")})
 
         self.assertEqual(1, countUserPresets())
         self.manager.saveAll()
         self.assertEqual(2, countUserPresets())
-        self.assertIn("vegeta.json", os.listdir(self.user_path))
-        self.assertIn("nappa.json", os.listdir(self.user_path))
+        self.assertIn("vegeta.json", os.listdir(self.manager.user_path))
+        self.assertIn("nappa.json", os.listdir(self.manager.user_path))
 
         other_manager = AudioPresetManager()
-        other_manager.default_path = self.default_path
-        other_manager.user_path = self.user_path
+        other_manager.default_path = self.manager.default_path
+        other_manager.user_path = self.manager.user_path
         other_manager.loadAll()
 
         total_presets = countDefaultPresets() + countUserPresets()
@@ -160,22 +160,22 @@ class TestPresetsIO(TestCase):
         self.assertEqual(2 + countDefaultPresets(), len(other_manager.presets))
         self.manager.saveAll()
         # The filepath was invalid. It was not actually a path.
-        self.assertEqual(2, len(os.listdir(self.user_path)))
+        self.assertEqual(2, len(os.listdir(self.manager.user_path)))
 
         # Testing with an invalid filename:
-        self.manager.presets["Sangoku"]["filepath"] = os.path.join(self.user_path,
+        self.manager.presets["Sangoku"]["filepath"] = os.path.join(self.manager.user_path,
             "INVALID FILENAME?!")
         self.manager.saveAll()
         # The filepath did not have a ".json" file extension
         # While such a file would be written to disk, it would not be loaded
-        self.assertEqual(3, len(os.listdir(self.user_path)))
+        self.assertEqual(3, len(os.listdir(self.manager.user_path)))
 
         # Trying to load all presets multiple times will create duplicates...
         self.assertRaises(DuplicatePresetNameException, other_manager.loadAll)
         # So let's reset it to a clean state:
         other_manager = AudioPresetManager()
-        other_manager.default_path = self.default_path
-        other_manager.user_path = self.user_path
+        other_manager.default_path = self.manager.default_path
+        other_manager.user_path = self.manager.user_path
         other_manager.loadAll()
         # We only expect two valid, loaded presets: nappa and vegeta
         self.assertEqual(2 + countDefaultPresets(), len(other_manager.presets))
@@ -185,7 +185,7 @@ class TestPresetsIO(TestCase):
             {"channels": 2,
             "depth": -9000,
             "sample-rate": 44100,
-            "filepath": os.path.join(self.user_path, "Default.json")})
+            "filepath": os.path.join(self.manager.user_path, "Default.json")})
         self.manager.saveAll()
 
         self.manager.addPreset('Solid Snake (ソリッド・スネーク) \#!"/$%?&*',
@@ -193,22 +193,22 @@ class TestPresetsIO(TestCase):
             "channels": 2,
             "depth": 16,
             "sample-rate": 44100,
-            "filepath": os.path.join(self.user_path,
+            "filepath": os.path.join(self.manager.user_path,
                 'Solid Snake (ソリッド・スネーク) \#!"/$%?&*' + ".json")})
         snake = self.manager.presets['Solid Snake (ソリッド・スネーク) \#!"/$%?&*']
         self.assertEqual(5, len(snake))
         # The slash ("/") in the filename is supposed to make it choke
         #self.assertRaises(IOError, self.manager.saveAll)
         # Let's be slightly more gentle
-        snake["filepath"] = os.path.join(self.user_path,
+        snake["filepath"] = os.path.join(self.manager.user_path,
                 'Solid Snake (ソリッド・スネーク)' + ".json")
         self.manager.saveAll()
 
         # Create a second concurrent instance with the same paths,
         # to check that it can read and write from the first instance's data
         other_manager = AudioPresetManager()
-        other_manager.default_path = self.default_path
-        other_manager.user_path = self.user_path
+        other_manager.default_path = self.manager.default_path
+        other_manager.user_path = self.manager.user_path
         other_manager.loadAll()
 
         snaaaake = other_manager.presets['Solid Snake (ソリッド・スネーク)']
