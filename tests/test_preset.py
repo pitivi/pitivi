@@ -134,21 +134,16 @@ class TestAudioPresetsIO(TestCase):
         self.manager.addPreset("Vegeta",
             {"channels": 6000,
             "depth": 16,
-            "sample-rate": 44100,
-            "filepath": os.path.join(self.manager.user_path, "vegeta.json")})
+            "sample-rate": 44100})
         self.manager.saveAll()
         self.assertEqual(1, countUserPresets(self.manager))
 
         self.manager.addPreset("Nappa",
             {"channels": 4000,
             "depth": 16,
-            "sample-rate": 44100,
-            "filepath": os.path.join(self.manager.user_path, "nappa.json")})
+            "sample-rate": 44100})
         self.manager.saveAll()
         self.assertEqual(2, countUserPresets(self.manager))
-
-        self.assertIn("vegeta.json", os.listdir(self.manager.user_path))
-        self.assertIn("nappa.json", os.listdir(self.manager.user_path))
 
         other_manager = AudioPresetManager()
         other_manager.default_path = self.manager.default_path
