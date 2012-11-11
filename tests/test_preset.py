@@ -49,6 +49,20 @@ def clearPresetManagerPaths(preset_manager):
     shutil.rmtree(preset_manager.user_path)
 
 
+def countJsonFilesIn(dir_path):
+    return len([filename
+                for filename in os.listdir(dir_path)
+                if filename.endswith(".json")])
+
+
+def countDefaultPresets(preset_manager):
+    return countJsonFilesIn(preset_manager.default_path)
+
+
+def countUserPresets(preset_manager):
+    return countJsonFilesIn(preset_manager.user_path)
+
+
 class TestPresetBasics(TestCase):
 
     def setUp(self):
@@ -112,36 +126,22 @@ class TestAudioPresetsIO(TestCase):
         clearPresetManagerPaths(self.manager)
 
     def testSaveAndLoad(self):
-
-        def countDefaultPresets():
-            foo = 0
-            for file in os.listdir(self.manager.default_path):
-                # This is needed to avoid a miscount with makefiles and such
-                if file.endswith(".json"):
-                    foo += 1
-            return foo
-
-        def countUserPresets():
-            return len(os.listdir(self.manager.user_path))
-
         self.manager.addPreset("Vegeta",
             {"channels": 6000,
             "depth": 16,
             "sample-rate": 44100,
             "filepath": os.path.join(self.manager.user_path, "vegeta.json")})
-        self.manager.cur_preset = "Vegeta"
-        self.manager.savePreset()
-        self.assertEqual(1, countUserPresets())
+        self.manager.saveAll()
+        self.assertEqual(1, countUserPresets(self.manager))
 
         self.manager.addPreset("Nappa",
             {"channels": 4000,
             "depth": 16,
             "sample-rate": 44100,
             "filepath": os.path.join(self.manager.user_path, "nappa.json")})
-
-        self.assertEqual(1, countUserPresets())
         self.manager.saveAll()
-        self.assertEqual(2, countUserPresets())
+        self.assertEqual(2, countUserPresets(self.manager))
+
         self.assertIn("vegeta.json", os.listdir(self.manager.user_path))
         self.assertIn("nappa.json", os.listdir(self.manager.user_path))
 
@@ -150,7 +150,7 @@ class TestAudioPresetsIO(TestCase):
         other_manager.user_path = self.manager.user_path
         other_manager.loadAll()
 
-        total_presets = countDefaultPresets() + countUserPresets()
+        total_presets = countDefaultPresets(self.manager) + countUserPresets(self.manager)
         self.assertEqual(total_presets, len(other_manager.presets))
 
         # Test invalid filenames/filepaths
@@ -161,7 +161,7 @@ class TestAudioPresetsIO(TestCase):
             "depth": 32,
             "sample-rate": 44100,
             "filepath": "INVALID FILENAME?!"})
-        self.assertEqual(2 + countDefaultPresets(), len(other_manager.presets))
+        self.assertEqual(2 + countDefaultPresets(self.manager), len(other_manager.presets))
         self.manager.saveAll()
         # The filepath was invalid. It was not actually a path.
         self.assertEqual(2, len(os.listdir(self.manager.user_path)))
@@ -180,7 +180,7 @@ class TestAudioPresetsIO(TestCase):
         other_manager.user_path = self.manager.user_path
         other_manager.loadAll()
         # We only expect two valid, loaded presets: nappa and vegeta
-        self.assertEqual(2 + countDefaultPresets(), len(other_manager.presets))
+        self.assertEqual(2 + countDefaultPresets(self.manager), len(other_manager.presets))
 
     def testEsotericFilenames(self):
         self.manager.addPreset("Default",
