@@ -104,8 +104,7 @@ SUPPORTED_FILE_FORMATS = {"video": ("3gpp", "3gpp2", "dv", "mp4", "mpeg", "ogg",
     # Don't forget audio formats
     "audio": ("aac", "ac3", "basic", "flac", "mp2", "mp4", "mpeg", "ogg", "opus", "webm", "x-adpcm", "x-aifc", "x-aiff", "x-aiffc", "x-ape", "x-flac+ogg", "x-m4b", "x-matroska", "x-ms-asx", "x-ms-wma", "x-speex", "x-speex+ogg", "x-vorbis+ogg", "x-wav"),
     # ...and image formats
-    "image": ("jp2", "jpeg", "png", "svg+xml"),
-}
+    "image": ("jp2", "jpeg", "png", "svg+xml")}
 # Stuff that we're not too confident about but might improve eventually:
 OTHER_KNOWN_FORMATS = ("video/mp2t")
 
@@ -414,8 +413,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.drag_dest_add_uri_targets()
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
-        self._setup_view_for_drag_and_drop(self.treeview)
-        self._setup_view_for_drag_and_drop(self.iconview)
+        self._setup_view_for_drag_and_drop(self.treeview, [("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)])
+        self._setup_view_for_drag_and_drop(self.iconview, [Gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)])
 
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems
@@ -447,15 +446,15 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.pack_start(self.treeview_scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, True, 0)
 
-    def _setup_view_for_drag_and_drop(self, view):
-        self.iconview.drag_source_set(0, [], Gdk.DragAction.COPY)
-        self.iconview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [Gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)], Gdk.DragAction.COPY)
-        self.iconview.drag_source_set_target_list(None)
-        self.iconview.drag_source_add_uri_targets()
-        self.iconview.drag_source_add_text_targets()
+    def _setup_view_for_drag_and_drop(self, view, target_entries):
+        view.drag_source_set(0, [], Gdk.DragAction.COPY)
+        view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, target_entries, Gdk.DragAction.COPY)
+        view.drag_source_set_target_list(None)
+        view.drag_source_add_uri_targets()
+        view.drag_source_add_text_targets()
 
-        self.iconview.connect("drag_begin", self._dndDragBeginCb)
-        self.iconview.connect("drag-end", self._dndDragEndCb)
+        view.connect("drag_begin", self._dndDragBeginCb)
+        view.connect("drag-end", self._dndDragEndCb)
 
     def _importSourcesCb(self, unused_action):
         self.showImportSourcesDialog()
