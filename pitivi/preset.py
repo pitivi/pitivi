@@ -85,28 +85,32 @@ class PresetManager(object):
 
     def saveAll(self):
         """Write changes to disk for all presets"""
+        for preset_name, values in self.ordered:
+            self.savePreset(preset_name)
+
+    def savePreset(self, preset_name):
+        if preset_name == _("No preset"):
+            return
         if os.path.isfile(self.user_path):
             # We used to save presets as a single file instead of a directory
             os.remove(self.user_path)
         if not os.path.exists(self.user_path):
             os.makedirs(self.user_path)
-        for name, properties in self.ordered:
-            if not name == _("No preset"):
-                try:
-                    filepath = self.presets[name]["filepath"]
-                except KeyError:
-                    filename = name + ".json"
-                    filepath = os.path.join(self.user_path, filename)
-                try:
-                    fout = open(filepath, "w")
-                    self._saveSection(fout, name)
-                    self.presets[name]["filepath"] = filepath
-                except IOError:
-                    # FIXME: this can happen in two cases: a permissions error,
-                    # or an invalid filename (ex: gibberish). In the latter case
-                    # we should log an error message or show an infobar, and
-                    # the test suite should verify this
-                    pass
+        try:
+            file_path = self.presets[preset_name]["filepath"]
+        except KeyError:
+            file_name = preset_name + ".json"
+            file_path = os.path.join(self.user_path, file_name)
+            self.presets[preset_name]["filepath"] = file_path
+        try:
+            with open(file_path, "w") as fout:
+                self._saveSection(fout, preset_name)
+        except IOError:
+            # FIXME: this can happen in two cases: a permissions error,
+            # or an invalid filename (ex: gibberish). In the latter case
+            # we should log an error message or show an infobar, and
+            # the test suite should verify this
+            pass
 
     def _convertSectionNameToPresetName(self, section):
         # A section name for a ConfigParser can have any name except "default"!
@@ -217,24 +221,7 @@ class PresetManager(object):
         """Update the current preset values from the widgets and save it."""
         if self.cur_preset != _("No preset"):
             self._updatePreset()
-            if os.path.isfile(self.user_path):
-                # We used to save presets as a single file instead of a directory
-                os.remove(self.user_path)
-            if not os.path.exists(self.user_path):
-                os.makedirs(self.user_path)
-            try:
-                filepath = self.presets[self.cur_preset]["filepath"]
-            except KeyError:
-                filepath = os.path.join(self.user_path, self.cur_preset + ".json")
-            try:
-                fout = open(filepath, "w")
-                self._saveSection(fout, self.cur_preset)
-                self.presets[self.cur_preset]["filepath"] = filepath
-            except IOError:
-                # TODO: show an error infobar... but this should never happen,
-                # because the UI is supposed to disable the Save button
-                # ...unless the user types an invalid filename (ex: gibberish)
-                pass
+            self.savePreset(self.cur_preset)
 
     def _updatePreset(self):
         """Copy the values from the widgets to the preset."""
