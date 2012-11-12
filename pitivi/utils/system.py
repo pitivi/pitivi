@@ -165,9 +165,6 @@ class System(Signallable, Loggable):
         self.debug("desktopMessage(): %s, %s" % title % message)
         pass
 
-    def desktopIsMessageable():
-        return False
-
 
 class FreedesktopOrgSystem(System):
     """provides messaging capabilites for desktops that implement fd.o specs"""
@@ -176,9 +173,6 @@ class FreedesktopOrgSystem(System):
         System.__init__(self)
         # FIXME Notifications disabled for the time being
         # Notify.init(APPNAME)
-
-    def desktopIsMesageable(self):
-        return True
 
     def desktopMessage(self, title, message, icon=None):
         #call super method for consistent logging
