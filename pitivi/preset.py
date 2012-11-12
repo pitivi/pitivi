@@ -167,7 +167,7 @@ class PresetManager(object):
         new_filepath = os.path.join(self.user_path, new_name + ".json")
         self.presets[new_name]["filepath"] = new_filepath
         self.cur_preset = new_name
-        self.savePreset()
+        self.saveCurrentPreset()
 
     def hasPreset(self, name):
         name = name.lower()
@@ -213,7 +213,7 @@ class PresetManager(object):
                 setter(self.presets[_("No preset")][field])
         self._ignore_update_requests = False
 
-    def savePreset(self):
+    def saveCurrentPreset(self):
         """Update the current preset values from the widgets and save it."""
         if self.cur_preset != _("No preset"):
             self._updatePreset()

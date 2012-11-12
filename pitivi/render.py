@@ -728,7 +728,7 @@ class RenderDialog(Loggable):
         self._updateRenderPresetButtons()
 
     def _saveRenderPresetButtonClickedCb(self, button):
-        self.render_presets.savePreset()
+        self.render_presets.saveCurrentPreset()
         self.save_render_preset_button.set_sensitive(False)
         self.remove_render_preset_button.set_sensitive(True)
 

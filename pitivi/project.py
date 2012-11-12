@@ -948,7 +948,7 @@ class ProjectSettingsDialog():
             self.audio_presets.removePreset(model[iter_][0])
 
     def _saveAudioPresetButtonClickedCb(self, button):
-        self.audio_presets.savePreset()
+        self.audio_presets.saveCurrentPreset()
         self.save_audio_preset_button.set_sensitive(False)
         self.remove_audio_preset_button.set_sensitive(True)
 
@@ -970,7 +970,7 @@ class ProjectSettingsDialog():
             self.video_presets.removePreset(model[iter_][0])
 
     def _saveVideoPresetButtonClickedCb(self, button):
-        self.video_presets.savePreset()
+        self.video_presets.saveCurrentPreset()
         self.save_video_preset_button.set_sensitive(False)
         self.remove_video_preset_button.set_sensitive(True)
 
