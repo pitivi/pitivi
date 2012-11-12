@@ -31,6 +31,7 @@ from pitivi.render import available_muxers, available_video_encoders, available_
 from pitivi.settings import xdg_data_home
 from pitivi.utils.misc import isWritable
 from pitivi.configure import get_renderpresets_dir, get_audiopresets_dir, get_videopresets_dir
+from pitivi.utils import system
 
 
 class DuplicatePresetNameException(Exception):
@@ -65,6 +66,7 @@ class PresetManager(object):
         self.cur_preset = None
         # Whether to ignore the updateValue calls.
         self._ignore_update_requests = False
+        self.system = system.getSystem()
 
     def loadAll(self):
         filepaths = []
@@ -99,7 +101,7 @@ class PresetManager(object):
         try:
             file_path = self.presets[preset_name]["filepath"]
         except KeyError:
-            file_name = preset_name + ".json"
+            file_name = self.system.getUniqueFilename(preset_name + ".json")
             file_path = os.path.join(self.user_path, file_name)
             self.presets[preset_name]["filepath"] = file_path
         try:

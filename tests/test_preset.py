@@ -168,6 +168,23 @@ class TestAudioPresetsIO(TestCase):
 
         other_manager = self.createOtherManager()
         other_manager.loadAll()
+        self.assertEquals(1 + countDefaultPresets(other_manager), len(other_manager.presets))
         snaaaake = other_manager.presets[non_ascii_preset_name]
         self.assertEqual(snake, snaaaake)
+
+    def testInvalidFilenamesSaveAndLoad(self):
+        # This would be an invalid file name as is.
+        preset_name = " / % "
+        self.manager.addPreset(preset_name,
+            {"channels": 2,
+            "depth": 16,
+            "sample-rate": 44100})
+        values = self.manager.presets[preset_name]
+        self.assertEqual(3, len(values))
+        self.manager.saveAll()
+
+        other_manager = self.createOtherManager()
+        other_manager.loadAll()
         self.assertEquals(1 + countDefaultPresets(other_manager), len(other_manager.presets))
+        other_values = other_manager.presets[preset_name]
+        self.assertEqual(values, other_values)

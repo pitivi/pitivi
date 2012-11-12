@@ -6,6 +6,15 @@ class TestSystem(TestCase):
     def setUp(self):
         self.system = System()
 
+    def testGetUniqueFilename(self):
+        self.assertNotEqual(self.system.getUniqueFilename("a/b"),
+                            self.system.getUniqueFilename("a%47b"))
+        self.assertNotEqual(self.system.getUniqueFilename("a%b"),
+                            self.system.getUniqueFilename("a%37b"))
+        self.assertNotEqual(self.system.getUniqueFilename("a%/b"),
+                            self.system.getUniqueFilename("a%37%3747b"))
+        self.assertEqual("a b", self.system.getUniqueFilename("a b"))
+
     def testScreensaverInhibit(self):
         #check that we start of uninhibited
         self.assertTrue(not self.system.screensaverIsInhibited())

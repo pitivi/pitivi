@@ -165,6 +165,14 @@ class System(Signallable, Loggable):
         self.debug("desktopMessage(): %s, %s" % title % message)
         pass
 
+    def getUniqueFilename(self, string):
+        """Get a filename which can only be obtained from the specified string.
+        @ivar string: the string to be translated.
+        @type string: str
+        @return: A filename which looks like the specified string.
+        """
+        return string.replace("%", "%37").replace("/", "%47")
+
 
 class FreedesktopOrgSystem(System):
     """provides messaging capabilites for desktops that implement fd.o specs"""
