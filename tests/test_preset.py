@@ -130,6 +130,12 @@ class TestAudioPresetsIO(TestCase):
     def tearDown(self):
         clearPresetManagerPaths(self.manager)
 
+    def createOtherManager(self):
+        other_manager = AudioPresetManager()
+        other_manager.default_path = self.manager.default_path
+        other_manager.user_path = self.manager.user_path
+        return other_manager
+
     def testSaveAndLoad(self):
         self.manager.addPreset("Vegeta",
             {"channels": 6000,
@@ -145,11 +151,8 @@ class TestAudioPresetsIO(TestCase):
         self.manager.saveAll()
         self.assertEqual(2, countUserPresets(self.manager))
 
-        other_manager = AudioPresetManager()
-        other_manager.default_path = self.manager.default_path
-        other_manager.user_path = self.manager.user_path
+        other_manager = self.createOtherManager()
         other_manager.loadAll()
-
         total_presets = countDefaultPresets(self.manager) + countUserPresets(self.manager)
         self.assertEqual(total_presets, len(other_manager.presets))
 
@@ -163,13 +166,8 @@ class TestAudioPresetsIO(TestCase):
         self.assertEqual(3, len(snake))
         self.manager.saveAll()
 
-        # Create a second concurrent instance with the same paths,
-        # to check that it can read and write from the first instance's data
-        other_manager = AudioPresetManager()
-        other_manager.default_path = self.manager.default_path
-        other_manager.user_path = self.manager.user_path
+        other_manager = self.createOtherManager()
         other_manager.loadAll()
-
         snaaaake = other_manager.presets[non_ascii_preset_name]
         self.assertEqual(snake, snaaaake)
         self.assertEquals(1 + countDefaultPresets(other_manager), len(other_manager.presets))
