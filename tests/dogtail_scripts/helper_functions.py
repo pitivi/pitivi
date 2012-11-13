@@ -200,3 +200,22 @@ class HelpFunc(BaseDogTail):
 
         # Release the mouse button
         dogtail.rawinput.release(to_coords[0], to_coords[1])
+
+    # These two methods are needed since spinbuttons in GTK 3.4 and newer have
+    # huge buttons, and simply asking dogtail to .click() or .doubleclick()
+    # would end up triggering those buttons instead of (de)selecting the text.
+    def spinbuttonClick(self, widget):
+        """
+        Do a single click in the text area of a spinbutton widget.
+        This is mostly useful when you want to defocus another widget.
+        """
+        (x, y) = widget.position
+        dogtail.rawinput.click(x + 10, y + 10)
+
+    def spinbuttonDoubleClick(self, widget):
+        """
+        Do a double-click in the text area of a spinbutton widget.
+        This is useful when you want to select all of its text.
+        """
+        (x, y) = widget.position
+        dogtail.rawinput.doubleClick(x + 10, y + 10)

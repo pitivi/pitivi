@@ -84,18 +84,19 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertEqual(displayCombo.combovalue, "Cinema (1.85)")
         self.assertEqual(displayText.text, "37:20")
 
-        #Test size spin buttons
+        # Test size spin buttons
+        # spinbuttonClick and spinbuttonDoubleClick are methods from HelperFunc
         spin = video.findChildren(GenericPredicate(roleName="spin button"))
         oldtext = spin[1].text
-        spin[0].doubleClick()
+        self.spinbuttonDoubleClick(spin[0])
         spin[0].typeText("1000")
         self.assertEqual(spin[1].text, oldtext)
-        spin[1].doubleClick()
+        self.spinbuttonDoubleClick(spin[1])
         spin[1].typeText("2000")
         video.child(name="Link").click()
-        spin[1].doubleClick()
+        self.spinbuttonDoubleClick(spin[1])
         spin[1].typeText("1000")
-        spin[0].click()
+        self.spinbuttonClick(spin[0])
         self.assertEqual(spin[0].text, "500")
 
         # Finally create the blank project
@@ -120,7 +121,7 @@ class ProjectPropertiesTest(HelpFunc):
         for child in children:
             childtext[child.text] = child
 
-        self.assertIn("333:320", childtext, "Pixel aspect ration not saved")
+        self.assertIn("333:320", childtext, "Pixel aspect ratio not saved")
         self.assertIn("37:20", childtext, "Display aspect ratio not saved")
 
         children = video.findChildren(GenericPredicate(roleName="spin button"))
