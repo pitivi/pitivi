@@ -10,22 +10,17 @@ class DialogsPreferencesTest(HelpFunc):
         dogtail.rawinput.pressKey("Esc")
         self.menubar.menu("Edit").click()
         self.menubar.menuItem("Preferences").click()
-        dialog = self.pitivi.child(name="Preferences", roleName="dialog")
+        dialog = self.pitivi.child(name="Preferences", roleName="dialog", recursive=False)
         dialog.child("Reset to Factory Settings", roleName="push button").click()
 
         # Set a different font
         dialog.child(name="Sans", roleName="push button").click()
-        fontchooser = self.pitivi.child(name="Pick a Font", roleName="dialog")
-        # Perf hack: do a search to reduce the amount of table cells displayed,
-        # otherwise dogtail will take ages to search for it.
-        # But even if the search entry is focused by default, you can't do
-        # dogtail.rawinput.typeText("cantarell bold")
-        # Because it types randomized letters (in dogtail 0.8.1).
-        # So here's a positional hack:
-        search_entry = fontchooser.children[0].children[0].children[0].children[4]
-        # Search for a very specific font, to avoid scrolling, which would
-        # make it impossible to click the first item in the search results
-        search_entry.text = "cantarell bold"
+        fontchooser = self.pitivi.child(name="Pick a Font", roleName="dialog", recursive=False)
+        # Perf hack: do a search to reduce the amount of table cells displayed
+        # (otherwise dogtail will take ages to search for it) and to prevent
+        # scrolling (so we can just click the first item in the search results).
+        # Since the search entry is focused by default, just start typing:
+        dogtail.rawinput.typeText("cantarell bold")
         # Ideally I'd search the child table cells, but this is way too slow,
         # so let's just pick the first item in the search results:
         fontchooser.child(roleName="table cell").click()
@@ -47,7 +42,7 @@ class DialogsPreferencesTest(HelpFunc):
         dogtail.rawinput.pressKey("Esc")
         self.menubar.menu("Edit").click()
         self.menubar.menuItem("Preferences").click()
-        dialog = self.pitivi.child(name="Preferences", roleName="dialog")
+        dialog = self.pitivi.child(name="Preferences", roleName="dialog", recursive=False)
 
         # Check if the previous values were correctly saved
         # In the case of the font, just search if such an item exists:

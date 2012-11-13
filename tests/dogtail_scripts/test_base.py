@@ -11,10 +11,11 @@ class BaseDogTail(unittest.TestCase):
         # Force the locale/language to English.
         # Otherwise we won't be able to grab the right widgets.
         os.environ["LC_ALL"] = 'C'
-        # Try to speed up UI interaction a little
+        # Try to speed up UI interaction a little.
+        # Do not change "typingDelay" from its default (0.075 secs);
+        # Setting it too low makes dogtail type characters in random order!
         from dogtail.config import config
         config.load({'actionDelay': 0.1,
-                     'typingDelay': 0.02,
                      'runTimeout': 1,
                      'searchCutoffCount': 5,
                      'defaultDelay': 0.1})
