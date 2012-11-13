@@ -35,9 +35,10 @@ class HelpFunc(BaseDogTail):
         proj_menu.click()
         proj_menu.menuItem("Open...").click()
         load = self.pitivi.child(roleName='file chooser', recursive=False)
-        load.child(name="Type a file name", roleName="toggle button").click()
+        # Same performance hack as in the import_media method
+        dogtail.rawinput.pressKey("/")
         load.child(roleName='text').text = url
-        load.button('Open').click()
+        dogtail.rawinput.pressKey("Enter")  # Don't search for the Open button
         # If an unsaved changes confirmation dialog shows up, deal with it
         if expect_unsaved_changes:
             # Simply try searching for the existence of the dialog's widgets
