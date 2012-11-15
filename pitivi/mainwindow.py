@@ -1270,10 +1270,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     def _leavePreviewCb(self, window, unused):
         window.destroy()
 
-    def _viewUri(self, path):
+    def _viewUri(self, uri):
         """ Preview a media file from the media library """
         preview_window = Gtk.Window()
         preview_window.set_title(_("Preview - click outside to close"))
+        preview_window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         preview_window.set_transient_for(self)
         preview_window.connect("focus-out-event", self._leavePreviewCb)
         previewer = PreviewWidget(self)
@@ -1281,9 +1282,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         preview_window.show_all()  # Needed for PreviewWidget to do its magic
         preview_window.hide()  # Hack to allow setting the window position
-        previewer.previewUri(path)
+        previewer.previewUri(uri)
         previewer.setMinimal()
-        info = self.app.current.medialibrary.getInfoFromUri(path)
+        info = self.app.current.medialibrary.getInfoFromUri(uri)
         try:
             # For videos and images, automatically resize the window
             # Try to keep it 1:1 if it can fit within 85% of the parent window
@@ -1310,8 +1311,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # otherwise, after the resize the position will not be readjusted
         preview_window.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         preview_window.show()
-
         previewer.play()
+        # Hack so that we really really force the "utility" window to be focused
+        preview_window.present()
 
     def updateTitle(self):
         name = touched = ""
