@@ -850,12 +850,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """ Called when a user clicks on the remove button """
         self._removeSources()
 
-    def _previewClip(self):
-        paths = self.getSelectedPaths()[0]  # Only use the first item
-        model = self.treeview.get_model()
-        self.debug("Let's play %s", model[paths][COL_URI])
-        self.emit('play', model[paths][COL_URI])
-
     def _clipPropertiesCb(self, unused_widget=None):
         """
         Show the clip properties (resolution, framerate, audio channels...)
@@ -956,9 +950,11 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         chain_up = True
 
         if event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
+            # It is possible to double-click outside of clips:
             if self.getSelectedPaths() != []:
-                # It is possible to double-click outside of clips!
-                self._previewClip()
+                # Here we used to emit "play", but
+                # this is now handled by _itemOrRowActivatedCb instead.
+                pass
             chain_up = False
         elif not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
             chain_up = not self._rowUnderMouseSelected(treeview, event)
@@ -1005,7 +1001,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     def _itemOrRowActivatedCb(self, unused_view, path, *unused_column):
         """
-        When Space, Shift+Space, Return or Enter is pressed, preview the clip.
+        When an item is double-clicked, or
+        Space, Shift+Space, Return or Enter is pressed, preview the clip.
         This method is the same for both iconview and treeview.
         """
         path = self.modelFilter[path][COL_URI]
@@ -1015,9 +1012,11 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         chain_up = True
 
         if event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
+            # It is possible to double-click outside of clips:
             if self.getSelectedPaths() != []:
-                # It is possible to double-click outside of clips!
-                self._previewClip()
+                # Here we used to emit "play", but
+                # this is now handled by _itemOrRowActivatedCb instead.
+                pass
             chain_up = False
         elif not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
             chain_up = not self._rowUnderMouseSelected(iconview, event)
