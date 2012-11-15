@@ -424,10 +424,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         # Viewer
         self.viewer = PitiviViewer(instance, undock_action=self.undock_action)
-        self.viewer.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
-            [FILESOURCE_TARGET_ENTRY, URI_TARGET_ENTRY],
-            Gdk.DragAction.COPY)
-        self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
 
         # Now, the lower part: the timeline
@@ -1243,29 +1239,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         chooser.destroy()
         return ret
-
-    def _viewerDndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
-                           selection, targetType, ctime):
-        # FIXME : This should be handled by the main application who knows how
-        # to switch between pipelines.
-        self.info("context:%s, targetType:%s", context, targetType)
-        if targetType == TYPE_URI_LIST:
-            uri = selection.data.strip().split("\n")[0].strip()
-        elif targetType == TYPE_PITIVI_FILESOURCE:
-            uri = selection.data
-        else:
-            context.finish(False, False, ctime)
-            return
-
-        try:
-            info = self.app.current.medialibrary.getInfoFromUri(uri)
-        except MediaLibraryError:
-            self.app.current.medialibrary.addUris([uri])
-            # FIXME Add a delay/catch signal when we start doing the discovering
-            # async
-            info = self.app.current.medialibrary.getInfoFromUri(uri)
-        self._viewUri(info.get_uri())
-        context.finish(True, False, ctime)
 
     def _leavePreviewCb(self, window, unused):
         window.destroy()
