@@ -269,7 +269,8 @@ class PitiviViewer(Gtk.VBox, Loggable):
             height = int(width / self.aframe.props.ratio)
             self.aframe.set_size_request(width, height)
         self.show_all()
-        self.buttons = boxalign
+        self.buttons = bbox
+        self.buttons_container = boxalign
 
     def setDisplayAspectRatio(self, ratio):
         """
@@ -359,12 +360,19 @@ class PitiviViewer(Gtk.VBox, Loggable):
         self.docked = False
         self.settings.viewerDocked = False
         self.undock_action.set_label(_("Dock Viewer"))
+        self.target = self.external
 
-        self.remove(self.buttons)
-        self.external_vbox.pack_end(self.buttons, False, False, 0)
+        self.remove(self.buttons_container)
+        self.external_vbox.pack_end(self.buttons_container, False, False, 0)
         self.external_window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         self.external_window.show()
-        self.target = self.external
+
+        self.fullscreen_button = Gtk.ToggleToolButton(Gtk.STOCK_FULLSCREEN)
+        self.fullscreen_button.set_tooltip_text(_("Show this window in fullscreen"))
+        self.buttons.pack_end(self.fullscreen_button, expand=False, fill=False, padding=6)
+        self.fullscreen_button.show()
+        self.fullscreen_button.connect("toggled", self._toggleFullscreen)
+
         # if we are playing, switch output immediately
         if self.sink:
             self._switch_output_window()
@@ -381,10 +389,11 @@ class PitiviViewer(Gtk.VBox, Loggable):
         self.docked = True
         self.settings.viewerDocked = True
         self.undock_action.set_label(_("Undock Viewer"))
-
         self.target = self.internal
-        self.external_vbox.remove(self.buttons)
-        self.pack_end(self.buttons, False, False, 0)
+
+        self.fullscreen_button.destroy()
+        self.external_vbox.remove(self.buttons_container)
+        self.pack_end(self.buttons_container, False, False, 0)
         self.show()
         # if we are playing, switch output immediately
         if self.sink:
@@ -396,6 +405,21 @@ class PitiviViewer(Gtk.VBox, Loggable):
             self.undock()
         else:
             self.dock()
+
+    def _toggleFullscreen(self, widget):
+        if widget.get_active():
+            self.external_window.hide()
+            # GTK doesn't let us fullscreen utility windows
+            self.external_window.set_type_hint(Gdk.WindowTypeHint.NORMAL)
+            self.external_window.show()
+            self.external_window.fullscreen()
+            widget.set_tooltip_text(_("Exit fullscreen mode"))
+        else:
+            self.external_window.unfullscreen()
+            widget.set_tooltip_text(_("Show this window in fullscreen"))
+            self.external_window.hide()
+            self.external_window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
+            self.external_window.show()
 
     def _positionCb(self, unused_pipeline, position):
         """
