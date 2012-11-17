@@ -469,6 +469,8 @@ class PitiviViewer(Gtk.VBox, Loggable):
 
     def _switch_output_window(self):
         Gdk.threads_enter()
+        # Prevent cases where target has no "window_xid" (yes, it happens!):
+        self.target.show()
         self.sink.set_window_handle(self.target.window_xid)
         self.sink.expose()
         Gdk.threads_leave()
