@@ -37,7 +37,6 @@ from optparse import OptionParser
 
 import pitivi.instance as instance
 
-from pitivi.check import initial_checks
 from pitivi.effects import EffectsHandler
 from pitivi.configure import APPNAME, pitivi_version, RELEASES_URL
 from pitivi.settings import GlobalSettings
@@ -55,12 +54,18 @@ import pitivi.utils.loggable as log
 #FIXME GES port disabled it
 #from pitivi.undo.timeline import TimelineLogObserver
 
-# FIXME : Speedup loading time
-# Currently we load everything in one go
-# It would be better if a minimalistic UI could start up ASAP, without loading
-# anything gst-related or that could slow down startup.
-# AND THEN load up the required parts.
-# This will result in a much better end-user experience
+
+"""
+Hierarchy of the whole thing:
+
+Pitivi
+    InteractivePitivi
+    GuiPitivi
+        FullGuiPitivi
+            ProjectCreatorGuiPitivi
+            ProjectLoaderGuiPitivi
+            StartupWizardGuiPitivi
+"""
 
 
 class Pitivi(Loggable, Signallable):
@@ -252,19 +257,8 @@ class InteractivePitivi(Pitivi):
         self.mainloop = GObject.MainLoop()
         self.actioner = None
         self.gui = None
-
-        # Check the dependencies.
-        missing_deps = initial_checks()
-        if missing_deps:
-            message, detail = missing_deps
-            self._showStartupError(message, detail)
-            sys.exit(2)
-
         if debug:
             sys.excepthook = self._excepthook
-
-    def _showStartupError(self, message, detail):
-        self.error("%s %s" % (message, detail))
 
     def _excepthook(self, exc_type, value, tback):
         import traceback
@@ -306,7 +300,6 @@ class GuiPitivi(InteractivePitivi):
     def _showStartupError(self, message, detail):
         dialog = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
                                    buttons=Gtk.ButtonsType.OK)
-        dialog.set_icon_name("pitivi")
         dialog.set_markup("<b>" + message + "</b>")
         dialog.format_secondary_text(detail)
         dialog.run()

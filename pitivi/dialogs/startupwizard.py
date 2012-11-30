@@ -28,7 +28,7 @@ from gettext import gettext as _
 
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.depsmanager import DepsManager
-from pitivi.check import soft_deps
+from pitivi.check import missing_soft_deps
 from pitivi.utils.misc import show_user_manual
 
 
@@ -59,7 +59,7 @@ class StartUpWizard(object):
         filter.add_pattern("*.xptv")
         self.recent_chooser.add_filter(filter)
 
-        if not soft_deps:
+        if not missing_soft_deps:
             self.builder.get_object("missing_deps_button").hide()
 
         self.app.projectManager.connect("new-project-failed", self._projectFailedCb)

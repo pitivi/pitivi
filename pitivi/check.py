@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 # PiTiVi , Non-linear video editor
 #
 #       pitivi/check.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2012, Jean-François Fortin Tam <nekohayo@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,28 +22,42 @@
 # Boston, MA 02110-1301, USA.
 
 """
-Runtime checks.
+This file is run by bin/pitivi on startup. Its purpose is to ensure that all
+the important dependencies for running the pitivi UI can be imported and satisfy
+our version number requirements.
+
+The checks here are supposed to take a negligible amount of time (< 0.2 seconds)
+and not impact startup. Module imports have no impact (they get imported later
+by the app anyway). For more complex checks, you can measure (with time.time()),
+when called from application.py instead of bin/pitivi, if it has an impact.
 """
-
-from gi.repository import Gdk
-from gi.repository import Gtk
-from gi.repository import Gst
-from gi.repository import GES
-
+from sys import modules
 from gettext import gettext as _
 
-from pitivi.instance import PiTiVi
-from pitivi.configure import APPNAME, PYGTK_REQ, GTK_REQ, PYGST_REQ, GST_REQ, GNONLIN_REQ, PYCAIRO_REQ
+# This list is meant to be a complete list for packagers.
+# Unless otherwise noted, modules are accessed through gobject introspection
+HARD_DEPS = {
+    "cairo": "1.10.0",  # using static python bindings
+    "GES": "1.0.0",
+    "gnonlin": "0.11.89.1",
+    "GooCanvas": "2.0",
+    "Gst": "1.0.2",
+    "Gtk": "3.4.0",
+    "xdg": None,  # "pyxdg", using static python bindings
 
-global soft_deps
-soft_deps = {}
+    # The following are not checked, but needed for the rest to work:
+    "gobject-introspection": "1.34.0",
+    "gst-python": "0.10.22",  # we currently require the git version, 02ca5d3ad2
+    "pygobject": "3.4.0",
+}
+# For the list of soft dependencies, see the "check_soft_dependencies" method,
+# near the end of this file.
+global missing_soft_deps
+missing_soft_deps = {}
 
 
-def initiate_videosinks():
-    """
-    Test if the autovideosink element can initiate, return TRUE if it is the
-    case.
-    """
+def _initiate_videosinks(Gst):
+    # TODO: eventually switch to a clutter sink
     sink = Gst.ElementFactory.make("autovideosink", None)
     if not sink.set_state(Gst.State.READY):
         return False
@@ -49,11 +65,8 @@ def initiate_videosinks():
     return True
 
 
-def initiate_audiosinks():
-    """
-    Test if the autoaudiosink element can initiate, return TRUE if it is the
-    case.
-    """
+def _initiate_audiosinks(Gst):
+    # Yes, this can still fail, if PulseAudio is non-responsive for example.
     sink = Gst.ElementFactory.make("autoaudiosink", None)
     if not sink.set_state(Gst.State.READY):
         return False
@@ -61,11 +74,7 @@ def initiate_audiosinks():
     return True
 
 
-def __try_import_from_gi__(modulename):
-    """
-    Attempt to load given module.
-    Returns True on success, else False.
-    """
+def _try_import_from_gi(modulename):
     try:
         __import__("gi.repository." + modulename)
         return True
@@ -73,11 +82,7 @@ def __try_import_from_gi__(modulename):
         return False
 
 
-def __try_import__(modulename):
-    """
-    Attempt to load given module.
-    Returns True on success, else False.
-    """
+def _try_import(modulename):
     try:
         __import__(modulename)
         return True
@@ -93,111 +98,154 @@ def _string_to_list(version):
     return [int(x) for x in version.split(".")]
 
 
-def check_required_version(modulename):
+def _check_dependency(modulename, from_gobject_introspection):
     """
-    Checks if the installed module is the required version or more recent.
-    Returns [None, None] if it's recent enough, else will return a list
-    containing the strings of the required version and the installed version.
-    This function does not check for the existence of the given module !
+    Checks if the given module can be imported and is recent enough.
+
+    "modulename" is case-sensitive
+    "from_gobject_introspection" is a mandatory boolean variable.
+
+    Returns: [satisfied, version_required, version_installed]
     """
-    if modulename == "gtk":
-        if list((Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION, Gtk.MICRO_VERSION)) < \
-                _string_to_list(GTK_REQ):
-            return [GTK_REQ, _version_to_string((Gtk.MAJOR_VERSION,
-                       Gtk.MINOR_VERSION, Gtk.MICRO_VERSION))]
+    VERSION_REQ = HARD_DEPS[modulename]
+    # What happens here is that we try to import the module. If it works,
+    # assign it to a "module" variable and check the version reqs with it.
+    module = None
+    if from_gobject_introspection is True:
+        if _try_import_from_gi(modulename):
+            module = modules["gi.repository." + modulename]
+    else:
+        if _try_import(modulename):
+            module = modules[modulename]
+
+    if module is None:
+        # Import failed, the dependency can't be satisfied, don't check versions
+        return [False, VERSION_REQ, None]
+    elif not VERSION_REQ:
+        # Import succeeded but there is no requirement, skip further checks
+        return [True, None, False]
+
+    # The import succeeded and there is a version requirement, so check it out:
+    if modulename == "Gst" or modulename == "GES":
+        if list(module.version()) < _string_to_list(VERSION_REQ):
+            return [False, VERSION_REQ, _version_to_string(module.version())]
+        else:
+            return [True, None, _version_to_string(module.version())]
+    if modulename == "Gtk":
+        gtk_version_tuple = (module.MAJOR_VERSION, module.MINOR_VERSION, module.MICRO_VERSION)
+        if list(gtk_version_tuple) < _string_to_list(VERSION_REQ):
+            return [False, VERSION_REQ, _version_to_string(gtk_version_tuple)]
+        else:
+            return [True, None, _version_to_string(gtk_version_tuple)]
     if modulename == "cairo":
-        import cairo
-        if _string_to_list(cairo.cairo_version_string()) < _string_to_list(PYCAIRO_REQ):
-            return [PYCAIRO_REQ, cairo.cairo_version_string()]
-    if modulename == "gst":
-        if list(Gst.version()) < _string_to_list(GST_REQ):
-            return [GST_REQ, _version_to_string(Gst.version())]
-    if modulename == "gnonlin":
-        gnlver = Gst.Registry.get().find_plugin("gnonlin").get_version()
-        if _string_to_list(gnlver) < _string_to_list(GNONLIN_REQ):
-            return [GNONLIN_REQ, gnlver]
-    return [None, None]
+        if _string_to_list(module.cairo_version_string()) < _string_to_list(VERSION_REQ):
+            return [False, VERSION_REQ, module.cairo_version_string()]
+        else:
+            return [True, None, module.cairo_version_string()]
+    if modulename == "GooCanvas":
+        # GooCanvas does not provide a function to check the version. BRILLIANT.
+        return [True, VERSION_REQ, False]
+
+    oops = 'Module "%s" is installed, but version checking is not defined in check_dependency' % modulename
+    raise NotImplementedError(oops)
 
 
-def initial_checks():
+def check_hard_dependencies():
+    missing_hard_deps = {}
+
+    satisfied, req, inst = _check_dependency("Gst", True)
+    if not satisfied:
+        missing_hard_deps["GStreamer"] = (req, inst)
+    satisfied, req, inst = _check_dependency("GES", True)
+    if not satisfied:
+        missing_hard_deps["GES"] = (req, inst)
+    satisfied, req, inst = _check_dependency("cairo", False)
+    if not satisfied:
+        missing_hard_deps["Cairo"] = (req, inst)
+    satisfied, req, inst = _check_dependency("GooCanvas", True)
+    if not satisfied:
+        missing_hard_deps["GooCanvas"] = (req, inst)
+    satisfied, req, inst = _check_dependency("xdg", False)
+    if not satisfied:
+        missing_hard_deps["PyXDG"] = (req, inst)
+    satisfied, req, inst = _check_dependency("Gtk", True)
+    if not satisfied:
+        missing_hard_deps["GTK+"] = (req, inst)
+    satisfied, req, inst = _check_dependency("xdg", False)
+    if not satisfied:
+        missing_hard_deps["PyXDG"] = (req, inst)
+
+    # Since we had to check Gst beforehand, we only do the import now:
+    from gi.repository import Gst
     Gst.init(None)
     reg = Gst.Registry.get()
+    # Special case: gnonlin is a plugin, not a python module to be imported,
+    # we can't use check_dependency to determine the version:
+    inst = Gst.Registry.get().find_plugin("gnonlin").get_version()
+    if _string_to_list(inst) < _string_to_list(HARD_DEPS["gnonlin"]):
+        missing_hard_deps["GNonLin"] = (HARD_DEPS["gnonlin"], inst)
 
-    if PiTiVi:
-        return (_("%s is already running") % APPNAME,
-                _("An instance of %s is already running in this script.") % APPNAME)
-    if not reg.find_plugin("gnonlin"):
-        return (_("Could not find the GNonLin plugins"),
-                _("Make sure the plugins were installed and are available in the GStreamer plugins path."))
-    if not reg.find_plugin("autodetect"):
-        return (_("Could not find the autodetect plugins"),
-                _("Make sure you have installed gst-plugins-good and that it's available in the GStreamer plugin path."))
-    if not hasattr(Gdk.Window, 'cairo_create'):
-        return (_("PyGTK doesn't have cairo support"),
-                _("Please use a version of the GTK+ Python bindings built with cairo support."))
-    if not initiate_videosinks():
-        return (_("Could not initiate the video output plugins"),
-                _("Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)."))
-    if not initiate_audiosinks():
-        return (_("Could not initiate the audio output plugins"),
-                _("Make sure you have at least one valid audio output sink available (alsasink or osssink)."))
-    if not __try_import_from_gi__("cairo"):
-        return (_("Could not import the cairo Python bindings"),
-                _("Make sure you have the cairo Python bindings installed."))
-    if not __try_import_from_gi__("GooCanvas"):
-        return (_("Could not import the goocanvas Python bindings"),
-                _("Make sure you have the goocanvas Python bindings installed."))
-    if not __try_import__("xdg"):
-        return (_("Could not import the xdg Python library"),
-                _("Make sure you have the xdg Python library installed."))
-    req, inst = check_required_version("gtk")
-    if req:
-        return (_("You do not have a recent enough version of GTK+ (your version %s)") % inst,
-                _("Install a version of GTK+ greater than or equal to %s.") % req)
-    req, inst = check_required_version("pygst")
-    if req:
-        return (_("You do not have a recent enough version of GStreamer Python bindings (your version %s)") % inst,
-                _("Install a version of the GStreamer Python bindings greater than or equal to %s.") % req)
-    req, inst = check_required_version("gst")
-    if req:
-        return (_("You do not have a recent enough version of GStreamer (your version %s)") % inst,
-                _("Install a version of the GStreamer greater than or equal to %s.") % req)
-    req, inst = check_required_version("cairo")
-    if req:
-        return (_("You do not have a recent enough version of the cairo Python bindings (your version %s)") % inst,
-                _("Install a version of the cairo Python bindings greater than or equal to %s.") % req)
-    req, inst = check_required_version("gnonlin")
-    if req:
-        return (_("You do not have a recent enough version of the GNonLin GStreamer plugin (your version %s)") % inst,
-                _("Install a version of the GNonLin GStreamer plugin greater than or equal to %s.") % req)
-    if not __try_import_from_gi__("GES"):
-        #FIXME enable version checking in GES
-        return (_("Could not import GStreamer Editing Services "),
-                _("Make sure you have GStreamer Editing Services installed."))
-    if not __try_import__("pkg_resources"):
-        return (_("Could not import the distutils modules"),
-                _("Make sure you have the distutils Python module installed."))
+    # Prepare the list of hard deps errors to warn about later:
+    for dependency in missing_hard_deps:
+        req = missing_hard_deps[dependency][0]
+        inst = missing_hard_deps[dependency][1]
+        if req and not inst:
+            message = "%s or newer is required, but was not found on your system." % req
+        elif req and inst:
+            message = "%s or newer is required, but only version %s was found." % (req, inst)
+        else:
+            message = "not found on your system."
+        missing_hard_deps[dependency] = message
 
-    # The following are soft dependencies
-    # Note that instead of checking for plugins using Gst.Registry.get().find_plugin("foo"),
-    # we could check for elements using Gst.ElementFactory.make("foo")
-    if not __try_import__("numpy"):
-        soft_deps["NumPy"] = _("Enables the autoalign feature")
-    if Gst.ElementFactory.make("frei0r-filter-scale0tilt", None) is None:
-        soft_deps["Frei0r"] = _("Additional video effects")
-    if not Gst.Registry.get().find_plugin("libav"):
-        soft_deps["GStreamer Libav plugin"] = _('Additional multimedia codecs through the Libav library')
-    # Test for gst bad
-    # This is disabled because, by definition, gst bad is a set of plugins that can
-    # move to gst good or ugly, and we don't really have something to rely upon.
-    #if not Gst.Registry.get().find_plugin("swfdec"): # FIXME: find a more representative plugin
-    #    soft_deps["GStreamer bad plugins"] = _('Additional GStreamer plugins whose code is not of good enough quality, or are not considered tested well enough. The licensing may or may not be LGPL')
-    # Test for gst ugly
-    #if not Gst.Registry.get().find_plugin("x264"):
-    #    soft_deps["GStreamer ugly plugins"] = _('Additional good quality GStreamer plugins whose license is not LGPL or with licensing issues')
+    # And finally, do a few last checks for basic sanity.
+    # Yes, a broken/dead autoaudiosink is still possible in 2012 with PulseAudio
+    if not _initiate_videosinks(Gst):
+        missing_hard_deps["autovideosink"] = \
+            "Could not initiate video output sink. "\
+            "Make sure you have a valid one (xvimagesink or ximagesink)."
+    if not _initiate_audiosinks(Gst):
+        missing_hard_deps["autoaudiosink"] = \
+            "Could not initiate audio output sink. "\
+            "Make sure you have a valid one (pulsesink, alsasink or osssink)."
 
-    if not GES.init():
-        return (_("Could not initialize GStreamer Editing Services"),
-                _("Make sure you have the gst-editing-services installed."))
+    return missing_hard_deps
 
-    return None
+
+def check_soft_dependencies():
+    """
+    Verify for the presence of optional modules that enhance the user experience
+
+    If those are missing from the system, the user will be notified of their
+    existence by the presence of a "Missing dependencies..." button at startup.
+    """
+    # Importing Gst again (even if we did it in hard deps checks), anyway it
+    # seems to have no measurable performance impact the 2nd time:
+    from gi.repository import Gst
+    Gst.init(None)
+    registry = Gst.Registry.get()
+    # Description strings are translatable as they may be shown in the pitivi UI
+    if not _try_import("numpy"):
+        missing_soft_deps["NumPy"] = _("enables the autoalign feature")
+    if not _try_import("pycanberra"):
+        missing_soft_deps["PyCanberra"] = \
+            _("enables sound notifications when rendering is complete")
+    if not _try_import_from_gi("Notify"):
+        missing_soft_deps["libnotify"] = \
+            _("enables visual notifications when rendering is complete")
+    if not registry.find_plugin("libav"):
+        missing_soft_deps["GStreamer Libav plugin"] = \
+            _('additional multimedia codecs through the Libav library')
+    # Apparently, doing a registry.find_plugin("frei0r") is not enough.
+    # Sometimes it still returns something even when frei0r is uninstalled,
+    # and anyway we're looking specifically for the scale0tilt filter.
+    # Don't use Gst.ElementFactory.make for this check, it's very I/O intensive.
+    # Instead, ask the registry with .lookup_feature or .check_feature_version:
+    if not registry.lookup_feature("frei0r-filter-scale0tilt"):
+        missing_soft_deps["Frei0r"] = \
+            _("additional video effects, clip transformation feature")
+
+    # TODO: we're not actually checking for gst bad and ugly... by definition,
+    # gst bad is a set of plugins that can move to gst good or ugly, and anyway
+    # distro packagers may split/combine the gstreamer plugins into any way they
+    # see fit. We can do a registry.find_plugin for specific encoders, but we
+    # don't really have something generic to rely on; ideas/patches welcome.

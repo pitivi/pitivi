@@ -39,7 +39,7 @@ from gettext import gettext as _
 from os.path import join
 
 from pitivi.timeline import ruler
-from pitivi.check import soft_deps
+from pitivi.check import missing_soft_deps
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT
 from pitivi.autoaligner import AlignmentProgressDialog
 from pitivi.utils.misc import quote_uri, print_ns
@@ -1755,7 +1755,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             self.timeline.enable_update(True)
 
     def alignSelected(self, unused_action):
-        if "NumPy" in soft_deps:
+        if "NumPy" in missing_soft_deps:
             DepsManager(self.app)
 
         elif self.timeline:

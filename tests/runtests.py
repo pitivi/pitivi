@@ -8,6 +8,17 @@ from gi.repository import GObject
 # because this tool is run directly, as an executable.
 GObject.threads_init()
 
+from pitivi.check import check_hard_dependencies
+missing_hard_deps = check_hard_dependencies()
+# This differs slightly from bin/pitivi.in as we don't check soft deps here:
+if missing_hard_deps:
+    print "\nERROR - The following hard dependencies are unmet:"
+    print "=================================================="
+    for dep in missing_hard_deps:
+        print "-", dep + ":", missing_hard_deps[dep]
+    print ""
+    sys.exit(2)
+
 
 def gettestnames(file_names):
     test_names = [file_name[:-3] for file_name in file_names]

@@ -31,7 +31,7 @@ from gi.repository import GES
 
 from gettext import gettext as _
 
-from pitivi.check import soft_deps
+from pitivi.check import missing_soft_deps
 from pitivi.configure import get_ui_dir
 
 from pitivi.dialogs.depsmanager import DepsManager
@@ -485,7 +485,7 @@ class TransformationProperties(Gtk.Expander):
         self.default_values = {}
         self.set_label(_("Transformation"))
 
-        if not "Frei0r" in soft_deps:
+        if not "Frei0r" in missing_soft_deps:
             self.builder = Gtk.Builder()
             self.builder.add_from_file(os.path.join(get_ui_dir(),
                         "cliptransformation.ui"))
@@ -518,7 +518,7 @@ class TransformationProperties(Gtk.Expander):
         self.app.gui.viewer.setZoom(scale.get_value())
 
     def _expandedCb(self, expander, params):
-        if not "Frei0r" in soft_deps:
+        if not "Frei0r" in missing_soft_deps:
             if self._current_tl_obj:
                 self.effect = self._findOrCreateEffect("frei0r-filter-scale0tilt")
                 self._updateSpinButtons()

@@ -24,7 +24,7 @@ from gi.repository import Gtk
 import os
 
 from pitivi.configure import get_ui_dir
-from pitivi.check import soft_deps
+from pitivi.check import missing_soft_deps
 
 
 class DepsManager(object):
@@ -60,7 +60,7 @@ class DepsManager(object):
         self.iface = dbus.Interface(self.obj, self.dbus_interface)
 
         soft_deps_list = []
-        for dep in soft_deps:
+        for dep in missing_soft_deps:
             soft_deps_list.append(dep)
 
         # This line works for testing, but InstallProvideFiles is not really what we want:
@@ -74,8 +74,8 @@ class DepsManager(object):
     def _setDepsLabel(self):
         """Set the contents of the label containing the list of missing dependencies"""
         label_contents = ""
-        for dep in soft_deps:
-            label_contents += "• " + dep + " (" + soft_deps[dep] + ")\n"
+        for dep in missing_soft_deps:
+            label_contents += "• " + dep + " (" + missing_soft_deps[dep] + ")\n"
         self.builder.get_object("pkg_list").set_text(label_contents)
 
     def show(self):
