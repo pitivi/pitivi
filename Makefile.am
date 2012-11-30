@@ -8,8 +8,6 @@ mime_DATA = pitivi.xml
 man_MANS = docs/pitivi.1
 
 EXTRA_DIST = \
-	pitivi.spec \
-	pitivi.spec.in \
 	ChangeLog \
 	NEWS \
 	AUTHORS \

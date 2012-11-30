@@ -23,7 +23,6 @@ ltmain.sh
 m4
 missing
 mkinstalldirs
-pitivi.spec
 py-compile
 stamp-h.in
 pitivi.desktop
