@@ -1,7 +1,23 @@
+PiTiVi GES version
+Now with half the codebase and twice the power
+
+2012 - ...
+
+Maintained by Thibault Saunier and Jeff Fortin,
+with the help of many contributors.
+
+A handwritten list here would be too long, be frequently outdated,
+and would not give their relative merit. Out of respect for our contributors,
+we point you instead to: http://ohloh.net/p/pitivi/contributors
+
+Or you can run: git shortlog -s -n
+
+===================================================
+
 PiTiVi Python Version
 Redone from scratch in Python (pygtk/gst-python)
 
-March 2005 - ...
+March 2005 - 2011
 
 Edward     HERVEY    <bilboed@bilboed.com>
 Alessandro Decina <alessandro.decina@collabora.co.uk>
