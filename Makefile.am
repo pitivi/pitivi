@@ -14,7 +14,6 @@ EXTRA_DIST = \
 	NEWS \
 	AUTHORS \
 	RELEASE \
-	ABOUT-NLS \
 	gnome-doc-utils.make \
     pitivi.xml
 
