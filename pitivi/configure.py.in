@@ -25,7 +25,7 @@ Enables identical use for installed and uninstalled versions.
 
 import os.path
 
-
+# Again, mostly the same thing as in bin/pitivi.in and pitivi/utils/misc.py:
 def _get_root_dir():
     return '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
 
@@ -40,12 +40,7 @@ pitivi_version = '@VERSION@'
 APPNAME = '@PACKAGE_NAME@'
 APPURL = 'http://www.pitivi.org/'
 RELEASES_URL = 'http://pitivi.org/releases.txt'
-PYGTK_REQ = '@PYGTK_REQ@'
-GTK_REQ = '@GTK_REQ@'
-PYGST_REQ = '@PYGST_REQ@'
-GST_REQ = '@GST_REQ@'
-GNONLIN_REQ = '@GNONLIN_REQ@'
-PYCAIRO_REQ = '@PYCAIRO_REQ@'
+
 
 if _in_devel():
     APPMANUALURL_OFFLINE = 'ghelp://%s' % os.path.join(_get_root_dir(), 'help/C')

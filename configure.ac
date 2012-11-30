@@ -1,5 +1,7 @@
 AC_PREREQ(2.52)
 
+dnl Note for packagers: see pitivi/check.py for the dependencies
+
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
@@ -19,25 +21,8 @@ AS_NANO(PITIVI_CVS="no", PITIVI_CVS="yes")
 dnl can autoconf find the source ?
 AC_CONFIG_SRCDIR([pitivi/application.py])
 
-
 AC_SUBST_FILE(AUTHORS)
 AUTHORS=$srcdir/AUTHORS
-
-dnl Note for packagers
-dnl The following requirements are run-time requirements,
-dnl make sure you don't forget them, even though you're able to
-dnl build pitivi without them.
-dnl
-dnl For a more exhaustive list of checks, you can have a look at
-dnl the runtime checks in pitivi/check.py
-
-AC_SUBST(GTK_REQ, 2.24.0)
-AC_SUBST(PYGTK_REQ, 2.17.0)
-AC_SUBST(PYGST_REQ, 0.10.19)
-AC_SUBST(GST_REQ, 0.10.36)
-AC_SUBST(GES_REQ, 0.10.01)
-AC_SUBST(GNONLIN_REQ, 0.10.16)
-AC_SUBST(PYCAIRO_REQ, 1.0.0)
 
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 AC_SUBST(ACLOCAL_AMFLAGS, "-I common/m4")

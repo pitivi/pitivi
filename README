@@ -1,5 +1,11 @@
-In order to get more video effects, you should install the frei0r library.
-Other "soft" dependencies include:
-- pycanberra and libnotify for sounds and notifications when rendering completes
+PiTiVi is a video editor built upon the GStreamer Editing Services.
+It aims to be an intuitive and flexible application
+that can appeal to newbies and professionals alike.
 
-Packagers should add them as recommended packages.
+For the list of dependencies, look at pitivi/check.py
+- "Hard" dependencies are required for Pitivi to function properly
+- "Soft" dependencies are recommended for an optimal user experience
+  (packagers should add them as recommended or required packages).
+
+Your involvement is what keeps this project moving forward.
+See the "contributing" section of http://www.pitivi.org to get started.
