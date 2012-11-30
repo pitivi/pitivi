@@ -106,8 +106,8 @@ def in_devel():
     """
     try:
         # This code is the same as in the configure files
-        rd = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
-        return os.path.exists(os.path.join(rd, '.git'))
+        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        return os.path.exists(os.path.join(root_dir, '.git'))
     except:
         return False
 

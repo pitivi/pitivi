@@ -32,16 +32,6 @@ CONFIGURED_GST_PLUGIN_PATH = '@CONFIGURED_GST_PLUGIN_PATH@'
 LIBDIR = '@LIBDIR@'
 localedir = ""
 
-# Check if we're in development or installed version
-# Add the path of pitivi stuff
-# TODO : change it when it's finally in cvs
-
-def _get_root_dir():
-    return '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
-
-def _in_devel():
-    rd = _get_root_dir()
-    return os.path.exists(os.path.join(rd, '.git'))
 
 def _prepend_env_path(name, value):
     os.environ[name] = os.pathsep.join(value +
@@ -51,6 +41,12 @@ def _prepend_env_path(name, value):
 def jump_through_hoops():
     os.environ["JUMP_THROUGH_HOOPS"] = "1"
     os.execv(sys.argv[0], sys.argv)
+
+
+# Check if we're in development or installed version and set paths properly
+def _in_devel():
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return os.path.exists(os.path.join(root_dir, '.git'))
 
 
 def _add_pitivi_path():
