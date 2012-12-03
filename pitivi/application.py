@@ -61,10 +61,9 @@ Hierarchy of the whole thing:
 Pitivi
     InteractivePitivi
     GuiPitivi
-        FullGuiPitivi
-            ProjectCreatorGuiPitivi
-            ProjectLoaderGuiPitivi
-            StartupWizardGuiPitivi
+        ProjectCreatorGuiPitivi
+        ProjectLoaderGuiPitivi
+        StartupWizardGuiPitivi
 """
 
 
@@ -290,7 +289,10 @@ class InteractivePitivi(Pitivi):
 
 class GuiPitivi(InteractivePitivi):
     """
-    Base class to launch PiTiVi with UI
+    Base class to launch a PiTiVi instance with a graphical user interface
+
+    This is called when we start the UI with a project passed as a parameter.
+    It is also called by StartupWizardGuiPitivi.
     """
 
     def __init__(self, debug=False):
@@ -309,7 +311,7 @@ class GuiPitivi(InteractivePitivi):
 
     def _createGui(self):
         """Returns a Gtk.Widget which represents the UI."""
-        raise NotImplementedError()
+        return PitiviMainWindow(self)
 
     def _showGui(self):
         """Creates and shows the UI."""
@@ -324,27 +326,15 @@ class GuiPitivi(InteractivePitivi):
         return False
 
 
-class FullGuiPitivi(GuiPitivi):
-    """
-    Creates an instance of PiTiVi with the UI
-
-    This is called when we start the UI with a project passed as a parameter.
-    It is also called by StartupWizardGuiPitivi.
-    """
-
-    def _createGui(self, **kargs):
-        return PitiviMainWindow(self, **kargs)
-
-
 #FIXME the GES port screwed the import to the timeline
-class ProjectCreatorGuiPitivi(FullGuiPitivi):
+class ProjectCreatorGuiPitivi(GuiPitivi):
     """
     Creates an instance of PiTiVi with the UI and loading a list
     of clips, adding them to the timeline or not
     """
 
     def __init__(self, media_filenames, add_to_timeline=False, debug=False):
-        FullGuiPitivi.__init__(self, debug)
+        GuiPitivi.__init__(self, debug)
         # load the passed filenames, optionally adding them to the timeline
         # (useful during development)
         self.projectManager.newBlankProject(False)
@@ -385,13 +375,13 @@ class ProjectCreatorGuiPitivi(FullGuiPitivi):
         return True
 
 
-class ProjectLoaderGuiPitivi(FullGuiPitivi):
+class ProjectLoaderGuiPitivi(GuiPitivi):
     """
     Creates an instance of the UI and loads @project_filename
     """
 
     def __init__(self, project_filename, debug=False):
-        FullGuiPitivi.__init__(self, debug)
+        GuiPitivi.__init__(self, debug)
         if not os.path.exists(project_filename):
             self.error("Project file does not exist: %s" % project_filename)
             sys.exit(1)
@@ -399,7 +389,7 @@ class ProjectLoaderGuiPitivi(FullGuiPitivi):
             self._loadProject(project_filename)
 
 
-class StartupWizardGuiPitivi(FullGuiPitivi):
+class StartupWizardGuiPitivi(GuiPitivi):
     """
     Creates an instance of the PiTiVi UI with the welcome dialog
 
@@ -407,17 +397,17 @@ class StartupWizardGuiPitivi(FullGuiPitivi):
     """
 
     def __init__(self, debug=False):
-        FullGuiPitivi.__init__(self, debug)
+        GuiPitivi.__init__(self, debug)
         self.projectManager.newBlankProject(False)
 
     def _createGui(self):
         # Prevent the main window to go fullscreen because at least
         # the Metacity window manager will refuse to bring
         # the startup wizard window in front of the main window.
-        return FullGuiPitivi._createGui(self, allow_full_screen=False)
+        return PitiviMainWindow(self, allow_full_screen=False)
 
     def _showGui(self):
-        FullGuiPitivi._showGui(self)
+        GuiPitivi._showGui(self)
         self.wizard = StartUpWizard(self)
         self.wizard.show()
 
