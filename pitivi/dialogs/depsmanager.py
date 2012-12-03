@@ -38,10 +38,13 @@ class DepsManager(object):
         self.builder.add_from_file(os.path.join(get_ui_dir(), "depsmanager.ui"))
         self.builder.connect_signals(self)
         self.window = self.builder.get_object("window1")
+        self.window.set_transient_for(self.app.gui)
+        self.window.set_modal(True)
 
         # FIXME: autodetect if we can actually use PackageKit's "InstallResource" dbus
         # method, and if yes, show this button.
         self.builder.get_object("install_btn").hide()
+        self._setDepsLabel()
         self.show()
 
     def _onCloseButtonClickedCb(self, unused_button):
@@ -59,9 +62,7 @@ class DepsManager(object):
         self.obj = self.session_bus.get_object(self.dbus_name, self.dbus_path)
         self.iface = dbus.Interface(self.obj, self.dbus_interface)
 
-        soft_deps_list = []
-        for dep in missing_soft_deps:
-            soft_deps_list.append(dep)
+        soft_deps_list = missing_soft_deps.keys()
 
         # This line works for testing, but InstallProvideFiles is not really what we want:
         #self.iface.InstallProvideFiles(self.window.window_xid, soft_deps_list, "show-progress,show-finished")
@@ -74,16 +75,12 @@ class DepsManager(object):
     def _setDepsLabel(self):
         """Set the contents of the label containing the list of missing dependencies"""
         label_contents = ""
-        for dep in missing_soft_deps:
-            label_contents += "• " + dep + " (" + missing_soft_deps[dep] + ")\n"
+        for dep, description in missing_soft_deps.iteritems():
+            label_contents += "• %s (%s)\n" % (dep, description)
         self.builder.get_object("pkg_list").set_text(label_contents)
 
     def show(self):
-        self.window.set_transient_for(self.app.gui)
-        self.window.set_modal(True)
-        self._setDepsLabel()
         self.window.show()
-        self.window.grab_focus()
 
     def hide(self):
         self.window.hide()
