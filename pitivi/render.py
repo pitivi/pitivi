@@ -1009,7 +1009,7 @@ class RenderDialog(Loggable):
             if has_libnotify:
                 Notify.init("pitivi")
                 if not self.progress.window.is_active():
-                    self.notification = Notify.Notification.new(_("Render complete"), _("<i>%s</i> has finished rendering." % self.fileentry.get_text()), "pitivi")
+                    self.notification = Notify.Notification.new(_("Render complete"), _('"%s" has finished rendering.' % self.fileentry.get_text()), "pitivi")
                     self.notification.show()
             if has_canberra:
                 canberra = pycanberra.Canberra()
