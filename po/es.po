@@ -14,16 +14,16 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-11-19 17:17+0000\n"
-"PO-Revision-Date: 2012-11-20 12:39+0100\n"
+"POT-Creation-Date: 2012-12-04 15:44+0000\n"
+"PO-Revision-Date: 2012-12-05 01:04+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
-"Language-Team: Español <gnome-es-list@gnome.org>\n"
+"Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Gtranslator 2.91.5\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../data/pitivi.desktop.in.in.h:1
 msgid "Pitivi Video Editor"
@@ -546,7 +546,7 @@ msgstr "Alineación vertical:"
 msgid "Advanced positioning"
 msgstr "Posicionamiento avanzado"
 
-#: ../pitivi/application.py:120
+#: ../pitivi/application.py:124
 #, python-format
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
@@ -555,7 +555,7 @@ msgstr ""
 "Ya hay una instancia de %s, informe a los desarrolladores rellenando un "
 "informe de error en http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:434
+#: ../pitivi/application.py:417
 msgid ""
 "\n"
 "    %prog [PROJECT_FILE]               # Start the video editor.\n"
@@ -567,230 +567,48 @@ msgstr ""
 "    %prog -i [-a] [ARCHIVO_MULTIMEDIA1 ...]    # Iniciar el editor de vídeo "
 "y crear un proyecto."
 
-#: ../pitivi/application.py:440
+#: ../pitivi/application.py:423
 msgid "Import each MEDIA_FILE into a new project."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:443
+#: ../pitivi/application.py:426
 msgid "Add each imported MEDIA_FILE to the timeline."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:446
+#: ../pitivi/application.py:429
 msgid "Run Pitivi in the Python Debugger."
 msgstr "Ejecutar Pitivi en el depurador de Python"
 
-#: ../pitivi/application.py:451
+#: ../pitivi/application.py:434
 msgid "-a requires -i"
 msgstr "-a requiere -i"
 
-#: ../pitivi/application.py:459
+#: ../pitivi/application.py:442
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "No se puede abrir más de un ARCHIVO_DE_PROYECTO"
 
-#: ../pitivi/check.py:127
-#, python-format
-msgid "%s is already running"
-msgstr "%s ya está en ejecución."
+#: ../pitivi/check.py:228
+#| msgid "Enables the autoalign feature"
+msgid "enables the autoalign feature"
+msgstr "actva la característica de alineamiento automático"
 
-#: ../pitivi/check.py:128
-#, python-format
-msgid "An instance of %s is already running in this script."
-msgstr "Ya se está ejecutando una instancia de %s en este script."
+#: ../pitivi/check.py:231
+msgid "enables sound notifications when rendering is complete"
+msgstr "activa las notificaciones sonoras cuando termina el renderizado"
 
-#: ../pitivi/check.py:130
-msgid "Could not find the GNonLin plugins"
-msgstr "No se pudieron encontrar los complementos GNOnLin"
+#: ../pitivi/check.py:234
+msgid "enables visual notifications when rendering is complete"
+msgstr "activa las notificaciones visuales cuando termina el renderizado"
 
-#: ../pitivi/check.py:131
-msgid ""
-"Make sure the plugins were installed and are available in the GStreamer "
-"plugins path."
+#: ../pitivi/check.py:237
+#| msgid "Additional multimedia codecs through the Libav library"
+msgid "additional multimedia codecs through the Libav library"
+msgstr "códecs multimedia adicionales mediante la biblioteca Libav"
+
+#: ../pitivi/check.py:245
+msgid "additional video effects, clip transformation feature"
 msgstr ""
-"Asegúrese de que los complementos fueron instalados y están disponibles en "
-"la ruta de complementos de GStreamer."
-
-#: ../pitivi/check.py:133
-msgid "Could not find the autodetect plugins"
-msgstr "No se pudieron encontrar los complementos de autodetección."
-
-#: ../pitivi/check.py:134
-msgid ""
-"Make sure you have installed gst-plugins-good and that it's available in the "
-"GStreamer plugin path."
-msgstr ""
-"Asegúrese de que ha instalado los complementos «gst-plugins-good» y que están "
-"disponibles en la ruta de complementos de GStreamer."
-
-#: ../pitivi/check.py:136
-msgid "PyGTK doesn't have cairo support"
-msgstr "PyGTK no tiene soporte para Cairo"
-
-#: ../pitivi/check.py:137
-msgid ""
-"Please use a version of the GTK+ Python bindings built with cairo support."
-msgstr ""
-"Use una versión de los bindings de Python para GTK+ compilados con soporte "
-"para Cairo."
-
-#: ../pitivi/check.py:139
-msgid "Could not initiate the video output plugins"
-msgstr "No se pudo iniciar los complementos de salida de vídeo"
-
-#: ../pitivi/check.py:140
-msgid ""
-"Make sure you have at least one valid video output sink available "
-"(xvimagesink or ximagesink)."
-msgstr ""
-"Asegúrese de que al menos un sumidero válido de salida de vídeo está "
-"disponible (xvimagesink o ximagesink)."
-
-#: ../pitivi/check.py:142
-msgid "Could not initiate the audio output plugins"
-msgstr "No se pudo iniciar los complementos de salida de sonido"
-
-#: ../pitivi/check.py:143
-msgid ""
-"Make sure you have at least one valid audio output sink available (alsasink "
-"or osssink)."
-msgstr ""
-"Asegúrese de que tiene al menos un sumidero de salida de audio disponible "
-"(alsasink o osssink)."
-
-#: ../pitivi/check.py:145
-msgid "Could not import the cairo Python bindings"
-msgstr "No se pudieron importar los bindings de Python para Cairo"
-
-#: ../pitivi/check.py:146
-msgid "Make sure you have the cairo Python bindings installed."
-msgstr ""
-"Asegúrese de que tiene instalados los bindings de Python para Cairo "
-"instalados."
-
-#: ../pitivi/check.py:148
-msgid "Could not import the goocanvas Python bindings"
-msgstr "No se pudieron importar los bindings de Python para goocanvas"
-
-#: ../pitivi/check.py:149
-msgid "Make sure you have the goocanvas Python bindings installed."
-msgstr ""
-"Asegúrese de que tiene instalados los bindings de Python para goocanvas."
-
-#: ../pitivi/check.py:151
-msgid "Could not import the xdg Python library"
-msgstr "No se pudo importar la biblioteca xdg de Python"
-
-#: ../pitivi/check.py:152
-msgid "Make sure you have the xdg Python library installed."
-msgstr "Asegúrese de que tiene instalada la biblioteca xdg de Python."
-
-#: ../pitivi/check.py:155
-#, python-format
-msgid "You do not have a recent enough version of GTK+ (your version %s)"
-msgstr "No tiene una versión reciente de GTK+ (su versión es %s)"
-
-#: ../pitivi/check.py:156
-#, python-format
-msgid "Install a version of GTK+ greater than or equal to %s."
-msgstr "Instale una versión de GTK+ mayor o igual a %s."
-
-#: ../pitivi/check.py:159
-#, python-format
-msgid ""
-"You do not have a recent enough version of GStreamer Python bindings (your "
-"version %s)"
-msgstr ""
-"No tiene una versión reciente de los bindings de Python para GStreamer (su "
-"versión es %s)"
-
-#: ../pitivi/check.py:160
-#, python-format
-msgid ""
-"Install a version of the GStreamer Python bindings greater than or equal to %"
-"s."
-msgstr ""
-"Instale una versión de los bindings de Python para GStreamer mayor o igual a "
-"%s."
-
-#: ../pitivi/check.py:163
-#, python-format
-msgid "You do not have a recent enough version of GStreamer (your version %s)"
-msgstr "No tiene una versión reciente de GStreamer (su versión es %s)"
-
-#: ../pitivi/check.py:164
-#, python-format
-msgid "Install a version of the GStreamer greater than or equal to %s."
-msgstr "Instale una versión de GStreamer mayor o igual a %s."
-
-#: ../pitivi/check.py:167
-#, python-format
-msgid ""
-"You do not have a recent enough version of the cairo Python bindings (your "
-"version %s)"
-msgstr ""
-"No tiene una versión reciente de los bindings de Python para Cairo (su "
-"versión es %s)"
-
-#: ../pitivi/check.py:168
-#, python-format
-msgid ""
-"Install a version of the cairo Python bindings greater than or equal to %s."
-msgstr ""
-"Instale una versión de los bindings de Python para Cairo mayor o igual a %s."
-
-#: ../pitivi/check.py:171
-#, python-format
-msgid ""
-"You do not have a recent enough version of the GNonLin GStreamer plugin "
-"(your version %s)"
-msgstr ""
-"No tiene una versión reciente del complemento de GStreamer GNonLin (su "
-"versión es %s)"
-
-#: ../pitivi/check.py:172
-#, python-format
-msgid ""
-"Install a version of the GNonLin GStreamer plugin greater than or equal to %"
-"s."
-msgstr ""
-"Instale una versión del complemento GNonLin para GStreamer mayor o igual a %"
-"s."
-
-#. FIXME enable version checking in GES
-#: ../pitivi/check.py:175
-msgid "Could not import GStreamer Editing Services "
-msgstr "No se pudieron importar los servicios de edición de GStreamer "
-
-#: ../pitivi/check.py:176
-msgid "Make sure you have GStreamer Editing Services installed."
-msgstr "Asegúrese de que tiene instalados servicios de edición de GStreamer."
-
-#: ../pitivi/check.py:178
-msgid "Could not import the distutils modules"
-msgstr "No se pudieron importar los módulos distutils"
-
-#: ../pitivi/check.py:179
-msgid "Make sure you have the distutils Python module installed."
-msgstr "Asegúrese de que tiene instalado el módulo distutils de Python."
-
-#: ../pitivi/check.py:185
-msgid "Enables the autoalign feature"
-msgstr "Activar la característica de alineamiento automático"
-
-#: ../pitivi/check.py:187
-msgid "Additional video effects"
-msgstr "Efectos de vídeo adicionales"
-
-#: ../pitivi/check.py:189
-msgid "Additional multimedia codecs through the Libav library"
-msgstr "Códecs multimedia adicionales mediante la biblioteca Libav"
-
-#: ../pitivi/check.py:200
-msgid "Could not initialize GStreamer Editing Services"
-msgstr "No se pudieron inicializar los servicios de edición de GStreamer"
-
-#: ../pitivi/check.py:201
-msgid "Make sure you have the gst-editing-services installed."
-msgstr "Asegúrese de que tiene instalado «gst-editing-services»."
+"efectos de vídeo adicionales, característica de transformación del clip"
 
 #: ../pitivi/clipproperties.py:165
 msgid "Remove effect"
@@ -1364,8 +1182,9 @@ msgstr "Renderizado completo"
 
 #: ../pitivi/render.py:1012
 #, python-format
-msgid "<i>%s</i> has finished rendering."
-msgstr "<i>%s</i> ha terminado el renderizado."
+#| msgid "<i>%s</i> has finished rendering."
+msgid "\"%s\" has finished rendering."
+msgstr "«%s» ha terminado el renderizado."
 
 #: ../pitivi/titleeditor.py:619 ../pitivi/titleeditor.py:626
 #: ../pitivi/utils/widgets.py:487
@@ -1465,7 +1284,6 @@ msgid "Dock Viewer"
 msgstr "Anclar el visor"
 
 #: ../pitivi/viewer.py:371 ../pitivi/viewer.py:419
-#| msgid "View the main window on the whole screen"
 msgid "Show this window in fullscreen"
 msgstr "Mostrar esta ventana en pantalla completa"
 
@@ -2025,6 +1843,159 @@ msgstr "No hay propiedades."
 msgid "Properties for %s"
 msgstr "Propiedades para %s"
 
+#~ msgid "%s is already running"
+#~ msgstr "%s ya está en ejecución."
+
+#~ msgid "An instance of %s is already running in this script."
+#~ msgstr "Ya se está ejecutando una instancia de %s en este script."
+
+#~ msgid "Could not find the GNonLin plugins"
+#~ msgstr "No se pudieron encontrar los complementos GNOnLin"
+
+#~ msgid ""
+#~ "Make sure the plugins were installed and are available in the GStreamer "
+#~ "plugins path."
+#~ msgstr ""
+#~ "Asegúrese de que los complementos fueron instalados y están disponibles "
+#~ "en la ruta de complementos de GStreamer."
+
+#~ msgid "Could not find the autodetect plugins"
+#~ msgstr "No se pudieron encontrar los complementos de autodetección."
+
+#~ msgid ""
+#~ "Make sure you have installed gst-plugins-good and that it's available in "
+#~ "the GStreamer plugin path."
+#~ msgstr ""
+#~ "Asegúrese de que ha instalado los complementos «gst-plugins-good» y que "
+#~ "están disponibles en la ruta de complementos de GStreamer."
+
+#~ msgid "PyGTK doesn't have cairo support"
+#~ msgstr "PyGTK no tiene soporte para Cairo"
+
+#~ msgid ""
+#~ "Please use a version of the GTK+ Python bindings built with cairo support."
+#~ msgstr ""
+#~ "Use una versión de los bindings de Python para GTK+ compilados con "
+#~ "soporte para Cairo."
+
+#~ msgid "Could not initiate the video output plugins"
+#~ msgstr "No se pudo iniciar los complementos de salida de vídeo"
+
+#~ msgid ""
+#~ "Make sure you have at least one valid video output sink available "
+#~ "(xvimagesink or ximagesink)."
+#~ msgstr ""
+#~ "Asegúrese de que al menos un sumidero válido de salida de vídeo está "
+#~ "disponible (xvimagesink o ximagesink)."
+
+#~ msgid "Could not initiate the audio output plugins"
+#~ msgstr "No se pudo iniciar los complementos de salida de sonido"
+
+#~ msgid ""
+#~ "Make sure you have at least one valid audio output sink available "
+#~ "(alsasink or osssink)."
+#~ msgstr ""
+#~ "Asegúrese de que tiene al menos un sumidero de salida de audio disponible "
+#~ "(alsasink o osssink)."
+
+#~ msgid "Could not import the cairo Python bindings"
+#~ msgstr "No se pudieron importar los bindings de Python para Cairo"
+
+#~ msgid "Make sure you have the cairo Python bindings installed."
+#~ msgstr ""
+#~ "Asegúrese de que tiene instalados los bindings de Python para Cairo "
+#~ "instalados."
+
+#~ msgid "Could not import the goocanvas Python bindings"
+#~ msgstr "No se pudieron importar los bindings de Python para goocanvas"
+
+#~ msgid "Make sure you have the goocanvas Python bindings installed."
+#~ msgstr ""
+#~ "Asegúrese de que tiene instalados los bindings de Python para goocanvas."
+
+#~ msgid "Could not import the xdg Python library"
+#~ msgstr "No se pudo importar la biblioteca xdg de Python"
+
+#~ msgid "Make sure you have the xdg Python library installed."
+#~ msgstr "Asegúrese de que tiene instalada la biblioteca xdg de Python."
+
+#~ msgid "You do not have a recent enough version of GTK+ (your version %s)"
+#~ msgstr "No tiene una versión reciente de GTK+ (su versión es %s)"
+
+#~ msgid "Install a version of GTK+ greater than or equal to %s."
+#~ msgstr "Instale una versión de GTK+ mayor o igual a %s."
+
+#~ msgid ""
+#~ "You do not have a recent enough version of GStreamer Python bindings "
+#~ "(your version %s)"
+#~ msgstr ""
+#~ "No tiene una versión reciente de los bindings de Python para GStreamer "
+#~ "(su versión es %s)"
+
+#~ msgid ""
+#~ "Install a version of the GStreamer Python bindings greater than or equal "
+#~ "to %s."
+#~ msgstr ""
+#~ "Instale una versión de los bindings de Python para GStreamer mayor o "
+#~ "igual a %s."
+
+#~ msgid ""
+#~ "You do not have a recent enough version of GStreamer (your version %s)"
+#~ msgstr "No tiene una versión reciente de GStreamer (su versión es %s)"
+
+#~ msgid "Install a version of the GStreamer greater than or equal to %s."
+#~ msgstr "Instale una versión de GStreamer mayor o igual a %s."
+
+#~ msgid ""
+#~ "You do not have a recent enough version of the cairo Python bindings "
+#~ "(your version %s)"
+#~ msgstr ""
+#~ "No tiene una versión reciente de los bindings de Python para Cairo (su "
+#~ "versión es %s)"
+
+#~ msgid ""
+#~ "Install a version of the cairo Python bindings greater than or equal to "
+#~ "%s."
+#~ msgstr ""
+#~ "Instale una versión de los bindings de Python para Cairo mayor o igual a "
+#~ "%s."
+
+#~ msgid ""
+#~ "You do not have a recent enough version of the GNonLin GStreamer plugin "
+#~ "(your version %s)"
+#~ msgstr ""
+#~ "No tiene una versión reciente del complemento de GStreamer GNonLin (su "
+#~ "versión es %s)"
+
+#~ msgid ""
+#~ "Install a version of the GNonLin GStreamer plugin greater than or equal "
+#~ "to %s."
+#~ msgstr ""
+#~ "Instale una versión del complemento GNonLin para GStreamer mayor o igual "
+#~ "a %s."
+
+#~ msgid "Could not import GStreamer Editing Services "
+#~ msgstr "No se pudieron importar los servicios de edición de GStreamer "
+
+#~ msgid "Make sure you have GStreamer Editing Services installed."
+#~ msgstr ""
+#~ "Asegúrese de que tiene instalados servicios de edición de GStreamer."
+
+#~ msgid "Could not import the distutils modules"
+#~ msgstr "No se pudieron importar los módulos distutils"
+
+#~ msgid "Make sure you have the distutils Python module installed."
+#~ msgstr "Asegúrese de que tiene instalado el módulo distutils de Python."
+
+#~ msgid "Additional video effects"
+#~ msgstr "Efectos de vídeo adicionales"
+
+#~ msgid "Could not initialize GStreamer Editing Services"
+#~ msgstr "No se pudieron inicializar los servicios de edición de GStreamer"
+
+#~ msgid "Make sure you have the gst-editing-services installed."
+#~ msgstr "Asegúrese de que tiene instalado «gst-editing-services»."
+
 #~ msgid "label"
 #~ msgstr "etiqueta"
 
@@ -2092,8 +2063,8 @@ msgstr "Propiedades para %s"
 #~ msgid ""
 #~ "Install a version of the GTK+ Python bindings greater than or equal to %s."
 #~ msgstr ""
-#~ "Instale una versión de los bindings de Python para GTK+ mayor o igual a %"
-#~ "s."
+#~ "Instale una versión de los bindings de Python para GTK+ mayor o igual a "
+#~ "%s."
 
 #~ msgid "Activated"
 #~ msgstr "Activado"
