@@ -1,5 +1,23 @@
 
-tests = test_*.py
+# Don't try to use wildcards to replace the list of tests below.
+# http://www.gnu.org/software/automake/manual/automake.html#Wildcards
+# Keep this list sorted!
+tests =	test_basic.py \
+	test_binary_search.py \
+	test_cache.py \
+	test_common.py \
+	test_log.py \
+	test_preset.py \
+	test_projectmanager.py \
+	test_projectsettings.py \
+	test_settings.py \
+	test_signallable.py \
+	test_system_gnome.py \
+	test_system.py \
+	test_timeline_undo.py \
+	test_undo.py \
+	test_utils.py
+# Keep the list sorted!
 
 EXTRA_DIST = \
 	__init__.py \
