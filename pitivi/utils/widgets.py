@@ -83,7 +83,7 @@ class DefaultWidget(Gtk.Label, DynamicWidget):
         pass
 
     def setWidgetValue(self, value):
-        self.set_text(value)
+        self.set_text(str(value))
 
     def getWidgetValue(self):
         return self.get_text()
@@ -831,12 +831,17 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
 
         y = 0
         for prop in props:
-            if (not prop.flags & GObject.PARAM_WRITABLE
-            or not prop.flags & GObject.PARAM_READABLE):
+            # We do not know how to work with GObjects, so blacklist
+            # them to avoid noise in the UI
+            if (not prop.flags & GObject.PARAM_WRITABLE or
+              not prop.flags & GObject.PARAM_READABLE or
+              GObject.type_is_a(prop.value_type, GObject.Object)):
                 continue
 
             if is_effect:
-                prop_value = self.element.get_child_property(prop.name)
+                result, prop_value = self.element.get_child_property(prop.name)
+                if result is False:
+                    self.debug("Could not get property %s value", prop.name)
             else:
                 if use_element_props:
                     prop_value = self.element.get_property(prop.name)
