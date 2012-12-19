@@ -54,18 +54,20 @@ _old_hup_handler = None
 # public log levels
 (ERROR,
  WARN,
+ FIXME,
  INFO,
  DEBUG,
- LOG) = range(1, 6)
+ LOG) = range(1, 7)
 
 COLORS = {ERROR: 'RED',
           WARN: 'YELLOW',
+          FIXME: 'MAGENTA',
           INFO: 'GREEN',
           DEBUG: 'BLUE',
           LOG: 'CYAN'}
 
 _FORMATTED_LEVELS = []
-_LEVEL_NAMES = ['ERROR', 'WARN', 'INFO', 'DEBUG', 'LOG']
+_LEVEL_NAMES = ['ERROR', 'WARN', 'FIXME', 'INFO', 'DEBUG', 'LOG']
 
 
 class TerminalController:
@@ -306,7 +308,7 @@ def getLevelInt(levelName):
 
 
 def getFormattedLevelName(level):
-    assert isinstance(level, int) and level > 0 and level < 6, \
+    assert isinstance(level, int) and level > 0 and level < len(_LEVEL_NAMES) + 1, \
         TypeError("Bad debug level")
     return _FORMATTED_LEVELS[level - 1]
 
@@ -578,6 +580,14 @@ def warningObject(object, cat, format, *args):
     doLog(WARN, object, cat, format, args)
 
 
+def fixmeObject(object, cat, format, *args):
+    """
+    Log a fixme message in the given category.
+    This is used for not implemented codepaths or known issues in the code
+    """
+    doLog(FIXME, object, cat, format, args)
+
+
 def infoObject(object, cat, format, *args):
     """
     Log an informational message in the given category.
@@ -663,7 +673,7 @@ def _preformatLevels(noColorEnvVarName):
     else:
         formatter = lambda level: format % (_LEVEL_NAMES[level - 1], )
 
-    for level in ERROR, WARN, INFO, DEBUG, LOG:
+    for level in ERROR, WARN, FIXME, INFO, DEBUG, LOG:
         _FORMATTED_LEVELS.append(formatter(level))
 
 ### "public" useful API
@@ -825,6 +835,10 @@ def warning(cat, format, *args):
     warningObject(None, cat, format, *args)
 
 
+def fixme(cat, format, *args):
+    fixmeObject(None, cat, format, *args)
+
+
 def info(cat, format, *args):
     infoObject(None, cat, format, *args)
 
@@ -961,6 +975,12 @@ class BaseLoggable(object):
         if _canShortcutLogging(self.logCategory, WARN):
             return
         warningObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
+
+    def fixme(self, *args):
+        """Log a fixme.  Used for FIXMEs ."""
+        if _canShortcutLogging(self.logCategory, FIXME):
+            return
+        fixmeObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
 
     def info(self, *args):
         """Log an informational message.  Used for normal operation."""
