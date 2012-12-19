@@ -763,8 +763,7 @@ class TrackFileSource(TrackObject):
         Set the human-readable file name as the clip's text label
         """
         if self.element:
-            uri = self.element.props.uri
-            info = self.app.current.medialibrary.getInfoFromUri(uri)
+            info = element.get_timeline_object().get_asset().get_info()
             self.name.props.text = info_name(info)
             twidth, theight = text_size(self.name)
             self.namewidth = twidth

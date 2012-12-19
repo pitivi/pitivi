@@ -27,6 +27,7 @@ classes that help with UI drawing around the application
 """
 import glib
 from gi.repository import Gst
+from gi.repository import GES
 from gi.repository import Gtk
 import os
 import cairo
@@ -190,7 +191,10 @@ def beautify_info(info):
 
 def info_name(info):
     """Return a human-readable filename (without the path and quoting)."""
-    filename = unquote(os.path.basename(info.get_uri()))
+    if  isinstance(info, GES.Asset):
+        filename = unquote(os.path.basename(info.get_id()))
+    else:
+        filename = unquote(os.path.basename(info.get_uri()))
     return glib.markup_escape_text(filename)
 
 

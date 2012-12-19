@@ -43,7 +43,7 @@ from pitivi.clipproperties import ClipProperties
 from pitivi.configure import pitivi_version, APPNAME, APPURL, get_pixmap_dir, get_ui_dir
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
-from pitivi.medialibrary import MediaLibraryWidget, MediaLibraryError
+from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
 from pitivi.timeline.timeline import Timeline
@@ -120,9 +120,6 @@ GlobalSettings.addConfigOption('lastCurrentVersion',
     key='last-current-version',
     default='')
 
-
-#FIXME Hacky, reimplement when avalaible in GES
-formats = [(None, _("PiTiVi native (XML)"), ('xptv',))]
 
 # FIXME PyGi to get stock_add working
 Gtk.stock_add = lambda items: None
@@ -608,10 +605,13 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     def _mediaLibraryPlayCb(self, medialibrary, uri):
         self._viewUri(uri)
 
-    def _mediaLibrarySourceRemovedCb(self, medialibrary, uri, unused_info):
+    def _projectChangedCb(self, project):
+        self.main_actions.get_action("SaveProject").set_sensitive(True)
+
+    def _mediaLibrarySourceRemovedCb(self, project, asset):
         """When a clip is removed from the Media Library, tell the timeline
         to remove all instances of that clip."""
-        self.timeline_ui.purgeObject(uri)
+        self.timeline_ui.purgeObject(asset.get_id())
 
     def _selectedLayerChangedCb(self, widget, layer):
         self.main_actions.get_action("RemoveLayer").set_sensitive(layer is not None)
@@ -737,15 +737,16 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         chooser.set_select_multiple(False)
         # TODO: Remove this set_current_folder call when GTK bug 683999 is fixed
         chooser.set_current_folder(self.settings.lastProjectFolder)
-        for format in formats:
+        formatter_assets = GES.list_assets(GES.Formatter)
+        formatter_assets.sort(key=lambda x: - x.get_meta(GES.META_FORMATTER_RANK))
+        for format in formatter_assets:
             filt = Gtk.FileFilter()
-            filt.set_name(format[1])
-            for ext in format[2]:
-                filt.add_pattern("*%s" % ext)
+            filt.set_name(format.get_meta(GES.META_DESCRIPTION))
+            filt.add_pattern("*%s" % format.get_meta(GES.META_FORMATTER_EXTENSION))
             chooser.add_filter(filt)
         default = Gtk.FileFilter()
         default.set_name(_("All supported formats"))
-        default.add_custom(Gtk.FileFilterFlags.URI, GES.Formatter.can_load_uri, None)
+        default.add_custom(Gtk.FileFilterFlags.URI, self._canLoadUri, None)
         chooser.add_filter(default)
 
         response = chooser.run()
@@ -753,6 +754,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.app.projectManager.loadProject(chooser.get_uri())
         chooser.destroy()
         return True
+
+    def _canLoadUri(self, filterinfo, uri):
+        GES.Formatter.can_load_uri(filterinfo.uri)
 
     def _undoCb(self, action):
         self.app.action_log.undo()
@@ -767,27 +771,16 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.prefsdialog.dialog.set_transient_for(self)
         self.prefsdialog.run()
 
-    def _projectManagerNewProjectLoadedCb(self, projectManager, project):
+    def _projectManagerNewProjectLoadedCb(self, projectManager, project, unused_fully_loaded):
         """
         Once a new project has been loaded, wait for media library's
         "ready" signal to populate the timeline.
         """
         self.log("A new project is loaded, wait for clips")
-        self._connectToProjectSources(self.app.current.medialibrary)
+        self._connectToProject(self.app.current)
         self.app.current.timeline.connect("notify::duration",
                 self._timelineDurationChangedCb)
         self.app.current.pipeline.activatePositionListener()
-
-        # This should only be done when loading a project, and disconnected
-        # as soon as we receive the signal.
-        self.app.current.medialibrary.connect("ready", self._projectClipsReady)
-
-    def _projectClipsReady(self, medialibrary):
-        """
-        After the project is loaded along with its media files, update the UI.
-        """
-        self.log("Project clips are ready, update the UI")
-        self.app.current.medialibrary.disconnect_by_func(self._projectClipsReady)
         self._setProject()
 
         #FIXME GES we should re-enable this when possible
@@ -795,7 +788,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         # Enable export functionality
         self.main_actions.get_action("ExportProject").set_sensitive(True)
-
         if self._missingUriOnLoading:
             self.app.current.setModificationState(True)
             self.main_actions.get_action("SaveProject").set_sensitive(True)
@@ -809,7 +801,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.recent_manager.add_item(uri)
         self.log("A NEW project is loading, deactivate UI")
 
-    def _projectManagerSaveProjectFailedCb(self, projectManager, uri, exception=None):
+    def _projectManagerSaveProjectFailedCb(self, projectManager, uri, unused, exception=None):
         project_filename = unquote(uri.split("/")[-1])
         dialog = Gtk.MessageDialog(self,
             Gtk.DialogFlags.MODAL,
@@ -826,10 +818,13 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.error("failed to save project")
 
     def _projectManagerProjectSavedCb(self, projectManager, project, uri):
-        self.app.action_log.checkpoint()
-        self._syncDoUndo(self.app.action_log)
+        # FIXME GES: Reimplement Undo/Redo
+        #self.app.action_log.checkpoint()
+        #self._syncDoUndo(self.app.action_log)
+        self.main_actions.get_action("SaveProject").set_sensitive(False)
         if uri:
             self.recent_manager.add_item(uri)
+
         if project.uri is None:
             project.uri = uri
 
@@ -954,7 +949,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         dialog.run()
         dialog.destroy()
 
-    def _projectManagerMissingUriCb(self, instance, formatter, tfs):
+    def _projectManagerMissingUriCb(self, u_project_manager, u_project,
+            error, asset):
+        uri = asset.get_id()
+        new_uri = None
         dialog = Gtk.Dialog(_("Locate missing file..."),
             self,
             Gtk.DialogFlags.MODAL,
@@ -973,11 +971,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # This can happen if the file was moved or deleted by an application
         # that does not manage Freedesktop thumbnails. The user is in luck!
         # This is based on medialibrary's addDiscovererInfo method.
-        thumbnail_hash = md5(tfs.get_uri()).hexdigest()
+        thumbnail_hash = md5(uri).hexdigest()
         thumb_dir = os.path.expanduser("~/.thumbnails/normal/")
         thumb_path_normal = thumb_dir + thumbnail_hash + ".png"
         if os.path.exists(thumb_path_normal):
-            self.debug("A thumbnail file was found for %s" % tfs.get_uri())
+            self.debug("A thumbnail file was found for %s" % uri)
             thumbnail = Gtk.Image.new_from_file(thumb_path_normal)
             thumbnail.set_padding(0, SPACING)
             hbox.pack_start(thumbnail, False, False, 0)
@@ -998,7 +996,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         text = _('The following file has moved: "<b>%s</b>"'
                  '\nPlease specify its new location:'
-                 % info_name(tfs))
+                 % info_name(asset))
 
         label = Gtk.Label()
         label.set_markup(text)
@@ -1016,7 +1014,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # Use a Gtk FileFilter to only show files with the same extension
         # Note that splitext gives us the extension with the ".", no need to
         # add it inside the filter string.
-        filename, extension = os.path.splitext(tfs.get_uri())
+        filename, extension = os.path.splitext(uri)
         filter = Gtk.FileFilter()
         # Translators: this is a format filter in a filechooser. Ex: "AVI files"
         filter.set_name(_("%s files" % extension))
@@ -1038,10 +1036,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if response == Gtk.ResponseType.OK:
             self.log("User chose a new URI for the missing file")
             new_uri = chooser.get_uri()
-            if new_uri:
-                self.app.current.medialibrary.addUris([new_uri])
-                formatter.update_source_uri(tfs, new_uri)
-                self._missingUriOnLoading = True
         else:
             # Even if the user clicks Cancel, the discoverer keeps trying to
             # import the rest of the clips...
@@ -1052,7 +1046,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             attempted_uri = self.app.current.uri
             reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
                     'PiTiVi does not currently support partial projects.'
-                    % info_name(tfs))
+                    % info_name(asset))
             # Put an end to the async signals spamming us with dialogs:
             self.app.projectManager.disconnect_by_func(self._projectManagerMissingUriCb)
             # Don't overlap the file chooser with our error dialog
@@ -1067,11 +1061,13 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.app.projectManager.emit("new-project-failed", attempted_uri, reason)
 
         dialog.destroy()
+        return new_uri
 
-    def _connectToProjectSources(self, medialibrary):
+    def _connectToProject(self, project):
         #FIXME GES we should re-enable this when possible
         #medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
-        medialibrary.connect("source-removed", self._mediaLibrarySourceRemovedCb)
+        project.connect("asset-removed", self._mediaLibrarySourceRemovedCb)
+        project.connect("project-changed", self._projectChangedCb)
 
     def _actionLogCommit(self, action_log, stack, nested):
         if nested:
@@ -1116,31 +1112,39 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.warning("Current project instance does not exist")
             return False
         try:
-            self.app.current.disconnect_by_func(self._settingsChangedCb)
+            self.app.current.disconnect_by_func(self._renderingSettingsChangedCb)
         except:
             # When loading the first project, the signal has never been
             # connected before.
             pass
         self.viewer.setPipeline(self.app.current.pipeline)
-        self._settingsChangedCb(self.app.current, None, self.app.current.settings)
+        self._renderingSettingsChangedCb(self.app.current, None, None)
         if self.timeline_ui:
-            self.timeline_ui.setProject(self.app.current)
+            #self.timeline_ui.setProject(self.app.current)
             self.clipconfig.project = self.app.current
             #FIXME GES port undo/redo
             #self.app.timelineLogObserver.pipeline = self.app.current.pipeline
-        self.app.current.connect("settings-changed", self._settingsChangedCb)
+
+        self.app.current.connect("rendering-settings-changed", self._renderingSettingsChangedCb)
         # When creating a blank project, medialibrary will eventually trigger
         # this _setProject method, but there's no project URI yet.
         if self.app.current.uri:
             folder_path = os.path.dirname(path_from_uri(self.app.current.uri))
             self.settings.lastProjectFolder = folder_path
 
-    def _settingsChangedCb(self, project, unused_old, new):
-        # TODO: this method's signature should be changed:
-        # project = self.app.current,
-        # old is never used, and the new is equal to self.app.current.settings
-        self.viewer.setDisplayAspectRatio(
-            float(new.videopar.num / new.videopar.denom * new.videowidth) / float(new.videoheight))
+    def _renderingSettingsChangedCb(self, project, item, value):
+        """
+            Called when any Project metadata changes, we filter out the ones
+            we are interested in.
+
+            if @item is None, it mean we called it ourself, and want the
+            aspect-ratio to be set
+        """
+        self.main_actions.get_action("SaveProject").set_sensitive(False)
+        if item in ["videopar", "videowidth", "videoheight"] or item is None:
+            ratio = float(project.videopar.num / project.videopar.denom *
+                          project.videowidth) / float(project.videoheight)
+            self.viewer.setDisplayAspectRatio(ratio)
 
     def _sourceListMissingPluginsCb(self, project, uri, factory,
             details, descriptions, missingPluginsCallback):
@@ -1199,23 +1203,26 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _showSaveAsDialog(self, project):
         self.log("Save URI requested")
+
         chooser = Gtk.FileChooserDialog(_("Save As..."),
             self,
             action=Gtk.FileChooserAction.SAVE,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
 
+        asset = GES.Formatter.get_default()
+        filt = Gtk.FileFilter()
+        filt.set_name(asset.get_meta(GES.META_DESCRIPTION))
+        filt.add_pattern("*.%s" % asset.get_meta(GES.META_FORMATTER_EXTENSION))
+        chooser.add_filter(filt)
+
         chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
-        chooser.set_current_name(_("Untitled") + ".xptv")
+        chooser.set_current_name(_("Untitled") + "." +
+                asset.get_meta(GES.META_FORMATTER_EXTENSION))
         chooser.set_current_folder(self.settings.lastProjectFolder)
         chooser.props.do_overwrite_confirmation = True
-        for format in formats:
-            filt = Gtk.FileFilter()
-            filt.set_name(format[1])
-            for ext in format[2]:
-                filt.add_pattern("*.%s" % ext)
-            chooser.add_filter(filt)
+
         default = Gtk.FileFilter()
         default.set_name(_("Detect automatically"))
         default.add_pattern("*")
@@ -1227,8 +1234,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # need to do this to work around bug in Gst.uri_construct
             # which escapes all /'s in path!
             uri = "file://" + chooser.get_filename()
-            self.log("uri:%s , format:%s", uri, format)
             format = chooser.get_filter().get_name()
+            self.log("uri:%s , format:%s", uri, format)
             if format == _("Detect automatically"):
                 format = None
             self.settings.lastProjectFolder = chooser.get_current_folder()
@@ -1257,7 +1264,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         preview_window.hide()  # Hack to allow setting the window position
         previewer.previewUri(uri)
         previewer.setMinimal()
-        info = self.app.current.medialibrary.getInfoFromUri(uri)
+        info = self.app.current.get_asset(uri, GES.TimelineFileSource).get_info()
         try:
             # For videos and images, automatically resize the window
             # Try to keep it 1:1 if it can fit within 85% of the parent window

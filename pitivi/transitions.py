@@ -35,7 +35,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
 from pitivi.utils.ui import SPACING, PADDING
 
-(COL_TRANSITION_ID,
+(COL_TRANSITION_ASSET,
  COL_NAME_TEXT,
  COL_DESC_TEXT,
  COL_ICON) = range(4)
@@ -100,7 +100,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         self.infobar.add(txtlabel)
         self.infobar.show_all()
 
-        self.storemodel = Gtk.ListStore(str, str, str, GdkPixbuf.Pixbuf)
+        self.storemodel = Gtk.ListStore(GES.Asset, str, str, GdkPixbuf.Pixbuf)
 
         self.iconview_scrollwin = Gtk.ScrolledWindow()
         self.iconview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
@@ -150,14 +150,13 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
 # UI callbacks
 
     def _transitionSelectedCb(self, event):
-        selected_item = self.getSelectedItem()
-        if not selected_item:
-        # The user clicked between icons
+        transition_asset = self.getSelectedItem()
+        if not transition_asset:
+            # The user clicked between icons
             return False
-        transition_id = int(selected_item)
-        transition = self.available_transitions.get(transition_id)
-        self.debug("New transition type selected: %s" % transition)
-        if transition.value_nick == "crossfade":
+
+        self.debug("New transition type selected: %s" % transition_asset.get_id())
+        if transition_asset.get_id() == "crossfade":
             self.props_widgets.set_sensitive(False)
         else:
             self.props_widgets.set_sensitive(True)
@@ -166,7 +165,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         position = self.app.current.pipeline.getPosition()
         self.app.current.pipeline.simple_seek(0)
 
-        self.element.set_transition_type(transition)
+        self.element.get_timeline_object().set_asset(transition_asset)
 
         # Seek back into the previous position, refreshing the preview
         self.app.current.pipeline.simple_seek(position)
@@ -219,13 +218,12 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
 # GES callbacks
 
     def _transitionTypeChangedCb(self, element, unused_prop):
-        transition = element.get_transition_type()
         try:
             self.iconview.disconnect_by_func(self._transitionSelectedCb)
         except TypeError:
             pass
         finally:
-            self.selectTransition(transition)
+            self.selectTransition(element.get_asset())
             self.iconview.connect("button-release-event", self._transitionSelectedCb)
 
     def _borderChangedCb(self, element, unused_prop):
@@ -260,27 +258,17 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         """
         Get the list of transitions from GES and load the associated thumbnails.
         """
-        # TODO: rewrite this method when GESRegistry exists
-        self.available_transitions = {}
-        # GES currently has transitions IDs up to 512
-        # Number 0 means "no transition", so we might just as well skip it.
-        for i in range(1, 513):
-            try:
-                transition = GES.VideoStandardTransitionType(i)
-            except ValueError:
-                # We hit a gap in the enum
-                pass
-            else:
-                self.available_transitions[transition.numerator] = transition
-                self.storemodel.append([str(transition.numerator),
-                                        str(transition.value_nick),
-                                        str(transition.value_name),
-                                        self._getIcon(transition.value_nick)])
+        for trans_asset in GES.list_assets(GES.TimelineTransition):
+            trans_asset.icon = self._getIcon(trans_asset.get_id())
+            self.storemodel.append([trans_asset,
+                                    str(trans_asset.get_id()),
+                                    str(trans_asset.get_meta(GES.META_DESCRIPTION)),
+                                    trans_asset.icon])
 
         # Now that the UI is fully ready, enable searching
         self.modelFilter.set_visible_func(self._setRowVisible, data=None)
         # Alphabetical/name sorting instead of based on the ID number
-        #self.storemodel.set_sort_column_id(COL_NAME_TEXT, Gtk.SortType.ASCENDING)
+        self.storemodel.set_sort_column_id(COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
     def activate(self, element):
         """
@@ -290,8 +278,8 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         self.element.connect("notify::border", self._borderChangedCb)
         self.element.connect("notify::invert", self._invertChangedCb)
         self.element.connect("notify::type", self._transitionTypeChangedCb)
-        transition = element.get_transition_type()
-        if transition.value_nick == "crossfade":
+        transition_asset = element.get_timeline_object().get_asset()
+        if transition_asset.get_id() == "crossfade":
             self.props_widgets.set_sensitive(False)
         else:
             self.props_widgets.set_sensitive(True)
@@ -299,16 +287,16 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         self.props_widgets.show_all()
         self.infobar.hide()
         self.searchbar.show_all()
-        self.selectTransition(transition)
+        self.selectTransition(transition_asset)
         self.app.gui.switchContextTab("transitions")
 
-    def selectTransition(self, transition):
+    def selectTransition(self, transition_asset):
         """
         For a given transition type, select it in the iconview if available.
         """
         model = self.iconview.get_model()
         for row in model:
-            if int(transition.numerator) == int(row[COL_TRANSITION_ID]):
+            if transition_asset == row[COL_TRANSITION_ASSET]:
                 path = model.get_path(row.iter)
                 self.iconview.select_path(path)
                 self.iconview.scroll_to_path(path, False, 0, 0)
@@ -354,7 +342,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
 
         view.set_tooltip_item(tooltip, path)
 
-        name = model.get_value(iter_, COL_TRANSITION_ID)
+        name = model.get_value(iter_, COL_TRANSITION_ASSET).get_id()
         if self._current_transition_name != name:
             self._current_transition_name = name
             icon = model.get_value(iter_, COL_ICON)
@@ -371,7 +359,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         path = self.iconview.get_selected_items()
         if path == []:
             return None
-        return self.modelFilter[path[0]][COL_TRANSITION_ID]
+        return self.modelFilter[path[0]][COL_TRANSITION_ASSET]
 
     def _setRowVisible(self, model, iter, data):
         """

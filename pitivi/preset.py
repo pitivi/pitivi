@@ -27,7 +27,7 @@ import json
 
 from gettext import gettext as _
 
-from pitivi.render import available_muxers, available_video_encoders, available_audio_encoders
+from pitivi.render import CachedEncoderList
 from pitivi.settings import xdg_data_home
 from pitivi.utils.misc import isWritable
 from pitivi.configure import get_renderpresets_dir, get_audiopresets_dir, get_videopresets_dir
@@ -395,9 +395,10 @@ class RenderPresetManager(PresetManager):
         acodec = parser["acodec"]
         vcodec = parser["vcodec"]
 
-        if (acodec not in [fact.get_name() for fact in available_audio_encoders()]
-        or vcodec not in [fact.get_name() for fact in available_video_encoders()]
-        or container not in [fact.get_name() for fact in available_muxers()]):
+        cached_encs = CachedEncoderList()
+        if (acodec not in [fact.get_name() for fact in cached_encs.aencoders]
+        or vcodec not in [fact.get_name() for fact in cached_encs.vencoders]
+        or container not in [fact.get_name() for fact in cached_encs.muxers]):
             return
 
         try:

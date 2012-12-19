@@ -43,7 +43,6 @@ from pitivi.settings import GlobalSettings
 from pitivi.utils.threads import ThreadMaster
 from pitivi.mainwindow import PitiviMainWindow
 from pitivi.project import ProjectManager, ProjectLogObserver
-from pitivi.undo.medialibrary import MediaLibraryLogObserver
 from pitivi.undo.undo import UndoableActionLog, DebugActionLogObserver
 from pitivi.dialogs.startupwizard import StartUpWizard
 
@@ -146,7 +145,6 @@ class Pitivi(Loggable, Signallable):
         # TODO reimplement the observing after GES port
         #self.timelineLogObserver = TimelineLogObserver(self.action_log)
         self.projectLogObserver = ProjectLogObserver(self.action_log)
-        self.medialibrary_log_observer = MediaLibraryLogObserver(self.action_log)
 
         self.version_information = {}
         self._checkVersion()
@@ -195,12 +193,12 @@ class Pitivi(Loggable, Signallable):
     def _newProjectLoaded(self, project):
         pass
 
-    def _projectManagerNewProjectLoaded(self, projectManager, project):
+    def _projectManagerNewProjectLoaded(self, projectManager, project,
+            unused_fully_loaded):
         self.current = project
         self.action_log.clean()
         #self.timelineLogObserver.startObserving(project.timeline)
         self.projectLogObserver.startObserving(project)
-        self.medialibrary_log_observer.startObserving(project.medialibrary)
         self._newProjectLoaded(project)
         self.emit("new-project-loaded", project)
 
@@ -326,7 +324,6 @@ class GuiPitivi(InteractivePitivi):
         return False
 
 
-#FIXME the GES port screwed the import to the timeline
 class ProjectCreatorGuiPitivi(GuiPitivi):
     """
     Creates an instance of PiTiVi with the UI and loading a list

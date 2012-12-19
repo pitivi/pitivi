@@ -16,7 +16,9 @@
 MYPITIVI=${MYPITIVI:-$HOME/pitivi-git}
 # Change this variable to 'master' if you prefer to work with the master branch
 # When using "master", this script will automatically "pull --rebase" modules.
-GST_RELEASE_TAG="1.0.2"
+# This will fail and check master in the end
+# Using master until we depend on a released version
+GST_RELEASE_TAG="master"
 # If you care about building the GStreamer/GES developer API documentation:
 BUILD_DOCS=false
 # Here are some dependencies for building GStreamer and GES. If they're missing,

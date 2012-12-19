@@ -401,7 +401,7 @@ class EffectProperties(Gtk.Expander):
         obj = self.timeline_objects[0]
         for track_effect in obj.get_top_effects():
             if not track_effect.props.bin_description in HIDDEN_EFFECTS:
-                material = self.app.effects.getFactoryFromName(
+                asset = self.app.effects.getFactoryFromName(
                     track_effect.props.bin_description)
                 to_append = [track_effect.props.active]
                 track = track_effect.get_track()
@@ -411,7 +411,7 @@ class EffectProperties(Gtk.Expander):
                     to_append.append("Video")
 
                 to_append.append(track_effect.props.bin_description)
-                to_append.append(material.description)
+                to_append.append(asset.description)
                 to_append.append(track_effect)
 
                 self.storemodel.append(to_append)

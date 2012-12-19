@@ -38,7 +38,6 @@ class clipmediapropsDialog():
 
     def __init__(self, project, audio_streams, video_streams):
         self.project = project
-        self.settings = self.project.getSettings()
         self.audio_streams = audio_streams
         self.video_streams = video_streams
         self.has_audio = self.has_video = self.is_image = False
@@ -110,36 +109,27 @@ class clipmediapropsDialog():
         self.checkbutton6 = builder.get_object("checkbutton6")
 
     def _applyButtonCb(self, unused_button):
-        _width = _height = _framerate = _par = -1
-        _channels = _rate = _depth = -1
-
+        project = self.projet
         if self.has_video:
             # This also handles the case where the video is a still image
             video = self.video_streams[0]
             if self.checkbutton1.get_active():
-                _width = video.get_width()
-                _height = video.get_height()
+                project.width = video.get_width()
+                project.height = video.get_height()
             if (self.checkbutton2.get_active() and not self.is_image):
-                _framerate = Gst.Fraction(video.get_framerate_num(),
+                project.framerate = Gst.Fraction(video.get_framerate_num(),
                                           video.get_framerate_denom())
             if (self.checkbutton3.get_active() and not self.is_image):
-                _par = Gst.Fraction(video.get_par_num(),
+                project.par = Gst.Fraction(video.get_par_num(),
                                     video.get_par_denom())
-            self.settings.setVideoProperties(_width, _height, _framerate, _par)
-
         if self.has_audio:
             audio = self.audio_streams[0]
             if self.checkbutton4.get_active():
-                _channels = audio.get_channels()
+                project.channels = audio.get_channels()
             if self.checkbutton5.get_active():
-                _rate = audio.get_sample_rate()
+                project.rate = audio.get_sample_rate()
             if self.checkbutton6.get_active():
-                _depth = audio.get_depth()
-            self.settings.setAudioProperties(_channels, _rate, _depth)
-
-        if self.has_video or self.has_audio:
-            self.project.setSettings(self.settings)
-
+                project.depth = audio.get_depth()
         self.dialog.destroy()
 
     def _cancelButtonCb(self, unused_button):

@@ -36,7 +36,7 @@ import time
 from urllib import unquote
 from gettext import gettext as _
 from hashlib import md5
-from gi.repository.GstPbutils import Discoverer, DiscovererVideoInfo
+from gi.repository.GstPbutils import DiscovererVideoInfo
 
 from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.settings import GlobalSettings
@@ -44,11 +44,11 @@ from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.dialogs.clipmediaprops import clipmediapropsDialog
 from pitivi.utils.ui import beautify_length
-from pitivi.utils.misc import PathWalker, quote_uri
-from pitivi.utils.signal import SignalGroup, Signallable
+from pitivi.utils.misc import PathWalker
+from pitivi.utils.signal import SignalGroup
 from pitivi.utils.loggable import Loggable
 import pitivi.utils.ui as dnd
-from pitivi.utils.ui import beautify_info, info_name, SPACING, PADDING
+from pitivi.utils.ui import beautify_info, info_name, SPACING
 
 from pitivi.utils.ui import TYPE_PITIVI_FILESOURCE
 
@@ -81,7 +81,7 @@ STORE_MODEL_STRUCTURE = (
 (COL_ICON,
  COL_ICON_LARGE,
  COL_INFOTEXT,
- COL_FACTORY,
+ COL_ASSET,
  COL_URI,
  COL_LENGTH,
  COL_SEARCH_TEXT,
@@ -107,146 +107,6 @@ SUPPORTED_FILE_FORMATS = {"video": ("3gpp", "3gpp2", "dv", "mp4", "mpeg", "ogg",
     "image": ("jp2", "jpeg", "png", "svg+xml")}
 # Stuff that we're not too confident about but might improve eventually:
 OTHER_KNOWN_FORMATS = ("video/mp2t")
-
-
-class MediaLibraryError(Exception):
-    pass
-
-
-class MediaLibrary(Signallable, Loggable):
-    """
-    Contains the sources for a project, stored as SourceFactory objects.
-
-    @ivar discoverer: The discoverer object used internally
-    @type discoverer: L{Discoverer}
-    @ivar nb_files_to_import: Total number of URIs on the last addUris call.
-    @type nb_files_to_import: int
-    @ivar nb_imported_files: Number of URIs loaded since the last addUris call.
-    @type nb_imported_files: int
-
-    Signals:
-     - C{source-added} : A source has been discovered and added to the MediaLibrary.
-     - C{source-removed} : A source was removed from the MediaLibrary.
-     - C{discovery-error} : The given uri is not a media file.
-     - C{nothing-to-import} : All the given uri were already imported
-     - C{ready} : No more files are being discovered/added.
-     - C{starting} : Some files are being discovered/added.
-    """
-
-    __signals__ = {
-        "source-added": ["info"],
-        "source-removed": ["uri"],
-        "discovery-error": ["uri", "reason"],
-        "nothing-to-import": [],
-        "ready": [],
-        "starting": [],
-    }
-
-    def __init__(self):
-        Loggable.__init__(self)
-        Signallable.__init__(self)
-        # A (URI -> SourceFactory) map.
-        self._sources = {}
-        # A list of SourceFactory objects.
-        self._ordered_sources = []
-        self._resetImportCounters()
-
-        self.discoverer = Discoverer.new(Gst.SECOND)
-        self.discoverer.connect("discovered", self.addDiscovererInfo)
-        self.discoverer.connect("finished", self.finishDiscovererCb)
-        self.discoverer.start()
-
-    def _resetImportCounters(self):
-        self.nb_files_to_import = 0
-        self.nb_imported_files = 0
-
-    def finishDiscovererCb(self, unused_discoverer):
-        self.debug("Got the discoverer's finished signal")
-        self._resetImportCounters()
-        self.emit("ready")
-
-    def addUris(self, uris):
-        """
-        Add c{uris} to the source list.
-
-        The uris will be analyzed before being added.
-        """
-        self.emit("starting")
-        self.debug("Adding %s", uris)
-        if type(uris) is str:
-            # A single URI string was provided... make it a list, otherwise
-            # we would loop over the characters of the string!
-            uris = [uris]
-        self.nb_files_to_import += len(uris)
-        for uri in uris:
-            # Ensure we have a correctly encoded URI according to RFC 2396.
-            # Otherwise, in some cases we'd get rogue characters that break
-            # searching for duplicates
-            uri = quote_uri(uri)
-            if uri not in self._sources:
-                self.discoverer.discover_uri_async(uri)
-                self.debug("Added a uri to discoverer async")
-            else:
-                self.nb_files_to_import -= 1
-                self.debug('"%s" is already in the media library' % uri)
-        if self.nb_files_to_import == 0:
-            # This is a cornercase hack for when you try to import a bunch of
-            # clips that are all present in the media library already.
-            # This will allow the progressbar to hide.
-            self.emit("nothing-to-import")
-        else:
-            self.debug("Done adding all URIs to discoverer async")
-
-    def removeUri(self, uri):
-        """
-        Remove the info for c{uri} from the source list.
-        """
-        # In theory we don't need quote_uri here, but since removeUri is public,
-        # we can never be too sure.
-        uri = quote_uri(uri)
-        try:
-            info = self._sources.pop(uri)
-        except KeyError:
-            raise MediaLibraryError("URI not in the medialibrary", uri)
-        try:
-            self._ordered_sources.remove(info)
-        except ValueError:
-            # this can only happen if discoverer hasn't finished scanning the
-            # source, so info must be None
-            assert info is None
-
-        self.debug("Removing %s", uri)
-        self.emit("source-removed", uri, info)
-
-    def getInfoFromUri(self, uri):
-        """
-        Get the source corresponding to C{uri}.
-        """
-        # Make sure the URI is properly quoted, as other modules calling this
-        # method do not necessarily provide URIs encoded in the same way.
-        uri = quote_uri(uri)
-        info = self._sources.get(uri)
-        if info is None:
-            raise MediaLibraryError("URI not in the medialibrary", uri)
-        return info
-
-    def addDiscovererInfo(self, discoverer, info, error):
-        """
-        Add the specified SourceFactory to the list of sources.
-        """
-        if error:
-            self.emit("discovery-error", info.get_uri(), error.message)
-        else:
-            uri = info.get_uri()
-            if self._sources.get(uri, None) is not None:
-                raise MediaLibraryError("We already have info for this URI", uri)
-            self._sources[uri] = info
-            self._ordered_sources.append(info)
-            self.nb_imported_files += 1
-            self.emit("source-added", info)
-
-    def getSources(self):
-        return self._ordered_sources
 
 
 def compare_simple(model, iter1, iter2, user_data):
@@ -463,12 +323,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._removeSources()
 
     def _insertEndCb(self, unused_action):
-        sources = []
-        for uri in self.getSelectedItems():
-            sources.append(GES.TimelineFileSource(uri=uri))
-
-        self.app.gui.timeline_ui.insertEnd(sources)
-        self._sources_to_insert = self.getSelectedItems()
+        self.app.gui.timeline_ui.insertEnd(self.getSelectedAssets())
 
     def _disableKeyboardShortcutsCb(self, *unused_args):
         """
@@ -544,18 +399,16 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         This first disconnects any handlers connected to an old project.
         If project is None, this just disconnects any connected handlers.
         """
-        self.project_signals.connect(project.medialibrary,
-            "source-added", None, self._sourceAddedCb)
-        self.project_signals.connect(project.medialibrary,
-            "source-removed", None, self._sourceRemovedCb)
-        self.project_signals.connect(project.medialibrary,
-            "discovery-error", None, self._discoveryErrorCb)
-        self.project_signals.connect(project.medialibrary,
-            "nothing-to-import", None, self._hideProgressBarCb)
-        self.project_signals.connect(project.medialibrary,
-            "ready", None, self._sourcesStoppedImportingCb)
-        self.project_signals.connect(project.medialibrary,
-            "starting", None, self._sourcesStartedImportingCb)
+        self.project_signals.connect(project, "asset-added", None,
+                self._assetAddedCb)
+        self.project_signals.connect(project, "asset-removed", None,
+                self._assetRemovedCb)
+        self.project_signals.connect(project, "error-loading-asset",
+                 None, self._errorCreatingAssetCb)
+        self.project_signals.connect(project, "done-importing", None,
+                self._sourcesStoppedImportingCb)
+        self.project_signals.connect(project, "start-importing", None,
+                self._sourcesStartedImportingCb)
 
     def _setClipView(self, view_type):
         """
@@ -632,12 +485,14 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._importDialog.add_filter(default)
         self._importDialog.show()
 
-    def _updateProgressbar(self):
+    def _updateProgressbar(self, current_clip_iter=None, total_clips=None):
         """
         Update the _progressbar with the ratio of clips imported vs the total
         """
-        current_clip_iter = self.app.current.medialibrary.nb_imported_files
-        total_clips = self.app.current.medialibrary.nb_files_to_import
+        if current_clip_iter is None and total_clips is None:
+            current_clip_iter = self.app.current.nb_imported_files
+            total_clips = self.app.current.nb_files_to_import
+
         progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
             {"current_clip": current_clip_iter,
             "total": total_clips})
@@ -647,7 +502,9 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         elif total_clips != 0:
             self._progressbar.set_fraction((current_clip_iter - 1) / float(total_clips))
 
-    def _addDiscovererInfo(self, info):
+    def _addAsset(self, asset):
+        info = asset.get_info()
+
         # The code below tries to read existing thumbnails from the freedesktop
         # thumbnails directory (~/.thumbnails). The filenames are simply
         # the file URI hashed with md5, so we can retrieve them easily.
@@ -690,7 +547,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.pending_rows.append((thumbnail,
                                   thumbnail_large,
                                   beautify_info(info),
-                                  info,
+                                  asset,
                                   info.get_uri(),
                                   duration,
                                   name,
@@ -705,15 +562,18 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     # medialibrary callbacks
 
-    def _sourceAddedCb(self, unused_medialibrary, factory):
+    def _assetAddedCb(self, unused_project, asset,
+            current_clip_iter=None, total_clips=None):
         """ a file was added to the medialibrary """
-        self._updateProgressbar()
-        self._addDiscovererInfo(factory)
+        if isinstance(asset, GES.AssetFileSource):
+            self._updateProgressbar()
+            self._addAsset(asset)
 
-    def _sourceRemovedCb(self, unused_medialibrary, uri, unused_info):
+    def _assetRemovedCb(self, unsued_project, asset):
         """ the given uri was removed from the medialibrary """
         # find the good line in the storemodel and remove it
         model = self.storemodel
+        uri = asset.get_id()
         for row in model:
             if uri == row[COL_URI]:
                 model.remove(row.iter)
@@ -722,17 +582,19 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self._welcome_infobar.show_all()
         self.debug("Removing %s", uri)
 
-    def _discoveryErrorCb(self, unused_medialibrary, uri, reason, extra=None):
+    def _errorCreatingAssetCb(self, unsued_project, error, id, type):
         """ The given uri isn't a media file """
-        error = (uri, reason, extra)
-        self._errors.append(error)
+        if GObject.type_is_a(type, GES.TimelineFileSource):
+            error = (id, str(error.domain), error)
+            self._errors.append(error)
+            self._updateProgressbar()
 
-    def _sourcesStartedImportingCb(self, unused_medialibrary):
+    def _sourcesStartedImportingCb(self, unsued_project):
         self.import_start_time = time.time()
         self._welcome_infobar.hide()
         self._progressbar.show()
 
-    def _sourcesStoppedImportingCb(self, unused_medialibrary):
+    def _sourcesStoppedImportingCb(self, unsued_project):
         self.debug("Importing took %.3f seconds" % (time.time() - self.import_start_time))
         self.flush_pending_rows()
         self._progressbar.hide()
@@ -745,14 +607,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 self._view_error_button.set_label(_("View error"))
 
             self._import_warning_infobar.show_all()
-
-    def _hideProgressBarCb(self, unused_medialibrary):
-        """
-        This is only called when all the uris we tried to import were already
-        present in the media library. We then need to hide the progressbar
-        because the media library is not going to emit the "ready" signal.
-        """
-        self._progressbar.hide()
 
     ## Error Dialog Box callbacks
 
@@ -774,7 +628,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.app.settings.closeImportDialog = \
                 dialogbox.props.extra_widget.get_active()
             filenames = dialogbox.get_uris()
-            self.app.current.medialibrary.addUris(filenames)
+            self.app.current.addUris(filenames)
             if self.app.settings.closeImportDialog:
                 dialogbox.destroy()
                 self._importDialog = None
@@ -803,17 +657,16 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         self.app.action_log.begin("remove clip from source list")
         for row in rows:
-            uri = model[row.get_path()][COL_URI]
-            self.app.current.medialibrary.removeUri(uri)
+            asset = model[row.get_path()][COL_ASSET]
+            self.app.current.remove_asset(asset)
         self.app.action_log.commit()
 
-    def _sourceIsUsed(self, uri):
+    def _sourceIsUsed(self, asset):
         """Check if a given URI is present in the timeline"""
         layers = self.app.current.timeline.get_layers()
         for layer in layers:
             for tlobj in layer.get_objects():
-                tlobj_uri = quote_uri(tlobj.get_uri())
-                if tlobj_uri == uri:
+                if tlobj.get_asset() == asset:
                     return True
         return False
 
@@ -821,14 +674,14 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         Select, in the media library, unused sources in the project.
         """
-        sources = self.app.current.medialibrary.getSources()
+        assets = self.app.current.list_assets(GES.TimelineFileSource)
         unused_sources_uris = []
 
         model = self.treeview.get_model()
         selection = self.treeview.get_selection()
-        for source in sources:
-            if not self._sourceIsUsed(source.get_uri()):
-                unused_sources_uris.append(source.get_uri())
+        for asset in assets:
+            if not self._sourceIsUsed(asset):
+                unused_sources_uris.append(asset.get_uri())
 
         # Hack around the fact that making selections (in a treeview/iconview)
         # deselects what was previously selected
@@ -857,10 +710,10 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         paths = self.getSelectedPaths()[0]  # Only use the first item
         model = self.treeview.get_model()
-        factory = model[paths][COL_FACTORY]
+        info = model[paths][COL_ASSET].get_info()
         d = clipmediapropsDialog(self.app.current,
-                                factory.get_audio_streams(),
-                                factory.get_video_streams())
+                                info.get_audio_streams(),
+                                info.get_video_streams())
         d.run()
 
     def _warningInfoBarDismissedCb(self, unused_button):
@@ -1058,6 +911,9 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.storemodel.clear()
             self._connectToProject(project)
 
+        # Make sure that the sources added to the project are added added
+        self.flush_pending_rows()
+
     def _newProjectFailedCb(self, unused_pitivi, unused_reason, unused_uri):
         self.storemodel.clear()
         self.project_signals.disconnectAll()
@@ -1089,12 +945,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         if len(directories):
             # Recursively import from folders that were dragged into the library
             self.app.threads.addThread(PathWalker, directories,
-                                    self.app.current.medialibrary.addUris)
+                                    self.app.current.addUris)
         if len(remote_files):
             #TODO waiting for remote files downloader support to be implemented
             pass
         if len(filenames):
-            self.app.current.medialibrary.addUris(filenames)
+            self.app.current.addUris(filenames)
 
     #used with TreeView and IconView
     def _dndDragBeginCb(self, view, context):
@@ -1133,4 +989,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             return [self.modelFilter[path][COL_URI]
                     for path in self._draggedPaths]
         return [self.modelFilter[path][COL_URI]
+            for path in self.getSelectedPaths()]
+
+    def getSelectedAssets(self):
+        """ Returns a list of selected items URIs """
+        if self._draggedPaths:
+            return [self.modelFilter[path][COL_ASSET]
+                    for path in self._draggedPaths]
+        return [self.modelFilter[path][COL_ASSET]
             for path in self.getSelectedPaths()]

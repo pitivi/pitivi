@@ -29,7 +29,6 @@ from gi.repository import GES
 GdkX11  # pyflakes
 from gi.repository import GstVideo
 GstVideo    # pyflakes
-from gi.repository import GdkPixbuf
 import cairo
 
 from gettext import gettext as _

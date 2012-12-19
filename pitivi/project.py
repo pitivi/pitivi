@@ -24,6 +24,7 @@ Project related classes
 """
 
 import os
+from gi.repository import GstPbutils
 from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -35,8 +36,6 @@ from datetime import datetime
 from gettext import gettext as _
 from pwd import getpwuid
 
-from pitivi.medialibrary import MediaLibrary
-from pitivi.settings import MultimediaSettings
 from pitivi.undo.undo import UndoableAction
 from pitivi.configure import get_ui_dir
 
@@ -53,15 +52,14 @@ from pitivi.utils.ui import frame_rates, audio_rates, audio_depths,\
     pixel_aspect_ratios, display_aspect_ratios, SPACING
 from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
     VideoPresetManager
+from pitivi.render import CachedEncoderList
 
+
+DEFAULT_MUXER = "oggmux"
+DEFAULT_VIDEO_ENCODER = "theoraenc"
+DEFAULT_AUDIO_ENCODER = "vorbisenc"
 
 #------------------ Backend classes ------------------------------------------#
-class Timeline(GES.Timeline):
-    def __init__(self):
-        GES.Timeline.__init__(self)
-        self.add_track(GES.Track.video_raw_new())
-        self.add_track(GES.Track.audio_raw_new())
-        self.selection = Selection()
 
 
 class ProjectSettingsChanged(UndoableAction):
@@ -86,21 +84,25 @@ class ProjectLogObserver(UndoableAction):
         self.log = log
 
     def startObserving(self, project):
-        project.connect("settings-changed", self._settingsChangedCb)
+        project.connect("notify-meta", self._settingsChangedCb)
 
     def stopObserving(self, project):
         try:
-            project.disconnect_by_function(self._settingsChangedCb)
+            project.disconnect_by_func(self._settingsChangedCb)
         except Exception:
             # This can happen when we interrupt the loading of a project,
             # such as in mainwindow's _projectManagerMissingUriCb
             pass
 
-    def _settingsChangedCb(self, project, old, new):
+    def _settingsChangedCb(self, project, item, value):
+        """
+        FIXME Renable undo/redo
         action = ProjectSettingsChanged(project, old, new)
         self.log.begin("change project settings")
         self.log.push(action)
         self.log.commit()
+        """
+        pass
 
 
 class ProjectManager(Signallable, Loggable):
@@ -108,7 +110,7 @@ class ProjectManager(Signallable, Loggable):
         "new-project-loading": ["uri"],
         "new-project-created": ["project"],
         "new-project-failed": ["uri", "exception"],
-        "new-project-loaded": ["project"],
+        "new-project-loaded": ["project", "fully_ready"],
         "save-project-failed": ["uri", "exception"],
         "project-saved": ["project", "uri"],
         "closing-project": ["project"],
@@ -125,7 +127,6 @@ class ProjectManager(Signallable, Loggable):
         self.backup_lock = 0
         self.avalaible_effects = avalaible_effects
         self.formatter = None
-        self._medialib_awaiting_discovery = []
 
     def loadProject(self, uri):
         """
@@ -162,19 +163,19 @@ class ProjectManager(Signallable, Loggable):
             # The "old" backup file will eventually be deleted or overwritten.
             self.current = Project(uri=uri)
 
-        self.emit("new-project-created", self.current)
-
-        timeline = self.current.timeline
-        self.formatter = GES.PitiviFormatter()
-        self.formatter.connect("source-moved", self._formatterMissingURICb)
-        self.formatter.connect("loaded", self._projectLoadedCb)
-        if self.formatter.load_from_uri(timeline, uri):
+        self.current.connect("missing-uri", self._missingURICb)
+        self.current.connect("loaded", self._projectLoadedCb)
+        if self.current.createTimeline():
+            self.emit("new-project-created", self.current)
             self.current.connect("project-changed", self._projectChangedCb)
-            return True
-        self.emit("new-project-failed", uri,
-            _('This might be due to a bug or an unsupported project file format. '
-                'If you were trying to add a media file to your project, '
-                'use the "Import" button instead.'))
+            return
+        else:
+            self.emit("new-project-failed", uri,
+                      _('This might be due to a bug or an unsupported project file format. '
+                      'If you were trying to add a media file to your project, '
+                      'use the "Import" button instead.'))
+            return
+
         # Reset projectManager and disconnect all the signals:
         self.newBlankProject()
         return False
@@ -186,8 +187,8 @@ class ProjectManager(Signallable, Loggable):
         @param time_diff: the difference, in seconds, between file mtimes
         """
         dialog = Gtk.Dialog("", None, 0,
-                    (_("Ignore backup"), Gtk.ResponseType.REJECT,
-                    _("Restore from backup"), Gtk.ResponseType.YES))
+                            (_("Ignore backup"), Gtk.ResponseType.REJECT,
+                            _("Restore from backup"), Gtk.ResponseType.YES))
         dialog.set_icon_name("pitivi")
         dialog.set_resizable(False)
         dialog.set_default_response(Gtk.ResponseType.YES)
@@ -209,7 +210,7 @@ class ProjectManager(Signallable, Loggable):
 
         # make the [[image] text] hbox
         image = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_QUESTION,
-               Gtk.IconSize.DIALOG)
+                                         Gtk.IconSize.DIALOG)
         hbox = Gtk.HBox(False, SPACING * 2)
         hbox.pack_start(image, False, True, 0)
         hbox.pack_start(vbox, True, True, 0)
@@ -228,11 +229,10 @@ class ProjectManager(Signallable, Loggable):
         else:
             return False
 
-    def saveProject(self, project, uri=None, overwrite=False, formatter=None, backup=False):
+    def saveProject(self, project, uri=None, overwrite=False, formatter_type=None,
+                    backup=False):
         """
         Save the L{Project} to the given location.
-
-        If specified, use the given formatter.
 
         @type project: L{Project}
         @param project: The L{Project} to save.
@@ -240,16 +240,14 @@ class ProjectManager(Signallable, Loggable):
         @param uri: The absolute URI of the location to store the project to.
         @param overwrite: Whether to overwrite existing location.
         @type overwrite: C{bool}
-        @type formatter: L{Formatter}
-        @param formatter: The L{Formatter} to use to store the project if specified.
-        If it is not specified, then it will be saved at its original format.
+        @type formatter_type: L{GType}
+        @param formatter: The type of the formatter to use to store the project if specified.
+        default is GES.XmlFormatter
         @param backup: Whether the requested save operation is for a backup
         @type backup: C{bool}
 
-        @see: L{Formatter.saveProject}
+        @see: L{GES.Project.save}
         """
-        if formatter is None:
-            formatter = GES.PitiviFormatter()
         if backup:
             if project.uri and self.current.uri is not None:
                 # Ignore whatever URI that is passed on to us. It's a trap.
@@ -270,7 +268,7 @@ class ProjectManager(Signallable, Loggable):
             if not isWritable(path_from_uri(uri)):
                 # TODO: this will not be needed when GTK+ bug #601451 is fixed
                 self.emit("save-project-failed", uri,
-                        _("You do not have permissions to write to this folder."))
+                          _("You do not have permissions to write to this folder."))
                 return
 
             # Update the project instance's uri for the "Save as" scenario.
@@ -278,22 +276,29 @@ class ProjectManager(Signallable, Loggable):
             if not backup:
                 project.uri = uri
 
-        if uri is None or not formatter.can_save_uri(uri):
+        if uri is None:
             self.emit("save-project-failed", uri,
-                    _("Cannot save with this file format."))
+                      _("Cannot save with this file format."))
             return
 
-        if overwrite or not os.path.exists(path_from_uri(uri)):
-            formatter.set_sources(project.medialibrary.getSources())
-            saved = formatter.save_to_uri(project.timeline, uri)
-            if saved:
-                if not backup:
-                    # Do not emit the signal when autosaving a backup file
-                    self.emit("project-saved", project, uri)
-                    self.debug('Saved project "%s"' % uri)
-                else:
-                    self.debug('Saved backup "%s"' % uri)
-            return saved
+        try:
+            saved = project.save(project.timeline, uri, formatter_type, overwrite)
+        except Exception, e:
+            self.emit("save-project-failed", uri,
+                      _("Cannot save with this file format. %s"), e)
+
+        if saved:
+            if not backup:
+                # Do not emit the signal when autosaving a backup file
+                project.setModificationState(False)
+                self.emit("project-saved", project, uri)
+                self.debug('Saved project "%s"' % uri)
+            else:
+                self.debug('Saved backup "%s"' % uri)
+        else:
+            self.emit("save-project-failed", uri,
+                      _("Cannot save with this file format"))
+        return saved
 
     def exportProject(self, project, uri):
         """
@@ -301,8 +306,9 @@ class ProjectManager(Signallable, Loggable):
         and all sources
         """
         # write project file to temporary file
-        project_name = project.name if project.name else "project"
-        tmp_name = "%s.xptv" % project_name
+        project_name = project.name if project.name else _("project")
+        asset = GES.Formatter.get_default()
+        tmp_name = "%s.%s" % (project_name, asset.get_meta(GES.META_FORMATTER_EXTENSION))
 
         try:
             directory = os.path.dirname(uri)
@@ -317,7 +323,7 @@ class ProjectManager(Signallable, Loggable):
                 tar.add(path_from_uri(tmp_uri), os.path.join(top, tmp_name))
 
                 # get common path
-                sources = project.medialibrary.getSources()
+                sources = project.listSources()
                 if self._allSourcesInHomedir(sources):
                     common = os.path.expanduser("~")
                 else:
@@ -325,7 +331,7 @@ class ProjectManager(Signallable, Loggable):
 
                 # add all sources
                 for source in sources:
-                    path = path_from_uri(source.get_uri())
+                    path = path_from_uri(source.get_id())
                     tar.add(path, os.path.join(top, os.path.relpath(path, common)))
                 tar.close()
 
@@ -386,19 +392,12 @@ class ProjectManager(Signallable, Loggable):
         # setting default values for project metadata
         project.author = getpwuid(os.getuid()).pw_gecos.split(",")[0]
 
+        project.createTimeline()
         self.emit("new-project-created", project)
         self.current = project
 
-        # Add default tracks to the timeline of the new project.
-        # The tracks of the timeline determine what tracks
-        # the rendered content will have. Pitivi currently supports
-        # projects with exactly one video track and one audio track.
         project.connect("project-changed", self._projectChangedCb)
-        if emission:
-            self.current.disconnect = False
-        else:
-            self.current.disconnect = True
-        self.emit("new-project-loaded", self.current)
+        self.emit("new-project-loaded", self.current, emission)
         self.time_loaded = time()
 
         return True
@@ -461,41 +460,22 @@ class ProjectManager(Signallable, Loggable):
         name, ext = os.path.splitext(uri)
         return name + ext + "~"
 
-    def _formatterMissingURICb(self, formatter, tfs):
-        return self.emit("missing-uri", formatter, tfs)
+    def _missingURICb(self, project, error, asset, what=None):
+        return self.emit("missing-uri", project, error, asset)
 
-    def _sourceAddedCb(self, unused_medialib, info):
-        try:
-            self._medialib_awaiting_discovery.remove(info.get_uri())
-        except ValueError:
-            self.error("%s not awaited, user is really fast", info.get_uri)
-
-        if not self._medialib_awaiting_discovery:
-            self.current.medialibrary.disconnect_by_function(self._sourceAddedCb)
-            self.emit("new-project-loaded", self.current)
-            self.time_loaded = time()
-
-    def _projectLoadedCb(self, formatter, timeline):
-        self.debug("Project loaded, starting media discovery")
-        for uri in self.formatter.get_sources():
-            self._medialib_awaiting_discovery.append(quote_uri(uri))
-        self.current.medialibrary.addUris(self._medialib_awaiting_discovery)
-        if self._medialib_awaiting_discovery:
-            self.current.medialibrary.connect("source-added", self._sourceAddedCb)
-        else:
-            self.emit("new-project-loaded", self.current)
-            self.time_loaded = time()
+    def _projectLoadedCb(self, project, timeline):
+        self.debug("Project loaded")
+        self.emit("new-project-loaded", self.current, True)
+        self.time_loaded = time()
 
 
-class Project(Signallable, Loggable):
+class Project(Loggable, GES.Project):
     """The base class for PiTiVi projects
 
     @ivar name: The name of the project
     @type name: C{str}
     @ivar description: A description of the project
     @type description: C{str}
-    @ivar medialibrary: The sources used by this project
-    @type medialibrary: L{MediaLibrary}
     @ivar timeline: The timeline
     @type timeline: L{GES.Timeline}
     @ivar pipeline: The timeline's pipeline
@@ -506,13 +486,18 @@ class Project(Signallable, Loggable):
     @type loaded: C{bool}
 
     Signals:
-     - C{settings-changed}: The project settings changed
      - C{project-changed}: Modifications were made to the project
+     - C{start-importing}: Started to import files in bash
+     - C{done-importing}: Done importing files in bash
     """
 
-    __signals__ = {
-        "settings-changed": ['old', 'new'],
-        "project-changed": [],
+    __gsignals__ = {
+        "start-importing": (GObject.SignalFlags.RUN_LAST, None, ()),
+        "done-importing": (GObject.SignalFlags.RUN_LAST, None, ()),
+        "project-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
+        "rendering-settings-changed": (GObject.SignalFlags.RUN_LAST, None,
+                                       (GObject.TYPE_PYOBJECT,
+                                        GObject.TYPE_PYOBJECT,))
     }
 
     def __init__(self, name="", uri=None, **kwargs):
@@ -521,66 +506,363 @@ class Project(Signallable, Loggable):
         @param uri: the uri of the project
         """
         Loggable.__init__(self)
+        GES.Project.__init__(self, uri=uri, extractable_type=GES.Timeline)
         self.log("name:%s, uri:%s", name, uri)
-        self.name = name
-        self.author = ""
-        self.year = ""
-        self.settings = None
-        self.description = ""
-        self.uri = uri
-        self.urichanged = False
-        self.format = None
-        self.medialibrary = MediaLibrary()
-
-        self._dirty = False
-        self.timeline = Timeline()
-
-        self.pipeline = Pipeline()
-        self.pipeline.add_timeline(self.timeline)
-        self.seeker = Seeker()
-
-        self.settings = MultimediaSettings()
-
-    def getUri(self):
-        return self._uri
-
-    def setUri(self, uri):
-        # FIXME support not local project
-        if uri and not Gst.uri_has_protocol(uri, "file"):
-            # Note that this does *not* give the same result as quote_uri()
-            self._uri = Gst.uri_construct("file", uri)
-        else:
-            self._uri = uri
-
-    uri = property(getUri, setUri)
-
-    def release(self):
-        self.pipeline.release()
         self.pipeline = None
         self.timeline = None
+        self.seeker = Seeker()
 
-    # Project settings methods
+        # FIXME Remove our URI and work more closely with GES.Project URI handling
+        self.uri = uri
 
-    def getSettings(self):
-        """
-        return the currently configured settings.
-        """
-        self.debug("self.settings %s", self.settings)
-        return self.settings
+        # Follow imports
+        self._dirty = False
+        self._to_import_uris = []
+        self.nb_files_to_import = 0
+        self.nb_imported_files = 0
 
-    def setSettings(self, settings):
-        """
-        Sets the given settings as the project's settings.
-        @param settings: The new settings for the project.
-        @type settings: MultimediaSettings
-        """
-        assert settings
-        self.log("Setting %s as the project's settings", settings)
-        oldsettings = self.settings
-        self.settings = settings
-        self.emit('settings-changed', oldsettings, settings)
+        # Project property default values
+        self.register_meta(GES.MetaFlag.READWRITE, "name", name)
+        self.register_meta(GES.MetaFlag.READWRITE, "author",
+                           getpwuid(os.getuid()).pw_gecos.split(",")[0])
 
-    # Save and Load features
+        # Handle rendering setting
+        self.set_meta("render-scale", 100.0)
+
+        container_profile = \
+            GstPbutils.EncodingContainerProfile.new("pitivi-profile",
+                                                    _("Pitivi encoding profile"),
+                                                    Gst.Caps("application/ogg"),
+                                                    None)
+
+        # Create video profile (We use the same default seetings as the project settings)
+        video_profile = GstPbutils.EncodingVideoProfile.new(Gst.Caps("video/x-theora"),
+                                                            None,
+                                                            Gst.Caps("video/x-raw"),
+                                                            0)
+
+        # Create audio profile (We use the same default seetings as the project settings)
+        audio_profile = GstPbutils.EncodingAudioProfile.new(Gst.Caps("audio/x-vorbis"),
+                                                            None,
+                                                            Gst.Caps("audio/x-raw"),
+                                                            0)
+        container_profile.add_profile(video_profile)
+        container_profile.add_profile(audio_profile)
+        # Keep a reference to those profiles
+        # FIXME We should handle the case we have more than 1 audio and 1 video profiles
+        self.container_profile = container_profile
+        self.audio_profile = audio_profile
+        self.video_profile = video_profile
+
+        # Add the profile to ourself
+        self.add_encoding_profile(container_profile)
+
+        # Now set the presets/ GstElement that will be used
+        # FIXME We might want to add the default Container/video decoder/audio encoder
+        # into the application settings, for now we just make sure to pick one with
+        # eighest probably the user has installed ie ogg+vorbis+theora
+
+        self.muxer = DEFAULT_MUXER
+        self.vencoder = DEFAULT_VIDEO_ENCODER
+        self.aencoder = DEFAULT_AUDIO_ENCODER
+        self._ensureAudioRestrictions()
+        self._ensureVideoRestrictions()
+
+        # FIXME That does not really belong to here and should be savable into
+        # The serilized file. For now, just let it be here.
+        # A (muxer -> containersettings) map.
+        self._containersettings_cache = {}
+        # A (vencoder -> vcodecsettings) map.
+        self._vcodecsettings_cache = {}
+        # A (aencoder -> acodecsettings) map.
+        self._acodecsettings_cache = {}
+
+    #-----------------#
+    # Our properties  #
+    #-----------------#
+
+    # Project specific properties
+    @property
+    def name(self):
+        return self.get_meta("name")
+
+    @name.setter
+    def name(self, name):
+        self.set_meta("name", name)
+        self.setModificationState(True)
+
+    @property
+    def year(self):
+        return self.get_meta("year")
+
+    @year.setter
+    def year(self, year):
+        self.set_meta("year", year)
+        self.setModificationState(True)
+
+    @property
+    def description(self):
+        return self.get_meta("description")
+
+    @description.setter
+    def description(self, description):
+        self.set_meta("description", description)
+        self.setModificationState(True)
+
+    @property
+    def author(self):
+        return self.get_meta("author")
+
+    @author.setter
+    def author(self, author):
+        self.set_meta("author", author)
+        self.setModificationState(True)
+
+    # Encoding related properties
+    @property
+    def videowidth(self):
+        return self.video_profile.get_restriction()[0]["videowidth"]
+
+    @videowidth.setter
+    def videowidth(self, value):
+        if self.video_profile.get_restriction()[0]["videowidth"] != value and value:
+            self.video_profile.get_restriction()[0]["videowidth"] = value
+            self._emitChange("rendering-settings-changed", "videowidth", value)
+
+    @property
+    def videoheight(self):
+        return self.video_profile.get_restriction()[0]["videoheight"]
+
+    @videoheight.setter
+    def videoheight(self, value):
+        if self.video_profile.get_restriction()[0]["videoheight"] != value and value:
+            self.video_profile.get_restriction()[0]["videoheight"] = value
+            self._emitChange("rendering-settings-changed", "videoheight", value)
+
+    @property
+    def videorate(self):
+        return self.video_profile.get_restriction()[0]["videorate"]
+
+    @videorate.setter
+    def videorate(self, value):
+        if self.video_profile.get_restriction()[0]["videorate"] != value and value:
+            self.video_profile.get_restriction()[0]["videorate"] = value
+
+    @property
+    def videopar(self):
+        return self.video_profile.get_restriction()[0]["videopar"]
+
+    @videopar.setter
+    def videopar(self, value):
+        if self.video_profile.get_restriction()[0]["videopar"] != value and value:
+            self.video_profile.get_restriction()[0]["videopar"] = value
+
+    @property
+    def audiochannels(self):
+        return self.audio_profile.get_restriction()[0]["audiochannels"]
+
+    @audiochannels.setter
+    def audiochannels(self, value):
+        if self.video_profile.get_restriction()[0]["audiochannels"] != value and value:
+            self.audio_profile.get_restriction()[0]["audiochannels"] = value
+            self._emitChange("rendering-settings-changed", "audiochannels", value)
+
+    @property
+    def audiorate(self):
+        return self.audio_profile.get_restriction()[0]["audiorate"]
+
+    @audiorate.setter
+    def audiorate(self, value):
+        if self.video_profile.get_restriction()[0]["audiorate"] != value and value:
+            self.audio_profile.get_restriction()[0]["audiorate"] = value
+            self._emitChange("rendering-settings-changed", "audiorate", value)
+
+    @property
+    def audiodepth(self):
+        return self.audio_profile.get_restriction()[0]["audiodepth"]
+
+    @audiodepth.setter
+    def audiodepth(self, value):
+        if self.video_profile.get_restriction()[0]["audiodepth"] != value and value:
+            self.audio_profile.get_restriction()[0]["audiodepth"] = value
+            self._emitChange("rendering-settings-changed", "audiodepth", value)
+
+    @property
+    def aencoder(self):
+        return self.audio_profile.get_preset_name()
+
+    @aencoder.setter
+    def aencoder(self, value):
+        if self.audio_profile.get_preset_name() != value and value:
+            feature = Gst.Registry.get().lookup_feature(value)
+            if feature is None:
+                self.error("%s not in registry", value)
+            else:
+                for template in feature.get_static_pad_templates():
+                    if template.name_template == "src":
+                        audiotype = template.get_caps()[0].get_name()
+                        break
+                self.audio_profile.set_format(Gst.Caps(audiotype))
+            self.audio_profile.set_preset_name(value)
+
+            self._emitChange("rendering-settings-changed", "aencoder", value)
+
+    @property
+    def vencoder(self):
+        return self.video_profile.get_preset_name()
+
+    @vencoder.setter
+    def vencoder(self, value):
+        if self.video_profile.get_preset_name() != value and value:
+            feature = Gst.Registry.get().lookup_feature(value)
+            if feature is None:
+                self.error("%s not in registry", value)
+            else:
+                for template in feature.get_static_pad_templates():
+                    if template.name_template == "src":
+                        videotype = template.get_caps()[0].get_name()
+                        break
+                self.video_profile.set_format(Gst.Caps(videotype))
+
+            self.video_profile.set_preset_name(value)
+
+            self._emitChange("rendering-settings-changed", "vencoder", value)
+
+    @property
+    def muxer(self):
+        return self.container_profile.get_preset_name()
+
+    @muxer.setter
+    def muxer(self, value):
+        if self.container_profile.get_preset_name() != value and value:
+            feature = Gst.Registry.get().lookup_feature(value)
+            if feature is None:
+                self.error("%s not in registry", value)
+            else:
+                for template in feature.get_static_pad_templates():
+                    if template.name_template == "src":
+                        muxertype = template.get_caps()[0].get_name()
+                        break
+                self.container_profile.set_format(Gst.Caps(muxertype))
+            self.container_profile.set_preset_name(value)
+
+            self._emitChange("rendering-settings-changed", "muxer", value)
+
+    @property
+    def render_scale(self):
+        return self.get_meta("render-scale")
+
+    @render_scale.setter
+    def render_scale(self, value):
+        if value:
+            return self.set_meta("render-scale", value)
+
+    #--------------------------------------------#
+    # GES.Project virtual methods implementation #
+    #--------------------------------------------#
+    def _handle_asset_loaded(self, id):
+        try:
+            self._to_import_uris.remove(id)
+            self.nb_imported_files += 1
+            if not self._to_import_uris:
+                self.nb_imported_files = 0
+                self.nb_files_to_import = 0
+                self._emitChange("done-importing")
+        except ValueError:
+            # We care only about the assets we are tracking
+            pass
+
+    def do_asset_added(self, asset):
+        """
+        When GES.Project emit "asset-added" this vmethod
+        get calls
+        """
+        self._handle_asset_loaded(asset.get_id())
+
+    def do_loading_error(self, error, id, type):
+        """ vmethod, get called on "asset-loading-error"""
+        self._handle_asset_loaded(id)
+
+    def do_loaded(self, timeline):
+        """ vmethod, get called on "loaded" """
+        self._ensureTracks()
+        #self._ensureLayer()
+
+        encoders = CachedEncoderList()
+        # The project just loaded, we need to check the new
+        # encoding profiles and make use of it now.
+        container_profile = self.list_encoding_profiles()[0]
+        if container_profile is not self.container_profile:
+            # The encoding profile might have been reset from the
+            # Project file, we just take it as our
+            self.container_profile = container_profile
+            self.muxer = self._getElementFactoryName(encoders.muxers, container_profile)
+            if self.muxer is None:
+                self.muxer = DEFAULT_MUXER
+            for profile in container_profile.get_profiles():
+                if isinstance(profile, GstPbutils.EncodingVideoProfile):
+                    self.video_profile = profile
+                    if self.video_profile.get_restriction() is None:
+                        self.video_profile.set_restriction(Gst.Caps("video/x-raw"))
+                    self._ensureVideoRestrictions()
+
+                    self.vencoder = self._getElementFactoryName(encoders.vencoders, profile)
+                elif isinstance(profile, GstPbutils.EncodingAudioProfile):
+                    self.audio_profile = profile
+                    if self.audio_profile.get_restriction() is None:
+                        self.audio_profile.set_restriction(Gst.Caps("audio/x-raw"))
+                    self._ensureAudioRestrictions()
+                    self.aencoder = self._getElementFactoryName(encoders.aencoders, profile)
+                else:
+                    self.warning("We do not handle profile: %s" % profile)
+
+    #--------------------------------------------#
+    #               Our API                      #
+    #--------------------------------------------#
+    def createTimeline(self):
+        """
+        The pitivi.Project handle 1 timeline at a time
+        unlike GES.Project
+        """
+        self.timeline = self.extract()
+        if self.timeline is None:
+            return False
+
+        self.timeline.selection = Selection()
+        self.pipeline = Pipeline()
+        self.pipeline.add_timeline(self.timeline)
+
+        return True
+
+    def addUris(self, uris):
+        """
+        Add c{uris} to the source list.
+
+        The uris will be analyzed before being added.
+        """
+        # Do not try to reload URIS that we already have loaded
+        uris = [uri for uri in uris if self.get_asset(uri, GES.TimelineFileSource) is None]
+        if not uris:
+            return
+
+        self.nb_files_to_import += len(uris)
+        if self._to_import_uris:
+            self._to_import_uris = set(uris.extend(list(self._to_import_uris)))
+        else:
+            self._emitChange("start-importing")
+            self._to_import_uris = uris
+
+        for uri in self._to_import_uris:
+            self.create_asset(uri, GES.TimelineFileSource)
+
+    def listSources(self):
+        return self.list_assets(GES.TimelineFileSource)
+
+    def release(self):
+        if self.pipeline:
+            self.pipeline.release()
+        self.pipeline = None
+        self.timeline = None
 
     def setModificationState(self, state):
         self._dirty = state
@@ -590,13 +872,153 @@ class Project(Signallable, Loggable):
     def hasUnsavedModifications(self):
         return self._dirty
 
+    def getDAR(self):
+        return Gst.Fraction(self.videowidth, self.videoheight) * self.videopar
+
+    def getVideoWidthAndHeight(self, render=False):
+        """ Returns the video width and height as a tuple
+
+        @param render: Whether to apply self.render_scale to the returned values
+        @type render: bool
+        """
+        if render:
+            scale = self.render_scale
+        else:
+            scale = 100
+        return self.videowidth * scale / 100, self.videoheight * scale / 100
+
+    def getVideoCaps(self, render=False):
+        """ Returns the GstCaps corresponding to the video settings """
+        videowidth, videoheight = self.getVideoWidthAndHeight(render=render)
+        vstr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (
+            videowidth, videoheight,
+            self.videopar.num, self.videopar.denom,
+            self.videorate.num, self.videorate.denom)
+        caps_str = "video/x-raw,%s" % (vstr)
+        video_caps = Gst.caps_from_string(caps_str)
+        return video_caps
+
+    def getAudioCaps(self):
+        """ Returns the GstCaps corresponding to the audio settings """
+        # TODO: Figure out why including 'depth' causes pipeline failures:
+        astr = "rate=%d,channels=%d" % (self.audiorate, self.audiochannels)
+        caps_str = "audio/x-raw,%s" % (astr)
+        audio_caps = Gst.caps_from_string(caps_str)
+        return audio_caps
+
+    def setAudioProperties(self, nbchanns=-1, rate=-1, depth=-1):
+        """
+        Set the number of audio channels, rate and depth
+        """
+        self.info("%d x %dHz %dbits", nbchanns, rate, depth)
+        if not nbchanns == -1 and not nbchanns == self.audiochannels:
+            self.audiochannels = nbchanns
+        if not rate == -1 and not rate == self.audiorate:
+            self.audiorate = rate
+        if not depth == -1 and not depth == self.audiodepth:
+            self.audiodepth = depth
+
+    def setEncoders(self, muxer="", vencoder="", aencoder=""):
+        """ Set the video/audio encoder and muxer """
+        if not muxer == "" and not muxer == self.muxer:
+            self.muxer = muxer
+        if not vencoder == "" and not vencoder == self.vencoder:
+            self.vencoder = vencoder
+        if not aencoder == "" and not aencoder == self.aencoder:
+            self.aencoder = aencoder
+
+    @property
+    def containersettings(self):
+        return self._containersettings_cache.setdefault(self.muxer, {})
+
+    @containersettings.setter
+    def containersettings(self, value):
+        self._containersettings_cache[self.muxer] = value
+
+    @property
+    def vcodecsettings(self):
+        return self._vcodecsettings_cache.setdefault(self.vencoder, {})
+
+    @vcodecsettings.setter
+    def vcodecsettings(self, value):
+        self._vcodecsettings_cache[self.vencoder] = value
+
+    @property
+    def acodecsettings(self):
+        return self._acodecsettings_cache.setdefault(self.aencoder, {})
+
+    @acodecsettings.setter
+    def acodecsettings(self, value):
+        self._acodecsettings_cache[self.aencoder] = value
+
+    #--------------------------------------------#
+    #               Private methods              #
+    #--------------------------------------------#
+
+    def _ensureTracks(self):
+        if self.timeline is None:
+            self.warning("Can't ensure tracks if no timeline set")
+            return
+
+        track_types = [track.get_property("track-type")
+                       for track in self.timeline.get_tracks()]
+
+        if GES.TrackType.VIDEO not in track_types:
+            self.timeline.add_track(GES.Track.video_raw_new())
+        if GES.TrackType.AUDIO not in track_types:
+            self.timeline.add_track(GES.Track.audio_raw_new())
+
+    def _ensureLayer(self):
+        if self.timeline is None:
+            self.warning("Can't ensure tracks if no timeline set")
+            return
+        if not self.timeline.get_layers():
+            self.timeline.append_layer()
+
+    def _ensureVideoRestrictions(self):
+        if not self.videowidth:
+            self.videowidth = 720
+        if not self.videoheight:
+            self.videoheight = 576
+        if not self.videorate:
+            self.videorate = Gst.Fraction(25, 1)
+        if not self.videopar:
+            self.videopar = Gst.Fraction(16, 15)
+
+    def _ensureAudioRestrictions(self):
+        if not self.audiochannels:
+            self.audiochannels = 2
+        if not self.audiorate:
+            self.audiorate = 44100
+        if not self.audiodepth:
+            self.audiodepth = 16
+
+    def _emitChange(self, signal, key=None, value=None):
+        if key and value:
+            self.emit(signal, key, value)
+        else:
+            self.emit(signal)
+        self.setModificationState(True)
+
+    def _getElementFactoryName(self, elements, profile):
+        if profile.get_preset_name():
+            return profile.get_preset_name()
+
+        factories = Gst.ElementFactory.list_filter(elements,
+                                                   Gst.Caps(profile.get_format()),
+                                                   Gst.PadDirection.SRC,
+                                                   False)
+        if factories:
+            factories.sort(key=lambda x: - x.get_rank())
+            return factories[0].get_name()
+        return None
+
 
 #----------------------- UI classes ------------------------------------------#
 class ProjectSettingsDialog():
 
     def __init__(self, parent, project):
         self.project = project
-        self.settings = project.getSettings()
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(), "projectsettings.ui"))
@@ -606,19 +1028,25 @@ class ProjectSettingsDialog():
         # add custom display aspect ratio widget
         self.dar_fraction_widget = FractionWidget()
         self.video_properties_table.attach(self.dar_fraction_widget,
-            0, 1, 6, 7, xoptions=Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL, yoptions=0)
+                                           0, 1, 6, 7,
+                                           xoptions=Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL,
+                                           yoptions=0)
         self.dar_fraction_widget.show()
 
         # add custom pixel aspect ratio widget
         self.par_fraction_widget = FractionWidget()
         self.video_properties_table.attach(self.par_fraction_widget,
-            1, 2, 6, 7, xoptions=Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL, yoptions=0)
+                                           1, 2, 6, 7,
+                                           xoptions=Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL,
+                                           yoptions=0)
         self.par_fraction_widget.show()
 
         # add custom framerate widget
         self.frame_rate_fraction_widget = FractionWidget()
         self.video_properties_table.attach(self.frame_rate_fraction_widget,
-            1, 2, 2, 3, xoptions=Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL, yoptions=0)
+                                           1, 2, 2, 3,
+                                           xoptions=Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL,
+                                           yoptions=0)
         self.frame_rate_fraction_widget.show()
 
         # populate coboboxes with appropriate data
@@ -633,13 +1061,13 @@ class ProjectSettingsDialog():
         # behavior
         self.wg = RippleUpdateGroup()
         self.wg.addVertex(self.frame_rate_combo,
-                signal="changed",
-                update_func=self._updateCombo,
-                update_func_args=(self.frame_rate_fraction_widget,))
+                          signal="changed",
+                          update_func=self._updateCombo,
+                          update_func_args=(self.frame_rate_fraction_widget,))
         self.wg.addVertex(self.frame_rate_fraction_widget,
-                signal="value-changed",
-                update_func=self._updateFraction,
-                update_func_args=(self.frame_rate_combo,))
+                          signal="value-changed",
+                          update_func=self._updateFraction,
+                          update_func_args=(self.frame_rate_combo,))
         self.wg.addVertex(self.dar_combo, signal="changed")
         self.wg.addVertex(self.dar_fraction_widget, signal="value-changed")
         self.wg.addVertex(self.par_combo, signal="changed")
@@ -647,54 +1075,60 @@ class ProjectSettingsDialog():
         self.wg.addVertex(self.width_spinbutton, signal="value-changed")
         self.wg.addVertex(self.height_spinbutton, signal="value-changed")
         self.wg.addVertex(self.save_audio_preset_button,
-                 update_func=self._updateAudioSaveButton)
+                          update_func=self._updateAudioSaveButton)
         self.wg.addVertex(self.save_video_preset_button,
-                 update_func=self._updateVideoSaveButton)
+                          update_func=self._updateVideoSaveButton)
         self.wg.addVertex(self.channels_combo, signal="changed")
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
         self.wg.addVertex(self.sample_depth_combo, signal="changed")
 
         # constrain width and height IFF constrain_sar_button is active
         self.wg.addEdge(self.width_spinbutton, self.height_spinbutton,
-            predicate=self.constrained, edge_func=self.updateHeight)
+                        predicate=self.constrained,
+                        edge_func=self.updateHeight)
         self.wg.addEdge(self.height_spinbutton, self.width_spinbutton,
-            predicate=self.constrained, edge_func=self.updateWidth)
+                        predicate=self.constrained,
+                        edge_func=self.updateWidth)
 
         # keep framereate text field and combo in sync
         self.wg.addBiEdge(self.frame_rate_combo, self.frame_rate_fraction_widget)
 
         # keep dar text field and combo in sync
         self.wg.addEdge(self.dar_combo, self.dar_fraction_widget,
-            edge_func=self.updateDarFromCombo)
+                        edge_func=self.updateDarFromCombo)
         self.wg.addEdge(self.dar_fraction_widget, self.dar_combo,
-            edge_func=self.updateDarFromFractionWidget)
+                        edge_func=self.updateDarFromFractionWidget)
 
         # keep par text field and combo in sync
         self.wg.addEdge(self.par_combo, self.par_fraction_widget,
-            edge_func=self.updateParFromCombo)
+                        edge_func=self.updateParFromCombo)
         self.wg.addEdge(self.par_fraction_widget, self.par_combo,
-            edge_func=self.updateParFromFractionWidget)
+                        edge_func=self.updateParFromFractionWidget)
 
         # constrain DAR and PAR values. because the combo boxes are already
         # linked, we only have to link the fraction widgets together.
         self.wg.addEdge(self.par_fraction_widget, self.dar_fraction_widget,
-            edge_func=self.updateDarFromPar)
+                        edge_func=self.updateDarFromPar)
         self.wg.addEdge(self.dar_fraction_widget, self.par_fraction_widget,
-            edge_func=self.updateParFromDar)
+                        edge_func=self.updateParFromDar)
 
         # update PAR when width/height change and the DAR checkbutton is
         # selected
         self.wg.addEdge(self.width_spinbutton, self.par_fraction_widget,
-            predicate=self.darSelected, edge_func=self.updateParFromDar)
+                        predicate=self.darSelected,
+                        edge_func=self.updateParFromDar)
         self.wg.addEdge(self.height_spinbutton, self.par_fraction_widget,
-            predicate=self.darSelected, edge_func=self.updateParFromDar)
+                        predicate=self.darSelected,
+                        edge_func=self.updateParFromDar)
 
         # update DAR when width/height change and the PAR checkbutton is
         # selected
         self.wg.addEdge(self.width_spinbutton, self.dar_fraction_widget,
-            predicate=self.parSelected, edge_func=self.updateDarFromPar)
+                        predicate=self.parSelected,
+                        edge_func=self.updateDarFromPar)
         self.wg.addEdge(self.height_spinbutton, self.dar_fraction_widget,
-            predicate=self.parSelected, edge_func=self.updateDarFromPar)
+                        predicate=self.parSelected,
+                        edge_func=self.updateDarFromPar)
 
         # presets
         self.audio_presets = AudioPresetManager()
@@ -702,12 +1136,12 @@ class ProjectSettingsDialog():
         self.video_presets = VideoPresetManager()
         self.video_presets.loadAll()
 
-        self._fillPresetsTreeview(
-            self.audio_preset_treeview, self.audio_presets,
-            self._updateAudioPresetButtons)
-        self._fillPresetsTreeview(
-            self.video_preset_treeview, self.video_presets,
-            self._updateVideoPresetButtons)
+        self._fillPresetsTreeview(self.audio_preset_treeview,
+                                  self.audio_presets,
+                                  self._updateAudioPresetButtons)
+        self._fillPresetsTreeview(self.video_preset_treeview,
+                                  self.video_presets,
+                                  self._updateVideoPresetButtons)
 
         # A map which tells which infobar should be used when displaying
         # an error for a preset manager.
@@ -753,22 +1187,20 @@ class ProjectSettingsDialog():
             self.select_par_radiobutton.props.active = True
             self.par_fraction_widget.setWidgetValue(value)
 
-        mgr.bindWidget("par", updatePar,
-            self.par_fraction_widget.getWidgetValue)
+        mgr.bindWidget("par", updatePar, self.par_fraction_widget.getWidgetValue)
 
     def bindFractionWidget(self, mgr, name, widget):
-        mgr.bindWidget(name, widget.setWidgetValue,
-            widget.getWidgetValue)
+        mgr.bindWidget(name, widget.setWidgetValue, widget.getWidgetValue)
 
     def bindCombo(self, mgr, name, widget):
         mgr.bindWidget(name,
-            lambda x: set_combo_value(widget, x),
-            lambda: get_combo_value(widget))
+                       lambda x: set_combo_value(widget, x),
+                       lambda: get_combo_value(widget))
 
     def bindSpinbutton(self, mgr, name, widget):
         mgr.bindWidget(name,
-            lambda x: widget.set_value(float(x)),
-            lambda: int(widget.get_value()))
+                       lambda x: widget.set_value(float(x)),
+                       lambda: int(widget.get_value()))
 
     def _fillPresetsTreeview(self, treeview, mgr, update_buttons_func):
         """Set up the specified treeview to display the specified presets.
@@ -792,7 +1224,7 @@ class ProjectSettingsDialog():
         renderer.connect("edited", self._presetNameEditedCb, mgr)
         renderer.connect("editing-started", self._presetNameEditingStartedCb, mgr)
         treeview.get_selection().connect("changed", self._presetChangedCb, mgr,
-                                        update_buttons_func)
+                                         update_buttons_func)
         treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
 
     def createAudioNoPreset(self, mgr):
@@ -806,7 +1238,7 @@ class ProjectSettingsDialog():
             "par": Gst.Fraction(int(get_combo_value(self.par_combo).num),
                                 int(get_combo_value(self.par_combo).denom)),
             "frame-rate": Gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
-                            int(get_combo_value(self.frame_rate_combo).denom)),
+                                       int(get_combo_value(self.frame_rate_combo).denom)),
             "height": int(self.height_spinbutton.get_value()),
             "width": int(self.width_spinbutton.get_value())})
 
@@ -1028,17 +1460,17 @@ class ProjectSettingsDialog():
 
     def updateUI(self):
 
-        self.width_spinbutton.set_value(self.settings.videowidth)
-        self.height_spinbutton.set_value(self.settings.videoheight)
+        self.width_spinbutton.set_value(self.project.videowidth)
+        self.height_spinbutton.set_value(self.project.videoheight)
 
         # video
-        self.frame_rate_fraction_widget.setWidgetValue(self.settings.videorate)
-        self.par_fraction_widget.setWidgetValue(self.settings.videopar)
+        self.frame_rate_fraction_widget.setWidgetValue(self.project.videorate)
+        self.par_fraction_widget.setWidgetValue(self.project.videopar)
 
         # audio
-        set_combo_value(self.channels_combo, self.settings.audiochannels)
-        set_combo_value(self.sample_rate_combo, self.settings.audiorate)
-        set_combo_value(self.sample_depth_combo, self.settings.audiodepth)
+        set_combo_value(self.channels_combo, self.project.audiochannels)
+        set_combo_value(self.sample_rate_combo, self.project.audiorate)
+        set_combo_value(self.sample_depth_combo, self.project.audiodepth)
 
         self._selectDarRadiobuttonToggledCb(self.select_dar_radiobutton)
 
@@ -1057,19 +1489,14 @@ class ProjectSettingsDialog():
         self.project.year = str(self.year_spinbutton.get_value_as_int())
 
     def updateSettings(self):
-        width = int(self.width_spinbutton.get_value())
-        height = int(self.height_spinbutton.get_value())
-        par = self.par_fraction_widget.getWidgetValue()
-        frame_rate = self.frame_rate_fraction_widget.getWidgetValue()
+        self.project.videowidth = int(self.width_spinbutton.get_value())
+        self.project.videoheight = int(self.height_spinbutton.get_value())
+        self.project.videopar = self.par_fraction_widget.getWidgetValue()
+        self.project.videorate = self.frame_rate_fraction_widget.getWidgetValue()
 
-        channels = get_combo_value(self.channels_combo)
-        sample_rate = get_combo_value(self.sample_rate_combo)
-        sample_depth = get_combo_value(self.sample_depth_combo)
-
-        self.settings.setVideoProperties(width, height, frame_rate, par)
-        self.settings.setAudioProperties(channels, sample_rate, sample_depth)
-
-        self.project.setSettings(self.settings)
+        self.project.audiochannels = get_combo_value(self.channels_combo)
+        self.project.audiorate = get_combo_value(self.sample_rate_combo)
+        self.project.audiodepth = get_combo_value(self.sample_depth_combo)
 
     def _responseCb(self, unused_widget, response):
         if response == Gtk.ResponseType.OK:

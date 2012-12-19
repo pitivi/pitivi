@@ -170,6 +170,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.show_error(uri)
         else:
             self.log("Call discoverer for " + uri)
+            self.fixme("Use a GESAsset here, and discover async with it")
             try:
                 info = self.discoverer.discover_uri(uri)
             except Exception, e:
@@ -322,7 +323,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.player.set_state(Gst.State.NULL)
             self.is_playing = False
             err, dbg = message.parse_error()
-            self.error("Error: %s " % err, dbg)
+            self.error("Error: %s %s" % (err, dbg))
 
     def _update_position(self, *args):
         if self.is_playing:

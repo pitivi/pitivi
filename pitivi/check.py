@@ -41,7 +41,7 @@ HARD_DEPS = {
     "GES": "1.0.0",
     "gnonlin": "0.11.89.1",
     "GooCanvas": "2.0",
-    "Gst": "1.0.2",
+    "Gst": "1.1.0",
     "Gtk": "3.4.0",
     "xdg": None,  # "pyxdg", using static python bindings
 

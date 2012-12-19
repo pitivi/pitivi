@@ -23,6 +23,7 @@ import os
 
 from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import GES
 
 from gettext import gettext as _
 
@@ -56,7 +57,10 @@ class StartUpWizard(object):
         # simple way to hide it.
         filter = Gtk.RecentFilter()
         filter.set_name(_("Projects"))
-        filter.add_pattern("*.xptv")
+
+        for asset in GES.list_assets(GES.Formatter):
+            filter.add_pattern('*.' + asset.get_meta(GES.META_FORMATTER_EXTENSION))
+
         self.recent_chooser.add_filter(filter)
 
         if not missing_soft_deps:
@@ -125,17 +129,16 @@ class StartUpWizard(object):
         """Handle the failure of a project open operation."""
         self.show()
 
-    def _projectLoadedCb(self, unused_project_manager, project):
+    def _projectLoadedCb(self, unused_project_manager, project, fully_loaded):
         """Handle the success of a project load operation.
 
         All the create or load project usage scenarios must generate
         a new-project-loaded signal from self.app.projectManager!
         """
-        if project.disconnect:
-            return
-        self.app.projectManager.disconnect_by_function(self._projectFailedCb)
-        self.app.projectManager.disconnect_by_function(self._projectLoadedCb)
-        self.app.projectManager.disconnect_by_function(self._projectLoadingCb)
+        if fully_loaded:
+            self.app.projectManager.disconnect_by_function(self._projectFailedCb)
+            self.app.projectManager.disconnect_by_function(self._projectLoadedCb)
+            self.app.projectManager.disconnect_by_function(self._projectLoadingCb)
 
     def _projectLoadingCb(self, unused_project_manager, unused_project):
         """Handle the start of a project load operation."""

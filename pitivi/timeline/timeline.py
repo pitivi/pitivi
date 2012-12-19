@@ -545,6 +545,7 @@ class TimelineControls(Gtk.VBox, Loggable):
     timeline = property(getTimeline, setTimeline, None, "The timeline property")
 
     def _layerAddedCb(self, timeline, layer):
+        self.debug("Layer %s added", layer)
         video_control = VideoLayerControl(self.app, layer)
         audio_control = AudioLayerControl(self.app, layer)
 
@@ -945,13 +946,9 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         self._framerate = Gst.Fraction(1, 1)
         self._timeline = None
 
-        # Used to insert sources at the end of the timeline
-        self._sources_to_insert = []
-
         self.zoomed_fitted = True
 
         # Timeline edition related fields
-        self._creating_tckobjs_sigid = {}
         self._move_context = None
 
         self._project = None
@@ -1173,11 +1170,11 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         if not self._drag_started:
             self._drag_started = True
         elif context.list_targets() not in DND_EFFECT_LIST and self.app.gui.medialibrary.dragged:
-            if not self._temp_objects and not self._creating_tckobjs_sigid:
+            if not self._temp_objects:
                 self._create_temp_source(x, y)
 
             # Let some time for TrackObject-s to be created
-            if self._temp_objects and not self._creating_tckobjs_sigid:
+            if self._temp_objects:
                 focus = self._temp_objects[0]
                 if self._move_context is None:
                     self._move_context = EditingContext(focus,
@@ -1204,10 +1201,6 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         If the user drags outside the timeline,
         remove the temporary objects we had created during the drap operation.
         """
-        # If TrackObject-s still being created, wait before deleting
-        if self._creating_tckobjs_sigid:
-            return True
-
         # Clean up only if clip was not dropped already
         if self._drag_started:
             self.debug("Drag cleanup")
@@ -1361,31 +1354,19 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         drag-and-drop operation.
         """
         layer = self._ensureLayer()[0]
-        duration = 0
+        start = 0
 
-        for uri in self.app.gui.medialibrary.getSelectedItems():
-            info = self._project.medialibrary.getInfoFromUri(uri)
-            src = GES.TimelineFileSource(uri=uri)
-            src.props.start = duration
-            # Set image duration
-            # FIXME: after GES Materials are merged, check if image instead
-            if src.props.duration == 0:
-                src.set_duration(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
-            duration += info.get_duration()
-            layer.add_object(src)
-            id = src.connect("track-object-added", self._trackObjectsCreatedCb, src, x, y)
-            self._creating_tckobjs_sigid[src] = id
+        for asset in self.app.gui.medialibrary.getSelectedAssets():
+            if asset.is_image():
+                clip_duration = long(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
+            else:
+                clip_duration = asset.get_duration()
 
-    def _trackObjectsCreatedCb(self, unused_tl, track_object, tlobj, x, y):
-        # Make sure not to start the moving process before the TrackObject-s
-        # are created. We concider that the time between the different
-        # TrackObject-s creation is short enough so we are all good when the
-        # first TrackObject is added to the TimelineObject
-        if tlobj.is_image():
-            tlobj.set_duration(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
-        self._temp_objects.insert(0, tlobj)
-        tlobj.disconnect(self._creating_tckobjs_sigid[tlobj])
-        del self._creating_tckobjs_sigid[tlobj]
+            source = layer.add_asset(asset, start, 0,
+                clip_duration, 1.0, asset.get_supported_types())
+
+            self._temp_objects.insert(0, source)
+            start += asset.get_duration()
 
     def _move_temp_source(self, x, y):
         x = self.hadj.props.value + x
@@ -1544,11 +1525,12 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         timeline_duration = duration + Gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / Gst.SECOND)
 
-        self.debug("duration: %s, timeline duration: %s" % (duration,
+        self.debug("duration: %s, timeline duration: %s" % (print_ns(duration),
            print_ns(timeline_duration)))
 
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
+        self.debug("Ideal zoom: %s, nearest_zoom_level %s", ideal_zoom_ratio, nearest_zoom_level)
         Zoomable.setZoomLevel(nearest_zoom_level)
         self.timeline.props.snapping_distance = \
             Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband)
@@ -1559,35 +1541,43 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
 
 ## Project callbacks
 
-    def _projectChangedCb(self, app, project):
+    def _projectChangedCb(self, app, project, unused_fully_loaded):
         """
-        When a new blank project is created, immediately clear the timeline.
-
-        Otherwise, we would sit around until a clip gets imported to the
-        media library, waiting for a "ready" signal.
+        When a project is loaded, we connect to its pipeline
         """
-        self.debug("New blank project created, pre-emptively clearing the timeline")
-        self.setProject(project)
+        self.debug("Project changed")
 
-    def setProject(self, project):
-        self.debug("Setting project %s", project)
-        if self._project:
-            self._project.disconnect_by_function(self._settingsChangedCb)
-            self._pipeline.disconnect_by_func(self.positionChangedCb)
-            self.pipeline = None
-
-        self._project = project
-        if self._project:
-            self.setTimeline(project.timeline)
-            self.ruler.setProjectFrameRate(self._project.getSettings().videorate)
-            self.ruler.zoomChanged()
-            self._settingsChangedCb(self._project, None, self._project.getSettings())
-
+        if project:
+            self.debug("Project is not None, connecting to its pipeline")
             self._seeker = self._project.seeker
             self._pipeline = self._project.pipeline
             self._pipeline.connect("position", self.positionChangedCb)
-            self._project.connect("settings-changed", self._settingsChangedCb)
+            self.ruler.setProjectFrameRate(self._project.videorate)
+            self.ruler.zoomChanged()
+            self._renderingSettingsChangedCb(self._project, None, None)
+
             self._setBestZoomRatio()
+
+    def _projectCreatedCb(self, app, project):
+        """
+        When a project is created, we connect to it timeline
+        """
+        self.debug("Setting project %s", project)
+        if self._project:
+            self._project.disconnect_by_func(self._renderingSettingsChangedCb)
+            try:
+                self._pipeline.disconnect_by_func(self.positionChangedCb)
+            except TypeError:
+                pass  # We were not connected no problem
+
+            self._pipeline = None
+            self._seeker = None
+
+        self._project = project
+        if self._project:
+            self._project.connect("rendering-settings-changed",
+                                  self._renderingSettingsChangedCb)
+            self.setTimeline(project.timeline)
 
     def setProjectManager(self, projectmanager):
         if self._projectmanager is not None:
@@ -1595,11 +1585,22 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
 
         self._projectmanager = projectmanager
         if projectmanager is not None:
+            projectmanager.connect("new-project-created", self._projectCreatedCb)
             projectmanager.connect("new-project-loaded", self._projectChangedCb)
 
-    def _settingsChangedCb(self, project, old, new):
-        self._framerate = new.videorate
-        self.ruler.setProjectFrameRate(self._framerate)
+    def _renderingSettingsChangedCb(self, project, item, value):
+        """
+        Called when any Project metadata changes, we filter out the one
+        we are interested in.
+
+        if @item is None, it mean we called it ourself, and want to force
+        getting the project videorate value
+        """
+        if item == "videorate" or item is None:
+            if value is None:
+                value = project.videorate
+            self._framerate = value
+            self.ruler.setProjectFrameRate(self._framerate)
 
 ## Timeline callbacks
 
@@ -1839,66 +1840,22 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             path, mime = foo[0], foo[1]
             self._project.pipeline.save_thumbnail(-1, -1, mime, path)
 
-    def insertEnd(self, sources):
+    def insertEnd(self, assets):
         """
         Add source at the end of the timeline
         @type sources: An L{GES.TimelineSource}
         @param x2: A list of sources to add to the timeline
         """
         self.app.action_log.begin("add clip")
+        # FIXME we should find the longets layer instead of adding it to the
+        # first one
         # Handle the case of a blank project
-        self._ensureLayer()
-        self._sources_to_insert = sources
+        layer = self._ensureLayer()[0]
+        for asset in assets:
+            if asset.is_image():
+                clip_duration = long(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
+            else:
+                clip_duration = asset.get_duration()
 
-        # Start adding sources in the timeline
-        self._insertNextSource()
-
-    def _insertNextSource(self):
-        """ Insert a source at the end of the timeline's first track """
-        timeline = self.app.current.timeline
-
-        if not self._sources_to_insert:
-            # We need to wait (100ms is enoug for sure) for TrackObject-s to
-            # be added to the Tracks
-            # FIXME remove this "hack" when Materials are merged
-            GObject.timeout_add(100, self._finalizeSourceAdded)
-            self.app.action_log.commit()
-
-            # Update zoom level if needed
-            return
-        source = self._sources_to_insert.pop()
-        layer = timeline.get_layers()[0]  # FIXME Get the longest layer
-        # Waiting for the TrackObject to be created because of a race
-        # condition, and to know the real length of the timeline when
-        # adding several sources at a time.
-        # connecting before adding, as it signaled before connection
-        source.connect("track-object-added", self._trackObjectAddedCb)
-        layer.add_object(source)
-
-    def _trackObjectAddedCb(self, source, trackobj):
-        """ After an object has been added to the first track, position it
-        correctly and request the next source to be processed. """
-        timeline = self.app.current.timeline
-        layer = timeline.get_layers()[0]  # FIXME Get the longest layer
-
-        # Set the duration of the clip if it is an image
-        if hasattr(source, "is_image") and source.is_image():
-            source.set_duration(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
-
-        # Handle the case where we just inserted the first clip
-        if len(layer.get_objects()) == 1:
-            source.props.start = 0
-        else:
-            source.props.start = timeline.props.duration
-
-        # We only need one TrackObject to estimate the new duration.
-        # Process the next source.
-        source.disconnect_by_func(self._trackObjectAddedCb)
-        self._insertNextSource()
-
-    def _finalizeSourceAdded(self):
-        timeline = self.app.current.timeline
-        self.app.current.seeker.seek(timeline.props.duration)
-        if self.zoomed_fitted is True:
-            self._setBestZoomRatio()
-        return False
+            layer.add_asset(asset, self.timeline.props.duration,
+                0, clip_duration, 1.0, asset.get_supported_types())
