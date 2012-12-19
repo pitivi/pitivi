@@ -52,8 +52,7 @@ from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import in_devel, show_user_manual, path_from_uri
 from pitivi.utils.ui import info_name, beautify_time_delta, SPACING, \
-    FILESOURCE_TARGET_ENTRY, URI_TARGET_ENTRY, \
-    TYPE_URI_LIST, TYPE_PITIVI_FILESOURCE
+    beautify_length
 from pitivi.viewer import PitiviViewer
 
 
@@ -983,20 +982,17 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # FIXME GES port, help user identify files with more information
         # need work to be done in GES directly
         # TODO: display the filesize to help the user identify the file
-        #if info.get_duration() == Gst.CLOCK_TIME_NONE:
+        print "DURATION ", asset.get_duration()
+        if asset.get_duration() == Gst.CLOCK_TIME_NONE:
             ## The file is probably an image, not video or audio.
-            #text = _('The following file has moved: "<b>%s</b>"'
-                     #'\nPlease specify its new location:'
-                     #% info_name(info))
-        #else:
-            #length = beautify_length(info.get_duration())
-            #text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
-                     #'\nPlease specify its new location:'
-                     #% (info_name(info), length))
-
-        text = _('The following file has moved: "<b>%s</b>"'
-                 '\nPlease specify its new location:'
-                 % info_name(asset))
+            text = _('The following file has moved: "<b>%s</b>"'
+                     '\nPlease specify its new location:'
+                     % info_name(asset))
+        else:
+            length = beautify_length(asset.get_duration())
+            text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
+                     '\nPlease specify its new location:'
+                     % (info_name(asset), length))
 
         label = Gtk.Label()
         label.set_markup(text)
