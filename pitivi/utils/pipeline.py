@@ -116,9 +116,9 @@ class Seeker(Signallable, Loggable):
             format, self.format = self.format, None
             try:
                 self.emit('seek', position, format)
-            except PipelineError:
-                self.error("Error while seeking to position:%s format: %r",
-                          print_ns(position), format)
+            except PipelineError as e:
+                self.error("Error while seeking to position:%s format: %r, reason: %s",
+                          print_ns(position), format, e)
                 # if an exception happened while seeking, properly
                 # reset ourselves
                 return False
@@ -282,16 +282,8 @@ class SimplePipeline(Signallable, Loggable):
         Get the duration of the C{Pipeline}.
         """
         self.log("format %r" % format)
-        try:
-            res, dur = self._pipeline.query_duration(format)
-        except Exception, e:
 
-            self.handleException(e)
-            raise PipelineError("Couldn't get duration")
-
-        if not res:
-            raise PipelineError("Couldn't get duration")
-
+        dur = self._getDuration(format)
         self.log("Got duration %s" % print_ns(dur))
         if self._duration != dur:
             self.emit("duration-changed", dur)
@@ -445,6 +437,17 @@ class SimplePipeline(Signallable, Loggable):
                 self._has_sync_bus_handler = False
         return Gst.BusSyncReply.PASS
 
+    def _getDuration(self, format=Gst.Format.TIME):
+        try:
+            res, dur = self._pipeline.query_duration(format)
+        except Exception, e:
+
+            self.handleException(e)
+            raise PipelineError("Couldn't get duration: %s" % e)
+
+        if not res:
+            raise PipelineError("Couldn't get duration: Returned None")
+
 
 class Pipeline(GES.TimelinePipeline, SimplePipeline):
     """
@@ -478,6 +481,16 @@ class Pipeline(GES.TimelinePipeline, SimplePipeline):
         self._seeker = Seeker()
         self._seeker.connect("seek", self._seekCb)
         self._seeker.connect("seek-relative", self._seekRelativeCb)
+
+    def _getDuration(self, format=Gst.Format.TIME):
+        return self._timeline.get_duration()
+
+    def add_timeline(self, timeline):
+        if GES.TimelinePipeline.add_timeline(self, timeline):
+            self._timeline = timeline
+            return True
+
+        return False
 
     def release(self):
         """
