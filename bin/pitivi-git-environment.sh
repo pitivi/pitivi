@@ -27,6 +27,7 @@ BUILD_DOCS=false
 GLIB_RELEASE_TAG="2.34.0" # "gobject-introspection" needs glib > 2.32
 PYGOBJECT_RELEASE_TAG="3.4.0"
 GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_1_34_0"
+
 #
 # Everything below this line shouldn't be edited!
 #
@@ -44,7 +45,7 @@ MODULES_MINIMAL="gnonlin gst-editing-services gst-python"
 # The following decision has to be made before we've set any env variables,
 # otherwise the script will detect our "gst uninstalled" and think it's the
 # system-wide install.
-if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null; then
+if pkg-config --exists --print-errors 'gstreamer-1.0 >= 1.1.0.1'; then
     MODULES=$MODULES_MINIMAL
 else
     MODULES=$MODULES_ALL
@@ -72,7 +73,7 @@ GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PAT
 export PKG_CONFIG_PATH="$PITIVI_PREFIX/lib/pkgconfig:$PITIVI/pygobject:$PKG_CONFIG_PATH"
 
 
-if pkg-config --list-all |grep gstreamer-1.0 &>/dev/null; then
+if pkg-config --exists --print-errors 'gstreamer-1.0 >= 1.1.0.1'; then
   echo "Using system-wide GStreamer 1.0"
 else
   echo "Using a local build of GStreamer 1.0"
