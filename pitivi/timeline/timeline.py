@@ -1363,7 +1363,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                 clip_duration = asset.get_duration()
 
             source = layer.add_asset(asset, start, 0,
-                clip_duration, 1.0, asset.get_supported_types())
+                clip_duration, 1.0, asset.get_supported_formats())
 
             self._temp_objects.insert(0, source)
             start += asset.get_duration()
@@ -1858,4 +1858,4 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                 clip_duration = asset.get_duration()
 
             layer.add_asset(asset, self.timeline.props.duration,
-                0, clip_duration, 1.0, asset.get_supported_types())
+                0, clip_duration, 1.0, asset.get_supported_formats())
