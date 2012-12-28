@@ -755,7 +755,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         return True
 
     def _canLoadUri(self, filterinfo, uri):
-        GES.Formatter.can_load_uri(filterinfo.uri)
+        try:
+            return GES.Formatter.can_load_uri(filterinfo.uri)
+        except:
+            return False
 
     def _undoCb(self, action):
         self.app.action_log.undo()
