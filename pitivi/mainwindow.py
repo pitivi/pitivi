@@ -775,7 +775,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         Once a new project has been loaded, wait for media library's
         "ready" signal to populate the timeline.
         """
-        self.log("A new project is loaded, wait for clips")
+        self.log("A new project is loaded")
         self._connectToProject(self.app.current)
         self.app.current.timeline.connect("notify::duration",
                 self._timelineDurationChangedCb)
@@ -982,7 +982,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # FIXME GES port, help user identify files with more information
         # need work to be done in GES directly
         # TODO: display the filesize to help the user identify the file
-        print "DURATION ", asset.get_duration()
         if asset.get_duration() == Gst.CLOCK_TIME_NONE:
             ## The file is probably an image, not video or audio.
             text = _('The following file has moved: "<b>%s</b>"'

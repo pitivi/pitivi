@@ -109,7 +109,7 @@ class clipmediapropsDialog():
         self.checkbutton6 = builder.get_object("checkbutton6")
 
     def _applyButtonCb(self, unused_button):
-        project = self.projet
+        project = self.project
         if self.has_video:
             # This also handles the case where the video is a still image
             video = self.video_streams[0]
