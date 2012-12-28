@@ -485,13 +485,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._importDialog.add_filter(default)
         self._importDialog.show()
 
-    def _updateProgressbar(self, current_clip_iter=None, total_clips=None):
+    def _updateProgressbar(self):
         """
         Update the _progressbar with the ratio of clips imported vs the total
         """
-        if current_clip_iter is None and total_clips is None:
-            current_clip_iter = self.app.current.nb_imported_files
-            total_clips = self.app.current.nb_files_to_import
+        current_clip_iter = self.app.current.nb_imported_files
+        total_clips = self.app.current.nb_files_to_import
 
         progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
             {"current_clip": current_clip_iter,
