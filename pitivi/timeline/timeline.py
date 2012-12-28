@@ -1851,6 +1851,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         # first one
         # Handle the case of a blank project
         layer = self._ensureLayer()[0]
+        self.timeline.enable_update(False)
         for asset in assets:
             if asset.is_image():
                 clip_duration = long(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
@@ -1859,3 +1860,4 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
 
             layer.add_asset(asset, self.timeline.props.duration,
                 0, clip_duration, 1.0, asset.get_supported_formats())
+        self.timeline.enable_update(True)
