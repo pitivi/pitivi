@@ -1112,34 +1112,28 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # When loading the first project, the signal has never been
             # connected before.
             pass
+        self.app.current.connect("rendering-settings-changed", self._renderingSettingsChangedCb)
+
         self.viewer.setPipeline(self.app.current.pipeline)
-        self._renderingSettingsChangedCb(self.app.current, None, None)
+        self._renderingSettingsChangedCb(self.app.current)
         if self.timeline_ui:
-            #self.timeline_ui.setProject(self.app.current)
             self.clipconfig.project = self.app.current
             #FIXME GES port undo/redo
             #self.app.timelineLogObserver.pipeline = self.app.current.pipeline
 
-        self.app.current.connect("rendering-settings-changed", self._renderingSettingsChangedCb)
         # When creating a blank project, medialibrary will eventually trigger
         # this _setProject method, but there's no project URI yet.
         if self.app.current.uri:
             folder_path = os.path.dirname(path_from_uri(self.app.current.uri))
             self.settings.lastProjectFolder = folder_path
 
-    def _renderingSettingsChangedCb(self, project, item, value):
+    def _renderingSettingsChangedCb(self, project, item=None, value=None):
         """
-            Called when any Project metadata changes, we filter out the ones
-            we are interested in.
-
-            if @item is None, it mean we called it ourself, and want the
-            aspect-ratio to be set
+        When the project setting change, we reset the viewer aspect ratio
         """
-        self.main_actions.get_action("SaveProject").set_sensitive(False)
-        if item in ["videopar", "videowidth", "videoheight"] or item is None:
-            ratio = float(project.videopar.num / project.videopar.denom *
-                          project.videowidth) / float(project.videoheight)
-            self.viewer.setDisplayAspectRatio(ratio)
+        ratio = float(project.videopar.num / project.videopar.denom *
+                      project.videowidth) / float(project.videoheight)
+        self.viewer.setDisplayAspectRatio(ratio)
 
     def _sourceListMissingPluginsCb(self, project, uri, factory,
             details, descriptions, missingPluginsCallback):
