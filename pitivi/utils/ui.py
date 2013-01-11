@@ -174,7 +174,10 @@ def beautify_info(info):
     }
 
     def stream_sort_key(stream):
-        return ranks[type(stream)]
+        try:
+            return ranks[type(stream)]
+        except KeyError:
+            return len(ranks)
 
     info.get_stream_list().sort(key=stream_sort_key)
     nice_streams_txts = []
