@@ -25,6 +25,7 @@
 from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import GObject
+from gi._glib import GError
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Pango
@@ -501,28 +502,48 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         elif total_clips != 0:
             self._progressbar.set_fraction((current_clip_iter - 1) / float(total_clips))
 
+    def _getThumbnailInDir(self, dir, hash):
+        thumb_path_normal = dir + "normal/" + hash + ".png"
+
+        try:
+            thumbnail = GdkPixbuf.Pixbuf.new_from_file(thumb_path_normal)
+            thumbnail_large = thumbnail
+            thumbnail_height = int(thumbnail.get_height() / 2)
+            thumbnail = thumbnail.scale_simple(64, thumbnail_height,
+                GdkPixbuf.InterpType.BILINEAR)
+
+            return thumbnail, thumbnail_large
+        except GError:
+            return None, None
+
     def _addAsset(self, asset):
         info = asset.get_info()
 
         # The code below tries to read existing thumbnails from the freedesktop
         # thumbnails directory (~/.thumbnails). The filenames are simply
         # the file URI hashed with md5, so we can retrieve them easily.
-        if [i for i in info.get_stream_list() if isinstance(i, DiscovererVideoInfo)]:
+        video_streams = [i for i in info.get_stream_list() if isinstance(i, DiscovererVideoInfo)]
+        if len(video_streams) > 0:
+            # From the freedesktop spec: "if the environment variable
+            # $XDG_CACHE_HOME is set and not blank then the directory
+            # $XDG_CACHE_HOME/thumbnails will be used, otherwise
+            # $HOME/.cache/thumbnails will be used."
+            # Older version of the spec also mentioned $HOME/.thumbnails
             thumbnail_hash = md5(info.get_uri()).hexdigest()
-            thumb_dir = os.path.expanduser("~/.thumbnails/")
-            thumb_path_normal = thumb_dir + "normal/" + thumbnail_hash + ".png"
-            # Pitivi used to consider 64 pixels as normal and 96 as large
-            # However, the fdo spec specifies 128 as normal and 256 as large.
-            # We will thus simply use the "normal" size and scale it down.
             try:
-                thumbnail = GdkPixbuf.Pixbuf.new_from_file(thumb_path_normal)
-                thumbnail_large = thumbnail
-                thumbnail_height = int(thumbnail.get_height() / 2)
-                thumbnail = thumbnail.scale_simple(64, thumbnail_height,
-                    GdkPixbuf.InterpType.BILINEAR)
-            except:
-                # TODO gst discoverer should create missing thumbnails.
+                thumb_dir = os.environ['XDG_CACHE_HOME']
+                thumbnail, thumbnail_large = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
+            except KeyError:
+                thumbnail, thumbnail_large = (None, None)
+            if thumbnail is None:
+                thumb_dir = os.path.expanduser("~/.cache/thumbnails/")
+                thumbnail, thumbnail_large = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
+            if thumbnail is None:
+                thumb_dir = os.path.expanduser("~/.thumbnails/")
+                thumbnail, thumbnail_large = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
+            if thumbnail is None:
                 thumbnail = self.videofilepixbuf
+                # TODO gst discoverer should create missing thumbnails.
                 thumbnail_large = thumbnail
         else:
             thumbnail = self.audiofilepixbuf
