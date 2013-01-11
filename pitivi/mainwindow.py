@@ -787,6 +787,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         #FIXME GES we should re-enable this when possible
         #self._syncDoUndo(self.app.action_log)
+        self.updateTitle()
 
         # Enable export functionality
         self.main_actions.get_action("ExportProject").set_sensitive(True)
@@ -823,6 +824,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # FIXME GES: Reimplement Undo/Redo
         #self.app.action_log.checkpoint()
         #self._syncDoUndo(self.app.action_log)
+        self.updateTitle()
+
         self.main_actions.get_action("SaveProject").set_sensitive(False)
         if uri:
             self.recent_manager.add_item(uri)
