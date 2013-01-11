@@ -517,8 +517,7 @@ class Project(Loggable, GES.Project):
 
         # Follow imports
         self._dirty = False
-        self._to_import_uris = []
-        self.nb_files_to_import = 0
+        self.nb_remaining_file_to_import = 0
         self.nb_imported_files = 0
 
         # Project property default values
@@ -761,16 +760,12 @@ class Project(Loggable, GES.Project):
     # GES.Project virtual methods implementation #
     #--------------------------------------------#
     def _handle_asset_loaded(self, id):
-        try:
-            self._to_import_uris.remove(id)
-            self.nb_imported_files += 1
-            if not self._to_import_uris:
-                self.nb_imported_files = 0
-                self.nb_files_to_import = 0
-                self._emitChange("done-importing")
-        except ValueError:
-            # We care only about the assets we are tracking
-            pass
+        self.nb_imported_files += 1
+        self.nb_remaining_file_to_import = len([asset for asset in self.get_loading_assets() if
+                GObject.type_is_a(asset.get_extractable_type(), GES.TimelineFileSource)])
+        if self.nb_remaining_file_to_import == 0:
+            self.nb_imported_files = 0
+            self._emitChange("done-importing")
 
     def do_asset_added(self, asset):
         """
@@ -825,6 +820,7 @@ class Project(Loggable, GES.Project):
         unlike GES.Project
         """
         self.timeline = self.extract()
+        self._calculateNbLoadingAssets()
         if self.timeline is None:
             return False
 
@@ -841,19 +837,9 @@ class Project(Loggable, GES.Project):
         The uris will be analyzed before being added.
         """
         # Do not try to reload URIS that we already have loaded
-        uris = [quote_uri(uri) for uri in uris if self.get_asset(uri, GES.TimelineFileSource) is None]
-        if not uris:
-            return
-
-        self.nb_files_to_import += len(uris)
-        if self._to_import_uris:
-            self._to_import_uris = set(uris.extend(list(self._to_import_uris)))
-        else:
-            self._emitChange("start-importing")
-            self._to_import_uris = uris
-
-        for uri in self._to_import_uris:
-            self.create_asset(uri, GES.TimelineFileSource)
+        for uri in uris:
+            self.create_asset(quote_uri(uri), GES.TimelineFileSource)
+        self._calculateNbLoadingAssets()
 
     def listSources(self):
         return self.list_assets(GES.TimelineFileSource)
@@ -1012,6 +998,15 @@ class Project(Loggable, GES.Project):
             factories.sort(key=lambda x: - x.get_rank())
             return factories[0].get_name()
         return None
+
+    def _calculateNbLoadingAssets(self):
+        nb_remaining_file_to_import = len([asset for asset in self.get_loading_assets() if
+                GObject.type_is_a(asset.get_extractable_type(), GES.TimelineFileSource)])
+        if self.nb_remaining_file_to_import == 0 and nb_remaining_file_to_import:
+            self.nb_remaining_file_to_import = nb_remaining_file_to_import
+            self._emitChange("start-importing")
+            return
+        self.nb_remaining_file_to_import = nb_remaining_file_to_import
 
 
 #----------------------- UI classes ------------------------------------------#

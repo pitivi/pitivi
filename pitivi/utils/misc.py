@@ -26,6 +26,7 @@ import sys
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
+from gi.repository import GLib
 import hashlib
 import os
 import struct
@@ -214,7 +215,7 @@ class PathWalker(Thread):
                     uris.append(quote_uri("file://%s" %
                             os.path.join(path, afile)))
                 if uris:
-                    self.callback(uris)
+                    GLib.idle_add(self.callback, uris)
 
     def abort(self):
         self.stopme.set()

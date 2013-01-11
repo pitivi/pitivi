@@ -414,6 +414,11 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.project_signals.connect(project, "start-importing", None,
                 self._sourcesStartedImportingCb)
 
+        # The start-importing signal would have already been emited at that
+        # time, make sure to catch if it is the case
+        if project.nb_remaining_file_to_import > 0:
+            self._sourcesStartedImportingCb(project)
+
     def _setClipView(self, view_type):
         """
         Set which clip view to use when medialibrary is showing clips.
@@ -494,7 +499,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         Update the _progressbar with the ratio of clips imported vs the total
         """
         current_clip_iter = self.app.current.nb_imported_files
-        total_clips = self.app.current.nb_files_to_import
+        total_clips = self.app.current.nb_remaining_file_to_import + current_clip_iter
 
         progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
             {"current_clip": current_clip_iter,
@@ -942,6 +947,13 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.project_signals.disconnectAll()
         self._project = None
 
+    def _addUris(self, uris):
+        if self.app.current:
+            self.app.current.addUris(uris)
+        else:
+            self.warning("Adding uris to project, but the project has changed in the meantime")
+        return False
+
     ## Drag and Drop
     def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
                            unused_y, selection, targettype, unused_time):
@@ -968,7 +980,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         if len(directories):
             # Recursively import from folders that were dragged into the library
             self.app.threads.addThread(PathWalker, directories,
-                                    self.app.current.addUris)
+                                    self._addUris)
         if len(remote_files):
             #TODO waiting for remote files downloader support to be implemented
             pass
