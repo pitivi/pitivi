@@ -841,7 +841,7 @@ class Project(Loggable, GES.Project):
         The uris will be analyzed before being added.
         """
         # Do not try to reload URIS that we already have loaded
-        uris = [uri for uri in uris if self.get_asset(uri, GES.TimelineFileSource) is None]
+        uris = [quote_uri(uri) for uri in uris if self.get_asset(uri, GES.TimelineFileSource) is None]
         if not uris:
             return
 
