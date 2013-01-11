@@ -1229,22 +1229,19 @@ class ProjectSettingsDialog():
 
     def createAudioNoPreset(self, mgr):
         mgr.prependPreset(_("No preset"), {
-            "depth": int(get_combo_value(self.sample_depth_combo)),
-            "channels": int(get_combo_value(self.channels_combo)),
-            "sample-rate": int(get_combo_value(self.sample_rate_combo))})
+            "depth": self.project.audiodepth,
+            "channels": self.project.audiochannels,
+            "sample-rate": self.project.audiorate})
 
     def createVideoNoPreset(self, mgr):
         mgr.prependPreset(_("No preset"), {
-            "par": Gst.Fraction(int(get_combo_value(self.par_combo).num),
-                                int(get_combo_value(self.par_combo).denom)),
-            "frame-rate": Gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
-                                       int(get_combo_value(self.frame_rate_combo).denom)),
-            "height": int(self.height_spinbutton.get_value()),
-            "width": int(self.width_spinbutton.get_value())})
+            "par": self.project.videopar,
+            "frame-rate": self.project.videorate,
+            "height": self.project.videoheight,
+            "width": self.project.videowidth})
 
     def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
-        """Handle the addition of a preset to the model of the preset manager.
-        """
+        """ Handle the addition of a preset to the model of the preset manager. """
         treeview.set_cursor_on_cell(path, column, renderer, start_editing=True)
         treeview.grab_focus()
 
