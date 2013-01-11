@@ -24,6 +24,7 @@
 
 from gi.repository import Gst
 from gi.repository import GES
+from gi.repository import GLib
 from gi.repository import GObject
 from gi._glib import GError
 from gi.repository import Gtk
@@ -111,7 +112,9 @@ OTHER_KNOWN_FORMATS = ("video/mp2t")
 
 
 def compare_simple(model, iter1, iter2, user_data):
-    if model[iter1][user_data] < model[iter2][user_data]:
+    a_basename = GLib.path_get_basename(model[iter1][user_data]).lower()
+    b_basename = GLib.path_get_basename(model[iter2][user_data]).lower()
+    if a_basename < b_basename:
         return -1
     # Each element is unique, there is a strict order.
     return 1
