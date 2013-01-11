@@ -114,22 +114,22 @@ class clipmediapropsDialog():
             # This also handles the case where the video is a still image
             video = self.video_streams[0]
             if self.checkbutton1.get_active():
-                project.width = video.get_width()
-                project.height = video.get_height()
+                project.videowidth = video.get_width()
+                project.videoheight = video.get_height()
             if (self.checkbutton2.get_active() and not self.is_image):
-                project.framerate = Gst.Fraction(video.get_framerate_num(),
-                                          video.get_framerate_denom())
+                project.videorate = Gst.Fraction(video.get_framerate_num(),
+                                                 video.get_framerate_denom())
             if (self.checkbutton3.get_active() and not self.is_image):
-                project.par = Gst.Fraction(video.get_par_num(),
-                                    video.get_par_denom())
+                project.videopar = Gst.Fraction(video.get_par_num(),
+                                                video.get_par_denom())
         if self.has_audio:
             audio = self.audio_streams[0]
             if self.checkbutton4.get_active():
-                project.channels = audio.get_channels()
+                project.audiochannels = audio.get_channels()
             if self.checkbutton5.get_active():
-                project.rate = audio.get_sample_rate()
+                project.audiorate = audio.get_sample_rate()
             if self.checkbutton6.get_active():
-                project.depth = audio.get_depth()
+                project.audiodepth = audio.get_depth()
         self.dialog.destroy()
 
     def _cancelButtonCb(self, unused_button):
