@@ -606,6 +606,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _projectChangedCb(self, project):
         self.main_actions.get_action("SaveProject").set_sensitive(True)
+        self.updateTitle()
 
     def _mediaLibrarySourceRemovedCb(self, project, asset):
         """When a clip is removed from the Media Library, tell the timeline
@@ -985,8 +986,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             thumbnail.set_padding(0, SPACING)
             hbox.pack_start(thumbnail, False, False, 0)
 
-        # FIXME GES port, help user identify files with more information
-        # need work to be done in GES directly
         # TODO: display the filesize to help the user identify the file
         if asset.get_duration() == Gst.CLOCK_TIME_NONE:
             ## The file is probably an image, not video or audio.
@@ -1037,6 +1036,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if response == Gtk.ResponseType.OK:
             self.log("User chose a new URI for the missing file")
             new_uri = chooser.get_uri()
+            self.app.current.setModificationState(self, False)
         else:
             # Even if the user clicks Cancel, the discoverer keeps trying to
             # import the rest of the clips...
