@@ -76,7 +76,7 @@ GlobalSettings.addConfigOption('lastClipView',
 
 STORE_MODEL_STRUCTURE = (
     GdkPixbuf.Pixbuf, GdkPixbuf.Pixbuf,
-    str, object, str, str, str, str)
+    str, object, str, str, str)
 
 (COL_ICON,
  COL_ICON_LARGE,
@@ -84,8 +84,7 @@ STORE_MODEL_STRUCTURE = (
  COL_ASSET,
  COL_URI,
  COL_LENGTH,
- COL_SEARCH_TEXT,
- COL_SHORT_TEXT) = range(len(STORE_MODEL_STRUCTURE))
+ COL_SEARCH_TEXT) = range(len(STORE_MODEL_STRUCTURE))
 
 ui = '''
 <ui>
@@ -248,7 +247,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         cell.props.ypad = 0
         cell.set_property("ellipsize", Pango.EllipsizeMode.END)
         self.iconview.pack_start(cell, False)
-        self.iconview.add_attribute(cell, "markup", COL_SHORT_TEXT)
+        self.iconview.add_attribute(cell, "markup", COL_SEARCH_TEXT)
 
         self.iconview.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
 
@@ -559,7 +558,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         else:
             duration = beautify_length(info.get_duration())
 
-        short_name = name = info_name(info)
+        name = info_name(info)
 
         self.pending_rows.append((thumbnail,
                                   thumbnail_large,
@@ -567,8 +566,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                                   asset,
                                   info.get_uri(),
                                   duration,
-                                  name,
-                                  short_name))
+                                  name))
         if len(self.pending_rows) > 50:
             self.flush_pending_rows()
 
