@@ -54,8 +54,6 @@ from pitivi.utils.ui import beautify_info, info_name, SPACING
 
 from pitivi.utils.ui import TYPE_PITIVI_FILESOURCE
 
-MAX_SHORT_NAME_LENGTH = 32
-
 # Values used in the settings file.
 SHOW_TREEVIEW = 1
 SHOW_ICONVIEW = 2
@@ -248,8 +246,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         cell.props.yalign = 0.0
         cell.props.xpad = 0
         cell.props.ypad = 0
-        cell.props.width = 128
-        cell.props.wrap_width = 128
+        cell.set_property("ellipsize", Pango.EllipsizeMode.END)
         self.iconview.pack_start(cell, False)
         self.iconview.add_attribute(cell, "markup", COL_SHORT_TEXT)
 
@@ -562,15 +559,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         else:
             duration = beautify_length(info.get_duration())
 
-        name = info_name(info)
-        short_name = None
-        uni = unicode(name, 'utf-8')
-
-        if len(uni) > MAX_SHORT_NAME_LENGTH:
-            short_uni = uni[0:MAX_SHORT_NAME_LENGTH - 1] + u"…"
-            short_name = short_uni.encode('utf-8')
-        else:
-            short_name = name
+        short_name = name = info_name(info)
 
         self.pending_rows.append((thumbnail,
                                   thumbnail_large,
