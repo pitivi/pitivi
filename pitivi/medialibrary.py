@@ -251,7 +251,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         cell.props.width = 128
         cell.props.wrap_width = 128
         self.iconview.pack_start(cell, False)
-        self.iconview.add_attribute(cell, "text", COL_SHORT_TEXT)
+        self.iconview.add_attribute(cell, "markup", COL_SHORT_TEXT)
 
         self.iconview.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
 
