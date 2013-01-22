@@ -313,9 +313,9 @@ if [ "$ready_to_run" != "1" ]; then
             fi
         fi
         # Silly hack for the fact that the version-controlled po/ files are
-        # changed during compilation of the "gstreamer" module, which prevents
-        # git pull --rebase from working
-        if [ $m == "gstreamer" ]; then
+        # changed during compilation of the "gstreamer" and "gst-plugins-base"
+        # modules, which prevents git pull --rebase from working
+        if [ $m == "gstreamer" ] || [ $m == "gst-plugins-base" ]; then
             git checkout -- po
         fi
         if [ $GST_RELEASE_TAG == "master" ]; then
