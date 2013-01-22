@@ -381,6 +381,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         if text == "":
             return True  # Avoid silly warnings
         else:
+            # We must convert to markup form to be able to search for &, ', etc.
+            text = GLib.markup_escape_text(text)
             return text in model.get_value(iter, COL_INFOTEXT).lower()
 
     def _getIcon(self, iconname, alternate=None):
