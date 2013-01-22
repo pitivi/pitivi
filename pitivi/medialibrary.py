@@ -359,7 +359,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._insertNextSource()
 
     def _searchEntryChangedCb(self, entry):
-        self.modelFilter.refilter()
+        # With many hundred clips in an iconview with dynamic columns and
+        # ellipsizing, doing needless searches is very expensive.
+        # Realistically, nobody expects to search for only one character,
+        # and skipping that makes a huge difference in responsiveness.
+        if len(entry.get_text()) != 1:
+            self.modelFilter.refilter()
 
     def _searchEntryIconClickedCb(self, entry, icon_pos, unused_event):
         if icon_pos == Gtk.EntryIconPosition.SECONDARY:
