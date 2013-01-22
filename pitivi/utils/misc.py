@@ -174,20 +174,15 @@ def path_from_uri(uri):
 
 def quote_uri(uri):
     """
-    Encode a URI according to RFC 2396, without touching the file:/// part.
+    Encode a URI/path according to RFC 2396, without touching the file:/// part.
     """
-    parts = list(urlsplit(uri, allow_fragments=False))
+    # Split off the "file:///" part, if present.
+    parts = urlsplit(uri, allow_fragments=False)
     # Make absolutely sure the string is unquoted before quoting again!
-    raw = unquote(parts[2])
-    # For computing thumbnail md5 hashes in the source list, we must adhere to
-    # RFC 2396. However, urllib's quote method only uses alphanumeric and "/"
-    # as their safe chars. We need to add both the reserved and unreserved chars
-    RFC_2396_RESERVED = ";/?:@&=+$,"
-    RFC_2396_UNRESERVED = "-_.!~*'()"
-    URIC_SAFE_CHARS = "/" + "%" + RFC_2396_RESERVED + RFC_2396_UNRESERVED
-    parts[2] = quote(raw, URIC_SAFE_CHARS)
-    uri = urlunsplit(parts)
-    return uri
+    raw_path = unquote(parts.path)
+    # For computing thumbnail md5 hashes in the media library, we must adhere to
+    # RFC 2396. It is quite tricky to handle all corner cases, leave it to Gst:
+    return Gst.filename_to_uri(raw_path)
 
 
 class PathWalker(Thread):
