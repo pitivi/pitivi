@@ -46,7 +46,7 @@ from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.dialogs.clipmediaprops import clipmediapropsDialog
 from pitivi.utils.ui import beautify_length
-from pitivi.utils.misc import PathWalker
+from pitivi.utils.misc import PathWalker, quote_uri
 from pitivi.utils.signal import SignalGroup
 from pitivi.utils.loggable import Loggable
 import pitivi.utils.ui as dnd
@@ -533,7 +533,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             # $XDG_CACHE_HOME/thumbnails will be used, otherwise
             # $HOME/.cache/thumbnails will be used."
             # Older version of the spec also mentioned $HOME/.thumbnails
-            thumbnail_hash = md5(info.get_uri()).hexdigest()
+            thumbnail_hash = md5(quote_uri(info.get_uri())).hexdigest()
             try:
                 thumb_dir = os.environ['XDG_CACHE_HOME']
                 thumbnail, thumbnail_large = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
