@@ -373,7 +373,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.menu.show()
         self._main_toolbar_box.show_all()
         # Auto-hiding fullscreen toolbar
-        self._main_toolbar_height = self.toolbar.size_request().height
+        self._main_toolbar_height = self.toolbar.get_preferred_height()[1]
         self._fullscreen_toolbar_win = Gtk.Window(Gtk.WindowType.POPUP)
         self._fullscreen_toolbar_win.resize(self.get_screen().get_width(), self._main_toolbar_height)
         self._fullscreen_toolbar_win.set_transient_for(self)
@@ -496,6 +496,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def setFullScreen(self, fullscreen):
         """ Toggle the fullscreen mode of the application """
+        # For some bizarre reason, the toolbar's height is initially incorrect,
+        # we need to reset it after startup to ensure we have the proper values.
+        self._main_toolbar_height = self.toolbar.get_preferred_height()[1]
+
         if fullscreen:
             self.fullscreen()
             self.menu.hide()
