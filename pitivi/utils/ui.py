@@ -38,7 +38,8 @@ from itertools import izip
 from urllib import unquote
 from gettext import ngettext, gettext as _
 from decimal import Decimal
-from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo, DiscovererStreamInfo
+from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
+    DiscovererStreamInfo, DiscovererSubtitleInfo
 
 from pitivi.utils.loggable import doLog, ERROR
 
@@ -183,10 +184,12 @@ def beautify_info(info):
     nice_streams_txts = []
     for stream in info.get_stream_list():
         try:
-            beautifull = beautify_stream(stream)
-            nice_streams_txts.append(beautifull)
+            beautified_string = beautify_stream(stream)
         except NotImplementedError:
             doLog(ERROR, "Beautify", "None", "Cannot beautify %s", stream)
+        else:
+            if beautified_string is not None:
+                nice_streams_txts.append(beautified_string)
 
     return ("<b>" + info_name(info) + "</b>\n" +
         "\n".join((nice for nice in nice_streams_txts)))
@@ -202,7 +205,7 @@ def info_name(info):
 
 
 def beautify_stream(stream):
-    if type(stream) == DiscovererAudioInfo:
+    if type(stream) is DiscovererAudioInfo:
         templ = ngettext("<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
                 "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",
                 stream.get_channels())
@@ -210,7 +213,7 @@ def beautify_stream(stream):
             stream.get_depth())
         return templ
 
-    elif type(stream) == DiscovererVideoInfo:
+    elif type(stream) is DiscovererVideoInfo:
         par = stream.get_par_num() / stream.get_par_denom()
         if not stream.is_image():
             templ = _("<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>")
@@ -223,13 +226,16 @@ def beautify_stream(stream):
             templ = _("<b>Image:</b> %d×%d <i>pixels</i>")
             templ = templ % (par * stream.get_width(), stream.get_height())
         return templ
-    elif type(stream) == DiscovererStreamInfo:
+
+    elif type(stream) is DiscovererSubtitleInfo:
+        # Ignore subtitle streams
+        return None
+
+    elif type(stream) is DiscovererStreamInfo:
         caps = stream.get_caps().to_string()
-        if "text" in caps:
-            return _("Subtitles")
-        elif "application/x-id3" in caps:
-            # TODO: most audio files have ID3 tags, but we don't show them.
-            return ''
+        if caps in ("application/x-subtitle", "application/x-id3", "text"):
+            # Ignore all audio ID3 tags and subtitle tracks, we don't show them
+            return None
 
     raise NotImplementedError
 
