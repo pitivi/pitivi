@@ -826,6 +826,10 @@ class RenderDialog(Loggable):
         bus.add_signal_watch()
         self._gstSigId[bus] = bus.connect('message', self._busMessageCb)
         self.app.current.pipeline.connect("position", self._updatePositionCb)
+        # Force writing the config now, or the path will be reset
+        # if the user opens the rendering dialog again
+        self.app.settings.lastExportFolder = self.filebutton.get_current_folder()
+        self.app.settings.storeSettings()
 
     def _closeButtonClickedCb(self, unused_button):
         self.debug("Render dialog's Close button clicked")
