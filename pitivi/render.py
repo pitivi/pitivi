@@ -275,6 +275,10 @@ class RenderingProgressDialog(Signallable):
         else:
             self.progressbar.set_text(_("Estimating..."))
 
+    def _deleteEventCb(self, unused_dialog_widget, unused_event):
+        """If the user closes the window by pressing Escape, stop rendering"""
+        self.emit("cancel")
+
     def _cancelButtonClickedCb(self, unused_button):
         self.emit("cancel")
 
