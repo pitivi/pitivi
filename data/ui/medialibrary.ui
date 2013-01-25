@@ -20,7 +20,7 @@
         <property name="is_important">True</property>
         <property name="label" translatable="yes">Import</property>
         <property name="use_underline">True</property>
-        <property name="icon_name">list-add</property>
+        <property name="icon_name">list-add-symbolic</property>
         <child internal-child="accessible">
           <object class="AtkObject" id="media_import_button-atkobject">
             <property name="AtkObject::accessible-name">media_import_button</property>
@@ -43,7 +43,7 @@
         <property name="tooltip_text" translatable="yes">Remove selected clips from the project</property>
         <property name="label" translatable="yes">_Remove from Project</property>
         <property name="use_underline">True</property>
-        <property name="icon_name">list-remove</property>
+        <property name="icon_name">list-remove-symbolic</property>
         <child internal-child="accessible">
           <object class="AtkObject" id="media_remove_button-atkobject">
             <property name="AtkObject::accessible-name">media_remove_button</property>
@@ -65,7 +65,7 @@
         <property name="tooltip_markup" translatable="yes">Clip Properties...</property>
         <property name="tooltip_text" translatable="yes">Clip Properties...</property>
         <property name="use_underline">True</property>
-        <property name="icon_name">document-properties</property>
+        <property name="icon_name">document-properties-symbolic</property>
         <child internal-child="accessible">
           <object class="AtkObject" id="media_props_button-atkobject">
             <property name="AtkObject::accessible-name">media_props_button</property>
@@ -88,7 +88,7 @@
         <property name="tooltip_text" translatable="yes">Insert the selected clips at the end of the timeline</property>
         <property name="label" translatable="yes">Insert at _End of Timeline</property>
         <property name="use_underline">True</property>
-        <property name="icon_name">insert-object</property>
+        <property name="icon_name">insert-object-symbolic</property>
         <child internal-child="accessible">
           <object class="AtkObject" id="media_insert_button-atkobject">
             <property name="AtkObject::accessible-name">media_insert_button</property>
