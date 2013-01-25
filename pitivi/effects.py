@@ -68,6 +68,7 @@ BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
 #FIXME Check if this is still true with GES
 #We should unblacklist it when #650985 is solved
 BLACKLISTED_PLUGINS = ["ldaspa"]
+ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
 
 
 class Effect():
@@ -333,13 +334,15 @@ class EffectsHandler(object):
         effect_name = effect_name + ".png"
         icon = None
         try:
-            icon = GdkPixbuf.Pixbuf.new_from_file(os.path.join(self._pixdir, effect_name))
-        # empty except clause is bad but load_icon raises Gio.Error.
-        ## Right, *gio*.
+            # We can afford to scale the images here, the impact is negligible
+            icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
+                os.path.join(self._pixdir, effect_name),
+                ICON_WIDTH, ICON_WIDTH)
+        # An empty except clause is bad, but "gi._glib.GError" is not helpful.
         except:
             try:
-                icon = GdkPixbuf.Pixbuf.new_from_file(os.path.join(self._pixdir,
-                    "defaultthumbnail.svg"))
+                icon = GdkPixbuf.Pixbuf.new_from_file(
+                    os.path.join(self._pixdir, "defaultthumbnail.svg"))
             except:
                 return None
 
@@ -397,7 +400,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
         icon_col = Gtk.TreeViewColumn()
         icon_col.props.spacing = SPACING
         icon_col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
-        icon_col.props.fixed_width = 96
+        icon_col.props.fixed_width = ICON_WIDTH
         icon_cell = Gtk.CellRendererPixbuf()
         icon_cell.props.xpad = 6
         icon_col.pack_start(icon_cell, True)
