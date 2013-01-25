@@ -624,7 +624,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _newProjectMenuCb(self, unused_action):
         self.app.projectManager.newBlankProject()
-        self.app.gui.showProjectSettingsDialog()
+        self.showProjectSettingsDialog()
 
     def _openProjectCb(self, unused_action):
         self.openProject()
