@@ -1040,7 +1040,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if response == Gtk.ResponseType.OK:
             self.log("User chose a new URI for the missing file")
             new_uri = chooser.get_uri()
-            self.app.current.setModificationState(self, False)
+            self.app.current.setModificationState(False)
         else:
             # Even if the user clicks Cancel, the discoverer keeps trying to
             # import the rest of the clips...
