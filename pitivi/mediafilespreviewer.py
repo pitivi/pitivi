@@ -1,23 +1,19 @@
 # -*- coding: utf-8 -*-
+import os
+from gettext import gettext as _
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import Pango
-import os
-
-from gettext import gettext as _
 from gi.repository.GstPbutils import Discoverer
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.settings import GlobalSettings
-
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import uri_is_valid
-from pitivi.utils.ui import beautify_length, beautify_stream,\
-    SPACING
-
+from pitivi.utils.ui import beautify_length, beautify_stream, SPACING
 from pitivi.viewer import ViewerWidget
 
 DEFAULT_AUDIO_IMAGE = os.path.join(get_pixmap_dir(), "pitivi-sound.png")
@@ -83,6 +79,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.time_format = Gst.Format(Gst.Format.TIME)
         self.original_dims = (PREVIEW_WIDTH, PREVIEW_HEIGHT)
         self.countinuous_seek = False
+        self.slider_being_used = False
         self.current_selected_uri = ""
         self.current_preview_type = ""
         self.description = ""
@@ -297,6 +294,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.preview_video.hide()
 
     def _on_seeker_press_cb(self, widget, event):
+        self.slider_being_used = True
         if event.type == Gdk.EventType.BUTTON_PRESS:
             self.countinuous_seek = True
             if self.is_playing:
@@ -307,10 +305,12 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.player.seek_simple(self.time_format, Gst.SeekFlags.FLUSH, value)
             if self.is_playing:
                 self.player.set_state(Gst.State.PLAYING)
+            # Now, allow gobject timeout to continue updating the slider pos:
+            self.slider_being_used = False
 
     def _on_motion_notify_cb(self, widget, event):
         if self.countinuous_seek:
-            value = widget.get_value()
+            value = long(widget.get_value())
             self.player.seek_simple(self.time_format, Gst.SeekFlags.FLUSH, value)
 
     def _bus_message_cb(self, bus, message):
@@ -326,7 +326,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.error("Error: %s %s" % (err, dbg))
 
     def _update_position(self, *args):
-        if self.is_playing:
+        if self.is_playing and not self.slider_being_used:
             curr_pos = self.player.query_position(self.time_format)[1]
             self.pos_adj.set_value(long(curr_pos))
         return self.is_playing
