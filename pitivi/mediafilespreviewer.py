@@ -266,8 +266,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.player.set_state(Gst.State.PLAYING)
         self.is_playing = True
         self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PAUSE)
-        #Make sure position is updated regularly
-        GObject.timeout_add(500, self._update_position)
+        GObject.timeout_add(250, self._update_position)
         self.debug("Preview started")
 
     def pause(self):
