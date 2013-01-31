@@ -605,8 +605,18 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.settings.mainWindowMainHPanePosition = self.mainhpaned.get_position()
         self.settings.mainWindowVPanePosition = self.vpaned.get_position()
 
-    def _mediaLibraryPlayCb(self, medialibrary, uri):
-        self._viewUri(uri)
+    def _mediaLibraryPlayCb(self, medialibrary, asset):
+        """
+        If the media library item to preview is an image, show it in the user's
+        favorite image viewer. Else, preview the video/sound in Pitivi.
+        """
+        # Technically, our preview widget can show images, but it's never going
+        # to do a better job (sizing, zooming, metadata, editing, etc.)
+        # than the user's favorite image viewer.
+        if asset.is_image():
+            os.system('xdg-open "%s"' % path_from_uri(asset.get_id()))
+        else:
+            self._viewUri(asset.get_id())
 
     def _projectChangedCb(self, project):
         self.main_actions.get_action("SaveProject").set_sensitive(True)

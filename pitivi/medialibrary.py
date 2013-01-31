@@ -880,8 +880,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         Space, Shift+Space, Return or Enter is pressed, preview the clip.
         This method is the same for both iconview and treeview.
         """
-        path = self.modelFilter[path][COL_URI]
-        self.emit('play', path)
+        asset = self.modelFilter[path][COL_ASSET]
+        self.emit('play', asset)
 
     def _iconViewButtonPressEventCb(self, iconview, event):
         chain_up = True
