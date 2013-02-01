@@ -272,10 +272,11 @@ class PreferencesDialog():
                 else:
                     label_widget = Gtk.Label(label=_(label) + ":")
                 icon = Gtk.Image()
-                icon.set_from_stock('gtk-clear', Gtk.IconSize.MENU)
+                icon.set_from_icon_name("edit-clear-all-symbolic", Gtk.IconSize.MENU)
                 revert = Gtk.Button()
                 revert.add(icon)
                 revert.set_tooltip_text(_("Reset to default value"))
+                revert.set_relief(Gtk.ReliefStyle.NONE)
                 revert.set_sensitive(not self.settings.isDefault(attrname))
                 revert.connect("clicked", self._resetOptionCb, attrname)
                 revert.show_all()

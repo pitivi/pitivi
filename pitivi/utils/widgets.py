@@ -880,10 +880,11 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
 
     def _getResetToDefaultValueButton(self, prop, widget):
         icon = Gtk.Image()
-        icon.set_from_stock('gtk-clear', Gtk.IconSize.MENU)
+        icon.set_from_icon_name("edit-clear-all-symbolic", Gtk.IconSize.MENU)
         button = Gtk.Button()
         button.add(icon)
         button.set_tooltip_text(_("Reset to default value"))
+        button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect('clicked', self._defaultBtnClickedCb, widget)
         return button
 
