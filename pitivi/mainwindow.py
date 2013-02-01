@@ -77,14 +77,18 @@ GlobalSettings.addConfigOption('mainWindowVPanePosition',
     section="main-window",
     key="vpane-position",
     default=200)
+GlobalSettings.addConfigOption('mainWindowX',
+    section="main-window",
+    key="X", default=0, type_=int)
+GlobalSettings.addConfigOption('mainWindowY',
+    section="main-window",
+    key="Y", default=0, type_=int)
 GlobalSettings.addConfigOption('mainWindowWidth',
     section="main-window",
-    key="width",
-    type_=int)
+    key="width", default=-1, type_=int)
 GlobalSettings.addConfigOption('mainWindowHeight',
     section="main-window",
-    key="height",
-    type_=int)
+    key="height", default=-1, type_=int)
 GlobalSettings.addConfigOption('lastProjectFolder',
     section="main-window",
     key="last-folder",
@@ -454,21 +458,20 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         ttb.get_accessible().set_name("timeline toolbar")
 
         # Restore settings (or set defaults) for position and visibility
-        height = -1
-        width = -1
         if self.settings.mainWindowHPanePosition:
             self.secondhpaned.set_position(self.settings.mainWindowHPanePosition)
         if self.settings.mainWindowMainHPanePosition:
             self.mainhpaned.set_position(self.settings.mainWindowMainHPanePosition)
         if self.settings.mainWindowVPanePosition:
             self.vpaned.set_position(self.settings.mainWindowVPanePosition)
-        if self.settings.mainWindowWidth:
-            width = self.settings.mainWindowWidth
-        if self.settings.mainWindowHeight:
-            height = self.settings.mainWindowHeight
-        self.set_default_size(width, height)
+        width = self.settings.mainWindowWidth
+        height = self.settings.mainWindowHeight
+        # Maximize by default; if the user chose a custom size, resize & move
         if height == -1 and width == -1:
             self.maximize()
+        else:
+            self.set_default_size(width, height)
+            self.move(self.settings.mainWindowX, self.settings.mainWindowY)
         if allow_full_screen and self.settings.mainWindowFullScreen:
             self.setFullScreen(True)
 
@@ -588,9 +591,14 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 ## UI Callbacks
 
     def _configureCb(self, unused_widget, event):
+        """
+        Handle the main window being moved, resized, maximized or fullscreened
+        """
         if not self.is_fullscreen:
             self.settings.mainWindowWidth = event.width
             self.settings.mainWindowHeight = event.height
+            self.settings.mainWindowX = event.x
+            self.settings.mainWindowY = event.y
 
     def _deleteCb(self, unused_widget, unused_data=None):
         self._saveWindowSettings()
