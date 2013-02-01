@@ -163,7 +163,7 @@ class Selected(Signallable):
     selected = property(getSelected, setSelected)
 
 
-class TrackObjectController(Controller):
+class TrackElementController(Controller):
 
     _cursor = ARROW
     _context = None
@@ -245,7 +245,7 @@ class TrackObjectController(Controller):
 
 class TrimHandle(View, GooCanvas.CanvasImage, Loggable, Zoomable):
 
-    """A component of a TrackObject which manage's the source's edit
+    """A component of a TrackElement which manage's the source's edit
     points"""
 
     def __init__(self, instance, element, timeline, **kwargs):
@@ -294,16 +294,16 @@ class StartHandle(TrimHandle):
 
     """Subclass of TrimHandle wich sets the object's start time"""
 
-    class Controller(TrackObjectController):
+    class Controller(TrackElementController):
 
         _cursor = LEFT_SIDE
 
         def drag_start(self, item, target, event):
             self.debug("Trim start %s" % target)
-            TrackObjectController.drag_start(self, item, target, event)
+            TrackElementController.drag_start(self, item, target, event)
 
             if self._view.element.is_locked():
-                elem = self._view.element.get_timeline_object()
+                elem = self._view.element.get_clip()
             else:
                 elem = self._view.element
 
@@ -328,16 +328,16 @@ class EndHandle(TrimHandle):
 
     """Subclass of TrimHandle which sets the objects's end time"""
 
-    class Controller(TrackObjectController):
+    class Controller(TrackElementController):
 
         _cursor = RIGHT_SIDE
 
         def drag_start(self, item, target, event):
             self.debug("Trim end %s" % target)
-            TrackObjectController.drag_start(self, item, target, event)
+            TrackElementController.drag_start(self, item, target, event)
 
             if self._view.element.is_locked():
-                elem = self._view.element.get_timeline_object()
+                elem = self._view.element.get_clip()
             else:
                 elem = self._view.element
             self._context = EditingContext(elem, self._view.timeline,
@@ -377,9 +377,9 @@ def raise_new(self, above):
 setattr(GooCanvas.CanvasItem, "raise_", raise_new)
 
 
-class TrackObject(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
+class TrackElement(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
 
-    class Controller(TrackObjectController):
+    class Controller(TrackElementController):
 
         _handle_enter_leave = True
 
@@ -387,7 +387,7 @@ class TrackObject(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
             if not self._view.movable:
                 return
 
-            TrackObjectController.drag_start(self, item, target, event)
+            TrackElementController.drag_start(self, item, target, event)
 
             self._context = EditingContext(self._view.element,
                 self._view.timeline, GES.EditMode.EDIT_NORMAL, GES.Edge.EDGE_NONE,
@@ -602,37 +602,37 @@ class TrackObject(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
 
     element = property(getElement, setElement, delElement)
 
-    def _updateCb(self, track_object, start):
+    def _updateCb(self, track_element, start):
         self._update()
 
     def selectedChangedCb(self, element, unused_selection):
         # Do not confuse this method with _selectionChangedCb in Timeline
         # unused_selection is True only when no clip was selected before
         # Note that element is a track.Selected object,
-        # whereas self.element is a GES object (ex: TrackVideoTransition)
+        # whereas self.element is a GES object (ex: VideoTransition)
         if element.selected:
-            if isinstance(self.element, GES.TrackTransition):
-                if isinstance(self.element, GES.TrackVideoTransition):
+            if isinstance(self.element, GES.Transition):
+                if isinstance(self.element, GES.VideoTransition):
                     self.app.gui.trans_list.activate(self.element)
-            elif isinstance(self.element, GES.TrackTitleSource):
+            elif isinstance(self.element, GES.TitleSource):
                 self.app.gui.switchContextTab("title editor")
-                self.app.gui.title_editor.set_source(self.element.get_timeline_object())
+                self.app.gui.title_editor.set_source(self.element.get_clip())
             else:
                 if self.element.get_track().get_property("track_type") == GES.TrackType.VIDEO:
                     has_text_overlay = False
-                    tlobj = self.element.get_timeline_object()
-                    trackobjs = tlobj.get_track_objects()
+                    clip = self.element.get_clip()
+                    trackobjs = clip.get_track_elements()
                     for trackobj in trackobjs:
-                        if isinstance(trackobj, GES.TrackTextOverlay):
+                        if isinstance(trackobj, GES.TextOverlay):
                             has_text_overlay = True
                             title = trackobj
                     if not has_text_overlay:
-                        title = GES.TrackTextOverlay()
+                        title = GES.TextOverlay()
                         title.set_text("")
-                        title.set_start(self.element.get_start())
-                        title.set_duration(self.element.get_duration())
+                        title.set_start(self.element.start)
+                        title.set_duration(self.element.duration)
                         # FIXME: Creating a text overlay everytime we select a video track object is madness
-                        self.element.get_timeline_object().add_track_object(title)
+                        self.element.get_clip().add_track_element(title)
                         self.element.get_track().add_object(title)
                     self.app.gui.title_editor.set_source(title)
                 self.app.gui.trans_list.deactivate()
@@ -645,12 +645,12 @@ class TrackObject(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
     def _update(self):
         # Calculating the new position
         try:
-            x = self.nsToPixel(self.element.get_start())
+            x = self.nsToPixel(self.element.start)
         except Exception, e:
             raise Exception(e)
 
         # get layer and track_type
-        layer = self.element.get_timeline_object().get_layer()
+        layer = self.element.get_clip().get_layer()
         track_type = self.element.get_track().get_property("track-type")
 
         # update height, compare with current height to not run into recursion
@@ -693,20 +693,20 @@ class TrackObject(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
         self.app.gui.timeline_ui.unsureVadjHeight()
 
 
-class TrackTransition(TrackObject):
+class Transition(TrackElement):
     """
-    Subclass of TrackObject to account for the differences of transition objects
+    Subclass of TrackElement to account for the differences of transition objects
     """
     def __init__(self, instance, element, track, timeline, utrack):
-        TrackObject.__init__(self, instance, element, track, timeline, utrack)
+        TrackElement.__init__(self, instance, element, track, timeline, utrack)
         for thing in (self.bg, self._selec_indic, self.namebg, self.name):
             self.add_child(thing, -1)
-        if isinstance(element, GES.TrackVideoTransition):
+        if isinstance(element, GES.VideoTransition):
             element.connect("notify::transition-type", self._changeVideoTransitionCb)
         self.movable = False
 
     def _setElement(self, element):
-        if isinstance(element, GES.TrackVideoTransition):
+        if isinstance(element, GES.VideoTransition):
             self.name.props.text = element.props.transition_type.value_nick
 
     def _getColor(self):
@@ -717,12 +717,12 @@ class TrackTransition(TrackObject):
         self.name.props.text = transition.props.transition_type.value_nick
 
 
-class TrackTitleSource(TrackObject):
+class TitleSource(TrackElement):
     """
-    Subclass of TrackObject for titles
+    Subclass of TrackElement for titles
     """
     def __init__(self, instance, element, track, timeline, utrack):
-        TrackObject.__init__(self, instance, element, track, timeline, utrack)
+        TrackElement.__init__(self, instance, element, track, timeline, utrack)
         #self.preview = Preview(self.app, element)
         object_thingies = (self.bg, self._selec_indic,
                         self.start_handle, self.end_handle,
@@ -745,12 +745,12 @@ class TrackTitleSource(TrackObject):
             self._update()
 
 
-class TrackFileSource(TrackObject):
+class UriSource(TrackElement):
     """
-    Subclass of TrackObject to allow thumbnailing of objects with URIs
+    Subclass of TrackElement to allow thumbnailing of objects with URIs
     """
     def __init__(self, instance, element, track, timeline, utrack):
-        TrackObject.__init__(self, instance, element, track, timeline, utrack)
+        TrackElement.__init__(self, instance, element, track, timeline, utrack)
         self.preview = Preview(self.app, element, self.height)
         object_thingies = (self.bg, self.preview, self._selec_indic,
                         self.start_handle, self.end_handle,
@@ -763,7 +763,7 @@ class TrackFileSource(TrackObject):
         Set the human-readable file name as the clip's text label
         """
         if self.element:
-            info = element.get_timeline_object().get_asset().get_info()
+            info = element.get_clip().get_asset().get_info()
             self.name.props.text = info_name(info)
             twidth, theight = text_size(self.name)
             self.namewidth = twidth
@@ -779,7 +779,7 @@ class TrackFileSource(TrackObject):
 
 class Track(GooCanvas.CanvasGroup, Zoomable, Loggable):
     """
-    Groups all TrackObjects of one Track
+    Groups all TrackElements of one Track
     """
     __gtype_name__ = 'Track'
 
@@ -834,32 +834,32 @@ class Track(GooCanvas.CanvasGroup, Zoomable, Loggable):
 
     track = property(getTrack, setTrack, None, "The timeline property")
 
-    def _objectAddedCb(self, unused_timeline, track_object):
-        if isinstance(track_object, GES.TrackTransition):
-            self._transitionAdded(track_object)
-        elif isinstance(track_object, GES.TrackTitleSource):
-            w = TrackTitleSource(self.app, track_object, self.track, self.timeline, self)
-            self.widgets[track_object] = w
+    def _objectAddedCb(self, unused_timeline, track_element):
+        if isinstance(track_element, GES.Transition):
+            self._transitionAdded(track_element)
+        elif isinstance(track_element, GES.TitleSource):
+            w = TitleSource(self.app, track_element, self.track, self.timeline, self)
+            self.widgets[track_element] = w
             self.add_child(w, -1)
-        elif isinstance(track_object, GES.TrackFileSource):
-            w = TrackFileSource(self.app, track_object, self.track, self.timeline, self)
-            self.widgets[track_object] = w
+        elif isinstance(track_element, GES.UriSource):
+            w = UriSource(self.app, track_element, self.track, self.timeline, self)
+            self.widgets[track_element] = w
             self.add_child(w, -1)
 
-    def _objectRemovedCb(self, unused_timeline, track_object):
-        if not isinstance(track_object, GES.TrackEffect) and track_object in self.widgets:
-            w = self.widgets[track_object]
-            del self.widgets[track_object]
+    def _objectRemovedCb(self, unused_timeline, track_element):
+        if not isinstance(track_element, GES.BaseEffect) and track_element in self.widgets:
+            w = self.widgets[track_element]
+            del self.widgets[track_element]
             self.remove_child(self.find_child(w))
             Zoomable.removeInstance(w)
 
     def _transitionAdded(self, transition):
-        w = TrackTransition(self.app, transition, self.track, self.timeline, self)
+        w = Transition(self.app, transition, self.track, self.timeline, self)
         self.widgets[transition] = w
         self.add_child(w, -1)
         self.transitions.append(w)
         w.raise_(None)
 
-    def updateTrackObjects(self):
-        for track_object in self.widgets.itervalues():
-            track_object._update()
+    def updateTrackElements(self):
+        for track_element in self.widgets.itervalues():
+            track_element._update()

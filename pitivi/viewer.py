@@ -433,7 +433,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
         """
         While a clip is being trimmed, show a live preview of it.
         """
-        if isinstance(tl_obj, GES.TimelineTitleSource) or tl_obj.props.is_image or not hasattr(tl_obj, "get_uri"):
+        if isinstance(tl_obj, GES.TitleClip) or tl_obj.props.is_image or not hasattr(tl_obj, "get_uri"):
             self.log("%s is an image or has no URI, so not previewing trim" % tl_obj)
             return False
 

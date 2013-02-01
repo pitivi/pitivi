@@ -204,9 +204,9 @@ class ThumbnailCache(object):
 previewers = {}
 
 
-def get_preview_for_object(instance, trackobject):
-    uri = trackobject.props.uri
-    track_type = trackobject.get_track().props.track_type
+def get_preview_for_object(instance, trackelement):
+    uri = trackelement.props.uri
+    track_type = trackelement.props.track_type
     key = uri, track_type
     if not key in previewers:
         # TODO: handle non-random access factories
@@ -218,7 +218,7 @@ def get_preview_for_object(instance, trackobject):
             # previewers[key] = RandomAccessAudioPreviewer(instance, uri)
             previewers[key] = DefaultPreviewer(instance, uri)
         elif track_type == GES.TrackType.VIDEO:
-            if trackobject.get_timeline_object().is_image():
+            if trackelement.get_clip().is_image():
                 previewers[key] = StillImagePreviewer(instance, uri)
             else:
                 previewers[key] = RandomAccessVideoPreviewer(instance, uri)
@@ -271,7 +271,7 @@ class DefaultPreviewer(Previewer):
 class RandomAccessPreviewer(Previewer):
     """ Handles loading, caching, and drawing preview data for segments of
     random-access streams.  There is one Previewer per track_type per
-    TrackObject.  Preview data is read from a uri, and when requested, drawn
+    TrackElement.  Preview data is read from a uri, and when requested, drawn
     into a given cairo context. If the requested data is not cached, an
     appropriate filler will be substituted, and an asyncrhonous request
     for the data will be issued. When the data becomes available, the update

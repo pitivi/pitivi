@@ -806,7 +806,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         "No properties."
         """
         is_effect = False
-        if isinstance(self.element, GES.TrackParseLaunchEffect):
+        if isinstance(self.element, GES.Effect):
             is_effect = True
             props = [prop for prop in self.element.list_children_properties() if not prop.name in self.ignore]
         else:

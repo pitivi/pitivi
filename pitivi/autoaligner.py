@@ -21,7 +21,7 @@
 
 # TODO reimplement after GES port
 """
-Classes for automatic alignment of L{TimelineObject}s
+Classes for automatic alignment of L{Clip}s
 """
 
 from gi.repository import GObject
@@ -298,18 +298,18 @@ def affinealign(reference, targets, max_drift=0.02):
     return offsets, drifts
 
 
-def getAudioTrack(timeline_object):
-    """Helper function for getting an audio track from a TimelineObject
+def getAudioTrack(clip):
+    """Helper function for getting an audio track from a Clip
 
-    @param timeline_object: The TimelineObject from which to locate an
+    @param clip: The Clip from which to locate an
         audio track
-    @type timeline_object: L{TimelineObject}
-    @returns: An audio track from timeline_object, or None if
-        timeline_object has no audio track
-    @rtype: audio L{TrackObject} or L{NoneType}
+    @type clip: L{Clip}
+    @returns: An audio track from clip, or None if
+        clip has no audio track
+    @rtype: audio L{TrackElement} or L{NoneType}
 
     """
-    for track in timeline_object.track_objects:
+    for track in clip.track_elements:
         if track.stream_type == AudioStream:
             return track
     return None
@@ -474,7 +474,7 @@ class EnvelopeExtractee(Extractee, Loggable):
 class AutoAligner(Loggable):
 
     """
-    Class for aligning a set of L{TimelineObject}s automatically.
+    Class for aligning a set of L{Clip}s automatically.
 
     The alignment is based on their contents, so that the shifted tracks
     are synchronized.  The current implementation only analyzes audio
@@ -499,21 +499,21 @@ class AutoAligner(Loggable):
 
     """
 
-    def __init__(self, timeline_objects, callback):
+    def __init__(self, clips, callback):
         """
-        @param timeline_objects: an iterable of L{TimelineObject}s.
-            In this implementation, only L{TimelineObject}s with at least one
+        @param clips: an iterable of L{Clip}s.
+            In this implementation, only L{Clip}s with at least one
             audio track will be aligned.
-        @type timeline_objects: iter(L{TimelineObject})
+        @type clips: iter(L{Clip})
         @param callback: A function to call when alignment is complete.  No
             arguments will be provided.
         @type callback: function
 
         """
         Loggable.__init__(self)
-        # self._timeline_objects maps each object to its envelope.  The values
+        # self._clips maps each object to its envelope.  The values
         # are initially None prior to envelope extraction.
-        self._timeline_objects = dict.fromkeys(timeline_objects)
+        self._clips = dict.fromkeys(clips)
         self._callback = callback
         # stack of (Track, Extractee) pairs waiting to be processed
         # When start() is called, the stack will be populated, and then
@@ -522,15 +522,15 @@ class AutoAligner(Loggable):
         self._extraction_stack = []
 
     @staticmethod
-    def canAlign(timeline_objects):
+    def canAlign(clips):
         """
         Can an AutoAligner align these objects?
 
         Determine whether a group of timeline objects can all
         be aligned together by an AutoAligner.
 
-        @param timeline_objects: a group of timeline objects
-        @type timeline_objects: iterable(L{TimelineObject})
+        @param clips: a group of timeline objects
+        @type clips: iterable(L{Clip})
         @returns: True iff the objects can aligned.
         @rtype: L{bool}
 
@@ -538,7 +538,7 @@ class AutoAligner(Loggable):
         # numpy is a "soft dependency".  If you're running without numpy,
         # this False return value is your only warning not to
         # use the AutoAligner, which will crash immediately.
-        return all(getAudioTrack(t) is not None for t in timeline_objects)
+        return all(getAudioTrack(t) is not None for t in clips)
 
     def _extractNextEnvelope(self):
         audiotrack, extractee = self._extraction_stack.pop()
@@ -548,9 +548,9 @@ class AutoAligner(Loggable):
                   audiotrack.out_point - audiotrack.in_point)
         return False
 
-    def _envelopeCb(self, array, timeline_object):
-        self.debug("Receiving envelope for %s", timeline_object)
-        self._timeline_objects[timeline_object] = array
+    def _envelopeCb(self, array, clip):
+        self.debug("Receiving envelope for %s", clip)
+        self._clips[clip] = array
         if self._extraction_stack:
             self._extractNextEnvelope()
         else:  # This was the last envelope
@@ -567,19 +567,18 @@ class AutoAligner(Loggable):
 
         """
         progress_aggregator = ProgressAggregator()
-        pairs = []  # (TimelineObject, {audio}TrackObject) pairs
-        for timeline_object in self._timeline_objects.keys():
-            audiotrack = getAudioTrack(timeline_object)
+        pairs = []  # (Clip, {audio}TrackElement) pairs
+        for clip in self._clips.keys():
+            audiotrack = getAudioTrack(clip)
             if audiotrack is not None:
-                pairs.append((timeline_object, audiotrack))
-            else:  # forget any TimelineObject without an audio track
-                self._timeline_objects.pop(timeline_object)
+                pairs.append((clip, audiotrack))
+            else:  # forget any Clip without an audio track
+                self._clips.pop(clip)
         if len(pairs) >= 2:
-            for timeline_object, audiotrack in pairs:
+            for clip, audiotrack in pairs:
                 # blocksize is the number of samples per block
                 blocksize = audiotrack.stream.rate // self.BLOCKRATE
-                extractee = EnvelopeExtractee(blocksize, self._envelopeCb,
-                                              timeline_object)
+                extractee = EnvelopeExtractee(blocksize, self._envelopeCb, clip)
                 # numsamples is the total number of samples in the track,
                 # which is used by progress_aggregator to determine
                 # the percent completion.
@@ -612,23 +611,23 @@ class AutoAligner(Loggable):
         determine which object moves and which stays put.
 
         @returns: the timeline object with lowest priority.
-        @rtype: L{TimelineObject}
+        @rtype: L{Clip}
 
         """
-        def priority(timeline_object):
-            return timeline_object.priority
-        return min(self._timeline_objects.iterkeys(), key=priority)
+        def priority(clip):
+            return clip.priority
+        return min(self._clips.iterkeys(), key=priority)
 
     def _performShifts(self):
         self.debug("performing shifts")
         reference = self._chooseReference()
         # By using pop(), this line also removes the reference
-        # TimelineObject and its envelope from further consideration,
+        # Clip and its envelope from further consideration,
         # saving some CPU time in rigidalign.
-        reference_envelope = self._timeline_objects.pop(reference)
+        reference_envelope = self._clips.pop(reference)
         # We call list() because we need a reliable ordering of the pairs
         # (In python 3, dict.items() returns an unordered dictview)
-        pairs = list(self._timeline_objects.items())
+        pairs = list(self._clips.items())
         envelopes = [p[1] for p in pairs]
         offsets = rigidalign(reference_envelope, envelopes)
         for (movable, envelope), offset in zip(pairs, offsets):

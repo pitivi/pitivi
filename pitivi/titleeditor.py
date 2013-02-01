@@ -711,7 +711,7 @@ class TitleEditor(Loggable):
             source_text = self.source.get_text()
             self.log("Title text set to %s", source_text)
             if source_text is None:
-                # FIXME: sometimes we get a TrackTextOverlay/TrackTitleSource
+                # FIXME: sometimes we get a TextOverlay/TitleSource
                 # without a valid text property. This should not happen.
                 source_text = ""
                 self.warning('Source did not have a text property, setting it to "" to avoid pango choking up on None')
@@ -777,7 +777,7 @@ class TitleEditor(Loggable):
 
     def set_source(self, source, created=False):  # FIXME: this "created" boolean param is a hack
         """
-        Set the GESTimelineTitleSource to be used with the title editor.
+        Set the GESTitleClip to be used with the title editor.
         This can be called either from the title editor in _createCb, or by
         track.py to set the source to None.
         """
@@ -790,9 +790,9 @@ class TitleEditor(Loggable):
         if source is None:
             self._deactivate()
         else:
-            assert isinstance(source, GES.TrackTextOverlay) or \
-                isinstance(source, GES.TrackTitleSource) or \
-                isinstance(source, GES.TimelineTitleSource)
+            assert isinstance(source, GES.TextOverlay) or \
+                isinstance(source, GES.TitleSource) or \
+                isinstance(source, GES.TitleClip)
             self._updateFromSource()
             self._activate()
 
@@ -800,7 +800,7 @@ class TitleEditor(Loggable):
         """
         The user clicked the "Create and insert" button, initialize the UI
         """
-        source = GES.TimelineTitleSource()
+        source = GES.TitleClip()
         source.set_text("")
         source.set_duration(long(Gst.SECOND * 5))
         self.set_source(source, True)

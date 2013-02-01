@@ -348,7 +348,7 @@ class ProjectCreatorGuiPitivi(GuiPitivi):
         if self._maybePopStartupUri(startup_uris, info.get_uri()) \
                 and add_to_timeline:
             self.action_log.begin("add clip")
-            src = GES.TimelineFileSource(uri=info.get_uri())
+            src = GES.UriClip(uri=info.get_uri())
             src.set_property("priority", 1)
             self.current.timeline.get_layers()[0].add_object(src)
             self.action_log.commit()

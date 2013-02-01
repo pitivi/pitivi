@@ -46,7 +46,7 @@ from pitivi.utils.misc import quote_uri, print_ns
 from pitivi.utils.pipeline import PipelineError
 from pitivi.settings import GlobalSettings
 
-from track import Track, TrackObject
+from track import Track, TrackElement
 from layer import VideoLayerControl, AudioLayerControl
 from pitivi.utils.timeline import EditingContext, SELECT, Zoomable
 
@@ -228,10 +228,10 @@ class TimelineCanvas(GooCanvas.Canvas, Zoomable, Loggable):
         x += self.app.gui.timeline_ui.hadj.get_value()
         return Point(*self.convert_from_pixels(x, y))
 
-    def setExpanded(self, track_object, expanded):
+    def setExpanded(self, track_element, expanded):
         track_ui = None
         for track in self._tracks:
-            if track.track == track_object:
+            if track.track == track_element:
                 track_ui = track
                 break
 
@@ -269,8 +269,8 @@ class TimelineCanvas(GooCanvas.Canvas, Zoomable, Loggable):
 
     def getItemsInArea(self, x1, y1, x2, y2):
         '''
-        Permits to get the Non UI L{Track}/L{TrackObject} in a list of set
-        corresponding to the L{Track}/L{TrackObject} which are in the are
+        Permits to get the Non UI L{Track}/L{TrackElement} in a list of set
+        corresponding to the L{Track}/L{TrackElement} which are in the are
 
         @param x1: The horizontal coordinate of the up left corner of the area
         @type x1: An C{int}
@@ -281,7 +281,7 @@ class TimelineCanvas(GooCanvas.Canvas, Zoomable, Loggable):
         @param x2: The vertical coordinate of the down right corner of the area
         @type x2: An C{int}
 
-        @returns: A list of L{Track}, L{TrackObject} tuples
+        @returns: A list of L{Track}, L{TrackElement} tuples
         '''
         bounds = GooCanvas.CanvasBounds()
         bounds.x1 = x1
@@ -293,15 +293,15 @@ class TimelineCanvas(GooCanvas.Canvas, Zoomable, Loggable):
             return [], []
 
         tracks = set()
-        track_objects = set()
+        track_elements = set()
 
         for item in items:
             if isinstance(item, Track):
                 tracks.add(item.track)
-            elif isinstance(item, TrackObject):
-                track_objects.add(item.element)
+            elif isinstance(item, TrackElement):
+                track_elements.add(item.element)
 
-        return tracks, track_objects
+        return tracks, track_elements
 
     def _normalize(self, p1, p2):
         w, h = p1 - p2
@@ -357,7 +357,7 @@ class TimelineCanvas(GooCanvas.Canvas, Zoomable, Loggable):
         items = self.get_items_in_area(self._marquee.get_bounds(), True, True, True)
         if items:
             return set((item.element for item in items if isinstance(item,
-                TrackObject) and item.bg in items))
+                TrackElement) and item.bg in items))
         return set()
 
 ## playhead implementation
@@ -475,9 +475,9 @@ class TimelineCanvas(GooCanvas.Canvas, Zoomable, Loggable):
         self._request_size()
 
     def updateTracks(self):
-        self.debug("Updating all TrackObjects")
+        self.debug("Updating all TrackElements")
         for track in self._tracks:
-            track.updateTrackObjects()
+            track.updateTrackElements()
 
 
 class TimelineControls(Gtk.VBox, Loggable):
@@ -1173,7 +1173,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             if not self._temp_objects:
                 self._create_temp_source(x, y)
 
-            # Let some time for TrackObject-s to be created
+            # Let some time for TrackElement-s to be created
             if self._temp_objects:
                 focus = self._temp_objects[0]
                 if self._move_context is None:
@@ -1240,7 +1240,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         else:
             if self.app.current.timeline.props.duration == 0:
                 return False
-            timeline_objs = self._getTimelineObjectUnderMouse(x, y)
+            timeline_objs = self._getClipUnderMouse(x, y)
             if timeline_objs:
                 # FIXME make a util function to add effects
                 # instead of copy/pasting it from cliproperties
@@ -1248,20 +1248,20 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                 media_type = self.app.effects.getFactoryFromName(bin_desc).media_type
 
                 # Trying to apply effect only on the first object of the selection
-                tlobj = timeline_objs[0]
+                clip = timeline_objs[0]
 
                 # Checking that this effect can be applied on this track object
                 # Which means, it has the corresponding media_type
-                for tckobj in tlobj.get_track_objects():
-                    track = tckobj.get_track()
+                for track_element in clip.get_track_elements():
+                    track = track_element.get_track()
                     if track.get_property("track_type") == GES.TrackType.AUDIO and \
                             media_type == AUDIO_EFFECT or \
                             track.get_property("track_type") == GES.TrackType.VIDEO and \
                             media_type == VIDEO_EFFECT:
                         #Actually add the effect
                         self.app.action_log.begin("add effect")
-                        effect = GES.TrackParseLaunchEffect(bin_description=bin_desc)
-                        tlobj.add_track_object(effect)
+                        effect = GES.Effect(bin_description=bin_desc)
+                        clip.add_track_element(effect)
                         track.add_object(effect)
                         self.app.gui.clipconfig.effect_expander.updateAll()
                         self.app.action_log.commit()
@@ -1273,13 +1273,13 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         Gtk.drag_finish(context, True, False, timestamp)
         return True
 
-    def _getTimelineObjectUnderMouse(self, x, y):
+    def _getClipUnderMouse(self, x, y):
         timeline_objs = []
         items_in_area = self._canvas.getItemsInArea(x, y, x + 1, y + 1)
 
-        track_objects = [obj for obj in items_in_area[1]]
-        for track_object in track_objects:
-            timeline_objs.append(track_object.get_timeline_object())
+        track_elements = [obj for obj in items_in_area[1]]
+        for track_element in track_elements:
+            timeline_objs.append(track_element.get_clip())
 
         return timeline_objs
 
@@ -1339,14 +1339,14 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         quoted_uri = quote_uri(uri)
         layers = self.timeline.get_layers()
         for layer in layers:
-            for tlobj in layer.get_objects():
-                if hasattr(tlobj, "get_uri"):
-                    if quote_uri(tlobj.get_uri()) == quoted_uri:
-                        layer.remove_object(tlobj)
+            for clip in layer.get_objects():
+                if hasattr(clip, "get_uri"):
+                    if quote_uri(clip.get_uri()) == quoted_uri:
+                        layer.remove_object(clip)
                 else:
                     # TimelineStandardTransition and the like don't have URIs
                     # GES will remove those transitions automatically.
-                    self.debug("Not removing %s from timeline as it has no URI" % tlobj)
+                    self.debug("Not removing %s from timeline as it has no URI" % clip)
 
     def _create_temp_source(self, x, y):
         """
@@ -1729,7 +1729,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
     def deleteSelected(self, unused_action):
         if self.timeline:
             self.app.action_log.begin("delete clip")
-            #FIXME GES port: Handle unlocked TrackObject-s
+            #FIXME GES port: Handle unlocked TrackElement-s
             for obj in self.timeline.selection:
                 layer = obj.get_layer()
                 layer.remove_object(obj)
@@ -1740,8 +1740,8 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             self.debug("Ungouping selected clips %s" % self.timeline.selection)
             self.timeline.enable_update(False)
             self.app.action_log.begin("ungroup")
-            for tlobj in self.timeline.selection:
-                tlobj.objects_set_locked(False)
+            for clip in self.timeline.selection:
+                clip.objects_set_locked(False)
             self.timeline.enable_update(True)
             self.app.action_log.commit()
 
@@ -1750,8 +1750,8 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             self.debug("Gouping selected clips %s" % self.timeline.selection)
             self.timeline.enable_update(False)
             self.app.action_log.begin("group")
-            for tlobj in self.timeline.selection:
-                tlobj.objects_set_locked(True)
+            for clip in self.timeline.selection:
+                clip.objects_set_locked(True)
             self.app.action_log.commit()
             self.timeline.enable_update(True)
 
@@ -1784,7 +1784,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                 start = tck_obj.get_start()
                 end = start + tck_obj.get_duration()
                 if start < position and end > position:
-                    obj = tck_obj.get_timeline_object()
+                    obj = tck_obj.get_clip()
                     obj.split(position)
         self.timeline.enable_update(True)
 

@@ -341,7 +341,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         self.app.gui.setActionsSensitive(True)
 
-    def _trackObjectAddedCb(self, source, trackobj):
+    def _trackElementAddedCb(self, source, trackobj):
         """ After an object has been added to the first track, position it
         correctly and request the next source to be processed. """
         timeline = self.app.current.timeline
@@ -353,9 +353,9 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         else:
             source.props.start = timeline.props.duration
 
-        # We only need one TrackObject to estimate the new duration.
+        # We only need one TrackElement to estimate the new duration.
         # Process the next source.
-        source.disconnect_by_func(self._trackObjectAddedCb)
+        source.disconnect_by_func(self._trackElementAddedCb)
         self._insertNextSource()
 
     def _searchEntryChangedCb(self, entry):
@@ -587,7 +587,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     def _assetAddedCb(self, unused_project, asset,
             current_clip_iter=None, total_clips=None):
         """ a file was added to the medialibrary """
-        if isinstance(asset, GES.AssetFileSource):
+        if isinstance(asset, GES.UriClipAsset):
             self._updateProgressbar()
             self._addAsset(asset)
 
@@ -606,7 +606,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     def _errorCreatingAssetCb(self, unsued_project, error, id, type):
         """ The given uri isn't a media file """
-        if GObject.type_is_a(type, GES.TimelineFileSource):
+        if GObject.type_is_a(type, GES.UriClip):
             error = (id, str(error.domain), error)
             self._errors.append(error)
             self._updateProgressbar()
@@ -687,8 +687,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """Check if a given URI is present in the timeline"""
         layers = self.app.current.timeline.get_layers()
         for layer in layers:
-            for tlobj in layer.get_objects():
-                if tlobj.get_asset() == asset:
+            for clip in layer.get_objects():
+                if clip.get_asset() == asset:
                     return True
         return False
 
@@ -696,7 +696,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         Select, in the media library, unused sources in the project.
         """
-        assets = self.app.current.list_assets(GES.TimelineFileSource)
+        assets = self.app.current.list_assets(GES.UriClip)
         unused_sources_uris = []
 
         model = self.treeview.get_model()

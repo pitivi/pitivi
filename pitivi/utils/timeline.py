@@ -45,18 +45,18 @@ SELECT_BETWEEN = 3
 #------------------------------------------------------------------------------#
 #                          Timeline Object management helper                   #
 class TimelineError(Exception):
-    """Base Exception for errors happening in L{Timeline}s or L{TimelineObject}s"""
+    """Base Exception for errors happening in L{Timeline}s or L{Clip}s"""
     pass
 
 
 class Selection(Signallable):
     """
-    A collection of L{GES.TimelineObject}.
+    A collection of L{GES.Clip}.
 
     Signals:
      - C{selection-changed} : The contents of the L{GES.Selection} changed.
 
-    @ivar selected: Set of selected L{GES.TrackObject}
+    @ivar selected: Set of selected L{GES.TrackElement}
     @type selected: C{list}
     """
 
@@ -69,23 +69,23 @@ class Selection(Signallable):
 
     def setToObj(self, obj, mode):
         """
-        Convenience method for calling L{setSelection} with a single L{GES.TimelineObject}
+        Convenience method for calling L{setSelection} with a single L{GES.Clip}
 
         @see: L{setSelection}
         """
         self.setSelection(set([obj]), mode)
 
-    def addTimelineObject(self, timeline_object):
+    def addClip(self, clip):
         """
-        Add the given timeline_object to the selection.
+        Add the given clip to the selection.
 
-        @param timeline_object: The object to add
-        @type timeline_object: L{GES.TimelineObject}
+        @param clip: The object to add
+        @type clip: L{GES.Clip}
         @raises TimelineError: If the object is already controlled by this
         Selection.
         """
-        if timeline_object in self.timeline_objects:
-            raise TimelineError("TrackObject already in this selection")
+        if clip in self.clips:
+            raise TimelineError("TrackElement already in this selection")
 
     def setSelection(self, objs, mode):
         """
@@ -105,8 +105,8 @@ class Selection(Signallable):
         selection = set()
         for obj in objs:
             # FIXME GES break, handle the fact that we have unlinked objects in GES
-            if isinstance(obj, GES.TrackObject):
-                selection.add(obj.get_timeline_object())
+            if isinstance(obj, GES.TrackElement):
+                selection.add(obj.get_clip())
             else:
                 selection.add(obj)
 
@@ -125,38 +125,38 @@ class Selection(Signallable):
             self.last_single_obj = iter(selection).next()
 
         for obj in old_selection - self.selected:
-            for tckobj in obj.get_track_objects():
-                if not isinstance(tckobj, GES.TrackEffect) and not isinstance(tckobj, GES.TrackTextOverlay):
-                    tckobj.selected.selected = False
+            for track_element in obj.get_track_elements():
+                if not isinstance(track_element, GES.BaseEffect) and not isinstance(track_element, GES.TextOverlay):
+                    track_element.selected.selected = False
 
         for obj in self.selected - old_selection:
-            for tckobj in obj.get_track_objects():
-                if not isinstance(tckobj, GES.TrackEffect) and not isinstance(tckobj, GES.TrackTextOverlay):
-                    tckobj.selected.selected = True
+            for track_element in obj.get_track_elements():
+                if not isinstance(track_element, GES.BaseEffect) and not isinstance(track_element, GES.TextOverlay):
+                    track_element.selected.selected = True
 
         self.emit("selection-changed")
 
     def getSelectedTrackObjs(self):
         """
-        Returns the list of L{TrackObject} contained in this selection.
+        Returns the list of L{TrackElement} contained in this selection.
         """
         objects = []
-        for timeline_object in self.selected:
-            objects.extend(timeline_object.get_track_objects())
+        for clip in self.selected:
+            objects.extend(clip.get_track_elements())
 
         return set(objects)
 
-    def getSelectedTrackEffects(self):
+    def getSelectedEffects(self):
         """
-        Returns the list of L{TrackEffect} contained in this selection.
+        Returns the list of L{GES.BaseEffect} contained in this selection.
         """
-        track_effects = []
-        for timeline_object in self.selected:
-            for track in timeline_object.get_track_objects():
-                if isinstance(track, GES.TrackEffect):
-                    track_effects.append(track)
+        effects = []
+        for clip in self.selected:
+            for track in clip.get_track_elements():
+                if isinstance(track, GES.BaseEffect):
+                    effects.append(track)
 
-        return track_effects
+        return effects
 
     def __len__(self):
         return len(self.selected)
@@ -181,10 +181,10 @@ class EditingContext(Signallable):
 
     def __init__(self, focus, timeline, mode, edge, other, settings):
         """
-        @param focus: the TimelineObject or TrackObject which is to be the
+        @param focus: the Clip or TrackElement which is to be the
         main target of interactive editing, such as the object directly under the
         mouse pointer
-        @type focus: L{GES.TimelineObject} or L{GES.TrackObject}
+        @type focus: L{GES.Clip} or L{GES.TrackElement}
 
         @param timeline: the timeline to edit
         @type timeline: instance of L{GES.Timeline}
@@ -199,7 +199,7 @@ class EditingContext(Signallable):
 
         @param other: a set of objects which are the secondary targets of
         interactive editing, such as objects in the current selection.
-        @type other: a set() of L{TimelineObject}s or L{TrackObject}s
+        @type other: a set() of L{Clip}s or L{TrackElement}s
 
         @param setting: The PiTiVi settings, used to get the snap_distance
         parametter
@@ -212,8 +212,8 @@ class EditingContext(Signallable):
         other.difference_update(set((focus,)))
 
         self.other = other
-        if isinstance(focus, GES.TrackObject):
-            self.focus = focus.get_timeline_object()
+        if isinstance(focus, GES.TrackElement):
+            self.focus = focus.get_clip()
         else:
             self.focus = focus
         self.timeline = timeline

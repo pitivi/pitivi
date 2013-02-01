@@ -762,7 +762,7 @@ class Project(Loggable, GES.Project):
     def _handle_asset_loaded(self, id):
         self.nb_imported_files += 1
         self.nb_remaining_file_to_import = len([asset for asset in self.get_loading_assets() if
-                GObject.type_is_a(asset.get_extractable_type(), GES.TimelineFileSource)])
+                GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
         if self.nb_remaining_file_to_import == 0:
             self.nb_imported_files = 0
             self._emitChange("done-importing")
@@ -838,11 +838,11 @@ class Project(Loggable, GES.Project):
         """
         # Do not try to reload URIS that we already have loaded
         for uri in uris:
-            self.create_asset(quote_uri(uri), GES.TimelineFileSource)
+            self.create_asset(quote_uri(uri), GES.UriClip)
         self._calculateNbLoadingAssets()
 
     def listSources(self):
-        return self.list_assets(GES.TimelineFileSource)
+        return self.list_assets(GES.UriClip)
 
     def release(self):
         if self.pipeline:
@@ -1001,7 +1001,7 @@ class Project(Loggable, GES.Project):
 
     def _calculateNbLoadingAssets(self):
         nb_remaining_file_to_import = len([asset for asset in self.get_loading_assets() if
-                GObject.type_is_a(asset.get_extractable_type(), GES.TimelineFileSource)])
+                GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
         if self.nb_remaining_file_to_import == 0 and nb_remaining_file_to_import:
             self.nb_remaining_file_to_import = nb_remaining_file_to_import
             self._emitChange("start-importing")

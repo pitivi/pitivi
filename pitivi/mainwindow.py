@@ -1284,7 +1284,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         preview_window.hide()  # Hack to allow setting the window position
         previewer.previewUri(uri)
         previewer.setMinimal()
-        info = self.app.current.get_asset(uri, GES.TimelineFileSource).get_info()
+        info = self.app.current.get_asset(uri, GES.UriClip).get_info()
         try:
             # For videos and images, automatically resize the window
             # Try to keep it 1:1 if it can fit within 85% of the parent window
