@@ -119,6 +119,7 @@ class StartUpWizard(object):
 
     def show(self):
         self.window.set_transient_for(self.app.gui)
+        self.window.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         self.window.show()
 
     def hide(self):
