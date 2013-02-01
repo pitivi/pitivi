@@ -360,8 +360,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         """
         self.set_title("%s" % (APPNAME))
         self.set_icon_name("pitivi")
-        self.connect("delete-event", self._deleteCb)
-        self.connect("configure-event", self._configureCb)
         vbox = Gtk.VBox(False)
         self.add(vbox)
         vbox.show()
@@ -474,6 +472,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.move(self.settings.mainWindowX, self.settings.mainWindowY)
         if allow_full_screen and self.settings.mainWindowFullScreen:
             self.setFullScreen(True)
+
+        # Connect the main window's signals at the end, to avoid messing around
+        # with the restoration of settings above.
+        self.connect("delete-event", self._deleteCb)
+        self.connect("configure-event", self._configureCb)
 
     def switchContextTab(self, tab=None):
         """
