@@ -161,9 +161,11 @@ class EffectProperties(Gtk.Expander):
         self._table = Gtk.Table(3, 1, False)
 
         self._toolbar = Gtk.Toolbar()
-        self._removeEffectBt = Gtk.ToolButton("gtk-delete")
+        self._toolbar.get_style_context().add_class("inline-toolbar")
+        self._toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
+        self._removeEffectBt = Gtk.ToolButton()
+        self._removeEffectBt.set_icon_name("list-remove-symbolic")
         self._removeEffectBt.set_label(_("Remove effect"))
-        self._removeEffectBt.set_use_underline(True)
         self._removeEffectBt.set_is_important(True)
         self._removeEffectBt.set_sensitive(False)
         self._toolbar.insert(self._removeEffectBt, 0)
