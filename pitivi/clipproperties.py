@@ -112,13 +112,13 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
 
     project = property(_getProject, _setProject)
 
-    def addInfoBar(self, text):
+    def createInfoBar(self, text):
         label = Gtk.Label(label=text)
         label.set_line_wrap(True)
-        info_bar = Gtk.InfoBar()
-        info_bar.get_content_area().add(label)
-        self.infobar_box.pack_start(info_bar, False, False, 0)
-        return info_bar
+        infobar = Gtk.InfoBar()
+        infobar.get_content_area().add(label)
+        self.infobar_box.pack_start(infobar, False, False, 0)
+        return infobar
 
     def _getTimeline(self):
         return self._timeline
@@ -153,7 +153,6 @@ class EffectProperties(Gtk.Expander):
         self._effect_config_ui = None
         self.effect_props_handling = effect_properties_handling
         self.clip_properties = clip_properties
-        self._info_bar = None
         self._config_ui_h_pos = None
         self._timeline = None
 
@@ -213,6 +212,9 @@ class EffectProperties(Gtk.Expander):
         self.treeview.drag_dest_add_text_targets()
         self.selection = self.treeview.get_selection()
 
+        self._infobar = clip_properties.createInfoBar(
+            _("Select a clip on the timeline to configure its associated effects"))
+
         # Prepare the main container widgets and lay out everything
         self._vcontent = Gtk.VPaned()
         self._table = Gtk.Table(3, 1, False)
@@ -222,7 +224,7 @@ class EffectProperties(Gtk.Expander):
         self.add(self._vcontent)
         self._vcontent.show()
         self._table.show_all()
-        self._showInfoBar()
+        self._infobar.show_all()
         self.hide()
 
         # Connect all the widget signals
@@ -384,7 +386,7 @@ class EffectProperties(Gtk.Expander):
             else:
                 self._hideEffectConfig()
                 self.storemodel.clear()
-                self._showInfoBar()
+                self._infobar.show()
             self._vcontent.show()
         else:
             self._vcontent.hide()
@@ -410,15 +412,9 @@ class EffectProperties(Gtk.Expander):
 
                 self.storemodel.append(to_append)
 
-    def _showInfoBar(self):
-        if self._info_bar is None:
-            self._info_bar = self.clip_properties.addInfoBar(
-                _("Select a clip on the timeline to configure its associated effects"))
-        self._info_bar.show_all()
-
     def _setEffectDragable(self):
         self.show()
-        self._info_bar.hide()
+        self._infobar.hide()
 
     def _treeviewSelectionChangedCb(self, treeview):
         if self.selection.count_selected_rows() == 0 and self.clips:
