@@ -126,7 +126,6 @@ class EffectAdded(UndoableAction):
         for prop_changed in self._props_changed:
             prop_changed.gst_element = self.track_element.getElement()
         self._props_changed = []
-
         self._done()
 
     def undo(self):
@@ -148,7 +147,6 @@ class EffectAdded(UndoableAction):
             self._properties_watcher.getPropChangedFromTrackObj(self.track_element)
         del self.track_element
         self.track_element = None
-
         self._undone()
 
 
@@ -182,7 +180,6 @@ class EffectRemoved(UndoableAction):
             self._properties_watcher.getPropChangedFromTrackObj(self.track_element)
         del self.track_element
         self.track_element = None
-
         self._done()
 
     def undo(self):
@@ -199,5 +196,4 @@ class EffectRemoved(UndoableAction):
         for prop_changed in self._props_changed:
             prop_changed.gst_element = self.track_element.getElement()
         self._props_changed = []
-
         self._undone()

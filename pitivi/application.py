@@ -170,18 +170,13 @@ class Pitivi(Loggable, Signallable):
         return True
 
     def _connectToProjectManager(self, projectManager):
-        projectManager.connect("new-project-loading",
-                self._projectManagerNewProjectLoading)
-        projectManager.connect("new-project-created",
-                self._projectManagerNewProjectCreated)
-        projectManager.connect("new-project-loaded",
-                self._projectManagerNewProjectLoaded)
-        projectManager.connect("new-project-failed",
-                self._projectManagerNewProjectFailed)
-        projectManager.connect("closing-project",
-                self._projectManagerClosingProject)
-        projectManager.connect("project-closed",
-                self._projectManagerProjectClosed)
+        pm = projectManager
+        pm.connect("new-project-loading", self._projectManagerNewProjectLoading)
+        pm.connect("new-project-created", self._projectManagerNewProjectCreated)
+        pm.connect("new-project-loaded", self._projectManagerNewProjectLoaded)
+        pm.connect("new-project-failed", self._projectManagerNewProjectFailed)
+        pm.connect("closing-project", self._projectManagerClosingProject)
+        pm.connect("project-closed", self._projectManagerProjectClosed)
 
     def _projectManagerNewProjectLoading(self, projectManager, uri):
         self.emit("new-project-loading", uri)
@@ -337,14 +332,12 @@ class ProjectCreatorGuiPitivi(GuiPitivi):
         self.projectManager.newBlankProject(False)
         uris = ["file://" + urllib.quote(os.path.abspath(media_filename))
                 for media_filename in media_filenames]
-        self.current.medialibrary.connect("source-added",
-                self._sourceAddedCb, uris, add_to_timeline)
-        self.current.medialibrary.connect("discovery-error",
-                self._discoveryErrorCb, uris)
-        self.current.medialibrary.addUris(uris)
+        lib = self.current.medialibrary
+        lib.connect("source-added", self._sourceAddedCb, uris, add_to_timeline)
+        lib.connect("discovery-error", self._discoveryErrorCb, uris)
+        lib.addUris(uris)
 
-    def _sourceAddedCb(self, medialibrary, info,
-            startup_uris, add_to_timeline):
+    def _sourceAddedCb(self, medialibrary, info, startup_uris, add_to_timeline):
         if self._maybePopStartupUri(startup_uris, info.get_uri()) \
                 and add_to_timeline:
             self.action_log.begin("add clip")

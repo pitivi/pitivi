@@ -342,8 +342,7 @@ class EffectProperties(Gtk.Expander):
 
                     break
 
-    def _dragDropCb(self, unused, context, unused_x, unused_y,
-             unused_timestamp):
+    def _dragDropCb(self, *unused_arguments):
         self.addEffectToCurrentSelection(self.app.gui.effectlist.getSelectedItems())
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):

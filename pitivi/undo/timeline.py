@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/timeline/timeline_undo.py
+#       pitivi/undo/timeline.py
 #
 # Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
 #
@@ -22,7 +22,6 @@
 from pitivi.utils.signal import Signallable
 from pitivi.undo.undo import PropertyChangeTracker, UndoableAction
 from pitivi.undo.effect import EffectAdded, EffectRemoved
-
 from pitivi.undo.effects import EffectGstElementPropertyChangeTracker
 
 
@@ -56,8 +55,7 @@ class ClipPropertyChangeTracker(PropertyChangeTracker):
 
     def _propertyChangedCb(self, clip, value, property_name):
         if not self._disabled:
-            PropertyChangeTracker._propertyChangedCb(self,
-                    clip, value, property_name)
+            PropertyChangeTracker._propertyChangedCb(self, clip, value, property_name)
 
 
 class KeyframeChangeTracker(Signallable):
@@ -91,15 +89,13 @@ class KeyframeChangeTracker(Signallable):
         self.keyframes[keyframe] = self._getKeyframeSnapshot(keyframe)
 
     def _keyframeRemovedCb(self, interpolator, keyframe, old_value=None):
-        pass
+        pass  # FIXME: this has not been implemented
 
     def _keyframeMovedCb(self, interpolator, keyframe, old_value=None):
         old_snapshot = self.keyframes[keyframe]
         new_snapshot = self._getKeyframeSnapshot(keyframe)
         self.keyframes[keyframe] = new_snapshot
-
-        self.emit("keyframe-moved", interpolator,
-                keyframe, old_snapshot, new_snapshot)
+        self.emit("keyframe-moved", interpolator, keyframe, old_snapshot, new_snapshot)
 
     def _getKeyframeSnapshot(self, keyframe):
         return (keyframe.mode, keyframe.time, keyframe.value)
@@ -113,13 +109,11 @@ class ClipPropertyChanged(UndoableAction):
         self.new_value = new_value
 
     def do(self):
-        setattr(self.clip,
-                self.property_name.replace("-", "_"), self.new_value)
+        setattr(self.clip, self.property_name.replace("-", "_"), self.new_value)
         self._done()
 
     def undo(self):
-        setattr(self.clip,
-                self.property_name.replace("-", "_"), self.old_value)
+        setattr(self.clip, self.property_name.replace("-", "_"), self.old_value)
         self._undone()
 
 
@@ -158,7 +152,6 @@ class ClipRemoved(UndoableAction):
             track.addTrackElement(track_element)
 
         self.timeline.addClip(self.clip)
-
         self._undone()
 
 
@@ -311,9 +304,7 @@ class TimelineLogObserver(object):
 
     def _connectToInterpolator(self, interpolator):
         interpolator.connect("keyframe-added", self._interpolatorKeyframeAddedCb)
-        interpolator.connect("keyframe-removed",
-                self._interpolatorKeyframeRemovedCb)
-
+        interpolator.connect("keyframe-removed", self._interpolatorKeyframeRemovedCb)
         tracker = KeyframeChangeTracker()
         tracker.connectToObject(interpolator)
         tracker.connect("keyframe-moved", self._interpolatorKeyframeMovedCb)
@@ -368,8 +359,7 @@ class TimelineLogObserver(object):
         action = self.interpolatorKeyframeAddedAction(track_element, keyframe)
         self.log.push(action)
 
-    def _interpolatorKeyframeRemovedCb(self, track_element, keyframe,
-            old_value=None):
+    def _interpolatorKeyframeRemovedCb(self, track_element, keyframe, old_value=None):
         action = self.interpolatorKeyframeRemovedAction(track_element, keyframe)
         self.log.push(action)
 
