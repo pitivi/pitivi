@@ -349,11 +349,11 @@ class TimelineCanvas(GooCanvas.Canvas, Zoomable, Loggable):
                 mode = 1
             if event.get_state()[1] & Gdk.ModifierType.CONTROL_MASK:
                 mode = 2
-            selected = self._objectsUnderMarquee()
-            self._timeline.selection.setSelection(self._objectsUnderMarquee(), mode)
+            selected = self._elementsUnderMarquee()
+            self._timeline.selection.setSelection(self._elementsUnderMarquee(), mode)
         return True
 
-    def _objectsUnderMarquee(self):
+    def _elementsUnderMarquee(self):
         items = self.get_items_in_area(self._marquee.get_bounds(), True, True, True)
         if items:
             return set((item.element for item in items if isinstance(item,
@@ -938,7 +938,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         self._updateZoomSlider = True
         self.ui_manager = ui_manager
         self.app = instance
-        self._temp_objects = []
+        self._temp_elements = []
         self._drag_started = False
         self._factories = None
         self._finish_drag = False
@@ -1170,16 +1170,16 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         if not self._drag_started:
             self._drag_started = True
         elif context.list_targets() not in DND_EFFECT_LIST and self.app.gui.medialibrary.dragged:
-            if not self._temp_objects:
+            if not self._temp_elements:
                 self._create_temp_source(x, y)
 
             # Let some time for TrackElement-s to be created
-            if self._temp_objects:
-                focus = self._temp_objects[0]
+            if self._temp_elements:
+                focus = self._temp_elements[0]
                 if self._move_context is None:
                     self._move_context = EditingContext(focus,
                             self.timeline, GES.EditMode.EDIT_NORMAL, GES.Edge.EDGE_NONE,
-                            set(self._temp_objects[1:]), self.app.settings)
+                            set(self._temp_elements[1:]), self.app.settings)
 
                 self._move_temp_source(x, y)
         return True
@@ -1208,11 +1208,11 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             self._factories = []
             if context.list_targets() not in DND_EFFECT_LIST:
                 self.timeline.enable_update(True)
-                self.debug("Need to cleanup %d objects" % len(self._temp_objects))
-                for obj in self._temp_objects:
+                self.debug("Need to cleanup %d elements" % len(self._temp_elements))
+                for obj in self._temp_elements:
                     layer = obj.get_layer()
-                    layer.remove_object(obj)
-                self._temp_objects = []
+                    layer.remove_clip(obj)
+                self._temp_elements = []
                 self._move_context = None
 
             self.debug("Drag cleanup ended")
@@ -1234,21 +1234,21 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             # The temporary objects and factories that we had created
             # in _dragMotionCb are now kept for good.
             # Clear the temporary references to objects, as they are real now.
-            self._temp_objects = []
+            self._temp_elements = []
             self._factories = []
             #context.drop_finish(True, timestamp)
         else:
             if self.app.current.timeline.props.duration == 0:
                 return False
-            timeline_objs = self._getClipUnderMouse(x, y)
-            if timeline_objs:
+            clips = self._getClipsUnderMouse(x, y)
+            if clips:
                 # FIXME make a util function to add effects
                 # instead of copy/pasting it from cliproperties
                 bin_desc = self.app.gui.effectlist.getSelectedItems()
                 media_type = self.app.effects.getFactoryFromName(bin_desc).media_type
 
                 # Trying to apply effect only on the first object of the selection
-                clip = timeline_objs[0]
+                clip = clips[0]
 
                 # Checking that this effect can be applied on this track object
                 # Which means, it has the corresponding media_type
@@ -1262,26 +1262,26 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                         self.app.action_log.begin("add effect")
                         effect = GES.Effect(bin_description=bin_desc)
                         clip.add_track_element(effect)
-                        track.add_object(effect)
+                        track.add_element(effect)
                         self.app.gui.clipconfig.effect_expander.updateAll()
                         self.app.action_log.commit()
                         self._factories = None
                         self._seeker.flush()
 
-                        self.timeline.selection.setSelection(timeline_objs, SELECT)
+                        self.timeline.selection.setSelection(clips, SELECT)
                         break
         Gtk.drag_finish(context, True, False, timestamp)
         return True
 
-    def _getClipUnderMouse(self, x, y):
-        timeline_objs = []
+    def _getClipsUnderMouse(self, x, y):
+        clips = []
         items_in_area = self._canvas.getItemsInArea(x, y, x + 1, y + 1)
 
         track_elements = [obj for obj in items_in_area[1]]
         for track_element in track_elements:
-            timeline_objs.append(track_element.get_clip())
+            clips.append(track_element.get_clip())
 
-        return timeline_objs
+        return clips
 
     def _showSaveScreenshotDialog(self):
         """
@@ -1339,10 +1339,10 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         quoted_uri = quote_uri(uri)
         layers = self.timeline.get_layers()
         for layer in layers:
-            for clip in layer.get_objects():
+            for clip in layer.get_clips():
                 if hasattr(clip, "get_uri"):
                     if quote_uri(clip.get_uri()) == quoted_uri:
-                        layer.remove_object(clip)
+                        layer.remove_clip(clip)
                 else:
                     # TimelineStandardTransition and the like don't have URIs
                     # GES will remove those transitions automatically.
@@ -1365,7 +1365,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             source = layer.add_asset(asset, start, 0,
                 clip_duration, 1.0, asset.get_supported_formats())
 
-            self._temp_objects.insert(0, source)
+            self._temp_elements.insert(0, source)
             start += asset.get_duration()
 
     def _move_temp_source(self, x, y):
@@ -1730,9 +1730,9 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         if self.timeline:
             self.app.action_log.begin("delete clip")
             #FIXME GES port: Handle unlocked TrackElement-s
-            for obj in self.timeline.selection:
-                layer = obj.get_layer()
-                layer.remove_object(obj)
+            for clip in self.timeline.selection:
+                layer = clip.get_layer()
+                layer.remove_clip(clip)
             self.app.action_log.commit()
 
     def ungroupSelected(self, unused_action):
@@ -1780,12 +1780,12 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         self.timeline.enable_update(False)
         position = self.app.current.pipeline.getPosition()
         for track in self.timeline.get_tracks():
-            for tck_obj in track.get_objects():
-                start = tck_obj.get_start()
-                end = start + tck_obj.get_duration()
+            for element in track.get_elements():
+                start = element.get_start()
+                end = start + element.get_duration()
                 if start < position and end > position:
-                    obj = tck_obj.get_clip()
-                    obj.split(position)
+                    clip = element.get_clip()
+                    clip.split(position)
         self.timeline.enable_update(True)
 
     def keyframe(self, action):
@@ -1794,7 +1794,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
 
         FIXME GES: this method is currently not used anywhere
         """
-        selected = self.timeline.selection.getSelectedTrackObjs()
+        selected = self.timeline.selection.getSelectedTrackElements()
         for obj in selected:
             keyframe_exists = False
             position = self.app.current.pipeline.getPosition()

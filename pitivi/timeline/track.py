@@ -391,7 +391,7 @@ class TrackElement(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
 
             self._context = EditingContext(self._view.element,
                 self._view.timeline, GES.EditMode.EDIT_NORMAL, GES.Edge.EDGE_NONE,
-                self._view.timeline.selection.getSelectedTrackObjs(),
+                self._view.timeline.selection.getSelectedTrackElements(),
                 self.app.settings)
 
             self._view.app.action_log.begin("move object")
@@ -621,11 +621,11 @@ class TrackElement(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
                 if self.element.get_track().get_property("track_type") == GES.TrackType.VIDEO:
                     has_text_overlay = False
                     clip = self.element.get_clip()
-                    trackobjs = clip.get_track_elements()
-                    for trackobj in trackobjs:
-                        if isinstance(trackobj, GES.TextOverlay):
+                    elements = clip.get_track_elements()
+                    for element in elements:
+                        if isinstance(element, GES.TextOverlay):
                             has_text_overlay = True
-                            title = trackobj
+                            title = element
                     if not has_text_overlay:
                         title = GES.TextOverlay()
                         title.set_text("")
@@ -633,7 +633,7 @@ class TrackElement(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
                         title.set_duration(self.element.duration)
                         # FIXME: Creating a text overlay everytime we select a video track object is madness
                         self.element.get_clip().add_track_element(title)
-                        self.element.get_track().add_object(title)
+                        self.element.get_track().add_element(title)
                     self.app.gui.title_editor.set_source(title)
                 self.app.gui.trans_list.deactivate()
                 self.app.gui.switchContextTab()
@@ -820,21 +820,21 @@ class Track(GooCanvas.CanvasGroup, Zoomable, Loggable):
 
     def setTrack(self, track):
         if self._track:
-            self._track.disconnect_by_func(self._objectAddedCb)
-            self._track.disconnect_by_func(self._objectRemovedCb)
-            for trackobj in self._track.get_objects():
-                self._objectRemovedCb(None, trackobj)
+            self._track.disconnect_by_func(self._elementAddedCb)
+            self._track.disconnect_by_func(self._elementRemovedCb)
+            for element in self._track.get_elements():
+                self._elementRemovedCb(None, element)
 
         self._track = track
         if track:
-            for trackobj in self.track.get_objects():
-                self._objectAddedCb(None, trackobj)
-            self._track.connect("track-object-added", self._objectAddedCb)
-            self._track.connect("track-object-removed", self._objectRemovedCb)
+            for element in self.track.get_elements():
+                self._elementAddedCb(None, element)
+            self._track.connect("track-element-added", self._elementAddedCb)
+            self._track.connect("track-element-removed", self._elementRemovedCb)
 
     track = property(getTrack, setTrack, None, "The timeline property")
 
-    def _objectAddedCb(self, unused_timeline, track_element):
+    def _elementAddedCb(self, unused_timeline, track_element):
         if isinstance(track_element, GES.Transition):
             self._transitionAdded(track_element)
         elif isinstance(track_element, GES.TitleSource):
@@ -846,7 +846,7 @@ class Track(GooCanvas.CanvasGroup, Zoomable, Loggable):
             self.widgets[track_element] = w
             self.add_child(w, -1)
 
-    def _objectRemovedCb(self, unused_timeline, track_element):
+    def _elementRemovedCb(self, unused_timeline, track_element):
         if not isinstance(track_element, GES.BaseEffect) and track_element in self.widgets:
             w = self.widgets[track_element]
             del self.widgets[track_element]

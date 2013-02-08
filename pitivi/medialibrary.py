@@ -341,14 +341,14 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         self.app.gui.setActionsSensitive(True)
 
-    def _trackElementAddedCb(self, source, trackobj):
+    def _trackElementAddedCb(self, source, unused_track_element):
         """ After an object has been added to the first track, position it
         correctly and request the next source to be processed. """
         timeline = self.app.current.timeline
         layer = timeline.get_layers()[0]  # FIXME Get the longest layer
 
         # Handle the case where we just inserted the first clip
-        if len(layer.get_objects()) == 1:
+        if len(layer.get_clips()) == 1:
             source.props.start = 0
         else:
             source.props.start = timeline.props.duration
@@ -687,7 +687,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """Check if a given URI is present in the timeline"""
         layers = self.app.current.timeline.get_layers()
         for layer in layers:
-            for clip in layer.get_objects():
+            for clip in layer.get_clips():
                 if clip.get_asset() == asset:
                     return True
         return False
@@ -703,7 +703,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         selection = self.treeview.get_selection()
         for asset in assets:
             if not self._sourceIsUsed(asset):
-                unused_sources_uris.append(asset.get_uri())
+                unused_sources_uris.append(asset.get_id())
 
         # Hack around the fact that making selections (in a treeview/iconview)
         # deselects what was previously selected

@@ -125,18 +125,18 @@ class Selection(Signallable):
             self.last_single_obj = iter(selection).next()
 
         for obj in old_selection - self.selected:
-            for track_element in obj.get_track_elements():
-                if not isinstance(track_element, GES.BaseEffect) and not isinstance(track_element, GES.TextOverlay):
-                    track_element.selected.selected = False
+            for element in obj.get_track_elements():
+                if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
+                    element.selected.selected = False
 
         for obj in self.selected - old_selection:
-            for track_element in obj.get_track_elements():
-                if not isinstance(track_element, GES.BaseEffect) and not isinstance(track_element, GES.TextOverlay):
-                    track_element.selected.selected = True
+            for element in obj.get_track_elements():
+                if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
+                    element.selected.selected = True
 
         self.emit("selection-changed")
 
-    def getSelectedTrackObjs(self):
+    def getSelectedTrackElements(self):
         """
         Returns the list of L{TrackElement} contained in this selection.
         """
@@ -152,9 +152,9 @@ class Selection(Signallable):
         """
         effects = []
         for clip in self.selected:
-            for track in clip.get_track_elements():
-                if isinstance(track, GES.BaseEffect):
-                    effects.append(track)
+            for element in clip.get_track_elements():
+                if isinstance(element, GES.BaseEffect):
+                    effects.append(element)
 
         return effects
 

@@ -274,8 +274,8 @@ class EffectProperties(Gtk.Expander):
         if selection.selected:
             self.clips = list(selection.selected)
             for clip in self.clips:
-                clip.connect("track-object-added", self._TrackElementAddedCb)
-                clip.connect("track-object-removed", self._trackElementRemovedCb)
+                clip.connect("track-element-added", self._TrackElementAddedCb)
+                clip.connect("track-element-removed", self._trackElementRemovedCb)
             self.show()
         else:
             self.clips = []
@@ -308,7 +308,7 @@ class EffectProperties(Gtk.Expander):
     def _removeEffect(self, effect):
         self.app.action_log.begin("remove effect")
         self._cleanCache(effect)
-        effect.get_track().remove_object(effect)
+        effect.get_track().remove_element(effect)
         effect.get_clip().release_track_element(effect)
         self._updateTreeview()
         self.app.action_log.commit()
@@ -335,7 +335,7 @@ class EffectProperties(Gtk.Expander):
                     self.app.action_log.begin("add effect")
                     effect = GES.Effect(bin_description=bin_desc)
                     clip.add_track_element(effect)
-                    track.add_object(effect)
+                    track.add_element(effect)
                     self.updateAll()
                     self.app.action_log.commit()
                     self.app.current.pipeline.flushSeek()
@@ -475,7 +475,7 @@ class TransformationProperties(Gtk.Expander):
         self.action_log = action_log
         self.app = app
         self._timeline = None
-        self._current_tl_obj = None
+        self._selected_clip = None
         self.spin_buttons = {}
         self.default_values = {}
         self.set_label(_("Transformation"))
@@ -514,7 +514,7 @@ class TransformationProperties(Gtk.Expander):
 
     def _expandedCb(self, expander, params):
         if not "Frei0r" in missing_soft_deps:
-            if self._current_tl_obj:
+            if self._selected_clip:
                 self.effect = self._findOrCreateEffect("frei0r-filter-scale0tilt")
                 self._updateSpinButtons()
                 self.set_expanded(self.get_expanded())
@@ -585,7 +585,7 @@ class TransformationProperties(Gtk.Expander):
         self.app.current.pipeline.flushSeek()
 
     def _findEffect(self, name):
-        for effect in self._current_tl_obj.get_track_elements():
+        for effect in self._selected_clip.get_track_elements():
             if isinstance(effect, GES.BaseEffect):
                 if name in effect.get_property("bin-description"):
                     self.effect = effect
@@ -595,11 +595,11 @@ class TransformationProperties(Gtk.Expander):
         effect = self._findEffect(name)
         if not effect:
             effect = GES.Effect(bin_description=name)
-            self._current_tl_obj.add_track_element(effect)
+            self._selected_clip.add_track_element(effect)
             tracks = self.app.projectManager.current.timeline.get_tracks()
             for track in tracks:
                 if track.get_caps().to_string() == "video/x-raw":
-                    track.add_object(effect)
+                    track.add_element(effect)
             effect = self._findEffect(name)
             # disable the effect on default
             a = self.effect.get_gnlobject()
@@ -611,11 +611,11 @@ class TransformationProperties(Gtk.Expander):
 
     def _selectionChangedCb(self, timeline):
         if self.timeline and len(self.timeline.selection.selected) > 0:
-            for tl_obj in self.timeline.selection.selected:
+            for clip in self.timeline.selection.selected:
                 pass
 
-            if tl_obj != self._current_tl_obj:
-                self._current_tl_obj = tl_obj
+            if clip != self._selected_clip:
+                self._selected_clip = clip
                 self.effect = None
 
             self.show()
@@ -623,8 +623,8 @@ class TransformationProperties(Gtk.Expander):
                 self.effect = self._findOrCreateEffect("frei0r-filter-scale0tilt")
                 self._updateSpinButtons()
         else:
-            if self._current_tl_obj:
-                self._current_tl_obj = None
+            if self._selected_clip:
+                self._selected_clip = None
                 self.zoom_scale.set_value(1.0)
                 self.app.current.pipeline.flushSeek()
             self.effect = None
@@ -632,7 +632,7 @@ class TransformationProperties(Gtk.Expander):
         self._updateBoxVisibility()
 
     def _updateBoxVisibility(self):
-        if self.get_expanded() and self._current_tl_obj:
+        if self.get_expanded() and self._selected_clip:
             self.app.gui.viewer.internal.show_box()
         else:
             self.app.gui.viewer.internal.hide_box()

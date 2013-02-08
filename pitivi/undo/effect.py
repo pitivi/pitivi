@@ -114,10 +114,10 @@ class EffectAdded(UndoableAction):
 
     def do(self):
         timeline = self.clip.timeline
-        tl_obj_track_obj = timeline.addEffectFactoryOnObject(self.factory,
+        clip_track_element = timeline.addEffectFactoryOnObject(self.factory,
                                             clips=[self.clip])
 
-        self.track_element = tl_obj_track_obj[0][1]
+        self.track_element = clip_track_element[0][1]
         element = self.track_element.getElement()
         for prop_name, prop_value in self.effect_props:
             element.set_property(prop_name, prop_value)
@@ -187,10 +187,10 @@ class EffectRemoved(UndoableAction):
 
     def undo(self):
         timeline = self.clip.timeline
-        tl_obj_track_obj = timeline.addEffectFactoryOnObject(self.factory,
+        clip_track_element = timeline.addEffectFactoryOnObject(self.factory,
                                             clips=[self.clip])
 
-        self.track_element = tl_obj_track_obj[0][1]
+        self.track_element = clip_track_element[0][1]
         element = self.track_element.getElement()
         for prop_name, prop_value in self.effect_props:
             element.set_property(prop_name, prop_value)

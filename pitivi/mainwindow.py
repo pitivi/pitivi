@@ -576,7 +576,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # Don't loop in self.timeline_ui.ui_manager.get_action_groups()
             # otherwise you'll get all the action groups of the application.
             self.timeline_ui.playhead_actions.set_sensitive(sensitive)
-            selected = self.timeline_ui.timeline.selection.getSelectedTrackObjs()
+            selected = self.timeline_ui.timeline.selection.getSelectedTrackElements()
             if not sensitive or (sensitive and selected):
                 self.log("Setting timeline selection actions sensitivity to %s" % sensitive)
                 self.timeline_ui.selection_actions.set_sensitive(sensitive)

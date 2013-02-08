@@ -350,7 +350,7 @@ class ProjectCreatorGuiPitivi(GuiPitivi):
             self.action_log.begin("add clip")
             src = GES.UriClip(uri=info.get_uri())
             src.set_property("priority", 1)
-            self.current.timeline.get_layers()[0].add_object(src)
+            self.current.timeline.get_layers()[0].add_clip(src)
             self.action_log.commit()
 
     def _discoveryErrorCb(self, medialibrary, uri, error, debug, startup_uris):
