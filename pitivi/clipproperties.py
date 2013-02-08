@@ -139,27 +139,25 @@ class EffectProperties(Gtk.Expander):
     # to put in ClipProperties, that is why this is done this way
 
     def __init__(self, instance, effect_properties_handling, clip_properties):
+        # Set up the expander widget that will contain everything:
         Gtk.Expander.__init__(self)
+        self.set_expanded(True)
+        self.set_label(_("Effects"))
+
+        # Global variables related to effects
+        self.app = instance
+        self.settings = instance.settings
 
         self.selected_effects = []
         self.clips = []
-        self._factory = None
-        self.app = instance
-        self.settings = instance.settings
-        self.effectsHandler = self.app.effects
         self._effect_config_ui = None
-        self.pipeline = None
         self.effect_props_handling = effect_properties_handling
         self.clip_properties = clip_properties
         self._info_bar = None
         self._config_ui_h_pos = None
         self._timeline = None
 
-        self._vcontent = Gtk.VPaned()
-        self.add(self._vcontent)
-
-        self._table = Gtk.Table(3, 1, False)
-
+        # The toolbar that will go between the list of effects and properties
         self._toolbar = Gtk.Toolbar()
         self._toolbar.get_style_context().add_class("inline-toolbar")
         self._toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
@@ -169,24 +167,20 @@ class EffectProperties(Gtk.Expander):
         self._removeEffectBt.set_is_important(True)
         self._removeEffectBt.set_sensitive(False)
         self._toolbar.insert(self._removeEffectBt, 0)
-        self._table.attach(self._toolbar, 0, 1, 0, 1, yoptions=Gtk.AttachOptions.FILL)
 
-        self.storemodel = Gtk.ListStore(bool, str, str, str, object)
-
-        #Treeview
+        # Treeview to display a list of effects (type and name)
         self.treeview_scrollwin = Gtk.ScrolledWindow()
         self.treeview_scrollwin.set_policy(Gtk.PolicyType.NEVER,
                                            Gtk.PolicyType.AUTOMATIC)
         self.treeview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
 
-        # TreeView
-        # Displays name, description
+        self.storemodel = Gtk.ListStore(bool, str, str, str, object)
         self.treeview = Gtk.TreeView(self.storemodel)
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.set_property("rules_hint", True)
         self.treeview.set_property("has_tooltip", True)
-        tsel = self.treeview.get_selection()
-        tsel.set_mode(Gtk.SelectionMode.SINGLE)
+        self.treeview.set_headers_clickable(False)
+        self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
 
         activatedcell = Gtk.CellRendererToggle()
         activatedcell.props.xpad = PADDING
@@ -194,7 +188,6 @@ class EffectProperties(Gtk.Expander):
 
         typecol = Gtk.TreeViewColumn(_("Type"))
         typecol.set_sort_column_id(COL_TYPE)
-        self.treeview.append_column(typecol)
         typecol.set_spacing(SPACING)
         typecol.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
         typecell = Gtk.CellRendererText()
@@ -202,47 +195,47 @@ class EffectProperties(Gtk.Expander):
         typecell.set_property("ellipsize", Pango.EllipsizeMode.END)
         typecol.pack_start(typecell, True)
         typecol.add_attribute(typecell, "text", COL_TYPE)
+        self.treeview.append_column(typecol)
 
         namecol = Gtk.TreeViewColumn(_("Effect name"))
         namecol.set_sort_column_id(COL_NAME_TEXT)
-        self.treeview.append_column(namecol)
         namecol.set_spacing(SPACING)
         namecell = Gtk.CellRendererText()
         namecell.props.xpad = PADDING
         namecell.set_property("ellipsize", Pango.EllipsizeMode.END)
         namecol.pack_start(namecell, True)
         namecol.add_attribute(namecell, "text", COL_NAME_TEXT)
+        self.treeview.append_column(namecol)
 
         self.treeview.drag_dest_set(Gtk.DestDefaults.MOTION,
-            [EFFECT_TARGET_ENTRY],
-            Gdk.DragAction.COPY)
+            [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
 
         self.treeview.drag_dest_add_text_targets()
-
         self.selection = self.treeview.get_selection()
 
-        self.selection.connect("changed", self._treeviewSelectionChangedCb)
-        self._removeEffectBt.connect("clicked", self._removeEffectClicked)
+        # Prepare the main container widgets and lay out everything
+        self._vcontent = Gtk.VPaned()
+        self._table = Gtk.Table(3, 1, False)
+        self._table.attach(self.treeview_scrollwin, 0, 1, 0, 1)
+        self._table.attach(self._toolbar, 0, 1, 2, 3, yoptions=Gtk.AttachOptions.FILL)
+        self._vcontent.pack1(self._table, resize=True, shrink=False)
+        self.add(self._vcontent)
+        self._vcontent.show()
+        self._table.show_all()
+        self._showInfoBar()
+        self.hide()
 
+        # Connect all the widget signals
+        self.selection.connect("changed", self._treeviewSelectionChangedCb)
         self.treeview.connect("drag-leave", self._dragLeaveCb)
         self.treeview.connect("drag-drop", self._dragDropCb)
         self.treeview.connect("drag-motion", self._dragMotionCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
         self._vcontent.connect("notify", self._vcontentNotifyCb)
-        self.treeview.set_headers_clickable(False)
+        self._removeEffectBt.connect("clicked", self._removeEffectClicked)
         self.app.connect("new-project-loaded", self._newProjectLoadedCb)
-
-        self._table.attach(self.treeview_scrollwin, 0, 1, 2, 3)
-
-        self._vcontent.pack1(self._table, resize=True, shrink=False)
-        self._showInfoBar()
-        self._vcontent.show()
-        self._table.show_all()
-        self.set_expanded(True)
-        self.set_label(_("Effects"))
         self.connect('notify::expanded', self._expandedCb)
         self.connected = False
-        self.hide()
 
     def _newProjectLoadedCb(self, app, project):
         self.clip_properties.project = project
