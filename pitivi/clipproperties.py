@@ -160,12 +160,11 @@ class EffectProperties(Gtk.Expander):
         self._toolbar = Gtk.Toolbar()
         self._toolbar.get_style_context().add_class("inline-toolbar")
         self._toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
-        self._removeEffectBt = Gtk.ToolButton()
-        self._removeEffectBt.set_icon_name("list-remove-symbolic")
-        self._removeEffectBt.set_label(_("Remove effect"))
-        self._removeEffectBt.set_is_important(True)
-        self._removeEffectBt.set_sensitive(False)
-        self._toolbar.insert(self._removeEffectBt, 0)
+        removeEffectButton = Gtk.ToolButton()
+        removeEffectButton.set_icon_name("list-remove-symbolic")
+        removeEffectButton.set_label(_("Remove effect"))
+        removeEffectButton.set_is_important(True)
+        self._toolbar.insert(removeEffectButton, 0)
 
         # Treeview to display a list of effects (type and name)
         self.treeview_scrollwin = Gtk.ScrolledWindow()
@@ -225,6 +224,7 @@ class EffectProperties(Gtk.Expander):
         self._vcontent.show()
         self._table.show_all()
         self._infobar.show_all()
+        self._toolbar.hide()
         self.hide()
 
         # Connect all the widget signals
@@ -234,7 +234,7 @@ class EffectProperties(Gtk.Expander):
         self.treeview.connect("drag-motion", self._dragMotionCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
         self._vcontent.connect("notify", self._vcontentNotifyCb)
-        self._removeEffectBt.connect("clicked", self._removeEffectClicked)
+        removeEffectButton.connect("clicked", self._removeEffectClicked)
         self.app.connect("new-project-loaded", self._newProjectLoadedCb)
         self.connect('notify::expanded', self._expandedCb)
         self.connected = False
@@ -378,7 +378,6 @@ class EffectProperties(Gtk.Expander):
 
     def updateAll(self):
         if self.get_expanded():
-            self._removeEffectBt.set_sensitive(False)
             if len(self.clips) == 1:
                 self._setEffectDragable()
                 self._updateTreeview()
@@ -419,10 +418,10 @@ class EffectProperties(Gtk.Expander):
     def _treeviewSelectionChangedCb(self, treeview):
         if self.selection.count_selected_rows() == 0 and self.clips:
             self.app.gui.setActionsSensitive(True)
-            self._removeEffectBt.set_sensitive(False)
+            self._toolbar.hide()
         else:
             self.app.gui.setActionsSensitive(False)
-            self._removeEffectBt.set_sensitive(True)
+            self._toolbar.show()
 
         self._updateEffectConfigUi()
 
