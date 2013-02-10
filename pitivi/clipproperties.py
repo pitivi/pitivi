@@ -166,7 +166,7 @@ class EffectProperties(Gtk.Expander):
         removeEffectButton.set_is_important(True)
         self._toolbar.insert(removeEffectButton, 0)
 
-        # Treeview to display a list of effects (type and name)
+        # Treeview to display a list of effects (checkbox, effect type and name)
         self.treeview_scrollwin = Gtk.ScrolledWindow()
         self.treeview_scrollwin.set_policy(Gtk.PolicyType.NEVER,
                                            Gtk.PolicyType.AUTOMATIC)
@@ -183,6 +183,8 @@ class EffectProperties(Gtk.Expander):
         activatedcell = Gtk.CellRendererToggle()
         activatedcell.props.xpad = PADDING
         activatedcell.connect("toggled", self._effectActiveToggleCb)
+        activatedcol = self.treeview.insert_column_with_attributes(-1,
+                            _("Active"), activatedcell, active=COL_ACTIVATED)
 
         typecol = Gtk.TreeViewColumn(_("Type"))
         typecol.set_sort_column_id(COL_TYPE)
