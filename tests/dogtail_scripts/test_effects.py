@@ -27,8 +27,10 @@ class EffectLibraryTest(HelpFunc):
         # Switch to audio effects view
         tab.child(name="effects library audio togglebutton").click()
         search.text = "Equa"
-        #Titles plus 3 plugins, two collumns = 8
-        self.assertEqual(len(tab.child(roleName="table").children), 8)
+        # The effects library listview doesn't show the header row, but
+        # it is still one of the children. So when we're looking for the 3
+        # rows matching "Equa", we need to add one child (1 header + 3 rows).
+        self.assertEqual(len(tab.child(roleName="table").children), 4)
 
     def help_test_effect_drag(self):
         sample = self.import_media()
@@ -43,7 +45,8 @@ class EffectLibraryTest(HelpFunc):
 
         dogtail.rawinput.click(clippos[0], clippos[1])
         self.assertTrue(table.sensitive)
-        #No effects added
+        # No effects added. The listview has 3 columns, so it starts at 3.
+        # Each time you add an effect, it adds a row, so +3 children.
         self.assertEqual(len(table.children), 3)
 
         center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)

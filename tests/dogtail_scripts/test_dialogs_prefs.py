@@ -20,7 +20,7 @@ class DialogsPreferencesTest(HelpFunc):
         # (otherwise dogtail will take ages to search for it) and to prevent
         # scrolling (so we can just click the first item in the search results).
         # Since the search entry is focused by default, just start typing:
-        dogtail.rawinput.typeText("cantarell bold")
+        dogtail.rawinput.typeText("cantarell bold oblique")
         # Ideally I'd search the child table cells, but this is way too slow,
         # so let's just pick the first item in the search results:
         fontchooser.child(roleName="table cell").click()
@@ -47,7 +47,7 @@ class DialogsPreferencesTest(HelpFunc):
         # Check if the previous values were correctly saved
         # In the case of the font, just search if such an item exists:
         try:
-            dialog.child(name="Cantarell Bold", roleName="push button")
+            dialog.child(name="Cantarell Bold Oblique", roleName="push button")
         except SearchError:
             self.fail("Font was not saved")
         self.assertEqual(dialog.child(roleName="spin button").text, "12")
