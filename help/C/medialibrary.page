@@ -42,7 +42,7 @@
          <list>
           <item><p>As you type, the first matching file will become selected.</p></item>
           <item><p>You can keep typing to refine your search.</p></item>
-          <item><p>When there are multiple results, you can use the <gui>up</gui> and <app>down</app> arrow keys to switch the selection between each search result.</p>
+          <item><p>When there are multiple results, you can use the <key>up</key> and <key>down</key> arrow keys to switch the selection between each search result.</p>
           </item>
          </list>
          <p>This method only allows searching from the beginning of the filename.</p>
