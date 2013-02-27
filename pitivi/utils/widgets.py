@@ -25,6 +25,7 @@ A collection of helper classes and routines for:
     * Creating UI from GstElement-s
 """
 
+import imp
 import os
 import re
 import sys
@@ -112,7 +113,7 @@ class TextWidget(Gtk.HBox, DynamicWidget):
     __INVALID__ = Gdk.Color(0xFFFF, 0, 0)
     __NORMAL__ = Gdk.Color(0, 0, 0)
 
-    def __init__(self, matches=None, choices=None, default=None):
+    def __init__(self, matches=None, choices=None, default=None, text_widget=None):
         if not default:
             # In the case of text widgets, a blank default is an empty string
             default = ""
@@ -122,17 +123,20 @@ class TextWidget(Gtk.HBox, DynamicWidget):
 
         self.set_border_width(0)
         self.set_spacing(0)
-        if choices:
-            self.combo = Gtk.combo_box_entry_new_text()
-            self.text = self.combo.get_child()
-            self.combo.show()
-            self.pack_start(self.combo, True, True, 0)
-            for choice in choices:
-                self.combo.append_text(choice)
+        if text_widget is None:
+            if choices:
+                self.combo = Gtk.combo_box_entry_new_text()
+                self.text = self.combo.get_child()
+                self.combo.show()
+                self.pack_start(self.combo, True, True, 0)
+                for choice in choices:
+                    self.combo.append_text(choice)
+            else:
+                self.text = Gtk.Entry()
+                self.text.show()
+                self.pack_start(self.text, True, True, 0)
         else:
-            self.text = Gtk.Entry()
-            self.text.show()
-            self.pack_start(self.text, True, True, 0)
+            self.text = text_widget
         self.matches = None
         self.last_valid = None
         self.valid = False
@@ -236,7 +240,7 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
         self.spinner.show()
 
     def connectValueChanged(self, callback, *args):
-        self.adjustment.connect("value-changed", callback, *args)
+        self.adjustment.connect("value-changed", callback, * args)
 
     def getWidgetValue(self):
         if self._type:
@@ -807,10 +811,18 @@ def make_property_widget(unused_element, prop, value=None):
     return widget
 
 
+def make_widget_wrapper(widget):
+    """ Creates a wrapper child of DynamicWidget for @widget """
+    if isinstance(widget, Gtk.Entry):
+        wrapper = TextWidget(widget=widget)
+    # TODO Implement more wrapper for more Gtk.Widget types
+
+
 class GstElementSettingsWidget(Gtk.VBox, Loggable):
     """
     Widget to view/modify properties of a Gst.Element
     """
+    custom_ui_creators = None
 
     def __init__(self):
         Gtk.VBox.__init__(self)
@@ -819,6 +831,21 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         self.ignore = None
         self.properties = None
         self.buttons = {}
+        if self.custom_ui_creators is None:
+            self._fill_custom_ui_creators()
+
+    @classmethod
+    def _fill_custom_ui_creators(self):
+        customwidgets_dir = os.path.join(os.path.dirname(__file__), "customwidgets")
+        for f in os.listdir(customwidgets_dir):
+            if f.endswith(".py"):
+                modulename = f.replace(".py", "")
+                try:
+                    module = imp.load_source(modulename, os.path.join(customwidgets_dir, f))
+                    self.custom_ui_creators[modulename] = module.create_widget
+                except AttributeError:
+                    # Not create_widget method, do not do anything
+                    pass
 
     def setElement(self, element, properties={}, ignore=['name'],
                    default_btn=False, use_element_props=False):
@@ -829,7 +856,49 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         self.element = element
         self.ignore = ignore
         self.properties = {}
-        self._addWidgets(properties, default_btn, use_element_props)
+        self.uncontrolled_properties = {}
+        try:
+            factoryname = element.get_factory().get_name()
+            created = self.custom_ui_creators[factoryname].create_widget(self, element)
+        except KeyError:
+            self._addWidgets(properties, default_btn, use_element_props)
+
+    def addPropertyWidget(self, prop, widget, to_default_btn=None):
+        if isinstance(widget, DynamicWidget):
+            # if the widget is already a DynamicWidget we use it as is
+            dynamic_widget = widget
+        else:
+            # if the widget is not dynamic we try to create a wrapper around it
+            # so we can control it with the standardsed DynamicWidget API
+            dynamic_widget = make_widget_wrapper(widget)
+
+        if dynamic_widget:
+            self.properties[prop] = dynamic_widget
+
+            self.element.connect('notify::' + prop.name, self._propertyChangedCb,
+                    dynamic_widget)
+            # The "reset to default" button associated with this property
+            if isinstance(to_default_btn, Gtk.Button):
+                # The "reset to default" button associated with this property
+                to_default_btn.connect('clicked', self._defaultBtnClickedCb,
+                                       widget)
+                self.buttons[button] = to_default_btn
+            elif to_default_btn is not None:
+                self.warning("to_default_btn should be either a Gtk.Button or "
+                             "None")
+        else:
+            # If we add a none standard widget, the creator of the widget is
+            # responsible for handling its behaviour "by hand"
+            self.info("Can not wrap widget: %s for property" % (widget, prop))
+
+            # we still keep a ref to those widget "just in case"
+            self.uncontrolled_properties[prop] = widget
+
+        if hasattr(prop, 'blurb'):
+            widget.set_tooltip_text(prop.blurb)
+
+    def addIgnoreProperty(self, ignore):
+        self.ignore.append(ignore)
 
     def _addWidgets(self, properties, default_btn, use_element_props):
         """
@@ -841,11 +910,12 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         "No properties."
         """
         is_effect = False
-        if isinstance(self.element, GES.Effect):
+        if isinstance(self.element, GES.BaseEffect):
             is_effect = True
             props = [prop for prop in self.element.list_children_properties() if not prop.name in self.ignore]
         else:
             props = [prop for prop in GObject.list_properties(self.element) if not prop.name in self.ignore]
+
         if not props:
             table = Gtk.Table(rows=1, columns=1)
             widget = Gtk.Label(label=_("No properties."))
@@ -896,15 +966,15 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
 
-            self.properties[prop] = widget
-
-            # The "reset to default" button associated with this property
             if default_btn:
-                button = self._getResetToDefaultValueButton(prop, widget)
-                table.attach(button, 2, 3, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
-                self.buttons[button] = widget
-            self.element.connect('notify::' + prop.name, self._propertyChangedCb, widget)
+                to_default_btn = self.getResetToDefaultValueButton(prop, widget)
+                table.attach(to_default_btn, 2, 3, y, y + 1,
+                             xoptions=Gtk.AttachOptions.FILL,
+                             yoptions=Gtk.AttachOptions.FILL)
+            else:
+                default_widget = None
 
+            self.addPropertyWidget(prop, widget, None)
             y += 1
 
         self.pack_start(table, True, True, 0)
@@ -913,7 +983,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
     def _propertyChangedCb(self, element, pspec, widget):
         widget.setWidgetValue(self.element.get_property(pspec.name))
 
-    def _getResetToDefaultValueButton(self, prop, widget):
+    def getResetToDefaultValueButton(self, prop, widget):
         icon = Gtk.Image()
         icon.set_from_icon_name("edit-clear-all-symbolic", Gtk.IconSize.MENU)
         button = Gtk.Button()
@@ -921,6 +991,9 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         button.set_tooltip_text(_("Reset to default value"))
         button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect('clicked', self._defaultBtnClickedCb, widget)
+
+        # Directly add it to the buttong dictionnary
+        self.buttons[button] = widget
         return button
 
     def _defaultBtnClickedCb(self, button, widget):
