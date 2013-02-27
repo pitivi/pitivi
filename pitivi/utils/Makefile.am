@@ -1,3 +1,5 @@
+SUBDIRS = customwidgets
+
 utilsdir = $(libdir)/pitivi/python/pitivi/utils
 
 utils_PYTHON = 	\
