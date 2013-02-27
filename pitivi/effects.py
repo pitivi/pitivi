@@ -36,6 +36,7 @@ from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import GLib
+from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Pango
@@ -48,7 +49,6 @@ from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.widgets import GstElementSettingsWidget
-
 
 (VIDEO_EFFECT, AUDIO_EFFECT) = list(range(1, 3))
 
@@ -566,14 +566,36 @@ class EffectListWidget(Gtk.Box, Loggable):
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message', 'parent']
 
 
-class EffectsPropertiesManager:
+class EffectsPropertiesManager(GObject.Object, Loggable):
     """Provides and caches UIs for editing effects.
 
     Attributes:
         app (Pitivi): The app.
     """
 
+    def create_widget_accumulator(*args):
+        """Aborts `create_widget` emission if we got a widget."""
+        handler_return = args[2]
+        if handler_return is None:
+            return True, handler_return
+        return False, handler_return
+
+    __gsignals__ = {
+        "create_widget": (GObject.SIGNAL_RUN_LAST, Gtk.Widget, (GstElementSettingsWidget, GES.Effect,),
+                          create_widget_accumulator),
+    }
+
+    def do_create_widget(self, effect_widget, effect):
+        """Creates a widget if the `create_widget` handlers did not."""
+        effect_name = effect.get_property("bin-description")
+        self.log('UI is being auto-generated for "%s"', effect_name)
+        effect_widget.add_widgets(with_reset_button=True)
+        self._postConfiguration(effect, effect_widget)
+        return None
+
     def __init__(self, app):
+        GObject.Object.__init__(self)
+        Loggable.__init__(self)
         self.cache_dict = {}
         self._current_element_values = {}
         self.app = app
@@ -588,13 +610,15 @@ class EffectsPropertiesManager:
             GstElementSettingsWidget: A container for configuring the effect.
         """
         if effect not in self.cache_dict:
-            # Here we should handle special effects configuration UI
             effect_widget = GstElementSettingsWidget()
-            effect_widget.setElement(effect, ignore=PROPS_TO_IGNORE,
-                                     with_reset_button=True)
+            effect_widget.setElement(effect, PROPS_TO_IGNORE)
+            widget = self.emit("create_widget", effect_widget, effect)
+            # The default handler of `create_widget` handles visibility
+            # itself and returns None
+            if widget is not None:
+                effect_widget.show_widget(widget)
             self.cache_dict[effect] = effect_widget
             self._connectAllWidgetCallbacks(effect_widget, effect)
-            self._postConfiguration(effect, effect_widget)
 
         for prop in effect.list_children_properties():
             value = effect.get_child_property(prop.name)
