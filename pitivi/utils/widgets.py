@@ -1025,23 +1025,22 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                     prop_value = properties.get(prop.name)
 
             widget = make_property_widget(self.element, prop, prop_value)
+            FILL = Gtk.AttachOptions.FILL  # A shortcut to compact code
             if isinstance(widget, ToggleWidget):
                 widget.set_label(prop.nick)
-                table.attach(widget, 0, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
+                table.attach(widget, 0, 2, y, y + 1, yoptions=FILL)
             else:
                 label = Gtk.Label(label=prop.nick + ":")
                 label.set_alignment(0.0, 0.5)
-                table.attach(label, 0, 1, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
-                table.attach(widget, 1, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
+                table.attach(label, 0, 1, y, y + 1, xoptions=FILL, yoptions=FILL)
+                table.attach(widget, 1, 2, y, y + 1, yoptions=FILL)
 
             if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
 
             if default_btn:
-                to_default_btn = self.getResetToDefaultValueButton(prop, widget)
-                table.attach(to_default_btn, 2, 3, y, y + 1,
-                             xoptions=Gtk.AttachOptions.FILL,
-                             yoptions=Gtk.AttachOptions.FILL)
+                reset = self.getResetToDefaultValueButton(prop, widget)
+                table.attach(reset, 2, 3, y, y + 1, xoptions=FILL, yoptions=FILL)
             else:
                 default_widget = None
 
