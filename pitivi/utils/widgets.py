@@ -214,31 +214,39 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
     The SpinButton is always displayed, while the Scale only appears if both
     lower and upper bounds are defined"""
 
-    def __init__(self, upper=None, lower=None, default=None):
+    def __init__(self, upper=None, lower=None, default=None,
+                 adjustment=None):
         Gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
 
         self.spacing = SPACING
-        self.adjustment = Gtk.Adjustment()
-        self.upper = upper
-        self.lower = lower
         self._type = None
-        if (lower is not None and upper is not None) and (lower > -5000 and upper < 5000):
-            self.slider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, self.adjustment)
-            self.pack_start(self.slider, fill=True, expand=True, padding=0)
-            self.slider.show()
-            self.slider.props.draw_value = False
+        if adjustment is None:
+            self.upper = upper
+            self.lower = lower
+            self.adjustment = Gtk.Adjustment()
+            if (lower is not None and upper is not None) and (lower > -5000 and upper < 5000):
+                self.slider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, self.adjustment)
+                self.pack_start(self.slider, fill=True, expand=True, padding=0)
+                self.slider.show()
+                self.slider.props.draw_value = False
 
-        if upper is None:
-            upper = GObject.G_MAXDOUBLE
-        if lower is None:
-            lower = GObject.G_MINDOUBLE
-        range = upper - lower
-        self.adjustment.props.lower = lower
-        self.adjustment.props.upper = upper
-        self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
-        self.pack_end(self.spinner, fill=True, expand=not hasattr(self, 'slider'), padding=0)
-        self.spinner.show()
+            if upper is None:
+                upper = GObject.G_MAXDOUBLE
+            if lower is None:
+                lower = GObject.G_MINDOUBLE
+            range = upper - lower
+            self.adjustment.props.lower = lower
+            self.adjustment.props.upper = upper
+            self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
+            self.pack_end(self.spinner, fill=True, expand=not hasattr(self, 'slider'), padding=0)
+            self.spinner.show()
+        else:
+            self.adjustment = adjustment
+            self.upper = self.adjust.get_upper()
+            self.lower = self.adjust.get_lower()
+            self.slider = None
+            self.spinner = None
 
     def connectValueChanged(self, callback, *args):
         self.adjustment.connect("value-changed", callback, * args)
@@ -262,13 +270,15 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
             minimum, maximum = (GObject.G_MINDOUBLE, GObject.G_MAXDOUBLE)
             step = 0.01
             page = 0.1
-            self.spinner.props.digits = 2
+            if self.spinner:
+                self.spinner.props.digits = 2
         if self.lower is not None:
             minimum = self.lower
         if self.upper is not None:
             maximum = self.upper
         self.adjustment.configure(value, minimum, maximum, step, page, 0)
-        self.spinner.set_adjustment(self.adjustment)
+        if self.spinner:
+            self.spinner.set_adjustment(self.adjustment)
 
 
 class TimeWidget(TextWidget, DynamicWidget):
@@ -816,6 +826,9 @@ def make_widget_wrapper(widget):
     """ Creates a wrapper child of DynamicWidget for @widget """
     if isinstance(widget, Gtk.Entry):
         wrapper = TextWidget(widget=widget)
+    if isinstance(widget, Gtk.Range):
+        wrapper = NumericWidget(adjustment=widget.get_adjustment())
+
     # TODO Implement more wrapper for more Gtk.Widget types
 
 
