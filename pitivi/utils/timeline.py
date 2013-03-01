@@ -106,7 +106,7 @@ class Selection(Signallable):
         for obj in objs:
             # FIXME GES break, handle the fact that we have unlinked objects in GES
             if isinstance(obj, GES.TrackElement):
-                selection.add(obj.get_clip())
+                selection.add(obj.get_parent())
             else:
                 selection.add(obj)
 
@@ -125,12 +125,12 @@ class Selection(Signallable):
             self.last_single_obj = iter(selection).next()
 
         for obj in old_selection - self.selected:
-            for element in obj.get_track_elements():
+            for element in obj.get_children():
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
                     element.selected.selected = False
 
         for obj in self.selected - old_selection:
-            for element in obj.get_track_elements():
+            for element in obj.get_children():
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
                     element.selected.selected = True
 
@@ -142,7 +142,7 @@ class Selection(Signallable):
         """
         objects = []
         for clip in self.selected:
-            objects.extend(clip.get_track_elements())
+            objects.extend(clip.get_children())
 
         return set(objects)
 
@@ -152,7 +152,7 @@ class Selection(Signallable):
         """
         effects = []
         for clip in self.selected:
-            for element in clip.get_track_elements():
+            for element in clip.get_children():
                 if isinstance(element, GES.BaseEffect):
                     effects.append(element)
 
@@ -213,7 +213,7 @@ class EditingContext(Signallable):
 
         self.other = other
         if isinstance(focus, GES.TrackElement):
-            self.focus = focus.get_clip()
+            self.focus = focus.get_parent()
         else:
             self.focus = focus
         self.timeline = timeline

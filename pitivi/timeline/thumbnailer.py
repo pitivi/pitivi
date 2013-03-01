@@ -218,7 +218,7 @@ def get_preview_for_object(instance, trackelement):
             # previewers[key] = RandomAccessAudioPreviewer(instance, uri)
             previewers[key] = DefaultPreviewer(instance, uri)
         elif track_type == GES.TrackType.VIDEO:
-            if trackelement.get_clip().is_image():
+            if trackelement.get_parent().is_image():
                 previewers[key] = StillImagePreviewer(instance, uri)
             else:
                 previewers[key] = RandomAccessVideoPreviewer(instance, uri)

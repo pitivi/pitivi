@@ -165,7 +165,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         position = self.app.current.pipeline.getPosition()
         self.app.current.pipeline.simple_seek(0)
 
-        self.element.get_clip().set_asset(transition_asset)
+        self.element.get_parent().set_asset(transition_asset)
 
         # Seek back into the previous position, refreshing the preview
         self.app.current.pipeline.simple_seek(position)
@@ -278,7 +278,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         self.element.connect("notify::border", self._borderChangedCb)
         self.element.connect("notify::invert", self._invertChangedCb)
         self.element.connect("notify::type", self._transitionTypeChangedCb)
-        transition_asset = element.get_clip().get_asset()
+        transition_asset = element.get_parent().get_asset()
         if transition_asset.get_id() == "crossfade":
             self.props_widgets.set_sensitive(False)
         else:

@@ -122,7 +122,7 @@ class ClipAdded(UndoableAction):
         self.timeline = timeline
         self.clip = clip
         self.tracks = dict((track_element, track_element.get_track())
-                for track_element in clip.get_track_elements())
+                for track_element in clip.get_children())
 
     def do(self):
         for track_element, track in self.tracks.iteritems():
@@ -141,7 +141,7 @@ class ClipRemoved(UndoableAction):
         self.timeline = timeline
         self.clip = clip
         self.tracks = dict((track_element, track_element.get_track())
-                for track_element in clip.get_track_elements())
+                for track_element in clip.get_children())
 
     def do(self):
         self.timeline.removeClip(self.clip, deep=True)
@@ -281,9 +281,9 @@ class TimelineLogObserver(object):
                     self._clipPropertyChangedCb, property_name)
         self.clip_property_trackers[clip] = tracker
 
-        clip.connect("track-element-added", self._clipTrackElementAddedCb)
-        clip.connect("track-element-removed", self._clipTrackElementRemovedCb)
-        for element in clip.get_track_elements():
+        clip.connect("child-added", self._clipTrackElementAddedCb)
+        clip.connect("child-removed", self._clipTrackElementRemovedCb)
+        for element in clip.get_children():
             self._connectToTrackElement(element)
 
     def _disconnectFromClip(self, clip):

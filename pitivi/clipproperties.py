@@ -279,8 +279,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         if selection.selected:
             self.clips = list(selection.selected)
             for clip in self.clips:
-                clip.connect("track-element-added", self._TrackElementAddedCb)
-                clip.connect("track-element-removed", self._trackElementRemovedCb)
+                clip.connect("child-added", self._TrackElementAddedCb)
+                clip.connect("child-removed", self._trackElementRemovedCb)
             self.show()
         else:
             self.clips = []
@@ -314,7 +314,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.app.action_log.begin("remove effect")
         self._cleanCache(effect)
         effect.get_track().remove_element(effect)
-        effect.get_clip().release_track_element(effect)
+        effect.get_parent().remove(effect)
         self._updateTreeview()
         self.app.action_log.commit()
 
@@ -330,7 +330,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
             # Checking that this effect can be applied on this track object
             # Which means, it has the corresponding media_type
-            for track_element in clip.get_track_elements():
+            for track_element in clip.get_children():
                 track = track_element.get_track()
                 if track.get_property("track_type") == GES.TrackType.AUDIO and \
                         media_type == AUDIO_EFFECT or \
@@ -339,7 +339,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                     #Actually add the effect
                     self.app.action_log.begin("add effect")
                     effect = GES.Effect(bin_description=bin_desc)
-                    clip.add_track_element(effect)
+                    clip.add(effect)
                     track.add_element(effect)
                     self.updateAll()
                     self.app.action_log.commit()
@@ -585,7 +585,7 @@ class TransformationProperties(Gtk.Expander):
         self.app.current.pipeline.flushSeek()
 
     def _findEffect(self, name):
-        for effect in self._selected_clip.get_track_elements():
+        for effect in self._selected_clip.get_children():
             if isinstance(effect, GES.BaseEffect):
                 if name in effect.get_property("bin-description"):
                     self.effect = effect
@@ -595,7 +595,7 @@ class TransformationProperties(Gtk.Expander):
         effect = self._findEffect(name)
         if not effect:
             effect = GES.Effect(bin_description=name)
-            self._selected_clip.add_track_element(effect)
+            self._selected_clip.add(effect)
             tracks = self.app.projectManager.current.timeline.get_tracks()
             for track in tracks:
                 if track.get_caps().to_string() == "video/x-raw":

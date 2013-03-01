@@ -1252,7 +1252,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
 
                 # Checking that this effect can be applied on this track object
                 # Which means, it has the corresponding media_type
-                for track_element in clip.get_track_elements():
+                for track_element in clip.get_children():
                     track = track_element.get_track()
                     if track.get_property("track_type") == GES.TrackType.AUDIO and \
                             media_type == AUDIO_EFFECT or \
@@ -1261,7 +1261,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                         #Actually add the effect
                         self.app.action_log.begin("add effect")
                         effect = GES.Effect(bin_description=bin_desc)
-                        clip.add_track_element(effect)
+                        clip.add(effect)
                         track.add_element(effect)
                         self.app.gui.clipconfig.effect_expander.updateAll()
                         self.app.action_log.commit()
@@ -1279,7 +1279,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
 
         track_elements = [obj for obj in items_in_area[1]]
         for track_element in track_elements:
-            clips.append(track_element.get_clip())
+            clips.append(track_element.get_parent())
 
         return clips
 
@@ -1784,7 +1784,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                 start = element.get_start()
                 end = start + element.get_duration()
                 if start < position and end > position:
-                    clip = element.get_clip()
+                    clip = element.get_parent()
                     clip.split(position)
         self.timeline.enable_update(True)
 

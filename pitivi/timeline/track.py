@@ -303,7 +303,7 @@ class StartHandle(TrimHandle):
             TrackElementController.drag_start(self, item, target, event)
 
             if self._view.element.is_locked():
-                elem = self._view.element.get_clip()
+                elem = self._view.element.get_parent()
             else:
                 elem = self._view.element
 
@@ -337,7 +337,7 @@ class EndHandle(TrimHandle):
             TrackElementController.drag_start(self, item, target, event)
 
             if self._view.element.is_locked():
-                elem = self._view.element.get_clip()
+                elem = self._view.element.get_parent()
             else:
                 elem = self._view.element
             self._context = EditingContext(elem, self._view.timeline,
@@ -616,12 +616,12 @@ class TrackElement(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
                     self.app.gui.trans_list.activate(self.element)
             elif isinstance(self.element, GES.TitleSource):
                 self.app.gui.switchContextTab("title editor")
-                self.app.gui.title_editor.set_source(self.element.get_clip())
+                self.app.gui.title_editor.set_source(self.element.get_parent())
             else:
                 if self.element.get_track().get_property("track_type") == GES.TrackType.VIDEO:
                     has_text_overlay = False
-                    clip = self.element.get_clip()
-                    elements = clip.get_track_elements()
+                    clip = self.element.get_parent()
+                    elements = clip.get_children()
                     for element in elements:
                         if isinstance(element, GES.TextOverlay):
                             has_text_overlay = True
@@ -632,7 +632,7 @@ class TrackElement(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
                         title.set_start(self.element.start)
                         title.set_duration(self.element.duration)
                         # FIXME: Creating a text overlay everytime we select a video track object is madness
-                        self.element.get_clip().add_track_element(title)
+                        self.element.get_parent().add(title)
                         self.element.get_track().add_element(title)
                     self.app.gui.title_editor.set_source(title)
                 self.app.gui.trans_list.deactivate()
@@ -650,7 +650,7 @@ class TrackElement(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
             raise Exception(e)
 
         # get layer and track_type
-        layer = self.element.get_clip().get_layer()
+        layer = self.element.get_parent().get_layer()
         track_type = self.element.get_track().get_property("track-type")
 
         # update height, compare with current height to not run into recursion
@@ -763,7 +763,7 @@ class UriSource(TrackElement):
         Set the human-readable file name as the clip's text label
         """
         if self.element:
-            info = element.get_clip().get_asset().get_info()
+            info = element.get_parent().get_asset().get_info()
             self.name.props.text = info_name(info)
             twidth, theight = text_size(self.name)
             self.namewidth = twidth
