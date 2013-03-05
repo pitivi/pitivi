@@ -185,6 +185,10 @@ def check_hard_dependencies():
     if _string_to_list(inst) < _string_to_list(HARD_DEPS["gnonlin"]):
         missing_hard_deps["GNonLin"] = (HARD_DEPS["gnonlin"], inst)
 
+    # GES is checked, import and intialize it
+    from gi.repository import GES
+    GES.init()
+
     # Prepare the list of hard deps errors to warn about later:
     for dependency in missing_hard_deps:
         req = missing_hard_deps[dependency][0]
