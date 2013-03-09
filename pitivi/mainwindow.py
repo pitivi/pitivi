@@ -35,7 +35,7 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import GES
-from gi.repository import GObject
+from gi.repository import GLib
 from gi.repository import GdkPixbuf
 from gi.repository.GstPbutils import InstallPluginsContext, install_plugins_async
 
@@ -513,7 +513,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self._fullscreen_toolbar_win.add(self.toolbar)
             self._fullscreen_toolbar_win.show()
             # The first time, wait a little before sliding out the toolbar:
-            GObject.timeout_add(750, self._slideFullscreenToolbarOut)
+            GLib.timeout_add(750, self._slideFullscreenToolbarOut)
         else:
             self.unfullscreen()
             self.menu.show()
@@ -524,11 +524,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _slideFullscreenToolbarIn(self, *args):
         self._fullscreenToolbarDirection = "down"
-        GObject.timeout_add(25, self._animateFullscreenToolbar)
+        GLib.timeout_add(25, self._animateFullscreenToolbar)
 
     def _slideFullscreenToolbarOut(self, *args):
         self._fullscreenToolbarDirection = "up"
-        GObject.timeout_add(25, self._animateFullscreenToolbar)
+        GLib.timeout_add(25, self._animateFullscreenToolbar)
         return False  # Stop the initial gobject timer
 
     def _animateFullscreenToolbar(self, *args):

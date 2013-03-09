@@ -39,6 +39,7 @@ import re
 import os
 import time
 
+from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -422,7 +423,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
 
         self.view.drag_source_set(0, [], Gdk.DragAction.COPY)
         self.view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [("pitivi/effect", 0, TYPE_PITIVI_EFFECT)], Gdk.DragAction.COPY)
-        self.view.drag_source_set_target_list(None)
+        self.view.drag_source_set_target_list([])
         self.view.drag_source_add_text_targets()
 
         self.view.connect("button-press-event", self._buttonPressEventCb)
@@ -440,7 +441,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
 
         # Delay the loading of the available effects so the application
         # starts faster.
-        GObject.idle_add(self._loadAvailableEffectsCb)
+        GLib.idle_add(self._loadAvailableEffectsCb)
         self.populate_categories_widget()
 
         # Individually show the tab's widgets.

@@ -1194,7 +1194,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         """
         self.debug("Drag leave")
         self._canvas.handler_block_by_func(self._dragMotionCb)
-        GObject.timeout_add(75, self._dragCleanUp, context)
+        GLib.timeout_add(75, self._dragCleanUp, context)
 
     def _dragCleanUp(self, context):
         """
@@ -1497,7 +1497,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         if position > self.hadj.props.upper:
             # we can't perform the scroll because the canvas needs to be
             # updated
-            GObject.idle_add(self._scrollToPosition, position)
+            GLib.idle_add(self._scrollToPosition, position)
         else:
             self._scrollToPosition(position)
 

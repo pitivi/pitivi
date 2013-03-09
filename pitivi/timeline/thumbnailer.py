@@ -515,7 +515,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         return utils.misc.quantize(time, self.tperiod)
 
     def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
-        GObject.idle_add(self._finishThumbnail, pixbuf, timestamp)
+        GLib.idle_add(self._finishThumbnail, pixbuf, timestamp)
 
     def _startThumbnail(self, timestamp):
         RandomAccessPreviewer._startThumbnail(self, timestamp)
@@ -625,7 +625,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
             cr.fill()
             surfaces.append(scaled)
         surfaces.append(surface)
-        GObject.idle_add(self._finishThumbnail, surfaces, self._audio_cur)
+        GLib.idle_add(self._finishThumbnail, surfaces, self._audio_cur)
 
     def _plotWaveform(self, cr, base_width):
         # clear background

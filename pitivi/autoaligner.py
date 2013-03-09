@@ -372,7 +372,7 @@ class ProgressAggregator(ProgressMeter):
 
         def cb(thusfar):
             self._portions[i] = thusfar
-            GObject.idle_add(self._callForward)
+            GLib.idle_add(self._callForward)
         return cb
 
     def addWatcher(self, function):
@@ -380,7 +380,7 @@ class ProgressAggregator(ProgressMeter):
 
     def _callForward(self):
         # This function always returns False so that it may be safely
-        # invoked via GObject.idle_add(). Use of idle_add() is necessary
+        # invoked via GLib.idle_add(). Use of idle_add() is necessary
         # to ensure that watchers are always called from the main thread,
         # even if progress updates are received from other threads.
         total_target = sum(self._targets)
@@ -587,7 +587,7 @@ class AutoAligner(Loggable):
                 extractee.addWatcher(progress_aggregator.getPortionCB(numsamples))
                 self._extraction_stack.append((audiotrack, extractee))
             # After we return, start the extraction cycle.
-            # This GObject.idle_add call should not be necessary;
+            # This GLib.idle_add call should not be necessary;
             # we should be able to invoke _extractNextEnvelope directly
             # here.  However, there is some as-yet-unexplained
             # race condition between the Python GIL, GTK UI updates,
@@ -595,10 +595,10 @@ class AutoAligner(Loggable):
             # occasional deadlocks during autoalignment.
             # This call to idle_add() reportedly eliminates the deadlock.
             # No one knows why.
-            GObject.idle_add(self._extractNextEnvelope)
+            GLib.idle_add(self._extractNextEnvelope)
         else:  # We can't do anything without at least two audio tracks
             # After we return, call the callback function (once)
-            GObject.idle_add(call_false, self._callback)
+            GLib.idle_add(call_false, self._callback)
         return progress_aggregator
 
     def _chooseReference(self):

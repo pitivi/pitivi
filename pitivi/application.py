@@ -29,7 +29,7 @@ import sys
 import urllib
 from gi.repository import GES
 from gi.repository import Gio
-from gi.repository import GObject
+from gi.repository import GLib
 from gi.repository import Gtk
 
 from gettext import gettext as _
@@ -246,7 +246,7 @@ class InteractivePitivi(Pitivi):
 
     def __init__(self, debug=False):
         Pitivi.__init__(self)
-        self.mainloop = GObject.MainLoop()
+        self.mainloop = GLib.MainLoop()
         self.actioner = None
         self.gui = None
         if debug:

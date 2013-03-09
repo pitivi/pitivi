@@ -23,9 +23,9 @@
 import glib
 import os
 
+from gi.repository import GLib
 from gi.repository import GES
 from gi.repository import Gtk
-from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
 from gettext import gettext as _
@@ -129,7 +129,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         self.border_mode_loop.connect("released", self._borderTypeChangedCb)
 
         # Speed-up startup by only checking available transitions on idle
-        GObject.idle_add(self._loadAvailableTransitionsCb)
+        GLib.idle_add(self._loadAvailableTransitionsCb)
 
         self.pack_start(self.infobar, False, True, 0)
         self.pack_start(self.searchbar, False, True, 0)

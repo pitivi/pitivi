@@ -26,7 +26,6 @@ from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import GObject
-from gi._glib import GError
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Pango
@@ -310,7 +309,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     def _setup_view_for_drag_and_drop(self, view, target_entries):
         view.drag_source_set(0, [], Gdk.DragAction.COPY)
         view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, target_entries, Gdk.DragAction.COPY)
-        view.drag_source_set_target_list(None)
+        view.drag_source_set_target_list([])
         view.drag_source_add_uri_targets()
         view.drag_source_add_text_targets()
         view.connect("drag_begin", self._dndDragBeginCb)
@@ -524,7 +523,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 GdkPixbuf.InterpType.BILINEAR)
 
             return thumbnail, thumbnail_large
-        except GError:
+        except GLib.GError:
             return None, None
 
     def _addAsset(self, asset):

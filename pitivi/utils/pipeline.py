@@ -30,6 +30,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
 from pitivi.utils.misc import print_ns
 
+from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import GES
@@ -79,7 +80,7 @@ class Seeker(Signallable, Loggable):
 
         if self.pending_seek_id is None:
             if on_idle:
-                GObject.idle_add(self._seekTimeoutCb)
+                GLib.idle_add(self._seekTimeoutCb)
             else:
                 self._seekTimeoutCb()
             self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb)
@@ -88,7 +89,7 @@ class Seeker(Signallable, Loggable):
         if self.pending_seek_id is None:
             self._time = time
             if on_idle:
-                GObject.idle_add(self._seekTimeoutCb, True)
+                GLib.idle_add(self._seekTimeoutCb, True)
             else:
                 self._seekTimeoutCb()
             self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb, True)
@@ -97,7 +98,7 @@ class Seeker(Signallable, Loggable):
         self.seekRelative(0, on_idle)
 
     def _scheduleSeek(self, timeout, callback, relative=False):
-        return GObject.timeout_add(timeout, callback, relative)
+        return GLib.timeout_add(timeout, callback, relative)
 
     def _seekTimeoutCb(self, relative=False):
         self.pending_seek_id = None
@@ -335,10 +336,10 @@ class SimplePipeline(Signallable, Loggable):
         # i.e. it does NOT check for current state
         if listen:
             if self._listening and self._listeningSigId == 0:
-                self._listeningSigId = GObject.timeout_add(self._listeningInterval,
+                self._listeningSigId = GLib.timeout_add(self._listeningInterval,
                     self._positionListenerCb)
         elif self._listeningSigId != 0:
-            GObject.source_remove(self._listeningSigId)
+            GLib.source_remove(self._listeningSigId)
             self._listeningSigId = 0
 
     def simple_seek(self, position, format=Gst.Format.TIME):
@@ -408,7 +409,7 @@ class SimplePipeline(Signallable, Loggable):
             self._handleErrorMessage(error, detail, message.src)
         elif message.type == Gst.MessageType.DURATION_CHANGED:
             self.debug("Duration might have changed, querying it")
-            GObject.idle_add(self._queryDurationAsync)
+            GLib.idle_add(self._queryDurationAsync)
         else:
             if self._has_sync_bus_handler is False:
                 # Pass message async to the sync bus handler
