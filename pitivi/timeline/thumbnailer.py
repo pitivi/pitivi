@@ -804,7 +804,6 @@ class Preview(GooCanvas.CanvasItemSimple, GooCanvas.CanvasItem, Zoomable):
         self.app = instance
         self.height = float(height)
         self.element = element
-        self.set_property("pointer-events", False)
         # ghetto hack
         self.hadj = instance.gui.timeline_ui.hadj
 
