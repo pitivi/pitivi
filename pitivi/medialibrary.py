@@ -234,6 +234,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.iconview.set_tooltip_column(COL_INFOTEXT)
         self.iconview.props.item_padding = 3
         self.iconview.props.margin = 3
+        self.iconview_on_path = None
 
         cell = Gtk.CellRendererPixbuf()
         self.iconview.pack_start(cell, False)
@@ -908,17 +909,18 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 self.iconview.select_path(path)
 
         self._ignoreRelease = chain_up
+        self.iconview_on_path = self.iconview.get_path_at_pos(event.x, event.y)
 
         return True
 
     def _iconViewButtonReleaseEventCb(self, iconview, event):
-        state = event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)
-        path = self.iconview.get_path_at_pos(event.x, event.y)
+        if self.iconview_on_path:
+            path = self.iconview.get_path_at_pos(event.x, event.y)
 
-        if not state and not self.dragged:
-            iconview.unselect_all()
-            if path:
-                iconview.select_path(path)
+            if path == self.iconview_on_path:
+                if iconview.path_is_selected(path):
+                    iconview.unselect_all()
+                    iconview.select_path(path)
 
     def _newProjectCreatedCb(self, app, project):
         if not self._project is project:
