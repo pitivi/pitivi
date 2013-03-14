@@ -258,6 +258,10 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
         return self.adjustment.get_value()
 
     def setWidgetValue(self, value):
+        # With introspection, we get tuples for GESTrackElement children props
+        if type(value) is tuple:
+            value = value[-1]  # Grab the last item of the tuple
+
         type_ = type(value)
         if self._type is None:
             self._type = type_
