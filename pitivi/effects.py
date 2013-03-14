@@ -656,10 +656,18 @@ class EffectsPropertiesManager:
             return conf_ui
 
     def _postConfiguration(self, effect, effect_set_ui):
+        """
+        If you need to set further UI things or set properties that are not
+        exposed by your effect configuration UI, you can do so here.
+        """
         if 'aspectratiocrop' in effect.get_property("bin-description"):
             for widget in effect_set_ui.get_children()[0].get_children():
                 if isinstance(widget, FractionWidget):
                     widget.addPresets(["4:3", "5:4", "9:3", "16:9", "16:10"])
+        elif effect.get_property("bin-description") == "alpha":
+            # All modes other than custom RGB chroma keying are useless to us.
+            # "ALPHA_METHOD_CUSTOM" corresponds to "3"
+            effect.set_child_property("method", 3)
 
     def _getUiToSetEffect(self, effect):
         """ Permit to get the widget to set the effect and not its container """
