@@ -24,15 +24,9 @@ from gi.repository import Gtk
 import pitivi.configure as configure
 
 
+# TODO: add methods to handle the color picker and to link it to the RGB widgets
 def create_widget(element_setting_widget, element):
-    ui = element_setting_widget
     builder = Gtk.Builder()
     builder.add_from_file(os.path.join(configure.get_ui_dir(), "effect-alpha.ui"))
-    ui.mapBuilder(builder)
-
-    table = builder.get_object("base_table")
-    window = builder.get_object("window1")
-
-    window.remove(table)
-
-    return table
+    element_setting_widget.mapBuilder(builder)
+    return builder.get_object("base_table")
