@@ -338,9 +338,8 @@ class EffectProperties(Gtk.Expander, Loggable):
                         media_type == VIDEO_EFFECT:
                     #Actually add the effect
                     self.app.action_log.begin("add effect")
-                    effect = GES.Effect(bin_description=bin_desc)
+                    effect = GES.Effect.new(bin_description=bin_desc)
                     clip.add(effect)
-                    track.add_element(effect)
                     self.updateAll()
                     self.app.action_log.commit()
                     self.app.current.pipeline.flushSeek()
@@ -594,12 +593,9 @@ class TransformationProperties(Gtk.Expander):
     def _findOrCreateEffect(self, name):
         effect = self._findEffect(name)
         if not effect:
-            effect = GES.Effect(bin_description=name)
+            effect = GES.Effect.new(bin_description=name)
             self._selected_clip.add(effect)
             tracks = self.app.projectManager.current.timeline.get_tracks()
-            for track in tracks:
-                if track.get_caps().to_string() == "video/x-raw":
-                    track.add_element(effect)
             effect = self._findEffect(name)
             # disable the effect on default
             a = self.effect.get_gnlobject()

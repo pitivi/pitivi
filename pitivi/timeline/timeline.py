@@ -1260,9 +1260,8 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                             media_type == VIDEO_EFFECT:
                         #Actually add the effect
                         self.app.action_log.begin("add effect")
-                        effect = GES.Effect(bin_description=bin_desc)
+                        effect = GES.Effect.new(bin_description=bin_desc)
                         clip.add(effect)
-                        track.add_element(effect)
                         self.app.gui.clipconfig.effect_expander.updateAll()
                         self.app.action_log.commit()
                         self._factories = None
