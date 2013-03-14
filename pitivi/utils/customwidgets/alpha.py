@@ -25,12 +25,9 @@ import pitivi.configure as configure
 
 
 def create_widget(element_setting_widget, element):
+    ui = element_setting_widget
     builder = Gtk.Builder()
-    builder.add_from_file(os.path.join(configure.get_ui_dir(),
-                               "somegladefile.ui"))
-    element_setting_widget.addPropertyWidget(builder.get_object("widget1"),
-            None)
-    element_setting_widget.addPropertyWidget(builder.get_object("widget2"),
-            builder.get_object("reset_widget2_value_btn"))
+    builder.add_from_file(os.path.join(configure.get_ui_dir(), "effect-alpha.ui"))
+    ui.mapBuilder(builder)
 
     return True
