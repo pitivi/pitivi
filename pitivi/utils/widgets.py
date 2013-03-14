@@ -867,7 +867,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                     module = imp.load_source(modulename, os.path.join(customwidgets_dir, f))
                     self.custom_ui_creators[modulename] = module.create_widget
                 except AttributeError:
-                    # Not create_widget method, do not do anything
+                    # No create_widget method present, do not do anything
                     pass
 
     def setElement(self, element, properties={}, ignore=['name'],
@@ -883,17 +883,17 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         created = False
         if isinstance(element, GES.Effect):
             bin_description = element.props.bin_description
+            # First, check if we already have an existing UI ready to display
             try:
-                # First try to create the widget thanks to a custom python coded
-                # "override"
                 created = self.custom_ui_creators[bin_description](self, element)
                 self.pack_start(created, True, True, 0)
                 self.show_all()
             except KeyError:
                 pass
+            # Otherwise, check if there's a custom UI available as a glade file
+            # in the utils/customwidgets directory:
             if not created:
                 try:
-                    # Then try to find a Glade file
                     builder = Gtk.Builder()
                     builder.add_from_file(os.path.join(get_ui_dir(),
                                           "customwidgets", bin_description + ".ui"))
@@ -925,6 +925,8 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             reset_widget = builder.get_object(widget_name)
             if widget is None:
                 self._unhandled_properties.append(prop)
+                self.warning("No custom widget found for %s property \"%s\"" %
+                            (prop.owner_type.name, prop.name))
             else:
                 self.addPropertyWidget(prop, widget, reset_widget)
 
@@ -951,13 +953,10 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                     dynamic_widget)
             # The "reset to default" button associated with this property
             if isinstance(to_default_btn, Gtk.Button):
-                # The "reset to default" button associated with this property
-                to_default_btn.connect('clicked', self._defaultBtnClickedCb,
-                                       widget)
+                to_default_btn.connect('clicked', self._defaultBtnClickedCb, widget)
                 self.buttons[button] = to_default_btn
             elif to_default_btn is not None:
-                self.warning("to_default_btn should be either a Gtk.Button or "
-                             "None")
+                self.warning("to_default_btn should be a Gtk.Button or None")
         else:
             # If we add a non-standard widget, the creator of the widget is
             # responsible for handling its behaviour "by hand"
