@@ -632,7 +632,6 @@ class EffectsPropertiesManager:
             effect_set_ui = GstElementSettingsWidget()
             effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
                                      default_btn=True, use_element_props=True)
-            nb_rows = effect_set_ui.get_children()[0].get_property('n-rows')
             effect_configuration_ui = Gtk.ScrolledWindow()
             effect_configuration_ui.add_with_viewport(effect_set_ui)
             effect_configuration_ui.set_policy(Gtk.PolicyType.AUTOMATIC,

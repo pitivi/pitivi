@@ -243,8 +243,8 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
             self.spinner.show()
         else:
             self.adjustment = adjustment
-            self.upper = self.adjust.get_upper()
-            self.lower = self.adjust.get_lower()
+            self.upper = adjustment.get_upper()
+            self.lower = adjustment.get_lower()
             self.slider = None
             self.spinner = None
 
@@ -827,11 +827,11 @@ def make_property_widget(unused_element, prop, value=None):
 def make_widget_wrapper(widget):
     """ Creates a wrapper child of DynamicWidget for @widget """
     if isinstance(widget, Gtk.Entry):
-        wrapper = TextWidget(widget=widget)
+        wrapper = TextWidget(text_widget=widget)
     if isinstance(widget, Gtk.Range):
         wrapper = NumericWidget(adjustment=widget.get_adjustment())
 
-    # TODO Implement more wrapper for more Gtk.Widget types
+    # TODO Implement wrappers for more Gtk.Widget types
 
 
 class GstElementSettingsWidget(Gtk.VBox, Loggable):
@@ -924,8 +924,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             if widget is None:
                 self._unhandled_properties.append(prop)
             else:
-                element_setting_widget.addPropertyWidget(prop, widget,
-                                                         reset_widget)
+                self.addPropertyWidget(prop, widget, reset_widget)
 
     def addPropertyWidget(self, prop, widget, to_default_btn=None):
         """
@@ -940,7 +939,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             dynamic_widget = widget
         else:
             # if the widget is not dynamic we try to create a wrapper around it
-            # so we can control it with the standardsed DynamicWidget API
+            # so we can control it with the standardized DynamicWidget API
             dynamic_widget = make_widget_wrapper(widget)
 
         if dynamic_widget:
@@ -960,7 +959,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         else:
             # If we add a non-standard widget, the creator of the widget is
             # responsible for handling its behaviour "by hand"
-            self.info("Can not wrap widget: %s for property" % (widget, prop))
+            self.info("Can not wrap widget %s for property %s" % (widget, prop))
             # We still keep a ref to that widget, "just in case"
             self.uncontrolled_properties[prop] = widget
 
@@ -1064,7 +1063,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect('clicked', self._defaultBtnClickedCb, widget)
 
-        # Directly add it to the buttong dictionnary
+        # Directly add it to the buttons dictionary
         self.buttons[button] = widget
         return button
 
