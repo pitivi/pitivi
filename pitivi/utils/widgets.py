@@ -827,9 +827,9 @@ def make_property_widget(unused_element, prop, value=None):
 def make_widget_wrapper(widget):
     """ Creates a wrapper child of DynamicWidget for @widget """
     if isinstance(widget, Gtk.Entry):
-        wrapper = TextWidget(text_widget=widget)
-    if isinstance(widget, Gtk.Range):
-        wrapper = NumericWidget(adjustment=widget.get_adjustment())
+        return TextWidget(text_widget=widget)
+    elif isinstance(widget, Gtk.Range):
+        return NumericWidget(adjustment=widget.get_adjustment())
 
     # TODO Implement wrappers for more Gtk.Widget types
 
@@ -887,6 +887,8 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 # First try to create the widget thanks to a custom python coded
                 # "override"
                 created = self.custom_ui_creators[bin_description](self, element)
+                self.pack_start(created, True, True, 0)
+                self.show_all()
             except KeyError:
                 pass
             if not created:

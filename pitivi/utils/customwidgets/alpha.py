@@ -30,4 +30,9 @@ def create_widget(element_setting_widget, element):
     builder.add_from_file(os.path.join(configure.get_ui_dir(), "effect-alpha.ui"))
     ui.mapBuilder(builder)
 
-    return True
+    table = builder.get_object("base_table")
+    window = builder.get_object("window1")
+
+    window.remove(table)
+
+    return table
