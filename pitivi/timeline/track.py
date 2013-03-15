@@ -228,7 +228,7 @@ class TrackElementController(Controller):
         self._context.editTo(position, priority)
 
     def _getMode(self):
-        if self._shift_down:
+        if self._shift_down or self.app.gui._autoripple_active:
             return GES.EditMode.EDIT_RIPPLE
         elif self._control_down:
             return GES.EditMode.EDIT_ROLL
@@ -390,7 +390,7 @@ class TrackElement(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
             self._view.app.action_log.begin("move object")
 
         def _getMode(self):
-            if self._shift_down:
+            if self._shift_down or self.app.gui._autoripple_active:
                 return GES.EditMode.EDIT_RIPPLE
             return GES.EditMode.EDIT_NORMAL
 

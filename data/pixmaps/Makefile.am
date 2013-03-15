@@ -4,6 +4,7 @@ pixmap_DATA = \
 	pitivi-advanced-22.png	\
 	pitivi-advanced-24.png	\
 	pitivi-align-24.svg	\
+	pitivi-gapless-24.svg \
 	pitivi-group-24.svg  \
 	pitivi-keyframe-24.svg  \
 	pitivi-keyframe.svg     \

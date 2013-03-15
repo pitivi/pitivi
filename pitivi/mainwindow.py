@@ -122,6 +122,10 @@ GlobalSettings.addConfigOption('lastCurrentVersion',
     section='version',
     key='last-current-version',
     default='')
+GlobalSettings.addConfigOption('timelineAutoRipple',
+    section='user-interface',
+    key='timeline-autoripple',
+    default=False)
 
 
 # FIXME PyGi to get stock_add working
@@ -138,6 +142,7 @@ def create_stock_icons():
         # Translators: This is an action, the title of a button
         ('pitivi-group', _('Group'), 0, 0, 'pitivi'),
         ('pitivi-align', _('Align'), 0, 0, 'pitivi'),
+        ('pitivi-gapless', _('Gapless mode'), 0, 0, 'pitivi'),
     ])
     pixmaps = {
         "pitivi-render": "pitivi-render-24.png",
@@ -146,6 +151,7 @@ def create_stock_icons():
         "pitivi-ungroup": "pitivi-ungroup-24.svg",
         "pitivi-group": "pitivi-group-24.svg",
         "pitivi-align": "pitivi-align-24.svg",
+        "pitivi-gapless": "pitivi-gapless-24.svg",
     }
     factory = Gtk.IconFactory()
     pmdir = get_pixmap_dir()
@@ -433,6 +439,14 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         ttb.get_style_context().add_class("inline-toolbar")
         ttb.set_orientation(Gtk.Orientation.VERTICAL)
         ttb.set_style(Gtk.ToolbarStyle.ICONS)
+        # Toggle/pushbuttons like the "gapless mode" ones are special, it seems
+        # you can't insert them as normal "actions", so we create them here:
+        ttb_gaplessmode_button = Gtk.ToggleToolButton()
+        ttb_gaplessmode_button.set_stock_id("pitivi-gapless")
+        ttb_gaplessmode_button.set_tooltip_markup(_("Toggle gapless mode\n"
+            "When enabled, adjacent clips automatically move to fill gaps."))
+        ttb_gaplessmode_button.show()
+        ttb.add(ttb_gaplessmode_button)
 
         self.vpaned.pack2(timeline_area, resize=True, shrink=False)
         timeline_area.pack_start(self.timeline_ui, expand=True, fill=True, padding=0)
@@ -472,11 +486,15 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.move(self.settings.mainWindowX, self.settings.mainWindowY)
         if allow_full_screen and self.settings.mainWindowFullScreen:
             self.setFullScreen(True)
+        # Restore the state of the timeline's "gapless" mode:
+        self._autoripple_active = self.settings.timelineAutoRipple
+        ttb_gaplessmode_button.set_active(self._autoripple_active)
 
         # Connect the main window's signals at the end, to avoid messing around
         # with the restoration of settings above.
         self.connect("delete-event", self._deleteCb)
         self.connect("configure-event", self._configureCb)
+        ttb_gaplessmode_button.connect("toggled", self._gaplessmodeToggledCb)
 
     def switchContextTab(self, tab=None):
         """
@@ -798,6 +816,15 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.prefsdialog = PreferencesDialog(self.app)
             self.prefsdialog.dialog.set_transient_for(self)
         self.prefsdialog.run()
+
+    def _gaplessmodeToggledCb(self, widget):
+        if widget.get_active():
+            self.info("Automatic ripple activated")
+            self._autoripple_active = True
+        else:
+            self.info("Automatic ripple deactivated")
+            self._autoripple_active = False
+        self.settings.timelineAutoRipple = self._autoripple_active
 
     def _projectManagerNewProjectLoadedCb(self, projectManager, project, unused_fully_loaded):
         """
