@@ -136,7 +136,7 @@ class Pitivi(Loggable, Signallable):
         self.effects = EffectsHandler()
         self.system = getSystem()
 
-        self.projectManager = ProjectManager(self.effects)
+        self.projectManager = ProjectManager(self)
         self._connectToProjectManager(self.projectManager)
 
         self.action_log = UndoableActionLog()

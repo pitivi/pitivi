@@ -119,13 +119,13 @@ class ProjectManager(Signallable, Loggable):
         "reverting-to-saved": ["project"],
     }
 
-    def __init__(self, avalaible_effects={}):
+    def __init__(self, app_instance):
         Signallable.__init__(self)
         Loggable.__init__(self)
-
+        self.app = app_instance
+        # Current project:
         self.current = None
         self.backup_lock = 0
-        self.avalaible_effects = avalaible_effects
         self.formatter = None
 
     def loadProject(self, uri):
@@ -190,7 +190,8 @@ class ProjectManager(Signallable, Loggable):
                             (_("Ignore backup"), Gtk.ResponseType.REJECT,
                             _("Restore from backup"), Gtk.ResponseType.YES))
         dialog.set_icon_name("pitivi")
-        dialog.set_resizable(False)
+        dialog.set_transient_for(self.app.gui)
+        dialog.set_modal(True)
         dialog.set_default_response(Gtk.ResponseType.YES)
 
         primary = Gtk.Label()
