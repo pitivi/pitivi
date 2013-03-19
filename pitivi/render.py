@@ -37,6 +37,7 @@ from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.widgets import GstElementSettingsDialog
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
+from pitivi.utils.misc import show_user_manual
 from pitivi.utils.ui import model, frame_rates, audio_rates, audio_depths, \
     audio_channels, get_combo_value, set_combo_value, beautify_ETA
 try:
@@ -842,6 +843,9 @@ class RenderDialog(Loggable):
     def _deleteEventCb(self, window, event):
         self.debug("Render dialog is being deleted")
         self.destroy()
+
+    def _containerContextHelpClickedCb(self, unused_button):
+        show_user_manual("codecscontainers")
 
     #-- GStreamer callbacks
     def _busMessageCb(self, unused_bus, message):
