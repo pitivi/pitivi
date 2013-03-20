@@ -208,7 +208,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         namecol.add_attribute(namecell, "text", COL_NAME_TEXT)
         self.treeview.append_column(namecol)
 
-        self.treeview.drag_dest_set(Gtk.DestDefaults.MOTION,
+        self.treeview.drag_dest_set(Gtk.DestDefaults.ALL,
             [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
 
         self.treeview.drag_dest_add_text_targets()
