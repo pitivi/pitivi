@@ -131,7 +131,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
     timeline = property(_getTimeline, _setTimeline)
 
 
-class EffectProperties(Gtk.Expander):
+class EffectProperties(Gtk.Expander, Loggable):
     """
     Widget for viewing and configuring effects
     """
@@ -143,6 +143,7 @@ class EffectProperties(Gtk.Expander):
         Gtk.Expander.__init__(self)
         self.set_expanded(True)
         self.set_label(_("Effects"))
+        Loggable.__init__(self)
 
         # Global variables related to effects
         self.app = instance
@@ -286,13 +287,13 @@ class EffectProperties(Gtk.Expander):
             self.hide()
         self.updateAll()
 
-    def  _TrackElementAddedCb(self, unused_clip, track_element):
+    def _TrackElementAddedCb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
             selec = self.timeline.selection.getSelectedEffects()
             self.selected_effects = selec
             self.updateAll()
 
-    def  _trackElementRemovedCb(self, unused_clip, track_element):
+    def _trackElementRemovedCb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
             selec = self.timeline.selection.getSelectedEffects()
             self.selected_effects = selec
@@ -347,12 +348,15 @@ class EffectProperties(Gtk.Expander):
                     break
 
     def _dragDropCb(self, *unused_arguments):
+        self.info("An item has been dropped onto the clip properties' effects list")
         self.addEffectToCurrentSelection(self.app.gui.effectlist.getSelectedItems())
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
+        self.info("The item being dragged has left the clip properties' effects list")
         self.drag_unhighlight()
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
+        self.debug("Something is being dragged in the clip properties' effects list")
         self.drag_highlight()
 
     def _effectActiveToggleCb(self, cellrenderertoggle, path):

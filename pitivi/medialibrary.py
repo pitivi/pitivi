@@ -313,7 +313,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         view.drag_source_set_target_list(None)
         view.drag_source_add_uri_targets()
         view.drag_source_add_text_targets()
-
         view.connect("drag_begin", self._dndDragBeginCb)
         view.connect("drag-end", self._dndDragEndCb)
 
@@ -909,8 +908,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 self.iconview.select_path(path)
 
         self._ignoreRelease = chain_up
-        self.iconview_cursor_pos = self.iconview.get_path_at_pos(event.x,
-                event.y)
+        self.iconview_cursor_pos = self.iconview.get_path_at_pos(event.x, event.y)
 
         return True
 
@@ -979,17 +977,16 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         if len(directories):
             # Recursively import from folders that were dragged into the library
-            self.app.threads.addThread(PathWalker, directories,
-                                    self._addUris)
+            self.app.threads.addThread(PathWalker, directories, self._addUris)
         if len(remote_files):
             #TODO waiting for remote files downloader support to be implemented
-            pass
+            self.fixme("Importing remote files is not implemented")
         if len(filenames):
             self.app.current.addUris(filenames)
 
     #used with TreeView and IconView
-    def _dndDragBeginCb(self, view, context):
-        self.info("tree drag_begin")
+    def _dndDragBeginCb(self, unused_view, context):
+        self.info("Drag operation begun")
         self.dragged = True
         paths = self.getSelectedPaths()
 
@@ -999,7 +996,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             row = self.modelFilter[paths[0]]
             Gtk.drag_set_icon_pixbuf(context, row[COL_ICON], 0, 0)
 
-    def _dndDragEndCb(self, view, context):
+    def _dndDragEndCb(self, unused_view, context):
+        self.info("Drag operation ended")
         self.dragged = False
 
     def getSelectedPaths(self):

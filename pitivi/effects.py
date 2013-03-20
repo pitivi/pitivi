@@ -428,6 +428,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
         self.view.connect("button-press-event", self._buttonPressEventCb)
         self.view.connect("select-cursor-row", self._enterPressEventCb)
         self.view.connect("drag_begin", self._dndDragBeginCb)
+        self.view.connect("drag_end", self._dndDragEndCb)
 
         scrollwin = Gtk.ScrolledWindow()
         scrollwin.props.hscrollbar_policy = Gtk.PolicyType.NEVER
@@ -487,8 +488,8 @@ class EffectListWidget(Gtk.VBox, Loggable):
 
         self.categoriesWidget.set_active(0)
 
-    def _dndDragBeginCb(self, view, context):
-        self.info("tree drag_begin")
+    def _dndDragBeginCb(self, unused_view, context):
+        self.info("Drag operation begun")
         model, paths = self.view.get_selection().get_selected_rows()
 
         if not paths:
@@ -499,6 +500,9 @@ class EffectListWidget(Gtk.VBox, Loggable):
         pixbuf = model.get_value(model.get_iter(path), COL_ICON)
         if pixbuf:
             Gtk.drag_set_icon_pixbuf(context, pixbuf, 0, 0)
+
+    def _dndDragEndCb(self, unused_view, context):
+        self.info("Drag operation ended")
 
     def _rowUnderMouseSelected(self, view, event):
         result = view.get_path_at_pos(int(event.x), int(event.y))
