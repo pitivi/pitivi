@@ -1738,7 +1738,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             self.timeline.enable_update(False)
             self.app.action_log.begin("ungroup")
             for clip in self.timeline.selection:
-                clip.objects_set_locked(False)
+                clip.ungroup(False)
             self.timeline.enable_update(True)
             self.app.action_log.commit()
 
@@ -1747,8 +1747,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
             self.debug("Gouping selected clips %s" % self.timeline.selection)
             self.timeline.enable_update(False)
             self.app.action_log.begin("group")
-            for clip in self.timeline.selection:
-                clip.objects_set_locked(True)
+            GES.Container.group(self.timeline.selection)
             self.app.action_log.commit()
             self.timeline.enable_update(True)
 

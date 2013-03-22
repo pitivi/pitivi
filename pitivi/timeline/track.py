@@ -302,11 +302,7 @@ class StartHandle(TrimHandle):
             self.debug("Trim start %s" % target)
             TrackElementController.drag_start(self, item, target, event)
 
-            if self._view.element.is_locked():
-                elem = self._view.element.get_parent()
-            else:
-                elem = self._view.element
-
+            elem = self._view.element.get_parent()
             self._context = EditingContext(elem, self._view.timeline,
                 GES.EditMode.EDIT_TRIM, GES.Edge.EDGE_START, set([]),
                 self.app.settings)
@@ -336,10 +332,7 @@ class EndHandle(TrimHandle):
             self.debug("Trim end %s" % target)
             TrackElementController.drag_start(self, item, target, event)
 
-            if self._view.element.is_locked():
-                elem = self._view.element.get_parent()
-            else:
-                elem = self._view.element
+            elem = self._view.element.get_parent()
             self._context = EditingContext(elem, self._view.timeline,
                 GES.EditMode.EDIT_TRIM, GES.Edge.EDGE_END, set([]),
                 self.app.settings)
