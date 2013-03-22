@@ -618,7 +618,7 @@ class TrackElement(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
                 self.app.gui.switchContextTab("title editor")
                 self.app.gui.title_editor.set_source(self.element.get_parent())
             else:
-                if self.element.get_track().get_property("track_type") == GES.TrackType.VIDEO:
+                if self.element.get_track_type() == GES.TrackType.VIDEO:
                     has_text_overlay = False
                     clip = self.element.get_parent()
                     elements = clip.get_children()
@@ -650,7 +650,7 @@ class TrackElement(View, GooCanvas.CanvasGroup, Zoomable, Loggable):
 
         # get layer and track_type
         layer = self.element.get_parent().get_layer()
-        track_type = self.element.get_track().get_property("track-type")
+        track_type = self.element.get_track_type()
 
         # update height, compare with current height to not run into recursion
         new_height = self.app.gui.timeline_ui.controls.getHeightOfLayer(track_type, layer)
@@ -770,7 +770,7 @@ class UriSource(TrackElement):
             self._update()
 
     def _getColor(self):
-        if self.element.get_track().get_property("track-type") == GES.TrackType.AUDIO:
+        if self.element.get_track_type() == GES.TrackType.AUDIO:
             return self.settings.audioClipBg
         else:
             return self.settings.videoClipBg

@@ -1253,11 +1253,9 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                 # Checking that this effect can be applied on this track object
                 # Which means, it has the corresponding media_type
                 for track_element in clip.get_children():
-                    track = track_element.get_track()
-                    if track.get_property("track_type") == GES.TrackType.AUDIO and \
-                            media_type == AUDIO_EFFECT or \
-                            track.get_property("track_type") == GES.TrackType.VIDEO and \
-                            media_type == VIDEO_EFFECT:
+                    track_type = track_element.get_track_type()
+                    if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
+                            track_type == GES.TrackType.VIDEO and media_type == VIDEO_EFFECT:
                         #Actually add the effect
                         self.app.action_log.begin("add effect")
                         effect = GES.Effect.new(bin_description=bin_desc)
