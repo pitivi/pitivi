@@ -2,7 +2,7 @@
 Encoding=UTF-8
 _Name=Pitivi Video Editor
 _Comment=Create and edit your own movies
-Exec=pitivi
+Exec=pitivi %f
 Terminal=false
 Type=Application
 Icon=pitivi
