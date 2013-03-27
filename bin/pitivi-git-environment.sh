@@ -24,9 +24,9 @@ BUILD_DOCS=false
 # Here are some dependencies for building GStreamer and GES. If they're missing,
 # we'll fetch the git repositories at the given version tag and compile.
 # If you set those variables to "master", it will grab the latest dev version
-GLIB_RELEASE_TAG="2.34.0" # "gobject-introspection" needs glib > 2.32
-PYGOBJECT_RELEASE_TAG="3.4.0"
-GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_1_34_0"
+GLIB_RELEASE_TAG="2.34.2" # "gobject-introspection" needs glib > 2.32
+PYGOBJECT_RELEASE_TAG="3.8.0"
+GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_1_34_2"
 
 #
 # Everything below this line shouldn't be edited!
@@ -34,7 +34,7 @@ GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_1_34_0"
 
 # Avoid building glib if we can, because it is annoying to use the "memory"
 # backend for gsettings (which happens when we compile glib for some reason)
-if pkg-config glib-2.0 --atleast-version=2.34; then
+if pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
     MODULES_CORE="gobject-introspection pygobject"
 else
     MODULES_CORE="glib gobject-introspection pygobject"
@@ -260,7 +260,7 @@ if [ "$ready_to_run" != "1" ]; then
 
 
         # Now compile that module
-        ./autogen.sh --prefix=$PITIVI/prefix --disable-gtk-doc
+        ./autogen.sh --prefix=$PITIVI/prefix --disable-gtk-doc --with-python=python2
         if [ $? -ne 0 ]; then
             echo "Could not run autogen for $m ; result: $?"
             exit 1
