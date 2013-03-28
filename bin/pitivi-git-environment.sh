@@ -223,6 +223,7 @@ if [ "$ready_to_run" != "1" ]; then
             fi
         fi
         cd $m
+        git remote update  # In case you haven't got the latest release tags...
         # Take into account whether the user want stable releases or "master"
         if [ $m == "glib" ]; then
             # Silly hack for the fact that glib changes the "mkinstalldirs" file
