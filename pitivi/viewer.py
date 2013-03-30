@@ -140,9 +140,10 @@ class PitiviViewer(Gtk.VBox, Loggable):
 
             self.pipeline.connect("state-change", self._pipelineStateChangedCb)
             self.pipeline.connect("position", self._positionCb)
-            self.pipeline.connect("window-handle-message", self._windowHandleMessageCb)
             self.pipeline.connect("duration-changed", self._durationChangedCb)
 
+        self.sink = pipeline.video_overlay
+        self._switch_output_window()
         self._setUiActive()
 
     def _disconnectFromPipeline(self):
@@ -152,7 +153,6 @@ class PitiviViewer(Gtk.VBox, Loggable):
             return
 
         self.pipeline.disconnect_by_func(self._pipelineStateChangedCb)
-        self.pipeline.disconnect_by_func(self._windowHandleMessageCb)
         self.pipeline.disconnect_by_func(self._positionCb)
         self.pipeline.disconnect_by_func(self._durationChangedCb)
 
@@ -449,7 +449,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
             self._oldTimelinePos = self.pipeline.getPosition()
             self._tmp_pipeline = Gst.ElementFactory.make("playbin", None)
             self._tmp_pipeline.set_property("uri", clip_uri)
-            self.setPipeline(SimplePipeline(self._tmp_pipeline))
+            self.setPipeline(SimplePipeline(self._tmp_pipeline, self._tmp_pipeline))
             self._lastClipTrimTime = cur_time
         if (cur_time - self._lastClipTrimTime) > 0.2:
             # Do not seek more than once every 200 ms (for performance)
@@ -484,14 +484,6 @@ class PitiviViewer(Gtk.VBox, Loggable):
             self.sink = None
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
         self.internal._currentStateCb(self.pipeline, state)
-
-    def _windowHandleMessageCb(self, unused_pipeline, message):
-        """
-        When the pipeline sends us a message to prepare-xwindow-id,
-        tell the viewer to switch its output window.
-        """
-        self.sink = message.src
-        self._switch_output_window()
 
     def _switch_output_window(self):
         Gdk.threads_enter()

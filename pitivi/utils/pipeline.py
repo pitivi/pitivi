@@ -146,26 +146,21 @@ class SimplePipeline(Signallable, Loggable):
         "position": ["position"],
         "duration-changed": ["duration"],
         "eos": [],
-        "error": ["message", "details"],
-        "window-handle-message": ["message"]}
+        "error": ["message", "details"]
+    }
 
-    def __init__(self, pipeline):
+    def __init__(self, pipeline, video_overlay):
         Loggable.__init__(self)
         Signallable.__init__(self)
         self._pipeline = pipeline
         self._bus = self._pipeline.get_bus()
         self._bus.add_signal_watch()
         self._bus.connect("message", self._busMessageCb)
-        # Initially, we set a synchronous bus message handler so that the window handle
-        # is known right away and we can set the viewer synchronously, avoiding
-        # the creation of an external window.
-        # Afterwards, the window-handle-message is handled async (to avoid deadlocks).
-        self._bus.set_sync_handler(self._busSyncMessageHandler, None)
-        self._has_sync_bus_handler = True
         self._listening = False  # for the position handler
         self._listeningInterval = 300  # default 300ms
         self._listeningSigId = 0
         self._duration = Gst.CLOCK_TIME_NONE
+        self.video_overlay = video_overlay
 
     def release(self):
         """
@@ -417,9 +412,6 @@ class SimplePipeline(Signallable, Loggable):
             self.debug("Duration might have changed, querying it")
             GLib.idle_add(self._queryDurationAsync)
         else:
-            if self._has_sync_bus_handler is False:
-                # Pass message async to the sync bus handler
-                self._busSyncMessageHandler(unused_bus, message, None)
             self.log("%s [%r]" % (message.type, message.src))
 
     def _queryDurationAsync(self, *args, **kwargs):
@@ -432,17 +424,6 @@ class SimplePipeline(Signallable, Loggable):
     def _handleErrorMessage(self, error, detail, source):
         self.error("error from %s: %s (%s)" % (source, error, detail))
         self.emit('error', error.message, detail)
-
-    def _busSyncMessageHandler(self, unused_bus, message, unused_user_data):
-        if message.type == Gst.MessageType.ELEMENT:
-            if message.has_name('prepare-window-handle'):
-                # handle element message synchronously
-                self.emit('window-handle-message', message)
-                #Remove the bus sync handler avoiding deadlocks
-                #FIXME wrong anotation dont allow none, reported as bug b681139
-                #self._bus.set_sync_handler(None, None)
-                self._has_sync_bus_handler = False
-        return Gst.BusSyncReply.PASS
 
     def _getDuration(self, format=Gst.Format.TIME):
         try:
@@ -477,13 +458,12 @@ class Pipeline(GES.TimelinePipeline, SimplePipeline):
                         (GObject.TYPE_UINT64,)),
         "eos": (GObject.SignalFlags.RUN_LAST, None, ()),
         "error": (GObject.SignalFlags.RUN_LAST, None,
-                (GObject.TYPE_STRING, GObject.TYPE_STRING)),
-        "window-handle-message": (GObject.SignalFlags.RUN_LAST, None,
-                        (GObject.TYPE_PYOBJECT,))}
+                (GObject.TYPE_STRING, GObject.TYPE_STRING))
+    }
 
     def __init__(self, pipeline=None):
         GES.TimelinePipeline.__init__(self)
-        SimplePipeline.__init__(self, self)
+        SimplePipeline.__init__(self, self, self)
 
         self._seeker = Seeker()
         self._seeker.connect("seek", self._seekCb)
