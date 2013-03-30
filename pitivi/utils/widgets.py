@@ -126,12 +126,14 @@ class TextWidget(Gtk.HBox, DynamicWidget):
         self.set_spacing(0)
         if text_widget is None:
             if choices:
-                self.combo = Gtk.combo_box_entry_new_text()
+                model = Gtk.ListStore(str)
+                self.combo = Gtk.ComboBox.new_with_model_and_entry(model)
                 self.text = self.combo.get_child()
                 self.combo.show()
                 self.pack_start(self.combo, True, True, 0)
+                self.combo.set_entry_text_column(0)
                 for choice in choices:
-                    self.combo.append_text(choice)
+                    model.append([choice])
             else:
                 self.text = Gtk.Entry()
                 self.text.show()
@@ -164,8 +166,9 @@ class TextWidget(Gtk.HBox, DynamicWidget):
         return self.text.get_text()
 
     def addChoices(self, choices):
+        model = self.combo.get_model()
         for choice in choices:
-            self.combo.append_text(choice)
+            model.append([choice])
 
     def _textChanged(self, unused_widget):
         text = self.text.get_text()
