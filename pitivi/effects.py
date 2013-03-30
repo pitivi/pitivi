@@ -612,8 +612,9 @@ class EffectListWidget(Gtk.VBox, Loggable):
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
 
 
-class EffectsPropertiesManager:
+class EffectsPropertiesManager(Loggable):
     def __init__(self, instance):
+        Loggable.__init__(self)
         self.cache_dict = {}
         self._current_effect_setting_ui = None
         self._current_element_values = {}
@@ -628,8 +629,9 @@ class EffectsPropertiesManager:
         """
 
         if effect not in self.cache_dict:
-            #Here we should handle special effects configuration UI
+            self.debug("Effect is not in the effects UI cache dictionary")
             effect_set_ui = GstElementSettingsWidget()
+            # setElement will automatically look for custom UIs using mapBuilder
             effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
                                      default_btn=True, use_element_props=True)
             effect_configuration_ui = Gtk.ScrolledWindow()
@@ -641,7 +643,6 @@ class EffectsPropertiesManager:
             self._postConfiguration(effect, effect_set_ui)
 
         effect_set_ui = self._getUiToSetEffect(effect)
-
         self._current_effect_setting_ui = effect_set_ui
         element = self._current_effect_setting_ui.element
         for prop in element.list_children_properties():
@@ -660,14 +661,22 @@ class EffectsPropertiesManager:
         If you need to set further UI things or set properties that are not
         exposed by your effect configuration UI, you can do so here.
         """
-        if 'aspectratiocrop' in effect.get_property("bin-description"):
+        effect_name = effect.get_property("bin-description")
+        self.log("Doing additional set-up for the %s effect", effect_name)
+        if effect_name == "aspectratiocrop":
+            self.debug("Adding some presets for the aspect ratio property")
             for widget in effect_set_ui.get_children()[0].get_children():
                 if isinstance(widget, FractionWidget):
                     widget.addPresets(["4:3", "5:4", "9:3", "16:9", "16:10"])
-        elif effect.get_property("bin-description") == "alpha":
+        elif effect_name == "alpha":
             # All modes other than custom RGB chroma keying are useless to us.
             # "ALPHA_METHOD_CUSTOM" corresponds to "3"
+            self.debug("Setting alpha's method to 3 (custom RGB chroma keying)")
             effect.set_child_property("method", 3)
+        else:
+            self.log('No additional set-up required for "%s"', effect_name)
+            return
+        self.debug('Additional properties successfully set for "%s"', effect_name)
 
     def _getUiToSetEffect(self, effect):
         """ Permit to get the widget to set the effect and not its container """
@@ -693,9 +702,10 @@ class EffectsPropertiesManager:
             value = Gst.Fraction(int(value.num), int(value.denom))
 
         if value != self._current_element_values.get(prop.name):
+            self.info("%s's value has changed to %s", prop.name, value)
             self.action_log.begin("Effect property change")
             self._current_effect_setting_ui.element.set_child_property(prop.name, value)
+            self.debug("Effect property has been set successfully")
             self.action_log.commit()
-
             self.app.current.pipeline.flushSeek()
             self._current_element_values[prop.name] = value

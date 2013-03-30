@@ -898,7 +898,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         """
         Set given element on Widget, with optional properties
         """
-        self.info("element:%s, use properties:%s", element, properties)
+        self.info("Setting %s with properties:%s", element, properties)
         self.element = element
         self.ignore = ignore
         self.properties = {}
@@ -911,6 +911,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 created = self.custom_ui_creators[bin_description](self, element)
                 self.pack_start(created, True, True, 0)
                 self.show_all()
+                self.log("Reusing the previously created UI for %s", bin_description)
             except KeyError:
                 pass
             # Otherwise, check if there's a custom UI available as a glade file
@@ -921,12 +922,12 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                     builder.add_from_file(os.path.join(get_ui_dir(),
                                           "customwidgets", bin_description + ".ui"))
                     self.mapBuilder(builder)
+                    self.info("Found a custom .ui file for %s", bin_description)
                     created = True
                 except GLib.GError:
-                    pass
-
+                    self.log("No .ui file available for %s", bin_description)
+        # If all else fails, dynamically create a UI from the properties
         if not created:
-            # Finaly we generate the widget
             self._addWidgets(properties, default_btn, use_element_props)
 
     def mapBuilder(self, builder):
@@ -1010,6 +1011,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         "No properties."
         """
         is_effect = False
+        self.log("Dynamically creating a table of property widgets")
 
         props = self._getProperties()
         if not props:
