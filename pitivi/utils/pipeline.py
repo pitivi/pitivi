@@ -285,7 +285,10 @@ class SimplePipeline(Signallable, Loggable):
         self.log("format %r" % format)
 
         dur = self._getDuration(format)
-        self.log("Got duration %s" % print_ns(dur))
+        if dur is None:
+            self.error("Invalid duration: None")
+        else:
+            self.log("Got duration %s" % print_ns(dur))
         if self._duration != dur:
             self.emit("duration-changed", dur)
 
@@ -372,6 +375,9 @@ class SimplePipeline(Signallable, Loggable):
         self.emit('position', position)
 
     def seekRelative(self, time):
+        if not time:
+            self.error("Trying to seek to an invalid time: %s", time)
+            return
         seekvalue = max(0, min(self.getPosition() + time, self.getDuration()))
         self.simple_seek(seekvalue)
 
