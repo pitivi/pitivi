@@ -696,11 +696,6 @@ class EffectsPropertiesManager(Loggable):
 
     def _onValueChangedCb(self, widget, dynamic, prop):
         value = dynamic.getWidgetValue()
-
-        #FIXME Workaround in order to make aspectratiocrop working
-        if isinstance(value, Gst.Fraction):
-            value = Gst.Fraction(int(value.num), int(value.denom))
-
         if value != self._current_element_values.get(prop.name):
             self.info("%s's value has changed to %s", prop.name, value)
             self.action_log.begin("Effect property change")
