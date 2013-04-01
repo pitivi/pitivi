@@ -870,7 +870,6 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         self.element = None
         self.ignore = None
         self.properties = None
-        self.buttons = {}
         self._unhandled_properties = []
         if self.custom_ui_creators is None:
             self._fill_custom_ui_creators()
@@ -941,17 +940,24 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
 
         If present, a reset button corresponding to the property will be used
         (the button must be named similarly, with "::reset" after the prop name)
+
+        A button named reset_all_button can also be provided and will be used as
+        a fallback for each property without an individual reset button.
         """
+        reset_all_button = builder.get_object("reset_all_button")
         for prop in self._getProperties():
             widget_name = prop.owner_type.name + "::" + prop.name
             widget = builder.get_object(widget_name)
-            reset_name = widget_name + "::" + "reset"
-            reset_widget = builder.get_object(widget_name)
             if widget is None:
                 self._unhandled_properties.append(prop)
                 self.warning("No custom widget found for %s property \"%s\"" %
                             (prop.owner_type.name, prop.name))
             else:
+                reset_name = widget_name + "::" + "reset"
+                reset_widget = builder.get_object(reset_name)
+                if not reset_widget:
+                    # If reset_all_button is not found, it will be None
+                    reset_widget = reset_all_button
                 self.addPropertyWidget(prop, widget, reset_widget)
 
     def addPropertyWidget(self, prop, widget, to_default_btn=None):
@@ -977,10 +983,9 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                     dynamic_widget)
             # The "reset to default" button associated with this property
             if isinstance(to_default_btn, Gtk.Button):
-                to_default_btn.connect('clicked', self._defaultBtnClickedCb, widget)
-                self.buttons[button] = to_default_btn
+                to_default_btn.connect('clicked', self._defaultBtnClickedCb, dynamic_widget)
             elif to_default_btn is not None:
-                self.warning("to_default_btn should be a Gtk.Button or None")
+                self.warning("to_default_btn should be Gtk.Button or None, got %s", to_default_btn)
         else:
             # If we add a non-standard widget, the creator of the widget is
             # responsible for handling its behaviour "by hand"
@@ -1088,9 +1093,6 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         button.set_tooltip_text(_("Reset to default value"))
         button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect('clicked', self._defaultBtnClickedCb, widget)
-
-        # Directly add it to the buttons dictionary
-        self.buttons[button] = widget
         return button
 
     def _defaultBtnClickedCb(self, button, widget):
