@@ -47,7 +47,7 @@ from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
  COL_TYPE,
  COL_NAME_TEXT,
  COL_DESC_TEXT,
- COL_TRACK_EFFECT) = range(5)
+ COL_TRACK_EFFECT) = list(range(5))
 
 
 class ClipPropertiesError(Exception):
@@ -532,22 +532,22 @@ class TransformationProperties(Gtk.Expander):
 
     def _defaultValuesCb(self, widget):
         self.disconnectSpinButtonsFromFlush()
-        for name, spinbtn in self.spin_buttons.items():
+        for name, spinbtn in list(self.spin_buttons.items()):
             spinbtn.set_value(self.default_values[name])
         self.connectSpinButtonsToFlush()
         # FIXME Why are we looking at the gnl object directly?
         self.effect.gnl_object.props.active = False
 
     def disconnectSpinButtonsFromFlush(self):
-        for spinbtn in self.spin_buttons.values():
+        for spinbtn in list(self.spin_buttons.values()):
             spinbtn.disconnect_by_func(self._flushPipeLineCb)
 
     def connectSpinButtonsToFlush(self):
-        for spinbtn in self.spin_buttons.values():
+        for spinbtn in list(self.spin_buttons.values()):
             spinbtn.connect("output", self._flushPipeLineCb)
 
     def _updateSpinButtons(self):
-        for name, spinbtn in self.spin_buttons.items():
+        for name, spinbtn in list(self.spin_buttons.items()):
             spinbtn.set_value(self.effect.get_property(name))
 
     def _getAndConnectToEffect(self, widget_name, property_name):

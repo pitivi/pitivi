@@ -35,7 +35,7 @@ import weakref
 
 from gi.repository import Clutter, Gtk, GtkClutter, Cogl, GES, Gdk, Gst, GstController
 from pitivi.utils.timeline import Zoomable, EditingContext, SELECT, UNSELECT, SELECT_ADD, Selected
-from previewers import AudioPreviewer, VideoPreviewer
+from .previewers import AudioPreviewer, VideoPreviewer
 
 import pitivi.configure as configure
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, KEYFRAME_SIZE, CONTROL_WIDTH, create_cogl_color
@@ -422,7 +422,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
             source = GstController.InterpolationControlSource()
             source.props.mode = GstController.InterpolationMode.LINEAR
             if not (element.set_control_source(source, propname.name, "direct")):
-                print "There was something like a problem captain"
+                print("There was something like a problem captain")
                 return
             binding = element.get_control_binding(propname.name)
 
@@ -1044,7 +1044,7 @@ class URISourceElement(TimelineElement):
             self.timeline._container.gui.switchContextTab(self.bElement)
 
         children = self.bElement.get_toplevel_parent().get_children(True)
-        selection = filter(lambda elem: isinstance(elem, GES.Source), children)
+        selection = [elem for elem in children if isinstance(elem, GES.Source)]
 
         self.timeline.selection.setSelection(selection, mode)
 

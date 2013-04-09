@@ -111,7 +111,7 @@ class TestProjectManager(TestCase):
         self.manager.loadProject(uri)
 
         self.assertEqual(0, len(self.signals))
-        self.failUnless(state["tried-close"], self.signals)
+        self.assertTrue(state["tried-close"], self.signals)
 
     def testLoadProject(self):
         self.manager.newBlankProject()
@@ -130,7 +130,7 @@ class TestProjectManager(TestCase):
             mainloop.quit()
 
         def missingUriCb(self, project, error, clip_asset, mainloop, result):
-            print project, error, clip_asset, mainloop, result
+            print(project, error, clip_asset, mainloop, result)
             result[0] = True
             mainloop.quit()
 
@@ -166,8 +166,8 @@ class TestProjectManager(TestCase):
             os.remove(xges_path)
 
     def testCloseRunningProjectNoProject(self):
-        self.failUnless(self.manager.closeRunningProject())
-        self.failIf(self.signals)
+        self.assertTrue(self.manager.closeRunningProject())
+        self.assertFalse(self.signals)
 
     def testCloseRunningProjectRefuseFromSignal(self):
         def closing(manager, project):
@@ -177,29 +177,29 @@ class TestProjectManager(TestCase):
         self.manager.current_project.uri = "file:///ciao"
         self.manager.connect("closing-project", closing)
 
-        self.failIf(self.manager.closeRunningProject())
+        self.assertFalse(self.manager.closeRunningProject())
         self.assertEqual(1, len(self.signals))
         name, args = self.signals[0]
         self.assertEqual("closing-project", name)
         project = args[0]
-        self.failUnless(project is self.manager.current_project)
+        self.assertTrue(project is self.manager.current_project)
 
     def testCloseRunningProject(self):
         current = self.manager.current_project = MockProject()
-        self.failUnless(self.manager.closeRunningProject())
+        self.assertTrue(self.manager.closeRunningProject())
         self.assertEqual(2, len(self.signals))
 
         name, args = self.signals[0]
         self.assertEqual("closing-project", name)
         project = args[0]
-        self.failUnless(project is current)
+        self.assertTrue(project is current)
 
         name, args = self.signals[1]
         self.assertEqual("project-closed", name)
         project = args[0]
-        self.failUnless(project is current)
+        self.assertTrue(project is current)
 
-        self.failUnless(self.manager.current_project is None)
+        self.assertTrue(self.manager.current_project is None)
 
     def testNewBlankProjectCantCloseCurrent(self):
         def closing(manager, project):
@@ -208,19 +208,19 @@ class TestProjectManager(TestCase):
         self.manager.current_project = MockProject()
         self.manager.current_project.uri = "file:///ciao"
         self.manager.connect("closing-project", closing)
-        self.failIf(self.manager.newBlankProject())
+        self.assertFalse(self.manager.newBlankProject())
         self.assertEqual(1, len(self.signals))
         signal, args = self.signals[0]
         self.assertEqual("closing-project", signal)
 
     def testNewBlankProject(self):
-        self.failUnless(self.manager.newBlankProject())
+        self.assertTrue(self.manager.newBlankProject())
         self.assertEqual(3, len(self.signals))
 
         name, args = self.signals[0]
         self.assertEqual("new-project-loading", name)
         uri = args[0]
-        self.failUnless(uri is None)
+        self.assertTrue(uri is None)
 
         name, args = self.signals[1]
         self.assertEqual("new-project-created", name)
@@ -230,10 +230,10 @@ class TestProjectManager(TestCase):
         name, args = self.signals[2]
         self.assertEqual("new-project-loaded", name)
         project = args[0]
-        self.failUnless(project is self.manager.current_project)
+        self.assertTrue(project is self.manager.current_project)
 
     def testSaveProject(self):
-        self.failUnless(self.manager.newBlankProject())
+        self.assertTrue(self.manager.newBlankProject())
 
         unused, path = tempfile.mkstemp(suffix=".xges")
         unused, path2 = tempfile.mkstemp(suffix=".xges")
@@ -242,15 +242,15 @@ class TestProjectManager(TestCase):
             uri2 = "file://" + os.path.abspath(path2)
 
             # Save the project.
-            self.failUnless(self.manager.saveProject(uri=uri, backup=False))
-            self.failUnless(uri_is_reachable(uri))
+            self.assertTrue(self.manager.saveProject(uri=uri, backup=False))
+            self.assertTrue(uri_is_reachable(uri))
 
             # Wait a bit.
             time.sleep(0.1)
 
             # Save the project at a new location.
-            self.failUnless(self.manager.saveProject(uri2, backup=False))
-            self.failUnless(uri_is_reachable(uri2))
+            self.assertTrue(self.manager.saveProject(uri2, backup=False))
+            self.assertTrue(uri_is_reachable(uri2))
 
             # Make sure the old path and the new path have different mtimes.
             mtime = os.path.getmtime(path)
@@ -261,7 +261,7 @@ class TestProjectManager(TestCase):
             time.sleep(0.1)
 
             # Save project again under the new path (by omitting uri arg)
-            self.failUnless(self.manager.saveProject(backup=False))
+            self.assertTrue(self.manager.saveProject(backup=False))
 
             # regression test for bug 594396
             # make sure we didn't save to the old URI
@@ -288,7 +288,7 @@ class TestProjectManager(TestCase):
 
         # Save the backup
         self.assertTrue(self.manager.saveProject(self.manager.current_project, backup=True))
-        self.failUnless(uri_is_reachable(backup_uri))
+        self.assertTrue(uri_is_reachable(backup_uri))
 
         self.manager.closeRunningProject()
         self.assertFalse(uri_is_reachable(backup_uri), "Backup file not deleted when project closed")

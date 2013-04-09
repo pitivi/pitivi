@@ -215,7 +215,7 @@ class Pitivi(Loggable, Signallable):
             self._version_information["current"] = current_version
             self._version_information["status"] = status
             self.emit("version-info-received", self._version_information)
-        except Exception, e:
+        except Exception as e:
             self.warning("Version info could not be read: %s", e)
 
     def isLatest(self):

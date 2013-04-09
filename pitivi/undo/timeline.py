@@ -46,7 +46,7 @@ class ClipPropertyChangeTracker(PropertyChangeTracker):
         if self._disabled and not disabled:
             self._disabled = disabled
             properties = self._takeCurrentSnapshot(self.obj)
-            for property_name, property_value in properties.iteritems():
+            for property_name, property_value in properties.items():
                 old_value = self.properties[property_name]
                 if old_value != property_value:
                     self._propertyChangedCb(self.obj, property_value, property_name)
@@ -125,7 +125,7 @@ class ClipAdded(UndoableAction):
                 for track_element in clip.get_children(False))
 
     def do(self):
-        for track_element, track in self.tracks.iteritems():
+        for track_element, track in self.tracks.items():
             track.addTrackElement(track_element)
 
         self.timeline.addClip(self.clip)
@@ -148,7 +148,7 @@ class ClipRemoved(UndoableAction):
         self._done()
 
     def undo(self):
-        for track_element, track in self.tracks.iteritems():
+        for track_element, track in self.tracks.items():
             track.addTrackElement(track_element)
 
         self.timeline.addClip(self.clip)
@@ -299,7 +299,7 @@ class TimelineLogObserver(object):
             self.effect_properties_tracker.addEffectElement(track_element.getElement())
 
     def _disconnectFromTrackElement(self, track_element):
-        for prop, interpolator in track_element.getInterpolators().itervalues():
+        for prop, interpolator in track_element.getInterpolators().values():
             self._disconnectFromInterpolator(interpolator)
 
     def _connectToInterpolator(self, interpolator):

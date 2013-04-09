@@ -31,7 +31,7 @@ from gi.repository import GLib
 from gettext import gettext as _
 from xml.sax import saxutils
 
-from utils.timeline import SELECT
+from .utils.timeline import SELECT
 from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
@@ -46,10 +46,10 @@ class AttrIterator():
         self.attribute_stack = []
         self.start_index = 0
         self.end_index = 0
-        if not self.next():
+        if not next(self):
             self.end_index = 2 ** 32 - 1
 
-    def next(self):
+    def __next__(self):
         if len(self.attributes) == 0 and len(self.attribute_stack) == 0:
             return False
         self.start_index = self.end_index
@@ -217,15 +217,15 @@ class PangoBuffer(Gtk.TextBuffer):
 
     def set_text(self, txt):
         Gtk.TextBuffer.set_text(self, "")
-        suc, self.parsed, self.txt, self.separator = Pango.parse_markup(txt, -1, u'\x00')
+        suc, self.parsed, self.txt, self.separator = Pango.parse_markup(txt, -1, '\x00')
         if not suc:
             oldtxt = txt
             txt = saxutils.escape(txt)
             self.warn("Marked text is not correct. Escape %s to %s", oldtxt, txt)
-            suc, self.parsed, self.txt, self.separator = Pango.parse_markup(txt, -1, u'\x00')
+            suc, self.parsed, self.txt, self.separator = Pango.parse_markup(txt, -1, '\x00')
         self.attrIter = self.parsed.get_iterator()
         self.add_iter_to_buffer()
-        while self.attrIter.next():
+        while next(self.attrIter):
             self.add_iter_to_buffer()
 
     def add_iter_to_buffer(self):
@@ -351,7 +351,7 @@ class PangoBuffer(Gtk.TextBuffer):
 
     def split_overlap(self, tagdict):
         intervals = []
-        for k, v in tagdict.items():
+        for k, v in list(tagdict.items()):
             #Split by exiting intervals
             tmpint = v
             for i in intervals:
@@ -370,11 +370,11 @@ class PangoBuffer(Gtk.TextBuffer):
             start = self.get_start_iter()
         if not end:
             end = self.get_end_iter()
-        txt = unicode(Gtk.TextBuffer.get_text(self, start, end, True))
+        txt = str(Gtk.TextBuffer.get_text(self, start, end, True))
         #Important step, split that no tags overlap
         tagdict = self.split_overlap(tagdict)
         cuts = {}
-        for k, v in tagdict.items():
+        for k, v in list(tagdict.items()):
             stag, etag = self.tag_to_markup(k)
             for st, e in v:
                 if st in cuts:
@@ -389,11 +389,11 @@ class PangoBuffer(Gtk.TextBuffer):
                     cuts[e + 1] = [etag]
         last_pos = 0
         outbuff = ""
-        cut_indices = cuts.keys()
+        cut_indices = list(cuts.keys())
         cut_indices.sort()
         soffset = start.get_offset()
         eoffset = end.get_offset()
-        cut_indices = filter(lambda i: eoffset >= i >= soffset, cut_indices)
+        cut_indices = [i for i in cut_indices if eoffset >= i >= soffset]
         for c in cut_indices:
             if not last_pos == c:
                 outbuff += saxutils.escape(txt[last_pos:c])
@@ -405,7 +405,7 @@ class PangoBuffer(Gtk.TextBuffer):
 
     def tag_to_markup(self, tag):
         stag = "<span"
-        for k, v in self.tagdict[tag].items():
+        for k, v in list(self.tagdict[tag].items()):
             #family in gtk, face in pango mark language
             if k == "family":
                 k = "face"
@@ -477,7 +477,7 @@ class PangoBuffer(Gtk.TextBuffer):
     def remove_all_tags(self):
         selection = self.get_selection()
         if selection:
-            for t in self.tags.values():
+            for t in list(self.tags.values()):
                 self.remove_tag(t, *selection)
 
 
@@ -511,7 +511,7 @@ class InteractivePangoBuffer(PangoBuffer):
     def setup_widget_from_pango(self, widg, markupstring):
         """setup widget from a pango markup string"""
         #font = Pango.FontDescription(fontstring)
-        suc, a, t, s = Pango.parse_markup(markupstring, -1, u'\x00')
+        suc, a, t, s = Pango.parse_markup(markupstring, -1, '\x00')
         ai = a.get_iterator()
         font, lang, attrs = ai.get_font()
 
@@ -539,7 +539,7 @@ class InteractivePangoBuffer(PangoBuffer):
             return
         self._in_mark_set = True
         if mark.get_name() == 'insert':
-            for tags, widg in self.tag_widgets.items():
+            for tags, widg in list(self.tag_widgets.items()):
                 active = True
                 for t in tags:
                     if not iter.has_tag(t):
@@ -563,7 +563,7 @@ class InteractivePangoBuffer(PangoBuffer):
         if old_itr != insert_itr:
             # Use the state of our widgets to determine what
             # properties to apply...
-            for tags, w in self.tag_widgets.items():
+            for tags, w in list(self.tag_widgets.items()):
                 if w.get_active():
                     for t in tags:
                         self.apply_tag(t, old_itr, insert_itr)
@@ -620,17 +620,17 @@ class TitleEditor(Loggable):
         for setting in settings:
             self.settings[setting] = builder.get_object(setting)
 
-        for n, en in {_("Custom"): "position",
-                      _("Top"): "top",
-                      _("Center"): "center",
-                      _("Bottom"): "bottom",
-                      _("Baseline"): "baseline"}.items():
+        for n, en in list({_("Custom"): "position",
+                _("Top"): "top",
+                _("Center"): "center",
+                _("Bottom"): "bottom",
+                _("Baseline"): "baseline"}.items()):
             self.settings["valignment"].append(en, n)
 
-        for n, en in {_("Custom"): "position",
-                      _("Left"): "left",
-                      _("Center"): "center",
-                      _("Right"): "right"}.items():
+        for n, en in list({_("Custom"): "position",
+                _("Left"): "left",
+                _("Center"): "center",
+                _("Right"): "right"}.items()):
             self.settings["halignment"].append(en, n)
         self._deactivate()
 
@@ -646,7 +646,7 @@ class TitleEditor(Loggable):
         self.source.set_background(color_int)
 
     def _frontTextColorButtonCb(self, widget):
-        suc, a, t, s = Pango.parse_markup("<span color='" + widget.get_color().to_string() + "'>color</span>", -1, u'\x00')
+        suc, a, t, s = Pango.parse_markup("<span color='" + widget.get_color().to_string() + "'>color</span>", -1, '\x00')
         ai = a.get_iterator()
         font, lang, attrs = ai.get_font()
         tags = self.pangobuffer.get_tags_from_attrs(None, None, attrs)
@@ -657,7 +657,7 @@ class TitleEditor(Loggable):
         font_face = " ".join(font_desc[:-1])
         font_size = str(int(font_desc[-1]) * 1024)
         text = "<span face='" + font_face + "'><span size='" + font_size + "'>text</span></span>"
-        suc, a, t, s = Pango.parse_markup(text, -1, u'\x00')
+        suc, a, t, s = Pango.parse_markup(text, -1, '\x00')
         ai = a.get_iterator()
         font, lang, attrs = ai.get_font()
         tags = self.pangobuffer.get_tags_from_attrs(font, None, attrs)
@@ -748,7 +748,7 @@ class TitleEditor(Loggable):
         """
         if self.source is None:
             return
-        for name, obj in self.settings.items():
+        for name, obj in list(self.settings.items()):
             if obj == updated_obj:
                 if name == "valignment":
                     self.source.set_valignment(getattr(GES.TextVAlign, obj.get_active_id().upper()))
@@ -800,7 +800,7 @@ class TitleEditor(Loggable):
         """
         source = GES.TitleClip()
         source.set_text("")
-        source.set_duration(long(Gst.SECOND * 5))
+        source.set_duration(int(Gst.SECOND * 5))
         self.set_source(source, True)
         # TODO: insert on the current layer at the playhead position.
         # If no space is available, create a new layer to insert to on top.

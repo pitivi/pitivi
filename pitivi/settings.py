@@ -20,7 +20,7 @@
 # Boston, MA 02110-1301, USA.
 
 import os
-from ConfigParser import SafeConfigParser, ParsingError
+from configparser import SafeConfigParser, ParsingError
 
 from gi.repository import GLib
 from pitivi.utils.signal import Signallable
@@ -160,7 +160,7 @@ class GlobalSettings(Signallable):
             if not self._config.has_section(section):
                 continue
             if key and self._config.has_option(section, key):
-                if typ == int or typ == long:
+                if typ == int or typ == int:
                     try:
                         value = self._config.getint(section, key)
                     except ValueError:
@@ -221,7 +221,7 @@ class GlobalSettings(Signallable):
                     self._config.remove_option(section, key)
         try:
             file = open(conf_file_path, 'w')
-        except IOError, OSError:
+        except IOError as OSError:
             return
         self._config.write(file)
         file.close()
@@ -241,8 +241,8 @@ class GlobalSettings(Signallable):
         @return: an iterator which yields a tuple of (attrname, type, key,
         environment, value for each option)
         """
-        for section, options in self.options.iteritems():
-            for attrname, (typ, key, environment) in options.iteritems():
+        for section, options in list(self.options.items()):
+            for attrname, (typ, key, environment) in list(options.items()):
                 yield section, attrname, typ, key, environment, getattr(self, attrname)
 
     def isDefault(self, attrname):

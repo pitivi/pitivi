@@ -2,6 +2,8 @@ AUTOMAKE_OPTIONS = dist-bzip2
 
 SUBDIRS	= bin pitivi common po tests data
 
+ACLOCAL_AMFLAGS = -I m4
+
 if BUILD_HELP
 SUBDIRS += help
 endif

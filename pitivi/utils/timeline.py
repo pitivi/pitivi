@@ -55,10 +55,10 @@ class ClipEdited(UndoableAction):
         self.edge = edge
 
     def do(self):
-        self.focus.edit([], self.new_priority, self.mode, self.edge, long(self.new_position))
+        self.focus.edit([], self.new_priority, self.mode, self.edge, int(self.new_position))
 
     def undo(self):
-        self.focus.edit([], self.old_priority, self.mode, self.edge, long(self.old_position))
+        self.focus.edit([], self.old_priority, self.mode, self.edge, int(self.old_position))
 
 
 class Selected(Signallable):
@@ -77,7 +77,7 @@ class Selected(Signallable):
     def __init__(self):
         self._selected = False
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         checking a Selected object is the same as checking its _selected
         property
@@ -277,7 +277,7 @@ class EditingContext(Signallable):
         self.new_position = position
         self.new_priority = priority
 
-        res = self.focus.edit([], priority, self.mode, self.edge, long(position))
+        res = self.focus.edit([], priority, self.mode, self.edge, int(position))
         if res and self.mode == GES.EditMode.EDIT_TRIM:
             if self.edge == GES.Edge.EDGE_START:
                 self.emit("clip-trim", self.focus, self.focus.props.in_point)
@@ -381,14 +381,14 @@ class Zoomable(object):
         """
         Returns the pixel equivalent in nanoseconds according to the zoomratio
         """
-        return long(pixel * Gst.SECOND / cls.zoomratio)
+        return int(pixel * Gst.SECOND / cls.zoomratio)
 
     @classmethod
     def pixelToNsAt(cls, pixel, ratio):
         """
         Returns the pixel equivalent in nanoseconds according to the zoomratio
         """
-        return long(pixel * Gst.SECOND / ratio)
+        return int(pixel * Gst.SECOND / ratio)
 
     @classmethod
     def nsToPixel(cls, duration):

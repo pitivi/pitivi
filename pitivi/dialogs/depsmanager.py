@@ -91,7 +91,7 @@ class DepsManager(object):
         missing dependencies
         """
         label_contents = ""
-        for depname, dep in missing_soft_deps.iteritems():
+        for depname, dep in missing_soft_deps.items():
             label_contents += "• %s (%s)\n" % (dep.modulename, dep.additional_message)
         self.builder.get_object("pkg_list").set_text(label_contents)
 

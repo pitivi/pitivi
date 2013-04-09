@@ -36,9 +36,9 @@ import os
 import time
 import threading
 
-from urllib import unquote
+from urllib.parse import unquote
 from gettext import ngettext, gettext as _
-from urlparse import urlparse
+from urllib.parse import urlparse
 from hashlib import md5
 from gi.repository.GstPbutils import DiscovererVideoInfo
 
@@ -87,7 +87,7 @@ STORE_MODEL_STRUCTURE = (
  COL_ASSET,
  COL_URI,
  COL_LENGTH,
- COL_SEARCH_TEXT) = range(len(STORE_MODEL_STRUCTURE))
+ COL_SEARCH_TEXT) = list(range(len(STORE_MODEL_STRUCTURE)))
 
 ui = '''
 <ui>
@@ -325,7 +325,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     def getAssetForUri(self, uri):
         # Sanitization
-        uri = filter(lambda c: c != '\n' and c != '\r', uri)
+        uri = [c for c in uri if c != '\n' and c != '\r']
         for path in self.modelFilter:
             asset = path[COL_ASSET]
             info = asset.get_info()
@@ -474,7 +474,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         filt_supported = Gtk.FileFilter()
         filt_known = Gtk.FileFilter()
         filt_supported.set_name(_("Supported file formats"))
-        for category, mime_types in SUPPORTED_FILE_FORMATS.iteritems():
+        for category, mime_types in SUPPORTED_FILE_FORMATS.items():
             for mime in mime_types:
                 filt_supported.add_mime_type(category + "/" + mime)
                 filt_known.add_mime_type(category + "/" + mime)
@@ -578,7 +578,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             # $HOME/.cache/thumbnails will be used."
             # Older version of the spec also mentioned $HOME/.thumbnails
             quoted_uri = quote_uri(info.get_uri())
-            thumbnail_hash = md5(quoted_uri).hexdigest()
+            thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
             try:
                 thumb_dir = os.environ['XDG_CACHE_HOME']
                 thumb_64, thumb_128 = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
@@ -1028,7 +1028,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         uris = selection.get_data().split("\r\n")
         # Filter out the empty uris.
-        uris = filter(lambda x: x, uris)
+        uris = [x for x in uris if x]
         for raw_uri in uris:
             # Strip out NULL chars first.
             raw_uri = raw_uri.strip('\x00')

@@ -90,7 +90,7 @@ class HelpFunc(BaseDogTail):
                 # and that means we can't assume that it's a text cell. Many
                 # listviews/treeviews/etc have cells for icons (text is None)
                 if child.text is not None:
-                    print "Searching for", text, "in", child.text
+                    print("Searching for", text, "in", child.text)
                     if exactMatchOnly:
                         if text == child.text:
                             return child

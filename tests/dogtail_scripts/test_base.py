@@ -66,7 +66,7 @@ class BaseDogTail(unittest.TestCase):
             # When we were simply searching the toplevel for the menu bar,
             # startup time was 0.0043 seconds. Anything significantly longer
             # means there are optimizations to be done, avoid recursive searches
-            print "\nWARNING: setUp in test_base took", start_time, "seconds, that's too slow.\n"
+            print("\nWARNING: setUp in test_base took", start_time, "seconds, that's too slow.\n")
         try:
             self.unlink
         except AttributeError:

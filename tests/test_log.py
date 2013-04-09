@@ -186,21 +186,21 @@ class TestGetExceptionMessage(unittest.TestCase):
         try:
             self.func2()
             self.fail("Should not get to this point")
-        except TypeError, e:
+        except TypeError as e:
             self.verifyException(e)
 
     def testLevel3(self):
         try:
             self.func3()
             self.fail("Should not get to this point")
-        except TypeError, e:
+        except TypeError as e:
             self.verifyException(e)
 
     def verifyException(self, e):
         message = log.getExceptionMessage(e)
-        self.failUnless("func1()" in message, message)
-        self.failUnless("test_log.py" in message, message)
-        self.failUnless("TypeError" in message, message)
+        self.assertTrue("func1()" in message, message)
+        self.assertTrue("test_log.py" in message, message)
+        self.assertTrue("TypeError" in message, message)
 
 
 class TestLogSettings(unittest.TestCase):
@@ -208,10 +208,10 @@ class TestLogSettings(unittest.TestCase):
     def testSet(self):
         old = log.getLogSettings()
         log.setDebug('*:5')
-        self.assertNotEquals(old, log.getLogSettings())
+        self.assertNotEqual(old, log.getLogSettings())
 
         log.setLogSettings(old)
-        self.assertEquals(old, log.getLogSettings())
+        self.assertEqual(old, log.getLogSettings())
 
 
 class TestWriteMark(TestWithHandler):
@@ -222,7 +222,7 @@ class TestWriteMark(TestWithHandler):
         log.addLogHandler(self.handler)
         marker = 'test'
         loggable.writeMarker(marker, log.DEBUG)
-        self.assertEquals(self.message, marker)
+        self.assertEqual(self.message, marker)
 
     def testWriteMarkInWarn(self):
         loggable = log.Loggable()
@@ -230,7 +230,7 @@ class TestWriteMark(TestWithHandler):
         log.addLogHandler(self.handler)
         marker = 'test'
         loggable.writeMarker(marker, log.WARN)
-        self.assertEquals(self.message, marker)
+        self.assertEqual(self.message, marker)
 
     def testWriteMarkInInfo(self):
         loggable = log.Loggable()
@@ -238,7 +238,7 @@ class TestWriteMark(TestWithHandler):
         log.addLogHandler(self.handler)
         marker = 'test'
         loggable.writeMarker(marker, log.INFO)
-        self.assertEquals(self.message, marker)
+        self.assertEqual(self.message, marker)
 
     def testWriteMarkInLog(self):
         loggable = log.Loggable()
@@ -246,7 +246,7 @@ class TestWriteMark(TestWithHandler):
         log.addLogHandler(self.handler)
         marker = 'test'
         loggable.writeMarker(marker, log.LOG)
-        self.assertEquals(self.message, marker)
+        self.assertEqual(self.message, marker)
 
     def testWriteMarkInError(self):
         loggable = log.Loggable()
@@ -254,27 +254,27 @@ class TestWriteMark(TestWithHandler):
         log.addLogHandler(self.handler)
         marker = 'test'
         loggable.writeMarker(marker, log.ERROR)
-        self.assertEquals(self.message, marker)
+        self.assertEqual(self.message, marker)
 
 
 class TestLogNames(unittest.TestCase):
 
     def testGetLevelNames(self):
-        self.assertEquals(['ERROR', 'WARN', 'FIXME', 'INFO', 'DEBUG', 'LOG'],
-                          log.getLevelNames())
+        self.assertEqual(['ERROR', 'WARN', 'FIXME', 'INFO', 'DEBUG', 'LOG'],
+            log.getLevelNames())
 
     def testGetLevelCode(self):
-        self.assertEquals(1, log.getLevelInt('ERROR'))
-        self.assertEquals(2, log.getLevelInt('WARN'))
-        self.assertEquals(3, log.getLevelInt('FIXME'))
-        self.assertEquals(4, log.getLevelInt('INFO'))
-        self.assertEquals(5, log.getLevelInt('DEBUG'))
-        self.assertEquals(6, log.getLevelInt('LOG'))
+        self.assertEqual(1, log.getLevelInt('ERROR'))
+        self.assertEqual(2, log.getLevelInt('WARN'))
+        self.assertEqual(3, log.getLevelInt('FIXME'))
+        self.assertEqual(4, log.getLevelInt('INFO'))
+        self.assertEqual(5, log.getLevelInt('DEBUG'))
+        self.assertEqual(6, log.getLevelInt('LOG'))
 
     def testGetLevelName(self):
-        self.assertEquals('ERROR', log.getLevelName(1))
-        self.assertEquals('WARN', log.getLevelName(2))
-        self.assertEquals('FIXME', log.getLevelName(3))
-        self.assertEquals('INFO', log.getLevelName(4))
-        self.assertEquals('DEBUG', log.getLevelName(5))
-        self.assertEquals('LOG', log.getLevelName(6))
+        self.assertEqual('ERROR', log.getLevelName(1))
+        self.assertEqual('WARN', log.getLevelName(2))
+        self.assertEqual('FIXME', log.getLevelName(3))
+        self.assertEqual('INFO', log.getLevelName(4))
+        self.assertEqual('DEBUG', log.getLevelName(5))
+        self.assertEqual('LOG', log.getLevelName(6))

@@ -29,7 +29,7 @@ from gi.repository import Pango
 
 from gettext import gettext as _
 
-from urllib import unquote
+from urllib.parse import unquote
 from pitivi.configure import get_ui_dir
 from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable

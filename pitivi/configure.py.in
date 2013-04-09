@@ -38,7 +38,7 @@ def in_devel():
     rd = _get_root_dir()
     return os.path.exists(os.path.join(rd, '.git'))
 
-if os.environ.has_key("APPDIR"):
+if "APPDIR" in os.environ:
     basedir = os.environ["APPDIR"]
     LIBDIR = os.path.join(basedir, 'usr', 'lib')
     PKGDATADIR = os.path.join(basedir, 'usr', 'share', 'pitivi')

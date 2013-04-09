@@ -88,7 +88,7 @@ class Dependency(object):
         """
         raise NotImplementedError
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.satisfied
 
     def __repr__(self):
@@ -219,24 +219,24 @@ def check_requirements():
         dependency.check()
         if not dependency.satisfied:
             if hard_dependencies_satisfied:
-                print _("ERROR - The following hard dependencies are unmet:")
-                print "=================================================="
-            print dependency
+                print((_("ERROR - The following hard dependencies are unmet:")))
+                print("==================================================")
+            print(dependency)
             hard_dependencies_satisfied = False
 
     for dependency in SOFT_DEPENDENCIES:
         dependency.check()
         if not dependency.satisfied:
             missing_soft_deps[dependency.modulename] = dependency
-            print _("Missing soft dependency:")
-            print dependency
+            print((_("Missing soft dependency:")))
+            print(dependency)
 
     if not hard_dependencies_satisfied:
         return False
 
     if not _check_audiosinks():
-        print _("Could not create audio output sink. "
-                "Make sure you have a valid one (pulsesink, alsasink or osssink).")
+        print((_("Could not create audio output sink. "
+                "Make sure you have a valid one (pulsesink, alsasink or osssink).")))
         return False
 
     return True

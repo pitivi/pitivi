@@ -540,7 +540,7 @@ class Point():
  LEFT,
  RIGHT,
  TOP,
- BOTTOM) = range(10)
+ BOTTOM) = list(range(10))
 
 
 class TransformationBox():
@@ -651,7 +651,7 @@ class TransformationBox():
         else:
             point_width = self.settings.pointSize
 
-        for point in self.points.values():
+        for point in list(self.points.values()):
             point.set_width(point_width)
 
     def draw(self, cr):
@@ -661,14 +661,14 @@ class TransformationBox():
         cr.rectangle(self.left, self.top, self.right - self.left, self.bottom - self.top)
         cr.stroke()
 
-        for point in self.points.values():
+        for point in list(self.points.values()):
             point.draw(cr)
 
     def select_point(self, event):
         # translate when zoomed out
         event.x -= self.area.x
         event.y -= self.area.y
-        for type, point in self.points.items():
+        for type, point in list(self.points.items()):
             if point.is_clicked(event):
                 self.clicked_point = type
                 return
@@ -722,7 +722,7 @@ class TransformationBox():
         return True
 
     def release_point(self):
-        for point in self.points.values():
+        for point in list(self.points.values()):
             point.clicked = False
         self.clicked_point = NO_POINT
 

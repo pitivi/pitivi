@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 #       pitivi/utils/pipeline.py
 #
@@ -88,7 +88,7 @@ class Seeker(Signallable, Loggable):
 
     def seekRelative(self, time, on_idle=False):
         if self.pending_seek_id is None:
-            self._time = long(time)
+            self._time = int(time)
             if on_idle:
                 self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb, relative=True)
             else:
@@ -167,7 +167,7 @@ class SimplePipeline(Signallable, Loggable):
         self._listeningInterval = 300  # default 300ms
         self._listeningSigId = 0
         self._duration = Gst.CLOCK_TIME_NONE
-        self.lastPosition = long(0 * Gst.SECOND)
+        self.lastPosition = int(0 * Gst.SECOND)
         self.pendingRecovery = False
         self._attempted_recoveries = 0
         self._waiting_for_async_done = True
@@ -290,7 +290,7 @@ class SimplePipeline(Signallable, Loggable):
         """
         try:
             res, cur = self._pipeline.query_position(format)
-        except Exception, e:
+        except Exception as e:
             self.handleException(e)
             raise PipelineError("Couldn't get position")
 
@@ -498,7 +498,7 @@ class SimplePipeline(Signallable, Loggable):
     def _getDuration(self, format=Gst.Format.TIME):
         try:
             res, dur = self._pipeline.query_duration(format)
-        except Exception, e:
+        except Exception as e:
             self.handleException(e)
             raise PipelineError("Couldn't get duration: %s" % e)
 
@@ -595,7 +595,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
 
         cur_frame = int(round(position * framerate.num / float(Gst.SECOND * framerate.denom), 2))
         new_frame = cur_frame + frames_offset
-        new_pos = long(new_frame * Gst.SECOND * framerate.denom / framerate.num)
+        new_pos = int(new_frame * Gst.SECOND * framerate.denom / framerate.num)
         Loggable.info(self, "From frame %d to %d at %f fps, seek to %s s",
                     cur_frame,
                     new_frame,

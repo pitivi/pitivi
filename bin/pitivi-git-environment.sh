@@ -35,7 +35,7 @@ GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_$(echo $GOBJECT_INTROSP
 # Everything below this line shouldn't be edited!
 #
 
-export PYTHON=python2
+export PYTHON=python3
 
 if ! pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
   echo "Using a local build of glib"

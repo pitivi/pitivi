@@ -1,4 +1,4 @@
 #!/usr/bin/env python2
 
-import runtests
+from . import runtests
 runtests.setup()

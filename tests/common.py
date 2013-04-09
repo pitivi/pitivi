@@ -45,11 +45,11 @@ class TestCase(unittest.TestCase):
         self.gccollect()
 
         for elt in leaked:
-            print elt
+            print(elt)
             for i in gc.get_referrers(elt):
-                print "   ", i
+                print("   ", i)
 
-        self.failIf(leaked, leaked)
+        self.assertFalse(leaked, leaked)
         del self._tracked
 
     def setUp(self):

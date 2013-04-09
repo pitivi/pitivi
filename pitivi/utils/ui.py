@@ -30,7 +30,9 @@ classes that help with UI drawing around the application
 import cairo
 import decimal
 import os
-import urllib
+import urllib.request
+import urllib.parse
+import urllib.error
 
 from gettext import ngettext, gettext as _
 
@@ -213,7 +215,7 @@ def set_cairo_color(context, color):
         cairo_color = (float(color.red), float(color.green), float(color.blue))
     elif type(color) is tuple:
         # Cairo's set_source_rgb function expects values from 0.0 to 1.0
-        cairo_color = map(lambda x: max(0, min(1, x / 255.0)), color)
+        cairo_color = [max(0, min(1, x / 255.0)) for x in color]
     else:
         raise Exception("Unexpected color parameter: %s, %s" % (type(color), color))
     context.set_source_rgb(*cairo_color)
@@ -259,9 +261,9 @@ def info_name(info):
     @type info: L{GES.Asset} or L{DiscovererInfo}
     """
     if isinstance(info, GES.Asset):
-        filename = urllib.unquote(os.path.basename(info.get_id()))
+        filename = urllib.parse.unquote(os.path.basename(info.get_id()))
     elif isinstance(info, DiscovererInfo):
-        filename = urllib.unquote(os.path.basename(info.get_uri()))
+        filename = urllib.parse.unquote(os.path.basename(info.get_uri()))
     else:
         raise Exception("Unsupported argument type: %s" % type(info))
     return GLib.markup_escape_text(filename)
@@ -326,10 +328,10 @@ def beautify_length(length):
     Converts the given time in nanoseconds to a human readable string
     """
     sec = length / Gst.SECOND
-    mins = sec / 60
-    sec = sec % 60
-    hours = mins / 60
-    mins = mins % 60
+    mins = int(sec / 60)
+    sec = int(sec % 60)
+    hours = int(mins / 60)
+    mins = int(mins % 60)
 
     parts = []
     if hours:

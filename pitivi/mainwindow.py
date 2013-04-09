@@ -23,7 +23,7 @@
 import os
 
 from time import time
-from urllib import unquote
+from urllib.parse import unquote
 from gettext import gettext as _
 from hashlib import md5
 
@@ -146,7 +146,7 @@ def create_stock_icons():
     }
     factory = Gtk.IconFactory()
     pmdir = get_pixmap_dir()
-    for stockid, path in pixmaps.iteritems():
+    for stockid, path in pixmaps.items():
         pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pmdir, path))
         iconset = Gtk.IconSet.new_from_pixbuf(pixbuf)
         factory.add(stockid, iconset)

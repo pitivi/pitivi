@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # Pitivi video editor
 #
 #       pitivi
@@ -27,7 +27,7 @@ import locale
 import gettext
 
 localedir = ""
-if os.environ.has_key("APPDIR"):
+if "APPDIR" in os.environ:
     basedir = os.environ["APPDIR"]
     CONFIGURED_PYTHONPATH = ""
     CONFIGURED_GI_TYPELIB_PATH = ""
@@ -79,7 +79,7 @@ def _add_pitivi_path():
     # prepend any directories found at configure time if they're not
     # already in the path. (if they are already in the path, the user
     # chose to have it that way, so we leave their order)
-    for path in string.split(CONFIGURED_PYTHONPATH, ':'):
+    for path in CONFIGURED_PYTHONPATH.split(':'):
         if path not in sys.path:
             sys.path.insert(0, path)
 
@@ -89,12 +89,12 @@ def _add_pitivi_path():
         locale.bindtextdomain('pitivi', localedir)
         locale.textdomain('pitivi')
     except:
-        print "Couldn't set locale."
+        print("Couldn't set locale.")
     try:
         gettext.bindtextdomain('pitivi', localedir)
         gettext.textdomain('pitivi')
     except:
-        print "Couldn't set the gettext domain. Translations will not work."
+        print("Couldn't set the gettext domain. Translations will not work.")
 
     if CONFIGURED_LD_LIBRARY_PATH or CONFIGURED_GST_PLUGIN_PATH:
         _prepend_env_path("LD_LIBRARY_PATH", [CONFIGURED_LD_LIBRARY_PATH])
@@ -112,8 +112,8 @@ def _initialize_modules():
     from pitivi.check import initialize_modules
     try:
         initialize_modules()
-    except Exception, e:
-        print "Failed to initialize modules: ", e
+    except Exception as e:
+        print("Failed to initialize modules: ", e)
 
 
 def _check_requirements():
@@ -127,7 +127,7 @@ def _run_pitivi():
 
     # Make it easy for developers to debug the application startup.
     if os.environ.get('PITIVI_DEBUG_NO_UI') == '1':
-        print 'Starting Pitivi with no GUI.'
+        print('Starting Pitivi with no GUI.')
         ptv.GuiPitivi._showGui = lambda *args, **kargs : None
 
     # Start the real Pitivi, with given arguments.
@@ -146,4 +146,4 @@ if __name__ == "__main__":
         _check_requirements()
         _run_pitivi()
     except KeyboardInterrupt:
-        print "\tPitivi stopped by user with KeyboardInterrupt!"
+        print("\tPitivi stopped by user with KeyboardInterrupt!")

@@ -59,7 +59,7 @@ from pitivi.utils.widgets import GstElementSettingsWidget, FractionWidget
 
 
 #------------- Helper to handle effect in the backend ---------------------------#
-(VIDEO_EFFECT, AUDIO_EFFECT) = range(1, 3)
+(VIDEO_EFFECT, AUDIO_EFFECT) = list(range(1, 3))
 
 BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
                        "alphacolor", "cogcolorspace", "videodetect",
@@ -364,7 +364,7 @@ GlobalSettings.addConfigSection('effect-library')
  COL_EFFECT_CATEGORIES,
  COL_FACTORY,
  COL_ELEMENT_NAME,
- COL_ICON) = range(7)
+ COL_ICON) = list(range(7))
 
 
 class EffectListWidget(Gtk.VBox, Loggable):
@@ -663,7 +663,7 @@ class EffectsPropertiesManager:
         return effect_set_ui
 
     def _connectAllWidgetCallbacks(self, effect_settings_widget, unused_effect):
-        for prop, widget in effect_settings_widget.properties.iteritems():
+        for prop, widget in effect_settings_widget.properties.items():
             widget.connectValueChanged(self._onValueChangedCb, widget, prop)
 
     def _onSetDefaultCb(self, unused_widget, dynamic):

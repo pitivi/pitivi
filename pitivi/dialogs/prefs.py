@@ -332,7 +332,7 @@ class PreferencesDialog(object):
         """
         Reset all settings to the defaults
         """
-        for section in self.prefs.itervalues():
+        for section in self.prefs.values():
             for attrname in section:
                 self._resetOptionCb(self.resets[attrname], attrname)
 
@@ -341,7 +341,7 @@ class PreferencesDialog(object):
         Resets all settings to the values from before the user opened the
         preferences dialog.
         """
-        for attrname, value in self.original_values.iteritems():
+        for attrname, value in self.original_values.items():
             self.widgets[attrname].setWidgetValue(value)
             setattr(self.settings, attrname, value)
         self._clearHistory()
@@ -391,7 +391,7 @@ class PreferencesDialog(object):
     def _canReset(self):
         # Disable missing docstring
         #pylint: disable=C0111
-        for section in self.prefs.itervalues():
+        for section in self.prefs.values():
             for attrname in section:
                 if not self.settings.isDefault(attrname):
                     return True

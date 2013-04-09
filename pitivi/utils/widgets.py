@@ -247,8 +247,8 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
         if self._type is None:
             self._type = type_
 
-        if type_ == int or type_ == long:
-            minimum, maximum = (-sys.maxint, sys.maxint)
+        if type_ == int or type_ == int:
+            minimum, maximum = (-sys.maxsize, sys.maxsize)
             step = 1.0
             page = 10.0
         elif type_ == float:
@@ -526,7 +526,7 @@ class ColorWidget(Gtk.ColorButton, DynamicWidget):
 
         if type_ is str:
             color = Gdk.Color(value)
-        elif (type_ is int) or (type_ is long):
+        elif (type_ is int) or (type_ is int):
             red, green, blue, alpha = unpack_color(value)
             color = Gdk.Color(red, green, blue)
         elif type_ is Gdk.Color:
@@ -542,7 +542,7 @@ class ColorWidget(Gtk.ColorButton, DynamicWidget):
         alpha = self.get_alpha()
         if self.value_type is int:
             return pack_color_32(color.red, color.green, color.blue, alpha)
-        if self.value_type is long:
+        if self.value_type is int:
             return pack_color_64(color.red, color.green, color.blue, alpha)
         elif self.value_type is Gdk.Color:
             return color
@@ -589,7 +589,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             # Use the dynamic widget (that has been provided as an argument)
             # to find which of the togglebuttons is the related one.
             self.log("Resetting one keyframe button")
-            for togglebutton in self.keyframeToggleButtons.keys():
+            for togglebutton in list(self.keyframeToggleButtons.keys()):
                 if self.keyframeToggleButtons[togglebutton] is widget:
                     # The dynamic widget matches the one
                     # related to the current to the current togglebutton
@@ -598,7 +598,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                     break  # Stop searching
         else:
             self.log("Resetting all keyframe buttons")
-            for togglebutton in self.keyframeToggleButtons.keys():
+            for togglebutton in list(self.keyframeToggleButtons.keys()):
                 togglebutton.set_label("◇")
                 self._setKeyframeToggleButtonState(togglebutton, False)
 
@@ -752,7 +752,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         widget = self.keyframeToggleButtons[button]
         widget.set_sensitive(False)
         # Now change the state of the *other* togglebuttons.
-        for togglebutton in self.keyframeToggleButtons.keys():
+        for togglebutton in list(self.keyframeToggleButtons.keys()):
             if togglebutton != button:
                 # Don't use set_active directly on the buttons; doing so will
                 # fire off signals that will toggle the others/confuse the UI
@@ -793,7 +793,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         returns the dictionnary of propertyname/propertyvalue
         """
         d = {}
-        for prop, widget in self.properties.iteritems():
+        for prop, widget in self.properties.items():
             if not prop.flags & GObject.PARAM_WRITABLE:
                 continue
             if isinstance(widget, DefaultWidget):
@@ -819,7 +819,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             widget = ToggleWidget(default=prop.default_value)
         elif type_name == "GEnum":
             choices = []
-            for key, val in prop.enum_class.__enum_values__.iteritems():
+            for key, val in prop.enum_class.__enum_values__.items():
                 choices.append([val.value_name, int(val)])
             widget = ChoiceWidget(choices, default=prop.default_value)
         elif type_name == "GstFraction":
@@ -894,7 +894,7 @@ class GstElementSettingsDialog(Loggable):
         self.resetAll()
 
     def resetAll(self):
-        for prop, widget in self.elementsettings.properties.iteritems():
+        for prop, widget in self.elementsettings.properties.items():
             widget.setWidgetToDefault()
 
 

@@ -192,7 +192,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.fixme("Use a GESAsset here, and discover async with it")
             try:
                 info = self.discoverer.discover_uri(uri)
-            except Exception, e:
+            except Exception as e:
                 self.preview_cache_errors[uri] = e
                 if self.current_selected_uri == uri:
                     self.show_error(uri)
@@ -328,7 +328,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
                 self.player.setState(Gst.State.PAUSED)
         elif event.type == Gdk.EventType.BUTTON_RELEASE:
             self.countinuous_seek = False
-            value = long(widget.get_value())
+            value = int(widget.get_value())
             self.player.simple_seek(value)
             if self.is_playing:
                 self.player.setState(Gst.State.PLAYING)
@@ -337,7 +337,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
     def _on_motion_notify_cb(self, widget, event):
         if self.countinuous_seek:
-            value = long(widget.get_value())
+            value = int(widget.get_value())
             self.player.simple_seek(value)
 
     def _pipelineEosCb(self, unused_pipeline):
@@ -353,7 +353,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
     def _update_position(self, *unused_args):
         if self.is_playing and not self.slider_being_used:
             curr_pos = self.player.getPosition()
-            self.pos_adj.set_value(long(curr_pos))
+            self.pos_adj.set_value(int(curr_pos))
         return self.is_playing
 
     def _on_preview_video_realize_cb(self, unused_drawing_area, unused_widget):
@@ -423,7 +423,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
     def _tag_found_cb(self, abus, mess):
         tag_list = mess.parse_tag()
         tag_list.foreach(self._appendTag, None)
-        keys = self.tags.keys()
+        keys = list(self.tags.keys())
         keys.sort()
         text = self.description + "\n\n"
         for key in keys:

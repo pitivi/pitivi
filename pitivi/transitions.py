@@ -37,7 +37,7 @@ from pitivi.utils.ui import SPACING, PADDING
 (COL_TRANSITION_ASSET,
  COL_NAME_TEXT,
  COL_DESC_TEXT,
- COL_ICON) = range(4)
+ COL_ICON) = list(range(4))
 
 
 class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):

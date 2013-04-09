@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export PYTHON=python2
+export PYTHON=python3
 
 DIE=0
 package=pitivi
@@ -79,7 +79,7 @@ fi
 
 # This is needed to create ltmain.sh for our C bits.
 tool_run "$libtoolize" "--copy --force"
-tool_run "$aclocal" "-I common/m4 $ACLOCAL_FLAGS"
+tool_run "$aclocal" "-I common/m4 -I m4 $ACLOCAL_FLAGS"
 tool_run "$autoconf"
 tool_run "$automake" "-a -c"
 

@@ -181,7 +181,7 @@ class FreedesktopOrgSystem(System):
             notification = Notify.Notification.new(title, message, icon=icon)
             try:
                 notification.show()
-            except RuntimeError, e:
+            except RuntimeError as e:
                 # This can happen if the system is not properly configured.
                 # See for example https://bugzilla.gnome.org/show_bug.cgi?id=719627.
                 self.error("desktopMessage: Failed displaying notification: %s", e.message)

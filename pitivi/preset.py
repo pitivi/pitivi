@@ -137,9 +137,6 @@ class PresetManager(object):
         @param values: The values of the new preset.
         @type values: dict
         """
-        if type(name) == unicode:
-            # We need utf-8 string objects, not unicode objects!
-            name = name.encode("utf-8")
         if self.hasPreset(name):
             raise DuplicatePresetNameException(name)
         self.presets[name] = values
@@ -212,7 +209,7 @@ class PresetManager(object):
             return
         values = self.presets[preset]
         self.cur_preset = preset
-        for field, (setter, getter) in self.widget_map.iteritems():
+        for field, (setter, getter) in self.widget_map.items():
             if values[field] != 0:
                 setter(values[field])
             else:
@@ -228,7 +225,7 @@ class PresetManager(object):
     def _updatePreset(self):
         """Copy the values from the widgets to the preset."""
         values = self.presets[self.cur_preset]
-        for field, (setter, getter) in self.widget_map.iteritems():
+        for field, (setter, getter) in self.widget_map.items():
             values[field] = getter()
 
     def _isCurrentPresetChanged(self):
@@ -238,7 +235,7 @@ class PresetManager(object):
             return False
         values = self.presets[self.cur_preset]
         return any((values[field] != getter()
-                    for field, (setter, getter) in self.widget_map.iteritems()))
+                    for field, (setter, getter) in self.widget_map.items()))
 
     def removePreset(self, name):
         try:

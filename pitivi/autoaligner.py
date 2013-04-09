@@ -154,7 +154,7 @@ def _findslope(a):
     x_neg = numpy.arange(2 * X - 1, X, -1)
     best_end = 0
     max_sum = 0
-    for end in xrange(Y):
+    for end in range(Y):
         y = (x_pos * end) // X
         s = numpy.sum(a[y, x_pos])
         if s > max_sum:
@@ -201,7 +201,7 @@ def affinealign(reference, targets, max_drift=0.02):
     # Construct FFT'd reference blocks
     freference_blocks = numpy.zeros((L2 / 2 + 1, num_blocks),
                                     dtype=numpy.complex)
-    for i in xrange(num_blocks):
+    for i in range(num_blocks):
         s = i * bspace
         tmp = numpy.zeros((L2,))
         tmp[s:s + bsize] = reference[s:s + bsize]
@@ -216,7 +216,7 @@ def affinealign(reference, targets, max_drift=0.02):
         #fxcorr is the FFT'd cross-correlation with the reference blocks
         fxcorr_blocks = numpy.zeros((L2 / 2 + 1, num_blocks),
                                     dtype=numpy.complex)
-        for i in xrange(num_blocks):
+        for i in range(num_blocks):
             fxcorr_blocks[:, i] = ft * freference_blocks[:, i]
             fxcorr_blocks[:, i] /= numpy.sqrt(numpy.sum(fxcorr_blocks[:, i] ** 2))
         del ft
@@ -252,7 +252,7 @@ def affinealign(reference, targets, max_drift=0.02):
         # Remove the local-correlation peak.
         halfautocorr[-1:2, -1:2] = 0  # NEEDS TUNING
         # Normalize each column (appears to be necessary)
-        for i in xrange(2 * num_blocks):
+        for i in range(2 * num_blocks):
             halfautocorr[:, i] /= numpy.sqrt(numpy.sum(halfautocorr[:, i] ** 2))
         #from matplotlib.pyplot import imshow,show
         #imshow(halfautocorr,interpolation='nearest',aspect='auto');show()
@@ -263,7 +263,7 @@ def affinealign(reference, targets, max_drift=0.02):
         xcorr_blocks = numpy.fft.irfft(fxcorr_blocks, None, 0)
         del fxcorr_blocks
         #TODO: see if phase ramps are worthwhile here
-        for i in xrange(num_blocks):
+        for i in range(num_blocks):
             blockcenter = i * bspace + bsize / 2
             shift = int(blockcenter * drift)
             if shift > 0:
@@ -566,7 +566,7 @@ class AutoAligner(Loggable):
         """
         progress_aggregator = ProgressAggregator()
         pairs = []  # (Clip, {audio}TrackElement) pairs
-        for clip in self._clips.keys():
+        for clip in list(self._clips.keys()):
             audiotrack = getAudioTrack(clip)
             if audiotrack is not None:
                 pairs.append((clip, audiotrack))
@@ -614,7 +614,7 @@ class AutoAligner(Loggable):
         """
         def priority(clip):
             return clip.priority
-        return min(self._clips.iterkeys(), key=priority)
+        return min(iter(self._clips.keys()), key=priority)
 
     def _performShifts(self):
         self.debug("performing shifts")
@@ -682,10 +682,10 @@ if __name__ == '__main__':
     envelopes = [numpy.fromfile(n) for n in names]
     reference = envelopes[-1]
     offsets, drifts = affinealign(reference, envelopes, 0.02)
-    print offsets, drifts
+    print(offsets, drifts)
     from matplotlib.pyplot import *
     clf()
-    for i in xrange(len(envelopes)):
+    for i in range(len(envelopes)):
         t = offsets[i] + (1 + drifts[i]) * numpy.arange(len(envelopes[i]))
         plot(t, envelopes[i] / numpy.sqrt(numpy.sum(envelopes[i] ** 2)))
     show()

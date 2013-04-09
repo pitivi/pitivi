@@ -102,9 +102,9 @@ class TestPresetBasics(TestCase):
         self.assertRaises(DuplicatePresetNameException, self.manager.addPreset, 'x', {})
 
     def testAddPresetWithNonAsciiName(self):
-        unicode_name = u"ソリッド・スネーク"
+        unicode_name = "ソリッド・スネーク"
         self.manager.addPreset(unicode_name, {})
-        self.assertTrue(unicode_name.encode("utf-8") in self.manager.getPresetNames())
+        self.assertTrue(unicode_name in self.manager.getPresetNames())
 
     def testRenamePreset(self):
         self.manager.addPreset('preseT onE', {'name1': '1A'})
@@ -165,7 +165,7 @@ class TestAudioPresetsIO(TestCase):
 
         other_manager = self.createOtherManager()
         other_manager.loadAll()
-        self.assertEquals(1 + countDefaultPresets(other_manager), len(other_manager.presets))
+        self.assertEqual(1 + countDefaultPresets(other_manager), len(other_manager.presets))
         snaaaake = other_manager.presets[non_ascii_preset_name]
         self.assertEqual(snake, snaaaake)
 
@@ -181,6 +181,6 @@ class TestAudioPresetsIO(TestCase):
 
         other_manager = self.createOtherManager()
         other_manager.loadAll()
-        self.assertEquals(1 + countDefaultPresets(other_manager), len(other_manager.presets))
+        self.assertEqual(1 + countDefaultPresets(other_manager), len(other_manager.presets))
         other_values = other_manager.presets[preset_name]
         self.assertEqual(values, other_values)

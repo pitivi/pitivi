@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 #       pitivi/utils/signal.py
 #
@@ -27,6 +27,7 @@
 """
 
 from random import randint
+import collections
 
 
 class SignalGroup:
@@ -78,7 +79,7 @@ class SignalGroup:
         """Disconnect all signals in the group.
 
         """
-        for old_object, handler_id in self.signal_handler_ids.itervalues():
+        for old_object, handler_id in self.signal_handler_ids.values():
             old_object.disconnect(handler_id)
         self.signal_handler_ids = {}
 
@@ -87,7 +88,7 @@ class SignalGroup:
         Disconnects all signal in the group connect on the given object
         """
         assert obj is not None
-        objids = [sid for sid in self.signal_handler_ids.keys() if self.signal_handler_ids[sid][0] == obj]
+        objids = [sid for sid in list(self.signal_handler_ids.keys()) if self.signal_handler_ids[sid][0] == obj]
         for sid in objids:
             old_object, handler_id = self.signal_handler_ids.pop(id)
             old_object.disconnect(handler_id)
@@ -118,16 +119,16 @@ class Signallable(object):
             # self.handlers is a dictionnary of callback ids per
             # signals.
             self.handlers = {}
-            for signame in self.siglist.keys():
+            for signame in list(self.siglist.keys()):
                 self.handlers[signame] = []
 
         def connect(self, signame, cb, args, kwargs):
             """ connect """
             # get a unique id
-            if not signame in self.handlers.keys():
+            if not signame in list(self.handlers.keys()):
                 raise Exception("Signal %s is not one of %s" % (signame,
-                ",\n\t".join(self.handlers.keys())))
-            if not callable(cb):
+                ",\n\t".join(list(self.handlers.keys()))))
+            if not isinstance(cb, collections.Callable):
                 raise Exception("Provided callable '%r' is not callable" % cb)
 
             uuid = randint(0, 2 ** 64)
@@ -147,7 +148,7 @@ class Signallable(object):
             except KeyError:
                 raise Exception("unknown signal id")
 
-            for lists in self.handlers.itervalues():
+            for lists in self.handlers.values():
                 try:
                     lists.remove(sigid)
                 except ValueError:

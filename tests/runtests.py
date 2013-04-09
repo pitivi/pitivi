@@ -60,7 +60,7 @@ def setup():
 
     try:
         import mock
-    except ImportError, e:
+    except ImportError as e:
         raise Exception("Python mock library missing! www.voidspace.org.uk/python/mock", e)
 
 

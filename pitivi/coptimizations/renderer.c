@@ -1,7 +1,7 @@
 #include <Python.h>
 #include <stdio.h>
 #include <cairo.h>
-#include <pycairo.h>
+#include <py3cairo.h>
 
 static Pycairo_CAPI_t *Pycairo_CAPI;
 
@@ -88,8 +88,22 @@ static PyMethodDef renderer_methods[] = {
   {NULL, NULL}
 };
 
-void initrenderer()
-{
-  Pycairo_IMPORT;
-  (void) Py_InitModule("renderer", renderer_methods);
+static PyModuleDef module = {
+    PyModuleDef_HEAD_INIT,
+    "renderer",
+    "Pitivi renderer module.",
+    -1,
+    renderer_methods, NULL, NULL, NULL, NULL
+};
+
+PyMODINIT_FUNC PyInit_renderer(void) {
+  if (import_cairo() < 0) {
+    g_print("Cairo import failed.");
+  }
+
+  PyObject* m;
+  m = PyModule_Create(&module);
+  if (m == NULL)
+      return NULL;
+  return m;
 }

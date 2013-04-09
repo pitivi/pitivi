@@ -851,7 +851,7 @@ class RenderDialog(Loggable):
         self.window.show()  # Show the rendering dialog again
 
     def _disconnectFromGst(self):
-        for obj, id in self._gstSigId.iteritems():
+        for obj, id in self._gstSigId.items():
             obj.disconnect(id)
         self._gstSigId = {}
         try:
@@ -1034,7 +1034,7 @@ class RenderDialog(Loggable):
         elif factory == get_combo_value(self.audio_encoder_combo):
             settings = self.project.acodecsettings
 
-        for propname, value in settings.iteritems():
+        for propname, value in settings.items():
             element.set_property(propname, value)
             self.debug("Setting %s to %s", propname, value)
 
@@ -1046,7 +1046,7 @@ class RenderDialog(Loggable):
 
     def updateResolution(self):
         width, height = self.project.getVideoWidthAndHeight(True)
-        self.resolution_label.set_text(u"%d×%d" % (width, height))
+        self.resolution_label.set_text("%d×%d" % (width, height))
 
     def _projectSettingsButtonClickedCb(self, unused_button):
         from pitivi.project import ProjectSettingsDialog

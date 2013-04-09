@@ -281,7 +281,7 @@ class ProjectManager(Signallable, Loggable):
             # set to always ask the user on our behalf about overwriting, so
             # if saveProject is actually called, that means overwriting is OK.
             saved = self.current_project.save(self.current_project.timeline, uri, formatter_type, overwrite=True)
-        except Exception, e:
+        except Exception as e:
             saved = False
             self.emit("save-project-failed", uri, e)
 
@@ -342,7 +342,7 @@ class ProjectManager(Signallable, Loggable):
         # This catches errors with tarring; the GUI already shows errors while
         # saving projects (ex: permissions), so probably no GUI needed here.
         # Keep the exception generic enough to catch programming errors:
-        except Exception, e:
+        except Exception as e:
             everything_ok = False
             self.error(e)
             tar_file = path_from_uri(uri)
@@ -881,7 +881,7 @@ class Project(Loggable, GES.Project):
         self.pipeline = Pipeline()
         try:
             self.pipeline.set_timeline(self.timeline)
-        except PipelineError, e:
+        except PipelineError as e:
             self.warning("Failed to set the timeline to the pipeline: %s", e)
             return False
 

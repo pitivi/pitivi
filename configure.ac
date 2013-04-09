@@ -24,7 +24,8 @@ AC_SUBST_FILE(AUTHORS)
 AUTHORS=$srcdir/AUTHORS
 
 AM_INIT_AUTOMAKE([foreign])
-AC_SUBST(ACLOCAL_AMFLAGS, "-I common/m4")
+AC_SUBST(ACLOCAL_AMFLAGS, "-I m4 -I common/m4")
+AC_CONFIG_MACRO_DIR([m4])
 
 AS_AC_EXPAND(LIBDIR, $libdir)
 AC_MSG_NOTICE(Storing library files in $LIBDIR)
@@ -38,13 +39,18 @@ AC_MSG_NOTICE(Storing configuration files in $SYSCONFDIR)
 AS_AC_EXPAND(LOCALSTATEDIR, $localstatedir)
 AC_MSG_NOTICE(Using localstatedir $LOCALSTATEDIR)
 
-dnl python checks (you can change the required python version bellow)
-AM_PATH_PYTHON(2.7.0)
-PY_PREFIX=`$PYTHON -c 'import sys ; print sys.prefix'`
-PYTHON_LIBS="-lpython$PYTHON_VERSION"
-PYTHON_CFLAGS="-I$PY_PREFIX/include/python$PYTHON_VERSION"
-AC_SUBST([PYTHON_LIBS])
-AC_SUBST([PYTHON_CFLAGS])
+# python checks
+
+# you can change the required python version bellow
+AM_PATH_PYTHON([3])
+
+AM_CHECK_PYTHON_HEADERS(, AC_MSG_ERROR([Python headers not found]))
+
+# - 'SO' for PyPy, CPython 2.7-3.2
+# - 'EXT_SUFFIX' for CPython3.3+ (http://bugs.python.org/issue16754)
+# - fallback to '.so'
+PYTHON_SO=`$PYTHON -c "import distutils.sysconfig, sys; get = distutils.sysconfig.get_config_var; sys.stdout.write(get('EXT_SUFFIX') or get('SO') or '.so');"`
+AC_SUBST(PYTHON_SO)
 
 dnl ALL_LINGUAS="fr"
 GETTEXT_PACKAGE="pitivi"
@@ -70,7 +76,7 @@ AC_SUBST(CONFIGURED_GI_TYPELIB_PATH)
 AC_CONFIG_FILES([bin/pitivi], [chmod +x bin/pitivi])
 
 PKG_CHECK_MODULES([cairo], [cairo])
-PKG_CHECK_MODULES([pycairo], [pycairo])
+PKG_CHECK_MODULES([py3cairo], [py3cairo])
 
 AC_ARG_ENABLE(help,
   AS_HELP_STRING([--disable-help],[disable help]),

@@ -162,7 +162,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         self._running = False
         # We should have one thumbnail per thumb_period.
         # TODO: get this from the user settings
-        self.thumb_period = long(0.5 * Gst.SECOND)
+        self.thumb_period = int(0.5 * Gst.SECOND)
         self.thumb_height = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
         self.thumb_width = None  # will be set by self._setupPipeline()
 
@@ -275,7 +275,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         else:
             self.duration = duration
 
-        self.queue = range(0, duration, self.thumb_period)
+        self.queue = list(range(0, duration, self.thumb_period))
 
         self._checkCPU()
 

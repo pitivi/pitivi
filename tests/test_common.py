@@ -26,21 +26,21 @@ import pitivi.utils.ui as ui_common
 class TestColors(common.TestCase):
 
     def test_pack_color_32(self):
-        self.assertEquals(
+        self.assertEqual(
             0x01020408,
             ui_common.pack_color_32(0x01FF, 0x02FF, 0x04FF, 0x08FF))
 
     def test_pack_color_64(self):
-        self.assertEquals(
+        self.assertEqual(
             0x01FF02FF04FF08FF,
             ui_common.pack_color_64(0x01FF, 0x02FF, 0x04FF, 0x08FF))
 
     def test_unpack_color_32(self):
-        self.assertEquals(
+        self.assertEqual(
             (0x0100, 0x0200, 0x0400, 0x0800),
             ui_common.unpack_color_32(0x01020408))
 
     def test_unpack_color_64(self):
-        self.assertEquals(
+        self.assertEqual(
             (0x01FF, 0x02FF, 0x04FF, 0x08FF),
             ui_common.unpack_color_64(0x01FF02FF04FF08FF))

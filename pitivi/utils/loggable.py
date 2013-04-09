@@ -27,7 +27,8 @@ import fnmatch
 import time
 import types
 import traceback
-import thread
+import _thread
+import collections
 
 
 # environment variables controlling levels for each category
@@ -57,7 +58,7 @@ _old_hup_handler = None
  FIXME,
  INFO,
  DEBUG,
- LOG) = range(1, 7)
+ LOG) = list(range(1, 7))
 
 COLORS = {ERROR: 'RED',
           WARN: 'YELLOW',
@@ -179,35 +180,35 @@ class TerminalController:
         # Look up string capabilities.
         for capability in self._STRING_CAPABILITIES:
             (attrib, cap_name) = capability.split('=')
-            setattr(self, attrib, self._tigetstr(cap_name) or '')
+            setattr(self, attrib, self._tigetstr(cap_name) or b'')
 
         # Colors
         set_fg = self._tigetstr('setf')
         if set_fg:
-            for i, color in zip(range(len(self._COLORS)), self._COLORS):
-                setattr(self, color, curses.tparm(set_fg, i) or '')
+            for i, color in zip(list(range(len(self._COLORS))), self._COLORS):
+                setattr(self, color, curses.tparm(set_fg, i) or b'')
         set_fg_ansi = self._tigetstr('setaf')
         if set_fg_ansi:
-            for i, color in zip(range(len(self._ANSICOLORS)),
+            for i, color in zip(list(range(len(self._ANSICOLORS))),
                                 self._ANSICOLORS):
-                setattr(self, color, curses.tparm(set_fg_ansi, i) or '')
+                setattr(self, color, curses.tparm(set_fg_ansi, i) or b'')
         set_bg = self._tigetstr('setb')
         if set_bg:
-            for i, color in zip(range(len(self._COLORS)), self._COLORS):
-                setattr(self, 'BG_' + color, curses.tparm(set_bg, i) or '')
+            for i, color in zip(list(range(len(self._COLORS))), self._COLORS):
+                setattr(self, 'BG_' + color, curses.tparm(set_bg, i) or b'')
         set_bg_ansi = self._tigetstr('setab')
         if set_bg_ansi:
-            for i, color in zip(range(len(self._ANSICOLORS)),
+            for i, color in zip(list(range(len(self._ANSICOLORS))),
                                 self._ANSICOLORS):
-                setattr(self, 'BG_' + color, curses.tparm(set_bg_ansi, i) or '')
+                setattr(self, 'BG_' + color, curses.tparm(set_bg_ansi, i) or b'')
 
     def _tigetstr(self, cap_name):
         # String capabilities can include "delays" of the form "$<2>".
         # For any modern terminal, we should be able to just ignore
         # these, so strip them out.
         import curses
-        cap = curses.tigetstr(cap_name) or ''
-        return re.sub(r'\$<\d+>[/*]?', '', cap)
+        cap = curses.tigetstr(cap_name) or b''
+        return re.sub(r'\$<\d+>[/*]?', '', cap.decode()).encode()
 
     def render(self, template):
         """
@@ -435,11 +436,11 @@ def getFileLine(where=-1):
     name = None
 
     if isinstance(where, types.FunctionType):
-        co = where.func_code
+        co = where.__code__
         lineno = co.co_firstlineno
         name = co.co_name
     elif isinstance(where, types.MethodType):
-        co = where.im_func.func_code
+        co = where.__func__.__code__
         lineno = co.co_firstlineno
         name = co.co_name
     else:
@@ -484,7 +485,7 @@ def getFormatArgs(startFormat, startArgs, endFormat, endArgs, args, kwargs):
     for a in args:
         debugArgs.append(ellipsize(a))
 
-    for items in kwargs.items():
+    for items in list(kwargs.items()):
         debugArgs.extend(items)
     debugArgs.extend(endArgs)
     format = startFormat \
@@ -536,7 +537,7 @@ def doLog(level, object, category, format, args, where=-1, filePath=None, line=N
         for handler in handlers:
             try:
                 handler(level, object, category, filePath, line, message)
-            except TypeError, e:
+            except TypeError as e:
                 raise SystemError("handler %r raised a TypeError: %s" % (
                     handler, getExceptionMessage(e)))
 
@@ -601,7 +602,7 @@ def safeprintf(file, format, *args):
             file.write(format % args)
         else:
             file.write(format)
-    except IOError, e:
+    except IOError as e:
         if e.errno == errno.EPIPE:
             # if our output is closed, exit; e.g. when logging over an
             # ssh connection and the ssh connection is closed
@@ -638,21 +639,32 @@ def stderrHandler(level, object, category, file, line, message):
         # level   pid     object   cat      time
         # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
         safeprintf(sys.stderr, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
-                   getFormattedLevelName(level), os.getpid(), thread.get_ident(),
+                   getFormattedLevelName(level), os.getpid(), _thread.get_ident(),
                    o[:32], category, time.strftime("%b %d %H:%M:%S"), "",
                    message, where)
     sys.stderr.flush()
 
 
-def _preformatLevels(enableColorOutput):
+def logLevelName(level):
     format = '%-5s'
+    return format % (_LEVEL_NAMES[level - 1], )
+
+
+def _preformatLevels(enableColorOutput):
 
     if enableColorOutput:
         t = TerminalController()
-        formatter = lambda level: ''.join((t.BOLD, getattr(t, COLORS[level]),
-                            format % (_LEVEL_NAMES[level - 1], ), t.NORMAL))
+
+        if type(t.BOLD) == bytes:
+            formatter = lambda level: ''.join(
+                (t.BOLD.decode(), getattr(t, COLORS[level]).decode(),
+                logLevelName(level), t.NORMAL.decode()))
+        else:
+            formatter = lambda level: ''.join(
+                (t.BOLD, getattr(t, COLORS[level]),
+                logLevelName(level), t.NORMAL))
     else:
-        formatter = lambda level: format % (_LEVEL_NAMES[level - 1], )
+        formatter = lambda level: logLevelName(level)
 
     for level in ERROR, WARN, FIXME, INFO, DEBUG, LOG:
         _FORMATTED_LEVELS.append(formatter(level))
@@ -747,7 +759,7 @@ def addLogHandler(func):
     @raises TypeError: if func is not a callable
     """
 
-    if not callable(func):
+    if not isinstance(func, collections.Callable):
         raise TypeError("func must be callable")
 
     if func not in _log_handlers:
@@ -766,7 +778,7 @@ def addLimitedLogHandler(func):
 
     @raises TypeError: TypeError if func is not a callable
     """
-    if not callable(func):
+    if not isinstance(func, collections.Callable):
         raise TypeError("func must be callable")
 
     if func not in _log_handlers_limited:
@@ -862,7 +874,7 @@ def reopenOutputFiles():
         return
 
     def reopen(name, fileno, *args):
-        oldmask = os.umask(0026)
+        oldmask = os.umask(0o026)
         try:
             f = open(name, 'a+', *args)
         finally:
@@ -902,7 +914,7 @@ def outputToFiles(stdout=None, stderr=None):
             _old_hup_handler(signum, frame)
 
     debug('log', 'installing SIGHUP handler')
-    import signal
+    from . import signal
     handler = signal.signal(signal.SIGHUP, sighup)
     if handler == signal.SIG_DFL or handler == signal.SIG_IGN:
         _old_hup_handler = None

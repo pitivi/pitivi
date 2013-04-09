@@ -35,11 +35,11 @@ from pitivi.utils.timeline import Zoomable, Selection, SELECT, TimelineError
 from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, CONTROL_WIDTH
 from pitivi.utils.widgets import ZoomBox
 
-from ruler import ScaleRuler
+from .ruler import ScaleRuler
 from gettext import gettext as _
 from pitivi.utils.pipeline import PipelineError
-from elements import URISourceElement, TransitionElement, Ghostclip
-from controls import ControlContainer
+from .elements import URISourceElement, TransitionElement, Ghostclip
+from .controls import ControlContainer
 
 GlobalSettings.addConfigOption('edgeSnapDeadband',
     section="user-interface",
@@ -1120,7 +1120,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         canvas_width = self.embed.get_allocation().width - CONTROL_WIDTH
         try:
             new_pos = Zoomable.nsToPixel(self._project.pipeline.getPosition())
-        except PipelineError, e:
+        except PipelineError as e:
             self.info("Pipeline error: %s", e)
             return
         except AttributeError:  # Standalone, no pipeline.
@@ -1204,7 +1204,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         try:
             progress_meter = auto_aligner.start()
             progress_meter.addWatcher(progress_dialog.updatePosition)
-        except Exception, e:
+        except Exception as e:
             self.error("Could not start the autoaligner: %s" % e)
             progress_dialog.window.destroy()
 
