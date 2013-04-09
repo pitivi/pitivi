@@ -34,6 +34,7 @@ from gi.repository import GObject
 from gi.repository import GooCanvas
 
 from gi.repository import Gdk
+from gi.repository import GLib
 
 from gettext import gettext as _
 from os.path import join
