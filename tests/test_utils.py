@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # PiTiVi , Non-linear video editor
 #
 #       test_utils.py

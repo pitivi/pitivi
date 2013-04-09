@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # PiTiVi , Non-linear video editor
 #
 # Copyright (c) 2009, Andoni Morales Alastruey <ylatuya@gmail.com>

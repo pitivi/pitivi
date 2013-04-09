@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 from helper_functions import HelpFunc
 import dogtail.rawinput
 
