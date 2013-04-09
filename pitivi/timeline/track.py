@@ -284,10 +284,11 @@ class TrimHandle(View, GooCanvas.CanvasImage, Loggable, Zoomable):
     height = property(getHeight, setHeight)
 
     def _scalePixbuf(self):
-        self.props.pixbuf = self.current_pixbuf.scale_simple(
+        new_pixbuf = self.current_pixbuf.scale_simple(
             self.current_pixbuf.get_width(),
             self.height,
             GdkPixbuf.InterpType.BILINEAR)
+        self.props.pixbuf = new_pixbuf
 
 
 class StartHandle(TrimHandle):
