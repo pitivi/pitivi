@@ -1352,5 +1352,5 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                 name = _("Untitled")
             if self.app.current.hasUnsavedModifications():
                 touched = "*"
-        title = u"%s%s \u2014 %s" % (touched, name, APPNAME)
+        title = "%s%s — %s" % (touched, name, APPNAME)
         self.set_title(title)
