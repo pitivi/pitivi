@@ -80,7 +80,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         self.position = 0  # In nanoseconds
         self.pressed = False
-        self.need_update = True
         self.min_frame_spacing = 5.0
         self.frame_height = 5.0
         self.frame_rate = Gst.Fraction(1 / 1)
@@ -88,15 +87,17 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.connect('draw', self.drawCb)
         self.connect('configure-event', self.configureEventCb)
         self.callback_id = None
+        self.callback_id_scroll = None
 
     def _hadjValueChangedCb(self, hadj):
         self.pixbuf_offset = self.hadj.get_value()
-        self.queue_draw()
+        if self.callback_id_scroll is not None:
+            GObject.source_remove(self.callback_id_scroll)
+        self.callback_id_scroll = GObject.timeout_add(100, self._maybeUpdate)
 
 ## Zoomable interface override
 
     def _maybeUpdate(self):
-        self.need_update = True
         self.queue_draw()
         self.callback_id = None
         return False
