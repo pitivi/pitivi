@@ -4,7 +4,6 @@ from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import GObject
 
-import collections
 import hashlib
 import os
 import sqlite3
@@ -473,7 +472,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.leftHandle.set_position(0, 0)
 
     def _createPreview(self):
-        self.preview = get_preview_for_object(self.bElement)
+        self.preview = get_preview_for_object(self.bElement, self.timeline)
         self.add_child(self.preview)
 
     def _createMarquee(self):
@@ -576,6 +575,10 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
 
 class TimelineStage(Clutter.ScrollActor, Zoomable):
+    __gsignals__ = {
+        'scrolled': (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+
     def __init__(self, container):
         Clutter.ScrollActor.__init__(self)
         Zoomable.__init__(self)
@@ -585,6 +588,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._createPlayhead()
         self._container = container
         self.lastPosition = 0
+        self._scroll_point = Clutter.Point()
 
     # Public API
 
@@ -713,6 +717,18 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._container.vadj.props.upper = self.props.height
         self._container.controls.addLayerControl(layer)
         self._updatePlayHead()
+
+    # Clutter Override
+
+    # TODO: remove self._scroll_point and get_scroll_point as soon as the Clutter API
+    # offers a way to query a ScrollActor for its current scroll point
+    def scroll_to_point(self, point):
+        Clutter.ScrollActor.scroll_to_point(self, point)
+        self._scroll_point = point.copy()
+        self.emit("scrolled")
+
+    def get_scroll_point(self):
+        return self._scroll_point
 
     # Callbacks
 
@@ -1585,7 +1601,7 @@ class Timeline(Gtk.VBox, Zoomable):
         self.project.create_asset("file://" + sys.argv[1], GES.UriClip)
 
 
-def get_preview_for_object(bElement):
+def get_preview_for_object(bElement, timeline):
     track_type = bElement.get_track_type()
     if track_type == GES.TrackType.AUDIO:
         # FIXME: RandomAccessAudioPreviewer doesn't work yet
@@ -1597,96 +1613,136 @@ def get_preview_for_object(bElement):
             # TODO: return still image previewer
             return Clutter.Actor()
         else:
-            return VideoPreviewer(bElement)
+            return VideoPreviewer(bElement, timeline)
     else:
         return Clutter.Actor()
 
 
-class VideoPreviewer(Clutter.Actor, Zoomable):
-    def __init__(self, bElement):
+class VideoPreviewer(Clutter.ScrollActor, Zoomable):
+    def __init__(self, bElement, timeline):
         """
         @param bElement : the backend GES.TrackElement
         @param track : the track to which the bElement belongs
         @param timeline : the containing graphic timeline.
         """
         Zoomable.__init__(self)
-        Clutter.Actor.__init__(self)
+        Clutter.ScrollActor.__init__(self)
 
         self.uri = bElement.props.uri
 
-        self.layoutManager = Clutter.BinLayout()
-        self.set_layout_manager(self.layoutManager)
-
         self.bElement = bElement
+        self.timeline = timeline
 
-#        self.bElement.connect("notify::duration", self.element_changed)
-#        self.bElement.connect("notify::in-point", self.element_changed)
+        self.bElement.connect("notify::duration", self.element_changed)
+        self.bElement.connect("notify::in-point", self.element_changed)
+        self.bElement.connect("notify::start", self.element_changed)
 
-        self.duration = self.bElement.get_duration()
-        self.in_point = self.bElement.get_inpoint()
+        self.timeline.connect("scrolled", self._update)
+
+        self.duration = self.bElement.props.duration
 
         self.thumb_margin = BORDER_WIDTH
         self.thumb_height = EXPANDED_SIZE - 2 * self.thumb_margin
         # self.thumb_width will be set by self._setupPipeline()
 
         # TODO: read this property from the settings
-        self.thumb_period = long(0.1 * Gst.SECOND)
+        self.thumb_period = long(0.5 * Gst.SECOND)
 
         # maps (quantized) times to Thumbnail objects
         self.thumbs = {}
 
         self.thumb_cache = ThumbnailCache(uri=self.uri)
 
-        self.queue = []
-
-        self.waiting_timestamp = None
+        self.wishlist = []
 
         self._setupPipeline()
 
-        self.callback_id = None
+        self._startThumbnailing()
 
     # Internal API
+
+    def _update(self, unused_msg_source):
+        self._addThumbnails()
 
     def _setupPipeline(self):
         """
         Create the pipeline.
 
         It has the form "playbin ! thumbnailsink" where thumbnailsink
-        is a Bin made out of "capsfilter ! gdkpixbufsink"
+        is a Bin made out of "videorate ! capsfilter ! gdkpixbufsink"
         """
-        self.pipeline = Gst.ElementFactory.make("playbin", None)
-        self.pipeline.props.uri = self.uri
-        self.pipeline.props.flags = 1  # Only render video
+        # TODO: don't hardcode the framerate but compute from thumb_period
+        self.pipeline = Gst.parse_launch(
+            "uridecodebin uri={uri} ! "
+            "videoconvert ! "
+            "videorate ! "
+            "videoscale method=lanczos ! "
+            "capsfilter caps=video/x-raw,format=(string)RGBA,height=(int){height},"
+            "pixel-aspect-ratio=(fraction)1/1,framerate=(fraction)2/1 ! "
+            "gdkpixbufsink name=gdkpixbufsink".format(uri=self.uri, height=self.thumb_height))
 
-        # Set up the thumbnailsink
-        thumbnailsink = Gst.parse_bin_from_description("capsfilter caps=video/x-raw,format=(string)RGB,pixel-aspect-ratio=(fraction)1/1 ! gdkpixbufsink name=gdkpixbufsink", True)
-
-        # get the gdkpixbufsink and the automatically created ghostpad
-        self.gdkpixbufsink = thumbnailsink.get_by_name("gdkpixbufsink")
-        sinkpad = thumbnailsink.get_static_pad("sink")
-
-        # Connect the playbin and the thumbnailsink
-        self.pipeline.props.video_sink = thumbnailsink
-
-        # add a message handler that listens for the created pixbufs
-        self.pipeline.get_bus().add_signal_watch()
-        self.pipeline.get_bus().connect("message", self.bus_message_handler)
+        # get the gdkpixbufsink and the sinkpad
+        self.gdkpixbufsink = self.pipeline.get_by_name("gdkpixbufsink")
+        sinkpad = self.gdkpixbufsink.get_static_pad("sink")
 
         self.pipeline.set_state(Gst.State.PAUSED)
+
         # Wait for the pipeline to be prerolled so we can check the width
         # that the thumbnails will have and set the aspect ratio accordingly
         # as well as getting the framerate of the video:
         change_return = self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
         if Gst.StateChangeReturn.SUCCESS == change_return[0]:
             neg_caps = sinkpad.get_current_caps()[0]
-            video_width = neg_caps["width"]
-            video_height = neg_caps["height"]
-            self.thumb_width = video_width * self.thumb_height / video_height
+            self.thumb_width = neg_caps["width"]
         else:
             # the pipeline couldn't be prerolled so we can't determine the
             # correct values. Set sane defaults (this should never happen)
             self.warning("Couldn't preroll the pipeline")
-            self.thumb_width = 16 * self.thumb_height / 9  # assume 16:9 aspect ratio
+            # assume 16:9 aspect ratio
+            self.thumb_width = 16 * self.thumb_height / 9
+
+        # pop all messages from the bus so we won't be flooded with messages
+        # from the prerolling phase
+        while self.pipeline.get_bus().pop():
+            continue
+        # add a message handler that listens for the created pixbufs
+        self.pipeline.get_bus().add_signal_watch()
+        self.pipeline.get_bus().connect("message", self.bus_message_handler)
+
+    def _startThumbnailing(self):
+        self.queue = []
+        query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
+        if not query_success:
+            print("Could not determine the duration of the file {}".format(self.uri))
+            duration = self.duration
+        else:
+            self.duration = duration
+
+        current_time = 0
+        while current_time < duration:
+            self.queue.append(current_time)
+            current_time += self.thumb_period
+
+        self._create_next_thumb()
+
+    def _create_next_thumb(self):
+        if not self.queue:
+            # nothing left to do
+            return
+        wish = self._get_wish()
+        if wish:
+            time = wish
+            self.queue.remove(wish)
+        else:
+            time = self.queue.pop(0)
+        # append the time to the end of the queue so that if this seek fails
+        # another try will be started later
+        self.queue.append(time)
+
+        self.pipeline.seek(1.0,
+            Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
+            Gst.SeekType.SET, time,
+            Gst.SeekType.NONE, -1)
 
     def _addThumbnails(self):
         """
@@ -1698,6 +1754,7 @@ class VideoPreviewer(Clutter.Actor, Zoomable):
         # TODO: check if duration or zoomratio really changed?
         self.remove_all_children()
         self.thumbs = {}
+        self.wishlist = []
 
         # calculate unquantized length of a thumb in nano seconds
         thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + self.thumb_margin)
@@ -1712,86 +1769,104 @@ class VideoPreviewer(Clutter.Actor, Zoomable):
         # make sure that we don't show thumbnails more often than thumb_period
         thumb_duration = max(thumb_duration, self.thumb_period)
 
-        number_of_thumbs = self.duration / thumb_duration
+        element_left, element_right = self._get_visible_range()
+        # TODO: replace with a call to utils.misc.quantize:
+        element_left = (element_left // thumb_duration) * thumb_duration
 
-        current_time = 0
-        # +1 because wa want to draw the rightmost thumbnail even if it will be clipped
-        for i in range(0, number_of_thumbs + 1):
+        current_time = element_left
+        while current_time < element_right:
             thumb = Thumbnail(self.thumb_width, self.thumb_height)
             thumb.set_position(Zoomable.nsToPixel(current_time), self.thumb_margin)
             self.add_child(thumb)
             self.thumbs[current_time] = thumb
-            self._thumbForTime(current_time)
+            if current_time in self.thumb_cache:
+                gdkpixbuf = self.thumb_cache[current_time]
+                self.thumbs[current_time].set_from_gdkpixbuf(gdkpixbuf)
+            else:
+                if not current_time in self.wishlist:
+                    self.wishlist.append(current_time)
             current_time += thumb_duration
 
-    def _thumbForTime(self, time):
-        if time in self.thumb_cache:
-            gdkpixbuf = self.thumb_cache[time]
-            self.thumbs[time].set_from_gdkpixbuf(gdkpixbuf)
-        else:
-            self._requestThumbnail(time)
+        position = Clutter.Point()
+        position.x = Zoomable.nsToPixel(self.bElement.props.in_point)
+        self.scroll_to_point(position)
 
-    def _requestThumbnail(self, time):
-        """Queue a thumbnail request for the given time"""
-        if time not in self.queue:  # and len(self._queue) <= self.max_requests:
-            if self.queue:
-                self.queue.append(time)
-            else:
-                self.queue.append(time)
-                self._nextThumbnail()
+    def _get_wish(self):
+        """Returns a wish that is also in the queue or None
+           if no such wish exists"""
+        while True:
+            if not self.wishlist:
+                return None
+            wish = self.wishlist.pop(0)
+            if wish in self.queue:
+                return wish
 
-    def _nextThumbnail(self):
-        """Notifies the preview object that the pipeline is ready to process
-        the next thumbnail in the queue. This should always be called from the
-        main application thread."""
-        if self.queue:
-            if not self._startThumbnail(self.queue[0]):
-                self.queue.pop(0)
-                self._nextThumbnail()
-        return False
-
-    def _startThumbnail(self, time):
-        self.waiting_timestamp = time
-        return self.pipeline.seek(1.0,
-            Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
-            Gst.SeekType.SET, time,
-            Gst.SeekType.NONE, -1)
-
-    def _finishThumbnail(self, gdkpixbuf, time):
-        """Notifies the preview object that the a new thumbnail is ready to be
-        cached. This should be called by subclasses when they have finished
-        processing the thumbnail for the current segment. This function should
-        always be called from the main thread of the application."""
-        waiting = self.waiting_timestamp
-        self.waiting_timestamp = None
-
-        if time != waiting:
-            time = waiting
-
-        thumbnail = gdkpixbuf.scale_simple(self.thumb_width, self.thumb_height, 3)
+    def _setThumbnail(self, time, thumbnail):
+        # TODO: is "time" guaranteed to be nanosecond precise?
+        # => __tim says: "that's how it should be"
+        # => also see gst-plugins-good/tests/icles/gdkpixbufsink-test
+        if time in self.queue:
+            self.queue.remove(time)
 
         self.thumb_cache[time] = thumbnail
 
         if time in self.thumbs:
             self.thumbs[time].set_from_gdkpixbuf(thumbnail)
-        #self.emit("update", time)
-
-        if time in self.queue:
-            self.queue.remove(time)
-        self._nextThumbnail()
-        return False
 
     # Interface (Zoomable)
 
-    def _maybeUpdate(self):
-        self._addThumbnails()
-        self.callback_id = None
-        return False
-
     def zoomChanged(self):
-        if self.callback_id is not None:
-            GObject.source_remove(self.callback_id)
-        self.callback_id = GObject.timeout_add(100, self._maybeUpdate)
+        self._addThumbnails()
+
+    def _get_visible_range(self):
+        timeline_left, timeline_right = self._get_visible_timeline_range()
+        element_left = timeline_left - self.bElement.props.start + self.bElement.props.in_point
+        element_left = max(element_left, self.bElement.props.in_point)
+
+        element_right = timeline_right - self.bElement.props.start + self.bElement.props.in_point
+        element_right = min(element_right, self.bElement.props.in_point + self.bElement.props.duration)
+
+        return (element_left, element_right)
+
+    # TODO: move to Timeline or to utils
+    def _get_visible_timeline_range(self):
+        # determine the visible left edge of the timeline
+        # TODO: isn't there some easier way to get the scroll point of the ScrollActor?
+        # timeline_left = -(self.timeline.get_transform().xw - self.timeline.props.x)
+        timeline_left = self.timeline.get_scroll_point().x
+
+        # determine the width of the pipeline
+        # by intersecting the timeline's and the stage's allocation
+        timeline_allocation = self.timeline.props.allocation
+        stage_allocation = self.timeline.get_stage().props.allocation
+
+        timeline_rect = Clutter.Rect()
+        timeline_rect.init(timeline_allocation.x1,
+                           timeline_allocation.y1,
+                           timeline_allocation.x2 - timeline_allocation.x1,
+                           timeline_allocation.y2 - timeline_allocation.y1)
+
+        stage_rect = Clutter.Rect()
+        stage_rect.init(stage_allocation.x1,
+                        stage_allocation.y1,
+                        stage_allocation.x2 - stage_allocation.x1,
+                        stage_allocation.y2 - stage_allocation.y1)
+
+        has_intersection, intersection = timeline_rect.intersection(stage_rect)
+
+        if not has_intersection:
+            return (0, 0)
+
+        timeline_width = intersection.size.width
+
+        # determine the visible right edge of the timeline
+        timeline_right = timeline_left + timeline_width
+
+        # convert to nanoseconds
+        time_left = Zoomable.pixelToNs(timeline_left)
+        time_right = Zoomable.pixelToNs(timeline_right)
+
+        return (time_left, time_right)
 
     # Callbacks
 
@@ -1799,28 +1874,19 @@ class VideoPreviewer(Clutter.Actor, Zoomable):
         if message.type == Gst.MessageType.ELEMENT and \
                 message.src == self.gdkpixbufsink:
             struct = message.get_structure()
-
-            # TODO: does struct.get_name() work?
-            #if struct.get_name() == "pixbuf":
-
-            # TODO: there exists no value named "timestamp"
-            #self._finishThumbnail(struct.get_value("pixbuf"), struct.get_value("timestamp"))
-            GLib.idle_add(self._finishThumbnail, struct.get_value("pixbuf"),
-                    struct.get_value("timestamp"))
+            struct_name = struct.get_name()
+            if struct_name == "preroll-pixbuf":
+                self._setThumbnail(struct.get_value("stream-time"), struct.get_value("pixbuf"))
+        elif message.type == Gst.MessageType.ASYNC_DONE:
+            self._create_next_thumb()
         return Gst.BusSyncReply.PASS
 
-    #bElement = receiver()
-
-    #@handler(bElement, "notify::duration")
-    #@handler(bElement, "notify::in-point")
-    def element_changed(self, unused_bElement, unused_start_duration):
-        self.duration = self.bElement.get_duration()
-        self.in_point = self.bElement.get_inpoint()
-        GLib.idle_add(self._addThumbnails)
+    def element_changed(self, unused_bElement, unused_value):
+        self.duration = max(self.duration, self.bElement.props.duration)
+        self._addThumbnails()
 
 
 class Thumbnail(Clutter.Actor):
-
     def __init__(self, width, height):
         Clutter.Actor.__init__(self)
         image = Clutter.Image.new()
@@ -1833,8 +1899,11 @@ class Thumbnail(Clutter.Actor):
     def set_from_gdkpixbuf(self, gdkpixbuf):
         row_stride = gdkpixbuf.get_rowstride()
         pixel_data = gdkpixbuf.get_pixels()
-        # Cogl.PixelFormat.RGB_888 := 2
-        self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGB_888, self.width, self.height, row_stride)
+        alpha = gdkpixbuf.get_has_alpha()
+        if alpha:
+            self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGBA_8888, self.width, self.height, row_stride)
+        else:
+            self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGB_888, self.width, self.height, row_stride)
 
 
 # TODO: replace with utils.misc.hash_file
@@ -1870,14 +1939,15 @@ class ThumbnailCache(object):
     def __init__(self, uri):
         object.__init__(self)
         # TODO: replace with utils.misc.hash_file
-        self.hash = hash_file(Gst.uri_get_location(uri))
+        filehash = hash_file(Gst.uri_get_location(uri))
         # TODO: replace with pitivi.settings.xdg_cache_home()
         cache_dir = get_dir(os.path.join(xdg_dirs.xdg_cache_home, "pitivi"), autocreate)
-        dbfile = os.path.join(get_dir(os.path.join(cache_dir, "thumbs")), self.hash)
+        dbfile = os.path.join(get_dir(os.path.join(cache_dir, "thumbs")), filehash)
         self.conn = sqlite3.connect(dbfile)
         self.cur = self.conn.cursor()
-        self.cur.execute("CREATE TABLE IF NOT EXISTS Thumbs (Time INTEGER NOT NULL PRIMARY KEY,\
-            Data BLOB NOT NULL, Width INTEGER NOT NULL, Height INTEGER NOT NULL, Stride INTEGER NOT NULL)")
+        self.cur.execute("CREATE TABLE IF NOT EXISTS Thumbs\
+                          (Time INTEGER NOT NULL PRIMARY KEY,\
+                          Jpeg BLOB NOT NULL)")
 
     def __contains__(self, key):
         # check if item is present in on disk cache
@@ -1890,23 +1960,24 @@ class ThumbnailCache(object):
         self.cur.execute("SELECT * FROM Thumbs WHERE Time = ?", (key,))
         row = self.cur.fetchone()
         if row:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_data(row[1],
-                                                    GdkPixbuf.Colorspace.RGB,
-                                                    False,
-                                                    8,
-                                                    row[2],
-                                                    row[3],
-                                                    row[4],
-                                                    None,
-                                                    None)
+            jpeg = row[1]
+            loader = GdkPixbuf.PixbufLoader.new()
+            # TODO: what do to if any of the following calls fails?
+            loader.write(jpeg)
+            loader.close()
+            pixbuf = loader.get_pixbuf()
             return pixbuf
         raise KeyError(key)
 
     def __setitem__(self, key, value):
-        blob = sqlite3.Binary(bytearray(value.get_pixels()))
+        success, jpeg = value.save_to_bufferv("jpeg", ["quality", None], ["90"])
+        if not success:
+            self.warning("JPEG compression failed")
+            return
+        blob = sqlite3.Binary(jpeg)
         #Replace if the key already existed
         self.cur.execute("DELETE FROM Thumbs WHERE  time=?", (key,))
-        self.cur.execute("INSERT INTO Thumbs VALUES (?,?,?,?,?)", (key, blob, value.get_width(), value.get_height(), value.get_rowstride()))
+        self.cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
         self.conn.commit()
 
 if __name__ == "__main__":
