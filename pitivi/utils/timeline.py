@@ -49,6 +49,40 @@ class TimelineError(Exception):
     pass
 
 
+class Selected(Signallable):
+    """
+    A simple class that let us emit a selected-changed signal
+    when needed, and that can be check directly to know if the
+    object is selected or not.
+
+    This is meant only for individual elements, do not confuse this with
+    utils.timeline's "Selection" class.
+    """
+
+    __signals__ = {
+        "selected-changed": []}
+
+    def __init__(self):
+        self._selected = False
+        self.movable = True
+
+    def __nonzero__(self):
+        """
+        checking a Selected object is the same as checking its _selected
+        property
+        """
+        return self._selected
+
+    def getSelected(self):
+        return self._selected
+
+    def setSelected(self, selected):
+        self._selected = selected
+        self.emit("selected-changed", selected)
+
+    selected = property(getSelected, setSelected)
+
+
 class Selection(Signallable):
     """
     A collection of L{GES.Clip}.

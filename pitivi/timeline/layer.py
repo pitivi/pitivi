@@ -86,7 +86,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         self.name_entry.connect("focus-in-event", self._focusChangeCb, False)
         self.name_entry.connect("focus-out-event", self._focusChangeCb, True)
         self.name_entry.connect("button_press_event", self._buttonPressCb)
-        self.name_entry.drag_dest_unset()
+#        self.name_entry.drag_dest_unset()
         self.name_entry.set_sensitive(False)
 
         # 'Solo' toggle button
@@ -153,9 +153,9 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         self.popup.show_all()
 
         # Drag and drop
-        self.drag_source_set(Gdk.ModifierType.BUTTON1_MASK,
-                             [LAYER_CONTROL_TARGET_ENTRY],
-                             Gdk.DragAction.MOVE)
+#        self.drag_source_set(Gdk.ModifierType.BUTTON1_MASK,
+#                             [LAYER_CONTROL_TARGET_ENTRY],
+#                             Gdk.DragAction.MOVE)
 
     def getSelected(self):
         return self._selected
@@ -197,7 +197,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         """
         Look if user selected layer or wants popup menu
         """
-        self._app.gui.timeline_ui.controls.selectLayerControl(self)
+        self._app.selectLayerControl(self)
         if event.button == 3:
             self.popup.popup(None, None, None, None, event.button, event.time)
 
@@ -357,7 +357,7 @@ class TwoStateButton(Gtk.Button):
     def set_states(self, state1, state2):
         self.states = {True: state1, False: state2}
 
-    def  _clickedCb(self, widget):
+    def _clickedCb(self, widget):
         self._state = not self._state
 
         self.set_label(self.states[self._state])

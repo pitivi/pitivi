@@ -967,7 +967,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if project.pipeline is not None:
             project.pipeline.deactivatePositionListener()
 
-        self.timeline_ui.timeline = None
+        self.timeline_ui.bTimeline = None
         self.clipconfig.timeline = None
         return False
 
