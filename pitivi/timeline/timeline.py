@@ -1633,11 +1633,11 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
         self.bElement = bElement
         self.timeline = timeline
 
-        self.bElement.connect("notify::duration", self.element_changed)
-        self.bElement.connect("notify::in-point", self.element_changed)
-        self.bElement.connect("notify::start", self.element_changed)
+        self.bElement.connect("notify::duration", self.duration_changed)
+        self.bElement.connect("notify::in-point", self._inpoint_changed_cb)
+        self.bElement.connect("notify::start", self.start_changed)
 
-        self.timeline.connect("scrolled", self._update)
+        self.timeline.connect("scrolled", self._scroll_changed)
 
         self.duration = self.bElement.props.duration
 
@@ -1659,10 +1659,20 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
 
         self._startThumbnailing()
 
+        self.callback_id = None
+
     # Internal API
 
-    def _update(self, unused_msg_source):
-        self._addThumbnails()
+    def _scroll_changed(self, unused):
+        self._updateWishlist()
+
+    def start_changed(self, unused_bElement, unused_value):
+        self._updateWishlist()
+
+    def _update(self, unused_msg_source=None):
+        if self.callback_id:
+            GLib.source_remove(self.callback_id)
+        self.callback_id = GLib.idle_add(self._addAllThumbnails, priority=GLib.PRIORITY_LOW)
 
     def _setupPipeline(self):
         """
@@ -1671,14 +1681,14 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
         It has the form "playbin ! thumbnailsink" where thumbnailsink
         is a Bin made out of "videorate ! capsfilter ! gdkpixbufsink"
         """
-        # TODO: don't hardcode the framerate but compute from thumb_period
+        # TODO: don't hardcode framerate
         self.pipeline = Gst.parse_launch(
             "uridecodebin uri={uri} ! "
             "videoconvert ! "
             "videorate ! "
             "videoscale method=lanczos ! "
             "capsfilter caps=video/x-raw,format=(string)RGBA,height=(int){height},"
-            "pixel-aspect-ratio=(fraction)1/1,framerate=(fraction)2/1 ! "
+            "pixel-aspect-ratio=(fraction)1/1,framerate=2/1 ! "
             "gdkpixbufsink name=gdkpixbufsink".format(uri=self.uri, height=self.thumb_height))
 
         # get the gdkpixbufsink and the sinkpad
@@ -1744,16 +1754,48 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
             Gst.SeekType.SET, time,
             Gst.SeekType.NONE, -1)
 
-    def _addThumbnails(self):
+    def _addAllThumbnails(self):
+        self.remove_all_children()
+        self.thumbs = {}
+
+        thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + self.thumb_margin)
+
+        # quantize thumb length to thumb_period
+        # TODO: replace with a call to utils.misc.quantize:
+        thumb_duration = (thumb_duration_tmp // self.thumb_period) * self.thumb_period
+        # make sure that the thumb duration after the quantization isn't smaller than before
+        if thumb_duration < thumb_duration_tmp:
+            thumb_duration += self.thumb_period
+
+        # make sure that we don't show thumbnails more often than thumb_period
+        thumb_duration = max(thumb_duration, self.thumb_period)
+
+        current_time = 0
+        while current_time < self.duration:
+            thumb = Thumbnail(self.thumb_width, self.thumb_height)
+            thumb.set_position(Zoomable.nsToPixel(current_time), self.thumb_margin)
+            self.add_child(thumb)
+            self.thumbs[current_time] = thumb
+            if current_time in self.thumb_cache:
+                gdkpixbuf = self.thumb_cache[current_time]
+                self.thumbs[current_time].set_from_gdkpixbuf(gdkpixbuf)
+            current_time += thumb_duration
+
+        self._updateWishlist()
+
+    def _inpoint_changed_cb(self, unused_bElement, unused_value):
+        position = Clutter.Point()
+        position.x = Zoomable.nsToPixel(self.bElement.props.in_point)
+        self.scroll_to_point(position)
+        self._updateWishlist()
+
+    def _updateWishlist(self):
         """
         Adds thumbnails for the whole clip.
 
         Takes the zoom setting into account and removes potentially
         existing thumbnails prior to adding the new ones.
         """
-        # TODO: check if duration or zoomratio really changed?
-        self.remove_all_children()
-        self.thumbs = {}
         self.wishlist = []
 
         # calculate unquantized length of a thumb in nano seconds
@@ -1775,21 +1817,9 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
 
         current_time = element_left
         while current_time < element_right:
-            thumb = Thumbnail(self.thumb_width, self.thumb_height)
-            thumb.set_position(Zoomable.nsToPixel(current_time), self.thumb_margin)
-            self.add_child(thumb)
-            self.thumbs[current_time] = thumb
-            if current_time in self.thumb_cache:
-                gdkpixbuf = self.thumb_cache[current_time]
-                self.thumbs[current_time].set_from_gdkpixbuf(gdkpixbuf)
-            else:
-                if not current_time in self.wishlist:
-                    self.wishlist.append(current_time)
+            if current_time not in self.thumb_cache:
+                self.wishlist.append(current_time)
             current_time += thumb_duration
-
-        position = Clutter.Point()
-        position.x = Zoomable.nsToPixel(self.bElement.props.in_point)
-        self.scroll_to_point(position)
 
     def _get_wish(self):
         """Returns a wish that is also in the queue or None
@@ -1805,6 +1835,8 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
         # TODO: is "time" guaranteed to be nanosecond precise?
         # => __tim says: "that's how it should be"
         # => also see gst-plugins-good/tests/icles/gdkpixbufsink-test
+        # => Daniel: It is *not* nanosecond precise when we remove the videorate
+        #            element from the pipeline
         if time in self.queue:
             self.queue.remove(time)
 
@@ -1816,7 +1848,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
     # Interface (Zoomable)
 
     def zoomChanged(self):
-        self._addThumbnails()
+        self._update()
 
     def _get_visible_range(self):
         timeline_left, timeline_right = self._get_visible_timeline_range()
@@ -1881,9 +1913,11 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
             self._create_next_thumb()
         return Gst.BusSyncReply.PASS
 
-    def element_changed(self, unused_bElement, unused_value):
-        self.duration = max(self.duration, self.bElement.props.duration)
-        self._addThumbnails()
+    def duration_changed(self, unused_bElement, unused_value):
+        new_duration = max(self.duration, self.bElement.props.duration)
+        if new_duration > self.duration:
+            self.duration = new_duration
+            self._update()
 
 
 class Thumbnail(Clutter.Actor):
