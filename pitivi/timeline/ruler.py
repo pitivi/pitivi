@@ -87,6 +87,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
         self.connect('draw', self.drawCb)
         self.connect('configure-event', self.configureEventCb)
+        self.callback_id = None
 
     def _hadjValueChangedCb(self, hadj):
         self.pixbuf_offset = self.hadj.get_value()
@@ -94,9 +95,16 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
 ## Zoomable interface override
 
-    def zoomChanged(self):
+    def _maybeUpdate(self):
         self.need_update = True
         self.queue_draw()
+        self.callback_id = None
+        return False
+
+    def zoomChanged(self):
+        if self.callback_id is not None:
+            GObject.source_remove(self.callback_id)
+        self.callback_id = GObject.timeout_add(100, self._maybeUpdate)
 
 ## timeline position changed method
 
@@ -153,8 +161,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # The distinction between the ruler and timeline canvas is theoretical.
         # If the user interacts with the ruler, have the timeline steal focus
         # from other widgets. This reactivates keyboard shortcuts for playback.
-        timeline = self.app.gui.timeline_ui
-        timeline._canvas.grab_focus(timeline._root_item)
+        #timeline = self.app.gui.timeline_ui
+        #timeline._canvas.grab_focus(timeline._root_item)
         return False
 
     def do_motion_notify_event(self, event):
