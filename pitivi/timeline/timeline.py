@@ -790,9 +790,16 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         element.props.y = y
         element.restore_easing_state()
 
-    def _redraw(self):
+    def _updateSize(self):
         self.save_easing_state()
+        self.set_easing_duration(0)
         self.props.width = self.nsToPixel(self.bTimeline.get_duration()) + 250
+        self.restore_easing_state()
+        self._container.updateHScrollAdjustments()
+
+    def _redraw(self):
+        self._updateSize()
+        self.save_easing_state()
         for element in self.elements:
             self._setElementX(element)
         self.restore_easing_state()
@@ -872,7 +879,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         pass
 
     def _trackElementAddedCb(self, track, bElement):
-        print "trackelement added"
+        self._updateSize()
         self._addTimelineElement(track, bElement)
 
     def _trackElementRemovedCb(self, track, bElement):
@@ -882,12 +889,14 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._setElementY(element)
 
     def _elementStartChangedCb(self, bElement, start, element):
+        self._updateSize()
         if element.isDragged:
             self._setElementX(element, ease=False)
         else:
             self._setElementX(element)
 
     def _elementDurationChangedCb(self, bElement, duration, element):
+        self._updateSize()
         element.update(False)
 
     def _elementInPointChangedCb(self, bElement, inpoint, element):
@@ -1115,15 +1124,8 @@ class Timeline(Gtk.VBox, Zoomable):
         self.point.y = 0
 
         self.zoomBox = ZoomBox(self)
-#        self.pack_end(self.zoomBox, False, False, False)
 
         self._packScrollbars(self)
-
-#        self.viewer = ViewerWidget()
-
-#        self.pack_end(self.viewer, False, False, False)
-
-#        self.viewer.set_size_request(200, 200)
 
         stage = self.embed.get_stage()
         stage.set_background_color(Clutter.Color.new(31, 30, 33, 255))
@@ -1149,8 +1151,6 @@ class Timeline(Gtk.VBox, Zoomable):
         stage.connect("button-press-event", self._clickedCb)
         self.timeline = widget
 
-        print self.timeline
-
         self.scrolled = 0
 
         self._createActions()
@@ -1162,8 +1162,6 @@ class Timeline(Gtk.VBox, Zoomable):
                 self._snapDistanceChangedCb)
 
         self.show_all()
-
-#        self.ruler.hide()
 
     def insertEnd(self, assets):
         """
@@ -1299,11 +1297,6 @@ class Timeline(Gtk.VBox, Zoomable):
 
         self._vscrollbar = Gtk.VScrollbar(self.vadj)
 
-        def scrollbar_show_cb(scrollbar):
-            scrollbar.hide()
-
-#        self._vscrollbar.connect("show", scrollbar_show_cb)
-
         self._hscrollBar = Gtk.HScrollbar(self.hadj)
         vbox.pack_end(self._hscrollBar, False, True, False)
 
@@ -1360,7 +1353,7 @@ class Timeline(Gtk.VBox, Zoomable):
         contents_size = Zoomable.nsToPixel(self.bTimeline.props.duration)
 
         widgets_width = controls_width + scrollbar_width
-        end_padding = 250  # Provide some space for clip insertion at the end
+        end_padding = 500  # Provide some space for clip insertion at the end
 
         self.hadj.props.lower = 0
         self.hadj.props.upper = contents_size + widgets_width + end_padding
