@@ -1738,6 +1738,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
     def _create_next_thumb(self):
         if not self.queue:
             # nothing left to do
+            self.thumb_cache.commit()
             return
         wish = self._get_wish()
         if wish:
@@ -2012,6 +2013,10 @@ class ThumbnailCache(object):
         #Replace if the key already existed
         self.cur.execute("DELETE FROM Thumbs WHERE  time=?", (key,))
         self.cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
+        #self.conn.commit()
+
+    def commit(self):
+        print("commit")
         self.conn.commit()
 
 if __name__ == "__main__":
