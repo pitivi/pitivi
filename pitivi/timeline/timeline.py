@@ -366,8 +366,11 @@ class TimelineElement(Clutter.Actor, Zoomable):
             self.border.set_easing_duration(600)
             self.preview.save_easing_state()
             self.preview.set_easing_duration(600)
-            self.rightHandle.save_easing_state()
-            self.rightHandle.set_easing_duration(600)
+            try:
+                self.rightHandle.save_easing_state()
+                self.rightHandle.set_easing_duration(600)
+            except AttributeError:  # Element doesnt't have handles
+                pass
 
         self.marquee.set_size(width, height)
         self.background.props.width = width
@@ -377,50 +380,20 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.props.width = width
         self.props.height = height
         self.preview.set_size(width, height)
-        self.rightHandle.set_position(width - self.rightHandle.props.width, 0)
+        try:
+            self.rightHandle.set_position(width - self.rightHandle.props.width, 0)
+        except AttributeError:  # Element doesnt't have handles
+                pass
 
         if ease:
             self.background.restore_easing_state()
             self.border.restore_easing_state()
             self.preview.restore_easing_state()
-            self.rightHandle.restore_easing_state()
+            try:
+                self.rightHandle.restore_easing_state()
+            except AttributeError:  # Element doesnt't have handles
+                pass
             self.restore_easing_state()
-
-    def updateGhostclip(self, priority, y, isControlledByBrother):
-        # Only tricky part of the code, can be called by the linked track element.
-        if priority < 0:
-            return
-
-        # Here we make it so the calculation is the same for audio and video.
-        if self.track_type == GES.TrackType.AUDIO and not isControlledByBrother:
-            y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
-
-        # And here we take into account the fact that the pointer might actually be
-        # on the other track element, meaning we have to offset it.
-        if isControlledByBrother:
-            if self.track_type == GES.TrackType.AUDIO:
-                y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
-            else:
-                y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
-
-        # Would that be a new layer ?
-        if priority == self.nbrLayers:
-            self.ghostclip.set_size(self.props.width, SPACING)
-            self.ghostclip.props.y = priority * (EXPANDED_SIZE + SPACING)
-            if self.track_type == GES.TrackType.AUDIO:
-                self.ghostclip.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
-            self.ghostclip.props.visible = True
-        else:
-            # No need to mockup on the same layer
-            if priority == self.bElement.get_parent().get_layer().get_priority():
-                self.ghostclip.props.visible = False
-            # We would be moving to an existing layer.
-            elif priority < self.nbrLayers:
-                self.ghostclip.set_size(self.props.width, EXPANDED_SIZE)
-                self.ghostclip.props.y = priority * (EXPANDED_SIZE + SPACING) + SPACING
-                if self.track_type == GES.TrackType.AUDIO:
-                    self.ghostclip.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
-                self.ghostclip.props.visible = True
 
     def update(self, ease):
         size = self.bElement.get_duration()
@@ -435,10 +408,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
     # Internal API
 
     def _createGhostclip(self):
-        self.ghostclip = Clutter.Actor.new()
-        self.ghostclip.set_background_color(Clutter.Color.new(100, 100, 100, 50))
-        self.ghostclip.props.visible = False
-        self.timeline.add_child(self.ghostclip)
+        pass
 
     def _createBorder(self):
         self.border = RoundedRectangle(0, 0, 5, 5)
@@ -451,25 +421,10 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.add_child(self.border)
 
     def _createBackground(self, track):
-        self.background = RoundedRectangle(0, 0, 5, 5)
-        if track.type == GES.TrackType.AUDIO:
-            color = Cogl.Color()
-            color.init_from_4ub(70, 79, 118, 255)
-        else:
-            color = Cogl.Color()
-            color.init_from_4ub(225, 232, 238, 255)
-        self.background.set_color(color)
-        self.background.set_border_width(3)
-
-        self.background.set_position(0, 0)
-        self.add_child(self.background)
+        pass
 
     def _createHandles(self):
-        self.leftHandle = TrimHandle(self, True)
-        self.rightHandle = TrimHandle(self, False)
-        self.add_child(self.leftHandle)
-        self.add_child(self.rightHandle)
-        self.leftHandle.set_position(0, 0)
+        pass
 
     def _createPreview(self):
         self.preview = get_preview_for_object(self.bElement, self.timeline)
@@ -509,6 +464,93 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
     # Callbacks
 
+    def _clickedCb(self, action, actor):
+        pass
+
+    def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
+        pass
+
+    def _dragProgressCb(self, action, actor, delta_x, delta_y):
+        return False
+
+    def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
+        pass
+
+    def _selectedChangedCb(self, selected, isSelected):
+        self.marquee.props.visible = isSelected
+
+
+class ClipElement(TimelineElement):
+    def __init__(self, bElement, track, timeline):
+        TimelineElement.__init__(self, bElement, track, timeline)
+
+    # public API
+    def updateGhostclip(self, priority, y, isControlledByBrother):
+        # Only tricky part of the code, can be called by the linked track element.
+        if priority < 0:
+            return
+
+        # Here we make it so the calculation is the same for audio and video.
+        if self.track_type == GES.TrackType.AUDIO and not isControlledByBrother:
+            y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
+
+        # And here we take into account the fact that the pointer might actually be
+        # on the other track element, meaning we have to offset it.
+        if isControlledByBrother:
+            if self.track_type == GES.TrackType.AUDIO:
+                y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
+            else:
+                y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
+
+        # Would that be a new layer ?
+        if priority == self.nbrLayers:
+            self.ghostclip.set_size(self.props.width, SPACING)
+            self.ghostclip.props.y = priority * (EXPANDED_SIZE + SPACING)
+            if self.track_type == GES.TrackType.AUDIO:
+                self.ghostclip.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
+            self.ghostclip.props.visible = True
+        else:
+            # No need to mockup on the same layer
+            if priority == self.bElement.get_parent().get_layer().get_priority():
+                self.ghostclip.props.visible = False
+            # We would be moving to an existing layer.
+            elif priority < self.nbrLayers:
+                self.ghostclip.set_size(self.props.width, EXPANDED_SIZE)
+                self.ghostclip.props.y = priority * (EXPANDED_SIZE + SPACING) + SPACING
+                if self.track_type == GES.TrackType.AUDIO:
+                    self.ghostclip.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
+                self.ghostclip.props.visible = True
+
+    # private API
+
+    def _createGhostclip(self):
+        self.ghostclip = Clutter.Actor.new()
+        self.ghostclip.set_background_color(Clutter.Color.new(100, 100, 100, 50))
+        self.ghostclip.props.visible = False
+        self.timeline.add_child(self.ghostclip)
+
+    def _createHandles(self):
+        self.leftHandle = TrimHandle(self, True)
+        self.rightHandle = TrimHandle(self, False)
+        self.add_child(self.leftHandle)
+        self.add_child(self.rightHandle)
+        self.leftHandle.set_position(0, 0)
+
+    def _createBackground(self, track):
+        self.background = RoundedRectangle(0, 0, 5, 5)
+        if track.type == GES.TrackType.AUDIO:
+            color = Cogl.Color()
+            color.init_from_4ub(70, 79, 118, 255)
+        else:
+            color = Cogl.Color()
+            color.init_from_4ub(225, 232, 238, 255)
+        self.background.set_color(color)
+        self.background.set_border_width(3)
+
+        self.background.set_position(0, 0)
+        self.add_child(self.background)
+
+    # Callbacks
     def _clickedCb(self, action, actor):
         #TODO : Let's be more specific, masks etc ..
         self.timeline.selection.setToObj(self.bElement, SELECT)
@@ -572,6 +614,21 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
     def _selectedChangedCb(self, selected, isSelected):
         self.marquee.props.visible = isSelected
+
+
+class TransitionElement(TimelineElement):
+    def __init__(self, bElement, track, timeline):
+        TimelineElement.__init__(self, bElement, track, timeline)
+
+    def _createBackground(self, track):
+        self.background = RoundedRectangle(0, 0, 5, 5)
+        color = Cogl.Color()
+        color.init_from_4ub(100, 100, 100, 125)
+        self.background.set_color(color)
+        self.background.set_border_width(3)
+
+        self.background.set_position(0, 0)
+        self.add_child(self.background)
 
 
 class TimelineStage(Clutter.ScrollActor, Zoomable):
@@ -651,8 +708,12 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.playhead.set_z_position(1)
 
     def _addTimelineElement(self, track, bElement):
-        element = TimelineElement(bElement, track, self)
-        element.set_z_position(-1)
+        if isinstance(bElement.get_parent(), GES.TransitionClip):
+            element = TransitionElement(bElement, track, self)
+            element.set_z_position(0)
+        else:
+            element = ClipElement(bElement, track, self)
+            element.set_z_position(-1)
 
         bElement.connect("notify::start", self._elementStartChangedCb, element)
         bElement.connect("notify::duration", self._elementDurationChangedCb, element)
@@ -668,9 +729,14 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._setElementX(element)
 
     def _removeTimelineElement(self, track, bElement):
-        bElement.disconnect_by_func("notify::start", self._elementStartChangedCb)
-        bElement.disconnect_by_func("notify::duration", self._elementDurationChangedCb)
-        bElement.disconnect_by_func("notify::in-point", self._elementInPointChangedCb)
+        bElement.disconnect_by_func(self._elementStartChangedCb)
+        bElement.disconnect_by_func(self._elementDurationChangedCb)
+        bElement.disconnect_by_func(self._elementInPointChangedCb)
+        for element in self.elements:
+            if element.bElement == bElement:
+                break
+        self.elements.remove(element)
+        self.remove_child(element)
 
     def _setElementX(self, element, ease=True):
         if ease:
@@ -1602,6 +1668,9 @@ class Timeline(Gtk.VBox, Zoomable):
 
 
 def get_preview_for_object(bElement, timeline):
+    # Fixme special preview for transitions, titles
+    if not isinstance(bElement.get_parent(), GES.UriClip):
+        return Clutter.Actor()
     track_type = bElement.get_track_type()
     if track_type == GES.TrackType.AUDIO:
         # FIXME: RandomAccessAudioPreviewer doesn't work yet
