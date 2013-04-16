@@ -602,6 +602,8 @@ class ClipElement(TimelineElement):
         priority = self._getLayerForY(coords[1] + self.timeline._container.point.y)
         priority = min(priority, len(self.timeline.bTimeline.get_layers()))
 
+        self.timeline._snapEndedCb()
+
         self.setDragged(False)
 
         self.ghostclip.props.visible = False
@@ -639,10 +641,12 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def __init__(self, container):
         Clutter.ScrollActor.__init__(self)
         Zoomable.__init__(self)
+        self.bTimeline = None
         self.set_background_color(Clutter.Color.new(31, 30, 33, 255))
         self.elements = []
         self.selection = Selection()
         self._createPlayhead()
+        self._createSnapIndicator()
         self._container = container
         self.lastPosition = 0
         self._scroll_point = Clutter.Point()
@@ -657,21 +661,30 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         @param bTimeline : the backend GES.Timeline which we interface.
         Does all the necessary connections.
         """
+
+        if self.bTimeline is not None:
+            self.bTimeline.disconnect_by_func(self._trackAddedCb)
+            self.bTimeline.disconnect_by_func(self._trackRemovedCb)
+            self.bTimeline.disconnect_by_func(self._layerAddedCb)
+            self.bTimeline.disconnect_by_func(self._layerRemovedCb)
+            self.bTimeline.disconnect_by_func(self._snapCb)
+            self.bTimeline.disconnect_by_func(self._snapEndedCb)
+
         self.bTimeline = bTimeline
 
-        self.bTimeline.connect("track-added", self._trackAddedCb)
-
         for track in bTimeline.get_tracks():
-            self.connectTrack(track)
+            self._connectTrack(track)
         for layer in bTimeline.get_layers():
             self._add_layer(layer)
+
+        self.bTimeline.connect("track-added", self._trackAddedCb)
+        self.bTimeline.connect("track-removed", self._trackRemovedCb)
         self.bTimeline.connect("layer-added", self._layerAddedCb)
         self.bTimeline.connect("layer-removed", self._layerRemovedCb)
-        self.zoomChanged()
+        self.bTimeline.connect("snapping-started", self._snapCb)
+        self.bTimeline.connect("snapping-ended", self._snapEndedCb)
 
-    def connectTrack(self, track):
-        track.connect("track-element-added", self._trackElementAddedCb)
-        track.connect("track-element-removed", self._trackElementRemovedCb)
+        self.zoomChanged()
 
     #Stage was clicked with nothing under the pointer
     def emptySelection(self):
@@ -688,6 +701,14 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         return None
 
     #Internal API
+
+    def _connectTrack(self, track):
+        track.connect("track-element-added", self._trackElementAddedCb)
+        track.connect("track-element-removed", self._trackElementRemovedCb)
+
+    def _disconnectTrack(self, track):
+        track.disconnect_by_func(self._trackElementAddedCb)
+        track.disconnect_by_func(self._trackElementRemovedCb)
 
     def _positionCb(self, pipeline, position):
         self.playhead.props.x = self.nsToPixel(position)
@@ -706,6 +727,14 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.add_child(self.playhead)
         self.playhead.set_easing_duration(0)
         self.playhead.set_z_position(1)
+
+    def _createSnapIndicator(self):
+        self._snap_indicator = Clutter.Actor()
+        self._snap_indicator.set_background_color(Clutter.Color.new(0, 0, 250, 200))
+        self._snap_indicator.props.visible = False
+        self._snap_indicator.props.width = 3
+        self._snap_indicator.props.y = 0
+        self.add_child(self._snap_indicator)
 
     def _addTimelineElement(self, track, bElement):
         if isinstance(bElement.get_parent(), GES.TransitionClip):
@@ -798,6 +827,22 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     # Callbacks
 
+    # snapping indicator
+    def _snapCb(self, unused_timeline, obj1, obj2, position):
+        """
+        Display or hide a snapping indicator line
+        """
+        if position == 0:
+            self._snapEndedCb()
+        else:
+            self._snap_indicator.props.x = Zoomable.nsToPixel(position)
+            height = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING) * 2
+            self._snap_indicator.props.height = height
+            self._snap_indicator.props.visible = True
+
+    def _snapEndedCb(self, *args):
+        self._snap_indicator.props.visible = False
+
     def _layerAddedCb(self, timeline, layer):
         self._add_layer(layer)
 
@@ -815,7 +860,10 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         clip.disconnect_by_func(self._elementRemovedCb)
 
     def _trackAddedCb(self, timeline, track):
-        self.connectTrack(track)
+        self._connectTrack(track)
+
+    def _trackRemovedCb(self, timeline, track):
+        self._disconnectTrack(track)
 
     def _elementAddedCb(self, clip, bElement):
         pass
@@ -1110,6 +1158,9 @@ class Timeline(Gtk.VBox, Zoomable):
         self._projectmanager = None
         self._project = None
 
+        self._settings.connect("edgeSnapDeadbandChanged",
+                self._snapDistanceChangedCb)
+
         self.show_all()
 
 #        self.ruler.hide()
@@ -1291,6 +1342,10 @@ class Timeline(Gtk.VBox, Zoomable):
         self.controls.scroll_to_point(point)
 
     def zoomChanged(self):
+        if self._settings and self.bTimeline:
+            # zoomChanged might be called various times before the UI is ready
+            self.bTimeline.props.snapping_distance = \
+                Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
         self.updateHScrollAdjustments()
 
     def updateHScrollAdjustments(self):
@@ -1456,6 +1511,11 @@ class Timeline(Gtk.VBox, Zoomable):
         self.timeline.setPipeline(self.pipeline)
         GObject.timeout_add(1000, self.doSeek)
         Zoomable.setZoomLevel(50)
+
+    def _snapDistanceChangedCb(self, settings):
+        if self.bTimeline:
+            self.bTimeline.props.snapping_distance = \
+                Zoomable.pixelToNs(settings.edgeSnapDeadband)
 
     def _projectChangedCb(self, app, project, unused_fully_loaded):
         """
