@@ -1627,7 +1627,21 @@ class Timeline(Gtk.VBox, Zoomable):
 
     def setTimeline(self, bTimeline):
         self.bTimeline = bTimeline
+        self.timeline.selection.connect("selection-changed", self._selectionChangedCb)
         self.timeline.setTimeline(bTimeline)
+
+    def _selectionChangedCb(self, selection):
+        """
+        The selected clips on the timeline canvas have changed with the
+        "selection-changed" signal.
+
+        This is where you apply global UI changes, unlike individual
+        track elements' "selected-changed" signal from the Selected class.
+        """
+        if selection:
+            self.selection_actions.set_sensitive(True)
+        else:
+            self.selection_actions.set_sensitive(False)
 
     def _scrollEventCb(self, embed, event):
         # FIXME : see https://bugzilla.gnome.org/show_bug.cgi?id=697522
