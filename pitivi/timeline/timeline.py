@@ -1127,14 +1127,20 @@ class Timeline(Gtk.VBox, Zoomable):
         layer = self._ensureLayer()[0]
         self.bTimeline.enable_update(False)
         for asset in assets:
-            if asset.is_image():
+            if isinstance(asset, GES.TitleClip):
+                clip_duration = asset.get_duration()
+            elif asset.is_image():
                 clip_duration = long(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
             else:
                 clip_duration = asset.get_duration()
 
             print "added asset"
-            layer.add_asset(asset, self.bTimeline.props.duration,
-                0, clip_duration, 1.0, asset.get_supported_formats())
+            if not isinstance(asset, GES.TitleClip):
+                layer.add_asset(asset, self.bTimeline.props.duration,
+                                0, clip_duration, 1.0, asset.get_supported_formats())
+            else:
+                asset.set_start(self.bTimeline.props.duration)
+                layer.add_clip(asset)
         self.bTimeline.enable_update(True)
 
     def setProjectManager(self, projectmanager):
