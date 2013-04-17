@@ -61,18 +61,20 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
 
         self.callback_id = None
 
+        self.counter = 0
+
     # Internal API
 
     def _scroll_changed(self, unused):
-        self._updateWishlist()
+        self._update()
 
     def start_changed(self, unused_bElement, unused_value):
-        self._updateWishlist()
+        self._update()
 
     def _update(self, unused_msg_source=None):
         if self.callback_id:
             GLib.source_remove(self.callback_id)
-        self.callback_id = GLib.idle_add(self._addAllThumbnails, priority=GLib.PRIORITY_LOW)
+        self.callback_id = GLib.idle_add(self._addVisibleThumbnails, priority=GLib.PRIORITY_LOW)
 
     def _setupPipeline(self):
         """
@@ -155,51 +157,11 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
             Gst.SeekType.SET, time,
             Gst.SeekType.NONE, -1)
 
-    def _addAllThumbnails(self):
+    def _addVisibleThumbnails(self):
         self.remove_all_children()
         self.thumbs = {}
-
-        thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + self.thumb_margin)
-
-        # quantize thumb length to thumb_period
-        # TODO: replace with a call to utils.misc.quantize:
-        thumb_duration = (thumb_duration_tmp // self.thumb_period) * self.thumb_period
-        # make sure that the thumb duration after the quantization isn't smaller than before
-        if thumb_duration < thumb_duration_tmp:
-            thumb_duration += self.thumb_period
-
-        # make sure that we don't show thumbnails more often than thumb_period
-        thumb_duration = max(thumb_duration, self.thumb_period)
-
-        current_time = 0
-        while current_time < self.duration:
-            thumb = Thumbnail(self.thumb_width, self.thumb_height)
-            thumb.set_position(Zoomable.nsToPixel(current_time), self.thumb_margin)
-            self.add_child(thumb)
-            self.thumbs[current_time] = thumb
-            if current_time in self.thumb_cache:
-                gdkpixbuf = self.thumb_cache[current_time]
-                self.thumbs[current_time].set_from_gdkpixbuf(gdkpixbuf)
-            current_time += thumb_duration
-
-        self._updateWishlist()
-
-    def _inpoint_changed_cb(self, unused_bElement, unused_value):
-        position = Clutter.Point()
-        position.x = Zoomable.nsToPixel(self.bElement.props.in_point)
-        self.scroll_to_point(position)
-        self._updateWishlist()
-
-    def _updateWishlist(self):
-        """
-        Adds thumbnails for the whole clip.
-
-        Takes the zoom setting into account and removes potentially
-        existing thumbnails prior to adding the new ones.
-        """
         self.wishlist = []
 
-        # calculate unquantized length of a thumb in nano seconds
         thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + self.thumb_margin)
 
         # quantize thumb length to thumb_period
@@ -218,9 +180,24 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
 
         current_time = element_left
         while current_time < element_right:
-            if current_time not in self.thumb_cache:
+            thumb = Thumbnail(self.thumb_width, self.thumb_height)
+            thumb.set_position(Zoomable.nsToPixel(current_time), self.thumb_margin)
+            self.add_child(thumb)
+            self.thumbs[current_time] = thumb
+            if current_time in self.thumb_cache:
+                gdkpixbuf = self.thumb_cache[current_time]
+                self.thumbs[current_time].set_from_gdkpixbuf(gdkpixbuf)
+            else:
                 self.wishlist.append(current_time)
             current_time += thumb_duration
+        self.counter += 1
+        print(self.counter)
+
+    def _inpoint_changed_cb(self, unused_bElement, unused_value):
+        position = Clutter.Point()
+        position.x = Zoomable.nsToPixel(self.bElement.props.in_point)
+        self.scroll_to_point(position)
+        self._update()
 
     def _get_wish(self):
         """Returns a wish that is also in the queue or None
