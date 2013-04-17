@@ -63,6 +63,8 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
 
         self.counter = 0
 
+        self._allAnimated = False
+
     # Internal API
 
     def _scroll_changed(self, unused):
@@ -159,6 +161,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
 
     def _addVisibleThumbnails(self):
         self.remove_all_children()
+        old_thumbs = self.thumbs.copy()
         self.thumbs = {}
         self.wishlist = []
 
@@ -186,10 +189,14 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
             self.thumbs[current_time] = thumb
             if current_time in self.thumb_cache:
                 gdkpixbuf = self.thumb_cache[current_time]
-                self.thumbs[current_time].set_from_gdkpixbuf(gdkpixbuf)
+                if self._allAnimated or current_time not in old_thumbs:
+                    self.thumbs[current_time].set_from_gdkpixbuf_animated(gdkpixbuf)
+                else:
+                    self.thumbs[current_time].set_from_gdkpixbuf(gdkpixbuf)
             else:
                 self.wishlist.append(current_time)
             current_time += thumb_duration
+        self._allAnimated = False
         self.counter += 1
         print(self.counter)
 
@@ -221,11 +228,13 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
         self.thumb_cache[time] = thumbnail
 
         if time in self.thumbs:
-            self.thumbs[time].set_from_gdkpixbuf(thumbnail)
+            self.thumbs[time].set_from_gdkpixbuf_animated(thumbnail)
 
     # Interface (Zoomable)
 
     def zoomChanged(self):
+        self.remove_all_children()
+        self._allAnimated = True
         self._update()
 
     def _get_visible_range(self):
@@ -305,7 +314,8 @@ class Thumbnail(Clutter.Actor):
         self.props.content = image
         self.width = width
         self.height = height
-        self.set_background_color(Clutter.Color.new(0, 100, 150, 100))
+        #self.set_background_color(Clutter.Color.new(0, 100, 150, 100))
+        self.set_opacity(0)
         self.set_size(self.width, self.height)
 
     def set_from_gdkpixbuf(self, gdkpixbuf):
@@ -316,6 +326,13 @@ class Thumbnail(Clutter.Actor):
             self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGBA_8888, self.width, self.height, row_stride)
         else:
             self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGB_888, self.width, self.height, row_stride)
+        self.set_opacity(255)
+
+    def set_from_gdkpixbuf_animated(self, gdkpixbuf):
+        self.save_easing_state()
+        self.set_easing_duration(750)
+        self.set_from_gdkpixbuf(gdkpixbuf)
+        self.restore_easing_state()
 
 
 # TODO: replace with utils.misc.hash_file
