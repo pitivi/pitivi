@@ -11,6 +11,13 @@ from pitivi.utils.ui import EXPANDED_SIZE, SPACING
 BORDER_WIDTH = 3  # For the timeline elements
 
 
+"""
+Convention throughout this file:
+Every GES element which name could be mistaken with a UI element
+is prefixed with a little b, example : bTimeline
+"""
+
+
 class VideoPreviewer(Clutter.ScrollActor, Zoomable):
     def __init__(self, bElement, timeline):
         """

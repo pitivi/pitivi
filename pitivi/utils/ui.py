@@ -58,7 +58,11 @@ PADDING = 6
 
 SPACING = 10
 
+PLAYHEAD_WIDTH = 2
+
 CANVAS_SPACING = 21
+
+CONTROL_WIDTH = 250
 
 # Layer creation blocking time in s
 LAYER_CREATION_BLOCK_TIME = 0.2

@@ -6,7 +6,7 @@ is prefixed with a little b, example : bTimeline
 
 import os
 
-from gi.repository import Clutter, Cogl, GES
+from gi.repository import Clutter, Cogl, GES, Gdk
 from pitivi.utils.timeline import Zoomable, EditingContext, Selection, SELECT, UNSELECT, Selected
 from previewers import VideoPreviewer, BORDER_WIDTH
 
@@ -18,6 +18,7 @@ def get_preview_for_object(bElement, timeline):
     # Fixme special preview for transitions, titles
     if not isinstance(bElement.get_parent(), GES.UriClip):
         return Clutter.Actor()
+
     track_type = bElement.get_track_type()
     if track_type == GES.TrackType.AUDIO:
         # FIXME: RandomAccessAudioPreviewer doesn't work yet
@@ -46,8 +47,10 @@ class RoundedRectangle(Clutter.Actor):
         Creates a new rounded rectangle
         """
         Clutter.Actor.__init__(self)
+
         self.props.width = width
         self.props.height = height
+
         self._arc = arc
         self._step = step
         self._border_width = border_width
@@ -114,18 +117,17 @@ class RoundedRectangle(Clutter.Actor):
 class TrimHandle(Clutter.Texture):
     def __init__(self, timelineElement, isLeft):
         Clutter.Texture.__init__(self)
-        self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
+
         self.isLeft = isLeft
+        self.isSelected = False
+        self.timelineElement = timelineElement
+        self.dragAction = Clutter.DragAction()
+
+        self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
         self.set_size(-1, EXPANDED_SIZE)
         self.hide()
-
-        self.isSelected = False
-
-        self.timelineElement = timelineElement
-
         self.set_reactive(True)
 
-        self.dragAction = Clutter.DragAction()
         self.add_action(self.dragAction)
 
         self.dragAction.connect("drag-begin", self._dragBeginCb)
@@ -134,6 +136,7 @@ class TrimHandle(Clutter.Texture):
 
         self.connect("enter-event", self._enterEventCb)
         self.connect("leave-event", self._leaveEventCb)
+
         self.timelineElement.connect("enter-event", self._elementEnterEventCb)
         self.timelineElement.connect("leave-event", self._elementLeaveEventCb)
         self.timelineElement.bElement.selected.connect("selected-changed", self._selectedChangedCb)
@@ -145,6 +148,7 @@ class TrimHandle(Clutter.Texture):
         for elem in self.timelineElement.get_children():
             elem.set_reactive(False)
         self.set_reactive(True)
+
         self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-focused.png"))
         if self.isLeft:
             self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE))
@@ -170,8 +174,11 @@ class TrimHandle(Clutter.Texture):
         self.props.visible = isSelected
 
     def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
-        self.timelineElement.setDragged(True)
+        self.dragBeginStartX = event_x
+        self.dragBeginStartY = event_y
         elem = self.timelineElement.bElement.get_parent()
+
+        self.timelineElement.setDragged(True)
 
         if self.isLeft:
             edge = GES.Edge.EDGE_START
@@ -188,14 +195,10 @@ class TrimHandle(Clutter.Texture):
                                        set([]),
                                        None)
 
-        self.dragBeginStartX = event_x
-        self.dragBeginStartY = event_y
-
     def _dragProgressCb(self, action, actor, delta_x, delta_y):
         # We can't use delta_x here because it fluctuates weirdly.
         coords = self.dragAction.get_motion_coords()
         delta_x = coords[0] - self.dragBeginStartX
-
         new_start = self._dragBeginStart + Zoomable.pixelToNs(delta_x)
 
         self._context.editTo(new_start, self.timelineElement.bElement.get_parent().get_layer().get_priority())
@@ -204,9 +207,11 @@ class TrimHandle(Clutter.Texture):
     def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
         self.timelineElement.setDragged(False)
         self._context.finish()
+
         self.timelineElement.set_reactive(True)
         for elem in self.timelineElement.get_children():
             elem.set_reactive(True)
+
         self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
 
@@ -222,31 +227,22 @@ class TimelineElement(Clutter.Actor, Zoomable):
         Clutter.Actor.__init__(self)
 
         self.timeline = timeline
-
         self.bElement = bElement
-
         self.bElement.selected = Selected()
-        self.bElement.selected.connect("selected-changed", self._selectedChangedCb)
+        self.track_type = self.bElement.get_track_type()  # This won't change
+        self.isDragged = False
+        size = self.bElement.get_duration()
 
         self._createBackground(track)
-
         self._createPreview()
-
         self._createBorder()
-
         self._createMarquee()
-
         self._createHandles()
-
         self._createGhostclip()
 
-        self.track_type = self.bElement.get_track_type()  # This won't change
-
-        self.isDragged = False
-
-        size = self.bElement.get_duration()
-        self.set_size(self.nsToPixel(size), EXPANDED_SIZE, False)
+        self.update(True)
         self.set_reactive(True)
+
         self._connectToEvents()
 
     # Public API
@@ -308,11 +304,12 @@ class TimelineElement(Clutter.Actor, Zoomable):
     def _createBorder(self):
         self.border = RoundedRectangle(0, 0, 5, 5)
         color = Cogl.Color()
+
         color.init_from_4ub(100, 100, 100, 255)
         self.border.set_border_color(color)
         self.border.set_border_width(3)
-
         self.border.set_position(0, 0)
+
         self.add_child(self.border)
 
     def _createBackground(self, track):
@@ -323,33 +320,36 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
     def _createPreview(self):
         self.preview = get_preview_for_object(self.bElement, self.timeline)
+
         self.add_child(self.preview)
 
     def _createMarquee(self):
         # TODO: difference between Actor.new() and Actor()?
         self.marquee = Clutter.Actor()
+
         self.marquee.set_background_color(Clutter.Color.new(60, 60, 60, 100))
-        self.add_child(self.marquee)
         self.marquee.props.visible = False
 
+        self.add_child(self.marquee)
+
     def _connectToEvents(self):
-        # Click
+        self.dragAction = Clutter.DragAction()
+
+        self.add_action(self.dragAction)
+
+        self.dragAction.connect("drag-progress", self._dragProgressCb)
+        self.dragAction.connect("drag-begin", self._dragBeginCb)
+        self.dragAction.connect("drag-end", self._dragEndCb)
+        self.bElement.selected.connect("selected-changed", self._selectedChangedCb)
         # We gotta go low-level cause Clutter.ClickAction["clicked"]
         # gets emitted after Clutter.DragAction["drag-begin"]
         self.connect("button-press-event", self._clickedCb)
-
-        # Drag and drop.
-        action = Clutter.DragAction()
-        self.add_action(action)
-        action.connect("drag-progress", self._dragProgressCb)
-        action.connect("drag-begin", self._dragBeginCb)
-        action.connect("drag-end", self._dragEndCb)
-        self.dragAction = action
 
     def _getLayerForY(self, y):
         if self.bElement.get_track_type() == GES.TrackType.AUDIO:
             y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
         priority = int(y / (EXPANDED_SIZE + SPACING))
+
         return priority
 
     # Interface (Zoomable)
@@ -420,29 +420,35 @@ class ClipElement(TimelineElement):
 
     def _createGhostclip(self):
         self.ghostclip = Clutter.Actor.new()
+
         self.ghostclip.set_background_color(Clutter.Color.new(100, 100, 100, 50))
         self.ghostclip.props.visible = False
+
         self.timeline.add_child(self.ghostclip)
 
     def _createHandles(self):
         self.leftHandle = TrimHandle(self, True)
         self.rightHandle = TrimHandle(self, False)
+
+        self.leftHandle.set_position(0, 0)
+
         self.add_child(self.leftHandle)
         self.add_child(self.rightHandle)
-        self.leftHandle.set_position(0, 0)
 
     def _createBackground(self, track):
         self.background = RoundedRectangle(0, 0, 5, 5)
+
         if track.type == GES.TrackType.AUDIO:
             color = Cogl.Color()
             color.init_from_4ub(70, 79, 118, 255)
         else:
             color = Cogl.Color()
             color.init_from_4ub(225, 232, 238, 255)
+
         self.background.set_color(color)
         self.background.set_border_width(3)
-
         self.background.set_position(0, 0)
+
         self.add_child(self.background)
 
     # Callbacks
@@ -451,37 +457,38 @@ class ClipElement(TimelineElement):
         self.timeline.selection.setToObj(self.bElement, SELECT)
 
     def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
-        self._context = EditingContext(self.bElement, self.timeline.bTimeline, GES.EditMode.EDIT_NORMAL, GES.Edge.EDGE_NONE, self.timeline.selection.getSelectedTrackElements(), None)
-
+        self._context = EditingContext(self.bElement,
+                                       self.timeline.bTimeline,
+                                       GES.EditMode.EDIT_NORMAL,
+                                       GES.Edge.EDGE_NONE,
+                                       self.timeline.selection.getSelectedTrackElements(),
+                                       None)
         # This can't change during a drag, so we can safely compute it now for drag events.
         self.nbrLayers = len(self.timeline.bTimeline.get_layers())
-        # We can also safely find if the object has a brother element
-        self.setDragged(True)
         self.brother = self.timeline.findBrother(self.bElement)
-        if self.brother:
-            self.brother.nbrLayers = self.nbrLayers
-
         self._dragBeginStart = self.bElement.get_start()
         self.dragBeginStartX = event_x
         self.dragBeginStartY = event_y
+
+        # We can also safely find if the object has a brother element
+        self.setDragged(True)
+        if self.brother:
+            self.brother.nbrLayers = self.nbrLayers
 
     def _dragProgressCb(self, action, actor, delta_x, delta_y):
         # We can't use delta_x here because it fluctuates weirdly.
         coords = self.dragAction.get_motion_coords()
         delta_x = coords[0] - self.dragBeginStartX
         delta_y = coords[1] - self.dragBeginStartY
-
         y = coords[1] + self.timeline._container.point.y
-
         priority = self._getLayerForY(y)
+        new_start = self._dragBeginStart + self.pixelToNs(delta_x)
 
         self.ghostclip.props.x = self.nsToPixel(self._dragBeginStart) + delta_x
         self.updateGhostclip(priority, y, False)
         if self.brother:
             self.brother.ghostclip.props.x = self.nsToPixel(self._dragBeginStart) + delta_x
             self.brother.updateGhostclip(priority, y, True)
-
-        new_start = self._dragBeginStart + self.pixelToNs(delta_x)
 
         if not self.ghostclip.props.visible:
             self._context.editTo(new_start, self.bElement.get_parent().get_layer().get_priority())
@@ -493,19 +500,17 @@ class ClipElement(TimelineElement):
         coords = self.dragAction.get_motion_coords()
         delta_x = coords[0] - self.dragBeginStartX
         new_start = self._dragBeginStart + self.pixelToNs(delta_x)
-
         priority = self._getLayerForY(coords[1] + self.timeline._container.point.y)
         priority = min(priority, len(self.timeline.bTimeline.get_layers()))
+        priority = max(0, priority)
 
         self.timeline._snapEndedCb()
-
         self.setDragged(False)
 
         self.ghostclip.props.visible = False
         if self.brother:
             self.brother.ghostclip.props.visible = False
 
-        priority = max(0, priority)
         self._context.editTo(new_start, priority)
         self._context.finish()
 
@@ -521,9 +526,10 @@ class TransitionElement(TimelineElement):
     def _createBackground(self, track):
         self.background = RoundedRectangle(0, 0, 5, 5)
         color = Cogl.Color()
+
         color.init_from_4ub(100, 100, 100, 125)
         self.background.set_color(color)
         self.background.set_border_width(3)
-
         self.background.set_position(0, 0)
+
         self.add_child(self.background)

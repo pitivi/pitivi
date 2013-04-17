@@ -42,6 +42,9 @@ from pitivi.utils.loggable import Loggable
 from pitivi.configure import get_ui_dir
 from pitivi.utils.ui import unpack_color, pack_color_32, pack_color_64, \
     time_to_string, SPACING
+from pitivi.utils.timeline import Zoomable
+
+ZOOM_FIT = _("Zoom Fit")
 
 
 class DynamicWidget(object):
@@ -1079,3 +1082,65 @@ class BaseTabs(Gtk.Notebook):
                                         resize=True, shrink=False)
         self.app.gui.mainhpaned.pack1(self.app.gui.secondhpaned,
                                       resize=True, shrink=False)
+
+
+class ZoomBox(Gtk.HBox, Zoomable):
+    def __init__(self, timeline):
+        """
+        This will hold the widgets responsible for zooming.
+        """
+        Gtk.HBox.__init__(self)
+        Zoomable.__init__(self)
+
+        self.timeline = timeline
+
+        zoom_fit_btn = Gtk.Button()
+        zoom_fit_btn.set_relief(Gtk.ReliefStyle.NONE)
+        zoom_fit_btn.set_tooltip_text(ZOOM_FIT)
+        zoom_fit_icon = Gtk.Image()
+        zoom_fit_icon.set_from_stock(Gtk.STOCK_ZOOM_FIT, Gtk.IconSize.BUTTON)
+        zoom_fit_btn_hbox = Gtk.HBox()
+        zoom_fit_btn_hbox.pack_start(zoom_fit_icon, False, True, 0)
+        zoom_fit_btn_hbox.pack_start(Gtk.Label(_("Zoom")), False, True, 0)
+        zoom_fit_btn.add(zoom_fit_btn_hbox)
+        zoom_fit_btn.connect("clicked", self._zoomFitCb)
+
+        self.pack_start(zoom_fit_btn, False, True, 0)
+
+        # zooming slider
+        self._zoomAdjustment = Gtk.Adjustment()
+        self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
+        self._zoomAdjustment.connect("value-changed", self._zoomAdjustmentChangedCb)
+        self._zoomAdjustment.props.lower = 0
+        self._zoomAdjustment.props.upper = Zoomable.zoom_steps
+        zoomslider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adjustment=self._zoomAdjustment)
+        zoomslider.props.draw_value = False
+        zoomslider.set_tooltip_text(_("Zoom Timeline"))
+        zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
+        zoomslider.set_size_request(100, 0)  # At least 100px wide for precision
+        self.pack_start(zoomslider, True, True, 0)
+
+        self.show_all()
+
+        self._updateZoomSlider = True
+
+    def _zoomAdjustmentChangedCb(self, adjustment):
+        # GTK crack
+        self._updateZoomSlider = False
+        Zoomable.setZoomLevel(int(adjustment.get_value()))
+        self.zoomed_fitted = False
+        self._updateZoomSlider = True
+
+    def _zoomFitCb(self, button):
+        self.timeline.zoomFit()
+
+    def _zoomSliderScrollCb(self, unused, event):
+        value = self._zoomAdjustment.get_value()
+        if event.direction in [Gdk.ScrollDirection.UP, Gdk.ScrollDirection.RIGHT]:
+            self._zoomAdjustment.set_value(value + 1)
+        elif event.direction in [Gdk.ScrollDirection.DOWN, Gdk.ScrollDirection.LEFT]:
+            self._zoomAdjustment.set_value(value - 1)
+
+    def zoomChanged(self):
+        if self._updateZoomSlider:
+            self._zoomAdjustment.set_value(self.getCurrentZoomLevel())
