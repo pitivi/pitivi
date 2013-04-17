@@ -306,12 +306,23 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.pack_start(self.treeview_scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, True, 0)
 
+    def getAssetForUri(self, uri):
+        # Sanitization
+        uri = filter(lambda c: c != '\n' and c != '\r', uri)
+        for path in self.modelFilter:
+            asset = path[COL_ASSET]
+            info = asset.get_info()
+            asset_uri = info.get_uri()
+            if asset_uri == uri:
+                return asset
+
     def _setup_view_for_drag_and_drop(self, view, target_entries):
         view.drag_source_set(0, [], Gdk.DragAction.COPY)
         view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, target_entries, Gdk.DragAction.COPY)
         view.drag_source_set_target_list([])
         view.drag_source_add_uri_targets()
         view.drag_source_add_text_targets()
+        view.connect("drag-data-get", self._dndDragDataGetCb)
         view.connect("drag_begin", self._dndDragBeginCb)
         view.connect("drag-end", self._dndDragEndCb)
 
@@ -984,6 +995,11 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.app.current.addUris(filenames)
 
     #used with TreeView and IconView
+    def _dndDragDataGetCb(self, unused_view, context, data, info, timestamp):
+        paths = self.getSelectedPaths()
+        uris = [self.modelFilter[path][COL_URI] for path in paths]
+        data.set_uris(uris)
+
     def _dndDragBeginCb(self, unused_view, context):
         self.info("Drag operation begun")
         self.dragged = True

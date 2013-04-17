@@ -131,6 +131,7 @@ class Ghostclip(Clutter.Actor):
         self.props.width = width
 
     def update(self, priority, y, isControlledByBrother):
+        self.priority = priority
         # Only tricky part of the code, can be called by the linked track element.
         if priority < 0:
             return
@@ -156,7 +157,7 @@ class Ghostclip(Clutter.Actor):
             self.props.visible = True
         else:
             # No need to mockup on the same layer
-            if priority == self.bElement.get_parent().get_layer().get_priority():
+            if self.bElement and priority == self.bElement.get_parent().get_layer().get_priority():
                 self.props.visible = False
             # We would be moving to an existing layer.
             elif priority < self.nbrLayers:
@@ -165,6 +166,13 @@ class Ghostclip(Clutter.Actor):
                 if self.track_type == GES.TrackType.AUDIO:
                     self.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
                 self.props.visible = True
+
+    def getLayerForY(self, y):
+        if self.track_type == GES.TrackType.AUDIO:
+            y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
+        priority = int(y / (EXPANDED_SIZE + SPACING))
+
+        return priority
 
 
 class TrimHandle(Clutter.Texture):

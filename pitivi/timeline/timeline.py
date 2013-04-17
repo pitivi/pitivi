@@ -3,6 +3,8 @@ GtkClutter.init([])
 
 from gi.repository import Gst, GES, GObject, Clutter, Gtk, GLib, Gdk
 
+from datetime import datetime
+
 from pitivi.utils.timeline import Zoomable, Selection, UNSELECT
 from pitivi.settings import GlobalSettings
 from pitivi.dialogs.prefs import PreferencesDialog
@@ -12,7 +14,7 @@ from pitivi.utils.widgets import ZoomBox
 from ruler import ScaleRuler
 from gettext import gettext as _
 from pitivi.utils.pipeline import Pipeline
-from elements import ClipElement, TransitionElement
+from elements import ClipElement, TransitionElement, Ghostclip
 from controls import ControlContainer
 
 GlobalSettings.addConfigOption('edgeSnapDeadband',
@@ -39,6 +41,8 @@ PreferencesDialog.addNumericPreference('imageClipLength',
     label=_("Image clip duration"),
     description=_("Default clip length (in miliseconds) of images when inserting on the timeline."),
     lower=1)
+
+TARGET_TYPE_URI_LIST = 80
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
@@ -122,6 +126,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.bTimeline = None
         self._container = container
         self.elements = []
+        self.ghostClips = []
         self.selection = Selection()
         self._scroll_point = Clutter.Point()
         self.lastPosition = 0  # Saved for redrawing when paused
@@ -177,7 +182,70 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
                 return elem
         return None
 
+    # drag and drop from the medialibrary
+
+    def resetGhostClips(self):
+        for ghostCouple in self.ghostClips:
+            for ghostclip in ghostCouple:
+                del ghostclip
+        self.ghostClips = []
+
+    def addGhostClip(self, asset, x, y):
+        ghostAudio = ghostVideo = None
+
+        if asset.get_supported_formats() & GES.TrackType.VIDEO:
+            ghostVideo = self._createGhostclip(GES.TrackType.VIDEO, asset)
+        if asset.get_supported_formats() & GES.TrackType.AUDIO:
+            ghostAudio = self._createGhostclip(GES.TrackType.AUDIO, asset)
+
+        self.ghostClips.append([ghostVideo, ghostAudio])
+
+    def updateGhostClips(self, x, y):
+        for ghostCouple in self.ghostClips:
+            for ghostclip in ghostCouple:
+                if ghostclip is not None:
+                    priority = int(y / (EXPANDED_SIZE + SPACING))
+                    ghostclip.update(priority, y, False)
+                    if x >= 0:
+                        ghostclip.props.x = x
+
+    def convertGhostClips(self):
+        for ghostCouple in self.ghostClips:
+            ghostclip = ghostCouple[0]
+            if not ghostclip:
+                ghostclip = ghostCouple[1]
+
+            layer = None
+            target = None
+            for layer in self.bTimeline.get_layers():
+                if layer.get_priority() == ghostclip.priority:
+                    target = layer
+                    break
+            if target is None:
+                layer = self.bTimeline.append_layer()
+
+            layer.add_asset(ghostclip.asset,
+                            Zoomable.pixelToNs(ghostclip.props.x),
+                            0,
+                            ghostclip.asset.get_duration(),
+                            1.0,
+                            ghostclip.asset.get_supported_formats())
+
+    def removeGhostClips(self):
+        for ghostCouple in self.ghostClips:
+            for ghostclip in ghostCouple:
+                if ghostclip is not None and ghostclip.get_parent():
+                    self.remove_child(ghostclip)
+
     # Internal API
+
+    def _createGhostclip(self, trackType, asset):
+        ghostclip = Ghostclip(trackType)
+        ghostclip.asset = asset
+        ghostclip.setNbrLayers(len(self.bTimeline.get_layers()))
+        ghostclip.setWidth(Zoomable.nsToPixel(asset.get_duration()))
+        self.add_child(ghostclip)
+        return ghostclip
 
     def _connectTrack(self, track):
         track.connect("track-element-added", self._trackElementAddedCb)
@@ -408,6 +476,8 @@ class Timeline(Gtk.VBox, Zoomable):
         self._createUi()
         self._createActions()
 
+        self._setUpDragAndDrop()
+
         self._settings.connect("edgeSnapDeadbandChanged",
                 self._snapDistanceChangedCb)
 
@@ -531,6 +601,21 @@ class Timeline(Gtk.VBox, Zoomable):
 
         self._packScrollbars(self)
         self.stage.show()
+
+    def _setUpDragAndDrop(self):
+        self.dropHighlight = False
+        self.dropOccured = False
+        self.dropDataReady = False
+        self.dropData = None
+        dnd_list = [Gtk.TargetEntry.new('text/uri-list', Gtk.TargetFlags.OTHER_APP, TARGET_TYPE_URI_LIST)]
+
+        self.drag_dest_set(0, dnd_list, Gdk.DragAction.COPY)
+        self.drag_dest_add_uri_targets()
+
+        self.connect('drag-motion', self._dragMotionCb)
+        self.connect('drag-data-received', self._dragDataReceivedCb)
+        self.connect('drag-drop', self._dragDropCb)
+        self.connect('drag-leave', self._dragLeaveCb)
 
     def _ensureLayer(self):
         """
@@ -819,6 +904,11 @@ class Timeline(Gtk.VBox, Zoomable):
     def _playPause(self, unused_action):
         self.app.current.pipeline.togglePlayback()
 
+    def _transposeXY(self, x, y):
+        height = self.ruler.get_allocation().height
+        x += self.timeline.get_scroll_point().x
+        return x - CONTROL_WIDTH, y - height
+
     # Interface
 
     # Zoomable
@@ -968,6 +1058,61 @@ class Timeline(Gtk.VBox, Zoomable):
             self.selection_actions.set_sensitive(True)
         else:
             self.selection_actions.set_sensitive(False)
+
+    # drag and drop
+
+    def _dragDataReceivedCb(self, widget, context, x, y, data, info, time):
+        if not self.dropDataReady:
+            if data.get_length() > 0:
+                if not self.dropOccured:
+                    self.timeline.resetGhostClips()
+                self.dropData = data.get_data()
+                self.dropDataReady = True
+
+        if self.dropOccured:
+            self.dropOccured = False
+            Gtk.drag_finish(context, True, False, time)
+            self._dragLeaveCb(widget, context, time)
+
+    def _dragDropCb(self, widget, context, x, y, time):
+        target = widget.drag_dest_find_target(context, None)
+        if target.name() == "text/uri-list":
+            self.dropOccured = True
+            widget.drag_get_data(context, target, time)
+            self.timeline.convertGhostClips()
+            return True
+        else:
+            return False
+
+    def _dragMotionCb(self, widget, context, x, y, time):
+        target = widget.drag_dest_find_target(context, None)
+        if target.name() != "text/uri-list":
+            return False
+        if not self.dropDataReady:
+            widget.drag_get_data(context, target, time)
+            Gdk.drag_status(context, 0, time)
+        else:
+            x, y = self._transposeXY(x, y)
+            if not self.timeline.ghostClips:
+                asset = self.app.gui.medialibrary.getAssetForUri(self.dropData)
+                self.timeline.addGhostClip(asset, x, y)
+            self.timeline.updateGhostClips(x, y)
+            Gdk.drag_status(context, Gdk.DragAction.COPY, time)
+            if not self.dropHighlight:
+                widget.drag_highlight()
+                self.dropHighlight = True
+#        Gtk.drag_set_icon_pixbuf(context, self.pixbuf, 0, 0)
+        return True
+
+    def _dragLeaveCb(self, widget, context, time):
+        if self.dropDataReady:
+            self.dropData = None
+            self.dropDataReady = False
+        if self.dropHighlight:
+            widget.drag_unhighlight()
+            self.dropHighlight = False
+
+        self.timeline.removeGhostClips()
 
     # Standalone
 
