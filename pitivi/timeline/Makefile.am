@@ -5,9 +5,10 @@ timeline_PYTHON =			\
 	curve.py	\
 	layer.py	\
 	ruler.py	\
-	thumbnailer.py		\
 	timeline.py		\
-	track.py
+	track.py	\
+	elements.py \
+	previewers.py
 
 clean-local:
 	rm -rf *.pyc *.pyo
