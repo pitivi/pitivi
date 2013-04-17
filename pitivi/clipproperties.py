@@ -103,9 +103,9 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
     def _setProject(self, project):
         self._project = project
         if project:
-            self.effect_expander._connectTimelineSelection(self._project.timeline)
+            self.effect_expander._connectTimelineSelection(self.app.gui.timeline_ui.timeline)
             if self.transformation_expander:
-                self.transformation_expander.timeline = self._project.timeline
+                self.transformation_expander.timeline = self.app.gui.timeline_ui.timeline
 
     def _getProject(self):
         return self._project
