@@ -52,8 +52,11 @@ LAYER_HEIGHT_EXPANDED = 50
 LAYER_HEIGHT_COLLAPSED = 15
 TRACK_SPACING = 8
 
-SPACING = 6
+EXPANDED_SIZE = 65
+
 PADDING = 6
+
+SPACING = 10
 
 CANVAS_SPACING = 21
 
@@ -197,7 +200,7 @@ def beautify_info(info):
 
 def info_name(info):
     """Return a human-readable filename (without the path and quoting)."""
-    if  isinstance(info, GES.Asset):
+    if isinstance(info, GES.Asset):
         filename = unquote(os.path.basename(info.get_id()))
     else:
         filename = unquote(os.path.basename(info.get_uri()))
