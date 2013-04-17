@@ -51,7 +51,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
         # maps (quantized) times to Thumbnail objects
         self.thumbs = {}
 
-        self.thumb_cache = ThumbnailCache(uri=self.uri)
+        self.thumb_cache = get_cache_for_uri(self.uri)
 
         self.wishlist = []
 
@@ -339,6 +339,18 @@ def get_dir(path, autocreate=True):
     if autocreate and not os.path.exists(path):
         os.makedirs(path)
     return path
+
+
+caches = {}
+
+
+def get_cache_for_uri(uri):
+    if uri in caches:
+        return caches[uri]
+    else:
+        cache = ThumbnailCache(uri)
+        caches[uri] = cache
+        return cache
 
 
 class ThumbnailCache(object):
