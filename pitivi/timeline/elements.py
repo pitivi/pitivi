@@ -114,6 +114,59 @@ class RoundedRectangle(Clutter.Actor):
         self.queue_redraw()
 
 
+class Ghostclip(Clutter.Actor):
+    def __init__(self, track_type, bElement=None):
+        Clutter.Actor.__init__(self)
+
+        self.track_type = track_type
+        self.bElement = bElement
+
+        self.set_background_color(Clutter.Color.new(100, 100, 100, 50))
+        self.props.visible = False
+
+    def setNbrLayers(self, nbrLayers):
+        self.nbrLayers = nbrLayers
+
+    def setWidth(self, width):
+        self.props.width = width
+
+    def update(self, priority, y, isControlledByBrother):
+        # Only tricky part of the code, can be called by the linked track element.
+        if priority < 0:
+            return
+
+        # Here we make it so the calculation is the same for audio and video.
+        if self.track_type == GES.TrackType.AUDIO and not isControlledByBrother:
+            y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
+
+        # And here we take into account the fact that the pointer might actually be
+        # on the other track element, meaning we have to offset it.
+        if isControlledByBrother:
+            if self.track_type == GES.TrackType.AUDIO:
+                y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
+            else:
+                y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
+
+        # Would that be a new layer ?
+        if priority == self.nbrLayers:
+            self.set_size(self.props.width, SPACING)
+            self.props.y = priority * (EXPANDED_SIZE + SPACING)
+            if self.track_type == GES.TrackType.AUDIO:
+                self.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
+            self.props.visible = True
+        else:
+            # No need to mockup on the same layer
+            if priority == self.bElement.get_parent().get_layer().get_priority():
+                self.props.visible = False
+            # We would be moving to an existing layer.
+            elif priority < self.nbrLayers:
+                self.set_size(self.props.width, EXPANDED_SIZE)
+                self.props.y = priority * (EXPANDED_SIZE + SPACING) + SPACING
+                if self.track_type == GES.TrackType.AUDIO:
+                    self.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
+                self.props.visible = True
+
+
 class TrimHandle(Clutter.Texture):
     def __init__(self, timelineElement, isLeft):
         Clutter.Texture.__init__(self)
@@ -380,50 +433,11 @@ class ClipElement(TimelineElement):
         TimelineElement.__init__(self, bElement, track, timeline)
 
     # public API
-    def updateGhostclip(self, priority, y, isControlledByBrother):
-        # Only tricky part of the code, can be called by the linked track element.
-        if priority < 0:
-            return
-
-        # Here we make it so the calculation is the same for audio and video.
-        if self.track_type == GES.TrackType.AUDIO and not isControlledByBrother:
-            y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
-
-        # And here we take into account the fact that the pointer might actually be
-        # on the other track element, meaning we have to offset it.
-        if isControlledByBrother:
-            if self.track_type == GES.TrackType.AUDIO:
-                y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
-            else:
-                y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
-
-        # Would that be a new layer ?
-        if priority == self.nbrLayers:
-            self.ghostclip.set_size(self.props.width, SPACING)
-            self.ghostclip.props.y = priority * (EXPANDED_SIZE + SPACING)
-            if self.track_type == GES.TrackType.AUDIO:
-                self.ghostclip.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
-            self.ghostclip.props.visible = True
-        else:
-            # No need to mockup on the same layer
-            if priority == self.bElement.get_parent().get_layer().get_priority():
-                self.ghostclip.props.visible = False
-            # We would be moving to an existing layer.
-            elif priority < self.nbrLayers:
-                self.ghostclip.set_size(self.props.width, EXPANDED_SIZE)
-                self.ghostclip.props.y = priority * (EXPANDED_SIZE + SPACING) + SPACING
-                if self.track_type == GES.TrackType.AUDIO:
-                    self.ghostclip.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
-                self.ghostclip.props.visible = True
 
     # private API
 
     def _createGhostclip(self):
-        self.ghostclip = Clutter.Actor.new()
-
-        self.ghostclip.set_background_color(Clutter.Color.new(100, 100, 100, 50))
-        self.ghostclip.props.visible = False
-
+        self.ghostclip = Ghostclip(self.track_type, self.bElement)
         self.timeline.add_child(self.ghostclip)
 
     def _createHandles(self):
@@ -464,16 +478,20 @@ class ClipElement(TimelineElement):
                                        self.timeline.selection.getSelectedTrackElements(),
                                        None)
         # This can't change during a drag, so we can safely compute it now for drag events.
-        self.nbrLayers = len(self.timeline.bTimeline.get_layers())
+        nbrLayers = len(self.timeline.bTimeline.get_layers())
         self.brother = self.timeline.findBrother(self.bElement)
         self._dragBeginStart = self.bElement.get_start()
         self.dragBeginStartX = event_x
         self.dragBeginStartY = event_y
 
+        self.ghostclip.setNbrLayers(nbrLayers)
+        self.ghostclip.setWidth(self.props.width)
+        if self.brother:
+            self.ghostclip.setWidth(self.props.width)
+            self.brother.ghostclip.setNbrLayers(nbrLayers)
+
         # We can also safely find if the object has a brother element
         self.setDragged(True)
-        if self.brother:
-            self.brother.nbrLayers = self.nbrLayers
 
     def _dragProgressCb(self, action, actor, delta_x, delta_y):
         # We can't use delta_x here because it fluctuates weirdly.
@@ -484,11 +502,11 @@ class ClipElement(TimelineElement):
         priority = self._getLayerForY(y)
         new_start = self._dragBeginStart + self.pixelToNs(delta_x)
 
-        self.ghostclip.props.x = self.nsToPixel(self._dragBeginStart) + delta_x
-        self.updateGhostclip(priority, y, False)
+        self.ghostclip.props.x = max(0, self.nsToPixel(self._dragBeginStart) + delta_x)
+        self.ghostclip.update(priority, y, False)
         if self.brother:
-            self.brother.ghostclip.props.x = self.nsToPixel(self._dragBeginStart) + delta_x
-            self.brother.updateGhostclip(priority, y, True)
+            self.brother.ghostclip.props.x = max(0, self.nsToPixel(self._dragBeginStart) + delta_x)
+            self.brother.ghostclip.update(priority, y, True)
 
         if not self.ghostclip.props.visible:
             self._context.editTo(new_start, self.bElement.get_parent().get_layer().get_priority())
