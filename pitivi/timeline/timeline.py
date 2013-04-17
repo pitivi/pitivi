@@ -196,6 +196,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def _updatePlayHead(self):
         height = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING) * 2
         self.playhead.set_size(PLAYHEAD_WIDTH, height)
+        self.playhead.props.x = self.nsToPixel(self.lastPosition)
 
     def _createPlayhead(self):
         self.playhead = Clutter.Actor()
@@ -276,8 +277,9 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.save_easing_state()
         self.set_easing_duration(0)
         self.props.width = self.nsToPixel(self.bTimeline.get_duration()) + 250
+        self.props.height = (len(self.bTimeline.get_layers()) + 1) * (EXPANDED_SIZE + SPACING) * 2 + SPACING
         self.restore_easing_state()
-
+        self._container.vadj.props.upper = self.props.height
         self._container.updateHScrollAdjustments()
 
     def _redraw(self):
@@ -286,22 +288,18 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.save_easing_state()
         for element in self.elements:
             self._setElementX(element)
+            self._setElementY(element)
         self.restore_easing_state()
 
-        self.playhead.props.x = self.nsToPixel(self.lastPosition)
+        self._updatePlayHead()
+
+    def _remove_layer(self, layer):
+        self._redraw()
+        self._container.controls.removeLayerControl(layer)
 
     def _add_layer(self, layer):
-        for element in self.elements:
-            self._setElementY(element)
-
-        self.save_easing_state()
-        self.props.height = (len(self.bTimeline.get_layers()) + 1) * (EXPANDED_SIZE + SPACING) * 2 + SPACING
-        self.restore_easing_state()
-
-        self._container.vadj.props.upper = self.props.height
-
+        self._redraw()
         self._container.controls.addLayerControl(layer)
-        self._updatePlayHead()
 
     # Interface overrides
 
@@ -346,6 +344,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     def _layerRemovedCb(self, timeline, layer):
         # FIXME : really remove layer ^^
+        self._remove_layer(layer)
         self._updatePlayHead()
 
     def _trackAddedCb(self, timeline, track):

@@ -147,3 +147,12 @@ class ControlContainer(Clutter.ScrollActor):
         self.addTrackControl(layer, False)
         self.addTrackControl(layer, True)
         self._reorderLayerActors()
+
+    def removeLayerControl(self, layer):
+        for control in self.controlActors:
+            if control.layer == layer:
+                self.remove_child(control)
+                self.trackControls.remove(control.widget)
+
+        self.controlActors = [elem for elem in self.controlActors if elem.layer != layer]
+        self._reorderLayerActors()
