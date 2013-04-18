@@ -408,8 +408,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._updatePlayHead()
 
     def _remove_layer(self, layer):
-        self._redraw()
         self._container.controls.removeLayerControl(layer)
+        self._redraw()
 
     def _add_layer(self, layer):
         self._redraw()
@@ -458,6 +458,9 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     def _layerRemovedCb(self, timeline, layer):
         # FIXME : really remove layer ^^
+        for lyr in self.bTimeline.get_layers():
+            if lyr.props.priority > layer.props.priority:
+                lyr.props.priority -= 1
         self._remove_layer(layer)
         self._updatePlayHead()
 

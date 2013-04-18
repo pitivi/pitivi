@@ -216,8 +216,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         return True
 
     def _deleteLayerCb(self, widget):
-        timeline = self.layer.get_timeline()
-        timeline.remove_layer(self.layer)
+        self._app.timeline.bTimeline.remove_layer(self.layer)
 
     def _moveLayerCb(self, widget, step):
         index = self.layer.get_priority()
