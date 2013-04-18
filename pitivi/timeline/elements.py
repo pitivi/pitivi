@@ -256,6 +256,9 @@ class TrimHandle(Clutter.Texture):
                                        set([]),
                                        None)
 
+        self._context.connect("clip-trim", self.clipTrimCb)
+        self._context.connect("clip-trim-finished", self.clipTrimFinishedCb)
+
     def _dragProgressCb(self, action, actor, delta_x, delta_y):
         # We can't use delta_x here because it fluctuates weirdly.
         coords = self.dragAction.get_motion_coords()
@@ -275,6 +278,14 @@ class TrimHandle(Clutter.Texture):
 
         self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
+
+    def clipTrimCb(self, unused_TrimStartContext, tl_obj, position):
+        # While a clip is being trimmed, ask the viewer to preview it
+        self.timelineElement.timeline._container.app.gui.viewer.clipTrimPreview(tl_obj, position)
+
+    def clipTrimFinishedCb(self, unused_TrimStartContext):
+        # When a clip has finished trimming, tell the viewer to reset itself
+        self.timelineElement.timeline._container.app.gui.viewer.clipTrimPreviewFinished()
 
 
 class TimelineElement(Clutter.Actor, Zoomable):
