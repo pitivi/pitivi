@@ -471,7 +471,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.marquee.props.visible = isSelected
 
 
-class ClipElement(TimelineElement):
+class URISourceElement(TimelineElement):
     def __init__(self, bElement, track, timeline):
         TimelineElement.__init__(self, bElement, track, timeline)
 

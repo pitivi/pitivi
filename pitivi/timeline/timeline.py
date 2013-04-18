@@ -36,7 +36,7 @@ from pitivi.utils.widgets import ZoomBox
 from ruler import ScaleRuler
 from gettext import gettext as _
 from pitivi.utils.pipeline import Pipeline
-from elements import ClipElement, TransitionElement, Ghostclip
+from elements import URISourceElement, TransitionElement, Ghostclip
 from controls import ControlContainer
 
 GlobalSettings.addConfigOption('edgeSnapDeadband',
@@ -314,7 +314,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             element = TransitionElement(bElement, track, self)
             element.set_z_position(0)
         else:
-            element = ClipElement(bElement, track, self)
+            element = URISourceElement(bElement, track, self)
             element.set_z_position(-1)
 
         bElement.connect("notify::start", self._elementStartChangedCb, element)
