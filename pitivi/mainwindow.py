@@ -432,7 +432,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         # Now, the lower part: the timeline
         timeline_area = Gtk.HBox()
-        self.timeline_ui = Timeline(instance, self.uimanager)
+        self.timeline_ui = Timeline(self, instance, self.uimanager)
         self.timeline_ui.setProjectManager(self.app.projectManager)
         self.timeline_ui.controls.connect("selection-changed", self._selectedLayerChangedCb)
         ttb = self.uimanager.get_widget("/TimelineToolBar")

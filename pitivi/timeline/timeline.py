@@ -204,6 +204,20 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
                 return elem
         return None
 
+    def insertLayer(self, ghostclip):
+        layer = None
+        if ghostclip.priority < len(self.bTimeline.get_layers()):
+            self.bTimeline.enable_update(False)
+            for layer in self.bTimeline.get_layers():
+                if layer.get_priority() >= ghostclip.priority:
+                    layer.props.priority += 1
+
+            layer = self.bTimeline.append_layer()
+            layer.props.priority = ghostclip.priority
+            self.bTimeline.enable_update(True)
+            self._container.controls._reorderLayerActors()
+        return layer
+
     # drag and drop from the medialibrary
 
     def resetGhostClips(self):
@@ -239,10 +253,16 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
             layer = None
             target = None
-            for layer in self.bTimeline.get_layers():
-                if layer.get_priority() == ghostclip.priority:
-                    target = layer
-                    break
+
+            if ghostclip.shouldCreateLayer:
+                layer = self.insertLayer(ghostclip)
+                target = layer
+            else:
+                for layer in self.bTimeline.get_layers():
+                    if layer.get_priority() == ghostclip.priority:
+                        target = layer
+                        break
+
             if target is None:
                 layer = self.bTimeline.append_layer()
 
@@ -482,12 +502,13 @@ def quit2_(*args, **kwargs):
 
 
 class Timeline(Gtk.VBox, Zoomable):
-    def __init__(self, instance, ui_manager):
+    def __init__(self, gui, instance, ui_manager):
         Zoomable.__init__(self)
         Gtk.VBox.__init__(self)
 
         GObject.threads_init()
 
+        self.gui = gui
         self.ui_manager = ui_manager
         self.app = instance
         self._settings = self.app.settings
@@ -602,6 +623,8 @@ class Timeline(Gtk.VBox, Zoomable):
         self.timeline = TimelineStage(self)
         self.controls = ControlContainer(self.timeline)
         self.zoomBox = ZoomBox(self)
+        self.shiftMask = False
+        self.controlMask = False
 
         self.stage.set_background_color(Clutter.Color.new(31, 30, 33, 255))
         self.timeline.set_position(CONTROL_WIDTH, 0)
@@ -614,6 +637,8 @@ class Timeline(Gtk.VBox, Zoomable):
         self.stage.connect("destroy", quit_)
         self.stage.connect("button-press-event", self._clickedCb)
         self.embed.connect("scroll-event", self._scrollEventCb)
+        self.gui.connect("key-press-event", self._keyPressEventCb)
+        self.gui.connect("key-release-event", self._keyReleaseEventCb)
 
         self.point = Clutter.Point()
         self.point.x = 0
@@ -944,6 +969,18 @@ class Timeline(Gtk.VBox, Zoomable):
         self.updateHScrollAdjustments()
 
     # Callbacks
+
+    def _keyPressEventCb(self, widget, event):
+        if event.keyval == Gdk.KEY_Shift_L:
+            self.shiftMask = True
+        elif event.keyval == Gdk.KEY_Control_L:
+            self.controlMask = True
+
+    def _keyReleaseEventCb(self, widget, event):
+        if event.keyval == Gdk.KEY_Shift_L:
+            self.shiftMask = False
+        elif event.keyval == Gdk.KEY_Control_L:
+            self.controlMask = False
 
     def _clickedCb(self, stage, event):
         actor = self.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, event.x, event.y)

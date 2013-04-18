@@ -146,6 +146,8 @@ class Ghostclip(Clutter.Actor):
         self.set_background_color(Clutter.Color.new(100, 100, 100, 50))
         self.props.visible = False
 
+        self.shouldCreateLayer = False
+
     def setNbrLayers(self, nbrLayers):
         self.nbrLayers = nbrLayers
 
@@ -171,13 +173,15 @@ class Ghostclip(Clutter.Actor):
                 y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
 
         # Would that be a new layer ?
-        if priority == self.nbrLayers:
+        if priority == self.nbrLayers or y % (EXPANDED_SIZE + SPACING) < SPACING:
+            self.shouldCreateLayer = True
             self.set_size(self.props.width, SPACING)
             self.props.y = priority * (EXPANDED_SIZE + SPACING)
             if self.track_type == GES.TrackType.AUDIO:
                 self.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
             self.props.visible = True
         else:
+            self.shouldCreateLayer = False
             # No need to mockup on the same layer
             if self.bElement and priority == self.bElement.get_parent().get_layer().get_priority():
                 self.props.visible = False
@@ -573,6 +577,9 @@ class URISourceElement(TimelineElement):
         self.ghostclip.props.visible = False
         if self.brother:
             self.brother.ghostclip.props.visible = False
+
+        if self.ghostclip.shouldCreateLayer:
+            self.timeline.insertLayer(self.ghostclip)
 
         self._context.editTo(new_start, priority)
         self._context.finish()
