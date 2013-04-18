@@ -409,7 +409,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         pass
 
     def _createBorder(self):
-        self.border = RoundedRectangle(0, 0, 5, 5)
+        self.border = RoundedRectangle(0, 0, 0, 0)
         self.border.bElement = self.bElement
         color = Cogl.Color()
 
@@ -510,7 +510,7 @@ class URISourceElement(TimelineElement):
         self.add_child(self.rightHandle)
 
     def _createBackground(self, track):
-        self.background = RoundedRectangle(0, 0, 5, 5)
+        self.background = RoundedRectangle(0, 0, 0, 0)
         self.background.bElement = self.bElement
 
         if track.type == GES.TrackType.AUDIO:
