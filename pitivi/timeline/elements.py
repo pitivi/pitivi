@@ -495,10 +495,11 @@ class ClipElement(TimelineElement):
         self.dragBeginStartX = event_x
         self.dragBeginStartY = event_y
 
+        self.nbrLayers = nbrLayers
         self.ghostclip.setNbrLayers(nbrLayers)
         self.ghostclip.setWidth(self.props.width)
         if self.brother:
-            self.ghostclip.setWidth(self.props.width)
+            self.brother.ghostclip.setWidth(self.props.width)
             self.brother.ghostclip.setNbrLayers(nbrLayers)
 
         # We can also safely find if the object has a brother element
