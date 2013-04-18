@@ -657,6 +657,8 @@ class Timeline(Gtk.VBox, Zoomable):
         self.gui.connect("key-press-event", self._keyPressEventCb)
         self.gui.connect("key-release-event", self._keyReleaseEventCb)
 
+        self.embed.connect("enter-notify-event", self._enterNotifyEventCb)
+
         self.point = Clutter.Point()
         self.point.x = 0
         self.point.y = 0
@@ -984,6 +986,9 @@ class Timeline(Gtk.VBox, Zoomable):
         self.updateHScrollAdjustments()
 
     # Callbacks
+
+    def _enterNotifyEventCb(self, widget, event):
+        self.gui.setActionsSensitive(True)
 
     def _keyPressEventCb(self, widget, event):
         if event.keyval == Gdk.KEY_Shift_L:
