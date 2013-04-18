@@ -423,13 +423,16 @@ class EffectListWidget(Gtk.VBox, Loggable):
 
         self.view.drag_source_set(0, [], Gdk.DragAction.COPY)
         self.view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [("pitivi/effect", 0, TYPE_PITIVI_EFFECT)], Gdk.DragAction.COPY)
+        #self.view.drag_source_set_target_list([("pitivi/effect", 0, TYPE_PITIVI_EFFECT)])
         self.view.drag_source_set_target_list([])
+        self.view.drag_source_add_uri_targets()
         self.view.drag_source_add_text_targets()
 
         self.view.connect("button-press-event", self._buttonPressEventCb)
         self.view.connect("select-cursor-row", self._enterPressEventCb)
-        self.view.connect("drag_begin", self._dndDragBeginCb)
-        self.view.connect("drag_end", self._dndDragEndCb)
+        self.view.connect("drag-begin", self._dndDragBeginCb)
+        self.view.connect("drag-end", self._dndDragEndCb)
+        self.view.connect("drag-data-get", self._dndDragDataGetCb)
 
         scrollwin = Gtk.ScrolledWindow()
         scrollwin.props.hscrollbar_policy = Gtk.PolicyType.NEVER
@@ -504,6 +507,9 @@ class EffectListWidget(Gtk.VBox, Loggable):
 
     def _dndDragEndCb(self, unused_view, context):
         self.info("Drag operation ended")
+
+    def _dndDragDataGetCb(self, unused_view, context, data, info, timestamp):
+        data.set_uris([self.getSelectedItems()])
 
     def _rowUnderMouseSelected(self, view, event):
         result = view.get_path_at_pos(int(event.x), int(event.y))

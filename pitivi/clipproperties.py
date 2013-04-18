@@ -320,19 +320,13 @@ class EffectProperties(Gtk.Expander, Loggable):
     def _cleanCache(self, effect):
         config_ui = self.effect_props_handling.cleanCache(effect)
 
-    def addEffectToCurrentSelection(self, bin_desc):
-        if self.clips:
-            media_type = self.app.effects.getFactoryFromName(bin_desc).media_type
+    def addEffectToClip(self, clip, bin_desc):
+        media_type = self.app.effects.getFactoryFromName(bin_desc).media_type
 
-            # Trying to apply effect only on the first object of the selection
-            clip = self.clips[0]
-
-            # Checking that this effect can be applied on this track object
-            # Which means, it has the corresponding media_type
-            for track_element in clip.get_children():
-                track_type = track_element.get_track_type()
-                if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
-                        track_type == GES.TrackType.VIDEO and media_type == VIDEO_EFFECT:
+        for track_element in clip.get_children():
+            track_type = track_element.get_track_type()
+            if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
+                    track_type == GES.TrackType.VIDEO and media_type == VIDEO_EFFECT:
                     #Actually add the effect
                     self.app.action_log.begin("add effect")
                     effect = GES.Effect.new(bin_description=bin_desc)
@@ -342,6 +336,15 @@ class EffectProperties(Gtk.Expander, Loggable):
                     self.app.current.pipeline.flushSeek()
 
                     break
+
+    def addEffectToCurrentSelection(self, bin_desc):
+        if self.clips:
+            # Trying to apply effect only on the first object of the selection
+            clip = self.clips[0]
+
+            # Checking that this effect can be applied on this track object
+            # Which means, it has the corresponding media_type
+            self.addEffectToClip(clip, bin_desc)
 
     def _dragDropCb(self, *unused_arguments):
         self.info("An item has been dropped onto the clip properties' effects list")

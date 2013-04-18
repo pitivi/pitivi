@@ -8,7 +8,7 @@ from datetime import datetime
 from pitivi.utils.timeline import Zoomable, Selection, UNSELECT
 from pitivi.settings import GlobalSettings
 from pitivi.dialogs.prefs import PreferencesDialog
-from pitivi.utils.ui import EXPANDED_SIZE, SPACING, PLAYHEAD_WIDTH, CONTROL_WIDTH
+from pitivi.utils.ui import EXPANDED_SIZE, SPACING, PLAYHEAD_WIDTH, CONTROL_WIDTH, TYPE_PITIVI_EFFECT
 from pitivi.utils.widgets import ZoomBox
 
 from ruler import ScaleRuler
@@ -1066,47 +1066,66 @@ class Timeline(Gtk.VBox, Zoomable):
             if data.get_length() > 0:
                 if not self.dropOccured:
                     self.timeline.resetGhostClips()
-                self.dropData = data.get_data()
+                self.dropData = data.get_uris()
                 self.dropDataReady = True
 
         if self.dropOccured:
             self.dropOccured = False
             Gtk.drag_finish(context, True, False, time)
             self._dragLeaveCb(widget, context, time)
+        else:
+            self.isDraggedClip = True
 
     def _dragDropCb(self, widget, context, x, y, time):
         target = widget.drag_dest_find_target(context, None)
+        y -= self.ruler.get_allocation().height
         if target.name() == "text/uri-list":
             self.dropOccured = True
             widget.drag_get_data(context, target, time)
-            self.timeline.convertGhostClips()
+            if self.isDraggedClip:
+                self.timeline.convertGhostClips()
+                self.timeline.resetGhostClips()
+            else:
+                actor = self.stage.get_actor_at_pos(Clutter.PickMode.ALL, x, y)
+                try:
+                    bElement = actor.bElement
+                    self.app.gui.clipconfig.effect_expander.addEffectToClip(bElement.get_parent(), self.dropData[0])
+                except AttributeError:
+                    return False
             return True
         else:
             return False
 
     def _dragMotionCb(self, widget, context, x, y, time):
         target = widget.drag_dest_find_target(context, None)
-        if target.name() != "text/uri-list":
+        if target.name() not in ["text/uri-list", "pitivi/effect"]:
             return False
         if not self.dropDataReady:
             widget.drag_get_data(context, target, time)
             Gdk.drag_status(context, 0, time)
         else:
             x, y = self._transposeXY(x, y)
-            if not self.timeline.ghostClips:
-                asset = self.app.gui.medialibrary.getAssetForUri(self.dropData)
-                self.timeline.addGhostClip(asset, x, y)
-            self.timeline.updateGhostClips(x, y)
+
+            # dragged from the media library
+            if not self.timeline.ghostClips and self.isDraggedClip:
+                for uri in self.dropData:
+                    asset = self.app.gui.medialibrary.getAssetForUri(uri)
+                    if asset is None:
+                        self.isDraggedClip = False
+                        break
+                    self.timeline.addGhostClip(asset, x, y)
+
+            if self.isDraggedClip:
+                self.timeline.updateGhostClips(x, y)
+
             Gdk.drag_status(context, Gdk.DragAction.COPY, time)
             if not self.dropHighlight:
                 widget.drag_highlight()
                 self.dropHighlight = True
-#        Gtk.drag_set_icon_pixbuf(context, self.pixbuf, 0, 0)
         return True
 
     def _dragLeaveCb(self, widget, context, time):
         if self.dropDataReady:
-            self.dropData = None
             self.dropDataReady = False
         if self.dropHighlight:
             widget.drag_unhighlight()

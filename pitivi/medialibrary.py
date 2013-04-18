@@ -323,7 +323,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         view.drag_source_add_uri_targets()
         view.drag_source_add_text_targets()
         view.connect("drag-data-get", self._dndDragDataGetCb)
-        view.connect("drag_begin", self._dndDragBeginCb)
+        view.connect("drag-begin", self._dndDragBeginCb)
         view.connect("drag-end", self._dndDragEndCb)
 
     def _importSourcesCb(self, unused_action):

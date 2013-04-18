@@ -364,6 +364,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
     def _createBorder(self):
         self.border = RoundedRectangle(0, 0, 5, 5)
+        self.border.bElement = self.bElement
         color = Cogl.Color()
 
         color.init_from_4ub(100, 100, 100, 255)
@@ -387,6 +388,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
     def _createMarquee(self):
         # TODO: difference between Actor.new() and Actor()?
         self.marquee = Clutter.Actor()
+        self.marquee.bElement = self.bElement
 
         self.marquee.set_background_color(Clutter.Color.new(60, 60, 60, 100))
         self.marquee.props.visible = False
@@ -459,6 +461,7 @@ class ClipElement(TimelineElement):
 
     def _createBackground(self, track):
         self.background = RoundedRectangle(0, 0, 5, 5)
+        self.background.bElement = self.bElement
 
         if track.type == GES.TrackType.AUDIO:
             color = Cogl.Color()
