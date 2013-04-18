@@ -631,7 +631,6 @@ class Timeline(Gtk.VBox, Zoomable):
     def _createUi(self):
         self.embed = GtkClutter.Embed()
         self.stage = self.embed.get_stage()
-        self.stage.set_size(200, 200)
 
         self.timeline = TimelineStage(self)
         self.controls = ControlContainer(self.timeline)
@@ -785,10 +784,8 @@ class Timeline(Gtk.VBox, Zoomable):
         self.ruler.hide()
 
         self.vadj.props.lower = 0
-        self.vadj.props.upper = 500
         self.vadj.props.page_size = 250
 
-        hbox.set_size_request(-1, 500)
         hbox.pack_start(self.embed, True, True, True)
         hbox.pack_start(self._vscrollbar, False, True, False)
 
