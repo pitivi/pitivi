@@ -220,18 +220,17 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         timeline.remove_layer(self.layer)
 
     def _moveLayerCb(self, widget, step):
-        index = self._app.gui.timeline_ui.controls.getControlIndex(self)
+        index = self.layer.get_priority()
         if abs(step) == 1:
             index += step
         elif step == -2:
             index = 0
         else:
-            index = len(self.layer.get_timeline().get_layers())
+            index = len(self.layer.get_timeline().get_layers()) - 1
             # if audio, set last position
-            if type(self) == AudioLayerControl:
-                index *= 2
 
-        self._app.gui.timeline_ui.controls.moveControlWidget(self, index)
+        self._app.moveLayer(self, index)
+#        self._app.timeline._container.app.gui.timeline_ui.controls.moveControlWidget(self, index)
 
     def getHeight(self):
         return self.get_allocation().height
