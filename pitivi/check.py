@@ -39,6 +39,7 @@ from gettext import gettext as _
 HARD_DEPS = {
     "cairo": "1.10.0",  # using static python bindings
     "GES": "1.0.0",
+    "Clutter": "1.12.0",
     "gnonlin": "0.11.89.1",
     "GooCanvas": "2.0",
     "Gst": "1.1.0",
@@ -131,7 +132,7 @@ def _check_dependency(modulename, from_gobject_introspection):
             return [False, VERSION_REQ, _version_to_string(module.version())]
         else:
             return [True, None, _version_to_string(module.version())]
-    if modulename == "Gtk":
+    if modulename == "Gtk" or modulename == "Clutter":
         gtk_version_tuple = (module.MAJOR_VERSION, module.MINOR_VERSION, module.MICRO_VERSION)
         if list(gtk_version_tuple) < _string_to_list(VERSION_REQ):
             return [False, VERSION_REQ, _version_to_string(gtk_version_tuple)]
@@ -156,6 +157,9 @@ def check_hard_dependencies():
     satisfied, req, inst = _check_dependency("Gst", True)
     if not satisfied:
         missing_hard_deps["GStreamer"] = (req, inst)
+    satisfied, req, inst = _check_dependency("Clutter", True)
+    if not satisfied:
+        missing_hard_deps["Clutter"] = (req, inst)
     satisfied, req, inst = _check_dependency("GES", True)
     if not satisfied:
         missing_hard_deps["GES"] = (req, inst)
