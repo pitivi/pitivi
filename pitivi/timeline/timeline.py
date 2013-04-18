@@ -244,6 +244,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
                     ghostclip.update(priority, y, False)
                     if x >= 0:
                         ghostclip.props.x = x
+                        self._updateSize(ghostclip)
 
     def convertGhostClips(self):
         for ghostCouple in self.ghostClips:
@@ -383,10 +384,13 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         element.props.y = y
         element.restore_easing_state()
 
-    def _updateSize(self):
+    def _updateSize(self, ghostclip=None):
         self.save_easing_state()
         self.set_easing_duration(0)
         self.props.width = self.nsToPixel(self.bTimeline.get_duration()) + 250
+        if ghostclip is not None:
+            ghostEnd = ghostclip.props.x + ghostclip.props.width + 250
+            self.props.width = max(ghostEnd, self.props.width)
         self.props.height = (len(self.bTimeline.get_layers()) + 1) * (EXPANDED_SIZE + SPACING) * 2 + SPACING
         self.restore_easing_state()
         self._container.vadj.props.upper = self.props.height

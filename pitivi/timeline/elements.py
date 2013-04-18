@@ -560,6 +560,7 @@ class URISourceElement(TimelineElement):
         # We can't use delta_x here because it fluctuates weirdly.
         mode = self.timeline._container.getEditionMode()
         self._context.setMode(mode)
+
         coords = self.dragAction.get_motion_coords()
         delta_x = coords[0] - self.dragBeginStartX
         delta_y = coords[1] - self.dragBeginStartY
@@ -577,6 +578,8 @@ class URISourceElement(TimelineElement):
             self._context.editTo(new_start, self.bElement.get_parent().get_layer().get_priority())
         else:
             self._context.editTo(self._dragBeginStart, self.bElement.get_parent().get_layer().get_priority())
+
+        self.timeline._updateSize(self.ghostclip)
         return False
 
     def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
