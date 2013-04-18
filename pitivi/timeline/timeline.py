@@ -1,3 +1,25 @@
+# -*- coding: utf-8 -*-
+# PiTiVi , Non-linear video editor
+#
+#       pitivi/timeline.py
+#
+# Copyright (c) 2013, Mathieu Duponchelle <mduponchelle1@gmail.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
 from gi.repository import GtkClutter
 GtkClutter.init([])
 
@@ -798,10 +820,10 @@ class Timeline(Gtk.VBox, Zoomable):
         return False
 
     def _scrollToPlayhead(self):
+        #self.ruler._maybeUpdate()
         canvas_size = self.embed.get_allocation().width - CONTROL_WIDTH
         new_pos = self.timeline.playhead.props.x
         scroll_pos = self.hadj.get_value()
-
         self.scrollToPosition(min(new_pos - canvas_size / 2,
                                   self.hadj.props.upper - canvas_size - 1))
 
