@@ -627,6 +627,8 @@ class Timeline(Gtk.VBox, Zoomable):
             return GES.EditMode.EDIT_RIPPLE
         if isAHandle and self.controlMask:
             return GES.EditMode.EDIT_ROLL
+        elif isAHandle:
+            return GES.EditMode.EDIT_TRIM
         return GES.EditMode.EDIT_NORMAL
 
     # Internal API

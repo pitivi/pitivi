@@ -300,6 +300,7 @@ class TrimHandle(Clutter.Texture):
         delta_x = coords[0] - self.dragBeginStartX
         new_start = self._dragBeginStart + Zoomable.pixelToNs(delta_x)
 
+        self._context.setMode(self.timelineElement.timeline._container.getEditionMode(isAHandle=True))
         self._context.editTo(new_start, self.timelineElement.bElement.get_parent().get_layer().get_priority())
         return False
 
