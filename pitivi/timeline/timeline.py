@@ -877,7 +877,10 @@ class Timeline(Gtk.VBox, Zoomable):
         if self.ruler.pressed or self.pressed:
             return
         canvas_size = self.embed.get_allocation().width - CONTROL_WIDTH
-        new_pos = Zoomable.nsToPixel(self.app.current.pipeline.getPosition())
+        try:
+            new_pos = Zoomable.nsToPixel(self.app.current.pipeline.getPosition())
+        except PipelineError:
+            return
         scroll_pos = self.hadj.get_value()
         self.scrollToPosition(min(new_pos - canvas_size / 2,
                                   self.hadj.props.upper - canvas_size - 1))
