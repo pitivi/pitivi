@@ -863,6 +863,8 @@ class Timeline(Gtk.VBox, Zoomable):
 
     def _scrollToPlayhead(self):
         #self.ruler._maybeUpdate()
+        if self.ruler.pressed:
+            return
         canvas_size = self.embed.get_allocation().width - CONTROL_WIDTH
         new_pos = self.timeline.playhead.props.x
         scroll_pos = self.hadj.get_value()
