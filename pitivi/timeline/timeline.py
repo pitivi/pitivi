@@ -1022,7 +1022,7 @@ class Timeline(Gtk.VBox, Zoomable):
 
     def _clickedCb(self, stage, event):
         self.pressed = True
-        position = self.pixelToNs(event.x - CONTROL_WIDTH)
+        position = self.pixelToNs(event.x - CONTROL_WIDTH + self.timeline._scroll_point.x)
         self._seeker.seek(position)
         self.pressed = False
         actor = self.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, event.x, event.y)
