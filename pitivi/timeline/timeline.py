@@ -668,6 +668,7 @@ class Timeline(Gtk.VBox, Zoomable):
         self.scrolled = 0
 
         self.zoomed_fitted = True
+        self.pressed = False
 
         self._packScrollbars(self)
         self.stage.show()
