@@ -863,7 +863,7 @@ class Timeline(Gtk.VBox, Zoomable):
 
     def _scrollToPlayhead(self):
         #self.ruler._maybeUpdate()
-        if self.ruler.pressed:
+        if self.ruler.pressed or self.pressed:
             return
         canvas_size = self.embed.get_allocation().width - CONTROL_WIDTH
         new_pos = self.timeline.playhead.props.x
@@ -1005,6 +1005,10 @@ class Timeline(Gtk.VBox, Zoomable):
             self.controlMask = False
 
     def _clickedCb(self, stage, event):
+        self.pressed = True
+        position = self.pixelToNs(event.x - CONTROL_WIDTH)
+        self._seeker.seek(position)
+        self.pressed = False
         actor = self.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, event.x, event.y)
         if actor == stage:
             self.timeline.emptySelection()
