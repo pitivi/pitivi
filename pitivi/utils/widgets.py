@@ -1128,6 +1128,7 @@ class ZoomBox(Gtk.HBox, Zoomable):
         # GTK crack
         self._updateZoomSlider = False
         Zoomable.setZoomLevel(int(adjustment.get_value()))
+        self.timeline._scrollToPlayhead()
         self.zoomed_fitted = False
         self._updateZoomSlider = True
 
