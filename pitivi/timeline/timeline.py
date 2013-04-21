@@ -305,9 +305,12 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.lastPosition = position
 
     def _updatePlayHead(self):
+        self.playhead.save_easing_state()
+        self.playhead.set_easing_duration(600)
         height = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING) * 2
         self.playhead.set_size(PLAYHEAD_WIDTH, height)
         self.playhead.props.x = self.nsToPixel(self.lastPosition)
+        self.playhead.restore_easing_state()
 
     def _createPlayhead(self):
         self.playhead = Clutter.Actor()
@@ -863,7 +866,10 @@ class Timeline(Gtk.VBox, Zoomable):
             self.vadj.props.page_size ** (2.0 / 3.0))
 
     def _scrollToPosition(self, position):
+        self.timeline.save_easing_state()
+        self.timeline.set_easing_duration(600)
         self._hscrollBar.set_value(position)
+        self.timeline.restore_easing_state()
         return False
 
     def _scrollToPlayhead(self):
@@ -871,7 +877,7 @@ class Timeline(Gtk.VBox, Zoomable):
         if self.ruler.pressed or self.pressed:
             return
         canvas_size = self.embed.get_allocation().width - CONTROL_WIDTH
-        new_pos = self.timeline.playhead.props.x
+        new_pos = Zoomable.nsToPixel(self.app.current.pipeline.getPosition())
         scroll_pos = self.hadj.get_value()
         self.scrollToPosition(min(new_pos - canvas_size / 2,
                                   self.hadj.props.upper - canvas_size - 1))
