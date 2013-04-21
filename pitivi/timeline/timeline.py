@@ -571,6 +571,8 @@ class Timeline(Gtk.VBox, Zoomable):
                 layer.add_clip(asset)
 
         self.bTimeline.enable_update(True)
+        if self.zoomed_fitted:
+            self._setBestZoomRatio()
 
     def setProjectManager(self, projectmanager):
         if self._projectmanager is not None:
@@ -664,6 +666,8 @@ class Timeline(Gtk.VBox, Zoomable):
         self.point.y = 0
 
         self.scrolled = 0
+
+        self.zoomed_fitted = True
 
         self._packScrollbars(self)
         self.stage.show()
@@ -1170,6 +1174,8 @@ class Timeline(Gtk.VBox, Zoomable):
             if self.isDraggedClip:
                 self.timeline.convertGhostClips()
                 self.timeline.resetGhostClips()
+                if self.zoomed_fitted:
+                    self._setBestZoomRatio()
             else:
                 actor = self.stage.get_actor_at_pos(Clutter.PickMode.ALL, x, y)
                 try:
