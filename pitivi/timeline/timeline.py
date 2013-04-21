@@ -35,7 +35,7 @@ from pitivi.utils.widgets import ZoomBox
 
 from ruler import ScaleRuler
 from gettext import gettext as _
-from pitivi.utils.pipeline import Pipeline
+from pitivi.utils.pipeline import Pipeline, PipelineError
 from elements import URISourceElement, TransitionElement, Ghostclip
 from controls import ControlContainer
 
@@ -334,6 +334,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.add_child(self._snap_indicator)
 
     def _addTimelineElement(self, track, bElement):
+        if isinstance(bElement, GES.Effect):
+            return
         if isinstance(bElement.get_parent(), GES.TransitionClip):
             element = TransitionElement(bElement, track, self)
             element.set_z_position(0)
