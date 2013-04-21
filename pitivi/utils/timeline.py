@@ -319,7 +319,7 @@ class Zoomable(object):
     min_zoom = 0.25
     zoom_steps = 100
     zoom_range = max_zoom - min_zoom
-    _cur_zoom = 2
+    _cur_zoom = 20
     zoomratio = None
 
     def __init__(self):
