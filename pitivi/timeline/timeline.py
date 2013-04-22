@@ -660,6 +660,7 @@ class Timeline(Gtk.VBox, Zoomable):
 
         self.stage.connect("destroy", quit_)
         self.stage.connect("button-press-event", self._clickedCb)
+        self.stage.connect("button-release-event", self._releasedCb)
         self.embed.connect("scroll-event", self._scrollEventCb)
         self.gui.connect("key-press-event", self._keyPressEventCb)
         self.gui.connect("key-release-event", self._keyReleaseEventCb)
@@ -1028,6 +1029,9 @@ class Timeline(Gtk.VBox, Zoomable):
         actor = self.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, event.x, event.y)
         if actor == stage:
             self.timeline.emptySelection()
+
+    def _releasedCb(self, stage, event):
+        self.timeline._snapEndedCb()
 
     def _renderingSettingsChangedCb(self, project, item, value):
         """
