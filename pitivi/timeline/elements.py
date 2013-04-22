@@ -29,7 +29,7 @@ is prefixed with a little b, example : bTimeline
 import os
 import cairo
 
-from gi.repository import Clutter, Cogl, GES, Gdk
+from gi.repository import Clutter, Cogl, GES, Gdk, GstController
 from pitivi.utils.timeline import Zoomable, EditingContext, Selection, SELECT, UNSELECT, Selected
 from previewers import VideoPreviewer, BORDER_WIDTH
 
@@ -341,6 +341,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.timeline = timeline
         self.bElement = bElement
         self.bElement.selected = Selected()
+        self.bElement.ui_element = self
         self.track_type = self.bElement.get_track_type()  # This won't change
         self.isDragged = False
         size = self.bElement.get_duration()
@@ -407,6 +408,9 @@ class TimelineElement(Clutter.Actor, Zoomable):
         if brother:
             brother.isDragged = dragged
         self.isDragged = dragged
+
+    def showKeyframes(self, propname):
+        pass
 
     # Internal API
 
@@ -520,6 +524,17 @@ class URISourceElement(TimelineElement):
     def hideHandles(self):
         self.rightHandle.hide()
         self.leftHandle.hide()
+
+    def showKeyframes(self, effect, propname):
+        binding = self.bElement.get_control_binding(propname.name)
+        if not binding:
+            source = GstController.InterpolationControlSource()
+            if not (effect.set_control_source(source, propname.name, "direct")):
+                print "There was something like a problem captain"
+                return
+            binding = effect.get_control_binding(propname.name)
+        print binding
+        print propname.default_value
 
     # private API
 

@@ -855,9 +855,9 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             return
 
         if default_btn:
-            table = Gtk.Table(rows=len(props), columns=3)
+            table = Gtk.Table(rows=len(props), columns=4)
         else:
-            table = Gtk.Table(rows=len(props), columns=2)
+            table = Gtk.Table(rows=len(props), columns=3)
 
         table.set_row_spacings(SPACING)
         table.set_col_spacings(SPACING)
@@ -902,6 +902,9 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 button = self._getResetToDefaultValueButton(prop, widget)
                 table.attach(button, 2, 3, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
                 self.buttons[button] = widget
+            button = self._getShowKeyframesButton(prop)
+            table.attach(button, 3, 4, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
+
             self.element.connect('notify::' + prop.name, self._propertyChangedCb, widget)
 
             y += 1
@@ -912,6 +915,16 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
     def _propertyChangedCb(self, element, pspec, widget):
         widget.setWidgetValue(self.element.get_property(pspec.name))
 
+    def _getShowKeyframesButton(self, prop):
+        icon = Gtk.Image()
+        icon.set_from_icon_name("document-properties-symbolic", Gtk.IconSize.MENU)
+        button = Gtk.Button()
+        button.add(icon)
+        button.set_tooltip_text(_("Show keyframes for this value"))
+        button.set_relief(Gtk.ReliefStyle.NONE)
+        button.connect('clicked', self._showKeyframesClickedCb, prop)
+        return button
+
     def _getResetToDefaultValueButton(self, prop, widget):
         icon = Gtk.Image()
         icon.set_from_icon_name("edit-clear-all-symbolic", Gtk.IconSize.MENU)
@@ -921,6 +934,13 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect('clicked', self._defaultBtnClickedCb, widget)
         return button
+
+    def _showKeyframesClickedCb(self, button, prop):
+        effect = self.element
+        track_type = effect.get_track_type()
+        for track_element in effect.get_parent().get_children():
+            if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
+                track_element.ui_element.showKeyframes(effect, prop)
 
     def _defaultBtnClickedCb(self, button, widget):
         widget.setWidgetToDefault()
