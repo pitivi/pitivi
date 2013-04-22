@@ -578,6 +578,8 @@ class Timeline(Gtk.VBox, Zoomable):
         self.bTimeline.enable_update(True)
         if self.zoomed_fitted:
             self._setBestZoomRatio()
+        else:
+            self.scrollToPosition(self.bTimeline.props.duration)
 
     def setProjectManager(self, projectmanager):
         if self._projectmanager is not None:
@@ -1091,15 +1093,11 @@ class Timeline(Gtk.VBox, Zoomable):
             self.setTimeline(project.timeline)
 
     def _zoomInCb(self, unused_action):
-        # This only handles the button callbacks (from the menus),
-        # not keyboard shortcuts or the zoom slider!
         Zoomable.zoomIn()
         self.log("Setting 'zoomed_fitted' to False")
         self.zoomed_fitted = False
 
     def _zoomOutCb(self, unused_action):
-        # This only handles the button callbacks (from the menus),
-        # not keyboard shortcuts or the zoom slider!
         Zoomable.zoomOut()
         self.log("Setting 'zoomed_fitted' to False")
         self.zoomed_fitted = False
@@ -1138,6 +1136,7 @@ class Timeline(Gtk.VBox, Zoomable):
                 Zoomable.zoomIn()
             elif deltas[2] > 0:
                 Zoomable.zoomOut()
+            self.zoomed_fitted = False
             self._scrollToPlayhead()
         elif event.state & Gdk.ModifierType.SHIFT_MASK:
             if deltas[2] > 0:
@@ -1192,6 +1191,9 @@ class Timeline(Gtk.VBox, Zoomable):
                 self.timeline.resetGhostClips()
                 if self.zoomed_fitted:
                     self._setBestZoomRatio()
+                else:
+                    x, y = self._transposeXY(x, y)
+                    self.scrollToPosition(Zoomable.pixelToNs(x))
             else:
                 actor = self.stage.get_actor_at_pos(Clutter.PickMode.ALL, x, y)
                 try:
