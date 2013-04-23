@@ -305,12 +305,14 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.lastPosition = position
 
     def _updatePlayHead(self):
-        self.playhead.save_easing_state()
-        self.playhead.set_easing_duration(600)
+        if self._container.pipeline and self._container.pipeline.get_state() != Gst.State.PLAYING:
+            self.playhead.save_easing_state()
+            self.playhead.set_easing_duration(600)
         height = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING) * 2
         self.playhead.set_size(PLAYHEAD_WIDTH, height)
         self.playhead.props.x = self.nsToPixel(self.lastPosition)
-        self.playhead.restore_easing_state()
+        if self._container.pipeline and self._container.pipeline.get_state() != Gst.State.PLAYING:
+            self.playhead.restore_easing_state()
 
     def _createPlayhead(self):
         self.playhead = Clutter.Actor()
@@ -527,6 +529,7 @@ class Timeline(Gtk.VBox, Zoomable):
 
         self._projectmanager = None
         self._project = None
+        self.pipeline = None
 
         self._createUi()
         self._createActions()
@@ -871,10 +874,12 @@ class Timeline(Gtk.VBox, Zoomable):
             self.vadj.props.page_size ** (2.0 / 3.0))
 
     def _scrollToPosition(self, position):
-        self.timeline.save_easing_state()
-        self.timeline.set_easing_duration(600)
+        if self.pipeline and self.pipeline.get_state() != Gst.State.PLAYING:
+            self.timeline.save_easing_state()
+            self.timeline.set_easing_duration(600)
         self._hscrollBar.set_value(position)
-        self.timeline.restore_easing_state()
+        if self.pipeline and self.pipeline.get_state() != Gst.State.PLAYING:
+            self.timeline.restore_easing_state()
         return False
 
     def _scrollToPlayhead(self):
