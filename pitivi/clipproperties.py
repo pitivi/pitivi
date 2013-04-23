@@ -167,12 +167,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         removeEffectButton.set_is_important(True)
         self._toolbar.insert(removeEffectButton, 0)
 
-        showKeyframesButton = Gtk.ToolButton()
-        showKeyframesButton.set_icon_name("document-properties-symbolic")
-        showKeyframesButton.set_label(_("Show keyframes"))
-        showKeyframesButton.set_is_important(True)
-        self._toolbar.insert(showKeyframesButton, 0)
-
         # Treeview to display a list of effects (checkbox, effect type and name)
         self.treeview_scrollwin = Gtk.ScrolledWindow()
         self.treeview_scrollwin.set_policy(Gtk.PolicyType.NEVER,
@@ -244,7 +238,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
         self._vcontent.connect("notify", self._vcontentNotifyCb)
         removeEffectButton.connect("clicked", self._removeEffectClicked)
-        showKeyframesButton.connect("clicked", self._showKeyframesClicked)
         self.app.connect("new-project-loaded", self._newProjectLoadedCb)
         self.connect('notify::expanded', self._expandedCb)
         self.connected = False
@@ -316,17 +309,6 @@ class EffectProperties(Gtk.Expander, Loggable):
             effect = self.storemodel.get_value(self.selection.get_selected()[1],
                                                COL_TRACK_EFFECT)
             self._removeEffect(effect)
-
-    def _showKeyframesClicked(self, event):
-        if not self.clips:
-            return
-        effect = self.storemodel.get_value(self.selection.get_selected()[1],
-                                           COL_TRACK_EFFECT)
-        track_type = effect.get_track_type()
-        for track_element in effect.get_parent().get_children():
-            print track_element
-            if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
-                track_element.ui_element.showKeyframes()
 
     def _removeEffect(self, effect):
         self.app.action_log.begin("remove effect")

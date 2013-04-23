@@ -64,6 +64,8 @@ CANVAS_SPACING = 21
 
 CONTROL_WIDTH = 250
 
+KEYFRAME_SIZE = 8
+
 # Layer creation blocking time in s
 LAYER_CREATION_BLOCK_TIME = 0.2
 

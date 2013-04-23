@@ -839,6 +839,8 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         If there are no properties, returns a table containing the label
         "No properties."
         """
+        self.bindings = {}
+        self.showKeyframesButtons = []
         is_effect = False
         if isinstance(self.element, GES.Effect):
             is_effect = True
@@ -892,6 +894,11 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 table.attach(label, 0, 1, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
                 table.attach(widget, 1, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
 
+            if not isinstance(widget, ToggleWidget) and not isinstance(widget, ChoiceWidget):
+                button = self._getShowKeyframesButton(prop)
+                self.showKeyframesButtons.append(button)
+                table.attach(button, 3, 4, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
+
             if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
 
@@ -899,11 +906,17 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
 
             # The "reset to default" button associated with this property
             if default_btn:
+                widget.propName = prop.name.split("-")[0]
+                name = prop.name
+
+                # If this element is controlled, the value means nothing anymore.
+                binding = self.element.get_control_binding(prop.name)
+                if binding:
+                    widget.set_sensitive(False)
+                    self.bindings[widget] = binding
                 button = self._getResetToDefaultValueButton(prop, widget)
                 table.attach(button, 2, 3, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
                 self.buttons[button] = widget
-            button = self._getShowKeyframesButton(prop)
-            table.attach(button, 3, 4, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
 
             self.element.connect('notify::' + prop.name, self._propertyChangedCb, widget)
 
@@ -936,6 +949,11 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         return button
 
     def _showKeyframesClickedCb(self, button, prop):
+        for but in self.showKeyframesButtons:
+            but.set_relief(Gtk.ReliefStyle.NONE)
+
+        button.set_relief(Gtk.ReliefStyle.HALF)
+
         effect = self.element
         track_type = effect.get_track_type()
         for track_element in effect.get_parent().get_children():
@@ -943,6 +961,16 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 track_element.ui_element.showKeyframes(effect, prop)
 
     def _defaultBtnClickedCb(self, button, widget):
+        binding = self.bindings[widget]
+        if binding:
+            effect = self.element
+            track_type = effect.get_track_type()
+            for track_element in effect.get_parent().get_children():
+                if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
+                    binding.props.control_source.unset_all()
+                    track_element.ui_element.updateKeyframes()
+
+        widget.set_sensitive(True)
         widget.setWidgetToDefault()
 
     def getSettings(self, with_default=False):
