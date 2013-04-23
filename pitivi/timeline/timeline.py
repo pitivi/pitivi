@@ -1325,7 +1325,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
         layers = self.timeline.get_layers()
 
         if (len(layers) == 0):
-            layer = GES.TimelineLayer()
+            layer = GES.Layer()
             layer.props.auto_transition = True
             self.timeline.add_layer(layer)
             layers = [layer]
@@ -1361,7 +1361,7 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                 clip_duration = asset.get_duration()
 
             source = layer.add_asset(asset, start, 0,
-                clip_duration, 1.0, asset.get_supported_formats())
+                clip_duration, asset.get_supported_formats())
 
             self._temp_elements.insert(0, source)
             start += asset.get_duration()
@@ -1856,5 +1856,5 @@ class Timeline(Gtk.Table, Loggable, Zoomable):
                 clip_duration = asset.get_duration()
 
             layer.add_asset(asset, self.timeline.props.duration,
-                0, clip_duration, 1.0, asset.get_supported_formats())
+                0, clip_duration, asset.get_supported_formats())
         self.timeline.enable_update(True)
