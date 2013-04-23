@@ -20,6 +20,8 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+import sys
+
 from gi.repository import GtkClutter
 GtkClutter.init([])
 
@@ -525,7 +527,9 @@ class Timeline(Gtk.VBox, Zoomable):
         self.gui = gui
         self.ui_manager = ui_manager
         self.app = instance
-        self._settings = self.app.settings
+        self._settings = None
+        if self.app:
+            self._settings = self.app.settings
 
         self._projectmanager = None
         self._project = None
@@ -536,11 +540,12 @@ class Timeline(Gtk.VBox, Zoomable):
 
         self._setUpDragAndDrop()
 
-        self._settings.connect("edgeSnapDeadbandChanged",
-                self._snapDistanceChangedCb)
+        if self._settings:
+            self._settings.connect("edgeSnapDeadbandChanged",
+                                   self._snapDistanceChangedCb)
 
         # Standalone
-        if __name__ == "__main__":
+        if not self._settings:
             gtksettings = Gtk.Settings.get_default()
             gtksettings.set_property("gtk-application-prefer-dark-theme", True)
 
@@ -635,7 +640,7 @@ class Timeline(Gtk.VBox, Zoomable):
         self.timeline.setTimeline(bTimeline)
 
     def getEditionMode(self, isAHandle=False):
-        if self.shiftMask or self.gui._autoripple_active:
+        if self.shiftMask or (self.gui and self.gui._autoripple_active):
             return GES.EditMode.EDIT_RIPPLE
         if isAHandle and self.controlMask:
             return GES.EditMode.EDIT_ROLL
@@ -667,8 +672,9 @@ class Timeline(Gtk.VBox, Zoomable):
         self.stage.connect("button-press-event", self._clickedCb)
         self.stage.connect("button-release-event", self._releasedCb)
         self.embed.connect("scroll-event", self._scrollEventCb)
-        self.gui.connect("key-press-event", self._keyPressEventCb)
-        self.gui.connect("key-release-event", self._keyReleaseEventCb)
+        if self.gui:
+            self.gui.connect("key-press-event", self._keyPressEventCb)
+            self.gui.connect("key-release-event", self._keyReleaseEventCb)
 
         self.embed.connect("enter-notify-event", self._enterNotifyEventCb)
 
@@ -716,6 +722,8 @@ class Timeline(Gtk.VBox, Zoomable):
         return layers
 
     def _createActions(self):
+        if not self.gui:
+            return
         actions = (
             ("ZoomIn", Gtk.STOCK_ZOOM_IN, None,
             "<Control>plus", ZOOM_IN, self._zoomInCb),
@@ -892,6 +900,8 @@ class Timeline(Gtk.VBox, Zoomable):
             new_pos = Zoomable.nsToPixel(self.app.current.pipeline.getPosition())
         except PipelineError:
             return
+        except AttributeError:  # Standalone, no pipeline.
+            return
         scroll_pos = self.hadj.get_value()
         self.scrollToPosition(min(new_pos - canvas_size / 2,
                                   self.hadj.props.upper - canvas_size - 1))
@@ -1015,7 +1025,8 @@ class Timeline(Gtk.VBox, Zoomable):
     # Callbacks
 
     def _enterNotifyEventCb(self, widget, event):
-        self.gui.setActionsSensitive(True)
+        if self.gui:
+            self.gui.setActionsSensitive(True)
 
     def _keyPressEventCb(self, widget, event):
         if event.keyval == Gdk.KEY_Shift_L:
@@ -1032,7 +1043,8 @@ class Timeline(Gtk.VBox, Zoomable):
     def _clickedCb(self, stage, event):
         self.pressed = True
         position = self.pixelToNs(event.x - CONTROL_WIDTH + self.timeline._scroll_point.x)
-        self._seeker.seek(position)
+        if self.app:
+            self._seeker.seek(position)
         actor = self.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, event.x, event.y)
         if actor == stage:
             self.timeline.emptySelection()
@@ -1274,6 +1286,7 @@ class Timeline(Gtk.VBox, Zoomable):
         bTimeline.add_track(GES.Track.audio_raw_new())
         bTimeline.add_track(GES.Track.video_raw_new())
 
+        self.bTimeline = bTimeline
         timeline.setTimeline(bTimeline)
 
         layer = GES.Layer()
@@ -1282,7 +1295,7 @@ class Timeline(Gtk.VBox, Zoomable):
         self.bTimeline = bTimeline
 
         self.project.connect("asset-added", self._doAssetAddedCb, layer)
-        self.project.create_asset("file://" + sys.argv[1], GES.UriClip)
+        self.project.create_asset("file://" + sys.argv[2], GES.UriClip)
 
     # Standalone internal API
 
@@ -1305,22 +1318,12 @@ class Timeline(Gtk.VBox, Zoomable):
         self.addClipToLayer(layer, asset, 2, 10, 5)
         self.addClipToLayer(layer, asset, 15, 10, 5)
 
-        self.pipeline = Pipeline()
-        self.pipeline.add_timeline(layer.get_timeline())
-
-        self.bus = self.pipeline.get_bus()
-        self.bus.add_signal_watch()
-        self.bus.connect("message", self._handle_message)
-        self.playButton.connect("clicked", self.togglePlayback)
-        #self.pipeline.togglePlayback()
-        self.pipeline.activatePositionListener(interval=30)
-        self.timeline.setPipeline(self.pipeline)
-        GObject.timeout_add(1000, self.doSeek)
         Zoomable.setZoomLevel(50)
 
-if __name__ == "__main__":
+
+def main():
     # Basic argument handling, no need for getopt here
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 3:
         print "Supply a uri as argument"
         sys.exit()
 
@@ -1329,7 +1332,7 @@ if __name__ == "__main__":
     print "ipython ; %gui gtk3 ; %run timeline.py ; help yourself"
 
     window = Gtk.Window()
-    widget = Timeline()
+    widget = Timeline(None, None, None)
     window.add(widget)
     window.maximize()
     window.show_all()

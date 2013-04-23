@@ -112,6 +112,7 @@ def _check_dependencies():
 
 def _run_pitivi():
     import pitivi.application as ptv
+    import pitivi.timeline.timeline as timeline
     from gi.repository import GObject
     # You really need this line if you don't want the UI to lock up as soon as
     # you start using GStreamer:
@@ -123,6 +124,8 @@ def _run_pitivi():
         ptv.GuiPitivi._showGui = lambda *args, **kargs : None
 
     # Exit the current script and start the real pitivi, with given arguments
+    if len(sys.argv) > 1 and sys.argv[1] == "--timeline":
+        sys.exit(timeline.main())
     sys.exit(ptv.main(sys.argv))
 
 
