@@ -137,6 +137,12 @@ class RoundedRectangle(Clutter.Actor):
 
 
 class Ghostclip(Clutter.Actor):
+    """
+    The concept of a ghostclip is to represent future actions without
+    actually moving GESClips. They are created when the user wants
+    to change a clip of layer, and when the user does a drag and drop
+    from the media library.
+    """
     def __init__(self, track_type, bElement=None):
         Clutter.Actor.__init__(self)
 
@@ -172,7 +178,7 @@ class Ghostclip(Clutter.Actor):
             else:
                 y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
 
-        # Would that be a new layer ?
+        # Would that be a new layer at the end or inserted ?
         if priority == self.nbrLayers or y % (EXPANDED_SIZE + SPACING) < SPACING:
             self.shouldCreateLayer = True
             self.set_size(self.props.width, SPACING)

@@ -199,6 +199,10 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def emptySelection(self):
         self.selection.setSelection(self.selection.getSelectedTrackElements(), UNSELECT)
 
+    """
+    @param element: the ui_element for which we want to find the sibling.
+    Will iterate over ui_elements to get the possible uri source with the same parent clip.
+    """
     def findBrother(self, element):
         father = element.get_parent()
         for elem in self.elements:
@@ -206,6 +210,10 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
                 return elem
         return None
 
+    """
+    @param ghostclip: the ghostclip that was dropped, needing a new layer.
+    Will move subsequent layers down, if any.
+    """
     def insertLayer(self, ghostclip):
         layer = None
         if ghostclip.priority < len(self.bTimeline.get_layers()):
@@ -221,6 +229,11 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         return layer
 
     # drag and drop from the medialibrary
+
+    """
+    Drag and drop is handled with ghostclips. We build a list of ghostclips when
+    drag data is received, and reset it after conversion only, avoiding the drag-leave bug.
+    """
 
     def resetGhostClips(self):
         for ghostCouple in self.ghostClips:
@@ -238,6 +251,9 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
         self.ghostClips.append([ghostVideo, ghostAudio])
 
+    """
+    This is called for each drag-motion.
+    """
     def updateGhostClips(self, x, y):
         for ghostCouple in self.ghostClips:
             for ghostclip in ghostCouple:
@@ -248,6 +264,9 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
                         ghostclip.props.x = x
                         self._updateSize(ghostclip)
 
+    """
+    This is called at drag-drop
+    """
     def convertGhostClips(self):
         for ghostCouple in self.ghostClips:
             ghostclip = ghostCouple[0]
@@ -276,6 +295,9 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
                             1.0,
                             ghostclip.asset.get_supported_formats())
 
+    """
+    This is called at drag-leave. We don't empty the list on purpose.
+    """
     def removeGhostClips(self):
         for ghostCouple in self.ghostClips:
             for ghostclip in ghostCouple:
@@ -302,7 +324,6 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     def _positionCb(self, pipeline, position):
         self.playhead.props.x = self.nsToPixel(position)
-        # FIXME this currently sucks
         self._container._scrollToPlayhead()
         self.lastPosition = position
 
@@ -518,6 +539,10 @@ def quit2_(*args, **kwargs):
 
 
 class Timeline(Gtk.VBox, Zoomable):
+    """
+    This is the main timeline widget, which will contain the timeline stage
+    and the layer controls, the scrollbars and the ruler.
+    """
     def __init__(self, gui, instance, ui_manager):
         Zoomable.__init__(self)
         Gtk.VBox.__init__(self)
@@ -555,13 +580,11 @@ class Timeline(Gtk.VBox, Zoomable):
 
     def insertEnd(self, assets):
         """
-        Add source at the end of the timeline
-        @type sources: An L{GES.TimelineSource}
-        @param x2: A list of sources to add to the timeline
+        Allows to add any asset at the end of the current timeline.
         """
         self.app.action_log.begin("add clip")
 
-        # FIXME we should find the longets layer instead of adding it to the
+        # FIXME we should find the longest layer instead of adding it to the
         # first one
         # Handle the case of a blank project
         layer = self._ensureLayer()[0]
