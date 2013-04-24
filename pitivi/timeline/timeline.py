@@ -292,7 +292,6 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
                             Zoomable.pixelToNs(ghostclip.props.x),
                             0,
                             ghostclip.asset.get_duration(),
-                            1.0,
                             ghostclip.asset.get_supported_formats())
 
     """
@@ -601,7 +600,7 @@ class Timeline(Gtk.VBox, Zoomable):
 
             if not isinstance(asset, GES.TitleClip):
                 layer.add_asset(asset, self.bTimeline.props.duration,
-                                0, clip_duration, 1.0, asset.get_supported_formats())
+                                0, clip_duration, asset.get_supported_formats())
             else:
                 asset.set_start(self.bTimeline.props.duration)
                 layer.add_clip(asset)
@@ -1292,7 +1291,7 @@ class Timeline(Gtk.VBox, Zoomable):
         Gtk.main()
 
     def addClipToLayer(self, layer, asset, start, duration, inpoint):
-        layer.add_asset(asset, start * Gst.SECOND, 0, duration * Gst.SECOND, 1.0, asset.get_supported_formats())
+        layer.add_asset(asset, start * Gst.SECOND, 0, duration * Gst.SECOND, asset.get_supported_formats())
 
     def togglePlayback(self, button):
         self.pipeline.togglePlayback()
