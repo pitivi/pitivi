@@ -423,7 +423,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
         color.init_from_4ub(100, 100, 100, 255)
         self.border.set_border_color(color)
-        self.border.set_border_width(3)
+        self.border.set_border_width(1)
         self.border.set_position(0, 0)
 
         self.add_child(self.border)
@@ -641,7 +641,6 @@ class TransitionElement(TimelineElement):
 
         color.init_from_4ub(100, 100, 100, 125)
         self.background.set_color(color)
-        self.background.set_border_width(3)
+        self.background.set_border_width(1)
         self.background.set_position(0, 0)
-
         self.add_child(self.background)
