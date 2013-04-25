@@ -27,6 +27,7 @@ is prefixed with a little b, example : bTimeline
 """
 
 import os
+import cairo
 
 from gi.repository import Clutter, Cogl, GES, Gdk
 from pitivi.utils.timeline import Zoomable, EditingContext, Selection, SELECT, UNSELECT, Selected
@@ -491,6 +492,27 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.marquee.props.visible = isSelected
 
 
+class Gradient(Clutter.Actor):
+    def __init__(self, rb, gb, bb, re, ge, be):
+        Clutter.Actor.__init__(self)
+        self.canvas = Clutter.Canvas()
+        self.linear = cairo.LinearGradient(0, 0, 10, EXPANDED_SIZE)
+        self.linear.add_color_stop_rgb(0, rb / 255., gb / 255., bb / 255.)
+        self.linear.add_color_stop_rgb(1, re / 255., ge / 255., be / 255.)
+        self.canvas.set_size(10, EXPANDED_SIZE)
+        self.canvas.connect("draw", self._drawCb)
+        self.set_content(self.canvas)
+        self.canvas.invalidate()
+
+    def _drawCb(self, canvas, cr, width, height):
+        cr.set_operator(cairo.OPERATOR_CLEAR)
+        cr.paint()
+        cr.set_operator(cairo.OPERATOR_OVER)
+        cr.set_source(self.linear)
+        cr.rectangle(0, 0, 10, EXPANDED_SIZE)
+        cr.fill()
+
+
 class URISourceElement(TimelineElement):
     def __init__(self, bElement, track, timeline):
         TimelineElement.__init__(self, bElement, track, timeline)
@@ -517,21 +539,15 @@ class URISourceElement(TimelineElement):
         self.add_child(self.rightHandle)
 
     def _createBackground(self, track):
-        self.background = RoundedRectangle(0, 0, 0, 0)
+        if track.type == GES.TrackType.AUDIO:
+            self.background = Gradient(0x1F, 0x1E, 0x21, 0x46, 0x61, 0x76)
+        else:
+            self.background = Gradient(0xE1, 0xE8, 0xEE, 0xAA, 0xA3, 0x7F)
+
         self.background.bElement = self.bElement
 
-        if track.type == GES.TrackType.AUDIO:
-            color = Cogl.Color()
-            color.init_from_4ub(70, 79, 118, 255)
-        else:
-            color = Cogl.Color()
-            color.init_from_4ub(225, 232, 238, 255)
-
-        self.background.set_color(color)
-        self.background.set_border_width(3)
-        self.background.set_position(0, 0)
-
         self.add_child(self.background)
+        self.background.set_position(0, 0)
 
     # Callbacks
     def _clickedCb(self, action, actor):
