@@ -60,18 +60,16 @@ missing_soft_deps = {}
 def _initiate_videosinks(Gst):
     # TODO: eventually switch to a clutter sink
     sink = Gst.ElementFactory.make("autovideosink", None)
-    if not sink.set_state(Gst.State.READY):
+    if not sink:
         return False
-    sink.set_state(Gst.State.NULL)
     return True
 
 
 def _initiate_audiosinks(Gst):
     # Yes, this can still fail, if PulseAudio is non-responsive for example.
     sink = Gst.ElementFactory.make("autoaudiosink", None)
-    if not sink.set_state(Gst.State.READY):
+    if not sink:
         return False
-    sink.set_state(Gst.State.NULL)
     return True
 
 
