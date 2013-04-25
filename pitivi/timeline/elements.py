@@ -146,13 +146,10 @@ class Ghostclip(Clutter.Actor):
     """
     def __init__(self, track_type, bElement=None):
         Clutter.Actor.__init__(self)
-
         self.track_type = track_type
         self.bElement = bElement
-
-        self.set_background_color(Clutter.Color.new(100, 100, 100, 50))
+        self.set_background_color(Clutter.Color.new(255, 255, 255, 50))
         self.props.visible = False
-
         self.shouldCreateLayer = False
 
     def setNbrLayers(self, nbrLayers):
@@ -443,17 +440,13 @@ class TimelineElement(Clutter.Actor, Zoomable):
         # TODO: difference between Actor.new() and Actor()?
         self.marquee = Clutter.Actor()
         self.marquee.bElement = self.bElement
-
         self.marquee.set_background_color(Clutter.Color.new(60, 60, 60, 100))
         self.marquee.props.visible = False
-
         self.add_child(self.marquee)
 
     def _connectToEvents(self):
         self.dragAction = Clutter.DragAction()
-
         self.add_action(self.dragAction)
-
         self.dragAction.connect("drag-progress", self._dragProgressCb)
         self.dragAction.connect("drag-begin", self._dragBeginCb)
         self.dragAction.connect("drag-end", self._dragEndCb)
@@ -494,6 +487,11 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
 class Gradient(Clutter.Actor):
     def __init__(self, rb, gb, bb, re, ge, be):
+        """
+        Creates a rectangle with a gradient. The first three parameters
+        are the gradient's RGB values at the top, the last three params
+        are the RGB values at the bottom.
+        """
         Clutter.Actor.__init__(self)
         self.canvas = Clutter.Canvas()
         self.linear = cairo.LinearGradient(0, 0, 10, EXPANDED_SIZE)
@@ -540,9 +538,13 @@ class URISourceElement(TimelineElement):
 
     def _createBackground(self, track):
         if track.type == GES.TrackType.AUDIO:
-            self.background = Gradient(0x1F, 0x1E, 0x21, 0x46, 0x61, 0x76)
+            # Audio clips go from dark green to light green
+            # (27, 46, 14, 255) to (73, 108, 33, 255)
+            self.background = Gradient(27, 46, 14, 73, 108, 33)
         else:
-            self.background = Gradient(0xE1, 0xE8, 0xEE, 0xAA, 0xA3, 0x7F)
+            # Video clips go from almost black to gray
+            # (15, 15, 15, 255) to (45, 45, 45, 255)
+            self.background = Gradient(15, 15, 15, 45, 45, 45)
 
         self.background.bElement = self.bElement
 
@@ -636,10 +638,9 @@ class TransitionElement(TimelineElement):
         self.isDragged = True
 
     def _createBackground(self, track):
-        self.background = RoundedRectangle(0, 0, 5, 5)
+        self.background = RoundedRectangle(0, 0, 0, 0)
         color = Cogl.Color()
-
-        color.init_from_4ub(100, 100, 100, 125)
+        color.init_from_4ub(35, 85, 125, 125)  # light blue
         self.background.set_color(color)
         self.background.set_border_width(1)
         self.background.set_position(0, 0)

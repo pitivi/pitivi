@@ -146,7 +146,6 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def __init__(self, container):
         Clutter.ScrollActor.__init__(self)
         Zoomable.__init__(self)
-
         self.bTimeline = None
         self._container = container
         self.elements = []
@@ -154,9 +153,6 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.selection = Selection()
         self._scroll_point = Clutter.Point()
         self.lastPosition = 0  # Saved for redrawing when paused
-
-        self.set_background_color(Clutter.Color.new(31, 30, 33, 255))
-
         self._createPlayhead()
         self._createSnapIndicator()
 
@@ -338,23 +334,19 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     def _createPlayhead(self):
         self.playhead = Clutter.Actor()
-
         self.playhead.set_background_color(Clutter.Color.new(200, 0, 0, 255))
         self.playhead.set_size(0, 0)
         self.playhead.set_position(0, 0)
         self.playhead.set_easing_duration(0)
         self.playhead.set_z_position(1)
-
         self.add_child(self.playhead)
 
     def _createSnapIndicator(self):
         self._snap_indicator = Clutter.Actor()
-
-        self._snap_indicator.set_background_color(Clutter.Color.new(0, 0, 250, 200))
+        self._snap_indicator.set_background_color(Clutter.Color.new(50, 150, 200, 200))
         self._snap_indicator.props.visible = False
         self._snap_indicator.props.width = 3
         self._snap_indicator.props.y = 0
-
         self.add_child(self._snap_indicator)
 
     def _addTimelineElement(self, track, bElement):
@@ -682,6 +674,7 @@ class Timeline(Gtk.VBox, Zoomable):
         self.shiftMask = False
         self.controlMask = False
 
+        # TODO: make the bg a gradient from (0, 0, 0, 255) to (50, 50, 50, 255)
         self.stage.set_background_color(Clutter.Color.new(31, 30, 33, 255))
         self.timeline.set_position(CONTROL_WIDTH, 0)
         self.controls.set_position(0, 0)
