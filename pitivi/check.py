@@ -183,9 +183,13 @@ def check_hard_dependencies():
     reg = Gst.Registry.get()
     # Special case: gnonlin is a plugin, not a python module to be imported,
     # we can't use check_dependency to determine the version:
-    inst = Gst.Registry.get().find_plugin("gnonlin").get_version()
-    if _string_to_list(inst) < _string_to_list(HARD_DEPS["gnonlin"]):
+    inst = Gst.Registry.get().find_plugin("gnonlin")
+    if not inst:
         missing_hard_deps["GNonLin"] = (HARD_DEPS["gnonlin"], inst)
+    else:
+        inst = inst.get_version()
+        if _string_to_list(inst) < _string_to_list(HARD_DEPS["gnonlin"]):
+            missing_hard_deps["GNonLin"] = (HARD_DEPS["gnonlin"], inst)
 
     # GES is checked, import and intialize it
     from gi.repository import GES
