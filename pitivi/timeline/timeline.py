@@ -580,8 +580,6 @@ class Timeline(Gtk.VBox, Zoomable):
         # Handle the case of a blank project
         layer = self._ensureLayer()[0]
 
-        self.bTimeline.enable_update(False)
-
         for asset in assets:
             if isinstance(asset, GES.TitleClip):
                 clip_duration = asset.get_duration()
@@ -597,7 +595,6 @@ class Timeline(Gtk.VBox, Zoomable):
                 asset.set_start(self.bTimeline.props.duration)
                 layer.add_clip(asset)
 
-        self.bTimeline.enable_update(True)
         if self.zoomed_fitted:
             self._setBestZoomRatio()
         else:
