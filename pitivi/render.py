@@ -37,7 +37,7 @@ from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.widgets import GstElementSettingsDialog
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
-from pitivi.utils.misc import show_user_manual
+from pitivi.utils.misc import show_user_manual, path_from_uri
 from pitivi.utils.ui import model, frame_rates, audio_rates,\
     audio_channels, get_combo_value, set_combo_value, beautify_ETA
 try:
@@ -248,15 +248,14 @@ class RenderingProgressDialog(Signallable):
         self.play_rendered_file_button = self.builder.get_object("play_rendered_file_button")
         self.close_button = self.builder.get_object("close_button")
         self.cancel_button = self.builder.get_object("cancel_button")
+        self._filesize_est_label = self.builder.get_object("estimated_filesize_label")
+        self._filesize_est_value_label = self.builder.get_object("estimated_filesize_value_label")
         # Parent the dialog with mainwindow, since renderingdialog is hidden.
         # It allows this dialog to properly minimize together with mainwindow
         self.window.set_transient_for(self.app.gui)
 
         # UI widgets
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
-
-        # TODO: show this widget for rendering statistics (bug 637079)
-        self.table1.hide()
 
         # We will only show the close/play buttons when the render is done:
         self.play_rendered_file_button.hide()
@@ -275,6 +274,16 @@ class RenderingProgressDialog(Signallable):
             self.progressbar.set_text(_("About %s left") % estimated)
         else:
             self.progressbar.set_text(_("Estimating..."))
+
+    def setFilesizeEstimate(self, estimated_filesize=None):
+
+        if not estimated_filesize:
+            self._filesize_est_label.hide()
+            self._filesize_est_value_label.hide()
+        else:
+            self._filesize_est_value_label.set_text(estimated_filesize)
+            self._filesize_est_label.show()
+            self._filesize_est_value_label.show()
 
     def _deleteEventCb(self, unused_dialog_widget, unused_event):
         """If the user closes the window by pressing Escape, stop rendering"""
@@ -323,6 +332,7 @@ class RenderDialog(Loggable):
         self.outfile = None
         self.notification = None
         self.timestarted = 0
+        self.current_position = None
 
         # Various gstreamer signal connection ID's
         # {object: sigId}
@@ -704,6 +714,26 @@ class RenderDialog(Loggable):
         self.fileentry.set_icon_from_stock(1, warning_icon)
         self.fileentry.set_icon_tooltip_text(1, tooltip_text)
 
+    def _getFilesizeEstimate(self):
+        """
+        Using the current render output's filesize and position in the timeline,
+        return a human-readable (ex: "14 MB") estimate of the final filesize.
+        """
+        if not self.current_position or self.current_position == 0:
+            return None
+
+        current_filesize = os.stat(path_from_uri(self.outfile)).st_size
+        length = self.app.current_project.timeline.props.duration
+        estimated_size = float(current_filesize * float(length) / self.current_position)
+        # Now let's make it human-readable (instead of octets).
+        # If it's in the giga range (10⁹) instead of mega (10⁶), use 2 decimals
+        if estimated_size > 10e8:
+            gigabytes = estimated_size / (10 ** 9)
+            return _("%.2f GB" % gigabytes)
+        else:
+            megabytes = int(estimated_size / (10 ** 6))
+            return _("%d MB" % megabytes)
+
     def updateFilename(self, basename):
         """Updates the filename UI element to show the specified file name."""
         extension = extension_for_muxer(self.project.muxer)
@@ -899,6 +929,7 @@ class RenderDialog(Loggable):
                         self.system.uninhibitSleep(RenderDialog.INHIBIT_REASON)
 
     def _updatePositionCb(self, pipeline, position):
+        self.current_position = position
         if self.progress:
             text = None
             timediff = time.time() - self.timestarted
@@ -909,6 +940,10 @@ class RenderDialog(Loggable):
                 # if the position is non-null
                 totaltime = (timediff * float(length) / float(position)) - timediff
                 text = beautify_ETA(int(totaltime * Gst.SECOND))
+                # Also piggyback on this to give an estimate of resulting filesize
+                est_filesize = self._getFilesizeEstimate()
+                if est_filesize:
+                    self.progress.setFilesizeEstimate(est_filesize)
             self.progress.updatePosition(fraction, text)
 
     def _elementAddedCb(self, bin, element):
