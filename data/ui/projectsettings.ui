@@ -76,11 +76,9 @@
             <child>
               <object class="GtkButton" id="button8">
                 <property name="label">gtk-cancel</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -92,11 +90,9 @@
             <child>
               <object class="GtkButton" id="ok_button">
                 <property name="label">gtk-ok</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -222,11 +218,9 @@
                         <property name="icon_size">1</property>
                         <child>
                           <object class="GtkToolButton" id="add_video_preset_button">
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="tooltip_text" translatable="yes">Create a new preset</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="icon_name">list-add-symbolic</property>
                             <signal name="clicked" handler="_addVideoPresetButtonClickedCb" swapped="no"/>
                           </object>
@@ -237,13 +231,11 @@
                         </child>
                         <child>
                           <object class="GtkToolButton" id="remove_video_preset_button">
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Remove the selected preset</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="icon_name">list-remove-symbolic</property>
                             <signal name="clicked" handler="_removeVideoPresetButtonClickedCb" swapped="no"/>
                           </object>
@@ -254,12 +246,10 @@
                         </child>
                         <child>
                           <object class="GtkToolButton" id="save_video_preset_button">
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Save changes to the currently selected preset</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="icon_name">document-save-symbolic</property>
                             <signal name="clicked" handler="_saveVideoPresetButtonClickedCb" swapped="no"/>
                           </object>
@@ -313,7 +303,7 @@
                         </attributes>
                       </object>
                       <packing>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                     <child>
@@ -331,17 +321,15 @@
                         <property name="right_attach">2</property>
                         <property name="top_attach">3</property>
                         <property name="bottom_attach">4</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="select_dar_radiobutton">
                         <property name="label" translatable="yes">Display aspect ratio</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="xalign">0</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
@@ -350,7 +338,7 @@
                       <packing>
                         <property name="top_attach">4</property>
                         <property name="bottom_attach">5</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                     <child>
@@ -368,7 +356,7 @@
                       <packing>
                         <property name="top_attach">5</property>
                         <property name="bottom_attach">6</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                     <child>
@@ -388,17 +376,15 @@
                         <property name="right_attach">2</property>
                         <property name="top_attach">5</property>
                         <property name="bottom_attach">6</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="select_par_radiobutton">
                         <property name="label" translatable="yes">Pixel aspect ratio</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="xalign">0</property>
                         <property name="draw_indicator">True</property>
                         <property name="group">select_dar_radiobutton</property>
@@ -408,7 +394,7 @@
                         <property name="right_attach">2</property>
                         <property name="top_attach">4</property>
                         <property name="bottom_attach">5</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                     <child>
@@ -470,11 +456,9 @@
                         <child>
                           <object class="GtkCheckButton" id="constrain_sar_button">
                             <property name="label" translatable="yes">Link</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="xalign">0</property>
                             <property name="draw_indicator">True</property>
                             <signal name="toggled" handler="_constrainSarButtonToggledCb" swapped="no"/>
@@ -505,7 +489,7 @@
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="right_attach">2</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                     <child>
@@ -525,7 +509,7 @@
                         <property name="right_attach">2</property>
                         <property name="top_attach">1</property>
                         <property name="bottom_attach">2</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                   </object>
@@ -650,12 +634,10 @@
                         <property name="icon_size">1</property>
                         <child>
                           <object class="GtkToolButton" id="add_audio_preset_button">
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Create a new preset</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="icon_name">list-add-symbolic</property>
                             <signal name="clicked" handler="_addAudioPresetButtonClickedCb" swapped="no"/>
                           </object>
@@ -666,13 +648,11 @@
                         </child>
                         <child>
                           <object class="GtkToolButton" id="remove_audio_preset_button">
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Remove the selected preset</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="icon_name">list-remove-symbolic</property>
                             <signal name="clicked" handler="_removeAudioPresetButtonClickedCb" swapped="no"/>
                           </object>
@@ -683,13 +663,11 @@
                         </child>
                         <child>
                           <object class="GtkToolButton" id="save_audio_preset_button">
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Save changes to the currently selected preset</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="icon_name">document-save-symbolic</property>
                             <signal name="clicked" handler="_saveAudioPresetButtonClickedCb" swapped="no"/>
                           </object>
@@ -716,7 +694,7 @@
                   <object class="GtkTable" id="table7">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="n_rows">4</property>
+                    <property name="n_rows">3</property>
                     <property name="n_columns">2</property>
                     <property name="column_spacing">6</property>
                     <property name="row_spacing">6</property>
@@ -733,7 +711,7 @@
                       </object>
                       <packing>
                         <property name="right_attach">2</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                     <child>
@@ -754,7 +732,7 @@
                         <property name="top_attach">1</property>
                         <property name="bottom_attach">2</property>
                         <property name="x_options">GTK_FILL</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                     <child>
@@ -775,28 +753,7 @@
                         <property name="top_attach">2</property>
                         <property name="bottom_attach">3</property>
                         <property name="x_options">GTK_FILL</property>
-                        <property name="y_options"></property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkAlignment" id="alignment4">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="left_padding">12</property>
-                        <child>
-                          <object class="GtkLabel" id="label4">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Sample depth:</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="top_attach">3</property>
-                        <property name="bottom_attach">4</property>
-                        <property name="x_options">GTK_FILL</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                     <child>
@@ -816,7 +773,7 @@
                         <property name="right_attach">2</property>
                         <property name="top_attach">1</property>
                         <property name="bottom_attach">2</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                     <child>
@@ -836,27 +793,7 @@
                         <property name="right_attach">2</property>
                         <property name="top_attach">2</property>
                         <property name="bottom_attach">3</property>
-                        <property name="y_options"></property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkComboBox" id="sample_depth_combo">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="model">model3</property>
-                        <child>
-                          <object class="GtkCellRendererText" id="renderer6"/>
-                          <attributes>
-                            <attribute name="text">0</attribute>
-                          </attributes>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">2</property>
-                        <property name="top_attach">3</property>
-                        <property name="bottom_attach">4</property>
-                        <property name="y_options"></property>
+                        <property name="y_options"/>
                       </packing>
                     </child>
                   </object>
@@ -903,7 +840,7 @@
                     <property name="right_attach">2</property>
                     <property name="top_attach">2</property>
                     <property name="bottom_attach">3</property>
-                    <property name="y_options"></property>
+                    <property name="y_options"/>
                   </packing>
                 </child>
                 <child>
@@ -917,7 +854,7 @@
                     <property name="right_attach">2</property>
                     <property name="top_attach">1</property>
                     <property name="bottom_attach">2</property>
-                    <property name="y_options"></property>
+                    <property name="y_options"/>
                   </packing>
                 </child>
                 <child>
@@ -929,7 +866,7 @@
                   <packing>
                     <property name="left_attach">1</property>
                     <property name="right_attach">2</property>
-                    <property name="y_options"></property>
+                    <property name="y_options"/>
                   </packing>
                 </child>
                 <child>
@@ -943,7 +880,7 @@
                     <property name="top_attach">1</property>
                     <property name="bottom_attach">2</property>
                     <property name="x_options">GTK_FILL</property>
-                    <property name="y_options"></property>
+                    <property name="y_options"/>
                   </packing>
                 </child>
                 <child>
@@ -957,7 +894,7 @@
                     <property name="top_attach">2</property>
                     <property name="bottom_attach">3</property>
                     <property name="x_options">GTK_FILL</property>
-                    <property name="y_options"></property>
+                    <property name="y_options"/>
                   </packing>
                 </child>
                 <child>
@@ -969,7 +906,7 @@
                   </object>
                   <packing>
                     <property name="x_options">GTK_FILL</property>
-                    <property name="y_options"></property>
+                    <property name="y_options"/>
                   </packing>
                 </child>
               </object>

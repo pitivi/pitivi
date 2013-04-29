@@ -30,7 +30,7 @@ import os
 
 from gettext import gettext as _
 from pitivi.configure import get_ui_dir
-from pitivi.utils.ui import frame_rates, audio_rates, audio_depths,\
+from pitivi.utils.ui import frame_rates, audio_rates,\
     audio_channels, pixel_aspect_ratios, get_value_from_model
 
 
@@ -53,8 +53,6 @@ class clipmediapropsDialog():
                 get_value_from_model(audio_channels, stream.get_channels()))
             self.sample_rate.set_text(
                 get_value_from_model(audio_rates, stream.get_sample_rate()))
-            self.sample_depth.set_text(
-                get_value_from_model(audio_depths, stream.get_depth()))
             self.has_audio = True
             break
 
@@ -94,7 +92,6 @@ class clipmediapropsDialog():
         self.size_width = builder.get_object("size_width")
         self.frame_rate = builder.get_object("frame_rate")
         self.aspect_ratio = builder.get_object("aspect_ratio")
-        self.sample_depth = builder.get_object("sample_depth")
         self.sample_rate = builder.get_object("sample_rate")
         self.frame1 = builder.get_object("frame1")
         self.frame2 = builder.get_object("frame2")
@@ -128,8 +125,6 @@ class clipmediapropsDialog():
                 project.audiochannels = audio.get_channels()
             if self.checkbutton5.get_active():
                 project.audiorate = audio.get_sample_rate()
-            if self.checkbutton6.get_active():
-                project.audiodepth = audio.get_depth()
         self.dialog.destroy()
 
     def _cancelButtonCb(self, unused_button):

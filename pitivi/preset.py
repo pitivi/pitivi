@@ -361,12 +361,10 @@ class AudioPresetManager(PresetManager):
         name = parser["name"]
 
         channels = parser["channels"]
-        depth = parser["depth"]
         sample_rate = parser["sample-rate"]
 
         self.addPreset(name, {
             "channels": channels,
-            "depth": depth,
             "sample-rate": sample_rate,
             "filepath": filepath,
         })
@@ -376,7 +374,6 @@ class AudioPresetManager(PresetManager):
         data = json.dumps({
             "name": section,
             "channels": values["channels"],
-            "depth": int(values["depth"]),
             "sample-rate": int(values["sample-rate"]),
         }, indent=4)
         fout.write(data)
@@ -413,7 +410,6 @@ class RenderPresetManager(PresetManager):
         framerate = Gst.Fraction(framerate_num, framerate_denom)
 
         channels = parser["channels"]
-        depth = parser["depth"]
         sample_rate = parser["sample-rate"]
 
         self.addPreset(name, {
@@ -424,7 +420,6 @@ class RenderPresetManager(PresetManager):
             "height": height,
             "frame-rate": framerate,
             "channels": channels,
-            "depth": depth,
             "sample-rate": sample_rate,
             "filepath": filepath,
         })
@@ -441,7 +436,6 @@ class RenderPresetManager(PresetManager):
             "framerate-num": values["frame-rate"].num,
             "framerate-denom": values["frame-rate"].denom,
             "channels": values["channels"],
-            "depth": int(values["depth"]),
             "sample-rate": int(values["sample-rate"]),
         }, indent=4)
         fout.write(data)

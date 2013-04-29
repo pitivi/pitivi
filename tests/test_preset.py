@@ -139,14 +139,12 @@ class TestAudioPresetsIO(TestCase):
     def testSaveAndLoad(self):
         self.manager.addPreset("Vegeta",
             {"channels": 6000,
-            "depth": 16,
             "sample-rate": 44100})
         self.manager.saveAll()
         self.assertEqual(1, countUserPresets(self.manager))
 
         self.manager.addPreset("Nappa",
             {"channels": 4000,
-            "depth": 16,
             "sample-rate": 44100})
         self.manager.saveAll()
         self.assertEqual(2, countUserPresets(self.manager))
@@ -160,10 +158,9 @@ class TestAudioPresetsIO(TestCase):
         non_ascii_preset_name = "Solid Snake (ソリッド・スネーク) \\#!\"'$%?&*"
         self.manager.addPreset(non_ascii_preset_name,
             {"channels": 2,
-            "depth": 16,
             "sample-rate": 44100})
         snake = self.manager.presets[non_ascii_preset_name]
-        self.assertEqual(3, len(snake))
+        self.assertEqual(2, len(snake))
         self.manager.saveAll()
 
         other_manager = self.createOtherManager()
@@ -177,10 +174,9 @@ class TestAudioPresetsIO(TestCase):
         preset_name = " / % "
         self.manager.addPreset(preset_name,
             {"channels": 2,
-            "depth": 16,
             "sample-rate": 44100})
         values = self.manager.presets[preset_name]
-        self.assertEqual(3, len(values))
+        self.assertEqual(2, len(values))
         self.manager.saveAll()
 
         other_manager = self.createOtherManager()

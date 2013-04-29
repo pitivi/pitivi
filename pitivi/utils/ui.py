@@ -424,12 +424,6 @@ audio_rates = model((str, int), (
     (_("%d kHz") % 48, 48000),
     (_("%d kHz") % 96, 96000)))
 
-audio_depths = model((str, int), (
-    (_("%d bit") % 8, 8),
-    (_("%d bit") % 16, 16),
-    (_("%d bit") % 24, 24),
-    (_("%d bit") % 32, 32)))
-
 audio_channels = model((str, int), (
     (_("6 Channels (5.1)"), 6),
     (_("4 Channels (4.0)"), 4),
