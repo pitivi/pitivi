@@ -776,7 +776,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             action=Gtk.FileChooserAction.OPEN,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                 Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
-        chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
         # TODO: Remove this set_current_folder call when GTK bug 683999 is fixed
         chooser.set_current_folder(self.settings.lastProjectFolder)
@@ -864,7 +863,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             Gtk.MessageType.ERROR,
             Gtk.ButtonsType.OK,
             _('Unable to save project "%s"') % project_filename)
-        dialog.set_title(_("Error Saving Project"))
         if exception:
             dialog.set_property("secondary-use-markup", True)
             dialog.set_property("secondary-text", unquote(str(exception)))
@@ -900,9 +898,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             (_("Close without saving"), Gtk.ResponseType.REJECT,
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                 save, Gtk.ResponseType.YES))
-        dialog.set_icon_name("pitivi")
+        # Even though we set the title to an empty string when creating dialog,
+        # seems we really have to do it once more so it doesn't show "pitivi"...
+        dialog.set_title("")
         dialog.set_resizable(False)
-        dialog.set_default_response(Gtk.ResponseType.YES)
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
         dialog.set_transient_for(self)
 
         primary = Gtk.Label()
@@ -935,7 +935,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         vbox.pack_start(secondary, True, True, 0)
 
         # make the [[image] text] hbox
-        image = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_WARNING,
+        image = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_QUESTION,
                Gtk.IconSize.DIALOG)
         hbox = Gtk.HBox(False, SPACING * 2)
         hbox.pack_start(image, False, True, 0)
@@ -977,14 +977,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                     Gtk.DialogFlags.MODAL,
                     Gtk.MessageType.WARNING,
                     Gtk.ButtonsType.NONE,
-                    _("Do you want to reload current project?"))
-            dialog.set_icon_name("pitivi")
+                    _("Revert to saved project version?"))
             dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.NO,
                     Gtk.STOCK_REVERT_TO_SAVED, Gtk.ResponseType.YES)
-            dialog.set_title(_("Revert to saved project"))
             dialog.set_resizable(False)
             dialog.set_property("secondary-text",
-                    _("All unsaved changes will be lost."))
+                    _("This will reload the current project. All unsaved changes will be lost."))
             dialog.set_default_response(Gtk.ResponseType.NO)
             dialog.set_transient_for(self)
             response = dialog.run()
@@ -1000,7 +998,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             Gtk.MessageType.ERROR,
             Gtk.ButtonsType.OK,
             _('Unable to load project "%s"') % project_filename)
-        dialog.set_title(_("Error Loading Project"))
         dialog.set_property("secondary-use-markup", True)
         dialog.set_property("secondary-text", unquote(str(exception)))
         dialog.set_transient_for(self)
@@ -1016,7 +1013,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             Gtk.DialogFlags.MODAL,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
-        dialog.set_icon_name("pitivi")
         dialog.set_border_width(SPACING * 2)
         dialog.get_content_area().set_spacing(SPACING)
         dialog.set_transient_for(self)
@@ -1213,7 +1209,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
 
-        chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
         chooser.props.do_overwrite_confirmation = True
 
@@ -1264,7 +1259,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         filt.add_pattern("*.%s" % asset.get_meta(GES.META_FORMATTER_EXTENSION))
         chooser.add_filter(filt)
 
-        chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled") + "." +
                 asset.get_meta(GES.META_FORMATTER_EXTENSION))
