@@ -847,12 +847,15 @@ def make_property_widget(unused_element, prop, value=None):
     return widget
 
 
-def make_widget_wrapper(widget):
+def make_widget_wrapper(widget, prop=None):
     """ Creates a wrapper child of DynamicWidget for @widget """
+    if prop is not None:
+        default_value = prop.default_value
+
     if isinstance(widget, Gtk.Entry):
-        return TextWidget(text_widget=widget)
+        return TextWidget(text_widget=widget, default=default_value)
     elif isinstance(widget, Gtk.Range):
-        return NumericWidget(adjustment=widget.get_adjustment())
+        return NumericWidget(adjustment=widget.get_adjustment(), default=default_value)
 
     # TODO Implement wrappers for more Gtk.Widget types
 
@@ -974,7 +977,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         else:
             # if the widget is not dynamic we try to create a wrapper around it
             # so we can control it with the standardized DynamicWidget API
-            dynamic_widget = make_widget_wrapper(widget)
+            dynamic_widget = make_widget_wrapper(widget, prop)
 
         if dynamic_widget:
             self.properties[prop] = dynamic_widget
