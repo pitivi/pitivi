@@ -6,9 +6,9 @@ timeline_PYTHON =			\
 	layer.py	\
 	ruler.py	\
 	timeline.py		\
-	track.py	\
 	elements.py \
-	previewers.py
+	previewers.py \
+	controls.py
 
 clean-local:
 	rm -rf *.pyc *.pyo
