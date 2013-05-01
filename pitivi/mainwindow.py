@@ -552,7 +552,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     def _animateFullscreenToolbar(self, *args):
         """
         Animate the fullscreen toolbar by moving it up or down by a few pixels.
-        This is meant to be called repeatedly by a GObject timer.
+        This is meant to be called repeatedly by a GLib timer.
         """
         # Believe it or not, that's how it's done in Gedit!
         # However, it seems like moving by 1 pixel is too slow with the overhead

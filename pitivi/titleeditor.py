@@ -26,7 +26,7 @@ from gi.repository import Gdk
 from gi.repository import Pango
 from gi.repository import GES
 from gi.repository import Gst
-from gi.repository import GObject
+from gi.repository import GLib
 
 from gettext import gettext as _
 from xml.sax import saxutils
@@ -830,10 +830,10 @@ class TitleEditor(Loggable):
         if event.button == 1:
             self._drag_events = [(event.x, event.y)]
             #Update drag by drag event change, but not too often
-            self.timeout = GObject.timeout_add(100, self.drag_update_event)
+            self.timeout = GLib.timeout_add(100, self.drag_update_event)
             #If drag goes out for 0.3 second, and do not come back, consider drag end
             self._drag_updated = True
-            self.timeout = GObject.timeout_add(1000, self.drag_possible_end_event)
+            self.timeout = GLib.timeout_add(1000, self.drag_possible_end_event)
 
     def drag_possible_end_event(self):
         if self._drag_updated:
