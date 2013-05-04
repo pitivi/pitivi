@@ -49,11 +49,45 @@ from pitivi.utils.timeline import Zoomable
 ZOOM_FIT = _("Zoom Fit")
 
 
-class DynamicWidget(object):
+class NumericEntry(Gtk.Entry):
+    __gtype_name__ = 'NumericEntry'
+
+    __gproperties__ = {
+        "matches": (str,
+                    "matches",
+                    "A string defining the regex to be used",
+                    None,
+                    GObject.PARAM_READWRITE),
+        "send-signal": (bool,
+                        "send-signal",
+                        "A string defining the regex to be used",
+                        False,
+                        GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        self._matches = None
+        self._emit = False
+
+    def do_get_property(self, prop):
+        if prop.name == "matches":
+            return self._matches
+        elif prop.name == "send-signal":
+            return self._emit
+
+    def do_set_property(self, prop, value):
+        if prop.name == "matches":
+            self._matches = value
+        elif prop.name == "send-signal":
+                self._emit = value
+
+
+class DynamicWidget(Loggable):
 
     """An interface which provides a uniform way to get, set, and observe
     widget properties"""
     def __init__(self, default):
+        Loggable.__init__(self)
         self.default = default
 
     def connectValueChanged(self, callback, *args):
@@ -114,14 +148,20 @@ class TextWidget(Gtk.HBox, DynamicWidget):
     __INVALID__ = Gdk.Color(0xFFFF, 0, 0)
     __NORMAL__ = Gdk.Color(0, 0, 0)
 
-    def __init__(self, matches=None, choices=None, default=None, text_widget=None):
-        if not default:
+    def __init__(self, matches=None, choices=None, default=None, text_widget=None,
+            min_value=None, max_value=None):
+        """
+        Note that @min_value and @max_value will also determine the type of values
+        that is expected to be used in this text entry
+        """
+        if default is None:
             # In the case of text widgets, a blank default is an empty string
             default = ""
 
         Gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
 
+        send_signal = False
         self.set_border_width(0)
         self.set_spacing(0)
         if text_widget is None:
@@ -140,30 +180,66 @@ class TextWidget(Gtk.HBox, DynamicWidget):
                 self.pack_start(self.text, True, True, 0)
         else:
             self.text = text_widget
-        self.matches = None
+            if isinstance(text_widget, NumericEntry):
+                matches = text_widget.props.matches
+                send_signal = text_widget.props.send_signal
         self.last_valid = None
         self.valid = False
-        self.send_signal = True
+        self.send_signal = send_signal
+
+        if min_value is not None:
+            self._type = type(min_value)
+        elif max_value is not None:
+            self._type = type(max_value)
+        else:
+            self._type = None
+        self.min_value = min_value
+        self.max_value = max_value
+        if matches:
+            self.matches = matches
+        else:
+            self.matches = None
         self.text.connect("changed", self._textChanged)
         self.text.connect("activate", self._activateCb)
-        if matches:
-            if type(matches) is str:
-                self.matches = re.compile(matches)
-            else:
-                self.matches = matches
-            self._textChanged(None)
+
+    @property
+    def matches(self):
+        return self._matches
+
+    @matches.setter
+    def matches(self, value):
+        if type(value) is str:
+            self._matches = re.compile(value)
+        else:
+            self._matches = value
+        self._textChanged(None)
 
     def connectValueChanged(self, callback, *args):
         return self.connect("value-changed", callback, *args)
 
     def setWidgetValue(self, value, send_signal=True):
+        if self.min_value is not None and self.max_value:
+            if value < self.min_value:
+                value = self.min_value
+            elif value > self.max_value:
+                value = self.max_value
         self.send_signal = send_signal
-        self.text.set_text(value)
+        self.text.set_text(str(value))
 
     def getWidgetValue(self):
         if self.matches:
-            return self.last_valid
-        return self.text.get_text()
+            value = self.last_valid
+        else:
+            value = self.text.get_text()
+
+        if self._type is not None:
+            try:
+                return self._type(value)
+            except ValueError:
+                self.debug("%s was not convertible to type %s"
+                        % (value, self._type))
+                return None
+        return value
 
     def addChoices(self, choices):
         model = self.combo.get_model()
@@ -245,7 +321,6 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
                 upper = GObject.G_MAXDOUBLE
             if lower is None:
                 lower = GObject.G_MINDOUBLE
-            range = upper - lower
             self.adjustment.props.lower = lower
             self.adjustment.props.upper = upper
             self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
@@ -330,7 +405,7 @@ class TimeWidget(TextWidget, DynamicWidget):
 
     def setWidgetValue(self, value, send_signal=True):
         TextWidget.setWidgetValue(self, time_to_string(value),
-                                send_signal=send_signal)
+                                  send_signal=send_signal)
 
     # No need to define connectValueChanged as it is inherited from DynamicWidget
     def connectActivateEvent(self, activateCb):
@@ -402,7 +477,6 @@ class FractionWidget(TextWidget, DynamicWidget):
     def setWidgetValue(self, value):
         # With introspection, we get tuples for GESTrackElement children props
         if type(value) is tuple:
-            print "fraction widget tuple:", value
             value = value[-1]  # Grab the last item of the tuple
 
         if type(value) is str:
@@ -853,7 +927,12 @@ def make_widget_wrapper(widget, prop=None):
         default_value = prop.default_value
 
     if isinstance(widget, Gtk.Entry):
-        return TextWidget(text_widget=widget, default=default_value)
+        if hasattr(prop, "minimum"):
+            minimum = prop.minimum
+        if hasattr(prop, "maximum"):
+            maximum = prop.maximum
+        return TextWidget(text_widget=widget, default=default_value,
+                min_value=minimum, max_value=maximum)
     elif isinstance(widget, Gtk.Range):
         return NumericWidget(adjustment=widget.get_adjustment(), default=default_value)
 
@@ -1004,7 +1083,6 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
 
     def _getProperties(self):
         if isinstance(self.element, GES.BaseEffect):
-            is_effect = True
             return [prop for prop in self.element.list_children_properties() if not prop.name in self.ignore]
         else:
             return [prop for prop in GObject.list_properties(self.element) if not prop.name in self.ignore]
@@ -1076,8 +1154,6 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             if default_btn:
                 reset = self.getResetToDefaultValueButton(prop, widget)
                 table.attach(reset, 2, 3, y, y + 1, xoptions=FILL, yoptions=FILL)
-            else:
-                default_widget = None
 
             self.addPropertyWidget(prop, widget, None)
             y += 1

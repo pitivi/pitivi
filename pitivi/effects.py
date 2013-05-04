@@ -696,7 +696,7 @@ class EffectsPropertiesManager(Loggable):
 
     def _onValueChangedCb(self, widget, dynamic, prop):
         value = dynamic.getWidgetValue()
-        if value != self._current_element_values.get(prop.name):
+        if value != self._current_element_values.get(prop.name) and value is not None:
             self.info("%s's value has changed to %s", prop.name, value)
             self.action_log.begin("Effect property change")
             self._current_effect_setting_ui.element.set_child_property(prop.name, value)

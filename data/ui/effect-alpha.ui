@@ -119,7 +119,9 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="GstAlpha::target-r">
+          <object class="NumericEntry" id="GstAlpha::target-r">
+            <property name="matches">^([0-2][0-9][0-9])$|^([0-9])$|^([0-9][0-9])$</property>
+            <property name="send-signal">False</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="max_length">3</property>
@@ -127,6 +129,7 @@
             <property name="width_chars">3</property>
             <property name="text" translatable="yes">0</property>
             <property name="invisible_char_set">True</property>
+            <property name="input_purpose">number</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -147,7 +150,9 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="GstAlpha::target-g">
+          <object class="NumericEntry" id="GstAlpha::target-g">
+            <property name="matches">^([0-2][0-9][0-9])$|^([0-9])$|^([0-9][0-9])$</property>
+            <property name="send-signal">False</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="max_length">3</property>
@@ -155,6 +160,7 @@
             <property name="width_chars">3</property>
             <property name="text" translatable="yes">255</property>
             <property name="invisible_char_set">True</property>
+            <property name="input_purpose">number</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -175,7 +181,9 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="GstAlpha::target-b">
+          <object class="NumericEntry" id="GstAlpha::target-b">
+            <property name="matches">^([0-2][0-9][0-9])$|^([0-9])$|^([0-9][0-9])$</property>
+            <property name="send-signal">False</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="max_length">3</property>
@@ -183,6 +191,7 @@
             <property name="width_chars">3</property>
             <property name="text" translatable="yes">0</property>
             <property name="invisible_char_set">True</property>
+            <property name="input_purpose">number</property>
           </object>
           <packing>
             <property name="expand">False</property>
