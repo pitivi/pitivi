@@ -372,6 +372,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.add_child(element)
 
     def _removeTimelineElement(self, track, bElement):
+        if isinstance(bElement, GES.Effect):
+            return
         bElement.disconnect_by_func(self._elementStartChangedCb)
         bElement.disconnect_by_func(self._elementDurationChangedCb)
         bElement.disconnect_by_func(self._elementInPointChangedCb)
