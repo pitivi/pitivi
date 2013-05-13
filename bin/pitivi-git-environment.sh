@@ -261,11 +261,15 @@ if [ "$ready_to_run" != "1" ]; then
 
 
         # Now compile that module
-        ./autogen.sh --prefix=$PITIVI/prefix --disable-gtk-doc --with-python=python2
-        if [ $? -ne 0 ]; then
-            echo "Could not run autogen for $m ; result: $?"
-            exit 1
-        fi
+	if test ! -f ./configure; then
+            ./autogen.sh --prefix=$PITIVI/prefix --disable-gtk-doc --with-python=python2
+            if [ $? -ne 0 ]; then
+		echo "Could not run autogen for $m ; result: $?"
+		exit 1
+            fi
+	else
+	    echo "autogen has already been run for $m, not running it again"
+	fi
 
         make
         if [ $? -ne 0 ]; then
@@ -326,15 +330,19 @@ if [ "$ready_to_run" != "1" ]; then
             fi
         fi
 
-        if $BUILD_DOCS; then
-            ./autogen.sh
-        else
-            ./autogen.sh --disable-gtk-doc
-        fi
-        if [ $? -ne 0 ]; then
-            echo "Could not run autogen for $m ; result: $?"
-            exit 1
-        fi
+	if test ! -f ./configure; then
+            if $BUILD_DOCS; then
+		./autogen.sh
+            else
+		./autogen.sh --disable-gtk-doc
+            fi
+            if [ $? -ne 0 ]; then
+		echo "Could not run autogen for $m ; result: $?"
+		exit 1
+            fi
+	else
+	    echo "autogen has already been run for $m, not running it again"
+	fi
 
         make
         if [ $? -ne 0 ]; then
@@ -349,10 +357,14 @@ if [ "$ready_to_run" != "1" ]; then
         git clone git://git.gnome.org/pitivi
     fi
     cd pitivi
-    ./autogen.sh
-    if [ $? -ne 0 ]; then
-        echo "Could not run autogen for Pitivi ; result: $?"
-        exit 1
+    if test ! -f ./configure; then
+	./autogen.sh
+	if [ $? -ne 0 ]; then
+            echo "Could not run autogen for Pitivi ; result: $?"
+            exit 1
+	fi
+    else
+	echo "autogen has already been run for Pitivi, not running it again"
     fi
     make
     ready_to_run=1
