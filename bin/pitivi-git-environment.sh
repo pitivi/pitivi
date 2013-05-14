@@ -261,15 +261,15 @@ if [ "$ready_to_run" != "1" ]; then
 
 
         # Now compile that module
-	if test ! -f ./configure; then
+        if test ! -f ./configure; then
             ./autogen.sh --prefix=$PITIVI/prefix --disable-gtk-doc --with-python=python2
             if [ $? -ne 0 ]; then
-		echo "Could not run autogen for $m ; result: $?"
-		exit 1
+                echo "Could not run autogen for $m ; result: $?"
+                exit 1
             fi
-	else
-	    echo "autogen has already been run for $m, not running it again"
-	fi
+        else
+            echo "autogen has already been run for $m, not running it again"
+        fi
 
         make
         if [ $? -ne 0 ]; then
@@ -298,11 +298,11 @@ if [ "$ready_to_run" != "1" ]; then
         # If the folder doesn't exist, check out the module. Later on, we will
         # update it anyway.
         if test ! -d $m; then
-            git clone git://anongit.freedesktop.org/gstreamer/$m
-            if [ $? -ne 0 ]; then
-                echo "Could not checkout $m ; result: $?"
-                exit 1
-            fi
+          git clone git://anongit.freedesktop.org/gstreamer/$m
+          if [ $? -ne 0 ]; then
+              echo "Could not checkout $m ; result: $?"
+              exit 1
+          fi
         fi
 
         cd $m
@@ -330,19 +330,19 @@ if [ "$ready_to_run" != "1" ]; then
             fi
         fi
 
-	if test ! -f ./configure; then
+        if test ! -f ./configure; then
             if $BUILD_DOCS; then
-		./autogen.sh
+                ./autogen.sh
             else
-		./autogen.sh --disable-gtk-doc
+                ./autogen.sh --disable-gtk-doc
             fi
             if [ $? -ne 0 ]; then
-		echo "Could not run autogen for $m ; result: $?"
-		exit 1
+                echo "Could not run autogen for $m ; result: $?"
+                exit 1
             fi
-	else
-	    echo "autogen has already been run for $m, not running it again"
-	fi
+        else
+            echo "autogen has already been run for $m, not running it again"
+        fi
 
         make
         if [ $? -ne 0 ]; then
@@ -356,15 +356,16 @@ if [ "$ready_to_run" != "1" ]; then
     if test ! -d $PITIVI/pitivi; then
         git clone git://git.gnome.org/pitivi
     fi
+
     cd pitivi
     if test ! -f ./configure; then
-	./autogen.sh
-	if [ $? -ne 0 ]; then
-            echo "Could not run autogen for Pitivi ; result: $?"
-            exit 1
-	fi
+        ./autogen.sh
+    if [ $? -ne 0 ]; then
+        echo "Could not run autogen for Pitivi ; result: $?"
+        exit 1
+    fi
     else
-	echo "autogen has already been run for Pitivi, not running it again"
+        echo "autogen has already been run for Pitivi, not running it again"
     fi
     make
     ready_to_run=1
