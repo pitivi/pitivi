@@ -1305,8 +1305,8 @@ class Timeline(Gtk.VBox, Zoomable):
         self.project = GES.Project(uri=None, extractable_type=GES.Timeline)
 
         bTimeline = GES.Timeline()
-        bTimeline.add_track(GES.Track.audio_raw_new())
-        bTimeline.add_track(GES.Track.video_raw_new())
+        bTimeline.add_track(GES.AudioTrack.new())
+        bTimeline.add_track(GES.VideoTrack.new())
 
         self.bTimeline = bTimeline
         timeline.setTimeline(bTimeline)

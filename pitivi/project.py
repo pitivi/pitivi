@@ -939,9 +939,9 @@ class Project(Loggable, GES.Project):
                        for track in self.timeline.get_tracks()]
 
         if GES.TrackType.VIDEO not in track_types:
-            self.timeline.add_track(GES.Track.video_raw_new())
+            self.timeline.add_track(GES.VideoTrack.new())
         if GES.TrackType.AUDIO not in track_types:
-            self.timeline.add_track(GES.Track.audio_raw_new())
+            self.timeline.add_track(GES.AudioTrack.new())
 
     def _ensureLayer(self):
         if self.timeline is None:
