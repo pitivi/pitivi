@@ -156,7 +156,6 @@ $PITIVI/gstreamer/plugins\
   # this still doesn't make it work for the uninstalled case, since man goes
   # look for a man directory "nearby" instead of the directory I'm telling it to
   export MANPATH=$PITIVI/gstreamer/tools:$PITIVI_PREFIX/share/man:$MANPATH
-  pythonver=`python -c "import sys; print sys.version[:3]"`
 fi
 
 # And anyway add GStreamer editing services library
