@@ -663,6 +663,7 @@ class Timeline(Gtk.VBox, Zoomable):
 
     def _createUi(self):
         self.embed = GtkClutter.Embed()
+        self.embed.get_accessible().set_name("timeline canvas")  # for dogtail
         self.stage = self.embed.get_stage()
 
         self.timeline = TimelineStage(self)

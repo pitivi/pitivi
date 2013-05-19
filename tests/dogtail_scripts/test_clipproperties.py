@@ -5,16 +5,25 @@ import dogtail.rawinput
 from time import sleep
 
 
-class ClipTransforamtionTest(HelpFunc):
+class ClipTransformationTest(HelpFunc):
     def test_transformation_options(self):
-        #Load sample
+        # Load a sample file, insert it twice in the timeline and wait for
+        # the insertion animation to be complete before we start clicking
         sample = self.import_media()
         self.insert_clip(sample)
+        self.insert_clip(sample)
+        sleep(0.5)
 
-        clippos = []
-        clippos.append((self.timeline.position[0] + 20, self.timeline.position[1] + 20))
-        clippos.append((self.timeline.position[0] + self.timeline.size[0] / 2, self.timeline.position[1] + 20))
-        dogtail.rawinput.click(clippos[0][0], clippos[0][1])
+        # Assume that the layer controls are roughly 260 pixels wide,
+        # so the first clip position should be x + 300, y + 30
+        _layer1_clips_y = self.timeline.position[1] + 30
+        clip1_pos = (self.timeline.position[0] + 300, _layer1_clips_y)
+        # The second clip position should be right in the middle of the timeline
+        # but we compensate (approximately) for the width of layer controls:
+        _middle_x = self.timeline.position[0] + 300 + (self.timeline.size[0] - 300) / 2
+        clip2_pos = (_middle_x, _layer1_clips_y)
+        # For now, only select the first clip on the timeline
+        dogtail.rawinput.click(clip1_pos[0], clip1_pos[1])
 
         tab = self.clipproperties
         tab.click()
@@ -47,12 +56,12 @@ class ClipTransforamtionTest(HelpFunc):
         spinb[2].text = "0.14"
         spinb[3].text = "0.07"
 
-        #Click second clip, look that settings not changed(not linked)
-        dogtail.rawinput.click(clippos[1][0], clippos[1][1])
+        # Click second clip, check that settings have not changed (not linked)
+        dogtail.rawinput.click(clip2_pos[0], clip2_pos[1])
         self.assertEqual(tab.child(roleName="slider").value, 1.0)
 
-        #Click back, look if settings saved
-        dogtail.rawinput.click(clippos[0][0], clippos[0][1])
+        # Click back onto the 1st clip, check that settings were saved
+        dogtail.rawinput.click(clip1_pos[0], clip1_pos[1])
         self.assertNotEqual(tab.child(roleName="slider").value, 1.0)
 
         self.assertNotNone(self.search_by_text("0.3", tab.child(roleName="panel", name="Position")))

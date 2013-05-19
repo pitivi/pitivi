@@ -37,10 +37,10 @@ class BaseDogTail(unittest.TestCase):
         # Reuse those variables throughout your scripts for efficient access.
         # FIXME: this will probably break with detached tabs.
         mainwindow = self.pitivi.children[0].children[0]  # this is a vbox
-        mainwindow_upper = mainwindow.children[2].children[0]
-        mainwindow_lower = mainwindow.children[2].children[1]
-        primary_tabs = mainwindow_upper.children[0].children[0]
-        secondary_tabs = mainwindow_upper.children[0].children[1]
+        mainwindow_upper = mainwindow.children[2].child(name="upper half", recursive=False)
+        mainwindow_lower = mainwindow.children[2].child(name="lower half", recursive=False)
+        primary_tabs = mainwindow_upper.children[0].child(name="primary tabs", recursive=False)
+        secondary_tabs = mainwindow_upper.children[0].child(name="secondary tabs", recursive=False)
         # These are the "shortcut" variables you can use for better perfs:
         self.menubar = mainwindow.child(roleName='menu bar')
         self.medialibrary = primary_tabs.children[0]
@@ -48,8 +48,8 @@ class BaseDogTail(unittest.TestCase):
         self.clipproperties = secondary_tabs.children[0]
         self.transitions = secondary_tabs.children[0]
         self.titles = secondary_tabs.children[0]
-        self.viewer = mainwindow_upper.children[1]
-        self.timeline = mainwindow_lower.children[0].child(name="timeline canvas", recursive=False)
+        self.viewer = mainwindow_upper.child(name="viewer", recursive=False)
+        self.timeline = mainwindow_lower.children[0].children[1].child(name="timeline canvas", recursive=False)
         self.timeline_toolbar = mainwindow_lower.child(name="timeline toolbar", recursive=False)
         # Used to speed up helper_functions in particular:
         self.import_button = self.medialibrary.child(name="media_import_button")

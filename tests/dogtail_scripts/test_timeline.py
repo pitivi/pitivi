@@ -48,6 +48,9 @@ class TimelineTest(HelpFunc):
         self.assertIsNotNone(timecode_widget)
         oldseek = timecode_widget.text
         center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
+        # Provide three sets of coordinates (on three layers) at the end of the
+        # timeline, where we will drag clips to. Here we don't have to worry
+        # about the width of layer controls widget for our calculations.
         endpos = []
         endpos.append((timeline.position[0] + timeline.size[0] - 30, timeline.position[1] + 30))
         endpos.append((timeline.position[0] + timeline.size[0] - 30, timeline.position[1] + 120))
