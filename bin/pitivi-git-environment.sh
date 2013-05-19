@@ -25,20 +25,24 @@ BUILD_DOCS=false
 # If you set those variables to "master", it will grab the latest dev version
 GLIB_RELEASE_TAG="2.34.2" # "gobject-introspection" needs glib > 2.32
 PYGOBJECT_RELEASE_TAG="3.8.0"
-GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_1_34_2"
+GOBJECT_INTROSPECTION_MINIMUM_VERSION="1.34.2"
+GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_$(echo $GOBJECT_INTROSPECTION_MINIMUM_VERSION | tr '.' '_')"
 
 
 #
 # Everything below this line shouldn't be edited!
 #
 
-# Avoid building glib if we can, because it is annoying to use the "memory"
-# backend for gsettings (which happens when we compile glib for some reason)
-if pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
-    MODULES_CORE="gobject-introspection pygobject"
-else
-    MODULES_CORE="glib gobject-introspection pygobject"
+if ! pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
+    MODULE_GLIB="glib"
 fi
+if ! pkg-config gobject-introspection-1.0 --atleast-version=$GOBJECT_INTROSPECTION_MINIMUM_VERSION; then
+    MODULE_GOBJECT_INTROSPECTION="gobject-introspection"
+fi
+if ! python2 -c "import gi; gi.check_version('${PYGOBJECT_RELEASE_TAG}')" &> /dev/null; then
+    MODULE_PYGOBJECT="pygobject"
+fi
+MODULES_CORE="${MODULE_GLIB} ${MODULE_GOBJECT_INTROSPECTION} ${MODULE_PYGOBJECT}"
 
 # The following decision has to be made before we've set any env variables,
 # otherwise the script will detect our "gst uninstalled" and think it's the
