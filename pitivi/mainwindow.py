@@ -425,6 +425,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.secondhpaned.pack2(self.context_tabs, resize=True, shrink=False)
         self.main_tabs.show()
         self.context_tabs.show()
+        # Prevent TitleEditor from stealing the tab focus on startup:
+        self.context_tabs.set_current_page(0)
 
         # Viewer
         self.viewer = PitiviViewer(instance, undock_action=self.undock_action)
