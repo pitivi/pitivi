@@ -8,7 +8,7 @@ from urllib import unquote
 from common import TestCase
 import pitivi.settings as settings
 
-from pitivi.timeline.thumbnailer import ThumbnailCache
+from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.utils.misc import hash_file
 
 

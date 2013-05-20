@@ -53,52 +53,39 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
         Clutter.ScrollActor.__init__(self)
         Loggable.__init__(self)
 
-        self.uri = bElement.props.uri
-
-        self.bElement = bElement
+        # Variables related to the timeline objects
         self.timeline = timeline
+        self.bElement = bElement
+        self.uri = bElement.props.uri
+        self.duration = bElement.props.duration
 
-        self.bElement.connect("notify::duration", self.duration_changed)
-        self.bElement.connect("notify::in-point", self._inpoint_changed_cb)
-        self.bElement.connect("notify::start", self.start_changed)
-
-        self.timeline.connect("scrolled", self._scroll_changed)
-
-        self.duration = self.bElement.props.duration
-
+        # Variables related to thumbnailing
+        self.wishlist = []
+        self._callback_id = None
+        self._allAnimated = False
+        self.thumb_period = long(0.5 * Gst.SECOND)  # TODO: get this from user settings
         self.thumb_margin = BORDER_WIDTH
         self.thumb_height = EXPANDED_SIZE - 2 * self.thumb_margin
         # self.thumb_width will be set by self._setupPipeline()
 
-        # TODO: read this property from the settings
-        self.thumb_period = long(0.5 * Gst.SECOND)
-
-        # maps (quantized) times to Thumbnail objects
+        # Maps (quantized) times to Thumbnail objects
         self.thumbs = {}
-
         self.thumb_cache = get_cache_for_uri(self.uri)
 
-        self.wishlist = []
-
+        # Connect signals and fire things up
+        self.timeline.connect("scrolled", self._scrollCb)
+        self.bElement.connect("notify::duration", self._durationChangedCb)
+        self.bElement.connect("notify::in-point", self._inpointChangedCb)
+        self.bElement.connect("notify::start", self._startChangedCb)
         self._setupPipeline()
-
         self._startThumbnailing()
-
-        self.callback_id = None
-        self._allAnimated = False
 
     # Internal API
 
-    def _scroll_changed(self, unused):
-        self._update()
-
-    def start_changed(self, unused_bElement, unused_value):
-        self._update()
-
     def _update(self, unused_msg_source=None):
-        if self.callback_id:
-            GLib.source_remove(self.callback_id)
-        self.callback_id = GLib.idle_add(self._addVisibleThumbnails, priority=GLib.PRIORITY_LOW)
+        if self._callback_id:
+            GLib.source_remove(self._callback_id)
+        self._callback_id = GLib.idle_add(self._addVisibleThumbnails, priority=GLib.PRIORITY_LOW)
 
     def _setupPipeline(self):
         """
@@ -182,6 +169,9 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
             Gst.SeekType.NONE, -1)
 
     def _addVisibleThumbnails(self):
+        """
+        Get the thumbnails to be displayed in the currently visible clip portion
+        """
         self.remove_all_children()
         old_thumbs = self.thumbs.copy()
         self.thumbs = {}
@@ -220,15 +210,10 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
             current_time += thumb_duration
         self._allAnimated = False
 
-    def _inpoint_changed_cb(self, unused_bElement, unused_value):
-        position = Clutter.Point()
-        position.x = Zoomable.nsToPixel(self.bElement.props.in_point)
-        self.scroll_to_point(position)
-        self._update()
-
     def _get_wish(self):
-        """Returns a wish that is also in the queue or None
-           if no such wish exists"""
+        """
+        Returns a wish that is also in the queue, or None if no such wish exists
+        """
         while True:
             if not self.wishlist:
                 return None
@@ -258,12 +243,16 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
         self._update()
 
     def _get_visible_range(self):
+        # Shortcut/convenience variables:
+        start = self.bElement.props.start
+        in_point = self.bElement.props.in_point
+        duration = self.bElement.props.duration
         timeline_left, timeline_right = self._get_visible_timeline_range()
-        element_left = timeline_left - self.bElement.props.start + self.bElement.props.in_point
-        element_left = max(element_left, self.bElement.props.in_point)
 
-        element_right = timeline_right - self.bElement.props.start + self.bElement.props.in_point
-        element_right = min(element_right, self.bElement.props.in_point + self.bElement.props.duration)
+        element_left = timeline_left - start + in_point
+        element_left = max(element_left, in_point)
+        element_right = timeline_right - start + in_point
+        element_right = min(element_right, in_point + duration)
 
         return (element_left, element_right)
 
@@ -320,7 +309,19 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
             self._create_next_thumb()
         return Gst.BusSyncReply.PASS
 
-    def duration_changed(self, unused_bElement, unused_value):
+    def _scrollCb(self, unused):
+        self._update()
+
+    def _startChangedCb(self, unused_bElement, unused_value):
+        self._update()
+
+    def _inpointChangedCb(self, unused_bElement, unused_value):
+        position = Clutter.Point()
+        position.x = Zoomable.nsToPixel(self.bElement.props.in_point)
+        self.scroll_to_point(position)
+        self._update()
+
+    def _durationChangedCb(self, unused_bElement, unused_value):
         new_duration = max(self.duration, self.bElement.props.duration)
         if new_duration > self.duration:
             self.duration = new_duration
@@ -343,9 +344,11 @@ class Thumbnail(Clutter.Actor):
         pixel_data = gdkpixbuf.get_pixels()
         alpha = gdkpixbuf.get_has_alpha()
         if alpha:
-            self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGBA_8888, self.width, self.height, row_stride)
+            self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGBA_8888,
+                                        self.width, self.height, row_stride)
         else:
-            self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGB_888, self.width, self.height, row_stride)
+            self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGB_888,
+                                        self.width, self.height, row_stride)
         self.set_opacity(255)
 
     def set_from_gdkpixbuf_animated(self, gdkpixbuf):
