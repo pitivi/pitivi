@@ -27,8 +27,10 @@ import sys
 import xdg.BaseDirectory as xdg_dirs
 
 from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING
+from pitivi.utils.misc import path_from_uri
 
 BORDER_WIDTH = 3  # For the timeline elements
 
@@ -40,7 +42,7 @@ is prefixed with a little b, example : bTimeline
 """
 
 
-class VideoPreviewer(Clutter.ScrollActor, Zoomable):
+class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
     def __init__(self, bElement, timeline):
         """
         @param bElement : the backend GES.TrackElement
@@ -49,6 +51,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
         """
         Zoomable.__init__(self)
         Clutter.ScrollActor.__init__(self)
+        Loggable.__init__(self)
 
         self.uri = bElement.props.uri
 
@@ -82,9 +85,6 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
         self._startThumbnailing()
 
         self.callback_id = None
-
-        self.counter = 0
-
         self._allAnimated = False
 
     # Internal API
@@ -149,7 +149,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
         self.queue = []
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
         if not query_success:
-            print("Could not determine the duration of the file {}".format(self.uri))
+            self.debug("Could not determine duration of %s" % self.uri)
             duration = self.duration
         else:
             self.duration = duration
@@ -219,8 +219,6 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
                 self.wishlist.append(current_time)
             current_time += thumb_duration
         self._allAnimated = False
-        self.counter += 1
-        print(self.counter)
 
     def _inpoint_changed_cb(self, unused_bElement, unused_value):
         position = Clutter.Point()
@@ -392,7 +390,7 @@ def get_cache_for_uri(uri):
         return cache
 
 
-class ThumbnailCache(object):
+class ThumbnailCache(Loggable):
 
     """Caches thumbnails by key using LRU policy, implemented with heapq.
 
@@ -400,28 +398,29 @@ class ThumbnailCache(object):
     held in memory, the rest is being cached on disk using an sqlite db."""
 
     def __init__(self, uri):
-        object.__init__(self)
+        Loggable.__init__(self)
         # TODO: replace with utils.misc.hash_file
-        filehash = hash_file(Gst.uri_get_location(uri))
+        self._filehash = hash_file(Gst.uri_get_location(uri))
+        self._filename = os.path.basename(path_from_uri(uri))
         # TODO: replace with pitivi.settings.xdg_cache_home()
         cache_dir = get_dir(os.path.join(xdg_dirs.xdg_cache_home, "pitivi"), autocreate)
-        dbfile = os.path.join(get_dir(os.path.join(cache_dir, "thumbs")), filehash)
-        self.conn = sqlite3.connect(dbfile)
-        self.cur = self.conn.cursor()
-        self.cur.execute("CREATE TABLE IF NOT EXISTS Thumbs\
+        dbfile = os.path.join(get_dir(os.path.join(cache_dir, "thumbs")), self._filehash)
+        self._db = sqlite3.connect(dbfile)
+        self._cur = self._db.cursor()  # Use this for normal db operations
+        self._cur.execute("CREATE TABLE IF NOT EXISTS Thumbs\
                           (Time INTEGER NOT NULL PRIMARY KEY,\
                           Jpeg BLOB NOT NULL)")
 
     def __contains__(self, key):
         # check if item is present in on disk cache
-        self.cur.execute("SELECT Time FROM Thumbs WHERE Time = ?", (key,))
-        if self.cur.fetchone():
+        self._cur.execute("SELECT Time FROM Thumbs WHERE Time = ?", (key,))
+        if self._cur.fetchone():
             return True
         return False
 
     def __getitem__(self, key):
-        self.cur.execute("SELECT * FROM Thumbs WHERE Time = ?", (key,))
-        row = self.cur.fetchone()
+        self._cur.execute("SELECT * FROM Thumbs WHERE Time = ?", (key,))
+        row = self._cur.fetchone()
         if row:
             jpeg = row[1]
             loader = GdkPixbuf.PixbufLoader.new()
@@ -439,10 +438,11 @@ class ThumbnailCache(object):
             return
         blob = sqlite3.Binary(jpeg)
         #Replace if the key already existed
-        self.cur.execute("DELETE FROM Thumbs WHERE  time=?", (key,))
-        self.cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
-        #self.conn.commit()
+        self._cur.execute("DELETE FROM Thumbs WHERE  time=?", (key,))
+        self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
+        #self._db.commit()
 
     def commit(self):
-        print("commit")
-        self.conn.commit()
+        self.debug('Saving thumbnail cache file to disk for "%s"' % self._filename)
+        self._db.commit()
+        self.log("Saved thumbnail cache file: %s" % self._filehash)
