@@ -23,14 +23,16 @@
 import sys
 
 from gi.repository import GtkClutter
+
 GtkClutter.init([])
 
 from gi.repository import Gst, GES, GObject, Clutter, Gtk, GLib, Gdk
 
-from datetime import datetime
-
+from pitivi.autoaligner import AlignmentProgressDialog
+from pitivi.check import missing_soft_deps
 from pitivi.utils.timeline import Zoomable, Selection, UNSELECT
 from pitivi.settings import GlobalSettings
+from pitivi.dialogs.depsmanager import DepsManager
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, PLAYHEAD_WIDTH, CONTROL_WIDTH, TYPE_PITIVI_EFFECT
 from pitivi.utils.widgets import ZoomBox
