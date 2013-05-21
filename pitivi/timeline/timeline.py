@@ -602,6 +602,14 @@ class Timeline(Gtk.VBox, Zoomable):
         else:
             self.scrollToPosition(self.bTimeline.props.duration)
 
+    def purgeObject(self, asset_id):
+        """Remove all instances of an asset from the timeline."""
+        layers = self.bTimeline.get_layers()
+        for layer in layers:
+            for tlobj in layer.get_clips():
+                if asset_id == tlobj.get_id():
+                    layer.remove_clip(tlobj)
+
     def setProjectManager(self, projectmanager):
         if self._projectmanager is not None:
             self._projectmanager.disconnect_by_func(self._projectChangedCb)
