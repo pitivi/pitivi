@@ -28,7 +28,7 @@ GtkClutter.init([])
 
 from gi.repository import Gst, GES, GObject, Clutter, Gtk, GLib, Gdk
 
-from pitivi.autoaligner import AlignmentProgressDialog
+from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
 from pitivi.check import missing_soft_deps
 from pitivi.utils.timeline import Zoomable, Selection, UNSELECT
 from pitivi.settings import GlobalSettings
@@ -977,9 +977,9 @@ class Timeline(Gtk.VBox, Zoomable):
                 self.app.action_log.commit()
                 progress_dialog.window.destroy()
 
-            pmeter = self.timeline.alignSelection(alignedCb)
-
-            pmeter.addWatcher(progress_dialog.updatePosition)
+            auto_aligner = AutoAligner(self.timeline.selection, alignedCb)
+            progress_meter = auto_aligner.start()
+            progress_meter.addWatcher(progress_dialog.updatePosition)
 
     def _split(self, action):
         """
