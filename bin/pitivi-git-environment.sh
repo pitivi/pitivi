@@ -36,19 +36,15 @@ GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_$(echo $GOBJECT_INTROSP
 if ! pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
     MODULE_GLIB="glib"
 else
-  echo "glib up to date"
+  echo "glib is up to date, using the version already available."
 fi
-if ! pkg-config gobject-introspection-1.0 --atleast-version=$GOBJECT_INTROSPECTION_MINIMUM_VERSION; then
-    MODULE_GOBJECT_INTROSPECTION="gobject-introspection"
-else
-  echo "gobject-introspection-1.0 up to date"
+if pkg-config gobject-introspection-1.0 --atleast-version=$GOBJECT_INTROSPECTION_MINIMUM_VERSION; then
+  echo "gobject-introspection-1.0 is up to date, but we are using a local build because you might want to fix bugs if you find any."
 fi
-if ! python2 -c "import gi; gi.check_version('${PYGOBJECT_RELEASE_TAG}')" &> /dev/null; then
-    MODULE_PYGOBJECT="pygobject"
-else
-  echo "pygobject up to date"
+if python2 -c "import gi; gi.check_version('${PYGOBJECT_RELEASE_TAG}')" &> /dev/null; then
+  echo "pygobject is up to date, but we are using a local build because you might want to fix bugs if you find any."
 fi
-MODULES_CORE="${MODULE_GLIB} ${MODULE_GOBJECT_INTROSPECTION} ${MODULE_PYGOBJECT}"
+MODULES_CORE="${MODULE_GLIB} gobject-introspection pygobject"
 
 # The following decision has to be made before we've set any env variables,
 # otherwise the script will detect our "gst uninstalled" and think it's the
