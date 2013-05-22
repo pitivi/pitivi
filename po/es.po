@@ -14,8 +14,8 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-04-29 17:07+0000\n"
-"PO-Revision-Date: 2013-05-03 17:19+0200\n"
+"POT-Creation-Date: 2013-05-18 19:32+0000\n"
+"PO-Revision-Date: 2013-05-22 12:13+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -907,12 +907,10 @@ msgid "If you don't save, your changes will be lost."
 msgstr "Si no guarda sus cambios se perderán"
 
 #: ../pitivi/mainwindow.py:980
-#| msgid "Revert to saved project"
 msgid "Revert to saved project version?"
 msgstr "¿Revertir a una versión guardad del proyecto?"
 
 #: ../pitivi/mainwindow.py:985
-#| msgid "All unsaved changes will be lost."
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Esto recargará el proyecto actual. Se perderán todos los cambios sin guardar."
@@ -992,25 +990,25 @@ msgstr "Guardar como…"
 msgid "Preview - click outside to close"
 msgstr "Vista previa; pulse fuera para cerrar"
 
-#: ../pitivi/mediafilespreviewer.py:136
+#: ../pitivi/mediafilespreviewer.py:137
 msgid "PiTiVi can not preview this file."
 msgstr "PiTiVi no puede previsualizar este archivo."
 
-#: ../pitivi/mediafilespreviewer.py:137
+#: ../pitivi/mediafilespreviewer.py:138
 msgid "More info"
 msgstr "Más información"
 
-#: ../pitivi/mediafilespreviewer.py:233
+#: ../pitivi/mediafilespreviewer.py:234
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Resolución</b>: %d × %d"
 
-#: ../pitivi/mediafilespreviewer.py:235 ../pitivi/mediafilespreviewer.py:250
+#: ../pitivi/mediafilespreviewer.py:236 ../pitivi/mediafilespreviewer.py:251
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Duración:</b>: %s"
 
-#: ../pitivi/mediafilespreviewer.py:441 ../pitivi/medialibrary.py:766
+#: ../pitivi/mediafilespreviewer.py:442 ../pitivi/medialibrary.py:766
 msgid "Error while analyzing a file"
 msgstr "Error al analizar un archivo"
 
@@ -1077,12 +1075,12 @@ msgid "The following file can not be used with PiTiVi."
 msgstr "El siguiente archivo no se puede usar con PiTiVi."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
-#: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1227
-#: ../pitivi/project.py:1233 ../pitivi/render.py:411
+#: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1228
+#: ../pitivi/project.py:1234 ../pitivi/render.py:411
 msgid "No preset"
 msgstr "No hay configuración"
 
-#: ../pitivi/project.py:174
+#: ../pitivi/project.py:175
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1092,15 +1090,15 @@ msgstr ""
 "soportado. Si está intentando añadir un archivo multimedia a su proyecto, "
 "use el botón «Importar» en su lugar."
 
-#: ../pitivi/project.py:190
+#: ../pitivi/project.py:191
 msgid "Ignore backup"
 msgstr "Ignorar respaldo"
 
-#: ../pitivi/project.py:191
+#: ../pitivi/project.py:192
 msgid "Restore from backup"
 msgstr "Restaurar desde un respaldo"
 
-#: ../pitivi/project.py:202
+#: ../pitivi/project.py:203
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1113,47 +1111,47 @@ msgstr ""
 "\n"
 "¿Quiere cargarla en su lugar?"
 
-#: ../pitivi/project.py:272
+#: ../pitivi/project.py:273
 msgid "You do not have permissions to write to this folder."
 msgstr "No tiene permiso para escribir en esta carpeta."
 
-#: ../pitivi/project.py:282
+#: ../pitivi/project.py:283
 msgid "Cannot save with this file format."
 msgstr "No se puede guardar con este formato de archivo."
 
-#: ../pitivi/project.py:289
+#: ../pitivi/project.py:290
 #, python-format
 msgid "Cannot save with this file format. %s"
 msgstr "No se puede guardar con este formato de archivo. %s"
 
-#: ../pitivi/project.py:301
+#: ../pitivi/project.py:302
 msgid "Cannot save with this file format"
 msgstr "No se puede guardar con este formato de archivo"
 
 #. write project file to temporary file
-#: ../pitivi/project.py:310
+#: ../pitivi/project.py:311
 msgid "project"
 msgstr "proyecto"
 
 #. We don't have a URI here, None means we're loading a new project
-#: ../pitivi/project.py:391
+#: ../pitivi/project.py:392
 msgid "New Project"
 msgstr "Proyecto nuevo"
 
-#: ../pitivi/project.py:534
+#: ../pitivi/project.py:535
 msgid "Pitivi encoding profile"
 msgstr "Perfil de codificación de Pitivi"
 
-#: ../pitivi/project.py:1249 ../pitivi/render.py:550
+#: ../pitivi/project.py:1250 ../pitivi/render.py:550
 #, python-format
 msgid "\"%s\" already exists."
 msgstr "«%s» ya existe."
 
-#: ../pitivi/project.py:1352 ../pitivi/render.py:591
+#: ../pitivi/project.py:1353 ../pitivi/render.py:591
 msgid "New preset"
 msgstr "Configuración nueva"
 
-#: ../pitivi/project.py:1355 ../pitivi/render.py:594
+#: ../pitivi/project.py:1356 ../pitivi/render.py:594
 #, python-format
 msgid "New preset %d"
 msgstr "Configuración nueva %d"
@@ -1191,11 +1189,30 @@ msgstr ""
 "Si no quiere sobreescribirlo, elija un nombre de archivo o una carpeta "
 "diferentes."
 
-#: ../pitivi/render.py:855 ../pitivi/render.py:856 ../pitivi/render.py:860
+#: ../pitivi/render.py:771
+msgid "Sorry, something didn’t work right."
+msgstr "Algo no ha funcionado correctamente."
+
+#: ../pitivi/render.py:772
+msgid ""
+"An error occured while trying to render your project. You might want to "
+"check our troubleshooting guide or file a bug report. See the details below "
+"for some basic information that may help identify the problem."
+msgstr ""
+"Ocurrió un error al renderizar su proyecto. Es posible que quiera consultar "
+"la guía de resolución de problemas o informar de un error. Consulte los "
+"detalles a continuación para encontrar información básica que puede ayudarle "
+"a identificar el problema."
+
+#: ../pitivi/render.py:783
+msgid "Details"
+msgstr "Detalles"
+
+#: ../pitivi/render.py:878 ../pitivi/render.py:879 ../pitivi/render.py:883
 msgid "Render complete"
 msgstr "Renderizado completo"
 
-#: ../pitivi/render.py:860
+#: ../pitivi/render.py:883
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "«%s» ha terminado el renderizado."
@@ -1389,7 +1406,7 @@ msgstr "Pan:"
 msgid "Change audio panning"
 msgstr "Cambiar el «panning» del sonido"
 
-#: ../pitivi/timeline/ruler.py:172
+#: ../pitivi/timeline/ruler.py:173
 #, python-format
 msgid "Frame #%d"
 msgstr "Fotograma nº %d"
