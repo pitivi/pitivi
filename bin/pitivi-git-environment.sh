@@ -183,8 +183,11 @@ export PYTHONPATH
 
 
 # Force build to happen automatically if the folders are missing
-# or if the --build parameter is used:
+# or if the --build parameter is used, or --force-autogen.
+# The difference being --force-autogen forces autogen.sh to be run,
+# whereas --build only uses it the first time
 ready_to_run=0
+force_autogen=1
 
 if test ! -d $PITIVI; then
     echo "===================================================================="
@@ -201,11 +204,14 @@ if test ! -d $PITIVI; then
     if [ $? -ne 0 ]; then
         exit 1
     fi
-elif [ "$1" != "--build" ]; then
+elif [ "$1" == "--build" ]; then
+    # Only build modules without using autogen if not necessary, to save time
+    force_autogen=0
+elif [ "$1" != "--force-autogen" ]; then
     # The folders existed, and the user just wants to set the shell environment
     ready_to_run=1
+    force_autogen=0
 fi
-
 
 if [ "$ready_to_run" != "1" ]; then
     cd $PITIVI
@@ -261,7 +267,7 @@ if [ "$ready_to_run" != "1" ]; then
 
 
         # Now compile that module
-        if test ! -f ./configure; then
+        if test ! -f ./configure || [ "$force_autogen" == "1" ]; then
             ./autogen.sh --prefix=$PITIVI/prefix --disable-gtk-doc --with-python=python2
             if [ $? -ne 0 ]; then
                 echo "Could not run autogen for $m ; result: $?"
@@ -330,7 +336,7 @@ if [ "$ready_to_run" != "1" ]; then
             fi
         fi
 
-        if test ! -f ./configure; then
+        if test ! -f ./configure || [ "$force_autogen" == "1" ]; then
             if $BUILD_DOCS; then
                 ./autogen.sh
             else
@@ -358,7 +364,7 @@ if [ "$ready_to_run" != "1" ]; then
     fi
 
     cd pitivi
-    if test ! -f ./configure; then
+    if test ! -f ./configure || [ "$force_autogen" == "1" ]; then
         ./autogen.sh
     if [ $? -ne 0 ]; then
         echo "Could not run autogen for Pitivi ; result: $?"
