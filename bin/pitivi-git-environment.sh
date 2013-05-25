@@ -207,7 +207,10 @@ if test ! -d $PITIVI; then
 elif [ "$1" == "--build" ]; then
     # Only build modules without using autogen if not necessary, to save time
     force_autogen=0
-elif [ "$1" != "--force-autogen" ]; then
+    shift
+elif [ "$1" == "--force-autogen" ]; then
+    shift
+else
     # The folders existed, and the user just wants to set the shell environment
     ready_to_run=1
     force_autogen=0
@@ -410,6 +413,11 @@ if [ $ready_to_run == 1 ]; then
           # Display "PTV env:", path, " $ "
           changed_PS1='PS1="\[$(tput bold)$(tput setb 1)$(tput setaf 7)\]PTV env:\w\[$(tput sgr0)\] $ "'
       fi
-      bash --rcfile <(cat ~/.bashrc; echo $changed_PS1)
+      if [ -z "$*" ];
+      then
+        bash --rcfile <(cat ~/.bashrc; echo $changed_PS1)
+      else
+        /bin/bash -c "$*"
+      fi
     fi
 fi
