@@ -390,13 +390,20 @@ if [ $ready_to_run == 1 ]; then
         declare -F "$FUNCTION_NAME" > /dev/null 2>&1
         return $?
         }
-    if function_exists __git_ps1
+
+    if [[ "${BASH_SOURCE[0]}" != "${0}" ]]
     then
-        # Display "PTV env:", path, the output of __git_ps1, " $ "
-        changed_PS1='PS1="\[$(tput bold)$(tput setb 1)$(tput setaf 7)\]PTV env:\w\[$(tput sgr0)\]\$(__git_ps1)$ "'
+      echo "pitivi-git environment is being sourced"
+      export PS1="[ptv] $PS1"
     else
-        # Display "PTV env:", path, " $ "
-        changed_PS1='PS1="\[$(tput bold)$(tput setb 1)$(tput setaf 7)\]PTV env:\w\[$(tput sgr0)\] $ "'
+      if function_exists __git_ps1
+      then
+          # Display "PTV env:", path, the output of __git_ps1, " $ "
+          changed_PS1='PS1="\[$(tput bold)$(tput setb 1)$(tput setaf 7)\]PTV env:\w\[$(tput sgr0)\]\$(__git_ps1)$ "'
+      else
+          # Display "PTV env:", path, " $ "
+          changed_PS1='PS1="\[$(tput bold)$(tput setb 1)$(tput setaf 7)\]PTV env:\w\[$(tput sgr0)\] $ "'
+      fi
+      bash --rcfile <(cat ~/.bashrc; echo $changed_PS1)
     fi
-    bash --rcfile <(cat ~/.bashrc; echo $changed_PS1)
 fi
