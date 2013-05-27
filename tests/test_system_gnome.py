@@ -9,7 +9,10 @@ class TestGnomeSystem(TestCase):
         self.system = getSystem()
 
     def testPowerInhibition(self):
-        self.assertTrue(isinstance(self.system, GnomeSystem))
+        if not isinstance(self.system, GnomeSystem):
+            # We can only test this on a Gnome system.
+            return
+
         #check that no other programs are inhibiting, otherwise the
         #test is compromised
         self.assertTrue(not self.system.session_iface.IsInhibited(

@@ -1,54 +1,58 @@
 #!/bin/bash -i
 # Indentation = 4 spaces.
 #
-# This script sets up the environment to use and develop pitivi with an
-# uninstalled git checkout of pitivi and GES.
+# This script sets up the environment to use and develop Pitivi.
 #
-# It will set up LD_LIBRARY_PATH, DYLD_LIBRARY_PATH, PKG_CONFIG_PATH,
-# to prefer the uninstalled versions but also contain the installed ones.
+# The git projects will be cloned in ~/pitivi-git, unless you specify
+# a different directory, for example:
+#     MYPITIVI=~/dev/pitivi pitivi-git-environment.sh
 #
-# You can change the MYPITIVI variable your preferred location, that either:
-#  + contains your own build of pitivi, ges, gst-python, etc.
-#
-#  + an empty location where you have R+W access, so that the script
-#    can set up everything for you (recommended).
-# Either set $MYPITIVI in your ~/.bashrc, or edit the line below:
+# LD_LIBRARY_PATH, DYLD_LIBRARY_PATH, PKG_CONFIG_PATH are set to
+# prefer the cloned git projects and to also allow using the installed ones.
+
 MYPITIVI=${MYPITIVI:-$HOME/pitivi-git}
-# Change this variable to 'master' if you prefer to work with the master branch
+
+# Change this variable to 'master' if you prefer to work with the master branch.
 # When using "master", this script will automatically "pull --rebase" modules.
-# This will fail and check master in the end
-# Using master until we depend on a released version
+# For now, we are using master until we depend on a released version.
 GST_RELEASE_TAG="master"
+
 # If you care about building the GStreamer/GES developer API documentation:
 BUILD_DOCS=false
+
 # Here are some dependencies for building GStreamer and GES. If they're missing,
 # we'll fetch the git repositories at the given version tag and compile.
 # If you set those variables to "master", it will grab the latest dev version
 GLIB_RELEASE_TAG="2.34.2" # "gobject-introspection" needs glib > 2.32
 PYGOBJECT_RELEASE_TAG="3.8.0"
-GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_1_34_2"
+GOBJECT_INTROSPECTION_MINIMUM_VERSION="1.34.2"
+GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_$(echo $GOBJECT_INTROSPECTION_MINIMUM_VERSION | tr '.' '_')"
+
 
 #
 # Everything below this line shouldn't be edited!
 #
 
-# Avoid building glib if we can, because it is annoying to use the "memory"
-# backend for gsettings (which happens when we compile glib for some reason)
-if pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
-    MODULES_CORE="gobject-introspection pygobject"
+if ! pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
+    MODULE_GLIB="glib"
 else
-    MODULES_CORE="glib gobject-introspection pygobject"
+  echo "glib is up to date, using the version already available."
 fi
-# Do NOT use the following two variables directly, use $MODULES instead
-MODULES_ALL="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python"
-MODULES_MINIMAL="gnonlin gst-editing-services gst-python"
+if pkg-config gobject-introspection-1.0 --atleast-version=$GOBJECT_INTROSPECTION_MINIMUM_VERSION; then
+  echo "gobject-introspection-1.0 is up to date, but we are using a local build because you might want to fix bugs if you find any."
+fi
+if python2 -c "import gi; gi.check_version('${PYGOBJECT_RELEASE_TAG}')" &> /dev/null; then
+  echo "pygobject is up to date, but we are using a local build because you might want to fix bugs if you find any."
+fi
+MODULES_CORE="${MODULE_GLIB} gobject-introspection pygobject"
+
 # The following decision has to be made before we've set any env variables,
 # otherwise the script will detect our "gst uninstalled" and think it's the
 # system-wide install.
 if pkg-config --exists --print-errors 'gstreamer-1.0 >= 1.1.0.1'; then
-    MODULES=$MODULES_MINIMAL
+    MODULES="gnonlin gst-editing-services gst-python"
 else
-    MODULES=$MODULES_ALL
+    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python"
 fi
 
 # base path under which dirs are installed
@@ -158,7 +162,6 @@ $PITIVI/gstreamer/plugins\
   # this still doesn't make it work for the uninstalled case, since man goes
   # look for a man directory "nearby" instead of the directory I'm telling it to
   export MANPATH=$PITIVI/gstreamer/tools:$PITIVI_PREFIX/share/man:$MANPATH
-  pythonver=`python -c "import sys; print sys.version[:3]"`
 fi
 
 # And anyway add GStreamer editing services library
