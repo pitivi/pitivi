@@ -23,14 +23,16 @@
 import sys
 
 from gi.repository import GtkClutter
+
 GtkClutter.init([])
 
 from gi.repository import Gst, GES, GObject, Clutter, Gtk, GLib, Gdk
 
-from datetime import datetime
-
+from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
+from pitivi.check import missing_soft_deps
 from pitivi.utils.timeline import Zoomable, Selection, UNSELECT
 from pitivi.settings import GlobalSettings
+from pitivi.dialogs.depsmanager import DepsManager
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, PLAYHEAD_WIDTH, CONTROL_WIDTH, TYPE_PITIVI_EFFECT
 from pitivi.utils.widgets import ZoomBox
@@ -372,6 +374,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.add_child(element)
 
     def _removeTimelineElement(self, track, bElement):
+        if isinstance(bElement, GES.Effect):
+            return
         bElement.disconnect_by_func(self._elementStartChangedCb)
         bElement.disconnect_by_func(self._elementDurationChangedCb)
         bElement.disconnect_by_func(self._elementInPointChangedCb)
@@ -600,6 +604,14 @@ class Timeline(Gtk.VBox, Zoomable):
         else:
             self.scrollToPosition(self.bTimeline.props.duration)
 
+    def purgeObject(self, asset_id):
+        """Remove all instances of an asset from the timeline."""
+        layers = self.bTimeline.get_layers()
+        for layer in layers:
+            for tlobj in layer.get_clips():
+                if asset_id == tlobj.get_id():
+                    layer.remove_clip(tlobj)
+
     def setProjectManager(self, projectmanager):
         if self._projectmanager is not None:
             self._projectmanager.disconnect_by_func(self._projectChangedCb)
@@ -663,6 +675,7 @@ class Timeline(Gtk.VBox, Zoomable):
 
     def _createUi(self):
         self.embed = GtkClutter.Embed()
+        self.embed.get_accessible().set_name("timeline canvas")  # for dogtail
         self.stage = self.embed.get_stage()
 
         self.timeline = TimelineStage(self)
@@ -720,8 +733,6 @@ class Timeline(Gtk.VBox, Zoomable):
     def _ensureLayer(self):
         """
         Make sure we have a layer in our timeline
-
-        Returns: The number of layer present in self.timeline
         """
         layers = self.bTimeline.get_layers()
 
@@ -861,7 +872,7 @@ class Timeline(Gtk.VBox, Zoomable):
         ruler_width = self.ruler.get_allocation().width
         # Add Gst.SECOND - 1 to the timeline duration to make sure the
         # last second of the timeline will be in view.
-        duration = self.timeline.bTimeline.get_duration()
+        duration = self.bTimeline.get_duration()
         if duration == 0:
             return
 
@@ -871,7 +882,7 @@ class Timeline(Gtk.VBox, Zoomable):
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
         Zoomable.setZoomLevel(nearest_zoom_level)
-        self.timeline.bTimeline.props.snapping_distance = \
+        self.bTimeline.props.snapping_distance = \
             Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband)
 
         # Only do this at the very end, after updating the other widgets.
@@ -919,7 +930,7 @@ class Timeline(Gtk.VBox, Zoomable):
                                   self.hadj.props.upper - canvas_size - 1))
 
     def _deleteSelected(self, unused_action):
-        if self.timeline:
+        if self.bTimeline:
             self.app.action_log.begin("delete clip")
 
             #FIXME GES port: Handle unlocked TrackElement-s
@@ -930,45 +941,45 @@ class Timeline(Gtk.VBox, Zoomable):
             self.app.action_log.commit()
 
     def _ungroupSelected(self, unused_action):
-        if self.timeline:
-            self.timeline.enable_update(False)
+        if self.bTimeline:
+            self.bTimeline.enable_update(False)
             self.app.action_log.begin("ungroup")
 
             for clip in self.timeline.selection:
                 clip.ungroup(False)
 
-            self.timeline.enable_update(True)
+            self.bTimeline.enable_update(True)
             self.app.action_log.commit()
 
     def _groupSelected(self, unused_action):
-        if self.timeline:
-            self.timeline.enable_update(False)
+        if self.bTimeline:
+            self.bTimeline.enable_update(False)
             self.app.action_log.begin("group")
 
             GES.Container.group(self.timeline.selection)
 
             self.app.action_log.commit()
-            self.timeline.enable_update(True)
+            self.bTimeline.enable_update(True)
 
     def _alignSelected(self, unused_action):
         if "NumPy" in missing_soft_deps:
             DepsManager(self.app)
 
-        elif self.timeline:
+        elif self.bTimeline:
             progress_dialog = AlignmentProgressDialog(self.app)
 
             progress_dialog.window.show()
             self.app.action_log.begin("align")
-            self.timeline.enable_update(False)
+            self.bTimeline.enable_update(False)
 
             def alignedCb():  # Called when alignment is complete
-                self.timeline.enable_update(True)
+                self.bTimeline.enable_update(True)
                 self.app.action_log.commit()
                 progress_dialog.window.destroy()
 
-            pmeter = self.timeline.alignSelection(alignedCb)
-
-            pmeter.addWatcher(progress_dialog.updatePosition)
+            auto_aligner = AutoAligner(self.timeline.selection, alignedCb)
+            progress_meter = auto_aligner.start()
+            progress_meter.addWatcher(progress_dialog.updatePosition)
 
     def _split(self, action):
         """

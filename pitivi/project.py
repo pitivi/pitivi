@@ -28,6 +28,7 @@ from gi.repository import GstPbutils
 from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
+from gi.repository import GLib
 from gi.repository import GObject
 import tarfile
 
@@ -428,7 +429,7 @@ class ProjectManager(Signallable, Loggable):
 
         if self.backup_lock == 0:
             self.backup_lock = 10
-            GObject.timeout_add_seconds(self.backup_lock, self._saveBackupCb, project, uri)
+            GLib.timeout_add_seconds(self.backup_lock, self._saveBackupCb, project, uri)
         else:
             if self.backup_lock < 60:
                 self.backup_lock += 5

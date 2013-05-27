@@ -27,8 +27,10 @@ import sys
 import xdg.BaseDirectory as xdg_dirs
 
 from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING
+from pitivi.utils.misc import path_from_uri
 
 BORDER_WIDTH = 3  # For the timeline elements
 
@@ -40,7 +42,7 @@ is prefixed with a little b, example : bTimeline
 """
 
 
-class VideoPreviewer(Clutter.ScrollActor, Zoomable):
+class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
     def __init__(self, bElement, timeline):
         """
         @param bElement : the backend GES.TrackElement
@@ -49,56 +51,41 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
         """
         Zoomable.__init__(self)
         Clutter.ScrollActor.__init__(self)
+        Loggable.__init__(self)
 
-        self.uri = bElement.props.uri
-
-        self.bElement = bElement
+        # Variables related to the timeline objects
         self.timeline = timeline
+        self.bElement = bElement
+        self.uri = bElement.props.uri
+        self.duration = bElement.props.duration
 
-        self.bElement.connect("notify::duration", self.duration_changed)
-        self.bElement.connect("notify::in-point", self._inpoint_changed_cb)
-        self.bElement.connect("notify::start", self.start_changed)
-
-        self.timeline.connect("scrolled", self._scroll_changed)
-
-        self.duration = self.bElement.props.duration
-
+        # Variables related to thumbnailing
+        self.wishlist = []
+        self._callback_id = None
+        self._allAnimated = False
+        self.thumb_period = long(0.5 * Gst.SECOND)  # TODO: get this from user settings
         self.thumb_margin = BORDER_WIDTH
         self.thumb_height = EXPANDED_SIZE - 2 * self.thumb_margin
         # self.thumb_width will be set by self._setupPipeline()
 
-        # TODO: read this property from the settings
-        self.thumb_period = long(0.5 * Gst.SECOND)
-
-        # maps (quantized) times to Thumbnail objects
+        # Maps (quantized) times to Thumbnail objects
         self.thumbs = {}
-
         self.thumb_cache = get_cache_for_uri(self.uri)
 
-        self.wishlist = []
-
+        # Connect signals and fire things up
+        self.timeline.connect("scrolled", self._scrollCb)
+        self.bElement.connect("notify::duration", self._durationChangedCb)
+        self.bElement.connect("notify::in-point", self._inpointChangedCb)
+        self.bElement.connect("notify::start", self._startChangedCb)
         self._setupPipeline()
-
         self._startThumbnailing()
-
-        self.callback_id = None
-
-        self.counter = 0
-
-        self._allAnimated = False
 
     # Internal API
 
-    def _scroll_changed(self, unused):
-        self._update()
-
-    def start_changed(self, unused_bElement, unused_value):
-        self._update()
-
     def _update(self, unused_msg_source=None):
-        if self.callback_id:
-            GLib.source_remove(self.callback_id)
-        self.callback_id = GLib.idle_add(self._addVisibleThumbnails, priority=GLib.PRIORITY_LOW)
+        if self._callback_id:
+            GLib.source_remove(self._callback_id)
+        self._callback_id = GLib.idle_add(self._addVisibleThumbnails, priority=GLib.PRIORITY_LOW)
 
     def _setupPipeline(self):
         """
@@ -149,7 +136,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
         self.queue = []
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
         if not query_success:
-            print("Could not determine the duration of the file {}".format(self.uri))
+            self.debug("Could not determine duration of %s" % self.uri)
             duration = self.duration
         else:
             self.duration = duration
@@ -182,6 +169,9 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
             Gst.SeekType.NONE, -1)
 
     def _addVisibleThumbnails(self):
+        """
+        Get the thumbnails to be displayed in the currently visible clip portion
+        """
         self.remove_all_children()
         old_thumbs = self.thumbs.copy()
         self.thumbs = {}
@@ -219,18 +209,11 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
                 self.wishlist.append(current_time)
             current_time += thumb_duration
         self._allAnimated = False
-        self.counter += 1
-        print(self.counter)
-
-    def _inpoint_changed_cb(self, unused_bElement, unused_value):
-        position = Clutter.Point()
-        position.x = Zoomable.nsToPixel(self.bElement.props.in_point)
-        self.scroll_to_point(position)
-        self._update()
 
     def _get_wish(self):
-        """Returns a wish that is also in the queue or None
-           if no such wish exists"""
+        """
+        Returns a wish that is also in the queue, or None if no such wish exists
+        """
         while True:
             if not self.wishlist:
                 return None
@@ -260,12 +243,16 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
         self._update()
 
     def _get_visible_range(self):
+        # Shortcut/convenience variables:
+        start = self.bElement.props.start
+        in_point = self.bElement.props.in_point
+        duration = self.bElement.props.duration
         timeline_left, timeline_right = self._get_visible_timeline_range()
-        element_left = timeline_left - self.bElement.props.start + self.bElement.props.in_point
-        element_left = max(element_left, self.bElement.props.in_point)
 
-        element_right = timeline_right - self.bElement.props.start + self.bElement.props.in_point
-        element_right = min(element_right, self.bElement.props.in_point + self.bElement.props.duration)
+        element_left = timeline_left - start + in_point
+        element_left = max(element_left, in_point)
+        element_right = timeline_right - start + in_point
+        element_right = min(element_right, in_point + duration)
 
         return (element_left, element_right)
 
@@ -322,7 +309,19 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable):
             self._create_next_thumb()
         return Gst.BusSyncReply.PASS
 
-    def duration_changed(self, unused_bElement, unused_value):
+    def _scrollCb(self, unused):
+        self._update()
+
+    def _startChangedCb(self, unused_bElement, unused_value):
+        self._update()
+
+    def _inpointChangedCb(self, unused_bElement, unused_value):
+        position = Clutter.Point()
+        position.x = Zoomable.nsToPixel(self.bElement.props.in_point)
+        self.scroll_to_point(position)
+        self._update()
+
+    def _durationChangedCb(self, unused_bElement, unused_value):
         new_duration = max(self.duration, self.bElement.props.duration)
         if new_duration > self.duration:
             self.duration = new_duration
@@ -345,9 +344,11 @@ class Thumbnail(Clutter.Actor):
         pixel_data = gdkpixbuf.get_pixels()
         alpha = gdkpixbuf.get_has_alpha()
         if alpha:
-            self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGBA_8888, self.width, self.height, row_stride)
+            self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGBA_8888,
+                                        self.width, self.height, row_stride)
         else:
-            self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGB_888, self.width, self.height, row_stride)
+            self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGB_888,
+                                        self.width, self.height, row_stride)
         self.set_opacity(255)
 
     def set_from_gdkpixbuf_animated(self, gdkpixbuf):
@@ -392,7 +393,7 @@ def get_cache_for_uri(uri):
         return cache
 
 
-class ThumbnailCache(object):
+class ThumbnailCache(Loggable):
 
     """Caches thumbnails by key using LRU policy, implemented with heapq.
 
@@ -400,28 +401,29 @@ class ThumbnailCache(object):
     held in memory, the rest is being cached on disk using an sqlite db."""
 
     def __init__(self, uri):
-        object.__init__(self)
+        Loggable.__init__(self)
         # TODO: replace with utils.misc.hash_file
-        filehash = hash_file(Gst.uri_get_location(uri))
+        self._filehash = hash_file(Gst.uri_get_location(uri))
+        self._filename = os.path.basename(path_from_uri(uri))
         # TODO: replace with pitivi.settings.xdg_cache_home()
         cache_dir = get_dir(os.path.join(xdg_dirs.xdg_cache_home, "pitivi"), autocreate)
-        dbfile = os.path.join(get_dir(os.path.join(cache_dir, "thumbs")), filehash)
-        self.conn = sqlite3.connect(dbfile)
-        self.cur = self.conn.cursor()
-        self.cur.execute("CREATE TABLE IF NOT EXISTS Thumbs\
+        dbfile = os.path.join(get_dir(os.path.join(cache_dir, "thumbs")), self._filehash)
+        self._db = sqlite3.connect(dbfile)
+        self._cur = self._db.cursor()  # Use this for normal db operations
+        self._cur.execute("CREATE TABLE IF NOT EXISTS Thumbs\
                           (Time INTEGER NOT NULL PRIMARY KEY,\
                           Jpeg BLOB NOT NULL)")
 
     def __contains__(self, key):
         # check if item is present in on disk cache
-        self.cur.execute("SELECT Time FROM Thumbs WHERE Time = ?", (key,))
-        if self.cur.fetchone():
+        self._cur.execute("SELECT Time FROM Thumbs WHERE Time = ?", (key,))
+        if self._cur.fetchone():
             return True
         return False
 
     def __getitem__(self, key):
-        self.cur.execute("SELECT * FROM Thumbs WHERE Time = ?", (key,))
-        row = self.cur.fetchone()
+        self._cur.execute("SELECT * FROM Thumbs WHERE Time = ?", (key,))
+        row = self._cur.fetchone()
         if row:
             jpeg = row[1]
             loader = GdkPixbuf.PixbufLoader.new()
@@ -439,10 +441,11 @@ class ThumbnailCache(object):
             return
         blob = sqlite3.Binary(jpeg)
         #Replace if the key already existed
-        self.cur.execute("DELETE FROM Thumbs WHERE  time=?", (key,))
-        self.cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
-        #self.conn.commit()
+        self._cur.execute("DELETE FROM Thumbs WHERE  time=?", (key,))
+        self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
+        #self._db.commit()
 
     def commit(self):
-        print("commit")
-        self.conn.commit()
+        self.debug('Saving thumbnail cache file to disk for "%s"' % self._filename)
+        self._db.commit()
+        self.log("Saved thumbnail cache file: %s" % self._filehash)

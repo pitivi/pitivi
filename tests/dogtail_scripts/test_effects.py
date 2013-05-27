@@ -35,7 +35,9 @@ class EffectLibraryTest(HelpFunc):
     def help_test_effect_drag(self):
         sample = self.import_media()
         self.insert_clip(sample)
-        clippos = (self.timeline.position[0] + 20, self.timeline.position[1] + 20)
+        # Assume that the layer controls are roughly 260 pixels wide,
+        # so the clip position should be x + 300, y + 30
+        clippos = (self.timeline.position[0] + 300, self.timeline.position[1] + 30)
 
         tab = self.effectslibrary
         tab.click()

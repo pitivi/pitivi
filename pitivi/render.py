@@ -767,6 +767,29 @@ class RenderDialog(Loggable):
                                             parent_window=self.window)
         self.dialog.ok_btn.connect("clicked", self._okButtonClickedCb, settings_attr)
 
+    def _showRenderErrorDialog(self, error, details):
+        primary_message = _("Sorry, something didn’t work right.")
+        secondary_message = _("An error occured while trying to render your "
+            "project. You might want to check our troubleshooting guide or "
+            "file a bug report. See the details below for some basic "
+            "information that may help identify the problem.")
+
+        dialog = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL,
+            Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
+            primary_message)
+        dialog.set_property("secondary-text", secondary_message)
+
+        expander = Gtk.Expander()
+        expander.set_label(_("Details"))
+        details_label = Gtk.Label(str(error) + "\n\n" + str(details))
+        details_label.set_line_wrap(True)
+        details_label.set_selectable(True)
+        expander.add(details_label)
+        dialog.get_message_area().add(expander)
+        dialog.show_all()  # Ensure the expander and its children show up
+        dialog.run()
+        dialog.destroy()
+
     def startAction(self):
         """ Start the render process """
         self._pipeline.set_state(Gst.State.NULL)
@@ -775,8 +798,8 @@ class RenderDialog(Loggable):
         self._gstSigId[encodebin] = encodebin.connect("element-added", self._elementAddedCb)
         self._pipeline.set_state(Gst.State.PLAYING)
 
-    def _cancelRender(self, progress):
-        self.debug("aborting render")
+    def _cancelRender(self, *unused_args):
+        self.debug("Aborting render")
         self._shutDown()
         self._destroyProgressWindow()
 
@@ -866,6 +889,13 @@ class RenderDialog(Loggable):
             self.progress.close_button.show()
             self.progress.cancel_button.hide()
             self.progress.play_pause_button.hide()
+
+        elif message.type == Gst.MessageType.ERROR:
+            # Errors in a GStreamer pipeline are fatal. If we encounter one,
+            # we should abort and show the error instead of sitting around.
+            error, details = message.parse_error()
+            self._cancelRender()
+            self._showRenderErrorDialog(error, details)
 
         elif message.type == Gst.MessageType.STATE_CHANGED and self.progress:
             prev, state, pending = message.parse_state_changed()

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from gettext import gettext as _
+from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -266,7 +267,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.player.set_state(Gst.State.PLAYING)
         self.is_playing = True
         self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PAUSE)
-        GObject.timeout_add(250, self._update_position)
+        GLib.timeout_add(250, self._update_position)
         self.debug("Preview started")
 
     def pause(self):

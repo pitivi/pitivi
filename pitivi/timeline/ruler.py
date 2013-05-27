@@ -27,6 +27,7 @@ import cairo
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Gst
+from gi.repository import GLib
 from gi.repository import GObject
 
 from gettext import gettext as _
@@ -92,8 +93,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
     def _hadjValueChangedCb(self, hadj):
         self.pixbuf_offset = self.hadj.get_value()
         if self.callback_id_scroll is not None:
-            GObject.source_remove(self.callback_id_scroll)
-        self.callback_id_scroll = GObject.timeout_add(100, self._maybeUpdate)
+            GLib.source_remove(self.callback_id_scroll)
+        self.callback_id_scroll = GLib.timeout_add(100, self._maybeUpdate)
 
 ## Zoomable interface override
 
@@ -104,8 +105,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def zoomChanged(self):
         if self.callback_id is not None:
-            GObject.source_remove(self.callback_id)
-        self.callback_id = GObject.timeout_add(100, self._maybeUpdate)
+            GLib.source_remove(self.callback_id)
+        self.callback_id = GLib.timeout_add(100, self._maybeUpdate)
 
 ## timeline position changed method
 
