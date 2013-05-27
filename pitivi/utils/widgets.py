@@ -25,6 +25,7 @@ A collection of helper classes and routines for:
     * Creating UI from GstElement-s
 """
 
+import imp
 import os
 import re
 import sys
@@ -34,6 +35,7 @@ from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import Pango
+from gi.repository import GLib
 from gi.repository import GObject
 
 from gettext import gettext as _
@@ -47,11 +49,45 @@ from pitivi.utils.timeline import Zoomable
 ZOOM_FIT = _("Zoom Fit")
 
 
-class DynamicWidget(object):
+class NumericEntry(Gtk.Entry):
+    __gtype_name__ = 'NumericEntry'
+
+    __gproperties__ = {
+        "matches": (str,
+                    "matches",
+                    "A string defining the regex to be used",
+                    None,
+                    GObject.PARAM_READWRITE),
+        "send-signal": (bool,
+                        "send-signal",
+                        "A string defining the regex to be used",
+                        False,
+                        GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        self._matches = None
+        self._emit = False
+
+    def do_get_property(self, prop):
+        if prop.name == "matches":
+            return self._matches
+        elif prop.name == "send-signal":
+            return self._emit
+
+    def do_set_property(self, prop, value):
+        if prop.name == "matches":
+            self._matches = value
+        elif prop.name == "send-signal":
+                self._emit = value
+
+
+class DynamicWidget(Loggable):
 
     """An interface which provides a uniform way to get, set, and observe
     widget properties"""
     def __init__(self, default):
+        Loggable.__init__(self)
         self.default = default
 
     def connectValueChanged(self, callback, *args):
@@ -112,55 +148,103 @@ class TextWidget(Gtk.HBox, DynamicWidget):
     __INVALID__ = Gdk.Color(0xFFFF, 0, 0)
     __NORMAL__ = Gdk.Color(0, 0, 0)
 
-    def __init__(self, matches=None, choices=None, default=None):
-        if not default:
+    def __init__(self, matches=None, choices=None, default=None, text_widget=None,
+            min_value=None, max_value=None):
+        """
+        Note that @min_value and @max_value will also determine the type of values
+        that is expected to be used in this text entry
+        """
+        if default is None:
             # In the case of text widgets, a blank default is an empty string
             default = ""
 
         Gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
 
+        send_signal = False
         self.set_border_width(0)
         self.set_spacing(0)
-        if choices:
-            self.combo = Gtk.combo_box_entry_new_text()
-            self.text = self.combo.get_child()
-            self.combo.show()
-            self.pack_start(self.combo, True, True, 0)
-            for choice in choices:
-                self.combo.append_text(choice)
+        if text_widget is None:
+            if choices:
+                model = Gtk.ListStore(str)
+                self.combo = Gtk.ComboBox.new_with_model_and_entry(model)
+                self.text = self.combo.get_child()
+                self.combo.show()
+                self.pack_start(self.combo, True, True, 0)
+                self.combo.set_entry_text_column(0)
+                for choice in choices:
+                    model.append([choice])
+            else:
+                self.text = Gtk.Entry()
+                self.text.show()
+                self.pack_start(self.text, True, True, 0)
         else:
-            self.text = Gtk.Entry()
-            self.text.show()
-            self.pack_start(self.text, True, True, 0)
-        self.matches = None
+            self.text = text_widget
+            if isinstance(text_widget, NumericEntry):
+                matches = text_widget.props.matches
+                send_signal = text_widget.props.send_signal
         self.last_valid = None
         self.valid = False
-        self.send_signal = True
+        self.send_signal = send_signal
+
+        if min_value is not None:
+            self._type = type(min_value)
+        elif max_value is not None:
+            self._type = type(max_value)
+        else:
+            self._type = None
+        self.min_value = min_value
+        self.max_value = max_value
+        if matches:
+            self.matches = matches
+        else:
+            self.matches = None
         self.text.connect("changed", self._textChanged)
         self.text.connect("activate", self._activateCb)
-        if matches:
-            if type(matches) is str:
-                self.matches = re.compile(matches)
-            else:
-                self.matches = matches
-            self._textChanged(None)
+
+    @property
+    def matches(self):
+        return self._matches
+
+    @matches.setter
+    def matches(self, value):
+        if type(value) is str:
+            self._matches = re.compile(value)
+        else:
+            self._matches = value
+        self._textChanged(None)
 
     def connectValueChanged(self, callback, *args):
         return self.connect("value-changed", callback, *args)
 
     def setWidgetValue(self, value, send_signal=True):
+        if self.min_value is not None and self.max_value:
+            if value < self.min_value:
+                value = self.min_value
+            elif value > self.max_value:
+                value = self.max_value
         self.send_signal = send_signal
-        self.text.set_text(value)
+        self.text.set_text(str(value))
 
     def getWidgetValue(self):
         if self.matches:
-            return self.last_valid
-        return self.text.get_text()
+            value = self.last_valid
+        else:
+            value = self.text.get_text()
+
+        if self._type is not None:
+            try:
+                return self._type(value)
+            except ValueError:
+                self.debug("%s was not convertible to type %s"
+                        % (value, self._type))
+                return None
+        return value
 
     def addChoices(self, choices):
+        model = self.combo.get_model()
         for choice in choices:
-            self.combo.append_text(choice)
+            model.append([choice])
 
     def _textChanged(self, unused_widget):
         text = self.text.get_text()
@@ -209,34 +293,48 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
     The SpinButton is always displayed, while the Scale only appears if both
     lower and upper bounds are defined"""
 
-    def __init__(self, upper=None, lower=None, default=None):
+    def __init__(self, upper=None, lower=None, default=None,
+                 adjustment=None):
         Gtk.HBox.__init__(self)
         DynamicWidget.__init__(self, default)
 
         self.spacing = SPACING
-        self.adjustment = Gtk.Adjustment()
-        self.upper = upper
-        self.lower = lower
         self._type = None
-        if (lower is not None and upper is not None) and (lower > -5000 and upper < 5000):
-            self.slider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, self.adjustment)
-            self.pack_start(self.slider, fill=True, expand=True, padding=0)
-            self.slider.show()
-            self.slider.props.draw_value = False
+        if adjustment is None:
+            self.upper = upper
+            self.lower = lower
+            self.adjustment = Gtk.Adjustment()
+            if (lower is not None and upper is not None) and (lower > -5000 and upper < 5000):
+                self.slider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, self.adjustment)
+                self.pack_start(self.slider, fill=True, expand=True, padding=0)
+                self.slider.show()
+                self.slider.props.draw_value = False
+                # Abuse GTK3's progressbar "fill level" feature to provide
+                # a visual indication of the default value on property sliders.
+                # "default > lower" handles off-boundaries values like -1
+                if default and default > lower:
+                    self.slider.set_restrict_to_fill_level(False)
+                    self.slider.set_fill_level(float(default))
+                    self.slider.set_show_fill_level(True)
 
-        if upper is None:
-            upper = GObject.G_MAXDOUBLE
-        if lower is None:
-            lower = GObject.G_MINDOUBLE
-        range = upper - lower
-        self.adjustment.props.lower = lower
-        self.adjustment.props.upper = upper
-        self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
-        self.pack_end(self.spinner, fill=True, expand=not hasattr(self, 'slider'), padding=0)
-        self.spinner.show()
+            if upper is None:
+                upper = GObject.G_MAXDOUBLE
+            if lower is None:
+                lower = GObject.G_MINDOUBLE
+            self.adjustment.props.lower = lower
+            self.adjustment.props.upper = upper
+            self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
+            self.pack_end(self.spinner, fill=True, expand=not hasattr(self, 'slider'), padding=0)
+            self.spinner.show()
+        else:
+            self.adjustment = adjustment
+            self.upper = adjustment.get_upper()
+            self.lower = adjustment.get_lower()
+            self.slider = None
+            self.spinner = None
 
     def connectValueChanged(self, callback, *args):
-        self.adjustment.connect("value-changed", callback, *args)
+        self.adjustment.connect("value-changed", callback, * args)
 
     def getWidgetValue(self):
         if self._type:
@@ -245,25 +343,29 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
         return self.adjustment.get_value()
 
     def setWidgetValue(self, value):
-        type_ = type(value)
-        if self._type is None:
-            self._type = type_
+        # With introspection, we get tuples for GESTrackElement children props
+        if type(value) is tuple:
+            value = value[-1]  # Grab the last item of the tuple
 
-        if type_ == int or type_ == long:
+        self._type = type(value)
+
+        if self._type == int or self._type == long:
             minimum, maximum = (-sys.maxint, sys.maxint)
             step = 1.0
             page = 10.0
-        elif type_ == float:
+        elif self._type == float:
             minimum, maximum = (GObject.G_MINDOUBLE, GObject.G_MAXDOUBLE)
             step = 0.01
             page = 0.1
-            self.spinner.props.digits = 2
+            if self.spinner:
+                self.spinner.props.digits = 2
         if self.lower is not None:
             minimum = self.lower
         if self.upper is not None:
             maximum = self.upper
         self.adjustment.configure(value, minimum, maximum, step, page, 0)
-        self.spinner.set_adjustment(self.adjustment)
+        if self.spinner:
+            self.spinner.set_adjustment(self.adjustment)
 
 
 class TimeWidget(TextWidget, DynamicWidget):
@@ -303,7 +405,7 @@ class TimeWidget(TextWidget, DynamicWidget):
 
     def setWidgetValue(self, value, send_signal=True):
         TextWidget.setWidgetValue(self, time_to_string(value),
-                                send_signal=send_signal)
+                                  send_signal=send_signal)
 
     # No need to define connectValueChanged as it is inherited from DynamicWidget
     def connectActivateEvent(self, activateCb):
@@ -373,6 +475,10 @@ class FractionWidget(TextWidget, DynamicWidget):
         self.addChoices(choices)
 
     def setWidgetValue(self, value):
+        # With introspection, we get tuples for GESTrackElement children props
+        if type(value) is tuple:
+            value = value[-1]  # Grab the last item of the tuple
+
         if type(value) is str:
             value = self._parseText(value)
         elif not hasattr(value, "denom"):
@@ -417,6 +523,10 @@ class ToggleWidget(Gtk.CheckButton, DynamicWidget):
         self.connect("toggled", callback, *args)
 
     def setWidgetValue(self, value):
+        # With introspection, we get tuples for GESTrackElement children props
+        if type(value) is tuple:
+            value = value[-1]  # Grab the last item of the tuple
+
         self.set_active(value)
 
     def getWidgetValue(self):
@@ -445,6 +555,10 @@ class ChoiceWidget(Gtk.HBox, DynamicWidget):
         return self.contents.connect("changed", callback, *args)
 
     def setWidgetValue(self, value):
+        # With introspection, we get tuples for GESTrackElement children props
+        if type(value) is tuple:
+            value = value[-1]  # Grab the last item of the tuple
+
         try:
             self.contents.set_active(self.values.index(value))
         except ValueError:
@@ -806,10 +920,30 @@ def make_property_widget(unused_element, prop, value=None):
     return widget
 
 
+def make_widget_wrapper(widget, prop=None):
+    """ Creates a wrapper child of DynamicWidget for @widget """
+    if prop is not None:
+        default_value = prop.default_value
+
+    if isinstance(widget, Gtk.Entry):
+        if hasattr(prop, "minimum"):
+            minimum = prop.minimum
+        if hasattr(prop, "maximum"):
+            maximum = prop.maximum
+        return TextWidget(text_widget=widget, default=default_value,
+                min_value=minimum, max_value=maximum)
+    elif isinstance(widget, Gtk.Range):
+        return NumericWidget(adjustment=widget.get_adjustment(), default=default_value)
+
+    # TODO Implement wrappers for more Gtk.Widget types
+
+
 class GstElementSettingsWidget(Gtk.VBox, Loggable):
     """
     Widget to view/modify properties of a Gst.Element
     """
+
+    custom_ui_creators = None
 
     def __init__(self):
         Gtk.VBox.__init__(self)
@@ -817,18 +951,140 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         self.element = None
         self.ignore = None
         self.properties = None
-        self.buttons = {}
+        self._unhandled_properties = []
+        if self.custom_ui_creators is None:
+            self._fill_custom_ui_creators()
+
+    @classmethod
+    def _fill_custom_ui_creators(self):
+        """
+        Automatically detect available custom GUIs for some effects,
+        and use them intead of autogenerated interfaces.
+        """
+        self.custom_ui_creators = {}
+        customwidgets_dir = os.path.join(os.path.dirname(__file__), "customwidgets")
+        for f in os.listdir(customwidgets_dir):
+            if f.endswith(".py"):
+                modulename = f.replace(".py", "")
+                try:
+                    module = imp.load_source(modulename, os.path.join(customwidgets_dir, f))
+                    self.custom_ui_creators[modulename] = module.create_widget
+                except AttributeError:
+                    # No create_widget method present, do not do anything
+                    pass
 
     def setElement(self, element, properties={}, ignore=['name'],
                    default_btn=False, use_element_props=False):
         """
         Set given element on Widget, with optional properties
         """
-        self.info("element:%s, use properties:%s", element, properties)
+        self.info("Setting %s with properties:%s", element, properties)
         self.element = element
         self.ignore = ignore
         self.properties = {}
-        self._addWidgets(properties, default_btn, use_element_props)
+        self.uncontrolled_properties = {}
+        created = False
+        if isinstance(element, GES.Effect):
+            bin_description = element.props.bin_description
+            # First, check if we already have an existing UI ready to display
+            try:
+                created = self.custom_ui_creators[bin_description](self, element)
+                self.pack_start(created, True, True, 0)
+                self.show_all()
+                self.log("Reusing the previously created UI for %s", bin_description)
+            except KeyError:
+                pass
+            # Otherwise, check if there's a custom UI available as a glade file
+            # in the utils/customwidgets directory:
+            if not created:
+                try:
+                    builder = Gtk.Builder()
+                    builder.add_from_file(os.path.join(get_ui_dir(),
+                                          "customwidgets", bin_description + ".ui"))
+                    self.mapBuilder(builder)
+                    self.info("Found a custom .ui file for %s", bin_description)
+                    created = True
+                except GLib.GError:
+                    self.log("No .ui file available for %s", bin_description)
+        # If all else fails, dynamically create a UI from the properties
+        if not created:
+            self._addWidgets(properties, default_btn, use_element_props)
+
+    def mapBuilder(self, builder):
+        """
+        Analyze a GtkBuilder object, map the GStreamer element's properties
+        to corresponding widgets, and connect signals automatically.
+
+        Prop control widgets should be named "element_name::prop_name", where:
+        - element_name is the gstreamer element (ex: the "alpha" effect)
+        - prop_name is the name of one of a particular property of the element
+
+        If present, a reset button corresponding to the property will be used
+        (the button must be named similarly, with "::reset" after the prop name)
+
+        A button named reset_all_button can also be provided and will be used as
+        a fallback for each property without an individual reset button.
+        """
+        reset_all_button = builder.get_object("reset_all_button")
+        for prop in self._getProperties():
+            widget_name = prop.owner_type.name + "::" + prop.name
+            widget = builder.get_object(widget_name)
+            if widget is None:
+                self._unhandled_properties.append(prop)
+                self.warning("No custom widget found for %s property \"%s\"" %
+                            (prop.owner_type.name, prop.name))
+            else:
+                reset_name = widget_name + "::" + "reset"
+                reset_widget = builder.get_object(reset_name)
+                if not reset_widget:
+                    # If reset_all_button is not found, it will be None
+                    reset_widget = reset_all_button
+                self.addPropertyWidget(prop, widget, reset_widget)
+
+    def addPropertyWidget(self, prop, widget, to_default_btn=None):
+        """
+        Connect an element property to a GTK Widget.
+        Optionally, a reset button widget can also be provided.
+
+        Unless you want to connect each widget individually, you should be using
+        the "mapBuilder" method instead.
+        """
+        if isinstance(widget, DynamicWidget):
+            # if the widget is already a DynamicWidget we use it as is
+            dynamic_widget = widget
+        else:
+            # if the widget is not dynamic we try to create a wrapper around it
+            # so we can control it with the standardized DynamicWidget API
+            dynamic_widget = make_widget_wrapper(widget, prop)
+
+        if dynamic_widget:
+            self.properties[prop] = dynamic_widget
+
+            self.element.connect('notify::' + prop.name, self._propertyChangedCb,
+                    dynamic_widget)
+            # The "reset to default" button associated with this property
+            if isinstance(to_default_btn, Gtk.Button):
+                to_default_btn.connect('clicked', self._defaultBtnClickedCb, dynamic_widget)
+            elif to_default_btn is not None:
+                self.warning("to_default_btn should be Gtk.Button or None, got %s", to_default_btn)
+        else:
+            # If we add a non-standard widget, the creator of the widget is
+            # responsible for handling its behaviour "by hand"
+            self.info("Can not wrap widget %s for property %s" % (widget, prop))
+            # We still keep a ref to that widget, "just in case"
+            self.uncontrolled_properties[prop] = widget
+
+        if hasattr(prop, 'blurb'):
+            widget.set_tooltip_text(prop.blurb)
+
+    def addIgnoreProperty(self, ignore):
+        self.ignore.append(ignore)
+
+    def _getProperties(self):
+        if isinstance(self.element, GES.BaseEffect):
+            return [prop for prop in self.element.list_children_properties() if not prop.name in self.ignore]
+        else:
+            return [prop for prop in GObject.list_properties(self.element) if not prop.name in self.ignore]
 
     def _addWidgets(self, properties, default_btn, use_element_props):
         """
@@ -840,11 +1096,9 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         "No properties."
         """
         is_effect = False
-        if isinstance(self.element, GES.Effect):
-            is_effect = True
-            props = [prop for prop in self.element.list_children_properties() if not prop.name in self.ignore]
-        else:
-            props = [prop for prop in GObject.list_properties(self.element) if not prop.name in self.ignore]
+        self.log("Dynamically creating a table of property widgets")
+
+        props = self._getProperties()
         if not props:
             table = Gtk.Table(rows=1, columns=1)
             widget = Gtk.Label(label=_("No properties."))
@@ -878,32 +1132,29 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                     self.debug("Could not get property %s value", prop.name)
             else:
                 if use_element_props:
-                    prop_value = self.element.get_property(prop.name)
+                    prop_value = self.element.get_child_property(prop.name)
                 else:
                     prop_value = properties.get(prop.name)
 
             widget = make_property_widget(self.element, prop, prop_value)
+            FILL = Gtk.AttachOptions.FILL  # A shortcut to compact code
             if isinstance(widget, ToggleWidget):
                 widget.set_label(prop.nick)
-                table.attach(widget, 0, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
+                table.attach(widget, 0, 2, y, y + 1, yoptions=FILL)
             else:
                 label = Gtk.Label(label=prop.nick + ":")
                 label.set_alignment(0.0, 0.5)
-                table.attach(label, 0, 1, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
-                table.attach(widget, 1, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
+                table.attach(label, 0, 1, y, y + 1, xoptions=FILL, yoptions=FILL)
+                table.attach(widget, 1, 2, y, y + 1, yoptions=FILL)
 
             if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
 
-            self.properties[prop] = widget
-
-            # The "reset to default" button associated with this property
             if default_btn:
-                button = self._getResetToDefaultValueButton(prop, widget)
-                table.attach(button, 2, 3, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
-                self.buttons[button] = widget
-            self.element.connect('notify::' + prop.name, self._propertyChangedCb, widget)
+                reset = self.getResetToDefaultValueButton(prop, widget)
+                table.attach(reset, 2, 3, y, y + 1, xoptions=FILL, yoptions=FILL)
 
+            self.addPropertyWidget(prop, widget, None)
             y += 1
 
         self.pack_start(table, True, True, 0)
@@ -912,7 +1163,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
     def _propertyChangedCb(self, element, pspec, widget):
         widget.setWidgetValue(self.element.get_property(pspec.name))
 
-    def _getResetToDefaultValueButton(self, prop, widget):
+    def getResetToDefaultValueButton(self, prop, widget):
         icon = Gtk.Image()
         icon.set_from_icon_name("edit-clear-all-symbolic", Gtk.IconSize.MENU)
         button = Gtk.Button()

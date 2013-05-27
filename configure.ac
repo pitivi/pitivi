@@ -74,6 +74,7 @@ pitivi/configure.py
 pitivi/dialogs/Makefile
 pitivi/undo/Makefile
 pitivi/utils/Makefile
+pitivi/utils/customwidgets/Makefile
 pitivi/timeline/Makefile
 po/Makefile.in
 tests/Makefile
