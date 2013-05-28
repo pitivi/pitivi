@@ -31,7 +31,7 @@ from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING
-from pitivi.utils.misc import path_from_uri
+from pitivi.utils.misc import path_from_uri, quote_uri
 
 BORDER_WIDTH = 3  # For the timeline elements
 
@@ -57,7 +57,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
         # Variables related to the timeline objects
         self.timeline = timeline
         self.bElement = bElement
-        self.uri = bElement.props.uri
+        self.uri = quote_uri(bElement.props.uri)  # Guard against malformed URIs
         self.duration = bElement.props.duration
 
         # Variables related to thumbnailing
