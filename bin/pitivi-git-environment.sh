@@ -389,7 +389,6 @@ fi
 
 
 if [ $ready_to_run == 1 ]; then
-    cd $PITIVI/pitivi
     # Change the looks of the prompt, to help us remember we're in a subshell.
     # If the user has some custom git bash helpers, try preserving them.
 
@@ -405,17 +404,12 @@ if [ $ready_to_run == 1 ]; then
       echo "pitivi-git environment is being sourced"
       export PS1="[ptv] $PS1"
     else
-      if function_exists __git_ps1
-      then
-          # Display "PTV env:", path, the output of __git_ps1, " $ "
-          changed_PS1='PS1="\[$(tput bold)$(tput setb 1)$(tput setaf 7)\]PTV env:\w\[$(tput sgr0)\]\$(__git_ps1)$ "'
-      else
-          # Display "PTV env:", path, " $ "
-          changed_PS1='PS1="\[$(tput bold)$(tput setb 1)$(tput setaf 7)\]PTV env:\w\[$(tput sgr0)\] $ "'
-      fi
       if [ -z "$*" ];
       then
-        bash --rcfile <(cat ~/.bashrc; echo $changed_PS1)
+        cd $PITIVI/pitivi
+        cp ~/.bashrc /tmp/ptvCustomPS1
+        echo "export PS1=[ptv]\ \$PS1" >> /tmp/ptvCustomPS1
+        bash --rcfile /tmp/ptvCustomPS1
       else
         /bin/bash -c "$*"
       fi
