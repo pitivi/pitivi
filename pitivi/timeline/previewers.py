@@ -146,7 +146,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
             self.queue.append(current_time)
             current_time += self.thumb_period
 
-        self._create_next_thumb()
+        GLib.idle_add(self._create_next_thumb, priority=GLib.PRIORITY_LOW)
 
     def _create_next_thumb(self):
         if not self.queue:
@@ -306,7 +306,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
             if struct_name == "preroll-pixbuf":
                 self._setThumbnail(struct.get_value("stream-time"), struct.get_value("pixbuf"))
         elif message.type == Gst.MessageType.ASYNC_DONE:
-            self._create_next_thumb()
+            GLib.idle_add(self._create_next_thumb, priority=GLib.PRIORITY_LOW)
         return Gst.BusSyncReply.PASS
 
     def _scrollCb(self, unused):
