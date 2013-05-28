@@ -343,7 +343,7 @@ if [ "$ready_to_run" != "1" ]; then
             if $BUILD_DOCS; then
                 ./autogen.sh
             else
-                ./autogen.sh --disable-gtk-doc
+                ./autogen.sh --disable-gtk-doc --disable-docbook
             fi
             if [ $? -ne 0 ]; then
                 echo "Could not run autogen for $m ; result: $?"
