@@ -25,6 +25,7 @@ import os
 import sqlite3
 import sys
 import xdg.BaseDirectory as xdg_dirs
+from random import randrange
 
 from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl
 from pitivi.utils.loggable import Loggable
@@ -147,6 +148,11 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
             current_time += self.thumb_period
 
         GLib.idle_add(self._create_next_thumb, priority=GLib.PRIORITY_LOW)
+        # Save periodically to avoid the common situation where the user exits
+        # the app before a long clip has been fully thumbnailed.
+        # Spread timeouts between 30-80 secs to avoid concurrent disk writes.
+        random_time = randrange(30, 80)
+        GLib.timeout_add_seconds(random_time, self._autosave)
 
     def _create_next_thumb(self):
         if not self.queue:
@@ -167,6 +173,14 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
             Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
             Gst.SeekType.SET, time,
             Gst.SeekType.NONE, -1)
+
+    def _autosave(self):
+        if self.queue:
+            self.log("Periodic thumbnail autosave")
+            self.thumb_cache.commit()
+            return True
+        else:
+            return False  # Stop the timer
 
     def _addVisibleThumbnails(self):
         """
