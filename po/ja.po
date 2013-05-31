@@ -1157,7 +1157,7 @@ msgstr "現在のプロジェクトを保存します"
 
 #: ../pitivi/ui/mainwindow.py:250
 msgid "Save _As..."
-msgstr "名前をつけて保存(_A)..."
+msgstr "名前を付けて保存(_A)..."
 
 #: ../pitivi/ui/mainwindow.py:253
 msgid "Reload the current project"
@@ -1360,7 +1360,7 @@ msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:1016
 msgid "Save As..."
-msgstr "名前をつけて保存..."
+msgstr "名前を付けて保存..."
 
 #: ../pitivi/ui/mainwindow.py:1024
 msgid "Untitled.xptv"
