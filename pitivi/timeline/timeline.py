@@ -215,14 +215,13 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def insertLayer(self, ghostclip):
         layer = None
         if ghostclip.priority < len(self.bTimeline.get_layers()):
-            self.bTimeline.enable_update(False)
             for layer in self.bTimeline.get_layers():
                 if layer.get_priority() >= ghostclip.priority:
                     layer.props.priority += 1
 
             layer = self.bTimeline.append_layer()
             layer.props.priority = ghostclip.priority
-            self.bTimeline.enable_update(True)
+            self.bTimeline.commit()
             self._container.controls._reorderLayerActors()
         return layer
 
@@ -291,6 +290,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
                             0,
                             ghostclip.asset.get_duration(),
                             ghostclip.asset.get_supported_formats())
+        self.bTimeline.commit()
 
     """
     This is called at drag-leave. We don't empty the list on purpose.
@@ -300,6 +300,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             for ghostclip in ghostCouple:
                 if ghostclip is not None and ghostclip.get_parent():
                     self.remove_child(ghostclip)
+        self.bTimeline.commit()
 
     # Internal API
 
@@ -603,6 +604,8 @@ class Timeline(Gtk.VBox, Zoomable):
             self._setBestZoomRatio()
         else:
             self.scrollToPosition(self.bTimeline.props.duration)
+
+        self.bTimeline.commit()
 
     def purgeObject(self, asset_id):
         """Remove all instances of an asset from the timeline."""
@@ -942,24 +945,22 @@ class Timeline(Gtk.VBox, Zoomable):
 
     def _ungroupSelected(self, unused_action):
         if self.bTimeline:
-            self.bTimeline.enable_update(False)
             self.app.action_log.begin("ungroup")
 
             for clip in self.timeline.selection:
                 clip.ungroup(False)
 
-            self.bTimeline.enable_update(True)
+            self.bTimeline.commit()
             self.app.action_log.commit()
 
     def _groupSelected(self, unused_action):
         if self.bTimeline:
-            self.bTimeline.enable_update(False)
             self.app.action_log.begin("group")
 
             GES.Container.group(self.timeline.selection)
 
             self.app.action_log.commit()
-            self.bTimeline.enable_update(True)
+            self.bTimeline.commit()
 
     def _alignSelected(self, unused_action):
         if "NumPy" in missing_soft_deps:
@@ -970,11 +971,10 @@ class Timeline(Gtk.VBox, Zoomable):
 
             progress_dialog.window.show()
             self.app.action_log.begin("align")
-            self.bTimeline.enable_update(False)
 
             def alignedCb():  # Called when alignment is complete
-                self.bTimeline.enable_update(True)
                 self.app.action_log.commit()
+                self.bTimeline.commit()
                 progress_dialog.window.destroy()
 
             auto_aligner = AutoAligner(self.timeline.selection, alignedCb)
@@ -985,7 +985,6 @@ class Timeline(Gtk.VBox, Zoomable):
         """
         Split clips at the current playhead position, regardless of selections.
         """
-        self.bTimeline.enable_update(False)
         position = self.app.current.pipeline.getPosition()
 
         for track in self.bTimeline.get_tracks():
@@ -996,7 +995,7 @@ class Timeline(Gtk.VBox, Zoomable):
                     clip = element.get_parent()
                     clip.split(position)
 
-        self.bTimeline.enable_update(True)
+        self.bTimeline.commit()
 
     def _keyframe(self, action):
         """

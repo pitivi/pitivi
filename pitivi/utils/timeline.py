@@ -255,12 +255,10 @@ class EditingContext(Signallable):
         self.edge = edge
         self.mode = mode
 
-        self.timeline.enable_update(False)
-
     def finish(self):
         """Clean up timeline for normal editing"""
         # TODO: post undo / redo action here
-        self.timeline.enable_update(True)
+        self.timeline.commit()
         self.emit("clip-trim-finished")
 
     def setMode(self, mode):
