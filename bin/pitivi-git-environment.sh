@@ -235,7 +235,7 @@ if [ "$ready_to_run" != "1" ]; then
             fi
         fi
         cd $m
-        git remote update  # In case you haven't got the latest release tags...
+        git fetch origin  # In case you haven't got the latest release tags...
         # Take into account whether the user want stable releases or "master"
         if [ $m == "glib" ]; then
             # Silly hack for the fact that glib changes the "mkinstalldirs" file
@@ -318,7 +318,7 @@ if [ "$ready_to_run" != "1" ]; then
         fi
 
         cd $m
-        git remote update  # In case you haven't got the latest release tags...
+        git fetch origin  # In case you haven't got the latest release tags...
         git checkout $GST_RELEASE_TAG
         if [ $? -ne 0 ]; then
             echo "Could not run checkout $GST_RELEASE_TAG for $m ; result: $?"
