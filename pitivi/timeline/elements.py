@@ -34,7 +34,7 @@ import cairo
 
 from gi.repository import Clutter, Gtk, GtkClutter, Cogl, GES, Gdk, Gst, GstController, GLib
 from pitivi.utils.timeline import Zoomable, EditingContext, Selection, SELECT, UNSELECT, SELECT_ADD, Selected
-from previewers import VideoPreviewer, BORDER_WIDTH
+from previewers import AudioPreviewer, VideoPreviewer, BORDER_WIDTH
 
 import pitivi.configure as configure
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, KEYFRAME_SIZE, CONTROL_WIDTH
@@ -52,7 +52,9 @@ def get_preview_for_object(bElement, timeline):
         # FIXME: RandomAccessAudioPreviewer doesn't work yet
         # previewers[key] = RandomAccessAudioPreviewer(instance, uri)
         # TODO: return waveform previewer
-        return Clutter.Actor()
+        previewer = AudioPreviewer(bElement, timeline)
+        previewer.startLevelsDiscovery(bElement.get_parent().get_uri())
+        return previewer
     elif track_type == GES.TrackType.VIDEO:
         if bElement.get_parent().is_image():
             # TODO: return still image previewer

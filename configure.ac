@@ -9,6 +9,8 @@ AC_INIT(PiTiVi, 0.15.2,
     https://bugzilla.gnome.org/browse.cgi?product=pitivi,
     pitivi)
 
+LT_INIT()
+
 dnl initialize automake
 AM_INIT_AUTOMAKE
 
@@ -42,6 +44,14 @@ AC_MSG_NOTICE(Using localstatedir $LOCALSTATEDIR)
 dnl check for python
 AS_PATH_PYTHON(2.5)
 
+dnl python checks (you can change the required python version bellow)
+AM_PATH_PYTHON(2.7.0)
+PY_PREFIX=`$PYTHON -c 'import sys ; print sys.prefix'`
+PYTHON_LIBS="-lpython$PYTHON_VERSION"
+PYTHON_CFLAGS="-I$PY_PREFIX/include/python$PYTHON_VERSION"
+AC_SUBST([PYTHON_LIBS])
+AC_SUBST([PYTHON_CFLAGS])
+
 dnl ALL_LINGUAS="fr"
 GETTEXT_PACKAGE="pitivi"
 AC_SUBST([GETTEXT_PACKAGE])
@@ -49,7 +59,7 @@ AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], "$GETTEXT_PACKAGE", [Gettext package])
 AM_GLIB_GNU_GETTEXT
 IT_PROG_INTLTOOL([0.35.0])
 
-CONFIGURED_PYTHONPATH=$PYTHONPATH
+CONFIGURED_PYTHONPATH=$PYTHONPATH:pitivi/coptimizations/.libs
 AC_SUBST(CONFIGURED_PYTHONPATH)
 
 CONFIGURED_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
@@ -59,6 +69,8 @@ CONFIGURED_GST_PLUGIN_PATH=$GST_PLUGIN_PATH
 AC_SUBST(CONFIGURED_GST_PLUGIN_PATH)
 
 AC_CONFIG_FILES([bin/pitivi], [chmod +x bin/pitivi])
+
+PKG_CHECK_MODULES([cairo], [cairo])
 
 GNOME_DOC_INIT([0.18.0])
 
@@ -75,6 +87,7 @@ pitivi/dialogs/Makefile
 pitivi/undo/Makefile
 pitivi/utils/Makefile
 pitivi/timeline/Makefile
+pitivi/coptimizations/Makefile
 po/Makefile.in
 tests/Makefile
 data/Makefile

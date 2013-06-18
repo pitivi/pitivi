@@ -33,6 +33,8 @@ version_check "automake" "$AUTOMAKE automake automake-1.7 automake-1.6 automake-
               "ftp://ftp.gnu.org/pub/gnu/automake/" 1 6 || DIE=1
 version_check "pkg-config" "" \
               "http://www.freedesktop.org/software/pkgconfig" 0 8 0 || DIE=1
+version_check "libtoolize" "$LIBTOOLIZE libtoolize glibtoolize" \
+              "ftp://ftp.gnu.org/pub/gnu/libtool/" 2 2 6 || DIE=1
 
 die_check $DIE
 
@@ -66,6 +68,8 @@ echo "+ checking for GNOME Doc Utils"
 tool_run "gnome-doc-prepare" "--automake" \
     "echo Install gnome-doc-utils if gnome-doc-prepare is missing."
 
+# This is needed to create ltmain.sh for our C bits.
+tool_run "$libtoolize" "--copy --force"
 tool_run "$aclocal" "-I common/m4 $ACLOCAL_FLAGS"
 tool_run "$autoconf"
 tool_run "$automake" "-a -c"

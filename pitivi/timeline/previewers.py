@@ -20,21 +20,30 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+import numpy
 import hashlib
 import os
 import sqlite3
 import sys
+import cairo
 import xdg.BaseDirectory as xdg_dirs
 from random import randrange
+from datetime import datetime, timedelta
 
 from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING
 from pitivi.utils.misc import path_from_uri, quote_uri
+from pitivi.utils.ui import EXPANDED_SIZE, SPACING, CONTROL_WIDTH
+
+from renderer import *
+
+INTERVAL = 500000  # For the waveform update interval.
 
 BORDER_WIDTH = 3  # For the timeline elements
 
+MARGIN = 500  # For the waveforms, ensures we always have a little extra surface when scrolling while playing.
 
 """
 Convention throughout this file:
@@ -463,3 +472,146 @@ class ThumbnailCache(Loggable):
         self.debug('Saving thumbnail cache file to disk for "%s"' % self._filename)
         self._db.commit()
         self.log("Saved thumbnail cache file: %s" % self._filehash)
+
+
+class AudioPreviewer(Clutter.Actor, Zoomable):
+    """
+    Audio previewer based on the results from the "level" gstreamer element.
+    """
+    def __init__(self, bElement, timeline):
+        Clutter.Actor.__init__(self)
+        Zoomable.__init__(self)
+        self.discovered = False
+        self.bElement = bElement
+        self.timeline = timeline
+
+        self.actors = []
+
+        self.set_content_scaling_filters(Clutter.ScalingFilter.NEAREST, Clutter.ScalingFilter.NEAREST)
+        self.canvas = Clutter.Canvas()
+        self.set_content(self.canvas)
+        self.width = 0
+        self.lastUpdate = datetime.now()
+
+        self.interval = timedelta(microseconds=INTERVAL)
+
+        self.current_geometry = (-1, -1)
+
+        self.surface = None
+        self.timeline.connect("scrolled", self._scrolledCb)
+        self.canvas.connect("draw", self._drawContentCb)
+        self.canvas.invalidate()
+
+        self._callback_id = 0
+
+    def startLevelsDiscovery(self, uri):
+        self.peaks = None
+        self.pipeline = Gst.parse_launch("uridecodebin uri=" + uri + " ! audioconvert ! level interval=10000000 post-messages=true ! fakesink")
+        bus = self.pipeline.get_bus()
+        bus.add_signal_watch()
+        bus.connect("message", self._messageCb)
+        self.pipeline.set_state(Gst.State.PLAYING)
+
+    def set_size(self, width, height):
+        if self.discovered:
+            self._maybeUpdate()
+
+    def updateOffset(self):
+        print self.timeline.get_scroll_point().x
+
+    def zoomChanged(self):
+        self._maybeUpdate()
+
+    def _maybeUpdate(self):
+        if self.discovered:
+            if datetime.now() - self.lastUpdate > self.interval:
+                self.lastUpdate = datetime.now()
+                self._compute_geometry()
+            else:
+                if self._callback_id:
+                    GLib.source_remove(self._callback_id)
+                self._callback_id = GLib.timeout_add(500, self._compute_geometry)
+
+    def _compute_geometry(self):
+        start = self.timeline.get_scroll_point().x - self.nsToPixel(self.bElement.props.start)
+        start = max(0, start)
+        end = min(self.timeline.get_scroll_point().x + self.timeline._container.get_allocation().width - CONTROL_WIDTH + MARGIN,
+                  self.nsToPixel(self.bElement.props.duration))
+
+        pixelWidth = self.nsToPixel(self.bElement.props.duration)
+
+        self.start = int(start / pixelWidth * self.nbSamples)
+        self.end = int(end / pixelWidth * self.nbSamples)
+
+        self.width = int(end - start)
+
+        if self.width < 0:  # We've been called at a moment where size was updated but not scroll_point.
+            return
+
+        self.canvas.set_size(self.width, 65)
+
+        Clutter.Actor.set_size(self, self.width, EXPANDED_SIZE)
+        self.set_position(start, self.props.y)
+        self.canvas.invalidate()
+
+    def _messageCb(self, bus, message):
+        s = message.get_structure()
+        p = None
+        if s:
+            p = s.get_value("rms")
+        if p:
+            if self.peaks is None:
+                if len(p) > 1:
+                    self.peaks = [[], []]
+                else:
+                    self.peaks = [[]]
+            if p[0] < 0:  # FIXME bug in level, this should not be necessary.
+                p[0] = 10 ** (p[0] / 20) * 100
+                self.peaks[0].append(p[0])
+            else:
+                self.peaks[0].append(self.peaks[0][-1])
+
+            if len(p) > 1:
+                if p[1] < 0:
+                    p[1] = 10 ** (p[1] / 20) * 100
+                    self.peaks[1].append(p[1])
+                else:
+                    self.peaks[1].append(self.peaks[1][-1])
+
+        if message.type == Gst.MessageType.EOS:
+            # Let's go mono.
+            if (len(self.peaks) > 1):
+                samples = (numpy.array(self.peaks[0]) + numpy.array(self.peaks[1])) / 2
+            else:
+                samples = numpy.array(self.peaks[0])
+
+            self.samples = samples.tolist()
+            self.nbSamples = len(self.samples)
+
+            self.discovered = True
+            self.start = 0
+            self.end = self.nbSamples
+            self._compute_geometry()
+            self.pipeline.set_state(Gst.State.NULL)
+
+        elif message.type == Gst.MessageType.ERROR:
+            # Something went wrong TODO : recover
+            self.pipeline.set_state(Gst.State.NULL)
+
+    def _drawContentCb(self, canvas, cr, surf_w, surf_h):
+        cr.set_operator(cairo.OPERATOR_CLEAR)
+        cr.paint()
+        if not self.discovered:
+            return
+
+        if self.surface:
+            self.surface.finish()
+
+        self.surface = fill_surface(self.samples[self.start:self.end], int(self.width), int(EXPANDED_SIZE))
+
+        cr.set_operator(cairo.OPERATOR_OVER)
+        cr.set_source_surface(self.surface, 0, 0)
+        cr.paint()
+
+    def _scrolledCb(self, unused):
+        self._maybeUpdate()
