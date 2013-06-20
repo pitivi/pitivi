@@ -42,6 +42,8 @@ from math import log1p, log10
 
 import resource
 
+import pickle
+
 from renderer import *
 
 
@@ -569,10 +571,23 @@ class AudioPreviewer(Clutter.Actor, Zoomable):
         self._callback_id = 0
 
     def startLevelsDiscovery(self, uri):
-        self.peaks = None
-        self.pipeline = Gst.parse_launch("uridecodebin uri=" + uri + " ! audioconvert ! level interval=10000000 post-messages=true ! fakesink qos=false")
+        filename = hash_file(Gst.uri_get_location(uri)) + ".wave"
+        cache_dir = get_dir(os.path.join(xdg_dirs.xdg_cache_home, os.path.join("pitivi/waves")), autocreate)
+        filename = cache_dir + "/" + filename
 
         self.adapter = None
+
+        if os.path.exists(filename):
+            self.samples = pickle.load(open(filename, "rb"))
+            self._startRendering()
+
+        else:
+            self.wavefile = filename
+            self._launchPipeline(uri)
+
+    def _launchPipeline(self, uri):
+        self.peaks = None
+        self.pipeline = Gst.parse_launch("uridecodebin uri=" + uri + " ! audioconvert ! level interval=10000000 post-messages=true ! fakesink qos=false")
 
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
@@ -625,6 +640,28 @@ class AudioPreviewer(Clutter.Actor, Zoomable):
         self.set_position(start, self.props.y)
         self.canvas.invalidate()
 
+    def _prepareSamples(self):
+        # Let's go mono.
+        if (len(self.peaks) > 1):
+            samples = (numpy.array(self.peaks[0]) + numpy.array(self.peaks[1])) / 2
+        else:
+            samples = numpy.array(self.peaks[0])
+
+        self.samples = samples.tolist()
+
+        f = open(self.wavefile, 'w')
+
+        pickle.dump(self.samples, f)
+
+    def _startRendering(self):
+        self.nbSamples = len(self.samples)
+        self.discovered = True
+        self.start = 0
+        self.end = self.nbSamples
+        self._compute_geometry()
+        if self.adapter:
+            self.adapter.stop()
+
     def _messageCb(self, bus, message):
         s = message.get_structure()
         p = None
@@ -650,22 +687,9 @@ class AudioPreviewer(Clutter.Actor, Zoomable):
                     self.peaks[i][pos] = self.peaks[i][pos - 1]
 
         if message.type == Gst.MessageType.EOS:
-            # Let's go mono.
-            if (len(self.peaks) > 1):
-                samples = (numpy.array(self.peaks[0]) + numpy.array(self.peaks[1])) / 2
-            else:
-                samples = numpy.array(self.peaks[0])
-
-            self.samples = samples.tolist()
-            self.nbSamples = len(self.samples)
-
-            self.discovered = True
-            self.start = 0
-            self.end = self.nbSamples
-            self._compute_geometry()
-            if self.adapter:
-                self.adapter.stop()
             self.pipeline.set_state(Gst.State.NULL)
+            self._prepareSamples()
+            self._startRendering()
 
         elif message.type == Gst.MessageType.ERROR:
             if self.adapter:
