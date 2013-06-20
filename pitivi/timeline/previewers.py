@@ -577,6 +577,8 @@ class AudioPreviewer(Clutter.Actor, Zoomable):
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
 
+        self.nSamples = self.bElement.get_parent().get_asset().get_duration() / 10000000
+
         bus.connect("message", self._messageCb)
 
         self.pipeline.set_state(Gst.State.PLAYING)
@@ -629,23 +631,23 @@ class AudioPreviewer(Clutter.Actor, Zoomable):
         if s:
             p = s.get_value("rms")
         if p:
-            if self.peaks is None:
-                if len(p) > 1:
-                    self.peaks = [[], []]
-                else:
-                    self.peaks = [[]]
-            if p[0] < 0:  # FIXME bug in level, this should not be necessary.
-                p[0] = 10 ** (p[0] / 20) * 100
-                self.peaks[0].append(p[0])
-            else:
-                self.peaks[0].append(self.peaks[0][-1])
+            st = s.get_value("stream-time")
 
-            if len(p) > 1:
-                if p[1] < 0:
-                    p[1] = 10 ** (p[1] / 20) * 100
-                    self.peaks[1].append(p[1])
+            if self.peaks is None:
+                self.peaks = []
+                for channel in p:
+                    self.peaks.append([0] * self.nSamples)
+
+            pos = int(st / 10000000)
+            if pos >= len(self.peaks[0]):
+                return
+
+            for i, val in enumerate(p):
+                if val < 0:
+                    val = 10 ** (val / 20) * 100
+                    self.peaks[i][pos] = val
                 else:
-                    self.peaks[1].append(self.peaks[1][-1])
+                    self.peaks[i][pos] = self.peaks[i][pos - 1]
 
         if message.type == Gst.MessageType.EOS:
             # Let's go mono.
