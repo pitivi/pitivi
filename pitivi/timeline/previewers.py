@@ -47,7 +47,10 @@ import pickle
 from renderer import *
 
 
-CPU_USAGE = 30 * multiprocessing.cpu_count()
+WAVEFORMS_CPU_USAGE = 30 * multiprocessing.cpu_count()
+
+# A little lower as it's more fluctuating
+THUMBNAILS_CPU_USAGE = 20 * multiprocessing.cpu_count()
 
 INTERVAL = 500000  # For the waveform update interval.
 
@@ -91,6 +94,11 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
         # Maps (quantized) times to Thumbnail objects
         self.thumbs = {}
         self.thumb_cache = get_cache_for_uri(self.uri)
+
+        # For CPU management
+        self.lastMoment = datetime.now()
+        self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
+        self.interval = 2000
 
         # Connect signals and fire things up
         self.timeline.connect("scrolled", self._scrollCb)
@@ -152,6 +160,24 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
         self.pipeline.get_bus().add_signal_watch()
         self.pipeline.get_bus().connect("message", self.bus_message_handler)
 
+    def _checkCPU(self):
+        deltaTime = (datetime.now() - self.lastMoment).total_seconds()
+        deltaUsage = resource.getrusage(resource.RUSAGE_SELF).ru_utime - self.lastUsage.ru_utime
+
+        usage_percent = float(deltaUsage) / deltaTime * 100
+
+        if usage_percent < THUMBNAILS_CPU_USAGE:
+            self.interval *= 0.9
+        else:
+            self.interval *= 1.1
+
+        GLib.timeout_add(self.interval, self._create_next_thumb)
+
+        self.lastMoment = datetime.now()
+        self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
+
+        return False
+
     def _startThumbnailing(self):
         self.queue = []
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
@@ -166,7 +192,8 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
             self.queue.append(current_time)
             current_time += self.thumb_period
 
-        GLib.idle_add(self._create_next_thumb, priority=GLib.PRIORITY_LOW)
+        self._checkCPU()
+
         # Save periodically to avoid the common situation where the user exits
         # the app before a long clip has been fully thumbnailed.
         # Spread timeouts between 30-80 secs to avoid concurrent disk writes.
@@ -187,7 +214,6 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
         # append the time to the end of the queue so that if this seek fails
         # another try will be started later
         self.queue.append(time)
-
         self.pipeline.seek(1.0,
             Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
             Gst.SeekType.SET, time,
@@ -339,7 +365,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
             if struct_name == "preroll-pixbuf":
                 self._setThumbnail(struct.get_value("stream-time"), struct.get_value("pixbuf"))
         elif message.type == Gst.MessageType.ASYNC_DONE:
-            GLib.idle_add(self._create_next_thumb, priority=GLib.PRIORITY_LOW)
+            self._checkCPU()
         return Gst.BusSyncReply.PASS
 
     def _scrollCb(self, unused):
@@ -516,12 +542,10 @@ class PipelineCpuAdapter:
 
         usage_percent = float(deltaUsage) / deltaTime * 100
 
-        print usage_percent, "% CPU"
-
-        if usage_percent >= CPU_USAGE and self.rate > 1.0:
+        if usage_percent >= WAVEFORMS_CPU_USAGE and self.rate > 1.0:
             self.rate -= self.rate * self.decreaseFactor
 
-        elif usage_percent < CPU_USAGE:
+        elif usage_percent < WAVEFORMS_CPU_USAGE:
             self.rate += self.rate * self.growthFactor
 
         self.lastMoment = datetime.now()
