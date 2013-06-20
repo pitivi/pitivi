@@ -20,6 +20,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+import multiprocessing
 import numpy
 import hashlib
 import os
@@ -37,7 +38,14 @@ from pitivi.utils.ui import EXPANDED_SIZE, SPACING
 from pitivi.utils.misc import path_from_uri, quote_uri
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, CONTROL_WIDTH
 
+from math import log1p, log10
+
+import resource
+
 from renderer import *
+
+
+CPU_USAGE = 30 * multiprocessing.cpu_count()
 
 INTERVAL = 500000  # For the waveform update interval.
 
@@ -474,6 +482,62 @@ class ThumbnailCache(Loggable):
         self.log("Saved thumbnail cache file: %s" % self._filehash)
 
 
+class PipelineCpuAdapter:
+    """
+    This pipeline manager will modulate the rate of the provided pipeline.
+    It is the responsibility of the caller to set the sync of the sink to False,
+    disable QOS and provide a pipeline with a rate of 1.0.
+    Doing otherwise would be cheating. Cheating is bad.
+    """
+    def __init__(self, pipeline):
+        self.pipeline = pipeline
+
+        self.lastMoment = datetime.now()
+        self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
+        self.rate = 1.0
+        self.growthFactor = 0.1
+        self.decreaseFactor = 0.1
+        self.done = False
+
+        GLib.timeout_add(200, self._modulateRate)
+
+    def stop(self):
+        self.pipeline = None
+        self.done = True
+
+    def _modulateRate(self):
+        if self.done:
+            return False
+
+        deltaTime = (datetime.now() - self.lastMoment).total_seconds()
+        deltaUsage = resource.getrusage(resource.RUSAGE_SELF).ru_utime - self.lastUsage.ru_utime
+
+        usage_percent = float(deltaUsage) / deltaTime * 100
+
+        print usage_percent, "% CPU"
+
+        if usage_percent >= CPU_USAGE and self.rate > 1.0:
+            self.rate -= self.rate * self.decreaseFactor
+
+        elif usage_percent < CPU_USAGE:
+            self.rate += self.rate * self.growthFactor
+
+        self.lastMoment = datetime.now()
+        self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
+
+        self.pipeline.set_state(Gst.State.PAUSED)
+        self.pipeline.seek(self.rate,
+                           Gst.Format.TIME,
+                           Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
+                           Gst.SeekType.SET,
+                           self.pipeline.query_position(Gst.Format.TIME)[1],
+                           Gst.SeekType.NONE,
+                           -1)
+        self.pipeline.set_state(Gst.State.PLAYING)
+
+        return True
+
+
 class AudioPreviewer(Clutter.Actor, Zoomable):
     """
     Audio previewer based on the results from the "level" gstreamer element.
@@ -506,10 +570,15 @@ class AudioPreviewer(Clutter.Actor, Zoomable):
 
     def startLevelsDiscovery(self, uri):
         self.peaks = None
-        self.pipeline = Gst.parse_launch("uridecodebin uri=" + uri + " ! audioconvert ! level interval=10000000 post-messages=true ! fakesink")
+        self.pipeline = Gst.parse_launch("uridecodebin uri=" + uri + " ! audioconvert ! level interval=10000000 post-messages=true ! fakesink qos=false")
+
+        self.adapter = None
+
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
+
         bus.connect("message", self._messageCb)
+
         self.pipeline.set_state(Gst.State.PLAYING)
 
     def set_size(self, width, height):
@@ -592,11 +661,30 @@ class AudioPreviewer(Clutter.Actor, Zoomable):
             self.start = 0
             self.end = self.nbSamples
             self._compute_geometry()
+            if self.adapter:
+                self.adapter.stop()
             self.pipeline.set_state(Gst.State.NULL)
 
         elif message.type == Gst.MessageType.ERROR:
+            if self.adapter:
+                self.adapter.stop()
             # Something went wrong TODO : recover
             self.pipeline.set_state(Gst.State.NULL)
+
+        elif message.type == Gst.MessageType.STATE_CHANGED:
+            prev, new, pending = message.parse_state_changed()
+            if message.src == self.pipeline:
+                if prev == Gst.State.READY and new == Gst.State.PAUSED:
+                    self.pipeline.seek(1.0,
+                                       Gst.Format.TIME,
+                                       Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
+                                       Gst.SeekType.SET,
+                                       0,
+                                       Gst.SeekType.NONE,
+                                       -1)
+
+                elif not self.adapter and prev == Gst.State.PAUSED and new == Gst.State.PLAYING:
+                    self.adapter = PipelineCpuAdapter(self.pipeline)
 
     def _drawContentCb(self, canvas, cr, surf_w, surf_h):
         cr.set_operator(cairo.OPERATOR_CLEAR)
