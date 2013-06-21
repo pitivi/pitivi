@@ -519,13 +519,17 @@ class PipelineCpuAdapter:
     """
     def __init__(self, pipeline):
         self.pipeline = pipeline
+        self.bus = self.pipeline.get_bus()
 
+        self.bus.connect("message", self._messageCb)
         self.lastMoment = datetime.now()
         self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
         self.rate = 1.0
         self.growthFactor = 0.1
         self.decreaseFactor = 0.1
         self.done = False
+        self.ready = False
+        self.lastPos = 0
 
         GLib.timeout_add(200, self._modulateRate)
 
@@ -542,26 +546,58 @@ class PipelineCpuAdapter:
 
         usage_percent = float(deltaUsage) / deltaTime * 100
 
-        if usage_percent >= WAVEFORMS_CPU_USAGE and self.rate > 1.0:
+        self.lastMoment = datetime.now()
+        self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
+
+        if usage_percent >= WAVEFORMS_CPU_USAGE and self.rate < 0.1:
+            if not self.ready:
+                self.ready = True
+                self.pipeline.set_state(Gst.State.READY)
+                res, self.lastPos = self.pipeline.query_position(Gst.Format.TIME)
+            return True
+
+        if usage_percent >= WAVEFORMS_CPU_USAGE and self.rate > 0.0:
             self.rate -= self.rate * self.decreaseFactor
 
         elif usage_percent < WAVEFORMS_CPU_USAGE:
             self.rate += self.rate * self.growthFactor
 
-        self.lastMoment = datetime.now()
-        self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
+        if not self.ready:
+            res, position = self.pipeline.query_position(Gst.Format.TIME)
+        else:
+            if self.rate > 0.5:  # This to avoid going back and forth from READY to PAUSED
+                self.pipeline.set_state(Gst.State.PAUSED)  # The message handler will unset ready and seek correctly.
+            return
 
         self.pipeline.set_state(Gst.State.PAUSED)
         self.pipeline.seek(self.rate,
                            Gst.Format.TIME,
                            Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
                            Gst.SeekType.SET,
-                           self.pipeline.query_position(Gst.Format.TIME)[1],
+                           position,
                            Gst.SeekType.NONE,
                            -1)
         self.pipeline.set_state(Gst.State.PLAYING)
 
+        self.ready = False
+
         return True
+
+    def _messageCb(self, bus, message):
+        if not self.ready:
+            return
+        if message.type == Gst.MessageType.STATE_CHANGED:
+            prev, new, pending = message.parse_state_changed()
+            if message.src == self.pipeline:
+                if prev == Gst.State.READY and new == Gst.State.PAUSED:
+                    self.pipeline.seek(1.0,
+                                       Gst.Format.TIME,
+                                       Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
+                                       Gst.SeekType.SET,
+                                       self.lastPos,
+                                       Gst.SeekType.NONE,
+                                       -1)
+                    self.ready = False
 
 
 class AudioPreviewer(Clutter.Actor, Zoomable):
