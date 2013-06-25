@@ -448,16 +448,22 @@ class TimelineElement(Clutter.Actor, Zoomable):
         keyframe.set_z_position(2)
         keyframe.set_position(x, y)
 
-    def drawLines(self):
-        for line in self.lines:
-            self.remove_child(line)
+    def drawLines(self, line=None):
+        for line_ in self.lines:
+            if line_ != line:
+                self.remove_child(line_)
 
-        self.lines = []
+        if line:
+            self.lines = [line]
+        else:
+            self.lines = []
 
         lastKeyframe = None
         for keyframe in self.keyframes:
-            if lastKeyframe:
-                self._createLine(keyframe.value, lastKeyframe.value)
+            if lastKeyframe and (not line or lastKeyframe != line.previousKeyframe):
+                self._createLine(keyframe, lastKeyframe, None)
+            elif lastKeyframe:
+                self._createLine(keyframe, lastKeyframe, line)
             lastKeyframe = keyframe
 
     def updateKeyframes(self):
@@ -509,19 +515,21 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.keyframes.append(keyframe)
         self.setKeyframePosition(keyframe, value)
 
-    def _createLine(self, value, lastPoint):
-        line = Line(self)
-        adj = self.nsToPixel(value.timestamp - lastPoint.timestamp)
-        opp = (lastPoint.value - value.value) * EXPANDED_SIZE
+    def _createLine(self, keyframe, lastKeyframe, line):
+        if not line:
+            line = Line(self, keyframe, lastKeyframe)
+            self.lines.append(line)
+            self.add_child(line)
+
+        adj = self.nsToPixel(keyframe.value.timestamp - lastKeyframe.value.timestamp)
+        opp = (lastKeyframe.value.value - keyframe.value.value) * EXPANDED_SIZE
         hyp = math.sqrt(adj ** 2 + opp ** 2)
         sinX = opp / hyp
         line.props.width = hyp
         line.props.height = 6
         line.props.rotation_angle_z = math.degrees(math.asin(sinX))
-        line.props.x = self.nsToPixel(lastPoint.timestamp)
-        line.props.y = EXPANDED_SIZE - (EXPANDED_SIZE * lastPoint.value)
-        self.lines.append(line)
-        self.add_child(line)
+        line.props.x = self.nsToPixel(lastKeyframe.value.timestamp)
+        line.props.y = EXPANDED_SIZE - (EXPANDED_SIZE * lastKeyframe.value.value)
         line.canvas.invalidate()
 
     def _createGhostclip(self):
@@ -631,7 +639,7 @@ class Gradient(Clutter.Actor):
 
 
 class Line(Clutter.Actor):
-    def __init__(self, timelineElement):
+    def __init__(self, timelineElement, keyframe, lastKeyframe):
         Clutter.Actor.__init__(self)
 
         self.timelineElement = timelineElement
@@ -642,10 +650,22 @@ class Line(Clutter.Actor):
         self.set_content(self.canvas)
         self.set_reactive(True)
 
-        self.connect("button-press-event", self._clickedCb)
+        self.gotDragged = False
+
+        self.dragAction = Clutter.DragAction()
+        self.add_action(self.dragAction)
+
+        self.dragAction.connect("drag-begin", self._dragBeginCb)
+        self.dragAction.connect("drag-end", self._dragEndCb)
+        self.dragAction.connect("drag-progress", self._dragProgressCb)
+
+        self.connect("button-release-event", self._clickedCb)
         self.connect("motion-event", self._motionEventCb)
         self.connect("enter-event", self._enterEventCb)
         self.connect("leave-event", self._leaveEventCb)
+
+        self.previousKeyframe = lastKeyframe
+        self.nextKeyframe = keyframe
 
     def _drawCb(self, canvas, cr, width, height):
         cr.set_operator(cairo.OPERATOR_CLEAR)
@@ -662,7 +682,15 @@ class Line(Clutter.Actor):
         y -= self.timelineElement.props.y
         return x, y
 
+    def _ungrab(self):
+        self.timelineElement.set_reactive(True)
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
+        self.timelineElement.timeline._container.reactive = True
+
     def _clickedCb(self, actor, event):
+        if self.gotDragged:
+            self.gotDragged = False
+            return
         x, y = self.transposeXY(event.x, event.y)
         value = 1.0 - (y / EXPANDED_SIZE)
         value = max(0.0, value)
@@ -676,12 +704,34 @@ class Line(Clutter.Actor):
         self.timelineElement.timeline._container.reactive = False
 
     def _leaveEventCb(self, actor, event):
-        self.timelineElement.set_reactive(True)
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
-        self.timelineElement.timeline._container.reactive = True
+        self._ungrab()
 
     def _motionEventCb(self, actor, event):
         pass
+
+    def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
+        self.dragBeginStartX = event_x
+        self.dragBeginStartY = event_y
+        self.origY = self.props.y
+        self.previousKeyframe.startDrag(event_x, event_y, self)
+        self.nextKeyframe.startDrag(event_x, event_y, self)
+
+    def _dragProgressCb(self, action, actor, delta_x, delta_y):
+        self.gotDragged = True
+        coords = self.dragAction.get_motion_coords()
+        delta_x = coords[0] - self.dragBeginStartX
+        delta_y = coords[1] - self.dragBeginStartY
+
+        self.previousKeyframe.updateValue(0, delta_y)
+        self.nextKeyframe.updateValue(0, delta_y)
+
+        return False
+
+    def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
+        self.previousKeyframe.endDrag()
+        self.nextKeyframe.endDrag()
+        if self.timelineElement.timeline.getActorUnderPointer() != self:
+            self._ungrab()
 
 
 class Keyframe(Clutter.Actor):
@@ -740,7 +790,7 @@ class Keyframe(Clutter.Actor):
     def _leaveEventCb(self, actor, event):
         self._unselect()
 
-    def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
+    def startDrag(self, event_x, event_y, line=None):
         self.dragBeginStartX = event_x
         self.dragBeginStartY = event_y
         self.lastTs = self.value.timestamp
@@ -749,11 +799,12 @@ class Keyframe(Clutter.Actor):
         self.duration = self.timelineElement.bElement.props.duration
         self.inpoint = self.timelineElement.bElement.props.in_point
         self.start = self.timelineElement.bElement.props.start
+        self.line = line
 
-    def _dragProgressCb(self, action, actor, delta_x, delta_y):
-        coords = self.dragAction.get_motion_coords()
-        delta_x = coords[0] - self.dragBeginStartX
-        delta_y = coords[1] - self.dragBeginStartY
+    def endDrag(self):
+        self.line = None
+
+    def updateValue(self, delta_x, delta_y):
         newTs = self.tsStart + Zoomable.pixelToNs(delta_x)
         newValue = self.valueStart - (delta_y / EXPANDED_SIZE)
 
@@ -776,13 +827,25 @@ class Keyframe(Clutter.Actor):
             # Resort the keyframes list each time. Should be cheap as there should never be too much keyframes,
             # if optimization is needed, check if resorting is needed, should not be in 99 % of the cases.
             self.timelineElement.keyframes = sorted(self.timelineElement.keyframes, key=lambda keyframe: keyframe.value.timestamp)
-            self.timelineElement.drawLines()
+            self.timelineElement.drawLines(self.line)
             # This will update the viewer. nifty.
-            self.timelineElement.timeline._container.seekInPosition(newTs + self.start)
+            if not self.line:
+                self.timelineElement.timeline._container.seekInPosition(newTs + self.start)
+
+    def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
+        self.startDrag(event_x, event_y)
+
+    def _dragProgressCb(self, action, actor, delta_x, delta_y):
+        coords = self.dragAction.get_motion_coords()
+        delta_x = coords[0] - self.dragBeginStartX
+        delta_y = coords[1] - self.dragBeginStartY
+
+        self.updateValue(delta_x, delta_y)
 
         return False
 
     def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
+        self.endDrag()
         if self.timelineElement.timeline.getActorUnderPointer() != self:
             self._unselect()
 
