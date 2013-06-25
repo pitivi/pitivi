@@ -157,6 +157,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.lastPosition = 0  # Saved for redrawing when paused
         self._createPlayhead()
         self._createSnapIndicator()
+        self._peekMouse()
 
     # Public API
 
@@ -302,7 +303,18 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
                     self.remove_child(ghostclip)
         self.bTimeline.commit()
 
+    def getActorUnderPointer(self):
+        return self.mouse.get_pointer_actor()
+
     # Internal API
+
+    def _peekMouse(self):
+        manager = Clutter.DeviceManager.get_default()
+
+        for device in manager.peek_devices():
+            if device.props.device_type == Clutter.InputDeviceType.POINTER_DEVICE and device.props.enabled is True:
+                self.mouse = device
+                break
 
     def _createGhostclip(self, trackType, asset):
         ghostclip = Ghostclip(trackType)

@@ -689,6 +689,11 @@ class Keyframe(Clutter.Actor):
         self.connect("leave-event", self._leaveEventCb)
         self.set_reactive(True)
 
+    def _unselect(self):
+        self.timelineElement.set_reactive(True)
+        self.set_background_color(Clutter.Color.new(0, 255, 0, 255))
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
+
     def _keyPressEventCb(self, actor, event):
         print event, dir(event)
 
@@ -698,9 +703,7 @@ class Keyframe(Clutter.Actor):
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
 
     def _leaveEventCb(self, actor, event):
-        self.timelineElement.set_reactive(True)
-        self.set_background_color(Clutter.Color.new(0, 255, 0, 255))
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
+        self._unselect()
 
     def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
         self.dragBeginStartX = event_x
@@ -735,6 +738,8 @@ class Keyframe(Clutter.Actor):
             self.lastTs = newTs
 
             self.timelineElement.setKeyframePosition(self, self.value)
+            # Resort the keyframes list each time. Should be cheap as there should never be too much keyframes,
+            # if optimization is needed, check if resorting is needed, should not be in 99 % of the cases.
             self.timelineElement.keyframes = sorted(self.timelineElement.keyframes, key=lambda keyframe: keyframe.value.timestamp)
             self.timelineElement.drawLines()
             # This will update the viewer. nifty.
@@ -743,7 +748,8 @@ class Keyframe(Clutter.Actor):
         return False
 
     def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
-        pass
+        if self.timelineElement.timeline.getActorUnderPointer() != self:
+            self._unselect()
 
 
 class URISourceElement(TimelineElement):
