@@ -457,8 +457,13 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
         self.keyframes = []
 
-        for value in values:
-            self._createKeyframe(value)
+        l = len(values)
+
+        for i, value in enumerate(values):
+            has_changable_time = True
+            if i == 0 or i == l - 1:
+                has_changable_time = False
+            self._createKeyframe(value, has_changable_time)
             lastPoint = value
 
         self.drawLines()
@@ -482,8 +487,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         keyframe.set_z_position(2)
         keyframe.set_position(x, y)
 
-    def _createKeyframe(self, value):
-        keyframe = Keyframe(self, value)
+    def _createKeyframe(self, value, has_changable_time):
+        keyframe = Keyframe(self, value, has_changable_time)
 
         self.add_child(keyframe)
         self.keyframes.append(keyframe)
@@ -659,7 +664,10 @@ class Line(Clutter.Actor):
 
 
 class Keyframe(Clutter.Actor):
-    def __init__(self, timelineElement, value):
+    """
+    If has_changable_time is False, it means this is an edge keyframe.
+    """
+    def __init__(self, timelineElement, value, has_changable_time):
         Clutter.Actor.__init__(self)
 
         self.value = value
@@ -670,6 +678,8 @@ class Keyframe(Clutter.Actor):
 
         self.dragAction = Clutter.DragAction()
         self.add_action(self.dragAction)
+
+        self.has_changable_time = has_changable_time
 
         self.dragAction.connect("drag-begin", self._dragBeginCb)
         self.dragAction.connect("drag-end", self._dragEndCb)
@@ -714,6 +724,9 @@ class Keyframe(Clutter.Actor):
 
         if newValue < 0.0 or newValue > 1.0:
             return False
+
+        if not self.has_changable_time:
+            newTs = self.lastTs
 
         self.timelineElement.source.unset(self.lastTs)
         if (self.timelineElement.source.set(newTs, newValue)):
