@@ -819,6 +819,14 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         self.properties = None
         self.buttons = {}
 
+    def resetShowKeyframesButton(self):
+        effect = self.element
+        for but in self.showKeyframesButtons:
+            but.set_active(False)
+        for track_element in effect.get_parent().get_children():
+            if hasattr(track_element, "ui_element"):
+                track_element.ui_element.hideKeyframes()
+
     def setElement(self, element, properties={}, ignore=['name'],
                    default_btn=False, use_element_props=False):
         """
@@ -929,13 +937,9 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         widget.setWidgetValue(self.element.get_property(pspec.name))
 
     def _getShowKeyframesButton(self, prop):
-        icon = Gtk.Image()
-        icon.set_from_icon_name("document-properties-symbolic", Gtk.IconSize.MENU)
-        button = Gtk.Button()
-        button.add(icon)
+        button = Gtk.CheckButton()
         button.set_tooltip_text(_("Show keyframes for this value"))
-        button.set_relief(Gtk.ReliefStyle.NONE)
-        button.connect('clicked', self._showKeyframesClickedCb, prop)
+        button.connect('toggled', self._showKeyframesClickedCb, prop)
         return button
 
     def _getResetToDefaultValueButton(self, prop, widget):
@@ -949,16 +953,18 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         return button
 
     def _showKeyframesClickedCb(self, button, prop):
+        active = button.get_active()
         for but in self.showKeyframesButtons:
-            but.set_relief(Gtk.ReliefStyle.NONE)
-
-        button.set_relief(Gtk.ReliefStyle.HALF)
-
+            if but != button:
+                but.set_active(False)
         effect = self.element
         track_type = effect.get_track_type()
+        button.set_active(active)
         for track_element in effect.get_parent().get_children():
-            if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
+            if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type() and active:
                 track_element.ui_element.showKeyframes(effect, prop)
+            elif hasattr(track_element, "ui_element"):
+                track_element.ui_element.hideKeyframes()
 
     def _defaultBtnClickedCb(self, button, widget):
         binding = self.bindings[widget]
