@@ -370,9 +370,6 @@ class SimplePipeline(Signallable, Loggable):
         self.emit('position', position)
 
     def seekRelative(self, time):
-        if not time:
-            self.error("Trying to seek to an invalid time: %s", time)
-            return
         seekvalue = max(0, min(self.getPosition() + time, self.getDuration()))
         self.simple_seek(seekvalue)
 
