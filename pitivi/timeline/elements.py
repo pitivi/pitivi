@@ -350,6 +350,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.lines = []
         self.keyframes = []
         self.source = None
+        self.keyframedElement = None
         size = self.bElement.get_duration()
 
         self._createBackground(track)
@@ -414,22 +415,31 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.keyframes = sorted(self.keyframes, key=lambda keyframe: keyframe.value.timestamp)
         self.updateKeyframes()
 
-    def showKeyframes(self, effect, propname):
-        binding = effect.get_control_binding(propname.name)
+    def showKeyframes(self, element, propname):
+        binding = element.get_control_binding(propname.name)
         if not binding:
             source = GstController.InterpolationControlSource()
             source.props.mode = GstController.InterpolationMode.LINEAR
-            if not (effect.set_control_source(source, propname.name, "direct")):
+            if not (element.set_control_source(source, propname.name, "direct")):
                 print "There was something like a problem captain"
                 return
             val = float(propname.default_value) / (propname.maximum - propname.minimum)
             source.set(self.bElement.props.in_point, val)
             source.set(self.bElement.props.duration, val)
-            binding = effect.get_control_binding(propname.name)
+            binding = element.get_control_binding(propname.name)
         self.binding = binding
         self.source = self.binding.props.control_source
         self.prop = propname
+        self.keyframedElement = element
         self.updateKeyframes()
+
+    def hideKeyframes(self):
+        for keyframe in self.keyframes:
+            self.remove_child(keyframe)
+
+        self.keyframes = []
+
+        self.drawLines()
 
     def setKeyframePosition(self, keyframe, value):
         x = self.nsToPixel(value.timestamp) - KEYFRAME_SIZE / 2
@@ -587,6 +597,10 @@ class TimelineElement(Clutter.Actor, Zoomable):
         pass
 
     def _selectedChangedCb(self, selected, isSelected):
+        if not isSelected:
+            self.hideKeyframes()
+        elif self.keyframedElement:
+            self.showKeyframes(self.keyframedElement, self.prop)
         self.marquee.props.visible = isSelected
 
 
@@ -888,9 +902,6 @@ class URISourceElement(TimelineElement):
 
         self._context.editTo(new_start, priority)
         self._context.finish()
-
-    def _selectedChangedCb(self, selected, isSelected):
-        self.marquee.props.visible = isSelected
 
 
 class TransitionElement(TimelineElement):
