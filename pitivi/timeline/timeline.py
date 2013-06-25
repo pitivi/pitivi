@@ -572,6 +572,7 @@ class Timeline(Gtk.VBox, Zoomable):
         self._projectmanager = None
         self._project = None
         self.pipeline = None
+        self.reactive = True
 
         self._createUi()
         self._createActions()
@@ -1091,6 +1092,12 @@ class Timeline(Gtk.VBox, Zoomable):
         position = self.pixelToNs(event.x - CONTROL_WIDTH + self.timeline._scroll_point.x)
         if self.app:
             self._seeker.seek(position)
+
+        # As actors are set to not reactive when keyframes are edited, get_actor_at_pos
+        # would return stage and we would wrongly empty our selection.
+        if not self.reactive:
+            return
+
         actor = self.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, event.x, event.y)
         if actor == stage:
             self.timeline.emptySelection()

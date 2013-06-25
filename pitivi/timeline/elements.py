@@ -673,10 +673,12 @@ class Line(Clutter.Actor):
     def _enterEventCb(self, actor, event):
         self.timelineElement.set_reactive(False)
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
+        self.timelineElement.timeline._container.reactive = False
 
     def _leaveEventCb(self, actor, event):
         self.timelineElement.set_reactive(True)
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
+        self.timelineElement.timeline._container.reactive = True
 
     def _motionEventCb(self, actor, event):
         pass
