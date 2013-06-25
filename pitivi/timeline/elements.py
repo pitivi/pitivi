@@ -409,6 +409,11 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.source.set(timestamp, value)
         self.updateKeyframes()
 
+    def removeKeyframe(self, kf):
+        self.source.unset(kf.value.timestamp)
+        self.keyframes = sorted(self.keyframes, key=lambda keyframe: keyframe.value.timestamp)
+        self.updateKeyframes()
+
     def showKeyframes(self, effect, propname):
         binding = effect.get_control_binding(propname.name)
         if not binding:
@@ -687,12 +692,26 @@ class Keyframe(Clutter.Actor):
         self.connect("key-press-event", self._keyPressEventCb)
         self.connect("enter-event", self._enterEventCb)
         self.connect("leave-event", self._leaveEventCb)
+
+        self.connect("button-press-event", self._clickedCb)
+
         self.set_reactive(True)
 
     def _unselect(self):
         self.timelineElement.set_reactive(True)
         self.set_background_color(Clutter.Color.new(0, 255, 0, 255))
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
+
+    def _remove(self):
+        # Can't remove edge keyframes !
+        if not self.has_changable_time:
+            return
+
+        self.timelineElement.removeKeyframe(self)
+
+    def _clickedCb(self, actor, event):
+        if (event.modifier_state & Clutter.ModifierType.CONTROL_MASK):
+            self._remove()
 
     def _keyPressEventCb(self, actor, event):
         print event, dir(event)
