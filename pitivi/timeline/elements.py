@@ -719,11 +719,9 @@ class Keyframe(Clutter.Actor):
         newTs = self.tsStart + Zoomable.pixelToNs(delta_x)
         newValue = self.valueStart - (delta_y / EXPANDED_SIZE)
 
-        if newTs < self.inpoint or newTs > self.duration:
-            return False
+        newTs = min(max(newTs, self.inpoint), self.duration)
 
-        if newValue < 0.0 or newValue > 1.0:
-            return False
+        newValue = min(max(newValue, 0.0), 1.0)
 
         if not self.has_changable_time:
             newTs = self.lastTs
