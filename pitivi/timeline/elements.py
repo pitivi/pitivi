@@ -39,6 +39,8 @@ from previewers import VideoPreviewer, BORDER_WIDTH
 import pitivi.configure as configure
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, KEYFRAME_SIZE, CONTROL_WIDTH
 
+from datetime import datetime
+
 
 def get_preview_for_object(bElement, timeline):
     # Fixme special preview for transitions, titles
@@ -761,23 +763,30 @@ class Keyframe(Clutter.Actor):
 
         self.connect("button-press-event", self._clickedCb)
 
+        self.lastClick = datetime.now()
+
         self.set_reactive(True)
 
     def _unselect(self):
         self.timelineElement.set_reactive(True)
         self.set_background_color(Clutter.Color.new(0, 255, 0, 255))
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
+        self.timelineElement.timeline._container.reactive = True
 
     def _remove(self):
         # Can't remove edge keyframes !
         if not self.has_changable_time:
             return
 
+        self._unselect()
         self.timelineElement.removeKeyframe(self)
 
     def _clickedCb(self, actor, event):
         if (event.modifier_state & Clutter.ModifierType.CONTROL_MASK):
             self._remove()
+        elif (datetime.now() - self.lastClick).total_seconds() < 0.5:
+            self._remove()
+        self.lastClick = datetime.now()
 
     def _keyPressEventCb(self, actor, event):
         print event, dir(event)
@@ -786,6 +795,7 @@ class Keyframe(Clutter.Actor):
         self.timelineElement.set_reactive(False)
         self.set_background_color(Clutter.Color.new(0, 0, 0, 255))
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
+        self.timelineElement.timeline._container.reactive = False
 
     def _leaveEventCb(self, actor, event):
         self._unselect()
