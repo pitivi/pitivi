@@ -821,7 +821,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
 
     def resetShowKeyframesButton(self):
         effect = self.element
-        for but in self.showKeyframesButtons:
+        for but in self.showKeyframesButtons.keys():
             but.set_active(False)
         for track_element in effect.get_parent().get_children():
             if hasattr(track_element, "ui_element"):
@@ -848,7 +848,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         "No properties."
         """
         self.bindings = {}
-        self.showKeyframesButtons = []
+        self.showKeyframesButtons = {}
         is_effect = False
         if isinstance(self.element, GES.Effect):
             is_effect = True
@@ -904,7 +904,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
 
             if not isinstance(widget, ToggleWidget) and not isinstance(widget, ChoiceWidget):
                 button = self._getShowKeyframesButton(prop)
-                self.showKeyframesButtons.append(button)
+                self.showKeyframesButtons[button] = widget
                 table.attach(button, 3, 4, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
 
             if hasattr(prop, 'blurb'):
@@ -953,8 +953,10 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         return button
 
     def _showKeyframesClickedCb(self, button, prop):
+        widget = self.showKeyframesButtons[button]
+        widget.set_sensitive(False)
         active = button.get_active()
-        for but in self.showKeyframesButtons:
+        for but in self.showKeyframesButtons.keys():
             if but != button:
                 but.set_active(False)
         effect = self.element
