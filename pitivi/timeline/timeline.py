@@ -313,6 +313,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         return ghostclip
 
     def _connectTrack(self, track):
+        for trackelement in track.get_elements():
+            self._trackElementAddedCb(track, trackelement)
         track.connect("track-element-added", self._trackElementAddedCb)
         track.connect("track-element-removed", self._trackElementRemovedCb)
 
@@ -441,6 +443,10 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._redraw()
         self._container.controls.addLayerControl(layer)
 
+    def _addTrackElement(self, track, bElement):
+        self._updateSize()
+        self._addTimelineElement(track, bElement)
+
     # Interface overrides
 
     # Zoomable Override
@@ -497,8 +503,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._disconnectTrack(track)
 
     def _trackElementAddedCb(self, track, bElement):
-        self._updateSize()
-        self._addTimelineElement(track, bElement)
+        self._addTrackElement(track, bElement)
 
     def _trackElementRemovedCb(self, track, bElement):
         self._removeTimelineElement(track, bElement)
