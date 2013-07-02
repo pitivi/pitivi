@@ -49,9 +49,7 @@ WAVEFORMS_CPU_USAGE = 30 * multiprocessing.cpu_count()
 THUMBNAILS_CPU_USAGE = 20 * multiprocessing.cpu_count()
 
 INTERVAL = 500000  # For the waveform update interval.
-
 BORDER_WIDTH = 3  # For the timeline elements
-
 MARGIN = 500  # For the waveforms, ensures we always have a little extra surface when scrolling while playing.
 
 """
@@ -157,9 +155,13 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
         self.pipeline.get_bus().connect("message", self.bus_message_handler)
 
     def _checkCPU(self):
+        """
+        Check the CPU usage and adjust the time interval (+10 or -10%) at
+        which the next thumbnail will be generated. Even then, it will only
+        happen when the gobject loop is idle to avoid blocking the UI.
+        """
         deltaTime = (datetime.now() - self.lastMoment).total_seconds()
         deltaUsage = resource.getrusage(resource.RUSAGE_SELF).ru_utime - self.lastUsage.ru_utime
-
         usage_percent = float(deltaUsage) / deltaTime * 100
 
         if usage_percent < THUMBNAILS_CPU_USAGE:
@@ -536,7 +538,6 @@ class PipelineCpuAdapter(Loggable):
         self.done = False
         self.ready = False
         self.lastPos = 0
-
         GLib.timeout_add(200, self._modulateRate)
 
     def stop(self):
@@ -544,12 +545,14 @@ class PipelineCpuAdapter(Loggable):
         self.done = True
 
     def _modulateRate(self):
+        """
+        Adapt the rate of audio playback (analysis) depending on CPU usage.
+        """
         if self.done:
             return False
 
         deltaTime = (datetime.now() - self.lastMoment).total_seconds()
         deltaUsage = resource.getrusage(resource.RUSAGE_SELF).ru_utime - self.lastUsage.ru_utime
-
         usage_percent = float(deltaUsage) / deltaTime * 100
 
         self.lastMoment = datetime.now()
@@ -618,7 +621,6 @@ class AudioPreviewer(Clutter.Actor, Zoomable, Loggable):
         self.bElement = bElement
         self._uri = quote_uri(bElement.props.uri)  # Guard against malformed URIs
         self.timeline = timeline
-
         self.actors = []
 
         self.set_content_scaling_filters(Clutter.ScalingFilter.NEAREST, Clutter.ScalingFilter.NEAREST)
@@ -661,14 +663,11 @@ class AudioPreviewer(Clutter.Actor, Zoomable, Loggable):
         self.debug('Now generating waveforms for "%s"' % filename_from_uri(self._uri))
         self.peaks = None
         self.pipeline = Gst.parse_launch("uridecodebin uri=" + self._uri + " ! audioconvert ! level interval=10000000 post-messages=true ! fakesink qos=false")
-
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
 
         self.nSamples = self.bElement.get_parent().get_asset().get_duration() / 10000000
-
         bus.connect("message", self._messageCb)
-
         self.pipeline.set_state(Gst.State.PLAYING)
 
     def set_size(self, width, height):
@@ -703,14 +702,12 @@ class AudioPreviewer(Clutter.Actor, Zoomable, Loggable):
 
         self.start = int(start / pixelWidth * self.nbSamples)
         self.end = int(end / pixelWidth * self.nbSamples)
-
         self.width = int(end - start)
 
         if self.width < 0:  # We've been called at a moment where size was updated but not scroll_point.
             return
 
         self.canvas.set_size(self.width, 65)
-
         Clutter.Actor.set_size(self, self.width, EXPANDED_SIZE)
         self.set_position(start, self.props.y)
         self.canvas.invalidate()
@@ -723,9 +720,7 @@ class AudioPreviewer(Clutter.Actor, Zoomable, Loggable):
             samples = numpy.array(self.peaks[0])
 
         self.samples = samples.tolist()
-
         f = open(self.wavefile, 'w')
-
         pickle.dump(self.samples, f)
 
     def _startRendering(self):
