@@ -45,6 +45,7 @@ HARD_DEPS = {
     "Gst": "1.1.0",
     "Gtk": "3.4.0",
     "xdg": None,  # "pyxdg", using static python bindings
+    "numpy": None,  # using static python bindings
 
     # The following are not checked, but needed for the rest to work:
     "gobject-introspection": "1.34.0",
@@ -176,6 +177,9 @@ def check_hard_dependencies():
     satisfied, req, inst = _check_dependency("xdg", False)
     if not satisfied:
         missing_hard_deps["PyXDG"] = (req, inst)
+    satisfied, req, inst = _check_dependency("numpy", False)
+    if not satisfied:
+        missing_hard_deps["NumPy"] = (req, inst)
 
     # Since we had to check Gst beforehand, we only do the import now:
     from gi.repository import Gst
@@ -234,8 +238,6 @@ def check_soft_dependencies():
     Gst.init(None)
     registry = Gst.Registry.get()
     # Description strings are translatable as they may be shown in the pitivi UI
-    if not _try_import("numpy"):
-        missing_soft_deps["NumPy"] = _("enables the autoalign feature")
     if not _try_import("pycanberra"):
         missing_soft_deps["PyCanberra"] = \
             _("enables sound notifications when rendering is complete")
