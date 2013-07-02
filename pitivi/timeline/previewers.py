@@ -531,8 +531,6 @@ class PipelineCpuAdapter(Loggable):
         self.lastMoment = datetime.now()
         self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
         self.rate = 1.0
-        self.growthFactor = 0.1
-        self.decreaseFactor = 0.1
         self.done = False
         self.ready = False
         self.lastPos = 0
@@ -563,10 +561,10 @@ class PipelineCpuAdapter(Loggable):
             return True
 
         if usage_percent >= WAVEFORMS_CPU_USAGE and self.rate > 0.0:
-            self.rate -= self.rate * self.decreaseFactor
+            self.rate *= 0.9
             self.log('Pipeline rate slowed down (-10%%) to %.3f' % self.rate)
         elif usage_percent < WAVEFORMS_CPU_USAGE:
-            self.rate += self.rate * self.growthFactor
+            self.rate *= 1.1
             self.log('Pipeline rate sped up (+10%%) to %.3f' % self.rate)
 
         if not self.ready:
