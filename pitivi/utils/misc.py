@@ -22,25 +22,22 @@
 
 # set of utility functions
 
-import sys
+from gettext import gettext as _
+from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
-from gi.repository import GLib
+from urllib import quote, unquote
+from urlparse import urlsplit, urlunsplit, urlparse
 import hashlib
 import os
 import struct
-import time
+import sys
 import threading
-
-from gettext import gettext as _
-
-from urlparse import urlsplit, urlunsplit, urlparse
-from urllib import quote, unquote
+import time
 
 import pitivi.utils.loggable as log
 from pitivi.utils.threads import Thread
-
 from pitivi.configure import APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE, APPNAME
 
 try:

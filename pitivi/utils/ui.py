@@ -25,21 +25,20 @@
 UI utilities. This file contain the UI constants, and various functions and
 classes that help with UI drawing around the application
 """
-import glib
-from gi.repository import Gst
-from gi.repository import GES
-from gi.repository import Gtk
-import os
-import cairo
 
-from gi.repository import Gtk
 
-from itertools import izip
-from urllib import unquote
-from gettext import ngettext, gettext as _
 from decimal import Decimal
+from gettext import ngettext, gettext as _
+from gi.repository import GES
+from gi.repository import Gst
+from gi.repository import Gtk
 from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
     DiscovererStreamInfo, DiscovererSubtitleInfo
+from itertools import izip
+from urllib import unquote
+import cairo
+import glib
+import os
 
 from pitivi.utils.loggable import doLog, ERROR
 

@@ -20,31 +20,27 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+from datetime import datetime, timedelta
+from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl
+from math import log1p, log10
+from random import randrange
+from renderer import *
+import cairo
+import hashlib
 import multiprocessing
 import numpy
-import hashlib
 import os
+import pickle
+import resource
 import sqlite3
 import sys
-import cairo
 import xdg.BaseDirectory as xdg_dirs
-from random import randrange
-from datetime import datetime, timedelta
 
-from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING
 from pitivi.utils.misc import filename_from_uri, quote_uri
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, CONTROL_WIDTH
-
-from math import log1p, log10
-
-import resource
-
-import pickle
-
-from renderer import *
 
 
 WAVEFORMS_CPU_USAGE = 30 * multiprocessing.cpu_count()
