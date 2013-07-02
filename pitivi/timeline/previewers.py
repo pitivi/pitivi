@@ -92,7 +92,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
         # For CPU management
         self.lastMoment = datetime.now()
         self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
-        self.interval = 2000
+        self.interval = 500  # Every 0.5 second, reevaluate the situation
 
         # Connect signals and fire things up
         self.timeline.connect("scrolled", self._scrollCb)
