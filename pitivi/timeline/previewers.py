@@ -102,7 +102,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
         self.bElement.connect("notify::in-point", self._inpointChangedCb)
         self.bElement.connect("notify::start", self._startChangedCb)
         self._setupPipeline()
-        self._startThumbnailing()
+        self._startThumbnailingWhenIdle()
 
     # Internal API
 
@@ -169,12 +169,14 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
             self.interval *= 1.1
             self.log('Thumbnailing slowed down (-10%%) to a %.1f ms interval for "%s"' % (self.interval, filename_from_uri(self.uri)))
 
-        GLib.timeout_add(self.interval, self._create_next_thumb)
-
         self.lastMoment = datetime.now()
         self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
-
+        GLib.timeout_add(self.interval, self._create_next_thumb_when_idle)
         return False
+
+    def _startThumbnailingWhenIdle(self):
+        self.debug('Waiting for UI to become idle for "%s"' % filename_from_uri(self.uri))
+        GLib.idle_add(self._startThumbnailing, priority=GLib.PRIORITY_LOW)
 
     def _startThumbnailing(self):
         self.debug('Now generating thumbnails for "%s"' % filename_from_uri(self.uri))
@@ -198,6 +200,10 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
         # Spread timeouts between 30-80 secs to avoid concurrent disk writes.
         random_time = randrange(30, 80)
         GLib.timeout_add_seconds(random_time, self._autosave)
+
+    def _create_next_thumb_when_idle(self):
+        self.log('Requesting next thumb when idle for "%s"' % filename_from_uri(self.uri))
+        GLib.idle_add(self._create_next_thumb, priority=GLib.PRIORITY_LOW)
 
     def _create_next_thumb(self):
         if not self.queue:
@@ -579,9 +585,8 @@ class PipelineCpuAdapter(Loggable):
                            Gst.SeekType.NONE,
                            -1)
         self.pipeline.set_state(Gst.State.PLAYING)
-
         self.ready = False
-
+        # Keep the glib timer running:
         return True
 
     def _messageCb(self, bus, message):
@@ -632,6 +637,10 @@ class AudioPreviewer(Clutter.Actor, Zoomable, Loggable):
         self.canvas.invalidate()
 
         self._callback_id = 0
+
+    def startLevelsDiscoveryWhenIdle(self):
+        self.debug('Waiting for UI to become idle for "%s"' % filename_from_uri(self._uri))
+        GLib.idle_add(self._startLevelsDiscovery, priority=GLib.PRIORITY_LOW)
 
     def _startLevelsDiscovery(self):
         self.log('Preparing waveforms for "%s"' % filename_from_uri(self._uri))
