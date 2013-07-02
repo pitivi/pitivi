@@ -172,6 +172,14 @@ def path_from_uri(uri):
     return unquote(path)
 
 
+def filename_from_uri(uri):
+    """
+    Return a human-readable filename (excluding the path to the file) to be
+    used in UI elements or to shorten debug statements
+    """
+    return os.path.basename(path_from_uri(uri))
+
+
 def quote_uri(uri):
     """
     Encode a URI/path according to RFC 2396, without touching the file:/// part.

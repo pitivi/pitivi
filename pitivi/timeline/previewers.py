@@ -35,7 +35,7 @@ from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING
-from pitivi.utils.misc import path_from_uri, quote_uri
+from pitivi.utils.misc import filename_from_uri, quote_uri
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, CONTROL_WIDTH
 
 from math import log1p, log10
@@ -463,7 +463,7 @@ class ThumbnailCache(Loggable):
         Loggable.__init__(self)
         # TODO: replace with utils.misc.hash_file
         self._filehash = hash_file(Gst.uri_get_location(uri))
-        self._filename = os.path.basename(path_from_uri(uri))
+        self._filename = filename_from_uri(uri)
         # TODO: replace with pitivi.settings.xdg_cache_home()
         cache_dir = get_dir(os.path.join(xdg_dirs.xdg_cache_home, "pitivi"), autocreate)
         dbfile = os.path.join(get_dir(os.path.join(cache_dir, "thumbs")), self._filehash)
