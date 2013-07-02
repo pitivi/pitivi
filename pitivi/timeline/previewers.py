@@ -168,8 +168,10 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
 
         if usage_percent < THUMBNAILS_CPU_USAGE:
             self.interval *= 0.9
+            self.log('Thumbnailing sped up (+10%%) to a %.1f ms interval for "%s"' % (self.interval, filename_from_uri(self.uri)))
         else:
             self.interval *= 1.1
+            self.log('Thumbnailing slowed down (-10%%) to a %.1f ms interval for "%s"' % (self.interval, filename_from_uri(self.uri)))
 
         GLib.timeout_add(self.interval, self._create_next_thumb)
 
@@ -179,6 +181,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
         return False
 
     def _startThumbnailing(self):
+        self.debug('Now generating thumbnails for "%s"' % filename_from_uri(self.uri))
         self.queue = []
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
         if not query_success:
@@ -203,6 +206,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
     def _create_next_thumb(self):
         if not self.queue:
             # nothing left to do
+            self.debug("Thumbnails generation complete")
             self.thumb_cache.commit()
             return
         wish = self._get_wish()
@@ -211,6 +215,7 @@ class VideoPreviewer(Clutter.ScrollActor, Zoomable, Loggable):
             self.queue.remove(wish)
         else:
             time = self.queue.pop(0)
+        self.log('Creating thumb for "%s"' % filename_from_uri(self.uri))
         # append the time to the end of the queue so that if this seek fails
         # another try will be started later
         self.queue.append(time)
@@ -510,7 +515,7 @@ class ThumbnailCache(Loggable):
         self.log("Saved thumbnail cache file: %s" % self._filehash)
 
 
-class PipelineCpuAdapter:
+class PipelineCpuAdapter(Loggable):
     """
     This pipeline manager will modulate the rate of the provided pipeline.
     It is the responsibility of the caller to set the sync of the sink to False,
@@ -518,6 +523,7 @@ class PipelineCpuAdapter:
     Doing otherwise would be cheating. Cheating is bad.
     """
     def __init__(self, pipeline):
+        Loggable.__init__(self)
         self.pipeline = pipeline
         self.bus = self.pipeline.get_bus()
 
@@ -558,9 +564,10 @@ class PipelineCpuAdapter:
 
         if usage_percent >= WAVEFORMS_CPU_USAGE and self.rate > 0.0:
             self.rate -= self.rate * self.decreaseFactor
-
+            self.log('Pipeline rate slowed down (-10%%) to %.3f' % self.rate)
         elif usage_percent < WAVEFORMS_CPU_USAGE:
             self.rate += self.rate * self.growthFactor
+            self.log('Pipeline rate sped up (+10%%) to %.3f' % self.rate)
 
         if not self.ready:
             res, position = self.pipeline.query_position(Gst.Format.TIME)
@@ -600,15 +607,17 @@ class PipelineCpuAdapter:
                     self.ready = False
 
 
-class AudioPreviewer(Clutter.Actor, Zoomable):
+class AudioPreviewer(Clutter.Actor, Zoomable, Loggable):
     """
     Audio previewer based on the results from the "level" gstreamer element.
     """
     def __init__(self, bElement, timeline):
         Clutter.Actor.__init__(self)
         Zoomable.__init__(self)
+        Loggable.__init__(self)
         self.discovered = False
         self.bElement = bElement
+        self._uri = quote_uri(bElement.props.uri)  # Guard against malformed URIs
         self.timeline = timeline
 
         self.actors = []
@@ -630,8 +639,9 @@ class AudioPreviewer(Clutter.Actor, Zoomable):
 
         self._callback_id = 0
 
-    def startLevelsDiscovery(self, uri):
-        filename = hash_file(Gst.uri_get_location(uri)) + ".wave"
+    def _startLevelsDiscovery(self):
+        self.log('Preparing waveforms for "%s"' % filename_from_uri(self._uri))
+        filename = hash_file(Gst.uri_get_location(self._uri)) + ".wave"
         cache_dir = get_dir(os.path.join(xdg_dirs.xdg_cache_home, os.path.join("pitivi/waves")), autocreate)
         filename = cache_dir + "/" + filename
 
@@ -640,14 +650,14 @@ class AudioPreviewer(Clutter.Actor, Zoomable):
         if os.path.exists(filename):
             self.samples = pickle.load(open(filename, "rb"))
             self._startRendering()
-
         else:
             self.wavefile = filename
-            self._launchPipeline(uri)
+            self._launchPipeline()
 
-    def _launchPipeline(self, uri):
+    def _launchPipeline(self):
+        self.debug('Now generating waveforms for "%s"' % filename_from_uri(self._uri))
         self.peaks = None
-        self.pipeline = Gst.parse_launch("uridecodebin uri=" + uri + " ! audioconvert ! level interval=10000000 post-messages=true ! fakesink qos=false")
+        self.pipeline = Gst.parse_launch("uridecodebin uri=" + self._uri + " ! audioconvert ! level interval=10000000 post-messages=true ! fakesink qos=false")
 
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
@@ -670,6 +680,7 @@ class AudioPreviewer(Clutter.Actor, Zoomable):
 
     def _maybeUpdate(self):
         if self.discovered:
+            self.log('Checking if the waveform for "%s" needs to be redrawn' % self._uri)
             if datetime.now() - self.lastUpdate > self.interval:
                 self.lastUpdate = datetime.now()
                 self._compute_geometry()
@@ -679,6 +690,7 @@ class AudioPreviewer(Clutter.Actor, Zoomable):
                 self._callback_id = GLib.timeout_add(500, self._compute_geometry)
 
     def _compute_geometry(self):
+        self.log("Computing the clip's geometry for waveforms")
         start = self.timeline.get_scroll_point().x - self.nsToPixel(self.bElement.props.start)
         start = max(0, start)
         end = min(self.timeline.get_scroll_point().x + self.timeline._container.get_allocation().width - CONTROL_WIDTH + MARGIN,

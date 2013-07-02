@@ -53,7 +53,7 @@ def get_preview_for_object(bElement, timeline):
         # previewers[key] = RandomAccessAudioPreviewer(instance, uri)
         # TODO: return waveform previewer
         previewer = AudioPreviewer(bElement, timeline)
-        previewer.startLevelsDiscovery(bElement.get_parent().get_uri())
+        previewer.startLevelsDiscovery()
         return previewer
     elif track_type == GES.TrackType.VIDEO:
         if bElement.get_parent().is_image():
