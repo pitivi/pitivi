@@ -209,17 +209,17 @@ class Pitivi(Loggable, Signallable):
         self.current = None
         self.emit("project-closed", project)
 
-    # check if for version information online
     def _checkVersion(self):
+        # Check online for release versions information
         giofile = Gio.File.new_for_uri(RELEASES_URL)
         self.info("Requesting version information")
         giofile.load_contents_async(None, self._versionInfoReceivedCb, None)
 
     def _versionInfoReceivedCb(self, giofile, result, data):
         try:
-            # split data in lines
-            raw = giofile.load_contents_finish(result)[0].split("\n")
-            # split line at '=' if not empty or comment
+            raw = giofile.load_contents_finish(result)[1]
+            raw = raw.split("\n")
+            # Split line at '=' if the line is not empty or a comment line
             data = [element.split("=") for element in raw
                     if element and not element.startswith("#")]
 
@@ -231,12 +231,15 @@ class Pitivi(Loggable, Signallable):
                 if version_status.upper() == "CURRENT":
                     current_version = version
 
-            self.info("Version information received")
+            self.info("Latest software version is %s", current_version)
+            if status is "UNSUPPORTED":
+                self.warning("Using an outdated version of Pitivi (%s)" % pitivi_version)
+
             self.version_information["current"] = current_version
             self.version_information["status"] = status
             self.emit("version-info-received", self.version_information)
-        except:
-            self.warning("Version information could not be read")
+        except Exception, e:
+            self.warning("Version info could not be read: %s" % e)
 
 
 class InteractivePitivi(Pitivi):
