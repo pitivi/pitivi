@@ -977,6 +977,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
                     binding.props.control_source.unset_all()
                     track_element.ui_element.updateKeyframes()
+            self.resetShowKeyframesButton()
 
         widget.set_sensitive(True)
         widget.setWidgetToDefault()

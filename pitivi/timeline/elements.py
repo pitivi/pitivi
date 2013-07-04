@@ -425,14 +425,19 @@ class TimelineElement(Clutter.Actor, Zoomable):
             if not (element.set_control_source(source, propname.name, "direct")):
                 print "There was something like a problem captain"
                 return
-            val = float(propname.default_value) / (propname.maximum - propname.minimum)
-            source.set(self.bElement.props.in_point, val)
-            source.set(self.bElement.props.duration, val)
             binding = element.get_control_binding(propname.name)
+
         self.binding = binding
-        self.source = self.binding.props.control_source
         self.prop = propname
         self.keyframedElement = element
+        self.source = self.binding.props.control_source
+
+        if len(self.source.get_all()) < 2:
+            self.source.unset_all()
+            val = float(propname.default_value) / (propname.maximum - propname.minimum)
+            self.source.set(self.bElement.props.in_point, val)
+            self.source.set(self.bElement.props.duration, val)
+
         self.updateKeyframes()
 
     def hideKeyframes(self):
