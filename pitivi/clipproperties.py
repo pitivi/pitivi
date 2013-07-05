@@ -312,6 +312,8 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _removeEffect(self, effect):
         self.app.action_log.begin("remove effect")
+        if self._effect_config_ui:
+            self._effect_config_ui.get_children()[0].get_children()[0].resetShowKeyframesButton()
         self._cleanCache(effect)
         effect.get_parent().remove(effect)
         self._updateTreeview()
