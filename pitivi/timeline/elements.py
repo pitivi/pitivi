@@ -823,7 +823,8 @@ class Keyframe(Clutter.Actor):
         newTs = self.tsStart + Zoomable.pixelToNs(delta_x)
         newValue = self.valueStart - (delta_y / EXPANDED_SIZE)
 
-        newTs = min(max(newTs, self.inpoint), self.duration)
+        # Don't overlap first and last keyframes.
+        newTs = min(max(newTs, self.inpoint + 1), self.duration - 1)
 
         newValue = min(max(newValue, 0.0), 1.0)
 
