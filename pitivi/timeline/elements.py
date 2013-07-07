@@ -32,7 +32,7 @@ import math
 import os
 import cairo
 
-from gi.repository import Clutter, Cogl, GES, Gdk, Gst, GstController
+from gi.repository import Clutter, Gtk, GtkClutter, Cogl, GES, Gdk, Gst, GstController, GLib
 from pitivi.utils.timeline import Zoomable, EditingContext, Selection, SELECT, UNSELECT, Selected
 from previewers import VideoPreviewer, BORDER_WIDTH
 
@@ -741,6 +741,34 @@ class Line(Clutter.Actor):
             self._ungrab()
 
 
+class KeyframeMenu(GtkClutter.Actor):
+    def __init__(self, keyframe):
+        GtkClutter.Actor.__init__(self)
+        self.keyframe = keyframe
+        vbox = Gtk.VBox()
+
+        button = Gtk.Button()
+        button.set_label("Remove")
+        button.connect("clicked", self._removeClickedCb)
+        vbox.pack_start(button, False, False, False)
+
+        self.get_widget().add(vbox)
+        self.vbox = vbox
+        self.vbox.hide()
+        self.set_reactive(True)
+
+    def show(self):
+        GtkClutter.Actor.show(self)
+        self.vbox.show_all()
+
+    def hide(self):
+        GtkClutter.Actor.hide(self)
+        self.vbox.hide()
+
+    def _removeClickedCb(self, button):
+        self.keyframe.remove()
+
+
 class Keyframe(Clutter.Actor):
     """
     If has_changable_time is False, it means this is an edge keyframe.
@@ -770,7 +798,16 @@ class Keyframe(Clutter.Actor):
 
         self.lastClick = datetime.now()
 
+        self.createMenu()
+
+        self.dragProgressed = False
+
         self.set_reactive(True)
+
+    def createMenu(self):
+        self.menu = KeyframeMenu(self)
+        self.timelineElement.timeline._container.stage.connect("button-press-event", self._stageClickedCb)
+        self.timelineElement.timeline.add_child(self.menu)
 
     def _unselect(self):
         self.timelineElement.set_reactive(True)
@@ -778,19 +815,27 @@ class Keyframe(Clutter.Actor):
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
         self.timelineElement.timeline._container.reactive = True
 
-    def _remove(self):
+    def remove(self):
         # Can't remove edge keyframes !
         if not self.has_changable_time:
             return
 
+        self.timelineElement.timeline.remove_child(self.menu)
+
         self._unselect()
         self.timelineElement.removeKeyframe(self)
 
+    def _stageClickedCb(self, stage, event):
+        actor = stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, event.x, event.y)
+        if actor != self.menu:
+            self.menu.hide()
+
     def _clickedCb(self, actor, event):
         if (event.modifier_state & Clutter.ModifierType.CONTROL_MASK):
-            self._remove()
+            self.remove()
         elif (datetime.now() - self.lastClick).total_seconds() < 0.5:
-            self._remove()
+            self.remove()
+
         self.lastClick = datetime.now()
 
     def _keyPressEventCb(self, actor, event):
@@ -817,6 +862,11 @@ class Keyframe(Clutter.Actor):
         self.line = line
 
     def endDrag(self):
+        if not self.dragProgressed and not self.line:
+            timeline = self.timelineElement.timeline
+            self.menu.set_position(self.timelineElement.props.x + self.props.x + 10, self.timelineElement.props.y + self.props.y + 10)
+            self.menu.show()
+
         self.line = None
 
     def updateValue(self, delta_x, delta_y):
@@ -849,9 +899,11 @@ class Keyframe(Clutter.Actor):
                 self.timelineElement.timeline._container.seekInPosition(newTs + self.start)
 
     def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
+        self.dragProgressed = False
         self.startDrag(event_x, event_y)
 
     def _dragProgressCb(self, action, actor, delta_x, delta_y):
+        self.dragProgressed = True
         coords = self.dragAction.get_motion_coords()
         delta_x = coords[0] - self.dragBeginStartX
         delta_y = coords[1] - self.dragBeginStartY
