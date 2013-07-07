@@ -965,6 +965,8 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         for track_element in effect.get_parent().get_children():
             if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type() and active:
                 track_element.ui_element.showKeyframes(effect, prop)
+                binding = self.element.get_control_binding(prop.name)
+                self.bindings[widget] = binding
             elif hasattr(track_element, "ui_element"):
                 track_element.ui_element.hideKeyframes()
 
