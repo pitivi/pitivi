@@ -971,7 +971,10 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 track_element.ui_element.hideKeyframes()
 
     def _defaultBtnClickedCb(self, button, widget):
-        binding = self.bindings[widget]
+        try:
+            binding = self.bindings[widget]
+        except KeyError:
+            binding = None
         if binding:
             effect = self.element
             track_type = effect.get_track_type()
