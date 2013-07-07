@@ -580,6 +580,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.dragAction.connect("drag-begin", self._dragBeginCb)
         self.dragAction.connect("drag-end", self._dragEndCb)
         self.bElement.selected.connect("selected-changed", self._selectedChangedCb)
+        self.bElement.connect("notify::duration", self._durationChangedCb)
+        self.bElement.connect("notify::inpoint", self._inpointChangedCb)
         # We gotta go low-level cause Clutter.ClickAction["clicked"]
         # gets emitted after Clutter.DragAction["drag-begin"]
         self.connect("button-press-event", self._clickedCb)
@@ -610,6 +612,40 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
     def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
         pass
+
+    def _durationChangedCb(self, element, duration):
+        duration = self.bElement.get_duration()
+        if not self.source:
+            return
+
+        values = self.source.get_all()
+        last = values[-1]
+        lastValue = last.value
+
+        for value in values:
+            if value.timestamp > duration or value == last:
+                self.source.unset(value.timestamp)
+
+        self.source.set(duration, lastValue)
+
+        self.updateKeyframes()
+
+    def _inpointChangedCb(self, element, inpoint):
+        inpoint = self.bElement.get_inpoint()
+        if not self.source:
+            return
+
+        values = self.source.get_all()
+        first = values[0]
+        firstValue = first.value
+
+        for value in values:
+            if value.timestamp < inpoint or value == first:
+                self.source.unset(value.timestamp)
+
+        self.source.set(inpoint, firstValue)
+
+        self.updateKeyframes()
 
     def _selectedChangedCb(self, selected, isSelected):
         if not isSelected:
