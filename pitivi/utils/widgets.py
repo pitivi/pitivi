@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # PiTiVi , Non-linear video editor
 #
 #       ui/gstwidget.py
@@ -819,10 +820,29 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         self.properties = None
         self.buttons = {}
 
-    def resetShowKeyframesButton(self):
+    def resetKeyframeToggleButtons(self, widget=None):
+        """
+        Reset all the keyframe togglebuttons for all properties.
+        If a property widget is specified, reset only its keyframe togglebutton.
+        """
+        if widget:
+            # Use the dynamic widget (that has been provided as an argument)
+            # to find which of the togglebuttons is the related one.
+            self.log("Resetting one keyframe button")
+            for togglebutton in self.keyframeToggleButtons.keys():
+                if self.keyframeToggleButtons[togglebutton] is widget:
+                    # The dynamic widget matches the one
+                    # related to the current to the current togglebutton
+                    togglebutton.set_label("◇")
+                    self._setKeyframeToggleButtonState(togglebutton, False)
+                    break  # Stop searching
+        else:
+            self.log("Resetting all keyframe buttons")
+            for togglebutton in self.keyframeToggleButtons.keys():
+                togglebutton.set_label("◇")
+                self._setKeyframeToggleButtonState(togglebutton, False)
+
         effect = self.element
-        for but in self.showKeyframesButtons.keys():
-            but.set_active(False)
         for track_element in effect.get_parent().get_children():
             if hasattr(track_element, "ui_element"):
                 track_element.ui_element.hideKeyframes()
@@ -848,7 +868,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         "No properties."
         """
         self.bindings = {}
-        self.showKeyframesButtons = {}
+        self.keyframeToggleButtons = {}
         is_effect = False
         if isinstance(self.element, GES.Effect):
             is_effect = True
@@ -903,8 +923,8 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 table.attach(widget, 1, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
 
             if not isinstance(widget, ToggleWidget) and not isinstance(widget, ChoiceWidget):
-                button = self._getShowKeyframesButton(prop)
-                self.showKeyframesButtons[button] = widget
+                button = self._getKeyframeToggleButton(prop)
+                self.keyframeToggleButtons[button] = widget
                 table.attach(button, 3, 4, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
 
             if hasattr(prop, 'blurb'):
@@ -936,10 +956,12 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
     def _propertyChangedCb(self, element, pspec, widget):
         widget.setWidgetValue(self.element.get_property(pspec.name))
 
-    def _getShowKeyframesButton(self, prop):
-        button = Gtk.CheckButton()
+    def _getKeyframeToggleButton(self, prop):
+        button = Gtk.ToggleButton()
+        button.set_label("◇")
+        button.props.focus_on_click = False  # Avoid the ugly selection outline
         button.set_tooltip_text(_("Show keyframes for this value"))
-        button.connect('toggled', self._showKeyframesClickedCb, prop)
+        button.connect('toggled', self._showKeyframesToggledCb, prop)
         return button
 
     def _getResetToDefaultValueButton(self, prop, widget):
@@ -952,18 +974,36 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         button.connect('clicked', self._defaultBtnClickedCb, widget)
         return button
 
-    def _showKeyframesClickedCb(self, button, prop):
-        widget = self.showKeyframesButtons[button]
-        widget.set_sensitive(False)
+    def _setKeyframeToggleButtonState(self, button, active_state):
+        """
+        This is meant for programmatically (un)pushing the provided keyframe
+        togglebutton, without triggering its signals.
+        """
+        self.log("Manually resetting the UI state of %s" % button)
+        button.handler_block_by_func(self._showKeyframesToggledCb)
+        button.set_active(active_state)
+        button.handler_unblock_by_func(self._showKeyframesToggledCb)
+
+    def _showKeyframesToggledCb(self, button, prop):
+        self.log("keyframes togglebutton clicked for %s" % prop)
         active = button.get_active()
-        for but in self.showKeyframesButtons.keys():
-            if but != button:
-                but.set_active(False)
+        # Disable the related dynamic gst property widget
+        widget = self.keyframeToggleButtons[button]
+        widget.set_sensitive(False)
+        # Now change the state of the *other* togglebuttons.
+        for togglebutton in self.keyframeToggleButtons.keys():
+            if togglebutton != button:
+                # Don't use set_active directly on the buttons; doing so will
+                # fire off signals that will toggle the others/confuse the UI
+                self._setKeyframeToggleButtonState(togglebutton, False)
+        # We always set this label, since the only way to *deactivate* keyframes
+        # (not just hide them temporarily) is to use the separate reset button.
+        button.set_label("◆")
+
         effect = self.element
         track_type = effect.get_track_type()
-        button.set_active(active)
         for track_element in effect.get_parent().get_children():
-            if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type() and active:
+            if active and hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
                 track_element.ui_element.showKeyframes(effect, prop)
                 binding = self.element.get_control_binding(prop.name)
                 self.bindings[widget] = binding
@@ -982,10 +1022,10 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
                     binding.props.control_source.unset_all()
                     track_element.ui_element.updateKeyframes()
-            self.resetShowKeyframesButton()
 
         widget.set_sensitive(True)
         widget.setWidgetToDefault()
+        self.resetKeyframeToggleButtons(widget)
 
     def getSettings(self, with_default=False):
         """
