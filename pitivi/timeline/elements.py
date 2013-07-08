@@ -365,6 +365,9 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.update(True)
         self.set_reactive(True)
 
+        self.isSelected = False
+        self._createMixingKeyframes()
+
         self._connectToEvents()
 
     # Public API
@@ -417,7 +420,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.keyframes = sorted(self.keyframes, key=lambda keyframe: keyframe.value.timestamp)
         self.updateKeyframes()
 
-    def showKeyframes(self, element, propname):
+    def showKeyframes(self, element, propname, isDefault=False):
         binding = element.get_control_binding(propname.name)
         if not binding:
             source = GstController.InterpolationControlSource()
@@ -432,6 +435,10 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.keyframedElement = element
         self.source = self.binding.props.control_source
 
+        if isDefault:
+            self.default_prop = propname
+            self.default_element = element
+
         if len(self.source.get_all()) < 2:
             self.source.unset_all()
             val = float(propname.default_value) / (propname.maximum - propname.minimum)
@@ -445,6 +452,9 @@ class TimelineElement(Clutter.Actor, Zoomable):
             self.remove_child(keyframe)
 
         self.keyframes = []
+
+        if self.isSelected:
+            self.showKeyframes(self.default_element, self.default_prop)
 
         self.drawLines()
 
@@ -507,6 +517,18 @@ class TimelineElement(Clutter.Actor, Zoomable):
         if brother:
             brother.isDragged = dragged
         self.isDragged = dragged
+
+    def _createMixingKeyframes(self):
+        if self.bElement.get_track_type() == GES.TrackType.VIDEO:
+            propname = "alpha"
+        else:
+            propname = "volume"
+
+        for spec in self.bElement.list_children_properties():
+            if spec.name == propname:
+                self.showKeyframes(self.bElement, spec, isDefault=True)
+
+        self.hideKeyframes()
 
     def _setKeyframePosition(self, keyframe, value):
         x = self.nsToPixel(value.timestamp) - KEYFRAME_SIZE / 2
@@ -597,7 +619,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
     def zoomChanged(self):
         self.update(True)
-        self.updateKeyframes()
+        if self.isSelected:
+            self.updateKeyframes()
 
     # Callbacks
 
@@ -648,6 +671,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.updateKeyframes()
 
     def _selectedChangedCb(self, selected, isSelected):
+        self.isSelected = isSelected
         if not isSelected:
             self.hideKeyframes()
         elif self.keyframedElement:
