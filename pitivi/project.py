@@ -812,10 +812,10 @@ class Project(Loggable, GES.Project):
         unlike GES.Project
         """
         self.timeline = self.extract()
-        self.timeline.set_auto_transition(True)
-        self._calculateNbLoadingAssets()
         if self.timeline is None:
             return False
+        self.timeline.set_auto_transition(True)
+        self._calculateNbLoadingAssets()
 
         self.timeline.selection = Selection()
         self.pipeline = Pipeline()
