@@ -158,6 +158,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._createPlayhead()
         self._createSnapIndicator()
         self._peekMouse()
+        self._setUpDragAndDrop()
 
     # Public API
 
@@ -307,6 +308,19 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         return self.mouse.get_pointer_actor()
 
     # Internal API
+
+    def _setUpDragAndDrop(self):
+        self.set_reactive(True)
+
+        self.marquee = Clutter.Actor()
+        self.marquee.set_background_color(Clutter.Color.new(100, 100, 100, 200))
+        self.marquee.hide()
+        self.add_child(self.marquee)
+
+        self.drawMarquee = False
+        self._container.stage.connect("button-press-event", self._dragBeginCb)
+        self._container.stage.connect("motion-event", self._dragProgressCb)
+        self._container.stage.connect("button-release-event", self._dragEndCb)
 
     def _peekMouse(self):
         manager = Clutter.DeviceManager.get_default()
@@ -479,6 +493,48 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         return self._scroll_point
 
     # Callbacks
+
+    def _dragBeginCb(self, actor, event):
+        self.drawMarquee = (self.getActorUnderPointer() == self)
+        if not self.drawMarquee:
+            return
+
+        self.dragBeginStartX = event.x - CONTROL_WIDTH + self._scroll_point.x
+        self.dragBeginStartY = event.y + self._scroll_point.y
+        self.marquee.set_size(0, 0)
+        self.marquee.set_position(event.x - CONTROL_WIDTH, event.y)
+        self.marquee.show()
+
+    def _dragProgressCb(self, actor, event):
+        if not self.drawMarquee:
+            return False
+
+        event.x -= CONTROL_WIDTH
+        event.x += self._scroll_point.x
+        event.y += self._scroll_point.y
+
+        delta_x = event.x - self.dragBeginStartX
+        delta_y = event.y - self.dragBeginStartY
+
+        newX = self.dragBeginStartX
+        newY = self.dragBeginStartY
+
+        if delta_x < 0:
+            newX = event.x
+            delta_x = abs(delta_x)
+
+        if delta_y < 0:
+            newY = event.y
+            delta_y = abs(delta_y)
+
+        self.marquee.set_position(newX, newY)
+
+        self.marquee.set_size(delta_x, delta_y)
+
+        return False
+
+    def _dragEndCb(self, actor, event):
+        self.marquee.hide()
 
     # snapping indicator
     def _snapCb(self, unused_timeline, obj1, obj2, position):
@@ -725,6 +781,7 @@ class Timeline(Gtk.VBox, Zoomable):
         self.stage.connect("button-press-event", self._clickedCb)
         self.stage.connect("button-release-event", self._releasedCb)
         self.embed.connect("scroll-event", self._scrollEventCb)
+
         if self.gui:
             self.gui.connect("key-press-event", self._keyPressEventCb)
             self.gui.connect("key-release-event", self._keyReleaseEventCb)
