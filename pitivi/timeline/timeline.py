@@ -309,6 +309,42 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     # Internal API
 
+    def _elementIsInLasso(self, element, x1, y1, x2, y2):
+        xE1 = element.props.x
+        xE2 = element.props.x + element.props.width
+        yE1 = element.props.y
+        yE2 = element.props.y + element.props.height
+
+        return self._overlap((x1, x2), (xE1, xE2)) and self._overlap((y1, y2), (yE1, yE2))
+
+    def _overlap(self, a, b):
+        x = max(a[0], b[0])
+        y = min(a[1], b[1])
+        return x < y
+
+    def _translate(self, event):
+        event.x -= CONTROL_WIDTH
+        event.x += self._scroll_point.x
+        event.y += self._scroll_point.y
+
+        delta_x = event.x - self.dragBeginStartX
+        delta_y = event.y - self.dragBeginStartY
+
+        newX = self.dragBeginStartX
+        newY = self.dragBeginStartY
+
+        # This is needed when you start to click and go left or up.
+
+        if delta_x < 0:
+            newX = event.x
+            delta_x = abs(delta_x)
+
+        if delta_y < 0:
+            newY = event.y
+            delta_y = abs(delta_y)
+
+        return (newX, newY, delta_x, delta_y)
+
     def _setUpDragAndDrop(self):
         self.set_reactive(True)
 
@@ -509,31 +545,26 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         if not self.drawMarquee:
             return False
 
-        event.x -= CONTROL_WIDTH
-        event.x += self._scroll_point.x
-        event.y += self._scroll_point.y
+        x, y, width, height = self._translate(event)
 
-        delta_x = event.x - self.dragBeginStartX
-        delta_y = event.y - self.dragBeginStartY
+        self.marquee.set_position(x, y)
 
-        newX = self.dragBeginStartX
-        newY = self.dragBeginStartY
-
-        if delta_x < 0:
-            newX = event.x
-            delta_x = abs(delta_x)
-
-        if delta_y < 0:
-            newY = event.y
-            delta_y = abs(delta_y)
-
-        self.marquee.set_position(newX, newY)
-
-        self.marquee.set_size(delta_x, delta_y)
+        self.marquee.set_size(width, height)
 
         return False
 
     def _dragEndCb(self, actor, event):
+        if not self.drawMarquee:
+            return
+
+        x, y, width, height = self._translate(event)
+
+        elements = set({})
+
+        for element in self.elements:
+            if self._elementIsInLasso(element, x, y, x + width, y + height):
+                elements.add(element.bElement.get_toplevel_parent())
+
         self.marquee.hide()
 
     # snapping indicator
