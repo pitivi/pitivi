@@ -33,7 +33,7 @@ import os
 import cairo
 
 from gi.repository import Clutter, Gtk, GtkClutter, Cogl, GES, Gdk, Gst, GstController, GLib
-from pitivi.utils.timeline import Zoomable, EditingContext, Selection, SELECT, UNSELECT, Selected
+from pitivi.utils.timeline import Zoomable, EditingContext, Selection, SELECT, UNSELECT, SELECT_ADD, Selected
 from previewers import VideoPreviewer, BORDER_WIDTH
 
 import pitivi.configure as configure
@@ -751,7 +751,6 @@ class Line(Clutter.Actor):
     def _ungrab(self):
         self.timelineElement.set_reactive(True)
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
-        self.timelineElement.timeline._container.reactive = True
 
     def _clickedCb(self, actor, event):
         if self.gotDragged:
@@ -767,7 +766,6 @@ class Line(Clutter.Actor):
     def _enterEventCb(self, actor, event):
         self.timelineElement.set_reactive(False)
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
-        self.timelineElement.timeline._container.reactive = False
 
     def _leaveEventCb(self, actor, event):
         self._ungrab()
@@ -872,7 +870,6 @@ class Keyframe(Clutter.Actor):
         self.timelineElement.set_reactive(True)
         self.set_background_color(Clutter.Color.new(0, 255, 0, 255))
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
-        self.timelineElement.timeline._container.reactive = True
 
     def remove(self):
         # Can't remove edge keyframes !
@@ -904,7 +901,6 @@ class Keyframe(Clutter.Actor):
         self.timelineElement.set_reactive(False)
         self.set_background_color(Clutter.Color.new(0, 0, 0, 255))
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
-        self.timelineElement.timeline._container.reactive = False
 
     def _leaveEventCb(self, actor, event):
         self._unselect()
@@ -1020,7 +1016,28 @@ class URISourceElement(TimelineElement):
     # Callbacks
     def _clickedCb(self, action, actor):
         #TODO : Let's be more specific, masks etc ..
-        self.timeline.selection.setToObj(self.bElement, SELECT)
+
+        children = self.bElement.get_toplevel_parent().get_children(True)
+        selection = filter(lambda elem: isinstance(elem, GES.Source), children)
+
+        mode = SELECT
+
+        if self.timeline._container.controlMask and not self.bElement.selected:
+            mode = SELECT_ADD
+            self.timeline.current_group.add(self.bElement.get_toplevel_parent())
+        elif self.timeline._container.controlMask:
+            self.timeline.current_group.remove(self.bElement.get_toplevel_parent())
+            mode = UNSELECT
+        elif not self.bElement.selected.selected:
+            GES.Container.ungroup(self.timeline.current_group, False)
+            self.timeline.current_group = GES.Group()
+            self.timeline.current_group.add(self.bElement.get_toplevel_parent())
+
+        children = self.bElement.get_toplevel_parent().get_children(True)
+        selection = filter(lambda elem: isinstance(elem, GES.Source), children)
+
+        self.timeline.selection.setSelection(selection, mode)
+
         return False
 
     def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
