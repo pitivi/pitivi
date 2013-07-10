@@ -843,7 +843,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 self._setKeyframeToggleButtonState(togglebutton, False)
 
         effect = self.element
-        for track_element in effect.get_parent().get_children():
+        for track_element in effect.get_parent().get_children(False):
             if hasattr(track_element, "ui_element"):
                 track_element.ui_element.hideKeyframes()
 
@@ -1002,7 +1002,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
 
         effect = self.element
         track_type = effect.get_track_type()
-        for track_element in effect.get_parent().get_children():
+        for track_element in effect.get_parent().get_children(False):
             if active and hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
                 track_element.ui_element.showKeyframes(effect, prop)
                 binding = self.element.get_control_binding(prop.name)
@@ -1018,7 +1018,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         if binding:
             effect = self.element
             track_type = effect.get_track_type()
-            for track_element in effect.get_parent().get_children():
+            for track_element in effect.get_parent().get_children(False):
                 if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
                     binding.props.control_source.unset_all()
                     track_element.ui_element.updateKeyframes()

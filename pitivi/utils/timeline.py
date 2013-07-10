@@ -159,12 +159,12 @@ class Selection(Signallable):
             self.last_single_obj = iter(selection).next()
 
         for obj in old_selection - self.selected:
-            for element in obj.get_children():
+            for element in obj.get_children(False):
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
                     element.selected.selected = False
 
         for obj in self.selected - old_selection:
-            for element in obj.get_children():
+            for element in obj.get_children(False):
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
                     element.selected.selected = True
 
@@ -176,7 +176,7 @@ class Selection(Signallable):
         """
         objects = []
         for clip in self.selected:
-            objects.extend(clip.get_children())
+            objects.extend(clip.get_children(False))
 
         return set(objects)
 
@@ -186,7 +186,7 @@ class Selection(Signallable):
         """
         effects = []
         for clip in self.selected:
-            for element in clip.get_children():
+            for element in clip.get_children(False):
                 if isinstance(element, GES.BaseEffect):
                     effects.append(element)
 
