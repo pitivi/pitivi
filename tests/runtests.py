@@ -9,6 +9,11 @@ from gi.repository import GObject
 GObject.threads_init()
 
 from pitivi.check import check_hard_dependencies
+
+parent = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+
+sys.path.append(os.path.join(parent, "pitivi/coptimizations/.libs"))
+
 missing_hard_deps = check_hard_dependencies()
 # This differs slightly from bin/pitivi.in as we don't check soft deps here:
 if missing_hard_deps:
