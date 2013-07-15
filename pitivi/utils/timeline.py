@@ -213,7 +213,7 @@ class EditingContext(Signallable):
         "clip-trim-finished": [],
     }
 
-    def __init__(self, focus, timeline, mode, edge, other, settings):
+    def __init__(self, focus, timeline, mode, edge, settings):
         """
         @param focus: the Clip or TrackElement which is to be the
         main target of interactive editing, such as the object directly under the
@@ -231,10 +231,6 @@ class EditingContext(Signallable):
         can be change during the time using the same context.
         @type mode: L{GES.EditMode}
 
-        @param other: a set of objects which are the secondary targets of
-        interactive editing, such as objects in the current selection.
-        @type other: a set() of L{Clip}s or L{TrackElement}s
-
         @param setting: The PiTiVi settings, used to get the snap_distance
         parametter
 
@@ -242,10 +238,6 @@ class EditingContext(Signallable):
         """
         Signallable.__init__(self)
 
-        # make sure focus is not in secondary object list
-        other.difference_update(set((focus,)))
-
-        self.other = other
         if isinstance(focus, GES.TrackElement):
             self.focus = focus.get_parent()
         else:

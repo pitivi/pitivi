@@ -297,7 +297,6 @@ class TrimHandle(Clutter.Texture):
                                        self.timelineElement.timeline.bTimeline,
                                        GES.EditMode.EDIT_TRIM,
                                        edge,
-                                       set([]),
                                        None)
 
         self._context.connect("clip-trim", self.clipTrimCb)
@@ -1030,7 +1029,6 @@ class URISourceElement(TimelineElement):
                                        self.timeline.bTimeline,
                                        mode,
                                        GES.Edge.EDGE_NONE,
-                                       self.timeline.selection.getSelectedTrackElements(),
                                        None)
         # This can't change during a drag, so we can safely compute it now for drag events.
         nbrLayers = len(self.timeline.bTimeline.get_layers())
