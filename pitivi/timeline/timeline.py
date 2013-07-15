@@ -742,6 +742,8 @@ class Timeline(Gtk.VBox, Zoomable):
         else:
             self.scrollToPosition(self.bTimeline.props.duration)
 
+        self.app.action_log.commit()
+
         self.bTimeline.commit()
 
     def purgeObject(self, asset_id):
