@@ -60,7 +60,7 @@ from pitivi.utils.widgets import GstElementSettingsWidget, FractionWidget
 
 
 #------------- Helper to handle effect in the backend ---------------------------#
-(VIDEO_EFFECT, AUDIO_EFFECT) = range(2)
+(VIDEO_EFFECT, AUDIO_EFFECT) = range(1, 3)
 
 BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
                        "alphacolor", "cogcolorspace", "videodetect",
@@ -191,6 +191,7 @@ class EffectsHandler(object):
 
             if ("Effect" in klass and name not in BLACKLISTED_EFFECTS
             and not [bplug for bplug in BLACKLISTED_PLUGINS if bplug in name]):
+                media_type = None
 
                 if "Audio" in klass:
                     self.audio_effects.append(element_factory)
@@ -198,6 +199,10 @@ class EffectsHandler(object):
                 elif "Video" in klass:
                     self.video_effects.append(element_factory)
                     media_type = VIDEO_EFFECT
+
+                if not media_type:
+                    HIDDEN_EFFECTS.append(name)
+                    continue
 
                 effect = Effect(name, media_type,
                                self._getEffectCategories(name),
