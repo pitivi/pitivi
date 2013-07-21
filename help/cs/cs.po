@@ -1,0 +1,2843 @@
+# Czech translation for pitivi.
+# Copyright (C) 2013 pitivi's COPYRIGHT HOLDER
+# This file is distributed under the same license as the pitivi package.
+# Marek Černocký <marek@manet.cz>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pitivi master\n"
+"POT-Creation-Date: 2013-02-07 05:17+0000\n"
+"PO-Revision-Date: 2013-02-24 13:56+0100\n"
+"Last-Translator: Marek Černocký <marek@manet.cz>\n"
+"Language-Team: Czech <gnome-cs-list@gnome.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: cs\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Gtranslator 2.91.6\n"
+
+#: C/welcomedialog.page:10(name) C/usingclips.page:10(name)
+#: C/trimming.page:11(name) C/sysreq.page:11(name) C/splitting.page:10(name)
+#: C/selectunusedfiles.page:12(name) C/savescreenshot.page:10(name)
+#: C/saveproject.page:11(name) C/rendering.page:10(name)
+#: C/projectsettings.page:10(name) C/presets.page:11(name)
+#: C/othertransitions.page:10(name) C/movearoundtimeline.page:10(name)
+#: C/medialibrary.page:10(name) C/makeselections.page:10(name)
+#: C/mainwindow.page:12(name) C/layers.page:10(name)
+#: C/keyframecurves.page:10(name) C/interface.page:10(name)
+#: C/insertintimeline.page:10(name) C/index.page:11(name)
+#: C/importing.page:10(name) C/importingmpegts.page:11(name)
+#: C/gstreamer.page:10(name) C/fadeinfadeout.page:10(name)
+#: C/effectsanimation.page:10(name) C/effects.page:11(name)
+#: C/crossfading.page:11(name) C/codecscontainers.page:10(name)
+#: C/cheatsheet.page:12(name) C/about.page:10(name)
+msgid "Jean-François Fortin Tam"
+msgstr "Jean-François Fortin Tam"
+
+#: C/welcomedialog.page:11(email) C/usingclips.page:11(email)
+#: C/trimming.page:12(email) C/sysreq.page:12(email)
+#: C/splitting.page:11(email) C/selectunusedfiles.page:13(email)
+#: C/savescreenshot.page:11(email) C/saveproject.page:12(email)
+#: C/rendering.page:11(email) C/projectsettings.page:11(email)
+#: C/presets.page:12(email) C/othertransitions.page:11(email)
+#: C/movearoundtimeline.page:11(email) C/medialibrary.page:11(email)
+#: C/makeselections.page:11(email) C/mainwindow.page:13(email)
+#: C/layers.page:11(email) C/keyframecurves.page:11(email)
+#: C/interface.page:11(email) C/insertintimeline.page:11(email)
+#: C/index.page:12(email) C/importing.page:11(email)
+#: C/importingmpegts.page:12(email) C/gstreamer.page:11(email)
+#: C/fadeinfadeout.page:11(email) C/effectsanimation.page:11(email)
+#: C/effects.page:12(email) C/crossfading.page:12(email)
+#: C/codecscontainers.page:11(email) C/cheatsheet.page:13(email)
+#: C/about.page:11(email)
+msgid "nekohayo@gmail.com"
+msgstr "nekohayo@gmail.com"
+
+#: C/welcomedialog.page:13(desc)
+msgid "Creating new projects and opening recent projects on startup"
+msgstr "Vytváření nových projektů a otevírání nedávných projektů po spuštění"
+
+#: C/welcomedialog.page:17(p) C/usingclips.page:21(p) C/trimming.page:22(p)
+#: C/sysreq.page:22(p) C/splitting.page:21(p) C/selectunusedfiles.page:19(p)
+#: C/savescreenshot.page:14(p) C/saveproject.page:22(p) C/rendering.page:21(p)
+#: C/projectsettings.page:21(p) C/presets.page:15(p)
+#: C/othertransitions.page:19(p) C/movearoundtimeline.page:23(p)
+#: C/medialibrary.page:21(p) C/makeselections.page:21(p)
+#: C/mainwindow.page:19(p) C/layers.page:21(p) C/keyframecurves.page:21(p)
+#: C/interface.page:15(p) C/insertintimeline.page:21(p) C/index.page:19(p)
+#: C/importing.page:21(p) C/importingmpegts.page:18(p) C/gstreamer.page:21(p)
+#: C/fadeinfadeout.page:21(p) C/effectsanimation.page:15(p)
+#: C/effects.page:16(p) C/crossfading.page:22(p) C/codecscontainers.page:14(p)
+#: C/cheatsheet.page:16(p) C/about.page:21(p)
+msgid "Creative Commons Share Alike 3.0"
+msgstr "Creative Commons Share Alike 3.0"
+
+#: C/welcomedialog.page:21(title)
+msgid "The welcome dialog"
+msgstr "Uvítací dialogové okno"
+
+#: C/welcomedialog.page:22(p)
+msgid ""
+"When you launch <app>PiTiVi</app>, a startup assistant appears, allowing you "
+"to create a new project or open an existing project in a few clicks. If you "
+"want to skip this dialog, press the <gui><key>Escape</key></gui> key on your "
+"keyboard or click the window's close button."
+msgstr ""
+"Když <app>PiTiVi</app> spustíte, objeví se uvítací průvodce, který vám "
+"umožní vytvořit nový projekt nebo otevřít existující projekt v několika "
+"kliknutích. Pokud chcete toto dialogové okno přeskočit, zmáčkněte na "
+"klávesnici klávesu <gui><key>Esc</key></gui> nebo klikněte na zavírací "
+"tlačítko dialogového okna."
+
+#: C/usingclips.page:14(name) C/trimming.page:15(name) C/sysreq.page:15(name)
+#: C/splitting.page:14(name) C/saveproject.page:15(name)
+#: C/rendering.page:14(name) C/projectsettings.page:14(name)
+#: C/othertransitions.page:14(name) C/movearoundtimeline.page:14(name)
+#: C/makeselections.page:14(name) C/layers.page:14(name)
+#: C/keyframecurves.page:14(name) C/insertintimeline.page:14(name)
+#: C/index.page:15(name) C/importing.page:14(name) C/gstreamer.page:14(name)
+#: C/fadeinfadeout.page:14(name) C/crossfading.page:15(name)
+#: C/about.page:14(name)
+msgid "Mario Blättermann"
+msgstr "Mario Blättermann"
+
+#: C/usingclips.page:15(email) C/trimming.page:16(email)
+#: C/sysreq.page:16(email) C/splitting.page:15(email)
+#: C/saveproject.page:16(email) C/rendering.page:15(email)
+#: C/projectsettings.page:15(email) C/othertransitions.page:15(email)
+#: C/movearoundtimeline.page:15(email) C/makeselections.page:15(email)
+#: C/layers.page:15(email) C/keyframecurves.page:15(email)
+#: C/insertintimeline.page:15(email) C/index.page:16(email)
+#: C/importing.page:15(email) C/gstreamer.page:15(email)
+#: C/fadeinfadeout.page:15(email) C/crossfading.page:16(email)
+#: C/about.page:15(email)
+msgid "mariobl@gnome.org"
+msgstr "mariobl@gnome.org"
+
+#: C/usingclips.page:17(desc)
+msgid ""
+"Learn the difference between clips and files and how to do basic operations "
+"on clips in the timeline."
+msgstr ""
+"Poučte se, jaký je rozdíl mezi klipy a soubory a o základních operacích s "
+"klipy na časové ose."
+
+#: C/usingclips.page:25(title)
+msgid "Using clips"
+msgstr "Používání klipů"
+
+#: C/usingclips.page:28(title)
+msgid "Clips vs files"
+msgstr "Klipy vs. soubory"
+
+#: C/usingclips.page:30(p)
+msgid ""
+"<em>Files</em> are data on your hard disk (videos, music, pictures, etc.) "
+"that can be accessed by <app>PiTiVi</app> and incorporated in your video "
+"editing project."
+msgstr ""
+"<em>Soubory</em> jsou data na vašem pevném disku (videa, hudba, obrázky, "
+"atd.), ke kterým může <app>PiTiVi</app> přistupovat a připojovat je do "
+"videí, která upravujete."
+
+#: C/usingclips.page:31(p)
+msgid ""
+"<em>Clips</em> are a visual representation of your files on the timeline. "
+"They represent the period of time they consume on the timeline and can be "
+"edited independently: each time you drag a file from the media library to "
+"the timeline, a new clip is created. As such, a file can be reused as much "
+"as you want to create any amount of different clips."
+msgstr ""
+"<em>Klipy</em> jsou vizuálním zpodobněním vašich souborů na časové ose. "
+"Představují časový úsek, který zabírají na časové ose a mohou být upravovány "
+"nezávisle: pokaždé, když přetáhnete soubor z knihovny médií na časovou osu, "
+"vytvoří se nový klip. Díky tomu může být soubor použit tolikrát, kolikrát "
+"chcete vytvořit samostatný klip."
+
+#: C/usingclips.page:33(p)
+msgid ""
+"Since PiTiVi is a non-destructive editor, clips are edited, not files. As "
+"such, your files stay intact."
+msgstr ""
+"Protože <app>PiTiVi</app> je nedestruktivní editor, upravují se klipy a ne "
+"soubory. Vaše soubory tak zůstanou nedotčeny."
+
+#: C/usingclips.page:37(title)
+msgid "Moving clips along the timeline"
+msgstr "Posouvání klipů po časové ose"
+
+#: C/usingclips.page:38(p)
+msgid "You can move a clip within a layer or move it to a different layer."
+msgstr ""
+"Klip můžete přesouvat v rámci vrstvy nebo jej přesunout do jiné vrstvy."
+
+#: C/usingclips.page:39(p)
+msgid ""
+"Click and drag a single clip to move it, and release the mouse button to "
+"place it. Dragging horizontally keeps the clip on the same layer, but "
+"dragging it vertically moves the clip to a different layer."
+msgstr ""
+"Klikněte na jednotlivý klip, tažením jej přesuňte a uvolněním tlačítka "
+"umístěte. Tažením ve vodorovném směru zůstane klip ve stejné vrstvě, tažením "
+"ve svislém směru jej přesunete do jiné vrstvy."
+
+#: C/usingclips.page:40(p)
+msgid ""
+"To move multiple clips at the same time, use the <key>Ctrl</key> or "
+"<key>Shift</key> keys to select multiple clips. Selected clips do not need "
+"to be on the same layer. Then, drag the clips just as you would do for a "
+"single clip; their position relative to each other will be preserved."
+msgstr ""
+"Když chcete přesunout více klipů naráz, použijte klávesy <key>Ctrl</key> a "
+"<key>Shift</key> k výběru více klipů. Vybrané klipy nemusí být nutně ve "
+"stejné vrstvě. Pak je přetáhněte stejně, jako by to byl jeden klip. Zůstane "
+"přitom zachována jejich vzájemná relativní poloha."
+
+#: C/usingclips.page:42(title)
+msgid "Using ripple editing while moving clips"
+msgstr "Používání zřetězených úprav při přesunu klipů"
+
+#: C/usingclips.page:43(p)
+msgid ""
+"While dragging clips around in the timeline, you can use the <link xref="
+"\"trimming\">ripple technique</link> to move the <em>following</em> clips "
+"(the clips that start after the one you're directly editing) to fill the gap."
+msgstr ""
+"Při přesouvání klipů po časové ose můžete použít <link xref=\"trimming"
+"\">techniku zřetězení</link>, aby se přesunuly i <em>následující</em> klipy "
+"(klipy, které začínají za tím klipem, který upravujete) a tím se zaplnila "
+"mezera."
+
+#: C/usingclips.page:45(p)
+msgid ""
+"Click and drag the clip you want to move, with the mouse button held down"
+msgstr ""
+"Klikněte na klip a táhněte kam potřebujete za stálého držení tlačítka myši"
+
+#: C/usingclips.page:46(p)
+msgid "During the drag, hold down <key>Shift</key> on the keyboard"
+msgstr "Během tažení zmáčkněte a držte klávesu <key>Shift</key>"
+
+#: C/usingclips.page:47(p)
+msgid ""
+"Release the mouse button to end the drag operation, then release the "
+"<key>Shift</key> key."
+msgstr ""
+"Na konci operace táhnutí uvolněte tlačítko myši a následně klávesu "
+"<key>Shift</key>."
+
+#: C/usingclips.page:49(p)
+msgid ""
+"During the drag operation, if you changed your mind and only want to drag "
+"one clip at a time, just release the <key>Shift</key> key before you release "
+"the mouse button."
+msgstr ""
+"Jestliže si to během přetahování rozmyslíte a rozhodnete se přetáhnout po "
+"časové ose jen ten jeden klip, stačí uvolnit klávesu <key>Shift</key> dřív "
+"než uvolníte tlačítko myši."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:34(None)
+msgid ""
+"@@image: 'figures/trimming-individual.png'; "
+"md5=858585ad6ddc21696f7b9f0d597982b4"
+msgstr ""
+"@@image: 'figures/trimming-individual.png'; "
+"md5=858585ad6ddc21696f7b9f0d597982b4"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:47(None)
+msgid ""
+"@@image: 'figures/ripple-before.png'; md5=7052e3caadd1ccbf9a91a8c506aeca7d"
+msgstr ""
+"@@image: 'figures/ripple-before.png'; md5=7052e3caadd1ccbf9a91a8c506aeca7d"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:51(None)
+msgid ""
+"@@image: 'figures/ripple-after.png'; md5=3f2fdba79d1c69c2f2022fe08a62b5a7"
+msgstr ""
+"@@image: 'figures/ripple-after.png'; md5=3f2fdba79d1c69c2f2022fe08a62b5a7"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:71(None)
+msgid ""
+"@@image: 'figures/roll-before.png'; md5=a6c8ea270c5aa9953c07b493409637a2"
+msgstr ""
+"@@image: 'figures/roll-before.png'; md5=a6c8ea270c5aa9953c07b493409637a2"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/trimming.page:75(None)
+msgid "@@image: 'figures/roll-after.png'; md5=83653c2c984da5d10a0bea16dcee84e4"
+msgstr ""
+"@@image: 'figures/roll-after.png'; md5=83653c2c984da5d10a0bea16dcee84e4"
+
+#: C/trimming.page:18(desc)
+msgid ""
+"Shortening clips by changing the beginning and ending points. Also covers "
+"ripple and roll editing."
+msgstr ""
+"Zkracování klipů změnou počátečního a koncového bodu. Včetně řetězových a "
+"svitkových úprav."
+
+#: C/trimming.page:26(title)
+msgid "Trimming"
+msgstr "Stříhání"
+
+#: C/trimming.page:28(p)
+msgid ""
+"Trimming is the act of changing the beginning or end point of a clip in the "
+"timeline."
+msgstr ""
+"Stříhání je činnost, při které se mění počáteční a koncový bod klipu na "
+"časové ose."
+
+#: C/trimming.page:31(title)
+msgid "Trimming an individual clip"
+msgstr "Stříhání jednotlivého klipu"
+
+#: C/trimming.page:32(p)
+msgid ""
+"Move the mouse cursor over a clip, and trimming handles will appear. Drag "
+"one of the trimming handles on the left or right edge of the clip to trim."
+msgstr ""
+"Přesuňte ukazatel myši na klip a objeví se střihací úchyty. Klip ustřihněte "
+"přetažením úchytů na levé nebo pravé hraně klipu."
+
+#: C/trimming.page:36(p)
+msgid ""
+"Clips that are grouped together, such as a video clip with its associated "
+"audio clip, will trim in unison when you drag the trimming handles. To trim "
+"only the audio or only the video part, you need to ungroup them first (see "
+"the section on Grouping/linking)."
+msgstr ""
+"Klipy jsou seskupovány dohromady, takže například videoklip s jeho "
+"přidruženým zvukovým klipem budou při přetažení střihacího úchopu ustřihnuty "
+"společně. Jestli chcete ustřihnout jen zvukovou nebo jen obrazovou část, "
+"musíte nejdříve zrušit jejich seskupení (viz oddíl seskupování/propojování)."
+
+#: C/trimming.page:40(title)
+msgid "Ripple editing"
+msgstr "Řetězové úpravy"
+
+#: C/trimming.page:41(p)
+msgid ""
+"Ripple edits are a variant of basic trimming which, in addition to trimming "
+"a clip, moves the “following” clips (the clips that start after the one "
+"you're directly editing) to fill the gap."
+msgstr ""
+"Řetězové úpravy (ripple editing) jsou variantou základního stříhání, které "
+"mimo ustřižení navíc posune „následující“ klipy (klipy, které začínají za "
+"tím, který stříháte), aby se zaplnila mezera."
+
+#: C/trimming.page:43(p)
+msgid ""
+"The ripple applies to all “following” clips, regardless of whether or not "
+"they are on the same layer."
+msgstr ""
+"Zřetězení se vztahuje na všechny „následující“ klipy bez ohledu na to, zda "
+"jsou či nejsou ve stejné vrstvě."
+
+#: C/trimming.page:45(p) C/trimming.page:69(p)
+msgid "Before:"
+msgstr "Před:"
+
+#: C/trimming.page:49(p) C/trimming.page:73(p)
+msgid "After:"
+msgstr "Po:"
+
+#: C/trimming.page:53(p)
+msgid "To do a ripple edit:"
+msgstr "Pro provedení zřetězené úpravy:"
+
+#: C/trimming.page:56(p) C/trimming.page:79(p)
+msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
+msgstr "Umístěte ukazatel myši na střihací úchyt mezi dvěma sousedícími klipy."
+
+#: C/trimming.page:57(p)
+msgid "Press and hold <key>Shift</key>."
+msgstr "Zmáčkněte a držte <key>Shift</key>."
+
+#: C/trimming.page:58(p) C/trimming.page:81(p)
+msgid "Drag the trimming handle."
+msgstr "Přetáhněte střihací úchyt."
+
+#: C/trimming.page:60(p)
+msgid ""
+"Ripple editing can also be used when moving clips around in the timeline. "
+"For detailed explanations on how to do this, see the section <link xref="
+"\"usingclips\">Using ripple editing while moving clips</link>."
+msgstr ""
+"Zřetězenou úpravu jde použít i při posouvání klipů po časové ose. Podrobné "
+"vysvětlení jak na to najdete v oddíle <link xref=\"usingclips\">Používání "
+"zřetězených úprav při přesunu klipů</link>."
+
+#: C/trimming.page:64(title)
+msgid "Roll editing"
+msgstr "Svitkové úpravy"
+
+#: C/trimming.page:65(p)
+msgid ""
+"Roll edits are a variant of basic trimming which, in addition to trimming a "
+"clip, <em>trims</em> the adjacent clips to prevent creating gaps."
+msgstr ""
+"Svitkové úpravy (roll editing) jsou variantou základního stříhání, které "
+"mimo ustřižení jednoho klipu, <em>ustřihne</em> i přilehlé klipy, aby "
+"nevznikly mezery."
+
+#: C/trimming.page:67(p)
+msgid ""
+"The roll applies to all temporally adjacent clips, regardless of whether or "
+"not they are on the same layer."
+msgstr ""
+"Svitek se vztahuje na všechny přilehlé klipy bez ohledu na to, zda jsou či "
+"nejsou ve stejné vrstvě."
+
+#: C/trimming.page:77(p)
+msgid "To do a roll edit:"
+msgstr "Pro provedení svitkové úpravy:"
+
+#: C/trimming.page:80(p)
+msgid "Press and hold <key>Ctrl</key>."
+msgstr "Zmáčkněte a držte <key>Ctrl</key>."
+
+#: C/sysreq.page:18(desc)
+msgid "What kind of hardware is needed to do video editing?"
+msgstr "Jaký druh hardwaru je zapotřebí pro úpravy videa?"
+
+#: C/sysreq.page:26(title)
+msgid "System requirements"
+msgstr "Systémové požadavky"
+
+#: C/sysreq.page:28(p)
+msgid ""
+"In terms of hardware, video editing typically requires a powerful computer, "
+"depending on the type of video you are editing. While the processing power "
+"of computers has increased tremendously over the years, so has demand for "
+"higher quality video."
+msgstr ""
+"Co se týká hardwaru, úpravy videa typicky vyžadují výkonný počítač, v "
+"závislosti na typu videa. Zatím co výpočetní výkon počítačů rok od roku "
+"narůstá, rostou i požadavky na vyšší kvalitu videa."
+
+#: C/sysreq.page:29(p)
+msgid ""
+"Editing HD (High Definition) video usually requires (at the time of this "
+"writing) state of the art hardware (depending on the codec used), while SD "
+"(Standard Definition) video editing can be done on modest hardware "
+"configurations. It is up to you to make sure that your equipment is "
+"adequate. It should at least be able to playback your media in <app>Totem</"
+"app> without lagging."
+msgstr ""
+"Úpravy videa HD (High Definition) obvykle vyžadují (v době psaní této "
+"příručky) nejmodernější hardware (v závislosti na použitém kodeku), zatímco "
+"video SD (Standard Definition) lze upravovat na průměrném hardwaru. Je na "
+"vás, abyste se ujistili, že vám vybavení bude dostačovat. Minimálně byste "
+"měli být schopni si přehrát multimediální soubor v přehrávači <app>Totem</"
+"app> bez zadrhávání."
+
+#: C/sysreq.page:30(p)
+msgid ""
+"It is possible, however, to use low-quality versions of your footage during "
+"editing and use the high-quality versions when rendering the final output, "
+"thus allowing to bypass hardware limitations to some extent. This is called "
+"<em>proxy editing</em>. This feature, however, is not yet available in "
+"<app>PiTiVi</app>."
+msgstr ""
+"Existuje i možnost použít verzi svého filmu v nízké kvalitě během úprav a "
+"při vykreslení finálního výstupu použít verzi ve vysoké kvalitě a tím do "
+"určité míry obejít omezení hardwaru. Říká se tomu <em>úpravy v zastoupení</"
+"em>. Tato funkce ale zatím není v <app>PiTiVi</app> k dispozici."
+
+#: C/splitting.page:17(desc)
+msgid "Dividing clips in two parts."
+msgstr "Dělení klipů na dvě části."
+
+#: C/splitting.page:25(title)
+msgid "Splitting"
+msgstr "Rozdělování"
+
+#: C/splitting.page:27(p)
+msgid ""
+"As the name implies, splitting a clip divides it into two adjacent clips, "
+"with new beginning/end points being created accordingly."
+msgstr ""
+"Jak název napovídá, rozdělování klip dělí na dva sousedící klipy pomocí "
+"nového počátečního a koncového bodu, které se vytvoří ve tomtéž místě."
+
+#: C/splitting.page:28(p)
+msgid ""
+"In <app>PiTiVi</app>, splitting is a “non-modal” operation; this means that "
+"you do not have to “activate” a particular tool before doing the split "
+"action. Splitting occurs where the playhead is currently located (see also "
+"<link xref=\"movearoundtimeline\">Moving the playhead</link>). Combined with "
+"zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless "
+"splitting is not only fast and efficient, it is also very accurate."
+msgstr ""
+"V <app>PiTiVi</app> je rozdělování „nemodální“ operace. To znamená, že před "
+"provedením této činnosti nemusíte „aktivovat“ nějaký nástroj. Rozdělení se "
+"provede v místě aktuální pozice přehrávání (viz také <link xref="
+"\"movearoundtimeline\">Přemisťování pozice přehrávání</link>). V kombinaci s "
+"přibližováním/oddalováním, posunem po jednotlivých snímcích pomocí "
+"klávesnice nebo rychloposuvem, je nemodální rozdělování nejen rychlé a "
+"efektivní, ale i velmi přesné."
+
+#: C/splitting.page:29(p)
+msgid "Selections affect splitting in the following ways:"
+msgstr "Výběr ovlivňuje rozdělení následujícími způsoby:"
+
+#: C/splitting.page:31(p)
+msgid "Only the selected clips under the playhead will be split."
+msgstr "Rozděleny budou pouze vybrané klipy v aktuální pozicí přehrávání."
+
+#: C/splitting.page:32(p)
+msgid ""
+"If no clips are selected, all the clips under the playhead will be split."
+msgstr ""
+"Když není vybrán žádný klip, budou rozděleny všechny klipy v aktuální pozici "
+"přehrávání."
+
+#: C/splitting.page:34(p)
+msgid "To split a single clip:"
+msgstr "Když chcete rozdělit jeden klip:"
+
+#: C/splitting.page:36(p)
+msgid "Click on the clip."
+msgstr "Klikněte na klip."
+
+#: C/splitting.page:37(p) C/splitting.page:43(p)
+msgid "Reposition the playhead (if needed)."
+msgstr "Přemístěte pozici přehrávání (pokud je potřeba)."
+
+#: C/splitting.page:38(p) C/splitting.page:44(p) C/splitting.page:50(p)
+msgid ""
+"Click on the <gui>Split</gui> button on the timeline toolbar or press "
+"<key>S</key>."
+msgstr ""
+"Klikněte na tlačítko <gui>Rozdělit</gui> na liště nástrojů časové osy nebo "
+"zmáčkněte <key>S</key>."
+
+#: C/splitting.page:40(p)
+msgid "To split all the clips across the all layers:"
+msgstr "Když chcete rozdělit všechny klipy napříč všemi vrstvami:"
+
+#: C/splitting.page:42(p)
+msgid ""
+"Click on a blank area of the timeline (this will deselect all selected "
+"clips, if any)."
+msgstr ""
+"Klikněte na prázdné místo v časové ose (tím se zruší výběr všech klipů, "
+"pokud jsou nějaké vybrané)."
+
+#: C/splitting.page:46(p)
+msgid "To split multiple selected clips:"
+msgstr "Když chcete rozdělit více vybraných klipů:"
+
+#: C/splitting.page:48(p)
+msgid "Position the playhead where you want to split."
+msgstr "Umístěte pozici přehrávání na místo, ve kterém chcete rozdělovat."
+
+#: C/splitting.page:49(p)
+msgid ""
+"Add or remove clips to the selection with the <key>Ctrl</key> modifier key. "
+"This will not affect the playhead's position."
+msgstr ""
+"Přidejte do nebo odeberte z výběru klipy pomocí modifikační klávesy "
+"<key>Ctrl</key>. Pozici přehrávání do neovlivní."
+
+#: C/selectunusedfiles.page:15(desc)
+msgid "Finding and removing unused media to cleanup your project"
+msgstr ""
+"Vyhledání a odstranění nepoužitích médií kvůli pročištění vašeho projektu"
+
+#: C/selectunusedfiles.page:23(title)
+msgid "Selecting unused files"
+msgstr "Výběr nepoužitých souborů"
+
+#: C/selectunusedfiles.page:24(p)
+msgid ""
+"You may sometimes find that you have imported more clips that you needed in "
+"your project. <app>PiTiVi</app> allows you to select files that are present "
+"in the media library but not in the timeline. There are various reasons to "
+"do this:"
+msgstr ""
+"Občas můžete narazit na to, že máte naimportováno více klipů, než ve svém "
+"projektu potřebujete. <app>PiTiVi</app> umožňuje vybrat soubory, které se "
+"nachází v knihovně médií, ale ne na časové ose. Existují různé důvody, proč "
+"to udělat:"
+
+#: C/selectunusedfiles.page:26(p)
+msgid "Improving performance when loading the project"
+msgstr "Zrychlení při načítání projektu"
+
+#: C/selectunusedfiles.page:27(p)
+msgid "Simplifying your editing workflow"
+msgstr "Zjednodušení postupu vaší práce"
+
+#: C/selectunusedfiles.page:28(p)
+msgid "Check which clips you may have forgot to use in your movie"
+msgstr "Kontrola, které klipy jste ve filmu zapomněli použít"
+
+#: C/selectunusedfiles.page:29(p)
+msgid "Backup or share your project more easily"
+msgstr "Snadnější zálohování a sdílení vašeho projektu"
+
+#: C/selectunusedfiles.page:31(p)
+msgid ""
+"To identify which clips are not being used in your project, use "
+"<guiseq><gui>Library</gui><gui>Select Unused Media</gui></guiseq>. Unused "
+"clips will then be selected in the media library. If you want to remove them "
+"from your project, use <guiseq><gui>Library</gui><gui>Remove from Project</"
+"gui></guiseq>."
+msgstr ""
+"Ke zjištění, které klipy nejsou ve vašem projektu využity, použijte "
+"<guiseq><gui>Knihovna</gui><gui>Vybrat nepoužitá média</gui></guiseq>. V "
+"knihovně médií se nepoužité klipy vyberou. Pokud je chcete ze svého projektu "
+"odstranit, použijte <guiseq><gui>Knihovna</gui><gui>Odebrat z projektu</"
+"gui></guiseq>."
+
+#: C/selectunusedfiles.page:32(p)
+msgid ""
+"If there are no unused clips in your project, nothing will be selected in "
+"the media library."
+msgstr ""
+"Když v projektu žádné nevyužité klipy nejsou, nic se v knihovně médií "
+"nevybere."
+
+#: C/savescreenshot.page:18(title)
+msgid "Saving a snapshot of the current frame"
+msgstr "Ukládání samostatného aktuálního snímku"
+
+#: C/savescreenshot.page:20(p)
+msgid ""
+"You can use <guiseq><gui>Timeline</gui><gui>Export current frame...</gui></"
+"guiseq> to save a copy of the current frame as an image file."
+msgstr ""
+"Můžete použít <guiseq><gui>Časová osa</gui><gui>Exportovat aktuální snímek…</"
+"gui></guiseq> k uložení kopie aktuálního snímku do obrázkového souboru."
+
+#: C/savescreenshot.page:21(p)
+msgid ""
+"Currently, PNG and JPEG are supported as file formats. The image resolution "
+"will match the project settings and any effect or transformation will also "
+"be applied to the resulting image."
+msgstr ""
+"Podporovanými formáty souborů jsou v současnosti PNG a JPEG. Rozlišení bude "
+"odpovídat nastavení projektu a na výsledný obrázek budou použity i případné "
+"efekty a přechody."
+
+#: C/saveproject.page:18(desc)
+msgid "How to save your project for later editing use."
+msgstr "Jak uložit svůj projekt pro pozdější úpravy."
+
+#: C/saveproject.page:26(title)
+msgid "Saving a project"
+msgstr "Ukládání projektu"
+
+#: C/saveproject.page:28(p)
+msgid ""
+"To save your project work, use the <guiseq><gui>Project</gui><gui>Save</"
+"gui></guiseq> menu, the Save button on the main toolbar or press "
+"<keyseq><key>Ctrl</key><key>S</key></keyseq>."
+msgstr ""
+"Projekt, na kterém pracujete, můžete uložit pomocí nabídky "
+"<guiseq><gui>Projekt</gui><gui>Uložit</gui></guiseq>, tlačítka Uložit na "
+"hlavní liště nástrojů nebo zmáčknutím <keyseq><key>Ctrl</key><key>S</key></"
+"keyseq>."
+
+#: C/saveproject.page:29(p)
+msgid ""
+"When you save a project for the first time, a dialog window appears, asking "
+"you where to save the project file and how to name it."
+msgstr ""
+"Když ukládáte projekt poprvé, objeví se dialogové okno, kde jste dotázáni na "
+"místo uložení projektového souboru a jeho název."
+
+#: C/saveproject.page:30(p)
+msgid ""
+"If you want to save your project as a different file, use "
+"<guiseq><gui>Project</gui><gui>Save as</gui></guiseq> or press "
+"<keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be "
+"used to create different versions of your project."
+msgstr ""
+"Pokud potřebujte uložit svůj projekt do jiného souboru, než je stávající, "
+"použijte <guiseq><gui>Projekt</gui><gui>Uložit jako</gui></guiseq> nebo "
+"zmáčkněte <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. "
+"Můžete to využít k vytvoření další verze svého projektu."
+
+#: C/saveproject.page:32(title)
+msgid "Reverting changes"
+msgstr "Vracení změn"
+
+#: C/saveproject.page:33(p)
+msgid ""
+"In addition to undoing individual changes, you can also decide to revert all "
+"the changes you have made since the last time you saved your project. To do "
+"so, use <guiseq><gui>Project</gui><gui>Revert</gui></guiseq>."
+msgstr ""
+"Mimo vracení jednotlivých změn, se můžete také rozhodnout vrátit všechny "
+"změny, které jste provedli od posledního uložení svého projektu. V takovém "
+"případě použijte <guiseq><gui>Projekt</gui><gui>Vrátit</gui></guiseq>."
+
+#: C/rendering.page:17(desc)
+msgid ""
+"Learn the difference between saving a project and exporting a rendered movie."
+msgstr ""
+"Poučte se o rozdílu mezi uložením projektu a exportem a vykreslením filmu."
+
+#: C/rendering.page:25(title)
+msgid "Understanding rendering"
+msgstr "Vysvětlení renderingu"
+
+#: C/rendering.page:27(p)
+msgid ""
+"Rendering is the process of exporting your project into a new, finalized "
+"media file. Rendering only creates a new “rendered” video file, and does not "
+"affect the project itself; you can still make edits to your project and "
+"render again as many times as needed."
+msgstr ""
+"Vykreslení (rendering) je proces, při kterém se váš projekt exportuje do "
+"nového výsledného multimediálního souboru. Při vykreslování se pouze vytvoří "
+"nově „vykreslený“ videosoubor, projektu se to nijak nedotkne. Projekt můžete "
+"nadále upravovat a nechat jej vykreslit, kolikrát budete chtít."
+
+#: C/rendering.page:29(p)
+msgid "From the <gui>Project</gui> menu, use <gui>Render</gui>."
+msgstr "Použijte <gui>Vykreslit</gui> v nabídce <gui>Projekt</gui>."
+
+#: C/rendering.page:30(p)
+msgid ""
+"Adjust the various encoding settings, if needed, to use settings different "
+"from the project settings."
+msgstr ""
+"Upravte různá nastavení kódování. Pokud je potřeba, můžete použít nastavení "
+"odlišná od nastavení projektu."
+
+#: C/rendering.page:31(p)
+msgid "Click the <gui>Render</gui> button."
+msgstr "Klikněte na tlačítko <gui>Vykreslit</gui>."
+
+#: C/rendering.page:34(p)
+msgid ""
+"If your computer is set to suspend or hibernate automatically, <app>PiTiVi</"
+"app> will automatically inhibit the power saving features during the render "
+"process."
+msgstr ""
+"Pokud máte svůj počítač nastavený, aby se automaticky uspával, <app>PiTiVi</"
+"app> automaticky zabrání režimu úspory energie během procesu vykreslování."
+
+#: C/projectsettings.page:17(desc)
+msgid ""
+"How to specify the global project resolution, framerate, aspect ratio, audio "
+"settings and project metadata."
+msgstr ""
+"Jak určit globálně pro projekt rozlišení, snímkovou rychlost, poměr stran, "
+"nastavení zvuku a metadata."
+
+#: C/projectsettings.page:25(title)
+msgid "Editing project settings"
+msgstr "Úpravy nastavení projektu"
+
+#: C/projectsettings.page:27(p)
+msgid ""
+"When starting a new project, you should make sure to go adjust the project "
+"settings, such as framerate, resolution and preferred codecs. The video "
+"resolution and aspect ratio will affect the appearance of the previewer. If "
+"you do not set the resolution and aspect ratio to match those of your "
+"footage, the video may look squished or letterboxed."
+msgstr ""
+"Když začínáte nový projekt, nezapomeňte upravit jeho nastavení, jako jsou "
+"snímková rychlost, rozlišení a upřednostňované kodeky. Rozlišení videa a "
+"poměr stran ovlivní vzhled náhledů. Pokud rozlišení a poměr stran "
+"nenastavíte, aby odpovídaly videozáznamu, může video vypadat sražené nebo "
+"naopak roztáhlé."
+
+#: C/projectsettings.page:28(p)
+msgid ""
+"To edit the project settings after initial creation, use the "
+"<guiseq><gui>Edit</gui><gui>Project Settings</gui></guiseq> menu."
+msgstr ""
+"Pro nastavení projektu dodatečně po jeho úvodním vytvoření použijte nabídku "
+"<guiseq><gui>Upravit</gui><gui>Nastavení projektu</gui></guiseq>."
+
+#: C/projectsettings.page:31(title)
+msgid "Pixel aspect ratio vs display aspect ratio"
+msgstr "Poměr stran v pixelech vs. poměr stran zobrazení"
+
+#: C/projectsettings.page:32(p)
+msgid ""
+"Digital images are composed of a grid of <link href=\"http://en.wikipedia."
+"org/wiki/Pixel\">pixels</link>, which may or may not be square. As such, in "
+"some cases, you may need to set the <link href=\"http://en.wikipedia.org/"
+"wiki/Pixel_aspect_ratio\">pixel aspect ratio</link> (PAR) for the image to "
+"display correctly. On the other hand, <link href=\"http://en.wikipedia.org/"
+"wiki/Display_aspect_ratio\">display aspect ratio</link> (DAR) is the "
+"mathematical ratio of width:height for the whole image."
+msgstr ""
+"Digitální obrázky jsou tvořené mřížkou bodů – <link href=\"http://cs."
+"wikipedia.org/wiki/Pixel\">pixelů</link>, které mohou a nebo nemusí být "
+"čtvercové. Proto je někdy potřeba nastavit <link href=\"http://en.wikipedia."
+"org/wiki/Pixel_aspect_ratio\">poměr stran pixelu</link> (odkazovaný text je "
+"v angličtině) (PAR – Pixel Aspect Ratio), aby se obrázek zobrazil správně. "
+"Oproti tomu <link href=\"http://en.wikipedia.org/wiki/Display_aspect_ratio"
+"\">poměr stran zobrazení</link> (odkazovaný text je v angličtině) (DAR – "
+"Display Aspect Ratio) je matematický poměr šířka ku výšce pro celý obrázek."
+
+#: C/projectsettings.page:33(p)
+msgid ""
+"In <app>PiTiVi</app>, pixel aspect ratio and display aspect ratio are "
+"related to each other by the video resolution (width and height). Once your "
+"resolution is set, setting the DAR will influence the PAR and vice versa. "
+"You can use either DAR or PAR, whichever you are most comfortable with."
+msgstr ""
+"V <app>PiTiVi</app> jsou poměr stran pixelu a poměr stran zobrazení ve "
+"vzájemném vztahu daném rozlišením videa (šířkou a výškou). Jakmile se "
+"nastaví rozlišení, nastavení DAR ovlivní PAR a naopak. Můžete používat to či "
+"ono, záleží jen na tom, co vám vyhovuje."
+
+#: C/projectsettings.page:34(p)
+msgid ""
+"You can use the ratios already provided in the combo boxes, or input a "
+"custom aspect ratio in the text entry below (using a syntax such as \"4:3\" "
+"or \"1.3333\", although the decimal version is less precise)."
+msgstr ""
+"Můžete použít poměry, kterou jsou nabízeny v rozbalovacích seznamech nebo "
+"zadat vlastní do textových polí pod nimi (používejte syntax „4:3“ nebo "
+"„1,3333“, ale desetinná verze je méně přesná)."
+
+#: C/presets.page:19(title)
+msgid "Presets"
+msgstr "Přednastavení"
+
+#: C/presets.page:20(p)
+msgid ""
+"Both the project settings dialog and the rendering dialog allow you to save "
+"presets for later use. If you often deal with the same kind of project "
+"settings, with different cameras or target devices for rendering, you may "
+"want to create custom presets."
+msgstr ""
+"Dialogová okna jak s nastavením projektu, tak vykreslování, umožňují uložit "
+"nastavení pro pozdější použití. Pokud často prohazujete stejné nastavení "
+"projektu s různými kamerami nebo cílovými zařízeními pro vykreslení, můžete "
+"si chtít vytvořit vlastní přednastavení."
+
+#: C/presets.page:21(p)
+msgid ""
+"While project settings concern themselves with global settings (such as "
+"resolution, framerate, aspect ratio and number of audio channels), the "
+"rendering presets are concerned with codecs and device constraints (for "
+"example, a handheld device or television may have a maximum screen "
+"resolution and framerate, which is not necessarily the case if you are "
+"exporting to a laptop or a website). As such, the presets in the rendering "
+"dialog are related to the project settings, but they govern different things."
+msgstr ""
+"Zatímco nastavení projektu se zaměřuje na globální údaje (jako je rozlišení, "
+"snímková rychlost, poměr stran a počet zvukových kanálů), přednastavení "
+"vykreslování se zaměřuje na kodeky a omezení zařízení (například přenosná "
+"zařízení nebo televize mohou mít maximální rozlišení obrazovky a snímkovou "
+"rychlost, které ale nejsou nutné, když exportujete pro notebook nebo webovou "
+"stránku.) Jako takové, se přednastavení v dialogovém okně vykreslování "
+"vztahují k nastavení projektu, ale řeší jiné věci."
+
+#: C/presets.page:22(p)
+msgid ""
+"In project settings, video presets and audio presets are independent of each "
+"other."
+msgstr ""
+"V nastavení projektu jsou nastavení videa a nastavení zvuku na sobě "
+"nezávislé."
+
+#: C/presets.page:24(title)
+msgid "Creating and editing presets"
+msgstr "Vytváření a úpravy přednastavení"
+
+#: C/presets.page:25(p)
+msgid "To create a preset:"
+msgstr "Pro vytvoření přednastavení:"
+
+#: C/presets.page:27(p) C/presets.page:34(p)
+msgid "Change the settings to your liking."
+msgstr "Změňte nastavení, jak potřebujete."
+
+#: C/presets.page:28(p)
+msgid "Click the <gui>Add</gui> button."
+msgstr "Klikněte na tlačítko <gui>Přidat</gui>."
+
+#: C/presets.page:29(p)
+msgid ""
+"Give your preset a unique name: while the preset is selected in the list, "
+"click on its name to toggle editing mode. When you're done, press "
+"<key>Enter</key>."
+msgstr ""
+"Dejte přednastavení jedinečný název: klikněte na název přednastavení, když "
+"je vybráno, aby se přepnul režim úprav. Až jste hotovi, zmáčkněte "
+"<key>Enter</key>."
+
+#: C/presets.page:31(p)
+msgid "To edit a preset:"
+msgstr "Pro úpravu přednastavení:"
+
+#: C/presets.page:33(p)
+msgid "Select your preset in the list of existing presets."
+msgstr "Vyberte své přednastavení v seznamu existujících přednastavení."
+
+#: C/presets.page:35(p)
+msgid "Click the <gui>Save</gui> button."
+msgstr "Klikněte na tlačítko <gui>Uložit</gui>."
+
+#: C/presets.page:37(p)
+msgid ""
+"To remove a preset, simply select it in the list of presets and press the "
+"<gui>Remove</gui> button."
+msgstr ""
+"Když chcete přednastavení odstranit, stačí jej vybrat v seznamu a zmáčknout "
+"tlačítko <gui>Odebrat</gui>."
+
+#: C/presets.page:38(p)
+msgid "Some presets are provided by default and cannot be removed."
+msgstr ""
+"Některá přednastavení jsou součástí ve výchozím stavu a není možné je "
+"odebrat."
+
+#: C/presets.page:41(title)
+msgid "Ignoring presets"
+msgstr "Ignorování přednastavení"
+
+#: C/presets.page:42(p)
+msgid ""
+"Presets are there to save time and reduce complexity. Experts can choose to "
+"simply ignore them and set everything manually; the \"No preset\" preset is "
+"a special preset that automatically saves its changes directly in the "
+"project file."
+msgstr ""
+"Přednastavení slouží k úspoře času a ke zjednodušení. Někteří odborníci je "
+"raději ignorují a nastavují si vše ručně. „Žádné přednastavení“ je speciální "
+"přednastavení, které ukládá své změny přímo do projektového souboru."
+
+#: C/presets.page:45(title)
+msgid "Limiting the resolution of a rendering preset"
+msgstr "Omezení rozlišení u přednastavení vykreslování"
+
+#: C/presets.page:46(p)
+msgid ""
+"If you want to make a preset with a fixed maximum resolution, you need to "
+"edit the preset file with a text editor. Presets files are typically stored "
+"in ~/.local/share/pitivi/ ; since many devices don't have a maximum "
+"resolution, the width/height are set to 0 (unlimited) by default. You can "
+"change these values to the maximum resolution of your target device."
+msgstr ""
+"Jestli chcete vytvořit přednastavení s pevně daným maximálním rozlišením, "
+"musíte upravit soubor s přednastavením v textovém editoru. Soubory s "
+"přednastavením jsou obvykle uloženy v ~/.local/share/pitivi/ a protože hodně "
+"zařízení nemá maximální rozlišení, jsou šířka (width) a výška (height) ve "
+"výchozím stavu nastaveny na 0. Tyto hodnoty můžete změnit na maximální "
+"rozlišení svého cílového zařízení."
+
+#: C/othertransitions.page:23(title)
+msgid "Other transitions"
+msgstr "Další přechody"
+
+#: C/othertransitions.page:25(p)
+msgid ""
+"Other types of transitions (such as wipes) are not yet implemented (see "
+"<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug "
+"#609353</link>)."
+msgstr ""
+"Další typy přechodů (jako třeba setření) zatím nejsou implementovány (viz "
+"see <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">chyba "
+"#609353</link>)."
+
+#: C/movearoundtimeline.page:16(name) C/medialibrary.page:14(name)
+msgid "Brian Grohe"
+msgstr "Brian Grohe"
+
+#: C/movearoundtimeline.page:17(email) C/medialibrary.page:15(email)
+msgid "grohe43@gmail.com"
+msgstr "grohe43@gmail.com"
+
+#: C/movearoundtimeline.page:19(desc)
+msgid "Moving the playhead, using the zoom feature, scrolling and scrubbing."
+msgstr ""
+"Přemisťování pozice přehrávání, používání funkce přiblížení, posouvání a "
+"rychloposuvu."
+
+#: C/movearoundtimeline.page:27(title)
+msgid "Moving around the timeline"
+msgstr "Posun po časové ose"
+
+#: C/movearoundtimeline.page:30(title)
+msgid "Activating the timeline toolbar"
+msgstr "Aktivace lišty nástrojů časové osy"
+
+#: C/movearoundtimeline.page:31(p)
+msgid ""
+"The timeline toolbar contains many tools, which become active once a clip is "
+"selected in the timeline. To select a clip, simply click on the desired clip "
+"in the timeline. When selected, the clip will become darker and the timeline "
+"toolbar items will now be clickable."
+msgstr ""
+"Lišta nástrojů časové osy obsahuje mnoho nástrojů, které se aktivují ve "
+"chvíli, kdy je vybrán klip na časové ose. Když chcete klip vybrat, stačí na "
+"klip na časové ose kliknout. Klip po vybrání ztmavne a položky na liště "
+"nástrojů časové osy začnou reagovat na kliknutí."
+
+#: C/movearoundtimeline.page:35(title)
+msgid "Scrolling"
+msgstr "Posouvání"
+
+#: C/movearoundtimeline.page:36(p)
+msgid ""
+"You can use the scrollbars (located on the right and bottom of the "
+"timeline), use the mouse wheel anywhere over the timeline to scroll "
+"horizontally, or hold down the <key>Shift</key> key while using the "
+"mousewheel to scroll the timeline layers vertically."
+msgstr ""
+"Můžete používat posuvníky (umístěné vpravo a dole na časové ose), můžete "
+"používat kolečko myši kdekoliv nad časovou osou k vodorovnému posunu a nebo "
+"můžete používat kolečko myši, a držet u toho zmáčknutou klávesu <key>Shift</"
+"key>, ke svislému posouvání vrstev časové osy."
+
+#: C/movearoundtimeline.page:40(title)
+msgid "Zooming"
+msgstr "Přibližování a oddalování"
+
+#: C/movearoundtimeline.page:41(p)
+msgid ""
+"Zooming directly affects your editing accuracy and your ability to move "
+"quickly along the timeline:"
+msgstr ""
+"Přiblížení přímo ovlivňuje přesnost úprav a schopnost posouvat se po časové "
+"ose rychle:"
+
+#: C/movearoundtimeline.page:43(p)
+msgid ""
+"When zooming in, video clips display more thumbnails and audio clips display "
+"increasingly detailed waveforms, allowing you to do precise edits."
+msgstr ""
+"Při větším přiblížení mají videoklipy větší náhledy a zvukové klipy "
+"detailnější křivku průběhu zvuku, takže můžete provádět přesnější úpravy."
+
+#: C/movearoundtimeline.page:44(p)
+msgid ""
+"Zooming out allows you to scroll faster along the timeline. Zoom can thus be "
+"used in conjunction with scrolling to move quickly between distant points of "
+"your project's chronology."
+msgstr ""
+"Při menším přiblížení se můžete rychleji pohybovat po časové ose. Oddálení "
+"tak můžete používat ve spolupráci s posouváním pro rychlé přecházení mezi "
+"body v časovém průběhu projektu."
+
+#: C/movearoundtimeline.page:46(p)
+msgid "You can zoom in and out by:"
+msgstr "Přibližovat a oddalovat můžete pomocí:"
+
+#: C/movearoundtimeline.page:48(p)
+msgid ""
+"Holding the <key>Ctrl</key> key while using the mousewheel over the timeline"
+msgstr ""
+"Držením klávesy <key>Ctrl</key> za současného použití kolečka myši nad "
+"časovou osou"
+
+#: C/movearoundtimeline.page:49(p)
+msgid ""
+"Using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and "
+"<guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq> menu items"
+msgstr ""
+"Použitím položek nabídky <guiseq><gui>Zobrazit</gui><gui>Přiblížit</gui></"
+"guiseq> a <guiseq><gui>Zobrazit</gui><gui>Oddálit</gui></guiseq>"
+
+#: C/movearoundtimeline.page:50(p)
+msgid "Dragging the zoom slider on the left of the ruler"
+msgstr "Posouváním táhla stupně přiblížení po levé straně pravítka"
+
+#: C/movearoundtimeline.page:51(p)
+msgid ""
+"Using keyboard shortcuts such as <key>Ctrl</key>+<key>-</key> to zoom out or "
+"<key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> on the numeric "
+"keypad) to zoom in"
+msgstr ""
+"Použitím klávesových zkratek <key>Ctrl</key>+<key>-</key> pro oddálení nebo "
+"<key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> na číselné "
+"klávesnici) pro přiblížení"
+
+#: C/movearoundtimeline.page:53(p)
+msgid ""
+"To get a better overview of your timeline, you may use the "
+"<guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the "
+"<gui>Zoom</gui> button on the left of the zoom slider."
+msgstr ""
+"Pro lepší přehled o své časové ose můžete použít položku nabídky "
+"<guiseq><gui>Zobrazit</gui><gui>Přizpůsobit</gui></guiseq> nebo kliknout na "
+"tlačítko <gui>Přiblížit</gui> nalevo od táhla přiblížení."
+
+#: C/movearoundtimeline.page:56(title)
+msgid "Zooming is always centered around the location of your playhead"
+msgstr "Přibližování/oddalování vždy používá jako střed pozici přehrávání"
+
+#: C/movearoundtimeline.page:57(p)
+msgid ""
+"When using the mouse wheel to zoom in and out, remember that the zoom is not "
+"relative to the position of your mouse, only to the position of the playhead "
+"on the timeline."
+msgstr ""
+"Když používáte k přiblížení či oddálení kolečko myši, pamatujte, že operace "
+"není vztahována k poloze vaší myši, ale vždy jen k pozici přehrávání na "
+"časové ose."
+
+#: C/movearoundtimeline.page:61(title)
+msgid "<em>Warping</em> between zoom levels"
+msgstr "<em>Přeskakování</em> mezi úrovněmi přiblížení"
+
+#: C/movearoundtimeline.page:62(p)
+msgid ""
+"Using your mouse's scroll wheel, you can also <em>warp</em> instantly from "
+"any zoom level to another in a single click. To do that, click with your "
+"mousewheel anywhere on the zoom slider."
+msgstr ""
+"Pomocí kolečka myši můžete rychle <em>přeskakovat</em> z jedné úrovně "
+"přiblížení do jiné jediným kliknutím. Stačí kolečkem myši kliknout někde v "
+"oblasti táhla pro nastavení úrovně přiblížení."
+
+#: C/movearoundtimeline.page:67(title)
+msgid "Moving the playhead"
+msgstr "Přemisťování pozice přehrávání"
+
+#: C/movearoundtimeline.page:68(p)
+msgid ""
+"You can change the position of the playhead by clicking anywhere on the "
+"ruler or on the timeline."
+msgstr ""
+"Pozici přehrávání můžete změnit kliknutím kdekoliv na pravítku nebo na "
+"časové ose."
+
+#: C/movearoundtimeline.page:69(p)
+msgid "When clicking on the <em>timeline</em>:"
+msgstr "Když kliknete na <em>časovou osu</em>:"
+
+#: C/movearoundtimeline.page:71(p)
+msgid ""
+"If a clip is under the mouse cursor, it will replace the current clip "
+"selection (see the <link xref=\"makeselections\">Selecting multiple items</"
+"link> section for more detailed instructions)."
+msgstr ""
+"Pokud se pod ukazatelem myši nachází klip, nahradí se aktuální výběr klipu "
+"(viz oddíl <link xref=\"makeselections\">Výběr více položek</link> pro "
+"podrobnější instrukce)."
+
+#: C/movearoundtimeline.page:72(p)
+msgid ""
+"If there is no clip under the cursor, all selected clips (if any) will be "
+"deselected."
+msgstr ""
+"Pokud pod ukazatelem není žádný klip, bude zrušen výběr všech vybraných "
+"klipů (pokud nějaké vybrané jsou)."
+
+#: C/movearoundtimeline.page:74(p)
+msgid ""
+"When clicking on the ruler, only the playhead's position changes; clip "
+"selections are not affected."
+msgstr ""
+"Když kliknete na pravítko, změní se pouze pozice přehrávání, výběr klipů "
+"zůstane nedotčen."
+
+#: C/movearoundtimeline.page:78(title)
+msgid "Scrubbing"
+msgstr "Rychloposuv"
+
+#: C/movearoundtimeline.page:79(p)
+msgid "<em>Scrubbing</em> is a way of moving the playhead that allows you to:"
+msgstr ""
+"„<em>Rychloposuv</em>“ (termín podle starých páskových magnetofonů a "
+"videopřehrávačů) je způsob přesunu pozice přehrávání, který vám umožňuje:"
+
+#: C/movearoundtimeline.page:81(p)
+msgid ""
+"Search for a specific position in time by approximation/trial and error."
+msgstr "Hledat konkrétní pozici v čase odhadem/metodou pokus – omyl."
+
+#: C/movearoundtimeline.page:82(p)
+msgid ""
+"Review repeatedly the visual motion in a scene by moving back and forth in "
+"time."
+msgstr ""
+"Opakovaně zrakem přezkoumávat pohyb ve scéně posouváním v čase zpět a vpřed."
+
+#: C/movearoundtimeline.page:84(p)
+msgid ""
+"To scrub, click on the ruler and move the mouse with the button still held "
+"down."
+msgstr ""
+"Rychloposuv provedete tak, že kliknete na pravítko a posouváte jej myší za "
+"stálého držení tlačítka."
+
+#: C/movearoundtimeline.page:85(p)
+msgid ""
+"You can also scrub by dragging the black vertical line that stems from the "
+"playhead and spans across the timeline."
+msgstr ""
+"Rychloposuv můžete provádět také tažením černé svislé čáry, která vychází od "
+"ukazatele pozice přehrávání a prochází skrz časovou osu."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/medialibrary.page:32(None)
+msgid ""
+"@@image: 'figures/previewsource.png'; md5=ec55ba71f7c9ec058d4619b342654a0e"
+msgstr ""
+"@@image: 'figures/previewsource.png'; md5=ec55ba71f7c9ec058d4619b342654a0e"
+
+#: C/medialibrary.page:17(desc)
+msgid "Managing your imported clips with the Media Library"
+msgstr "Správa vašich importovaných klipů v knihovně médií"
+
+#: C/medialibrary.page:25(title)
+msgid "Using the Media Library"
+msgstr "Používání knihovny médií"
+
+#: C/medialibrary.page:28(title)
+msgid "Previewing a clip from the <gui>Media Library</gui>"
+msgstr "Náhled klipů z <gui>Knihovny médií</gui>"
+
+#: C/medialibrary.page:29(p)
+msgid ""
+"To preview a clip before placing it on the timeline, you can double-click on "
+"it in the <gui>Media Library</gui>, or right-click and choose <gui>Preview "
+"Clip</gui> from the popup menu. This will open the clip in a window that "
+"automatically closes whenever you click outside the window."
+msgstr ""
+"Jestli se chcete podívat na náhled klipu před tím, než ho umístíte na "
+"časovou osu, můžete na něj dvojitě kliknout v <gui>Knihovně médií</gui> nebo "
+"kliknout pravým tlačítkem a zvolit <gui>Náhled klipu</gui> v místní nabídce. "
+"Klip se otevře v okně, které se automaticky zavře, když kliknete kamkoliv "
+"mimo toto okno."
+
+#: C/medialibrary.page:31(desc)
+msgid "Popup menu"
+msgstr "Místní nabídka"
+
+#: C/medialibrary.page:36(title)
+msgid "Filtering search"
+msgstr "Hledání pomocí filtrování"
+
+#: C/medialibrary.page:37(p)
+msgid ""
+"A search bar is shown at the top of the <gui>Media Library</gui>. Typing "
+"into the search entry filters the contents of the <gui>Media Library</gui> "
+"to show only clips whose filenames match your search terms. To reset the "
+"search entry, click the \"cleanup\" icon in the search entry."
+msgstr ""
+"V horní části <gui>Knihovny médií</gui> je zobrazena vyhledávací lišta. Když "
+"do ní budete psát, bude se obsah <gui>Knihovny médií</gui> filtrovat tak, "
+"aby zobrazoval pouze klipy, jejichž názvy odpovídají zadanému výrazu. K "
+"vymazání zadaného výrazu použijte „mazací“ ikonu přímo ve vyhledávacím poli."
+
+#: C/medialibrary.page:40(title)
+msgid "Typeahead search"
+msgstr "Hledání psaním"
+
+#: C/medialibrary.page:41(p)
+msgid ""
+"An alternative way of searching, if you know the beginning of a clip's "
+"filename, is to click anywhere in the <gui>Media Library</gui> and start "
+"typing the name of the file you're looking for."
+msgstr ""
+"Alternativním způsobem hledání, pokud znáte začátek názvu souboru s klipem, "
+"je kliknout kdekoliv v <gui>Knihovně médií</gui> a začít psát název souboru, "
+"který hledáte."
+
+#: C/medialibrary.page:43(p)
+msgid "As you type, the first matching file will become selected."
+msgstr "Jak postupně píšete, vybírá se nejbližší shodný název souboru."
+
+#: C/medialibrary.page:44(p)
+msgid "You can keep typing to refine your search."
+msgstr "Dalším psaním hledání upřesňujete."
+
+#: C/medialibrary.page:45(p)
+msgid ""
+"When there are multiple results, you can use the <key>up</key> and "
+"<key>down</key> arrow keys to switch the selection between each search "
+"result."
+msgstr ""
+"Pokud existuje více výsledků, můžete použít kurzorové klávesy <key>↑</key> a "
+"<key>↓</key> k přepnutí mezi jednotlivými výsledky hledání."
+
+#: C/medialibrary.page:48(p)
+msgid "This method only allows searching from the beginning of the filename."
+msgstr "Tímto způsobem lze hledat pouze od počátku názvu souboru."
+
+#: C/medialibrary.page:51(title)
+msgid "View modes"
+msgstr "Režimy zobrazení"
+
+#: C/medialibrary.page:52(p)
+msgid ""
+"The <gui>Media Library</gui> can display your clips in a list "
+"(<guiseq><gui>View</gui><gui>Show Clips as a List</gui></guiseq>) or in an "
+"icon view (<guiseq><gui>View</gui><gui>Show Clips as Icons</gui></guiseq>)."
+msgstr ""
+"<gui>Knihovna médií</gui> umí zobrazovat vaše klipy v podobě seznamu "
+"(<guiseq><gui>Zobrazit</gui><gui>Zobrazit klipy jako seznam</gui></guiseq>) "
+"nebo v podobě ikon (<guiseq><gui>Zobrazit</gui><gui>Zobrazit klipy jako "
+"ikony</gui></guiseq>)."
+
+#: C/medialibrary.page:53(p)
+msgid ""
+"The list view mode shows more details about each clip, but the icon view "
+"mode can display more clips without needing to scroll (especially on high "
+"resolution computer monitors)."
+msgstr ""
+"V seznamovém zobrazení je uvedeno o klipu více podrobností, ale v ikonovém "
+"zase uvidíte víc klipů naráz, aniž byste museli zobrazení posouvat (hlavně "
+"na monitorech s vyšším rozlišením)."
+
+#: C/makeselections.page:17(desc)
+msgid "Selecting and deselecting single or multiple items."
+msgstr "Vybírání a rušení výběru jedné nebo více položek."
+
+#: C/makeselections.page:25(title)
+msgid "Making selections"
+msgstr "Provádění výběru"
+
+#: C/makeselections.page:28(title)
+msgid "Selecting a single item"
+msgstr "Výběr jedné položky"
+
+#: C/makeselections.page:29(p)
+msgid "To select a file or a clip in <app>PiTiVi</app>, click it."
+msgstr "Soubor nebo klip v <app>PiTiVi</app> vyberete tak, že na něj kliknete."
+
+#: C/makeselections.page:33(title)
+msgid "Selecting multiple items"
+msgstr "Výběr více položek"
+
+#: C/makeselections.page:34(p)
+msgid ""
+"Multiple selections allow you to apply actions (dragging, deleting, "
+"grouping, etc.) to many clips at once."
+msgstr ""
+"Díky vícenásobnému výběru můžete použít akce (přetahování, mazání, "
+"seskupování, apod.) u více klipů naráz."
+
+#: C/makeselections.page:35(p)
+msgid "Selecting multiple adjacent items:"
+msgstr "Výběr více sousedících položek:"
+
+#: C/makeselections.page:37(p)
+msgid "Click the first item."
+msgstr "Klikněte na první položku."
+
+#: C/makeselections.page:38(p)
+msgid "Hold the <key>Shift</key> key."
+msgstr "Držte zmáčknutou klávesu <key>Shift</key>."
+
+#: C/makeselections.page:39(p)
+msgid "Click the last item."
+msgstr "Klikněte na poslední položku."
+
+#: C/makeselections.page:41(p)
+msgid "Selecting multiple nonadjacent items:"
+msgstr "Výběr více nesousedících položek:"
+
+#: C/makeselections.page:43(p)
+msgid "Hold down the <key>Ctrl</key> key."
+msgstr "Držte zmáčknutou klávesu <key>Ctrl</key>."
+
+#: C/makeselections.page:44(p)
+msgid "Click on all the items you want to select."
+msgstr "Postupně klikejte na všechny položky, které chcete vybrat."
+
+#: C/makeselections.page:46(p)
+msgid ""
+"You can deselect an individual item by clicking on it again with the "
+"<key>Ctrl</key> key held down. This can be used in conjunction with the "
+"<em>Selecting multiple adjacent items</em> technique above."
+msgstr ""
+"Jednotlivé položky můžete zrušit z výběru tak, že na ně znovu kliknete a "
+"budete přitom držet zmáčknutou klávesu <key>Ctrl</key>. Můžete to využít ve "
+"spojení s technikou <em>výběru více sousedících položek</em> zmíněnou výše."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/mainwindow.page:28(None)
+msgid "@@image: 'figures/mainwindow.jpg'; md5=544f1d503faaec759beac50fd36670df"
+msgstr ""
+"@@image: 'figures/mainwindow.jpg'; md5=544f1d503faaec759beac50fd36670df"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/mainwindow.page:45(None)
+msgid "@@image: 'figures/hovering.png'; md5=b4a8bd739707a43056e55a5d2b31ed57"
+msgstr "@@image: 'figures/hovering.png'; md5=b4a8bd739707a43056e55a5d2b31ed57"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/mainwindow.page:54(None)
+msgid "@@image: 'figures/ruler.png'; md5=2d2f2261c4bdb034be332fbcea37f273"
+msgstr "@@image: 'figures/ruler.png'; md5=2d2f2261c4bdb034be332fbcea37f273"
+
+#: C/mainwindow.page:15(desc)
+msgid "Discover the components of the main window."
+msgstr "Objevte části hlavního okna."
+
+#: C/mainwindow.page:23(title)
+msgid "The main window"
+msgstr "Hlavní okno"
+
+#: C/mainwindow.page:26(title)
+msgid "<app>PiTiVi</app> main window"
+msgstr "Hlavní okno aplikace <app>PiTiVi</app>"
+
+#: C/mainwindow.page:27(desc)
+msgid ""
+"The main window, as the name implies, is the window containing the main "
+"components of the <app>PiTiVi</app> user interface, namely: the menu bar, "
+"the toolbars, the timeline and various customizable components (media "
+"library, previewer, effects library, transitions library, etc.)."
+msgstr ""
+"Hlavní okno je, jak napovídá jeho název, okno, které obsahuje hlavní části "
+"uživatelského rozhraní aplikace <app>PiTiVi</app>, jmenovitě: lištu nabídek, "
+"lištu nástrojů, časovou osu a různé přizpůsobitelné komponenty (knihovnu "
+"médií, náhled, knihovnu efektů, knihovnu přechodů, atd.)."
+
+#: C/mainwindow.page:34(title)
+msgid "Menu bar"
+msgstr "Lišta nabídek"
+
+#: C/mainwindow.page:35(p)
+msgid ""
+"The menu bar contains all the possible actions of the toolbars, plus many "
+"more. The menu bar also provides some instant-apply settings, as well as "
+"access to further customizations in the <gui>Project settings</gui> dialog "
+"and <gui>Preferences</gui> dialog."
+msgstr ""
+"Lišta nabídek obsahuje všechny možné akce z lišty nástrojů plus řadu "
+"dalších. Lišta nabídek rovněž poskytuje některá rychlá nastavení, a také "
+"přistup k dalšímu přizpůsobení v dialogových oknech <gui>Nastavení projektu</"
+"gui> a <gui>Předvolby</gui>."
+
+#: C/mainwindow.page:36(p)
+msgid "The menu bar cannot be hidden."
+msgstr "Lištu nabídek nelze skrýt."
+
+#: C/mainwindow.page:41(title)
+msgid "The toolbars"
+msgstr "Lišta nástrojů"
+
+#: C/mainwindow.page:42(p)
+msgid ""
+"Toolbars provide access to the most commonly used functions of <app>PiTiVi</"
+"app>. All items in toolbars can also be accessed through the menu bar. "
+"Toolbars can be activated or deactivated in the <gui>View</gui> menu."
+msgstr ""
+"Lišta nástrojů poskytuje přístup k běžně nepoužívanějším funkcím "
+"<app>PiTiVi</app>. Všechny položky, které jsou na liště nástrojů, najdete i "
+"v liště nabídek. Lištu nástrojů je možné aktivovat a deaktivovat v nabídce "
+"<gui>Zobrazit</gui>."
+
+#: C/mainwindow.page:43(p)
+msgid ""
+"You can hover the mouse cursor over a toolbar item to reveal an information "
+"tooltip regarding its function."
+msgstr ""
+"Můžete najet kurzorem myši nad položku na liště nástrojů, aby se vám ukázala "
+"vysvětlivka informující o její funkci."
+
+#: C/mainwindow.page:50(title)
+msgid "Ruler"
+msgstr "Pravítko"
+
+#: C/mainwindow.page:51(p)
+msgid ""
+"The ruler plays a crucial role in your interaction with the timeline. In "
+"addition to giving you time measurements (in seconds), it is the primary way "
+"of moving the playhead (and thus, your position in time)."
+msgstr ""
+"Pravítko hraje zásadní roli při vaší práci s časovou osou. Navíc vám dává "
+"přehled o čase (v sekundách) a jde o hlavní způsob, jak přesouvat pozici "
+"přehrávání (a tím vaši pozici v čase)."
+
+#: C/mainwindow.page:52(p)
+msgid "The current playhead position is indicated by a red vertical line:"
+msgstr "Aktuální pozice přehrávání je označena červenou svislou čarou:"
+
+#: C/mainwindow.page:57(p)
+msgid ""
+"When zoomed in, frames are visually represented on the ruler as alternating "
+"light and dark areas in the bottom part; those are based on the project "
+"framerate settings."
+msgstr ""
+"Při dostatečném přiblížení jsou na pravítku v dolní části zvýrazněny "
+"jednotlivé snímky v podobě světlejších a tmavších ploch. Záleží na nastavení "
+"snímkové rychlosti projektu."
+
+#: C/mainwindow.page:59(p)
+msgid ""
+"To move your position in time, click anywhere on the ruler. You can also "
+"<em>scrub</em> the timeline by clicking on the ruler and holding down the "
+"mouse button while moving. See the section on <link xref=\"movearoundtimeline"
+"\">scrubbing</link> for more details."
+msgstr ""
+"Když se chcete posunout v čase, klikněte kdekoliv na pravítku. Můžete také "
+"použít „<em>rychloposuv</em>“ filmu na časové ose tak, že na pravítko "
+"kliknete a během posouvání držíte tlačítko myši zmáčknuté. Viz oddíl <link "
+"xref=\"movearoundtimeline\">Rychloposuv</link> pro více podrobností."
+
+#: C/mainwindow.page:63(title)
+msgid "Marker bar"
+msgstr "Lišta značek"
+
+#: C/mainwindow.page:64(p)
+msgid ""
+"Markers are visual cues that you can create to <em>mark</em> important "
+"points or regions in your project's timeline. The marker bar allows you to "
+"view and edit markers that you created."
+msgstr ""
+"Značky jsou vizuální zarážky, které si můžete vytvořit, abyste si "
+"<em>označili</em> důležité body nebo úseky na časové ose svého projektu. Na "
+"liště značek vidíte značky, které jste vytvořili a můžete je upravovat."
+
+#: C/mainwindow.page:66(p)
+msgid ""
+"This feature is not yet implemented. See <link href=\"https://bugzilla.gnome."
+"org/show_bug.cgi?id=608682\">bug #608682</link> for more information."
+msgstr ""
+"Tato funkce není zatím implementována. Viz <link href=\"https://bugzilla."
+"gnome.org/show_bug.cgi?id=608682\">chyba #608682</link> pro více informací "
+"(odkazovaný text je v angličtině)."
+
+#: C/mainwindow.page:71(title) C/cheatsheet.page:48(title)
+msgid "Timeline"
+msgstr "Časová osa"
+
+#: C/mainwindow.page:72(p)
+msgid ""
+"The timeline is the core user interface component that you will use for "
+"editing. It is a visual, time-proportional representation of your project's "
+"chronology."
+msgstr ""
+"Časová osa je jádrem uživatelského rozhraní a budete ji používat k úpravám. "
+"Jde o vizuální reprezentaci časové posloupnosti vašeho projektu."
+
+#: C/mainwindow.page:76(title)
+msgid "Playback toolbar"
+msgstr "Lišta přehrávání"
+
+#: C/mainwindow.page:77(p)
+msgid "This toolbar, located below the previewer, contains buttons controlling"
+msgstr ""
+"Tato lišta nástrojů umístěná pod náhledem obsahuje tlačítka ovládající:"
+
+#: C/mainwindow.page:79(p)
+msgid "The playback of the timeline."
+msgstr "Přehrávání na časové ose."
+
+#: C/mainwindow.page:80(p)
+msgid "The playback of a clip being previewed from the media library."
+msgstr "Přehrávání klipu zobrazeného z knihovny médií."
+
+#: C/mainwindow.page:82(p)
+msgid ""
+"The <gui>Play</gui> button transforms into a <gui>Pause</gui> button when "
+"playing, and reverts to a <gui>Play</gui> button again when not playing."
+msgstr ""
+"Tlačítko <gui>Přehrát</gui> se během přehrávání změní na <gui>Pozastavit</"
+"gui> a když se nepřehrává, vrátí se zpět na <gui>Přehrát</gui>."
+
+#: C/mainwindow.page:86(title)
+msgid "Previewer"
+msgstr "Náhled"
+
+#: C/mainwindow.page:87(p)
+msgid "The previewer displays"
+msgstr "Náhled zobrazuje:"
+
+#: C/mainwindow.page:89(p)
+msgid "Your project's video when playing back."
+msgstr "Video vašeho projektu, když jej přehráváte."
+
+#: C/mainwindow.page:90(p)
+msgid "The video frame at the current position of the playhead."
+msgstr "Snímek videa na aktuální pozici přehrávání."
+
+#: C/mainwindow.page:91(p)
+msgid "A <em>live preview</em> when trimming a clip's beginning/end point."
+msgstr "<em>Živý náhled</em> při stříhání počátečního/koncového bodu klipu."
+
+#: C/mainwindow.page:93(p)
+msgid ""
+"The <em>live preview</em> feature is not yet implemented. See <link href="
+"\"https://bugzilla.gnome.org/show_bug.cgi?id=569980\">bug #569980</link> for "
+"more information."
+msgstr ""
+"Funkce <em>živého náhledu</em> zatím není implementována. Viz <link href="
+"\"https://bugzilla.gnome.org/show_bug.cgi?id=569980\">chyba #569980</link> "
+"pro více informací (odkazovaný text je v angličtině)."
+
+#: C/mainwindow.page:100(title) C/cheatsheet.page:39(title)
+msgid "Media Library"
+msgstr "Knihovna médií"
+
+#: C/mainwindow.page:101(p)
+msgid ""
+"The media library displays the imported media files in your project and "
+"allows you to manage them."
+msgstr ""
+"Knihovna médií zobrazuje multimediální soubory naimportované do vašeho "
+"projektu a umožňuje vám je spravovat."
+
+#: C/license.page:8(desc)
+msgid "Legal information."
+msgstr "Právní informace."
+
+#: C/license.page:11(title)
+msgid "License"
+msgstr "Licence"
+
+#: C/license.page:12(p)
+msgid ""
+"This work is distributed under a CreativeCommons Attribution-Share Alike 3.0 "
+"Unported license."
+msgstr ""
+"Tato práce je šířena pod licencí CreativeCommons Attribution-Share Alike 3.0 "
+"Unported license."
+
+#: C/license.page:20(p)
+msgid "You are free:"
+msgstr "Můžete volně:"
+
+#: C/license.page:25(em)
+msgid "To share"
+msgstr "Sdílet"
+
+#: C/license.page:26(p)
+msgid "To copy, distribute and transmit the work."
+msgstr "Kopírovat, šířit a rozesílat dílo."
+
+#: C/license.page:29(em)
+msgid "To remix"
+msgstr "Měnit"
+
+#: C/license.page:30(p)
+msgid "To adapt the work."
+msgstr "Přizpůsobovat dílo."
+
+#: C/license.page:33(p)
+msgid "Under the following conditions:"
+msgstr "Za následujících podmínek:"
+
+#: C/license.page:36(em)
+msgid "Attribution"
+msgstr "Označení"
+
+#: C/license.page:37(p)
+msgid ""
+"You must attribute the work in the manner specified by the author or "
+"licensor (but not in any way that suggests that they endorse you or your use "
+"of the work)."
+msgstr ""
+"Musíte dílo označit v souladu s požadavky autora nebo licence (ale ne žádným "
+"způsobem, který předpokládá, že podporují vás nebo vaše použití díla)."
+
+#: C/license.page:40(em)
+msgid "Share Alike"
+msgstr "Stejné sdílení"
+
+#: C/license.page:41(p)
+msgid ""
+"If you alter, transform, or build upon this work, you may distribute the "
+"resulting work only under the same, similar or a compatible license."
+msgstr ""
+"Pokud dílo změníte, převedete nebo na něm založíte jiné, můžete výsledek "
+"této práce šířit pouze pod stejnou, podobnou nebo kompatibilní licencí."
+
+#: C/license.page:44(p)
+msgid ""
+"For the full text of the license, see the <link href=\"http://"
+"creativecommons.org/licenses/by-sa/3.0/legalcode\">CreativeCommons website</"
+"link>, or read the full <link href=\"http://creativecommons.org/licenses/by-"
+"sa/3.0/\">Commons Deed</link>."
+msgstr ""
+"Text licence v plném znění najdete na <link href=\"http://creativecommons."
+"org/licenses/by-sa/3.0/legalcode\">webových stránkách CreativeCommons</link> "
+"nebo si přečtěte <link href=\"http://creativecommons.org/licenses/by-sa/3.0/"
+"\">výtah dokumentu pro neprávníky</link>."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/layers.page:41(None)
+msgid "@@image: 'figures/layers.png'; md5=27c5f543944b381bc7147ff90b3deaee"
+msgstr "@@image: 'figures/layers.png'; md5=27c5f543944b381bc7147ff90b3deaee"
+
+#: C/layers.page:25(title)
+msgid "Understanding layers"
+msgstr "Vysvětlení vrstev"
+
+#: C/layers.page:27(p)
+msgid ""
+"<em>Layers</em> are a fundamental concept for advanced editing in the "
+"timeline: compositing, mixing multiple videos simultaneously, and adding "
+"titles depend on this feature."
+msgstr ""
+"<em>Vrstvy</em> jsou základním pojmem v oblasti pokročilých úprav na časové "
+"ose: skládání, mixování více videí dohromady a přidávání titulků závisí na "
+"této funkčnosti."
+
+#: C/layers.page:28(p)
+msgid ""
+"It is easier to think of layers in terms of images painted on glass. With "
+"several pieces of glass stacked on top of each other, each of these pieces "
+"of glass is a layer. If the top piece of glass is completely painted over, "
+"none of the pieces of glass underneath will be visible."
+msgstr ""
+"Nejsnadněji si vrstvy představíte jako obrázky kreslené na sklo. Poskládejte "
+"si několik tabulí skla na sebe a každé z těchto skel můžete považovat za "
+"vrstvu. Když bude sklo na vrchu hromady úplně pomalované, nebude vidět žádné "
+"jiné pod ním."
+
+#: C/layers.page:29(p)
+msgid ""
+"If, on the other hand, you only paint over a portion of a piece of glass, "
+"you will be able to see what is underneath the non-painted parts."
+msgstr ""
+"Pokud ale pomalujete pouze část skla, můžete vidět přes nepomalovanou část, "
+"co je pod ním."
+
+#: C/layers.page:32(title)
+msgid "Opacity (how solid “opaque” things are)"
+msgstr "Krytí (jak moc jsou věci „neprůhledné“)"
+
+#: C/layers.page:33(p)
+msgid ""
+"Each layer (and each clip) has its own transparency. To continue the paint "
+"on glass metaphor, if the paint is thin enough, it can be seen through. "
+"Visually, an opacity of 100% means you cannot see the clips below that layer "
+"or clip, and an opacity of of 50% means you can partly see them."
+msgstr ""
+"Každá vrstva (a každý klip) mají svoji vlastní průhlednost. Když zůstaneme u "
+"přirovnání ke skleněným tabulím, když nějakou nepomalujeme dostatečně silně, "
+"bude skrz ní částečně vidět. Opticky krytí 100 % znamená, že nemůžete vidět "
+"klipy pod touto vrstvou nebo klipem, a krytí 50 %, že můžete částečně vidět "
+"skrz."
+
+#: C/layers.page:37(title)
+msgid "How this translates in terms of user interface"
+msgstr "Jak se to projevuje z hlediska uživatelského rozhraní"
+
+#: C/layers.page:38(p)
+msgid ""
+"While, in real life, you can stack pieces of glass onto each other in three "
+"dimensions, your computer monitor only has two dimensions. Thus, the "
+"<em>layers on top</em> (the “Z” axis in the physical world) are also "
+"visually <em>on top</em>, albeit on the “Y” axis."
+msgstr ""
+"Zatímco ve skutečnosti můžete tabule skla pokládat jednu na druhou ve třech "
+"rozměrech, počítačový displej je jen dvourozměrný. Proto jsou <em>vrstvy "
+"nahoře</em> (osa „Z“ v reálném světe) zobrazeny sice <em>nahoře</em>, ale "
+"osy „Y“."
+
+#: C/layers.page:39(p)
+msgid ""
+"The following diagram illustrates the <em>pieces of glass</em> (left) and "
+"how they are show as <em>layers</em> in <app>PiTiVi</app>'s user interface "
+"(right)."
+msgstr ""
+"Následující nákres ilustruje <em>kusy skla</em> (vlevo) a jak se zobrazují v "
+"podobě <em>vrstev</em> v uživatelském rozhraní <app>PiTiVi</app> (vpravo)."
+
+#: C/layers.page:43(p)
+msgid ""
+"Clips located on a layer above will block the clips below from view, unless "
+"it has an opacity value lower than 100% (as shown with the two topmost "
+"layers in the previous illustration)."
+msgstr ""
+"Klipy, které jsou umístěné ve vrchní vrstvě blokují možnost vidět klipy, "
+"které jsou umístěny v nižší vrstvě, ledaže je jejich krytí nastaveno na méně "
+"než 100 % (jak je ukázáno na dvou vrchních vrstvách na předchozí ilustraci)."
+
+#: C/layers.page:47(title)
+msgid "Adding and removing layers"
+msgstr "Přidávání a odebírání vrstev"
+
+#: C/layers.page:48(p)
+msgid ""
+"Layers are created and removed automatically. There is no “layer management” "
+"interface in <app>PiTiVi</app> (at least, not yet)."
+msgstr ""
+"Vrstvy se vytváří a odebírají automaticky. V <app>PiTiVi</app> není žádná "
+"explicitní „správa vrstev“ (nebo alespoň prozatím)."
+
+#: C/layers.page:49(p)
+msgid ""
+"To create a layer, drag a clip downwards until a new layer appears for it."
+msgstr ""
+"Když chcete vytvořit novou vrstvu, přesuňte klip směrem dolů, až se pro něj "
+"objeví nová vrstva."
+
+#: C/layers.page:50(p)
+msgid ""
+"If there are no more clips on a layer, it is automatically removed. Thus, to "
+"remove a layer, simply drag its clips upwards onto another layer."
+msgstr ""
+"Jestliže ve vrstvě nezůstane žádný klip, vrstva se automaticky odstraní. "
+"Takže když chcete vrstvu odebrat, stačí klipy, co jsou na ní, přesunout do "
+"některé z vrstev nahoru."
+
+#: C/layers.page:54(title)
+msgid "What about audio layers?"
+msgstr "A co zvukové vrstvy?"
+
+#: C/layers.page:55(p)
+msgid ""
+"Unlike in vision, multiple sounds do not (objectively) “block” each other. "
+"As such, if you have multiple audio clips on separate layers, their sound "
+"will be mixed together. Controlling the volume of those audio clips simply "
+"changes their relative loudness."
+msgstr ""
+"Na rozdíl od obrazových záležitostí se více zvuků (záměrně) navzájem "
+"„neblokuje“. Proto se, když máte víc zvukových klipů v různých vrstvách, "
+"jejich zvuk bude mixovat. Hlasitost těchto zvukových klipů se jednoduše určí "
+"jako jejich relativní hlasitost."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/keyframecurves.page:29(None)
+msgid ""
+"@@image: 'figures/keyframecurves.png'; md5=d91b335281ec48ab9f8fade73bf09852"
+msgstr ""
+"@@image: 'figures/keyframecurves.png'; md5=d91b335281ec48ab9f8fade73bf09852"
+
+#: C/keyframecurves.page:17(desc)
+msgid "Changing the opacity or volume of a clip over time."
+msgstr "Změna krytí nebo hlasitosti klipu v průběhu času."
+
+#: C/keyframecurves.page:25(title)
+msgid "Keyframe curves"
+msgstr "Křivky přes klíčové snímky"
+
+#: C/keyframecurves.page:27(p)
+msgid ""
+"Some types of clips (currently only audio clips) support interpolating "
+"property values over their time. The user can add one or more <em>keyframes</"
+"em> to control the interpolation, a term borrowed from animation. "
+"<app>PiTiVi</app> represents the value of the property in between keyframes "
+"as a <em>curve</em> drawn over the clip. Currently only linear interpolation "
+"is supported."
+msgstr ""
+"Některé typy klipů (v současnosti jen zvukové) podporují interpolaci hodnot "
+"vlastností v časovém průběhu. Uživatel může přidat jeden či více "
+"<em>klíčových snímků</em>, které interpolaci řídí. Názvosloví je vypůjčeno z "
+"animací. <app>PiTiVi</app> znázorňuje hodnotu vlastnosti mezi klíčovými "
+"snímky v podobě <em>křivky</em> nakreslené přes klip. V současnosti je "
+"podporována pouze lineární interpolace."
+
+#: C/keyframecurves.page:33(title)
+msgid "General usage"
+msgstr "Obecné využití"
+
+#: C/keyframecurves.page:34(p)
+msgid ""
+"Curves are an intrinsic property of clips and can not be removed by the "
+"user. The start and end points of the curve are fixed to the start and end "
+"points of the clip, and also can not be removed by the user."
+msgstr ""
+"Křivky jsou vnitřní vlastností klipů a uživatel je nemůže odstranit. "
+"Počáteční a koncový bod křivky jsou pevné svázány s počátečním a koncovým "
+"bodem klipu a proto ani ty uživatel nemůže odstranit."
+
+#: C/keyframecurves.page:36(p)
+msgid ""
+"You can add a new keyframe by double-clicking on an empty portion of a curve."
+msgstr ""
+"Přidat klíčový snímek můžete dvojitým kliknutím na prázdnou část křivky."
+
+#: C/keyframecurves.page:37(p)
+msgid "You can remove a keyframe by double-clicking on it."
+msgstr "Odstranit klíčový snímek můžete dvojitým kliknutím na něj."
+
+#: C/keyframecurves.page:38(p)
+msgid ""
+"You can adjust the time and value of a keyframe by moving it with the mouse. "
+"You can place the keyframe anywhere on the clip you like, even if this "
+"changes the order of the keyframes."
+msgstr ""
+"Čas a hodnotu klíčového snímku můžete upravit jeho přesunutím pomocí myši. "
+"Můžete jej umístit kdekoliv v klipu chcete, dokonce tak, že se tím změní "
+"pořadí klíčových snímků."
+
+#: C/keyframecurves.page:39(p)
+msgid ""
+"You can click-and-drag on a segment of a curve between two keyframes to "
+"adjust the vertical position of the segment."
+msgstr ""
+"Můžete kliknout na segment křivky mezi dvěma klíčkovými snímky a táhnout "
+"jej, abyste upravili svislé umístění segmentu."
+
+#: C/keyframecurves.page:44(title)
+msgid "Audio curves"
+msgstr "Zvukové křivky"
+
+#: C/keyframecurves.page:45(p)
+msgid ""
+"For volume curves the vertical position represents the volume of the clip on "
+"a scale from 0 to 200%."
+msgstr ""
+"U zvukových křivek představuje svislá poloha hlasitost klipu ve škále od 0 "
+"do 200 %."
+
+#: C/keyframecurves.page:49(title)
+msgid "Video compositing curves"
+msgstr "Skládání křivek videa"
+
+#: C/keyframecurves.page:50(p)
+msgid ""
+"The vertical position represents the alpha (opacity) of the clip on a scale "
+"from 0 to 100%. See the <link xref=\"layers\">Understanding layers</link> "
+"section for more details."
+msgstr ""
+"Svislá poloha představuje alfa kanál (krytí) klipu ve škále od 0 od 100 %. "
+"Viz oddíl <link xref=\"layers\">Vysvětlení vrstev</link> pro další "
+"podrobnosti."
+
+#: C/interface.page:13(desc)
+msgid "Discover the various windows, components and widgets."
+msgstr "Objevujte různorodá okna, komponenty a widgety."
+
+#: C/interface.page:19(title)
+msgid "An overview of the user interface"
+msgstr "Přehled uživatelského rozhraní"
+
+#: C/insertintimeline.page:17(desc)
+msgid "Putting your project media files into the timeline for editing."
+msgstr ""
+"Umisťujte multimediální soubory z vašeho projektu na časovou osu, kde je "
+"můžete upravovat."
+
+#: C/insertintimeline.page:25(title)
+msgid "Inserting clips"
+msgstr "Vkládání klipů"
+
+#: C/insertintimeline.page:27(p)
+msgid ""
+"From the media library, you can insert one or more clips by selecting them "
+"(using the <key>Ctrl</key> or <key>Shift</key> keys to select multiple "
+"clips) and:"
+msgstr ""
+"Z knihovny médií můžete vložit jeden či více klipů tak, že je vyberete (více "
+"klipů vyberete pomocí <key>Ctrl</key> nebo <key>Shift</key>) a:"
+
+#: C/insertintimeline.page:29(p)
+msgid "Dragging and dropping them onto place in the timeline."
+msgstr "Přetáhnete je a upustíte je někde na časové ose."
+
+#: C/insertintimeline.page:30(p)
+msgid ""
+"Using <guiseq><gui>Library</gui><gui>Insert at End of Timeline</gui></"
+"guiseq>."
+msgstr ""
+"Pomocí <guiseq><gui>Knihovna</gui><gui>Vložit na konec časové osy</gui></"
+"guiseq>."
+
+#: C/insertintimeline.page:31(p)
+msgid ""
+"Pressing the <key>Insert</key> (Ins) key. Those clips will be inserted at "
+"the end of the timeline."
+msgstr ""
+"Zmáčknete klávesu <key>Insert</key>. Tímto se klipy vloží na konec časové "
+"osy."
+
+#: C/insertintimeline.page:34(p)
+msgid ""
+"It should also be possible to import files directly into the timeline by "
+"dragging them from another application and dropping them onto <app>PiTiVi</"
+"app>'s timeline. The files would be added automatically to the media library "
+"in the process. This feature is not yet implemented, see <link href="
+"\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">bug #570118</link> for "
+"more information."
+msgstr ""
+"Také by mělo být možné importovat soubory přímo na časovou osu přetažením z "
+"jiné aplikace a upuštěním na časovou osu v <app>PiTiVi</app>. Soubory se "
+"přitom automaticky přidají i do knihovny médií. Tato funkcionalita zatím "
+"není implementována, viz <link href=\"https://bugzilla.gnome.org/show_bug."
+"cgi?id=608682\">chyba č. 570118</link>."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/index.page:24(None)
+msgid "@@image: 'figures/logo.png'; md5=694867eec987a61b070a11a7255a6de9"
+msgstr "@@image: 'figures/logo.png'; md5=694867eec987a61b070a11a7255a6de9"
+
+#: C/index.page:7(title) C/index.page:8(title)
+msgid "PiTiVi Quick Start Manual"
+msgstr "Příručka pro rychlé seznámení s PiTiVi"
+
+#: C/index.page:23(title)
+msgid ""
+"<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">PiTiVi "
+"logo</media> PiTiVi Video Editor"
+msgstr ""
+"<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Logo "
+"PiTiVi</media> videoeditor PiTiVi"
+
+#: C/index.page:28(p)
+msgid ""
+"Built upon the <link href=\"http://en.wikipedia.org/wiki/GStreamer"
+"\"><app>GStreamer</app></link> multimedia framework, <app>PiTiVi</app> aims "
+"to be an intuitive and flexible video editor that integrates well with <link "
+"href=\"http://gnome.org\"><app>GNOME</app></link> and can appeal to newbies "
+"and professionals alike."
+msgstr ""
+"Videoeditor <app>PiTiVi</app> je postaven nad multimediální platformou <link "
+"href=\"http://cs.wikipedia.org/wiki/GStreamer\"><app>GStreamer</app></link> "
+"a měl by být intuitivní, flexibilní a dobře zaintegrovaný do <link href="
+"\"http://gnome.org\"><app>GNOME</app></link>. Cílem je oslovit začátečníky i "
+"profesionály."
+
+#: C/index.page:29(p)
+msgid ""
+"This guide is intended to help you grasp the concepts behind its design and "
+"get productive quickly."
+msgstr ""
+"Tato příručka se zaměřuje na to, aby vás seznámila s konceptem jeho "
+"fungování a abyste mohli rychle začít vytvářet."
+
+#: C/index.page:32(title)
+msgid "Introduction"
+msgstr "Úvod"
+
+#: C/index.page:36(title)
+msgid "Getting Started"
+msgstr "Začínáme"
+
+#: C/index.page:40(title)
+msgid "Basic Editing with the Timeline"
+msgstr "Základní úpravy na časové ose"
+
+#: C/index.page:44(title)
+msgid "Special Effects"
+msgstr "Speciální efekty"
+
+#: C/index.page:48(title)
+msgid "Transitions"
+msgstr "Přechody"
+
+#: C/index.page:52(title)
+msgid "Exporting Your Finished Movie"
+msgstr "Export vašeho výsledného filmu"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/importing.page:50(None)
+msgid ""
+"@@image: 'figures/filechooser.png'; md5=7c99958f9d766b874c3994fd56870259"
+msgstr ""
+"@@image: 'figures/filechooser.png'; md5=7c99958f9d766b874c3994fd56870259"
+
+#: C/importing.page:17(desc)
+msgid "Importing files into your project as clips."
+msgstr "Import souborů v podobě klipů do vašeho projektu."
+
+#: C/importing.page:25(title)
+msgid "Getting media"
+msgstr "Získávání médií"
+
+#: C/importing.page:27(p)
+msgid ""
+"At the time of this writing, the only supported method is importing files "
+"from your hard drive. As such, you cannot use <app>PiTiVi</app> to capture "
+"directly from a camcorder. For DV/HDV camcorders using an IEEE 1394 "
+"connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture "
+"footage."
+msgstr ""
+"V době psaní této příručky je jediným podporovaným způsobem import souborů z "
+"pevného disku. Proto není v <app>PiTiVi</app> možné přímo zachytávat video z "
+"kamery. Pro videokamery DV/HDV používající připojení IEEE 1394 (FireWire) "
+"můžete použít aplikace <app>Kino</app> nebo <app>dvgrab</app>."
+
+#: C/importing.page:29(p)
+msgid "We would welcome good quality patches to implement the following:"
+msgstr "Uvítali bychom kvalitní příspěvky k implementaci následujícího:"
+
+#: C/importing.page:31(p)
+msgid "Capture from a DV or HDV camcorder using an IEEE 1394 connection."
+msgstr "Snímání přes kamery DV a HDV připojení pomocí IEEE 1394."
+
+#: C/importing.page:32(p)
+msgid "Capture from a webcam."
+msgstr "Snímání přes webové kamery."
+
+#: C/importing.page:33(p)
+msgid "Dumping a network/Internet stream."
+msgstr "Zachytávání vysílání ze sítě/Internetu."
+
+#: C/importing.page:34(p)
+msgid "Importing from DVD."
+msgstr "Import z DVD."
+
+#: C/importing.page:35(p)
+msgid "Importing from an audio CD."
+msgstr "Import ze zvukových CD."
+
+#: C/importing.page:36(p)
+msgid ""
+"Downloading from content providers such as <link href=\"http://www.jamendo."
+"com\">Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</"
+"link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, "
+"etc."
+msgstr ""
+"Stahování od poskytovatelů obsahu, jako jsou <link href=\"http://www.jamendo."
+"com\">Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</"
+"link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, "
+"apod."
+
+#: C/importing.page:42(title)
+msgid "Importing files"
+msgstr "Importování souborů"
+
+#: C/importing.page:44(title)
+msgid "Using the file chooser"
+msgstr "Pomocí výběru souborů"
+
+#: C/importing.page:45(p)
+msgid ""
+"You can import media into the <gui>Media Library</gui> by using the file "
+"chooser dialog, which has the advantage of letting you preview the files you "
+"want to import. To do so, use the <guiseq><gui>Library</gui><gui>Import "
+"Files...</gui></guiseq> menu, the <gui>Import Files...</gui> button on the "
+"main toolbar, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>."
+msgstr ""
+"Multimediální soubory můžete do <gui>Knihovny médií</gui> importovat pomocí "
+"dialogového okna pro výběr souborů, které je vylepšené o náhledy souborů "
+"vybraných k importu. Použijte k tomu nabídku <guiseq><gui>Knihovna</"
+"gui><gui>Importovat soubory…</gui></guiseq>, tlačítko <gui>Importovat "
+"soubory…</gui> na hlavní liště nástrojů nebo zmáčkněte <keyseq><key>Ctrl</"
+"key><key>i</key></keyseq>."
+
+#: C/importing.page:46(p)
+msgid "The following file chooser dialog window will appear:"
+msgstr "Objeví se následující dialogové okno pro výběr souboru:"
+
+#: C/importing.page:48(title) C/importing.page:49(desc)
+msgid "Filechooser dialog"
+msgstr "Dialogové okno pro výběr souboru"
+
+#: C/importing.page:52(p)
+msgid ""
+"Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the "
+"same time. You can also import all the files contained in a folder (and its "
+"subfolders) by using <guiseq><gui>Library</gui><gui>Import Folders...</gui></"
+"guiseq> in the menu bar."
+msgstr ""
+"Pro výběr více souborů naráz zmáčkněte <key>Ctrl</key> nebo <key>Shift</"
+"key>. Můžete také importovat všechny soubory uložené ve složce (a jejích "
+"podsložkách) pomocí <guiseq><gui>Knihovna</gui><gui>Importovat složky…</"
+"gui></guiseq> v hlavní nabídce."
+
+#: C/importing.page:55(title)
+msgid "Using drag and drop"
+msgstr "Metodou „táni a pusť“"
+
+#: C/importing.page:56(p)
+msgid ""
+"The concept of drag and drop is a well-established method of bridging the "
+"gap between software applications. Simply select the files you want to "
+"import in another application (such as a file manager or a multimedia app) "
+"and drag them with your mouse onto <app>PiTiVi</app>'s <gui>Media Library</"
+"gui>."
+msgstr ""
+"Koncept „táhni a pusť“ je zavedený způsob, jak překlenout více aplikací. "
+"Stačí v jiné aplikaci (třeba správci souborů nebo nějaké multimediální "
+"aplikaci) vybrat soubory, které chcete importovat, a přetáhnout je myší do "
+"<gui>Knihovny médií</gui> v <app>PiTiVi</app>."
+
+#: C/importing.page:57(p)
+msgid "This feature can be used to:"
+msgstr "Tuto funkčnost můžete využít k:"
+
+#: C/importing.page:60(p)
+msgid ""
+"Easily import music or video clips from a media player (such as "
+"<app>Rhythmbox</app> or <app>Totem</app>)."
+msgstr ""
+"Snadnému importu hudebních klipů nebo videoklipů z hudebního přehrávače "
+"(jako je <app>Rhythmbox</app> nebo <app>Totem</app>)."
+
+#: C/importing.page:63(p)
+msgid ""
+"Allow using a full-fledged file manager (such as <app>Nautilus</app>, "
+"<app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of "
+"the file chooser dialog."
+msgstr ""
+"K použití plnohodnotného správce souborů (jako je <app>Nautilus</app>, "
+"<app>Thunar</app>, <app>Dolphin</app> nebo <app>Konqueror</app>) místo "
+"dialogového okna pro výběr souboru."
+
+#: C/importing.page:66(p)
+msgid "Import a combination of multiple files and folders at the same time."
+msgstr "Importu kombinace více souborů a složek naráz."
+
+#: C/importing.page:69(p)
+msgid ""
+"Leverage the searching capability of another application (such as <app>GNOME "
+"Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
+"<app>GNOME Search Tool</app>, etc.)."
+msgstr ""
+"Využítí schopnosti vyhledávání v jiných aplikacích (jako je <app>GNOME "
+"Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
+"<app>GNOME Search Tool</app> aj.)."
+
+#: C/importingmpegts.page:14(desc)
+msgid ""
+"How to convert .mts and .m2ts files to a format that can be parsed by "
+"GStreamer and PiTiVi."
+msgstr ""
+"Jak převést soubory .mts a .m2ts do formátu, který umí zpracovat GStreamer a "
+"PiTiVi."
+
+#. TODO: remove this manual page when gstreamer supports mpeg-ts files !
+#: C/importingmpegts.page:22(title)
+msgid "Dealing with AVCHD / MPEG-TS files"
+msgstr "Práce se soubory AVCHD / MPEG-TS"
+
+#: C/importingmpegts.page:24(p)
+msgid ""
+"At the time being, MPEG Transport Stream files (usually with file extensions "
+"such as .mts, .m2ts and sometimes .mpg or .mpeg), such as those used by some "
+"HD camcorders, cannot be played reliably with <app>GStreamer</app>. As such, "
+"you may want to remux them in a different container format by using "
+"<app>ffmpeg</app>. To convert losslessly to an MPEG4 container, you can use "
+"the following command:"
+msgstr ""
+"V současné době nejde soubory MPEG Transport Stream (obvykle s příponou "
+"souboru .mts, .m2ts a někdy i .mpg nebo .mpeg), které jsou používány u "
+"některých videokamer HD, spolehlivě přehrát na platformě <app>GStreamer</"
+"app>. Z toho důvodu je možná budete chtít převést do jiného formátu "
+"kontejneru pomocí programu <app>ffmpeg</app>. Pro bezeztrátový převod do "
+"kontejneru MPEG4 můžete použít následující příkaz:"
+
+#: C/importingmpegts.page:25(code)
+#, no-wrap
+msgid "ffmpeg -i your_clip.MTS -vcodec copy -acodec copy -sn test.mp4"
+msgstr "ffmpeg -i váš_klip.MTS -vcodec copy -acodec copy -sn pokus.mp4"
+
+#: C/gstreamer.page:17(desc)
+msgid ""
+"Ensuring you have the proper multimedia codecs and plugins installed for "
+"maximum compatibility."
+msgstr ""
+"Ujistěte se, že máte kvůli úplné kompatibilitě nainstalovány příslušné "
+"multimediální kodeky a zásuvné moduly."
+
+#: C/gstreamer.page:25(title)
+msgid "Gstreamer and compatibility"
+msgstr "Gstreamer a kompatibilita"
+
+#: C/gstreamer.page:27(p)
+msgid ""
+"A great strength in <app>PiTiVi</app> lies in its use of the <app>GStreamer</"
+"app> multimedia framework. <app>GStreamer</app> is used by dozens of "
+"multimedia applications across desktop environments, operating systems and "
+"architectures."
+msgstr ""
+"Velká síla <app>PiTiVi</app> spočívá v tom, že používá multimediální "
+"platformu <app>GStreamer</app>. <app>GStreamer</app> je používán řadou "
+"multimediálních aplikací napříč různými pracovními prostředími, operačními "
+"systémy a architekturami."
+
+#: C/gstreamer.page:28(p)
+msgid "This essentially means three things to you, the user:"
+msgstr "Pro uživatele to v zásadě znamená tři věci:"
+
+#: C/gstreamer.page:31(p)
+msgid ""
+"You can, in theory, import pretty much any media file supported by "
+"<app>GStreamer</app> (but see the next section)."
+msgstr ""
+"Teoreticky můžete importovat velké množství multimediálních souborů "
+"podporovaných platformou <app>GStreamer</app> (ale viz následující oddíl)."
+
+#: C/gstreamer.page:34(p)
+msgid ""
+"You can render your projects using any supported container and codec "
+"combination from <app>GStreamer</app>."
+msgstr ""
+"Výstup svého projektu můžete nechat zpracovat pomocí libovolné kombinace "
+"podporovaného kontejneru a kodeku z platformy <app>GStreamer</app>."
+
+#: C/gstreamer.page:37(p)
+msgid ""
+"You need a very recent version of <app>GStreamer</app> to maximize "
+"<app>PiTiVi's</app> capabilities and reduce the possibilities of bugs. This "
+"is because the <app>PiTiVi</app> project developers work hard in fixing "
+"problems directly in <app>GStreamer</app> (instead of putting temporary "
+"workarounds inside <app>PiTiVi</app>)."
+msgstr ""
+"Abyste získali maximální funkčnost <app>PiTiVi</app> a přitom omezily možné "
+"chyby na minimum, potřebujete nejnovější verzi platformy </"
+"app>GStreamer<app>. To je z toho důvodu, že vývojáři projektu </"
+"app>PiTiVi<app> usilovně pracují na opravách problémů přímo v platformě </"
+"app>GStreamer<app> (místo toho, aby je obcházeli v rámci </app>PiTiVi<app>)."
+
+#: C/gstreamer.page:42(title)
+msgid "A word about editing-friendly codecs"
+msgstr "Něco o vhodnosti kodeků pro úpravy"
+
+#: C/gstreamer.page:43(p)
+msgid ""
+"Some formats, like <em>MPEG</em>, are oriented towards playback only, and do "
+"not compress each frame independently. While it is the goal of <app>PiTiVi</"
+"app> to support working with these files, certain operations (like rapid "
+"seeking) will not perform as well as they would with frame-independent "
+"compressed video (such as <em>MJPEG</em> or <em>DV</em>)."
+msgstr ""
+"Některé formáty, jako <em>MPEG</em> jsou cílené pouze na postupné přehrávání "
+"a nekomprimují každý snímek nezávisle. I když se <app>PiTiVi</app> snaží "
+"podporovat práci s takovýmito soubory, některé operace (jako rychlé "
+"nastavení pozice) nebudou tak výkonné, jako u videí s nezávislou komprimací "
+"snímků (jako <em>MJPEG</em> nebo <em>DV</em>)."
+
+#: C/gstreamer.page:47(title)
+msgid "The Good, the Bad and the Ugly"
+msgstr "Sady Good, Bad a Ugly"
+
+#: C/gstreamer.page:48(p)
+msgid ""
+"<app>GStreamer</app> plugins come into three categories: good, bad and ugly. "
+"To maximize your experience, you may need to install some of all of these "
+"plugins to ensure compatibility with your media files. Whether or not you "
+"install them is up to you, and may depend on your country's jurisdiction "
+"regarding software patents."
+msgstr ""
+"Zásuvné moduly pro <app>GStreamer</app> jsou rozděleny do tří kategorií: "
+"Good, Bad a Ugly. Pokud chcete mít co nejvíce bezproblémové používání, "
+"nainstalujte je všechny, abyste mohli přehrávat co nejvíce typů "
+"multimediálních souborů. Zda si je nainstalujete nebo ne, záleží jen na vás "
+"a patentových zákonech ve vaší zemi."
+
+#: C/gstreamer.page:50(p)
+msgid ""
+"The \"Good\" plugins are good quality plugins under the LGPL license. These "
+"plugins are considered safe and recommended at any time."
+msgstr ""
+"Zásuvné moduly „Good“ (dobré) jsou zásuvné moduly dobré kvality s licencí "
+"LGPL. Jsou považovány za bezpečné a doporučovány za všech situací."
+
+#: C/gstreamer.page:51(p)
+msgid ""
+"The \"Bad\" plugins are plugins whose code is not of good enough quality, or "
+"are not considered tested well enough. The licensing may or may not be LGPL."
+msgstr ""
+"Zásuvné moduly „Bad“ (špatné) nemají dostatečně kvalitní kód a nejsou "
+"považovány za řádně otestované. Licence může nebo nemusí být LGPL."
+
+#: C/gstreamer.page:52(p)
+msgid ""
+"The \"Ugly\" plugins are good quality plugins whose license is not LGPL or "
+"with licensing issues."
+msgstr ""
+"Zásuvné moduly „Ugly“ (ošklivé) mají dobrou kvalitu, ale jejich licence není "
+"LGPL nebo mají nějaké licenční problémy."
+
+#: C/gstreamer.page:54(p)
+msgid ""
+"In addition to the Good, Bad and Ugly plugins, you may want to install "
+"gstreamer-ffmpeg to have access to ffmpeg's set of codecs."
+msgstr ""
+"Mimo zásuvné moduly Good, Bad a Ugly si můžete nainstalovat gstreamer-"
+"ffmpeg, který vám zpřístupní sadu kodeků ffmpeg."
+
+#: C/gstreamer.page:59(title)
+msgid "Image file formats"
+msgstr "Formáty souborů s obrázky"
+
+#: C/gstreamer.page:60(p)
+msgid ""
+"While it is not feasible to list every possible combination of supported "
+"video or audio formats, it is however possible to list the static image "
+"formats that can be imported: JPEG, PNG, JPEG 2000, PNM and SVG."
+msgstr ""
+"I když není proveditelné vypsat všechny možné kombinace podporovaných "
+"formátů videa a zvuku, je možné uvést seznam formátů statických obrázků, "
+"které lze importovat: JPEG, PNG, JPEG 2000, PNM a SVG."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/fadeinfadeout.page:33(None)
+msgid "@@image: 'figures/fadestep1.png'; md5=4bdb320d2ef57e3d09c67fcdba8ab103"
+msgstr "@@image: 'figures/fadestep1.png'; md5=4bdb320d2ef57e3d09c67fcdba8ab103"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/fadeinfadeout.page:36(None)
+msgid "@@image: 'figures/fadestep2.png'; md5=c4bafbd98aee44ec93cb41c857b501c5"
+msgstr "@@image: 'figures/fadestep2.png'; md5=c4bafbd98aee44ec93cb41c857b501c5"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/fadeinfadeout.page:42(None)
+msgid "@@image: 'figures/fadestep3.png'; md5=5aa08a9539d2d7bb6e39be379e88d778"
+msgstr "@@image: 'figures/fadestep3.png'; md5=5aa08a9539d2d7bb6e39be379e88d778"
+
+#: C/fadeinfadeout.page:17(desc)
+msgid "Fading video to black or to a layer below, or fading audio."
+msgstr "Prolnutí videa do černé nebo do nižší vrstvy nebo prolnutí zvuku."
+
+#: C/fadeinfadeout.page:25(title)
+msgid "Fade-ins and fade-outs"
+msgstr "„Prolnutí do“ a „prolnutí z“"
+
+#: C/fadeinfadeout.page:27(p)
+msgid ""
+"You can do “fades” of single clip by using <app>PiTiVi</app>'s video mixing "
+"capabilities, which relies on keyframes controlling each clip's opacity (see "
+"also: <link xref=\"layers\">Understanding layers</link>)."
+msgstr ""
+"Pomocí funkce mixování videa v <app>PiTiVi</app> můžete vytvořit „prolnutí“ "
+"samostatného klipu. Princip je založen na klíčových snímcích, které řídí "
+"krytí klipu (viz také <link xref=\"layers\">Vysvětlení vrstev</link>)."
+
+#: C/fadeinfadeout.page:28(p)
+msgid "To fade a clip to black:"
+msgstr "Aby se klip prolínal do černé:"
+
+#: C/fadeinfadeout.page:31(p)
+msgid ""
+"Double-click on its opacity keyframe curve where you want the fade-out to "
+"start (or the fade-in to end)."
+msgstr ""
+"Dvojitě klikněte na křivku klíčových snímku pro krytí v místě, kde má "
+"„prolnutí z“ začínat (nebo „prolnutí do“ končit)."
+
+#: C/fadeinfadeout.page:40(p)
+msgid "Click and drag the last (or first) keyframe of the clip downwards."
+msgstr ""
+"Klikněte na poslední (nebo první) klíčový snímek klipu a přetáhněte jej níž."
+
+#: C/effectsanimation.page:13(desc)
+msgid "Changing the properties of effects over time"
+msgstr "Změna vlastností efektů v průběhu času"
+
+#: C/effectsanimation.page:19(title)
+msgid "Animating effects with Keyframes"
+msgstr "Animované efekty s klíčovými snímky"
+
+#: C/effectsanimation.page:21(p)
+msgid ""
+"This feature is not yet implemented, but is planned to be completed as a "
+"GSoC 2011 project."
+msgstr ""
+"Tato funkce není zatím implementována, ale je plánováno její dokončení v "
+"rámci projektu GSoC 2011."
+
+#: C/effects.page:14(desc)
+msgid "Adding special effects to your video and audio"
+msgstr "Přidávání speciálních efektů do vašeho videa a zvuku"
+
+#: C/effects.page:20(title)
+msgid "Introduction to effects"
+msgstr "Úvod do efektů"
+
+#: C/effects.page:22(p)
+msgid ""
+"<app>PiTiVi</app> offers a wide variety of video and audio effects to spice "
+"up your movies. Effects are non destructive: they are only applied to the "
+"resulting rendered movie and do not affect your source files."
+msgstr ""
+"<app>PiTiVi</app> nabízí širokou paletu efektů videa a zvuku pro vylepšení "
+"vašich filmů. Efekty jsou nedestruktivní: použijí se až během závěrečného "
+"vykreslování filmu a nijak nezasahují do původních zdrojových souborů."
+
+#: C/effects.page:24(p)
+msgid ""
+"Available effects depend on the software installed on your computer. If you "
+"don't see anything (or only a handful of effects) in <app>PiTiVi</app>'s "
+"effect library, make sure that the following are installed on your system:"
+msgstr ""
+"Dostupnost efektů závisí na softwaru nainstalovaném ve vašem počítači. "
+"Jestliže v knihovně efektů <app>PiTiVi</app> nevidíte žádné efekty, nebo jen "
+"hrstku, zkontrolujte, zda máte nainstalováno následující:"
+
+#: C/effects.page:26(p)
+msgid "The <link xref=\"gstreamer\">appropriate GStreamer plugins</link>"
+msgstr ""
+"<link xref=\"gstreamer\">Příslušné zásuvné moduly platformy GStreamer</link>"
+
+#: C/effects.page:27(p)
+msgid "frei0r-plugins"
+msgstr "frei0r-plugins"
+
+#: C/effects.page:28(p)
+msgid "gnome-video-effects"
+msgstr "gnome-video-effects"
+
+#: C/effects.page:33(title)
+msgid "Adding and removing effects to clips"
+msgstr "Přidávání a odebírání efektů u klipů"
+
+#: C/effects.page:34(p)
+msgid "To add an effect:"
+msgstr "Pro přidání efektu:\t"
+
+#: C/effects.page:36(p)
+msgid "Select an existing clip on the timeline"
+msgstr "Vyberte na časové ose klip"
+
+#: C/effects.page:37(p)
+msgid "Choose an effect in the effect library"
+msgstr "V knihovně efektů zvolte efekt"
+
+#: C/effects.page:38(p)
+msgid ""
+"Drag the chosen effect into the <gui>Clip configuration</gui> pane's "
+"<gui>Effects</gui> section"
+msgstr ""
+"Přetáhněte zvolený efekt na panel <gui>Nastavení klipu</gui> v části "
+"<gui>Efekty</gui>"
+
+#: C/effects.page:40(p)
+msgid ""
+"To remove an effect on a selected clip, select it in the clip's effect list "
+"and click the <gui>Remove</gui> button."
+msgstr ""
+"Když chcete u vybraného klipu efekt odebrat, vyberte jej v seznamu efektů "
+"daného klipu a klikněte na tlačítko <gui>Odebrat</gui>."
+
+#: C/effects.page:43(title)
+msgid "Toggling effects on and off"
+msgstr "Vypínání a zapínání efektů"
+
+#: C/effects.page:44(p)
+msgid ""
+"If you want to temporarily disable an effect (to compare with and without "
+"the effect, or for performance reasons), click the corresponding checkbox in "
+"the effect properties pane."
+msgstr ""
+"Pokud potřebujete efekt jen dočasně zakázat (abyste si porovnali verzi s a "
+"bez efektu, nebo z výkonnostních důvodů), klikněte na příslušné zaškrtávací "
+"políčko v panelu s vlastnostmi efektů."
+
+#: C/effects.page:46(p)
+msgid ""
+"Currently, effects are applied on a \"per-clip\" basis. It is not yet "
+"possible to apply effects to timeline layers."
+msgstr ""
+"V současnosti se efekty vztahují na jednotlivé klipy. Není možné použít "
+"efekty na celou vrstvu v časové ose."
+
+#: C/crossfading.page:18(desc)
+msgid "Making two clips fade into each other."
+msgstr "Vytvoření vzájemného prolnutí dvou klipů."
+
+#: C/crossfading.page:26(title)
+msgid "Crossfading clips"
+msgstr "Prolínání klipů"
+
+#: C/crossfading.page:28(p)
+msgid ""
+"To do a crossfade between two clips on the same layer, simply drag one of "
+"the clips onto the other so that it overlaps. The overlapping region will be "
+"used for transitions (crossfade by default) between the two clips. You can "
+"adjust the length of the transition by moving or trimming the clips."
+msgstr ""
+"Jestli chcete vytvořit prolnutí dvou klipů ve stejné vrstvě, jednoduše "
+"přetáhněte jeden klip na druhý, tak aby se překrývaly. Překrývající se "
+"oblast bude použita k přechodu (výchozí je prolnutí) mezi těmito dvěma "
+"klipy. Délku přechodu můžete upravit posunutím nebo ustřihnutím klipů."
+
+#: C/crossfading.page:30(p)
+msgid ""
+"Crossfades are achieved using <app>PiTiVi</app>'s video mixing features, "
+"which use keyframes to control the opacity of clips."
+msgstr ""
+"Prolnutí je dosaženo použitím mixovací funkce <app>PiTiVi</app>, která "
+"používá klíčové snímky k řízení krytí/průhlednosti klipů."
+
+#: C/crossfading.page:31(p)
+msgid ""
+"This also means that if you set opacity keyframes for that clip, they will "
+"be taken into account for the crossfade."
+msgstr ""
+"To mimo jiné znamená, že když u klíčového snímku nastavíte krytí pro klip, "
+"bude to vzato v úvahu pro prolínání."
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/codecscontainers.page:26(None)
+msgid ""
+"@@image: 'figures/codecscontainers.jpg'; md5=e43e6a92cda311d0cd8c24fb0df67a17"
+msgstr ""
+"@@image: 'figures/codecscontainers.jpg'; md5=e43e6a92cda311d0cd8c24fb0df67a17"
+
+#: C/codecscontainers.page:16(desc)
+msgid ""
+"What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? "
+"Learn about codecs and container formats here."
+msgstr ""
+"Jaký je rozdíl mezi OGG a Vorbis? Mezi AVI a DivX? Mezi x264 a H.264? Zde se "
+"dozvíte o kodecích a formátech kontejnerů."
+
+#: C/codecscontainers.page:19(title)
+msgid "Understanding codecs and containers"
+msgstr "Vysvětlení kodeků a kontejnerů"
+
+#: C/codecscontainers.page:20(p)
+msgid ""
+"The following is one of the most complex topics of video editing. Many "
+"people do not know the distinction between codecs and container file "
+"formats, thanks in part to the general lack of standardization, confusing "
+"marketing terms and filename extensions."
+msgstr ""
+"Jedná se o jedno z nejkomplexnějších témat z oblasti úprav videa. Spousta "
+"lidí nezná rozdíl mezi kodeky a formáty kontejnerů, z části díky obecným "
+"nedostatkům ve standardizaci a z části matením marketingových výrazů a "
+"přípon souborů."
+
+#: C/codecscontainers.page:21(p)
+msgid ""
+"This guide is an attempt at clarifying this distinction without going into "
+"technical details. If you want to learn more about containers and codecs, "
+"you should probably look at Wikipedia's page on <link href=\"http://en."
+"wikipedia.org/wiki/Container_format_(digital)\">containers</link> and <link "
+"href=\"http://en.wikipedia.org/wiki/Codec\">codecs</link>."
+msgstr ""
+"Tato příručka je pokusem objasnit tyto rozdíly bez zacházení do přílišných "
+"technických podrobností. Jestli se chcete o kontejnerech a kodecích naučit "
+"více, měli byste se pro začátek podívat na stránky Wikipedie <link href="
+"\"http://cs.wikipedia.org/wiki/Multimedi%C3%A1ln%C3%AD_kontejner"
+"\">kontejnery</link> a <link href=\"http://cs.wikipedia.org/wiki/Kodek"
+"\">kodeky</link>."
+
+#: C/codecscontainers.page:22(p)
+msgid ""
+"Basically, a container is what we typically associate with the file format. "
+"Containers \"contain\" the various components of a video: the stream of "
+"images, the sound, and anything else. For example, you could have multiple "
+"soundtracks and subtitles included in a video file, if the container format "
+"allows it. Example of popular containers are OGG, Matroska, AVI, MPEG."
+msgstr ""
+"Kontejner je v zásadě to, co si obvykle představujeme pod formátem souboru. "
+"Kontejner „obsahuje“ různé součásti videa: obrazovou část, zvukovou stopu a "
+"cokoliv dalšího. Například můžete u videa mít přiloženo, pokud to daný "
+"kontejner umí, několik zvukových stop a několik titulků v různých jazycích. "
+"Příklady populárních kontejnerů jsou OGG, Matroska, AVI, MPEG."
+
+#: C/codecscontainers.page:23(p)
+msgid ""
+"Codecs are ways of \"coding\" and \"decoding\" streams. Their job is "
+"typically to compress data (and decompress it when playing it back) so that "
+"you can store and transmit files with a smaller filesize. There are many "
+"codecs available out there, each with their strengths, weaknesses and "
+"peculiarities, and choosing the right codec with the right settings for the "
+"right situation is a form of art."
+msgstr ""
+"Kodeky jsou způsob, jak „kódovat“ a „dekódovat“ datový proud. Jejich úkolem "
+"je typicky data komprimovat (a při přehrávání nazpět dekomprimovat), díky "
+"čemuž můžete uchovávat a přenášet soubory o menší velikosti. Kodeků existuje "
+"celá řada, každý z nich má své silné a slabé stránky a vychytávky. Zvolit "
+"správný kodek se správným nastavením pro správnou situaci je tak trochu "
+"uměním."
+
+#: C/codecscontainers.page:24(p)
+msgid "The following figure should make things clearer:"
+msgstr "Následující obrázek by vám to měl podat názorně:"
+
+#: C/cheatsheet.page:20(title)
+msgid "Keyboard shortcuts and cheatsheet"
+msgstr "Klávesové zkratky a finty"
+
+#: C/cheatsheet.page:22(p)
+msgid ""
+"This page is a list of important shortcuts to access commonly used or hidden "
+"features. Take the time to get familiar with them as they will improve your "
+"productivity tremendously."
+msgstr ""
+"Na této stránce najdete důležité klávesové zkratky pro přístup k "
+"nejpoužívanějším a skrytým funkcím. Zkuste věnovat trochu času seznámení s "
+"nimi a vaše produktivita práce významně vzroste."
+
+#: C/cheatsheet.page:25(title)
+msgid "General"
+msgstr "Obecné"
+
+#: C/cheatsheet.page:27(p)
+msgid "<key>Ctrl+N</key>: Create a new project"
+msgstr "<key>Ctrl+N</key>: Vytvořit nový projekt"
+
+#: C/cheatsheet.page:28(p)
+msgid "<key>Ctrl+O</key>: Open a project file"
+msgstr "<key>Ctrl+O</key>: Otevřít projektový soubor"
+
+#: C/cheatsheet.page:29(p)
+msgid "<key>Ctrl+S</key>: Save the current project"
+msgstr "<key>Ctrl+S</key>: Uložit aktuální projekt"
+
+#: C/cheatsheet.page:30(p)
+msgid "<key>Ctrl+Q</key>: Quit the application"
+msgstr "<key>Ctrl+Q</key>: Ukončit aplikaci"
+
+#: C/cheatsheet.page:31(p)
+msgid "<key>Ctrl+Z</key>: Undo"
+msgstr "<key>Ctrl+Z</key>: Zpět "
+
+#: C/cheatsheet.page:32(p)
+msgid "<key>Ctrl+Y</key>: Redo"
+msgstr "<key>Ctrl+Y</key>: Znovu"
+
+#: C/cheatsheet.page:33(p)
+msgid "<key>F11</key>: Toggle fullscreen mode"
+msgstr "<key>F11</key>: Přepnout režim celé obrazovky"
+
+#: C/cheatsheet.page:34(p)
+msgid "<key>F1</key>: Show the user manual"
+msgstr "<key>F1</key>: Zobrazit uživatelskou příručku"
+
+#: C/cheatsheet.page:41(p)
+msgid "<key>Enter</key>: Preview (playback) the selected clip"
+msgstr "<key>Enter</key>: Přehrát v náhledu vybraný klip"
+
+#: C/cheatsheet.page:42(p)
+msgid "<key>Insert</key>: Insert the selected clips into the timeline"
+msgstr "<key>Insert</key>: Vložit vybrané klipy na časovou osu"
+
+#: C/cheatsheet.page:43(p)
+msgid "<key>Ctrl+Delete</key>: Remove the selected clips from the project"
+msgstr "<key>Ctrl+Delete</key>: Odstranit vybrané klipy z projektu"
+
+#: C/cheatsheet.page:50(p)
+msgid "<key>Spacebar</key>: Toggle playback."
+msgstr "<key>Spacebar</key>: Spustit/zastavit přehrávání."
+
+#: C/cheatsheet.page:51(p)
+msgid ""
+"<key>S</key>: Split the clips at the current playhead position. If there are "
+"selected clips, only those will be split."
+msgstr ""
+"<key>S</key>: Rozdělit klipy v místě aktuální pozice přehrávání. Pokud jsou "
+"některé klipy vybrané, rozdělí se jen tyto."
+
+#: C/cheatsheet.page:52(p)
+msgid "<key>Delete</key>: Remove selected clips from the timeline."
+msgstr "<key>Delete</key>: Odebrat vybrané klipy z časové osy."
+
+#: C/cheatsheet.page:53(p)
+msgid ""
+"<key>←</key> and <key>→</key>: Seek one frame backwards or forwards. This "
+"depends on your project framerate."
+msgstr ""
+"<key>←</key> a <key>→</key>: Posunout se o jeden snímek zpět nebo vpřed. "
+"Závisí to na snímkové rychlosti vašeho projektu."
+
+#: C/cheatsheet.page:54(p)
+msgid ""
+"<key>Ctrl+←</key> and <key>Ctrl+→</key>: Seek one clip backwards or forwards."
+msgstr ""
+"<key>Ctrl+←</key> a <key>Ctrl+→</key>: Posunout se o jeden klip zpět nebo "
+"vpřed."
+
+#: C/cheatsheet.page:55(p)
+msgid ""
+"<key>Shift+←</key> and <key>Shift+→</key>: Seek one second backwards or "
+"forwards."
+msgstr ""
+"<key>Shift+←</key> an <key>Shift+→</key>: Posunout o sekundu zpět nebo vpřed."
+
+#: C/cheatsheet.page:56(p)
+msgid ""
+"<key>Ctrl++</key> and <key>Ctrl+-</key>: Zoom in or zoom out. You can also "
+"use <key>Ctrl</key> with the mouse wheel to control the zoom more "
+"efficiently."
+msgstr ""
+"<key>Ctrl++</key> a <key>Ctrl+-</key>: Přiblížit nebo oddálit. K "
+"efektivnějšímu ovládání můžete použít také <key>Ctrl</key> spolu s kolečkem "
+"myši."
+
+#: C/cheatsheet.page:57(p)
+msgid "<key>Ctrl+0</key>: Adjust the zoom to fit the timeline."
+msgstr ""
+"<key>Ctrl+0</key>: Nastavit přiblížení, aby odpovídalo optimálně časové ose."
+
+#: C/cheatsheet.page:58(p)
+msgid "<key>Shift</key>+drag: Ripple edit."
+msgstr "<key>Shift</key>+tažení: Řetězová úprava."
+
+#: C/cheatsheet.page:59(p)
+msgid "<key>Ctrl</key>+drag: Roll edit."
+msgstr "<key>Ctrl</key>+tažení: Svitková úprava."
+
+#: C/cheatsheet.page:60(p)
+msgid "<key>K</key>: Add a property keyframe at the current playhead position."
+msgstr ""
+"<key>K</key>: Přidat klíčový snímek vlastnosti na místo aktuální pozice "
+"přehrávání."
+
+#: C/cheatsheet.page:61(p)
+msgid ""
+"<key>.</key> and <key>,</key>: Go to the next or previous property keyframe."
+msgstr ""
+"<key>.</key> a <key>,</key>: Přejít na následující nebo předchozí klíčový "
+"snímek vlastnosti."
+
+#: C/about.page:17(desc)
+msgid "Current state of this user manual and call for participation."
+msgstr "Aktuální stav této uživatelské příručky a výzva ke spolupráci."
+
+#: C/about.page:25(title)
+msgid "About this manual"
+msgstr "O této příručce"
+
+#: C/about.page:26(p)
+msgid "This user manual is written and maintained by Jean-François Fortin Tam."
+msgstr "Tuto příručku napsal a udržuje Jean-François Fortin Tam."
+
+#: C/about.page:28(title)
+msgid "Work in progress"
+msgstr "Zatím rozpracováno"
+
+#: C/about.page:29(p)
+msgid ""
+"You may encounter unwritten portions due to features that have not yet been "
+"implemented in PiTiVi at the time of writing."
+msgstr ""
+"Můžete narazit na nedopsané části, protože daná funkce nebyla v době psaní "
+"příručky v PiTiVi ještě implementována."
+
+#: C/about.page:30(p)
+msgid ""
+"You may also encounter smaller areas which have been documented in this "
+"manual but have not been implemented in PiTiVi – those are areas where the "
+"design and expected user interaction are quite narrow/certain."
+msgstr ""
+"Také můžete narazit na drobnosti, které jsou v této příručce zdokumentovány, "
+"ale zatím nejsou v PiTiVi zcela implementovány – jedná se o situace, kdy "
+"jsou návrh a očekávané uživatelské rozhraní již zcela jisté."
+
+#: C/about.page:34(title)
+msgid "Patches welcome"
+msgstr "Příspěvky vítány"
+
+#: C/about.page:35(p)
+msgid ""
+"If you happen to find errors, missing information or unclear passages in "
+"this manual, please feel free to submit corrections. You can find contact "
+"information on <link href=\"http://jeff.ecchi.ca/\">my personal website</"
+"link>. You can also <link href=\"https://bugzilla.gnome.org/enter_bug.cgi?"
+"product=pitivi;component=documentation\">file bugs on the “documentation” "
+"component in our bug tracker</link>."
+msgstr ""
+"Pokud najdete v této příručce chybu, chybějící informaci nebo nejasnou "
+"pasáž, věnujte prosím chvilku zaslání nápravy. Kontaktní informace najdete "
+"na <link href=\"http://jeff.ecchi.ca/\">mých osobních webových stránkách</"
+"link>. Můžete také <link href=\"https://bugzilla.gnome.org/enter_bug.cgi?"
+"product=pitivi;component=documentation\">vyplnit chybové hlášení pro "
+"komponentu „dokumentace“ v systému pro sledování chyb</link>."
+
+#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
+#: C/index.page:0(None)
+msgid "translator-credits"
+msgstr "Marek Černocký <marek@manet.cz>"
