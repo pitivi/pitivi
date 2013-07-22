@@ -434,9 +434,9 @@ class SimplePipeline(Signallable, Loggable):
             raise PipelineError("Couldn't get duration: Returned None")
 
 
-class Pipeline(GES.TimelinePipeline, SimplePipeline):
+class Pipeline(GES.Pipeline, SimplePipeline):
     """
-    Helper to handle GES.TimelinePipeline through the SimplePipeline API
+    Helper to handle GES.Pipeline through the SimplePipeline API
     and handle the Seeker properly
 
     Signals:
@@ -459,7 +459,7 @@ class Pipeline(GES.TimelinePipeline, SimplePipeline):
     }
 
     def __init__(self, pipeline=None):
-        GES.TimelinePipeline.__init__(self)
+        GES.Pipeline.__init__(self)
         SimplePipeline.__init__(self, self, self)
 
         self._seeker = Seeker()
@@ -470,7 +470,7 @@ class Pipeline(GES.TimelinePipeline, SimplePipeline):
         return self._timeline.get_duration()
 
     def add_timeline(self, timeline):
-        if GES.TimelinePipeline.add_timeline(self, timeline):
+        if GES.Pipeline.add_timeline(self, timeline):
             self._timeline = timeline
             return True
 
