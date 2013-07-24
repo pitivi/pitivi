@@ -224,6 +224,12 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
             self.pack_start(self.slider, fill=True, expand=True, padding=0)
             self.slider.show()
             self.slider.props.draw_value = False
+            # Abuse GTK3's progressbar "fill level" feature to provide
+            # a visual indication of the default value on property sliders.
+            if default is not None:
+                self.slider.set_restrict_to_fill_level(False)
+                self.slider.set_fill_level(float(default))
+                self.slider.set_show_fill_level(True)
 
         if upper is None:
             upper = GObject.G_MAXDOUBLE
