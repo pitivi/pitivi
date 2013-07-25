@@ -1012,8 +1012,7 @@ class Timeline(Gtk.VBox, Zoomable):
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
         Zoomable.setZoomLevel(nearest_zoom_level)
-        self.bTimeline.props.snapping_distance = \
-            Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband)
+        self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
         # Only do this at the very end, after updating the other widgets.
         self.zoomed_fitted = True
@@ -1190,8 +1189,7 @@ class Timeline(Gtk.VBox, Zoomable):
     def zoomChanged(self):
         if self._settings and self.bTimeline:
             # zoomChanged might be called various times before the UI is ready
-            self.bTimeline.props.snapping_distance = \
-                Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
+            self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
         self.updateHScrollAdjustments()
 
@@ -1239,8 +1237,7 @@ class Timeline(Gtk.VBox, Zoomable):
 
     def _snapDistanceChangedCb(self, settings):
         if self.bTimeline:
-            self.bTimeline.props.snapping_distance = \
-                Zoomable.pixelToNs(settings.edgeSnapDeadband)
+            self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
     def _projectChangedCb(self, app, project, unused_fully_loaded):
         """
