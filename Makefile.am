@@ -12,12 +12,10 @@ EXTRA_DIST = \
 	NEWS \
 	AUTHORS \
 	RELEASE \
-	gnome-doc-utils.make \
     pitivi.xml
 
 
 DISTCLEANFILES =                \
-        gnome-doc-utils.make    \
         intltool-extract        \
         intltool-merge          \
         intltool-update

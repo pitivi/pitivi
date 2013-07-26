@@ -62,11 +62,11 @@ fi
 
 toplevel_check $srcfile
 
-echo "+ checking for GNOME Doc Utils"
-# gnome-doc-prepare is a gnome_doc_utils tool which creates a link to
-# gnome-doc-utils.make, which is required to build the user manual.
-tool_run "gnome-doc-prepare" "--automake" \
-    "echo Install gnome-doc-utils if gnome-doc-prepare is missing."
+GNOMEDOC=`which yelp-build`
+if test -z $GNOMEDOC; then
+  echo "Please intall the yelp-tools package"
+  exit 1
+fi
 
 # This is needed to create ltmain.sh for our C bits.
 tool_run "$libtoolize" "--copy --force"

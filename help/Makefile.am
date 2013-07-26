@@ -1,9 +1,7 @@
-include $(top_srcdir)/gnome-doc-utils.make
+@YELP_HELP_RULES@
 
-dist-hook: doc-dist-hook
-
-DOC_ID = pitivi
-DOC_FIGURES = \
+HELP_ID = pitivi
+HELP_MEDIA = \
     figures/codecscontainers.jpg\
     figures/fadestep1.png \
     figures/fadestep2.png \
@@ -22,7 +20,7 @@ DOC_FIGURES = \
     figures/ruler.png \
     figures/trimming-individual.png
 
-DOC_PAGES = \
+HELP_FILES = \
     about.page \
     cheatsheet.page \
     codecscontainers.page \
@@ -56,7 +54,7 @@ DOC_PAGES = \
     usingclips.page \
     welcomedialog.page
 
-DOC_LINGUAS = de el es fr sl uk
+HELP_LINGUAS = cs de el es fr sl uk
 
 html:
 	mkdir -p html

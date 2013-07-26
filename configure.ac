@@ -72,7 +72,7 @@ AC_CONFIG_FILES([bin/pitivi], [chmod +x bin/pitivi])
 
 PKG_CHECK_MODULES([cairo], [cairo])
 
-GNOME_DOC_INIT([0.18.0])
+YELP_HELP_INIT
 
 dnl output stuff
 AC_OUTPUT(

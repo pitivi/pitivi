@@ -45,7 +45,7 @@ RELEASES_URL = 'http://pitivi.org/releases.txt'
 if _in_devel():
     APPMANUALURL_OFFLINE = 'ghelp://%s' % os.path.join(_get_root_dir(), 'help/C')
 else:
-    APPMANUALURL_OFFLINE = 'ghelp:pitivi'
+    APPMANUALURL_OFFLINE = 'help:pitivi'
 
 APPMANUALURL_ONLINE = 'http://www.pitivi.org/manual'
 

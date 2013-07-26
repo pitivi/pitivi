@@ -15,7 +15,6 @@ help/*/*.mo
 help/*/*.page
 !help/C/*.page
 
-gnome-doc-utils.make
 install-sh
 libtool
 locale/
