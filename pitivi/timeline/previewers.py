@@ -662,7 +662,8 @@ class AudioPreviewer(Clutter.Actor, Zoomable, Loggable):
     def _launchPipeline(self):
         self.debug('Now generating waveforms for "%s"' % filename_from_uri(self._uri))
         self.peaks = None
-        self.pipeline = Gst.parse_launch("uridecodebin uri=" + self._uri + " ! audioconvert ! level interval=10000000 post-messages=true ! fakesink qos=false")
+        self.pipeline = Gst.parse_launch("uridecodebin caps=audio/x-raw uri=" + self._uri + " ! audioconvert ! level name=wavelevel interval=10000000 post-messages=true ! fakesink qos=false")
+        self._level = self.pipeline.get_by_name("wavelevel")
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
 
@@ -733,39 +734,55 @@ class AudioPreviewer(Clutter.Actor, Zoomable, Loggable):
             self.adapter.stop()
 
     def _messageCb(self, bus, message):
-        s = message.get_structure()
-        p = None
-        if s:
-            p = s.get_value("rms")
-        if p:
-            st = s.get_value("stream-time")
+        if message.src == self._level:
+            s = message.get_structure()
+            p = None
+            if s:
+                p = s.get_value("rms")
 
-            if self.peaks is None:
-                self.peaks = []
-                for channel in p:
-                    self.peaks.append([0] * self.nSamples)
+            if p:
+                st = s.get_value("stream-time")
 
-            pos = int(st / 10000000)
-            if pos >= len(self.peaks[0]):
-                return
+                if self.peaks is None:
+                    self.peaks = []
+                    for channel in p:
+                        self.peaks.append([0] * self.nSamples)
 
-            for i, val in enumerate(p):
-                if val < 0:
-                    val = 10 ** (val / 20) * 100
-                    self.peaks[i][pos] = val
-                else:
-                    self.peaks[i][pos] = self.peaks[i][pos - 1]
+                pos = int(st / 10000000)
+                if pos >= len(self.peaks[0]):
+                    return
+
+                for i, val in enumerate(p):
+                    if val < 0:
+                        val = 10 ** (val / 20) * 100
+                        self.peaks[i][pos] = val
+                    else:
+                        self.peaks[i][pos] = self.peaks[i][pos - 1]
+            return
 
         if message.type == Gst.MessageType.EOS:
-            self.pipeline.set_state(Gst.State.NULL)
             self._prepareSamples()
             self._startRendering()
+            self.stopGeneration()
 
         elif message.type == Gst.MessageType.ERROR:
             if self.adapter:
                 self.adapter.stop()
+                self.adapter = None
             # Something went wrong TODO : recover
-            self.pipeline.set_state(Gst.State.NULL)
+            self.stopGeneration()
+            self._num_failures += 1
+            if self._num_failures < 2:
+                self.warning("Issue during waveforms generation: %s"
+                             " for the %ith time, trying again with no rate "
+                             " modulation", message.parse_error(),
+                             self._num_failures)
+                bus.disconnect_by_func(self._messageCb)
+                self._launchPipeline()
+                pipeline_queue.addPipeline(self)  # let it try again
+            else:
+                self.error("Issue during waveforms generation: %s"
+                           "Abandonning", message.parse_error())
 
         elif message.type == Gst.MessageType.STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
