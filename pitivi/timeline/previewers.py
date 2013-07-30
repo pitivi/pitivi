@@ -202,7 +202,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         """
         # TODO: don't hardcode framerate
         self.pipeline = Gst.parse_launch(
-            "uridecodebin uri={uri} ! "
+            "uridecodebin uri={uri} name=decode ! "
             "videoconvert ! "
             "videorate ! "
             "videoscale method=lanczos ! "
@@ -229,6 +229,9 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
             self.warning("Couldn't preroll the pipeline")
             # assume 16:9 aspect ratio
             self.thumb_width = 16 * self.thumb_height / 9
+
+        decode = self.pipeline.get_by_name("decode")
+        decode.connect("autoplug-select", self._autoplugSelectCb)
 
         # pop all messages from the bus so we won't be flooded with messages
         # from the prerolling phase
@@ -469,6 +472,12 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
                 message.src == self.pipeline:
             self._checkCPU()
         return Gst.BusSyncReply.PASS
+
+    def _autoplugSelectCb(self, decode, pad, caps, factory):
+        # Don't plug audio decoders / parsers.
+        if "Audio" in factory.get_klass():
+            return True
+        return False
 
     def _scrollCb(self, unused):
         self._update()
@@ -778,8 +787,10 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
     def _launchPipeline(self):
         self.debug('Now generating waveforms for "%s"' % filename_from_uri(self._uri))
         self.peaks = None
-        self.pipeline = Gst.parse_launch("uridecodebin caps=audio/x-raw uri=" + self._uri + " ! audioconvert ! level name=wavelevel interval=10000000 post-messages=true ! fakesink qos=false")
+        self.pipeline = Gst.parse_launch("uridecodebin uri=" + self._uri + " ! audioconvert ! level name=wavelevel interval=10000000 post-messages=true ! fakesink qos=false")
         self._level = self.pipeline.get_by_name("wavelevel")
+        decode = self.pipeline.get_by_name("decode")
+        decode.connect("autoplug-select", self._autoplugSelectCb)
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
 
@@ -917,6 +928,12 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
                         new == Gst.State.PLAYING and self._num_failures == 0:
                     self.adapter = PipelineCpuAdapter(self.pipeline)
                     self.adapter.start()
+
+    def _autoplugSelectCb(self, decode, pad, caps, factory):
+        # Don't plug video decoders / parsers.
+        if "Video" in factory.get_klass():
+            return True
+        return False
 
     def _drawContentCb(self, canvas, cr, surf_w, surf_h):
         cr.set_operator(cairo.OPERATOR_CLEAR)
