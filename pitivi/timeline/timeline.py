@@ -21,6 +21,7 @@
 # Boston, MA 02110-1301, USA.
 
 import sys
+import os
 
 from gi.repository import GtkClutter
 
@@ -822,7 +823,6 @@ class Timeline(Gtk.VBox, Zoomable):
         self.stage.add_child(self.controls)
         self.stage.add_child(self.timeline)
 
-        self.stage.connect("destroy", quit_)
         self.stage.connect("button-press-event", self._clickedCb)
         self.stage.connect("button-release-event", self._releasedCb)
         self.embed.connect("scroll-event", self._scrollEventCb)
@@ -1455,6 +1455,8 @@ class Timeline(Gtk.VBox, Zoomable):
 
         self.bTimeline = bTimeline
         timeline.setTimeline(bTimeline)
+
+        self.stage.connect("destroy", quit_)
 
         layer = GES.Layer()
         bTimeline.add_layer(layer)
