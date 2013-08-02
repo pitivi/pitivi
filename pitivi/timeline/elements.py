@@ -28,9 +28,8 @@ is prefixed with a little b, example : bTimeline
 
 import cairo
 import math
-
 import os
-import cairo
+from datetime import datetime
 
 from gi.repository import Clutter, Gtk, GtkClutter, Cogl, GES, Gdk, Gst, GstController, GLib
 from pitivi.utils.timeline import Zoomable, EditingContext, Selection, SELECT, UNSELECT, SELECT_ADD, Selected
@@ -39,19 +38,14 @@ from previewers import AudioPreviewer, VideoPreviewer, BORDER_WIDTH
 import pitivi.configure as configure
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, KEYFRAME_SIZE, CONTROL_WIDTH
 
-from datetime import datetime
-
 
 def get_preview_for_object(bElement, timeline):
-    # Fixme special preview for transitions, titles
+    # FIXME: special preview for transitions, titles
     if not isinstance(bElement.get_parent(), GES.UriClip):
         return Clutter.Actor()
 
     track_type = bElement.get_track_type()
     if track_type == GES.TrackType.AUDIO:
-        # FIXME: RandomAccessAudioPreviewer doesn't work yet
-        # previewers[key] = RandomAccessAudioPreviewer(instance, uri)
-        # TODO: return waveform previewer
         previewer = AudioPreviewer(bElement, timeline)
         previewer.startLevelsDiscoveryWhenIdle()
         return previewer
@@ -497,7 +491,6 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.keyframes = []
 
         l = len(values)
-
         for i, value in enumerate(values):
             has_changable_time = True
             if i == 0 or i == l - 1:
@@ -540,7 +533,6 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
     def _createKeyframe(self, value, has_changable_time):
         keyframe = Keyframe(self, value, has_changable_time)
-
         self.add_child(keyframe)
         self.keyframes.append(keyframe)
         self.setKeyframePosition(keyframe, value)
@@ -569,12 +561,10 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.border = RoundedRectangle(0, 0, 0, 0)
         self.border.bElement = self.bElement
         color = Cogl.Color()
-
         color.init_from_4ub(100, 100, 100, 255)
         self.border.set_border_color(color)
         self.border.set_border_width(1)
         self.border.set_position(0, 0)
-
         self.add_child(self.border)
 
     def _createBackground(self, track):
@@ -585,7 +575,6 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
     def _createPreview(self):
         self.preview = get_preview_for_object(self.bElement, self.timeline)
-
         self.add_child(self.preview)
 
     def _createMarquee(self):
@@ -613,7 +602,6 @@ class TimelineElement(Clutter.Actor, Zoomable):
         if self.bElement.get_track_type() == GES.TrackType.AUDIO:
             y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
         priority = int(y / (EXPANDED_SIZE + SPACING))
-
         return priority
 
     # Interface (Zoomable)
@@ -707,9 +695,11 @@ class Gradient(Clutter.Actor):
 
 
 class Line(Clutter.Actor):
+    """
+    A cairo line used for keyframe curves.
+    """
     def __init__(self, timelineElement, keyframe, lastKeyframe):
         Clutter.Actor.__init__(self)
-
         self.timelineElement = timelineElement
 
         self.canvas = Clutter.Canvas()
@@ -735,7 +725,10 @@ class Line(Clutter.Actor):
         self.previousKeyframe = lastKeyframe
         self.nextKeyframe = keyframe
 
-    def _drawCb(self, canvas, cr, width, height):
+    def _drawCb(self, canvas, cr, width, unused_height):
+        """
+        This is where we actually create the line segments for keyframe curves.
+        """
         cr.set_operator(cairo.OPERATOR_CLEAR)
         cr.paint()
         cr.set_operator(cairo.OPERATOR_OVER)
@@ -832,11 +825,14 @@ class Keyframe(Clutter.Actor):
     """
     If has_changable_time is False, it means this is an edge keyframe.
     """
+
     def __init__(self, timelineElement, value, has_changable_time):
         Clutter.Actor.__init__(self)
 
         self.value = value
         self.timelineElement = timelineElement
+        self.has_changable_time = has_changable_time
+        self.lastClick = datetime.now()
 
         self.set_size(KEYFRAME_SIZE, KEYFRAME_SIZE)
         self.set_background_color(Clutter.Color.new(0, 255, 0, 255))
@@ -844,23 +840,16 @@ class Keyframe(Clutter.Actor):
         self.dragAction = Clutter.DragAction()
         self.add_action(self.dragAction)
 
-        self.has_changable_time = has_changable_time
-
         self.dragAction.connect("drag-begin", self._dragBeginCb)
         self.dragAction.connect("drag-end", self._dragEndCb)
         self.dragAction.connect("drag-progress", self._dragProgressCb)
         self.connect("key-press-event", self._keyPressEventCb)
         self.connect("enter-event", self._enterEventCb)
         self.connect("leave-event", self._leaveEventCb)
-
         self.connect("button-press-event", self._clickedCb)
 
-        self.lastClick = datetime.now()
-
         self.createMenu()
-
         self.dragProgressed = False
-
         self.set_reactive(True)
 
     def createMenu(self):
@@ -879,7 +868,6 @@ class Keyframe(Clutter.Actor):
             return
 
         self.timelineElement.timeline.remove_child(self.menu)
-
         self._unselect()
         self.timelineElement.removeKeyframe(self)
 
@@ -943,7 +931,6 @@ class Keyframe(Clutter.Actor):
             self.value = Gst.TimedValue()
             self.value.timestamp = newTs
             self.value.value = newValue
-
             self.lastTs = newTs
 
             self.timelineElement.setKeyframePosition(self, self.value)
@@ -964,9 +951,7 @@ class Keyframe(Clutter.Actor):
         coords = self.dragAction.get_motion_coords()
         delta_x = coords[0] - self.dragBeginStartX
         delta_y = coords[1] - self.dragBeginStartY
-
         self.updateValue(delta_x, delta_y)
-
         return False
 
     def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
