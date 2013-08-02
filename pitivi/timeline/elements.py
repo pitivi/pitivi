@@ -548,7 +548,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         hyp = math.sqrt(adj ** 2 + opp ** 2)
         sinX = opp / hyp
         line.props.width = hyp
-        line.props.height = 6
+        line.props.height = KEYFRAME_SIZE
         line.props.rotation_angle_z = math.degrees(math.asin(sinX))
         line.props.x = self.nsToPixel(lastKeyframe.value.timestamp)
         line.props.y = EXPANDED_SIZE - (EXPANDED_SIZE * lastKeyframe.value.value)
@@ -703,7 +703,7 @@ class Line(Clutter.Actor):
         self.timelineElement = timelineElement
 
         self.canvas = Clutter.Canvas()
-        self.canvas.set_size(1000, 4)
+        self.canvas.set_size(1000, KEYFRAME_SIZE)
         self.canvas.connect("draw", self._drawCb)
         self.set_content(self.canvas)
         self.set_reactive(True)
@@ -728,14 +728,38 @@ class Line(Clutter.Actor):
     def _drawCb(self, canvas, cr, width, unused_height):
         """
         This is where we actually create the line segments for keyframe curves.
+        We draw multiple lines (one-third of the height each) to add a "shadow"
+        around the actual line segment to improve visibility.
         """
         cr.set_operator(cairo.OPERATOR_CLEAR)
         cr.paint()
         cr.set_operator(cairo.OPERATOR_OVER)
-        cr.set_source_rgb(255, 0, 0)
-        cr.set_line_width(2.)
-        cr.move_to(0, 2)
-        cr.line_to(width, 2)
+
+        # The "height budget" to draw line components = the tallest component...
+        _max_height = KEYFRAME_SIZE
+
+        # While normally all three lines would have an equal height,
+        # I make the shadow lines be 1/2 (3px) instead of 1/3 (2px),
+        # while keeping their 1/3 position... this softens them up.
+
+        # Upper shadow/border:
+        cr.set_source_rgba(0, 0, 0, 0.5)  # 50% transparent black color
+        cr.move_to(0, _max_height / 3)
+        cr.line_to(width, _max_height / 3)
+        cr.set_line_width(_max_height / 3)  # Special case: fuzzy 3px
+        cr.stroke()
+        # Lower shadow/border:
+        cr.set_source_rgba(0, 0, 0, 0.5)  # 50% transparent black color
+        cr.move_to(0, _max_height * 2 / 3)
+        cr.line_to(width, _max_height * 2 / 3)
+        cr.set_line_width(_max_height / 3)  # Special case: fuzzy 3px
+        cr.stroke()
+        # Draw the actual line in the middle.
+        # Do it last, so that it gets drawn on top and remains sharp.
+        cr.set_source_rgba(237, 212, 0, 255)
+        cr.move_to(0, _max_height / 2)
+        cr.line_to(width, _max_height / 2)
+        cr.set_line_width(_max_height / 3)
         cr.stroke()
 
     def transposeXY(self, x, y):
