@@ -38,6 +38,13 @@ from previewers import AudioPreviewer, VideoPreviewer, BORDER_WIDTH
 import pitivi.configure as configure
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, KEYFRAME_SIZE, CONTROL_WIDTH
 
+# Colors for keyframes and clips (RGBA)
+KEYFRAME_LINE_COLOR = (237, 212, 0, 255)  # "Tango" yellow
+KEYFRAME_NORMAL_COLOR = Clutter.Color.new(0, 0, 0, 200)
+KEYFRAME_SELECTED_COLOR = Clutter.Color.new(200, 200, 200, 200)
+CLIP_SELECTED_OVERLAY_COLOR = Clutter.Color.new(60, 60, 60, 100)
+GHOST_CLIP_COLOR = Clutter.Color.new(255, 255, 255, 50)
+
 
 def get_preview_for_object(bElement, timeline):
     # FIXME: special preview for transitions, titles
@@ -149,7 +156,7 @@ class Ghostclip(Clutter.Actor):
         Clutter.Actor.__init__(self)
         self.track_type = track_type
         self.bElement = bElement
-        self.set_background_color(Clutter.Color.new(255, 255, 255, 50))
+        self.set_background_color(GHOST_CLIP_COLOR)
         self.props.visible = False
         self.shouldCreateLayer = False
 
@@ -581,7 +588,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         # TODO: difference between Actor.new() and Actor()?
         self.marquee = Clutter.Actor()
         self.marquee.bElement = self.bElement
-        self.marquee.set_background_color(Clutter.Color.new(60, 60, 60, 100))
+        self.marquee.set_background_color(CLIP_SELECTED_OVERLAY_COLOR)
         self.marquee.props.visible = False
         self.add_child(self.marquee)
 
@@ -756,7 +763,7 @@ class Line(Clutter.Actor):
         cr.stroke()
         # Draw the actual line in the middle.
         # Do it last, so that it gets drawn on top and remains sharp.
-        cr.set_source_rgba(237, 212, 0, 255)
+        cr.set_source_rgba(*KEYFRAME_LINE_COLOR)
         cr.move_to(0, _max_height / 2)
         cr.line_to(width, _max_height / 2)
         cr.set_line_width(_max_height / 3)
@@ -859,7 +866,7 @@ class Keyframe(Clutter.Actor):
         self.lastClick = datetime.now()
 
         self.set_size(KEYFRAME_SIZE, KEYFRAME_SIZE)
-        self.set_background_color(Clutter.Color.new(0, 255, 0, 255))
+        self.set_background_color(KEYFRAME_NORMAL_COLOR)
 
         self.dragAction = Clutter.DragAction()
         self.add_action(self.dragAction)
@@ -883,7 +890,7 @@ class Keyframe(Clutter.Actor):
 
     def _unselect(self):
         self.timelineElement.set_reactive(True)
-        self.set_background_color(Clutter.Color.new(0, 255, 0, 255))
+        self.set_background_color(KEYFRAME_NORMAL_COLOR)
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
 
     def remove(self):
@@ -913,7 +920,7 @@ class Keyframe(Clutter.Actor):
 
     def _enterEventCb(self, actor, event):
         self.timelineElement.set_reactive(False)
-        self.set_background_color(Clutter.Color.new(0, 0, 0, 255))
+        self.set_background_color(KEYFRAME_SELECTED_COLOR)
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
 
     def _leaveEventCb(self, actor, event):

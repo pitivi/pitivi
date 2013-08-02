@@ -86,6 +86,12 @@ ALIGN = _("Align clips based on their soundtracks")
 SELECT_BEFORE = ("Select all sources before selected")
 SELECT_AFTER = ("Select all after selected")
 
+# Colors
+TIMELINE_BACKGROUND_COLOR = Clutter.Color.new(31, 30, 33, 255)
+SELECTION_MARQUEE_COLOR = Clutter.Color.new(100, 100, 100, 200)
+PLAYHEAD_COLOR = Clutter.Color.new(200, 0, 0, 255)
+SNAPPING_INDICATOR_COLOR = Clutter.Color.new(50, 150, 200, 200)
+
 ui = '''
 <ui>
     <menubar name="MainMenuBar">
@@ -348,7 +354,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.set_reactive(True)
 
         self.marquee = Clutter.Actor()
-        self.marquee.set_background_color(Clutter.Color.new(100, 100, 100, 200))
+        self.marquee.set_background_color(SELECTION_MARQUEE_COLOR)
         self.marquee.hide()
         self.add_child(self.marquee)
 
@@ -400,7 +406,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     def _createPlayhead(self):
         self.playhead = Clutter.Actor()
-        self.playhead.set_background_color(Clutter.Color.new(200, 0, 0, 255))
+        self.playhead.set_background_color(PLAYHEAD_COLOR)
         self.playhead.set_size(0, 0)
         self.playhead.set_position(0, 0)
         self.playhead.set_easing_duration(0)
@@ -409,7 +415,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     def _createSnapIndicator(self):
         self._snap_indicator = Clutter.Actor()
-        self._snap_indicator.set_background_color(Clutter.Color.new(50, 150, 200, 200))
+        self._snap_indicator.set_background_color(SNAPPING_INDICATOR_COLOR)
         self._snap_indicator.props.visible = False
         self._snap_indicator.props.width = 3
         self._snap_indicator.props.y = 0
@@ -815,7 +821,7 @@ class Timeline(Gtk.VBox, Zoomable):
         perspective.fov_y = 90.
         self.stage.set_perspective(perspective)
 
-        self.stage.set_background_color(Clutter.Color.new(31, 30, 33, 255))
+        self.stage.set_background_color(TIMELINE_BACKGROUND_COLOR)
         self.timeline.set_position(CONTROL_WIDTH, 0)
         self.controls.set_position(0, 0)
         self.controls.set_z_position(2)
