@@ -159,6 +159,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.current_group = GES.Group()
 
         self._container = container
+        self._settings = container._settings
         self.elements = []
         self.ghostClips = []
         self.selection = Selection()
@@ -292,10 +293,15 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             if target is None:
                 layer = self.bTimeline.append_layer()
 
+            if ghostclip.asset.is_image():
+                clip_duration = self._settings.imageClipLength * Gst.SECOND / 1000.0
+            else:
+                clip_duration = ghostclip.asset.get_duration()
+
             layer.add_asset(ghostclip.asset,
                             Zoomable.pixelToNs(ghostclip.props.x),
                             0,
-                            ghostclip.asset.get_duration(),
+                            clip_duration,
                             ghostclip.asset.get_supported_formats())
         self.bTimeline.commit()
 
@@ -375,7 +381,13 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         ghostclip = Ghostclip(trackType)
         ghostclip.asset = asset
         ghostclip.setNbrLayers(len(self.bTimeline.get_layers()))
-        ghostclip.setWidth(Zoomable.nsToPixel(asset.get_duration()))
+
+        if asset.is_image():
+            clip_duration = self._settings.imageClipLength * Gst.SECOND / 1000.0
+        else:
+            clip_duration = asset.get_duration()
+
+        ghostclip.setWidth(Zoomable.nsToPixel(clip_duration))
         self.add_child(ghostclip)
         return ghostclip
 
@@ -668,7 +680,6 @@ class Timeline(Gtk.VBox, Zoomable):
     def __init__(self, gui, instance, ui_manager):
         Zoomable.__init__(self)
         Gtk.VBox.__init__(self)
-
         GObject.threads_init()
 
         self.gui = gui
@@ -715,7 +726,7 @@ class Timeline(Gtk.VBox, Zoomable):
             if isinstance(asset, GES.TitleClip):
                 clip_duration = asset.get_duration()
             elif asset.is_image():
-                clip_duration = long(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
+                clip_duration = self._settings.imageClipLength * Gst.SECOND / 1000.0
             else:
                 clip_duration = asset.get_duration()
 
