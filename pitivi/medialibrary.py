@@ -477,7 +477,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._importDialog.props.extra_widget = close_after
         self._importDialog.set_default_response(Gtk.ResponseType.OK)
         self._importDialog.set_select_multiple(True)
-        self._importDialog.set_modal(False)
+        self._importDialog.set_modal(True)
+        self._importDialog.set_transient_for(self.app.gui)
         self._importDialog.set_current_folder(self.app.settings.lastImportFolder)
         self._importDialog.connect('response', self._dialogBoxResponseCb)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
