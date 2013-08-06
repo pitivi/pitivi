@@ -190,6 +190,9 @@ class ProjectManager(Signallable, Loggable):
         dialog = Gtk.Dialog("", None, 0,
                             (_("Ignore backup"), Gtk.ResponseType.REJECT,
                             _("Restore from backup"), Gtk.ResponseType.YES))
+        # Even though we set the title to an empty string when creating dialog,
+        # seems we really have to do it once more so it doesn't show "pitivi"...
+        dialog.set_title("")
         dialog.set_icon_name("pitivi")
         dialog.set_transient_for(self.app.gui)
         dialog.set_modal(True)
