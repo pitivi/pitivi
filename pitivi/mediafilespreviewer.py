@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 from gettext import gettext as _
 from gi.repository import GLib
 from gi.repository import GObject
@@ -16,8 +15,6 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import uri_is_valid
 from pitivi.utils.ui import beautify_length, beautify_stream, SPACING
 from pitivi.viewer import ViewerWidget
-
-DEFAULT_AUDIO_IMAGE = os.path.join(get_pixmap_dir(), "pitivi-sound.png")
 
 PREVIEW_WIDTH = 250
 PREVIEW_HEIGHT = 100
@@ -244,7 +241,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
 
             audio = audio[0]
             self.pos_adj.props.upper = duration
-            self.preview_image.set_from_file(DEFAULT_AUDIO_IMAGE)
+            self.preview_image.set_from_icon_name("audio-x-generic", Gtk.IconSize.DIALOG)
             self.preview_image.show()
             self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
             self.description = beautify_stream(audio) + "\n" + \
