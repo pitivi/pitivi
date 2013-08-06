@@ -299,15 +299,13 @@ def affinealign(reference, targets, max_drift=0.02):
 
 
 def getAudioTrack(clip):
-    """Helper function for getting an audio track from a Clip
+    """
+    Helper function for getting an audio track from a Clip
 
-    @param clip: The Clip from which to locate an
-        audio track
+    @param clip: The Clip from which to locate an audio track
     @type clip: L{Clip}
-    @returns: An audio track from clip, or None if
-        clip has no audio track
+    @returns: An audio track from clip, or None if clip has no audio track
     @rtype: audio L{TrackElement} or L{NoneType}
-
     """
     for track in clip.track_elements:
         if track.stream_type == AudioStream:
@@ -655,8 +653,7 @@ class AlignmentProgressDialog:
 
     def __init__(self, app):
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
-                                   "alignmentprogress.ui"))
+        self.builder.add_from_file(os.path.join(configure.get_ui_dir(), "alignmentprogress.ui"))
         self.builder.connect_signals(self)
 
         self.window = self.builder.get_object("align-progress")
@@ -668,12 +665,6 @@ class AlignmentProgressDialog:
         # to work correctly, although there is a known bug for Gnome 3 in
         # RenderingProgressDialog (bug #652917)
         self.window.set_transient_for(app.gui)
-
-        # UI widgets
-        # We currently reuse the render icon for this dialog.
-        icon_path = os.path.join(configure.get_pixmap_dir(),
-                                 "pitivi-render-16.png")
-        self.window.set_icon_from_file(icon_path)
 
         # FIXME: Add a cancel button
 

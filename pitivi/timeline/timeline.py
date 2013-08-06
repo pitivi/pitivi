@@ -1134,23 +1134,26 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
             self.app.action_log.commit()
 
     def _alignSelected(self, unused_action):
-        if "NumPy" in missing_soft_deps:
-            DepsManager(self.app)
+        if not self.bTimeline:
+            self.error("Trying to use the autoalign feature with an empty timeline")
+            return
 
-        elif self.bTimeline:
-            progress_dialog = AlignmentProgressDialog(self.app)
+        progress_dialog = AlignmentProgressDialog(self.app)
+        progress_dialog.window.show()
+        self.app.action_log.begin("align")
 
-            progress_dialog.window.show()
-            self.app.action_log.begin("align")
+        def alignedCb():  # Called when alignment is complete
+            self.app.action_log.commit()
+            self.bTimeline.commit()
+            progress_dialog.window.destroy()
 
-            def alignedCb():  # Called when alignment is complete
-                self.app.action_log.commit()
-                self.bTimeline.commit()
-                progress_dialog.window.destroy()
-
-            auto_aligner = AutoAligner(self.timeline.selection, alignedCb)
+        auto_aligner = AutoAligner(self.timeline.selection, alignedCb)
+        try:
             progress_meter = auto_aligner.start()
             progress_meter.addWatcher(progress_dialog.updatePosition)
+        except Exception, e:
+            self.error("Could not start the autoaligner: %s" % e)
+            progress_dialog.window.destroy()
 
     def _split(self, action):
         """
