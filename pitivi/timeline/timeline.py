@@ -1206,6 +1206,41 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         x += self.timeline.get_scroll_point().x
         return x - CONTROL_WIDTH, y - height
 
+    def _showSaveScreenshotDialog(self):
+        """
+        Show a filechooser dialog asking the user where to save the snapshot
+        and what file type to use.
+
+        Returns a list containing the full path and the mimetype if successful,
+        returns none otherwise.
+        """
+        chooser = Gtk.FileChooserDialog(_("Save As..."), self.app.gui,
+            action=Gtk.FileChooserAction.SAVE,
+            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
+        chooser.set_icon_name("pitivi")
+        chooser.set_select_multiple(False)
+        chooser.set_current_name(_("Untitled"))
+        chooser.props.do_overwrite_confirmation = True
+        formats = {_("PNG image"): ["image/png", ("png",)],
+            _("JPEG image"): ["image/jpeg", ("jpg", "jpeg")]}
+        for format in formats:
+            filt = Gtk.FileFilter()
+            filt.set_name(format)
+            filt.add_mime_type(formats.get(format)[0])
+            chooser.add_filter(filt)
+        response = chooser.run()
+        if response == Gtk.ResponseType.OK:
+            chosen_format = formats.get(chooser.get_filter().get_name())
+            chosen_ext = chosen_format[1][0]
+            chosen_mime = chosen_format[0]
+            uri = os.path.join(chooser.get_current_folder(), chooser.get_filename())
+            ret = [uri + "." + chosen_ext, chosen_mime]
+        else:
+            ret = None
+        chooser.destroy()
+        return ret
+
     # Interface
 
     # Zoomable
