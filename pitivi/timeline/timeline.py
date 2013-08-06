@@ -1036,19 +1036,21 @@ class Timeline(Gtk.VBox, Zoomable):
         # Only do this at the very end, after updating the other widgets.
         self.zoomed_fitted = True
 
-    def _scrollLeft(self):
+    def scroll_left(self):
+        # This method can be a callback for our events, or called by ruler.py
         self._hscrollBar.set_value(self._hscrollBar.get_value() -
             self.hadj.props.page_size ** (2.0 / 3.0))
 
-    def _scrollRight(self):
+    def scroll_right(self):
+        # This method can be a callback for our events, or called by ruler.py
         self._hscrollBar.set_value(self._hscrollBar.get_value() +
             self.hadj.props.page_size ** (2.0 / 3.0))
 
-    def _scrollUp(self):
+    def scroll_up(self):
         self._vscrollbar.set_value(self._vscrollbar.get_value() -
             self.vadj.props.page_size ** (2.0 / 3.0))
 
-    def _scrollDown(self):
+    def scroll_down(self):
         self._vscrollbar.set_value(self._vscrollbar.get_value() +
             self.vadj.props.page_size ** (2.0 / 3.0))
 
@@ -1343,14 +1345,14 @@ class Timeline(Gtk.VBox, Zoomable):
             self._scrollToPlayhead()
         elif event.state & Gdk.ModifierType.SHIFT_MASK:
             if deltas[2] > 0:
-                self._scrollDown()
+                self.scroll_down()
             elif deltas[2] < 0:
-                self._scrollUp()
+                self.scroll_up()
         else:
             if deltas[2] > 0:
-                self._scrollRight()
+                self.scroll_right()
             elif deltas[2] < 0:
-                self._scrollLeft()
+                self.scroll_left()
         self.scrolled += 1
 
     def _selectionChangedCb(self, selection):
