@@ -77,8 +77,8 @@ STORE_MODEL_STRUCTURE = (
     GdkPixbuf.Pixbuf, GdkPixbuf.Pixbuf,
     str, object, str, str, str)
 
-(COL_ICON,
- COL_ICON_LARGE,
+(COL_ICON_64,
+ COL_ICON_128,
  COL_INFOTEXT,
  COL_ASSET,
  COL_URI,
@@ -198,7 +198,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         pixcell = Gtk.CellRendererPixbuf()
         pixcell.props.xpad = 6
         pixbufcol.pack_start(pixcell, True)
-        pixbufcol.add_attribute(pixcell, 'pixbuf', COL_ICON)
+        pixbufcol.add_attribute(pixcell, 'pixbuf', COL_ICON_64)
 
         namecol = Gtk.TreeViewColumn(_("Information"))
         self.treeview.append_column(namecol)
@@ -237,7 +237,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         cell = Gtk.CellRendererPixbuf()
         self.iconview.pack_start(cell, False)
-        self.iconview.add_attribute(cell, "pixbuf", COL_ICON_LARGE)
+        self.iconview.add_attribute(cell, "pixbuf", COL_ICON_128)
 
         cell = Gtk.CellRendererText()
         cell.props.alignment = Pango.Alignment.CENTER
@@ -261,10 +261,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.app.connect("new-project-created", self._newProjectCreatedCb)
         self.app.connect("new-project-loaded", self._newProjectLoadedCb)
         self.app.connect("new-project-failed", self._newProjectFailedCb)
-
-        # default pixbufs
-        self.audiofilepixbuf = self._getIcon("audio-x-generic")
-        self.videofilepixbuf = self._getIcon("video-x-generic")
 
         # Drag and Drop
         self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
@@ -395,19 +391,19 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             text = GLib.markup_escape_text(text)
             return text in model.get_value(iter, COL_INFOTEXT).lower()
 
-    def _getIcon(self, iconname, alternate=None):
+    def _getIcon(self, iconname, alternate=None, size=48):
         icontheme = Gtk.IconTheme.get_default()
         pixdir = get_pixmap_dir()
         icon = None
         try:
-            icon = icontheme.load_icon(iconname, 48, 0)
+            icon = icontheme.load_icon(iconname, size, 0)
         except:
             # empty except clause is bad but load_icon raises Gio.Error.
             # Right, *gio*.
             if alternate:
                 icon = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pixdir, alternate))
             else:
-                icon = icontheme.load_icon("dialog-question", 48, 0)
+                icon = icontheme.load_icon("dialog-question", size, 0)
         return icon
 
     def _connectToProject(self, project):
@@ -539,6 +535,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             return None, None
 
     def _addAsset(self, asset):
+        # 128 is the normal thumb size, but for icons it looks insane.
+        LARGE_SIZE = 96
         info = asset.get_info()
 
         # The code below tries to read existing thumbnails from the freedesktop
@@ -564,12 +562,16 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 thumb_dir = os.path.expanduser("~/.thumbnails/")
                 thumbnail, thumbnail_large = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
             if thumbnail is None:
-                thumbnail = self.videofilepixbuf
                 # TODO gst discoverer should create missing thumbnails.
-                thumbnail_large = thumbnail
+                if asset.is_image():
+                    thumbnail = self._getIcon("image-x-generic")
+                    thumbnail_large = self._getIcon("image-x-generic", None, LARGE_SIZE)
+                else:
+                    thumbnail = self._getIcon("video-x-generic")
+                    thumbnail_large = self._getIcon("video-x-generic", None, LARGE_SIZE)
         else:
-            thumbnail = self.audiofilepixbuf
-            thumbnail_large = self.audiofilepixbuf
+            thumbnail = self._getIcon("audio-x-generic")
+            thumbnail_large = self._getIcon("audio-x-generic", None, LARGE_SIZE)
 
         if info.get_duration() == Gst.CLOCK_TIME_NONE:
             duration = ''
@@ -1010,7 +1012,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             context.drag_abort(int(time.time()))
         else:
             row = self.modelFilter[paths[0]]
-            Gtk.drag_set_icon_pixbuf(context, row[COL_ICON], 0, 0)
+            Gtk.drag_set_icon_pixbuf(context, row[COL_ICON_64], 0, 0)
 
     def _dndDragEndCb(self, unused_view, context):
         self.info("Drag operation ended")
