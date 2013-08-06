@@ -35,6 +35,7 @@ from pitivi.utils.timeline import Zoomable, Selection, SELECT, UNSELECT
 from pitivi.settings import GlobalSettings
 from pitivi.dialogs.depsmanager import DepsManager
 from pitivi.dialogs.prefs import PreferencesDialog
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, PLAYHEAD_WIDTH, CONTROL_WIDTH, TYPE_PITIVI_EFFECT
 from pitivi.utils.widgets import ZoomBox
 
@@ -672,7 +673,7 @@ def quit2_(*args, **kwargs):
     Gtk.main_quit()
 
 
-class Timeline(Gtk.VBox, Zoomable):
+class Timeline(Gtk.VBox, Zoomable, Loggable):
     """
     This is the main timeline widget, which will contain the timeline stage
     and the layer controls, the scrollbars and the ruler.
@@ -680,6 +681,7 @@ class Timeline(Gtk.VBox, Zoomable):
     def __init__(self, gui, instance, ui_manager):
         Zoomable.__init__(self)
         Gtk.VBox.__init__(self)
+        Loggable.__init__(self)
         GObject.threads_init()
 
         self.gui = gui
@@ -975,8 +977,6 @@ class Timeline(Gtk.VBox, Zoomable):
         self._hscrollBar = Gtk.HScrollbar(self.hadj)
         self.ruler = ScaleRuler(self, self.hadj)
 
-        hbox = Gtk.HBox()
-
         self.hadj.connect("value-changed", self._updateScrollPosition)
         self.vadj.connect("value-changed", self._updateScrollPosition)
 
@@ -989,18 +989,16 @@ class Timeline(Gtk.VBox, Zoomable):
         self.vadj.props.lower = 0
         self.vadj.props.page_size = 250
 
+        hbox = Gtk.HBox()
         hbox.pack_start(self.embed, True, True, True)
         hbox.pack_start(self._vscrollbar, False, True, False)
-
         vbox.pack_end(hbox, True, True, True)
-
-        hbox = Gtk.HBox()
 
         self.zoomBox.set_size_request(CONTROL_WIDTH, -1)
 
+        hbox = Gtk.HBox()
         hbox.pack_start(self.zoomBox, False, True, False)
         hbox.pack_start(self.ruler, True, True, True)
-
         vbox.pack_end(hbox, False, True, False)
 
     def _updateScrollPosition(self, adjustment):
@@ -1027,6 +1025,7 @@ class Timeline(Gtk.VBox, Zoomable):
 
         timeline_duration = duration + Gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / Gst.SECOND)
+        self.debug("Adjusting zoom to a timeline duration of %s secs" % duration)
 
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
@@ -1071,7 +1070,8 @@ class Timeline(Gtk.VBox, Zoomable):
         canvas_size = self.embed.get_allocation().width - CONTROL_WIDTH
         try:
             new_pos = Zoomable.nsToPixel(self.app.current.pipeline.getPosition())
-        except PipelineError:
+        except PipelineError, e:
+            self.error("Pipeline error: %s" % e)
             return
         except AttributeError:  # Standalone, no pipeline.
             return
