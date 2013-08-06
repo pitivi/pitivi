@@ -335,6 +335,17 @@ if [ "$ready_to_run" != "1" ]; then
         if [ $m == "gstreamer" ] || [ $m == "gst-plugins-base" ]; then
             git checkout -- po
         fi
+        # Another similar hack because gst-plugins-bad keeps changing
+        # common/ and win32/common/:
+        if [ $m == "gst-plugins-bad" ]; then
+            git checkout -- common
+            git checkout -- win32
+        fi
+        # Yep, another temporary workaround:
+        if [ $m == "gst-editing-services" ]; then
+            git checkout -- acinclude.m4
+        fi
+
         if [ $GST_RELEASE_TAG == "master" ]; then
             git pull --rebase
             if [ $? -ne 0 ]; then
