@@ -521,18 +521,33 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self._progressbar.set_fraction((current_clip_iter - 1) / float(total_clips))
 
     def _getThumbnailInDir(self, dir, hash):
-        thumb_path_normal = dir + "normal/" + hash + ".png"
+        """
+        For a given thumbnail cache directory and file URI hash, see if there're
+        thumbnails available and return them in resolutions that pitivi expects.
 
+        The cache dirs might have resolutions of 256 and/or 128,
+        while we need 128 (for iconview) and 64 (for listview).
+        """
+        path_256 = dir + "large/" + hash + ".png"
+        path_128 = dir + "normal/" + hash + ".png"
+        interpolation = GdkPixbuf.InterpType.BILINEAR
+
+        # First, try the 128 version since that's the native resolution we want:
         try:
-            thumbnail = GdkPixbuf.Pixbuf.new_from_file(thumb_path_normal)
-            thumbnail_large = thumbnail
-            thumbnail_height = int(thumbnail.get_height() / 2)
-            thumbnail = thumbnail.scale_simple(64, thumbnail_height,
-                GdkPixbuf.InterpType.BILINEAR)
-
-            return thumbnail, thumbnail_large
+            thumb_128 = GdkPixbuf.Pixbuf.new_from_file(path_128)
+            w, h = thumb_128.get_width(), thumb_128.get_height()
+            thumb_64 = thumb_128.scale_simple(w / 2, h / 2, interpolation)
+            return thumb_64, thumb_128
         except GLib.GError:
-            return None, None
+            # path_128 doesn't exist, try the 256 version
+            try:
+                thumb_256 = GdkPixbuf.Pixbuf.new_from_file(path_256)
+                w, h = thumb_256.get_width(), thumb_256.get_height()
+                thumb_128 = thumb_256.scale_simple(w / 2, h / 2, interpolation)
+                thumb_64 = thumb_256.scale_simple(w / 4, h / 4, interpolation)
+                return thumb_64, thumb_128
+            except GLib.GError:
+                return None, None
 
     def _addAsset(self, asset):
         # 128 is the normal thumb size, but for icons it looks insane.
@@ -552,26 +567,26 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             thumbnail_hash = md5(quote_uri(info.get_uri())).hexdigest()
             try:
                 thumb_dir = os.environ['XDG_CACHE_HOME']
-                thumbnail, thumbnail_large = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
+                thumb_64, thumb_128 = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
             except KeyError:
-                thumbnail, thumbnail_large = (None, None)
-            if thumbnail is None:
+                thumb_64, thumb_128 = (None, None)
+            if thumb_64 is None:
                 thumb_dir = os.path.expanduser("~/.cache/thumbnails/")
-                thumbnail, thumbnail_large = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
-            if thumbnail is None:
+                thumb_64, thumb_128 = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
+            if thumb_64 is None:
                 thumb_dir = os.path.expanduser("~/.thumbnails/")
-                thumbnail, thumbnail_large = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
-            if thumbnail is None:
+                thumb_64, thumb_128 = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
+            if thumb_64 is None:
                 # TODO gst discoverer should create missing thumbnails.
                 if asset.is_image():
-                    thumbnail = self._getIcon("image-x-generic")
-                    thumbnail_large = self._getIcon("image-x-generic", None, LARGE_SIZE)
+                    thumb_64 = self._getIcon("image-x-generic")
+                    thumb_128 = self._getIcon("image-x-generic", None, LARGE_SIZE)
                 else:
-                    thumbnail = self._getIcon("video-x-generic")
-                    thumbnail_large = self._getIcon("video-x-generic", None, LARGE_SIZE)
+                    thumb_64 = self._getIcon("video-x-generic")
+                    thumb_128 = self._getIcon("video-x-generic", None, LARGE_SIZE)
         else:
-            thumbnail = self._getIcon("audio-x-generic")
-            thumbnail_large = self._getIcon("audio-x-generic", None, LARGE_SIZE)
+            thumb_64 = self._getIcon("audio-x-generic")
+            thumb_128 = self._getIcon("audio-x-generic", None, LARGE_SIZE)
 
         if info.get_duration() == Gst.CLOCK_TIME_NONE:
             duration = ''
@@ -580,8 +595,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         name = info_name(info)
 
-        self.pending_rows.append((thumbnail,
-                                  thumbnail_large,
+        self.pending_rows.append((thumb_64,
+                                  thumb_128,
                                   beautify_info(info),
                                   asset,
                                   info.get_uri(),
