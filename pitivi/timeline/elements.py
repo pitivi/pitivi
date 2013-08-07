@@ -671,8 +671,6 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.isSelected = isSelected
         if not isSelected:
             self.hideKeyframes()
-        elif self.keyframedElement:
-            self.showKeyframes(self.keyframedElement, self.prop)
         self.marquee.props.visible = isSelected
 
 
@@ -1056,6 +1054,9 @@ class URISourceElement(TimelineElement):
         selection = filter(lambda elem: isinstance(elem, GES.Source), children)
 
         self.timeline.selection.setSelection(selection, mode)
+
+        if self.keyframedElement:
+            self.showKeyframes(self.keyframedElement, self.prop)
 
         return False
 
