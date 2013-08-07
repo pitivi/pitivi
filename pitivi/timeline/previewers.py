@@ -828,6 +828,9 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
 
         pixelWidth = self.nsToPixel(self.bElement.props.duration)
 
+        if pixelWidth <= 0:
+            return
+
         self.start = int(start / pixelWidth * self.nbSamples)
         self.end = int(end / pixelWidth * self.nbSamples)
         self.width = int(end - start)
