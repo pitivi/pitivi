@@ -1101,11 +1101,15 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
                 if toplevel == self.timeline.current_group:
                     for child in toplevel.get_children(False):
                         containers.add(child)
+                    toplevel.ungroup(False)
                 else:
                     containers.add(toplevel)
 
             for container in containers:
                 GES.Container.ungroup(container, False)
+                self.timeline.bTimeline.commit()
+
+            self.timeline.current_group = GES.Group()
 
             self.app.action_log.commit()
             self.bTimeline.commit()
