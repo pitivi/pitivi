@@ -815,7 +815,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if not self.prefsdialog:
             from pitivi.dialogs.prefs import PreferencesDialog
             self.prefsdialog = PreferencesDialog(self.app)
-            self.prefsdialog.dialog.set_transient_for(self)
         self.prefsdialog.run()
 
     def _gaplessmodeToggledCb(self, widget):

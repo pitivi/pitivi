@@ -63,6 +63,7 @@ class PreferencesDialog():
         min_height = req.height
         width = max(min_width, self.settings.prefsDialogWidth)
         height = max(min_height, self.settings.prefsDialogHeight)
+        self.dialog.set_transient_for(instance.gui)
         self.dialog.set_default_size(width, height)
 
     def run(self):

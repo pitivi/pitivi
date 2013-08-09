@@ -1005,13 +1005,60 @@ class ProjectSettingsDialog():
 
     def __init__(self, parent_window, project):
         self.project = project
+        self._createUi()
+        self.window.set_transient_for(parent_window)
+        self._setupUiConstraints()
+        self.updateUI()
+        self.createAudioNoPreset(self.audio_presets)
+        self.createVideoNoPreset(self.video_presets)
 
+    def _createUi(self):
+        """
+        Initialize the static parts of the UI and set up various shortcuts
+        """
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(), "projectsettings.ui"))
         self.builder.connect_signals(self)
-        self._setProperties()  # Initialize a bunch of UI shortcut variables
-        self.window.set_transient_for(parent_window)
 
+        getObj = self.builder.get_object
+        self.window = getObj("project-settings-dialog")
+        self.video_properties_table = getObj("video_properties_table")
+        self.video_properties_table = getObj("video_properties_table")
+        self.frame_rate_combo = getObj("frame_rate_combo")
+        self.dar_combo = getObj("dar_combo")
+        self.par_combo = getObj("par_combo")
+        self.channels_combo = getObj("channels_combo")
+        self.sample_rate_combo = getObj("sample_rate_combo")
+        self.year_spinbutton = getObj("year_spinbutton")
+        self.author_entry = getObj("author_entry")
+        self.width_spinbutton = getObj("width_spinbutton")
+        self.height_spinbutton = getObj("height_spinbutton")
+        self.save_audio_preset_button = getObj("save_audio_preset_button")
+        self.save_video_preset_button = getObj("save_video_preset_button")
+        self.audio_preset_treeview = getObj("audio_preset_treeview")
+        self.video_preset_treeview = getObj("video_preset_treeview")
+        self.select_par_radiobutton = getObj("select_par_radiobutton")
+        self.remove_audio_preset_button = getObj("remove_audio_preset_button")
+        self.remove_video_preset_button = getObj("remove_video_preset_button")
+        self.constrain_sar_button = getObj("constrain_sar_button")
+        self.select_dar_radiobutton = getObj("select_dar_radiobutton")
+        self.video_preset_infobar = getObj("video-preset-infobar")
+        self.audio_preset_infobar = getObj("audio-preset-infobar")
+        self.title_entry = getObj("title_entry")
+        self.author_entry = getObj("author_entry")
+        self.year_spinbutton = getObj("year_spinbutton")
+
+        # Set the shading style in the contextual toolbars below presets
+        video_presets_toolbar = getObj("video_presets_toolbar")
+        audio_presets_toolbar = getObj("audio_presets_toolbar")
+        video_presets_toolbar.get_style_context().add_class("inline-toolbar")
+        audio_presets_toolbar.get_style_context().add_class("inline-toolbar")
+
+    def _setupUiConstraints(self):
+        """
+        Create dynamic widgets and
+        set up the relationships between various widgets
+        """
         # add custom display aspect ratio widget
         self.dar_fraction_widget = FractionWidget()
         self.video_properties_table.attach(self.dar_fraction_widget,
@@ -1152,17 +1199,6 @@ class ProjectSettingsDialog():
         self.wg.addEdge(self.channels_combo, self.save_audio_preset_button)
         self.wg.addEdge(self.sample_rate_combo, self.save_audio_preset_button)
 
-        # Set the shading style in the contextual toolbars below presets
-        video_presets_toolbar = self.builder.get_object("video_presets_toolbar")
-        audio_presets_toolbar = self.builder.get_object("audio_presets_toolbar")
-        video_presets_toolbar.get_style_context().add_class("inline-toolbar")
-        audio_presets_toolbar.get_style_context().add_class("inline-toolbar")
-
-        self.updateUI()
-
-        self.createAudioNoPreset(self.audio_presets)
-        self.createVideoNoPreset(self.video_presets)
-
     def bindPar(self, mgr):
 
         def updatePar(value):
@@ -1288,35 +1324,6 @@ class ProjectSettingsDialog():
         width = int(self.width_spinbutton.get_value())
         height = int(self.height_spinbutton.get_value())
         return Gst.Fraction(width, height)
-
-    def _setProperties(self):
-        getObj = self.builder.get_object
-        self.window = getObj("project-settings-dialog")
-        self.video_properties_table = getObj("video_properties_table")
-        self.video_properties_table = getObj("video_properties_table")
-        self.frame_rate_combo = getObj("frame_rate_combo")
-        self.dar_combo = getObj("dar_combo")
-        self.par_combo = getObj("par_combo")
-        self.channels_combo = getObj("channels_combo")
-        self.sample_rate_combo = getObj("sample_rate_combo")
-        self.year_spinbutton = getObj("year_spinbutton")
-        self.author_entry = getObj("author_entry")
-        self.width_spinbutton = getObj("width_spinbutton")
-        self.height_spinbutton = getObj("height_spinbutton")
-        self.save_audio_preset_button = getObj("save_audio_preset_button")
-        self.save_video_preset_button = getObj("save_video_preset_button")
-        self.audio_preset_treeview = getObj("audio_preset_treeview")
-        self.video_preset_treeview = getObj("video_preset_treeview")
-        self.select_par_radiobutton = getObj("select_par_radiobutton")
-        self.remove_audio_preset_button = getObj("remove_audio_preset_button")
-        self.remove_video_preset_button = getObj("remove_video_preset_button")
-        self.constrain_sar_button = getObj("constrain_sar_button")
-        self.select_dar_radiobutton = getObj("select_dar_radiobutton")
-        self.video_preset_infobar = getObj("video-preset-infobar")
-        self.audio_preset_infobar = getObj("audio-preset-infobar")
-        self.title_entry = getObj("title_entry")
-        self.author_entry = getObj("author_entry")
-        self.year_spinbutton = getObj("year_spinbutton")
 
     def _constrainSarButtonToggledCb(self, button):
         if button.props.active:

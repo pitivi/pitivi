@@ -328,17 +328,7 @@ class RenderDialog(Loggable):
         # {object: sigId}
         self._gstSigId = {}
 
-        self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(configure.get_ui_dir(), "renderingdialog.ui"))
-        self.builder.connect_signals(self)
-        self._setProperties()  # Initialize a bunch of UI shortcut variables
-        icon = os.path.join(configure.get_pixmap_dir(), "pitivi-render-16.png")
-        self.window.set_icon_from_file(icon)
-        self.window.set_transient_for(app.gui)
-
-        # Set the shading style in the toolbar below presets
-        presets_toolbar = self.builder.get_object("render_presets_toolbar")
-        presets_toolbar.get_style_context().add_class("inline-toolbar")
+        self._createUi()
 
         # FIXME: re-enable this widget when bug #637078 is implemented
         self.selected_only_button.destroy()
@@ -627,28 +617,40 @@ class RenderDialog(Loggable):
         update_preset_buttons_func()
         self._hidePresetManagerError(mgr)
 
-    def _setProperties(self):
-        self.window = self.builder.get_object("render-dialog")
-        self.selected_only_button = self.builder.get_object("selected_only_button")
-        self.video_output_checkbutton = self.builder.get_object("video_output_checkbutton")
-        self.audio_output_checkbutton = self.builder.get_object("audio_output_checkbutton")
-        self.render_button = self.builder.get_object("render_button")
-        self.video_settings_button = self.builder.get_object("video_settings_button")
-        self.audio_settings_button = self.builder.get_object("audio_settings_button")
-        self.frame_rate_combo = self.builder.get_object("frame_rate_combo")
-        self.scale_spinbutton = self.builder.get_object("scale_spinbutton")
-        self.channels_combo = self.builder.get_object("channels_combo")
-        self.sample_rate_combo = self.builder.get_object("sample_rate_combo")
-        self.muxercombobox = self.builder.get_object("muxercombobox")
-        self.audio_encoder_combo = self.builder.get_object("audio_encoder_combo")
-        self.video_encoder_combo = self.builder.get_object("video_encoder_combo")
-        self.filebutton = self.builder.get_object("filebutton")
-        self.fileentry = self.builder.get_object("fileentry")
-        self.resolution_label = self.builder.get_object("resolution_label")
-        self.render_preset_treeview = self.builder.get_object("render_preset_treeview")
-        self.save_render_preset_button = self.builder.get_object("save_render_preset_button")
-        self.remove_render_preset_button = self.builder.get_object("remove_render_preset_button")
-        self.render_preset_infobar = self.builder.get_object("render-preset-infobar")
+    def _createUi(self):
+        builder = Gtk.Builder()
+        builder.add_from_file(os.path.join(configure.get_ui_dir(), "renderingdialog.ui"))
+        builder.connect_signals(self)
+
+        self.window = builder.get_object("render-dialog")
+        self.selected_only_button = builder.get_object("selected_only_button")
+        self.video_output_checkbutton = builder.get_object("video_output_checkbutton")
+        self.audio_output_checkbutton = builder.get_object("audio_output_checkbutton")
+        self.render_button = builder.get_object("render_button")
+        self.video_settings_button = builder.get_object("video_settings_button")
+        self.audio_settings_button = builder.get_object("audio_settings_button")
+        self.frame_rate_combo = builder.get_object("frame_rate_combo")
+        self.scale_spinbutton = builder.get_object("scale_spinbutton")
+        self.channels_combo = builder.get_object("channels_combo")
+        self.sample_rate_combo = builder.get_object("sample_rate_combo")
+        self.muxercombobox = builder.get_object("muxercombobox")
+        self.audio_encoder_combo = builder.get_object("audio_encoder_combo")
+        self.video_encoder_combo = builder.get_object("video_encoder_combo")
+        self.filebutton = builder.get_object("filebutton")
+        self.fileentry = builder.get_object("fileentry")
+        self.resolution_label = builder.get_object("resolution_label")
+        self.render_preset_treeview = builder.get_object("render_preset_treeview")
+        self.save_render_preset_button = builder.get_object("save_render_preset_button")
+        self.remove_render_preset_button = builder.get_object("remove_render_preset_button")
+        self.render_preset_infobar = builder.get_object("render-preset-infobar")
+
+        icon = os.path.join(configure.get_pixmap_dir(), "pitivi-render-16.png")
+        self.window.set_icon_from_file(icon)
+        self.window.set_transient_for(self.app.gui)
+
+        # Set the shading style in the toolbar below presets
+        presets_toolbar = builder.get_object("render_presets_toolbar")
+        presets_toolbar.get_style_context().add_class("inline-toolbar")
 
     def _settingsChanged(self, project, key, value):
         self.updateResolution()
