@@ -1003,13 +1003,14 @@ class Project(Loggable, GES.Project):
 #----------------------- UI classes ------------------------------------------#
 class ProjectSettingsDialog():
 
-    def __init__(self, parent, project):
+    def __init__(self, parent_window, project):
         self.project = project
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(), "projectsettings.ui"))
-        self._setProperties()
         self.builder.connect_signals(self)
+        self._setProperties()  # Initialize a bunch of UI shortcut variables
+        self.window.set_transient_for(parent_window)
 
         # add custom display aspect ratio widget
         self.dar_fraction_widget = FractionWidget()

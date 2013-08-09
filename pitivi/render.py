@@ -329,14 +329,12 @@ class RenderDialog(Loggable):
         self._gstSigId = {}
 
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
-            "renderingdialog.ui"))
-        self._setProperties()
+        self.builder.add_from_file(os.path.join(configure.get_ui_dir(), "renderingdialog.ui"))
         self.builder.connect_signals(self)
-
-        # UI widgets
+        self._setProperties()  # Initialize a bunch of UI shortcut variables
         icon = os.path.join(configure.get_pixmap_dir(), "pitivi-render-16.png")
         self.window.set_icon_from_file(icon)
+        self.window.set_transient_for(app.gui)
 
         # Set the shading style in the toolbar below presets
         presets_toolbar = self.builder.get_object("render_presets_toolbar")

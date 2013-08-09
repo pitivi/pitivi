@@ -70,6 +70,7 @@
     <property name="can_focus">False</property>
     <property name="border_width">12</property>
     <property name="title" translatable="yes">Render</property>
+    <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="default_height">400</property>
     <property name="type_hint">dialog</property>
