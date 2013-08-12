@@ -831,8 +831,21 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         if pixelWidth <= 0:
             return
 
-        self.start = int(start / pixelWidth * self.nbSamples)
-        self.end = int(end / pixelWidth * self.nbSamples)
+        real_duration = self.bElement.get_parent().get_asset().get_duration()
+
+        # We need to take duration and inpoint into account.
+
+        nbSamples = self.nbSamples
+        startOffsetSamples = 0
+
+        if self.bElement.props.duration != 0:
+            nbSamples = self.nbSamples / (float(real_duration) / float(self.bElement.props.duration))
+        if self.bElement.props.in_point != 0:
+            startOffsetSamples = self.nbSamples / (float(real_duration) / float(self.bElement.props.in_point))
+
+        self.start = int(start / pixelWidth * nbSamples + startOffsetSamples)
+        self.end = int(end / pixelWidth * nbSamples + startOffsetSamples)
+
         self.width = int(end - start)
 
         if self.width < 0:  # We've been called at a moment where size was updated but not scroll_point.
