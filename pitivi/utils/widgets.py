@@ -818,13 +818,14 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
     Widget to view/modify properties of a Gst.Element
     """
 
-    def __init__(self):
+    def __init__(self, isControllable=True):
         Gtk.VBox.__init__(self)
         Loggable.__init__(self)
         self.element = None
         self.ignore = None
         self.properties = None
         self.buttons = {}
+        self.isControllable = isControllable
 
     def resetKeyframeToggleButtons(self, widget=None):
         """
@@ -928,7 +929,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 table.attach(label, 0, 1, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
                 table.attach(widget, 1, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
 
-            if not isinstance(widget, ToggleWidget) and not isinstance(widget, ChoiceWidget):
+            if not isinstance(widget, ToggleWidget) and not isinstance(widget, ChoiceWidget) and self.isControllable:
                 button = self._getKeyframeToggleButton(prop)
                 self.keyframeToggleButtons[button] = widget
                 table.attach(button, 3, 4, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
@@ -943,11 +944,12 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 widget.propName = prop.name.split("-")[0]
                 name = prop.name
 
-                # If this element is controlled, the value means nothing anymore.
-                binding = self.element.get_control_binding(prop.name)
-                if binding:
-                    widget.set_sensitive(False)
-                    self.bindings[widget] = binding
+                if self.isControllable:
+                    # If this element is controlled, the value means nothing anymore.
+                    binding = self.element.get_control_binding(prop.name)
+                    if binding:
+                        widget.set_sensitive(False)
+                        self.bindings[widget] = binding
                 button = self._getResetToDefaultValueButton(prop, widget)
                 table.attach(button, 2, 3, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
                 self.buttons[button] = widget
@@ -1053,7 +1055,7 @@ class GstElementSettingsDialog(Loggable):
     Dialog window for viewing/modifying properties of a Gst.Element
     """
 
-    def __init__(self, elementfactory, properties={}, parent_window=None):
+    def __init__(self, elementfactory, properties={}, parent_window=None, isControllable=True):
         Loggable.__init__(self)
         self.debug("factory:%s, properties:%s", elementfactory, properties)
 
@@ -1063,7 +1065,7 @@ class GstElementSettingsDialog(Loggable):
         self.ok_btn = self.builder.get_object("okbutton1")
 
         self.window = self.builder.get_object("dialog1")
-        self.elementsettings = GstElementSettingsWidget()
+        self.elementsettings = GstElementSettingsWidget(isControllable)
         self.builder.get_object("viewport1").add(self.elementsettings)
 
         self.factory = elementfactory
