@@ -1157,19 +1157,27 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
 
     def _split(self, action):
         """
-        Split clips at the current playhead position, regardless of selections.
+        If clips are selected, split them at the current playhead position.
+        Otherwise, split all clips at the playhead position.
         """
-        position = self.app.current.pipeline.getPosition()
+        selected = self.timeline.selection.getSelectedTrackElements()
 
-        for track in self.bTimeline.get_tracks():
-            for element in track.get_elements():
-                start = element.get_start()
-                end = start + element.get_duration()
-                if start < position and end > position:
-                    clip = element.get_parent()
-                    clip.split(position)
+        if selected:
+            self._splitElements(selected)
+        else:
+            for track in self.bTimeline.get_tracks():
+                self._splitElements(track.get_elements())
 
         self.bTimeline.commit()
+
+    def _splitElements(self, elements):
+        position = self.app.current.pipeline.getPosition()
+        for element in elements:
+            start = element.get_start()
+            end = start + element.get_duration()
+            if start < position and end > position:
+                clip = element.get_parent()
+                clip.split(position)
 
     def _keyframe(self, action):
         """
