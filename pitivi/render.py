@@ -748,7 +748,7 @@ class RenderDialog(Loggable):
         """
         properties = getattr(self.project, settings_attr)
         self.dialog = GstElementSettingsDialog(factory, properties=properties,
-                                            parent_window=self.window)
+                                            parent_window=self.window, isControllable=False)
         self.dialog.ok_btn.connect("clicked", self._okButtonClickedCb, settings_attr)
 
     def _showRenderErrorDialog(self, error, details):
