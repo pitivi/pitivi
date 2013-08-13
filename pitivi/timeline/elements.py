@@ -354,6 +354,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.isDragged = False
         self.lines = []
         self.keyframes = []
+        self.keyframesVisible = False
         self.source = None
         self.keyframedElement = None
         size = self.bElement.get_duration()
@@ -442,17 +443,15 @@ class TimelineElement(Clutter.Actor, Zoomable):
             self.default_prop = propname
             self.default_element = element
 
-        if len(self.source.get_all()) < 2:
-            self.source.unset_all()
-            val = float(propname.default_value) / (propname.maximum - propname.minimum)
-            self.source.set(self.bElement.props.in_point, val)
-            self.source.set(self.bElement.props.duration, val)
+        self.keyframesVisible = True
 
         self.updateKeyframes()
 
     def hideKeyframes(self):
         for keyframe in self.keyframes:
             self.remove_child(keyframe)
+
+        self.keyframesVisible = False
 
         self.keyframes = []
 
@@ -462,7 +461,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.drawLines()
 
     def setKeyframePosition(self, keyframe, value):
-        x = self.nsToPixel(value.timestamp) - KEYFRAME_SIZE / 2
+        x = self.nsToPixel(value.timestamp - self.bElement.props.in_point) - KEYFRAME_SIZE / 2
         y = EXPANDED_SIZE - (value.value * EXPANDED_SIZE)
 
         keyframe.set_z_position(2)
@@ -491,6 +490,13 @@ class TimelineElement(Clutter.Actor, Zoomable):
             return
 
         values = self.source.get_all()
+
+        if len(values) < 2 and self.bElement.props.duration > 0:
+            self.source.unset_all()
+            val = float(self.prop.default_value) / (self.prop.maximum - self.prop.minimum)
+            self.source.set(self.bElement.props.in_point, val)
+            self.source.set(self.bElement.props.duration + self.bElement.props.in_point, val)
+
         lastPoint = None
 
         for keyframe in self.keyframes:
@@ -533,7 +539,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.hideKeyframes()
 
     def _setKeyframePosition(self, keyframe, value):
-        x = self.nsToPixel(value.timestamp) - KEYFRAME_SIZE / 2
+        x = self.nsToPixel(value.timestamp - self.bElement.props.in_point) - KEYFRAME_SIZE / 2
         y = EXPANDED_SIZE - (value.value * EXPANDED_SIZE)
 
         keyframe.set_z_position(2)
@@ -558,7 +564,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         line.props.width = hyp
         line.props.height = KEYFRAME_SIZE
         line.props.rotation_angle_z = math.degrees(math.asin(sinX))
-        line.props.x = self.nsToPixel(lastKeyframe.value.timestamp)
+        line.props.x = self.nsToPixel(lastKeyframe.value.timestamp - self.bElement.props.in_point)
         line.props.y = EXPANDED_SIZE - (EXPANDED_SIZE * lastKeyframe.value.value)
         line.canvas.invalidate()
 
@@ -601,7 +607,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.dragAction.connect("drag-end", self._dragEndCb)
         self.bElement.selected.connect("selected-changed", self._selectedChangedCb)
         self.bElement.connect("notify::duration", self._durationChangedCb)
-        self.bElement.connect("notify::inpoint", self._inpointChangedCb)
+        self.bElement.connect("notify::in-point", self._inpointChangedCb)
         # We gotta go low-level cause Clutter.ClickAction["clicked"]
         # gets emitted after Clutter.DragAction["drag-begin"]
         self.connect("button-press-event", self._clickedCb)
@@ -634,38 +640,12 @@ class TimelineElement(Clutter.Actor, Zoomable):
         pass
 
     def _durationChangedCb(self, element, duration):
-        duration = self.bElement.get_duration()
-        if not self.source:
-            return
-
-        values = self.source.get_all()
-        last = values[-1]
-        lastValue = last.value
-
-        for value in values:
-            if value.timestamp > duration or value == last:
-                self.source.unset(value.timestamp)
-
-        self.source.set(duration, lastValue)
-
-        self.updateKeyframes()
+        if self.keyframesVisible:
+            self.updateKeyframes()
 
     def _inpointChangedCb(self, element, inpoint):
-        inpoint = self.bElement.get_inpoint()
-        if not self.source:
-            return
-
-        values = self.source.get_all()
-        first = values[0]
-        firstValue = first.value
-
-        for value in values:
-            if value.timestamp < inpoint or value == first:
-                self.source.unset(value.timestamp)
-
-        self.source.set(inpoint, firstValue)
-
-        self.updateKeyframes()
+        if self.keyframesVisible:
+            self.updateKeyframes()
 
     def _selectedChangedCb(self, selected, isSelected):
         self.isSelected = isSelected
