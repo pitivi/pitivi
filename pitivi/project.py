@@ -626,6 +626,7 @@ class Project(Loggable, GES.Project):
 
     @videowidth.setter
     def videowidth(self, value):
+        value = int(value)
         if self.video_profile.get_restriction()[0]["width"] != value and value:
             self.video_profile.get_restriction()[0]["width"] = value
             self._emitChange("rendering-settings-changed", "width", value)
@@ -636,6 +637,7 @@ class Project(Loggable, GES.Project):
 
     @videoheight.setter
     def videoheight(self, value):
+        value = int(value)
         if self.video_profile.get_restriction()[0]["height"] != value and value:
             self.video_profile.get_restriction()[0]["height"] = value
             self._emitChange("rendering-settings-changed", "height", value)
