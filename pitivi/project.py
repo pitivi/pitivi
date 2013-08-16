@@ -48,7 +48,7 @@ from pitivi.utils.pipeline import Pipeline
 from pitivi.utils.timeline import Selection
 from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
-from pitivi.utils.ui import frame_rates, audio_rates, audio_depths,\
+from pitivi.utils.ui import frame_rates, audio_rates,\
     audio_channels, beautify_time_delta, get_combo_value, set_combo_value,\
     pixel_aspect_ratios, display_aspect_ratios, SPACING
 from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
@@ -622,71 +622,63 @@ class Project(Loggable, GES.Project):
     # Encoding related properties
     @property
     def videowidth(self):
-        return self.video_profile.get_restriction()[0]["videowidth"]
+        return self.video_profile.get_restriction()[0]["width"]
 
     @videowidth.setter
     def videowidth(self, value):
-        if self.video_profile.get_restriction()[0]["videowidth"] != value and value:
-            self.video_profile.get_restriction()[0]["videowidth"] = value
-            self._emitChange("rendering-settings-changed", "videowidth", value)
+        value = int(value)
+        if self.video_profile.get_restriction()[0]["width"] != value and value:
+            self.video_profile.get_restriction()[0]["width"] = value
+            self._emitChange("rendering-settings-changed", "width", value)
 
     @property
     def videoheight(self):
-        return self.video_profile.get_restriction()[0]["videoheight"]
+        return self.video_profile.get_restriction()[0]["height"]
 
     @videoheight.setter
     def videoheight(self, value):
-        if self.video_profile.get_restriction()[0]["videoheight"] != value and value:
-            self.video_profile.get_restriction()[0]["videoheight"] = value
-            self._emitChange("rendering-settings-changed", "videoheight", value)
+        value = int(value)
+        if self.video_profile.get_restriction()[0]["height"] != value and value:
+            self.video_profile.get_restriction()[0]["height"] = value
+            self._emitChange("rendering-settings-changed", "height", value)
 
     @property
     def videorate(self):
-        return self.video_profile.get_restriction()[0]["videorate"]
+        return self.video_profile.get_restriction()[0]["framerate"]
 
     @videorate.setter
     def videorate(self, value):
-        if self.video_profile.get_restriction()[0]["videorate"] != value and value:
-            self.video_profile.get_restriction()[0]["videorate"] = value
+        if self.video_profile.get_restriction()[0]["framerate"] != value and value:
+            self.video_profile.get_restriction()[0]["framerate"] = value
 
     @property
     def videopar(self):
-        return self.video_profile.get_restriction()[0]["videopar"]
+        return self.video_profile.get_restriction()[0]["pixel-aspect-ratio"]
 
     @videopar.setter
     def videopar(self, value):
-        if self.video_profile.get_restriction()[0]["videopar"] != value and value:
-            self.video_profile.get_restriction()[0]["videopar"] = value
+        if self.video_profile.get_restriction()[0]["pixel-aspect-ratio"] != value and value:
+            self.video_profile.get_restriction()[0]["pixel-aspect-ratio"] = value
 
     @property
     def audiochannels(self):
-        return self.audio_profile.get_restriction()[0]["audiochannels"]
+        return self.audio_profile.get_restriction()[0]["channels"]
 
     @audiochannels.setter
     def audiochannels(self, value):
-        if self.video_profile.get_restriction()[0]["audiochannels"] != value and value:
-            self.audio_profile.get_restriction()[0]["audiochannels"] = value
-            self._emitChange("rendering-settings-changed", "audiochannels", value)
+        if self.audio_profile.get_restriction()[0]["channels"] != value and value:
+            self.audio_profile.get_restriction()[0]["channels"] = value
+            self._emitChange("rendering-settings-changed", "channels", value)
 
     @property
     def audiorate(self):
-        return self.audio_profile.get_restriction()[0]["audiorate"]
+        return self.audio_profile.get_restriction()[0]["rate"]
 
     @audiorate.setter
     def audiorate(self, value):
-        if self.video_profile.get_restriction()[0]["audiorate"] != value and value:
-            self.audio_profile.get_restriction()[0]["audiorate"] = value
-            self._emitChange("rendering-settings-changed", "audiorate", value)
-
-    @property
-    def audiodepth(self):
-        return self.audio_profile.get_restriction()[0]["audiodepth"]
-
-    @audiodepth.setter
-    def audiodepth(self, value):
-        if self.video_profile.get_restriction()[0]["audiodepth"] != value and value:
-            self.audio_profile.get_restriction()[0]["audiodepth"] = value
-            self._emitChange("rendering-settings-changed", "audiodepth", value)
+        if self.audio_profile.get_restriction()[0]["rate"] != value and value:
+            self.audio_profile.get_restriction()[0]["rate"] = value
+            self._emitChange("rendering-settings-changed", "rate", value)
 
     @property
     def aencoder(self):
@@ -822,9 +814,9 @@ class Project(Loggable, GES.Project):
         unlike GES.Project
         """
         self.timeline = self.extract()
-        self._calculateNbLoadingAssets()
         if self.timeline is None:
             return False
+        self._calculateNbLoadingAssets()
 
         self.timeline.selection = Selection()
         self.pipeline = Pipeline()
@@ -888,23 +880,20 @@ class Project(Loggable, GES.Project):
 
     def getAudioCaps(self):
         """ Returns the GstCaps corresponding to the audio settings """
-        # TODO: Figure out why including 'depth' causes pipeline failures:
         astr = "rate=%d,channels=%d" % (self.audiorate, self.audiochannels)
         caps_str = "audio/x-raw,%s" % (astr)
         audio_caps = Gst.caps_from_string(caps_str)
         return audio_caps
 
-    def setAudioProperties(self, nbchanns=-1, rate=-1, depth=-1):
+    def setAudioProperties(self, nbchanns=-1, rate=-1):
         """
-        Set the number of audio channels, rate and depth
+        Set the number of audio channels and the rate
         """
-        self.info("%d x %dHz %dbits", nbchanns, rate, depth)
+        self.info("%d x %dHz %dbits", nbchanns, rate)
         if not nbchanns == -1 and not nbchanns == self.audiochannels:
             self.audiochannels = nbchanns
         if not rate == -1 and not rate == self.audiorate:
             self.audiorate = rate
-        if not depth == -1 and not depth == self.audiodepth:
-            self.audiodepth = depth
 
     def setEncoders(self, muxer="", vencoder="", aencoder=""):
         """ Set the video/audio encoder and muxer """
@@ -952,9 +941,9 @@ class Project(Loggable, GES.Project):
                        for track in self.timeline.get_tracks()]
 
         if GES.TrackType.VIDEO not in track_types:
-            self.timeline.add_track(GES.Track.video_raw_new())
+            self.timeline.add_track(GES.VideoTrack.new())
         if GES.TrackType.AUDIO not in track_types:
-            self.timeline.add_track(GES.Track.audio_raw_new())
+            self.timeline.add_track(GES.AudioTrack.new())
 
     def _ensureLayer(self):
         if self.timeline is None:
@@ -978,8 +967,6 @@ class Project(Loggable, GES.Project):
             self.audiochannels = 2
         if not self.audiorate:
             self.audiorate = 44100
-        if not self.audiodepth:
-            self.audiodepth = 16
 
     def _emitChange(self, signal, key=None, value=None):
         if key and value:
@@ -1053,7 +1040,6 @@ class ProjectSettingsDialog():
 
         self.channels_combo.set_model(audio_channels)
         self.sample_rate_combo.set_model(audio_rates)
-        self.sample_depth_combo.set_model(audio_depths)
 
         # behavior
         self.wg = RippleUpdateGroup()
@@ -1077,7 +1063,6 @@ class ProjectSettingsDialog():
                           update_func=self._updateVideoSaveButton)
         self.wg.addVertex(self.channels_combo, signal="changed")
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
-        self.wg.addVertex(self.sample_depth_combo, signal="changed")
 
         # constrain width and height IFF constrain_sar_button is active
         self.wg.addEdge(self.width_spinbutton, self.height_spinbutton,
@@ -1155,7 +1140,6 @@ class ProjectSettingsDialog():
         # Bind the widgets in the Audio tab to the Audio Presets Manager.
         self.bindCombo(self.audio_presets, "channels", self.channels_combo)
         self.bindCombo(self.audio_presets, "sample-rate", self.sample_rate_combo)
-        self.bindCombo(self.audio_presets, "depth", self.sample_depth_combo)
 
         self.wg.addEdge(self.par_fraction_widget, self.save_video_preset_button)
         self.wg.addEdge(self.frame_rate_fraction_widget, self.save_video_preset_button)
@@ -1164,7 +1148,6 @@ class ProjectSettingsDialog():
 
         self.wg.addEdge(self.channels_combo, self.save_audio_preset_button)
         self.wg.addEdge(self.sample_rate_combo, self.save_audio_preset_button)
-        self.wg.addEdge(self.sample_depth_combo, self.save_audio_preset_button)
 
         # Set the shading style in the contextual toolbars below presets
         video_presets_toolbar = self.builder.get_object("video_presets_toolbar")
@@ -1226,7 +1209,6 @@ class ProjectSettingsDialog():
 
     def createAudioNoPreset(self, mgr):
         mgr.prependPreset(_("No preset"), {
-            "depth": self.project.audiodepth,
             "channels": self.project.audiochannels,
             "sample-rate": self.project.audiorate})
 
@@ -1314,7 +1296,6 @@ class ProjectSettingsDialog():
         self.par_combo = getObj("par_combo")
         self.channels_combo = getObj("channels_combo")
         self.sample_rate_combo = getObj("sample_rate_combo")
-        self.sample_depth_combo = getObj("sample_depth_combo")
         self.year_spinbutton = getObj("year_spinbutton")
         self.author_entry = getObj("author_entry")
         self.width_spinbutton = getObj("width_spinbutton")
@@ -1362,7 +1343,6 @@ class ProjectSettingsDialog():
         self.audio_presets.addPreset(preset_name, {
             "channels": get_combo_value(self.channels_combo),
             "sample-rate": get_combo_value(self.sample_rate_combo),
-            "depth": get_combo_value(self.sample_depth_combo)
         })
         self.audio_presets.restorePreset(preset_name)
         self._updateAudioPresetButtons()
@@ -1464,7 +1444,6 @@ class ProjectSettingsDialog():
         # audio
         set_combo_value(self.channels_combo, self.project.audiochannels)
         set_combo_value(self.sample_rate_combo, self.project.audiorate)
-        set_combo_value(self.sample_depth_combo, self.project.audiodepth)
 
         self._selectDarRadiobuttonToggledCb(self.select_dar_radiobutton)
 
@@ -1490,7 +1469,6 @@ class ProjectSettingsDialog():
 
         self.project.audiochannels = get_combo_value(self.channels_combo)
         self.project.audiorate = get_combo_value(self.sample_rate_combo)
-        self.project.audiodepth = get_combo_value(self.sample_depth_combo)
 
     def _responseCb(self, unused_widget, response):
         if response == Gtk.ResponseType.OK:

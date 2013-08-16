@@ -25,21 +25,20 @@
 UI utilities. This file contain the UI constants, and various functions and
 classes that help with UI drawing around the application
 """
-import glib
-from gi.repository import Gst
-from gi.repository import GES
-from gi.repository import Gtk
-import os
-import cairo
 
-from gi.repository import Gtk
 
-from itertools import izip
-from urllib import unquote
-from gettext import ngettext, gettext as _
 from decimal import Decimal
+from gettext import ngettext, gettext as _
+from gi.repository import GES
+from gi.repository import Gst
+from gi.repository import Gtk
 from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
     DiscovererStreamInfo, DiscovererSubtitleInfo
+from itertools import izip
+from urllib import unquote
+import cairo
+import glib
+import os
 
 from pitivi.utils.loggable import doLog, ERROR
 
@@ -51,18 +50,15 @@ from pitivi.utils.loggable import doLog, ERROR
 LAYER_HEIGHT_EXPANDED = 50
 LAYER_HEIGHT_COLLAPSED = 15
 TRACK_SPACING = 8
-
 EXPANDED_SIZE = 65
+CONTROL_WIDTH = 250
 
 PADDING = 6
-
 SPACING = 10
 
 PLAYHEAD_WIDTH = 2
-
 CANVAS_SPACING = 21
-
-CONTROL_WIDTH = 250
+KEYFRAME_SIZE = 8
 
 # Layer creation blocking time in s
 LAYER_CREATION_BLOCK_TIME = 0.2
@@ -423,12 +419,6 @@ audio_rates = model((str, int), (
     (_("%.1f kHz") % 44.1, 44100),
     (_("%d kHz") % 48, 48000),
     (_("%d kHz") % 96, 96000)))
-
-audio_depths = model((str, int), (
-    (_("%d bit") % 8, 8),
-    (_("%d bit") % 16, 16),
-    (_("%d bit") % 24, 24),
-    (_("%d bit") % 32, 32)))
 
 audio_channels = model((str, int), (
     (_("6 Channels (5.1)"), 6),

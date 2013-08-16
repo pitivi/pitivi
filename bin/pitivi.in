@@ -55,6 +55,8 @@ def _add_pitivi_path():
     root = None
     if _in_devel():
         root = os.path.split(dir)[0]
+        sys.path.insert(0, os.path.join(root, "pitivi", "coptimizations",
+                    ".libs"))
         localedir = os.path.join(os.path.split(dir)[0], 'locale')
     else:
         root = os.path.join(LIBDIR, 'pitivi', 'python')

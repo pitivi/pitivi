@@ -312,6 +312,8 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _removeEffect(self, effect):
         self.app.action_log.begin("remove effect")
+        if self._effect_config_ui:
+            self._effect_config_ui.get_children()[0].get_children()[0].resetKeyframeToggleButtons()
         self._cleanCache(effect)
         effect.get_parent().remove(effect)
         self._updateTreeview()
@@ -323,7 +325,7 @@ class EffectProperties(Gtk.Expander, Loggable):
     def addEffectToClip(self, clip, bin_desc):
         media_type = self.app.effects.getFactoryFromName(bin_desc).media_type
 
-        for track_element in clip.get_children():
+        for track_element in clip.get_children(False):
             track_type = track_element.get_track_type()
             if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
                     track_type == GES.TrackType.VIDEO and media_type == VIDEO_EFFECT:
@@ -446,6 +448,9 @@ class EffectProperties(Gtk.Expander, Loggable):
 
             element = effect
             ui = self.effect_props_handling.getEffectConfigurationUI(element)
+
+            if self._effect_config_ui:
+                self._effect_config_ui.get_children()[0].get_children()[0].resetShowKeyframesButton()
 
             self._effect_config_ui = ui
             if self._effect_config_ui:
@@ -584,7 +589,7 @@ class TransformationProperties(Gtk.Expander):
         self.app.current.pipeline.flushSeek()
 
     def _findEffect(self, name):
-        for effect in self._selected_clip.get_children():
+        for effect in self._selected_clip.get_children(False):
             if isinstance(effect, GES.BaseEffect):
                 if name in effect.get_property("bin-description"):
                     self.effect = effect

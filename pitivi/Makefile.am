@@ -1,4 +1,5 @@
 SUBDIRS = \
+	coptimizations \
 	dialogs \
 	utils \
 	timeline \

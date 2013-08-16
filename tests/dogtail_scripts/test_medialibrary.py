@@ -6,6 +6,9 @@ from time import sleep
 class MediaLibraryTest(HelpFunc):
 
     def test_medialibrary(self):
+        # Some commonly-used widgets in this test:
+        search = self.medialibrary.child(name="media_search_entry", roleName="text")
+        unused_media_button = search.child(name="starred-symbolic", roleName="icon")
         # FIXME: this test will fail if the media library is in listview mode
         samples = []
         samples.append(self.import_media("flat_colour1_640x480.png"))
@@ -14,15 +17,13 @@ class MediaLibraryTest(HelpFunc):
         self.insert_clip(samples[0])
         self.insert_clip(samples[2])
 
-        self.menubar.menu("Library").click()
-        self.menubar.menu("Library").menuItem("Select Unused Media").click()
+        unused_media_button.click()
         self.assertFalse(samples[0].isSelected)
         self.assertTrue(samples[1].isSelected)
         self.assertFalse(samples[2].isSelected)
 
         iconview = self.medialibrary.child(roleName="layered pane")
         self.assertEqual(len(iconview.children), 3)
-        search = self.medialibrary.textentry("")
         search.click()
         search.typeText("colour2")
         self.assertEqual(len(iconview.children), 1)
@@ -50,13 +51,10 @@ class MediaLibraryTest(HelpFunc):
 
         # Search for the remaining clips that were not inserted in the timeline,
         # then insert them all at once.
-        self.menubar.menu("Library").click()
-        self.menubar.menu("Library").menuItem("Select Unused Media").click()
-        self.menubar.menu("Library").click()
-        self.menubar.menu("Library").menuItem("Insert at End of Timeline").click()
+        unused_media_button.click()
+        self.insert_button.click()
         sleep(0.5)
-        self.menubar.menu("Library").click()
-        self.menubar.menu("Library").menuItem("Select Unused Media").click()
+        unused_media_button.click()
         sleep(0.5)
         for icon in iconview.children:
             self.assertFalse(icon.isSelected)

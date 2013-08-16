@@ -37,9 +37,18 @@ from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import time_to_string, beautify_length
 
+# Color #393f3f stolen from the dark variant of Adwaita.
+# There's *no way* to get the GTK3 theme's bg color there (it's always black)
+RULER_BACKGROUND_COLOR = (57, 63, 63)
+
 
 def setCairoColor(cr, color):
-    cr.set_source_rgb(float(color.red), float(color.green), float(color.blue))
+    if type(color) is tuple:
+        # Cairo's set_source_rgb function expects values from 0.0 to 1.0
+        cairo_color = map(lambda x: max(0, min(1, x / 255.0)), color)
+        cr.set_source_rgb(*cairo_color)
+    else:
+        cr.set_source_rgb(float(color.red), float(color.green), float(color.blue))
 
 
 class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
@@ -205,7 +214,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def drawBackground(self, cr):
         style = self.get_style_context()
-        setCairoColor(cr, style.get_background_color(Gtk.StateFlags.NORMAL))
+        setCairoColor(cr, RULER_BACKGROUND_COLOR)
         cr.rectangle(0, 0, cr.get_target().get_width(), cr.get_target().get_height())
         cr.fill()
         offset = int(self.nsToPixel(Gst.CLOCK_TIME_NONE)) - self.pixbuf_offset

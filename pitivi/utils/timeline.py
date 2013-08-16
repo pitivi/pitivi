@@ -29,6 +29,8 @@ from pitivi.utils.signal import Signallable
 from pitivi.utils.receiver import receiver, handler
 from pitivi.utils.ui import Point
 
+from pitivi.undo.undo import UndoableAction
+
 #from pitivi.utils.align import AutoAligner
 
 # Selection modes
@@ -47,6 +49,23 @@ SELECT_BETWEEN = 3
 class TimelineError(Exception):
     """Base Exception for errors happening in L{Timeline}s or L{Clip}s"""
     pass
+
+
+class ClipEdited(UndoableAction):
+    def __init__(self, focus, old_priority, new_priority, mode, edge, old_position, new_position):
+        self.focus = focus
+        self.old_priority = old_priority
+        self.old_position = old_position
+        self.new_priority = new_priority
+        self.new_position = new_position
+        self.mode = mode
+        self.edge = edge
+
+    def do(self):
+        self.focus.edit([], self.new_priority, self.mode, self.edge, long(self.new_position))
+
+    def undo(self):
+        self.focus.edit([], self.old_priority, self.mode, self.edge, long(self.old_position))
 
 
 class Selected(Signallable):
@@ -159,12 +178,12 @@ class Selection(Signallable):
             self.last_single_obj = iter(selection).next()
 
         for obj in old_selection - self.selected:
-            for element in obj.get_children():
+            for element in obj.get_children(False):
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
                     element.selected.selected = False
 
         for obj in self.selected - old_selection:
-            for element in obj.get_children():
+            for element in obj.get_children(False):
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
                     element.selected.selected = True
 
@@ -176,7 +195,7 @@ class Selection(Signallable):
         """
         objects = []
         for clip in self.selected:
-            objects.extend(clip.get_children())
+            objects.extend(clip.get_children(False))
 
         return set(objects)
 
@@ -186,7 +205,7 @@ class Selection(Signallable):
         """
         effects = []
         for clip in self.selected:
-            for element in clip.get_children():
+            for element in clip.get_children(False):
                 if isinstance(element, GES.BaseEffect):
                     effects.append(element)
 
@@ -213,7 +232,7 @@ class EditingContext(Signallable):
         "clip-trim-finished": [],
     }
 
-    def __init__(self, focus, timeline, mode, edge, other, settings):
+    def __init__(self, focus, timeline, mode, edge, settings, action_log):
         """
         @param focus: the Clip or TrackElement which is to be the
         main target of interactive editing, such as the object directly under the
@@ -231,10 +250,6 @@ class EditingContext(Signallable):
         can be change during the time using the same context.
         @type mode: L{GES.EditMode}
 
-        @param other: a set of objects which are the secondary targets of
-        interactive editing, such as objects in the current selection.
-        @type other: a set() of L{Clip}s or L{TrackElement}s
-
         @param setting: The PiTiVi settings, used to get the snap_distance
         parametter
 
@@ -242,25 +257,34 @@ class EditingContext(Signallable):
         """
         Signallable.__init__(self)
 
-        # make sure focus is not in secondary object list
-        other.difference_update(set((focus,)))
-
-        self.other = other
         if isinstance(focus, GES.TrackElement):
             self.focus = focus.get_parent()
         else:
             self.focus = focus
+
+        self.old_position = self.focus.get_start()
+        if edge == GES.Edge.EDGE_END and mode == GES.EditMode.EDIT_TRIM:
+            self.old_position += self.focus.get_duration()
+
+        self.old_priority = self.focus.get_priority()
+
         self.timeline = timeline
+        self.action_log = action_log
 
         self.edge = edge
         self.mode = mode
 
-        self.timeline.enable_update(False)
+        self.action_log.begin("move-clip")
 
     def finish(self):
         """Clean up timeline for normal editing"""
-        # TODO: post undo / redo action here
-        self.timeline.enable_update(True)
+
+        action = ClipEdited(self.focus, self.old_priority, self.new_priority, self.mode, self.edge,
+                            self.old_position, self.new_position)
+
+        self.action_log.push(action)
+        self.action_log.commit()
+        self.timeline.commit()
         self.emit("clip-trim-finished")
 
     def setMode(self, mode):
@@ -275,6 +299,9 @@ class EditingContext(Signallable):
             priority = -1
         else:
             priority = max(0, priority)
+
+        self.new_position = position
+        self.new_priority = priority
 
         res = self.focus.edit([], priority, self.mode, self.edge, long(position))
         if res and self.mode == GES.EditMode.EDIT_TRIM:

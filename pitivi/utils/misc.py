@@ -22,25 +22,22 @@
 
 # set of utility functions
 
-import sys
+from gettext import gettext as _
+from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
-from gi.repository import GLib
+from urllib import quote, unquote
+from urlparse import urlsplit, urlunsplit, urlparse
 import hashlib
 import os
 import struct
-import time
+import sys
 import threading
-
-from gettext import gettext as _
-
-from urlparse import urlsplit, urlunsplit, urlparse
-from urllib import quote, unquote
+import time
 
 import pitivi.utils.loggable as log
 from pitivi.utils.threads import Thread
-
 from pitivi.configure import APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE, APPNAME
 
 try:
@@ -170,6 +167,14 @@ def path_from_uri(uri):
     foo = urlparse(uri)
     path = foo.netloc + foo.path
     return unquote(path)
+
+
+def filename_from_uri(uri):
+    """
+    Return a human-readable filename (excluding the path to the file) to be
+    used in UI elements or to shorten debug statements
+    """
+    return os.path.basename(path_from_uri(uri))
 
 
 def quote_uri(uri):

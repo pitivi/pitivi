@@ -124,8 +124,6 @@ class ControlContainer(Clutter.ScrollActor):
         movedLayer = control.layer
         priority = movedLayer.get_priority()
 
-        self.timeline.bTimeline.enable_update(False)
-
         movedLayer.props.priority = 999  # Don't put 1000 layers or this breaks !
 
         if priority > target:
@@ -142,7 +140,7 @@ class ControlContainer(Clutter.ScrollActor):
         movedLayer.props.priority = target
 
         self._reorderLayerActors()
-        self.timeline.bTimeline.enable_update(True)
+        self.timeline.bTimeline.commit()
 
     def addTrackControl(self, layer, isAudio):
         if isAudio:

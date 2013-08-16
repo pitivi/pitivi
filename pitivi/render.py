@@ -38,7 +38,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.widgets import GstElementSettingsDialog
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.misc import show_user_manual
-from pitivi.utils.ui import model, frame_rates, audio_rates, audio_depths, \
+from pitivi.utils.ui import model, frame_rates, audio_rates,\
     audio_channels, get_combo_value, set_combo_value, beautify_ETA
 try:
     import pycanberra
@@ -372,7 +372,6 @@ class RenderDialog(Loggable):
         self.wg.addVertex(self.save_render_preset_button, update_func=self._updateRenderSaveButton)
         self.wg.addVertex(self.channels_combo, signal="changed")
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
-        self.wg.addVertex(self.sample_depth_combo, signal="changed")
         self.wg.addVertex(self.muxercombobox, signal="changed")
         self.wg.addVertex(self.audio_encoder_combo, signal="changed")
         self.wg.addVertex(self.video_encoder_combo, signal="changed")
@@ -390,14 +389,12 @@ class RenderDialog(Loggable):
         self.wg.addEdge(self.muxercombobox, self.save_render_preset_button)
         self.wg.addEdge(self.channels_combo, self.save_render_preset_button)
         self.wg.addEdge(self.sample_rate_combo, self.save_render_preset_button)
-        self.wg.addEdge(self.sample_depth_combo, self.save_render_preset_button)
 
         self._infobarForPresetManager = {self.render_presets: self.render_preset_infobar}
 
         # Bind widgets to RenderPresetsManager
         self.bindCombo(self.render_presets, "channels", self.channels_combo)
         self.bindCombo(self.render_presets, "sample-rate", self.sample_rate_combo)
-        self.bindCombo(self.render_presets, "depth", self.sample_depth_combo)
         self.bindCombo(self.render_presets, "acodec", self.audio_encoder_combo)
         self.bindCombo(self.render_presets, "vcodec", self.video_encoder_combo)
         self.bindCombo(self.render_presets, "container", self.muxercombobox)
@@ -409,7 +406,6 @@ class RenderDialog(Loggable):
 
     def createNoPreset(self, mgr):
         mgr.prependPreset(_("No preset"), {
-            "depth": int(get_combo_value(self.sample_depth_combo)),
             "channels": int(get_combo_value(self.channels_combo)),
             "sample-rate": int(get_combo_value(self.sample_rate_combo)),
             "acodec": get_combo_value(self.audio_encoder_combo).get_name(),
@@ -436,11 +432,6 @@ class RenderDialog(Loggable):
             mgr.bindWidget(name,
                 lambda x: self.vcodec_setter(widget, x),
                 lambda: get_combo_value(widget).get_name())
-
-        elif name == "depth":
-            mgr.bindWidget(name,
-                lambda x: self.sample_depth_setter(widget, x),
-                lambda: get_combo_value(widget))
 
         elif name == "sample-rate":
             mgr.bindWidget(name,
@@ -485,9 +476,6 @@ class RenderDialog(Loggable):
         if not self.muxer_combo_changing:
             # The user directly changed the video encoder combo.
             self.preferred_vencoder = value
-
-    def sample_depth_setter(self, widget, value):
-        self.project.audiodepth = set_combo_value(widget, value)
 
     def sample_rate_setter(self, widget, value):
         self.project.audiorate = set_combo_value(widget, value)
@@ -598,7 +586,6 @@ class RenderDialog(Loggable):
     def _addRenderPresetButtonClickedCb(self, button):
         preset_name = self._getUniquePresetName(self.render_presets)
         self.render_presets.addPreset(preset_name, {
-            "depth": int(get_combo_value(self.sample_depth_combo)),
             "channels": int(get_combo_value(self.channels_combo)),
             "sample-rate": int(get_combo_value(self.sample_rate_combo)),
             "acodec": get_combo_value(self.audio_encoder_combo).get_name(),
@@ -654,7 +641,6 @@ class RenderDialog(Loggable):
         self.scale_spinbutton = self.builder.get_object("scale_spinbutton")
         self.channels_combo = self.builder.get_object("channels_combo")
         self.sample_rate_combo = self.builder.get_object("sample_rate_combo")
-        self.sample_depth_combo = self.builder.get_object("sample_depth_combo")
         self.muxercombobox = self.builder.get_object("muxercombobox")
         self.audio_encoder_combo = self.builder.get_object("audio_encoder_combo")
         self.video_encoder_combo = self.builder.get_object("video_encoder_combo")
@@ -674,7 +660,6 @@ class RenderDialog(Loggable):
         self.frame_rate_combo.set_model(frame_rates)
         self.channels_combo.set_model(audio_channels)
         self.sample_rate_combo.set_model(audio_rates)
-        self.sample_depth_combo.set_model(audio_depths)
         self.muxercombobox.set_model(factorylist(CachedEncoderList().muxers))
 
     def _displaySettings(self):
@@ -685,7 +670,6 @@ class RenderDialog(Loggable):
         # Audio settings
         set_combo_value(self.channels_combo, self.project.audiochannels)
         set_combo_value(self.sample_rate_combo, self.project.audiorate)
-        set_combo_value(self.sample_depth_combo, self.project.audiodepth)
 
     def _displayRenderSettings(self):
         """Display the settings which can be changed only in the RenderDialog.
@@ -764,7 +748,7 @@ class RenderDialog(Loggable):
         """
         properties = getattr(self.project, settings_attr)
         self.dialog = GstElementSettingsDialog(factory, properties=properties,
-                                            parent_window=self.window)
+                                            parent_window=self.window, isControllable=False)
         self.dialog.ok_btn.connect("clicked", self._okButtonClickedCb, settings_attr)
 
     def _showRenderErrorDialog(self, error, details):
@@ -793,7 +777,8 @@ class RenderDialog(Loggable):
     def startAction(self):
         """ Start the render process """
         self._pipeline.set_state(Gst.State.NULL)
-        self._pipeline.set_mode(GES.PipelineFlags.SMART_RENDER)
+        # FIXME: https://github.com/pitivi/gst-editing-services/issues/23
+        self._pipeline.set_mode(GES.PipelineFlags.RENDER)
         encodebin = self._pipeline.get_by_name("internal-encodebin")
         self._gstSigId[encodebin] = encodebin.connect("element-added", self._elementAddedCb)
         self._pipeline.set_state(Gst.State.PLAYING)
@@ -958,14 +943,12 @@ class RenderDialog(Loggable):
         if active:
             self.channels_combo.set_sensitive(True)
             self.sample_rate_combo.set_sensitive(True)
-            self.sample_depth_combo.set_sensitive(True)
             self.audio_encoder_combo.set_sensitive(True)
             self.audio_settings_button.set_sensitive(True)
             self.render_button.set_sensitive(True)
         else:
             self.channels_combo.set_sensitive(False)
             self.sample_rate_combo.set_sensitive(False)
-            self.sample_depth_combo.set_sensitive(False)
             self.audio_encoder_combo.set_sensitive(False)
             self.audio_settings_button.set_sensitive(False)
             if not self.video_output_checkbutton.get_active():
@@ -1005,9 +988,6 @@ class RenderDialog(Loggable):
 
     def _channelsComboChangedCb(self, combo):
         self.project.audiochannels = get_combo_value(combo)
-
-    def _sampleDepthComboChangedCb(self, combo):
-        self.project.audiodepth = get_combo_value(combo)
 
     def _sampleRateComboChangedCb(self, combo):
         self.project.audiorate = get_combo_value(combo)

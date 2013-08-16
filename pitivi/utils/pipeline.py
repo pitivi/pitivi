@@ -161,6 +161,8 @@ class SimplePipeline(Signallable, Loggable):
         self._listeningSigId = 0
         self._duration = Gst.CLOCK_TIME_NONE
         self.video_overlay = video_overlay
+        self.lastPosition = long(0 * Gst.SECOND)
+        self.pendingRecovery = False
 
     def release(self):
         """
@@ -326,6 +328,7 @@ class SimplePipeline(Signallable, Loggable):
             cur = self.getPosition()
             if cur != Gst.CLOCK_TIME_NONE:
                 self.emit('position', cur)
+                self.lastPosition = cur
         finally:
             return True
 
@@ -366,13 +369,12 @@ class SimplePipeline(Signallable, Loggable):
             self.debug("seeking failed")
             raise PipelineError("seek failed")
 
+        self.lastPosition = position
+
         self.debug("seeking successful")
         self.emit('position', position)
 
     def seekRelative(self, time):
-        if not time:
-            self.error("Trying to seek to an invalid time: %s", time)
-            return
         seekvalue = max(0, min(self.getPosition() + time, self.getDuration()))
         self.simple_seek(seekvalue)
 
@@ -397,6 +399,9 @@ class SimplePipeline(Signallable, Loggable):
                     except PipelineError:
                         # no sinks??
                         pass
+                    if self.pendingRecovery:
+                        self.simple_seek(self.lastPosition)
+                        self.pendingRecovery = False
                 elif prev == Gst.State.PAUSED and new == Gst.State.PLAYING:
                     self._listenToPosition(True)
                 elif prev == Gst.State.PLAYING and new == Gst.State.PAUSED:
@@ -408,11 +413,18 @@ class SimplePipeline(Signallable, Loggable):
         elif message.type == Gst.MessageType.ERROR:
             error, detail = message.parse_error()
             self._handleErrorMessage(error, detail, message.src)
+            if not (self._pipeline.get_mode() & GES.PipelineFlags.RENDER):
+                self._recover()
         elif message.type == Gst.MessageType.DURATION_CHANGED:
             self.debug("Duration might have changed, querying it")
             GLib.idle_add(self._queryDurationAsync)
         else:
             self.log("%s [%r]" % (message.type, message.src))
+
+    def _recover(self):
+        self.pendingRecovery = True
+        self._pipeline.set_state(Gst.State.NULL)
+        self._pipeline.set_state(Gst.State.PAUSED)
 
     def _queryDurationAsync(self, *args, **kwargs):
         try:
@@ -437,9 +449,9 @@ class SimplePipeline(Signallable, Loggable):
             raise PipelineError("Couldn't get duration: Returned None")
 
 
-class Pipeline(GES.TimelinePipeline, SimplePipeline):
+class Pipeline(GES.Pipeline, SimplePipeline):
     """
-    Helper to handle GES.TimelinePipeline through the SimplePipeline API
+    Helper to handle GES.Pipeline through the SimplePipeline API
     and handle the Seeker properly
 
     Signals:
@@ -462,7 +474,7 @@ class Pipeline(GES.TimelinePipeline, SimplePipeline):
     }
 
     def __init__(self, pipeline=None):
-        GES.TimelinePipeline.__init__(self)
+        GES.Pipeline.__init__(self)
         SimplePipeline.__init__(self, self, self)
 
         self._seeker = Seeker()
@@ -473,7 +485,7 @@ class Pipeline(GES.TimelinePipeline, SimplePipeline):
         return self._timeline.get_duration()
 
     def add_timeline(self, timeline):
-        if GES.TimelinePipeline.add_timeline(self, timeline):
+        if GES.Pipeline.add_timeline(self, timeline):
             self._timeline = timeline
             return True
 

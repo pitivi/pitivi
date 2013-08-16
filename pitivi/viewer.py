@@ -451,7 +451,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
             self._tmp_pipeline.set_property("uri", clip_uri)
             self.setPipeline(SimplePipeline(self._tmp_pipeline, self._tmp_pipeline))
             self._lastClipTrimTime = cur_time
-        if (cur_time - self._lastClipTrimTime) > 0.2:
+        if (cur_time - self._lastClipTrimTime) > 0.2 and self.pipeline.getState() == Gst.State.PAUSED:
             # Do not seek more than once every 200 ms (for performance)
             self._tmp_pipeline.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, position)
             self._lastClipTrimTime = cur_time

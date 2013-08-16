@@ -21,16 +21,19 @@
 # Boston, MA 02110-1301, USA.
 
 import sys
+import os
 
 from gi.repository import GtkClutter
+
 GtkClutter.init([])
 
 from gi.repository import Gst, GES, GObject, Clutter, Gtk, GLib, Gdk
 
-from datetime import datetime
-
-from pitivi.utils.timeline import Zoomable, Selection, UNSELECT
+from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
+from pitivi.check import missing_soft_deps
+from pitivi.utils.timeline import Zoomable, Selection, SELECT, UNSELECT
 from pitivi.settings import GlobalSettings
+from pitivi.dialogs.depsmanager import DepsManager
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, PLAYHEAD_WIDTH, CONTROL_WIDTH, TYPE_PITIVI_EFFECT
 from pitivi.utils.widgets import ZoomBox
@@ -82,6 +85,12 @@ GROUP = _("Group clips")
 ALIGN = _("Align clips based on their soundtracks")
 SELECT_BEFORE = ("Select all sources before selected")
 SELECT_AFTER = ("Select all after selected")
+
+# Colors
+TIMELINE_BACKGROUND_COLOR = Clutter.Color.new(31, 30, 33, 255)
+SELECTION_MARQUEE_COLOR = Clutter.Color.new(100, 100, 100, 200)
+PLAYHEAD_COLOR = Clutter.Color.new(200, 0, 0, 255)
+SNAPPING_INDICATOR_COLOR = Clutter.Color.new(50, 150, 200, 200)
 
 ui = '''
 <ui>
@@ -147,7 +156,10 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         Clutter.ScrollActor.__init__(self)
         Zoomable.__init__(self)
         self.bTimeline = None
+        self.current_group = GES.Group()
+
         self._container = container
+        self._settings = container._settings
         self.elements = []
         self.ghostClips = []
         self.selection = Selection()
@@ -155,6 +167,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.lastPosition = 0  # Saved for redrawing when paused
         self._createPlayhead()
         self._createSnapIndicator()
+        self._peekMouse()
+        self._setUpDragAndDrop()
 
     # Public API
 
@@ -191,10 +205,6 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
         self.zoomChanged()
 
-    # Stage was clicked with nothing under the pointer
-    def emptySelection(self):
-        self.selection.setSelection(self.selection.getSelectedTrackElements(), UNSELECT)
-
     """
     @param element: the ui_element for which we want to find the sibling.
     Will iterate over ui_elements to get the possible uri source with the same parent clip.
@@ -213,14 +223,13 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def insertLayer(self, ghostclip):
         layer = None
         if ghostclip.priority < len(self.bTimeline.get_layers()):
-            self.bTimeline.enable_update(False)
             for layer in self.bTimeline.get_layers():
                 if layer.get_priority() >= ghostclip.priority:
                     layer.props.priority += 1
 
             layer = self.bTimeline.append_layer()
             layer.props.priority = ghostclip.priority
-            self.bTimeline.enable_update(True)
+            self.bTimeline.commit()
             self._container.controls._reorderLayerActors()
         return layer
 
@@ -284,11 +293,17 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             if target is None:
                 layer = self.bTimeline.append_layer()
 
+            if ghostclip.asset.is_image():
+                clip_duration = self._settings.imageClipLength * Gst.SECOND / 1000.0
+            else:
+                clip_duration = ghostclip.asset.get_duration()
+
             layer.add_asset(ghostclip.asset,
                             Zoomable.pixelToNs(ghostclip.props.x),
                             0,
-                            ghostclip.asset.get_duration(),
+                            clip_duration,
                             ghostclip.asset.get_supported_formats())
+        self.bTimeline.commit()
 
     """
     This is called at drag-leave. We don't empty the list on purpose.
@@ -298,18 +313,87 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             for ghostclip in ghostCouple:
                 if ghostclip is not None and ghostclip.get_parent():
                     self.remove_child(ghostclip)
+        self.bTimeline.commit()
+
+    def getActorUnderPointer(self):
+        return self.mouse.get_pointer_actor()
 
     # Internal API
+
+    def _elementIsInLasso(self, element, x1, y1, x2, y2):
+        xE1 = element.props.x
+        xE2 = element.props.x + element.props.width
+        yE1 = element.props.y
+        yE2 = element.props.y + element.props.height
+
+        return self._segmentsOverlap((x1, x2), (xE1, xE2)) and self._segmentsOverlap((y1, y2), (yE1, yE2))
+
+    def _segmentsOverlap(self, a, b):
+        x = max(a[0], b[0])
+        y = min(a[1], b[1])
+        return x < y
+
+    def _translateToTimelineContext(self, event):
+        event.x -= CONTROL_WIDTH
+        event.x += self._scroll_point.x
+        event.y += self._scroll_point.y
+
+        delta_x = event.x - self.dragBeginStartX
+        delta_y = event.y - self.dragBeginStartY
+
+        newX = self.dragBeginStartX
+        newY = self.dragBeginStartY
+
+        # This is needed when you start to click and go left or up.
+
+        if delta_x < 0:
+            newX = event.x
+            delta_x = abs(delta_x)
+
+        if delta_y < 0:
+            newY = event.y
+            delta_y = abs(delta_y)
+
+        return (newX, newY, delta_x, delta_y)
+
+    def _setUpDragAndDrop(self):
+        self.set_reactive(True)
+
+        self.marquee = Clutter.Actor()
+        self.marquee.set_background_color(SELECTION_MARQUEE_COLOR)
+        self.marquee.hide()
+        self.add_child(self.marquee)
+
+        self.drawMarquee = False
+        self._container.stage.connect("button-press-event", self._dragBeginCb)
+        self._container.stage.connect("motion-event", self._dragProgressCb)
+        self._container.stage.connect("button-release-event", self._dragEndCb)
+
+    def _peekMouse(self):
+        manager = Clutter.DeviceManager.get_default()
+
+        for device in manager.peek_devices():
+            if device.props.device_type == Clutter.InputDeviceType.POINTER_DEVICE and device.props.enabled is True:
+                self.mouse = device
+                break
 
     def _createGhostclip(self, trackType, asset):
         ghostclip = Ghostclip(trackType)
         ghostclip.asset = asset
         ghostclip.setNbrLayers(len(self.bTimeline.get_layers()))
-        ghostclip.setWidth(Zoomable.nsToPixel(asset.get_duration()))
+
+        if asset.is_image():
+            clip_duration = self._settings.imageClipLength * Gst.SECOND / 1000.0
+        else:
+            clip_duration = asset.get_duration()
+
+        ghostclip.setWidth(Zoomable.nsToPixel(clip_duration))
         self.add_child(ghostclip)
         return ghostclip
 
     def _connectTrack(self, track):
+        for trackelement in track.get_elements():
+            self._trackElementAddedCb(track, trackelement)
         track.connect("track-element-added", self._trackElementAddedCb)
         track.connect("track-element-removed", self._trackElementRemovedCb)
 
@@ -334,7 +418,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     def _createPlayhead(self):
         self.playhead = Clutter.Actor()
-        self.playhead.set_background_color(Clutter.Color.new(200, 0, 0, 255))
+        self.playhead.set_background_color(PLAYHEAD_COLOR)
         self.playhead.set_size(0, 0)
         self.playhead.set_position(0, 0)
         self.playhead.set_easing_duration(0)
@@ -343,7 +427,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     def _createSnapIndicator(self):
         self._snap_indicator = Clutter.Actor()
-        self._snap_indicator.set_background_color(Clutter.Color.new(50, 150, 200, 200))
+        self._snap_indicator.set_background_color(SNAPPING_INDICATOR_COLOR)
         self._snap_indicator.props.visible = False
         self._snap_indicator.props.width = 3
         self._snap_indicator.props.y = 0
@@ -438,6 +522,10 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._redraw()
         self._container.controls.addLayerControl(layer)
 
+    def _addTrackElement(self, track, bElement):
+        self._updateSize()
+        self._addTimelineElement(track, bElement)
+
     # Interface overrides
 
     # Zoomable Override
@@ -458,6 +546,60 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         return self._scroll_point
 
     # Callbacks
+
+    def _dragBeginCb(self, actor, event):
+        self.drawMarquee = (self.getActorUnderPointer() == self)
+
+        if not self.drawMarquee:
+            return
+
+        if self.current_group:
+            GES.Container.ungroup(self.current_group, False)
+            self.current_group = GES.Group()
+
+        self.dragBeginStartX = event.x - CONTROL_WIDTH + self._scroll_point.x
+        self.dragBeginStartY = event.y + self._scroll_point.y
+        self.marquee.set_size(0, 0)
+        self.marquee.set_position(event.x - CONTROL_WIDTH, event.y)
+        self.marquee.show()
+
+    def _dragProgressCb(self, actor, event):
+        if not self.drawMarquee:
+            return False
+
+        x, y, width, height = self._translateToTimelineContext(event)
+
+        self.marquee.set_position(x, y)
+        self.marquee.set_size(width, height)
+
+        return False
+
+    def _dragEndCb(self, actor, event):
+        if not self.drawMarquee:
+            return
+
+        self.drawMarquee = False
+
+        x, y, width, height = self._translateToTimelineContext(event)
+        elements = set({})
+
+        for element in self.elements:
+            if self._elementIsInLasso(element, x, y, x + width, y + height):
+                elements.add(element.bElement.get_toplevel_parent())
+
+        elements = list(elements)
+        selection = []
+
+        if elements:
+            self.current_group = GES.Group()
+            for element in elements:
+                self.current_group.add(element)
+            children = self.current_group.get_children(True)
+            #Let's only get the actual sources that we display
+            selection = filter(lambda elem: isinstance(elem, GES.Source), children)
+
+        self.selection.setSelection(selection, SELECT)
+        self.marquee.hide()
 
     # snapping indicator
     def _snapCb(self, unused_timeline, obj1, obj2, position):
@@ -494,8 +636,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._disconnectTrack(track)
 
     def _trackElementAddedCb(self, track, bElement):
-        self._updateSize()
-        self._addTimelineElement(track, bElement)
+        self._addTrackElement(track, bElement)
 
     def _trackElementRemovedCb(self, track, bElement):
         self._removeTimelineElement(track, bElement)
@@ -539,7 +680,6 @@ class Timeline(Gtk.VBox, Zoomable):
     def __init__(self, gui, instance, ui_manager):
         Zoomable.__init__(self)
         Gtk.VBox.__init__(self)
-
         GObject.threads_init()
 
         self.gui = gui
@@ -586,7 +726,7 @@ class Timeline(Gtk.VBox, Zoomable):
             if isinstance(asset, GES.TitleClip):
                 clip_duration = asset.get_duration()
             elif asset.is_image():
-                clip_duration = long(long(self._settings.imageClipLength) * Gst.SECOND / 1000)
+                clip_duration = self._settings.imageClipLength * Gst.SECOND / 1000.0
             else:
                 clip_duration = asset.get_duration()
 
@@ -601,6 +741,18 @@ class Timeline(Gtk.VBox, Zoomable):
             self._setBestZoomRatio()
         else:
             self.scrollToPosition(self.bTimeline.props.duration)
+
+        self.app.action_log.commit()
+
+        self.bTimeline.commit()
+
+    def purgeObject(self, asset_id):
+        """Remove all instances of an asset from the timeline."""
+        layers = self.bTimeline.get_layers()
+        for layer in layers:
+            for tlobj in layer.get_clips():
+                if asset_id == tlobj.get_id():
+                    layer.remove_clip(tlobj)
 
     def setProjectManager(self, projectmanager):
         if self._projectmanager is not None:
@@ -647,6 +799,10 @@ class Timeline(Gtk.VBox, Zoomable):
         else:
             self._scrollToPosition(position)
 
+    def seekInPosition(self, position):
+        self.pressed = True
+        self._seeker.seek(position)
+
     def setTimeline(self, bTimeline):
         self.bTimeline = bTimeline
         self.timeline.selection.connect("selection-changed", self._selectionChangedCb)
@@ -667,6 +823,7 @@ class Timeline(Gtk.VBox, Zoomable):
         self.embed = GtkClutter.Embed()
         self.embed.get_accessible().set_name("timeline canvas")  # for dogtail
         self.stage = self.embed.get_stage()
+        perspective = self.stage.get_perspective()
 
         self.timeline = TimelineStage(self)
         self.controls = ControlContainer(self.timeline)
@@ -674,8 +831,10 @@ class Timeline(Gtk.VBox, Zoomable):
         self.shiftMask = False
         self.controlMask = False
 
-        # TODO: make the bg a gradient from (0, 0, 0, 255) to (50, 50, 50, 255)
-        self.stage.set_background_color(Clutter.Color.new(31, 30, 33, 255))
+        perspective.fov_y = 90.
+        self.stage.set_perspective(perspective)
+
+        self.stage.set_background_color(TIMELINE_BACKGROUND_COLOR)
         self.timeline.set_position(CONTROL_WIDTH, 0)
         self.controls.set_position(0, 0)
         self.controls.set_z_position(2)
@@ -683,10 +842,10 @@ class Timeline(Gtk.VBox, Zoomable):
         self.stage.add_child(self.controls)
         self.stage.add_child(self.timeline)
 
-        self.stage.connect("destroy", quit_)
         self.stage.connect("button-press-event", self._clickedCb)
         self.stage.connect("button-release-event", self._releasedCb)
         self.embed.connect("scroll-event", self._scrollEventCb)
+
         if self.gui:
             self.gui.connect("key-press-event", self._keyPressEventCb)
             self.gui.connect("key-release-event", self._keyReleaseEventCb)
@@ -723,8 +882,6 @@ class Timeline(Gtk.VBox, Zoomable):
     def _ensureLayer(self):
         """
         Make sure we have a layer in our timeline
-
-        Returns: The number of layer present in self.timeline
         """
         layers = self.bTimeline.get_layers()
 
@@ -864,7 +1021,7 @@ class Timeline(Gtk.VBox, Zoomable):
         ruler_width = self.ruler.get_allocation().width
         # Add Gst.SECOND - 1 to the timeline duration to make sure the
         # last second of the timeline will be in view.
-        duration = self.timeline.bTimeline.get_duration()
+        duration = self.bTimeline.get_duration()
         if duration == 0:
             return
 
@@ -874,8 +1031,7 @@ class Timeline(Gtk.VBox, Zoomable):
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
         Zoomable.setZoomLevel(nearest_zoom_level)
-        self.timeline.bTimeline.props.snapping_distance = \
-            Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband)
+        self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
         # Only do this at the very end, after updating the other widgets.
         self.zoomed_fitted = True
@@ -922,7 +1078,7 @@ class Timeline(Gtk.VBox, Zoomable):
                                   self.hadj.props.upper - canvas_size - 1))
 
     def _deleteSelected(self, unused_action):
-        if self.timeline:
+        if self.bTimeline:
             self.app.action_log.begin("delete clip")
 
             #FIXME GES port: Handle unlocked TrackElement-s
@@ -933,51 +1089,75 @@ class Timeline(Gtk.VBox, Zoomable):
             self.app.action_log.commit()
 
     def _ungroupSelected(self, unused_action):
-        if self.timeline:
-            self.timeline.enable_update(False)
+        if self.bTimeline:
             self.app.action_log.begin("ungroup")
 
-            for clip in self.timeline.selection:
-                clip.ungroup(False)
+            containers = set({})
 
-            self.timeline.enable_update(True)
+            for obj in self.timeline.selection:
+                toplevel = obj.get_toplevel_parent()
+                if toplevel == self.timeline.current_group:
+                    for child in toplevel.get_children(False):
+                        containers.add(child)
+                    toplevel.ungroup(False)
+                else:
+                    containers.add(toplevel)
+
+            for container in containers:
+                GES.Container.ungroup(container, False)
+                self.timeline.bTimeline.commit()
+
+            self.timeline.current_group = GES.Group()
+
             self.app.action_log.commit()
+            self.bTimeline.commit()
 
     def _groupSelected(self, unused_action):
-        if self.timeline:
-            self.timeline.enable_update(False)
+        if self.bTimeline:
             self.app.action_log.begin("group")
 
-            GES.Container.group(self.timeline.selection)
+            containers = set({})
 
+            for obj in self.timeline.selection:
+                toplevel = obj.get_toplevel_parent()
+                if toplevel == self.timeline.current_group:
+                    for child in toplevel.get_children(False):
+                        containers.add(child)
+                    toplevel.ungroup(False)
+                else:
+                    containers.add(toplevel)
+
+            if containers:
+                group = GES.Container.group(list(containers))
+
+            self.timeline.current_group = GES.Group()
+
+            self.bTimeline.commit()
             self.app.action_log.commit()
-            self.timeline.enable_update(True)
 
     def _alignSelected(self, unused_action):
         if "NumPy" in missing_soft_deps:
             DepsManager(self.app)
 
-        elif self.timeline:
+        elif self.bTimeline:
             progress_dialog = AlignmentProgressDialog(self.app)
 
             progress_dialog.window.show()
             self.app.action_log.begin("align")
-            self.timeline.enable_update(False)
 
             def alignedCb():  # Called when alignment is complete
-                self.timeline.enable_update(True)
                 self.app.action_log.commit()
+                self.bTimeline.commit()
                 progress_dialog.window.destroy()
 
-            pmeter = self.timeline.alignSelection(alignedCb)
-
-            pmeter.addWatcher(progress_dialog.updatePosition)
+            auto_aligner = AutoAligner(self.timeline.selection, alignedCb)
+            progress_meter = auto_aligner.start()
+            progress_meter.addWatcher(progress_dialog.updatePosition)
 
     def _split(self, action):
         """
         Split clips at the current playhead position, regardless of selections.
         """
-        self.bTimeline.enable_update(False)
         position = self.app.current.pipeline.getPosition()
 
         for track in self.bTimeline.get_tracks():
@@ -988,7 +1168,7 @@ class Timeline(Gtk.VBox, Zoomable):
                     clip = element.get_parent()
                     clip.split(position)
 
-        self.bTimeline.enable_update(True)
+        self.bTimeline.commit()
 
     def _keyframe(self, action):
         """
@@ -1020,7 +1200,7 @@ class Timeline(Gtk.VBox, Zoomable):
     def _playPause(self, unused_action):
         self.app.current.pipeline.togglePlayback()
 
-    def _transposeXY(self, x, y):
+    def transposeXY(self, x, y):
         height = self.ruler.get_allocation().height
         x += self.timeline.get_scroll_point().x
         return x - CONTROL_WIDTH, y - height
@@ -1032,8 +1212,7 @@ class Timeline(Gtk.VBox, Zoomable):
     def zoomChanged(self):
         if self._settings and self.bTimeline:
             # zoomChanged might be called various times before the UI is ready
-            self.bTimeline.props.snapping_distance = \
-                Zoomable.pixelToNs(self._settings.edgeSnapDeadband)
+            self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
         self.updateHScrollAdjustments()
 
@@ -1060,9 +1239,6 @@ class Timeline(Gtk.VBox, Zoomable):
         position = self.pixelToNs(event.x - CONTROL_WIDTH + self.timeline._scroll_point.x)
         if self.app:
             self._seeker.seek(position)
-        actor = self.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, event.x, event.y)
-        if actor == stage:
-            self.timeline.emptySelection()
 
     def _releasedCb(self, stage, event):
         self.timeline._snapEndedCb()
@@ -1084,8 +1260,7 @@ class Timeline(Gtk.VBox, Zoomable):
 
     def _snapDistanceChangedCb(self, settings):
         if self.bTimeline:
-            self.bTimeline.props.snapping_distance = \
-                Zoomable.pixelToNs(settings.edgeSnapDeadband)
+            self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
     def _projectChangedCb(self, app, project, unused_fully_loaded):
         """
@@ -1224,7 +1399,7 @@ class Timeline(Gtk.VBox, Zoomable):
                 if self.zoomed_fitted:
                     self._setBestZoomRatio()
                 else:
-                    x, y = self._transposeXY(x, y)
+                    x, y = self.transposeXY(x, y)
                     self.scrollToPosition(Zoomable.pixelToNs(x))
             else:
                 actor = self.stage.get_actor_at_pos(Clutter.PickMode.ALL, x, y)
@@ -1245,7 +1420,7 @@ class Timeline(Gtk.VBox, Zoomable):
             widget.drag_get_data(context, target, time)
             Gdk.drag_status(context, 0, time)
         else:
-            x, y = self._transposeXY(x, y)
+            x, y = self.transposeXY(x, y)
 
             # dragged from the media library
             if not self.timeline.ghostClips and self.isDraggedClip:
@@ -1298,11 +1473,13 @@ class Timeline(Gtk.VBox, Zoomable):
         self.project = GES.Project(uri=None, extractable_type=GES.Timeline)
 
         bTimeline = GES.Timeline()
-        bTimeline.add_track(GES.Track.audio_raw_new())
-        bTimeline.add_track(GES.Track.video_raw_new())
+        bTimeline.add_track(GES.AudioTrack.new())
+        bTimeline.add_track(GES.VideoTrack.new())
 
         self.bTimeline = bTimeline
         timeline.setTimeline(bTimeline)
+
+        self.stage.connect("destroy", quit_)
 
         layer = GES.Layer()
         bTimeline.add_layer(layer)

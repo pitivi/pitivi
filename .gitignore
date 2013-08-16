@@ -52,3 +52,12 @@ log
 *.BASE.*
 *.BACKUP.*
 *.so
+
+# Files generated in the pitivi/coptimizations/ code
+pitivi/coptimizations/.libs/
+pitivi/coptimizations/.deps/
+depcomp
+*.a
+*.la
+*.lo
+*.o
