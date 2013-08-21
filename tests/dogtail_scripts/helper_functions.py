@@ -106,11 +106,18 @@ class HelpFunc(BaseDogTail):
         for i in range(5):
             # The time it takes for the icon to appear is unpredictable,
             # therefore we try up to 5 times to look for it
-            icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
+            try:
+                icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
+            except TypeError:
+                # If no icon can be seen due to restrictive search results,
+                # don't try to loop over "icons" (which will be a None type).
+                # See further below for further checks that verify this.
+                continue
             for icon in icons:
                 if icon.text == filename:
                     return icon
             sleep(0.5)
+
         # Failure to find an icon might be because it is hidden due to a search
         current_search_text = self.medialibrary.child(name="media_search_entry", roleName="text").text.lower()
         self.assertNotEqual(current_search_text, "")
