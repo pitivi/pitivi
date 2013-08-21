@@ -150,6 +150,9 @@ class ProjectPropertiesTest(HelpFunc):
         return new_timestamp != timestamp
 
     def test_backup(self):
+        # FIXME: this test would fail in listview mode - for now we just force iconview mode.
+        self.force_medialibrary_iconview_mode()
+
         #Create empty project
         sample = self.import_media()
 
@@ -238,6 +241,9 @@ class ProjectPropertiesTest(HelpFunc):
         filename2 = "/tmp/test_project-%i.xptv" % time()
         self.unlink.append(filename1)
         self.unlink.append(filename2)
+
+        # FIXME: this test would fail in listview mode - for now we just force iconview mode.
+        self.force_medialibrary_iconview_mode()
 
         #Create project
         self.assertTrue(infobar_media.showing)

@@ -220,3 +220,15 @@ class HelpFunc(BaseDogTail):
         """
         (x, y) = widget.position
         dogtail.rawinput.doubleClick(x + 10, y + 10)
+
+    def force_medialibrary_iconview_mode(self):
+        """
+        Many of our tests looking up clips in the media library don't handle
+        the fact that iconview appears different than treeview to dogtail, and
+        thus that we need to double the code. This dodges the issue by ensuring
+        the tests run in iconview mode.
+        """
+        listview = self.medialibrary.child(name="media_listview_scrollwindow")
+        if listview.showing:
+            dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
+            self.medialibrary.child(name="media_listview_button", roleName="panel").click()

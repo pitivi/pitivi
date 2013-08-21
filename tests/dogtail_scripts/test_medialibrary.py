@@ -9,7 +9,10 @@ class MediaLibraryTest(HelpFunc):
         # Some commonly-used widgets in this test:
         search = self.medialibrary.child(name="media_search_entry", roleName="text")
         unused_media_button = search.child(name="starred-symbolic", roleName="icon")
-        # FIXME: this test will fail if the media library is in listview mode
+
+        # FIXME: this test would fail in listview mode - for now we just force iconview mode.
+        self.force_medialibrary_iconview_mode()
+
         samples = []
         samples.append(self.import_media("flat_colour1_640x480.png"))
         samples.append(self.import_media("flat_colour2_640x480.png"))

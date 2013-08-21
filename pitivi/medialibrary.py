@@ -162,10 +162,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.treeview_scrollwin = Gtk.ScrolledWindow()
         self.treeview_scrollwin.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         self.treeview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
+        self.treeview_scrollwin.get_accessible().set_name("media_listview_scrollwindow")
 
         self.iconview_scrollwin = Gtk.ScrolledWindow()
         self.iconview_scrollwin.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.iconview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
+        self.iconview_scrollwin.get_accessible().set_name("media_iconview_scrollwindow")
 
         # import sources dialogbox
         self._importDialog = None
