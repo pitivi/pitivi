@@ -124,7 +124,7 @@ class TextWidget(Gtk.HBox, DynamicWidget):
         self.set_border_width(0)
         self.set_spacing(0)
         if choices:
-            self.combo = Gtk.combo_box_entry_new_text()
+            self.combo = Gtk.ComboBoxText.new_with_entry()
             self.text = self.combo.get_child()
             self.combo.show()
             self.pack_start(self.combo, True, True, 0)
