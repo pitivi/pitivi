@@ -236,6 +236,8 @@ class ProjectPropertiesTest(HelpFunc):
         infobar_media = self.medialibrary.child(name="Information", roleName="alert")
         filename1 = "/tmp/test_project-%i.xptv" % time()
         filename2 = "/tmp/test_project-%i.xptv" % time()
+        self.unlink.append(filename1)
+        self.unlink.append(filename2)
 
         #Create project
         self.assertTrue(infobar_media.showing)
