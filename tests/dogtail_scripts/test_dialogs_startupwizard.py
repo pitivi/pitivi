@@ -5,15 +5,17 @@ from time import time, sleep
 
 class DialogsStartupWizardTest(HelpFunc):
     def test_welcome(self):
-        filename = "test_project%i.xptv" % time()
-        #Save project
+        filename = "auto_pitivi_test_project-%i.xges" % time()
+        filename_full_path = "/tmp/" + filename
+        self.unlink.append(filename_full_path)
+        # Create a new project and save it
         self.pitivi.child(name="New", roleName='push button').click()
         self.pitivi.child(name="OK", roleName="push button").click()
-        self.saveProject("/tmp/" + filename)
+        self.saveProject(filename_full_path)
         sleep(1)
-        #Hacky, but we need to open once more
+        # To show the welcome dialog, we need to restart the app
         self.tearDown(clean=False)
         self.setUp()
         welcome = self.pitivi.child(name="Welcome", roleName="frame")
-        #We expect that just saved project will be in welcome window
+        # We expect to find the project we just saved in the welcome dialog:
         welcome.child(name=filename)

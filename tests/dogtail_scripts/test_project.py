@@ -11,25 +11,54 @@ DURATION_OF_TWO_CLIPS = "0:00:03.999"
 
 
 class ProjectPropertiesTest(HelpFunc):
+
+    # Convenience methods
+
+    def wait_for_file(self, path, time_out=10):
+        """
+        Check for the existence of a file, until a timeout is reached.
+        This gives enough time for GES/Pitivi to do whatever it needs to do.
+
+        Also checks that the file is not an empty (0 bytes) file.
+        """
+        time_elapsed = 0
+        exists = False
+        while (time_elapsed <= time_out) and not exists:
+            time_elapsed += 1
+            sleep(1)
+            exists = os.path.isfile(path) and os.path.getsize(path) > 0
+        return exists
+
+    def wait_for_update(self, path, timestamp, time_out=20):
+        time_elapsed = 0
+        new_timestamp = False
+        while (time_elapsed <= time_out) and new_timestamp == timestamp:
+            time_elapsed += 2
+            sleep(2)
+            new_timestamp = os.path.getmtime(path)
+        return new_timestamp != timestamp
+
+    # The actual test cases
+
     def test_settings_video(self):
+        # TODO: test the audio and metadata tabs too
         welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
         welcome_dialog.button("New").click()
-
-        #Play with project settings, look if they are correctly represented
         dialog = self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False)
         video = dialog.tab("Video")
 
-        #Test presets
+        # Select a different preset
+        # CAUTION: changing the resolution changes the pixel aspect ratio!
         video.child(name="720p24", roleName="table cell").click()
         children = video.findChildren(IsATextEntryNamed(""))
-        childtext = {}
+        childtext = {}  # The framerate, DAR and PAR custom text entry widgets
         for child in children:
             childtext[child.text] = child
-
+        # Do a quick check to ensure we have all three text entry widgets:
         self.assertIn("1:1", childtext)
         self.assertIn("24M", childtext)
         self.assertIn("16:9", childtext)
-
+        # Then verify the resolution was set correctly from the preset:
         children = video.findChildren(GenericPredicate(roleName="spin button"))
         spintext = {}
         for child in children:
@@ -47,7 +76,7 @@ class ProjectPropertiesTest(HelpFunc):
         frameText.typeText("0")
         video.child(name="12 fps", roleName="combo box")
 
-        #Test pixel and display ascpect ratio
+        # Test pixel and display aspect ratio (PAR and DAR)
         pixelCombo = video.child(name="Square", roleName="combo box")
         pixelText = childtext["1:1"]
         displayCombo = video.child(name="DV Widescreen (16:9)", roleName="combo box")
@@ -57,13 +86,11 @@ class ProjectPropertiesTest(HelpFunc):
         video.child(name="576p", roleName="menu item").click()
         self.assertEqual(pixelCombo.combovalue, "576p")
         self.assertEqual(pixelText.text, "12:11")
-        #self.assertEqual(displayCombo.combovalue, "")
         self.assertEqual(displayText.text, "64:33")
 
         pixelText.doubleClick()
         pixelText.click()
         pixelText.typeText("3:4")
-        #self.assertEqual(pixelCombo.combovalue, "")
         self.assertEqual(pixelText.text, "3:4")
         self.assertEqual(displayCombo.combovalue, "Standard (4:3)")
         self.assertEqual(displayText.text, "4:3")
@@ -71,17 +98,16 @@ class ProjectPropertiesTest(HelpFunc):
         video.child(name="Display aspect ratio", roleName="radio button").click()
         displayCombo.click()
         video.child(name="Cinema (1.37)", roleName="menu item").click()
-        #self.assertEqual(pixelCombo.combovalue, "")
-        self.assertEqual(pixelText.text, "99:128")
         self.assertEqual(displayCombo.combovalue, "Cinema (1.37)")
         self.assertEqual(displayText.text, "11:8")
+        self.assertEqual(pixelText.text, "99:128")
 
         displayText.doubleClick()
         displayText.click()
         displayText.typeText("37:20")
-        #self.assertEqual(pixelCombo.combovalue, "")
-        self.assertEqual(pixelText.text, "333:320")
         self.assertEqual(displayCombo.combovalue, "Cinema (1.85)")
+        self.assertEqual(pixelText.text, "333:320")  # It changes further below
+        # This check is probably useless, but we never know:
         self.assertEqual(displayText.text, "37:20")
 
         # Test size spin buttons
@@ -97,67 +123,56 @@ class ProjectPropertiesTest(HelpFunc):
         self.spinbuttonDoubleClick(spin[1])
         spin[1].typeText("1000")
         self.spinbuttonClick(spin[0])
-        self.assertEqual(spin[0].text, "500")
+        self.assertEqual(spin[0].text, "500")  # Final resolution: 500x1000
 
-        # Finally create the blank project
+        # Apply the changes to the newly created project
         dialog.button("OK").click()
 
         # A blank project was created, test saving without any clips/objects
-        settings_test_project_file = "/tmp/settings.xptv"
+        settings_test_project_file = "/tmp/auto_pitivi_test_project_settings.xges"
         self.unlink.append(settings_test_project_file)
         self.saveProject(settings_test_project_file)
-        sleep(1)  # Give enough time for GES to save the project
-        self.assertTrue(os.path.exists(settings_test_project_file))
-        # Load project and test settings
+        self.assertTrue(self.wait_for_file(settings_test_project_file))
+        # Really quit to be sure the stuff was correctly serialized
+        self.tearDown(clean=False, kill=False)
+        self.setUp()
         self.loadProject(settings_test_project_file)
         sleep(1)  # Give enough time for GES to load the project
         self.pitivi.menu("Edit").click()
         self.pitivi.menuItem("Project Settings").click()
-
+        # Since we shut down the whole app, we must reset our shortcut variables:
         dialog = self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False)
         video = dialog.tab("Video")
-        children = video.findChildren(IsATextEntryNamed(""))
-        childtext = {}
-        for child in children:
-            childtext[child.text] = child
 
-        self.assertIn("333:320", childtext, "Pixel aspect ratio not saved")
-        self.assertIn("37:20", childtext, "Display aspect ratio not saved")
-
+        # Check the resolution:
         children = video.findChildren(GenericPredicate(roleName="spin button"))
         spintext = {}
         for child in children:
             spintext[child.text] = child
-        self.assertIn("500", spintext, "Video height is not saved")
-        self.assertIn("1000", spintext, "Video width is not saved")
+        self.assertIn("500", spintext, "Video height was not saved")
+        self.assertIn("1000", spintext, "Video width was not saved")
 
-    def wait_for_file(self, path, time_out=20):
-        sleeped = 0
-        exists = False
-        while (sleeped <= time_out) and not exists:
-            sleeped += 2
-            sleep(2)
-            exists = os.path.exists(path)
-        return exists
-
-    def wait_for_update(self, path, timestamp, time_out=20):
-        sleeped = 0
-        new_timestamp = False
-        while (sleeped <= time_out) and new_timestamp == timestamp:
-            sleeped += 2
-            sleep(2)
-            new_timestamp = os.path.getmtime(path)
-        return new_timestamp != timestamp
+        # Check the aspect ratios:
+        dialog = self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False)
+        video = dialog.tab("Video")
+        children = video.findChildren(IsATextEntryNamed(""))
+        childtext = {}  # The framerate, DAR and PAR custom text entry widgets
+        for child in children:
+            childtext[child.text] = child
+        # You'd expect a PAR of 333:320 and DAR of 37:20... but we changed the
+        # resolution (500x1000) right before saving, so the PAR changed to 37:10
+        self.assertIn("37:10", childtext, "Pixel aspect ratio was not saved")
+        # However, the DAR is expected to be unaffected by the image resolution:
+        self.assertEqual(displayCombo.combovalue, "Cinema (1.85)")
+        self.assertIn("37:20", childtext, "Display aspect ratio was not saved")
 
     def test_backup(self):
         # FIXME: this test would fail in listview mode - for now we just force iconview mode.
         self.force_medialibrary_iconview_mode()
 
-        #Create empty project
+        # Import a clip into an empty project and save the project
         sample = self.import_media()
-
-        #Save project
-        filename = "test_project-%i.xptv" % time()
+        filename = "auto_pitivi_test_project-%i.xges" % time()
         path = "/tmp/" + filename
         backup_path = path + "~"
         self.unlink.append(backup_path)
@@ -237,51 +252,67 @@ class ProjectPropertiesTest(HelpFunc):
         self.goToEnd_button = self.viewer.child(name="goToEnd_button")
         seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
         infobar_media = self.medialibrary.child(name="Information", roleName="alert")
-        filename1 = "/tmp/test_project-%i.xptv" % time()
-        filename2 = "/tmp/test_project-%i.xptv" % time()
+        iconview = self.medialibrary.child(roleName="layered pane")
+        filename1 = "/tmp/auto_pitivi_test_project-1.xges"
+        filename2 = "/tmp/auto_pitivi_test_project-2.xges"
         self.unlink.append(filename1)
         self.unlink.append(filename2)
 
         # FIXME: this test would fail in listview mode - for now we just force iconview mode.
         self.force_medialibrary_iconview_mode()
 
-        #Create project
+        # Create project #1 - one clip with only one instance on the timeline
         self.assertTrue(infobar_media.showing)
-        sample = self.import_media()
-        self.insert_clip(sample)
-        self.saveProject(filename1)
+        project1_sample1 = self.import_media()
         self.assertFalse(infobar_media.showing)
+        self.insert_clip(project1_sample1)
+        self.saveProject(filename1)
 
-        #Create new, check if cleaned
+        # Creating a blank project should clear the library and show its infobar
         sleep(0.5)
         self.menubar.menu("Project").click()
         self.menubar.menu("Project").menuItem("New").click()
         self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False).button("OK").click()
 
-        icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
-        self.goToEnd_button.click()
-        self.assertEqual(len(icons), 0)
+        self.assertEqual(len(iconview.children), 0,
+            "Created a new project, but the media library is not empty")
         self.assertTrue(infobar_media.showing)
-
-        #Create bigger project
-        sample = self.import_media()
-        self.import_media("flat_colour1_640x480.png")
-        self.insert_clip(sample, 2)
-        self.saveProject(filename2)
-        self.assertFalse(infobar_media.showing)
-
-        #Load first, check if populated
-        self.load_project(filename1)
-        icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
+        # We don't have a very good way to check that the timeline was cleared,
+        # but this is better than nothing as a quick sanity check:
         self.goToEnd_button.click()
-        self.assertEqual(len(icons), 1)
-        self.assertEqual(seektime.text, DURATION_OF_ONE_CLIP)
-        self.assertFalse(infobar_media.showing)
+        sleep(0.5)
+        self.assertEqual(seektime.text, "0:00:00.000", "The timeline is not empty")
 
-        #Load second, check if populated
-        self.load_project(filename2)
-        icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
+        # Create project #2 - 2 clips with 2 timeline instances of the first one
+        # We use only the first one on the timeline because we know its duration
+        project2_sample1 = self.import_media()
+        __project2_sample2 = self.import_media("flat_colour1_640x480.png")
+        self.assertFalse(infobar_media.showing)
+        sleep(0.5)
+        self.insert_clip(project2_sample1, 2)
+        sleep(1)
         self.goToEnd_button.click()
-        self.assertEqual(len(icons), 2)
         self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
+        self.saveProject(filename2)
+
+        # Provoke an unsaved change and switch back to project #1.
+        # - We should be warned about unsaved changes
+        # - The number of clips in the library should have changed
+        # - The timeline length should have changed
+        sleep(1)
+        project2_sample1.click()
+        sleep(0.5)
+        self.medialibrary.child(name="media_remove_button").click()
+        self.loadProject(filename1, unsaved_changes="discard")
+        sleep(3)
+        self.assertEqual(len(iconview.children), 1)
         self.assertFalse(infobar_media.showing)
+        self.goToEnd_button.click()
+        self.assertEqual(seektime.text, DURATION_OF_ONE_CLIP)
+        # Switch back to project #2, expect the same thing.
+        self.loadProject(filename2)
+        sleep(3)
+        self.assertEqual(len(iconview.children), 2)
+        self.assertFalse(infobar_media.showing)
+        self.goToEnd_button.click()
+        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
