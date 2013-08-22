@@ -774,6 +774,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         abt.show()
 
     def openProject(self):
+        # Requesting project closure at this point in time prompts users about
+        # unsaved changes (if any); much better than having ProjectManager
+        # trigger this *after* the user already chose a new project to load...
+        if not self.app.projectManager.closeRunningProject():
+            return  # The user has not made a decision, don't do anything
+
         chooser = Gtk.FileChooserDialog(_("Open File..."),
             self,
             action=Gtk.FileChooserAction.OPEN,
