@@ -4,6 +4,7 @@ import unittest
 import os
 import re
 from dogtail.predicate import GenericPredicate
+from dogtail.tree import SearchError
 from test_base import BaseDogTail
 import dogtail.rawinput
 from time import sleep
@@ -30,21 +31,48 @@ class HelpFunc(BaseDogTail):
             # Just save
             proj_menu.menuItem("Save").click()
 
-    def loadProject(self, url, expect_unsaved_changes=False):
+    def loadProject(self, url, unsaved_changes=None):
         dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
         proj_menu = self.menubar.menu("Project")
         proj_menu.click()
         proj_menu.menuItem("Open...").click()
-        load = self.pitivi.child(roleName='file chooser', recursive=False)
+        # If an "unsaved changes" prompt is expected to show up, deal with it:
+        if unsaved_changes is not None:
+            result = self._check_unsaved_changes_dialog(decision=unsaved_changes)
+            if result is False:  # The user clicked "Cancel" (no decision)
+                return
+
+        load = self.pitivi.child(name="Open File...", roleName="file chooser", recursive=False)
         # Same performance hack as in the import_media method
         dogtail.rawinput.pressKey("/")
         load.child(roleName='text').text = url
-        dogtail.rawinput.pressKey("Enter")  # Don't search for the Open button
-        # If an unsaved changes confirmation dialog shows up, deal with it
-        if expect_unsaved_changes:
-            # Simply try searching for the existence of the dialog's widgets
-            # If it fails, dogtail will fail with a SearchError, which is fine
-            self.pitivi.child(name="Close without saving", roleName="push button").click()
+        # Speed hack: don't search for the Open button
+        dogtail.rawinput.pressKey("Enter")
+
+    def _check_unsaved_changes_dialog(self, decision):
+        """
+        Search for the presence of a dialog asking users about unsaved changes.
+        If it is absent, Dogtail will fail with a SearchError, which is fine.
+
+        The "decision" parameter must be either "discard", "cancel" or "save".
+        """
+        sleep(1)
+        try:
+            dialog = self.pitivi.child(name="unsaved changes dialog", roleName="dialog", recursive=False, retry=False)
+        except SearchError:
+            self.fail('The "unsaved changes" dialog/prompt was expected but did not appear')
+
+        if decision is "discard":
+            dialog.child(name="Close without saving", roleName="push button").click()
+            return True
+        elif decision is "cancel":
+            dialog.child(name="Cancel", roleName="push button").click()
+            return False  # Prevent us from expecting the file chooser in loadProject
+        elif decision is "save":
+            dialog.child(name="Save", roleName="push button").click()
+            return True
+        else:
+            self.fail("You didn't provide a valid answer for the unsaved changes dialog!")
 
     def search_by_text(self, text, parent, name=None, roleName=None, exactMatchOnly=True):
         """

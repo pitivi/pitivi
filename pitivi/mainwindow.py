@@ -906,6 +906,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         dialog.set_resizable(False)
         dialog.set_default_response(Gtk.ResponseType.CANCEL)
         dialog.set_transient_for(self)
+        dialog.get_accessible().set_name("unsaved changes dialog")
 
         primary = Gtk.Label()
         primary.set_line_wrap(True)
