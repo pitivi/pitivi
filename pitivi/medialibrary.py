@@ -959,6 +959,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self._project = project
             self._resetErrorList()
             self.storemodel.clear()
+            self._welcome_infobar.show_all()
             self._connectToProject(project)
 
     def _newProjectLoadedCb(self, unused_pitivi, project):
