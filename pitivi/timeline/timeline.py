@@ -189,8 +189,15 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             self.bTimeline.disconnect_by_func(self._layerRemovedCb)
             self.bTimeline.disconnect_by_func(self._snapCb)
             self.bTimeline.disconnect_by_func(self._snapEndedCb)
+            for track in self.bTimeline.get_tracks():
+                self._trackRemovedCb(self.bTimeline, track)
+            for layer in self.bTimeline.get_layers():
+                self._layerRemovedCb(self.bTimeline, layer)
 
         self.bTimeline = bTimeline
+
+        if bTimeline is None:
+            return
 
         for track in bTimeline.get_tracks():
             self._connectTrack(track)
@@ -635,6 +642,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     def _trackRemovedCb(self, timeline, track):
         self._disconnectTrack(track)
+        for element in track.get_elements():
+            self._trackElementRemovedCb(track, element)
 
     def _trackElementAddedCb(self, track, bElement):
         self._addTrackElement(track, bElement)
@@ -718,6 +727,9 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         Allows to add any asset at the end of the current timeline.
         """
         self.app.action_log.begin("add clip")
+        if self.bTimeline is None:
+            self.error("No bTimeline set, this is a bug")
+            return
 
         # FIXME we should find the longest layer instead of adding it to the
         # first one
@@ -773,7 +785,10 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         timeline_ui_width = self.embed.get_allocation().width
         controls_width = 0
         scrollbar_width = 0
-        contents_size = Zoomable.nsToPixel(self.bTimeline.props.duration)
+        if self.bTimeline is None:
+            contents_size = 0
+        else:
+            contents_size = Zoomable.nsToPixel(self.bTimeline.props.duration)
 
         widgets_width = controls_width + scrollbar_width
         end_padding = CONTROL_WIDTH + 250  # Provide some space for clip insertion at the end
@@ -1019,7 +1034,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         ruler_width = self.ruler.get_allocation().width
         # Add Gst.SECOND - 1 to the timeline duration to make sure the
         # last second of the timeline will be in view.
-        duration = self.bTimeline.get_duration()
+        duration = 0 if not self.bTimeline else self.bTimeline.get_duration()
         if duration == 0:
             return
 
