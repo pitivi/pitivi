@@ -26,7 +26,6 @@ Main application
 """
 import os
 import sys
-import urllib
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import GLib
@@ -46,6 +45,7 @@ from pitivi.project import ProjectManager, ProjectLogObserver
 from pitivi.undo.undo import UndoableActionLog, DebugActionLogObserver
 from pitivi.dialogs.startupwizard import StartUpWizard
 
+from pitivi.utils.misc import quote_uri
 from pitivi.utils.signal import Signallable
 from pitivi.utils.system import getSystem
 from pitivi.utils.loggable import Loggable
@@ -275,8 +275,7 @@ class InteractivePitivi(Pitivi):
         raise NotImplementedError()
 
     def _loadProject(self, project_filename):
-        project = "file://%s" % os.path.abspath(project_filename)
-        self.projectManager.loadProject(project)
+        self.projectManager.loadProject(quote_uri(os.path.abspath(project_filename)))
 
     def run(self):
         """Runs the main loop."""
@@ -333,7 +332,7 @@ class ProjectCreatorGuiPitivi(GuiPitivi):
         # load the passed filenames, optionally adding them to the timeline
         # (useful during development)
         self.projectManager.newBlankProject(False)
-        uris = ["file://" + urllib.quote(os.path.abspath(media_filename))
+        uris = [quote_uri(os.path.abspath(media_filename))
                 for media_filename in media_filenames]
         lib = self.current.medialibrary
         lib.connect("source-added", self._sourceAddedCb, uris, add_to_timeline)
