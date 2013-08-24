@@ -469,13 +469,16 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         bElement.disconnect_by_func(self._elementStartChangedCb)
         bElement.disconnect_by_func(self._elementDurationChangedCb)
         bElement.disconnect_by_func(self._elementInPointChangedCb)
+        bElement.disconnect_by_func(self._elementPriorityChangedCb)
 
         for element in self.elements:
             if element.bElement == bElement:
                 break
 
+        element.cleanup()
         self.elements.remove(element)
         self.remove_child(element)
+        self.selection.setSelection(set([]), SELECT)
 
     def _setElementX(self, element, ease=True):
         if ease:

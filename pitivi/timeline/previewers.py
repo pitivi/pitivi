@@ -512,6 +512,9 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
             self.pipeline = None
         PreviewGenerator.emit(self, "done")
 
+    def cleanup(self):
+        Zoomable.__del__(self)
+
 
 class Thumbnail(Clutter.Actor):
     def __init__(self, width, height):
@@ -983,3 +986,8 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         self.pipeline.set_state(Gst.State.NULL)
         self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
         PreviewGenerator.emit(self, "done")
+
+    def cleanup(self):
+        self.canvas.disconnect_by_func(self._drawContentCb)
+        self.timeline.disconnect_by_func(self._scrolledCb)
+        Zoomable.__del__(self)

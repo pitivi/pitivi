@@ -31,6 +31,8 @@ import math
 import os
 from datetime import datetime
 
+import weakref
+
 from gi.repository import Clutter, Gtk, GtkClutter, Cogl, GES, Gdk, Gst, GstController, GLib
 from pitivi.utils.timeline import Zoomable, EditingContext, Selection, SELECT, UNSELECT, SELECT_ADD, Selected
 from previewers import AudioPreviewer, VideoPreviewer, BORDER_WIDTH
@@ -219,7 +221,7 @@ class TrimHandle(Clutter.Texture):
 
         self.isLeft = isLeft
         self.isSelected = False
-        self.timelineElement = timelineElement
+        self.timelineElement = weakref.proxy(timelineElement)
         self.dragAction = Clutter.DragAction()
 
         self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
@@ -239,6 +241,10 @@ class TrimHandle(Clutter.Texture):
         self.timelineElement.connect("enter-event", self._elementEnterEventCb)
         self.timelineElement.connect("leave-event", self._elementLeaveEventCb)
         self.timelineElement.bElement.selected.connect("selected-changed", self._selectedChangedCb)
+
+    def cleanup(self):
+        self.timelineElement.disconnect_by_func(self._elementEnterEventCb)
+        self.timelineElement.disconnect_by_func(self._elementLeaveEventCb)
 
     #Callbacks
 
@@ -349,7 +355,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.timeline = timeline
         self.bElement = bElement
         self.bElement.selected = Selected()
-        self.bElement.ui_element = self
+        self.bElement.ui_element = weakref.proxy(self)
         self.track_type = self.bElement.get_track_type()  # This won't change
         self.isDragged = False
         self.lines = []
@@ -357,6 +363,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.keyframesVisible = False
         self.source = None
         self.keyframedElement = None
+        self.rightHandle = None
         size = self.bElement.get_duration()
 
         self._createBackground(track)
@@ -386,11 +393,9 @@ class TimelineElement(Clutter.Actor, Zoomable):
             self.border.set_easing_duration(600)
             self.preview.save_easing_state()
             self.preview.set_easing_duration(600)
-            try:
+            if self.rightHandle:
                 self.rightHandle.save_easing_state()
                 self.rightHandle.set_easing_duration(600)
-            except AttributeError:  # Element doesnt't have handles
-                pass
 
         self.marquee.set_size(width, height)
         self.background.props.width = width
@@ -400,19 +405,15 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.props.width = width
         self.props.height = height
         self.preview.set_size(width, height)
-        try:
+        if self.rightHandle:
             self.rightHandle.set_position(width - self.rightHandle.props.width, 0)
-        except AttributeError:  # Element doesnt't have handles
-                pass
 
         if ease:
             self.background.restore_easing_state()
             self.border.restore_easing_state()
             self.preview.restore_easing_state()
-            try:
+            if self.rightHandle:
                 self.rightHandle.restore_easing_state()
-            except AttributeError:  # Element doesnt't have handles
-                pass
             self.restore_easing_state()
 
     def addKeyframe(self, value, timestamp):
@@ -513,6 +514,20 @@ class TimelineElement(Clutter.Actor, Zoomable):
             lastPoint = value
 
         self.drawLines()
+
+    def cleanup(self):
+        Zoomable.__del__(self)
+        self.disconnectFromEvents()
+
+    def disconnectFromEvents(self):
+        self.dragAction.disconnect_by_func(self._dragProgressCb)
+        self.dragAction.disconnect_by_func(self._dragBeginCb)
+        self.dragAction.disconnect_by_func(self._dragEndCb)
+        self.remove_action(self.dragAction)
+        self.bElement.selected.disconnect_by_func(self._selectedChangedCb)
+        self.bElement.disconnect_by_func(self._durationChangedCb)
+        self.bElement.disconnect_by_func(self._inpointChangedCb)
+        self.disconnect_by_func(self._clickedCb)
 
     # private API
 
@@ -686,7 +701,7 @@ class Line(Clutter.Actor):
     """
     def __init__(self, timelineElement, keyframe, lastKeyframe):
         Clutter.Actor.__init__(self)
-        self.timelineElement = timelineElement
+        self.timelineElement = weakref.proxy(timelineElement)
 
         self.canvas = Clutter.Canvas()
         self.canvas.set_size(1000, KEYFRAME_SIZE)
@@ -840,7 +855,7 @@ class Keyframe(Clutter.Actor):
         Clutter.Actor.__init__(self)
 
         self.value = value
-        self.timelineElement = timelineElement
+        self.timelineElement = weakref.proxy(timelineElement)
         self.has_changable_time = has_changable_time
         self.lastClick = datetime.now()
 
@@ -1117,6 +1132,15 @@ class URISourceElement(TimelineElement):
         if self.gotDragged:
             self._context.editTo(new_start, priority)
             self._context.finish()
+
+    def cleanup(self):
+        if self.preview:
+            self.preview.cleanup()
+        self.leftHandle.cleanup()
+        self.leftHandle = None
+        self.rightHandle.cleanup()
+        self.rightHandle = None
+        TimelineElement.cleanup(self)
 
 
 class TransitionElement(TimelineElement):
