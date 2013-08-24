@@ -973,6 +973,7 @@ class Keyframe(Clutter.Actor):
 class URISourceElement(TimelineElement):
     def __init__(self, bElement, track, timeline):
         TimelineElement.__init__(self, bElement, track, timeline)
+        self.gotDragged = False
 
     # public API
 
@@ -1013,7 +1014,6 @@ class URISourceElement(TimelineElement):
     # Callbacks
     def _clickedCb(self, action, actor):
         #TODO : Let's be more specific, masks etc ..
-
         children = self.bElement.get_toplevel_parent().get_children(True)
         selection = filter(lambda elem: isinstance(elem, GES.Source), children)
 
@@ -1041,13 +1041,8 @@ class URISourceElement(TimelineElement):
         return False
 
     def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
+        self.gotDragged = False
         mode = self.timeline._container.getEditionMode()
-        self._context = EditingContext(self.bElement,
-                                       self.timeline.bTimeline,
-                                       mode,
-                                       GES.Edge.EDGE_NONE,
-                                       None,
-                                       self.timeline._container.app.action_log)
 
         # This can't change during a drag, so we can safely compute it now for drag events.
         nbrLayers = len(self.timeline.bTimeline.get_layers())
@@ -1068,6 +1063,15 @@ class URISourceElement(TimelineElement):
 
     def _dragProgressCb(self, action, actor, delta_x, delta_y):
         # We can't use delta_x here because it fluctuates weirdly.
+        if not self.gotDragged:
+            self.gotDragged = True
+            self._context = EditingContext(self.bElement,
+                                           self.timeline.bTimeline,
+                                           None,
+                                           GES.Edge.EDGE_NONE,
+                                           None,
+                                           self.timeline._container.app.action_log)
+
         mode = self.timeline._container.getEditionMode()
         self._context.setMode(mode)
 
@@ -1110,8 +1114,9 @@ class URISourceElement(TimelineElement):
         if self.ghostclip.shouldCreateLayer:
             self.timeline.insertLayer(self.ghostclip)
 
-        self._context.editTo(new_start, priority)
-        self._context.finish()
+        if self.gotDragged:
+            self._context.editTo(new_start, priority)
+            self._context.finish()
 
 
 class TransitionElement(TimelineElement):
