@@ -361,12 +361,14 @@ class ProjectManager(Signallable, Loggable):
 
     def closeRunningProject(self):
         """ close the current project """
-        self.info("closing running project")
 
         if self.current is None:
+            self.debug("No project set")
             return True
 
+        self.info("closing running project %s", self.current.props.uri)
         if not self.emit("closing-project", self.current):
+            self.error("Could not close project")
             return False
 
         self.emit("project-closed", self.current)
@@ -469,7 +471,7 @@ class ProjectManager(Signallable, Loggable):
         return self.emit("missing-uri", project, error, asset)
 
     def _projectLoadedCb(self, project, timeline):
-        self.debug("Project loaded")
+        self.debug("Project loaded %s", self.current.props.uri)
         self.emit("new-project-loaded", self.current, True)
         self.time_loaded = time()
 
