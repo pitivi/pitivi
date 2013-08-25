@@ -639,7 +639,7 @@ class ThumbnailCache(Loggable):
 class PipelineCpuAdapter(Loggable):
     """
     This pipeline manager will modulate the rate of the provided pipeline.
-    It is the responsibility of the caller to set the sync of the sink to False,
+    It is the responsibility of the caller to set the sync of the sink to True,
     disable QOS and provide a pipeline with a rate of 1.0.
     Doing otherwise would be cheating. Cheating is bad.
     """
@@ -787,7 +787,9 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
     def _launchPipeline(self):
         self.debug('Now generating waveforms for "%s"' % filename_from_uri(self._uri))
         self.peaks = None
-        self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" + self._uri + " ! audioconvert ! level name=wavelevel interval=10000000 post-messages=true ! fakesink qos=false")
+        self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" + self._uri + " ! audioconvert ! level name=wavelevel interval=10000000 post-messages=true ! fakesink qos=false name=faked")
+        faked = self.pipeline.get_by_name("faked")
+        faked.props.sync = True
         self._level = self.pipeline.get_by_name("wavelevel")
         decode = self.pipeline.get_by_name("decode")
         decode.connect("autoplug-select", self._autoplugSelectCb)
