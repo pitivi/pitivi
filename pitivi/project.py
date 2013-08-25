@@ -166,20 +166,19 @@ class ProjectManager(Signallable, Loggable):
 
         self.current.connect("missing-uri", self._missingURICb)
         self.current.connect("loaded", self._projectLoadedCb)
+
         if self.current.createTimeline():
             self.emit("new-project-created", self.current)
             self.current.connect("project-changed", self._projectChangedCb)
-            return
+            return True
         else:
             self.emit("new-project-failed", uri,
                       _('This might be due to a bug or an unsupported project file format. '
                       'If you were trying to add a media file to your project, '
                       'use the "Import" button instead.'))
-            return
-
-        # Reset projectManager and disconnect all the signals:
-        self.newBlankProject()
-        return False
+            # Reset projectManager and disconnect all the signals:
+            self.newBlankProject()
+            return False
 
     def _restoreFromBackupDialog(self, time_diff):
         """
