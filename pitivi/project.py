@@ -234,75 +234,68 @@ class ProjectManager(Signallable, Loggable):
         else:
             return False
 
-    def saveProject(self, project, uri=None, overwrite=False, formatter_type=None,
-                    backup=False):
+    def saveProject(self, uri=None, formatter_type=None, backup=False):
         """
-        Save the L{Project} to the given location.
+        Save the current project. All arguments are optional, but the behavior
+        will differ depending on the combination of which ones are set.
 
-        @type project: L{Project}
-        @param project: The L{Project} to save.
-        @type uri: L{str}
-        @param uri: The absolute URI of the location to store the project to.
-        @param overwrite: Whether to overwrite existing location.
-        @type overwrite: C{bool}
-        @type formatter_type: L{GType}
-        @param formatter: The type of the formatter to use to store the project if specified.
-        default is GES.XmlFormatter
-        @param backup: Whether the requested save operation is for a backup
-        @type backup: C{bool}
+        If a URI is specified, this means we want to save to a new (different)
+        location, so it will be used instead of the current project instance's
+        existing URI.
 
-        @see: L{GES.Project.save}
+        "backup=True" is for automatic backups: it ignores any "uri" arg, uses
+        the current project instance to save to a special URI behind the scenes.
+
+        "formatter_type" allows specifying a GES formatter type to use; if None,
+        GES will default to GES.XmlFormatter.
         """
         if backup:
-            if project.uri and self.current.uri is not None:
+            if self.current is not None and self.current.uri is not None:
                 # Ignore whatever URI that is passed on to us. It's a trap.
-                uri = self._makeBackupURI(project.uri)
+                uri = self._makeBackupURI(self.current.uri)
             else:
                 # Do not try to save backup files for blank projects.
                 # It is possible that self.current.uri == None when the backup
                 # timer sent us an old instance of the (now closed) project.
                 return
         elif uri is None:
-            # This allows calling saveProject without specifying the target URI
-            uri = project.uri
+            # "Normal save" scenario. The filechoosers in mainwindow ask users
+            # for permission to overwrite the file (if needed), so we're safe.
+            uri = self.current.uri
         else:
-            # Ensure the URI we are given is properly encoded, or GIO will fail
+            # "Save As" (or "normal-save a blank project") scenario. We use the
+            # provided URI, so ensure it's properly encoded, or GIO will fail:
             uri = quote_uri(uri)
 
-            # The following needs to happen before we change project.uri:
             if not isWritable(path_from_uri(uri)):
                 # TODO: this will not be needed when GTK+ bug #601451 is fixed
                 self.emit("save-project-failed", uri,
                           _("You do not have permissions to write to this folder."))
                 return
 
-            # Update the project instance's uri for the "Save as" scenario.
-            # Otherwise, subsequent saves will be to the old uri.
-            if not backup:
-                project.uri = uri
-
-        if uri is None:
-            self.emit("save-project-failed", uri,
-                      _("Cannot save with this file format."))
-            return
-
         try:
-            saved = project.save(project.timeline, uri, formatter_type, overwrite)
+            # "overwrite" is always True: our GTK filechooser save dialogs are
+            # set to always ask the user on our behalf about overwriting, so
+            # if saveProject is actually called, that means overwriting is OK.
+            saved = self.current.save(self.current.timeline, uri, formatter_type, overwrite=True)
         except Exception, e:
+            saved = False
             self.emit("save-project-failed", uri,
                       _("Cannot save with this file format. %s"), e)
 
         if saved:
             if not backup:
                 # Do not emit the signal when autosaving a backup file
-                project.setModificationState(False)
-                self.emit("project-saved", project, uri)
+                self.current.setModificationState(False)
+                self.emit("project-saved", self.current, uri)
                 self.debug('Saved project "%s"' % uri)
+                # Update the project instance's uri,
+                # otherwise, subsequent saves will be to the old uri.
+                self.info("Setting the project instance's URI to %s" % uri)
+                self.current.uri = uri
             else:
                 self.debug('Saved backup "%s"' % uri)
-        else:
-            self.emit("save-project-failed", uri,
-                      _("Cannot save with this file format"))
+
         return saved
 
     def exportProject(self, project, uri):
@@ -318,7 +311,7 @@ class ProjectManager(Signallable, Loggable):
         try:
             directory = os.path.dirname(uri)
             tmp_uri = os.path.join(directory, tmp_name)
-            self.saveProject(project, tmp_uri, overwrite=True)
+            self.saveProject(tmp_uri)
 
             # create tar file
             with tarfile.open(path_from_uri(uri), mode="w") as tar:
@@ -363,7 +356,7 @@ class ProjectManager(Signallable, Loggable):
         """ close the current project """
 
         if self.current is None:
-            self.debug("No project set")
+            self.warning("Trying to close a project that was already closed/didn't exist")
             return True
 
         self.info("closing running project %s", self.current.props.uri)
@@ -444,7 +437,7 @@ class ProjectManager(Signallable, Loggable):
             self.backup_lock -= 5
             return True
         else:
-            self.saveProject(project, overwrite=True, backup=True)
+            self.saveProject(backup=True)
             self.backup_lock = 0
         return False
 

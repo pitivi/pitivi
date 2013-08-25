@@ -674,12 +674,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if not self.app.current.uri:
             self._saveProjectAsCb(unused_action)
         else:
-            self.app.projectManager.saveProject(self.app.current, overwrite=True)
+            self.app.projectManager.saveProject()
 
     def _saveProjectAsCb(self, unused_action):
         uri = self._showSaveAsDialog(self.app.current)
         if uri is not None:
-            return self.app.projectManager.saveProject(self.app.current, uri, overwrite=True)
+            return self.app.projectManager.saveProject(uri)
 
         return False
 
@@ -961,7 +961,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         dialog.destroy()
         if response == Gtk.ResponseType.YES:
             if project.uri is not None:
-                res = self.app.projectManager.saveProject(project, overwrite=True)
+                res = self.app.projectManager.saveProject()
             else:
                 res = self._saveProjectAsCb(None)
         elif response == Gtk.ResponseType.REJECT:
