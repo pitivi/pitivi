@@ -367,6 +367,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         tck_effect.set_active(not tck_effect.is_active())
         cellrenderertoggle.set_active(tck_effect.is_active())
         self._updateTreeview()
+        self.app.current.timeline.commit()
         self.app.action_log.commit()
 
     def _expandedCb(self, expander, params):
