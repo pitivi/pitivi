@@ -196,6 +196,7 @@ class ProjectManager(Signallable, Loggable):
         dialog.set_transient_for(self.app.gui)
         dialog.set_modal(True)
         dialog.set_default_response(Gtk.ResponseType.YES)
+        dialog.get_accessible().set_name("restore from backup dialog")
 
         primary = Gtk.Label()
         primary.set_line_wrap(True)

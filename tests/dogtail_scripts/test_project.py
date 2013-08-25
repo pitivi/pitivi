@@ -176,74 +176,88 @@ class ProjectPropertiesTest(HelpFunc):
         path = "/tmp/" + filename
         backup_path = path + "~"
         self.unlink.append(backup_path)
-        self.saveProject(path)
 
-        #Change somthing
+        # Set up one clip in the timeline, then save.
         seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
         self.assertIsNotNone(seektime)
         self.insert_clip(sample)
         self.goToEnd_button = self.viewer.child(name="goToEnd_button")
         self.goToEnd_button.click()
         self.assertEqual(seektime.text, DURATION_OF_ONE_CLIP)
+        self.saveProject(path)
+        self.assertFalse(os.path.exists(backup_path))
 
-        #It should save after 10 seconds if no changes made
-        self.assertTrue(self.wait_for_file(backup_path), "Backup not created")
-        self.assertTrue(os.path.getmtime(backup_path) -
-                        os.path.getmtime(path) > 0,
+        # Now make some (unsaved) change by inserting a second clip instance:
+        self.insert_clip(sample)
+        self.goToEnd_button = self.viewer.child(name="goToEnd_button")
+        self.goToEnd_button.click()
+        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
+        # A backup should appear after 10 secs if no further changes were made
+        self.assertTrue(self.wait_for_file(backup_path, time_out=11), "Backup not created")
+        self.assertTrue(os.path.getmtime(backup_path) - os.path.getmtime(path) > 0,
                         "Backup is older than saved file")
 
-        #Try to quit, it should warn us
+        # Try to quit, it should warn us about unsaved changes.
         self.menubar.menu("Project").click()
         self.menubar.menu("Project").menuItem("Quit").click()
-
-        #If finds button, means it warned
-        self.pitivi.child(roleName="dialog", recursive=False).button("Cancel").click()
-        self.saveProject(saveAs=False)
-        #Backup should be deleted, and no warning displayed
+        self.pitivi.child(name="unsaved changes dialog", roleName="dialog", recursive=False).button("Cancel").click()
+        # Check again to ensure the backup didn't disappear - and then save
         self.menubar.menu("Project").click()
         self.menubar.menu("Project").menuItem("Quit").click()
+        self.pitivi.child(name="unsaved changes dialog", roleName="dialog", recursive=False).button("Save").click()
+        # The backup should now be deleted, and should not come back:
+        sleep(1)
         self.assertFalse(os.path.exists(backup_path))
-        #Test if backup is found
+        sleep(10)
+        self.assertFalse(os.path.exists(backup_path))
+
+        # Start the app again, make a trivial change, ensure the backup exists
         self.setUp()
         welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
         welcome_dialog.child(name=filename).doubleClick()
         sample = self.import_media("flat_colour1_640x480.png")
-        self.assertTrue(self.wait_for_file(backup_path, 120), "Backup not created")
+        # Go figure why, this one takes much longer (~27 secs) to appear:
+        self.assertTrue(self.wait_for_file(backup_path, time_out=35), "Backup not created")
         self.tearDown(clean=False, kill=True)
+
+        # After another "crash", try loading from the backup.
         self.setUp()
         welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
         welcome_dialog.child(name=filename).doubleClick()
-        #Try restoring from backup
-        self.pitivi.child(roleName="dialog", recursive=False).button("Restore from backup").click()
-        samples = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
-        self.assertEqual(len(samples), 2)
+        self.pitivi.child(name="restore from backup dialog", roleName="dialog", recursive=False).button("Restore from backup").click()
+        # Ensure the backup ACTUALLY LOADED instead of a blank project. Really.
+        sleep(5)
+        iconview = self.medialibrary.child(roleName="layered pane")
+        self.assertEqual(len(iconview.children), 2, "Loaded from backup but the media library does not have the expected amount of clips")
+        self.goToEnd_button = self.viewer.child(name="goToEnd_button")
+        self.goToEnd_button.click()
+        self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
+        # ...and that the user can't save without using Save As:
         self.menubar.menu("Project").click()
         self.assertFalse(self.menubar.menu("Project").menuItem("Save").sensitive)
-        #Behaved as saveAs
-
-        # Kill once more
+        # Do not save, kill once more - the backup should be preserved
+        # and the user should be prompted again on the next startup
         self.tearDown(clean=False, kill=True)
         timestamp = os.path.getmtime(backup_path)
         self.setUp()
         welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
         welcome_dialog.child(name=filename).doubleClick()
-        self.pitivi.child(roleName="dialog", recursive=False).button("Ignore backup").click()
-        #Backup is not deleted, not changed
+        self.pitivi.child(name="restore from backup dialog", roleName="dialog", recursive=False).button("Ignore backup").click()
+        # The backup file must not have changed or vanished:
         self.assertEqual(timestamp, os.path.getmtime(backup_path))
 
         #Look if backup updated, even it is newer than saved project
-
         sample = self.import_media("flat_colour2_640x480.png")
         self.assertTrue(self.wait_for_update(backup_path, timestamp))
-        #Try to quit, it should warn us (still newer version)
+
+        # Quitting should warn us about unsaved changes (still in a newer version)
         self.menubar.menu("Project").click()
         self.menubar.menu("Project").menuItem("Quit").click()
-
         # Dismiss the unsaved changes warning by cancelling it:
-        self.pitivi.child(roleName="dialog", recursive=False).button("Cancel").click()
+        self.pitivi.child(name="unsaved changes dialog", roleName="dialog", recursive=False).button("Cancel").click()
+        # Save stuff behind the scenes...
         self.saveProject(saveAs=False)
-
-        #Backup should be deleted, and no warning displayed
+        # The backup file should now be gone, and no warning displayed:
         self.menubar.menu("Project").click()
         self.menubar.menu("Project").menuItem("Quit").click()
         self.assertFalse(os.path.exists(backup_path))
