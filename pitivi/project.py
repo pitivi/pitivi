@@ -310,7 +310,10 @@ class ProjectManager(Signallable, Loggable):
         try:
             directory = os.path.dirname(uri)
             tmp_uri = os.path.join(directory, tmp_name)
+            # saveProject updates the project URI... so we better back it up:
+            _old_uri = self.current.uri
             self.saveProject(tmp_uri)
+            self.current.uri = _old_uri
 
             # create tar file
             with tarfile.open(path_from_uri(uri), mode="w") as tar:
