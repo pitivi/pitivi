@@ -864,7 +864,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.recent_manager.add_item(uri)
         self.log("A NEW project is loading, deactivate UI")
 
-    def _projectManagerSaveProjectFailedCb(self, projectManager, uri, unused, exception=None):
+    def _projectManagerSaveProjectFailedCb(self, projectManager, uri, exception=None):
         project_filename = unquote(uri.split("/")[-1])
         dialog = Gtk.MessageDialog(self,
             Gtk.DialogFlags.MODAL,
