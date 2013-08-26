@@ -122,6 +122,7 @@ export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
 :$PITIVI/gst-plugins-ugly/pkgconfig\
 :$PITIVI/gst-plugins-bad/pkgconfig\
 :$PITIVI/gst-ffmpeg/pkgconfig\
+:$PITIVI/gst-editing-services/pkgconfig\
 :${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
 export GST_PLUGIN_PATH="\
