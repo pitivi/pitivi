@@ -283,7 +283,7 @@ class SimplePipeline(Signallable, Loggable):
 
         dur = self._getDuration(format)
         if dur is None:
-            self.error("Invalid duration: None")
+            self.info("Invalid duration: None")
         else:
             self.log("Got duration %s" % print_ns(dur))
         if self._duration != dur:
@@ -329,6 +329,8 @@ class SimplePipeline(Signallable, Loggable):
             if cur != Gst.CLOCK_TIME_NONE:
                 self.emit('position', cur)
                 self.lastPosition = cur
+        except PipelineError:
+            pass
         finally:
             return True
 

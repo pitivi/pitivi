@@ -1086,7 +1086,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         try:
             new_pos = Zoomable.nsToPixel(self.app.current.pipeline.getPosition())
         except PipelineError, e:
-            self.error("Pipeline error: %s" % e)
+            self.info("Pipeline error: %s" % e)
             return
         except AttributeError:  # Standalone, no pipeline.
             return
