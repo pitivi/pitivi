@@ -21,10 +21,8 @@
 # Boston, MA 02110-1301, USA.
 
 from datetime import datetime, timedelta
-from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl, GObject, GES
-from math import log1p, log10
+from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl, GES
 from random import randrange
-from renderer import *
 import cairo
 import hashlib
 import multiprocessing
@@ -33,15 +31,17 @@ import os
 import pickle
 import resource
 import sqlite3
-import sys
 import xdg.BaseDirectory as xdg_dirs
+
+# Our C module optimizing waveforms rendering
+import renderer
 
 from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
-from pitivi.utils.ui import EXPANDED_SIZE, SPACING
-from pitivi.utils.misc import filename_from_uri, quote_uri, print_ns
-from pitivi.utils.ui import EXPANDED_SIZE, SPACING, CONTROL_WIDTH
+from pitivi.utils.ui import EXPANDED_SIZE
+from pitivi.utils.misc import filename_from_uri, quote_uri
+from pitivi.utils.ui import CONTROL_WIDTH
 
 
 WAVEFORMS_CPU_USAGE = 30 * multiprocessing.cpu_count()
@@ -316,9 +316,9 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         # another try will be started later
         self.queue.append(time)
         self.pipeline.seek(1.0,
-            Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
-            Gst.SeekType.SET, time,
-            Gst.SeekType.NONE, -1)
+                           Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
+                           Gst.SeekType.SET, time,
+                           Gst.SeekType.NONE, -1)
 
         # Remove the GSource
         return False
@@ -962,7 +962,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         if self.surface:
             self.surface.finish()
 
-        self.surface = fill_surface(self.samples[self.start:self.end], int(self.width), int(EXPANDED_SIZE))
+        self.surface = renderer.fill_surface(self.samples[self.start:self.end], int(self.width), int(EXPANDED_SIZE))
 
         cr.set_operator(cairo.OPERATOR_OVER)
         cr.set_source_surface(self.surface, 0, 0)
