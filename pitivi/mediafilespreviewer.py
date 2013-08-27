@@ -69,7 +69,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         bus.enable_sync_message_emission()
         bus.connect('sync-message::element', self._sync_message_cb)
         bus.connect('message::tag', self._tag_found_cb)
-        self.__videosink = self.player.get_property("video-sink")
+        self.__videosink = Gst.ElementFactory.make("autovideosink", "videosink")
         self.__fakesink = Gst.ElementFactory.make("fakesink", "fakesink")
 
         #some global variables for preview handling
