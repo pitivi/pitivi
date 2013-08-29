@@ -187,7 +187,8 @@ class PitiviViewer(Gtk.VBox, Loggable):
                                       obey_child=False)
 
         self.internal = ViewerWidget(self.app.settings)
-        self.internal.init_transformation_events()
+        # Transformation boxed DISABLED
+        # self.internal.init_transformation_events()
         self.internal.show()
         self.aframe.add(self.internal)
         self.pack_start(self.aframe, True, True, 0)
@@ -835,12 +836,17 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
             #self.modify_bg(state, self.style.black)
 
     def init_transformation_events(self):
+        self.info("TransformationBox disabled")
+        """
         self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK
                         | Gdk.EventMask.BUTTON_RELEASE_MASK
                         | Gdk.EventMask.POINTER_MOTION_MASK
                         | Gdk.EventMask.POINTER_MOTION_HINT_MASK)
+        """
 
     def show_box(self):
+        self.info("TransformationBox disabled")
+        """
         if not self.box:
             self.box = TransformationBox(self.settings)
             self.box.init_size(self.area)
@@ -851,6 +857,7 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
             self.connect("size-allocate", self._sizeCb)
             self.box.set_transformation_properties(self.transformation_properties)
             self.renderbox()
+        """
 
     def _sizeCb(self, widget, area):
         # The transformation box is cleared when using regular rendering
@@ -917,10 +924,13 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
         return True
 
     def _currentStateCb(self, pipeline, state):
+        self.info("TransformationBox disabled")
+        """
         self.pipeline = pipeline
         if state == Gst.State.PAUSED:
             self._store_pixbuf()
         self.renderbox()
+        """
 
     def motion_notify_event(self, widget, event):
         if event.get_state() & Gdk.ModifierType.BUTTON1_MASK:

@@ -82,14 +82,16 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.infobar_box = Gtk.VBox()
         effect_properties_handling = EffectsPropertiesManager(instance)
         self.effect_expander = EffectProperties(instance, effect_properties_handling, self)
-        self.transformation_expander = TransformationProperties(instance, instance.action_log)
         self.effect_expander.set_vexpand(False)
-        self.transformation_expander.set_vexpand(False)
+        # Transformation boxed DISABLED
+        #self.transformation_expander = TransformationProperties(instance, instance.action_log)
+        #self.transformation_expander.set_vexpand(False)
 
         vbox = Gtk.VBox()
         vbox.set_spacing(SPACING)
         vbox.pack_start(self.infobar_box, False, True, 0)
-        vbox.pack_start(self.transformation_expander, False, True, 0)
+        # Transformation boxed DISABLED
+        #vbox.pack_start(self.transformation_expander, False, True, 0)
         vbox.pack_start(self.effect_expander, True, True, 0)
 
         viewport = Gtk.Viewport()
@@ -104,8 +106,9 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self._project = project
         if project:
             self.effect_expander._connectTimelineSelection(self.app.gui.timeline_ui.timeline)
-            if self.transformation_expander:
-                self.transformation_expander.timeline = self.app.gui.timeline_ui.timeline
+            # Transformation boxed DISABLED
+            # if self.transformation_expander:
+                # self.transformation_expander.timeline = self.app.gui.timeline_ui.timeline
 
     def _getProject(self):
         return self._project
@@ -125,7 +128,8 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
 
     def _setTimeline(self, timeline):
         self.effect_expander.timeline = timeline
-        self.transformation_expander.timeline = timeline
+        # Transformation boxed DISABLED
+        # self.transformation_expander.timeline = timeline
         self._timeline = timeline
 
     timeline = property(_getTimeline, _setTimeline)
