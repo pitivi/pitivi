@@ -25,6 +25,7 @@ missing
 mkinstalldirs
 py-compile
 stamp-h.in
+pitivi.appdata.xml
 pitivi.desktop
 pitivi.desktop.in
 prepare-ChangeLog.pl

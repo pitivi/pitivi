@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+ <id type="desktop">pitivi.desktop</id>
+ <licence>LGPLv2</licence>
+ <name>Pitivi</name>
+ <_summary>A video editor that aims to appeal to hobbyists and professionals alike, with a strong focus on usability, efficiency and quality</_summary>
+ <_description>
+  <p>Integrating well with the GNOME desktop environment and other applications, Pitivi sports a beautiful user interface designed to be powerful yet easy to learn.</p>
+  <p>With a non-modal editing workflow, a framerate-independent and playhead-centric timeline, Pitivi allows you quickly and accurately trim, split and review your scenes. Pitivi's ripple and roll editing features allow spending more time on storytelling and less time on "pushing clips around".</p>
+  <p>Some other features include:</p>
+  <ul>
+    <li>Accepts any file formats supported by the GStreamer multimedia framework</li>
+    <li>Can animate hundreds of special effects and filters with keyframable properties</li>
+    <li>Ability to set custom aspect ratios, framerates and rendering presets</li>
+    <li>Easy to use crossfades and SMPTE transitions</li>
+    <li>Multihead-friendly with detachable user interface components</li>
+  </ul>
+ </_description>
+ <screenshots>
+  <!-- Widths and heights are approximations for the software center apps to choose from !-->
+  <screenshot type="default" width="1366" height="740">http://www.pitivi.org/i/screenshots/software_center_main.jpg</screenshot>
+ </screenshots>
+ <url type="homepage">http://www.pitivi.org</url>
+ <updatecontact>nekohayo@gmail.com</updatecontact>
+</application>
