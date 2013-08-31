@@ -126,8 +126,7 @@ class ProjectManager(Signallable, Loggable):
         self.app = app_instance
         # Current project:
         self.current = None
-        self.backup_lock = 0
-        self.formatter = None
+        self._backup_lock = 0
 
     def loadProject(self, uri):
         """
@@ -419,28 +418,28 @@ class ProjectManager(Signallable, Loggable):
         self.loadProject(uri)
 
     def _projectChangedCb(self, project):
-        # The backup_lock is a timer, when a change in the project is done it is
-        # set to 10 seconds. If before those 10 seconds pass an other change is done
-        # 5 seconds are added in the timeout callback instead of saving the backup
+        # _backup_lock is a timer, when a change in the project is done it is
+        # set to 10 seconds. If before those 10 secs pass another change occurs,
+        # 5 secs are added to the timeout callback instead of saving the backup
         # file. The limit is 60 seconds.
         uri = project.uri
         if uri is None:
             return
 
-        if self.backup_lock == 0:
-            self.backup_lock = 10
-            GLib.timeout_add_seconds(self.backup_lock, self._saveBackupCb, project, uri)
+        if self._backup_lock == 0:
+            self._backup_lock = 10
+            GLib.timeout_add_seconds(self._backup_lock, self._saveBackupCb, project, uri)
         else:
-            if self.backup_lock < 60:
-                self.backup_lock += 5
+            if self._backup_lock < 60:
+                self._backup_lock += 5
 
     def _saveBackupCb(self, project, uri):
-        if self.backup_lock > 10:
-            self.backup_lock -= 5
+        if self._backup_lock > 10:
+            self._backup_lock -= 5
             return True
         else:
             self.saveProject(backup=True)
-            self.backup_lock = 0
+            self._backup_lock = 0
         return False
 
     def _cleanBackup(self, uri):
