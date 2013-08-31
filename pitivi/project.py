@@ -677,12 +677,16 @@ class Project(Loggable, GES.Project):
 
     @property
     def audiorate(self):
-        return self.audio_profile.get_restriction()[0]["rate"]
+        try:
+            return int(self.audio_profile.get_restriction()[0]["rate"])
+        except TypeError:
+            return None
 
     @audiorate.setter
     def audiorate(self, value):
-        if self.audio_profile.get_restriction()[0]["rate"] != value and value:
-            self.audio_profile.get_restriction()[0]["rate"] = value
+        if self.audio_profile.get_restriction()[0]["rate"] != value and \
+                value is not None:
+            self.audio_profile.get_restriction()[0]["rate"] = int(value)
             self._emitChange("rendering-settings-changed", "rate", value)
 
     @property
