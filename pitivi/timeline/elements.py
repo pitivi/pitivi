@@ -1147,6 +1147,7 @@ class TransitionElement(TimelineElement):
     def __init__(self, bElement, track, timeline):
         TimelineElement.__init__(self, bElement, track, timeline)
         self.isDragged = True
+        self.set_reactive(True)
 
     def _createBackground(self, track):
         self.background = RoundedRectangle(0, 0, 0, 0)
@@ -1156,3 +1157,16 @@ class TransitionElement(TimelineElement):
         self.background.set_border_width(1)
         self.background.set_position(0, 0)
         self.add_child(self.background)
+
+    def _selectedChangedCb(self, selected, isSelected):
+        TimelineElement._selectedChangedCb(self, selected, isSelected)
+
+        if isSelected:
+            self.timeline._container.app.gui.trans_list.activate(self.bElement)
+        else:
+            self.timeline._container.app.gui.trans_list.deactivate()
+
+    def _clickedCb(self, action, actor):
+        selection = set([self.bElement])
+        self.timeline.selection.setSelection(selection, SELECT)
+        return False

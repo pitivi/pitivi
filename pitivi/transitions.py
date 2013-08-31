@@ -161,14 +161,8 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         else:
             self.props_widgets.set_sensitive(True)
 
-        # Avoid deadlocks by seeking to 0 before changing type
-        position = self.app.current.pipeline.getPosition()
-        self.app.current.pipeline.simple_seek(0)
-
         self.element.get_parent().set_asset(transition_asset)
-
-        # Seek back into the previous position, refreshing the preview
-        self.app.current.pipeline.simple_seek(position)
+        self.app.current.seeker.flush(True)
 
         return True
 
@@ -176,9 +170,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         value = range_changed.get_value()
         self.debug("User changed the border property to %s" % value)
         self.element.set_border(int(value))
-        # FIXME: Currently creates deadlocks, reactivate it when
-        # fixed
-        #self.app.current.seeker.flush(True)
+        self.app.current.seeker.flush(True)
 
     def _invertCheckboxCb(self, widget):
         value = widget.get_active()
