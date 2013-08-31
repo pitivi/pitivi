@@ -80,19 +80,17 @@ class Seeker(Signallable, Loggable):
 
         if self.pending_seek_id is None:
             if on_idle:
-                GLib.idle_add(self._seekTimeoutCb)
+                self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb)
             else:
                 self._seekTimeoutCb()
-            self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb)
 
     def seekRelative(self, time, on_idle=False):
         if self.pending_seek_id is None:
-            self._time = time
+            self._time = long(time)
             if on_idle:
-                GLib.idle_add(self._seekTimeoutCb, True)
+                self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb, relative=True)
             else:
                 self._seekTimeoutCb()
-            self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb, True)
 
     def flush(self, on_idle=False):
         self.seekRelative(0, on_idle)
