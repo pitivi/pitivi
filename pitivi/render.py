@@ -808,7 +808,11 @@ class RenderDialog(Loggable):
         for obj, id in self._gstSigId.iteritems():
             obj.disconnect(id)
         self._gstSigId = {}
-        self.app.current.pipeline.disconnect_by_func(self._updatePositionCb)
+        try:
+            self.app.current.pipeline.disconnect_by_func(self._updatePositionCb)
+        except TypeError:
+            # The render was successful, so this was already disconnected
+            pass
 
     def destroy(self):
         self.window.destroy()
