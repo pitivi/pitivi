@@ -263,7 +263,7 @@ class RenderingProgressDialog(Signallable):
 
     def updatePosition(self, fraction, estimated):
         self.progressbar.set_fraction(fraction)
-        self.window.set_title(_("%d%% Rendered") % int(100 * fraction))
+        self.window.set_title(_("Rendering — %d%% complete") % int(100 * fraction))
         if estimated:
             # Translators: this string indicates the estimated time
             # remaining until an action (such as rendering) completes.
