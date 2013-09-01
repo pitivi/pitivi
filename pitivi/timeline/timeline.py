@@ -1087,7 +1087,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
             return
         canvas_size = self.embed.get_allocation().width - CONTROL_WIDTH
         try:
-            new_pos = Zoomable.nsToPixel(self.app.current.pipeline.getPosition())
+            new_pos = Zoomable.nsToPixel(self.app.current_project.pipeline.getPosition())
         except PipelineError, e:
             self.info("Pipeline error: %s" % e)
             return
@@ -1193,7 +1193,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self.bTimeline.commit()
 
     def _splitElements(self, elements):
-        position = self.app.current.pipeline.getPosition()
+        position = self.app.current_project.pipeline.getPosition()
         for element in elements:
             start = element.get_start()
             end = start + element.get_duration()
@@ -1211,7 +1211,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
 
         for obj in selected:
             keyframe_exists = False
-            position = self.app.current.pipeline.getPosition()
+            position = self.app.current_project.pipeline.getPosition()
             position_in_obj = (position - obj.start) + obj.in_point
             interpolators = obj.getInterpolators()
             for value in interpolators:
@@ -1229,7 +1229,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
                     self.app.action_log.commit()
 
     def _playPause(self, unused_action):
-        self.app.current.pipeline.togglePlayback()
+        self.app.current_project.pipeline.togglePlayback()
 
     def transposeXY(self, x, y):
         height = self.ruler.get_allocation().height
@@ -1388,14 +1388,14 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
             self._project.pipeline.save_thumbnail(-1, -1, mime, path)
 
     def _previousKeyframeCb(self, action):
-        position = self.app.current.pipeline.getPosition()
+        position = self.app.current_project.pipeline.getPosition()
         prev_kf = self.timeline.getPrevKeyframe(position)
         if prev_kf:
             self._seeker.seek(prev_kf)
             self.scrollToPlayhead()
 
     def _nextKeyframeCb(self, action):
-        position = self.app.current.pipeline.getPosition()
+        position = self.app.current_project.pipeline.getPosition()
         next_kf = self.timeline.getNextKeyframe(position)
         if next_kf:
             self._seeker.seek(next_kf)

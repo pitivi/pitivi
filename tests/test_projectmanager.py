@@ -239,9 +239,9 @@
         #def closing(manager, project):
             #return False
 
-        #self.manager.current = MockProject()
-        #self.manager.current.has_mods = False
-        #self.manager.current.uri = "file:///ciao"
+        #self.manager.current_project = MockProject()
+        #self.manager.current_project.has_mods = False
+        #self.manager.current_project.uri = "file:///ciao"
         #self.manager.connect("closing-project", closing)
 
         #self.failIf(self.manager.closeRunningProject())
@@ -249,11 +249,11 @@
         #name, args = self.signals[0]
         #self.failUnlessEqual(name, "closing-project")
         #project = args[0]
-        #self.failUnless(project is self.manager.current)
+        #self.failUnless(project is self.manager.current_project)
 
     #def testCloseRunningProject(self):
-        #current = self.manager.current = MockProject()
-        #self.manager.current.has_mods = False
+        #current = self.manager.current_project = MockProject()
+        #self.manager.current_project.has_mods = False
         #self.failUnless(self.manager.closeRunningProject())
         #self.failUnlessEqual(len(self.signals), 2)
 
@@ -267,15 +267,15 @@
         #project = args[0]
         #self.failUnless(project is current)
 
-        #self.failUnlessEqual(self.manager.current, None)
+        #self.failUnlessEqual(self.manager.current_project, None)
 
     #def testNewBlankProjectCantCloseCurrent(self):
         #def closing(manager, project):
             #return False
 
-        #self.manager.current = MockProject()
-        #self.manager.current.has_mods = False
-        #self.manager.current.uri = "file:///ciao"
+        #self.manager.current_project = MockProject()
+        #self.manager.current_project.has_mods = False
+        #self.manager.current_project.uri = "file:///ciao"
         #self.manager.connect("closing-project", closing)
         #self.failIf(self.manager.newBlankProject())
         #self.failUnlessEqual(len(self.signals), 1)
@@ -299,7 +299,7 @@
         #name, args = self.signals[2]
         #self.failUnlessEqual(name, "new-project-loaded")
         #project = args[0]
-        #self.failUnless(project is self.manager.current)
+        #self.failUnless(project is self.manager.current_project)
 
     #def testSaveProject(self):
         #uri = "file://" + os.path.abspath("testproject.xptv")
@@ -317,7 +317,7 @@
         ## save a project
         #self.failUnless(self.manager.newBlankProject())
         #self.failUnless(self.manager.saveProject(
-            #self.manager.current, uri, True))
+            #self.manager.current_project, uri, True))
         #self.failUnless(uri_is_reachable(uri))
 
         ## wait a bit
@@ -325,7 +325,7 @@
 
         ## save project under new path
         #self.failUnless(self.manager.saveProject(
-            #self.manager.current, uri2, True))
+            #self.manager.current_project, uri2, True))
         #self.failUnless(uri_is_reachable(uri2))
 
         ## make sure the old path and the new path have different mtime
@@ -338,7 +338,7 @@
 
         ## save project again under new path (by omitting uri arg)
         #self.failUnless(self.manager.saveProject(
-            #self.manager.current, overwrite=True))
+            #self.manager.current_project, overwrite=True))
 
         ## regression test for bug 594396
         ## make sure we didn't save to the old URI
@@ -358,10 +358,10 @@
 
         ## Create and save the project
         #self.manager.newBlankProject()
-        #self.manager.saveProject(self.manager.current, uri, True)
+        #self.manager.saveProject(self.manager.current_project, uri, True)
 
         ## Save the backup
-        #self.manager._saveBackupCb(self.manager.current, uri)
+        #self.manager._saveBackupCb(self.manager.current_project, uri)
         #backup_uri = self.manager._makeBackupURI(uri)
         #self.failUnless(uri_is_reachable(uri))
         #self.failUnless(uri_is_reachable(backup_uri))

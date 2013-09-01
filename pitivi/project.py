@@ -124,8 +124,7 @@ class ProjectManager(Signallable, Loggable):
         Signallable.__init__(self)
         Loggable.__init__(self)
         self.app = app_instance
-        # Current project:
-        self.current = None
+        self.current_project = None
         self.disable_save = False  # Enforce "Save as" for backup and xptv files
         self._backup_lock = 0
 
@@ -135,7 +134,7 @@ class ProjectManager(Signallable, Loggable):
         should be loaded instead, and if so, force the user to use "Save as"
         afterwards.
         """
-        if self.current is not None and not self.closeRunningProject():
+        if self.current_project is not None and not self.closeRunningProject():
             return False
 
         self.emit("new-project-loading", uri)
@@ -158,7 +157,7 @@ class ProjectManager(Signallable, Loggable):
             self.debug('Loading project from backup "%s"' % uri)
 
         # Load the project:
-        self.current = Project(uri=uri)
+        self.current_project = Project(uri=uri)
         # For backup files and legacy formats, force the user to use "Save as"
         if use_backup or path.endswith(".xptv"):
             self.debug("Enforcing read-only mode")
@@ -166,12 +165,12 @@ class ProjectManager(Signallable, Loggable):
         else:
             self.disable_save = False
 
-        self.current.connect("missing-uri", self._missingURICb)
-        self.current.connect("loaded", self._projectLoadedCb)
+        self.current_project.connect("missing-uri", self._missingURICb)
+        self.current_project.connect("loaded", self._projectLoadedCb)
 
-        if self.current.createTimeline():
-            self.emit("new-project-created", self.current)
-            self.current.connect("project-changed", self._projectChangedCb)
+        if self.current_project.createTimeline():
+            self.emit("new-project-created", self.current_project)
+            self.current_project.connect("project-changed", self._projectChangedCb)
             return True
         else:
             self.emit("new-project-failed", uri,
@@ -256,18 +255,18 @@ class ProjectManager(Signallable, Loggable):
             return
 
         if backup:
-            if self.current is not None and self.current.uri is not None:
+            if self.current_project is not None and self.current_project.uri is not None:
                 # Ignore whatever URI that is passed on to us. It's a trap.
-                uri = self._makeBackupURI(self.current.uri)
+                uri = self._makeBackupURI(self.current_project.uri)
             else:
                 # Do not try to save backup files for blank projects.
-                # It is possible that self.current.uri == None when the backup
+                # It is possible that self.current_project.uri == None when the backup
                 # timer sent us an old instance of the (now closed) project.
                 return
         elif uri is None:
             # "Normal save" scenario. The filechoosers in mainwindow ask users
             # for permission to overwrite the file (if needed), so we're safe.
-            uri = self.current.uri
+            uri = self.current_project.uri
         else:
             # "Save As" (or "normal-save a blank project") scenario. We use the
             # provided URI, so ensure it's properly encoded, or GIO will fail:
@@ -283,7 +282,7 @@ class ProjectManager(Signallable, Loggable):
             # "overwrite" is always True: our GTK filechooser save dialogs are
             # set to always ask the user on our behalf about overwriting, so
             # if saveProject is actually called, that means overwriting is OK.
-            saved = self.current.save(self.current.timeline, uri, formatter_type, overwrite=True)
+            saved = self.current_project.save(self.current_project.timeline, uri, formatter_type, overwrite=True)
         except Exception, e:
             saved = False
             self.emit("save-project-failed", uri, e)
@@ -291,13 +290,13 @@ class ProjectManager(Signallable, Loggable):
         if saved:
             if not backup:
                 # Do not emit the signal when autosaving a backup file
-                self.current.setModificationState(False)
-                self.emit("project-saved", self.current, uri)
+                self.current_project.setModificationState(False)
+                self.emit("project-saved", self.current_project, uri)
                 self.debug('Saved project "%s"' % uri)
                 # Update the project instance's uri,
                 # otherwise, subsequent saves will be to the old uri.
                 self.info("Setting the project instance's URI to %s" % uri)
-                self.current.uri = uri
+                self.current_project.uri = uri
                 self.disable_save = False
             else:
                 self.debug('Saved backup "%s"' % uri)
@@ -318,9 +317,9 @@ class ProjectManager(Signallable, Loggable):
             directory = os.path.dirname(uri)
             tmp_uri = os.path.join(directory, tmp_name)
             # saveProject updates the project URI... so we better back it up:
-            _old_uri = self.current.uri
+            _old_uri = self.current_project.uri
             self.saveProject(tmp_uri)
-            self.current.uri = _old_uri
+            self.current_project.uri = _old_uri
 
             # create tar file
             with tarfile.open(path_from_uri(uri), mode="w") as tar:
@@ -364,33 +363,33 @@ class ProjectManager(Signallable, Loggable):
     def closeRunningProject(self):
         """ close the current project """
 
-        if self.current is None:
+        if self.current_project is None:
             self.warning("Trying to close a project that was already closed/didn't exist")
             return True
 
-        self.info("closing running project %s", self.current.props.uri)
-        if not self.emit("closing-project", self.current):
+        self.info("closing running project %s", self.current_project.uri)
+        if not self.emit("closing-project", self.current_project):
             self.error("Could not close project")
             return False
 
-        self.emit("project-closed", self.current)
+        self.emit("project-closed", self.current_project)
         # We should never choke on silly stuff like disconnecting signals
         # that were already disconnected. It blocks the UI for nothing.
         # This can easily happen when a project load/creation failed.
         try:
-            self.current.disconnect_by_function(self._projectChangedCb)
+            self.current_project.disconnect_by_function(self._projectChangedCb)
         except Exception:
             self.debug("Tried disconnecting signals, but they were not connected")
-        self._cleanBackup(self.current.uri)
-        self.current.release()
-        self.current = None
+        self._cleanBackup(self.current_project.uri)
+        self.current_project.release()
+        self.current_project = None
 
         return True
 
     def newBlankProject(self, emission=True):
         """ start up a new blank project """
         # if there's a running project we must close it
-        if self.current is not None and not self.closeRunningProject():
+        if self.current_project is not None and not self.closeRunningProject():
             return False
 
         if emission:
@@ -403,10 +402,10 @@ class ProjectManager(Signallable, Loggable):
 
         project.createTimeline()
         self.emit("new-project-created", project)
-        self.current = project
+        self.current_project = project
 
         project.connect("project-changed", self._projectChangedCb)
-        self.emit("new-project-loaded", self.current, emission)
+        self.emit("new-project-loaded", self.current_project, emission)
         self.time_loaded = time()
 
         return True
@@ -415,13 +414,13 @@ class ProjectManager(Signallable, Loggable):
         """
         Discard all unsaved changes and reload current open project
         """
-        if self.current.uri is None or not self.current.hasUnsavedModifications():
+        if self.current_project.uri is None or not self.current_project.hasUnsavedModifications():
             return True
-        if not self.emit("reverting-to-saved", self.current):
+        if not self.emit("reverting-to-saved", self.current_project):
             return False
 
-        uri = self.current.uri
-        self.current.setModificationState(False)
+        uri = self.current_project.uri
+        self.current_project.setModificationState(False)
         self.closeRunningProject()
         self.loadProject(uri)
 
@@ -473,8 +472,8 @@ class ProjectManager(Signallable, Loggable):
         return self.emit("missing-uri", project, error, asset)
 
     def _projectLoadedCb(self, project, timeline):
-        self.debug("Project loaded %s", self.current.props.uri)
-        self.emit("new-project-loaded", self.current, True)
+        self.debug("Project loaded %s", self.current_project.props.uri)
+        self.emit("new-project-loaded", self.current_project, True)
         self.time_loaded = time()
 
 

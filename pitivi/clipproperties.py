@@ -339,7 +339,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                     clip.add(effect)
                     self.updateAll()
                     self.app.action_log.commit()
-                    self.app.current.pipeline.flushSeek()
+                    self.app.current_project.pipeline.flushSeek()
 
                     break
 
@@ -371,7 +371,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         tck_effect.set_active(not tck_effect.is_active())
         cellrenderertoggle.set_active(tck_effect.is_active())
         self._updateTreeview()
-        self.app.current.timeline.commit()
+        self.app.current_project.timeline.commit()
         self.app.action_log.commit()
 
     def _expandedCb(self, expander, params):
@@ -591,7 +591,7 @@ class TransformationProperties(Gtk.Expander):
         self.app.gui.setActionsSensitive(True)
 
     def _flushPipeLineCb(self, widget):
-        self.app.current.pipeline.flushSeek()
+        self.app.current_project.pipeline.flushSeek()
 
     def _findEffect(self, name):
         for effect in self._selected_clip.get_children(False):
@@ -605,7 +605,7 @@ class TransformationProperties(Gtk.Expander):
         if not effect:
             effect = GES.Effect.new(bin_description=name)
             self._selected_clip.add(effect)
-            tracks = self.app.projectManager.current.timeline.get_tracks()
+            tracks = self.app.projectManager.current_project.timeline.get_tracks()
             effect = self._findEffect(name)
             # disable the effect on default
             a = self.effect.get_gnlobject()
@@ -632,7 +632,7 @@ class TransformationProperties(Gtk.Expander):
             if self._selected_clip:
                 self._selected_clip = None
                 self.zoom_scale.set_value(1.0)
-                self.app.current.pipeline.flushSeek()
+                self.app.current_project.pipeline.flushSeek()
             self.effect = None
             self.hide()
         self._updateBoxVisibility()

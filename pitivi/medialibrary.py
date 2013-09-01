@@ -352,7 +352,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     def _trackElementAddedCb(self, source, unused_track_element):
         """ After an object has been added to the first track, position it
         correctly and request the next source to be processed. """
-        timeline = self.app.current.timeline
+        timeline = self.app.current_project.timeline
         layer = timeline.get_layers()[0]  # FIXME Get the longest layer
 
         # Handle the case where we just inserted the first clip
@@ -510,8 +510,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         Update the _progressbar with the ratio of clips imported vs the total
         """
-        current_clip_iter = self.app.current.nb_imported_files
-        total_clips = self.app.current.nb_remaining_file_to_import + current_clip_iter
+        current_clip_iter = self.app.current_project.nb_imported_files
+        total_clips = self.app.current_project.nb_remaining_file_to_import + current_clip_iter
 
         progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
             {"current_clip": current_clip_iter,
@@ -680,7 +680,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.app.settings.closeImportDialog = \
                 dialogbox.props.extra_widget.get_active()
             filenames = dialogbox.get_uris()
-            self.app.current.addUris(filenames)
+            self.app.current_project.addUris(filenames)
             if self.app.settings.closeImportDialog:
                 dialogbox.destroy()
                 self._importDialog = None
@@ -710,12 +710,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.app.action_log.begin("remove clip from source list")
         for row in rows:
             asset = model[row.get_path()][COL_ASSET]
-            self.app.current.remove_asset(asset)
+            self.app.current_project.remove_asset(asset)
         self.app.action_log.commit()
 
     def _sourceIsUsed(self, asset):
         """Check if a given URI is present in the timeline"""
-        layers = self.app.current.timeline.get_layers()
+        layers = self.app.current_project.timeline.get_layers()
         for layer in layers:
             for clip in layer.get_clips():
                 if clip.get_asset() == asset:
@@ -726,7 +726,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         Select, in the media library, unused sources in the project.
         """
-        assets = self.app.current.list_assets(GES.UriClip)
+        assets = self.app.current_project.list_assets(GES.UriClip)
         unused_sources_uris = []
 
         model = self.treeview.get_model()
@@ -763,7 +763,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         paths = self.getSelectedPaths()[0]  # Only use the first item
         model = self.treeview.get_model()
         info = model[paths][COL_ASSET].get_info()
-        d = clipmediapropsDialog(self.app.current,
+        d = clipmediapropsDialog(self.app.current_project,
                                 info.get_audio_streams(),
                                 info.get_video_streams())
         d.run()
@@ -977,8 +977,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._project = None
 
     def _addUris(self, uris):
-        if self.app.current:
-            self.app.current.addUris(uris)
+        if self.app.current_project:
+            self.app.current_project.addUris(uris)
         else:
             self.warning("Adding uris to project, but the project has changed in the meantime")
         return False
@@ -1013,7 +1013,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             #TODO waiting for remote files downloader support to be implemented
             self.fixme("Importing remote files is not implemented")
         if len(filenames):
-            self.app.current.addUris(filenames)
+            self.app.current_project.addUris(filenames)
 
     #used with TreeView and IconView
     def _dndDragDataGetCb(self, unused_view, context, data, info, timestamp):

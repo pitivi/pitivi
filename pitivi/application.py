@@ -126,7 +126,7 @@ class Pitivi(Loggable, Signallable):
                 % APPNAME)
         instance.PiTiVi = self
 
-        self.current = None
+        self.current_project = None
 
         # get settings
         self.settings = GlobalSettings()
@@ -159,12 +159,12 @@ class Pitivi(Loggable, Signallable):
         self.debug("shutting down")
         # we refuse to close if we're running a user interface and the user
         # doesn't want us to close the current project.
-        if self.current and not self.projectManager.closeRunningProject():
+        if self.current_project and not self.projectManager.closeRunningProject():
             self.warning("Not closing since running project doesn't want to close")
             return False
         self.threads.stopAllThreads()
         self.settings.storeSettings()
-        self.current = None
+        self.current_project = None
         instance.PiTiVi = None
         self.emit("shutdown")
         return True
@@ -182,15 +182,14 @@ class Pitivi(Loggable, Signallable):
         self.emit("new-project-loading", uri)
 
     def _projectManagerNewProjectCreated(self, projectManager, project):
-        self.current = project
+        self.current_project = project
         self.emit("new-project-created", project)
 
     def _newProjectLoaded(self, project):
         pass
 
-    def _projectManagerNewProjectLoaded(self, projectManager, project,
-            unused_fully_loaded):
-        self.current = project
+    def _projectManagerNewProjectLoaded(self, projectManager, project, unused_fully_loaded):
+        self.current_project = project
         self.action_log.clean()
         #self.timelineLogObserver.startObserving(project.timeline)
         self.projectLogObserver.startObserving(project)
@@ -206,7 +205,7 @@ class Pitivi(Loggable, Signallable):
     def _projectManagerProjectClosed(self, projectManager, project):
         #self.timelineLogObserver.stopObserving(project.timeline)
         self.projectLogObserver.stopObserving(project)
-        self.current = None
+        self.current_project = None
         self.emit("project-closed", project)
 
     def _checkVersion(self):
@@ -334,7 +333,7 @@ class ProjectCreatorGuiPitivi(GuiPitivi):
         self.projectManager.newBlankProject(False)
         uris = [quote_uri(os.path.abspath(media_filename))
                 for media_filename in media_filenames]
-        lib = self.current.medialibrary
+        lib = self.current_project.medialibrary
         lib.connect("source-added", self._sourceAddedCb, uris, add_to_timeline)
         lib.connect("discovery-error", self._discoveryErrorCb, uris)
         lib.addUris(uris)
@@ -345,7 +344,7 @@ class ProjectCreatorGuiPitivi(GuiPitivi):
             self.action_log.begin("add clip")
             src = GES.UriClip(uri=info.get_uri())
             src.set_property("priority", 1)
-            self.current.timeline.get_layers()[0].add_clip(src)
+            self.current_project.timeline.get_layers()[0].add_clip(src)
             self.action_log.commit()
 
     def _discoveryErrorCb(self, medialibrary, uri, error, debug, startup_uris):
@@ -361,8 +360,8 @@ class ProjectCreatorGuiPitivi(GuiPitivi):
             return False
 
         if not startup_uris:
-            self.current.medialibrary.disconnect_by_function(self._sourceAddedCb)
-            self.current.medialibrary.disconnect_by_function(self._discoveryErrorCb)
+            self.current_project.medialibrary.disconnect_by_function(self._sourceAddedCb)
+            self.current_project.medialibrary.disconnect_by_function(self._discoveryErrorCb)
 
         return True
 

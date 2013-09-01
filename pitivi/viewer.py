@@ -328,7 +328,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
             self.target.renderbox()
 
     def _playButtonCb(self, unused_button, playing):
-        self.app.current.pipeline.togglePlayback()
+        self.app.current_project.pipeline.togglePlayback()
 
     def _goToStartCb(self, unused_button):
         self.seeker.seek(0)
@@ -343,7 +343,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
 
     def _goToEndCb(self, unused_button):
         try:
-            end = self.app.current.pipeline.getDuration()
+            end = self.app.current_project.pipeline.getDuration()
         except:
             self.warning("Couldn't get timeline duration")
         try:
@@ -464,7 +464,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
         if self._tmp_pipeline is not None:
             self._tmp_pipeline.set_state(Gst.State.NULL)
             self._tmp_pipeline = None  # Free the memory
-            self.setPipeline(self.app.current.pipeline, self._oldTimelinePos)
+            self.setPipeline(self.app.current_project.pipeline, self._oldTimelinePos)
             self.debug("Back to old pipeline")
 
     def _pipelineStateChangedCb(self, pipeline, state):

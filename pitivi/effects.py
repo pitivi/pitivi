@@ -695,5 +695,5 @@ class EffectsPropertiesManager:
             self._current_effect_setting_ui.element.set_child_property(prop.name, value)
             self.action_log.commit()
 
-            self.app.current.pipeline.flushSeek()
+            self.app.current_project.pipeline.flushSeek()
             self._current_element_values[prop.name] = value

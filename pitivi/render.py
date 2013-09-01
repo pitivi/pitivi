@@ -796,7 +796,7 @@ class RenderDialog(Loggable):
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
 
     def _pauseRender(self, progress):
-        self.app.current.pipeline.togglePlayback()
+        self.app.current_project.pipeline.togglePlayback()
 
     def _destroyProgressWindow(self):
         """ Handle the completion or the cancellation of the render process. """
@@ -809,7 +809,7 @@ class RenderDialog(Loggable):
             obj.disconnect(id)
         self._gstSigId = {}
         try:
-            self.app.current.pipeline.disconnect_by_func(self._updatePositionCb)
+            self.app.current_project.pipeline.disconnect_by_func(self._updatePositionCb)
         except TypeError:
             # The render was successful, so this was already disconnected
             pass
@@ -842,7 +842,7 @@ class RenderDialog(Loggable):
         bus = self._pipeline.get_bus()
         bus.add_signal_watch()
         self._gstSigId[bus] = bus.connect('message', self._busMessageCb)
-        self.app.current.pipeline.connect("position", self._updatePositionCb)
+        self.app.current_project.pipeline.connect("position", self._updatePositionCb)
         # Force writing the config now, or the path will be reset
         # if the user opens the rendering dialog again
         self.app.settings.lastExportFolder = self.filebutton.get_current_folder()
@@ -902,7 +902,7 @@ class RenderDialog(Loggable):
         if self.progress:
             text = None
             timediff = time.time() - self.timestarted
-            length = self.app.current.timeline.props.duration
+            length = self.app.current_project.timeline.props.duration
             fraction = float(min(position, length)) / float(length)
             if timediff > 5.0 and position:
                 # only display ETA after 5s in order to have enough averaging and
