@@ -25,6 +25,7 @@ Rendering-related utilities and classes
 """
 
 import os
+from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import Gst
 from gi.repository import GES
@@ -237,8 +238,7 @@ class RenderingProgressDialog(Signallable):
         self.app = app
         self.main_render_dialog = parent
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(configure.get_ui_dir(),
-            "renderingprogress.ui"))
+        self.builder.add_from_file(os.path.join(configure.get_ui_dir(), "renderingprogress.ui"))
         self.builder.connect_signals(self)
 
         self.window = self.builder.get_object("render-progress")
@@ -261,22 +261,20 @@ class RenderingProgressDialog(Signallable):
         self.play_rendered_file_button.hide()
         self.close_button.hide()
 
-    def updatePosition(self, fraction, estimated):
+    def updatePosition(self, fraction):
         self.progressbar.set_fraction(fraction)
         self.window.set_title(_("Rendering — %d%% complete") % int(100 * fraction))
-        if estimated:
-            # Translators: this string indicates the estimated time
-            # remaining until an action (such as rendering) completes.
-            # The "%s" is an already-localized human-readable duration,
-            # such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
-            # In some languages, "About %s left" can be expressed roughly as
-            # "There remains approximatively %s" (to handle gender and plurals).
-            self.progressbar.set_text(_("About %s left") % estimated)
-        else:
-            self.progressbar.set_text(_("Estimating..."))
+
+    def updateProgressbarETA(self, time_estimation):
+        # Translators: this string indicates the estimated time
+        # remaining until an action (such as rendering) completes.
+        # The "%s" is an already-localized human-readable duration,
+        # such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
+        # In some languages, "About %s left" can be expressed roughly as
+        # "There remains approximatively %s" (to handle gender and plurals).
+        self.progressbar.set_text(_("About %s left") % time_estimation)
 
     def setFilesizeEstimate(self, estimated_filesize=None):
-
         if not estimated_filesize:
             self._filesize_est_label.hide()
             self._filesize_est_value_label.hide()
@@ -324,6 +322,7 @@ class RenderDialog(Loggable):
         self.app = app
         self.project = project
         self.system = app.system
+
         if pipeline is not None:
             self._pipeline = pipeline
         else:
@@ -331,8 +330,14 @@ class RenderDialog(Loggable):
 
         self.outfile = None
         self.notification = None
-        self.timestarted = 0
+
+        # Variables to keep track of progress indication timers:
+        self._filesizeEstimateTimer = self._timeEstimateTimer = None
+        self._is_rendering = False
+        self._rendering_is_paused = False
         self.current_position = None
+        self._time_started = 0
+        self._time_spent_paused = 0  # Avoids the ETA being wrong on resume
 
         # Various gstreamer signal connection ID's
         # {object: sigId}
@@ -718,6 +723,10 @@ class RenderDialog(Loggable):
         """
         Using the current render output's filesize and position in the timeline,
         return a human-readable (ex: "14 MB") estimate of the final filesize.
+
+        Estimates in megabytes (over 30 MB) are rounded to the nearest 10 MB
+        to smooth out small variations. You'd be surprised how imprecision can
+        improve perceived accuracy.
         """
         if not self.current_position or self.current_position == 0:
             return None
@@ -732,6 +741,8 @@ class RenderDialog(Loggable):
             return _("%.2f GB" % gigabytes)
         else:
             megabytes = int(estimated_size / (10 ** 6))
+            if megabytes > 30:
+                megabytes = int(round(megabytes, -1))  # -1 means round to 10
             return _("%d MB" % megabytes)
 
     def updateFilename(self, basename):
@@ -812,6 +823,8 @@ class RenderDialog(Loggable):
         encodebin = self._pipeline.get_by_name("internal-encodebin")
         self._gstSigId[encodebin] = encodebin.connect("element-added", self._elementAddedCb)
         self._pipeline.set_state(Gst.State.PLAYING)
+        self._is_rendering = True
+        self._time_started = time.time()
 
     def _cancelRender(self, *unused_args):
         self.debug("Aborting render")
@@ -821,11 +834,20 @@ class RenderDialog(Loggable):
     def _shutDown(self):
         """ The render process has been aborted, shutdown the gstreamer pipeline
         and disconnect from its signals """
+        self._is_rendering = False
+        self._rendering_is_paused = False
+        self._time_spent_paused = 0
         self._pipeline.set_state(Gst.State.NULL)
         self._disconnectFromGst()
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
 
     def _pauseRender(self, progress):
+        self._rendering_is_paused = self.progress.play_pause_button.get_active()
+        if self._rendering_is_paused:
+            self._last_timestamp_when_pausing = time.time()
+        else:
+            self._time_spent_paused += time.time() - self._last_timestamp_when_pausing
+            self.debug("Resuming render after %d seconds in pause" % self._time_spent_paused)
         self.app.current_project.pipeline.togglePlayback()
 
     def _destroyProgressWindow(self):
@@ -889,6 +911,36 @@ class RenderDialog(Loggable):
     def _containerContextHelpClickedCb(self, unused_button):
         show_user_manual("codecscontainers")
 
+    #-- Periodic (timer) callbacks
+    def _updateTimeEstimateCb(self):
+        if self._rendering_is_paused:
+            return True  # Do nothing until we resume rendering
+        elif self._is_rendering:
+            timediff = time.time() - self._time_started - self._time_spent_paused
+            length = self.app.current_project.timeline.props.duration
+            totaltime = (timediff * float(length) / float(self.current_position)) - timediff
+            time_estimate = beautify_ETA(int(totaltime * Gst.SECOND))
+            if time_estimate:
+                self.progress.updateProgressbarETA(time_estimate)
+            return True
+        else:
+            self._timeEstimateTimer = None
+            self.debug("Stopping the ETA timer")
+            return False  # Stop the timer
+
+    def _updateFilesizeEstimateCb(self):
+        if self._rendering_is_paused:
+            return True  # Do nothing until we resume rendering
+        elif self._is_rendering:
+            est_filesize = self._getFilesizeEstimate()
+            if est_filesize:
+                self.progress.setFilesizeEstimate(est_filesize)
+            return True
+        else:
+            self.debug("Stopping the filesize estimation timer")
+            self._filesizeEstimateTimer = None
+            return False  # Stop the timer
+
     #-- GStreamer callbacks
     def _busMessageCb(self, unused_bus, message):
         if message.type == Gst.MessageType.EOS:  # Render complete
@@ -896,6 +948,7 @@ class RenderDialog(Loggable):
             self._shutDown()
             self.progress.progressbar.set_text(_("Render complete"))
             self.progress.window.set_title(_("Render complete"))
+            self.progress.setFilesizeEstimate(None)
             if has_libnotify:
                 Notify.init("pitivi")
                 if not self.progress.window.is_active():
@@ -922,29 +975,36 @@ class RenderDialog(Loggable):
                 state_really_changed = pending == Gst.State.VOID_PENDING
                 if state_really_changed:
                     if state == Gst.State.PLAYING:
-                        self.debug("Rendering started/resumed, resetting ETA calculation and inhibiting sleep")
-                        self.timestarted = time.time()
+                        self.debug("Rendering started/resumed, inhibiting sleep")
                         self.system.inhibitSleep(RenderDialog.INHIBIT_REASON)
                     else:
                         self.system.uninhibitSleep(RenderDialog.INHIBIT_REASON)
 
     def _updatePositionCb(self, pipeline, position):
+        """
+        Unlike other progression indicator callbacks, this one occurs every time
+        the pipeline emits a position changed signal, which is *very* often.
+        This should only be used for a smooth progressbar/percentage, not text.
+        """
         self.current_position = position
-        if self.progress:
-            text = None
-            timediff = time.time() - self.timestarted
-            length = self.app.current_project.timeline.props.duration
-            fraction = float(min(position, length)) / float(length)
-            if timediff > 5.0 and position:
-                # only display ETA after 5s in order to have enough averaging and
-                # if the position is non-null
-                totaltime = (timediff * float(length) / float(position)) - timediff
-                text = beautify_ETA(int(totaltime * Gst.SECOND))
-                # Also piggyback on this to give an estimate of resulting filesize
-                est_filesize = self._getFilesizeEstimate()
-                if est_filesize:
-                    self.progress.setFilesizeEstimate(est_filesize)
-            self.progress.updatePosition(fraction, text)
+        if not self.progress or not position:
+            return
+
+        length = self.app.current_project.timeline.props.duration
+        fraction = float(min(position, length)) / float(length)
+        self.progress.updatePosition(fraction)
+
+        # In order to have enough averaging, only display the ETA after 5s
+        timediff = time.time() - self._time_started
+        if not self._timeEstimateTimer:
+            if timediff < 6:
+                self.progress.progressbar.set_text(_("Estimating..."))
+            else:
+                self._timeEstimateTimer = GLib.timeout_add_seconds(3, self._updateTimeEstimateCb)
+
+        # Filesize is trickier and needs more time to be meaningful:
+        if not self._filesizeEstimateTimer and (fraction > 0.33 or timediff > 180):
+            self._filesizeEstimateTimer = GLib.timeout_add_seconds(5, self._updateFilesizeEstimateCb)
 
     def _elementAddedCb(self, bin, element):
         """
