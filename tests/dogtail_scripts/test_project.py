@@ -1,6 +1,8 @@
 #!/usr/bin/env python2
 from helper_functions import HelpFunc
 from dogtail.predicate import IsATextEntryNamed, GenericPredicate
+from dogtail.tree import SearchError
+import dogtail.rawinput
 from time import time, sleep
 import os
 
@@ -222,6 +224,7 @@ class ProjectPropertiesTest(HelpFunc):
 
         # After another "crash", try loading from the backup.
         self.setUp()
+        seektime = self.viewer.child(name="timecode_entry").child(roleName="text")
         welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
         welcome_dialog.child(name=filename).doubleClick()
         self.pitivi.child(name="restore from backup dialog", roleName="dialog", recursive=False).button("Restore from backup").click()
@@ -232,9 +235,14 @@ class ProjectPropertiesTest(HelpFunc):
         self.goToEnd_button = self.viewer.child(name="goToEnd_button")
         self.goToEnd_button.click()
         self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
-        # ...and that the user can't save without using Save As:
+        # ...and that clicking "Save" actually triggers "Save As":
         self.menubar.menu("Project").click()
-        self.assertFalse(self.menubar.menu("Project").menuItem("Save").sensitive)
+        self.menubar.menu("Project").menuItem("Save").click()
+        try:
+            _save_as_dialog = self.pitivi.child(name="Save As...", roleName="file chooser", recursive=False, retry=False)
+            dogtail.rawinput.pressKey("Esc")  # Dismiss the dialog
+        except SearchError:
+            self.fail('Clicking "Save" after loading a backup project should have triggered the "Save As" dialog')
         # Do not save, kill once more - the backup should be preserved
         # and the user should be prompted again on the next startup
         self.tearDown(clean=False, kill=True)

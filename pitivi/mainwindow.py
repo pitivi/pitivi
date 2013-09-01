@@ -671,7 +671,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.openProject()
 
     def _saveProjectCb(self, unused_action):
-        if not self.app.current.uri:
+        if not self.app.current.uri or self.app.projectManager.disable_save is True:
             self._saveProjectAsCb(unused_action)
         else:
             self.app.projectManager.saveProject()
@@ -856,6 +856,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.main_actions.get_action("SaveProject").set_sensitive(True)
             self._missingUriOnLoading = False
 
+        if projectManager.disable_save is True:
+            # Special case: we enforce "Save as", but the normal "Save" button
+            # redirects to it if needed, so we still want it to be enabled:
+            self.main_actions.get_action("SaveProject").set_sensitive(True)
+
         if self.app.current.timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
 
@@ -896,7 +901,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if not project.hasUnsavedModifications():
             return True
 
-        if project.uri:
+        if project.uri and projectManager.disable_save is False:
             save = Gtk.STOCK_SAVE
         else:
             save = Gtk.STOCK_SAVE_AS
@@ -960,7 +965,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         response = dialog.run()
         dialog.destroy()
         if response == Gtk.ResponseType.YES:
-            if project.uri is not None:
+            if project.uri is not None and projectManager.disable_save is False:
                 res = self.app.projectManager.saveProject()
             else:
                 res = self._saveProjectAsCb(None)

@@ -126,6 +126,7 @@ class ProjectManager(Signallable, Loggable):
         self.app = app_instance
         # Current project:
         self.current = None
+        self.disable_save = False  # Enforce "Save as" for backup and xptv files
         self._backup_lock = 0
 
     def loadProject(self, uri):
@@ -151,17 +152,19 @@ class ProjectManager(Signallable, Loggable):
         else:
             if time_diff > 0:
                 use_backup = self._restoreFromBackupDialog(time_diff)
+
         if use_backup:
             uri = self._makeBackupURI(uri)
             self.debug('Loading project from backup "%s"' % uri)
-            # Make a new project instance, but don't specify the URI.
-            # That way, we force the user to "Save as" (which ensures that the
-            # changes in the loaded backup file are approved by the user).
-            self.current = Project()
+
+        # Load the project:
+        self.current = Project(uri=uri)
+        # For backup files and legacy formats, force the user to use "Save as"
+        if use_backup or path.endswith(".xptv"):
+            self.debug("Enforcing read-only mode")
+            self.disable_save = True
         else:
-            # Load the project normally.
-            # The "old" backup file will eventually be deleted or overwritten.
-            self.current = Project(uri=uri)
+            self.disable_save = False
 
         self.current.connect("missing-uri", self._missingURICb)
         self.current.connect("loaded", self._projectLoadedCb)
@@ -248,6 +251,10 @@ class ProjectManager(Signallable, Loggable):
         "formatter_type" allows specifying a GES formatter type to use; if None,
         GES will default to GES.XmlFormatter.
         """
+        if self.disable_save is True and (backup is True or uri is None):
+            self.log("Read-only mode is enforced and no new URI was specified, ignoring save request")
+            return
+
         if backup:
             if self.current is not None and self.current.uri is not None:
                 # Ignore whatever URI that is passed on to us. It's a trap.
@@ -291,6 +298,7 @@ class ProjectManager(Signallable, Loggable):
                 # otherwise, subsequent saves will be to the old uri.
                 self.info("Setting the project instance's URI to %s" % uri)
                 self.current.uri = uri
+                self.disable_save = False
             else:
                 self.debug('Saved backup "%s"' % uri)
 
@@ -512,8 +520,6 @@ class Project(Loggable, GES.Project):
         self.pipeline = None
         self.timeline = None
         self.seeker = Seeker()
-
-        # FIXME Remove our URI and work more closely with GES.Project URI handling
         self.uri = uri
 
         # Follow imports
