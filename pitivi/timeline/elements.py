@@ -505,6 +505,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
         self.keyframes = []
 
+        values = self.source.get_all()
+
         l = len(values)
         for i, value in enumerate(values):
             has_changable_time = True
