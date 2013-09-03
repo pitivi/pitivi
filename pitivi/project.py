@@ -853,7 +853,17 @@ class Project(Loggable, GES.Project):
         self.pipeline = Pipeline()
         self.pipeline.add_timeline(self.timeline)
 
+        self.update_restriction_caps()
+
         return True
+
+    def update_restriction_caps(self):
+        caps = Gst.Caps.new_empty_simple("video/x-raw")
+        caps.set_value("width", self.videowidth)
+        caps.set_value("height", self.videoheight)
+        for track in self.timeline.get_tracks():
+            if isinstance(track, GES.VideoTrack):
+                track.set_restriction_caps(caps)
 
     def addUris(self, uris):
         """
