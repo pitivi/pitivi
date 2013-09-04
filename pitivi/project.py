@@ -677,6 +677,7 @@ class Project(Loggable, GES.Project):
     def videorate(self, value):
         if self.video_profile.get_restriction()[0]["framerate"] != value and value:
             self.video_profile.get_restriction()[0]["framerate"] = value
+            self._emitChange("rendering-settings-changed", "videorate", value)
 
     @property
     def videopar(self):
@@ -861,6 +862,7 @@ class Project(Loggable, GES.Project):
         caps = Gst.Caps.new_empty_simple("video/x-raw")
         caps.set_value("width", self.videowidth)
         caps.set_value("height", self.videoheight)
+        caps.set_value("framerate", self.videorate)
         for track in self.timeline.get_tracks():
             if isinstance(track, GES.VideoTrack):
                 track.set_restriction_caps(caps)

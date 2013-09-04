@@ -1374,7 +1374,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
 
             self.ruler.setProjectFrameRate(self._framerate)
 
-        if item == "width" or item == "height":
+        if item == "width" or item == "height" or item == "videorate":
             project.update_restriction_caps()
 
     def _snapDistanceChangedCb(self, settings):
