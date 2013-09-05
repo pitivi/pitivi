@@ -977,10 +977,18 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         return res
 
     def _projectManagerProjectClosedCb(self, projectManager, project):
-        # we must disconnect from the project pipeline before it is released
+        """
+        This happens immediately when the user asks to load another project,
+        after the user confirmed that unsaved changes can be discarded but
+        before the filechooser to pick the new project to load appears...
+        We can then expect another project to be loaded soon afterwards.
+        """
+        # We must disconnect from the project pipeline before it is released:
         if project.pipeline is not None:
             project.pipeline.deactivatePositionListener()
 
+        self.info("Project closed - clearing the media library and timeline")
+        self.medialibrary.storemodel.clear()
         self.timeline_ui.setTimeline(None)
         self.clipconfig.timeline = None
         return False

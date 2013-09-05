@@ -369,7 +369,7 @@ class ProjectManager(Signallable, Loggable):
 
         self.info("closing running project %s", self.current_project.uri)
         if not self.emit("closing-project", self.current_project):
-            self.error("Could not close project")
+            self.warning("Could not close project - this could be because there were unsaved changes and the user cancelled when prompted about them")
             return False
 
         self.emit("project-closed", self.current_project)
