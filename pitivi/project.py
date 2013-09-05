@@ -388,9 +388,9 @@ class ProjectManager(Signallable, Loggable):
 
     def newBlankProject(self, emission=True):
         """ start up a new blank project """
-        # if there's a running project we must close it
+        # This will prompt users about unsaved changes (if any):
         if self.current_project is not None and not self.closeRunningProject():
-            return False
+            return False  # The user has not made a decision, don't do anything
 
         if emission:
             self.emit("new-project-loading", None)
