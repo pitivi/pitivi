@@ -1661,7 +1661,7 @@ msgstr "Informació extra:"
 
 #: ../pitivi/dialogs/prefs.py:278 ../pitivi/utils/widgets.py:886
 msgid "Reset to default value"
-msgstr "Reinicia als valor predeterminats"
+msgstr "Reinicia als valors predeterminats"
 
 #: ../pitivi/dialogs/startupwizard.py:59
 msgid "Projects"
