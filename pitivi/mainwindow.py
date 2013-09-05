@@ -1124,7 +1124,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # The chooser will be destroyed further below, so let's hide it now.
             dialog.hide()
             # Reset projectManager and disconnect all the signals:
-            self.app.projectManager.newBlankProject()
+            self.app.projectManager.newBlankProject(ignore_unsaved_changes=True)
             # Force the project load to fail:
             # This will show an error using _projectManagerNewProjectFailedCb
             # You have to do this *after* successfully creating a blank project,

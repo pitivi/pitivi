@@ -330,7 +330,7 @@ class ProjectCreatorGuiPitivi(GuiPitivi):
         GuiPitivi.__init__(self, debug)
         # load the passed filenames, optionally adding them to the timeline
         # (useful during development)
-        self.projectManager.newBlankProject(False)
+        self.projectManager.newBlankProject(emission=False)
         uris = [quote_uri(os.path.abspath(media_filename))
                 for media_filename in media_filenames]
         lib = self.current_project.medialibrary
@@ -389,7 +389,7 @@ class StartupWizardGuiPitivi(GuiPitivi):
 
     def __init__(self, debug=False):
         GuiPitivi.__init__(self, debug)
-        self.projectManager.newBlankProject(False)
+        self.projectManager.newBlankProject(emission=False)
 
     def _createGui(self):
         # Prevent the main window to go fullscreen because at least

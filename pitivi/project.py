@@ -178,7 +178,7 @@ class ProjectManager(Signallable, Loggable):
                       'If you were trying to add a media file to your project, '
                       'use the "Import" button instead.'))
             # Reset projectManager and disconnect all the signals:
-            self.newBlankProject()
+            self.newBlankProject(ignore_unsaved_changes=True)
             return False
 
     def _restoreFromBackupDialog(self, time_diff):
@@ -386,11 +386,19 @@ class ProjectManager(Signallable, Loggable):
 
         return True
 
-    def newBlankProject(self, emission=True):
-        """ start up a new blank project """
-        # This will prompt users about unsaved changes (if any):
-        if self.current_project is not None and not self.closeRunningProject():
-            return False  # The user has not made a decision, don't do anything
+    def newBlankProject(self, emission=True, ignore_unsaved_changes=False):
+        """
+        Start up a new blank project.
+
+        The ignore_unsaved_changes parameter is used in special cases to force
+        the creation of a new project without prompting the user about unsaved
+        changes. This is an "extreme" way to reset Pitivi's state.
+        """
+        if self.current_project is not None:
+            # This will prompt users about unsaved changes (if any):
+            if not ignore_unsaved_changes and not self.closeRunningProject():
+                # The user has not made a decision, don't do anything
+                return False
 
         if emission:
             self.emit("new-project-loading", None)
