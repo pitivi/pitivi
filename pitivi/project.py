@@ -313,9 +313,9 @@ class ProjectManager(Signallable, Loggable):
         asset = GES.Formatter.get_default()
         tmp_name = "%s.%s" % (project_name, asset.get_meta(GES.META_FORMATTER_EXTENSION))
 
+        directory = os.path.dirname(uri)
+        tmp_uri = os.path.join(directory, tmp_name)
         try:
-            directory = os.path.dirname(uri)
-            tmp_uri = os.path.join(directory, tmp_name)
             # saveProject updates the project URI... so we better back it up:
             _old_uri = self.current_project.uri
             self.saveProject(tmp_uri)
@@ -340,13 +340,27 @@ class ProjectManager(Signallable, Loggable):
                     path = path_from_uri(source.get_id())
                     tar.add(path, os.path.join(top, os.path.relpath(path, common)))
                 tar.close()
+        # This catches errors with tarring; the GUI already shows errors while
+        # saving projects (ex: permissions), so probably no GUI needed here.
+        # Keep the exception generic enough to catch programming errors:
+        except Exception, e:
+            everything_ok = False
+            self.error(e)
+            tar_file = path_from_uri(uri)
+            if os.path.isfile(tar_file):
+                renamed = os.path.splitext(tar_file)[0] + " (CORRUPT)" + ".tar"
+                self.warning('An error occurred, will save the tarball as "%s"' % renamed)
+                os.rename(tar_file, renamed)
+        else:
+            everything_ok = True
 
-            # remove temporary file
+        # Ensure we remove the temporary project file no matter what:
+        try:
             os.remove(path_from_uri(tmp_uri))
-        except:
-            return False
+        except OSError:
+            pass
 
-        return True
+        return everything_ok
 
     def _allSourcesInHomedir(self, sources):
         """
@@ -355,7 +369,7 @@ class ProjectManager(Signallable, Loggable):
         homedir = os.path.expanduser("~")
 
         for source in sources:
-            if not path_from_uri(source.get_uri()).startswith(homedir):
+            if not path_from_uri(source.get_id()).startswith(homedir):
                 return False
 
         return True
