@@ -1234,14 +1234,17 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         chooser.set_select_multiple(False)
         chooser.props.do_overwrite_confirmation = True
 
+        asset = GES.Formatter.get_default()
+        asset_extension = asset.get_meta(GES.META_FORMATTER_EXTENSION)
+
         if not project.name:
-            chooser.set_current_name(_("Untitled") + ".tar")
+            chooser.set_current_name(_("Untitled") + "." + asset_extension + "_tar")
         else:
-            chooser.set_current_name(project.name + ".tar")
+            chooser.set_current_name(project.name + "." + asset_extension + "_tar")
 
         filt = Gtk.FileFilter()
         filt.set_name(_("Tar archive"))
-        filt.add_pattern("*.tar")
+        filt.add_pattern("*.%s_tar" % asset_extension)
         chooser.add_filter(filt)
         default = Gtk.FileFilter()
         default.set_name(_("Detect automatically"))

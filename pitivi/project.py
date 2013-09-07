@@ -311,7 +311,8 @@ class ProjectManager(Signallable, Loggable):
         # write project file to temporary file
         project_name = project.name if project.name else _("project")
         asset = GES.Formatter.get_default()
-        tmp_name = "%s.%s" % (project_name, asset.get_meta(GES.META_FORMATTER_EXTENSION))
+        project_extension = asset.get_meta(GES.META_FORMATTER_EXTENSION)
+        tmp_name = "%s.%s" % (project_name, project_extension)
 
         directory = os.path.dirname(uri)
         tmp_uri = os.path.join(directory, tmp_name)
@@ -348,7 +349,7 @@ class ProjectManager(Signallable, Loggable):
             self.error(e)
             tar_file = path_from_uri(uri)
             if os.path.isfile(tar_file):
-                renamed = os.path.splitext(tar_file)[0] + " (CORRUPT)" + ".tar"
+                renamed = os.path.splitext(tar_file)[0] + " (CORRUPT)" + "." + project_extension + "_tar"
                 self.warning('An error occurred, will save the tarball as "%s"' % renamed)
                 os.rename(tar_file, renamed)
         else:
