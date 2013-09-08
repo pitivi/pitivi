@@ -19,6 +19,6 @@
   </info>
 
     <title>The welcome dialog</title>
-      <p>When you launch <app>PiTiVi</app>, a startup assistant appears, allowing you to create a new project or open an existing project in a few clicks. If you want to skip this dialog, press the <gui><key>Escape</key></gui> key on your keyboard or click the window's close button.</p>
+      <p>When you launch <app>Pitivi</app>, a startup assistant appears, allowing you to create a new project or open an existing project in a few clicks. If you want to skip this dialog, press the <gui><key>Escape</key></gui> key on your keyboard or click the window's close button.</p>
 
 </page>

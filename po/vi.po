@@ -257,8 +257,8 @@ msgid "File contains a redirection to another clip."
 msgstr "Tập tin có chỉ dẫn đến một tập tin phim khác."
 
 #: ../pitivi/discoverer.py:466
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi chưa hỗ trợ các tập tin chỉ dẫn đến tập tin khác."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Pitivi chưa hỗ trợ các tập tin chỉ dẫn đến tập tin khác."
 
 #: ../pitivi/discoverer.py:492
 msgid "Pipeline didn't want to go to PLAYING."
@@ -375,8 +375,8 @@ msgid "%s doesn't yet handle non local projects"
 msgstr "%s chưa xử lý được các đề án lưu bên ngoài"
 
 #: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi Native (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi Native (XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
@@ -953,8 +953,8 @@ msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:863
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi không nhập được tập tin \"%s\""
+msgid "Pitivi is unable to load file \"%s\""
+msgstr "Pitivi không nhập được tập tin \"%s\""
 
 #: ../pitivi/ui/mainwindow.py:866
 msgid "Error Loading File"
@@ -965,8 +965,8 @@ msgid "Locate missing file..."
 msgstr "Tìm tập tin bị thiếu..."
 
 #: ../pitivi/ui/mainwindow.py:882
-msgid "The following file has moved, please tell PiTiVi where to find it."
-msgstr "Tập tin sau đây đã chuyển nơi, vui lòng cho PiTiVi biết vị trí của nó."
+msgid "The following file has moved, please tell Pitivi where to find it."
+msgstr "Tập tin sau đây đã chuyển nơi, vui lòng cho Pitivi biết vị trí của nó."
 
 #: ../pitivi/ui/mainwindow.py:884
 msgid "Duration:"
@@ -1142,8 +1142,8 @@ msgid "Revert"
 msgstr "Trở lại"
 
 #: ../pitivi/ui/prefs.py:125
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Cần khởi động lại PiTiVi để kích hoạt một số thay đổi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Cần khởi động lại Pitivi để kích hoạt một số thay đổi"
 
 #: ../pitivi/ui/prefs.py:320
 msgid "Reset"
@@ -1295,16 +1295,16 @@ msgid "Error while analyzing files"
 msgstr "Gặp lỗi khi đang phân tích các tập tin"
 
 #: ../pitivi/ui/sourcelist.py:1049
-msgid "The following files can not be used with PiTiVi."
-msgstr "Những tập tin sau đây không dùng được với PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Những tập tin sau đây không dùng được với Pitivi."
 
 #: ../pitivi/ui/sourcelist.py:1051
 msgid "Error while analyzing a file"
 msgstr "Gặp lỗi khi đang phân tích tập tin"
 
 #: ../pitivi/ui/sourcelist.py:1052
-msgid "The following file can not be used with PiTiVi."
-msgstr "Tập tin sau đây không dùng được với PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Tập tin sau đây không dùng được với Pitivi."
 
 #. tooltip text for toolbar
 #: ../pitivi/ui/timeline.py:47

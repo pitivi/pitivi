@@ -30,7 +30,7 @@
     <section>
         <title>Pixel aspect ratio vs display aspect ratio</title>
         <p>Digital images are composed of a grid of <link href="http://en.wikipedia.org/wiki/Pixel">pixels</link>, which may or may not be square. As such, in some cases, you may need to set the <link href="http://en.wikipedia.org/wiki/Pixel_aspect_ratio">pixel aspect ratio</link> (PAR) for the image to display correctly. On the other hand, <link href="http://en.wikipedia.org/wiki/Display_aspect_ratio">display aspect ratio</link> (DAR) is the mathematical ratio of width:height for the whole image.</p>
-        <p>In <app>PiTiVi</app>, pixel aspect ratio and display aspect ratio are related to each other by the video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with.</p>
+        <p>In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are related to each other by the video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with.</p>
         <p>You can use the ratios already provided in the combo boxes, or input a custom aspect ratio in the text entry below (using a syntax such as "4:3" or "1.3333", although the decimal version is less precise).</p>
     </section>
 </page>

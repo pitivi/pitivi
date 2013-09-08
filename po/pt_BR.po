@@ -175,10 +175,10 @@ msgstr "Instalar"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Para habilitar recursos adicionais, por favor instale os seguintes pacotes e "
-"reinicie PiTiVi:"
+"reinicie Pitivi:"
 
 #: ../data/ui/effectslibrary.ui.h:1
 msgid "Show video effects"
@@ -254,8 +254,8 @@ msgid "Section"
 msgstr "Seção"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Algumas alterações não terão efeito até que você reinicie o PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Algumas alterações não terão efeito até que você reinicie o Pitivi"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -873,8 +873,8 @@ msgstr "Versão de desenvolvimento"
 
 #: ../pitivi/mainwindow.py:737 ../pitivi/dialogs/startupwizard.py:164
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "PiTiVi %s está dispoível."
+msgid "Pitivi %s is available."
+msgstr "Pitivi %s está dispoível."
 
 #: ../pitivi/mainwindow.py:744
 msgid "Current maintainers:"
@@ -990,11 +990,11 @@ msgstr "Todos os arquivos"
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 "Nenhum arquivo de substituição foi fornecido para \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi não possui suporte a projetos parciais no momento."
+"Pitivi não possui suporte a projetos parciais no momento."
 
 #: ../pitivi/mainwindow.py:1228
 msgid "Export To..."
@@ -1024,8 +1024,8 @@ msgid "Preview - click outside to close"
 msgstr "Pre-visualização - clique fora para fechar"
 
 #: ../pitivi/mediafilespreviewer.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "O PiTiVi não pode pré-visualizar este arquivo."
+msgid "Pitivi can not preview this file."
+msgstr "O Pitivi não pode pré-visualizar este arquivo."
 
 #: ../pitivi/mediafilespreviewer.py:135
 msgid "More info"
@@ -1100,12 +1100,12 @@ msgid "Error while analyzing files"
 msgstr "Erro ao analisar os arquivos"
 
 #: ../pitivi/medialibrary.py:784
-msgid "The following files can not be used with PiTiVi."
+msgid "The following files can not be used with Pitivi."
 msgstr "Os arquivos a seguir não podem ser usados com o PiTiVI."
 
 #: ../pitivi/medialibrary.py:787
-msgid "The following file can not be used with PiTiVi."
-msgstr "O seguinte arquivo não pode ser usado com o PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "O seguinte arquivo não pode ser usado com o Pitivi."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
 #: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1279
@@ -1924,8 +1924,8 @@ msgstr "Ampliar linha do tempo"
 #~ msgid "Blur"
 #~ msgstr "Borrão"
 
-#~ msgid "PiTiVi native (XML)"
-#~ msgstr "PiTiVi nativo (XML)"
+#~ msgid "Pitivi native (XML)"
+#~ msgstr "Pitivi nativo (XML)"
 
 #~ msgid "Subtitles"
 #~ msgstr "Legendas"
@@ -2216,8 +2216,8 @@ msgstr "Ampliar linha do tempo"
 #~ msgid "File contains a redirection to another clip."
 #~ msgstr "O arquivo contém um redirecionamento para outro clip."
 
-#~ msgid "PiTiVi currently does not handle redirection files."
-#~ msgstr "Atualmente o PiTiVi não manipula arquivos de redirecionamento."
+#~ msgid "Pitivi currently does not handle redirection files."
+#~ msgstr "Atualmente o Pitivi não manipula arquivos de redirecionamento."
 
 #~ msgid "Pipeline didn't want to go to PLAYING."
 #~ msgstr "Fila de processamento não quer ir para REPRODUZINDO."
@@ -2646,9 +2646,9 @@ msgstr "Ampliar linha do tempo"
 #~ msgid "URI:"
 #~ msgstr "URI:"
 
-#~ msgid "The following file has moved, please tell PiTiVi where to find it."
+#~ msgid "The following file has moved, please tell Pitivi where to find it."
 #~ msgstr ""
-#~ "O seguinte arquivo foi movido, por favor diga ao PiTiVi onde encontrá-lo."
+#~ "O seguinte arquivo foi movido, por favor diga ao Pitivi onde encontrá-lo."
 
 #~ msgid "Duration:"
 #~ msgstr "Duração:"

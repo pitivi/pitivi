@@ -26,8 +26,8 @@
    <p>This user manual is written and maintained by Jean-François Fortin Tam.</p>
    <section>
     <title>Work in progress</title>
-     <p>You may encounter unwritten portions due to features that have not yet been implemented in PiTiVi at the time of writing.</p>
-     <p>You may also encounter smaller areas which have been documented in this manual but have not been implemented in PiTiVi – those are areas where the design and expected user interaction are quite narrow/certain.</p>
+     <p>You may encounter unwritten portions due to features that have not yet been implemented in Pitivi at the time of writing.</p>
+     <p>You may also encounter smaller areas which have been documented in this manual but have not been implemented in Pitivi – those are areas where the design and expected user interaction are quite narrow/certain.</p>
    </section>
 
    <section>

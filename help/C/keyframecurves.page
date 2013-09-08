@@ -24,7 +24,7 @@
 
     <title>Keyframe curves</title>
      
-     <p>Some types of clips (currently only audio clips) support interpolating property values over their time. The user can add one or more <em>keyframes</em> to control the interpolation, a term borrowed from animation. <app>PiTiVi</app> represents the value of the property in between keyframes as a <em>curve</em> drawn over the clip. Currently only linear interpolation is supported.</p>
+     <p>Some types of clips (currently only audio clips) support interpolating property values over their time. The user can add one or more <em>keyframes</em> to control the interpolation, a term borrowed from animation. <app>Pitivi</app> represents the value of the property in between keyframes as a <em>curve</em> drawn over the clip. Currently only linear interpolation is supported.</p>
      <figure>
       <media type="image" src="figures/keyframecurves.png" mime="image/png" style="right"></media>
      </figure>

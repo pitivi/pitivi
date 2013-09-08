@@ -31,7 +31,7 @@
       <item><p>Click the <gui>Render</gui> button.</p></item>
      </steps>
      <note style="bug">
-      <p>If your computer is set to suspend or hibernate automatically, <app>PiTiVi</app> will automatically inhibit the power saving features during the render process.</p>
+      <p>If your computer is set to suspend or hibernate automatically, <app>Pitivi</app> will automatically inhibit the power saving features during the render process.</p>
      </note>
 
 </page>

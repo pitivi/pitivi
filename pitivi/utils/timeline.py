@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       pitivi/timeline/timeline.py
 #
@@ -250,7 +250,7 @@ class EditingContext(Signallable):
         can be change during the time using the same context.
         @type mode: L{GES.EditMode}
 
-        @param setting: The PiTiVi settings, used to get the snap_distance
+        @param setting: The Pitivi settings, used to get the snap_distance
         parametter
 
         @returns: An instance of L{pitivi.utils.timeline.EditingContext}

@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       pitivi/undo/timeline.py
 #

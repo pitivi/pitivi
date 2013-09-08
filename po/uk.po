@@ -82,10 +82,10 @@ msgstr "Встановити"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Щоб уможливити використання додаткових можливостей, будь ласка, встановіть "
-"вказані нижче пакунки і перезапустіть PiTiVi:"
+"вказані нижче пакунки і перезапустіть Pitivi:"
 
 #: ../data/ui/depsmanager.ui.h:4
 msgid "label"
@@ -263,10 +263,10 @@ msgid "Section"
 msgstr "Розділ"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
+msgid "<b>Some changes will not take effect until you restart Pitivi</b>"
 msgstr ""
 "<b>Деякі з внесених вами змін набудуть чинності лише після перезапуску "
-"PiTiVi</b>"
+"Pitivi</b>"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -743,8 +743,8 @@ msgid "File contains a redirection to another clip."
 msgstr "У файлі міститься переспрямування на інший кліп."
 
 #: ../pitivi/discoverer.py:474
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "Поточна версія PiTiVi не здатна обробляти файли з переспрямуваннями."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Поточна версія Pitivi не здатна обробляти файли з переспрямуваннями."
 
 #: ../pitivi/discoverer.py:500
 msgid "Pipeline didn't want to go to PLAYING."
@@ -796,8 +796,8 @@ msgid "effect"
 msgstr "ефект"
 
 #: ../pitivi/formatters/format.py:81
-msgid "PiTiVi Native (XML)"
-msgstr "Рідний для PiTiVi (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Рідний для Pitivi (XML)"
 
 #: ../pitivi/formatters/format.py:82
 msgid "Playlist format"
@@ -1069,8 +1069,8 @@ msgid "%d%% Rendered"
 msgstr "Оброблено %d%%"
 
 #: ../pitivi/ui/filechooserpreview.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "Перегляд цього файла у PiTiVi неможливий."
+msgid "Pitivi can not preview this file."
+msgstr "Перегляд цього файла у Pitivi неможливий."
 
 #: ../pitivi/ui/filechooserpreview.py:135
 msgid "More info"
@@ -1643,12 +1643,12 @@ msgid "Error while analyzing files"
 msgstr "Помилка під час спроби аналізу файлів"
 
 #: ../pitivi/ui/sourcelist.py:773
-msgid "The following files can not be used with PiTiVi."
-msgstr "Перелічені нижче файли не можна використовувати у PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Перелічені нижче файли не можна використовувати у Pitivi."
 
 #: ../pitivi/ui/sourcelist.py:776
-msgid "The following file can not be used with PiTiVi."
-msgstr "Вказаний нижче файл не можна використовувати у PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Вказаний нижче файл не можна використовувати у Pitivi."
 
 #: ../pitivi/ui/startupwizard.py:59
 #| msgid "_Project"
@@ -2182,9 +2182,9 @@ msgstr "У %s ще не передбачено обробки нелокальн
 #~ msgid "URI:"
 #~ msgstr "Адреса:"
 
-#~ msgid "The following file has moved, please tell PiTiVi where to find it."
+#~ msgid "The following file has moved, please tell Pitivi where to find it."
 #~ msgstr ""
-#~ "Вказаний файл було пересунуто, будь ласка, повідомте PiTiVi його нову "
+#~ "Вказаний файл було пересунуто, будь ласка, повідомте Pitivi його нову "
 #~ "адресу."
 
 #~ msgid "Duration:"

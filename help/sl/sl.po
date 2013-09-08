@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: PiTiVi help\n"
+"Project-Id-Version: Pitivi help\n"
 "POT-Creation-Date: 2012-04-08 10:21+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
@@ -119,8 +119,8 @@ msgid "The welcome dialog"
 msgstr "Pozdravno pogovorno okno"
 
 #: C/welcomedialog.page:22(p)
-msgid "When you launch <app>PiTiVi</app>, a startup assistant appears, allowing you to create a new project or open an existing project in a few clicks. If you want to skip this dialog, press the <gui><key>Escape</key></gui> key on your keyboard or click the window's close button."
-msgstr "Ko zaženete <app>PiTiVi</app>, se pojavi zagonski pomočnik, ki vam omogoča ustvarjanje novega projekta ali odpiranje obstoječega projekta z nekaj kliki. V primeru da želite preskočiti to pogovorno okno, pritisnite tipko <gui><key>Escape</key></gui> ali kliknite na gumb zapri."
+msgid "When you launch <app>Pitivi</app>, a startup assistant appears, allowing you to create a new project or open an existing project in a few clicks. If you want to skip this dialog, press the <gui><key>Escape</key></gui> key on your keyboard or click the window's close button."
+msgstr "Ko zaženete <app>Pitivi</app>, se pojavi zagonski pomočnik, ki vam omogoča ustvarjanje novega projekta ali odpiranje obstoječega projekta z nekaj kliki. V primeru da želite preskočiti to pogovorno okno, pritisnite tipko <gui><key>Escape</key></gui> ali kliknite na gumb zapri."
 
 #: C/usingclips.page:14(name)
 #: C/trimming.page:15(name)
@@ -179,16 +179,16 @@ msgid "Clips vs files"
 msgstr "Posnetki in datoteke"
 
 #: C/usingclips.page:30(p)
-msgid "<em>Files</em> are data on your hard disk (videos, music, pictures, etc.) that can be accessed by <app>PiTiVi</app> and incorporated in your video editing project."
-msgstr "<em>Datoteke</em> so podatki na vašem trdem disku (videoposnetki, glasba, slike, itd.) do katerih lahko <app>PiTiVi</app> dostopa in so vključene v vaš projekt urejanja videa."
+msgid "<em>Files</em> are data on your hard disk (videos, music, pictures, etc.) that can be accessed by <app>Pitivi</app> and incorporated in your video editing project."
+msgstr "<em>Datoteke</em> so podatki na vašem trdem disku (videoposnetki, glasba, slike, itd.) do katerih lahko <app>Pitivi</app> dostopa in so vključene v vaš projekt urejanja videa."
 
 #: C/usingclips.page:31(p)
 msgid "<em>Clips</em> are a visual representation of your files on the timeline. They represent the period of time they consume on the timeline and can be edited independently: each time you drag a file from the media library to the timeline, a new clip is created. As such, a file can be reused as much as you want to create any amount of different clips."
 msgstr "<em>Posnetki</em> so vidna predstavitev vaših datotek na časovnici. Na časovnici predstavljajo čas, ki ga zavzemajo. Lahko jih urejate neodvisno. Vsakič ko povlečete datoteko iz predstavnostne knjižnice v časovnico, bo ustvarjen nov posnetek. Datoteko lahko uporabite kolikorkrat želite in ustvarite kolikor želite različnih posnetkov."
 
 #: C/usingclips.page:33(p)
-msgid "Since PiTiVi is a non-destructive editor, clips are edited, not files. As such, your files stay intact."
-msgstr "Ker je PiTiVi neuničevalen urejevalnik, urejate posnetke, ne datoteke. Vaše datoteke ostanejo nedotaknjene."
+msgid "Since Pitivi is a non-destructive editor, clips are edited, not files. As such, your files stay intact."
+msgstr "Ker je Pitivi neuničevalen urejevalnik, urejate posnetke, ne datoteke. Vaše datoteke ostanejo nedotaknjene."
 
 #: C/usingclips.page:37(title)
 msgid "Moving clips along the timeline"
@@ -365,8 +365,8 @@ msgid "Editing HD (High Definition) video usually requires (at the time of this 
 msgstr "Urejanje HD videa običajno zahteva (ob času pisanja) zelo dober računalnik (odvisno od uporabljenega kodeka), urejanje SD videa pa lahko izvajate na povprečnih računalnikih. Prepričajte se, da je vaša oprema primerna. Morala bi biti zmožna vsaj predvajanja vašega filma v <app>Totemu</app>."
 
 #: C/sysreq.page:30(p)
-msgid "It is possible, however, to use low-quality versions of your footage during editing and use the high-quality versions when rendering the final output, thus allowing to bypass hardware limitations to some extent. This is called <em>proxy editing</em>. This feature, however, is not yet available in <app>PiTiVi</app>."
-msgstr "Za urejanje je mogoče uporabiti video nizke kakovosti, za izris končnega videa pa različico visoke kakovosti. To vam omogoča delen izogibanje omejitvam strojne opreme. Ta zmožnost se imenuje <em>posredno urejanje</em>, vendar še ni na voljo v <app>PiTiVi</app>."
+msgid "It is possible, however, to use low-quality versions of your footage during editing and use the high-quality versions when rendering the final output, thus allowing to bypass hardware limitations to some extent. This is called <em>proxy editing</em>. This feature, however, is not yet available in <app>Pitivi</app>."
+msgstr "Za urejanje je mogoče uporabiti video nizke kakovosti, za izris končnega videa pa različico visoke kakovosti. To vam omogoča delen izogibanje omejitvam strojne opreme. Ta zmožnost se imenuje <em>posredno urejanje</em>, vendar še ni na voljo v <app>Pitivi</app>."
 
 #: C/splitting.page:17(desc)
 msgid "Dividing clips in two parts."
@@ -381,8 +381,8 @@ msgid "As the name implies, splitting a clip divides it into two adjacent clips,
 msgstr "Razdelitev posnetka ustvari dva sosednja posnetka z ustrezno ustvarjenima začetnima/končnima točkama."
 
 #: C/splitting.page:28(p)
-msgid "In <app>PiTiVi</app>, splitting is a “non-modal” operation; this means that you do not have to “activate” a particular tool before doing the split action. Splitting occurs where the playhead is currently located (see also <link xref=\"movearoundtimeline\">Moving the playhead</link>). Combined with zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless splitting is not only fast and efficient, it is also very accurate."
-msgstr "V <app>PiTiVi</app> se razdelitev posnetka izvede kot \"ne-modalno\" opravilo, kar pomeni, da vam pred razdelitvijo ni treba \"omogočiti\" določenega orodja. Razdeljevanje se izvede kjer se trenutno nahaja glava predvajanja (oglejte si tudi <link xref=\"movearoundtimeline\">Premikanje glave predvajanja</link>). Skupaj s približevanjem, iskanjem sličico za sličico s tipkovnico ali drgnjenjem je takšno razdeljevanje hitro in učinkovito ter tudi zelo natančno."
+msgid "In <app>Pitivi</app>, splitting is a “non-modal” operation; this means that you do not have to “activate” a particular tool before doing the split action. Splitting occurs where the playhead is currently located (see also <link xref=\"movearoundtimeline\">Moving the playhead</link>). Combined with zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless splitting is not only fast and efficient, it is also very accurate."
+msgstr "V <app>Pitivi</app> se razdelitev posnetka izvede kot \"ne-modalno\" opravilo, kar pomeni, da vam pred razdelitvijo ni treba \"omogočiti\" določenega orodja. Razdeljevanje se izvede kjer se trenutno nahaja glava predvajanja (oglejte si tudi <link xref=\"movearoundtimeline\">Premikanje glave predvajanja</link>). Skupaj s približevanjem, iskanjem sličico za sličico s tipkovnico ali drgnjenjem je takšno razdeljevanje hitro in učinkovito ter tudi zelo natančno."
 
 #: C/splitting.page:29(p)
 msgid "Selections affect splitting in the following ways:"
@@ -444,8 +444,8 @@ msgid "Selecting unused files"
 msgstr "Izbor neuporabljenih datotek"
 
 #: C/selectunusedfiles.page:24(p)
-msgid "You may sometimes find that you have imported more clips that you needed in your project. <app>PiTiVi</app> allows you to select files that are present in the media library but not in the timeline. There are various reasons to do this:"
-msgstr "Lahko se zgodi, da uvozite več posnetkov kot jih potrebujete v projektu. <app>PiTiVi</app> vam omogoča izbiro datotek, ki so prisotne v predstavnostni knjižnici, a ne v časovnici. To je pametno narediti zaradi naslednjih razlogov:"
+msgid "You may sometimes find that you have imported more clips that you needed in your project. <app>Pitivi</app> allows you to select files that are present in the media library but not in the timeline. There are various reasons to do this:"
+msgstr "Lahko se zgodi, da uvozite več posnetkov kot jih potrebujete v projektu. <app>Pitivi</app> vam omogoča izbiro datotek, ki so prisotne v predstavnostni knjižnici, a ne v časovnici. To je pametno narediti zaradi naslednjih razlogov:"
 
 #: C/selectunusedfiles.page:26(p)
 msgid "Improving performance when loading the project"
@@ -524,8 +524,8 @@ msgid "Click the <gui>Render</gui> button."
 msgstr "Kliknite na gumb <gui>Izriši</gui>."
 
 #: C/rendering.page:34(p)
-msgid "If your computer is set to suspend or hibernate automatically, <app>PiTiVi</app> will automatically inhibit the power saving features during the render process (see bug <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=571885\">bug #571885</link>)."
-msgstr "V primeru da je vaš računalnik nastavljen na samodejen prehod v stanje pripravljenosti ali mirovanje, bo <app>PiTiVi</app> med izrisovanjem samodejno onemogočil zmožnosti varčevanja z energijo (oglejte si <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=571885\">hrošč 571885</link>)."
+msgid "If your computer is set to suspend or hibernate automatically, <app>Pitivi</app> will automatically inhibit the power saving features during the render process (see bug <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=571885\">bug #571885</link>)."
+msgstr "V primeru da je vaš računalnik nastavljen na samodejen prehod v stanje pripravljenosti ali mirovanje, bo <app>Pitivi</app> med izrisovanjem samodejno onemogočil zmožnosti varčevanja z energijo (oglejte si <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=571885\">hrošč 571885</link>)."
 
 #: C/projectsettings.page:17(desc)
 msgid "How to specify the global project resolution, framerate, aspect ratio, audio settings and project metadata."
@@ -552,8 +552,8 @@ msgid "Digital images are composed of a grid of <link href=\"http://en.wikipedia
 msgstr "Digitalne slike so sestavljene iz mreže <link href=\"http://en.wikipedia.org/wiki/Pixel\">točk</link>, ki so lahko kvadratne ali pa tudi ne. V nekaterih primerih boste morda morali za pravilen prikaz slike nastaviti <link href=\"http://en.wikipedia.org/wiki/Pixel_aspect_ratio\">razmerje velikosti točke</link> (PAR). <link href=\"http://en.wikipedia.org/wiki/Display_aspect_ratio\">Razmerje velikosti slike</link> je razmerje širina:višina celotne slike."
 
 #: C/projectsettings.page:33(p)
-msgid "In <app>PiTiVi</app>, pixel aspect ratio and display aspect ratio are related to each other by the video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with."
-msgstr "V <app>PiTiVi</app> sta razmerje velikosti točk in zaslona povezana skupaj z ločljivostjo videa (širina in višina). Ko je ločljivost nastavljena, bo nastavitev razmerja velikosti slike vplivala na razmerje velikosti točke in obratno. Uporabite lahko katerokoli od teh vrednosti."
+msgid "In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are related to each other by the video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with."
+msgstr "V <app>Pitivi</app> sta razmerje velikosti točk in zaslona povezana skupaj z ločljivostjo videa (širina in višina). Ko je ločljivost nastavljena, bo nastavitev razmerja velikosti slike vplivala na razmerje velikosti točke in obratno. Uporabite lahko katerokoli od teh vrednosti."
 
 #: C/projectsettings.page:34(p)
 msgid "You can use the ratios already provided in the combo boxes, or input a custom aspect ratio in the text entry below (using a syntax such as \"4:3\" or \"1.3333\", although the decimal version is less precise)."
@@ -859,8 +859,8 @@ msgid "Selecting a single item"
 msgstr "Izbira enega predmeta"
 
 #: C/makeselections.page:29(p)
-msgid "To select a file or a clip in <app>PiTiVi</app>, click it."
-msgstr "Za izbiro datoteke ali posnetka v <app>PiTiVi</app> kliknite nanj."
+msgid "To select a file or a clip in <app>Pitivi</app>, click it."
+msgstr "Za izbiro datoteke ali posnetka v <app>Pitivi</app> kliknite nanj."
 
 #: C/makeselections.page:33(title)
 msgid "Selecting multiple items"
@@ -929,12 +929,12 @@ msgid "The main window"
 msgstr "Glavno okno"
 
 #: C/mainwindow.page:26(title)
-msgid "<app>PiTiVi</app> main window"
-msgstr "Glavno okno <app>PiTiVi</app>"
+msgid "<app>Pitivi</app> main window"
+msgstr "Glavno okno <app>Pitivi</app>"
 
 #: C/mainwindow.page:27(desc)
-msgid "The main window, as the name implies, is the window containing the main components of the <app>PiTiVi</app> user interface, namely: the menu bar, the toolbars, the timeline and various customizable components (media library, previewer, effects library, transitions library, etc.)."
-msgstr "Glavno okno vsebuje glavne sestavne dele uporabniškega vmesnika <app>PiTiVi</app>: menijsko vrstico, orodne vrstice, časovnico in različne prilagodljive sestavne dele (knjižnica predstavnosti, predogled, knjižnica učinkov, knjižnica prehodov, itd.)."
+msgid "The main window, as the name implies, is the window containing the main components of the <app>Pitivi</app> user interface, namely: the menu bar, the toolbars, the timeline and various customizable components (media library, previewer, effects library, transitions library, etc.)."
+msgstr "Glavno okno vsebuje glavne sestavne dele uporabniškega vmesnika <app>Pitivi</app>: menijsko vrstico, orodne vrstice, časovnico in različne prilagodljive sestavne dele (knjižnica predstavnosti, predogled, knjižnica učinkov, knjižnica prehodov, itd.)."
 
 #: C/mainwindow.page:34(title)
 msgid "Menu bar"
@@ -953,8 +953,8 @@ msgid "The toolbars"
 msgstr "Orodne vrstice"
 
 #: C/mainwindow.page:42(p)
-msgid "Toolbars provide access to the most commonly used functions of <app>PiTiVi</app>. All items in toolbars can also be accessed through the menu bar. Toolbars can be activated or deactivated in the <gui>View</gui> menu."
-msgstr "Orodne vrstice zagotavljajo dostop do najbolj pogosto uporabljenih zmožnosti <app>PiTiVi</app>. Do vseh predmetov v orodnih vrstici lahko dostopate tudi z menijsko vrstico. Orodne vrstice je mogoče omogočiti ali onemogočiti v meniju <gui>Pogled</gui>."
+msgid "Toolbars provide access to the most commonly used functions of <app>Pitivi</app>. All items in toolbars can also be accessed through the menu bar. Toolbars can be activated or deactivated in the <gui>View</gui> menu."
+msgstr "Orodne vrstice zagotavljajo dostop do najbolj pogosto uporabljenih zmožnosti <app>Pitivi</app>. Do vseh predmetov v orodnih vrstici lahko dostopate tudi z menijsko vrstico. Orodne vrstice je mogoče omogočiti ali onemogočiti v meniju <gui>Pogled</gui>."
 
 #: C/mainwindow.page:43(p)
 msgid "You can hover the mouse cursor over a toolbar item to reveal an information tooltip regarding its function."
@@ -1147,8 +1147,8 @@ msgid "While, in real life, you can stack pieces of glass onto each other in thr
 msgstr "V realnosti je mogoče skladati koščke stekla enega na drugega v treh dimenzijah, vaš računalniški zaslon pa ima le dve dimenziji. Zato so <em>plasti na vrhu</em> (os \"Z\" v realnem svetu) na zaslonu vidno na <em>vrhu</em> na osi \"Y\"."
 
 #: C/layers.page:39(p)
-msgid "The following diagram illustrates the <em>pieces of glass</em> (left) and how they are show as <em>layers</em> in <app>PiTiVi</app>'s user interface (right)."
-msgstr "Naslednji diagram prikazuje <em>koščke stekla</em> (levo) in kako so prikazani kot <em>plasti</em> v uporabniškem vmesniku <app>PiTiVi</app> (desno)."
+msgid "The following diagram illustrates the <em>pieces of glass</em> (left) and how they are show as <em>layers</em> in <app>Pitivi</app>'s user interface (right)."
+msgstr "Naslednji diagram prikazuje <em>koščke stekla</em> (levo) in kako so prikazani kot <em>plasti</em> v uporabniškem vmesniku <app>Pitivi</app> (desno)."
 
 #: C/layers.page:43(p)
 msgid "Clips located on a layer above will block the clips below from view, unless it has an opacity value lower than 100% (as shown with the two topmost layers in the previous illustration)."
@@ -1159,8 +1159,8 @@ msgid "Adding and removing layers"
 msgstr "Dodajanje in odstranjevanje plasti"
 
 #: C/layers.page:48(p)
-msgid "Layers are created and removed automatically. There is no “layer management” interface in <app>PiTiVi</app> (at least, not yet)."
-msgstr "Plasti so samodejno ustvarjene in odstranjene. V programu <app>PiTiVi</app> ni vmesnika za “upravljanje plasti“ (vsaj za zdaj)."
+msgid "Layers are created and removed automatically. There is no “layer management” interface in <app>Pitivi</app> (at least, not yet)."
+msgstr "Plasti so samodejno ustvarjene in odstranjene. V programu <app>Pitivi</app> ni vmesnika za “upravljanje plasti“ (vsaj za zdaj)."
 
 #: C/layers.page:49(p)
 msgid "To create a layer, drag a clip downwards until a new layer appears for it."
@@ -1193,8 +1193,8 @@ msgid "Keyframe curves"
 msgstr "Krivulje ključnih sličic"
 
 #: C/keyframecurves.page:27(p)
-msgid "Some types of clips (currently only audio clips) support interpolating property values over their time. The user can add one or more <em>keyframes</em> to control the interpolation, a term borrowed from animation. <app>PiTiVi</app> represents the value of the property in between keyframes as a <em>curve</em> drawn over the clip. Currently only linear interpolation is supported."
-msgstr "Nekatere vrste posnetkov (trenutno le zvočni posnetki) omogočajo interpolacijo vrednosti lastnosti čez čas. Uporabnik lahko doda eno ali več <em>ključnih sličic</em> za nadzor interpolacije. <app>PiTiVi</app> predstavi vrednost lastnosti med ključnima sličicama kot <em>krivuljo</em> narisano pod posnetkov. Trenutno je podprta le linearna interpolacija."
+msgid "Some types of clips (currently only audio clips) support interpolating property values over their time. The user can add one or more <em>keyframes</em> to control the interpolation, a term borrowed from animation. <app>Pitivi</app> represents the value of the property in between keyframes as a <em>curve</em> drawn over the clip. Currently only linear interpolation is supported."
+msgstr "Nekatere vrste posnetkov (trenutno le zvočni posnetki) omogočajo interpolacijo vrednosti lastnosti čez čas. Uporabnik lahko doda eno ali več <em>ključnih sličic</em> za nadzor interpolacije. <app>Pitivi</app> predstavi vrednost lastnosti med ključnima sličicama kot <em>krivuljo</em> narisano pod posnetkov. Trenutno je podprta le linearna interpolacija."
 
 #: C/keyframecurves.page:33(title)
 msgid "General usage"
@@ -1269,8 +1269,8 @@ msgid "Pressing the <key>Insert</key> (Ins) key. Those clips will be inserted at
 msgstr "Prisnite tipko <key>Insert</key> (Ins). Posnetki bodo vstavljeni na konec časovnice."
 
 #: C/insertintimeline.page:34(p)
-msgid "It should also be possible to import files directly into the timeline by dragging them from another application and dropping them onto <app>PiTiVi</app>'s timeline. The files would be added automatically to the media library in the process. This feature is not yet implemented, see <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">bug #570118</link> for more information."
-msgstr "Datoteke lahko uvozite neposredno na časovnico z njihovim vlečenjem iz drugega programa in spustom na časovnico <app>PiTiVi</app>. Datoteke bodo samodejno dodane v knjižnico predstavnosti. Ta zmožnost še ni podprta. Za več podrobnosti si oglejte <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">hrošč št.570118</link>"
+msgid "It should also be possible to import files directly into the timeline by dragging them from another application and dropping them onto <app>Pitivi</app>'s timeline. The files would be added automatically to the media library in the process. This feature is not yet implemented, see <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">bug #570118</link> for more information."
+msgstr "Datoteke lahko uvozite neposredno na časovnico z njihovim vlečenjem iz drugega programa in spustom na časovnico <app>Pitivi</app>. Datoteke bodo samodejno dodane v knjižnico predstavnosti. Ta zmožnost še ni podprta. Za več podrobnosti si oglejte <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=608682\">hrošč št.570118</link>"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -1280,16 +1280,16 @@ msgstr "@@image: 'figures/logo.png'; md5=694867eec987a61b070a11a7255a6de9"
 
 #: C/index.page:7(title)
 #: C/index.page:8(title)
-msgid "PiTiVi Quick Start Manual"
-msgstr "Priročnik za hiter začetek s PiTiVi"
+msgid "Pitivi Quick Start Manual"
+msgstr "Priročnik za hiter začetek s Pitivi"
 
 #: C/index.page:23(title)
-msgid "<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">PiTiVi logo</media> PiTiVi Video Editor"
-msgstr "<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">logotip PiTiVi</media> Urejevalnik videa PiTiVi"
+msgid "<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Pitivi logo</media> Pitivi Video Editor"
+msgstr "<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">logotip Pitivi</media> Urejevalnik videa Pitivi"
 
 #: C/index.page:28(p)
-msgid "Built upon the <link href=\"http://en.wikipedia.org/wiki/GStreamer\"><app>GStreamer</app></link> multimedia framework, <app>PiTiVi</app> aims to be an intuitive and flexible video editor that integrates well with <link href=\"http://gnome.org\"><app>GNOME</app></link> and can appeal to newbies and professionals alike."
-msgstr "<app>PiTiVi</app> je izgrajen je na predstavnostem ogrodju <link href=\"http://en.wikipedia.org/wiki/GStreamer\"><app>GStreamer</app></link>  in poskuša biti intuitiven in prilagodljiv urejevalnik videa, ki se dobro vključi v <link href=\"http://gnome.org\"><app>GNOME</app></link> in je lahko zanimiv tako za novince kot profesionalce."
+msgid "Built upon the <link href=\"http://en.wikipedia.org/wiki/GStreamer\"><app>GStreamer</app></link> multimedia framework, <app>Pitivi</app> aims to be an intuitive and flexible video editor that integrates well with <link href=\"http://gnome.org\"><app>GNOME</app></link> and can appeal to newbies and professionals alike."
+msgstr "<app>Pitivi</app> je izgrajen je na predstavnostem ogrodju <link href=\"http://en.wikipedia.org/wiki/GStreamer\"><app>GStreamer</app></link>  in poskuša biti intuitiven in prilagodljiv urejevalnik videa, ki se dobro vključi v <link href=\"http://gnome.org\"><app>GNOME</app></link> in je lahko zanimiv tako za novince kot profesionalce."
 
 #: C/index.page:29(p)
 msgid "This guide is intended to help you grasp the concepts behind its design and get productive quickly."
@@ -1334,8 +1334,8 @@ msgid "Getting media"
 msgstr "Dobivanje predstavnostnih datotek"
 
 #: C/importing.page:27(p)
-msgid "At the time of this writing, the only supported method is importing files from your hard drive. As such, you cannot use <app>PiTiVi</app> to capture directly from a camcorder. For DV/HDV camcorders using an IEEE 1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture footage."
-msgstr "Med časom pisanje je edini podprti način uvoz datotek s trdega diska. Zato <app>PiTiVi</app> ne morete uporabiti za neposreden zajem s kamere. Za kamere DV/HDV, ki uporabljajo povezavo IEEE 1394 lahko za zajem posnetkov uporabite programa <app>Kino</app> ali <app>dvgran</app>."
+msgid "At the time of this writing, the only supported method is importing files from your hard drive. As such, you cannot use <app>Pitivi</app> to capture directly from a camcorder. For DV/HDV camcorders using an IEEE 1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture footage."
+msgstr "Med časom pisanje je edini podprti način uvoz datotek s trdega diska. Zato <app>Pitivi</app> ne morete uporabiti za neposreden zajem s kamere. Za kamere DV/HDV, ki uporabljajo povezavo IEEE 1394 lahko za zajem posnetkov uporabite programa <app>Kino</app> ali <app>dvgran</app>."
 
 #: C/importing.page:29(p)
 msgid "We would welcome good quality patches to implement the following:"
@@ -1395,8 +1395,8 @@ msgid "Using drag and drop"
 msgstr "Uporaba povleci in spusti"
 
 #: C/importing.page:56(p)
-msgid "The concept of drag and drop is a well-established method of bridging the gap between software applications. Simply select the files you want to import in another application (such as a file manager or a multimedia app) and drag them with your mouse onto <app>PiTiVi</app>'s <gui>Media Library</gui>."
-msgstr "Koncept vlečenja in spuščanja je dobro uveljavljen način prenosa datotek med programi. Enostavno izberite datoteke, ki jih želite uvoziti, v drugem programu (kot je upravljalnik datotek ali predstavnostni program) in jih z miško povlecite v <gui>Knjižnico predstavnosti</gui> <app>PiTiVi</app>."
+msgid "The concept of drag and drop is a well-established method of bridging the gap between software applications. Simply select the files you want to import in another application (such as a file manager or a multimedia app) and drag them with your mouse onto <app>Pitivi</app>'s <gui>Media Library</gui>."
+msgstr "Koncept vlečenja in spuščanja je dobro uveljavljen način prenosa datotek med programi. Enostavno izberite datoteke, ki jih želite uvoziti, v drugem programu (kot je upravljalnik datotek ali predstavnostni program) in jih z miško povlecite v <gui>Knjižnico predstavnosti</gui> <app>Pitivi</app>."
 
 #: C/importing.page:57(p)
 msgid "This feature can be used to:"
@@ -1419,8 +1419,8 @@ msgid "Leverage the searching capability of another application (such as <app>GN
 msgstr "Uporaba zmožnosti iskanja drugega programa (kot so <app>GNOME Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, <app>GNOME Search Tool</app>, itd.)."
 
 #: C/importingmpegts.page:14(desc)
-msgid "How to convert .mts and .m2ts files to a format that can be parsed by GStreamer and PiTiVi."
-msgstr "Kako pretvoriti datoteke .mts in .m2ts v vrsto, ki jo lahko GStreamer in PiTiVi razčlenita."
+msgid "How to convert .mts and .m2ts files to a format that can be parsed by GStreamer and Pitivi."
+msgstr "Kako pretvoriti datoteke .mts in .m2ts v vrsto, ki jo lahko GStreamer in Pitivi razčlenita."
 
 #. TODO: remove this manual page when gstreamer supports mpeg-ts files !
 #: C/importingmpegts.page:22(title)
@@ -1445,8 +1445,8 @@ msgid "Gstreamer and compatibility"
 msgstr "Gstreamer in združljivost"
 
 #: C/gstreamer.page:27(p)
-msgid "A great strength in <app>PiTiVi</app> lies in its use of the <app>GStreamer</app> multimedia framework. <app>GStreamer</app> is used by dozens of multimedia applications across desktop environments, operating systems and architectures."
-msgstr "Velika moč <app>PiTiVi</app> je njegova uporaba ogrodja predstavnosti <app>GStreamer</app>. <app>GStreamer</app> uporablja na ducate predstavnostnih programov na različnih namiznih okoljih, operacijskih sistemih in arhitekturah. "
+msgid "A great strength in <app>Pitivi</app> lies in its use of the <app>GStreamer</app> multimedia framework. <app>GStreamer</app> is used by dozens of multimedia applications across desktop environments, operating systems and architectures."
+msgstr "Velika moč <app>Pitivi</app> je njegova uporaba ogrodja predstavnosti <app>GStreamer</app>. <app>GStreamer</app> uporablja na ducate predstavnostnih programov na različnih namiznih okoljih, operacijskih sistemih in arhitekturah. "
 
 #: C/gstreamer.page:28(p)
 msgid "This essentially means three things to you, the user:"
@@ -1461,16 +1461,16 @@ msgid "You can render your projects using any supported container and codec comb
 msgstr "lahko izrišete svoje projekte v kateremukoli podprti kombinaciji vsebnika in kodeka, ki ju podpira <app>GStreamer</app>."
 
 #: C/gstreamer.page:37(p)
-msgid "You need a very recent version of <app>GStreamer</app> to maximize <app>PiTiVi's</app> capabilities and reduce the possibilities of bugs. This is because the <app>PiTiVi</app> project developers work hard in fixing problems directly in <app>GStreamer</app> (instead of putting temporary workarounds inside <app>PiTiVi</app>)."
-msgstr "Za povečanje števila zmožnosti <app>PiTiVi</app> in zmanjšanje možnosti hroščev boste potrebovali zelo nedavno različico <app>GStreamer</app>. To je potrebno zato, ker razvijalci <app>PiTiVI</app> trdo delajo na popravljanju težav neposredno v <app>GStreamer</app> (namesto začasnih rešitev v <app>PiTiVi</app>)."
+msgid "You need a very recent version of <app>GStreamer</app> to maximize <app>Pitivi's</app> capabilities and reduce the possibilities of bugs. This is because the <app>Pitivi</app> project developers work hard in fixing problems directly in <app>GStreamer</app> (instead of putting temporary workarounds inside <app>Pitivi</app>)."
+msgstr "Za povečanje števila zmožnosti <app>Pitivi</app> in zmanjšanje možnosti hroščev boste potrebovali zelo nedavno različico <app>GStreamer</app>. To je potrebno zato, ker razvijalci <app>PiTiVI</app> trdo delajo na popravljanju težav neposredno v <app>GStreamer</app> (namesto začasnih rešitev v <app>Pitivi</app>)."
 
 #: C/gstreamer.page:42(title)
 msgid "A word about editing-friendly codecs"
 msgstr "Nekaj o za urejanje prijaznih kodekih"
 
 #: C/gstreamer.page:43(p)
-msgid "Some formats, like <em>MPEG</em>, are oriented towards playback only, and do not compress each frame independently. While it is the goal of <app>PiTiVi</app> to support working with these files, certain operations (like rapid seeking) will not perform as well as they would with frame-independent compressed video (such as <em>MJPEG</em> or <em>DV</em>)."
-msgstr "Nekatere vrste kot je <em>MPEG</em> so namenjene le za predvajanje in se posamezne sličice ne stisnejo neodvisno. <app>PiTiVi</app> podpira delo s temi datotekami, vendar nekatera opravila (kot je hitro iskanje) ne bodo delovala tako dobro kot delujejo na videu, kjer je vsaka sličica stisnjena neodvisno (kot je <em>MJPEG</em> ali <em>DV</em>)."
+msgid "Some formats, like <em>MPEG</em>, are oriented towards playback only, and do not compress each frame independently. While it is the goal of <app>Pitivi</app> to support working with these files, certain operations (like rapid seeking) will not perform as well as they would with frame-independent compressed video (such as <em>MJPEG</em> or <em>DV</em>)."
+msgstr "Nekatere vrste kot je <em>MPEG</em> so namenjene le za predvajanje in se posamezne sličice ne stisnejo neodvisno. <app>Pitivi</app> podpira delo s temi datotekami, vendar nekatera opravila (kot je hitro iskanje) ne bodo delovala tako dobro kot delujejo na videu, kjer je vsaka sličica stisnjena neodvisno (kot je <em>MJPEG</em> ali <em>DV</em>)."
 
 #: C/gstreamer.page:47(title)
 msgid "The Good, the Bad and the Ugly"
@@ -1531,8 +1531,8 @@ msgid "Fade-ins and fade-outs"
 msgstr "Pojemanja in naraščanja"
 
 #: C/fadeinfadeout.page:27(p)
-msgid "You can do “fades” of single clip by using <app>PiTiVi</app>'s video mixing capabilities, which relies on keyframes controlling each clip's opacity (see also: <link xref=\"layers\">Understanding layers</link>)."
-msgstr "Ustvarite lahko \"pojemanja\" posameznega posnetka z uporabo zmožnosti mešanja videa <app>PiTiVi</app>, ki se zanaša na ključne sličice, ki nadzirajo prekrivnost posnetkov (oglejte si tudi <link xref=\"layers\">Razumevanje plasti</link>)."
+msgid "You can do “fades” of single clip by using <app>Pitivi</app>'s video mixing capabilities, which relies on keyframes controlling each clip's opacity (see also: <link xref=\"layers\">Understanding layers</link>)."
+msgstr "Ustvarite lahko \"pojemanja\" posameznega posnetka z uporabo zmožnosti mešanja videa <app>Pitivi</app>, ki se zanaša na ključne sličice, ki nadzirajo prekrivnost posnetkov (oglejte si tudi <link xref=\"layers\">Razumevanje plasti</link>)."
 
 #: C/fadeinfadeout.page:28(p)
 msgid "To fade a clip to black:"
@@ -1567,12 +1567,12 @@ msgid "Introduction to effects"
 msgstr "Uvod k učinkom"
 
 #: C/effects.page:22(p)
-msgid "<app>PiTiVi</app> offers a wide variety of video and audio effects to spice up your movies. Effects are non destructive: they are only applied to the resulting rendered movie and do not affect your source files."
-msgstr "<app>PiTiVi</app> ponuja širok nabor zvočnih in video učinkov za obogatitev vaših filmov. Učinki so neuničujoči: uveljavljeni so le na izrisan film in ne vplivajo na vaše izvorne datoteke."
+msgid "<app>Pitivi</app> offers a wide variety of video and audio effects to spice up your movies. Effects are non destructive: they are only applied to the resulting rendered movie and do not affect your source files."
+msgstr "<app>Pitivi</app> ponuja širok nabor zvočnih in video učinkov za obogatitev vaših filmov. Učinki so neuničujoči: uveljavljeni so le na izrisan film in ne vplivajo na vaše izvorne datoteke."
 
 #: C/effects.page:24(p)
-msgid "Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in <app>PiTiVi</app>'s effect library, make sure that the following are installed on your system:"
-msgstr "Razpoložljivi učinki so odvisni od programov, ki so nameščeni na vašem računalniku. Če v knjižnici učinkov <app>PiTiVi</app> ne vidite ničesar (ali le nekaj učinkov), se prepričajte, da so na vašem sistemu nameščeni naslednji paketi:"
+msgid "Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in <app>Pitivi</app>'s effect library, make sure that the following are installed on your system:"
+msgstr "Razpoložljivi učinki so odvisni od programov, ki so nameščeni na vašem računalniku. Če v knjižnici učinkov <app>Pitivi</app> ne vidite ničesar (ali le nekaj učinkov), se prepričajte, da so na vašem sistemu nameščeni naslednji paketi:"
 
 #: C/effects.page:26(p)
 msgid "The <link xref=\"gstreamer\">appropriate GStreamer plugins</link>"
@@ -1635,8 +1635,8 @@ msgid "To do a crossfade between two clips on the same layer, simply drag one of
 msgstr "Za postopen prehod med dvema posnetkoma na isti plasti enostavno povlecite en posnetek v drugega tako da se pokrivata. Prekrivajoče se področje bo uporabljeno za prehode (privzeto postopen prehod) med dvema posnetkoma. S premikom ali obrezom posnetkov lahko prilagoditev dolžino prehoda."
 
 #: C/crossfading.page:30(p)
-msgid "Crossfades are achieved using <app>PiTiVi</app>'s video mixing features, which use keyframes to control the opacity of clips."
-msgstr "Postopne prehode je mogoče doseči z zmožnostmi mešanja videa <app>PiTiVi</app>, ki za nadzor prosojnosti posnetkov uporabljajo ključne sličice."
+msgid "Crossfades are achieved using <app>Pitivi</app>'s video mixing features, which use keyframes to control the opacity of clips."
+msgstr "Postopne prehode je mogoče doseči z zmožnostmi mešanja videa <app>Pitivi</app>, ki za nadzor prosojnosti posnetkov uporabljajo ključne sličice."
 
 #: C/crossfading.page:31(p)
 msgid "This also means that if you set opacity keyframes for that clip, they will be taken into account for the crossfade."
@@ -1693,12 +1693,12 @@ msgid "Work in progress"
 msgstr "Delo v teku"
 
 #: C/about.page:29(p)
-msgid "You may encounter unwritten portions due to features that have not yet been implemented in PiTiVi at the time of writing."
-msgstr "Morda boste videli nedokončane dele zaradi zmožnosti, ki v PiTiVi ob času pisanja še niso bile podprte."
+msgid "You may encounter unwritten portions due to features that have not yet been implemented in Pitivi at the time of writing."
+msgstr "Morda boste videli nedokončane dele zaradi zmožnosti, ki v Pitivi ob času pisanja še niso bile podprte."
 
 #: C/about.page:30(p)
-msgid "You may also encounter smaller areas which have been documented in this manual but have not been implemented in PiTiVi – those are areas where the design and expected user interaction are quite narrow/certain."
-msgstr "Morda boste našli manjša področja, ki so bila v tem priročniku dokumentirana, vendar v PiTiVi še niso bila podprta - to so področja, kjer sta zasnova in pričakovano uporabniško delovanje dokaj ozka/določena."
+msgid "You may also encounter smaller areas which have been documented in this manual but have not been implemented in Pitivi – those are areas where the design and expected user interaction are quite narrow/certain."
+msgstr "Morda boste našli manjša področja, ki so bila v tem priročniku dokumentirana, vendar v Pitivi še niso bila podprta - to so področja, kjer sta zasnova in pričakovano uporabniško delovanje dokaj ozka/določena."
 
 #: C/about.page:34(title)
 msgid "Patches welcome"

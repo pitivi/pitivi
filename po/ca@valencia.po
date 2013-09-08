@@ -23,7 +23,7 @@ msgstr ""
 
 #: ../data/pitivi.desktop.in.in.h:1
 msgid "Pitivi Video Editor"
-msgstr "Editor de vídeo PiTiVi"
+msgstr "Editor de vídeo Pitivi"
 
 #: ../data/pitivi.desktop.in.in.h:2
 msgid "Create and edit your own movies"
@@ -133,10 +133,10 @@ msgstr "Instal·la"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Per habilitar funcionalitats addicionals cal que instal·leu els paquets "
-"següents i reinicieu el PiTiVi:"
+"següents i reinicieu el Pitivi:"
 
 #: ../data/ui/depsmanager.ui.h:4
 msgid "label"
@@ -155,8 +155,8 @@ msgid "Section"
 msgstr "Secció"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "No s'aplicaran alguns dels canvis fins que no reinicieu el PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "No s'aplicaran alguns dels canvis fins que no reinicieu el Pitivi"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -449,7 +449,7 @@ msgstr "Afig els FITXER_MULTIMÈDIA importats a la línia de temps."
 
 #: ../pitivi/application.py:446
 msgid "Run Pitivi in the Python Debugger."
-msgstr "Executa el PiTiVi en el depurador de Python."
+msgstr "Executa el Pitivi en el depurador de Python."
 
 #: ../pitivi/application.py:451
 msgid "-a requires -i"
@@ -767,8 +767,8 @@ msgstr "Cerca:"
 
 #. FIXME Hacky, reimplement when avalaible in GES
 #: ../pitivi/mainwindow.py:135
-msgid "PiTiVi Native (XML)"
-msgstr "Nadiu del PiTiVi (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Nadiu del Pitivi (XML)"
 
 #: ../pitivi/mainwindow.py:142 ../pitivi/timeline/timeline.py:1093
 msgid "Split"
@@ -931,8 +931,8 @@ msgstr "Transicions"
 
 #: ../pitivi/mainwindow.py:648 ../pitivi/dialogs/startupwizard.py:158
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "El PiTiVi %s es troba disponible."
+msgid "Pitivi %s is available."
+msgstr "El Pitivi %s es troba disponible."
 
 #: ../pitivi/mainwindow.py:655
 msgid "Current maintainers:"
@@ -1050,11 +1050,11 @@ msgstr ""
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 "No s'ha proporcionat cap fitxer per substituir «<i>%s</i>».\n"
 "\n"
-"El PiTiVi no admet projectes parcials."
+"El Pitivi no admet projectes parcials."
 
 #: ../pitivi/mainwindow.py:1099
 msgid "Export To..."
@@ -1080,8 +1080,8 @@ msgid "Preview - click outside to close"
 msgstr "Previsualització - feu clic a fora per tancar"
 
 #: ../pitivi/mediafilespreviewer.py:125
-msgid "PiTiVi can not preview this file."
-msgstr "El PiTiVi no pot previsualitzar este fitxer."
+msgid "Pitivi can not preview this file."
+msgstr "El Pitivi no pot previsualitzar este fitxer."
 
 #: ../pitivi/mediafilespreviewer.py:126
 msgid "More info"
@@ -1212,12 +1212,12 @@ msgid "Error while analyzing files"
 msgstr "S'ha produït un error en analitzar els fitxers"
 
 #: ../pitivi/medialibrary.py:978
-msgid "The following files can not be used with PiTiVi."
-msgstr "Els fitxers següents no es poden utilitzar amb el PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Els fitxers següents no es poden utilitzar amb el Pitivi."
 
 #: ../pitivi/medialibrary.py:981
-msgid "The following file can not be used with PiTiVi."
-msgstr "El fitxer següent no es pot utilitzar amb el PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "El fitxer següent no es pot utilitzar amb el Pitivi."
 
 #: ../pitivi/preset.py:93 ../pitivi/preset.py:210 ../pitivi/preset.py:215
 #: ../pitivi/preset.py:274 ../pitivi/preset.py:291 ../pitivi/project.py:786
@@ -2033,8 +2033,8 @@ msgstr "Propietats de %s"
 #~ msgid "File contains a redirection to another clip."
 #~ msgstr "El fitxer conté una redirecció a un altre clip."
 
-#~ msgid "PiTiVi currently does not handle redirection files."
-#~ msgstr "El PiTiVi encara no sap gestionar les redireccions de fitxers."
+#~ msgid "Pitivi currently does not handle redirection files."
+#~ msgstr "El Pitivi encara no sap gestionar les redireccions de fitxers."
 
 #~ msgid "Pipeline didn't want to go to PLAYING."
 #~ msgstr "El conducte no vol anar a EN REPRODUCCIÓ."
@@ -2430,7 +2430,7 @@ msgstr "Propietats de %s"
 #~ "obrir la interfície gràfica."
 
 #~ msgid "Run pitivi with no gui"
-#~ msgstr "Executa el PiTiVi sense la interfície gràfica"
+#~ msgstr "Executa el Pitivi sense la interfície gràfica"
 
 #~ msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
 #~ msgstr "%(width)d x %(height)d píxels a %(framerate).2f fps"
@@ -2441,8 +2441,8 @@ msgstr "Propietats de %s"
 #~ msgid "URI:"
 #~ msgstr "URI:"
 
-#~ msgid "The following file has moved, please tell PiTiVi where to find it."
-#~ msgstr "El fitxer següent s'ha mogut, indiqueu al PiTiVi on trobar-lo."
+#~ msgid "The following file has moved, please tell Pitivi where to find it."
+#~ msgstr "El fitxer següent s'ha mogut, indiqueu al Pitivi on trobar-lo."
 
 #~ msgid "Duration:"
 #~ msgstr "Durada:"

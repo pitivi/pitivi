@@ -8,7 +8,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PiTiVi\n"
+"Project-Id-Version: Pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2013-09-08 17:45+0000\n"
@@ -166,10 +166,10 @@ msgstr "Nainstalovat"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Pokud chcete zapnout dodatečné funkce, nainstalujte prosím následující "
-"balíčky a PiTiVi restartujte:"
+"balíčky a Pitivi restartujte:"
 
 #: ../data/ui/effectslibrary.ui.h:1
 msgid "Show video effects"
@@ -245,8 +245,8 @@ msgid "Section"
 msgstr "Oddíl"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Některé změny se neprojeví, dokud PiTiVi znovu nespustíte"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Některé změny se neprojeví, dokud Pitivi znovu nespustíte"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -862,8 +862,8 @@ msgstr "Vývojová verze"
 
 #: ../pitivi/mainwindow.py:737 ../pitivi/dialogs/startupwizard.py:164
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "Je k dispozici PiTiVi %s."
+msgid "Pitivi %s is available."
+msgstr "Je k dispozici Pitivi %s."
 
 #: ../pitivi/mainwindow.py:744
 msgid "Current maintainers:"
@@ -971,11 +971,11 @@ msgstr "Všechny soubory"
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 "Není k dispozici soubor nahrazující „<i>%s</i>“.\n"
 "\n"
-"PiTiVi v současnosti nepodporuje neúplné projekty."
+"Pitivi v současnosti nepodporuje neúplné projekty."
 
 #: ../pitivi/mainwindow.py:1228
 msgid "Export To..."
@@ -1005,8 +1005,8 @@ msgid "Preview - click outside to close"
 msgstr "Náhled – kliknutím mimo jej zavřete"
 
 #: ../pitivi/mediafilespreviewer.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi nemůže vytvořit náhled tohoto souboru."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi nemůže vytvořit náhled tohoto souboru."
 
 #: ../pitivi/mediafilespreviewer.py:135
 msgid "More info"
@@ -1081,12 +1081,12 @@ msgid "Error while analyzing files"
 msgstr "Nastala chyba při analyzování souborů"
 
 #: ../pitivi/medialibrary.py:784
-msgid "The following files can not be used with PiTiVi."
-msgstr "Následující soubory nemůžou být použity v PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Následující soubory nemůžou být použity v Pitivi."
 
 #: ../pitivi/medialibrary.py:787
-msgid "The following file can not be used with PiTiVi."
-msgstr "Následující soubor nemůže být použit v PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Následující soubor nemůže být použit v Pitivi."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
 #: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1279

@@ -24,7 +24,7 @@
 
     <title>Fade-ins and fade-outs</title>
      
-     <p>You can do “fades” of single clip by using <app>PiTiVi</app>'s video mixing capabilities, which relies on keyframes controlling each clip's opacity (see also: <link xref="layers">Understanding layers</link>).</p>
+     <p>You can do “fades” of single clip by using <app>Pitivi</app>'s video mixing capabilities, which relies on keyframes controlling each clip's opacity (see also: <link xref="layers">Understanding layers</link>).</p>
      <p>To fade a clip to black:</p>
      <steps>
       <item>

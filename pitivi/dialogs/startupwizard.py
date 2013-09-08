@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       pitivi/dialogs/startupwizard.py
 #
@@ -161,7 +161,7 @@ class StartUpWizard(object):
 
         # increment counter, create infobar and show info
         self.app.settings.displayCounter = self.app.settings.displayCounter + 1
-        text = _("PiTiVi %s is available." % version["current"])
+        text = _("Pitivi %s is available." % version["current"])
         label = Gtk.Label(label=text)
         self.infobar.get_content_area().add(label)
         self.infobar.set_message_type(Gtk.MessageType.INFO)

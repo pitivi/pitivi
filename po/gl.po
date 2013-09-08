@@ -1,6 +1,6 @@
-# Galician translation of PiTiVi.
+# Galician translation of Pitivi.
 # Copyright (C) 2009
-# This file is distributed under the same license as the PiTiVi package.
+# This file is distributed under the same license as the Pitivi package.
 #
 # Proxecto Trasno - Adaptación do software libre á lingua galega:  Se desexas
 # colaborar connosco, podes atopar máis información en http://www.trasno.net
@@ -140,10 +140,10 @@ msgstr "Instalar"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Para activar características adicionais instale os seguintes paquetes e "
-"reinicie PiTiVi:"
+"reinicie Pitivi:"
 
 #: ../data/ui/depsmanager.ui.h:4
 msgid "label"
@@ -162,8 +162,8 @@ msgid "Section"
 msgstr "Sección"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Algúns cambios non terán efecto ata que reinicie PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Algúns cambios non terán efecto ata que reinicie Pitivi"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -772,8 +772,8 @@ msgstr "Buscar:"
 
 #. FIXME Hacky, reimplement when avalaible in GES
 #: ../pitivi/mainwindow.py:135
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi nativo (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi nativo (XML)"
 
 #: ../pitivi/mainwindow.py:142 ../pitivi/timeline/timeline.py:1093
 msgid "Split"
@@ -936,8 +936,8 @@ msgstr "Transicións"
 
 #: ../pitivi/mainwindow.py:648 ../pitivi/dialogs/startupwizard.py:158
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "PiTiVi %s está dispoñíbel."
+msgid "Pitivi %s is available."
+msgstr "Pitivi %s está dispoñíbel."
 
 #: ../pitivi/mainwindow.py:655
 msgid "Current maintainers:"
@@ -1058,11 +1058,11 @@ msgstr ""
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 "Non se forneceu un reemprazo para «<i>%s</i>».\n"
 "\n"
-"Actualmente, PiTiVi non admite proxectos parciais."
+"Actualmente, Pitivi non admite proxectos parciais."
 
 #: ../pitivi/mainwindow.py:1099
 msgid "Export To..."
@@ -1088,8 +1088,8 @@ msgid "Preview - click outside to close"
 msgstr "Vista previa - prema fóra para pechar"
 
 #: ../pitivi/mediafilespreviewer.py:125
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi non pode previsualizar este ficheiro."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi non pode previsualizar este ficheiro."
 
 #: ../pitivi/mediafilespreviewer.py:126
 msgid "More info"
@@ -1220,12 +1220,12 @@ msgid "Error while analyzing files"
 msgstr "Produciuse un erro ao analizar os ficheiros"
 
 #: ../pitivi/medialibrary.py:978
-msgid "The following files can not be used with PiTiVi."
-msgstr "Non é posíbel usar os seguintes ficheiros con PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Non é posíbel usar os seguintes ficheiros con Pitivi."
 
 #: ../pitivi/medialibrary.py:981
-msgid "The following file can not be used with PiTiVi."
-msgstr "Non é posíbel usar o seguinte ficheiro con PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Non é posíbel usar o seguinte ficheiro con Pitivi."
 
 #: ../pitivi/preset.py:93 ../pitivi/preset.py:210 ../pitivi/preset.py:215
 #: ../pitivi/preset.py:274 ../pitivi/preset.py:291 ../pitivi/project.py:786
@@ -2020,7 +2020,7 @@ msgstr "Propiedades para %s"
 #~ "IGU."
 
 #~ msgid "Run pitivi with no gui"
-#~ msgstr "Executar PiTiVi sen IGU"
+#~ msgstr "Executar Pitivi sen IGU"
 
 #~ msgid "Render the given project file to OUTPUT_FILE with no GUI."
 #~ msgstr ""

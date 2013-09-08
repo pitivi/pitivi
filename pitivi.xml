@@ -2,7 +2,7 @@
 <mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
 	<mime-type type="text/x-xptv">
 		<sub-class-of type="text/plain"/>
-		<comment>Legacy PiTiVi project file</comment>
+		<comment>Legacy Pitivi project file</comment>
 		<glob pattern="*.xptv"/>
         <magic priority="50">
             <match value="&lt;pitivi" type="string" offset="0"/>

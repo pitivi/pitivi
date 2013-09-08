@@ -21,7 +21,7 @@
   </info>
 
     <title>Selecting unused files</title>
-      <p>You may sometimes find that you have imported more clips that you needed in your project. <app>PiTiVi</app> allows you to select files that are present in the media library but not in the timeline. There are various reasons to do this:</p>
+      <p>You may sometimes find that you have imported more clips that you needed in your project. <app>Pitivi</app> allows you to select files that are present in the media library but not in the timeline. There are various reasons to do this:</p>
       <list>
           <item><p>Improving performance when loading the project</p></item>
           <item><p>Simplifying your editing workflow</p></item>

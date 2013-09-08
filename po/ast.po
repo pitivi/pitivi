@@ -274,8 +274,8 @@ msgid "File contains a redirection to another clip."
 msgstr "El ficheru caltién una redireición a otru vídeu."
 
 #: ../pitivi/discoverer.py:465
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "Anguaño, PiTiVi nun puede remanar ficheros de redireición."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Anguaño, Pitivi nun puede remanar ficheros de redireición."
 
 #: ../pitivi/discoverer.py:491
 msgid "Pipeline didn't want to go to PLAYING."
@@ -400,8 +400,8 @@ msgid "%s doesn't yet handle non local projects"
 msgstr "%s entá nun puede remanar proyeutos non llocales"
 
 #: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi nativu (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi nativu (XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
@@ -956,8 +956,8 @@ msgstr "Si nun guardes perderánse dellos cambeos"
 
 #: ../pitivi/ui/mainwindow.py:817
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi nun puede cargar el ficheru «%s»"
+msgid "Pitivi is unable to load file \"%s\""
+msgstr "Pitivi nun puede cargar el ficheru «%s»"
 
 #: ../pitivi/ui/mainwindow.py:820
 msgid "Error Loading File"
@@ -968,8 +968,8 @@ msgid "Locate missing file..."
 msgstr "Atopar ficheru perdíu..."
 
 #: ../pitivi/ui/mainwindow.py:836
-msgid "The following file has moved, please tell PiTiVi where to find it."
-msgstr "Movióse'l siguiente ficheru, di-y a PiTiVi aú atopalu."
+msgid "The following file has moved, please tell Pitivi where to find it."
+msgstr "Movióse'l siguiente ficheru, di-y a Pitivi aú atopalu."
 
 #: ../pitivi/ui/mainwindow.py:838
 msgid "Duration:"
@@ -1145,8 +1145,8 @@ msgid "Revert"
 msgstr "Revertir"
 
 #: ../pitivi/ui/prefs.py:125
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Dellos cambeos nun tendrán efeutu fasta que reanicies PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Dellos cambeos nun tendrán efeutu fasta que reanicies Pitivi"
 
 #: ../pitivi/ui/prefs.py:320
 msgid "Reset"
@@ -1300,16 +1300,16 @@ msgid "Error while analyzing files"
 msgstr "Fallu al analizar los ficheros"
 
 #: ../pitivi/ui/sourcelist.py:1059
-msgid "The following files can not be used with PiTiVi."
-msgstr "Los siguientes ficheros nun pueden usase con PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Los siguientes ficheros nun pueden usase con Pitivi."
 
 #: ../pitivi/ui/sourcelist.py:1061
 msgid "Error while analyzing a file"
 msgstr "Fallu al analizar un ficheru"
 
 #: ../pitivi/ui/sourcelist.py:1062
-msgid "The following file can not be used with PiTiVi."
-msgstr "El siguiente ficheru nun puede usase con PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "El siguiente ficheru nun puede usase con Pitivi."
 
 #. tooltip text for toolbar
 #: ../pitivi/ui/timeline.py:46

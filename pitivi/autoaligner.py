@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       timeline/align.py
 #
@@ -174,9 +174,9 @@ def affinealign(reference, targets, max_drift=0.02):
     targets.  Designed for aligning the amplitude envelopes of recordings of
     the same event by different devices.
 
-    NOTE: This method is currently NOT USED by PiTiVi, as it has proven both
+    NOTE: This method is currently NOT USED by Pitivi, as it has proven both
     unnecessary and unusable.  So far every test case has been registered
-    successfully by rigidalign, and until PiTiVi supports time-stretching of
+    successfully by rigidalign, and until Pitivi supports time-stretching of
     audio, the drift calculation cannot actually be used.
 
     @param reference: the reference signal to which others will be registered

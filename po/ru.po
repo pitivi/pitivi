@@ -144,10 +144,10 @@ msgstr "Установить"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Чтобы включить дополнительные возможности, установите следующие пакеты и "
-"перезапустите PiTiVi:"
+"перезапустите Pitivi:"
 
 #: ../data/ui/effectslibrary.ui.h:1
 #| msgid "Video effects"
@@ -235,9 +235,9 @@ msgid "Section"
 msgstr "Раздел"
 
 #: ../data/ui/preferences.ui.h:3
-#| msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Некоторые изменения вступят в силу только после перезапуска PiTiVi"
+#| msgid "<b>Some changes will not take effect until you restart Pitivi</b>"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Некоторые изменения вступят в силу только после перезапуска Pitivi"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -735,9 +735,9 @@ msgstr "эффект"
 
 #. FIXME Hacky, reimplement when avalaible in GES
 #: ../pitivi/mainwindow.py:125
-#| msgid "PiTiVi Native (XML)"
-msgid "PiTiVi native (XML)"
-msgstr "Формат PiTiVi (XML)"
+#| msgid "Pitivi Native (XML)"
+msgid "Pitivi native (XML)"
+msgstr "Формат Pitivi (XML)"
 
 #: ../pitivi/mainwindow.py:135 ../pitivi/timeline/timeline.py:1099
 msgid "Split"
@@ -900,7 +900,7 @@ msgstr ""
 
 #: ../pitivi/mainwindow.py:692 ../pitivi/dialogs/startupwizard.py:160
 #, python-format
-msgid "PiTiVi %s is available."
+msgid "Pitivi %s is available."
 msgstr ""
 
 #: ../pitivi/mainwindow.py:699
@@ -1036,7 +1036,7 @@ msgstr "Все файлы"
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 
 #: ../pitivi/mainwindow.py:1158
@@ -1071,8 +1071,8 @@ msgid "Preview - click outside to close"
 msgstr ""
 
 #: ../pitivi/mediafilespreviewer.py:139
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi не удалось выполнить предварительный просмотр этого файла."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi не удалось выполнить предварительный просмотр этого файла."
 
 #: ../pitivi/mediafilespreviewer.py:140
 msgid "More info"
@@ -1149,12 +1149,12 @@ msgid "Error while analyzing files"
 msgstr "Ошибка при анализе файлов"
 
 #: ../pitivi/medialibrary.py:879
-msgid "The following files can not be used with PiTiVi."
-msgstr "Следующие файлы не могут быть использованы в PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Следующие файлы не могут быть использованы в Pitivi."
 
 #: ../pitivi/medialibrary.py:882
-msgid "The following file can not be used with PiTiVi."
-msgstr "Следующий файл не может быть использован в PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Следующий файл не может быть использован в Pitivi."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
 #: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:799
@@ -2190,8 +2190,8 @@ msgstr "Свойства %s"
 #~ msgid "File contains a redirection to another clip."
 #~ msgstr "Файл содержит перенаправление к другому файлу."
 
-#~ msgid "PiTiVi currently does not handle redirection files."
-#~ msgstr "PiTiVi пока что не поддерживает файлы перенаправления."
+#~ msgid "Pitivi currently does not handle redirection files."
+#~ msgstr "Pitivi пока что не поддерживает файлы перенаправления."
 
 #~ msgid "Pipeline didn't want to go to PLAYING."
 #~ msgstr "Конвейер не перешёл в режим ВОСПРОИЗВЕДЕНИЯ."

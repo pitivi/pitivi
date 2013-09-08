@@ -133,7 +133,7 @@ msgstr "Instalēt"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Lai aktivētu papildu iespējas, lūdzu, instalējiet sekojošas pakotnes un "
 "pārstartējiet PitiVi:"
@@ -155,8 +155,8 @@ msgid "Section"
 msgstr "Nodaļa"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Dažas izmaiņas nestāsies spēkā, kamēr nebūsiet pārstartējis PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Dažas izmaiņas nestāsies spēkā, kamēr nebūsiet pārstartējis Pitivi"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -758,8 +758,8 @@ msgstr "Rādīt video efektus kā ikonas"
 
 #. FIXME Hacky, reimplement when avalaible in GES
 #: ../pitivi/mainwindow.py:135
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi vietējais (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi vietējais (XML)"
 
 #: ../pitivi/mainwindow.py:142 ../pitivi/timeline/timeline.py:737
 msgid "Split"
@@ -914,8 +914,8 @@ msgstr "Pārejas"
 
 #: ../pitivi/mainwindow.py:635 ../pitivi/dialogs/startupwizard.py:161
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "PiTiVi %s ir pieejams."
+msgid "Pitivi %s is available."
+msgstr "Pitivi %s ir pieejams."
 
 #: ../pitivi/mainwindow.py:648
 msgid "Contributors:"
@@ -1031,8 +1031,8 @@ msgid "Preview - click outside to close"
 msgstr "Priekšskatījums — spiediet ārpusē, lai aizvērtu"
 
 #: ../pitivi/mediafilespreviewer.py:125
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi nespēj priekšspēlēt šo failu."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi nespēj priekšspēlēt šo failu."
 
 #: ../pitivi/mediafilespreviewer.py:126
 msgid "More info"
@@ -1163,12 +1163,12 @@ msgid "Error while analyzing files"
 msgstr "Failu analizēšanas laikā notika kļūda"
 
 #: ../pitivi/medialibrary.py:976
-msgid "The following files can not be used with PiTiVi."
-msgstr "Sekojošos failus nevar lietot ar PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Sekojošos failus nevar lietot ar Pitivi."
 
 #: ../pitivi/medialibrary.py:979
-msgid "The following file can not be used with PiTiVi."
-msgstr "Sekojošo failu nevar lietot ar PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Sekojošo failu nevar lietot ar Pitivi."
 
 #: ../pitivi/preset.py:93 ../pitivi/preset.py:210 ../pitivi/preset.py:215
 #: ../pitivi/preset.py:274 ../pitivi/preset.py:291 ../pitivi/project.py:771
@@ -1903,8 +1903,8 @@ msgstr "%s īpašības"
 #~ msgid "File contains a redirection to another clip."
 #~ msgstr "Fails satur pāradresāciju uz citu klipu."
 
-#~ msgid "PiTiVi currently does not handle redirection files."
-#~ msgstr "PiTiVi šobrīd nespēj apstrādāt pārsūtīšanas failus."
+#~ msgid "Pitivi currently does not handle redirection files."
+#~ msgstr "Pitivi šobrīd nespēj apstrādāt pārsūtīšanas failus."
 
 #~ msgid "Pipeline didn't want to go to PLAYING."
 #~ msgstr "Konveijers negribēja pāriet uz stāvokli ATSKAŅO."

@@ -6,7 +6,7 @@
 # Hannie Dumoleyn <hannie@ubuntu-nl.org>, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: PiTiVi\n"
+"Project-Id-Version: Pitivi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-02 17:03+0200\n"
 "PO-Revision-Date: 2010-10-02 16:12+0200\n"
@@ -277,8 +277,8 @@ msgid "File contains a redirection to another clip."
 msgstr "Het bestand bevat een verwijzing naar een ander fragment."
 
 #: ../pitivi/discoverer.py:466
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi kan momenteel niet omgaan met verwijzingsbestanden."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Pitivi kan momenteel niet omgaan met verwijzingsbestanden."
 
 #: ../pitivi/discoverer.py:492
 msgid "Pipeline didn't want to go to PLAYING."
@@ -468,8 +468,8 @@ msgid "effect"
 msgstr "effect"
 
 #: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi-bestand (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi-bestand (XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
@@ -1083,8 +1083,8 @@ msgstr "Alle niet opgeslagen wijzigingen zullen verloren gaan."
 
 #: ../pitivi/ui/mainwindow.py:921
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi kon \"%s\" niet laden"
+msgid "Pitivi is unable to load file \"%s\""
+msgstr "Pitivi kon \"%s\" niet laden"
 
 #: ../pitivi/ui/mainwindow.py:924
 msgid "Error Loading File"
@@ -1095,9 +1095,9 @@ msgid "Locate missing file..."
 msgstr "Ontbrekend bestand zoeken…"
 
 #: ../pitivi/ui/mainwindow.py:940
-msgid "The following file has moved, please tell PiTiVi where to find it."
+msgid "The following file has moved, please tell Pitivi where to find it."
 msgstr ""
-"Het volgende bestand is verplaats, geef aan waar PiTiVi het kan vinden."
+"Het volgende bestand is verplaats, geef aan waar Pitivi het kan vinden."
 
 #: ../pitivi/ui/mainwindow.py:942
 msgid "Duration:"
@@ -1269,8 +1269,8 @@ msgid "Revert"
 msgstr "Terugdraaien"
 
 #: ../pitivi/ui/prefs.py:125
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Sommige wijzigingen worden pas van kracht wanneer u PiTiVi herstart"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Sommige wijzigingen worden pas van kracht wanneer u Pitivi herstart"
 
 #: ../pitivi/ui/prefs.py:320
 msgid "Reset"
@@ -1448,16 +1448,16 @@ msgid "Error while analyzing files"
 msgstr "Fout tijdens het analyseren van bestanden"
 
 #: ../pitivi/ui/sourcelist.py:1058
-msgid "The following files can not be used with PiTiVi."
-msgstr "De volgende bestanden kunnen niet worden gebruikt in PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "De volgende bestanden kunnen niet worden gebruikt in Pitivi."
 
 #: ../pitivi/ui/sourcelist.py:1060
 msgid "Error while analyzing a file"
 msgstr "Fout tijdens het analyseren van een bestand"
 
 #: ../pitivi/ui/sourcelist.py:1061
-msgid "The following file can not be used with PiTiVi."
-msgstr "Het volgende bestand kan niet worden gebruikt in PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Het volgende bestand kan niet worden gebruikt in Pitivi."
 
 #. tooltip text for toolbar
 #: ../pitivi/ui/timeline.py:54

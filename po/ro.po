@@ -222,8 +222,8 @@ msgid "File contains a redirection to another clip."
 msgstr "Fișierul conține o redirectare către alt clip."
 
 #: ../pitivi/discoverer.py:424
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "Versiunea curentă a PiTiVi nu suportă fișiere de redirectare."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Versiunea curentă a Pitivi nu suportă fișiere de redirectare."
 
 #: ../pitivi/application.py:121
 #, python-format
@@ -342,8 +342,8 @@ msgid "%s doesn't yet handle non local projects"
 msgstr "%s nu poate încă să opereze cu proiecte nelocale"
 
 #: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
-msgstr "Nativ PiTiVi (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Nativ Pitivi (XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
@@ -915,8 +915,8 @@ msgstr "Dacă nu salvați o parte a modificărilor vor fi pierdute"
 
 #: ../pitivi/ui/mainwindow.py:801
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi nu a reușit să încarce fișierul „%s”"
+msgid "Pitivi is unable to load file \"%s\""
+msgstr "Pitivi nu a reușit să încarce fișierul „%s”"
 
 #: ../pitivi/ui/mainwindow.py:804
 msgid "Error Loading File"
@@ -927,8 +927,8 @@ msgid "Locate missing file..."
 msgstr "Localizează fișierul lipsă..."
 
 #: ../pitivi/ui/mainwindow.py:820
-msgid "The following file has moved, please tell PiTiVi where to find it."
-msgstr "Următorul fișier a fost mutat, informați PiTiVi unde îl poate găsi."
+msgid "The following file has moved, please tell Pitivi where to find it."
+msgstr "Următorul fișier a fost mutat, informați Pitivi unde îl poate găsi."
 
 #: ../pitivi/ui/mainwindow.py:822
 msgid "Duration:"
@@ -1105,8 +1105,8 @@ msgid "Revert"
 msgstr "Revenire"
 
 #: ../pitivi/ui/prefs.py:123
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Unele modificări nu vor avea efect decât după repornirea PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Unele modificări nu vor avea efect decât după repornirea Pitivi"
 
 #: ../pitivi/ui/prefs.py:318
 msgid "Reset"
@@ -1259,16 +1259,16 @@ msgid "Error while analyzing files"
 msgstr "Au apărut erori în timpul analizării fișierelor"
 
 #: ../pitivi/ui/sourcelist.py:807
-msgid "The following files can not be used with PiTiVi."
-msgstr "Următoarele fișiere nu pot fi folosite în PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Următoarele fișiere nu pot fi folosite în Pitivi."
 
 #: ../pitivi/ui/sourcelist.py:809
 msgid "Error while analyzing a file"
 msgstr "Eroare în timpul analizării unui fișier"
 
 #: ../pitivi/ui/sourcelist.py:810
-msgid "The following file can not be used with PiTiVi."
-msgstr "Următorul fișier nu poate fi folosit în PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Următorul fișier nu poate fi folosit în Pitivi."
 
 #. tooltip text for toolbar
 #: ../pitivi/ui/timeline.py:46

@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       settings.py
 #
@@ -129,7 +129,7 @@ class Notification(object):
 
 class GlobalSettings(Signallable):
     """
-    Global PiTiVi settings.
+    Global Pitivi settings.
 
     The settings object loads settings from three different sources: the
     global configuration, the local configuration file, and the environment.

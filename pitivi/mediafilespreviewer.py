@@ -131,7 +131,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         # Error handling
         vbox = Gtk.VBox()
         vbox.set_spacing(SPACING)
-        self.l_error = Gtk.Label(label=_("PiTiVi can not preview this file."))
+        self.l_error = Gtk.Label(label=_("Pitivi can not preview this file."))
         self.b_details = Gtk.Button(_("More info"))
         self.b_details.connect('clicked', self._on_b_details_clicked_cb)
         vbox.pack_start(self.l_error, True, True, 0)

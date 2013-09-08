@@ -152,10 +152,10 @@ msgstr "Namesti"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Za omogočitev dodatnih zmožnosti namestite naslednje pakete in ponovno "
-"zaženite PiTiVi:"
+"zaženite Pitivi:"
 
 #: ../data/ui/effectslibrary.ui.h:1
 msgid "Show video effects"
@@ -231,8 +231,8 @@ msgid "Section"
 msgstr "Odsek"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Nekatere spremembe ne bodo imele učinka do ponovnega zagona PiTiVi."
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Nekatere spremembe ne bodo imele učinka do ponovnega zagona Pitivi."
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -843,8 +843,8 @@ msgstr "Rrazvojna različica"
 
 #: ../pitivi/mainwindow.py:737 ../pitivi/dialogs/startupwizard.py:164
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "Na voljo je PiTiVi %s."
+msgid "Pitivi %s is available."
+msgstr "Na voljo je Pitivi %s."
 
 #: ../pitivi/mainwindow.py:744
 msgid "Current maintainers:"
@@ -952,11 +952,11 @@ msgstr "Vse datoteke"
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 "Ni nadomestne datoteke za \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi trenutno ne podpira delnih projektov."
+"Pitivi trenutno ne podpira delnih projektov."
 
 #: ../pitivi/mainwindow.py:1228
 msgid "Export To..."
@@ -986,8 +986,8 @@ msgid "Preview - click outside to close"
 msgstr "Predogled - kliknite zunaj okvira za izhod"
 
 #: ../pitivi/mediafilespreviewer.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi ne more ustvariti predogleda te datoteke."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi ne more ustvariti predogleda te datoteke."
 
 #: ../pitivi/mediafilespreviewer.py:135
 msgid "More info"
@@ -1062,12 +1062,12 @@ msgid "Error while analyzing files"
 msgstr "Napaka med preučevanjem datotek"
 
 #: ../pitivi/medialibrary.py:784
-msgid "The following files can not be used with PiTiVi."
-msgstr "S PiTiVi ni mogoče uporabiti naslednjih datotek."
+msgid "The following files can not be used with Pitivi."
+msgstr "S Pitivi ni mogoče uporabiti naslednjih datotek."
 
 #: ../pitivi/medialibrary.py:787
-msgid "The following file can not be used with PiTiVi."
-msgstr "PiTiVi ne more uporabiti naslednje datoteke."
+msgid "The following file can not be used with Pitivi."
+msgstr "Pitivi ne more uporabiti naslednje datoteke."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
 #: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1279

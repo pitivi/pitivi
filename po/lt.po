@@ -125,9 +125,9 @@ msgstr "Įdiegti"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
-"Papildomoms savybėms įjungti įdiekite šiuos paketus ir perleiskite PiTiVi:"
+"Papildomoms savybėms įjungti įdiekite šiuos paketus ir perleiskite Pitivi:"
 
 #: ../data/ui/effectslibrary.ui.h:1
 msgid "Show video effects"
@@ -203,8 +203,8 @@ msgid "Section"
 msgstr "Skiltis"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Kai kurie pakeitimai įsigalios tik perleidus PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Kai kurie pakeitimai įsigalios tik perleidus Pitivi"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -834,8 +834,8 @@ msgstr "Kūrimo versija"
 
 #: ../pitivi/mainwindow.py:737 ../pitivi/dialogs/startupwizard.py:164
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "Prieinama PiTiVi %s"
+msgid "Pitivi %s is available."
+msgstr "Prieinama Pitivi %s"
 
 #: ../pitivi/mainwindow.py:744
 msgid "Current maintainers:"
@@ -943,11 +943,11 @@ msgstr "Visi failai"
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 "Nepateiktas pakaitalas failui „<i>%s</i>“.\n"
 "\n"
-"PiTiVi šiuo metu nepalaiko dalinių projektų."
+"Pitivi šiuo metu nepalaiko dalinių projektų."
 
 #: ../pitivi/mainwindow.py:1207
 msgid "Export To..."
@@ -977,8 +977,8 @@ msgid "Preview - click outside to close"
 msgstr "Peržiūra - spauskite išorėje užvėrimui"
 
 #: ../pitivi/mediafilespreviewer.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi negali pateikti peržiūrai šio failo."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi negali pateikti peržiūrai šio failo."
 
 #: ../pitivi/mediafilespreviewer.py:135
 msgid "More info"
@@ -1053,12 +1053,12 @@ msgid "Error while analyzing files"
 msgstr "Klaida analizuojant failus"
 
 #: ../pitivi/medialibrary.py:782
-msgid "The following files can not be used with PiTiVi."
-msgstr "Šie failai negali būti naudojami su PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Šie failai negali būti naudojami su Pitivi."
 
 #: ../pitivi/medialibrary.py:785
-msgid "The following file can not be used with PiTiVi."
-msgstr "Šie failai negali būti naudojami su PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Šie failai negali būti naudojami su Pitivi."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
 #: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1250

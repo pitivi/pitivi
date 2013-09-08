@@ -19,9 +19,9 @@
 
     <title>Introduction to effects</title>
      
-     <p><app>PiTiVi</app> offers a wide variety of video and audio effects to spice up your movies. Effects are non destructive: they are only applied to the resulting rendered movie and do not affect your source files.</p>
+     <p><app>Pitivi</app> offers a wide variety of video and audio effects to spice up your movies. Effects are non destructive: they are only applied to the resulting rendered movie and do not affect your source files.</p>
      <note style="important">
-        <p>Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in <app>PiTiVi</app>'s effect library, make sure that the following are installed on your system:</p>
+        <p>Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in <app>Pitivi</app>'s effect library, make sure that the following are installed on your system:</p>
         <list>
             <item><p>The <link xref="gstreamer">appropriate GStreamer plugins</link></p></item>
             <item><p>frei0r-plugins</p></item>

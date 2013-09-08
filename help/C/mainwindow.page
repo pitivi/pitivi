@@ -23,8 +23,8 @@
     <title>The main window</title>
 
       <figure>
-       <title><app>PiTiVi</app> main window</title>
-       <desc>The main window, as the name implies, is the window containing the main components of the <app>PiTiVi</app> user interface, namely: the menu bar, the toolbars, the timeline and various customizable components (media library, previewer, effects library, transitions library, etc.).</desc>
+       <title><app>Pitivi</app> main window</title>
+       <desc>The main window, as the name implies, is the window containing the main components of the <app>Pitivi</app> user interface, namely: the menu bar, the toolbars, the timeline and various customizable components (media library, previewer, effects library, transitions library, etc.).</desc>
         <media type="image" src="figures/mainwindow.jpg" mime="image/jpg" style="right">
         </media>
       </figure>
@@ -39,7 +39,7 @@
 
     <section>
      <title>The toolbars</title>
-      <p>Toolbars provide access to the most commonly used functions of <app>PiTiVi</app>. All items in toolbars can also be accessed through the menu bar. Toolbars can be activated or deactivated in the <gui>View</gui> menu.</p>
+      <p>Toolbars provide access to the most commonly used functions of <app>Pitivi</app>. All items in toolbars can also be accessed through the menu bar. Toolbars can be activated or deactivated in the <gui>View</gui> menu.</p>
       <p>You can hover the mouse cursor over a toolbar item to reveal an information tooltip regarding its function.</p>
       <figure>
         <media type="image" src="figures/hovering.png" mime="image/png" style="right"></media>

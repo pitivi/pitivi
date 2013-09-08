@@ -81,7 +81,7 @@ msgstr "స్థాపించు"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 
 #: ../data/ui/depsmanager.ui.h:4
@@ -260,7 +260,7 @@ msgid "Section"
 msgstr "విభాగం"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
+msgid "<b>Some changes will not take effect until you restart Pitivi</b>"
 msgstr ""
 
 #: ../data/ui/preferences.ui.h:4
@@ -704,7 +704,7 @@ msgid "File contains a redirection to another clip."
 msgstr ""
 
 #: ../pitivi/discoverer.py:474
-msgid "PiTiVi currently does not handle redirection files."
+msgid "Pitivi currently does not handle redirection files."
 msgstr ""
 
 #: ../pitivi/discoverer.py:500
@@ -757,7 +757,7 @@ msgid "effect"
 msgstr "ప్రభావం"
 
 #: ../pitivi/formatters/format.py:81
-msgid "PiTiVi Native (XML)"
+msgid "Pitivi Native (XML)"
 msgstr ""
 
 #: ../pitivi/formatters/format.py:82
@@ -1022,7 +1022,7 @@ msgid "%d%% Rendered"
 msgstr "%d%% రెండరయినవి"
 
 #: ../pitivi/ui/filechooserpreview.py:134
-msgid "PiTiVi can not preview this file."
+msgid "Pitivi can not preview this file."
 msgstr "పిటివి ఈ ఫైలుని మునుజూపలేదు."
 
 #: ../pitivi/ui/filechooserpreview.py:135
@@ -1583,11 +1583,11 @@ msgid "Error while analyzing files"
 msgstr "ఫైళ్ళను విశ్లేషిస్తుండగా దోషము వచ్చినది"
 
 #: ../pitivi/ui/sourcelist.py:773
-msgid "The following files can not be used with PiTiVi."
+msgid "The following files can not be used with Pitivi."
 msgstr ""
 
 #: ../pitivi/ui/sourcelist.py:776
-msgid "The following file can not be used with PiTiVi."
+msgid "The following file can not be used with Pitivi."
 msgstr ""
 
 #: ../pitivi/ui/startupwizard.py:59

@@ -269,8 +269,8 @@ msgid "File contains a redirection to another clip."
 msgstr "Файлът съдържа препратка към друг клип."
 
 #: ../pitivi/discoverer.py:466
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "За момента PiTiVi не може да обработва файлове с пренасочване."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "За момента Pitivi не може да обработва файлове с пренасочване."
 
 #: ../pitivi/discoverer.py:492
 msgid "Pipeline didn't want to go to PLAYING."
@@ -463,8 +463,8 @@ msgid "effect"
 msgstr "ефект"
 
 #: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
-msgstr "Собствен формат на PiTiVi (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Собствен формат на Pitivi (XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
@@ -1079,8 +1079,8 @@ msgstr "Всички незапазени промени ще бъдат изг�
 
 #: ../pitivi/ui/mainwindow.py:913
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi не успя да зареди файла „%s“"
+msgid "Pitivi is unable to load file \"%s\""
+msgstr "Pitivi не успя да зареди файла „%s“"
 
 #: ../pitivi/ui/mainwindow.py:916
 msgid "Error Loading File"
@@ -1091,9 +1091,9 @@ msgid "Locate missing file..."
 msgstr "Намиране на липсващия файл…"
 
 #: ../pitivi/ui/mainwindow.py:932
-msgid "The following file has moved, please tell PiTiVi where to find it."
+msgid "The following file has moved, please tell Pitivi where to find it."
 msgstr ""
-"Следният файл е преместен. Укажете къде може да бъде намерен от PiTiVi."
+"Следният файл е преместен. Укажете къде може да бъде намерен от Pitivi."
 
 #: ../pitivi/ui/mainwindow.py:934
 msgid "Duration:"
@@ -1265,8 +1265,8 @@ msgid "Revert"
 msgstr "Връщане"
 
 #: ../pitivi/ui/prefs.py:125
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Някой промени ще влязат в действие след като рестартирате PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Някой промени ще влязат в действие след като рестартирате Pitivi"
 
 #: ../pitivi/ui/prefs.py:320
 msgid "Reset"
@@ -1444,16 +1444,16 @@ msgid "Error while analyzing files"
 msgstr "Грешка при анализиране на файлове"
 
 #: ../pitivi/ui/sourcelist.py:1058
-msgid "The following files can not be used with PiTiVi."
-msgstr "Тези файлове не могат да бъдат използвани от PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Тези файлове не могат да бъдат използвани от Pitivi."
 
 #: ../pitivi/ui/sourcelist.py:1060
 msgid "Error while analyzing a file"
 msgstr "Грешка при анализиране на файл"
 
 #: ../pitivi/ui/sourcelist.py:1061
-msgid "The following file can not be used with PiTiVi."
-msgstr "Този файл не може да бъде използван от PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Този файл не може да бъде използван от Pitivi."
 
 #. tooltip text for toolbar
 #: ../pitivi/ui/timeline.py:54

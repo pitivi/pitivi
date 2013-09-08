@@ -36,7 +36,7 @@
      <section>
       <title>How this translates in terms of user interface</title>
        <p>While, in real life, you can stack pieces of glass onto each other in three dimensions, your computer monitor only has two dimensions. Thus, the <em>layers on top</em> (the “Z” axis in the physical world) are also visually <em>on top</em>, albeit on the “Y” axis.</p>
-       <p>The following diagram illustrates the <em>pieces of glass</em> (left) and how they are show as <em>layers</em> in <app>PiTiVi</app>'s user interface (right).</p>
+       <p>The following diagram illustrates the <em>pieces of glass</em> (left) and how they are show as <em>layers</em> in <app>Pitivi</app>'s user interface (right).</p>
        <figure>
         <media type="image" src="figures/layers.png" mime="image/png" style="right"></media>
        </figure>
@@ -45,7 +45,7 @@
 
      <section>
       <title>Adding and removing layers</title>
-       <p>Layers are created and removed automatically. There is no “layer management” interface in <app>PiTiVi</app> (at least, not yet).</p>
+       <p>Layers are created and removed automatically. There is no “layer management” interface in <app>Pitivi</app> (at least, not yet).</p>
        <p>To create a layer, drag a clip downwards until a new layer appears for it.</p>
        <p>If there are no more clips on a layer, it is automatically removed. Thus, to remove a layer, simply drag its clips upwards onto another layer.</p>
      </section>

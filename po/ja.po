@@ -25,7 +25,7 @@ msgstr ""
 
 #: ../data/pitivi.desktop.in.in.h:1
 msgid "Pitivi Video Editor"
-msgstr "PiTiVi 動画エディター"
+msgstr "Pitivi 動画エディター"
 
 #: ../data/pitivi.desktop.in.in.h:2
 msgid "Create and edit your own movies"
@@ -86,9 +86,9 @@ msgstr "インストール"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
-"追加機能を有効にするには、以下のパッケージをインストールしてPiTiViを再起動し"
+"追加機能を有効にするには、以下のパッケージをインストールしてPitiviを再起動し"
 "てください:"
 
 #: ../data/ui/depsmanager.ui.h:4
@@ -267,8 +267,8 @@ msgid "Section"
 msgstr "セクション"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
-msgstr "<b>一部の変更点は、PiTiVi を再起動するまで有効になりません</b>"
+msgid "<b>Some changes will not take effect until you restart Pitivi</b>"
+msgstr "<b>一部の変更点は、Pitivi を再起動するまで有効になりません</b>"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -427,7 +427,7 @@ msgstr "各メディアファイルをインポートして、タイムライン
 
 #: ../pitivi/application.py:461
 msgid "Run Pitivi in the Python Debugger."
-msgstr "Python デバッガーで PiTiVi を起動します。"
+msgstr "Python デバッガーで Pitivi を起動します。"
 
 #: ../pitivi/application.py:464
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
@@ -734,8 +734,8 @@ msgid "File contains a redirection to another clip."
 msgstr "ファイルに他のクリップへのリダイレクトが含まれています。"
 
 #: ../pitivi/discoverer.py:474
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "現在の PiTiVi はファイルのリダイレクトを処理することができません。"
+msgid "Pitivi currently does not handle redirection files."
+msgstr "現在の Pitivi はファイルのリダイレクトを処理することができません。"
 
 #: ../pitivi/discoverer.py:500
 msgid "Pipeline didn't want to go to PLAYING."
@@ -787,8 +787,8 @@ msgid "effect"
 msgstr "effect"
 
 #: ../pitivi/formatters/format.py:81
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi 標準 (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi 標準 (XML)"
 
 #: ../pitivi/formatters/format.py:82
 msgid "Playlist format"
@@ -1058,8 +1058,8 @@ msgid "%d%% Rendered"
 msgstr "レンダリング"
 
 #: ../pitivi/ui/filechooserpreview.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiViはこのファイルをプレビューできません。"
+msgid "Pitivi can not preview this file."
+msgstr "Pitiviはこのファイルをプレビューできません。"
 
 #: ../pitivi/ui/filechooserpreview.py:135
 msgid "More info"
@@ -1649,12 +1649,12 @@ msgid "Error while analyzing files"
 msgstr "ファイルの解析中にエラーが発生しました"
 
 #: ../pitivi/ui/sourcelist.py:773
-msgid "The following files can not be used with PiTiVi."
-msgstr "以下のファイルは PiTiVi で扱えません。"
+msgid "The following files can not be used with Pitivi."
+msgstr "以下のファイルは Pitivi で扱えません。"
 
 #: ../pitivi/ui/sourcelist.py:776
-msgid "The following file can not be used with PiTiVi."
-msgstr "以下のファイルは PiTiVi で扱えません。"
+msgid "The following file can not be used with Pitivi."
+msgstr "以下のファイルは Pitivi で扱えません。"
 
 #: ../pitivi/ui/startupwizard.py:59
 #, fuzzy
@@ -2095,9 +2095,9 @@ msgstr "%sは未保存のプロジェクトを扱いません"
 #~ msgid "Capture Network Stream"
 #~ msgstr "ネットワークからストリームをキャプチャします"
 
-#~ msgid "The following file has moved, please tell PiTiVi where to find it."
+#~ msgid "The following file has moved, please tell Pitivi where to find it."
 #~ msgstr ""
-#~ "以下のファイルは移動されています。ファイルのある場所を PiTiVi に指示してく"
+#~ "以下のファイルは移動されています。ファイルのある場所を Pitivi に指示してく"
 #~ "ださい。"
 
 #~ msgid "Duration:"
@@ -2202,7 +2202,7 @@ msgstr "%sは未保存のプロジェクトを扱いません"
 #~ "プロジェクトのタイムライン末尾に追加します。"
 
 #~ msgid "Run pitivi with no gui"
-#~ msgstr "GUI なしで PiTiVi を起動します"
+#~ msgstr "GUI なしで Pitivi を起動します"
 
 #~ msgid "<b>Author:</b>"
 #~ msgstr "<b>作者:</b>"
@@ -2497,12 +2497,12 @@ msgstr "%sは未保存のプロジェクトを扱いません"
 #~ msgid "Video Preset"
 #~ msgstr "映像プリセット"
 
-#~ msgid "PiTiVi is unable to load file \"%s\""
-#~ msgstr "PiTiVi はファイル \"%s\" を読み込めません"
+#~ msgid "Pitivi is unable to load file \"%s\""
+#~ msgstr "Pitivi はファイル \"%s\" を読み込めません"
 
-#~ msgid "Some changes will not take effect until you restart PiTiVi"
+#~ msgid "Some changes will not take effect until you restart Pitivi"
 #~ msgstr ""
-#~ "設定項目のなかには、PiTiVi を再起動するまで反映されないものがあります"
+#~ "設定項目のなかには、Pitivi を再起動するまで反映されないものがあります"
 
 #~ msgid "Show Thumbnails on Video Clips"
 #~ msgstr "映像クリップ上にサムネイルを表示します"
@@ -2544,7 +2544,7 @@ msgstr "%sは未保存のプロジェクトを扱いません"
 #~ msgstr "量子化ビット:"
 
 #~ msgid "Run pitivi in the Python Debugger"
-#~ msgstr "Python デバッガーで PiTiVi を起動します"
+#~ msgstr "Python デバッガーで Pitivi を起動します"
 
 #~ msgid "Could not find the GNonLin plugins!"
 #~ msgstr "GNonLin プラグインが見つかりませんでした!"

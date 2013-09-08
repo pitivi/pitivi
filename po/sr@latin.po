@@ -128,7 +128,7 @@ msgstr "Instaliraj"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Da omogućite dodatne funkcije, instalirajte sledeće pakete i ponovo "
 "pokrenite Pitivi:"
@@ -207,7 +207,7 @@ msgid "Section"
 msgstr "Odeljak"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Neke promene neće biti dostupne sve dok ponovo ne pokrenete Pitivi"
 
 #: ../data/ui/preferences.ui.h:4
@@ -842,7 +842,7 @@ msgstr "Razvojno izdanje"
 
 #: ../pitivi/mainwindow.py:735 ../pitivi/dialogs/startupwizard.py:164
 #, python-format
-msgid "PiTiVi %s is available."
+msgid "Pitivi %s is available."
 msgstr "Pitivi %s je dostupan."
 
 #: ../pitivi/mainwindow.py:742
@@ -956,7 +956,7 @@ msgstr "Sve datoteke"
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 "Nije obezbeđena zamenska datoteka za „<i>%s</i>“.\n"
 "\n"
@@ -989,7 +989,7 @@ msgid "Preview - click outside to close"
 msgstr "Pregled — kliknite izvan da zatvorite"
 
 #: ../pitivi/mediafilespreviewer.py:136
-msgid "PiTiVi can not preview this file."
+msgid "Pitivi can not preview this file."
 msgstr "Pitivi ne može da prikaže pregled ove datoteke."
 
 #: ../pitivi/mediafilespreviewer.py:137
@@ -1065,11 +1065,11 @@ msgid "Error while analyzing files"
 msgstr "Greška prilikom analiziranja datoteka"
 
 #: ../pitivi/medialibrary.py:764
-msgid "The following files can not be used with PiTiVi."
+msgid "The following files can not be used with Pitivi."
 msgstr "Sledeće datoteke ne mogu biti korišćene u Pitiviju."
 
 #: ../pitivi/medialibrary.py:767
-msgid "The following file can not be used with PiTiVi."
+msgid "The following file can not be used with Pitivi."
 msgstr "Sledeća datoteka ne može biti korišćena u Pitiviju."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224

@@ -6,7 +6,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PiTiVi\n"
+"Project-Id-Version: Pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-12-16 08:55+0000\n"
@@ -129,7 +129,7 @@ msgstr "Installa"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Per abilitare le funzionalità aggiuntive, installare i seguenti pacchetti e "
 "riavviare l'applicazione:"
@@ -208,7 +208,7 @@ msgid "Section"
 msgstr "Sezione"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
 msgstr ""
 "Alcune modifiche non verranno applicate fino al riavvio dell'applicazione"
 
@@ -674,8 +674,8 @@ msgstr "effetto"
 
 #. FIXME Hacky, reimplement when avalaible in GES
 #: ../pitivi/mainwindow.py:125
-msgid "PiTiVi native (XML)"
-msgstr "Nativo PiTiVi (XML)"
+msgid "Pitivi native (XML)"
+msgstr "Nativo Pitivi (XML)"
 
 #: ../pitivi/mainwindow.py:135 ../pitivi/timeline/timeline.py:1099
 msgid "Split"
@@ -834,8 +834,8 @@ msgstr "Versione di sviluppo"
 
 #: ../pitivi/mainwindow.py:692 ../pitivi/dialogs/startupwizard.py:160
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "È disponibile PiTiVi %s."
+msgid "Pitivi %s is available."
+msgstr "È disponibile Pitivi %s."
 
 #: ../pitivi/mainwindow.py:699
 msgid "Current maintainers:"
@@ -955,7 +955,7 @@ msgstr "Tutti i file"
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 "Nessun file di sostituzione è stato fornito per «<i>%s</i>».\n"
 "\n"
@@ -989,7 +989,7 @@ msgid "Preview - click outside to close"
 msgstr "Anteprima - fare clic all'esterno per chiudere"
 
 #: ../pitivi/mediafilespreviewer.py:139
-msgid "PiTiVi can not preview this file."
+msgid "Pitivi can not preview this file."
 msgstr "Non è possibile visualizzare l'anteprima di questo file."
 
 #: ../pitivi/mediafilespreviewer.py:140
@@ -1065,11 +1065,11 @@ msgid "Error while analyzing files"
 msgstr "Errore durante l'analisi dei file"
 
 #: ../pitivi/medialibrary.py:879
-msgid "The following files can not be used with PiTiVi."
+msgid "The following files can not be used with Pitivi."
 msgstr "I seguenti file non possono essere usati dall'applicazione."
 
 #: ../pitivi/medialibrary.py:882
-msgid "The following file can not be used with PiTiVi."
+msgid "The following file can not be used with Pitivi."
 msgstr "Il file seguente non può essere usato dall'applicazione."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224

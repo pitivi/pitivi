@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       ui/mainwindow.py
 #
@@ -734,7 +734,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         gst_version_str = "GStreamer %i.%i.%i.%i" % (Gst.version())
         if (self.app.version_information and
            self.app.version_information["status"] != "CURRENT"):
-            version_str = _("PiTiVi %s is available." %
+            version_str = _("Pitivi %s is available." %
                 (self.app.version_information["current"]))
 
             abt.set_comments("%s\n\n%s\n\n%s" %
@@ -1116,7 +1116,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # TODO: bugs #661059, 609136
             attempted_uri = self.app.current_project.uri
             reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
-                    'PiTiVi does not currently support partial projects.'
+                    'Pitivi does not currently support partial projects.'
                     % info_name(asset))
             # Put an end to the async signals spamming us with dialogs:
             self.app.projectManager.disconnect_by_func(self._projectManagerMissingUriCb)
@@ -1173,7 +1173,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         redo_action.set_sensitive(can_redo)
         self.updateTitle()
 
-## PiTiVi current project callbacks
+## Pitivi current project callbacks
 
     def _setProject(self):
         """

@@ -142,10 +142,10 @@ msgstr "Installer"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Pour disposer de fonctions supplémentaires, veuillez installer les paquets "
-"suivants et redémarrer PiTiVi :"
+"suivants et redémarrer Pitivi :"
 
 #: ../data/ui/depsmanager.ui.h:4
 msgid "label"
@@ -164,10 +164,10 @@ msgid "Section"
 msgstr "Section"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
 msgstr ""
 "Certaines modifications ne seront pas appliquées tant que vous n'aurez pas "
-"redémarré PiTiVi"
+"redémarré Pitivi"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -449,7 +449,7 @@ msgstr "Ajoute chaque FICHIER_MÉDIA importé à la piste de montage."
 
 #: ../pitivi/application.py:442
 msgid "Run Pitivi in the Python Debugger."
-msgstr "Lance PiTiVi dans le débogueur Python."
+msgstr "Lance Pitivi dans le débogueur Python."
 
 #: ../pitivi/application.py:447
 msgid "-a requires -i"
@@ -788,8 +788,8 @@ msgstr "Afficher les effets vidéo sous la forme d'icônes"
 
 #. FIXME Hacky, reimplement when avalaible in GES
 #: ../pitivi/mainwindow.py:135
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi natif (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi natif (XML)"
 
 #: ../pitivi/mainwindow.py:142 ../pitivi/timeline/timeline.py:741
 msgid "Split"
@@ -944,8 +944,8 @@ msgstr "Transitions"
 
 #: ../pitivi/mainwindow.py:664 ../pitivi/dialogs/startupwizard.py:161
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "PiTiVi %s est disponible."
+msgid "Pitivi %s is available."
+msgstr "Pitivi %s est disponible."
 
 #: ../pitivi/mainwindow.py:677
 msgid "Contributors:"
@@ -1069,8 +1069,8 @@ msgid "Preview - click outside to close"
 msgstr "Aperçu - cliquez en dehors pour fermer"
 
 #: ../pitivi/mediafilespreviewer.py:125
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi ne peut afficher un aperçu de ce fichier."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi ne peut afficher un aperçu de ce fichier."
 
 #: ../pitivi/mediafilespreviewer.py:126
 msgid "More info"
@@ -1201,12 +1201,12 @@ msgid "Error while analyzing files"
 msgstr "Erreur lors de l'analyse des fichiers"
 
 #: ../pitivi/medialibrary.py:978
-msgid "The following files can not be used with PiTiVi."
-msgstr "Les fichiers suivants ne peuvent pas être utilisés par PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Les fichiers suivants ne peuvent pas être utilisés par Pitivi."
 
 #: ../pitivi/medialibrary.py:981
-msgid "The following file can not be used with PiTiVi."
-msgstr "Le fichier suivant ne peut pas être utilisé par PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Le fichier suivant ne peut pas être utilisé par Pitivi."
 
 #: ../pitivi/preset.py:93 ../pitivi/preset.py:210 ../pitivi/preset.py:215
 #: ../pitivi/preset.py:274 ../pitivi/preset.py:291 ../pitivi/project.py:790

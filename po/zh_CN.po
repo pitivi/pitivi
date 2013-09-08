@@ -246,8 +246,8 @@ msgid "File contains a redirection to another clip."
 msgstr "文件包含到另一个片段的重定向。"
 
 #: ../pitivi/discoverer.py:466
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi 当前无法处理重定向文件。"
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Pitivi 当前无法处理重定向文件。"
 
 #: ../pitivi/discoverer.py:492
 msgid "Pipeline didn't want to go to PLAYING."
@@ -305,7 +305,7 @@ msgstr "在Python 调试器中运行 Pitivi"
 
 #: ../pitivi/application.py:242
 msgid "Run pitivi with no gui"
-msgstr "在没有 GUI 情况下运行 PiTiVi"
+msgstr "在没有 GUI 情况下运行 Pitivi"
 
 #: ../pitivi/application.py:243
 msgid "Render the given project file to OUTPUT_FILE with no GUI."
@@ -444,8 +444,8 @@ msgid "effect"
 msgstr "效果"
 
 #: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi 本地项目(XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi 本地项目(XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
@@ -1088,8 +1088,8 @@ msgstr "您所有未保存的变动将丢失。"
 
 #: ../pitivi/ui/mainwindow.py:940
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi 无法载入文件“%s”"
+msgid "Pitivi is unable to load file \"%s\""
+msgstr "Pitivi 无法载入文件“%s”"
 
 #: ../pitivi/ui/mainwindow.py:943
 msgid "Error Loading File"
@@ -1100,8 +1100,8 @@ msgid "Locate missing file..."
 msgstr "定位缺失的文件..."
 
 #: ../pitivi/ui/mainwindow.py:959
-msgid "The following file has moved, please tell PiTiVi where to find it."
-msgstr "以下文件已经被移动了，请告诉 PiTiVi 在哪里搜索。"
+msgid "The following file has moved, please tell Pitivi where to find it."
+msgstr "以下文件已经被移动了，请告诉 Pitivi 在哪里搜索。"
 
 #: ../pitivi/ui/mainwindow.py:961
 msgid "Duration:"
@@ -1273,8 +1273,8 @@ msgid "Revert"
 msgstr "还原"
 
 #: ../pitivi/ui/prefs.py:125
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "有些变动在重新启动 PiTiVi 前不会生效"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "有些变动在重新启动 Pitivi 前不会生效"
 
 #: ../pitivi/ui/prefs.py:320
 msgid "Reset"
@@ -1512,16 +1512,16 @@ msgid "Error while analyzing files"
 msgstr "分析文件时出错"
 
 #: ../pitivi/ui/sourcelist.py:1078
-msgid "The following files can not be used with PiTiVi."
-msgstr "以下文件不能用于 PiTiVi"
+msgid "The following files can not be used with Pitivi."
+msgstr "以下文件不能用于 Pitivi"
 
 #: ../pitivi/ui/sourcelist.py:1080
 msgid "Error while analyzing a file"
 msgstr "分析文件时出错"
 
 #: ../pitivi/ui/sourcelist.py:1081
-msgid "The following file can not be used with PiTiVi."
-msgstr "以下文件不能用于 PiTiVi"
+msgid "The following file can not be used with Pitivi."
+msgstr "以下文件不能用于 Pitivi"
 
 #: ../pitivi/ui/startupwizard.glade.h:1
 msgid "Browse projects..."

@@ -27,7 +27,7 @@
      
      <p>To do a crossfade between two clips on the same layer, simply drag one of the clips onto the other so that it overlaps. The overlapping region will be used for transitions (crossfade by default) between the two clips. You can adjust the length of the transition by moving or trimming the clips.</p>
      <note>
-      <p>Crossfades are achieved using <app>PiTiVi</app>'s video mixing features, which use keyframes to control the opacity of clips.</p>
+      <p>Crossfades are achieved using <app>Pitivi</app>'s video mixing features, which use keyframes to control the opacity of clips.</p>
       <p>This also means that if you set opacity keyframes for that clip, they will be taken into account for the crossfade.</p>
      </note>
 

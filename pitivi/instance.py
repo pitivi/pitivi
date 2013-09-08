@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       pitivi/instance.py
 #
@@ -20,14 +20,14 @@
 # Boston, MA 02110-1301, USA.
 
 """
-Current PiTiVi instance module
+Current Pitivi instance module
 
-This module holds the current instance of the PiTiVi program at runtime as a
+This module holds the current instance of the Pitivi program at runtime as a
 global pitivi.Pitivi instance.
 
-PiTiVi : current instance of pitivi top-level class.
+Pitivi : current instance of pitivi top-level class.
 """
 
 # FIXME : We really need to get rid of this global singleton
 
-PiTiVi = None
+Pitivi = None

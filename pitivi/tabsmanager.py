@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       tabsmanager.py
 #
@@ -103,7 +103,7 @@ class BaseTabs(Gtk.Notebook):
         window.move(x, y)
         window.connect("configure-event", self._detachedComponentWindowConfiguredCb, child_name)
         window.connect("destroy", self._detachedComponentWindowDestroyCb, child,
-                        original_position, child_name)
+                original_position, child_name)
 
         if not created_by_signal:
             # Delete the tab from the original notebook (since it was not

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       pitivi/dialogs/depsmanager.py
 #

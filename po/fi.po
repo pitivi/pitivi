@@ -80,9 +80,9 @@ msgstr "Puuttuvia riippuvuuksia"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
-"Asenna seuraavat paketit ja käynnistä PiTiVi uudelleen ottaaksesi käyttöön "
+"Asenna seuraavat paketit ja käynnistä Pitivi uudelleen ottaaksesi käyttöön "
 "tiettyjä ylimääräisiä ominaisuuksia:"
 
 #: ../data/ui/depsmanager.ui.h:4
@@ -253,9 +253,9 @@ msgid "Unknown Mib"
 msgstr "Tuntematon Mib"
 
 #: ../data/ui/preferences.ui.h:1
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
+msgid "<b>Some changes will not take effect until you restart Pitivi</b>"
 msgstr ""
-"<b>Jotkin muutoksista eivät tule voimaa, ennen kuin PiTiVi käynnistetään "
+"<b>Jotkin muutoksista eivät tule voimaa, ennen kuin Pitivi käynnistetään "
 "uudelleen</b>"
 
 #: ../data/ui/preferences.ui.h:2
@@ -717,8 +717,8 @@ msgid "File contains a redirection to another clip."
 msgstr "Tiedosto sisältää uudelleenohjauksen toiseen leikkeeseen."
 
 #: ../pitivi/discoverer.py:474
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi ei tällä hetkellä käsittele uudelleenohjaustiedostoja."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Pitivi ei tällä hetkellä käsittele uudelleenohjaustiedostoja."
 
 #: ../pitivi/discoverer.py:500
 msgid "Pipeline didn't want to go to PLAYING."
@@ -769,8 +769,8 @@ msgid "effect"
 msgstr "tehoste"
 
 #: ../pitivi/formatters/format.py:81
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVin oma muoto (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivin oma muoto (XML)"
 
 #: ../pitivi/formatters/format.py:82
 msgid "Playlist format"
@@ -1017,8 +1017,8 @@ msgid ""
 msgstr ""
 
 #: ../pitivi/ui/filechooserpreview.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi ei voi esikatsella tätä tiedostoa."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi ei voi esikatsella tätä tiedostoa."
 
 #: ../pitivi/ui/filechooserpreview.py:135
 msgid "More info"
@@ -1296,7 +1296,7 @@ msgid ""
 "Please specify its new location:"
 msgstr ""
 "Seuraava tiedosto on siirretty: ”<b>%s</b>”\n"
-"Kerro PiTiVille mistä se löytyy:"
+"Kerro Pitiville mistä se löytyy:"
 
 #: ../pitivi/ui/mainwindow.py:872
 #, python-format
@@ -1562,12 +1562,12 @@ msgid "Error while analyzing files"
 msgstr "Virhe analysoitaessa tiedostoja"
 
 #: ../pitivi/ui/sourcelist.py:773
-msgid "The following files can not be used with PiTiVi."
-msgstr "Seuraavia tiedostoja ei voi käyttää PiTiVin kanssa."
+msgid "The following files can not be used with Pitivi."
+msgstr "Seuraavia tiedostoja ei voi käyttää Pitivin kanssa."
 
 #: ../pitivi/ui/sourcelist.py:776
-msgid "The following file can not be used with PiTiVi."
-msgstr "Seuraavaa tiedostoa ei voi käyttää PiTiVissä."
+msgid "The following file can not be used with Pitivi."
+msgstr "Seuraavaa tiedostoa ei voi käyttää Pitivissä."
 
 #: ../pitivi/ui/timelinecanvas.py:52
 msgid "Behavior"

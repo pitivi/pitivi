@@ -49,12 +49,12 @@ msgid ""
 "transitions</li> <li>Multihead-friendly with detachable user interface "
 "components</li> </ul>"
 msgstr ""
-"<p>Integrując się ze środowiskiem GNOME i innymi programami, program PiTiVi "
+"<p>Integrując się ze środowiskiem GNOME i innymi programami, program Pitivi "
 "posiada prosty, lecz jednocześnie oferujący wiele możliwości interfejs "
 "użytkownika.</p> <p>Dzięki niemodalnej edycji oraz niezależnej od liczby "
-"klatek i opartej o głowicę osi czasu, program PiTiVi umożliwia szybkie i "
+"klatek i opartej o głowicę osi czasu, program Pitivi umożliwia szybkie i "
 "dokładne przycinanie, dzielenie i przeglądanie tworzonych scen. Funkcje "
-"edycji programu PiTiVi pozwalają spędzić więcej czasu na opowiadaniu "
+"edycji programu Pitivi pozwalają spędzić więcej czasu na opowiadaniu "
 "historii, a mniej na \"przerzucaniu\" klipów.</p> <p>Inne funkcje obejmują:</"
 "p> <ul> <li>Można używać wszystkich formatów plików obsługiwanych przez "
 "bibliotekę multimedialną GStreamer</li> <li>Można animować setki efektów "
@@ -66,7 +66,7 @@ msgstr ""
 
 #: ../data/pitivi.desktop.in.in.h:1
 msgid "Pitivi Video Editor"
-msgstr "Edytor wideo PiTiVi"
+msgstr "Edytor wideo Pitivi"
 
 #: ../data/pitivi.desktop.in.in.h:2
 msgid "Create and edit your own movies"
@@ -169,10 +169,10 @@ msgstr "Zainstaluj"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Aby włączyć dodatkowe funkcje, proszę zainstalować następujące pakiety i "
-"ponownie uruchomić program PiTiVi:"
+"ponownie uruchomić program Pitivi:"
 
 #: ../data/ui/effectslibrary.ui.h:1
 msgid "Show video effects"
@@ -248,9 +248,9 @@ msgid "Section"
 msgstr "Sekcja"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
 msgstr ""
-"Niektóre zmiany zostaną uwzględnione po ponownym uruchomieniu programu PiTiVi"
+"Niektóre zmiany zostaną uwzględnione po ponownym uruchomieniu programu Pitivi"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -598,7 +598,7 @@ msgstr "Dodaje każdy zaimportowany PLIK_MULTIMEDIALNY do osi czasu."
 
 #: ../pitivi/application.py:420
 msgid "Run Pitivi in the Python Debugger."
-msgstr "Uruchamia program PiTiVi w debugerze języka Python."
+msgstr "Uruchamia program Pitivi w debugerze języka Python."
 
 #: ../pitivi/application.py:425
 msgid "-a requires -i"
@@ -867,8 +867,8 @@ msgstr "Wersja rozwojowa"
 
 #: ../pitivi/mainwindow.py:737 ../pitivi/dialogs/startupwizard.py:164
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "PiTiVi %s jest dostępny."
+msgid "Pitivi %s is available."
+msgstr "Pitivi %s jest dostępny."
 
 #: ../pitivi/mainwindow.py:744
 msgid "Current maintainers:"
@@ -1001,11 +1001,11 @@ msgstr "Wszystkie pliki"
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 "Nie dostarczono pliku zastępczego dla \"<i>%s</i>\".\n"
 "\n"
-"Program PiTiVi obecnie nie obsługuje częściowych projektów."
+"Program Pitivi obecnie nie obsługuje częściowych projektów."
 
 #: ../pitivi/mainwindow.py:1228
 msgid "Export To..."
@@ -1035,8 +1035,8 @@ msgid "Preview - click outside to close"
 msgstr "Podgląd - kliknięcie poza nim zamknie"
 
 #: ../pitivi/mediafilespreviewer.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "Program PiTiVi nie może wyświetlić podglądu tego pliku."
+msgid "Pitivi can not preview this file."
+msgstr "Program Pitivi nie może wyświetlić podglądu tego pliku."
 
 #: ../pitivi/mediafilespreviewer.py:135
 msgid "More info"
@@ -1111,12 +1111,12 @@ msgid "Error while analyzing files"
 msgstr "Wystąpił błąd podczas analizowania plików"
 
 #: ../pitivi/medialibrary.py:784
-msgid "The following files can not be used with PiTiVi."
-msgstr "Następujące pliki nie mogą być używane w programie PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Następujące pliki nie mogą być używane w programie Pitivi."
 
 #: ../pitivi/medialibrary.py:787
-msgid "The following file can not be used with PiTiVi."
-msgstr "Następujący plik nie może być używane w programie PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Następujący plik nie może być używane w programie Pitivi."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
 #: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1279
@@ -1171,7 +1171,7 @@ msgstr "Nowy projekt"
 
 #: ../pitivi/project.py:562
 msgid "Pitivi encoding profile"
-msgstr "Profil kodowania PiTiVi"
+msgstr "Profil kodowania Pitivi"
 
 #: ../pitivi/project.py:1300 ../pitivi/render.py:541
 #, python-format

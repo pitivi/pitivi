@@ -24,7 +24,7 @@
 
     <title>Getting media</title>
 
-     <p>At the time of this writing, the only supported method is importing files from your hard drive. As such, you cannot use <app>PiTiVi</app> to capture directly from a camcorder. For DV/HDV camcorders using an IEEE 1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture footage.</p>
+     <p>At the time of this writing, the only supported method is importing files from your hard drive. As such, you cannot use <app>Pitivi</app> to capture directly from a camcorder. For DV/HDV camcorders using an IEEE 1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture footage.</p>
       <note>
        <p>We would welcome good quality patches to implement the following:</p>
        <list>
@@ -53,7 +53,7 @@
        </section>
        <section>
         <title>Using drag and drop</title>
-         <p>The concept of drag and drop is a well-established method of bridging the gap between software applications. Simply select the files you want to import in another application (such as a file manager or a multimedia app) and drag them with your mouse onto <app>PiTiVi</app>'s <gui>Media Library</gui>.</p>
+         <p>The concept of drag and drop is a well-established method of bridging the gap between software applications. Simply select the files you want to import in another application (such as a file manager or a multimedia app) and drag them with your mouse onto <app>Pitivi</app>'s <gui>Media Library</gui>.</p>
          <p>This feature can be used to:</p>
          <list>
           <item>

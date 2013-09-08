@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       configure.py
 #
@@ -37,14 +37,17 @@ GST_REQ = '0.10.22'
 GNONLIN_REQ = '0.10.12'
 PYCAIRO_REQ = '1.8'
 
+
 def _get_root_dir():
     return '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
+
 
 def _in_devel():
     rd = _get_root_dir()
     return (os.path.exists(os.path.join(rd, '.svn')) or
             os.path.exists(os.path.join(rd, 'CVS')) or
             os.path.exists(os.path.join(rd, '.git')))
+
 
 def get_pixmap_dir():
     """ Returns the directory for program-only pixmaps """
@@ -55,6 +58,7 @@ def get_pixmap_dir():
         root = PKGDATADIR
     print (os.path.join(root, 'pixmaps'))
     return os.path.join(root, 'pixmaps')
+
 
 def get_global_pixmap_dir():
     """ Returns the directory for global pixmaps (ex : application icon) """

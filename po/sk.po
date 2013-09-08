@@ -80,10 +80,10 @@ msgstr "Nainštalovať"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Keď chcete povoliť dodatočné funkcie, nainštalujte nasledujúce balíky a "
-"reštartujte PiTiVi:"
+"reštartujte Pitivi:"
 
 #: ../data/ui/depsmanager.ui.h:4
 msgid "label"
@@ -267,8 +267,8 @@ msgid "Section"
 msgstr "Sekcia"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
-msgstr "<b>Niektoré zmeny sa prejavia až po reštarte programu PiTiVi</b>"
+msgid "<b>Some changes will not take effect until you restart Pitivi</b>"
+msgstr "<b>Niektoré zmeny sa prejavia až po reštarte programu Pitivi</b>"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -800,8 +800,8 @@ msgstr "Súbor obsahuje presmerovanie na iný klip."
 
 # self error detail
 #: ../pitivi/discoverer.py:474
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi zatiaľ nevie spracovať presmerované súbory."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Pitivi zatiaľ nevie spracovať presmerované súbory."
 
 # self error
 #: ../pitivi/discoverer.py:500
@@ -869,8 +869,8 @@ msgstr "efekt"
 
 # register known formatters
 #: ../pitivi/formatters/format.py:81
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi formát (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi formát (XML)"
 
 # register known formatters
 #: ../pitivi/formatters/format.py:82
@@ -1174,8 +1174,8 @@ msgstr "Zhotovených %d %%"
 
 # label
 #: ../pitivi/ui/filechooserpreview.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi nevie zobraziť náhľad tohto súboru."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi nevie zobraziť náhľad tohto súboru."
 
 # button
 #: ../pitivi/ui/filechooserpreview.py:135
@@ -1497,7 +1497,7 @@ msgstr "Všetky neuložené zmeny sa stratia."
 #: ../pitivi/ui/mainwindow.py:844
 #, python-format
 msgid "Unable to load project \"%s\""
-msgstr "PiTiVi nedokáže načítať projekt „%s“"
+msgstr "Pitivi nedokáže načítať projekt „%s“"
 
 # dialog title
 #: ../pitivi/ui/mainwindow.py:846
@@ -1893,13 +1893,13 @@ msgstr "Nastala chyba počas analyzovania súborov"
 
 # msg
 #: ../pitivi/ui/sourcelist.py:773
-msgid "The following files can not be used with PiTiVi."
-msgstr "Nasledujúce súbory sa nedajú použiť v programe PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Nasledujúce súbory sa nedajú použiť v programe Pitivi."
 
 # msg
 #: ../pitivi/ui/sourcelist.py:776
-msgid "The following file can not be used with PiTiVi."
-msgstr "Nasledujúci súbor sa nedá použiť v programe PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Nasledujúci súbor sa nedá použiť v programe Pitivi."
 
 # action
 #: ../pitivi/ui/startupwizard.py:59

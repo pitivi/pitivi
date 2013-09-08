@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       project.py
 #
@@ -501,7 +501,7 @@ class ProjectManager(Signallable, Loggable):
 
 
 class Project(Loggable, GES.Project):
-    """The base class for PiTiVi projects
+    """The base class for Pitivi projects
 
     @ivar name: The name of the project
     @type name: C{str}

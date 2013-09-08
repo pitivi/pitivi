@@ -81,8 +81,8 @@ msgid "Install"
 msgstr "Installera"
 
 #: ../data/ui/depsmanager.ui.h:3
-msgid "To enable additional features, please install the following packages and restart PiTiVi:"
-msgstr "Installera följande paket och starta om PiTiVi för att aktivera ytterligare funktioner:"
+msgid "To enable additional features, please install the following packages and restart Pitivi:"
+msgstr "Installera följande paket och starta om Pitivi för att aktivera ytterligare funktioner:"
 
 #: ../data/ui/depsmanager.ui.h:4
 msgid "label"
@@ -263,8 +263,8 @@ msgid "Section"
 msgstr "Sektion"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
-msgstr "<b>Vissa ändringar kommer inte bli aktiva förrän du startar om PiTiVi</b>"
+msgid "<b>Some changes will not take effect until you restart Pitivi</b>"
+msgstr "<b>Vissa ändringar kommer inte bli aktiva förrän du startar om Pitivi</b>"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -680,8 +680,8 @@ msgid "File contains a redirection to another clip."
 msgstr "Filen innehåller en omdirigering till ett annat videoklipp."
 
 #: ../pitivi/discoverer.py:474
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi kan för närvarande inte hantera omdirigeringsfiler."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Pitivi kan för närvarande inte hantera omdirigeringsfiler."
 
 #: ../pitivi/discoverer.py:500
 msgid "Pipeline didn't want to go to PLAYING."
@@ -735,8 +735,8 @@ msgid "effect"
 msgstr "effekt"
 
 #: ../pitivi/formatters/format.py:81
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi (XML)"
 
 #: ../pitivi/formatters/format.py:82
 msgid "Playlist format"
@@ -1018,8 +1018,8 @@ msgid "%d%% Rendered"
 msgstr "%d%% renderat"
 
 #: ../pitivi/ui/filechooserpreview.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi kan inte förhandsvisa denna fil."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi kan inte förhandsvisa denna fil."
 
 #: ../pitivi/ui/filechooserpreview.py:135
 msgid "More info"
@@ -1591,12 +1591,12 @@ msgid "Error while analyzing files"
 msgstr "Fel vid analysering av filerna"
 
 #: ../pitivi/ui/sourcelist.py:773
-msgid "The following files can not be used with PiTiVi."
-msgstr "Följande filer kan inte användas med PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Följande filer kan inte användas med Pitivi."
 
 #: ../pitivi/ui/sourcelist.py:776
-msgid "The following file can not be used with PiTiVi."
-msgstr "Följande fil kan inte användas med PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Följande fil kan inte användas med Pitivi."
 
 #: ../pitivi/ui/startupwizard.py:59
 msgid "Projects"

@@ -81,8 +81,8 @@ msgstr "無法滿足相依關係"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
-msgstr "若要啟用額外功能，請安裝下列套件並重新啟動 PiTiVi："
+"restart Pitivi:"
+msgstr "若要啟用額外功能，請安裝下列套件並重新啟動 Pitivi："
 
 #: ../data/ui/depsmanager.ui.h:4
 msgid "label"
@@ -252,8 +252,8 @@ msgid "Unknown Mib"
 msgstr "未知 Mib"
 
 #: ../data/ui/preferences.ui.h:1
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
-msgstr "<b>有些變化將不會生效，直到您重新啟動 PiTiVi</b>"
+msgid "<b>Some changes will not take effect until you restart Pitivi</b>"
+msgstr "<b>有些變化將不會生效，直到您重新啟動 Pitivi</b>"
 
 #: ../data/ui/preferences.ui.h:2
 msgid "Preferences"
@@ -706,8 +706,8 @@ msgid "File contains a redirection to another clip."
 msgstr "檔案包含重新導向至其他剪輯。"
 
 #: ../pitivi/discoverer.py:474
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi 目前無法處理重新導向式的檔案。"
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Pitivi 目前無法處理重新導向式的檔案。"
 
 #: ../pitivi/discoverer.py:500
 msgid "Pipeline didn't want to go to PLAYING."
@@ -759,8 +759,8 @@ msgid "effect"
 msgstr "特效"
 
 #: ../pitivi/formatters/format.py:81
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi 原生 (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi 原生 (XML)"
 
 #: ../pitivi/formatters/format.py:82
 msgid "Playlist format"
@@ -1025,8 +1025,8 @@ msgid "%d%% Rendered"
 msgstr "%d%% 已壓製"
 
 #: ../pitivi/ui/filechooserpreview.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi 無法預覽此檔案。"
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi 無法預覽此檔案。"
 
 #: ../pitivi/ui/filechooserpreview.py:135
 msgid "More info"
@@ -1597,12 +1597,12 @@ msgid "Error while analyzing files"
 msgstr "解析檔案時發生錯誤"
 
 #: ../pitivi/ui/sourcelist.py:773
-msgid "The following files can not be used with PiTiVi."
-msgstr "下列檔案不能與 PiTiVi 一起使用。"
+msgid "The following files can not be used with Pitivi."
+msgstr "下列檔案不能與 Pitivi 一起使用。"
 
 #: ../pitivi/ui/sourcelist.py:776
-msgid "The following file can not be used with PiTiVi."
-msgstr "下列檔案不能與 PiTiVi 一起使用。"
+msgid "The following file can not be used with Pitivi."
+msgstr "下列檔案不能與 Pitivi 一起使用。"
 
 #: ../pitivi/ui/startupwizard.py:59
 msgid "Projects"
@@ -1957,8 +1957,8 @@ msgstr "%s 尚無法處理非本地端的專案"
 #~ msgid "_File"
 #~ msgstr "檔案(_F)"
 
-#~ msgid "PiTiVi is unable to load file \"%s\""
-#~ msgstr "PiTiVi 無法載入檔案「%s」"
+#~ msgid "Pitivi is unable to load file \"%s\""
+#~ msgstr "Pitivi 無法載入檔案「%s」"
 
 #~ msgid "Error Loading File"
 #~ msgstr "讀取檔案時發生錯誤"
@@ -2208,8 +2208,8 @@ msgstr "%s 尚無法處理非本地端的專案"
 #~ msgid "Raw Audio"
 #~ msgstr "Raw 音訊"
 
-#~ msgid "The following file has moved, please tell PiTiVi where to find it."
-#~ msgstr "下列檔案已經移動，請告訴 PiTiVi 該去哪裡找到它。"
+#~ msgid "The following file has moved, please tell Pitivi where to find it."
+#~ msgstr "下列檔案已經移動，請告訴 Pitivi 該去哪裡找到它。"
 
 #~ msgid "HTTP / HTTPS"
 #~ msgstr "HTTP / HTTPS"
@@ -2236,8 +2236,8 @@ msgstr "%s 尚無法處理非本地端的專案"
 #~ "此外掛程式已經安裝在您的系統內。\n"
 #~ "如果您同意的話，版本 %(v1)s 將會被版本 %(v2)s 取代"
 
-#~ msgid "Some changes will not take effect until you restart PiTiVi"
-#~ msgstr "有些變更還不會套用效果直到您重新啟動 PiTiVi 為止"
+#~ msgid "Some changes will not take effect until you restart Pitivi"
+#~ msgstr "有些變更還不會套用效果直到您重新啟動 Pitivi 為止"
 
 #~ msgid "Reset"
 #~ msgstr "重設"

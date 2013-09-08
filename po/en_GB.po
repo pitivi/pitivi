@@ -323,8 +323,8 @@ msgid "File contains a redirection to another clip."
 msgstr "File contains a redirection to another clip."
 
 #: ../pitivi/discoverer.py:466
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi currently does not handle redirection files."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Pitivi currently does not handle redirection files."
 
 #: ../pitivi/discoverer.py:492
 msgid "Pipeline didn't want to go to PLAYING."
@@ -382,8 +382,8 @@ msgid "effect"
 msgstr "effect"
 
 #: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi Native (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi Native (XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
@@ -822,8 +822,8 @@ msgid "Unknown Mib"
 msgstr "Unknown Mib"
 
 #: ../pitivi/ui/filechooserpreview.py:133
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi can not preview this file."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi can not preview this file."
 
 #: ../pitivi/ui/filechooserpreview.py:134
 msgid "More info"
@@ -1301,8 +1301,8 @@ msgid "Revert"
 msgstr "Revert"
 
 #: ../pitivi/ui/prefs.py:126
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Some changes will not take effect until you restart PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Some changes will not take effect until you restart Pitivi"
 
 #: ../pitivi/ui/prefs.py:321
 msgid "Reset"
@@ -1605,12 +1605,12 @@ msgid "Error while analyzing files"
 msgstr "Error while analysing files"
 
 #: ../pitivi/ui/sourcelist.py:747
-msgid "The following files can not be used with PiTiVi."
-msgstr "The following files can not be used with PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "The following files can not be used with Pitivi."
 
 #: ../pitivi/ui/sourcelist.py:750
-msgid "The following file can not be used with PiTiVi."
-msgstr "The following file can not be used with PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "The following file can not be used with Pitivi."
 
 #: ../pitivi/ui/startupwizard.glade.h:1
 msgid "Browse projects..."
@@ -1985,8 +1985,8 @@ msgstr "%s doesn't yet handle non-local projects"
 #~ msgid "URI:"
 #~ msgstr "URI:"
 
-#~ msgid "The following file has moved, please tell PiTiVi where to find it."
-#~ msgstr "The following file has moved, please tell PiTiVi where to find it."
+#~ msgid "The following file has moved, please tell Pitivi where to find it."
+#~ msgstr "The following file has moved, please tell Pitivi where to find it."
 
 #~ msgid "Duration:"
 #~ msgstr "Duration:"

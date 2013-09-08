@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       pitivi/utils/system.py
 #
@@ -29,7 +29,7 @@ from pitivi.utils.signal import Signallable
 
 class System(Signallable, Loggable):
     """A base class for all *Systems
-    implementing methods available in other parts of PiTiVi
+    implementing methods available in other parts of Pitivi
     """
 
     __signals__ = {

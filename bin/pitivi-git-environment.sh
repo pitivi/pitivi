@@ -376,7 +376,7 @@ if [ "$ready_to_run" != "1" ]; then
         cd ..
     done
 
-    # And obviously ... PiTiVi itself
+    # And obviously ... Pitivi itself
     if test ! -d $PITIVI/pitivi; then
         git clone git://git.gnome.org/pitivi
     fi

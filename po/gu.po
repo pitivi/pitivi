@@ -214,7 +214,7 @@ msgid "File contains a redirection to another clip."
 msgstr ""
 
 #: ../pitivi/discoverer.py:348
-msgid "PiTiVi currently does not handle redirection files."
+msgid "Pitivi currently does not handle redirection files."
 msgstr ""
 
 #: ../pitivi/application.py:106
@@ -632,7 +632,7 @@ msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:600
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
+msgid "Pitivi is unable to load file \"%s\""
 msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:602
@@ -941,7 +941,7 @@ msgid "Error while analyzing files"
 msgstr ""
 
 #: ../pitivi/ui/sourcelist.py:715
-msgid "The following files can not be used with PiTiVi."
+msgid "The following files can not be used with Pitivi."
 msgstr ""
 
 #: ../pitivi/ui/sourcelist.py:717
@@ -949,7 +949,7 @@ msgid "Error while analyzing a file"
 msgstr ""
 
 #: ../pitivi/ui/sourcelist.py:718
-msgid "The following file can not be used with PiTiVi."
+msgid "The following file can not be used with Pitivi."
 msgstr ""
 
 #. tooltip text for toolbar

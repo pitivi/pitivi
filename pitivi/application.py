@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       pitivi/pitivi.py
 #
@@ -119,12 +119,12 @@ class Pitivi(Loggable, Signallable):
         self.info('starting up')
 
         # store ourself in the instance global
-        if instance.PiTiVi:
+        if instance.Pitivi:
             raise RuntimeWarning(_("There is already a %s instance, please inform "
                 "the developers by filing a bug at "
                 "http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi")
                 % APPNAME)
-        instance.PiTiVi = self
+        instance.Pitivi = self
 
         self.current_project = None
 
@@ -151,9 +151,9 @@ class Pitivi(Loggable, Signallable):
 
     def shutdown(self):
         """
-        Close PiTiVi.
+        Close Pitivi.
 
-        @return: C{True} if PiTiVi was successfully closed, else C{False}.
+        @return: C{True} if Pitivi was successfully closed, else C{False}.
         @rtype: C{bool}
         """
         self.debug("shutting down")
@@ -165,7 +165,7 @@ class Pitivi(Loggable, Signallable):
         self.threads.stopAllThreads()
         self.settings.storeSettings()
         self.current_project = None
-        instance.PiTiVi = None
+        instance.Pitivi = None
         self.emit("shutdown")
         return True
 
@@ -243,7 +243,7 @@ class Pitivi(Loggable, Signallable):
 
 class InteractivePitivi(Pitivi):
     """
-    Base class to launch interactive PiTiVi
+    Base class to launch interactive Pitivi
     """
 
     def __init__(self, debug=False):
@@ -283,7 +283,7 @@ class InteractivePitivi(Pitivi):
 
 class GuiPitivi(InteractivePitivi):
     """
-    Base class to launch a PiTiVi instance with a graphical user interface
+    Base class to launch a Pitivi instance with a graphical user interface
 
     This is called when we start the UI with a project passed as a parameter.
     It is also called by StartupWizardGuiPitivi.
@@ -322,7 +322,7 @@ class GuiPitivi(InteractivePitivi):
 
 class ProjectCreatorGuiPitivi(GuiPitivi):
     """
-    Creates an instance of PiTiVi with the UI and loading a list
+    Creates an instance of Pitivi with the UI and loading a list
     of clips, adding them to the timeline or not
     """
 
@@ -382,7 +382,7 @@ class ProjectLoaderGuiPitivi(GuiPitivi):
 
 class StartupWizardGuiPitivi(GuiPitivi):
     """
-    Creates an instance of the PiTiVi UI with the welcome dialog
+    Creates an instance of the Pitivi UI with the welcome dialog
 
     This is not called when a project is passed as a parameter.
     """

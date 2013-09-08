@@ -53,7 +53,7 @@ GES:
 
             total: 20 to 30 days
 
-PiTiVi:
+Pitivi:
 
     Critical
     ========
@@ -79,7 +79,7 @@ PiTiVi:
         -> Implement properly rendering:
             => 2 days DONE:
 
-        -> Remove ALL references to the old PiTiVi core
+        -> Remove ALL references to the old Pitivi core
             => 1 day left
 
         > Handle project settings:

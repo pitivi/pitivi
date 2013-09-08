@@ -4,8 +4,8 @@
       id="index">
 
   <info>
-    <title type="link">PiTiVi Quick Start Manual</title>
-    <title type="text">PiTiVi Quick Start Manual</title>
+    <title type="link">Pitivi Quick Start Manual</title>
+    <title type="text">Pitivi Quick Start Manual</title>
     <revision pkgversion="0.14.0" version="0.2" date="2011-06-05" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
@@ -21,11 +21,11 @@
   </info>
 
   <title>
-    <media type="image" mime="image/png" src="figures/logo.png">PiTiVi logo</media>
-    PiTiVi Video Editor
+    <media type="image" mime="image/png" src="figures/logo.png">Pitivi logo</media>
+    Pitivi Video Editor
   </title>
 
-   <p>Built upon the <link href="http://en.wikipedia.org/wiki/GStreamer"><app>GStreamer</app></link> multimedia framework, <app>PiTiVi</app> aims to be an intuitive and flexible video editor that integrates well with <link href="http://gnome.org"><app>GNOME</app></link> and can appeal to newbies and professionals alike.</p>
+   <p>Built upon the <link href="http://en.wikipedia.org/wiki/GStreamer"><app>GStreamer</app></link> multimedia framework, <app>Pitivi</app> aims to be an intuitive and flexible video editor that integrates well with <link href="http://gnome.org"><app>GNOME</app></link> and can appeal to newbies and professionals alike.</p>
    <p>This guide is intended to help you grasp the concepts behind its design and get productive quickly.</p>
 
   <section id="intro" style="2column">

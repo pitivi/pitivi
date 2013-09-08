@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       pitivi/medialibrary.py
 #
@@ -781,10 +781,10 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         if len(self._errors) > 1:
             msgs = (_("Error while analyzing files"),
-                    _("The following files can not be used with PiTiVi."))
+                    _("The following files can not be used with Pitivi."))
         else:
             msgs = (_("Error while analyzing a file"),
-                    _("The following file can not be used with PiTiVi."))
+                    _("The following file can not be used with Pitivi."))
         self._error_dialogbox = FileListErrorDialog(*msgs)
         self._error_dialogbox.connect("close", self._errorDialogBoxCloseCb)
         self._error_dialogbox.connect("response", self._errorDialogBoxResponseCb)

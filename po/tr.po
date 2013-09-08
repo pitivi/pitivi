@@ -88,7 +88,7 @@ msgstr ""
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 
 #: ../data/ui/depsmanager.ui.h:4
@@ -292,9 +292,9 @@ msgstr "Bilinmeyen sebep"
 
 #: ../data/ui/preferences.ui.h:1
 #, fuzzy
-#| msgid "Some changes will not take effect until you restart PiTiVi"
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
-msgstr "Bazı değişiklikler PiTiVi'yi yeniden başlatana kadar geçerli olmayacak"
+#| msgid "Some changes will not take effect until you restart Pitivi"
+msgid "<b>Some changes will not take effect until you restart Pitivi</b>"
+msgstr "Bazı değişiklikler Pitivi'yi yeniden başlatana kadar geçerli olmayacak"
 
 #: ../data/ui/preferences.ui.h:2
 msgid "Preferences"
@@ -487,7 +487,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Run pitivi in the Python Debugger"
 msgid "Run Pitivi in the Python Debugger."
-msgstr "PiTiVi'yi Python Debugger içinde çalıştır"
+msgstr "Pitivi'yi Python Debugger içinde çalıştır"
 
 #: ../pitivi/application.py:464
 msgid "Render the specified project to OUTPUT_FILE with no GUI."
@@ -847,8 +847,8 @@ msgid "File contains a redirection to another clip."
 msgstr "Dosya başka bir klibe yönlendiriliyor."
 
 #: ../pitivi/discoverer.py:474
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi şu anda dosyaları yeniden yönlendiremiyor."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Pitivi şu anda dosyaları yeniden yönlendiremiyor."
 
 #: ../pitivi/discoverer.py:500
 msgid "Pipeline didn't want to go to PLAYING."
@@ -909,8 +909,8 @@ msgid "effect"
 msgstr ""
 
 #: ../pitivi/formatters/format.py:81
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi Native (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi Native (XML)"
 
 #: ../pitivi/formatters/format.py:82
 msgid "Playlist format"
@@ -1177,9 +1177,9 @@ msgstr ""
 
 #: ../pitivi/ui/filechooserpreview.py:134
 #, fuzzy
-#| msgid "PiTiVi currently does not handle redirection files."
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi şu anda dosyaları yeniden yönlendiremiyor."
+#| msgid "Pitivi currently does not handle redirection files."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi şu anda dosyaları yeniden yönlendiremiyor."
 
 #: ../pitivi/ui/filechooserpreview.py:135
 msgid "More info"
@@ -1458,9 +1458,9 @@ msgstr "Eğer kaydetmezseniz değişiklikler kaybedilecektir"
 
 #: ../pitivi/ui/mainwindow.py:844
 #, fuzzy, python-format
-#| msgid "PiTiVi is unable to load file \"%s\""
+#| msgid "Pitivi is unable to load file \"%s\""
 msgid "Unable to load project \"%s\""
-msgstr "PiTiVi dosyayı yükleyemiyor \"%s\""
+msgstr "Pitivi dosyayı yükleyemiyor \"%s\""
 
 #: ../pitivi/ui/mainwindow.py:846
 #, fuzzy
@@ -1475,12 +1475,12 @@ msgstr "Kayıt dosyayı bul..."
 #. The file is probably an image, not video or audio.
 #: ../pitivi/ui/mainwindow.py:867
 #, fuzzy, python-format
-#| msgid "The following file has moved, please tell PiTiVi where to find it."
+#| msgid "The following file has moved, please tell Pitivi where to find it."
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
 "Please specify its new location:"
 msgstr ""
-"Aşağıdaki dosyanın yeri değişmiş, lütfen PiTiVi'ye onu nerede bulacağını "
+"Aşağıdaki dosyanın yeri değişmiş, lütfen Pitivi'ye onu nerede bulacağını "
 "söyleyin."
 
 #: ../pitivi/ui/mainwindow.py:872
@@ -1786,12 +1786,12 @@ msgid "Error while analyzing files"
 msgstr "Dosyaları analiz ederken hata oluştu"
 
 #: ../pitivi/ui/sourcelist.py:773
-msgid "The following files can not be used with PiTiVi."
-msgstr "Aşağıdaki dosyalar PiTiVi ile kullanılamaz durumda."
+msgid "The following files can not be used with Pitivi."
+msgstr "Aşağıdaki dosyalar Pitivi ile kullanılamaz durumda."
 
 #: ../pitivi/ui/sourcelist.py:776
-msgid "The following file can not be used with PiTiVi."
-msgstr "Aşağıdaki dosya PiTiVi ile kullanılamaz."
+msgid "The following file can not be used with Pitivi."
+msgstr "Aşağıdaki dosya Pitivi ile kullanılamaz."
 
 #: ../pitivi/ui/timelinecanvas.py:52
 msgid "Behavior"

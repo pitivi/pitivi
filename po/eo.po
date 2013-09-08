@@ -285,7 +285,7 @@ msgid "File contains a redirection to another clip."
 msgstr ""
 
 #: ../pitivi/discoverer.py:466
-msgid "PiTiVi currently does not handle redirection files."
+msgid "Pitivi currently does not handle redirection files."
 msgstr ""
 
 #: ../pitivi/discoverer.py:492
@@ -344,7 +344,7 @@ msgid "effect"
 msgstr "efekto"
 
 #: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
+msgid "Pitivi Native (XML)"
 msgstr ""
 
 #: ../pitivi/formatters/format.py:78
@@ -1068,7 +1068,7 @@ msgid "Locate missing file..."
 msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:948
-msgid "The following file has moved, please tell PiTiVi where to find it."
+msgid "The following file has moved, please tell Pitivi where to find it."
 msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:950
@@ -1235,7 +1235,7 @@ msgid "Revert"
 msgstr "Malfari"
 
 #: ../pitivi/ui/prefs.py:125
-msgid "Some changes will not take effect until you restart PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
 msgstr ""
 
 #: ../pitivi/ui/prefs.py:320
@@ -1537,7 +1537,7 @@ msgid "Error while analyzing files"
 msgstr ""
 
 #: ../pitivi/ui/sourcelist.py:740
-msgid "The following files can not be used with PiTiVi."
+msgid "The following files can not be used with Pitivi."
 msgstr ""
 
 #: ../pitivi/ui/sourcelist.py:742
@@ -1545,7 +1545,7 @@ msgid "Error while analyzing a file"
 msgstr ""
 
 #: ../pitivi/ui/sourcelist.py:743
-msgid "The following file can not be used with PiTiVi."
+msgid "The following file can not be used with Pitivi."
 msgstr ""
 
 #: ../pitivi/ui/startupwizard.glade.h:1

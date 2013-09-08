@@ -142,7 +142,7 @@ msgid "Install"
 msgstr "התקנה"
 
 #: ../data/ui/depsmanager.ui.h:3
-msgid "To enable additional features, please install the following packages and restart PiTiVi:"
+msgid "To enable additional features, please install the following packages and restart Pitivi:"
 msgstr ""
 
 #: ../data/ui/depsmanager.ui.h:4
@@ -162,8 +162,8 @@ msgid "Section"
 msgstr "אזור"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "חלק מהשינויים שבוצעו לא ייכנסו לתוקף עד להפעלת PiTiVi מחדש"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "חלק מהשינויים שבוצעו לא ייכנסו לתוקף עד להפעלת Pitivi מחדש"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -751,8 +751,8 @@ msgstr "חיפוש:"
 
 #. FIXME Hacky, reimplement when avalaible in GES
 #: ../pitivi/mainwindow.py:135
-msgid "PiTiVi Native (XML)"
-msgstr "טבעי של PiTiVi‏ (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "טבעי של Pitivi‏ (XML)"
 
 #: ../pitivi/mainwindow.py:142
 #: ../pitivi/timeline/timeline.py:1093
@@ -927,7 +927,7 @@ msgstr "משך"
 #: ../pitivi/mainwindow.py:648
 #: ../pitivi/dialogs/startupwizard.py:158
 #, python-format
-msgid "PiTiVi %s is available."
+msgid "Pitivi %s is available."
 msgstr ""
 
 #: ../pitivi/mainwindow.py:655
@@ -1007,7 +1007,7 @@ msgstr "כל השינויים שלא נשמרו ילכו לאיבוד."
 #: ../pitivi/mainwindow.py:907
 #, fuzzy, python-format
 msgid "Unable to load project \"%s\""
-msgstr "התכנית PiTiVi לא הצליחה לטעון את הקובץ \"%s\""
+msgstr "התכנית Pitivi לא הצליחה לטעון את הקובץ \"%s\""
 
 #: ../pitivi/mainwindow.py:908
 #, fuzzy
@@ -1036,14 +1036,14 @@ msgstr "איתור קובץ חסר..."
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
 "Please specify its new location:"
-msgstr "הקוב. הבא הועבר, נא לגלות ל־PiTiVi היכן למצוא אותו."
+msgstr "הקוב. הבא הועבר, נא לגלות ל־Pitivi היכן למצוא אותו."
 
 #: ../pitivi/mainwindow.py:997
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 
 #: ../pitivi/mainwindow.py:1099
@@ -1077,8 +1077,8 @@ msgstr ""
 
 #: ../pitivi/mediafilespreviewer.py:125
 #, fuzzy
-msgid "PiTiVi can not preview this file."
-msgstr "התכנית PiTiVi כרגע אינה מסוגלת לטפל בקובצי הפניה."
+msgid "Pitivi can not preview this file."
+msgstr "התכנית Pitivi כרגע אינה מסוגלת לטפל בקובצי הפניה."
 
 #: ../pitivi/mediafilespreviewer.py:126
 msgid "More info"
@@ -1221,12 +1221,12 @@ msgid "Error while analyzing files"
 msgstr "שגיאה בעת ניתוח הקבצים"
 
 #: ../pitivi/medialibrary.py:978
-msgid "The following files can not be used with PiTiVi."
-msgstr "לא ניתן להשתמש ב־PiTiVi לעיבוד קבצים אלה."
+msgid "The following files can not be used with Pitivi."
+msgstr "לא ניתן להשתמש ב־Pitivi לעיבוד קבצים אלה."
 
 #: ../pitivi/medialibrary.py:981
-msgid "The following file can not be used with PiTiVi."
-msgstr "לא ניתן להשתמש ב־PiTiVi לעיבוד קובץ זה."
+msgid "The following file can not be used with Pitivi."
+msgstr "לא ניתן להשתמש ב־Pitivi לעיבוד קובץ זה."
 
 #: ../pitivi/preset.py:93
 #: ../pitivi/preset.py:210

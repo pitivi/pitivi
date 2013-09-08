@@ -1,6 +1,6 @@
 Timeline view design document (c) 2005 Edward Hervey
 
-* How is the timeline handled in PiTiVi ?
+* How is the timeline handled in Pitivi ?
 
   The timeline follows the "View - Model - Data" design.
    _ Data is the gnonlin timeline (GnlTimeline)

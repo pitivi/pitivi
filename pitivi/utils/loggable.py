@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       pitivi/log/loggable.py
 #
@@ -304,7 +304,7 @@ def getLevelInt(levelName):
     """
     assert isinstance(levelName, str) and levelName in getLevelNames(), \
         "Bad debug level name"
-    return  getLevelNames().index(levelName) + 1
+    return getLevelNames().index(levelName) + 1
 
 
 def getFormattedLevelName(level):

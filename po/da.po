@@ -1,12 +1,12 @@
-# Danish translation of PiTiVi.
-# Copyright (C) 2009 PiTiVi & nedenstående oversættere.
-# This file is distributed under the same license as the PiTiVi package.
+# Danish translation of Pitivi.
+# Copyright (C) 2009 Pitivi & nedenstående oversættere.
+# This file is distributed under the same license as the Pitivi package.
 # Per Kongstad <p_kongstad@op.pl>, 2009.
 # Joe Hansen <joedalton2@yahoo.dk>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PiTiVi\n"
+"Project-Id-Version: Pitivi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-11-09 21:20+0100\n"
 "PO-Revision-Date: 2010-10-29 12:12+0100\n"
@@ -270,8 +270,8 @@ msgid "File contains a redirection to another clip."
 msgstr "Fil indeholder en henvisning til et andet klip."
 
 #: ../pitivi/discoverer.py:466
-msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi understøtter for nuværende ikke henvisningsfiler."
+msgid "Pitivi currently does not handle redirection files."
+msgstr "Pitivi understøtter for nuværende ikke henvisningsfiler."
 
 #: ../pitivi/discoverer.py:492
 msgid "Pipeline didn't want to go to PLAYING."
@@ -469,8 +469,8 @@ msgid "effect"
 msgstr "effekt"
 
 #: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi ren (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi ren (XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
@@ -1092,8 +1092,8 @@ msgstr "Alle ændringer, der ikke er gemt, mistes."
 
 #: ../pitivi/ui/mainwindow.py:926
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi kan ikke indlæse filen \"%s\""
+msgid "Pitivi is unable to load file \"%s\""
+msgstr "Pitivi kan ikke indlæse filen \"%s\""
 
 #: ../pitivi/ui/mainwindow.py:929
 msgid "Error Loading File"
@@ -1104,9 +1104,9 @@ msgid "Locate missing file..."
 msgstr "Lokalisér manglende fil..."
 
 #: ../pitivi/ui/mainwindow.py:945
-msgid "The following file has moved, please tell PiTiVi where to find it."
+msgid "The following file has moved, please tell Pitivi where to find it."
 msgstr ""
-"Den følgende fil har flyttet sig, fortæl venligst PiTiVi hvor programmet "
+"Den følgende fil har flyttet sig, fortæl venligst Pitivi hvor programmet "
 "skal finde den."
 
 #: ../pitivi/ui/mainwindow.py:947
@@ -1279,8 +1279,8 @@ msgid "Revert"
 msgstr "Fortryd"
 
 #: ../pitivi/ui/prefs.py:125
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Nogle ændringer vil ikke være aktive, før du genstarter PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Nogle ændringer vil ikke være aktive, før du genstarter Pitivi"
 
 #: ../pitivi/ui/prefs.py:320
 msgid "Reset"
@@ -1460,16 +1460,16 @@ msgid "Error while analyzing files"
 msgstr "Fejl opstod ved analyse af filer"
 
 #: ../pitivi/ui/sourcelist.py:1058
-msgid "The following files can not be used with PiTiVi."
-msgstr "De følgende filer kan ikke bruges med PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "De følgende filer kan ikke bruges med Pitivi."
 
 #: ../pitivi/ui/sourcelist.py:1060
 msgid "Error while analyzing a file"
 msgstr "Fejl opstod ved analyse af fil"
 
 #: ../pitivi/ui/sourcelist.py:1061
-msgid "The following file can not be used with PiTiVi."
-msgstr "Den følgende fil kan ikke bruges med PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Den følgende fil kan ikke bruges med Pitivi."
 
 #. tooltip text for toolbar
 #: ../pitivi/ui/timeline.py:54

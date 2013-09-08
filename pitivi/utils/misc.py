@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       utils.py
 #
@@ -100,7 +100,7 @@ def bin_contains(bin, element):
 
 def in_devel():
     """
-    Returns True if the current PiTiVi instance is run from a git checkout
+    Returns True if the current Pitivi instance is run from a git checkout
     """
     try:
         # This code is the same as in the configure files

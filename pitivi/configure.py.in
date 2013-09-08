@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       configure.py
 #
@@ -25,9 +25,11 @@ Enables identical use for installed and uninstalled versions.
 
 import os.path
 
+
 # Again, mostly the same thing as in bin/pitivi.in and pitivi/utils/misc.py:
 def _get_root_dir():
     return '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
+
 
 def _in_devel():
     rd = _get_root_dir()
@@ -40,14 +42,13 @@ pitivi_version = '@VERSION@'
 APPNAME = '@PACKAGE_NAME@'
 APPURL = 'http://www.pitivi.org/'
 RELEASES_URL = 'http://pitivi.org/releases.txt'
+APPMANUALURL_ONLINE = 'http://www.pitivi.org/manual'
 
 
 if _in_devel():
     APPMANUALURL_OFFLINE = 'ghelp://%s' % os.path.join(_get_root_dir(), 'help/C')
 else:
     APPMANUALURL_OFFLINE = 'help:pitivi'
-
-APPMANUALURL_ONLINE = 'http://www.pitivi.org/manual'
 
 
 def get_data_dir():
@@ -60,21 +61,26 @@ def get_data_dir():
         datadir = PKGDATADIR
     return os.path.abspath(datadir)
 
+
 def get_pixmap_dir():
     """ Returns the directory for program-only pixmaps """
     return os.path.join(get_data_dir(), 'pixmaps')
+
 
 def get_ui_dir():
     """ Returns the directory for GtkBuilder/Glade files """
     return os.path.join(get_data_dir(), 'ui')
 
+
 def get_renderpresets_dir():
     """ Returns the directory for Render Presets files """
     return os.path.join(get_data_dir(), 'renderpresets')
 
+
 def get_audiopresets_dir():
     """ Returns the directory for Audio Presets files """
     return os.path.join(get_data_dir(), 'audiopresets')
+
 
 def get_videopresets_dir():
     """ Returns the directory for Video Presets files """

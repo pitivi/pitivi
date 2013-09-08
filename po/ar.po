@@ -255,7 +255,7 @@ msgid "File contains a redirection to another clip."
 msgstr ""
 
 #: ../pitivi/discoverer.py:466
-msgid "PiTiVi currently does not handle redirection files."
+msgid "Pitivi currently does not handle redirection files."
 msgstr ""
 
 #: ../pitivi/discoverer.py:492
@@ -438,7 +438,7 @@ msgid "effect"
 msgstr ""
 
 #: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
+msgid "Pitivi Native (XML)"
 msgstr ""
 
 #: ../pitivi/formatters/format.py:78
@@ -1091,7 +1091,7 @@ msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:926
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
+msgid "Pitivi is unable to load file \"%s\""
 msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:929
@@ -1105,7 +1105,7 @@ msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:945
 #, fuzzy
-msgid "The following file has moved, please tell PiTiVi where to find it."
+msgid "The following file has moved, please tell Pitivi where to find it."
 msgstr "لا يمكن عرض الموقع بهذا العارض."
 
 #: ../pitivi/ui/mainwindow.py:947
@@ -1275,7 +1275,7 @@ msgid "Revert"
 msgstr "احذف"
 
 #: ../pitivi/ui/prefs.py:125
-msgid "Some changes will not take effect until you restart PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
 msgstr ""
 
 #: ../pitivi/ui/prefs.py:320
@@ -1468,7 +1468,7 @@ msgstr "حدث خطأ خلال فتح %s."
 
 #: ../pitivi/ui/sourcelist.py:1058
 #, fuzzy
-msgid "The following files can not be used with PiTiVi."
+msgid "The following files can not be used with Pitivi."
 msgstr "لا يمكن عرض الموقع بهذا العارض."
 
 #: ../pitivi/ui/sourcelist.py:1060
@@ -1478,7 +1478,7 @@ msgstr "حدث خطأ خلال فتح %s."
 
 #: ../pitivi/ui/sourcelist.py:1061
 #, fuzzy
-msgid "The following file can not be used with PiTiVi."
+msgid "The following file can not be used with Pitivi."
 msgstr "لا يمكن عرض الموقع بهذا العارض."
 
 #. tooltip text for toolbar

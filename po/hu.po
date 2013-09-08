@@ -132,10 +132,10 @@ msgstr "Telepítés"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "További szolgáltatások bekapcsolásához telepítse a következő csomagokat, és "
-"indítsa újra a PiTiVit:"
+"indítsa újra a Pitivit:"
 
 #: ../data/ui/effectslibrary.ui.h:1
 msgid "Show video effects"
@@ -211,8 +211,8 @@ msgid "Section"
 msgstr "Szakasz"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Néhány változtatás nem lép életbe a PiTiVi újraindításáig"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Néhány változtatás nem lép életbe a Pitivi újraindításáig"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -840,8 +840,8 @@ msgstr "Fejlesztői verzió"
 
 #: ../pitivi/mainwindow.py:717 ../pitivi/dialogs/startupwizard.py:164
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "Elérhető a PiTiVi %s."
+msgid "Pitivi %s is available."
+msgstr "Elérhető a Pitivi %s."
 
 #: ../pitivi/mainwindow.py:724
 msgid "Current maintainers:"
@@ -961,11 +961,11 @@ msgstr "Minden fájl"
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 "Nincs megadva cserefájl ehhez: „<i>%s</i>”.\n"
 "\n"
-"A PiTiVi jelenleg nem támogatja a részleges projekteket."
+"A Pitivi jelenleg nem támogatja a részleges projekteket."
 
 #: ../pitivi/mainwindow.py:1183
 msgid "Export To..."
@@ -995,8 +995,8 @@ msgid "Preview - click outside to close"
 msgstr "Előnézet – kattintson kívülre a bezáráshoz"
 
 #: ../pitivi/mediafilespreviewer.py:136
-msgid "PiTiVi can not preview this file."
-msgstr "A PiTiVi nem képes megjeleníteni ezt a fájlt."
+msgid "Pitivi can not preview this file."
+msgstr "A Pitivi nem képes megjeleníteni ezt a fájlt."
 
 #: ../pitivi/mediafilespreviewer.py:137
 msgid "More info"
@@ -1071,12 +1071,12 @@ msgid "Error while analyzing files"
 msgstr "Hiba a fájlok elemzése közben"
 
 #: ../pitivi/medialibrary.py:755
-msgid "The following files can not be used with PiTiVi."
-msgstr "A PiTiVi nem tudja használni a következő fájlokat."
+msgid "The following files can not be used with Pitivi."
+msgstr "A Pitivi nem tudja használni a következő fájlokat."
 
 #: ../pitivi/medialibrary.py:758
-msgid "The following file can not be used with PiTiVi."
-msgstr "A PiTiVi nem tudja használni a következő fájlt."
+msgid "The following file can not be used with Pitivi."
+msgstr "A Pitivi nem tudja használni a következő fájlt."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
 #: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1226
@@ -2027,8 +2027,8 @@ msgstr "A(z) %s tulajdonságai"
 #~ msgid "Blur"
 #~ msgstr "Elmosás"
 
-#~ msgid "PiTiVi native (XML)"
-#~ msgstr "PiTiVi natív (XML)"
+#~ msgid "Pitivi native (XML)"
+#~ msgstr "Pitivi natív (XML)"
 
 #~ msgid "Subtitles"
 #~ msgstr "Feliratok"
@@ -2147,8 +2147,8 @@ msgstr "A(z) %s tulajdonságai"
 #~ msgid "File contains a redirection to another clip."
 #~ msgstr "A fájl átirányítást tartalmaz egy másik klipre."
 
-#~ msgid "PiTiVi currently does not handle redirection files."
-#~ msgstr "A PiTiVi jelenleg nem kezeli az átirányítási fájlokat."
+#~ msgid "Pitivi currently does not handle redirection files."
+#~ msgstr "A Pitivi jelenleg nem kezeli az átirányítási fájlokat."
 
 #~ msgid "Pipeline didn't want to go to PLAYING."
 #~ msgstr "Az adatcsatorna nem akart LEJÁTSZÁS állapotba kerülni."

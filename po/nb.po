@@ -80,7 +80,7 @@ msgstr "Mangler avhengigheter"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 
 #: ../data/ui/depsmanager.ui.h:4
@@ -248,8 +248,8 @@ msgid "Unknown Mib"
 msgstr "Ukjent Mib"
 
 #: ../data/ui/preferences.ui.h:1
-msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
-msgstr "<b>Noen endringer vil ikke gjelde før du starter PiTiVi på nytt</b>"
+msgid "<b>Some changes will not take effect until you restart Pitivi</b>"
+msgstr "<b>Noen endringer vil ikke gjelde før du starter Pitivi på nytt</b>"
 
 #: ../data/ui/preferences.ui.h:2
 msgid "Preferences"
@@ -674,7 +674,7 @@ msgid "File contains a redirection to another clip."
 msgstr ""
 
 #: ../pitivi/discoverer.py:475
-msgid "PiTiVi currently does not handle redirection files."
+msgid "Pitivi currently does not handle redirection files."
 msgstr ""
 
 #: ../pitivi/discoverer.py:501
@@ -736,8 +736,8 @@ msgid "Failed loading %(uri)s."
 msgstr "Klarte ikke å laste %(uri)s."
 
 #: ../pitivi/formatters/format.py:81
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi-format (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi-format (XML)"
 
 #: ../pitivi/formatters/format.py:82
 msgid "Playlist format"
@@ -955,8 +955,8 @@ msgstr ""
 "Velg et annet filnavn eller en annen mappe hvis du ikke vil overskrive den."
 
 #: ../pitivi/ui/filechooserpreview.py:134
-msgid "PiTiVi can not preview this file."
-msgstr "PiTiVi kan ikke forhåndsvise denne filen."
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi kan ikke forhåndsvise denne filen."
 
 #: ../pitivi/ui/filechooserpreview.py:135
 msgid "More info"
@@ -1516,12 +1516,12 @@ msgid "Error while analyzing files"
 msgstr "Feil under analyse av filer"
 
 #: ../pitivi/ui/sourcelist.py:774
-msgid "The following files can not be used with PiTiVi."
-msgstr "Følgende filer kan ikke brukes med PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Følgende filer kan ikke brukes med Pitivi."
 
 #: ../pitivi/ui/sourcelist.py:777
-msgid "The following file can not be used with PiTiVi."
-msgstr "Følgende fil kan ikke brukes med PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Følgende fil kan ikke brukes med Pitivi."
 
 #: ../pitivi/ui/timelinecanvas.py:52
 msgid "Behavior"

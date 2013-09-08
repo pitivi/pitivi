@@ -1,6 +1,6 @@
-# Greek translation of PiTiVi.
+# Greek translation of Pitivi.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PiTiVi package.
+# This file is distributed under the same license as the Pitivi package.
 # Simos Xenitellis <simos@gnome.org>, 2006.
 # Dimitris Tsiolis <dimits7@gmail.com>, 2010.
 # Panagiotis Papadopoulos <panpapadopoulos01@gmail.com>, 2011.
@@ -133,10 +133,10 @@ msgstr "Εγκατάσταση"
 #: ../data/ui/depsmanager.ui.h:3
 msgid ""
 "To enable additional features, please install the following packages and "
-"restart PiTiVi:"
+"restart Pitivi:"
 msgstr ""
 "Για να ενεργοποιήσετε πρόσθετα χαρακτηριστικά, παρακαλούμε εγκαταστήστε τα "
-"παρακάτω πακέτα και επανεκκινήστε το PiTiVi:"
+"παρακάτω πακέτα και επανεκκινήστε το Pitivi:"
 
 #: ../data/ui/effectslibrary.ui.h:1
 #| msgid "Video effects"
@@ -225,8 +225,8 @@ msgid "Section"
 msgstr "Ενότητα"
 
 #: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Μερικές αλλαγές δεν θα εφαρμοστούν έως ότου επανεκκινήσετε το PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Μερικές αλλαγές δεν θα εφαρμοστούν έως ότου επανεκκινήσετε το Pitivi"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
@@ -881,8 +881,8 @@ msgstr "Έκδοση ανάπτυξης"
 
 #: ../pitivi/mainwindow.py:737 ../pitivi/dialogs/startupwizard.py:164
 #, python-format
-msgid "PiTiVi %s is available."
-msgstr "Το PiTiVi %s είναι διαθέσιμο."
+msgid "Pitivi %s is available."
+msgstr "Το Pitivi %s είναι διαθέσιμο."
 
 #: ../pitivi/mainwindow.py:744
 msgid "Current maintainers:"
@@ -998,11 +998,11 @@ msgstr "Όλα τα αρχεία"
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
-"PiTiVi does not currently support partial projects."
+"Pitivi does not currently support partial projects."
 msgstr ""
 "Δεν δόθηκε αρχείο αντικατάστασης για \"<i>%s</i>\".\n"
 "\n"
-"Το PiTiVi δεν υποστηρίζει προς το παρόν μερικά έργα."
+"Το Pitivi δεν υποστηρίζει προς το παρόν μερικά έργα."
 
 #: ../pitivi/mainwindow.py:1208
 msgid "Export To..."
@@ -1032,8 +1032,8 @@ msgid "Preview - click outside to close"
 msgstr "Προεπισκόπηση - πάτημα εξωτερικά για κλείσιμο"
 
 #: ../pitivi/mediafilespreviewer.py:137
-msgid "PiTiVi can not preview this file."
-msgstr "Το PiTiVi δε μπορεί να προεπισκοπήσει αυτό το αρχείο."
+msgid "Pitivi can not preview this file."
+msgstr "Το Pitivi δε μπορεί να προεπισκοπήσει αυτό το αρχείο."
 
 #: ../pitivi/mediafilespreviewer.py:138
 msgid "More info"
@@ -1113,12 +1113,12 @@ msgid "Error while analyzing files"
 msgstr "Σφάλμα κατά την ανάλυση των αρχείων"
 
 #: ../pitivi/medialibrary.py:764
-msgid "The following files can not be used with PiTiVi."
-msgstr "Τα παρακάτω αρχεία δε μπορούν να χρησιμοποιηθούν με το PiTiVi."
+msgid "The following files can not be used with Pitivi."
+msgstr "Τα παρακάτω αρχεία δε μπορούν να χρησιμοποιηθούν με το Pitivi."
 
 #: ../pitivi/medialibrary.py:767
-msgid "The following file can not be used with PiTiVi."
-msgstr "Το παρακάτω αρχείο δε μπορεί να χρησιμοποιηθεί με το PiTiVi."
+msgid "The following file can not be used with Pitivi."
+msgstr "Το παρακάτω αρχείο δε μπορεί να χρησιμοποιηθεί με το Pitivi."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
 #: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1209
@@ -1986,8 +1986,8 @@ msgstr "Γραμμή χρόνου εστίασης"
 #~ msgid "Show Video Effects as Icons"
 #~ msgstr "Εμφάνιση των Βίντεο Εφέ ως Εικονίδια"
 
-#~ msgid "PiTiVi Native (XML)"
-#~ msgstr "Αρχικό PiTiVi (XML)"
+#~ msgid "Pitivi Native (XML)"
+#~ msgstr "Αρχικό Pitivi (XML)"
 
 #~ msgid "Unlink"
 #~ msgstr "Αποσύνδεση"
@@ -2272,8 +2272,8 @@ msgstr "Γραμμή χρόνου εστίασης"
 #~ msgid "File contains a redirection to another clip."
 #~ msgstr "Το αρχείο περιέχει μια ανακατεύθυνση σε άλλο κλιπ."
 
-#~ msgid "PiTiVi currently does not handle redirection files."
-#~ msgstr "Προς το παρόν το PiTiVi δεν χειρίζεται αρχεία ανακατευθύνσης."
+#~ msgid "Pitivi currently does not handle redirection files."
+#~ msgstr "Προς το παρόν το Pitivi δεν χειρίζεται αρχεία ανακατευθύνσης."
 
 #~ msgid "Pipeline didn't want to go to PLAYING."
 #~ msgstr "Η διασωλήνωση δεν θέλησε να μεταβεί σε κατάσταση ΑΝΑΠΑΡΑΓΩΓΗΣ."

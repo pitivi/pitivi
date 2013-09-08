@@ -255,7 +255,7 @@ msgid "File contains a redirection to another clip."
 msgstr "Pel beralîkirina li klibeke din, dihewîne."
 
 #: ../pitivi/discoverer.py:465
-msgid "PiTiVi currently does not handle redirection files."
+msgid "Pitivi currently does not handle redirection files."
 msgstr "PITIVI aniha piştgirî nade pelên ku beralîkirin dihewîne."
 
 #: ../pitivi/discoverer.py:491
@@ -384,8 +384,8 @@ msgid "%s doesn't yet handle non local projects"
 msgstr "%s hê nikare projeyên ne heremî bi kar bîne."
 
 #: ../pitivi/formatters/format.py:77
-msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi Heremî (XML)"
+msgid "Pitivi Native (XML)"
+msgstr "Pitivi Heremî (XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
@@ -940,8 +940,8 @@ msgstr "Ger tu tomar nekî wê hinek guhertin wenda bibin"
 
 #: ../pitivi/ui/mainwindow.py:822
 #, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiViyê nekarî pela \"%s\" bar bike"
+msgid "Pitivi is unable to load file \"%s\""
+msgstr "Pitiviyê nekarî pela \"%s\" bar bike"
 
 #: ../pitivi/ui/mainwindow.py:825
 msgid "Error Loading File"
@@ -952,9 +952,9 @@ msgid "Locate missing file..."
 msgstr "Pela wenda bibîne.."
 
 #: ../pitivi/ui/mainwindow.py:841
-msgid "The following file has moved, please tell PiTiVi where to find it."
+msgid "The following file has moved, please tell Pitivi where to find it."
 msgstr ""
-"Pel hatiye guheztin, ji kerema xwe re bêje PiTiVi ka dikare wê li ku bibîne."
+"Pel hatiye guheztin, ji kerema xwe re bêje Pitivi ka dikare wê li ku bibîne."
 
 #: ../pitivi/ui/mainwindow.py:843
 msgid "Duration:"
@@ -1130,9 +1130,9 @@ msgid "Revert"
 msgstr "Vegerîne"
 
 #: ../pitivi/ui/prefs.py:125
-msgid "Some changes will not take effect until you restart PiTiVi"
+msgid "Some changes will not take effect until you restart Pitivi"
 msgstr ""
-"Heta ku PiTiVi ji nû ve nedî destpêkirin wê hinek guhertin neyên çalakirin"
+"Heta ku Pitivi ji nû ve nedî destpêkirin wê hinek guhertin neyên çalakirin"
 
 #: ../pitivi/ui/prefs.py:320
 msgid "Reset"
@@ -1286,16 +1286,16 @@ msgid "Error while analyzing files"
 msgstr "Di analîzkirina pelan de çewtî"
 
 #: ../pitivi/ui/sourcelist.py:1059
-msgid "The following files can not be used with PiTiVi."
-msgstr "Pelên lîstekirî bi PiTiViyê re nikarin werin bikaranîn."
+msgid "The following files can not be used with Pitivi."
+msgstr "Pelên lîstekirî bi Pitiviyê re nikarin werin bikaranîn."
 
 #: ../pitivi/ui/sourcelist.py:1061
 msgid "Error while analyzing a file"
 msgstr "Di analîzkirina pelekê de çewtî"
 
 #: ../pitivi/ui/sourcelist.py:1062
-msgid "The following file can not be used with PiTiVi."
-msgstr "Ev pel bi PiTiViyê re nikare werin bikaranîn."
+msgid "The following file can not be used with Pitivi."
+msgstr "Ev pel bi Pitiviyê re nikare werin bikaranîn."
 
 #. tooltip text for toolbar
 #: ../pitivi/ui/timeline.py:46

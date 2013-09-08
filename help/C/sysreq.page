@@ -27,6 +27,6 @@
 
      <p>In terms of hardware, video editing typically requires a powerful computer, depending on the type of video you are editing. While the processing power of computers has increased tremendously over the years, so has demand for higher quality video.</p>
      <p>Editing HD (High Definition) video usually requires (at the time of this writing) state of the art hardware (depending on the codec used), while SD (Standard Definition) video editing can be done on modest hardware configurations. It is up to you to make sure that your equipment is adequate. It should at least be able to playback your media in <app>Totem</app> without lagging.</p>
-     <p>It is possible, however, to use low-quality versions of your footage during editing and use the high-quality versions when rendering the final output, thus allowing to bypass hardware limitations to some extent. This is called <em>proxy editing</em>. This feature, however, is not yet available in <app>PiTiVi</app>.</p>
+     <p>It is possible, however, to use low-quality versions of your footage during editing and use the high-quality versions when rendering the final output, thus allowing to bypass hardware limitations to some extent. This is called <em>proxy editing</em>. This feature, however, is not yet available in <app>Pitivi</app>.</p>
 
 </page>

@@ -1,3 +1,3 @@
 """
-Main PiTiVi package
+Main Pitivi package
 """

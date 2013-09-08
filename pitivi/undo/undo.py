@@ -1,4 +1,4 @@
-# PiTiVi , Non-linear video editor
+# Pitivi video editor
 #
 #       pitivi/undo/undo.py
 #
@@ -111,7 +111,7 @@ class UndoableActionStack(UndoableAction):
 class UndoableActionLog(Signallable, Loggable):
     """
     This is the "master" class that handles all the undo/redo system. There is
-    only one instance of it in PiTiVi: application.py's "action_log" property.
+    only one instance of it in Pitivi: application.py's "action_log" property.
     """
     __signals__ = {
         "begin": ["stack", "nested"],
