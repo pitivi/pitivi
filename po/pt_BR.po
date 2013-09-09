@@ -18,9 +18,9 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-09-06 18:57+0000\n"
-"PO-Revision-Date: 2013-09-07 11:54-0300\n"
-"Last-Translator: Enrico Nicoletto <liverig@gmail.com>\n"
+"POT-Creation-Date: 2013-09-09 09:50+0000\n"
+"PO-Revision-Date: 2013-09-09 09:36-0300\n"
+"Last-Translator: Rafael Ferreira <rafael.f.f1@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
@@ -86,7 +86,7 @@ msgstr "Iniciando auto-alinhamento"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Realizando auto-alinhamento</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:277
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1001
 msgid "Estimating..."
 msgstr "Estimando..."
 
@@ -481,36 +481,22 @@ msgid "Rendering"
 msgstr "Renderizando"
 
 #: ../data/ui/renderingprogress.ui.h:2
-msgid "<b><big>Rendering movie</big></b>"
-msgstr "<b><big>Renderizando filme</big></b>"
+msgid ""
+"<small>This process may take a long time depending on the selected codecs, "
+"the image resolution, your computer's processing power, applied effects and "
+"the length of your movie.</small>"
+msgstr ""
+"<small>Esse processo pode levar muito tempo dependendo dos codecs "
+"selecionados, da resolução da image, da capacidade de processamento do seu "
+"computador, dos efeitos aplicados e da duração do seu filme.</small>"
 
 #: ../data/ui/renderingprogress.ui.h:3
-msgid "Unknown Mib"
-msgstr "Mib desconhecido"
-
-#: ../data/ui/renderingprogress.ui.h:4
-msgid "Unknown"
-msgstr "Desconhecido"
-
-#: ../data/ui/renderingprogress.ui.h:5
-msgid "Rendering first pass"
-msgstr "Primeira passagem de renderização"
-
-#: ../data/ui/renderingprogress.ui.h:6
-msgid "Estimated filesize:"
-msgstr "Tamanho estimado do arquivo:"
-
-#: ../data/ui/renderingprogress.ui.h:7
-msgid "Frames per second:"
-msgstr "Quadros por segundo:"
-
-#: ../data/ui/renderingprogress.ui.h:8
-msgid "Phase:"
-msgstr "Fase:"
-
-#: ../data/ui/renderingprogress.ui.h:9
 msgid "Initializing..."
 msgstr "Inicializando..."
+
+#: ../data/ui/renderingprogress.ui.h:4
+msgid "Estimated filesize:"
+msgstr "Tamanho estimado do arquivo:"
 
 #: ../data/ui/startupwizard.ui.h:1
 msgid "Welcome"
@@ -1014,26 +1000,26 @@ msgstr ""
 msgid "Export To..."
 msgstr "Exportar para..."
 
-#: ../pitivi/mainwindow.py:1238 ../pitivi/mainwindow.py:1285
-#: ../pitivi/mainwindow.py:1368 ../pitivi/render.py:339
+#: ../pitivi/mainwindow.py:1241 ../pitivi/mainwindow.py:1288
+#: ../pitivi/mainwindow.py:1371 ../pitivi/render.py:354
 #: ../pitivi/timeline/timeline.py:1253
 msgid "Untitled"
 msgstr "Sem título"
 
-#: ../pitivi/mainwindow.py:1243
+#: ../pitivi/mainwindow.py:1246
 msgid "Tar archive"
 msgstr "Arquivo tar"
 
-#: ../pitivi/mainwindow.py:1247 ../pitivi/mainwindow.py:1258
-#: ../pitivi/mainwindow.py:1291 ../pitivi/mainwindow.py:1303
+#: ../pitivi/mainwindow.py:1250 ../pitivi/mainwindow.py:1261
+#: ../pitivi/mainwindow.py:1294 ../pitivi/mainwindow.py:1306
 msgid "Detect automatically"
 msgstr "Detectar automaticamente"
 
-#: ../pitivi/mainwindow.py:1272 ../pitivi/timeline/timeline.py:1247
+#: ../pitivi/mainwindow.py:1275 ../pitivi/timeline/timeline.py:1247
 msgid "Save As..."
 msgstr "Salvar como..."
 
-#: ../pitivi/mainwindow.py:1320
+#: ../pitivi/mainwindow.py:1323
 msgid "Preview - click outside to close"
 msgstr "Pre-visualização - clique fora para fechar"
 
@@ -1122,8 +1108,8 @@ msgid "The following file can not be used with PiTiVi."
 msgstr "O seguinte arquivo não pode ser usado com o PiTiVi."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
-#: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1264
-#: ../pitivi/project.py:1269 ../pitivi/render.py:396
+#: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1279
+#: ../pitivi/project.py:1284 ../pitivi/render.py:411
 msgid "No preset"
 msgstr "Nenhuma predefinição"
 
@@ -1168,32 +1154,32 @@ msgid "project"
 msgstr "projeto"
 
 #. We don't have a URI here, None means we're loading a new project
-#: ../pitivi/project.py:406
+#: ../pitivi/project.py:421
 msgid "New Project"
 msgstr "Novo projeto"
 
-#: ../pitivi/project.py:547
+#: ../pitivi/project.py:562
 msgid "Pitivi encoding profile"
 msgstr "Perfil de codificação Pitivi"
 
-#: ../pitivi/project.py:1285 ../pitivi/render.py:526
+#: ../pitivi/project.py:1300 ../pitivi/render.py:541
 #, python-format
 msgid "\"%s\" already exists."
 msgstr "\"%s\" já existe."
 
-#: ../pitivi/project.py:1358 ../pitivi/render.py:567
+#: ../pitivi/project.py:1373 ../pitivi/render.py:582
 msgid "New preset"
 msgstr "Nova predefinição"
 
-#: ../pitivi/project.py:1361 ../pitivi/render.py:570
+#: ../pitivi/project.py:1376 ../pitivi/render.py:585
 #, python-format
 msgid "New preset %d"
 msgstr "Nova predefinição %d"
 
-#: ../pitivi/render.py:267
+#: ../pitivi/render.py:266
 #, python-format
-msgid "%d%% Rendered"
-msgstr "%d%% renderizados"
+msgid "Rendering — %d%% complete"
+msgstr "Renderização — %d%% completa"
 
 #. Translators: this string indicates the estimated time
 #. remaining until an action (such as rendering) completes.
@@ -1206,15 +1192,15 @@ msgstr "%d%% renderizados"
 msgid "About %s left"
 msgstr "Cerca de %s restantes"
 
-#: ../pitivi/render.py:307
+#: ../pitivi/render.py:314
 msgid "Currently rendering"
 msgstr "Renderizando no momento"
 
-#: ../pitivi/render.py:696
+#: ../pitivi/render.py:711
 msgid "A file name is required."
 msgstr "É necessário um nome de arquivo."
 
-#: ../pitivi/render.py:698
+#: ../pitivi/render.py:713
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1223,11 +1209,22 @@ msgstr ""
 "Se você não deseja sobrescrevê-lo, selecione um nome de arquivo ou pasta "
 "diferente."
 
-#: ../pitivi/render.py:755
+#: ../pitivi/render.py:741
+#, python-format
+msgid "%.2f GB"
+msgstr "%.2f GB"
+
+#. -1 means round to 10
+#: ../pitivi/render.py:746
+#, python-format
+msgid "%d MB"
+msgstr "%d MB"
+
+#: ../pitivi/render.py:796
 msgid "Sorry, something didn’t work right."
 msgstr "Desculpe, algo não funcionou direito."
 
-#: ../pitivi/render.py:756
+#: ../pitivi/render.py:797
 msgid ""
 "An error occured while trying to render your project. You might want to "
 "check our troubleshooting guide or file a bug report. See the details below "
@@ -1238,15 +1235,15 @@ msgstr ""
 "detalhes abaixo para encontrar informação básica que possa ajudar "
 "identificar o problema."
 
-#: ../pitivi/render.py:767
+#: ../pitivi/render.py:808
 msgid "Details"
 msgstr "Detalhes"
 
-#: ../pitivi/render.py:867 ../pitivi/render.py:868 ../pitivi/render.py:872
+#: ../pitivi/render.py:949 ../pitivi/render.py:950 ../pitivi/render.py:955
 msgid "Render complete"
 msgstr "Renderização completa"
 
-#: ../pitivi/render.py:872
+#: ../pitivi/render.py:955
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "A renderização de \"%s\" foi finalizada."
@@ -1776,6 +1773,27 @@ msgstr "Ampliação"
 #: ../pitivi/utils/widgets.py:1227
 msgid "Zoom Timeline"
 msgstr "Ampliar linha do tempo"
+
+#~ msgid "<b><big>Rendering movie</big></b>"
+#~ msgstr "<b><big>Renderizando filme</big></b>"
+
+#~ msgid "Unknown Mib"
+#~ msgstr "Mib desconhecido"
+
+#~ msgid "Unknown"
+#~ msgstr "Desconhecido"
+
+#~ msgid "Rendering first pass"
+#~ msgstr "Primeira passagem de renderização"
+
+#~ msgid "Frames per second:"
+#~ msgstr "Quadros por segundo:"
+
+#~ msgid "Phase:"
+#~ msgstr "Fase:"
+
+#~ msgid "%d%% Rendered"
+#~ msgstr "%d%% renderizados"
 
 #~ msgid "Cannot save with this file format."
 #~ msgstr "Não é possível salvar com esse formato de arquivo."
