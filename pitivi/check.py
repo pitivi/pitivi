@@ -41,7 +41,6 @@ HARD_DEPS = {
     "GES": "1.0.0",
     "Clutter": "1.12.0",
     "gnonlin": "0.11.89.1",
-    "GooCanvas": "2.0",
     "Gst": "1.1.0",
     "Gtk": "3.4.0",
     "xdg": None,  # "pyxdg", using static python bindings
@@ -142,9 +141,6 @@ def _check_dependency(modulename, from_gobject_introspection):
             return [False, VERSION_REQ, module.cairo_version_string()]
         else:
             return [True, None, module.cairo_version_string()]
-    if modulename == "GooCanvas":
-        # GooCanvas does not provide a function to check the version. BRILLIANT.
-        return [True, VERSION_REQ, False]
 
     oops = 'Module "%s" is installed, but version checking is not defined in check_dependency' % modulename
     raise NotImplementedError(oops)
@@ -165,9 +161,6 @@ def check_hard_dependencies():
     satisfied, req, inst = _check_dependency("cairo", False)
     if not satisfied:
         missing_hard_deps["Cairo"] = (req, inst)
-    satisfied, req, inst = _check_dependency("GooCanvas", True)
-    if not satisfied:
-        missing_hard_deps["GooCanvas"] = (req, inst)
     satisfied, req, inst = _check_dependency("xdg", False)
     if not satisfied:
         missing_hard_deps["PyXDG"] = (req, inst)
