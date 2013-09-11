@@ -579,28 +579,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self._fullscreenToolbarDirection = None
         return False
 
-    def setActionsSensitive(self, sensitive):
-        """
-        Grab (or release) keyboard letter keys focus/sensitivity
-        for operations such as typing text in an entry.
-
-        This toggles the sensitivity of all actiongroups that might interfere.
-        This means mostly the timeline's actions.
-
-        This method does not need to be called when creating a separate window.
-        """
-        self.log("Setting actions sensitivity to %s" % sensitive)
-        # The mainwindow's actions don't prevent typing into entry widgets;
-        # Only timeline actions (ex: deleting and play/pause) are dangerous.
-        if self.timeline_ui:
-            # Don't loop in self.timeline_ui.ui_manager.get_action_groups()
-            # otherwise you'll get all the action groups of the application.
-            self.timeline_ui.playhead_actions.set_sensitive(sensitive)
-            selected = self.timeline_ui.timeline.selection.getSelectedTrackElements()
-            if not sensitive or (sensitive and selected):
-                self.log("Setting timeline selection actions sensitivity to %s" % sensitive)
-                self.timeline_ui.selection_actions.set_sensitive(sensitive)
-
 ## Missing Plugin Support
 
     def _installPlugins(self, details, missingPluginsCallback):

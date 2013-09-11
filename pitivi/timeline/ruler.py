@@ -72,6 +72,12 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         Zoomable.__init__(self)
         Loggable.__init__(self)
         self.log("Creating new ScaleRuler")
+
+        # Allows stealing focus from other GTK widgets, prevent accidents:
+        self.props.can_focus = True
+        self.connect("focus-in-event", self._focusInCb)
+        self.connect("focus-out-event", self._focusOutCb)
+
         self.app = instance
         self._seeker = Seeker()
         self.hadj = hadj
@@ -98,6 +104,14 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.connect('configure-event', self.configureEventCb)
         self.callback_id = None
         self.callback_id_scroll = None
+
+    def _focusInCb(self, unused_widget, unused_arg):
+        self.log("Ruler has grabbed focus")
+        self.app.gui.timeline_ui.setActionsSensitivity(True)
+
+    def _focusOutCb(self, unused_widget, unused_arg):
+        self.log("Ruler has lost focus")
+        self.app.gui.timeline_ui.setActionsSensitivity(False)
 
     def _hadjValueChangedCb(self, hadj):
         self.pixbuf_offset = self.hadj.get_value()
@@ -168,6 +182,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def do_button_release_event(self, event):
         self.debug("button released at x:%d", event.x)
+        self.grab_focus()  # Prevent other widgets from being confused
         self.pressed = False
         return False
 

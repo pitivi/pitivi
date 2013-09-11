@@ -586,12 +586,6 @@ class EffectListWidget(Gtk.VBox, Loggable):
     def _searchEntryIconClickedCb(self, entry, unused, unused1):
         entry.set_text("")
 
-    def _searchEntryFocusedCb(self, entry, event):
-        self.app.gui.setActionsSensitive(False)
-
-    def _searchEntryDefocusedCb(self, entry, event):
-        self.app.gui.setActionsSensitive(True)
-
     def _setRowVisible(self, model, iter, data):
         if self._effectType == model.get_value(iter, COL_EFFECT_TYPE):
             if model.get_value(iter, COL_EFFECT_CATEGORIES) is None:

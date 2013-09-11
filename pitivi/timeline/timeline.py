@@ -694,6 +694,11 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         Loggable.__init__(self)
         GObject.threads_init()
 
+        # Allows stealing focus from other GTK widgets, prevent accidents:
+        self.props.can_focus = True
+        self.connect("focus-in-event", self._focusInCb)
+        self.connect("focus-out-event", self._focusOutCb)
+
         self.gui = gui
         self.ui_manager = ui_manager
         self.app = instance
@@ -842,6 +847,22 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
             return GES.EditMode.EDIT_TRIM
         return GES.EditMode.EDIT_NORMAL
 
+    def setActionsSensitivity(self, sensitive):
+        """
+        The timeline's "actions" have global keyboard shortcuts that are
+        dangerous in any context other than the timeline. In a text entry widget
+        for example, you don't want the "Delete" key to remove clips currently
+        selected on the timeline, or "Spacebar" to toggle playback.
+
+        This sets the sensitivity of all actiongroups that might interfere.
+        """
+        self.playhead_actions.set_sensitive(sensitive)
+        self.debug("Playback shortcuts sensitivity set to %s" % sensitive)
+        selected = self.timeline.selection.getSelectedTrackElements()
+        if not sensitive or (sensitive and selected):
+            self.selection_actions.set_sensitive(sensitive)
+            self.debug("Editing shortcuts sensitivity set to %s" % sensitive)
+
     # Internal API
 
     def _createUi(self):
@@ -874,8 +895,6 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         if self.gui:
             self.gui.connect("key-press-event", self._keyPressEventCb)
             self.gui.connect("key-release-event", self._keyReleaseEventCb)
-
-        self.embed.connect("enter-notify-event", self._enterNotifyEventCb)
 
         self.point = Clutter.Point()
         self.point.x = 0
@@ -1295,10 +1314,6 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
 
     # Callbacks
 
-    def _enterNotifyEventCb(self, widget, event):
-        if self.gui:
-            self.gui.setActionsSensitive(True)
-
     def _keyPressEventCb(self, widget, event):
         if event.keyval == Gdk.KEY_Shift_L:
             self.shiftMask = True
@@ -1311,8 +1326,17 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         elif event.keyval == Gdk.KEY_Control_L:
             self.controlMask = False
 
+    def _focusInCb(self, unused_widget, unused_arg):
+        self.log("Timeline has grabbed focus")
+        self.setActionsSensitivity(True)
+
+    def _focusOutCb(self, unused_widget, unused_arg):
+        self.log("Timeline has lost focus")
+        self.setActionsSensitivity(False)
+
     def _timelineClickedCb(self, unused_timeline, event):
         self.pressed = True
+        self.grab_focus()  # Prevent other widgets from being confused
         position = self.pixelToNs(event.x - CONTROL_WIDTH + self.timeline._scroll_point.x)
         if self.app:
             self._seeker.seek(position)

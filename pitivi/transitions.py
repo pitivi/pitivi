@@ -118,8 +118,6 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         self.iconview.set_property("has_tooltip", True)
 
         self.searchEntry.connect("changed", self._searchEntryChangedCb)
-        self.searchEntry.connect("focus-in-event", self._searchEntryActivateCb)
-        self.searchEntry.connect("focus-out-event", self._searchEntryDeactivateCb)
         self.searchEntry.connect("icon-press", self._searchEntryIconClickedCb)
         self.iconview.connect("selection-changed", self._transitionSelectedCb)
         self.iconview.connect("query-tooltip", self._queryTooltipCb)
@@ -200,12 +198,6 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
 
     def _searchEntryIconClickedCb(self, entry, unused, unsed1):
         entry.set_text("")
-
-    def _searchEntryDeactivateCb(self, entry, event):
-        self.app.gui.setActionsSensitive(True)
-
-    def _searchEntryActivateCb(self, entry, event):
-        self.app.gui.setActionsSensitive(False)
 
 # GES callbacks
 

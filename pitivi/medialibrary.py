@@ -183,8 +183,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
         self.treeview.connect("button-release-event", self._treeViewButtonReleaseEventCb)
-        self.treeview.connect("focus-in-event", self._disableKeyboardShortcutsCb)
-        self.treeview.connect("focus-out-event", self._enableKeyboardShortcutsCb)
         self.treeview.connect("row-activated", self._itemOrRowActivatedCb)
         self.treeview.set_property("rules_hint", True)
         self.treeview.set_headers_visible(False)
@@ -226,8 +224,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.connect("button-press-event", self._iconViewButtonPressEventCb)
         self.iconview.connect("button-release-event", self._iconViewButtonReleaseEventCb)
-        self.iconview.connect("focus-in-event", self._disableKeyboardShortcutsCb)
-        self.iconview.connect("focus-out-event", self._enableKeyboardShortcutsCb)
         self.iconview.connect("item-activated", self._itemOrRowActivatedCb)
         self.iconview.connect("selection-changed", self._viewSelectionChangedCb)
         self.iconview.set_item_orientation(Gtk.Orientation.VERTICAL)
@@ -332,22 +328,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     def _insertEndCb(self, unused_action):
         self.app.gui.timeline_ui.insertEnd(self.getSelectedAssets())
-
-    def _disableKeyboardShortcutsCb(self, *unused_args):
-        """
-        Disable the Delete keyboard shortcut and playback shortcuts
-        to prevent accidents or being unable to type various characters.
-
-        This is used when focusing the search entry, icon on tree view widgets.
-        """
-        self.app.gui.setActionsSensitive(False)
-
-    def _enableKeyboardShortcutsCb(self, *unused_args):
-        """
-        When focusing out of media library widgets,
-        re-enable the timeline keyboard shortcuts.
-        """
-        self.app.gui.setActionsSensitive(True)
 
     def _trackElementAddedCb(self, source, unused_track_element):
         """ After an object has been added to the first track, position it

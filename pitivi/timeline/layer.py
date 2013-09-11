@@ -84,8 +84,6 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         self.name_entry = Gtk.Entry()
         self.name_entry.set_tooltip_text(_("Set a personalized name for this layer"))
         self.name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
-        self.name_entry.connect("focus-in-event", self._focusChangeCb, False)
-        self.name_entry.connect("focus-out-event", self._focusChangeCb, True)
         self.name_entry.connect("button_press_event", self._buttonPressCb)
 #        self.name_entry.drag_dest_unset()
         self.name_entry.set_sensitive(False)
@@ -179,9 +177,6 @@ class BaseLayerControl(Gtk.VBox, Loggable):
             button.set_tooltip_text(_("Make layer invisible"))
         else:
             button.set_tooltip_text(_("Make layer visible"))
-
-    def _focusChangeCb(self, widget, direction, sensitive_actions):
-        self._app.gui.setActionsSensitive(sensitive_actions)
 
     def _soloToggledCb(self, button):
         """

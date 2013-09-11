@@ -630,12 +630,6 @@ class TitleEditor(Loggable):
             self.settings["halignment"].append(en, n)
         self._deactivate()
 
-    def _textviewFocusedCb(self, unused_widget, unused_event):
-        self.app.gui.setActionsSensitive(False)
-
-    def _textviewUnfocusedCb(self, unused_widget, unused_event):
-        self.app.gui.setActionsSensitive(True)
-
     def _backgroundColorButtonCb(self, widget):
         self.textarea.modify_base(self.textarea.get_state(), widget.get_color())
         color = widget.get_rgba()

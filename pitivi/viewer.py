@@ -244,7 +244,6 @@ class PitiviViewer(Gtk.VBox, Loggable):
         self.timecode_entry.setWidgetValue(0)
         self.timecode_entry.set_tooltip_text(_('Enter a timecode or frame number\nand press "Enter" to go to that position'))
         self.timecode_entry.connectActivateEvent(self._entryActivateCb)
-        self.timecode_entry.connectFocusEvents(self._entryFocusInCb, self._entryFocusOutCb)
         bbox.pack_start(self.timecode_entry, False, 10, 0)
         self._haveUI = True
 
@@ -288,13 +287,6 @@ class PitiviViewer(Gtk.VBox, Loggable):
 
     def _entryActivateCb(self, entry):
         self._seekFromTimecodeWidget()
-
-    def _entryFocusInCb(self, entry, event):
-        self.app.gui.setActionsSensitive(False)
-
-    def _entryFocusOutCb(self, entry, event):
-        self._seekFromTimecodeWidget()
-        self.app.gui.setActionsSensitive(True)
 
     def _seekFromTimecodeWidget(self):
         nanoseconds = self.timecode_entry.getWidgetValue()

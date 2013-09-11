@@ -429,10 +429,8 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _treeviewSelectionChangedCb(self, treeview):
         if self.selection.count_selected_rows() == 0 and self.clips:
-            self.app.gui.setActionsSensitive(True)
             self._toolbar.hide()
         else:
-            self.app.gui.setActionsSensitive(False)
             self._toolbar.show()
 
         self._updateEffectConfigUi()
@@ -561,8 +559,6 @@ class TransformationProperties(Gtk.Expander):
         """
         spinbtn = self.builder.get_object(widget_name)
         spinbtn.connect("output", self._onValueChangedCb, property_name)
-        spinbtn.connect("focus-in-event", self._disableTimelineActionsCb)
-        spinbtn.connect("focus-out-event", self._enableTimelineActionsCb)
         self.spin_buttons[property_name] = spinbtn
         self.default_values[property_name] = spinbtn.get_value()
 
@@ -583,12 +579,6 @@ class TransformationProperties(Gtk.Expander):
         # so no point is selected
         if box and box.clicked_point == 0:
             box.update_from_effect(self.effect)
-
-    def _disableTimelineActionsCb(self, unused_widget, unused_event):
-        self.app.gui.setActionsSensitive(False)
-
-    def _enableTimelineActionsCb(self, unused_widget, unused_event):
-        self.app.gui.setActionsSensitive(True)
 
     def _flushPipeLineCb(self, widget):
         self.app.current_project.pipeline.flushSeek()

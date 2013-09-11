@@ -230,8 +230,6 @@
             <property name="margin_top">12</property>
             <property name="margin_bottom">12</property>
             <property name="wrap_mode">word</property>
-            <signal name="focus-in-event" handler="_textviewFocusedCb" swapped="no"/>
-            <signal name="focus-out-event" handler="_textviewUnfocusedCb" swapped="no"/>
           </object>
           <packing>
             <property name="expand">True</property>

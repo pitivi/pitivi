@@ -144,8 +144,6 @@
               </object>
             </child>
             <signal name="changed" handler="_searchEntryChangedCb" swapped="no"/>
-            <signal name="focus-in-event" handler="_disableKeyboardShortcutsCb" swapped="no"/>
-            <signal name="focus-out-event" handler="_enableKeyboardShortcutsCb" swapped="no"/>
             <signal name="icon-release" handler="_searchEntryIconClickedCb" swapped="no"/>
           </object>
         </child>
