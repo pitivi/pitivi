@@ -851,7 +851,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         perspective = self.stage.get_perspective()
 
         self.timeline = TimelineStage(self)
-        self.controls = ControlContainer(self.timeline)
+        self.controls = ControlContainer(self.app, self.timeline)
         self.zoomBox = ZoomBox(self)
         self.shiftMask = False
         self.controlMask = False

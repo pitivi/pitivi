@@ -39,11 +39,12 @@ class BaseLayerControl(Gtk.VBox, Loggable):
 
     __gtype_name__ = 'LayerControl'
 
-    def __init__(self, app, layer, layer_type):
+    def __init__(self, control_container, layer, layer_type, app):
         Gtk.VBox.__init__(self, spacing=0)
         Loggable.__init__(self)
 
         self._app = app
+        self._control_container = control_container
         self.layer = layer
         self._selected = False
 
@@ -197,7 +198,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         """
         Look if user selected layer or wants popup menu
         """
-        self._app.selectLayerControl(self)
+        self._control_container.selectLayerControl(self)
         if event.button == 3:
             self.popup.popup(None, None, None, None, event.button, event.time)
 
@@ -288,8 +289,8 @@ class VideoLayerControl(BaseLayerControl):
 
     __gtype_name__ = 'VideoLayerControl'
 
-    def __init__(self, app, layer):
-        BaseLayerControl.__init__(self, app, layer, GES.TrackType.VIDEO)
+    def __init__(self, control_container, layer, app):
+        BaseLayerControl.__init__(self, control_container, layer, GES.TrackType.VIDEO, app)
 
         opacity = Gtk.Label(label=_("Opacity:"))
 
@@ -312,8 +313,8 @@ class AudioLayerControl(BaseLayerControl):
 
     __gtype_name__ = 'AudioLayerControl'
 
-    def __init__(self, app, layer):
-        BaseLayerControl.__init__(self, app, layer, GES.TrackType.AUDIO)
+    def __init__(self, control_container, layer, app):
+        BaseLayerControl.__init__(self, control_container, layer, GES.TrackType.AUDIO, app)
 
         volume = Gtk.Label(label=_("Vol:"))
         volume_button = Gtk.VolumeButton(size=Gtk.IconSize.MENU)

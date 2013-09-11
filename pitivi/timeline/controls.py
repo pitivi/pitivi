@@ -94,9 +94,10 @@ class ControlContainer(Clutter.ScrollActor):
         "selection-changed": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_PYOBJECT,),)
     }
 
-    def __init__(self, timeline):
+    def __init__(self, app, timeline):
         Clutter.ScrollActor.__init__(self)
 
+        self._app = app
         self.timeline = timeline
         self.controlActors = []
         self.trackControls = []
@@ -144,9 +145,9 @@ class ControlContainer(Clutter.ScrollActor):
 
     def addTrackControl(self, layer, isAudio):
         if isAudio:
-            control = AudioLayerControl(self, layer)
+            control = AudioLayerControl(self, layer, self._app)
         else:
-            control = VideoLayerControl(self, layer)
+            control = VideoLayerControl(self, layer, self._app)
 
         controlActor = ControlActor(self, control, layer)
         controlActor.isAudio = isAudio
