@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-09-06 00:13+0000\n"
-"PO-Revision-Date: 2013-09-06 20:56+0200\n"
+"POT-Creation-Date: 2013-09-08 17:45+0000\n"
+"PO-Revision-Date: 2013-09-11 11:29+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -77,7 +77,7 @@ msgstr "Začíná automatického zarovnání"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Provádění automatického zarovnání</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:277
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1001
 msgid "Estimating..."
 msgstr "Odhaduje se…"
 
@@ -472,36 +472,22 @@ msgid "Rendering"
 msgstr "Vykreslování"
 
 #: ../data/ui/renderingprogress.ui.h:2
-msgid "<b><big>Rendering movie</big></b>"
-msgstr "<b><big>Vykreslování filmu</big></b>"
+msgid ""
+"<small>This process may take a long time depending on the selected codecs, "
+"the image resolution, your computer's processing power, applied effects and "
+"the length of your movie.</small>"
+msgstr ""
+"<small>Zpracování může zabrat hodně času v závislosti na vybraných "
+"kodecích, rozlišení obrazu, výkonu vašeho počítače, použitých efektech a "
+"délce vašeho filmu.</small>"
 
 #: ../data/ui/renderingprogress.ui.h:3
-msgid "Unknown Mib"
-msgstr "neznámo Mib"
-
-#: ../data/ui/renderingprogress.ui.h:4
-msgid "Unknown"
-msgstr "neznámo"
-
-#: ../data/ui/renderingprogress.ui.h:5
-msgid "Rendering first pass"
-msgstr "První průchod vykreslování"
-
-#: ../data/ui/renderingprogress.ui.h:6
-msgid "Estimated filesize:"
-msgstr "Odhadnutá velikost souboru:"
-
-#: ../data/ui/renderingprogress.ui.h:7
-msgid "Frames per second:"
-msgstr "Snímků za sekundu:"
-
-#: ../data/ui/renderingprogress.ui.h:8
-msgid "Phase:"
-msgstr "Fáze:"
-
-#: ../data/ui/renderingprogress.ui.h:9
 msgid "Initializing..."
 msgstr "Inicializuje se…"
+
+#: ../data/ui/renderingprogress.ui.h:4
+msgid "Estimated filesize:"
+msgstr "Odhadnutá velikost souboru:"
 
 #: ../data/ui/startupwizard.ui.h:1
 msgid "Welcome"
@@ -995,26 +981,26 @@ msgstr ""
 msgid "Export To..."
 msgstr "Export do…"
 
-#: ../pitivi/mainwindow.py:1238 ../pitivi/mainwindow.py:1285
-#: ../pitivi/mainwindow.py:1368 ../pitivi/render.py:339
+#: ../pitivi/mainwindow.py:1241 ../pitivi/mainwindow.py:1288
+#: ../pitivi/mainwindow.py:1371 ../pitivi/render.py:354
 #: ../pitivi/timeline/timeline.py:1253
 msgid "Untitled"
 msgstr "Nepojmenovaný"
 
-#: ../pitivi/mainwindow.py:1243
+#: ../pitivi/mainwindow.py:1246
 msgid "Tar archive"
 msgstr "Archiv TAR"
 
-#: ../pitivi/mainwindow.py:1247 ../pitivi/mainwindow.py:1258
-#: ../pitivi/mainwindow.py:1291 ../pitivi/mainwindow.py:1303
+#: ../pitivi/mainwindow.py:1250 ../pitivi/mainwindow.py:1261
+#: ../pitivi/mainwindow.py:1294 ../pitivi/mainwindow.py:1306
 msgid "Detect automatically"
 msgstr "Rozpoznat automaticky"
 
-#: ../pitivi/mainwindow.py:1272 ../pitivi/timeline/timeline.py:1247
+#: ../pitivi/mainwindow.py:1275 ../pitivi/timeline/timeline.py:1247
 msgid "Save As..."
 msgstr "Uložit jako…"
 
-#: ../pitivi/mainwindow.py:1320
+#: ../pitivi/mainwindow.py:1323
 msgid "Preview - click outside to close"
 msgstr "Náhled – kliknutím mimo jej zavřete"
 
@@ -1103,8 +1089,8 @@ msgid "The following file can not be used with PiTiVi."
 msgstr "Následující soubor nemůže být použit v PiTiVi."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
-#: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1264
-#: ../pitivi/project.py:1269 ../pitivi/render.py:396
+#: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1279
+#: ../pitivi/project.py:1284 ../pitivi/render.py:411
 msgid "No preset"
 msgstr "Žádné přednastavení"
 
@@ -1149,32 +1135,33 @@ msgid "project"
 msgstr "projekt"
 
 #. We don't have a URI here, None means we're loading a new project
-#: ../pitivi/project.py:406
+#: ../pitivi/project.py:421
 msgid "New Project"
 msgstr "Nový projekt"
 
-#: ../pitivi/project.py:547
+#: ../pitivi/project.py:562
 msgid "Pitivi encoding profile"
 msgstr "Profil kódování Pitivi"
 
-#: ../pitivi/project.py:1285 ../pitivi/render.py:526
+#: ../pitivi/project.py:1300 ../pitivi/render.py:541
 #, python-format
 msgid "\"%s\" already exists."
 msgstr "„%s“ již existuje."
 
-#: ../pitivi/project.py:1358 ../pitivi/render.py:567
+#: ../pitivi/project.py:1373 ../pitivi/render.py:582
 msgid "New preset"
 msgstr "Nové přednastavení"
 
-#: ../pitivi/project.py:1361 ../pitivi/render.py:570
+#: ../pitivi/project.py:1376 ../pitivi/render.py:585
 #, python-format
 msgid "New preset %d"
 msgstr "Nové přednastavení %d"
 
-#: ../pitivi/render.py:267
+#: ../pitivi/render.py:266
 #, python-format
-msgid "%d%% Rendered"
-msgstr "Vykresleno %d %%"
+#| msgid "Render complete"
+msgid "Rendering — %d%% complete"
+msgstr "Vykresluje se — %d %% dokončeno"
 
 #. Translators: this string indicates the estimated time
 #. remaining until an action (such as rendering) completes.
@@ -1187,15 +1174,15 @@ msgstr "Vykresleno %d %%"
 msgid "About %s left"
 msgstr "Zbývá přibližně %s"
 
-#: ../pitivi/render.py:307
+#: ../pitivi/render.py:314
 msgid "Currently rendering"
 msgstr "Právě se vykresluje"
 
-#: ../pitivi/render.py:696
+#: ../pitivi/render.py:711
 msgid "A file name is required."
 msgstr "Vyžadován název souboru."
 
-#: ../pitivi/render.py:698
+#: ../pitivi/render.py:713
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1203,11 +1190,23 @@ msgstr ""
 "Soubor již existuje.\n"
 "Pokud jej nechcete přepsat, zvolte jiný název souboru nebo složku."
 
-#: ../pitivi/render.py:755
+#: ../pitivi/render.py:741
+#, python-format
+#| msgid "%.2f fps"
+msgid "%.2f GB"
+msgstr "%.2f GB"
+
+#. -1 means round to 10
+#: ../pitivi/render.py:746
+#, python-format
+msgid "%d MB"
+msgstr "%d MB"
+
+#: ../pitivi/render.py:796
 msgid "Sorry, something didn’t work right."
 msgstr "Bohužel, ale něco nefunguje správně."
 
-#: ../pitivi/render.py:756
+#: ../pitivi/render.py:797
 msgid ""
 "An error occured while trying to render your project. You might want to "
 "check our troubleshooting guide or file a bug report. See the details below "
@@ -1218,15 +1217,15 @@ msgstr ""
 "chybové hlášení. V podrobnostech níže najdete nějaké základní informace, "
 "které vám mohou pomoci určit původ problému."
 
-#: ../pitivi/render.py:767
+#: ../pitivi/render.py:808
 msgid "Details"
 msgstr "Podrobnosti"
 
-#: ../pitivi/render.py:867 ../pitivi/render.py:868 ../pitivi/render.py:872
+#: ../pitivi/render.py:949 ../pitivi/render.py:950 ../pitivi/render.py:955
 msgid "Render complete"
 msgstr "Vykreslování dokončeno"
 
-#: ../pitivi/render.py:872
+#: ../pitivi/render.py:955
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "„%s“ má dokončeno vykreslování."
@@ -1759,15 +1758,3 @@ msgstr "Přiblížit"
 #: ../pitivi/utils/widgets.py:1227
 msgid "Zoom Timeline"
 msgstr "Přiblížit časovou osu"
-
-#~ msgid "Cannot save with this file format."
-#~ msgstr "Nelze uložit v tomto formátu souboru."
-
-#~ msgid "Cannot save with this file format. %s"
-#~ msgstr "Nelze uložit v tomto formátu souboru. %s"
-
-#~ msgid "Cannot save with this file format"
-#~ msgstr "Nelze uložit v tomto formátu souboru"
-
-#~ msgid "enables the autoalign feature"
-#~ msgstr "zapne funkci automatického zarovnání"
