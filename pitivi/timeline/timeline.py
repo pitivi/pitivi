@@ -867,8 +867,8 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self.stage.add_child(self.controls)
         self.stage.add_child(self.timeline)
 
-        self.stage.connect("button-press-event", self._clickedCb)
-        self.stage.connect("button-release-event", self._releasedCb)
+        self.timeline.connect("button-press-event", self._timelineClickedCb)
+        self.timeline.connect("button-release-event", self._timelineClickReleasedCb)
         self.embed.connect("scroll-event", self._scrollEventCb)
 
         if self.gui:
@@ -1311,13 +1311,13 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         elif event.keyval == Gdk.KEY_Control_L:
             self.controlMask = False
 
-    def _clickedCb(self, stage, event):
+    def _timelineClickedCb(self, unused_timeline, event):
         self.pressed = True
         position = self.pixelToNs(event.x - CONTROL_WIDTH + self.timeline._scroll_point.x)
         if self.app:
             self._seeker.seek(position)
 
-    def _releasedCb(self, stage, event):
+    def _timelineClickReleasedCb(self, unused_timeline, unused_event):
         self.timeline._snapEndedCb()
 
     def _renderingSettingsChangedCb(self, project, item, value):
