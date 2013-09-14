@@ -4,7 +4,6 @@
 # Keep this list sorted!
 tests =	test_basic.py \
 	test_binary_search.py \
-	test_cache.py \
 	test_common.py \
 	test_log.py \
 	test_preset.py \
