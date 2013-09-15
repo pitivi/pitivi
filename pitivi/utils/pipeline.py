@@ -161,6 +161,8 @@ class SimplePipeline(Signallable, Loggable):
         self.video_overlay = video_overlay
         self.lastPosition = long(0 * Gst.SECOND)
         self.pendingRecovery = False
+        self._waiting_for_async_done = True
+        self._next_seek = None
 
     def release(self):
         """
@@ -353,6 +355,11 @@ class SimplePipeline(Signallable, Loggable):
         @type format: C{Gst.Format}
         @raise PipelineError: If seek failed
         """
+        if self._waiting_for_async_done is True:
+            self._next_seek = (position, format)
+            self.info("Setting next seek to %s" % (str(self._next_seek)))
+            return
+
         if format == Gst.Format.TIME:
             self.debug("position : %s" % print_ns(position))
         else:
@@ -365,6 +372,7 @@ class SimplePipeline(Signallable, Loggable):
         res = self._pipeline.seek(1.0, format, Gst.SeekFlags.FLUSH,
                                   Gst.SeekType.SET, position,
                                   Gst.SeekType.NONE, -1)
+        self._waiting_for_async_done = True
         if not res:
             self.debug("seeking failed")
             raise PipelineError("seek failed")
@@ -418,6 +426,11 @@ class SimplePipeline(Signallable, Loggable):
         elif message.type == Gst.MessageType.DURATION_CHANGED:
             self.debug("Duration might have changed, querying it")
             GLib.idle_add(self._queryDurationAsync)
+        elif message.type == Gst.MessageType.ASYNC_DONE:
+            self._waiting_for_async_done = False
+            if self._next_seek is not None:
+                self.simple_seek(self._next_seek[0], self._next_seek[1])
+                self._next_seek = None
         else:
             self.log("%s [%r]" % (message.type, message.src))
 
