@@ -755,7 +755,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         if self.zoomed_fitted:
             self._setBestZoomRatio()
         else:
-            self.scrollToPosition(self.bTimeline.props.duration)
+            self.scrollToPixel(self.bTimeline.props.duration)
 
         self.app.action_log.commit()
 
@@ -809,12 +809,12 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self._hscrollBar.set_value(0)
         self._setBestZoomRatio()
 
-    def scrollToPosition(self, position):
-        if position > self.hadj.props.upper:
+    def scrollToPixel(self, x):
+        if x > self.hadj.props.upper:
             # We can't scroll yet, because the canvas needs to be updated
-            GLib.idle_add(self._scrollToPosition, position)
+            GLib.idle_add(self._scrollToPixel, x)
         else:
-            self._scrollToPosition(position)
+            self._scrollToPixel(x)
 
     def seekInPosition(self, position):
         self.pressed = True
@@ -1068,11 +1068,17 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self._vscrollbar.set_value(self._vscrollbar.get_value() +
             self.vadj.props.page_size ** (2.0 / 3.0))
 
-    def _scrollToPosition(self, position):
+    def _scrollToPixel(self, x):
+        if x > self.hadj.props.upper:
+            self.warning("Position %s is bigger than the hscrollbar's upper bound (%s) - is the position really in pixels?" % (x, self.hadj.props.upper))
+        elif x < self.hadj.props.lower:
+            self.warning("Position %s is smaller than the hscrollbar's lower bound (%s)" % (x, self.hadj.props.lower))
+
         if self.pipeline and self.pipeline.get_state() != Gst.State.PLAYING:
             self.timeline.save_easing_state()
             self.timeline.set_easing_duration(600)
-        self._hscrollBar.set_value(position)
+
+        self._hscrollBar.set_value(x)
         if self.pipeline and self.pipeline.get_state() != Gst.State.PLAYING:
             self.timeline.restore_easing_state()
         return False
@@ -1091,7 +1097,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         except AttributeError:  # Standalone, no pipeline.
             return
         scroll_pos = self.hadj.get_value()
-        self.scrollToPosition(min(new_pos - canvas_size / 2,
+        self.scrollToPixel(min(new_pos - canvas_size / 2,
                                   self.hadj.props.upper - canvas_size - 1))
 
     def _deleteSelected(self, unused_action):
@@ -1463,7 +1469,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
                     self._setBestZoomRatio()
                 else:
                     x, y = self.transposeXY(x, y)
-                    self.scrollToPosition(Zoomable.pixelToNs(x))
+                    self.scrollToPixel(Zoomable.pixelToNs(x))
             else:
                 actor = self.stage.get_actor_at_pos(Clutter.PickMode.ALL, x, y)
                 try:
