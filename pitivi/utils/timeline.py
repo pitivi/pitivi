@@ -424,6 +424,7 @@ class Zoomable(object):
         Returns the pixel equivalent of the given duration, according to the
         set zoom ratio
         """
+        # Here, a long time ago (206f3a05), a pissed programmer said:
         ## DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!!!!!
         if duration == Gst.CLOCK_TIME_NONE:
             return 0
