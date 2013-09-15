@@ -737,6 +737,11 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         # Handle the case of a blank project
         layer = self._ensureLayer()[0]
 
+        # We need to snapshot this value, because we only do the zoom fit at the
+        # end of clip insertion, but inserting multiple clips eventually changes
+        # the value of self.zoomed_fitted as clips get progressively inserted...
+        _ZOOM_WAS_FITTED = self.zoomed_fitted
+
         for asset in assets:
             if isinstance(asset, GES.TitleClip):
                 clip_duration = asset.get_duration()
@@ -752,13 +757,12 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
                 asset.set_start(self.bTimeline.props.duration)
                 layer.add_clip(asset)
 
-        if self.zoomed_fitted:
+        if _ZOOM_WAS_FITTED:
             self._setBestZoomRatio()
         else:
-            self.scrollToPixel(self.bTimeline.props.duration)
+            self.scrollToPixel(Zoomable.nsToPixel(self.bTimeline.props.duration))
 
         self.app.action_log.commit()
-
         self.bTimeline.commit()
 
     def purgeObject(self, asset_id):
@@ -803,7 +807,11 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         if contents_size + widgets_width <= timeline_ui_width:
             # We're zoomed out completely, re-enable automatic zoom fitting
             # when adding new clips.
+            self.log("Setting 'zoomed_fitted' to True")
             self.zoomed_fitted = True
+        else:
+            self.log("Setting 'zoomed_fitted' to False")
+            self.zoomed_fitted = False
 
     def zoomFit(self):
         self._hscrollBar.set_value(0)
@@ -1048,6 +1056,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
         # Only do this at the very end, after updating the other widgets.
+        self.log("Setting 'zoomed_fitted' to True")
         self.zoomed_fitted = True
 
     def scroll_left(self):
@@ -1088,7 +1097,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         if self.ruler.pressed or self.pressed:
             self.pressed = False
             return
-        canvas_size = self.embed.get_allocation().width - CONTROL_WIDTH
+        canvas_width = self.embed.get_allocation().width - CONTROL_WIDTH
         try:
             new_pos = Zoomable.nsToPixel(self.app.current_project.pipeline.getPosition())
         except PipelineError, e:
@@ -1096,9 +1105,8 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
             return
         except AttributeError:  # Standalone, no pipeline.
             return
-        scroll_pos = self.hadj.get_value()
-        self.scrollToPixel(min(new_pos - canvas_size / 2,
-                                  self.hadj.props.upper - canvas_size - 1))
+        playhead_pos_centered = new_pos - canvas_width / 2
+        self.scrollToPixel(max(0, playhead_pos_centered))
 
     def _deleteSelected(self, unused_action):
         if self.bTimeline:
@@ -1412,7 +1420,6 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
                 Zoomable.zoomIn()
             elif deltas[2] > 0:
                 Zoomable.zoomOut()
-            self.zoomed_fitted = False
             self._scrollToPlayhead()
         elif event.state & Gdk.ModifierType.SHIFT_MASK:
             if deltas[2] > 0:
@@ -1457,6 +1464,9 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
             self.isDraggedClip = True
 
     def _dragDropCb(self, widget, context, x, y, time):
+        # Same as in insertEnd: this value changes during insertion, snapshot it
+        _ZOOM_WAS_FITTED = self.zoomed_fitted
+
         target = widget.drag_dest_find_target(context, None)
         y -= self.ruler.get_allocation().height
         if target.name() == "text/uri-list":
@@ -1465,11 +1475,14 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
             if self.isDraggedClip:
                 self.timeline.convertGhostClips()
                 self.timeline.resetGhostClips()
-                if self.zoomed_fitted:
+                if _ZOOM_WAS_FITTED:
                     self._setBestZoomRatio()
                 else:
                     x, y = self.transposeXY(x, y)
-                    self.scrollToPixel(Zoomable.pixelToNs(x))
+                    # Add a margin (up to 50px) on the left, this prevents
+                    # disorientation & clarifies to users where the clip starts
+                    margin = min(x, 50)
+                    self.scrollToPixel(x - margin)
             else:
                 actor = self.stage.get_actor_at_pos(Clutter.PickMode.ALL, x, y)
                 try:
