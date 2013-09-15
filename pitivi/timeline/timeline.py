@@ -181,7 +181,6 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         @param bTimeline : the backend GES.Timeline which we interface.
         Does all the necessary connections.
         """
-
         if self.bTimeline is not None:
             self.bTimeline.disconnect_by_func(self._trackAddedCb)
             self.bTimeline.disconnect_by_func(self._trackRemovedCb)
@@ -213,22 +212,22 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
         self.zoomChanged()
 
-    """
-    @param element: the ui_element for which we want to find the sibling.
-    Will iterate over ui_elements to get the possible uri source with the same parent clip.
-    """
     def findBrother(self, element):
+        """
+        Iterate over ui_elements to get the URI source with the same parent clip
+        @param element: the ui_element for which we want to find the sibling.
+        """
         father = element.get_parent()
         for elem in self.elements:
             if elem.bElement.get_parent() == father and elem.bElement != element:
                 return elem
         return None
 
-    """
-    @param ghostclip: the ghostclip that was dropped, needing a new layer.
-    Will move subsequent layers down, if any.
-    """
     def insertLayer(self, ghostclip):
+        """
+        @param ghostclip: the ghostclip that was dropped, needing a new layer.
+        Will move subsequent layers down, if any.
+        """
         layer = None
         if ghostclip.priority < len(self.bTimeline.get_layers()):
             for layer in self.bTimeline.get_layers():
@@ -241,12 +240,9 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             self._container.controls._reorderLayerActors()
         return layer
 
-    # drag and drop from the medialibrary
-
-    """
-    Drag and drop is handled with ghostclips. We build a list of ghostclips when
-    drag data is received, and reset it after conversion only, avoiding the drag-leave bug.
-    """
+    # Drag and drop from the medialibrary, handled by "ghost" (temporary) clips.
+    # We create those when drag data is received, reset them after conversion.
+    # This avoids bugs when dragging in and out of the timeline
 
     def resetGhostClips(self):
         for ghostCouple in self.ghostClips:
@@ -264,10 +260,10 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
         self.ghostClips.append([ghostVideo, ghostAudio])
 
-    """
-    This is called for each drag-motion.
-    """
     def updateGhostClips(self, x, y):
+        """
+        This is called for each drag-motion.
+        """
         for ghostCouple in self.ghostClips:
             for ghostclip in ghostCouple:
                 if ghostclip is not None:
@@ -277,13 +273,12 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
                         ghostclip.props.x = x
                         self._updateSize(ghostclip)
 
-    """
-    This is called at drag-drop
-    """
     def convertGhostClips(self):
+        """
+        This is called at drag-drop
+        """
         placement = 0
         layer = None
-
         for ghostCouple in self.ghostClips:
             ghostclip = ghostCouple[0]
             if not ghostclip:
@@ -317,10 +312,10 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             placement += clip_duration
         self.bTimeline.commit()
 
-    """
-    This is called at drag-leave. We don't empty the list on purpose.
-    """
     def removeGhostClips(self):
+        """
+        This is called at drag-leave. We don't empty the list on purpose.
+        """
         for ghostCouple in self.ghostClips:
             for ghostclip in ghostCouple:
                 if ghostclip is not None and ghostclip.get_parent():
@@ -625,7 +620,6 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             self._snapEndedCb()
         else:
             height = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING) * 2
-
             self._snap_indicator.props.height = height
             self._snap_indicator.props.x = Zoomable.nsToPixel(position)
             self._snap_indicator.props.visible = True
@@ -817,8 +811,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
 
     def scrollToPosition(self, position):
         if position > self.hadj.props.upper:
-            # we can't perform the scroll because the canvas needs to be
-            # updated
+            # We can't scroll yet, because the canvas needs to be updated
             GLib.idle_add(self._scrollToPosition, position)
         else:
             self._scrollToPosition(position)
