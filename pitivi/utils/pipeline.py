@@ -90,7 +90,7 @@ class Seeker(Signallable, Loggable):
             if on_idle:
                 self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb, relative=True)
             else:
-                self._seekTimeoutCb()
+                self._seekTimeoutCb(relative=True)
 
     def flush(self, on_idle=False):
         self.seekRelative(0, on_idle)
