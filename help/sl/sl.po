@@ -212,7 +212,7 @@ msgstr "Uporaba zaporednega urejanja med premikanjem posnetkov"
 
 #: C/usingclips.page:43(p)
 msgid "While dragging clips around in the timeline, you can use the <link xref=\"trimming\">ripple technique</link> to move the <em>following</em> clips (the clips that start after the one you're directly editing) to fill the gap."
-msgstr "Med premikanjem posnetkov po časovnici lahko uporabite <link xref=\"trimming\"zaporedno tehniko</link> za premik <em>naslednjih</em> posnetkov (posnetkov, ki se začnejo za tistim, ki ga neposredno urejate) za zapolnitev vrzeli."
+msgstr "Med premikanjem posnetkov po časovnici lahko uporabite <link xref=\"trimming\">zaporedno tehniko</link> za premik <em>naslednjih</em> posnetkov (posnetkov, ki se začnejo za tistim, ki ga neposredno urejate) za zapolnitev vrzeli."
 
 #: C/usingclips.page:45(p)
 msgid "Click and drag the clip you want to move, with the mouse button held down"
@@ -742,7 +742,7 @@ msgstr "Ko kliknete na <em>časovnico</em>:"
 
 #: C/movearoundtimeline.page:71(p)
 msgid "If a clip is under the mouse cursor, it will replace the current clip selection (see the <link xref=\"makeselections\">Selecting multiple items</link> section for more detailed instructions)."
-msgstr "V primeru da je posnetek pod miškinim kazalcem, bo zamenjal trenutno izbiro posnetka (za podrobnejša navodila si oglejte odsek  <link xref=\"makeselections\"\">Izbiranje več predmetov</link>)."
+msgstr "V primeru da je posnetek pod miškinim kazalcem, bo zamenjal trenutno izbiro posnetka (za podrobnejša navodila si oglejte odsek  <link xref=\"makeselections\">Izbiranje več predmetov</link>)."
 
 #: C/movearoundtimeline.page:72(p)
 msgid "If there is no clip under the cursor, all selected clips (if any) will be deselected."
@@ -978,7 +978,7 @@ msgstr "Ko jih boste približali, bodo sličice vidno predstavljene na ravnilu k
 
 #: C/mainwindow.page:59(p)
 msgid "To move your position in time, click anywhere on the ruler. You can also <em>scrub</em> the timeline by clicking on the ruler and holding down the mouse button while moving. See the section on <link xref=\"movearoundtimeline\">scrubbing</link> for more details."
-msgstr "Za premik vašega položaja v času kliknite kjerkoli na ravnilu. Časovnico lahko tudi <em>drgnete</em> s klikom na ravnilo in držanjem miškinega gumba medtem ko se premikate. Oglejte si odsek <link xref=\"movearoundtimeline\"\">Drgnjenje</link> za več podrobnosti."
+msgstr "Za premik vašega položaja v času kliknite kjerkoli na ravnilu. Časovnico lahko tudi <em>drgnete</em> s klikom na ravnilo in držanjem miškinega gumba medtem ko se premikate. Oglejte si odsek <link xref=\"movearoundtimeline\">Drgnjenje</link> za več podrobnosti."
 
 #: C/mainwindow.page:63(title)
 msgid "Marker bar"
