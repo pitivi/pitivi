@@ -163,7 +163,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.debug("button pressed at x:%d", event.x)
         self.pressed = True
         position = self.pixelToNs(event.x + self.pixbuf_offset)
-        self._seeker.seek(position)
+        self._seeker.seek(position, on_idle=True)
         return True
 
     def do_button_release_event(self, event):
@@ -175,7 +175,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         position = self.pixelToNs(event.x + self.pixbuf_offset)
         if self.pressed:
             self.debug("motion at event.x %d", event.x)
-            self._seeker.seek(position)
+            self._seeker.seek(position, on_idle=True)
 
         human_time = beautify_length(position)
         cur_frame = int(position / self.ns_per_frame) + 1
