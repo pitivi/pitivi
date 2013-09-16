@@ -73,6 +73,7 @@ class Seeker(Signallable, Loggable):
         self.position = None
         self.format = None
         self._time = None
+        self.pending_position = None
 
     def seek(self, position, format=Gst.Format.TIME, on_idle=False):
         self.format = format
@@ -83,6 +84,8 @@ class Seeker(Signallable, Loggable):
                 self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb)
             else:
                 self._seekTimeoutCb()
+        else:
+            self.pending_position = position
 
     def seekRelative(self, time, on_idle=False):
         if self.pending_seek_id is None:
@@ -100,6 +103,7 @@ class Seeker(Signallable, Loggable):
 
     def _seekTimeoutCb(self, relative=False):
         self.pending_seek_id = None
+
         if relative:
             try:
                 self.emit('seek-relative', self._time)
@@ -121,6 +125,11 @@ class Seeker(Signallable, Loggable):
                 # if an exception happened while seeking, properly
                 # reset ourselves
                 return False
+
+        if self.pending_position:
+            self.seek(self.pending_position, on_idle=True)
+            self.pending_position = None
+
         return False
 
 
