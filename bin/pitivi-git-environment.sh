@@ -50,7 +50,7 @@ MODULES_CORE="${MODULE_GLIB} gobject-introspection pygobject"
 # otherwise the script will detect our "gst uninstalled" and think it's the
 # system-wide install.
 if pkg-config --exists --print-errors 'gstreamer-1.0 >= 1.1.0.1'; then
-    MODULES="gnonlin gst-editing-services gst-python"
+    MODULES="gnonlin gst-editing-services gst-python gst-devtools"
 else
     MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python"
 fi
@@ -67,6 +67,7 @@ $PITIVI/gst-editing-services/tools:\
 $PITIVI/pitivi/bin/:\
 $PITIVI/gstreamer/tools:\
 $PITIVI/gst-plugins-base/tools:\
+$PITIVI/gst-devtools/validate/tools:\
 $PITIVI_PREFIX/bin:\
 $PATH"
 
@@ -116,6 +117,11 @@ else
   DYLD_LIBRARY_PATH=$PITIVI/gstreamer/gst/.libs:$DYLD_LIBRARY_PATH
   GI_TYPELIB_PATH=$PITIVI/gstreamer/gst:$GI_TYPELIB_PATH
 
+  LD_LIBRARY_PATH=$PITIVI/gst-devtools/validate/gst/validate/.libs:$LD_LIBRARY_PATH
+  DYLD_LIBRARY_PATH=$PITIVI/gst-devtools/validate/gst/validate/.libs:$DYLD_LIBRARY_PATH
+  GI_TYPELIB_PATH=$PITIVI$PITIVI/gst-devtools/validate/gst/validate/$GI_TYPELIB_PATH
+
+
 export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
 :$PITIVI/gst-plugins-base/pkgconfig\
 :$PITIVI/gst-plugins-good/pkgconfig\
@@ -123,6 +129,7 @@ export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
 :$PITIVI/gst-plugins-bad/pkgconfig\
 :$PITIVI/gst-ffmpeg/pkgconfig\
 :$PITIVI/gst-editing-services/pkgconfig\
+:$PITIVI/gst-devtools/validate/pkgconfig\
 :${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
 export GST_PLUGIN_PATH="\
