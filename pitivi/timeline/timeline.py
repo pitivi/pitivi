@@ -281,36 +281,40 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     This is called at drag-drop
     """
     def convertGhostClips(self):
+        placement = 0
+        layer = None
+
         for ghostCouple in self.ghostClips:
             ghostclip = ghostCouple[0]
             if not ghostclip:
                 ghostclip = ghostCouple[1]
 
-            layer = None
-            target = None
-
-            if ghostclip.shouldCreateLayer:
-                layer = self.insertLayer(ghostclip)
-                target = layer
-            else:
-                for layer in self.bTimeline.get_layers():
-                    if layer.get_priority() == ghostclip.priority:
-                        target = layer
-                        break
-
-            if target is None:
-                layer = self.bTimeline.append_layer()
+            if layer is None:
+                target = None
+                if ghostclip.shouldCreateLayer:
+                    layer = self.insertLayer(ghostclip)
+                    target = layer
+                else:
+                    for layer in self.bTimeline.get_layers():
+                        if layer.get_priority() == ghostclip.priority:
+                            target = layer
+                            break
+                if target is None:
+                    layer = self.bTimeline.append_layer()
 
             if ghostclip.asset.is_image():
                 clip_duration = self._settings.imageClipLength * Gst.SECOND / 1000.0
             else:
                 clip_duration = ghostclip.asset.get_duration()
 
+            if not placement:
+                placement = Zoomable.pixelToNs(ghostclip.props.x)
             layer.add_asset(ghostclip.asset,
-                            Zoomable.pixelToNs(ghostclip.props.x),
+                            placement,
                             0,
                             clip_duration,
                             ghostclip.asset.get_supported_formats())
+            placement += clip_duration
         self.bTimeline.commit()
 
     """
