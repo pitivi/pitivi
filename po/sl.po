@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-09-10 18:35+0000\n"
+"POT-Creation-Date: 2013-09-14 16:44+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
@@ -22,13 +22,15 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
 "%100==4 ? 3 : 0);\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.5.7\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1
 msgid ""
 "A video editor that aims to appeal to hobbyists and professionals alike, "
 "with a strong focus on usability, efficiency and quality"
 msgstr ""
+"Montažni program za video, namenjen navdušencem in strokovnjakom, z močnim "
+"poudarkom na uporabnosti, učinkovitosti in kakovosti."
 
 #: ../data/pitivi.appdata.xml.in.h:2
 msgid ""
@@ -463,6 +465,9 @@ msgid ""
 "the image resolution, your computer's processing power, applied effects and "
 "the length of your movie.</small>"
 msgstr ""
+"<small>To opravilo je lahko dolgotrajno, odvisno od izbranih kodekov, "
+"ločljivosti slike, procesorske moči računalnika, uporabljenih učinkov "
+"in dolžine vašega filma.</small>"
 
 #: ../data/ui/renderingprogress.ui.h:3
 msgid "Initializing..."
@@ -585,19 +590,19 @@ msgstr "Možnost -a zahteva možnost -i"
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "Ni mogoče določiti več kot ene datoteke projekta"
 
-#: ../pitivi/check.py:243
+#: ../pitivi/check.py:236
 msgid "enables sound notifications when rendering is complete"
 msgstr "omogoči zvočna obvestila po končanju izrisovanja"
 
-#: ../pitivi/check.py:246
+#: ../pitivi/check.py:239
 msgid "enables visual notifications when rendering is complete"
 msgstr "omogoči vidna obvestila po končanju izrisovanja"
 
-#: ../pitivi/check.py:249
+#: ../pitivi/check.py:242
 msgid "additional multimedia codecs through the Libav library"
 msgstr "dodatni kodeki predstavnosti preko knjižnice Libav"
 
-#: ../pitivi/check.py:257
+#: ../pitivi/check.py:250
 msgid "additional video effects, clip transformation feature"
 msgstr "dodatni video učinki, možnost pretvarjanje posnetka"
 
@@ -1740,147 +1745,3 @@ msgstr "Približanje"
 #: ../pitivi/utils/widgets.py:1227
 msgid "Zoom Timeline"
 msgstr "Približanje časovnice"
-
-#~ msgid "<b><big>Rendering movie</big></b>"
-#~ msgstr "<b><big>Pretvarjanje posnetka</big></b>"
-
-#~ msgid "Unknown Mib"
-#~ msgstr "Naznano Mib"
-
-#~ msgid "Unknown"
-#~ msgstr "Neznano"
-
-#~ msgid "Rendering first pass"
-#~ msgstr "Prvi prehod pretvarjanja"
-
-#~ msgid "Frames per second:"
-#~ msgstr "Sličic na sekundo:"
-
-#~ msgid "Phase:"
-#~ msgstr "Faza:"
-
-#~ msgid "Cannot save with this file format."
-#~ msgstr "Ni mogoče shraniti v ta zapis."
-
-#~ msgid "Cannot save with this file format. %s"
-#~ msgstr "V izbranem zapisu datoteke ni mogoče shraniti. %s"
-
-#~ msgid "Cannot save with this file format"
-#~ msgstr "V izbranem zapisu datoteke ni mogoče shraniti."
-
-#~ msgid "%d%% Rendered"
-#~ msgstr "%d%% pretvorjeno"
-
-#~ msgid "enables the autoalign feature"
-#~ msgstr "omogoči zmožnost samodejnega poravnavanja"
-
-#~ msgid "Sample depth:"
-#~ msgstr "Globina vzorčenja:"
-
-#~ msgid "%d bit"
-#~ msgstr "%d bitov"
-
-#~ msgid "Error Saving Project"
-#~ msgstr "Prišlo je do napake med shranjevanjem projekta"
-
-#~ msgid "Do you want to reload current project?"
-#~ msgstr "Ali želite ponovno naložiti trenutni projekt?"
-
-#~ msgid "Error Loading Project"
-#~ msgstr "Napaka med nalaganjem projekta"
-
-#~ msgid "Appearance"
-#~ msgstr "Videz"
-
-#~ msgid "Thumbnail gap"
-#~ msgstr "Vrzel med sličicami"
-
-#~ msgid "The spacing between thumbnails, in pixels"
-#~ msgstr "Razmik med sličicami v točkah"
-
-#~ msgid "Performance"
-#~ msgstr "Zmogljivost"
-
-#~ msgid "Thumbnail every"
-#~ msgstr "Sličica vsakih"
-
-#~ msgid "1/100 second"
-#~ msgstr "1/100 sekunde"
-
-#~ msgid "1/10 second"
-#~ msgstr "1/10 sekunde"
-
-#~ msgid "1/4 second"
-#~ msgstr "1/4 sekunde"
-
-#~ msgid "1/2 second"
-#~ msgstr "1/2 sekunde"
-
-#~ msgid "1 second"
-#~ msgstr "1 sekunda"
-
-#~ msgid "5 seconds"
-#~ msgstr "5 sekund"
-
-#~ msgid "10 seconds"
-#~ msgstr "10 sekund"
-
-#~ msgid "minute"
-#~ msgstr "minut"
-
-#~ msgid "The interval, in seconds, between thumbnails."
-#~ msgstr "Čas med sličicami v sekundah."
-
-#~ msgid "Enable video thumbnails"
-#~ msgstr "Omogoči sličice videa"
-
-#~ msgid "Show thumbnails on video clips"
-#~ msgstr "Pokaži sličice na video posnetkih"
-
-#~ msgid "Enable audio waveforms"
-#~ msgstr "Omogoči oblike zvočnih valov"
-
-#~ msgid "Show waveforms on audio clips"
-#~ msgstr "Pokaži oblike valov na zvočnih posnetkih"
-
-#~ msgid "One or more GStreamer errors occured!"
-#~ msgstr "Prišlo je do ene ali več napak GStreamer!"
-
-#~ msgid "Error List"
-#~ msgstr "Seznam napak"
-
-#~ msgid "The following errors have been reported:"
-#~ msgstr "Sporočene so bile naslednje napake:"
-
-#~ msgid "Color for video clips"
-#~ msgstr "Barva video posnetkov"
-
-#~ msgid "The background color for clips in video tracks."
-#~ msgstr "Barva ozadja za posnetke v video progah."
-
-#~ msgid "Color for audio clips"
-#~ msgstr "Barva zvočnih posnetkov"
-
-#~ msgid "The background color for clips in audio tracks."
-#~ msgstr "Barva ozadja za posnetke v zvočnih progah."
-
-#~ msgid "Color for title clips"
-#~ msgstr "Barva za posnetke naslovov"
-
-#~ msgid "The background color for clips in title tracks."
-#~ msgstr "Barva ozadja za posnetke v sledeh z napisi."
-
-#~ msgid "Selection color"
-#~ msgstr "Barva izbire"
-
-#~ msgid "Selected clips will be tinted with this color."
-#~ msgstr "Izbrani posnetki bodo rahlo obarvani s to barvo."
-
-#~ msgid "Clip font"
-#~ msgstr "Pisava posnetkov"
-
-#~ msgid "The font to use for clip titles"
-#~ msgstr "Pisava za naslove posnetkov"
-
-#~ msgid "Choose..."
-#~ msgstr "Izberite ..."
