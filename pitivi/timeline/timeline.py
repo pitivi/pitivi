@@ -1315,10 +1315,24 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
     # Callbacks
 
     def _keyPressEventCb(self, widget, event):
+        # This is used both for changing the selection modes and for affecting
+        # the seek keyboard shortcuts further below
         if event.keyval == Gdk.KEY_Shift_L:
             self._shiftMask = True
         elif event.keyval == Gdk.KEY_Control_L:
             self._controlMask = True
+
+        # Now the second (independent) part: framestepping and seeking shortcuts
+        if event.keyval == Gdk.KEY_Left:
+            if self._shiftMask:
+                self._seeker.seekRelative(0 - Gst.SECOND)
+            else:
+                self._project.pipeline.stepFrame(self._framerate, -1)
+        elif event.keyval == Gdk.KEY_Right:
+            if self._shiftMask:
+                self._seeker.seekRelative(Gst.SECOND)
+            else:
+                self._project.pipeline.stepFrame(self._framerate, 1)
 
     def _keyReleaseEventCb(self, widget, event):
         if event.keyval == Gdk.KEY_Shift_L:

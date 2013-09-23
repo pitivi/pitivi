@@ -51,7 +51,6 @@
           <item><p><key>S</key>: Split the clips at the current playhead position. If there are selected clips, only those will be split.</p></item>
           <item><p><key>Delete</key>: Remove selected clips from the timeline.</p></item>
           <item><p><key>←</key> and <key>→</key>: Seek one frame backwards or forwards. This depends on your project framerate.</p></item>
-          <item><p><key>Ctrl+←</key> and <key>Ctrl+→</key>: Seek one clip backwards or forwards.</p></item>
           <item><p><key>Shift+←</key> and <key>Shift+→</key>: Seek one second backwards or forwards.</p></item>
           <item><p><key>Ctrl++</key> and <key>Ctrl+-</key>: Zoom in or zoom out. You can also use <key>Ctrl</key> with the mouse wheel to control the zoom more efficiently.</p></item>
           <item><p><key>Ctrl+0</key>: Adjust the zoom to fit the timeline.</p></item>
