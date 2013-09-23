@@ -419,6 +419,7 @@ class SimplePipeline(Signallable, Loggable):
                     if self.pendingRecovery:
                         self.simple_seek(self.lastPosition)
                         self.pendingRecovery = False
+                        self.info("Seeked back to the last position after pipeline recovery")
                 elif prev == Gst.State.PAUSED and new == Gst.State.PLAYING:
                     self._listenToPosition(True)
                 elif prev == Gst.State.PLAYING and new == Gst.State.PAUSED:
@@ -444,6 +445,7 @@ class SimplePipeline(Signallable, Loggable):
             self.log("%s [%r]" % (message.type, message.src))
 
     def _recover(self):
+        self.warning("Pipeline error detected during playback, resetting")
         self.pendingRecovery = True
         self._pipeline.set_state(Gst.State.NULL)
         self._pipeline.set_state(Gst.State.PAUSED)
