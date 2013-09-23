@@ -839,9 +839,9 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self.timeline.setTimeline(bTimeline)
 
     def getEditionMode(self, isAHandle=False):
-        if self.shiftMask or (self.gui and self.gui._autoripple_active):
+        if self._shiftMask or (self.gui and self.gui._autoripple_active):
             return GES.EditMode.EDIT_RIPPLE
-        if isAHandle and self.controlMask:
+        if isAHandle and self._controlMask:
             return GES.EditMode.EDIT_ROLL
         elif isAHandle:
             return GES.EditMode.EDIT_TRIM
@@ -874,8 +874,8 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self.timeline = TimelineStage(self)
         self.controls = ControlContainer(self.app, self.timeline)
         self.zoomBox = ZoomBox(self)
-        self.shiftMask = False
-        self.controlMask = False
+        self._shiftMask = False
+        self._controlMask = False
 
         perspective.fov_y = 90.
         self.stage.set_perspective(perspective)
@@ -1316,15 +1316,15 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
 
     def _keyPressEventCb(self, widget, event):
         if event.keyval == Gdk.KEY_Shift_L:
-            self.shiftMask = True
+            self._shiftMask = True
         elif event.keyval == Gdk.KEY_Control_L:
-            self.controlMask = True
+            self._controlMask = True
 
     def _keyReleaseEventCb(self, widget, event):
         if event.keyval == Gdk.KEY_Shift_L:
-            self.shiftMask = False
+            self._shiftMask = False
         elif event.keyval == Gdk.KEY_Control_L:
-            self.controlMask = False
+            self._controlMask = False
 
     def _focusInCb(self, unused_widget, unused_arg):
         self.log("Timeline has grabbed focus")
