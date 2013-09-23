@@ -537,7 +537,13 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         Seek backwards or forwards a certain amount of frames (frames_offset).
         This clamps the playhead to the project frames.
         """
-        cur_frame = int(round(self.getPosition() * framerate.num / float(Gst.SECOND * framerate.denom), 2))
+        try:
+            position = self.getPosition()
+        except PipelineError:
+            self.warning("Couldn't get position (you're framestepping too quickly), ignoring this request")
+            return
+
+        cur_frame = int(round(position * framerate.num / float(Gst.SECOND * framerate.denom), 2))
         new_frame = cur_frame + frames_offset
         new_pos = long(new_frame * Gst.SECOND * framerate.denom / framerate.num)
         Loggable.info(self, "From frame %d to %d at %f fps, seek to %s s" % (cur_frame,
