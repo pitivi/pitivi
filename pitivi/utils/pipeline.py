@@ -431,6 +431,7 @@ class SimplePipeline(Signallable, Loggable):
         elif message.type == Gst.MessageType.ERROR:
             error, detail = message.parse_error()
             self._handleErrorMessage(error, detail, message.src)
+            self._waiting_for_async_done = False
             if not (self._pipeline.get_mode() & GES.PipelineFlags.RENDER):
                 self._recover()
         elif message.type == Gst.MessageType.DURATION_CHANGED:
