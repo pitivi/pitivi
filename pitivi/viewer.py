@@ -143,6 +143,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
             self.pipeline.connect("duration-changed", self._durationChangedCb)
 
         self.sink = pipeline.video_overlay
+        self.target.sink = self.sink
         self._switch_output_window()
         self._setUiActive()
 
