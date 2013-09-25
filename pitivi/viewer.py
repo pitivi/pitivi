@@ -189,7 +189,6 @@ class PitiviViewer(Gtk.VBox, Loggable):
         self.internal = ViewerWidget(self.app.settings)
         # Transformation boxed DISABLED
         # self.internal.init_transformation_events()
-        self.internal.show()
         self.aframe.add(self.internal)
         self.pack_start(self.aframe, True, True, 0)
 
@@ -202,7 +201,6 @@ class PitiviViewer(Gtk.VBox, Loggable):
         self.external_window.connect("delete-event", self._externalWindowDeleteCb)
         self.external_window.connect("configure-event", self._externalWindowConfigureCb)
         self.external_vbox = vbox
-        self.external_vbox.show_all()
 
         # Buttons/Controls
         bbox = Gtk.HBox()
@@ -268,9 +266,18 @@ class PitiviViewer(Gtk.VBox, Loggable):
             width += 110
             height = int(width / self.aframe.props.ratio)
             self.aframe.set_size_request(width, height)
-        self.show_all()
+
         self.buttons = bbox
         self.buttons_container = boxalign
+        # Prevent black frames and flickering while resizing or changing focus:
+        self.internal.set_double_buffered(False)
+        self.external.set_double_buffered(False)
+        # We keep the ViewerWidget hidden initially, or the desktop wallpaper
+        # would show through the non-double-buffered widget!
+        self.internal.set_no_show_all(True)
+        self.external.set_no_show_all(True)
+        self.show_all()
+        self.external_vbox.show_all()
 
     def setDisplayAspectRatio(self, ratio):
         """
