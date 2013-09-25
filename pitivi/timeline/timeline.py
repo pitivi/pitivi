@@ -160,6 +160,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.current_group = GES.Group()
 
         self._container = container
+        self.allowSeek = True
         self._settings = container._settings
         self.elements = []
         self.ghostClips = []
@@ -658,6 +659,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     def _elementStartChangedCb(self, bElement, start, element):
         self._updateSize()
+        self.allowSeek = False
 
         if element.isDragged:
             self._setElementX(element, ease=False)
@@ -666,9 +668,11 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     def _elementDurationChangedCb(self, bElement, duration, element):
         self._updateSize()
+        self.allowSeek = False
         element.update(False)
 
     def _elementInPointChangedCb(self, bElement, inpoint, element):
+        self.allowSeek = False
         self._setElementX(element, ease=False)
 
     def _layerPriorityChangedCb(self, layer, priority):
@@ -1352,11 +1356,13 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
     def _timelineClickedCb(self, unused_timeline, event):
         self.pressed = True
         self.grab_focus()  # Prevent other widgets from being confused
-        position = self.pixelToNs(event.x - CONTROL_WIDTH + self.timeline._scroll_point.x)
-        if self.app:
+
+    def _timelineClickReleasedCb(self, unused_timeline, event):
+        if self.app and self.timeline.allowSeek is True:
+            position = self.pixelToNs(event.x - CONTROL_WIDTH + self.timeline._scroll_point.x)
             self._seeker.seek(position)
 
-    def _timelineClickReleasedCb(self, unused_timeline, unused_event):
+        self.timeline.allowSeek = True
         self.timeline._snapEndedCb()
 
     def _renderingSettingsChangedCb(self, project, item, value):
