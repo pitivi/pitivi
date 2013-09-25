@@ -854,8 +854,6 @@ class Project(Loggable, GES.Project):
         self.pipeline = Pipeline()
         self.pipeline.add_timeline(self.timeline)
 
-        self.update_restriction_caps()
-
         return True
 
     def update_restriction_caps(self):
