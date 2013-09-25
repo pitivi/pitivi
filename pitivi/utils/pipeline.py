@@ -35,6 +35,8 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import GES
 
+MAX_RECOVERIES = 5
+
 
 # FIXME : define/document a proper hierarchy
 class PipelineError(Exception):
@@ -170,6 +172,7 @@ class SimplePipeline(Signallable, Loggable):
         self.video_overlay = video_overlay
         self.lastPosition = long(0 * Gst.SECOND)
         self.pendingRecovery = False
+        self._attempted_recoveries = 0
         self._waiting_for_async_done = True
         self._next_seek = None
 
@@ -438,6 +441,7 @@ class SimplePipeline(Signallable, Loggable):
             self.debug("Duration might have changed, querying it")
             GLib.idle_add(self._queryDurationAsync)
         elif message.type == Gst.MessageType.ASYNC_DONE:
+            self._attempted_recoveries = 0
             self._waiting_for_async_done = False
             if self._next_seek is not None:
                 self.simple_seek(self._next_seek[0], self._next_seek[1])
@@ -446,10 +450,14 @@ class SimplePipeline(Signallable, Loggable):
             self.log("%s [%r]" % (message.type, message.src))
 
     def _recover(self):
+        if self._attempted_recoveries > MAX_RECOVERIES:
+            self.warning("Pipeline error detected multiple times in a row, not resetting anymore")
+            return
         self.warning("Pipeline error detected during playback, resetting")
         self.pendingRecovery = True
         self._pipeline.set_state(Gst.State.NULL)
         self._pipeline.set_state(Gst.State.PAUSED)
+        self._attempted_recoveries += 1
 
     def _queryDurationAsync(self, *args, **kwargs):
         try:
