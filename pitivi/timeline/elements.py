@@ -1036,10 +1036,10 @@ class URISourceElement(TimelineElement):
 
         mode = SELECT
 
-        if self.timeline._container.controlMask and not self.bElement.selected:
+        if self.timeline._container._controlMask and not self.bElement.selected:
             mode = SELECT_ADD
             self.timeline.current_group.add(self.bElement.get_toplevel_parent())
-        elif self.timeline._container.controlMask:
+        elif self.timeline._container._controlMask:
             self.timeline.current_group.remove(self.bElement.get_toplevel_parent())
             mode = UNSELECT
         elif not self.bElement.selected.selected:
