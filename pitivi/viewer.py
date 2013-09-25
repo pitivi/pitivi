@@ -828,7 +828,7 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
             #self.modify_bg(state, self.style.black)
 
     def init_transformation_events(self):
-        self.info("TransformationBox disabled")
+        self.fixme("TransformationBox disabled")
         """
         self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK
                         | Gdk.EventMask.BUTTON_RELEASE_MASK
@@ -837,7 +837,7 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
         """
 
     def show_box(self):
-        self.info("TransformationBox disabled")
+        self.fixme("TransformationBox disabled")
         """
         if not self.box:
             self.box = TransformationBox(self.settings)
@@ -916,7 +916,7 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
         return True
 
     def _currentStateCb(self, pipeline, state):
-        self.info("TransformationBox disabled")
+        self.fixme("TransformationBox disabled")
         """
         self.pipeline = pipeline
         if state == Gst.State.PAUSED:
