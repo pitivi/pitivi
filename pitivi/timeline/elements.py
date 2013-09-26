@@ -1137,7 +1137,10 @@ class URISourceElement(TimelineElement):
 
     def cleanup(self):
         if self.preview:
-            self.preview.cleanup()
+            try:
+                self.preview.cleanup()
+            except AttributeError:  # preview was just an actor.
+                pass
         self.leftHandle.cleanup()
         self.leftHandle = None
         self.rightHandle.cleanup()
