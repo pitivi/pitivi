@@ -296,7 +296,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         return False
 
     def _create_next_thumb(self):
-        if not self.wishlist:
+        if not self.wishlist or not self.queue:
             # nothing left to do
             self.debug("Thumbnails generation complete")
             self.stopGeneration()
