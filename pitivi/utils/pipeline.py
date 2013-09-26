@@ -175,6 +175,7 @@ class SimplePipeline(Signallable, Loggable):
         self._attempted_recoveries = 0
         self._waiting_for_async_done = True
         self._next_seek = None
+        self._timeout_async_id = 0
 
     def release(self):
         """
@@ -357,6 +358,11 @@ class SimplePipeline(Signallable, Loggable):
             GLib.source_remove(self._listeningSigId)
             self._listeningSigId = 0
 
+    def _resetWaitingForAsyncDone(self):
+        self.warning("we didn't get async done, this is a bug")
+        self._waiting_for_async_done = False
+        return False
+
     def simple_seek(self, position, format=Gst.Format.TIME):
         """
         Seeks in the L{Pipeline} to the given position.
@@ -385,6 +391,13 @@ class SimplePipeline(Signallable, Loggable):
                                   Gst.SeekType.SET, position,
                                   Gst.SeekType.NONE, -1)
         self._waiting_for_async_done = True
+
+        if self._timeout_async_id:
+            GLib.source_remove(self._timeout_async_id)
+            self._timeout_async_id = 0
+
+        self._timeout_async_id = GLib.timeout_add(1000, self._resetWaitingForAsyncDone)
+
         if not res:
             self.debug("seeking failed")
             raise PipelineError("seek failed")
@@ -446,6 +459,9 @@ class SimplePipeline(Signallable, Loggable):
             if self._next_seek is not None:
                 self.simple_seek(self._next_seek[0], self._next_seek[1])
                 self._next_seek = None
+            if self._timeout_async_id:
+                GLib.source_remove(self._timeout_async_id)
+                self._timeout_async_id = 0
         else:
             self.log("%s [%r]" % (message.type, message.src))
 
