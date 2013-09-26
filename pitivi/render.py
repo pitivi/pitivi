@@ -886,6 +886,17 @@ class RenderDialog(Loggable):
         self.progress = RenderingProgressDialog(self.app, self)
         self.window.hide()  # Hide the rendering settings dialog while rendering
 
+        # Now find a format to set on the restriction caps.
+        # The reason is we can't send different formats on the encoders.
+        factory = Gst.ElementFactory.find(self.project.vencoder)
+        for struct in factory.get_static_pad_templates():
+            if struct.direction == Gst.PadDirection.SINK:
+                caps = struct.get_caps()
+                fixed = caps.fixate()
+                fmt = fixed.get_structure(0).get_value("format")
+                self.project.video_profile.get_restriction()[0]["format"] = fmt
+                break
+
         self._pipeline.set_render_settings(self.outfile, self.project.container_profile)
         self.startAction()
         self.progress.window.show()
