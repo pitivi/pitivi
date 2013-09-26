@@ -272,7 +272,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         self.debug('Now generating thumbnails for "%s"' % filename_from_uri(self.uri))
         self.queue = []
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
-        if not query_success:
+        if not query_success or duration == -1:
             self.debug("Could not determine duration of %s" % self.uri)
             duration = self.duration
         else:
