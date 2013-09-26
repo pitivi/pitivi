@@ -56,6 +56,8 @@ HELP_FILES = \
 
 HELP_LINGUAS = cs de el es fr sl uk
 
+distdir-help-files: all
+
 html:
 	mkdir -p html
 	yelp-build cache C/*.page
