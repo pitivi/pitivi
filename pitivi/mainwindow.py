@@ -1010,6 +1010,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _projectManagerMissingUriCb(self, u_project_manager, u_project,
             error, asset):
+        self._missingUriOnLoading = True
         uri = asset.get_id()
         new_uri = None
         dialog = Gtk.Dialog(_("Locate missing file..."),
