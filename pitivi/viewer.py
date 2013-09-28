@@ -180,6 +180,10 @@ class PitiviViewer(Gtk.VBox, Loggable):
         self.settings.viewerX = event.x
         self.settings.viewerY = event.y
 
+    def _videoRealized(self, widget):
+        if widget == self.target:
+            self._switch_output_window()
+
     def _createUi(self):
         """ Creates the Viewer GUI """
         # Drawing area
@@ -277,6 +281,8 @@ class PitiviViewer(Gtk.VBox, Loggable):
         # would show through the non-double-buffered widget!
         self.internal.set_no_show_all(True)
         self.external.set_no_show_all(True)
+        self.internal.connect("realize", self._videoRealized)
+        self.external.connect("realize", self._videoRealized)
         self.show_all()
         self.external_vbox.show_all()
 
@@ -487,12 +493,21 @@ class PitiviViewer(Gtk.VBox, Loggable):
         self.internal._currentStateCb(self.pipeline, state)
 
     def _switch_output_window(self):
-        Gdk.threads_enter()
-        # Prevent cases where target has no "window_xid" (yes, it happens!):
-        self.target.show()
-        self.sink.set_window_handle(self.target.window_xid)
-        self.sink.expose()
-        Gdk.threads_leave()
+        # Don't do anything if we don't have a pipeline
+        if self.sink is None:
+            return
+
+        if self.target.get_realized():
+            if platform.system() == 'Windows':
+                xid = self.target.get_window().get_handle()
+            else:
+                xid = self.target.get_window().get_xid()
+
+            self.sink.set_window_handle(xid)
+            self.sink.expose()
+        else:
+            # Show the widget and wait for the realized callback
+            self.target.show()
 
 
 class Point():
@@ -898,17 +913,6 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
                 self.get_window().get_height())
 
         self.stored = True
-
-    def do_realize(self):
-        """
-        Redefine gtk DrawingArea's do_realize method to handle multiple OSes.
-        This is called when creating the widget to get the window ID.
-        """
-        Gtk.DrawingArea.do_realize(self)
-        if platform.system() == 'Windows':
-            self.window_xid = self.props.window.handle
-        else:
-            self.window_xid = self.get_property('window').get_xid()
 
     def button_release_event(self, widget, event):
         if event.button == 1:
