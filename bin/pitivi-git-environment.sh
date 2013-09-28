@@ -78,7 +78,7 @@ GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PAT
 export PKG_CONFIG_PATH="$PITIVI_PREFIX/lib/pkgconfig:$PITIVI/pygobject:$PKG_CONFIG_PATH"
 
 
-if pkg-config --exists --print-errors 'gstreamer-1.0 >= 1.2.0.1'; then
+if pkg-config --exists --print-errors 'gstreamer-1.0 >= 1.2.0'; then
   echo "Using system-wide GStreamer 1.0"
 else
   echo "Using a local build of GStreamer 1.0"
