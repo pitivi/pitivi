@@ -50,9 +50,9 @@ MODULES_CORE="${MODULE_GLIB} gobject-introspection pygobject"
 # otherwise the script will detect our "gst uninstalled" and think it's the
 # system-wide install.
 if pkg-config --exists --print-errors 'gstreamer-1.0 >= 1.2.0'; then
-    MODULES="gnonlin gst-editing-services gst-python gst-devtools"
+    MODULES="gnonlin gst-editing-services gst-python"
 else
-    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python"
+    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python  gst-devtools"
 fi
 
 # base path under which dirs are installed
@@ -325,7 +325,12 @@ if [ "$ready_to_run" != "1" ]; then
           fi
         fi
 
-        cd $m
+        if [ $m == "gst-devtools" ]; then
+          cd $m/validate
+        else
+          cd $m
+        fi
+
         git fetch origin  # In case you haven't got the latest release tags...
         git checkout $GST_RELEASE_TAG
         if [ $? -ne 0 ]; then
