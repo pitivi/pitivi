@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import platform
 from gettext import gettext as _
 from gi.repository import GLib
 from gi.repository import GObject
@@ -66,10 +67,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.connect('message', self._bus_message_cb)
-        bus.enable_sync_message_emission()
-        bus.connect('sync-message::element', self._sync_message_cb)
         bus.connect('message::tag', self._tag_found_cb)
-        self.__videosink = Gst.ElementFactory.make("autovideosink", "videosink")
         self.__fakesink = Gst.ElementFactory.make("fakesink", "fakesink")
 
         #some global variables for preview handling
@@ -86,7 +84,9 @@ class PreviewWidget(Gtk.VBox, Loggable):
         # Gui elements:
         # Drawing area for video output
         self.preview_video = ViewerWidget()
+        self.preview_video.connect("realize", self._on_preview_video_realize_cb)
         self.preview_video.modify_bg(Gtk.StateType.NORMAL, self.preview_video.get_style().black)
+        self.preview_video.set_double_buffered(False)
         self.pack_start(self.preview_video, False, True, 0)
 
         # An image for images and audio
@@ -215,7 +215,6 @@ class PreviewWidget(Gtk.VBox, Loggable):
             else:
                 self.current_preview_type = 'video'
                 self.preview_image.hide()
-                self.player.set_property("video-sink", self.__videosink)
                 self.player.set_property("uri", self.current_selected_uri)
                 self.player.set_state(Gst.State.PAUSED)
                 self.pos_adj.props.upper = duration
@@ -328,6 +327,13 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.pos_adj.set_value(long(curr_pos))
         return self.is_playing
 
+    def _on_preview_video_realize_cb(self, widget):
+        if platform.system() == 'Windows':
+            xid = widget.get_window().get_handle()
+        else:
+            xid = widget.get_window().get_xid()
+        self.player.set_window_handle(xid)
+
     def _on_start_stop_clicked_cb(self, button):
         if self.is_playing:
             self.pause()
@@ -370,35 +376,6 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.preview_image.show()
             self.settings.FCpreviewWidth = int(w)
             self.settings.FCpreviewHeight = int(h)
-
-    def _sync_message_cb(self, bus, mess):
-        if mess.type == Gst.MessageType.ELEMENT:
-            if mess.has_name('prepare-window-handle'):
-                sink = mess.src
-
-                # We need to set force-aspect-ratio and handle-expose properties
-                # to the real videosink. Depending on how the pipeline was
-                # configured and the version of gstreamer, the source of this
-                # message could be the videosink itself or playsink. If it's
-                # playsink, we need to get the videosink that is inside it.
-                # Even better, the sink inside playsink could be autovideosink,
-                # which isn't a real sink, therefore we get the sink inside it.
-                try:
-                    if sink.get_factory().get_name() == 'playsink':
-                        realsink = sink.get_property('video-sink')
-                    else:
-                        realsink = sink
-                    if realsink.get_factory().get_name() == 'autovideosink':
-                        realsink = realsink.iterate_sinks().next()[1]
-
-                    realsink.set_property('force-aspect-ratio', True)
-                    realsink.set_property("handle-expose", True)
-                finally:
-                    Gdk.threads_enter()
-                    sink.set_window_handle(self.preview_video.window_xid)
-                    sink.expose()
-                    Gdk.threads_leave()
-        return Gst.BusSyncReply.PASS
 
     def _appendTag(self, taglist, tag, unused_udata):
         if tag in acceptable_tags:
