@@ -1619,21 +1619,6 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self.project.connect("asset-added", self._doAssetAddedCb, layer)
         self.project.create_asset("file://" + sys.argv[2], GES.UriClip)
 
-    # Standalone internal API
-
-    def _handle_message(self, bus, message):
-        if message.type == Gst.MessageType.ELEMENT:
-            if message.has_name('prepare-window-handle'):
-                Gdk.threads_enter()
-                self.sink = message.src
-                self.sink.set_window_handle(self.viewer.window_xid)
-                self.sink.expose()
-                Gdk.threads_leave()
-            elif message.type == Gst.MessageType.STATE_CHANGED:
-                prev, new, pending = message.parse_state_changed()
-
-        return True
-
     # Standalone callbacks
 
     def _doAssetAddedCb(self, project, asset, layer):
