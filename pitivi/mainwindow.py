@@ -729,6 +729,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                    "Alessandro Decina <alessandro.decina@collabora.co.uk>",
                    "Brandon Lewis <brandon_lewis@berkeley.edu>",
                    "",
+                   # Translators: this paragraph is to be translated, the list of contributors is shown dynamically as a clickable link below it
                    _("Contributors:\n" +
                    "A handwritten list here would...\n" +
                    "• be too long,\n" +
