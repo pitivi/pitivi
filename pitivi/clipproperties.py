@@ -428,7 +428,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._infobar.hide()
 
     def _treeviewSelectionChangedCb(self, treeview):
-        if self.selection.count_selected_rows() == 0 and self.clips:
+        if self.selection.count_selected_rows() == 0:
             self._toolbar.hide()
         else:
             self._toolbar.show()
