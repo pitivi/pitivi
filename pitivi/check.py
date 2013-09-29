@@ -38,17 +38,17 @@ from gettext import gettext as _
 # Unless otherwise noted, modules are accessed through gobject introspection
 HARD_DEPS = {
     "cairo": "1.10.0",  # using static python bindings
-    "GES": "1.0.0",
+    "GES": "1.0.0.0",  # packagers: in reality 1.1.90, but that GES version erronously reports itself as 1.0.0.0
     "Clutter": "1.12.0",
-    "gnonlin": "0.11.89.1",
-    "Gst": "1.1.0",
-    "Gtk": "3.4.0",
+    "gnonlin": "1.1.90",
+    "Gst": "1.2.0",
+    "Gtk": "3.8.0",
     "xdg": None,  # "pyxdg", using static python bindings
     "numpy": None,  # using static python bindings
 
     # The following are not checked, but needed for the rest to work:
     "gobject-introspection": "1.34.0",
-    "gst-python": "0.10.22",  # we currently require the git version, 02ca5d3ad2
+    "gst-python": "1.1.90",
     "pygobject": "3.4.0",
 }
 # For the list of soft dependencies, see the "check_soft_dependencies" method,

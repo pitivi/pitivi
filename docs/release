@@ -17,6 +17,7 @@ Pre-requisites:
 Preparing:
     Pre-releases:
      * Bump nano number up in configure.ac (ex: 0.15.91 -> 0.15.92)
+     * Update the dependencies' version numbers in pitivi/check.py
      * Re-autogen
      * Make sure pre-requisites are still valid
      * Commit
@@ -26,11 +27,11 @@ Preparing:
      * Re-autogen
      * Make sure pre-requisites are still valid
      * Update the following files:
-      * pitivi.org/versions.txt: add new release as current
-      * RELEASE. Basically short version of release notes/announcement. To get the list of contributors,
-        * 'git shortlog -s -n RELEASE-<previoustag>..'
-      * NEWS (a shorter version of RELEASE, with the exec summary of changes)
-      * AUTHORS (if there are new maintainers)
+       * pitivi.org/versions.txt: add new release as current
+       * pitivi/check.py: dependencies' version numbers
+       * RELEASE: the release notes (or its short version)/announcement. To get the list of contributors, 'git shortlog -s -n RELEASE-<previoustag>..'
+       * NEWS: a shorter version of RELEASE, with the exec summary of changes
+       * AUTHORS: if there are new maintainers
      * Commit
      * git tag -a RELEASE-X_YY_Z  # For major releases, Z = 0
      * Use git push --tags to ensure the tags are published on the remote

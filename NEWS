@@ -1,3 +1,19 @@
+2013 September 29 - Pitivi 0.91
+
+  First alpha release for the new version of Pitivi based on GES.
+  It is a major rework of the entire Pitivi architecture. It includes:
+
+  * Replacing the core of Pitivi by GES; 20 thousand lines of code removed
+  * Porting to GStreamer 1.x
+  * Porting to GTK+ 3.x
+  * Replacing GooCanvas by Clutter for the timeline
+  * An automated UI test suite, with many checks for mission-critical parts
+  * Fixing hundreds of bugs
+  * Implementing many new features
+  * UI polish all over the place
+  * Refactoring pretty much the entire codebase
+  * See http://wiki.pitivi.org/wiki/0.91 for details
+
 2012 May 3 - PiTiVi 0.15.2
   * Bug fix release for a regression introduced by 0.15.1
   * Translations have been updated
@@ -7,7 +23,7 @@
   * Minor string fixes and additions to the user manual
   * Translations have been updated
 
-2011 Septembre 26 - PiTiVi 0.15
+2011 September 26 - PiTiVi 0.15
   * A new transformation feature allows resizing, panning and cropping clips directly in the previewer
   * Automatic clip alignment by analyzing soundtracks to sync multicamera footage
   * Ability to have presets for rendering
