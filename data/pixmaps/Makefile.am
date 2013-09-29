@@ -20,7 +20,10 @@ pixmap_DATA = \
 	processing-clip.png	\
 	processing-clip.svg	\
 	trimbar-focused.png	\
-	trimbar-normal.png \
+	trimbar-normal.png
+
+effectspixmapdir = $(pkgdatadir)/pixmaps/effects
+effectspixmap_DATA = \
     effects/agingtv.png \
     effects/bulge.png \
     effects/burn.png \
@@ -83,7 +86,11 @@ pixmap_DATA = \
     effects/stretch.png \
     effects/threshold0r.png \
     effects/tunnel.png \
-    effects/twirl.png \
+    effects/twirl.png
+
+transitionspixmapdir = $(pkgdatadir)/pixmaps/transitions
+transitionspixmap_DATA = \
+    transitions/barndoor-dbl.png \
     transitions/barndoor-dtl.png \
     transitions/barndoor-h.png \
     transitions/barndoor-v.png \
@@ -156,4 +163,6 @@ pixmap_DATA = \
     transitions/windshield-v.png
 
 EXTRA_DIST = \
-	$(pixmap_DATA)
+	$(pixmap_DATA) \
+	$(effectspixmap_DATA) \
+	$(transitionspixmap_DATA)
