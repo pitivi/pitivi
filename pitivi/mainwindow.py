@@ -781,6 +781,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         response = chooser.run()
         if response == Gtk.ResponseType.OK:
             self.app.projectManager.loadProject(chooser.get_uri())
+        else:
+            self.info("User cancelled loading a new project, but no other project is currently active. Resetting")
+            self.app.projectManager.newBlankProject()
         chooser.destroy()
         return True
 
