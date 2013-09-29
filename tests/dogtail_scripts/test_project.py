@@ -42,6 +42,33 @@ class ProjectPropertiesTest(HelpFunc):
 
     # The actual test cases
 
+    def test_cancelling_load_with_no_fallback(self):
+        """
+        Test the scenario where you have no unsaved changes, go to choose
+        a project to load but cancel the file chooser, then try to import clips
+        """
+        dogtail.rawinput.pressKey("Esc")  # Dismiss the welcome dialog
+        self.menubar.menu("Project").click()
+        self.menubar.menu("Project").menuItem("Open...").click()
+        # The file chooser shows up, dismiss it without choosing any project:
+        chooser = self.pitivi.child(name="Open File...", roleName="file chooser", recursive=False)
+        chooser.child(name="Cancel", roleName="push button").click()
+        # We should be able to import clips in the media library
+        # without failing due to a missing app project instance:
+        try:
+            the_clip = self.import_media()
+        except AssertionError:
+            self.fail("The clip import dialog didn't work, something is broken")
+        self.force_medialibrary_iconview_mode()
+        iconview = self.medialibrary.child(roleName="layered pane")
+        self.assertEqual(len(iconview.children), 1)
+        self.insert_clip(the_clip)
+        # Try to quit, it should warn us about unsaved changes.
+        self.menubar.menu("Project").click()
+        self.menubar.menu("Project").menuItem("Quit").click()
+        unsaved_changes = self.pitivi.child(name="unsaved changes dialog", roleName="dialog", recursive=False)
+        unsaved_changes.button("Close without saving").click()
+
     def test_settings_video(self):
         # TODO: test the audio and metadata tabs too
         welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
