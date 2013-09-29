@@ -98,7 +98,6 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
                 "same layer. Click the transition on the timeline to change "
                 "the transition type."))
         self.infobar.add(txtlabel)
-        self.infobar.show_all()
 
         self.storemodel = Gtk.ListStore(GES.Asset, str, str, GdkPixbuf.Pixbuf)
 
@@ -138,7 +137,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         self.modelFilter = self.storemodel.filter_new()
         self.iconview.set_model(self.modelFilter)
 
-        self.infobar.show()
+        self.infobar.show_all()
         self.iconview_scrollwin.show_all()
         self.iconview.hide()
         self.props_widgets.set_sensitive(False)
@@ -269,10 +268,13 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
             self.props_widgets.set_sensitive(True)
         self.iconview.show_all()
         self.props_widgets.show_all()
-        self.infobar.hide()
         self.searchbar.show_all()
         self.selectTransition(transition_asset)
         self.app.gui.switchContextTab("transitions")
+        # We REALLY want the infobar to be hidden as space is really constrained
+        # and yet GTK 3.10 seems to be racy in showing/hiding infobars, so
+        # this must happen *after* the tab has been made visible/switched to:
+        self.infobar.hide()
 
     def selectTransition(self, transition_asset):
         """
