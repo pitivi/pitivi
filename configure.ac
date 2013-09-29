@@ -17,16 +17,13 @@ AM_INIT_AUTOMAKE
 dnl define PACKAGE_VERSION_* variables
 AS_VERSION
 
-dnl check if this is a release version
-AS_NANO(PITIVI_CVS="no", PITIVI_CVS="yes")
-
 dnl can autoconf find the source ?
 AC_CONFIG_SRCDIR([pitivi/application.py])
 
 AC_SUBST_FILE(AUTHORS)
 AUTHORS=$srcdir/AUTHORS
 
-AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
+AM_INIT_AUTOMAKE([foreign])
 AC_SUBST(ACLOCAL_AMFLAGS, "-I common/m4")
 
 AS_AC_EXPAND(LIBDIR, $libdir)
@@ -40,9 +37,6 @@ AC_MSG_NOTICE(Storing configuration files in $SYSCONFDIR)
 
 AS_AC_EXPAND(LOCALSTATEDIR, $localstatedir)
 AC_MSG_NOTICE(Using localstatedir $LOCALSTATEDIR)
-
-dnl check for python
-AS_PATH_PYTHON(2.5)
 
 dnl python checks (you can change the required python version bellow)
 AM_PATH_PYTHON(2.7.0)
