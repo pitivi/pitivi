@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-09-14 16:44+0000\n"
-"PO-Revision-Date: 2013-09-22 18:09+0300\n"
+"POT-Creation-Date: 2013-09-27 17:38+0000\n"
+"PO-Revision-Date: 2013-09-29 20:49+0300\n"
 "Last-Translator: Aurimas Černius <aurisc4@gmail.com>\n"
 "Language-Team: Lietuvių <gnome-lt@lists.akl.lt>\n"
 "Language: lt\n"
@@ -195,7 +195,7 @@ msgstr "Importuoti"
 msgid "Remove selected clips from the project"
 msgstr "Pašalinti pasirinktus klipus iš projekto"
 
-#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:282
+#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:278
 msgid "_Remove from Project"
 msgstr "_Pašalinti iš projekto"
 
@@ -207,7 +207,7 @@ msgstr "Klipo savybės..."
 msgid "Insert the selected clips at the end of the timeline"
 msgstr "Įterpti pasirinktus klipus laiko juostos pabaigoje"
 
-#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:285
+#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:281
 msgid "Insert at _End of Timeline"
 msgstr "Įt_erpti laiko juostos pabaigoje"
 
@@ -641,7 +641,7 @@ msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Pasirinkite klipą laiko juostoje su juo susietiems efektams konfigūruoti"
 
-#: ../pitivi/clipproperties.py:490
+#: ../pitivi/clipproperties.py:488
 msgid "Transformation"
 msgstr "Transformacija"
 
@@ -689,7 +689,7 @@ msgstr "Garsas |garsas"
 msgid "effect"
 msgstr "efektas"
 
-#: ../pitivi/mainwindow.py:139 ../pitivi/timeline/timeline.py:963
+#: ../pitivi/mainwindow.py:139 ../pitivi/timeline/timeline.py:987
 msgid "Split"
 msgstr "Padalinti"
 
@@ -697,16 +697,16 @@ msgstr "Padalinti"
 msgid "Keyframe"
 msgstr "Pagrindinis kadras"
 
-#: ../pitivi/mainwindow.py:141 ../pitivi/timeline/timeline.py:948
+#: ../pitivi/mainwindow.py:141 ../pitivi/timeline/timeline.py:972
 msgid "Ungroup"
 msgstr "Išgrupuoti"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/mainwindow.py:143 ../pitivi/timeline/timeline.py:952
+#: ../pitivi/mainwindow.py:143 ../pitivi/timeline/timeline.py:976
 msgid "Group"
 msgstr "Sugrupuoti"
 
-#: ../pitivi/mainwindow.py:144 ../pitivi/timeline/timeline.py:955
+#: ../pitivi/mainwindow.py:144 ../pitivi/timeline/timeline.py:979
 msgid "Align"
 msgstr "Lygiuoti"
 
@@ -816,7 +816,7 @@ msgstr "_Žinynas"
 msgid "View the main window on the whole screen"
 msgstr "Rodyti pagrindinį langą visame ekrane"
 
-#: ../pitivi/mainwindow.py:316 ../pitivi/viewer.py:394
+#: ../pitivi/mainwindow.py:316 ../pitivi/viewer.py:386
 msgid "Undock Viewer"
 msgstr "Išimti rodinį"
 
@@ -852,90 +852,109 @@ msgstr ""
 "Perjungti veikseną be tarpų\n"
 "Kai įjungta, gretimi klipai automatiškai pastumiami tarpams užpildyti."
 
-#: ../pitivi/mainwindow.py:729
+#: ../pitivi/mainwindow.py:707
 msgid "Development version"
 msgstr "Kūrimo versija"
 
-#: ../pitivi/mainwindow.py:737 ../pitivi/dialogs/startupwizard.py:164
+#: ../pitivi/mainwindow.py:715 ../pitivi/dialogs/startupwizard.py:164
 #, python-format
 msgid "Pitivi %s is available."
 msgstr "Prieinama Pitivi %s"
 
-#: ../pitivi/mainwindow.py:744
+#: ../pitivi/mainwindow.py:722
 msgid "Current maintainers:"
 msgstr "Dabartiniai kūrėjai:"
 
-#: ../pitivi/mainwindow.py:749
+#: ../pitivi/mainwindow.py:727
 msgid "Past maintainers:"
 msgstr "Buvę kūrėjai:"
 
-#: ../pitivi/mainwindow.py:754
-msgid "Contributors:\n"
-msgstr "Pagalbininkai:\n"
+#: ../pitivi/mainwindow.py:732
+msgid ""
+"Contributors:\n"
+"A handwritten list here would...\n"
+"• be too long,\n"
+"• be frequently outdated,\n"
+"• not show their relative merit.\n"
+"\n"
+"Out of respect for our contributors, we point you instead to:\n"
+msgstr ""
+"Pagalbininkai:\n"
+"Rankomis parašytas sąrašas būtų...\n"
+"• per ilgas,\n"
+"• būtų dažnai pasenęs,\n"
+"• neparodytų jų santykinio indėlio.\n"
+"\n"
+"Gerbdami prisidėjusius žmones, jus nukreipia šiuo adresu:\n"
 
 #. Translators: keep the %s at the end of the 1st line
-#: ../pitivi/mainwindow.py:761
+#: ../pitivi/mainwindow.py:739
 #, python-format
-msgid "The list of contributors on Ohloh %s\n"
-msgstr "Pagalbininkų sąrašas Ohloh %s\n"
+#| msgid "The list of contributors on Ohloh %s\n"
+msgid ""
+"The list of contributors on Ohloh %s\n"
+"Or you can run: git shortlog -s -n"
+msgstr ""
+"Pagalbininkų sąrašas Ohloh %s\n"
+"Arba galite įvykdyti: git shortlog -s -n"
 
-#: ../pitivi/mainwindow.py:765
+#: ../pitivi/mainwindow.py:743
 msgid "translator-credits"
 msgstr ""
 "Išvertė:\n"
 "Aurimas Černius <aurisc4@gmail.com>"
 
 #. The user has not made a decision, don't do anything
-#: ../pitivi/mainwindow.py:783
+#: ../pitivi/mainwindow.py:761
 msgid "Open File..."
 msgstr "Atverti failą..."
 
-#: ../pitivi/mainwindow.py:799
+#: ../pitivi/mainwindow.py:777
 msgid "All supported formats"
 msgstr "Visi palaikomi formatai"
 
-#: ../pitivi/mainwindow.py:878
+#: ../pitivi/mainwindow.py:856
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "Nepavyksta įrašyti projekto „%s“"
 
-#: ../pitivi/mainwindow.py:911
+#: ../pitivi/mainwindow.py:889
 msgid "Close without saving"
 msgstr "Užverti neįrašant"
 
-#: ../pitivi/mainwindow.py:927
+#: ../pitivi/mainwindow.py:905
 msgid "Save changes to the current project before closing?"
 msgstr "Įrašyti dabartinio projekto pakeitimus prie užveriant?"
 
-#: ../pitivi/mainwindow.py:939
+#: ../pitivi/mainwindow.py:917
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "Jei neįrašysite, pakeitimai nuo paskutinio %s bus prarasti."
 
-#: ../pitivi/mainwindow.py:943
+#: ../pitivi/mainwindow.py:921
 msgid "If you don't save, your changes will be lost."
 msgstr "Jei neįrašysite, jūsų pakeitimai bus prarasti."
 
-#: ../pitivi/mainwindow.py:1002
+#: ../pitivi/mainwindow.py:980
 msgid "Revert to saved project version?"
 msgstr "Grąžinti įrašytą projekto versiją?"
 
-#: ../pitivi/mainwindow.py:1007
+#: ../pitivi/mainwindow.py:985
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Projektas bus įkeltas iš naujo. Visi neįrašyti pakeitimai bus prarasti."
 
-#: ../pitivi/mainwindow.py:1022
+#: ../pitivi/mainwindow.py:1000
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Nepavyksta įkelti projekto „%s“"
 
-#: ../pitivi/mainwindow.py:1033
+#: ../pitivi/mainwindow.py:1011
 msgid "Locate missing file..."
 msgstr "Surasti trūkstamą failą..."
 
 #. # The file is probably an image, not video or audio.
-#: ../pitivi/mainwindow.py:1062
+#: ../pitivi/mainwindow.py:1040
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
@@ -944,7 +963,7 @@ msgstr ""
 "Šis failas buvo perkeltas: „<b>%s</b>“\n"
 "Nurodykite jo naują vietą:"
 
-#: ../pitivi/mainwindow.py:1067
+#: ../pitivi/mainwindow.py:1045
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
@@ -954,16 +973,16 @@ msgstr ""
 "Please specify its new location:"
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI files"
-#: ../pitivi/mainwindow.py:1090
+#: ../pitivi/mainwindow.py:1068
 #, python-format
 msgid "%s files"
 msgstr "%s failai"
 
-#: ../pitivi/mainwindow.py:1094 ../pitivi/medialibrary.py:502
+#: ../pitivi/mainwindow.py:1072 ../pitivi/medialibrary.py:482
 msgid "All files"
 msgstr "Visi failai"
 
-#: ../pitivi/mainwindow.py:1118
+#: ../pitivi/mainwindow.py:1096
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -974,30 +993,30 @@ msgstr ""
 "\n"
 "Pitivi šiuo metu nepalaiko dalinių projektų."
 
-#: ../pitivi/mainwindow.py:1228
+#: ../pitivi/mainwindow.py:1206
 msgid "Export To..."
 msgstr "Eksportuoti į..."
 
-#: ../pitivi/mainwindow.py:1241 ../pitivi/mainwindow.py:1288
-#: ../pitivi/mainwindow.py:1371 ../pitivi/render.py:354
-#: ../pitivi/timeline/timeline.py:1253
+#: ../pitivi/mainwindow.py:1219 ../pitivi/mainwindow.py:1266
+#: ../pitivi/mainwindow.py:1349 ../pitivi/render.py:354
+#: ../pitivi/timeline/timeline.py:1283
 msgid "Untitled"
 msgstr "Nepavadinta"
 
-#: ../pitivi/mainwindow.py:1246
+#: ../pitivi/mainwindow.py:1224
 msgid "Tar archive"
 msgstr "Tar archyvas"
 
-#: ../pitivi/mainwindow.py:1250 ../pitivi/mainwindow.py:1261
-#: ../pitivi/mainwindow.py:1294 ../pitivi/mainwindow.py:1306
+#: ../pitivi/mainwindow.py:1228 ../pitivi/mainwindow.py:1239
+#: ../pitivi/mainwindow.py:1272 ../pitivi/mainwindow.py:1284
 msgid "Detect automatically"
 msgstr "Aptikti automatiškai"
 
-#: ../pitivi/mainwindow.py:1275 ../pitivi/timeline/timeline.py:1247
+#: ../pitivi/mainwindow.py:1253 ../pitivi/timeline/timeline.py:1277
 msgid "Save As..."
 msgstr "Įrašyti taip..."
 
-#: ../pitivi/mainwindow.py:1323
+#: ../pitivi/mainwindow.py:1301
 msgid "Preview - click outside to close"
 msgstr "Peržiūra - spauskite išorėje užvėrimui"
 
@@ -1019,69 +1038,69 @@ msgstr "<b>Raiška</b>: %dx%d"
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Trukmį</b>: %s"
 
-#: ../pitivi/mediafilespreviewer.py:439 ../pitivi/medialibrary.py:786
+#: ../pitivi/mediafilespreviewer.py:439 ../pitivi/medialibrary.py:766
 msgid "Error while analyzing a file"
 msgstr "Klaida analizuojant failą"
 
-#: ../pitivi/medialibrary.py:196
+#: ../pitivi/medialibrary.py:194
 msgid "Icon"
 msgstr "Piktograma"
 
-#: ../pitivi/medialibrary.py:205
+#: ../pitivi/medialibrary.py:203
 msgid "Information"
 msgstr "Informacija"
 
-#: ../pitivi/medialibrary.py:216
+#: ../pitivi/medialibrary.py:214
 msgid "Duration"
 msgstr "Trukmė"
 
-#: ../pitivi/medialibrary.py:465
+#: ../pitivi/medialibrary.py:445
 msgid "Select One or More Files"
 msgstr "Pasirinkite vieną ar daugiau failų"
 
-#: ../pitivi/medialibrary.py:467
+#: ../pitivi/medialibrary.py:447
 msgid "Close after importing files"
 msgstr "Užverti importavus failus"
 
-#: ../pitivi/medialibrary.py:490
+#: ../pitivi/medialibrary.py:470
 msgid "Supported file formats"
 msgstr "Palaikomi failų formatai"
 
 #. Also allow showing known but not reliable demuxers
-#: ../pitivi/medialibrary.py:497
+#: ../pitivi/medialibrary.py:477
 msgid "All known file formats"
 msgstr "Visi žinomi failų formatai"
 
-#: ../pitivi/medialibrary.py:516
+#: ../pitivi/medialibrary.py:496
 #, python-format
 msgid "Importing clip %(current_clip)d of %(total)d"
 msgstr "Importuojamas klipas %(current_clip)d iš %(total)d"
 
-#: ../pitivi/medialibrary.py:655
+#: ../pitivi/medialibrary.py:635
 msgid "Errors occurred while importing."
 msgstr "Kilo klaidų importuojant."
 
-#: ../pitivi/medialibrary.py:656
+#: ../pitivi/medialibrary.py:636
 msgid "View errors"
 msgstr "Rodyti klaidas"
 
-#: ../pitivi/medialibrary.py:658
+#: ../pitivi/medialibrary.py:638
 msgid "An error occurred while importing."
 msgstr "Importuojant kilo klaida."
 
-#: ../pitivi/medialibrary.py:659
+#: ../pitivi/medialibrary.py:639
 msgid "View error"
 msgstr "Rodyti klaidą"
 
-#: ../pitivi/medialibrary.py:783
+#: ../pitivi/medialibrary.py:763
 msgid "Error while analyzing files"
 msgstr "Klaida analizuojant failus"
 
-#: ../pitivi/medialibrary.py:784
+#: ../pitivi/medialibrary.py:764
 msgid "The following files can not be used with Pitivi."
 msgstr "Šie failai negali būti naudojami su Pitivi."
 
-#: ../pitivi/medialibrary.py:787
+#: ../pitivi/medialibrary.py:767
 msgid "The following file can not be used with Pitivi."
 msgstr "Šie failai negali būti naudojami su Pitivi."
 
@@ -1156,7 +1175,6 @@ msgstr "Naujas išankstinis įrašas %d"
 
 #: ../pitivi/render.py:266
 #, python-format
-#| msgid "Render complete"
 msgid "Rendering — %d%% complete"
 msgstr "Piešiama — užbaigta %d%%"
 
@@ -1189,7 +1207,6 @@ msgstr ""
 
 #: ../pitivi/render.py:741
 #, python-format
-#| msgid "%.2f fps"
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
@@ -1279,23 +1296,23 @@ msgstr ""
 "Sukurti perėjimą perdengiant du gretimus klipus tame pačiame sluoksnyje. "
 "Spauskite ant perėjimo laiko linijoje perėjimo tipui pakeisti."
 
-#: ../pitivi/transitions.py:189
+#: ../pitivi/transitions.py:187
 msgid "Slow"
 msgstr "Lėtas"
 
-#: ../pitivi/transitions.py:190
+#: ../pitivi/transitions.py:188
 msgid "Fast"
 msgstr "Greitas"
 
-#: ../pitivi/transitions.py:191
+#: ../pitivi/transitions.py:189
 msgid "Epileptic"
 msgstr "Epileptinis"
 
-#: ../pitivi/transitions.py:195
+#: ../pitivi/transitions.py:193
 msgid "Sharp"
 msgstr "Aštrus"
 
-#: ../pitivi/transitions.py:196
+#: ../pitivi/transitions.py:194
 msgid "Smooth"
 msgstr "Sklandus"
 
@@ -1327,31 +1344,31 @@ msgstr ""
 "Įveskite laiko kodą arba kadro numerį\n"
 "ir spauskite „Enter“ perėjimui į tą padėtį"
 
-#: ../pitivi/viewer.py:365
+#: ../pitivi/viewer.py:357
 msgid "Dock Viewer"
 msgstr "Įtaisyti rodinį"
 
-#: ../pitivi/viewer.py:374 ../pitivi/viewer.py:422
+#: ../pitivi/viewer.py:366 ../pitivi/viewer.py:414
 msgid "Show this window in fullscreen"
 msgstr "Rodyti šį langą visame ekrane"
 
-#: ../pitivi/viewer.py:419
+#: ../pitivi/viewer.py:411
 msgid "Exit fullscreen mode"
 msgstr "Palikti viso ekrano veikseną"
 
-#: ../pitivi/viewer.py:1025
+#: ../pitivi/viewer.py:1017
 msgid "Play"
 msgstr "Groti"
 
-#: ../pitivi/viewer.py:1033
+#: ../pitivi/viewer.py:1025
 msgid "Pause"
 msgstr "Pristabdyti"
 
-#: ../pitivi/timeline/layer.py:84
+#: ../pitivi/timeline/layer.py:85
 msgid "Set a personalized name for this layer"
 msgstr "Nustatyti pavadinimą šiam sluoksniui"
 
-#: ../pitivi/timeline/layer.py:94
+#: ../pitivi/timeline/layer.py:93
 msgid ""
 "<b>Solo mode</b>\n"
 "Other non-soloed layers will be disabled as long as this is enabled."
@@ -1359,7 +1376,7 @@ msgstr ""
 "<b>Solo veiksena</b>\n"
 "Kiti ne solo sluoksniai bus išjungti kol šis bus įjungtas."
 
-#: ../pitivi/timeline/layer.py:109
+#: ../pitivi/timeline/layer.py:108
 msgid ""
 "<b>Enable or disable this layer</b>\n"
 "Disabled layers will not play nor render."
@@ -1367,55 +1384,55 @@ msgstr ""
 "<b>Įjungti arba išjungti šį sluoksnį</b>\n"
 "Išjungti sluoksniai negrojami ir nepiešiami."
 
-#: ../pitivi/timeline/layer.py:129
+#: ../pitivi/timeline/layer.py:128
 msgid "_Delete layer"
 msgstr "Iš_trinti sluoksnį"
 
-#: ../pitivi/timeline/layer.py:132
+#: ../pitivi/timeline/layer.py:131
 msgid "Move layer up"
 msgstr "Perkelti sluoksnį aukštyn"
 
-#: ../pitivi/timeline/layer.py:135
+#: ../pitivi/timeline/layer.py:134
 msgid "Move layer down"
 msgstr "Perkelti sluoksnį žemyn"
 
-#: ../pitivi/timeline/layer.py:138
+#: ../pitivi/timeline/layer.py:137
 msgid "Move layer to top"
 msgstr "Perkelti sluoksnį į viršų"
 
-#: ../pitivi/timeline/layer.py:141
+#: ../pitivi/timeline/layer.py:140
 msgid "Move layer to bottom"
 msgstr "Perkelti sluoksnį į apačią"
 
-#: ../pitivi/timeline/layer.py:178
+#: ../pitivi/timeline/layer.py:177
 msgid "Make layer invisible"
 msgstr "Padaryti sluoksnį nematomą"
 
-#: ../pitivi/timeline/layer.py:180
+#: ../pitivi/timeline/layer.py:179
 msgid "Make layer visible"
 msgstr "Padaryti sluoksnį matomą"
 
-#: ../pitivi/timeline/layer.py:294
+#: ../pitivi/timeline/layer.py:290
 msgid "Opacity:"
 msgstr "Nepermatomumas:"
 
-#: ../pitivi/timeline/layer.py:301
+#: ../pitivi/timeline/layer.py:297
 msgid "Change video opacity"
 msgstr "Keisti vaizdo nepermatomumą"
 
-#: ../pitivi/timeline/layer.py:318
+#: ../pitivi/timeline/layer.py:314
 msgid "Vol:"
 msgstr "Gars:"
 
-#: ../pitivi/timeline/layer.py:321
+#: ../pitivi/timeline/layer.py:317
 msgid "Pan:"
 msgstr "Sklidimas:"
 
-#: ../pitivi/timeline/layer.py:327
+#: ../pitivi/timeline/layer.py:323
 msgid "Change audio panning"
 msgstr "Keisti garso sklidimą"
 
-#: ../pitivi/timeline/ruler.py:182
+#: ../pitivi/timeline/ruler.py:197
 #, python-format
 msgid "Frame #%d"
 msgstr "Kadras #%d"
@@ -1493,37 +1510,37 @@ msgstr "Sugrupuoti klipus"
 msgid "Align clips based on their soundtracks"
 msgstr "Lygiuoti klipus pagal jų garso takelius"
 
-#: ../pitivi/timeline/timeline.py:929
+#: ../pitivi/timeline/timeline.py:953
 msgid "Export current frame..."
 msgstr "Eksportuoti dabartinį kadrą..."
 
-#: ../pitivi/timeline/timeline.py:930
+#: ../pitivi/timeline/timeline.py:954
 msgid "Export the frame at the current playhead position as an image file."
 msgstr ""
 "Eksportuoti kadrą dabartinėje grojimo galvutės padėtyje kaip paveikslėlio "
 "failą."
 
-#: ../pitivi/timeline/timeline.py:961
+#: ../pitivi/timeline/timeline.py:985
 msgid "Start Playback"
 msgstr "Pradėti grojimą"
 
-#: ../pitivi/timeline/timeline.py:966
+#: ../pitivi/timeline/timeline.py:990
 msgid "Add a Keyframe"
 msgstr "Pridėti pagrindinį kadrą"
 
-#: ../pitivi/timeline/timeline.py:969
+#: ../pitivi/timeline/timeline.py:993
 msgid "_Previous Keyframe"
 msgstr "_Ankstesnis pagrindinis kadras"
 
-#: ../pitivi/timeline/timeline.py:972
+#: ../pitivi/timeline/timeline.py:996
 msgid "_Next Keyframe"
 msgstr "_Kitas pagrindinis kadras"
 
-#: ../pitivi/timeline/timeline.py:1255
+#: ../pitivi/timeline/timeline.py:1285
 msgid "PNG image"
 msgstr "PNG paveikslėlis"
 
-#: ../pitivi/timeline/timeline.py:1256
+#: ../pitivi/timeline/timeline.py:1286
 msgid "JPEG image"
 msgstr "JPEG paveikslėlis"
 
