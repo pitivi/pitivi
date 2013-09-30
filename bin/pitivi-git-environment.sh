@@ -385,7 +385,12 @@ if [ "$ready_to_run" != "1" ]; then
             echo "Could not compile $m ; result: $?"
             exit 1
         fi
-        cd ..
+
+        if [ $m == "gst-devtools" ]; then
+          cd ../..
+        else
+          cd ..
+        fi
     done
 
     # And obviously ... Pitivi itself
