@@ -338,6 +338,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                     effect = GES.Effect.new(bin_description=bin_desc)
                     clip.add(effect)
                     self.updateAll()
+                    self.app.current_project.timeline.commit()
                     self.app.action_log.commit()
                     self.app.current_project.pipeline.flushSeek()
 
