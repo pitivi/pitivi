@@ -577,6 +577,10 @@ class TimelineElement(Clutter.Actor, Zoomable):
         adj = self.nsToPixel(keyframe.value.timestamp - lastKeyframe.value.timestamp)
         opp = (lastKeyframe.value.value - keyframe.value.value) * EXPANDED_SIZE
         hyp = math.sqrt(adj ** 2 + opp ** 2)
+
+        if (hyp < 1):  # line length would be less tan one pixel
+            return
+
         sinX = opp / hyp
         line.props.width = hyp
         line.props.height = KEYFRAME_SIZE
