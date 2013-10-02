@@ -538,6 +538,9 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         GES.Pipeline.__init__(self)
         SimplePipeline.__init__(self, self, self)
 
+        self._clutter_sink = Gst.ElementFactory.make("cluttersink", None)
+        self.preview_set_video_sink(self._clutter_sink)
+
         self._seeker = Seeker()
         self._seeker.connect("seek", self._seekCb)
         self._seeker.connect("seek-relative", self._seekRelativeCb)

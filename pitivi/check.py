@@ -34,6 +34,16 @@ when called from application.py instead of bin/pitivi, if it has an impact.
 from sys import modules
 from gettext import gettext as _
 
+# SHENANIGANS
+from gi.repository import Gdk
+Gdk.init([])
+
+from gi.repository import GtkClutter
+GtkClutter.init([])
+
+from gi.repository import ClutterGst
+ClutterGst.init([])
+
 # This list is meant to be a complete list for packagers.
 # Unless otherwise noted, modules are accessed through gobject introspection
 HARD_DEPS = {
