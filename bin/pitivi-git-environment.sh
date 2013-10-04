@@ -15,7 +15,9 @@ MYPITIVI=${MYPITIVI:-$HOME/pitivi-git}
 # Change this variable to 'master' if you prefer to work with the master branch.
 # When using "master", this script will automatically "pull --rebase" modules.
 # For now, we are using master until we depend on a released version.
-GST_RELEASE_TAG="1.2"
+DEFAULT_GST_VERSION="1.2"
+GST_RELEASE_TAG=${GST_RELEASE_TAG:-$DEFAULT_GST_VERSION}
+GST_MIN_VERSION=${GST_MIN_VERSION:-$DEFAULT_GST_VERSION}
 
 # If you care about building the GStreamer/GES developer API documentation:
 BUILD_DOCS=false
@@ -53,7 +55,7 @@ fi
 # The following decision has to be made before we've set any env variables,
 # otherwise the script will detect our "gst uninstalled" and think it's the
 # system-wide install.
-if pkg-config --exists --print-errors 'gstreamer-1.0 >= 1.2.0'; then
+if pkg-config gstreamer-1.0 --atleast-version=$GST_MIN_VERSION --print-errors; then
     MODULES="gnonlin gst-editing-services gst-python"
 else
     MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python  gst-devtools"
@@ -82,7 +84,7 @@ GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PAT
 export PKG_CONFIG_PATH="$PITIVI_PREFIX/lib/pkgconfig:$PITIVI/pygobject:$PKG_CONFIG_PATH"
 
 
-if pkg-config --exists --print-errors 'gstreamer-1.0 >= 1.2.0'; then
+if pkg-config gstreamer-1.0 --atleast-version=$GST_MIN_VERSION --print-errors; then
   echo "Using system-wide GStreamer 1.0"
 else
   echo "Using a local build of GStreamer 1.0"
@@ -174,6 +176,8 @@ $PITIVI/gstreamer/plugins\
   # this still doesn't make it work for the uninstalled case, since man goes
   # look for a man directory "nearby" instead of the directory I'm telling it to
   export MANPATH=$PITIVI/gstreamer/tools:$PITIVI_PREFIX/share/man:$MANPATH
+
+  export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data
 fi
 
 # And anyway add GStreamer editing services library
