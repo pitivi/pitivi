@@ -513,6 +513,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         PreviewGenerator.emit(self, "done")
 
     def cleanup(self):
+        self.stopGeneration()
         Zoomable.__del__(self)
 
 
@@ -988,6 +989,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         PreviewGenerator.emit(self, "done")
 
     def cleanup(self):
+        self.stopGeneration()
         self.canvas.disconnect_by_func(self._drawContentCb)
         self.timeline.disconnect_by_func(self._scrolledCb)
         Zoomable.__del__(self)
