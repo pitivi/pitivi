@@ -48,7 +48,10 @@ fi
 
 if python2 -c "import gi; gi.check_version('${PYGOBJECT_RELEASE_TAG}')" &> /dev/null; then
   echo "pygobject is up to date, not building"
+  # Hack around PYTHONPATH ordering to support gi overrides
+  PYTHONPATH=$(python2 -c 'import gi; print(gi._overridesdir)')/../../:$PYTHONPATH
 else
+  PYTHONPATH=$MYPITIVI/pygobject:$PYTHONPATH
   MODULES_CORE="${MODULE_GLIB} pygobject"
 fi
 
@@ -58,7 +61,7 @@ fi
 if pkg-config gstreamer-1.0 --atleast-version=$GST_MIN_VERSION --print-errors; then
     MODULES="gnonlin gst-editing-services gst-python"
 else
-    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python  gst-devtools"
+    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python gst-devtools"
 fi
 
 # base path under which dirs are installed
@@ -70,6 +73,7 @@ PITIVI_PREFIX=$PITIVI/prefix
 # set up a bunch of paths
 export PATH="\
 $PITIVI/gst-editing-services/tools:\
+$PITIVI/gst-editing-services/tests/tools:\
 $PITIVI/pitivi/bin/:\
 $PITIVI/gstreamer/tools:\
 $PITIVI/gst-plugins-base/tools:\
@@ -191,7 +195,7 @@ GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH
 export GST_PLUGIN_PATH=$GST_PLUGIN_PATH:$PITIVI/gnonlin/gnl/.libs
 
 # And python
-PYTHONPATH=$MYPITIVI/pygobject:$MYPITIVI/gst-python${PYTHONPATH:+:$PYTHONPATH}:$MYPITIVI/gst-editing-services/bindings/python${PYTHONPATH:+:$PYTHONPATH}
+PYTHONPATH=$PYTHONPATH:$MYPITIVI/gst-python:$MYPITIVI/gst-editing-services/bindings/python
 export LD_LIBRARY_PATH=$PITIVI/pygobject/gi/.libs:$LD_LIBRARY_PATH
 export DYLD_LIBRARY_PATH=$PITIVI/pygobject/gi/.libs:$DYLD_LIBRARY_PATH
 
