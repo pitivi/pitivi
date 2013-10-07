@@ -102,14 +102,13 @@
             </child>
             <child>
               <object class="GtkButton" id="render_button">
-                <property name="label">Render</property>
+                <property name="label" translatable="yes">Render</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_underline">True</property>
-                <property name="use_stock">True</property>
                 <signal name="clicked" handler="_renderButtonClickedCb" swapped="no"/>
               </object>
               <packing>
