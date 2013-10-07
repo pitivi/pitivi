@@ -61,8 +61,10 @@ fi
 if pkg-config gstreamer-1.0 --atleast-version=$GST_MIN_VERSION --print-errors; then
     MODULES="gnonlin gst-editing-services gst-python"
 else
-    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python gst-devtools"
+    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python"
 fi
+
+
 
 # base path under which dirs are installed
 PITIVI=$MYPITIVI
@@ -209,8 +211,35 @@ export PYTHONPATH
 # or if the --build parameter is used, or --force-autogen.
 # The difference being --force-autogen forces autogen.sh to be run,
 # whereas --build only uses it the first time
-ready_to_run=0
+ready_to_run=1
 force_autogen=1
+build=false
+
+for i in "$@"
+do
+case $i in
+  --build)
+  force_autogen=0
+  ready_to_run=0
+  shift
+
+  ;;
+  --force-autogen)
+  force_autogen=1
+  ready_to_run=0
+  shift
+
+  ;;
+  --devel=*)
+  MODULES=$MODULES " gst-devtools"
+  shift
+
+  ;;
+esac
+done
+
+
+
 
 if test ! -d $PITIVI; then
     echo "===================================================================="
@@ -227,16 +256,7 @@ if test ! -d $PITIVI; then
     if [ $? -ne 0 ]; then
         exit 1
     fi
-elif [ "$1" == "--build" ]; then
-    # Only build modules without using autogen if not necessary, to save time
-    force_autogen=0
-    shift
-elif [ "$1" == "--force-autogen" ]; then
-    shift
-else
-    # The folders existed, and the user just wants to set the shell environment
-    ready_to_run=1
-    force_autogen=0
+    ready_to_run=0
 fi
 
 if [ "$ready_to_run" != "1" ]; then
