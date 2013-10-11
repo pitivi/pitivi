@@ -1,11 +1,10 @@
 themedir = $(datadir)/icons/hicolor
-size = scalable
-context = actions
+size = 512x512
 
 iconsdir = $(themedir)/$(size)/apps
 
 icons_DATA = \
-	pitivi.svg
+	pitivi.png
 
 EXTRA_DIST = \
         $(icons_DATA)
