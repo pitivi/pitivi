@@ -899,8 +899,7 @@ class RenderDialog(Loggable):
             factory = Gst.ElementFactory.find(self.project.vencoder)
             for struct in factory.get_static_pad_templates():
                 if struct.direction == Gst.PadDirection.SINK:
-                    caps = struct.get_caps()
-                    caps = caps.copy()
+                    caps = Gst.Caps.from_string(struct.get_caps().to_string())
                     fixed = caps.fixate()
                     fmt = fixed.get_structure(0).get_value("format")
                     self.project.video_profile.get_restriction()[0]["format"] = fmt
