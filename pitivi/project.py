@@ -604,6 +604,7 @@ class Project(Loggable, GES.Project):
         self._vcodecsettings_cache = {}
         # A (aencoder -> acodecsettings) map.
         self._acodecsettings_cache = {}
+        self._has_rendering_values = False
 
     #-----------------#
     # Our properties  #
@@ -647,6 +648,19 @@ class Project(Loggable, GES.Project):
         self.setModificationState(True)
 
     # Encoding related properties
+    def set_rendering(self, rendering):
+        if rendering and self._has_rendering_values != rendering:
+            copy = Gst.Caps.from_string(self.video_profile.get_restriction().to_string())
+            self.video_profile.set_restriction(copy)
+            self.videowidth = self.videowidth * self.render_scale / 100
+            self.videoheight = self.videoheight * self.render_scale / 100
+        elif self._has_rendering_values != rendering:
+            copy = Gst.Caps.from_string(self.video_profile.get_restriction().to_string())
+            self.video_profile.set_restriction(copy)
+            self.videowidth = self.videowidth / self.render_scale * 100
+            self.videoheight = self.videoheight / self.render_scale * 100
+        self._has_rendering_values = rendering
+
     @property
     def videowidth(self):
         return self.video_profile.get_restriction()[0]["width"]
@@ -905,10 +919,17 @@ class Project(Loggable, GES.Project):
         @type render: bool
         """
         if render:
-            scale = self.render_scale
-        else:
-            scale = 100
-        return self.videowidth * scale / 100, self.videoheight * scale / 100
+            if not self._has_rendering_values:
+                return (self.videowidth * self.render_scale / 100,
+                        self.videoheight * self.render_scale / 100)
+            else:
+                return self.videowidth, self.videoheight
+
+        if self._has_rendering_values:
+            return (self.videowidth / self.render_scale * 100,
+                    self.videoheight / self.render_scale * 100)
+
+        return self.videowidth, self.videoheight
 
     def getVideoCaps(self, render=False):
         """ Returns the GstCaps corresponding to the video settings """

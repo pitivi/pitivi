@@ -836,6 +836,7 @@ class RenderDialog(Loggable):
     def _shutDown(self):
         """ The render process has been aborted, shutdown the gstreamer pipeline
         and disconnect from its signals """
+        self.project.set_rendering(False)
         self._is_rendering = False
         self._rendering_is_paused = False
         self._time_spent_paused = 0
@@ -906,6 +907,7 @@ class RenderDialog(Loggable):
                     self._factory_formats[encoder_string] = fmt
                     break
 
+        self.project.set_rendering(True)
         self._pipeline.set_render_settings(self.outfile, self.project.container_profile)
         self.startAction()
         self.progress.window.show()
@@ -1049,7 +1051,7 @@ class RenderDialog(Loggable):
         self.updateResolution()
 
     def updateResolution(self):
-        width, height = self.project.getVideoWidthAndHeight(render=True)
+        width, height = self.project.getVideoWidthAndHeight(True)
         self.resolution_label.set_text(u"%d×%d" % (width, height))
 
     def _projectSettingsButtonClickedCb(self, button):
