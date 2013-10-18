@@ -131,7 +131,7 @@ else
 
   LD_LIBRARY_PATH=$PITIVI/gst-devtools/validate/gst/validate/.libs:$LD_LIBRARY_PATH
   DYLD_LIBRARY_PATH=$PITIVI/gst-devtools/validate/gst/validate/.libs:$DYLD_LIBRARY_PATH
-  GI_TYPELIB_PATH=$PITIVI$PITIVI/gst-devtools/validate/gst/validate/$GI_TYPELIB_PATH
+  GI_TYPELIB_PATH=$PITIVI/gst-devtools/validate/gst/validate/:$GI_TYPELIB_PATH
 
 
 export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
@@ -191,7 +191,7 @@ export LD_LIBRARY_PATH=$PITIVI/gst-editing-services/ges/.libs:$LD_LIBRARY_PATH
 export DYLD_LIBRARY_PATH=$PITIVI/gst-editing-services/ges/.libs:$DYLD_LIBRARY_PATH
 export PATH=$PITIVI/gst-editing-services/tools:$PATH
 GI_TYPELIB_PATH=$PITIVI/gst-editing-services/ges:$GI_TYPELIB_PATH
-GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0:/usr/lib/girepository-1.0
+GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0:/usr/lib/girepository-1.0
 
 # And GNonLin
 export GST_PLUGIN_PATH=$GST_PLUGIN_PATH:$PITIVI/gnonlin/gnl/.libs
