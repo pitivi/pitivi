@@ -25,8 +25,9 @@ EXTRA_DIST +=                   \
         intltool-update.in      \
         $(man_MANS)
 
+# This rule allows running pitivi uninstalled
 locale-uninstalled:
-	if test -d po; then \
+	if test -d po && test -z "$(DESTDIR)"; then \
 	    $(MAKE) -C po datadir=../$(top_builddir) install; \
 	fi
 
