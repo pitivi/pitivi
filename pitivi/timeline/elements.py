@@ -771,6 +771,7 @@ class Line(Clutter.Actor):
 
     def transposeXY(self, x, y):
         x -= self.timelineElement.props.x + CONTROL_WIDTH - self.timelineElement.timeline._scroll_point.x
+        x += Zoomable.nsToPixel(self.timelineElement.bElement.props.in_point)
         y -= self.timelineElement.props.y
         return x, y
 
@@ -950,7 +951,7 @@ class Keyframe(Clutter.Actor):
         newValue = self.valueStart - (delta_y / EXPANDED_SIZE)
 
         # Don't overlap first and last keyframes.
-        newTs = min(max(newTs, self.inpoint + 1), self.duration - 1)
+        newTs = min(max(newTs, self.inpoint + 1), self.duration + self.inpoint - 1)
 
         newValue = min(max(newValue, 0.0), 1.0)
 
