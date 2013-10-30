@@ -34,7 +34,6 @@ Effects global handling
      that are too cumbersome to use as such
   _ Complex Audio/Video Effects
 """
-import glib
 import re
 import os
 import time
@@ -461,7 +460,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
     def view_description_cell_data_func(column, cell, model, iter_, data):
 
         name, desc = model.get(iter_, COL_NAME_TEXT, COL_DESC_TEXT)
-        escape = glib.markup_escape_text
+        escape = GLib.markup_escape_text
         cell.props.markup = "<b>%s</b>\n%s" % (escape(name),
                                                escape(desc),)
 

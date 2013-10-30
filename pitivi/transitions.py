@@ -20,7 +20,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-import glib
 import os
 
 from gi.repository import GLib
@@ -336,8 +335,8 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
 
         longname = model.get_value(iter_, COL_NAME_TEXT).strip()
         description = model.get_value(iter_, COL_DESC_TEXT)
-        txt = "<b>%s:</b>\n%s" % (glib.markup_escape_text(longname),
-                                  glib.markup_escape_text(description),)
+        txt = "<b>%s:</b>\n%s" % (GLib.markup_escape_text(longname),
+                                  GLib.markup_escape_text(description),)
         tooltip.set_markup(txt)
         return True
 

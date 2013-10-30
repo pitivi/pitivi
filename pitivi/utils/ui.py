@@ -37,7 +37,6 @@ from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
 from itertools import izip
 from urllib import unquote
 import cairo
-import glib
 import os
 
 from pitivi.utils.loggable import doLog, ERROR
@@ -204,7 +203,7 @@ def info_name(info):
         filename = unquote(os.path.basename(info.get_id()))
     else:
         filename = unquote(os.path.basename(info.get_uri()))
-    return glib.markup_escape_text(filename)
+    return GLib.markup_escape_text(filename)
 
 
 def beautify_stream(stream):
