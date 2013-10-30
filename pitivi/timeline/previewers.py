@@ -31,11 +31,11 @@ import os
 import pickle
 import resource
 import sqlite3
-import xdg.BaseDirectory as xdg_dirs
 
 # Our C module optimizing waveforms rendering
 import renderer
 
+from pitivi.settings import xdg_cache_home
 from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
@@ -594,8 +594,7 @@ class ThumbnailCache(Loggable):
         # TODO: replace with utils.misc.hash_file
         self._filehash = hash_file(Gst.uri_get_location(uri))
         self._filename = filename_from_uri(uri)
-        # TODO: replace with pitivi.settings.xdg_cache_home()
-        cache_dir = get_dir(os.path.join(xdg_dirs.xdg_cache_home, "pitivi"), autocreate)
+        cache_dir = get_dir(os.path.join(xdg_cache_home(), "pitivi"), autocreate)
         dbfile = os.path.join(get_dir(os.path.join(cache_dir, "thumbs")), self._filehash)
         self._db = sqlite3.connect(dbfile)
         self._cur = self._db.cursor()  # Use this for normal db operations
@@ -778,7 +777,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
     def _startLevelsDiscovery(self):
         self.log('Preparing waveforms for "%s"' % filename_from_uri(self._uri))
         filename = hash_file(Gst.uri_get_location(self._uri)) + ".wave"
-        cache_dir = get_dir(os.path.join(xdg_dirs.xdg_cache_home, os.path.join("pitivi/waves")), autocreate)
+        cache_dir = get_dir(os.path.join(xdg_cache_home(), os.path.join("pitivi/waves")), autocreate)
         filename = cache_dir + "/" + filename
 
         if os.path.exists(filename):

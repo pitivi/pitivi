@@ -21,8 +21,8 @@
 
 import os
 from ConfigParser import SafeConfigParser, ParsingError
-import xdg.BaseDirectory as xdg_dirs  # Freedesktop directories spec
 
+from gi.repository import GLib
 from pitivi.utils.signal import Signallable
 
 
@@ -86,25 +86,17 @@ def get_env_dirs(var, default):
 
 def xdg_config_home(autocreate=True):
     """Get the directory for storing the user's pitivi configuration"""
-    return get_dir(os.path.join(xdg_dirs.xdg_config_home, "pitivi"), autocreate)
+    return get_dir(os.path.join(GLib.get_user_config_dir(), "pitivi"), autocreate)
 
 
 def xdg_data_home(autocreate=True):
     """Get the directory for storing the user's data: presets, plugins, etc."""
-    return get_dir(os.path.join(xdg_dirs.xdg_data_home, "pitivi"), autocreate)
+    return get_dir(os.path.join(GLib.get_user_data_dir(), "pitivi"), autocreate)
 
 
 def xdg_cache_home(autocreate=True):
     """Get the user cache directory"""
-    return get_dir(os.path.join(xdg_dirs.xdg_cache_home, "pitivi"), autocreate)
-
-
-def xdg_data_dirs():
-    return get_env_dirs(xdg_dirs.xdg_data_dirs)
-
-
-def xdg_config_dirs():
-    return get_env_dirs(xdg_dirs.xdg_config_dirs)
+    return get_dir(os.path.join(GLib.get_user_cache_dir(), "pitivi"), autocreate)
 
 
 class ConfigError(Exception):
@@ -159,7 +151,7 @@ class GlobalSettings(Signallable):
     def _readSettingsFromConfigurationFile(self):
         # This reads the configuration from the user configuration file
         try:
-            conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
+            conf_file_path = os.path.join(GLib.get_user_config_dir(), "pitivi.conf")
             self._config.read(conf_file_path)
         except ParsingError:
             return
@@ -217,7 +209,7 @@ class GlobalSettings(Signallable):
                 setattr(self, attrname, value)
 
     def _writeSettingsToConfigurationFile(self):
-        conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
+        conf_file_path = os.path.join(GLib.get_user_config_dir(), "pitivi.conf")
 
         for (section, attrname, typ, key, env_var, value) in self.iterAllOptions():
             if not self._config.has_section(section):

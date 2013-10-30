@@ -43,7 +43,6 @@ HARD_DEPS = {
     "gnonlin": "1.1.90",
     "Gst": "1.2.0",
     "Gtk": "3.8.0",
-    "xdg": None,  # "pyxdg", using static python bindings
     "numpy": None,  # using static python bindings
 
     # The following are not checked, but needed for the rest to work:
@@ -161,15 +160,9 @@ def check_hard_dependencies():
     satisfied, req, inst = _check_dependency("cairo", False)
     if not satisfied:
         missing_hard_deps["Cairo"] = (req, inst)
-    satisfied, req, inst = _check_dependency("xdg", False)
-    if not satisfied:
-        missing_hard_deps["PyXDG"] = (req, inst)
     satisfied, req, inst = _check_dependency("Gtk", True)
     if not satisfied:
         missing_hard_deps["GTK+"] = (req, inst)
-    satisfied, req, inst = _check_dependency("xdg", False)
-    if not satisfied:
-        missing_hard_deps["PyXDG"] = (req, inst)
     satisfied, req, inst = _check_dependency("numpy", False)
     if not satisfied:
         missing_hard_deps["NumPy"] = (req, inst)
