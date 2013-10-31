@@ -35,12 +35,12 @@ import sqlite3
 # Our C module optimizing waveforms rendering
 import renderer
 
-from pitivi.settings import xdg_cache_home
+from pitivi.settings import get_dir, xdg_cache_home
 from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE
-from pitivi.utils.misc import filename_from_uri, quote_uri
+from pitivi.utils.misc import filename_from_uri, quote_uri, hash_file
 from pitivi.utils.ui import CONTROL_WIDTH
 
 
@@ -547,29 +547,6 @@ class Thumbnail(Clutter.Actor):
         self.restore_easing_state()
 
 
-# TODO: replace with utils.misc.hash_file
-def hash_file(uri):
-    """Hashes the first 256KB of the specified file"""
-    sha256 = hashlib.sha256()
-    with open(uri, "rb") as file:
-        for _ in range(1024):
-            chunk = file.read(256)
-            if not chunk:
-                break
-            sha256.update(chunk)
-    return sha256.hexdigest()
-
-# TODO: remove eventually
-autocreate = True
-
-
-# TODO: replace with pitivi.settings.get_dir
-def get_dir(path, autocreate=True):
-    if autocreate and not os.path.exists(path):
-        os.makedirs(path)
-    return path
-
-
 caches = {}
 
 
@@ -591,7 +568,6 @@ class ThumbnailCache(Loggable):
 
     def __init__(self, uri):
         Loggable.__init__(self)
-        # TODO: replace with utils.misc.hash_file
         self._filehash = hash_file(Gst.uri_get_location(uri))
         self._filename = filename_from_uri(uri)
         thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
