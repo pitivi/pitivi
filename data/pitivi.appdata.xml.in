@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2013 Jean-François Fortin Tam <nekohayo@gmail.com> -->
 <application>
  <id type="desktop">pitivi.desktop</id>
- <licence>LGPLv2</licence>
+ <licence>CC-BY</licence>
  <name>Pitivi</name>
  <_summary>A video editor that aims to appeal to hobbyists and professionals alike, with a strong focus on usability, efficiency and quality</_summary>
  <_description>
@@ -17,8 +18,7 @@
   </ul>
  </_description>
  <screenshots>
-  <!-- Widths and heights are approximations for the software center apps to choose from !-->
-  <screenshot type="default" width="1366" height="740">http://www.pitivi.org/i/screenshots/software_center_main.jpg</screenshot>
+  <screenshot type="default">http://www.pitivi.org/i/screenshots/software_center_main.jpg</screenshot>
  </screenshots>
  <url type="homepage">http://www.pitivi.org</url>
  <updatecontact>nekohayo@gmail.com</updatecontact>
