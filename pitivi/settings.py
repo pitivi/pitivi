@@ -95,7 +95,7 @@ def xdg_data_home(autocreate=True):
 
 
 def xdg_cache_home(autocreate=True):
-    """Get the user cache directory"""
+    """Get the Pitivi cache directory"""
     return get_dir(os.path.join(GLib.get_user_cache_dir(), "pitivi"), autocreate)
 
 
@@ -151,7 +151,7 @@ class GlobalSettings(Signallable):
     def _readSettingsFromConfigurationFile(self):
         # This reads the configuration from the user configuration file
         try:
-            conf_file_path = os.path.join(GLib.get_user_config_dir(), "pitivi.conf")
+            conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
             self._config.read(conf_file_path)
         except ParsingError:
             return
@@ -209,7 +209,7 @@ class GlobalSettings(Signallable):
                 setattr(self, attrname, value)
 
     def _writeSettingsToConfigurationFile(self):
-        conf_file_path = os.path.join(GLib.get_user_config_dir(), "pitivi.conf")
+        conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
 
         for (section, attrname, typ, key, env_var, value) in self.iterAllOptions():
             if not self._config.has_section(section):

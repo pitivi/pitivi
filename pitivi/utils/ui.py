@@ -29,6 +29,7 @@ classes that help with UI drawing around the application
 
 from decimal import Decimal
 from gettext import ngettext, gettext as _
+from gi.repository import GLib
 from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk

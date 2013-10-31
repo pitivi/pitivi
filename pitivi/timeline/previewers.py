@@ -594,8 +594,8 @@ class ThumbnailCache(Loggable):
         # TODO: replace with utils.misc.hash_file
         self._filehash = hash_file(Gst.uri_get_location(uri))
         self._filename = filename_from_uri(uri)
-        cache_dir = get_dir(os.path.join(xdg_cache_home(), "pitivi"), autocreate)
-        dbfile = os.path.join(get_dir(os.path.join(cache_dir, "thumbs")), self._filehash)
+        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
+        dbfile = os.path.join(thumbs_cache_dir, self._filehash)
         self._db = sqlite3.connect(dbfile)
         self._cur = self._db.cursor()  # Use this for normal db operations
         self._cur.execute("CREATE TABLE IF NOT EXISTS Thumbs\
@@ -777,7 +777,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
     def _startLevelsDiscovery(self):
         self.log('Preparing waveforms for "%s"' % filename_from_uri(self._uri))
         filename = hash_file(Gst.uri_get_location(self._uri)) + ".wave"
-        cache_dir = get_dir(os.path.join(xdg_cache_home(), os.path.join("pitivi/waves")), autocreate)
+        cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
         filename = cache_dir + "/" + filename
 
         if os.path.exists(filename):
