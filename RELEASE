@@ -1,34 +1,25 @@
-0.91 Release "Charming Defects"
--------------------------------
-This is the first alpha release for the new version of Pitivi based on GES,
-the GStreamer Editing Services library.
-
-It is a major rework of the entire Pitivi architecture. It includes:
-- Replacing the core of Pitivi by GES; 20 thousand lines of code removed
-- Porting to GStreamer 1.x
-- Porting to GTK+ 3.x
-- Replacing GooCanvas by Clutter for the timeline
-- An automated UI test suite, with many checks for mission-critical parts
-- Fixing hundreds of bugs
-- Implementing many new features
-- UI polish all over the place
-- Refactoring pretty much the entire codebase
-
-Since 0.15.2, over 1300 changes have been committed in Pitivi alone.
-
-As you may guess, this gargantuan amount of improvements cannot fit in a short
-announcement such as this one. Instead, you can find a more detailed summary on
+0.92 Release "Baby Steps"
+-------------------------
+This is the second alpha release for the new version of Pitivi based on GES,
+the GStreamer Editing Services library. This is a incremental bugfixing release,
+so make sure to also look at the 0.91 release notes to get the full picture:
 http://wiki.pitivi.org/wiki/0.91
 
-Please keep in mind that this is an alpha release, so there may be some bugs we
-haven't found yet. We appreciate your feedback, so try it out, let us know how
-well it works for you and report detailed bugs for issues you may encounter.
-With your help, we will follow up with a beta release and eventually a 1.0
-release.
+Detailed release notes for 0.92 are on http://wiki.pitivi.org/wiki/0.91
+
+Please keep in mind that this is still an alpha release. That said, one month
+after the 0.91 release and with the feedback we have received so far,
+we are pretty confident that the new release series is of much higher quality
+than the 0.15 series and older.
+
+So try it out, let us know how well it works for you,
+and report detailed bugs for issues you may encounter.
 
 == Requirements ==
 
-Dependencies/requirements have changed significantly since the 0.15 series.
+Dependencies/requirements have changed significantly since the 0.15 series,
+but have stayed mostly the same since 0.91 (pyxdg was dropped as a dependency).
+
 Refer to Pitivi's check.py for the dependencies' versions for this release.
 See also http://wiki.pitivi.org/wiki/Dependencies for additional tips.
 
@@ -37,111 +28,33 @@ See also http://wiki.pitivi.org/wiki/Dependencies for additional tips.
 
 In Pitivi:
 
-   526	Jean-François Fortin Tam
-   266	Thibault Saunier
-   190	Mathieu Duponchelle
-    72	Paul Lange
-    37	Piotr Drąg
-    26	Alex Băluț
-    24	Daniel Mustieles
-    23	Matas Brazdeikis
-    18	Marek Černocký
-    17	Matej Urbančič
-    17	Nicolas Dufresne
-    14	Daniel Thul
-    12	René Stadler
-    10	Alexandru Băluț
-     8	Stephen Griffiths
-     8	Мирослав Николић
-     7	Luis de Bethencourt
-     5	Lubosz Sarnecki
-     5	Martin Srebotnjak
-     4	Rafael Ferreira
-     3	Aurimas Černius
-     3	Fran Diéguez
-     3	Milagros Infante Montero
-     2	Andrej Žnidaršič
-     2	Anton Belka
-     2	Balázs Úr
-     2	Bruno Brouard
-     2	Dimitris Spingos
-     2	Elad Alfassa
-     2	Joris Valette
-     2	Meenal-goyal
-     2	Pere Orga
-     2	Thiago Santos
-     1	Adonfo Jayme Barrientos
-     1	Antonio Fernandes C. Neto
-     1	Brian Grohe
-     1	Carles Ferrando
-     1	Christian Kirbach
-     1	Danny Piccirillo
-     1	Dominique Leuenberger
-     1	Enrico Nicoletto
-     1	Florêncio Neves
-     1	Gabor Kelemen
-     1	Gianvito Cavasoli
-     1	Jan Gerber
-     1	Javier Jardón
-     1	Jiro Matsuzawa
-     1	Jordi Mas
-     1	Marianne Corvellec
-     1	Mattias Põldaru
-     1	Milagros Alessandra Infante Montero
-     1	Odin Hørthe Omdal
-     1	Oliver Propst
-     1	Olivier Duchateau
-     1	Panagiotis Papadopoulos
-     1	Praveen Illa
-     1	Rūdolfs Mazurs
-     1	Simon Corsin
-     1	Simon Wenner
-     1	Ulisse Perusin
-     1	Yann Pravo
-     1	Yaron Shahrabani
-     1	Yuri Myasoedov
+     9  Thibault Saunier
+     6  Jean-François Fortin Tam
+     6  Mathieu Duponchelle
+     3  Colin Walters
+     2  Fran Diéguez
+     1  Cheng-Chia Tseng
+     1  Claude Paroz
+     1  Daniel Mustieles
+     1  Marek Černocký
+     1  Martin Srebotnjak
+     1  Rafael Ferreira
+     1  Rūdolfs Mazurs
+     1  Timo Jyrinki
+     1  Мирослав Николић
+
 
 In GES:
 
-   596	Thibault Saunier
-    98	Mathieu Duponchelle
-    74	Edward Hervey
-    54	Tim-Philipp Müller
-    34	Sebastian Dröge
-    26	Luis de Bethencourt
-    11	Simon Corsin
-    10	Volodymyr Rudyi
-     8	Stefan Kost
-     6	Mark Nauwelaerts
-     6	Stefan Sauer
-     5	Robert Swain
-     5	Vasilis Liaskovitis
-     5	Руслан Ижбулатов
-     4	Nicolas Dufresne
-     4	Thiago Santos
-     3	Alessandro Decina
-     3	Anton Belka
-     3	Lubosz Sarnecki
-     3	Paul Lange
-     3	Xabier Rodriguez Calvar
-     2	Matas Brazdeikis
-     2	Vincent Penquerc'h
-     1	Alban Browaeys
-     1	Andoni Morales Alastruey
-     1	David Schleef
-     1	Jean-François Fortin Tam
-     1	Joris Valette
-     1	Kerrick Staley
-     1	Kishore Arepalli
-     1	Mateu Batle
-     1	Stéphane Maniaci
-     1	Thomas Vander Stichele
-     1	Wim Taymans
+     5  Thibault Saunier
+     2  Kishore Arepalli
+     2  Mathieu Duponchelle
+
 
 == Download ==
 
   Pitivi source tarballs are available on the GNOME FTP servers:
-   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.91/
+   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.92
 
   See the website for distribution-specific packages.
 
@@ -155,4 +68,4 @@ In GES:
 
 == Bugs Fixed ==
 
- * Too many to list here, see http://wiki.pitivi.org/wiki/0.91
+See https://bugzilla.gnome.org/buglist.cgi?product=pitivi;target_milestone=0.92

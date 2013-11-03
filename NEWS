@@ -1,3 +1,18 @@
+2013 November 3rd - Pitivi 0.92
+
+  Second alpha release for the new version of Pitivi based on GES.
+  All the improvements from 0.91, plus:
+
+  * Fix a bug where transitions would stop working
+  * Fix the handling of rendering parameters
+  * Fixes for the keyframes UI in the timeline
+  * Usability improvements for the welcome dialog
+  * Update the preview immediately when adding an effect
+  * Fixes for AppData XML spec compliance
+  * Various build and packaging fixes
+  * Drop the PyXDG dependency
+  * Translations have been updated
+
 2013 September 29 - Pitivi 0.91
 
   First alpha release for the new version of Pitivi based on GES.

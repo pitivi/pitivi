@@ -27,7 +27,7 @@ Preparing:
      * Re-autogen
      * Make sure pre-requisites are still valid
      * Update the following files:
-       * pitivi.org/versions.txt: add new release as current
+       * pitivi.org/releases.txt: add new release as current
        * pitivi/check.py: dependencies' version numbers
        * RELEASE: the release notes (or its short version)/announcement. To get the list of contributors, 'git shortlog -s -n RELEASE-<previoustag>..'
        * NEWS: a shorter version of RELEASE, with the exec summary of changes
