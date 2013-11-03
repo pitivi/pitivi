@@ -70,15 +70,14 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="spacing">6</property>
+                <property name="homogeneous">True</property>
                 <property name="layout_style">start</property>
                 <child>
                   <object class="GtkButton" id="new_button">
                     <property name="label">gtk-new</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="use_stock">True</property>
                     <signal name="clicked" handler="_newProjectCb" swapped="no"/>
                   </object>
@@ -91,11 +90,9 @@
                 <child>
                   <object class="GtkButton" id="open_button">
                     <property name="label" translatable="yes">Browse projects...</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="_onBrowseButtonClickedCb" swapped="no"/>
                   </object>
                   <packing>
@@ -107,11 +104,9 @@
                 <child>
                   <object class="GtkButton" id="help_button">
                     <property name="label">gtk-help</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="use_stock">True</property>
                     <signal name="clicked" handler="_userManualCb" swapped="no"/>
                   </object>
@@ -124,11 +119,9 @@
                 <child>
                   <object class="GtkButton" id="cheatsheet_button">
                     <property name="label" translatable="yes">Keyboard shortcuts</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="_cheatsheetCb" swapped="no"/>
                   </object>
                   <packing>
@@ -140,11 +133,9 @@
                 <child>
                   <object class="GtkButton" id="missing_deps_button">
                     <property name="label" translatable="yes">Missing dependencies...</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="_onMissingDepsButtonClickedCb" swapped="no"/>
                   </object>
                   <packing>
