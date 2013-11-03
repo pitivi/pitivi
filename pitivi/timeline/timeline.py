@@ -33,7 +33,6 @@ from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
 from pitivi.check import missing_soft_deps
 from pitivi.utils.timeline import Zoomable, Selection, SELECT, UNSELECT
 from pitivi.settings import GlobalSettings
-from pitivi.dialogs.depsmanager import DepsManager
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, PLAYHEAD_WIDTH, CONTROL_WIDTH, TYPE_PITIVI_EFFECT

@@ -32,14 +32,20 @@ class DepsManager(object):
     The sane way to query and install is by using PackageKit's InstallResource()
     """
 
-    def __init__(self, app):
+    def __init__(self, app, parent_window=None):
         self.app = app
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(), "depsmanager.ui"))
         self.builder.connect_signals(self)
         self.window = self.builder.get_object("window1")
-        self.window.set_transient_for(self.app.gui)
         self.window.set_modal(True)
+        if parent_window:
+            self.window.set_transient_for(parent_window)
+        else:
+            self.window.set_transient_for(self.app.gui)
+        # Same hack as in the rendering progress dialog,
+        # to prevent GTK3 from eating a crazy amount of vertical space:
+        self.window.set_resizable(False)
 
         # FIXME: autodetect if we can actually use PackageKit's "InstallResource" dbus
         # method, and if yes, show this button.
