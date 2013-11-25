@@ -40,10 +40,13 @@ if ! pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
 else
   echo "glib is up to date, using the version already available."
 fi
-if pkg-config gobject-introspection-1.0 --atleast-version=$GOBJECT_INTROSPECTION_MINIMUM_VERSION; then
-  echo "gobject-introspection-1.0 is up to date, not building."
-else
+
+MODULES_CORE=""
+if ! pkg-config gobject-introspection-1.0 --atleast-version=$GOBJECT_INTROSPECTION_MINIMUM_VERSION; then
+  echo "Building gobject-introspection"
   MODULES_CORE="${MODULE_GLIB} gobject-introspection"
+else
+  echo "gobject-introspection-1.0 is up to date, not building."
 fi
 
 if python2 -c "import gi; gi.check_version('${PYGOBJECT_RELEASE_TAG}')" &> /dev/null; then
@@ -52,7 +55,7 @@ if python2 -c "import gi; gi.check_version('${PYGOBJECT_RELEASE_TAG}')" &> /dev/
   PYTHONPATH=$(python2 -c 'import gi; print(gi._overridesdir)')/../../:$PYTHONPATH
 else
   PYTHONPATH=$MYPITIVI/pygobject:$PYTHONPATH
-  MODULES_CORE="${MODULE_GLIB} pygobject"
+  MODULES_CORE="${MODULES_CORE} pygobject"
 fi
 
 # The following decision has to be made before we've set any env variables,
