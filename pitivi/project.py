@@ -749,7 +749,7 @@ class Project(Loggable, GES.Project):
             else:
                 for template in feature.get_static_pad_templates():
                     if template.name_template == "src":
-                        audiotype = template.get_caps()[0].get_name()
+                        audiotype = template.get_caps()[0].to_string()
                         break
                 self.audio_profile.set_format(Gst.Caps(audiotype))
             self.audio_profile.set_preset_name(value)
@@ -769,7 +769,7 @@ class Project(Loggable, GES.Project):
             else:
                 for template in feature.get_static_pad_templates():
                     if template.name_template == "src":
-                        videotype = template.get_caps()[0].get_name()
+                        videotype = template.get_caps()[0].to_string()
                         break
                 self.video_profile.set_format(Gst.Caps(videotype))
 
@@ -790,7 +790,7 @@ class Project(Loggable, GES.Project):
             else:
                 for template in feature.get_static_pad_templates():
                     if template.name_template == "src":
-                        muxertype = template.get_caps()[0].get_name()
+                        muxertype = template.get_caps()[0].to_string()
                         break
                 self.container_profile.set_format(Gst.Caps(muxertype))
             self.container_profile.set_preset_name(value)
