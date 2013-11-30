@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi 0.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-10 08:09+0800\n"
-"PO-Revision-Date: 2013-10-06 14:00+0800\n"
+"POT-Creation-Date: 2013-11-30 14:25+0800\n"
+"PO-Revision-Date: 2013-11-26 21:10+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese/Traditional <community@linuxhall.org>\n"
 "Language: zh_TW\n"
@@ -20,40 +20,53 @@ msgstr ""
 
 #: ../data/pitivi.appdata.xml.in.h:1
 msgid ""
-"A video editor that aims to appeal to hobbyists and professionals alike, "
-"with a strong focus on usability, efficiency and quality"
+"Pitivi is a video editor that aims to appeal to hobbyists and professionals "
+"alike, with a strong focus on efficiency, quality and usability. It "
+"integrates well with other applications and sports a beautiful user "
+"interface designed to be powerful yet easy to learn."
 msgstr ""
-"一個以「同樣吸引愛好者與專家使用」為目標的影片編輯器，專注於便用性、效率與品"
-"質"
+"Pitivi 是個以「吸引愛好者，也吸引專家」為目標的影片編輯器，非常專注於效率、品"
+"質、便用。它不只與其他應用程式整合良好，更具有美觀的使用者介面，設計雖強大但"
+"仍易於學習。"
 
 #: ../data/pitivi.appdata.xml.in.h:2
 msgid ""
-"<p>Integrating well with the GNOME desktop environment and other "
-"applications, Pitivi sports a beautiful user interface designed to be "
-"powerful yet easy to learn.</p> <p>With a non-modal editing workflow, a "
-"framerate-independent and playhead-centric timeline, Pitivi allows you "
-"quickly and accurately trim, split and review your scenes. Pitivi's ripple "
-"and roll editing features allow spending more time on storytelling and less "
-"time on \"pushing clips around\".</p> <p>Some other features include:</p> "
-"<ul> <li>Accepts any file formats supported by the GStreamer multimedia "
-"framework</li> <li>Can animate hundreds of special effects and filters with "
-"keyframable properties</li> <li>Ability to set custom aspect ratios, "
-"framerates and rendering presets</li> <li>Easy to use crossfades and SMPTE "
-"transitions</li> <li>Multihead-friendly with detachable user interface "
-"components</li> </ul>"
+"With a non-modal editing workflow, a framerate-independent and playhead-"
+"centric timeline, Pitivi allows you quickly and accurately trim, split and "
+"review your scenes. Pitivi's ripple and roll editing features allow spending "
+"more time on storytelling and less time on \"pushing clips around\"."
 msgstr ""
-"<p>不只與 GNOME 桌面環境及其他應用程式整合良好，Pitivi 更有著強大卻也容易使用"
-"的漂亮使用者介面。</p> <p>採用非典範編輯工作流程、無關幀率且以播放頭為中心的"
-"時間軸，Pitivi 讓您快速並精確地修剪、切分、檢閱您拍攝的畫面。Pitivi 的漣漪與"
-"捲動編輯功能，讓您可將更多時間花在故事描述上，而更少時間花在「到處推動剪輯」"
-"上。</p> <p>其他的特色包括：</p> <ul> <li>接受任何 GStreamer 多媒體框架支援的"
-"檔案格式</li> <li>能用可作鍵幀的屬性來製作上百種特效與濾鏡動畫</li> <li>可設"
-"定自訂長寬比、幀率、壓製用預置設定的能力</li> <li>易用的交錯淡化與 SMPTE 轉場"
-"</li> <li>使用者介面組件可從主視窗中脫離出來，方便您多方面分別處理</li> </ul>"
+
+#: ../data/pitivi.appdata.xml.in.h:3
+msgid "Some other features include:"
+msgstr "其他特點包括："
+
+#: ../data/pitivi.appdata.xml.in.h:4
+msgid ""
+"Accepts any file formats supported by the GStreamer multimedia framework"
+msgstr "接受任何 GStreamer 多媒體框架所支援的檔案格式"
+
+#: ../data/pitivi.appdata.xml.in.h:5
+msgid ""
+"Can animate hundreds of special effects and filters with keyframable "
+"properties"
+msgstr ""
+
+#: ../data/pitivi.appdata.xml.in.h:6
+msgid "Ability to set custom aspect ratios, framerates and rendering presets"
+msgstr "可以自訂長寬比、幀率、壓製預置設定"
+
+#: ../data/pitivi.appdata.xml.in.h:7
+msgid "Easy to use crossfades and SMPTE transitions"
+msgstr "易用的交錯淡化與 SMPTE 轉場"
+
+#: ../data/pitivi.appdata.xml.in.h:8
+msgid "Multihead-friendly with detachable user interface components"
+msgstr ""
 
 #: ../data/pitivi.desktop.in.in.h:1
-msgid "Pitivi Video Editor"
-msgstr "Pitivi 影片編輯器"
+msgid "Video Editor"
+msgstr "影片編輯器"
 
 #: ../data/pitivi.desktop.in.in.h:2
 msgid "Create and edit your own movies"
@@ -67,7 +80,7 @@ msgstr "自動校準開始"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>執行自動對齊</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1021
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1022
 msgid "Estimating..."
 msgstr "估計..."
 
@@ -313,7 +326,7 @@ msgstr "幀率："
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
 #: ../data/ui/projectsettings.ui.h:16 ../data/ui/renderingdialog.ui.h:31
-#: ../pitivi/effects.py:284
+#: ../pitivi/effects.py:283
 msgid "Video"
 msgstr "視訊"
 
@@ -586,19 +599,19 @@ msgstr "-a 需要 -i"
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "無法開啟超過一個 PROJECT_FILE"
 
-#: ../pitivi/check.py:236
+#: ../pitivi/check.py:229
 msgid "enables sound notifications when rendering is complete"
 msgstr "當壓製完成時啟用音效通知"
 
-#: ../pitivi/check.py:239
+#: ../pitivi/check.py:232
 msgid "enables visual notifications when rendering is complete"
 msgstr "當壓製完成時啟用視覺通知"
 
-#: ../pitivi/check.py:242
+#: ../pitivi/check.py:235
 msgid "additional multimedia codecs through the Libav library"
 msgstr "透過 Libav 函式庫獲得的其他多媒體編解碼器"
 
-#: ../pitivi/check.py:250
+#: ../pitivi/check.py:243
 msgid "additional video effects, clip transformation feature"
 msgstr "其他視訊特效、剪輯轉變功能"
 
@@ -630,51 +643,51 @@ msgstr "選取一個時間軸上的剪輯以配置其相關特效"
 msgid "Transformation"
 msgstr "變形"
 
-#: ../pitivi/effects.py:79 ../pitivi/effects.py:173 ../pitivi/effects.py:266
+#: ../pitivi/effects.py:78 ../pitivi/effects.py:172 ../pitivi/effects.py:265
 msgid "Uncategorized"
 msgstr "尚未分類"
 
-#: ../pitivi/effects.py:105 ../pitivi/effects.py:107
+#: ../pitivi/effects.py:104 ../pitivi/effects.py:106
 msgid "All effects"
 msgstr "所有的特效"
 
-#: ../pitivi/effects.py:108
+#: ../pitivi/effects.py:107
 msgid "Colors"
 msgstr "色彩"
 
-#: ../pitivi/effects.py:125
+#: ../pitivi/effects.py:124
 msgid "Compositing"
 msgstr "混成"
 
-#: ../pitivi/effects.py:132
+#: ../pitivi/effects.py:131
 msgid "Noise & blur"
 msgstr "噪訊與模糊"
 
-#: ../pitivi/effects.py:138
+#: ../pitivi/effects.py:137
 msgid "Analysis"
 msgstr "分析"
 
-#: ../pitivi/effects.py:146
+#: ../pitivi/effects.py:145
 msgid "Geometry"
 msgstr "幾何"
 
-#: ../pitivi/effects.py:157
+#: ../pitivi/effects.py:156
 msgid "Fancy"
 msgstr "幻想"
 
-#: ../pitivi/effects.py:169
+#: ../pitivi/effects.py:168
 msgid "Time"
 msgstr "時間"
 
-#: ../pitivi/effects.py:285
+#: ../pitivi/effects.py:284
 msgid "Audio |audio"
 msgstr "音訊 |音訊"
 
-#: ../pitivi/effects.py:286
+#: ../pitivi/effects.py:285
 msgid "effect"
 msgstr "特效"
 
-#: ../pitivi/mainwindow.py:139 ../pitivi/timeline/timeline.py:992
+#: ../pitivi/mainwindow.py:139 ../pitivi/timeline/timeline.py:991
 msgid "Split"
 msgstr "分割"
 
@@ -682,16 +695,16 @@ msgstr "分割"
 msgid "Keyframe"
 msgstr "鍵幀"
 
-#: ../pitivi/mainwindow.py:141 ../pitivi/timeline/timeline.py:977
+#: ../pitivi/mainwindow.py:141 ../pitivi/timeline/timeline.py:976
 msgid "Ungroup"
 msgstr "取消群組"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/mainwindow.py:143 ../pitivi/timeline/timeline.py:981
+#: ../pitivi/mainwindow.py:143 ../pitivi/timeline/timeline.py:980
 msgid "Group"
 msgstr "群組"
 
-#: ../pitivi/mainwindow.py:144 ../pitivi/timeline/timeline.py:984
+#: ../pitivi/mainwindow.py:144 ../pitivi/timeline/timeline.py:983
 msgid "Align"
 msgstr "對齊"
 
@@ -841,7 +854,7 @@ msgstr ""
 msgid "Development version"
 msgstr "開發版本"
 
-#: ../pitivi/mainwindow.py:715 ../pitivi/dialogs/startupwizard.py:164
+#: ../pitivi/mainwindow.py:715 ../pitivi/dialogs/startupwizard.py:163
 #, python-format
 msgid "Pitivi %s is available."
 msgstr "Pitivi %s 已可使用。"
@@ -926,12 +939,12 @@ msgstr "目前的專案會重新載入。所有尚未儲存的變動將會流失
 msgid "Unable to load project \"%s\""
 msgstr "無法載入專案「%s」"
 
-#: ../pitivi/mainwindow.py:1015
+#: ../pitivi/mainwindow.py:1016
 msgid "Locate missing file..."
 msgstr "為遺失的檔案定位..."
 
 #. # The file is probably an image, not video or audio.
-#: ../pitivi/mainwindow.py:1044
+#: ../pitivi/mainwindow.py:1045
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
@@ -940,7 +953,7 @@ msgstr ""
 "下列檔案已被移動：「<b>%s</b>」\n"
 "請指定其新位置："
 
-#: ../pitivi/mainwindow.py:1049
+#: ../pitivi/mainwindow.py:1050
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
@@ -950,16 +963,16 @@ msgstr ""
 "請指定其新位置："
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI files"
-#: ../pitivi/mainwindow.py:1072
+#: ../pitivi/mainwindow.py:1073
 #, python-format
 msgid "%s files"
 msgstr "%s 份檔案"
 
-#: ../pitivi/mainwindow.py:1076 ../pitivi/medialibrary.py:482
+#: ../pitivi/mainwindow.py:1077 ../pitivi/medialibrary.py:482
 msgid "All files"
 msgstr "所有檔案"
 
-#: ../pitivi/mainwindow.py:1100
+#: ../pitivi/mainwindow.py:1101
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -970,30 +983,30 @@ msgstr ""
 "\n"
 "Pitivi 目前尚未支援部份專案。"
 
-#: ../pitivi/mainwindow.py:1210
+#: ../pitivi/mainwindow.py:1211
 msgid "Export To..."
 msgstr "匯出至..."
 
-#: ../pitivi/mainwindow.py:1223 ../pitivi/mainwindow.py:1270
-#: ../pitivi/mainwindow.py:1353 ../pitivi/render.py:356
-#: ../pitivi/timeline/timeline.py:1288
+#: ../pitivi/mainwindow.py:1224 ../pitivi/mainwindow.py:1271
+#: ../pitivi/mainwindow.py:1354 ../pitivi/render.py:356
+#: ../pitivi/timeline/timeline.py:1287
 msgid "Untitled"
 msgstr "未命名"
 
-#: ../pitivi/mainwindow.py:1228
+#: ../pitivi/mainwindow.py:1229
 msgid "Tar archive"
 msgstr "Tar 封存檔"
 
-#: ../pitivi/mainwindow.py:1232 ../pitivi/mainwindow.py:1243
-#: ../pitivi/mainwindow.py:1276 ../pitivi/mainwindow.py:1288
+#: ../pitivi/mainwindow.py:1233 ../pitivi/mainwindow.py:1244
+#: ../pitivi/mainwindow.py:1277 ../pitivi/mainwindow.py:1289
 msgid "Detect automatically"
 msgstr "自動偵測"
 
-#: ../pitivi/mainwindow.py:1257 ../pitivi/timeline/timeline.py:1282
+#: ../pitivi/mainwindow.py:1258 ../pitivi/timeline/timeline.py:1281
 msgid "Save As..."
 msgstr "另存新檔..."
 
-#: ../pitivi/mainwindow.py:1305
+#: ../pitivi/mainwindow.py:1306
 msgid "Preview - click outside to close"
 msgstr "預覽 -  點按外部可關閉"
 
@@ -1082,8 +1095,8 @@ msgid "The following file can not be used with Pitivi."
 msgstr "下列檔案不能與 Pitivi 一起使用。"
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
-#: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1289
-#: ../pitivi/project.py:1294 ../pitivi/render.py:413
+#: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1322
+#: ../pitivi/project.py:1327 ../pitivi/render.py:413
 msgid "No preset"
 msgstr "無預設"
 
@@ -1134,16 +1147,16 @@ msgstr "新專案"
 msgid "Pitivi encoding profile"
 msgstr "Pitivi 編碼設定檔"
 
-#: ../pitivi/project.py:1310 ../pitivi/render.py:543
+#: ../pitivi/project.py:1343 ../pitivi/render.py:543
 #, python-format
 msgid "\"%s\" already exists."
 msgstr "「%s」已經存在。"
 
-#: ../pitivi/project.py:1383 ../pitivi/render.py:584
+#: ../pitivi/project.py:1416 ../pitivi/render.py:584
 msgid "New preset"
 msgstr "新的預設"
 
-#: ../pitivi/project.py:1386 ../pitivi/render.py:587
+#: ../pitivi/project.py:1419 ../pitivi/render.py:587
 #, python-format
 msgid "New preset %d"
 msgstr "新預設 %d"
@@ -1208,11 +1221,11 @@ msgstr ""
 msgid "Details"
 msgstr "細節"
 
-#: ../pitivi/render.py:969 ../pitivi/render.py:970 ../pitivi/render.py:975
+#: ../pitivi/render.py:970 ../pitivi/render.py:971 ../pitivi/render.py:976
 msgid "Render complete"
 msgstr "壓製完成"
 
-#: ../pitivi/render.py:975
+#: ../pitivi/render.py:976
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "「%s」已完成壓製。"
@@ -1246,23 +1259,23 @@ msgstr "左側"
 msgid "Right"
 msgstr "右側"
 
-#: ../pitivi/transitions.py:66
+#: ../pitivi/transitions.py:65
 msgid "Search..."
 msgstr "搜尋..."
 
-#: ../pitivi/transitions.py:72
+#: ../pitivi/transitions.py:71
 msgid "Normal"
 msgstr "一般"
 
-#: ../pitivi/transitions.py:73
+#: ../pitivi/transitions.py:72
 msgid "Loop"
 msgstr "循環"
 
-#: ../pitivi/transitions.py:83
+#: ../pitivi/transitions.py:82
 msgid "Reverse direction"
 msgstr "反轉方向"
 
-#: ../pitivi/transitions.py:97
+#: ../pitivi/transitions.py:96
 msgid ""
 "Create a transition by overlapping two adjacent clips on the same layer. "
 "Click the transition on the timeline to change the transition type."
@@ -1270,23 +1283,23 @@ msgstr ""
 "利用在同個層次上重疊兩份相鄰的剪輯來建立出轉場效果。點按時間軸上的轉場可更換"
 "轉場類型。"
 
-#: ../pitivi/transitions.py:186
+#: ../pitivi/transitions.py:185
 msgid "Slow"
 msgstr "慢"
 
-#: ../pitivi/transitions.py:187
+#: ../pitivi/transitions.py:186
 msgid "Fast"
 msgstr "快"
 
-#: ../pitivi/transitions.py:188
+#: ../pitivi/transitions.py:187
 msgid "Epileptic"
 msgstr "癲癇"
 
-#: ../pitivi/transitions.py:192
+#: ../pitivi/transitions.py:191
 msgid "Sharp"
 msgstr "銳利"
 
-#: ../pitivi/transitions.py:193
+#: ../pitivi/transitions.py:192
 msgid "Smooth"
 msgstr "平滑"
 
@@ -1403,23 +1416,24 @@ msgid "Pan:"
 msgstr ""
 
 #: ../pitivi/timeline/layer.py:323
+#, fuzzy
 msgid "Change audio panning"
-msgstr ""
+msgstr "變更音訊"
 
 #: ../pitivi/timeline/ruler.py:197
 #, python-format
 msgid "Frame #%d"
 msgstr "框幀 #%d"
 
-#: ../pitivi/timeline/timeline.py:55 ../pitivi/timeline/timeline.py:68
+#: ../pitivi/timeline/timeline.py:54 ../pitivi/timeline/timeline.py:67
 msgid "Behavior"
 msgstr "行為"
 
-#: ../pitivi/timeline/timeline.py:56
+#: ../pitivi/timeline/timeline.py:55
 msgid "Snap distance"
 msgstr "突然吸附距離"
 
-#: ../pitivi/timeline/timeline.py:57
+#: ../pitivi/timeline/timeline.py:56
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1427,90 +1441,90 @@ msgstr ""
 "在時間軸上，兩個剪輯片段拖動靠近時，會突然像是磁鐵互相吸附的距離(以像素為"
 "單)。"
 
-#: ../pitivi/timeline/timeline.py:69
+#: ../pitivi/timeline/timeline.py:68
 msgid "Image clip duration"
 msgstr "影像剪輯時間"
 
-#: ../pitivi/timeline/timeline.py:70
+#: ../pitivi/timeline/timeline.py:69
 msgid ""
 "Default clip length (in miliseconds) of images when inserting on the "
 "timeline."
 msgstr "插入時間軸時的預設影像剪輯長度 (毫秒)。"
 
 #. tooltip text for toolbar
-#: ../pitivi/timeline/timeline.py:76
+#: ../pitivi/timeline/timeline.py:75
 msgid "Delete Selected"
 msgstr "刪除選取項"
 
-#: ../pitivi/timeline/timeline.py:77
+#: ../pitivi/timeline/timeline.py:76
 msgid "Split clip at playhead position"
 msgstr "分割剪輯於播放開頭位置"
 
-#: ../pitivi/timeline/timeline.py:78
+#: ../pitivi/timeline/timeline.py:77
 msgid "Add a keyframe"
 msgstr "加入鍵幀"
 
-#: ../pitivi/timeline/timeline.py:79
+#: ../pitivi/timeline/timeline.py:78
 msgid "Move to the previous keyframe"
 msgstr "移動到前一個鍵幀"
 
-#: ../pitivi/timeline/timeline.py:80
+#: ../pitivi/timeline/timeline.py:79
 msgid "Move to the next keyframe"
 msgstr "移動到下一個鍵幀"
 
-#: ../pitivi/timeline/timeline.py:81
+#: ../pitivi/timeline/timeline.py:80
 msgid "Zoom In"
 msgstr "拉近"
 
-#: ../pitivi/timeline/timeline.py:82
+#: ../pitivi/timeline/timeline.py:81
 msgid "Zoom Out"
 msgstr "拉遠"
 
-#: ../pitivi/timeline/timeline.py:83 ../pitivi/utils/widgets.py:48
+#: ../pitivi/timeline/timeline.py:82 ../pitivi/utils/widgets.py:48
 msgid "Zoom Fit"
 msgstr "縮放為適合長度"
 
-#: ../pitivi/timeline/timeline.py:84
+#: ../pitivi/timeline/timeline.py:83
 msgid "Ungroup clips"
 msgstr "取消影片剪輯群組"
 
-#: ../pitivi/timeline/timeline.py:85
+#: ../pitivi/timeline/timeline.py:84
 msgid "Group clips"
 msgstr "群組影片剪輯"
 
-#: ../pitivi/timeline/timeline.py:86
+#: ../pitivi/timeline/timeline.py:85
 msgid "Align clips based on their soundtracks"
 msgstr "根據剪輯的音軌對齊剪輯"
 
-#: ../pitivi/timeline/timeline.py:958
+#: ../pitivi/timeline/timeline.py:957
 msgid "Export current frame..."
 msgstr "匯出目前框幀..."
 
-#: ../pitivi/timeline/timeline.py:959
+#: ../pitivi/timeline/timeline.py:958
 msgid "Export the frame at the current playhead position as an image file."
 msgstr "將目前播放頭所在位置的框幀匯出為影像檔。"
 
-#: ../pitivi/timeline/timeline.py:990
+#: ../pitivi/timeline/timeline.py:989
 msgid "Start Playback"
 msgstr "開始播放"
 
-#: ../pitivi/timeline/timeline.py:995
+#: ../pitivi/timeline/timeline.py:994
 msgid "Add a Keyframe"
 msgstr "加入鍵幀"
 
-#: ../pitivi/timeline/timeline.py:998
+#: ../pitivi/timeline/timeline.py:997
 msgid "_Previous Keyframe"
 msgstr "前一個鍵幀(_P)"
 
-#: ../pitivi/timeline/timeline.py:1001
+#: ../pitivi/timeline/timeline.py:1000
 msgid "_Next Keyframe"
 msgstr "下一個鍵幀(_N)"
 
-#: ../pitivi/timeline/timeline.py:1290
+#: ../pitivi/timeline/timeline.py:1289
 msgid "PNG image"
 msgstr "PNG 影像"
 
-#: ../pitivi/timeline/timeline.py:1291
+#: ../pitivi/timeline/timeline.py:1290
 msgid "JPEG image"
 msgstr "JPEG 影像"
 
@@ -1751,6 +1765,31 @@ msgstr "縮放時間軸"
 #~ "• 無法顯示相關的功績。\n"
 #~ "\n"
 #~ "出於對我們貢獻者的尊崇，我們改請您前往：\n"
+
+#~ msgid ""
+#~ "<p>Integrating well with the GNOME desktop environment and other "
+#~ "applications, Pitivi sports a beautiful user interface designed to be "
+#~ "powerful yet easy to learn.</p> <p>With a non-modal editing workflow, a "
+#~ "framerate-independent and playhead-centric timeline, Pitivi allows you "
+#~ "quickly and accurately trim, split and review your scenes. Pitivi's "
+#~ "ripple and roll editing features allow spending more time on storytelling "
+#~ "and less time on \"pushing clips around\".</p> <p>Some other features "
+#~ "include:</p> <ul> <li>Accepts any file formats supported by the GStreamer "
+#~ "multimedia framework</li> <li>Can animate hundreds of special effects and "
+#~ "filters with keyframable properties</li> <li>Ability to set custom aspect "
+#~ "ratios, framerates and rendering presets</li> <li>Easy to use crossfades "
+#~ "and SMPTE transitions</li> <li>Multihead-friendly with detachable user "
+#~ "interface components</li> </ul>"
+#~ msgstr ""
+#~ "<p>不只與 GNOME 桌面環境及其他應用程式整合良好，Pitivi 更有著強大卻也容易"
+#~ "使用的漂亮使用者介面。</p> <p>採用非典範編輯工作流程、無關幀率且以播放頭為"
+#~ "中心的時間軸，Pitivi 讓您快速並精確地修剪、切分、檢閱您拍攝的畫面。Pitivi "
+#~ "的漣漪與捲動編輯功能，讓您可將更多時間花在故事描述上，而更少時間花在「到處"
+#~ "推動剪輯」上。</p> <p>其他的特色包括：</p> <ul> <li>接受任何 GStreamer 多"
+#~ "媒體框架支援的檔案格式</li> <li>能用可作鍵幀的屬性來製作上百種特效與濾鏡動"
+#~ "畫</li> <li>可設定自訂長寬比、幀率、壓製用預置設定的能力</li> <li>易用的交"
+#~ "錯淡化與 SMPTE 轉場</li> <li>使用者介面組件可從主視窗中脫離出來，方便您多"
+#~ "方面分別處理</li> </ul>"
 
 #~ msgid "<b>Crop</b>"
 #~ msgstr "<b>裁剪</b>"
