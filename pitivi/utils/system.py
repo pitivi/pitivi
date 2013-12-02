@@ -44,7 +44,7 @@ class System(Signallable, Loggable):
 
     def __init__(self):
         Loggable.__init__(self)
-        self.log("new object" + str(self))
+        self.log("new object " + str(self))
         self._reset()
 
     def _reset(self):
@@ -167,7 +167,7 @@ class System(Signallable, Loggable):
         @arg message: C{str} the body of the message
         @arg icon: C{str} icon to be shown with the message
         """
-        self.debug("desktopMessage(): %s, %s" % title % message)
+        self.debug("desktopMessage(): %s, %s", title, message)
 
     def getUniqueFilename(self, string):
         """Get a filename which can only be obtained from the specified string.
