@@ -192,7 +192,12 @@ class FreedesktopOrgSystem(System):
 
         if has_libnotify:
             notification = Notify.Notification.new(title, message, icon=icon)
-            notification.show()
+            try:
+                notification.show()
+            except RuntimeError, e:
+                # This can happen if the system is not properly configured.
+                # See for example https://bugzilla.gnome.org/show_bug.cgi?id=719627.
+                self.error("desktopMessage: Failed displaying notification: %s", e.message)
 
 
 #org.gnome.SessionManager flags
