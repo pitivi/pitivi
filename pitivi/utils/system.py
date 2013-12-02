@@ -78,7 +78,7 @@ class System(Signallable, Loggable):
 
     def _isInhibited(self, list_, key=None):
         if key is None:
-            if len(list_) > 0:
+            if list_:
                 return True
         elif key in list_:
             return True
