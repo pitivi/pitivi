@@ -56,6 +56,14 @@ global missing_soft_deps
 missing_soft_deps = {}
 
 
+def at_least_version(version, required):
+    for i, item in enumerate(version):
+        if required[i] != item:
+            return item > required[i]
+
+    return True
+
+
 def _initiate_videosinks(Gst):
     # TODO: eventually switch to a clutter sink
     sink = Gst.ElementFactory.make("autovideosink", None)

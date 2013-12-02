@@ -23,6 +23,7 @@
 import sys
 import os
 
+import gi
 from gi.repository import GtkClutter
 
 GtkClutter.init([])
@@ -30,7 +31,7 @@ GtkClutter.init([])
 from gi.repository import Gst, GES, GObject, Clutter, Gtk, GLib, Gdk
 
 from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
-from pitivi.check import missing_soft_deps
+from pitivi.check import missing_soft_deps, at_least_version
 from pitivi.utils.timeline import Zoomable, Selection, SELECT, UNSELECT
 from pitivi.settings import GlobalSettings
 from pitivi.dialogs.prefs import PreferencesDialog
@@ -696,7 +697,8 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         Zoomable.__init__(self)
         Gtk.VBox.__init__(self)
         Loggable.__init__(self)
-        GObject.threads_init()
+        if not at_least_version(gi.version_info, (3, 11, 0)):
+            GObject.threads_init()
 
         # Allows stealing focus from other GTK widgets, prevent accidents:
         self.props.can_focus = True

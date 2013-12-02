@@ -119,10 +119,12 @@ def _check_dependencies():
 def _run_pitivi():
     import pitivi.application as ptv
     import pitivi.timeline.timeline as timeline
-    from gi.repository import GObject
-    # You really need this line if you don't want the UI to lock up as soon as
-    # you start using GStreamer:
-    GObject.threads_init()
+    from pitivi.check import at_least_version
+    import gi
+
+    if not at_least_version(gi.version_info, (3, 11, 0)):
+        from gi.repository import GObject
+        GObject.threads_init()
 
     # Make it easy for developers to debug the application startup.
     if os.environ.get('PITIVI_DEBUG_NO_UI') == '1':
