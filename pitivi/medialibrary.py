@@ -795,7 +795,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 selection = view.get_selected_items()
                 return view.path_is_selected(path) and len(selection)
         else:
-            assert False
+            raise RuntimeError("Unknown media library view type: %s" % type(view))
 
         return False
 

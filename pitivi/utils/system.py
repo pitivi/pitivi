@@ -53,9 +53,8 @@ class System(Signallable, Loggable):
 
     #generic functions
     def _inhibit(self, list_, key):
-        if key is None or (not isinstance(key, str)):
-            assert False
-
+        assert key is not None
+        assert isinstance(key, str)
         if not key in list_:
             list_.append(key)
             self.log("emitting 'update-power-inhibition'")
@@ -68,9 +67,7 @@ class System(Signallable, Loggable):
                 self.log("emitting 'update-power-inhibition'")
                 self.emit('update-power-inhibition')
         else:
-            if not isinstance(key, str):
-                assert False
-
+            assert isinstance(key, str)
             if key in list_:
                 list_.remove(key)
                 self.log("emitting 'update-power-inhibition'")
