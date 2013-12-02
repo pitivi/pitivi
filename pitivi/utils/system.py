@@ -76,15 +76,6 @@ class System(Signallable, Loggable):
                 self.log("emitting 'update-power-inhibition'")
                 self.emit('update-power-inhibition')
 
-    def _listToString(self, list_):
-        keys = ""
-        for key in list_:
-            if keys != "":
-                keys += ", "
-            keys += key
-
-        return keys
-
     def _isInhibited(self, list_, key=None):
         if key is None:
             if len(list_) > 0:
@@ -120,7 +111,7 @@ class System(Signallable, Loggable):
 
     def getScreensaverInhibitors(self):
         """returns a comma seperated string of screensaver inhibitor keys"""
-        return self._listToString(self._screensaver_keys)
+        return ", ".join(self._screensaver_keys)
 
     def screensaverIsBlockable(self):
         return False
@@ -151,7 +142,7 @@ class System(Signallable, Loggable):
 
     def getSleepInhibitors(self):
         """returns a comma seperated string of sleep inhibitor keys"""
-        return self._listToString(self._sleep_keys)
+        return ", ".join(self._sleep_keys)
 
     def sleepIsBlockable(self):
         return False
