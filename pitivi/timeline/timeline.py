@@ -31,8 +31,8 @@ GtkClutter.init([])
 from gi.repository import Gst, GES, GObject, Clutter, Gtk, GLib, Gdk
 
 from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
-from pitivi.check import missing_soft_deps, at_least_version
-from pitivi.utils.timeline import Zoomable, Selection, SELECT, UNSELECT
+from pitivi.check import at_least_version
+from pitivi.utils.timeline import Zoomable, Selection, SELECT
 from pitivi.settings import GlobalSettings
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.utils.loggable import Loggable
@@ -41,7 +41,7 @@ from pitivi.utils.widgets import ZoomBox
 
 from ruler import ScaleRuler
 from gettext import gettext as _
-from pitivi.utils.pipeline import Pipeline, PipelineError
+from pitivi.utils.pipeline import PipelineError
 from elements import URISourceElement, TransitionElement, Ghostclip
 from controls import ControlContainer
 

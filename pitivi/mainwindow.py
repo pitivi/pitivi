@@ -190,7 +190,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self._setActions(instance)
         self._createUi(instance, allow_full_screen)
         self.recent_manager = Gtk.RecentManager()
-        self._zoom_duration_changed = False
         self._missingUriOnLoading = False
 
         self.app.projectManager.connect("new-project-loading",
