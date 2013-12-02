@@ -841,22 +841,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.iconview.unselect_all()
 
     def _treeViewButtonPressEventCb(self, treeview, event):
-        chain_up = True
-
-        if event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
-            # It is possible to double-click outside of clips:
-            if self.getSelectedPaths() != []:
-                # Here we used to emit "play", but
-                # this is now handled by _itemOrRowActivatedCb instead.
-                pass
-            chain_up = False
-        elif not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
-            chain_up = not self._rowUnderMouseSelected(treeview, event)
-
-        if not chain_up:
-            self._draggedPaths = self.getSelectedPaths()
-        else:
-            self._draggedPaths = None
+        self._updateDraggedPaths(treeview, event)
 
         Gtk.TreeView.do_button_press_event(treeview, event)
 
@@ -866,6 +851,24 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 ts.select_path(path)
 
         return True
+
+    def _updateDraggedPaths(self, view, event):
+        if event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
+            # It is possible to double-click outside of clips:
+            if self.getSelectedPaths():
+                # Here we used to emit "play", but
+                # this is now handled by _itemOrRowActivatedCb instead.
+                pass
+            chain_up = False
+        elif not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
+            chain_up = not self._rowUnderMouseSelected(view, event)
+        else:
+            chain_up = True
+
+        if not chain_up:
+            self._draggedPaths = self.getSelectedPaths()
+        else:
+            self._draggedPaths = None
 
     def _treeViewButtonReleaseEventCb(self, treeview, event):
         ts = self.treeview.get_selection()
@@ -903,22 +906,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.emit('play', asset)
 
     def _iconViewButtonPressEventCb(self, iconview, event):
-        chain_up = True
-
-        if event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
-            # It is possible to double-click outside of clips:
-            if self.getSelectedPaths() != []:
-                # Here we used to emit "play", but
-                # this is now handled by _itemOrRowActivatedCb instead.
-                pass
-            chain_up = False
-        elif not event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
-            chain_up = not self._rowUnderMouseSelected(iconview, event)
-
-        if not chain_up:
-            self._draggedPaths = self.getSelectedPaths()
-        else:
-            self._draggedPaths = None
+        self._updateDraggedPaths(iconview, event)
 
         Gtk.IconView.do_button_press_event(iconview, event)
 
@@ -926,7 +914,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             for path in self._draggedPaths:
                 self.iconview.select_path(path)
 
-        self._ignoreRelease = chain_up
         self.iconview_cursor_pos = self.iconview.get_path_at_pos(event.x, event.y)
 
         return True
