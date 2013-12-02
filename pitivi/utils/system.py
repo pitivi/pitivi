@@ -26,6 +26,12 @@ from pitivi.configure import APPNAME
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
 
+try:
+    from gi.repository import Notify
+    has_libnotify = True
+except ImportError:
+    has_libnotify = False
+
 
 class System(Signallable, Loggable):
     """A base class for all *Systems
@@ -154,16 +160,14 @@ class System(Signallable, Loggable):
     def uninhibitAll(self):
         self._reset()
         self.emit('update-power-inhibition')
-        pass
 
     def desktopMessage(self, title, message, icon=None):
         """send a message to the desktop to be displayed to the user
         @arg title: C{str} the title of the message
         @arg message: C{str} the body of the message
-        @arg icon: C{GdkPixbuf.Pixbuf} icon to be shown with the message
+        @arg icon: C{str} icon to be shown with the message
         """
         self.debug("desktopMessage(): %s, %s" % title % message)
-        pass
 
     def getUniqueFilename(self, string):
         """Get a filename which can only be obtained from the specified string.
@@ -179,18 +183,16 @@ class FreedesktopOrgSystem(System):
 
     def __init__(self):
         System.__init__(self)
-        # FIXME Notifications disabled for the time being
-        # Notify.init(APPNAME)
+        if has_libnotify:
+            Notify.init(APPNAME)
 
-    def desktopMessage(self, title, message, icon=None):
+    def desktopMessage(self, title, message, icon="pitivi"):
         #call super method for consistent logging
-        System.desktopMessage(title, message, icon)
+        System.desktopMessage(self, title, message, icon)
 
-        # FIXME Notifications disabled for the time being
-        #notification = Notify.Notification(title, message)
-        #if icon is not None and isinstance(icon, GdkPixbuf.Pixbuf):
-            #notification.set_icon_from_pixbuf(icon)
-        #notification.show()
+        if has_libnotify:
+            notification = Notify.Notification.new(title, message, icon=icon)
+            notification.show()
 
 
 #org.gnome.SessionManager flags
@@ -275,22 +277,13 @@ system_ = None
 if os.name == 'posix':
     if 'GNOME_DESKTOP_SESSION_ID' in os.environ:
         try:
-            # FIXME Disable notifications for the time being as it causes
-            # various errors and the implementation is not done yet
-            #from gi.repository import Notify
             import dbus
             system_ = GnomeSystem
         except:
             pass
 
     if system_ is None:
-        try:
-            # FIXME Disable notifications for the time being as it causes
-            # various errors and the implementation is not done yet
-            # from gi.repository import Notify
-            system_ = FreedesktopOrgSystem
-        except:
-            pass
+        system_ = FreedesktopOrgSystem
 elif os.name == 'nt':
     pass
 elif os.name == 'mac':

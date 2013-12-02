@@ -47,12 +47,6 @@ try:
 except ImportError:
     has_canberra = False
 
-try:
-    from gi.repository import Notify
-    has_libnotify = True
-except ImportError:
-    has_libnotify = False
-
 
 class CachedEncoderList(object):
     """
@@ -970,11 +964,9 @@ class RenderDialog(Loggable):
             self.progress.progressbar.set_text(_("Render complete"))
             self.progress.window.set_title(_("Render complete"))
             self.progress.setFilesizeEstimate(None)
-            if has_libnotify:
-                Notify.init("pitivi")
-                if not self.progress.window.is_active():
-                    self.notification = Notify.Notification.new(_("Render complete"), _('"%s" has finished rendering.' % self.fileentry.get_text()), "pitivi")
-                    self.notification.show()
+            if not self.progress.window.is_active():
+                notification = _('"%s" has finished rendering.' % self.fileentry.get_text())
+                self.app.system.desktopMessage(_("Render complete"), notification, "pitivi")
             if has_canberra:
                 canberra = pycanberra.Canberra()
                 canberra.play(1, pycanberra.CA_PROP_EVENT_ID, "complete-media", None)
