@@ -1,7 +1,7 @@
 #include <Python.h>
 #include <stdio.h>
 #include <cairo.h>
-#include </usr/include/pycairo/pycairo.h>
+#include <pycairo.h>
 
 static Pycairo_CAPI_t *Pycairo_CAPI;
 

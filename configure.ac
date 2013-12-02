@@ -65,6 +65,7 @@ AC_SUBST(CONFIGURED_GST_PLUGIN_PATH)
 AC_CONFIG_FILES([bin/pitivi], [chmod +x bin/pitivi])
 
 PKG_CHECK_MODULES([cairo], [cairo])
+PKG_CHECK_MODULES([pycairo], [pycairo])
 
 YELP_HELP_INIT
 
