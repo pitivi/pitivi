@@ -1,6 +1,10 @@
 AUTOMAKE_OPTIONS = dist-bzip2
 
-SUBDIRS	= bin pitivi common po tests data help
+SUBDIRS	= bin pitivi common po tests data
+
+if BUILD_HELP
+SUBDIRS += help
+endif
 
 mimedir = $(datadir)/mime/packages
 mime_DATA = pitivi.xml

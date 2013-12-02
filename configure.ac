@@ -67,7 +67,21 @@ AC_CONFIG_FILES([bin/pitivi], [chmod +x bin/pitivi])
 PKG_CHECK_MODULES([cairo], [cairo])
 PKG_CHECK_MODULES([pycairo], [pycairo])
 
-YELP_HELP_INIT
+AC_ARG_ENABLE(help,
+  AS_HELP_STRING([--disable-help],[disable help]),
+  [
+    case "${enableval}" in
+      yes) BUILD_HELP=yes ;;
+      no)  BUILD_HELP=no ;;
+      *)   AC_MSG_ERROR(bad value ${enableval} for --disable-help) ;;
+    esac
+  ],
+[BUILD_HELP=yes]) dnl Default value
+AM_CONDITIONAL(BUILD_HELP, test "x$BUILD_HELP" = "xyes")
+
+if test x$BUILD_HELP = xyes; then
+  YELP_HELP_INIT
+fi
 
 dnl output stuff
 AC_OUTPUT(

@@ -62,10 +62,17 @@ fi
 
 toplevel_check $srcfile
 
-GNOMEDOC=`which yelp-build`
-if test -z $GNOMEDOC; then
-  echo "Please intall the yelp-tools package"
-  exit 1
+build_help=true
+while getopts disable-help x; do
+  build_help=false
+done; OPTIND=0
+
+if $build_help; then
+  GNOMEDOC=`which yelp-build`
+  if test -z $GNOMEDOC; then
+    echo "Please intall the yelp-tools package"
+    exit 1
+  fi
 fi
 
 # This is needed to create ltmain.sh for our C bits.
