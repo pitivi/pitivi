@@ -27,6 +27,7 @@ import locale
 import gettext
 
 CONFIGURED_PYTHONPATH = '@CONFIGURED_PYTHONPATH@'
+CONFIGURED_GI_TYPELIB_PATH = '@CONFIGURED_GI_TYPELIB_PATH@'
 CONFIGURED_LD_LIBRARY_PATH = '@CONFIGURED_LD_LIBRARY_PATH@'
 CONFIGURED_GST_PLUGIN_PATH = '@CONFIGURED_GST_PLUGIN_PATH@'
 LIBDIR = '@LIBDIR@'
@@ -92,6 +93,9 @@ def _add_pitivi_path():
         if "JUMP_THROUGH_HOOPS" not in os.environ:
             # ld caches LD_LIBRARY_PATH at startup so we need to execv() here. LALA.
             jump_through_hoops()
+
+    if CONFIGURED_GI_TYPELIB_PATH:
+        _prepend_env_path("GI_TYPELIB_PATH", [CONFIGURED_GI_TYPELIB_PATH])
 
 
 def _check_dependencies():
