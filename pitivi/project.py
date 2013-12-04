@@ -187,9 +187,9 @@ class ProjectManager(Signallable, Loggable):
 
         @param time_diff: the difference, in seconds, between file mtimes
         """
-        dialog = Gtk.Dialog("", None, 0,
-                            (_("Ignore backup"), Gtk.ResponseType.REJECT,
-                            _("Restore from backup"), Gtk.ResponseType.YES))
+        dialog = Gtk.Dialog(title="", transient_for=None)
+        dialog.add_buttons(_("Ignore backup"), Gtk.ResponseType.REJECT,
+                           _("Restore from backup"), Gtk.ResponseType.YES)
         # Even though we set the title to an empty string when creating dialog,
         # seems we really have to do it once more so it doesn't show "pitivi"...
         dialog.set_title("")
@@ -211,13 +211,13 @@ class ProjectManager(Signallable, Loggable):
         primary.props.label = message
 
         # put the text in a vbox
-        vbox = Gtk.VBox(False, SPACING * 2)
+        vbox = Gtk.VBox(homogeneous=False, spacing=SPACING * 2)
         vbox.pack_start(primary, True, True, 0)
 
         # make the [[image] text] hbox
         image = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_QUESTION,
                                          Gtk.IconSize.DIALOG)
-        hbox = Gtk.HBox(False, SPACING * 2)
+        hbox = Gtk.HBox(homogeneous=False, spacing=SPACING * 2)
         hbox.pack_start(image, False, True, 0)
         hbox.pack_start(vbox, True, True, 0)
         hbox.set_border_width(SPACING)

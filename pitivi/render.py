@@ -795,14 +795,14 @@ class RenderDialog(Loggable):
             "file a bug report. See the details below for some basic "
             "information that may help identify the problem.")
 
-        dialog = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL,
-            Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
-            primary_message)
+        dialog = Gtk.MessageDialog(transient_for=self.window, modal=True,
+            message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+            text=primary_message)
         dialog.set_property("secondary-text", secondary_message)
 
         expander = Gtk.Expander()
         expander.set_label(_("Details"))
-        details_label = Gtk.Label(str(error) + "\n\n" + str(details))
+        details_label = Gtk.Label(label=str(error) + "\n\n" + str(details))
         details_label.set_line_wrap(True)
         details_label.set_selectable(True)
         expander.add(details_label)

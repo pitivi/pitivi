@@ -487,10 +487,9 @@ class PathWidget(Gtk.FileChooserButton, DynamicWidget):
 
     def __init__(self, action=Gtk.FileChooserAction.OPEN, default=None):
         DynamicWidget.__init__(self, default)
-        self.dialog = Gtk.FileChooserDialog(
-            action=action,
-            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_CLOSE,
-             Gtk.ResponseType.CLOSE))
+        self.dialog = Gtk.FileChooserDialog(action=action)
+        self.dialong.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_CLOSE,
+                                 Gtk.ResponseType.CLOSE)
         self.dialog.set_default_response(Gtk.ResponseType.OK)
         Gtk.FileChooserButton.__init__(self, self.dialog)
         self.dialog.connect("response", self._responseCb)
@@ -726,7 +725,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         else:
             props = [prop for prop in GObject.list_properties(self.element) if not prop.name in self.ignore]
         if not props:
-            table = Gtk.Table(rows=1, columns=1)
+            table = Gtk.Table(n_rows=1, n_columns=1)
             widget = Gtk.Label(label=_("No properties."))
             widget.set_sensitive(False)
             table.attach(widget, 0, 1, 0, 1, yoptions=Gtk.AttachOptions.FILL)
@@ -735,9 +734,9 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             return
 
         if default_btn:
-            table = Gtk.Table(rows=len(props), columns=4)
+            table = Gtk.Table(n_rows=len(props), n_columns=4)
         else:
-            table = Gtk.Table(rows=len(props), columns=3)
+            table = Gtk.Table(n_rows=len(props), n_columns=3)
 
         table.set_row_spacings(SPACING)
         table.set_col_spacings(SPACING)
@@ -1053,7 +1052,7 @@ class ZoomBox(Gtk.HBox, Zoomable):
         zoom_fit_icon.set_from_stock(Gtk.STOCK_ZOOM_FIT, Gtk.IconSize.BUTTON)
         zoom_fit_btn_hbox = Gtk.HBox()
         zoom_fit_btn_hbox.pack_start(zoom_fit_icon, False, True, 0)
-        zoom_fit_btn_hbox.pack_start(Gtk.Label(_("Zoom")), False, True, 0)
+        zoom_fit_btn_hbox.pack_start(Gtk.Label(label=_("Zoom")), False, True, 0)
         zoom_fit_btn.add(zoom_fit_btn_hbox)
         zoom_fit_btn.connect("clicked", self._zoomFitCb)
 

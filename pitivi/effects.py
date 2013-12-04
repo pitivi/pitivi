@@ -393,7 +393,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
         # Store
         self.storemodel = Gtk.ListStore(str, str, int, object, object, str, GdkPixbuf.Pixbuf)
 
-        self.view = Gtk.TreeView(self.storemodel)
+        self.view = Gtk.TreeView(model=self.storemodel)
         self.view.props.headers_visible = False
         self.view.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
 

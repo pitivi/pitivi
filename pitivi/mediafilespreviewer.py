@@ -97,7 +97,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
 
         # Play button
         self.bbox = Gtk.HBox()
-        self.play_button = Gtk.ToolButton(Gtk.STOCK_MEDIA_PLAY)
+        self.play_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_MEDIA_PLAY)
         self.play_button.connect("clicked", self._on_start_stop_clicked_cb)
         self.bbox.pack_start(self.play_button, False, True, 0)
 
@@ -112,9 +112,9 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.bbox.pack_start(self.seeker, True, True, 0)
 
         # Zoom buttons
-        self.b_zoom_in = Gtk.ToolButton(Gtk.STOCK_ZOOM_IN)
+        self.b_zoom_in = Gtk.ToolButton.new_from_stock(Gtk.STOCK_ZOOM_IN)
         self.b_zoom_in.connect("clicked", self._on_zoom_clicked_cb, 1)
-        self.b_zoom_out = Gtk.ToolButton(Gtk.STOCK_ZOOM_OUT)
+        self.b_zoom_out = Gtk.ToolButton.new_from_stock(Gtk.STOCK_ZOOM_OUT)
         self.b_zoom_out.connect("clicked", self._on_zoom_clicked_cb, -1)
         self.bbox.pack_start(self.b_zoom_in, False, True, 0)
         self.bbox.pack_start(self.b_zoom_out, False, True, 0)
@@ -132,7 +132,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         vbox = Gtk.VBox()
         vbox.set_spacing(SPACING)
         self.l_error = Gtk.Label(label=_("Pitivi can not preview this file."))
-        self.b_details = Gtk.Button(_("More info"))
+        self.b_details = Gtk.Button.new_with_label(_("More info"))
         self.b_details.connect('clicked', self._on_b_details_clicked_cb)
         vbox.pack_start(self.l_error, True, True, 0)
         vbox.pack_start(self.b_details, False, False, 0)
@@ -407,11 +407,11 @@ class PreviewWidget(Gtk.VBox, Loggable):
     def _on_b_details_clicked_cb(self, unused_button):
         mess = self.preview_cache_errors.get(self.current_selected_uri, None)
         if mess is not None:
-            dialog = Gtk.MessageDialog(None,
-                Gtk.DialogFlags.MODAL,
-                Gtk.MessageType.WARNING,
-                Gtk.ButtonsType.OK,
-                str(mess))
+            dialog = Gtk.MessageDialog(transient_for=None,
+                modal=True,
+                message_type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.OK,
+                text=str(mess))
             dialog.set_icon_name("pitivi")
             dialog.set_title(_("Error while analyzing a file"))
             dialog.run()

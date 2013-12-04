@@ -178,7 +178,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
 
         self.storemodel = Gtk.ListStore(bool, str, str, str, object)
-        self.treeview = Gtk.TreeView(self.storemodel)
+        self.treeview = Gtk.TreeView(model=self.storemodel)
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.set_property("rules_hint", True)
         self.treeview.set_property("has_tooltip", True)
@@ -223,7 +223,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         # Prepare the main container widgets and lay out everything
         self._vcontent = Gtk.VPaned()
-        self._table = Gtk.Table(3, 1, False)
+        self._table = Gtk.Table(n_rows=3, n_columns=1, homogeneous=False)
         self._table.attach(self.treeview_scrollwin, 0, 1, 0, 1)
         self._table.attach(self._toolbar, 0, 1, 2, 3, yoptions=Gtk.AttachOptions.FILL)
         self._vcontent.pack1(self._table, resize=True, shrink=False)

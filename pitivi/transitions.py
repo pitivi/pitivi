@@ -66,7 +66,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         self.searchbar.pack_end(self.searchEntry, True, True, 0)
 
         self.props_widgets = Gtk.VBox()
-        borderTable = Gtk.Table(rows=2, columns=3)
+        borderTable = Gtk.Table(n_rows=2, n_columns=3)
 
         self.border_mode_normal = Gtk.RadioButton(group=None, label=_("Normal"))
         self.border_mode_loop = Gtk.RadioButton(group=self.border_mode_normal, label=_("Loop"))
@@ -79,7 +79,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         # The ypadding is a hack to make the slider widget align with the radiobuttons.
         borderTable.attach(self.borderScale, 2, 3, 0, 2, ypadding=SPACING * 2)
 
-        self.invert_checkbox = Gtk.CheckButton(_("Reverse direction"))
+        self.invert_checkbox = Gtk.CheckButton(label=_("Reverse direction"))
         self.invert_checkbox.set_border_width(SPACING)
 
         self.props_widgets.add(borderTable)
@@ -107,7 +107,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         # See also http://python.6.n6.nabble.com/Cannot-shrink-width-of-scrolled-textview-tp1945060.html
         #self.iconview_scrollwin.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 
-        self.iconview = Gtk.IconView(self.storemodel)
+        self.iconview = Gtk.IconView(model=self.storemodel)
         self.iconview.set_pixbuf_column(COL_ICON)
         # We don't show text because we have a searchbar and the names are ugly
         #self.iconview.set_text_column(COL_NAME_TEXT)

@@ -1003,9 +1003,9 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
             "period", NEXTKEYFRAME, self._nextKeyframeCb),
         )
 
-        actiongroup = Gtk.ActionGroup("timelinepermanent")
-        self.selection_actions = Gtk.ActionGroup("timelineselection")
-        self.playhead_actions = Gtk.ActionGroup("timelineplayhead")
+        actiongroup = Gtk.ActionGroup(name="timelinepermanent")
+        self.selection_actions = Gtk.ActionGroup(name="timelineselection")
+        self.playhead_actions = Gtk.ActionGroup(name="timelineplayhead")
 
         actiongroup.add_actions(actions)
 
@@ -1021,8 +1021,8 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
     def _packScrollbars(self, vbox):
         self.hadj = Gtk.Adjustment()
         self.vadj = Gtk.Adjustment()
-        self._vscrollbar = Gtk.VScrollbar(self.vadj)
-        self._hscrollBar = Gtk.HScrollbar(self.hadj)
+        self._vscrollbar = Gtk.VScrollbar(adjustment=self.vadj)
+        self._hscrollBar = Gtk.HScrollbar(adjustment=self.hadj)
         self.ruler = ScaleRuler(self, self.hadj)
 
         self.hadj.connect("value-changed", self._updateScrollPosition)
@@ -1280,10 +1280,10 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         Returns a list containing the full path and the mimetype if successful,
         returns none otherwise.
         """
-        chooser = Gtk.FileChooserDialog(_("Save As..."), self.app.gui,
-            action=Gtk.FileChooserAction.SAVE,
-            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
+        chooser = Gtk.FileChooserDialog(title=_("Save As..."), transient_for=self.app.gui,
+            action=Gtk.FileChooserAction.SAVE)
+        chooser.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
         chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled"))

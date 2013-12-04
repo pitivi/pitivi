@@ -179,7 +179,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         # TreeView
         # Displays icon, name, type, length
-        self.treeview = Gtk.TreeView(self.modelFilter)
+        self.treeview = Gtk.TreeView(model=self.modelFilter)
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
         self.treeview.connect("button-release-event", self._treeViewButtonReleaseEventCb)
@@ -220,7 +220,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         namecol.add_attribute(txtcell, "markup", COL_LENGTH)
 
         # IconView
-        self.iconview = Gtk.IconView(self.modelFilter)
+        self.iconview = Gtk.IconView(model=self.modelFilter)
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.connect("button-press-event", self._iconViewButtonPressEventCb)
         self.iconview.connect("button-release-event", self._iconViewButtonReleaseEventCb)
@@ -281,7 +281,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             ("InsertEnd", Gtk.STOCK_COPY, _("Insert at _End of Timeline"),
             "Insert", None, self._insertEndCb),
         )
-        self.selection_actions = Gtk.ActionGroup("medialibraryselection")
+        self.selection_actions = Gtk.ActionGroup(name="medialibraryselection")
         self.selection_actions.add_actions(selection_actions)
         self.selection_actions.set_sensitive(False)
         uiman.insert_action_group(self.selection_actions, 0)
@@ -444,13 +444,14 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         chooser_action = Gtk.FileChooserAction.OPEN
         dialogtitle = _("Select One or More Files")
 
-        close_after = Gtk.CheckButton(_("Close after importing files"))
+        close_after = Gtk.CheckButton(label=_("Close after importing files"))
         close_after.set_active(self.app.settings.closeImportDialog)
 
-        self._importDialog = Gtk.FileChooserDialog(dialogtitle, None,
-                                           chooser_action,
-                                           (Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE,
-                                            Gtk.STOCK_ADD, Gtk.ResponseType.OK))
+        self._importDialog = Gtk.FileChooserDialog(title=dialogtitle, transient_for=None,
+                                           action=chooser_action)
+
+        self._importDialog.add_buttons(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE,
+                                       Gtk.STOCK_ADD, Gtk.ResponseType.OK)
         self._importDialog.set_icon_name("pitivi")
         self._importDialog.props.extra_widget = close_after
         self._importDialog.set_default_response(Gtk.ResponseType.OK)

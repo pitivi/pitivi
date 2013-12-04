@@ -213,13 +213,13 @@ class PitiviViewer(Gtk.VBox, Loggable):
         boxalign.add(bbox)
         self.pack_start(boxalign, False, True, 0)
 
-        self.goToStart_button = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
+        self.goToStart_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_MEDIA_PREVIOUS)
         self.goToStart_button.connect("clicked", self._goToStartCb)
         self.goToStart_button.set_tooltip_text(_("Go to the beginning of the timeline"))
         self.goToStart_button.set_sensitive(False)
         bbox.pack_start(self.goToStart_button, False, True, 0)
 
-        self.back_button = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
+        self.back_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_MEDIA_REWIND)
         self.back_button.connect("clicked", self._backCb)
         self.back_button.set_tooltip_text(_("Go back one second"))
         self.back_button.set_sensitive(False)
@@ -230,13 +230,13 @@ class PitiviViewer(Gtk.VBox, Loggable):
         bbox.pack_start(self.playpause_button, False, True, 0)
         self.playpause_button.set_sensitive(False)
 
-        self.forward_button = Gtk.ToolButton(Gtk.STOCK_MEDIA_FORWARD)
+        self.forward_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_MEDIA_FORWARD)
         self.forward_button.connect("clicked", self._forwardCb)
         self.forward_button.set_tooltip_text(_("Go forward one second"))
         self.forward_button.set_sensitive(False)
         bbox.pack_start(self.forward_button, False, True, 0)
 
-        self.goToEnd_button = Gtk.ToolButton(Gtk.STOCK_MEDIA_NEXT)
+        self.goToEnd_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_MEDIA_NEXT)
         self.goToEnd_button.connect("clicked", self._goToEndCb)
         self.goToEnd_button.set_tooltip_text(_("Go to the end of the timeline"))
         self.goToEnd_button.set_sensitive(False)

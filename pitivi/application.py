@@ -294,7 +294,7 @@ class GuiPitivi(InteractivePitivi):
         self._showGui()
 
     def _showStartupError(self, message, detail):
-        dialog = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+        dialog = Gtk.MessageDialog(message_type=Gtk.MessageType.ERROR,
                                    buttons=Gtk.ButtonsType.OK)
         dialog.set_markup("<b>" + message + "</b>")
         dialog.format_secondary_text(detail)

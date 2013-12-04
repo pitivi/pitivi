@@ -56,7 +56,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         # that is used for list items in TreeView.
         self.SELECTED_COLOR = context.get_background_color(Gtk.StateFlags.SELECTED)
 
-        table = Gtk.Table(rows=2, columns=2)
+        table = Gtk.Table(n_rows=2, n_columns=2)
         table.set_border_width(2)
         table.set_row_spacings(3)
         table.set_col_spacings(3)
@@ -125,19 +125,19 @@ class BaseLayerControl(Gtk.VBox, Loggable):
 
         # Popup Menu
         self.popup = Gtk.Menu()
-        layer_delete = Gtk.ImageMenuItem(_("_Delete layer"))
+        layer_delete = Gtk.ImageMenuItem.new_with_label(_("_Delete layer"))
         layer_delete.connect("activate", self._deleteLayerCb)
         layer_delete.set_image(Gtk.Image.new_from_icon_name("edit-delete", Gtk.IconSize.MENU))
-        self.layer_up = Gtk.ImageMenuItem(_("Move layer up"))
+        self.layer_up = Gtk.ImageMenuItem.new_with_label(_("Move layer up"))
         self.layer_up.connect("activate", self._moveLayerCb, -1)
         self.layer_up.set_image(Gtk.Image.new_from_icon_name("go-up", Gtk.IconSize.MENU))
-        self.layer_down = Gtk.ImageMenuItem(_("Move layer down"))
+        self.layer_down = Gtk.ImageMenuItem.new_with_label(_("Move layer down"))
         self.layer_down.connect("activate", self._moveLayerCb, 1)
         self.layer_down.set_image(Gtk.Image.new_from_icon_name("go-down", Gtk.IconSize.MENU))
-        self.layer_first = Gtk.ImageMenuItem(_("Move layer to top"))
+        self.layer_first = Gtk.ImageMenuItem.new_with_label(_("Move layer to top"))
         self.layer_first.connect("activate", self._moveLayerCb, -2)
         self.layer_first.set_image(Gtk.Image.new_from_icon_name("go-top", Gtk.IconSize.MENU))
-        self.layer_last = Gtk.ImageMenuItem(_("Move layer to bottom"))
+        self.layer_last = Gtk.ImageMenuItem.new_with_label(_("Move layer to bottom"))
         self.layer_last.connect("activate", self._moveLayerCb, 2)
         self.layer_last.set_image(Gtk.Image.new_from_icon_name("go-bottom", Gtk.IconSize.MENU))
 
@@ -290,7 +290,7 @@ class VideoLayerControl(BaseLayerControl):
         opacity = Gtk.Label(label=_("Opacity:"))
 
         # Opacity scale
-        opacity_adjust = Gtk.Adjustment(value=100, upper=100, step_incr=5, page_incr=10)
+        opacity_adjust = Gtk.Adjustment(value=100, upper=100, step_increment=5, page_increment=10)
         opacity_scale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adjustment=opacity_adjust)
         opacity_scale.set_value_pos(Gtk.PositionType.LEFT)
         opacity_scale.set_digits(0)
@@ -316,7 +316,7 @@ class AudioLayerControl(BaseLayerControl):
 
         panning = Gtk.Label(label=_("Pan:"))
         # Volume scale
-        panning_adjust = Gtk.Adjustment(value=0, lower=-100, upper=100, step_incr=5, page_incr=10)
+        panning_adjust = Gtk.Adjustment(value=0, lower=-100, upper=100, step_increment=5, page_increment=10)
         panning_scale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adjustment=panning_adjust)
         panning_scale.set_value_pos(Gtk.PositionType.LEFT)
         panning_scale.set_digits(0)

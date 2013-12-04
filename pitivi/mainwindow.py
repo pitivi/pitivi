@@ -157,7 +157,7 @@ def create_stock_icons():
     pmdir = get_pixmap_dir()
     for stockid, path in pixmaps.iteritems():
         pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pmdir, path))
-        iconset = Gtk.IconSet(pixbuf)
+        iconset = Gtk.IconSet.new_from_pixbuf(pixbuf)
         factory.add(stockid, iconset)
         factory.add_default()
 
@@ -311,12 +311,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             "F11", _("View the main window on the whole screen"), self._fullScreenCb),
         ]
 
-        self.main_actions = Gtk.ActionGroup("mainwindow")
+        self.main_actions = Gtk.ActionGroup(name="mainwindow")
         self.main_actions.add_actions(actions)
-        self.undock_action = Gtk.Action("WindowizeViewer", _("Undock Viewer"),
-            _("Put the viewer in a separate window"), None)
+        self.undock_action = Gtk.Action(name="WindowizeViewer", label=_("Undock Viewer"),
+            tooltip=_("Put the viewer in a separate window"), stock_id=None)
         self.main_actions.add_action(self.undock_action)
-        self.toggle_actions = Gtk.ActionGroup("mainwindowtoggles")
+        self.toggle_actions = Gtk.ActionGroup(name="mainwindowtoggles")
         self.toggle_actions.add_toggle_actions(toggleactions)
 
         important_actions = ("Undo", "SaveProject", "RenderProject")
@@ -366,7 +366,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         """
         self.set_title("%s" % (APPNAME))
         self.set_icon_name("pitivi")
-        vbox = Gtk.VBox(False)
+        vbox = Gtk.VBox(homogeneous=False)
         self.add(vbox)
         vbox.show()
 
@@ -382,7 +382,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self._main_toolbar_box.show_all()
         # Auto-hiding fullscreen toolbar
         self._main_toolbar_height = self.toolbar.get_preferred_height()[1]
-        self._fullscreen_toolbar_win = Gtk.Window(Gtk.WindowType.POPUP)
+        self._fullscreen_toolbar_win = Gtk.Window(type=Gtk.WindowType.POPUP)
         self._fullscreen_toolbar_win.resize(self.get_screen().get_width(), self._main_toolbar_height)
         self._fullscreen_toolbar_win.set_transient_for(self)
         self._fullscreen_toolbar_win.connect("enter-notify-event", self._slideFullscreenToolbarIn)
@@ -416,7 +416,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.title_editor = TitleEditor(instance, self.uimanager)
         self.context_tabs.append_page(self.clipconfig, Gtk.Label(label=_("Clip configuration")))
         self.context_tabs.append_page(self.trans_list, Gtk.Label(label=_("Transitions")))
-        self.context_tabs.append_page(self.title_editor.widget, Gtk.Label(_("Title editor")))
+        self.context_tabs.append_page(self.title_editor.widget, Gtk.Label(label=_("Title editor")))
         self.context_tabs.connect("switch-page", self.title_editor.tab_switched)
         self.clipconfig.show()
         self.trans_list.show()
@@ -759,11 +759,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if not self.app.projectManager.closeRunningProject():
             return  # The user has not made a decision, don't do anything
 
-        chooser = Gtk.FileChooserDialog(_("Open File..."),
-            self,
-            action=Gtk.FileChooserAction.OPEN,
-            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        chooser = Gtk.FileChooserDialog(title=_("Open File..."),
+            transient_for=self,
+            action=Gtk.FileChooserAction.OPEN)
+        chooser.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
         chooser.set_select_multiple(False)
         # TODO: Remove this set_current_folder call when GTK bug 683999 is fixed
         chooser.set_current_folder(self.settings.lastProjectFolder)
@@ -853,11 +853,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _projectManagerSaveProjectFailedCb(self, projectManager, uri, exception=None):
         project_filename = unquote(uri.split("/")[-1])
-        dialog = Gtk.MessageDialog(self,
-            Gtk.DialogFlags.MODAL,
-            Gtk.MessageType.ERROR,
-            Gtk.ButtonsType.OK,
-            _('Unable to save project "%s"') % project_filename)
+        dialog = Gtk.MessageDialog(transient_for=self,
+            modal=True,
+            message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK,
+            text=_('Unable to save project "%s"') % project_filename)
         if exception:
             dialog.set_property("secondary-use-markup", True)
             dialog.set_property("secondary-text", unquote(str(exception)))
@@ -888,11 +888,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         else:
             save = Gtk.STOCK_SAVE_AS
 
-        dialog = Gtk.Dialog("",
-            self, Gtk.DialogFlags.MODAL,
-            (_("Close without saving"), Gtk.ResponseType.REJECT,
+        dialog = Gtk.Dialog(title="",
+                            transient_for=self, modal=True)
+        dialog.add_buttons(_("Close without saving"), Gtk.ResponseType.REJECT,
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                save, Gtk.ResponseType.YES))
+                save, Gtk.ResponseType.YES)
         # Even though we set the title to an empty string when creating dialog,
         # seems we really have to do it once more so it doesn't show "pitivi"...
         dialog.set_title("")
@@ -926,14 +926,14 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                                     "your changes will be lost.")
 
         # put the text in a vbox
-        vbox = Gtk.VBox(False, SPACING * 2)
+        vbox = Gtk.VBox(homogeneous=False, spacing=SPACING * 2)
         vbox.pack_start(primary, True, True, 0)
         vbox.pack_start(secondary, True, True, 0)
 
         # make the [[image] text] hbox
         image = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_QUESTION,
                Gtk.IconSize.DIALOG)
-        hbox = Gtk.HBox(False, SPACING * 2)
+        hbox = Gtk.HBox(homogeneous=False, spacing=SPACING * 2)
         hbox.pack_start(image, False, True, 0)
         hbox.pack_start(vbox, True, True, 0)
         hbox.set_border_width(SPACING)
@@ -977,11 +977,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _projectManagerRevertingToSavedCb(self, projectManager, unused_project):
         if self.app.current_project.hasUnsavedModifications():
-            dialog = Gtk.MessageDialog(self,
-                    Gtk.DialogFlags.MODAL,
-                    Gtk.MessageType.WARNING,
-                    Gtk.ButtonsType.NONE,
-                    _("Revert to saved project version?"))
+            dialog = Gtk.MessageDialog(transient_for=self,
+                    modal=True,
+                    message_type=Gtk.MessageType.WARNING,
+                    buttons=Gtk.ButtonsType.NONE,
+                    text=_("Revert to saved project version?"))
             dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.NO,
                     Gtk.STOCK_REVERT_TO_SAVED, Gtk.ResponseType.YES)
             dialog.set_resizable(False)
@@ -997,11 +997,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _projectManagerNewProjectFailedCb(self, projectManager, uri, exception):
         project_filename = unquote(uri.split("/")[-1])
-        dialog = Gtk.MessageDialog(self,
-            Gtk.DialogFlags.MODAL,
-            Gtk.MessageType.ERROR,
-            Gtk.ButtonsType.OK,
-            _('Unable to load project "%s"') % project_filename)
+        dialog = Gtk.MessageDialog(transient_for=self,
+                                   modal=True,
+                                   message_type=Gtk.MessageType.ERROR,
+                                   buttons=Gtk.ButtonsType.OK,
+                                   text=_('Unable to load project "%s"') % project_filename)
         dialog.set_property("secondary-use-markup", True)
         dialog.set_property("secondary-text", unquote(str(exception)))
         dialog.set_transient_for(self)
@@ -1013,11 +1013,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self._missingUriOnLoading = True
         uri = asset.get_id()
         new_uri = None
-        dialog = Gtk.Dialog(_("Locate missing file..."),
-            self,
-            Gtk.DialogFlags.MODAL,
-            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        dialog = Gtk.Dialog(title=_("Locate missing file..."),
+            transient_for=self,
+            modal=True)
+
+        dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
         dialog.set_border_width(SPACING * 2)
         dialog.get_content_area().set_spacing(SPACING)
         dialog.set_transient_for(self)
@@ -1208,11 +1209,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 ## other
     def _showExportDialog(self, project):
         self.log("Export requested")
-        chooser = Gtk.FileChooserDialog(_("Export To..."),
-            self,
-            action=Gtk.FileChooserAction.SAVE,
-            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
+        chooser = Gtk.FileChooserDialog(title=_("Export To..."),
+            transient_for=self,
+            action=Gtk.FileChooserAction.SAVE)
+        chooser.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
 
         chooser.set_select_multiple(False)
         chooser.props.do_overwrite_confirmation = True
@@ -1255,11 +1256,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     def _showSaveAsDialog(self, project):
         self.log("Save URI requested")
 
-        chooser = Gtk.FileChooserDialog(_("Save As..."),
-            self,
-            action=Gtk.FileChooserAction.SAVE,
-            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
+        chooser = Gtk.FileChooserDialog(title=_("Save As..."),
+            transient_for=self,
+            action=Gtk.FileChooserAction.SAVE)
+        chooser.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
 
         asset = GES.Formatter.get_default()
         filt = Gtk.FileFilter()

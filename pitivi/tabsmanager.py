@@ -60,7 +60,7 @@ class BaseTabs(Gtk.Notebook):
         position = notebook.page_num(child)
         notebook.remove_page(position)
         setattr(self.settings, child_name + "docked", True)
-        label = Gtk.Label(child_name)
+        label = Gtk.Label(label=child_name)
         self.insert_page(child, label, original_position)
         self._set_child_properties(child, label)
 
@@ -109,7 +109,7 @@ class BaseTabs(Gtk.Notebook):
             # Delete the tab from the original notebook (since it was not
             # torn off by GTK) and add its contents to our newly created window
             self.remove_page(original_position)
-            notebook.append_page(child, Gtk.Label(child_name))
+            notebook.append_page(child, Gtk.Label(label=child_name))
         else:
             return notebook
 
