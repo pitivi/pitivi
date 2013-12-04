@@ -651,13 +651,11 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     ## Error Dialog Box callbacks
 
-    def _errorDialogBoxCloseCb(self, unused_dialog):
-        self._error_dialogbox.destroy()
-        self._error_dialogbox = None
+    def _errorDialogBoxCloseCb(self, dialog):
+        dialog.destroy()
 
-    def _errorDialogBoxResponseCb(self, unused_dialog, unused_response):
-        self._error_dialogbox.destroy()
-        self._error_dialogbox = None
+    def _errorDialogBoxResponseCb(self, dialog, unused_response):
+        dialog.destroy()
 
     ## Import Sources Dialog Box callbacks
 
@@ -774,12 +772,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         else:
             msgs = (_("Error while analyzing a file"),
                     _("The following file can not be used with Pitivi."))
-        self._error_dialogbox = FileListErrorDialog(*msgs)
-        self._error_dialogbox.connect("close", self._errorDialogBoxCloseCb)
-        self._error_dialogbox.connect("response", self._errorDialogBoxResponseCb)
+        error_dialogbox = FileListErrorDialog(*msgs)
+        error_dialogbox.connect("close", self._errorDialogBoxCloseCb)
+        error_dialogbox.connect("response", self._errorDialogBoxResponseCb)
         for uri, reason, extra in self._errors:
-            self._error_dialogbox.addFailedFile(uri, reason, extra)
-        self._error_dialogbox.window.show()
+            error_dialogbox.addFailedFile(uri, reason, extra)
+        error_dialogbox.window.show()
         # Reset the error list, since the user has read them.
         self._resetErrorList()
 
