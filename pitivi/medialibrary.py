@@ -98,13 +98,13 @@ ui = '''
 # http://en.wikipedia.org/wiki/List_of_file_formats#Video
 # ...and looking at the contents of /usr/share/mime
 SUPPORTED_FILE_FORMATS = {"video": ("3gpp", "3gpp2", "dv", "mp4", "mpeg", "ogg", "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf", "x-msvideo", "x-ms-wmp", "x-ms-wmv", "x-ogm+ogg", "x-theora+ogg"),
-    "application": ("mxf"),
+    "application": ("mxf",),
     # Don't forget audio formats
     "audio": ("aac", "ac3", "basic", "flac", "mp2", "mp4", "mpeg", "ogg", "opus", "webm", "x-adpcm", "x-aifc", "x-aiff", "x-aiffc", "x-ape", "x-flac+ogg", "x-m4b", "x-matroska", "x-ms-asx", "x-ms-wma", "x-speex", "x-speex+ogg", "x-vorbis+ogg", "x-wav"),
     # ...and image formats
     "image": ("jp2", "jpeg", "png", "svg+xml")}
 # Stuff that we're not too confident about but might improve eventually:
-OTHER_KNOWN_FORMATS = ("video/mp2t")
+OTHER_KNOWN_FORMATS = ("video/mp2t",)
 
 
 def compare_simple(model, iter1, iter2, user_data):
