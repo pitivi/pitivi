@@ -570,37 +570,6 @@ class FontWidget(Gtk.FontButton, DynamicWidget):
         return self.get_font_name()
 
 
-class ResolutionWidget(Gtk.HBox, DynamicWidget):
-
-    def __init__(self, default=None):
-        Gtk.HBox.__init__(self)
-        DynamicWidget.__init__(self, default)
-        self.props.spacing = SPACING
-
-        self.dwidth = 0
-        self.dheight = 0
-        self.dwidthWidget = NumericWidget(lower=0)
-        self.dheightWidget = NumericWidget(lower=0)
-        self.pack_start(self.dwidthWidget, True, True, 0)
-        self.pack_start(Gtk.Label("x", True, True, 0))
-        self.pack_start(self.dheightWidget, True, True, 0)
-        self.setWidgetValue((320, 240))
-        self.show_all()
-
-    def connectValueChanged(self, callback, *args):
-        self.dwidthWidget.connectValueChanged(callback, *args)
-        self.dheightWidget.connectValueChanged(callback, *args)
-
-    def setWidgetValue(self, value):
-        width, height = value
-
-        self.dwidthWidget.setWidgetValue(width)
-        self.dheightWidget.setWidgetValue(height)
-
-    def getWidgetValue(self):
-        return self.dwidthWidget.getWidgetValue(),\
-            self.dheightWidget.getWidgetValue()
-
 if __name__ == '__main__':
 
     def valueChanged(unused_widget, widget, target):
