@@ -31,6 +31,7 @@ import os
 import pickle
 import resource
 import sqlite3
+import bisect
 
 # Our C module optimizing waveforms rendering
 import renderer
@@ -40,7 +41,7 @@ from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE
-from pitivi.utils.misc import filename_from_uri, quote_uri, hash_file
+from pitivi.utils.misc import filename_from_uri, quote_uri, hash_file, print_ns
 from pitivi.utils.ui import CONTROL_WIDTH
 
 
@@ -384,7 +385,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
             if wish in self.queue:
                 return wish
 
-    def _setThumbnail(self, time, thumbnail):
+    def _setThumbnail(self, time, pixbuf):
         # TODO: is "time" guaranteed to be nanosecond precise?
         # => __tim says: "that's how it should be"
         # => also see gst-plugins-good/tests/icles/gdkpixbufsink-test
@@ -393,10 +394,25 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         if time in self.queue:
             self.queue.remove(time)
 
-        self.thumb_cache[time] = thumbnail
+        self.thumb_cache[time] = pixbuf
 
         if time in self.thumbs:
-            self.thumbs[time].set_from_gdkpixbuf_animated(thumbnail)
+            self.thumbs[time].set_from_gdkpixbuf_animated(pixbuf)
+        else:
+            sorted_times = self.thumbs.keys()
+            sorted_times.sort()
+            index = bisect.bisect(sorted_times, time)
+            time = sorted_times[index]
+            thumb = self.thumbs[sorted_times[index]]
+            if thumb.has_pixel_data and len(sorted_times) > index + 1:
+                # It might actually be the follwoing thumbnail we were
+                time = sorted_times[index + 1]
+                thumb = self.thumbs[time]
+                if thumb.has_pixel_data:
+                    self.error("Surrounding thumbnails are already set "
+                               "for timestamp %s" % print_ns(time))
+                    return
+            self.thumbs[time].set_from_gdkpixbuf_animated(pixbuf)
 
     # Interface (Zoomable)
 
@@ -527,11 +543,13 @@ class Thumbnail(Clutter.Actor):
         #self.set_background_color(Clutter.Color.new(0, 100, 150, 100))
         self.set_opacity(0)
         self.set_size(self.width, self.height)
+        self.has_pixel_data = False
 
     def set_from_gdkpixbuf(self, gdkpixbuf):
         row_stride = gdkpixbuf.get_rowstride()
         pixel_data = gdkpixbuf.get_pixels()
         alpha = gdkpixbuf.get_has_alpha()
+        self.has_pixel_data = True
         if alpha:
             self.props.content.set_data(pixel_data, Cogl.PixelFormat.RGBA_8888,
                                         self.width, self.height, row_stride)
