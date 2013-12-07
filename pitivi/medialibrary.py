@@ -468,9 +468,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         filt_supported = Gtk.FileFilter()
         filt_known = Gtk.FileFilter()
         filt_supported.set_name(_("Supported file formats"))
-        for category in SUPPORTED_FILE_FORMATS:
-            # Category can be "video", "audio", "image", "application"
-            for mime in SUPPORTED_FILE_FORMATS[category]:
+        for category, mime_types in SUPPORTED_FILE_FORMATS.iteritems():
+            for mime in mime_types:
                 filt_supported.add_mime_type(category + "/" + mime)
                 filt_known.add_mime_type(category + "/" + mime)
         # Also allow showing known but not reliable demuxers
