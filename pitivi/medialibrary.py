@@ -97,7 +97,7 @@ ui = '''
 # http://en.wikipedia.org/wiki/Comparison_of_container_formats and
 # http://en.wikipedia.org/wiki/List_of_file_formats#Video
 # ...and looking at the contents of /usr/share/mime
-SUPPORTED_FILE_FORMATS = {"video": ("3gpp", "3gpp2", "dv", "mp4", "mpeg", "ogg", "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf", "x-msvideo", "x-ms-wmp", "x-ms-wmv", "x-ogm+ogg", "x-theora+ogg"),
+SUPPORTED_FILE_FORMATS = {"video": ("3gpp", "3gpp2", "dv", "mp2t", "mp4", "mpeg", "ogg", "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf", "x-msvideo", "x-ms-wmp", "x-ms-wmv", "x-ogm+ogg", "x-theora+ogg"),
     "application": ("mxf",),
     # Don't forget audio formats
     "audio": ("aac", "ac3", "basic", "flac", "mp2", "mp4", "mpeg", "ogg", "opus", "webm", "x-adpcm", "x-aifc", "x-aiff", "x-aiffc", "x-ape", "x-flac+ogg", "x-m4b", "x-matroska", "x-ms-asx", "x-ms-wma", "x-speex", "x-speex+ogg", "x-vorbis+ogg", "x-wav"),
