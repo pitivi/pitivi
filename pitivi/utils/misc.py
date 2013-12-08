@@ -27,8 +27,9 @@ from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
-from urllib import quote, unquote
-from urlparse import urlsplit, urlunsplit, urlparse
+from urllib import unquote
+from urlparse import urlsplit, urlparse
+import bisect
 import hashlib
 import os
 import struct
@@ -124,7 +125,6 @@ def isWritable(path):
         # open(path, "rw") will IOError if the file doesn't already exist.
         # Therefore, simply check the directory permissions instead:
         return os.access(os.path.dirname(path), os.W_OK)
-    return True
 
 
 def uri_is_valid(uri):
@@ -361,30 +361,26 @@ def quantize(input, interval):
     return (input // interval) * interval
 
 
-# Python re-implementation of binary search algorithm found here:
-# http://en.wikipedia.org/wiki/Binary_search
-#
-# This is the iterative version without the early termination branch, which
-# also tells us the element of A that are nearest to Value, if the element we
-# want is not found. This is useful for implementing edge snaping in the UI,
-# where we repeatedly search through a list of control points for the one
-# closes to the cursor. Because we don't care whether the cursor position
-# matches the list, this function returns the index of the lement closest to
-# value in the array.
+def binary_search(elements, value):
+    """Returns the index of the element closest to value.
 
-
-def binary_search(col, value):
-    low = 0
-    high = len(col)
-    while (low < high):
-        mid = (low + high) / 2
-        if (col[mid] < value):
-            low = mid + 1
-        else:
-            #can't be high = mid-1: here col[mid] >= value,
-            #so high can't be < mid if col[mid] == value
-            high = mid
-    return low
+    @param elements: A sorted list.
+    """
+    if not elements:
+        return -1
+    closest_index = bisect.bisect_left(elements, value, 0, len(elements) - 1)
+    element = elements[closest_index]
+    closest_distance = abs(element - value)
+    if closest_distance == 0:
+        return closest_index
+    for index in (closest_index - 1,):
+        if index < 0:
+            continue
+        distance = abs(elements[index] - value)
+        if closest_distance > distance:
+            closest_index = index
+            closest_distance = distance
+    return closest_index
 
 
 def argmax(func, seq):

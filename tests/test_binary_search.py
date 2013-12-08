@@ -1,46 +1,28 @@
 import unittest
-import pitivi
-from pitivi.application import Pitivi
 from pitivi.utils.misc import binary_search
 from common import TestCase
 
 
-class BasicTest(TestCase):
-    """
-    Basic test to create the proper creation of the Pitivi object
-    """
+class BinarySearchTest(TestCase):
 
-    def testBinarySearch(self):
-        # binary_search always returns an index, so we do the comparison here
-        def found(A, result, value):
-            if ((result < len(A)) and (A[result] == value)):
-                return result
-            else:
-                return False
+    def testEmptyList(self):
+        self.assertEquals(binary_search([], 10), -1)
 
-        for offset in xrange(1, 5):
-            for length in xrange(1, 2049, 300):
-                A = [i * offset for i in xrange(0, length)]
+    def testExisting(self):
+        A = [10, 20, 30]
+        for index, element in enumerate(A):
+            self.assertEquals(binary_search([10, 20, 30], element), index)
 
-## check negative hits
+    def testMissingLeft(self):
+        self.assertEquals(binary_search([10, 20, 30], 1), 0)
+        self.assertEquals(binary_search([10, 20, 30], 16), 1)
+        self.assertEquals(binary_search([10, 20, 30], 29), 2)
 
-                # search value too low
-                # error if value is found
-                # if search returns non-negative index, fail
-                value = A[0] - 1
-                self.assertFalse(found(A, binary_search(A, value), value))
+    def testMissingRight(self):
+        self.assertEquals(binary_search([10, 20, 30], 11), 0)
+        self.assertEquals(binary_search([10, 20, 30], 24), 1)
+        self.assertEquals(binary_search([10, 20, 30], 40), 2)
 
-                # search value too high
-                # error if value is found
-                # if search returns non-negative index, fail
-                value = A[-1] + 1
-                self.assertFalse(found(A, binary_search(A, value), value))
-
-## check positive hits
-                for i, a in enumerate(A):
-                    # error if value is NOT found
-                    # if search does not return correct value, fail
-                    self.assertEquals(binary_search(A, A[i]), i)
 
 if __name__ == "__main__":
     unittest.main()
