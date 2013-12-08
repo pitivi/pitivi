@@ -30,7 +30,6 @@ import os
 import pickle
 import resource
 import sqlite3
-import bisect
 
 # Our C module optimizing waveforms rendering
 import renderer
@@ -38,10 +37,10 @@ import renderer
 from pitivi.settings import get_dir, xdg_cache_home
 from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import binary_search, filename_from_uri, quantize, quote_uri, hash_file, print_ns
 from pitivi.utils.timeline import Zoomable
-from pitivi.utils.ui import EXPANDED_SIZE
-from pitivi.utils.misc import filename_from_uri, quantize, quote_uri, hash_file, print_ns
 from pitivi.utils.ui import CONTROL_WIDTH
+from pitivi.utils.ui import EXPANDED_SIZE
 
 
 WAVEFORMS_CPU_USAGE = 30 * multiprocessing.cpu_count()
@@ -396,9 +395,9 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         else:
             sorted_times = self.thumbs.keys()
             sorted_times.sort()
-            index = bisect.bisect(sorted_times, time)
+            index = binary_search(sorted_times, time)
             time = sorted_times[index]
-            thumb = self.thumbs[sorted_times[index]]
+            thumb = self.thumbs[time]
             if thumb.has_pixel_data and len(sorted_times) > index + 1:
                 # It might actually be the follwoing thumbnail we were
                 time = sorted_times[index + 1]
