@@ -393,8 +393,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         if time in self.thumbs:
             self.thumbs[time].set_from_gdkpixbuf_animated(pixbuf)
         else:
-            sorted_times = self.thumbs.keys()
-            sorted_times.sort()
+            sorted_times = sorted(self.thumbs.keys())
             index = binary_search(sorted_times, time)
             time = sorted_times[index]
             thumb = self.thumbs[time]
