@@ -380,11 +380,13 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
                 return wish
 
     def _setThumbnail(self, time, pixbuf):
-        # TODO: is "time" guaranteed to be nanosecond precise?
+        # Q: Is "time" guaranteed to be nanosecond precise?
+        # A: Not always.
         # => __tim says: "that's how it should be"
         # => also see gst-plugins-good/tests/icles/gdkpixbufsink-test
         # => Daniel: It is *not* nanosecond precise when we remove the videorate
         #            element from the pipeline
+        # => thiblahute: not the case with mpegts
         if time in self.queue:
             self.queue.remove(time)
 
