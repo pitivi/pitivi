@@ -357,8 +357,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         # TODO: replace with a call to utils.misc.quantize:
         element_left = (element_left // thumb_duration) * thumb_duration
 
-        current_time = element_left
-        while current_time < element_right:
+        for current_time in range(element_left, element_right, thumb_duration):
             thumb = Thumbnail(self.thumb_width, self.thumb_height)
             thumb.set_position(Zoomable.nsToPixel(current_time), self.thumb_margin)
             self.add_child(thumb)
@@ -371,7 +370,6 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
                     self.thumbs[current_time].set_from_gdkpixbuf(gdkpixbuf)
             else:
                 self.wishlist.append(current_time)
-            current_time += thumb_duration
         self._allAnimated = False
 
     def _get_wish(self):
