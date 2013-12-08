@@ -24,7 +24,6 @@ from datetime import datetime, timedelta
 from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl, GES
 from random import randrange
 import cairo
-import hashlib
 import multiprocessing
 import numpy
 import os
@@ -41,7 +40,7 @@ from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE
-from pitivi.utils.misc import filename_from_uri, quote_uri, hash_file, print_ns
+from pitivi.utils.misc import filename_from_uri, quantize, quote_uri, hash_file, print_ns
 from pitivi.utils.ui import CONTROL_WIDTH
 
 
@@ -344,8 +343,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + self.thumb_margin)
 
         # quantize thumb length to thumb_period
-        # TODO: replace with a call to utils.misc.quantize:
-        thumb_duration = (thumb_duration_tmp // self.thumb_period) * self.thumb_period
+        thumb_duration = quantize(thumb_duration_tmp, self.thumb_period)
         # make sure that the thumb duration after the quantization isn't smaller than before
         if thumb_duration < thumb_duration_tmp:
             thumb_duration += self.thumb_period
@@ -354,8 +352,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         thumb_duration = max(thumb_duration, self.thumb_period)
 
         element_left, element_right = self._get_visible_range()
-        # TODO: replace with a call to utils.misc.quantize:
-        element_left = (element_left // thumb_duration) * thumb_duration
+        element_left = quantize(element_left, thumb_duration)
 
         for current_time in range(element_left, element_right, thumb_duration):
             thumb = Thumbnail(self.thumb_width, self.thumb_height)
