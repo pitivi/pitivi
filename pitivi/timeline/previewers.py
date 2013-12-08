@@ -407,7 +407,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
                     self.error("Surrounding thumbnails are already set "
                                "for timestamp %s" % print_ns(time))
                     return
-            self.thumbs[time].set_from_gdkpixbuf_animated(pixbuf)
+            thumb.set_from_gdkpixbuf_animated(pixbuf)
 
     # Interface (Zoomable)
 
@@ -478,7 +478,9 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
             struct = message.get_structure()
             struct_name = struct.get_name()
             if struct_name == "preroll-pixbuf":
-                self._setThumbnail(struct.get_value("stream-time"), struct.get_value("pixbuf"))
+                stream_time = struct.get_value("stream-time")
+                pixbuf = struct.get_value("pixbuf")
+                self._setThumbnail(stream_time, pixbuf)
         elif message.type == Gst.MessageType.ASYNC_DONE and \
                 message.src == self.pipeline:
             self._checkCPU()
