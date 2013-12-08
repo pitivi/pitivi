@@ -337,7 +337,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         Get the thumbnails to be displayed in the currently visible clip portion
         """
         self.remove_all_children()
-        old_thumbs = self.thumbs.copy()
+        old_thumbs = self.thumbs
         self.thumbs = {}
         self.wishlist = []
 
