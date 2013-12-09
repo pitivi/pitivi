@@ -603,15 +603,15 @@ class ThumbnailCache(Loggable):
     def __getitem__(self, key):
         self._cur.execute("SELECT * FROM Thumbs WHERE Time = ?", (key,))
         row = self._cur.fetchone()
-        if row:
-            jpeg = row[1]
-            loader = GdkPixbuf.PixbufLoader.new()
-            # TODO: what do to if any of the following calls fails?
-            loader.write(jpeg)
-            loader.close()
-            pixbuf = loader.get_pixbuf()
-            return pixbuf
-        raise KeyError(key)
+        if not row:
+            raise KeyError(key)
+        jpeg = row[1]
+        loader = GdkPixbuf.PixbufLoader.new()
+        # TODO: what do to if any of the following calls fails?
+        loader.write(jpeg)
+        loader.close()
+        pixbuf = loader.get_pixbuf()
+        return pixbuf
 
     def __setitem__(self, key, value):
         success, jpeg = value.save_to_bufferv("jpeg", ["quality", None], ["90"])
@@ -622,7 +622,6 @@ class ThumbnailCache(Loggable):
         #Replace if the key already existed
         self._cur.execute("DELETE FROM Thumbs WHERE  time=?", (key,))
         self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
-        #self._db.commit()
 
     def commit(self):
         self.debug('Saving thumbnail cache file to disk for "%s"' % self._filename)
