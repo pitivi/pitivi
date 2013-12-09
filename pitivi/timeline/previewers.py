@@ -395,7 +395,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         self.thumb_cache[time] = pixbuf
 
         if time in self.thumbs:
-            self.thumbs[time].set_from_gdkpixbuf_animated(pixbuf)
+            thumb = self.thumbs[time]
         else:
             sorted_times = sorted(self.thumbs.keys())
             index = binary_search(sorted_times, time)
@@ -409,7 +409,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
                     self.error("Surrounding thumbnails are already set "
                                "for timestamp %s" % print_ns(time))
                     return
-            thumb.set_from_gdkpixbuf_animated(pixbuf)
+        thumb.set_from_gdkpixbuf_animated(pixbuf)
 
     # Interface (Zoomable)
 
