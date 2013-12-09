@@ -389,11 +389,6 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         # => Daniel: It is *not* nanosecond precise when we remove the videorate
         #            element from the pipeline
         # => thiblahute: not the case with mpegts
-        if time in self.queue:
-            self.queue.remove(time)
-
-        self.thumb_cache[time] = pixbuf
-
         if time in self.thumbs:
             thumb = self.thumbs[time]
         else:
@@ -410,6 +405,9 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
                                "for timestamp %s" % print_ns(time))
                     return
         thumb.set_from_gdkpixbuf_animated(pixbuf)
+        if time in self.queue:
+            self.queue.remove(time)
+        self.thumb_cache[time] = pixbuf
 
     # Interface (Zoomable)
 
