@@ -158,7 +158,9 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         self._thumb_cb_id = None
         self._allAnimated = False
         self._running = False
-        self.thumb_period = long(0.5 * Gst.SECOND)  # TODO: get this from user settings
+        # We should have one thumbnail per thumb_period.
+        # TODO: get this from the user settings
+        self.thumb_period = long(0.5 * Gst.SECOND)
         self.thumb_margin = BORDER_WIDTH
         self.thumb_height = EXPANDED_SIZE - 2 * self.thumb_margin
         self.thumb_width = None  # will be set by self._setupPipeline()
@@ -330,6 +332,16 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         else:
             return False  # Stop the timer
 
+    def _get_thumb_duration(self):
+        thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + self.thumb_margin)
+        # quantize thumb length to thumb_period
+        thumb_duration = quantize(thumb_duration_tmp, self.thumb_period)
+        # make sure that the thumb duration after the quantization isn't smaller than before
+        if thumb_duration < thumb_duration_tmp:
+            thumb_duration += self.thumb_period
+        # make sure that we don't show thumbnails more often than thumb_period
+        return max(thumb_duration, self.thumb_period)
+
     def _addVisibleThumbnails(self):
         """
         Get the thumbnails to be displayed in the currently visible clip portion
@@ -339,17 +351,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         self.thumbs = {}
         self.wishlist = []
 
-        thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + self.thumb_margin)
-
-        # quantize thumb length to thumb_period
-        thumb_duration = quantize(thumb_duration_tmp, self.thumb_period)
-        # make sure that the thumb duration after the quantization isn't smaller than before
-        if thumb_duration < thumb_duration_tmp:
-            thumb_duration += self.thumb_period
-
-        # make sure that we don't show thumbnails more often than thumb_period
-        thumb_duration = max(thumb_duration, self.thumb_period)
-
+        thumb_duration = self._get_thumb_duration()
         element_left, element_right = self._get_visible_range()
         element_left = quantize(element_left, thumb_duration)
 
