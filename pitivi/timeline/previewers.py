@@ -271,7 +271,6 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
 
     def _startThumbnailing(self):
         self.debug('Now generating thumbnails for "%s"' % filename_from_uri(self.uri))
-        self.queue = []
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
         if not query_success or duration == -1:
             self.debug("Could not determine duration of %s" % self.uri)
@@ -279,10 +278,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         else:
             self.duration = duration
 
-        current_time = 0
-        while current_time < duration:
-            self.queue.append(current_time)
-            current_time += self.thumb_period
+        self.queue = range(0, duration, self.thumb_period)
 
         self._checkCPU()
 
