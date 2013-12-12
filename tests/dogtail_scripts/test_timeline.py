@@ -139,6 +139,7 @@ class TimelineTest(HelpFunc):
         sleep(1)
         dogtail.rawinput.click(tpos[0] + 250 * adj, tpos[1] + 50)
         #Check if we selected transition
+        sleep(0.5)
         iconlist = self.transitions.child(roleName="layered pane")
         self.assertTrue(iconlist.sensitive)
         iconlist.children[-2].select()

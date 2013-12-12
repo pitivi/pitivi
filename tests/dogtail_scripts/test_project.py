@@ -248,6 +248,7 @@ class ProjectPropertiesTest(HelpFunc):
         # Go figure why, this one takes much longer (~27 secs) to appear:
         self.assertTrue(self.wait_for_file(backup_path, time_out=35), "Backup not created")
         self.tearDown(clean=False, kill=True)
+        sleep(0.5)
 
         # After another "crash", try loading from the backup.
         self.setUp()
@@ -274,6 +275,7 @@ class ProjectPropertiesTest(HelpFunc):
         # and the user should be prompted again on the next startup
         self.tearDown(clean=False, kill=True)
         timestamp = os.path.getmtime(backup_path)
+        sleep(0.5)
         self.setUp()
         welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
         welcome_dialog.child(name=filename).doubleClick()
