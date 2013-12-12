@@ -958,7 +958,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     ## Drag and Drop
     def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
                            unused_y, selection, targettype, unused_time):
-
         self.debug("targettype:%d, selection.data:%r", targettype, selection.get_data())
 
         directories = []
@@ -966,8 +965,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         filenames = []
 
         uris = selection.get_data().split("\r\n")
-        uris = filter(lambda x: x != "", uris)
-
+        # Filter out the empty uris.
+        uris = filter(lambda x: x, uris)
         for uri in uris:
             uri = unquote(uri.strip('\x00'))
             if os.path.isfile(uri[7:]):
