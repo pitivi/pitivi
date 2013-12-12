@@ -108,9 +108,9 @@ class PreviewGenerator(Signallable):
     those classes
     """
 
-    # We only wan 1 instance of PipelineQueue to be used for all the
-    # generators
-    manager = PreviewGeneratorManager()
+    # We only want one instance of PreviewGeneratorManager to be used for
+    # all the generators.
+    __manager = PreviewGeneratorManager()
 
     __signals__ = {
         "done": [],
@@ -118,6 +118,9 @@ class PreviewGenerator(Signallable):
     }
 
     def __init__(self, track_type):
+        """
+        @param track_type : GES.TrackType.*
+        """
         Signallable.__init__(self)
         self.track_type = track_type
 
@@ -131,7 +134,7 @@ class PreviewGenerator(Signallable):
         """
         Let the PreviewGeneratorManager control our execution
         """
-        self.manager.addPipeline(self)
+        PreviewGenerator.__manager.addPipeline(self)
 
 
 class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
