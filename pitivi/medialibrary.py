@@ -978,13 +978,13 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 #FIXME Very dubious check.
                 remote_files.append(uri)
 
-        if len(directories):
+        if directories:
             # Recursively import from folders that were dragged into the library
             self.app.threads.addThread(PathWalker, directories, self._addUris)
-        if len(remote_files):
+        if remote_files:
             #TODO waiting for remote files downloader support to be implemented
             self.fixme("Importing remote files is not implemented")
-        if len(filenames):
+        if filenames:
             self.app.current_project.addUris(filenames)
 
     #used with TreeView and IconView
@@ -998,7 +998,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.dragged = True
         paths = self.getSelectedPaths()
 
-        if len(paths) < 1:
+        if not paths:
             context.drag_abort(int(time.time()))
         else:
             row = self.modelFilter[paths[0]]
