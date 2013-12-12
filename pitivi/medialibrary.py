@@ -36,6 +36,7 @@ import time
 
 from urllib import unquote
 from gettext import ngettext, gettext as _
+from urlparse import urlparse
 from hashlib import md5
 from gi.repository.GstPbutils import DiscovererVideoInfo
 
@@ -961,28 +962,29 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.debug("targettype:%d, selection.data:%r", targettype, selection.get_data())
 
         directories = []
-        remote_files = []
         filenames = []
 
         uris = selection.get_data().split("\r\n")
         # Filter out the empty uris.
         uris = filter(lambda x: x, uris)
-        for uri in uris:
-            uri = unquote(uri.strip('\x00'))
-            if os.path.isfile(uri[7:]):
-                filenames.append(uri)
-            elif os.path.isdir(uri[7:]):
-                directories.append(uri)
-            elif "://" in uri:
-                #FIXME Very dubious check.
-                remote_files.append(uri)
+        for raw_uri in uris:
+            # Strip out NULL chars first.
+            raw_uri = raw_uri.strip('\x00')
+            uri = urlparse(raw_uri)
+            if uri.scheme == 'file':
+                path = unquote(uri.path)
+                if os.path.isfile(path):
+                    filenames.append(raw_uri)
+                elif os.path.isdir(path):
+                    directories.append(raw_uri)
+                else:
+                    self.warning("Unusable file: %s, %s", raw_uri, path)
+            else:
+                self.fixme("Importing remote files is not implemented: %s", raw_uri)
 
         if directories:
             # Recursively import from folders that were dragged into the library
             self.app.threads.addThread(PathWalker, directories, self._addUris)
-        if remote_files:
-            #TODO waiting for remote files downloader support to be implemented
-            self.fixme("Importing remote files is not implemented")
         if filenames:
             self.app.current_project.addUris(filenames)
 
