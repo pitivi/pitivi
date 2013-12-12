@@ -24,11 +24,9 @@ from datetime import datetime, timedelta
 from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl, GES
 from random import randrange
 import cairo
-import multiprocessing
 import numpy
 import os
 import pickle
-import resource
 import sqlite3
 
 # Our C module optimizing waveforms rendering
@@ -38,15 +36,16 @@ from pitivi.settings import get_dir, xdg_cache_home
 from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import binary_search, filename_from_uri, quantize, quote_uri, hash_file, print_ns
+from pitivi.utils.system import CPUUsageTracker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import CONTROL_WIDTH
 from pitivi.utils.ui import EXPANDED_SIZE
 
 
-WAVEFORMS_CPU_USAGE = 30 * multiprocessing.cpu_count()
+WAVEFORMS_CPU_USAGE = 30
 
 # A little lower as it's more fluctuating
-THUMBNAILS_CPU_USAGE = 20 * multiprocessing.cpu_count()
+THUMBNAILS_CPU_USAGE = 20
 
 INTERVAL = 500000  # For the waveform update interval.
 BORDER_WIDTH = 3  # For the timeline elements
@@ -172,9 +171,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         self.thumbs = {}
         self.thumb_cache = get_cache_for_uri(self.uri)
 
-        # For CPU management
-        self.lastMoment = datetime.now()
-        self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
+        self.cpu_usage_tracker = CPUUsageTracker()
         self.interval = 500  # Every 0.5 second, reevaluate the situation
 
         # Connect signals and fire things up
@@ -251,22 +248,15 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         which the next thumbnail will be generated. Even then, it will only
         happen when the gobject loop is idle to avoid blocking the UI.
         """
-        deltaTime = (datetime.now() - self.lastMoment).total_seconds()
-        deltaUsage = resource.getrusage(resource.RUSAGE_SELF).ru_utime - self.lastUsage.ru_utime
-        usage_percent = float(deltaUsage) / deltaTime * 100
-
+        usage_percent = self.cpu_usage_tracker.usage()
         if usage_percent < THUMBNAILS_CPU_USAGE:
             self.interval *= 0.9
             self.log('Thumbnailing sped up (+10%%) to a %.1f ms interval for "%s"' % (self.interval, filename_from_uri(self.uri)))
         else:
             self.interval *= 1.1
             self.log('Thumbnailing slowed down (-10%%) to a %.1f ms interval for "%s"' % (self.interval, filename_from_uri(self.uri)))
-
-        self.lastMoment = datetime.now()
-        self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
+        self.cpu_usage_tracker.reset()
         self._thumb_cb_id = GLib.timeout_add(self.interval, self._create_next_thumb)
-
-        return False
 
     def _startThumbnailingWhenIdle(self):
         self.debug('Waiting for UI to become idle for "%s"' % filename_from_uri(self.uri))
@@ -640,8 +630,7 @@ class PipelineCpuAdapter(Loggable):
         self.pipeline = pipeline
         self.bus = self.pipeline.get_bus()
 
-        self.lastMoment = datetime.now()
-        self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
+        self.cpu_usage_tracker = CPUUsageTracker()
         self.rate = 1.0
         self.done = False
         self.ready = False
@@ -667,13 +656,8 @@ class PipelineCpuAdapter(Loggable):
         if self.done:
             return False
 
-        deltaTime = (datetime.now() - self.lastMoment).total_seconds()
-        deltaUsage = resource.getrusage(resource.RUSAGE_SELF).ru_utime - self.lastUsage.ru_utime
-        usage_percent = float(deltaUsage) / deltaTime * 100
-
-        self.lastMoment = datetime.now()
-        self.lastUsage = resource.getrusage(resource.RUSAGE_SELF)
-
+        usage_percent = self.cpu_usage_tracker.usage()
+        self.cpu_usage_tracker.reset()
         if usage_percent >= WAVEFORMS_CPU_USAGE:
             if self.rate < 0.1:
                 if not self.ready:

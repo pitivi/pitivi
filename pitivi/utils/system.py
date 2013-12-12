@@ -20,7 +20,10 @@
 # Boston, MA 02111-1307, USA.
 
 
+import datetime
+import multiprocessing
 import os
+import resource
 
 from pitivi.configure import APPNAME
 from pitivi.utils.loggable import Loggable
@@ -292,3 +295,18 @@ def getSystem():
         system = System()
 
     return system
+
+
+class CPUUsageTracker(object):
+    def __init__(self):
+        self.reset()
+
+    def usage(self):
+        delta_time = (datetime.datetime.now() - self.last_moment).total_seconds()
+        delta_usage = resource.getrusage(resource.RUSAGE_SELF).ru_utime - self.last_usage.ru_utime
+        usage = float(delta_usage) / delta_time * 100
+        return usage / multiprocessing.cpu_count()
+
+    def reset(self):
+        self.last_moment = datetime.datetime.now()
+        self.last_usage = resource.getrusage(resource.RUSAGE_SELF)
