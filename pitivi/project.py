@@ -145,16 +145,16 @@ class ProjectManager(Signallable, Loggable):
         use_backup = False
         try:
             time_diff = os.path.getmtime(backup_path) - os.path.getmtime(path)
-            self.debug('Backup file "%s" is %d secs newer' % (backup_path, time_diff))
+            self.debug('Backup file is %d secs newer: %s', time_diff, backup_path)
         except OSError:
-            self.debug('Backup file "%s" does not exist' % backup_path)
+            self.debug('Backup file does not exist: %s', backup_path)
         else:
             if time_diff > 0:
                 use_backup = self._restoreFromBackupDialog(time_diff)
 
         if use_backup:
             uri = self._makeBackupURI(uri)
-            self.debug('Loading project from backup "%s"' % uri)
+            self.debug('Loading project from backup: %s', uri)
 
         # Load the project:
         self.current_project = Project(uri=uri)
@@ -292,14 +292,14 @@ class ProjectManager(Signallable, Loggable):
                 # Do not emit the signal when autosaving a backup file
                 self.current_project.setModificationState(False)
                 self.emit("project-saved", self.current_project, uri)
-                self.debug('Saved project "%s"' % uri)
+                self.debug('Saved project: %s', uri)
                 # Update the project instance's uri,
                 # otherwise, subsequent saves will be to the old uri.
-                self.info("Setting the project instance's URI to %s" % uri)
+                self.info("Setting the project instance's URI to: %s", uri)
                 self.current_project.uri = uri
                 self.disable_save = False
             else:
-                self.debug('Saved backup "%s"' % uri)
+                self.debug('Saved backup: %s', uri)
 
         return saved
 
@@ -478,7 +478,7 @@ class ProjectManager(Signallable, Loggable):
         path = path_from_uri(self._makeBackupURI(uri))
         if os.path.exists(path):
             os.remove(path)
-            self.debug('Removed backup file "%s"' % path)
+            self.debug('Removed backup file: %s', path)
 
     def _makeBackupURI(self, uri):
         """

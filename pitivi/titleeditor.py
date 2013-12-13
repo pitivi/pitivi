@@ -775,7 +775,7 @@ class TitleEditor(Loggable):
         This can be called either from the title editor in _createCb, or by
         track.py to set the source to None.
         """
-        self.debug("Source set to %s", str(source))
+        self.debug("Source set to %s", source)
         self.source = source
         self._reset()
         self.created = created

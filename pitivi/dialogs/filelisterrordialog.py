@@ -60,7 +60,7 @@ class FileListErrorDialog(Signallable, Loggable):
         give a string identifying the reason why the file failed to be
         discovered
         """
-        self.debug("Uri:%s, reason:%s, extra:%s", uri, reason, extra)
+        self.debug("Uri: %s, reason: %s, extra: %s", uri, reason, extra)
         exp = self._createFileExpander(uri, reason, extra)
         self.errorvbox.pack_start(exp, False, False, 0)
         if len(self.errorvbox.get_children()) < 3:

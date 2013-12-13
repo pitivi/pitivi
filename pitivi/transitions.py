@@ -151,7 +151,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
             # The user clicked between icons
             return False
 
-        self.debug("New transition type selected: %s" % transition_asset.get_id())
+        self.debug("New transition type selected: %s", transition_asset.get_id())
         if transition_asset.get_id() == "crossfade":
             self.props_widgets.set_sensitive(False)
         else:
@@ -164,13 +164,13 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
 
     def _borderScaleCb(self, range_changed):
         value = range_changed.get_value()
-        self.debug("User changed the border property to %s" % value)
+        self.debug("User changed the border property to %s", value)
         self.element.set_border(int(value))
         self.app.current_project.seeker.flush(True)
 
     def _invertCheckboxCb(self, widget):
         value = widget.get_active()
-        self.debug("User changed the invert property to %s" % value)
+        self.debug("User changed the invert property to %s", value)
         self.element.set_inverted(value)
         self.app.current_project.seeker.flush()
 

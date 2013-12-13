@@ -259,14 +259,14 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         self._thumb_cb_id = GLib.timeout_add(self.interval, self._create_next_thumb)
 
     def _startThumbnailingWhenIdle(self):
-        self.debug('Waiting for UI to become idle for "%s"' % filename_from_uri(self.uri))
+        self.debug('Waiting for UI to become idle for: %s', filename_from_uri(self.uri))
         GLib.idle_add(self._startThumbnailing, priority=GLib.PRIORITY_LOW)
 
     def _startThumbnailing(self):
-        self.debug('Now generating thumbnails for "%s"' % filename_from_uri(self.uri))
+        self.debug('Now generating thumbnails for: %s', filename_from_uri(self.uri))
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
         if not query_success or duration == -1:
-            self.debug("Could not determine duration of %s" % self.uri)
+            self.debug("Could not determine duration of: %s", self.uri)
             duration = self.duration
         else:
             self.duration = duration
@@ -616,7 +616,7 @@ class ThumbnailCache(Loggable):
         self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
 
     def commit(self):
-        self.debug('Saving thumbnail cache file to disk for "%s"' % self._filename)
+        self.debug('Saving thumbnail cache file to disk for: %s', self._filename)
         self._db.commit()
         self.log("Saved thumbnail cache file: %s" % self._filehash)
 
@@ -748,7 +748,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         self._callback_id = 0
 
     def startLevelsDiscoveryWhenIdle(self):
-        self.debug('Waiting for UI to become idle for "%s"' % filename_from_uri(self._uri))
+        self.debug('Waiting for UI to become idle for: %s', filename_from_uri(self._uri))
         GLib.idle_add(self._startLevelsDiscovery, priority=GLib.PRIORITY_LOW)
 
     def _startLevelsDiscovery(self):
@@ -765,7 +765,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
             self._launchPipeline()
 
     def _launchPipeline(self):
-        self.debug('Now generating waveforms for "%s"' % filename_from_uri(self._uri))
+        self.debug('Now generating waveforms for: %s', filename_from_uri(self._uri))
         self.peaks = None
         self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" + self._uri + " ! audioconvert ! level name=wavelevel interval=10000000 post-messages=true ! fakesink qos=false name=faked")
         faked = self.pipeline.get_by_name("faked")

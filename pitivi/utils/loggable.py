@@ -1160,7 +1160,7 @@ class TwistedLogObserver(BaseLoggable):
                 for failureType in self._ignoreErrors:
                     r = f.check(failureType)
                     if r:
-                        self.debug("Failure of type %r, ignoring" % failureType)
+                        self.debug("Failure of type %r, ignoring", failureType)
                         return
 
                 self.log("Failure %r" % f)

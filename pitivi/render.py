@@ -844,7 +844,7 @@ class RenderDialog(Loggable):
             self._last_timestamp_when_pausing = time.time()
         else:
             self._time_spent_paused += time.time() - self._last_timestamp_when_pausing
-            self.debug("Resuming render after %d seconds in pause" % self._time_spent_paused)
+            self.debug("Resuming render after %d seconds in pause", self._time_spent_paused)
         self.app.current_project.pipeline.togglePlayback()
 
     def _destroyProgressWindow(self):

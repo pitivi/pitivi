@@ -701,7 +701,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         """
         Set given element on Widget, with optional properties
         """
-        self.info("element:%s, use properties:%s", element, properties)
+        self.info("element: %s, use properties: %s", element, properties)
         self.element = element
         self.ignore = ignore
         self.properties = {}
@@ -754,7 +754,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             if is_effect:
                 result, prop_value = self.element.get_child_property(prop.name)
                 if result is False:
-                    self.debug("Could not get property %s value", prop.name)
+                    self.debug("Could not get value for property: %s", prop.name)
             else:
                 if use_element_props:
                     prop_value = self.element.get_property(prop.name)
@@ -899,7 +899,7 @@ class GstElementSettingsDialog(Loggable):
 
     def __init__(self, elementfactory, properties={}, parent_window=None, isControllable=True):
         Loggable.__init__(self)
-        self.debug("factory:%s, properties:%s", elementfactory, properties)
+        self.debug("factory: %s, properties: %s", elementfactory, properties)
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(), "elementsettingsdialog.ui"))

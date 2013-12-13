@@ -863,11 +863,11 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         This sets the sensitivity of all actiongroups that might interfere.
         """
         self.playhead_actions.set_sensitive(sensitive)
-        self.debug("Playback shortcuts sensitivity set to %s" % sensitive)
+        self.debug("Playback shortcuts sensitivity set to %s", sensitive)
         selected = self.timeline.selection.getSelectedTrackElements()
         if not sensitive or (sensitive and selected):
             self.selection_actions.set_sensitive(sensitive)
-            self.debug("Editing shortcuts sensitivity set to %s" % sensitive)
+            self.debug("Editing shortcuts sensitivity set to %s", sensitive)
 
     # Internal API
 
@@ -1073,7 +1073,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
 
         timeline_duration = duration + Gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / Gst.SECOND)
-        self.debug("Adjusting zoom to a timeline duration of %s secs" % duration)
+        self.debug("Adjusting zoom to a timeline duration of %s secs", duration)
 
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
@@ -1126,7 +1126,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         try:
             new_pos = Zoomable.nsToPixel(self.app.current_project.pipeline.getPosition())
         except PipelineError, e:
-            self.info("Pipeline error: %s" % e)
+            self.info("Pipeline error: %s", e)
             return
         except AttributeError:  # Standalone, no pipeline.
             return

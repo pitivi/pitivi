@@ -126,7 +126,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
         @type pipeline: L{Pipeline}.
         @param position: Optional position to seek to initially.
         """
-        self.debug("self.pipeline:%r", self.pipeline)
+        self.debug("self.pipeline: %r", self.pipeline)
 
         self.seeker = Seeker()
         self._disconnectFromPipeline()
@@ -148,7 +148,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
         self._setUiActive()
 
     def _disconnectFromPipeline(self):
-        self.debug("pipeline:%r", self.pipeline)
+        self.debug("pipeline: %r", self.pipeline)
         if self.pipeline is None:
             # silently return, there's nothing to disconnect from
             return

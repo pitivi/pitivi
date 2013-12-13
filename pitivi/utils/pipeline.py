@@ -208,7 +208,7 @@ class SimplePipeline(Signallable, Loggable):
         @raises PipelineError: If the C{Gst.Pipeline} could not be changed to
         the requested state.
         """
-        self.debug("state:%r" % state)
+        self.debug("state set to: %r", state)
         res = self._pipeline.set_state(state)
         if res == Gst.StateChangeReturn.FAILURE:
             # reset to NULL
@@ -226,7 +226,7 @@ class SimplePipeline(Signallable, Loggable):
         @rtype: C{State}
         """
         change, state, pending = self._pipeline.get_state(0)
-        self.debug("change:%r, state:%r, pending:%r" % (change, state, pending))
+        self.debug("change: %r, state: %r, pending: %r", change, state, pending)
         return state
 
     def play(self):
@@ -275,7 +275,7 @@ class SimplePipeline(Signallable, Loggable):
         @rtype: L{long}
         @raise PipelineError: If the position couldn't be obtained.
         """
-        self.log("format %r" % format)
+        self.log("format %r", format)
         try:
             res, cur = self._pipeline.query_position(format)
         except Exception, e:
@@ -285,20 +285,20 @@ class SimplePipeline(Signallable, Loggable):
         if not res:
             raise PipelineError("Couldn't get position")
 
-        self.log("Got position %s" % format_ns(cur))
+        self.log("Got position %s", format_ns(cur))
         return cur
 
     def getDuration(self, format=Gst.Format.TIME):
         """
         Get the duration of the C{Pipeline}.
         """
-        self.log("format %r" % format)
+        self.log("format %r", format)
 
         dur = self._getDuration(format)
         if dur is None:
             self.info("Invalid duration: None")
         else:
-            self.log("Got duration %s" % format_ns(dur))
+            self.log("Got duration %s", format_ns(dur))
         if self._duration != dur:
             self.emit("duration-changed", dur)
 
@@ -375,13 +375,13 @@ class SimplePipeline(Signallable, Loggable):
         """
         if self._waiting_for_async_done is True:
             self._next_seek = (position, format)
-            self.info("Setting next seek to %s" % (str(self._next_seek)))
+            self.info("Setting next seek to %s", self._next_seek)
             return
 
         if format == Gst.Format.TIME:
-            self.debug("position : %s" % format_ns(position))
+            self.debug("position: %s", format_ns(position))
         else:
-            self.debug("position : %d , format:%d" % (position, format))
+            self.debug("position: %d, format: %d", position, format)
 
         # clamp between [0, duration]
         if format == Gst.Format.TIME:
@@ -422,7 +422,7 @@ class SimplePipeline(Signallable, Loggable):
             prev, new, pending = message.parse_state_changed()
 
             if message.src == self._pipeline:
-                self.debug("Pipeline change state prev:%r, new:%r, pending:%r" % (prev, new, pending))
+                self.debug("Pipeline change state prev: %r, new: %r, pending: %r", prev, new, pending)
 
                 emit_state_change = pending == Gst.State.VOID_PENDING
                 if prev == Gst.State.READY and new == Gst.State.PAUSED:
@@ -463,7 +463,7 @@ class SimplePipeline(Signallable, Loggable):
                 GLib.source_remove(self._timeout_async_id)
                 self._timeout_async_id = 0
         else:
-            self.log("%s [%r]" % (message.type, message.src))
+            self.log("%s [%r]", message.type, message.src)
 
     def _recover(self):
         if self._attempted_recoveries > MAX_RECOVERIES:
@@ -571,9 +571,11 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         cur_frame = int(round(position * framerate.num / float(Gst.SECOND * framerate.denom), 2))
         new_frame = cur_frame + frames_offset
         new_pos = long(new_frame * Gst.SECOND * framerate.denom / framerate.num)
-        Loggable.info(self, "From frame %d to %d at %f fps, seek to %s s" % (cur_frame,
-                    new_frame, framerate.num / framerate.denom,
-                    new_pos / float(Gst.SECOND)))
+        Loggable.info(self, "From frame %d to %d at %f fps, seek to %s s",
+                    cur_frame,
+                    new_frame,
+                    framerate.num / framerate.denom,
+                    new_pos / float(Gst.SECOND))
         self.simple_seek(new_pos)
 
     def _seekCb(self, ruler, position, format):

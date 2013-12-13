@@ -615,7 +615,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 break
         if not len(model):
             self._welcome_infobar.show_all()
-        self.debug("Removing %s", uri)
+        self.debug("Removing: %s", uri)
 
     def _errorCreatingAssetCb(self, unsued_project, error, id, type):
         """ The given uri isn't a media file """
@@ -630,7 +630,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._progressbar.show()
 
     def _sourcesStoppedImportingCb(self, unsued_project):
-        self.debug("Importing took %.3f seconds" % (time.time() - self.import_start_time))
+        self.debug("Importing took %.3f seconds", time.time() - self.import_start_time)
         self.flush_pending_rows()
         self._progressbar.hide()
         if self._errors:
@@ -659,7 +659,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     ## Import Sources Dialog Box callbacks
 
     def _dialogBoxResponseCb(self, dialogbox, response):
-        self.debug("response:%r", response)
+        self.debug("response: %r", response)
         if response == Gtk.ResponseType.OK:
             lastfolder = dialogbox.get_current_folder()
             self.app.settings.lastImportFolder = lastfolder
@@ -959,7 +959,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     ## Drag and Drop
     def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
                            unused_y, selection, targettype, unused_time):
-        self.debug("targettype:%d, selection.data:%r", targettype, selection.get_data())
+        self.debug("targettype: %d, selection.data: %r", targettype, selection.get_data())
 
         directories = []
         filenames = []
