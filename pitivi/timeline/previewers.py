@@ -378,6 +378,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         # => Daniel: It is *not* nanosecond precise when we remove the videorate
         #            element from the pipeline
         # => thiblahute: not the case with mpegts
+        original_time = time
         if time in self.thumbs:
             thumb = self.thumbs[time]
         else:
@@ -385,14 +386,16 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
             index = binary_search(sorted_times, time)
             time = sorted_times[index]
             thumb = self.thumbs[time]
-            if thumb.has_pixel_data and len(sorted_times) > index + 1:
-                # It might actually be the follwoing thumbnail we were
-                time = sorted_times[index + 1]
-                thumb = self.thumbs[time]
-                if thumb.has_pixel_data:
-                    self.error("Surrounding thumbnails are already set "
-                               "for timestamp %s" % print_ns(time))
-                    return
+            if thumb.has_pixel_data:
+                # If this happens, it means the precision of the thumbnail
+                # generator is not good enough for the current thumbnail
+                # interval.
+                # We could consider shifting the thumbnails, but seems like
+                # too much trouble for something which does not happen in
+                # practice. My last words..
+                self.fixme("Thumbnail is already set for time: %s, %s",
+                           print_ns(time), print_ns(original_time))
+                return
         thumb.set_from_gdkpixbuf_animated(pixbuf)
         if time in self.queue:
             self.queue.remove(time)
