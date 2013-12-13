@@ -61,7 +61,7 @@ def between(a, b, c):
     return (a <= b) and (b <= c)
 
 
-def print_ns(time):
+def format_ns(time):
     if time == Gst.CLOCK_TIME_NONE:
         return "CLOCK_TIME_NONE"
 

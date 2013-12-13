@@ -28,7 +28,7 @@ High-level pipelines
 """
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
-from pitivi.utils.misc import print_ns
+from pitivi.utils.misc import format_ns
 
 from gi.repository import GLib
 from gi.repository import GObject
@@ -123,7 +123,7 @@ class Seeker(Signallable, Loggable):
                 self.emit('seek', position, format)
             except PipelineError as e:
                 self.error("Error while seeking to position:%s format: %r, reason: %s",
-                          print_ns(position), format, e)
+                          format_ns(position), format, e)
                 # if an exception happened while seeking, properly
                 # reset ourselves
                 return False
@@ -285,7 +285,7 @@ class SimplePipeline(Signallable, Loggable):
         if not res:
             raise PipelineError("Couldn't get position")
 
-        self.log("Got position %s" % print_ns(cur))
+        self.log("Got position %s" % format_ns(cur))
         return cur
 
     def getDuration(self, format=Gst.Format.TIME):
@@ -298,7 +298,7 @@ class SimplePipeline(Signallable, Loggable):
         if dur is None:
             self.info("Invalid duration: None")
         else:
-            self.log("Got duration %s" % print_ns(dur))
+            self.log("Got duration %s" % format_ns(dur))
         if self._duration != dur:
             self.emit("duration-changed", dur)
 
@@ -379,7 +379,7 @@ class SimplePipeline(Signallable, Loggable):
             return
 
         if format == Gst.Format.TIME:
-            self.debug("position : %s" % print_ns(position))
+            self.debug("position : %s" % format_ns(position))
         else:
             self.debug("position : %d , format:%d" % (position, format))
 

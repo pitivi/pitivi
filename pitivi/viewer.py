@@ -40,7 +40,7 @@ from pitivi.utils.pipeline import Seeker, SimplePipeline
 from pitivi.utils.ui import SPACING, hex_to_rgb
 from pitivi.utils.widgets import TimeWidget
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import print_ns
+from pitivi.utils.misc import format_ns
 
 GlobalSettings.addConfigSection("viewer")
 GlobalSettings.addConfigOption("viewerDocked", section="viewer",
@@ -451,7 +451,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
         cur_time = time()
         if not self._tmp_pipeline:
             self.debug("Creating temporary pipeline for clip %s, position %s",
-                clip_uri, print_ns(position))
+                clip_uri, format_ns(position))
 
             self._oldTimelinePos = self.pipeline.getPosition()
             self._tmp_pipeline = Gst.ElementFactory.make("playbin", None)

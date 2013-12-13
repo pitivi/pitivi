@@ -35,7 +35,7 @@ import renderer
 from pitivi.settings import get_dir, xdg_cache_home
 from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import binary_search, filename_from_uri, quantize, quote_uri, hash_file, print_ns
+from pitivi.utils.misc import binary_search, filename_from_uri, quantize, quote_uri, hash_file, format_ns
 from pitivi.utils.system import CPUUsageTracker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import CONTROL_WIDTH
@@ -394,7 +394,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
                 # too much trouble for something which does not happen in
                 # practice. My last words..
                 self.fixme("Thumbnail is already set for time: %s, %s",
-                           print_ns(time), print_ns(original_time))
+                           format_ns(time), format_ns(original_time))
                 return
         thumb.set_from_gdkpixbuf_animated(pixbuf)
         if time in self.queue:
