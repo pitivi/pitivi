@@ -188,21 +188,24 @@ class PitiviViewer(Gtk.VBox, Loggable):
         """ Creates the Viewer GUI """
         # Drawing area
         # The aspect ratio gets overridden on startup by setDisplayAspectRatio
-        self.aframe = Gtk.AspectFrame(xalign=0.5, yalign=1.0, ratio=4.0 / 3.0,
-                                      obey_child=False)
+        self.internal_aframe = Gtk.AspectFrame(xalign=0.5, yalign=1.0,
+                                            ratio=4.0 / 3.0, obey_child=False)
+        self.external_aframe = Gtk.AspectFrame(xalign=0.5, yalign=0.5,
+                                            ratio=4.0 / 3.0, obey_child=False)
 
         self.internal = ViewerWidget(self.app.settings)
         # Transformation boxed DISABLED
         # self.internal.init_transformation_events()
-        self.aframe.add(self.internal)
-        self.pack_start(self.aframe, True, True, 0)
+        self.internal_aframe.add(self.internal)
+        self.pack_start(self.internal_aframe, True, True, 0)
 
         self.external_window = Gtk.Window()
         vbox = Gtk.VBox()
         vbox.set_spacing(SPACING)
         self.external_window.add(vbox)
         self.external = ViewerWidget(self.app.settings)
-        vbox.pack_start(self.external, True, True, 0)
+        self.external_aframe.add(self.external)
+        vbox.pack_start(self.external_aframe, True, True, 0)
         self.external_window.connect("delete-event", self._externalWindowDeleteCb)
         self.external_window.connect("configure-event", self._externalWindowConfigureCb)
         self.external_vbox = vbox
@@ -273,8 +276,8 @@ class PitiviViewer(Gtk.VBox, Loggable):
             width = req.width
             height = req.height
             width += 110
-            height = int(width / self.aframe.props.ratio)
-            self.aframe.set_size_request(width, height)
+            height = int(width / self.internal_aframe.props.ratio)
+            self.internal_aframe.set_size_request(width, height)
 
         self.buttons = bbox
         self.buttons_container = boxalign
@@ -291,17 +294,9 @@ class PitiviViewer(Gtk.VBox, Loggable):
         self.external_vbox.show_all()
 
     def setDisplayAspectRatio(self, ratio):
-        """
-        Sets the DAR of the Viewer to the given ratio.
-
-        @arg ratio: The aspect ratio to set on the viewer
-        @type ratio: L{float}
-        """
-        self.debug("Setting ratio of %f [%r]", float(ratio), ratio)
-        try:
-            self.aframe.set_property("ratio", float(ratio))
-        except:
-            self.warning("could not set ratio !")
+        self.debug("Setting aspect ratio to %f [%r]", float(ratio), ratio)
+        self.internal_aframe.set_property("ratio", float(ratio))
+        self.external_aframe.set_property("ratio", float(ratio))
 
     def _entryActivateCb(self, entry):
         self._seekFromTimecodeWidget()
