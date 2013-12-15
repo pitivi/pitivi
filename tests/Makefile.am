@@ -3,9 +3,9 @@
 # http://www.gnu.org/software/automake/manual/automake.html#Wildcards
 # Keep this list sorted!
 tests =	test_basic.py \
-	test_binary_search.py \
 	test_common.py \
 	test_log.py \
+	test_misc.py \
 	test_preset.py \
 	test_projectmanager.py \
 	test_projectsettings.py \
