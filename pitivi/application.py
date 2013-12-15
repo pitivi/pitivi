@@ -131,7 +131,6 @@ class Pitivi(Loggable, Signallable):
         # get settings
         self.settings = GlobalSettings()
         self.threads = ThreadMaster()
-        #self.screencast = False
 
         self.effects = EffectsHandler()
         self.system = getSystem()

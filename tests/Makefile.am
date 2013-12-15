@@ -7,6 +7,7 @@ tests =	test_basic.py \
 	test_log.py \
 	test_misc.py \
 	test_preset.py \
+	test_project.py \
 	test_projectmanager.py \
 	test_projectsettings.py \
 	test_settings.py \
