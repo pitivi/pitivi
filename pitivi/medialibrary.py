@@ -535,7 +535,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 return None, None
 
     def _addAsset(self, asset):
-        # 128 is the normal thumb size, but for icons it looks insane.
+        # 128 is the normal size for thumbnails, but for *icons* it looks insane
         LARGE_SIZE = 96
         info = asset.get_info()
 
@@ -591,6 +591,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.flush_pending_rows()
 
     def flush_pending_rows(self):
+        self.debug("Flushing %d pending model rows", len(self.pending_rows))
         for row in self.pending_rows:
             self.storemodel.append(row)
         del self.pending_rows[:]
