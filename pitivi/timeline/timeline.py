@@ -149,6 +149,10 @@ is prefixed with a little b, example : bTimeline
 
 
 class TimelineStage(Clutter.ScrollActor, Zoomable):
+    """
+    The timeline view showing the clips.
+    """
+
     __gsignals__ = {
         'scrolled': (GObject.SIGNAL_RUN_FIRST, None, ())
     }
@@ -560,8 +564,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     # Callbacks
 
     def _dragBeginCb(self, actor, event):
-        self.drawMarquee = (self.getActorUnderPointer() == self)
-
+        self.drawMarquee = self.getActorUnderPointer() == self
         if not self.drawMarquee:
             return
 
@@ -589,29 +592,24 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def _dragEndCb(self, actor, event):
         if not self.drawMarquee:
             return
-
         self.drawMarquee = False
 
         x, y, width, height = self._translateToTimelineContext(event)
-        elements = set({})
+        elements = self._getElementsInRegion(x, y, width, height)
+        self.current_group = GES.Group()
+        for element in elements:
+            self.current_group.add(element)
+        selection = [child for child in self.current_group.get_children(True)
+                     if isinstance(child, GES.Source)]
+        self.selection.setSelection(selection, SELECT)
+        self.marquee.hide()
 
+    def _getElementsInRegion(self, x, y, width, height):
+        elements = set()
         for element in self.elements:
             if self._elementIsInLasso(element, x, y, x + width, y + height):
                 elements.add(element.bElement.get_toplevel_parent())
-
-        elements = list(elements)
-        selection = []
-
-        if elements:
-            self.current_group = GES.Group()
-            for element in elements:
-                self.current_group.add(element)
-            children = self.current_group.get_children(True)
-            #Let's only get the actual sources that we display
-            selection = filter(lambda elem: isinstance(elem, GES.Source), children)
-
-        self.selection.setSelection(selection, SELECT)
-        self.marquee.hide()
+        return elements
 
     # snapping indicator
     def _snapCb(self, unused_timeline, obj1, obj2, position):
