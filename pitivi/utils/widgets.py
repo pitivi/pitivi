@@ -1059,11 +1059,13 @@ class ZoomBox(Gtk.HBox, Zoomable):
 
         # zooming slider
         self._zoomAdjustment = Gtk.Adjustment()
-        self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
-        self._zoomAdjustment.connect("value-changed", self._zoomAdjustmentChangedCb)
         self._zoomAdjustment.props.lower = 0
         self._zoomAdjustment.props.upper = Zoomable.zoom_steps
         zoomslider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adjustment=self._zoomAdjustment)
+        # Setting _zoomAdjustment's value must be done after we create the
+        # zoom slider, otherwise the slider remains at the leftmost position.
+        self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
+        self._zoomAdjustment.connect("value-changed", self._zoomAdjustmentChangedCb)
         zoomslider.props.draw_value = False
         zoomslider.set_tooltip_text(_("Zoom Timeline"))
         zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
