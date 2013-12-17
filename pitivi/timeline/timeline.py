@@ -32,7 +32,7 @@ from gi.repository import Gst, GES, GObject, Clutter, Gtk, GLib, Gdk
 
 from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
 from pitivi.check import at_least_version
-from pitivi.utils.timeline import Zoomable, Selection, SELECT
+from pitivi.utils.timeline import Zoomable, Selection, SELECT, TimelineError
 from pitivi.settings import GlobalSettings
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.utils.loggable import Loggable
@@ -476,14 +476,19 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         bElement.disconnect_by_func(self._elementInPointChangedCb)
         bElement.disconnect_by_func(self._elementPriorityChangedCb)
 
-        for element in self.elements:
-            if element.bElement == bElement:
-                break
-
+        element = self._getElement(bElement)
+        if not element:
+            raise TimelineError("Missing element for: " + bElement)
         element.cleanup()
         self.elements.remove(element)
         self.remove_child(element)
         self.selection.setSelection(set([]), SELECT)
+
+    def _getElement(self, bElement):
+        for element in self.elements:
+            if element.bElement == bElement:
+                return element
+        return None
 
     def _setElementX(self, element, ease=True):
         if ease:
