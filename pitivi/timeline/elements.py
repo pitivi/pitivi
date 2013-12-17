@@ -139,9 +139,6 @@ class RoundedRectangle(Clutter.Actor):
         self._border_width = width
         self.queue_redraw()
 
-    def get_border_color(color):
-        return self._border_color
-
     def set_border_color(self, color):
         self._border_color = color
         self.queue_redraw()
