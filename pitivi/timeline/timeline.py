@@ -1086,15 +1086,15 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         Set the zoom level so that the entire timeline is in view.
         """
         ruler_width = self.ruler.get_allocation().width
-        # Add Gst.SECOND - 1 to the timeline duration to make sure the
-        # last second of the timeline will be in view.
         duration = 0 if not self.bTimeline else self.bTimeline.get_duration()
-        if duration == 0:
+        if not duration:
             return
 
+        # Add Gst.SECOND - 1 to the timeline duration to make sure the
+        # last second of the timeline will be in view.
         timeline_duration = duration + Gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / Gst.SECOND)
-        self.debug("Adjusting zoom to a timeline duration of %s secs", duration)
+        self.debug("Adjusting zoom to a timeline duration of %s secs", timeline_duration_s)
 
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)

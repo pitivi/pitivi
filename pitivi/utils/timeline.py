@@ -24,14 +24,9 @@ from gi.repository import GES
 from gi.repository import Gdk
 from gi.repository import Gst
 
-from pitivi.utils.loggable import Loggable
-from pitivi.utils.signal import Signallable
-from pitivi.utils.receiver import receiver, handler
-from pitivi.utils.ui import Point
-
 from pitivi.undo.undo import UndoableAction
+from pitivi.utils.signal import Signallable
 
-#from pitivi.utils.align import AutoAligner
 
 # Selection modes
 SELECT = 0
