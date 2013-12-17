@@ -117,8 +117,7 @@ class Selection(Signallable):
         "selection-changed": []}
 
     def __init__(self):
-        self.selected = set([])
-        self.last_single_obj = None
+        self.selected = set()
 
     def setToObj(self, obj, mode):
         """
@@ -149,12 +148,11 @@ class Selection(Signallable):
          - L{UNSELECT} : the same minus the provided selection.
          - L{SELECT_ADD} : extended with the provided selection.
 
-        @param selection: The list of timeline objects to update the selection with.
-        @param mode: The type of update to apply. Can be C{SELECT},C{UNSELECT} or C{SELECT_ADD}
+        @param objs: Timeline objects to update the selection with.
+        @param mode: The type of update to apply. Can be C{SELECT}, C{UNSELECT} or C{SELECT_ADD}
 
         @see: L{setToObj}
         """
-        # get a list of timeline objects
         selection = set()
         for obj in objs:
             # FIXME GES break, handle the fact that we have unlinked objects in GES
@@ -162,26 +160,22 @@ class Selection(Signallable):
                 selection.add(obj.get_parent())
             else:
                 selection.add(obj)
-
-        old_selection = self.selected
         if mode == SELECT_ADD:
             selection = self.selected | selection
         elif mode == UNSELECT:
             selection = self.selected - selection
 
+        old_selection = self.selected
         if selection == old_selection:
-            # The user clicked on the same clip
+            # Nothing changed. This can happen for example when the user clicks
+            # the selected clip, then the clip remains selected.
             return
         self.selected = selection
-
-        if len(self.selected) == 1:
-            self.last_single_obj = iter(selection).next()
 
         for obj in old_selection - self.selected:
             for element in obj.get_children(False):
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
                     element.selected.selected = False
-
         for obj in self.selected - old_selection:
             for element in obj.get_children(False):
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
@@ -208,7 +202,6 @@ class Selection(Signallable):
             for element in clip.get_children(False):
                 if isinstance(element, GES.BaseEffect):
                     effects.append(element)
-
         return effects
 
     def __len__(self):
