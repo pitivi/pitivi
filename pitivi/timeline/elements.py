@@ -34,8 +34,8 @@ from datetime import datetime
 import weakref
 
 from gi.repository import Clutter, Gtk, GtkClutter, Cogl, GES, Gdk, Gst, GstController, GLib
-from pitivi.utils.timeline import Zoomable, EditingContext, Selection, SELECT, UNSELECT, SELECT_ADD, Selected
-from previewers import AudioPreviewer, VideoPreviewer, BORDER_WIDTH
+from pitivi.utils.timeline import Zoomable, EditingContext, SELECT, UNSELECT, SELECT_ADD, Selected
+from previewers import AudioPreviewer, VideoPreviewer
 
 import pitivi.configure as configure
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, KEYFRAME_SIZE, CONTROL_WIDTH

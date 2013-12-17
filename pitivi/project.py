@@ -45,7 +45,6 @@ from pitivi.utils.pipeline import Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
 from pitivi.utils.pipeline import Pipeline
-from pitivi.utils.timeline import Selection
 from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import frame_rates, audio_rates,\
@@ -874,7 +873,6 @@ class Project(Loggable, GES.Project):
             self.timeline.props.auto_transition = True
         self._calculateNbLoadingAssets()
 
-        self.timeline.selection = Selection()
         self.pipeline = Pipeline()
         self.pipeline.set_timeline(self.timeline)
 
