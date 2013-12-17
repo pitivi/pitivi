@@ -830,7 +830,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
 
     def zoomFit(self):
         self._hscrollBar.set_value(0)
-        self._setBestZoomRatio()
+        self._setBestZoomRatio(allow_zoom_in=True)
 
     def scrollToPixel(self, x):
         if x > self.hadj.props.upper:
@@ -1081,7 +1081,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         point.x = 0
         self.controls.scroll_to_point(point)
 
-    def _setBestZoomRatio(self):
+    def _setBestZoomRatio(self, allow_zoom_in=False):
         """
         Set the zoom level so that the entire timeline is in view.
         """
@@ -1094,10 +1094,18 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         # last second of the timeline will be in view.
         timeline_duration = duration + Gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / Gst.SECOND)
-        self.debug("Adjusting zoom to a timeline duration of %s secs", timeline_duration_s)
+        self.debug("Adjusting zoom for a timeline duration of %s secs", timeline_duration_s)
 
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
+        if nearest_zoom_level >= Zoomable.getCurrentZoomLevel():
+            # This means if we continue we'll zoom in.
+            if not allow_zoom_in:
+                # For example when the user zoomed out and is adding clips
+                # to the timeline, zooming in would be confusing.
+                self.log("Zoom not changed because the entire timeline is already visible")
+                return
+
         Zoomable.setZoomLevel(nearest_zoom_level)
         self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
@@ -1457,7 +1465,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self.zoomed_fitted = False
 
     def _zoomFitCb(self, unused, unsued2=None):
-        self._setBestZoomRatio()
+        self._setBestZoomRatio(allow_zoom_in=True)
 
     def _screenshotCb(self, unused_action):
         """

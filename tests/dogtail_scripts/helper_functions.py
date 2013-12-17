@@ -114,6 +114,7 @@ class HelpFunc(BaseDogTail):
             self.insert_button.click()
         sleep(n / 2.0)  # Inserting clips takes time!
         icon.deselect()
+        self.zoom_best_fit_button.click()
 
     def import_media(self, filename="tears of steel.webm"):
         dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
