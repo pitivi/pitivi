@@ -24,7 +24,9 @@
 
 from gi.repository import Gst
 from gi.repository import GES
+from gi.repository import Gio
 from gi.repository import GLib
+from gi.repository import GnomeDesktop
 from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -46,7 +48,7 @@ from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.dialogs.clipmediaprops import clipmediapropsDialog
 from pitivi.utils.ui import beautify_length
-from pitivi.utils.misc import PathWalker, quote_uri
+from pitivi.utils.misc import PathWalker, quote_uri, path_from_uri
 from pitivi.utils.signal import SignalGroup
 from pitivi.utils.loggable import Loggable
 import pitivi.utils.ui as dnd
@@ -132,6 +134,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         self.app = instance
         self._errors = []
+        self._missing_thumbs = []
         self._project = None
         self._draggedPaths = None
         self.dragged = False
@@ -534,6 +537,72 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             except GLib.GError:
                 return None, None
 
+    def _gen_missing_thumbs(self, thumbnailer):
+        # Some benchmarks to ensure that naïvely looping the model isn't too bad
+        start_time = time.time()
+        time_spent_generating_thumbs = 0.0
+        time_spent_searching_model = 0.0
+        time_spent_updating_model = 0.0
+        amount_of_thumbs_total = len(self._missing_thumbs)
+        amount_of_thumbs_processed = 0
+
+        for uri in self._missing_thumbs:
+            # This way of getting the mimetype feels awfully convoluted but
+            # seems to be the proper/reliable way in a GNOME context
+            _file = Gio.file_new_for_uri(uri)
+            _info = _file.query_info(attributes="standard::*",
+                                    flags=Gio.FileQueryInfoFlags.NONE,
+                                    cancellable=None)
+            mime = Gio.content_type_get_mime_type(_info.get_content_type())
+
+            mtime = os.path.getmtime(path_from_uri(uri))
+
+            _lap_start = time.time()  # for benchmarking
+            if thumbnailer.can_thumbnail(uri, mime, mtime):
+                pixbuf_128 = thumbnailer.generate_thumbnail(uri, mime)
+                if pixbuf_128:
+                    thumbnailer.save_thumbnail(pixbuf_128, uri, mtime)
+                    # We also want the "64 pixels" version, can't use
+                    # desktop_thumbnail_scale_down_pixbuf 'cause it doesn't
+                    # keep aspect ratio. Screw that, 64² will appear on restart.
+                    time_spent_generating_thumbs += (time.time() - _lap_start)
+
+                    # Now search through the model
+                    _lap2_start = time.time()
+                    _found = False
+                    for row in self.storemodel:
+                        if uri == row[COL_URI]:
+                            _found = True
+                            time_spent_searching_model += (time.time() - _lap2_start)
+                            # Finally, show the new pixbuf in the UI
+                            _lap3_start = time.time()
+                            row[COL_ICON_128] = pixbuf_128
+                            time_spent_updating_model += (time.time() - _lap3_start)
+                            amount_of_thumbs_processed += 1
+                            break
+
+                    if not _found:
+                        # Should not ever happen, but who knows...
+                        self.error("%s needed a thumbnail, but vanished from storemodel", uri)
+                        time_spent_searching_model += (time.time() - _lap2_start)
+
+                else:
+                    self.debug("Failed creating a thumbnail for %s", uri)
+            else:
+                self.debug("Thumbnailer says it can't thumbnail %s", uri)
+
+        # Don't iteratively remove items of the list you're looping onto, fool:
+        self._missing_thumbs = []
+
+        # Report the results of the benchmarks
+        self.info("%d/%d thumbs created (%.3fs to generate, "
+                "%.4fs to search the model, %.4fs to insert)",
+                amount_of_thumbs_processed,
+                amount_of_thumbs_total,
+                time_spent_generating_thumbs,
+                time_spent_searching_model,
+                time_spent_updating_model)
+
     def _addAsset(self, asset):
         # 128 is the normal size for thumbnails, but for *icons* it looks insane
         LARGE_SIZE = 96
@@ -549,7 +618,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             # $XDG_CACHE_HOME/thumbnails will be used, otherwise
             # $HOME/.cache/thumbnails will be used."
             # Older version of the spec also mentioned $HOME/.thumbnails
-            thumbnail_hash = md5(quote_uri(info.get_uri())).hexdigest()
+            quoted_uri = quote_uri(info.get_uri())
+            thumbnail_hash = md5(quoted_uri).hexdigest()
             try:
                 thumb_dir = os.environ['XDG_CACHE_HOME']
                 thumb_64, thumb_128 = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
@@ -562,13 +632,15 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 thumb_dir = os.path.expanduser("~/.thumbnails/")
                 thumb_64, thumb_128 = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
             if thumb_64 is None:
-                # TODO gst discoverer should create missing thumbnails.
                 if asset.is_image():
                     thumb_64 = self._getIcon("image-x-generic")
                     thumb_128 = self._getIcon("image-x-generic", None, LARGE_SIZE)
                 else:
                     thumb_64 = self._getIcon("video-x-generic")
                     thumb_128 = self._getIcon("video-x-generic", None, LARGE_SIZE)
+                # TODO ideally gst discoverer should create missing thumbnails.
+                self.log("Missing a thumbnail for %s, queuing", path_from_uri(quoted_uri))
+                self._missing_thumbs.append(quoted_uri)
         else:
             thumb_64 = self._getIcon("audio-x-generic")
             thumb_128 = self._getIcon("audio-x-generic", None, LARGE_SIZE)
@@ -648,6 +720,13 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self._view_error_button.set_label(btn_text)
             self._warning_label.set_text(text)
             self._import_warning_infobar.show_all()
+
+        if self._missing_thumbs:
+            self.info("%d thumbnails are missing, we will generate them", len(self._missing_thumbs))
+            # We need to instanciate the thumbnail factory on the main thread...
+            _size_normal = GnomeDesktop.DesktopThumbnailSize.NORMAL
+            thumbnailer = GnomeDesktop.DesktopThumbnailFactory.new(_size_normal)
+            self._gen_missing_thumbs(thumbnailer)
 
     ## Error Dialog Box callbacks
 

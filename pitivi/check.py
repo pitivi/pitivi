@@ -38,9 +38,11 @@ from gettext import gettext as _
 # Unless otherwise noted, modules are accessed through gobject introspection
 HARD_DEPS = {
     "cairo": "1.10.0",  # using static python bindings
-    "GES": "1.0.0.0",  # packagers: in reality 1.1.90, but that GES version erronously reports itself as 1.0.0.0
     "Clutter": "1.12.0",
+    "GES": "1.0.0.0",  # packagers: in reality 1.1.90, but that GES version erronously reports itself as 1.0.0.0
+    "Gio": None,
     "gnonlin": "1.1.90",
+    "GnomeDesktop": None,
     "Gst": "1.2.0",
     "Gtk": "3.8.0",
     "numpy": None,  # using static python bindings
