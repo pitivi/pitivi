@@ -491,17 +491,20 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         Update the _progressbar with the ratio of clips imported vs the total
         """
+        # The clip iter has a +1 offset in the progressbar label (to refer to
+        # the actual # of the clip we're processing), but there is no offset
+        # in the progressbar itself (to reflect the process being incomplete).
         current_clip_iter = self.app.current_project.nb_imported_files
         total_clips = self.app.current_project.nb_remaining_file_to_import + current_clip_iter
 
         progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
-            {"current_clip": current_clip_iter,
+            {"current_clip": current_clip_iter + 1,
             "total": total_clips})
         self._progressbar.set_text(progressbar_text)
         if current_clip_iter == 0:
             self._progressbar.set_fraction(0.0)
         elif total_clips != 0:
-            self._progressbar.set_fraction((current_clip_iter - 1) / float(total_clips))
+            self._progressbar.set_fraction(current_clip_iter / float(total_clips))
 
     def _getThumbnailInDir(self, dir, hash):
         """
