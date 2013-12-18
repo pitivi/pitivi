@@ -209,11 +209,12 @@
         </child>
         <child>
           <object class="GtkButton" id="warnings_dismiss_button">
-            <property name="label">gtk-close</property>
+            <property name="label">✖</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="has_tooltip">True</property>
+            <property name="tooltip_text" translatable="yes">Close this message</property>
             <property name="receives_default">True</property>
-            <property name="use_stock">True</property>
             <signal name="clicked" handler="_warningInfoBarDismissedCb" swapped="no"/>
           </object>
           <packing>
