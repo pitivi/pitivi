@@ -35,7 +35,7 @@ import os
 import time
 
 from urllib import unquote
-from gettext import gettext as _
+from gettext import ngettext, gettext as _
 from hashlib import md5
 from gi.repository.GstPbutils import DiscovererVideoInfo
 
@@ -635,13 +635,18 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.flush_pending_rows()
         self._progressbar.hide()
         if self._errors:
-            if len(self._errors) > 1:
-                self._warning_label.set_text(_("Errors occurred while importing."))
-                self._view_error_button.set_label(_("View errors"))
-            else:
-                self._warning_label.set_text(_("An error occurred while importing."))
-                self._view_error_button.set_label(_("View error"))
+            errors_amount = len(self._errors)
+            btn_text = ngettext("View error", "View errors", errors_amount)
+            # Translators: {0:d} is just like %d (integer number variable)
+            text = ngettext("An error occurred while importing.",
+                            "{0:d} errors occurred while importing.",
+                            errors_amount)
+            # Do the {0:d} (aka "%d") substitution using "format" instead of %,
+            # avoiding tracebacks as %d would be missing in the singular form:
+            text = text.format(errors_amount)
 
+            self._view_error_button.set_label(btn_text)
+            self._warning_label.set_text(text)
             self._import_warning_infobar.show_all()
 
     ## Error Dialog Box callbacks
