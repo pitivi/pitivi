@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="incomplete"/>
+    <revision pkgversion="0.92" version="0.1" date="2013-12-19" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -15,6 +15,8 @@
       <email>mariobl@gnome.org</email>
       <name>Brian Grohe</name>
       <email>grohe43@gmail.com</email>
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
     </credit>
     <desc>
       Moving the playhead, using the zoom feature, scrolling and scrubbing.
@@ -50,16 +52,15 @@
            <item><p>Dragging the zoom slider on the left of the ruler</p></item>
            <item><p>Using keyboard shortcuts such as <key>Ctrl</key>+<key>-</key> to zoom out or <key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> on the numeric keypad) to zoom in</p></item>
        </list>
-       <p>To get a better overview of your timeline, you may use the <guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the <gui>Zoom</gui> button on the left of the zoom slider.</p>
+       <p>To get a better overview of your timeline, you may use the <guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the <gui>Zoom</gui> button on the left of the zoom slider. The third way to do this is by pressing <keyseq><key>Ctrl</key><key>0</key></keyseq></p>.
 
        <note>
            <title>Zooming is always centered around the location of your playhead</title>
            <p>When using the mouse wheel to zoom in and out, remember that the zoom is not relative to the position of your mouse, only to the position of the playhead on the timeline.</p>
        </note>
-
        <note style="tip">
         <title><em>Warping</em> between zoom levels</title>
-        <p>Using your mouse's scroll wheel, you can also <em>warp</em> instantly from any zoom level to another in a single click. To do that, click with your mousewheel anywhere on the zoom slider.</p>
+        <p>Using your mouse, you can also <em>warp</em> instantly from any zoom level to another in a single click. To do that, click anywhere on the zoom slider.</p>
        </note>
      </section>
 
@@ -82,7 +83,6 @@
         <item><p>Review repeatedly the visual motion in a scene by moving back and forth in time.</p></item>
        </list>
        <p>To scrub, click on the ruler and move the mouse with the button still held down.</p>
-       <p>You can also scrub by dragging the black vertical line that stems from the playhead and spans across the timeline.</p>
      </section>
 
 </page>
