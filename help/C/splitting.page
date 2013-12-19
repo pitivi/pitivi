@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#timeline"/>
-    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="complete"/>
+    <revision pkgversion="0.92" version="0.1" date="2013-12-19" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -13,6 +13,8 @@
     <credit type="contributor">
       <name>Mario Blättermann</name>
       <email>mariobl@gnome.org</email>
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
     </credit>
     <desc>
       Dividing clips in two parts.
@@ -23,7 +25,7 @@
   </info>
 
     <title>Splitting</title>
-     
+
      <p>As the name implies, splitting a clip divides it into two adjacent clips, with new beginning/end points being created accordingly.</p>
      <p>In <app>Pitivi</app>, splitting is a “non-modal” operation; this means that you do not have to “activate” a particular tool before doing the split action. Splitting occurs where the playhead is currently located (see also <link xref="movearoundtimeline">Moving the playhead</link>). Combined with zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless splitting is not only fast and efficient, it is also very accurate.</p>
      <p>Selections affect splitting in the following ways:</p>
@@ -49,5 +51,10 @@
       <item><p>Add or remove clips to the selection with the <key>Ctrl</key> modifier key. This will not affect the playhead's position.</p></item>
       <item><p>Click on the <gui>Split</gui> button on the timeline toolbar or press <key>S</key>.</p></item>
      </steps>
+
+        <note style="tip">
+        <title>Cutting out the middle</title>
+        <p>When you want to cut out a middle section of a clip, split the clip twice on the positions where the part you want to remove begins and ends. Select the middle part and hit <key>delete</key>. Now, eliminate the empty space between the remaining two parts by moving one of them towards the other until they align.</p>
+        </note>
 
 </page>
