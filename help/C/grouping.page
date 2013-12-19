@@ -1,0 +1,47 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="topic"
+      id="grouping">
+
+  <info>
+    <link type="guide" xref="index#timeline"/>
+    <revision pkgversion="0.92" version="0.1" date="2013-12-19" status="complete"/>
+    <credit type="author">
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Jean-François Fortin Tam</name>
+      <email>nekohayo@gmail.com</email>
+    </credit>
+    <desc>
+      Grouping and ungrouping clips in timeline.
+    </desc>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+    <title>Grouping and ungrouping clips</title>
+        <p>The grouping and ungrouping functions are useful when you want to add or separate audio tracks from video clips, or when you want to create a block of clips that you can select, edit and move all at once.</p>
+
+      <section>
+      <title>Grouping clips in timeline</title>
+        <list>
+        <item><p>Select multiple clips in the timeline (see the <link xref="makeselections">Selecting multiple items</link> section for more detailed instructions).</p></item>
+        <item><p>Click the <gui>Group clips</gui> button on the timeline toolbar.</p></item>
+        </list>
+        <p>You can now select, edit and move the clips all at once.</p>
+      </section>
+
+      <section>
+      <title>Ungrouping clips in timeline</title>
+        <list>
+        <item><p>Select a group of clips in the timeline.</p></item>
+        <item><p>Click the <gui>Ungroup clips</gui> button on the timeline toolbar.</p></item>
+        </list>
+        <p>You can now select, edit and move the clips independently.</p>
+      </section>
+
+
+</page>

@@ -28,6 +28,7 @@ HELP_FILES = \
     effects.page \
     effectsanimation.page \
     fadeinfadeout.page \
+    grouping.page \
     gstreamer.page \
     importingmpegts.page \
     importing.page \
