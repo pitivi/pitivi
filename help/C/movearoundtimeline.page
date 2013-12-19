@@ -50,7 +50,7 @@
            <item><p>Holding the <key>Ctrl</key> key while using the mousewheel over the timeline</p></item>
            <item><p>Using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and <guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq> menu items</p></item>
            <item><p>Dragging the zoom slider on the left of the ruler</p></item>
-           <item><p>Using keyboard shortcuts such as <key>Ctrl</key>+<key>-</key> to zoom out or <key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> on the numeric keypad) to zoom in</p></item>
+           <item><p>Using keyboard shortcuts such as <keyseq><key>Ctrl</key><key>-</key></keyseq> to zoom out or <keyseq><key>Ctrl</key><key>=</key></keyseq> (<keyseq><key>Ctrl</key><key>+</key></keyseq> on the numeric keypad) to zoom in</p></item>
        </list>
        <p>To get a better overview of your timeline, you may use the <guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the <gui>Zoom</gui> button on the left of the zoom slider. The third way to do this is by pressing <keyseq><key>Ctrl</key><key>0</key></keyseq></p>.
 
