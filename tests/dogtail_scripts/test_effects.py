@@ -6,7 +6,6 @@ import dogtail.rawinput
 # FIXME: cleanup the weird use of variable names for tabs here
 class EffectLibraryTest(HelpFunc):
     def test_effect_library(self):
-        #Load sample
         self.import_media()
         tab = self.effectslibrary
         tab.click()
@@ -43,35 +42,35 @@ class EffectLibraryTest(HelpFunc):
         tab.click()
         conftab = self.clipproperties
         conftab.click()
-        table = conftab.child(roleName="table")
+        clip_effects_table = conftab.child(roleName="table")
 
         dogtail.rawinput.click(clippos[0], clippos[1])
-        self.assertTrue(table.sensitive)
+        self.assertTrue(clip_effects_table.sensitive)
         # No effects added. The listview has 3 columns, so it starts at 3.
         # Each time you add an effect, it adds a row, so +3 children.
-        self.assertEqual(len(table.children), 3)
+        self.assertEqual(len(clip_effects_table.children), 3)
 
         center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
         icon = self.search_by_regex("^Agingtv", tab, roleName="table cell")
 
         #Drag video effect on the clip
         self.improved_drag(center(icon), clippos)
-        self.assertEqual(len(table.children), 6)
+        self.assertEqual(len(clip_effects_table.children), 6)
         #Drag video effect to the table
         icon = self.search_by_regex("^3Dflippo", tab, roleName="table cell")
-        self.improved_drag(center(icon), center(table))
-        self.assertEqual(len(table.children), 9)
+        self.improved_drag(center(icon), center(clip_effects_table))
+        self.assertEqual(len(clip_effects_table.children), 9)
 
         #Drag audio effect on the clip
         tab.child(name="effects library audio togglebutton").click()
         effect = self.search_by_regex("^Amplifier", tab, roleName="table cell")
         self.improved_drag(center(effect), clippos)
-        self.assertEqual(len(table.children), 12)
+        self.assertEqual(len(clip_effects_table.children), 12)
 
         #Drag audio effect on the table
         effect = self.search_by_regex("^Audiokaraoke", tab, roleName="table cell")
-        self.improved_drag(center(effect), center(table))
-        self.assertEqual(len(table.children), 15)
+        self.improved_drag(center(effect), center(clip_effects_table))
+        self.assertEqual(len(clip_effects_table.children), 15)
 
     def test_change_effect_settings(self):
         self.help_test_effect_drag()
