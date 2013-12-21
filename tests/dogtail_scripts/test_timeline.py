@@ -36,8 +36,7 @@ class TimelineTest(HelpFunc):
         timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
         self.assertIsNotNone(timecode_widget)
 
-        center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
-        self.improved_drag(center(sample), center(self.timeline))
+        self.improved_drag(self.center(sample), self.center(self.timeline))
         self.goToEnd_button.click()
         self.assertNotEqual(timecode_widget.text, "0:00:00.000")
 
@@ -47,7 +46,6 @@ class TimelineTest(HelpFunc):
         timeline = self.timeline
         self.assertIsNotNone(timecode_widget)
         oldseek = timecode_widget.text
-        center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
         # Provide three sets of coordinates (on three layers) at the end of the
         # timeline, where we will drag clips to. Here we don't have to worry
         # about the width of layer controls widget for our calculations.
@@ -58,10 +56,10 @@ class TimelineTest(HelpFunc):
         for i in range(20):
             if (i % 4 == 0):
                 # Drag to center, next layer, out, and then back in
-                self.improved_drag(center(sample), endpos[i % 3], middle=[center(timeline), endpos[(i + 1) % 2], center(sample)])
+                self.improved_drag(self.center(sample), endpos[i % 3], middle=[self.center(timeline), endpos[(i + 1) % 2], self.center(sample)])
             else:
                 # Simple drag
-                self.improved_drag(center(sample), endpos[i % 3])
+                self.improved_drag(self.center(sample), endpos[i % 3])
             # Give time to insert the object. If you don't wait long enough,
             # dogtail won't be able to click goToEnd_button:
             sleep(0.7)
@@ -185,10 +183,9 @@ class TimelineTest(HelpFunc):
         # Check if adding an effect causes a regression in behavior
         self.effectslibrary.click()
         self.clipproperties.click()
-        center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
         table = self.clipproperties.child(roleName="table")
         effect_from_library = self.search_by_text("Agingtv", self.effectslibrary, roleName="table cell", exactMatchOnly=False)
-        self.improved_drag(center(effect_from_library), center(table))
+        self.improved_drag(self.center(effect_from_library), self.center(table))
         self.goToEnd_button.click()
         seekbefore = timecode_widget.text
         # Try ripple and roll

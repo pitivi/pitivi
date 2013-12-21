@@ -1,6 +1,5 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-import unittest
 import os
 import re
 from dogtail.predicate import GenericPredicate
@@ -275,3 +274,7 @@ class HelpFunc(BaseDogTail):
         if listview.showing:
             dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
             self.medialibrary.child(name="media_listview_button", roleName="panel").click()
+
+    @staticmethod
+    def center(obj):
+        return obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2

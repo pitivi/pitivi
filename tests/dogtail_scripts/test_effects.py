@@ -50,26 +50,25 @@ class EffectLibraryTest(HelpFunc):
         # Each time you add an effect, it adds a row, so +3 children.
         self.assertEqual(len(clip_effects_table.children), 3)
 
-        center = lambda obj: (obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2)
         icon = self.search_by_regex("^Agingtv", tab, roleName="table cell")
 
         #Drag video effect on the clip
-        self.improved_drag(center(icon), clippos)
+        self.improved_drag(self.center(icon), clippos)
         self.assertEqual(len(clip_effects_table.children), 6)
         #Drag video effect to the table
         icon = self.search_by_regex("^3Dflippo", tab, roleName="table cell")
-        self.improved_drag(center(icon), center(clip_effects_table))
+        self.improved_drag(self.center(icon), self.center(clip_effects_table))
         self.assertEqual(len(clip_effects_table.children), 9)
 
         #Drag audio effect on the clip
         tab.child(name="effects library audio togglebutton").click()
         effect = self.search_by_regex("^Amplifier", tab, roleName="table cell")
-        self.improved_drag(center(effect), clippos)
+        self.improved_drag(self.center(effect), clippos)
         self.assertEqual(len(clip_effects_table.children), 12)
 
         #Drag audio effect on the table
         effect = self.search_by_regex("^Audiokaraoke", tab, roleName="table cell")
-        self.improved_drag(center(effect), center(clip_effects_table))
+        self.improved_drag(self.center(effect), self.center(clip_effects_table))
         self.assertEqual(len(clip_effects_table.children), 15)
 
     def test_change_effect_settings(self):
