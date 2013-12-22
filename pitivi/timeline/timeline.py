@@ -504,7 +504,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         track_type = bElement.get_track_type()
 
         y = 0
-        if (track_type == GES.TrackType.AUDIO):
+        if track_type == GES.TrackType.AUDIO:
             y = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING)
         y += bElement.get_parent().get_layer().get_priority() * (EXPANDED_SIZE + SPACING) + SPACING
 
@@ -744,8 +744,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         """
         self.app.action_log.begin("add clip")
         if self.bTimeline is None:
-            self.error("No bTimeline set, this is a bug")
-            return
+            raise TimelineError("No bTimeline set, this is a bug")
 
         # FIXME we should find the longest layer instead of adding it to the
         # first one
