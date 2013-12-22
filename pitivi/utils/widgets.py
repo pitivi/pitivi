@@ -42,7 +42,7 @@ from gettext import gettext as _
 from pitivi.utils.loggable import Loggable
 from pitivi.configure import get_ui_dir
 from pitivi.utils.ui import unpack_color, pack_color_32, pack_color_64, \
-    time_to_string, SPACING
+    time_to_string, SPACING, CONTROL_WIDTH
 from pitivi.utils.timeline import Zoomable
 
 ZOOM_FIT = _("Zoom Fit")
@@ -1072,6 +1072,7 @@ class ZoomBox(Gtk.HBox, Zoomable):
         zoomslider.set_size_request(100, 0)  # At least 100px wide for precision
         self.pack_start(zoomslider, True, True, 0)
 
+        self.set_size_request(CONTROL_WIDTH, -1)
         self.show_all()
 
         self._updateZoomSlider = True

@@ -912,6 +912,10 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self.pressed = False
 
         self._packScrollbars(self)
+        min_height = (self.ruler.get_size_request()[1] +
+                      (EXPANDED_SIZE + SPACING) * 2 +
+                      SPACING * 3)
+        self.set_size_request(-1, min_height)
         self.stage.show()
 
     def enableKeyboardAndMouseEvents(self):
@@ -1060,7 +1064,6 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         vbox.pack_end(self._hscrollBar, False, True, False)
 
         self.ruler.setProjectFrameRate(24.)
-        self.ruler.set_size_request(0, 25)
         self.ruler.hide()
 
         self.vadj.props.lower = 0
@@ -1070,8 +1073,6 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         hbox.pack_start(self.embed, True, True, True)
         hbox.pack_start(self._vscrollbar, False, True, False)
         vbox.pack_end(hbox, True, True, True)
-
-        self.zoomBox.set_size_request(CONTROL_WIDTH, -1)
 
         hbox = Gtk.HBox()
         hbox.pack_start(self.zoomBox, False, True, False)

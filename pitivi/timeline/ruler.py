@@ -104,6 +104,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.connect('configure-event', self.configureEventCb)
         self.callback_id = None
         self.callback_id_scroll = None
+        self.set_size_request(0, 25)
 
     def _focusInCb(self, unused_widget, unused_arg):
         self.log("Ruler has grabbed focus")
