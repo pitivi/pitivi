@@ -127,13 +127,13 @@ class TextWidget(Gtk.HBox, DynamicWidget):
             self.combo = Gtk.ComboBoxText.new_with_entry()
             self.text = self.combo.get_child()
             self.combo.show()
-            self.pack_start(self.combo, True, True, 0)
+            self.pack_start(self.combo, expand=True, fill=True, padding=0)
             for choice in choices:
                 self.combo.append_text(choice)
         else:
             self.text = Gtk.Entry()
             self.text.show()
-            self.pack_start(self.text, True, True, 0)
+            self.pack_start(self.text, expand=True, fill=True, padding=0)
         self.matches = None
         self.last_valid = None
         self.valid = False
@@ -221,7 +221,7 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
         self._type = None
         if (lower is not None and upper is not None) and (lower > -5000 and upper < 5000):
             self.slider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, self.adjustment)
-            self.pack_start(self.slider, fill=True, expand=True, padding=0)
+            self.pack_start(self.slider, expand=True, fill=True, padding=0)
             self.slider.show()
             self.slider.props.draw_value = False
             # Abuse GTK3's progressbar "fill level" feature to provide
@@ -442,7 +442,7 @@ class ChoiceWidget(Gtk.HBox, DynamicWidget):
         self.choices = None
         self.values = None
         self.contents = Gtk.ComboBoxText()
-        self.pack_start(self.contents, True, True, 0)
+        self.pack_start(self.contents, expand=True, fill=True, padding=0)
         self.setChoices(choices)
         self.contents.show()
         cell = self.contents.get_cells()[0]
@@ -729,7 +729,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             widget = Gtk.Label(label=_("No properties."))
             widget.set_sensitive(False)
             table.attach(widget, 0, 1, 0, 1, yoptions=Gtk.AttachOptions.FILL)
-            self.pack_start(table, True, True, 0)
+            self.pack_start(table, expand=True, fill=True, padding=0)
             self.show_all()
             return
 
@@ -800,7 +800,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
 
             y += 1
 
-        self.pack_start(table, True, True, 0)
+        self.pack_start(table, expand=True, fill=True, padding=0)
         self.show_all()
 
     def _propertyChangedCb(self, element, pspec, widget):
@@ -1050,12 +1050,12 @@ class ZoomBox(Gtk.HBox, Zoomable):
         zoom_fit_btn.set_tooltip_text(ZOOM_FIT)
         zoom_fit_icon = Gtk.Image.new_from_icon_name("zoom-best-fit", Gtk.IconSize.BUTTON)
         zoom_fit_btn_hbox = Gtk.HBox()
-        zoom_fit_btn_hbox.pack_start(zoom_fit_icon, False, True, 0)
-        zoom_fit_btn_hbox.pack_start(Gtk.Label(label=_("Zoom")), False, True, 0)
+        zoom_fit_btn_hbox.pack_start(zoom_fit_icon, expand=False, fill=True, padding=0)
+        zoom_fit_btn_hbox.pack_start(Gtk.Label(label=_("Zoom")), expand=False, fill=True, padding=0)
         zoom_fit_btn.add(zoom_fit_btn_hbox)
         zoom_fit_btn.connect("clicked", self._zoomFitCb)
 
-        self.pack_start(zoom_fit_btn, False, True, 0)
+        self.pack_start(zoom_fit_btn, expand=False, fill=True, padding=0)
 
         # zooming slider
         self._zoomAdjustment = Gtk.Adjustment()
@@ -1070,7 +1070,7 @@ class ZoomBox(Gtk.HBox, Zoomable):
         zoomslider.set_tooltip_text(_("Zoom Timeline"))
         zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
         zoomslider.set_size_request(100, 0)  # At least 100px wide for precision
-        self.pack_start(zoomslider, True, True, 0)
+        self.pack_start(zoomslider, expand=True, fill=True, padding=0)
 
         self.set_size_request(CONTROL_WIDTH, -1)
         self.show_all()
