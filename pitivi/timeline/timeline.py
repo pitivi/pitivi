@@ -746,10 +746,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         if self.bTimeline is None:
             raise TimelineError("No bTimeline set, this is a bug")
 
-        # FIXME we should find the longest layer instead of adding it to the
-        # first one
-        # Handle the case of a blank project
-        layer = self._ensureLayer()[0]
+        layer = self._getLongestLayer()
 
         # We need to snapshot this value, because we only do the zoom fit at the
         # end of clip insertion, but inserting multiple clips eventually changes
@@ -949,19 +946,31 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self.connect('drag-drop', self._dragDropCb)
         self.connect('drag-leave', self._dragLeaveCb)
 
-    def _ensureLayer(self):
+    def _getLayers(self):
         """
-        Make sure we have a layer in our timeline
+        Make sure we have at least one layer in our timeline.
         """
         layers = self.bTimeline.get_layers()
-
         if not layers:
             layer = GES.Layer()
             layer.props.auto_transition = True
             self.bTimeline.add_layer(layer)
-            layers = [layer]
-
+            return [layer]
         return layers
+
+    def _getLongestLayer(self):
+        """
+        Return the longest layer.
+        """
+        layers = self._getLayers()
+        if len(layers) == 1:
+            return layers[0]
+        # Create a list of (layer_length, layer) tuples.
+        layer_lengths = [(max([(clip.get_start() + clip.get_duration()) for clip in layer.get_clips()] or [0]), layer)
+                         for layer in layers]
+        # Easily get the longest.
+        unused_longest_time, longest_layer = max(layer_lengths)
+        return longest_layer
 
     def _createActions(self):
         if not self.gui:
