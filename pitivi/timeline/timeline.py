@@ -751,7 +751,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         # We need to snapshot this value, because we only do the zoom fit at the
         # end of clip insertion, but inserting multiple clips eventually changes
         # the value of self.zoomed_fitted as clips get progressively inserted...
-        _ZOOM_WAS_FITTED = self.zoomed_fitted
+        zoom_was_fitted = self.zoomed_fitted
 
         for asset in assets:
             if isinstance(asset, GES.TitleClip):
@@ -768,7 +768,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
                 asset.set_start(self.bTimeline.props.duration)
                 layer.add_clip(asset)
 
-        if _ZOOM_WAS_FITTED:
+        if zoom_was_fitted:
             self._setBestZoomRatio()
         else:
             self.scrollToPixel(Zoomable.nsToPixel(self.bTimeline.props.duration))
@@ -1551,7 +1551,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
 
     def _dragDropCb(self, widget, context, x, y, time):
         # Same as in insertEnd: this value changes during insertion, snapshot it
-        _ZOOM_WAS_FITTED = self.zoomed_fitted
+        zoom_was_fitted = self.zoomed_fitted
 
         target = widget.drag_dest_find_target(context, None)
         y -= self.ruler.get_allocation().height
@@ -1561,7 +1561,7 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
             if self.isDraggedClip:
                 self.timeline.convertGhostClips()
                 self.timeline.resetGhostClips()
-                if _ZOOM_WAS_FITTED:
+                if zoom_was_fitted:
                     self._setBestZoomRatio()
                 else:
                     x, y = self.transposeXY(x, y)
