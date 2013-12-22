@@ -338,23 +338,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     def _insertEndCb(self, unused_action):
         self.app.gui.timeline_ui.insertEnd(self.getSelectedAssets())
 
-    def _trackElementAddedCb(self, source, unused_track_element):
-        """ After an object has been added to the first track, position it
-        correctly and request the next source to be processed. """
-        timeline = self.app.current_project.timeline
-        layer = timeline.get_layers()[0]  # FIXME Get the longest layer
-
-        # Handle the case where we just inserted the first clip
-        if len(layer.get_clips()) == 1:
-            source.props.start = 0
-        else:
-            source.props.start = timeline.props.duration
-
-        # We only need one TrackElement to estimate the new duration.
-        # Process the next source.
-        source.disconnect_by_func(self._trackElementAddedCb)
-        self._insertNextSource()
-
     def _searchEntryChangedCb(self, entry):
         # With many hundred clips in an iconview with dynamic columns and
         # ellipsizing, doing needless searches is very expensive.
