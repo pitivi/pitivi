@@ -10,7 +10,6 @@ utils_PYTHON = 	\
 	ui.py           \
 	system.py       \
 	threads.py      \
-	receiver.py     \
 	ripple_update_group.py	\
 	misc.py         \
 	widgets.py
