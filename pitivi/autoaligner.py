@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       timeline/align.py
+#       pitivi/autoaligner.py
 #
 # Copyright (c) 2011, Benjamin M. Schwartz <bens@alum.mit.edu>
 #

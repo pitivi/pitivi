@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       ui/clipmediaprops.py
+#       pitivi/dialogs/clipmediaprops.py
 #
 # Copyright (c) 2011, Parthasarathi Susarla <partha@collabora.co.uk>
 #

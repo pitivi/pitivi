@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       clipproperties.py
+#       pitivi/clipproperties.py
 #
 # Copyright (C) 2010 Thibault Saunier <tsaunier@gnome.org>
 #

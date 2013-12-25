@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       utils.py
+#       pitivi/utils/misc.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>

@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       pitivi/medialibrary.py
+#       pitivi/titleeditor.py
 #
 # Copyright (c) 2012, Matas Brazdeikis <matas@brazdeikis.lt>
 #

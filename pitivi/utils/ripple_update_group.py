@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       ui/ripple_update_group.py
+#       pitivi/utils/ripple_update_group.py
 #
 # Copyright (c) 2010, Brandon Lewis <brandon.lewis@collabora.co.uk>
 #

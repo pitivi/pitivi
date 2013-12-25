@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       pitivi/medialibrary_undo.py
+#       pitivi/undo/medialibrary.py
 #
 # Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
 #

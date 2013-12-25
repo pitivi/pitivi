@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       ui/prefs.py
+#       pitivi/dialogs/prefs.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #

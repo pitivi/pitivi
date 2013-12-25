@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       ui/filelisterrordialog.py
+#       pitivi/dialogs/filelisterrordialog.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #

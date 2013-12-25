@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       timeline/extract.py
+#       pitivi/utils/extract.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2011, Benjamin M. Schwartz <bens@alum.mit.edu>

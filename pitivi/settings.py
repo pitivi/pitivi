@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       settings.py
+#       pitivi/settings.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #

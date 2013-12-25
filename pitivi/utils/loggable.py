@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       pitivi/log/loggable.py
+#       pitivi/utils/loggable.py
 #
 # Copyright (c) 2009, Alessandro Decina <alessandro.decina@collabora.co.uk>
 #

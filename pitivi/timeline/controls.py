@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
 #
-#       pitivi/controls.py
+#       pitivi/timeline/controls.py
 #
 # Copyright (c) 2013, Mathieu Duponchelle <mduponchelle1@gmail.com>
 #

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
 #
-#       transitions.py
+#       pitivi/transitions.py
 #
 # Copyright (c) 2012, Jean-François Fortin Tam <nekohayo@gmail.com>
 #

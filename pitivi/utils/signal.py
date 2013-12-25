@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
 #
-#       signal.py
+#       pitivi/utils/signal.py
 #
 # Copyright (c) 2006, Richard Boulton <richard@tartarus.org>
-# Copyright (C) 2012 Thibault Saunier <thibaul.saunier@collabora.com>
+# Copyright (C) 2012 Thibault Saunier <thibault.saunier@collabora.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
