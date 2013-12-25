@@ -29,14 +29,12 @@ from pitivi.utils.signal import Signallable
 
 
 # Selection modes
+# Set the selection to the given set.
 SELECT = 0
-"""Set the selection to the given set."""
+# Remove the given set from the selection.
 UNSELECT = 1
-"""Remove the given set from the selection."""
+# Extend the selection with the given set.
 SELECT_ADD = 2
-"""Extend the selection with the given set"""
-SELECT_BETWEEN = 3
-"""Select a range of clips"""
 
 
 #------------------------------------------------------------------------------#
