@@ -1,5 +1,4 @@
 import unittest
-import pitivi
 from common import TestCase
 from pitivi.application import Pitivi
 
@@ -18,14 +17,8 @@ class BasicTest(TestCase):
         self.assertEqual(ptv.current_project, None)
         self.assert_(ptv.effects)
 
-        # was the unique instance object properly set
-        self.assertEquals(pitivi.instance.Pitivi, ptv)
-
         # close pitivi
         ptv.shutdown()
-
-        # make sure the instance has been unset
-        self.assertEquals(pitivi.instance.Pitivi, None)
 
 if __name__ == "__main__":
     unittest.main()

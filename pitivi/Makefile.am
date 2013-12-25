@@ -16,7 +16,6 @@ pitivi_PYTHON = \
 	clipproperties.py \
 	configure.py \
 	effects.py \
-	instance.py \
 	mainwindow.py \
 	mediafilespreviewer.py \
 	medialibrary.py \

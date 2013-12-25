@@ -34,10 +34,8 @@ from gi.repository import Gtk
 from gettext import gettext as _
 from optparse import OptionParser
 
-import pitivi.instance as instance
-
 from pitivi.effects import EffectsHandler
-from pitivi.configure import APPNAME, pitivi_version, RELEASES_URL
+from pitivi.configure import pitivi_version, RELEASES_URL
 from pitivi.settings import GlobalSettings
 from pitivi.utils.threads import ThreadMaster
 from pitivi.mainwindow import PitiviMainWindow
@@ -118,14 +116,6 @@ class Pitivi(Loggable, Signallable):
 
         self.info('starting up')
 
-        # store ourself in the instance global
-        if instance.Pitivi:
-            raise RuntimeWarning(_("There is already a %s instance, please inform "
-                "the developers by filing a bug at "
-                "http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi")
-                % APPNAME)
-        instance.Pitivi = self
-
         self.current_project = None
 
         # get settings
@@ -164,7 +154,6 @@ class Pitivi(Loggable, Signallable):
         self.threads.stopAllThreads()
         self.settings.storeSettings()
         self.current_project = None
-        instance.Pitivi = None
         self.emit("shutdown")
         return True
 
