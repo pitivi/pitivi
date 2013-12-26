@@ -45,6 +45,16 @@ class StartUpWizard(object):
     - see the quick start manual (User Manual button).
     """
 
+    @staticmethod
+    def _userManualCb(unused_button):
+        """Handle a click on the Help button."""
+        show_user_manual()
+
+    @staticmethod
+    def _cheatsheetCb(unused_button):
+        """Show the cheatsheet section of the user manual"""
+        show_user_manual("cheatsheet")
+
     def __init__(self, app):
         self.app = app
         self.builder = Gtk.Builder()
@@ -105,14 +115,6 @@ class StartUpWizard(object):
     def _onMissingDepsButtonClickedCb(self, unused_button):
         """Handle a click on the Missing Deps button."""
         DepsManager(self.app, parent_window=self.window)
-
-    def _userManualCb(self, unused_button):
-        """Handle a click on the Help button."""
-        show_user_manual()
-
-    def _cheatsheetCb(self, unused_button):
-        """Show the cheatsheet section of the user manual"""
-        show_user_manual("cheatsheet")
 
     def _deleteCb(self, unused_widget, unused_event):
         """Handle a click on the X button of the dialog."""
