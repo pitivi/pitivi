@@ -103,6 +103,7 @@ class StartUpWizard(object):
         self.app.gui.openProject()
 
     def _onMissingDepsButtonClickedCb(self, unused_button):
+        """Handle a click on the Missing Deps button."""
         DepsManager(self.app, parent_window=self.window)
 
     def _userManualCb(self, unused_button):
@@ -118,11 +119,13 @@ class StartUpWizard(object):
         self.app.projectManager.newBlankProject()
 
     def show(self):
+        """Will show the interal window and position the wizard"""
         self.window.set_transient_for(self.app.gui)
         self.window.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         self.window.show()
 
     def hide(self):
+        """Will hide the internal window"""
         self.window.hide()
 
     def _projectFailedCb(self, unused_project_manager, unused_uri,
@@ -146,6 +149,7 @@ class StartUpWizard(object):
         self.hide()
 
     def _appVersionInfoReceivedCb(self, unused_pitivi, version):
+        """Handle version info"""
         # current version, don't show message
         if version["status"].upper() == "CURRENT":
             return
