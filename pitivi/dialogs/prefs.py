@@ -71,7 +71,8 @@ class PreferencesDialog(object):
         self.factory_settings = builder.get_object("resetButton")
         self.restart_warning = builder.get_object("restartWarning")
 
-        self._fillContents()
+        self.sections = {}
+        self.__fillContents()
         req = self.contents.size_request()
         min_width = req.width
         min_height = req.height
@@ -250,8 +251,7 @@ class PreferencesDialog(object):
             ptvWidgets.FontWidget)
 
 ## Implementation
-    def _fillContents(self):
-        self.sections = {}
+    def __fillContents(self):
         for section in sorted(self.prefs):
             options = self.prefs[section]
             self.model.append((_(section), section))
