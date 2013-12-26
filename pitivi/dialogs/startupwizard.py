@@ -1,3 +1,4 @@
+""" This module implements a startup wizard"""
 # Pitivi video editor
 #
 #       pitivi/dialogs/startupwizard.py
