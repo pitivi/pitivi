@@ -58,7 +58,19 @@ class PreferencesDialog(object):
         self.widgets = {}
         self.resets = {}
         self._current = None
-        self._createUi()
+
+        # Identify the widgets we'll need
+        builder = Gtk.Builder()
+        builder.add_from_file(os.path.join(get_ui_dir(), "preferences.ui"))
+        builder.connect_signals(self)
+        self.dialog = builder.get_object("dialog1")
+        self.model = builder.get_object("liststore1")
+        self.treeview = builder.get_object("treeview1")
+        self.contents = builder.get_object("box1")
+        self.revert_button = builder.get_object("revertButton")
+        self.factory_settings = builder.get_object("resetButton")
+        self.restart_warning = builder.get_object("restartWarning")
+
         self._fillContents()
         req = self.contents.size_request()
         min_width = req.width
@@ -71,21 +83,6 @@ class PreferencesDialog(object):
     def run(self):
         """Run the internal dialog"""
         self.dialog.run()
-
-    def _createUi(self):
-        """Create the Gtk builder"""
-        builder = Gtk.Builder()
-        builder.add_from_file(os.path.join(get_ui_dir(), "preferences.ui"))
-        builder.connect_signals(self)
-
-        # widgets we'll need
-        self.dialog = builder.get_object("dialog1")
-        self.model = builder.get_object("liststore1")
-        self.treeview = builder.get_object("treeview1")
-        self.contents = builder.get_object("box1")
-        self.revert_button = builder.get_object("revertButton")
-        self.factory_settings = builder.get_object("resetButton")
-        self.restart_warning = builder.get_object("restartWarning")
 
 ## Public API
 
