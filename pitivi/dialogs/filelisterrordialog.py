@@ -61,13 +61,14 @@ class FileListErrorDialog(Signallable, Loggable):
         discovered
         """
         self.debug("Uri: %s, reason: %s, extra: %s", uri, reason, extra)
-        exp = self._createFileExpander(uri, reason, extra)
+        exp = self.__createFileExpander(uri, reason, extra)
         self.errorvbox.pack_start(exp, False, False, 0)
         if len(self.errorvbox.get_children()) < 3:
             exp.set_expanded(True)  # Let's save the user some clicks
         exp.show_all()
 
-    def _createFileExpander(self, uri, reason, extra=None):
+    @staticmethod
+    def __createFileExpander(uri, reason, extra=None):
         if uri:
             if uri.startswith("file://"):
                 uri = uri[7:]
