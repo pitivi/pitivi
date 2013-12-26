@@ -109,12 +109,15 @@ class FileListErrorDialog(Signallable, Loggable):
         return self.window.get_property("visible")
 
     def destroy(self):
+        """Destroy internal window"""
         self.window.destroy()
 
     ## Callbacks from glade
 
     def _closeCb(self, unused_dialog):
+        """Emit the close signal"""
         self.emit('close')
 
     def _responseCb(self, unused_dialog, response):
+        """Emit the response signal"""
         self.emit('response', response)
