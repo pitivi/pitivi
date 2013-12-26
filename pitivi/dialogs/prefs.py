@@ -401,9 +401,7 @@ class PreferencesDialog(object):
 
 if __name__ == "__main__":
 
-    from pitivi.settings import GlobalSettings
-
-    options = (
+    OPTIONS = (
         ('numericPreference1', 10),
         ('numericPreference2', 2.4),
         ('textPreference1', "banana"),
@@ -415,7 +413,7 @@ if __name__ == "__main__":
         ('aFontPreference', "Sans 9"),
     )
 
-    for attrname, default in options:
+    for attrname, default in OPTIONS:
         GlobalSettings.addConfigOption(attrname, default=default)
 
 ## Numeric
