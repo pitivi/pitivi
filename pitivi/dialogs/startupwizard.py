@@ -91,7 +91,7 @@ class StartUpWizard(object):
         uri = self.recent_chooser.get_current_uri()
         self.app.projectManager.loadProject(uri)
 
-    def _keyPressCb(self, widget, event):
+    def _keyPressCb(self, unused_widget, event):
         """Handle a key press event on the dialog."""
         if event.keyval == Gdk.KEY_Escape:
             # The user pressed "Esc".
@@ -112,7 +112,7 @@ class StartUpWizard(object):
         """Show the cheatsheet section of the user manual"""
         show_user_manual("cheatsheet")
 
-    def _deleteCb(self, unused_widget, event):
+    def _deleteCb(self, unused_widget, unused_event):
         """Handle a click on the X button of the dialog."""
         self.app.projectManager.newBlankProject()
 
@@ -129,7 +129,7 @@ class StartUpWizard(object):
         """Handle the failure of a project open operation."""
         self.show()
 
-    def _projectLoadedCb(self, unused_project_manager, project, fully_loaded):
+    def _projectLoadedCb(self, unused_project_manager, unused_project, fully_loaded):
         """Handle the success of a project load operation.
 
         All the create or load project usage scenarios must generate
@@ -144,7 +144,7 @@ class StartUpWizard(object):
         """Handle the start of a project load operation."""
         self.hide()
 
-    def _appVersionInfoReceivedCb(self, pitivi, version):
+    def _appVersionInfoReceivedCb(self, unused_pitivi, version):
         # current version, don't show message
         if version["status"].upper() == "CURRENT":
             return
