@@ -49,8 +49,8 @@ class DepsManager(object):
         # to prevent GTK3 from eating a crazy amount of vertical space:
         self.window.set_resizable(False)
 
-        # FIXME: autodetect if we can actually use PackageKit's "InstallResource" dbus
-        # method, and if yes, show this button.
+        # FIXME: autodetect if we can actually use PackageKit's
+        # "InstallResource" dbus method, and if yes, show this button.
         self.builder.get_object("install_btn").hide()
         self._setDepsLabel()
         self.show()
@@ -62,24 +62,27 @@ class DepsManager(object):
     def _onInstallButtonClickedCb(self, unused_button):
         """ Hide on install and try to install dependencies """
         self.hide()
-        """
-        # FIXME: this is not implemented properly. Here is some partially working code:
+        # FIXME: this is not implemented properly.
+        # Here is some partially working code:
 
-        self.session_bus = dbus.SessionBus()
-        self.dbus_path = "/org/freedesktop/PackageKit"
-        self.dbus_name = "org.freedesktop.PackageKit"
-        self.dbus_interface = "org.freedesktop.PackageKit.Modify"
-        self.obj = self.session_bus.get_object(self.dbus_name, self.dbus_path)
-        self.iface = dbus.Interface(self.obj, self.dbus_interface)
+        # self.session_bus = dbus.SessionBus()
+        # self.dbus_path = "/org/freedesktop/PackageKit"
+        # self.dbus_name = "org.freedesktop.PackageKit"
+        # self.dbus_interface = "org.freedesktop.PackageKit.Modify"
+        # self.obj = self.session_bus.get_object(self.dbus_name, self.dbus_path)
+        # self.iface = dbus.Interface(self.obj, self.dbus_interface)
 
-        soft_deps_list = missing_soft_deps.keys()
+        # soft_deps_list = missing_soft_deps.keys()
 
-        # This line works for testing, but InstallProvideFiles is not really what we want:
-        #self.iface.InstallProvideFiles(self.window.window_xid, soft_deps_list, "show-progress,show-finished")
+        # This line works for testing, but InstallProvideFiles
+        # is not really what we want:
+        # self.iface.InstallProvideFiles(self.window.window_xid,
+        # soft_deps_list, "show-progress,show-finished")
 
         # Instead, we should be using InstallResources(xid, type, resources)
-        self.iface.InstallResources(self.window.window_xid, None, soft_deps_list)
-        """
+        # self.iface.InstallResources(self.window.window_xid,
+        # None, soft_deps_list)
+
         # TODO: catch exceptions/create callbacks to _installFailedCb
 
     def _setDepsLabel(self):
