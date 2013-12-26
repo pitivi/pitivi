@@ -35,7 +35,9 @@ from pitivi.utils.ui import frame_rates, audio_rates, \
 
 
 class ClipMediaPropsDialog():
-
+    """
+    Displays an asset's properties, and allow applying them to a project.
+    """
     def __init__(self, project, audio_streams, video_streams):
         self.project = project
         self.audio_streams = audio_streams
@@ -44,6 +46,7 @@ class ClipMediaPropsDialog():
         self._createUi()
 
     def run(self):
+        """Set up widgets and run the dialog"""
         # TODO: in "onApplyButtonClicked", we only use the first stream...
         # If we have multiple audio or video streams, we should reflect that
         # in the UI, instead of acting as if there was only one. But that means
@@ -83,6 +86,7 @@ class ClipMediaPropsDialog():
         self.dialog.run()
 
     def _createUi(self):
+        """Create the Gtk builder"""
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "clipmediaprops.ui"))
         builder.connect_signals(self)
@@ -106,6 +110,7 @@ class ClipMediaPropsDialog():
         self.checkbutton6 = builder.get_object("checkbutton6")
 
     def _applyButtonCb(self, unused_button):
+        """Apply widget values to the project"""
         project = self.project
         if self.has_video:
             # This also handles the case where the video is a still image
@@ -128,4 +133,5 @@ class ClipMediaPropsDialog():
         self.dialog.destroy()
 
     def _cancelButtonCb(self, unused_button):
+        """Destroy the dialog"""
         self.dialog.destroy()
