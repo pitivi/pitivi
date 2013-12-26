@@ -46,7 +46,7 @@ GlobalSettings.addConfigOption('prefsDialogHeight',
     default=400)
 
 
-class PreferencesDialog():
+class PreferencesDialog(object):
 
     prefs = {}
     original_values = {}
