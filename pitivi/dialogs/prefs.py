@@ -447,7 +447,7 @@ if __name__ == "__main__":
         label="Numbers only",
         section="Test",
         description="This input validates its input with a regex",
-        matches="^-?\d+(\.\d+)?$")
+        matches=r"^-?\d+(\.\d+)?$")
 
 ## other
     PreferencesDialog.addPathPreference('aPathPreference',
