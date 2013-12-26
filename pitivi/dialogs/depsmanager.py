@@ -20,6 +20,8 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+""" This module implements the notions of missing dependencies """
+
 from gi.repository import Gtk
 import os
 
@@ -54,9 +56,11 @@ class DepsManager(object):
         self.show()
 
     def _onCloseButtonClickedCb(self, unused_button):
+        """ Hide on close """
         self.hide()
 
     def _onInstallButtonClickedCb(self, unused_button):
+        """ Hide on install and try to install dependencies """
         self.hide()
         """
         # FIXME: this is not implemented properly. Here is some partially working code:
@@ -79,16 +83,21 @@ class DepsManager(object):
         # TODO: catch exceptions/create callbacks to _installFailedCb
 
     def _setDepsLabel(self):
-        """Set the contents of the label containing the list of missing dependencies"""
+        """
+        Set the contents of the label containing the list of
+        missing dependencies
+        """
         label_contents = ""
         for dep, description in missing_soft_deps.iteritems():
             label_contents += "• %s (%s)\n" % (dep, description)
         self.builder.get_object("pkg_list").set_text(label_contents)
 
     def show(self):
+        """Show internal window"""
         self.window.show()
 
     def hide(self):
+        """Hide internal window"""
         self.window.hide()
 
     def _installFailedCb(self, unused_exception):
