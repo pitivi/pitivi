@@ -34,7 +34,7 @@ from pitivi.utils.ui import frame_rates, audio_rates, \
     audio_channels, pixel_aspect_ratios, get_value_from_model
 
 
-class clipmediapropsDialog():
+class ClipMediaPropsDialog():
 
     def __init__(self, project, audio_streams, video_streams):
         self.project = project

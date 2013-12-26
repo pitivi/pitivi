@@ -47,7 +47,7 @@ from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.settings import GlobalSettings
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
-from pitivi.dialogs.clipmediaprops import clipmediapropsDialog
+from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
 from pitivi.utils.ui import beautify_length
 from pitivi.utils.misc import PathWalker, quote_uri, path_from_uri
 from pitivi.utils.signal import SignalGroup
@@ -809,7 +809,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         paths = self.getSelectedPaths()[0]  # Only use the first item
         model = self.treeview.get_model()
         info = model[paths][COL_ASSET].get_info()
-        d = clipmediapropsDialog(self.app.current_project,
+        d = ClipMediaPropsDialog(self.app.current_project,
                                 info.get_audio_streams(),
                                 info.get_video_streams())
         d.run()
