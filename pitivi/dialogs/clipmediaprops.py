@@ -30,7 +30,7 @@ import os
 
 from gettext import gettext as _
 from pitivi.configure import get_ui_dir
-from pitivi.utils.ui import frame_rates, audio_rates,\
+from pitivi.utils.ui import frame_rates, audio_rates, \
     audio_channels, pixel_aspect_ratios, get_value_from_model
 
 
