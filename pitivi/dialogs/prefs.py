@@ -314,8 +314,8 @@ class PreferencesDialog(object):
 
     def _treeSelectionChangedCb(self, selection):
         """ Update current when selection changed"""
-        model, iter = selection.get_selected()
-        new = self.sections[model[iter][1]]
+        model, _iter = selection.get_selected()
+        new = self.sections[model[_iter][1]]
         if self._current != new:
             if self._current:
                 self._current.hide()
