@@ -47,7 +47,9 @@ GlobalSettings.addConfigOption('prefsDialogHeight',
 
 
 class PreferencesDialog(object):
-
+    """
+    This dialog displays preferences for pitivi.
+    """
     prefs = {}
     original_values = {}
 
@@ -67,9 +69,11 @@ class PreferencesDialog(object):
         self.dialog.set_default_size(width, height)
 
     def run(self):
+        """Run the internal dialog"""
         self.dialog.run()
 
     def _createUi(self):
+        """Create the Gtk builder"""
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "preferences.ui"))
         builder.connect_signals(self)
@@ -312,6 +316,7 @@ class PreferencesDialog(object):
         self.factory_settings.set_sensitive(self._canReset())
 
     def _treeSelectionChangedCb(self, selection):
+        """ Update current when selection changed"""
         model, iter = selection.get_selected()
         new = self.sections[model[iter][1]]
         if self._current != new:
@@ -321,6 +326,8 @@ class PreferencesDialog(object):
             self._current = new
 
     def _clearHistory(self):
+        # Disable missing docstring
+        #pylint: disable=C0111
         self.original_values = {}
         self.revert_button.set_sensitive(False)
 
@@ -354,10 +361,14 @@ class PreferencesDialog(object):
         self.factory_settings.set_sensitive(self._canReset())
 
     def _acceptButtonCb(self, unused_button):
+        # Disable missing docstring
+        #pylint: disable=C0111
         self._clearHistory()
         self.dialog.hide()
 
-    def _valueChanged(self, fake_widget, real_widget, attrname):
+    def _valueChanged(self, unused_fake_widget, real_widget, attrname):
+        # Disable missing docstring
+        #pylint: disable=C0111
         value = getattr(self.settings, attrname)
         if attrname not in self.original_values:
             self.original_values[attrname] = value
@@ -375,10 +386,14 @@ class PreferencesDialog(object):
         self.factory_settings.set_sensitive(True)
 
     def _configureCb(self, unused_widget, event):
+        # Disable missing docstring
+        #pylint: disable=C0111
         self.settings.prefsDialogWidth = event.width
         self.settings.prefsDialogHeight = event.height
 
     def _canReset(self):
+        # Disable missing docstring
+        #pylint: disable=C0111
         for section in self.prefs.itervalues():
             for attrname in section:
                 if not self.settings.isDefault(attrname):
