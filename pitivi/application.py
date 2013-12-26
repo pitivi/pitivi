@@ -357,10 +357,7 @@ class StartupWizardGuiPitivi(GuiPitivi):
         self.projectManager.newBlankProject(emission=False)
 
     def _createGui(self):
-        # Prevent the main window to go fullscreen because at least
-        # the Metacity window manager will refuse to bring
-        # the startup wizard window in front of the main window.
-        return PitiviMainWindow(self, allow_full_screen=False)
+        return PitiviMainWindow(self)
 
     def _showGui(self):
         GuiPitivi._showGui(self)

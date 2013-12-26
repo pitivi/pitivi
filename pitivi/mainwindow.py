@@ -31,7 +31,6 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import GES
-from gi.repository import GLib
 from gi.repository import GdkPixbuf
 from gi.repository.GstPbutils import InstallPluginsContext, install_plugins_async
 
@@ -57,10 +56,6 @@ GlobalSettings.addConfigOption("fileSupportEnabled",
     default=False)
 
 GlobalSettings.addConfigSection("main-window")
-GlobalSettings.addConfigOption('mainWindowFullScreen',
-    section="main-window",
-    key="full-screen",
-    default=False)
 GlobalSettings.addConfigOption('mainWindowHPanePosition',
     section="main-window",
     key="hpane-position",
@@ -165,7 +160,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     @cvar app: The application object
     @type app: L{Pitivi}
     """
-    def __init__(self, app, allow_full_screen=True):
+    def __init__(self, app):
         gtksettings = Gtk.Settings.get_default()
         gtksettings.set_property("gtk-application-prefer-dark-theme", True)
         # Pulseaudio "role" (http://0pointer.de/blog/projects/tagging-audio.htm)
@@ -177,11 +172,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.app = app
         self.log("Creating MainWindow")
         self.settings = app.settings
-        self.is_fullscreen = False
         self.prefsdialog = None
         create_stock_icons()
         self._setActions()
-        self._createUi(allow_full_screen)
+        self._createUi()
         self.recent_manager = Gtk.RecentManager()
         self._missingUriOnLoading = False
 
@@ -289,18 +283,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             ("Help", None, _("_Help")),
         ]
 
-        toggleactions = [
-            ("FullScreen", Gtk.STOCK_FULLSCREEN, None,
-            "F11", _("View the main window on the whole screen"), self._fullScreenCb),
-        ]
-
         self.main_actions = Gtk.ActionGroup(name="mainwindow")
         self.main_actions.add_actions(actions)
         self.undock_action = Gtk.Action(name="WindowizeViewer", label=_("Undock Viewer"),
             tooltip=_("Put the viewer in a separate window"), stock_id=None)
         self.main_actions.add_action(self.undock_action)
-        self.toggle_actions = Gtk.ActionGroup(name="mainwindowtoggles")
-        self.toggle_actions.add_toggle_actions(toggleactions)
 
         important_actions = ("Undo", "SaveProject", "RenderProject")
         for action in self.main_actions.list_actions():
@@ -329,10 +316,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.uimanager = Gtk.UIManager()
         self.add_accel_group(self.uimanager.get_accel_group())
         self.uimanager.insert_action_group(self.main_actions, 0)
-        self.uimanager.insert_action_group(self.toggle_actions, -1)
         self.uimanager.add_ui_from_file(os.path.join(get_ui_dir(), "mainwindow.xml"))
 
-    def _createUi(self, allow_full_screen):
+    def _createUi(self):
         """
         Create the graphical interface with the following hierarchy in a vbox:
         -- Menubar
@@ -363,13 +349,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         vbox.pack_start(self._main_toolbar_box, False, True, 0)
         self.menu.show()
         self._main_toolbar_box.show_all()
-        # Auto-hiding fullscreen toolbar
-        self._main_toolbar_height = self.toolbar.get_preferred_height()[1]
-        self._fullscreen_toolbar_win = Gtk.Window(type=Gtk.WindowType.POPUP)
-        self._fullscreen_toolbar_win.resize(self.get_screen().get_width(), self._main_toolbar_height)
-        self._fullscreen_toolbar_win.set_transient_for(self)
-        self._fullscreen_toolbar_win.connect("enter-notify-event", self._slideFullscreenToolbarIn)
-        self._fullscreen_toolbar_win.connect("leave-notify-event", self._slideFullscreenToolbarOut)
 
         # Set up our main containers, in the order documented above
         self.vpaned = Gtk.VPaned()  # Separates the timeline from tabs+viewer
@@ -448,8 +427,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         else:
             self.set_default_size(width, height)
             self.move(self.settings.mainWindowX, self.settings.mainWindowY)
-        if allow_full_screen and self.settings.mainWindowFullScreen:
-            self.setFullScreen(True)
 
         # Connect the main window's signals at the end, to avoid messing around
         # with the restoration of settings above.
@@ -479,65 +456,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             return
         self.context_tabs.set_current_page(page)
 
-    def setFullScreen(self, fullscreen):
-        """ Toggle the fullscreen mode of the application """
-        # For some bizarre reason, the toolbar's height is initially incorrect,
-        # we need to reset it after startup to ensure we have the proper values.
-        self._main_toolbar_height = self.toolbar.get_preferred_height()[1]
-
-        if fullscreen:
-            self.fullscreen()
-            self.menu.hide()
-            self._main_toolbar_box.remove(self.toolbar)
-            self._fullscreen_toolbar_win.add(self.toolbar)
-            self._fullscreen_toolbar_win.show()
-            # The first time, wait a little before sliding out the toolbar:
-            GLib.timeout_add(750, self._slideFullscreenToolbarOut)
-        else:
-            self.unfullscreen()
-            self.menu.show()
-            self._fullscreen_toolbar_win.remove(self.toolbar)
-            self._main_toolbar_box.add(self.toolbar)
-            self._fullscreen_toolbar_win.hide()
-        self.is_fullscreen = fullscreen
-
-    def _slideFullscreenToolbarIn(self, *unused_args):
-        self._fullscreenToolbarDirection = "down"
-        GLib.timeout_add(25, self._animateFullscreenToolbar)
-
-    def _slideFullscreenToolbarOut(self, *unused_args):
-        self._fullscreenToolbarDirection = "up"
-        GLib.timeout_add(25, self._animateFullscreenToolbar)
-        return False  # Stop the initial gobject timer
-
-    def _animateFullscreenToolbar(self, *unused_args):
-        """
-        Animate the fullscreen toolbar by moving it up or down by a few pixels.
-        This is meant to be called repeatedly by a GLib timer.
-        """
-        # Believe it or not, that's how it's done in Gedit!
-        # However, it seems like moving by 1 pixel is too slow with the overhead
-        # of introspected python, so using increments of 10 works.
-        INCREMENT = 10
-        # Provide one extra pixel as a mouse target when retracted:
-        MIN_POSITION = 1 - self._main_toolbar_height
-        (current_x, current_y) = self._fullscreen_toolbar_win.get_position()
-        if self._fullscreenToolbarDirection == "down":
-            # Remember: current_y is initially negative (when retracted),
-            # we just want to move towards the target "0" position!
-            if current_y < 0:
-                target_y = min(0, current_y + INCREMENT)
-                self._fullscreen_toolbar_win.move(current_x, target_y)
-                return True
-        else:
-            target_y = max(MIN_POSITION, current_y - INCREMENT)
-            if target_y > MIN_POSITION:
-                self._fullscreen_toolbar_win.move(current_x, target_y)
-                return True
-        # We're done moving, stop the gobject timer
-        self._fullscreenToolbarDirection = None
-        return False
-
     def focusTimeline(self):
         self.timeline_ui.grab_focus()
 
@@ -555,13 +473,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _configureCb(self, unused_widget, event):
         """
-        Handle the main window being moved, resized, maximized or fullscreened
+        Handle the main window being moved, resized or maximized
         """
-        if not self.is_fullscreen:
-            self.settings.mainWindowWidth = event.width
-            self.settings.mainWindowHeight = event.height
-            self.settings.mainWindowX = event.x
-            self.settings.mainWindowY = event.y
+        self.settings.mainWindowWidth = event.width
+        self.settings.mainWindowHeight = event.height
+        self.settings.mainWindowX = event.x
+        self.settings.mainWindowY = event.y
 
     def _deleteCb(self, unused_widget, unused_data=None):
         self._saveWindowSettings()
@@ -571,7 +488,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         return False
 
     def _saveWindowSettings(self):
-        self.settings.mainWindowFullScreen = self.is_fullscreen
         self.settings.mainWindowHPanePosition = self.secondhpaned.get_position()
         self.settings.mainWindowMainHPanePosition = self.mainhpaned.get_position()
         self.settings.mainWindowVPanePosition = self.vpaned.get_position()
@@ -645,9 +561,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     def _quitCb(self, unused_action):
         self._saveWindowSettings()
         self.app.shutdown()
-
-    def _fullScreenCb(self, unused_action):
-        self.setFullScreen(not self.is_fullscreen)
 
     def _userManualCb(self, unused_action):
         show_user_manual()

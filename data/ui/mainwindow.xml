@@ -23,7 +23,6 @@
     <menu action="View">
       <placeholder name="Timeline" />
       <separator />
-      <menuitem action="FullScreen" />
       <menuitem action="WindowizeViewer" />
     </menu>
     <menu action="Library">
@@ -49,8 +48,6 @@
     <separator />
     <toolitem action="SaveProject" />
     <toolitem action="RenderProject" />
-    <separator />
-    <toolitem action="FullScreen" />
   </toolbar>
   <accelerator action="RenderProject" />
 </ui>
