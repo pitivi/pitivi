@@ -55,13 +55,13 @@ class StartUpWizard(object):
         self.recent_chooser = self.builder.get_object("recentchooser2")
         # FIXME: gtk creates a combo box with only one item, but there is no
         # simple way to hide it.
-        filter = Gtk.RecentFilter()
-        filter.set_name(_("Projects"))
+        _filter = Gtk.RecentFilter()
+        _filter.set_name(_("Projects"))
 
         for asset in GES.list_assets(GES.Formatter):
-            filter.add_pattern('*.' + asset.get_meta(GES.META_FORMATTER_EXTENSION))
+            _filter.add_pattern('*.' + asset.get_meta(GES.META_FORMATTER_EXTENSION))
 
-        self.recent_chooser.add_filter(filter)
+        self.recent_chooser.add_filter(_filter)
 
         if not missing_soft_deps:
             self.builder.get_object("missing_deps_button").hide()
