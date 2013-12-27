@@ -192,24 +192,16 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.recent_manager = Gtk.RecentManager()
         self._missingUriOnLoading = False
 
-        self.app.projectManager.connect("new-project-loading",
-                self._projectManagerNewProjectLoadingCb)
-        self.app.projectManager.connect("new-project-loaded",
-                self._projectManagerNewProjectLoadedCb)
-        self.app.projectManager.connect("new-project-failed",
-                self._projectManagerNewProjectFailedCb)
-        self.app.projectManager.connect("save-project-failed",
-                self._projectManagerSaveProjectFailedCb)
-        self.app.projectManager.connect("project-saved",
-                self._projectManagerProjectSavedCb)
-        self.app.projectManager.connect("closing-project",
-                self._projectManagerClosingProjectCb)
-        self.app.projectManager.connect("reverting-to-saved",
-                self._projectManagerRevertingToSavedCb)
-        self.app.projectManager.connect("project-closed",
-                self._projectManagerProjectClosedCb)
-        self.app.projectManager.connect("missing-uri",
-                self._projectManagerMissingUriCb)
+        pm = self.app.projectManager
+        pm.connect("new-project-loading", self._projectManagerNewProjectLoadingCb)
+        pm.connect("new-project-loaded", self._projectManagerNewProjectLoadedCb)
+        pm.connect("new-project-failed", self._projectManagerNewProjectFailedCb)
+        pm.connect("save-project-failed", self._projectManagerSaveProjectFailedCb)
+        pm.connect("project-saved", self._projectManagerProjectSavedCb)
+        pm.connect("closing-project", self._projectManagerClosingProjectCb)
+        pm.connect("reverting-to-saved", self._projectManagerRevertingToSavedCb)
+        pm.connect("project-closed", self._projectManagerProjectClosedCb)
+        pm.connect("missing-uri", self._projectManagerMissingUriCb)
 
         self.app.action_log.connect("commit", self._actionLogCommit)
         self.app.action_log.connect("undo", self._actionLogUndo)
