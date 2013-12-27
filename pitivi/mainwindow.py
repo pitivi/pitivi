@@ -228,10 +228,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         dialog = RenderDialog(self.app, project)
         dialog.window.connect("destroy", self._renderDialogDestroyCb)
         self.set_sensitive(False)
+        self.timeline_ui.disableKeyboardAndMouseEvents()
         dialog.window.show()
 
     def _renderDialogDestroyCb(self, unused_dialog):
         self.set_sensitive(True)
+        self.timeline_ui.enableKeyboardAndMouseEvents()
 
     def _renderCb(self, unused_button):
         self.showRenderDialog(self.app.current_project)

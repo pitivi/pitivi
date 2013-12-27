@@ -914,6 +914,23 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self._packScrollbars(self)
         self.stage.show()
 
+    def enableKeyboardAndMouseEvents(self):
+        self.info("Unblocking timeline mouse and keyboard signals")
+        self.stage.disconnect_by_func(self._ignoreAllEventsCb)
+
+    def disableKeyboardAndMouseEvents(self):
+        """
+        A safety measure to prevent interacting with the Clutter timeline
+        during render (no, setting GtkClutterEmbed as insensitive won't work,
+        neither will using handler_block_by_func, nor connecting to the "event"
+        signals because they won't block the children and other widgets).
+        """
+        self.info("Blocking timeline mouse and keyboard signals")
+        self.stage.connect("captured-event", self._ignoreAllEventsCb)
+
+    def _ignoreAllEventsCb(self, *args):
+        return True
+
     def _setUpDragAndDrop(self):
         self.dropHighlight = False
         self.dropOccured = False
