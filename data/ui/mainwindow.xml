@@ -22,8 +22,6 @@
     </menu>
     <menu action="View">
       <placeholder name="Timeline" />
-      <separator />
-      <menuitem action="WindowizeViewer" />
     </menu>
     <menu action="Library">
       <separator />

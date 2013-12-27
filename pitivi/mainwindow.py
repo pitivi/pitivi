@@ -285,9 +285,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         self.main_actions = Gtk.ActionGroup(name="mainwindow")
         self.main_actions.add_actions(actions)
-        self.undock_action = Gtk.Action(name="WindowizeViewer", label=_("Undock Viewer"),
-            tooltip=_("Put the viewer in a separate window"), stock_id=None)
-        self.main_actions.add_action(self.undock_action)
 
         important_actions = ("Undo", "SaveProject", "RenderProject")
         for action in self.main_actions.list_actions():
@@ -391,7 +388,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.context_tabs.show()
 
         # Viewer
-        self.viewer = ViewerContainer(self.app, undock_action=self.undock_action)
+        self.viewer = ViewerContainer(self.app)
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
 
         # Now, the lower part: the timeline

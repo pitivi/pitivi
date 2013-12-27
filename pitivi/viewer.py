@@ -78,7 +78,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
     INHIBIT_REASON = _("Currently playing")
 
-    def __init__(self, app, undock_action=None):
+    def __init__(self, app):
         Gtk.VBox.__init__(self)
         self.set_border_width(SPACING)
         self.app = app
@@ -98,12 +98,9 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self._haveUI = False
 
         self._createUi()
-        self.undock_action = undock_action
-        if undock_action:
-            self.undock_action.connect("activate", self._toggleDocked)
 
-            if not self.settings.viewerDocked:
-                self.undock()
+        if not self.settings.viewerDocked:
+            self.undock()
 
     @property
     def target(self):
@@ -231,12 +228,18 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.goToEnd_button.set_sensitive(False)
         bbox.pack_start(self.goToEnd_button, False, True, 0)
 
-        # current time
         self.timecode_entry = TimeWidget()
         self.timecode_entry.setWidgetValue(0)
         self.timecode_entry.set_tooltip_text(_('Enter a timecode or frame number\nand press "Enter" to go to that position'))
         self.timecode_entry.connectActivateEvent(self._entryActivateCb)
         bbox.pack_start(self.timecode_entry, False, 10, 0)
+
+        self.undock_button = Gtk.ToolButton()
+        self.undock_button.set_icon_name("view-restore")
+        self.undock_button.connect("clicked", self.undock)
+        self.undock_button.set_tooltip_text(_("Detach the viewer\nYou can re-attach it by closing the newly created window."))
+        bbox.pack_start(self.undock_button, False, True, 0)
+
         self._haveUI = True
 
         # Identify widgets for AT-SPI, making our test suite easier to develop
@@ -247,6 +250,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.forward_button.get_accessible().set_name("forward_button")
         self.goToEnd_button.get_accessible().set_name("goToEnd_button")
         self.timecode_entry.get_accessible().set_name("timecode_entry")
+        self.undock_button.get_accessible().set_name("undock_button")
 
         screen = Gdk.Screen.get_default()
         height = screen.get_height()
@@ -329,22 +333,20 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
     ## public methods for controlling playback
 
-    def undock(self):
-        if not self.undock_action:
-            self.error("Cannot undock because undock_action is missing.")
-            return
+    def undock(self, *unused_widget):
         if not self.docked:
+            self.warning("The viewer is already undocked")
             return
 
         self.docked = False
         self.settings.viewerDocked = False
-        self.undock_action.set_label(_("Dock Viewer"))
 
         self.remove(self.buttons_container)
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
         self.external_window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         self.external_window.show()
 
+        self.undock_button.hide()
         self.fullscreen_button = Gtk.ToggleToolButton()
         self.fullscreen_button.set_icon_name("view-fullscreen")
         self.fullscreen_button.set_tooltip_text(_("Show this window in fullscreen"))
@@ -360,15 +362,13 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.external_window.resize(self.settings.viewerWidth, self.settings.viewerHeight)
 
     def dock(self):
-        if not self.undock_action:
-            self.error("Cannot dock because undock_action is missing.")
-            return
         if self.docked:
+            self.warning("The viewer is already docked")
             return
         self.docked = True
         self.settings.viewerDocked = True
-        self.undock_action.set_label(_("Undock Viewer"))
 
+        self.undock_button.show()
         self.fullscreen_button.destroy()
         self.external_vbox.remove(self.buttons_container)
         self.pack_end(self.buttons_container, False, False, 0)
@@ -377,12 +377,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
         if self.pipeline:
             self._switch_output_window()
         self.external_window.hide()
-
-    def _toggleDocked(self, unused_action):
-        if self.docked:
-            self.undock()
-        else:
-            self.dock()
 
     def _toggleFullscreen(self, widget):
         if widget.get_active():
