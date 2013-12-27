@@ -171,11 +171,11 @@ class TextWidget(Gtk.HBox, DynamicWidget):
                 if self.send_signal:
                     self.emit("value-changed")
                 if not self.valid:
-                    self.text.set_icon_from_stock(1, None)
+                    self.text.set_icon_from_icon_name(1, None)
                 self.valid = True
             else:
                 if self.valid:
-                    self.text.set_icon_from_stock(1, Gtk.STOCK_DIALOG_WARNING)
+                    self.text.set_icon_from_icon_name(1, "dialog-warning")
                 self.valid = False
         elif self.send_signal:
             self.emit("value-changed")
@@ -1048,8 +1048,7 @@ class ZoomBox(Gtk.HBox, Zoomable):
         zoom_fit_btn = Gtk.Button()
         zoom_fit_btn.set_relief(Gtk.ReliefStyle.NONE)
         zoom_fit_btn.set_tooltip_text(ZOOM_FIT)
-        zoom_fit_icon = Gtk.Image()
-        zoom_fit_icon.set_from_stock(Gtk.STOCK_ZOOM_FIT, Gtk.IconSize.BUTTON)
+        zoom_fit_icon = Gtk.Image.new_from_icon_name("zoom-best-fit", Gtk.IconSize.BUTTON)
         zoom_fit_btn_hbox = Gtk.HBox()
         zoom_fit_btn_hbox.pack_start(zoom_fit_icon, False, True, 0)
         zoom_fit_btn_hbox.pack_start(Gtk.Label(label=_("Zoom")), False, True, 0)

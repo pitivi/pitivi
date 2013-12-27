@@ -213,13 +213,15 @@ class PitiviViewer(Gtk.VBox, Loggable):
         boxalign.add(bbox)
         self.pack_start(boxalign, False, True, 0)
 
-        self.goToStart_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_MEDIA_PREVIOUS)
+        self.goToStart_button = Gtk.ToolButton()
+        self.goToStart_button.set_icon_name("media-skip-backward")
         self.goToStart_button.connect("clicked", self._goToStartCb)
         self.goToStart_button.set_tooltip_text(_("Go to the beginning of the timeline"))
         self.goToStart_button.set_sensitive(False)
         bbox.pack_start(self.goToStart_button, False, True, 0)
 
-        self.back_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_MEDIA_REWIND)
+        self.back_button = Gtk.ToolButton()
+        self.back_button.set_icon_name("media-seek-backward")
         self.back_button.connect("clicked", self._backCb)
         self.back_button.set_tooltip_text(_("Go back one second"))
         self.back_button.set_sensitive(False)
@@ -230,13 +232,15 @@ class PitiviViewer(Gtk.VBox, Loggable):
         bbox.pack_start(self.playpause_button, False, True, 0)
         self.playpause_button.set_sensitive(False)
 
-        self.forward_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_MEDIA_FORWARD)
+        self.forward_button = Gtk.ToolButton()
+        self.forward_button.set_icon_name("media-seek-forward")
         self.forward_button.connect("clicked", self._forwardCb)
         self.forward_button.set_tooltip_text(_("Go forward one second"))
         self.forward_button.set_sensitive(False)
         bbox.pack_start(self.forward_button, False, True, 0)
 
-        self.goToEnd_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_MEDIA_NEXT)
+        self.goToEnd_button = Gtk.ToolButton()
+        self.goToEnd_button.set_icon_name("media-skip-forward")
         self.goToEnd_button.connect("clicked", self._goToEndCb)
         self.goToEnd_button.set_tooltip_text(_("Go to the end of the timeline"))
         self.goToEnd_button.set_sensitive(False)
@@ -376,7 +380,8 @@ class PitiviViewer(Gtk.VBox, Loggable):
         self.external_window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         self.external_window.show()
 
-        self.fullscreen_button = Gtk.ToggleToolButton(Gtk.STOCK_FULLSCREEN)
+        self.fullscreen_button = Gtk.ToggleToolButton()
+        self.fullscreen_button.set_icon_name("view-fullscreen")
         self.fullscreen_button.set_tooltip_text(_("Show this window in fullscreen"))
         self.buttons.pack_end(self.fullscreen_button, expand=False, fill=False, padding=6)
         self.fullscreen_button.show()
@@ -1022,17 +1027,15 @@ class PlayPauseButton(Gtk.Button, Loggable):
         self.emit("play", self.playing)
 
     def setPlay(self):
-        """ display the play image """
-        self.log("setPlay")
+        self.log("Displaying the play image")
         self.playing = True
-        self.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_MEDIA_PLAY, Gtk.IconSize.BUTTON))
+        self.set_image(Gtk.Image.new_from_icon_name("media-playback-start", Gtk.IconSize.BUTTON))
         self.set_tooltip_text(_("Play"))
         self.playing = False
 
     def setPause(self):
-        self.log("setPause")
-        """ display the pause image """
+        self.log("Displaying the pause image")
         self.playing = False
-        self.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_MEDIA_PAUSE, Gtk.IconSize.BUTTON))
+        self.set_image(Gtk.Image.new_from_icon_name("media-playback-pause", Gtk.IconSize.BUTTON))
         self.set_tooltip_text(_("Pause"))
         self.playing = True

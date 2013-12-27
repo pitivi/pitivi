@@ -924,8 +924,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         vbox.pack_start(secondary, True, True, 0)
 
         # make the [[image] text] hbox
-        image = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_QUESTION,
-               Gtk.IconSize.DIALOG)
+        image = Gtk.Image.new_from_icon_name("dialog-question", Gtk.IconSize.DIALOG)
         hbox = Gtk.HBox(homogeneous=False, spacing=SPACING * 2)
         hbox.pack_start(image, False, True, 0)
         hbox.pack_start(vbox, True, True, 0)

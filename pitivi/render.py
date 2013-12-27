@@ -701,7 +701,7 @@ class RenderDialog(Loggable):
         if not path:
             # This happens when the window is initialized.
             return
-        warning_icon = Gtk.STOCK_DIALOG_WARNING
+        warning_icon = "dialog-warning"
         filename = self.fileentry.get_text()
         if not filename:
             tooltip_text = _("A file name is required.")
@@ -712,7 +712,7 @@ class RenderDialog(Loggable):
         else:
             warning_icon = None
             tooltip_text = None
-        self.fileentry.set_icon_from_stock(1, warning_icon)
+        self.fileentry.set_icon_from_icon_name(1, warning_icon)
         self.fileentry.set_icon_tooltip_text(1, tooltip_text)
 
     def _getFilesizeEstimate(self):
