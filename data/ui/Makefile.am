@@ -7,7 +7,7 @@ ui_DATA = \
 	effectslibrary.ui \
 	elementsettingsdialog.ui \
 	filelisterrordialog.ui \
-	mainwindow.xml \
+	mainmenubutton.ui \
 	medialibrary.ui \
 	preferences.ui \
 	projectsettings.ui \

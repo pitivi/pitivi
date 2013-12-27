@@ -51,10 +51,6 @@ from pitivi.utils.ui import info_name, beautify_time_delta, SPACING, \
 from pitivi.viewer import ViewerContainer
 
 
-GlobalSettings.addConfigOption("fileSupportEnabled",
-    environment="PITIVI_FILE_SUPPORT",
-    default=False)
-
 GlobalSettings.addConfigSection("main-window")
 GlobalSettings.addConfigOption('mainWindowHPanePosition',
     section="main-window",
@@ -126,7 +122,6 @@ Gtk.stock_add = lambda items: None
 def create_stock_icons():
     """ Creates the pitivi-only stock icons """
     Gtk.stock_add([
-        ('pitivi-render', _('Render'), 0, 0, 'pitivi'),
         ('pitivi-split', _('Split'), 0, 0, 'pitivi'),
         ('pitivi-keyframe', _('Keyframe'), 0, 0, 'pitivi'),
         ('pitivi-ungroup', _('Ungroup'), 0, 0, 'pitivi'),
@@ -136,7 +131,6 @@ def create_stock_icons():
         ('pitivi-gapless', _('Gapless mode'), 0, 0, 'pitivi'),
     ])
     pixmaps = {
-        "pitivi-render": "pitivi-render-24.png",
         "pitivi-split": "pitivi-split-24.svg",
         "pitivi-keyframe": "pitivi-keyframe-24.svg",
         "pitivi-ungroup": "pitivi-ungroup-24.svg",
@@ -174,7 +168,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.settings = app.settings
         self.prefsdialog = None
         create_stock_icons()
-        self._setActions()
+
+        self.uimanager = Gtk.UIManager()
+        self.add_accel_group(self.uimanager.get_accel_group())
+
         self._createUi()
         self.recent_manager = Gtk.RecentManager()
         self._missingUriOnLoading = False
@@ -217,109 +214,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     def _renderCb(self, unused_button):
         self.showRenderDialog(self.app.current_project)
 
-    def _setActions(self):
-        """
-        Sets up the GtkActions. This allows managing the sensitivity of widgets
-        to the mouse and keyboard shortcuts.
-        """
-        # Action list items can vary in size (1-6 items). The first one is the
-        # name, and it is the only mandatory option. All the other options are
-        # optional, and if omitted will default to None.
-        #
-        # name (required), stock ID, translatable label,
-        # keyboard shortcut, translatable tooltip, callback function
-        actions = [
-            # In some cases we manually specify the translatable label,
-            # because we want to have the "..." at the end, indicating
-            # an action that requires "further interaction" from the user.
-            ("NewProject", Gtk.STOCK_NEW, None,
-            None, _("Create a new project"), self._newProjectMenuCb),
-
-            ("OpenProject", Gtk.STOCK_OPEN, _("_Open..."),
-            None, _("Open an existing project"), self._openProjectCb),
-
-            ("SaveProject", Gtk.STOCK_SAVE, None,
-            None, _("Save the current project"), self._saveProjectCb),
-
-            ("SaveProjectAs", Gtk.STOCK_SAVE_AS, _("Save _As..."),
-            None, _("Save the current project"), self._saveProjectAsCb),
-
-            ("RevertToSavedProject", Gtk.STOCK_REVERT_TO_SAVED, None,
-            None, _("Reload the current project"), self._revertToSavedProjectCb),
-
-            ("ExportProject", Gtk.STOCK_HARDDISK, _("Export as Archive..."),
-            None, _("Export the current project"), self._exportProjectAsTarCb),
-
-            ("ProjectSettings", Gtk.STOCK_PROPERTIES, _("Project Settings"),
-            None, _("Edit the project settings"), self._projectSettingsCb),
-
-            ("RenderProject", 'pitivi-render', _("_Render..."),
-            None, _("Export your project as a finished movie"), self._renderCb),
-
-            ("Undo", Gtk.STOCK_UNDO, None,
-            "<Ctrl>Z", _("Undo the last operation"), self._undoCb),
-
-            ("Redo", Gtk.STOCK_REDO, None,
-            "<Ctrl>Y", _("Redo the last operation that was undone"), self._redoCb),
-
-            ("Preferences", Gtk.STOCK_PREFERENCES, None,
-            None, None, self._prefsCb),
-
-            ("Quit", Gtk.STOCK_QUIT, None, None, None, self._quitCb),
-
-            ("About", Gtk.STOCK_ABOUT, None,
-            None, _("Information about %s") % APPNAME, self._aboutCb),
-
-            ("UserManual", Gtk.STOCK_HELP, _("User Manual"),
-             "F1", None, self._userManualCb),
-
-            # Set up the toplevel menu items for translation
-            ("File", None, _("_Project")),
-            ("Edit", None, _("_Edit")),
-            ("View", None, _("_View")),
-            ("Library", None, _("_Library")),
-            ("Timeline", None, _("_Timeline")),
-            ("Viewer", None, _("Previe_w")),
-            ("Help", None, _("_Help")),
-        ]
-
-        self.main_actions = Gtk.ActionGroup(name="mainwindow")
-        self.main_actions.add_actions(actions)
-
-        important_actions = ("Undo", "SaveProject", "RenderProject")
-        for action in self.main_actions.list_actions():
-            action_name = action.get_name()
-            if action_name in important_actions:
-                # Force showing a label alongside the action's toolbar button
-                action.props.is_important = True
-            if action_name == "RenderProject":
-                # the button is set sensitive when the timeline duration changes
-                action.set_sensitive(False)
-                self.render_button = action
-            elif action_name in ["NewProject", "SaveProject", "SaveProjectAs", "OpenProject"]:
-                if self.app.settings.fileSupportEnabled:
-                    action.set_sensitive(True)
-            elif action_name in [
-                "File", "Edit", "View", "Help",
-                "UserManual", "About", "Quit", "ImportSourcesFolder",
-                "Preferences", "Project", "ProjectSettings",
-                "Library", "Timeline", "Viewer", "WindowizeViewer"
-            ]:  # One of the remaining known actions we expect to be sensitive
-                action.set_sensitive(True)
-            else:
-                action.set_sensitive(False)
-                self.log("%s has been made insensitive" % action_name)
-
-        self.uimanager = Gtk.UIManager()
-        self.add_accel_group(self.uimanager.get_accel_group())
-        self.uimanager.insert_action_group(self.main_actions, 0)
-        self.uimanager.add_ui_from_file(os.path.join(get_ui_dir(), "mainwindow.xml"))
-
     def _createUi(self):
         """
         Create the graphical interface with the following hierarchy in a vbox:
-        -- Menubar
-        -- Main toolbar
         -- self.vpaned
         ---- self.mainhpaned (upper half)
         ------ self.secondaryhpaned (upper-left)
@@ -327,6 +224,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         -------- Context tabs
         ------ Viewer (upper-right)
         ---- Timeline (bottom half)
+
+        In the window titlebar, there is also a HeaderBar widget.
 
         The full hierarchy is also visible with accessibility tools like "sniff"
         """
@@ -336,16 +235,21 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.add(vbox)
         vbox.show()
 
-        # Main menu & toolbar
-        self.menu = self.uimanager.get_widget("/MainMenuBar")
-        self._main_toolbar_box = Gtk.VBox()  # To reparent after fullscreen
-        self.toolbar = self.uimanager.get_widget("/MainToolBar")
-        self.toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_PRIMARY_TOOLBAR)
-        self._main_toolbar_box.add(self.toolbar)
-        vbox.pack_start(self.menu, False, True, 0)
-        vbox.pack_start(self._main_toolbar_box, False, True, 0)
-        self.menu.show()
-        self._main_toolbar_box.show_all()
+        # Main "toolbar" (using client-side window decorations with HeaderBar)
+        self._headerbar = Gtk.HeaderBar()
+        self._create_headerbar_buttons()
+        builder = Gtk.Builder()
+        builder.add_from_file(os.path.join(get_ui_dir(), "mainmenubutton.ui"))
+        builder.connect_signals(self)
+        menubutton = builder.get_object("menubutton")
+        self._menubutton_items = {}
+        for widget in builder.get_object("menu").get_children():
+            self._menubutton_items[Gtk.Buildable.get_name(widget)] = widget
+
+        self._headerbar.pack_end(menubutton)
+        self._headerbar.set_show_close_button(True)
+        self._headerbar.show_all()
+        self.set_titlebar(self._headerbar)
 
         # Set up our main containers, in the order documented above
         self.vpaned = Gtk.VPaned()  # Separates the timeline from tabs+viewer
@@ -394,13 +298,16 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # Now, the lower part: the timeline
         self.timeline_ui = TimelineContainer(self, self.app, self.uimanager)
         self.timeline_ui.setProjectManager(self.app.projectManager)
-
         self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
+
+        # Enable our shortcuts for HeaderBar buttons and menu items:
+        self._set_keyboard_shortcuts()
 
         # Identify widgets for AT-SPI, making our test suite easier to develop
         # These will show up in sniff, accerciser, etc.
         self.get_accessible().set_name("main window")
-        self.toolbar.get_accessible().set_name("main toolbar")
+        self._headerbar.get_accessible().set_name("headerbar")
+        menubutton.get_accessible().set_name("main menu button")
         self.vpaned.get_accessible().set_name("contents")
         self.mainhpaned.get_accessible().set_name("upper half")
         self.secondhpaned.get_accessible().set_name("tabs")
@@ -456,6 +363,74 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     def focusTimeline(self):
         self.timeline_ui.grab_focus()
 
+    def _create_headerbar_buttons(self):
+        self.undo_button = Gtk.Button.new_from_icon_name("edit-undo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+        self.undo_button.set_always_show_image(True)
+        self.undo_button.set_label(_("Undo"))
+        self.undo_button.connect("clicked", self._undoCb)
+
+        self.redo_button = Gtk.Button.new_from_icon_name("edit-redo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+        self.redo_button.set_always_show_image(True)
+        self.redo_button.set_label(_("Redo"))
+        self.redo_button.connect("clicked", self._redoCb)
+
+        separator = Gtk.Separator()
+
+        self.save_button = Gtk.Button.new_from_icon_name("document-save", Gtk.IconSize.LARGE_TOOLBAR)
+        self.save_button.set_always_show_image(True)
+        self.save_button.set_label(_("Save"))
+        self.save_button.connect("clicked", self._saveProjectCb)
+
+        render_icon = Gtk.Image.new_from_file(os.path.join(get_pixmap_dir(), "pitivi-render-24.png"))
+        self.render_button = Gtk.Button()
+        self.render_button.set_image(render_icon)
+        self.render_button.set_always_show_image(True)
+        self.render_button.set_label(_("Render"))
+        self.render_button.set_tooltip_text(_("Export your project as a finished movie"))
+        self.render_button.set_sensitive(False)  # The only one we have to set.
+        self.render_button.connect("clicked", self._renderCb)
+
+        self._headerbar.pack_start(self.undo_button)
+        self._headerbar.pack_start(self.redo_button)
+        self._headerbar.pack_start(separator)
+        self._headerbar.pack_start(self.save_button)
+        self._headerbar.pack_start(self.render_button)
+
+    def _set_keyboard_shortcuts(self):
+        """
+        You can't rely on Glade/GTKBuilder to set accelerators properly
+        on menu items or buttons, it just doesn't work.
+        GAction and GActionGroup are overkill and a massive PITA.
+
+        This code keeps things *really* simple, and it actually works.
+        Bonus points: the accelerators disable themselves when buttons or
+        menu items are set_sensitive(False), which is exactly what we want.
+        """
+        ctrl = Gdk.ModifierType.CONTROL_MASK
+        shift = Gdk.ModifierType.SHIFT_MASK
+        menus = self._menubutton_items
+        self.__set_accelerator(menus["menu_new"], Gdk.KEY_n, ctrl)
+        self.__set_accelerator(menus["menu_open"], Gdk.KEY_o, ctrl)
+        self.__set_accelerator(menus["menu_save_as"], Gdk.KEY_s, ctrl | shift)
+        self.__set_accelerator(menus["menu_help"], Gdk.KEY_F1)
+        self.__set_accelerator(self.undo_button, Gdk.KEY_z, ctrl)
+        self.__set_accelerator(self.redo_button, Gdk.KEY_z, ctrl | shift)
+        self.__set_accelerator(self.save_button, Gdk.KEY_s, ctrl)
+
+    def __set_accelerator(self, widget, key, mods=0, flags=Gtk.AccelFlags.VISIBLE):
+        """
+        Convenience function to deal with the madness of widget.add_accelerator
+        to set a keyboard shortcut onto a GTK Widget. It determines the proper
+        widget signal to emit and allows using default modifiers and flags.
+        """
+        accel_group = self.uimanager.get_accel_group()
+        if type(widget) in [Gtk.Button, Gtk.ToolItem]:
+            signal = "clicked"
+        else:
+            signal = "activate"
+
+        widget.add_accelerator(signal, accel_group, key, mods, flags)
+
 ## Missing Plugin Support
 
     def _installPlugins(self, details, missingPluginsCallback):
@@ -506,7 +481,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             preview_window.preview()
 
     def _projectChangedCb(self, unused_project):
-        self.main_actions.get_action("SaveProject").set_sensitive(True)
+        self.save_button.set_sensitive(True)
         self.updateTitle()
 
     def _mediaLibrarySourceRemovedCb(self, unused_project, asset):
@@ -556,10 +531,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         from pitivi.project import ProjectSettingsDialog
         ProjectSettingsDialog(self, self.app.current_project).window.run()
         self.updateTitle()
-
-    def _quitCb(self, unused_action):
-        self._saveWindowSettings()
-        self.app.shutdown()
 
     def _userManualCb(self, unused_action):
         show_user_manual()
@@ -674,6 +645,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.prefsdialog = PreferencesDialog(self.app)
         self.prefsdialog.run()
 
+## Project management callbacks
     def _projectManagerNewProjectLoadedCb(self, projectManager, unused_project, unused_fully_loaded):
         """
         Once a new project has been loaded, wait for media library's
@@ -690,17 +662,15 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         #self._syncDoUndo(self.app.action_log)
         self.updateTitle()
 
-        # Enable export functionality
-        self.main_actions.get_action("ExportProject").set_sensitive(True)
         if self._missingUriOnLoading:
             self.app.current_project.setModificationState(True)
-            self.main_actions.get_action("SaveProject").set_sensitive(True)
+            self.save_button.set_sensitive(True)
             self._missingUriOnLoading = False
 
         if projectManager.disable_save is True:
             # Special case: we enforce "Save as", but the normal "Save" button
             # redirects to it if needed, so we still want it to be enabled:
-            self.main_actions.get_action("SaveProject").set_sensitive(True)
+            self.save_button.set_sensitive(True)
 
         if self.app.current_project.timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
@@ -731,7 +701,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         #self._syncDoUndo(self.app.action_log)
         self.updateTitle()
 
-        self.main_actions.get_action("SaveProject").set_sensitive(False)
+        self.save_button.set_sensitive(False)
         if uri:
             self.recent_manager.add_item(uri)
 
@@ -831,6 +801,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.medialibrary.storemodel.clear()
         self.timeline_ui.setProject(None)
         self.clipconfig.timeline = None
+        self.render_button.set_sensitive(False)
         return False
 
     def _projectManagerRevertingToSavedCb(self, unused_project_manager, unused_project):
@@ -982,6 +953,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         project.connect("asset-removed", self._mediaLibrarySourceRemovedCb)
         project.connect("project-changed", self._projectChangedCb)
 
+## Undo/redo methods
+
     def _actionLogCommit(self, action_log, unused_stack, nested):
         if nested:
             return
@@ -998,21 +971,17 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self._syncDoUndo(action_log)
 
     def _syncDoUndo(self, action_log):
-        undo_action = self.main_actions.get_action("Undo")
         can_undo = bool(action_log.undo_stacks)
-        undo_action.set_sensitive(can_undo)
+        self.undo_button.set_sensitive(can_undo)
 
         dirty = action_log.dirty()
-        save_action = self.main_actions.get_action("SaveProject")
-        save_action.set_sensitive(dirty)
+        self.save_button.set_sensitive(dirty)
         if self.app.current_project.uri is not None:
-            revert_action = self.main_actions.get_action("RevertToSavedProject")
-            revert_action.set_sensitive(dirty)
+            self._menubutton_items["menu_revert_to_saved"].set_sensitive(dirty)
         self.app.current_project.setModificationState(dirty)
 
-        redo_action = self.main_actions.get_action("Redo")
         can_redo = bool(action_log.redo_stacks)
-        redo_action.set_sensitive(can_redo)
+        self.redo_button.set_sensitive(can_redo)
         self.updateTitle()
 
 ## Pitivi current project callbacks
@@ -1058,6 +1027,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         return res
 
     def _timelineDurationChangedCb(self, timeline, unused_duration):
+        """
+        When a clip is inserted into a blank timeline, enable the render button.
+        This callback is not triggered by loading a project.
+        """
         duration = timeline.get_duration()
         self.debug("Timeline duration changed to %s", duration)
         self.render_button.set_sensitive(duration > 0)
@@ -1149,6 +1122,50 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         chooser.destroy()
         return ret
 
+    def _screenshotCb(self, unused_action):
+        """
+        Export a snapshot of the current frame as an image file.
+        """
+        foo = self._showSaveScreenshotDialog()
+        if foo:
+            path, mime = foo[0], foo[1]
+            self.app.current_project.pipeline.save_thumbnail(-1, -1, mime, path)
+
+    def _showSaveScreenshotDialog(self):
+        """
+        Show a filechooser dialog asking the user where to save the snapshot
+        of the current frame and what file type to use.
+
+        Returns a list containing the full path and the mimetype if successful,
+        returns none otherwise.
+        """
+        chooser = Gtk.FileChooserDialog(title=_("Save As..."),
+            transient_for=self, action=Gtk.FileChooserAction.SAVE)
+        chooser.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
+        chooser.set_icon_name("pitivi")
+        chooser.set_select_multiple(False)
+        chooser.set_current_name(_("Untitled"))
+        chooser.props.do_overwrite_confirmation = True
+        formats = {_("PNG image"): ["image/png", ("png",)],
+                _("JPEG image"): ["image/jpeg", ("jpg", "jpeg")]}
+        for format in formats:
+            filt = Gtk.FileFilter()
+            filt.set_name(format)
+            filt.add_mime_type(formats.get(format)[0])
+            chooser.add_filter(filt)
+        response = chooser.run()
+        if response == Gtk.ResponseType.OK:
+            chosen_format = formats.get(chooser.get_filter().get_name())
+            chosen_ext = chosen_format[1][0]
+            chosen_mime = chosen_format[0]
+            uri = os.path.join(chooser.get_current_folder(), chooser.get_filename())
+            ret = [uri + "." + chosen_ext, chosen_mime]
+        else:
+            ret = None
+        chooser.destroy()
+        return ret
+
     def updateTitle(self):
         name = touched = ""
         if self.app.current_project:
@@ -1159,6 +1176,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             if self.app.current_project.hasUnsavedModifications():
                 touched = "*"
         title = "%s%s — %s" % (touched, name, APPNAME)
+        self._headerbar.set_title(title)
         self.set_title(title)
 
 

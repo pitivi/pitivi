@@ -175,7 +175,7 @@ HARD_DEPENDENCIES = (CairoDependency("1.10.0"),
                      GtkOrClutterDependency("ClutterGst", "2.0.0"),
                      GstDependency("Gst", "1.2.0"),
                      GstDependency("GES", "1.2.0.0"),
-                     GtkOrClutterDependency("Gtk", "3.8.0"),
+                     GtkOrClutterDependency("Gtk", "3.10.0"),
                      ClassicDependency("numpy", None),
                      GIDependency("Gio", None),
                      GstPluginDependency("gnonlin", "1.2.0"))
