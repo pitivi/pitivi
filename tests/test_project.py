@@ -22,6 +22,7 @@ import tempfile
 
 from unittest import TestCase
 
+from gi.repository import GES
 from gi.repository import GLib
 
 from pitivi.project import Project
@@ -45,9 +46,10 @@ class TestProjectLoading(TestCase):
 
         # Create a blank project and save it.
         project = Project("noname")
-        self.assertTrue(project.createTimeline())
         result = [False]
         project.connect("loaded", loaded, self.mainloop, result)
+
+        self.assertTrue(project.createTimeline())
         GLib.timeout_add_seconds(5, quit, self.mainloop)
         self.mainloop.run()
         self.assertTrue(result[0], "Blank project creation failed to trigger signal: loaded")
@@ -67,3 +69,37 @@ class TestProjectLoading(TestCase):
             self.assertTrue(result[0], "Blank project loading failed to trigger signal: loaded")
         finally:
             os.remove(xges_path)
+
+    def testAssetAddingRemovingAdding(self):
+        def loaded(project, timeline, mainloop, result, uris):
+            result[0] = True
+            project.addUris(uris)
+
+        def added(project, mainloop, result, uris):
+            result[1] = True
+            assets = project.list_assets(GES.UriClip)
+            asset = assets[0]
+            project.remove_asset(asset)
+            GLib.idle_add(readd, mainloop, result, uris)
+
+        def readd(mainloop, result, uris):
+            project.addUris(uris)
+            result[2] = True
+            mainloop.quit()
+
+        def quit(mainloop):
+            mainloop.quit()
+
+        # Create a blank project and save it.
+        project = Project("noname")
+        result = [False, False, False]
+        uris = ["file://%s/samples/tears of steel.webm" % os.path.abspath(".")]
+        project.connect("loaded", loaded, self.mainloop, result, uris)
+        project.connect("done-importing", added, self.mainloop, result, uris)
+
+        self.assertTrue(project.createTimeline())
+        GLib.timeout_add_seconds(5, quit, self.mainloop)
+        self.mainloop.run()
+        self.assertTrue(result[0], "Project creation failed to trigger signal: loaded")
+        self.assertTrue(result[1], "Asset add failed to trigger signal: done-importing")
+        self.assertTrue(result[2], "Asset re-adding failed")
