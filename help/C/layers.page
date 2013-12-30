@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#timeline"/>
-    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="complete"/>
+    <revision pkgversion="0.13.4" version="0.1" date="2013-12-30" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -13,9 +13,11 @@
     <credit type="contributor">
       <name>Mario Blättermann</name>
       <email>mariobl@gnome.org</email>
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
     </credit>
     <desc>
-      
+
     </desc>
     <license>
       <p>Creative Commons Share Alike 3.0</p>
@@ -46,7 +48,7 @@
      <section>
       <title>Adding and removing layers</title>
        <p>Layers are created and removed automatically. There is no “layer management” interface in <app>Pitivi</app> (at least, not yet).</p>
-       <p>To create a layer, drag a clip downwards until a new layer appears for it.</p>
+       <p>To create a layer, drag a clip to the middle space between two existing layers. Once the grey shadow (a thin rectangle) appears between the layers, release it.</p>
        <p>If there are no more clips on a layer, it is automatically removed. Thus, to remove a layer, simply drag its clips upwards onto another layer.</p>
      </section>
 
