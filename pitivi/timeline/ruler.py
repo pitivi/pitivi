@@ -42,13 +42,13 @@ from pitivi.utils.ui import time_to_string, beautify_length
 RULER_BACKGROUND_COLOR = (57, 63, 63)
 
 
-def setCairoColor(cr, color):
+def setCairoColor(context, color):
     if type(color) is tuple:
         # Cairo's set_source_rgb function expects values from 0.0 to 1.0
         cairo_color = map(lambda x: max(0, min(1, x / 255.0)), color)
-        cr.set_source_rgb(*cairo_color)
+        context.set_source_rgb(*cairo_color)
     else:
-        cr.set_source_rgb(float(color.red), float(color.green), float(color.blue))
+        context.set_source_rgb(float(color.red), float(color.green), float(color.blue))
 
 
 class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
@@ -155,23 +155,22 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         return False
 
-    def drawCb(self, widget, cr):
-        if self.pixbuf is not None:
-            db = self.pixbuf
+    def drawCb(self, widget, context):
+        if self.pixbuf is None:
+            self.info('No buffer to paint')
+            return False
 
-            # Create cairo context with double buffer as is DESTINATION
-            cc = cairo.Context(db)
+        pixbuf = self.pixbuf
 
-            #draw everything
-            self.drawBackground(cc)
-            self.drawRuler(cc)
-            self.drawPosition(cc)
-            db.flush()
+        # Draw on a temporary context and then copy everything.
+        drawing_context = cairo.Context(pixbuf)
+        self.drawBackground(drawing_context)
+        self.drawRuler(drawing_context)
+        self.drawPosition(drawing_context)
+        pixbuf.flush()
 
-            cr.set_source_surface(self.pixbuf, 0.0, 0.0)
-            cr.paint()
-        else:
-            self.info('No buffer to paint buffer')
+        context.set_source_surface(self.pixbuf, 0.0, 0.0)
+        context.paint()
 
         return False
 
@@ -229,22 +228,24 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
 ## Drawing methods
 
-    def drawBackground(self, cr):
+    def drawBackground(self, context):
         style = self.get_style_context()
-        setCairoColor(cr, RULER_BACKGROUND_COLOR)
-        cr.rectangle(0, 0, cr.get_target().get_width(), cr.get_target().get_height())
-        cr.fill()
+        setCairoColor(context, RULER_BACKGROUND_COLOR)
+        width = context.get_target().get_width()
+        height = context.get_target().get_height()
+        context.rectangle(0, 0, width, height)
+        context.fill()
         offset = int(self.nsToPixel(Gst.CLOCK_TIME_NONE)) - self.pixbuf_offset
         if offset > 0:
-            setCairoColor(cr, style.get_background_color(Gtk.StateFlags.ACTIVE))
-            cr.rectangle(0, 0, int(offset), cr.get_target().get_height())
-            cr.fill()
+            setCairoColor(context, style.get_background_color(Gtk.StateFlags.ACTIVE))
+            context.rectangle(0, 0, int(offset), context.get_target().get_height())
+            context.fill()
 
-    def drawRuler(self, cr):
+    def drawRuler(self, context):
         # FIXME use system defaults
-        cr.set_font_face(cairo.ToyFontFace("Cantarell"))
-        cr.set_font_size(13)
-        textwidth = cr.text_extents(time_to_string(0))[2]
+        context.set_font_face(cairo.ToyFontFace("Cantarell"))
+        context.set_font_size(13)
+        textwidth = context.text_extents(time_to_string(0))[2]
 
         for scale in self.scale:
             spacing = Zoomable.zoomratio * scale
@@ -252,34 +253,34 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                 break
 
         offset = self.pixbuf_offset % spacing
-        self.drawFrameBoundaries(cr)
-        self.drawTicks(cr, offset, spacing, scale)
-        self.drawTimes(cr, offset, spacing, scale)
+        self.drawFrameBoundaries(context)
+        self.drawTicks(context, offset, spacing, scale)
+        self.drawTimes(context, offset, spacing, scale)
 
-    def drawTick(self, cr, paintpos, height):
+    def drawTick(self, context, paintpos, height):
         # We need to use 0.5 pixel offsets to get a sharp 1 px line in cairo
         paintpos = int(paintpos - 0.5) + 0.5
-        height = int(cr.get_target().get_height() * (1 - height))
+        height = int(context.get_target().get_height() * (1 - height))
         style = self.get_style_context()
-        setCairoColor(cr, style.get_color(Gtk.StateType.NORMAL))
-        cr.set_line_width(1)
-        cr.move_to(paintpos, height)
-        cr.line_to(paintpos, cr.get_target().get_height())
-        cr.close_path()
-        cr.stroke()
+        setCairoColor(context, style.get_color(Gtk.StateType.NORMAL))
+        context.set_line_width(1)
+        context.move_to(paintpos, height)
+        context.line_to(paintpos, context.get_target().get_height())
+        context.close_path()
+        context.stroke()
 
-    def drawTicks(self, cr, offset, spacing, scale):
+    def drawTicks(self, context, offset, spacing, scale):
         for subdivide, height in self.subdivide:
             spc = spacing / float(subdivide)
             if spc < self.min_tick_spacing:
                 break
             paintpos = -spacing + 0.5
             paintpos += spacing - offset
-            while paintpos < cr.get_target().get_width():
-                self.drawTick(cr, paintpos, height)
+            while paintpos < context.get_target().get_width():
+                self.drawTick(context, paintpos, height)
                 paintpos += spc
 
-    def drawTimes(self, cr, offset, spacing, scale):
+    def drawTimes(self, context, offset, spacing, scale):
         # figure out what the optimal offset is
         interval = long(Gst.SECOND * scale)
         seconds = self.pixelToNs(self.pixbuf_offset)
@@ -288,21 +289,21 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             seconds = seconds - (seconds % interval) + interval
             paintpos += spacing - offset
 
-        while paintpos < cr.get_target().get_width():
+        while paintpos < context.get_target().get_width():
             if paintpos < self.nsToPixel(Gst.CLOCK_TIME_NONE):
                 state = Gtk.StateType.ACTIVE
             else:
                 state = Gtk.StateType.NORMAL
             timevalue = time_to_string(long(seconds))
             style = self.get_style_context()
-            setCairoColor(cr, style.get_color(state))
-            x_bearing, y_bearing = cr.text_extents("0")[:2]
-            cr.move_to(int(paintpos), 1 - y_bearing)
-            cr.show_text(timevalue)
+            setCairoColor(context, style.get_color(state))
+            x_bearing, y_bearing = context.text_extents("0")[:2]
+            context.move_to(int(paintpos), 1 - y_bearing)
+            context.show_text(timevalue)
             paintpos += spacing
             seconds += interval
 
-    def drawFrameBoundaries(self, cr):
+    def drawFrameBoundaries(self, context):
         """
         Draw the alternating rectangles that represent the project frames at
         high zoom levels. These are based on the framerate set in the project
@@ -313,7 +314,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             return
 
         offset = self.pixbuf_offset % frame_width
-        height = cr.get_target().get_height()
+        height = context.get_target().get_height()
         y = int(height - self.frame_height)
         # INSENSITIVE is a dark shade of gray, but lacks contrast
         # SELECTED will be bright blue and more visible to represent frames
@@ -323,12 +324,12 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         frame_num = int(self.pixelToNs(self.pixbuf_offset) * float(self.frame_rate) / Gst.SECOND)
         paintpos = self.pixbuf_offset - offset
-        max_pos = cr.get_target().get_width() + self.pixbuf_offset
+        max_pos = context.get_target().get_width() + self.pixbuf_offset
         while paintpos < max_pos:
             paintpos = self.nsToPixel(1 / float(self.frame_rate) * Gst.SECOND * frame_num)
-            setCairoColor(cr, states[(frame_num + 1) % 2])
-            cr.rectangle(0.5 + paintpos - self.pixbuf_offset, y, frame_width, height)
-            cr.fill()
+            setCairoColor(context, states[(frame_num + 1) % 2])
+            context.rectangle(0.5 + paintpos - self.pixbuf_offset, y, frame_width, height)
+            context.fill()
             frame_num += 1
 
     def drawPosition(self, context):
