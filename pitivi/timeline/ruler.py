@@ -141,8 +141,9 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
 ## Gtk.Widget overrides
     def configureEventCb(self, widget, event, data=None):
-        self.debug("Configuring, height %d, width %d",
-            widget.get_allocated_width(), widget.get_allocated_height())
+        width = widget.get_allocated_width()
+        height = widget.get_allocated_height()
+        self.debug("Configuring, height %d, width %d", width, height)
 
         # Destroy previous buffer
         if self.pixbuf is not None:
@@ -150,8 +151,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             self.pixbuf = None
 
         # Create a new buffer
-        self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32,
-                widget.get_allocated_width(), widget.get_allocated_height())
+        self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
 
         return False
 
