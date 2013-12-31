@@ -262,7 +262,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         paintpos = int(paintpos - 0.5) + 0.5
         height = int(context.get_target().get_height() * (1 - height))
         style = self.get_style_context()
-        setCairoColor(context, style.get_color(Gtk.StateType.NORMAL))
+        setCairoColor(context, style.get_color(Gtk.StateFlags.NORMAL))
         context.set_line_width(1)
         context.move_to(paintpos, height)
         context.line_to(paintpos, context.get_target().get_height())
@@ -291,9 +291,9 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         while paintpos < context.get_target().get_width():
             if paintpos < self.nsToPixel(Gst.CLOCK_TIME_NONE):
-                state = Gtk.StateType.ACTIVE
+                state = Gtk.StateFlags.ACTIVE
             else:
-                state = Gtk.StateType.NORMAL
+                state = Gtk.StateFlags.NORMAL
             timevalue = time_to_string(long(seconds))
             style = self.get_style_context()
             setCairoColor(context, style.get_color(state))
