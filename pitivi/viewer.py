@@ -137,9 +137,9 @@ class ViewerContainer(Gtk.VBox, Loggable):
         @type pipeline: L{Pipeline}.
         @param position: Optional position to seek to initially.
         """
-        self.debug("self.pipeline: %r", self.pipeline)
         self._disconnectFromPipeline()
 
+        self.debug("New pipeline: %r", pipeline)
         self.pipeline = pipeline
         self.pipeline.pause()
         self.seeker.seek(position)
@@ -153,7 +153,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self._setUiActive()
 
     def _disconnectFromPipeline(self):
-        self.debug("pipeline: %r", self.pipeline)
+        self.debug("Previous pipeline: %r", self.pipeline)
         if self.pipeline is None:
             # silently return, there's nothing to disconnect from
             return
@@ -187,6 +187,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
     def _videoRealized(self, widget):
         if widget == self.target:
+            self.log("Widget realized: %s", widget)
             self._switch_output_window()
 
     def _createUi(self):
@@ -475,7 +476,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
         This is meant to be called by mainwindow.
         """
-        self.info("current state changed : %s", state)
         if int(state) == int(Gst.State.PLAYING):
             self.playpause_button.setPause()
             self.system.inhibitScreensaver(self.INHIBIT_REASON)
@@ -493,9 +493,11 @@ class ViewerContainer(Gtk.VBox, Loggable):
             return
 
         if self.target.get_realized():
+            self.debug("Connecting the sink pipeline to the viewer's texture")
             self.sink.props.texture = self.target.texture
         else:
             # Show the widget and wait for the realized callback
+            self.log("Target is not realized, showing the widget")
             self.target.show()
 
 
