@@ -293,6 +293,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             if space < MIN_TICK_SPACING_PIXELS:
                 break
             paintpos = 0.5 - offset
+            setCairoColor(context, self._color_normal)
             while paintpos < context.get_target().get_width():
                 self._drawTick(context, paintpos, height_ratio)
                 paintpos += space
@@ -302,7 +303,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         paintpos = int(paintpos - 0.5) + 0.5
         target_height = context.get_target().get_height()
         y = int(target_height * (1 - height_ratio))
-        setCairoColor(context, self._color_normal)
         context.set_line_width(1)
         context.move_to(paintpos, y)
         context.line_to(paintpos, target_height)
