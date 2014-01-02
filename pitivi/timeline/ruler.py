@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
 #
 #       pitivi/timeline/ruler.py
 #
 # Copyright (c) 2006, Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2014, Alex Băluț <alexandru.balut@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -107,6 +109,16 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.callback_id = None
         self.callback_id_scroll = None
         self.set_size_request(0, 25)
+
+        style = self.get_style_context()
+        color_normal = style.get_color(Gtk.StateFlags.NORMAL)
+        color_insensitive = style.get_color(Gtk.StateFlags.INSENSITIVE)
+        self._color_normal = color_normal
+        self._color_dimmed = Gdk.RGBA(
+            *[(x * 3 + y * 2) / 5
+              for x, y in ((color_normal.red, color_insensitive.red),
+                           (color_normal.green, color_insensitive.green),
+                           (color_normal.blue, color_insensitive.blue))])
 
     def _focusInCb(self, unused_widget, unused_arg):
         self.log("Ruler has grabbed focus")
@@ -295,12 +307,30 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         style = self.get_style_context()
         setCairoColor(context, style.get_color(state))
         y_bearing = context.text_extents("0")[1]
+
+        def split(x):
+            # Seven elements: h : mm : ss . mmm
+            # Using negative indices because the first element (hour)
+            # can have a variable length.
+            return x[:-10], x[-10], x[-9:-7], x[-7], x[-6:-4], x[-4], x[-3:]
+
+        previous_time = split(time_to_string(max(0, seconds - interval)))
         while paintpos < context.get_target().get_width():
-            timevalue = time_to_string(long(seconds))
             context.move_to(int(paintpos), 1 - y_bearing)
-            context.show_text(timevalue)
+            current_time = split(time_to_string(long(seconds)))
+            self._drawTime(context, current_time, previous_time)
+            previous_time = current_time
             paintpos += spacing
             seconds += interval
+
+    def _drawTime(self, context, current, previous):
+        for element, previous_element in zip(current, previous):
+            if element == previous_element:
+                color = self._color_dimmed
+            else:
+                color = self._color_normal
+            setCairoColor(context, color)
+            context.show_text(element)
 
     def drawFrameBoundaries(self, context):
         """
