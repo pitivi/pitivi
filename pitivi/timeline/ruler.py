@@ -312,10 +312,10 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
     def drawTimes(self, context, offset, spacing, scale):
         # figure out what the optimal offset is
         interval = long(Gst.SECOND * scale)
-        seconds = self.pixelToNs(self.pixbuf_offset)
+        current_time = self.pixelToNs(self.pixbuf_offset)
         paintpos = TIMES_LEFT_MARGIN_PIXELS
         if offset > 0:
-            seconds = seconds - (seconds % interval) + interval
+            current_time = current_time - (current_time % interval) + interval
             paintpos += spacing - offset
 
         state = Gtk.StateFlags.NORMAL
@@ -329,14 +329,15 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             # can have a variable length.
             return x[:-10], x[-10], x[-9:-7], x[-7], x[-6:-4], x[-4], x[-3:]
 
-        previous_time = split(time_to_string(max(0, seconds - interval)))
-        while paintpos < context.get_target().get_width():
+        previous = split(time_to_string(max(0, current_time - interval)))
+        width = context.get_target().get_width()
+        while paintpos < width:
             context.move_to(int(paintpos), 1 - y_bearing)
-            current_time = split(time_to_string(long(seconds)))
-            self._drawTime(context, current_time, previous_time)
-            previous_time = current_time
+            current = split(time_to_string(long(current_time)))
+            self._drawTime(context, current, previous)
+            previous = current
             paintpos += spacing
-            seconds += interval
+            current_time += interval
 
     def _drawTime(self, context, current, previous):
         for element, previous_element in zip(current, previous):
