@@ -71,6 +71,9 @@ def setCairoColor(context, color):
 class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
     """
     Widget for displaying the ruler.
+
+    Displays a series of consecutive intervals. For each interval its beginning
+    time is shown. If zoomed in enough, shows the frames in alternate colors.
     """
 
     __gsignals__ = {
@@ -268,17 +271,21 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # FIXME use system defaults
         context.set_font_face(cairo.ToyFontFace("Cantarell"))
         context.set_font_size(13)
-        textwidth = context.text_extents(time_to_string(0))[2]
 
-        for scale in self.scales:
-            spacing = Zoomable.zoomratio * scale
-            if spacing >= textwidth * 1.5:
-                break
-
+        spacing, scale = self._getSpacing(context)
         offset = self.pixbuf_offset % spacing
         self.drawFrameBoundaries(context)
         self.drawTicks(context, offset, spacing)
         self.drawTimes(context, offset, spacing, scale)
+
+    def _getSpacing(self, context):
+        textwidth = context.text_extents(time_to_string(0))[2]
+        zoom = Zoomable.zoomratio
+        for scale in self.scales:
+            spacing = scale * zoom
+            if spacing >= textwidth * 1.5:
+                return spacing, scale
+        raise Exception("Failed to find an interval size for textwidth:%s, zoomratio:%s" % (textwidth, Zoomable.zoomratio))
 
     def drawTicks(self, context, offset, spacing):
         for count_per_interval, height_ratio in TICK_TYPES:
