@@ -21,9 +21,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-"""
-Widget for the complex view ruler
-"""
 import cairo
 
 from gi.repository import Gtk
@@ -43,6 +40,22 @@ from pitivi.utils.ui import time_to_string, beautify_length
 # There's *no way* to get the GTK3 theme's bg color there (it's always black)
 RULER_BACKGROUND_COLOR = (57, 63, 63)
 
+# A series of valid interval lengths in seconds.
+SCALES = (0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 3600)
+
+# The minimum distance between adjacent ticks.
+MIN_TICK_SPACING_PIXELS = 3
+# (count per interval, height ratio) tuples determining how the ticks appear.
+TICK_TYPES = ((1, 1.0), (2, 0.5), (10, .25))
+
+# For displaying the times a bit to the right.
+TIMES_LEFT_MARGIN_PIXELS = 3
+
+# The minimum width for a frame to be displayed.
+FRAME_MIN_WIDTH_PIXELS = 5
+# How short it should be.
+FRAME_HEIGHT_PIXELS = 5
+
 
 def setCairoColor(context, color):
     if type(color) is Gdk.RGBA:
@@ -56,6 +69,9 @@ def setCairoColor(context, color):
 
 
 class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
+    """
+    Widget for displaying the ruler.
+    """
 
     __gsignals__ = {
         "button-press-event": "override",
@@ -65,10 +81,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         "seek": (GObject.SignalFlags.RUN_LAST, None,
                 [GObject.TYPE_UINT64])
     }
-
-    min_tick_spacing = 3
-    scale = [0, 0, 0, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 3600]
-    subdivide = ((1, 1.0), (2, 0.5), (10, .25))
 
     def __init__(self, instance, hadj):
         Gtk.DrawingArea.__init__(self)
@@ -99,8 +111,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         self.position = 0  # In nanoseconds
         self.pressed = False
-        self.min_frame_spacing = 5.0
-        self.frame_height = 5.0
         self.frame_rate = Gst.Fraction(1 / 1)
         self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
         self.connect('draw', self.drawCb)
@@ -118,6 +128,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
               for x, y in ((color_normal.red, color_insensitive.red),
                            (color_normal.green, color_insensitive.green),
                            (color_normal.blue, color_insensitive.blue))])
+
+        self.scales = SCALES
 
     def _focusInCb(self, unused_widget, unused_arg):
         self.log("Ruler has grabbed focus")
@@ -235,9 +247,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         """
         self.frame_rate = rate
         self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
-        self.scale[0] = float(2 / rate)
-        self.scale[1] = float(5 / rate)
-        self.scale[2] = float(10 / rate)
+        self.scales = (float(2 / rate), float(5 / rate), float(10 / rate)) + SCALES
 
 ## Drawing methods
 
@@ -260,32 +270,31 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         context.set_font_size(13)
         textwidth = context.text_extents(time_to_string(0))[2]
 
-        for scale in self.scale:
+        for scale in self.scales:
             spacing = Zoomable.zoomratio * scale
             if spacing >= textwidth * 1.5:
                 break
 
         offset = self.pixbuf_offset % spacing
         self.drawFrameBoundaries(context)
-        self.drawTicks(context, offset, spacing, scale)
+        self.drawTicks(context, offset, spacing)
         self.drawTimes(context, offset, spacing, scale)
 
-    def drawTicks(self, context, offset, spacing, scale):
-        for subdivide, height in self.subdivide:
-            spc = spacing / float(subdivide)
-            if spc < self.min_tick_spacing:
+    def drawTicks(self, context, offset, spacing):
+        for count_per_interval, height_ratio in TICK_TYPES:
+            space = float(spacing) / count_per_interval
+            if space < MIN_TICK_SPACING_PIXELS:
                 break
-            paintpos = -spacing + 0.5
-            paintpos += spacing - offset
+            paintpos = 0.5 - offset
             while paintpos < context.get_target().get_width():
-                self._drawTick(context, paintpos, height)
-                paintpos += spc
+                self._drawTick(context, paintpos, height_ratio)
+                paintpos += space
 
-    def _drawTick(self, context, paintpos, tick_height):
+    def _drawTick(self, context, paintpos, height_ratio):
         # We need to use 0.5 pixel offsets to get a sharp 1 px line in cairo
         paintpos = int(paintpos - 0.5) + 0.5
         target_height = context.get_target().get_height()
-        y = int(target_height * (1 - tick_height))
+        y = int(target_height * (1 - height_ratio))
         setCairoColor(context, self._color_normal)
         context.set_line_width(1)
         context.move_to(paintpos, y)
@@ -297,7 +306,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # figure out what the optimal offset is
         interval = long(Gst.SECOND * scale)
         seconds = self.pixelToNs(self.pixbuf_offset)
-        paintpos = 2
+        paintpos = TIMES_LEFT_MARGIN_PIXELS
         if offset > 0:
             seconds = seconds - (seconds % interval) + interval
             paintpos += spacing - offset
@@ -338,12 +347,12 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         settings, not the actual frames on a video codec level.
         """
         frame_width = self.nsToPixel(self.ns_per_frame)
-        if not frame_width >= self.min_frame_spacing:
+        if not frame_width >= FRAME_MIN_WIDTH_PIXELS:
             return
 
         offset = self.pixbuf_offset % frame_width
         height = context.get_target().get_height()
-        y = int(height - self.frame_height)
+        y = int(height - FRAME_HEIGHT_PIXELS)
         # INSENSITIVE is a dark shade of gray, but lacks contrast
         # SELECTED will be bright blue and more visible to represent frames
         style = self.get_style_context()
