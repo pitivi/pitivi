@@ -271,18 +271,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.drawTicks(context, offset, spacing, scale)
         self.drawTimes(context, offset, spacing, scale)
 
-    def drawTick(self, context, paintpos, height):
-        # We need to use 0.5 pixel offsets to get a sharp 1 px line in cairo
-        paintpos = int(paintpos - 0.5) + 0.5
-        height = int(context.get_target().get_height() * (1 - height))
-        style = self.get_style_context()
-        setCairoColor(context, style.get_color(Gtk.StateFlags.NORMAL))
-        context.set_line_width(1)
-        context.move_to(paintpos, height)
-        context.line_to(paintpos, context.get_target().get_height())
-        context.close_path()
-        context.stroke()
-
     def drawTicks(self, context, offset, spacing, scale):
         for subdivide, height in self.subdivide:
             spc = spacing / float(subdivide)
@@ -291,8 +279,20 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             paintpos = -spacing + 0.5
             paintpos += spacing - offset
             while paintpos < context.get_target().get_width():
-                self.drawTick(context, paintpos, height)
+                self._drawTick(context, paintpos, height)
                 paintpos += spc
+
+    def _drawTick(self, context, paintpos, tick_height):
+        # We need to use 0.5 pixel offsets to get a sharp 1 px line in cairo
+        paintpos = int(paintpos - 0.5) + 0.5
+        target_height = context.get_target().get_height()
+        y = int(target_height * (1 - tick_height))
+        setCairoColor(context, self._color_normal)
+        context.set_line_width(1)
+        context.move_to(paintpos, y)
+        context.line_to(paintpos, target_height)
+        context.close_path()
+        context.stroke()
 
     def drawTimes(self, context, offset, spacing, scale):
         # figure out what the optimal offset is
