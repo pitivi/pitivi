@@ -66,7 +66,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                 [GObject.TYPE_UINT64])
     }
 
-    border = 0
     min_tick_spacing = 3
     scale = [0, 0, 0, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 3600]
     subdivide = ((1, 1.0), (2, 0.5), (10, .25))
@@ -298,7 +297,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # figure out what the optimal offset is
         interval = long(Gst.SECOND * scale)
         seconds = self.pixelToNs(self.pixbuf_offset)
-        paintpos = float(self.border) + 2
+        paintpos = 2
         if offset > 0:
             seconds = seconds - (seconds % interval) + interval
             paintpos += spacing - offset
@@ -363,7 +362,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def drawPosition(self, context):
         # a simple RED line will do for now
-        xpos = self.nsToPixel(self.position) + self.border - self.pixbuf_offset
+        xpos = self.nsToPixel(self.position) - self.pixbuf_offset
         context.save()
         context.set_line_width(1.5)
         context.set_source_rgb(1.0, 0, 0)
