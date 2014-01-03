@@ -727,7 +727,7 @@ msgstr "Klíčový snímek"
 
 #: ../pitivi/mainwindow.py:141 ../pitivi/timeline/timeline.py:995
 msgid "Ungroup"
-msgstr "Zrušit skupinu"
+msgstr "Zrušit seskupení"
 
 #. Translators: This is an action, the title of a button
 #: ../pitivi/mainwindow.py:143 ../pitivi/timeline/timeline.py:999
