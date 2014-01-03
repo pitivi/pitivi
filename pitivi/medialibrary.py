@@ -35,6 +35,7 @@ from gi.repository import GdkPixbuf
 
 import os
 import time
+import threading
 
 from urllib import unquote
 from gettext import ngettext, gettext as _
@@ -304,6 +305,10 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.pack_start(self.treeview_scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, True, 0)
 
+        # We need to instanciate the thumbnail factory on the main thread...
+        size_normal = GnomeDesktop.DesktopThumbnailSize.NORMAL
+        self.thumbnailer = GnomeDesktop.DesktopThumbnailFactory.new(size_normal)
+
     def getAssetForUri(self, uri):
         # Sanitization
         uri = filter(lambda c: c != '\n' and c != '\r', uri)
@@ -537,71 +542,25 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             except GLib.GError:
                 return None, None
 
-    def _gen_missing_thumbs(self, thumbnailer):
-        # Some benchmarks to ensure that naïvely looping the model isn't too bad
-        start_time = time.time()
-        time_spent_generating_thumbs = 0.0
-        time_spent_searching_model = 0.0
-        time_spent_updating_model = 0.0
-        amount_of_thumbs_total = len(self._missing_thumbs)
-        amount_of_thumbs_processed = 0
-
-        for uri in self._missing_thumbs:
-            # This way of getting the mimetype feels awfully convoluted but
-            # seems to be the proper/reliable way in a GNOME context
-            _file = Gio.file_new_for_uri(uri)
-            _info = _file.query_info(attributes="standard::*",
+    def _generateThumbnails(self, uri):
+        # This way of getting the mimetype feels awfully convoluted but
+        # seems to be the proper/reliable way in a GNOME context
+        asset_file = Gio.file_new_for_uri(uri)
+        info = asset_file.query_info(attributes="standard::*",
                                     flags=Gio.FileQueryInfoFlags.NONE,
                                     cancellable=None)
-            mime = Gio.content_type_get_mime_type(_info.get_content_type())
-
-            mtime = os.path.getmtime(path_from_uri(uri))
-
-            _lap_start = time.time()  # for benchmarking
-            if thumbnailer.can_thumbnail(uri, mime, mtime):
-                pixbuf_128 = thumbnailer.generate_thumbnail(uri, mime)
-                if pixbuf_128:
-                    thumbnailer.save_thumbnail(pixbuf_128, uri, mtime)
-                    # We also want the "64 pixels" version, can't use
-                    # desktop_thumbnail_scale_down_pixbuf 'cause it doesn't
-                    # keep aspect ratio. Screw that, 64² will appear on restart.
-                    time_spent_generating_thumbs += (time.time() - _lap_start)
-
-                    # Now search through the model
-                    _lap2_start = time.time()
-                    _found = False
-                    for row in self.storemodel:
-                        if uri == row[COL_URI]:
-                            _found = True
-                            time_spent_searching_model += (time.time() - _lap2_start)
-                            # Finally, show the new pixbuf in the UI
-                            _lap3_start = time.time()
-                            row[COL_ICON_128] = pixbuf_128
-                            time_spent_updating_model += (time.time() - _lap3_start)
-                            amount_of_thumbs_processed += 1
-                            break
-
-                    if not _found:
-                        # Should not ever happen, but who knows...
-                        self.error("%s needed a thumbnail, but vanished from storemodel", uri)
-                        time_spent_searching_model += (time.time() - _lap2_start)
-
-                else:
-                    self.debug("Failed creating a thumbnail for %s", uri)
-            else:
-                self.debug("Thumbnailer says it can't thumbnail %s", uri)
-
-        # Don't iteratively remove items of the list you're looping onto, fool:
-        self._missing_thumbs = []
-
-        # Report the results of the benchmarks
-        self.info("%d/%d thumbs created (%.3fs to generate, "
-                "%.4fs to search the model, %.4fs to insert)",
-                amount_of_thumbs_processed,
-                amount_of_thumbs_total,
-                time_spent_generating_thumbs,
-                time_spent_searching_model,
-                time_spent_updating_model)
+        mime = Gio.content_type_get_mime_type(info.get_content_type())
+        mtime = os.path.getmtime(path_from_uri(uri))
+        if not self.thumbnailer.can_thumbnail(uri, mime, mtime):
+            self.debug("Thumbnailer says it can't thumbnail %s", uri)
+            return None
+        pixbuf_128 = self.thumbnailer.generate_thumbnail(uri, mime)
+        if not pixbuf_128:
+            self.debug("Thumbnailer failed thumbnailing %s", uri)
+            return None
+        self.thumbnailer.save_thumbnail(pixbuf_128, uri, mtime)
+        pixbuf_64 = pixbuf_128.scale_simple(64, 64, GdkPixbuf.InterpType.BILINEAR)
+        return pixbuf_128, pixbuf_64
 
     def _addAsset(self, asset):
         # 128 is the normal size for thumbnails, but for *icons* it looks insane
@@ -721,12 +680,33 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self._warning_label.set_text(text)
             self._import_warning_infobar.show_all()
 
-        if self._missing_thumbs:
-            self.info("%d thumbnails are missing, we will generate them", len(self._missing_thumbs))
-            # We need to instanciate the thumbnail factory on the main thread...
-            _size_normal = GnomeDesktop.DesktopThumbnailSize.NORMAL
-            thumbnailer = GnomeDesktop.DesktopThumbnailFactory.new(_size_normal)
-            self._gen_missing_thumbs(thumbnailer)
+        missing_thumbs = self._missing_thumbs
+        self._missing_thumbs = []
+        if missing_thumbs:
+            self.info("Generating missing thumbnails: %d", len(missing_thumbs))
+            self._thumbs_process = threading.Thread(target=MediaLibraryWidget._generateThumbnailsThread, args=(self, missing_thumbs))
+            self._thumbs_process.start()
+
+    def _generateThumbnailsThread(self, missing_thumbs):
+        for uri in missing_thumbs:
+            thumbnails = self._generateThumbnails(uri)
+            if not thumbnails:
+                continue
+            pixbuf_128, pixbuf_64 = thumbnails
+            # Search through the model for the row corresponding to the asset.
+            found = False
+            for row in self.storemodel:
+                if uri == row[COL_URI]:
+                    found = True
+                    # Finally, show the new pixbuf in the UI
+                    if pixbuf_128:
+                        row[COL_ICON_128] = pixbuf_128
+                    if pixbuf_64:
+                        row[COL_ICON_64] = pixbuf_64
+                    break
+            if not found:
+                # Can happen if the user removed the asset in the meanwhile.
+                self.log("%s needed a thumbnail, but vanished from storemodel", uri)
 
     ## Error Dialog Box callbacks
 
