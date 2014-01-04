@@ -1,13 +1,14 @@
 # Czech translation for pitivi.
 # Copyright (C) 2013 pitivi's COPYRIGHT HOLDER
 # This file is distributed under the same license as the pitivi package.
-# Marek Černocký <marek@manet.cz>, 2013.
+#
+# Marek Černocký <marek@manet.cz>, 2013, 2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2013-08-18 04:41+0000\n"
-"PO-Revision-Date: 2013-08-22 20:30+0200\n"
+"POT-Creation-Date: 2014-01-02 17:44+0000\n"
+"PO-Revision-Date: 2014-01-04 19:22+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -22,85 +23,71 @@ msgctxt "_"
 msgid "translator-credits"
 msgstr "Marek Černocký <marek@manet.cz>"
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#.
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/index.page:24(media)
+#: C/index.page:24
 msgctxt "_"
-msgid "external ref='figures/logo.png' md5='694867eec987a61b070a11a7255a6de9'"
-msgstr "external ref='figures/logo.png' md5='694867eec987a61b070a11a7255a6de9'"
+msgid "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
+msgstr "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
 
-#: C/index.page:7(info/title)
+#. (itstool) path: info/title
+#: C/index.page:7
 msgctxt "link"
 msgid "Pitivi Quick Start Manual"
 msgstr "Příručka pro rychlé seznámení s Pitivi"
 
-#: C/index.page:8(info/title)
+#. (itstool) path: info/title
+#: C/index.page:8
 msgctxt "text"
 msgid "Pitivi Quick Start Manual"
 msgstr "Příručka pro rychlé seznámení s Pitivi"
 
-#: C/index.page:11(credit/name) C/about.page:10(credit/name)
-#: C/cheatsheet.page:12(credit/name) C/codecscontainers.page:10(credit/name)
-#: C/crossfading.page:11(credit/name) C/effects.page:11(credit/name)
-#: C/effectsanimation.page:10(credit/name)
-#: C/fadeinfadeout.page:10(credit/name) C/gstreamer.page:10(credit/name)
-#: C/importingmpegts.page:11(credit/name) C/importing.page:10(credit/name)
-#: C/insertintimeline.page:10(credit/name) C/interface.page:10(credit/name)
-#: C/keyframecurves.page:10(credit/name) C/layers.page:10(credit/name)
-#: C/mainwindow.page:12(credit/name) C/makeselections.page:10(credit/name)
-#: C/medialibrary.page:10(credit/name)
-#: C/movearoundtimeline.page:10(credit/name)
-#: C/othertransitions.page:10(credit/name) C/presets.page:11(credit/name)
-#: C/projectsettings.page:10(credit/name) C/rendering.page:10(credit/name)
-#: C/saveproject.page:11(credit/name) C/savescreenshot.page:10(credit/name)
-#: C/selectunusedfiles.page:12(credit/name) C/splitting.page:10(credit/name)
-#: C/sysreq.page:11(credit/name) C/trimming.page:11(credit/name)
-#: C/usingclips.page:10(credit/name) C/welcomedialog.page:10(credit/name)
+#. (itstool) path: credit/name
+#: C/index.page:11 C/about.page:10 C/cheatsheet.page:12
+#: C/codecscontainers.page:10 C/crossfading.page:11 C/effects.page:11
+#: C/effectsanimation.page:10 C/fadeinfadeout.page:10 C/grouping.page:14
+#: C/gstreamer.page:10 C/importingmpegts.page:11 C/importing.page:10
+#: C/insertintimeline.page:10 C/interface.page:10 C/keyframecurves.page:10
+#: C/layers.page:10 C/mainwindow.page:12 C/makeselections.page:10
+#: C/medialibrary.page:10 C/movearoundtimeline.page:10
+#: C/othertransitions.page:10 C/presets.page:11 C/projectsettings.page:10
+#: C/rendering.page:10 C/saveproject.page:11 C/savescreenshot.page:10
+#: C/selectunusedfiles.page:12 C/splitting.page:10 C/sysreq.page:11
+#: C/trimming.page:11 C/usingclips.page:10 C/welcomedialog.page:10
 msgid "Jean-François Fortin Tam"
 msgstr "Jean-François Fortin Tam"
 
-#: C/index.page:15(credit/name) C/about.page:14(credit/name)
-#: C/crossfading.page:15(credit/name) C/fadeinfadeout.page:14(credit/name)
-#: C/gstreamer.page:14(credit/name) C/importing.page:14(credit/name)
-#: C/insertintimeline.page:14(credit/name)
-#: C/keyframecurves.page:14(credit/name) C/layers.page:14(credit/name)
-#: C/makeselections.page:14(credit/name)
-#: C/movearoundtimeline.page:14(credit/name)
-#: C/othertransitions.page:14(credit/name)
-#: C/projectsettings.page:14(credit/name) C/rendering.page:14(credit/name)
-#: C/saveproject.page:15(credit/name) C/splitting.page:14(credit/name)
-#: C/sysreq.page:15(credit/name) C/trimming.page:15(credit/name)
-#: C/usingclips.page:14(credit/name)
+#. (itstool) path: credit/name
+#: C/index.page:15 C/about.page:14 C/crossfading.page:15
+#: C/fadeinfadeout.page:14 C/gstreamer.page:14 C/importing.page:14
+#: C/insertintimeline.page:14 C/keyframecurves.page:14 C/layers.page:14
+#: C/makeselections.page:14 C/movearoundtimeline.page:14
+#: C/othertransitions.page:14 C/projectsettings.page:14 C/rendering.page:14
+#: C/saveproject.page:15 C/splitting.page:14 C/sysreq.page:15
+#: C/trimming.page:15 C/usingclips.page:14
 msgid "Mario Blättermann"
 msgstr "Mario Blättermann"
 
-#: C/index.page:19(license/p) C/about.page:21(license/p)
-#: C/cheatsheet.page:16(license/p) C/codecscontainers.page:14(license/p)
-#: C/crossfading.page:22(license/p) C/effects.page:16(license/p)
-#: C/effectsanimation.page:15(license/p) C/fadeinfadeout.page:21(license/p)
-#: C/gstreamer.page:21(license/p) C/importingmpegts.page:18(license/p)
-#: C/importing.page:21(license/p) C/insertintimeline.page:21(license/p)
-#: C/interface.page:15(license/p) C/keyframecurves.page:21(license/p)
-#: C/layers.page:21(license/p) C/mainwindow.page:19(license/p)
-#: C/makeselections.page:21(license/p) C/medialibrary.page:21(license/p)
-#: C/movearoundtimeline.page:23(license/p)
-#: C/othertransitions.page:19(license/p) C/presets.page:15(license/p)
-#: C/projectsettings.page:21(license/p) C/rendering.page:21(license/p)
-#: C/saveproject.page:22(license/p) C/savescreenshot.page:14(license/p)
-#: C/selectunusedfiles.page:19(license/p) C/splitting.page:21(license/p)
-#: C/sysreq.page:22(license/p) C/trimming.page:22(license/p)
-#: C/usingclips.page:21(license/p) C/welcomedialog.page:17(license/p)
+#. (itstool) path: license/p
+#: C/index.page:19 C/about.page:21 C/cheatsheet.page:16
+#: C/codecscontainers.page:14 C/crossfading.page:22 C/effects.page:16
+#: C/effectsanimation.page:15 C/fadeinfadeout.page:21 C/grouping.page:21
+#: C/gstreamer.page:21 C/importingmpegts.page:18 C/importing.page:23
+#: C/insertintimeline.page:21 C/interface.page:15 C/keyframecurves.page:21
+#: C/layers.page:23 C/mainwindow.page:19 C/makeselections.page:21
+#: C/medialibrary.page:21 C/movearoundtimeline.page:25
+#: C/othertransitions.page:19 C/presets.page:15 C/projectsettings.page:21
+#: C/rendering.page:21 C/saveproject.page:22 C/savescreenshot.page:14
+#: C/selectunusedfiles.page:19 C/splitting.page:23 C/sysreq.page:22
+#: C/trimming.page:22 C/usingclips.page:23 C/welcomedialog.page:17
 msgid "Creative Commons Share Alike 3.0"
 msgstr "Creative Commons Share Alike 3.0"
 
-#: C/index.page:23(page/title)
+#. (itstool) path: page/title
+#: C/index.page:23
 msgid ""
 "<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Pitivi "
 "logo</media> Pitivi Video Editor"
@@ -108,7 +95,8 @@ msgstr ""
 "<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Logo "
 "Pitivi</media> videoeditor Pitivi"
 
-#: C/index.page:28(page/p)
+#. (itstool) path: page/p
+#: C/index.page:28
 msgid ""
 "Built upon the <link href=\"http://en.wikipedia.org/wiki/GStreamer"
 "\"><app>GStreamer</app></link> multimedia framework, <app>Pitivi</app> aims "
@@ -122,7 +110,8 @@ msgstr ""
 "\"http://gnome.org\"><app>GNOME</app></link>. Cílem je oslovit začátečníky i "
 "profesionály."
 
-#: C/index.page:29(page/p)
+#. (itstool) path: page/p
+#: C/index.page:29
 msgid ""
 "This guide is intended to help you grasp the concepts behind its design and "
 "get productive quickly."
@@ -130,47 +119,58 @@ msgstr ""
 "Tato příručka se zaměřuje na to, aby vás seznámila s konceptem jeho "
 "fungování a abyste mohli rychle začít vytvářet."
 
-#: C/index.page:32(section/title)
+#. (itstool) path: section/title
+#: C/index.page:32
 msgid "Introduction"
 msgstr "Úvod"
 
-#: C/index.page:36(section/title)
+#. (itstool) path: section/title
+#: C/index.page:36
 msgid "Getting Started"
 msgstr "Začínáme"
 
-#: C/index.page:40(section/title)
+#. (itstool) path: section/title
+#: C/index.page:40
 msgid "Basic Editing with the Timeline"
 msgstr "Základní úpravy na časové ose"
 
-#: C/index.page:44(section/title)
+#. (itstool) path: section/title
+#: C/index.page:44
 msgid "Special Effects"
 msgstr "Speciální efekty"
 
-#: C/index.page:48(section/title)
+#. (itstool) path: section/title
+#: C/index.page:48
 msgid "Transitions"
 msgstr "Přechody"
 
-#: C/index.page:52(section/title)
+#. (itstool) path: section/title
+#: C/index.page:52
 msgid "Exporting Your Finished Movie"
 msgstr "Export vašeho výsledného filmu"
 
-#: C/about.page:17(info/desc)
+#. (itstool) path: info/desc
+#: C/about.page:17
 msgid "Current state of this user manual and call for participation."
 msgstr "Aktuální stav této uživatelské příručky a výzva ke spolupráci."
 
-#: C/about.page:25(page/title)
+#. (itstool) path: page/title
+#: C/about.page:25
 msgid "About this manual"
 msgstr "O této příručce"
 
-#: C/about.page:26(page/p)
+#. (itstool) path: page/p
+#: C/about.page:26
 msgid "This user manual is written and maintained by Jean-François Fortin Tam."
 msgstr "Tuto příručku napsal a udržuje Jean-François Fortin Tam."
 
-#: C/about.page:28(section/title)
+#. (itstool) path: section/title
+#: C/about.page:28
 msgid "Work in progress"
 msgstr "Zatím rozpracováno"
 
-#: C/about.page:29(section/p)
+#. (itstool) path: section/p
+#: C/about.page:29
 msgid ""
 "You may encounter unwritten portions due to features that have not yet been "
 "implemented in Pitivi at the time of writing."
@@ -178,7 +178,8 @@ msgstr ""
 "Můžete narazit na nedopsané části, protože daná funkce nebyla v době psaní "
 "příručky v Pitivi ještě implementována."
 
-#: C/about.page:30(section/p)
+#. (itstool) path: section/p
+#: C/about.page:30
 msgid ""
 "You may also encounter smaller areas which have been documented in this "
 "manual but have not been implemented in Pitivi – those are areas where the "
@@ -188,11 +189,13 @@ msgstr ""
 "ale zatím nejsou v Pitivi zcela implementovány – jedná se o situace, kdy "
 "jsou návrh a očekávané uživatelské rozhraní již zcela jisté."
 
-#: C/about.page:34(section/title)
+#. (itstool) path: section/title
+#: C/about.page:34
 msgid "Patches welcome"
 msgstr "Příspěvky vítány"
 
-#: C/about.page:35(section/p)
+#. (itstool) path: section/p
+#: C/about.page:35
 msgid ""
 "If you happen to find errors, missing information or unclear passages in "
 "this manual, please feel free to submit corrections. You can find contact "
@@ -208,11 +211,13 @@ msgstr ""
 "product=pitivi;component=documentation\">vyplnit chybové hlášení pro "
 "komponentu „dokumentace“ v systému pro sledování chyb</link>."
 
-#: C/cheatsheet.page:20(page/title)
+#. (itstool) path: page/title
+#: C/cheatsheet.page:20
 msgid "Keyboard shortcuts and cheatsheet"
 msgstr "Klávesové zkratky a finty"
 
-#: C/cheatsheet.page:22(page/p)
+#. (itstool) path: page/p
+#: C/cheatsheet.page:22
 msgid ""
 "This page is a list of important shortcuts to access commonly used or hidden "
 "features. Take the time to get familiar with them as they will improve your "
@@ -222,67 +227,88 @@ msgstr ""
 "nejpoužívanějším a skrytým funkcím. Zkuste věnovat trochu času seznámení s "
 "nimi a vaše produktivita práce významně vzroste."
 
-#: C/cheatsheet.page:25(section/title)
+#. (itstool) path: section/title
+#: C/cheatsheet.page:25
 msgid "General"
 msgstr "Obecné"
 
-#: C/cheatsheet.page:27(item/p)
-msgid "<key>Ctrl+N</key>: Create a new project"
-msgstr "<key>Ctrl+N</key>: Vytvořit nový projekt"
+#. (itstool) path: item/p
+#: C/cheatsheet.page:27
+msgid "<keyseq><key>Ctrl</key><key>N</key></keyseq>: Create a new project"
+msgstr "<keyseq><key>Ctrl</key><key>N</key></keyseq>: Vytvořit nový projekt"
 
-#: C/cheatsheet.page:28(item/p)
-msgid "<key>Ctrl+O</key>: Open a project file"
-msgstr "<key>Ctrl+O</key>: Otevřít projektový soubor"
+#. (itstool) path: item/p
+#: C/cheatsheet.page:28
+msgid "<keyseq><key>Ctrl</key><key>O</key></keyseq>: Open a project file"
+msgstr ""
+"<keyseq><key>Ctrl</key><key>O</key></keyseq>: Otevřít projektový soubor"
 
-#: C/cheatsheet.page:29(item/p)
-msgid "<key>Ctrl+S</key>: Save the current project"
-msgstr "<key>Ctrl+S</key>: Uložit aktuální projekt"
+#. (itstool) path: item/p
+#: C/cheatsheet.page:29
+msgid "<keyseq><key>Ctrl</key><key>S</key></keyseq>: Save the current project"
+msgstr "<keyseq><key>Ctrl</key><key>S</key></keyseq>: Uložit aktuální projekt"
 
-#: C/cheatsheet.page:30(item/p)
-msgid "<key>Ctrl+Q</key>: Quit the application"
-msgstr "<key>Ctrl+Q</key>: Ukončit aplikaci"
+#. (itstool) path: item/p
+#: C/cheatsheet.page:30
+msgid "<keyseq><key>Ctrl</key><key>Q</key></keyseq>: Quit the application"
+msgstr "<keyseq><key>Ctrl</key><key>Q</key></keyseq>: Ukončit aplikaci"
 
-#: C/cheatsheet.page:31(item/p)
-msgid "<key>Ctrl+Z</key>: Undo"
-msgstr "<key>Ctrl+Z</key>: Zpět "
+#. (itstool) path: item/p
+#: C/cheatsheet.page:31
+msgid "<keyseq><key>Ctrl</key><key>Z</key></keyseq>: Undo"
+msgstr "<keyseq><key>Ctrl</key><key>Z</key></keyseq>: Zpět "
 
-#: C/cheatsheet.page:32(item/p)
-msgid "<key>Ctrl+Y</key>: Redo"
-msgstr "<key>Ctrl+Y</key>: Znovu"
+#. (itstool) path: item/p
+#: C/cheatsheet.page:32
+msgid "<keyseq><key>Ctrl</key><key>Y</key></keyseq>: Redo"
+msgstr "<keyseq><key>Ctrl</key><key>Y</key></keyseq>: Znovu"
 
-#: C/cheatsheet.page:33(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:33
 msgid "<key>F11</key>: Toggle fullscreen mode"
 msgstr "<key>F11</key>: Přepnout režim celé obrazovky"
 
-#: C/cheatsheet.page:34(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:34
 msgid "<key>F1</key>: Show the user manual"
 msgstr "<key>F1</key>: Zobrazit uživatelskou příručku"
 
-#: C/cheatsheet.page:39(section/title) C/mainwindow.page:100(section/title)
+#. (itstool) path: section/title
+#: C/cheatsheet.page:39 C/mainwindow.page:100
 msgid "Media Library"
 msgstr "Knihovna médií"
 
-#: C/cheatsheet.page:41(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:41
 msgid "<key>Enter</key>: Preview (playback) the selected clip"
 msgstr "<key>Enter</key>: Přehrát v náhledu vybraný klip"
 
-#: C/cheatsheet.page:42(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:42
 msgid "<key>Insert</key>: Insert the selected clips into the timeline"
 msgstr "<key>Insert</key>: Vložit vybrané klipy na časovou osu"
 
-#: C/cheatsheet.page:43(item/p)
-msgid "<key>Ctrl+Delete</key>: Remove the selected clips from the project"
-msgstr "<key>Ctrl+Delete</key>: Odstranit vybrané klipy z projektu"
+#. (itstool) path: item/p
+#: C/cheatsheet.page:43
+msgid ""
+"<keyseq><key>Ctrl</key><key>Delete</key></keyseq>: Remove the selected clips "
+"from the project"
+msgstr ""
+"<keyseq><key>Ctrl</key><key>Delete</key></keyseq>: Odstranit vybrané klipy z "
+"projektu"
 
-#: C/cheatsheet.page:48(section/title) C/mainwindow.page:71(section/title)
+#. (itstool) path: section/title
+#: C/cheatsheet.page:48 C/mainwindow.page:71
 msgid "Timeline"
 msgstr "Časová osa"
 
-#: C/cheatsheet.page:50(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:50
 msgid "<key>Spacebar</key>: Toggle playback."
 msgstr "<key>Spacebar</key>: Spustit/zastavit přehrávání."
 
-#: C/cheatsheet.page:51(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:51
 msgid ""
 "<key>S</key>: Split the clips at the current playhead position. If there are "
 "selected clips, only those will be split."
@@ -290,11 +316,13 @@ msgstr ""
 "<key>S</key>: Rozdělit klipy v místě aktuální pozice přehrávání. Pokud jsou "
 "některé klipy vybrané, rozdělí se jen tyto."
 
-#: C/cheatsheet.page:52(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:52
 msgid "<key>Delete</key>: Remove selected clips from the timeline."
 msgstr "<key>Delete</key>: Odebrat vybrané klipy z časové osy."
 
-#: C/cheatsheet.page:53(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:53
 msgid ""
 "<key>←</key> and <key>→</key>: Seek one frame backwards or forwards. This "
 "depends on your project framerate."
@@ -302,61 +330,66 @@ msgstr ""
 "<key>←</key> a <key>→</key>: Posunout se o jeden snímek zpět nebo vpřed. "
 "Závisí to na snímkové rychlosti vašeho projektu."
 
-#: C/cheatsheet.page:54(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:54
 msgid ""
-"<key>Ctrl+←</key> and <key>Ctrl+→</key>: Seek one clip backwards or forwards."
+"<keyseq><key>Shift</key><key>←</key></keyseq> and <keyseq><key>Shift</"
+"key><key>→</key></keyseq>: Seek one second backwards or forwards."
 msgstr ""
-"<key>Ctrl+←</key> a <key>Ctrl+→</key>: Posunout se o jeden klip zpět nebo "
-"vpřed."
+"<keyseq><key>Shift</key><key>←</key></keyseq> a <keyseq><key>Shift</"
+"key><key>→</key></keyseq>: Posunout o sekundu zpět nebo vpřed."
 
-#: C/cheatsheet.page:55(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:55
 msgid ""
-"<key>Shift+←</key> and <key>Shift+→</key>: Seek one second backwards or "
-"forwards."
+"<keyseq><key>Ctrl</key><key>+</key></keyseq> and <keyseq><key>Ctrl</"
+"key><key>-</key></keyseq>: Zoom in or zoom out. You can also use <key>Ctrl</"
+"key> with the mouse wheel to control the zoom more efficiently."
 msgstr ""
-"<key>Shift+←</key> an <key>Shift+→</key>: Posunout o sekundu zpět nebo vpřed."
+"<keyseq><key>Ctrl</key><key>+</key></keyseq> a <keyseq><key>Ctrl</key><key>-"
+"</key></keyseq>: Přiblížit nebo oddálit. K účinnějšímu ovládání můžete "
+"použít také <key>Ctrl</key> spolu s kolečkem myši."
 
-#: C/cheatsheet.page:56(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:56
 msgid ""
-"<key>Ctrl++</key> and <key>Ctrl+-</key>: Zoom in or zoom out. You can also "
-"use <key>Ctrl</key> with the mouse wheel to control the zoom more "
-"efficiently."
+"<keyseq><key>Ctrl</key><key>0</key></keyseq>: Adjust the zoom to fit the "
+"timeline."
 msgstr ""
-"<key>Ctrl++</key> a <key>Ctrl+-</key>: Přiblížit nebo oddálit. K "
-"efektivnějšímu ovládání můžete použít také <key>Ctrl</key> spolu s kolečkem "
-"myši."
+"<keyseq><key>Ctrl</key><key>0</key></keyseq>: Nastavit přiblížení, aby "
+"odpovídalo optimálně časové ose."
 
-#: C/cheatsheet.page:57(item/p)
-msgid "<key>Ctrl+0</key>: Adjust the zoom to fit the timeline."
-msgstr ""
-"<key>Ctrl+0</key>: Nastavit přiblížení, aby odpovídalo optimálně časové ose."
-
-#: C/cheatsheet.page:58(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:57
 msgid "<key>Shift</key>+drag: Ripple edit."
 msgstr "<key>Shift</key>+tažení: Řetězová úprava."
 
-#: C/cheatsheet.page:59(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:58
 msgid "<key>Ctrl</key>+drag: Roll edit."
 msgstr "<key>Ctrl</key>+tažení: Svitková úprava."
 
-#: C/cheatsheet.page:60(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:59
 msgid "<key>K</key>: Add a property keyframe at the current playhead position."
 msgstr ""
 "<key>K</key>: Přidat klíčový snímek vlastnosti na místo aktuální pozice "
 "přehrávání."
 
-#: C/cheatsheet.page:61(item/p)
+#. (itstool) path: item/p
+#: C/cheatsheet.page:60
 msgid ""
 "<key>.</key> and <key>,</key>: Go to the next or previous property keyframe."
 msgstr ""
 "<key>.</key> a <key>,</key>: Přejít na následující nebo předchozí klíčový "
 "snímek vlastnosti."
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/codecscontainers.page:26(media)
+#: C/codecscontainers.page:26
 msgctxt "_"
 msgid ""
 "external ref='figures/codecscontainers.jpg' "
@@ -365,7 +398,8 @@ msgstr ""
 "external ref='figures/codecscontainers.jpg' "
 "md5='e43e6a92cda311d0cd8c24fb0df67a17'"
 
-#: C/codecscontainers.page:16(info/desc)
+#. (itstool) path: info/desc
+#: C/codecscontainers.page:16
 msgid ""
 "What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? "
 "Learn about codecs and container formats here."
@@ -373,11 +407,13 @@ msgstr ""
 "Jaký je rozdíl mezi OGG a Vorbis? Mezi AVI a DivX? Mezi x264 a H.264? Zde se "
 "dozvíte o kodecích a formátech kontejnerů."
 
-#: C/codecscontainers.page:19(page/title)
+#. (itstool) path: page/title
+#: C/codecscontainers.page:19
 msgid "Understanding codecs and containers"
 msgstr "Vysvětlení kodeků a kontejnerů"
 
-#: C/codecscontainers.page:20(page/p)
+#. (itstool) path: page/p
+#: C/codecscontainers.page:20
 msgid ""
 "The following is one of the most complex topics of video editing. Many "
 "people do not know the distinction between codecs and container file "
@@ -389,7 +425,8 @@ msgstr ""
 "nedostatkům ve standardizaci a z části matením marketingových výrazů a "
 "přípon souborů."
 
-#: C/codecscontainers.page:21(page/p)
+#. (itstool) path: page/p
+#: C/codecscontainers.page:21
 msgid ""
 "This guide is an attempt at clarifying this distinction without going into "
 "technical details. If you want to learn more about containers and codecs, "
@@ -404,7 +441,8 @@ msgstr ""
 "\">kontejnery</link> a <link href=\"http://cs.wikipedia.org/wiki/Kodek"
 "\">kodeky</link>."
 
-#: C/codecscontainers.page:22(page/p)
+#. (itstool) path: page/p
+#: C/codecscontainers.page:22
 msgid ""
 "Basically, a container is what we typically associate with the file format. "
 "Containers \"contain\" the various components of a video: the stream of "
@@ -418,7 +456,8 @@ msgstr ""
 "kontejner umí, několik zvukových stop a několik titulků v různých jazycích. "
 "Příklady populárních kontejnerů jsou OGG, Matroska, AVI, MPEG."
 
-#: C/codecscontainers.page:23(page/p)
+#. (itstool) path: page/p
+#: C/codecscontainers.page:23
 msgid ""
 "Codecs are ways of \"coding\" and \"decoding\" streams. Their job is "
 "typically to compress data (and decompress it when playing it back) so that "
@@ -434,19 +473,23 @@ msgstr ""
 "správný kodek se správným nastavením pro správnou situaci je tak trochu "
 "uměním."
 
-#: C/codecscontainers.page:24(page/p)
+#. (itstool) path: page/p
+#: C/codecscontainers.page:24
 msgid "The following figure should make things clearer:"
 msgstr "Následující obrázek by vám to měl podat názorně:"
 
-#: C/crossfading.page:18(info/desc)
+#. (itstool) path: info/desc
+#: C/crossfading.page:18
 msgid "Making two clips fade into each other."
 msgstr "Vytvoření vzájemného prolnutí dvou klipů."
 
-#: C/crossfading.page:26(page/title)
+#. (itstool) path: page/title
+#: C/crossfading.page:26
 msgid "Crossfading clips"
 msgstr "Prolínání klipů"
 
-#: C/crossfading.page:28(page/p)
+#. (itstool) path: page/p
+#: C/crossfading.page:28
 msgid ""
 "To do a crossfade between two clips on the same layer, simply drag one of "
 "the clips onto the other so that it overlaps. The overlapping region will be "
@@ -458,7 +501,8 @@ msgstr ""
 "oblast bude použita k přechodu (výchozí je prolnutí) mezi těmito dvěma "
 "klipy. Délku přechodu můžete upravit posunutím nebo ustřihnutím klipů."
 
-#: C/crossfading.page:30(note/p)
+#. (itstool) path: note/p
+#: C/crossfading.page:30
 msgid ""
 "Crossfades are achieved using <app>Pitivi</app>'s video mixing features, "
 "which use keyframes to control the opacity of clips."
@@ -466,7 +510,8 @@ msgstr ""
 "Prolnutí je dosaženo použitím mixovací funkce <app>Pitivi</app>, která "
 "používá klíčové snímky k řízení krytí/průhlednosti klipů."
 
-#: C/crossfading.page:31(note/p)
+#. (itstool) path: note/p
+#: C/crossfading.page:31
 msgid ""
 "This also means that if you set opacity keyframes for that clip, they will "
 "be taken into account for the crossfade."
@@ -474,15 +519,18 @@ msgstr ""
 "To mimo jiné znamená, že když u klíčového snímku nastavíte krytí pro klip, "
 "bude to vzato v úvahu pro prolínání."
 
-#: C/effects.page:14(info/desc)
+#. (itstool) path: info/desc
+#: C/effects.page:14
 msgid "Adding special effects to your video and audio"
 msgstr "Přidávání speciálních efektů do vašeho videa a zvuku"
 
-#: C/effects.page:20(page/title)
+#. (itstool) path: page/title
+#: C/effects.page:20
 msgid "Introduction to effects"
 msgstr "Úvod do efektů"
 
-#: C/effects.page:22(page/p)
+#. (itstool) path: page/p
+#: C/effects.page:22
 msgid ""
 "<app>Pitivi</app> offers a wide variety of video and audio effects to spice "
 "up your movies. Effects are non destructive: they are only applied to the "
@@ -492,7 +540,8 @@ msgstr ""
 "vašich filmů. Efekty jsou nedestruktivní: použijí se až během závěrečného "
 "vykreslování filmu a nijak nezasahují do původních zdrojových souborů."
 
-#: C/effects.page:24(note/p)
+#. (itstool) path: note/p
+#: C/effects.page:24
 msgid ""
 "Available effects depend on the software installed on your computer. If you "
 "don't see anything (or only a handful of effects) in <app>Pitivi</app>'s "
@@ -502,36 +551,44 @@ msgstr ""
 "Jestliže v knihovně efektů <app>Pitivi</app> nevidíte žádné efekty, nebo jen "
 "hrstku, zkontrolujte, zda máte nainstalováno následující:"
 
-#: C/effects.page:26(item/p)
+#. (itstool) path: item/p
+#: C/effects.page:26
 msgid "The <link xref=\"gstreamer\">appropriate GStreamer plugins</link>"
 msgstr ""
 "<link xref=\"gstreamer\">Příslušné zásuvné moduly platformy GStreamer</link>"
 
-#: C/effects.page:27(item/p)
+#. (itstool) path: item/p
+#: C/effects.page:27
 msgid "frei0r-plugins"
 msgstr "frei0r-plugins"
 
-#: C/effects.page:28(item/p)
+#. (itstool) path: item/p
+#: C/effects.page:28
 msgid "gnome-video-effects"
 msgstr "gnome-video-effects"
 
-#: C/effects.page:33(section/title)
+#. (itstool) path: section/title
+#: C/effects.page:33
 msgid "Adding and removing effects to clips"
 msgstr "Přidávání a odebírání efektů u klipů"
 
-#: C/effects.page:34(section/p)
+#. (itstool) path: section/p
+#: C/effects.page:34
 msgid "To add an effect:"
 msgstr "Pro přidání efektu:\t"
 
-#: C/effects.page:36(item/p)
+#. (itstool) path: item/p
+#: C/effects.page:36
 msgid "Select an existing clip on the timeline"
 msgstr "Vyberte na časové ose klip"
 
-#: C/effects.page:37(item/p)
+#. (itstool) path: item/p
+#: C/effects.page:37
 msgid "Choose an effect in the effect library"
 msgstr "V knihovně efektů zvolte efekt"
 
-#: C/effects.page:38(item/p)
+#. (itstool) path: item/p
+#: C/effects.page:38
 msgid ""
 "Drag the chosen effect into the <gui>Clip configuration</gui> pane's "
 "<gui>Effects</gui> section"
@@ -539,7 +596,8 @@ msgstr ""
 "Přetáhněte zvolený efekt na panel <gui>Nastavení klipu</gui> v části "
 "<gui>Efekty</gui>"
 
-#: C/effects.page:40(section/p)
+#. (itstool) path: section/p
+#: C/effects.page:40
 msgid ""
 "To remove an effect on a selected clip, select it in the clip's effect list "
 "and click the <gui>Remove</gui> button."
@@ -547,11 +605,13 @@ msgstr ""
 "Když chcete u vybraného klipu efekt odebrat, vyberte jej v seznamu efektů "
 "daného klipu a klikněte na tlačítko <gui>Odebrat</gui>."
 
-#: C/effects.page:43(section/title)
+#. (itstool) path: section/title
+#: C/effects.page:43
 msgid "Toggling effects on and off"
 msgstr "Vypínání a zapínání efektů"
 
-#: C/effects.page:44(section/p)
+#. (itstool) path: section/p
+#: C/effects.page:44
 msgid ""
 "If you want to temporarily disable an effect (to compare with and without "
 "the effect, or for performance reasons), click the corresponding checkbox in "
@@ -561,7 +621,8 @@ msgstr ""
 "bez efektu, nebo z výkonnostních důvodů), klikněte na příslušné zaškrtávací "
 "políčko v panelu s vlastnostmi efektů."
 
-#: C/effects.page:46(note/p)
+#. (itstool) path: note/p
+#: C/effects.page:46
 msgid ""
 "Currently, effects are applied on a \"per-clip\" basis. It is not yet "
 "possible to apply effects to timeline layers."
@@ -569,15 +630,18 @@ msgstr ""
 "V současnosti se efekty vztahují na jednotlivé klipy. Není možné použít "
 "efekty na celou vrstvu v časové ose."
 
-#: C/effectsanimation.page:13(info/desc)
+#. (itstool) path: info/desc
+#: C/effectsanimation.page:13
 msgid "Changing the properties of effects over time"
 msgstr "Změna vlastností efektů v průběhu času"
 
-#: C/effectsanimation.page:19(page/title)
+#. (itstool) path: page/title
+#: C/effectsanimation.page:19
 msgid "Animating effects with Keyframes"
 msgstr "Animované efekty s klíčovými snímky"
 
-#: C/effectsanimation.page:21(page/p)
+#. (itstool) path: page/p
+#: C/effectsanimation.page:21
 msgid ""
 "This feature is not yet implemented, but is planned to be completed as a "
 "GSoC 2011 project."
@@ -585,48 +649,54 @@ msgstr ""
 "Tato funkce není zatím implementována, ale je plánováno její dokončení v "
 "rámci projektu GSoC 2011."
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/fadeinfadeout.page:33(media)
+#: C/fadeinfadeout.page:33
 msgctxt "_"
 msgid ""
 "external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
 msgstr ""
 "external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/fadeinfadeout.page:36(media)
+#: C/fadeinfadeout.page:36
 msgctxt "_"
 msgid ""
 "external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
 msgstr ""
 "external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/fadeinfadeout.page:42(media)
+#: C/fadeinfadeout.page:42
 msgctxt "_"
 msgid ""
 "external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
 msgstr ""
 "external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
 
-#: C/fadeinfadeout.page:17(info/desc)
+#. (itstool) path: info/desc
+#: C/fadeinfadeout.page:17
 msgid "Fading video to black or to a layer below, or fading audio."
 msgstr "Prolnutí videa do černé nebo do nižší vrstvy nebo prolnutí zvuku."
 
-#: C/fadeinfadeout.page:25(page/title)
+#. (itstool) path: page/title
+#: C/fadeinfadeout.page:25
 msgid "Fade-ins and fade-outs"
 msgstr "„Prolnutí do“ a „prolnutí z“"
 
-#: C/fadeinfadeout.page:27(page/p)
+#. (itstool) path: page/p
+#: C/fadeinfadeout.page:27
 msgid ""
 "You can do “fades” of single clip by using <app>Pitivi</app>'s video mixing "
 "capabilities, which relies on keyframes controlling each clip's opacity (see "
@@ -636,11 +706,13 @@ msgstr ""
 "samostatného klipu. Princip je založen na klíčových snímcích, které řídí "
 "krytí klipu (viz také <link xref=\"layers\">Vysvětlení vrstev</link>)."
 
-#: C/fadeinfadeout.page:28(page/p)
+#. (itstool) path: page/p
+#: C/fadeinfadeout.page:28
 msgid "To fade a clip to black:"
 msgstr "Aby se klip prolínal do černé:"
 
-#: C/fadeinfadeout.page:31(item/p)
+#. (itstool) path: item/p
+#: C/fadeinfadeout.page:31
 msgid ""
 "Double-click on its opacity keyframe curve where you want the fade-out to "
 "start (or the fade-in to end)."
@@ -648,12 +720,87 @@ msgstr ""
 "Dvojitě klikněte na křivku klíčových snímku pro krytí v místě, kde má "
 "„prolnutí z“ začínat (nebo „prolnutí do“ končit)."
 
-#: C/fadeinfadeout.page:40(item/p)
+#. (itstool) path: item/p
+#: C/fadeinfadeout.page:40
 msgid "Click and drag the last (or first) keyframe of the clip downwards."
 msgstr ""
 "Klikněte na poslední (nebo první) klíčový snímek klipu a přetáhněte jej níž."
 
-#: C/gstreamer.page:17(info/desc)
+#. (itstool) path: credit/name
+#: C/grouping.page:10 C/importing.page:16 C/layers.page:16
+#: C/movearoundtimeline.page:18 C/splitting.page:16 C/usingclips.page:16
+msgid "Tomáš Karger"
+msgstr "Tomáš Karger"
+
+#. (itstool) path: info/desc
+#: C/grouping.page:17
+msgid "Grouping and ungrouping clips in timeline."
+msgstr "Jak seskupit a zrušit seskupení klipů na časové ose."
+
+#. (itstool) path: page/title
+#: C/grouping.page:25
+msgid "Grouping and ungrouping clips"
+msgstr "Seskupování a rušení seskupení klipů"
+
+#. (itstool) path: page/p
+#: C/grouping.page:26
+msgid ""
+"The grouping and ungrouping functions are useful when you want to add or "
+"separate audio tracks from video clips, or when you want to create a block "
+"of clips that you can select, edit and move all at once."
+msgstr ""
+"Funkce seskupování a rušení seskupení je užitečná, když chcete přidat nebo "
+"oddělit zvukové stopy z videoklipů nebo když chcete vytvořit blok klipů, "
+"které pak můžete vybírat, upravovat a posouvat naráz."
+
+#. (itstool) path: section/title
+#: C/grouping.page:29
+msgid "Grouping clips in timeline"
+msgstr "Seskupování klipů na časové ose"
+
+#. (itstool) path: item/p
+#: C/grouping.page:31
+msgid ""
+"Select multiple clips in the timeline (see the <link xref=\"makeselections"
+"\">Selecting multiple items</link> section for more detailed instructions)."
+msgstr ""
+"Vyberte na časové ose několik klipů (viz oddíl <link xref=\"makeselections"
+"\">Výběr více položek</link> ohledně podrobnějšího návodu)."
+
+#. (itstool) path: item/p
+#: C/grouping.page:32
+msgid "Click the <gui>Group clips</gui> button on the timeline toolbar."
+msgstr "Klikněte na tlačítko <gui>Seskupit</gui> na liště nástrojů časové osy."
+
+#. (itstool) path: section/p
+#: C/grouping.page:34
+msgid "You can now select, edit and move the clips all at once."
+msgstr "Od této chvíle můžete vybírat, upravovat a přesouvat klipy naráz."
+
+#. (itstool) path: section/title
+#: C/grouping.page:38
+msgid "Ungrouping clips in timeline"
+msgstr "Rušení seskupení na časové ose"
+
+#. (itstool) path: item/p
+#: C/grouping.page:40
+msgid "Select a group of clips in the timeline."
+msgstr "Vyberte na časové ose skupinu klipů"
+
+#. (itstool) path: item/p
+#: C/grouping.page:41
+msgid "Click the <gui>Ungroup clips</gui> button on the timeline toolbar."
+msgstr ""
+"Klikněte na tlačítko <gui>Zrušit seskupení</gui> na liště nástrojů časové "
+"osy."
+
+#. (itstool) path: section/p
+#: C/grouping.page:43
+msgid "You can now select, edit and move the clips independently."
+msgstr "Od této chvíle můžete vybírat, upravovat a přesouvat klipy nezávisle."
+
+#. (itstool) path: info/desc
+#: C/gstreamer.page:17
 msgid ""
 "Ensuring you have the proper multimedia codecs and plugins installed for "
 "maximum compatibility."
@@ -661,11 +808,13 @@ msgstr ""
 "Ujistěte se, že máte kvůli úplné kompatibilitě nainstalovány příslušné "
 "multimediální kodeky a zásuvné moduly."
 
-#: C/gstreamer.page:25(page/title)
+#. (itstool) path: page/title
+#: C/gstreamer.page:25
 msgid "Gstreamer and compatibility"
 msgstr "Gstreamer a kompatibilita"
 
-#: C/gstreamer.page:27(page/p)
+#. (itstool) path: page/p
+#: C/gstreamer.page:27
 msgid ""
 "A great strength in <app>Pitivi</app> lies in its use of the <app>GStreamer</"
 "app> multimedia framework. <app>GStreamer</app> is used by dozens of "
@@ -677,11 +826,13 @@ msgstr ""
 "multimediálních aplikací napříč různými pracovními prostředími, operačními "
 "systémy a architekturami."
 
-#: C/gstreamer.page:28(page/p)
+#. (itstool) path: page/p
+#: C/gstreamer.page:28
 msgid "This essentially means three things to you, the user:"
 msgstr "Pro uživatele to v zásadě znamená tři věci:"
 
-#: C/gstreamer.page:31(item/p)
+#. (itstool) path: item/p
+#: C/gstreamer.page:31
 msgid ""
 "You can, in theory, import pretty much any media file supported by "
 "<app>GStreamer</app> (but see the next section)."
@@ -689,7 +840,8 @@ msgstr ""
 "Teoreticky můžete importovat velké množství multimediálních souborů "
 "podporovaných platformou <app>GStreamer</app> (ale viz následující oddíl)."
 
-#: C/gstreamer.page:34(item/p)
+#. (itstool) path: item/p
+#: C/gstreamer.page:34
 msgid ""
 "You can render your projects using any supported container and codec "
 "combination from <app>GStreamer</app>."
@@ -697,7 +849,8 @@ msgstr ""
 "Výstup svého projektu můžete nechat zpracovat pomocí libovolné kombinace "
 "podporovaného kontejneru a kodeku z platformy <app>GStreamer</app>."
 
-#: C/gstreamer.page:37(item/p)
+#. (itstool) path: item/p
+#: C/gstreamer.page:37
 msgid ""
 "You need a very recent version of <app>GStreamer</app> to maximize "
 "<app>Pitivi's</app> capabilities and reduce the possibilities of bugs. This "
@@ -706,16 +859,18 @@ msgid ""
 "workarounds inside <app>Pitivi</app>)."
 msgstr ""
 "Abyste získali maximální funkčnost <app>Pitivi</app> a přitom omezily možné "
-"chyby na minimum, potřebujete nejnovější verzi platformy <app>GStreamer</app>. "
-"To je z toho důvodu, že vývojáři projektu <app>Pitivi</app> usilovně pracují "
-"na opravách problémů přímo v platformě <app>GStreamer</app> (místo toho, aby "
-"je obcházeli v rámci <app>Pitivi</app>)."
+"chyby na minimum, potřebujete nejnovější verzi platformy <app>GStreamer</"
+"app>. To je z toho důvodu, že vývojáři projektu <app>Pitivi</app> usilovně "
+"pracují na opravách problémů přímo v platformě <app>GStreamer</app> (místo "
+"toho, aby je obcházeli v rámci <app>Pitivi</app>)."
 
-#: C/gstreamer.page:42(section/title)
+#. (itstool) path: section/title
+#: C/gstreamer.page:42
 msgid "A word about editing-friendly codecs"
 msgstr "Něco o vhodnosti kodeků pro úpravy"
 
-#: C/gstreamer.page:43(section/p)
+#. (itstool) path: section/p
+#: C/gstreamer.page:43
 msgid ""
 "Some formats, like <em>MPEG</em>, are oriented towards playback only, and do "
 "not compress each frame independently. While it is the goal of <app>Pitivi</"
@@ -729,11 +884,13 @@ msgstr ""
 "nastavení pozice) nebudou tak výkonné, jako u videí s nezávislou komprimací "
 "snímků (jako <em>MJPEG</em> nebo <em>DV</em>)."
 
-#: C/gstreamer.page:47(section/title)
+#. (itstool) path: section/title
+#: C/gstreamer.page:47
 msgid "The Good, the Bad and the Ugly"
 msgstr "Sady Good, Bad a Ugly"
 
-#: C/gstreamer.page:48(section/p)
+#. (itstool) path: section/p
+#: C/gstreamer.page:48
 msgid ""
 "<app>GStreamer</app> plugins come into three categories: good, bad and ugly. "
 "To maximize your experience, you may need to install some of all of these "
@@ -747,7 +904,8 @@ msgstr ""
 "multimediálních souborů. Zda si je nainstalujete nebo ne, záleží jen na vás "
 "a patentových zákonech ve vaší zemi."
 
-#: C/gstreamer.page:50(item/p)
+#. (itstool) path: item/p
+#: C/gstreamer.page:50
 msgid ""
 "The \"Good\" plugins are good quality plugins under the LGPL license. These "
 "plugins are considered safe and recommended at any time."
@@ -755,7 +913,8 @@ msgstr ""
 "Zásuvné moduly „Good“ (dobré) jsou zásuvné moduly dobré kvality s licencí "
 "LGPL. Jsou považovány za bezpečné a doporučovány za všech situací."
 
-#: C/gstreamer.page:51(item/p)
+#. (itstool) path: item/p
+#: C/gstreamer.page:51
 msgid ""
 "The \"Bad\" plugins are plugins whose code is not of good enough quality, or "
 "are not considered tested well enough. The licensing may or may not be LGPL."
@@ -763,7 +922,8 @@ msgstr ""
 "Zásuvné moduly „Bad“ (špatné) nemají dostatečně kvalitní kód a nejsou "
 "považovány za řádně otestované. Licence může nebo nemusí být LGPL."
 
-#: C/gstreamer.page:52(item/p)
+#. (itstool) path: item/p
+#: C/gstreamer.page:52
 msgid ""
 "The \"Ugly\" plugins are good quality plugins whose license is not LGPL or "
 "with licensing issues."
@@ -771,7 +931,8 @@ msgstr ""
 "Zásuvné moduly „Ugly“ (ošklivé) mají dobrou kvalitu, ale jejich licence není "
 "LGPL nebo mají nějaké licenční problémy."
 
-#: C/gstreamer.page:54(note/p)
+#. (itstool) path: note/p
+#: C/gstreamer.page:54
 msgid ""
 "In addition to the Good, Bad and Ugly plugins, you may want to install "
 "gstreamer-ffmpeg to have access to ffmpeg's set of codecs."
@@ -779,11 +940,13 @@ msgstr ""
 "Mimo zásuvné moduly Good, Bad a Ugly si můžete nainstalovat gstreamer-"
 "ffmpeg, který vám zpřístupní sadu kodeků ffmpeg."
 
-#: C/gstreamer.page:59(section/title)
+#. (itstool) path: section/title
+#: C/gstreamer.page:59
 msgid "Image file formats"
 msgstr "Formáty souborů s obrázky"
 
-#: C/gstreamer.page:60(section/p)
+#. (itstool) path: section/p
+#: C/gstreamer.page:60
 msgid ""
 "While it is not feasible to list every possible combination of supported "
 "video or audio formats, it is however possible to list the static image "
@@ -793,7 +956,8 @@ msgstr ""
 "formátů videa a zvuku, je možné uvést seznam formátů statických obrázků, "
 "které lze importovat: JPEG, PNG, JPEG 2000, PNM a SVG."
 
-#: C/importingmpegts.page:14(info/desc)
+#. (itstool) path: info/desc
+#: C/importingmpegts.page:14
 msgid ""
 "How to convert .mts and .m2ts files to a format that can be parsed by "
 "GStreamer and Pitivi."
@@ -801,11 +965,13 @@ msgstr ""
 "Jak převést soubory .mts a .m2ts do formátu, který umí zpracovat GStreamer a "
 "Pitivi."
 
-#: C/importingmpegts.page:22(page/title)
+#. (itstool) path: page/title
+#: C/importingmpegts.page:22
 msgid "Dealing with AVCHD / MPEG-TS files"
 msgstr "Práce se soubory AVCHD / MPEG-TS"
 
-#: C/importingmpegts.page:24(page/p)
+#. (itstool) path: page/p
+#: C/importingmpegts.page:24
 msgid ""
 "At the time being, MPEG Transport Stream files (usually with file extensions "
 "such as .mts, .m2ts and sometimes .mpg or .mpeg), such as those used by some "
@@ -821,31 +987,36 @@ msgstr ""
 "kontejneru pomocí programu <app>ffmpeg</app>. Pro bezeztrátový převod do "
 "kontejneru MPEG4 můžete použít následující příkaz:"
 
-#: C/importingmpegts.page:25(page/code)
+#. (itstool) path: page/code
+#: C/importingmpegts.page:25
 #, no-wrap
 msgid "ffmpeg -i your_clip.MTS -vcodec copy -acodec copy -sn test.mp4"
 msgstr "ffmpeg -i váš_klip.MTS -vcodec copy -acodec copy -sn pokus.mp4"
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/importing.page:50(media)
+#: C/importing.page:51
 msgctxt "_"
 msgid ""
 "external ref='figures/filechooser.png' md5='7c99958f9d766b874c3994fd56870259'"
 msgstr ""
 "external ref='figures/filechooser.png' md5='7c99958f9d766b874c3994fd56870259'"
 
-#: C/importing.page:17(info/desc)
+#. (itstool) path: info/desc
+#: C/importing.page:19
 msgid "Importing files into your project as clips."
 msgstr "Import souborů v podobě klipů do vašeho projektu."
 
-#: C/importing.page:25(page/title)
+#. (itstool) path: page/title
+#: C/importing.page:27
 msgid "Getting media"
 msgstr "Získávání médií"
 
-#: C/importing.page:27(page/p)
+#. (itstool) path: page/p
+#: C/importing.page:29
 msgid ""
 "At the time of this writing, the only supported method is importing files "
 "from your hard drive. As such, you cannot use <app>Pitivi</app> to capture "
@@ -858,31 +1029,38 @@ msgstr ""
 "kamery. Pro videokamery DV/HDV používající připojení IEEE 1394 (FireWire) "
 "můžete použít aplikace <app>Kino</app> nebo <app>dvgrab</app>."
 
-#: C/importing.page:29(note/p)
+#. (itstool) path: note/p
+#: C/importing.page:31
 msgid "We would welcome good quality patches to implement the following:"
 msgstr "Uvítali bychom kvalitní příspěvky k implementaci následujícího:"
 
-#: C/importing.page:31(item/p)
+#. (itstool) path: item/p
+#: C/importing.page:33
 msgid "Capture from a DV or HDV camcorder using an IEEE 1394 connection."
 msgstr "Snímání přes kamery DV a HDV připojení pomocí IEEE 1394."
 
-#: C/importing.page:32(item/p)
+#. (itstool) path: item/p
+#: C/importing.page:34
 msgid "Capture from a webcam."
 msgstr "Snímání přes webové kamery."
 
-#: C/importing.page:33(item/p)
+#. (itstool) path: item/p
+#: C/importing.page:35
 msgid "Dumping a network/Internet stream."
 msgstr "Zachytávání vysílání ze sítě/Internetu."
 
-#: C/importing.page:34(item/p)
+#. (itstool) path: item/p
+#: C/importing.page:36
 msgid "Importing from DVD."
 msgstr "Import z DVD."
 
-#: C/importing.page:35(item/p)
+#. (itstool) path: item/p
+#: C/importing.page:37
 msgid "Importing from an audio CD."
 msgstr "Import ze zvukových CD."
 
-#: C/importing.page:36(item/p)
+#. (itstool) path: item/p
+#: C/importing.page:38
 msgid ""
 "Downloading from content providers such as <link href=\"http://www.jamendo."
 "com\">Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</"
@@ -894,54 +1072,57 @@ msgstr ""
 "link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, "
 "apod."
 
-#: C/importing.page:42(section/title)
+#. (itstool) path: section/title
+#: C/importing.page:44
 msgid "Importing files"
 msgstr "Importování souborů"
 
-#: C/importing.page:44(section/title)
+#. (itstool) path: section/title
+#: C/importing.page:45
 msgid "Using the file chooser"
 msgstr "Pomocí výběru souborů"
 
-#: C/importing.page:45(section/p)
+#. (itstool) path: section/p
+#: C/importing.page:46
 msgid ""
 "You can import media into the <gui>Media Library</gui> by using the file "
 "chooser dialog, which has the advantage of letting you preview the files you "
-"want to import. To do so, use the <guiseq><gui>Library</gui><gui>Import "
-"Files...</gui></guiseq> menu, the <gui>Import Files...</gui> button on the "
-"main toolbar, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>."
+"want to import. To do so, use the <guiseq><gui>Library</gui><gui>Import</"
+"gui></guiseq> button, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>."
 msgstr ""
 "Multimediální soubory můžete do <gui>Knihovny médií</gui> importovat pomocí "
 "dialogového okna pro výběr souborů, které je vylepšené o náhledy souborů "
-"vybraných k importu. Použijte k tomu nabídku <guiseq><gui>Knihovna</"
-"gui><gui>Importovat soubory…</gui></guiseq>, tlačítko <gui>Importovat "
-"soubory…</gui> na hlavní liště nástrojů nebo zmáčkněte <keyseq><key>Ctrl</"
+"vybraných k importu. Použijte k tomu tlačítko <guiseq><gui>Knihovna</"
+"gui><gui>Importovat</gui></guiseq> nebo zmáčkněte <keyseq><key>Ctrl</"
 "key><key>i</key></keyseq>."
 
-#: C/importing.page:46(section/p)
+#. (itstool) path: section/p
+#: C/importing.page:47
 msgid "The following file chooser dialog window will appear:"
 msgstr "Objeví se následující dialogové okno pro výběr souboru:"
 
-#: C/importing.page:48(figure/title) C/importing.page:49(figure/desc)
+#. (itstool) path: figure/title
+#. (itstool) path: figure/desc
+#: C/importing.page:49 C/importing.page:50
 msgid "Filechooser dialog"
 msgstr "Dialogové okno pro výběr souboru"
 
-#: C/importing.page:52(section/p)
+#. (itstool) path: section/p
+#: C/importing.page:53
 msgid ""
 "Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the "
-"same time. You can also import all the files contained in a folder (and its "
-"subfolders) by using <guiseq><gui>Library</gui><gui>Import Folders...</gui></"
-"guiseq> in the menu bar."
+"same time."
 msgstr ""
-"Pro výběr více souborů naráz zmáčkněte <key>Ctrl</key> nebo <key>Shift</"
-"key>. Můžete také importovat všechny soubory uložené ve složce (a jejích "
-"podsložkách) pomocí <guiseq><gui>Knihovna</gui><gui>Importovat složky…</"
-"gui></guiseq> v hlavní nabídce."
+"Se zmáčknutou klávesou <key>Ctrl</key> nebo <key>Shift</key> můžete vybrat "
+"více souborů naráz."
 
-#: C/importing.page:55(section/title)
+#. (itstool) path: section/title
+#: C/importing.page:56
 msgid "Using drag and drop"
 msgstr "Metodou „táni a pusť“"
 
-#: C/importing.page:56(section/p)
+#. (itstool) path: section/p
+#: C/importing.page:57
 msgid ""
 "The concept of drag and drop is a well-established method of bridging the "
 "gap between software applications. Simply select the files you want to "
@@ -954,11 +1135,13 @@ msgstr ""
 "aplikaci) vybrat soubory, které chcete importovat, a přetáhnout je myší do "
 "<gui>Knihovny médií</gui> v <app>Pitivi</app>."
 
-#: C/importing.page:57(section/p)
+#. (itstool) path: section/p
+#: C/importing.page:58
 msgid "This feature can be used to:"
 msgstr "Tuto funkčnost můžete využít k:"
 
-#: C/importing.page:60(item/p)
+#. (itstool) path: item/p
+#: C/importing.page:61
 msgid ""
 "Easily import music or video clips from a media player (such as "
 "<app>Rhythmbox</app> or <app>Totem</app>)."
@@ -966,7 +1149,8 @@ msgstr ""
 "Snadnému importu hudebních klipů nebo videoklipů z hudebního přehrávače "
 "(jako je <app>Rhythmbox</app> nebo <app>Totem</app>)."
 
-#: C/importing.page:63(item/p)
+#. (itstool) path: item/p
+#: C/importing.page:64
 msgid ""
 "Allow using a full-fledged file manager (such as <app>Nautilus</app>, "
 "<app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of "
@@ -976,11 +1160,13 @@ msgstr ""
 "<app>Thunar</app>, <app>Dolphin</app> nebo <app>Konqueror</app>) místo "
 "dialogového okna pro výběr souboru."
 
-#: C/importing.page:66(item/p)
+#. (itstool) path: item/p
+#: C/importing.page:67
 msgid "Import a combination of multiple files and folders at the same time."
 msgstr "Importu kombinace více souborů a složek naráz."
 
-#: C/importing.page:69(item/p)
+#. (itstool) path: item/p
+#: C/importing.page:70
 msgid ""
 "Leverage the searching capability of another application (such as <app>GNOME "
 "Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
@@ -990,17 +1176,20 @@ msgstr ""
 "Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
 "<app>GNOME Search Tool</app> aj.)."
 
-#: C/insertintimeline.page:17(info/desc)
+#. (itstool) path: info/desc
+#: C/insertintimeline.page:17
 msgid "Putting your project media files into the timeline for editing."
 msgstr ""
 "Umisťujte multimediální soubory z vašeho projektu na časovou osu, kde je "
 "můžete upravovat."
 
-#: C/insertintimeline.page:25(page/title)
+#. (itstool) path: page/title
+#: C/insertintimeline.page:25
 msgid "Inserting clips"
 msgstr "Vkládání klipů"
 
-#: C/insertintimeline.page:27(page/p)
+#. (itstool) path: page/p
+#: C/insertintimeline.page:27
 msgid ""
 "From the media library, you can insert one or more clips by selecting them "
 "(using the <key>Ctrl</key> or <key>Shift</key> keys to select multiple "
@@ -1009,11 +1198,13 @@ msgstr ""
 "Z knihovny médií můžete vložit jeden či více klipů tak, že je vyberete (více "
 "klipů vyberete pomocí <key>Ctrl</key> nebo <key>Shift</key>) a:"
 
-#: C/insertintimeline.page:29(item/p)
+#. (itstool) path: item/p
+#: C/insertintimeline.page:29
 msgid "Dragging and dropping them onto place in the timeline."
 msgstr "Přetáhnete je a upustíte je někde na časové ose."
 
-#: C/insertintimeline.page:30(item/p)
+#. (itstool) path: item/p
+#: C/insertintimeline.page:30
 msgid ""
 "Using <guiseq><gui>Library</gui><gui>Insert at End of Timeline</gui></"
 "guiseq>."
@@ -1021,7 +1212,8 @@ msgstr ""
 "Pomocí <guiseq><gui>Knihovna</gui><gui>Vložit na konec časové osy</gui></"
 "guiseq>."
 
-#: C/insertintimeline.page:31(item/p)
+#. (itstool) path: item/p
+#: C/insertintimeline.page:31
 msgid ""
 "Pressing the <key>Insert</key> (Ins) key. Those clips will be inserted at "
 "the end of the timeline."
@@ -1029,7 +1221,8 @@ msgstr ""
 "Zmáčknete klávesu <key>Insert</key>. Tímto se klipy vloží na konec časové "
 "osy."
 
-#: C/insertintimeline.page:34(note/p)
+#. (itstool) path: note/p
+#: C/insertintimeline.page:34
 msgid ""
 "It should also be possible to import files directly into the timeline by "
 "dragging them from another application and dropping them onto <app>Pitivi</"
@@ -1044,19 +1237,22 @@ msgstr ""
 "není implementována, viz <link href=\"https://bugzilla.gnome.org/show_bug."
 "cgi?id=608682\">chyba č. 570118</link>."
 
-#: C/interface.page:13(info/desc)
+#. (itstool) path: info/desc
+#: C/interface.page:13
 msgid "Discover the various windows, components and widgets."
 msgstr "Objevujte různorodá okna, komponenty a widgety."
 
-#: C/interface.page:19(page/title)
+#. (itstool) path: page/title
+#: C/interface.page:19
 msgid "An overview of the user interface"
 msgstr "Přehled uživatelského rozhraní"
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/keyframecurves.page:29(media)
+#: C/keyframecurves.page:29
 msgctxt "_"
 msgid ""
 "external ref='figures/keyframecurves.png' "
@@ -1065,15 +1261,18 @@ msgstr ""
 "external ref='figures/keyframecurves.png' "
 "md5='d91b335281ec48ab9f8fade73bf09852'"
 
-#: C/keyframecurves.page:17(info/desc)
+#. (itstool) path: info/desc
+#: C/keyframecurves.page:17
 msgid "Changing the opacity or volume of a clip over time."
 msgstr "Změna krytí nebo hlasitosti klipu v průběhu času."
 
-#: C/keyframecurves.page:25(page/title)
+#. (itstool) path: page/title
+#: C/keyframecurves.page:25
 msgid "Keyframe curves"
 msgstr "Křivky přes klíčové snímky"
 
-#: C/keyframecurves.page:27(page/p)
+#. (itstool) path: page/p
+#: C/keyframecurves.page:27
 msgid ""
 "Some types of clips (currently only audio clips) support interpolating "
 "property values over their time. The user can add one or more <em>keyframes</"
@@ -1089,11 +1288,13 @@ msgstr ""
 "snímky v podobě <em>křivky</em> nakreslené přes klip. V současnosti je "
 "podporována pouze lineární interpolace."
 
-#: C/keyframecurves.page:33(section/title)
+#. (itstool) path: section/title
+#: C/keyframecurves.page:33
 msgid "General usage"
 msgstr "Obecné využití"
 
-#: C/keyframecurves.page:34(section/p)
+#. (itstool) path: section/p
+#: C/keyframecurves.page:34
 msgid ""
 "Curves are an intrinsic property of clips and can not be removed by the "
 "user. The start and end points of the curve are fixed to the start and end "
@@ -1103,17 +1304,20 @@ msgstr ""
 "Počáteční a koncový bod křivky jsou pevné svázány s počátečním a koncovým "
 "bodem klipu a proto ani ty uživatel nemůže odstranit."
 
-#: C/keyframecurves.page:36(item/p)
+#. (itstool) path: item/p
+#: C/keyframecurves.page:36
 msgid ""
 "You can add a new keyframe by double-clicking on an empty portion of a curve."
 msgstr ""
 "Přidat klíčový snímek můžete dvojitým kliknutím na prázdnou část křivky."
 
-#: C/keyframecurves.page:37(item/p)
+#. (itstool) path: item/p
+#: C/keyframecurves.page:37
 msgid "You can remove a keyframe by double-clicking on it."
 msgstr "Odstranit klíčový snímek můžete dvojitým kliknutím na něj."
 
-#: C/keyframecurves.page:38(item/p)
+#. (itstool) path: item/p
+#: C/keyframecurves.page:38
 msgid ""
 "You can adjust the time and value of a keyframe by moving it with the mouse. "
 "You can place the keyframe anywhere on the clip you like, even if this "
@@ -1123,7 +1327,8 @@ msgstr ""
 "Můžete jej umístit kdekoliv v klipu chcete, dokonce tak, že se tím změní "
 "pořadí klíčových snímků."
 
-#: C/keyframecurves.page:39(item/p)
+#. (itstool) path: item/p
+#: C/keyframecurves.page:39
 msgid ""
 "You can click-and-drag on a segment of a curve between two keyframes to "
 "adjust the vertical position of the segment."
@@ -1131,11 +1336,13 @@ msgstr ""
 "Můžete kliknout na segment křivky mezi dvěma klíčkovými snímky a táhnout "
 "jej, abyste upravili svislé umístění segmentu."
 
-#: C/keyframecurves.page:44(section/title)
+#. (itstool) path: section/title
+#: C/keyframecurves.page:44
 msgid "Audio curves"
 msgstr "Zvukové křivky"
 
-#: C/keyframecurves.page:45(section/p)
+#. (itstool) path: section/p
+#: C/keyframecurves.page:45
 msgid ""
 "For volume curves the vertical position represents the volume of the clip on "
 "a scale from 0 to 200%."
@@ -1143,11 +1350,13 @@ msgstr ""
 "U zvukových křivek představuje svislá poloha hlasitost klipu ve škále od 0 "
 "do 200 %."
 
-#: C/keyframecurves.page:49(section/title)
+#. (itstool) path: section/title
+#: C/keyframecurves.page:49
 msgid "Video compositing curves"
 msgstr "Skládání křivek videa"
 
-#: C/keyframecurves.page:50(section/p)
+#. (itstool) path: section/p
+#: C/keyframecurves.page:50
 msgid ""
 "The vertical position represents the alpha (opacity) of the clip on a scale "
 "from 0 to 100%. See the <link xref=\"layers\">Understanding layers</link> "
@@ -1157,22 +1366,25 @@ msgstr ""
 "Viz oddíl <link xref=\"layers\">Vysvětlení vrstev</link> pro další "
 "podrobnosti."
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/layers.page:41(media)
+#: C/layers.page:43
 msgctxt "_"
 msgid ""
 "external ref='figures/layers.png' md5='27c5f543944b381bc7147ff90b3deaee'"
 msgstr ""
 "external ref='figures/layers.png' md5='27c5f543944b381bc7147ff90b3deaee'"
 
-#: C/layers.page:25(page/title)
+#. (itstool) path: page/title
+#: C/layers.page:27
 msgid "Understanding layers"
 msgstr "Vysvětlení vrstev"
 
-#: C/layers.page:27(page/p)
+#. (itstool) path: page/p
+#: C/layers.page:29
 msgid ""
 "<em>Layers</em> are a fundamental concept for advanced editing in the "
 "timeline: compositing, mixing multiple videos simultaneously, and adding "
@@ -1182,7 +1394,8 @@ msgstr ""
 "ose: skládání, mixování více videí dohromady a přidávání titulků závisí na "
 "této funkčnosti."
 
-#: C/layers.page:28(page/p)
+#. (itstool) path: page/p
+#: C/layers.page:30
 msgid ""
 "It is easier to think of layers in terms of images painted on glass. With "
 "several pieces of glass stacked on top of each other, each of these pieces "
@@ -1194,7 +1407,8 @@ msgstr ""
 "vrstvu. Když bude sklo na vrchu hromady úplně pomalované, nebude vidět žádné "
 "jiné pod ním."
 
-#: C/layers.page:29(page/p)
+#. (itstool) path: page/p
+#: C/layers.page:31
 msgid ""
 "If, on the other hand, you only paint over a portion of a piece of glass, "
 "you will be able to see what is underneath the non-painted parts."
@@ -1202,11 +1416,13 @@ msgstr ""
 "Pokud ale pomalujete pouze část skla, můžete vidět přes nepomalovanou část, "
 "co je pod ním."
 
-#: C/layers.page:32(section/title)
+#. (itstool) path: section/title
+#: C/layers.page:34
 msgid "Opacity (how solid “opaque” things are)"
 msgstr "Krytí (jak moc jsou věci „neprůhledné“)"
 
-#: C/layers.page:33(section/p)
+#. (itstool) path: section/p
+#: C/layers.page:35
 msgid ""
 "Each layer (and each clip) has its own transparency. To continue the paint "
 "on glass metaphor, if the paint is thin enough, it can be seen through. "
@@ -1219,11 +1435,13 @@ msgstr ""
 "klipy pod touto vrstvou nebo klipem, a krytí 50 %, že můžete částečně vidět "
 "skrz."
 
-#: C/layers.page:37(section/title)
+#. (itstool) path: section/title
+#: C/layers.page:39
 msgid "How this translates in terms of user interface"
 msgstr "Jak se to projevuje z hlediska uživatelského rozhraní"
 
-#: C/layers.page:38(section/p)
+#. (itstool) path: section/p
+#: C/layers.page:40
 msgid ""
 "While, in real life, you can stack pieces of glass onto each other in three "
 "dimensions, your computer monitor only has two dimensions. Thus, the "
@@ -1235,7 +1453,8 @@ msgstr ""
 "nahoře</em> (osa „Z“ v reálném světe) zobrazeny sice <em>nahoře</em>, ale "
 "osy „Y“."
 
-#: C/layers.page:39(section/p)
+#. (itstool) path: section/p
+#: C/layers.page:41
 msgid ""
 "The following diagram illustrates the <em>pieces of glass</em> (left) and "
 "how they are show as <em>layers</em> in <app>Pitivi</app>'s user interface "
@@ -1244,7 +1463,8 @@ msgstr ""
 "Následující nákres ilustruje <em>kusy skla</em> (vlevo) a jak se zobrazují v "
 "podobě <em>vrstev</em> v uživatelském rozhraní <app>Pitivi</app> (vpravo)."
 
-#: C/layers.page:43(section/p)
+#. (itstool) path: section/p
+#: C/layers.page:45
 msgid ""
 "Clips located on a layer above will block the clips below from view, unless "
 "it has an opacity value lower than 100% (as shown with the two topmost "
@@ -1254,11 +1474,13 @@ msgstr ""
 "které jsou umístěny v nižší vrstvě, ledaže je jejich krytí nastaveno na méně "
 "než 100 % (jak je ukázáno na dvou vrchních vrstvách na předchozí ilustraci)."
 
-#: C/layers.page:47(section/title)
+#. (itstool) path: section/title
+#: C/layers.page:49
 msgid "Adding and removing layers"
 msgstr "Přidávání a odebírání vrstev"
 
-#: C/layers.page:48(section/p)
+#. (itstool) path: section/p
+#: C/layers.page:50
 msgid ""
 "Layers are created and removed automatically. There is no “layer management” "
 "interface in <app>Pitivi</app> (at least, not yet)."
@@ -1266,14 +1488,19 @@ msgstr ""
 "Vrstvy se vytváří a odebírají automaticky. V <app>Pitivi</app> není žádná "
 "explicitní „správa vrstev“ (nebo alespoň prozatím)."
 
-#: C/layers.page:49(section/p)
+#. (itstool) path: section/p
+#: C/layers.page:51
 msgid ""
-"To create a layer, drag a clip downwards until a new layer appears for it."
+"To create a layer, drag a clip to the middle space between two existing "
+"layers. Once the grey shadow (a thin rectangle) appears between the layers, "
+"release it."
 msgstr ""
-"Když chcete vytvořit novou vrstvu, přesuňte klip směrem dolů, až se pro něj "
-"objeví nová vrstva."
+"Vrstvu vytvoříte tak, že klip přetáhnete doprostřed mezery mezi dvěma "
+"stávajícími vrstvami. Jakmile se mezi vrstvami objeví šedý stín (tenký "
+"obdélník), klip upusťte."
 
-#: C/layers.page:50(section/p)
+#. (itstool) path: section/p
+#: C/layers.page:52
 msgid ""
 "If there are no more clips on a layer, it is automatically removed. Thus, to "
 "remove a layer, simply drag its clips upwards onto another layer."
@@ -1282,11 +1509,13 @@ msgstr ""
 "Takže když chcete vrstvu odebrat, stačí klipy, co jsou na ní, přesunout do "
 "některé z vrstev nahoru."
 
-#: C/layers.page:54(section/title)
+#. (itstool) path: section/title
+#: C/layers.page:56
 msgid "What about audio layers?"
 msgstr "A co zvukové vrstvy?"
 
-#: C/layers.page:55(section/p)
+#. (itstool) path: section/p
+#: C/layers.page:57
 msgid ""
 "Unlike in vision, multiple sounds do not (objectively) “block” each other. "
 "As such, if you have multiple audio clips on separate layers, their sound "
@@ -1298,15 +1527,18 @@ msgstr ""
 "jejich zvuk bude mixovat. Hlasitost těchto zvukových klipů se jednoduše určí "
 "jako jejich relativní hlasitost."
 
-#: C/license.page:8(info/desc)
+#. (itstool) path: info/desc
+#: C/license.page:8
 msgid "Legal information."
 msgstr "Právní informace."
 
-#: C/license.page:11(page/title)
+#. (itstool) path: page/title
+#: C/license.page:11
 msgid "License"
 msgstr "Licence"
 
-#: C/license.page:12(page/p)
+#. (itstool) path: page/p
+#: C/license.page:12
 msgid ""
 "This work is distributed under a CreativeCommons Attribution-Share Alike 3.0 "
 "Unported license."
@@ -1314,35 +1546,43 @@ msgstr ""
 "Tato práce je šířena pod licencí CreativeCommons Attribution-Share Alike 3.0 "
 "Unported license."
 
-#: C/license.page:20(page/p)
+#. (itstool) path: page/p
+#: C/license.page:20
 msgid "You are free:"
 msgstr "Můžete volně:"
 
-#: C/license.page:25(item/title)
+#. (itstool) path: item/title
+#: C/license.page:25
 msgid "<em>To share</em>"
 msgstr "<em>Sdílet</em>"
 
-#: C/license.page:26(item/p)
+#. (itstool) path: item/p
+#: C/license.page:26
 msgid "To copy, distribute and transmit the work."
 msgstr "Kopírovat, šířit a rozesílat dílo."
 
-#: C/license.page:29(item/title)
+#. (itstool) path: item/title
+#: C/license.page:29
 msgid "<em>To remix</em>"
 msgstr "<em>Měnit</em>"
 
-#: C/license.page:30(item/p)
+#. (itstool) path: item/p
+#: C/license.page:30
 msgid "To adapt the work."
 msgstr "Přizpůsobovat dílo."
 
-#: C/license.page:33(page/p)
+#. (itstool) path: page/p
+#: C/license.page:33
 msgid "Under the following conditions:"
 msgstr "Za následujících podmínek:"
 
-#: C/license.page:36(item/title)
+#. (itstool) path: item/title
+#: C/license.page:36
 msgid "<em>Attribution</em>"
 msgstr "<em>Označení</em>"
 
-#: C/license.page:37(item/p)
+#. (itstool) path: item/p
+#: C/license.page:37
 msgid ""
 "You must attribute the work in the manner specified by the author or "
 "licensor (but not in any way that suggests that they endorse you or your use "
@@ -1351,11 +1591,13 @@ msgstr ""
 "Musíte dílo označit v souladu s požadavky autora nebo licence (ale ne žádným "
 "způsobem, který předpokládá, že podporují vás nebo vaše použití díla)."
 
-#: C/license.page:40(item/title)
+#. (itstool) path: item/title
+#: C/license.page:40
 msgid "<em>Share Alike</em>"
 msgstr "<em>Stejné sdílení</em>"
 
-#: C/license.page:41(item/p)
+#. (itstool) path: item/p
+#: C/license.page:41
 msgid ""
 "If you alter, transform, or build upon this work, you may distribute the "
 "resulting work only under the same, similar or a compatible license."
@@ -1363,7 +1605,8 @@ msgstr ""
 "Pokud dílo změníte, převedete nebo na něm založíte jiné, můžete výsledek "
 "této práce šířit pouze pod stejnou, podobnou nebo kompatibilní licencí."
 
-#: C/license.page:44(page/p)
+#. (itstool) path: page/p
+#: C/license.page:44
 msgid ""
 "For the full text of the license, see the <link href=\"http://"
 "creativecommons.org/licenses/by-sa/3.0/legalcode\">CreativeCommons website</"
@@ -1375,51 +1618,67 @@ msgstr ""
 "nebo si přečtěte <link href=\"http://creativecommons.org/licenses/by-sa/3.0/"
 "\">výtah dokumentu pro neprávníky</link>."
 
+#. (itstool) path: page/p
+#: C/license.page:48
+msgid ""
+"For the license of Pitivi itself, see the <link href=\"http://www.gnu.org/"
+"licenses/lgpl-2.1.html\">GNU Lesser General Public License</link>."
+msgstr ""
+"Licencí Pitivi jako aplikace je <link href=\"http://www.gnu.org/licenses/"
+"lgpl-2.1.html\">GNU Lesser General Public License</link>."
+
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/mainwindow.page:28(media)
+#: C/mainwindow.page:28
 msgctxt "_"
 msgid ""
 "external ref='figures/mainwindow.jpg' md5='544f1d503faaec759beac50fd36670df'"
 msgstr ""
 "external ref='figures/mainwindow.jpg' md5='544f1d503faaec759beac50fd36670df'"
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/mainwindow.page:45(media)
+#: C/mainwindow.page:45
 msgctxt "_"
 msgid ""
 "external ref='figures/hovering.png' md5='b4a8bd739707a43056e55a5d2b31ed57'"
 msgstr ""
 "external ref='figures/hovering.png' md5='b4a8bd739707a43056e55a5d2b31ed57'"
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/mainwindow.page:54(media)
+#: C/mainwindow.page:54
 msgctxt "_"
 msgid "external ref='figures/ruler.png' md5='2d2f2261c4bdb034be332fbcea37f273'"
 msgstr ""
 "external ref='figures/ruler.png' md5='2d2f2261c4bdb034be332fbcea37f273'"
 
-#: C/mainwindow.page:15(info/desc)
+#. (itstool) path: info/desc
+#: C/mainwindow.page:15
 msgid "Discover the components of the main window."
 msgstr "Objevte části hlavního okna."
 
-#: C/mainwindow.page:23(page/title)
+#. (itstool) path: page/title
+#: C/mainwindow.page:23
 msgid "The main window"
 msgstr "Hlavní okno"
 
-#: C/mainwindow.page:26(figure/title)
+#. (itstool) path: figure/title
+#: C/mainwindow.page:26
 msgid "<app>Pitivi</app> main window"
 msgstr "Hlavní okno aplikace <app>Pitivi</app>"
 
-#: C/mainwindow.page:27(figure/desc)
+#. (itstool) path: figure/desc
+#: C/mainwindow.page:27
 msgid ""
 "The main window, as the name implies, is the window containing the main "
 "components of the <app>Pitivi</app> user interface, namely: the menu bar, "
@@ -1431,11 +1690,13 @@ msgstr ""
 "lištu nástrojů, časovou osu a různé přizpůsobitelné komponenty (knihovnu "
 "médií, náhled, knihovnu efektů, knihovnu přechodů, atd.)."
 
-#: C/mainwindow.page:34(section/title)
+#. (itstool) path: section/title
+#: C/mainwindow.page:34
 msgid "Menu bar"
 msgstr "Lišta nabídek"
 
-#: C/mainwindow.page:35(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:35
 msgid ""
 "The menu bar contains all the possible actions of the toolbars, plus many "
 "more. The menu bar also provides some instant-apply settings, as well as "
@@ -1447,15 +1708,18 @@ msgstr ""
 "přistup k dalšímu přizpůsobení v dialogových oknech <gui>Nastavení projektu</"
 "gui> a <gui>Předvolby</gui>."
 
-#: C/mainwindow.page:36(note/p)
+#. (itstool) path: note/p
+#: C/mainwindow.page:36
 msgid "The menu bar cannot be hidden."
 msgstr "Lištu nabídek nelze skrýt."
 
-#: C/mainwindow.page:41(section/title)
+#. (itstool) path: section/title
+#: C/mainwindow.page:41
 msgid "The toolbars"
 msgstr "Lišta nástrojů"
 
-#: C/mainwindow.page:42(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:42
 msgid ""
 "Toolbars provide access to the most commonly used functions of <app>Pitivi</"
 "app>. All items in toolbars can also be accessed through the menu bar. "
@@ -1466,7 +1730,8 @@ msgstr ""
 "v liště nabídek. Lištu nástrojů je možné aktivovat a deaktivovat v nabídce "
 "<gui>Zobrazit</gui>."
 
-#: C/mainwindow.page:43(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:43
 msgid ""
 "You can hover the mouse cursor over a toolbar item to reveal an information "
 "tooltip regarding its function."
@@ -1474,11 +1739,13 @@ msgstr ""
 "Můžete najet kurzorem myši nad položku na liště nástrojů, aby se vám ukázala "
 "vysvětlivka informující o její funkci."
 
-#: C/mainwindow.page:50(section/title)
+#. (itstool) path: section/title
+#: C/mainwindow.page:50
 msgid "Ruler"
 msgstr "Pravítko"
 
-#: C/mainwindow.page:51(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:51
 msgid ""
 "The ruler plays a crucial role in your interaction with the timeline. In "
 "addition to giving you time measurements (in seconds), it is the primary way "
@@ -1488,11 +1755,13 @@ msgstr ""
 "přehled o čase (v sekundách) a jde o hlavní způsob, jak přesouvat pozici "
 "přehrávání (a tím vaši pozici v čase)."
 
-#: C/mainwindow.page:52(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:52
 msgid "The current playhead position is indicated by a red vertical line:"
 msgstr "Aktuální pozice přehrávání je označena červenou svislou čarou:"
 
-#: C/mainwindow.page:57(note/p)
+#. (itstool) path: note/p
+#: C/mainwindow.page:57
 msgid ""
 "When zoomed in, frames are visually represented on the ruler as alternating "
 "light and dark areas in the bottom part; those are based on the project "
@@ -1502,7 +1771,8 @@ msgstr ""
 "jednotlivé snímky v podobě světlejších a tmavších ploch. Záleží na nastavení "
 "snímkové rychlosti projektu."
 
-#: C/mainwindow.page:59(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:59
 msgid ""
 "To move your position in time, click anywhere on the ruler. You can also "
 "<em>scrub</em> the timeline by clicking on the ruler and holding down the "
@@ -1514,11 +1784,13 @@ msgstr ""
 "kliknete a během posouvání držíte tlačítko myši zmáčknuté. Viz oddíl <link "
 "xref=\"movearoundtimeline\">Rychloposuv</link> pro více podrobností."
 
-#: C/mainwindow.page:63(section/title)
+#. (itstool) path: section/title
+#: C/mainwindow.page:63
 msgid "Marker bar"
 msgstr "Lišta značek"
 
-#: C/mainwindow.page:64(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:64
 msgid ""
 "Markers are visual cues that you can create to <em>mark</em> important "
 "points or regions in your project's timeline. The marker bar allows you to "
@@ -1528,7 +1800,8 @@ msgstr ""
 "<em>označili</em> důležité body nebo úseky na časové ose svého projektu. Na "
 "liště značek vidíte značky, které jste vytvořili a můžete je upravovat."
 
-#: C/mainwindow.page:66(note/p)
+#. (itstool) path: note/p
+#: C/mainwindow.page:66
 msgid ""
 "This feature is not yet implemented. See <link href=\"https://bugzilla.gnome."
 "org/show_bug.cgi?id=608682\">bug #608682</link> for more information."
@@ -1537,7 +1810,8 @@ msgstr ""
 "gnome.org/show_bug.cgi?id=608682\">chyba #608682</link> pro více informací "
 "(odkazovaný text je v angličtině)."
 
-#: C/mainwindow.page:72(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:72
 msgid ""
 "The timeline is the core user interface component that you will use for "
 "editing. It is a visual, time-proportional representation of your project's "
@@ -1546,24 +1820,29 @@ msgstr ""
 "Časová osa je jádrem uživatelského rozhraní a budete ji používat k úpravám. "
 "Jde o vizuální reprezentaci časové posloupnosti vašeho projektu."
 
-#: C/mainwindow.page:76(section/title)
+#. (itstool) path: section/title
+#: C/mainwindow.page:76
 msgid "Playback toolbar"
 msgstr "Lišta přehrávání"
 
-#: C/mainwindow.page:77(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:77
 msgid "This toolbar, located below the previewer, contains buttons controlling"
 msgstr ""
 "Tato lišta nástrojů umístěná pod náhledem obsahuje tlačítka ovládající:"
 
-#: C/mainwindow.page:79(item/p)
+#. (itstool) path: item/p
+#: C/mainwindow.page:79
 msgid "The playback of the timeline."
 msgstr "Přehrávání na časové ose."
 
-#: C/mainwindow.page:80(item/p)
+#. (itstool) path: item/p
+#: C/mainwindow.page:80
 msgid "The playback of a clip being previewed from the media library."
 msgstr "Přehrávání klipu zobrazeného z knihovny médií."
 
-#: C/mainwindow.page:82(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:82
 msgid ""
 "The <gui>Play</gui> button transforms into a <gui>Pause</gui> button when "
 "playing, and reverts to a <gui>Play</gui> button again when not playing."
@@ -1571,27 +1850,33 @@ msgstr ""
 "Tlačítko <gui>Přehrát</gui> se během přehrávání změní na <gui>Pozastavit</"
 "gui> a když se nepřehrává, vrátí se zpět na <gui>Přehrát</gui>."
 
-#: C/mainwindow.page:86(section/title)
+#. (itstool) path: section/title
+#: C/mainwindow.page:86
 msgid "Previewer"
 msgstr "Náhled"
 
-#: C/mainwindow.page:87(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:87
 msgid "The previewer displays"
 msgstr "Náhled zobrazuje:"
 
-#: C/mainwindow.page:89(item/p)
+#. (itstool) path: item/p
+#: C/mainwindow.page:89
 msgid "Your project's video when playing back."
 msgstr "Video vašeho projektu, když jej přehráváte."
 
-#: C/mainwindow.page:90(item/p)
+#. (itstool) path: item/p
+#: C/mainwindow.page:90
 msgid "The video frame at the current position of the playhead."
 msgstr "Snímek videa na aktuální pozici přehrávání."
 
-#: C/mainwindow.page:91(item/p)
+#. (itstool) path: item/p
+#: C/mainwindow.page:91
 msgid "A <em>live preview</em> when trimming a clip's beginning/end point."
 msgstr "<em>Živý náhled</em> při stříhání počátečního/koncového bodu klipu."
 
-#: C/mainwindow.page:93(note/p)
+#. (itstool) path: note/p
+#: C/mainwindow.page:93
 msgid ""
 "The <em>live preview</em> feature is not yet implemented. See <link href="
 "\"https://bugzilla.gnome.org/show_bug.cgi?id=569980\">bug #569980</link> for "
@@ -1601,7 +1886,8 @@ msgstr ""
 "\"https://bugzilla.gnome.org/show_bug.cgi?id=569980\">chyba #569980</link> "
 "pro více informací (odkazovaný text je v angličtině)."
 
-#: C/mainwindow.page:101(section/p)
+#. (itstool) path: section/p
+#: C/mainwindow.page:101
 msgid ""
 "The media library displays the imported media files in your project and "
 "allows you to manage them."
@@ -1609,27 +1895,33 @@ msgstr ""
 "Knihovna médií zobrazuje multimediální soubory naimportované do vašeho "
 "projektu a umožňuje vám je spravovat."
 
-#: C/makeselections.page:17(info/desc)
+#. (itstool) path: info/desc
+#: C/makeselections.page:17
 msgid "Selecting and deselecting single or multiple items."
 msgstr "Vybírání a rušení výběru jedné nebo více položek."
 
-#: C/makeselections.page:25(page/title)
+#. (itstool) path: page/title
+#: C/makeselections.page:25
 msgid "Making selections"
 msgstr "Provádění výběru"
 
-#: C/makeselections.page:28(section/title)
+#. (itstool) path: section/title
+#: C/makeselections.page:28
 msgid "Selecting a single item"
 msgstr "Výběr jedné položky"
 
-#: C/makeselections.page:29(section/p)
+#. (itstool) path: section/p
+#: C/makeselections.page:29
 msgid "To select a file or a clip in <app>Pitivi</app>, click it."
 msgstr "Soubor nebo klip v <app>Pitivi</app> vyberete tak, že na něj kliknete."
 
-#: C/makeselections.page:33(section/title)
+#. (itstool) path: section/title
+#: C/makeselections.page:33
 msgid "Selecting multiple items"
 msgstr "Výběr více položek"
 
-#: C/makeselections.page:34(section/p)
+#. (itstool) path: section/p
+#: C/makeselections.page:34
 msgid ""
 "Multiple selections allow you to apply actions (dragging, deleting, "
 "grouping, etc.) to many clips at once."
@@ -1637,35 +1929,43 @@ msgstr ""
 "Díky vícenásobnému výběru můžete použít akce (přetahování, mazání, "
 "seskupování, apod.) u více klipů naráz."
 
-#: C/makeselections.page:35(section/p)
+#. (itstool) path: section/p
+#: C/makeselections.page:35
 msgid "Selecting multiple adjacent items:"
 msgstr "Výběr více sousedících položek:"
 
-#: C/makeselections.page:37(item/p)
+#. (itstool) path: item/p
+#: C/makeselections.page:37
 msgid "Click the first item."
 msgstr "Klikněte na první položku."
 
-#: C/makeselections.page:38(item/p)
+#. (itstool) path: item/p
+#: C/makeselections.page:38
 msgid "Hold the <key>Shift</key> key."
 msgstr "Držte zmáčknutou klávesu <key>Shift</key>."
 
-#: C/makeselections.page:39(item/p)
+#. (itstool) path: item/p
+#: C/makeselections.page:39
 msgid "Click the last item."
 msgstr "Klikněte na poslední položku."
 
-#: C/makeselections.page:41(section/p)
+#. (itstool) path: section/p
+#: C/makeselections.page:41
 msgid "Selecting multiple nonadjacent items:"
 msgstr "Výběr více nesousedících položek:"
 
-#: C/makeselections.page:43(item/p)
+#. (itstool) path: item/p
+#: C/makeselections.page:43
 msgid "Hold down the <key>Ctrl</key> key."
 msgstr "Držte zmáčknutou klávesu <key>Ctrl</key>."
 
-#: C/makeselections.page:44(item/p)
+#. (itstool) path: item/p
+#: C/makeselections.page:44
 msgid "Click on all the items you want to select."
 msgstr "Postupně klikejte na všechny položky, které chcete vybrat."
 
-#: C/makeselections.page:46(section/p)
+#. (itstool) path: section/p
+#: C/makeselections.page:46
 msgid ""
 "You can deselect an individual item by clicking on it again with the "
 "<key>Ctrl</key> key held down. This can be used in conjunction with the "
@@ -1675,11 +1975,12 @@ msgstr ""
 "budete přitom držet zmáčknutou klávesu <key>Ctrl</key>. Můžete to využít ve "
 "spojení s technikou <em>výběru více sousedících položek</em> zmíněnou výše."
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/medialibrary.page:32(media)
+#: C/medialibrary.page:32
 msgctxt "_"
 msgid ""
 "external ref='figures/previewsource.png' "
@@ -1688,24 +1989,28 @@ msgstr ""
 "external ref='figures/previewsource.png' "
 "md5='ec55ba71f7c9ec058d4619b342654a0e'"
 
-#: C/medialibrary.page:14(credit/name)
-#: C/movearoundtimeline.page:16(credit/name)
+#. (itstool) path: credit/name
+#: C/medialibrary.page:14 C/movearoundtimeline.page:16
 msgid "Brian Grohe"
 msgstr "Brian Grohe"
 
-#: C/medialibrary.page:17(info/desc)
+#. (itstool) path: info/desc
+#: C/medialibrary.page:17
 msgid "Managing your imported clips with the Media Library"
 msgstr "Správa vašich importovaných klipů v knihovně médií"
 
-#: C/medialibrary.page:25(page/title)
+#. (itstool) path: page/title
+#: C/medialibrary.page:25
 msgid "Using the Media Library"
 msgstr "Používání knihovny médií"
 
-#: C/medialibrary.page:28(section/title)
+#. (itstool) path: section/title
+#: C/medialibrary.page:28
 msgid "Previewing a clip from the <gui>Media Library</gui>"
 msgstr "Náhled klipů z <gui>Knihovny médií</gui>"
 
-#: C/medialibrary.page:29(section/p)
+#. (itstool) path: section/p
+#: C/medialibrary.page:29
 msgid ""
 "To preview a clip before placing it on the timeline, you can double-click on "
 "it in the <gui>Media Library</gui>, or right-click and choose <gui>Preview "
@@ -1718,15 +2023,18 @@ msgstr ""
 "Klip se otevře v okně, které se automaticky zavře, když kliknete kamkoliv "
 "mimo toto okno."
 
-#: C/medialibrary.page:31(figure/desc)
+#. (itstool) path: figure/desc
+#: C/medialibrary.page:31
 msgid "Popup menu"
 msgstr "Místní nabídka"
 
-#: C/medialibrary.page:36(section/title)
+#. (itstool) path: section/title
+#: C/medialibrary.page:36
 msgid "Filtering search"
 msgstr "Hledání pomocí filtrování"
 
-#: C/medialibrary.page:37(section/p)
+#. (itstool) path: section/p
+#: C/medialibrary.page:37
 msgid ""
 "A search bar is shown at the top of the <gui>Media Library</gui>. Typing "
 "into the search entry filters the contents of the <gui>Media Library</gui> "
@@ -1738,11 +2046,13 @@ msgstr ""
 "aby zobrazoval pouze klipy, jejichž názvy odpovídají zadanému výrazu. K "
 "vymazání zadaného výrazu použijte „mazací“ ikonu přímo ve vyhledávacím poli."
 
-#: C/medialibrary.page:40(section/title)
+#. (itstool) path: section/title
+#: C/medialibrary.page:40
 msgid "Typeahead search"
 msgstr "Hledání psaním"
 
-#: C/medialibrary.page:41(section/p)
+#. (itstool) path: section/p
+#: C/medialibrary.page:41
 msgid ""
 "An alternative way of searching, if you know the beginning of a clip's "
 "filename, is to click anywhere in the <gui>Media Library</gui> and start "
@@ -1752,15 +2062,18 @@ msgstr ""
 "je kliknout kdekoliv v <gui>Knihovně médií</gui> a začít psát název souboru, "
 "který hledáte."
 
-#: C/medialibrary.page:43(item/p)
+#. (itstool) path: item/p
+#: C/medialibrary.page:43
 msgid "As you type, the first matching file will become selected."
 msgstr "Jak postupně píšete, vybírá se nejbližší shodný název souboru."
 
-#: C/medialibrary.page:44(item/p)
+#. (itstool) path: item/p
+#: C/medialibrary.page:44
 msgid "You can keep typing to refine your search."
 msgstr "Dalším psaním hledání upřesňujete."
 
-#: C/medialibrary.page:45(item/p)
+#. (itstool) path: item/p
+#: C/medialibrary.page:45
 msgid ""
 "When there are multiple results, you can use the <key>up</key> and "
 "<key>down</key> arrow keys to switch the selection between each search "
@@ -1769,15 +2082,18 @@ msgstr ""
 "Pokud existuje více výsledků, můžete použít kurzorové klávesy <key>↑</key> a "
 "<key>↓</key> k přepnutí mezi jednotlivými výsledky hledání."
 
-#: C/medialibrary.page:48(section/p)
+#. (itstool) path: section/p
+#: C/medialibrary.page:48
 msgid "This method only allows searching from the beginning of the filename."
 msgstr "Tímto způsobem lze hledat pouze od počátku názvu souboru."
 
-#: C/medialibrary.page:51(section/title)
+#. (itstool) path: section/title
+#: C/medialibrary.page:51
 msgid "View modes"
 msgstr "Režimy zobrazení"
 
-#: C/medialibrary.page:52(section/p)
+#. (itstool) path: section/p
+#: C/medialibrary.page:52
 msgid ""
 "The <gui>Media Library</gui> can display your clips in a list "
 "(<guiseq><gui>View</gui><gui>Show Clips as a List</gui></guiseq>) or in an "
@@ -1788,7 +2104,8 @@ msgstr ""
 "nebo v podobě ikon (<guiseq><gui>Zobrazit</gui><gui>Zobrazit klipy jako "
 "ikony</gui></guiseq>)."
 
-#: C/medialibrary.page:53(section/p)
+#. (itstool) path: section/p
+#: C/medialibrary.page:53
 msgid ""
 "The list view mode shows more details about each clip, but the icon view "
 "mode can display more clips without needing to scroll (especially on high "
@@ -1798,21 +2115,25 @@ msgstr ""
 "zase uvidíte víc klipů naráz, aniž byste museli zobrazení posouvat (hlavně "
 "na monitorech s vyšším rozlišením)."
 
-#: C/movearoundtimeline.page:19(info/desc)
+#. (itstool) path: info/desc
+#: C/movearoundtimeline.page:21
 msgid "Moving the playhead, using the zoom feature, scrolling and scrubbing."
 msgstr ""
 "Přemisťování pozice přehrávání, používání funkce přiblížení, posouvání a "
 "rychloposuvu."
 
-#: C/movearoundtimeline.page:27(page/title)
+#. (itstool) path: page/title
+#: C/movearoundtimeline.page:29
 msgid "Moving around the timeline"
 msgstr "Posun po časové ose"
 
-#: C/movearoundtimeline.page:30(section/title)
+#. (itstool) path: section/title
+#: C/movearoundtimeline.page:32
 msgid "Activating the timeline toolbar"
 msgstr "Aktivace lišty nástrojů časové osy"
 
-#: C/movearoundtimeline.page:31(section/p)
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:33
 msgid ""
 "The timeline toolbar contains many tools, which become active once a clip is "
 "selected in the timeline. To select a clip, simply click on the desired clip "
@@ -1824,11 +2145,13 @@ msgstr ""
 "klip na časové ose kliknout. Klip po vybrání ztmavne a položky na liště "
 "nástrojů časové osy začnou reagovat na kliknutí."
 
-#: C/movearoundtimeline.page:35(section/title)
+#. (itstool) path: section/title
+#: C/movearoundtimeline.page:37
 msgid "Scrolling"
 msgstr "Posouvání"
 
-#: C/movearoundtimeline.page:36(section/p)
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:38
 msgid ""
 "You can use the scrollbars (located on the right and bottom of the "
 "timeline), use the mouse wheel anywhere over the timeline to scroll "
@@ -1840,11 +2163,13 @@ msgstr ""
 "můžete používat kolečko myši, a držet u toho zmáčknutou klávesu <key>Shift</"
 "key>, ke svislému posouvání vrstev časové osy."
 
-#: C/movearoundtimeline.page:40(section/title)
+#. (itstool) path: section/title
+#: C/movearoundtimeline.page:42
 msgid "Zooming"
 msgstr "Přibližování a oddalování"
 
-#: C/movearoundtimeline.page:41(section/p)
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:43
 msgid ""
 "Zooming directly affects your editing accuracy and your ability to move "
 "quickly along the timeline:"
@@ -1852,7 +2177,8 @@ msgstr ""
 "Přiblížení přímo ovlivňuje přesnost úprav a schopnost posouvat se po časové "
 "ose rychle:"
 
-#: C/movearoundtimeline.page:43(item/p)
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:45
 msgid ""
 "When zooming in, video clips display more thumbnails and audio clips display "
 "increasingly detailed waveforms, allowing you to do precise edits."
@@ -1860,7 +2186,8 @@ msgstr ""
 "Při větším přiblížení mají videoklipy větší náhledy a zvukové klipy "
 "detailnější křivku průběhu zvuku, takže můžete provádět přesnější úpravy."
 
-#: C/movearoundtimeline.page:44(item/p)
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:46
 msgid ""
 "Zooming out allows you to scroll faster along the timeline. Zoom can thus be "
 "used in conjunction with scrolling to move quickly between distant points of "
@@ -1870,18 +2197,21 @@ msgstr ""
 "tak můžete používat ve spolupráci s posouváním pro rychlé přecházení mezi "
 "body v časovém průběhu projektu."
 
-#: C/movearoundtimeline.page:46(section/p)
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:48
 msgid "You can zoom in and out by:"
 msgstr "Přibližovat a oddalovat můžete pomocí:"
 
-#: C/movearoundtimeline.page:48(item/p)
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:50
 msgid ""
 "Holding the <key>Ctrl</key> key while using the mousewheel over the timeline"
 msgstr ""
 "Držením klávesy <key>Ctrl</key> za současného použití kolečka myši nad "
 "časovou osou"
 
-#: C/movearoundtimeline.page:49(item/p)
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:51
 msgid ""
 "Using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and "
 "<guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq> menu items"
@@ -1889,35 +2219,44 @@ msgstr ""
 "Použitím položek nabídky <guiseq><gui>Zobrazit</gui><gui>Přiblížit</gui></"
 "guiseq> a <guiseq><gui>Zobrazit</gui><gui>Oddálit</gui></guiseq>"
 
-#: C/movearoundtimeline.page:50(item/p)
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:52
 msgid "Dragging the zoom slider on the left of the ruler"
 msgstr "Posouváním táhla stupně přiblížení po levé straně pravítka"
 
-#: C/movearoundtimeline.page:51(item/p)
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:53
 msgid ""
-"Using keyboard shortcuts such as <key>Ctrl</key>+<key>-</key> to zoom out or "
-"<key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> on the numeric "
-"keypad) to zoom in"
+"Using keyboard shortcuts such as <keyseq><key>Ctrl</key><key>-</key></"
+"keyseq> to zoom out or <keyseq><key>Ctrl</key><key>=</key></keyseq> "
+"(<keyseq><key>Ctrl</key><key>+</key></keyseq> on the numeric keypad) to zoom "
+"in"
 msgstr ""
-"Použitím klávesových zkratek <key>Ctrl</key>+<key>-</key> pro oddálení nebo "
-"<key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> na číselné "
-"klávesnici) pro přiblížení"
+"Použitím klávesových zkratek <keyseq><key>Ctrl</key><key>-</key></keyseq> "
+"pro oddálení nebo <keyseq><key>Ctrl</key><key>=</key></keyseq> "
+"(<keyseq><key>Ctrl</key><key>+</key></keyseq> na číselné klávesnici) pro "
+"přiblížení"
 
-#: C/movearoundtimeline.page:53(section/p)
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:55
 msgid ""
 "To get a better overview of your timeline, you may use the "
 "<guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the "
-"<gui>Zoom</gui> button on the left of the zoom slider."
+"<gui>Zoom</gui> button on the left of the zoom slider. The third way to do "
+"this is by pressing <keyseq><key>Ctrl</key><key>0</key></keyseq>"
 msgstr ""
 "Pro lepší přehled o své časové ose můžete použít položku nabídky "
 "<guiseq><gui>Zobrazit</gui><gui>Přizpůsobit</gui></guiseq> nebo kliknout na "
-"tlačítko <gui>Přiblížit</gui> nalevo od táhla přiblížení."
+"tlačítko <gui>Přiblížit</gui> nalevo od táhla přiblížení. Třetí možností je "
+"zmáčknout <keyseq><key>Ctrl</key><key>0</key></keyseq>."
 
-#: C/movearoundtimeline.page:56(note/title)
+#. (itstool) path: note/title
+#: C/movearoundtimeline.page:58
 msgid "Zooming is always centered around the location of your playhead"
 msgstr "Přibližování/oddalování vždy používá jako střed pozici přehrávání"
 
-#: C/movearoundtimeline.page:57(note/p)
+#. (itstool) path: note/p
+#: C/movearoundtimeline.page:59
 msgid ""
 "When using the mouse wheel to zoom in and out, remember that the zoom is not "
 "relative to the position of your mouse, only to the position of the playhead "
@@ -1927,25 +2266,37 @@ msgstr ""
 "není vztahována k poloze vaší myši, ale vždy jen k pozici přehrávání na "
 "časové ose."
 
-#: C/movearoundtimeline.page:61(note/title)
+#. (itstool) path: note/title
+#: C/movearoundtimeline.page:62
 msgid "<em>Warping</em> between zoom levels"
 msgstr "<em>Přeskakování</em> mezi úrovněmi přiblížení"
 
-#: C/movearoundtimeline.page:62(note/p)
+#. (itstool) path: note/p
+#: C/movearoundtimeline.page:63
 msgid ""
-"Using your mouse's scroll wheel, you can also <em>warp</em> instantly from "
-"any zoom level to another in a single click. To do that, click with your "
-"mousewheel anywhere on the zoom slider."
+"Using your mouse, you can also <em>warp</em> instantly from any zoom level "
+"to another in a single click. To do that, click anywhere on the zoom slider."
 msgstr ""
-"Pomocí kolečka myši můžete rychle <em>přeskakovat</em> z jedné úrovně "
-"přiblížení do jiné jediným kliknutím. Stačí kolečkem myši kliknout někde v "
+"Pomocí myši můžete rychle <em>přeskakovat</em> z jedné úrovně "
+"přiblížení do jiné jediným kliknutím. Stačí kliknout kdekoliv v "
 "oblasti táhla pro nastavení úrovně přiblížení."
 
-#: C/movearoundtimeline.page:67(section/title)
+#. (itstool) path: page/section
+#: C/movearoundtimeline.page:41
+msgid ""
+"<_:title-1/> <_:p-2/> <_:list-3/> <_:p-4/> <_:list-5/> <_:p-6/>. <_:note-7/> "
+"<_:note-8/>"
+msgstr ""
+"<_:title-1/> <_:p-2/> <_:list-3/> <_:p-4/> <_:list-5/> <_:p-6/>. <_:note-7/> "
+"<_:note-8/>"
+
+#. (itstool) path: section/title
+#: C/movearoundtimeline.page:68
 msgid "Moving the playhead"
 msgstr "Přemisťování pozice přehrávání"
 
-#: C/movearoundtimeline.page:68(section/p)
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:69
 msgid ""
 "You can change the position of the playhead by clicking anywhere on the "
 "ruler or on the timeline."
@@ -1953,11 +2304,13 @@ msgstr ""
 "Pozici přehrávání můžete změnit kliknutím kdekoliv na pravítku nebo na "
 "časové ose."
 
-#: C/movearoundtimeline.page:69(section/p)
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:70
 msgid "When clicking on the <em>timeline</em>:"
 msgstr "Když kliknete na <em>časovou osu</em>:"
 
-#: C/movearoundtimeline.page:71(item/p)
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:72
 msgid ""
 "If a clip is under the mouse cursor, it will replace the current clip "
 "selection (see the <link xref=\"makeselections\">Selecting multiple items</"
@@ -1967,7 +2320,8 @@ msgstr ""
 "(viz oddíl <link xref=\"makeselections\">Výběr více položek</link> pro "
 "podrobnější instrukce)."
 
-#: C/movearoundtimeline.page:72(item/p)
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:73
 msgid ""
 "If there is no clip under the cursor, all selected clips (if any) will be "
 "deselected."
@@ -1975,7 +2329,8 @@ msgstr ""
 "Pokud pod ukazatelem není žádný klip, bude zrušen výběr všech vybraných "
 "klipů (pokud nějaké vybrané jsou)."
 
-#: C/movearoundtimeline.page:74(section/p)
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:75
 msgid ""
 "When clicking on the ruler, only the playhead's position changes; clip "
 "selections are not affected."
@@ -1983,29 +2338,34 @@ msgstr ""
 "Když kliknete na pravítko, změní se pouze pozice přehrávání, výběr klipů "
 "zůstane nedotčen."
 
-#: C/movearoundtimeline.page:78(section/title)
+#. (itstool) path: section/title
+#: C/movearoundtimeline.page:79
 msgid "Scrubbing"
 msgstr "Rychloposuv"
 
-#: C/movearoundtimeline.page:79(section/p)
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:80
 msgid "<em>Scrubbing</em> is a way of moving the playhead that allows you to:"
 msgstr ""
 "„<em>Rychloposuv</em>“ (termín podle starých páskových magnetofonů a "
 "videopřehrávačů) je způsob přesunu pozice přehrávání, který vám umožňuje:"
 
-#: C/movearoundtimeline.page:81(item/p)
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:82
 msgid ""
 "Search for a specific position in time by approximation/trial and error."
 msgstr "Hledat konkrétní pozici v čase odhadem/metodou pokus – omyl."
 
-#: C/movearoundtimeline.page:82(item/p)
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:83
 msgid ""
 "Review repeatedly the visual motion in a scene by moving back and forth in "
 "time."
 msgstr ""
 "Opakovaně zrakem přezkoumávat pohyb ve scéně posouváním v čase zpět a vpřed."
 
-#: C/movearoundtimeline.page:84(section/p)
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:85
 msgid ""
 "To scrub, click on the ruler and move the mouse with the button still held "
 "down."
@@ -2013,19 +2373,13 @@ msgstr ""
 "Rychloposuv provedete tak, že kliknete na pravítko a posouváte jej myší za "
 "stálého držení tlačítka."
 
-#: C/movearoundtimeline.page:85(section/p)
-msgid ""
-"You can also scrub by dragging the black vertical line that stems from the "
-"playhead and spans across the timeline."
-msgstr ""
-"Rychloposuv můžete provádět také tažením černé svislé čáry, která vychází od "
-"ukazatele pozice přehrávání a prochází skrz časovou osu."
-
-#: C/othertransitions.page:23(page/title)
+#. (itstool) path: page/title
+#: C/othertransitions.page:23
 msgid "Other transitions"
 msgstr "Další přechody"
 
-#: C/othertransitions.page:25(page/p)
+#. (itstool) path: page/p
+#: C/othertransitions.page:25
 msgid ""
 "Other types of transitions (such as wipes) are not yet implemented (see "
 "<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug "
@@ -2035,11 +2389,13 @@ msgstr ""
 "see <link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">chyba "
 "#609353</link>)."
 
-#: C/presets.page:19(page/title)
+#. (itstool) path: page/title
+#: C/presets.page:19
 msgid "Presets"
 msgstr "Přednastavení"
 
-#: C/presets.page:20(page/p)
+#. (itstool) path: page/p
+#: C/presets.page:20
 msgid ""
 "Both the project settings dialog and the rendering dialog allow you to save "
 "presets for later use. If you often deal with the same kind of project "
@@ -2051,7 +2407,8 @@ msgstr ""
 "projektu s různými kamerami nebo cílovými zařízeními pro vykreslení, můžete "
 "si chtít vytvořit vlastní přednastavení."
 
-#: C/presets.page:21(page/p)
+#. (itstool) path: page/p
+#: C/presets.page:21
 msgid ""
 "While project settings concern themselves with global settings (such as "
 "resolution, framerate, aspect ratio and number of audio channels), the "
@@ -2069,7 +2426,8 @@ msgstr ""
 "stránku.) Jako takové, se přednastavení v dialogovém okně vykreslování "
 "vztahují k nastavení projektu, ale řeší jiné věci."
 
-#: C/presets.page:22(note/p)
+#. (itstool) path: note/p
+#: C/presets.page:22
 msgid ""
 "In project settings, video presets and audio presets are independent of each "
 "other."
@@ -2077,23 +2435,28 @@ msgstr ""
 "V nastavení projektu jsou nastavení videa a nastavení zvuku na sobě "
 "nezávislé."
 
-#: C/presets.page:24(section/title)
+#. (itstool) path: section/title
+#: C/presets.page:24
 msgid "Creating and editing presets"
 msgstr "Vytváření a úpravy přednastavení"
 
-#: C/presets.page:25(section/p)
+#. (itstool) path: section/p
+#: C/presets.page:25
 msgid "To create a preset:"
 msgstr "Pro vytvoření přednastavení:"
 
-#: C/presets.page:27(item/p) C/presets.page:34(item/p)
+#. (itstool) path: item/p
+#: C/presets.page:27 C/presets.page:34
 msgid "Change the settings to your liking."
 msgstr "Změňte nastavení, jak potřebujete."
 
-#: C/presets.page:28(item/p)
+#. (itstool) path: item/p
+#: C/presets.page:28
 msgid "Click the <gui>Add</gui> button."
 msgstr "Klikněte na tlačítko <gui>Přidat</gui>."
 
-#: C/presets.page:29(item/p)
+#. (itstool) path: item/p
+#: C/presets.page:29
 msgid ""
 "Give your preset a unique name: while the preset is selected in the list, "
 "click on its name to toggle editing mode. When you're done, press "
@@ -2103,19 +2466,23 @@ msgstr ""
 "je vybráno, aby se přepnul režim úprav. Až jste hotovi, zmáčkněte "
 "<key>Enter</key>."
 
-#: C/presets.page:31(section/p)
+#. (itstool) path: section/p
+#: C/presets.page:31
 msgid "To edit a preset:"
 msgstr "Pro úpravu přednastavení:"
 
-#: C/presets.page:33(item/p)
+#. (itstool) path: item/p
+#: C/presets.page:33
 msgid "Select your preset in the list of existing presets."
 msgstr "Vyberte své přednastavení v seznamu existujících přednastavení."
 
-#: C/presets.page:35(item/p)
+#. (itstool) path: item/p
+#: C/presets.page:35
 msgid "Click the <gui>Save</gui> button."
 msgstr "Klikněte na tlačítko <gui>Uložit</gui>."
 
-#: C/presets.page:37(section/p)
+#. (itstool) path: section/p
+#: C/presets.page:37
 msgid ""
 "To remove a preset, simply select it in the list of presets and press the "
 "<gui>Remove</gui> button."
@@ -2123,17 +2490,20 @@ msgstr ""
 "Když chcete přednastavení odstranit, stačí jej vybrat v seznamu a zmáčknout "
 "tlačítko <gui>Odebrat</gui>."
 
-#: C/presets.page:38(note/p)
+#. (itstool) path: note/p
+#: C/presets.page:38
 msgid "Some presets are provided by default and cannot be removed."
 msgstr ""
 "Některá přednastavení jsou součástí ve výchozím stavu a není možné je "
 "odebrat."
 
-#: C/presets.page:41(section/title)
+#. (itstool) path: section/title
+#: C/presets.page:41
 msgid "Ignoring presets"
 msgstr "Ignorování přednastavení"
 
-#: C/presets.page:42(section/p)
+#. (itstool) path: section/p
+#: C/presets.page:42
 msgid ""
 "Presets are there to save time and reduce complexity. Experts can choose to "
 "simply ignore them and set everything manually; the \"No preset\" preset is "
@@ -2144,11 +2514,13 @@ msgstr ""
 "raději ignorují a nastavují si vše ručně. „Žádné přednastavení“ je speciální "
 "přednastavení, které ukládá své změny přímo do projektového souboru."
 
-#: C/presets.page:45(section/title)
+#. (itstool) path: section/title
+#: C/presets.page:45
 msgid "Limiting the resolution of a rendering preset"
 msgstr "Omezení rozlišení u přednastavení vykreslování"
 
-#: C/presets.page:46(section/p)
+#. (itstool) path: section/p
+#: C/presets.page:46
 msgid ""
 "If you want to make a preset with a fixed maximum resolution, you need to "
 "edit the preset file with a text editor. Presets files are typically stored "
@@ -2163,7 +2535,8 @@ msgstr ""
 "výchozím stavu nastaveny na 0. Tyto hodnoty můžete změnit na maximální "
 "rozlišení svého cílového zařízení."
 
-#: C/projectsettings.page:17(info/desc)
+#. (itstool) path: info/desc
+#: C/projectsettings.page:17
 msgid ""
 "How to specify the global project resolution, framerate, aspect ratio, audio "
 "settings and project metadata."
@@ -2171,11 +2544,13 @@ msgstr ""
 "Jak určit globálně pro projekt rozlišení, snímkovou rychlost, poměr stran, "
 "nastavení zvuku a metadata."
 
-#: C/projectsettings.page:25(page/title)
+#. (itstool) path: page/title
+#: C/projectsettings.page:25
 msgid "Editing project settings"
 msgstr "Úpravy nastavení projektu"
 
-#: C/projectsettings.page:27(page/p)
+#. (itstool) path: page/p
+#: C/projectsettings.page:27
 msgid ""
 "When starting a new project, you should make sure to go adjust the project "
 "settings, such as framerate, resolution and preferred codecs. The video "
@@ -2189,7 +2564,8 @@ msgstr ""
 "nenastavíte, aby odpovídaly videozáznamu, může video vypadat sražené nebo "
 "naopak roztáhlé."
 
-#: C/projectsettings.page:28(page/p)
+#. (itstool) path: page/p
+#: C/projectsettings.page:28
 msgid ""
 "To edit the project settings after initial creation, use the "
 "<guiseq><gui>Edit</gui><gui>Project Settings</gui></guiseq> menu."
@@ -2197,11 +2573,13 @@ msgstr ""
 "Pro nastavení projektu dodatečně po jeho úvodním vytvoření použijte nabídku "
 "<guiseq><gui>Upravit</gui><gui>Nastavení projektu</gui></guiseq>."
 
-#: C/projectsettings.page:31(section/title)
+#. (itstool) path: section/title
+#: C/projectsettings.page:31
 msgid "Pixel aspect ratio vs display aspect ratio"
 msgstr "Poměr stran v pixelech vs. poměr stran zobrazení"
 
-#: C/projectsettings.page:32(section/p)
+#. (itstool) path: section/p
+#: C/projectsettings.page:32
 msgid ""
 "Digital images are composed of a grid of <link href=\"http://en.wikipedia."
 "org/wiki/Pixel\">pixels</link>, which may or may not be square. As such, in "
@@ -2220,7 +2598,8 @@ msgstr ""
 "\">poměr stran zobrazení</link> (odkazovaný text je v angličtině) (DAR – "
 "Display Aspect Ratio) je matematický poměr šířka ku výšce pro celý obrázek."
 
-#: C/projectsettings.page:33(section/p)
+#. (itstool) path: section/p
+#: C/projectsettings.page:33
 msgid ""
 "In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are "
 "related to each other by the video resolution (width and height). Once your "
@@ -2232,7 +2611,8 @@ msgstr ""
 "nastaví rozlišení, nastavení DAR ovlivní PAR a naopak. Můžete používat to či "
 "ono, záleží jen na tom, co vám vyhovuje."
 
-#: C/projectsettings.page:34(section/p)
+#. (itstool) path: section/p
+#: C/projectsettings.page:34
 msgid ""
 "You can use the ratios already provided in the combo boxes, or input a "
 "custom aspect ratio in the text entry below (using a syntax such as \"4:3\" "
@@ -2242,17 +2622,20 @@ msgstr ""
 "zadat vlastní do textových polí pod nimi (používejte syntax „4:3“ nebo "
 "„1,3333“, ale desetinná verze je méně přesná)."
 
-#: C/rendering.page:17(info/desc)
+#. (itstool) path: info/desc
+#: C/rendering.page:17
 msgid ""
 "Learn the difference between saving a project and exporting a rendered movie."
 msgstr ""
 "Poučte se o rozdílu mezi uložením projektu a exportem a vykreslením filmu."
 
-#: C/rendering.page:25(page/title)
+#. (itstool) path: page/title
+#: C/rendering.page:25
 msgid "Understanding rendering"
 msgstr "Vysvětlení renderingu"
 
-#: C/rendering.page:27(page/p)
+#. (itstool) path: page/p
+#: C/rendering.page:27
 msgid ""
 "Rendering is the process of exporting your project into a new, finalized "
 "media file. Rendering only creates a new “rendered” video file, and does not "
@@ -2264,11 +2647,13 @@ msgstr ""
 "nově „vykreslený“ videosoubor, projektu se to nijak nedotkne. Projekt můžete "
 "nadále upravovat a nechat jej vykreslit, kolikrát budete chtít."
 
-#: C/rendering.page:29(item/p)
+#. (itstool) path: item/p
+#: C/rendering.page:29
 msgid "From the <gui>Project</gui> menu, use <gui>Render</gui>."
 msgstr "Použijte <gui>Vykreslit</gui> v nabídce <gui>Projekt</gui>."
 
-#: C/rendering.page:30(item/p)
+#. (itstool) path: item/p
+#: C/rendering.page:30
 msgid ""
 "Adjust the various encoding settings, if needed, to use settings different "
 "from the project settings."
@@ -2276,11 +2661,13 @@ msgstr ""
 "Upravte různá nastavení kódování. Pokud je potřeba, můžete použít nastavení "
 "odlišná od nastavení projektu."
 
-#: C/rendering.page:31(item/p)
+#. (itstool) path: item/p
+#: C/rendering.page:31
 msgid "Click the <gui>Render</gui> button."
 msgstr "Klikněte na tlačítko <gui>Vykreslit</gui>."
 
-#: C/rendering.page:34(note/p)
+#. (itstool) path: note/p
+#: C/rendering.page:34
 msgid ""
 "If your computer is set to suspend or hibernate automatically, <app>Pitivi</"
 "app> will automatically inhibit the power saving features during the render "
@@ -2289,15 +2676,18 @@ msgstr ""
 "Pokud máte svůj počítač nastavený, aby se automaticky uspával, <app>Pitivi</"
 "app> automaticky zabrání režimu úspory energie během procesu vykreslování."
 
-#: C/saveproject.page:18(info/desc)
+#. (itstool) path: info/desc
+#: C/saveproject.page:18
 msgid "How to save your project for later editing use."
 msgstr "Jak uložit svůj projekt pro pozdější úpravy."
 
-#: C/saveproject.page:26(page/title)
+#. (itstool) path: page/title
+#: C/saveproject.page:26
 msgid "Saving a project"
 msgstr "Ukládání projektu"
 
-#: C/saveproject.page:28(page/p)
+#. (itstool) path: page/p
+#: C/saveproject.page:28
 msgid ""
 "To save your project work, use the <guiseq><gui>Project</gui><gui>Save</"
 "gui></guiseq> menu, the Save button on the main toolbar or press "
@@ -2308,7 +2698,8 @@ msgstr ""
 "hlavní liště nástrojů nebo zmáčknutím <keyseq><key>Ctrl</key><key>S</key></"
 "keyseq>."
 
-#: C/saveproject.page:29(page/p)
+#. (itstool) path: page/p
+#: C/saveproject.page:29
 msgid ""
 "When you save a project for the first time, a dialog window appears, asking "
 "you where to save the project file and how to name it."
@@ -2316,7 +2707,8 @@ msgstr ""
 "Když ukládáte projekt poprvé, objeví se dialogové okno, kde jste dotázáni na "
 "místo uložení projektového souboru a jeho název."
 
-#: C/saveproject.page:30(page/p)
+#. (itstool) path: page/p
+#: C/saveproject.page:30
 msgid ""
 "If you want to save your project as a different file, use "
 "<guiseq><gui>Project</gui><gui>Save as</gui></guiseq> or press "
@@ -2328,11 +2720,13 @@ msgstr ""
 "zmáčkněte <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. "
 "Můžete to využít k vytvoření další verze svého projektu."
 
-#: C/saveproject.page:32(section/title)
+#. (itstool) path: section/title
+#: C/saveproject.page:32
 msgid "Reverting changes"
 msgstr "Vracení změn"
 
-#: C/saveproject.page:33(section/p)
+#. (itstool) path: section/p
+#: C/saveproject.page:33
 msgid ""
 "In addition to undoing individual changes, you can also decide to revert all "
 "the changes you have made since the last time you saved your project. To do "
@@ -2342,11 +2736,13 @@ msgstr ""
 "změny, které jste provedli od posledního uložení svého projektu. V takovém "
 "případě použijte <guiseq><gui>Projekt</gui><gui>Vrátit</gui></guiseq>."
 
-#: C/savescreenshot.page:18(page/title)
+#. (itstool) path: page/title
+#: C/savescreenshot.page:18
 msgid "Saving a snapshot of the current frame"
 msgstr "Ukládání samostatného aktuálního snímku"
 
-#: C/savescreenshot.page:20(page/p)
+#. (itstool) path: page/p
+#: C/savescreenshot.page:20
 msgid ""
 "You can use <guiseq><gui>Timeline</gui><gui>Export current frame...</gui></"
 "guiseq> to save a copy of the current frame as an image file."
@@ -2354,7 +2750,8 @@ msgstr ""
 "Můžete použít <guiseq><gui>Časová osa</gui><gui>Exportovat aktuální snímek…</"
 "gui></guiseq> k uložení kopie aktuálního snímku do obrázkového souboru."
 
-#: C/savescreenshot.page:21(page/p)
+#. (itstool) path: page/p
+#: C/savescreenshot.page:21
 msgid ""
 "Currently, PNG and JPEG are supported as file formats. The image resolution "
 "will match the project settings and any effect or transformation will also "
@@ -2364,16 +2761,19 @@ msgstr ""
 "odpovídat nastavení projektu a na výsledný obrázek budou použity i případné "
 "efekty a přechody."
 
-#: C/selectunusedfiles.page:15(info/desc)
+#. (itstool) path: info/desc
+#: C/selectunusedfiles.page:15
 msgid "Finding and removing unused media to cleanup your project"
 msgstr ""
 "Vyhledání a odstranění nepoužitích médií kvůli pročištění vašeho projektu"
 
-#: C/selectunusedfiles.page:23(page/title)
+#. (itstool) path: page/title
+#: C/selectunusedfiles.page:23
 msgid "Selecting unused files"
 msgstr "Výběr nepoužitých souborů"
 
-#: C/selectunusedfiles.page:24(page/p)
+#. (itstool) path: page/p
+#: C/selectunusedfiles.page:24
 msgid ""
 "You may sometimes find that you have imported more clips that you needed in "
 "your project. <app>Pitivi</app> allows you to select files that are present "
@@ -2385,23 +2785,28 @@ msgstr ""
 "nachází v knihovně médií, ale ne na časové ose. Existují různé důvody, proč "
 "to udělat:"
 
-#: C/selectunusedfiles.page:26(item/p)
+#. (itstool) path: item/p
+#: C/selectunusedfiles.page:26
 msgid "Improving performance when loading the project"
 msgstr "Zrychlení při načítání projektu"
 
-#: C/selectunusedfiles.page:27(item/p)
+#. (itstool) path: item/p
+#: C/selectunusedfiles.page:27
 msgid "Simplifying your editing workflow"
 msgstr "Zjednodušení postupu vaší práce"
 
-#: C/selectunusedfiles.page:28(item/p)
+#. (itstool) path: item/p
+#: C/selectunusedfiles.page:28
 msgid "Check which clips you may have forgot to use in your movie"
 msgstr "Kontrola, které klipy jste ve filmu zapomněli použít"
 
-#: C/selectunusedfiles.page:29(item/p)
+#. (itstool) path: item/p
+#: C/selectunusedfiles.page:29
 msgid "Backup or share your project more easily"
 msgstr "Snadnější zálohování a sdílení vašeho projektu"
 
-#: C/selectunusedfiles.page:31(page/p)
+#. (itstool) path: page/p
+#: C/selectunusedfiles.page:31
 msgid ""
 "To identify which clips are not being used in your project, use "
 "<guiseq><gui>Library</gui><gui>Select Unused Media</gui></guiseq>. Unused "
@@ -2415,7 +2820,8 @@ msgstr ""
 "odstranit, použijte <guiseq><gui>Knihovna</gui><gui>Odebrat z projektu</"
 "gui></guiseq>."
 
-#: C/selectunusedfiles.page:32(note/p)
+#. (itstool) path: note/p
+#: C/selectunusedfiles.page:32
 msgid ""
 "If there are no unused clips in your project, nothing will be selected in "
 "the media library."
@@ -2423,15 +2829,18 @@ msgstr ""
 "Když v projektu žádné nevyužité klipy nejsou, nic se v knihovně médií "
 "nevybere."
 
-#: C/splitting.page:17(info/desc)
+#. (itstool) path: info/desc
+#: C/splitting.page:19
 msgid "Dividing clips in two parts."
 msgstr "Dělení klipů na dvě části."
 
-#: C/splitting.page:25(page/title)
+#. (itstool) path: page/title
+#: C/splitting.page:27
 msgid "Splitting"
 msgstr "Rozdělování"
 
-#: C/splitting.page:27(page/p)
+#. (itstool) path: page/p
+#: C/splitting.page:29
 msgid ""
 "As the name implies, splitting a clip divides it into two adjacent clips, "
 "with new beginning/end points being created accordingly."
@@ -2439,7 +2848,8 @@ msgstr ""
 "Jak název napovídá, rozdělování klip dělí na dva sousedící klipy pomocí "
 "nového počátečního a koncového bodu, které se vytvoří ve tomtéž místě."
 
-#: C/splitting.page:28(page/p)
+#. (itstool) path: page/p
+#: C/splitting.page:30
 msgid ""
 "In <app>Pitivi</app>, splitting is a “non-modal” operation; this means that "
 "you do not have to “activate” a particular tool before doing the split "
@@ -2456,35 +2866,41 @@ msgstr ""
 "klávesnice nebo rychloposuvem, je nemodální rozdělování nejen rychlé a "
 "efektivní, ale i velmi přesné."
 
-#: C/splitting.page:29(page/p)
+#. (itstool) path: page/p
+#: C/splitting.page:31
 msgid "Selections affect splitting in the following ways:"
 msgstr "Výběr ovlivňuje rozdělení následujícími způsoby:"
 
-#: C/splitting.page:31(item/p)
+#. (itstool) path: item/p
+#: C/splitting.page:33
 msgid "Only the selected clips under the playhead will be split."
 msgstr "Rozděleny budou pouze vybrané klipy v aktuální pozicí přehrávání."
 
-#: C/splitting.page:32(item/p)
+#. (itstool) path: item/p
+#: C/splitting.page:34
 msgid ""
 "If no clips are selected, all the clips under the playhead will be split."
 msgstr ""
 "Když není vybrán žádný klip, budou rozděleny všechny klipy v aktuální pozici "
 "přehrávání."
 
-#: C/splitting.page:34(page/p)
+#. (itstool) path: page/p
+#: C/splitting.page:36
 msgid "To split a single clip:"
 msgstr "Když chcete rozdělit jeden klip:"
 
-#: C/splitting.page:36(item/p)
+#. (itstool) path: item/p
+#: C/splitting.page:38
 msgid "Click on the clip."
 msgstr "Klikněte na klip."
 
-#: C/splitting.page:37(item/p) C/splitting.page:43(item/p)
+#. (itstool) path: item/p
+#: C/splitting.page:39 C/splitting.page:45
 msgid "Reposition the playhead (if needed)."
 msgstr "Přemístěte pozici přehrávání (pokud je potřeba)."
 
-#: C/splitting.page:38(item/p) C/splitting.page:44(item/p)
-#: C/splitting.page:50(item/p)
+#. (itstool) path: item/p
+#: C/splitting.page:40 C/splitting.page:46 C/splitting.page:52
 msgid ""
 "Click on the <gui>Split</gui> button on the timeline toolbar or press "
 "<key>S</key>."
@@ -2492,11 +2908,13 @@ msgstr ""
 "Klikněte na tlačítko <gui>Rozdělit</gui> na liště nástrojů časové osy nebo "
 "zmáčkněte <key>S</key>."
 
-#: C/splitting.page:40(page/p)
+#. (itstool) path: page/p
+#: C/splitting.page:42
 msgid "To split all the clips across the all layers:"
 msgstr "Když chcete rozdělit všechny klipy napříč všemi vrstvami:"
 
-#: C/splitting.page:42(item/p)
+#. (itstool) path: item/p
+#: C/splitting.page:44
 msgid ""
 "Click on a blank area of the timeline (this will deselect all selected "
 "clips, if any)."
@@ -2504,15 +2922,18 @@ msgstr ""
 "Klikněte na prázdné místo v časové ose (tím se zruší výběr všech klipů, "
 "pokud jsou nějaké vybrané)."
 
-#: C/splitting.page:46(page/p)
+#. (itstool) path: page/p
+#: C/splitting.page:48
 msgid "To split multiple selected clips:"
 msgstr "Když chcete rozdělit více vybraných klipů:"
 
-#: C/splitting.page:48(item/p)
+#. (itstool) path: item/p
+#: C/splitting.page:50
 msgid "Position the playhead where you want to split."
 msgstr "Umístěte pozici přehrávání na místo, ve kterém chcete rozdělovat."
 
-#: C/splitting.page:49(item/p)
+#. (itstool) path: item/p
+#: C/splitting.page:51
 msgid ""
 "Add or remove clips to the selection with the <key>Ctrl</key> modifier key. "
 "This will not affect the playhead's position."
@@ -2520,15 +2941,37 @@ msgstr ""
 "Přidejte do nebo odeberte z výběru klipy pomocí modifikační klávesy "
 "<key>Ctrl</key>. Pozici přehrávání do neovlivní."
 
-#: C/sysreq.page:18(info/desc)
+#. (itstool) path: note/title
+#: C/splitting.page:56
+msgid "Cutting out the middle"
+msgstr "Vyříznutí uprostřed"
+
+#. (itstool) path: note/p
+#: C/splitting.page:57
+msgid ""
+"When you want to cut out a middle section of a clip, split the clip twice on "
+"the positions where the part you want to remove begins and ends. Select the "
+"middle part and hit <key>delete</key>. Now, eliminate the empty space "
+"between the remaining two parts by moving one of them towards the other "
+"until they align."
+msgstr ""
+"Když potřebujete vyříznout část uprostřed klipu, rozdělte klip dvakrát a to "
+"v místech, kde vyřezávaná část začíná a končí. Středovou část vyberte a "
+"zmáčkněte <key>Delete</key>. Následně odstraňte vzniklou mezeru tak, že "
+"zbývající dvě části posunete na doraz k sobě."
+
+#. (itstool) path: info/desc
+#: C/sysreq.page:18
 msgid "What kind of hardware is needed to do video editing?"
 msgstr "Jaký druh hardwaru je zapotřebí pro úpravy videa?"
 
-#: C/sysreq.page:26(page/title)
+#. (itstool) path: page/title
+#: C/sysreq.page:26
 msgid "System requirements"
 msgstr "Systémové požadavky"
 
-#: C/sysreq.page:28(page/p)
+#. (itstool) path: page/p
+#: C/sysreq.page:28
 msgid ""
 "In terms of hardware, video editing typically requires a powerful computer, "
 "depending on the type of video you are editing. While the processing power "
@@ -2539,7 +2982,8 @@ msgstr ""
 "závislosti na typu videa. Zatím co výpočetní výkon počítačů rok od roku "
 "narůstá, rostou i požadavky na vyšší kvalitu videa."
 
-#: C/sysreq.page:29(page/p)
+#. (itstool) path: page/p
+#: C/sysreq.page:29
 msgid ""
 "Editing HD (High Definition) video usually requires (at the time of this "
 "writing) state of the art hardware (depending on the codec used), while SD "
@@ -2555,7 +2999,8 @@ msgstr ""
 "měli být schopni si přehrát multimediální soubor v přehrávači <app>Totem</"
 "app> bez zadrhávání."
 
-#: C/sysreq.page:30(page/p)
+#. (itstool) path: page/p
+#: C/sysreq.page:30
 msgid ""
 "It is possible, however, to use low-quality versions of your footage during "
 "editing and use the high-quality versions when rendering the final output, "
@@ -2568,11 +3013,12 @@ msgstr ""
 "určité míry obejít omezení hardwaru. Říká se tomu <em>úpravy v zastoupení</"
 "em>. Tato funkce ale zatím není v <app>Pitivi</app> k dispozici."
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:34(media)
+#: C/trimming.page:34
 msgctxt "_"
 msgid ""
 "external ref='figures/trimming-individual.png' "
@@ -2581,11 +3027,12 @@ msgstr ""
 "external ref='figures/trimming-individual.png' "
 "md5='858585ad6ddc21696f7b9f0d597982b4'"
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:47(media)
+#: C/trimming.page:47
 msgctxt "_"
 msgid ""
 "external ref='figures/ripple-before.png' "
@@ -2594,11 +3041,12 @@ msgstr ""
 "external ref='figures/ripple-before.png' "
 "md5='7052e3caadd1ccbf9a91a8c506aeca7d'"
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:51(media)
+#: C/trimming.page:51
 msgctxt "_"
 msgid ""
 "external ref='figures/ripple-after.png' "
@@ -2607,29 +3055,32 @@ msgstr ""
 "external ref='figures/ripple-after.png' "
 "md5='3f2fdba79d1c69c2f2022fe08a62b5a7'"
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:71(media)
+#: C/trimming.page:71
 msgctxt "_"
 msgid ""
 "external ref='figures/roll-before.png' md5='a6c8ea270c5aa9953c07b493409637a2'"
 msgstr ""
 "external ref='figures/roll-before.png' md5='a6c8ea270c5aa9953c07b493409637a2'"
 
+#. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:75(media)
+#: C/trimming.page:75
 msgctxt "_"
 msgid ""
 "external ref='figures/roll-after.png' md5='83653c2c984da5d10a0bea16dcee84e4'"
 msgstr ""
 "external ref='figures/roll-after.png' md5='83653c2c984da5d10a0bea16dcee84e4'"
 
-#: C/trimming.page:18(info/desc)
+#. (itstool) path: info/desc
+#: C/trimming.page:18
 msgid ""
 "Shortening clips by changing the beginning and ending points. Also covers "
 "ripple and roll editing."
@@ -2637,11 +3088,13 @@ msgstr ""
 "Zkracování klipů změnou počátečního a koncového bodu. Včetně řetězových a "
 "svitkových úprav."
 
-#: C/trimming.page:26(page/title)
+#. (itstool) path: page/title
+#: C/trimming.page:26
 msgid "Trimming"
 msgstr "Stříhání"
 
-#: C/trimming.page:28(page/p)
+#. (itstool) path: page/p
+#: C/trimming.page:28
 msgid ""
 "Trimming is the act of changing the beginning or end point of a clip in the "
 "timeline."
@@ -2649,11 +3102,13 @@ msgstr ""
 "Stříhání je činnost, při které se mění počáteční a koncový bod klipu na "
 "časové ose."
 
-#: C/trimming.page:31(section/title)
+#. (itstool) path: section/title
+#: C/trimming.page:31
 msgid "Trimming an individual clip"
 msgstr "Stříhání jednotlivého klipu"
 
-#: C/trimming.page:32(section/p)
+#. (itstool) path: section/p
+#: C/trimming.page:32
 msgid ""
 "Move the mouse cursor over a clip, and trimming handles will appear. Drag "
 "one of the trimming handles on the left or right edge of the clip to trim."
@@ -2661,7 +3116,8 @@ msgstr ""
 "Přesuňte ukazatel myši na klip a objeví se střihací úchyty. Klip ustřihněte "
 "přetažením úchytů na levé nebo pravé hraně klipu."
 
-#: C/trimming.page:36(section/p)
+#. (itstool) path: section/p
+#: C/trimming.page:36
 msgid ""
 "Clips that are grouped together, such as a video clip with its associated "
 "audio clip, will trim in unison when you drag the trimming handles. To trim "
@@ -2673,11 +3129,13 @@ msgstr ""
 "společně. Jestli chcete ustřihnout jen zvukovou nebo jen obrazovou část, "
 "musíte nejdříve zrušit jejich seskupení (viz oddíl seskupování/propojování)."
 
-#: C/trimming.page:40(section/title)
+#. (itstool) path: section/title
+#: C/trimming.page:40
 msgid "Ripple editing"
 msgstr "Řetězové úpravy"
 
-#: C/trimming.page:41(section/p)
+#. (itstool) path: section/p
+#: C/trimming.page:41
 msgid ""
 "Ripple edits are a variant of basic trimming which, in addition to trimming "
 "a clip, moves the “following” clips (the clips that start after the one "
@@ -2687,7 +3145,8 @@ msgstr ""
 "mimo ustřižení navíc posune „následující“ klipy (klipy, které začínají za "
 "tím, který stříháte), aby se zaplnila mezera."
 
-#: C/trimming.page:43(note/p)
+#. (itstool) path: note/p
+#: C/trimming.page:43
 msgid ""
 "The ripple applies to all “following” clips, regardless of whether or not "
 "they are on the same layer."
@@ -2695,31 +3154,38 @@ msgstr ""
 "Zřetězení se vztahuje na všechny „následující“ klipy bez ohledu na to, zda "
 "jsou či nejsou ve stejné vrstvě."
 
-#: C/trimming.page:45(section/p) C/trimming.page:69(section/p)
+#. (itstool) path: section/p
+#: C/trimming.page:45 C/trimming.page:69
 msgid "Before:"
 msgstr "Před:"
 
-#: C/trimming.page:49(section/p) C/trimming.page:73(section/p)
+#. (itstool) path: section/p
+#: C/trimming.page:49 C/trimming.page:73
 msgid "After:"
 msgstr "Po:"
 
-#: C/trimming.page:53(section/p)
+#. (itstool) path: section/p
+#: C/trimming.page:53
 msgid "To do a ripple edit:"
 msgstr "Pro provedení zřetězené úpravy:"
 
-#: C/trimming.page:56(item/p) C/trimming.page:79(item/p)
+#. (itstool) path: item/p
+#: C/trimming.page:56 C/trimming.page:79
 msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
 msgstr "Umístěte ukazatel myši na střihací úchyt mezi dvěma sousedícími klipy."
 
-#: C/trimming.page:57(item/p)
+#. (itstool) path: item/p
+#: C/trimming.page:57
 msgid "Press and hold <key>Shift</key>."
 msgstr "Zmáčkněte a držte <key>Shift</key>."
 
-#: C/trimming.page:58(item/p) C/trimming.page:81(item/p)
+#. (itstool) path: item/p
+#: C/trimming.page:58 C/trimming.page:81
 msgid "Drag the trimming handle."
 msgstr "Přetáhněte střihací úchyt."
 
-#: C/trimming.page:60(section/p)
+#. (itstool) path: section/p
+#: C/trimming.page:60
 msgid ""
 "Ripple editing can also be used when moving clips around in the timeline. "
 "For detailed explanations on how to do this, see the section <link xref="
@@ -2729,11 +3195,13 @@ msgstr ""
 "vysvětlení jak na to najdete v oddíle <link xref=\"usingclips\">Používání "
 "zřetězených úprav při přesunu klipů</link>."
 
-#: C/trimming.page:64(section/title)
+#. (itstool) path: section/title
+#: C/trimming.page:64
 msgid "Roll editing"
 msgstr "Svitkové úpravy"
 
-#: C/trimming.page:65(section/p)
+#. (itstool) path: section/p
+#: C/trimming.page:65
 msgid ""
 "Roll edits are a variant of basic trimming which, in addition to trimming a "
 "clip, <em>trims</em> the adjacent clips to prevent creating gaps."
@@ -2742,7 +3210,8 @@ msgstr ""
 "mimo ustřižení jednoho klipu, <em>ustřihne</em> i přilehlé klipy, aby "
 "nevznikly mezery."
 
-#: C/trimming.page:67(note/p)
+#. (itstool) path: note/p
+#: C/trimming.page:67
 msgid ""
 "The roll applies to all temporally adjacent clips, regardless of whether or "
 "not they are on the same layer."
@@ -2750,15 +3219,18 @@ msgstr ""
 "Svitek se vztahuje na všechny přilehlé klipy bez ohledu na to, zda jsou či "
 "nejsou ve stejné vrstvě."
 
-#: C/trimming.page:77(section/p)
+#. (itstool) path: section/p
+#: C/trimming.page:77
 msgid "To do a roll edit:"
 msgstr "Pro provedení svitkové úpravy:"
 
-#: C/trimming.page:80(item/p)
+#. (itstool) path: item/p
+#: C/trimming.page:80
 msgid "Press and hold <key>Ctrl</key>."
 msgstr "Zmáčkněte a držte <key>Ctrl</key>."
 
-#: C/usingclips.page:17(info/desc)
+#. (itstool) path: info/desc
+#: C/usingclips.page:19
 msgid ""
 "Learn the difference between clips and files and how to do basic operations "
 "on clips in the timeline."
@@ -2766,15 +3238,18 @@ msgstr ""
 "Poučte se, jaký je rozdíl mezi klipy a soubory a o základních operacích s "
 "klipy na časové ose."
 
-#: C/usingclips.page:25(page/title)
+#. (itstool) path: page/title
+#: C/usingclips.page:27
 msgid "Using clips"
 msgstr "Používání klipů"
 
-#: C/usingclips.page:28(section/title)
+#. (itstool) path: section/title
+#: C/usingclips.page:30
 msgid "Clips vs files"
 msgstr "Klipy vs. soubory"
 
-#: C/usingclips.page:30(item/p)
+#. (itstool) path: item/p
+#: C/usingclips.page:32
 msgid ""
 "<em>Files</em> are data on your hard disk (videos, music, pictures, etc.) "
 "that can be accessed by <app>Pitivi</app> and incorporated in your video "
@@ -2784,7 +3259,8 @@ msgstr ""
 "atd.), ke kterým může <app>Pitivi</app> přistupovat a připojovat je do "
 "videí, která upravujete."
 
-#: C/usingclips.page:31(item/p)
+#. (itstool) path: item/p
+#: C/usingclips.page:33
 msgid ""
 "<em>Clips</em> are a visual representation of your files on the timeline. "
 "They represent the period of time they consume on the timeline and can be "
@@ -2798,7 +3274,8 @@ msgstr ""
 "vytvoří se nový klip. Díky tomu může být soubor použit tolikrát, kolikrát "
 "chcete vytvořit samostatný klip."
 
-#: C/usingclips.page:33(section/p)
+#. (itstool) path: section/p
+#: C/usingclips.page:35
 msgid ""
 "Since Pitivi is a non-destructive editor, clips are edited, not files. As "
 "such, your files stay intact."
@@ -2806,42 +3283,68 @@ msgstr ""
 "Protože <app>Pitivi</app> je nedestruktivní editor, upravují se klipy a ne "
 "soubory. Vaše soubory tak zůstanou nedotčeny."
 
-#: C/usingclips.page:37(section/title)
+#. (itstool) path: section/title
+#: C/usingclips.page:39
 msgid "Moving clips along the timeline"
 msgstr "Posouvání klipů po časové ose"
 
-#: C/usingclips.page:38(section/p)
+#. (itstool) path: section/p
+#: C/usingclips.page:40
 msgid "You can move a clip within a layer or move it to a different layer."
 msgstr ""
 "Klip můžete přesouvat v rámci vrstvy nebo jej přesunout do jiné vrstvy."
 
-#: C/usingclips.page:39(section/p)
+#. (itstool) path: section/p
+#: C/usingclips.page:41
 msgid ""
 "Click and drag a single clip to move it, and release the mouse button to "
 "place it. Dragging horizontally keeps the clip on the same layer, but "
-"dragging it vertically moves the clip to a different layer."
+"dragging it vertically moves the clip to a different layer (see <link xref="
+"\"layers\">Understanding layers</link> for more information)."
 msgstr ""
 "Klikněte na jednotlivý klip, tažením jej přesuňte a uvolněním tlačítka "
 "umístěte. Tažením ve vodorovném směru zůstane klip ve stejné vrstvě, tažením "
-"ve svislém směru jej přesunete do jiné vrstvy."
+"ve svislém směru jej přesunete do jiné vrstvy (viz <link xref=\"layers"
+"\">Vysvětlení vrstev</link> pro více informací)."
 
-#: C/usingclips.page:40(section/p)
+#. (itstool) path: section/p
+#: C/usingclips.page:42
+msgid ""
+"To move a clip to an existing layer, drag it on the layer and release it "
+"when a grey shadow representing the space the clip would occupy appears. To "
+"move a clip to a new layer, drag it to the middle space between two existing "
+"layers. Once the grey shadow (now a thin rectangle) appears between the "
+"layers, release it."
+msgstr ""
+"Do stávající vrstvy klip přesunete tak, že jej přetáhnete nad vrstvu a "
+"upustíte ve chvíli, kdy se objeví šedý stín představující místo, které "
+"klip zabere. Do nové vrstvy jej přesunte přetažením na střed mezery mezi "
+"dvěma stávajícími vrstvami. Až se mezi vrstvami objeví šedý stín (úzký "
+"obdélník), upusťte jej."
+
+#. (itstool) path: section/p
+#: C/usingclips.page:43
 msgid ""
 "To move multiple clips at the same time, use the <key>Ctrl</key> or "
-"<key>Shift</key> keys to select multiple clips. Selected clips do not need "
-"to be on the same layer. Then, drag the clips just as you would do for a "
-"single clip; their position relative to each other will be preserved."
+"<key>Shift</key> keys to select multiple clips (see <link xref="
+"\"makeselections\">Making selections</link> for more details). Selected "
+"clips do not need to be on the same layer. Then, drag the clips just as you "
+"would do for a single clip; their position relative to each other will be "
+"preserved."
 msgstr ""
 "Když chcete přesunout více klipů naráz, použijte klávesy <key>Ctrl</key> a "
-"<key>Shift</key> k výběru více klipů. Vybrané klipy nemusí být nutně ve "
-"stejné vrstvě. Pak je přetáhněte stejně, jako by to byl jeden klip. Zůstane "
-"přitom zachována jejich vzájemná relativní poloha."
+"<key>Shift</key> k výběru více klipů (viz <link xref=\"makeselections"
+"\">Provádění výběru</link> pro více informací). Vybrané klipy nemusí být "
+"nutně ve stejné vrstvě. Pak je přetáhněte stejně, jako by to byl jeden klip. "
+"Zůstane přitom zachována jejich vzájemná relativní poloha."
 
-#: C/usingclips.page:42(section/title)
+#. (itstool) path: section/title
+#: C/usingclips.page:45
 msgid "Using ripple editing while moving clips"
 msgstr "Používání zřetězených úprav při přesunu klipů"
 
-#: C/usingclips.page:43(section/p)
+#. (itstool) path: section/p
+#: C/usingclips.page:46
 msgid ""
 "While dragging clips around in the timeline, you can use the <link xref="
 "\"trimming\">ripple technique</link> to move the <em>following</em> clips "
@@ -2852,17 +3355,20 @@ msgstr ""
 "(klipy, které začínají za tím klipem, který upravujete) a tím se zaplnila "
 "mezera."
 
-#: C/usingclips.page:45(item/p)
+#. (itstool) path: item/p
+#: C/usingclips.page:48
 msgid ""
 "Click and drag the clip you want to move, with the mouse button held down"
 msgstr ""
 "Klikněte na klip a táhněte kam potřebujete za stálého držení tlačítka myši"
 
-#: C/usingclips.page:46(item/p)
+#. (itstool) path: item/p
+#: C/usingclips.page:49
 msgid "During the drag, hold down <key>Shift</key> on the keyboard"
 msgstr "Během tažení zmáčkněte a držte klávesu <key>Shift</key>"
 
-#: C/usingclips.page:47(item/p)
+#. (itstool) path: item/p
+#: C/usingclips.page:50
 msgid ""
 "Release the mouse button to end the drag operation, then release the "
 "<key>Shift</key> key."
@@ -2870,7 +3376,8 @@ msgstr ""
 "Na konci operace táhnutí uvolněte tlačítko myši a následně klávesu "
 "<key>Shift</key>."
 
-#: C/usingclips.page:49(section/p)
+#. (itstool) path: section/p
+#: C/usingclips.page:52
 msgid ""
 "During the drag operation, if you changed your mind and only want to drag "
 "one clip at a time, just release the <key>Shift</key> key before you release "
@@ -2880,15 +3387,18 @@ msgstr ""
 "časové ose jen ten jeden klip, stačí uvolnit klávesu <key>Shift</key> dřív "
 "než uvolníte tlačítko myši."
 
-#: C/welcomedialog.page:13(info/desc)
+#. (itstool) path: info/desc
+#: C/welcomedialog.page:13
 msgid "Creating new projects and opening recent projects on startup"
 msgstr "Vytváření nových projektů a otevírání nedávných projektů po spuštění"
 
-#: C/welcomedialog.page:21(page/title)
+#. (itstool) path: page/title
+#: C/welcomedialog.page:21
 msgid "The welcome dialog"
 msgstr "Uvítací dialogové okno"
 
-#: C/welcomedialog.page:22(page/p)
+#. (itstool) path: page/p
+#: C/welcomedialog.page:22
 msgid ""
 "When you launch <app>Pitivi</app>, a startup assistant appears, allowing you "
 "to create a new project or open an existing project in a few clicks. If you "
