@@ -259,17 +259,13 @@ class TrimHandle(Clutter.Texture):
 
     def _leaveEventCb(self, actor, event):
         self.timelineElement.set_reactive(True)
+        children = self.timelineElement.get_children()
 
-        actor = self.timelineElement.timeline._container.stage.get_actor_at_pos(Clutter.PickMode.ALL, event.x, event.y)
-        try:
-            element = actor.bElement
-            if element != self.timelineElement.bELement and not self.isSelected:
-                self.timelineElement.hideHandles()
-        except AttributeError:
-            if not self.isSelected:
-                self.timelineElement.hideHandles()
+        other_actor = self.timelineElement.timeline._container.stage.get_actor_at_pos(Clutter.PickMode.ALL, event.x, event.y)
+        if other_actor not in children and not self.isSelected:
+            self.timelineElement.hideHandles()
 
-        for elem in self.timelineElement.get_children():
+        for elem in children:
             elem.set_reactive(True)
         self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
         self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
