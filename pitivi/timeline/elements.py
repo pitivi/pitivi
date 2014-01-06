@@ -355,7 +355,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
         self._createBackground(track)
         self._createPreview()
-        self._createBorder()
+        self.border = self._createBorder()
         self._createMarquee()
         self._createHandles()
         self._createGhostclip()
@@ -580,14 +580,15 @@ class TimelineElement(Clutter.Actor, Zoomable):
         pass
 
     def _createBorder(self):
-        self.border = RoundedRectangle(0, 0, 0, 0)
-        self.border.bElement = self.bElement
+        border = RoundedRectangle(0, 0, 0, 0)
+        border.bElement = self.bElement
         color = Cogl.Color()
         color.init_from_4ub(100, 100, 100, 255)
-        self.border.set_border_color(color)
-        self.border.set_border_width(1)
-        self.border.set_position(0, 0)
-        self.add_child(self.border)
+        border.set_border_color(color)
+        border.set_border_width(1)
+        border.set_position(0, 0)
+        self.add_child(border)
+        return border
 
     def _createBackground(self, track):
         pass
