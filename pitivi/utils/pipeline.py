@@ -244,10 +244,12 @@ class SimplePipeline(Signallable, Loggable):
         # is only emitted every 300ms and the playhead jumps
         # during the playback.
         try:
-            self.emit("position", self.getPosition())
+            position = self.getPosition()
         except PipelineError:
             # Getting the position failed
-            pass
+            return
+        if position != Gst.CLOCK_TIME_NONE and position >= 0:
+            self.emit("position", position)
 
     def stop(self):
         """
@@ -273,7 +275,6 @@ class SimplePipeline(Signallable, Loggable):
         @rtype: L{long}
         @raise PipelineError: If the position couldn't be obtained.
         """
-        self.log("format %r", format)
         try:
             res, cur = self._pipeline.query_position(format)
         except Exception, e:
