@@ -253,6 +253,7 @@ class EditingContext(Signallable):
             self.old_position += self.focus.get_duration()
 
         self.old_priority = self.focus.get_priority()
+        self.new_position = None
 
         self.timeline = timeline
         self.action_log = action_log
@@ -264,13 +265,13 @@ class EditingContext(Signallable):
 
     def finish(self):
         """Clean up timeline for normal editing"""
-
-        action = ClipEdited(self.focus, self.old_priority, self.new_priority, self.mode, self.edge,
-                            self.old_position, self.new_position)
-
-        self.action_log.push(action)
-        self.action_log.commit()
-        self.timeline.commit()
+        if self.new_position is not None and self.new_priority is not None:
+            # The mouse cursor did move.
+            action = ClipEdited(self.focus, self.old_priority, self.new_priority, self.mode, self.edge,
+                                self.old_position, self.new_position)
+            self.action_log.push(action)
+            self.action_log.commit()
+            self.timeline.commit()
         self.emit("clip-trim-finished")
 
     def setMode(self, mode):
