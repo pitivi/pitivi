@@ -227,7 +227,6 @@ class TrimHandle(Clutter.Texture):
         self.set_reactive(True)
 
         self.add_action(self.dragAction)
-
         self.dragAction.connect("drag-begin", self._dragBeginCb)
         self.dragAction.connect("drag-end", self._dragEndCb)
         self.dragAction.connect("drag-progress", self._dragProgressCb)
@@ -240,6 +239,8 @@ class TrimHandle(Clutter.Texture):
         self.timelineElement.bElement.selected.connect("selected-changed", self._selectedChangedCb)
 
     def cleanup(self):
+        self.disconnect_by_func(self._enterEventCb)
+        self.disconnect_by_func(self._leaveEventCb)
         self.timelineElement.disconnect_by_func(self._elementEnterEventCb)
         self.timelineElement.disconnect_by_func(self._elementLeaveEventCb)
 
