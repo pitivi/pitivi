@@ -217,7 +217,6 @@ class TrimHandle(Clutter.Texture):
         Clutter.Texture.__init__(self)
 
         self.isLeft = isLeft
-        self.isSelected = False
         self.timelineElement = weakref.proxy(timelineElement)
         self.dragAction = Clutter.DragAction()
 
@@ -236,7 +235,6 @@ class TrimHandle(Clutter.Texture):
 
         self.timelineElement.connect("enter-event", self._elementEnterEventCb)
         self.timelineElement.connect("leave-event", self._elementLeaveEventCb)
-        self.timelineElement.bElement.selected.connect("selected-changed", self._selectedChangedCb)
 
     def cleanup(self):
         self.disconnect_by_func(self._enterEventCb)
@@ -263,7 +261,7 @@ class TrimHandle(Clutter.Texture):
         children = self.timelineElement.get_children()
 
         other_actor = self.timelineElement.timeline._container.stage.get_actor_at_pos(Clutter.PickMode.ALL, event.x, event.y)
-        if other_actor not in children and not self.isSelected:
+        if other_actor not in children:
             self.timelineElement.hideHandles()
 
         for elem in children:
@@ -275,12 +273,7 @@ class TrimHandle(Clutter.Texture):
         self.show()
 
     def _elementLeaveEventCb(self, actor, event):
-        if not self.isSelected:
-            self.hide()
-
-    def _selectedChangedCb(self, selected, isSelected):
-        self.isSelected = isSelected
-        self.props.visible = isSelected
+        self.hide()
 
     def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
         self.dragBeginStartX = event_x
