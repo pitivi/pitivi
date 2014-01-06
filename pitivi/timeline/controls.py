@@ -31,10 +31,11 @@ from layer import VideoLayerControl, AudioLayerControl
 
 
 class ControlActor(GtkClutter.Actor):
-    def __init__(self, container, widget, layer):
+    def __init__(self, container, widget, layer, is_audio):
         GtkClutter.Actor.__init__(self)
 
         self.layer = layer
+        self.is_audio = is_audio
         self._container = container
         self.widget = widget
 
@@ -43,7 +44,7 @@ class ControlActor(GtkClutter.Actor):
         self._setUpDragAndDrop()
 
     def _getLayerForY(self, y):
-        if self.isAudio:
+        if self.is_audio:
             y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
         priority = int(y / (EXPANDED_SIZE + SPACING))
 
@@ -70,7 +71,7 @@ class ControlActor(GtkClutter.Actor):
         y = self.dragAction.get_motion_coords()[1]
         priority = self._getLayerForY(y)
         lowerLimit = 0
-        if self.isAudio:
+        if self.is_audio:
             lowerLimit = self.nbrLayers * (EXPANDED_SIZE + SPACING)
 
         if actor.props.y + delta_y > lowerLimit and priority < self.nbrLayers:
@@ -104,7 +105,7 @@ class ControlContainer(Clutter.ScrollActor):
 
     def _setTrackControlPosition(self, control):
         y = control.layer.get_priority() * (EXPANDED_SIZE + SPACING) + SPACING
-        if control.isAudio:
+        if control.is_audio:
             y += len(self.timeline.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING)
 
         control.set_position(0, y)
@@ -143,15 +144,13 @@ class ControlContainer(Clutter.ScrollActor):
         self._reorderLayerActors()
         self.timeline.bTimeline.commit()
 
-    def addTrackControl(self, layer, isAudio):
-        if isAudio:
+    def addTrackControl(self, layer, is_audio):
+        if is_audio:
             control = AudioLayerControl(self, layer, self._app)
         else:
             control = VideoLayerControl(self, layer, self._app)
 
-        controlActor = ControlActor(self, control, layer)
-        controlActor.isAudio = isAudio
-        controlActor.layer = layer
+        controlActor = ControlActor(self, control, layer, is_audio)
         controlActor.set_size(CONTROL_WIDTH, EXPANDED_SIZE + SPACING)
 
         self.add_child(controlActor)
