@@ -263,6 +263,11 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         GLib.idle_add(self._startThumbnailing, priority=GLib.PRIORITY_LOW)
 
     def _startThumbnailing(self):
+        if not self.pipeline:
+            # Can happen if stopGeneration is called because the clip has been
+            # removed from the timeline after the PreviewGeneratorManager
+            # started this job.
+            return
         self.debug('Now generating thumbnails for: %s', filename_from_uri(self.uri))
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
         if not query_success or duration == -1:
