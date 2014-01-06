@@ -38,7 +38,7 @@ from pitivi.utils.timeline import Zoomable, EditingContext, SELECT, UNSELECT, SE
 from previewers import AudioPreviewer, VideoPreviewer
 
 import pitivi.configure as configure
-from pitivi.utils.ui import EXPANDED_SIZE, SPACING, KEYFRAME_SIZE, CONTROL_WIDTH
+from pitivi.utils.ui import EXPANDED_SIZE, SPACING, KEYFRAME_SIZE, CONTROL_WIDTH, create_cogl_color
 
 # Colors for keyframes and clips (RGBA)
 KEYFRAME_LINE_COLOR = (237, 212, 0, 255)  # "Tango" yellow
@@ -46,6 +46,9 @@ KEYFRAME_NORMAL_COLOR = Clutter.Color.new(0, 0, 0, 200)
 KEYFRAME_SELECTED_COLOR = Clutter.Color.new(200, 200, 200, 200)
 CLIP_SELECTED_OVERLAY_COLOR = Clutter.Color.new(60, 60, 60, 100)
 GHOST_CLIP_COLOR = Clutter.Color.new(255, 255, 255, 50)
+
+BORDER_NORMAL_COLOR = create_cogl_color(100, 100, 100, 255)
+BORDER_SELECTED_COLOR = create_cogl_color(200, 200, 10, 255)
 
 
 def get_preview_for_object(bElement, timeline):
@@ -351,6 +354,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.source = None
         self.keyframedElement = None
         self.rightHandle = None
+        self.isSelected = False
         size = self.bElement.get_duration()
 
         self._createBackground(track)
@@ -363,7 +367,6 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.update(True)
         self.set_reactive(True)
 
-        self.isSelected = False
         self._createMixingKeyframes()
 
         self._connectToEvents()
@@ -582,9 +585,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
     def _createBorder(self):
         border = RoundedRectangle(0, 0, 0, 0)
         border.bElement = self.bElement
-        color = Cogl.Color()
-        color.init_from_4ub(100, 100, 100, 255)
-        border.set_border_color(color)
+        border.set_border_color(BORDER_NORMAL_COLOR)
         border.set_border_width(1)
         border.set_position(0, 0)
         self.add_child(border)
@@ -661,6 +662,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         if not isSelected:
             self.hideKeyframes()
         self.marquee.props.visible = isSelected
+        color = BORDER_SELECTED_COLOR if isSelected else BORDER_NORMAL_COLOR
+        self.border.set_border_color(color)
 
 
 class Gradient(Clutter.Actor):

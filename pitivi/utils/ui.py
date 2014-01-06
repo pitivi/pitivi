@@ -29,6 +29,7 @@ classes that help with UI drawing around the application
 
 from decimal import Decimal
 from gettext import ngettext, gettext as _
+from gi.repository import Cogl
 from gi.repository import GLib
 from gi.repository import GES
 from gi.repository import Gst
@@ -167,6 +168,12 @@ def unpack_cairo_gradient(value):
 
 def hex_to_rgb(value):
     return tuple(float(int(value[i:i + 2], 16)) / 255.0 for i in range(0, 6, 2))
+
+
+def create_cogl_color(red, green, blue, alpha):
+    color = Cogl.Color()
+    color.init_from_4ub(red, green, blue, alpha)
+    return color
 
 
 #------ Helper to help beatify indos so they can be displayed in the UI -----#
