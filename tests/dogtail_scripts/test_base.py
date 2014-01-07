@@ -49,8 +49,9 @@ class BaseDogTail(unittest.TestCase):
         self.transitions = secondary_tabs.children[0]
         self.titles = secondary_tabs.children[0]
         self.viewer = mainwindow_upper.child(name="viewer", recursive=False)
-        self.zoom_best_fit_button = mainwindow_lower.children[0].children[0].button("Zoom")
-        self.timeline = mainwindow_lower.children[0].children[1].child(name="timeline canvas", recursive=False)
+        self.timeline_ui = mainwindow_lower.child(name="timeline ui", recursive=False)
+        self.zoom_best_fit_button = self.timeline_ui.child(name="Zoom", recursive=True)
+        self.timeline = self.timeline_ui.child(name="timeline canvas", recursive=False)
         self.timeline_toolbar = mainwindow_lower.child(name="timeline toolbar", recursive=False)
         # Used to speed up helper_functions in particular:
         self.import_button = self.medialibrary.child(name="media_import_button")

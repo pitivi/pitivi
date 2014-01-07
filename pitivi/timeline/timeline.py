@@ -692,14 +692,13 @@ def quit2_(*args, **kwargs):
     Gtk.main_quit()
 
 
-class Timeline(Gtk.VBox, Zoomable, Loggable):
+class Timeline(Gtk.Grid, Zoomable, Loggable):
     """
-    This is the main timeline widget, which will contain the timeline stage
-    and the layer controls, the scrollbars and the ruler.
+    Container for zoom box, ruler, the actual timeline layers and scrollbars.
     """
     def __init__(self, gui, instance, ui_manager):
         Zoomable.__init__(self)
-        Gtk.VBox.__init__(self)
+        Gtk.Grid.__init__(self)
         Loggable.__init__(self)
         if not at_least_version(gi.version_info, (3, 11, 0)):
             GObject.threads_init()
@@ -911,12 +910,30 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self.zoomed_fitted = True
         self.pressed = False
 
-        self._packScrollbars(self)
+        self.hadj = Gtk.Adjustment()
+        self.vadj = Gtk.Adjustment()
+        self.hadj.connect("value-changed", self._updateScrollPosition)
+        self.vadj.connect("value-changed", self._updateScrollPosition)
+        self.vadj.props.lower = 0
+        self.vadj.props.page_size = 250
+        self._vscrollbar = Gtk.VScrollbar(adjustment=self.vadj)
+        self._hscrollBar = Gtk.HScrollbar(adjustment=self.hadj)
+
+        self.ruler = ScaleRuler(self, self.hadj)
+        self.ruler.props.hexpand = True
+        self.ruler.setProjectFrameRate(24.)
+        self.ruler.hide()
+
+        self.attach(self.zoomBox, 0, 0, 1, 1)
+        self.attach(self.ruler, 1, 0, 1, 1)
+        self.attach(self.embed, 0, 1, 2, 1)
+        self.attach(self._vscrollbar, 2, 1, 1, 1)
+        self.attach(self._hscrollBar, 1, 2, 1, 1)
+
         min_height = (self.ruler.get_size_request()[1] +
                       (EXPANDED_SIZE + SPACING) * 2 +
                       SPACING * 3)
         self.set_size_request(-1, min_height)
-        self.stage.show()
 
     def enableKeyboardAndMouseEvents(self):
         self.info("Unblocking timeline mouse and keyboard signals")
@@ -1050,34 +1067,6 @@ class Timeline(Gtk.VBox, Zoomable, Loggable):
         self.ui_manager.insert_action_group(self.playhead_actions, -1)
 
         self.ui_manager.add_ui_from_string(ui)
-
-    def _packScrollbars(self, vbox):
-        self.hadj = Gtk.Adjustment()
-        self.vadj = Gtk.Adjustment()
-        self._vscrollbar = Gtk.VScrollbar(adjustment=self.vadj)
-        self._hscrollBar = Gtk.HScrollbar(adjustment=self.hadj)
-        self.ruler = ScaleRuler(self, self.hadj)
-
-        self.hadj.connect("value-changed", self._updateScrollPosition)
-        self.vadj.connect("value-changed", self._updateScrollPosition)
-
-        vbox.pack_end(self._hscrollBar, False, True, False)
-
-        self.ruler.setProjectFrameRate(24.)
-        self.ruler.hide()
-
-        self.vadj.props.lower = 0
-        self.vadj.props.page_size = 250
-
-        hbox = Gtk.HBox()
-        hbox.pack_start(self.embed, True, True, True)
-        hbox.pack_start(self._vscrollbar, False, True, False)
-        vbox.pack_end(hbox, True, True, True)
-
-        hbox = Gtk.HBox()
-        hbox.pack_start(self.zoomBox, False, True, False)
-        hbox.pack_start(self.ruler, True, True, True)
-        vbox.pack_end(hbox, False, True, False)
 
     def _updateScrollPosition(self, adjustment):
         self._scroll_pos_ns = Zoomable.pixelToNs(self.hadj.get_value())
