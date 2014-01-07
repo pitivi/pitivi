@@ -300,8 +300,6 @@ class EditingContext(Signallable):
 
 #-------------------------- Interfaces ----------------------------------------#
 
-ARROW = Gdk.Cursor.new(Gdk.CursorType.ARROW)
-
 
 class Zoomable(object):
     """

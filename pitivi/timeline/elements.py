@@ -50,6 +50,11 @@ GHOST_CLIP_COLOR = Clutter.Color.new(255, 255, 255, 50)
 BORDER_NORMAL_COLOR = create_cogl_color(100, 100, 100, 255)
 BORDER_SELECTED_COLOR = create_cogl_color(200, 200, 10, 255)
 
+NORMAL_CURSOR = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
+DRAG_CURSOR = Gdk.Cursor.new(Gdk.CursorType.HAND1)
+DRAG_LEFT_HANDLEBAR_CURSOR = Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE)
+DRAG_RIGHT_HANDLEBAR_CURSOR = Gdk.Cursor.new(Gdk.CursorType.RIGHT_SIDE)
+
 
 def get_preview_for_object(bElement, timeline):
     # FIXME: special preview for transitions, titles
@@ -255,9 +260,9 @@ class TrimHandle(Clutter.Texture):
 
         self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-focused.png"))
         if self.isLeft:
-            self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE))
+            self.timelineElement.timeline._container.embed.get_window().set_cursor(DRAG_LEFT_HANDLEBAR_CURSOR)
         else:
-            self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.RIGHT_SIDE))
+            self.timelineElement.timeline._container.embed.get_window().set_cursor(DRAG_RIGHT_HANDLEBAR_CURSOR)
 
     def _leaveEventCb(self, actor, event):
         self.timelineElement.set_reactive(True)
@@ -270,7 +275,7 @@ class TrimHandle(Clutter.Texture):
         for elem in children:
             elem.set_reactive(True)
         self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(NORMAL_CURSOR)
 
     def _elementEnterEventCb(self, actor, event):
         self.show()
@@ -321,7 +326,7 @@ class TrimHandle(Clutter.Texture):
             elem.set_reactive(True)
 
         self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(NORMAL_CURSOR)
 
     def clipTrimCb(self, unused_TrimStartContext, tl_obj, position):
         # While a clip is being trimmed, ask the viewer to preview it
@@ -768,7 +773,7 @@ class Line(Clutter.Actor):
 
     def _ungrab(self):
         self.timelineElement.set_reactive(True)
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(NORMAL_CURSOR)
 
     def _clickedCb(self, actor, event):
         if self.gotDragged:
@@ -783,7 +788,7 @@ class Line(Clutter.Actor):
 
     def _enterEventCb(self, actor, event):
         self.timelineElement.set_reactive(False)
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(DRAG_CURSOR)
 
     def _leaveEventCb(self, actor, event):
         self._ungrab()
@@ -883,7 +888,7 @@ class Keyframe(Clutter.Actor):
     def _unselect(self):
         self.timelineElement.set_reactive(True)
         self.set_background_color(KEYFRAME_NORMAL_COLOR)
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(NORMAL_CURSOR)
 
     def remove(self):
         # Can't remove edge keyframes !
@@ -913,7 +918,7 @@ class Keyframe(Clutter.Actor):
     def _enterEventCb(self, actor, event):
         self.timelineElement.set_reactive(False)
         self.set_background_color(KEYFRAME_SELECTED_COLOR)
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(DRAG_CURSOR)
 
     def _leaveEventCb(self, actor, event):
         self._unselect()
