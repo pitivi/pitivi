@@ -839,14 +839,14 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         if self.width < 0:  # We've been called at a moment where size was updated but not scroll_point.
             return
 
-        self.canvas.set_size(self.width, 65)
+        self.canvas.set_size(self.width, EXPANDED_SIZE)
         Clutter.Actor.set_size(self, self.width, EXPANDED_SIZE)
         self.set_position(start, self.props.y)
         self.canvas.invalidate()
 
     def _prepareSamples(self):
         # Let's go mono.
-        if (len(self.peaks) > 1):
+        if len(self.peaks) > 1:
             samples = (numpy.array(self.peaks[0]) + numpy.array(self.peaks[1])) / 2
         else:
             samples = numpy.array(self.peaks[0])
