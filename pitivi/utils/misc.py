@@ -160,13 +160,13 @@ def get_filesystem_encoding():
     return sys.getfilesystemencoding() or "utf-8"
 
 
-def path_from_uri(uri):
+def path_from_uri(raw_uri):
     """
-    Return a human-readable path that can be used with python's os.path
+    Return a path that can be used with Python's os.path.
     """
-    foo = urlparse(uri)
-    path = foo.netloc + foo.path
-    return unquote(path)
+    uri = urlparse(raw_uri)
+    assert uri.scheme == "file"
+    return unquote(uri.path)
 
 
 def filename_from_uri(uri):
