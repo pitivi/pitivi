@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export PYTHON=python2
+
 DIE=0
 package=pitivi
 srcfile=pitivi/application.py
