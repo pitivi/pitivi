@@ -11,7 +11,6 @@ tests =	test_basic.py \
 	test_project.py \
 	test_projectmanager.py \
 	test_projectsettings.py \
-	test_settings.py \
 	test_signallable.py \
 	test_system_gnome.py \
 	test_system.py \
