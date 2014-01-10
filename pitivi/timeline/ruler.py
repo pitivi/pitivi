@@ -56,6 +56,9 @@ FRAME_MIN_WIDTH_PIXELS = 5
 # How short it should be.
 FRAME_HEIGHT_PIXELS = 5
 
+NORMAL_FONT_SIZE = 13
+SMALL_FONT_SIZE = 11
+
 
 def setCairoColor(context, color):
     if type(color) is Gdk.RGBA:
@@ -270,7 +273,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
     def drawRuler(self, context):
         # FIXME use system defaults
         context.set_font_face(cairo.ToyFontFace("Cantarell"))
-        context.set_font_size(13)
+        context.set_font_size(NORMAL_FONT_SIZE)
 
         spacing, scale = self._getSpacing(context)
         offset = self.pixbuf_offset % spacing
@@ -340,13 +343,19 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             current_time += interval
 
     def _drawTime(self, context, current, previous):
-        for element, previous_element in zip(current, previous):
+        for index, (element, previous_element) in enumerate(zip(current, previous)):
             if element == previous_element:
                 color = self._color_dimmed
             else:
                 color = self._color_normal
             setCairoColor(context, color)
+            # Display the millis with a smaller font
+            small = index >= 5
+            if small:
+                context.set_font_size(SMALL_FONT_SIZE)
             context.show_text(element)
+            if small:
+                context.set_font_size(NORMAL_FONT_SIZE)
 
     def drawFrameBoundaries(self, context):
         """
