@@ -276,9 +276,9 @@ if test ! -d $PITIVI; then
 fi
 
 if [ "$ready_to_run" != "1" ]; then
-    cd $PITIVI
     for m in $MODULES_CORE
     do
+        cd $PITIVI
         echo ""
         echo "Building $m"
         # If the folder doesn't exist, check out the module. Later on, we will
@@ -352,8 +352,6 @@ if [ "$ready_to_run" != "1" ]; then
                 exit 1
             fi
         fi
-
-        cd ..
     done
 
 
@@ -361,7 +359,8 @@ if [ "$ready_to_run" != "1" ]; then
     # Build all the necessary gstreamer modules.
     for m in $MODULES
     do
-        echo ""
+        cd $PITIVI
+        echo
         echo "Building $m"
         # If the folder doesn't exist, check out the module. Later on, we will
         # update it anyway.
@@ -433,15 +432,10 @@ if [ "$ready_to_run" != "1" ]; then
             echo "Could not compile $m ; result: $?"
             exit 1
         fi
-
-        if [ $m == "gst-devtools" ]; then
-          cd ../..
-        else
-          cd ..
-        fi
     done
 
     # And obviously ... Pitivi itself
+    cd $PITIVI
     if test ! -d $PITIVI/pitivi; then
         git clone git://git.gnome.org/pitivi
     fi
