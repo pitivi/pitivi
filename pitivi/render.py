@@ -870,7 +870,7 @@ class RenderDialog(Loggable):
 
     #-- UI callbacks
     def _okButtonClickedCb(self, unused_button, settings_attr):
-        setattr(self, settings_attr, self.dialog.getSettings())
+        setattr(self.project, settings_attr, self.dialog.getSettings())
         self.dialog.window.destroy()
 
     def _renderButtonClickedCb(self, unused_button):
