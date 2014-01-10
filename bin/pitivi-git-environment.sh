@@ -36,24 +36,26 @@ GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_$(echo $GOBJECT_INTROSP
 #
 
 if ! pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
-    MODULE_GLIB="glib"
+  echo "Using a local build of glib"
+  MODULE_GLIB="glib"
 else
-  echo "glib is up to date, using the version already available."
+  echo "Using system-wide glib"
 fi
 
 MODULES_CORE=""
 if ! pkg-config gobject-introspection-1.0 --atleast-version=$GOBJECT_INTROSPECTION_MINIMUM_VERSION; then
-  echo "Building gobject-introspection"
+  echo "Using a local build of gobject-introspection-1.0"
   MODULES_CORE="${MODULE_GLIB} gobject-introspection"
 else
-  echo "gobject-introspection-1.0 is up to date, not building."
+  echo "Using system-wide gobject-introspection-1.0"
 fi
 
 if python2 -c "import gi; gi.check_version('${PYGOBJECT_RELEASE_TAG}')" &> /dev/null; then
-  echo "pygobject is up to date, not building"
+  echo "Using system-wide pygobject"
   # Hack around PYTHONPATH ordering to support gi overrides
   PYTHONPATH=$(python2 -c 'import gi; print(gi._overridesdir)')/../../:$PYTHONPATH
 else
+  echo "Using a local build of pygobject"
   PYTHONPATH=$MYPITIVI/pygobject:$PYTHONPATH
   MODULES_CORE="${MODULES_CORE} pygobject"
 fi
@@ -233,9 +235,20 @@ case $i in
   shift
 
   ;;
-  --devel=*)
-  MODULES=$MODULES " gst-devtools"
+  --devel)
+  MODULES="${MODULES} gst-devtools"
   shift
+
+  ;;
+  --help)
+  cat <<END
+
+--build            - Update and rebuild the needed libraries, if any.
+--force-autogen    - Run autogen before building stuff.
+--devel            - Also build gst-devtools.
+
+END
+  exit
 
   ;;
 esac
@@ -436,10 +449,10 @@ if [ "$ready_to_run" != "1" ]; then
     cd pitivi
     if test ! -f ./configure || [ "$force_autogen" == "1" ]; then
         ./autogen.sh
-    if [ $? -ne 0 ]; then
-        echo "Could not run autogen for Pitivi ; result: $?"
-        exit 1
-    fi
+        if [ $? -ne 0 ]; then
+            echo "Could not run autogen for Pitivi ; result: $?"
+            exit 1
+        fi
     else
         echo "autogen has already been run for Pitivi, not running it again"
     fi
