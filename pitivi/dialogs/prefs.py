@@ -89,7 +89,7 @@ class PreferencesDialog(object):
 
     @classmethod
     def addPreference(cls, attrname, label, description, section=None,
-                    widget_klass=None, **args):
+                    widget_class=None, **args):
         """
         Add a user preference. The preferences dialog will try
         to guess the appropriate widget to use based on the type of the
@@ -97,20 +97,20 @@ class PreferencesDialog(object):
 
         @param label: user-visible name for this option
         @type label: C{str}
-        @param desc: a user-visible description documenting this option
+        @param description: a user-visible description documenting this option
         (ignored unless prefs_label is non-null)
-        @type desc: C{str}
+        @type description: C{str}
         @param : user-visible category to which this option
         belongs (ignored unless prefs_label is non-null)
         @type section: C{str}
-        @param widget_klass: overrides auto-detected widget
-        @type widget_klass: C{class}
+        @param widget_class: overrides auto-detected widget
+        @type widget_class: C{class}
         """
         if not section:
             section = "General"
         if not section in cls.prefs:
             cls.prefs[section] = {}
-        cls.prefs[section][attrname] = (label, description, widget_klass, args)
+        cls.prefs[section][attrname] = (label, description, widget_class, args)
 
     @classmethod
     def addPathPreference(cls, attrname, label, description, section=None):
@@ -120,9 +120,9 @@ class PreferencesDialog(object):
 
         @param label: user-visible name for this option
         @type label: C{str}
-        @param desc: a user-visible description documenting this option
+        @param description: a user-visible description documenting this option
         (ignored unless prefs_label is non-null)
-        @type desc: C{str}
+        @type description: C{str}
         @param section: user-visible category to which this option
         belongs (ignored unless prefs_label is non-null)
         @type section: C{str}
@@ -140,9 +140,9 @@ class PreferencesDialog(object):
 
         @param label: user-visible name for this option
         @type label: C{str}
-        @param desc: a user-visible description documenting this option
+        @param description: a user-visible description documenting this option
         (ignored unless prefs_label is non-null)
-        @type desc: C{str}
+        @type description: C{str}
         @param section: user-visible category to which this option
         belongs (ignored unless prefs_label is non-null)
         @type section: C{str}
@@ -163,9 +163,9 @@ class PreferencesDialog(object):
 
         @param label: user-visible name for this option
         @type label: C{str}
-        @param desc: a user-visible description documenting this option
+        @param description: a user-visible description documenting this option
         (ignored unless prefs_label is non-null)
-        @type desc: C{str}
+        @type description: C{str}
         @param section: user-visible category to which this option
         belongs (ignored unless prefs_label is non-null)
         @type section: C{str}
@@ -182,9 +182,9 @@ class PreferencesDialog(object):
 
         @param label: user-visible name for this option
         @type label: C{str}
-        @param desc: a user-visible description documenting this option
+        @param description: a user-visible description documenting this option
         (ignored unless prefs_label is non-null)
-        @type desc: C{str}
+        @type description: C{str}
         @param choices: a sequence of (<label>, <value>) pairs
         @type choices: C{[(str, pyobject), ...]}
         @param section: user-visible category to which this option
@@ -202,9 +202,9 @@ class PreferencesDialog(object):
 
         @param label: user-visible name for this option
         @type label: C{str}
-        @param desc: a user-visible description documenting this option
+        @param description: a user-visible description documenting this option
         (ignored unless prefs_label is non-null)
-        @type desc: C{str}
+        @type description: C{str}
         @param section: user-visible category to which this option
         belongs (ignored unless prefs_label is non-null)
         @type section: C{str}
@@ -222,9 +222,9 @@ class PreferencesDialog(object):
 
         @param label: user-visible name for this option
         @type label: C{str}
-        @param desc: a user-visible description documenting this option
+        @param description: a user-visible description documenting this option
         (ignored unless prefs_label is non-null)
-        @type desc: C{str}
+        @type description: C{str}
         @param section: user-visible category to which this option
         belongs (ignored unless prefs_label is non-null)
         @type section: C{str}
@@ -240,9 +240,9 @@ class PreferencesDialog(object):
 
         @param label: user-visible name for this option
         @type label: C{str}
-        @param desc: a user-visible description documenting this option
+        @param description: a user-visible description documenting this option
         (ignored unless prefs_label is non-null)
-        @type desc: C{str}
+        @type description: C{str}
         @param section: user-visible category to which this option
         belongs (ignored unless prefs_label is non-null)
         @type section: C{str}
@@ -263,8 +263,8 @@ class PreferencesDialog(object):
 
             prefs = {}
             for attrname in options:
-                label, description, klass, args = options[attrname]
-                widget = klass(**args)
+                label, description, widget_class, args = options[attrname]
+                widget = widget_class(**args)
                 widget.setWidgetValue(getattr(self.settings, attrname))
                 widget.connectValueChanged(self._valueChanged, widget, attrname)
                 self.widgets[attrname] = widget
