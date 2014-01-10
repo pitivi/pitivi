@@ -42,7 +42,6 @@ HARD_DEPS = {
     "GES": "1.0.0.0",  # packagers: in reality 1.1.90, but that GES version erronously reports itself as 1.0.0.0
     "Gio": None,
     "gnonlin": "1.1.90",
-    "GnomeDesktop": None,
     "Gst": "1.2.0",
     "Gtk": "3.8.0",
     "numpy": None,  # using static python bindings
@@ -52,9 +51,10 @@ HARD_DEPS = {
     "gst-python": "1.1.90",
     "pygobject": "3.4.0",
 }
+
 # For the list of soft dependencies, see the "check_soft_dependencies" method,
 # near the end of this file.
-global missing_soft_deps
+# (library_name, why_we_need_it) tuples:
 missing_soft_deps = {}
 
 
@@ -232,17 +232,24 @@ def check_soft_dependencies():
     # seems to have no measurable performance impact the 2nd time:
     from gi.repository import Gst
     Gst.init(None)
-    registry = Gst.Registry.get()
-    # Description strings are translatable as they may be shown in the pitivi UI
+
+    # Description strings are translatable as they are shown in the Pitivi UI.
     if not _try_import("pycanberra"):
         missing_soft_deps["PyCanberra"] = \
             _("enables sound notifications when rendering is complete")
+
+    if not _try_import_from_gi("GnomeDesktop"):
+        missing_soft_deps["libgnome-desktop"] = \
+            _("file thumbnails provided by GNOME's thumbnailers")
     if not _try_import_from_gi("Notify"):
         missing_soft_deps["libnotify"] = \
             _("enables visual notifications when rendering is complete")
+
+    registry = Gst.Registry.get()
     if not registry.find_plugin("libav"):
         missing_soft_deps["GStreamer Libav plugin"] = \
-            _('additional multimedia codecs through the Libav library')
+            _("additional multimedia codecs through the Libav library")
+
     # Apparently, doing a registry.find_plugin("frei0r") is not enough.
     # Sometimes it still returns something even when frei0r is uninstalled,
     # and anyway we're looking specifically for the scale0tilt filter.

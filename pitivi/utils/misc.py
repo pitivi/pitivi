@@ -337,7 +337,6 @@ infinity = Infinity()
 
 
 def profile(func, profiler_filename="result.prof"):
-    import os.path
     counter = 1
     output_filename = profiler_filename
     while os.path.exists(output_filename):

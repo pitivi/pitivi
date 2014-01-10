@@ -37,7 +37,6 @@ from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
     DiscovererStreamInfo, DiscovererSubtitleInfo
-from itertools import izip
 from urllib import unquote
 import cairo
 import os

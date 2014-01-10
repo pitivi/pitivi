@@ -26,7 +26,11 @@ from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import GLib
-from gi.repository import GnomeDesktop
+try:
+    from gi.repository import GnomeDesktop
+    has_gnome_desktop = True
+except ImportError:
+    has_gnome_desktop = False
 from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -305,9 +309,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.pack_start(self.treeview_scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, True, 0)
 
-        # We need to instanciate the thumbnail factory on the main thread...
-        size_normal = GnomeDesktop.DesktopThumbnailSize.NORMAL
-        self.thumbnailer = GnomeDesktop.DesktopThumbnailFactory.new(size_normal)
+        if has_gnome_desktop:
+            # We need to instanciate the thumbnail factory on the main thread...
+            size_normal = GnomeDesktop.DesktopThumbnailSize.NORMAL
+            self.thumbnailer = GnomeDesktop.DesktopThumbnailFactory.new(size_normal)
+        else:
+            self.thumbnailer = None
 
     def getAssetForUri(self, uri):
         # Sanitization
@@ -526,6 +533,9 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 return None, None
 
     def _generateThumbnails(self, uri):
+        if not self.thumbnailer:
+            # TODO: Use thumbnails generated with GStreamer.
+            return None
         # This way of getting the mimetype feels awfully convoluted but
         # seems to be the proper/reliable way in a GNOME context
         asset_file = Gio.file_new_for_uri(uri)
