@@ -529,8 +529,13 @@ class TimelineElement(Clutter.Actor, Zoomable):
     # private API
 
     def update(self, ease):
-        size = self.bElement.get_duration()
-        self.set_size(self.nsToPixel(size), EXPANDED_SIZE, ease)
+        start = self.bElement.get_start()
+        duration = self.bElement.get_duration()
+        # The calculation of the duration assumes that the start is always
+        # int(pixels_float). In that case, the rounding can add up and a pixel
+        # might be lost if we ignore the start of the clip.
+        size = self.nsToPixel(start + duration) - self.nsToPixel(start)
+        self.set_size(size, EXPANDED_SIZE, ease)
 
     def setDragged(self, dragged):
         brother = self.timeline.findBrother(self.bElement)
