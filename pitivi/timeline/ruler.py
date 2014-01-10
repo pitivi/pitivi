@@ -88,7 +88,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                 [GObject.TYPE_UINT64])
     }
 
-    def __init__(self, instance, hadj):
+    def __init__(self, timeline, hadj):
         Gtk.DrawingArea.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
@@ -99,7 +99,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.connect("focus-in-event", self._focusInCb)
         self.connect("focus-out-event", self._focusOutCb)
 
-        self.app = instance
+        self.timeline = timeline
         self._seeker = Seeker()
         self.hadj = hadj
         hadj.connect("value-changed", self._hadjValueChangedCb)
@@ -139,11 +139,11 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def _focusInCb(self, unused_widget, unused_arg):
         self.log("Ruler has grabbed focus")
-        self.app.gui.timeline_ui.setActionsSensitivity(True)
+        self.timeline.setActionsSensitivity(True)
 
     def _focusOutCb(self, unused_widget, unused_arg):
         self.log("Ruler has lost focus")
-        self.app.gui.timeline_ui.setActionsSensitivity(False)
+        self.timeline.setActionsSensitivity(False)
 
     def _hadjValueChangedCb(self, hadj):
         self.pixbuf_offset = self.hadj.get_value()
@@ -234,18 +234,18 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             # Control + scroll = zoom
             if event.scroll.direction == Gdk.ScrollDirection.UP:
                 Zoomable.zoomIn()
-                self.app.gui.timeline_ui.zoomed_fitted = False
+                self.timeline.zoomed_fitted = False
             elif event.scroll.direction == Gdk.ScrollDirection.DOWN:
                 Zoomable.zoomOut()
-                self.app.gui.timeline_ui.zoomed_fitted = False
+                self.timeline.zoomed_fitted = False
         else:
             # No modifier key held down, just scroll
             if (event.scroll.direction == Gdk.ScrollDirection.UP
             or event.scroll.direction == Gdk.ScrollDirection.LEFT):
-                self.app.gui.timeline_ui.scroll_left()
+                self.timeline.scroll_left()
             elif (event.scroll.direction == Gdk.ScrollDirection.DOWN
             or event.scroll.direction == Gdk.ScrollDirection.RIGHT):
-                self.app.gui.timeline_ui.scroll_right()
+                self.timeline.scroll_right()
 
     def setProjectFrameRate(self, rate):
         """
