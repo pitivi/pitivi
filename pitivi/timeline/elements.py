@@ -358,6 +358,10 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.add_child(self.marquee)
 
         self._createHandles()
+
+        self._linesMarker = self._createMarker()
+        self._keyframesMarker = self._createMarker()
+
         self._createGhostclip()
 
         self.update(True)
@@ -437,10 +441,9 @@ class TimelineElement(Clutter.Actor, Zoomable):
     def hideKeyframes(self):
         for keyframe in self.keyframes:
             self.remove_child(keyframe)
+        self.keyframes = []
 
         self.keyframesVisible = False
-
-        self.keyframes = []
 
         if self.isSelected:
             self.showKeyframes(self.default_element, self.default_prop)
@@ -451,7 +454,6 @@ class TimelineElement(Clutter.Actor, Zoomable):
         x = self.nsToPixel(value.timestamp - self.bElement.props.in_point) - KEYFRAME_SIZE / 2
         y = EXPANDED_SIZE - (value.value * EXPANDED_SIZE)
 
-        keyframe.set_z_position(2)
         keyframe.set_position(x, y)
 
     def drawLines(self, line=None):
@@ -477,29 +479,22 @@ class TimelineElement(Clutter.Actor, Zoomable):
             return
 
         values = self.source.get_all()
-
         if len(values) < 2 and self.bElement.props.duration > 0:
             self.source.unset_all()
             val = float(self.prop.default_value) / (self.prop.maximum - self.prop.minimum)
             self.source.set(self.bElement.props.in_point, val)
             self.source.set(self.bElement.props.duration + self.bElement.props.in_point, val)
 
-        lastPoint = None
-
         for keyframe in self.keyframes:
             self.remove_child(keyframe)
 
         self.keyframes = []
-
         values = self.source.get_all()
-
-        l = len(values)
+        values_count = len(values)
         for i, value in enumerate(values):
-            has_changeable_time = True
-            if i == 0 or i == l - 1:
-                has_changeable_time = False
-            self._createKeyframe(value, has_changeable_time)
-            lastPoint = value
+            has_changeable_time = i > 0 and i < values_count - 1
+            keyframe = self._createKeyframe(value, has_changeable_time)
+            self.keyframes.append(keyframe)
 
         self.drawLines()
 
@@ -518,6 +513,11 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.disconnect_by_func(self._clickedCb)
 
     # private API
+
+    def _createMarker(self):
+        marker = Clutter.Actor()
+        self.add_child(marker)
+        return marker
 
     def update(self, ease):
         start = self.bElement.get_start()
@@ -552,20 +552,19 @@ class TimelineElement(Clutter.Actor, Zoomable):
         x = self.nsToPixel(value.timestamp - self.bElement.props.in_point) - KEYFRAME_SIZE / 2
         y = EXPANDED_SIZE - (value.value * EXPANDED_SIZE)
 
-        keyframe.set_z_position(2)
         keyframe.set_position(x, y)
 
     def _createKeyframe(self, value, has_changeable_time):
         keyframe = Keyframe(self, value, has_changeable_time)
-        self.add_child(keyframe)
-        self.keyframes.append(keyframe)
+        self.insert_child_above(keyframe, self._keyframesMarker)
         self.setKeyframePosition(keyframe, value)
+        return keyframe
 
     def _createLine(self, keyframe, lastKeyframe, line):
         if not line:
             line = Line(self, keyframe, lastKeyframe)
             self.lines.append(line)
-            self.add_child(line)
+            self.insert_child_above(line, self._linesMarker)
 
         adj = self.nsToPixel(keyframe.value.timestamp - lastKeyframe.value.timestamp)
         opp = (lastKeyframe.value.value - keyframe.value.value) * EXPANDED_SIZE

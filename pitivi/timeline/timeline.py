@@ -106,10 +106,30 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
         self.selection = Selection()
         self._scroll_point = Clutter.Point()
         self.lastPosition = 0  # Saved for redrawing when paused
-        self._createPlayhead()
-        self._createSnapIndicator()
         self.mouse = self._peekMouse()
-        self._setUpDragAndDrop()
+
+        # The markers are used for placing clips at the right depth.
+        # The first marker added as a child is the furthest and
+        # the latest added marker is the closest to the viewer.
+
+        # All the audio, video, image, title clips are placed above this marker.
+        self._clips_marker = Clutter.Actor()
+        self.add_child(self._clips_marker)
+        # All the transition clips are placed above this marker.
+        self._transitions_marker = Clutter.Actor()
+        self.add_child(self._transitions_marker)
+
+        # Add the playhead later so it appears on top of all the clips.
+        self.playhead = self._createPlayhead()
+        self.add_child(self.playhead)
+
+        self._snap_indicator = self._createSnapIndicator()
+        self.add_child(self._snap_indicator)
+
+        # Add the drag and drop marquee so it appears on top of the playhead.
+        self.marquee = self._setUpDragAndDrop()
+        self.add_child(self.marquee)
+        self.drawMarquee = False
 
     # Public API
 
@@ -304,23 +324,23 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
             newY = event.y
             delta_y = abs(delta_y)
 
-        return (newX, newY, delta_x, delta_y)
+        return newX, newY, delta_x, delta_y
 
     def _setUpDragAndDrop(self):
         self.set_reactive(True)
 
-        self.marquee = Clutter.Actor()
-        self.marquee.set_background_color(SELECTION_MARQUEE_COLOR)
-        self.marquee.hide()
-        self.add_child(self.marquee)
-
-        self.drawMarquee = False
         self._container.stage.connect("button-press-event", self._dragBeginCb)
         self._container.stage.connect("motion-event", self._dragProgressCb)
         self._container.stage.connect("button-release-event", self._dragEndCb)
         self._container.gui.connect("button-release-event", self._dragEndCb)
 
-    def _peekMouse(self):
+        marquee = Clutter.Actor()
+        marquee.set_background_color(SELECTION_MARQUEE_COLOR)
+        marquee.hide()
+        return marquee
+
+    @staticmethod
+    def _peekMouse():
         manager = Clutter.DeviceManager.get_default()
         for device in manager.peek_devices():
             if device.props.device_type == Clutter.InputDeviceType.POINTER_DEVICE and device.props.enabled is True:
@@ -368,31 +388,34 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
     def _movePlayhead(self, position):
         self.playhead.props.x = self.nsToPixel(position)
 
-    def _createPlayhead(self):
-        self.playhead = Clutter.Actor()
-        self.playhead.set_background_color(PLAYHEAD_COLOR)
-        self.playhead.set_size(0, 0)
-        self.playhead.set_position(0, 0)
-        self.playhead.set_easing_duration(0)
-        self.add_child(self.playhead)
+    @staticmethod
+    def _createPlayhead():
+        playhead = Clutter.Actor()
+        playhead.set_background_color(PLAYHEAD_COLOR)
+        playhead.set_size(0, 0)
+        playhead.set_position(0, 0)
+        playhead.set_easing_duration(0)
+        return playhead
 
-    def _createSnapIndicator(self):
-        self._snap_indicator = Clutter.Actor()
-        self._snap_indicator.set_background_color(SNAPPING_INDICATOR_COLOR)
-        self._snap_indicator.props.visible = False
-        self._snap_indicator.props.width = 3
-        self._snap_indicator.props.y = 0
-        self.add_child(self._snap_indicator)
+    @staticmethod
+    def _createSnapIndicator():
+        indicator = Clutter.Actor()
+        indicator.set_background_color(SNAPPING_INDICATOR_COLOR)
+        indicator.props.visible = False
+        indicator.props.width = 3
+        indicator.props.y = 0
+        return indicator
 
     def _addTimelineElement(self, track, bElement):
         if isinstance(bElement, GES.Effect):
             return
+
         if isinstance(bElement, GES.Transition):
             element = TransitionElement(bElement, self)
-            element.set_z_position(0)
+            marker = self._transitions_marker
         elif isinstance(bElement, GES.Source):
             element = URISourceElement(bElement, self)
-            element.set_z_position(-1)
+            marker = self._clips_marker
         else:
             self.warning("Unknown element: %s", bElement)
             return
@@ -407,7 +430,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
         self._setElementX(element)
         self._setElementY(element)
 
-        self.add_child(element)
+        self.insert_child_above(element, marker)
 
     def _removeTimelineElement(self, unused_track, bElement):
         if isinstance(bElement, GES.Effect):
@@ -798,7 +821,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.embed = GtkClutter.Embed()
         self.embed.get_accessible().set_name("timeline canvas")  # for dogtail
         self.stage = self.embed.get_stage()
-        perspective = self.stage.get_perspective()
 
         self.timeline = TimelineStage(self, self._settings)
         self.controls = ControlContainer(self.app, self.timeline)
@@ -806,13 +828,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._shiftMask = False
         self._controlMask = False
 
-        perspective.fov_y = 90.
-        self.stage.set_perspective(perspective)
-
         self.stage.set_background_color(TIMELINE_BACKGROUND_COLOR)
         self.timeline.set_position(CONTROL_WIDTH, 0)
         self.controls.set_position(0, 0)
-        self.controls.set_z_position(2)
 
         self.stage.add_child(self.controls)
         self.stage.add_child(self.timeline)
