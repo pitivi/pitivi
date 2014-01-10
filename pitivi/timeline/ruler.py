@@ -325,6 +325,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         style = self.get_style_context()
         setCairoColor(context, style.get_color(state))
         y_bearing = context.text_extents("0")[1]
+        millis = scale < 1
 
         def split(x):
             # Seven elements: h : mm : ss . mmm
@@ -337,13 +338,18 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         while paintpos < width:
             context.move_to(int(paintpos), 1 - y_bearing)
             current = split(time_to_string(long(current_time)))
-            self._drawTime(context, current, previous)
+            self._drawTime(context, current, previous, millis)
             previous = current
             paintpos += spacing
             current_time += interval
 
-    def _drawTime(self, context, current, previous):
+    def _drawTime(self, context, current, previous, millis):
+        hour = int(current[0])
         for index, (element, previous_element) in enumerate(zip(current, previous)):
+            if index <= 1 and not hour:
+                continue
+            if index >= 5 and not millis:
+                break
             if element == previous_element:
                 color = self._color_dimmed
             else:

@@ -718,6 +718,7 @@ class Timeline(Gtk.Grid, Zoomable, Loggable):
         self._projectmanager = None
         self._project = None
         self.pipeline = None
+        self.bTimeline = None
 
         self._createUi()
         self._createActions()
