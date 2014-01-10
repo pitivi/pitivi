@@ -34,7 +34,7 @@ from gettext import gettext as _
 from pitivi.utils.pipeline import Seeker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import time_to_string, beautify_length
+from pitivi.utils.ui import NORMAL_FONT, time_to_string, beautify_length
 
 # Color #393f3f stolen from the dark variant of Adwaita.
 # There's *no way* to get the GTK3 theme's bg color there (it's always black)
@@ -271,8 +271,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             context.fill()
 
     def drawRuler(self, context):
-        # FIXME use system defaults
-        context.set_font_face(cairo.ToyFontFace("Cantarell"))
+        context.set_font_face(NORMAL_FONT)
         context.set_font_size(NORMAL_FONT_SIZE)
 
         spacing, scale = self._getSpacing(context)

@@ -32,6 +32,7 @@ from gettext import ngettext, gettext as _
 from gi.repository import Cogl
 from gi.repository import GLib
 from gi.repository import GES
+from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
@@ -90,6 +91,26 @@ VIDEO_EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/video-effect", 0, TYPE_P
 AUDIO_TRANSITION_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/audio-transition", 0, TYPE_PITIVI_AUDIO_TRANSITION)
 VIDEO_TRANSITION_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/video-transition", 0, TYPE_PITIVI_VIDEO_TRANSITION)
 LAYER_CONTROL_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/layer-control", 0, TYPE_PITIVI_LAYER_CONTROL)
+
+
+def _get_settings(schema):
+    if schema not in Gio.Settings.list_schemas():
+        return None
+    return Gio.Settings(schema)
+
+
+def _get_font(font_spec, default):
+    raw_font = default
+    settings = _get_settings("org.gnome.desktop.interface")
+    if settings:
+        if font_spec in settings.list_keys():
+            raw_font = settings.get_string(font_spec)
+    face = raw_font.rsplit(" ", 1)[0]
+    return cairo.ToyFontFace(face)
+
+NORMAL_FONT = _get_font("font-name", "Cantarell")
+DOCUMENT_FONT = _get_font("document-font-name", "Sans")
+MONOSPACE_FONT = _get_font("monospace-font-name", "Monospace")
 
 
 # ---------------------- ARGB color helper-------------------------------------#
