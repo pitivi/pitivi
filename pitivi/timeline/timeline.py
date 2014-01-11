@@ -692,7 +692,7 @@ def quit2_(*args, **kwargs):
     Gtk.main_quit()
 
 
-class Timeline(Gtk.Grid, Zoomable, Loggable):
+class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     """
     Container for zoom box, ruler, the actual timeline layers and scrollbars.
     """
@@ -1668,7 +1668,7 @@ def main():
     print "ipython ; %gui gtk3 ; %run timeline.py ; help yourself"
 
     window = Gtk.Window()
-    widget = Timeline(None, None, None)
+    widget = TimelineContainer(None, None, None)
     window.add(widget)
     window.maximize()
     window.show_all()

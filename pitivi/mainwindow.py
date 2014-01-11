@@ -46,7 +46,7 @@ from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
-from pitivi.timeline.timeline import Timeline
+from pitivi.timeline.timeline import TimelineContainer
 from pitivi.titleeditor import TitleEditor
 from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
@@ -427,7 +427,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         # Now, the lower part: the timeline
         timeline_area = Gtk.HBox()
-        self.timeline_ui = Timeline(self, instance, self.uimanager)
+        self.timeline_ui = TimelineContainer(self, instance, self.uimanager)
         self.timeline_ui.setProjectManager(self.app.projectManager)
         self.timeline_ui.controls.connect("selection-changed", self._selectedLayerChangedCb)
         ttb = self.uimanager.get_widget("/TimelineToolBar")
