@@ -80,7 +80,7 @@
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
                             <child>
-                              <object class="GtkCheckButton" id="checkbutton1">
+                              <object class="GtkCheckButton" id="size_checkbutton">
                                 <property name="label" translatable="yes">Size (pixels):</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -153,7 +153,7 @@
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
                             <child>
-                              <object class="GtkCheckButton" id="checkbutton2">
+                              <object class="GtkCheckButton" id="framerate_checkbutton">
                                 <property name="label" translatable="yes">Frame rate:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -192,7 +192,7 @@
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
                             <child>
-                              <object class="GtkCheckButton" id="checkbutton3">
+                              <object class="GtkCheckButton" id="PAR_checkbutton">
                                 <property name="label" translatable="yes">Pixel aspect ratio:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -267,7 +267,7 @@
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
                             <child>
-                              <object class="GtkCheckButton" id="checkbutton4">
+                              <object class="GtkCheckButton" id="channels_checkbutton">
                                 <property name="label" translatable="yes">Channels:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -306,7 +306,7 @@
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
                             <child>
-                              <object class="GtkCheckButton" id="checkbutton5">
+                              <object class="GtkCheckButton" id="samplerate_checkbtn">
                                 <property name="label" translatable="yes">Sample rate:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>

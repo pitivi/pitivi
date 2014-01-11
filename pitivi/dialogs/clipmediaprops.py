@@ -51,23 +51,25 @@ class ClipMediaPropsDialog(object):
         builder.add_from_file(os.path.join(get_ui_dir(), "clipmediaprops.ui"))
         builder.connect_signals(self)
         self.dialog = builder.get_object("Import Settings")
+        # Checkbuttons (with their own labels) in the first table column:
+        self.size_checkbutton = builder.get_object("size_checkbutton")
+        self.framerate_checkbutton = builder.get_object("framerate_checkbutton")
+        self.PAR_checkbutton = builder.get_object("PAR_checkbutton")
+        self.channels_checkbutton = builder.get_object("channels_checkbutton")
+        self.samplerate_checkbutton = builder.get_object("samplerate_checkbtn")
+        # These labels are in a separate table col on the right of checkboxes:
         self.channels = builder.get_object("channels")
         self.size_height = builder.get_object("size_height")
         self.size_width = builder.get_object("size_width")
         self.frame_rate = builder.get_object("frame_rate")
         self.aspect_ratio = builder.get_object("aspect_ratio")
         self.sample_rate = builder.get_object("sample_rate")
+        # Various other layout widgets
         self.frame1 = builder.get_object("frame1")
         self.frame2 = builder.get_object("frame2")
         self.hbox2 = builder.get_object("hbox2")
         self.hbox3 = builder.get_object("hbox3")
-        self.label2 = builder.get_object("label2")
-        self.checkbutton1 = builder.get_object("checkbutton1")
-        self.checkbutton2 = builder.get_object("checkbutton2")
-        self.checkbutton3 = builder.get_object("checkbutton3")
-        self.checkbutton4 = builder.get_object("checkbutton4")
-        self.checkbutton5 = builder.get_object("checkbutton5")
-        self.checkbutton6 = builder.get_object("checkbutton6")
+        self.video_header_label = builder.get_object("label2")
 
     def run(self):
         """Set up widgets and run the dialog"""
@@ -106,7 +108,7 @@ class ClipMediaPropsDialog(object):
         if self.is_image:
             self.hbox2.hide()
             self.hbox3.hide()
-            self.label2.set_markup("<b>" + _("Image:") + "</b>")
+            self.video_header_label.set_markup("<b>" + _("Image:") + "</b>")
 
         self.dialog.connect("key-press-event", self._keyPressCb)
         self.dialog.run()
@@ -117,20 +119,20 @@ class ClipMediaPropsDialog(object):
         if self.has_video:
             # This also handles the case where the video is a still image
             video = self.video_streams[0]
-            if self.checkbutton1.get_active():
+            if self.size_checkbutton.get_active():
                 project.videowidth = video.get_width()
                 project.videoheight = video.get_height()
-            if self.checkbutton2.get_active() and not self.is_image:
+            if self.framerate_checkbutton.get_active() and not self.is_image:
                 project.videorate = Gst.Fraction(video.get_framerate_num(),
                                                  video.get_framerate_denom())
-            if self.checkbutton3.get_active() and not self.is_image:
+            if self.PAR_checkbutton.get_active() and not self.is_image:
                 project.videopar = Gst.Fraction(video.get_par_num(),
                                                 video.get_par_denom())
         if self.has_audio:
             audio = self.audio_streams[0]
-            if self.checkbutton4.get_active():
+            if self.channels_checkbutton.get_active():
                 project.audiochannels = audio.get_channels()
-            if self.checkbutton5.get_active():
+            if self.samplerate_checkbutton.get_active():
                 project.audiorate = audio.get_sample_rate()
         self.dialog.destroy()
 
