@@ -264,3 +264,4 @@ def check_soft_dependencies():
     # distro packagers may split/combine the gstreamer plugins into any way they
     # see fit. We can do a registry.find_plugin for specific encoders, but we
     # don't really have something generic to rely on; ideas/patches welcome.
+    return missing_soft_deps
