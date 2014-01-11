@@ -90,14 +90,30 @@ class ClipMediaPropsDialog(object):
             self.size_height.set_text(str(stream.get_height()))
             self.is_image = stream.is_image()
             if not self.is_image:
-                self.frame_rate.set_text(
-                    get_value_from_model(frame_rates, Gst.Fraction(
-                        stream.get_framerate_num(),
-                        stream.get_framerate_denom())))
+                # When gst returns a crazy framerate such as 0/1, that either
+                # means it couldn't determine it, or it is a variable framerate
+                framerate_num = stream.get_framerate_num()
+                framerate_denom = stream.get_framerate_denom()
+                if framerate_num != 0 and framerate_denom != 0:
+                    self.frame_rate.set_text(
+                        get_value_from_model(frame_rates,
+                            Gst.Fraction(framerate_num, framerate_denom)
+                        ))
+                else:
+                    foo = str(framerate_num) + "/" + str(framerate_denom)
+                    # Translators: a label showing an invalid framerate value
+                    self.frame_rate.set_text(_("invalid (%s fps)" % foo))
+                    self.framerate_checkbutton.set_active(False)
+                    # For consistency, insensitize the checkbox AND value labels
+                    self.framerate_checkbutton.set_sensitive(False)
+                    self.frame_rate.set_sensitive(False)
+
+                # Aspect ratio (probably?) doesn't need such a check:
                 self.aspect_ratio.set_text(
                     get_value_from_model(pixel_aspect_ratios, Gst.Fraction(
                         stream.get_par_num(),
                         stream.get_par_denom())))
+
             self.has_video = True
             break
 
