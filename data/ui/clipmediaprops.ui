@@ -193,7 +193,7 @@
                             <property name="spacing">6</property>
                             <child>
                               <object class="GtkCheckButton" id="PAR_checkbutton">
-                                <property name="label" translatable="yes">Pixel aspect ratio:</property>
+                                <property name="label" translatable="yes" comments="PAR is the aspect ratio &quot;of the pixels&quot;, not an aspect ratio &quot;in pixels&quot;.">Pixel aspect ratio:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>

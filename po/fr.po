@@ -343,13 +343,15 @@ msgstr "Enregistrer les modifications du pré-réglage actuellement sélectionn�
 msgid "Aspect Ratio:"
 msgstr "Rapport d'affichage :"
 
-#: ../data/ui/projectsettings.ui.h:11
+#. DAR is the aspect ratio of the image being displayed to the viewer. "Display" is used as a noun, not as a verb/action.
+#: ../data/ui/projectsettings.ui.h:12
 msgid "Display aspect ratio"
 msgstr "Rapport d'affichage à l'écran"
 
-#: ../data/ui/projectsettings.ui.h:12
+#. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
+#: ../data/ui/projectsettings.ui.h:14
 msgid "Pixel aspect ratio"
-msgstr "Rapport d'affichage en pixels"
+msgstr "Rapport d'affichage des pixels"
 
 #: ../data/ui/projectsettings.ui.h:13
 msgid "x"
@@ -1601,7 +1603,11 @@ msgstr "Image PNG"
 msgid "JPEG image"
 msgstr "Image JPEG"
 
-#: ../pitivi/dialogs/clipmediaprops.py:82
+#: ../pitivi/dialogs/clipmediaprops.py:101
+msgid "invalid (%s fps)"
+msgstr "invalide (%s fps)"
+
+#: ../pitivi/dialogs/clipmediaprops.py:123
 msgid "Image:"
 msgstr "Image :"
 
