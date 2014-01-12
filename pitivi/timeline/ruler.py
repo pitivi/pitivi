@@ -23,7 +23,6 @@
 
 import cairo
 
-from gi.repository import Clutter
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Gst
@@ -35,7 +34,7 @@ from gettext import gettext as _
 from pitivi.utils.pipeline import Seeker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, time_to_string, beautify_length
+from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, set_cairo_color, time_to_string, beautify_length
 
 # Color #393f3f stolen from the dark variant of Adwaita.
 # There's *no way* to get the GTK3 theme's bg color there (it's always black)
@@ -59,20 +58,6 @@ FRAME_HEIGHT_PIXELS = 5
 
 NORMAL_FONT_SIZE = 13
 SMALL_FONT_SIZE = 11
-
-
-def setCairoColor(context, color):
-    if type(color) is Clutter.Color:
-        color = (color.red, color.green, color.blue)
-
-    if type(color) is Gdk.RGBA:
-        cairo_color = (float(color.red), float(color.green), float(color.blue))
-    elif type(color) is tuple:
-        # Cairo's set_source_rgb function expects values from 0.0 to 1.0
-        cairo_color = map(lambda x: max(0, min(1, x / 255.0)), color)
-    else:
-        raise Exception("Unexpected color parameter: %s, %s" % (type(color), color))
-    context.set_source_rgb(*cairo_color)
 
 
 class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
@@ -266,14 +251,14 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def drawBackground(self, context):
         style = self.get_style_context()
-        setCairoColor(context, RULER_BACKGROUND_COLOR)
+        set_cairo_color(context, RULER_BACKGROUND_COLOR)
         width = context.get_target().get_width()
         height = context.get_target().get_height()
         context.rectangle(0, 0, width, height)
         context.fill()
         offset = int(self.nsToPixel(Gst.CLOCK_TIME_NONE)) - self.pixbuf_offset
         if offset > 0:
-            setCairoColor(context, style.get_background_color(Gtk.StateFlags.ACTIVE))
+            set_cairo_color(context, style.get_background_color(Gtk.StateFlags.ACTIVE))
             context.rectangle(0, 0, int(offset), context.get_target().get_height())
             context.fill()
 
@@ -302,7 +287,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             if space < MIN_TICK_SPACING_PIXELS:
                 break
             paintpos = 0.5 - offset
-            setCairoColor(context, self._color_normal)
+            set_cairo_color(context, self._color_normal)
             while paintpos < context.get_target().get_width():
                 self._drawTick(context, paintpos, height_ratio)
                 paintpos += space
@@ -329,7 +314,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         state = Gtk.StateFlags.NORMAL
         style = self.get_style_context()
-        setCairoColor(context, style.get_color(state))
+        set_cairo_color(context, style.get_color(state))
         y_bearing = context.text_extents("0")[1]
         millis = scale < 1
 
@@ -360,7 +345,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                 color = self._color_dimmed
             else:
                 color = self._color_normal
-            setCairoColor(context, color)
+            set_cairo_color(context, color)
             # Display the millis with a smaller font
             small = index >= 5
             if small:
@@ -393,7 +378,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         max_pos = context.get_target().get_width() + self.pixbuf_offset
         while paintpos < max_pos:
             paintpos = self.nsToPixel(1 / float(self.frame_rate) * Gst.SECOND * frame_num)
-            setCairoColor(context, states[(frame_num + 1) % 2])
+            set_cairo_color(context, states[(frame_num + 1) % 2])
             context.rectangle(0.5 + paintpos - self.pixbuf_offset, y, frame_width, height)
             context.fill()
             frame_num += 1
@@ -403,7 +388,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # without this the line appears blurry.
         xpos = self.nsToPixel(self.position) - self.pixbuf_offset + 0.5
         context.set_line_width(PLAYHEAD_WIDTH + 2)
-        setCairoColor(context, PLAYHEAD_COLOR)
+        set_cairo_color(context, PLAYHEAD_COLOR)
         context.move_to(xpos, 0)
         context.line_to(xpos, context.get_target().get_height())
         context.stroke()

@@ -33,6 +33,7 @@ from gi.repository import Clutter
 from gi.repository import Cogl
 from gi.repository import GLib
 from gi.repository import GES
+from gi.repository import Gdk
 from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -197,6 +198,20 @@ def create_cogl_color(red, green, blue, alpha):
     color = Cogl.Color()
     color.init_from_4ub(red, green, blue, alpha)
     return color
+
+
+def set_cairo_color(context, color):
+    if type(color) is Clutter.Color:
+        color = (color.red, color.green, color.blue)
+
+    if type(color) is Gdk.RGBA:
+        cairo_color = (float(color.red), float(color.green), float(color.blue))
+    elif type(color) is tuple:
+        # Cairo's set_source_rgb function expects values from 0.0 to 1.0
+        cairo_color = map(lambda x: max(0, min(1, x / 255.0)), color)
+    else:
+        raise Exception("Unexpected color parameter: %s, %s" % (type(color), color))
+    context.set_source_rgb(*cairo_color)
 
 
 #------ Helper to help beatify indos so they can be displayed in the UI -----#
