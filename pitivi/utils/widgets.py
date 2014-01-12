@@ -75,22 +75,11 @@ class DynamicWidget(object):
             self.setWidgetValue(self.default)
 
 
-class DefaultWidget(Gtk.Label, DynamicWidget):
-
+class DefaultWidget(Gtk.Label):
     """When all hope fails...."""
 
-    def __init__(self, default=None, *unused, **kw_unused):
+    def __init__(self, *unused, **kw_unused):
         Gtk.Label.__init__(self, _("Implement Me"))
-        DynamicWidget.__init__(self, default)
-
-    def connectValueChanged(self, callback, *args):
-        pass
-
-    def setWidgetValue(self, value):
-        self.set_text(str(value))
-
-    def getWidgetValue(self):
-        return self.get_text()
 
 
 class TextWidget(Gtk.HBox, DynamicWidget):
@@ -811,14 +800,9 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 d[prop.name] = value
         return d
 
-    @staticmethod
-    def _makePropertyWidget(prop, value=None):
-        """ Creates a Widget for the given element property """
-        # FIXME : implement the case for flags
+    def _makePropertyWidget(self, prop, value=None):
+        """ Creates a Widget for the specified element property """
         type_name = GObject.type_name(prop.value_type.fundamental)
-
-        if value is None:
-            value = prop.default_value
         if type_name == "gchararray":
             widget = TextWidget(default=prop.default_value)
         elif type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat', 'gulong', 'gdouble']:
@@ -838,9 +822,13 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         elif type_name == "GstFraction":
             widget = FractionWidget(None, presets=["0:1"], default=prop.default_value)
         else:
-            widget = DefaultWidget(type_name)
+            # TODO: implement widgets for: GBoxed, GFlags
+            self.fixme("Unsupported property type: %s", type_name)
+            widget = DefaultWidget()
 
-        if value is not None and type_name != "GFlags":
+        if value is None:
+            value = prop.default_value
+        if value is not None and not isinstance(widget, DefaultWidget):
             widget.setWidgetValue(value)
 
         return widget
