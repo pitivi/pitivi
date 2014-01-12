@@ -157,7 +157,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         'scrolled': (GObject.SIGNAL_RUN_FIRST, None, ())
     }
 
-    def __init__(self, container):
+    def __init__(self, container, settings):
         Clutter.ScrollActor.__init__(self)
         Zoomable.__init__(self)
         self.bTimeline = None
@@ -165,7 +165,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
         self._container = container
         self.allowSeek = True
-        self._settings = container._settings
+        self._settings = settings
         self.elements = []
         self.ghostClips = []
         self.selection = Selection()
@@ -683,18 +683,9 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._redraw()
 
 
-# This is for running standalone
-def quit_(stage):
-    Gtk.main_quit()
-
-
-def quit2_(*args, **kwargs):
-    Gtk.main_quit()
-
-
 class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     """
-    Container for zoom box, ruler, the actual timeline layers and scrollbars.
+    Container for zoom box, ruler, timeline, scrollbars and toolbar.
     """
     def __init__(self, gui, instance, ui_manager):
         Zoomable.__init__(self)
@@ -711,9 +702,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.gui = gui
         self.ui_manager = ui_manager
         self.app = instance
-        self._settings = None
-        if self.app:
-            self._settings = self.app.settings
+        self._settings = self.app.settings
 
         self._projectmanager = None
         self._project = None
@@ -725,14 +714,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self._setUpDragAndDrop()
 
-        if self._settings:
-            self._settings.connect("edgeSnapDeadbandChanged",
-                                   self._snapDistanceChangedCb)
-
-        # Standalone
-        if not self._settings:
-            gtksettings = Gtk.Settings.get_default()
-            gtksettings.set_property("gtk-application-prefer-dark-theme", True)
+        self._settings.connect("edgeSnapDeadbandChanged",
+                               self._snapDistanceChangedCb)
 
         self.show_all()
 
@@ -845,7 +828,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.setTimeline(bTimeline)
 
     def getEditionMode(self, isAHandle=False):
-        if self._shiftMask or (self.gui and self.gui._autoripple_active):
+        if self._shiftMask or self._autoripple_active:
             return GES.EditMode.EDIT_RIPPLE
         if isAHandle and self._controlMask:
             return GES.EditMode.EDIT_ROLL
@@ -877,7 +860,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.stage = self.embed.get_stage()
         perspective = self.stage.get_perspective()
 
-        self.timeline = TimelineStage(self)
+        self.timeline = TimelineStage(self, self._settings)
         self.controls = ControlContainer(self.app, self.timeline)
         self.zoomBox = ZoomBox(self)
         self._shiftMask = False
@@ -898,9 +881,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.connect("button-release-event", self._timelineClickReleasedCb)
         self.embed.connect("scroll-event", self._scrollEventCb)
 
-        if self.gui:
-            self.gui.connect("key-press-event", self._keyPressEventCb)
-            self.gui.connect("key-release-event", self._keyReleaseEventCb)
+        self.gui.connect("key-press-event", self._keyPressEventCb)
+        self.gui.connect("key-release-event", self._keyReleaseEventCb)
 
         self.point = Clutter.Point()
         self.point.x = 0
@@ -925,11 +907,30 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.ruler.setProjectFrameRate(24.)
         self.ruler.hide()
 
+        toolbar = self.ui_manager.get_widget("/TimelineToolBar")
+        toolbar.get_style_context().add_class("inline-toolbar")
+        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
+        toolbar.set_style(Gtk.ToolbarStyle.ICONS)
+        toolbar.get_accessible().set_name("timeline toolbar")
+
+        # Toggle/pushbuttons like the "gapless mode" ones are special, it seems
+        # you can't insert them as normal "actions", so we create them here:
+        gapless_mode_button = Gtk.ToggleToolButton()
+        gapless_mode_button.set_stock_id("pitivi-gapless")
+        gapless_mode_button.set_tooltip_markup(_("Toggle gapless mode\n"
+            "When enabled, adjacent clips automatically move to fill gaps."))
+        toolbar.add(gapless_mode_button)
+        # Restore the state of the timeline's "gapless" mode:
+        self._autoripple_active = self._settings.timelineAutoRipple
+        gapless_mode_button.set_active(self._autoripple_active)
+        gapless_mode_button.connect("toggled", self._gaplessmodeToggledCb)
+
         self.attach(self.zoomBox, 0, 0, 1, 1)
         self.attach(self.ruler, 1, 0, 1, 1)
         self.attach(self.embed, 0, 1, 2, 1)
         self.attach(self._vscrollbar, 2, 1, 1, 1)
         self.attach(self._hscrollBar, 1, 2, 1, 1)
+        self.attach(toolbar, 3, 1, 1, 1)
 
         min_height = (self.ruler.get_size_request()[1] +
                       (EXPANDED_SIZE + SPACING) * 2 +
@@ -995,8 +996,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return longest_layer
 
     def _createActions(self):
-        if not self.gui:
-            return
         actions = (
             ("ZoomIn", Gtk.STOCK_ZOOM_IN, None,
             "<Control>plus", ZOOM_IN, self._zoomInCb),
@@ -1039,7 +1038,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         playhead_actions = (
             ("PlayPause", Gtk.STOCK_MEDIA_PLAY, None,
-            "space", _("Start Playback"), self._playPause),
+            "space", _("Start Playback"), self._playPauseCb),
 
             ("Split", "pitivi-split", _("Split"),
             "S", SPLIT, self._split),
@@ -1292,7 +1291,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     interpolator.newKeyframe(position_in_obj)
                     self.app.action_log.commit()
 
-    def _playPause(self, unused_action):
+    def _playPauseCb(self, unused_action):
         self.app.current_project.pipeline.togglePlayback()
 
     def transposeXY(self, x, y):
@@ -1335,12 +1334,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         chooser.destroy()
         return ret
 
-    # Interface
-
     # Zoomable
 
     def zoomChanged(self):
-        if self._settings and self.bTimeline:
+        if self.bTimeline:
             # zoomChanged might be called various times before the UI is ready
             self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
@@ -1523,6 +1520,15 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         else:
             self.selection_actions.set_sensitive(False)
 
+    def _gaplessmodeToggledCb(self, button):
+        if button.get_active():
+            self.info("Automatic ripple activated")
+            self._autoripple_active = True
+        else:
+            self.info("Automatic ripple deactivated")
+            self._autoripple_active = False
+        self._settings.timelineAutoRipple = self._autoripple_active
+
     # drag and drop
 
     def _dragDataReceivedCb(self, widget, context, x, y, data, info, time):
@@ -1607,69 +1613,3 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.dropHighlight = False
 
         self.timeline.removeGhostClips()
-
-    # Standalone
-
-    # Standalone public API
-
-    def run(self):
-        self.testTimeline(self.timeline)
-        GLib.io_add_watch(sys.stdin, GLib.IO_IN, quit2_)
-        Gtk.main()
-
-    def addClipToLayer(self, layer, asset, start, duration, inpoint):
-        layer.add_asset(asset, start * Gst.SECOND, 0, duration * Gst.SECOND, asset.get_supported_formats())
-
-    def togglePlayback(self, button):
-        self.pipeline.togglePlayback()
-
-    def testTimeline(self, timeline):
-        timeline.set_easing_duration(600)
-
-        Gst.init([])
-        GES.init()
-
-        self.project = GES.Project(uri=None, extractable_type=GES.Timeline)
-
-        bTimeline = GES.Timeline()
-        bTimeline.add_track(GES.AudioTrack.new())
-        bTimeline.add_track(GES.VideoTrack.new())
-
-        self.bTimeline = bTimeline
-        timeline.setTimeline(bTimeline)
-
-        self.stage.connect("destroy", quit_)
-
-        layer = GES.Layer()
-        bTimeline.add_layer(layer)
-
-        self.bTimeline = bTimeline
-
-        self.project.connect("asset-added", self._doAssetAddedCb, layer)
-        self.project.create_asset("file://" + sys.argv[2], GES.UriClip)
-
-    # Standalone callbacks
-
-    def _doAssetAddedCb(self, project, asset, layer):
-        self.addClipToLayer(layer, asset, 2, 10, 5)
-        self.addClipToLayer(layer, asset, 15, 10, 5)
-
-        Zoomable.setZoomLevel(50)
-
-
-def main():
-    # Basic argument handling, no need for getopt here
-    if len(sys.argv) < 3:
-        print "Supply a uri as argument"
-        sys.exit()
-
-    print "Starting stupid demo, using uri as a new clip, with start = 2, duration = 25 and inpoint = 5."
-    print "Use ipython if you want to interact with the timeline in a more interesting way"
-    print "ipython ; %gui gtk3 ; %run timeline.py ; help yourself"
-
-    window = Gtk.Window()
-    widget = TimelineContainer(None, None, None)
-    window.add(widget)
-    window.maximize()
-    window.show_all()
-    widget.run()

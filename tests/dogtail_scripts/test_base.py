@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+
 import unittest
 import os
 from time import time, sleep
-from dogtail.predicate import GenericPredicate
 
 
 class BaseDogTail(unittest.TestCase):
@@ -38,7 +38,7 @@ class BaseDogTail(unittest.TestCase):
         # FIXME: this will probably break with detached tabs.
         mainwindow = self.pitivi.children[0].children[0]  # this is a vbox
         mainwindow_upper = mainwindow.children[2].child(name="upper half", recursive=False)
-        mainwindow_lower = mainwindow.children[2].child(name="lower half", recursive=False)
+        timeline_area = mainwindow.children[2].child(name="timeline area", recursive=False)
         primary_tabs = mainwindow_upper.children[0].child(name="primary tabs", recursive=False)
         secondary_tabs = mainwindow_upper.children[0].child(name="secondary tabs", recursive=False)
         # These are the "shortcut" variables you can use for better perfs:
@@ -49,10 +49,9 @@ class BaseDogTail(unittest.TestCase):
         self.transitions = secondary_tabs.children[0]
         self.titles = secondary_tabs.children[0]
         self.viewer = mainwindow_upper.child(name="viewer", recursive=False)
-        self.timeline_ui = mainwindow_lower.child(name="timeline ui", recursive=False)
-        self.zoom_best_fit_button = self.timeline_ui.child(name="Zoom", recursive=True)
-        self.timeline = self.timeline_ui.child(name="timeline canvas", recursive=False)
-        self.timeline_toolbar = mainwindow_lower.child(name="timeline toolbar", recursive=False)
+        self.zoom_best_fit_button = timeline_area.child(name="Zoom", recursive=True)
+        self.timeline = timeline_area.child(name="timeline canvas", recursive=False)
+        self.timeline_toolbar = timeline_area.child(name="timeline toolbar", recursive=False)
         # Used to speed up helper_functions in particular:
         self.import_button = self.medialibrary.child(name="media_import_button")
         self.insert_button = self.medialibrary.child(name="media_insert_button")

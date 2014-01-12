@@ -118,7 +118,6 @@ def _check_dependencies():
 
 def _run_pitivi():
     import pitivi.application as ptv
-    import pitivi.timeline.timeline as timeline
     from pitivi.check import at_least_version
     import gi
 
@@ -131,9 +130,7 @@ def _run_pitivi():
         print 'Starting Pitivi with no GUI.'
         ptv.GuiPitivi._showGui = lambda *args, **kargs : None
 
-    # Exit the current script and start the real pitivi, with given arguments
-    if len(sys.argv) > 1 and sys.argv[1] == "--timeline":
-        sys.exit(timeline.main())
+    # Start the real Pitivi, with given arguments.
     sys.exit(ptv.main(sys.argv))
 
 

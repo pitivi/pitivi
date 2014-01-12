@@ -426,29 +426,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
 
         # Now, the lower part: the timeline
-        timeline_area = Gtk.HBox()
         self.timeline_ui = TimelineContainer(self, instance, self.uimanager)
         self.timeline_ui.setProjectManager(self.app.projectManager)
         self.timeline_ui.controls.connect("selection-changed", self._selectedLayerChangedCb)
-        ttb = self.uimanager.get_widget("/TimelineToolBar")
-        ttb.get_style_context().add_class("inline-toolbar")
-        ttb.set_orientation(Gtk.Orientation.VERTICAL)
-        ttb.set_style(Gtk.ToolbarStyle.ICONS)
-        # Toggle/pushbuttons like the "gapless mode" ones are special, it seems
-        # you can't insert them as normal "actions", so we create them here:
-        ttb_gaplessmode_button = Gtk.ToggleToolButton()
-        ttb_gaplessmode_button.set_stock_id("pitivi-gapless")
-        ttb_gaplessmode_button.set_tooltip_markup(_("Toggle gapless mode\n"
-            "When enabled, adjacent clips automatically move to fill gaps."))
-        ttb_gaplessmode_button.show()
-        ttb.add(ttb_gaplessmode_button)
-
-        self.vpaned.pack2(timeline_area, resize=True, shrink=False)
-        timeline_area.pack_start(self.timeline_ui, expand=True, fill=True, padding=0)
-        timeline_area.pack_start(ttb, expand=False, fill=True, padding=0)
-        timeline_area.show()
-        self.timeline_ui.show()
-        ttb.show()
+        self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
 
         # Identify widgets for AT-SPI, making our test suite easier to develop
         # These will show up in sniff, accerciser, etc.
@@ -456,13 +437,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.toolbar.get_accessible().set_name("main toolbar")
         self.vpaned.get_accessible().set_name("contents")
         self.mainhpaned.get_accessible().set_name("upper half")
-        timeline_area.get_accessible().set_name("lower half")
         self.secondhpaned.get_accessible().set_name("tabs")
         self.main_tabs.get_accessible().set_name("primary tabs")
         self.context_tabs.get_accessible().set_name("secondary tabs")
         self.viewer.get_accessible().set_name("viewer")
-        self.timeline_ui.get_accessible().set_name("timeline ui")
-        ttb.get_accessible().set_name("timeline toolbar")
+        self.timeline_ui.get_accessible().set_name("timeline area")
 
         # Restore settings (or set defaults) for position and visibility
         if self.settings.mainWindowHPanePosition:
@@ -481,15 +460,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.move(self.settings.mainWindowX, self.settings.mainWindowY)
         if allow_full_screen and self.settings.mainWindowFullScreen:
             self.setFullScreen(True)
-        # Restore the state of the timeline's "gapless" mode:
-        self._autoripple_active = self.settings.timelineAutoRipple
-        ttb_gaplessmode_button.set_active(self._autoripple_active)
 
         # Connect the main window's signals at the end, to avoid messing around
         # with the restoration of settings above.
         self.connect("delete-event", self._deleteCb)
         self.connect("configure-event", self._configureCb)
-        ttb_gaplessmode_button.connect("toggled", self._gaplessmodeToggledCb)
 
     def switchContextTab(self, tab=None):
         """
@@ -798,15 +773,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             from pitivi.dialogs.prefs import PreferencesDialog
             self.prefsdialog = PreferencesDialog(self.app)
         self.prefsdialog.run()
-
-    def _gaplessmodeToggledCb(self, widget):
-        if widget.get_active():
-            self.info("Automatic ripple activated")
-            self._autoripple_active = True
-        else:
-            self.info("Automatic ripple deactivated")
-            self._autoripple_active = False
-        self.settings.timelineAutoRipple = self._autoripple_active
 
     def _projectManagerNewProjectLoadedCb(self, projectManager, project, unused_fully_loaded):
         """
