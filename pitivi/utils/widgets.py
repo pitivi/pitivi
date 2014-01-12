@@ -631,40 +631,6 @@ if __name__ == '__main__':
     Gtk.main()
 
 
-def make_property_widget(unused_element, prop, value=None):
-    """ Creates a Widget for the given element property """
-    # FIXME : implement the case for flags
-    type_name = GObject.type_name(prop.value_type.fundamental)
-
-    if value is None:
-        value = prop.default_value
-    if type_name == "gchararray":
-        widget = TextWidget(default=prop.default_value)
-    elif type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat', 'gulong', 'gdouble']:
-        maximum, minimum = None, None
-        if hasattr(prop, "minimum"):
-            minimum = prop.minimum
-        if hasattr(prop, "maximum"):
-            maximum = prop.maximum
-        widget = NumericWidget(default=prop.default_value, upper=maximum, lower=minimum)
-    elif type_name == "gboolean":
-        widget = ToggleWidget(default=prop.default_value)
-    elif type_name == "GEnum":
-        choices = []
-        for key, val in prop.enum_class.__enum_values__.iteritems():
-            choices.append([val.value_name, int(val)])
-        widget = ChoiceWidget(choices, default=prop.default_value)
-    elif type_name == "GstFraction":
-        widget = FractionWidget(None, presets=["0:1"], default=prop.default_value)
-    else:
-        widget = DefaultWidget(type_name)
-
-    if value is not None and type_name != "GFlags":
-        widget.setWidgetValue(value)
-
-    return widget
-
-
 class GstElementSettingsWidget(Gtk.VBox, Loggable):
     """
     Widget to view/modify properties of a Gst.Element
@@ -771,7 +737,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 else:
                     prop_value = properties.get(prop.name)
 
-            widget = make_property_widget(self.element, prop, prop_value)
+            widget = self._makePropertyWidget(prop, prop_value)
             if isinstance(widget, ToggleWidget):
                 widget.set_label(prop.nick)
                 table.attach(widget, 0, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
@@ -900,6 +866,40 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             if value is not None and (value != prop.default_value or with_default):
                 d[prop.name] = value
         return d
+
+    @staticmethod
+    def _makePropertyWidget(prop, value=None):
+        """ Creates a Widget for the given element property """
+        # FIXME : implement the case for flags
+        type_name = GObject.type_name(prop.value_type.fundamental)
+
+        if value is None:
+            value = prop.default_value
+        if type_name == "gchararray":
+            widget = TextWidget(default=prop.default_value)
+        elif type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat', 'gulong', 'gdouble']:
+            maximum, minimum = None, None
+            if hasattr(prop, "minimum"):
+                minimum = prop.minimum
+            if hasattr(prop, "maximum"):
+                maximum = prop.maximum
+            widget = NumericWidget(default=prop.default_value, upper=maximum, lower=minimum)
+        elif type_name == "gboolean":
+            widget = ToggleWidget(default=prop.default_value)
+        elif type_name == "GEnum":
+            choices = []
+            for key, val in prop.enum_class.__enum_values__.iteritems():
+                choices.append([val.value_name, int(val)])
+            widget = ChoiceWidget(choices, default=prop.default_value)
+        elif type_name == "GstFraction":
+            widget = FractionWidget(None, presets=["0:1"], default=prop.default_value)
+        else:
+            widget = DefaultWidget(type_name)
+
+        if value is not None and type_name != "GFlags":
+            widget.setWidgetValue(value)
+
+        return widget
 
 
 class GstElementSettingsDialog(Loggable):
