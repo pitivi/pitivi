@@ -1,16 +1,13 @@
 #!/usr/bin/env python2
+
 from helper_functions import HelpFunc
-from dogtail.predicate import GenericPredicate
 from dogtail.tree import SearchError
 import dogtail.rawinput
 from time import sleep
 from pyatspi import Registry as registry
-from pyatspi import (KEY_SYM, KEY_PRESS, KEY_PRESSRELEASE, KEY_RELEASE)
+from pyatspi import KEY_PRESS, KEY_RELEASE
 
-# These are the timecodes we expect for "tears of steel.webm", depending on
-# if we insert it once in a blank timeline or twice in a blank timeline.
-DURATION_OF_ONE_CLIP = "0:00:01.999"
-DURATION_OF_TWO_CLIPS = "0:00:03.999"
+from test_base import DURATION_OF_ONE_CLIP, DURATION_OF_TWO_CLIPS
 
 
 class TimelineTest(HelpFunc):
@@ -38,7 +35,7 @@ class TimelineTest(HelpFunc):
 
         self.improved_drag(self.center(sample), self.center(self.timeline))
         self.goToEnd_button.click()
-        self.assertNotEqual(timecode_widget.text, "0:00:00.000")
+        self.assertNotEqual(timecode_widget.text, "00:00.000")
 
     def test_multiple_drag(self):
         sample = self.import_media()
@@ -225,6 +222,6 @@ class TimelineTest(HelpFunc):
         dogtail.rawinput.release(tpos[0] + cend - 40, tpos[1] + 30)
         registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Shift_L"), None, KEY_RELEASE)
         self.goToEnd_button.click()
-        self.assertNotEqual(timecode_widget.text, "0:00:11.139")
+        self.assertNotEqual(timecode_widget.text, "00:11.139")
 
         #TODO: do something more with clips

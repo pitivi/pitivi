@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+
 import os
 import re
 from dogtail.predicate import GenericPredicate
@@ -8,7 +9,7 @@ from test_base import BaseDogTail
 import dogtail.rawinput
 from time import sleep
 from pyatspi import Registry as registry
-from pyatspi import (KEY_SYM, KEY_PRESS, KEY_PRESSRELEASE, KEY_RELEASE)
+from pyatspi import KEY_PRESS, KEY_RELEASE
 
 
 class HelpFunc(BaseDogTail):

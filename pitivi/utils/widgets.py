@@ -284,12 +284,13 @@ class TimeWidget(TextWidget, DynamicWidget):
     # The "frame number" match rule is ^([0-9]+)$ (with a + to require 1 digit)
     # The "timecode" rule is ^([0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$"
     # Combining the two, we get:
-    regex = re.compile("^([0-9]+)$|^([0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
+    VALID_REGEX = re.compile("^([0-9]+)$|^([0-9]:)?([0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
+
     __gtype_name__ = 'TimeWidget'
 
     def __init__(self, default=None):
         DynamicWidget.__init__(self, default)
-        TextWidget.__init__(self, self.regex)
+        TextWidget.__init__(self, self.VALID_REGEX)
         TextWidget.set_width_chars(self, 10)
         self._framerate = None
 
@@ -297,12 +298,17 @@ class TimeWidget(TextWidget, DynamicWidget):
         timecode = TextWidget.getWidgetValue(self)
 
         if ":" in timecode:
-            hh, mm, end = timecode.split(":")
-            ss, xxx = end.split(".")
+            parts = timecode.split(":")
+            if len(parts) == 2:
+                hh = 0
+                mm, end = parts
+            else:
+                hh, mm, end = parts
+            ss, millis = end.split(".")
             nanosecs = int(hh) * 3.6 * 10e12 \
                 + int(mm) * 6 * 10e10 \
                 + int(ss) * 10e9 \
-                + int(xxx) * 10e6
+                + int(millis) * 10e6
             nanosecs = nanosecs / 10  # Compensate the 10 factor of e notation
         else:
             # We were given a frame number. Convert from the project framerate.
@@ -311,11 +317,12 @@ class TimeWidget(TextWidget, DynamicWidget):
         # The seeker won't like floating point nanoseconds!
         return int(nanosecs)
 
-    def setWidgetValue(self, value, send_signal=True):
-        TextWidget.setWidgetValue(self, time_to_string(value),
-                                send_signal=send_signal)
+    def setWidgetValue(self, timeNanos, send_signal=True):
+        timecode = time_to_string(timeNanos)
+        if timecode.startswith("0:"):
+            timecode = timecode[2:]
+        TextWidget.setWidgetValue(self, timecode, send_signal=send_signal)
 
-    # No need to define connectValueChanged as it is inherited from DynamicWidget
     def connectActivateEvent(self, activateCb):
         return self.connect("activate", activateCb)
 

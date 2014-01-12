@@ -6,10 +6,7 @@ import dogtail.rawinput
 from time import time, sleep
 import os
 
-# These are the timecodes we expect for "tears of steel.webm", depending on
-# if we insert it once in a blank timeline or twice in a blank timeline.
-DURATION_OF_ONE_CLIP = "0:00:01.999"
-DURATION_OF_TWO_CLIPS = "0:00:03.999"
+from test_base import DURATION_OF_ONE_CLIP, DURATION_OF_TWO_CLIPS
 
 
 class ProjectPropertiesTest(HelpFunc):
@@ -332,7 +329,7 @@ class ProjectPropertiesTest(HelpFunc):
         # but this is better than nothing as a quick sanity check:
         self.goToEnd_button.click()
         sleep(0.5)
-        self.assertEqual(seektime.text, "0:00:00.000", "The timeline is not empty")
+        self.assertEqual(seektime.text, "00:00.000", "The timeline is not empty")
 
         # Create project #2 - 2 clips with 2 timeline instances of the first one
         # We use only the first one on the timeline because we know its duration
