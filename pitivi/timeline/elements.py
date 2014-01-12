@@ -876,7 +876,6 @@ class Keyframe(Clutter.Actor):
         self.dragAction.connect("drag-begin", self._dragBeginCb)
         self.dragAction.connect("drag-end", self._dragEndCb)
         self.dragAction.connect("drag-progress", self._dragProgressCb)
-        self.connect("key-press-event", self._keyPressEventCb)
         self.connect("enter-event", self._enterEventCb)
         self.connect("leave-event", self._leaveEventCb)
         self.connect("button-press-event", self._clickedCb)
@@ -916,9 +915,6 @@ class Keyframe(Clutter.Actor):
             self.remove()
 
         self.lastClick = datetime.now()
-
-    def _keyPressEventCb(self, actor, event):
-        print event, dir(event)
 
     def _enterEventCb(self, actor, event):
         self.timelineElement.set_reactive(False)

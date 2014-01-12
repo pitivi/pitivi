@@ -1297,7 +1297,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # Callbacks
 
-    def _keyPressEventCb(self, widget, event):
+    def _keyPressEventCb(self, unused_widget, event):
         # This is used both for changing the selection modes and for affecting
         # the seek keyboard shortcuts further below
         if event.keyval == Gdk.KEY_Shift_L:
