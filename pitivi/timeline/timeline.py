@@ -762,7 +762,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.zoomed_fitted = False
 
     def zoomFit(self):
-        self._hscrollBar.set_value(0)
+        self._hscrollbar.set_value(0)
         self._setBestZoomRatio(allow_zoom_in=True)
 
     def scrollToPixel(self, x):
@@ -854,7 +854,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.vadj.props.lower = 0
         self.vadj.props.page_size = 250
         self._vscrollbar = Gtk.VScrollbar(adjustment=self.vadj)
-        self._hscrollBar = Gtk.HScrollbar(adjustment=self.hadj)
+        self._hscrollbar = Gtk.HScrollbar(adjustment=self.hadj)
 
         self.ruler = ScaleRuler(self, self.hadj)
         self.ruler.props.hexpand = True
@@ -869,7 +869,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         alter_style_class(".inline-toolbar", toolbar, "padding-left: %dpx; border-width: 0px; background: alpha (@base_color, 0.0);" % (SPACING / 2))
         alter_style_class(".scrollbar.trough", self._vscrollbar, "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
-        alter_style_class(".scrollbar.trough", self._hscrollBar, "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
+        alter_style_class(".scrollbar.trough", self._hscrollbar, "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
 
         # Toggle/pushbuttons like the "gapless mode" ones are special, it seems
         # you can't insert them as normal "actions", so we create them here:
@@ -887,7 +887,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.attach(self.ruler, 1, 0, 1, 1)
         self.attach(self.embed, 0, 1, 2, 1)
         self.attach(self._vscrollbar, 2, 1, 1, 1)
-        self.attach(self._hscrollBar, 1, 2, 1, 1)
+        self.attach(self._hscrollbar, 1, 2, 1, 1)
         self.attach(toolbar, 3, 1, 1, 1)
 
         min_height = (self.ruler.get_size_request()[1] +
@@ -1069,12 +1069,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def scroll_left(self):
         # This method can be a callback for our events, or called by ruler.py
-        self._hscrollBar.set_value(self._hscrollBar.get_value() -
+        self._hscrollbar.set_value(self._hscrollbar.get_value() -
             self.hadj.props.page_size ** (2.0 / 3.0))
 
     def scroll_right(self):
         # This method can be a callback for our events, or called by ruler.py
-        self._hscrollBar.set_value(self._hscrollBar.get_value() +
+        self._hscrollbar.set_value(self._hscrollbar.get_value() +
             self.hadj.props.page_size ** (2.0 / 3.0))
 
     def scroll_up(self):
@@ -1095,7 +1095,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.timeline.save_easing_state()
             self.timeline.set_easing_duration(600)
 
-        self._hscrollBar.set_value(x)
+        self._hscrollbar.set_value(x)
         if self.pipeline and self.pipeline.get_state() != Gst.State.PLAYING:
             self.timeline.restore_easing_state()
         return False
