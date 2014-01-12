@@ -36,7 +36,7 @@ from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable, Selection, SELECT, TimelineError
-from pitivi.utils.ui import EXPANDED_SIZE, SPACING, PLAYHEAD_WIDTH, CONTROL_WIDTH, TYPE_PITIVI_EFFECT
+from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, PLAYHEAD_WIDTH, CONTROL_WIDTH
 from pitivi.utils.widgets import ZoomBox
 
 from ruler import ScaleRuler
@@ -866,6 +866,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         toolbar.set_orientation(Gtk.Orientation.VERTICAL)
         toolbar.set_style(Gtk.ToolbarStyle.ICONS)
         toolbar.get_accessible().set_name("timeline toolbar")
+
+        alter_style_class(".inline-toolbar", toolbar, "padding-left: %dpx; border-width: 0px; background: alpha (@base_color, 0.0);" % (SPACING / 2))
+        alter_style_class(".scrollbar.trough", self._vscrollbar, "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
+        alter_style_class(".scrollbar.trough", self._hscrollBar, "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
 
         # Toggle/pushbuttons like the "gapless mode" ones are special, it seems
         # you can't insert them as normal "actions", so we create them here:

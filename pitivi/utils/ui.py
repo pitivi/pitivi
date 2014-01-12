@@ -397,6 +397,15 @@ def get_value_from_model(model, key):
         return "%.3f" % Decimal(float(key.num) / key.denom)
     return str(key)
 
+
+def alter_style_class(style_class, target_widget, css_style):
+    css_provider = Gtk.CssProvider()
+    toolbar_css = "%s { %s }" % (style_class, css_style)
+    css_provider.load_from_data(toolbar_css.encode('UTF-8'))
+    style_context = target_widget.get_style_context()
+    style_context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+
 #------------------------ encoding datas ----------------------------------------#
 # FIXME This should into a special file
 frame_rates = model((str, object), (
