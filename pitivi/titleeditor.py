@@ -606,7 +606,7 @@ class TitleEditor(Loggable):
         self.textarea = builder.get_object("textview")
         self.markup_button = builder.get_object("markupToggle")
         toolbar = builder.get_object("toolbar")
-        toolbar.get_style_context().add_class("inline-toolbar")
+        toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
         buttons = ["bold", "italic", "font", "font_fore_color", "back_color"]
         for button in buttons:

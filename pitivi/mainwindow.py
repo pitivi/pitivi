@@ -367,7 +367,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.menu = self.uimanager.get_widget("/MainMenuBar")
         self._main_toolbar_box = Gtk.VBox()  # To reparent after fullscreen
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
-        self.toolbar.get_style_context().add_class("primary-toolbar")
+        self.toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_PRIMARY_TOOLBAR)
         self._main_toolbar_box.add(self.toolbar)
         vbox.pack_start(self.menu, False, True, 0)
         vbox.pack_start(self._main_toolbar_box, False, True, 0)

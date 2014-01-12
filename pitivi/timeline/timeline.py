@@ -862,14 +862,14 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.ruler.hide()
 
         toolbar = self.ui_manager.get_widget("/TimelineToolBar")
-        toolbar.get_style_context().add_class("inline-toolbar")
+        toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         toolbar.set_orientation(Gtk.Orientation.VERTICAL)
         toolbar.set_style(Gtk.ToolbarStyle.ICONS)
         toolbar.get_accessible().set_name("timeline toolbar")
 
-        alter_style_class(".inline-toolbar", toolbar, "padding-left: %dpx; border-width: 0px; background: alpha (@base_color, 0.0);" % (SPACING / 2))
-        alter_style_class(".scrollbar.trough", self._vscrollbar, "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
-        alter_style_class(".scrollbar.trough", self._hscrollbar, "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
+        alter_style_class(".%s" % Gtk.STYLE_CLASS_INLINE_TOOLBAR, toolbar, "padding-left: %dpx; border-width: 0px; background: alpha (@base_color, 0.0);" % (SPACING / 2))
+        alter_style_class(".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, self._vscrollbar, "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
+        alter_style_class(".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, self._hscrollbar, "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
 
         # Toggle/pushbuttons like the "gapless mode" ones are special, it seems
         # you can't insert them as normal "actions", so we create them here:

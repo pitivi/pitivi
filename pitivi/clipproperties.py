@@ -163,7 +163,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         # The toolbar that will go between the list of effects and properties
         self._toolbar = Gtk.Toolbar()
-        self._toolbar.get_style_context().add_class("inline-toolbar")
+        self._toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         self._toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
         removeEffectButton = Gtk.ToolButton()
         removeEffectButton.set_icon_name("list-remove-symbolic")

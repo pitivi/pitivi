@@ -1119,8 +1119,8 @@ class ProjectSettingsDialog():
         # Set the shading style in the contextual toolbars below presets
         video_presets_toolbar = getObj("video_presets_toolbar")
         audio_presets_toolbar = getObj("audio_presets_toolbar")
-        video_presets_toolbar.get_style_context().add_class("inline-toolbar")
-        audio_presets_toolbar.get_style_context().add_class("inline-toolbar")
+        video_presets_toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
+        audio_presets_toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
     def _setupUiConstraints(self):
         """

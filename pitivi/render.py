@@ -661,7 +661,7 @@ class RenderDialog(Loggable):
 
         # Set the shading style in the toolbar below presets
         presets_toolbar = builder.get_object("render_presets_toolbar")
-        presets_toolbar.get_style_context().add_class("inline-toolbar")
+        presets_toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
     def _settingsChanged(self, project, key, value):
         self.updateResolution()

@@ -153,7 +153,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._warning_label = builder.get_object("warning_label")
         self._view_error_button = builder.get_object("view_error_button")
         toolbar = builder.get_object("medialibrary_toolbar")
-        toolbar.get_style_context().add_class("inline-toolbar")
+        toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         self._remove_button = builder.get_object("media_remove_button")
         self._clipprops_button = builder.get_object("media_props_button")
         self._insert_button = builder.get_object("media_insert_button")

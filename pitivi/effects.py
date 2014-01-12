@@ -384,7 +384,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
         builder.add_from_file(os.path.join(get_ui_dir(), "effectslibrary.ui"))
         builder.connect_signals(self)
         toolbar = builder.get_object("effectslibrary_toolbar")
-        toolbar.get_style_context().add_class("inline-toolbar")
+        toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         self.video_togglebutton = builder.get_object("video_togglebutton")
         self.audio_togglebutton = builder.get_object("audio_togglebutton")
         self.categoriesWidget = builder.get_object("categories")
