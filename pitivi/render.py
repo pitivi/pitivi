@@ -828,8 +828,7 @@ class RenderDialog(Loggable):
         self._destroyProgressWindow()
 
     def _shutDown(self):
-        """ The render process has been aborted, shutdown the gstreamer pipeline
-        and disconnect from its signals """
+        """Shutdown the gstreamer pipeline and disconnect from its signals."""
         self.project.set_rendering(False)
         self._is_rendering = False
         self._rendering_is_paused = False

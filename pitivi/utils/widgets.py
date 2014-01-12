@@ -70,9 +70,6 @@ class DynamicWidget(object):
     def getWidgetDefault(self):
         return self.default
 
-    def setWidgetDefault(self, value):
-        self.default = value
-
     def setWidgetToDefault(self):
         if self.default is not None:
             self.setWidgetValue(self.default)
@@ -498,8 +495,7 @@ class PathWidget(Gtk.FileChooserButton, DynamicWidget):
     def __init__(self, action=Gtk.FileChooserAction.OPEN, default=None):
         DynamicWidget.__init__(self, default)
         self.dialog = Gtk.FileChooserDialog(action=action)
-        self.dialong.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_CLOSE,
-                                 Gtk.ResponseType.CLOSE)
+        self.dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
         self.dialog.set_default_response(Gtk.ResponseType.OK)
         Gtk.FileChooserButton.__init__(self, self.dialog)
         self.dialog.connect("response", self._responseCb)
@@ -577,58 +573,6 @@ class FontWidget(Gtk.FontButton, DynamicWidget):
 
     def getWidgetValue(self):
         return self.get_font_name()
-
-
-if __name__ == '__main__':
-
-    def valueChanged(unused_widget, widget, target):
-        target.set_text(str(widget.getWidgetValue()))
-
-    widgets = (
-        (PathWidget, "file:///home/", ()),
-        (TextWidget, "banana", ()),
-        (TextWidget, "words only", ("^([a-zA-Z]+\s*)+$",)),
-        (TextWidget, "numbers only", ("^\d+$",
-            ("12", "14"))),
-        (NumericWidget, 42, (100, 1)),
-        (ToggleWidget, True, ()),
-        (ChoiceWidget, "banana", ((
-            ("banana", "banana"),
-            ("apple", "apple"),
-            ("pear", "pear")),)),
-        (ColorWidget, 0x336699FF, (int,)),
-        (FontWidget, "Sans 9", ()),
-        (FractionWidget, "30M", (
-            Gst.FractionRange(Gst.Fraction(1, 1),
-            Gst.Fraction(30000, 1001)),
-        )),
-        (FractionWidget, Gst.Fraction(25000, 1001), (
-            Gst.FractionRange(
-                Gst.Fraction(1, 1),
-                Gst.Fraction(30000, 1001)
-            ),
-            ("25:1", Gst.Fraction(30, 1), "30M", ),
-        )),
-    )
-
-    W = Gtk.Window()
-    v = Gtk.VBox()
-    t = Gtk.Table()
-
-    for y, (klass, default, args) in enumerate(widgets):
-        w = klass(*args)
-        w.setWidgetValue(default)
-        l = Gtk.Label(label=str(w.getWidgetValue()))
-        w.connectValueChanged(valueChanged, w, l)
-        w.show()
-        l.show()
-        t.attach(w, 0, 1, y, y + 1)
-        t.attach(l, 1, 2, y, y + 1)
-    t.show()
-
-    W.add(t)
-    W.show()
-    Gtk.main()
 
 
 class GstElementSettingsWidget(Gtk.VBox, Loggable):

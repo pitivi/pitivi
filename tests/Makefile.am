@@ -16,7 +16,8 @@ tests =	test_basic.py \
 	test_system.py \
 	test_timeline_undo.py \
 	test_undo.py \
-	test_utils.py
+	test_utils.py \
+	test_widgets.py
 # Keep the list sorted!
 
 EXTRA_DIST = \
