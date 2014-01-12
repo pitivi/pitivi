@@ -1101,7 +1101,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return False
 
     def _scrollToPlayhead(self):
-        #self.ruler._maybeUpdate()
         if self.ruler.pressed or self.pressed:
             self.pressed = False
             return
@@ -1373,8 +1372,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         """
         When a project is loaded, we connect to its pipeline
         """
-
-        if project:
+        assert self._project is project
+        if self._project:
             self._seeker = self._project.seeker
             self.timeline.setPipeline(self._project.pipeline)
 
