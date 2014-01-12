@@ -36,7 +36,7 @@ from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable, Selection, SELECT, TimelineError
-from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, PLAYHEAD_WIDTH, CONTROL_WIDTH
+from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, CONTROL_WIDTH
 from pitivi.utils.widgets import ZoomBox
 
 from ruler import ScaleRuler
@@ -90,7 +90,6 @@ SELECT_AFTER = ("Select all after selected")
 # Colors
 TIMELINE_BACKGROUND_COLOR = Clutter.Color.new(31, 30, 33, 255)
 SELECTION_MARQUEE_COLOR = Clutter.Color.new(100, 100, 100, 200)
-PLAYHEAD_COLOR = Clutter.Color.new(200, 0, 0, 255)
 SNAPPING_INDICATOR_COLOR = Clutter.Color.new(50, 150, 200, 200)
 
 

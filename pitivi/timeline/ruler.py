@@ -23,6 +23,7 @@
 
 import cairo
 
+from gi.repository import Clutter
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Gst
@@ -34,7 +35,7 @@ from gettext import gettext as _
 from pitivi.utils.pipeline import Seeker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_WIDTH, time_to_string, beautify_length
+from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, time_to_string, beautify_length
 
 # Color #393f3f stolen from the dark variant of Adwaita.
 # There's *no way* to get the GTK3 theme's bg color there (it's always black)
@@ -61,6 +62,9 @@ SMALL_FONT_SIZE = 11
 
 
 def setCairoColor(context, color):
+    if type(color) is Clutter.Color:
+        color = (color.red, color.green, color.blue)
+
     if type(color) is Gdk.RGBA:
         cairo_color = (float(color.red), float(color.green), float(color.blue))
     elif type(color) is tuple:
@@ -399,7 +403,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # without this the line appears blurry.
         xpos = self.nsToPixel(self.position) - self.pixbuf_offset + 0.5
         context.set_line_width(PLAYHEAD_WIDTH + 2)
-        context.set_source_rgb(1.0, 0, 0)
+        setCairoColor(context, PLAYHEAD_COLOR)
         context.move_to(xpos, 0)
         context.line_to(xpos, context.get_target().get_height())
         context.stroke()

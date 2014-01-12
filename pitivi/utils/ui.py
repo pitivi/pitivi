@@ -29,6 +29,7 @@ classes that help with UI drawing around the application
 
 from decimal import Decimal
 from gettext import ngettext, gettext as _
+from gi.repository import Clutter
 from gi.repository import Cogl
 from gi.repository import GLib
 from gi.repository import GES
@@ -60,6 +61,8 @@ SPACING = 10
 PLAYHEAD_WIDTH = 1
 CANVAS_SPACING = 21
 KEYFRAME_SIZE = 8
+
+PLAYHEAD_COLOR = Clutter.Color.new(200, 0, 0, 255)
 
 # Layer creation blocking time in s
 LAYER_CREATION_BLOCK_TIME = 0.2
