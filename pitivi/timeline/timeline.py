@@ -114,6 +114,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         Clutter.ScrollActor.__init__(self)
         Zoomable.__init__(self)
         self.bTimeline = None
+        self._project = None
         self.current_group = GES.Group()
 
         self._container = container
@@ -131,8 +132,9 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     # Public API
 
-    def setPipeline(self, pipeline):
-        pipeline.connect('position', self._positionCb)
+    def setProject(self, project):
+        self._project = project
+        self._project.pipeline.connect('position', self._positionCb)
 
     def setTimeline(self, bTimeline):
         """
@@ -367,19 +369,19 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         track.disconnect_by_func(self._trackElementAddedCb)
         track.disconnect_by_func(self._trackElementRemovedCb)
 
-    def _positionCb(self, pipeline, position):
+    def _positionCb(self, unused_pipeline, position):
         self.playhead.props.x = self.nsToPixel(position)
         self._container._scrollToPlayhead()
         self.lastPosition = position
 
     def _updatePlayHead(self):
-        if self._container.pipeline and self._container.pipeline.get_state() != Gst.State.PLAYING:
+        if self._project and self._project.pipeline.get_state() != Gst.State.PLAYING:
             self.playhead.save_easing_state()
             self.playhead.set_easing_duration(600)
         height = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING) * 2
         self.playhead.set_size(PLAYHEAD_WIDTH, height)
         self.playhead.props.x = self.nsToPixel(self.lastPosition)
-        if self._container.pipeline and self._container.pipeline.get_state() != Gst.State.PLAYING:
+        if self._project and self._project.pipeline.get_state() != Gst.State.PLAYING:
             self.playhead.restore_easing_state()
 
     def _createPlayhead(self):
@@ -659,7 +661,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self._projectmanager = None
         self._project = None
-        self.pipeline = None
         self.bTimeline = None
 
         self.ui_manager.add_ui_from_file(os.path.join(get_ui_dir(), "timelinecontainer.xml"))
@@ -1089,12 +1090,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         elif x < self.hadj.props.lower:
             self.warning("Position %s is smaller than the hscrollbar's lower bound (%s)" % (x, self.hadj.props.lower))
 
-        if self.pipeline and self.pipeline.get_state() != Gst.State.PLAYING:
+        if self._project and self._project.pipeline.get_state() != Gst.State.PLAYING:
             self.timeline.save_easing_state()
             self.timeline.set_easing_duration(600)
 
         self._hscrollbar.set_value(x)
-        if self.pipeline and self.pipeline.get_state() != Gst.State.PLAYING:
+        if self._project and self._project.pipeline.get_state() != Gst.State.PLAYING:
             self.timeline.restore_easing_state()
         return False
 
@@ -1104,7 +1105,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             return
         canvas_width = self.embed.get_allocation().width - CONTROL_WIDTH
         try:
-            new_pos = Zoomable.nsToPixel(self.app.current_project.pipeline.getPosition())
+            new_pos = Zoomable.nsToPixel(self._project.pipeline.getPosition())
         except PipelineError, e:
             self.info("Pipeline error: %s", e)
             return
@@ -1209,7 +1210,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.bTimeline.commit()
 
     def _splitElements(self, elements):
-        position = self.app.current_project.pipeline.getPosition()
+        position = self._project.pipeline.getPosition()
         for element in elements:
             start = element.get_start()
             end = start + element.get_duration()
@@ -1225,7 +1226,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         for obj in selected:
             keyframe_exists = False
-            position = self.app.current_project.pipeline.getPosition()
+            position = self._project.pipeline.getPosition()
             position_in_obj = (position - obj.start) + obj.in_point
             interpolators = obj.getInterpolators()
             for value in interpolators:
@@ -1243,7 +1244,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     self.app.action_log.commit()
 
     def _playPauseCb(self, unused_action):
-        self.app.current_project.pipeline.togglePlayback()
+        self._project.pipeline.togglePlayback()
 
     def transposeXY(self, x, y):
         height = self.ruler.get_allocation().height
@@ -1371,7 +1372,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         assert self._project is project
         if self._project:
             self._seeker = self._project.seeker
-            self.timeline.setPipeline(self._project.pipeline)
+            self.timeline.setProject(self._project)
 
             self.ruler.setProjectFrameRate(self._project.videorate)
             self.ruler.zoomChanged()
@@ -1386,13 +1387,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if self._project:
             self._project.disconnect_by_func(self._renderingSettingsChangedCb)
             try:
-                self.timeline.pipeline.disconnect_by_func(self.timeline.positionCb)
+                self.timeline._pipeline.disconnect_by_func(self.timeline.positionCb)
             except AttributeError:
                 pass
             except TypeError:
                 pass  # We were not connected no problem
 
-            self.timeline.pipeline = None
+            self.timeline._pipeline = None
             self._seeker = None
 
         self._project = project
@@ -1424,14 +1425,14 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self._project.pipeline.save_thumbnail(-1, -1, mime, path)
 
     def _previousKeyframeCb(self, action):
-        position = self.app.current_project.pipeline.getPosition()
+        position = self._project.pipeline.getPosition()
         prev_kf = self.timeline.getPrevKeyframe(position)
         if prev_kf:
             self._seeker.seek(prev_kf)
             self.scrollToPlayhead()
 
     def _nextKeyframeCb(self, action):
-        position = self.app.current_project.pipeline.getPosition()
+        position = self._project.pipeline.getPosition()
         next_kf = self.timeline.getNextKeyframe(position)
         if next_kf:
             self._seeker.seek(next_kf)
