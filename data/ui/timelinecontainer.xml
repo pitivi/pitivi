@@ -1,0 +1,44 @@
+<ui>
+  <menubar name="MainMenuBar">
+    <menu action="View">
+      <placeholder name="Timeline">
+        <menuitem action="ZoomIn" />
+        <menuitem action="ZoomOut" />
+        <menuitem action="ZoomFit" />
+      </placeholder>
+    </menu>
+    <menu action="Timeline">
+      <placeholder name="Timeline">
+        <menuitem action="Split" />
+        <menuitem action="DeleteObj" />
+        <separator />
+        <menuitem action="GroupObj" />
+        <menuitem action="UngroupObj" />
+        <menuitem action="AlignObj" />
+        <separator />
+        <menuitem action="Keyframe" />
+        <menuitem action="Prevkeyframe" />
+        <menuitem action="Nextkeyframe" />
+        <separator />
+        <menuitem action="PlayPause" />
+        <menuitem action="Screenshot" />
+      </placeholder>
+    </menu>
+  </menubar>
+  <toolbar name="TimelineToolBar">
+    <placeholder name="Timeline">
+      <separator />
+      <toolitem action="Split" />
+      <toolitem action="DeleteObj" />
+      <toolitem action="GroupObj" />
+      <toolitem action="UngroupObj" />
+      <toolitem action="AlignObj" />
+    </placeholder>
+  </toolbar>
+  <accelerator action="PlayPause" />
+  <accelerator action="DeleteObj" />
+  <accelerator action="ControlEqualAccel" />
+  <accelerator action="ControlKPAddAccel" />
+  <accelerator action="ControlKPSubtractAccel" />
+  <accelerator action="Keyframe" />
+</ui>

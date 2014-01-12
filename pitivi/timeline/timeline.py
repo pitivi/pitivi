@@ -20,7 +20,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-import sys
 import os
 
 import gi
@@ -32,10 +31,11 @@ from gi.repository import Gst, GES, GObject, Clutter, Gtk, GLib, Gdk
 
 from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
 from pitivi.check import at_least_version
-from pitivi.utils.timeline import Zoomable, Selection, SELECT, TimelineError
-from pitivi.settings import GlobalSettings
+from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
+from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.timeline import Zoomable, Selection, SELECT, TimelineError
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, PLAYHEAD_WIDTH, CONTROL_WIDTH, TYPE_PITIVI_EFFECT
 from pitivi.utils.widgets import ZoomBox
 
@@ -92,53 +92,6 @@ TIMELINE_BACKGROUND_COLOR = Clutter.Color.new(31, 30, 33, 255)
 SELECTION_MARQUEE_COLOR = Clutter.Color.new(100, 100, 100, 200)
 PLAYHEAD_COLOR = Clutter.Color.new(200, 0, 0, 255)
 SNAPPING_INDICATOR_COLOR = Clutter.Color.new(50, 150, 200, 200)
-
-ui = '''
-<ui>
-    <menubar name="MainMenuBar">
-        <menu action="View">
-            <placeholder name="Timeline">
-                <menuitem action="ZoomIn" />
-                <menuitem action="ZoomOut" />
-                <menuitem action="ZoomFit" />
-            </placeholder>
-        </menu>
-        <menu action="Timeline">
-            <placeholder name="Timeline">
-                <menuitem action="Split" />
-                <menuitem action="DeleteObj" />
-                <separator />
-                <menuitem action="GroupObj" />
-                <menuitem action="UngroupObj" />
-                <menuitem action="AlignObj" />
-                <separator />
-                <menuitem action="Keyframe" />
-                <menuitem action="Prevkeyframe" />
-                <menuitem action="Nextkeyframe" />
-                <separator />
-                <menuitem action="PlayPause" />
-                <menuitem action="Screenshot" />
-            </placeholder>
-        </menu>
-    </menubar>
-    <toolbar name="TimelineToolBar">
-        <placeholder name="Timeline">
-            <separator />
-            <toolitem action="Split" />
-            <toolitem action="DeleteObj" />
-            <toolitem action="GroupObj" />
-            <toolitem action="UngroupObj" />
-            <toolitem action="AlignObj" />
-        </placeholder>
-    </toolbar>
-    <accelerator action="PlayPause" />
-    <accelerator action="DeleteObj" />
-    <accelerator action="ControlEqualAccel" />
-    <accelerator action="ControlKPAddAccel" />
-    <accelerator action="ControlKPSubtractAccel" />
-    <accelerator action="Keyframe" />
-</ui>
-'''
 
 
 """
@@ -709,8 +662,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.pipeline = None
         self.bTimeline = None
 
-        self._createUi()
+        self.ui_manager.add_ui_from_file(os.path.join(get_ui_dir(), "timelinecontainer.xml"))
         self._createActions()
+        self._createUi()
 
         self._setUpDragAndDrop()
 
@@ -1065,8 +1019,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.ui_manager.insert_action_group(self.selection_actions, -1)
         self.playhead_actions.add_actions(playhead_actions)
         self.ui_manager.insert_action_group(self.playhead_actions, -1)
-
-        self.ui_manager.add_ui_from_string(ui)
 
     def _updateScrollPosition(self, adjustment):
         self._scroll_pos_ns = Zoomable.pixelToNs(self.hadj.get_value())
