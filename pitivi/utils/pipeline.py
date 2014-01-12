@@ -223,7 +223,7 @@ class SimplePipeline(Signallable, Loggable):
         @return: The current state.
         @rtype: C{State}
         """
-        change, state, pending = self._pipeline.get_state(0)
+        change, state, pending = self._pipeline.get_state(timeout=0)  # No timeout
         self.debug("change: %r, state: %r, pending: %r", change, state, pending)
         return state
 

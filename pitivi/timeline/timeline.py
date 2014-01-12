@@ -375,13 +375,13 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.lastPosition = position
 
     def _updatePlayHead(self):
-        if self._project and self._project.pipeline.get_state() != Gst.State.PLAYING:
+        if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
             self.playhead.save_easing_state()
             self.playhead.set_easing_duration(600)
         height = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING) * 2
         self.playhead.set_size(PLAYHEAD_WIDTH, height)
         self.playhead.props.x = self.nsToPixel(self.lastPosition)
-        if self._project and self._project.pipeline.get_state() != Gst.State.PLAYING:
+        if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
             self.playhead.restore_easing_state()
 
     def _createPlayhead(self):
@@ -1090,12 +1090,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         elif x < self.hadj.props.lower:
             self.warning("Position %s is smaller than the hscrollbar's lower bound (%s)" % (x, self.hadj.props.lower))
 
-        if self._project and self._project.pipeline.get_state() != Gst.State.PLAYING:
+        if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
             self.timeline.save_easing_state()
             self.timeline.set_easing_duration(600)
 
         self._hscrollbar.set_value(x)
-        if self._project and self._project.pipeline.get_state() != Gst.State.PLAYING:
+        if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
             self.timeline.restore_easing_state()
         return False
 

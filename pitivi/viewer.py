@@ -991,7 +991,7 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
                 if self.box.area.width != self.pixbuf.get_width():
                     cr.restore()
 
-            if self.pipeline and self.pipeline.get_state()[1] == Gst.State.PAUSED:
+            if self.pipeline and self.pipeline.getState() == Gst.State.PAUSED:
                 self.box.draw(cr)
             cr.pop_group_to_source()
             cr.paint()
