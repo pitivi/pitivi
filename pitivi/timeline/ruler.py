@@ -36,10 +36,6 @@ from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, set_cairo_color, time_to_string, beautify_length
 
-# Color #393f3f stolen from the dark variant of Adwaita.
-# There's *no way* to get the GTK3 theme's bg color there (it's always black)
-RULER_BACKGROUND_COLOR = (57, 63, 63)
-
 # A series of valid interval lengths in seconds.
 SCALES = (0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 3600)
 
@@ -89,6 +85,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.connect("focus-out-event", self._focusOutCb)
 
         self.timeline = timeline
+        self._background_color = timeline.get_style_context().lookup_color('theme_bg_color')[1]
         self._seeker = Seeker()
         self.hadj = hadj
         hadj.connect("value-changed", self._hadjValueChangedCb)
@@ -251,7 +248,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def drawBackground(self, context):
         style = self.get_style_context()
-        set_cairo_color(context, RULER_BACKGROUND_COLOR)
+        set_cairo_color(context, self._background_color)
         width = context.get_target().get_width()
         height = context.get_target().get_height()
         context.rectangle(0, 0, width, height)
