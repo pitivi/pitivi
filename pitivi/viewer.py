@@ -214,7 +214,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
         bbox = Gtk.HBox()
         boxalign = Gtk.Alignment(xalign=0.5, yalign=0.5, xscale=0.0, yscale=0.0)
         boxalign.add(bbox)
-        self.pack_start(boxalign, False, True, 0)
+        self.pack_start(boxalign, False, True, SPACING)
 
         self.goToStart_button = Gtk.ToolButton()
         self.goToStart_button.set_icon_name("media-skip-backward")
