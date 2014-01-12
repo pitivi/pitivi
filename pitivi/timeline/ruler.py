@@ -166,8 +166,11 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
 ## timeline position changed method
 
-    def timelinePositionChanged(self, value, unused_frame=None):
-        self.position = value
+    def setPipeline(self, pipeline):
+        pipeline.connect('position', self.timelinePositionCb)
+
+    def timelinePositionCb(self, pipeline, position):
+        self.position = position
         self.queue_draw()
 
 ## Gtk.Widget overrides
@@ -392,9 +395,10 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             frame_num += 1
 
     def drawPosition(self, context):
-        # a simple RED line will do for now
-        xpos = self.nsToPixel(self.position) - self.pixbuf_offset
-        context.set_line_width(PLAYHEAD_WIDTH)
+        # Add 0.5 so that the line center is at the middle of the pixel,
+        # without this the line appears blurry.
+        xpos = self.nsToPixel(self.position) - self.pixbuf_offset + 0.5
+        context.set_line_width(PLAYHEAD_WIDTH + 2)
         context.set_source_rgb(1.0, 0, 0)
         context.move_to(xpos, 0)
         context.line_to(xpos, context.get_target().get_height())

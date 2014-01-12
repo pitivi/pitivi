@@ -370,7 +370,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         track.disconnect_by_func(self._trackElementRemovedCb)
 
     def _positionCb(self, unused_pipeline, position):
-        self.playhead.props.x = self.nsToPixel(position)
+        self._movePlayhead(position)
         self._container._scrollToPlayhead()
         self.lastPosition = position
 
@@ -380,9 +380,12 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             self.playhead.set_easing_duration(600)
         height = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING) * 2
         self.playhead.set_size(PLAYHEAD_WIDTH, height)
-        self.playhead.props.x = self.nsToPixel(self.lastPosition)
+        self._movePlayhead(self.lastPosition)
         if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
             self.playhead.restore_easing_state()
+
+    def _movePlayhead(self, position):
+        self.playhead.props.x = self.nsToPixel(position)
 
     def _createPlayhead(self):
         self.playhead = Clutter.Actor()
@@ -390,7 +393,6 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.playhead.set_size(0, 0)
         self.playhead.set_position(0, 0)
         self.playhead.set_easing_duration(0)
-        self.playhead.set_z_position(1)
         self.add_child(self.playhead)
 
     def _createSnapIndicator(self):
@@ -1373,6 +1375,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if self._project:
             self._seeker = self._project.seeker
             self.timeline.setProject(self._project)
+            self.ruler.setPipeline(self._project.pipeline)
 
             self.ruler.setProjectFrameRate(self._project.videorate)
             self.ruler.zoomChanged()
