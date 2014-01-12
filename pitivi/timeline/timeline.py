@@ -468,9 +468,9 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def _updateSize(self, ghostclip=None):
         self.save_easing_state()
         self.set_easing_duration(0)
-        self.props.width = self.nsToPixel(self.bTimeline.get_duration()) + 250
+        self.props.width = self.nsToPixel(self.bTimeline.get_duration()) + CONTROL_WIDTH
         if ghostclip is not None:
-            ghostEnd = ghostclip.props.x + ghostclip.props.width + 250
+            ghostEnd = ghostclip.props.x + ghostclip.props.width + CONTROL_WIDTH
             self.props.width = max(ghostEnd, self.props.width)
         self.props.height = (len(self.bTimeline.get_layers()) + 1) * (EXPANDED_SIZE + SPACING) * 2 + SPACING
         self.restore_easing_state()
@@ -736,23 +736,20 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         Recalculate the horizontal scrollbar depending on the timeline duration.
         """
         timeline_ui_width = self.embed.get_allocation().width
-        controls_width = 0
-        scrollbar_width = 0
         if self.bTimeline is None:
             contents_size = 0
         else:
             contents_size = Zoomable.nsToPixel(self.bTimeline.props.duration)
 
-        widgets_width = controls_width + scrollbar_width
-        end_padding = CONTROL_WIDTH + 250  # Provide some space for clip insertion at the end
+        end_padding = CONTROL_WIDTH * 2  # Provide some space for clip insertion at the end
 
         self.hadj.props.lower = 0
-        self.hadj.props.upper = contents_size + widgets_width + end_padding
+        self.hadj.props.upper = contents_size + end_padding
         self.hadj.props.page_size = timeline_ui_width
         self.hadj.props.page_increment = contents_size * 0.9
         self.hadj.props.step_increment = contents_size * 0.1
 
-        if contents_size + widgets_width <= timeline_ui_width:
+        if contents_size <= timeline_ui_width:
             # We're zoomed out completely, re-enable automatic zoom fitting
             # when adding new clips.
             self.log("Setting 'zoomed_fitted' to True")
@@ -892,7 +889,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         min_height = (self.ruler.get_size_request()[1] +
                       (EXPANDED_SIZE + SPACING) * 2 +
-                      SPACING * 3)
+                      # Some more.
+                      EXPANDED_SIZE)
         self.set_size_request(-1, min_height)
 
     def enableKeyboardAndMouseEvents(self):
@@ -999,10 +997,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             "space", _("Start Playback"), self._playPauseCb),
 
             ("Split", "pitivi-split", _("Split"),
-            "S", SPLIT, self._split),
+            "S", SPLIT, self._splitCb),
 
             ("Keyframe", "pitivi-keyframe", _("Add a Keyframe"),
-            "K", KEYFRAME, self._keyframe),
+            "K", KEYFRAME, self._keyframeCb),
 
             ("Prevkeyframe", None, _("_Previous Keyframe"),
             "comma", PREVKEYFRAME, self._previousKeyframeCb),
@@ -1195,7 +1193,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.error("Could not start the autoaligner: %s" % e)
             progress_dialog.window.destroy()
 
-    def _split(self, action):
+    def _splitCb(self, action):
         """
         If clips are selected, split them at the current playhead position.
         Otherwise, split all clips at the playhead position.
@@ -1219,11 +1217,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 clip = element.get_parent()
                 clip.split(position)
 
-    def _keyframe(self, action):
+    def _keyframeCb(self, action):
         """
         Add or remove a keyframe at the current position of the selected clip.
-
-        FIXME GES: this method is currently not used anywhere
         """
         selected = self.timeline.selection.getSelectedTrackElements()
 

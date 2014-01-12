@@ -34,7 +34,7 @@ from gettext import gettext as _
 from pitivi.utils.pipeline import Seeker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import NORMAL_FONT, time_to_string, beautify_length
+from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_WIDTH, time_to_string, beautify_length
 
 # Color #393f3f stolen from the dark variant of Adwaita.
 # There's *no way* to get the GTK3 theme's bg color there (it's always black)
@@ -145,7 +145,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.log("Ruler has lost focus")
         self.timeline.setActionsSensitivity(False)
 
-    def _hadjValueChangedCb(self, hadj):
+    def _hadjValueChangedCb(self, unused_arg):
         self.pixbuf_offset = self.hadj.get_value()
         if self.callback_id_scroll is not None:
             GLib.source_remove(self.callback_id_scroll)
@@ -394,10 +394,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
     def drawPosition(self, context):
         # a simple RED line will do for now
         xpos = self.nsToPixel(self.position) - self.pixbuf_offset
-        context.save()
-        context.set_line_width(1.5)
+        context.set_line_width(PLAYHEAD_WIDTH)
         context.set_source_rgb(1.0, 0, 0)
         context.move_to(xpos, 0)
         context.line_to(xpos, context.get_target().get_height())
         context.stroke()
-        context.restore()

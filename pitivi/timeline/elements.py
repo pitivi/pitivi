@@ -33,7 +33,7 @@ from datetime import datetime
 
 import weakref
 
-from gi.repository import Clutter, Gtk, GtkClutter, Cogl, GES, Gdk, Gst, GstController, GLib
+from gi.repository import Clutter, Gtk, GtkClutter, Cogl, GES, Gdk, Gst, GstController
 from pitivi.utils.timeline import Zoomable, EditingContext, SELECT, UNSELECT, SELECT_ADD, Selected
 from previewers import AudioPreviewer, VideoPreviewer
 
