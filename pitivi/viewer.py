@@ -129,8 +129,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
         self.seeker = Seeker()
         self._disconnectFromPipeline()
-        if self.pipeline:
-            self.pipeline.set_state(Gst.State.NULL)
 
         self.pipeline = pipeline
         self.pipeline.pause()
