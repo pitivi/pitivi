@@ -787,9 +787,6 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         if self.discovered:
             self._maybeUpdate()
 
-    def updateOffset(self):
-        print self.timeline.get_scroll_point().x
-
     def zoomChanged(self):
         self._maybeUpdate()
 
