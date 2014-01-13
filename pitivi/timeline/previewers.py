@@ -806,33 +806,33 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
 
     def _compute_geometry(self):
         self.log("Computing the clip's geometry for waveforms")
-        start = self.timeline.get_scroll_point().x - self.nsToPixel(self.bElement.props.start)
-        start = max(0, start)
-        end = min(self.timeline.get_scroll_point().x + self.timeline._container.get_allocation().width - CONTROL_WIDTH + MARGIN,
-                  self.nsToPixel(self.bElement.props.duration))
-
         width_px = self.nsToPixel(self.bElement.props.duration)
         if width_px <= 0:
             return
-
-        asset_duration = self.bElement.get_parent().get_asset().get_duration()
-
-        # We need to take duration and inpoint into account.
-
-        nbSamples = self.nbSamples
-        startOffsetSamples = 0
-
-        if self.bElement.props.duration != 0:
-            nbSamples = self.nbSamples / (float(asset_duration) / float(self.bElement.props.duration))
-        if self.bElement.props.in_point != 0:
-            startOffsetSamples = self.nbSamples / (float(asset_duration) / float(self.bElement.props.in_point))
-
-        self.start = int(start / width_px * nbSamples + startOffsetSamples)
-        self.end = int(end / width_px * nbSamples + startOffsetSamples)
-
+        start = self.timeline.get_scroll_point().x - self.nsToPixel(self.bElement.props.start)
+        start = max(0, start)
+        # Take into account the timeline width, to avoid building
+        # huge clips when the timeline is zoomed in a lot.
+        timeline_width = self.timeline._container.get_allocation().width - CONTROL_WIDTH
+        end = min(width_px,
+                  self.timeline.get_scroll_point().x + timeline_width + MARGIN)
         self.width = int(end - start)
         if self.width < 0:  # We've been called at a moment where size was updated but not scroll_point.
             return
+
+        # We need to take duration and inpoint into account.
+        asset_duration = self.bElement.get_parent().get_asset().get_duration()
+        if self.bElement.props.duration:
+            nbSamples = self.nbSamples / (float(asset_duration) / float(self.bElement.props.duration))
+        else:
+            nbSamples = self.nbSamples
+        if self.bElement.props.in_point:
+            startOffsetSamples = self.nbSamples / (float(asset_duration) / float(self.bElement.props.in_point))
+        else:
+            startOffsetSamples = 0
+
+        self.start = int(start / width_px * nbSamples + startOffsetSamples)
+        self.end = int(end / width_px * nbSamples + startOffsetSamples)
 
         self.canvas.set_size(self.width, EXPANDED_SIZE)
         Clutter.Actor.set_size(self, self.width, EXPANDED_SIZE)
