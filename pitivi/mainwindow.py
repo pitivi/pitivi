@@ -929,7 +929,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         self.info("Project closed - clearing the media library and timeline")
         self.medialibrary.storemodel.clear()
-        self.timeline_ui.setTimeline(None)
+        self.timeline_ui.setProject(None)
         self.clipconfig.timeline = None
         return False
 

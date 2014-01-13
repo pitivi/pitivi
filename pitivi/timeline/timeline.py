@@ -132,14 +132,16 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     # Public API
 
     def setProject(self, project):
+        """
+        Connects with the GES.Timeline holding the project.
+        """
         self._project = project
-        self._project.pipeline.connect('position', self._positionCb)
+        if self._project:
+            self._project.pipeline.connect('position', self._positionCb)
+            bTimeline = self._project.timeline
+        else:
+            bTimeline = None
 
-    def setTimeline(self, bTimeline):
-        """
-        @param bTimeline : the backend GES.Timeline which we interface.
-        Does all the necessary connections.
-        """
         if self.bTimeline is not None:
             self.bTimeline.disconnect_by_func(self._trackAddedCb)
             self.bTimeline.disconnect_by_func(self._trackRemovedCb)
@@ -775,10 +777,17 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.pressed = True
         self._seeker.seek(position)
 
-    def setTimeline(self, bTimeline):
-        self.bTimeline = bTimeline
+    def setProject(self, project):
+        self._project = project
+        if self._project:
+            self._project.connect("rendering-settings-changed",
+                                  self._renderingSettingsChangedCb)
+            self.bTimeline = project.timeline
+        else:
+            self.bTimeline = None
+
+        self.timeline.setProject(self._project)
         self.timeline.selection.connect("selection-changed", self._selectionChangedCb)
-        self.timeline.setTimeline(bTimeline)
 
     def getEditionMode(self, isAHandle=False):
         if self._shiftMask or self._autoripple_active:
@@ -1373,7 +1382,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         assert self._project is project
         if self._project:
             self._seeker = self._project.seeker
-            self.timeline.setProject(self._project)
             self.ruler.setPipeline(self._project.pipeline)
 
             self.ruler.setProjectFrameRate(self._project.videorate)
@@ -1398,11 +1406,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.timeline._pipeline = None
             self._seeker = None
 
-        self._project = project
-        if self._project:
-            self._project.connect("rendering-settings-changed",
-                                  self._renderingSettingsChangedCb)
-            self.setTimeline(project.timeline)
+        self.setProject(project)
 
     def _zoomInCb(self, unused_action):
         Zoomable.zoomIn()

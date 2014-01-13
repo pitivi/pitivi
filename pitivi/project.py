@@ -422,8 +422,8 @@ class ProjectManager(Signallable, Loggable):
         project.author = getpwuid(os.getuid()).pw_gecos.split(",")[0]
 
         project.createTimeline()
-        self.emit("new-project-created", project)
         self.current_project = project
+        self.emit("new-project-created", project)
 
         project.connect("project-changed", self._projectChangedCb)
         self.emit("new-project-loaded", self.current_project, emission)
