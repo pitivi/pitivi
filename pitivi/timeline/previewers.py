@@ -47,8 +47,8 @@ WAVEFORMS_CPU_USAGE = 30
 # A little lower as it's more fluctuating
 THUMBNAILS_CPU_USAGE = 20
 
-INTERVAL = 500000  # For the waveform update interval.
-BORDER_WIDTH = 3  # For the timeline elements
+THUMB_MARGIN_PX = 3
+WAVEFORM_UPDATE_INTERVAL = timedelta(microseconds=500000)
 MARGIN = 500  # For the waveforms, ensures we always have a little extra surface when scrolling while playing.
 
 """
@@ -163,8 +163,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         # We should have one thumbnail per thumb_period.
         # TODO: get this from the user settings
         self.thumb_period = long(0.5 * Gst.SECOND)
-        self.thumb_margin = BORDER_WIDTH
-        self.thumb_height = EXPANDED_SIZE - 2 * self.thumb_margin
+        self.thumb_height = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
         self.thumb_width = None  # will be set by self._setupPipeline()
 
         # Maps (quantized) times to Thumbnail objects
@@ -327,7 +326,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
             return False  # Stop the timer
 
     def _get_thumb_duration(self):
-        thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + self.thumb_margin)
+        thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + THUMB_MARGIN_PX)
         # quantize thumb length to thumb_period
         thumb_duration = quantize(thumb_duration_tmp, self.thumb_period)
         # make sure that the thumb duration after the quantization isn't smaller than before
@@ -351,7 +350,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
 
         for current_time in range(element_left, element_right, thumb_duration):
             thumb = Thumbnail(self.thumb_width, self.thumb_height)
-            thumb.set_position(Zoomable.nsToPixel(current_time), self.thumb_margin)
+            thumb.set_position(Zoomable.nsToPixel(current_time), THUMB_MARGIN_PX)
             self.add_child(thumb)
             self.thumbs[current_time] = thumb
             if current_time in self.thumb_cache:
@@ -741,8 +740,6 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         self._num_failures = 0
         self.lastUpdate = datetime.now()
 
-        self.interval = timedelta(microseconds=INTERVAL)
-
         self.current_geometry = (-1, -1)
 
         self.adapter = None
@@ -776,14 +773,14 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" + self._uri + " ! audioconvert ! level name=wavelevel interval=10000000 post-messages=true ! fakesink qos=false name=faked")
         faked = self.pipeline.get_by_name("faked")
         faked.props.sync = True
-        self._level = self.pipeline.get_by_name("wavelevel")
+        self._wavelevel = self.pipeline.get_by_name("wavelevel")
         decode = self.pipeline.get_by_name("decode")
         decode.connect("autoplug-select", self._autoplugSelectCb)
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
 
         self.nSamples = self.bElement.get_parent().get_asset().get_duration() / 10000000
-        bus.connect("message", self._messageCb)
+        bus.connect("message", self._busMessageCb)
         self.becomeControlled()
 
     def set_size(self, unused_width, unused_height):
@@ -799,7 +796,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
     def _maybeUpdate(self):
         if self.discovered:
             self.log('Checking if the waveform for "%s" needs to be redrawn' % self._uri)
-            if datetime.now() - self.lastUpdate > self.interval:
+            if datetime.now() - self.lastUpdate > WAVEFORM_UPDATE_INTERVAL:
                 self.lastUpdate = datetime.now()
                 self._compute_geometry()
             else:
@@ -814,12 +811,11 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         end = min(self.timeline.get_scroll_point().x + self.timeline._container.get_allocation().width - CONTROL_WIDTH + MARGIN,
                   self.nsToPixel(self.bElement.props.duration))
 
-        pixelWidth = self.nsToPixel(self.bElement.props.duration)
-
-        if pixelWidth <= 0:
+        width_px = self.nsToPixel(self.bElement.props.duration)
+        if width_px <= 0:
             return
 
-        real_duration = self.bElement.get_parent().get_asset().get_duration()
+        asset_duration = self.bElement.get_parent().get_asset().get_duration()
 
         # We need to take duration and inpoint into account.
 
@@ -827,15 +823,14 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         startOffsetSamples = 0
 
         if self.bElement.props.duration != 0:
-            nbSamples = self.nbSamples / (float(real_duration) / float(self.bElement.props.duration))
+            nbSamples = self.nbSamples / (float(asset_duration) / float(self.bElement.props.duration))
         if self.bElement.props.in_point != 0:
-            startOffsetSamples = self.nbSamples / (float(real_duration) / float(self.bElement.props.in_point))
+            startOffsetSamples = self.nbSamples / (float(asset_duration) / float(self.bElement.props.in_point))
 
-        self.start = int(start / pixelWidth * nbSamples + startOffsetSamples)
-        self.end = int(end / pixelWidth * nbSamples + startOffsetSamples)
+        self.start = int(start / width_px * nbSamples + startOffsetSamples)
+        self.end = int(end / width_px * nbSamples + startOffsetSamples)
 
         self.width = int(end - start)
-
         if self.width < 0:  # We've been called at a moment where size was updated but not scroll_point.
             return
 
@@ -864,8 +859,8 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         if self.adapter:
             self.adapter.stop()
 
-    def _messageCb(self, bus, message):
-        if message.src == self._level:
+    def _busMessageCb(self, bus, message):
+        if message.src == self._wavelevel:
             s = message.get_structure()
             p = None
             if s:
@@ -908,7 +903,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
                              " for the %ith time, trying again with no rate "
                              " modulation", message.parse_error(),
                              self._num_failures)
-                bus.disconnect_by_func(self._messageCb)
+                bus.disconnect_by_func(self._busMessageCb)
                 self._launchPipeline()
                 self.becomeControlled()
             else:
@@ -939,9 +934,9 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
             return True
         return False
 
-    def _drawContentCb(self, unused_canvas, cr, unused_surf_w, unused_surf_h):
-        cr.set_operator(cairo.OPERATOR_CLEAR)
-        cr.paint()
+    def _drawContentCb(self, unused_canvas, context, unused_surf_w, unused_surf_h):
+        context.set_operator(cairo.OPERATOR_CLEAR)
+        context.paint()
         if not self.discovered:
             return
 
@@ -950,9 +945,9 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
 
         self.surface = renderer.fill_surface(self.samples[self.start:self.end], int(self.width), int(EXPANDED_SIZE))
 
-        cr.set_operator(cairo.OPERATOR_OVER)
-        cr.set_source_surface(self.surface, 0, 0)
-        cr.paint()
+        context.set_operator(cairo.OPERATOR_OVER)
+        context.set_source_surface(self.surface, 0, 0)
+        context.paint()
 
     def _scrolledCb(self, unused):
         self._maybeUpdate()
