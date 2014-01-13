@@ -36,11 +36,11 @@ from time import time
 from math import pi
 
 from pitivi.settings import GlobalSettings
-from pitivi.utils.pipeline import Seeker, SimplePipeline
-from pitivi.utils.ui import SPACING, hex_to_rgb
-from pitivi.utils.widgets import TimeWidget
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import format_ns
+from pitivi.utils.pipeline import AssetPipeline, Seeker
+from pitivi.utils.ui import SPACING, hex_to_rgb
+from pitivi.utils.widgets import TimeWidget
 
 GlobalSettings.addConfigSection("viewer")
 GlobalSettings.addConfigOption("viewerDocked", section="viewer",
@@ -92,8 +92,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.log("New ViewerContainer")
 
         self.pipeline = None
-        self._tmp_pipeline = None  # Used for displaying a preview when trimming
-
         self.sink = None
         self.docked = True
 
@@ -441,29 +439,28 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
         clip_uri = tl_obj.props.uri
         cur_time = time()
-        if not self._tmp_pipeline:
+        if self.pipeline == self.app.current_project.pipeline:
             self.debug("Creating temporary pipeline for clip %s, position %s",
                 clip_uri, format_ns(position))
-
             self._oldTimelinePos = self.pipeline.getPosition()
-            self._tmp_pipeline = Gst.ElementFactory.make("playbin", None)
-            self._tmp_pipeline.set_property("uri", clip_uri)
-            self.setPipeline(SimplePipeline(self._tmp_pipeline, self._tmp_pipeline))
+            self.setPipeline(AssetPipeline(tl_obj))
             self._lastClipTrimTime = cur_time
+
         if (cur_time - self._lastClipTrimTime) > 0.2 and self.pipeline.getState() == Gst.State.PAUSED:
             # Do not seek more than once every 200 ms (for performance)
-            self._tmp_pipeline.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, position)
+            self.pipeline.simple_seek(position)
             self._lastClipTrimTime = cur_time
 
     def clipTrimPreviewFinished(self):
         """
         After trimming a clip, reset the project pipeline into the viewer.
         """
-        if self._tmp_pipeline is not None:
-            self._tmp_pipeline.set_state(Gst.State.NULL)
-            self._tmp_pipeline = None  # Free the memory
+        if self.pipeline is not self.app.current_project.pipeline:
+            self.pipeline.setState(Gst.State.NULL)
+            # Using pipeline.getPosition() here does not work because for some
+            # reason it's a bit off, that's why we need self._oldTimelinePos.
             self.setPipeline(self.app.current_project.pipeline, self._oldTimelinePos)
-            self.debug("Back to old pipeline")
+            self.debug("Back to the project's pipeline")
 
     def _pipelineStateChangedCb(self, unused_pipeline, state):
         """

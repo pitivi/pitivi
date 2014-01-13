@@ -489,12 +489,25 @@ class SimplePipeline(Signallable, Loggable):
         try:
             res, dur = self._pipeline.query_duration(format)
         except Exception, e:
-
             self.handleException(e)
             raise PipelineError("Couldn't get duration: %s" % e)
 
         if not res:
             raise PipelineError("Couldn't get duration: Returned None")
+        return dur
+
+
+class AssetPipeline(SimplePipeline):
+    """
+    Pipeline for playing a single clip.
+    """
+
+    def __init__(self, clip):
+        bPipeline = Gst.ElementFactory.make("playbin", None)
+        bPipeline.set_property("uri", clip.props.uri)
+        SimplePipeline.__init__(self, bPipeline, bPipeline)
+
+        self.clip = clip
 
 
 class Pipeline(GES.Pipeline, SimplePipeline):
