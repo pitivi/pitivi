@@ -69,16 +69,11 @@ GlobalSettings.addConfigOption("pointColor", section="viewer",
     default='49a0e0')
 
 
-class PitiviViewer(Gtk.VBox, Loggable):
+class ViewerContainer(Gtk.VBox, Loggable):
     """
-    A Widget to control and visualize a Pipeline
-
-    @ivar pipeline: The current pipeline
-    @type pipeline: L{Pipeline}
-    @ivar action: The action controlled by this Pipeline
-    @type action: L{ViewAction}
+    A wiget holding a viewer and the controls.
     """
-    __gtype_name__ = 'PitiviViewer'
+    __gtype_name__ = 'ViewerContainer'
     __gsignals__ = {
         "activate-playback-controls": (GObject.SignalFlags.RUN_LAST,
             None, (GObject.TYPE_BOOLEAN,)),
@@ -94,7 +89,7 @@ class PitiviViewer(Gtk.VBox, Loggable):
         self.system = app.system
 
         Loggable.__init__(self)
-        self.log("New PitiviViewer")
+        self.log("New ViewerContainer")
 
         self.pipeline = None
         self._tmp_pipeline = None  # Used for displaying a preview when trimming

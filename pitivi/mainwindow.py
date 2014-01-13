@@ -53,7 +53,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import in_devel, show_user_manual, path_from_uri
 from pitivi.utils.ui import info_name, beautify_time_delta, SPACING, \
     beautify_length
-from pitivi.viewer import PitiviViewer
+from pitivi.viewer import ViewerContainer
 
 
 GlobalSettings.addConfigOption("fileSupportEnabled",
@@ -422,7 +422,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.context_tabs.set_current_page(0)
 
         # Viewer
-        self.viewer = PitiviViewer(instance, undock_action=self.undock_action)
+        self.viewer = ViewerContainer(instance, undock_action=self.undock_action)
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
 
         # Now, the lower part: the timeline
