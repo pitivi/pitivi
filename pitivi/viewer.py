@@ -134,15 +134,14 @@ class PitiviViewer(Gtk.VBox, Loggable):
             self.pipeline.set_state(Gst.State.NULL)
 
         self.pipeline = pipeline
-        if self.pipeline:
-            self.pipeline.pause()
-            self.seeker.seek(position)
+        self.pipeline.pause()
+        self.seeker.seek(position)
 
-            self.pipeline.connect("state-change", self._pipelineStateChangedCb)
-            self.pipeline.connect("position", self._positionCb)
-            self.pipeline.connect("duration-changed", self._durationChangedCb)
+        self.pipeline.connect("state-change", self._pipelineStateChangedCb)
+        self.pipeline.connect("position", self._positionCb)
+        self.pipeline.connect("duration-changed", self._durationChangedCb)
 
-        self.sink = pipeline.video_overlay
+        self.sink = self.pipeline.video_overlay
         self.target.sink = self.sink
         self._switch_output_window()
         self._setUiActive()
