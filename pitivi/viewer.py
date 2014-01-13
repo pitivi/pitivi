@@ -94,6 +94,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.pipeline = None
         self.sink = None
         self.docked = True
+        self.seeker = Seeker()
 
         # Only used for restoring the pipeline position after a live clip trim preview:
         self._oldTimelinePos = None
@@ -126,8 +127,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
         @param position: Optional position to seek to initially.
         """
         self.debug("self.pipeline: %r", self.pipeline)
-
-        self.seeker = Seeker()
         self._disconnectFromPipeline()
 
         self.pipeline = pipeline
