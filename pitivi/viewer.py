@@ -347,14 +347,8 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.seeker.seekRelative(Gst.SECOND)
 
     def _goToEndCb(self, unused_button):
-        try:
-            end = self.app.current_project.pipeline.getDuration()
-        except:
-            self.warning("Couldn't get timeline duration")
-        try:
-            self.seeker.seek(end)
-        except:
-            self.warning("Couldn't seek to the end of the timeline")
+        end = self.app.current_project.pipeline.getDuration()
+        self.seeker.seek(end)
 
     ## public methods for controlling playback
 
