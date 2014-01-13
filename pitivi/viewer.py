@@ -103,13 +103,19 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self._haveUI = False
 
         self._createUi()
-        self.target = self.internal
         self.undock_action = undock_action
         if undock_action:
             self.undock_action.connect("activate", self._toggleDocked)
 
             if not self.settings.viewerDocked:
                 self.undock()
+
+    @property
+    def target(self):
+        if self.docked:
+            return self.internal
+        else:
+            return self.external
 
     def setPipeline(self, pipeline, position=None):
         """
@@ -362,7 +368,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.docked = False
         self.settings.viewerDocked = False
         self.undock_action.set_label(_("Dock Viewer"))
-        self.target = self.external
 
         self.remove(self.buttons_container)
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
@@ -392,7 +397,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.docked = True
         self.settings.viewerDocked = True
         self.undock_action.set_label(_("Undock Viewer"))
-        self.target = self.internal
 
         self.fullscreen_button.destroy()
         self.external_vbox.remove(self.buttons_container)
