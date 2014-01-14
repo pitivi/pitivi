@@ -339,21 +339,26 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
     def _playButtonCb(self, unused_button, unused_playing):
         self.app.current_project.pipeline.togglePlayback()
+        self.app.gui.focusTimeline()
 
     def _goToStartCb(self, unused_button):
         self.seeker.seek(0)
+        self.app.gui.focusTimeline()
 
     def _backCb(self, unused_button):
         # Seek backwards one second
         self.seeker.seekRelative(0 - Gst.SECOND)
+        self.app.gui.focusTimeline()
 
     def _forwardCb(self, unused_button):
         # Seek forward one second
         self.seeker.seekRelative(Gst.SECOND)
+        self.app.gui.focusTimeline()
 
     def _goToEndCb(self, unused_button):
         end = self.app.current_project.pipeline.getDuration()
         self.seeker.seek(end)
+        self.app.gui.focusTimeline()
 
     ## public methods for controlling playback
 

@@ -544,6 +544,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self._fullscreenToolbarDirection = None
         return False
 
+    def focusTimeline(self):
+        self.timeline_ui.grab_focus()
+
 ## Missing Plugin Support
 
     def _installPlugins(self, details, missingPluginsCallback):
