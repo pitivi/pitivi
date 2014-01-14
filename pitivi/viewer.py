@@ -19,9 +19,8 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-import platform
-from gi.repository import Gtk
 from gi.repository import Clutter
+from gi.repository import Gtk
 from gi.repository import GtkClutter
 from gi.repository import Gdk
 from gi.repository import Gst
@@ -94,7 +93,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.log("New ViewerContainer")
 
         self.pipeline = None
-        self.sink = None
+        self.__sink = None
         self.docked = True
         self.seeker = Seeker()
 
@@ -118,6 +117,16 @@ class ViewerContainer(Gtk.VBox, Loggable):
         else:
             return self.external
 
+    @property
+    def sink(self):
+        return self.__sink
+
+    @sink.setter
+    def sink(self, sink):
+        self.__sink = sink
+        self.internal.sink = sink
+        self.external.sink = sink
+
     def setPipeline(self, pipeline, position=None):
         """
         Set the Viewer to the given Pipeline.
@@ -139,9 +148,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.pipeline.connect("position", self._positionCb)
         self.pipeline.connect("duration-changed", self._durationChangedCb)
 
-        #self.sink = self.pipeline.video_overlay
-        self.sink = pipeline.video_overlay._clutter_sink
-        self.target.sink = self.sink
+        self.sink = pipeline.clutter_sink
         self._switch_output_window()
         self._setUiActive()
 
@@ -276,7 +283,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
             width += 110
             height = int(width / self.internal_aframe.props.ratio)
             self.internal_aframe.set_size_request(width, height)
-            self.internal.texture.set_size(width, height)
 
         self.buttons = bbox
         self.buttons_container = boxalign
@@ -328,7 +334,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
             self.sink.set_render_rectangle(*area)
             self.target.box.update_size(area)
             self.target.zoom = zoom
-            self.target.sink = self.sink
             self.target.renderbox()
 
     def _playButtonCb(self, unused_button, unused_playing):
@@ -819,10 +824,14 @@ class ViewerWidget(GtkClutter.Embed, Loggable):
 
     def __init__(self, settings=None):
         GtkClutter.Embed.__init__(self)
-        self._stage = self.get_stage()
+        layout_manager = Clutter.BinLayout(x_align=Clutter.BinAlignment.FILL, y_align=Clutter.BinAlignment.FILL)
+        self.get_stage().set_layout_manager(layout_manager)
         self.texture = Clutter.Texture()
-        self.texture.set_sync_size(False)
-        self._stage.add_child(self.texture)
+        # This is a trick to make the viewer appear darker at the start.
+        self.texture.set_from_rgb_data(data=[0] * 3, has_alpha=False,
+                width=1, height=1, rowstride=3, bpp=3,
+                flags=Clutter.TextureFlags.NONE)
+        self.get_stage().add_child(self.texture)
         Loggable.__init__(self)
         self.seeker = Seeker()
         self.settings = settings
