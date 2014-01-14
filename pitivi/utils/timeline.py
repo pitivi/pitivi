@@ -120,18 +120,6 @@ class Selection(Signallable):
         """
         self.setSelection(set([obj]), mode)
 
-    def addClip(self, clip):
-        """
-        Add the given clip to the selection.
-
-        @param clip: The object to add
-        @type clip: L{GES.Clip}
-        @raises TimelineError: If the object is already controlled by this
-        Selection.
-        """
-        if clip in self.clips:
-            raise TimelineError("TrackElement already in this selection")
-
     def setSelection(self, objs, mode):
         """
         Update the current selection.

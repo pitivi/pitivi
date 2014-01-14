@@ -788,10 +788,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         """
         self.playhead_actions.set_sensitive(sensitive)
         self.debug("Playback shortcuts sensitivity set to %s", sensitive)
-        selected = self.timeline.selection.getSelectedTrackElements()
-        if not sensitive or (sensitive and selected):
-            self.selection_actions.set_sensitive(sensitive)
-            self.debug("Editing shortcuts sensitivity set to %s", sensitive)
+
+        sensitive = sensitive and self.timeline.selection
+        self.selection_actions.set_sensitive(sensitive)
+        self.debug("Editing shortcuts sensitivity set to %s", sensitive)
 
     # Internal API
 
