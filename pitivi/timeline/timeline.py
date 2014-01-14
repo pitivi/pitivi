@@ -68,21 +68,6 @@ PreferencesDialog.addNumericPreference('imageClipLength',
 
 TARGET_TYPE_URI_LIST = 80
 
-# tooltip text for toolbar
-DELETE = _("Delete Selected")
-SPLIT = _("Split clip at playhead position")
-KEYFRAME = _("Add a keyframe")
-PREVKEYFRAME = _("Move to the previous keyframe")
-NEXTKEYFRAME = _("Move to the next keyframe")
-ZOOM_IN = _("Zoom In")
-ZOOM_OUT = _("Zoom Out")
-ZOOM_FIT = _("Zoom Fit")
-UNGROUP = _("Ungroup clips")
-GROUP = _("Group clips")
-ALIGN = _("Align clips based on their soundtracks")
-SELECT_BEFORE = ("Select all sources before selected")
-SELECT_AFTER = ("Select all after selected")
-
 # Colors
 TIMELINE_BACKGROUND_COLOR = Clutter.Color.new(31, 30, 33, 255)
 SELECTION_MARQUEE_COLOR = Clutter.Color.new(100, 100, 100, 200)
@@ -957,15 +942,30 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return longest_layer
 
     def _createActions(self):
+        """
+        Sets up the GtkActions. This allows managing the sensitivity of widgets
+        to the mouse and keyboard shortcuts.
+        """
+        # TODO: use GAction + GActionGroup (Gio.SimpleAction + Gio.SimpleActionGroup)
+
+        # Action list items can vary in size (1-6 items). The first one is the
+        # name, and it is the only mandatory option. All the other options are
+        # optional, and if omitted will default to None.
+        #
+        # name (required), stock ID, translatable label,
+        # keyboard shortcut, translatable tooltip, callback function
+        zoom_in_tooltip = _("Zoom In")
+        zoom_out_tooltip = _("Zoom Out")
+        zoom_fit_tooltip = _("Zoom Fit")
         actions = (
             ("ZoomIn", Gtk.STOCK_ZOOM_IN, None,
-            "<Control>plus", ZOOM_IN, self._zoomInCb),
+            "<Control>plus", zoom_in_tooltip, self._zoomInCb),
 
             ("ZoomOut", Gtk.STOCK_ZOOM_OUT, None,
-            "<Control>minus", ZOOM_OUT, self._zoomOutCb),
+            "<Control>minus", zoom_out_tooltip, self._zoomOutCb),
 
             ("ZoomFit", Gtk.STOCK_ZOOM_FIT, None,
-            "<Control>0", ZOOM_FIT, self._zoomFitCb),
+            "<Control>0", zoom_fit_tooltip, self._zoomFitCb),
 
             ("Screenshot", None, _("Export current frame..."),
             None, _("Export the frame at the current playhead "
@@ -973,28 +973,28 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             # Alternate keyboard shortcuts to the actions above
             ("ControlEqualAccel", Gtk.STOCK_ZOOM_IN, None,
-            "<Control>equal", ZOOM_IN, self._zoomInCb),
+            "<Control>equal", zoom_in_tooltip, self._zoomInCb),
 
             ("ControlKPAddAccel", Gtk.STOCK_ZOOM_IN, None,
-            "<Control>KP_Add", ZOOM_IN, self._zoomInCb),
+            "<Control>KP_Add", zoom_in_tooltip, self._zoomInCb),
 
             ("ControlKPSubtractAccel", Gtk.STOCK_ZOOM_OUT, None,
-            "<Control>KP_Subtract", ZOOM_OUT, self._zoomOutCb),
+            "<Control>KP_Subtract", zoom_out_tooltip, self._zoomOutCb),
         )
 
         selection_actions = (
             ("DeleteObj", Gtk.STOCK_DELETE, None,
-            "Delete", DELETE, self._deleteSelected),
+            "Delete", _("Delete Selected"), self._deleteSelected),
 
             ("UngroupObj", "pitivi-ungroup", _("Ungroup"),
-            "<Shift><Control>G", UNGROUP, self._ungroupSelected),
+            "<Shift><Control>G", _("Ungroup clips"), self._ungroupSelected),
 
             # Translators: This is an action, the title of a button
             ("GroupObj", "pitivi-group", _("Group"),
-            "<Control>G", GROUP, self._groupSelected),
+            "<Control>G", _("Group clips"), self._groupSelected),
 
             ("AlignObj", "pitivi-align", _("Align"),
-            "<Shift><Control>A", ALIGN, self._alignSelected),
+            "<Shift><Control>A", _("Align clips based on their soundtracks"), self._alignSelected),
         )
 
         playhead_actions = (
@@ -1002,16 +1002,16 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             "space", _("Start Playback"), self._playPauseCb),
 
             ("Split", "pitivi-split", _("Split"),
-            "S", SPLIT, self._splitCb),
+            "S", _("Split clip at playhead position"), self._splitCb),
 
             ("Keyframe", "pitivi-keyframe", _("Add a Keyframe"),
-            "K", KEYFRAME, self._keyframeCb),
+            "K", _("Add a keyframe"), self._keyframeCb),
 
             ("Prevkeyframe", None, _("_Previous Keyframe"),
-            "comma", PREVKEYFRAME, self._previousKeyframeCb),
+            "comma", _("Move to the previous keyframe"), self._previousKeyframeCb),
 
             ("Nextkeyframe", None, _("_Next Keyframe"),
-            "period", NEXTKEYFRAME, self._nextKeyframeCb),
+            "period", _("Move to the next keyframe"), self._nextKeyframeCb),
         )
 
         actiongroup = Gtk.ActionGroup(name="timelinepermanent")
