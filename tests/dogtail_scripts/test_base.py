@@ -42,18 +42,20 @@ class BaseDogTail(unittest.TestCase):
         # by using their known position instead of searching.
         # Reuse those variables throughout your scripts for efficient access.
         # FIXME: this will probably break with detached tabs.
-        mainwindow = self.pitivi.children[0].children[0]  # this is a vbox
-        mainwindow_upper = mainwindow.children[2].child(name="upper half", recursive=False)
-        timeline_area = mainwindow.children[2].child(name="timeline area", recursive=False)
+        mainwindow = self.pitivi.children[0].children[0].children[0]  # this is a vbox
+        assert mainwindow.name == 'contents'
+        mainwindow_upper, timeline_area = mainwindow.children
+        assert mainwindow_upper.name == 'upper half'
+        assert timeline_area.name == 'timeline area'
         primary_tabs = mainwindow_upper.children[0].child(name="primary tabs", recursive=False)
         secondary_tabs = mainwindow_upper.children[0].child(name="secondary tabs", recursive=False)
         # These are the "shortcut" variables you can use for better perfs:
-        self.menubar = mainwindow.child(roleName='menu bar')
+        self.menubar = self.pitivi.children[0].child(name='headerbar', recursive=False)
         self.medialibrary = primary_tabs.children[0]
         self.effectslibrary = primary_tabs.children[1]
         self.clipproperties = secondary_tabs.children[0]
-        self.transitions = secondary_tabs.children[0]
-        self.titles = secondary_tabs.children[0]
+        self.transitions = secondary_tabs.children[1]
+        self.titles = secondary_tabs.children[2]
         self.viewer = mainwindow_upper.child(name="viewer", recursive=False)
         self.zoom_best_fit_button = timeline_area.child(name="Zoom", recursive=True)
         self.timeline = timeline_area.child(name="timeline canvas", recursive=False)
