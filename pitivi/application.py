@@ -72,10 +72,6 @@ class Pitivi(Loggable, Signallable):
      - C{new-project-loading} : Pitivi is attempting to load a new project.
      - C{new-project-loaded} : A new L{Project} has been loaded, and the UI should refresh it's view.
      - C{new-project-failed} : A new L{Project} failed to load.
-     - C{closing-project} :  pitivi would like to close a project. handlers should return false
-     if they do not want this project to close. by default, assumes
-     true. This signal should only be used by classes that might want to abort
-     the closing of a project.
      - C{project-closed} : The project is closed, it will be freed when the callback returns.
      Classes should connect to this instance when they want to know that
      data related to that project is no longer going to be used.
@@ -93,7 +89,6 @@ class Pitivi(Loggable, Signallable):
         "new-project-created": ["project"],
         "new-project-loaded": ["project"],
         "new-project-failed": ["uri", "exception"],
-        "closing-project": ["project"],
         "project-closed": ["project"],
         "missing-uri": ["formatter", "uri"],
         "version-info-received": ["versions"],
@@ -161,7 +156,6 @@ class Pitivi(Loggable, Signallable):
         pm.connect("new-project-created", self._projectManagerNewProjectCreated)
         pm.connect("new-project-loaded", self._projectManagerNewProjectLoaded)
         pm.connect("new-project-failed", self._projectManagerNewProjectFailed)
-        pm.connect("closing-project", self._projectManagerClosingProject)
         pm.connect("project-closed", self._projectManagerProjectClosed)
 
     def _projectManagerNewProjectLoading(self, unused_project_manager, uri):
@@ -184,9 +178,6 @@ class Pitivi(Loggable, Signallable):
 
     def _projectManagerNewProjectFailed(self, unused_project_manager, uri, exception):
         self.emit("new-project-failed", uri, exception)
-
-    def _projectManagerClosingProject(self, unused_project_manager, project):
-        return self.emit("closing-project", project)
 
     def _projectManagerProjectClosed(self, unused_project_manager, project):
         #self.timelineLogObserver.stopObserving(project.timeline)
@@ -235,7 +226,6 @@ class InteractivePitivi(Pitivi):
     def __init__(self, debug=False):
         Pitivi.__init__(self)
         self.mainloop = GLib.MainLoop()
-        self.actioner = None
         self.gui = None
         if debug:
             sys.excepthook = self._excepthook
@@ -245,22 +235,6 @@ class InteractivePitivi(Pitivi):
         import pdb
         traceback.print_tb(tback)
         pdb.post_mortem(tback)
-
-    def _setActioner(self, actioner):
-        self.actioner = actioner
-        if self.actioner:
-            self.actioner.connect("eos", self._eosCb)
-            # On error, all we need to do is shutdown which
-            # is the same as we do for EOS
-            self.actioner.connect("error", self._eosCb)
-            # Configure the actioner and start acting!
-            self.actioner.startAction()
-
-    def _eosCb(self, unused_obj):
-        raise NotImplementedError()
-
-    def _loadProject(self, project_filename):
-        self.projectManager.loadProject(quote_uri(os.path.abspath(project_filename)))
 
     def run(self):
         """Runs the main loop."""
@@ -285,9 +259,6 @@ class GuiPitivi(InteractivePitivi):
         dialog.set_markup("<b>" + message + "</b>")
         dialog.format_secondary_text(detail)
         dialog.run()
-
-    def _eosCb(self, unused_obj):
-        self.shutdown()
 
     def _createGui(self):
         """Returns a Gtk.Widget which represents the UI."""
@@ -362,8 +333,7 @@ class ProjectLoaderGuiPitivi(GuiPitivi):
         if not os.path.exists(project_filename):
             self.error("Project file does not exist: %s" % project_filename)
             sys.exit(1)
-        else:
-            self._loadProject(project_filename)
+        self.projectManager.loadProject(quote_uri(os.path.abspath(project_filename)))
 
 
 class StartupWizardGuiPitivi(GuiPitivi):
