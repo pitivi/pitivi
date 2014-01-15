@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#rendering"/>
-    <revision pkgversion="0.16" version="0.1" date="2012-01-02" status="incomplete"/>
+    <revision pkgversion="0.92" version="0.1" date="2014-01-27" status="incomplete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -13,6 +13,8 @@
     <credit type="contributor">
       <name>Mario Blättermann</name>
       <email>mariobl@gnome.org</email>
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
     </credit>
     <desc>
       Learn the difference between saving a project and exporting a rendered movie.
@@ -23,15 +25,19 @@
   </info>
 
     <title>Understanding rendering</title>
-     
+
      <p>Rendering is the process of exporting your project into a new, finalized media file. Rendering only creates a new “rendered” video file, and does not affect the project itself; you can still make edits to your project and render again as many times as needed.</p>
      <steps>
       <item><p>From the <gui>Project</gui> menu, use <gui>Render</gui>.</p></item>
       <item><p>Adjust the various encoding settings, if needed, to use settings different from the project settings.</p></item>
       <item><p>Click the <gui>Render</gui> button.</p></item>
      </steps>
-     <note style="bug">
+     <note style="tip">
       <p>If your computer is set to suspend or hibernate automatically, <app>Pitivi</app> will automatically inhibit the power saving features during the render process.</p>
      </note>
+     <section>
+      <title>Project settings and the rendering dialog</title>
+       <p>In rendering, project settings are taken as default values for most of the rendering settings such as framerate, number of audio channels or their sampling rate. These values can be overridden only temporarily for a given render. Once the render is complete, the values will reset to the project settings defaults. However, some settings, such as the resolution scale, container, codecs, codec settings and the render output folder are saved so they appear as defaults in the next rendering.</p>
+     </section>
 
 </page>
