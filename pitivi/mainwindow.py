@@ -1010,10 +1010,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         chooser = Gtk.FileChooserWidget(action=Gtk.FileChooserAction.OPEN)
         chooser.set_select_multiple(False)
-        pw = PreviewWidget(self.app)
-        chooser.set_preview_widget(pw)
+        previewer = PreviewWidget(self.app)
+        chooser.set_preview_widget(previewer)
         chooser.set_use_preview_label(False)
-        chooser.connect('update-preview', pw.add_preview_request)
+        chooser.connect('update-preview', previewer.add_preview_request)
         chooser.set_current_folder(self.settings.lastProjectFolder)
         # Use a Gtk FileFilter to only show files with the same extension
         # Note that splitext gives us the extension with the ".", no need to

@@ -459,10 +459,10 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._importDialog.set_current_folder(self.app.settings.lastImportFolder)
         self._importDialog.connect('response', self._dialogBoxResponseCb)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
-        pw = PreviewWidget(self.app)
-        self._importDialog.set_preview_widget(pw)
+        previewer = PreviewWidget(self.app)
+        self._importDialog.set_preview_widget(previewer)
         self._importDialog.set_use_preview_label(False)
-        self._importDialog.connect('update-preview', pw.add_preview_request)
+        self._importDialog.connect('update-preview', previewer.add_preview_request)
         # Filter for the "known good" formats by default
         filt_supported = Gtk.FileFilter()
         filt_known = Gtk.FileFilter()
