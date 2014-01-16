@@ -1261,11 +1261,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         previewer = PreviewWidget(self)
         preview_window.add(previewer)
 
-        preview_window.show_all()  # Needed for PreviewWidget to do its magic
-        preview_window.hide()  # Hack to allow setting the window position
         previewer.previewUri(uri)
         previewer.setMinimal()
-
+        previewer.show()
         info = self.app.current_project.get_asset(uri, GES.UriClip).get_info()
         video_streams = info.get_video_streams()
 

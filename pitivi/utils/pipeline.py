@@ -515,12 +515,13 @@ class AssetPipeline(SimplePipeline):
     Pipeline for playing a single clip.
     """
 
-    def __init__(self, clip, name=None):
+    def __init__(self, clip=None, name=None):
         bPipeline = Gst.ElementFactory.make("playbin", name)
         SimplePipeline.__init__(self, bPipeline)
 
-        self.setClipUri(clip.props.uri)
         self.clip = clip
+        if self.clip:
+            self.setClipUri(self.clip.props.uri)
 
     def setClipUri(self, uri):
         self._pipeline.set_property("uri", uri)

@@ -21,7 +21,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-import platform
 from gettext import gettext as _
 from gi.repository import GLib
 from gi.repository import GObject
@@ -35,6 +34,7 @@ from gi.repository.GstPbutils import Discoverer
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import uri_is_valid
+from pitivi.utils.pipeline import AssetPipeline
 from pitivi.utils.ui import beautify_length, beautify_stream, SPACING
 from pitivi.viewer import ViewerWidget
 
@@ -84,12 +84,10 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.discoverer = Discoverer.new(Gst.SECOND)
 
         #playbin for play pics
-        self.player = Gst.ElementFactory.make("playbin", "preview-player")
-        bus = self.player.get_bus()
-        bus.add_signal_watch()
-        bus.connect('message', self._bus_message_cb)
-        bus.connect('message::tag', self._tag_found_cb)
-        self.__fakesink = Gst.ElementFactory.make("fakesink", "fakesink")
+        self.player = AssetPipeline(clip=None, name="preview-player")
+        self.player.connect('eos', self._pipelineEosCb)
+        self.player.connect('error', self._pipelineErrorCb)
+        self.player._bus.connect('message::tag', self._tag_found_cb)
 
         #some global variables for preview handling
         self.is_playing = False
@@ -107,6 +105,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.preview_video.connect("realize", self._on_preview_video_realize_cb)
         self.preview_video.modify_bg(Gtk.StateType.NORMAL, self.preview_video.get_style().black)
         self.preview_video.set_double_buffered(False)
+        self.preview_video.show()
         self.pack_start(self.preview_video, False, True, 0)
 
         # An image for images and audio
@@ -202,7 +201,6 @@ class PreviewWidget(Gtk.VBox, Loggable):
                 self.show_preview(uri, info)
 
     def show_preview(self, uri, info):
-
         if info:
             self.preview_cache[uri] = info
         else:
@@ -238,13 +236,14 @@ class PreviewWidget(Gtk.VBox, Loggable):
             else:
                 self.current_preview_type = 'video'
                 self.preview_image.hide()
-                self.player.set_property("uri", self.current_selected_uri)
-                self.player.set_state(Gst.State.PAUSED)
+                self.player.setClipUri(self.current_selected_uri)
+                self.player.setState(Gst.State.PAUSED)
                 self.pos_adj.props.upper = duration
                 w, h = self.__get_best_size((video.get_par_num() / video.get_par_denom()) * video.get_width(),
                     video.get_height())
                 self.preview_video.set_size_request(w, h)
                 self.preview_video.show()
+                self.player.connectWithViewer(self.preview_video)
                 self.bbox.show()
                 self.play_button.show()
                 self.seeker.show()
@@ -268,10 +267,9 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
             self.description = beautify_stream(audio) + "\n" + \
                 _("<b>Duration</b>: %s") % pretty_duration + "\n"
-            self.player.set_state(Gst.State.NULL)
-            self.player.set_property("uri", self.current_selected_uri)
-            self.player.set_property("video-sink", self.__fakesink)
-            self.player.set_state(Gst.State.PAUSED)
+            self.player.setState(Gst.State.NULL)
+            self.player.setClipUri(self.current_selected_uri)
+            self.player.setState(Gst.State.PAUSED)
             self.play_button.show()
             self.seeker.show()
             self.b_zoom_in.hide()
@@ -283,14 +281,14 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.b_details.show()
 
     def play(self):
-        self.player.set_state(Gst.State.PLAYING)
+        self.player.setState(Gst.State.PLAYING)
         self.is_playing = True
         self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PAUSE)
         GLib.timeout_add(250, self._update_position)
         self.debug("Preview started")
 
     def pause(self):
-        self.player.set_state(Gst.State.PAUSED)
+        self.player.setState(Gst.State.PAUSED)
         self.is_playing = False
         self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
         self.log("Preview paused")
@@ -304,7 +302,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.description = ""
         self.l_tags.set_markup("")
         self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
-        self.player.set_state(Gst.State.NULL)
+        self.player.setState(Gst.State.NULL)
         self.is_playing = False
         self.tags = {}
         self.current_selected_uri = ""
@@ -317,45 +315,40 @@ class PreviewWidget(Gtk.VBox, Loggable):
         if event.type == Gdk.EventType.BUTTON_PRESS:
             self.countinuous_seek = True
             if self.is_playing:
-                self.player.set_state(Gst.State.PAUSED)
+                self.player.setState(Gst.State.PAUSED)
         elif event.type == Gdk.EventType.BUTTON_RELEASE:
             self.countinuous_seek = False
             value = long(widget.get_value())
-            self.player.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, value)
+            self.player.simple_seek(value)
             if self.is_playing:
-                self.player.set_state(Gst.State.PLAYING)
+                self.player.setState(Gst.State.PLAYING)
             # Now, allow gobject timeout to continue updating the slider pos:
             self.slider_being_used = False
 
     def _on_motion_notify_cb(self, widget, event):
         if self.countinuous_seek:
             value = long(widget.get_value())
-            self.player.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, value)
+            self.player.simple_seek(value)
 
-    def _bus_message_cb(self, bus, message):
-        if message.type == Gst.MessageType.EOS:
-            self.player.set_state(Gst.State.NULL)
-            self.is_playing = False
-            self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
-            self.pos_adj.set_value(0)
-        elif message.type == Gst.MessageType.ERROR:
-            self.player.set_state(Gst.State.NULL)
-            self.is_playing = False
-            err, dbg = message.parse_error()
-            self.error("Error: %s %s" % (err, dbg))
+    def _pipelineEosCb(self, unused_pipeline):
+        self.player.setState(Gst.State.NULL)
+        self.is_playing = False
+        self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
+        self.pos_adj.set_value(0)
+
+    def _pipelineErrorCb(self, unused_message, unused_detail):
+        self.player.setState(Gst.State.NULL)
+        self.is_playing = False
 
     def _update_position(self, *unused_args):
         if self.is_playing and not self.slider_being_used:
-            curr_pos = self.player.query_position(Gst.Format.TIME)[1]
+            curr_pos = self.player.getPosition()
             self.pos_adj.set_value(long(curr_pos))
         return self.is_playing
 
-    def _on_preview_video_realize_cb(self, widget):
-        if platform.system() == 'Windows':
-            xid = widget.get_window().get_handle()
-        else:
-            xid = widget.get_window().get_xid()
-        self.player.set_window_handle(xid)
+    def _on_preview_video_realize_cb(self, unused_widget):
+        if self.current_preview_type == 'video':
+            self.player.connectWithViewer(self.preview_video)
 
     def _on_start_stop_clicked_cb(self, button):
         if self.is_playing:
@@ -441,11 +434,8 @@ class PreviewWidget(Gtk.VBox, Loggable):
             dialog.destroy()
 
     def _destroy_cb(self, widget):
-        self.player.set_state(Gst.State.NULL)
+        self.player.setState(Gst.State.NULL)
         self.is_playing = False
-        #FIXME: are the following lines really needed?
-        del self.player
-        del self.preview_cache
 
     def __get_best_size(self, width_in, height_in):
         if width_in > height_in:
