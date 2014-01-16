@@ -93,7 +93,6 @@ class PreviewWidget(Gtk.VBox, Loggable):
 
         #some global variables for preview handling
         self.is_playing = False
-        self.time_format = Gst.Format(Gst.Format.TIME)
         self.original_dims = (PREVIEW_WIDTH, PREVIEW_HEIGHT)
         self.countinuous_seek = False
         self.slider_being_used = False
@@ -322,7 +321,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         elif event.type == Gdk.EventType.BUTTON_RELEASE:
             self.countinuous_seek = False
             value = long(widget.get_value())
-            self.player.seek_simple(self.time_format, Gst.SeekFlags.FLUSH, value)
+            self.player.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, value)
             if self.is_playing:
                 self.player.set_state(Gst.State.PLAYING)
             # Now, allow gobject timeout to continue updating the slider pos:
@@ -331,7 +330,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
     def _on_motion_notify_cb(self, widget, event):
         if self.countinuous_seek:
             value = long(widget.get_value())
-            self.player.seek_simple(self.time_format, Gst.SeekFlags.FLUSH, value)
+            self.player.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, value)
 
     def _bus_message_cb(self, bus, message):
         if message.type == Gst.MessageType.EOS:
@@ -347,7 +346,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
 
     def _update_position(self, *unused_args):
         if self.is_playing and not self.slider_being_used:
-            curr_pos = self.player.query_position(self.time_format)[1]
+            curr_pos = self.player.query_position(Gst.Format.TIME)[1]
             self.pos_adj.set_value(long(curr_pos))
         return self.is_playing
 
