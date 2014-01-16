@@ -306,7 +306,7 @@ class SimplePipeline(Signallable, Loggable):
 
         return dur
 
-    def activatePositionListener(self, interval=30):
+    def activatePositionListener(self, interval=500):
         """
         Activate the position listener.
 
