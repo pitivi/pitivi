@@ -156,7 +156,7 @@ class SimplePipeline(Signallable, Loggable):
         "error": ["message", "details"]
     }
 
-    def __init__(self, pipeline, video_overlay):
+    def __init__(self, pipeline):
         Loggable.__init__(self)
         Signallable.__init__(self)
         self._pipeline = pipeline
@@ -167,7 +167,6 @@ class SimplePipeline(Signallable, Loggable):
         self._listeningInterval = 300  # default 300ms
         self._listeningSigId = 0
         self._duration = Gst.CLOCK_TIME_NONE
-        self.video_overlay = video_overlay
         self.lastPosition = long(0 * Gst.SECOND)
         self.pendingRecovery = False
         self._attempted_recoveries = 0
@@ -505,7 +504,7 @@ class AssetPipeline(SimplePipeline):
     def __init__(self, clip):
         bPipeline = Gst.ElementFactory.make("playbin", None)
         bPipeline.set_property("uri", clip.props.uri)
-        SimplePipeline.__init__(self, bPipeline, bPipeline)
+        SimplePipeline.__init__(self, bPipeline)
 
         self.clip = clip
 
@@ -536,7 +535,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
 
     def __init__(self, pipeline=None):
         GES.Pipeline.__init__(self)
-        SimplePipeline.__init__(self, self, self)
+        SimplePipeline.__init__(self, self)
 
         self.clutter_sink = Gst.ElementFactory.make("cluttersink", None)
         self.preview_set_video_sink(self.clutter_sink)
