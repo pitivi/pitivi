@@ -124,6 +124,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
     def _maybeUpdate(self):
         self.queue_draw()
         self.callback_id = None
+        self.callback_id_scroll = None
         return False
 
     def zoomChanged(self):
