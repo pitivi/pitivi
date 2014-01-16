@@ -36,7 +36,6 @@ from gi.repository import GES
 MAX_RECOVERIES = 5
 
 
-# FIXME : define/document a proper hierarchy
 class PipelineError(Exception):
     pass
 
@@ -159,6 +158,7 @@ class SimplePipeline(Signallable, Loggable):
     def __init__(self, pipeline):
         Loggable.__init__(self)
         Signallable.__init__(self)
+
         self._pipeline = pipeline
         self._bus = self._pipeline.get_bus()
         self._bus.add_signal_watch()
@@ -173,6 +173,20 @@ class SimplePipeline(Signallable, Loggable):
         self._waiting_for_async_done = True
         self._next_seek = None
         self._timeout_async_id = 0
+
+        # Create a cluttersink element used for display. Subclasses must connect
+        # it to self._pipeline themselves
+        self._clutter_sink = Gst.ElementFactory.make("cluttersink", None)
+        if isinstance(pipeline, GES.Pipeline):
+            self._pipeline.preview_set_video_sink(self._clutter_sink)
+        else:
+            self._pipeline.set_property("video_sink", self._clutter_sink)
+
+    def connectWithViewer(self, viewer):
+        """
+        Connect the specified ViewerWidget so this pipeline can be displayed.
+        """
+        self._clutter_sink.props.texture = viewer.texture
 
     def release(self):
         """
@@ -501,12 +515,15 @@ class AssetPipeline(SimplePipeline):
     Pipeline for playing a single clip.
     """
 
-    def __init__(self, clip):
-        bPipeline = Gst.ElementFactory.make("playbin", None)
-        bPipeline.set_property("uri", clip.props.uri)
+    def __init__(self, clip, name=None):
+        bPipeline = Gst.ElementFactory.make("playbin", name)
         SimplePipeline.__init__(self, bPipeline)
 
+        self.setClipUri(clip.props.uri)
         self.clip = clip
+
+    def setClipUri(self, uri):
+        self._pipeline.set_property("uri", uri)
 
 
 class Pipeline(GES.Pipeline, SimplePipeline):
@@ -536,9 +553,6 @@ class Pipeline(GES.Pipeline, SimplePipeline):
     def __init__(self, pipeline=None):
         GES.Pipeline.__init__(self)
         SimplePipeline.__init__(self, self)
-
-        self.clutter_sink = Gst.ElementFactory.make("cluttersink", None)
-        self.preview_set_video_sink(self.clutter_sink)
 
         self._seeker = Seeker()
         self._seeker.connect("seek", self._seekCb)

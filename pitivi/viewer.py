@@ -93,7 +93,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.log("New ViewerContainer")
 
         self.pipeline = None
-        self.__sink = None
         self.docked = True
         self.seeker = Seeker()
 
@@ -117,16 +116,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
         else:
             return self.external
 
-    @property
-    def sink(self):
-        return self.__sink
-
-    @sink.setter
-    def sink(self, sink):
-        self.__sink = sink
-        self.internal.sink = sink
-        self.external.sink = sink
-
     def setPipeline(self, pipeline, position=None):
         """
         Set the Viewer to the given Pipeline.
@@ -148,7 +137,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.pipeline.connect("position", self._positionCb)
         self.pipeline.connect("duration-changed", self._durationChangedCb)
 
-        self.sink = pipeline.clutter_sink
         self._switch_output_window()
         self._setUiActive()
 
@@ -386,7 +374,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.fullscreen_button.connect("toggled", self._toggleFullscreen)
 
         # if we are playing, switch output immediately
-        if self.sink:
+        if self.pipeline:
             self._switch_output_window()
         self.hide()
         self.external_window.move(self.settings.viewerX, self.settings.viewerY)
@@ -407,7 +395,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.pack_end(self.buttons_container, False, False, 0)
         self.show()
         # if we are playing, switch output immediately
-        if self.sink:
+        if self.pipeline:
             self._switch_output_window()
         self.external_window.hide()
 
@@ -488,18 +476,17 @@ class ViewerContainer(Gtk.VBox, Loggable):
             self.playpause_button.setPlay()
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
         else:
-            self.sink = None
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
         self.internal._currentStateCb(self.pipeline, state)
 
     def _switch_output_window(self):
         # Don't do anything if we don't have a pipeline
-        if self.sink is None:
+        if self.pipeline is None:
             return
 
         if self.target.get_realized():
-            self.debug("Connecting the sink pipeline to the viewer's texture")
-            self.sink.props.texture = self.target.texture
+            self.debug("Connecting the pipeline to the viewer's texture")
+            self.pipeline.connectWithViewer(self.target)
         else:
             # Show the widget and wait for the realized callback
             self.log("Target is not realized, showing the widget")
