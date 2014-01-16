@@ -173,33 +173,25 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.settings.viewerX = event.x
         self.settings.viewerY = event.y
 
-    def _videoRealized(self, widget):
-        if widget == self.target:
-            self.log("Widget realized: %s", widget)
+    def _videoRealizedCb(self, unused_drawing_area, viewer):
+        if viewer == self.target:
+            self.log("Viewer widget realized: %s", viewer)
             self._switch_output_window()
 
     def _createUi(self):
         """ Creates the Viewer GUI """
         # Drawing area
-        # The aspect ratio gets overridden on startup by setDisplayAspectRatio
-        self.internal_aframe = Gtk.AspectFrame(xalign=0.5, yalign=1.0,
-                                            ratio=4.0 / 3.0, obey_child=False)
-        self.external_aframe = Gtk.AspectFrame(xalign=0.5, yalign=0.5,
-                                            ratio=4.0 / 3.0, obey_child=False)
-
-        self.internal = ViewerWidget(self.app.settings)
+        self.internal = ViewerWidget(self.app.settings, realizedCb=self._videoRealizedCb)
         # Transformation boxed DISABLED
         # self.internal.init_transformation_events()
-        self.internal_aframe.add(self.internal)
-        self.pack_start(self.internal_aframe, True, True, 0)
+        self.pack_start(self.internal, True, True, 0)
 
         self.external_window = Gtk.Window()
         vbox = Gtk.VBox()
         vbox.set_spacing(SPACING)
         self.external_window.add(vbox)
-        self.external = ViewerWidget(self.app.settings)
-        self.external_aframe.add(self.external)
-        vbox.pack_start(self.external_aframe, True, True, 0)
+        self.external = ViewerWidget(self.app.settings, realizedCb=self._videoRealizedCb)
+        vbox.pack_start(self.external, True, True, 0)
         self.external_window.connect("delete-event", self._externalWindowDeleteCb)
         self.external_window.connect("configure-event", self._externalWindowConfigureCb)
         self.external_vbox = vbox
@@ -270,27 +262,18 @@ class ViewerContainer(Gtk.VBox, Loggable):
             width = req.width
             height = req.height
             width += 110
-            height = int(width / self.internal_aframe.props.ratio)
-            self.internal_aframe.set_size_request(width, height)
+            height = int(width / self.internal.props.ratio)
+            self.internal.set_size_request(width, height)
 
         self.buttons = bbox
         self.buttons_container = boxalign
-        # Prevent black frames and flickering while resizing or changing focus:
-        self.internal.set_double_buffered(False)
-        self.external.set_double_buffered(False)
-        # We keep the ViewerWidget hidden initially, or the desktop wallpaper
-        # would show through the non-double-buffered widget!
-        self.internal.set_no_show_all(True)
-        self.external.set_no_show_all(True)
-        self.internal.connect("realize", self._videoRealized)
-        self.external.connect("realize", self._videoRealized)
         self.show_all()
         self.external_vbox.show_all()
 
     def setDisplayAspectRatio(self, ratio):
         self.debug("Setting aspect ratio to %f [%r]", float(ratio), ratio)
-        self.internal_aframe.set_property("ratio", float(ratio))
-        self.external_aframe.set_property("ratio", float(ratio))
+        self.internal.setDisplayAspectRatio(ratio)
+        self.external.setDisplayAspectRatio(ratio)
 
     def _entryActivateCb(self, unused_entry):
         self._seekFromTimecodeWidget()
@@ -806,7 +789,7 @@ class TransformationBox():
             self.transformation_properties.connectSpinButtonsToFlush()
 
 
-class ViewerWidget(GtkClutter.Embed, Loggable):
+class ViewerWidget(Gtk.AspectFrame, Loggable):
     """
     Widget for displaying properly GStreamer video sink
 
@@ -816,17 +799,31 @@ class ViewerWidget(GtkClutter.Embed, Loggable):
 
     __gsignals__ = {}
 
-    def __init__(self, settings=None):
-        GtkClutter.Embed.__init__(self)
+    def __init__(self, settings=None, realizedCb=None):
+        # Prevent black frames and flickering while resizing or changing focus:
+        # The aspect ratio gets overridden by setDisplayAspectRatio.
+        Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=1.0,
+                                 ratio=4.0 / 3.0, obey_child=False)
+        Loggable.__init__(self)
+
+        self.drawing_area = GtkClutter.Embed()
+        self.drawing_area.set_double_buffered(False)
+        # We keep the ViewerWidget hidden initially, or the desktop wallpaper
+        # would show through the non-double-buffered widget!
+        if realizedCb:
+            self.drawing_area.connect("realize", realizedCb, self)
+        self.add(self.drawing_area)
+
         layout_manager = Clutter.BinLayout(x_align=Clutter.BinAlignment.FILL, y_align=Clutter.BinAlignment.FILL)
-        self.get_stage().set_layout_manager(layout_manager)
+        self.drawing_area.get_stage().set_layout_manager(layout_manager)
         self.texture = Clutter.Texture()
         # This is a trick to make the viewer appear darker at the start.
         self.texture.set_from_rgb_data(data=[0] * 3, has_alpha=False,
                 width=1, height=1, rowstride=3, bpp=3,
                 flags=Clutter.TextureFlags.NONE)
-        self.get_stage().add_child(self.texture)
-        Loggable.__init__(self)
+        self.drawing_area.get_stage().add_child(self.texture)
+        self.drawing_area.show()
+
         self.seeker = Seeker()
         self.settings = settings
         self.box = None
@@ -840,6 +837,9 @@ class ViewerWidget(GtkClutter.Embed, Loggable):
         # FIXME PyGi Styling with Gtk3
         #for state in range(Gtk.StateType.INSENSITIVE + 1):
             #self.modify_bg(state, self.style.black)
+
+    def setDisplayAspectRatio(self, ratio):
+        self.set_property("ratio", float(ratio))
 
     def init_transformation_events(self):
         self.fixme("TransformationBox disabled")

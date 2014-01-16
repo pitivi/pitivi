@@ -68,10 +68,10 @@ acceptable_tags = [
     Gst.TAG_COPYRIGHT]
 
 
-class PreviewWidget(Gtk.VBox, Loggable):
+class PreviewWidget(Gtk.Grid, Loggable):
 
     def __init__(self, instance):
-        Gtk.VBox.__init__(self)
+        Gtk.Grid.__init__(self)
         Loggable.__init__(self)
 
         self.log("Init PreviewWidget")
@@ -101,25 +101,23 @@ class PreviewWidget(Gtk.VBox, Loggable):
 
         # Gui elements:
         # Drawing area for video output
-        self.preview_video = ViewerWidget()
-        self.preview_video.connect("realize", self._on_preview_video_realize_cb)
-        self.preview_video.modify_bg(Gtk.StateType.NORMAL, self.preview_video.get_style().black)
-        self.preview_video.set_double_buffered(False)
-        self.preview_video.show()
-        self.pack_start(self.preview_video, False, True, 0)
+        self.preview_video = ViewerWidget(realizedCb=self._on_preview_video_realize_cb)
+        self.preview_video.props.hexpand = False
+        self.preview_video.props.vexpand = False
+        self.attach(self.preview_video, 0, 0, 1, 1)
 
         # An image for images and audio
         self.preview_image = Gtk.Image()
         self.preview_image.set_size_request(self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
         self.preview_image.show()
-        self.pack_start(self.preview_image, False, True, 0)
+        self.attach(self.preview_image, 0, 1, 1, 1)
 
         # Play button
         self.bbox = Gtk.HBox()
         self.play_button = Gtk.ToolButton()
         self.play_button.set_icon_name("media-playback-start")
         self.play_button.connect("clicked", self._on_start_stop_clicked_cb)
-        self.bbox.pack_start(self.play_button, False, True, 0)
+        self.bbox.pack_start(self.play_button, False, False, 0)
 
         #Scale for position handling
         self.pos_adj = Gtk.Adjustment()
@@ -141,14 +139,14 @@ class PreviewWidget(Gtk.VBox, Loggable):
         self.bbox.pack_start(self.b_zoom_in, False, True, 0)
         self.bbox.pack_start(self.b_zoom_out, False, True, 0)
         self.bbox.show_all()
-        self.pack_start(self.bbox, False, False, 0)
+        self.attach(self.bbox, 0, 2, 1, 1)
 
         # Label for metadata tags
         self.l_tags = Gtk.Label()
         self.l_tags.set_justify(Gtk.Justification.LEFT)
         self.l_tags.set_ellipsize(Pango.EllipsizeMode.END)
         self.l_tags.show()
-        self.pack_start(self.l_tags, False, False, 0)
+        self.attach(self.l_tags, 0, 3, 1, 1)
 
         # Error handling
         vbox = Gtk.VBox()
@@ -159,7 +157,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         vbox.pack_start(self.l_error, True, True, 0)
         vbox.pack_start(self.b_details, False, False, 0)
         vbox.show()
-        self.pack_start(vbox, False, False, 0)
+        self.attach(vbox, 0, 4, 1, 1)
 
     def setMinimal(self):
         self.remove(self.l_tags)
@@ -239,9 +237,11 @@ class PreviewWidget(Gtk.VBox, Loggable):
                 self.player.setClipUri(self.current_selected_uri)
                 self.player.setState(Gst.State.PAUSED)
                 self.pos_adj.props.upper = duration
-                w, h = self.__get_best_size((video.get_par_num() / video.get_par_denom()) * video.get_width(),
-                    video.get_height())
+                video_width = (video.get_par_num() / video.get_par_denom()) * video.get_width()
+                video_height = video.get_height()
+                w, h = self.__get_best_size(video_width, video_height)
                 self.preview_video.set_size_request(w, h)
+                self.preview_video.setDisplayAspectRatio(float(video_width) / video_height)
                 self.preview_video.show()
                 self.player.connectWithViewer(self.preview_video)
                 self.bbox.show()
@@ -249,9 +249,9 @@ class PreviewWidget(Gtk.VBox, Loggable):
                 self.seeker.show()
                 self.b_zoom_in.show()
                 self.b_zoom_out.show()
-                self.description = _("<b>Resolution</b>: %d×%d") % \
-                    ((video.get_par_num() / video.get_par_denom()) * video.get_width(), video.get_height()) +\
-                    "\n" + _("<b>Duration</b>: %s") % pretty_duration + "\n"
+                self.description = "\n".join([
+                    _("<b>Resolution</b>: %d×%d") % (video_width, video_height),
+                    _("<b>Duration</b>: %s") % pretty_duration])
         else:
             self.current_preview_type = 'audio'
             self.preview_video.hide()
@@ -265,8 +265,9 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.preview_image.set_from_icon_name("audio-x-generic", Gtk.IconSize.DIALOG)
             self.preview_image.show()
             self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
-            self.description = beautify_stream(audio) + "\n" + \
-                _("<b>Duration</b>: %s") % pretty_duration + "\n"
+            self.description = "\n".join([
+                beautify_stream(audio),
+                _("<b>Duration</b>: %s") % pretty_duration])
             self.player.setState(Gst.State.NULL)
             self.player.setClipUri(self.current_selected_uri)
             self.player.setState(Gst.State.PAUSED)
@@ -346,7 +347,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.pos_adj.set_value(long(curr_pos))
         return self.is_playing
 
-    def _on_preview_video_realize_cb(self, unused_widget):
+    def _on_preview_video_realize_cb(self, unused_drawing_area, unused_widget):
         if self.current_preview_type == 'video':
             self.player.connectWithViewer(self.preview_video)
 
@@ -415,7 +416,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
         tag_list.foreach(self._appendTag, None)
         keys = self.tags.keys()
         keys.sort()
-        text = self.description + "\n"
+        text = self.description + "\n\n"
         for key in keys:
             text = text + "<b>" + key.capitalize() + "</b>: " + self.tags[key] + "\n"
         self.l_tags.set_markup(text)
