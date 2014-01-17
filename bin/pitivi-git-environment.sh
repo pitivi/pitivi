@@ -35,6 +35,8 @@ GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_$(echo $GOBJECT_INTROSP
 # Everything below this line shouldn't be edited!
 #
 
+export PYTHON=python2
+
 if ! pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
   echo "Using a local build of glib"
   MODULE_GLIB="glib"
@@ -50,10 +52,10 @@ else
   echo "Using system-wide gobject-introspection-1.0"
 fi
 
-if python2 -c "import gi; gi.check_version('${PYGOBJECT_RELEASE_TAG}')" &> /dev/null; then
+if $PYTHON -c "import gi; gi.check_version('${PYGOBJECT_RELEASE_TAG}')" &> /dev/null; then
   echo "Using system-wide pygobject"
   # Hack around PYTHONPATH ordering to support gi overrides
-  PYTHONPATH=$(python2 -c 'import gi; print(gi._overridesdir)')/../../:$PYTHONPATH
+  PYTHONPATH=$($PYTHON -c 'import gi; print(gi._overridesdir)')/../../:$PYTHONPATH
 else
   echo "Using a local build of pygobject"
   PYTHONPATH=$MYPITIVI/pygobject:$PYTHONPATH
@@ -330,7 +332,7 @@ if [ "$ready_to_run" != "1" ]; then
 
         # Now compile that module
         if test ! -f ./configure || [ "$force_autogen" == "1" ]; then
-            ./autogen.sh --prefix=$PITIVI/prefix --disable-gtk-doc --with-python=python2
+            ./autogen.sh --prefix=$PITIVI/prefix --disable-gtk-doc --with-python=$PYTHON
             if [ $? -ne 0 ]; then
                 echo "Could not run autogen for $m ; result: $?"
                 exit 1
