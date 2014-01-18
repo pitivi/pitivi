@@ -593,7 +593,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if asset.is_image():
             os.system('xdg-open "%s"' % path_from_uri(asset.get_id()))
         else:
-            self._viewUri(asset.get_id())
+            self._previewAsset(asset.get_id())
 
     def _projectChangedCb(self, unused_project):
         self.main_actions.get_action("SaveProject").set_sensitive(True)
@@ -1251,7 +1251,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     def _leavePreviewCb(self, window, unused):
         window.destroy()
 
-    def _viewUri(self, uri):
+    def _previewAsset(self, uri):
         """ Preview a media file from the media library """
         preview_window = Gtk.Window()
         preview_window.set_title(_("Preview - click outside to close"))
@@ -1270,8 +1270,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if video_streams:
             # For videos and images, automatically resize the window
             # Try to keep it 1:1 if it can fit within 85% of the parent window
-            img_width = video_streams[0].get_width()
-            img_height = video_streams[0].get_height()
+            video = video_streams[0]
+            img_width = video.get_width()
+            img_height = video.get_height()
             controls_height = previewer.bbox.size_request().height
             mainwindow_width, mainwindow_height = self.get_size()
             max_width = 0.85 * mainwindow_width
