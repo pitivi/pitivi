@@ -70,7 +70,7 @@ acceptable_tags = [
 
 class PreviewWidget(Gtk.Grid, Loggable):
 
-    def __init__(self, instance):
+    def __init__(self, instance, minimal=False):
         Gtk.Grid.__init__(self)
         Loggable.__init__(self)
 
@@ -102,8 +102,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
         # Gui elements:
         # Drawing area for video output
         self.preview_video = ViewerWidget(realizedCb=self._on_preview_video_realize_cb)
-        self.preview_video.props.hexpand = False
-        self.preview_video.props.vexpand = False
+        self.preview_video.props.hexpand = minimal
+        self.preview_video.props.vexpand = minimal
         self.attach(self.preview_video, 0, 0, 1, 1)
 
         # An image for images and audio
@@ -159,12 +159,10 @@ class PreviewWidget(Gtk.Grid, Loggable):
         vbox.show()
         self.attach(vbox, 0, 4, 1, 1)
 
-    def setMinimal(self):
-        self.remove(self.l_tags)
-        self.b_zoom_in.hide()
-        self.b_zoom_out.hide()
-        # Allow expanding/filling and pack the video preview below the controls
-        self.set_child_packing(self.preview_video, True, True, 0, Gtk.PackType.END)
+        if minimal:
+            self.remove(self.l_tags)
+            self.bbox.remove(self.b_zoom_in)
+            self.bbox.remove(self.b_zoom_out)
 
     def add_preview_request(self, dialogbox):
         """add a preview request """

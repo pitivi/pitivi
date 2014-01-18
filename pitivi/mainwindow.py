@@ -1258,11 +1258,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         preview_window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         preview_window.set_transient_for(self)
         preview_window.connect("focus-out-event", self._leavePreviewCb)
-        previewer = PreviewWidget(self)
+        previewer = PreviewWidget(self, minimal=True)
         preview_window.add(previewer)
 
         previewer.previewUri(uri)
-        previewer.setMinimal()
         previewer.show()
         controls_height = previewer.bbox.size_request().height
         width, height = self._calculatePreviewWindowSize(uri, controls_height)
