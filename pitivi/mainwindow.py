@@ -1264,6 +1264,18 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         previewer.previewUri(uri)
         previewer.setMinimal()
         previewer.show()
+        controls_height = previewer.bbox.size_request().height
+        width, height = self._calculatePreviewWindowSize(uri, controls_height)
+        preview_window.resize(width, height)
+        # Setting the position of the window only works if it's currently hidden
+        # otherwise, after the resize the position will not be readjusted
+        preview_window.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
+        preview_window.show()
+        previewer.play()
+        # Hack so that we really really force the "utility" window to be focused
+        preview_window.present()
+
+    def _calculatePreviewWindowSize(self, uri, controls_height):
         info = self.app.current_project.get_asset(uri, GES.UriClip).get_info()
         video_streams = info.get_video_streams()
 
@@ -1273,32 +1285,22 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             video = video_streams[0]
             img_width = video.get_width()
             img_height = video.get_height()
-            controls_height = previewer.bbox.size_request().height
             mainwindow_width, mainwindow_height = self.get_size()
             max_width = 0.85 * mainwindow_width
             max_height = 0.85 * mainwindow_height
 
             if img_width < max_width and (img_height + controls_height) < max_height:
                 # The video is small enough, keep it 1:1
-                preview_window.resize(img_width, img_height + controls_height)
+                return img_width, img_height + controls_height
             else:
                 # The video is too big, size it down
                 # TODO: be smarter, figure out which (width, height) is bigger
                 new_height = max_width * img_height / img_width
-                preview_window.resize(int(max_width),
-                    int(new_height + controls_height))
+                return int(max_width), int(new_height + controls_height)
         else:
             # There is no video/image stream. This is an audio file.
             # Resize to the minimum and let the window manager deal with it
-            preview_window.resize(1, 1)
-
-        # Setting the position of the window only works if it's currently hidden
-        # otherwise, after the resize the position will not be readjusted
-        preview_window.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
-        preview_window.show()
-        previewer.play()
-        # Hack so that we really really force the "utility" window to be focused
-        preview_window.present()
+            return 1, 1
 
     def updateTitle(self):
         name = touched = ""
