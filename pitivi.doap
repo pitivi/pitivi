@@ -26,13 +26,6 @@ we would recommend building from version control.
 
   <maintainer>
     <foaf:Person>
-      <foaf:name>Edward Hervey</foaf:name>
-      <foaf:mbox rdf:resource="mailto:edward.hervey@collabora.com" />
-      <gnome:userid>edwardrv</gnome:userid>
-    </foaf:Person>
-  </maintainer>
-  <maintainer>
-    <foaf:Person>
       <foaf:name>Thibault Saunier</foaf:name>
       <foaf:mbox rdf:resource="mailto:thibault.saunier@collabora.com" />
       <gnome:userid>tsaunier</gnome:userid>
