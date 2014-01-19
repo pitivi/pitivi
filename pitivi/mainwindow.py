@@ -1188,10 +1188,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # need to do this to work around bug in Gst.uri_construct
             # which escapes all /'s in path!
             uri = "file://" + chooser.get_filename()
-            format_ = chooser.get_filter().get_name()
-            if format_ == _("Detect automatically"):
-                format_ = None
-            self.log("uri:%s , format:%s", uri, format_)
+            self.log("uri: %s", uri)
             ret = uri
         else:
             self.log("User didn't choose a URI to export project to")
@@ -1232,10 +1229,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # need to do this to work around bug in Gst.uri_construct
             # which escapes all /'s in path!
             uri = "file://" + chooser.get_filename()
-            format_ = chooser.get_filter().get_name()
-            self.log("uri:%s , format:%s", uri, format_)
-            if format_ == _("Detect automatically"):
-                format_ = None
+            file_filter = chooser.get_filter().get_name()
+            self.log("uri:%s , filter:%s", uri, file_filter)
             self.settings.lastProjectFolder = chooser.get_current_folder()
             ret = uri
         else:
