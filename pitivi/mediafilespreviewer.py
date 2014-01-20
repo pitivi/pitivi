@@ -187,11 +187,10 @@ class PreviewWidget(Gtk.Grid, Loggable):
             try:
                 info = self.discoverer.discover_uri(uri)
             except Exception, e:
-                if e is not None:
-                    self.preview_cache_errors[uri] = e
-                    if self.current_selected_uri == uri:
-                        self.show_error(uri)
-                    return
+                self.preview_cache_errors[uri] = e
+                if self.current_selected_uri == uri:
+                    self.show_error(uri)
+                return
 
             if self.current_selected_uri == uri:
                 self.show_preview(uri, info)
