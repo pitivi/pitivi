@@ -307,10 +307,7 @@ class SimplePipeline(Signallable, Loggable):
         self.log("format %r", format)
 
         dur = self._getDuration(format)
-        if dur is None:
-            self.info("Invalid duration: None")
-        else:
-            self.log("Got duration %s", format_ns(dur))
+        self.log("Got duration %s", format_ns(dur))
         if self._duration != dur:
             self.emit("duration-changed", dur)
 

@@ -62,6 +62,8 @@ def between(a, b, c):
 
 
 def format_ns(time):
+    if time is None:
+        return None
     if time == Gst.CLOCK_TIME_NONE:
         return "CLOCK_TIME_NONE"
 
