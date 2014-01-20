@@ -29,7 +29,7 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import Pango
-from gi.repository.GstPbutils import Discoverer
+from gi.repository import GstPbutils
 
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
@@ -81,7 +81,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.preview_cache = {}
         self.preview_cache_errors = {}
 
-        self.discoverer = Discoverer.new(Gst.SECOND)
+        self.discoverer = GstPbutils.Discoverer.new(Gst.SECOND)
 
         #playbin for play pics
         self.player = AssetPipeline(clip=None, name="preview-player")
