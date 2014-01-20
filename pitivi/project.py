@@ -41,7 +41,7 @@ from pitivi.undo.undo import UndoableAction
 from pitivi.configure import get_ui_dir
 
 from pitivi.utils.misc import quote_uri, path_from_uri, isWritable
-from pitivi.utils.pipeline import Seeker
+from pitivi.utils.pipeline import PipelineError, Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
 from pitivi.utils.pipeline import Pipeline
@@ -874,7 +874,11 @@ class Project(Loggable, GES.Project):
         self._calculateNbLoadingAssets()
 
         self.pipeline = Pipeline()
-        self.pipeline.set_timeline(self.timeline)
+        try:
+            self.pipeline.set_timeline(self.timeline)
+        except PipelineError, e:
+            self.warning("Failed to set the timeline to the pipeline: %s", e)
+            return False
 
         return True
 

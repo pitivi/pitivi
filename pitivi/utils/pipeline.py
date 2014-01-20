@@ -555,6 +555,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         GES.Pipeline.__init__(self)
         SimplePipeline.__init__(self, self)
 
+        self._timeline = None
         self._seeker = Seeker()
         self._seeker.connect("seek", self._seekCb)
         self._seeker.connect("seek-relative", self._seekRelativeCb)
@@ -563,11 +564,9 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         return self._timeline.get_duration()
 
     def set_timeline(self, timeline):
-        if GES.Pipeline.set_timeline(self, timeline):
-            self._timeline = timeline
-            return True
-
-        return False
+        if not GES.Pipeline.set_timeline(self, timeline):
+            raise PipelineError("Cannot set the timeline to the pipeline")
+        self._timeline = timeline
 
     def release(self):
         """
