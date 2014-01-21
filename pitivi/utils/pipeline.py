@@ -24,14 +24,17 @@
 """
 High-level pipelines
 """
-from pitivi.utils.loggable import Loggable
-from pitivi.utils.signal import Signallable
-from pitivi.utils.misc import format_ns
 
+from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
-from gi.repository import GES
+from gi.repository import GstPbutils
+
+from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import format_ns
+from pitivi.utils.signal import Signallable
+
 
 MAX_RECOVERIES = 5
 
@@ -166,6 +169,7 @@ class SimplePipeline(Signallable, Loggable):
         self._listening = False  # for the position handler
         self._listeningInterval = 300  # default 300ms
         self._listeningSigId = 0
+        self._has_duration = True
         self._duration = Gst.CLOCK_TIME_NONE
         self.lastPosition = long(0 * Gst.SECOND)
         self.pendingRecovery = False
@@ -397,7 +401,10 @@ class SimplePipeline(Signallable, Loggable):
 
         # clamp between [0, duration]
         if format == Gst.Format.TIME:
-            position = max(0, min(position, self.getDuration()) - 1)
+            if self._has_duration:
+                position = max(0, min(position, self.getDuration()) - 1)
+            else:
+                position = max(0, position)
 
         res = self._pipeline.seek(1.0, format, Gst.SeekFlags.FLUSH,
                                   Gst.SeekType.SET, position,
@@ -525,6 +532,16 @@ class AssetPipeline(SimplePipeline):
 
     def setClipUri(self, uri):
         self._pipeline.set_property("uri", uri)
+
+        discoverer = GstPbutils.Discoverer.new(Gst.SECOND)
+        info = discoverer.discover_uri(uri)
+        has_duration = False
+        if info:
+            videos = info.get_video_streams()
+            if videos:
+                video = videos[0]
+                has_duration = not video.is_image()
+        self._has_duration = has_duration
 
 
 class Pipeline(GES.Pipeline, SimplePipeline):
