@@ -1033,11 +1033,7 @@ class URISourceElement(TimelineElement):
     # Callbacks
     def _clickedCb(self, action, actor):
         #TODO : Let's be more specific, masks etc ..
-        children = self.bElement.get_toplevel_parent().get_children(True)
-        selection = filter(lambda elem: isinstance(elem, GES.Source), children)
-
         mode = SELECT
-
         if self.timeline._container._controlMask and not self.bElement.selected:
             mode = SELECT_ADD
             self.timeline.current_group.add(self.bElement.get_toplevel_parent())
