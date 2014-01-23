@@ -1141,11 +1141,8 @@ class URISourceElement(TimelineElement):
             self._context.finish()
 
     def cleanup(self):
-        if self.preview:
-            try:
-                self.preview.cleanup()
-            except AttributeError:  # preview was just an actor.
-                pass
+        if self.preview and not type(self.preview) is Clutter.Actor:
+            self.preview.cleanup()
         self.leftHandle.cleanup()
         self.leftHandle = None
         self.rightHandle.cleanup()
