@@ -722,6 +722,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         Zoomable.__init__(self)
         Loggable.__init__(self)
         PreviewGenerator.__init__(self, GES.TrackType.AUDIO)
+        self.pipeline = None
         self.discovered = False
         self.bElement = bElement
         self._uri = quote_uri(bElement.props.uri)  # Guard against malformed URIs
@@ -960,8 +961,11 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         if self.adapter is not None:
             self.adapter.stop()
             self.adapter = None
-        self.pipeline.set_state(Gst.State.NULL)
-        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+
+        if self.pipeline:
+            self.pipeline.set_state(Gst.State.NULL)
+            self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+
         PreviewGenerator.emit(self, "done")
 
     def cleanup(self):
