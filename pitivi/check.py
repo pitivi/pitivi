@@ -76,14 +76,6 @@ def at_least_version(version, required):
     return True
 
 
-def _initiate_videosinks(Gst):
-    # TODO: eventually switch to a clutter sink
-    sink = Gst.ElementFactory.make("autovideosink", None)
-    if not sink:
-        return False
-    return True
-
-
 def _initiate_audiosinks(Gst):
     # Yes, this can still fail, if PulseAudio is non-responsive for example.
     sink = Gst.ElementFactory.make("autoaudiosink", None)
@@ -219,10 +211,6 @@ def check_hard_dependencies():
 
     # And finally, do a few last checks for basic sanity.
     # Yes, a broken/dead autoaudiosink is still possible in 2012 with PulseAudio
-    if not _initiate_videosinks(Gst):
-        missing_hard_deps["autovideosink"] = \
-            "Could not initiate video output sink. "\
-            "Make sure you have a valid one (xvimagesink or ximagesink)."
     if not _initiate_audiosinks(Gst):
         missing_hard_deps["autoaudiosink"] = \
             "Could not initiate audio output sink. "\
