@@ -31,18 +31,11 @@ and not impact startup. Module imports have no impact (they get imported later
 by the app anyway). For more complex checks, you can measure (with time.time()),
 when called from application.py instead of bin/pitivi, if it has an impact.
 """
-from sys import modules
+
+import sys
+
 from gettext import gettext as _
 
-# SHENANIGANS
-from gi.repository import Gdk
-Gdk.init([])
-
-from gi.repository import GtkClutter
-GtkClutter.init([])
-
-from gi.repository import ClutterGst
-ClutterGst.init([])
 
 # This list is meant to be a complete list for packagers.
 # Unless otherwise noted, modules are accessed through gobject introspection
@@ -123,10 +116,10 @@ def _check_dependency(modulename, from_gobject_introspection):
     module = None
     if from_gobject_introspection is True:
         if _try_import_from_gi(modulename):
-            module = modules["gi.repository." + modulename]
+            module = sys.modules["gi.repository." + modulename]
     else:
         if _try_import(modulename):
-            module = modules[modulename]
+            module = sys.modules[modulename]
 
     if module is None:
         # Import failed, the dependency can't be satisfied, don't check versions
@@ -181,21 +174,17 @@ def check_hard_dependencies():
 
     # Since we had to check Gst beforehand, we only do the import now:
     from gi.repository import Gst
-    Gst.init(None)
 
+    registry = Gst.Registry.get()
     # Special case: gnonlin is a plugin, not a python module to be imported,
     # we can't use check_dependency to determine the version:
-    inst = Gst.Registry.get().find_plugin("gnonlin")
+    inst = registry.find_plugin("gnonlin")
     if not inst:
         missing_hard_deps["GNonLin"] = (HARD_DEPS["gnonlin"], inst)
     else:
         inst = inst.get_version()
         if _string_to_list(inst) < _string_to_list(HARD_DEPS["gnonlin"]):
             missing_hard_deps["GNonLin"] = (HARD_DEPS["gnonlin"], inst)
-
-    # GES is checked, import and intialize it
-    from gi.repository import GES
-    GES.init()
 
     # Prepare the list of hard deps errors to warn about later:
     for dependency in missing_hard_deps:
@@ -226,10 +215,7 @@ def check_soft_dependencies():
     If those are missing from the system, the user will be notified of their
     existence by the presence of a "Missing dependencies..." button at startup.
     """
-    # Importing Gst again (even if we did it in hard deps checks), anyway it
-    # seems to have no measurable performance impact the 2nd time:
     from gi.repository import Gst
-    Gst.init(None)
 
     # Description strings are translatable as they are shown in the Pitivi UI.
     if not _try_import("pycanberra"):

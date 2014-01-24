@@ -20,14 +20,12 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+from gi.repository import Clutter
+from gi.repository import GObject
 from gi.repository import GtkClutter
-GtkClutter.init([])
 
-from gi.repository import Clutter, GObject
-
+from pitivi.timeline.layer import VideoLayerControl, AudioLayerControl
 from pitivi.utils.ui import EXPANDED_SIZE, SPACING, CONTROL_WIDTH
-
-from layer import VideoLayerControl, AudioLayerControl
 
 
 class ControlActor(GtkClutter.Actor):

@@ -24,12 +24,8 @@ from gi.repository import Gtk
 from gi.repository import GtkClutter
 from gi.repository import Gdk
 from gi.repository import Gst
-from gi.repository import GdkX11
 from gi.repository import GObject
 from gi.repository import GES
-GdkX11  # pyflakes
-from gi.repository import GstVideo
-GstVideo    # pyflakes
 import cairo
 
 from gettext import gettext as _

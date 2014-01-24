@@ -98,6 +98,30 @@ def _add_pitivi_path():
         _prepend_env_path("GI_TYPELIB_PATH", [CONFIGURED_GI_TYPELIB_PATH])
 
 
+def _initialize_modules():
+    from gi.repository import Gdk
+    Gdk.init([])
+    from gi.repository import GtkClutter
+    GtkClutter.init([])
+    from gi.repository import ClutterGst
+    ClutterGst.init([])
+
+    import gi
+    if not gi.version_info >= (3, 11):
+        from gi.repository import GObject
+        GObject.threads_init()
+
+    from gi.repository import Gst
+    Gst.init(None)
+    from gi.repository import GES
+    GES.init()
+
+    # This is required because of:
+    # https://bugzilla.gnome.org/show_bug.cgi?id=656314
+    from gi.repository import GdkX11
+    GdkX11  # noop
+
+
 def _check_dependencies():
     from pitivi.check import check_hard_dependencies, check_soft_dependencies
     missing_hard_deps = check_hard_dependencies()
@@ -118,12 +142,6 @@ def _check_dependencies():
 
 def _run_pitivi():
     import pitivi.application as ptv
-    from pitivi.check import at_least_version
-    import gi
-
-    if not at_least_version(gi.version_info, (3, 11, 0)):
-        from gi.repository import GObject
-        GObject.threads_init()
 
     # Make it easy for developers to debug the application startup.
     if os.environ.get('PITIVI_DEBUG_NO_UI') == '1':
@@ -136,6 +154,10 @@ def _run_pitivi():
 
 try:
     _add_pitivi_path()
+    try:
+        _initialize_modules()
+    except Exception, e:
+        print "Failed to initialize modules: ", e
     # Dep checks really have to happen here, not in application.py. Otherwise,
     # as soon as application.py starts, it will try importing all the code and
     # the classes in application.py will not even have the opportunity to run.

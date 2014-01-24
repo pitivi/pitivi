@@ -22,15 +22,11 @@
 
 import os
 
-import gi
 from gi.repository import GtkClutter
-
-GtkClutter.init([])
 
 from gi.repository import Gst, GES, GObject, Clutter, Gtk, GLib, Gdk
 
 from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
-from pitivi.check import at_least_version
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
@@ -649,8 +645,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         Zoomable.__init__(self)
         Gtk.Grid.__init__(self)
         Loggable.__init__(self)
-        if not at_least_version(gi.version_info, (3, 11, 0)):
-            GObject.threads_init()
 
         # Allows stealing focus from other GTK widgets, prevent accidents:
         self.props.can_focus = True
