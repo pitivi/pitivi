@@ -535,6 +535,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         # int(pixels_float). In that case, the rounding can add up and a pixel
         # might be lost if we ignore the start of the clip.
         size = self.nsToPixel(start + duration) - self.nsToPixel(start)
+        # Avoid elements to become invisible.
+        size = max(size, 1)
         self.set_size(size, EXPANDED_SIZE, ease)
 
     def setDragged(self, dragged):
