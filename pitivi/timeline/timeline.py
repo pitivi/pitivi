@@ -388,7 +388,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def _addTimelineElement(self, track, bElement):
         if isinstance(bElement, GES.Effect):
             return
-        if isinstance(bElement.get_parent(), GES.TransitionClip):
+        if isinstance(bElement, GES.Transition):
             element = TransitionElement(bElement, track, self)
             element.set_z_position(0)
         else:
