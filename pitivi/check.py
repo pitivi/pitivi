@@ -42,6 +42,7 @@ from gettext import gettext as _
 HARD_DEPS = {
     "cairo": "1.10.0",  # using static python bindings
     "Clutter": "1.12.0",
+    "ClutterGst": "2.0.0",
     "GES": "1.0.0.0",  # packagers: in reality 1.1.90, but that GES version erronously reports itself as 1.0.0.0
     "Gio": None,
     "gnonlin": "1.1.90",
@@ -129,12 +130,12 @@ def _check_dependency(modulename, from_gobject_introspection):
         return [True, None, False]
 
     # The import succeeded and there is a version requirement, so check it out:
-    if modulename == "Gst" or modulename == "GES":
+    if modulename in ("Gst", "GES"):
         if list(module.version()) < _string_to_list(VERSION_REQ):
             return [False, VERSION_REQ, _version_to_string(module.version())]
         else:
             return [True, None, _version_to_string(module.version())]
-    if modulename == "Gtk" or modulename == "Clutter":
+    if modulename in ("Gtk", "Clutter", "ClutterGst"):
         gtk_version_tuple = (module.MAJOR_VERSION, module.MINOR_VERSION, module.MICRO_VERSION)
         if list(gtk_version_tuple) < _string_to_list(VERSION_REQ):
             return [False, VERSION_REQ, _version_to_string(gtk_version_tuple)]
@@ -159,6 +160,9 @@ def check_hard_dependencies():
     satisfied, req, inst = _check_dependency("Clutter", True)
     if not satisfied:
         missing_hard_deps["Clutter"] = (req, inst)
+    satisfied, req, inst = _check_dependency("ClutterGst", True)
+    if not satisfied:
+        missing_hard_deps["ClutterGst"] = (req, inst)
     satisfied, req, inst = _check_dependency("GES", True)
     if not satisfied:
         missing_hard_deps["GES"] = (req, inst)
