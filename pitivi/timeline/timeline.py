@@ -81,7 +81,7 @@ is prefixed with a little b, example : bTimeline
 """
 
 
-class TimelineStage(Clutter.ScrollActor, Zoomable):
+class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
     """
     The timeline view showing the clips.
     """
@@ -93,6 +93,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def __init__(self, container, settings):
         Clutter.ScrollActor.__init__(self)
         Zoomable.__init__(self)
+        Loggable.__init__(self)
         self.bTimeline = None
         self._project = None
         self.current_group = GES.Group()
@@ -391,9 +392,12 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         if isinstance(bElement, GES.Transition):
             element = TransitionElement(bElement, track, self)
             element.set_z_position(0)
-        else:
+        elif isinstance(bElement, GES.Source):
             element = URISourceElement(bElement, track, self)
             element.set_z_position(-1)
+        else:
+            self.warning("Unknown element: %s", bElement)
+            return
 
         bElement.connect("notify::start", self._elementStartChangedCb, element)
         bElement.connect("notify::duration", self._elementDurationChangedCb, element)
