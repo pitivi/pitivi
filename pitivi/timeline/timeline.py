@@ -482,10 +482,6 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._redraw()
         self._container.controls.addLayerControl(layer)
 
-    def _addTrackElement(self, track, bElement):
-        self._updateSize()
-        self._addTimelineElement(track, bElement)
-
     # Interface overrides
 
     # Zoomable Override
@@ -592,7 +588,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             self._removeTimelineElement(track, element)
 
     def _trackElementAddedCb(self, track, bElement):
-        self._addTrackElement(track, bElement)
+        self._updateSize()
+        self._addTimelineElement(track, bElement)
 
     def _trackElementRemovedCb(self, track, bElement):
         self._removeTimelineElement(track, bElement)
