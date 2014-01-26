@@ -1,28 +1,17 @@
+#!/usr/bin/env python2
+
+"""Pitivi tests runner."""
+
 import os
 import sys
 import unittest
 
-from gi.repository import GObject
-# This call has to be made before any "import Gst" call!
-# We have to do this call here, even though it already is in __init__.py,
-# because this tool is run directly, as an executable.
-GObject.threads_init()
-
-from pitivi.check import check_hard_dependencies
 
 parent = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-
 sys.path.append(os.path.join(parent, "pitivi/coptimizations/.libs"))
 
-missing_hard_deps = check_hard_dependencies()
-# This differs slightly from bin/pitivi.in as we don't check soft deps here:
-if missing_hard_deps:
-    print "\nERROR - The following hard dependencies are unmet:"
-    print "=================================================="
-    for dep in missing_hard_deps:
-        print "-", dep + ":", missing_hard_deps[dep]
-    print ""
-    sys.exit(2)
+from pitivi.check import initialize_modules
+initialize_modules()
 
 
 def gettestnames(file_names):

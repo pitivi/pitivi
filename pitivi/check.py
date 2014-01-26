@@ -253,3 +253,33 @@ def check_soft_dependencies():
     # see fit. We can do a registry.find_plugin for specific encoders, but we
     # don't really have something generic to rely on; ideas/patches welcome.
     return missing_soft_deps
+
+
+def initialize_modules():
+    """
+    Initialize the modules.
+
+    This has to be done in a specific order otherwise the app
+    crashes on some systems.
+    """
+    from gi.repository import Gdk
+    Gdk.init([])
+    from gi.repository import GtkClutter
+    GtkClutter.init([])
+    from gi.repository import ClutterGst
+    ClutterGst.init([])
+
+    import gi
+    if not gi.version_info >= (3, 11):
+        from gi.repository import GObject
+        GObject.threads_init()
+
+    from gi.repository import Gst
+    Gst.init(None)
+    from gi.repository import GES
+    GES.init()
+
+    # This is required because of:
+    # https://bugzilla.gnome.org/show_bug.cgi?id=656314
+    from gi.repository import GdkX11
+    GdkX11  # noop

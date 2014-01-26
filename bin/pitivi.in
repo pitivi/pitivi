@@ -99,27 +99,11 @@ def _add_pitivi_path():
 
 
 def _initialize_modules():
-    from gi.repository import Gdk
-    Gdk.init([])
-    from gi.repository import GtkClutter
-    GtkClutter.init([])
-    from gi.repository import ClutterGst
-    ClutterGst.init([])
-
-    import gi
-    if not gi.version_info >= (3, 11):
-        from gi.repository import GObject
-        GObject.threads_init()
-
-    from gi.repository import Gst
-    Gst.init(None)
-    from gi.repository import GES
-    GES.init()
-
-    # This is required because of:
-    # https://bugzilla.gnome.org/show_bug.cgi?id=656314
-    from gi.repository import GdkX11
-    GdkX11  # noop
+    from pitivi.check import initialize_modules
+    try:
+        initialize_modules()
+    except Exception, e:
+        print "Failed to initialize modules: ", e
 
 
 def _check_dependencies():
@@ -152,18 +136,16 @@ def _run_pitivi():
     sys.exit(ptv.main(sys.argv))
 
 
-try:
-    _add_pitivi_path()
+if __name__ == "__main__":
     try:
+        _add_pitivi_path()
         _initialize_modules()
-    except Exception, e:
-        print "Failed to initialize modules: ", e
-    # Dep checks really have to happen here, not in application.py. Otherwise,
-    # as soon as application.py starts, it will try importing all the code and
-    # the classes in application.py will not even have the opportunity to run.
-    # We do these checks on every startup (even outside the dev environment, for
-    # soft deps); doing imports and gst registry checks has near-zero cost.
-    _check_dependencies()
-    _run_pitivi()
-except KeyboardInterrupt:
-    print "\tPitivi stopped by user with KeyboardInterrupt!"
+        # Dep checks really have to happen here, not in application.py. Otherwise,
+        # as soon as application.py starts, it will try importing all the code and
+        # the classes in application.py will not even have the opportunity to run.
+        # We do these checks on every startup (even outside the dev environment, for
+        # soft deps); doing imports and gst registry checks has near-zero cost.
+        _check_dependencies()
+        _run_pitivi()
+    except KeyboardInterrupt:
+        print "\tPitivi stopped by user with KeyboardInterrupt!"
