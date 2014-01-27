@@ -26,11 +26,7 @@
 
        <section>
         <title>Previewing a clip from the <gui>Media Library</gui></title>
-         <p>To preview a clip before placing it on the timeline, you can double-click on it in the <gui>Media Library</gui>, or right-click and choose <gui>Preview Clip</gui> from the popup menu. This will open the clip in a window that automatically closes whenever you click outside the window.</p>
-         <figure>
-          <desc>Popup menu</desc>
-          <media type="image" src="figures/previewsource.png" mime="image/png" style="right"></media>
-         </figure>
+         <p>To preview a clip before placing it on the timeline, you can double-click on it in the <gui>Media Library</gui>. This will open the clip in a window that automatically closes whenever you click outside the window.</p>
        </section>
        <section>
         <title>Filtering search</title>

@@ -12,7 +12,6 @@ HELP_MEDIA = \
     figures/layers.png \
     figures/logo.png \
     figures/mainwindow.jpg \
-    figures/previewsource.png \
     figures/ripple-after.png \
     figures/ripple-before.png \
     figures/roll-after.png \
