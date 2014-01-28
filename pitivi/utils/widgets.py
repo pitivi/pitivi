@@ -792,8 +792,9 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         """
         d = {}
         for prop, widget in self.properties.iteritems():
-            if (not prop.flags & GObject.PARAM_WRITABLE
-            or isinstance(widget, DefaultWidget)):
+            if not prop.flags & GObject.PARAM_WRITABLE:
+                continue
+            if isinstance(widget, DefaultWidget):
                 continue
             value = widget.getWidgetValue()
             if value is not None and (value != prop.default_value or with_default):
@@ -839,7 +840,7 @@ class GstElementSettingsDialog(Loggable):
     Dialog window for viewing/modifying properties of a Gst.Element
     """
 
-    def __init__(self, elementfactory, properties={}, parent_window=None, isControllable=True):
+    def __init__(self, elementfactory, properties, parent_window=None, isControllable=True):
         Loggable.__init__(self)
         self.debug("factory: %s, properties: %s", elementfactory, properties)
 
