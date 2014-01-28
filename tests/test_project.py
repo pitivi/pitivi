@@ -93,7 +93,7 @@ class TestProjectLoading(TestCase):
         # Create a blank project and save it.
         project = Project("noname")
         result = [False, False, False]
-        uris = ["file://%s/samples/tears of steel.webm" % os.path.abspath(".")]
+        uris = ["file://%s/samples/tears of steel.webm" % os.path.dirname(os.path.abspath(__file__))]
         project.connect("loaded", loaded, self.mainloop, result, uris)
         project.connect("done-importing", added, self.mainloop, result, uris)
 

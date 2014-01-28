@@ -7,46 +7,71 @@ import sys
 import unittest
 
 
-parent = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-sys.path.append(os.path.join(parent, "pitivi/coptimizations/.libs"))
+def _testcases(filenames):
+    """Yield testcases out of filenames."""
+    for filename in filenames:
+        if filename.endswith(".py"):
+            yield filename[:-3]
 
-from pitivi.check import initialize_modules
-initialize_modules()
+
+def _tests_suite():
+    """Pick which tests to run."""
+    testcase = os.getenv("TESTCASE")
+    if testcase:
+        testcases = [testcase]
+    else:
+        testcases = _testcases(sys.argv[1:])
+    loader = unittest.TestLoader()
+    return loader.loadTestsFromNames(testcases)
 
 
-def gettestnames(file_names):
-    test_names = [file_name[:-3] for file_name in file_names]
-    return test_names
+def get_pitivi_dir():
+    from pitivi.configure import _in_devel
+    if _in_devel():
+        # We know exactly where the top dir.
+        tests_dir = os.path.dirname(os.path.abspath(__file__))
+        pitivi_dir = os.path.join(tests_dir, os.path.pardir)
+    else:
+        # Probably running make distcheck. The path to the test files
+        # is different than the build path, so we must use the current
+        # dir which is build_path/tests.
+        pitivi_dir = os.path.join(os.path.abspath(os.path.curdir), os.path.pardir)
+    return os.path.abspath(pitivi_dir)
 
-loader = unittest.TestLoader()
 
-# Set verbosity.
-descriptions = 1
-verbosity = 1
-if 'VERBOSE' in os.environ:
-    descriptions = 2
-    verbosity = 2
-from pitivi.utils import loggable as log
-log.init('PITIVI_DEBUG', 1)
+def setup():
+    # Make available to configure.py the top level dir.
+    pitivi_dir = get_pitivi_dir()
+    os.environ.setdefault('PITIVI_TOP_LEVEL_DIR', pitivi_dir)
 
-# Make available to configure.py the top level dir.
-dir = os.path.dirname(os.path.abspath(__file__))
-top_srcdir = os.path.split(dir)[0]
-os.environ.setdefault('PITIVI_TOP_LEVEL_DIR', top_srcdir)
+    # Make available the compiled C code.
+    libs_dir = os.path.join(pitivi_dir, "pitivi/coptimizations/.libs")
+    sys.path.append(libs_dir)
 
-# Pick which tests to run.
-TEST_CASE = os.getenv("TESTCASE")
-if TEST_CASE:
-    test_names = [TEST_CASE]
-else:
-    test_names = gettestnames(sys.argv[1:])
-suite = loader.loadTestsFromNames(test_names)
-if not list(suite):
-    raise Exception("No tests found")
+    # Make sure the modules are initialized correctly.
+    from pitivi.check import initialize_modules
+    initialize_modules()
 
-# Run the tests.
-testRunner = unittest.TextTestRunner(descriptions=descriptions,
-    verbosity=verbosity)
-result = testRunner.run(suite)
-if result.failures or result.errors:
-    sys.exit(1)
+
+if __name__ == "__main__":
+    setup()
+
+    # Set verbosity.
+    descriptions = 1
+    verbosity = 1
+    if 'VERBOSE' in os.environ:
+        descriptions = 2
+        verbosity = 2
+    from pitivi.utils import loggable as log
+    log.init('PITIVI_DEBUG', 1)
+
+    suite = _tests_suite()
+    if not list(suite):
+        raise Exception("No tests found")
+
+    # Run the tests.
+    testRunner = unittest.TextTestRunner(descriptions=descriptions,
+        verbosity=verbosity)
+    result = testRunner.run(suite)
+    if result.failures or result.errors:
+        sys.exit(1)
