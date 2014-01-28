@@ -589,7 +589,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def _trackRemovedCb(self, unused_timeline, track):
         self._disconnectTrack(track)
         for element in track.get_elements():
-            self._trackElementRemovedCb(track, element)
+            self._removeTimelineElement(track, element)
 
     def _trackElementAddedCb(self, track, bElement):
         self._addTrackElement(track, bElement)
