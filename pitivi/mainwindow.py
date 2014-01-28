@@ -1141,9 +1141,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         """
         When the project setting change, we reset the viewer aspect ratio
         """
-        ratio = float(project.videopar.num / project.videopar.denom *
-                      project.videowidth) / float(project.videoheight)
-        self.viewer.setDisplayAspectRatio(ratio)
+        self.viewer.setDisplayAspectRatio(project.aspect_ratio)
         self.viewer.timecode_entry.setFramerate(project.videorate)
 
     def _sourceListMissingPluginsCb(self, unused_project, unused_uri, unused_factory,

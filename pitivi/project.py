@@ -713,6 +713,12 @@ class Project(Loggable, GES.Project):
         self.set_video_restriction_value("pixel-aspect-ratio", value)
 
     @property
+    def aspect_ratio(self):
+        videopar = self.videopar
+        par = videopar.num / videopar.denom
+        return par * float(self.videowidth) / float(self.videoheight)
+
+    @property
     def audiochannels(self):
         return self.audio_profile.get_restriction()[0]["channels"]
 
