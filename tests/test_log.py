@@ -20,269 +20,261 @@
 # Headers in this file shall remain intact.
 
 
-###
-# FIXME me all
-###
-#from twisted.trial import unittest
+import unittest
 
-#from pitivi.utils import loggable as log
+from pitivi.utils import loggable as log
 
-#__version__ = "$Rev: 7162 $"
+__version__ = "$Rev: 7162 $"
 
 
-#class LogTester(log.Loggable):
-    #logCategory = 'testlog'
+class LogTester(log.Loggable):
+    logCategory = 'testlog'
 
 
-#class LogFunctionTester(log.Loggable):
+class LogFunctionTester(log.Loggable):
 
-    #def logFunction(self, format, *args):
-        #return (("override " + format), ) + args[1:]
+    def logFunction(self, format, *args):
+        return (("override " + format), ) + args[1:]
 
 
-#class TestLog(unittest.TestCase):
+class TestWithHandler(unittest.TestCase):
 
-    #def setUp(self):
-        #self.category = self.level = self.message = None
-        #self.tester = LogTester()
-        ## we want to remove the default handler so it doesn't show up stuff
-        #log.reset()
+    def setUp(self):
+        self.level = None
+        self.object = None
+        self.category = None
+        self.file = None
+        self.line = None
+        self.message = None
 
-    ## just test for parsing semi- or non-valid FLU_DEBUG variables
+        # we want to remove the default handler so it doesn't show up stuff
+        log.reset()
 
-    #def testSetDebug(self):
-        #log.setDebug(":5")
-        #log.setDebug("*")
-        #log.setDebug("5")
+    def handler(self, level, object, category, file, line, message):
+        self.level = level
+        self.object = object
+        self.category = category
+        self.file = file
+        self.line = line
+        self.message = message.split(' ', 1)[1]
 
-    ## test for adding a log handler
 
-    #def handler(self, level, object, category, file, line, message):
-        #self.level = level
-        #self.object = object
-        #self.category = category
-        #self.file = file
-        #self.line = line
-        #self.message = message
+class TestLog(TestWithHandler):
 
-    #def testLimitInvisible(self):
-        #log.setDebug("testlog:3")
-        #log.addLimitedLogHandler(self.handler)
+    def setUp(self):
+        TestWithHandler.setUp(self)
+        self.tester = LogTester()
 
-        ## log 2 we shouldn't get
-        #self.tester.log("not visible")
-        #assert not self.category
-        #assert not self.level
-        #assert not self.message
+    # just test for parsing semi- or non-valid FLU_DEBUG variables
 
-        #self.tester.debug("not visible")
-        #assert not self.category
-        #assert not self.level
-        #assert not self.message
+    def testSetDebug(self):
+        log.setDebug(":5")
+        log.setDebug("*")
+        log.setDebug("5")
 
-    #def testLimitedVisible(self):
-        #log.setDebug("testlog:3")
-        #log.addLimitedLogHandler(self.handler)
+    # test for adding a log handler
 
-        ## log 3 we should get
-        #self.tester.info("visible")
-        #assert self.category == 'testlog'
-        #assert self.level == log.INFO
-        #assert self.message == 'visible'
+    def testLimitInvisible(self):
+        log.setDebug("testlog:%d" % log.INFO)
+        log.addLimitedLogHandler(self.handler)
 
-        #self.tester.warning("also visible")
-        #assert self.category == 'testlog'
-        #assert self.level == log.WARN
-        #assert self.message == 'also visible'
+        # log 2 we shouldn't get
+        self.tester.log("not visible")
+        self.assertFalse(self.category)
+        self.assertFalse(self.level)
+        self.assertFalse(self.message)
 
-    #def testFormatStrings(self):
-        #log.setDebug("testlog:3")
-        #log.addLimitedLogHandler(self.handler)
+        self.tester.debug("not visible")
+        self.assertFalse(self.category)
+        self.assertFalse(self.level)
+        self.assertFalse(self.message)
 
-        #self.tester.info("%d %s", 42, 'the answer')
-        #assert self.category == 'testlog'
-        #assert self.level == log.INFO
-        #assert self.message == '42 the answer'
+    def testLimitedVisible(self):
+        log.setDebug("testlog:%d" % log.INFO)
+        log.addLimitedLogHandler(self.handler)
 
-    #def testLimitedError(self):
-        #log.setDebug("testlog:3")
-        #log.addLimitedLogHandler(self.handler)
+        # log 3 we should get
+        self.tester.info("visible")
+        self.assertEqual(self.category, 'testlog')
+        self.assertEqual(self.level, log.INFO)
+        self.assertEqual(self.message, 'visible')
 
-        #self.assertRaises(SystemExit, self.tester.error, "error")
-        #assert self.category == 'testlog'
-        #assert self.level == log.ERROR
-        #assert self.message == 'error'
+        self.tester.warning("also visible")
+        self.assertEqual(self.category, 'testlog')
+        self.assertEqual(self.level, log.WARN)
+        self.assertEqual(self.message, 'also visible')
 
-    #def testLogHandlerLimitedLevels(self):
-        #log.setDebug("testlog:3")
-        #log.addLimitedLogHandler(self.handler)
+    def testFormatStrings(self):
+        log.setDebug("testlog:%d" % log.INFO)
+        log.addLimitedLogHandler(self.handler)
 
-        ## now try debug and log again too
-        #log.setDebug("testlog:5")
+        self.tester.info("%d %s", 42, 'the answer')
+        self.assertEqual(self.category, 'testlog')
+        self.assertEqual(self.level, log.INFO)
+        self.assertEqual(self.message, '42 the answer')
 
-        #self.tester.debug("debug")
-        #assert self.category == 'testlog'
-        #assert self.level == log.DEBUG
-        #assert self.message == 'debug'
+    def testLimitedError(self):
+        log.setDebug("testlog:%d" % log.ERROR)
+        log.addLimitedLogHandler(self.handler)
 
-        #self.tester.log("log")
-        #assert self.category == 'testlog'
-        #assert self.level == log.LOG
-        #assert self.message == 'log'
+        self.tester.error("error")
+        self.assertEqual(self.category, 'testlog')
+        self.assertEqual(self.level, log.ERROR)
+        self.assertEqual(self.message, 'error')
 
-    ## test that we get all log messages
+    def testLogHandlerLimitedLevels(self):
+        log.setDebug("testlog:%d" % log.INFO)
+        log.addLimitedLogHandler(self.handler)
 
-    #def testLogHandler(self):
-        #log.setDebug("testlog:3")
-        #log.addLogHandler(self.handler)
+        # now try debug and log again too
+        log.setDebug("testlog:%d" % log.LOG)
 
-        #self.tester.log("visible")
-        #assert self.message == 'visible'
+        self.tester.debug("debug")
+        self.assertEqual(self.category, 'testlog')
+        self.assertEqual(self.level, log.DEBUG)
+        self.assertEqual(self.message, 'debug')
 
-        #self.tester.warning("also visible")
-        #assert self.message == 'also visible'
+        self.tester.log("log")
+        self.assertEqual(self.category, 'testlog')
+        self.assertEqual(self.level, log.LOG)
+        self.assertEqual(self.message, 'log')
 
+    # test that we get all log messages
 
-#class TestOwnLogHandler(unittest.TestCase):
+    def testLogHandler(self):
+        log.setDebug("testlog:%d" % log.INFO)
+        log.addLogHandler(self.handler)
 
-    #def setUp(self):
-        #self.category = self.level = self.message = None
-        #self.tester = LogFunctionTester()
+        self.tester.log("visible")
+        self.assertEqual(self.message, 'visible')
 
-    #def handler(self, level, object, category, file, line, message):
-        #self.level = level
-        #self.object = object
-        #self.category = category
-        #self.file = file
-        #self.line = line
-        #self.message = message
-
-    ## test if our own log handler correctly mangles the message
-
-    #def testOwnLogHandlerLimited(self):
-        #log.setDebug("testlog:3")
-        #log.addLogHandler(self.handler)
-
-        #self.tester.log("visible")
-        #assert self.message == 'override visible'
-
-    #def testLogHandlerAssertion(self):
-        #self.assertRaises(TypeError, log.addLimitedLogHandler, None)
-
-
-#class TestGetExceptionMessage(unittest.TestCase):
-
-    #def func3(self):
-        #self.func2()
-
-    #def func2(self):
-        #self.func1()
-
-    #def func1(self):
-        #raise TypeError("I am in func1")
-
-    #def testLevel2(self):
-        #try:
-            #self.func2()
-            #self.fail()
-        #except TypeError, e:
-            #self.verifyException(e)
-
-    #def testLevel3(self):
-        #try:
-            #self.func3()
-            #self.fail()
-        #except TypeError, e:
-            #self.verifyException(e)
-
-    #def verifyException(self, e):
-        #message = log.getExceptionMessage(e)
-        #self.failUnless("func1()" in message)
-        #self.failUnless("test_log.py" in message)
-        #self.failUnless("TypeError" in message)
-
-
-#class TestLogSettings(unittest.TestCase):
-
-    #def testSet(self):
-        #old = log.getLogSettings()
-        #log.setDebug('*:5')
-        #self.assertNotEquals(old, log.getLogSettings())
-
-        #log.setLogSettings(old)
-        #self.assertEquals(old, log.getLogSettings())
-
-
-#class TestWriteMark(unittest.TestCase):
-
-    #def handler(self, level, object, category, file, line, message):
-        #self.level = level
-        #self.object = object
-        #self.category = category
-        #self.file = file
-        #self.line = line
-        #self.message = message
-
-    #def testWriteMarkInDebug(self):
-        #loggable = log.Loggable()
-        #log.setDebug("4")
-        #log.addLogHandler(self.handler)
-        #marker = 'test'
-        #loggable.writeMarker(marker, log.DEBUG)
-        #self.assertEquals(self.message, marker)
-
-    #def testWriteMarkInWarn(self):
-        #loggable = log.Loggable()
-        #log.setDebug("2")
-        #log.addLogHandler(self.handler)
-        #marker = 'test'
-        #loggable.writeMarker(marker, log.WARN)
-        #self.assertEquals(self.message, marker)
-
-    #def testWriteMarkInInfo(self):
-        #loggable = log.Loggable()
-        #log.setDebug("3")
-        #log.addLogHandler(self.handler)
-        #marker = 'test'
-        #loggable.writeMarker(marker, log.INFO)
-        #self.assertEquals(self.message, marker)
-
-    #def testWriteMarkInLog(self):
-        #loggable = log.Loggable()
-        #log.setDebug("5")
-        #log.addLogHandler(self.handler)
-        #marker = 'test'
-        #loggable.writeMarker(marker, log.LOG)
-        #self.assertEquals(self.message, marker)
-
-    #def testWriteMarkInError(self):
-        #loggable = log.Loggable()
-        #log.setDebug("4")
-        #log.addLogHandler(self.handler)
-        #marker = 'test'
-        #self.assertRaises(SystemExit, loggable.writeMarker, marker, log.ERROR)
-        #self.assertEquals(self.message, marker)
-
-
-#class TestLogNames(unittest.TestCase):
-
-    #def testGetLevelNames(self):
-        #self.assertEquals(['ERROR', 'WARN', 'INFO', 'DEBUG', 'LOG'],
-                          #log.getLevelNames())
-
-    #def testGetLevelCode(self):
-        #self.assertEquals(1, log.getLevelInt('ERROR'))
-        #self.assertEquals(2, log.getLevelInt('WARN'))
-        #self.assertEquals(3, log.getLevelInt('INFO'))
-        #self.assertEquals(4, log.getLevelInt('DEBUG'))
-        #self.assertEquals(5, log.getLevelInt('LOG'))
-
-    #def testGetLevelName(self):
-        #self.assertEquals('ERROR', log.getLevelName(1))
-        #self.assertEquals('WARN', log.getLevelName(2))
-        #self.assertEquals('INFO', log.getLevelName(3))
-        #self.assertEquals('DEBUG', log.getLevelName(4))
-        #self.assertEquals('LOG', log.getLevelName(5))
-
-#if __name__ == '__main__':
-    #unittest.main()
+        self.tester.warning("also visible")
+        self.assertEqual(self.message, 'also visible')
+
+
+class TestOwnLogHandler(TestWithHandler):
+
+    def setUp(self):
+        TestWithHandler.setUp(self)
+        self.tester = LogFunctionTester()
+
+    # test if our own log handler correctly mangles the message
+
+    def testOwnLogHandlerLimited(self):
+        log.setDebug("testlog:%d" % log.INFO)
+        log.addLogHandler(self.handler)
+
+        self.tester.log("visible")
+        self.assertEqual(self.message, 'override visible')
+
+    def testLogHandlerAssertion(self):
+        self.assertRaises(TypeError, log.addLimitedLogHandler, None)
+
+
+class TestGetExceptionMessage(unittest.TestCase):
+
+    def func3(self):
+        self.func2()
+
+    def func2(self):
+        self.func1()
+
+    def func1(self):
+        raise TypeError("I am in func1")
+
+    def testLevel2(self):
+        try:
+            self.func2()
+            self.fail("Should not get to this point")
+        except TypeError, e:
+            self.verifyException(e)
+
+    def testLevel3(self):
+        try:
+            self.func3()
+            self.fail("Should not get to this point")
+        except TypeError, e:
+            self.verifyException(e)
+
+    def verifyException(self, e):
+        message = log.getExceptionMessage(e)
+        self.failUnless("func1()" in message, message)
+        self.failUnless("test_log.py" in message, message)
+        self.failUnless("TypeError" in message, message)
+
+
+class TestLogSettings(unittest.TestCase):
+
+    def testSet(self):
+        old = log.getLogSettings()
+        log.setDebug('*:5')
+        self.assertNotEquals(old, log.getLogSettings())
+
+        log.setLogSettings(old)
+        self.assertEquals(old, log.getLogSettings())
+
+
+class TestWriteMark(TestWithHandler):
+
+    def testWriteMarkInDebug(self):
+        loggable = log.Loggable()
+        log.setDebug("%d" % log.DEBUG)
+        log.addLogHandler(self.handler)
+        marker = 'test'
+        loggable.writeMarker(marker, log.DEBUG)
+        self.assertEquals(self.message, marker)
+
+    def testWriteMarkInWarn(self):
+        loggable = log.Loggable()
+        log.setDebug("%d" % log.WARN)
+        log.addLogHandler(self.handler)
+        marker = 'test'
+        loggable.writeMarker(marker, log.WARN)
+        self.assertEquals(self.message, marker)
+
+    def testWriteMarkInInfo(self):
+        loggable = log.Loggable()
+        log.setDebug("%d" % log.INFO)
+        log.addLogHandler(self.handler)
+        marker = 'test'
+        loggable.writeMarker(marker, log.INFO)
+        self.assertEquals(self.message, marker)
+
+    def testWriteMarkInLog(self):
+        loggable = log.Loggable()
+        log.setDebug("%d" % log.LOG)
+        log.addLogHandler(self.handler)
+        marker = 'test'
+        loggable.writeMarker(marker, log.LOG)
+        self.assertEquals(self.message, marker)
+
+    def testWriteMarkInError(self):
+        loggable = log.Loggable()
+        log.setDebug("%d" % log.ERROR)
+        log.addLogHandler(self.handler)
+        marker = 'test'
+        loggable.writeMarker(marker, log.ERROR)
+        self.assertEquals(self.message, marker)
+
+
+class TestLogNames(unittest.TestCase):
+
+    def testGetLevelNames(self):
+        self.assertEquals(['ERROR', 'WARN', 'FIXME', 'INFO', 'DEBUG', 'LOG'],
+                          log.getLevelNames())
+
+    def testGetLevelCode(self):
+        self.assertEquals(1, log.getLevelInt('ERROR'))
+        self.assertEquals(2, log.getLevelInt('WARN'))
+        self.assertEquals(3, log.getLevelInt('FIXME'))
+        self.assertEquals(4, log.getLevelInt('INFO'))
+        self.assertEquals(5, log.getLevelInt('DEBUG'))
+        self.assertEquals(6, log.getLevelInt('LOG'))
+
+    def testGetLevelName(self):
+        self.assertEquals('ERROR', log.getLevelName(1))
+        self.assertEquals('WARN', log.getLevelName(2))
+        self.assertEquals('FIXME', log.getLevelName(3))
+        self.assertEquals('INFO', log.getLevelName(4))
+        self.assertEquals('DEBUG', log.getLevelName(5))
+        self.assertEquals('LOG', log.getLevelName(6))

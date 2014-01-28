@@ -280,7 +280,7 @@ def getLevelName(level):
     @return: The name of the level
     @rtype: str
     """
-    assert isinstance(level, int) and level > 0 and level < 6, \
+    assert isinstance(level, int) and level > 0 and level < 7, \
         TypeError("Bad debug level")
     return getLevelNames()[level - 1]
 
@@ -550,9 +550,6 @@ def errorObject(object, cat, format, *args):
     """
     doLog(ERROR, object, cat, format, args)
 
-    # we do the import here because having it globally causes weird import
-    # errors if our gstreactor also imports .log, which brings in errors
-    # and pb stuff
     if args:
         raise SystemExit(format % args)
     else:
@@ -932,8 +929,7 @@ class BaseLoggable(object):
         marker to multiple elements at a time helps debugging.
         @param marker: A string write to the log.
         @type marker: str
-        @param level: The log level. It can be log.WARN, log.INFO,
-        log.DEBUG, log.ERROR or log.LOG.
+        @param level: The log level. It can be log.ERROR, etc.
         @type  level: int
         """
         logHandlers = {WARN: self.warning,
