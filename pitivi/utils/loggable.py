@@ -519,6 +519,7 @@ def doLog(level, object, category, format, args, where=-1, filePath=None, line=N
         message = format % args
     else:
         message = format
+    funcname = None
 
     # first all the unlimited ones
     if _log_handlers:
