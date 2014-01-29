@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+# Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
 # Copyright (c) 2013, Alex Băluț <alexandru.balut@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -19,13 +20,278 @@
 
 import os
 import tempfile
+import time
 
 from unittest import TestCase
 
 from gi.repository import GES
 from gi.repository import GLib
 
-from pitivi.project import Project
+from pitivi.project import Project, ProjectManager
+from pitivi.utils.misc import uri_is_reachable
+
+
+class MockProject(object):
+    settings = None
+    format = None
+    uri = None
+    has_mods = True
+
+    def hasUnsavedModifications(self):
+        return self.has_mods
+
+    def release(self):
+        pass
+
+    def disconnect_by_function(self, ignored):
+        pass
+
+
+class ProjectManagerListener(object):
+    def __init__(self, manager):
+        self.manager = manager
+        self.connectToProjectManager(self.manager)
+        self._reset()
+
+    def _reset(self):
+        self.signals = []
+
+    def connectToProjectManager(self, manager):
+        for signal in ("new-project-loading", "new-project-loaded",
+                "new-project-created", "new-project-failed", "missing-uri",
+                "closing-project", "project-closed"):
+            self.manager.connect(signal, self._recordSignal, signal)
+
+    def _recordSignal(self, *args):
+        signal = args[-1]
+        args = args[1:-1]
+        self.signals.append((signal, args))
+
+        return True
+
+
+class TestProjectManager(TestCase):
+    def setUp(self):
+        self.manager = ProjectManager(None)
+        self.listener = ProjectManagerListener(self.manager)
+        self.signals = self.listener.signals
+
+    def testLoadProjectFailedUnknownFormat(self):
+        """
+        Check that new-project-failed is emitted when we don't have a suitable
+        formatter.
+        """
+        uri = "file:///Untitled.meh"
+        self.manager.loadProject(uri)
+
+        # loading
+        name, args = self.signals[0]
+        self.assertEqual(uri, args[0], self.signals)
+
+        # failed
+        name, args = self.signals[1]
+        self.assertEqual("new-project-failed", name)
+        signalUri, unused_message = args
+        self.assertEqual(uri, signalUri, self.signals)
+
+    def testLoadProjectClosesCurrent(self):
+        """
+        Check that new-project-failed is emited if we can't close the current
+        project instance.
+        """
+        state = {"tried-close": False}
+
+        def close():
+            state["tried-close"] = True
+            return False
+        self.manager.closeRunningProject = close
+
+        uri = "file:///Untitled.xptv"
+        self.manager.current_project = MockProject()
+        self.manager.loadProject(uri)
+
+        self.assertEqual(0, len(self.signals))
+        self.failUnless(state["tried-close"], self.signals)
+
+    def testLoadProject(self):
+        self.manager.newBlankProject()
+
+        name, args = self.signals[0]
+        self.assertEqual("new-project-loading", name, self.signals)
+
+        name, args = self.signals[1]
+        self.assertEqual("new-project-created", name, self.signals)
+
+        name, args = self.signals[2]
+        self.assertEqual("new-project-loaded", name, self.signals)
+
+    def testMissingUriForwarded(self):
+        def quit(mainloop):
+            mainloop.quit()
+
+        def missingUriCb(self, project, error, clip_asset, mainloop, result):
+            print project, error, clip_asset, mainloop, result
+            result[0] = True
+            mainloop.quit()
+
+        self.mainloop = GLib.MainLoop()
+
+        result = [False]
+        self.manager.connect("missing-uri", missingUriCb, self.mainloop, result)
+
+        # Load a project with a missing asset.
+        unused, xges_path = tempfile.mkstemp()
+        with open(xges_path, "w") as xges:
+            xges.write("""<ges version='0.1'>
+  <project>
+    <ressources>
+      <asset id='file:///icantpossiblyexist.png' extractable-type-name='GESUriClip' />
+    </ressources>
+    <timeline>
+      <track caps='video/x-raw' track-type='4' track-id='0' />
+      <layer priority='0'>
+        <clip id='0' asset-id='file:///icantpossiblyexist.png' type-name='GESUriClip' layer-priority='0' track-types='4' start='0' duration='2590000000' inpoint='0' rate='0' />
+      </layer>
+    </timeline>
+</project>
+</ges>""")
+        uri = "file://%s" % xges_path
+        try:
+            self.assertTrue(self.manager.loadProject(uri))
+
+            GLib.timeout_add_seconds(5, quit, self.mainloop)
+            self.mainloop.run()
+            self.assertTrue(result[0], "missing not missing")
+        finally:
+            os.remove(xges_path)
+
+    def testCloseRunningProjectNoProject(self):
+        self.failUnless(self.manager.closeRunningProject())
+        self.failIf(self.signals)
+
+    def testCloseRunningProjectRefuseFromSignal(self):
+        def closing(manager, project):
+            return False
+
+        self.manager.current_project = MockProject()
+        self.manager.current_project.uri = "file:///ciao"
+        self.manager.connect("closing-project", closing)
+
+        self.failIf(self.manager.closeRunningProject())
+        self.assertEqual(1, len(self.signals))
+        name, args = self.signals[0]
+        self.assertEqual("closing-project", name)
+        project = args[0]
+        self.failUnless(project is self.manager.current_project)
+
+    def testCloseRunningProject(self):
+        current = self.manager.current_project = MockProject()
+        self.failUnless(self.manager.closeRunningProject())
+        self.assertEqual(2, len(self.signals))
+
+        name, args = self.signals[0]
+        self.assertEqual("closing-project", name)
+        project = args[0]
+        self.failUnless(project is current)
+
+        name, args = self.signals[1]
+        self.assertEqual("project-closed", name)
+        project = args[0]
+        self.failUnless(project is current)
+
+        self.failUnless(self.manager.current_project is None)
+
+    def testNewBlankProjectCantCloseCurrent(self):
+        def closing(manager, project):
+            return False
+
+        self.manager.current_project = MockProject()
+        self.manager.current_project.uri = "file:///ciao"
+        self.manager.connect("closing-project", closing)
+        self.failIf(self.manager.newBlankProject())
+        self.assertEqual(1, len(self.signals))
+        signal, args = self.signals[0]
+        self.assertEqual("closing-project", signal)
+
+    def testNewBlankProject(self):
+        self.failUnless(self.manager.newBlankProject())
+        self.assertEqual(3, len(self.signals))
+
+        name, args = self.signals[0]
+        self.assertEqual("new-project-loading", name)
+        uri = args[0]
+        self.failUnless(uri is None)
+
+        name, args = self.signals[1]
+        self.assertEqual("new-project-created", name)
+        project = args[0]
+        self.assertEqual(uri, project.uri)
+
+        name, args = self.signals[2]
+        self.assertEqual("new-project-loaded", name)
+        project = args[0]
+        self.failUnless(project is self.manager.current_project)
+
+    def testSaveProject(self):
+        self.failUnless(self.manager.newBlankProject())
+
+        unused, path = tempfile.mkstemp(suffix=".xges")
+        unused, path2 = tempfile.mkstemp(suffix=".xges")
+        try:
+            uri = "file://" + os.path.abspath(path)
+            uri2 = "file://" + os.path.abspath(path2)
+
+            # Save the project.
+            self.failUnless(self.manager.saveProject(uri=uri, backup=False))
+            self.failUnless(uri_is_reachable(uri))
+
+            # Wait a bit.
+            time.sleep(0.1)
+
+            # Save the project at a new location.
+            self.failUnless(self.manager.saveProject(uri2, backup=False))
+            self.failUnless(uri_is_reachable(uri2))
+
+            # Make sure the old path and the new path have different mtimes.
+            mtime = os.path.getmtime(path)
+            mtime2 = os.path.getmtime(path2)
+            self.assertLess(mtime, mtime2)
+
+            # Wait a bit more.
+            time.sleep(0.1)
+
+            # Save project again under the new path (by omitting uri arg)
+            self.failUnless(self.manager.saveProject(backup=False))
+
+            # regression test for bug 594396
+            # make sure we didn't save to the old URI
+            self.assertEqual(mtime, os.path.getmtime(path))
+            # make sure we did save to the new URI
+            self.assertLess(mtime2, os.path.getmtime(path2))
+        finally:
+            os.remove(path)
+            os.remove(path2)
+
+    def testMakeBackupUri(self):
+        uri = "file:///tmp/x.xges"
+        self.assertEqual(uri + "~", self.manager._makeBackupURI(uri))
+
+    def testBackupProject(self):
+        self.manager.newBlankProject()
+
+        # Assign an uri to the project where it's saved by default.
+        unused, xges_path = tempfile.mkstemp(suffix=".xges")
+        uri = "file://" + os.path.abspath(xges_path)
+        self.manager.current_project.uri = uri
+        # This is where the automatic backup file is saved.
+        backup_uri = self.manager._makeBackupURI(uri)
+
+        # Save the backup
+        self.assertTrue(self.manager.saveProject(self.manager.current_project, backup=True))
+        self.failUnless(uri_is_reachable(backup_uri))
+
+        self.manager.closeRunningProject()
+        self.assertFalse(uri_is_reachable(backup_uri), "Backup file not deleted when project closed")
 
 
 class TestProjectLoading(TestCase):

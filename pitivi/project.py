@@ -250,7 +250,7 @@ class ProjectManager(Signallable, Loggable):
         """
         if self.disable_save is True and (backup is True or uri is None):
             self.log("Read-only mode is enforced and no new URI was specified, ignoring save request")
-            return
+            return False
 
         if backup:
             if self.current_project is not None and self.current_project.uri is not None:
@@ -260,7 +260,7 @@ class ProjectManager(Signallable, Loggable):
                 # Do not try to save backup files for blank projects.
                 # It is possible that self.current_project.uri == None when the backup
                 # timer sent us an old instance of the (now closed) project.
-                return
+                return False
         elif uri is None:
             # "Normal save" scenario. The filechoosers in mainwindow ask users
             # for permission to overwrite the file (if needed), so we're safe.
@@ -274,7 +274,7 @@ class ProjectManager(Signallable, Loggable):
                 # TODO: this will not be needed when GTK+ bug #601451 is fixed
                 self.emit("save-project-failed", uri,
                           _("You do not have permissions to write to this folder."))
-                return
+                return False
 
         try:
             # "overwrite" is always True: our GTK filechooser save dialogs are
@@ -509,8 +509,6 @@ class Project(Loggable, GES.Project):
     @type timeline: L{GES.Timeline}
     @ivar pipeline: The timeline's pipeline
     @type pipeline: L{Pipeline}
-    @ivar format: The format under which the project is currently stored.
-    @type format: L{FormatterClass}
     @ivar loaded: Whether the project is fully loaded or not.
     @type loaded: C{bool}
 
@@ -867,11 +865,12 @@ class Project(Loggable, GES.Project):
     #--------------------------------------------#
     #               Our API                      #
     #--------------------------------------------#
+
     def createTimeline(self):
         """
-        The pitivi.Project handle 1 timeline at a time
-        unlike GES.Project
+        Load the project.
         """
+        # In this extract call the project is loaded from the file.
         self.timeline = self.extract()
         if self.timeline is None:
             return False

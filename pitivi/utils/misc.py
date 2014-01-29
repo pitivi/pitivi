@@ -123,7 +123,7 @@ def uri_is_valid(uri):
     Will also check if the size is valid (> 0).
 
     @param uri: The location to check
-    @type uri: C{URI}
+    @type uri: C{str}
     """
     return (Gst.uri_is_valid(uri) and
             Gst.uri_get_protocol(uri) == "file" and
@@ -134,7 +134,7 @@ def uri_is_reachable(uri):
     """ Check whether the given uri is reachable by GStreamer.
 
     @param uri: The location to check
-    @type uri: C{URI}
+    @type uri: C{str}
     @return: C{True} if the uri is reachable.
     @rtype: C{bool}
     """

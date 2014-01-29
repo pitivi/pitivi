@@ -11,7 +11,6 @@ tests =	\
 	test_prefs.py \
 	test_preset.py \
 	test_project.py \
-	test_projectmanager.py \
 	test_projectsettings.py \
 	test_signallable.py \
 	test_system_gnome.py \
