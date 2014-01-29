@@ -427,8 +427,8 @@ def getFileLine(where=-1):
     @param where: how many frames to go back up, or function
     @type  where: int (negative) or function
 
-    @return: tuple of (file, line)
-    @rtype:  tuple of (str, int)
+    @return: tuple of (file, line, function_name)
+    @rtype:  tuple of (str, int, str)
     """
     co = None
     lineno = None
@@ -458,7 +458,7 @@ def getFileLine(where=-1):
             stackFrame = stackFrame.f_back
 
     if not co:
-        return "<unknown file>", 0
+        return "<unknown file>", 0, None
 
     return scrubFilename(co.co_filename), lineno, name
 
