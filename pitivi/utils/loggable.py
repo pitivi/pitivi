@@ -521,40 +521,26 @@ def doLog(level, object, category, format, args, where=-1, filePath=None, line=N
         message = format
     funcname = None
 
-    # first all the unlimited ones
-    if _log_handlers:
+    if level > getCategoryLevel(category):
+        handlers = _log_handlers
+    else:
+        handlers = _log_handlers + _log_handlers_limited
+
+    if handlers:
         if filePath is None and line is None:
             (filePath, line, funcname) = getFileLine(where=where)
         ret['filePath'] = filePath
         ret['line'] = line
         if funcname:
             message = "\033[00m\033[32;01m%s:\033[00m %s" % (funcname, message)
-        for handler in _log_handlers:
+        for handler in handlers:
             try:
                 handler(level, object, category, filePath, line, message)
             except TypeError, e:
                 raise SystemError("handler %r raised a TypeError: %s" % (
                     handler, getExceptionMessage(e)))
 
-    if level > getCategoryLevel(category):
-        return ret
-
-    if _log_handlers_limited:
-        if filePath is None and line is None:
-            (filePath, line, funcname) = getFileLine(where=where)
-        ret['filePath'] = filePath
-        ret['line'] = line
-        if funcname:
-            message = "\033[00m\033[32;01m%s:\033[00m %s" % (funcname, message)
-        for handler in _log_handlers_limited:
-            # set this a second time, just in case there weren't unlimited
-            # loggers there before
-            try:
-                handler(level, object, category, filePath, line, message)
-            except TypeError:
-                raise SystemError("handler %r raised a TypeError" % handler)
-
-        return ret
+    return ret
 
 
 def errorObject(object, cat, format, *args):
