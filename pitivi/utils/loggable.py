@@ -531,7 +531,7 @@ def doLog(level, object, category, format, args, where=-1, filePath=None, line=N
             message = "\033[00m\033[32;01m%s:\033[00m %s" % (funcname, message)
         for handler in _log_handlers:
             try:
-                handler(level, object, category, file, line, message)
+                handler(level, object, category, filePath, line, message)
             except TypeError, e:
                 raise SystemError("handler %r raised a TypeError: %s" % (
                     handler, getExceptionMessage(e)))
