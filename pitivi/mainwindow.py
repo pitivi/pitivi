@@ -1160,7 +1160,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             return False
         try:
             self.app.current_project.disconnect_by_func(self._renderingSettingsChangedCb)
-        except:
+        except TypeError:
             # When loading the first project, the signal has never been
             # connected before.
             pass
