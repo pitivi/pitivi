@@ -660,13 +660,10 @@ def stderrHandler(level, object, category, file, line, message):
     sys.stderr.flush()
 
 
-def _preformatLevels(noColorEnvVarName):
+def _preformatLevels(enableColorOutput):
     format = '%-5s'
 
-    if (noColorEnvVarName is not None
-        and (noColorEnvVarName not in os.environ
-             or not os.environ[noColorEnvVarName])):
-
+    if enableColorOutput:
         t = TerminalController()
         formatter = lambda level: ''.join((t.BOLD, getattr(t, COLORS[level]),
                             format % (_LEVEL_NAMES[level - 1], ), t.NORMAL))
@@ -681,7 +678,7 @@ def _preformatLevels(noColorEnvVarName):
 # setup functions
 
 
-def init(envVarName, enableColorOutput=False, enableCrackOutput=True):
+def init(envVarName, enableColorOutput=True, enableCrackOutput=True):
     """
     Initialize the logging system and parse the environment variable
     of the given name.
@@ -697,10 +694,7 @@ def init(envVarName, enableColorOutput=False, enableCrackOutput=True):
     global _ENV_VAR_NAME
     _ENV_VAR_NAME = envVarName
 
-    if enableColorOutput:
-        _preformatLevels(envVarName + "_NO_COLOR")
-    else:
-        _preformatLevels(None)
+    _preformatLevels(enableColorOutput)
 
     if envVarName in os.environ:
         # install a log handler that uses the value of the environment var

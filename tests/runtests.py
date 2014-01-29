@@ -68,7 +68,7 @@ if __name__ == "__main__":
         descriptions = 2
         verbosity = 2
     from pitivi.utils import loggable as log
-    log.init('PITIVI_DEBUG', 1)
+    log.init('PITIVI_DEBUG')
 
     suite = _tests_suite()
     if not list(suite):

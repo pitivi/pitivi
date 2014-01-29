@@ -95,13 +95,10 @@ class Pitivi(Loggable, Signallable):
         "shutdown": None}
 
     def __init__(self):
-        """
-        initialize pitivi with the command line arguments
-        """
         Loggable.__init__(self)
 
-        # init logging as early as possible so we can log startup code
-        enable_color = os.environ.get('PITIVI_DEBUG_NO_COLOR', '0') in ('', '0')
+        # Init logging as early as possible so we can log startup code
+        enable_color = not os.environ.get('PITIVI_DEBUG_NO_COLOR', '0') in ('', '1')
         # Let's show a human-readable pitivi debug output by default, and only
         # show a crazy unreadable mess when surrounded by gst debug statements.
         enable_crack_output = "GST_DEBUG" in os.environ
@@ -109,15 +106,12 @@ class Pitivi(Loggable, Signallable):
 
         self.info('starting up')
 
-        self.current_project = None
-
-        # get settings
         self.settings = GlobalSettings()
         self.threads = ThreadMaster()
-
         self.effects = EffectsHandler()
         self.system = getSystem()
 
+        self.current_project = None
         self.projectManager = ProjectManager(self)
         self._connectToProjectManager(self.projectManager)
 
