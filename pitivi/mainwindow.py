@@ -167,9 +167,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     Pitivi's main window.
 
     @cvar app: The application object
-    @type app: L{Application}
-    @cvar project: The current project
-    @type project: L{Project}
+    @type app: L{Pitivi}
     """
     def __init__(self, instance, allow_full_screen=True):
         """ initialize with the Pitivi object """
@@ -665,20 +663,21 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         abt.set_program_name(APPNAME)
         abt.set_website(APPURL)
 
-        _app_version_info = self.app.version_information
         if in_devel():
             version_str = _("Development version")
-        elif _app_version_info and _app_version_info["status"] != "CURRENT":
+        elif not self.app.isLatest():
             version_str = _("Version %(cur_ver)s — %(new_ver)s is available" %
                             {"cur_ver": pitivi_version,
-                             "new_ver": _app_version_info["current"]})
+                             "new_ver": self.app.getLatest()})
         else:
             version_str = _("Version %s" % pitivi_version)
         abt.set_version(version_str)
 
-        ges_version_str = "GES %i.%i.%i.%i" % (GES.version())
-        gst_version_str = "GStreamer %i.%i.%i.%i" % (Gst.version())
-        abt.set_comments("\n%s\n%s" % (ges_version_str, gst_version_str))
+        comments = ["",
+                    "GES %s" % ".".join(map(str, GES.version())),
+                    "GStreamer %s" % ".".join(map(str, Gst.version()))]
+        abt.set_comments("\n".join(comments))
+
         authors = [_("Current maintainers:"),
                    "Jean-François Fortin Tam <nekohayo@gmail.com>",
                    "Thibault Saunier <thibault.saunier@collabora.com>",

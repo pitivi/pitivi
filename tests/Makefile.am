@@ -2,7 +2,8 @@
 # Don't try to use wildcards to replace the list of tests below.
 # http://www.gnu.org/software/automake/manual/automake.html#Wildcards
 # Keep this list sorted!
-tests =	test_basic.py \
+tests =	\
+	test_application.py \
 	test_common.py \
 	test_log.py \
 	test_misc.py \

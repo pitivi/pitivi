@@ -128,7 +128,7 @@ class Pitivi(Loggable, Signallable):
         #self.timelineLogObserver = TimelineLogObserver(self.action_log)
         self.projectLogObserver = ProjectLogObserver(self.action_log)
 
-        self.version_information = {}
+        self._version_information = {}
         self._checkVersion()
 
     def shutdown(self):
@@ -191,7 +191,7 @@ class Pitivi(Loggable, Signallable):
         self.info("Requesting version information")
         giofile.load_contents_async(None, self._versionInfoReceivedCb, None)
 
-    def _versionInfoReceivedCb(self, giofile, result, data):
+    def _versionInfoReceivedCb(self, giofile, result, user_data):
         try:
             raw = giofile.load_contents_finish(result)[1]
             raw = raw.split("\n")
@@ -201,21 +201,36 @@ class Pitivi(Loggable, Signallable):
 
             # search newest version and status
             status = "UNSUPPORTED"
+            current_version = None
             for version, version_status in data:
                 if pitivi_version == version:
                     status = version_status
                 if version_status.upper() == "CURRENT":
+                    # This is the latest.
                     current_version = version
 
             self.info("Latest software version is %s", current_version)
             if status is "UNSUPPORTED":
-                self.warning("Using an outdated version of Pitivi (%s)" % pitivi_version)
+                self.warning("Using an outdated version of Pitivi (%s)", pitivi_version)
 
-            self.version_information["current"] = current_version
-            self.version_information["status"] = status
-            self.emit("version-info-received", self.version_information)
+            self._version_information["current"] = current_version
+            self._version_information["status"] = status
+            self.emit("version-info-received", self._version_information)
         except Exception, e:
-            self.warning("Version info could not be read: %s" % e)
+            self.warning("Version info could not be read: %s", e)
+
+    def isLatest(self):
+        """
+        Whether the app's version is the latest as far as we know.
+        """
+        status = self._version_information.get("status")
+        return status is None or status.upper() == "CURRENT"
+
+    def getLatest(self):
+        """
+        Get the latest version of the app or None.
+        """
+        return self._version_information.get("current")
 
 
 class InteractivePitivi(Pitivi):

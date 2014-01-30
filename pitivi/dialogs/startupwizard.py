@@ -86,8 +86,8 @@ class StartUpWizard(object):
         vbox = self.builder.get_object("topvbox")
         self.infobar = Gtk.InfoBar()
         vbox.pack_start(self.infobar, True, True, 0)
-        if self.app.version_information:
-            self._appVersionInfoReceivedCb(None, self.app.version_information)
+        if self.app.getLatest():
+            self._appVersionInfoReceivedCb(self.app, None)
         else:
             self.app.connect("version-info-received", self._appVersionInfoReceivedCb)
 
@@ -152,24 +152,25 @@ class StartUpWizard(object):
         """Handle the start of a project load operation."""
         self.hide()
 
-    def _appVersionInfoReceivedCb(self, unused_pitivi, version):
+    def _appVersionInfoReceivedCb(self, app, unused_version_information):
         """Handle version info"""
-        # current version, don't show message
-        if version["status"].upper() == "CURRENT":
+        if app.isLatest():
+            # current version, don't show message
             return
 
-        # new current version, reset counter
-        if self.app.settings.lastCurrentVersion != version["current"]:
-            self.app.settings.lastCurrentVersion = version["current"]
+        latest_version = app.getLatest()
+        if self.app.settings.lastCurrentVersion != latest_version:
+            # new latest version, reset counter
+            self.app.settings.lastCurrentVersion = latest_version
             self.app.settings.displayCounter = 0
 
-        # current version info already showed 5 times, don't show again
         if self.app.settings.displayCounter >= 5:
+            # current version info already showed 5 times, don't show again
             return
 
         # increment counter, create infobar and show info
         self.app.settings.displayCounter = self.app.settings.displayCounter + 1
-        text = _("Pitivi %s is available." % version["current"])
+        text = _("Pitivi %s is available." % latest_version)
         label = Gtk.Label(label=text)
         self.infobar.get_content_area().add(label)
         self.infobar.set_message_type(Gtk.MessageType.INFO)
