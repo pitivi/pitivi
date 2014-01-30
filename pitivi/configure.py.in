@@ -31,7 +31,10 @@ def _get_root_dir():
     return '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
 
 
-def _in_devel():
+def in_devel():
+    """
+    Returns whether the app is run from a git checkout.
+    """
     rd = _get_root_dir()
     return os.path.exists(os.path.join(rd, '.git'))
 
@@ -45,14 +48,14 @@ RELEASES_URL = 'http://pitivi.org/releases.txt'
 APPMANUALURL_ONLINE = 'http://www.pitivi.org/manual'
 
 
-if _in_devel():
+if in_devel():
     APPMANUALURL_OFFLINE = 'ghelp://%s' % os.path.join(_get_root_dir(), 'help/C')
 else:
     APPMANUALURL_OFFLINE = 'help:pitivi'
 
 
 def get_data_dir():
-    if _in_devel():
+    if in_devel():
         datadir = os.path.join(_get_root_dir(), "data")
     elif os.getenv("PITIVI_TOP_LEVEL_DIR"):
         top_level = os.getenv("PITIVI_TOP_LEVEL_DIR")

@@ -40,7 +40,7 @@ from gi.repository import GdkPixbuf
 from gi.repository.GstPbutils import InstallPluginsContext, install_plugins_async
 
 from pitivi.clipproperties import ClipProperties
-from pitivi.configure import pitivi_version, APPNAME, APPURL, get_pixmap_dir, get_ui_dir
+from pitivi.configure import in_devel, pitivi_version, APPNAME, APPURL, get_pixmap_dir, get_ui_dir
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
@@ -50,7 +50,7 @@ from pitivi.timeline.timeline import TimelineContainer
 from pitivi.titleeditor import TitleEditor
 from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import in_devel, show_user_manual, path_from_uri
+from pitivi.utils.misc import show_user_manual, path_from_uri
 from pitivi.utils.ui import info_name, beautify_time_delta, SPACING, \
     beautify_length
 from pitivi.viewer import ViewerContainer

@@ -26,8 +26,8 @@ def _tests_suite():
 
 
 def get_pitivi_dir():
-    from pitivi.configure import _in_devel
-    if _in_devel():
+    from pitivi.configure import in_devel
+    if in_devel():
         # We know exactly where the top dir.
         tests_dir = os.path.dirname(os.path.abspath(__file__))
         pitivi_dir = os.path.join(tests_dir, os.path.pardir)
