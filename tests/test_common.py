@@ -20,7 +20,6 @@
 # Boston, MA 02110-1301, USA.
 
 import common
-from unittest import main
 import pitivi.utils.ui as ui_common
 
 
@@ -45,6 +44,3 @@ class TestColors(common.TestCase):
         self.assertEquals(
             (0x01FF, 0x02FF, 0x04FF, 0x08FF),
             ui_common.unpack_color_64(0x01FF02FF04FF08FF))
-
-if __name__ == "__main__":
-    main()

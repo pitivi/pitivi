@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
 #
 #       tests/test_projectsettings.py
 #
-# Copyright (c) 2011, Alex Balut <alexandru.balut@gmail.com>
+# Copyright (c) 2011, Alex Băluț <alexandru.balut@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public

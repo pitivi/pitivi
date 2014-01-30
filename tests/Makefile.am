@@ -13,7 +13,6 @@ tests =	\
 	test_project.py \
 	test_projectsettings.py \
 	test_signallable.py \
-	test_system_gnome.py \
 	test_system.py \
 	test_timeline_undo.py \
 	test_undo.py \

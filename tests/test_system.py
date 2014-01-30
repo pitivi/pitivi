@@ -1,5 +1,30 @@
+# -*- coding: utf-8 -*-
+# Pitivi video editor
+#
+#       tests/test_system.py
+#
+# Copyright (c) 2012, Jean-François Fortin Tam <nekohayo@gmail.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
 from unittest import TestCase
-from pitivi.utils.system import System
+
+from pitivi.utils.system import System, getSystem, GnomeSystem, \
+    INHIBIT_LOGOUT, INHIBIT_SUSPEND, INHIBIT_SESSION_IDLE, \
+    INHIBIT_USER_SWITCHING
 
 
 class TestSystem(TestCase):
@@ -58,3 +83,51 @@ class TestSystem(TestCase):
             self.assertTrue(not self.system.sleepIsInhibited(str(c)))
 
         self.assertTrue(not self.system.sleepIsInhibited())
+
+
+class TestGnomeSystem(TestCase):
+    def setUp(self):
+        self.system = getSystem()
+
+    def testPowerInhibition(self):
+        if not isinstance(self.system, GnomeSystem):
+            # We can only test this on a Gnome system.
+            return
+
+        #check that no other programs are inhibiting, otherwise the
+        #test is compromised
+        self.assertTrue(not self.system.session_iface.IsInhibited(
+            INHIBIT_LOGOUT | INHIBIT_USER_SWITCHING | INHIBIT_SUSPEND |
+            INHIBIT_SESSION_IDLE))
+
+        self.system.inhibitScreensaver('1')
+        self.assertTrue(self.system.session_iface.IsInhibited(
+            INHIBIT_SESSION_IDLE))
+
+        self.system.inhibitSleep('2')
+        #screensaver should be able to turn off, but
+        self.assertTrue(not self.system.session_iface.IsInhibited(
+            INHIBIT_SESSION_IDLE))
+        #suspend (sleep, suspend, shutdown), logout should be inhibited
+        #IsInhibited will return true if just one is inhibited, so we
+        #check both separately.
+        self.assertTrue(self.system.session_iface.IsInhibited(
+            INHIBIT_SUSPEND))
+        self.assertTrue(self.system.session_iface.IsInhibited(
+            INHIBIT_LOGOUT))
+
+        self.system.uninhibitSleep('2')
+        #screensaver should now be blocked
+        self.assertTrue(self.system.session_iface.IsInhibited(
+            INHIBIT_SESSION_IDLE))
+        #suspend and logout should be unblocked
+        self.assertTrue(not self.system.session_iface.IsInhibited(
+            INHIBIT_SUSPEND))
+        self.assertTrue(not self.system.session_iface.IsInhibited(
+            INHIBIT_LOGOUT))
+
+        self.system.uninhibitScreensaver('1')
+        #now everything should be unblocked
+        self.assertTrue(not self.system.session_iface.IsInhibited(
+            INHIBIT_LOGOUT | INHIBIT_USER_SWITCHING | INHIBIT_SUSPEND |
+            INHIBIT_SESSION_IDLE))
