@@ -70,7 +70,8 @@
 
     <section>
      <title>Timeline</title>
-      <p>The timeline is the core user interface component that you will use for editing. It is a visual, time-proportional representation of your project's chronology.</p>
+      <p>The timeline is the core user interface component that you will use for editing. Vertically, it is divided into layers that can be filled with audio and video clips. Horizontally, it constitutes a time-proportional representation of your project's chronology. Various levels of zoom can be applied to the timeline. However, these apply only to the horizontal (chronological) dimension of the timeline.</p>
+      <p>See the <link xref="layers">Understanding layers</link> and <link xref="movearoundtimeline">Moving around the timeline</link> pages for more information on how to work with the timeline.</p>
     </section>
 
     <section>
