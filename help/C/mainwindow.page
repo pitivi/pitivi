@@ -32,7 +32,7 @@
 
     <section>
      <title>Menu bar</title>
-      <p>The menu bar contains all the possible actions of the toolbars, plus many more. The menu bar also provides some instant-apply settings, as well as access to further customizations in the <gui>Project settings</gui> dialog and <gui>Preferences</gui> dialog.</p>
+      <p>The menu bar is a place where many functions can be accessed. It contains all actions contained in the three toolbars, plus actions related to managing projects, view settings and help. <gui>Project settings</gui> and <gui>Preferences</gui> can also be accessed through the menu bar. However, actions specific to the <gui>Media library</gui>, <gui>Effect library</gui>, <gui>Clip configuration</gui>, <gui>Transitions</gui>, or <gui>Title editor</gui> are not included in the menu bar.</p>
       <note><p>The menu bar cannot be hidden.</p>
       </note>
     </section>
