@@ -376,6 +376,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._container.stage.connect("button-press-event", self._dragBeginCb)
         self._container.stage.connect("motion-event", self._dragProgressCb)
         self._container.stage.connect("button-release-event", self._dragEndCb)
+        self._container.gui.connect("button-release-event", self._dragEndCb)
 
     def _peekMouse(self):
         manager = Clutter.DeviceManager.get_default()
