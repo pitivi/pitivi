@@ -965,7 +965,7 @@ class RenderDialog(Loggable):
             self.progress.setFilesizeEstimate(None)
             if not self.progress.window.is_active():
                 notification = _('"%s" has finished rendering.' % self.fileentry.get_text())
-                self.app.system.desktopMessage(_("Render complete"), notification, "pitivi")
+                self.notification = self.app.system.desktopMessage(_("Render complete"), notification, "pitivi")
             if has_canberra:
                 canberra = pycanberra.Canberra()
                 canberra.play(1, pycanberra.CA_PROP_EVENT_ID, "complete-media", None)

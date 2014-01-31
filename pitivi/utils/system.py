@@ -157,6 +157,7 @@ class System(Signallable, Loggable):
         @arg icon: C{str} icon to be shown with the message
         """
         self.debug("desktopMessage(): %s, %s", title, message)
+        return None
 
     def getUniqueFilename(self, string):
         """Get a filename which can only be obtained from the specified string.
@@ -187,6 +188,9 @@ class FreedesktopOrgSystem(System):
                 # This can happen if the system is not properly configured.
                 # See for example https://bugzilla.gnome.org/show_bug.cgi?id=719627.
                 self.error("desktopMessage: Failed displaying notification: %s", e.message)
+                return None
+            return notification
+        return None
 
 
 #org.gnome.SessionManager flags
