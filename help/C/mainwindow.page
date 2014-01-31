@@ -50,15 +50,14 @@
 
     <section>
      <title>Ruler</title>
-      <p>The ruler plays a crucial role in your interaction with the timeline. In addition to giving you time measurements (in seconds), it is the primary way of moving the playhead (and thus, your position in time).</p>
+      <p>The ruler plays a crucial role in your interaction with the timeline. First, it represents a time scale providing time measurements (in seconds) for overall orientation. Second, it constitutes the primary surface on which you can move the playhead (and thus, change your position in time). To move your position, click anywhere on the ruler. You can also <em>scrub</em> the timeline by clicking on the ruler and holding down the mouse button while moving. See the section on <link xref="movearoundtimeline">scrubbing</link> for more details.</p>
       <p>The current playhead position is indicated by a red vertical line:</p>
       <figure>
         <media type="image" src="figures/ruler.png" mime="image/png" style="right"></media>
       </figure>
       <note>
-       <p>When zoomed in, frames are visually represented on the ruler as alternating light and dark areas in the bottom part; those are based on the project framerate settings.</p>
+       <p>When zoomed in, frames are visually represented as alternating light and dark areas in the bottom part of the ruler. Hovering the mouse cursor over the ruler in this state will reveal an information tooltip with frame number. The amount of time the individual frames take up is based on the project framerate settings.</p>
       </note>
-      <p>To move your position in time, click anywhere on the ruler. You can also <em>scrub</em> the timeline by clicking on the ruler and holding down the mouse button while moving. See the section on <link xref="movearoundtimeline">scrubbing</link> for more details.</p>
     </section>
 
     <section>
