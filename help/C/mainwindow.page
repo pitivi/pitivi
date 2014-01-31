@@ -39,8 +39,10 @@
 
     <section>
      <title>The toolbars</title>
-      <p>Toolbars provide access to the most commonly used functions of <app>Pitivi</app>. All items in toolbars can also be accessed through the menu bar. Toolbars can be activated or deactivated in the <gui>View</gui> menu.</p>
+      <p> There are three toolbars in the <app>Pitivi</app> main window: the <gui>Main toolbar</gui>, the <gui>Playback toolbar</gui> and the <gui>Timeline toolbar</gui>. These provide access to the most commonly used functions of <app>Pitivi</app>. All items in toolbars can also be accessed through the menu bar. Toolbars can be activated or deactivated in the <gui>View</gui> menu.</p>
+      <note style="tip">
       <p>You can hover the mouse cursor over a toolbar item to reveal an information tooltip regarding its function.</p>
+      </note>
       <figure>
         <media type="image" src="figures/hovering.png" mime="image/png" style="right"></media>
       </figure>
