@@ -241,12 +241,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "mainmenubutton.ui"))
         builder.connect_signals(self)
-        menubutton = builder.get_object("menubutton")
+        self._menubutton = builder.get_object("menubutton")
         self._menubutton_items = {}
         for widget in builder.get_object("menu").get_children():
             self._menubutton_items[Gtk.Buildable.get_name(widget)] = widget
 
-        self._headerbar.pack_end(menubutton)
+        self._headerbar.pack_end(self._menubutton)
         self._headerbar.set_show_close_button(True)
         self._headerbar.show_all()
         self.set_titlebar(self._headerbar)
@@ -307,7 +307,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # These will show up in sniff, accerciser, etc.
         self.get_accessible().set_name("main window")
         self._headerbar.get_accessible().set_name("headerbar")
-        menubutton.get_accessible().set_name("main menu button")
+        self._menubutton.get_accessible().set_name("main menu button")
         self.vpaned.get_accessible().set_name("contents")
         self.mainhpaned.get_accessible().set_name("upper half")
         self.secondhpaned.get_accessible().set_name("tabs")
@@ -416,6 +416,16 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.__set_accelerator(self.undo_button, Gdk.KEY_z, ctrl)
         self.__set_accelerator(self.redo_button, Gdk.KEY_z, ctrl | shift)
         self.__set_accelerator(self.save_button, Gdk.KEY_s, ctrl)
+
+        def closeCb(unused_accel_group, unused_widget, unused_key, unused_mods):
+            self.close()
+
+        def menuCb(unused_accel_group, unused_widget, unused_key, unused_mods):
+            self._menubutton.set_active(not self._menubutton.get_active())
+
+        accel_group = self.uimanager.get_accel_group()
+        accel_group.connect(Gdk.KEY_q, ctrl, Gtk.AccelFlags.VISIBLE, closeCb)
+        accel_group.connect(Gdk.KEY_F10, 0, Gtk.AccelFlags.VISIBLE, menuCb)
 
     def __set_accelerator(self, widget, key, mods=0, flags=Gtk.AccelFlags.VISIBLE):
         """
