@@ -45,7 +45,7 @@ from gettext import gettext as _
 from optparse import OptionParser
 
 from pitivi.effects import EffectsHandler
-from pitivi.configure import pitivi_version, RELEASES_URL
+from pitivi.configure import VERSION, RELEASES_URL
 from pitivi.settings import GlobalSettings
 from pitivi.utils.threads import ThreadMaster
 from pitivi.mainwindow import PitiviMainWindow
@@ -203,7 +203,7 @@ class Pitivi(Loggable, Signallable):
             status = "UNSUPPORTED"
             current_version = None
             for version, version_status in data:
-                if pitivi_version == version:
+                if VERSION == version:
                     status = version_status
                 if version_status.upper() == "CURRENT":
                     # This is the latest.
@@ -211,7 +211,7 @@ class Pitivi(Loggable, Signallable):
 
             self.info("Latest software version is %s", current_version)
             if status is "UNSUPPORTED":
-                self.warning("Using an outdated version of Pitivi (%s)", pitivi_version)
+                self.warning("Using an outdated version of Pitivi (%s)", VERSION)
 
             self._version_information["current"] = current_version
             self._version_information["status"] = status

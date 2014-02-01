@@ -40,7 +40,7 @@ from gi.repository import GdkPixbuf
 from gi.repository.GstPbutils import InstallPluginsContext, install_plugins_async
 
 from pitivi.clipproperties import ClipProperties
-from pitivi.configure import in_devel, pitivi_version, APPNAME, APPURL, get_pixmap_dir, get_ui_dir
+from pitivi.configure import in_devel, VERSION, APPNAME, APPURL, get_pixmap_dir, get_ui_dir
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
@@ -352,7 +352,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         The full hierarchy is also visible with accessibility tools like "sniff"
         """
-        self.set_title("%s" % (APPNAME))
+        self.set_title("%s" % APPNAME)
         self.set_icon_name("pitivi")
         vbox = Gtk.VBox(homogeneous=False)
         self.add(vbox)
@@ -667,10 +667,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             version_str = _("Development version")
         elif not self.app.isLatest():
             version_str = _("Version %(cur_ver)s — %(new_ver)s is available" %
-                            {"cur_ver": pitivi_version,
+                            {"cur_ver": VERSION,
                              "new_ver": self.app.getLatest()})
         else:
-            version_str = _("Version %s" % pitivi_version)
+            version_str = _("Version %s" % VERSION)
         abt.set_version(version_str)
 
         comments = ["",
