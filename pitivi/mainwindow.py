@@ -670,7 +670,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def _aboutCb(self, unused_action):
         abt = Gtk.AboutDialog()
-        abt.set_name(APPNAME)
+        abt.set_program_name(APPNAME)
         if in_devel():
             abt.set_version(_("Development version"))
         else:
