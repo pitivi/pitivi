@@ -671,22 +671,22 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     def _aboutCb(self, unused_action):
         abt = Gtk.AboutDialog()
         abt.set_program_name(APPNAME)
-        if in_devel():
-            abt.set_version(_("Development version"))
-        else:
-            abt.set_version(pitivi_version)
         abt.set_website(APPURL)
+
+        _app_version_info = self.app.version_information
+        if in_devel():
+            version_str = _("Development version")
+        elif _app_version_info and _app_version_info["status"] != "CURRENT":
+            version_str = _("Version %(cur_ver)s — %(new_ver)s is available" %
+                            {"cur_ver": pitivi_version,
+                             "new_ver": _app_version_info["current"]})
+        else:
+            version_str = _("Version %s" % pitivi_version)
+        abt.set_version(version_str)
+
         ges_version_str = "GES %i.%i.%i.%i" % (GES.version())
         gst_version_str = "GStreamer %i.%i.%i.%i" % (Gst.version())
-        if (self.app.version_information and
-           self.app.version_information["status"] != "CURRENT"):
-            version_str = _("Pitivi %s is available." %
-                (self.app.version_information["current"]))
-
-            abt.set_comments("%s\n\n%s\n\n%s" %
-                (ges_version_str, gst_version_str, version_str))
-        else:
-            abt.set_comments("%s\n%s" % (ges_version_str, gst_version_str))
+        abt.set_comments("\n%s\n%s" % (ges_version_str, gst_version_str))
         authors = [_("Current maintainers:"),
                    "Jean-François Fortin Tam <nekohayo@gmail.com>",
                    "Thibault Saunier <thibault.saunier@collabora.com>",
