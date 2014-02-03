@@ -104,8 +104,9 @@ def in_devel():
     Returns True if the current Pitivi instance is run from a git checkout
     """
     try:
-        # This code is the same as in the configure files
-        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        # This code is similar to configure.py.in, but we go up 3 dir levels
+        _parent = os.path.dirname
+        root_dir = _parent(_parent(_parent(os.path.abspath(__file__))))
         return os.path.exists(os.path.join(root_dir, '.git'))
     except:
         return False
