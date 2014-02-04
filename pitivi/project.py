@@ -876,7 +876,7 @@ class Project(Loggable, GES.Project):
 
         self.timeline.selection = Selection()
         self.pipeline = Pipeline()
-        self.pipeline.add_timeline(self.timeline)
+        self.pipeline.set_timeline(self.timeline)
 
         return True
 

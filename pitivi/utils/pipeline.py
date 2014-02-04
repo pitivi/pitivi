@@ -531,8 +531,8 @@ class Pipeline(GES.Pipeline, SimplePipeline):
     def _getDuration(self, format=Gst.Format.TIME):
         return self._timeline.get_duration()
 
-    def add_timeline(self, timeline):
-        if GES.Pipeline.add_timeline(self, timeline):
+    def set_timeline(self, timeline):
+        if GES.Pipeline.set_timeline(self, timeline):
             self._timeline = timeline
             return True
 
