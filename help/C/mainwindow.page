@@ -114,4 +114,9 @@
       </note>
     </section>
 
+    <section>
+     <title>Middle pane</title>
+      <p>The middle pane contains <gui>Clip configuration</gui>, <gui>Transitions</gui> and <gui>Title editor</gui>. You can switch between them by selecting the appropriate tab. The <gui>Clip configuration</gui> allows you to activate, deactivate or configure settings of effects applied to a selected clip. <gui>Transitions</gui> let you pick and configure the transition type when two clips overlap in the timeline. With <gui>Title editor</gui> you can create new clips with titles or add titles to existing ones.</p>
+    </section>
+
 </page>
