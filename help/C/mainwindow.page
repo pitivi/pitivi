@@ -79,6 +79,22 @@
     </section>
 
     <section>
+     <title>Timeline toolbar</title>
+      <p>The timeline toolbar is located at the right edge of the timeline. It contains basic actions for editing in timeline:</p>
+      <list>
+      <item><p>Split clip at playhead position</p></item>
+      <item><p>Delete selected</p></item>
+      <item><p>Group clips</p></item>
+      <item><p>Ungroup clips</p></item>
+      <item><p>Align clips based on their soundtracks</p></item>
+      <item><p>Toggle gapless mode</p></item>
+      </list>
+      <note>
+      <p>Note that most of the actions become available only once a clip is selected. When there is no subject for the action to be performed on, it remains shaded (indicating its unavailability).</p>
+      </note>
+    </section>
+
+    <section>
      <title>Playback toolbar</title>
       <p>This toolbar, located below the previewer, contains buttons controlling the playback of the timeline. Options provided by the toolbar are the following:</p>
       <list>
