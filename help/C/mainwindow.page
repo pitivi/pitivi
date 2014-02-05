@@ -107,8 +107,11 @@
     </section>
 
     <section>
-     <title>Media Library</title>
-      <p>The media library displays the imported media files in your project and allows you to manage them.</p>
+     <title>Left pane</title>
+      <p>The left pane contains media and effect libraries. You can switch between them by selecting the appropriate tab. The <gui>Media library</gui> displays the imported media files in your project and allows you to manage them. The <gui>Effect library</gui> contains number of audio and video effects applicable to clips.</p>
+      <note style="tip">
+      <p>You can search the libraries by using the text box in the header of each library.</p>
+      </note>
     </section>
 
 </page>
