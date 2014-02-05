@@ -29,6 +29,10 @@
         </media>
       </figure>
 
+    <note style="tip">
+    <title>Resizing components of the main window</title>
+    <p>In the spaces between components, there are handles indicated by five light dots. You can proportionally resize pairs of components by clicking and dragging the handles to the desired position.</p>
+    </note>
 
     <section>
      <title>Menu bar</title>
