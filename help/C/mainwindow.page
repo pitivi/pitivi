@@ -76,12 +76,19 @@
 
     <section>
      <title>Playback toolbar</title>
-      <p>This toolbar, located below the previewer, contains buttons controlling</p>
+      <p>This toolbar, located below the previewer, contains buttons controlling the playback of the timeline. Options provided by the toolbar are the following:</p>
       <list>
-       <item><p>The playback of the timeline.</p></item>
-       <item><p>The playback of a clip being previewed from the media library.</p></item>
+      <item><p>Play</p></item>
+      <item><p>Pause</p></item>
+      <item><p>Go forward one second</p></item>
+      <item><p>Go back one second</p></item>
+      <item><p>Go to the end of the timeline</p></item>
+      <item><p>Go to the beginning of the timeline</p></item>
       </list>
+      <p>For more information on how to move on the timeline, see the <em>Moving the playhead</em> and <em>Scrubbing</em> sections on the <link xref="movearoundtimeline">Moving around the timeline</link> page.</p>
+      <note>
       <p>The <gui>Play</gui> button transforms into a <gui>Pause</gui> button when playing, and reverts to a <gui>Play</gui> button again when not playing.</p>
+      </note>
     </section>
 
     <section>
