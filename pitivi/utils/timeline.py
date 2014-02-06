@@ -218,7 +218,7 @@ class EditingContext(Signallable):
         "clip-trim-finished": [],
     }
 
-    def __init__(self, focus, timeline, mode, edge, settings, action_log):
+    def __init__(self, focus, timeline, mode, edge, unused_settings, action_log):
         """
         @param focus: the Clip or TrackElement which is to be the
         main target of interactive editing, such as the object directly under the

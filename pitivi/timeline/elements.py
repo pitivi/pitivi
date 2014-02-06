@@ -252,7 +252,7 @@ class TrimHandle(Clutter.Texture):
 
     #Callbacks
 
-    def _enterEventCb(self, actor, event):
+    def _enterEventCb(self, unused_actor, unused_event):
         self.timelineElement.set_reactive(False)
         for elem in self.timelineElement.get_children():
             elem.set_reactive(False)
@@ -264,7 +264,7 @@ class TrimHandle(Clutter.Texture):
         else:
             self.timelineElement.timeline._container.embed.get_window().set_cursor(DRAG_RIGHT_HANDLEBAR_CURSOR)
 
-    def _leaveEventCb(self, actor, event):
+    def _leaveEventCb(self, unused_actor, event):
         self.timelineElement.set_reactive(True)
         children = self.timelineElement.get_children()
 
@@ -277,13 +277,13 @@ class TrimHandle(Clutter.Texture):
         self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
         self.timelineElement.timeline._container.embed.get_window().set_cursor(NORMAL_CURSOR)
 
-    def _elementEnterEventCb(self, actor, event):
+    def _elementEnterEventCb(self, unused_actor, unused_event):
         self.show()
 
-    def _elementLeaveEventCb(self, actor, event):
+    def _elementLeaveEventCb(self, unused_actor, unused_event):
         self.hide()
 
-    def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
+    def _dragBeginCb(self, unused_action, unused_actor, event_x, event_y, unused_modifiers):
         self.dragBeginStartX = event_x
         self.dragBeginStartY = event_y
         elem = self.timelineElement.bElement.get_parent()
@@ -307,7 +307,7 @@ class TrimHandle(Clutter.Texture):
         self._context.connect("clip-trim", self.clipTrimCb)
         self._context.connect("clip-trim-finished", self.clipTrimFinishedCb)
 
-    def _dragProgressCb(self, action, actor, delta_x, delta_y):
+    def _dragProgressCb(self, unused_action, unused_actor, delta_x, unused_delta_y):
         # We can't use delta_x here because it fluctuates weirdly.
         coords = self.dragAction.get_motion_coords()
         delta_x = coords[0] - self.dragBeginStartX
@@ -317,7 +317,7 @@ class TrimHandle(Clutter.Texture):
         self._context.editTo(new_start, self.timelineElement.bElement.get_parent().get_layer().get_priority())
         return False
 
-    def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
+    def _dragEndCb(self, unused_action, unused_actor, unused_event_x, unused_event_y, unused_modifiers):
         self.timelineElement.setDragged(False)
         self._context.finish()
 
@@ -653,21 +653,21 @@ class TimelineElement(Clutter.Actor, Zoomable):
     def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
         pass
 
-    def _dragProgressCb(self, action, actor, delta_x, delta_y):
+    def _dragProgressCb(self, unused_action, unused_actor, unused_delta_x, unused_delta_y):
         return False
 
     def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
         pass
 
-    def _durationChangedCb(self, element, duration):
+    def _durationChangedCb(self, unused_element, unused_duration):
         if self.keyframesVisible:
             self.updateKeyframes()
 
-    def _inpointChangedCb(self, element, inpoint):
+    def _inpointChangedCb(self, unused_element, unused_inpoint):
         if self.keyframesVisible:
             self.updateKeyframes()
 
-    def _selectedChangedCb(self, selected, isSelected):
+    def _selectedChangedCb(self, unused_selected, isSelected):
         self.isSelected = isSelected
         if not isSelected:
             self.hideKeyframes()
@@ -693,7 +693,7 @@ class Gradient(Clutter.Actor):
         self.set_content(self.canvas)
         self.canvas.invalidate()
 
-    def _drawCb(self, canvas, cr, width, height):
+    def _drawCb(self, unused_canvas, cr, unused_width, unused_height):
         cr.set_operator(cairo.OPERATOR_CLEAR)
         cr.paint()
         cr.set_operator(cairo.OPERATOR_OVER)
@@ -733,7 +733,7 @@ class Line(Clutter.Actor):
         self.previousKeyframe = lastKeyframe
         self.nextKeyframe = keyframe
 
-    def _drawCb(self, canvas, cr, width, unused_height):
+    def _drawCb(self, unused_canvas, cr, width, unused_height):
         """
         This is where we actually create the line segments for keyframe curves.
         We draw multiple lines (one-third of the height each) to add a "shadow"
@@ -780,7 +780,7 @@ class Line(Clutter.Actor):
         self.timelineElement.set_reactive(True)
         self.timelineElement.timeline._container.embed.get_window().set_cursor(NORMAL_CURSOR)
 
-    def _clickedCb(self, actor, event):
+    def _clickedCb(self, unused_actor, event):
         if self.gotDragged:
             self.gotDragged = False
             return
@@ -791,24 +791,24 @@ class Line(Clutter.Actor):
         timestamp = Zoomable.pixelToNs(x)
         self.timelineElement.addKeyframe(value, timestamp)
 
-    def _enterEventCb(self, actor, event):
+    def _enterEventCb(self, unused_actor, unused_event):
         self.timelineElement.set_reactive(False)
         self.timelineElement.timeline._container.embed.get_window().set_cursor(DRAG_CURSOR)
 
-    def _leaveEventCb(self, actor, event):
+    def _leaveEventCb(self, unused_actor, unused_event):
         self._ungrab()
 
     def _motionEventCb(self, actor, event):
         pass
 
-    def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
+    def _dragBeginCb(self, unused_action, unused_actor, event_x, event_y, unused_modifiers):
         self.dragBeginStartX = event_x
         self.dragBeginStartY = event_y
         self.origY = self.props.y
         self.previousKeyframe.startDrag(event_x, event_y, self)
         self.nextKeyframe.startDrag(event_x, event_y, self)
 
-    def _dragProgressCb(self, action, actor, delta_x, delta_y):
+    def _dragProgressCb(self, unused_action, unused_actor, unused_delta_x, delta_y):
         self.gotDragged = True
         coords = self.dragAction.get_motion_coords()
         delta_x = coords[0] - self.dragBeginStartX
@@ -819,7 +819,7 @@ class Line(Clutter.Actor):
 
         return False
 
-    def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
+    def _dragEndCb(self, unused_action, unused_actor, unused_event_x, unused_event_y, unused_modifiers):
         self.previousKeyframe.endDrag()
         self.nextKeyframe.endDrag()
         if self.timelineElement.timeline.getActorUnderPointer() != self:
@@ -850,7 +850,7 @@ class KeyframeMenu(GtkClutter.Actor):
         GtkClutter.Actor.hide(self)
         self.vbox.hide()
 
-    def _removeClickedCb(self, button):
+    def _removeClickedCb(self, unused_button):
         self.keyframe.remove()
 
 
@@ -908,7 +908,7 @@ class Keyframe(Clutter.Actor):
         if actor != self.menu:
             self.menu.hide()
 
-    def _clickedCb(self, actor, event):
+    def _clickedCb(self, unused_actor, event):
         if (event.modifier_state & Clutter.ModifierType.CONTROL_MASK):
             self.remove()
         elif (datetime.now() - self.lastClick).total_seconds() < 0.5:
@@ -916,12 +916,12 @@ class Keyframe(Clutter.Actor):
 
         self.lastClick = datetime.now()
 
-    def _enterEventCb(self, actor, event):
+    def _enterEventCb(self, unused_actor, unused_event):
         self.timelineElement.set_reactive(False)
         self.set_background_color(KEYFRAME_SELECTED_COLOR)
         self.timelineElement.timeline._container.embed.get_window().set_cursor(DRAG_CURSOR)
 
-    def _leaveEventCb(self, actor, event):
+    def _leaveEventCb(self, unused_actor, unused_event):
         self._unselect()
 
     def startDrag(self, event_x, event_y, line=None):
@@ -971,11 +971,11 @@ class Keyframe(Clutter.Actor):
             if not self.line:
                 self.timelineElement.timeline._container.seekInPosition(newTs + self.start)
 
-    def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
+    def _dragBeginCb(self, unused_action, unused_actor, event_x, event_y, unused_modifiers):
         self.dragProgressed = False
         self.startDrag(event_x, event_y)
 
-    def _dragProgressCb(self, action, actor, delta_x, delta_y):
+    def _dragProgressCb(self, unused_action, unused_actor, delta_x, delta_y):
         self.dragProgressed = True
         coords = self.dragAction.get_motion_coords()
         delta_x = coords[0] - self.dragBeginStartX
@@ -983,7 +983,7 @@ class Keyframe(Clutter.Actor):
         self.updateValue(delta_x, delta_y)
         return False
 
-    def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
+    def _dragEndCb(self, unused_action, unused_actor, unused_event_x, unused_event_y, unused_modifiers):
         self.endDrag()
         if self.timelineElement.timeline.getActorUnderPointer() != self:
             self._unselect()

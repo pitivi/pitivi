@@ -510,16 +510,16 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self._fullscreen_toolbar_win.hide()
         self.is_fullscreen = fullscreen
 
-    def _slideFullscreenToolbarIn(self, *args):
+    def _slideFullscreenToolbarIn(self, *unused_args):
         self._fullscreenToolbarDirection = "down"
         GLib.timeout_add(25, self._animateFullscreenToolbar)
 
-    def _slideFullscreenToolbarOut(self, *args):
+    def _slideFullscreenToolbarOut(self, *unused_args):
         self._fullscreenToolbarDirection = "up"
         GLib.timeout_add(25, self._animateFullscreenToolbar)
         return False  # Stop the initial gobject timer
 
-    def _animateFullscreenToolbar(self, *args):
+    def _animateFullscreenToolbar(self, *unused_args):
         """
         Animate the fullscreen toolbar by moving it up or down by a few pixels.
         This is meant to be called repeatedly by a GLib timer.
@@ -582,7 +582,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.settings.mainWindowMainHPanePosition = self.mainhpaned.get_position()
         self.settings.mainWindowVPanePosition = self.vpaned.get_position()
 
-    def _mediaLibraryPlayCb(self, medialibrary, asset):
+    def _mediaLibraryPlayCb(self, unused_medialibrary, asset):
         """
         If the media library item to preview is an image, show it in the user's
         favorite image viewer. Else, preview the video/sound in Pitivi.
@@ -595,16 +595,16 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         else:
             self._viewUri(asset.get_id())
 
-    def _projectChangedCb(self, project):
+    def _projectChangedCb(self, unused_project):
         self.main_actions.get_action("SaveProject").set_sensitive(True)
         self.updateTitle()
 
-    def _mediaLibrarySourceRemovedCb(self, project, asset):
+    def _mediaLibrarySourceRemovedCb(self, unused_project, asset):
         """When a clip is removed from the Media Library, tell the timeline
         to remove all instances of that clip."""
         self.timeline_ui.purgeObject(asset.get_id())
 
-    def _selectedLayerChangedCb(self, widget, layer):
+    def _selectedLayerChangedCb(self, unused_widget, layer):
         self.main_actions.get_action("RemoveLayer").set_sensitive(layer is not None)
 
 ## Toolbar/Menu actions callback
@@ -756,16 +756,16 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         chooser.destroy()
         return True
 
-    def _canLoadUri(self, filterinfo, uri):
+    def _canLoadUri(self, filterinfo, unused_uri):
         try:
             return GES.Formatter.can_load_uri(filterinfo.uri)
         except:
             return False
 
-    def _undoCb(self, action):
+    def _undoCb(self, unused_action):
         self.app.action_log.undo()
 
-    def _redoCb(self, action):
+    def _redoCb(self, unused_action):
         self.app.action_log.redo()
 
     def _prefsCb(self, unused_action):
@@ -774,7 +774,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             self.prefsdialog = PreferencesDialog(self.app)
         self.prefsdialog.run()
 
-    def _projectManagerNewProjectLoadedCb(self, projectManager, project, unused_fully_loaded):
+    def _projectManagerNewProjectLoadedCb(self, projectManager, unused_project, unused_fully_loaded):
         """
         Once a new project has been loaded, wait for media library's
         "ready" signal to populate the timeline.
@@ -805,12 +805,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if self.app.current_project.timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
 
-    def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
+    def _projectManagerNewProjectLoadingCb(self, unused_project_manager, uri):
         if uri:
             self.recent_manager.add_item(uri)
         self.log("A NEW project is loading, deactivate UI")
 
-    def _projectManagerSaveProjectFailedCb(self, projectManager, uri, exception=None):
+    def _projectManagerSaveProjectFailedCb(self, unused_project_manager, uri, exception=None):
         project_filename = unquote(uri.split("/")[-1])
         dialog = Gtk.MessageDialog(transient_for=self,
             modal=True,
@@ -825,7 +825,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         dialog.destroy()
         self.error("failed to save project")
 
-    def _projectManagerProjectSavedCb(self, projectManager, project, uri):
+    def _projectManagerProjectSavedCb(self, unused_project_manager, project, uri):
         # FIXME GES: Reimplement Undo/Redo
         #self.app.action_log.checkpoint()
         #self._syncDoUndo(self.app.action_log)
@@ -916,7 +916,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         return res
 
-    def _projectManagerProjectClosedCb(self, projectManager, project):
+    def _projectManagerProjectClosedCb(self, unused_project_manager, project):
         """
         This happens immediately when the user asks to load another project,
         after the user confirmed that unsaved changes can be discarded but
@@ -933,7 +933,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.clipconfig.timeline = None
         return False
 
-    def _projectManagerRevertingToSavedCb(self, projectManager, unused_project):
+    def _projectManagerRevertingToSavedCb(self, unused_project_manager, unused_project):
         if self.app.current_project.hasUnsavedModifications():
             dialog = Gtk.MessageDialog(transient_for=self,
                     modal=True,
@@ -953,7 +953,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                 return False
         return True
 
-    def _projectManagerNewProjectFailedCb(self, projectManager, uri, exception):
+    def _projectManagerNewProjectFailedCb(self, unused_project_manager, uri, exception):
         project_filename = unquote(uri.split("/")[-1])
         dialog = Gtk.MessageDialog(transient_for=self,
                                    modal=True,
@@ -966,8 +966,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         dialog.run()
         dialog.destroy()
 
-    def _projectManagerMissingUriCb(self, u_project_manager, u_project,
-            error, asset):
+    def _projectManagerMissingUriCb(self, unused_project_manager, unused_project,
+            unused_error, asset):
         self._missingUriOnLoading = True
         uri = asset.get_id()
         new_uri = None
@@ -1026,7 +1026,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # Use a Gtk FileFilter to only show files with the same extension
         # Note that splitext gives us the extension with the ".", no need to
         # add it inside the filter string.
-        filename, extension = os.path.splitext(uri)
+        unused_filename, extension = os.path.splitext(uri)
         filter = Gtk.FileFilter()
         # Translators: this is a format filter in a filechooser. Ex: "AVI files"
         filter.set_name(_("%s files" % extension))
@@ -1082,7 +1082,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         project.connect("asset-removed", self._mediaLibrarySourceRemovedCb)
         project.connect("project-changed", self._projectChangedCb)
 
-    def _actionLogCommit(self, action_log, stack, nested):
+    def _actionLogCommit(self, action_log, unused_stack, nested):
         if nested:
             return
 
@@ -1091,10 +1091,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     def _actionLogCleaned(self, action_log):
         self._syncDoUndo(action_log)
 
-    def _actionLogUndo(self, action_log, stack):
+    def _actionLogUndo(self, action_log, unused_stack):
         self._syncDoUndo(action_log)
 
-    def _actionLogRedo(self, action_log, stack):
+    def _actionLogRedo(self, action_log, unused_stack):
         self._syncDoUndo(action_log)
 
     def _syncDoUndo(self, action_log):
@@ -1145,7 +1145,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             folder_path = os.path.dirname(path_from_uri(self.app.current_project.uri))
             self.settings.lastProjectFolder = folder_path
 
-    def _renderingSettingsChangedCb(self, project, item=None, value=None):
+    def _renderingSettingsChangedCb(self, project, unused_item=None, unused_value=None):
         """
         When the project setting change, we reset the viewer aspect ratio
         """
@@ -1154,8 +1154,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.viewer.setDisplayAspectRatio(ratio)
         self.viewer.timecode_entry.setFramerate(project.videorate)
 
-    def _sourceListMissingPluginsCb(self, project, uri, factory,
-            details, descriptions, missingPluginsCallback):
+    def _sourceListMissingPluginsCb(self, unused_project, unused_uri, unused_factory,
+            details, unused_descriptions, missingPluginsCallback):
         res = self._installPlugins(details, missingPluginsCallback)
         return res
 
@@ -1211,7 +1211,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         chooser.destroy()
         return ret
 
-    def _showSaveAsDialog(self, project):
+    def _showSaveAsDialog(self, unused_project):
         self.log("Save URI requested")
 
         chooser = Gtk.FileChooserDialog(title=_("Save As..."),

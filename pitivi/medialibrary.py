@@ -623,13 +623,13 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     # medialibrary callbacks
 
     def _assetAddedCb(self, unused_project, asset,
-            current_clip_iter=None, total_clips=None):
+            unused_current_clip_iter=None, unused_total_clips=None):
         """ a file was added to the medialibrary """
         if isinstance(asset, GES.UriClipAsset):
             self._updateProgressbar()
             self._addAsset(asset)
 
-    def _assetRemovedCb(self, unsued_project, asset):
+    def _assetRemovedCb(self, unused_project, asset):
         """ the given uri was removed from the medialibrary """
         # find the good line in the storemodel and remove it
         model = self.storemodel
@@ -642,19 +642,19 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self._welcome_infobar.show_all()
         self.debug("Removing: %s", uri)
 
-    def _errorCreatingAssetCb(self, unsued_project, error, id, type):
+    def _errorCreatingAssetCb(self, unused_project, error, id, type):
         """ The given uri isn't a media file """
         if GObject.type_is_a(type, GES.UriClip):
             error = (id, str(error.domain), error)
             self._errors.append(error)
             self._updateProgressbar()
 
-    def _sourcesStartedImportingCb(self, unsued_project):
+    def _sourcesStartedImportingCb(self, unused_project):
         self.import_start_time = time.time()
         self._welcome_infobar.hide()
         self._progressbar.show()
 
-    def _sourcesStoppedImportingCb(self, unsued_project):
+    def _sourcesStoppedImportingCb(self, unused_project):
         self.debug("Importing took %.3f seconds", time.time() - self.import_start_time)
         self.flush_pending_rows()
         self._progressbar.hide()
@@ -920,7 +920,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         else:
             self._draggedPaths = None
 
-    def _treeViewButtonReleaseEventCb(self, treeview, event):
+    def _treeViewButtonReleaseEventCb(self, unused_treeview, event):
         ts = self.treeview.get_selection()
         state = event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)
         path = self.treeview.get_path_at_pos(event.x, event.y)
@@ -980,7 +980,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                     iconview.unselect_all()
                     iconview.select_path(current_cursor_pos)
 
-    def _newProjectCreatedCb(self, app, project):
+    def _newProjectCreatedCb(self, unused_app, project):
         if not self._project is project:
             self._project = project
             self._resetErrorList()
@@ -1042,7 +1042,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.app.current_project.addUris(filenames)
 
     #used with TreeView and IconView
-    def _dndDragDataGetCb(self, unused_view, context, data, info, timestamp):
+    def _dndDragDataGetCb(self, unused_view, unused_context, data, unused_info, unused_timestamp):
         paths = self.getSelectedPaths()
         uris = [self.modelFilter[path][COL_URI] for path in paths]
         data.set_uris(uris)
@@ -1058,7 +1058,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             row = self.modelFilter[paths[0]]
             Gtk.drag_set_icon_pixbuf(context, row[COL_ICON_64], 0, 0)
 
-    def _dndDragEndCb(self, unused_view, context):
+    def _dndDragEndCb(self, unused_view, unused_context):
         self.info("Drag operation ended")
         self.dragged = False
 

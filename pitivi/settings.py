@@ -76,7 +76,7 @@ def get_dirs(glob):
     return [d for d in glob.split(os.path.pathsep) if os.path.exists(d)]
 
 
-def get_env_dir(var, default, autocreate=True):
+def get_env_dir(var, default, unused_autocreate=True):
     return get_dir(get_env_default(var, default))
 
 
@@ -137,7 +137,7 @@ class GlobalSettings(Signallable):
     defaults = {}
     __signals__ = {}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **unused_kwargs):
         Signallable.__init__(self)
         self._config = SafeConfigParser()
         self._readSettingsFromGlobalConfiguration()

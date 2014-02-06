@@ -474,7 +474,7 @@ class SimplePipeline(Signallable, Loggable):
         self._pipeline.set_state(Gst.State.PAUSED)
         self._attempted_recoveries += 1
 
-    def _queryDurationAsync(self, *args, **kwargs):
+    def _queryDurationAsync(self, *unused_args, **unused_kwargs):
         try:
             self.getDuration()
         except:
@@ -577,7 +577,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                     new_pos / float(Gst.SECOND))
         self.simple_seek(new_pos)
 
-    def _seekCb(self, ruler, position, format):
+    def _seekCb(self, unused_ruler, position, unused_format):
         """
         The app's main seek method used when the user seeks manually.
 

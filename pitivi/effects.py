@@ -371,7 +371,7 @@ GlobalSettings.addConfigSection('effect-library')
 class EffectListWidget(Gtk.VBox, Loggable):
     """ Widget for listing effects """
 
-    def __init__(self, instance, uiman):
+    def __init__(self, instance, unused_uiman):
         Gtk.VBox.__init__(self)
         Loggable.__init__(self)
 
@@ -457,7 +457,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
         toolbar.show_all()
 
     @staticmethod
-    def view_description_cell_data_func(column, cell, model, iter_, data):
+    def view_description_cell_data_func(unused_column, cell, model, iter_, unused_data):
 
         name, desc = model.get(iter_, COL_NAME_TEXT, COL_DESC_TEXT)
         escape = GLib.markup_escape_text
@@ -509,10 +509,10 @@ class EffectListWidget(Gtk.VBox, Loggable):
         if pixbuf:
             Gtk.drag_set_icon_pixbuf(context, pixbuf, 0, 0)
 
-    def _dndDragEndCb(self, unused_view, context):
+    def _dndDragEndCb(self, unused_view, unused_context):
         self.info("Drag operation ended")
 
-    def _dndDragDataGetCb(self, unused_view, context, data, info, timestamp):
+    def _dndDragDataGetCb(self, unused_view, unused_context, data, unused_info, unused_timestamp):
         data.set_uris([self.getSelectedItems()])
 
     def _rowUnderMouseSelected(self, view, event):
@@ -524,7 +524,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
                 selection.count_selected_rows() > 0
         return False
 
-    def _enterPressEventCb(self, view, event=None):
+    def _enterPressEventCb(self, unused_view, unused_event=None):
         factory_name = self.getSelectedItems()
         if factory_name is not None:
             self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
@@ -576,16 +576,16 @@ class EffectListWidget(Gtk.VBox, Loggable):
         self.populate_categories_widget()
         self.modelFilter.refilter()
 
-    def _categoryChangedCb(self, combobox):
+    def _categoryChangedCb(self, unused_combobox):
         self.modelFilter.refilter()
 
-    def _searchEntryChangedCb(self, entry):
+    def _searchEntryChangedCb(self, unused_entry):
         self.modelFilter.refilter()
 
     def _searchEntryIconClickedCb(self, entry, unused, unused1):
         entry.set_text("")
 
-    def _setRowVisible(self, model, iter, data):
+    def _setRowVisible(self, model, iter, unused_data):
         if self._effectType == model.get_value(iter, COL_EFFECT_TYPE):
             if model.get_value(iter, COL_EFFECT_CATEGORIES) is None:
                 return False
@@ -669,14 +669,14 @@ class EffectsPropertiesManager:
 
         return effect_set_ui
 
-    def _connectAllWidgetCbs(self, effect_configuration_ui, effect):
+    def _connectAllWidgetCbs(self, unused_effect_configuration_ui, unused_effect):
         for prop, widget in effect_configuration_ui.properties.iteritems():
             widget.connectValueChanged(self._onValueChangedCb, widget, prop)
 
-    def _onSetDefaultCb(self, widget, dynamic):
+    def _onSetDefaultCb(self, unused_widget, dynamic):
         dynamic.setWidgetToDefault()
 
-    def _onValueChangedCb(self, widget, dynamic, prop):
+    def _onValueChangedCb(self, unused_widget, dynamic, prop):
         value = dynamic.getWidgetValue()
 
         #FIXME Workaround in order to make aspectratiocrop working

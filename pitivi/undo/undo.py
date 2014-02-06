@@ -225,7 +225,7 @@ class UndoableActionLog(Signallable, Loggable):
         current_snapshot = self._takeSnapshot()
         return current_snapshot != self._checkpoint
 
-    def _runStack(self, stack, run):
+    def _runStack(self, unused_stack, run):
         self.running = True
         try:
             run()
@@ -244,7 +244,7 @@ class UndoableActionLog(Signallable, Loggable):
 
         return stack
 
-    def _stackIsNested(self, stack):
+    def _stackIsNested(self, unused_stack):
         return bool(len(self.stacks))
 
 
@@ -272,16 +272,16 @@ class DebugActionLogObserver(Loggable):
                 self._actionLogrollbackCb, self._actionLogPushCb):
             log.disconnect_by_func(method)
 
-    def _actionLogBeginCb(self, log, stack, nested):
+    def _actionLogBeginCb(self, unused_log, stack, nested):
         self.debug("begin action %s nested %s", stack.action_group_name, nested)
 
-    def _actionLogCommitCb(self, log, stack, nested):
+    def _actionLogCommitCb(self, unused_log, stack, nested):
         self.debug("commit action %s nested %s", stack.action_group_name, nested)
 
-    def _actionLogRollbackCb(self, log, stack, nested):
+    def _actionLogRollbackCb(self, unused_log, stack, nested):
         self.debug("rollback action %s nested %s", stack.action_group_name, nested)
 
-    def _actionLogPushCb(self, log, stack, action):
+    def _actionLogPushCb(self, unused_log, stack, action):
         self.debug("push %s in %s", action, stack.action_group_name)
 
 

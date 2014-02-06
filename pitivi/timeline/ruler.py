@@ -155,12 +155,12 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
     def setPipeline(self, pipeline):
         pipeline.connect('position', self.timelinePositionCb)
 
-    def timelinePositionCb(self, pipeline, position):
+    def timelinePositionCb(self, unused_pipeline, position):
         self.position = position
         self.queue_draw()
 
 ## Gtk.Widget overrides
-    def configureEventCb(self, widget, event, data=None):
+    def configureEventCb(self, widget, unused_event, unused_data=None):
         width = widget.get_allocated_width()
         height = widget.get_allocated_height()
         self.debug("Configuring, height %d, width %d", width, height)
@@ -175,7 +175,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         return False
 
-    def drawCb(self, widget, context):
+    def drawCb(self, unused_widget, context):
         if self.pixbuf is None:
             self.info('No buffer to paint')
             return False

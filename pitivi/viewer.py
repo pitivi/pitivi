@@ -170,11 +170,11 @@ class ViewerContainer(Gtk.VBox, Loggable):
         if active:
             self.emit("activate-playback-controls", True)
 
-    def _externalWindowDeleteCb(self, window, event):
+    def _externalWindowDeleteCb(self, unused_window, unused_event):
         self.dock()
         return True
 
-    def _externalWindowConfigureCb(self, window, event):
+    def _externalWindowConfigureCb(self, unused_window, event):
         self.settings.viewerWidth = event.width
         self.settings.viewerHeight = event.height
         self.settings.viewerX = event.x
@@ -298,7 +298,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.internal_aframe.set_property("ratio", float(ratio))
         self.external_aframe.set_property("ratio", float(ratio))
 
-    def _entryActivateCb(self, entry):
+    def _entryActivateCb(self, unused_entry):
         self._seekFromTimecodeWidget()
 
     def _seekFromTimecodeWidget(self):
@@ -332,7 +332,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
             self.target.sink = self.sink
             self.target.renderbox()
 
-    def _playButtonCb(self, unused_button, playing):
+    def _playButtonCb(self, unused_button, unused_playing):
         self.app.current_project.pipeline.togglePlayback()
 
     def _goToStartCb(self, unused_button):
@@ -401,7 +401,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
             self._switch_output_window()
         self.external_window.hide()
 
-    def _toggleDocked(self, action):
+    def _toggleDocked(self, unused_action):
         if self.docked:
             self.undock()
         else:
@@ -465,7 +465,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
             self.setPipeline(self.app.current_project.pipeline, self._oldTimelinePos)
             self.debug("Back to old pipeline")
 
-    def _pipelineStateChangedCb(self, pipeline, state):
+    def _pipelineStateChangedCb(self, unused_pipeline, state):
         """
         When playback starts/stops, update the viewer widget,
         play/pause button and (un)inhibit the screensaver.
@@ -866,7 +866,7 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
             self.renderbox()
         """
 
-    def _sizeCb(self, widget, area):
+    def _sizeCb(self, unused_widget, unused_area):
         # The transformation box is cleared when using regular rendering
         # so we need to flush the pipeline
         self.seeker.flush()
@@ -906,7 +906,7 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
 
         self.stored = True
 
-    def button_release_event(self, widget, event):
+    def button_release_event(self, unused_widget, event):
         if event.button == 1:
             self.box.update_effect_properties()
             self.box.release_point()
@@ -914,12 +914,12 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
             self.stored = False
         return True
 
-    def button_press_event(self, widget, event):
+    def button_press_event(self, unused_widget, event):
         if event.button == 1:
             self.box.select_point(event)
         return True
 
-    def _currentStateCb(self, pipeline, state):
+    def _currentStateCb(self, unused_pipeline, unused_state):
         self.fixme("TransformationBox disabled")
         """
         self.pipeline = pipeline
@@ -928,7 +928,7 @@ class ViewerWidget(Gtk.DrawingArea, Loggable):
         self.renderbox()
         """
 
-    def motion_notify_event(self, widget, event):
+    def motion_notify_event(self, unused_widget, event):
         if event.get_state() & Gdk.ModifierType.BUTTON1_MASK:
             if self.box.transform(event):
                 if self.stored:

@@ -177,13 +177,13 @@ class RandomAccessAudioExtractor(RandomAccessExtractor):
         # message is received before setting self._ready = True,
         # which enables extraction to proceed.
 
-    def _busMessageErrorCb(self, bus, message):
+    def _busMessageErrorCb(self, unused_bus, message):
         error, debug = message.parse_error()
         self.error("Event bus error: %s; %s", error, debug)
 
         return Gst.BusSyncReply.PASS
 
-    def _busMessageAsyncDoneCb(self, bus, message):
+    def _busMessageAsyncDoneCb(self, bus, unused_message):
         self.debug("Pipeline is ready for seeking")
         bus.disconnect(self._donecb_id)  # Don't call me again
         self._ready = True

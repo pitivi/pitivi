@@ -520,13 +520,13 @@ class RenderDialog(Loggable):
                                         mgr, update_buttons_func)
         treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
 
-    def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
+    def _newPresetCb(self, unused_model, path, unused_iter_, column, renderer, treeview):
         """Handle the addition of a preset to the model of the preset manager.
         """
         treeview.set_cursor_on_cell(path, column, renderer, start_editing=True)
         treeview.grab_focus()
 
-    def _presetNameEditedCb(self, renderer, path, new_text, mgr):
+    def _presetNameEditedCb(self, unused_renderer, path, new_text, mgr):
         """Handle the renaming of a preset."""
         from pitivi.preset import DuplicatePresetNameException
 
@@ -537,11 +537,11 @@ class RenderDialog(Loggable):
             error_markup = _('"%s" already exists.') % new_text
             self._showPresetManagerError(mgr, error_markup)
 
-    def _presetNameEditingStartedCb(self, renderer, editable, path, mgr):
+    def _presetNameEditingStartedCb(self, unused_renderer, unused_editable, unused_path, mgr):
         """Handle the start of a preset renaming."""
         self._hidePresetManagerError(mgr)
 
-    def _treeviewDefocusedCb(self, widget, event, mgr):
+    def _treeviewDefocusedCb(self, unused_widget, unused_event, mgr):
         """Handle the treeview loosing the focus."""
         self._hidePresetManagerError(mgr)
 
@@ -582,7 +582,7 @@ class RenderDialog(Loggable):
             i += 1
         return preset_name
 
-    def _addRenderPresetButtonClickedCb(self, button):
+    def _addRenderPresetButtonClickedCb(self, unused_button):
         preset_name = self._getUniquePresetName(self.render_presets)
         self.render_presets.addPreset(preset_name, {
             "channels": int(get_combo_value(self.channels_combo)),
@@ -598,7 +598,7 @@ class RenderDialog(Loggable):
         self.render_presets.restorePreset(preset_name)
         self._updateRenderPresetButtons()
 
-    def _saveRenderPresetButtonClickedCb(self, button):
+    def _saveRenderPresetButtonClickedCb(self, unused_button):
         self.render_presets.saveCurrentPreset()
         self.save_render_preset_button.set_sensitive(False)
         self.remove_render_preset_button.set_sensitive(True)
@@ -609,7 +609,7 @@ class RenderDialog(Loggable):
         can_remove = self.render_presets.isRemoveButtonSensitive()
         self.remove_render_preset_button.set_sensitive(can_remove)
 
-    def _removeRenderPresetButtonClickedCb(self, button):
+    def _removeRenderPresetButtonClickedCb(self, unused_button):
         selection = self.render_preset_treeview.get_selection()
         model, iter_ = selection.get_selected()
         if iter_:
@@ -663,7 +663,7 @@ class RenderDialog(Loggable):
         presets_toolbar = builder.get_object("render_presets_toolbar")
         presets_toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
-    def _settingsChanged(self, project, key, value):
+    def _settingsChanged(self, unused_project, unused_key, unused_value):
         self.updateResolution()
 
     def _initializeComboboxModels(self):
@@ -693,7 +693,7 @@ class RenderDialog(Loggable):
         set_combo_value(self.muxercombobox,
             Gst.ElementFactory.find(self.project.muxer))
 
-    def _checkForExistingFile(self, *args):
+    def _checkForExistingFile(self, *unused_args):
         """
         Display a warning icon and tooltip if the file path already exists.
         """
@@ -837,7 +837,7 @@ class RenderDialog(Loggable):
         self._disconnectFromGst()
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
 
-    def _pauseRender(self, progress):
+    def _pauseRender(self, unused_progress):
         self._rendering_is_paused = self.progress.play_pause_button.get_active()
         if self._rendering_is_paused:
             self._last_timestamp_when_pausing = time.time()
@@ -918,7 +918,7 @@ class RenderDialog(Loggable):
         self.debug("Render dialog's Close button clicked")
         self.destroy()
 
-    def _deleteEventCb(self, window, event):
+    def _deleteEventCb(self, unused_window, unused_event):
         self.debug("Render dialog is being deleted")
         self.destroy()
 
@@ -992,7 +992,7 @@ class RenderDialog(Loggable):
                     else:
                         self.system.uninhibitSleep(RenderDialog.INHIBIT_REASON)
 
-    def _updatePositionCb(self, pipeline, position):
+    def _updatePositionCb(self, unused_pipeline, position):
         """
         Unlike other progression indicator callbacks, this one occurs every time
         the pipeline emits a position changed signal, which is *very* often.
@@ -1018,7 +1018,7 @@ class RenderDialog(Loggable):
         if not self._filesizeEstimateTimer and (fraction > 0.33 or timediff > 180):
             self._filesizeEstimateTimer = GLib.timeout_add_seconds(5, self._updateFilesizeEstimateCb)
 
-    def _elementAddedCb(self, bin, element):
+    def _elementAddedCb(self, unused_bin, element):
         """
         Setting properties on Gst.Element-s has they are added to the
         Gst.Encodebin
@@ -1035,7 +1035,7 @@ class RenderDialog(Loggable):
             self.debug("Setting %s to %s", propname, value)
 
     #-- Settings changed callbacks
-    def _scaleSpinbuttonChangedCb(self, button):
+    def _scaleSpinbuttonChangedCb(self, unused_button):
         render_scale = self.scale_spinbutton.get_value()
         self.project.render_scale = render_scale
         self.updateResolution()
@@ -1044,12 +1044,12 @@ class RenderDialog(Loggable):
         width, height = self.project.getVideoWidthAndHeight(True)
         self.resolution_label.set_text(u"%d×%d" % (width, height))
 
-    def _projectSettingsButtonClickedCb(self, button):
+    def _projectSettingsButtonClickedCb(self, unused_button):
         from pitivi.project import ProjectSettingsDialog
         dialog = ProjectSettingsDialog(self.window, self.project)
         dialog.window.run()
 
-    def _audioOutputCheckbuttonToggledCb(self, audio):
+    def _audioOutputCheckbuttonToggledCb(self, unused_audio):
         active = self.audio_output_checkbutton.get_active()
         if active:
             self.channels_combo.set_sensitive(True)
@@ -1065,7 +1065,7 @@ class RenderDialog(Loggable):
             if not self.video_output_checkbutton.get_active():
                 self.render_button.set_sensitive(False)
 
-    def _videoOutputCheckbuttonToggledCb(self, video):
+    def _videoOutputCheckbuttonToggledCb(self, unused_video):
         active = self.video_output_checkbutton.get_active()
         if active:
             self.scale_spinbutton.set_sensitive(True)
@@ -1093,7 +1093,7 @@ class RenderDialog(Loggable):
             # The user directly changed the video encoder combo.
             self.preferred_vencoder = vencoder
 
-    def _videoSettingsButtonClickedCb(self, button):
+    def _videoSettingsButtonClickedCb(self, unused_button):
         factory = get_combo_value(self.video_encoder_combo)
         self._elementSettingsDialog(factory, 'vcodecsettings')
 
@@ -1110,7 +1110,7 @@ class RenderDialog(Loggable):
             # The user directly changed the audio encoder combo.
             self.preferred_aencoder = aencoder
 
-    def _audioSettingsButtonClickedCb(self, button):
+    def _audioSettingsButtonClickedCb(self, unused_button):
         factory = get_combo_value(self.audio_encoder_combo)
         self._elementSettingsDialog(factory, 'acodecsettings')
 

@@ -150,7 +150,7 @@ class System(Signallable, Loggable):
         self._reset()
         self.emit('update-power-inhibition')
 
-    def desktopMessage(self, title, message, icon=None):
+    def desktopMessage(self, title, message, unused_icon=None):
         """send a message to the desktop to be displayed to the user
         @arg title: C{str} the title of the message
         @arg message: C{str} the body of the message

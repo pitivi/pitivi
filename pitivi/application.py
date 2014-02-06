@@ -166,17 +166,17 @@ class Pitivi(Loggable, Signallable):
         pm.connect("closing-project", self._projectManagerClosingProject)
         pm.connect("project-closed", self._projectManagerProjectClosed)
 
-    def _projectManagerNewProjectLoading(self, projectManager, uri):
+    def _projectManagerNewProjectLoading(self, unused_project_manager, uri):
         self.emit("new-project-loading", uri)
 
-    def _projectManagerNewProjectCreated(self, projectManager, project):
+    def _projectManagerNewProjectCreated(self, unused_project_manager, project):
         self.current_project = project
         self.emit("new-project-created", project)
 
-    def _newProjectLoaded(self, project):
+    def _newProjectLoaded(self, unused_project):
         pass
 
-    def _projectManagerNewProjectLoaded(self, projectManager, project, unused_fully_loaded):
+    def _projectManagerNewProjectLoaded(self, unused_project_manager, project, unused_fully_loaded):
         self.current_project = project
         self.action_log.clean()
         #self.timelineLogObserver.startObserving(project.timeline)
@@ -184,13 +184,13 @@ class Pitivi(Loggable, Signallable):
         self._newProjectLoaded(project)
         self.emit("new-project-loaded", project)
 
-    def _projectManagerNewProjectFailed(self, projectManager, uri, exception):
+    def _projectManagerNewProjectFailed(self, unused_project_manager, uri, exception):
         self.emit("new-project-failed", uri, exception)
 
-    def _projectManagerClosingProject(self, projectManager, project):
+    def _projectManagerClosingProject(self, unused_project_manager, project):
         return self.emit("closing-project", project)
 
-    def _projectManagerProjectClosed(self, projectManager, project):
+    def _projectManagerProjectClosed(self, unused_project_manager, project):
         #self.timelineLogObserver.stopObserving(project.timeline)
         self.projectLogObserver.stopObserving(project)
         self.current_project = None
@@ -242,7 +242,7 @@ class InteractivePitivi(Pitivi):
         if debug:
             sys.excepthook = self._excepthook
 
-    def _excepthook(self, exc_type, value, tback):
+    def _excepthook(self, unused_exc_type, unused_value, tback):
         import traceback
         import pdb
         traceback.print_tb(tback)
@@ -326,7 +326,7 @@ class ProjectCreatorGuiPitivi(GuiPitivi):
         lib.connect("discovery-error", self._discoveryErrorCb, uris)
         lib.addUris(uris)
 
-    def _sourceAddedCb(self, medialibrary, info, startup_uris, add_to_timeline):
+    def _sourceAddedCb(self, unused_media_library, info, startup_uris, add_to_timeline):
         if self._maybePopStartupUri(startup_uris, info.get_uri()) \
                 and add_to_timeline:
             self.action_log.begin("add clip")
@@ -335,7 +335,7 @@ class ProjectCreatorGuiPitivi(GuiPitivi):
             self.current_project.timeline.get_layers()[0].add_clip(src)
             self.action_log.commit()
 
-    def _discoveryErrorCb(self, medialibrary, uri, error, debug, startup_uris):
+    def _discoveryErrorCb(self, unused_media_library, uri, unused_error, unused_debug, startup_uris):
         self._maybePopStartupUri(startup_uris, uri)
 
     def _maybePopStartupUri(self, startup_uris, uri):

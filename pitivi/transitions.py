@@ -42,7 +42,7 @@ from pitivi.utils.ui import SPACING, PADDING
 
 class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
 
-    def __init__(self, instance, uiman):
+    def __init__(self, instance, unused_uiman):
         Gtk.VBox.__init__(self)
         Loggable.__init__(self)
         Signallable.__init__(self)
@@ -145,7 +145,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
 
 # UI callbacks
 
-    def _transitionSelectedCb(self, event):
+    def _transitionSelectedCb(self, unused_event):
         transition_asset = self.getSelectedItem()
         if not transition_asset:
             # The user clicked between icons
@@ -191,10 +191,10 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
             self.borderScale.add_mark(0, Gtk.PositionType.BOTTOM, _("Sharp"))
             self.borderScale.add_mark(25000, Gtk.PositionType.BOTTOM, _("Smooth"))
 
-    def _searchEntryChangedCb(self, entry):
+    def _searchEntryChangedCb(self, unused_entry):
         self.modelFilter.refilter()
 
-    def _searchEntryIconClickedCb(self, entry, unused, unsed1):
+    def _searchEntryIconClickedCb(self, entry, unused, unused_1):
         entry.set_text("")
 
 # GES callbacks
@@ -346,7 +346,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
             return None
         return self.modelFilter[path[0]][COL_TRANSITION_ASSET]
 
-    def _setRowVisible(self, model, iter, data):
+    def _setRowVisible(self, model, iter, unused_data):
         """
         Filters the icon view depending on the search results
         """

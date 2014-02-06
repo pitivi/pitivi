@@ -483,7 +483,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
             self._checkCPU()
         return Gst.BusSyncReply.PASS
 
-    def _autoplugSelectCb(self, decode, pad, caps, factory):
+    def _autoplugSelectCb(self, unused_decode, unused_pad, unused_caps, factory):
         # Don't plug audio decoders / parsers.
         if "Audio" in factory.get_klass():
             return True
@@ -701,7 +701,7 @@ class PipelineCpuAdapter(Loggable):
         # Keep the glib timer running:
         return True
 
-    def _messageCb(self, bus, message):
+    def _messageCb(self, unused_bus, message):
         if not self.ready:
             return
         if message.type == Gst.MessageType.STATE_CHANGED:
@@ -786,7 +786,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         bus.connect("message", self._messageCb)
         self.becomeControlled()
 
-    def set_size(self, width, height):
+    def set_size(self, unused_width, unused_height):
         if self.discovered:
             self._maybeUpdate()
 
@@ -933,13 +933,13 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
                     self.adapter = PipelineCpuAdapter(self.pipeline)
                     self.adapter.start()
 
-    def _autoplugSelectCb(self, decode, pad, caps, factory):
+    def _autoplugSelectCb(self, unused_decode, unused_pad, unused_caps, factory):
         # Don't plug video decoders / parsers.
         if "Video" in factory.get_klass():
             return True
         return False
 
-    def _drawContentCb(self, canvas, cr, surf_w, surf_h):
+    def _drawContentCb(self, unused_canvas, cr, unused_surf_w, unused_surf_h):
         cr.set_operator(cairo.OPERATOR_CLEAR)
         cr.paint()
         if not self.discovered:

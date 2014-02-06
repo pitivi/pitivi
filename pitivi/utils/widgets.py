@@ -78,7 +78,7 @@ class DynamicWidget(object):
 class DefaultWidget(Gtk.Label):
     """When all hope fails...."""
 
-    def __init__(self, *unused, **kw_unused):
+    def __init__(self, *unused, **unused_kwargs):
         Gtk.Label.__init__(self, _("Implement Me"))
 
 
@@ -712,7 +712,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         self.pack_start(table, expand=True, fill=True, padding=0)
         self.show_all()
 
-    def _propertyChangedCb(self, element, pspec, widget):
+    def _propertyChangedCb(self, unused_element, pspec, widget):
         widget.setWidgetValue(self.element.get_property(pspec.name))
 
     def _getKeyframeToggleButton(self, prop):
@@ -723,7 +723,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         button.connect('toggled', self._showKeyframesToggledCb, prop)
         return button
 
-    def _getResetToDefaultValueButton(self, prop, widget):
+    def _getResetToDefaultValueButton(self, unused_prop, widget):
         icon = Gtk.Image()
         icon.set_from_icon_name("edit-clear-all-symbolic", Gtk.IconSize.MENU)
         button = Gtk.Button()
@@ -769,7 +769,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             elif hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
                 track_element.ui_element.hideKeyframes()
 
-    def _defaultBtnClickedCb(self, button, widget):
+    def _defaultBtnClickedCb(self, unused_button, widget):
         try:
             binding = self.bindings[widget]
         except KeyError:
@@ -938,7 +938,7 @@ class BaseTabs(Gtk.Notebook):
         if self._hide_hpaned:
             self._showSecondHpanedInMainWindow()
 
-    def _createWindowCb(self, from_notebook, child, x, y):
+    def _createWindowCb(self, unused_from_notebook, child, x, y):
         original_position = self.child_get_property(child, "position")
         label = self.child_get_property(child, "tab-label")
         window = Gtk.Window()
@@ -1028,7 +1028,7 @@ class ZoomBox(Gtk.HBox, Zoomable):
         self.zoomed_fitted = False
         self._updateZoomSlider = True
 
-    def _zoomFitCb(self, button):
+    def _zoomFitCb(self, unused_button):
         self.timeline.zoomFit()
 
     def _zoomSliderScrollCb(self, unused, event):

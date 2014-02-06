@@ -64,7 +64,7 @@ class BaseTabs(Gtk.Notebook):
         self.insert_page(child, label, original_position)
         self._set_child_properties(child, label)
 
-    def _createWindowCb(self, from_notebook, child, unused_x, unused_y):
+    def _createWindowCb(self, unused_from_notebook, child, unused_x, unused_y):
         """
         Callback that occurs when tearing off a tab to create a new window
         """
@@ -113,7 +113,7 @@ class BaseTabs(Gtk.Notebook):
         else:
             return notebook
 
-    def _detachedComponentWindowConfiguredCb(self, window, event, child_name):
+    def _detachedComponentWindowConfiguredCb(self, unused_window, event, child_name):
         """
         When the user configures the detached window
         (changes its size, position, etc.), save the settings.

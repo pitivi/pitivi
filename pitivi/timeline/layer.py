@@ -166,7 +166,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
 
     selected = property(getSelected, setSelected, None, "Selection state")
 
-    def _foldingChangedCb(self, button, state):
+    def _foldingChangedCb(self, unused_button, state):
         if state:
             self.lower_hbox.show()
         else:
@@ -189,7 +189,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
             # Enable all layers
             self._app.gui.timeline_ui.controls.soloLayer(None)
 
-    def _buttonPressCb(self, widget, event):
+    def _buttonPressCb(self, unused_widget, event):
         """
         Look if user selected layer or wants popup menu
         """
@@ -211,10 +211,10 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         # continue GTK signal propagation
         return True
 
-    def _deleteLayerCb(self, widget):
+    def _deleteLayerCb(self, unused_widget):
         self._control_container.timeline.bTimeline.remove_layer(self.layer)
 
-    def _moveLayerCb(self, widget, step):
+    def _moveLayerCb(self, unused_widget, step):
         index = self.layer.get_priority()
         if abs(step) == 1:
             index += step
@@ -351,7 +351,7 @@ class TwoStateButton(Gtk.Button):
     def set_states(self, state1, state2):
         self.states = {True: state1, False: state2}
 
-    def _clickedCb(self, widget):
+    def _clickedCb(self, unused_widget):
         self._state = not self._state
 
         self.set_label(self.states[self._state])

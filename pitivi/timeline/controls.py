@@ -58,7 +58,7 @@ class ControlActor(GtkClutter.Actor):
         self.dragAction.connect("drag-progress", self._dragProgressCb)
         self.dragAction.connect("drag-end", self._dragEndCb)
 
-    def _dragBeginCb(self, action, actor, event_x, event_y, modifiers):
+    def _dragBeginCb(self, unused_action, unused_actor, event_x, unused_event_y, unused_modifiers):
         self.brother = self._container.getBrotherControl(self)
 
         self.brother.raise_top()
@@ -67,7 +67,7 @@ class ControlActor(GtkClutter.Actor):
         self.nbrLayers = len(self._container.timeline.bTimeline.get_layers())
         self._dragBeginStartX = event_x
 
-    def _dragProgressCb(self, action, actor, delta_x, delta_y):
+    def _dragProgressCb(self, unused_action, actor, unused_delta_x, delta_y):
         y = self.dragAction.get_motion_coords()[1]
         priority = self._getLayerForY(y)
         lowerLimit = 0
@@ -82,7 +82,7 @@ class ControlActor(GtkClutter.Actor):
             self._container.moveLayer(self, priority)
         return False
 
-    def _dragEndCb(self, action, actor, event_x, event_y, modifiers):
+    def _dragEndCb(self, unused_action, unused_actor, unused_event_x, event_y, unused_modifiers):
         priority = self._getLayerForY(event_y)
 
         if self.layer.get_priority() != priority and priority >= 0 and priority < self.nbrLayers:

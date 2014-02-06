@@ -211,7 +211,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
                 del ghostclip
         self.ghostClips = []
 
-    def addGhostClip(self, asset, x, y):
+    def addGhostClip(self, asset, unused_x, unused_y):
         ghostAudio = ghostVideo = None
 
         if asset.get_supported_formats() & GES.TrackType.VIDEO:
@@ -426,7 +426,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
         self.add_child(element)
 
-    def _removeTimelineElement(self, track, bElement):
+    def _removeTimelineElement(self, unused_track, bElement):
         if isinstance(bElement, GES.Effect):
             return
         bElement.disconnect_by_func(self._elementStartChangedCb)
@@ -526,7 +526,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
     # Callbacks
 
-    def _dragBeginCb(self, actor, event):
+    def _dragBeginCb(self, unused_actor, event):
         self.drawMarquee = self.getActorUnderPointer() == self
         if not self.drawMarquee:
             return
@@ -541,7 +541,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self.marquee.set_position(event.x - CONTROL_WIDTH, event.y)
         self.marquee.show()
 
-    def _dragProgressCb(self, actor, event):
+    def _dragProgressCb(self, unused_actor, event):
         if not self.drawMarquee:
             return False
 
@@ -552,7 +552,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
 
         return False
 
-    def _dragEndCb(self, actor, event):
+    def _dragEndCb(self, unused_actor, event):
         if not self.drawMarquee:
             return
         self.drawMarquee = False
@@ -575,7 +575,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         return elements
 
     # snapping indicator
-    def _snapCb(self, unused_timeline, obj1, obj2, position):
+    def _snapCb(self, unused_timeline, unused_obj1, unused_obj2, position):
         """
         Display or hide a snapping indicator line
         """
@@ -587,13 +587,13 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
             self._snap_indicator.props.x = Zoomable.nsToPixel(position)
             self._snap_indicator.props.visible = True
 
-    def _snapEndedCb(self, *args):
+    def _snapEndedCb(self, *unused_args):
         self._snap_indicator.props.visible = False
 
-    def _layerAddedCb(self, timeline, layer):
+    def _layerAddedCb(self, unused_timeline, layer):
         self._add_layer(layer)
 
-    def _layerRemovedCb(self, timeline, layer):
+    def _layerRemovedCb(self, unused_timeline, layer):
         # FIXME : really remove layer ^^
         for lyr in self.bTimeline.get_layers():
             if lyr.props.priority > layer.props.priority:
@@ -601,11 +601,11 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         self._remove_layer(layer)
         self._updatePlayHead()
 
-    def _trackAddedCb(self, timeline, track):
+    def _trackAddedCb(self, unused_timeline, track):
         self._connectTrack(track)
         self._container.app.current_project.update_restriction_caps()
 
-    def _trackRemovedCb(self, timeline, track):
+    def _trackRemovedCb(self, unused_timeline, track):
         self._disconnectTrack(track)
         for element in track.get_elements():
             self._trackElementRemovedCb(track, element)
@@ -616,10 +616,10 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
     def _trackElementRemovedCb(self, track, bElement):
         self._removeTimelineElement(track, bElement)
 
-    def _elementPriorityChangedCb(self, bElement, priority, element):
+    def _elementPriorityChangedCb(self, unused_bElement, unused_priority, element):
         self._setElementY(element)
 
-    def _elementStartChangedCb(self, bElement, start, element):
+    def _elementStartChangedCb(self, unused_bElement, unused_start, element):
         self._updateSize()
         self.allowSeek = False
 
@@ -628,16 +628,16 @@ class TimelineStage(Clutter.ScrollActor, Zoomable):
         else:
             self._setElementX(element)
 
-    def _elementDurationChangedCb(self, bElement, duration, element):
+    def _elementDurationChangedCb(self, unused_bElement, unused_duration, element):
         self._updateSize()
         self.allowSeek = False
         element.update(False)
 
-    def _elementInPointChangedCb(self, bElement, inpoint, element):
+    def _elementInPointChangedCb(self, unused_bElement, unused_inpoint, element):
         self.allowSeek = False
         self._setElementX(element, ease=False)
 
-    def _layerPriorityChangedCb(self, layer, priority):
+    def _layerPriorityChangedCb(self, unused_layer, unused_priority):
         self._redraw()
 
 
@@ -918,7 +918,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.info("Blocking timeline mouse and keyboard signals")
         self.stage.connect("captured-event", self._ignoreAllEventsCb)
 
-    def _ignoreAllEventsCb(self, *args):
+    def _ignoreAllEventsCb(self, *unused_args):
         return True
 
     def _setUpDragAndDrop(self):
@@ -1033,7 +1033,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.playhead_actions.add_actions(playhead_actions)
         self.ui_manager.insert_action_group(self.playhead_actions, -1)
 
-    def _updateScrollPosition(self, adjustment):
+    def _updateScrollPosition(self, unused_adjustment):
         self._scroll_pos_ns = Zoomable.pixelToNs(self.hadj.get_value())
         point = Clutter.Point()
         point.x = self.hadj.get_value()
@@ -1204,7 +1204,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.error("Could not start the autoaligner: %s" % e)
             progress_dialog.window.destroy()
 
-    def _splitCb(self, action):
+    def _splitCb(self, unused_action):
         """
         If clips are selected, split them at the current playhead position.
         Otherwise, split all clips at the playhead position.
@@ -1228,7 +1228,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 clip = element.get_parent()
                 clip.split(position)
 
-    def _keyframeCb(self, action):
+    def _keyframeCb(self, unused_action):
         """
         Add or remove a keyframe at the current position of the selected clip.
         """
@@ -1327,7 +1327,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             else:
                 self._project.pipeline.stepFrame(self._framerate, 1)
 
-    def _keyReleaseEventCb(self, widget, event):
+    def _keyReleaseEventCb(self, unused_widget, event):
         if event.keyval == Gdk.KEY_Shift_L:
             self._shiftMask = False
         elif event.keyval == Gdk.KEY_Control_L:
@@ -1341,7 +1341,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.log("Timeline has lost focus")
         self.setActionsSensitivity(False)
 
-    def _timelineClickedCb(self, unused_timeline, event):
+    def _timelineClickedCb(self, unused_timeline, unused_event):
         self.pressed = True
         self.grab_focus()  # Prevent other widgets from being confused
 
@@ -1371,11 +1371,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if item == "width" or item == "height" or item == "videorate":
             project.update_restriction_caps()
 
-    def _snapDistanceChangedCb(self, settings):
+    def _snapDistanceChangedCb(self, unused_settings):
         if self.bTimeline:
             self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
-    def _projectChangedCb(self, app, project, unused_fully_loaded):
+    def _projectChangedCb(self, unused_app, project, unused_fully_loaded):
         """
         When a project is loaded, we connect to its pipeline
         """
@@ -1390,7 +1390,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self._renderingSettingsChangedCb(self._project, None, None)
             self._setBestZoomRatio()
 
-    def _projectCreatedCb(self, app, project):
+    def _projectCreatedCb(self, unused_app, project):
         """
         When a project is created, we connect to it timeline
         """
@@ -1418,7 +1418,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.log("Setting 'zoomed_fitted' to False")
         self.zoomed_fitted = False
 
-    def _zoomFitCb(self, unused, unsued2=None):
+    def _zoomFitCb(self, unused, unused_2=None):
         self._setBestZoomRatio(allow_zoom_in=True)
 
     def _screenshotCb(self, unused_action):
@@ -1430,21 +1430,21 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             path, mime = foo[0], foo[1]
             self._project.pipeline.save_thumbnail(-1, -1, mime, path)
 
-    def _previousKeyframeCb(self, action):
+    def _previousKeyframeCb(self, unused_action):
         position = self._project.pipeline.getPosition()
         prev_kf = self.timeline.getPrevKeyframe(position)
         if prev_kf:
             self._seeker.seek(prev_kf)
             self.scrollToPlayhead()
 
-    def _nextKeyframeCb(self, action):
+    def _nextKeyframeCb(self, unused_action):
         position = self._project.pipeline.getPosition()
         next_kf = self.timeline.getNextKeyframe(position)
         if next_kf:
             self._seeker.seek(next_kf)
             self.scrollToPlayhead()
 
-    def _scrollEventCb(self, embed, event):
+    def _scrollEventCb(self, unused_embed, event):
         # FIXME : see https://bugzilla.gnome.org/show_bug.cgi?id=697522
         deltas = event.get_scroll_deltas()
         if event.state & Gdk.ModifierType.CONTROL_MASK:
@@ -1489,7 +1489,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # drag and drop
 
-    def _dragDataReceivedCb(self, widget, context, x, y, data, info, time):
+    def _dragDataReceivedCb(self, widget, context, unused_x, unused_y, data, unused_info, time):
         if not self.dropDataReady:
             if data.get_length() > 0:
                 if not self.dropOccured:
@@ -1563,7 +1563,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 self.dropHighlight = True
         return True
 
-    def _dragLeaveCb(self, widget, context, time):
+    def _dragLeaveCb(self, widget, unused_context, unused_time):
         if self.dropDataReady:
             self.dropDataReady = False
         if self.dropHighlight:

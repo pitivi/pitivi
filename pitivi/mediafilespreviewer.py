@@ -279,7 +279,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
             self.b_zoom_out.hide()
             self.bbox.show()
 
-    def show_error(self, uri):
+    def show_error(self, unused_uri):
         self.l_error.show()
         self.b_details.show()
 
@@ -345,7 +345,7 @@ class PreviewWidget(Gtk.VBox, Loggable):
             err, dbg = message.parse_error()
             self.error("Error: %s %s" % (err, dbg))
 
-    def _update_position(self, *args):
+    def _update_position(self, *unused_args):
         if self.is_playing and not self.slider_being_used:
             curr_pos = self.player.query_position(self.time_format)[1]
             self.pos_adj.set_value(long(curr_pos))

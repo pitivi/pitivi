@@ -259,7 +259,7 @@ def get_controllable_properties(element):
 
 def linkDynamic(element, target):
 
-    def pad_added(bin, pad, target):
+    def pad_added(unused_bin, pad, target):
         compatpad = target.get_compatible_pad(pad)
         if compatpad:
             pad.link_full(compatpad, Gst.PAD_LINK_CHECK_NOTHING)
@@ -344,7 +344,7 @@ def profile(func, profiler_filename="result.prof"):
         output_filename = profiler_filename + str(counter)
         counter += 1
 
-    def _wrapper(*args, **kwargs):
+    def _wrapper(*unused_args, **kwargs):
         local_func = func
         cProfile.runctx("result = local_func(*args, **kwargs)", globals(), locals(),
                         filename=output_filename)

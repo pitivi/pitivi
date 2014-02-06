@@ -461,7 +461,7 @@ class ProjectManager(Signallable, Loggable):
             if self._backup_lock < 60:
                 self._backup_lock += 5
 
-    def _saveBackupCb(self, project, uri):
+    def _saveBackupCb(self, unused_project, unused_uri):
         if self._backup_lock > 10:
             self._backup_lock -= 5
             return True
@@ -489,10 +489,10 @@ class ProjectManager(Signallable, Loggable):
         name, ext = os.path.splitext(uri)
         return name + ext + "~"
 
-    def _missingURICb(self, project, error, asset, what=None):
+    def _missingURICb(self, project, error, asset, unused_what=None):
         return self.emit("missing-uri", project, error, asset)
 
-    def _projectLoadedCb(self, project, timeline):
+    def _projectLoadedCb(self, unused_project, unused_timeline):
         self.debug("Project loaded %s", self.current_project.props.uri)
         self.emit("new-project-loaded", self.current_project, True)
         self.time_loaded = time()
@@ -529,7 +529,7 @@ class Project(Loggable, GES.Project):
                                         GObject.TYPE_PYOBJECT,))
     }
 
-    def __init__(self, name="", uri=None, **kwargs):
+    def __init__(self, name="", uri=None, **unused_kwargs):
         """
         @param name: the name of the project
         @param uri: the uri of the project
@@ -806,7 +806,7 @@ class Project(Loggable, GES.Project):
     #--------------------------------------------#
     # GES.Project virtual methods implementation #
     #--------------------------------------------#
-    def _handle_asset_loaded(self, id):
+    def _handle_asset_loaded(self, unused_id):
         self.nb_imported_files += 1
         self.nb_remaining_file_to_import = len([asset for asset in self.get_loading_assets() if
                 GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
@@ -821,11 +821,11 @@ class Project(Loggable, GES.Project):
         """
         self._handle_asset_loaded(asset.get_id())
 
-    def do_loading_error(self, error, id, type):
+    def do_loading_error(self, unused_error, id, unused_type):
         """ vmethod, get called on "asset-loading-error"""
         self._handle_asset_loaded(id)
 
-    def do_loaded(self, timeline):
+    def do_loaded(self, unused_timeline):
         """ vmethod, get called on "loaded" """
         self._ensureTracks()
         #self._ensureLayer()
@@ -1326,12 +1326,12 @@ class ProjectSettingsDialog():
             "height": self.project.videoheight,
             "width": self.project.videowidth})
 
-    def _newPresetCb(self, model, path, iter_, column, renderer, treeview):
+    def _newPresetCb(self, unused_model, path, unused_iter_, column, renderer, treeview):
         """ Handle the addition of a preset to the model of the preset manager. """
         treeview.set_cursor_on_cell(path, column, renderer, start_editing=True)
         treeview.grab_focus()
 
-    def _presetNameEditedCb(self, renderer, path, new_text, mgr):
+    def _presetNameEditedCb(self, unused_renderer, path, new_text, mgr):
         """Handle the renaming of a preset."""
         try:
             mgr.renamePreset(path, new_text)
@@ -1339,7 +1339,7 @@ class ProjectSettingsDialog():
             error_markup = _('"%s" already exists.') % new_text
             self._showPresetManagerError(mgr, error_markup)
 
-    def _presetNameEditingStartedCb(self, renderer, editable, path, mgr):
+    def _presetNameEditingStartedCb(self, unused_renderer, unused_editable, unused_path, mgr):
         """Handle the start of a preset renaming."""
         self._hidePresetManagerError(mgr)
 
@@ -1354,7 +1354,7 @@ class ProjectSettingsDialog():
         update_preset_buttons_func()
         self._hidePresetManagerError(mgr)
 
-    def _treeviewDefocusedCb(self, widget, event, mgr):
+    def _treeviewDefocusedCb(self, unused_widget, unused_event, mgr):
         self._hidePresetManagerError(mgr)
 
     def _showPresetManagerError(self, mgr, error_markup):
@@ -1416,7 +1416,7 @@ class ProjectSettingsDialog():
             i += 1
         return preset_name
 
-    def _addAudioPresetButtonClickedCb(self, button):
+    def _addAudioPresetButtonClickedCb(self, unused_button):
         preset_name = self._getUniquePresetName(self.audio_presets)
         self.audio_presets.addPreset(preset_name, {
             "channels": get_combo_value(self.channels_combo),
@@ -1425,18 +1425,18 @@ class ProjectSettingsDialog():
         self.audio_presets.restorePreset(preset_name)
         self._updateAudioPresetButtons()
 
-    def _removeAudioPresetButtonClickedCb(self, button):
+    def _removeAudioPresetButtonClickedCb(self, unused_button):
         selection = self.audio_preset_treeview.get_selection()
         model, iter_ = selection.get_selected()
         if iter_:
             self.audio_presets.removePreset(model[iter_][0])
 
-    def _saveAudioPresetButtonClickedCb(self, button):
+    def _saveAudioPresetButtonClickedCb(self, unused_button):
         self.audio_presets.saveCurrentPreset()
         self.save_audio_preset_button.set_sensitive(False)
         self.remove_audio_preset_button.set_sensitive(True)
 
-    def _addVideoPresetButtonClickedCb(self, button):
+    def _addVideoPresetButtonClickedCb(self, unused_button):
         preset_name = self._getUniquePresetName(self.video_presets)
         self.video_presets.addPreset(preset_name, {
             "width": int(self.width_spinbutton.get_value()),
@@ -1447,13 +1447,13 @@ class ProjectSettingsDialog():
         self.video_presets.restorePreset(preset_name)
         self._updateVideoPresetButtons()
 
-    def _removeVideoPresetButtonClickedCb(self, button):
+    def _removeVideoPresetButtonClickedCb(self, unused_button):
         selection = self.video_preset_treeview.get_selection()
         model, iter_ = selection.get_selected()
         if iter_:
             self.video_presets.removePreset(model[iter_][0])
 
-    def _saveVideoPresetButtonClickedCb(self, button):
+    def _saveVideoPresetButtonClickedCb(self, unused_button):
         self.video_presets.saveCurrentPreset()
         self.save_video_preset_button.set_sensitive(False)
         self.remove_video_preset_button.set_sensitive(True)

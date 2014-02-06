@@ -96,7 +96,7 @@ class AttrIterator():
 def get_iterator(self):
     tmplist = []
 
-    def fil(val, data):
+    def fil(val, unused_data):
         tmplist.append(val)
         return False
 
@@ -364,7 +364,7 @@ class PangoBuffer(Gtk.TextBuffer):
             intervals.extend(tmpint)
         return tagdict
 
-    def get_text(self, start=None, end=None, include_hidden_chars=True):
+    def get_text(self, start=None, end=None, unused_include_hidden_chars=True):
         tagdict = self.get_tags()
         if not start:
             start = self.get_start_iter()
@@ -570,7 +570,7 @@ class InteractivePangoBuffer(PangoBuffer):
 
 
 class TitleEditor(Loggable):
-    def __init__(self, instance, uimap):
+    def __init__(self, instance, unused_uimap):
         Loggable.__init__(self)
         Signallable.__init__(self)
         self.app = instance
@@ -726,7 +726,7 @@ class TitleEditor(Loggable):
             else:
                 self.bt["back_color"].set_visible(False)
 
-    def _updateSourceText(self, updated_obj):
+    def _updateSourceText(self, unused_updated_obj):
         if self.source is not None:
             if self.markup_button.get_active():
                 text = self.textbuffer.get_text(self.textbuffer.get_start_iter(),
@@ -820,7 +820,7 @@ class TitleEditor(Loggable):
         self.app.gui.viewer.target.disconnect_by_func(self.drag_release_event)
         self._signals_connected = False
 
-    def drag_press_event(self, widget, event):
+    def drag_press_event(self, unused_widget, event):
         if event.button == 1:
             self._drag_events = [(event.x, event.y)]
             #Update drag by drag event change, but not too often
@@ -858,17 +858,17 @@ class TitleEditor(Loggable):
         else:
             return False
 
-    def drag_notify_event(self, widget, event):
+    def drag_notify_event(self, unused_widget, event):
         if len(self._drag_events) > 0 and event.get_state() & Gdk.ModifierType.BUTTON1_MASK:
             self._drag_updated = True
             self._drag_events.append((event.x, event.y))
             st = self._drag_events[0]
             e = self._drag_events[-1]
 
-    def drag_release_event(self, widget, event):
+    def drag_release_event(self, unused_widget, unused_event):
         self._drag_events = []
 
-    def tab_switched(self, unused_notebook, arg1, arg2):
+    def tab_switched(self, unused_notebook, unused_arg1, arg2):
         if arg2 == 2:
             self._connect_signals()
         else:
