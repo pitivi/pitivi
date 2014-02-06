@@ -726,10 +726,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         chooser.set_current_folder(self.settings.lastProjectFolder)
         formatter_assets = GES.list_assets(GES.Formatter)
         formatter_assets.sort(key=lambda x: - x.get_meta(GES.META_FORMATTER_RANK))
-        for format in formatter_assets:
+        for format_ in formatter_assets:
             filt = Gtk.FileFilter()
-            filt.set_name(format.get_meta(GES.META_DESCRIPTION))
-            filt.add_pattern("*%s" % format.get_meta(GES.META_FORMATTER_EXTENSION))
+            filt.set_name(format_.get_meta(GES.META_DESCRIPTION))
+            filt.add_pattern("*%s" % format_.get_meta(GES.META_FORMATTER_EXTENSION))
             chooser.add_filter(filt)
         default = Gtk.FileFilter()
         default.set_name(_("All supported formats"))
@@ -1016,15 +1016,15 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # Note that splitext gives us the extension with the ".", no need to
         # add it inside the filter string.
         unused_filename, extension = os.path.splitext(uri)
-        filter = Gtk.FileFilter()
+        filter_ = Gtk.FileFilter()
         # Translators: this is a format filter in a filechooser. Ex: "AVI files"
-        filter.set_name(_("%s files" % extension))
-        filter.add_pattern("*" + extension.lower())
-        filter.add_pattern("*" + extension.upper())
+        filter_.set_name(_("%s files" % extension))
+        filter_.add_pattern("*" + extension.lower())
+        filter_.add_pattern("*" + extension.upper())
         default = Gtk.FileFilter()
         default.set_name(_("All files"))
         default.add_pattern("*")
-        chooser.add_filter(filter)
+        chooser.add_filter(filter_)
         chooser.add_filter(default)
         dialog.get_content_area().pack_start(chooser, True, True, 0)
         chooser.show()
@@ -1188,10 +1188,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # need to do this to work around bug in Gst.uri_construct
             # which escapes all /'s in path!
             uri = "file://" + chooser.get_filename()
-            format = chooser.get_filter().get_name()
-            if format == _("Detect automatically"):
-                format = None
-            self.log("uri:%s , format:%s", uri, format)
+            format_ = chooser.get_filter().get_name()
+            if format_ == _("Detect automatically"):
+                format_ = None
+            self.log("uri:%s , format:%s", uri, format_)
             ret = uri
         else:
             self.log("User didn't choose a URI to export project to")
@@ -1232,10 +1232,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # need to do this to work around bug in Gst.uri_construct
             # which escapes all /'s in path!
             uri = "file://" + chooser.get_filename()
-            format = chooser.get_filter().get_name()
-            self.log("uri:%s , format:%s", uri, format)
-            if format == _("Detect automatically"):
-                format = None
+            format_ = chooser.get_filter().get_name()
+            self.log("uri:%s , format:%s", uri, format_)
+            if format_ == _("Detect automatically"):
+                format_ = None
             self.settings.lastProjectFolder = chooser.get_current_folder()
             ret = uri
         else:
