@@ -180,7 +180,7 @@ def check_hard_dependencies():
     # Since we had to check Gst beforehand, we only do the import now:
     from gi.repository import Gst
     Gst.init(None)
-    reg = Gst.Registry.get()
+
     # Special case: gnonlin is a plugin, not a python module to be imported,
     # we can't use check_dependency to determine the version:
     inst = Gst.Registry.get().find_plugin("gnonlin")
