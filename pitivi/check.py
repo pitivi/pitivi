@@ -86,7 +86,7 @@ def _try_import_from_gi(modulename):
     try:
         __import__("gi.repository." + modulename)
         return True
-    except:
+    except ImportError:
         return False
 
 
@@ -94,7 +94,7 @@ def _try_import(modulename):
     try:
         __import__(modulename)
         return True
-    except:
+    except ImportError:
         return False
 
 
