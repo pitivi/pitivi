@@ -1262,16 +1262,20 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         preview_window.hide()  # Hack to allow setting the window position
         previewer.previewUri(uri)
         previewer.setMinimal()
+
         info = self.app.current_project.get_asset(uri, GES.UriClip).get_info()
-        try:
+        video_streams = info.get_video_streams()
+
+        if video_streams:
             # For videos and images, automatically resize the window
             # Try to keep it 1:1 if it can fit within 85% of the parent window
-            img_width = info.get_video_streams()[0].get_width()
-            img_height = info.get_video_streams()[0].get_height()
+            img_width = video_streams[0].get_width()
+            img_height = video_streams[0].get_height()
             controls_height = previewer.bbox.size_request().height
             mainwindow_width, mainwindow_height = self.get_size()
             max_width = 0.85 * mainwindow_width
             max_height = 0.85 * mainwindow_height
+
             if img_width < max_width and (img_height + controls_height) < max_height:
                 # The video is small enough, keep it 1:1
                 preview_window.resize(img_width, img_height + controls_height)
@@ -1281,10 +1285,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                 new_height = max_width * img_height / img_width
                 preview_window.resize(int(max_width),
                     int(new_height + controls_height))
-        except:
+        else:
             # There is no video/image stream. This is an audio file.
             # Resize to the minimum and let the window manager deal with it
             preview_window.resize(1, 1)
+
         # Setting the position of the window only works if it's currently hidden
         # otherwise, after the resize the position will not be readjusted
         preview_window.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
