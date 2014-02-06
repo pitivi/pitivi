@@ -23,6 +23,15 @@
 
 """
 Main application
+
+Hierarchy of the whole thing:
+
+Pitivi
+    InteractivePitivi
+    GuiPitivi
+        ProjectCreatorGuiPitivi
+        ProjectLoaderGuiPitivi
+        StartupWizardGuiPitivi
 """
 import os
 import sys
@@ -50,18 +59,6 @@ from pitivi.utils.loggable import Loggable
 import pitivi.utils.loggable as log
 #FIXME GES port disabled it
 #from pitivi.undo.timeline import TimelineLogObserver
-
-
-"""
-Hierarchy of the whole thing:
-
-Pitivi
-    InteractivePitivi
-    GuiPitivi
-        ProjectCreatorGuiPitivi
-        ProjectLoaderGuiPitivi
-        StartupWizardGuiPitivi
-"""
 
 
 class Pitivi(Loggable, Signallable):
