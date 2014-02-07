@@ -7,10 +7,14 @@
     <link type="guide" xref="interface"/>
     <link type="seealso" xref="medialibrary"/>
     <link type="seealso" xref="movearoundtimeline"/>
-    <revision pkgversion="0.14" version="0.2" date="2010-12-05" status="complete"/>
+    <revision pkgversion="0.92" version="0.3" date="2014-02-07" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
+    </credit>
+    <credit type="contributor">
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
     </credit>
     <desc>
       Discover the components of the main window.
