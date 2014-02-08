@@ -34,8 +34,7 @@
        </section>
        <section>
         <title>View modes</title>
-         <p>The <gui>Media Library</gui> can display your clips in a list (<guiseq><gui>View</gui><gui>Show Clips as a List</gui></guiseq>) or in an icon view (<guiseq><gui>View</gui><gui>Show Clips as Icons</gui></guiseq>).</p>
-         <p>The list view mode shows more details about each clip, but the icon view mode can display more clips without needing to scroll (especially on high resolution computer monitors).</p>
+         <p>The <gui>Media Library</gui> can display your clips in a list or in an icon view. The default mode is icon view because it display more clips without needing to scroll down. However, the list view mode shows more details about each clip. To activate/deactivate it, click on the <gui>Show clips as a detailed list</gui> button next to the search bar.</p>
        </section>
 
 </page>
