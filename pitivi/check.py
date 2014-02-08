@@ -3,8 +3,7 @@
 #
 #       pitivi/check.py
 #
-# Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
-# Copyright (c) 2012, Jean-François Fortin Tam <nekohayo@gmail.com>
+# Copyright (c) 2014, Mathieu Duponchelle <mduponchelle1@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -36,62 +35,165 @@ import sys
 
 from gettext import gettext as _
 
-
-# This list is meant to be a complete list for packagers.
-# Unless otherwise noted, modules are accessed through gobject introspection
-HARD_DEPS = {
-    "cairo": "1.10.0",  # using static python bindings
-    "Clutter": "1.12.0",
-    "ClutterGst": "2.0.0",
-    "GES": "1.0.0.0",  # packagers: in reality 1.1.90, but that GES version erronously reports itself as 1.0.0.0
-    "Gio": None,
-    "gnonlin": "1.1.90",
-    "Gst": "1.2.0",
-    "Gtk": "3.8.0",
-    "numpy": None,  # using static python bindings
-
-    # The following are not checked, but needed for the rest to work:
-    "gobject-introspection": "1.34.0",
-    "gst-python": "1.1.90",
-    "pygobject": "3.4.0",
-}
-
-# For the list of soft dependencies, see the "check_soft_dependencies" method,
-# near the end of this file.
-# (library_name, why_we_need_it) tuples:
 missing_soft_deps = {}
 
 
-def at_least_version(version, required):
-    for i, item in enumerate(version):
-        if required[i] != item:
-            return item > required[i]
+class Dependency(object):
+    """
+    This abstract class represents a module or component requirement.
+    @param modulename: The string allowing for import or lookup of the component.
+    @param version_required_string: A string in the format X.Y.Z or None if no version
+      check is necessary.
+    @param additional_message: A string that will be displayed to the user to further
+      explain the purpose of the missing component.
+    """
+    def __init__(self, modulename, version_required_string, additional_message=None):
+        self.version_required_string = version_required_string
+        self.modulename = modulename
+        self.satisfied = False
+        self.version_installed = None
+        self.component = None
+        self.additional_message = additional_message
 
-    return True
+    def check(self):
+        """
+        Sets the satisfied flag to True or False.
+        """
+        self.component = self._try_importing_component()
+
+        if not self.component:
+            self.satisfied = False
+        elif self.version_required_string is None:
+            self.satisfied = True
+        else:
+            formatted_version = self._format_version(self.component)
+            self.version_installed = _version_to_string(formatted_version)
+
+            if formatted_version >= _string_to_list(self.version_required_string):
+                self.satisfied = True
+
+    def _try_importing_component(self):
+        """
+        Subclasses must implement that method to return an object
+        on which version will be inspectable.
+        Return None on failure to import.
+        """
+        raise NotImplementedError
+
+    def _format_version(self, module):
+        """
+        Subclasses must return the version number split
+        in an iterable of ints.
+        For example "1.2.10" should return [1, 2, 10]
+        """
+        raise NotImplementedError
+
+    def __repr__(self):
+        if self.satisfied:
+            return ""
+
+        message = "- " + self.modulename + " "
+        if not self.component:
+            message += _("not found on the system")
+        else:
+            message += self.version_installed + _(" is installed but ") +\
+                self.version_required_string + _(" is required")
+
+        if self.additional_message is not None:
+            message += "\n    -> " + self.additional_message
+
+        return message
 
 
-def _initiate_audiosinks(Gst):
+class GIDependency(Dependency):
+    def _try_importing_component(self):
+        try:
+            __import__("gi.repository." + self.modulename)
+            module = sys.modules["gi.repository." + self.modulename]
+        except ImportError:
+            module = None
+        return module
+
+    def _format_version(self, module):
+        pass
+
+
+class ClassicDependency(Dependency):
+    def _try_importing_component(self):
+        try:
+            __import__(self.modulename)
+            module = sys.modules[self.modulename]
+        except ImportError:
+            module = None
+        return module
+
+    def _format_version(self, module):
+        pass
+
+
+class GstPluginDependency(Dependency):
+    """
+    Don't call check on its instances before actually checking
+    Gst is importable.
+    """
+    def _try_importing_component(self):
+        from gi.repository import Gst
+        Gst.init(None)
+
+        registry = Gst.Registry.get()
+        plugin = registry.find_plugin(self.modulename)
+        return plugin
+
+    def _format_version(self, plugin):
+        return _string_to_list(plugin.get_version())
+
+
+class GstDependency(GIDependency):
+    def _format_version(self, module):
+        return list(module.version())
+
+
+class GtkOrClutterDependency(GIDependency):
+    def _format_version(self, module):
+        return [module.MAJOR_VERSION, module.MINOR_VERSION, module.MICRO_VERSION]
+
+
+class CairoDependency(ClassicDependency):
+    def __init__(self, version_required_string):
+        ClassicDependency.__init__(self, "cairo", version_required_string)
+
+    def _format_version(self, module):
+        return _string_to_list(module.cairo_version_string())
+
+
+HARD_DEPENDENCIES = (CairoDependency("1.10.0"),
+                     GtkOrClutterDependency("Clutter", "1.12.0"),
+                     GtkOrClutterDependency("ClutterGst", "2.0.0"),
+                     GstDependency("Gst", "1.2.0"),
+                     GstDependency("GES", "1.0.0.0"),
+                     GtkOrClutterDependency("Gtk", "3.8.0"),
+                     ClassicDependency("numpy", None),
+                     GIDependency("Gio", None),
+                     GstPluginDependency("gnonlin", "1.1.90"))
+
+SOFT_DEPENDENCIES = (ClassicDependency("pycanberra", None,
+                                       _("enables sound notifications when rendering is complete")),
+                     GIDependency("GnomeDesktop", None,
+                                  _("file thumbnails provided by GNOME's thumbnailers")),
+                     GIDependency("Notify", None,
+                                  _("enables visual notifications when rendering is complete")),
+                     GstPluginDependency("libav", None,
+                                         _("additional multimedia codecs through the Libav library")))
+
+
+def _check_audiosinks():
+    from gi.repository import Gst
+
     # Yes, this can still fail, if PulseAudio is non-responsive for example.
     sink = Gst.ElementFactory.make("autoaudiosink", None)
     if not sink:
         return False
     return True
-
-
-def _try_import_from_gi(modulename):
-    try:
-        __import__("gi.repository." + modulename)
-        return True
-    except ImportError:
-        return False
-
-
-def _try_import(modulename):
-    try:
-        __import__(modulename)
-        return True
-    except ImportError:
-        return False
 
 
 def _version_to_string(version):
@@ -102,157 +204,33 @@ def _string_to_list(version):
     return [int(x) for x in version.split(".")]
 
 
-def _check_dependency(modulename, from_gobject_introspection):
-    """
-    Checks if the given module can be imported and is recent enough.
+def check_requirements():
+    hard_dependencies_satisfied = True
+    for dependency in HARD_DEPENDENCIES:
+        dependency.check()
+        if not dependency.satisfied:
+            if hard_dependencies_satisfied:
+                print _("\nERROR - The following hard dependencies are unmet:")
+                print "=================================================="
+            print dependency
+            hard_dependencies_satisfied = False
 
-    "modulename" is case-sensitive
-    "from_gobject_introspection" is a mandatory boolean variable.
+    for dependency in SOFT_DEPENDENCIES:
+        dependency.check()
+        if not dependency.satisfied:
+            missing_soft_deps[dependency.modulename] = dependency
+            print _("Missing soft dependency:")
+            print dependency
 
-    Returns: [satisfied, version_required, version_installed]
-    """
-    VERSION_REQ = HARD_DEPS[modulename]
-    # What happens here is that we try to import the module. If it works,
-    # assign it to a "module" variable and check the version reqs with it.
-    module = None
-    if from_gobject_introspection is True:
-        if _try_import_from_gi(modulename):
-            module = sys.modules["gi.repository." + modulename]
-    else:
-        if _try_import(modulename):
-            module = sys.modules[modulename]
+    if not hard_dependencies_satisfied:
+        return False
 
-    if module is None:
-        # Import failed, the dependency can't be satisfied, don't check versions
-        return [False, VERSION_REQ, None]
-    elif not VERSION_REQ:
-        # Import succeeded but there is no requirement, skip further checks
-        return [True, None, False]
+    if not _check_audiosinks():
+        print _("Could not create audio output sink. "
+                "Make sure you have a valid one (pulsesink, alsasink or osssink).")
+        return False
 
-    # The import succeeded and there is a version requirement, so check it out:
-    if modulename in ("Gst", "GES"):
-        if list(module.version()) < _string_to_list(VERSION_REQ):
-            return [False, VERSION_REQ, _version_to_string(module.version())]
-        else:
-            return [True, None, _version_to_string(module.version())]
-    if modulename in ("Gtk", "Clutter", "ClutterGst"):
-        gtk_version_tuple = (module.MAJOR_VERSION, module.MINOR_VERSION, module.MICRO_VERSION)
-        if list(gtk_version_tuple) < _string_to_list(VERSION_REQ):
-            return [False, VERSION_REQ, _version_to_string(gtk_version_tuple)]
-        else:
-            return [True, None, _version_to_string(gtk_version_tuple)]
-    if modulename == "cairo":
-        if _string_to_list(module.cairo_version_string()) < _string_to_list(VERSION_REQ):
-            return [False, VERSION_REQ, module.cairo_version_string()]
-        else:
-            return [True, None, module.cairo_version_string()]
-
-    oops = 'Module "%s" is installed, but version checking is not defined in check_dependency' % modulename
-    raise NotImplementedError(oops)
-
-
-def check_hard_dependencies():
-    missing_hard_deps = {}
-
-    satisfied, req, inst = _check_dependency("Gst", True)
-    if not satisfied:
-        missing_hard_deps["GStreamer"] = (req, inst)
-    satisfied, req, inst = _check_dependency("Clutter", True)
-    if not satisfied:
-        missing_hard_deps["Clutter"] = (req, inst)
-    satisfied, req, inst = _check_dependency("ClutterGst", True)
-    if not satisfied:
-        missing_hard_deps["ClutterGst"] = (req, inst)
-    satisfied, req, inst = _check_dependency("GES", True)
-    if not satisfied:
-        missing_hard_deps["GES"] = (req, inst)
-    satisfied, req, inst = _check_dependency("cairo", False)
-    if not satisfied:
-        missing_hard_deps["Cairo"] = (req, inst)
-    satisfied, req, inst = _check_dependency("Gtk", True)
-    if not satisfied:
-        missing_hard_deps["GTK+"] = (req, inst)
-    satisfied, req, inst = _check_dependency("numpy", False)
-    if not satisfied:
-        missing_hard_deps["NumPy"] = (req, inst)
-
-    # Since we had to check Gst beforehand, we only do the import now:
-    from gi.repository import Gst
-
-    registry = Gst.Registry.get()
-    # Special case: gnonlin is a plugin, not a python module to be imported,
-    # we can't use check_dependency to determine the version:
-    inst = registry.find_plugin("gnonlin")
-    if not inst:
-        missing_hard_deps["GNonLin"] = (HARD_DEPS["gnonlin"], inst)
-    else:
-        inst = inst.get_version()
-        if _string_to_list(inst) < _string_to_list(HARD_DEPS["gnonlin"]):
-            missing_hard_deps["GNonLin"] = (HARD_DEPS["gnonlin"], inst)
-
-    # Prepare the list of hard deps errors to warn about later:
-    for dependency in missing_hard_deps:
-        req = missing_hard_deps[dependency][0]
-        inst = missing_hard_deps[dependency][1]
-        if req and not inst:
-            message = "%s or newer is required, but was not found on your system." % req
-        elif req and inst:
-            message = "%s or newer is required, but only version %s was found." % (req, inst)
-        else:
-            message = "not found on your system."
-        missing_hard_deps[dependency] = message
-
-    # And finally, do a few last checks for basic sanity.
-    # Yes, a broken/dead autoaudiosink is still possible in 2012 with PulseAudio
-    if not _initiate_audiosinks(Gst):
-        missing_hard_deps["autoaudiosink"] = \
-            "Could not initiate audio output sink. "\
-            "Make sure you have a valid one (pulsesink, alsasink or osssink)."
-
-    return missing_hard_deps
-
-
-def check_soft_dependencies():
-    """
-    Verify for the presence of optional modules that enhance the user experience
-
-    If those are missing from the system, the user will be notified of their
-    existence by the presence of a "Missing dependencies..." button at startup.
-    """
-    from gi.repository import Gst
-
-    # Description strings are translatable as they are shown in the Pitivi UI.
-    if not _try_import("pycanberra"):
-        missing_soft_deps["PyCanberra"] = \
-            _("enables sound notifications when rendering is complete")
-
-    if not _try_import_from_gi("GnomeDesktop"):
-        missing_soft_deps["libgnome-desktop"] = \
-            _("file thumbnails provided by GNOME's thumbnailers")
-    if not _try_import_from_gi("Notify"):
-        missing_soft_deps["libnotify"] = \
-            _("enables visual notifications when rendering is complete")
-
-    registry = Gst.Registry.get()
-    if not registry.find_plugin("libav"):
-        missing_soft_deps["GStreamer Libav plugin"] = \
-            _("additional multimedia codecs through the Libav library")
-
-    # Apparently, doing a registry.find_plugin("frei0r") is not enough.
-    # Sometimes it still returns something even when frei0r is uninstalled,
-    # and anyway we're looking specifically for the scale0tilt filter.
-    # Don't use Gst.ElementFactory.make for this check, it's very I/O intensive.
-    # Instead, ask the registry with .lookup_feature or .check_feature_version:
-    if not registry.lookup_feature("frei0r-filter-scale0tilt"):
-        missing_soft_deps["Frei0r"] = \
-            _("additional video effects, clip transformation feature")
-
-    # TODO: we're not actually checking for gst bad and ugly... by definition,
-    # gst bad is a set of plugins that can move to gst good or ugly, and anyway
-    # distro packagers may split/combine the gstreamer plugins into any way they
-    # see fit. We can do a registry.find_plugin for specific encoders, but we
-    # don't really have something generic to rely on; ideas/patches welcome.
-    return missing_soft_deps
+    return True
 
 
 def initialize_modules():

@@ -74,8 +74,10 @@ class StartUpWizard(object):
 
         self.recent_chooser.add_filter(_filter)
 
+        missing_button = self.builder.get_object("missing_deps_button")
+
         if not missing_soft_deps:
-            self.builder.get_object("missing_deps_button").hide()
+            missing_button.hide()
 
         self.app.projectManager.connect("new-project-failed", self._projectFailedCb)
         self.app.projectManager.connect("new-project-loaded", self._projectLoadedCb)

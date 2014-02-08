@@ -106,23 +106,11 @@ def _initialize_modules():
         print "Failed to initialize modules: ", e
 
 
-def _check_dependencies():
-    from pitivi.check import check_hard_dependencies, check_soft_dependencies
-    missing_hard_deps = check_hard_dependencies()
-    # Yes, check soft deps even if hard ones are OK. We'll need them at runtime:
-    missing_soft_deps = check_soft_dependencies()
+def _check_requirements():
+    from pitivi.check import check_requirements
 
-    if missing_hard_deps:
-        print "\nERROR - The following hard dependencies are unmet:"
-        print "=================================================="
-        for dep in missing_hard_deps:
-            print "-", dep + ":", missing_hard_deps[dep]
-        if missing_soft_deps:
-            print "\nAdditionally, the following soft dependencies are missing..."
-            for dep in missing_soft_deps:
-                print "-", dep + ":", missing_soft_deps[dep]
+    if not check_requirements():
         sys.exit(2)
-
 
 def _run_pitivi():
     import pitivi.application as ptv
@@ -145,7 +133,7 @@ if __name__ == "__main__":
         # the classes in application.py will not even have the opportunity to run.
         # We do these checks on every startup (even outside the dev environment, for
         # soft deps); doing imports and gst registry checks has near-zero cost.
-        _check_dependencies()
+        _check_requirements()
         _run_pitivi()
     except KeyboardInterrupt:
         print "\tPitivi stopped by user with KeyboardInterrupt!"
