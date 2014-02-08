@@ -24,6 +24,10 @@
 
     <title>Using the Media Library</title>
 
+        <section>
+        <title>Importing a file to the <gui>Media Library</gui></title>
+         <p>There are two ways to import files into the <gui>Media library</gui>. The first way is to click on the <gui>Import</gui> button in the upper left corner. This will open a file chooser in which you can preview selected files or select multiple files (by holding <key>Shift</key> or <key>Control</key> while selecting them). The second way is to drag and drop the files from a file browser to the <gui>Media library</gui>. By importing a <em>file</em> into the <gui>Media library</gui>, it becomes a <em>clip</em>.</p>
+       </section>
        <section>
         <title>Previewing a clip from the <gui>Media Library</gui></title>
          <p>To preview a clip before placing it on the timeline, you can double-click on it in the <gui>Media Library</gui>. This will open the clip in a window that automatically closes whenever you click outside the window.</p>
