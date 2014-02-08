@@ -33,17 +33,6 @@
          <p>A search bar is shown at the top of the <gui>Media Library</gui>. Typing into the search entry filters the contents of the <gui>Media Library</gui> to show only clips whose filenames match your search terms. To reset the search entry, click the "cleanup" icon in the search entry.</p>
        </section>
        <section>
-        <title>Typeahead search</title>
-         <p>An alternative way of searching, if you know the beginning of a clip's filename, is to click anywhere in the <gui>Media Library</gui> and start typing the name of the file you're looking for.</p>
-         <list>
-          <item><p>As you type, the first matching file will become selected.</p></item>
-          <item><p>You can keep typing to refine your search.</p></item>
-          <item><p>When there are multiple results, you can use the <key>up</key> and <key>down</key> arrow keys to switch the selection between each search result.</p>
-          </item>
-         </list>
-         <p>This method only allows searching from the beginning of the filename.</p>
-       </section>
-       <section>
         <title>View modes</title>
          <p>The <gui>Media Library</gui> can display your clips in a list (<guiseq><gui>View</gui><gui>Show Clips as a List</gui></guiseq>) or in an icon view (<guiseq><gui>View</gui><gui>Show Clips as Icons</gui></guiseq>).</p>
          <p>The list view mode shows more details about each clip, but the icon view mode can display more clips without needing to scroll (especially on high resolution computer monitors).</p>
