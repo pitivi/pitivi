@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="interface"/>
-    <revision pkgversion="0.14" version="0.2" date="2011-06-05" status="incomplete"/>
+    <revision pkgversion="0.92" version="0.3" date="2014-02-10" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -13,6 +13,8 @@
     <credit type="contributor">
       <name>Brian Grohe</name>
       <email>grohe43@gmail.com</email>
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
     </credit>
     <desc>
       Managing your imported clips with the Media Library
