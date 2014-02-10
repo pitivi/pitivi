@@ -40,5 +40,17 @@
         <title>View modes</title>
          <p>The <gui>Media Library</gui> can display your clips in a list or in an icon view. The default mode is icon view because it display more clips without needing to scroll down. However, the list view mode shows more details about each clip. To activate/deactivate it, click on the <gui>Show clips as a detailed list</gui> button next to the search bar.</p>
        </section>
+       <section>
+        <title>Other actions</title>
+         <p>There are three further actions you can perform with clips. Each is represented by a button in the upper right part of the <gui>Media Library</gui>:</p>
+         <list type="numbered">
+          <item><p><gui>Remove selected clips from the project</gui> (this can also be performed by pressing <keyseq><key>Control</key><key>Delete</key></keyseq>).</p></item>
+          <item><p><gui>Clip properties...</gui> opens a new window with information on <em>video size</em>, <em>frame rate</em> and <em>aspect ratio</em>. Clicking the <gui>Apply to project</gui> button adjusts the project settings to the clip properties. You can select which properties to apply by leaving them ticked/unticked.</p></item>
+          <item><p><gui>Insert selected clips at the end of the timeline</gui> inserts selected clips one after another into the first layer of the timeline at a position, where the last clip on any layer ends.</p></item>
+         </list>
+         <note>
+         <p>In order for these actions to become available, one or more clips must be selected.</p>
+         </note>
+       </section>
 
 </page>
