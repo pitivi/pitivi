@@ -92,12 +92,13 @@ class Dependency(object):
         if self.satisfied:
             return ""
 
-        message = "- " + self.modulename + " "
         if not self.component:
-            message += _("not found on the system")
+            # Translators: %s is a Python module name or another os component
+            message = "- %s not found on the system" % self.modulename
         else:
-            message += self.version_installed + _(" is installed but ") +\
-                self.version_required_string + _(" is required")
+            # Translators: %s is a Python module name or another os component
+            message = "- %s version %s is installed but Pitivi requires at least version %s" % (
+                self.modulename, self.version_installed, self.version_required_string)
 
         if self.additional_message is not None:
             message += "\n    -> " + self.additional_message
@@ -210,7 +211,7 @@ def check_requirements():
         dependency.check()
         if not dependency.satisfied:
             if hard_dependencies_satisfied:
-                print _("\nERROR - The following hard dependencies are unmet:")
+                print _("ERROR - The following hard dependencies are unmet:")
                 print "=================================================="
             print dependency
             hard_dependencies_satisfied = False
