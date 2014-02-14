@@ -94,11 +94,11 @@ class Dependency(object):
 
         if not self.component:
             # Translators: %s is a Python module name or another os component
-            message = "- %s not found on the system" % self.modulename
+            message = _("- %s not found on the system" % self.modulename)
         else:
             # Translators: %s is a Python module name or another os component
-            message = "- %s version %s is installed but Pitivi requires at least version %s" % (
-                self.modulename, self.version_installed, self.version_required_string)
+            message = _("- %s version %s is installed but Pitivi requires at least version %s" % (
+                self.modulename, self.version_installed, self.version_required_string))
 
         if self.additional_message is not None:
             message += "\n    -> " + self.additional_message
