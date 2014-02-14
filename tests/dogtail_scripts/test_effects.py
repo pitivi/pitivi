@@ -32,6 +32,8 @@ class EffectLibraryTest(HelpFunc):
         self.assertEqual(len(tab.child(roleName="table").children), 4)
 
     def help_test_effect_drag(self):
+        self.force_medialibrary_iconview_mode()
+
         sample = self.import_media()
         self.insert_clip(sample)
         # Assume that the layer controls are roughly 260 pixels wide,

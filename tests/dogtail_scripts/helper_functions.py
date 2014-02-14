@@ -117,6 +117,9 @@ class HelpFunc(BaseDogTail):
         self.zoom_best_fit_button.click()
 
     def import_media(self, filename="tears of steel.webm"):
+        """
+        @return: The icon widget.
+        """
         dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
         self.import_button.click()
 
@@ -273,8 +276,11 @@ class HelpFunc(BaseDogTail):
         """
         listview = self.medialibrary.child(name="media_listview_scrollwindow")
         if listview.showing:
-            dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
+            # Ensure the welcome dialog is closed.
+            dogtail.rawinput.pressKey("Esc")
+            # Make sure the list view is hidden.
             self.medialibrary.child(name="media_listview_button", roleName="panel").click()
+            self.wait_for_node_hidden(listview, timeout=2)
 
     @staticmethod
     def center(obj):
