@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2014-02-10 21:57+0000\n"
-"PO-Revision-Date: 2014-02-13 22:44+0100\n"
+"POT-Creation-Date: 2014-02-14 02:44+0000\n"
+"PO-Revision-Date: 2014-02-14 10:51+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -619,47 +619,31 @@ msgstr "-a vyžaduje -i"
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "Nelze otevřít více než jeden PROJEKTOVÝ_SOUBOR"
 
-#: ../pitivi/check.py:97
-msgid "not found on the system"
-msgstr "nebyl nalezen v systému"
-
-#: ../pitivi/check.py:99
-msgid " is installed but "
-msgstr " je nainstalován, ale "
-
-#: ../pitivi/check.py:100
-msgid " is required"
-msgstr "je požadován"
-
-#: ../pitivi/check.py:180
+#: ../pitivi/check.py:181
 msgid "enables sound notifications when rendering is complete"
 msgstr "zapne zvukové upozorňování na dokončené vykreslování"
 
-#: ../pitivi/check.py:182
+#: ../pitivi/check.py:183
 msgid "file thumbnails provided by GNOME's thumbnailers"
 msgstr "náhledy souborů poskytnuté vytvářením náhledů v GNOME"
 
-#: ../pitivi/check.py:184
+#: ../pitivi/check.py:185
 msgid "enables visual notifications when rendering is complete"
 msgstr "zapne vizuální upozorňování na dokončené vykreslování"
 
-#: ../pitivi/check.py:186
+#: ../pitivi/check.py:187
 msgid "additional multimedia codecs through the Libav library"
 msgstr "dodatečné multimediální kodeky z knihovny Libav"
 
-#: ../pitivi/check.py:213
-msgid ""
-"\n"
-"ERROR - The following hard dependencies are unmet:"
-msgstr ""
-"\n"
-"CHYBA – Následující tvrdé závislosti nejsou splněny:"
+#: ../pitivi/check.py:214
+msgid "ERROR - The following hard dependencies are unmet:"
+msgstr "CHYBA – Následující tvrdé závislosti nejsou splněny:"
 
-#: ../pitivi/check.py:222
+#: ../pitivi/check.py:223
 msgid "Missing soft dependency:"
 msgstr "Chybějící měkká závislost:"
 
-#: ../pitivi/check.py:229
+#: ../pitivi/check.py:230
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -1819,3 +1803,12 @@ msgstr "Přiblížit"
 #: ../pitivi/utils/widgets.py:1013
 msgid "Zoom Timeline"
 msgstr "Přiblížit časovou osu"
+
+#~ msgid "not found on the system"
+#~ msgstr "nebyl nalezen v systému"
+
+#~ msgid " is installed but "
+#~ msgstr " je nainstalován, ale "
+
+#~ msgid " is required"
+#~ msgstr "je požadován"
