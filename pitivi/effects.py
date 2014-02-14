@@ -211,13 +211,13 @@ class EffectsHandler(object):
 
     def getAllAudioEffects(self):
         """
-        @returns:  the list off available audio effects elements
+        @return: the list of available audio effects elements
         """
         return self.audio_effects
 
     def getAllVideoEffects(self):
         """
-        @returns: the list off available video effects elements
+        @return: the list of available video effects elements
         """
         return self.video_effects
 
@@ -226,26 +226,25 @@ class EffectsHandler(object):
 
     def getFactoryFromName(self, name):
         """
-        @ivar name: Factory name.
+        @param name: Factory name.
         @type name: C{str}
-        @returns: The l{Effect} corresponding to the name
-        @raises: KeyError if the name doesn't  exist
+        @return: The l{Effect} corresponding to the name or None
         """
         return self._effect_factories_dict.get(name)
 
     def _getEffectDescripton(self, element_factory):
         """
-        @ivar element_factory: The element factory
+        @param element_factory: The element factory
         @type element_factory: L{Gst.ElementFactory}
-        @returns: A human description C{str} for the effect
+        @return: A human description C{str} for the effect
         """
         return element_factory.get_description()
 
     def _getEffectCategories(self, effect_name):
         """
-        @ivar effect_name: the name of the effect for wich we want the category
+        @param effect_name: the name of the effect for wich we want the category
         @type effect_name: L{str}
-        @returns: A C{list} of name C{str} of categories corresponding the effect
+        @return: A C{list} of name C{str} of categories corresponding the effect
         """
         categories = []
 
@@ -274,9 +273,9 @@ class EffectsHandler(object):
 
     def _getEffectName(self, element_factory):
         """
-        @ivar element_factory: The element factory
+        @param element_factory: The element factory
         @type element_factory: L{Gst.ElementFactory}
-        @returns: A human readable name C{str} for the effect
+        @return: A human readable name C{str} for the effect
         """
         #TODO check if it is the good way to make it translatable
         #And to filter actually!
@@ -289,12 +288,12 @@ class EffectsHandler(object):
 
     def getVideoCategories(self, aware=True):
         """
-        @ivar aware: C{True} if you want it to return only categories on which
-        there are effects on the system, else C{False}
+        @param aware: C{True} if you want it to return only categories on which
+            there are effects on the system, else C{False}
         @type aware: C{bool}
-        @returns: All video effect categories names C{str} that are available
-        on the system if it has been filled earlier, if it hasen't it will
-        just return all categories
+        @return: All video effect categories names C{str} that are available
+            on the system if it has been filled earlier, if it hasen't it will
+            just return all categories
         """
         if not self._video_categories or not aware:
             for categorie in self._video_categories_effects[1:]:
@@ -310,10 +309,10 @@ class EffectsHandler(object):
 
     def getAudioCategories(self, aware=True):
         """
-        @ivar  aware: C{True} if you want it to return only categories on
-        whichs there are effects on the system, else C{False}
+        @param aware: C{True} if you want it to return only categories on
+            which there are effects on the system, else C{False}
         @type aware: C{bool}
-        @returns: All audio effect categories names C{str}
+        @return: All audio effect categories names C{str}
         """
         if not self._audio_categories or not aware:
             for categorie in self._audio_categories_effects[1:]:
@@ -329,7 +328,7 @@ class EffectsHandler(object):
 
     def getAllCategories(self):
         """
-        @returns: All effect categories names C{str}
+        @return: All effect categories names C{str}
         """
         effects_categories = []
         return effects_categories.extended(self.video_categories).extended(
@@ -458,7 +457,6 @@ class EffectListWidget(Gtk.VBox, Loggable):
 
     @staticmethod
     def view_description_cell_data_func(unused_column, cell, model, iter_, unused_data):
-
         name, desc = model.get(iter_, COL_NAME_TEXT, COL_DESC_TEXT)
         escape = GLib.markup_escape_text
         cell.props.markup = "<b>%s</b>\n%s" % (escape(name),
@@ -619,29 +617,25 @@ class EffectsPropertiesManager:
         self.app = instance
 
     def getEffectConfigurationUI(self, effect):
-        """
-            Permit to get a configuration GUI for the effect
-            @param effect: The effect for which we want the configuration UI
-            @type effect: C{Gst.Element}
-        """
+        """Permit to get a configuration GUI for the effect
 
+        @param effect: The effect for which we want the configuration UI
+        @type effect: C{Gst.Element}
+        """
         if effect not in self.cache_dict:
-            #Here we should handle special effects configuration UI
-            effect_set_ui = GstElementSettingsWidget()
-            effect_set_ui.setElement(effect, ignore=PROPS_TO_IGNORE,
-                                     default_btn=True, use_element_props=True)
-            nb_rows = effect_set_ui.get_children()[0].get_property('n-rows')
-            effect_configuration_ui = Gtk.ScrolledWindow()
-            effect_configuration_ui.add_with_viewport(effect_set_ui)
-            effect_configuration_ui.set_policy(Gtk.PolicyType.AUTOMATIC,
-                                               Gtk.PolicyType.AUTOMATIC)
-            self.cache_dict[effect] = effect_configuration_ui
-            self._connectAllWidgetCbs(effect_set_ui, effect)
-            self._postConfiguration(effect, effect_set_ui)
+            # Here we should handle special effects configuration UI
+            effect_settings_widget = GstElementSettingsWidget()
+            effect_settings_widget.setElement(effect, ignore=PROPS_TO_IGNORE,
+                    default_btn=True, use_element_props=True)
+            scrolled_window = Gtk.ScrolledWindow()
+            scrolled_window.add_with_viewport(effect_settings_widget)
+            scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC,
+                    Gtk.PolicyType.AUTOMATIC)
+            self.cache_dict[effect] = scrolled_window
+            self._connectAllWidgetCallbacks(effect_settings_widget, effect)
+            self._postConfiguration(effect, effect_settings_widget)
 
-        effect_set_ui = self._getUiToSetEffect(effect)
-
-        self._current_effect_setting_ui = effect_set_ui
+        self._current_effect_setting_ui = self._getUiToSetEffect(effect)
         element = self._current_effect_setting_ui.element
         for prop in element.list_children_properties():
             self._current_element_values[prop.name] = element.get_child_property(prop.name)
@@ -666,11 +660,10 @@ class EffectsPropertiesManager:
             effect_set_ui = self.cache_dict[effect].get_children()[0].get_children()[0]
         else:
             effect_set_ui = self.cache_dict[effect]
-
         return effect_set_ui
 
-    def _connectAllWidgetCbs(self, unused_effect_configuration_ui, unused_effect):
-        for prop, widget in effect_configuration_ui.properties.iteritems():
+    def _connectAllWidgetCallbacks(self, effect_settings_widget, unused_effect):
+        for prop, widget in effect_settings_widget.properties.iteritems():
             widget.connectValueChanged(self._onValueChangedCb, widget, prop)
 
     def _onSetDefaultCb(self, unused_widget, dynamic):

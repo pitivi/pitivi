@@ -79,8 +79,8 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self._project = None
 
         self.infobar_box = Gtk.VBox()
-        effect_properties_handling = EffectsPropertiesManager(instance)
-        self.effect_expander = EffectProperties(instance, effect_properties_handling, self)
+        effects_properties_manager = EffectsPropertiesManager(instance)
+        self.effect_expander = EffectProperties(instance, effects_properties_manager, self)
         self.effect_expander.set_vexpand(False)
         # Transformation boxed DISABLED
         #self.transformation_expander = TransformationProperties(instance, instance.action_log)
@@ -137,11 +137,14 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
 class EffectProperties(Gtk.Expander, Loggable):
     """
     Widget for viewing and configuring effects
+
+    @type instance: C{Pitivi}
+    @type effects_properties_manager: C{EffectsPropertiesManager}
     """
     # Note: This should be inherited from Gtk.Expander when we get other things
     # to put in ClipProperties, that is why this is done this way
 
-    def __init__(self, instance, effect_properties_handling, clip_properties):
+    def __init__(self, instance, effects_properties_manager, clip_properties):
         # Set up the expander widget that will contain everything:
         Gtk.Expander.__init__(self)
         self.set_expanded(True)
@@ -155,7 +158,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.selected_effects = []
         self.clips = []
         self._effect_config_ui = None
-        self.effect_props_handling = effect_properties_handling
+        self.effects_properties_manager = effects_properties_manager
         self.clip_properties = clip_properties
         self._config_ui_h_pos = None
         self._timeline = None
@@ -240,7 +243,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview.connect("drag-motion", self._dragMotionCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
         self._vcontent.connect("notify", self._vcontentNotifyCb)
-        removeEffectButton.connect("clicked", self._removeEffectClicked)
+        removeEffectButton.connect("clicked", self._removeEffectCb)
         self.app.connect("new-project-loaded", self._newProjectLoadedCb)
         self.connect('notify::expanded', self._expandedCb)
         self.connected = False
@@ -305,25 +308,22 @@ class EffectProperties(Gtk.Expander, Loggable):
     def _connectTimelineSelection(self, timeline):
         self.timeline = timeline
 
-    def _removeEffectClicked(self, toolbutton):
+    def _removeEffectCb(self, toolbutton):
         if not self.selection.get_selected()[1]:
+            # Cannot remove nothing,
             return
-        else:
-            effect = self.storemodel.get_value(self.selection.get_selected()[1],
-                                               COL_TRACK_EFFECT)
-            self._removeEffect(effect)
+        effect = self.storemodel.get_value(self.selection.get_selected()[1],
+                                           COL_TRACK_EFFECT)
+        self._removeEffect(effect)
 
     def _removeEffect(self, effect):
         self.app.action_log.begin("remove effect")
         if self._effect_config_ui:
             self._effect_config_ui.get_children()[0].get_children()[0].resetKeyframeToggleButtons()
-        self._cleanCache(effect)
+        self.effects_properties_manager.cleanCache(effect)
         effect.get_parent().remove(effect)
         self._updateTreeview()
         self.app.action_log.commit()
-
-    def _cleanCache(self, effect):
-        config_ui = self.effect_props_handling.cleanCache(effect)
 
     def addEffectToClip(self, clip, bin_desc):
         media_type = self.app.effects.getFactoryFromName(bin_desc).media_type
@@ -450,7 +450,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                     self._vcontent.remove(widget)
 
             element = effect
-            ui = self.effect_props_handling.getEffectConfigurationUI(element)
+            ui = self.effects_properties_manager.getEffectConfigurationUI(element)
 
             if self._effect_config_ui:
                 self._effect_config_ui.get_children()[0].get_children()[0].resetShowKeyframesButton()
