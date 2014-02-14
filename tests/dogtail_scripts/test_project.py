@@ -11,34 +11,6 @@ from test_base import DURATION_OF_ONE_CLIP, DURATION_OF_TWO_CLIPS
 
 class ProjectPropertiesTest(HelpFunc):
 
-    # Convenience methods
-
-    def wait_for_file(self, path, time_out=10):
-        """
-        Check for the existence of a file, until a timeout is reached.
-        This gives enough time for GES/Pitivi to do whatever it needs to do.
-
-        Also checks that the file is not an empty (0 bytes) file.
-        """
-        time_elapsed = 0
-        exists = False
-        while (time_elapsed <= time_out) and not exists:
-            time_elapsed += 1
-            sleep(1)
-            exists = os.path.isfile(path) and os.path.getsize(path) > 0
-        return exists
-
-    def wait_for_update(self, path, timestamp, time_out=20):
-        time_elapsed = 0
-        new_timestamp = False
-        while (time_elapsed <= time_out) and new_timestamp == timestamp:
-            time_elapsed += 2
-            sleep(2)
-            new_timestamp = os.path.getmtime(path)
-        return new_timestamp != timestamp
-
-    # The actual test cases
-
     def test_cancelling_load_with_no_fallback(self):
         """
         Test the scenario where you have no unsaved changes, go to choose
@@ -114,9 +86,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertEqual(pixelText.text, "12:11")
         self.assertEqual(displayText.text, "64:33")
 
-        pixelText.doubleClick()
-        pixelText.click()
-        pixelText.typeText("3:4")
+        pixelText.text = "3:4"
         self.assertEqual(pixelText.text, "3:4")
         self.assertEqual(displayCombo.combovalue, "Standard (4:3)")
         self.assertEqual(displayText.text, "4:3")
@@ -128,9 +98,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertEqual(displayText.text, "11:8")
         self.assertEqual(pixelText.text, "99:128")
 
-        displayText.doubleClick()
-        displayText.click()
-        displayText.typeText("37:20")
+        displayText.text = "37:20"
         self.assertEqual(displayCombo.combovalue, "Cinema (1.85)")
         self.assertEqual(pixelText.text, "333:320")  # It changes further below
         # This check is probably useless, but we never know:
@@ -219,7 +187,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.goToEnd_button.click()
         self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
         # A backup should appear after 10 secs if no further changes were made
-        self.assertTrue(self.wait_for_file(backup_path, time_out=11), "Backup not created")
+        self.assertTrue(self.wait_for_file(backup_path, timeout=11), "Backup not created")
         self.assertTrue(os.path.getmtime(backup_path) - os.path.getmtime(path) > 0,
                         "Backup is older than saved file")
 
@@ -243,7 +211,7 @@ class ProjectPropertiesTest(HelpFunc):
         welcome_dialog.child(name=filename).doubleClick()
         sample = self.import_media("flat_colour1_640x480.png")
         # Go figure why, this one takes much longer (~27 secs) to appear:
-        self.assertTrue(self.wait_for_file(backup_path, time_out=35), "Backup not created")
+        self.assertTrue(self.wait_for_file(backup_path, timeout=35), "Backup not created")
         self.tearDown(clean=False, kill=True)
         sleep(0.5)
 
@@ -312,7 +280,7 @@ class ProjectPropertiesTest(HelpFunc):
         # Create project #1 - one clip with only one instance on the timeline
         self.assertTrue(infobar_media.showing)
         project1_sample1 = self.import_media()
-        self.assertFalse(infobar_media.showing)
+        self.assertTrue(self.wait_for_node_hidden(infobar_media, timeout=4))
         self.insert_clip(project1_sample1)
         self.saveProject(filename1)
 
@@ -339,6 +307,7 @@ class ProjectPropertiesTest(HelpFunc):
         sleep(0.5)
         self.insert_clip(project2_sample1, 2)
         sleep(1)
+        self.assertEqual(len(iconview.children), 2)
         self.goToEnd_button.click()
         self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
         self.saveProject(filename2)
@@ -351,12 +320,15 @@ class ProjectPropertiesTest(HelpFunc):
         project2_sample1.click()
         sleep(0.5)
         self.medialibrary.child(name="media_remove_button").click()
+        self.assertEqual(len(iconview.children), 1,
+            "A clip has just been removed so only one should be left")
         self.loadProject(filename1, unsaved_changes="discard")
         sleep(3)
         self.assertEqual(len(iconview.children), 1)
         self.assertFalse(infobar_media.showing)
         self.goToEnd_button.click()
         self.assertEqual(seektime.text, DURATION_OF_ONE_CLIP)
+
         # Switch back to project #2, expect the same thing.
         self.loadProject(filename2)
         sleep(3)

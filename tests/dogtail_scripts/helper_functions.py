@@ -279,3 +279,36 @@ class HelpFunc(BaseDogTail):
     @staticmethod
     def center(obj):
         return obj.position[0] + obj.size[0] / 2, obj.position[1] + obj.size[1] / 2
+
+    @staticmethod
+    def wait_for_node_hidden(widget, timeout=10):
+        while widget.showing and timeout > 0:
+            sleep(1)
+            timeout -= 1
+        return not widget.showing
+
+    @staticmethod
+    def wait_for_file(path, timeout=10):
+        """
+        Check for the existence of a file, until a timeout is reached.
+        This gives enough time for GES/Pitivi to do whatever it needs to do.
+
+        Also checks that the file is not an empty (0 bytes) file.
+        """
+        time_elapsed = 0
+        exists = False
+        while (time_elapsed <= timeout) and not exists:
+            time_elapsed += 1
+            sleep(1)
+            exists = os.path.isfile(path) and os.path.getsize(path) > 0
+        return exists
+
+    @staticmethod
+    def wait_for_update(path, timestamp, timeout=20):
+        time_elapsed = 0
+        new_timestamp = False
+        while (time_elapsed <= timeout) and new_timestamp == timestamp:
+            time_elapsed += 2
+            sleep(2)
+            new_timestamp = os.path.getmtime(path)
+        return new_timestamp != timestamp
