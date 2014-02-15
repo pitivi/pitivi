@@ -26,6 +26,7 @@ A collection of helper classes and routines for:
     * Creating UI from GstElement-s
 """
 
+import math
 import os
 import re
 import sys
@@ -979,10 +980,13 @@ class BaseTabs(Gtk.Notebook):
 
 
 class ZoomBox(Gtk.HBox, Zoomable):
+    """
+    Container holding the widgets for zooming.
+
+    @type timeline: TimelineContainer
+    """
+
     def __init__(self, timeline):
-        """
-        This will hold the widgets responsible for zooming.
-        """
         Gtk.HBox.__init__(self)
         Zoomable.__init__(self)
 
@@ -1032,11 +1036,19 @@ class ZoomBox(Gtk.HBox, Zoomable):
         self.timeline.zoomFit()
 
     def _zoomSliderScrollCb(self, unused, event):
-        value = self._zoomAdjustment.get_value()
+        delta = 0
         if event.direction in [Gdk.ScrollDirection.UP, Gdk.ScrollDirection.RIGHT]:
-            self._zoomAdjustment.set_value(value + 1)
+            delta = 1
         elif event.direction in [Gdk.ScrollDirection.DOWN, Gdk.ScrollDirection.LEFT]:
-            self._zoomAdjustment.set_value(value - 1)
+            delta = -1
+        elif event.direction in [Gdk.ScrollDirection.SMOOTH]:
+            unused_res, delta_x, delta_y = event.get_scroll_deltas()
+            if delta_x:
+                delta = math.copysign(1, delta_x)
+            elif delta_y:
+                delta = math.copysign(1, -delta_y)
+        if delta:
+            self._zoomAdjustment.set_value(self._zoomAdjustment.get_value() + delta)
 
     def zoomChanged(self):
         if self._updateZoomSlider:
