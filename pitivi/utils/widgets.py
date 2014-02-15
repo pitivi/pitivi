@@ -42,7 +42,8 @@ from gettext import gettext as _
 
 from pitivi.utils.loggable import Loggable
 from pitivi.configure import get_ui_dir
-from pitivi.utils.ui import unpack_color, pack_color_32, pack_color_64, \
+from pitivi.utils.ui import beautify_length, \
+    unpack_color, pack_color_32, pack_color_64, \
     time_to_string, SPACING, CONTROL_WIDTH
 from pitivi.utils.timeline import Zoomable
 
@@ -1013,9 +1014,10 @@ class ZoomBox(Gtk.HBox, Zoomable):
         # zoom slider, otherwise the slider remains at the leftmost position.
         self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
         zoomslider.props.draw_value = False
-        zoomslider.set_tooltip_text(_("Zoom Timeline"))
         zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
         zoomslider.connect("value-changed", self._zoomAdjustmentChangedCb)
+        zoomslider.connect("query-tooltip", self._sliderTooltipCb)
+        zoomslider.set_has_tooltip(True)
         zoomslider.set_size_request(100, 0)  # At least 100px wide for precision
         self.pack_start(zoomslider, expand=True, fill=True, padding=ZOOM_SLIDER_PADDING)
 
@@ -1047,3 +1049,16 @@ class ZoomBox(Gtk.HBox, Zoomable):
         zoomLevel = self.getCurrentZoomLevel()
         if int(self._zoomAdjustment.get_value()) != zoomLevel:
             self._zoomAdjustment.set_value(zoomLevel)
+
+    def _sliderTooltipCb(self, unused_slider, unused_x, unused_y, unused_keyboard_mode, tooltip):
+        # We assume the width of the ruler is exactly the width of the timeline.
+        width_px = self.timeline.ruler.get_allocated_width()
+        timeline_width_ns = Zoomable.pixelToNs(width_px)
+        if timeline_width_ns >= Gst.SECOND:
+            # Translators: %s represents a duration, for example "10 minutes"
+            tip = _("%s displayed") % beautify_length(timeline_width_ns)
+        else:
+            # Translators: This is a tooltip
+            tip = _("%d nanoseconds displayed, because we can") % timeline_width_ns
+        tooltip.set_text(tip)
+        return True
