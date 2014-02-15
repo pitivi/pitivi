@@ -1023,7 +1023,7 @@ class ZoomBox(Gtk.HBox, Zoomable):
         self.show_all()
 
     def _zoomAdjustmentChangedCb(self, adjustment):
-        Zoomable.setZoomLevel(int(adjustment.get_value()))
+        Zoomable.setZoomLevel(adjustment.get_value())
 
     def _zoomFitCb(self, unused_button):
         self.timeline.zoomFit()

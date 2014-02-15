@@ -349,7 +349,7 @@ class Zoomable(object):
 
     @classmethod
     def setZoomLevel(cls, level):
-        level = min(cls.zoom_steps, max(0, level))
+        level = int(max(0, min(level, cls.zoom_steps)))
         if level != cls._cur_zoom:
             cls._cur_zoom = level
             cls.setZoomRatio(cls.computeZoomRatio(level))
