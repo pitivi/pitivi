@@ -56,26 +56,6 @@ DRAG_LEFT_HANDLEBAR_CURSOR = Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE)
 DRAG_RIGHT_HANDLEBAR_CURSOR = Gdk.Cursor.new(Gdk.CursorType.RIGHT_SIDE)
 
 
-def get_preview_for_object(bElement, timeline):
-    # FIXME: special preview for transitions, titles
-    if not isinstance(bElement.get_parent(), GES.UriClip):
-        return Clutter.Actor()
-
-    track_type = bElement.get_track_type()
-    if track_type == GES.TrackType.AUDIO:
-        previewer = AudioPreviewer(bElement, timeline)
-        previewer.startLevelsDiscoveryWhenIdle()
-        return previewer
-    elif track_type == GES.TrackType.VIDEO:
-        if bElement.get_parent().is_image():
-            # TODO: return still image previewer
-            return Clutter.Actor()
-        else:
-            return VideoPreviewer(bElement, timeline)
-    else:
-        return Clutter.Actor()
-
-
 class RoundedRectangle(Clutter.Actor):
     """
     Custom actor used to draw a rectangle that can have rounded corners
@@ -363,7 +343,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         size = self.bElement.get_duration()
 
         self._createBackground(track)
-        self._createPreview()
+        self.preview = self._createPreview()
+        self.add_child(self.preview)
         self.border = self._createBorder()
         self._createMarquee()
         self._createHandles()
@@ -579,8 +560,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         adj = self.nsToPixel(keyframe.value.timestamp - lastKeyframe.value.timestamp)
         opp = (lastKeyframe.value.value - keyframe.value.value) * EXPANDED_SIZE
         hyp = math.sqrt(adj ** 2 + opp ** 2)
-
-        if (hyp < 1):  # line length would be less tan one pixel
+        if hyp < 1:
+            # line length would be less than one pixel
             return
 
         sinX = opp / hyp
@@ -610,11 +591,16 @@ class TimelineElement(Clutter.Actor, Zoomable):
         pass
 
     def _createPreview(self):
-        self.preview = get_preview_for_object(self.bElement, self.timeline)
-        self.add_child(self.preview)
+        if isinstance(self.bElement, GES.AudioUriSource):
+            previewer = AudioPreviewer(self.bElement, self.timeline)
+            previewer.startLevelsDiscoveryWhenIdle()
+            return previewer
+        if isinstance(self.bElement, GES.VideoUriSource):
+            return VideoPreviewer(self.bElement, self.timeline)
+        # TODO: GES.AudioTransition, GES.VideoTransition, GES.ImageSource, GES.TitleSource
+        return Clutter.Actor()
 
     def _createMarquee(self):
-        # TODO: difference between Actor.new() and Actor()?
         self.marquee = Clutter.Actor()
         self.marquee.bElement = self.bElement
         self.marquee.set_background_color(CLIP_SELECTED_OVERLAY_COLOR)
