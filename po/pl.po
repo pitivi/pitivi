@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-11 14:49+0100\n"
-"PO-Revision-Date: 2014-02-11 14:50+0100\n"
+"POT-Creation-Date: 2014-02-15 19:34+0100\n"
+"PO-Revision-Date: 2014-02-15 19:35+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -355,7 +355,7 @@ msgstr "Liczba klatek na sekundę:"
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
 #: ../data/ui/projectsettings.ui.h:16 ../data/ui/renderingdialog.ui.h:31
-#: ../pitivi/effects.py:283
+#: ../pitivi/effects.py:282
 msgid "Video"
 msgstr "Wideo"
 
@@ -622,48 +622,46 @@ msgstr "-a wymaga -i"
 msgid "Cannot open more than one PROJECT_FILE"
 msgstr "Nie można otworzyć więcej niż jednego PLIKU_PROJEKTU"
 
+#. Translators: %s is a Python module name or another os component
 #: ../pitivi/check.py:97
-msgid "not found on the system"
-msgstr "nie odnaleziono w systemie"
+#, python-format
+msgid "- %s not found on the system"
+msgstr "- nie odnaleziono %s w systemie"
 
-#: ../pitivi/check.py:99
-msgid " is installed but "
-msgstr " jest zainstalowane, ale "
-
+#. Translators: %s is a Python module name or another os component
 #: ../pitivi/check.py:100
-msgid " is required"
-msgstr " jest wymagane"
+#, python-format
+msgid "- %s version %s is installed but Pitivi requires at least version %s"
+msgstr ""
+"- %s w wersji %s jest zainstalowane, ale program Pitivi wymaga co najmniej "
+"wersji %s"
 
-#: ../pitivi/check.py:180
+#: ../pitivi/check.py:181
 msgid "enables sound notifications when rendering is complete"
 msgstr "włącza powiadomienia dźwiękowe po ukończeniu renderowania"
 
-#: ../pitivi/check.py:182
+#: ../pitivi/check.py:183
 msgid "file thumbnails provided by GNOME's thumbnailers"
 msgstr ""
 "miniatury plików dostarczane przez generatory miniatur środowiska GNOME"
 
-#: ../pitivi/check.py:184
+#: ../pitivi/check.py:185
 msgid "enables visual notifications when rendering is complete"
 msgstr "włącza powiadomienia po ukończeniu renderowania"
 
-#: ../pitivi/check.py:186
+#: ../pitivi/check.py:187
 msgid "additional multimedia codecs through the Libav library"
 msgstr "dodatkowe kodeki multimedialne przez bibliotekę libav"
 
-#: ../pitivi/check.py:213
-msgid ""
-"\n"
-"ERROR - The following hard dependencies are unmet:"
-msgstr ""
-"\n"
-"BŁĄD - brak następujących twardych zależności:"
+#: ../pitivi/check.py:214
+msgid "ERROR - The following hard dependencies are unmet:"
+msgstr "BŁĄD - brak następujących twardych zależności:"
 
-#: ../pitivi/check.py:222
+#: ../pitivi/check.py:223
 msgid "Missing soft dependency:"
 msgstr "Brakujące miękkie zależności:"
 
-#: ../pitivi/check.py:229
+#: ../pitivi/check.py:230
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -671,27 +669,27 @@ msgstr ""
 "Nie można utworzyć odpływu wyjścia dźwięku. Proszę się upewnić, że istnieje "
 "prawidłowy odpływ (pulsesink, alsasink lub osssink)."
 
-#: ../pitivi/clipproperties.py:148
+#: ../pitivi/clipproperties.py:151
 msgid "Effects"
 msgstr "Efekty"
 
-#: ../pitivi/clipproperties.py:169
+#: ../pitivi/clipproperties.py:172
 msgid "Remove effect"
 msgstr "Usuń efekt"
 
-#: ../pitivi/clipproperties.py:191
+#: ../pitivi/clipproperties.py:194
 msgid "Active"
 msgstr "Aktywny"
 
-#: ../pitivi/clipproperties.py:193
+#: ../pitivi/clipproperties.py:196
 msgid "Type"
 msgstr "Typ"
 
-#: ../pitivi/clipproperties.py:204
+#: ../pitivi/clipproperties.py:207
 msgid "Effect name"
 msgstr "Nazwa efektu"
 
-#: ../pitivi/clipproperties.py:221
+#: ../pitivi/clipproperties.py:224
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Proszę wybrać klip na osi czasu, aby skonfigurować jego powiązane efekty"
@@ -700,7 +698,7 @@ msgstr ""
 msgid "Transformation"
 msgstr "Przekształcenie"
 
-#: ../pitivi/effects.py:78 ../pitivi/effects.py:172 ../pitivi/effects.py:265
+#: ../pitivi/effects.py:78 ../pitivi/effects.py:172 ../pitivi/effects.py:264
 msgid "Uncategorized"
 msgstr "Bez kategorii"
 
@@ -736,11 +734,11 @@ msgstr "Dekoracje"
 msgid "Time"
 msgstr "Czas"
 
-#: ../pitivi/effects.py:284
+#: ../pitivi/effects.py:283
 msgid "Audio |audio"
 msgstr "Dźwięk"
 
-#: ../pitivi/effects.py:285
+#: ../pitivi/effects.py:284
 msgid "effect"
 msgstr "efekt"
 
