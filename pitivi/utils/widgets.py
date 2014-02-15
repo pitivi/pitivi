@@ -1012,25 +1012,18 @@ class ZoomBox(Gtk.HBox, Zoomable):
         # Setting _zoomAdjustment's value must be done after we create the
         # zoom slider, otherwise the slider remains at the leftmost position.
         self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
-        self._zoomAdjustment.connect("value-changed", self._zoomAdjustmentChangedCb)
         zoomslider.props.draw_value = False
         zoomslider.set_tooltip_text(_("Zoom Timeline"))
         zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
+        zoomslider.connect("value-changed", self._zoomAdjustmentChangedCb)
         zoomslider.set_size_request(100, 0)  # At least 100px wide for precision
         self.pack_start(zoomslider, expand=True, fill=True, padding=ZOOM_SLIDER_PADDING)
 
         self.set_size_request(CONTROL_WIDTH, -1)
         self.show_all()
 
-        self._updateZoomSlider = True
-
     def _zoomAdjustmentChangedCb(self, adjustment):
-        # GTK crack
-        self._updateZoomSlider = False
         Zoomable.setZoomLevel(int(adjustment.get_value()))
-        self.timeline._scrollToPlayhead()
-        self.zoomed_fitted = False
-        self._updateZoomSlider = True
 
     def _zoomFitCb(self, unused_button):
         self.timeline.zoomFit()
@@ -1048,8 +1041,9 @@ class ZoomBox(Gtk.HBox, Zoomable):
             elif delta_y:
                 delta = math.copysign(1, -delta_y)
         if delta:
-            self._zoomAdjustment.set_value(self._zoomAdjustment.get_value() + delta)
+            Zoomable.setZoomLevel(Zoomable.getCurrentZoomLevel() + delta)
 
     def zoomChanged(self):
-        if self._updateZoomSlider:
-            self._zoomAdjustment.set_value(self.getCurrentZoomLevel())
+        zoomLevel = self.getCurrentZoomLevel()
+        if int(self._zoomAdjustment.get_value()) != zoomLevel:
+            self._zoomAdjustment.set_value(zoomLevel)
