@@ -485,10 +485,10 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
         l = len(values)
         for i, value in enumerate(values):
-            has_changable_time = True
+            has_changeable_time = True
             if i == 0 or i == l - 1:
-                has_changable_time = False
-            self._createKeyframe(value, has_changable_time)
+                has_changeable_time = False
+            self._createKeyframe(value, has_changeable_time)
             lastPoint = value
 
         self.drawLines()
@@ -545,8 +545,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         keyframe.set_z_position(2)
         keyframe.set_position(x, y)
 
-    def _createKeyframe(self, value, has_changable_time):
-        keyframe = Keyframe(self, value, has_changable_time)
+    def _createKeyframe(self, value, has_changeable_time):
+        keyframe = Keyframe(self, value, has_changeable_time)
         self.add_child(keyframe)
         self.keyframes.append(keyframe)
         self.setKeyframePosition(keyframe, value)
@@ -844,15 +844,16 @@ class KeyframeMenu(GtkClutter.Actor):
 
 class Keyframe(Clutter.Actor):
     """
-    If has_changable_time is False, it means this is an edge keyframe.
+    @ivar has_changeable_time: if False, it means this is an edge keyframe.
+    @type has_changeable_time: bool
     """
 
-    def __init__(self, timelineElement, value, has_changable_time):
+    def __init__(self, timelineElement, value, has_changeable_time):
         Clutter.Actor.__init__(self)
 
         self.value = value
         self.timelineElement = weakref.proxy(timelineElement)
-        self.has_changable_time = has_changable_time
+        self.has_changeable_time = has_changeable_time
         self.lastClick = datetime.now()
 
         self.set_size(KEYFRAME_SIZE, KEYFRAME_SIZE)
@@ -884,7 +885,7 @@ class Keyframe(Clutter.Actor):
 
     def remove(self):
         # Can't remove edge keyframes !
-        if not self.has_changable_time:
+        if not self.has_changeable_time:
             return
 
         self.timelineElement.timeline.remove_child(self.menu)
@@ -940,7 +941,7 @@ class Keyframe(Clutter.Actor):
 
         newValue = min(max(newValue, 0.0), 1.0)
 
-        if not self.has_changable_time:
+        if not self.has_changeable_time:
             newTs = self.lastTs
 
         self.timelineElement.source.unset(self.lastTs)
