@@ -319,12 +319,13 @@ class TrimHandle(Clutter.Texture):
 
 
 class TimelineElement(Clutter.Actor, Zoomable):
-    def __init__(self, bElement, track, timeline):
-        """
-        @param bElement: the backend GES.TrackElement
-        @param track: the track to which the bElement belongs
-        @param timeline: the containing graphic timeline.
-        """
+    """
+    @ivar bElement: the backend element.
+    @type bElement: GES.TrackElement
+    @ivar timeline: the containing graphic timeline.
+    """
+
+    def __init__(self, bElement, timeline):
         Zoomable.__init__(self)
         Clutter.Actor.__init__(self)
 
@@ -343,7 +344,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.isSelected = False
         size = self.bElement.get_duration()
 
-        self.background = self._createBackground(track)
+        self.background = self._createBackground()
         self.background.set_position(0, 0)
         self.add_child(self.background)
 
@@ -536,7 +537,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.isDragged = dragged
 
     def _createMixingKeyframes(self):
-        if self.bElement.get_track_type() == GES.TrackType.VIDEO:
+        if self.track_type == GES.TrackType.VIDEO:
             propname = "alpha"
         else:
             propname = "volume"
@@ -592,7 +593,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         border.set_position(0, 0)
         return border
 
-    def _createBackground(self, track):
+    def _createBackground(self):
         raise NotImplementedError()
 
     def _createHandles(self):
@@ -629,7 +630,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.connect("button-press-event", self._clickedCb)
 
     def _getLayerForY(self, y):
-        if self.bElement.get_track_type() == GES.TrackType.AUDIO:
+        if self.track_type == GES.TrackType.AUDIO:
             y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
         priority = int(y / (EXPANDED_SIZE + SPACING))
         return priority
@@ -987,8 +988,8 @@ class Keyframe(Clutter.Actor):
 
 
 class URISourceElement(TimelineElement):
-    def __init__(self, bElement, track, timeline):
-        TimelineElement.__init__(self, bElement, track, timeline)
+    def __init__(self, bElement, timeline):
+        TimelineElement.__init__(self, bElement, timeline)
         self.gotDragged = False
 
     # public API
@@ -1012,8 +1013,8 @@ class URISourceElement(TimelineElement):
         self.add_child(self.leftHandle)
         self.add_child(self.rightHandle)
 
-    def _createBackground(self, track):
-        if track.type == GES.TrackType.AUDIO:
+    def _createBackground(self):
+        if self.track_type == GES.TrackType.AUDIO:
             # Audio clips go from dark green to light green
             # (27, 46, 14, 255) to (73, 108, 33, 255)
             background = Gradient(27, 46, 14, 73, 108, 33)
@@ -1138,12 +1139,12 @@ class URISourceElement(TimelineElement):
 
 
 class TransitionElement(TimelineElement):
-    def __init__(self, bElement, track, timeline):
-        TimelineElement.__init__(self, bElement, track, timeline)
+    def __init__(self, bElement, timeline):
+        TimelineElement.__init__(self, bElement, timeline)
         self.isDragged = True
         self.set_reactive(True)
 
-    def _createBackground(self, track):
+    def _createBackground(self):
         background = RoundedRectangle(0, 0, 0, 0)
         background.set_color(TRANSITION_COLOR)
         background.set_border_width(1)

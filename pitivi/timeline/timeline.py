@@ -388,10 +388,10 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
         if isinstance(bElement, GES.Effect):
             return
         if isinstance(bElement, GES.Transition):
-            element = TransitionElement(bElement, track, self)
+            element = TransitionElement(bElement, self)
             element.set_z_position(0)
         elif isinstance(bElement, GES.Source):
-            element = URISourceElement(bElement, track, self)
+            element = URISourceElement(bElement, self)
             element.set_z_position(-1)
         else:
             self.warning("Unknown element: %s", bElement)
