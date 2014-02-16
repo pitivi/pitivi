@@ -20,10 +20,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-"""
-Main GTK+ window
-"""
-
 import os
 
 from time import time
@@ -169,7 +165,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     @cvar app: The application object
     @type app: L{Pitivi}
     """
-    def __init__(self, instance, allow_full_screen=True):
+    def __init__(self, app, allow_full_screen=True):
         """ initialize with the Pitivi object """
         gtksettings = Gtk.Settings.get_default()
         gtksettings.set_property("gtk-application-prefer-dark-theme", True)
@@ -179,14 +175,14 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         Gtk.Window.__init__(self)
         Loggable.__init__(self, "mainwindow")
-        self.app = instance
+        self.app = app
         self.log("Creating MainWindow")
-        self.settings = instance.settings
+        self.settings = app.settings
         self.is_fullscreen = False
         self.prefsdialog = None
         create_stock_icons()
-        self._setActions(instance)
-        self._createUi(instance, allow_full_screen)
+        self._setActions()
+        self._createUi(allow_full_screen)
         self.recent_manager = Gtk.RecentManager()
         self._missingUriOnLoading = False
 
@@ -228,7 +224,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     def _renderCb(self, unused_button):
         self.showRenderDialog(self.app.current_project)
 
-    def _setActions(self, instance):
+    def _setActions(self):
         """
         Sets up the GtkActions. This allows managing the sensitivity of widgets
         to the mouse and keyboard shortcuts.
@@ -318,7 +314,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                 action.set_sensitive(False)
                 self.render_button = action
             elif action_name in ["NewProject", "SaveProject", "SaveProjectAs", "OpenProject"]:
-                if instance.settings.fileSupportEnabled:
+                if self.app.settings.fileSupportEnabled:
                     action.set_sensitive(True)
             elif action_name in [
                 "File", "Edit", "View", "Help",
@@ -337,7 +333,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.uimanager.insert_action_group(self.toggle_actions, -1)
         self.uimanager.add_ui_from_file(os.path.join(get_ui_dir(), "mainwindow.xml"))
 
-    def _createUi(self, instance, allow_full_screen):
+    def _createUi(self, allow_full_screen):
         """
         Create the graphical interface with the following hierarchy in a vbox:
         -- Menubar
@@ -388,9 +384,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.mainhpaned.show()
 
         # First set of tabs
-        self.main_tabs = BaseTabs(instance)
-        self.medialibrary = MediaLibraryWidget(instance, self.uimanager)
-        self.effectlist = EffectListWidget(instance, self.uimanager)
+        self.main_tabs = BaseTabs(self.app)
+        self.medialibrary = MediaLibraryWidget(self.app, self.uimanager)
+        self.effectlist = EffectListWidget(self.app, self.uimanager)
         self.main_tabs.append_page(self.medialibrary, Gtk.Label(label=_("Media Library")))
         self.main_tabs.append_page(self.effectlist, Gtk.Label(label=_("Effect Library")))
         self.medialibrary.connect('play', self._mediaLibraryPlayCb)
@@ -398,10 +394,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.effectlist.show()
 
         # Second set of tabs
-        self.context_tabs = BaseTabs(instance)
-        self.clipconfig = ClipProperties(instance, self.uimanager)
-        self.trans_list = TransitionsListWidget(instance, self.uimanager)
-        self.title_editor = TitleEditor(instance, self.uimanager)
+        self.context_tabs = BaseTabs(self.app)
+        self.clipconfig = ClipProperties(self.app, self.uimanager)
+        self.trans_list = TransitionsListWidget(self.app, self.uimanager)
+        self.title_editor = TitleEditor(self.app, self.uimanager)
         self.context_tabs.append_page(self.clipconfig, Gtk.Label(label=_("Clip configuration")))
         self.context_tabs.append_page(self.trans_list, Gtk.Label(label=_("Transitions")))
         self.context_tabs.append_page(self.title_editor.widget, Gtk.Label(label=_("Title editor")))
@@ -417,11 +413,11 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.context_tabs.set_current_page(0)
 
         # Viewer
-        self.viewer = ViewerContainer(instance, undock_action=self.undock_action)
+        self.viewer = ViewerContainer(self.app, undock_action=self.undock_action)
         self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
 
         # Now, the lower part: the timeline
-        self.timeline_ui = TimelineContainer(self, instance, self.uimanager)
+        self.timeline_ui = TimelineContainer(self, self.app, self.uimanager)
         self.timeline_ui.setProjectManager(self.app.projectManager)
 
         self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
