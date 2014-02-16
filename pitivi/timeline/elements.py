@@ -46,6 +46,7 @@ KEYFRAME_NORMAL_COLOR = Clutter.Color.new(0, 0, 0, 200)
 KEYFRAME_SELECTED_COLOR = Clutter.Color.new(200, 200, 200, 200)
 CLIP_SELECTED_OVERLAY_COLOR = Clutter.Color.new(60, 60, 60, 100)
 GHOST_CLIP_COLOR = Clutter.Color.new(255, 255, 255, 50)
+TRANSITION_COLOR = create_cogl_color(35, 85, 125, 125)  # light blue
 
 BORDER_NORMAL_COLOR = create_cogl_color(100, 100, 100, 255)
 BORDER_SELECTED_COLOR = create_cogl_color(200, 200, 10, 255)
@@ -320,9 +321,9 @@ class TrimHandle(Clutter.Texture):
 class TimelineElement(Clutter.Actor, Zoomable):
     def __init__(self, bElement, track, timeline):
         """
-        @param bElement : the backend GES.TrackElement
-        @param track : the track to which the bElement belongs
-        @param timeline : the containing graphic timeline.
+        @param bElement: the backend GES.TrackElement
+        @param track: the track to which the bElement belongs
+        @param timeline: the containing graphic timeline.
         """
         Zoomable.__init__(self)
         Clutter.Actor.__init__(self)
@@ -342,11 +343,19 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.isSelected = False
         size = self.bElement.get_duration()
 
-        self._createBackground(track)
+        self.background = self._createBackground(track)
+        self.background.set_position(0, 0)
+        self.add_child(self.background)
+
         self.preview = self._createPreview()
         self.add_child(self.preview)
+
         self.border = self._createBorder()
-        self._createMarquee()
+        self.add_child(self.border)
+
+        self.marquee = self._createMarquee()
+        self.add_child(self.marquee)
+
         self._createHandles()
         self._createGhostclip()
 
@@ -581,11 +590,10 @@ class TimelineElement(Clutter.Actor, Zoomable):
         border.set_border_color(BORDER_NORMAL_COLOR)
         border.set_border_width(1)
         border.set_position(0, 0)
-        self.add_child(border)
         return border
 
     def _createBackground(self, track):
-        pass
+        raise NotImplementedError()
 
     def _createHandles(self):
         pass
@@ -601,11 +609,11 @@ class TimelineElement(Clutter.Actor, Zoomable):
         return Clutter.Actor()
 
     def _createMarquee(self):
-        self.marquee = Clutter.Actor()
-        self.marquee.bElement = self.bElement
-        self.marquee.set_background_color(CLIP_SELECTED_OVERLAY_COLOR)
-        self.marquee.props.visible = False
-        self.add_child(self.marquee)
+        marquee = Clutter.Actor()
+        marquee.bElement = self.bElement
+        marquee.set_background_color(CLIP_SELECTED_OVERLAY_COLOR)
+        marquee.props.visible = False
+        return marquee
 
     def _connectToEvents(self):
         self.dragAction = Clutter.DragAction()
@@ -1008,16 +1016,13 @@ class URISourceElement(TimelineElement):
         if track.type == GES.TrackType.AUDIO:
             # Audio clips go from dark green to light green
             # (27, 46, 14, 255) to (73, 108, 33, 255)
-            self.background = Gradient(27, 46, 14, 73, 108, 33)
+            background = Gradient(27, 46, 14, 73, 108, 33)
         else:
             # Video clips go from almost black to gray
             # (15, 15, 15, 255) to (45, 45, 45, 255)
-            self.background = Gradient(15, 15, 15, 45, 45, 45)
-
-        self.background.bElement = self.bElement
-
-        self.add_child(self.background)
-        self.background.set_position(0, 0)
+            background = Gradient(15, 15, 15, 45, 45, 45)
+        background.bElement = self.bElement
+        return background
 
     # Callbacks
     def _clickedCb(self, action, actor):
@@ -1139,13 +1144,10 @@ class TransitionElement(TimelineElement):
         self.set_reactive(True)
 
     def _createBackground(self, track):
-        self.background = RoundedRectangle(0, 0, 0, 0)
-        color = Cogl.Color()
-        color.init_from_4ub(35, 85, 125, 125)  # light blue
-        self.background.set_color(color)
-        self.background.set_border_width(1)
-        self.background.set_position(0, 0)
-        self.add_child(self.background)
+        background = RoundedRectangle(0, 0, 0, 0)
+        background.set_color(TRANSITION_COLOR)
+        background.set_border_width(1)
+        return background
 
     def _selectedChangedCb(self, selected, isSelected):
         TimelineElement._selectedChangedCb(self, selected, isSelected)
@@ -1156,6 +1158,6 @@ class TransitionElement(TimelineElement):
             self.timeline._container.app.gui.trans_list.deactivate()
 
     def _clickedCb(self, action, actor):
-        selection = set([self.bElement])
+        selection = {self.bElement}
         self.timeline.selection.setSelection(selection, SELECT)
         return False
