@@ -33,7 +33,6 @@ HELP_FILES = \
     importingmpegts.page \
     importing.page \
     index.page \
-    insertintimeline.page \
     interface.page \
     keyframecurves.page \
     layers.page \

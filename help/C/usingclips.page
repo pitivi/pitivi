@@ -35,6 +35,16 @@
        <p>Since Pitivi is a non-destructive editor, clips are edited, not files. As such, your files stay intact.</p>
      </section>
 
+     <section>     
+     <title>Inserting clips</title>
+     <p>From the media library, you can insert one or more clips by selecting them (using the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) and:</p>
+     <list>
+      <item><p>Dragging and dropping them onto place in the timeline.</p></item>
+      <item><p>Using <guiseq><gui>Library</gui><gui>Insert at End of Timeline</gui></guiseq>.</p></item>
+      <item><p>Pressing the <key>Insert</key> (Ins) key. Those clips will be inserted at the end of the timeline.</p></item>
+     </list>
+     </section>
+
      <section>
       <title>Moving clips along the timeline</title>
        <p>You can move a clip within a layer or move it to a different layer.</p>
