@@ -41,6 +41,9 @@ from pitivi.utils.ui import SPACING, PADDING
 
 
 class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
+    """
+    Widget for configuring the selected transition.
+    """
 
     def __init__(self, instance, unused_uiman):
         Gtk.VBox.__init__(self)
@@ -269,7 +272,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         self.props_widgets.show_all()
         self.searchbar.show_all()
         self.selectTransition(transition_asset)
-        self.app.gui.switchContextTab("transitions")
+        self.app.gui.switchContextTab(element)
         # We REALLY want the infobar to be hidden as space is really constrained
         # and yet GTK 3.10 seems to be racy in showing/hiding infobars, so
         # this must happen *after* the tab has been made visible/switched to:

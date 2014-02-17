@@ -18,7 +18,7 @@
               <object class="GtkLabel" id="info_bar_label2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">No title clip selected. Select a clip to edit or create a new one.</property>
+                <property name="label" translatable="yes">Select a title clip to edit or create a new one.</property>
                 <property name="wrap">True</property>
               </object>
               <packing>

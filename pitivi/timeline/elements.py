@@ -323,6 +323,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
     @ivar bElement: the backend element.
     @type bElement: GES.TrackElement
     @ivar timeline: the containing graphic timeline.
+    @type timeline: TimelineStage
     """
 
     def __init__(self, bElement, timeline):
@@ -1025,7 +1026,7 @@ class URISourceElement(TimelineElement):
         return background
 
     # Callbacks
-    def _clickedCb(self, action, actor):
+    def _clickedCb(self, unused_action, unused_actor):
         #TODO : Let's be more specific, masks etc ..
         mode = SELECT
         if self.timeline._container._controlMask and not self.bElement.selected:
@@ -1038,6 +1039,7 @@ class URISourceElement(TimelineElement):
             GES.Container.ungroup(self.timeline.current_group, False)
             self.timeline.current_group = GES.Group()
             self.timeline.current_group.add(self.bElement.get_toplevel_parent())
+            self.timeline._container.app.gui.switchContextTab(self.bElement)
 
         children = self.bElement.get_toplevel_parent().get_children(True)
         selection = filter(lambda elem: isinstance(elem, GES.Source), children)

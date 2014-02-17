@@ -166,7 +166,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
     @type app: L{Pitivi}
     """
     def __init__(self, app, allow_full_screen=True):
-        """ initialize with the Pitivi object """
         gtksettings = Gtk.Settings.get_default()
         gtksettings.set_property("gtk-application-prefer-dark-theme", True)
         # Pulseaudio "role" (http://0pointer.de/blog/projects/tagging-audio.htm)
@@ -457,26 +456,24 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.connect("delete-event", self._deleteCb)
         self.connect("configure-event", self._configureCb)
 
-    def switchContextTab(self, tab=None):
+    def switchContextTab(self, bElement):
         """
         Switch the tab being displayed on the second set of tabs,
         depending on the context.
 
-        @param the name of the tab to switch to, or None to reset
+        @param bElement: The timeline element which has been focused.
+        @type bElement: GES.TrackElement
         """
-        if not tab:
+        if isinstance(bElement, GES.TitleSource):
+            page = 2
+        elif isinstance(bElement, GES.Source):
+            # This covers: VideoUriSource, ImageSource, AudioUriSource.
             page = 0
+        elif isinstance(bElement, GES.Transition):
+            page = 1
         else:
-            tab = tab.lower()
-            if tab == "clip configuration":
-                page = 0
-            elif tab == "transitions":
-                page = 1
-            elif tab == "title editor":
-                page = 2
-            else:
-                self.debug("Invalid context tab switch requested")
-                return False
+            self.warning("Unknown element type: %s", bElement)
+            return
         self.context_tabs.set_current_page(page)
 
     def setFullScreen(self, fullscreen):

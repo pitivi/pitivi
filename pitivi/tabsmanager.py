@@ -26,6 +26,9 @@ from pitivi.settings import GlobalSettings
 
 
 class BaseTabs(Gtk.Notebook):
+    """
+    @type app: Pitivi
+    """
     def __init__(self, app):
         Gtk.Notebook.__init__(self)
         self.set_border_width(SPACING)

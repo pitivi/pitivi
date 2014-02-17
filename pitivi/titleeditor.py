@@ -570,6 +570,10 @@ class InteractivePangoBuffer(PangoBuffer):
 
 
 class TitleEditor(Loggable):
+    """
+    Widget for configuring the selected title.
+    """
+
     def __init__(self, instance, unused_uimap):
         Loggable.__init__(self)
         Signallable.__init__(self)

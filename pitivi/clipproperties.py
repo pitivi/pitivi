@@ -68,7 +68,7 @@ def compare_type(track, effect_type):
 
 class ClipProperties(Gtk.ScrolledWindow, Loggable):
     """
-    Widget for configuring clips properties
+    Widget for configuring the selected clip.
     """
 
     def __init__(self, instance, uiman):

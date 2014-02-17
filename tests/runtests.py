@@ -52,6 +52,11 @@ def setup():
     from pitivi.check import initialize_modules
     initialize_modules()
 
+    try:
+        import mock
+    except ImportError, e:
+        raise Exception("Python mock library missing! www.voidspace.org.uk/python/mock", e)
+
 
 if __name__ == "__main__":
     setup()

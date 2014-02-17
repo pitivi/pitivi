@@ -6,6 +6,7 @@ tests =	\
 	test_application.py \
 	test_common.py \
 	test_log.py \
+	test_mainwindow.py \
 	test_misc.py \
 	test_prefs.py \
 	test_preset.py \
