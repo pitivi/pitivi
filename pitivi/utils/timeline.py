@@ -76,7 +76,6 @@ class Selected(Signallable):
 
     def __init__(self):
         self._selected = False
-        self.movable = True
 
     def __nonzero__(self):
         """

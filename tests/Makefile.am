@@ -19,6 +19,7 @@ tests =	\
 	test_timeline_undo.py \
 	test_undo.py \
 	test_utils.py \
+	test_utils_timeline.py \
 	test_widgets.py
 # Keep the list sorted!
 

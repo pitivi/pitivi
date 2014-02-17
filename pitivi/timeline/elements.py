@@ -1029,13 +1029,14 @@ class URISourceElement(TimelineElement):
     def _clickedCb(self, unused_action, unused_actor):
         #TODO : Let's be more specific, masks etc ..
         mode = SELECT
-        if self.timeline._container._controlMask and not self.bElement.selected:
-            mode = SELECT_ADD
-            self.timeline.current_group.add(self.bElement.get_toplevel_parent())
-        elif self.timeline._container._controlMask:
-            self.timeline.current_group.remove(self.bElement.get_toplevel_parent())
-            mode = UNSELECT
-        elif not self.bElement.selected.selected:
+        if self.timeline._container._controlMask:
+            if not self.bElement.selected:
+                mode = SELECT_ADD
+                self.timeline.current_group.add(self.bElement.get_toplevel_parent())
+            else:
+                self.timeline.current_group.remove(self.bElement.get_toplevel_parent())
+                mode = UNSELECT
+        elif not self.bElement.selected:
             GES.Container.ungroup(self.timeline.current_group, False)
             self.timeline.current_group = GES.Group()
             self.timeline.current_group.add(self.bElement.get_toplevel_parent())

@@ -3,7 +3,7 @@
 #
 #       tests/test_preset.py
 #
-# Copyright (c) 2011, Alex Balut <alexandru.balut@gmail.com>
+# Copyright (c) 2011, Alex Băluț <alexandru.balut@gmail.com>
 # Copyright (c) 2011, Jean-François Fortin Tam <nekohayo@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
