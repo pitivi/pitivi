@@ -456,6 +456,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.connect("delete-event", self._deleteCb)
         self.connect("configure-event", self._configureCb)
 
+        # Focus the timeline by default!
+        self.timeline_ui.grab_focus()
+
     def switchContextTab(self, bElement):
         """
         Switch the tab being displayed on the second set of tabs,
