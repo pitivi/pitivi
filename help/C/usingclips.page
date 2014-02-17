@@ -28,21 +28,24 @@
 
      <section>
       <title>Clips vs files</title>
-       <list>
-        <item><p><em>Files</em> are data on your hard disk (videos, music, pictures, etc.) that can be accessed by <app>Pitivi</app> and incorporated in your video editing project.</p></item>
-        <item><p><em>Clips</em> are a visual representation of your files on the timeline. They represent the period of time they consume on the timeline and can be edited independently: each time you drag a file from the media library to the timeline, a new clip is created. As such, a file can be reused as much as you want to create any amount of different clips.</p></item>
-       </list>
+        <p><em>Files</em> are data on your hard disk (videos, music, pictures, etc.) that can be accessed by <app>Pitivi</app> and incorporated in your video editing project.</p>
+        <p><em>Clips</em> are a visual representation of your files on the timeline. They represent the period of time they consume on the timeline and can be edited independently: each time you drag a file from the media library to the timeline, a new clip is created. As such, a file can be reused as much as you want to create any amount of different clips.</p>
+       <note>
        <p>Since Pitivi is a non-destructive editor, clips are edited, not files. As such, your files stay intact.</p>
+       </note>
      </section>
 
      <section>     
      <title>Inserting clips</title>
-     <p>From the media library, you can insert one or more clips by selecting them (using the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) and:</p>
+     <p>From the media library, you can insert one or more clips by selecting them (use the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) and doing one of the following:</p>
      <list>
-      <item><p>Dragging and dropping them onto place in the timeline.</p></item>
-      <item><p>Using <guiseq><gui>Library</gui><gui>Insert at End of Timeline</gui></guiseq>.</p></item>
-      <item><p>Pressing the <key>Insert</key> (Ins) key. Those clips will be inserted at the end of the timeline.</p></item>
+      <item><p>Dragging and dropping them onto a place in the timeline.</p></item>
+      <item><p>Clicking the <gui>Insert the selected clips at the end of the timeline</gui> button in the <gui>Media library</gui>.</p></item>
+      <item><p>Pressing the <key>Insert</key> key.</p></item>
      </list>
+     <p>
+     When following the second and third options (clicking or pressing insert), selected clips will be inserted one after another into the first layer of the timeline at a position, where the last clip on any layer ends.
+     </p>
      </section>
 
      <section>
