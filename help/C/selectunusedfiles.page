@@ -6,7 +6,7 @@
   <info>
     <link type="seealso" xref="medialibrary"/>
     <link type="seealso" xref="usingclips"/>
-    <link type="seealso" xref="saveproject"/>
+    <link type="seealso" xref="workwithprojects"/>
     <revision pkgversion="0.14.2" version="0.2" date="2011-08-15" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>

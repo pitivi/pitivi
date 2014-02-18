@@ -1,7 +1,7 @@
 <page xmlns="http://projectmallard.org/1.0/"
       xmlns:e="http://projectmallard.org/experimental/"
       type="topic"
-      id="editsettings">
+      id="workwithprojects">
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
@@ -13,19 +13,35 @@
     <credit type="contributor">
       <name>Mario Blättermann</name>
       <email>mariobl@gnome.org</email>
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
     </credit>
     <desc>
-      How to specify the global project resolution, framerate, aspect ratio, audio settings and project metadata.
+      How to load and save projects, edit their settings and metadata.
     </desc>
     <license>
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
 
-    <title>Editing project settings</title>
+    <title>Working with projects</title>
 
+    <section>
+    <title>Saving a project</title>
+     <p>To save your project work, use the <guiseq><gui>Project</gui><gui>Save</gui></guiseq> menu, the Save button on the main toolbar or press <keyseq><key>Ctrl</key><key>S</key></keyseq>.</p>
+      <p>When you save a project for the first time, a dialog window appears, asking you where to save the project file and how to name it.</p>
+      <p>If you want to save your project as a different file, use <guiseq><gui>Project</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be used to create different versions of your project.</p>
+    </section>
+    <section>
+        <title>Reverting changes</title>
+        <p>In addition to undoing individual changes, you can also decide to revert all the changes you have made since the last time you saved your project. To do so, use <guiseq><gui>Project</gui><gui>Revert</gui></guiseq>.</p>
+    </section>
+
+    <section>
+    <title>Editing project settings</title>
     <p>When starting a new project, you should make sure to go adjust the project settings, such as framerate, resolution and preferred codecs. The video resolution and aspect ratio will affect the appearance of the previewer. If you do not set the resolution and aspect ratio to match those of your footage, the video may look squished or letterboxed.</p>
     <p>To edit the project settings after initial creation, use the <guiseq><gui>Edit</gui><gui>Project Settings</gui></guiseq> menu.</p>
+    </section>
 
     <section>
         <title>Pixel aspect ratio vs display aspect ratio</title>

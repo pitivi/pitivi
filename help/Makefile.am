@@ -43,16 +43,15 @@ HELP_FILES = \
     movearoundtimeline.page \
     othertransitions.page \
     presets.page \
-    projectsettings.page \
     rendering.page \
-    saveproject.page \
     savescreenshot.page \
     selectunusedfiles.page \
     splitting.page \
     sysreq.page \
     trimming.page \
     usingclips.page \
-    welcomedialog.page
+    welcomedialog.page \
+    workwithprojects.page
 
 HELP_LINGUAS = cs de el es fr sl uk
 
