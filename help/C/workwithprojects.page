@@ -28,25 +28,30 @@
 
     <section>
     <title>Saving a project</title>
-     <p>To save your project work, use the <guiseq><gui>Project</gui><gui>Save</gui></guiseq> menu, the Save button on the main toolbar or press <keyseq><key>Ctrl</key><key>S</key></keyseq>.</p>
-      <p>When you save a project for the first time, a dialog window appears, asking you where to save the project file and how to name it.</p>
-      <p>If you want to save your project as a different file, use <guiseq><gui>Project</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be used to create different versions of your project.</p>
+     <p>To save your project work, use <guiseq><gui>Project</gui><gui>Save</gui></guiseq> from the menu bar, the <gui>Save</gui> button on the main toolbar or press <keyseq><key>Ctrl</key><key>S</key></keyseq>. When you save a project for the first time, a dialog window appears, asking you where to save the project file and how to name it.</p>
+      <note style="tip">
+      <p>If you want to save your project as a different file, use <guiseq><gui>Project</gui><gui>Save as</gui></guiseq> from the menu bar or press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be used to create different versions of your project.</p>
+      </note>
     </section>
     <section>
-        <title>Reverting changes</title>
-        <p>In addition to undoing individual changes, you can also decide to revert all the changes you have made since the last time you saved your project. To do so, use <guiseq><gui>Project</gui><gui>Revert</gui></guiseq>.</p>
+        <title>Undoing and reverting changes</title>
+        <p>To undo a change, simply click on the <gui>Undo</gui> button in the main toolbar or press <keyseq><key>Ctrl</key><key>Z</key></keyseq>. In addition to undoing individual changes, you can also decide to revert all the changes you have made since the last time you saved your project. To do so, use <guiseq><gui>Project</gui><gui>Revert</gui></guiseq> from the menu bar.</p>
     </section>
 
     <section>
     <title>Editing project settings</title>
-    <p>When starting a new project, you should make sure to go adjust the project settings, such as framerate, resolution and preferred codecs. The video resolution and aspect ratio will affect the appearance of the previewer. If you do not set the resolution and aspect ratio to match those of your footage, the video may look squished or letterboxed.</p>
-    <p>To edit the project settings after initial creation, use the <guiseq><gui>Edit</gui><gui>Project Settings</gui></guiseq> menu.</p>
+    <p>When starting a new project, you should make sure to adjust the project settings, such as framerate, resolution and preferred codecs. The video resolution and aspect ratio will affect the appearance of the previewer. If you do not set the resolution and aspect ratio to match those of your footage, the video may look squished or letterboxed.</p>
+    <note>
+    <p>Everytime you start a new project, a dialog window appears where you can adjust audio and video settings or metadata. To edit the project settings after initial creation, use <guiseq><gui>Edit</gui><gui>Project Settings</gui></guiseq> from the menu bar.</p>
+    </note>
     </section>
 
     <section>
         <title>Pixel aspect ratio vs display aspect ratio</title>
-        <p>Digital images are composed of a grid of <link href="http://en.wikipedia.org/wiki/Pixel">pixels</link>, which may or may not be square. As such, in some cases, you may need to set the <link href="http://en.wikipedia.org/wiki/Pixel_aspect_ratio">pixel aspect ratio</link> (PAR) for the image to display correctly. On the other hand, <link href="http://en.wikipedia.org/wiki/Display_aspect_ratio">display aspect ratio</link> (DAR) is the mathematical ratio of width:height for the whole image.</p>
-        <p>In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are related to each other by the video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with.</p>
+        <p>Digital images are composed of a grid of <link href="http://en.wikipedia.org/wiki/Pixel">pixels</link>, which may or may not be square. In some cases, you may need to set the <link href="http://en.wikipedia.org/wiki/Pixel_aspect_ratio">pixel aspect ratio</link> (PAR) for the image to display correctly. On the other hand, <link href="http://en.wikipedia.org/wiki/Display_aspect_ratio">display aspect ratio</link> (DAR) is the mathematical ratio of width:height for the whole image.</p>
+        <p>In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are related to each other through video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with.</p>
+        <note>
         <p>You can use the ratios already provided in the combo boxes, or input a custom aspect ratio in the text entry below (using a syntax such as "4:3" or "1.3333", although the decimal version is less precise).</p>
+        </note>
     </section>
 </page>
