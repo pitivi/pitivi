@@ -28,7 +28,6 @@ HELP_FILES = \
     effects.page \
     effectsanimation.page \
     fadeinfadeout.page \
-    grouping.page \
     gstreamer.page \
     importingmpegts.page \
     importing.page \
@@ -38,13 +37,13 @@ HELP_FILES = \
     layers.page \
     license.page \
     mainwindow.page \
-    makeselections.page \
     medialibrary.page \
     movearoundtimeline.page \
     othertransitions.page \
     presets.page \
     rendering.page \
     savescreenshot.page \
+    selectiongrouping.page \
     selectunusedfiles.page \
     splitting.page \
     sysreq.page \
