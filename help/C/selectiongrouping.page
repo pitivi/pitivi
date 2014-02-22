@@ -28,7 +28,7 @@
     
     <section>
       <title>Making selections</title>
-       <p>To select a file or a clip in <app>Pitivi</app>, click it. Multiple selections allow you to apply actions (dragging, deleting, grouping, etc.) to many clips at once.</p>
+       <p>By selecting a file or a clip, you specify what item should the subsequent actions be applied to. To select an individual item, simply click it. Multiple selections allow you to apply actions (dragging, deleting, grouping, etc.) to many clips at once.</p>
        <p>Selecting multiple adjacent items:</p>
        <steps>
         <item><p>Click the first item.</p></item>
@@ -40,30 +40,25 @@
         <item><p>Hold down the <key>Ctrl</key> key.</p></item>
         <item><p>Click on all the items you want to select.</p></item>
        </steps>
+       <note style="tip">
        <p>You can deselect an individual item by clicking on it again with the <key>Ctrl</key> key held down. This can be used in conjunction with the <em>Selecting multiple adjacent items</em> technique above.</p>
+       </note>
      </section>
      <section>
          <title>Grouping and ungrouping clips</title>
         <p>The grouping and ungrouping functions are useful when you want to add or separate audio tracks from video clips, or when you want to create a block of clips that you can select, edit and move all at once.</p>
-     </section>
-
-      <section>
-      <title>Grouping clips in timeline</title>
-        <list>
-        <item><p>Select multiple clips in the timeline (see the <link xref="makeselections">Selecting multiple items</link> section for more detailed instructions).</p></item>
-        <item><p>Click the <gui>Group clips</gui> button on the timeline toolbar.</p></item>
-        </list>
+        <p>Grouping clips in timeline:</p>
+        <steps>
+         <item><p>Select multiple clips in the timeline.</p></item>
+         <item><p>Click the <gui>Group clips</gui> button on the timeline toolbar.</p></item>
+        </steps>
         <p>You can now select, edit and move the clips all at once.</p>
-      </section>
-
-      <section>
-      <title>Ungrouping clips in timeline</title>
-        <list>
-        <item><p>Select a group of clips in the timeline.</p></item>
-        <item><p>Click the <gui>Ungroup clips</gui> button on the timeline toolbar.</p></item>
-        </list>
+        <p>Ungrouping clips in timeline:</p>
+        <steps>
+         <item><p>Select a group of clips in the timeline.</p></item>
+         <item><p>Click the <gui>Ungroup clips</gui> button on the timeline toolbar.</p></item>
+        </steps>
         <p>You can now select, edit and move the clips independently.</p>
-      </section>
-
+     </section>
 
 </page>
