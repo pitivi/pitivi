@@ -397,9 +397,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.clipconfig = ClipProperties(self.app, self.uimanager)
         self.trans_list = TransitionsListWidget(self.app, self.uimanager)
         self.title_editor = TitleEditor(self.app, self.uimanager)
-        self.context_tabs.append_page(self.clipconfig, Gtk.Label(label=_("Clip configuration")))
-        self.context_tabs.append_page(self.trans_list, Gtk.Label(label=_("Transitions")))
-        self.context_tabs.append_page(self.title_editor.widget, Gtk.Label(label=_("Title editor")))
+        self.context_tabs.append_page(self.clipconfig, Gtk.Label(label=_("Clip")))
+        self.context_tabs.append_page(self.trans_list, Gtk.Label(label=_("Transition")))
+        self.context_tabs.append_page(self.title_editor.widget, Gtk.Label(label=_("Title")))
         self.context_tabs.connect("switch-page", self.title_editor.tabSwitchedCb)
         # Show by default the Title tab, as the Clip and Transition tabs
         # are useful only when a clip or transition is selected, but
