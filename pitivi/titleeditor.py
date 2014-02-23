@@ -872,8 +872,8 @@ class TitleEditor(Loggable):
     def drag_release_event(self, unused_widget, unused_event):
         self._drag_events = []
 
-    def tab_switched(self, unused_notebook, unused_arg1, arg2):
-        if arg2 == 2:
+    def tabSwitchedCb(self, unused_notebook, page_widget, unused_page_index):
+        if self.widget == page_widget:
             self._connect_signals()
         else:
             self._disconnect_signals()

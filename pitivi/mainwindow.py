@@ -400,7 +400,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.context_tabs.append_page(self.clipconfig, Gtk.Label(label=_("Clip configuration")))
         self.context_tabs.append_page(self.trans_list, Gtk.Label(label=_("Transitions")))
         self.context_tabs.append_page(self.title_editor.widget, Gtk.Label(label=_("Title editor")))
-        self.context_tabs.connect("switch-page", self.title_editor.tab_switched)
+        self.context_tabs.connect("switch-page", self.title_editor.tabSwitchedCb)
         self.clipconfig.show()
         self.trans_list.show()
 
