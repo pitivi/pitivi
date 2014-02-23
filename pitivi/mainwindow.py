@@ -401,15 +401,15 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.context_tabs.append_page(self.trans_list, Gtk.Label(label=_("Transitions")))
         self.context_tabs.append_page(self.title_editor.widget, Gtk.Label(label=_("Title editor")))
         self.context_tabs.connect("switch-page", self.title_editor.tabSwitchedCb)
-        self.clipconfig.show()
-        self.trans_list.show()
+        # Show by default the Title tab, as the Clip and Transition tabs
+        # are useful only when a clip or transition is selected, but
+        # the Title tab allows adding titles.
+        self.context_tabs.set_current_page(2)
 
         self.secondhpaned.pack1(self.main_tabs, resize=True, shrink=False)
         self.secondhpaned.pack2(self.context_tabs, resize=False, shrink=False)
         self.main_tabs.show()
         self.context_tabs.show()
-        # Prevent TitleEditor from stealing the tab focus on startup:
-        self.context_tabs.set_current_page(0)
 
         # Viewer
         self.viewer = ViewerContainer(self.app, undock_action=self.undock_action)
