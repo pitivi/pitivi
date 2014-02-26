@@ -453,8 +453,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
     def setKeyframePosition(self, keyframe, value):
         x = self.nsToPixel(value.timestamp - self.bElement.props.in_point) - KEYFRAME_SIZE / 2
-        y = EXPANDED_SIZE - (value.value * EXPANDED_SIZE)
-
+        y = EXPANDED_SIZE - (value.value * EXPANDED_SIZE) - KEYFRAME_SIZE / 2
         keyframe.set_position(x, y)
 
     def drawLines(self, line=None):
@@ -549,12 +548,6 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
         self.hideKeyframes()
 
-    def _setKeyframePosition(self, keyframe, value):
-        x = self.nsToPixel(value.timestamp - self.bElement.props.in_point) - KEYFRAME_SIZE / 2
-        y = EXPANDED_SIZE - (value.value * EXPANDED_SIZE)
-
-        keyframe.set_position(x, y)
-
     def _createKeyframe(self, value, has_changeable_time):
         keyframe = Keyframe(self, value, has_changeable_time)
         self.insert_child_above(keyframe, self._keyframesMarker)
@@ -578,8 +571,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         line.props.width = hyp
         line.props.height = KEYFRAME_SIZE
         line.props.rotation_angle_z = math.degrees(math.asin(sinX))
-        line.props.x = self.nsToPixel(lastKeyframe.value.timestamp - self.bElement.props.in_point)
-        line.props.y = EXPANDED_SIZE - (EXPANDED_SIZE * lastKeyframe.value.value)
+        line.props.x = self.nsToPixel(lastKeyframe.value.timestamp - self.bElement.props.in_point) - KEYFRAME_SIZE / 2
+        line.props.y = EXPANDED_SIZE - (EXPANDED_SIZE * lastKeyframe.value.value) - KEYFRAME_SIZE / 2
         line.canvas.invalidate()
 
     def _createGhostclip(self):
