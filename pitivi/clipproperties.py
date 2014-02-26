@@ -453,7 +453,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             ui = self.effects_properties_manager.getEffectConfigurationUI(element)
 
             if self._effect_config_ui:
-                self._effect_config_ui.get_children()[0].get_children()[0].resetShowKeyframesButton()
+                self._effect_config_ui.get_children()[0].get_children()[0].resetKeyframeToggleButtons()
 
             self._effect_config_ui = ui
             if self._effect_config_ui:
