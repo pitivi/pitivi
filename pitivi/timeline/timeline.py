@@ -839,8 +839,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.connect("button-release-event", self._timelineClickReleasedCb)
         self.embed.connect("scroll-event", self._scrollEventCb)
 
-        self.gui.connect("key-press-event", self._keyPressEventCb)
-        self.gui.connect("key-release-event", self._keyReleaseEventCb)
+        self.connect("key-press-event", self._keyPressEventCb)
+        self.connect("key-release-event", self._keyReleaseEventCb)
 
         self.point = Clutter.Point()
         self.point.x = 0
