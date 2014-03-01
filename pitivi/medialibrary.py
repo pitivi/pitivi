@@ -131,13 +131,13 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         'play': (GObject.SignalFlags.RUN_LAST, None,
                 (GObject.TYPE_PYOBJECT,))}
 
-    def __init__(self, instance, uiman):
+    def __init__(self, app, uiman):
         Gtk.VBox.__init__(self)
         Loggable.__init__(self)
 
         self.pending_rows = []
 
-        self.app = instance
+        self.app = app
         self._errors = []
         self._missing_thumbs = []
         self._project = None
@@ -459,7 +459,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._importDialog.set_current_folder(self.app.settings.lastImportFolder)
         self._importDialog.connect('response', self._dialogBoxResponseCb)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
-        previewer = PreviewWidget(self.app)
+        previewer = PreviewWidget(self.app.settings)
         self._importDialog.set_preview_widget(previewer)
         self._importDialog.set_use_preview_label(False)
         self._importDialog.connect('update-preview', previewer.add_preview_request)

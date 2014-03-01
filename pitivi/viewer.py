@@ -787,7 +787,7 @@ class TransformationBox():
 
 class ViewerWidget(Gtk.AspectFrame, Loggable):
     """
-    Widget for displaying properly GStreamer video sink
+    Widget for displaying a GStreamer video sink.
 
     @ivar settings: The settings of the application.
     @type settings: L{GlobalSettings}

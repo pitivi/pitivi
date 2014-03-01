@@ -1006,7 +1006,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         chooser = Gtk.FileChooserWidget(action=Gtk.FileChooserAction.OPEN)
         chooser.set_select_multiple(False)
-        previewer = PreviewWidget(self.app)
+        previewer = PreviewWidget(self.settings)
         chooser.set_preview_widget(previewer)
         chooser.set_use_preview_label(False)
         chooser.connect('update-preview', previewer.add_preview_request)
@@ -1268,7 +1268,7 @@ class PreviewAssetWindow(Gtk.Window):
         self.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         self.set_transient_for(main_window)
 
-        self._previewer = PreviewWidget(main_window, minimal=True)
+        self._previewer = PreviewWidget(main_window.settings, minimal=True)
         self.add(self._previewer)
         self._previewer.previewUri(self._asset.get_id())
         self._previewer.show()

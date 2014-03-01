@@ -69,15 +69,21 @@ acceptable_tags = [
 
 
 class PreviewWidget(Gtk.Grid, Loggable):
+    """
+    Widget for displaying a GStreamer sink with playback controls.
 
-    def __init__(self, instance, minimal=False):
+    @ivar settings: The settings of the app.
+    @type settings: L{GlobalSettings}
+    """
+
+    def __init__(self, settings, minimal=False):
         Gtk.Grid.__init__(self)
         Loggable.__init__(self)
 
         self.log("Init PreviewWidget")
         self.connect('destroy', self._destroy_cb)
 
-        self.settings = instance.settings
+        self.settings = settings
         self.preview_cache = {}
         self.preview_cache_errors = {}
 
