@@ -45,6 +45,8 @@ from gi.repository import Gtk
 from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
     DiscovererStreamInfo, DiscovererSubtitleInfo, DiscovererInfo
 
+from pitivi.utils.misc import path_from_uri
+
 from pitivi.utils.loggable import doLog, ERROR
 
 # ---------------------- Constants -------------------------------------------#
@@ -246,7 +248,7 @@ def beautify_info(info):
         if beautified_string:
             nice_streams_txts.append(beautified_string)
 
-    return ("<b>" + info_name(info) + "</b>\n" +
+    return ("<b>" + path_from_uri(info.get_uri()) + "</b>\n" +
         "\n".join(nice_streams_txts))
 
 
