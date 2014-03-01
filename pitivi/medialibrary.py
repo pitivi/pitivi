@@ -806,13 +806,15 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         Show the clip properties (resolution, framerate, audio channels...)
         and allow setting them as the new project settings.
         """
-        paths = self.getSelectedPaths()[0]  # Only use the first item
-        model = self.treeview.get_model()
-        info = model[paths][COL_ASSET].get_info()
-        d = ClipMediaPropsDialog(self.app.current_project,
-                                info.get_audio_streams(),
-                                info.get_video_streams())
-        d.run()
+        paths = self.getSelectedPaths()
+        if not paths:
+            self.debug("No item selected")
+            return
+        # Only use the first item.
+        path = paths[0]
+        asset = self.storemodel[path][COL_ASSET]
+        dialog = ClipMediaPropsDialog(self.app.current_project, asset)
+        dialog.run()
 
     def _warningInfoBarDismissedCb(self, unused_button):
         self._resetErrorList()

@@ -17,16 +17,13 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-Dialog box displaying the properties of a clip from media library, allowing
-to set those properties as the project settings.
-"""
+import os
 
 from gi.repository import Gtk
 from gi.repository import Gst
-import os
 
 from gettext import gettext as _
+
 from pitivi.configure import get_ui_dir
 from pitivi.utils.ui import frame_rates, audio_rates, \
     audio_channels, pixel_aspect_ratios, get_value_from_model
@@ -34,13 +31,20 @@ from pitivi.utils.ui import frame_rates, audio_rates, \
 
 class ClipMediaPropsDialog(object):
     """
-    Displays an asset's properties, and allow applying them to a project.
+    Displays the properties of an asset, and allows applying them to a project.
+
+    @type project: L{Project}
+    @type asset: L{GES.UriClipAsset}
     """
-    def __init__(self, project, audio_streams, video_streams):
+
+    def __init__(self, project, asset):
         self.project = project
-        self.audio_streams = audio_streams
-        self.video_streams = video_streams
-        self.has_audio = self.has_video = self.is_image = False
+        info = asset.get_info()
+        self.audio_streams = info.get_audio_streams()
+        self.video_streams = info.get_video_streams()
+        self.has_audio = False
+        self.has_video = False
+        self.is_image = False
 
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "clipmediaprops.ui"))
@@ -113,10 +117,10 @@ class ClipMediaPropsDialog(object):
             if self.checkbutton1.get_active():
                 project.videowidth = video.get_width()
                 project.videoheight = video.get_height()
-            if (self.checkbutton2.get_active() and not self.is_image):
+            if self.checkbutton2.get_active() and not self.is_image:
                 project.videorate = Gst.Fraction(video.get_framerate_num(),
                                                  video.get_framerate_denom())
-            if (self.checkbutton3.get_active() and not self.is_image):
+            if self.checkbutton3.get_active() and not self.is_image:
                 project.videopar = Gst.Fraction(video.get_par_num(),
                                                 video.get_par_denom())
         if self.has_audio:
