@@ -27,8 +27,13 @@ classes that help with UI drawing around the application
 """
 
 
-from decimal import Decimal
+import cairo
+import decimal
+import os
+import urllib
+
 from gettext import ngettext, gettext as _
+
 from gi.repository import Clutter
 from gi.repository import Cogl
 from gi.repository import GLib
@@ -39,9 +44,6 @@ from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
     DiscovererStreamInfo, DiscovererSubtitleInfo, DiscovererInfo
-from urllib import unquote
-import cairo
-import os
 
 from pitivi.utils.loggable import doLog, ERROR
 
@@ -50,6 +52,7 @@ from pitivi.utils.loggable import doLog, ERROR
 ##
 # UI pixels information constants
 ##
+
 LAYER_HEIGHT_EXPANDED = 50
 LAYER_HEIGHT_COLLAPSED = 15
 TRACK_SPACING = 8
@@ -254,9 +257,9 @@ def info_name(info):
     @type info: L{GES.Asset} or L{DiscovererInfo}
     """
     if isinstance(info, GES.Asset):
-        filename = unquote(os.path.basename(info.get_id()))
+        filename = urllib.unquote(os.path.basename(info.get_id()))
     elif isinstance(info, DiscovererInfo):
-        filename = unquote(os.path.basename(info.get_uri()))
+        filename = urllib.unquote(os.path.basename(info.get_uri()))
     else:
         raise Exception("Unsupported argument type: %s" % type(info))
     return GLib.markup_escape_text(filename)
@@ -422,7 +425,7 @@ def get_value_from_model(model, key):
         if row[1] == key:
             return str(row[0])
     if isinstance(key, Gst.Fraction):
-        return "%.3f" % Decimal(float(key.num) / key.denom)
+        return "%.3f" % decimal.Decimal(float(key.num) / key.denom)
     return str(key)
 
 
