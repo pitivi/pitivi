@@ -312,11 +312,15 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         Compare the model elements identified by the L{Gtk.TreeIter} elements.
         """
-        a_basename = GLib.path_get_basename(model[iter1][COL_URI]).lower()
-        b_basename = GLib.path_get_basename(model[iter2][COL_URI]).lower()
-        if a_basename < b_basename:
+        uri1 = model[iter1][COL_URI]
+        uri2 = model[iter2][COL_URI]
+        basename1 = GLib.path_get_basename(uri1).lower()
+        basename2 = GLib.path_get_basename(uri2).lower()
+        if basename1 < basename2:
             return -1
-        # Each element is unique, there is a strict order.
+        if basename1 == basename2:
+            if uri1 < uri2:
+                return -1
         return 1
 
     def getAssetForUri(self, uri):
