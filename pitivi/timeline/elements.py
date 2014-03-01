@@ -571,7 +571,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         line.props.width = hyp
         line.props.height = KEYFRAME_SIZE
         line.props.rotation_angle_z = math.degrees(math.asin(sinX))
-        line.props.x = self.nsToPixel(lastKeyframe.value.timestamp - self.bElement.props.in_point) - KEYFRAME_SIZE / 2
+        line.props.x = self.nsToPixel(lastKeyframe.value.timestamp - self.bElement.props.in_point)
         line.props.y = EXPANDED_SIZE - (EXPANDED_SIZE * lastKeyframe.value.value) - KEYFRAME_SIZE / 2
         line.canvas.invalidate()
 
