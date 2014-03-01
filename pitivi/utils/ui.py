@@ -38,7 +38,7 @@ from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
-    DiscovererStreamInfo, DiscovererSubtitleInfo
+    DiscovererStreamInfo, DiscovererSubtitleInfo, DiscovererInfo
 from urllib import unquote
 import cairo
 import os
@@ -248,11 +248,17 @@ def beautify_info(info):
 
 
 def info_name(info):
-    """Return a human-readable filename (without the path and quoting)."""
+    """
+    Return a human-readable filename (without the path and quoting).
+
+    @type info: L{GES.Asset} or L{DiscovererInfo}
+    """
     if isinstance(info, GES.Asset):
         filename = unquote(os.path.basename(info.get_id()))
-    else:
+    elif isinstance(info, DiscovererInfo):
         filename = unquote(os.path.basename(info.get_uri()))
+    else:
+        raise Exception("Unsupported argument type: %s" % type(info))
     return GLib.markup_escape_text(filename)
 
 
