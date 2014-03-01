@@ -587,7 +587,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if asset.is_image():
             os.system('xdg-open "%s"' % path_from_uri(asset.get_id()))
         else:
-            self._previewAsset(asset.get_id())
+            preview_window = PreviewAssetWindow(asset, self)
+            preview_window.preview()
 
     def _projectChangedCb(self, unused_project):
         self.main_actions.get_action("SaveProject").set_sensitive(True)
@@ -1236,59 +1237,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         chooser.destroy()
         return ret
 
-    def _leavePreviewCb(self, window, unused):
-        window.destroy()
-
-    def _previewAsset(self, uri):
-        """ Preview a media file from the media library """
-        preview_window = Gtk.Window()
-        preview_window.set_title(_("Preview - click outside to close"))
-        preview_window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
-        preview_window.set_transient_for(self)
-        preview_window.connect("focus-out-event", self._leavePreviewCb)
-        previewer = PreviewWidget(self, minimal=True)
-        preview_window.add(previewer)
-
-        previewer.previewUri(uri)
-        previewer.show()
-        controls_height = previewer.bbox.size_request().height
-        width, height = self._calculatePreviewWindowSize(uri, controls_height)
-        preview_window.resize(width, height)
-        # Setting the position of the window only works if it's currently hidden
-        # otherwise, after the resize the position will not be readjusted
-        preview_window.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
-        preview_window.show()
-        previewer.play()
-        # Hack so that we really really force the "utility" window to be focused
-        preview_window.present()
-
-    def _calculatePreviewWindowSize(self, uri, controls_height):
-        info = self.app.current_project.get_asset(uri, GES.UriClip).get_info()
-        video_streams = info.get_video_streams()
-
-        if video_streams:
-            # For videos and images, automatically resize the window
-            # Try to keep it 1:1 if it can fit within 85% of the parent window
-            video = video_streams[0]
-            img_width = video.get_width()
-            img_height = video.get_height()
-            mainwindow_width, mainwindow_height = self.get_size()
-            max_width = 0.85 * mainwindow_width
-            max_height = 0.85 * mainwindow_height
-
-            if img_width < max_width and (img_height + controls_height) < max_height:
-                # The video is small enough, keep it 1:1
-                return img_width, img_height + controls_height
-            else:
-                # The video is too big, size it down
-                # TODO: be smarter, figure out which (width, height) is bigger
-                new_height = max_width * img_height / img_width
-                return int(max_width), int(new_height + controls_height)
-        else:
-            # There is no video/image stream. This is an audio file.
-            # Resize to the minimum and let the window manager deal with it
-            return 1, 1
-
     def updateTitle(self):
         name = touched = ""
         if self.app.current_project:
@@ -1300,3 +1248,74 @@ class PitiviMainWindow(Gtk.Window, Loggable):
                 touched = "*"
         title = "%s%s — %s" % (touched, name, APPNAME)
         self.set_title(title)
+
+
+class PreviewAssetWindow(Gtk.Window):
+    """
+    Window for previewing a video or audio asset.
+
+    @ivar asset: The asset to be previewed.
+    @type asset: L{GES.UriClipAsset}
+    @type main_window: L{PitiviMainWindow}
+    """
+
+    def __init__(self, asset, main_window):
+        Gtk.Window.__init__(self)
+        self._asset = asset
+        self._main_window = main_window
+
+        self.set_title(_("Preview"))
+        self.set_type_hint(Gdk.WindowTypeHint.UTILITY)
+        self.set_transient_for(main_window)
+
+        self._previewer = PreviewWidget(main_window, minimal=True)
+        self.add(self._previewer)
+        self._previewer.previewUri(self._asset.get_id())
+        self._previewer.show()
+
+        self.connect("focus-out-event", self._leavePreviewCb)
+
+    def preview(self):
+        """
+        Show the window and start the playback.
+        """
+        width, height = self._calculatePreviewWindowSize()
+        self.resize(width, height)
+        # Setting the position of the window only works if it's currently hidden
+        # otherwise, after the resize the position will not be readjusted
+        self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
+        self.show()
+
+        self._previewer.play()
+        # Hack so that we really really force the "utility" window to be focused
+        self.present()
+
+    def _calculatePreviewWindowSize(self):
+        info = self._asset.get_info()
+        video_streams = info.get_video_streams()
+        if not video_streams:
+            # There is no video/image stream. This is an audio file.
+            # Resize to the minimum and let the window manager deal with it.
+            return 1, 1
+        # For videos and images, automatically resize the window
+        # Try to keep it 1:1 if it can fit within 85% of the parent window
+        video = video_streams[0]
+        img_width = video.get_width()
+        img_height = video.get_height()
+        mainwindow_width, mainwindow_height = self._main_window.get_size()
+        max_width = 0.85 * mainwindow_width
+        max_height = 0.85 * mainwindow_height
+
+        controls_height = self._previewer.bbox.size_request().height
+        if img_width < max_width and (img_height + controls_height) < max_height:
+            # The video is small enough, keep it 1:1
+            return img_width, img_height + controls_height
+        else:
+            # The video is too big, size it down
+            # TODO: be smarter, figure out which (width, height) is bigger
+            new_height = max_width * img_height / img_width
+            return int(max_width), int(new_height + controls_height)
+
+    def _leavePreviewCb(self, window, unused):
+        self.destroy()
+        return True
