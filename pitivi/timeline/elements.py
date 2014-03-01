@@ -774,12 +774,20 @@ class Line(Clutter.Actor):
         if self.gotDragged:
             self.gotDragged = False
             return
-        x, y = self.transposeXY(event.x, event.y)
-        value = 1.0 - (y / EXPANDED_SIZE)
-        value = max(0.0, value)
-        value = min(1.0, value)
+        x, unused_y = self.transposeXY(event.x, event.y)
         timestamp = Zoomable.pixelToNs(x)
+        value = self._valueAtTimestamp(timestamp)
         self.timelineElement.addKeyframe(value, timestamp)
+
+    def _valueAtTimestamp(self, timestamp):
+        timestamp_left = self.previousKeyframe.value.timestamp
+        value_left = self.previousKeyframe.value.value
+        timestamp_right = self.nextKeyframe.value.timestamp
+        value_right = self.nextKeyframe.value.value
+        height = value_right - value_left
+        duration = timestamp_right - timestamp_left
+        value = value_right - (timestamp_right - timestamp) * height / duration
+        return max(0.0, min(value, 1.0))
 
     def _enterEventCb(self, unused_actor, unused_event):
         self.timelineElement.set_reactive(False)
