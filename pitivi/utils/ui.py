@@ -214,8 +214,12 @@ def set_cairo_color(context, color):
     context.set_source_rgb(*cairo_color)
 
 
-#------ Helper to help beatify indos so they can be displayed in the UI -----#
 def beautify_info(info):
+    """
+    Formats the specified info for display.
+
+    @type info: L{DiscovererInfo}
+    """
     ranks = {
         DiscovererVideoInfo: 0,
         DiscovererAudioInfo: 1,
@@ -235,12 +239,12 @@ def beautify_info(info):
             beautified_string = beautify_stream(stream)
         except NotImplementedError:
             doLog(ERROR, "Beautify", "None", "Cannot beautify %s", stream)
-        else:
-            if beautified_string is not None:
-                nice_streams_txts.append(beautified_string)
+            continue
+        if beautified_string:
+            nice_streams_txts.append(beautified_string)
 
     return ("<b>" + info_name(info) + "</b>\n" +
-        "\n".join((nice for nice in nice_streams_txts)))
+        "\n".join(nice_streams_txts))
 
 
 def info_name(info):
