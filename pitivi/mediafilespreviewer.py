@@ -291,8 +291,14 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
         self.log("Preview paused")
 
+    def togglePlayback(self):
+        if self.is_playing:
+            self.pause()
+        else:
+            self.play()
+
     def clear_preview(self):
-        self.log("Reset PreviewWidget ")
+        self.log("Reset PreviewWidget")
         self.seeker.set_value(0)
         self.bbox.hide()
         self.l_error.hide()
