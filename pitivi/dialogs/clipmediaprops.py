@@ -19,8 +19,9 @@
 
 import os
 
-from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import Gst
+from gi.repository import Gtk
 
 from gettext import gettext as _
 
@@ -106,6 +107,8 @@ class ClipMediaPropsDialog(object):
             self.hbox2.hide()
             self.hbox3.hide()
             self.label2.set_markup("<b>" + _("Image:") + "</b>")
+
+        self.dialog.connect("key-press-event", self._keyPressCb)
         self.dialog.run()
 
     def _applyButtonCb(self, unused_button):
@@ -134,3 +137,8 @@ class ClipMediaPropsDialog(object):
     def _cancelButtonCb(self, unused_button):
         """Destroy the dialog"""
         self.dialog.destroy()
+
+    def _keyPressCb(self, unused_widget, event):
+        if event.keyval in (Gdk.KEY_Escape, Gdk.KEY_Q, Gdk.KEY_q):
+            self.dialog.destroy()
+        return True
