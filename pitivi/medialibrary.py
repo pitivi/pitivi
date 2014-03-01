@@ -115,15 +115,6 @@ SUPPORTED_FILE_FORMATS = {"video": ("3gpp", "3gpp2", "dv", "mp2t", "mp4", "mpeg"
 OTHER_KNOWN_FORMATS = ("video/mp2t",)
 
 
-def compare_simple(model, iter1, iter2, user_data):
-    a_basename = GLib.path_get_basename(model[iter1][user_data]).lower()
-    b_basename = GLib.path_get_basename(model[iter2][user_data]).lower()
-    if a_basename < b_basename:
-        return -1
-    # Each element is unique, there is a strict order.
-    return 1
-
-
 class MediaLibraryWidget(Gtk.VBox, Loggable):
     """ Widget for listing sources """
 
@@ -162,7 +153,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         # Store
         self.storemodel = Gtk.ListStore(*STORE_MODEL_STRUCTURE)
-        self.storemodel.set_sort_func(COL_URI, compare_simple, user_data=COL_URI)
+        self.storemodel.set_sort_func(COL_URI, MediaLibraryWidget.compare_basename)
         # Prefer to sort the media library elements by URI
         # rather than show them randomly.
         self.storemodel.set_sort_column_id(COL_URI, Gtk.SortType.ASCENDING)
@@ -315,6 +306,18 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.thumbnailer = GnomeDesktop.DesktopThumbnailFactory.new(size_normal)
         else:
             self.thumbnailer = None
+
+    @staticmethod
+    def compare_basename(model, iter1, iter2, unused_user_data):
+        """
+        Compare the model elements identified by the L{Gtk.TreeIter} elements.
+        """
+        a_basename = GLib.path_get_basename(model[iter1][COL_URI]).lower()
+        b_basename = GLib.path_get_basename(model[iter2][COL_URI]).lower()
+        if a_basename < b_basename:
+            return -1
+        # Each element is unique, there is a strict order.
+        return 1
 
     def getAssetForUri(self, uri):
         # Sanitization
