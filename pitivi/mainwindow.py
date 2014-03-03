@@ -296,6 +296,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.timeline_ui.setProjectManager(self.app.project_manager)
         self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
 
+        self.timeline_ui.timeline.selection.connect("selection-changed", self.title_editor.selectionChangedCb)
+
         # Enable our shortcuts for HeaderBar buttons and menu items:
         self._set_keyboard_shortcuts()
 

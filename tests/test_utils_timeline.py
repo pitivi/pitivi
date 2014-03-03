@@ -20,6 +20,8 @@
 import mock
 from unittest import TestCase
 
+from gi.repository import GES
+
 from pitivi.utils.timeline import Selected, Selection, SELECT, SELECT_ADD, \
     UNSELECT
 
@@ -49,3 +51,23 @@ class TestSelection(TestCase):
         self.assertTrue(selection)
         selection.setSelection([clip1], UNSELECT)
         self.assertFalse(selection)
+
+    def testGetSingleClip(self):
+        selection = Selection()
+        clip1 = GES.UriClip()
+        clip2 = GES.TitleClip()
+
+        # Selection empty.
+        self.assertFalse(selection.getSingleClip(GES.TitleClip))
+
+        # Selection contains only a non-requested-type clip.
+        selection.setSelection([clip1], SELECT)
+        self.assertFalse(selection.getSingleClip(GES.TitleClip))
+
+        # Selection contains only requested-type clip.
+        selection.setSelection([clip2], SELECT)
+        self.assertEqual(clip2, selection.getSingleClip(GES.TitleClip))
+
+        # Selection contains more than one clip.
+        selection.setSelection([clip1, clip2], SELECT)
+        self.assertFalse(selection.getSingleClip(GES.UriClip))

@@ -583,7 +583,6 @@ class TitleEditor(Loggable):
         self.bt = {}
         self.settings = {}
         self.source = None
-        self.created = False
         self.seeker = Seeker()
 
         #Drag attributes
@@ -767,49 +766,41 @@ class TitleEditor(Loggable):
                 self.seeker.flush()
                 return
 
-    def _reset(self):
-        #TODO: reset not only text
+    def set_source(self, source):
+        """
+        Set the clip to be edited with this editor.
+
+        @type source: L{GES.TitleSource}
+        """
+        self.debug("Source set to %s", source)
+        self._deactivate()
+        assert isinstance(source, GES.TextOverlay) or \
+            isinstance(source, GES.TitleSource)
+        self.source = source
+        self._updateFromSource()
+        self._activate()
+
+    def unset_source(self):
+        self.source = None
+        self._deactivate()
+        # TODO: reset not only text
         self.markup_button.set_active(False)
         self.pangobuffer.set_text("")
         self.textbuffer.set_text("")
-        #Set right buffer
+        # Set the right buffer
         self._markupToggleCb(self.markup_button)
-
-    def set_source(self, source, created=False):  # FIXME: this "created" boolean param is a hack
-        """
-        Set the GESTitleClip to be used with the title editor.
-        This can be called either from the title editor in _createCb, or by
-        track.py to set the source to None.
-        """
-        self.debug("Source set to %s", source)
-        self.source = source
-        self._reset()
-        self.created = created
-        # We can't just assert source is not None... because track.py may ask us
-        # to reset the source to None
-        if source is None:
-            self._deactivate()
-        else:
-            assert isinstance(source, GES.TextOverlay) or \
-                isinstance(source, GES.TitleSource) or \
-                isinstance(source, GES.TitleClip)
-            self._updateFromSource()
-            self._activate()
 
     def _createCb(self, unused_button):
         """
         The user clicked the "Create and insert" button, initialize the UI
         """
-        source = GES.TitleClip()
-        source.set_text("")
-        source.set_duration(int(Gst.SECOND * 5))
-        self.set_source(source, True)
+        clip = GES.TitleClip()
+        clip.set_text("")
+        clip.set_duration(int(Gst.SECOND * 5))
         # TODO: insert on the current layer at the playhead position.
         # If no space is available, create a new layer to insert to on top.
-        self.app.gui.timeline_ui.insertEnd([self.source])
-        self.app.gui.timeline_ui.timeline.selection.setToObj(self.source, SELECT)
-        #After insertion consider as not created
-        self.created = False
+        self.app.gui.timeline_ui.insertEnd([clip])
+        self.app.gui.timeline_ui.timeline.selection.setToObj(clip, SELECT)
 
     def _connect_signals(self):
         if not self._signals_connected:
@@ -879,3 +870,11 @@ class TitleEditor(Loggable):
             self._connect_signals()
         else:
             self._disconnect_signals()
+
+    def selectionChangedCb(self, selection):
+        selected_clip = selection.getSingleClip(GES.TitleClip)
+        source = selected_clip and selected_clip.get_children(False)[0]
+        if source:
+            self.set_source(source)
+        else:
+            self.unset_source()

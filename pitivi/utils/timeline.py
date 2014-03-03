@@ -143,7 +143,6 @@ class Selection(Signallable):
             for element in obj.get_children(False):
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
                     element.selected.selected = True
-
         self.emit("selection-changed")
 
     def getSelectedTrackElements(self):
@@ -166,6 +165,18 @@ class Selection(Signallable):
                 if isinstance(element, GES.BaseEffect):
                     effects.append(element)
         return effects
+
+    def getSingleClip(self, clip_type):
+        """
+        Returns the single-selected clip, if any.
+
+        @param clip_type: The class the clip must be an instance of.
+        """
+        if len(self.selected) == 1:
+            clip = tuple(self.selected)[0]
+            if isinstance(clip, clip_type):
+                return clip
+        return None
 
     def __len__(self):
         return len(self.selected)
