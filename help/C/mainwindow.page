@@ -4,7 +4,7 @@
       id="mainwindow">
 
   <info>
-    <link type="guide" xref="interface"/>
+    <link type="guide" xref="index#intro"/>
     <link type="seealso" xref="medialibrary"/>
     <link type="seealso" xref="movearoundtimeline"/>
     <revision pkgversion="0.92" version="0.3" date="2014-02-07" status="complete"/>

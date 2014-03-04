@@ -31,7 +31,6 @@ HELP_FILES = \
     importingmpegts.page \
     importing.page \
     index.page \
-    interface.page \
     keyframecurves.page \
     layers.page \
     license.page \
