@@ -4,7 +4,7 @@
       id="welcomedialog">
 
   <info>
-    <link type="guide" xref="interface"/>
+    <link type="guide" xref="index#intro"/>
     <revision pkgversion="0.92" version="0.2" date="2014-02-11" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
