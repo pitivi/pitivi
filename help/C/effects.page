@@ -6,12 +6,14 @@
   <info>
     <link type="guide" xref="index#effects"/>
     <link type="seealso" xref="gstreamer"/>
-    <revision pkgversion="0.14.2" version="0.2" date="2011-08-15" status="incomplete"/>
+    <revision pkgversion="0.92" version="0.2" date="2014-03-07" status="incomplete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
     </credit>
-    <desc>Adding special effects to your video and audio</desc>
+    <desc>Adding special effects to your video and audio clips</desc>
     <license>
       <p>Creative Commons Share Alike 3.0</p>
     </license>
@@ -19,14 +21,9 @@
 
     <title>Introduction to effects</title>
      
-     <p><app>Pitivi</app> offers a wide variety of video and audio effects to spice up your movies. Effects are non destructive: they are only applied to the resulting rendered movie and do not affect your source files.</p>
-     <note style="important">
-        <p>Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in <app>Pitivi</app>'s effect library, make sure that the following are installed on your system:</p>
-        <list>
-            <item><p>The <link xref="gstreamer">appropriate GStreamer plugins</link></p></item>
-            <item><p>frei0r-plugins</p></item>
-            <item><p>gnome-video-effects</p></item>
-        </list>
+     <p><app>Pitivi</app> uses a wide variety of video and audio effects to spice up your movies. Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in the effect library, make sure that the <app>gnome-video-effects</app> package is installed on your system. Alternatively, you can look for packages containing GStreamer or frei0r effect plugins that are available in the repositories of your distribution.</p>
+     <note>
+      <p>Effects are non-destructive: they are only applied to the resulting rendered movie and do not affect your source files.</p>
      </note>
 
     <section>
@@ -35,13 +32,18 @@
         <steps>
             <item><p>Select an existing clip on the timeline</p></item>
             <item><p>Choose an effect in the effect library</p></item>
-            <item><p>Drag the chosen effect into the <gui>Clip configuration</gui> pane's <gui>Effects</gui> section</p></item>
+            <item><p>Drag the chosen effect into the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq></p></item>
         </steps>
-        <p>To remove an effect on a selected clip, select it in the clip's effect list and click the <gui>Remove</gui> button.</p>
+        <p>To remove an effect:</p>
+        <steps>
+            <item><p>Select an existing clip on the timeline</p></item>
+            <item><p>Select the effect you want to remove in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq></p></item>
+            <item><p>Click the <gui>Remove effect</gui> button</p></item>
+        </steps>
     </section>
     <section>
-        <title>Toggling effects on and off</title>
-        <p>If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the effect properties pane.</p>
+        <title>Toggling and configuring effects</title>
+        <p>If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq>.</p>
+        <p>To configure an effect, simply select it in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq>. Variables that can be adjusted will appear in the lower part of the <gui>Clip configuration</gui> tab. Each variable can be put back to it's original value by clicking the corresponding <gui>Reset to default value</gui> button.</p>
     </section>
-    <note><p>Currently, effects are applied on a "per-clip" basis. It is not yet possible to apply effects to timeline layers.</p></note>
 </page>
