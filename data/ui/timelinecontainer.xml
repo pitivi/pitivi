@@ -17,8 +17,6 @@
         <menuitem action="AlignObj" />
         <separator />
         <menuitem action="Keyframe" />
-        <menuitem action="Prevkeyframe" />
-        <menuitem action="Nextkeyframe" />
         <separator />
         <menuitem action="PlayPause" />
         <menuitem action="Screenshot" />

@@ -1023,12 +1023,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             ("Keyframe", "pitivi-keyframe", _("Add a Keyframe"),
             "K", _("Add a keyframe"), self._keyframeCb),
-
-            ("Prevkeyframe", None, _("_Previous Keyframe"),
-            "comma", _("Move to the previous keyframe"), self._previousKeyframeCb),
-
-            ("Nextkeyframe", None, _("_Next Keyframe"),
-            "period", _("Move to the next keyframe"), self._nextKeyframeCb),
         )
 
         actiongroup = Gtk.ActionGroup(name="timelinepermanent")
@@ -1440,20 +1434,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if foo:
             path, mime = foo[0], foo[1]
             self._project.pipeline.save_thumbnail(-1, -1, mime, path)
-
-    def _previousKeyframeCb(self, unused_action):
-        position = self._project.pipeline.getPosition()
-        prev_kf = self.timeline.getPrevKeyframe(position)
-        if prev_kf:
-            self._seeker.seek(prev_kf)
-            self.scrollToPlayhead()
-
-    def _nextKeyframeCb(self, unused_action):
-        position = self._project.pipeline.getPosition()
-        next_kf = self.timeline.getNextKeyframe(position)
-        if next_kf:
-            self._seeker.seek(next_kf)
-            self.scrollToPlayhead()
 
     def _scrollEventCb(self, unused_embed, event):
         # FIXME : see https://bugzilla.gnome.org/show_bug.cgi?id=697522
