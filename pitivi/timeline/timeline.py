@@ -837,6 +837,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.timeline.connect("button-press-event", self._timelineClickedCb)
         self.timeline.connect("button-release-event", self._timelineClickReleasedCb)
+        # FIXME: Connect to the stage of the embed instead, see https://bugzilla.gnome.org/show_bug.cgi?id=697522
         self.embed.connect("scroll-event", self._scrollEventCb)
 
         self.connect("key-press-event", self._keyPressEventCb)
@@ -1436,7 +1437,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self._project.pipeline.save_thumbnail(-1, -1, mime, path)
 
     def _scrollEventCb(self, unused_embed, event):
-        # FIXME : see https://bugzilla.gnome.org/show_bug.cgi?id=697522
         deltas = event.get_scroll_deltas()
         if event.state & Gdk.ModifierType.CONTROL_MASK:
             if deltas[2] < 0:
