@@ -155,10 +155,10 @@ class Ghostclip(Clutter.Actor):
         self.props.width = width
 
     def update(self, priority, y, isControlledByBrother):
-        self.priority = priority
-        # Only tricky part of the code, can be called by the linked track element.
-        if priority < 0:
-            return
+        # Priority and y can be negative when dragging an asset to the ruler.
+        # Priority can also be negative when dragging a linked element.
+        self.priority = min(max(0, priority), self.nbrLayers)
+        y = max(0, y)
 
         # Here we make it so the calculation is the same for audio and video.
         if self.track_type == GES.TrackType.AUDIO and not isControlledByBrother:
@@ -173,22 +173,22 @@ class Ghostclip(Clutter.Actor):
                 y -= self.nbrLayers * (EXPANDED_SIZE + SPACING)
 
         # Would that be a new layer at the end or inserted ?
-        if priority == self.nbrLayers or y % (EXPANDED_SIZE + SPACING) < SPACING:
+        if self.priority == self.nbrLayers or y % (EXPANDED_SIZE + SPACING) < SPACING:
             self.shouldCreateLayer = True
             self.set_size(self.props.width, SPACING)
-            self.props.y = priority * (EXPANDED_SIZE + SPACING)
+            self.props.y = self.priority * (EXPANDED_SIZE + SPACING)
             if self.track_type == GES.TrackType.AUDIO:
                 self.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
             self.props.visible = True
         else:
             self.shouldCreateLayer = False
             # No need to mockup on the same layer
-            if self.bElement and priority == self.bElement.get_parent().get_layer().get_priority():
+            if self.bElement and self.priority == self.bElement.get_parent().get_layer().get_priority():
                 self.props.visible = False
             # We would be moving to an existing layer.
-            elif priority < self.nbrLayers:
+            elif self.priority < self.nbrLayers:
                 self.set_size(self.props.width, EXPANDED_SIZE)
-                self.props.y = priority * (EXPANDED_SIZE + SPACING) + SPACING
+                self.props.y = self.priority * (EXPANDED_SIZE + SPACING) + SPACING
                 if self.track_type == GES.TrackType.AUDIO:
                     self.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
                 self.props.visible = True
