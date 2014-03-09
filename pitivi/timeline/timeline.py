@@ -186,21 +186,24 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
                 return elem
         return None
 
-    def insertLayer(self, ghostclip):
+    def createLayerForGhostClip(self, ghostclip):
         """
+        Creates a layer and moves subsequent layers down, if any.
+
         @param ghostclip: the ghostclip that was dropped, needing a new layer.
-        Will move subsequent layers down, if any.
+        @type ghostclip: L{Ghostclip}
+        @rtype: L{GES.Layer}
         """
-        layer = None
-        if ghostclip.priority < len(self.bTimeline.get_layers()):
-            for layer in self.bTimeline.get_layers():
+        layers = self.bTimeline.get_layers()
+        if ghostclip.priority < len(layers):
+            for layer in layers:
                 if layer.get_priority() >= ghostclip.priority:
                     layer.props.priority += 1
 
-            layer = self.bTimeline.append_layer()
-            layer.props.priority = ghostclip.priority
-            self.bTimeline.commit()
-            self._container.controls._reorderLayerActors()
+        layer = self.bTimeline.append_layer()
+        layer.props.priority = ghostclip.priority
+        self.bTimeline.commit()
+        self._container.controls._reorderLayerActors()
         return layer
 
     # Drag and drop from the medialibrary, handled by "ghost" (temporary) clips.
@@ -208,29 +211,25 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
     # This avoids bugs when dragging in and out of the timeline
 
     def resetGhostClips(self):
-        for ghostCouple in self.ghostClips:
-            for ghostclip in ghostCouple:
-                del ghostclip
         self.ghostClips = []
 
     def addGhostClip(self, asset, unused_x, unused_y):
-        ghostAudio = ghostVideo = None
-
+        ghostVideo = None
         if asset.get_supported_formats() & GES.TrackType.VIDEO:
             ghostVideo = self._createGhostclip(GES.TrackType.VIDEO, asset)
+        ghostAudio = None
         if asset.get_supported_formats() & GES.TrackType.AUDIO:
             ghostAudio = self._createGhostclip(GES.TrackType.AUDIO, asset)
-
         self.ghostClips.append([ghostVideo, ghostAudio])
 
     def updateGhostClips(self, x, y):
         """
         This is called for each drag-motion.
         """
+        priority = int(y / (EXPANDED_SIZE + SPACING))
         for ghostCouple in self.ghostClips:
             for ghostclip in ghostCouple:
-                if ghostclip is not None:
-                    priority = int(y / (EXPANDED_SIZE + SPACING))
+                if ghostclip:
                     ghostclip.update(priority, y, False)
                     if x >= 0:
                         ghostclip.props.x = x
@@ -242,23 +241,11 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
         """
         placement = 0
         layer = None
-        for ghostCouple in self.ghostClips:
-            ghostclip = ghostCouple[0]
-            if not ghostclip:
-                ghostclip = ghostCouple[1]
+        for ghostVideo, ghostAudio in self.ghostClips:
+            ghostclip = ghostVideo or ghostAudio
 
             if layer is None:
-                target = None
-                if ghostclip.shouldCreateLayer:
-                    layer = self.insertLayer(ghostclip)
-                    target = layer
-                else:
-                    for layer in self.bTimeline.get_layers():
-                        if layer.get_priority() == ghostclip.priority:
-                            target = layer
-                            break
-                if target is None:
-                    layer = self.bTimeline.append_layer()
+                layer = self._getLayerForGhostClip(ghostclip)
 
             if ghostclip.asset.is_image():
                 clip_duration = self._settings.imageClipLength * Gst.SECOND / 1000.0
@@ -275,13 +262,24 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
             placement += clip_duration
         self.bTimeline.commit()
 
+    def _getLayerForGhostClip(self, ghostclip):
+        """
+        Return the layer on which the specified ghostclip should be added.
+        """
+        if ghostclip.shouldCreateLayer:
+            return self.createLayerForGhostClip(ghostclip)
+        for layer in self.bTimeline.get_layers():
+            if layer.get_priority() == ghostclip.priority:
+                return layer
+        raise TimelineError()
+
     def removeGhostClips(self):
         """
         This is called at drag-leave. We don't empty the list on purpose.
         """
         for ghostCouple in self.ghostClips:
             for ghostclip in ghostCouple:
-                if ghostclip is not None and ghostclip.get_parent():
+                if ghostclip and ghostclip.get_parent():
                     self.remove_child(ghostclip)
         self.bTimeline.commit()
 
@@ -671,6 +669,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._createActions()
         self._createUi()
 
+        self.dropHighlight = False
+        self.dropOccured = False
+        self.dropDataReady = False
+        self.dropData = None
         self._setUpDragAndDrop()
 
         self._settings.connect("edgeSnapDeadbandChanged",
@@ -919,10 +921,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return True
 
     def _setUpDragAndDrop(self):
-        self.dropHighlight = False
-        self.dropOccured = False
-        self.dropDataReady = False
-        self.dropData = None
         dnd_list = [Gtk.TargetEntry.new('text/uri-list', Gtk.TargetFlags.OTHER_APP, TARGET_TYPE_URI_LIST)]
 
         self.drag_dest_set(0, dnd_list, Gdk.DragAction.COPY)
@@ -1555,8 +1553,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return True
 
     def _dragLeaveCb(self, widget, unused_context, unused_time):
-        if self.dropDataReady:
-            self.dropDataReady = False
+        self.dropDataReady = False
         if self.dropHighlight:
             widget.drag_unhighlight()
             self.dropHighlight = False

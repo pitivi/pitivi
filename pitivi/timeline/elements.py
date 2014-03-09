@@ -1125,7 +1125,7 @@ class URISourceElement(TimelineElement):
             self.brother.ghostclip.props.visible = False
 
         if self.ghostclip.shouldCreateLayer:
-            self.timeline.insertLayer(self.ghostclip)
+            self.timeline.createLayerForGhostClip(self.ghostclip)
 
         if self.gotDragged:
             self._context.editTo(new_start, priority)
