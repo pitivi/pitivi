@@ -1835,7 +1835,7 @@ msgstr "Mostrados %s"
 #: ../pitivi/utils/widgets.py:1062
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
-msgstr "Mostrados %s nanosegundos, porque podemos"
+msgstr "Mostrados %d nanosegundos, porque podemos"
 
 #~ msgid ""
 #~ "There is already a %s instance, please inform the developers by filing a "
