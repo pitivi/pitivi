@@ -1554,7 +1554,7 @@ msgstr "Spustit přehrávání"
 
 #: ../pitivi/timeline/timeline.py:1022
 msgid "Split clip at playhead position"
-msgstr "Rozdělit klip v místě kurzoru"
+msgstr "Rozdělit klip na pozici přehrávání"
 
 #: ../pitivi/timeline/timeline.py:1024
 msgid "Add a Keyframe"
