@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#timeline"/>
-    <revision pkgversion="0.13.4" version="0.1" date="2010-12-05" status="complete"/>
+    <revision pkgversion="0.92" version="0.2" date="2014-03-13" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -13,9 +13,11 @@
     <credit type="contributor">
       <name>Mario Blättermann</name>
       <email>mariobl@gnome.org</email>
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
     </credit>
     <desc>
-      Changing the opacity or volume of a clip over time.
+      Changing properties of a clip over time.
     </desc>
     <license>
       <p>Creative Commons Share Alike 3.0</p>
@@ -24,30 +26,36 @@
 
     <title>Keyframe curves</title>
      
-     <p>Some types of clips (currently only audio clips) support interpolating property values over their time. The user can add one or more <em>keyframes</em> to control the interpolation, a term borrowed from animation. <app>Pitivi</app> represents the value of the property in between keyframes as a <em>curve</em> drawn over the clip. Currently only linear interpolation is supported.</p>
+     <p>By using keyframe curves, you can change property values of clips over time. This can be used to change opacity or volume just as well as control effect variables at any point in the clip's duration.</p>
      <figure>
       <media type="image" src="figures/keyframecurves.png" mime="image/png" style="right"></media>
      </figure>
+     <p>A terminological note:</p>
+     <list>
+         <item><p><em>Keyframes</em> are the points that are used to determine the property value at a given point in time.</p></item>
+         <item><p><em>Keyframe curves</em> are the lines connecting the points providing smooth transitions between them.</p></item>
+     </list>
+     <p>By default, keyframe curves are flat: there are two keyframes with the same value, one at the beginning and one at the end of the clip. As a result, the curve connecting the two keyframes is a straight horizontal line indicating that the vlaue of a given property is the same at each point in time within the clip's duration. To change the value (and the rate of it's change) at any point, you can add one or more keyframes to the clip and drag them to appropriate positions representing their values.</p>
+     <note>
+         <p>Currently only linear keyframe curves are supported.</p>
+     </note>
 
      <section>
       <title>General usage</title>
-      <p>Curves are an intrinsic property of clips and can not be removed by the user. The start and end points of the curve are fixed to the start and end points of the clip, and also can not be removed by the user.</p>
+      <p>Keyframe curves are an intrinsic property of clips and can not be removed by the user. The start and end keyframes are fixed to the start and end points of the clip, and can not be removed by the user either. Besides that, you can:</p>
       <list>
-       <item><p>You can add a new keyframe by double-clicking on an empty portion of a curve.</p></item>
-       <item><p>You can remove a keyframe by double-clicking on it.</p></item>
-       <item><p>You can adjust the time and value of a keyframe by moving it with the mouse. You can place the keyframe anywhere on the clip you like, even if this changes the order of the keyframes.</p></item>
-       <item><p>You can click-and-drag on a segment of a curve between two keyframes to adjust the vertical position of the segment.</p></item>
+       <item><p>add a new keyframe by double-clicking on an empty portion of a curve</p></item>
+       <item><p>remove a keyframe by double-clicking on it</p></item>
+       <item><p>adjust the time and value of a keyframe by moving it with the mouse</p></item>
+       <item><p>click-and-drag on a segment of a curve between two keyframes to adjust the vertical position of the segment</p></item>
       </list>
+      <note style="tip">
+          <p>You can place the keyframe anywhere on the clip, even if this changes the order of the keyframes.</p>
+      </note>
      </section>
 
      <section>
-      <title>Audio curves</title>
-       <p>For volume curves the vertical position represents the volume of the clip on a scale from 0 to 200%.</p>
+      <title>Audio and video curves</title>
+       <p>For volume curves the vertical position represents the volume of the clip on a scale from 0 to 200%. For video curves, the vertical position represents the alpha (opacity) of the clip on a scale from 0 to 100%. See the <link xref="layers">Understanding layers</link> page for more details on opacity.</p>
      </section>
-
-     <section>
-      <title>Video compositing curves</title>
-       <p>The vertical position represents the alpha (opacity) of the clip on a scale from 0 to 100%. See the <link xref="layers">Understanding layers</link> section for more details.</p>
-     </section>
-
 </page>
