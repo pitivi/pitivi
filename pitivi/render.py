@@ -25,27 +25,25 @@ Rendering-related utilities and classes
 """
 
 import os
+import time
+
 from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import Gst
 from gi.repository import GES
-import time
 
 from gettext import gettext as _
-from pitivi import configure
-from pitivi.utils.signal import Signallable
 
+from pitivi import configure
+
+from pitivi.check import PYCANBERRA_SOFT_DEPENDENCY
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.widgets import GstElementSettingsDialog
-from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.misc import show_user_manual, path_from_uri
+from pitivi.utils.ripple_update_group import RippleUpdateGroup
+from pitivi.utils.signal import Signallable
 from pitivi.utils.ui import model, frame_rates, audio_rates,\
     audio_channels, get_combo_value, set_combo_value, beautify_ETA
-try:
-    import pycanberra
-    has_canberra = True
-except ImportError:
-    has_canberra = False
+from pitivi.utils.widgets import GstElementSettingsDialog
 
 
 class CachedEncoderList(object):
@@ -865,6 +863,14 @@ class RenderDialog(Loggable):
     def destroy(self):
         self.window.destroy()
 
+    @staticmethod
+    def _maybePlayFinishedSound():
+        if not PYCANBERRA_SOFT_DEPENDENCY:
+            return
+        import pycanberra
+        canberra = pycanberra.Canberra()
+        canberra.play(1, pycanberra.CA_PROP_EVENT_ID, "complete-media", None)
+
     #------------------- Callbacks ------------------------------------------#
 
     #-- UI callbacks
@@ -966,9 +972,7 @@ class RenderDialog(Loggable):
             if not self.progress.window.is_active():
                 notification = _('"%s" has finished rendering.' % self.fileentry.get_text())
                 self.notification = self.app.system.desktopMessage(_("Render complete"), notification, "pitivi")
-            if has_canberra:
-                canberra = pycanberra.Canberra()
-                canberra.play(1, pycanberra.CA_PROP_EVENT_ID, "complete-media", None)
+            self._maybePlayFinishedSound()
             self.progress.play_rendered_file_button.show()
             self.progress.close_button.show()
             self.progress.cancel_button.hide()

@@ -4,6 +4,7 @@
 # Keep this list sorted!
 tests =	\
 	test_application.py \
+	test_check.py \
 	test_common.py \
 	test_log.py \
 	test_mainwindow.py \

@@ -23,15 +23,10 @@ import multiprocessing
 import os
 import resource
 
+from pitivi.check import NOTIFY_SOFT_DEPENDENCY
 from pitivi.configure import APPNAME
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
-
-try:
-    from gi.repository import Notify
-    has_libnotify = True
-except ImportError:
-    has_libnotify = False
 
 
 class System(Signallable, Loggable):
@@ -173,14 +168,16 @@ class FreedesktopOrgSystem(System):
 
     def __init__(self):
         System.__init__(self)
-        if has_libnotify:
+        if NOTIFY_SOFT_DEPENDENCY:
+            from gi.repository import Notify
             Notify.init(APPNAME)
 
     def desktopMessage(self, title, message, icon="pitivi"):
         #call super method for consistent logging
         System.desktopMessage(self, title, message, icon)
 
-        if has_libnotify:
+        if NOTIFY_SOFT_DEPENDENCY:
+            from gi.repository import Notify
             notification = Notify.Notification.new(title, message, icon=icon)
             try:
                 notification.show()

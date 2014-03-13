@@ -88,6 +88,9 @@ class Dependency(object):
         """
         raise NotImplementedError
 
+    def __nonzero__(self):
+        return self.satisfied
+
     def __repr__(self):
         if self.satisfied:
             return ""
@@ -177,14 +180,19 @@ HARD_DEPENDENCIES = (CairoDependency("1.10.0"),
                      GIDependency("Gio", None),
                      GstPluginDependency("gnonlin", "1.1.90"))
 
-SOFT_DEPENDENCIES = (ClassicDependency("pycanberra", None,
-                                       _("enables sound notifications when rendering is complete")),
-                     GIDependency("GnomeDesktop", None,
-                                  _("file thumbnails provided by GNOME's thumbnailers")),
-                     GIDependency("Notify", None,
-                                  _("enables visual notifications when rendering is complete")),
-                     GstPluginDependency("libav", None,
-                                         _("additional multimedia codecs through the Libav library")))
+PYCANBERRA_SOFT_DEPENDENCY = ClassicDependency("pycanberra", None,
+                                               _("enables sound notifications when rendering is complete"))
+GNOMEDESKTOP_SOFT_DEPENDENCY = GIDependency("GnomeDesktop", None,
+                                            _("file thumbnails provided by GNOME's thumbnailers"))
+NOTIFY_SOFT_DEPENDENCY = GIDependency("Notify", None,
+                                      _("enables visual notifications when rendering is complete"))
+LIBAV_SOFT_DEPENDENCY = GstPluginDependency("libav", None,
+                                            _("additional multimedia codecs through the Libav library"))
+
+SOFT_DEPENDENCIES = (PYCANBERRA_SOFT_DEPENDENCY,
+                     GNOMEDESKTOP_SOFT_DEPENDENCY,
+                     NOTIFY_SOFT_DEPENDENCY,
+                     LIBAV_SOFT_DEPENDENCY)
 
 
 def _check_audiosinks():

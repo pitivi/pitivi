@@ -26,11 +26,6 @@ from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import GLib
-try:
-    from gi.repository import GnomeDesktop
-    has_gnome_desktop = True
-except ImportError:
-    has_gnome_desktop = False
 from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -47,6 +42,7 @@ from urlparse import urlparse
 from hashlib import md5
 from gi.repository.GstPbutils import DiscovererVideoInfo
 
+from pitivi.check import GNOMEDESKTOP_SOFT_DEPENDENCY
 from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.settings import GlobalSettings
 from pitivi.mediafilespreviewer import PreviewWidget
@@ -300,12 +296,16 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.pack_start(self.treeview_scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, True, 0)
 
-        if has_gnome_desktop:
-            # We need to instanciate the thumbnail factory on the main thread...
-            size_normal = GnomeDesktop.DesktopThumbnailSize.NORMAL
-            self.thumbnailer = GnomeDesktop.DesktopThumbnailFactory.new(size_normal)
-        else:
-            self.thumbnailer = None
+        self.thumbnailer = MediaLibraryWidget._getThumbnailer()
+
+    @staticmethod
+    def _getThumbnailer():
+        if not GNOMEDESKTOP_SOFT_DEPENDENCY:
+            return None
+        from gi.repository import GnomeDesktop
+        # We need to instanciate the thumbnail factory on the main thread...
+        size_normal = GnomeDesktop.DesktopThumbnailSize.NORMAL
+        return GnomeDesktop.DesktopThumbnailFactory.new(size_normal)
 
     @staticmethod
     def compare_basename(model, iter1, iter2, unused_user_data):
