@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2014-03-04 16:30+0000\n"
-"PO-Revision-Date: 2014-03-13 18:21+0100\n"
+"POT-Creation-Date: 2014-03-13 17:22+0000\n"
+"PO-Revision-Date: 2014-03-14 14:13+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -156,39 +156,33 @@ msgstr "General"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:27
-#| msgid "<key>Ctrl+N</key>: Create a new project"
 msgid "<keyseq><key>Ctrl</key><key>N</key></keyseq>: Create a new project"
 msgstr "<keyseq><key>Ctrl</key><key>N</key></keyseq>: crear un proyecto nuevo"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:28
-#| msgid "<key>Ctrl+O</key>: Open a project file"
 msgid "<keyseq><key>Ctrl</key><key>O</key></keyseq>: Open a project file"
 msgstr ""
 "<keyseq><key>Ctrl</key><key>O</key></keyseq>: abrir un archivo de proyecto"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:29
-#| msgid "<key>Ctrl+S</key>: Save the current project"
 msgid "<keyseq><key>Ctrl</key><key>S</key></keyseq>: Save the current project"
 msgstr ""
 "<keyseq><key>Ctrl</key><key>S</key></keyseq>: guardar el proyecto actual"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:30
-#| msgid "<key>Ctrl+Q</key>: Quit the application"
 msgid "<keyseq><key>Ctrl</key><key>Q</key></keyseq>: Quit the application"
 msgstr "<keyseq><key>Ctrl</key><key>Q</key></keyseq>: salir de la aplicación"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:31
-#| msgid "<key>Ctrl+Z</key>: Undo"
 msgid "<keyseq><key>Ctrl</key><key>Z</key></keyseq>: Undo"
 msgstr "<keyseq><key>Ctrl</key><key>Z</key></keyseq>: deshacer"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:32
-#| msgid "<key>Ctrl+Y</key>: Redo"
 msgid "<keyseq><key>Ctrl</key><key>Y</key></keyseq>: Redo"
 msgstr "<keyseq><key>Ctrl</key><key>Y</key></keyseq>: rehacer"
 
@@ -220,7 +214,6 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:43
-#| msgid "<key>Ctrl+Delete</key>: Remove the selected clips from the project"
 msgid ""
 "<keyseq><key>Ctrl</key><key>Delete</key></keyseq>: Remove the selected clips "
 "from the project"
@@ -264,9 +257,6 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:54
-#| msgid ""
-#| "<key>Shift+←</key> and <key>Shift+→</key>: Seek one second backwards or "
-#| "forwards."
 msgid ""
 "<keyseq><key>Shift</key><key>←</key></keyseq> and <keyseq><key>Shift</"
 "key><key>→</key></keyseq>: Seek one second backwards or forwards."
@@ -276,10 +266,6 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:55
-#| msgid ""
-#| "<key>Ctrl++</key> and <key>Ctrl+-</key>: Zoom in or zoom out. You can "
-#| "also use <key>Ctrl</key> with the mouse wheel to control the zoom more "
-#| "efficiently."
 msgid ""
 "<keyseq><key>Ctrl</key><key>+</key></keyseq> and <keyseq><key>Ctrl</"
 "key><key>-</key></keyseq>: Zoom in or zoom out. You can also use <key>Ctrl</"
@@ -291,7 +277,6 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:56
-#| msgid "<key>Ctrl+0</key>: Adjust the zoom to fit the timeline."
 msgid ""
 "<keyseq><key>Ctrl</key><key>0</key></keyseq>: Adjust the zoom to fit the "
 "timeline."
@@ -973,13 +958,6 @@ msgstr "Usar el selector de archivos"
 
 #. (itstool) path: section/p
 #: C/importing.page:46
-#| msgid ""
-#| "You can import media into the <gui>Media Library</gui> by using the file "
-#| "chooser dialog, which has the advantage of letting you preview the files "
-#| "you want to import. To do so, use the <guiseq><gui>Library</"
-#| "gui><gui>Import Files...</gui></guiseq> menu, the <gui>Import Files...</"
-#| "gui> button on the main toolbar, or press <keyseq><key>Ctrl</key><key>i</"
-#| "key></keyseq>."
 msgid ""
 "You can import media into the <gui>Media Library</gui> by using the file "
 "chooser dialog, which has the advantage of letting you preview the files you "
@@ -1080,9 +1058,6 @@ msgstr ""
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.page:24
-#| msgctxt "_"
-#| msgid ""
-#| "external ref='figures/logo.png' md5='694867eec987a61b070a11a7255a6de9'"
 msgctxt "_"
 msgid "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
 msgstr "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
@@ -1327,11 +1302,6 @@ msgstr ""
 
 #. (itstool) path: page/p
 #: C/layers.page:30
-#| msgid ""
-#| "It is easier to think of layers in terms of images painted on glass. With "
-#| "several pieces of glass stacked on top of each other, each of these "
-#| "pieces of glass is a layer. If the top piece of glass is completely "
-#| "painted over, none of the pieces of glass underneath will be visible."
 msgid ""
 "It is easier to think of layers in terms of images painted on glass. With "
 "several pieces of glass stacked on top of each other, each of these pieces "
@@ -1387,10 +1357,6 @@ msgstr ""
 
 #. (itstool) path: figure/desc
 #: C/layers.page:41
-#| msgid ""
-#| "The following diagram illustrates the <em>pieces of glass</em> (left) and "
-#| "how they are show as <em>layers</em> in <app>Pitivi</app>'s user "
-#| "interface (right)."
 msgid ""
 "Diagram illustrating the <em>pieces of glass</em> (left) and how they are "
 "show as <em>layers</em> in <app>Pitivi</app>'s user interface (right)."
@@ -1401,10 +1367,6 @@ msgstr ""
 
 #. (itstool) path: note/p
 #: C/layers.page:45
-#| msgid ""
-#| "Clips located on a layer above will block the clips below from view, "
-#| "unless it has an opacity value lower than 100% (as shown with the two "
-#| "topmost layers in the previous illustration)."
 msgid ""
 "Clips located on a layer above will block the clips below from view, unless "
 "they have an opacity value lower than 100% (as shown with the two topmost "
@@ -1421,9 +1383,6 @@ msgstr "Añadir y quitar capas"
 
 #. (itstool) path: section/p
 #: C/layers.page:51
-#| msgid ""
-#| "Layers are created and removed automatically. There is no “layer "
-#| "management” interface in <app>Pitivi</app> (at least, not yet)."
 msgid ""
 "There is no “layer management” interface in <app>Pitivi</app>. Layers are "
 "created and removed automatically:"
@@ -1444,9 +1403,6 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/layers.page:54
-#| msgid ""
-#| "If there are no more clips on a layer, it is automatically removed. Thus, "
-#| "to remove a layer, simply drag its clips upwards onto another layer."
 msgid ""
 "If there are no more clips on a layer, it is automatically removed. Thus, to "
 "remove a layer, simply drag its clips onto another layer."
@@ -1462,11 +1418,6 @@ msgstr "¿Qué pasa con las capas de sonido?"
 
 #. (itstool) path: section/p
 #: C/layers.page:60
-#| msgid ""
-#| "Unlike in vision, multiple sounds do not (objectively) “block” each "
-#| "other. As such, if you have multiple audio clips on separate layers, "
-#| "their sound will be mixed together. Controlling the volume of those audio "
-#| "clips simply changes their relative loudness."
 msgid ""
 "Unlike in vision, multiple sounds do not “block” each other. If you have "
 "multiple audio clips on separate layers, their sound will be mixed together. "
@@ -1645,7 +1596,6 @@ msgstr ""
 
 #. (itstool) path: note/title
 #: C/mainwindow.page:37
-#| msgid "Discover the components of the main window."
 msgid "Resizing components of the main window"
 msgstr "Redimensionar los componentes de la ventana principal."
 
@@ -1656,6 +1606,9 @@ msgid ""
 "dots. You can proportionally resize pairs of components by clicking and "
 "dragging the handles to the desired position."
 msgstr ""
+"En los espacios entre componentes hay tiradores representados por cinco "
+"puntos. Puede redimensionar proporcionalmente pares de componentes pulsando "
+"y arrastrando los tiradores a la posición que quiera."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:42
@@ -1673,6 +1626,15 @@ msgid ""
 "<gui>Clip configuration</gui>, <gui>Transitions</gui>, or <gui>Title editor</"
 "gui> are not included in the menu bar."
 msgstr ""
+"La barra de menú es el lugar desde el que se puede acceder a muchas "
+"funciones. Contiene todas las secciones que aparecen en las tres barras de "
+"herramientas, incluyendo acciones relacionadas con la gestión de proyectos, "
+"configuración de vistas y ayuda. También se puede acceder a la "
+"<gui>Configuración del proyecto</gui> y a las <gui>Preferencias</gui> "
+"mediante la barra de menú. sin embargo, las acciones de la <gui>Biblioteca "
+"de medios</gui>, <gui>Biblioteca de efectos</gui>, <gui>Configuración del "
+"vídeo</gui>, <gui>Transiciones</gui>, o <gui>Editor de títulos</gui> no "
+"están incluidos en la barra de menús."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:44
@@ -1686,7 +1648,6 @@ msgstr "Las barras de herramientas"
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:50
-#, fuzzy
 #| msgid ""
 #| "Toolbars provide access to the most commonly used functions of "
 #| "<app>Pitivi</app>. All items in toolbars can also be accessed through the "
@@ -1700,10 +1661,13 @@ msgid ""
 "menu bar. Toolbars can be activated or deactivated in the <gui>View</gui> "
 "menu."
 msgstr ""
-"Las barras de herramientas ofrecen acceso a las funciones más comúnmente "
-"utilizadas de <app>Pitivi</app>. Puede acceder a todos los elementos de las "
-"barras de herramientas a través de la barra de menú. Se pueden activar o "
-"desactivar las barras de herramientas en el menú <gui>Ver</gui>."
+"Hay tres barras de herramientas en la ventana principal de <app>Pitivi</"
+"app>: la <gui>Barra de herramientas principal</gui>, la <gui>Barra de "
+"herramientas de reproducción</gui> y la <gui>Barra de herramientas de la "
+"línea de tiempo</gui>. Proporcionan acceso a las funciones más comúnmente "
+"usadas de <app>Pitivi</app>. Se puede acceder a todos los elementos de las "
+"barras de herramientas mediante la barra de menú. Las barras de herramientas "
+"se pueden activar o desactivar en el menú <gui>Ver</gui>."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:52
@@ -1815,7 +1779,6 @@ msgstr ""
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:86
-#| msgid "The toolbars"
 msgid "Timeline toolbar"
 msgstr "Barra de herramientas de la línea de tiempo"
 
@@ -1846,7 +1809,6 @@ msgstr "Agrupar vídeos"
 
 #. (itstool) path: item/p
 #: C/mainwindow.page:92
-#| msgid "Using clips"
 msgid "Ungroup clips"
 msgstr "Desagrupar vídeos"
 
@@ -1858,7 +1820,7 @@ msgstr "Alinear vídeos basándose en sus pistas de sonido"
 #. (itstool) path: item/p
 #: C/mainwindow.page:94
 msgid "Toggle gapless mode"
-msgstr ""
+msgstr "Conmutar el modo sin esapcios"
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:97
@@ -1867,6 +1829,9 @@ msgid ""
 "When there is no subject for the action to be performed on, it remains "
 "shaded (indicating its unavailability)."
 msgstr ""
+"Tenga en cuenta que la mayoría de las acciones sólo están disponibles cuando "
+"se selecciona un clip. Cuando no hay un sujeto sobre el que realizar la "
+"acción, permanecen sombreadas (indicando que no están disponibles)."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:102
@@ -1875,8 +1840,6 @@ msgstr "Barra de herramientas de reproducción"
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:103
-#| msgid ""
-#| "This toolbar, located below the previewer, contains buttons controlling"
 msgid ""
 "This toolbar, located below the previewer, contains buttons controlling the "
 "playback of the timeline. Options provided by the toolbar are the following:"
@@ -1907,13 +1870,11 @@ msgstr "Retroceder un segundo"
 
 #. (itstool) path: item/p
 #: C/mainwindow.page:109
-#| msgid "The playback of the timeline."
 msgid "Go to the end of the timeline"
 msgstr "Ir al final de la línea de tiempo"
 
 #. (itstool) path: item/p
 #: C/mainwindow.page:110
-#| msgid "The playback of the timeline."
 msgid "Go to the beginning of the timeline"
 msgstr "Ir al comienzo de la línea de tiempo"
 
@@ -1924,6 +1885,10 @@ msgid ""
 "playhead</em> and <em>Scrubbing</em> sections on the <link xref="
 "\"movearoundtimeline\">Moving around the timeline</link> page."
 msgstr ""
+"Para obtener más información sobre cómo moverse en la línea de tiempo, "
+"consulte las secciones <em>Mover la posición actual</em> y <em>Depuración</"
+"em> en la página <link xref=\"movearoundtimeline\">Moverse por la línea de "
+"tiempo</link>."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:114
@@ -2020,7 +1985,6 @@ msgstr "Usar la biblioteca de medios"
 
 #. (itstool) path: section/title
 #: C/medialibrary.page:30
-#| msgid "Previewing a clip from the <gui>Media Library</gui>"
 msgid "Importing a file to the <gui>Media Library</gui>"
 msgstr "Importar un archivo a la <gui>Biblioteca de medios</gui>"
 
@@ -2043,11 +2007,6 @@ msgstr "Vista previa de un clip desde la <gui>Biblioteca de medios</gui>"
 
 #. (itstool) path: section/p
 #: C/medialibrary.page:35
-#| msgid ""
-#| "To preview a clip before placing it on the timeline, you can double-click "
-#| "on it in the <gui>Media Library</gui>, or right-click and choose "
-#| "<gui>Preview Clip</gui> from the popup menu. This will open the clip in a "
-#| "window that automatically closes whenever you click outside the window."
 msgid ""
 "To preview a clip before placing it on the timeline, you can double-click on "
 "it in the <gui>Media Library</gui>. This will open the clip in a window that "
@@ -2092,10 +2051,15 @@ msgid ""
 "each clip. To activate/deactivate it, click on the <gui>Show clips as a "
 "detailed list</gui> button next to the search bar."
 msgstr ""
+"La <gui>Biblioteca de medios</gui> puede mostrar sus vídeos en una vista de "
+"lista o de iconos. El modo predeterminado es la vista de iconos, ya que "
+"muestra más clips sin necesidad de desplazarse hacia abajo. Sin embargo, la "
+"vista de vista muestra más detalles sobre cada clip. Para activarla/"
+"desactivarla, pulse en el botón <gui>Mostrar clips como una lista detallada</"
+"gui> junto a la barra de búsqueda."
 
 #. (itstool) path: section/title
 #: C/medialibrary.page:46
-#| msgid "Other transitions"
 msgid "Other actions"
 msgstr "Otras acciones"
 
@@ -2106,6 +2070,9 @@ msgid ""
 "represented by a button in the upper right part of the <gui>Media Library</"
 "gui>:"
 msgstr ""
+"Hay 3 acciones más que puede realizar con los clips. Cada una de ellas se "
+"representa por un botón en la parte superior derecha de la <gui>Biblioteca "
+"de medios</gui>:"
 
 #. (itstool) path: item/p
 #: C/medialibrary.page:49
@@ -2133,6 +2100,9 @@ msgid ""
 "clips one after another into the first layer of the timeline at a position, "
 "where the last clip on any layer ends."
 msgstr ""
+"<gui>Insertar los clips seleccionados al final de la línea de tiempo</gui> "
+"inserta los clips seleccionados, uno detrás de otro, en la primera capa de "
+"la línea de tiempo, donde terminan el último clip o cualquier capa."
 
 #. (itstool) path: note/p
 #: C/medialibrary.page:54
@@ -2258,10 +2228,6 @@ msgstr "Arrastrando el deslizador de la ampliación a la izquierda de la regla"
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:53
-#| msgid ""
-#| "Using keyboard shortcuts such as <key>Ctrl</key>+<key>-</key> to zoom out "
-#| "or <key>Ctrl</key>+<key>=</key> (<key>Ctrl</key>+<key>+</key> on the "
-#| "numeric keypad) to zoom in"
 msgid ""
 "Using keyboard shortcuts such as <keyseq><key>Ctrl</key><key>-</key></"
 "keyseq> to zoom out or <keyseq><key>Ctrl</key><key>=</key></keyseq> "
@@ -2714,13 +2680,11 @@ msgstr ""
 
 #. (itstool) path: info/desc
 #: C/selectiongrouping.page:19
-#| msgid "Select an existing clip on the timeline"
 msgid "Making selections and grouping clips in timeline."
 msgstr "Hacer selecciones y agrupar clips en la línea de tiempo."
 
 #. (itstool) path: page/title
 #: C/selectiongrouping.page:27
-#| msgid "Selecting a single item"
 msgid "Selection and grouping"
 msgstr "Seleccionar y agrupamiento"
 
@@ -2799,21 +2763,16 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/selectiongrouping.page:50
-#| msgid "Moving clips along the timeline"
 msgid "Grouping clips in timeline:"
 msgstr "Agrupar clips en la línea de tiempo:"
 
 #. (itstool) path: item/p
 #: C/selectiongrouping.page:52
-#| msgid "Select an existing clip on the timeline"
 msgid "Select multiple clips in the timeline."
 msgstr "Seleccione varios clips en la línea del tiempo."
 
 #. (itstool) path: item/p
 #: C/selectiongrouping.page:53
-#| msgid ""
-#| "Click on the <gui>Split</gui> button on the timeline toolbar or press "
-#| "<key>S</key>."
 msgid "Click the <gui>Group clips</gui> button on the timeline toolbar."
 msgstr ""
 "Pulse el botón <gui>Agrupar clips</gui> en la barra de herramientas de la "
@@ -2826,21 +2785,16 @@ msgstr "Ahora puede seleccionar, editar y mover todos los clips a la vez."
 
 #. (itstool) path: section/p
 #: C/selectiongrouping.page:56
-#| msgid "Moving clips along the timeline"
 msgid "Ungrouping clips in timeline:"
 msgstr "Desagrupar clips en la línea de tiempo:"
 
 #. (itstool) path: item/p
 #: C/selectiongrouping.page:58
-#| msgid "Select an existing clip on the timeline"
 msgid "Select a group of clips in the timeline."
 msgstr "Seleccionar un grupo de clips en la línea del tiempo."
 
 #. (itstool) path: item/p
 #: C/selectiongrouping.page:59
-#| msgid ""
-#| "Click on the <gui>Split</gui> button on the timeline toolbar or press "
-#| "<key>S</key>."
 msgid "Click the <gui>Ungroup clips</gui> button on the timeline toolbar."
 msgstr ""
 "Pulse el botón <gui>Desagrupar clips</gui> en la barra de herramientas de la "
@@ -3400,7 +3354,6 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/usingclips.page:42
-#| msgid "Dragging and dropping them onto place in the timeline."
 msgid "Dragging and dropping them onto a place in the timeline."
 msgstr "Arrastrarlos y soltarlos en una parte de la línea del tiempo."
 
@@ -3413,7 +3366,6 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/usingclips.page:44
-#| msgid "Hold the <key>Shift</key> key."
 msgid "Pressing the <key>Insert</key> key."
 msgstr "Pulsando la tecla <key>Insert</key>."
 
@@ -3611,7 +3563,6 @@ msgstr ""
 
 #. (itstool) path: page/title
 #: C/workwithprojects.page:27
-#| msgid "Saving a project"
 msgid "Working with projects"
 msgstr "Trabajar con proyectos"
 
@@ -3659,7 +3610,6 @@ msgstr ""
 
 #. (itstool) path: section/title
 #: C/workwithprojects.page:37
-#| msgid "Reverting changes"
 msgid "Undoing and reverting changes"
 msgstr "Deshacer y revertir cambios"
 
@@ -3733,7 +3683,6 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:51
-#, fuzzy
 #| msgid ""
 #| "Digital images are composed of a grid of <link href=\"http://en.wikipedia."
 #| "org/wiki/Pixel\">pixels</link>, which may or may not be square. As such, "
@@ -3751,18 +3700,17 @@ msgid ""
 "wiki/Display_aspect_ratio\">display aspect ratio</link> (DAR) is the "
 "mathematical ratio of width:height for the whole image."
 msgstr ""
-"Las imágenes digitales están compuestas de una cuadrícula de <link href="
-"\"http://en.wikipedia.org/wiki/Pixel\">píxeles</link>, que puede ser o no un "
-"cuadrado. Como tal, en algunos casos, podría necesitar configurar la <link "
-"href=\"http://en.wikipedia.org/wiki/Pixel_aspect_ratio\">proporción del "
-"aspecto en píxeles</link> (PAR) para que la imagen se muestre correctamente. "
-"Por otro lado la, <link href=\"http://en.wikipedia.org/wiki/"
-"Display_aspect_ratio\">proporción del aspecto visualizado</link> (DAR) es la "
-"proporción matemática de anchura:altura para la imagen entera."
+"Las imágenes digitales están compuestas de una cuadrícula de <link href="
+"\"http://en.wikipedia.org/wiki/Pixel\">píxeles</link>, que puede ser o no un "
+"cuadrado. En algunos casos, podría necesitar configurar la <link href="
+"\"http://en.wikipedia.org/wiki/Pixel_aspect_ratio\">proporción del aspecto "
+"en píxeles</link> (PAR) para que la imagen se muestre correctamente. Por "
+"otro lado la, <link href=\"http://en.wikipedia.org/wiki/Display_aspect_ratio"
+"\">proporción del aspecto visualizado</link> (DAR) es la proporción "
+"matemática de anchura:altura para la imagen completa."
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:52
-#, fuzzy
 #| msgid ""
 #| "In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are "
 #| "related to each other by the video resolution (width and height). Once "
