@@ -805,9 +805,14 @@ class Project(Loggable, GES.Project):
     #--------------------------------------------#
     # GES.Project virtual methods implementation #
     #--------------------------------------------#
-    def _handle_asset_loaded(self, unused_id):
+
+    def _handle_asset_loaded(self, asset=None, unused_asset_id=None):
+        if asset and not GObject.type_is_a(asset.get_extractable_type(), GES.UriClip):
+            # Ignore for example the assets producing GES.TitleClips.
+            return
         self.nb_imported_files += 1
-        self.nb_remaining_file_to_import = len([asset for asset in self.get_loading_assets() if
+        assets = self.get_loading_assets()
+        self.nb_remaining_file_to_import = len([asset for asset in assets if
                 GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
         if self.nb_remaining_file_to_import == 0:
             self.nb_imported_files = 0
@@ -818,11 +823,11 @@ class Project(Loggable, GES.Project):
         When GES.Project emit "asset-added" this vmethod
         get calls
         """
-        self._handle_asset_loaded(asset.get_id())
+        self._handle_asset_loaded(asset=asset)
 
-    def do_loading_error(self, unused_error, id, unused_type):
+    def do_loading_error(self, unused_error, asset_id, unused_type):
         """ vmethod, get called on "asset-loading-error"""
-        self._handle_asset_loaded(id)
+        self._handle_asset_loaded(unused_asset_id=asset_id)
 
     def do_loaded(self, unused_timeline):
         """ vmethod, get called on "loaded" """
