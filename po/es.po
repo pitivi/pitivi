@@ -14,8 +14,8 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2014-03-02 12:37+0000\n"
-"PO-Revision-Date: 2014-03-11 14:18+0100\n"
+"POT-Creation-Date: 2014-03-11 13:20+0000\n"
+"PO-Revision-Date: 2014-03-14 13:55+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -232,11 +232,11 @@ msgstr "Propiedades del clip…"
 
 #: ../data/ui/medialibrary.ui.h:6
 msgid "Insert the selected clips at the end of the timeline"
-msgstr "Insertar los clips seleccionados al final de la cronología"
+msgstr "Insertar los clips seleccionados al final de la línea de tiempo"
 
 #: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:281
 msgid "Insert at _End of Timeline"
-msgstr "Insertar al _final de la cronología"
+msgstr "Insertar al _final de la línea de tiempo"
 
 #: ../data/ui/medialibrary.ui.h:8
 msgid "Show clips as a detailed list"
@@ -537,7 +537,6 @@ msgid "Missing dependencies..."
 msgstr "Dependencias faltantes…"
 
 #: ../data/ui/titleeditor.ui.h:1
-#| msgid "No title clip selected. Select a clip to edit or create a new one."
 msgid "Select a title clip to edit or create a new one."
 msgstr "Seleccione un clip para editarlo o cree uno nuevo."
 
@@ -603,11 +602,13 @@ msgstr ""
 
 #: ../pitivi/application.py:379
 msgid "Import each MEDIA_FILE into a new project."
-msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
+msgstr ""
+"Añada cada ARCHIVO_MULTIMEDIA a la línea de tiempo después de importarla."
 
 #: ../pitivi/application.py:382
 msgid "Add each imported MEDIA_FILE to the timeline."
-msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
+msgstr ""
+"Añada cada ARCHIVO_MULTIMEDIA a la línea de tiempo después de importarla."
 
 #: ../pitivi/application.py:385
 msgid "Run Pitivi in the Python Debugger."
@@ -658,14 +659,10 @@ msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "Error: no se cumplen las siguientes dependencias fuertes:"
 
 #: ../pitivi/check.py:223
-#| msgid "Missing Dependencies"
 msgid "Missing soft dependency:"
 msgstr "Falta la dependencia débil:"
 
 #: ../pitivi/check.py:230
-#| msgid ""
-#| "Make sure you have at least one valid audio output sink available "
-#| "(alsasink or osssink)."
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -696,7 +693,8 @@ msgstr "Nombre del efecto"
 #: ../pitivi/clipproperties.py:224
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
-"Seleccionar un clip en la cronología para configurar sus efectos asociados"
+"Seleccionar un clip en la línea de tiempo para configurar sus efectos "
+"asociados"
 
 #: ../pitivi/clipproperties.py:488
 msgid "Transformation"
@@ -851,7 +849,7 @@ msgstr "_Biblioteca"
 
 #: ../pitivi/mainwindow.py:287
 msgid "_Timeline"
-msgstr "Crono_logía"
+msgstr "Línea de _tiempo"
 
 #: ../pitivi/mainwindow.py:288
 msgid "Previe_w"
@@ -882,17 +880,14 @@ msgid "Effect Library"
 msgstr "Biblioteca de efectos"
 
 #: ../pitivi/mainwindow.py:400
-#| msgid "Clips"
 msgid "Clip"
 msgstr "Clip"
 
 #: ../pitivi/mainwindow.py:401
-#| msgid "Transitions"
 msgid "Transition"
 msgstr "Transición"
 
 #: ../pitivi/mainwindow.py:402
-#| msgid "Untitled"
 msgid "Title"
 msgstr "Título"
 
@@ -1063,7 +1058,6 @@ msgid "Save As..."
 msgstr "Guardar como…"
 
 #: ../pitivi/mainwindow.py:1267
-#| msgid "Previe_w"
 msgid "Preview"
 msgstr "Previsualizar"
 
@@ -1339,7 +1333,8 @@ msgid ""
 "Click the transition on the timeline to change the transition type."
 msgstr ""
 "Crear una transición superponiendo dos clips adyacentes en la misma capa. "
-"Pulse en la transición en la cronología para cambiar el tipo de transición."
+"Pulse en la transición en la línea de tiempo para cambiar el tipo de "
+"transición."
 
 #: ../pitivi/transitions.py:188
 msgid "Slow"
@@ -1367,7 +1362,7 @@ msgstr "Reproduciendo actualmente"
 
 #: ../pitivi/viewer.py:204
 msgid "Go to the beginning of the timeline"
-msgstr "Ir al comienzo de la cronología"
+msgstr "Ir al comienzo de la línea de tiempo"
 
 #: ../pitivi/viewer.py:211
 msgid "Go back one second"
@@ -1379,7 +1374,7 @@ msgstr "Ir al siguiente segundo"
 
 #: ../pitivi/viewer.py:230
 msgid "Go to the end of the timeline"
-msgstr "Ir al final de la cronología"
+msgstr "Ir al final de la línea de tiempo"
 
 #: ../pitivi/viewer.py:237
 msgid ""
@@ -1508,7 +1503,7 @@ msgid ""
 "timeline."
 msgstr ""
 "Duración predeterminada (el milisegundos) del clip de imágenes al insertarlo "
-"en la cronología."
+"en la línea de tiempo."
 
 #: ../pitivi/timeline/timeline.py:882
 msgid ""
