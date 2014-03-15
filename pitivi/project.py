@@ -1036,7 +1036,7 @@ class Project(Loggable, GES.Project):
         if not self.videorate:
             self.videorate = Gst.Fraction(25, 1)
         if not self.videopar:
-            self.videopar = Gst.Fraction(16, 15)
+            self.videopar = Gst.Fraction(1, 1)
 
     def _ensureAudioRestrictions(self):
         if not self.audiochannels:
