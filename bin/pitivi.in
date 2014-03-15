@@ -26,12 +26,22 @@ import string
 import locale
 import gettext
 
-CONFIGURED_PYTHONPATH = '@CONFIGURED_PYTHONPATH@'
-CONFIGURED_GI_TYPELIB_PATH = '@CONFIGURED_GI_TYPELIB_PATH@'
-CONFIGURED_LD_LIBRARY_PATH = '@CONFIGURED_LD_LIBRARY_PATH@'
-CONFIGURED_GST_PLUGIN_PATH = '@CONFIGURED_GST_PLUGIN_PATH@'
-LIBDIR = '@LIBDIR@'
 localedir = ""
+if os.environ.has_key("APPDIR"):
+    basedir = os.environ["APPDIR"]
+    CONFIGURED_PYTHONPATH = ""
+    CONFIGURED_GI_TYPELIB_PATH = ""
+    CONFIGURED_LD_LIBRARY_PATH = ""
+    CONFIGURED_GST_PLUGIN_PATH = ""
+    LIBDIR = os.path.join(basedir, 'usr', 'lib')
+    DATADIR = os.path.join(basedir, "usr", "share")
+else:
+    CONFIGURED_PYTHONPATH = '@CONFIGURED_PYTHONPATH@'
+    CONFIGURED_GI_TYPELIB_PATH = '@CONFIGURED_GI_TYPELIB_PATH@'
+    CONFIGURED_LD_LIBRARY_PATH = '@CONFIGURED_LD_LIBRARY_PATH@'
+    CONFIGURED_GST_PLUGIN_PATH = '@CONFIGURED_GST_PLUGIN_PATH@'
+    LIBDIR = '@LIBDIR@'
+    DATADIR = '@DATADIR'
 
 
 def _prepend_env_path(name, value):
@@ -61,7 +71,7 @@ def _add_pitivi_path():
         localedir = os.path.join(os.path.split(dir)[0], 'locale')
     else:
         root = os.path.join(LIBDIR, 'pitivi', 'python')
-        localedir = "@DATADIR@/locale"
+        localedir = os.path.join(DATADIR, "locale")
 
     if not root in sys.path:
         sys.path.insert(0, root)
