@@ -615,7 +615,7 @@ class TitleEditor(Loggable):
         toolbar = builder.get_object("toolbar")
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
-        buttons = ["bold", "italic", "font", "font_fore_color", "back_color"]
+        buttons = ["bold", "italic", "font", "font_fore_color", "background_color"]
         for button in buttons:
             self.bt[button] = builder.get_object(button)
 
@@ -647,6 +647,7 @@ class TitleEditor(Loggable):
         color_int += int(color.alpha * 255) * 256 ** 3
         self.debug("Setting title background color to %s", hex(color_int))
         self.source.set_background(color_int)
+        self.seeker.flush()
 
     def _frontTextColorButtonCb(self, widget):
         suc, a, t, s = Pango.parse_markup("<span color='" + widget.get_color().to_string() + "'>color</span>", -1, '\x00')
@@ -722,16 +723,16 @@ class TitleEditor(Loggable):
             self.settings['ypos'].set_value(self.source.get_ypos())
             self.settings['valignment'].set_active_id(self.source.get_valignment().value_name)
             self.settings['halignment'].set_active_id(self.source.get_halignment().value_name)
-            if hasattr(self.source, "get_background"):
-                self.bt["back_color"].set_visible(True)
-                color = self.source.get_background()
+            if hasattr(self.source, "get_background_color"):
+                self.bt["background_color"].set_visible(True)
+                color = self.source.get_background_color()
                 color = Gdk.RGBA(color / 256 ** 2 % 256 / 255.,
                                  color / 256 ** 1 % 256 / 255.,
                                  color / 256 ** 0 % 256 / 255.,
                                  color / 256 ** 3 % 256 / 255.)
-                self.bt["back_color"].set_rgba(color)
+                #self.bt["background_color"].set_rgba(color)
             else:
-                self.bt["back_color"].set_visible(False)
+                self.bt["background_color"].set_visible(False)
 
     def _updateSourceText(self, unused_updated_obj):
         if self.source is not None:
