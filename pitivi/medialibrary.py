@@ -137,6 +137,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         builder.connect_signals(self)
         self._welcome_infobar = builder.get_object("welcome_infobar")
         self._import_warning_infobar = builder.get_object("warning_infobar")
+        self._import_warning_infobar.hide()
         self._warning_label = builder.get_object("warning_label")
         self._view_error_button = builder.get_object("view_error_button")
         toolbar = builder.get_object("medialibrary_toolbar")
@@ -252,9 +253,10 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
         self.project_signals = SignalGroup()
-        self.app.connect("new-project-created", self._newProjectCreatedCb)
-        self.app.connect("new-project-loaded", self._newProjectLoadedCb)
-        self.app.connect("new-project-failed", self._newProjectFailedCb)
+        project_manager = self.app.project_manager
+        project_manager.connect("new-project-created", self._newProjectCreatedCb)
+        project_manager.connect("new-project-loaded", self._newProjectLoadedCb)
+        project_manager.connect("new-project-failed", self._newProjectFailedCb)
 
         # Drag and Drop
         self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
@@ -499,8 +501,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # The clip iter has a +1 offset in the progressbar label (to refer to
         # the actual # of the clip we're processing), but there is no offset
         # in the progressbar itself (to reflect the process being incomplete).
-        current_clip_iter = self.app.current_project.nb_imported_files
-        total_clips = self.app.current_project.nb_remaining_file_to_import + current_clip_iter
+        current_clip_iter = self.app.project_manager.current_project.nb_imported_files
+        total_clips = self.app.project_manager.current_project.nb_remaining_file_to_import + current_clip_iter
 
         progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
             {"current_clip": current_clip_iter + 1,
@@ -727,7 +729,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.app.settings.closeImportDialog = \
                 dialogbox.props.extra_widget.get_active()
             filenames = dialogbox.get_uris()
-            self.app.current_project.addUris(filenames)
+            self.app.project_manager.current_project.addUris(filenames)
             if self.app.settings.closeImportDialog:
                 dialogbox.destroy()
                 self._importDialog = None
@@ -757,12 +759,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.app.action_log.begin("remove clip from source list")
         for row in rows:
             asset = model[row.get_path()][COL_ASSET]
-            self.app.current_project.remove_asset(asset)
+            self.app.project_manager.current_project.remove_asset(asset)
         self.app.action_log.commit()
 
     def _sourceIsUsed(self, asset):
         """Check if a given URI is present in the timeline"""
-        layers = self.app.current_project.timeline.get_layers()
+        layers = self.app.project_manager.current_project.timeline.get_layers()
         for layer in layers:
             for clip in layer.get_clips():
                 if clip.get_asset() == asset:
@@ -773,7 +775,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         Select, in the media library, unused sources in the project.
         """
-        assets = self.app.current_project.list_assets(GES.UriClip)
+        assets = self.app.project_manager.current_project.list_assets(GES.UriClip)
         unused_sources_uris = []
 
         model = self.treeview.get_model()
@@ -814,7 +816,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # Only use the first item.
         path = paths[0]
         asset = self.storemodel[path][COL_ASSET]
-        dialog = ClipMediaPropsDialog(self.app.current_project, asset)
+        dialog = ClipMediaPropsDialog(self.app.project_manager.current_project, asset)
         dialog.run()
 
     def _warningInfoBarDismissedCb(self, unused_button):
@@ -998,7 +1000,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self._welcome_infobar.show_all()
             self._connectToProject(project)
 
-    def _newProjectLoadedCb(self, unused_pitivi, project):
+    def _newProjectLoadedCb(self, unused_app, project, unused_fully_ready):
         if not self._project is project:
             self._project = project
             self.storemodel.clear()
@@ -1013,8 +1015,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._project = None
 
     def _addUris(self, uris):
-        if self.app.current_project:
-            self.app.current_project.addUris(uris)
+        if self.app.project_manager.current_project:
+            self.app.project_manager.current_project.addUris(uris)
         else:
             self.warning("Adding uris to project, but the project has changed in the meantime")
         return False
@@ -1049,7 +1051,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             # Recursively import from folders that were dragged into the library
             self.app.threads.addThread(PathWalker, directories, self._addUris)
         if filenames:
-            self.app.current_project.addUris(filenames)
+            self.app.project_manager.current_project.addUris(filenames)
 
     #used with TreeView and IconView
     def _dndDragDataGetCb(self, unused_view, unused_context, data, unused_info, unused_timestamp):

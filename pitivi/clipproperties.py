@@ -144,7 +144,7 @@ class EffectProperties(Gtk.Expander, Loggable):
     # Note: This should be inherited from Gtk.Expander when we get other things
     # to put in ClipProperties, that is why this is done this way
 
-    def __init__(self, instance, effects_properties_manager, clip_properties):
+    def __init__(self, app, effects_properties_manager, clip_properties):
         # Set up the expander widget that will contain everything:
         Gtk.Expander.__init__(self)
         self.set_expanded(True)
@@ -152,8 +152,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         Loggable.__init__(self)
 
         # Global variables related to effects
-        self.app = instance
-        self.settings = instance.settings
+        self.app = app
+        self.settings = app.settings
 
         self.selected_effects = []
         self.clips = []
@@ -244,11 +244,11 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
         self._vcontent.connect("notify", self._vcontentNotifyCb)
         removeEffectButton.connect("clicked", self._removeEffectCb)
-        self.app.connect("new-project-loaded", self._newProjectLoadedCb)
+        self.app.project_manager.connect("new-project-loaded", self._newProjectLoadedCb)
         self.connect('notify::expanded', self._expandedCb)
         self.connected = False
 
-    def _newProjectLoadedCb(self, app, project):
+    def _newProjectLoadedCb(self, app, project, unused_fully_loaded):
         self.clip_properties.project = project
         self.selected_effects = self.timeline.selection.getSelectedEffects()
         self.updateAll()
@@ -337,9 +337,9 @@ class EffectProperties(Gtk.Expander, Loggable):
                     effect = GES.Effect.new(bin_description=bin_desc)
                     clip.add(effect)
                     self.updateAll()
-                    self.app.current_project.timeline.commit()
+                    self.app.project_manager.current_project.timeline.commit()
                     self.app.action_log.commit()
-                    self.app.current_project.pipeline.flushSeek()
+                    self.app.project_manager.current_project.pipeline.flushSeek()
 
                     break
 
@@ -371,7 +371,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         tck_effect.set_active(not tck_effect.is_active())
         cellrenderertoggle.set_active(tck_effect.is_active())
         self._updateTreeview()
-        self.app.current_project.timeline.commit()
+        self.app.project_manager.current_project.timeline.commit()
         self.app.action_log.commit()
 
     def _expandedCb(self, expander, params):
@@ -579,7 +579,7 @@ class TransformationProperties(Gtk.Expander):
             box.update_from_effect(self.effect)
 
     def _flushPipeLineCb(self, widget):
-        self.app.current_project.pipeline.flushSeek()
+        self.app.project_manager.current_project.pipeline.flushSeek()
 
     def _findEffect(self, name):
         for effect in self._selected_clip.get_children(False):
@@ -593,7 +593,7 @@ class TransformationProperties(Gtk.Expander):
         if not effect:
             effect = GES.Effect.new(bin_description=name)
             self._selected_clip.add(effect)
-            tracks = self.app.projectManager.current_project.timeline.get_tracks()
+            tracks = self.app.project_manager.current_project.timeline.get_tracks()
             effect = self._findEffect(name)
             # disable the effect on default
             a = self.effect.get_gnlobject()
@@ -620,7 +620,7 @@ class TransformationProperties(Gtk.Expander):
             if self._selected_clip:
                 self._selected_clip = None
                 self.zoom_scale.set_value(1.0)
-                self.app.current_project.pipeline.flushSeek()
+                self.app.project_manager.current_project.pipeline.flushSeek()
             self.effect = None
             self.hide()
         self._updateBoxVisibility()

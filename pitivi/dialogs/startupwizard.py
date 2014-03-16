@@ -1,4 +1,3 @@
-""" This module implements a startup wizard"""
 # Pitivi video editor
 #
 #       pitivi/dialogs/startupwizard.py
@@ -28,9 +27,9 @@ from gi.repository import GES
 
 from gettext import gettext as _
 
+from pitivi.check import missing_soft_deps
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.depsmanager import DepsManager
-from pitivi.check import missing_soft_deps
 from pitivi.utils.misc import show_user_manual
 
 
@@ -79,9 +78,10 @@ class StartUpWizard(object):
         if not missing_soft_deps:
             missing_button.hide()
 
-        self.app.projectManager.connect("new-project-failed", self._projectFailedCb)
-        self.app.projectManager.connect("new-project-loaded", self._projectLoadedCb)
-        self.app.projectManager.connect("new-project-loading", self._projectLoadingCb)
+        project_manager = self.app.project_manager
+        project_manager.connect("new-project-failed", self._projectFailedCb)
+        project_manager.connect("new-project-loaded", self._projectLoadedCb)
+        project_manager.connect("new-project-loading", self._projectLoadingCb)
 
         vbox = self.builder.get_object("topvbox")
         self.infobar = Gtk.InfoBar()
@@ -93,7 +93,8 @@ class StartUpWizard(object):
 
     def _newProjectCb(self, unused_button):
         """Handle a click on the New (Project) button."""
-        self.app.projectManager.newBlankProject()
+        self.app.project_manager.newBlankProject()
+        self.hide()
         self.app.gui.showProjectSettingsDialog()
 
     def _loadCb(self, unused_recent_chooser):
@@ -102,13 +103,14 @@ class StartUpWizard(object):
         This calls the project manager to load the associated URI.
         """
         uri = self.recent_chooser.get_current_uri()
-        self.app.projectManager.loadProject(uri)
+        self.app.project_manager.loadProject(uri)
 
     def _keyPressCb(self, unused_widget, event):
         """Handle a key press event on the dialog."""
         if event.keyval == Gdk.KEY_Escape:
             # The user pressed "Esc".
-            self.app.projectManager.newBlankProject()
+            self.app.project_manager.newBlankProject()
+            self.hide()
 
     def _onBrowseButtonClickedCb(self, unused_button6):
         """Handle a click on the Browse button."""
@@ -120,7 +122,8 @@ class StartUpWizard(object):
 
     def _deleteCb(self, unused_widget, unused_event):
         """Handle a click on the X button of the dialog."""
-        self.app.projectManager.newBlankProject()
+        self.app.project_manager.newBlankProject()
+        self.hide()
 
     def show(self):
         """Will show the interal window and position the wizard"""
@@ -137,16 +140,16 @@ class StartUpWizard(object):
         """Handle the failure of a project open operation."""
         self.show()
 
-    def _projectLoadedCb(self, unused_project_manager, unused_project, fully_loaded):
-        """Handle the success of a project load operation.
+    def _projectLoadedCb(self, project_manager, unused_project, fully_loaded):
+        """
+        Handle the success of a project load operation.
 
-        All the create or load project usage scenarios must generate
-        a new-project-loaded signal from self.app.projectManager!
+        @type project_manager: L{ProjectManager}
         """
         if fully_loaded:
-            self.app.projectManager.disconnect_by_function(self._projectFailedCb)
-            self.app.projectManager.disconnect_by_function(self._projectLoadedCb)
-            self.app.projectManager.disconnect_by_function(self._projectLoadingCb)
+            project_manager.disconnect_by_function(self._projectFailedCb)
+            project_manager.disconnect_by_function(self._projectLoadedCb)
+            project_manager.disconnect_by_function(self._projectLoadingCb)
 
     def _projectLoadingCb(self, unused_project_manager, unused_project):
         """Handle the start of a project load operation."""

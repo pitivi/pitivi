@@ -106,6 +106,12 @@ class ProjectLogObserver(UndoableAction):
 
 
 class ProjectManager(Signallable, Loggable):
+    """
+    @type app: L{Pitivi}
+    @type current_project: L{Project}
+    @param disable_save: Whether saving is disabled to enforce using save-as.
+    """
+
     __signals__ = {
         "new-project-loading": ["uri"],
         "new-project-created": ["project"],
@@ -119,12 +125,14 @@ class ProjectManager(Signallable, Loggable):
         "reverting-to-saved": ["project"],
     }
 
-    def __init__(self, app_instance):
+    _instance = None
+
+    def __init__(self, app):
         Signallable.__init__(self)
         Loggable.__init__(self)
-        self.app = app_instance
+        self.app = app
         self.current_project = None
-        self.disable_save = False  # Enforce "Save as" for backup and xptv files
+        self.disable_save = False
         self._backup_lock = 0
 
     def loadProject(self, uri):
@@ -176,7 +184,6 @@ class ProjectManager(Signallable, Loggable):
                       _('This might be due to a bug or an unsupported project file format. '
                       'If you were trying to add a media file to your project, '
                       'use the "Import" button instead.'))
-            # Reset projectManager and disconnect all the signals:
             self.newBlankProject(ignore_unsaved_changes=True)
             return False
 
@@ -426,6 +433,7 @@ class ProjectManager(Signallable, Loggable):
         self.emit("new-project-created", project)
 
         project.connect("project-changed", self._projectChangedCb)
+        project.setModificationState(False)
         self.emit("new-project-loaded", self.current_project, emission)
         self.time_loaded = time()
 
@@ -499,7 +507,8 @@ class ProjectManager(Signallable, Loggable):
 
 
 class Project(Loggable, GES.Project):
-    """The base class for Pitivi projects
+    """
+    The base class for Pitivi projects
 
     @ivar name: The name of the project
     @type name: C{str}

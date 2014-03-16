@@ -603,7 +603,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
 
     def _trackAddedCb(self, unused_timeline, track):
         self._connectTrack(track)
-        self._container.app.current_project.update_restriction_caps()
+        self._container.app.project_manager.current_project.update_restriction_caps()
 
     def _trackRemovedCb(self, unused_timeline, track):
         self._disconnectTrack(track)

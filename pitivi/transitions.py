@@ -161,7 +161,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
             self.props_widgets.set_sensitive(True)
 
         self.element.get_parent().set_asset(transition_asset)
-        self.app.current_project.seeker.flush(True)
+        self.app.project_manager.current_project.seeker.flush(True)
 
         return True
 
@@ -169,13 +169,13 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         value = range_changed.get_value()
         self.debug("User changed the border property to %s", value)
         self.element.set_border(int(value))
-        self.app.current_project.seeker.flush(True)
+        self.app.project_manager.current_project.seeker.flush(True)
 
     def _invertCheckboxCb(self, widget):
         value = widget.get_active()
         self.debug("User changed the invert property to %s", value)
         self.element.set_inverted(value)
-        self.app.current_project.seeker.flush()
+        self.app.project_manager.current_project.seeker.flush()
 
     def _borderTypeChangedCb(self, widget=None):
         """

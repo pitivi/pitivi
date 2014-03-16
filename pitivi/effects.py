@@ -609,12 +609,15 @@ PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
 
 
 class EffectsPropertiesManager:
-    def __init__(self, instance):
+    """
+    @type app: L{Pitivi}
+    """
+    def __init__(self, app):
         self.cache_dict = {}
         self._current_effect_setting_ui = None
         self._current_element_values = {}
-        self.action_log = instance.action_log
-        self.app = instance
+        self.action_log = app.action_log
+        self.app = app
 
     def getEffectConfigurationUI(self, effect):
         """Permit to get a configuration GUI for the effect
@@ -681,5 +684,5 @@ class EffectsPropertiesManager:
             self._current_effect_setting_ui.element.set_child_property(prop.name, value)
             self.action_log.commit()
 
-            self.app.current_project.pipeline.flushSeek()
+            self.app.project_manager.current_project.pipeline.flushSeek()
             self._current_element_values[prop.name] = value

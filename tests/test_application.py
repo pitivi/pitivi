@@ -35,32 +35,39 @@ class TestPitivi(TestCase):
 
     def testBasic(self):
         app = application.Pitivi()
+        app.emit("startup")
         self.assertTrue(app.shutdown())
 
     def testVersionInfo(self):
         app = application.Pitivi()
+        app.emit("startup")
         self.assertTrue(app.isLatest())
 
         app = application.Pitivi()
+        app.emit("startup")
         app._versionInfoReceivedCb(MockGioFile(), "invalid", None)
         self.assertTrue(app.isLatest())
 
         app = application.Pitivi()
+        app.emit("startup")
         app._versionInfoReceivedCb(MockGioFile(), "%s=CURRENT" % configure.VERSION, None)
         self.assertTrue(app.isLatest())
         self.assertEqual(configure.VERSION, app.getLatest())
 
         app = application.Pitivi()
+        app.emit("startup")
         app._versionInfoReceivedCb(MockGioFile(), "%s=current\n0=supported" % configure.VERSION, None)
         self.assertTrue(app.isLatest())
         self.assertEqual(configure.VERSION, app.getLatest())
 
         app = application.Pitivi()
+        app.emit("startup")
         app._versionInfoReceivedCb(MockGioFile(), "999.0=CURRENT", None)
         self.assertFalse(app.isLatest())
         self.assertEqual("999.0", app.getLatest())
 
         app = application.Pitivi()
+        app.emit("startup")
         app._versionInfoReceivedCb(MockGioFile(), "999.0=CURRENT\n%s=SUPPORTED" % configure.VERSION, None)
         self.assertFalse(app.isLatest())
         self.assertEqual("999.0", app.getLatest())

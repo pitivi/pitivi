@@ -309,7 +309,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
             self.target.renderbox()
 
     def _playButtonCb(self, unused_button, unused_playing):
-        self.app.current_project.pipeline.togglePlayback()
+        self.app.project_manager.current_project.pipeline.togglePlayback()
         self.app.gui.focusTimeline()
 
     def _goToStartCb(self, unused_button):
@@ -327,7 +327,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.app.gui.focusTimeline()
 
     def _goToEndCb(self, unused_button):
-        end = self.app.current_project.pipeline.getDuration()
+        end = self.app.project_manager.current_project.pipeline.getDuration()
         self.seeker.seek(end)
         self.app.gui.focusTimeline()
 
@@ -412,7 +412,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
         clip_uri = tl_obj.props.uri
         cur_time = time()
-        if self.pipeline == self.app.current_project.pipeline:
+        if self.pipeline == self.app.project_manager.current_project.pipeline:
             self.debug("Creating temporary pipeline for clip %s, position %s",
                 clip_uri, format_ns(position))
             self._oldTimelinePos = self.pipeline.getPosition()
@@ -428,11 +428,11 @@ class ViewerContainer(Gtk.VBox, Loggable):
         """
         After trimming a clip, reset the project pipeline into the viewer.
         """
-        if self.pipeline is not self.app.current_project.pipeline:
+        if self.pipeline is not self.app.project_manager.current_project.pipeline:
             self.pipeline.setState(Gst.State.NULL)
             # Using pipeline.getPosition() here does not work because for some
             # reason it's a bit off, that's why we need self._oldTimelinePos.
-            self.setPipeline(self.app.current_project.pipeline, self._oldTimelinePos)
+            self.setPipeline(self.app.project_manager.current_project.pipeline, self._oldTimelinePos)
             self.debug("Back to the project's pipeline")
 
     def _pipelineStateChangedCb(self, unused_pipeline, state):

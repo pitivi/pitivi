@@ -176,7 +176,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.recent_manager = Gtk.RecentManager()
         self._missingUriOnLoading = False
 
-        pm = self.app.projectManager
+        pm = self.app.project_manager
         pm.connect("new-project-loading", self._projectManagerNewProjectLoadingCb)
         pm.connect("new-project-loaded", self._projectManagerNewProjectLoadedCb)
         pm.connect("new-project-failed", self._projectManagerNewProjectFailedCb)
@@ -212,7 +212,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.timeline_ui.enableKeyboardAndMouseEvents()
 
     def _renderCb(self, unused_button):
-        self.showRenderDialog(self.app.current_project)
+        self.showRenderDialog(self.app.project_manager.current_project)
 
     def _createUi(self):
         """
@@ -297,7 +297,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         # Now, the lower part: the timeline
         self.timeline_ui = TimelineContainer(self, self.app, self.uimanager)
-        self.timeline_ui.setProjectManager(self.app.projectManager)
+        self.timeline_ui.setProjectManager(self.app.project_manager)
         self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
 
         # Enable our shortcuts for HeaderBar buttons and menu items:
@@ -502,33 +502,33 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 ## Toolbar/Menu actions callback
 
     def _newProjectMenuCb(self, unused_action):
-        if self.app.projectManager.newBlankProject() is not False:
+        if self.app.project_manager.newBlankProject() is not False:
             self.showProjectSettingsDialog()
 
     def _openProjectCb(self, unused_action):
         self.openProject()
 
     def _saveProjectCb(self, unused_action):
-        if not self.app.current_project.uri or self.app.projectManager.disable_save is True:
+        if not self.app.project_manager.current_project.uri or self.app.project_manager.disable_save:
             self._saveProjectAsCb(unused_action)
         else:
-            self.app.projectManager.saveProject()
+            self.app.project_manager.saveProject()
 
     def _saveProjectAsCb(self, unused_action):
-        uri = self._showSaveAsDialog(self.app.current_project)
+        uri = self._showSaveAsDialog(self.app.project_manager.current_project)
         if uri is not None:
-            return self.app.projectManager.saveProject(uri)
+            return self.app.project_manager.saveProject(uri)
 
         return False
 
     def _revertToSavedProjectCb(self, unused_action):
-        return self.app.projectManager.revertToSavedProject()
+        return self.app.project_manager.revertToSavedProject()
 
     def _exportProjectAsTarCb(self, unused_action):
-        uri = self._showExportDialog(self.app.current_project)
+        uri = self._showExportDialog(self.app.project_manager.current_project)
         result = None
         if uri:
-            result = self.app.projectManager.exportProject(self.app.current_project, uri)
+            result = self.app.project_manager.exportProject(self.app.project_manager.current_project, uri)
 
         if not result:
             self.log("Project couldn't be exported")
@@ -539,7 +539,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def showProjectSettingsDialog(self):
         from pitivi.project import ProjectSettingsDialog
-        ProjectSettingsDialog(self, self.app.current_project).window.run()
+        ProjectSettingsDialog(self, self.app.project_manager.current_project).window.run()
         self.updateTitle()
 
     def _userManualCb(self, unused_action):
@@ -605,7 +605,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         # Requesting project closure at this point in time prompts users about
         # unsaved changes (if any); much better than having ProjectManager
         # trigger this *after* the user already chose a new project to load...
-        if not self.app.projectManager.closeRunningProject():
+        if not self.app.project_manager.closeRunningProject():
             return  # The user has not made a decision, don't do anything
 
         chooser = Gtk.FileChooserDialog(title=_("Open File..."),
@@ -630,10 +630,10 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         response = chooser.run()
         if response == Gtk.ResponseType.OK:
-            self.app.projectManager.loadProject(chooser.get_uri())
+            self.app.project_manager.loadProject(chooser.get_uri())
         else:
             self.info("User cancelled loading a new project, but no other project is currently active. Resetting")
-            self.app.projectManager.newBlankProject()
+            self.app.project_manager.newBlankProject()
         chooser.destroy()
         return True
 
@@ -656,16 +656,16 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.prefsdialog.run()
 
 ## Project management callbacks
-    def _projectManagerNewProjectLoadedCb(self, projectManager, unused_project, unused_fully_loaded):
+
+    def _projectManagerNewProjectLoadedCb(self, project_manager, unused_project, unused_fully_loaded):
         """
-        Once a new project has been loaded, wait for media library's
-        "ready" signal to populate the timeline.
+        @type project_manager: L{ProjectManager}
         """
         self.log("A new project is loaded")
-        self._connectToProject(self.app.current_project)
-        self.app.current_project.timeline.connect("notify::duration",
+        self._connectToProject(self.app.project_manager.current_project)
+        self.app.project_manager.current_project.timeline.connect("notify::duration",
                 self._timelineDurationChangedCb)
-        self.app.current_project.pipeline.activatePositionListener()
+        self.app.project_manager.current_project.pipeline.activatePositionListener()
         self._setProject()
 
         #FIXME GES we should re-enable this when possible
@@ -673,16 +673,16 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.updateTitle()
 
         if self._missingUriOnLoading:
-            self.app.current_project.setModificationState(True)
+            self.app.project_manager.current_project.setModificationState(True)
             self.save_button.set_sensitive(True)
             self._missingUriOnLoading = False
 
-        if projectManager.disable_save is True:
+        if project_manager.disable_save is True:
             # Special case: we enforce "Save as", but the normal "Save" button
             # redirects to it if needed, so we still want it to be enabled:
             self.save_button.set_sensitive(True)
 
-        if self.app.current_project.timeline.props.duration != 0:
+        if self.app.project_manager.current_project.timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
 
     def _projectManagerNewProjectLoadingCb(self, unused_project_manager, uri):
@@ -718,11 +718,15 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if project.uri is None:
             project.uri = uri
 
-    def _projectManagerClosingProjectCb(self, projectManager, project):
+    def _projectManagerClosingProjectCb(self, project_manager, project):
+        """
+        @type project_manager: L{ProjectManager}
+        @type project: L{Project}
+        """
         if not project.hasUnsavedModifications():
             return True
 
-        if project.uri and projectManager.disable_save is False:
+        if project.uri and not project_manager.disable_save:
             save = Gtk.STOCK_SAVE
         else:
             save = Gtk.STOCK_SAVE_AS
@@ -755,7 +759,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         if project.uri:
             path = unquote(project.uri).split("file://")[1]
-            last_saved = max(os.path.getmtime(path), projectManager.time_loaded)
+            last_saved = max(os.path.getmtime(path), project_manager.time_loaded)
             time_delta = time() - last_saved
             secondary.props.label = _("If you don't save, "
                 "the changes from the last %s will be lost."
@@ -785,8 +789,8 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         response = dialog.run()
         dialog.destroy()
         if response == Gtk.ResponseType.YES:
-            if project.uri is not None and projectManager.disable_save is False:
-                res = self.app.projectManager.saveProject()
+            if project.uri is not None and project_manager.disable_save is False:
+                res = self.app.project_manager.saveProject()
             else:
                 res = self._saveProjectAsCb(None)
         elif response == Gtk.ResponseType.REJECT:
@@ -815,7 +819,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         return False
 
     def _projectManagerRevertingToSavedCb(self, unused_project_manager, unused_project):
-        if self.app.current_project.hasUnsavedModifications():
+        if self.app.project_manager.current_project.hasUnsavedModifications():
             dialog = Gtk.MessageDialog(transient_for=self,
                     modal=True,
                     message_type=Gtk.MessageType.WARNING,
@@ -929,7 +933,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         if response == Gtk.ResponseType.OK:
             self.log("User chose a new URI for the missing file")
             new_uri = chooser.get_uri()
-            self.app.current_project.setModificationState(False)
+            self.app.project_manager.current_project.setModificationState(False)
         else:
             # Even if the user clicks Cancel, the discoverer keeps trying to
             # import the rest of the clips...
@@ -937,22 +941,22 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             # this async operation, or the filechooser will keep showing up
             # and all sorts of weird things will happen.
             # TODO: bugs #661059, 609136
-            attempted_uri = self.app.current_project.uri
+            attempted_uri = self.app.project_manager.current_project.uri
             reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
                     'Pitivi does not currently support partial projects.'
                     % info_name(asset))
             # Put an end to the async signals spamming us with dialogs:
-            self.app.projectManager.disconnect_by_func(self._projectManagerMissingUriCb)
+            self.app.project_manager.disconnect_by_func(self._projectManagerMissingUriCb)
             # Don't overlap the file chooser with our error dialog
             # The chooser will be destroyed further below, so let's hide it now.
             dialog.hide()
             # Reset projectManager and disconnect all the signals:
-            self.app.projectManager.newBlankProject(ignore_unsaved_changes=True)
+            self.app.project_manager.newBlankProject(ignore_unsaved_changes=True)
             # Force the project load to fail:
             # This will show an error using _projectManagerNewProjectFailedCb
             # You have to do this *after* successfully creating a blank project,
             # or the startupwizard will still be connected to that signal too.
-            self.app.projectManager.emit("new-project-failed", attempted_uri, reason)
+            self.app.project_manager.emit("new-project-failed", attempted_uri, reason)
 
         dialog.destroy()
         return new_uri
@@ -986,9 +990,9 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         dirty = action_log.dirty()
         self.save_button.set_sensitive(dirty)
-        if self.app.current_project.uri is not None:
+        if self.app.project_manager.current_project.uri is not None:
             self._menubutton_items["menu_revert_to_saved"].set_sensitive(dirty)
-        self.app.current_project.setModificationState(dirty)
+        self.app.project_manager.current_project.setModificationState(dirty)
 
         can_redo = bool(action_log.redo_stacks)
         self.redo_button.set_sensitive(can_redo)
@@ -1000,28 +1004,28 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         """
         Disconnect and reconnect callbacks to the new current project
         """
-        if not self.app.current_project:
+        if not self.app.project_manager.current_project:
             self.warning("Current project instance does not exist")
             return False
         try:
-            self.app.current_project.disconnect_by_func(self._renderingSettingsChangedCb)
+            self.app.project_manager.current_project.disconnect_by_func(self._renderingSettingsChangedCb)
         except TypeError:
             # When loading the first project, the signal has never been
             # connected before.
             pass
-        self.app.current_project.connect("rendering-settings-changed", self._renderingSettingsChangedCb)
+        self.app.project_manager.current_project.connect("rendering-settings-changed", self._renderingSettingsChangedCb)
 
-        self.viewer.setPipeline(self.app.current_project.pipeline)
-        self._renderingSettingsChangedCb(self.app.current_project)
+        self.viewer.setPipeline(self.app.project_manager.current_project.pipeline)
+        self._renderingSettingsChangedCb(self.app.project_manager.current_project)
         if self.timeline_ui:
-            self.clipconfig.project = self.app.current_project
+            self.clipconfig.project = self.app.project_manager.current_project
             #FIXME GES port undo/redo
-            #self.app.timelineLogObserver.pipeline = self.app.current_project.pipeline
+            #self.app.timelineLogObserver.pipeline = self.app.project_manager.current_project.pipeline
 
         # When creating a blank project, medialibrary will eventually trigger
         # this _setProject method, but there's no project URI yet.
-        if self.app.current_project.uri:
-            folder_path = os.path.dirname(path_from_uri(self.app.current_project.uri))
+        if self.app.project_manager.current_project.uri:
+            folder_path = os.path.dirname(path_from_uri(self.app.project_manager.current_project.uri))
             self.settings.lastProjectFolder = folder_path
 
     def _renderingSettingsChangedCb(self, project, unused_item=None, unused_value=None):
@@ -1139,7 +1143,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         foo = self._showSaveScreenshotDialog()
         if foo:
             path, mime = foo[0], foo[1]
-            self.app.current_project.pipeline.save_thumbnail(-1, -1, mime, path)
+            self.app.project_manager.current_project.pipeline.save_thumbnail(-1, -1, mime, path)
 
     def _showSaveScreenshotDialog(self):
         """
@@ -1178,12 +1182,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
     def updateTitle(self):
         name = touched = ""
-        if self.app.current_project:
-            if self.app.current_project.name:
-                name = self.app.current_project.name
+        if self.app.project_manager.current_project:
+            if self.app.project_manager.current_project.name:
+                name = self.app.project_manager.current_project.name
             else:
                 name = _("Untitled")
-            if self.app.current_project.hasUnsavedModifications():
+            if self.app.project_manager.current_project.hasUnsavedModifications():
                 touched = "*"
         title = "%s%s — %s" % (touched, name, APPNAME)
         self._headerbar.set_title(title)
