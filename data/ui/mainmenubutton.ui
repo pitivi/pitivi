@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.16.0 on Fri Dec 27 12:36:25 2013 -->
+<!-- Generated with glade 3.16.1 -->
 <interface>
-  <!-- interface-requires gtk+ 3.10 -->
+  <requires lib="gtk+" version="3.10"/>
   <object class="GtkMenu" id="menu">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -10,18 +10,18 @@
       <object class="GtkMenuItem" id="menu_new">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="action_name">win.new_project</property>
         <property name="label" translatable="yes">New project</property>
         <property name="use_underline">True</property>
-        <signal name="activate" handler="_newProjectMenuCb" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkMenuItem" id="menu_open">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="action_name">win.open_project</property>
         <property name="label" translatable="yes">Open project...</property>
         <property name="use_underline">True</property>
-        <signal name="activate" handler="_openProjectCb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -35,9 +35,9 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Save the current project under a new name or a different location</property>
+        <property name="action_name">win.save_as</property>
         <property name="label" translatable="yes">Save As...</property>
         <property name="use_underline">True</property>
-        <signal name="activate" handler="_saveProjectAsCb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -111,9 +111,9 @@
       <object class="GtkMenuItem" id="menu_help">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="action_name">win.user_manual</property>
         <property name="label" translatable="yes">User Manual</property>
         <property name="use_underline">True</property>
-        <signal name="activate" handler="_userManualCb" swapped="no"/>
       </object>
     </child>
     <child>

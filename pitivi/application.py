@@ -95,6 +95,10 @@ class Pitivi(Gtk.Application, Loggable):
         self.system = getSystem()
 
         self.action_log = UndoableActionLog()
+        self.action_log.connect("commit", self._actionLogCommit)
+        self.action_log.connect("undo", self._actionLogUndo)
+        self.action_log.connect("redo", self._actionLogRedo)
+        self.action_log.connect("cleaned", self._actionLogCleaned)
         self.debug_action_log_observer = DebugActionLogObserver()
         self.debug_action_log_observer.startObserving(self.action_log)
         self.project_log_observer = ProjectLogObserver(self.action_log)
@@ -102,7 +106,24 @@ class Pitivi(Gtk.Application, Loggable):
         self.project_manager.connect("new-project-loaded", self._newProjectLoaded)
         self.project_manager.connect("project-closed", self._projectClosed)
 
+        self._createActions()
         self._checkVersion()
+
+    def _createActions(self):
+        self.undo_action = Gio.SimpleAction.new("undo", None)
+        self.undo_action.connect("activate", self._undoCb)
+        self.add_action(self.undo_action)
+        self.add_accelerator("<Control>z", "app.undo", None)
+
+        self.redo_action = Gio.SimpleAction.new("redo", None)
+        self.redo_action.connect("activate", self._redoCb)
+        self.add_action(self.redo_action)
+        self.add_accelerator("<Control><Shift>z", "app.redo", None)
+
+        self.quit_action = Gio.SimpleAction.new("quit", None)
+        self.quit_action.connect("activate", self._quitCb)
+        self.add_action(self.quit_action)
+        self.add_accelerator("<Control>q", "app.quit", None)
 
     def activateCb(self, unused_app):
         if self.gui:
@@ -216,3 +237,37 @@ class Pitivi(Gtk.Application, Loggable):
         Get the latest version of the app or None.
         """
         return self._version_information.get("current")
+
+    def _quitCb(self, unused_action, unused_param):
+        self.shutdown()
+
+    def _undoCb(self, unused_action, unused_param):
+        self.action_log.undo()
+
+    def _redoCb(self, unused_action, unused_param):
+        self.action_log.redo()
+
+    def _actionLogCommit(self, action_log, unused_stack, nested):
+        if nested:
+            return
+        self._syncDoUndo(action_log)
+
+    def _actionLogUndo(self, action_log, unused_stack):
+        self._syncDoUndo(action_log)
+
+    def _actionLogRedo(self, action_log, unused_stack):
+        self._syncDoUndo(action_log)
+
+    def _actionLogCleaned(self, action_log):
+        self._syncDoUndo(action_log)
+
+    def _syncDoUndo(self, action_log):
+        can_undo = bool(action_log.undo_stacks)
+        self.undo_action.set_enabled(can_undo)
+
+        can_redo = bool(action_log.redo_stacks)
+        self.redo_action.set_enabled(can_redo)
+
+        dirty = action_log.dirty()
+        self.project_manager.current_project.setModificationState(dirty)
+        self.gui.showProjectStatus()

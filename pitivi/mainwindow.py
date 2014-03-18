@@ -27,11 +27,12 @@ from urllib.parse import unquote
 from gettext import gettext as _
 from hashlib import md5
 
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import Gst
 from gi.repository import GES
+from gi.repository import Gdk
 from gi.repository import GdkPixbuf
+from gi.repository import Gio
+from gi.repository import Gst
+from gi.repository import Gtk
 from gi.repository.GstPbutils import InstallPluginsContext, install_plugins_async
 
 from pitivi.clipproperties import ClipProperties
@@ -147,7 +148,7 @@ def create_stock_icons():
         factory.add_default()
 
 
-class PitiviMainWindow(Gtk.Window, Loggable):
+class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
     """
     Pitivi's main window.
 
@@ -161,7 +162,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         os.environ["PULSE_PROP_media.role"] = "production"
         os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
 
-        Gtk.Window.__init__(self)
+        Gtk.ApplicationWindow.__init__(self)
         Loggable.__init__(self, "mainwindow")
         self.app = app
         self.log("Creating MainWindow")
@@ -186,11 +187,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         pm.connect("reverting-to-saved", self._projectManagerRevertingToSavedCb)
         pm.connect("project-closed", self._projectManagerProjectClosedCb)
         pm.connect("missing-uri", self._projectManagerMissingUriCb)
-
-        self.app.action_log.connect("commit", self._actionLogCommit)
-        self.app.action_log.connect("undo", self._actionLogUndo)
-        self.app.action_log.connect("redo", self._actionLogRedo)
-        self.app.action_log.connect("cleaned", self._actionLogCleaned)
 
     def showRenderDialog(self, project):
         """
@@ -367,19 +363,18 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         self.undo_button = Gtk.Button.new_from_icon_name("edit-undo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
         self.undo_button.set_always_show_image(True)
         self.undo_button.set_label(_("Undo"))
-        self.undo_button.connect("clicked", self._undoCb)
+        self.undo_button.set_action_name("app.undo")
 
         self.redo_button = Gtk.Button.new_from_icon_name("edit-redo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
         self.redo_button.set_always_show_image(True)
         self.redo_button.set_label(_("Redo"))
-        self.redo_button.connect("clicked", self._redoCb)
+        self.redo_button.set_action_name("app.redo")
 
         separator = Gtk.Separator()
 
         self.save_button = Gtk.Button.new_from_icon_name("document-save", Gtk.IconSize.LARGE_TOOLBAR)
         self.save_button.set_always_show_image(True)
         self.save_button.set_label(_("Save"))
-        self.save_button.connect("clicked", self._saveProjectCb)
 
         render_icon = Gtk.Image.new_from_file(os.path.join(get_pixmap_dir(), "pitivi-render-24.png"))
         self.render_button = Gtk.Button()
@@ -406,40 +401,46 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         Bonus points: the accelerators disable themselves when buttons or
         menu items are set_sensitive(False), which is exactly what we want.
         """
-        ctrl = Gdk.ModifierType.CONTROL_MASK
-        shift = Gdk.ModifierType.SHIFT_MASK
-        menus = self._menubutton_items
-        self.__set_accelerator(menus["menu_new"], Gdk.KEY_n, ctrl)
-        self.__set_accelerator(menus["menu_open"], Gdk.KEY_o, ctrl)
-        self.__set_accelerator(menus["menu_save_as"], Gdk.KEY_s, ctrl | shift)
-        self.__set_accelerator(menus["menu_help"], Gdk.KEY_F1)
-        self.__set_accelerator(self.undo_button, Gdk.KEY_z, ctrl)
-        self.__set_accelerator(self.redo_button, Gdk.KEY_z, ctrl | shift)
-        self.__set_accelerator(self.save_button, Gdk.KEY_s, ctrl)
+        self.save_action = Gio.SimpleAction.new("save", None)
+        self.save_action.connect("activate", self._saveProjectCb)
+        self.add_action(self.save_action)
+        self.app.add_accelerator("<Control>s", "win.save", None)
+        self.save_button.set_action_name("win.save")
 
-        def closeCb(unused_accel_group, unused_widget, unused_key, unused_mods):
-            self.close()
+        self.new_project_action = Gio.SimpleAction.new("new_project", None)
+        self.new_project_action.connect("activate", self._newProjectMenuCb)
+        self.add_action(self.new_project_action)
+        self.app.add_accelerator("<Control>n", "win.new_project", None)
 
-        def menuCb(unused_accel_group, unused_widget, unused_key, unused_mods):
+        self.open_project_action = Gio.SimpleAction.new("open_project", None)
+        self.open_project_action.connect("activate", self._openProjectCb)
+        self.add_action(self.open_project_action)
+        self.app.add_accelerator("<Control>o", "win.open_project", None)
+
+        self.save_as_action = Gio.SimpleAction.new("save_as", None)
+        self.save_as_action.connect("activate", self._saveProjectAsCb)
+        self.add_action(self.save_as_action)
+        self.app.add_accelerator("<Control><Shift>s", "win.save_as", None)
+
+        self.help_action = Gio.SimpleAction.new("help", None)
+        self.help_action.connect("activate", self._userManualCb)
+        self.add_action(self.help_action)
+        self.app.add_accelerator("F1", "win.help", None)
+
+        def menuCb(unused_action, unused_param):
             self._menubutton.set_active(not self._menubutton.get_active())
 
-        accel_group = self.uimanager.get_accel_group()
-        accel_group.connect(Gdk.KEY_q, ctrl, Gtk.AccelFlags.VISIBLE, closeCb)
-        accel_group.connect(Gdk.KEY_F10, 0, Gtk.AccelFlags.VISIBLE, menuCb)
+        menu_button_action = Gio.SimpleAction.new("menu_button", None)
+        menu_button_action.connect("activate", menuCb)
+        self.add_action(menu_button_action)
+        self.app.add_accelerator("F10", "win.menu_button", None)
 
-    def __set_accelerator(self, widget, key, mods=0, flags=Gtk.AccelFlags.VISIBLE):
-        """
-        Convenience function to deal with the madness of widget.add_accelerator
-        to set a keyboard shortcut onto a GTK Widget. It determines the proper
-        widget signal to emit and allows using default modifiers and flags.
-        """
-        accel_group = self.uimanager.get_accel_group()
-        if type(widget) in [Gtk.Button, Gtk.ToolItem]:
-            signal = "clicked"
-        else:
-            signal = "activate"
-
-        widget.add_accelerator(signal, accel_group, key, mods, flags)
+    def showProjectStatus(self):
+        dirty = self.app.project_manager.current_project.hasUnsavedModifications()
+        self.save_action.set_enabled(dirty)
+        if self.app.project_manager.current_project.uri:
+            self._menubutton_items["menu_revert_to_saved"].set_sensitive(dirty)
+        self.updateTitle()
 
 ## Missing Plugin Support
 
@@ -491,7 +492,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
             preview_window.preview()
 
     def _projectChangedCb(self, unused_project):
-        self.save_button.set_sensitive(True)
+        self.save_action.set_enabled(True)
         self.updateTitle()
 
     def _mediaLibrarySourceRemovedCb(self, unused_project, asset):
@@ -501,20 +502,20 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
 ## Toolbar/Menu actions callback
 
-    def _newProjectMenuCb(self, unused_action):
+    def _newProjectMenuCb(self, unused_action, unused_param):
         if self.app.project_manager.newBlankProject() is not False:
             self.showProjectSettingsDialog()
 
-    def _openProjectCb(self, unused_action):
+    def _openProjectCb(self, unused_action, unused_param):
         self.openProject()
 
-    def _saveProjectCb(self, unused_action):
+    def _saveProjectCb(self, action, unused_param):
         if not self.app.project_manager.current_project.uri or self.app.project_manager.disable_save:
-            self._saveProjectAsCb(unused_action)
+            self._saveProjectAsCb(action, None)
         else:
             self.app.project_manager.saveProject()
 
-    def _saveProjectAsCb(self, unused_action):
+    def _saveProjectAsCb(self, unused_action, unused_param):
         uri = self._showSaveAsDialog(self.app.project_manager.current_project)
         if uri is not None:
             return self.app.project_manager.saveProject(uri)
@@ -542,7 +543,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         ProjectSettingsDialog(self, self.app.project_manager.current_project).window.run()
         self.updateTitle()
 
-    def _userManualCb(self, unused_action):
+    def _userManualCb(self, unused_action, unused_param):
         show_user_manual()
 
     def _aboutResponseCb(self, dialog, unused_response):
@@ -643,12 +644,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         except:
             return False
 
-    def _undoCb(self, unused_action):
-        self.app.action_log.undo()
-
-    def _redoCb(self, unused_action):
-        self.app.action_log.redo()
-
     def _prefsCb(self, unused_action):
         if not self.prefsdialog:
             from pitivi.dialogs.prefs import PreferencesDialog
@@ -674,13 +669,13 @@ class PitiviMainWindow(Gtk.Window, Loggable):
 
         if self._missingUriOnLoading:
             self.app.project_manager.current_project.setModificationState(True)
-            self.save_button.set_sensitive(True)
+            self.save_action.set_enabled(True)
             self._missingUriOnLoading = False
 
         if project_manager.disable_save is True:
             # Special case: we enforce "Save as", but the normal "Save" button
             # redirects to it if needed, so we still want it to be enabled:
-            self.save_button.set_sensitive(True)
+            self.save_action.set_enabled(True)
 
         if self.app.project_manager.current_project.timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
@@ -711,7 +706,7 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         #self._syncDoUndo(self.app.action_log)
         self.updateTitle()
 
-        self.save_button.set_sensitive(False)
+        self.save_action.set_enabled(False)
         if uri:
             self.recent_manager.add_item(uri)
 
@@ -966,37 +961,6 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         #medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
         project.connect("asset-removed", self._mediaLibrarySourceRemovedCb)
         project.connect("project-changed", self._projectChangedCb)
-
-## Undo/redo methods
-
-    def _actionLogCommit(self, action_log, unused_stack, nested):
-        if nested:
-            return
-
-        self._syncDoUndo(action_log)
-
-    def _actionLogCleaned(self, action_log):
-        self._syncDoUndo(action_log)
-
-    def _actionLogUndo(self, action_log, unused_stack):
-        self._syncDoUndo(action_log)
-
-    def _actionLogRedo(self, action_log, unused_stack):
-        self._syncDoUndo(action_log)
-
-    def _syncDoUndo(self, action_log):
-        can_undo = bool(action_log.undo_stacks)
-        self.undo_button.set_sensitive(can_undo)
-
-        dirty = action_log.dirty()
-        self.save_button.set_sensitive(dirty)
-        if self.app.project_manager.current_project.uri is not None:
-            self._menubutton_items["menu_revert_to_saved"].set_sensitive(dirty)
-        self.app.project_manager.current_project.setModificationState(dirty)
-
-        can_redo = bool(action_log.redo_stacks)
-        self.redo_button.set_sensitive(can_redo)
-        self.updateTitle()
 
 ## Pitivi current project callbacks
 
