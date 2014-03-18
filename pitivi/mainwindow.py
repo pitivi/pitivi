@@ -472,10 +472,12 @@ class PitiviMainWindow(Gtk.Window, Loggable):
         """
         Handle the main window being moved, resized or maximized
         """
+        # get_position() takes window manager decoration into account
+        position = self.get_position()
         self.settings.mainWindowWidth = event.width
         self.settings.mainWindowHeight = event.height
-        self.settings.mainWindowX = event.x
-        self.settings.mainWindowY = event.y
+        self.settings.mainWindowX = position[0]
+        self.settings.mainWindowY = position[1]
 
     def _deleteCb(self, unused_widget, unused_data=None):
         self._saveWindowSettings()

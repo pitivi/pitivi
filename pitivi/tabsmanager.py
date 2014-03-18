@@ -123,6 +123,7 @@ class BaseTabs(Gtk.Notebook):
 
         The config key's name depends on the name (label) of the tab widget.
         """
+        # get_position() takes the window manager's decorations into account
         position = window.get_position()
         setattr(self.settings, child_name + "width", event.width)
         setattr(self.settings, child_name + "height", event.height)
