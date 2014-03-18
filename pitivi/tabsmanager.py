@@ -116,17 +116,18 @@ class BaseTabs(Gtk.Notebook):
         else:
             return notebook
 
-    def _detachedComponentWindowConfiguredCb(self, unused_window, event, child_name):
+    def _detachedComponentWindowConfiguredCb(self, window, event, child_name):
         """
         When the user configures the detached window
         (changes its size, position, etc.), save the settings.
 
         The config key's name depends on the name (label) of the tab widget.
         """
+        position = window.get_position()
         setattr(self.settings, child_name + "width", event.width)
         setattr(self.settings, child_name + "height", event.height)
-        setattr(self.settings, child_name + "x", event.x)
-        setattr(self.settings, child_name + "y", event.y)
+        setattr(self.settings, child_name + "x", position[0])
+        setattr(self.settings, child_name + "y", position[1])
 
     def _createDefaultConfig(self, child_name):
         """
