@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-15 16:13+0100\n"
-"PO-Revision-Date: 2014-03-15 16:14+0100\n"
+"POT-Creation-Date: 2014-03-18 20:34+0100\n"
+"PO-Revision-Date: 2014-03-18 20:35+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -124,25 +124,26 @@ msgstr "Rozmiar (w pikselach):"
 msgid "Frame rate:"
 msgstr "Liczba klatek na sekundę:"
 
-#: ../data/ui/clipmediaprops.ui.h:6
+#. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
+#: ../data/ui/clipmediaprops.ui.h:7
 msgid "Pixel aspect ratio:"
 msgstr "Proporcje obrazu (w pikselach):"
 
-#: ../data/ui/clipmediaprops.ui.h:7
+#: ../data/ui/clipmediaprops.ui.h:8
 msgid "Video:"
 msgstr "Wideo:"
 
-#: ../data/ui/clipmediaprops.ui.h:8 ../data/ui/projectsettings.ui.h:19
+#: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:21
 #: ../data/ui/renderingdialog.ui.h:32
 msgid "Channels:"
 msgstr "Kanały:"
 
-#: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:20
+#: ../data/ui/clipmediaprops.ui.h:10 ../data/ui/projectsettings.ui.h:22
 #: ../data/ui/renderingdialog.ui.h:33
 msgid "Sample rate:"
 msgstr "Częstotliwość próbki:"
 
-#: ../data/ui/clipmediaprops.ui.h:10
+#: ../data/ui/clipmediaprops.ui.h:11
 msgid "Audio:"
 msgstr "Dźwięk:"
 
@@ -332,58 +333,60 @@ msgstr "Zapisuje zmiany w obecnie zaznaczonym ustawieniu"
 msgid "Aspect Ratio:"
 msgstr "Proporcje:"
 
-#: ../data/ui/projectsettings.ui.h:11
+#. DAR is the aspect ratio of the image being displayed to the viewer. "Display" is used as a noun, not as a verb/action.
+#: ../data/ui/projectsettings.ui.h:12
 msgid "Display aspect ratio"
 msgstr "Wyświetlanie proporcji obrazu"
 
-#: ../data/ui/projectsettings.ui.h:12
+#. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
+#: ../data/ui/projectsettings.ui.h:14
 msgid "Pixel aspect ratio"
 msgstr "Proporcje obrazu w pikselach"
 
-#: ../data/ui/projectsettings.ui.h:13
+#: ../data/ui/projectsettings.ui.h:15
 msgid "x"
 msgstr "x"
 
-#: ../data/ui/projectsettings.ui.h:14
+#: ../data/ui/projectsettings.ui.h:16
 msgid "Link"
 msgstr "Połącz"
 
-#: ../data/ui/projectsettings.ui.h:15
+#: ../data/ui/projectsettings.ui.h:17
 msgid "Frame Rate:"
 msgstr "Liczba klatek na sekundę:"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../data/ui/projectsettings.ui.h:16 ../data/ui/renderingdialog.ui.h:31
+#: ../data/ui/projectsettings.ui.h:18 ../data/ui/renderingdialog.ui.h:31
 #: ../pitivi/effects.py:282
 msgid "Video"
 msgstr "Wideo"
 
-#: ../data/ui/projectsettings.ui.h:17
+#: ../data/ui/projectsettings.ui.h:19
 msgid "Audio Preset"
 msgstr "Ustawienie dźwięku"
 
-#: ../data/ui/projectsettings.ui.h:18
+#: ../data/ui/projectsettings.ui.h:20
 msgid "Format"
 msgstr "Format"
 
-#: ../data/ui/projectsettings.ui.h:21 ../data/ui/renderingdialog.ui.h:35
+#: ../data/ui/projectsettings.ui.h:23 ../data/ui/renderingdialog.ui.h:35
 msgid "Audio"
 msgstr "Dźwięk"
 
-#: ../data/ui/projectsettings.ui.h:22
+#: ../data/ui/projectsettings.ui.h:24
 msgid "Author:"
 msgstr "Autor:"
 
-#: ../data/ui/projectsettings.ui.h:23
+#: ../data/ui/projectsettings.ui.h:25
 msgid "Year:"
 msgstr "Rok:"
 
-#: ../data/ui/projectsettings.ui.h:24
+#: ../data/ui/projectsettings.ui.h:26
 msgid "Project title:"
 msgstr "Tytuł projektu:"
 
-#: ../data/ui/projectsettings.ui.h:25
+#: ../data/ui/projectsettings.ui.h:27
 msgid "Info"
 msgstr "Informacje"
 
@@ -1139,8 +1142,8 @@ msgid "The following file can not be used with Pitivi."
 msgstr "Następujący plik nie może być używane w programie Pitivi."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
-#: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1327
-#: ../pitivi/project.py:1332 ../pitivi/render.py:407
+#: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1324
+#: ../pitivi/project.py:1329 ../pitivi/render.py:407
 msgid "No preset"
 msgstr "Brak ustawienia"
 
@@ -1193,16 +1196,16 @@ msgstr "Nowy projekt"
 msgid "Pitivi encoding profile"
 msgstr "Profil kodowania Pitivi"
 
-#: ../pitivi/project.py:1348 ../pitivi/render.py:537
+#: ../pitivi/project.py:1345 ../pitivi/render.py:537
 #, python-format
 msgid "\"%s\" already exists."
 msgstr "\"%s\" już istnieje."
 
-#: ../pitivi/project.py:1421 ../pitivi/render.py:578
+#: ../pitivi/project.py:1418 ../pitivi/render.py:578
 msgid "New preset"
 msgstr "Nowe ustawienie"
 
-#: ../pitivi/project.py:1424 ../pitivi/render.py:581
+#: ../pitivi/project.py:1421 ../pitivi/render.py:581
 #, python-format
 msgid "New preset %d"
 msgstr "Nowe ustawienie %d"
@@ -1596,7 +1599,13 @@ msgstr "Obraz PNG"
 msgid "JPEG image"
 msgstr "Obraz JPEG"
 
-#: ../pitivi/dialogs/clipmediaprops.py:109
+#. Translators: a label showing an invalid framerate value
+#: ../pitivi/dialogs/clipmediaprops.py:105
+#, python-format
+msgid "invalid (%s fps)"
+msgstr "nieprawidłowe (%s FPS)"
+
+#: ../pitivi/dialogs/clipmediaprops.py:127
 msgid "Image:"
 msgstr "Obraz:"
 
