@@ -657,7 +657,7 @@ class TitleEditor(Loggable):
     def _fontButtonCb(self, widget):
         font_desc = widget.get_font_name().split(" ")
         font_face = " ".join(font_desc[:-1])
-        font_size = str(int(font_desc[-1]) * 1024)
+        font_size = str(int(float(font_desc[-1]) * 1024))
         text = "<span face='" + font_face + "'><span size='" + font_size + "'>text</span></span>"
         suc, a, t, s = Pango.parse_markup(text, -1, '\x00')
         ai = a.get_iterator()
