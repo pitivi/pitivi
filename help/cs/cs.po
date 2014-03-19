@@ -1731,8 +1731,8 @@ msgid ""
 "\"movearoundtimeline\">Moving around the timeline</link> pages for more "
 "information on how to work with the timeline."
 msgstr ""
-"Viz stránky <link xref=\"layers\">Vysvětlení vrstev<link xref=\"layers\"> a "
-"</link>Posun po časové ose<link xref=\"layers\"> ohledně dalších informací, "
+"Viz stránky <link xref=\"layers\">Vysvětlení vrstev</link> a <link xref="
+"\"movearoundtimeline\">Posun po časové ose</link> ohledně dalších informací, "
 "jak pracovat s časovou osou."
 
 #. (itstool) path: section/title
