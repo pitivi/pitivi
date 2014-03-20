@@ -26,17 +26,22 @@ def _tests_suite():
 
 
 def get_pitivi_dir():
+    tests_dir = os.path.dirname(os.path.abspath(__file__))
+    pitivi_dir = os.path.join(tests_dir, os.path.pardir)
+    return os.path.abspath(pitivi_dir)
+
+
+def get_build_dir():
     from pitivi.configure import in_devel
     if in_devel():
-        # We know exactly where the top dir.
-        tests_dir = os.path.dirname(os.path.abspath(__file__))
-        pitivi_dir = os.path.join(tests_dir, os.path.pardir)
+        # It's the same.
+        build_dir = get_pitivi_dir()
     else:
         # Probably running make distcheck. The path to the test files
         # is different than the build path, so we must use the current
         # dir which is build_path/tests.
-        pitivi_dir = os.path.join(os.path.abspath(os.path.curdir), os.path.pardir)
-    return os.path.abspath(pitivi_dir)
+        build_dir = os.path.join(os.path.abspath(os.path.curdir), os.path.pardir)
+    return os.path.abspath(build_dir)
 
 
 def setup():
@@ -45,7 +50,8 @@ def setup():
     os.environ.setdefault('PITIVI_TOP_LEVEL_DIR', pitivi_dir)
 
     # Make available the compiled C code.
-    libs_dir = os.path.join(pitivi_dir, "pitivi/coptimizations/.libs")
+    build_dir = get_build_dir()
+    libs_dir = os.path.join(build_dir, "pitivi/coptimizations/.libs")
     sys.path.append(libs_dir)
 
     # Make sure the modules are initialized correctly.
