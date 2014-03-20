@@ -204,7 +204,12 @@ class Pitivi(Loggable, Signallable):
                     current_version = version
 
             self.info("Latest software version is %s", current_version)
-            if status is "UNSUPPORTED":
+            # Python is magical... comparing version *strings* always works,
+            # even with different major.minor.nano version number schemes!
+            if VERSION > current_version:
+                status = "CURRENT"
+                self.info("Running version %s, which is newer than the latest known version. Considering it as the latest current version.", VERSION)
+            elif status is "UNSUPPORTED":
                 self.warning("Using an outdated version of Pitivi (%s)", VERSION)
 
             self._version_information["current"] = current_version
