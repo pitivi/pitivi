@@ -22,10 +22,14 @@ tests =	\
 	test_widgets.py
 # Keep the list sorted!
 
+samples = \
+    samples/tears_of_steel.webm
+
 EXTRA_DIST = \
 	__init__.py \
 	common.py \
 	runtests.py \
+	$(samples) \
 	$(tests)
 
 clean-local:

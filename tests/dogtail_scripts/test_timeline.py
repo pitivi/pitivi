@@ -198,7 +198,7 @@ class TimelineTest(HelpFunc):
         self.assertNotEqual(timecode_widget.text, seekbefore, "Not rippled after adding effect")
 
     def test_image_video_mix(self):
-        files = ["tears of steel.webm", "flat_colour2_640x480.png",
+        files = ["tears_of_steel.webm", "flat_colour2_640x480.png",
                  "flat_colour4_1600x1200.jpg", "flat_colour1_640x480.png",
                  "flat_colour3_320x180.png", "flat_colour5_1600x1200.jpg"]
         samples = self.import_media_multiple(files)

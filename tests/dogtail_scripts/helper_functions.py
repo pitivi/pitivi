@@ -116,7 +116,7 @@ class HelpFunc(BaseDogTail):
         icon.deselect()
         self.zoom_best_fit_button.click()
 
-    def import_media(self, filename="tears of steel.webm"):
+    def import_media(self, filename="tears_of_steel.webm"):
         """
         @return: The icon widget.
         """

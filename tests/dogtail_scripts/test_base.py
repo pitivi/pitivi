@@ -6,7 +6,7 @@ import os
 from time import time, sleep
 
 
-# These are the timecodes we expect for "tears of steel.webm", depending on
+# These are the timecodes we expect for "tears_of_steel.webm", depending on
 # if we insert it once in a blank timeline or twice in a blank timeline.
 DURATION_OF_ONE_CLIP = "00:01.999"
 DURATION_OF_TWO_CLIPS = "00:03.999"

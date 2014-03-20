@@ -23,14 +23,14 @@ class DialogsClipMediaPropsTest(HelpFunc):
         dialog.child(name="Cancel").click()
         sample.deselect()
 
-        # Do the same thing for "tears of steel.webm":
+        # Do the same thing for "tears_of_steel.webm":
         sample = self.import_media()
         sample.select()
         media_props_button.click()
 
         # Check again for the presence of the dialog and its contents
         dialog = self.pitivi.child(name="Clip Properties", roleName="dialog", recursive=False)
-        # These are the properties of "tears of steel.webm":
+        # These are the properties of "tears_of_steel.webm":
         labels = {"Video:", "960", "400", "25 fps", "Square",
                 "Audio:", "Mono", "44.1 kHz"}
         real_labels = set([])
