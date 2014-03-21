@@ -1,3 +1,26 @@
+2014 March 20th - Pitivi 0.93
+
+  First beta and 3rd release of the new version of Pitivi based on GES.
+  All the improvements from 0.91 and 0.92, plus:
+
+  * Port the viewer and media file previewers to use a Clutter video output sink
+  * Visual refinements to the timeline (clip positioning, borders, selections)
+  * Improvements to the ruler and timecode display
+  * Allow importing MPEG-TS/AVCHD files
+  * Fixes and improvements to the timeline's clip thumbnailers
+  * Clip thumbnailing in the media library, better import error handling
+  * Various fixes to the application version checking
+  * Rework the way dependencies are checked on startup
+  * Make some features contextual and cleanup menus
+  * Many content updates to the user manual
+  * Papercut fixes to keyframe curves
+  * Many fixes for rendering
+  * Fix pylint errors
+  * Various fixes to the automated test suite
+  * Code refactoring and cleanup all over the place
+  * Fixes for AppData XML spec compliance
+  * Various build and packaging fixes
+
 2013 November 3rd - Pitivi 0.92
 
   Second alpha release for the new version of Pitivi based on GES.

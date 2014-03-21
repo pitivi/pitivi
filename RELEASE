@@ -1,24 +1,20 @@
-0.92 Release "Baby Steps"
--------------------------
-This is the second alpha release for the new version of Pitivi based on GES,
-the GStreamer Editing Services library. This is a incremental bugfixing release,
-so make sure to also look at the 0.91 release notes to get the full picture:
-http://wiki.pitivi.org/wiki/0.91
+0.93 Release "Ra is a happy"
+----------------------------
+This is the third release for the new version of Pitivi based on GES,
+the GStreamer Editing Services library. This is a incremental bugfixing release.
 
-Detailed release notes for 0.92 are on http://wiki.pitivi.org/wiki/0.91
+Detailed release notes for 0.93 are on http://wiki.pitivi.org/wiki/0.93
 
-Please keep in mind that this is still an alpha release. That said, one month
-after the 0.91 release and with the feedback we have received so far,
-we are pretty confident that the new release series is of much higher quality
-than the 0.15 series and older.
+This is now considered a beta release. As per the feedback we've received since
+0.91 and the many fixes we've made since then, we are confident that the new
+release series is of much higher quality than the 0.15 series and older.
 
-So try it out, let us know how well it works for you,
-and report detailed bugs for issues you may encounter.
+This release works well for us and we make nice movies with it.
+Try it out, have fun and report detailed bugs for issues you may encounter!
 
 == Requirements ==
 
-Dependencies/requirements have changed significantly since the 0.15 series,
-but have stayed mostly the same since 0.91 (pyxdg was dropped as a dependency).
+For this release, we depend on GStreamer, GNonLin and GES 1.2.0.
 
 Refer to Pitivi's check.py for the dependencies' versions for this release.
 See also http://wiki.pitivi.org/wiki/Dependencies for additional tips.
@@ -28,33 +24,50 @@ See also http://wiki.pitivi.org/wiki/Dependencies for additional tips.
 
 In Pitivi:
 
-     9  Thibault Saunier
-     6  Jean-François Fortin Tam
-     6  Mathieu Duponchelle
-     3  Colin Walters
-     2  Fran Diéguez
+   234  Alexandru Băluț
+    44  Mathieu Duponchelle
+    33  Tomas Karger
+    27  Jean-François Fortin Tam
+    16  Marek Černocký
+    10  Piotr Drąg
+     9  Daniel Mustieles
+     6  Thibault Saunier
+     4  Rafael Ferreira
+     3  Enrico Nicoletto
+     2  Aurimas Černius
+     2  Daniel Korostil
+     2  Kristjan SCHMIDT
+     2  Мирослав Николић
+     1  Benjamin Steinwender
      1  Cheng-Chia Tseng
-     1  Claude Paroz
-     1  Daniel Mustieles
-     1  Marek Černocký
-     1  Martin Srebotnjak
-     1  Rafael Ferreira
-     1  Rūdolfs Mazurs
-     1  Timo Jyrinki
-     1  Мирослав Николић
+     1  Dimitris Spingos
+     1  Gabor Kelemen
+     1  Jakub Steiner
+     1  Marcel Tiede
+     1  Matej Urbančič
+     1  Olivier Duchateau
+     1  Volkan Gezer
 
 
 In GES:
 
-     5  Thibault Saunier
+    38  Thibault Saunier
+     4  Alexandru Băluț
+     4  Sebastian Dröge
+     3  Dan Williams
+     3  Mathieu Duponchelle
+     3  Tim-Philipp Müller
      2  Kishore Arepalli
-     2  Mathieu Duponchelle
+     1  Andreas Schwab
+     1  Edward Hervey
+     1  Lubosz Sarnecki
+     1  Stefan Sauer
 
 
 == Download ==
 
   Pitivi source tarballs are available on the GNOME FTP servers:
-   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.92
+   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.93
 
   See the website for distribution-specific packages.
 
@@ -68,4 +81,4 @@ In GES:
 
 == Bugs Fixed ==
 
-See https://bugzilla.gnome.org/buglist.cgi?product=pitivi;target_milestone=0.92
+See https://bugzilla.gnome.org/buglist.cgi?product=pitivi;target_milestone=0.93
