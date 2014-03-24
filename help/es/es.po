@@ -4,14 +4,14 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # Jorge González <jorgegonz@svn.gnome.org>, 2011.
 # Sylvia Sánchez <LailahFSF@gmail.com>, 2011.
-# Milagros Alessandra Infante Montero <maim92@gmail.com>, 2012, 2013.
+# Milagros Alessandra Infante Montero <maim92@gmail.com>, 2012, 2013, 2014.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2011, 2012, 2013, 2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2014-03-13 17:22+0000\n"
-"PO-Revision-Date: 2014-03-14 14:13+0100\n"
+"POT-Creation-Date: 2014-03-21 11:25+0000\n"
+"PO-Revision-Date: 2014-03-24 10:52+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -1648,11 +1648,6 @@ msgstr "Las barras de herramientas"
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:50
-#| msgid ""
-#| "Toolbars provide access to the most commonly used functions of "
-#| "<app>Pitivi</app>. All items in toolbars can also be accessed through the "
-#| "menu bar. Toolbars can be activated or deactivated in the <gui>View</gui> "
-#| "menu."
 msgid ""
 "There are three toolbars in the <app>Pitivi</app> main window: the <gui>Main "
 "toolbar</gui>, the <gui>Playback toolbar</gui> and the <gui>Timeline "
@@ -1685,12 +1680,6 @@ msgstr "Regla"
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:61
-#, fuzzy
-#| msgid ""
-#| "To move your position in time, click anywhere on the ruler. You can also "
-#| "<em>scrub</em> the timeline by clicking on the ruler and holding down the "
-#| "mouse button while moving. See the section on <link xref="
-#| "\"movearoundtimeline\">scrubbing</link> for more details."
 msgid ""
 "The ruler plays a crucial role in your interaction with the timeline. First, "
 "it represents a time scale providing time measurements (in seconds) for "
@@ -1701,10 +1690,15 @@ msgid ""
 "moving. See the section on <link xref=\"movearoundtimeline\">scrubbing</"
 "link> for more details."
 msgstr ""
-"Para mover su posición, pulse en cualquier parte de la regla. Puede también "
-"<em>depurar</em> la línea del tiempo pulsando en la regla y manteniendo "
-"pulsado el botón del ratón mientras se mueve. Consulte la sección <link xref="
-"\"movearoundtimeline\">depuración</link> para obtener más detalles."
+"La regla tiene un papel crucial en su interacción con la línea del tiempo. "
+"Primero, representa una escala de tiempo que proporciona mediciones de "
+"tiempo (en segundos) para la interacción global. Segundo, constituye la "
+"superficie principal en la que puede mover la posición actual (así, cambia "
+"su posición en el tiempo). Para mover su posición, pulse en cualquier parte "
+"de la regla. Puede también <em>depurar</em> la línea del tiempo pulsando en "
+"la regla y manteniendo pulsado el botón del ratón mientras se mueve. "
+"Consulte la sección <link xref=\"movearoundtimeline\">depuración</link> para "
+"obtener más detalles."
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:62
@@ -1713,11 +1707,6 @@ msgstr "La posición actual se indica mediante una línea vertical roja:"
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:67
-#, fuzzy
-#| msgid ""
-#| "When zoomed in, frames are visually represented on the ruler as "
-#| "alternating light and dark areas in the bottom part; those are based on "
-#| "the project framerate settings."
 msgid ""
 "When zoomed in, frames are visually represented as alternating light and "
 "dark areas in the bottom part of the ruler. Hovering the mouse cursor over "
@@ -1726,8 +1715,11 @@ msgid ""
 "project framerate settings."
 msgstr ""
 "Cuando se amplía, las imágenes se representan visualmente en la regla como "
-"alternancia de zonas claras y oscuras en la parte inferior; estos se basan "
-"en las configuraciones del proyecto de imágenes por segundo."
+"alternancia de zonas claras y oscuras en la parte inferior. Situando el "
+"cursor del ratón sobre la regla en este estado revelará una descripción "
+"emergente con el número del fotograma. La cantidad de tiempo que los "
+"fotogramas individuales ocupan se basa en la configuración de imágenes por "
+"segundo del proyecto."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:72
@@ -1765,6 +1757,12 @@ msgid ""
 "applied to the timeline. However, these apply only to the horizontal "
 "(chronological) dimension of the timeline."
 msgstr ""
+"La línea del tiempo es el componente de interfaz de usuario principal que "
+"usará para editar. Verticalmente, se divide en capas que se pueden llenar "
+"con clips de sonido y vídeo. Horizontalmente, constituye una representación "
+"proporcional en el tiempo de la cronología de su proyecto. Se pueden aplicar "
+"varios niveles de acercamiento a la línea del tiempo. Sin embargo, éstos se "
+"aplican sólo a la dimensión horizontal (cronológica) de la línea del tiempo."
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:82
@@ -1941,6 +1939,11 @@ msgid ""
 "<gui>Effect library</gui> contains number of audio and video effects "
 "applicable to clips."
 msgstr ""
+"El panel izquierdo contiene los medios y las bibliotecas de efectos. Puede "
+"cambiar entre ellos seleccionando la pestaña correspondiente. La "
+"<gui>Biblioteca de medios</gui> muestra los archivos multimedia importados "
+"en su proyecto y le permite gestionarlos. La <gui>Biblioteca de efectos</"
+"gui> contiene el número de efectos de sonido y vídeo aplicables a los clips."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:133
@@ -1967,6 +1970,14 @@ msgid ""
 "when two clips overlap in the timeline. With <gui>Title editor</gui> you can "
 "create new clips with titles or add titles to existing ones."
 msgstr ""
+"El panel central contiene la <gui>Configuración del clip</gui>, las "
+"<gui>Transiciones</gui> y el <gui>Editor de títulos</gui>. Puede cambiar "
+"entre ellos seleccionando la pestaña correspondiente. La <gui>Configuración "
+"del clip </gui> le permite activar, desactivar o configurar los ajustes de "
+"efectos aplicados a un clip seleccionado. <gui>Transiciones</gui> le "
+"permiten seleccionar y configurar el tipo de transición cuando hay dos clips "
+"superpuestos en la línea de tiempo. Con el <gui>Editor de títulos</gui> "
+"puede crear nuevos clips con títulos o añadir títulos a los ya existentes."
 
 #. (itstool) path: credit/name
 #: C/medialibrary.page:14 C/movearoundtimeline.page:16
@@ -1999,6 +2010,14 @@ msgid ""
 "from a file browser to the <gui>Media library</gui>. By importing a "
 "<em>file</em> into the <gui>Media library</gui>, it becomes a <em>clip</em>."
 msgstr ""
+"Hay dos maneras de importar archivos en la <gui>Biblioteca de medios</gui>. "
+"La primera manera es pulsar en el botón <gui>Importar</gui> en la esquina "
+"superior izquierda. Esto abrirá un selector de archivo en el que se puede "
+"previsualizar los archivos seleccionados o seleccionar múltiples archivos "
+"(manteniendo <key>Mayús</key> o <key>Ctrl</key> mientras los selecciona). La "
+"segunda manera es arrastrar y soltar los archivos desde un explorador de "
+"archivos a la <gui>Biblioteca de medios</gui>. Al importar un <em>archivo</"
+"em> en la <gui>Biblioteca de medios</gui>, se convierte en un <em>clip</em>."
 
 #. (itstool) path: section/title
 #: C/medialibrary.page:34
@@ -2092,6 +2111,11 @@ msgid ""
 "clip properties. You can select which properties to apply by leaving them "
 "ticked/unticked."
 msgstr ""
+"<gui>Propiedades del clip…</gui> abre una nueva ventana con información "
+"sobre el <em>tamaño del vídeo</em>, <em>imágenes por segundo</em> y "
+"<em>proporción del aspecto</em>. Pulsando el botón <gui>Aplicar al proyecto</"
+"gui> ajusta las configuraciones del proyecto a las propiedades del clip. "
+"Puede seleccionar qué propiedades se aplican al dejarlos marcados/sin marcar."
 
 #. (itstool) path: item/p
 #: C/medialibrary.page:51
@@ -2241,11 +2265,6 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/movearoundtimeline.page:55
-#, fuzzy
-#| msgid ""
-#| "To get a better overview of your timeline, you may use the "
-#| "<guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click "
-#| "the <gui>Zoom</gui> button on the left of the zoom slider."
 msgid ""
 "To get a better overview of your timeline, you may use the "
 "<guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the "
@@ -2254,7 +2273,9 @@ msgid ""
 msgstr ""
 "Para tener una mejor visión general de su línea del tiempo, puede usar el "
 "elemento del menú <guiseq><gui>Ver</gui><gui>Mejor ajuste</gui></guiseq> o "
-"pulse el botón <gui>Ampliación</gui> en la izquierda del deslizador del zoom."
+"pulse el botón <gui>Acercar</gui> en la izquierda del deslizador del "
+"acercamiento. La tercera manera es pulsando <keyseq><key>Ctrl</key><key>0</"
+"key></keyseq>"
 
 #. (itstool) path: note/title
 #: C/movearoundtimeline.page:58
@@ -2280,19 +2301,13 @@ msgstr "<em>Deformación</em> entre niveles de ampliación"
 
 #. (itstool) path: note/p
 #: C/movearoundtimeline.page:63
-#, fuzzy
-#| msgid ""
-#| "Using your mouse's scroll wheel, you can also <em>warp</em> instantly "
-#| "from any zoom level to another in a single click. To do that, click with "
-#| "your mousewheel anywhere on the zoom slider."
 msgid ""
 "Using your mouse, you can also <em>warp</em> instantly from any zoom level "
 "to another in a single click. To do that, click anywhere on the zoom slider."
 msgstr ""
-"Usando la rueda de desplazamiento de su ratón, también puede <em>deformar</"
-"em> al instante desde cualquier nivel de ampliación a otro con una única "
-"pulsación. Para hacer esto, pulse con la rueda del ratón en cualquier lugar "
-"del deslizador de la ampliación."
+"Usando su ratón, también puede <em>deformar</em> al instante desde cualquier "
+"nivel de ampliación a otro con una única pulsación. Para hacer esto, pulse "
+"en cualquier lugar del deslizador de la ampliación."
 
 #. (itstool) path: page/section
 #: C/movearoundtimeline.page:41
@@ -2324,19 +2339,14 @@ msgstr "Cuando pulse en la <em>línea del tiempo</em>:"
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:72
-#, fuzzy
-#| msgid ""
-#| "If a clip is under the mouse cursor, it will replace the current clip "
-#| "selection (see the <link xref=\"makeselections\">Selecting multiple "
-#| "items</link> section for more detailed instructions)."
 msgid ""
 "If a clip is under the mouse cursor, it will replace the current clip "
 "selection (see the <link xref=\"selectiongrouping\">Making selections</link> "
 "section for more detailed instructions)."
 msgstr ""
 "Si un clip está debajo del cursor del ratón, reemplazará la selección actual "
-"del clip (consulte la sección <link xref=\"makeselections\">Seleccionar "
-"múltiples elementos</link> para obtener instrucciones más detalladas)."
+"del clip (consulte la sección <link xref=\"selectiongrouping\">Hacer "
+"selecciones</link> para obtener instrucciones más detalladas)."
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:73
@@ -2372,6 +2382,15 @@ msgid ""
 "milisec</em> where hours are optional. To insert a frame number, overwrite "
 "the timecode with a plain number of the desired frame."
 msgstr ""
+"Puede saltar a una posición exacta en la línea del tiempo editando el valor "
+"del tiempo mostrado en la barra de herramientas de reproducción (consulte la "
+"descripción de <link xref=\"mainwindow\">la ventana principal</link>). Para "
+"editarlo, simplemente pulse en el dispositivo, sobrescriba el valor y pulse "
+"<key>Intro</key>. El valor puede representar el código de tiempo o un número "
+"de fotograma. El código de tiempo tiene la siguiente forma: <em>hh:mm:ss."
+"miliseg</em> donde las horas son opcionales. Para insertar un número de "
+"fotograma, sobrescriba el código de tiempo con un número normal del "
+"fotograma deseado."
 
 #. (itstool) path: section/title
 #: C/movearoundtimeline.page:83
@@ -3683,14 +3702,6 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:51
-#| msgid ""
-#| "Digital images are composed of a grid of <link href=\"http://en.wikipedia."
-#| "org/wiki/Pixel\">pixels</link>, which may or may not be square. As such, "
-#| "in some cases, you may need to set the <link href=\"http://en.wikipedia."
-#| "org/wiki/Pixel_aspect_ratio\">pixel aspect ratio</link> (PAR) for the "
-#| "image to display correctly. On the other hand, <link href=\"http://en."
-#| "wikipedia.org/wiki/Display_aspect_ratio\">display aspect ratio</link> "
-#| "(DAR) is the mathematical ratio of width:height for the whole image."
 msgid ""
 "Digital images are composed of a grid of <link href=\"http://en.wikipedia."
 "org/wiki/Pixel\">pixels</link>, which may or may not be square. In some "
@@ -3711,12 +3722,6 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:52
-#| msgid ""
-#| "In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are "
-#| "related to each other by the video resolution (width and height). Once "
-#| "your resolution is set, setting the DAR will influence the PAR and vice "
-#| "versa. You can use either DAR or PAR, whichever you are most comfortable "
-#| "with."
 msgid ""
 "In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are "
 "related to each other through video resolution (width and height). Once your "
