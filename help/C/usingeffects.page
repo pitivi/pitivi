@@ -17,6 +17,9 @@
   </info>
 
     <title>Using effects</title>
-     
-     <p>This feature is not yet implemented, but is planned to be completed as a GSoC 2011 project.</p>
+
+    <section>
+        <title>Configuring effects</title>
+        <p>To configure an effect, simply select it in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq>. Variables that can be adjusted will appear in the lower part of the <gui>Clip configuration</gui> tab. Each variable can be put back to it's original value by clicking the corresponding <gui>Reset to default value</gui> button.</p>
+    </section>
 </page>

@@ -42,8 +42,7 @@
         </steps>
     </section>
     <section>
-        <title>Toggling and configuring effects</title>
+        <title>Toggling effects</title>
         <p>If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq>.</p>
-        <p>To configure an effect, simply select it in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq>. Variables that can be adjusted will appear in the lower part of the <gui>Clip configuration</gui> tab. Each variable can be put back to it's original value by clicking the corresponding <gui>Reset to default value</gui> button.</p>
     </section>
 </page>
